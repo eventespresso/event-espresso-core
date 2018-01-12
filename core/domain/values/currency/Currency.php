@@ -40,11 +40,18 @@ class Currency
     private $sign;
 
     /**
-     * Whether the currency sign should come before the number or not
+     * Whether the currency sign should come before the amount or not
      *
      * @var boolean $sign_b4
      */
     private $sign_b4;
+
+    /**
+     * Space (or nothing) displayed between currency sign and amount
+     *
+     * @var string $sign_separator
+     */
+    private $sign_separator;
 
     /**
      * How many digits should come after the decimal place
@@ -88,7 +95,6 @@ class Currency
     private $subunits;
 
 
-
     /**
      * Currency constructor.
      *
@@ -99,7 +105,8 @@ class Currency
      * @param int    $decimal_places the number of decimal places to use when DISPLAYING the currency
      * @param string $decimal_mark
      * @param string $thousands
-     * @param int    $subunits number of fractional divisions of a currency's main unit
+     * @param int    $subunits       number of fractional divisions of a currency's main unit
+     * @param string $sign_separator
      */
     public function __construct(
         $code,
@@ -109,7 +116,8 @@ class Currency
         $decimal_places,
         $decimal_mark,
         $thousands,
-        $subunits
+        $subunits,
+        $sign_separator = ''
     ) {
         $this->code           = $code;
         $this->label          = $label;
@@ -119,6 +127,7 @@ class Currency
         $this->decimal_mark   = $decimal_mark;
         $this->thousands      = $thousands;
         $this->subunits       = $subunits;
+        $this->sign_separator = $sign_separator;
     }
 
 
@@ -182,6 +191,15 @@ class Currency
     public function signB4()
     {
         return $this->sign_b4;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function signSeparator()
+    {
+        return $this->sign_separator;
     }
 
 

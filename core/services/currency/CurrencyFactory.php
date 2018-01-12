@@ -64,7 +64,8 @@ class CurrencyFactory
             $country_currency['CurrencyDecimalPlaces'],
             $country_currency['CurrencyDecimalMark'],
             $country_currency['CurrencyThousands'],
-            $country_currency['CurrencySubunits']
+            $country_currency['CurrencySubunits'],
+            $country_currency['CurrencySignSeparator']
         );
     }
 

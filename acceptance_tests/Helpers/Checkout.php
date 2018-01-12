@@ -16,28 +16,31 @@ trait Checkout
     /**
      * @param     $value
      * @param int $attendee_number
+     * @param bool  $admin  Used to indicate whether we're filling out the field from the context of the admin or not.
      */
-    public function fillOutFirstNameFieldForAttendee($value, $attendee_number = 1)
+    public function fillOutFirstNameFieldForAttendee($value, $attendee_number = 1, $admin = false)
     {
-        $this->actor()->fillField(CheckoutPage::firstNameFieldSelectorForAttendeeNumber($attendee_number), $value);
+        $this->actor()->fillField(CheckoutPage::firstNameFieldSelectorForAttendeeNumber($attendee_number, $admin), $value);
     }
 
     /**
      * @param     $value
      * @param int $attendee_number
+     * @param bool  $admin  Used to indicate whether we're filling out the field from the context of the admin or not.
      */
-    public function fillOutLastNameFieldForAttendee($value, $attendee_number = 1)
+    public function fillOutLastNameFieldForAttendee($value, $attendee_number = 1, $admin = false)
     {
-        $this->actor()->fillField(CheckoutPage::lastNameFieldSelectorForAttendeeNumber($attendee_number), $value);
+        $this->actor()->fillField(CheckoutPage::lastNameFieldSelectorForAttendeeNumber($attendee_number, $admin), $value);
     }
 
     /**
      * @param     $value
      * @param int $attendee_number
+     * @param bool  $admin  Used to indicate whether we're filling out the field from the context of the admin or not.
      */
-    public function fillOutEmailFieldForAttendee($value, $attendee_number = 1)
+    public function fillOutEmailFieldForAttendee($value, $attendee_number = 1, $admin = false)
     {
-        $this->actor()->fillField(CheckoutPage::emailFieldSelectorForAttendeeNumber($attendee_number), $value);
+        $this->actor()->fillField(CheckoutPage::emailFieldSelectorForAttendeeNumber($attendee_number, $admin), $value);
     }
 
 

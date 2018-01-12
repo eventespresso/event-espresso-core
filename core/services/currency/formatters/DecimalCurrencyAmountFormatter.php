@@ -28,7 +28,12 @@ class DecimalCurrencyAmountFormatter implements CurrencyAmountFormatterInterface
      */
     public function format($money_amount, Currency $currency)
     {
-        return (string)round($money_amount, $currency->decimalPlaces());
+        return number_format(
+            $money_amount,
+            $currency->decimalPlaces(),
+            $currency->decimalMark(),
+            ''
+        );
     }
 
 
