@@ -1153,6 +1153,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         $registrations_to_apply_payment_to .= EEH_HTML::tbody();
         // get registrations for TXN
         $registrations = $this->_transaction->registrations($query_params);
+        $existing_reg_payments = $this->_template_args['existing_reg_payments'];
         foreach ($registrations as $registration) {
             if ($registration instanceof EE_Registration) {
                 $attendee_name                     = $registration->attendee() instanceof EE_Attendee
