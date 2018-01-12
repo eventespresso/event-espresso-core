@@ -40,7 +40,20 @@
 	<br class="clear"/>
 
 
-	<?php if ( $attendee instanceof EE_Attendee && ( $grand_raw_total > 0 || $TXN_status != 'TCM' || ! empty( $payments ) ) ) : ?>
+	<?php if ($attendee instanceof EE_Attendee && ( $grand_raw_total > 0 || $TXN_status != 'TCM' || ! empty( $payments ) ) ) :
+            $no_payment_text = EE_Registry::instance()->CAP->current_user_can(
+                    'ee_edit_payments',
+                    'apply_payment_or_refund_from_registration_details'
+                )
+                ? esc_html__(
+                    'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.',
+                    'event_espresso'
+                )
+                : esc_html__(
+                    'No payments have been applied to this transaction yet.',
+                    'event_espresso'
+                );
+        ?>
 
 	<h3 class="admin-primary-mbox-h4 hdr-has-icon">
 		<span class="ee-icon ee-icon-cash"></span><?php _e( 'Payment Details', 'event_espresso' );?>
@@ -138,7 +151,7 @@
 			?>
 				<tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr hidden">
 					<td class=" jst-rght" colspan="11">
-						<span class="important-notice"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
+						<span class="important-notice"><?php echo $no_payment_text; ?></span>
 					</td>
 				</tr>
 				<tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr<?php echo $pay_totals_class;?>">
@@ -148,7 +161,7 @@
 		<?php else : ?>
 				<tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr">
 					<td class=" jst-rght" colspan="11">
-						<span class="important-notice"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
+						<span class="important-notice"><?php echo $no_payment_text; ?></span>
 					</td>
 				</tr>
 				<tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr hidden">
