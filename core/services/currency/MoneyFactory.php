@@ -90,7 +90,7 @@ class MoneyFactory
     {
         return new Money(
             $amount,
-            $this->currency_factory->createFromCountryCode(),
+            $this->currency_factory->createFromCountryCode(\EE_Config::instance()->organization->CNT_ISO),
             $this->calculator()
         );
     }

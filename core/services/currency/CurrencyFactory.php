@@ -24,11 +24,6 @@ class CurrencyFactory
 {
 
     /**
-     * @var string $site_country_iso
-     */
-    private $site_country_iso;
-
-    /**
      * @var CountryCurrencyDao $country_currencies
      */
     private $country_currencies;
@@ -40,10 +35,9 @@ class CurrencyFactory
      * @param CountryCurrencyDao     $country_currencies
      * @param EE_Organization_Config $organization_config
      */
-    public function __construct(CountryCurrencyDao $country_currencies, EE_Organization_Config $organization_config)
+    public function __construct(CountryCurrencyDao $country_currencies)
     {
         $this->country_currencies = $country_currencies;
-        $this->site_country_iso   = $organization_config->CNT_ISO;
     }
 
 
@@ -78,9 +72,8 @@ class CurrencyFactory
      * @throws EE_Error
      * @throws InvalidArgumentException
      */
-    public function createFromCountryCode($CNT_ISO = null)
+    public function createFromCountryCode($CNT_ISO)
     {
-        $CNT_ISO = $CNT_ISO !== null ? $CNT_ISO : $this->site_country_iso;
         return $this->createCurrencyFromCountryCurrency(
             $this->country_currencies->getCountryCurrencyByIsoCode($CNT_ISO)
         );
