@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
@@ -172,7 +175,10 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      * @param \EE_Transaction $transaction
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _get_txn_timestamp(EE_Transaction $transaction)
     {
@@ -314,7 +320,10 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
      *
      * @param \EE_Transaction $transaction
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function column_ATT_fname(EE_Transaction $transaction)
     {
@@ -377,7 +386,10 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
      *
      * @param \EE_Transaction $transaction
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function column_event_name(EE_Transaction $transaction)
     {
@@ -541,9 +553,13 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
 
     /**
      * Get the link to view the details for the primary registration.
+     *
      * @param EE_Transaction $transaction
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function get_primary_registration_details_link(EE_Transaction $transaction)
     {
@@ -576,6 +592,9 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
      * @param EE_Transaction $transaction
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function get_send_payment_reminder_trigger_link(EE_Transaction $transaction)
     {
@@ -609,12 +628,14 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     }
 
 
-
     /**
      * Get link to filtered view in the message activity list table of messages for this transaction.
      * @param EE_Transaction $transaction
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function get_related_messages_link(EE_Transaction $transaction)
     {
