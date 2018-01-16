@@ -407,11 +407,13 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 'action' => 'default',
                 'EVT_ID' => $event->ID(),
             ));
-            if (EE_Registry::instance()->CAP->current_user_can(
-                'ee_edit_event',
-                'espresso_events_edit',
-                $event->ID()
-            )) {
+            if (empty($this->_req_data['EVT_ID'])
+                && EE_Registry::instance()->CAP->current_user_can(
+                    'ee_edit_event',
+                    'espresso_events_edit',
+                    $event->ID()
+                )
+            ) {
                 $actions['filter_by_event'] = '<a href="' . $txn_by_event_lnk . '"'
                         . ' title="' . esc_attr__('Filter transactions by this event', 'event_espresso') . '">'
                         . esc_html__('View Transactions for this event', 'event_espresso')
