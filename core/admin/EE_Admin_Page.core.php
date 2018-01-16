@@ -3773,8 +3773,17 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         $option = 'per_page';
         $args   = array(
-            'label'   => $this->_admin_page_title,
-            'default' => 10,
+            'label'   => esc_html__(
+                    apply_filters(
+                        'FHEE__EE_Admin_Page___per_page_screen_options___label',
+                        $this->_admin_page_title,
+                        $this
+                    )
+            ),
+            'default' => (int) apply_filters(
+                    'FHEE__EE_Admin_Page___per_page_screen_options__default',
+                    10
+            ),
             'option'  => $this->_current_page . '_' . $this->_current_view . '_per_page',
         );
         //ONLY add the screen option if the user has access to it.
