@@ -14,7 +14,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\tests\mocks\core\domain
  * @author  Brent Christensen
- * @since   $VID:$
+ * 
  */
 class DomainMock extends DomainBase
 {

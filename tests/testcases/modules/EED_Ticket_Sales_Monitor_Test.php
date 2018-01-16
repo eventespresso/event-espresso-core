@@ -8,7 +8,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * 
  */
 class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
 {

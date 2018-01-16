@@ -17,7 +17,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\core\services
  * @author  Brent Christensen
- * @since   $VID:$
+ * 
  */
 class ContextChecker
 {
