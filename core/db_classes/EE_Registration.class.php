@@ -883,7 +883,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function payment_overview_url($clear_session = false)
     {
         return add_query_arg(
-            apply_filters(
+            (array) apply_filters(
                 'FHEE__EE_Registration__payment_overview_url__query_args',
                 array(
                     'e_reg_url_link' => $this->reg_url_link(),
@@ -911,7 +911,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function edit_attendee_information_url()
     {
         return add_query_arg(
-            apply_filters(
+            (array) apply_filters(
                 'FHEE__EE_Registration__edit_attendee_information_url__query_args',
                 array(
                     'e_reg_url_link' => $this->reg_url_link(),
