@@ -3810,7 +3810,13 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             switch ($map_option) {
                 case $this->_current_page . '_' . $this->_current_view . '_per_page':
                     $value = (int)$value;
-                    if ($value < 1 || $value > 999) {
+                    $max_value = apply_filters(
+                        'FHEE__EE_Admin_Page___set_per_page_screen_options__max_value',
+                        999,
+                        $this->_current_page,
+                        $this->_current_view
+                    );
+                    if ($value < 1 || $value > $max_value) {
                         return;
                     }
                     break;
