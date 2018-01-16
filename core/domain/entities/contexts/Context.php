@@ -1,8 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\entities;
-
-use EventEspresso\core\domain\entities\contexts\ContextInterface;
+namespace EventEspresso\core\domain\entities\contexts;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -10,9 +8,12 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class Context
- * NAMESPACE MOVED : PLZ USE : \EventEspresso\core\domain\entities\contexts\Context
+ * Simple DTO for conveying the background details about why some other logic is being performed,
+ * that can assist with the decision making process or simply enhance logging.
  *
- * @deprecated 4.9.54
+ * @package EventEspresso\core\domain\entities
+ * @author  Brent Christensen
+ * @since   4.9.46.rc.076
  */
 class Context implements ContextInterface
 {
