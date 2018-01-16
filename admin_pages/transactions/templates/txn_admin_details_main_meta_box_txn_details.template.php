@@ -44,11 +44,8 @@
     <br class="clear"/>
 
 
-    <?php if ($attendee instanceof EE_Attendee && ($grand_raw_total > 0 || $TXN_status != 'TCM' || ! empty($payments))) :
-        $no_payment_text = EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_payments',
-            'apply_payment_or_refund_from_registration_details'
-        )
+    <?php if ($attendee instanceof EE_Attendee && ($grand_raw_total > 0 || $TXN_status !== EEM_Transaction::complete_status_code || ! empty($payments))) :
+        $no_payment_text = $can_edit_payments
             ? esc_html__(
                 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.',
                 'event_espresso'
@@ -101,10 +98,7 @@
                             <td class=" jst-cntr">
                                 <ul class="txn-overview-actions-ul">
                                     <li>
-                                        <?php if (EE_Registry::instance()->CAP->current_user_can(
-                                            'ee_edit_payments',
-                                            'apply_payment_or_refund_from_registration_details'
-                                        )) : ?>
+                                        <?php if ($can_edit_payments) : ?>
                                         <a class="txn-admin-payment-action-edit-lnk"
                                            title="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
                                            data-payment-id="<?php echo $PAY_ID; ?>">
@@ -113,10 +107,7 @@
                                         <?php endif; ?>
                                     </li>
                                     <li>
-                                        <?php if (EE_Registry::instance()->CAP->current_user_can(
-                                            'ee_delete_payments',
-                                            'delete_payment_from_registration_details'
-                                        )) : ?>
+                                        <?php if ($can_delete_payments) : ?>
                                         <a class="txn-admin-payment-action-delete-lnk"
                                            title="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
                                            data-payment-id="<?php echo $PAY_ID; ?>">
@@ -268,10 +259,7 @@
         </div>
 
         <ul id="txn-admin-payment-options-ul">
-            <?php if (EE_Registry::instance()->CAP->current_user_can(
-                'ee_edit_payments',
-                'apply_payment_or_refund_from_registration_details'
-            )) :
+            <?php if ($can_edit_payments) :
                 ?>
                 <li>
                     <a id="display-txn-admin-apply-payment" class="button-primary no-icon no-hide"

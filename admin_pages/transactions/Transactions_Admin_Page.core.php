@@ -923,6 +923,14 @@ class Transactions_Admin_Page extends EE_Admin_Page
         $this->_template_args['attendee'] = $this->_transaction->primary_registration() instanceof EE_Registration
             ? $this->_transaction->primary_registration()->attendee()
             : null;
+        $this->_template_args['can_edit_payments'] = EE_Registry::instance()->CAP->current_user_can(
+            'ee_edit_payments',
+            'apply_payment_or_refund_from_registration_details'
+        );
+        $this->_template_args['can_delete_payments'] = EE_Registry::instance()->CAP->current_user_can(
+            'ee_delete_payments',
+            'delete_payment_from_registration_details'
+        );
 
         //get line table
         EEH_Autoloader::register_line_item_display_autoloaders();
