@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\core\domain\entities\contexts\Context;
+use EventEspresso\core\domain\entities\contexts\ContextInterface;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -141,7 +141,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @param string       $new_STS_ID
      * @param boolean      $use_default
-     * @param Context|null $context
+     * @param ContextInterface|null $context
      * @return bool
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -151,7 +151,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function set_status($new_STS_ID = null, $use_default = false, Context $context = null)
+    public function set_status($new_STS_ID = null, $use_default = false, ContextInterface $context = null)
     {
         // get current REG_Status
         $old_STS_ID = $this->status_ID();
@@ -199,14 +199,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @param string       $new_STS_ID
      * @param string       $old_STS_ID
-     * @param Context|null $context
+     * @param ContextInterface|null $context
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    private function _update_if_canceled_or_declined($new_STS_ID, $old_STS_ID, Context $context = null)
+    private function _update_if_canceled_or_declined($new_STS_ID, $old_STS_ID, ContextInterface $context = null)
     {
         // these reg statuses should not be considered in any calculations involving monies owing
         $closed_reg_statuses = EEM_Registration::closed_reg_statuses();
@@ -232,14 +232,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param array        $closed_reg_statuses
      * @param string       $new_STS_ID
      * @param string       $old_STS_ID
-     * @param Context|null $context
+     * @param ContextInterface|null $context
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    private function updateIfCanceled(array $closed_reg_statuses, $new_STS_ID, $old_STS_ID, Context $context = null)
+    private function updateIfCanceled(array $closed_reg_statuses, $new_STS_ID, $old_STS_ID, ContextInterface $context = null)
     {
         // true if registration has been cancelled or declined
         if (in_array($new_STS_ID, $closed_reg_statuses, true)
@@ -277,14 +277,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param array        $closed_reg_statuses
      * @param string       $new_STS_ID
      * @param string       $old_STS_ID
-     * @param Context|null $context
+     * @param ContextInterface|null $context
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    private function updateIfDeclined(array $closed_reg_statuses, $new_STS_ID, $old_STS_ID, Context $context = null)
+    private function updateIfDeclined(array $closed_reg_statuses, $new_STS_ID, $old_STS_ID, ContextInterface $context = null)
     {
         // true if reinstating cancelled or declined registration
         if (in_array($old_STS_ID, $closed_reg_statuses, true)
@@ -316,10 +316,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     * @param Context|null $context
+     * @param ContextInterface|null $context
      * @return bool
      */
-    private function statusChangeUpdatesTransaction(Context $context = null)
+    private function statusChangeUpdatesTransaction(ContextInterface $context = null)
     {
         $contexts_that_do_not_update_transaction = (array) apply_filters(
             'AHEE__EE_Registration__statusChangeUpdatesTransaction__contexts_that_do_not_update_transaction',
@@ -328,7 +328,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             $this
         );
         return ! (
-            $context instanceof Context
+            $context instanceof ContextInterface
             && in_array($context->slug(), $contexts_that_do_not_update_transaction, true)
         );
     }

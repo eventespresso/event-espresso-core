@@ -20,7 +20,6 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  *
  * @package Event Espresso
  * @author  Brent Christensen
- * @since   $VID:$
  * @group   CoffeeShop
  */
 class CoffeeShopTest extends EE_UnitTestCase

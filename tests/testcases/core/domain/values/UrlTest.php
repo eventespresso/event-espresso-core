@@ -16,7 +16,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\tests\testcases\core\domain\values
  * @author  Brent Christensen
- * @since   $VID:$
+ *
  * @group   UrlVO
  */
 class UrlTest extends EE_UnitTestCase

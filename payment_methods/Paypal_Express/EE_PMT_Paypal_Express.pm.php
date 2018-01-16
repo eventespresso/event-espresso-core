@@ -11,7 +11,7 @@
  * @package            Event Espresso
  * @subpackage         eea-paypal-express
  * @author             Event Espresso
- * @version            $VID:$
+ *
  * ----------------------------------------------
  */
 class EE_PMT_Paypal_Express extends EE_PMT_Base
@@ -33,7 +33,7 @@ class EE_PMT_Paypal_Express extends EE_PMT_Base
             // @codingStandardsIgnoreEnd
             'event_espresso'
         );
-        $this->_default_button_url = $this->file_url() . 'lib' . DS . 'paypal-express-checkout-logo.png';
+        $this->_default_button_url = $this->file_url() . 'lib' . DS . 'paypal-express-checkout-logo-gold-160.png';
 
         parent::__construct($pm_instance);
     }
