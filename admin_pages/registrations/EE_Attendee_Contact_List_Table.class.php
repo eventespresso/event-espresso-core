@@ -35,23 +35,23 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
     protected function _set_properties()
     {
         $this->_wp_list_args = array(
-            'singular' => __('attendee', 'event_espresso'),
-            'plural'   => __('attendees', 'event_espresso'),
+            'singular' => esc_html__('attendee', 'event_espresso'),
+            'plural'   => esc_html__('attendees', 'event_espresso'),
             'ajax'     => true,
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
 
         $this->_columns = array(
             'cb'          => '<input type="checkbox" />', //Render a checkbox instead of text
-            'ATT_ID'      => __('ID', 'event_espresso'),
-            'ATT_fname'   => __('First Name', 'event_espresso'),
-            'ATT_lname'   => __('Last Name', 'event_espresso'),
-            'ATT_email'   => __('Email Address', 'event_espresso'),
-            'ATT_phone'   => __('Phone', 'event_espresso'),
-            'ATT_address' => __('Address', 'event_espresso'),
-            'ATT_city'    => __('City', 'event_espresso'),
-            'STA_ID'      => __('State/Province', 'event_espresso'),
-            'CNT_ISO'     => __('Country', 'event_espresso'),
+            'ATT_ID'      => esc_html__('ID', 'event_espresso'),
+            'ATT_fname'   => esc_html__('First Name', 'event_espresso'),
+            'ATT_lname'   => esc_html__('Last Name', 'event_espresso'),
+            'ATT_email'   => esc_html__('Email Address', 'event_espresso'),
+            'ATT_phone'   => esc_html__('Phone', 'event_espresso'),
+            'ATT_address' => esc_html__('Address', 'event_espresso'),
+            'ATT_city'    => esc_html__('City', 'event_espresso'),
+            'STA_ID'      => esc_html__('State/Province', 'event_espresso'),
+            'CNT_ISO'     => esc_html__('Country', 'event_espresso'),
         );
 
         $this->_sortable_columns = array(
@@ -202,7 +202,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
             );
             $actions['edit'] = '<a href="' . $edit_lnk_url . '" title="'
                                . esc_attr__('Edit Contact', 'event_espresso') . '">'
-                               . __('Edit', 'event_espresso') . '</a>';
+                               . esc_html__('Edit', 'event_espresso') . '</a>';
         }
 
         if ($this->_view === 'in_use') {
@@ -220,7 +220,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
                 );
                 $actions['trash'] = '<a href="' . $trash_lnk_url . '" title="'
                                     . esc_attr__('Move Contact to Trash', 'event_espresso')
-                                    . '">' . __('Trash', 'event_espresso') . '</a>';
+                                    . '">' . esc_html__('Trash', 'event_espresso') . '</a>';
             }
         } else {
             if (EE_Registry::instance()->CAP->current_user_can(
@@ -234,7 +234,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
                 ), REG_ADMIN_URL);
                 $actions['restore'] = '<a href="' . $restore_lnk_url . '" title="'
                                       . esc_attr__('Restore Contact', 'event_espresso') . '">'
-                                      . __('Restore', 'event_espresso') . '</a>';
+                                      . esc_html__('Restore', 'event_espresso') . '</a>';
             }
         }
 
