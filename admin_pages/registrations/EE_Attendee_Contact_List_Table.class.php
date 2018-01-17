@@ -15,16 +15,15 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
  */
 class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
 {
-
     /**
      * Initial setup of data (called by parent).
      */
     protected function _setup_data()
     {
-        $this->_data = $this->_view != 'trash'
+        $this->_data = $this->_view !== 'trash'
             ? $this->_admin_page->get_attendees($this->_per_page)
             : $this->_admin_page->get_attendees($this->_per_page, false, true);
-        $this->_all_data_count = $this->_view != 'trash'
+        $this->_all_data_count = $this->_view !== 'trash'
             ? $this->_admin_page->get_attendees($this->_per_page, true)
             : $this->_admin_page->get_attendees($this->_per_page, true, true);
     }
@@ -206,12 +205,12 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
                                . __('Edit', 'event_espresso') . '</a>';
         }
 
-        if ($this->_view == 'in_use') {
+        if ($this->_view === 'in_use') {
             // trash attendee link
             if (EE_Registry::instance()->CAP->current_user_can(
                 'ee_delete_contacts',
-                'espresso_registrations_trash_attendees')
-            ) {
+                'espresso_registrations_trash_attendees'
+            )) {
                 $trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
                     array(
                         'action' => 'trash_attendee',
@@ -226,8 +225,8 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
         } else {
             if (EE_Registry::instance()->CAP->current_user_can(
                 'ee_delete_contacts',
-                'espresso_registrations_restore_attendees')
-            ) {
+                'espresso_registrations_restore_attendees'
+            )) {
                 // restore attendee link
                 $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
                     'action' => 'restore_attendees',
