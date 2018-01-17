@@ -1133,7 +1133,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     public static function add_query_args_and_nonce(
         $args = array(),
-        $url = '',
+        $url = false,
         $sticky = false,
         $exclude_nonce = false
     ) {

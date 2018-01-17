@@ -8,7 +8,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
  *
  * @package \
  * @author  Darren Ethier
- * @since   $VID:$
+ * @since   4.9.55.p
  */
 class EE_Detect_File_Editor_Request extends EE_Middleware
 {
