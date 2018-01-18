@@ -1,10 +1,6 @@
 <?php
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
-
 defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
-
 
 
 /**
@@ -29,10 +25,6 @@ class EEH_Money extends EEH_Base
      * @param string           $CNT_ISO
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     public static function strip_localized_money_formatting($money_value, $CNT_ISO = '')
     {
@@ -67,10 +59,6 @@ class EEH_Money extends EEH_Base
      * @param int|string $money_value
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     public static function convert_to_float_from_localized_money($money_value)
     {
@@ -96,88 +84,76 @@ class EEH_Money extends EEH_Base
     {
         // Check numbers to 5 digits of precision
         $epsilon = 0.00001;
-        $float1  = (float) $float1;
-        $float2  = (float) $float2;
+        $float1 = (float) $float1;
+        $float2 = (float) $float2;
         switch ($operator) {
             // equal
-            case '=':
-            case '==':
-            case '===':
-            case 'eq':
+            case "=":
+            case "==":
+            case "===":
+            case "eq":
                 if (abs($float1 - $float2) < $epsilon) {
                     return true;
                 }
                 break;
             // less than
-            case '<':
-            case 'lt':
+            case "<":
+            case "lt":
                 if (abs($float1 - $float2) < $epsilon) {
                     return false;
-                }
-                if ($float1 < $float2) {
-                    return true;
+                } else {
+                    if ($float1 < $float2) {
+                        return true;
+                    }
                 }
                 break;
             // less than or equal
-            case '<=':
-            case 'lte':
-                if (
-                    self::compare_floats($float1, $float2, '<')
-                    || self::compare_floats($float1, $float2)
-                ) {
+            case "<=":
+            case "lte":
+                if (self::compare_floats($float1, $float2, '<') || self::compare_floats($float1, $float2, '=')) {
                     return true;
                 }
                 break;
             // greater than
-            case '>':
-            case 'gt':
+            case ">":
+            case "gt":
                 if (abs($float1 - $float2) < $epsilon) {
                     return false;
-                }
-                if ($float1 > $float2) {
-                    return true;
+                } else {
+                    if ($float1 > $float2) {
+                        return true;
+                    }
                 }
                 break;
             // greater than or equal
-            case '>=':
-            case 'gte':
-                if (
-                    self::compare_floats($float1, $float2, '>')
-                    || self::compare_floats($float1, $float2)
-                ) {
+            case ">=":
+            case "gte":
+                if (self::compare_floats($float1, $float2, '>') || self::compare_floats($float1, $float2, '=')) {
                     return true;
                 }
                 break;
-            case '<>':
-            case '!=':
-            case 'ne':
+            case "<>":
+            case "!=":
+            case "ne":
                 if (abs($float1 - $float2) > $epsilon) {
                     return true;
                 }
                 break;
             default:
-                throw new EE_Error(
-                    esc_html__(
-                        "Unknown operator '" . $operator . "' in EEH_Money::compare_floats()",
-                        'event_espresso'
-                    )
-                );
+                throw new EE_Error(__("Unknown operator '" . $operator . "' in EEH_Money::compare_floats()",
+                    'event_espresso'));
         }
         return false;
     }
 
 
     /**
-     * This returns a localized format string suitable for jqPlot.
+     * This returns a localized format string suitable for jQplot.
      *
      * @param string $CNT_ISO  If this is provided, then will attempt to get the currency settings for the country.
      *                         Otherwise will use currency settings for current active country on site.
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     public static function get_format_for_jqplot($CNT_ISO = '')
     {
@@ -199,12 +175,8 @@ class EEH_Money extends EEH_Base
      *                         Otherwise will use currency settings for current active country on site.
      *                         Note: GoogleCharts uses ICU pattern set
      *                         (@see http://icu-project.org/apiref/icu4c/classDecimalFormat.html#_details)
-     * @return array
+     * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     public static function get_format_for_google_charts($CNT_ISO = '')
     {
@@ -236,26 +208,15 @@ class EEH_Money extends EEH_Base
 
     /**
      * @param string $CNT_ISO
-     * @param bool   $from_db whether to fetch currency data from the admin editable DB, or the immutable JSON file
-     * @return EE_Currency_Config
+     * @return EE_Currency_Config|null
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
-    public static function get_currency_config($CNT_ISO = '', $from_db = true)
+    public static function get_currency_config($CNT_ISO = '')
     {
         //if CNT_ISO passed lets try to get currency settings for it.
         $currency_config = $CNT_ISO !== ''
             ? new EE_Currency_Config($CNT_ISO)
             : null;
-        if ($from_db) {
-            $country = EEM_Country::instance()->get_one_by_ID($CNT_ISO);
-            if ($country instanceof EE_Country) {
-                $currency_config->setFromCountry($country);
-            }
-        }
         //default currency settings for site if not set
         if (! $currency_config instanceof EE_Currency_Config) {
             $currency_config = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
@@ -264,92 +225,4 @@ class EEH_Money extends EEH_Base
         }
         return $currency_config;
     }
-
-
-    /**
-     * replacement for EEH_Template::format_currency
-     * This helper takes a raw float value and formats it according to the default config country currency settings, or
-     * the country currency settings from the supplied country ISO code
-     *
-     * @param  float   $amount       raw money value
-     * @param  boolean $return_raw   whether to return the formatted float value only with no currency sign or code
-     * @param  boolean $display_code whether to display the country code (USD). Default = TRUE
-     * @param string   $CNT_ISO      2 letter ISO code for a country
-     * @param string   $cur_code_span_class
-     * @param boolean  $from_db whether to fetch configuration data from the database (which a site admin can change)
-     *                          or from our JSON file, which admins can't change. Setting to true is usually better
-     *                          if the value will be displayed to a user; but if communicating with another server,
-     *                          setting to false will return more reliable formatting.
-     * @since $VID:$
-     * @return string        the html output for the formatted money value
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    public static function format_currency(
-        $amount = null,
-        $return_raw = false,
-        $display_code = true,
-        $CNT_ISO = '',
-        $cur_code_span_class = 'currency-code',
-        $from_db = true
-    ) {
-        // ensure amount was received
-        if ($amount === null) {
-            $msg = esc_html__('In order to format currency, an amount needs to be passed.', 'event_espresso');
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-            return '';
-        }
-        //ensure amount is float
-        $amount  = (float)filter_var(
-            apply_filters('FHEE__EEH_Template__format_currency__raw_amount', $amount),
-            FILTER_SANITIZE_NUMBER_FLOAT,
-            FILTER_FLAG_ALLOW_FRACTION
-        );
-        $CNT_ISO = (string) apply_filters('FHEE__EEH_Template__format_currency__CNT_ISO', $CNT_ISO, $amount);
-        // filter raw amount (allows 0.00 to be changed to "free" for example)
-        $amount_formatted = apply_filters('FHEE__EEH_Template__format_currency__amount', $amount, $return_raw);
-        // still a number or was amount converted to a string like "free" ?
-        if (is_float($amount_formatted)) {
-            // get currency config object for that country
-            $mny = EEH_Money::get_currency_config($CNT_ISO, $from_db);
-            // format float
-            $amount_formatted = number_format($amount, $mny->dec_plc, $mny->dec_mrk, $mny->thsnds);
-            // add formatting ?
-            if (! $return_raw) {
-                // add currency sign
-                if ($mny->sign_b4) {
-                    if ($amount >= 0) {
-                        $amount_formatted = $mny->sign . $amount_formatted;
-                    } else {
-                        $amount_formatted = '-' . $mny->sign . str_replace('-', '', $amount_formatted);
-                    }
-                } else {
-                    $amount_formatted .= $mny->sign;
-                }
-                // filter to allow global setting of display_code
-                $display_code = filter_var(
-                    apply_filters('FHEE__EEH_Template__format_currency__display_code', $display_code),
-                    FILTER_VALIDATE_BOOLEAN
-                );
-                // add currency code ?
-                $amount_formatted = $display_code
-                    ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>'
-                    : $amount_formatted;
-            }
-            // filter results
-            $amount_formatted = (string) apply_filters(
-                'FHEE__EEH_Template__format_currency__amount_formatted',
-                $amount_formatted,
-                $mny,
-                $return_raw
-            );
-        }
-        // clean up vars
-        unset($mny);
-        // return formatted currency amount
-        return $amount_formatted;
-    }
-}
+} //end class EEH_Money

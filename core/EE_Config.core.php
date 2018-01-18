@@ -1,9 +1,6 @@
 <?php
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
-use EventEspresso\core\services\currency\CountryCurrencyDao;
 use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
@@ -316,13 +313,12 @@ final class EE_Config implements ResettableInterface
     }
 
 
+
     /**
-     * @return void
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
+     *    _verify_config
+     *
+     * @access    protected
+     * @return    void
      */
     protected function _verify_config()
     {
@@ -339,7 +335,7 @@ final class EE_Config implements ResettableInterface
         );
         $this->currency = $this->currency instanceof EE_Currency_Config
             ? $this->currency
-            : new EE_Currency_Config($this->organization->CNT_ISO);
+            : new EE_Currency_Config();
         $this->currency = apply_filters('FHEE__EE_Config___initialize_config__currency', $this->currency);
         $this->registration = $this->registration instanceof EE_Registration_Config
             ? $this->registration
@@ -1563,7 +1559,7 @@ class EE_Config_Base
      *
      * @param string $property property name (checks to see if exists).
      * @return mixed if a detected type found return the escaped value, otherwise just the raw value is returned.
-     * @throws EE_Error
+     * @throws \EE_Error
      */
     public function get_pretty($property)
     {
@@ -1893,11 +1889,11 @@ class EE_Core_Config extends EE_Config_Base
 
 
     /**
-     * Used to return what the opt-in value is set for the EE User Experience Program.
+     * Used to return what the optin value is set for the EE User Experience Program.
      * This accounts for multisite and this value being requested for a subsite.  In multisite, the value is set
      * on the main site only.
      *
-     * @return mixed
+     * @return mixed|void
      */
     protected function _get_main_ee_ueip_optin()
     {
@@ -2181,69 +2177,56 @@ class EE_Currency_Config extends EE_Config_Base
     public $thsnds;
 
 
+
     /**
      *    class constructor
      *
      * @access    public
-     * @param string             $CNT_ISO
-     * @param CountryCurrencyDao $country_currencies
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @param string $CNT_ISO
+     * @throws \EE_Error
      */
-    public function __construct($CNT_ISO = '', CountryCurrencyDao $country_currencies = null)
+    public function __construct($CNT_ISO = '')
     {
-        if(! $country_currencies instanceof CountryCurrencyDao){
-            $country_currencies = new CountryCurrencyDao();
-        }
+        /** @var \EventEspresso\core\services\database\TableAnalysis $table_analysis */
+        $table_analysis = EE_Registry::instance()->create('TableAnalysis', array(), true);
+        // get country code from organization settings or use default
+        $ORG_CNT = isset(EE_Registry::instance()->CFG->organization)
+                   && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
+            ? EE_Registry::instance()->CFG->organization->CNT_ISO
+            : '';
+        // but override if requested
+        $CNT_ISO = ! empty($CNT_ISO) ? $CNT_ISO : $ORG_CNT;
         // so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode) and double-check the countries table exists
-        if (! empty($CNT_ISO)) {
+        if (
+            ! empty($CNT_ISO)
+            && EE_Maintenance_Mode::instance()->models_can_query()
+            && $table_analysis->tableExists(EE_Registry::instance()->load_model('Country')->table())
+        ) {
             // retrieve the country settings from the db, just in case they have been customized
-            $country_currency = $country_currencies->getCountryCurrencyByIsoCode($CNT_ISO);
-            $this->code = $country_currency['CurrencyCode'];    // currency code: USD, CAD, EUR
-            $this->name = $country_currency['CurrencyNameSingle'];    // Dollar
-            $this->plural = $country_currency['CurrencyNamePlural'];    // Dollars
-            $this->sign = $country_currency['CurrencySign'];            // currency sign: $
-            $this->sign_b4 = $country_currency['CurrencySignB4'];        // currency sign before or after: $TRUE  or  FALSE$
-            $this->dec_plc = $country_currency['CurrencyDecimalPlaces'];    // decimal places: 2 = 0.00  3 = 0.000
-            $this->dec_mrk = $country_currency['CurrencyDecimalMark'];    // decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
-            $this->thsnds = $country_currency['CurrencyThousands'];    // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+            $country = EE_Registry::instance()->load_model('Country')->get_one_by_ID($CNT_ISO);
+            if ($country instanceof EE_Country) {
+                $this->code = $country->currency_code();    // currency code: USD, CAD, EUR
+                $this->name = $country->currency_name_single();    // Dollar
+                $this->plural = $country->currency_name_plural();    // Dollars
+                $this->sign = $country->currency_sign();            // currency sign: $
+                $this->sign_b4 = $country->currency_sign_before();        // currency sign before or after: $TRUE  or  FALSE$
+                $this->dec_plc = $country->currency_decimal_places();    // decimal places: 2 = 0.00  3 = 0.000
+                $this->dec_mrk = $country->currency_decimal_mark();    // decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
+                $this->thsnds = $country->currency_thousands_separator();    // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+            }
         }
         // fallback to hardcoded defaults, in case the above failed
         if (empty($this->code)) {
             // set default currency settings
             $this->code = 'USD';    // currency code: USD, CAD, EUR
-            $this->name = esc_html__('Dollar', 'event_espresso');    // Dollar
-            $this->plural = esc_html__('Dollars', 'event_espresso');    // Dollars
+            $this->name = __('Dollar', 'event_espresso');    // Dollar
+            $this->plural = __('Dollars', 'event_espresso');    // Dollars
             $this->sign = '$';    // currency sign: $
             $this->sign_b4 = true;    // currency sign before or after: $TRUE  or  FALSE$
             $this->dec_plc = 2;    // decimal places: 2 = 0.00  3 = 0.000
             $this->dec_mrk = '.';    // decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
             $this->thsnds = ',';    // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
         }
-    }
-
-
-    /**
-     * @param EE_Country $country
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     */
-    public function setFromCountry(EE_Country $country)
-    {
-        $this->code    = $country->currency_code();    // currency code: USD, CAD, EUR
-        $this->name    = $country->currency_name_single();    // Dollar
-        $this->plural  = $country->currency_name_plural();    // Dollars
-        $this->sign    = $country->currency_sign();            // currency sign: $
-        $this->sign_b4 = $country->currency_sign_before();        // currency sign before or after: $TRUE  or  FALSE$
-        $this->dec_plc = $country->currency_decimal_places();    // decimal places: 2 = 0.00  3 = 0.000
-        $this->dec_mrk = $country->currency_decimal_mark();    // decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
-        $this->thsnds  = $country->currency_thousands_separator();    // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
     }
 }
 

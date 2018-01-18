@@ -14,8 +14,6 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
  * @ version		 	4.3
- * @ deprecated in 4.9.54 because even though many countries share the same currency, they still have different ways of
- * displaying it.
  *
  * ------------------------------------------------------------------------
  *

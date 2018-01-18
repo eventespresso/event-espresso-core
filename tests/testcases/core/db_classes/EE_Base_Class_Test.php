@@ -1,7 +1,4 @@
 <?php
-
-use EventEspresso\core\domain\values\currency\Money;
-
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -635,20 +632,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $this->assertTrue(1 == $l2_from_db->get_raw('LIN_quantity'));
     }
 
-    /**
-     * @group 11170
-     */
-    public function testGetRawMoney()
-    {
-        $l = $this->new_model_obj_with_dependencies(
-            'Line_Item',
-            array(
-                'LIN_total' => 12.34
-            )
-        );
-        $this->assertTrue(is_float($l->get_raw('LIN_total')));
-    }
-
 
 
     /**
@@ -1051,14 +1034,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $this->assertEquals('Europe/London', $dtt->get_timezone());
     }
 
-    public function testGetMoneyObjectNormal()
-    {
-        $ticket = $this->new_model_obj_with_dependencies('Ticket');
-        $this->assertTrue(
-            $ticket->getMoneyObject('TKT_price')
-            instanceof Money
-        );
-    }
 
 
     /**
@@ -1084,14 +1059,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
 
 
 
-    /**
-     * @expectedException EE_Error
-     */
-    public function getMoneyObjectNotMoney()
-    {
-        $t = $this->new_model_obj_with_dependencies('Ticket');
-        $t->getMoneyObject('TKT_name');
-    }
     /**
      * Tests if we prepare a model field with f(), then put in a form input,
      * and the browser does it usual converting of HTML entities into what they represent
@@ -1120,6 +1087,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
             $original_value,
             $t2->get('TKT_description')
         );
+
     }
 }
 
