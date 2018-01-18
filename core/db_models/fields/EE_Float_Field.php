@@ -27,27 +27,23 @@ class EE_Float_Field extends EE_Model_Field_Base
      * So if you want to pass in a string that NEEDS to interpret periods as decimal marks, call floatval() on it first.
      * Returns a float
      *
-     * @param type $value_inputted_for_field_on_model_object
+     * @param string|float|int $value_inputted_for_field_on_model_object
      * @return float
      */
     function prepare_for_set($value_inputted_for_field_on_model_object)
     {
-//		echo __LINE__."$value_inputted_for_field_on_model_object<br>";
         //remove whitespaces and thousands separators
         if (is_string($value_inputted_for_field_on_model_object)) {
             $value_inputted_for_field_on_model_object = str_replace(array(" ", EE_Config::instance()->currency->thsnds),
                 "", $value_inputted_for_field_on_model_object);
-//echo __LINE__."$value_inputted_for_field_on_model_object<br>";
-//normalize it so periods are decimal marks (we don't care where you're from: we're talking PHP now)
+            //normalize it so periods are decimal marks (we don't care where you're from: we're talking PHP now)
             $value_inputted_for_field_on_model_object = str_replace(EE_Config::instance()->currency->dec_mrk, ".",
                 $value_inputted_for_field_on_model_object);
-//echo __LINE__."$value_inputted_for_field_on_model_object<br>";
-//double-check there's absolutely nothing left on this string besides numbers
+            //double-check there's absolutely nothing left on this string besides numbers
             $value_inputted_for_field_on_model_object = preg_replace("/[^0-9,.]/", "",
                 $value_inputted_for_field_on_model_object);
         }
-//		echo __LINE__."$value_inputted_for_field_on_model_object<br>";
-        return floatval($value_inputted_for_field_on_model_object);
+        return (float)$value_inputted_for_field_on_model_object;
     }
 
     /**
