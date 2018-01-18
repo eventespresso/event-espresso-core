@@ -325,7 +325,9 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
     public function column_STA_ID(EE_Attendee $attendee)
     {
         $states = EEM_State::instance()->get_all_states();
-        $state = isset($states[$attendee->state_ID()]) ? $states[$attendee->state_ID()]->get('STA_name') : $attendee->state_ID();
+        $state = isset($states[$attendee->state_ID()])
+            ? $states[$attendee->state_ID()]->get('STA_name')
+            : $attendee->state_ID();
         return ! is_numeric($state) ? $state : '';
     }
 
