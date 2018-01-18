@@ -233,7 +233,7 @@ class EED_Single_Page_Checkout extends EED_Module
         define('SPCO_TEMPLATES_PATH', SPCO_BASE_PATH . 'templates' . DS);
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(SPCO_BASE_PATH, true);
         EE_Registry::$i18n_js_strings['registration_expiration_notice'] = sprintf(
-            __('%1$sWe\'re sorry, but you\'re registration time has expired.%2$s%4$sIf you still wish to complete your registration, please return to the %5$sEvent List%6$sEvent List%7$s and reselect your tickets if available. Please except our apologies for any inconvenience this may have caused.%8$s',
+            __('%1$sWe\'re sorry, but your registration time has expired.%2$s%4$sIf you still wish to complete your registration, please return to the %5$sEvent List%6$sEvent List%7$s and reselect your tickets if available. Please accept our apologies for any inconvenience this may have caused.%8$s',
                 'event_espresso'),
             '<h4 class="important-notice">',
             '</h4>',
@@ -1504,7 +1504,7 @@ class EED_Single_Page_Checkout extends EED_Module
         EE_Registry::$i18n_js_strings['timer_second'] = __('second', 'event_espresso');
         EE_Registry::$i18n_js_strings['registration_expiration_notice'] = sprintf(
             __(
-                '%1$sWe\'re sorry, but your registration time has expired.%2$s%3$s%4$sIf you still wish to complete your registration, please return to the %5$sEvent List%6$sEvent List%7$s and reselect your tickets if available. Please except our apologies for any inconvenience this may have caused.%8$s',
+                '%1$sWe\'re sorry, but your registration time has expired.%2$s%3$s%4$sIf you still wish to complete your registration, please return to the %5$sEvent List%6$sEvent List%7$s and reselect your tickets if available. Please accept our apologies for any inconvenience this may have caused.%8$s',
                 'event_espresso'
             ),
             '<h4 class="important-notice">',
