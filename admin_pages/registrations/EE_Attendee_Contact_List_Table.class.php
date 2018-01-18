@@ -47,6 +47,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
             'ATT_fname'   => esc_html__('First Name', 'event_espresso'),
             'ATT_lname'   => esc_html__('Last Name', 'event_espresso'),
             'ATT_email'   => esc_html__('Email Address', 'event_espresso'),
+            'Registration_Count' => esc_html__('# Registrations', 'event_espresso'),
             'ATT_phone'   => esc_html__('Phone', 'event_espresso'),
             'ATT_address' => esc_html__('Address', 'event_espresso'),
             'ATT_city'    => esc_html__('City', 'event_espresso'),
@@ -59,12 +60,19 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
             'ATT_lname' => array('ATT_lname' => true), //true means its already sorted
             'ATT_fname' => array('ATT_fname' => false),
             'ATT_email' => array('ATT_email' => false),
+            'Registration_Count' => array('Registration_Count', false),
             'ATT_city'  => array('ATT_city' => false),
             'STA_ID'    => array('STA_ID' => false),
             'CNT_ISO'   => array('CNT_ISO' => false),
         );
 
-        $this->_hidden_columns = array();
+        $this->_hidden_columns = array(
+            'ATT_phone',
+            'ATT_address',
+            'ATT_city',
+            'STA_ID',
+            'CNT_ISO'
+        );
     }
 
 
@@ -113,15 +121,15 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
     /**
      * Checkbox column
      *
-     * @param EE_Attendee $item
+     * @param EE_Attendee $attendee
      * @return string
      * @throws EE_Error
      */
-    public function column_cb($item)
+    public function column_cb(EE_Attendee $attendee)
     {
         return sprintf(
             '<input type="checkbox" name="checkbox[%1$s]" value="%1$s" />',
-            $item->ID()
+            $attendee->ID()
         );
     }
 
@@ -129,14 +137,14 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
     /**
      * ATT_ID column
      *
-     * @param EE_Attendee $item
+     * @param EE_Attendee $attendee
      * @return string
      * @throws EE_Error
      */
-    public function column_ATT_ID($item)
+    public function column_ATT_ID(EE_Attendee $attendee)
     {
-        $content = $item->ID();
-        $attendee_name = $item instanceof EE_Attendee ? $item->full_name() : '';
+        $content = $attendee->ID();
+        $attendee_name = $attendee instanceof EE_Attendee ? $attendee->full_name() : '';
         $content .= '  <span class="show-on-mobile-view-only">' . $attendee_name . '</span>';
         return $content;
     }
@@ -145,20 +153,20 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
     /**
      * ATT_lname column
      *
-     * @param EE_Attendee $item
+     * @param EE_Attendee $attendee
      * @return string
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws EE_Error
      */
-    public function column_ATT_lname($item)
+    public function column_ATT_lname(EE_Attendee $attendee)
     {
         // edit attendee link
         $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
             array(
                 'action' => 'edit_attendee',
-                'post'   => $item->ID(),
+                'post'   => $attendee->ID(),
             ),
             REG_ADMIN_URL
         );
@@ -168,8 +176,8 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
         )
             ? '<a href="' . $edit_lnk_url . '" title="'
               . esc_attr__('Edit Contact', 'event_espresso') . '">'
-              . $item->lname() . '</a>'
-            : $item->lname();
+              . $attendee->lname() . '</a>'
+            : $attendee->lname();
         return $name_link;
     }
 
@@ -177,14 +185,14 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
     /**
      * ATT_fname column
      *
-     * @param EE_Attendee $item
+     * @param EE_Attendee $attendee
      * @return string
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws EE_Error
      */
-    public function column_ATT_fname($item)
+    public function column_ATT_fname(EE_Attendee $attendee)
     {
         //Build row actions
         $actions = array();
@@ -196,7 +204,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
             $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
                 array(
                     'action' => 'edit_attendee',
-                    'post'   => $item->ID(),
+                    'post'   => $attendee->ID(),
                 ),
                 REG_ADMIN_URL
             );
@@ -214,7 +222,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
                 $trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
                     array(
                         'action' => 'trash_attendee',
-                        'ATT_ID' => $item->ID(),
+                        'ATT_ID' => $attendee->ID(),
                     ),
                     REG_ADMIN_URL
                 );
@@ -230,7 +238,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
                 // restore attendee link
                 $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
                     'action' => 'restore_attendees',
-                    'ATT_ID' => $item->ID(),
+                    'ATT_ID' => $attendee->ID(),
                 ), REG_ADMIN_URL);
                 $actions['restore'] = '<a href="' . $restore_lnk_url . '" title="'
                                       . esc_attr__('Restore Contact', 'event_espresso') . '">'
@@ -240,15 +248,15 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
 
         $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
             'action' => 'edit_attendee',
-            'post'   => $item->ID(),
+            'post'   => $attendee->ID(),
         ), REG_ADMIN_URL);
         $name_link = EE_Registry::instance()->CAP->current_user_can(
             'ee_edit_contacts',
             'espresso_registrations_edit_attendee'
         )
             ? '<a href="' . $edit_lnk_url . '" title="'
-              . esc_attr__('Edit Contact', 'event_espresso') . '">' . $item->fname() . '</a>'
-            : $item->fname();
+              . esc_attr__('Edit Contact', 'event_espresso') . '">' . $attendee->fname() . '</a>'
+            : $attendee->fname();
 
         //Return the name contents
         return sprintf('%1$s %2$s', $name_link, $this->row_actions($actions));
@@ -257,81 +265,100 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
 
     /**
      * Email Column
-     * @param EE_Attendee $item
+     *
+     * @param EE_Attendee $attendee
      * @return string
+     * @throws EE_Error
      */
-    public function column_ATT_email($item)
+    public function column_ATT_email(EE_Attendee $attendee)
     {
-        return '<a href="mailto:' . $item->email() . '">' . $item->email() . '</a>';
+        return '<a href="mailto:' . $attendee->email() . '">' . $attendee->email() . '</a>';
+    }
+
+
+    /**
+     * Column displaying count of registrations attached to Attendee.
+     * @param EE_Attendee $attendee
+     */
+    public function column_Registration_Count(EE_Attendee $attendee)
+    {
+
     }
 
 
     /**
      * ATT_address column
      *
-     * @param EE_Attendee $item
+     * @param EE_Attendee $attendee
      * @return mixed
+     * @throws EE_Error
      */
-    public function column_ATT_address($item)
+    public function column_ATT_address(EE_Attendee $attendee)
     {
-        return $item->address();
+        return $attendee->address();
     }
 
 
     /**
      * ATT_city column
-     * @param EE_Attendee $item
+     *
+     * @param EE_Attendee $attendee
      * @return mixed
+     * @throws EE_Error
      */
-    public function column_ATT_city($item)
+    public function column_ATT_city(EE_Attendee $attendee)
     {
-        return $item->city();
+        return $attendee->city();
     }
 
 
     /**
      * State Column
-     * @param EE_Attendee $item
+     *
+     * @param EE_Attendee $attendee
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function column_STA_ID($item)
+    public function column_STA_ID(EE_Attendee $attendee)
     {
         $states = EEM_State::instance()->get_all_states();
-        $state = isset($states[$item->state_ID()]) ? $states[$item->state_ID()]->get('STA_name') : $item->state_ID();
+        $state = isset($states[$attendee->state_ID()]) ? $states[$attendee->state_ID()]->get('STA_name') : $attendee->state_ID();
         return ! is_numeric($state) ? $state : '';
     }
 
 
     /**
      * Country Column
-     * @param EE_Attendee $item
+     *
+     * @param EE_Attendee $attendee
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function column_CNT_ISO($item)
+    public function column_CNT_ISO(EE_Attendee $attendee)
     {
         $countries = EEM_Country::instance()->get_all_countries();
-        $country = isset($countries[$item->country_ID()])
-            ? $countries[$item->country_ID()]->get('CNT_name')
-            : $item->country_ID();
+        $country = isset($countries[$attendee->country_ID()])
+            ? $countries[$attendee->country_ID()]->get('CNT_name')
+            : $attendee->country_ID();
         return ! is_numeric($country) ? $country : '';
     }
 
 
     /**
      * Phone Number column
-     * @param EE_Attendee $item
+     *
+     * @param EE_Attendee $attendee
      * @return mixed
+     * @throws EE_Error
      */
-    public function column_ATT_phone($item)
+    public function column_ATT_phone(EE_Attendee $attendee)
     {
-        return $item->phone();
+        return $attendee->phone();
     }
 }
