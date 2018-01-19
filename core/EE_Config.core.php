@@ -445,10 +445,7 @@ final class EE_Config implements ResettableInterface
         $this->_addon_option_names = array();
         foreach ($this->addons as $addon_name => $addon_config_obj) {
             $addon_config_obj = maybe_unserialize($addon_config_obj);
-            $config_class = null;
-            if($addon_config_obj !== null ){
-                $config_class = get_class($addon_config_obj);
-            }
+            $config_class = $addon_config_obj instanceof EE_Config_Base ? get_class($addon_config_obj) : null;
             if ($addon_config_obj instanceof $config_class && ! $addon_config_obj instanceof __PHP_Incomplete_Class) {
                 $this->update_config('addons', $addon_name, $addon_config_obj, false);
             }
