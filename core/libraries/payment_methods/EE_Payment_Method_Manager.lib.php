@@ -348,10 +348,10 @@ class EE_Payment_Method_Manager implements ResettableInterface
                 'invoice_pm_requirements_notice',
                 sprintf(
                     esc_html__(
-                        'The Invoice payment method has been activated. It requires the invoice message type, html messenger, and pdf messenger be activated as well for the %1$smessages system%2$s, so it has been automatically verified that they are also active.',
+                        'The Invoice payment method has been activated. It requires the %1$sinvoice message%2$s type to be active, so it was automatically activated for you.',
                         'event_espresso'
                     ),
-                    '<a href="' . admin_url('admin.php?page=espresso_messages') . '">',
+                    '<a href="' . admin_url('admin.php?page=espresso_messages&action=settings') . '">',
                     '</a>'
                 ),
                 true
