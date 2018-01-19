@@ -336,16 +336,14 @@ class EE_Payment_Method_Manager implements ResettableInterface
         $payment_method->save();
         /** @type EE_Message_Resource_Manager $message_resource_manager */
         //if this was the invoice message type, make sure users can view their invoices
-        $message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
         if ($payment_method->type() === 'Invoice'
             && (
-                ! $message_resource_manager->is_message_type_active_for_messenger('html', 'invoice')
-                || ! $message_resource_manager->is_messenger_active('pdf')
+                ! EEH_MSG_Template::is_mt_active('invoice')
             )
         ) {
+            $message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
             /** @type EE_Message_Resource_Manager $message_resource_manager */
             $message_resource_manager->ensure_message_type_is_active('invoice', 'html');
-            $message_resource_manager->ensure_messenger_is_active('pdf');
             new PersistentAdminNotice(
                 'invoice_pm_requirements_notice',
                 sprintf(
