@@ -368,6 +368,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         'on_join_limit',
         'default_where_conditions',
         'caps',
+        'extra_selects'
     );
 
     /**
@@ -1051,14 +1052,25 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     protected function _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null)
     {
+
         // remember the custom selections, if any, and type cast as array
         // (unless $columns_to_select is an object, then just set as an empty array)
         // Note: (array) 'some string' === array( 'some string' )
-        $this->_custom_selections = ! is_object($columns_to_select) ? (array)$columns_to_select : array();
+        $custom_selection = array();
+        if( isset($query_params['extra_selects'])) {
+            $custom_selection = $query_params['extra_selects'];
+        } elseif(! is_object($columns_to_select)){
+            $custom_selection = (array)$columns_to_select;
+        }
+        $this->_custom_selections = $custom_selection;
         $model_query_info = $this->_create_model_query_info_carrier($query_params);
         $select_expressions = $columns_to_select !== null
             ? $this->_construct_select_from_input($columns_to_select)
             : $this->_construct_default_select_sql($model_query_info);
+        if( isset($query_params['extra_selects'])) {
+            $extra_selects = $this->_construct_select_from_input($query_params['extra_selects']);
+            $select_expressions = implode(', ', array($select_expressions, $extra_selects));
+        }
         $SQL = "SELECT $select_expressions " . $this->_construct_2nd_half_of_select_query($model_query_info);
         return $this->_do_wpdb_query('get_results', array($SQL, $output));
     }
