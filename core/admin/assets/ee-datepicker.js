@@ -136,7 +136,7 @@ var dttPickerHelper = {
 
 
 	picker: function(start, end, next, doingstart) {
-		if ( typeof(doingstart) === 'undefined' ) doingstart = true;
+	    doingstart = typeof doingstart === 'boolean' ? doingstart : true;
 
 		this.startobj = start;
 		this.endobj = end;
@@ -148,7 +148,7 @@ var dttPickerHelper = {
 		this.startDate = this.startobj.val() === '' ? dttPickerHelper.eemoment() : moment(this.startobj.val(), this.momentFormat );
 
 		this.endDate = this.endobj instanceof jQuery ? this.endobj.val() : '';
-		this.endDate = this.endDate === '' ? this.startDate.clone().add( this.defaultRange.duration, this.defaultRange.type ) : moment(this.endDate, this.momentFormat );
+		this.endDate = this.endDate === '' ? this.getDefaultDate(doingstart) : moment(this.endDate, this.momentFormat );
 
 		this.dttOptions.hour = doingstart ? this.startDate.hours() : this.endDate.hours();
 		this.dttOptions.minute = doingstart ? this.startDate.minutes() : this.endDate.minutes();
@@ -166,7 +166,7 @@ var dttPickerHelper = {
 		};
 
 		this.dttOptions.onClose = function(dateText, dpinst) {
-				var newDate = moment( dateText, dttPickerHelper.momentFormat ),
+				var newDate = dateText === '' ? dttPickerHelper.getDefaultDate(doingstart) : moment( dateText, dttPickerHelper.momentFormat ),
 					lastVal = dpinst.lastVal === '' ? null : moment(dpinst.lastVal, dttPickerHelper.momentFormat ),
 					diff = lastVal !== null ? newDate.diff(lastVal, 'minutes') : 60,
                     dateToClone = null;
@@ -176,11 +176,13 @@ var dttPickerHelper = {
 					if ( dttPickerHelper.endobj instanceof jQuery ) {
                         dttPickerHelper.endobj.val(dttPickerHelper.endDate.format(dttPickerHelper.momentFormat));
                     }
-					//dttPickerHelper.nextobj.focus();
+                    //if dateText was empty, then we need to set the default val from what was retrieved for newDate
+                    dttPickerHelper.startobj.val(newDate.format(dttPickerHelper.momentFormat));
 				} else {
 					dttPickerHelper.endDate = newDate;
 					dttPickerHelper.startobj.val(dttPickerHelper.startDate.format(dttPickerHelper.momentFormat ));
-					//dttPickerHelper.nextobj.focus();
+                    //if dateText was empty, then we need to set the default val from what was retrieved for newDate
+                    dttPickerHelper.endobj.val(newDate.format(dttPickerHelper.momentFormat));
 				}
 
 
@@ -204,6 +206,14 @@ var dttPickerHelper = {
 			this.pickerobj.datetimepicker(this.dttOptions);
 
 	},
+
+
+    getDefaultDate: function(doingstart) {
+	    doingstart = typeof doingstart === 'boolean' ? doingstart : true;
+	    return doingstart
+            ? this.endDate.clone().subtract(this.defaultRange.duration, this.defaultRange.type)
+            : this.startDate.clone().add(this.defaultRange.duration, this.defaultRange.type);
+    },
 
 
 	resetpicker: function() {
