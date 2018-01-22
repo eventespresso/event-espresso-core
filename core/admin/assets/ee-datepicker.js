@@ -148,7 +148,7 @@ var dttPickerHelper = {
 		this.startDate = this.startobj.val() === '' ? dttPickerHelper.eemoment() : moment(this.startobj.val(), this.momentFormat );
 
 		this.endDate = this.endobj instanceof jQuery ? this.endobj.val() : '';
-		this.endDate = this.endDate === '' ? this.getDefaultDate(doingstart) : moment(this.endDate, this.momentFormat );
+		this.endDate = this.endDate === '' ? this.getDefaultDate(false) : moment(this.endDate, this.momentFormat );
 
 		this.dttOptions.hour = doingstart ? this.startDate.hours() : this.endDate.hours();
 		this.dttOptions.minute = doingstart ? this.startDate.minutes() : this.endDate.minutes();
