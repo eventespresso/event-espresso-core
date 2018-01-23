@@ -1,7 +1,8 @@
 <?php
+
 namespace EventEspresso\modules\ticket_selector;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -28,7 +29,6 @@ class ProcessTicketSelector
     private static $_available_spaces = array();
 
 
-
     /**
      * cancelTicketSelections
      *
@@ -37,7 +37,7 @@ class ProcessTicketSelector
     public function cancelTicketSelections()
     {
         // check nonce
-        if ( ! $this->processTicketSelectorNonce('cancel_ticket_selections')) {
+        if (! $this->processTicketSelectorNonce('cancel_ticket_selections')) {
             return false;
         }
         \EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__);
@@ -54,7 +54,6 @@ class ProcessTicketSelector
         }
         exit();
     }
-
 
 
     /**
@@ -95,7 +94,6 @@ class ProcessTicketSelector
     }
 
 
-
     /**
      * process_ticket_selections
      *
@@ -106,7 +104,7 @@ class ProcessTicketSelector
     {
         do_action('EED_Ticket_Selector__process_ticket_selections__before');
         // do we have an event id?
-        if ( ! \EE_Registry::instance()->REQ->is_set('tkt-slctr-event-id')) {
+        if (! \EE_Registry::instance()->REQ->is_set('tkt-slctr-event-id')) {
             // $_POST['tkt-slctr-event-id'] was not set ?!?!?!?
             \EE_Error::add_error(
                 sprintf(
@@ -152,7 +150,7 @@ class ProcessTicketSelector
                 $valid['total_tickets'],
                 'event_espresso'
             );
-            $limit_error_1 = sprintf($total_tickets_string, $valid['total_tickets']);
+            $limit_error_1        = sprintf($total_tickets_string, $valid['total_tickets']);
             // dev only message
             $max_atndz_string = _n(
                 'The registration limit for this event is %s ticket per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.',
@@ -160,28 +158,29 @@ class ProcessTicketSelector
                 $valid['max_atndz'],
                 'event_espresso'
             );
-            $limit_error_2 = sprintf($max_atndz_string, $valid['max_atndz'], $valid['max_atndz']);
+            $limit_error_2    = sprintf($max_atndz_string, $valid['max_atndz'], $valid['max_atndz']);
             \EE_Error::add_error($limit_error_1 . '<br/>' . $limit_error_2, __FILE__, __FUNCTION__, __LINE__);
         } else {
             // all data appears to be valid
-            $tckts_slctd = false;
+            $tckts_slctd   = false;
             $tickets_added = 0;
-            $valid = apply_filters('FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data', $valid);
+            $valid         = apply_filters('FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data',
+                $valid);
             if ($valid['total_tickets'] > 0) {
                 // load cart
                 \EE_Registry::instance()->load_core('Cart');
                 // cycle thru the number of data rows sent from the event listing
                 for ($x = 0; $x < $valid['rows']; $x++) {
                     // does this row actually contain a ticket quantity?
-                    if (isset($valid['qty'][$x]) && $valid['qty'][$x] > 0) {
+                    if (isset($valid['qty'][ $x ]) && $valid['qty'][ $x ] > 0) {
                         // YES we have a ticket quantity
                         $tckts_slctd = true;
                         //						d( $valid['ticket_obj'][$x] );
-                        if ($valid['ticket_obj'][$x] instanceof \EE_Ticket) {
+                        if ($valid['ticket_obj'][ $x ] instanceof \EE_Ticket) {
                             // then add ticket to cart
                             $tickets_added += $this->addTicketToCart(
-                                $valid['ticket_obj'][$x],
-                                $valid['qty'][$x]
+                                $valid['ticket_obj'][ $x ],
+                                $valid['qty'][ $x ]
                             );
                             if (\EE_Error::has_error()) {
                                 break;
@@ -232,7 +231,7 @@ class ProcessTicketSelector
                     );
                     exit();
                 } else {
-                    if ( ! \EE_Error::has_error() && ! \EE_Error::has_error(true, 'attention')) {
+                    if (! \EE_Error::has_error() && ! \EE_Error::has_error(true, 'attention')) {
                         // nothing added to cart
                         \EE_Error::add_attention(__('No tickets were added for the event', 'event_espresso'),
                             __FILE__, __FUNCTION__, __LINE__);
@@ -264,7 +263,6 @@ class ProcessTicketSelector
     }
 
 
-
     /**
      * validate_post_data
      *
@@ -274,7 +272,7 @@ class ProcessTicketSelector
     private function validatePostData($id = 0)
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        if ( ! $id) {
+        if (! $id) {
             \EE_Error::add_error(
                 __('The event id provided was not valid.', 'event_espresso'),
                 __FILE__,
@@ -307,7 +305,7 @@ class ProcessTicketSelector
                 switch ($what) {
                     // integers
                     case 'event_id':
-                        $valid_data[$what] = absint($input_value);
+                        $valid_data[ $what ] = absint($input_value);
                         // get event via the event id we put in the form
                         $valid_data['event'] = \EE_Registry::instance()
                                                            ->load_model('Event')
@@ -315,26 +313,26 @@ class ProcessTicketSelector
                         break;
                     case 'rows':
                     case 'max_atndz':
-                        $valid_data[$what] = absint($input_value);
+                        $valid_data[ $what ] = absint($input_value);
                         break;
                     // arrays of integers
                     case 'qty':
                         /** @var array $row_qty */
                         $row_qty = $input_value;
                         // if qty is coming from a radio button input, then we need to assemble an array of rows
-                        if ( ! is_array($row_qty)) {
+                        if (! is_array($row_qty)) {
                             // get number of rows
                             $rows = \EE_Registry::instance()->REQ->is_set('tkt-slctr-rows-' . $id)
                                 ? absint(\EE_Registry::instance()->REQ->get('tkt-slctr-rows-' . $id))
                                 : 1;
                             // explode ints by the dash
                             $row_qty = explode('-', $row_qty);
-                            $row = isset($row_qty[0]) ? absint($row_qty[0]) : 1;
-                            $qty = isset($row_qty[1]) ? absint($row_qty[1]) : 0;
+                            $row     = isset($row_qty[0]) ? absint($row_qty[0]) : 1;
+                            $qty     = isset($row_qty[1]) ? absint($row_qty[1]) : 0;
                             $row_qty = array($row => $qty);
                             for ($x = 1; $x <= $rows; $x++) {
-                                if ( ! isset($row_qty[$x])) {
-                                    $row_qty[$x] = 0;
+                                if (! isset($row_qty[ $x ])) {
+                                    $row_qty[ $x ] = 0;
                                 }
                             }
                         }
@@ -343,7 +341,7 @@ class ProcessTicketSelector
                         foreach ($row_qty as $qty) {
                             $qty = absint($qty);
                             // sanitize as integers
-                            $valid_data[$what][] = $qty;
+                            $valid_data[ $what ][]       = $qty;
                             $valid_data['total_tickets'] += $qty;
                         }
                         break;
@@ -351,14 +349,16 @@ class ProcessTicketSelector
                     case 'ticket_id':
                         $value_array = array();
                         // cycle thru values
-                        foreach ((array)$input_value as $key => $value) {
+                        foreach ((array) $input_value as $key => $value) {
                             // allow only numbers, letters,  spaces, commas and dashes
-                            $value_array[$key] = wp_strip_all_tags($value);
+                            $value_array[ $key ] = wp_strip_all_tags($value);
                             // get ticket via the ticket id we put in the form
-                            $ticket_obj = \EE_Registry::instance()->load_model('Ticket')->get_one_by_ID($value);
-                            $valid_data['ticket_obj'][$key] = $ticket_obj;
+                            $ticket_obj                       = \EE_Registry::instance()
+                                                                            ->load_model('Ticket')
+                                                                            ->get_one_by_ID($value);
+                            $valid_data['ticket_obj'][ $key ] = $ticket_obj;
                         }
-                        $valid_data[$what] = $value_array;
+                        $valid_data[ $what ] = $value_array;
                         break;
                     case 'return_url' :
                         // grab and sanitize return-url
@@ -371,14 +371,13 @@ class ProcessTicketSelector
                             // use event list url instead, but append anchor
                             $input_value = \EEH_Event_View::event_archive_url() . '#' . $input_value;
                         }
-                        $valid_data[$what] = $input_value;
+                        $valid_data[ $what ] = $input_value;
                         break;
                 }    // end switch $what
             }
         }    // end foreach $inputs_to_clean
         return $valid_data;
     }
-
 
 
     /**
@@ -445,7 +444,6 @@ class ProcessTicketSelector
     }
 
 
-
     /**
      * @param int $available_spaces
      * @throws \EE_Error
@@ -481,7 +479,6 @@ class ProcessTicketSelector
     }
 
 
-
     /**
      * ticketDatetimeAvailability
      * creates an array of tickets plus all of the datetimes available to each ticket
@@ -495,30 +492,29 @@ class ProcessTicketSelector
     private function ticketDatetimeAvailability(\EE_Ticket $ticket, $get_original_ticket_spaces = false)
     {
         // if the $_available_spaces array has not been set up yet...
-        if ( ! isset(self::$_available_spaces['tickets'][$ticket->ID()])) {
+        if (! isset(self::$_available_spaces['tickets'][ $ticket->ID() ])) {
             $this->setInitialTicketDatetimeAvailability($ticket);
         }
         $available_spaces = $ticket->qty() - $ticket->sold();
-        if (isset(self::$_available_spaces['tickets'][$ticket->ID()])) {
+        if (isset(self::$_available_spaces['tickets'][ $ticket->ID() ])) {
             // loop thru tickets, which will ALSO include individual ticket records AND a total
-            foreach (self::$_available_spaces['tickets'][$ticket->ID()] as $DTD_ID => $spaces) {
+            foreach (self::$_available_spaces['tickets'][ $ticket->ID() ] as $DTD_ID => $spaces) {
                 // if we want the original datetime availability BEFORE we started subtracting tickets ?
                 if ($get_original_ticket_spaces) {
                     // then grab the available spaces from the "tickets" array
                     // and compare with the above to get the lowest number
                     $available_spaces = min(
                         $available_spaces,
-                        self::$_available_spaces['tickets'][$ticket->ID()][$DTD_ID]
+                        self::$_available_spaces['tickets'][ $ticket->ID() ][ $DTD_ID ]
                     );
                 } else {
                     // we want the updated ticket availability as stored in the "datetimes" array
-                    $available_spaces = min($available_spaces, self::$_available_spaces['datetimes'][$DTD_ID]);
+                    $available_spaces = min($available_spaces, self::$_available_spaces['datetimes'][ $DTD_ID ]);
                 }
             }
         }
         return $available_spaces;
     }
-
 
 
     /**
@@ -541,7 +537,7 @@ class ProcessTicketSelector
                 'order_by' => array('DTT_EVT_start' => 'ASC'),
             )
         );
-        if ( ! empty($datetimes)) {
+        if (! empty($datetimes)) {
             // now loop thru all of the datetimes
             foreach ($datetimes as $datetime) {
                 if ($datetime instanceof \EE_Datetime) {
@@ -549,23 +545,22 @@ class ProcessTicketSelector
                     $spaces_remaining = $datetime->spaces_remaining();
                     // save the total available spaces ( the lesser of the ticket qty minus the number of tickets sold
                     // or the datetime spaces remaining) to this ticket using the datetime ID as the key
-                    self::$_available_spaces['tickets'][$ticket->ID()][$datetime->ID()] = min(
+                    self::$_available_spaces['tickets'][ $ticket->ID() ][ $datetime->ID() ] = min(
                         $ticket->qty() - $ticket->sold(),
                         $spaces_remaining
                     );
                     // if the remaining spaces for this datetime is already set,
                     // then compare that against the datetime spaces remaining, and take the lowest number,
                     // else just take the datetime spaces remaining, and assign to the datetimes array
-                    self::$_available_spaces['datetimes'][$datetime->ID()] = isset(
-                        self::$_available_spaces['datetimes'][$datetime->ID()]
+                    self::$_available_spaces['datetimes'][ $datetime->ID() ] = isset(
+                        self::$_available_spaces['datetimes'][ $datetime->ID() ]
                     )
-                        ? min(self::$_available_spaces['datetimes'][$datetime->ID()], $spaces_remaining)
+                        ? min(self::$_available_spaces['datetimes'][ $datetime->ID() ], $spaces_remaining)
                         : $spaces_remaining;
                 }
             }
         }
     }
-
 
 
     /**
@@ -575,16 +570,14 @@ class ProcessTicketSelector
      */
     private function recalculateTicketDatetimeAvailability(\EE_Ticket $ticket, $qty = 0)
     {
-        if (isset(self::$_available_spaces['tickets'][$ticket->ID()])) {
+        if (isset(self::$_available_spaces['tickets'][ $ticket->ID() ])) {
             // loop thru tickets, which will ALSO include individual ticket records AND a total
-            foreach (self::$_available_spaces['tickets'][$ticket->ID()] as $DTD_ID => $spaces) {
+            foreach (self::$_available_spaces['tickets'][ $ticket->ID() ] as $DTD_ID => $spaces) {
                 // subtract the qty of selected tickets from each datetime's available spaces this ticket has access to,
-                self::$_available_spaces['datetimes'][$DTD_ID] -= $qty;
+                self::$_available_spaces['datetimes'][ $DTD_ID ] -= $qty;
             }
         }
     }
-
-
 }
 // End of file ProcessTicketSelector.php
 // Location: /ProcessTicketSelector.php
