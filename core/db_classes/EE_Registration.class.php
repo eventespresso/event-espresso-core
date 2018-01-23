@@ -869,39 +869,59 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     * Gets the URL of the thank you page with this registration REG_url_link added as
-     * a query parameter
+     * Gets the URL for the checkout payment options reg step
+     * with this registration's REG_url_link added as a query parameter
      *
      * @param bool $clear_session Set to true when you want to clear the session on revisiting the
      *                            payment overview url.
      * @return string
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     public function payment_overview_url($clear_session = false)
     {
-        return add_query_arg(array(
-            'e_reg_url_link' => $this->reg_url_link(),
-            'step'           => 'payment_options',
-            'revisit'        => true,
-            'clear_session' => (bool) $clear_session
-        ), EE_Registry::instance()->CFG->core->reg_page_url());
+        return add_query_arg(
+            (array) apply_filters(
+                'FHEE__EE_Registration__payment_overview_url__query_args',
+                array(
+                    'e_reg_url_link' => $this->reg_url_link(),
+                    'step'           => 'payment_options',
+                    'revisit'        => true,
+                    'clear_session'  => (bool) $clear_session,
+                ),
+                $this
+            ),
+            EE_Registry::instance()->CFG->core->reg_page_url()
+        );
     }
 
 
     /**
-     * Gets the URL of the thank you page with this registration REG_url_link added as
-     * a query parameter
+     * Gets the URL for the checkout attendee information reg step
+     * with this registration's REG_url_link added as a query parameter
      *
      * @return string
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     public function edit_attendee_information_url()
     {
-        return add_query_arg(array(
-            'e_reg_url_link' => $this->reg_url_link(),
-            'step'           => 'attendee_information',
-            'revisit'        => true,
-        ), EE_Registry::instance()->CFG->core->reg_page_url());
+        return add_query_arg(
+            (array) apply_filters(
+                'FHEE__EE_Registration__edit_attendee_information_url__query_args',
+                array(
+                    'e_reg_url_link' => $this->reg_url_link(),
+                    'step'           => 'attendee_information',
+                    'revisit'        => true,
+                ),
+                $this
+            ),
+            EE_Registry::instance()->CFG->core->reg_page_url()
+        );
     }
 
 
