@@ -250,12 +250,11 @@ class ProcessTicketSelector
                         )
                     );
                     exit();
-                } else {
-                    if (! EE_Error::has_error() && ! EE_Error::has_error(true, 'attention')) {
-                        // nothing added to cart
-                        EE_Error::add_attention(__('No tickets were added for the event', 'event_espresso'),
-                            __FILE__, __FUNCTION__, __LINE__);
-                    }
+                }
+                if (! EE_Error::has_error() && ! EE_Error::has_error(true, 'attention')) {
+                    // nothing added to cart
+                    EE_Error::add_attention(__('No tickets were added for the event', 'event_espresso'),
+                        __FILE__, __FUNCTION__, __LINE__);
                 }
             } else {
                 // no ticket quantities were selected
@@ -272,13 +271,13 @@ class ProcessTicketSelector
             EE_Error::get_notices(false, true);
             wp_safe_redirect($valid['return_url']);
             exit();
-        } elseif (isset($event_to_add['id'])) {
-            EE_Error::get_notices(false, true);
-            wp_safe_redirect(get_permalink($event_to_add['id']));
-            exit();
-        } else {
-            echo EE_Error::get_notices();
         }
+        if ($id) {
+            EE_Error::get_notices(false, true);
+            wp_safe_redirect(get_permalink($id));
+            exit();
+        }
+        echo EE_Error::get_notices();
         return false;
     }
 
@@ -416,7 +415,7 @@ class ProcessTicketSelector
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    private function addTicketToCart(EE_Ticket $ticket = null, $qty = 1)
+    private function addTicketToCart(EE_Ticket $ticket, $qty = 1)
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         // get the number of spaces left for this datetime ticket
