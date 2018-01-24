@@ -11,7 +11,7 @@
  * @package            Event Espresso
  * @subpackage         eea-paypal-express
  * @author             Event Espresso
- * @version            $VID:$
+ * 
  * ----------------------------------------------
  */
 //Quickfix to address https://events.codebasehq.com/projects/event-espresso/tickets/11089 ASAP

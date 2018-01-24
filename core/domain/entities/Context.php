@@ -2,20 +2,19 @@
 
 namespace EventEspresso\core\domain\entities;
 
+use EventEspresso\core\domain\entities\contexts\ContextInterface;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
 /**
  * Class Context
- * Simple DTO for conveying the background details about why some other logic is being performed,
- * that can assist with the decision making process or simply enhance logging.
+ * NAMESPACE MOVED : PLZ USE : \EventEspresso\core\domain\entities\contexts\Context
  *
- * @package EventEspresso\core\domain\entities
- * @author  Brent Christensen
- * @since   4.9.46.rc.076
+ * @deprecated 4.9.54
  */
-class Context
+class Context implements ContextInterface
 {
 
     /**

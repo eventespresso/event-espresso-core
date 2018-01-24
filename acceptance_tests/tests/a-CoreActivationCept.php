@@ -8,9 +8,8 @@ use Page\MessagesAdmin;
 // - asserting Event Espresso Core is active (and activates without problems)
 $I = new EventEspressoAcceptanceTester($scenario);
 
-
 //make sure messages system is set to send on same request for all tests (as we need immediate feedback).
-$I->loginAsAdmin();
+$I->loginAsAdmin(20);
 $I->amOnMessageSettingsPage();
 $I->selectOption(MessagesAdmin::GLOBAL_MESSAGES_SETTINGS_ON_REQUEST_SELECTION_SELECTOR, '1');
 $I->click(MessagesAdmin::GLOBAL_MESSAGES_SETTINGS_SUBMIT_SELECTOR);

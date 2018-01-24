@@ -8,7 +8,7 @@
  * @package         Event Espresso
  * @subpackage    core
  * @author				Brent Christensen
- * @since		 	   $VID:$
+ * 
  *
  */
 class EE_Invoice_Line_Item_Display_Strategy implements EEI_Line_Item_Display {

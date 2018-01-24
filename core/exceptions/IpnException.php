@@ -16,7 +16,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  *
  * @package       Event Espresso
  * @author        Michael Nelson
- * @since         $VID:$
+ *
  */
 class IpnException extends \LogicException
 {
