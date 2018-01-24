@@ -1127,10 +1127,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                 'class' => $checked_never->cssClasses(),
                 'desc'  => $checked_never->legendLabel(),
             ),
-            'view_details'     => array(
-                'class' => 'dashicons dashicons-search',
-                'desc'  => esc_html__('View All Check-in Records for this Registrant', 'event_espresso'),
-            ),
             'approved_status'  => array(
                 'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
                 'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_approved, false, 'sentence'),

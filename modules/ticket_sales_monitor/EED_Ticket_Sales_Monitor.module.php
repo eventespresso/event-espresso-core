@@ -188,10 +188,17 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     public static function release_tickets_for_expired_carts()
     {
+        do_action('AHEE__EED_Ticket_Sales_Monitor__release_tickets_for_expired_carts__begin');
         $expired_ticket_IDs      = array();
         $valid_ticket_line_items = array();
         $total_line_items        = EEM_Line_Item::instance()->get_total_line_items_with_no_transaction();
         if (empty($total_line_items)) {
+            do_action(
+                'AHEE__EED_Ticket_Sales_Monitor__release_tickets_for_expired_carts__end',
+                $total_line_items,
+                $valid_ticket_line_items,
+                $expired_ticket_IDs
+            );
             return;
         }
         $expired = current_time('timestamp') - EE_Registry::instance()->SSN->lifespan();
@@ -221,6 +228,12 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                 999
             );
         }
+        do_action(
+            'AHEE__EED_Ticket_Sales_Monitor__release_tickets_for_expired_carts__end',
+            $total_line_items,
+            $valid_ticket_line_items,
+            $expired_ticket_IDs
+        );
     }
 
 
