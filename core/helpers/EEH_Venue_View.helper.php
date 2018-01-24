@@ -91,11 +91,18 @@ class EEH_Venue_View extends EEH_Base {
 										break;
 									}
 								}
-								// if the venue being asked for is not related to the global event post,
-								// still return the venue being asked for
 							}
-							// no venue ID ?
-							// then the global post is an events post and this function was called with no argument
+							// if the venue being asked for is not related to the global event post,
+							// still return the venue being asked for
+							if ( EEH_Venue_View::$_venue instanceof EE_Venue && EEH_Venue_View::$_venue->ID() !== $VNU_ID ) {
+								$venue = EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
+
+								if( $venue instanceof EE_Venue ) {
+									EEH_Venue_View::$_venue = $venue;
+								}
+							}
+						// no venue ID ?
+						// then the global post is an events post and this function was called with no argument
 						} else {
 							// just grab the first related event venue
 							EEH_Venue_View::$_venue = reset( $venues );
