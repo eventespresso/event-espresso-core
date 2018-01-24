@@ -101,6 +101,9 @@ interface EEI_Base
      * @throws \EE_Error
      */
     public function get_pretty($field_name, $extra_cache_ref);
+
+
+
 }
 // End of file EEI_Base.interface.php
 // Location: core/interfaces/EEI_Base.interface.php

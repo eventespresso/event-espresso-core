@@ -1,8 +1,4 @@
 <?php
-
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
-
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('NO direct script access allowed');
 }
@@ -433,18 +429,13 @@ class EEH_Template
      * This helper takes a raw float value and formats it according to the default config country currency settings, or
      * the country currency settings from the supplied country ISO code
      *
-     * @deprecated $VID:$
      * @param  float   $amount       raw money value
      * @param  boolean $return_raw   whether to return the formatted float value only with no currency sign or code
      * @param  boolean $display_code whether to display the country code (USD). Default = TRUE
      * @param string   $CNT_ISO      2 letter ISO code for a country
      * @param string   $cur_code_span_class
      * @return string        the html output for the formatted money value
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws \EE_Error
      */
     public static function format_currency(
         $amount = null,
@@ -453,13 +444,58 @@ class EEH_Template
         $CNT_ISO = '',
         $cur_code_span_class = 'currency-code'
     ) {
-        return EEH_Money::format_currency(
-            $amount,
-            $return_raw,
-            $display_code,
-            $CNT_ISO,
-            $cur_code_span_class
-        );
+        // ensure amount was received
+        if ($amount === null) {
+            $msg = __('In order to format currency, an amount needs to be passed.', 'event_espresso');
+            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
+            return '';
+        }
+        //ensure amount is float
+        $amount  = apply_filters('FHEE__EEH_Template__format_currency__raw_amount', (float)$amount);
+        $CNT_ISO = apply_filters('FHEE__EEH_Template__format_currency__CNT_ISO', $CNT_ISO, $amount);
+        // filter raw amount (allows 0.00 to be changed to "free" for example)
+        $amount_formatted = apply_filters('FHEE__EEH_Template__format_currency__amount', $amount, $return_raw);
+        // still a number or was amount converted to a string like "free" ?
+        if (is_float($amount_formatted)) {
+            // was a country ISO code passed ? if so generate currency config object for that country
+            $mny = $CNT_ISO !== '' ? new EE_Currency_Config($CNT_ISO) : null;
+            // verify results
+            if ( ! $mny instanceof EE_Currency_Config) {
+                // set default config country currency settings
+                $mny = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
+                    ? EE_Registry::instance()->CFG->currency
+                    : new EE_Currency_Config();
+            }
+            // format float
+            $amount_formatted = number_format($amount, $mny->dec_plc, $mny->dec_mrk, $mny->thsnds);
+            // add formatting ?
+            if ( ! $return_raw) {
+                // add currency sign
+                if ($mny->sign_b4) {
+                    if ($amount >= 0) {
+                        $amount_formatted = $mny->sign . $amount_formatted;
+                    } else {
+                        $amount_formatted = '-' . $mny->sign . str_replace('-', '', $amount_formatted);
+                    }
+
+                } else {
+                    $amount_formatted = $amount_formatted . $mny->sign;
+                }
+
+                // filter to allow global setting of display_code
+                $display_code = apply_filters('FHEE__EEH_Template__format_currency__display_code', $display_code);
+
+                // add currency code ?
+                $amount_formatted = $display_code ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount_formatted;
+            }
+            // filter results
+            $amount_formatted = apply_filters('FHEE__EEH_Template__format_currency__amount_formatted',
+                $amount_formatted, $mny, $return_raw);
+        }
+        // clean up vars
+        unset($mny);
+        // return formatted currency amount
+        return $amount_formatted;
     }
 
 
