@@ -14,7 +14,7 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  * @package               Event Espresso
  * @subpackage            core
  * @author                Brent Christensen
- * @since                 $VID:$
+ * 
  */
 class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base
 {

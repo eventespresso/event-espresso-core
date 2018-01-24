@@ -14,7 +14,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\tests\mocks\core\services\cache
  * @author  Brent Christensen
- * @since   $VID:$
+ * 
  */
 class PostRelatedCacheManagerMock extends PostRelatedCacheManager
 {

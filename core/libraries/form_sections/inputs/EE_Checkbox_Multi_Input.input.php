@@ -8,7 +8,7 @@
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Mike Nelson
- * @since 				$VID:$
+ * 
  *
  */
 class EE_Checkbox_Multi_Input extends EE_Form_Input_With_Options_Base{

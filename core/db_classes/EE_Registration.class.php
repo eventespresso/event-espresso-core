@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\core\domain\entities\Context;
+use EventEspresso\core\domain\entities\contexts\ContextInterface;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -141,7 +141,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @param string       $new_STS_ID
      * @param boolean      $use_default
-     * @param Context|null $context
+     * @param ContextInterface|null $context
      * @return bool
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -151,7 +151,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function set_status($new_STS_ID = null, $use_default = false, Context $context = null)
+    public function set_status($new_STS_ID = null, $use_default = false, ContextInterface $context = null)
     {
         // get current REG_Status
         $old_STS_ID = $this->status_ID();
@@ -199,14 +199,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @param string       $new_STS_ID
      * @param string       $old_STS_ID
-     * @param Context|null $context
+     * @param ContextInterface|null $context
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    private function _update_if_canceled_or_declined($new_STS_ID, $old_STS_ID, Context $context = null)
+    private function _update_if_canceled_or_declined($new_STS_ID, $old_STS_ID, ContextInterface $context = null)
     {
         // these reg statuses should not be considered in any calculations involving monies owing
         $closed_reg_statuses = EEM_Registration::closed_reg_statuses();
@@ -232,14 +232,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param array        $closed_reg_statuses
      * @param string       $new_STS_ID
      * @param string       $old_STS_ID
-     * @param Context|null $context
+     * @param ContextInterface|null $context
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    private function updateIfCanceled(array $closed_reg_statuses, $new_STS_ID, $old_STS_ID, Context $context = null)
+    private function updateIfCanceled(array $closed_reg_statuses, $new_STS_ID, $old_STS_ID, ContextInterface $context = null)
     {
         // true if registration has been cancelled or declined
         if (in_array($new_STS_ID, $closed_reg_statuses, true)
@@ -277,14 +277,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param array        $closed_reg_statuses
      * @param string       $new_STS_ID
      * @param string       $old_STS_ID
-     * @param Context|null $context
+     * @param ContextInterface|null $context
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    private function updateIfDeclined(array $closed_reg_statuses, $new_STS_ID, $old_STS_ID, Context $context = null)
+    private function updateIfDeclined(array $closed_reg_statuses, $new_STS_ID, $old_STS_ID, ContextInterface $context = null)
     {
         // true if reinstating cancelled or declined registration
         if (in_array($old_STS_ID, $closed_reg_statuses, true)
@@ -316,10 +316,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     * @param Context|null $context
+     * @param ContextInterface|null $context
      * @return bool
      */
-    private function statusChangeUpdatesTransaction(Context $context = null)
+    private function statusChangeUpdatesTransaction(ContextInterface $context = null)
     {
         $contexts_that_do_not_update_transaction = (array) apply_filters(
             'AHEE__EE_Registration__statusChangeUpdatesTransaction__contexts_that_do_not_update_transaction',
@@ -328,7 +328,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             $this
         );
         return ! (
-            $context instanceof Context
+            $context instanceof ContextInterface
             && in_array($context->slug(), $contexts_that_do_not_update_transaction, true)
         );
     }
@@ -869,39 +869,59 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     * Gets the URL of the thank you page with this registration REG_url_link added as
-     * a query parameter
+     * Gets the URL for the checkout payment options reg step
+     * with this registration's REG_url_link added as a query parameter
      *
      * @param bool $clear_session Set to true when you want to clear the session on revisiting the
      *                            payment overview url.
      * @return string
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     public function payment_overview_url($clear_session = false)
     {
-        return add_query_arg(array(
-            'e_reg_url_link' => $this->reg_url_link(),
-            'step'           => 'payment_options',
-            'revisit'        => true,
-            'clear_session' => (bool) $clear_session
-        ), EE_Registry::instance()->CFG->core->reg_page_url());
+        return add_query_arg(
+            (array) apply_filters(
+                'FHEE__EE_Registration__payment_overview_url__query_args',
+                array(
+                    'e_reg_url_link' => $this->reg_url_link(),
+                    'step'           => 'payment_options',
+                    'revisit'        => true,
+                    'clear_session'  => (bool) $clear_session,
+                ),
+                $this
+            ),
+            EE_Registry::instance()->CFG->core->reg_page_url()
+        );
     }
 
 
     /**
-     * Gets the URL of the thank you page with this registration REG_url_link added as
-     * a query parameter
+     * Gets the URL for the checkout attendee information reg step
+     * with this registration's REG_url_link added as a query parameter
      *
      * @return string
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     public function edit_attendee_information_url()
     {
-        return add_query_arg(array(
-            'e_reg_url_link' => $this->reg_url_link(),
-            'step'           => 'attendee_information',
-            'revisit'        => true,
-        ), EE_Registry::instance()->CFG->core->reg_page_url());
+        return add_query_arg(
+            (array) apply_filters(
+                'FHEE__EE_Registration__edit_attendee_information_url__query_args',
+                array(
+                    'e_reg_url_link' => $this->reg_url_link(),
+                    'step'           => 'attendee_information',
+                    'revisit'        => true,
+                ),
+                $this
+            ),
+            EE_Registry::instance()->CFG->core->reg_page_url()
+        );
     }
 
 

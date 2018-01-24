@@ -31,7 +31,7 @@ defined('EVENT_ESPRESSO_VERSION')|| exit('No direct script access allowed');
  * @package       Event Espresso
  * @subpackage    core
  * @author        Brent Christensen
- * @since         $VID:$
+ *
  */
 class DisplayTicketSelector
 {

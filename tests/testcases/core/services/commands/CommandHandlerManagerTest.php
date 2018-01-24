@@ -16,7 +16,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * 
  * @group         CommandBus
  */
 class CommandHandlerManagerTest extends EE_UnitTestCase
