@@ -515,7 +515,11 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 			$input_constructor_args['default'] = $default_value;
 		}
 		$max_max_for_question = EEM_Question::instance()->absolute_max_for_system_question( $this->system_ID() );
-		if( EEM_Question::instance()->question_type_is_in_category(  $this->type(), 'text' ) ) {
+		if( in_array(
+		    $this->type(),
+            EEM_Question::instance()->questionTypesWithMaxLength(),
+            true
+        ) ) {
 			$input_constructor_args[ 'validation_strategies' ][] = new EE_Max_Length_Validation_Strategy(
 				null,
 				min( $max_max_for_question, $this->max() )
