@@ -28,7 +28,10 @@ trait EventsAdmin
      */
     public function publishEvent()
     {
+        $this->actor()->scrollTo(EventsPage::EVENT_EDITOR_TITLE_FIELD_SELECTOR);
+        $this->actor()->wait(2);
         $this->actor()->click(EventsPage::EVENT_EDITOR_PUBLISH_BUTTON_SELECTOR);
+        $this->actor()->waitForText('Event published.', 30);
     }
 
 
@@ -37,6 +40,8 @@ trait EventsAdmin
      */
     public function saveEvent()
     {
+        $this->actor()->scrollTo(EventsPage::EVENT_EDITOR_TITLE_FIELD_SELECTOR);
+        $this->actor()->wait(2);
         $this->actor()->click(EventsPage::EVENT_EDITOR_SAVE_BUTTON_SELECTOR);
     }
 
