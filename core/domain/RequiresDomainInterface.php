@@ -13,7 +13,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\core\domain
  * @author  Brent Christensen
- * @since   $VID:$
+ *
  */
 interface RequiresDomainInterface
 {
