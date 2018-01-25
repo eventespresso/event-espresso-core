@@ -334,19 +334,24 @@ class EE_Payment_Method_Manager implements ResettableInterface
         }
         $payment_method->set_active();
         $payment_method->save();
-        if ($payment_method->type() === 'Invoice') {
-            /** @type EE_Message_Resource_Manager $message_resource_manager */
+        /** @type EE_Message_Resource_Manager $message_resource_manager */
+        //if this was the invoice message type, make sure users can view their invoices
+        if ($payment_method->type() === 'Invoice'
+            && (
+                ! EEH_MSG_Template::is_mt_active('invoice')
+            )
+        ) {
             $message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
+            /** @type EE_Message_Resource_Manager $message_resource_manager */
             $message_resource_manager->ensure_message_type_is_active('invoice', 'html');
-            $message_resource_manager->ensure_messenger_is_active('pdf');
             new PersistentAdminNotice(
                 'invoice_pm_requirements_notice',
                 sprintf(
                     esc_html__(
-                        'The Invoice payment method has been activated. It requires the invoice message type, html messenger, and pdf messenger be activated as well for the %1$smessages system%2$s, so it has been automatically verified that they are also active.',
+                        'The Invoice payment method has been activated. It requires the %1$sinvoice message%2$s type to be active, so it was automatically activated for you.',
                         'event_espresso'
                     ),
-                    '<a href="' . admin_url('admin.php?page=espresso_messages') . '">',
+                    '<a href="' . admin_url('admin.php?page=espresso_messages&action=settings') . '">',
                     '</a>'
                 ),
                 true
