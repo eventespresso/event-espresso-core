@@ -1,4 +1,6 @@
 <?php
+
+use EventEspresso\core\domain\values\model\CustomSelects;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
@@ -393,9 +395,10 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
     /**
      * When using _get_all_wpdb_results, you can specify a custom selection. If you do so,
-     * it gets saved on this property so those selections can be used in WHERE, GROUP_BY, etc.
+     * it gets saved on this property as an instance of CustomSelects so those selections can be used in
+     * WHERE, GROUP_BY, etc.
      *
-     * @var array
+     * @var CustomSelects
      */
     protected $_custom_selections = array();
 
@@ -1031,7 +1034,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     }
 
 
-
     /**
      * Used internally to get WPDB results, because other functions, besides get_all, may want to do some queries, but
      * may want to preserve the WPDB results (eg, update, which first queries to make sure we have all the tables on
@@ -1049,30 +1051,45 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                  Eg, array('count'=>array('COUNT(REG_ID)','%d'))
      * @return array | stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
      * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     protected function _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null)
     {
-
-        // remember the custom selections, if any, and type cast as array
-        // (unless $columns_to_select is an object, then just set as an empty array)
-        // Note: (array) 'some string' === array( 'some string' )
-        $custom_selection = array();
-        if( isset($query_params['extra_selects'])) {
-            $custom_selection = $query_params['extra_selects'];
-        } elseif(! is_object($columns_to_select)){
-            $custom_selection = (array)$columns_to_select;
-        }
-        $this->_custom_selections = $custom_selection;
+        $this->_custom_selections = $this->getCustomSelection($query_params, $columns_to_select);;
         $model_query_info = $this->_create_model_query_info_carrier($query_params);
-        $select_expressions = $columns_to_select !== null
-            ? $this->_construct_select_from_input($columns_to_select)
-            : $this->_construct_default_select_sql($model_query_info);
-        if( isset($query_params['extra_selects'])) {
-            $extra_selects = $this->_construct_select_from_input($query_params['extra_selects']);
-            $select_expressions = implode(', ', array($select_expressions, $extra_selects));
+        $select_expressions = $columns_to_select === null
+            ? $this->_construct_default_select_sql($model_query_info)
+            : '';
+        if ($this->_custom_selections instanceof CustomSelects) {
+            $custom_expressions = $this->_custom_selections->columnsToSelectExpression();
+            $select_expressions .= $select_expressions
+                ? ', ' . $custom_expressions
+                : $custom_expressions;
         }
+
         $SQL = "SELECT $select_expressions " . $this->_construct_2nd_half_of_select_query($model_query_info);
         return $this->_do_wpdb_query('get_results', array($SQL, $output));
+    }
+
+
+    /**
+     * Get a CustomSelects object if the $query_params or $columns_to_select allows for it.
+     * Note: $query_params['extra_selects'] will always override any $columns_to_select values. It is the preferred
+     * method of including extra select information.
+     *
+     * @param array             $query_params
+     * @param null|array|string $columns_to_select
+     * @return null|CustomSelects
+     * @throws InvalidArgumentException
+     */
+    protected function getCustomSelection(array $query_params, $columns_to_select = null)
+    {
+        if (! isset($query_params['extra_selects']) && $columns_to_select === null) {
+            return null;
+        }
+        $selects = isset($query_params['extra_selects']) ? $query_params['extra_selects'] : $columns_to_select;
+        $selects = is_string($selects) ? explode(',', $selects) : $selects;
+        return new CustomSelects($selects);
     }
 
 
@@ -3941,7 +3958,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             );
         }
         //check if it's a custom selection
-        if (array_key_exists($query_param, $this->_custom_selections)) {
+        if ($this->_custom_selections instanceof CustomSelects
+            && in_array($query_param, $this->_custom_selections->columnAliases(), true)
+        ) {
             return;
         }
         //check if has a model name at the beginning
@@ -4109,8 +4128,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 $field_obj = $this->_deduce_field_from_query_param($query_param);
                 //if it's not a normal field, maybe it's a custom selection?
                 if (! $field_obj) {
-                    if (isset($this->_custom_selections[$query_param][1])) {
-                        $field_obj = $this->_custom_selections[$query_param][1];
+                    if ($this->_custom_selections instanceof CustomSelects) {
+                        $field_obj = $this->_custom_selections->getDataTypeForAlias($query_param);
                     } else {
                         throw new EE_Error(sprintf(__("%s is neither a valid model field name, nor a custom selection",
                             "event_espresso"), $query_param));
@@ -4140,17 +4159,22 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 $query_param);
             return $table_alias_prefix . $field->get_qualified_column();
         }
-        if (array_key_exists($query_param, $this->_custom_selections)) {
+        if ($this->_custom_selections instanceof CustomSelects
+            && in_array($query_param, $this->_custom_selections->columnAliases(), true)
+        ) {
             //maybe it's custom selection item?
             //if so, just use it as the "column name"
             return $query_param;
         }
+        $custom_select_aliases = $this->_custom_selections instanceof CustomSelects
+            ? implode(',', $this->_custom_selections->columnAliases())
+            : '';
         throw new EE_Error(
             sprintf(
                 __(
                     "%s is not a valid field on this model, nor a custom selection (%s)",
                     "event_espresso"
-                ), $query_param, implode(",", $this->_custom_selections)
+                ), $query_param, $custom_select_aliases
             )
         );
     }
