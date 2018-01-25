@@ -95,6 +95,13 @@ class EEM_Question extends EEM_Soft_Delete_Base
     protected $_question_descriptions;
 
 
+    /**
+     * Question types that should have an admin-defined max input length
+     * @var array
+     */
+    protected $question_types_with_max_lengh;
+
+
     // private instance of the Attendee object
     protected static $_instance = NULL;
 
@@ -173,6 +180,14 @@ class EEM_Question extends EEM_Soft_Delete_Base
                     EEM_Question::QST_type_checkbox,
                     EEM_Question::QST_type_multi_select
                 )
+            )
+        );
+        $this->question_types_with_max_lengh = apply_filters(
+            'FHEE__EEM_Question___construct__question_types_with_max_length',
+            array(
+                EEM_Question::QST_type_text,
+                EEM_Question::QST_type_textarea,
+                EEM_Question::QST_type_html_textarea
             )
         );
 
@@ -415,6 +430,16 @@ class EEM_Question extends EEM_Soft_Delete_Base
     public function question_descriptions()
     {
         return $this->_question_descriptions;
+    }
+
+
+    /**
+     * Returns all the question types that should have an admin-defined max input length
+     * @return array
+     */
+    public function questionTypesWithMaxLength()
+    {
+        return (array)$this->question_types_with_max_lengh;
     }
 
 
