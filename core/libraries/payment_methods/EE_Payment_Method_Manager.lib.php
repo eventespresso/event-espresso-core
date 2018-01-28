@@ -468,6 +468,11 @@ class EE_Payment_Method_Manager implements ResettableInterface
             array('PMD_scope' => array()),
             array(array('PMD_slug' => $payment_method_slug))
         );
+        do_action(
+            'AHEE__EE_Payment_Method_Manager__deactivate_payment_method__after_deactivating_payment_method',
+            $payment_method_slug,
+            $count_updated
+        );
         return $count_updated;
     }
 
