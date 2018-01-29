@@ -3249,6 +3249,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 'force_join'
             );
         }
+        $this->extractRelatedModelsFromCustomSelects($query_info_carrier);
         return $query_info_carrier;
     }
 
@@ -3970,35 +3971,116 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         //check if has a model name at the beginning
         //and
         //check if it's a field on a related model
-        foreach ($this->_model_relations as $valid_related_model_name => $relation_obj) {
-            if (strpos($query_param, $valid_related_model_name . ".") === 0) {
-                $this->_add_join_to_model($valid_related_model_name, $passed_in_query_info, $original_query_param);
-                $query_param = substr($query_param, strlen($valid_related_model_name . "."));
-                if ($query_param === '') {
-                    //nothing left to $query_param
-                    //we should actually end in a field name, not a model like this!
-                    throw new EE_Error(sprintf(__("Query param '%s' (of type %s on model %s) shouldn't end on a period (.) ",
-                        "event_espresso"),
-                        $query_param, $query_param_type, get_class($this), $valid_related_model_name));
-                }
-                $related_model_obj = $this->get_related_model_obj($valid_related_model_name);
-                $related_model_obj->_extract_related_model_info_from_query_param(
-                    $query_param,
-                    $passed_in_query_info, $query_param_type, $original_query_param
-                );
-                return;
-            }
-            if ($query_param === $valid_related_model_name) {
-                $this->_add_join_to_model($valid_related_model_name, $passed_in_query_info, $original_query_param);
-                return;
-            }
+        if ($this->extractJoinModelFromQueryParams(
+            $passed_in_query_info,
+            $query_param,
+            $original_query_param,
+            $query_param_type
+        )) {
+            return;
         }
+
         //ok so $query_param didn't start with a model name
         //and we previously confirmed it wasn't a logic query param or field on the current model
         //it's wack, that's what it is
-        throw new EE_Error(sprintf(__("There is no model named '%s' related to %s. Query param type is %s and original query param is %s",
-            "event_espresso"),
-            $query_param, get_class($this), $query_param_type, $original_query_param));
+        throw new EE_Error(
+            sprintf(
+                esc_html__(
+                    "There is no model named '%s' related to %s. Query param type is %s and original query param is %s",
+                    "event_espresso"
+                ),
+                $query_param,
+                get_class($this),
+                $query_param_type,
+                $original_query_param
+            )
+        );
+    }
+
+
+    /**
+     * Extracts any possible join model information from the provided possible_join_string.
+     * This method will read the provided $possible_join_string value and determine if there are any possible model join
+     * parts that should be added to the query.
+     *
+     * @param EE_Model_Query_Info_Carrier $query_info_carrier
+     * @param string                      $possible_join_string  Such as Registration.REG_ID, or Registration
+     * @param null|string                 $original_query_param
+     * @param string                      $query_parameter_type  The type for the source of the $possible_join_string
+     *                                                           ('where', 'order_by', 'group_by', 'custom_selects' etc.)
+     * @return bool  returns true if a join was added and false if not.
+     * @throws EE_Error
+     */
+    private function extractJoinModelFromQueryParams(
+        EE_Model_Query_Info_Carrier $query_info_carrier,
+        $possible_join_string,
+        $original_query_param,
+        $query_parameter_type
+    ) {
+        foreach ($this->_model_relations as $valid_related_model_name => $relation_obj) {
+            if (strpos($possible_join_string, $valid_related_model_name . ".") === 0) {
+                $this->_add_join_to_model($valid_related_model_name, $query_info_carrier, $original_query_param);
+                $possible_join_string = substr($possible_join_string, strlen($valid_related_model_name . "."));
+                if ($possible_join_string === '') {
+                    //nothing left to $query_param
+                    //we should actually end in a field name, not a model like this!
+                    throw new EE_Error(
+                        sprintf(
+                            esc_html__(
+                                "Query param '%s' (of type %s on model %s) shouldn't end on a period (.) ",
+                                "event_espresso"
+                            ),
+                            $possible_join_string,
+                            $query_parameter_type,
+                            get_class($this),
+                            $valid_related_model_name
+                        )
+                    );
+                }
+                $related_model_obj = $this->get_related_model_obj($valid_related_model_name);
+                $related_model_obj->_extract_related_model_info_from_query_param(
+                    $possible_join_string,
+                    $query_info_carrier,
+                    $query_parameter_type,
+                    $original_query_param
+                );
+                return true;
+            }
+            if ($possible_join_string === $valid_related_model_name) {
+                $this->_add_join_to_model(
+                    $valid_related_model_name,
+                    $query_info_carrier,
+                    $original_query_param
+                );
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * Extracts related models from Custom Selects and sets up any joins for those related models.
+     * @param EE_Model_Query_Info_Carrier $query_info_carrier
+     * @throws EE_Error
+     */
+    private function extractRelatedModelsFromCustomSelects(EE_Model_Query_Info_Carrier $query_info_carrier)
+    {
+        if ($this->_custom_selections instanceof CustomSelects
+            && ($this->_custom_selections->type() === CustomSelects::TYPE_STRUCTURED
+                || $this->_custom_selections->type() == CustomSelects::TYPE_COMPLEX
+            )
+        ) {
+            $original_selects = $this->_custom_selections->originalSelects();
+            foreach ($original_selects as $alias => $select_configuration) {
+                $this->extractJoinModelFromQueryParams(
+                    $query_info_carrier,
+                    $select_configuration[0],
+                    $select_configuration[0],
+                    'custom_selects'
+                );
+            }
+        }
     }
 
 
@@ -5024,9 +5106,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         $results = array();
         if ($this->_custom_selections instanceof CustomSelects) {
             foreach ($this->_custom_selections->columnAliases() as $alias) {
-                if (isset($results[$alias])) {
+                if (isset($db_results_row[$alias])) {
                     $results[$alias] = $this->convertValueToDataType(
-                        $results[$alias],
+                        $db_results_row[$alias],
                         $this->_custom_selections->getDataTypeForAlias($alias)
                     );
                 }
