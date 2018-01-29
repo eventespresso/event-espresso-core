@@ -4995,10 +4995,60 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     }
                 }
             }
+            //also, if this was a custom select query, let's see if there are any results for the custom select fields
+            //and add them to the object as well.  We'll convert according to the set data_type if there's any set for
+            //the field in the CustomSelects object
+            if ($this->_custom_selections instanceof CustomSelects) {
+                $classInstance->setCustomSelectsValues(
+                    $this->getValuesForCustomSelectAliasesFromResults($row)
+                );
+            }
         }
         return $array_of_objects;
     }
 
+
+    /**
+     * This will parse a given row of results from the db and see if any keys in the results match an alias within the
+     * current CustomSelects object. This will be used to build an array of values indexed by those keys.
+     *
+     * @param array $db_results_row
+     * @return array
+     */
+    protected function getValuesForCustomSelectAliasesFromResults(array $db_results_row)
+    {
+        $results = array();
+        if ($this->_custom_selections instanceof CustomSelects) {
+            foreach ($this->_custom_selections->columnAliases() as $alias) {
+                if (isset($results[$alias])) {
+                    $results[$alias] = $this->convertValueToDataType(
+                        $results[$alias],
+                        $this->_custom_selections->getDataTypeForAlias($alias)
+                    );
+                }
+            }
+        }
+        return $results;
+    }
+
+
+    /**
+     * This will set the value for the given alias
+     * @param string $value
+     * @param string $datatype (one of %d, %s, %f)
+     * @return int|string|float (int for %d, string for %s, float for %f)
+     */
+    protected function convertValueToDataType($value, $datatype)
+    {
+        switch ($datatype) {
+            case '%f':
+                return (float) $value;
+            case '%d':
+                return (int) $value;
+            default:
+                return (string) $value;
+        }
+    }
 
 
     /**
