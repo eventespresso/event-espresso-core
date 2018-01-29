@@ -1,4 +1,9 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use PHPUnit\Framework\Exception;
+
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -1136,7 +1141,8 @@ class EEM_Base_Test extends EE_UnitTestCase
     /**
      * @group 9566
      */
-    public function test_is_logic_query_param_key(){
+    public function test_is_logic_query_param_key()
+    {
         $this->assertTrue( EEM_Answer::instance()->is_logic_query_param_key( 'OR' ) );
         $this->assertTrue( EEM_Answer::instance()->is_logic_query_param_key( 'NOT*' ) );
         $this->assertTrue( EEM_Answer::instance()->is_logic_query_param_key( 'AND*other-condition' ) );
@@ -1144,6 +1150,36 @@ class EEM_Base_Test extends EE_UnitTestCase
         $this->assertFalse( EEM_Answer::instance()->is_logic_query_param_key( 'Registration.REG_date' ) );
         $this->assertFalse( EEM_Answer::instance()->is_logic_query_param_key( 'ORG_name' ) );
 
+    }
+
+
+    /**
+     * @group customselects
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws Exception
+     */
+    public function testExtraSelects()
+    {
+        //setup some data in the db
+        $attendee = $this->factory->attendee->create();
+        $this->factory->registration->create_many(3, array('ATT_ID' => $attendee->ID()));
+        EEM_Attendee::reset();
+        EEM_Registration::reset();
+        $attendees = EEM_Attendee::instance()->get_all(
+            array(
+                'extra_selects' => array(
+                    'registration_count' => array('Registration.REG_ID', 'count', '%d')
+                )
+            )
+        );
+        $this->assertCount(1, $attendees);
+        $attendee = reset($attendees);
+        $this->assertInstanceOf('EE_Attendee', $attendee);
+        $this->assertEquals(3, $attendee->getForCustomSelectAlias('registration_count'));
     }
 
 }
