@@ -360,14 +360,14 @@ final class EE_System implements ResettableInterface
         $this->deactivateIncompatibleAddon(
             'Wait Lists',
             'EE_WAIT_LISTS_VERSION',
-            '1.0.0.rc.074',
+            '1.0.0.beta.074',
             'load_espresso_wait_lists',
             'EE_WAIT_LISTS_PLUGIN_FILE'
         );
         $this->deactivateIncompatibleAddon(
             'Automated Upcoming Event Notifications',
             'EE_AUTOMATED_UPCOMING_EVENT_NOTIFICATION_VERSION',
-            '1.0.0.rc.091',
+            '1.0.0.beta.091',
             'load_espresso_automated_upcoming_event_notification',
             'EE_AUTOMATED_UPCOMING_EVENT_NOTIFICATION_PLUGIN_FILE'
         );
