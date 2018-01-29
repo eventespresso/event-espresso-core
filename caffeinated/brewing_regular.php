@@ -35,9 +35,13 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
     protected $_table_analysis;
 
 
-
     /**
      * EE_Brewing_Regular constructor.
+     * @throws \DomainException
+     * @throws \EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
      */
     public function __construct(TableAnalysis $table_analysis)
     {
@@ -57,9 +61,12 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
             // load caff scripts
             add_action('wp_enqueue_scripts', array($this, 'enqueue_caffeinated_scripts'), 10);
             add_filter('FHEE__EE_Registry__load_helper__helper_paths', array($this, 'caf_helper_paths'), 10);
-            add_filter(
-                'FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register',
-                array($this, 'caf_payment_methods')
+            //add_filter('FHEE__EE_Registry__load_helper__helper_paths', array($this, 'caf_helper_paths'), 10);
+            EE_Register_Payment_Method::register(
+                'caffeinated_payment_methods',
+                array(
+                    'payment_method_paths' => glob(EE_CAF_PAYMENT_METHODS . '*', GLOB_ONLYDIR)
+                )
             );
             // caffeinated constructed
             do_action('AHEE__EE_Brewing_Regular__construct__complete');
@@ -259,22 +266,6 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
         );
         return $menuitems;
     }
-
-
-
-    /**
-     * Adds the payment methods in {event-espresso-core}/caffeinated/payment_methods
-     *
-     * @param array $payment_method_paths
-     * @return array values are folder paths to payment method folders
-     */
-    public function caf_payment_methods($payment_method_paths)
-    {
-        $caf_payment_methods_paths = glob(EE_CAF_PAYMENT_METHODS . '*', GLOB_ONLYDIR);
-        $payment_method_paths = array_merge($payment_method_paths, $caf_payment_methods_paths);
-        return $payment_method_paths;
-    }
-
 
 
     /**
