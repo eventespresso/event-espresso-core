@@ -360,8 +360,11 @@ abstract class EE_Base_Class
     }
 
 
-
-    public function setCustomSelectsValues($custom_select_values)
+    /**
+     * Set custom select values for model.
+     * @param array $custom_select_values
+     */
+    public function setCustomSelectsValues(array $custom_select_values)
     {
         $this->custom_selection_results = $custom_select_values;
     }
