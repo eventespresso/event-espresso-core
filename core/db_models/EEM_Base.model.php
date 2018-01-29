@@ -3912,7 +3912,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         $query_param = $this->_remove_stars_and_anything_after_from_condition_query_param_key($query_param);
         /** @var $allow_logic_query_params bool whether or not to allow logic_query_params like 'NOT','OR', or 'AND' */
-        $allow_logic_query_params = in_array($query_param_type, array('where', 'having'), true);
+        $allow_logic_query_params = in_array($query_param_type, array('where', 'having', 0, 'custom_selects'), true);
         $allow_fields = in_array(
             $query_param_type,
             array('where', 'having', 'order_by', 'group_by', 'order', 'custom_selects', 0),
