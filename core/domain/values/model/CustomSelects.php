@@ -102,7 +102,7 @@ class CustomSelects
             $invalid_keys = array_filter(
                 array_keys($selects),
                 function ($value) {
-                    return is_int($value);
+                    return ! is_int($value);
                 }
             );
             if (! empty($invalid_keys)) {
@@ -245,7 +245,7 @@ class CustomSelects
     {
         $operator = strtoupper($select_parts[1]);
         //validate operator
-        if (! in_array($select_parts[1], $this->valid_operators, true)) {
+        if (! in_array($operator, $this->valid_operators, true)) {
             throw new InvalidArgumentException(
                 sprintf(
                     esc_html__(
@@ -325,14 +325,15 @@ class CustomSelects
     /**
      * Return the datatype for the given column_alias
      * @param string $column_alias
-     * @return string
+     * @return string  (if there's no data type we return string as the default).
      */
     public function getDataTypeForAlias($column_alias)
     {
-        if (in_array($column_alias, $this->columnAliases(), true)
-            && isset($this->original_selects[$column_alias])
+        if (isset($this->original_selects[$column_alias])
+            && in_array($column_alias, $this->columnAliases(), true)
         ) {
             return $this->getDataTypeForSelectType($this->original_selects[$column_alias]);
         }
+        return '%s';
     }
 }
