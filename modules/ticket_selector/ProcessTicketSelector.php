@@ -185,15 +185,14 @@ class ProcessTicketSelector
         if ($valid['total_tickets'] > $valid['max_atndz']) {
             $this->maxAttendeesViolation($valid);
         } else {
-            // die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
             // all data appears to be valid
             if ($this->processSuccessfulCart($this->addTicketsToCart($valid))) {
                 return true;
             }
         }
-        //die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL BEFORE REDIRECT
+        // die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL BEFORE REDIRECT
         // at this point, just return if registration is being made from admin
-        if ($this->request->isAdmin()) {
+        if ($this->request->isAdmin() || $this->request->isFrontAjax()) {
             return false;
         }
         if ($valid['return_url']) {
@@ -496,6 +495,7 @@ class ProcessTicketSelector
      */
     private function processSuccessfulCart($tickets_added)
     {
+        // die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
         if (apply_filters('FHEE__EED_Ticket_Selector__process_ticket_selections__success', $tickets_added)) {
             do_action(
                 'FHEE__EE_Ticket_Selector__process_ticket_selections__before_redirecting_to_checkout',
@@ -506,7 +506,7 @@ class ProcessTicketSelector
             $this->cart->save_cart(false);
             // exit('KILL REDIRECT AFTER CART UPDATE'); // <<<<<<<<  OR HERE TO KILL REDIRECT AFTER CART UPDATE
             // just return TRUE for registrations being made from admin
-            if ($this->request->isAdmin()) {
+            if ($this->request->isAdmin() || $this->request->isFrontAjax()) {
                 return true;
             }
             EE_Error::get_notices(false, true);
