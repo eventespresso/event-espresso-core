@@ -3245,6 +3245,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             case 'CNT_ID':
                 $orderby = 'CNT_ID';
                 break;
+            case 'Registration_Count':
+                $orderby = 'Registration_Count';
+                break;
             default:
                 $orderby = 'ATT_lname';
         }
@@ -3277,38 +3280,29 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'ATT_phone'                         => array('LIKE', $sstr),
                 'Registration.REG_final_price'      => array('LIKE', $sstr),
                 'Registration.REG_code'             => array('LIKE', $sstr),
-                'Registration.REG_count'            => array('LIKE', $sstr),
                 'Registration.REG_group_size'       => array('LIKE', $sstr),
             );
         }
         $offset = ($current_page - 1) * $per_page;
         $limit  = $count ? null : array($offset, $per_page);
+        $query_args = array(
+            $_where,
+            'extra_selects' => array('Registration_Count' => array('Registration.REG_ID', 'count', '%d')),
+            'limit' => $limit
+        );
+        if (! $count) {
+            $query_args['order_by'] = array($orderby => $sort);
+        }
         if ($trash) {
-            $_where['status'] = array('!=', 'publish');
+            $query_args[0]['status'] = array('!=', 'publish');
             $all_attendees    = $count
-                ? $ATT_MDL->count(array(
-                    $_where,
-                    'order_by' => array($orderby => $sort),
-                    'limit'    => $limit,
-                ), 'ATT_ID', true)
-                : $ATT_MDL->get_all(array(
-                    $_where,
-                    'order_by' => array($orderby => $sort),
-                    'limit'    => $limit,
-                ));
+                ? $ATT_MDL->count($query_args, 'ATT_ID', true)
+                : $ATT_MDL->get_all($query_args);
         } else {
-            $_where['status'] = array('IN', array('publish'));
+            $query_args[0]['status'] = array('IN', array('publish'));
             $all_attendees    = $count
-                ? $ATT_MDL->count(array(
-                    $_where,
-                    'order_by' => array($orderby => $sort),
-                    'limit'    => $limit,
-                ), 'ATT_ID', true)
-                : $ATT_MDL->get_all(array(
-                    $_where,
-                    'order_by' => array($orderby => $sort),
-                    'limit'    => $limit,
-                ));
+                ? $ATT_MDL->count($query_args, 'ATT_ID', true)
+                : $ATT_MDL->get_all($query_args);
         }
         return $all_attendees;
     }
