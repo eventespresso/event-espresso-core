@@ -1021,6 +1021,29 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $EVT_ID                                    = ! empty($this->_req_data['event_id'])
             ? absint($this->_req_data['event_id'])
             : 0;
+        $ATT_ID = !empty($this->_req_data['ATT_ID'])
+            ? absint($this->_req_data['ATT_ID'])
+            : 0;
+        if ($ATT_ID) {
+            $attendee = EEM_Attendee::instance()->get_one_by_ID($ATT_ID);
+            if ($attendee instanceof EE_Attendee) {
+                $this->_template_args['admin_page_header'] = sprintf(
+                    esc_html__(
+                        '%1$s Viewing registrations for %2$s%3$s',
+                        'event_espresso'
+                    ),
+                    '<h3 style="line-height:1.5em;">',
+                    '<a href="' . EE_Admin_Page::add_query_args_and_nonce(
+                        array(
+                            'action' => 'edit_attendee',
+                            'post' => $ATT_ID
+                        ),
+                        REG_ADMIN_URL
+                    ) . '">' . $attendee->full_name() . '</a>',
+                    '</h3>'
+                );
+            }
+        }
         if ($EVT_ID) {
             if (EE_Registry::instance()->CAP->current_user_can(
                 'ee_edit_registrations',
@@ -1183,6 +1206,22 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         }
 
         return $query_params;
+    }
+
+
+    /**
+     * This will add ATT_ID to the provided $where array for EE model query parameters.
+     *
+     * @param array $request usually the same as $this->_req_data but not necessarily
+     * @return array
+     */
+    protected function addAttendeeIdToWhereConditions(array $request)
+    {
+        $where = array();
+        if (! empty($request['ATT_ID'])) {
+            $where['ATT_ID'] = absint($request['ATT_ID']);
+        }
+        return $where;
     }
 
 
@@ -1407,6 +1446,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         return apply_filters(
             'FHEE__Registrations_Admin_Page___get_where_conditions_for_registrations_query',
             array_merge(
+                $this->addAttendeeIdToWhereConditions($request),
                 $this->_add_event_id_to_where_conditions($request),
                 $this->_add_category_id_to_where_conditions($request),
                 $this->_add_datetime_id_to_where_conditions($request),
