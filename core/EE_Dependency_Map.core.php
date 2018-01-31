@@ -648,6 +648,16 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\modules\ticket_selector\ProcessTicketSelector' => array(
+                'EE_Core_Config' => EE_Dependency_Map::load_from_cache,
+                'EE_Request' => EE_Dependency_Map::load_from_cache,
+                'EE_Session' => EE_Dependency_Map::load_from_cache,
+                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker' => array(
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+            ),
         );
     }
 
@@ -747,6 +757,9 @@ class EE_Dependency_Map
             },
             'EE_Registration_Config'                   => function () {
                 return EE_Config::instance()->registration;
+            },
+            'EE_Core_Config'                   => function () {
+                return EE_Config::instance()->core;
             },
             'EventEspresso\core\services\loaders\Loader' => function () {
                 return LoaderFactory::getLoader();
