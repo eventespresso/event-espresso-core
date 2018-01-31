@@ -397,7 +397,7 @@ class EEH_Debug_Tools
         $is_method = method_exists($var_name, $var);
         $var_name = ucwords(str_replace('_', ' ', $var_name));
         $heading_tag = is_int($heading_tag) ? "h{$heading_tag}" : 'h5';
-        $result = EEH_Debug_Tools::heading($var_name, $heading_tag, $margin);
+        $result = EEH_Debug_Tools::heading($var_name, $heading_tag, $margin, $line);
         $result .= $is_method
             ? EEH_Debug_Tools::grey_span('::') . EEH_Debug_Tools::orange_span($var . '()')
             : EEH_Debug_Tools::grey_span(' : ') . EEH_Debug_Tools::orange_span($var);
@@ -410,17 +410,23 @@ class EEH_Debug_Tools
     }
 
 
+    protected static function plainOutput()
+    {
+        return defined('EE_TESTS_DIR') || (defined('DOING_AJAX') && DOING_AJAX);
+    }
+
 
     /**
      * @param string $var_name
      * @param string $heading_tag
      * @param string $margin
+     * @param int    $line
      * @return string
      */
-    protected static function heading($var_name = '', $heading_tag = 'h5', $margin = '')
+    protected static function heading($var_name = '', $heading_tag = 'h5', $margin = '', $line = 0)
     {
-        if (defined('EE_TESTS_DIR')) {
-            return "\n{$var_name}";
+        if (EEH_Debug_Tools::plainOutput()) {
+            return "\n\n{$line}) {$var_name}";
         }
         $margin = "25px 0 0 {$margin}";
         return '<' . $heading_tag . ' style="color:#2EA2CC; margin:' . $margin . ';"><b>' . $var_name . '</b>';
@@ -434,7 +440,7 @@ class EEH_Debug_Tools
      */
     protected static function headingX($heading_tag = 'h5')
     {
-        if (defined('EE_TESTS_DIR')) {
+        if (EEH_Debug_Tools::plainOutput()) {
             return '';
         }
         return '</' . $heading_tag . '>';
@@ -448,7 +454,7 @@ class EEH_Debug_Tools
      */
     protected static function grey_span($content = '')
     {
-        if (defined('EE_TESTS_DIR')) {
+        if (EEH_Debug_Tools::plainOutput()) {
             return $content;
         }
         return '<span style="color:#999">' . $content . '</span>';
@@ -463,7 +469,7 @@ class EEH_Debug_Tools
      */
     protected static function file_and_line($file, $line)
     {
-        if ($file === '' || $line === '' || defined('EE_TESTS_DIR')) {
+        if ($file === '' || $line === '' || EEH_Debug_Tools::plainOutput()) {
             return '';
         }
         return '<br /><span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">'
@@ -481,7 +487,7 @@ class EEH_Debug_Tools
      */
     protected static function orange_span($content = '')
     {
-        if (defined('EE_TESTS_DIR')) {
+        if (EEH_Debug_Tools::plainOutput()) {
             return $content;
         }
         return '<span style="color:#E76700">' . $content . '</span>';
@@ -498,7 +504,7 @@ class EEH_Debug_Tools
         ob_start();
         var_dump($var);
         $var = ob_get_clean();
-        if (defined('EE_TESTS_DIR')) {
+        if (EEH_Debug_Tools::plainOutput()) {
             return "\n" . $var;
         }
         return '<pre style="color:#999; padding:1em; background: #fff">' . $var . '</pre>';
@@ -543,7 +549,7 @@ class EEH_Debug_Tools
         }
         $var_name = ucwords(str_replace(array('$', '_'), array('', ' '), $var_name));
         $heading_tag = is_int($heading_tag) ? "h{$heading_tag}" : 'h5';
-        $result = EEH_Debug_Tools::heading($var_name, $heading_tag, $margin);
+        $result = EEH_Debug_Tools::heading($var_name, $heading_tag, $margin, $line);
         $result .= EEH_Debug_Tools::grey_span(' : ') . EEH_Debug_Tools::orange_span(
                 EEH_Debug_Tools::pre_span($var)
             );
