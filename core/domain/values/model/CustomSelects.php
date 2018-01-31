@@ -8,6 +8,9 @@ use InvalidArgumentException;
  * VO for model system that receives a formatted array for custom select part of a a query and can be used by the model
  * to build the various query parts.
  *
+ * This includes accomplishing things like `COUNT(Registration.REG_ID) as registration_cound` or
+ * `SUM(Transaction.TXN_total) as TXN_sum`
+ *
  * @package EventEspresso\core\domain\values\model
  * @author  Darren Ethier
  * @since   $VID:$
