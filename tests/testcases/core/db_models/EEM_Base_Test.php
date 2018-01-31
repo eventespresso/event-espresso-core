@@ -1179,7 +1179,7 @@ class EEM_Base_Test extends EE_UnitTestCase
         $this->assertCount(1, $attendees);
         $attendee = reset($attendees);
         $this->assertInstanceOf('EE_Attendee', $attendee);
-        $this->assertEquals(3, $attendee->getForCustomSelectAlias('registration_count'));
+        $this->assertEquals(3, $attendee->getCustomSelect('registration_count'));
     }
 
 }

@@ -376,7 +376,7 @@ abstract class EE_Base_Class
      * @param string $alias
      * @return string|int|float|null
      */
-    public function getForCustomSelectAlias($alias)
+    public function getCustomSelect($alias)
     {
         return isset($this->custom_selection_results[$alias])
             ? $this->custom_selection_results[$alias]
