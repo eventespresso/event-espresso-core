@@ -60,7 +60,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
             'ATT_lname' => array('ATT_lname' => true), //true means its already sorted
             'ATT_fname' => array('ATT_fname' => false),
             'ATT_email' => array('ATT_email' => false),
-            'Registration_Count' => array('Registration_Count', false),
+            'Registration_Count' => array('Registration_Count' => false),
             'ATT_city'  => array('ATT_city' => false),
             'STA_ID'    => array('STA_ID' => false),
             'CNT_ISO'   => array('CNT_ISO' => false),
@@ -121,12 +121,15 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
     /**
      * Checkbox column
      *
-     * @param EE_Attendee $attendee
+     * @param EE_Attendee $attendee  Unable to typehint this method because overrides parent.
      * @return string
      * @throws EE_Error
      */
-    public function column_cb(EE_Attendee $attendee)
+    public function column_cb($attendee)
     {
+        if (! $attendee instanceof EE_Attendee) {
+            return '';
+        }
         return sprintf(
             '<input type="checkbox" name="checkbox[%1$s]" value="%1$s" />',
             $attendee->ID()
@@ -278,11 +281,21 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
 
     /**
      * Column displaying count of registrations attached to Attendee.
+     *
      * @param EE_Attendee $attendee
+     * @return string
+     * @throws EE_Error
      */
     public function column_Registration_Count(EE_Attendee $attendee)
     {
-
+        $link = EEH_URL::add_query_args_and_nonce(
+            array(
+                'action' => 'default',
+                'ATT_ID' => $attendee->ID()
+            ),
+            REG_ADMIN_URL
+        );
+        return '<a href="' . $link . '">' . $attendee->getCustomSelect('Registration_Count') . '</a>';
     }
 
 
