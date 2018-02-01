@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
@@ -183,56 +185,36 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function release_tickets_for_expired_carts()
     {
         do_action('AHEE__EED_Ticket_Sales_Monitor__release_tickets_for_expired_carts__begin');
-        $expired_ticket_IDs      = array();
-        $valid_ticket_line_items = array();
-        $total_line_items        = EEM_Line_Item::instance()->get_total_line_items_with_no_transaction();
-        if (empty($total_line_items)) {
-            do_action(
-                'AHEE__EED_Ticket_Sales_Monitor__release_tickets_for_expired_carts__end',
-                $total_line_items,
-                $valid_ticket_line_items,
-                $expired_ticket_IDs
-            );
-            return;
-        }
-        $expired = current_time('timestamp') - EE_Registry::instance()->SSN->lifespan();
-        foreach ($total_line_items as $total_line_item) {
-            /** @var EE_Line_Item $total_line_item */
-            $ticket_line_items = EED_Ticket_Sales_Monitor::get_ticket_line_items_for_grand_total($total_line_item);
-            foreach ($ticket_line_items as $ticket_line_item) {
-                if (! $ticket_line_item instanceof EE_Line_Item) {
+        $expired_ticket_IDs = array();
+        $timestamp                 = time() - EE_Registry::instance()->SSN->lifespan();
+        $expired_ticket_line_items = EEM_Line_Item::instance()->getTicketLineItemsForExpiredCarts($timestamp);
+        if (! empty($expired_ticket_line_items)) {
+            foreach ($expired_ticket_line_items as $expired_ticket_line_item) {
+                if (! $expired_ticket_line_item instanceof EE_Line_Item) {
                     continue;
                 }
-                if ($total_line_item->timestamp(true) <= $expired) {
-                    $expired_ticket_IDs[$ticket_line_item->OBJ_ID()] = $ticket_line_item->OBJ_ID();
-                } else {
-                    $valid_ticket_line_items[$ticket_line_item->OBJ_ID()] = $ticket_line_item;
-                }
+                $expired_ticket_IDs[ $expired_ticket_line_item->OBJ_ID() ] = $expired_ticket_line_item->OBJ_ID();
             }
-        }
-        if (! empty($expired_ticket_IDs)) {
-            EED_Ticket_Sales_Monitor::release_reservations_for_tickets(
-                \EEM_Ticket::instance()->get_tickets_with_IDs($expired_ticket_IDs),
-                $valid_ticket_line_items
-            );
-            // let's get rid of expired line items so that they can't interfere with tracking
-            add_action(
-                'shutdown',
-                array('EED_Ticket_Sales_Monitor', 'clear_expired_line_items_with_no_transaction'),
-                999
-            );
+            if (! empty($expired_ticket_IDs)) {
+                EED_Ticket_Sales_Monitor::release_reservations_for_tickets(
+                    \EEM_Ticket::instance()->get_tickets_with_IDs($expired_ticket_IDs),
+                    array()
+                );
+                // now  let's get rid of expired line items so that they can't interfere with tracking
+                EED_Ticket_Sales_Monitor::clear_expired_line_items_with_no_transaction($timestamp);
+            }
         }
         do_action(
             'AHEE__EED_Ticket_Sales_Monitor__release_tickets_for_expired_carts__end',
-            $total_line_items,
-            $valid_ticket_line_items,
-            $expired_ticket_IDs
+            $expired_ticket_line_items,
+            array(),
+            array()
         );
     }
 
@@ -432,8 +414,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function ticket_quantity_updated(EE_Line_Item $line_item, $quantity = 1)
     {
@@ -473,8 +455,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function post_notices()
     {
@@ -488,8 +470,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _post_notices()
     {
@@ -661,8 +643,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function session_cart_reset(EE_Session $session)
     {
@@ -693,8 +675,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _session_cart_reset(EE_Cart $cart)
     {
@@ -870,8 +852,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      *
      * @throws \EE_Error
      * @throws \DomainException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws \InvalidArgumentException
      */
     public static function reset_reservation_counts()
@@ -972,14 +954,18 @@ class EED_Ticket_Sales_Monitor extends EED_Module
 
 
     /**
+     * @param int $timestamp
      * @return false|int
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
-    public static function clear_expired_line_items_with_no_transaction()
+    public static function clear_expired_line_items_with_no_transaction($timestamp = 0)
     {
+        $timestamp = absint($timestamp) !== 0
+            ? $timestamp
+            : time() - EE_Registry::instance()->SSN->lifespan();
         /** @type WPDB $wpdb */
         global $wpdb;
         return $wpdb->query(
@@ -987,7 +973,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                 'DELETE FROM ' . EEM_Line_Item::instance()->table() . '
                 WHERE TXN_ID = 0 AND LIN_timestamp <= %s',
                 // use GMT time because that's what LIN_timestamps are in
-                date('Y-m-d H:i:s', time() - EE_Registry::instance()->SSN->lifespan())
+                date('Y-m-d H:i:s', $timestamp)
             )
         );
     }
