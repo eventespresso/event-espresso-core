@@ -58,6 +58,7 @@ class EEW_Upcoming_Events extends EspressoWidget {
 			'show_everywhere' => FALSE,
 			'date_limit' => 2,
 			'limit' => 10,
+			'sort' => 'ASC',
 			'date_range' => FALSE,
 			'image_size' => 'medium'
 		);
@@ -68,6 +69,10 @@ class EEW_Upcoming_Events extends EspressoWidget {
 		$yes_no_values = array(
 			EE_Question_Option::new_instance( array( 'QSO_value' => FALSE, 'QSO_desc' => __('No', 'event_espresso'))),
 			EE_Question_Option::new_instance( array( 'QSO_value' => TRUE, 'QSO_desc' => __('Yes', 'event_espresso')))
+		);
+		$sort_values = array(
+			EE_Question_Option::new_instance( array( 'QSO_value' => 'ASC', 'QSO_desc' => __('ASC', 'event_espresso'))),
+			EE_Question_Option::new_instance( array( 'QSO_value' => 'DESC', 'QSO_desc' => __('DESC', 'event_espresso')))
 		);
 
 	?>
@@ -123,6 +128,20 @@ class EEW_Upcoming_Events extends EspressoWidget {
 				$yes_no_values,
 				$this->get_field_name('show_expired'),
 				$this->get_field_id('show_expired')
+			);
+			?>
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id('sort'); ?>">
+				<?php _e('Sort Events:', 'event_espresso'); ?>
+			</label>
+			<?php
+			echo EEH_Form_Fields::select(
+				__('Sort Events:', 'event_espresso'),
+				$instance['sort'],
+				$sort_values,
+				$this->get_field_name('sort'),
+				$this->get_field_id('sort')
 			);
 			?>
 		</p>
@@ -238,6 +257,7 @@ class EEW_Upcoming_Events extends EspressoWidget {
 		$instance['category_name'] = $new_instance['category_name'];
 		$instance['show_expired'] = $new_instance['show_expired'];
 		$instance['limit'] = $new_instance['limit'];
+		$instance['sort'] = $new_instance['sort'];
 		$instance['image_size'] = $new_instance['image_size'];
 		$instance['show_desc'] = $new_instance['show_desc'];
 		$instance['show_dates'] = $new_instance['show_dates'];
@@ -319,7 +339,7 @@ class EEW_Upcoming_Events extends EspressoWidget {
 					$where,
 					'limit' => $instance['limit'] > 0 ? '0,' . $instance['limit'] : '0,10',
 					'order_by' => 'Datetime.DTT_EVT_start',
-					'order' => 'ASC',
+					'order' => isset($instance['sort']) ? $instance['sort'] : 'ASC',
 					'group_by' => 'EVT_ID'
 				));
 
