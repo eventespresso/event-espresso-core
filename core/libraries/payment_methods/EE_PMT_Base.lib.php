@@ -1,18 +1,10 @@
 <?php
-
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidEntityException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\currency\CurrencyFactory;
-use EventEspresso\core\services\currency\MoneyFactory;
-use EventEspresso\core\services\formatters\AsciiOnly;
-use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter;
-
-//prevents a fatal error because somehow these aren't autoloaded elsewhere and are required in this class
 EE_Registry::instance()->load_lib('Gateway');
 EE_Registry::instance()->load_lib('Onsite_Gateway');
 EE_Registry::instance()->load_lib('Offsite_Gateway');
+
+use \EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter;
+use \EventEspresso\core\services\formatters\AsciiOnly;
 
 /**
  *
@@ -20,9 +12,10 @@ EE_Registry::instance()->load_lib('Offsite_Gateway');
  *
  * Description
  *
- * @package       Event Espresso
+ * @package            Event Espresso
  * @subpackage    core
- * @author        Mike Nelson
+ * @author                Mike Nelson
+ * 
  *
  */
 abstract class EE_PMT_Base
@@ -99,41 +92,15 @@ abstract class EE_PMT_Base
      */
     protected $_default_description = NULL;
 
-    /**
-     * @var MoneyFactory
-     */
-    protected $money_factory;
-
-    /**
-     * @var CurrencyFactory
-     */
-    protected $currency_factory;
-
 
     /**
      *
      * @param EE_Payment_Method $pm_instance
-     * @param MoneyFactory|null $money_factory
-     * @param CurrencyFactory $currency_factory
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
      * @throws EE_Error
+     * @return EE_PMT_Base
      */
-    public function __construct(
-        $pm_instance = NULL,
-        MoneyFactory $money_factory = null,
-        CurrencyFactory $currency_factory = null
-    ) {
-        if (! $money_factory instanceof  MoneyFactory) {
-            $money_factory = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\MoneyFactory');
-        }
-        if (! $currency_factory instanceof  CurrencyFactory) {
-            $currency_factory = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\currency\CurrencyFactory');
-        }
-        $this->currency_factory = $currency_factory;
-        $this->money_factory = $money_factory;
+    function __construct($pm_instance = NULL)
+    {
         if ($pm_instance instanceof EE_Payment_Method) {
             $this->set_instance($pm_instance);
         }
@@ -177,7 +144,6 @@ abstract class EE_PMT_Base
 
     /**
      * sets the file_folder property
-     * @throws ReflectionException
      */
     protected function _set_file_folder()
     {
@@ -255,7 +221,6 @@ abstract class EE_PMT_Base
     /**
      * Gets teh form for displaying to admins where they setup the payment method
      * @return EE_Payment_Method_Form
-     * @throws EE_Error
      */
     function settings_form()
     {
@@ -304,10 +269,9 @@ abstract class EE_PMT_Base
      * Gets the form for displaying to attendees where they can enter their billing info
      * which will be sent to teh gateway (can be null)
      *
-     * @param EE_Transaction $transaction
+     * @param \EE_Transaction $transaction
      * @param array $extra_args
-     * @return EE_Billing_Attendee_Info_Form|EE_Billing_Info_Form|null
-     * @throws EE_Error
+     * @return \EE_Billing_Attendee_Info_Form|\EE_Billing_Info_Form|null
      */
     public function billing_form(EE_Transaction $transaction = NULL, $extra_args = array())
     {
@@ -338,8 +302,8 @@ abstract class EE_PMT_Base
 
     /**
      * Creates the billing form for this payment method type
-     * @param EE_Transaction $transaction
-     * @return EE_Billing_Info_Form
+     * @param \EE_Transaction $transaction
+     * @return \EE_Billing_Info_Form
      */
     abstract function generate_new_billing_form(EE_Transaction $transaction = NULL);
 
@@ -348,8 +312,8 @@ abstract class EE_PMT_Base
      * apply_billing_form_debug_settings
      * applies debug data to the form
      *
-     * @param EE_Billing_Info_Form $billing_form
-     * @return EE_Billing_Info_Form
+     * @param \EE_Billing_Info_Form $billing_form
+     * @return \EE_Billing_Info_Form
      */
     public function apply_billing_form_debug_settings(EE_Billing_Info_Form $billing_form)
     {
@@ -388,9 +352,6 @@ abstract class EE_PMT_Base
      * @param string $method
      * @param bool $by_admin
      * @return EE_Payment
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      * @throws EE_Error
      */
     function process_payment(EE_Transaction $transaction, $amount = null, $billing_info = null, $return_url = null, $fail_url = '', $method = 'CART', $by_admin = false)
@@ -506,9 +467,6 @@ abstract class EE_PMT_Base
      * @param array $req_data
      * @param EE_Transaction $transaction
      * @return EE_Payment
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      * @throws EE_Error
      */
     public function handle_ipn($req_data, $transaction)
@@ -529,7 +487,6 @@ abstract class EE_PMT_Base
      * @param EE_Billing_Attendee_Info_Form $billing_form
      * @param EE_Transaction $transaction
      * @return boolean success
-     * @throws EE_Error
      */
     protected function _save_billing_info_to_attendee($billing_form, $transaction)
     {
@@ -558,7 +515,6 @@ abstract class EE_PMT_Base
      * @param EE_Transaction $transaction
      * @param array $req_data
      * @return EE_Payment
-     * @throws EE_Error
      */
     protected function find_payment_for_ipn(EE_Transaction $transaction, $req_data = array())
     {
@@ -593,7 +549,6 @@ abstract class EE_PMT_Base
      *
      * @param EE_Transaction $transaction
      * @return EE_Payment
-     * @throws EE_Error
      */
     public function finalize_payment_for($transaction)
     {
@@ -663,7 +618,6 @@ abstract class EE_PMT_Base
      * Other gateways may want to override this, such as offline gateways.
      * @param EE_Payment $payment
      * @return string
-     * @throws \DomainException
      */
     public function payment_overview_content(EE_Payment $payment)
     {

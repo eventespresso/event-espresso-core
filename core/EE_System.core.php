@@ -360,14 +360,14 @@ final class EE_System implements ResettableInterface
         $this->deactivateIncompatibleAddon(
             'Wait Lists',
             'EE_WAIT_LISTS_VERSION',
-            '1.0.0.rc.074',
+            '1.0.0.beta.074',
             'load_espresso_wait_lists',
             'EE_WAIT_LISTS_PLUGIN_FILE'
         );
         $this->deactivateIncompatibleAddon(
             'Automated Upcoming Event Notifications',
             'EE_AUTOMATED_UPCOMING_EVENT_NOTIFICATION_VERSION',
-            '1.0.0.rc.091',
+            '1.0.0.beta.091',
             'load_espresso_automated_upcoming_event_notification',
             'EE_AUTOMATED_UPCOMING_EVENT_NOTIFICATION_PLUGIN_FILE'
         );
@@ -837,17 +837,14 @@ final class EE_System implements ResettableInterface
     }
 
 
+
     /**
      * load_core_configuration
      * this is hooked into 'AHEE__EE_Bootstrap__load_core_configuration'
      * which runs during the WP 'plugins_loaded' action at priority 5
      *
      * @return void
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EE_Error
      * @throws ReflectionException
-     * @throws InvalidArgumentException
      */
     public function load_core_configuration()
     {
@@ -856,19 +853,7 @@ final class EE_System implements ResettableInterface
         //load textdomain
         EE_Load_Textdomain::load_textdomain();
         // load and setup EE_Config and EE_Network_Config
-        /** @var EE_Config $config */
         $config = $this->loader->getShared('EE_Config');
-        if($this->maintenance_mode->models_can_query()){
-            $country_model = $this->registry->load_model('Country');
-            /** @var \EventEspresso\core\services\database\TableAnalysis $table_analysis */
-            $table_analysis = $this->loader->getShared('EventEspresso\core\services\database\TableAnalysis');
-            if($table_analysis->tableExists($country_model->table())){
-                $country = $country_model->get_one_by_ID($config->organization->CNT_ISO);
-                if($country instanceof EE_Country) {
-                    $config->currency->setFromCountry($country);
-                }
-            }
-        }
         $this->loader->getShared('EE_Network_Config');
         // setup autoloaders
         // enable logging?

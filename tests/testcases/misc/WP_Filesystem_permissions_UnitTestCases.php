@@ -15,7 +15,6 @@ class WP_Filesystem_permissions_UnitTestCases extends WP_UnitTestCase
 
     function setUp()
     {
-        parent::setUp();
         add_filter('filesystem_method_file', array($this, 'filter_abstraction_file'));
         add_filter('filesystem_method', array($this, 'filter_fs_method'));
         WP_Filesystem();
@@ -28,7 +27,6 @@ class WP_Filesystem_permissions_UnitTestCases extends WP_UnitTestCase
         global $wp_filesystem;
         remove_filter('filesystem_method_file', array($this, 'filter_abstraction_file'));
         remove_filter('filesystem_method', array($this, 'filter_fs_method'));
-        $wp_filesystem = null;
         unset($wp_filesystem);
         parent::tearDown();
     }

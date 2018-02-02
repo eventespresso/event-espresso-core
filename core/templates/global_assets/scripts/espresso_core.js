@@ -534,6 +534,13 @@ jQuery( document ).ready( function ( $ ) {
 
 
 
+    // display a "you need to enable cookies" message if cookies are disabled in the browser settings
+    if (! navigator.cookieEnabled) {
+    	$('#ee-cookies-not-set-msg').removeClass('hidden');
+    }    
+
+
+
 });
 
 
