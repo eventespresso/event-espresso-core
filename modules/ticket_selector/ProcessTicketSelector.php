@@ -3,17 +3,22 @@
 namespace EventEspresso\modules\ticket_selector;
 
 use EE_Cart;
+use EE_Config;
 use EE_Core_Config;
 use EE_Error;
+use EE_Registry;
 use EE_Request;
 use EE_Session;
 use EE_Ticket;
 use EEH_Event_View;
+use EEM_Datetime;
 use EEM_Ticket;
 use EventEspresso\core\domain\services\factories\CartFactory;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use function install_font_family;
 use InvalidArgumentException;
+use ReflectionException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -64,25 +69,44 @@ class ProcessTicketSelector
 
     /**
      * ProcessTicketSelector constructor.
+     * NOTE: PLZ use the Loader to instantiate this class if need be
+     * so that all dependencies get injected correctly (which will happen automatically)
+     * Null values for parameters are only for backwards compatibility but will be removed later on.
      *
      * @param EE_Core_Config                    $core_config
      * @param EE_Request                        $request
      * @param EE_Session                        $session
      * @param EEM_Ticket                        $ticket_model
      * @param TicketDatetimeAvailabilityTracker $tracker
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     public function __construct(
-        EE_Core_Config $core_config,
-        EE_Request $request,
-        EE_Session $session,
-        EEM_Ticket $ticket_model,
-        TicketDatetimeAvailabilityTracker $tracker
+        EE_Core_Config $core_config = null,
+        EE_Request $request = null,
+        EE_Session $session = null,
+        EEM_Ticket $ticket_model = null,
+        TicketDatetimeAvailabilityTracker $tracker = null
     ) {
-        $this->core_config  = $core_config;
-        $this->request      = $request;
-        $this->session      = $session;
-        $this->ticket_model = $ticket_model;
-        $this->tracker      = $tracker;
+        $this->core_config  = $core_config instanceof EE_Core_Config
+            ? $core_config
+            : EE_Config::instance()->core;
+        $this->request      = $request instanceof EE_Request
+            ? $request
+            : EE_Registry::instance()->load_core('EE_Request');
+        $this->session      = $session instanceof EE_Session
+            ? $session
+            : EE_Registry::instance()->SSN;
+        $this->ticket_model = $ticket_model instanceof EEM_Ticket
+            ? $ticket_model
+            : EEM_Ticket::instance();
+        $this->tracker      = $tracker instanceof TicketDatetimeAvailabilityTracker
+            ? $tracker
+            : new TicketDatetimeAvailabilityTracker(EEM_Datetime::instance());
     }
 
 
@@ -162,7 +186,7 @@ class ProcessTicketSelector
      * process_ticket_selections
      *
      * @return array|bool
-     * @throws \ReflectionException
+     * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
@@ -240,7 +264,7 @@ class ProcessTicketSelector
      *
      * @param int $id
      * @return array|FALSE
-     * @throws \ReflectionException
+     * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
@@ -378,7 +402,7 @@ class ProcessTicketSelector
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function addTicketsToCart(array $valid)
     {
