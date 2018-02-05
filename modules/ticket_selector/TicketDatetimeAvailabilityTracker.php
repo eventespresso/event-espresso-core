@@ -210,22 +210,26 @@ class TicketDatetimeAvailabilityTracker
         // the appropriate singular or plural message based on the number of $available_spaces
         if ($total_ticket_count) {
             $msg = sprintf(
-                _n(
-                    'We\'re sorry, but there is only %1$s available space left for this event at this particular date and time. Please select a different number (or different combination) of tickets by cancelling the current selection and choosing again, or proceed to registration.',
-                    'We\'re sorry, but there are only %1$s available spaces left for this event at this particular date and time. Please select a different number (or different combination) of tickets by cancelling the current selection and choosing again, or proceed to registration.',
-                    $available_spaces,
-                    'event_espresso'
+                esc_html(
+                    _n(
+                        'We\'re sorry, but there is only %1$s available space left for this event at this particular date and time. Please select a different number (or different combination) of tickets by cancelling the current selection and choosing again, or proceed to registration.',
+                        'We\'re sorry, but there are only %1$s available spaces left for this event at this particular date and time. Please select a different number (or different combination) of tickets by cancelling the current selection and choosing again, or proceed to registration.',
+                        $available_spaces,
+                        'event_espresso'
+                    )
                 ),
                 $available_spaces,
                 '<br />'
             );
         } else {
             $msg = sprintf(
-                _n(
-                    'We\'re sorry, but there is only %1$s available space left for this event at this particular date and time. Please select a different number (or different combination) of tickets.',
-                    'We\'re sorry, but there are only %1$s available spaces left for this event at this particular date and time. Please select a different number (or different combination) of tickets.',
-                    $available_spaces,
-                    'event_espresso'
+                esc_html(
+                    _n(
+                        'We\'re sorry, but there is only %1$s available space left for this event at this particular date and time. Please select a different number (or different combination) of tickets.',
+                        'We\'re sorry, but there are only %1$s available spaces left for this event at this particular date and time. Please select a different number (or different combination) of tickets.',
+                        $available_spaces,
+                        'event_espresso'
+                    )
                 ),
                 $available_spaces,
                 '<br />'
