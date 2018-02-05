@@ -376,19 +376,23 @@ class ProcessTicketSelector
     private function maxAttendeesViolation(array $valid)
     {
         // ordering too many tickets !!!
-        $total_tickets_string = _n(
-            'You have attempted to purchase %s ticket.',
-            'You have attempted to purchase %s tickets.',
-            $valid['total_tickets'],
-            'event_espresso'
+        $total_tickets_string = esc_html(
+            _n(
+                'You have attempted to purchase %s ticket.',
+                'You have attempted to purchase %s tickets.',
+                $valid['total_tickets'],
+                'event_espresso'
+            )
         );
         $limit_error_1        = sprintf($total_tickets_string, $valid['total_tickets']);
         // dev only message
-        $max_attendees_string = _n(
-            'The registration limit for this event is %s ticket per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.',
-            'The registration limit for this event is %s tickets per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.',
-            $valid['max_atndz'],
-            'event_espresso'
+        $max_attendees_string = esc_html(
+            _n(
+                'The registration limit for this event is %s ticket per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.',
+                'The registration limit for this event is %s tickets per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.',
+                $valid['max_atndz'],
+                'event_espresso'
+            )
         );
         $limit_error_2    = sprintf($max_attendees_string, $valid['max_atndz'], $valid['max_atndz']);
         EE_Error::add_error($limit_error_1 . '<br/>' . $limit_error_2, __FILE__, __FUNCTION__, __LINE__);
@@ -513,14 +517,21 @@ class ProcessTicketSelector
 
 
     /**
-     * @param      $tickets_added
+     * @param $tickets_added
      * @return bool
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     private function processSuccessfulCart($tickets_added)
     {
         // die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
         if (apply_filters('FHEE__EED_Ticket_Selector__process_ticket_selections__success', $tickets_added)) {
+            // make sure cart is loaded
+            if(! $this->cart  instanceof EE_Cart){
+                $this->cart = CartFactory::getCart();
+            }
             do_action(
                 'FHEE__EE_Ticket_Selector__process_ticket_selections__before_redirecting_to_checkout',
                 $this->cart,
