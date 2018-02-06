@@ -16,7 +16,6 @@ use EEM_Ticket;
 use EventEspresso\core\domain\services\factories\CartFactory;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use function install_font_family;
 use InvalidArgumentException;
 use ReflectionException;
 
