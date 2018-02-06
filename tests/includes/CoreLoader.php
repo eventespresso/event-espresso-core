@@ -165,6 +165,13 @@ class CoreLoader
 
     public function postLoadWPandEE()
     {
+        // ensure date and time formats are set
+        if (! get_option('date_format')) {
+            update_option('date_format', 'F j, Y');
+        }
+        if (! get_option('timeFormat')) {
+            update_option('timeFormat', 'g:i a');
+        }
         EE_Registry::instance()->SSN = EE_Registry::instance()->load_core('EE_Session_Mock');
     }
 
