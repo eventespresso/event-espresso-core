@@ -212,8 +212,6 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         }
         do_action(
             'AHEE__EED_Ticket_Sales_Monitor__release_tickets_for_expired_carts__end',
-            array(), // $total_line_items
-            array(),    // $valid_ticket_line_items
             $expired_ticket_IDs,
             $expired_ticket_line_items
         );
