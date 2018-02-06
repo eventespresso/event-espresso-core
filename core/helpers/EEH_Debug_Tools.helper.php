@@ -426,7 +426,7 @@ class EEH_Debug_Tools
     protected static function heading($var_name = '', $heading_tag = 'h5', $margin = '', $line = 0)
     {
         if (EEH_Debug_Tools::plainOutput()) {
-            return "\n\n{$line}) {$var_name}";
+            return "\n{$line}) {$var_name}";
         }
         $margin = "25px 0 0 {$margin}";
         return '<' . $heading_tag . ' style="color:#2EA2CC; margin:' . $margin . ';"><b>' . $var_name . '</b>';
