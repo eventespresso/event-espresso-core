@@ -107,10 +107,6 @@ final class EE_Front_Controller
         add_filter('admin_url', array($this, 'maybe_force_admin_ajax_ssl'), 200, 1);
         // action hook EE
         do_action('AHEE__EE_Front_Controller__construct__done', $this);
-        // for checking that browser cookies are enabled
-        if (apply_filters('FHEE__EE_Front_Controller____construct__set_test_cookie', true)) {
-            setcookie('ee_cookie_test', uniqid('ect',true), time() + DAY_IN_SECONDS, '/');
-        }
     }
 
 
