@@ -3,19 +3,17 @@
 namespace EventEspresso\modules\ticket_selector;
 
 use EE_Cart;
-use EE_Config;
 use EE_Core_Config;
 use EE_Error;
-use EE_Registry;
 use EE_Request;
 use EE_Session;
 use EE_Ticket;
 use EEH_Event_View;
-use EEM_Datetime;
 use EEM_Ticket;
 use EventEspresso\core\domain\services\factories\CartFactory;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -91,21 +89,22 @@ class ProcessTicketSelector
         EEM_Ticket $ticket_model = null,
         TicketDatetimeAvailabilityTracker $tracker = null
     ) {
+        $loader = LoaderFactory::getLoader();
         $this->core_config  = $core_config instanceof EE_Core_Config
             ? $core_config
-            : EE_Config::instance()->core;
+            : $loader->getShared('EE_Core_Config');
         $this->request      = $request instanceof EE_Request
             ? $request
-            : EE_Registry::instance()->load_core('EE_Request');
+            : $loader->getShared('EE_Request');
         $this->session      = $session instanceof EE_Session
             ? $session
-            : EE_Registry::instance()->SSN;
+            : $loader->getShared('EE_Session');
         $this->ticket_model = $ticket_model instanceof EEM_Ticket
             ? $ticket_model
-            : EEM_Ticket::instance();
+            : $loader->getShared('EEM_Ticket');
         $this->tracker      = $tracker instanceof TicketDatetimeAvailabilityTracker
             ? $tracker
-            : new TicketDatetimeAvailabilityTracker(EEM_Datetime::instance());
+            : $loader->getShared('EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker');
     }
 
 
