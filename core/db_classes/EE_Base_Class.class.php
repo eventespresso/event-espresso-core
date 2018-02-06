@@ -116,6 +116,25 @@ abstract class EE_Base_Class
     protected $_model;
 
 
+    /**
+     * This is a cache of results from custom selections done on a query that constructs this entity. The only purpose
+     * for these values is for retrieval of the results, they are not further queryable and they are not persisted to
+     * the db.  They also do not automatically update if there are any changes to the data that produced their results.
+     * The format is a simple array of field_alias => field_value.  So for instance if a custom select was something
+     * like,  "Select COUNT(Registration.REG_ID) as Registration_Count ...", then the resulting value will be in this
+     * array as:
+     * array(
+     *  'Registration_Count' => 24
+     * );
+     * Note: if the custom select configuration for the query included a data type, the value will be in the data type
+     * provided for the query (@see EventEspresso\core\domain\values\model\CustomSelects::__construct phpdocs for more
+     * info)
+     *
+     * @var array
+     */
+    protected $custom_selection_results = array();
+
+
 
     /**
      * basic constructor for Event Espresso classes, performs any necessary initialization, and verifies it's children
@@ -338,6 +357,30 @@ abstract class EE_Base_Class
             throw new EE_Error(sprintf(__("A valid EE_Model_Field_Base could not be found for the given field name: %s",
                 "event_espresso"), $field_name));
         }
+    }
+
+
+    /**
+     * Set custom select values for model.
+     * @param array $custom_select_values
+     */
+    public function setCustomSelectsValues(array $custom_select_values)
+    {
+        $this->custom_selection_results = $custom_select_values;
+    }
+
+
+    /**
+     * Returns the custom select value for the provided alias if its set.
+     * If not set, returns null.
+     * @param string $alias
+     * @return string|int|float|null
+     */
+    public function getCustomSelect($alias)
+    {
+        return isset($this->custom_selection_results[$alias])
+            ? $this->custom_selection_results[$alias]
+            : null;
     }
 
 

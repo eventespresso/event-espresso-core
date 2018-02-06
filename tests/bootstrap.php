@@ -10,7 +10,7 @@ $core_loader->init();
 
 
 /**
- * redefining wp_mail function here as a mock for our tests.  Has to be done early
+ * Redefining wp_mail function here as a mock for our tests.  Has to be done early
  * to override the existing wp_mail.  Tests can use the given filter to adjust the responses as necessary.
  */
 function wp_mail($to, $subject, $message, $headers = '', $attachments = array())

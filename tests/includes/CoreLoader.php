@@ -90,7 +90,6 @@ class CoreLoader
         //make sure EE_session does not load
         tests_add_filter('FHEE_load_EE_Session', '__return_false');
         // and don't set cookies
-        tests_add_filter('FHEE__EE_Front_Controller____construct__set_test_cookie', '__return_false');
         tests_add_filter('FHEE__EE_Error__get_error__show_normal_exceptions', '__return_true');
         // we need to add these filters BEFORE the Registry is instantiated
         tests_add_filter(

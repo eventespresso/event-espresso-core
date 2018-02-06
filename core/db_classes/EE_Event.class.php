@@ -1227,6 +1227,42 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
     /**
+     * Adds a question group to this event
+     *
+     * @param EE_Question_Group|int $question_group_id_or_obj
+     * @param bool                  $for_primary if true, the question group will be added for the primary
+     *                                           registrant, if false will be added for others. default: false
+     * @return EE_Base_Class|EE_Question_Group
+     * @throws EE_Error
+     */
+    public function add_question_group($question_group_id_or_obj, $for_primary = false)
+    {
+        $extra = $for_primary
+            ? array('EQG_primary' => 1)
+            : array();
+        return $this->_add_relation_to($question_group_id_or_obj, 'Question_Group', $extra);
+    }
+
+
+    /**
+     * Removes a question group from the event
+     *
+     * @param EE_Question_Group|int $question_group_id_or_obj
+     * @param bool                  $for_primary if true, the question group will be removed from the primary
+     *                                           registrant, if false will be removed from others. default: false
+     * @return EE_Base_Class|EE_Question_Group
+     * @throws EE_Error
+     */
+    public function remove_question_group($question_group_id_or_obj, $for_primary = false)
+    {
+        $where = $for_primary
+            ? array('EQG_primary' => 1)
+            : array();
+        return $this->_remove_relation_to($question_group_id_or_obj, 'Question_Group', $where);
+    }
+
+
+    /**
      * Gets all the question groups, ordering them by QSG_order ascending
      *
      * @param array $query_params @see EEM_Base::get_all
