@@ -1133,7 +1133,12 @@ class EE_Register_Addon implements EEI_Plugin_API
             if (! empty(self::$_settings[ $addon_name ]['payment_method_paths'])) {
                 EE_Register_Payment_Method::deregister($addon_name);
             }
-            $addon = EE_Registry::instance()->getAddon($class_name);
+            try {
+                $addon = EE_Registry::instance()->getAddon($class_name);
+            }catch (OutOfBoundsException $addon_not_yet_registered_exception) {
+                //the add-on was not yet registered in the registry. That actually means we don't need to do as much cleanup
+                $addon = null;
+            }
             if ($addon instanceof EE_Addon) {
                 remove_action(
                     'deactivate_' . $addon->get_main_plugin_file_basename(),
