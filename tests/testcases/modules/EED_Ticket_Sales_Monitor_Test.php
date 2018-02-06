@@ -8,7 +8,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
+ *
  */
 class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
 {
@@ -32,9 +32,9 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
         $this->assertInstanceOf('EE_Line_Item', $ticket_line_item);
         $this->assertEquals($ticket_count, $ticket_line_item->quantity());
         if ($expired) {
-            $this->fake_expired_cart($total_line_item, current_time('timestamp') - DAY_IN_SECONDS);
+            $this->fake_expired_cart($total_line_item, time() - DAY_IN_SECONDS);
         }
-        $saved = $total_line_item->save_this_and_descendants();
+        $saved = $total_line_item->save_this_and_descendants_to_txn();
         // total, pretax, tax total, tax, event, ticket, price
         $this->assertEquals(7, $saved);
         return $ticket_line_item;
