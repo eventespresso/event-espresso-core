@@ -268,7 +268,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				KEY parent_order (LIN_parent,LIN_order),
 				KEY txn_type_timestamp (TXN_ID,LIN_type,LIN_timestamp),
 				KEY txn_obj_id_obj_type (TXN_ID,OBJ_ID,OBJ_type),
-				KEY obj_id_obj_type (OBJ_ID, OBJ_type)";
+				KEY obj_id_obj_type (OBJ_ID,OBJ_type)";
         $this->_get_table_manager()->dropIndex('esp_line_item', 'TXN_ID');
         $this->_get_table_manager()->dropIndex('esp_line_item', 'LIN_code');
         $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
