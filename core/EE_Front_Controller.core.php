@@ -517,7 +517,7 @@ final class EE_Front_Controller
 
     /**
      * @return void
-     * @deprecated $VID:$
+     * @deprecated 4.9.57.p
      */
     public function loadPersistentAdminNoticeManager()
     {
