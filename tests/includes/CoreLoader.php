@@ -169,8 +169,8 @@ class CoreLoader
         if (! get_option('date_format')) {
             update_option('date_format', 'F j, Y');
         }
-        if (! get_option('timeFormat')) {
-            update_option('timeFormat', 'g:i a');
+        if (! get_option('time_format')) {
+            update_option('time_format', 'g:i a');
         }
         EE_Registry::instance()->SSN = EE_Registry::instance()->load_core('EE_Session_Mock');
     }
