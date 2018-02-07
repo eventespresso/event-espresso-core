@@ -201,15 +201,15 @@ final class EE_Admin implements InterminableInterface
         if (EE_Maintenance_Mode::instance()->models_can_query()) {
             //ok so we want to enable the entire admin
             $this->persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(
-                'EventEspresso\core\services\notifications\PersistentAdminNoticeManager',
-                array(
-                    EE_Admin_Page::add_query_args_and_nonce(
-                        array(
-                            'page'   => EE_Registry::instance()->REQ->get('page', ''),
-                            'action' => EE_Registry::instance()->REQ->get('action', ''),
-                        ),
-                        EE_ADMIN_URL
+                'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+            );
+            $this->persistent_admin_notice_manager->setReturnUrl(
+                EE_Admin_Page::add_query_args_and_nonce(
+                    array(
+                        'page'   => EE_Registry::instance()->REQ->get('page', ''),
+                        'action' => EE_Registry::instance()->REQ->get('action', ''),
                     ),
+                    EE_ADMIN_URL
                 )
             );
             $this->maybeSetDatetimeWarningNotice();
