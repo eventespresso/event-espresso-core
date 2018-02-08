@@ -1071,69 +1071,69 @@ class EE_Register_Addon implements EEI_Plugin_API
     public static function deregister($addon_name = null)
     {
         if (isset(self::$_settings[ $addon_name ]['class_name'])) {
-            do_action('AHEE__EE_Register_Addon__deregister__before', $addon_name);
-            $class_name = self::$_settings[ $addon_name ]['class_name'];
-            if (! empty(self::$_settings[ $addon_name ]['dms_paths'])) {
-                // setup DMS
-                EE_Register_Data_Migration_Scripts::deregister($addon_name);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['admin_path'])) {
-                // register admin page
-                EE_Register_Admin_Page::deregister($addon_name);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['module_paths'])) {
-                // add to list of modules to be registered
-                EE_Register_Module::deregister($addon_name);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['shortcode_paths'])
-                || ! empty(self::$_settings[ $addon_name ]['shortcode_fqcns'])
-            ) {
-                // add to list of shortcodes to be registered
-                EE_Register_Shortcode::deregister($addon_name);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['config_class'])) {
-                // if config_class present let's register config.
-                EE_Register_Config::deregister(self::$_settings[ $addon_name ]['config_class']);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['widget_paths'])) {
-                // add to list of widgets to be registered
-                EE_Register_Widget::deregister($addon_name);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['model_paths'])
-                || ! empty(self::$_settings[ $addon_name ]['class_paths'])
-            ) {
-                // add to list of shortcodes to be registered
-                EE_Register_Model::deregister($addon_name);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['model_extension_paths'])
-                || ! empty(self::$_settings[ $addon_name ]['class_extension_paths'])
-            ) {
-                // add to list of shortcodes to be registered
-                EE_Register_Model_Extensions::deregister($addon_name);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['message_types'])) {
-                foreach (
-                    (array) self::$_settings[ $addon_name ]['message_types'] as $message_type =>
-                    $message_type_settings
-                ) {
-                    EE_Register_Message_Type::deregister($message_type);
-                }
-            }
-            //deregister capabilities for addon
-            if (
-                ! empty(self::$_settings[ $addon_name ]['capabilities'])
-                || ! empty(self::$_settings[ $addon_name ]['capability_maps'])
-            ) {
-                EE_Register_Capabilities::deregister($addon_name);
-            }
-            //deregister custom_post_types for addon
-            if (! empty(self::$_settings[ $addon_name ]['custom_post_types'])) {
-                EE_Register_CPT::deregister($addon_name);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['payment_method_paths'])) {
-                EE_Register_Payment_Method::deregister($addon_name);
-            }
             try {
+                do_action('AHEE__EE_Register_Addon__deregister__before', $addon_name);
+                $class_name = self::$_settings[ $addon_name ]['class_name'];
+                if (! empty(self::$_settings[ $addon_name ]['dms_paths'])) {
+                    // setup DMS
+                    EE_Register_Data_Migration_Scripts::deregister($addon_name);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['admin_path'])) {
+                    // register admin page
+                    EE_Register_Admin_Page::deregister($addon_name);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['module_paths'])) {
+                    // add to list of modules to be registered
+                    EE_Register_Module::deregister($addon_name);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['shortcode_paths'])
+                    || ! empty(self::$_settings[ $addon_name ]['shortcode_fqcns'])
+                ) {
+                    // add to list of shortcodes to be registered
+                    EE_Register_Shortcode::deregister($addon_name);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['config_class'])) {
+                    // if config_class present let's register config.
+                    EE_Register_Config::deregister(self::$_settings[ $addon_name ]['config_class']);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['widget_paths'])) {
+                    // add to list of widgets to be registered
+                    EE_Register_Widget::deregister($addon_name);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['model_paths'])
+                    || ! empty(self::$_settings[ $addon_name ]['class_paths'])
+                ) {
+                    // add to list of shortcodes to be registered
+                    EE_Register_Model::deregister($addon_name);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['model_extension_paths'])
+                    || ! empty(self::$_settings[ $addon_name ]['class_extension_paths'])
+                ) {
+                    // add to list of shortcodes to be registered
+                    EE_Register_Model_Extensions::deregister($addon_name);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['message_types'])) {
+                    foreach (
+                        (array) self::$_settings[ $addon_name ]['message_types'] as $message_type =>
+                        $message_type_settings
+                    ) {
+                        EE_Register_Message_Type::deregister($message_type);
+                    }
+                }
+                //deregister capabilities for addon
+                if (
+                    ! empty(self::$_settings[ $addon_name ]['capabilities'])
+                    || ! empty(self::$_settings[ $addon_name ]['capability_maps'])
+                ) {
+                    EE_Register_Capabilities::deregister($addon_name);
+                }
+                //deregister custom_post_types for addon
+                if (! empty(self::$_settings[ $addon_name ]['custom_post_types'])) {
+                    EE_Register_CPT::deregister($addon_name);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['payment_method_paths'])) {
+                    EE_Register_Payment_Method::deregister($addon_name);
+                }
                 $addon = EE_Registry::instance()->getAddon($class_name);
             }catch (OutOfBoundsException $addon_not_yet_registered_exception) {
                 //the add-on was not yet registered in the registry. That actually means we don't need to do as much cleanup
