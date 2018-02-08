@@ -1135,27 +1135,26 @@ class EE_Register_Addon implements EEI_Plugin_API
                     EE_Register_Payment_Method::deregister($addon_name);
                 }
                 $addon = EE_Registry::instance()->getAddon($class_name);
+                if ($addon instanceof EE_Addon) {
+                    remove_action(
+                        'deactivate_' . $addon->get_main_plugin_file_basename(),
+                        array($addon, 'deactivation')
+                    );
+                    remove_action(
+                        'AHEE__EE_System__perform_activations_upgrades_and_migrations',
+                        array($addon, 'initialize_db_if_no_migrations_required')
+                    );
+                    //remove `after_registration` call
+                    remove_action(
+                        'AHEE__EE_System__load_espresso_addons__complete',
+                        array($addon, 'after_registration'),
+                        999
+                    );
+                }
+                EE_Registry::instance()->removeAddon($class_name);
             }catch (OutOfBoundsException $addon_not_yet_registered_exception) {
                 //the add-on was not yet registered in the registry. That actually means we don't need to do as much cleanup
-                $addon = null;
             }
-            if ($addon instanceof EE_Addon) {
-                remove_action(
-                    'deactivate_' . $addon->get_main_plugin_file_basename(),
-                    array($addon, 'deactivation')
-                );
-                remove_action(
-                    'AHEE__EE_System__perform_activations_upgrades_and_migrations',
-                    array($addon, 'initialize_db_if_no_migrations_required')
-                );
-                //remove `after_registration` call
-                remove_action(
-                    'AHEE__EE_System__load_espresso_addons__complete',
-                    array($addon, 'after_registration'),
-                    999
-                );
-            }
-            EE_Registry::instance()->removeAddon($class_name);
             unset(self::$_settings[ $addon_name ]);
             do_action('AHEE__EE_Register_Addon__deregister__after', $addon_name);
         }
