@@ -12,6 +12,8 @@ defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
 
 /**
  * EED_Recaptcha
+ * PLZ NOTE: ALL ADMIN SETTINGS FUNCTIONALITY HAS BEEN MOVED TO
+ * \EventEspresso\caffeinated\modules\recaptcha_invisible\RecaptchaAdminSettings
  *
  * @package        Event Espresso
  * @subpackage     /modules/recaptcha/
@@ -19,6 +21,11 @@ defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
  */
 class EED_Recaptcha extends EED_Module
 {
+
+    /**
+     * @var EE_Registration_Config $config
+     */
+    private static $config;
 
     /**
      * @type bool $_not_a_robot
@@ -50,13 +57,11 @@ class EED_Recaptcha extends EED_Module
      */
     public static function set_hooks()
     {
+        EED_Recaptcha::$config = EE_Registry::instance()->CFG->registration;
         // use_captcha ?
         if (
-            EE_Registry::instance()->CFG->registration->use_captcha
-            && ! (
-                EE_Registry::instance()->REQ->get('step', '') === 'payment_options'
-                && (boolean) EE_Registry::instance()->REQ->get('revisit', false) === true
-            )
+            EED_Recaptcha::useRecaptcha()
+            && EED_Recaptcha::notPaymentOptionsRevisit()
         ) {
             EED_Recaptcha::set_definitions();
             EED_Recaptcha::enqueue_styles_and_scripts();
@@ -67,19 +72,19 @@ class EED_Recaptcha extends EED_Module
             );
             add_filter(
                 'FHEE__EED_Single_Page_Checkout__init___continue_reg',
-                array('EED_Recaptcha', 'not_a_robot'), 10
+                array('EED_Recaptcha', 'not_a_robot')
             );
             add_filter(
                 'FHEE__EE_SPCO_Reg_Step__set_completed___completed',
-                array('EED_Recaptcha', 'not_a_robot'), 10
+                array('EED_Recaptcha', 'not_a_robot')
             );
             add_filter(
                 'FHEE__EE_SPCO_JSON_Response___toString__JSON_response',
-                array('EED_Recaptcha', 'recaptcha_response'), 10, 1
+                array('EED_Recaptcha', 'recaptcha_response')
             );
             add_filter(
                 'FHEE__EED_Recaptcha___bypass_recaptcha__bypass_request_params_array',
-                array('EED_Recaptcha', 'bypass_recaptcha_for_spco_load_payment_method'), 10, 1
+                array('EED_Recaptcha', 'bypass_recaptcha_for_spco_load_payment_method')
             );
         }
     }
@@ -95,28 +100,28 @@ class EED_Recaptcha extends EED_Module
      */
     public static function set_hooks_admin()
     {
+        EED_Recaptcha::$config = EE_Registry::instance()->CFG->registration;
         EED_Recaptcha::set_definitions();
         // use_captcha ?
         if (
-            EE_Registry::instance()->CFG->registration->use_captcha
+            EED_Recaptcha::useRecaptcha()
+            && EED_Recaptcha::notPaymentOptionsRevisit()
             && EE_Registry::instance()->REQ->get('step', '') !== ''
-            && ! (
-                EE_Registry::instance()->REQ->get('step', '') === 'payment_options'
-                && (boolean) EE_Registry::instance()->REQ->get('revisit', false) === true
-            )
         ) {
             EED_Recaptcha::enqueue_styles_and_scripts();
-            add_filter('FHEE__EED_Single_Page_Checkout__init___continue_reg', array('EED_Recaptcha', 'not_a_robot'),
-                10);
-            add_filter('FHEE__EE_SPCO_Reg_Step__set_completed___completed', array('EED_Recaptcha', 'not_a_robot'), 10);
-            add_filter('FHEE__EE_SPCO_JSON_Response___toString__JSON_response',
-                array('EED_Recaptcha', 'recaptcha_response'), 10, 1);
+            add_filter(
+                'FHEE__EED_Single_Page_Checkout__init___continue_reg',
+                array('EED_Recaptcha', 'not_a_robot')
+            );
+            add_filter(
+                'FHEE__EE_SPCO_Reg_Step__set_completed___completed',
+                array('EED_Recaptcha', 'not_a_robot')
+            );
+            add_filter(
+                'FHEE__EE_SPCO_JSON_Response___toString__JSON_response',
+                array('EED_Recaptcha', 'recaptcha_response')
+            );
         }
-        // admin settings
-        add_action('AHEE__Extend_Registration_Form_Admin_Page___reg_form_settings_template',
-            array('EED_Recaptcha', 'admin_settings'), 10, 1);
-        add_filter('FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration',
-            array('EED_Recaptcha', 'update_admin_settings'), 10, 1);
     }
 
 
@@ -128,7 +133,10 @@ class EED_Recaptcha extends EED_Module
         if (is_user_logged_in()) {
             EED_Recaptcha::$_not_a_robot = true;
         }
-        define('RECAPTCHA_BASE_PATH', rtrim(str_replace(array('\\', '/'), DS, plugin_dir_path(__FILE__)), DS) . DS);
+        define(
+            'RECAPTCHA_BASE_PATH',
+            rtrim(str_replace(array('\\', '/'), DS, plugin_dir_path(__FILE__)), DS) . DS
+        );
         define('RECAPTCHA_BASE_URL', plugin_dir_url(__FILE__));
     }
 
@@ -146,6 +154,31 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
+     * @return boolean
+     */
+    public static function useRecaptcha()
+    {
+        return EED_Recaptcha::$config->use_captcha
+               && EED_Recaptcha::$config->recaptcha_theme !== 'invisible';
+    }
+
+
+    /**
+     * @return boolean
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     */
+    public static function notPaymentOptionsRevisit()
+    {
+        return ! (
+            EE_Registry::instance()->REQ->get('step', '') === 'payment_options'
+            && (boolean) EE_Registry::instance()->REQ->get('revisit', false) === true
+        );
+    }
+
+
+    /**
      * @return void
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -153,22 +186,37 @@ class EED_Recaptcha extends EED_Module
      */
     public static function enqueue_styles_and_scripts()
     {
-        wp_register_script('espresso_recaptcha', RECAPTCHA_BASE_URL . 'scripts' . DS . 'espresso_recaptcha.js',
-            array('single_page_checkout'), EVENT_ESPRESSO_VERSION, true);
-        wp_register_script('google_recaptcha', 'https://www.google.com/recaptcha/api.js?hl='
-                                               . EE_Registry::instance()->CFG->registration->recaptcha_language,
-            array('espresso_recaptcha'), EVENT_ESPRESSO_VERSION, true);
-        EE_Registry::$i18n_js_strings['no_SPCO_error']      = __('It appears the Single Page Checkout javascript was not loaded properly! Please refresh the page and try again or contact support.',
-            'event_espresso');
-        EE_Registry::$i18n_js_strings['no_recaptcha_error'] = __('There appears to be a problem with the reCAPTCHA configuration! Please check the admin settings or contact support.',
-            'event_espresso');
-        EE_Registry::$i18n_js_strings['recaptcha_fail']     = __('Please complete the anti-spam test before proceeding.',
-            'event_espresso');
+        wp_register_script(
+            'espresso_recaptcha',
+            RECAPTCHA_BASE_URL . 'scripts' . DS . 'espresso_recaptcha.js',
+            array('single_page_checkout'),
+            EVENT_ESPRESSO_VERSION,
+            true
+        );
+        wp_register_script(
+            'google_recaptcha',
+            'https://www.google.com/recaptcha/api.js?hl=' . EED_Recaptcha::$config->recaptcha_language,
+            array('espresso_recaptcha'),
+            EVENT_ESPRESSO_VERSION,
+            true
+        );
+        EE_Registry::$i18n_js_strings['no_SPCO_error']      = __(
+            'It appears the Single Page Checkout javascript was not loaded properly! Please refresh the page and try again or contact support.',
+            'event_espresso'
+        );
+        EE_Registry::$i18n_js_strings['no_recaptcha_error'] = __(
+            'There appears to be a problem with the reCAPTCHA configuration! Please check the admin settings or contact support.',
+            'event_espresso'
+        );
+        EE_Registry::$i18n_js_strings['recaptcha_fail']     = __(
+            'Please complete the anti-spam test before proceeding.',
+            'event_espresso'
+        );
     }
 
 
     /**
-     * @param WP $WP
+     * @param \WP $WP
      */
     public function run($WP)
     {
@@ -185,8 +233,7 @@ class EED_Recaptcha extends EED_Module
     {
         $not_a_robot = is_bool(EED_Recaptcha::$_not_a_robot)
             ? EED_Recaptcha::$_not_a_robot
-            :
-            EED_Recaptcha::recaptcha_passed();
+            : EED_Recaptcha::recaptcha_passed();
         return $not_a_robot;
     }
 
@@ -205,19 +252,17 @@ class EED_Recaptcha extends EED_Module
             return;
         }
         // don't display if not using recaptcha or user is logged in
-        if (EE_Registry::instance()->CFG->registration->use_captcha) {
+        if (EED_Recaptcha::useRecaptcha() && ! EED_Recaptcha::$_not_a_robot) {
             // only display if they have NOT passed the test yet
-            if (! EED_Recaptcha::$_not_a_robot) {
-                EEH_Template::display_template(
-                    RECAPTCHA_BASE_PATH . DS . 'templates' . DS . 'recaptcha.template.php',
-                    array(
-                        'recaptcha_publickey' => EE_Registry::instance()->CFG->registration->recaptcha_publickey,
-                        'recaptcha_theme'     => EE_Registry::instance()->CFG->registration->recaptcha_theme,
-                        'recaptcha_type'      => EE_Registry::instance()->CFG->registration->recaptcha_type,
-                    )
-                );
-                wp_enqueue_script('google_recaptcha');
-            }
+            EEH_Template::display_template(
+                RECAPTCHA_BASE_PATH . DS . 'templates' . DS . 'recaptcha.template.php',
+                array(
+                    'recaptcha_publickey' => EED_Recaptcha::$config->recaptcha_publickey,
+                    'recaptcha_theme'     => EED_Recaptcha::$config->recaptcha_theme,
+                    'recaptcha_type'      => EED_Recaptcha::$config->recaptcha_type,
+                )
+            );
+            wp_enqueue_script('google_recaptcha');
         }
     }
 
@@ -281,13 +326,16 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     * @return    boolean
+     * @return boolean
      */
     private static function _bypass_recaptcha()
     {
-        // an array of key value pairs that must match exactly with the incoming request, in order to bypass recaptcha for the current request ONLY
-        $bypass_request_params_array = apply_filters('FHEE__EED_Recaptcha___bypass_recaptcha__bypass_request_params_array',
-            array());
+        // an array of key value pairs that must match exactly with the incoming request,
+        // in order to bypass recaptcha for the current request ONLY
+        $bypass_request_params_array = (array) apply_filters(
+            'FHEE__EED_Recaptcha___bypass_recaptcha__bypass_request_params_array',
+            array()
+        );
         // does $bypass_request_params_array have any values ?
         if (empty($bypass_request_params_array)) {
             return false;
@@ -295,8 +343,11 @@ class EED_Recaptcha extends EED_Module
         // initially set bypass to TRUE
         $bypass_recaptcha = true;
         foreach ($bypass_request_params_array as $key => $value) {
-            // if $key is not found or value doesn't match exactly, then toggle bypass to FALSE, otherwise carry over it's value. This way, one missed setting results in no bypass
-            $bypass_recaptcha = isset($_REQUEST[ $key ]) && $_REQUEST[ $key ] === $value ? $bypass_recaptcha : false;
+            // if $key is not found or value doesn't match exactly, then toggle bypass to FALSE,
+            // otherwise carry over it's value. This way, one missed setting results in no bypass
+            $bypass_recaptcha = isset($_REQUEST[ $key ]) && $_REQUEST[ $key ] === $value
+                ? $bypass_recaptcha
+                : false;
         }
         return $bypass_recaptcha;
     }
@@ -310,7 +361,10 @@ class EED_Recaptcha extends EED_Module
      */
     private static function _get_recaptcha_response()
     {
-        EED_Recaptcha::$_recaptcha_response = EE_Registry::instance()->REQ->get('g-recaptcha-response', false);
+        EED_Recaptcha::$_recaptcha_response = EE_Registry::instance()->REQ->get(
+            'g-recaptcha-response',
+            false
+        );
     }
 
 
@@ -323,7 +377,7 @@ class EED_Recaptcha extends EED_Module
     private static function _process_recaptcha_response()
     {
         // verify library is loaded
-        if (! class_exists('\\ReCaptcha\\ReCaptcha')) {
+        if (! class_exists('\ReCaptcha\ReCaptcha')) {
             require_once RECAPTCHA_BASE_PATH . DS . 'autoload.php';
         }
         // The response from reCAPTCHA
@@ -334,7 +388,7 @@ class EED_Recaptcha extends EED_Module
             // if allow_url_fopen is Off, then set a different request method
             $request_method     = ! ini_get('allow_url_fopen') ? new SocketPost() : null;
             $recaptcha          = new ReCaptcha(
-                EE_Registry::instance()->CFG->registration->recaptcha_privatekey,
+                EED_Recaptcha::$config->recaptcha_privatekey,
                 $request_method
             );
             $recaptcha_response = $recaptcha->verify(
