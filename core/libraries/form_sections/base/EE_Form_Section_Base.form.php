@@ -1,4 +1,6 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\libraries\form_sections\strategies\filter\FormHtmlFilter;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
@@ -88,11 +90,11 @@ abstract class EE_Form_Section_Base
     protected $_form_html_filter;
 
 
-
     /**
      * @param array $options_array {
      * @type        $name          string the name for this form section, if you want to explicitly define it
      *                             }
+     * @throws InvalidDataTypeException
      */
     public function __construct($options_array = array())
     {
@@ -102,6 +104,9 @@ abstract class EE_Form_Section_Base
             $key = '_' . $key;
             if (property_exists($this, $key) && empty($this->{$key})) {
                 $this->{$key} = $value;
+                if($key === '_subsections' && ! is_array($value)) {
+                    throw new InvalidDataTypeException($key, $value, 'array');
+                }
             }
         }
         // set parser which allows the form section's rendered HTML to be filtered
