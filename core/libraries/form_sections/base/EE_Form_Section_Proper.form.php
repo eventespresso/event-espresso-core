@@ -225,7 +225,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * After the form section is initially created, call this to sanitize the data in the submission
      * which relates to this form section, validate it, and set it as properties on the form.
@@ -244,16 +243,24 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *                             But if the data has already been validated
      *                             (eg you validated the data then stored it in the DB)
      *                             you may want to skip this step.
+     * @throws EE_Error
      */
     public function receive_form_submission($req_data = null, $validate = true)
     {
-        $req_data = apply_filters('FHEE__EE_Form_Section_Proper__receive_form_submission__req_data', $req_data, $this,
-            $validate);
+        $req_data = apply_filters(
+            'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data',
+            $req_data,
+            $this,
+            $validate
+        );
         if ($req_data === null) {
             $req_data = array_merge($_GET, $_POST);
         }
-        $req_data = apply_filters('FHEE__EE_Form_Section_Proper__receive_form_submission__request_data', $req_data,
-            $this);
+        $req_data = (array) apply_filters(
+            'FHEE__EE_Form_Section_Proper__receive_form_submission__request_data',
+            $req_data,
+            $this
+        );
         $this->_normalize($req_data);
         if ($validate) {
             $this->_validate();
@@ -262,7 +269,12 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                 $this->store_submitted_form_data_in_session();
             }
         }
-        do_action('AHEE__EE_Form_Section_Proper__receive_form_submission__end', $req_data, $this, $validate);
+        do_action(
+            'AHEE__EE_Form_Section_Proper__receive_form_submission__end',
+            $req_data,
+            $this,
+            $validate
+        );
     }
 
 
@@ -543,7 +555,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     /**
      * gets teh default name of this form section if none is specified
      *
-     * @return string
+     * @return void
      */
     protected function _set_default_name_if_empty()
     {
@@ -574,12 +586,12 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * returns HTML for displaying this form section. recursively calls display_section() on all subsections
      *
      * @param bool $display_previously_submitted_data
      * @return string
+     * @throws EE_Error
      */
     public function get_html($display_previously_submitted_data = true)
     {
@@ -603,7 +615,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * See http://stackoverflow.com/questions/4957446/load-external-css-file-in-body-tag.
      * So if your form enqueues CSS, it's preferred to call this before wp_enqueue_scripts.)
      *
-     * @return string
+     * @return void
      * @throws \EE_Error
      */
     public function enqueue_js()
@@ -952,7 +964,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *                                                      set yet, etc.)
      * @return EE_Form_Section_Proper[]
      */
-    public function subsections($require_construction_to_be_finalized = true)
+    public function subsections($require_construction_to_be_finalized = false)
     {
         if ($require_construction_to_be_finalized) {
             $this->ensure_construct_finalized_called();
@@ -1177,6 +1189,28 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                 $subsection->_construct_finalize($this, $name);
             }
         }
+    }
+
+
+    /**
+     * @param string $subsection_name
+     * @param bool   $recursive
+     * @return bool
+     */
+    public function has_subsection($subsection_name, $recursive = false)
+    {
+        foreach ($this->_subsections as $name => $subsection) {if(
+                $name === $subsection_name
+                || (
+                    $recursive
+                    && $subsection instanceof EE_Form_Section_Proper
+                    && $subsection->has_subsection($subsection_name, $recursive)
+                )
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
