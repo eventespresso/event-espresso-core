@@ -2320,7 +2320,7 @@ class EE_Registration_Config extends EE_Config_Base
      * ReCaptcha Theme
      *
      * @var string $recaptcha_theme
-     *    options: 'dark    ', 'light'
+     *    options: 'dark', 'light', 'invisible'
      */
     public $recaptcha_theme;
 
