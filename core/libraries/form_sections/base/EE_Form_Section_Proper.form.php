@@ -964,7 +964,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *                                                      set yet, etc.)
      * @return EE_Form_Section_Proper[]
      */
-    public function subsections($require_construction_to_be_finalized = false)
+    public function subsections($require_construction_to_be_finalized = true)
     {
         if ($require_construction_to_be_finalized) {
             $this->ensure_construct_finalized_called();
