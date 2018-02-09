@@ -1,25 +1,21 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use ReCaptcha\ReCaptcha;
+use ReCaptcha\RequestMethod\SocketPost;
+use ReCaptcha\Response;
+
+defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
 
 
 
 /**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package            Event Espresso
- * @ author            Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                    http://www.eventespresso.com
- * @ version            4.0
- * ------------------------------------------------------------------------
  * EED_Recaptcha
  *
  * @package        Event Espresso
  * @subpackage     /modules/recaptcha/
  * @author         Brent Christensen
- * ------------------------------------------------------------------------
  */
 class EED_Recaptcha extends EED_Module
 {
@@ -36,7 +32,7 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     * @return EED_Recaptcha
+     * @return EED_Module|EED_Recaptcha
      */
     public static function instance()
     {
@@ -45,10 +41,12 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     *    set_hooks - for hooking into EE Core, other modules, etc
+     * set_hooks - for hooking into EE Core, other modules, etc
      *
-     * @access    public
-     * @return    void
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public static function set_hooks()
     {
@@ -88,10 +86,12 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     *    set_hooks_admin - for hooking into EE Admin Core, other modules, etc
+     * set_hooks_admin - for hooking into EE Admin Core, other modules, etc
      *
-     * @access    public
-     * @return    void
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public static function set_hooks_admin()
     {
@@ -121,10 +121,7 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     *    set_definitions
-     *
-     * @access    public
-     * @return    void
+     * @return void
      */
     public static function set_definitions()
     {
@@ -137,10 +134,7 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     * set_late_hooks
-     *
-     * @access    public
-     * @return    void
+     * @return void
      */
     public static function set_late_hooks()
     {
@@ -152,10 +146,10 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     *    enqueue_styles_and_scripts
-     *
-     * @access    public
-     * @return    void
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public static function enqueue_styles_and_scripts()
     {
@@ -174,10 +168,7 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     *    run
-     *
-     * @access    public
-     * @param \WP $WP
+     * @param WP $WP
      */
     public function run($WP)
     {
@@ -185,9 +176,10 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     * not_a_robot
-     *
      * @return boolean
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public static function not_a_robot()
     {
@@ -200,10 +192,11 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     * display_recaptcha
-     *
-     * @access public
      * @return void
+     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public static function display_recaptcha()
     {
@@ -230,10 +223,10 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     * bypass_recaptcha_for_spco_load_payment_method
-     *
-     * @access public
-     * @return string
+     * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public static function bypass_recaptcha_for_spco_load_payment_method()
     {
@@ -246,10 +239,10 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     * recaptcha_passed
-     *
-     * @access public
      * @return boolean
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public static function recaptcha_passed()
     {
@@ -272,11 +265,8 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     * recaptcha_response
-     *
-     * @access public
      * @param array $recaptcha_response
-     * @return boolean
+     * @return array
      */
     public static function recaptcha_response($recaptcha_response = array())
     {
@@ -291,9 +281,6 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     *    _bypass_recaptcha
-     *
-     * @access private
      * @return    boolean
      */
     private static function _bypass_recaptcha()
@@ -316,10 +303,10 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     *    process_recaptcha
-     *
-     * @access private
-     * @return    boolean
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     private static function _get_recaptcha_response()
     {
@@ -328,16 +315,16 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     *    process_recaptcha
-     *
-     * @access private
-     * @return    boolean
+     * @return boolean
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     private static function _process_recaptcha_response()
     {
         // verify library is loaded
         if (! class_exists('\\ReCaptcha\\ReCaptcha')) {
-            require_once(RECAPTCHA_BASE_PATH . DS . 'autoload.php');
+            require_once RECAPTCHA_BASE_PATH . DS . 'autoload.php';
         }
         // The response from reCAPTCHA
         EED_Recaptcha::_get_recaptcha_response();
@@ -345,8 +332,8 @@ class EED_Recaptcha extends EED_Module
         // Was there a reCAPTCHA response?
         if ($recaptcha_response) {
             // if allow_url_fopen is Off, then set a different request method
-            $request_method     = ! ini_get('allow_url_fopen') ? new \ReCaptcha\RequestMethod\SocketPost() : null;
-            $recaptcha          = new \ReCaptcha\ReCaptcha(
+            $request_method     = ! ini_get('allow_url_fopen') ? new SocketPost() : null;
+            $recaptcha          = new ReCaptcha(
                 EE_Registry::instance()->CFG->registration->recaptcha_privatekey,
                 $request_method
             );
@@ -355,11 +342,7 @@ class EED_Recaptcha extends EED_Module
                 $_SERVER['REMOTE_ADDR']
             );
         }
-        if ($recaptcha_response instanceof \ReCaptcha\Response && $recaptcha_response->isSuccess()) {
-            return true;
-        }
-        // sorry... it appears you can't don't know what soup or hamburgers are !!!
-        return false;
+        return $recaptcha_response instanceof Response && $recaptcha_response->isSuccess();
     }
 
 
@@ -368,10 +351,11 @@ class EED_Recaptcha extends EED_Module
 
     /***************************************        reCAPTCHA ADMIN SETTINGS        ***************************************/
     /**
-     * admin_settings
-     *
-     * @access public
-     * @return array
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public static function admin_settings()
     {
@@ -380,10 +364,11 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     * _recaptcha_main_settings
-     *
-     * @access protected
      * @return EE_Form_Section_Proper
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     protected static function _recaptcha_settings_form()
     {
@@ -412,10 +397,11 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     * _recaptcha_main_settings
-     *
-     * @access protected
      * @return EE_Form_Section_Proper
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     protected static function _recaptcha_main_settings()
     {
@@ -469,10 +455,11 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     * _recaptcha_appearance_settings
-     *
-     * @access protected
      * @return EE_Form_Section_Proper
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     protected static function _recaptcha_appearance_settings()
     {
@@ -576,40 +563,13 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     * _recaptcha_example
-     *
-     * @access protected
-     * @return EE_Form_Section_Proper
-     */
-    protected static function _recaptcha_example()
-    {
-        //		 if ( !empty( $recaptcha_example ) ) { ?>
-        <!--		-->
-        <!--			<h2 class="ee-admin-settings-hdr admin-recaptcha-settings-hdr">-->
-        <!--				--><?php //_e('reCAPTCHA Example', 'event_espresso'); ?>
-        <!--			</h2>-->
-        <!--			<p class="description">--><?php //_e('A reCAPTCHA displaying here means that you have a valid public key entered for the reCAPTCHA settings and this is how the reCAPTCHA will look with the currently set appearance settings.  If you do not see a reCAPTCHA then please doublecheck the key you entered for a public key.', 'event_espresso'); ?><!--</p>-->
-        <!--			<table class="form-table">-->
-        <!--				<tbody>-->
-        <!--		-->
-        <!--					<tr class="admin-recaptcha-settings-tr">-->
-        <!--						<td>-->
-        <!--							--><?php //echo $recaptcha_example; ?>
-        <!--						</td>-->
-        <!--					</tr>-->
-        <!--		-->
-        <!--				</tbody>-->
-        <!--			</table>-->
-        <!--		--><?php //}
-    }
-
-
-    /**
-     * admin_settings_template
-     *
-     * @access public
      * @param EE_Registration_Config $EE_Registration_Config
-     * @return array
+     * @return EE_Registration_Config
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws ReflectionException
+     * @throws EE_Error
      */
     public static function update_admin_settings(EE_Registration_Config $EE_Registration_Config)
     {
@@ -652,8 +612,6 @@ class EED_Recaptcha extends EED_Module
         } catch (EE_Error $e) {
             $e->get_error();
         }
-        //		d( $EE_Registration_Config );
-        //		die();
         return $EE_Registration_Config;
     }
 }
