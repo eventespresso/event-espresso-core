@@ -1156,9 +1156,7 @@ class EE_Register_Addon implements EEI_Plugin_API
                 //the add-on was not yet registered in the registry, so RegistryContainer::__get() throws this exception.
                 //also no need to worry about this or log it, it's ok to deregister an add-on before its registered in the registry
             } catch (Exception $e) {
-                EE_Log::instance()->log(
-                    __FILE__,
-                    __FUNCTION__,
+                error_log(
                     sprintf(
                         esc_html__('Exception of type %1$s caught while deregistering add-on $2$s, its message was "%3$s" and stack trace was "%4$s"', 'event_espresso'),
                         get_class($e),
