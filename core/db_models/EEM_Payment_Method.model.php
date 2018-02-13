@@ -319,6 +319,10 @@ class EEM_Payment_Method extends EEM_Base {
 				//only deactivate and notify the admin if the payment is active somewhere
 				$payment_method->deactivate();
 				$payment_method->save();
+                do_action(
+                    'AHEE__EEM_Payment_Method___create_objects_auto_deactivated_payment_method',
+                    $payment_method
+                );
                 new PersistentAdminNotice(
                     'auto-deactivated-' . $payment_method->type(),
                     sprintf(
