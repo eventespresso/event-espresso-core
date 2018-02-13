@@ -13,7 +13,9 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use Exception;
+use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -41,24 +43,24 @@ class PersistentAdminNoticeManager
      * if AJAX is not enabled, then the return URL will be used for redirecting back to the admin page where the
      * persistent admin notice was displayed, and ultimately dismissed from.
      *
-     * @type string $return_url
+     * @var string $return_url
      */
     private $return_url;
 
     /**
-     * @type CapabilitiesChecker $capabilities_checker
+     * @var CapabilitiesChecker $capabilities_checker
      */
     private $capabilities_checker;
 
     /**
-     * @type EE_Request $request
+     * @var EE_Request $request
      */
     private $request;
 
 
 
     /**
-     * CapChecker constructor
+     * PersistentAdminNoticeManager constructor
      *
      * @param string              $return_url  where to  redirect to after dismissing notices
      * @param CapabilitiesChecker $capabilities_checker
@@ -84,7 +86,7 @@ class PersistentAdminNoticeManager
      * @param string $return_url
      * @throws InvalidDataTypeException
      */
-    private function setReturnUrl($return_url)
+    public function setReturnUrl($return_url)
     {
         if (! is_string($return_url)) {
             throw new InvalidDataTypeException('$return_url', $return_url, 'string');
@@ -389,6 +391,30 @@ class PersistentAdminNoticeManager
         $this->getPersistentAdminNoticeCollection();
         $this->registerNotices();
         $this->saveNotices();
+        add_filter(
+            'PersistentAdminNoticeManager__registerAndSaveNotices__complete',
+            '__return_true'
+        );
+    }
+
+
+    /**
+     * @throws DomainException
+     * @throws InvalidDataTypeException
+     * @throws InvalidEntityException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     */
+    public static function loadRegisterAndSaveNotices()
+    {
+        /** @var PersistentAdminNoticeManager $persistent_admin_notice_manager */
+        $persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+        );
+        // if shutdown has already run, then call registerAndSaveNotices() manually
+        if(did_action('shutdown')){
+            $persistent_admin_notice_manager->registerAndSaveNotices();
+        }
     }
 
 
