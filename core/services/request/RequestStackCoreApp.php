@@ -70,6 +70,9 @@ class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCore
         do_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading');
         $this->setupFramework();
         $loader = LoaderFactory::getLoader();
+        $loader->getShared(
+            'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+        );
         // WP cron jobs
         $loader->getShared('EE_Cron_Tasks');
         $loader->getShared('EE_System');
