@@ -243,13 +243,13 @@ class EE_Request implements InterminableInterface
         $return = in_array($return, array('bool', 'key', 'value'), true)
             ? $return
             : 'is_set';
+        // replace wildcard chars with regex chars
+        $pattern = str_replace(
+            array("\*", "\?"),
+            array('.*', '.'),
+            preg_quote($pattern, '/')
+        );
         foreach ($request_params as $key => $request_param) {
-            // replace wildcard chars with regex chars
-            $pattern = str_replace(
-                array("\*", "\?"),
-                array('.*', '.'),
-                preg_quote($pattern, '/')
-            );
             if (preg_match('/^' . $pattern . '$/is', $key)) {
                 // return value for request param
                 if ($return === 'value'){
