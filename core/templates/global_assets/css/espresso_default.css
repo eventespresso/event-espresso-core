@@ -385,6 +385,12 @@ input.ee-register-button {
 	float: right;
 }
 
+.ee-button-disabled,
+.ee-button-disabled:hover {
+    border     : 1px solid #CCCCCC !important;
+    background : #CCCCCC !important;
+    box-shadow : none !important;
+}
 
 /* BUTTON SIZES */
 
@@ -781,7 +787,7 @@ input.ee-register-button {
 .float-left {
 	float: left;
 }
-.clear, 
+.clear,
 .clear-float,
 .ee-clear-float {
 	clear: both;
