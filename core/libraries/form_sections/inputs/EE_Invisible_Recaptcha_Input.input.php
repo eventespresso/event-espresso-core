@@ -19,7 +19,8 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class EE_Invisible_Recaptcha_Input extends EE_Form_Input_Base
 {
 
-    const SCRIPT_HANDLE_GOOGLE_INVISIBLE_RECAPTCHA = 'google_invisible_recaptcha';
+    const SCRIPT_HANDLE_GOOGLE_INVISIBLE_RECAPTCHA   = 'google_invisible_recaptcha';
+
     const SCRIPT_HANDLE_ESPRESSO_INVISIBLE_RECAPTCHA = 'espresso_invisible_recaptcha';
 
     /**
@@ -31,6 +32,11 @@ class EE_Invisible_Recaptcha_Input extends EE_Form_Input_Base
      * @var string $recaptcha_id
      */
     private $recaptcha_id;
+
+    /**
+     * @var string $submit_button_id
+     */
+    private $submit_button_id;
 
 
     /**
@@ -44,13 +50,16 @@ class EE_Invisible_Recaptcha_Input extends EE_Form_Input_Base
     {
         $this->_set_display_strategy(new EE_Invisible_Recaptcha_Display_Strategy());
         parent::__construct($input_settings);
-        $registration_config = $registration_config instanceof EE_Registration_Config
+        $registration_config    = $registration_config instanceof EE_Registration_Config
             ? $registration_config
             : EE_Registry::instance()->CFG->registration;
-        $this->config = $registration_config;
-        $this->recaptcha_id = isset($input_settings['recaptcha_id'])
+        $this->config           = $registration_config;
+        $this->recaptcha_id     = isset($input_settings['recaptcha_id'])
             ? $input_settings['recaptcha_id']
             : substr(spl_object_hash($this), 8, 8);
+        $this->submit_button_id = isset($input_settings['submit_button_id'])
+            ? $input_settings['submit_button_id']
+            : '';
         $this->registerScripts();
     }
 
@@ -105,7 +114,7 @@ class EE_Invisible_Recaptcha_Input extends EE_Form_Input_Base
      */
     public function registerScripts()
     {
-        if(! $this->useCaptcha()) {
+        if (! $this->useCaptcha()) {
             return;
         }
         add_filter('script_loader_tag', array($this, 'addScriptAttributes'), 10, 2);
@@ -134,7 +143,9 @@ class EE_Invisible_Recaptcha_Input extends EE_Form_Input_Base
             EE_Invisible_Recaptcha_Input::SCRIPT_HANDLE_ESPRESSO_INVISIBLE_RECAPTCHA,
             'eeRecaptcha',
             array(
-                'siteKey' => $this->siteKey()
+                'siteKey'          => $this->siteKey(),
+                'submit_button_id' => $this->submit_button_id,
+                'wp_debug'         => WP_DEBUG,
             )
         );
     }
