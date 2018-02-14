@@ -27,12 +27,6 @@ class EED_Recaptcha_Invisible extends EED_Module
      */
     private static $config;
 
-    /**
-     * @var boolean $use_captcha
-     */
-    private static $use_captcha;
-
-
 
     /**
      * @return EED_Module|EED_Recaptcha
@@ -52,7 +46,7 @@ class EED_Recaptcha_Invisible extends EED_Module
     public static function set_hooks()
     {
         EED_Recaptcha_Invisible::setProperties();
-        if(EED_Recaptcha_Invisible::useInvisibleRecaptcha()){
+        if (EED_Recaptcha_Invisible::useInvisibleRecaptcha()) {
             // ticket selection
             add_filter(
                 'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
@@ -70,7 +64,8 @@ class EED_Recaptcha_Invisible extends EED_Module
             );
             add_filter(
                 'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data',
-                array('EED_Recaptcha_Invisible', 'receiveSpcoRegStepForm')
+                array('EED_Recaptcha_Invisible', 'receiveSpcoRegStepForm'),
+                10, 2
             );
         }
     }
@@ -141,7 +136,7 @@ class EED_Recaptcha_Invisible extends EED_Module
      * @throws InvalidDataTypeException
      * @throws InvalidArgumentException
      */
-    protected static function recaptchaPassed()
+    public static function recaptchaPassed()
     {
         // logged in means you have already passed a turing test of sorts
         if (EED_Recaptcha_Invisible::useInvisibleRecaptcha() === false || is_user_logged_in()) {
@@ -165,19 +160,16 @@ class EED_Recaptcha_Invisible extends EED_Module
      * @throws InvalidInterfaceException
      * @throws RuntimeException
      */
-    protected static function verifyToken(EE_Request $request)
+    public static function verifyToken(EE_Request $request)
     {
-        try {
-            $invisible_recaptcha = RecaptchaFactory::create();
-            if($invisible_recaptcha->verifyToken($request)){
-                add_action('shutdown', array('EED_Recaptcha_Invisible', 'setSessionData'));
-                return true;
-            }
-        } catch (RuntimeException $e) {
-            EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+        $invisible_recaptcha = RecaptchaFactory::create();
+        if ($invisible_recaptcha->verifyToken($request)) {
+            add_action('shutdown', array('EED_Recaptcha_Invisible', 'setSessionData'));
+            return true;
         }
         return false;
     }
+
 
     /**
      * @param EE_Form_Section_Proper $reg_form
@@ -189,11 +181,12 @@ class EED_Recaptcha_Invisible extends EED_Module
      */
     public static function spcoRegStepForm(EE_Form_Section_Proper $reg_form)
     {
-        if(EED_Recaptcha_Invisible::recaptchaPassed()){
+        // do nothing if form isn't for a reg step or test has already been passed
+        if (! EED_Recaptcha_Invisible::processSpcoRegStepForm($reg_form)) {
             return;
         }
         $default_hidden_inputs = $reg_form->get_subsection('default_hidden_inputs');
-        if($default_hidden_inputs instanceof EE_Form_Section_Proper){
+        if ($default_hidden_inputs instanceof EE_Form_Section_Proper) {
             $invisible_recaptcha = RecaptchaFactory::create();
             $invisible_recaptcha->addToFormSection($default_hidden_inputs);
         }
@@ -201,23 +194,39 @@ class EED_Recaptcha_Invisible extends EED_Module
 
 
     /**
-     * @param array|null $req_data
-     * @return array
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
+     * @param EE_Form_Section_Proper $reg_form
+     * @return bool
      * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     */
+    public static function processSpcoRegStepForm(EE_Form_Section_Proper $reg_form)
+    {
+        return strpos($reg_form->name(), 'reg-step-form') === false || EED_Recaptcha_Invisible::recaptchaPassed();
+    }
+
+
+    /**
+     * @param array|null             $req_data
+     * @param EE_Form_Section_Proper $reg_form
+     * @return array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws RuntimeException
      */
-    public static function receiveSpcoRegStepForm($req_data = array())
+    public static function receiveSpcoRegStepForm($req_data = array(), EE_Form_Section_Proper $reg_form)
     {
-        // do nothing if test has  already  been passed
-        if (EED_Recaptcha_Invisible::recaptchaPassed()) {
+        // do nothing if form isn't for a reg step or test has already been passed
+        if (! EED_Recaptcha_Invisible::processSpcoRegStepForm($reg_form)) {
             return $req_data;
         }
         /** @var EE_Request $request */
         $request = LoaderFactory::getLoader()->getShared('EE_Request');
         if (! EED_Recaptcha_Invisible::verifyToken($request)) {
-            if($request->isAjax()) {
+            if ($request->isAjax()) {
                 $json_response = new EE_SPCO_JSON_Response();
                 $json_response->echoAndExit();
             }
@@ -238,14 +247,13 @@ class EED_Recaptcha_Invisible extends EED_Module
      * @throws InvalidInterfaceException
      * @throws EE_Error
      */
-    public static function ticketSelectorForm( $html = '', EE_Event $event)
+    public static function ticketSelectorForm($html = '', EE_Event $event)
     {
         // do nothing if test has  already  been passed
         if (EED_Recaptcha_Invisible::recaptchaPassed()) {
             return $html;
         }
-        $invisible_recaptcha = RecaptchaFactory::create();
-        $html .= $invisible_recaptcha->getInputHtml(
+        $html .= RecaptchaFactory::create()->getInputHtml(
             array('recaptcha_id' => $event->ID())
         );
         return $html;
@@ -267,8 +275,8 @@ class EED_Recaptcha_Invisible extends EED_Module
         }
         /** @var EE_Request $request */
         $request = LoaderFactory::getLoader()->getShared('EE_Request');
-        if(! EED_Recaptcha_Invisible::verifyToken($request)) {
-            $event_id = $request->get('tkt-slctr-event-id');
+        if (! EED_Recaptcha_Invisible::verifyToken($request)) {
+            $event_id   = $request->get('tkt-slctr-event-id');
             $return_url = $request->is_set("tkt-slctr-return-url-{$event_id}")
                 ? $request->get("tkt-slctr-return-url-{$event_id}")
                 : get_permalink($event_id);
