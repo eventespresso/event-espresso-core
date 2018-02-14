@@ -29,7 +29,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class InvisibleRecaptcha
 {
 
-    const URL_GOOGLE_RECAPTCHA_API = 'https://www.google.com/recaptcha/api/siteverify';
+    const URL_GOOGLE_RECAPTCHA_API          = 'https://www.google.com/recaptcha/api/siteverify';
 
     const SESSION_DATA_KEY_RECAPTCHA_PASSED = 'recaptcha_passed';
 
@@ -107,14 +107,22 @@ class InvisibleRecaptcha
      */
     public function verifyToken(EE_Request $request)
     {
-        $response = wp_safe_remote_post(
+        static $previous_recaptcha_response = array();
+        $grecaptcha_response = $request->get('g-recaptcha-response');
+        // if this token has already been verified, then return previous response
+        if (isset($previous_recaptcha_response[ $grecaptcha_response ])) {
+            return $previous_recaptcha_response[ $grecaptcha_response ];
+        }
+        // will update to true if everything passes
+        $previous_recaptcha_response[ $grecaptcha_response ] = false;
+        $response                                            = wp_safe_remote_post(
             InvisibleRecaptcha::URL_GOOGLE_RECAPTCHA_API,
             array(
                 'body' => array(
                     'secret'   => $this->config->recaptcha_privatekey,
-                    'response' => $request->get('g-recaptcha-response'),
+                    'response' => $grecaptcha_response,
                     'remoteip' => $request->ip_address(),
-                )
+                ),
             )
         );
         if ($response instanceof WP_Error) {
@@ -122,13 +130,15 @@ class InvisibleRecaptcha
             return false;
         }
         $results = json_decode(wp_remote_retrieve_body($response), true);
-        if ($results['success'] !== true) {
-            $errors = array_map(
+        if (filter_var($results['success'], FILTER_VALIDATE_BOOLEAN) !== true) {
+            $errors   = array_map(
                 array($this, 'getErrorCode'),
                 $results['error-codes']
             );
+            $errors[] = 'challenge timestamp: ' . $results['challenge_ts'] . '.';
             $this->generateError(implode(' ', $errors));
         }
+        $previous_recaptcha_response[ $grecaptcha_response ] = true;
         return true;
     }
 
@@ -143,11 +153,11 @@ class InvisibleRecaptcha
         throw new RuntimeException(
             sprintf(
                 esc_html__(
-                    'We\'re sorry but an attempt to verify the form\'s reCAPTCHA has failed. %1$s %2$sPlease try again.',
+                    'We\'re sorry but an attempt to verify the form\'s reCAPTCHA has failed. %1$s %2$s Please try again.',
                     'event_espresso'
                 ),
                 '<br />',
-                current_user_can('manage_options')? $error_response : ''
+                current_user_can('manage_options') ? $error_response : ''
             )
         );
     }
