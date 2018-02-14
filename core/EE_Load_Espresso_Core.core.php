@@ -49,16 +49,16 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
     protected $registry;
 
 
-
     /**
      * EE_Load_Espresso_Core constructor
+     *
+     * @throws EE_Error
      */
 	public function __construct() {
         // deprecated functions
         espresso_load_required('EE_Base', EE_CORE . 'EE_Base.core.php');
         espresso_load_required('EE_Deprecated', EE_CORE . 'EE_Deprecated.core.php');
     }
-
 
 
     /**
@@ -76,6 +76,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
+     * @throws DomainException
      */
     public function handle_request(EE_Request $request, EE_Response $response)
     {
@@ -106,6 +107,9 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
         $this->_load_class_tools();
         // deprecated functions
         espresso_load_required('EE_Deprecated', EE_CORE . 'EE_Deprecated.core.php');
+        $loader->getShared(
+            'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+        );
         // WP cron jobs
         $loader->getShared('EE_Cron_Tasks');
         $loader->getShared('EE_Request_Handler');
@@ -185,7 +189,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
             );
             wp_die(EE_Error::get_notices());
         }
-        require_once(EE_CORE . 'EE_Dependency_Map.core.php');
+        require_once EE_CORE . 'EE_Dependency_Map.core.php';
         return EE_Dependency_Map::instance($this->request, $this->response);
     }
 
@@ -206,7 +210,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
             );
             wp_die(EE_Error::get_notices());
         }
-        require_once(EE_CORE . 'EE_Registry.core.php');
+        require_once EE_CORE . 'EE_Registry.core.php';
         return EE_Registry::instance($this->dependency_map);
     }
 
@@ -223,7 +227,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
                 __FILE__, __FUNCTION__, __LINE__
             );
         }
-        require_once(EE_HELPERS . 'EEH_Class_Tools.helper.php');
+        require_once EE_HELPERS . 'EEH_Class_Tools.helper.php';
     }
 
 
