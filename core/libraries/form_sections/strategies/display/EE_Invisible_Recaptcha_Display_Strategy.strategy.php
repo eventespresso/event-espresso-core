@@ -42,6 +42,7 @@ class EE_Invisible_Recaptcha_Display_Strategy extends EE_Display_Strategy_Base
     <div id="g-recaptcha-{$this->input()->recaptchaId()}"
         class="g-recaptcha"
         data-sitekey="{$this->input()->siteKey()}"
+        data-submit_button_id="{$this->input()->submitButtonId()}"
         data-callback="espressoLoadRecaptcha"
         data-size="invisible"
         data-badge="bottomleft" 
