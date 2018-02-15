@@ -110,6 +110,15 @@ class EE_Invisible_Recaptcha_Input extends EE_Form_Input_Base
 
 
     /**
+     * @return string
+     */
+    public function submitButtonId()
+    {
+        return $this->submit_button_id;
+    }
+
+
+    /**
      * @return void
      */
     public function registerScripts()
@@ -138,15 +147,6 @@ class EE_Invisible_Recaptcha_Input extends EE_Form_Input_Base
             array(EE_Invisible_Recaptcha_Input::SCRIPT_HANDLE_ESPRESSO_INVISIBLE_RECAPTCHA),
             false,
             true
-        );
-        wp_localize_script(
-            EE_Invisible_Recaptcha_Input::SCRIPT_HANDLE_ESPRESSO_INVISIBLE_RECAPTCHA,
-            'eeRecaptcha',
-            array(
-                'siteKey'          => $this->siteKey(),
-                'submit_button_id' => $this->submit_button_id,
-                'wp_debug'         => WP_DEBUG,
-            )
         );
     }
 
