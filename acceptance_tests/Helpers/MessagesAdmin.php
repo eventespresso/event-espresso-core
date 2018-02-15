@@ -298,8 +298,5 @@ trait MessagesAdmin
     public function dismissMessageModal()
     {
         $this->actor()->executeJs('window.dialogHelper.closeModal()');
-        //this is needed otherwise phantom js gets stuck in the wrong context and any future element events will fail.
-        $this->actor()->scrollTo('form#EE_Message_List_Table-table-frm');
-        $this->actor()->click('form#EE_Message_List_Table-table-frm');
     }
 }

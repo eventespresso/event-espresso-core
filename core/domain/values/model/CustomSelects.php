@@ -13,7 +13,7 @@ use InvalidArgumentException;
  *
  * @package EventEspresso\core\domain\values\model
  * @author  Darren Ethier
- * @since   $VID:$
+ * @since   4.9.57.p
  */
 class CustomSelects
 {
