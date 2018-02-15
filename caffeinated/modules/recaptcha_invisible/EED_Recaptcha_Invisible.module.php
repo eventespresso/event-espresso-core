@@ -105,11 +105,13 @@ class EED_Recaptcha_Invisible extends EED_Module
      */
     public static function setProperties()
     {
+
         EED_Recaptcha_Invisible::$config = EE_Registry::instance()->CFG->registration;
         EED_Recaptcha_Invisible::$localized_vars = array(
-            'siteKey' => EED_Recaptcha_Invisible::$config->recaptcha_publickey,
-            'recaptcha_passed' => EED_Recaptcha_Invisible::recaptchaPassed() ? 'true' : 'false',
-            'wp_debug' => WP_DEBUG,
+            'siteKey'          => EED_Recaptcha_Invisible::$config->recaptcha_publickey,
+            'recaptcha_passed' => EED_Recaptcha_Invisible::recaptchaPassed(),
+            'wp_debug'         => WP_DEBUG,
+            'mer_active'       => defined('EE_EVENT_QUEUE_BASE_URL'),
         );
     }
 
@@ -237,7 +239,8 @@ class EED_Recaptcha_Invisible extends EED_Module
      */
     public static function processSpcoRegStepForm(EE_Form_Section_Proper $reg_form)
     {
-        return strpos($reg_form->name(), 'reg-step-form') === false || EED_Recaptcha_Invisible::recaptchaPassed();
+        return strpos($reg_form->name(), 'reg-step-form') !== false
+               || ! EED_Recaptcha_Invisible::recaptchaPassed();
     }
 
 
