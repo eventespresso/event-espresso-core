@@ -22,7 +22,7 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 class EED_Ticket_Sales_Monitor extends EED_Module
 {
 
-    const debug = false;    //	true false
+    const debug = true;    //	true false
 
     /**
      * an array of raw ticket data from EED_Ticket_Selector
@@ -346,11 +346,11 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     {
         if (self::debug) {
             echo '<br /> . . . ticket->ID: ' . $ticket->ID();
-            echo '<br /> . . . ticket->reserved: ' . $ticket->reserved();
+            echo '<br /> . . . ticket->reserved before: ' . $ticket->reserved();
         }
         $ticket->decrease_reserved($quantity);
         if (self::debug) {
-            echo '<br /> . . . ticket->reserved: ' . $ticket->reserved();
+            echo '<br /> . . . ticket->reserved after: ' . $ticket->reserved();
         }
         return $ticket->save() ? 1 : 0;
     }
@@ -701,24 +701,26 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         if (self::debug) {
             echo '<br /><br /> ' . __LINE__ . ') ' . __METHOD__ . '() ';
         }
-        EE_Registry::instance()->load_helper('Line_Item');
         $ticket_line_items = $cart->get_tickets();
         if (empty($ticket_line_items)) {
             return;
         }
+        if (self::debug) {
+            echo '<br /> . ticket_line_item count: ' . count($ticket_line_items);
+        }
         foreach ($ticket_line_items as $ticket_line_item) {
             if (self::debug) {
-                echo '<br /> . ticket_line_item->ID(): ' . $ticket_line_item->ID();
+                echo '<br /> . . ticket_line_item->ID(): ' . $ticket_line_item->ID();
             }
             if ($ticket_line_item instanceof EE_Line_Item && $ticket_line_item->OBJ_type() === 'Ticket') {
                 if (self::debug) {
-                    echo '<br /> . . ticket_line_item->OBJ_ID(): ' . $ticket_line_item->OBJ_ID();
+                    echo '<br /> . . . ticket_line_item->OBJ_ID(): ' . $ticket_line_item->OBJ_ID();
                 }
                 $ticket = EEM_Ticket::instance()->get_one_by_ID($ticket_line_item->OBJ_ID());
                 if ($ticket instanceof EE_Ticket) {
                     if (self::debug) {
-                        echo '<br /> . . ticket->ID(): ' . $ticket->ID();
-                        echo '<br /> . . ticket_line_item->quantity(): ' . $ticket_line_item->quantity();
+                        echo '<br /> . . . ticket->ID(): ' . $ticket->ID();
+                        echo '<br /> . . . ticket_line_item->quantity(): ' . $ticket_line_item->quantity();
                     }
                     $this->_release_reserved_ticket($ticket, $ticket_line_item->quantity());
                 }
