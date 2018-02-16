@@ -107,13 +107,8 @@ class EED_Recaptcha_Invisible extends EED_Module
     {
 
         EED_Recaptcha_Invisible::$config = EE_Registry::instance()->CFG->registration;
-        EED_Recaptcha_Invisible::$localized_vars = array(
-            'siteKey'          => EED_Recaptcha_Invisible::$config->recaptcha_publickey,
-            'recaptcha_passed' => EED_Recaptcha_Invisible::recaptchaPassed(),
-            'wp_debug'         => WP_DEBUG,
-            'mer_active'       => defined('EE_EVENT_QUEUE_BASE_URL'),
-        );
     }
+
 
 
     /**
@@ -129,9 +124,18 @@ class EED_Recaptcha_Invisible extends EED_Module
 
     /**
      * @return void
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidArgumentException
      */
     public static function setLocalizedVars()
     {
+        EED_Recaptcha_Invisible::$localized_vars = array(
+            'siteKey'          => EED_Recaptcha_Invisible::$config->recaptcha_publickey,
+            'recaptcha_passed' => EED_Recaptcha_Invisible::recaptchaPassed(),
+            'wp_debug'         => WP_DEBUG,
+            'mer_active'       => defined('EE_EVENT_QUEUE_BASE_URL'),
+        );
         wp_localize_script(
             EE_Invisible_Recaptcha_Input::SCRIPT_HANDLE_ESPRESSO_INVISIBLE_RECAPTCHA,
             'eeRecaptcha',
