@@ -22,7 +22,7 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 class EED_Ticket_Sales_Monitor extends EED_Module
 {
 
-    const debug = true;    //	true false
+    const debug = false;    //	true false
 
     /**
      * an array of raw ticket data from EED_Ticket_Selector
