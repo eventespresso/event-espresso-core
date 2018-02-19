@@ -13,7 +13,7 @@ define( 'EE_NEW_PAYMENT_METHOD_URL', plugin_dir_url( __FILE__ ));
  * @package			Event Espresso
  * @subpackage		espresso-new-payment-method
  * @author			    Brent Christensen
- * @ version		 	$VID:$
+ *
  *
  * ------------------------------------------------------------------------
  */

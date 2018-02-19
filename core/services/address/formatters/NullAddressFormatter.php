@@ -14,7 +14,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package       Event Espresso
  * @subpackage    core/services/address/formatters
  * @author        Brent Christensen
- * @since         $VID:$
+ * 
  */
 class NullAddressFormatter implements \EEI_Address_Formatter {
 

@@ -55,9 +55,12 @@ interface CacheStorageInterface
     /**
      * delete multiple cached items
      *
-     * @param array $keys [required] array of full or partial cache keys to be deleted
+     * @param array $keys           [required] array of full or partial cache keys to be deleted
+     * @param bool  $force_delete   [optional] if true, then will not check incoming keys against those being tracked
+     *                              and proceed directly to deleting those entries from the cache storage
+     * @return
      */
-    public function deleteMany(array $keys);
+    public function deleteMany(array $keys, $force_delete = false);
 
 }
 // End of file CacheStorageInterface.php

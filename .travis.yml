@@ -14,22 +14,29 @@ env:
     - WP_VERSION=latest WP_MULTISITE=0
 matrix:
   include:
+  - php: 7.2
+  - php: 7.1
+  - php: 7.0
+  - php: 5.6
+  - php: 5.5
+  - php: 5.4
   - php: 5.3
     dist: precise
-  - php: 5.4
-  - php: 5.5
-  - php: 5.6
-  - php: 5.6
+  # multisite builds
+  - php: 7.2
     env: WP_MULTISITE=1
-  - php: 5.6
-    env: WP_VERSION=4.1
-  - php: 5.6
-    env: WP_VERSION=4.1 WP_MULTISITE=1
-  - php: 7.0
-    env: WP_MULTISITE=1
-  - php: 7.0
   - php: 7.1
     env: WP_MULTISITE=1
+  - php: 7.0
+    env: WP_MULTISITE=1
+  - php: 5.6
+    env: WP_MULTISITE=1
+  # WP 4.2 builds
+  - php: 5.6
+    env: WP_VERSION=4.2
+  - php: 5.6
+    env: WP_VERSION=4.2 WP_MULTISITE=1
+  # nightly builds
   - php: nightly
   - php: nightly
     env: WP_MULTISITE=1
@@ -49,7 +56,7 @@ before_script:
     # Install the specified version of PHPUnit depending on the PHP version:
     if [[ -n "$TRAVIS_PHP_VERSION" ]]; then
       case "$TRAVIS_PHP_VERSION" in
-        7.1|7.0|nightly)
+        7.2|7.1|7.0|nightly)
           echo "Using PHPUnit 6.1"
           composer global require "phpunit/phpunit=6.1.*"
           ;;

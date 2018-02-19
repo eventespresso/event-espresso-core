@@ -34,7 +34,7 @@
 	<h4 class="espresso-header"><span class="dashicons dashicons-update ee-icon-size-22"></span><?php esc_html_e('Reset Event Espresso Data', 'event_espresso');?></h4>
     <p><?php esc_html_e(' This will reset data for Event Espresso 4, and for all active add-ons. Inactive add-ons will not be affected.', 'event_espresso');?></p>
     <p><?php esc_html_e('Your Event Espresso data will return to its default settings. The rest of your website will be unaffected.', 'event_espresso');?></p>
-	<div class="float-right"><a class="button button-primary" href="<?php echo $reset_db_url;?>"><?php esc_html_e('Reset Event Espresso Tables', 'event_espresso');?></a></div>
+	<div class="float-right"><a class="button button-primary ee-confirm" href="<?php echo $reset_db_url;?>"><?php esc_html_e('Reset Event Espresso Tables', 'event_espresso');?></a></div>
 	<div class="clear"></div>
 </div>
 <br />
@@ -53,7 +53,7 @@
 		<li><?php printf( esc_html__('Note: Event Espresso 4 categories are %snot%s deleted by this script', 'event_espresso'), '<strong>', '</strong>' ); ?>
 		<br><a href="<?php echo admin_url('edit-tags.php?taxonomy=espresso_event_categories'); ?>"><?php esc_html_e('You can go here to delete Event Espresso categories', 'event_espresso'); ?></a></li>
 	</ol>
-	<div class="float-right"><a href="<?php echo $delete_db_url; ?>" id="delete-all-data-btn" class="button-primary"><?php esc_html_e('Permanently Delete All Event Espresso Data', 'event_espresso');?></a></div>
+	<div class="float-right"><a href="<?php echo $delete_db_url; ?>" id="delete-all-data-btn" class="button-primary ee-confirm"><?php esc_html_e('Permanently Delete All Event Espresso Data', 'event_espresso');?></a></div>
 	<div class="clear"></div>
 </div>
 <br/>

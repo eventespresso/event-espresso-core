@@ -8,7 +8,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
- * @since                 $VID:$
+ * 
  * @group                 model_fields
  * @group                 models
  */

@@ -14,7 +14,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  *
  * @package        Event Espresso
  * @author         Mike Nelson
- * @since          $VID:$
+ * 
  */
 class EmailValidationException extends DomainException
 {

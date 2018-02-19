@@ -7,7 +7,6 @@ use EE_Datetime;
 use EE_Error;
 use EE_Event;
 use EE_Ticket;
-use EEM_Ticket;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
@@ -68,7 +67,7 @@ class EventSpacesCalculator
     /**
      * Array of Datetime IDs grouped by Ticket
      *
-     * @var array $ticket_datetimes
+     * @var array[] $ticket_datetimes
      */
     private $ticket_datetimes = array();
 
@@ -96,7 +95,17 @@ class EventSpacesCalculator
     /**
      * @var boolean $debug
      */
-    private $debug = false;
+    private $debug = false; // true false
+
+    /**
+     * @var null|int $spaces_remaining
+     */
+    private $spaces_remaining;
+
+    /**
+     * @var null|int $total_spaces_available
+     */
+    private $total_spaces_available;
 
 
 
@@ -111,6 +120,35 @@ class EventSpacesCalculator
     {
         $this->event                 = $event;
         $this->datetime_query_params = $datetime_query_params + array('order_by' => array('DTT_reg_limit' => 'ASC'));
+        $this->setHooks();
+    }
+
+
+
+    /**
+     * @return void
+     */
+    private function setHooks()
+    {
+        add_action( 'AHEE__EE_Ticket__increase_sold', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Ticket__decrease_sold', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Datetime__increase_sold', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Datetime__decrease_sold', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Ticket__increase_reserved', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Ticket__decrease_reserved', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Datetime__increase_reserved', array($this, 'clearResults'));
+        add_action( 'AHEE__EE_Datetime__decrease_reserved', array($this, 'clearResults'));
+    }
+
+
+
+    /**
+     * @return void
+     */
+    public function clearResults()
+    {
+        $this->spaces_remaining = null;
+        $this->total_spaces_available = null;
     }
 
 
@@ -127,10 +165,7 @@ class EventSpacesCalculator
         if (empty($this->active_tickets)) {
             $this->active_tickets = $this->event->tickets(
                 array(
-                    array(
-                        'TKT_end_date' => array('>=', EEM_Ticket::instance()->current_time_for_query('TKT_end_date')),
-                        'TKT_deleted'  => false,
-                    ),
+                    array('TKT_deleted'  => false),
                     'order_by' => array('TKT_qty' => 'ASC'),
                 )
             );
@@ -249,8 +284,11 @@ class EventSpacesCalculator
      */
     public function spacesRemaining()
     {
-        $this->initialize();
-        return $this->calculate();
+        if ($this->spaces_remaining === null) {
+            $this->initialize();
+            $this->spaces_remaining = $this->calculate();
+        }
+        return $this->spaces_remaining;
     }
 
 
@@ -268,8 +306,11 @@ class EventSpacesCalculator
      */
     public function totalSpacesAvailable()
     {
-        $this->initialize();
-        return $this->calculate(false);
+        if($this->total_spaces_available === null) {
+            $this->initialize();
+            $this->total_spaces_available = $this->calculate(false);
+        }
+        return $this->total_spaces_available;
     }
 
 
@@ -307,8 +348,9 @@ class EventSpacesCalculator
                 // we need to index our data arrays using strings for the purpose of sorting,
                 // but we also need them to be unique, so  we'll just prepend a letter T to the ID
                 $ticket_identifier = "T{$ticket->ID()}";
-                // to start, we'll just consider the raw qty to be the maximum availability for this ticket
-                $max_tickets = $ticket->qty();
+                // to start, we'll just consider the raw qty to be the maximum availability for this ticket,
+                // unless the ticket is past its "sell until" date, in which case the qty will be 0
+                $max_tickets = $ticket->is_expired() ? 0 : $ticket->qty();
                 // but we'll adjust that after looping over each datetime for the ticket and checking reg limits
                 $ticket_datetimes = $ticket->datetimes($this->datetime_query_params);
                 foreach ($ticket_datetimes as $datetime) {
@@ -362,6 +404,7 @@ class EventSpacesCalculator
     {
         if ($this->debug) {
             \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+            \EEH_Debug_Tools::printr($consider_sold, '$consider_sold', __FILE__, __LINE__);
         }
         if ($consider_sold) {
             // subtract amounts sold from all ticket quantities and datetime spaces
@@ -392,6 +435,11 @@ class EventSpacesCalculator
         foreach ($this->tickets_sold as $ticket_identifier => $tickets_sold) {
             if (isset($this->ticket_quantities[ $ticket_identifier ])){
                 $this->ticket_quantities[ $ticket_identifier ] -= $tickets_sold;
+                // don't let values go below zero
+                $this->ticket_quantities[ $ticket_identifier ] = max(
+                    $this->ticket_quantities[ $ticket_identifier ],
+                    0
+                );
                 if ($this->debug) {
                     \EEH_Debug_Tools::printr("{$tickets_sold} sales for ticket {$ticket_identifier} ", 'subtracting', __FILE__, __LINE__);
                 }
@@ -403,6 +451,11 @@ class EventSpacesCalculator
                 foreach ($this->ticket_datetimes[ $ticket_identifier ] as $ticket_datetime) {
                     if (isset($this->ticket_quantities[ $ticket_identifier ])) {
                         $this->datetime_spaces[ $ticket_datetime ] -= $tickets_sold;
+                        // don't let values go below zero
+                        $this->datetime_spaces[ $ticket_datetime ] = max(
+                            $this->datetime_spaces[ $ticket_datetime ],
+                            0
+                        );
                         if ($this->debug) {
                             \EEH_Debug_Tools::printr("{$tickets_sold} sales for datetime {$ticket_datetime} ",
                                 'subtracting', __FILE__, __LINE__);
@@ -551,6 +604,7 @@ class EventSpacesCalculator
         $ticket_quantity,
         $at_capacity
     ) {
+        /** @var array $datetime_tickets */
         foreach ($this->datetime_tickets as $datetime_ID => $datetime_tickets) {
             if ($datetime_ID !== $datetime_identifier || ! is_array($datetime_tickets)) {
                 continue;

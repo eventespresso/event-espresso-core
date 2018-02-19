@@ -91,6 +91,7 @@ jQuery(document).ready(function($) {
            this.resetFormInputs();
             $('.batch-message-edit-fields').hide();
             dialogHelper.closeModal();
+            this.setClickEventForShortcodePicker(false);
          },
 
 
@@ -142,7 +143,68 @@ jQuery(document).ready(function($) {
             $('#batch-message-from').val(response.batch_message_from);
             $('#batch-message-subject').val(response.batch_message_subject);
             $('#batch-message-content').val(response.batch_message_content);
+            this.setClickEventForShortcodePicker();
          },
+
+
+
+        /**
+         * Sets the namespaced click event for the shortcode picker.
+         * @param {boolean} bind whether to bind or unbind the click event
+         */
+        setClickEventForShortcodePicker: function(bind)
+        {
+            var $shortcodeContainer = $('.ee_shortcode_chooser_container', '.batch-message-edit-fields'),
+                bind = typeof bind === 'undefined' || typeof bind !== 'boolean',
+                clickHandler = function(e) {
+                    EENewsletterTrigger.shortCodePickerClickEvent(this);
+                };
+
+            if (bind) {
+                $('.js-shortcode-selection', $shortcodeContainer).on('click.shortcodeClick', clickHandler)
+            } else {
+                $('.js-shortcode-selection', $shortcodeContainer).off('click.shortcodeClick', clickHandler)
+            }
+        },
+
+
+        /**
+         * Handler for a clicked shortcode element.
+         * @param {object} clickedEl
+         */
+        shortCodePickerClickEvent: function(clickedEl) {
+            var shortcodeRequested = $(clickedEl).data('value');
+            var input = $(clickedEl).data('linkedInputId');
+            this.addShortcodeToInput(input, shortcodeRequested);
+        },
+
+
+        /**
+         * Adds the given shortcode to the attached input.
+         * @param {string} inputId
+         * @param {string} shortcodeRequested
+         */
+        addShortcodeToInput: function(inputId, shortcodeRequested) {
+            if (typeof inputId !== 'string' || typeof shortcodeRequested !== 'string') {
+                return;
+            }
+            var input = document.getElementById(inputId);
+            var $input = $(input);
+
+            if(document.selection) {
+                // Go the IE way
+                $input[0].focus();
+                document.selection.createRange().text=shortcodeRequested;
+            }
+            else if ('selectionStart' in input) {
+                var startPos = input.selectionStart;
+                input.value = input.value.substr(0, startPos) + shortcodeRequested + input.value.substr(input.selectionEnd, input.value.length);
+                input.selectionStart = startPos + input.value.length;
+                input.selectionEnd = startPos + shortcodeRequested.length;
+            } else {
+                //do nothing for now.
+            }
+        },
 
 
 

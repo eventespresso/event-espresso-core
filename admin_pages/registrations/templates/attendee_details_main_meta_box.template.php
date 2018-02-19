@@ -43,7 +43,7 @@ EEH_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee')
 					</th>
 					<td>
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
-						<input class="regular-text required" type="text" id="ATT_email" name="ATT_email" value="<?php echo $attendee->email(); ?>"/><br/>
+						<input class="regular-text required" type="text" id="ATT_email" name="ATT_email" value="<?php $attendee->f('ATT_email'); ?>"/><br/>
 						<p class="description"><?php _e('( required value )', 'event_espresso'); ?></p>
 					</td>
 				</tr>

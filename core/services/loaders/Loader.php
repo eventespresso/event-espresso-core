@@ -16,7 +16,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * 
  */
 class Loader implements LoaderInterface
 {
@@ -116,7 +116,6 @@ class Loader implements LoaderInterface
      */
     public function reset()
     {
-        $this->new_loader->reset();
         $this->shared_loader->reset();
     }
 

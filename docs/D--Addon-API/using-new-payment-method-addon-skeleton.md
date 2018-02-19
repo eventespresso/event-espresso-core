@@ -8,7 +8,8 @@ Just copy that entire folder "new-payment-method" into your wp-content/plugins f
 
 You probably only want one payment mehtod, so feel free to delete the unneeded one, and comment it out from the addon file EE_New_Payment_Method.class.php file.
 
-In order to simplify renaming the addon, copy the "renamer.php" file located in event-espresso-core/tests/utilities/renamer.php into your newly-copied "new-payment-method". Then direct your web browser directly to that file (eg go to "{yoursite.com}/wp-content/plugins/new-payment-method/renamer.php") and follow the page's instructions to rename the file.
+To facilitate renaming the folder and all its classes, we recommend using the `renamer.php` located here: https://github.com/eventespresso/eea-renamer.
+Instrucions on how to use it are in that repository.
 
 Here is a video:
 

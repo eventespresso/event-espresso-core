@@ -33,3 +33,7 @@
 #selected-batch-send-trigger {
 	margin-left: 10px;
 }
+
+.js-shortcode-selection {
+    cursor: pointer;
+}
