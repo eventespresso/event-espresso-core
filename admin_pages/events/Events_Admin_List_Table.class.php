@@ -402,50 +402,30 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
-
     /**
      * @param EE_Event $item
+     * @return string
      * @throws EE_Error
      */
     public function column_start_date_time(EE_Event $item)
     {
-        $output = ! empty($this->_dtt)
+        return $this->_dtt instanceof EE_Datetime
             ? $this->_dtt->get_i18n_datetime('DTT_EVT_start')
             : esc_html__('No Date was saved for this Event', 'event_espresso');
-        //display in user's timezone?
-        $output .= ! empty($this->_dtt)
-            ? $this->_dtt->display_in_my_timezone(
-                'DTT_EVT_start',
-                'get_i18n_datetime',
-                '',
-                'My Timezone: '
-            )
-            : '';
-        return $output;
     }
-
 
 
     /**
      * @param EE_Event $item
+     * @return string
      * @throws EE_Error
      */
     public function column_reg_begins(EE_Event $item)
     {
         $reg_start = $item->get_ticket_with_earliest_start_time();
-        $output = ! empty($reg_start)
+        return $reg_start instanceof EE_Ticket
             ? $reg_start->get_i18n_datetime('TKT_start_date')
             : esc_html__('No Tickets have been setup for this Event', 'event_espresso');
-        //display in user's timezone?
-        $output .= ! empty($reg_start)
-            ? $reg_start->display_in_my_timezone(
-                'TKT_start_date',
-                'get_i18n_datetime',
-                '',
-                'My Timezone: '
-            )
-            : '';
-        return $output;
     }
 
 
