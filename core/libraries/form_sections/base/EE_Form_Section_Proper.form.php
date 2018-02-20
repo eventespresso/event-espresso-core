@@ -168,13 +168,13 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             } else {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'Subsection "%s" is not an instanceof EE_Form_Section_Base on form "%s". It is a "%s"',
                             'event_espresso'
                         ),
                         $subsection_name,
                         get_class($this),
-                        $subsection ? get_class($subsection) : __('NULL', 'event_espresso')
+                        $subsection ? get_class($subsection) : esc_html__('NULL', 'event_espresso')
                     )
                 );
             }
@@ -478,13 +478,13 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         if (! $subsection instanceof EE_Form_Input_Base) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Subsection '%s' is not an instanceof EE_Form_Input_Base on form '%s'. It is a '%s'",
                         'event_espresso'
                     ),
                     $name,
                     get_class($this),
-                    $subsection ? get_class($subsection) : __('NULL', 'event_espresso')
+                    $subsection ? get_class($subsection) : esc_html__('NULL', 'event_espresso')
                 )
             );
         }
@@ -515,7 +515,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         if (! $subsection instanceof EE_Form_Section_Proper) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Subsection '%'s is not an instanceof EE_Form_Section_Proper on form '%s'",
                         'event_espresso'
                     ),
@@ -554,7 +554,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         if (! $this->has_received_submission()) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'You cannot check if a form is valid before receiving the form submission using receive_form_submission',
                         'event_espresso'
                     )
@@ -841,8 +841,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     private static function _get_localized_error_messages()
     {
         return array(
-            'validUrl' => __('This is not a valid absolute URL. Eg, http://domain.com/monkey.jpg', 'event_espresso'),
-            'regex'    => __('Please check your input', 'event_espresso'),
+            'validUrl' => esc_html__('This is not a valid absolute URL. Eg, http://domain.com/monkey.jpg', 'event_espresso'),
+            'regex'    => esc_html__('Please check your input', 'event_espresso'),
         );
     }
 
@@ -1203,7 +1203,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             if (! $subsection instanceof EE_Form_Section_Base) {
                 EE_Error::add_error(
                     sprintf(
-                        __(
+                        esc_html__(
                             "Trying to add a %s as a subsection (it was named '%s') to the form section '%s'. It was removed.",
                             'event_espresso'
                         ),
@@ -1249,7 +1249,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     {
         $this->_form_submission_error_message .= ! empty($form_submission_error_message)
             ? $form_submission_error_message
-            : __('Form submission failed due to errors', 'event_espresso');
+            : esc_html__('Form submission failed due to errors', 'event_espresso');
     }
 
 
@@ -1269,7 +1269,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     {
         $this->_form_submission_success_message .= ! empty($form_submission_success_message)
             ? $form_submission_success_message
-            : __('Form submitted successfully', 'event_espresso');
+            : esc_html__('Form submitted successfully', 'event_espresso');
     }
 
 
