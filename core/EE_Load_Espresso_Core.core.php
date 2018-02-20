@@ -52,7 +52,6 @@ class EE_Load_Espresso_Core implements RequestDecoratorInterface, RequestStackCo
     protected $registry;
 
 
-
     /**
      * EE_Load_Espresso_Core constructor
      *
@@ -77,7 +76,6 @@ class EE_Load_Espresso_Core implements RequestDecoratorInterface, RequestStackCo
     }
 
 
-
     /**
      * handle
      * sets hooks for running rest of system
@@ -91,6 +89,7 @@ class EE_Load_Espresso_Core implements RequestDecoratorInterface, RequestStackCo
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
+     * @throws DomainException
      */
     public function handleRequest(RequestInterface $request, ResponseInterface $response)
     {

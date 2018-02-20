@@ -129,12 +129,12 @@ If you need to influence a previously constructed ContextChecker and change its 
  "FHEE__EventEspresso_core_domain_entities_context_ContextChecker__" + ContextChecker::identifier() + "__isAllowed"
 ```
 
-So for the last ContextChecker above, we could filter the value it returns from `isAllowed()` using the following:
+So for the last ContextChecker above, we could filter the value it returns from `isAllowed()` using the following: (note that  we are using ContextInterface for type hinting)
 
 ```php
 add_filter(
     'FHEE__EventEspresso_core_domain_entities_context_ContextChecker__send-email-if-registration-cancelled-by-admin__isAllowed',
-    function ($is_allowed, Context $context)
+    function ($is_allowed, ContextInterface $context)
     {
         // if context slug contains the word "automated" return true, else return previously evaluated result
         return strpos($context->slug(), 'automated') !== false

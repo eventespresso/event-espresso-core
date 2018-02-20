@@ -15,7 +15,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\tests\testcases\core\request_stack
  * @author  Brent Christensen
- * @since   $VID:$
+ * 
  */
 class RequestTest extends PHPUnit_Framework_TestCase
 {

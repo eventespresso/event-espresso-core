@@ -15,7 +15,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Brent Christensen
  * @since   4.9.46.rc.076
  */
-class Context
+class Context implements ContextInterface
 {
 
     /**
@@ -54,7 +54,7 @@ class Context
     /**
      * @param string $slug
      */
-    protected function setSlug($slug)
+    private function setSlug($slug)
     {
         $this->slug = sanitize_key($slug);
     }
@@ -72,7 +72,7 @@ class Context
     /**
      * @param string $description
      */
-    protected function setDescription($description)
+    private function setDescription($description)
     {
         $this->description = sanitize_text_field($description);
     }

@@ -5,7 +5,7 @@
  * @package			Event Espresso
  * @subpackage		eea-new-addon
  * @author 				Brent Christensen
- * @ version		 	$VID:$
+ * 
  *
  * ------------------------------------------------------------------------
  */

@@ -27,6 +27,8 @@ if (defined('WP_DEBUG') && WP_DEBUG === true && defined('EE_ERROR_EMAILS') && EE
 class EE_Error extends Exception
 {
 
+    const OPTIONS_KEY_NOTICES = 'ee_notices';
+
 
     /**
      * name of the file to log exceptions to
@@ -255,7 +257,7 @@ class EE_Error extends Exception
             ? true
             : false;
         if ($check_stored && ! $has_error) {
-            $notices = (array)get_option('ee_notices', array());
+            $notices = (array)get_option(EE_Error::OPTIONS_KEY_NOTICES, array());
             foreach ($notices as $type => $notice) {
                 if ($type === $type_to_check && $notice) {
                     return true;
@@ -776,17 +778,17 @@ class EE_Error extends Exception
         // EEH_Debug_Tools::printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
         // either save notices to the db
         if ($save_to_transient || isset($_REQUEST['activate-selected'])) {
-            $existing_notices  = get_option('ee_notices', array());
-            $existing_notices = $existing_notices !== '' ? $existing_notices : array();
+            $existing_notices  = get_option(EE_Error::OPTIONS_KEY_NOTICES, array());
+            $existing_notices = is_array($existing_notices) ? $existing_notices : array();
             self::$_espresso_notices = array_merge(
                 $existing_notices,
                 self::$_espresso_notices
             );
-            update_option('ee_notices', self::$_espresso_notices);
+            update_option(EE_Error::OPTIONS_KEY_NOTICES, self::$_espresso_notices);
             return array();
         }
         // grab any notices that have been previously saved
-        if ($notices = get_option('ee_notices', false)) {
+        if ($notices = get_option(EE_Error::OPTIONS_KEY_NOTICES, array())) {
             foreach ($notices as $type => $notice) {
                 if (is_array($notice) && ! empty($notice)) {
                     // make sure that existing notice type is an array
@@ -800,7 +802,7 @@ class EE_Error extends Exception
                 }
             }
             // now clear any stored notices
-            update_option('ee_notices', false);
+            update_option(EE_Error::OPTIONS_KEY_NOTICES, array());
         }
         // check for success messages
         if (self::$_espresso_notices['success'] && ! empty(self::$_espresso_notices['success'])) {

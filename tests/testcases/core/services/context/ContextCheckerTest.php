@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\entities\contexts\Context;
+use EventEspresso\core\domain\entities\contexts\ContextInterface;
 use EventEspresso\tests\mocks\core\services\context\ContextCheckerMock;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -13,7 +14,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\tests\testcases\core\services\context
  * @author  Brent Christensen
- * @since   $VID:$
+ * 
  * @group   11040
  */
 class ContextCheckerTest extends EE_UnitTestCase
@@ -81,7 +82,7 @@ class ContextCheckerTest extends EE_UnitTestCase
         $context_checker_looking_for_three = new ContextCheckerMock(
             'looking-for-three',
             $this->acceptable_values,
-            function (Context $context)
+            function (ContextInterface $context)
             {
                 return strpos($context->slug(), 'three' ) !== false;
             }
@@ -90,7 +91,7 @@ class ContextCheckerTest extends EE_UnitTestCase
         $context_checker_looking_for_four = new ContextCheckerMock(
             'looking-for-four',
             $this->acceptable_values,
-            function (Context $context)
+            function (ContextInterface $context)
             {
                 return strpos($context->slug(), 'four' ) !== false;
             }
@@ -106,7 +107,7 @@ class ContextCheckerTest extends EE_UnitTestCase
         // and add custom detection for the word "five"
         add_filter(
             'FHEE__EventEspresso_core_domain_entities_context_ContextChecker__this-is-a-test__isAllowed',
-            function ($is_allowed, Context $context)
+            function ($is_allowed, ContextInterface $context)
             {
                 // if context slug contains the word "five" return true, else return previously evaluated result
                 return strpos($context->slug(), 'five') !== false
@@ -121,7 +122,7 @@ class ContextCheckerTest extends EE_UnitTestCase
         // now do it again, but looking for a value that will not be within the context slug
         add_filter(
             'FHEE__EventEspresso_core_domain_entities_context_ContextChecker__this-is-a-test__isAllowed',
-            function ($is_allowed, Context $context)
+            function ($is_allowed, ContextInterface $context)
             {
                 // if context slug contains the word "six" return true, else return previously evaluated result
                 return strpos($context->slug(), 'six') !== false

@@ -14,7 +14,7 @@ use EE_Datetime;
  * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
- * @since                 $VID:$
+ * 
  */
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');

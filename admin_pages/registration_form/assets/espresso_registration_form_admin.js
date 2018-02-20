@@ -45,13 +45,13 @@ function espresso_update_option_order() {
 
 function espresso_reg_forms_show_or_hide_question_options(){
 	var val=jQuery('#QST_type').val();
-	if ( val === 'RADIO_BTN' || val === 'CHECKBOX' || val === 'MULTI_SELECT' || val === 'DROPDOWN' ){
+	if ( ee_question_data.question_type_with_options.indexOf(val) !== -1 ){
 		jQuery('#question_options').show();
 		espresso_reg_forms_show_option_desc();
 	}else{
 		jQuery('#question_options').hide();
 	}
-	if ( val === 'TEXT' || val === 'TEXTAREA' || val === 'HTML_TEXTAREA' ){
+	if ( ee_question_data.question_types_with_max.indexOf(val) !== -1){
 		jQuery('#text_input_question_options').show();
 	}else{
 		jQuery('#text_input_question_options').hide();

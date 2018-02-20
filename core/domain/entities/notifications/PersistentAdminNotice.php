@@ -6,10 +6,10 @@ use DomainException;
 use EventEspresso\core\domain\services\capabilities\CapCheck;
 use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
 use EventEspresso\core\domain\services\capabilities\RequiresCapCheckInterface;
-use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\Collection;
+use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 use Exception;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -310,6 +310,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
      *
      * @param Collection $persistent_admin_notice_collection
      * @throws InvalidEntityException
+     * @throws InvalidDataTypeException
      */
     public function registerPersistentAdminNotice(Collection $persistent_admin_notice_collection)
     {
@@ -342,16 +343,17 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
      */
     public function confirmRegistered()
     {
+        if (! apply_filters('PersistentAdminNoticeManager__registerAndSaveNotices__complete', false)) {
+            PersistentAdminNoticeManager::loadRegisterAndSaveNotices();
+        }
         if (! $this->registered && WP_DEBUG) {
-            new ExceptionStackTraceDisplay(
-                new DomainException(
-                    sprintf(
-                        esc_html__(
-                            'The "%1$s" PersistentAdminNotice was not successfully registered. Please ensure that it is being created prior to either the "admin_notices" or "network_admin_notices" hooks being triggered.',
-                            'event_espresso'
-                        ),
-                        $this->name
-                    )
+            throw new DomainException(
+                sprintf(
+                    esc_html__(
+                        'The "%1$s" PersistentAdminNotice was not successfully registered. Please ensure that it is being created prior to either the "admin_notices" or "network_admin_notices" hooks being triggered.',
+                        'event_espresso'
+                    ),
+                    $this->name
                 )
             );
         }

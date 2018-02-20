@@ -89,8 +89,11 @@ class BootstrapCore
     {
         $this->bootstrapDependencyInjectionContainer();
         $bootstrap_request = $this->bootstrapRequestResponseObjects();
+        add_action(
+            'EE_Load_Espresso_Core__handle_request__initialize_core_loading',
+            array($bootstrap_request, 'setupLegacyRequest')
+        );
         $this->runRequestStack();
-        $bootstrap_request->setupLegacyRequest();
     }
 
 
