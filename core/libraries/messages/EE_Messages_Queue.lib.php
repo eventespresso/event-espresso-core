@@ -398,12 +398,12 @@ class EE_Messages_Queue
         $stored_rate_info = get_option($this->_get_rate_limit_key(), array());
         $rate_limit = isset($stored_rate_info[0])
             ? (int) $stored_rate_info[0]
-            : $this->_default_rate_limit();
+            : 0;
         $expiry = isset($stored_rate_info[1])
             ? (int) $stored_rate_info[1]
             : 0;
         //set the default for tracking?
-        if (time() > $expiry) {
+        if ($rate_limit === 0 || time() > $expiry) {
             $expiry = $this->_get_rate_limit_expiry();
             $rate_limit = $this->_default_rate_limit();
             update_option($this->_get_rate_limit_key(), array($rate_limit, $expiry));
