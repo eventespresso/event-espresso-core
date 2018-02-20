@@ -404,7 +404,8 @@ class EE_Messages_Queue
             : 0;
         //set the default for tracking?
         if (time() > $expiry) {
-            update_option($this->_get_rate_limit_key(), array($rate_limit, $this->_get_rate_limit_expiry()));
+            $expiry = $this->_get_rate_limit_expiry();
+            update_option($this->_get_rate_limit_key(), array($rate_limit, $expiry));
         }
         return $return_expiry ? $expiry : $rate_limit;
     }
