@@ -1,6 +1,7 @@
 <?php
 
-
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 
 /**
  * For containing info about a non-field form section, which contains other form sections/fields.
@@ -70,18 +71,18 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * so that they know who their parent is, and what name they've been given.
      *
      * @param array[] $options_array   {
-     * @type        $subsections     EE_Form_Section_Validatable[] where keys are the section's name
-     * @type        $include         string[] numerically-indexed where values are section names to be included,
-     *                               and in that order. This is handy if you want
-     *                               the subsections to be ordered differently than the default, and if you override
-     *                               which fields are shown
-     * @type        $exclude         string[] values are subsections to be excluded. This is handy if you want
-     *                               to remove certain default subsections (note: if you specify BOTH 'include' AND
-     *                               'exclude', the inclusions will be applied first, and the exclusions will exclude
-     *                               items from that list of inclusions)
-     * @type        $layout_strategy EE_Form_Section_Layout_Base strategy for laying out the form
-     *                               } @see EE_Form_Section_Validatable::__construct()
-     * @throws \EE_Error
+     * @type          $subsections     EE_Form_Section_Validatable[] where keys are the section's name
+     * @type          $include         string[] numerically-indexed where values are section names to be included,
+     *                                 and in that order. This is handy if you want
+     *                                 the subsections to be ordered differently than the default, and if you override
+     *                                 which fields are shown
+     * @type          $exclude         string[] values are subsections to be excluded. This is handy if you want
+     *                                 to remove certain default subsections (note: if you specify BOTH 'include' AND
+     *                                 'exclude', the inclusions will be applied first, and the exclusions will exclude
+     *                                 items from that list of inclusions)
+     * @type          $layout_strategy EE_Form_Section_Layout_Base strategy for laying out the form
+     *                                 } @see EE_Form_Section_Validatable::__construct()
+     * @throws EE_Error
      */
     public function __construct($options_array = array())
     {
@@ -120,7 +121,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         if (did_action('wp_enqueue_scripts') || did_action('admin_enqueue_scripts')) {
             //ok so they've constructed this object after when they should have.
             //just enqueue the generic form scripts and initialize the form immediately in the JS
-            \EE_Form_Section_Proper::wp_enqueue_scripts(true);
+            EE_Form_Section_Proper::wp_enqueue_scripts(true);
         } else {
             add_action('wp_enqueue_scripts', array('EE_Form_Section_Proper', 'wp_enqueue_scripts'));
             add_action('admin_enqueue_scripts', array('EE_Form_Section_Proper', 'wp_enqueue_scripts'));
@@ -154,7 +155,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *
      * @param EE_Form_Section_Proper $parent_form_section
      * @param string                 $name
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function _construct_finalize($parent_form_section, $name)
     {
@@ -230,6 +231,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *
      * @param null $form_data
      * @return boolean
+     * @throws EE_Error
      */
     public function was_submitted($form_data = null)
     {
@@ -255,6 +257,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *                             But if the data has already been validated
      *                             (eg you validated the data then stored it in the DB)
      *                             you may want to skip this step.
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function receive_form_submission($req_data = null, $validate = true)
     {
@@ -294,12 +300,16 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * so that they can be used to repopulate the form if it failed validation
      *
      * @return boolean whether or not the data was successfully stored in the session
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     protected function store_submitted_form_data_in_session()
     {
         return EE_Registry::instance()->SSN->set_session_data(
             array(
-                \EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY => $this->submitted_values(true),
+                EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY => $this->submitted_values(true),
             )
         );
     }
@@ -310,17 +320,19 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * so that they can be used to repopulate the form if it failed validation
      *
      * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     protected function get_submitted_form_data_from_session()
     {
         $session = EE_Registry::instance()->SSN;
         if ($session instanceof EE_Session) {
             return $session->get_session_data(
-                \EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY
+                EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY
             );
-        } else {
-            return array();
         }
+        return array();
     }
 
 
@@ -328,11 +340,14 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * flushed the originally submitted input values from the session
      *
      * @return boolean whether or not the data was successfully removed from the session
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     protected function flush_submitted_form_data_from_session()
     {
         return EE_Registry::instance()->SSN->reset_data(
-            array(\EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY)
+            array(EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY)
         );
     }
 
@@ -344,6 +359,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * Returns true if the form was populated from the session, false otherwise
      *
      * @return boolean
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function populate_from_session()
     {
@@ -355,9 +374,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         $this->flush_submitted_form_data_from_session();
         if ($this->form_data_present_in($form_data_in_session)) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
 
@@ -369,6 +387,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * the value being an array formatted in teh same way
      *
      * @param array $default_data
+     * @throws EE_Error
      */
     public function populate_defaults($default_data)
     {
@@ -407,7 +426,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *                                                      (realizing that the subsections' html names
      *                                                      might not be set yet, etc.)
      * @return EE_Form_Section_Base
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_subsection($name, $require_construction_to_be_finalized = true)
     {
@@ -422,6 +441,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * Gets all the validatable subsections of this form section
      *
      * @return EE_Form_Section_Validatable[]
+     * @throws EE_Error
      */
     public function get_validatable_subsections()
     {
@@ -464,7 +484,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                     ),
                     $name,
                     get_class($this),
-                    $subsection ? get_class($subsection) : __("NULL", 'event_espresso')
+                    $subsection ? get_class($subsection) : __('NULL', 'event_espresso')
                 )
             );
         }
@@ -514,7 +534,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *
      * @param string $name
      * @return mixed depending on the input's type and its normalization strategy
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_input_value($name)
     {
@@ -535,8 +555,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             throw new EE_Error(
                 sprintf(
                     __(
-                        "You cannot check if a form is valid before receiving the form submission using receive_form_submission",
-                        "event_espresso"
+                        'You cannot check if a form is valid before receiving the form submission using receive_form_submission',
+                        'event_espresso'
                     )
                 )
             );
@@ -546,7 +566,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         }
         // ok so no general errors to this entire form section.
         // so let's check the subsections, but only set errors if that hasn't been done yet
-        $set_submission_errors = $this->submission_error_message() === '' ? true : false;
+        $set_submission_errors = $this->submission_error_message() === '';
         foreach ($this->get_validatable_subsections() as $subsection) {
             if (! $subsection->is_valid() || $subsection->get_validation_error_string() !== '') {
                 if ($set_submission_errors) {
@@ -562,15 +582,15 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
 
     /**
-     * gets teh default name of this form section if none is specified
+     * gets the default name of this form section if none is specified
      *
-     * @return string
+     * @return void
      */
     protected function _set_default_name_if_empty()
     {
         if (! $this->_name) {
             $classname    = get_class($this);
-            $default_name = str_replace("EE_", "", $classname);
+            $default_name = str_replace('EE_', '', $classname);
             $this->_name  = $default_name;
         }
     }
@@ -579,13 +599,16 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     /**
      * Returns the HTML for the form, except for the form opening and closing tags
      * (as the form section doesn't know where you necessarily want to send the information to),
-     * and except for a submit button. Enqueus JS and CSS; if called early enough we will
+     * and except for a submit button. Enqueues JS and CSS; if called early enough we will
      * try to enqueue them in the header, otherwise they'll be enqueued in the footer.
      * Not doing_it_wrong because theoretically this CAN be used properly,
      * provided its used during "wp_enqueue_scripts", or it doesn't need to enqueue
      * any CSS.
      *
-     * @throws \EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function get_html_and_js()
     {
@@ -599,6 +622,12 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *
      * @param bool $display_previously_submitted_data
      * @return string
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public function get_html($display_previously_submitted_data = true)
     {
@@ -621,8 +650,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * See http://stackoverflow.com/questions/4957446/load-external-css-file-in-body-tag.
      * So if your form enqueues CSS, it's preferred to call this before wp_enqueue_scripts.)
      *
-     * @return string
-     * @throws \EE_Error
+     * @return void
+     * @throws EE_Error
      */
     public function enqueue_js()
     {
@@ -667,7 +696,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * This needs to be called AFTER we've called $this->_enqueue_jquery_validate_script,
      * but before the wordpress hook wp_loaded
      *
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function _enqueue_and_localize_form_js()
     {
@@ -686,7 +715,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *
      * @param bool $return_for_subsection
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function localize_validation_rules($return_for_subsection = false)
     {
@@ -711,6 +740,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *
      * @param array $form_other_js_data
      * @return array
+     * @throws EE_Error
      */
     public function get_other_js_data($form_other_js_data = array())
     {
@@ -726,6 +756,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * Keys are their form names, and values are the inputs themselves
      *
      * @return EE_Form_Input_Base
+     * @throws EE_Error
      */
     public function inputs_in_subsections()
     {
@@ -747,6 +778,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * and values are a string of all their validation errors
      *
      * @return string[]
+     * @throws EE_Error
      */
     public function subsection_validation_errors_by_html_name()
     {
@@ -764,6 +796,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     /**
      * passes all the form data required by the JS to the JS, and enqueues the few required JS files.
      * Should be setup by each form during the _enqueues_and_localize_form_js
+     *
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public static function localize_script_for_all_forms()
     {
@@ -785,6 +821,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
     /**
      * ensure_scripts_localized
+     *
+     * @throws EE_Error
      */
     public function ensure_scripts_localized()
     {
@@ -803,7 +841,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     private static function _get_localized_error_messages()
     {
         return array(
-            'validUrl' => __("This is not a valid absolute URL. Eg, http://domain.com/monkey.jpg", "event_espresso"),
+            'validUrl' => __('This is not a valid absolute URL. Eg, http://domain.com/monkey.jpg', 'event_espresso'),
             'regex'    => __('Please check your input', 'event_espresso'),
         );
     }
@@ -819,7 +857,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
 
     /**
-     * @return array
+     * @return void
      */
     public static function reset_js_localization()
     {
@@ -832,6 +870,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * See parent function for more...
      *
      * @return array
+     * @throws EE_Error
      */
     public function get_jquery_validation_rules()
     {
@@ -851,6 +890,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *
      * @param array $req_data like $_POST
      * @return void
+     * @throws EE_Error
      */
     protected function _normalize($req_data)
     {
@@ -874,6 +914,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * If you need to perform validation on the form as a whole (considering multiple)
      * you would be best to override this _validate method,
      * calling parent::_validate() first.
+     *
+     * @throws EE_Error
      */
     protected function _validate()
     {
@@ -890,6 +932,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * Gets all the validated inputs for the form section
      *
      * @return array
+     * @throws EE_Error
      */
     public function valid_data()
     {
@@ -909,6 +952,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * Gets all the inputs on this form section
      *
      * @return EE_Form_Input_Base[]
+     * @throws EE_Error
      */
     public function inputs()
     {
@@ -926,6 +970,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * Gets all the subsections which are a proper form
      *
      * @return EE_Form_Section_Proper[]
+     * @throws EE_Error
      */
     public function subforms()
     {
@@ -951,6 +996,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *                                                      (realizing that the subsections' html names might not be
      *                                                      set yet, etc.)
      * @return EE_Form_Section_Proper[]
+     * @throws EE_Error
      */
     public function subsections($require_construction_to_be_finalized = true)
     {
@@ -975,6 +1021,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *                                        and if $flatten is FALSE it can be a multidimensional array
      *                                        where keys are always subsection names and values are either
      *                                        the input's normalized value, or an array like the top-level array
+     * @throws EE_Error
      */
     public function input_values($include_subform_inputs = false, $flatten = false)
     {
@@ -998,6 +1045,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *                                        and if $flatten is FALSE it can be a multidimensional array
      *                                        where keys are always subsection names and values are either
      *                                        the input's normalized value, or an array like the top-level array
+     * @throws EE_Error
      */
     public function input_pretty_values($include_subform_inputs = false, $flatten = false)
     {
@@ -1019,6 +1067,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *                                        and if $flatten is FALSE it can be a multidimensional array
      *                                        where keys are always subsection names and values are either
      *                                        the input's normalized value, or an array like the top-level array
+     * @throws EE_Error
      */
     public function _input_values($pretty = false, $include_subform_inputs = false, $flatten = false)
     {
@@ -1056,6 +1105,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *                                   and if $flatten is FALSE it can be a multidimensional array
      *                                   where keys are always subsection names and values are either
      *                                   the input's normalized value, or an array like the top-level array
+     * @throws EE_Error
      */
     public function submitted_values($include_subforms = false)
     {
@@ -1064,7 +1114,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             if ($subsection instanceof EE_Form_Input_Base) {
                 // is this input part of an array of inputs?
                 if (strpos($subsection->html_name(), '[') !== false) {
-                    $full_input_name  = \EEH_Array::convert_array_values_to_keys(
+                    $full_input_name  = EEH_Array::convert_array_values_to_keys(
                         explode(
                             '[',
                             str_replace(']', '', $subsection->html_name())
@@ -1089,7 +1139,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * (ie, had receive_form_submission called on it yet)
      *
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function has_received_submission()
     {
@@ -1115,7 +1165,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
     /**
      * @param array $inputs_to_hide
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function hide(array $inputs_to_hide = array())
     {
@@ -1145,7 +1195,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *                                                          or if $subsection_name_to_target is null,
      *                                                          before or after entire subsections array
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function add_subsections($new_subsections, $subsection_name_to_target = null, $add_before = true)
     {
@@ -1155,7 +1205,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                     sprintf(
                         __(
                             "Trying to add a %s as a subsection (it was named '%s') to the form section '%s'. It was removed.",
-                            "event_espresso"
+                            'event_espresso'
                         ),
                         get_class($subsection),
                         $subsection_name,
@@ -1181,6 +1231,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
     /**
      * Just gets all validatable subsections to clean their sensitive data
+     *
+     * @throws EE_Error
      */
     public function clean_sensitive_data()
     {
@@ -1237,15 +1289,14 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * EE_Form_Input_Base::_set_default_html_name_if_empty
      *
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function html_name_prefix()
     {
         if ($this->parent_section() instanceof EE_Form_Section_Proper) {
             return $this->parent_section()->html_name_prefix() . '[' . $this->name() . ']';
-        } else {
-            return $this->name();
         }
+        return $this->name();
     }
 
 
@@ -1255,7 +1306,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * was set, which is probably nothing, or the classname)
      *
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function name()
     {
@@ -1266,7 +1317,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
     /**
      * @return EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function parent_section()
     {
@@ -1279,7 +1330,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * make sure construction finalized was called, otherwise children might not be ready
      *
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function ensure_construct_finalized_called()
     {
@@ -1295,6 +1346,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *
      * @param array $req_data
      * @return boolean
+     * @throws EE_Error
      */
     public function form_data_present_in($req_data = null)
     {
@@ -1322,6 +1374,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * gets the validation errors for ALL subsection
      *
      * @return EE_Validation_Error[]
+     * @throws EE_Error
      */
     public function get_validation_errors_accumulated()
     {
@@ -1354,6 +1407,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *
      * @param string|false $form_section_path we accept false also because substr( '../', '../' ) = false
      * @return EE_Form_Section_Base
+     * @throws EE_Error
      */
     public function find_section_from_path($form_section_path)
     {
@@ -1373,9 +1427,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         $child_section = $this->get_subsection($child_section_name);
         if ($child_section instanceof EE_Form_Section_Base) {
             return $child_section->find_section_from_path($subpath);
-        } else {
-            return null;
         }
+        return null;
     }
 }
 
