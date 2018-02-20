@@ -393,7 +393,7 @@ class EE_Messages_Queue
      * @param bool $return_expiry  If true then return the expiry time not the rate_limit.
      * @return int
      */
-    public function get_rate_limit($return_expiry = false)
+    protected function get_rate_limit($return_expiry = false)
     {
         $stored_rate_info = get_option($this->_get_rate_limit_key(), array());
         $rate_limit = isset($stored_rate_info[0])
@@ -417,7 +417,7 @@ class EE_Messages_Queue
      *
      * @param int $batch_completed This sets the new rate limit based on the given batch that was completed.
      */
-    public function set_rate_limit($batch_completed)
+    protected function set_rate_limit($batch_completed)
     {
         //first get the most up to date rate limit (in case its expired and reset)
         $rate_limit = $this->get_rate_limit();
