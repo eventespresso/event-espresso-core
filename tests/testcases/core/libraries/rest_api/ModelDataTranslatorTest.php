@@ -2,11 +2,9 @@
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 use EventEspresso\core\libraries\rest_api\RestException;
 
-
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
-
 
 /**
  * Class ModelDataTranslator_Test
@@ -24,7 +22,8 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     /**
      * Contains an array of RFC3339/ISO8601 formatted date strings and the accompanying unix timestamp for them
      */
-    public function timestampDataProvider() {
+    public function timestampDataProvider()
+    {
         return array(
             array('2018-02-21T06:09:37+00:00', 1519193377, 'UTC'),
             array('2018-02-21T06:09:37+10:00', 1519157377, 'UTC'),
