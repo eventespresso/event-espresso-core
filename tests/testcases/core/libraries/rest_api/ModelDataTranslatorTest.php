@@ -1,6 +1,7 @@
 <?php
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 use EventEspresso\core\libraries\rest_api\RestException;
+use PHPUnit\Framework\Exception;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -35,6 +36,17 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     }
 
 
+    public function invalidTimestampDataProvider()
+    {
+        return array(
+            array('2018-02-21T06:09:37+00', 'UTC'),
+            array('2018-02-21T06:09:37+10:00:12', 'UTC'),
+            array('2018-02-21T06:09:37-3:30', 'UTC'),
+            array('2018-02-21T06:09:37Z+1:00', 'UTC'),
+        );
+    }
+
+
     /**
      * @dataProvider timestampDataProvider
      * @param $timestamp
@@ -61,6 +73,32 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 '4.8.36',
                 $timezone_string
             )
+        );
+    }
+
+
+    /**
+     * @dataProvider invalidTimestampDataProvider
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws RestException
+     * @throws Exception
+     * @group 11368
+     */
+    public function testIncomingInvalidTimestamp($timestamp, $timezone)
+    {
+        $this->expectException('EventEspresso\core\libraries\rest_api\RestException');
+        $this->expectExceptionCode('400');
+        ModelDataTranslator::prepareFieldValueFromJson(
+            new EE_Datetime_Field(
+                'post_date',
+                esc_html__('Date/Time Event Created', 'event_espresso'),
+                false,
+                EE_Datetime_Field::now
+            ),
+            $timestamp,
+            $timezone
         );
     }
 

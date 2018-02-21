@@ -163,6 +163,23 @@ class ModelDataTranslator
             $new_value = rest_parse_date(
                 self::getTimestampWithTimezoneOffset($original_value, $field_obj, $timezone_string)
             );
+            if ($new_value === false) {
+                throw new RestException(
+                    'invalid_format_for_timestamp',
+                    sprintf(
+                        esc_html__(
+                            'Timestamps received on a request as the value for Date and Time fields must be in %1$s/%2$s format.  The timestamp provided (%3$s) is not that format.',
+                            'event_espresso'
+                        ),
+                        'RFC3339',
+                        'ISO8601',
+                        $original_value
+                    ),
+                    array(
+                        'status' => 400
+                    )
+                );
+            }
         } else {
             $new_value = $original_value;
         }
