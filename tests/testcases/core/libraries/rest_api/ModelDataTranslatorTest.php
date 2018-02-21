@@ -80,6 +80,8 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
 
     /**
      * @dataProvider invalidTimestampDataProvider
+     * @expectedException EventEspresso\core\libraries\rest_api\RestException
+     * @expectedExceptionCode 400
      * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -89,8 +91,6 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      */
     public function testIncomingInvalidTimestamp($timestamp, $timezone)
     {
-        $this->expectException('EventEspresso\core\libraries\rest_api\RestException');
-        $this->expectExceptionCode('400');
         ModelDataTranslator::prepareFieldValueFromJson(
             new EE_Datetime_Field(
                 'post_date',
