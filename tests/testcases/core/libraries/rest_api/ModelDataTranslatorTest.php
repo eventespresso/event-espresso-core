@@ -43,6 +43,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
             array('2018-02-21T06:09:37+10:00:12', 'UTC'),
             array('2018-02-21T06:09:37-3:30', 'UTC'),
             array('2018-02-21T06:09:37Z+1:00', 'UTC'),
+            array('02-21-2018T06:09:37', 'UTC')
         );
     }
 
