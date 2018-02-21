@@ -107,16 +107,19 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      */
     public function testPrepareConditionsQueryParamsForModels__gmtDatetimes()
     {
-        $this->markTestSkipped('Temporarily until https://events.codebasehq.com/projects/event-espresso/tickets/10626 is released');
-        update_option('gmt_offset', '');
         $data_translator = new ModelDataTranslator();
         $gmt_offsets = array(-12, -10.5, -9, -7.5, -6, -4.5, -3, -1.5, 0, 1.5, 3, 4.5, 6, 7.5, 9, 10.5, 12);
         foreach ($gmt_offsets as $gmt_offset) {
-            $TZ_NAME = \EEH_DTT_Helper::get_timezone_string_from_gmt_offset($gmt_offset);
-            update_option('timezone_string', $TZ_NAME);
+            //set the offset
+            update_option('gmt_offset', $gmt_offset);
             $now_local_time = current_time('mysql');
             $now_utc_time = current_time('mysql', true);
-            $this->assertNotEquals($now_local_time, $now_utc_time);
+            //should always be equal except when offset is 0
+            if ($gmt_offset !== 0) {
+                $this->assertNotEquals($now_local_time, $now_utc_time, sprintf('For gmt offset %d', $gmt_offset));
+            } else {
+                $this->assertEquals($now_local_time, $now_utc_time);
+            }
             $model_data = $data_translator::prepareConditionsQueryParamsForModels(
                 array(
                     'EVT_created'      => mysql_to_rfc3339($now_local_time),
@@ -128,7 +131,11 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
             //verify the model data being inputted is in UTC
             $this->assertEquals($now_utc_time, date('Y-m-d H:i:s', $model_data['EVT_created']));
             //NOT in local time
-            $this->assertNotEquals($now_local_time, $model_data['EVT_created']);
+            $this->assertNotEquals(
+                $now_local_time,
+                $model_data['EVT_created'],
+                sprintf('For gmt offset %d', $gmt_offset)
+            );
             //notice that there's no "_gmt" on EVT_modified. That's (currently at least)
             //not a real model field. It just indicates to treat the time already being in UTC
             $this->assertEquals($now_utc_time, date('Y-m-d H:i:s', $model_data['EVT_modified']));
