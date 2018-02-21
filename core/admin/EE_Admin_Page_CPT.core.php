@@ -1380,13 +1380,30 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         $post_type_object = $this->_cpt_object;
         $title            = $post_type_object->labels->add_new_item;
         $editing          = true;
-        wp_enqueue_script('autosave');
         $post    = $post = get_default_post_to_edit($this->_cpt_routes[$this->_req_action], true);
         $post_ID = $post->ID;
         add_action('admin_print_styles', array($this, 'add_new_admin_page_global'));
         //modify the default editor title field with default title.
         add_filter('enter_title_here', array($this, 'add_custom_editor_default_title'), 10);
-        include_once WP_ADMIN_PATH . 'edit-form-advanced.php';
+        $this->loadEditorTemplate();
+    }
+
+
+    /**
+     * Enqueues auto-save and loads the editor template
+     *
+     * @param bool $creating
+     */
+    private function loadEditorTemplate($creating = true) {
+        global $post, $title, $is_IE, $post_type, $post_type_object;
+        if (apply_filters('FHEE__EE_Admin_Page_CPT___create_new_cpt_item__replace_editor', false, $post) === false) {
+            //only enqueue autosave when creating event (necessary to get permalink/url generated)
+            //otherwise EE doesn't support autosave fully, so to prevent user confusion we disable it in edit context.
+            if ($creating) {
+                wp_enqueue_script('autosave');
+            }
+            include_once WP_ADMIN_PATH . 'edit-form-advanced.php';
+        }
     }
 
 
@@ -1431,8 +1448,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         $post_type_object = $this->_cpt_object;
 
         if ( ! wp_check_post_lock($post->ID)) {
-            $active_post_lock = wp_set_post_lock($post->ID);
-            //wp_enqueue_script('autosave');
+            wp_set_post_lock($post->ID);
         }
         $title = $this->_cpt_object->labels->edit_item;
         add_action('admin_footer', '_admin_notice_post_locked');
@@ -1453,7 +1469,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         add_action('admin_print_styles', array($this, 'add_new_admin_page_global'));
         //modify the default editor title field with default title.
         add_filter('enter_title_here', array($this, 'add_custom_editor_default_title'), 10);
-        include_once WP_ADMIN_PATH . 'edit-form-advanced.php';
+        $this->loadEditorTemplate(false);
     }
 
 
