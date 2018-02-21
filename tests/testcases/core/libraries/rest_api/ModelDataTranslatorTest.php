@@ -1,5 +1,12 @@
 <?php
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
+use EventEspresso\core\libraries\rest_api\RestException;
+
+
+if (! defined('EVENT_ESPRESSO_VERSION')) {
+    exit('No direct script access allowed');
+}
+
 
 /**
  * Class ModelDataTranslator_Test
@@ -8,12 +15,11 @@ use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
  * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
- * 
+ *
  * @group                 rest_api
  */
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+class ModelDataTranslatorTest extends EE_REST_TestCase
+{
 
 
 
