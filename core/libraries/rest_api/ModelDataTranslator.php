@@ -10,7 +10,6 @@ use EE_Maybe_Serialized_Simple_HTML_Field;
 use EE_Model_Field_Base;
 use EE_Serialized_Text_Field;
 use EEM_Base;
-use function mysql_to_rfc3339;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
