@@ -29,6 +29,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
             array('2018-02-21T06:09:37+10:00', 1519157377, 'UTC'),
             array('2018-02-21T06:09:37-03:30', 1519205977, 'UTC'),
             array('2018-02-21T06:09:37', 1519211377, 'America/New_York'),
+            array('2018-02-21T06:09:37-03:30', 1519205977, 'America/New_York'),
             array('2018-02-21T06:09:37Z', 1519193377, 'UTC'),
         );
     }
@@ -62,7 +63,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
             )
         );
     }
-    
+
 
     public function testPrepareQueryParamsForRestApi()
     {
