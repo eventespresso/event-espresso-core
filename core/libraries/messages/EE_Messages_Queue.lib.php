@@ -41,12 +41,6 @@ class EE_Messages_Queue
      */
     protected $_batch_count;
 
-    /**
-     * Sets the limit of how many messages can be sent per hour.
-     *
-     * @type int
-     */
-    protected $_rate_limit;
 
     /**
      * This is an array of cached queue items being stored in this object.
@@ -82,7 +76,6 @@ class EE_Messages_Queue
     public function __construct(EE_Message_Repository $message_repository)
     {
         $this->_batch_count        = apply_filters('FHEE__EE_Messages_Queue___batch_count', 50);
-        $this->_rate_limit         = $this->get_rate_limit();
         $this->_message_repository = $message_repository;
     }
 
@@ -217,13 +210,14 @@ class EE_Messages_Queue
      */
     public function get_to_send_batch_and_send()
     {
-        if ($this->is_locked(EE_Messages_Queue::action_sending) || $this->_rate_limit < 1) {
+        $rate_limit = $this->get_rate_limit();
+        if ($rate_limit < 1 || $this->is_locked(EE_Messages_Queue::action_sending)) {
             return false;
         }
 
         $this->lock_queue(EE_Messages_Queue::action_sending);
 
-        $batch = $this->_batch_count < $this->_rate_limit ? $this->_batch_count : $this->_rate_limit;
+        $batch = $this->_batch_count < $rate_limit ? $this->_batch_count : $rate_limit;
 
         $query_args = array(
             // key 0 = where conditions
@@ -241,9 +235,12 @@ class EE_Messages_Queue
             return false;
         }
 
+        $queue_count = 0;
+
         //add to queue.
         foreach ($messages_to_send as $message) {
             if ($message instanceof EE_Message) {
+                $queue_count++;
                 $this->add($message);
             }
         }
@@ -253,6 +250,8 @@ class EE_Messages_Queue
 
         //release lock
         $this->unlock_queue(EE_Messages_Queue::action_sending);
+        //update rate limit
+        $this->set_rate_limit($queue_count);
         return true;
     }
 
@@ -264,7 +263,7 @@ class EE_Messages_Queue
      */
     public function lock_queue($type = EE_Messages_Queue::action_generating)
     {
-        set_transient($this->_get_lock_key($type), 1, $this->_get_lock_expiry($type));
+        update_option($this->_get_lock_key($type), $this->_get_lock_expiry($type));
     }
 
 
@@ -275,7 +274,7 @@ class EE_Messages_Queue
      */
     public function unlock_queue($type = EE_Messages_Queue::action_generating)
     {
-        delete_transient($this->_get_lock_key($type));
+        delete_option($this->_get_lock_key($type));
     }
 
 
@@ -299,7 +298,7 @@ class EE_Messages_Queue
      */
     protected function _get_lock_expiry($type = EE_Messages_Queue::action_generating)
     {
-        return (int)apply_filters('FHEE__EE_Messages_Queue__lock_expiry', HOUR_IN_SECONDS, $type);
+        return time() + (int) apply_filters('FHEE__EE_Messages_Queue__lock_expiry', HOUR_IN_SECONDS, $type);
     }
 
 
@@ -321,7 +320,7 @@ class EE_Messages_Queue
      */
     protected function _get_rate_limit_expiry()
     {
-        return (int)apply_filters('FHEE__EE_Messages_Queue__rate_limit_expiry', HOUR_IN_SECONDS);
+        return time() + (int) apply_filters('FHEE__EE_Messages_Queue__rate_limit_expiry', HOUR_IN_SECONDS);
     }
 
 
@@ -332,7 +331,7 @@ class EE_Messages_Queue
      */
     protected function _default_rate_limit()
     {
-        return (int)apply_filters('FHEE__EE_Messages_Queue___rate_limit', 200);
+        return (int) apply_filters('FHEE__EE_Messages_Queue___rate_limit', 200);
     }
 
 
@@ -358,13 +357,14 @@ class EE_Messages_Queue
      */
     public function is_locked($type = EE_Messages_Queue::action_generating)
     {
+        $lock = (int) get_option($this->_get_lock_key($type), 0);
         /**
          * This filters the default is_locked behaviour.
          */
         $is_locked = filter_var(
             apply_filters(
                 'FHEE__EE_Messages_Queue__is_locked',
-                get_transient($this->_get_lock_key($type)),
+                $lock > time(),
                 $this
             ),
             FILTER_VALIDATE_BOOLEAN
@@ -390,15 +390,25 @@ class EE_Messages_Queue
      * Retrieves the rate limit that may be cached as a transient.
      * If the rate limit is not set, then this sets the default rate limit and expiry and returns it.
      *
+     * @param bool $return_expiry  If true then return the expiry time not the rate_limit.
      * @return int
      */
-    public function get_rate_limit()
+    protected function get_rate_limit($return_expiry = false)
     {
-        if ( ! $rate_limit = get_transient($this->_get_rate_limit_key())) {
+        $stored_rate_info = get_option($this->_get_rate_limit_key(), array());
+        $rate_limit = isset($stored_rate_info[0])
+            ? (int) $stored_rate_info[0]
+            : 0;
+        $expiry = isset($stored_rate_info[1])
+            ? (int) $stored_rate_info[1]
+            : 0;
+        //set the default for tracking?
+        if (empty($stored_rate_info) || time() > $expiry) {
+            $expiry = $this->_get_rate_limit_expiry();
             $rate_limit = $this->_default_rate_limit();
-            set_transient($this->_get_rate_limit_key(), $rate_limit, $this->_get_rate_limit_key());
+            update_option($this->_get_rate_limit_key(), array($rate_limit, $expiry));
         }
-        return $rate_limit;
+        return $return_expiry ? $expiry : $rate_limit;
     }
 
 
@@ -407,13 +417,15 @@ class EE_Messages_Queue
      *
      * @param int $batch_completed This sets the new rate limit based on the given batch that was completed.
      */
-    public function set_rate_limit($batch_completed)
+    protected function set_rate_limit($batch_completed)
     {
         //first get the most up to date rate limit (in case its expired and reset)
         $rate_limit = $this->get_rate_limit();
+        $expiry = $this->get_rate_limit(true);
         $new_limit  = $rate_limit - $batch_completed;
         //updating the transient option directly to avoid resetting the expiry.
-        update_option('_transient_' . $this->_get_rate_limit_key(), $new_limit);
+
+        update_option($this->_get_rate_limit_key(), array($new_limit, $expiry));
     }
 
 
