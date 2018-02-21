@@ -111,9 +111,15 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
         foreach ($gmt_offsets as $gmt_offset) {
             //set the offset
             update_option('gmt_offset', $gmt_offset);
-            $now_local_time = current_time('mysql');
+            //set the current time from our timezone helper to more closely mimic how dates and times pass through our
+            //model.  We can't use WP's `current_time` because wp ALWAYS uses offset directly if its present whereas EE
+            //tries to coerce a closest matching timezone string for "invalid" offsets (PHP version < 5.6).
+            $datetime = new DateTime('now', new DateTimeZone(
+                EEH_DTT_Helper::get_timezone_string_from_gmt_offset($gmt_offset)
+            ));
+            $now_local_time = $datetime->format(EE_Datetime_Field::mysql_timestamp_format);
             $now_utc_time = current_time('mysql', true);
-            //should always be equal except when offset is 0
+            //should always be not equal except when offset is 0
             if ($gmt_offset !== 0) {
                 $this->assertNotEquals($now_local_time, $now_utc_time, sprintf('For gmt offset %d', $gmt_offset));
             } else {
