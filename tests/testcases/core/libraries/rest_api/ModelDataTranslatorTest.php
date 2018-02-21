@@ -21,10 +21,49 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 class ModelDataTranslatorTest extends EE_REST_TestCase
 {
 
+    /**
+     * Contains an array of RFC3339/ISO8601 formatted date strings and the accompanying unix timestamp for them
+     */
+    public function timestampDataProvider() {
+        return array(
+            array('2018-02-21T06:09:37+00:00', 1519193377, 'UTC'),
+            array('2018-02-21T06:09:37+10:00', 1519157377, 'UTC'),
+            array('2018-02-21T06:09:37-03:30', 1519205977, 'UTC'),
+            //since -3:30 is invalid for the standard (missing a padded 0 after the -), we expect false to get returned
+            //for the value.
+            array('2018-02-21T06:09:37-3:30', false, 'UTC')
+        );
+    }
 
 
-class ModelDataTranslatorTest extends EE_REST_TestCase
-{
+    /**
+     * @dataProvider timestampDataProvider
+     * @param $timestamp
+     * @param $expected_unixtimestamp
+     * @param $timezone_string
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws RestException
+     * @group 11368
+     */
+    public function testIncomingTimestampWithTimezoneInformation($timestamp, $expected_unixtimestamp, $timezone_string)
+    {
+        $this->assertEquals(
+            $expected_unixtimestamp,
+            ModelDataTranslator::prepareFieldValueFromJson(
+                new EE_Datetime_Field(
+                    'post_date',
+                    esc_html__('Date/Time Event Created', 'event_espresso'),
+                    false,
+                    EE_Datetime_Field::now
+                ),
+                $timestamp,
+                '4.8.36',
+                $timezone_string
+            )
+        );
+    }
 
     public function testPrepareQueryParamsForRestApi()
     {
