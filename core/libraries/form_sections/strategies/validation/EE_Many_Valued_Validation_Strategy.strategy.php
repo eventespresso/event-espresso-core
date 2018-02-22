@@ -24,6 +24,9 @@ class EE_Many_Valued_Validation_Strategy extends EE_Validation_Strategy_Base{
 		$this->_individual_item_validation_strategies = $individual_item_validation_strategies;
 		parent::__construct();
 	}
+
+
+
 	/**
 	 * Applies all teh individual item validation strategies on each item in the array
 	 * @param array $normalized_value
@@ -42,7 +45,11 @@ class EE_Many_Valued_Validation_Strategy extends EE_Validation_Strategy_Base{
 				}
 			}
 		}
-	}
+        return true;
+    }
+
+
+
 	/**
 	 * Extends parent's _construct_finalize so we ALSO set the input
 	 * on each sub-validation-strategy
