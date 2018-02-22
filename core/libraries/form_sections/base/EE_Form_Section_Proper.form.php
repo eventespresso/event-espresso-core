@@ -571,7 +571,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             if (! $subsection->is_valid() || $subsection->get_validation_error_string() !== '') {
                 if ($set_submission_errors) {
                     $this->set_submission_error_message(
-                        $subsection->get_validation_error_string()
+                        $subsection->get_validation_error_string(),
+                        $subsection
                     );
                 }
                 return false;
@@ -1008,6 +1009,15 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
 
     /**
+     * @return bool
+     */
+    public function has_subsections()
+    {
+        return ! empty($this->_subsections);
+    }
+
+
+    /**
      * Returns a simple array where keys are input names, and values are their normalized
      * values. (Similar to calling get_input_value on inputs)
      *
@@ -1243,13 +1253,47 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
 
     /**
-     * @param string $form_submission_error_message
+     * @param string                           $form_submission_error_message
+     * @param EE_Form_Section_Validatable $form_section
+     * @throws EE_Error
      */
-    public function set_submission_error_message($form_submission_error_message = '')
-    {
+    public function set_submission_error_message(
+        $form_submission_error_message = '',
+        EE_Form_Section_Validatable $form_section
+    ) {
         $this->_form_submission_error_message .= ! empty($form_submission_error_message)
-            ? $form_submission_error_message
-            : esc_html__('Form submission failed due to errors', 'event_espresso');
+            ? $form_section->name() . ': ' . $form_submission_error_message
+            : sprintf(
+                esc_html__('The "%1$s" form section submission failed due to unknown errors', 'event_espresso'),
+                $form_section->name()
+            );
+    }
+
+
+    /**
+     * @param array $previous_form_submission_error_messages
+     * @return array|string
+     * @throws EE_Error
+     */
+    public function all_form_errors(array $previous_form_submission_error_messages = array())
+    {
+        $form_submission_error_messages = array();
+        foreach ($this->subsections() as $subsection) {
+            if($subsection instanceof EE_Form_Section_Proper){
+                $form_submission_error_messages += $subsection->all_form_errors(
+                    $previous_form_submission_error_messages
+                );
+            }
+            if($subsection instanceof EE_Form_Section_Validatable){
+                foreach($subsection->get_validation_errors() as $validation_error) {
+                    $form_submission_error_messages[] = $validation_error->getMessage();
+                }
+            }
+        }
+        if ($this->submission_error_message() !== '') {
+            $form_submission_error_messages[] = $this->submission_error_message();
+        }
+        return $form_submission_error_messages + $previous_form_submission_error_messages;
     }
 
 
