@@ -69,7 +69,8 @@ class EEH_DTT_Helper
 
 
     /**
-     * _create_timezone_object_from_timezone_name
+     * This returns a string that can represent the provided gmt offset in format that can be passed into
+     * DateTimeZone.  This is NOT a string that can be passed as a value on the WordPress timezone_string option.
      *
      * @param float|string $gmt_offset
      * @return string
