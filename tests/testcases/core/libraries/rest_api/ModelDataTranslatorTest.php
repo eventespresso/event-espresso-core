@@ -1,5 +1,11 @@
 <?php
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
+use EventEspresso\core\libraries\rest_api\RestException;
+use PHPUnit\Framework\Exception;
+
+if (! defined('EVENT_ESPRESSO_VERSION')) {
+    exit('No direct script access allowed');
+}
 
 /**
  * Class ModelDataTranslator_Test
@@ -8,17 +14,95 @@ use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
  * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
- * 
+ *
  * @group                 rest_api
  */
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 class ModelDataTranslatorTest extends EE_REST_TestCase
 {
+
+    /**
+     * Contains an array of RFC3339/ISO8601 formatted date strings and the accompanying unix timestamp for them
+     */
+    public function timestampDataProvider()
+    {
+        return array(
+            array('2018-02-21T06:09:37+00:00', 1519193377, 'UTC'),
+            array('2018-02-21T06:09:37+10:00', 1519157377, 'UTC'),
+            array('2018-02-21T06:09:37-03:30', 1519205977, 'UTC'),
+            array('2018-02-21T06:09:37', 1519211377, 'America/New_York'),
+            array('2018-02-21T06:09:37-03:30', 1519205977, 'America/New_York'),
+            array('2018-02-21T06:09:37Z', 1519193377, 'UTC'),
+        );
+    }
+
+
+    public function invalidTimestampDataProvider()
+    {
+        return array(
+            array('2018-02-21T06:09:37+00', 'UTC'),
+            array('2018-02-21T06:09:37+10:00:12', 'UTC'),
+            array('2018-02-21T06:09:37-3:30', 'UTC'),
+            array('2018-02-21T06:09:37Z+1:00', 'UTC'),
+            array('02-21-2018T06:09:37', 'UTC')
+        );
+    }
+
+
+    /**
+     * @dataProvider timestampDataProvider
+     * @param $timestamp
+     * @param $expected_unixtimestamp
+     * @param $timezone_string
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws RestException
+     * @group 11368
+     */
+    public function testIncomingTimestampWithTimezoneInformation($timestamp, $expected_unixtimestamp, $timezone_string)
+    {
+        $this->assertEquals(
+            $expected_unixtimestamp,
+            ModelDataTranslator::prepareFieldValueFromJson(
+                new EE_Datetime_Field(
+                    'post_date',
+                    esc_html__('Date/Time Event Created', 'event_espresso'),
+                    false,
+                    EE_Datetime_Field::now
+                ),
+                $timestamp,
+                '4.8.36',
+                $timezone_string
+            )
+        );
+    }
+
+
+    /**
+     * @dataProvider invalidTimestampDataProvider
+     * @expectedException EventEspresso\core\libraries\rest_api\RestException
+     * @expectedExceptionCode 400
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws RestException
+     * @throws Exception
+     * @group 11368
+     */
+    public function testIncomingInvalidTimestamp($timestamp, $timezone)
+    {
+        ModelDataTranslator::prepareFieldValueFromJson(
+            new EE_Datetime_Field(
+                'post_date',
+                esc_html__('Date/Time Event Created', 'event_espresso'),
+                false,
+                EE_Datetime_Field::now
+            ),
+            $timestamp,
+            $timezone
+        );
+    }
+
 
     public function testPrepareQueryParamsForRestApi()
     {
@@ -62,16 +146,25 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      */
     public function testPrepareConditionsQueryParamsForModels__gmtDatetimes()
     {
-        $this->markTestSkipped('Temporarily until https://events.codebasehq.com/projects/event-espresso/tickets/10626 is released');
-        update_option('gmt_offset', '');
         $data_translator = new ModelDataTranslator();
         $gmt_offsets = array(-12, -10.5, -9, -7.5, -6, -4.5, -3, -1.5, 0, 1.5, 3, 4.5, 6, 7.5, 9, 10.5, 12);
         foreach ($gmt_offsets as $gmt_offset) {
-            $TZ_NAME = \EEH_DTT_Helper::get_timezone_string_from_gmt_offset($gmt_offset);
-            update_option('timezone_string', $TZ_NAME);
-            $now_local_time = current_time('mysql');
+            //set the offset
+            update_option('gmt_offset', $gmt_offset);
+            //set the current time from our timezone helper to more closely mimic how dates and times pass through our
+            //model.  We can't use WP's `current_time` because wp ALWAYS uses offset directly if its present whereas EE
+            //tries to coerce a closest matching timezone string for "invalid" offsets (PHP version < 5.6).
+            $datetime = new DateTime('now', new DateTimeZone(
+                EEH_DTT_Helper::get_timezone_string_from_gmt_offset($gmt_offset)
+            ));
+            $now_local_time = $datetime->format(EE_Datetime_Field::mysql_timestamp_format);
             $now_utc_time = current_time('mysql', true);
-            $this->assertNotEquals($now_local_time, $now_utc_time);
+            //should always be not equal except when offset is 0
+            if ($gmt_offset !== 0) {
+                $this->assertNotEquals($now_local_time, $now_utc_time, sprintf('For gmt offset %d', $gmt_offset));
+            } else {
+                $this->assertEquals($now_local_time, $now_utc_time);
+            }
             $model_data = $data_translator::prepareConditionsQueryParamsForModels(
                 array(
                     'EVT_created'      => mysql_to_rfc3339($now_local_time),
@@ -83,7 +176,11 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
             //verify the model data being inputted is in UTC
             $this->assertEquals($now_utc_time, date('Y-m-d H:i:s', $model_data['EVT_created']));
             //NOT in local time
-            $this->assertNotEquals($now_local_time, $model_data['EVT_created']);
+            $this->assertNotEquals(
+                $now_local_time,
+                $model_data['EVT_created'],
+                sprintf('For gmt offset %d', $gmt_offset)
+            );
             //notice that there's no "_gmt" on EVT_modified. That's (currently at least)
             //not a real model field. It just indicates to treat the time already being in UTC
             $this->assertEquals($now_utc_time, date('Y-m-d H:i:s', $model_data['EVT_modified']));
