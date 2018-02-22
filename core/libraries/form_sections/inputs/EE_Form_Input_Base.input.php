@@ -188,14 +188,23 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     public function __construct($input_args = array())
     {
         $input_args = (array)apply_filters('FHEE__EE_Form_Input_Base___construct__input_args', $input_args, $this);
+        $no_validation = null;
         // the following properties must be cast as arrays
         if (isset($input_args['validation_strategies'])) {
             foreach ((array)$input_args['validation_strategies'] as $validation_strategy) {
                 if ($validation_strategy instanceof EE_Validation_Strategy_Base) {
                     $this->_validation_strategies[get_class($validation_strategy)] = $validation_strategy;
+                    $no_validation = $validation_strategy instanceof EE_No_Validation_Strategy
+                        ? $validation_strategy
+                        : $no_validation;
                 }
             }
             unset($input_args['validation_strategies']);
+        }
+        if($no_validation instanceof EE_No_Validation_Strategy){
+            $this->_validation_strategies = array(
+                'EE_No_Validation_Strategy' => $no_validation
+            );
         }
         // loop thru incoming options
         foreach ($input_args as $key => $value) {
