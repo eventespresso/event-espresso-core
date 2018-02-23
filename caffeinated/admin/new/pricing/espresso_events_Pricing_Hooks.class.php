@@ -225,8 +225,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                     ),
                     'DTT_ERROR_MSG'         => array(
                         'no_ticket_name' => esc_html__('General Admission', 'event_espresso'),
-                        'dismiss_button' => '<div class="save-cancel-button-container"><button class="button-secondary ee-modal-cancel">'
-                                            . esc_html__('Dismiss', 'event_espresso') . '</button></div>',
+                        'dismiss_button' => '<div class="save-cancel-button-container">'
+                                            . '<button class="button-secondary ee-modal-cancel">'
+                                            . esc_html__('Dismiss', 'event_espresso')
+                                            . '</button></div>',
                     ),
                     'DTT_OVERSELL_WARNING'  => array(
                         'datetime_ticket' => esc_html__(
@@ -579,8 +581,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                     // if $create_new_TKT is false then we can safely update the existing ticket.
                     // Otherwise we have to create a new ticket.
                     if ($create_new_TKT) {
-                        $new_tkt = $this->_duplicate_ticket($ticket, $price_rows, $ticket_price, $base_price,
-                            $base_price_id);
+                        $new_tkt = $this->_duplicate_ticket(
+                            $ticket,
+                            $price_rows,
+                            $ticket_price,
+                            $base_price,
+                            $base_price_id
+                        );
                     }
                 }
             } else {
@@ -611,10 +618,19 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 $ticket = EEH_DTT_Helper::date_time_add($ticket, 'TKT_end_date', 'days');
             }
             //let's make sure the base price is handled
-            $ticket = ! $create_new_TKT ? $this->_add_prices_to_ticket(array(), $ticket, $update_prices, $base_price,
-                $base_price_id) : $ticket;
+            $ticket = ! $create_new_TKT
+                ? $this->_add_prices_to_ticket(
+                    array(),
+                    $ticket,
+                    $update_prices,
+                    $base_price,
+                    $base_price_id
+                )
+                : $ticket;
             //add/update price_modifiers
-            $ticket = ! $create_new_TKT ? $this->_add_prices_to_ticket($price_rows, $ticket, $update_prices) : $ticket;
+            $ticket = ! $create_new_TKT
+                ? $this->_add_prices_to_ticket($price_rows, $ticket, $update_prices)
+                : $ticket;
             //need to make sue that the TKT_price is accurate after saving the prices.
             $ticket->ensure_TKT_Price_correct();
             //handle CREATING a default tkt from the incoming tkt but ONLY if this isn't an autosave.
@@ -629,7 +645,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 // (note this is just removing the cached relations in the object)
                 $new_default->_remove_relations('Datetime');
                 //todo we need to add the current attached prices as new prices to the new default ticket.
-                $new_default = $this->_add_prices_to_ticket($price_rows, $new_default, $update_prices);
+                $new_default = $this->_add_prices_to_ticket(
+                    $price_rows,
+                    $new_default,
+                    $update_prices
+                );
                 //don't forget the base price!
                 $new_default = $this->_add_prices_to_ticket(
                     array(),
@@ -720,12 +740,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
 
     /**
      * @access  protected
-     * @param \EE_Ticket     $ticket
+     * @param EE_Ticket      $ticket
      * @param \EE_Datetime[] $saved_datetimes
      * @param \EE_Datetime[] $added_datetimes
      * @param \EE_Datetime[] $removed_datetimes
-     * @return \EE_Ticket
-     * @throws \EE_Error
+     * @return EE_Ticket
+     * @throws EE_Error
      */
     protected function _update_ticket_datetimes(
         EE_Ticket $ticket,
@@ -775,17 +795,17 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
 
     /**
      * @access  protected
-     * @param \EE_Ticket $ticket
-     * @param array      $price_rows
-     * @param int        $ticket_price
-     * @param int        $base_price
-     * @param int        $base_price_id
-     * @return \EE_Ticket
+     * @param EE_Ticket $ticket
+     * @param array     $price_rows
+     * @param int       $ticket_price
+     * @param int       $base_price
+     * @param int       $base_price_id
+     * @return EE_Ticket
      * @throws ReflectionException
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _duplicate_ticket(
         EE_Ticket $ticket,
@@ -821,7 +841,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         //now we update the prices just for this ticket
         $new_ticket = $this->_add_prices_to_ticket($price_rows, $new_ticket, true);
         //and we update the base price
-        $new_ticket = $this->_add_prices_to_ticket(array(), $new_ticket, true, $base_price, $base_price_id);
+        $new_ticket = $this->_add_prices_to_ticket(
+            array(),
+            $new_ticket,
+            true,
+            $base_price,
+            $base_price_id
+        );
         return $new_ticket;
     }
 
@@ -1151,7 +1177,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         $all_datetimes = array()
     ) {
         $dtt_display_template_args = array(
-            'dtt_edit_row'             => $this->_get_dtt_edit_row($datetime_row, $datetime, $default, $all_datetimes),
+            'dtt_edit_row'             => $this->_get_dtt_edit_row(
+                $datetime_row,
+                $datetime,
+                $default,
+                $all_datetimes
+            ),
             'dtt_attached_tickets_row' => $this->_get_dtt_attached_tickets_row(
                 $datetime_row,
                 $datetime,
@@ -1579,7 +1610,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 //default so let's just use what's been set for the default date-time which is 30 days from now.
                 $template_args['TKT_end_date'] = date(
                     $this->_date_time_format,
-                    mktime(24, 0, 0, date('m'), date('d') + 29, date('Y')
+                    mktime(
+                        24, 0, 0, date('m'), date('d') + 29, date('Y')
                     )
                 );
             }
@@ -1735,7 +1767,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 : 'edit_prices',
             'price_type_selector'   => $default && empty($price)
                 ? $this->_get_base_price_template($ticket_row, $price_row, $price, $default)
-                : $this->_get_price_type_selector($ticket_row, $price_row, $price, $default, $send_disabled),
+                : $this->_get_price_type_selector(
+                    $ticket_row,
+                    $price_row,
+                    $price,
+                    $default,
+                    $send_disabled
+                ),
             'PRC_ID'                => $default && empty($price)
                 ? 0
                 : $price->ID(),
@@ -1804,7 +1842,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @param bool     $disabled
      * @return mixed
      * @throws ReflectionException
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws DomainException
@@ -1813,9 +1851,20 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
     protected function _get_price_type_selector($ticket_row, $price_row, $price, $default, $disabled = false)
     {
         if ($price->is_base_price()) {
-            return $this->_get_base_price_template($ticket_row, $price_row, $price, $default);
+            return $this->_get_base_price_template(
+                $ticket_row,
+                $price_row,
+                $price,
+                $default
+            );
         }
-        return $this->_get_price_modifier_template($ticket_row, $price_row, $price, $default, $disabled);
+        return $this->_get_price_modifier_template(
+            $ticket_row,
+            $price_row,
+            $price,
+            $default,
+            $disabled
+        );
     }
 
 
