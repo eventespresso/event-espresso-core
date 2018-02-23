@@ -1,26 +1,15 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-/**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package        Event Espresso
- * @ author        Event Espresso
- * @ copyright    (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license        {@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @ link                {@link http://www.eventespresso.com}
- * @ since            4.0
- */
+<?php use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 /**
  * EE_Datetime class
  *
- * @package               Event Espresso
- * @subpackage            includes/classes/EE_Datetime.class.php
- * @author                Brent Christensen
- * ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  includes/classes/EE_Datetime.class.php
+ * @author      Brent Christensen
  */
 class EE_Datetime extends EE_Soft_Delete_Base_Class
 {
@@ -63,17 +52,28 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     * @param array  $props_n_values          incoming values
-     * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
-     *                                        used.)
-     * @param array  $date_formats            incoming date_formats in an array where the first value is the
-     *                                        date_format and the second value is the time format
+     * @param array  $props_n_values    incoming values
+     * @param string $timezone          incoming timezone (if not set the timezone set for the website will be used.)
+     * @param array $date_formats       incoming date_formats in an array where the first value is the date_format
+     *                                  and the second value is the time format
      * @return EE_Datetime
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
     {
-        $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
+        $has_object = parent::_check_for_object(
+            $props_n_values,
+            __CLASS__,
+            $timezone,
+            $date_formats
+        );
+        return $has_object
+            ? $has_object
+            : new self($props_n_values, false, $timezone, $date_formats);
     }
 
 
@@ -82,6 +82,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
      *                                the website will be used.
      * @return EE_Datetime
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public static function new_instance_from_db($props_n_values = array(), $timezone = null)
     {
@@ -91,6 +96,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
     /**
      * @param $name
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function set_name($name)
     {
@@ -100,6 +110,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
     /**
      * @param $description
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function set_description($description)
     {
@@ -108,10 +123,15 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        Set event start date
-     *        set the start date for an event
+     * Set event start date
+     * set the start date for an event
      *
-     * @param        string $date a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
+     * @param string $date a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function set_start_date($date)
     {
@@ -120,10 +140,15 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        Set event start time
-     *        set the start time for an event
+     * Set event start time
+     * set the start time for an event
      *
-     * @param        string $time a string representation of the event time ex:  9am  or  7:30 PM
+     * @param string $time a string representation of the event time ex:  9am  or  7:30 PM
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function set_start_time($time)
     {
@@ -132,10 +157,15 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        Set event end date
-     *        set the end date for an event
+     * Set event end date
+     * set the end date for an event
      *
-     * @param        string $date a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
+     * @param string $date a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function set_end_date($date)
     {
@@ -144,10 +174,15 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        Set event end time
-     *        set the end time for an event
+     * Set event end time
+     * set the end time for an event
      *
-     * @param        string $time a string representation of the event time ex:  9am  or  7:30 PM
+     * @param string $time a string representation of the event time ex:  9am  or  7:30 PM
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function set_end_time($time)
     {
@@ -156,10 +191,15 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        Set registration limit
-     *        set the maximum number of attendees that can be registered for this datetime slot
+     * Set registration limit
+     * set the maximum number of attendees that can be registered for this datetime slot
      *
-     * @param        int $reg_limit
+     * @param int $reg_limit
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function set_reg_limit($reg_limit)
     {
@@ -168,10 +208,14 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get the number of tickets sold for this datetime slot
+     * get the number of tickets sold for this datetime slot
      *
-     * @access        public
-     * @return        mixed        int on success, FALSE on fail
+     * @return mixed int on success, FALSE on fail
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function sold()
     {
@@ -180,9 +224,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    set_sold
-     *
-     * @param        int $sold
+     * @param int $sold
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function set_sold($sold)
     {
@@ -196,6 +243,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * increments sold by amount passed by $qty
      *
      * @param int $qty
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function increase_sold($qty = 1)
     {
@@ -216,6 +268,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * decrements (subtracts) sold amount passed by $qty
      *
      * @param int $qty
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function decrease_sold($qty = 1)
     {
@@ -234,6 +291,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * Gets qty of reserved tickets for this datetime
      *
      * @return int
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function reserved()
     {
@@ -245,6 +307,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * Sets qty of reserved tickets for this datetime
      *
      * @param int $reserved
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function set_reserved($reserved)
     {
@@ -259,6 +326,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      *
      * @param int $qty
      * @return void
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function increase_reserved($qty = 1)
     {
@@ -278,6 +350,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      *
      * @param int $qty
      * @return void
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function decrease_reserved($qty = 1)
     {
@@ -296,6 +373,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * total sold and reserved tickets
      *
      * @return int
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function sold_and_reserved()
     {
@@ -307,6 +389,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * returns the datetime name
      *
      * @return string
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function name()
     {
@@ -318,6 +405,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * returns the datetime description
      *
      * @return string
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function description()
     {
@@ -328,7 +420,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * This helper simply returns whether the event_datetime for the current datetime is a primary datetime
      *
-     * @return boolean          TRUE if is primary, FALSE if not.
+     * @return boolean  TRUE if is primary, FALSE if not.
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function is_primary()
     {
@@ -339,7 +436,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * This helper simply returns the order for the datetime
      *
-     * @return int         The order of the datetime for this event.
+     * @return int  The order of the datetime for this event.
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function order()
     {
@@ -351,6 +453,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * This helper simply returns the parent id for the datetime
      *
      * @return int
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function parent()
     {
@@ -359,16 +466,20 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        show date and/or time
+     * show date and/or time
      *
-     * @access    private
-     * @param    string $date_or_time - whether to display a date or time or both
-     * @param    string $start_or_end - whether to display start or end datetimes
-     * @param    string $dt_frmt
-     * @param    string $tm_frmt
-     * @param    bool   $echo         - whether we echo or return (note echoing uses "pretty" formats, otherwise we use
-     *                                the standard formats)
-     * @return    string|bool  string on success, FALSE on fail
+     * @param string $date_or_time    whether to display a date or time or both
+     * @param string $start_or_end    whether to display start or end datetimes
+     * @param string $dt_frmt
+     * @param string $tm_frmt
+     * @param bool   $echo            whether we echo or return (note echoing uses "pretty" formats,
+     *                                otherwise we use the standard formats)
+     * @return string|bool  string on success, FALSE on fail
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     private function _show_datetime(
         $date_or_time = null,
@@ -378,7 +489,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
         $echo = false
     ) {
         $field_name = "DTT_EVT_{$start_or_end}";
-        $dtt        = $this->_get_datetime($field_name, $dt_frmt, $tm_frmt, $date_or_time, $echo);
+        $dtt        = $this->_get_datetime(
+            $field_name,
+            $dt_frmt,
+            $tm_frmt,
+            $date_or_time,
+            $echo
+        );
         if (! $echo) {
             return $dtt;
         }
@@ -390,8 +507,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * get event start date.  Provide either the date format, or NULL to re-use the
      * last-used format, or '' to use the default date format
      *
-     * @param string $dt_frmt - string representation of date format defaults to 'F j, Y'
-     * @return        mixed        string on success, FALSE on fail
+     * @param string $dt_frmt   string representation of date format defaults to 'F j, Y'
+     * @return mixed            string on success, FALSE on fail
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function start_date($dt_frmt = '')
     {
@@ -403,6 +525,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * Echoes start_date()
      *
      * @param string $dt_frmt
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function e_start_date($dt_frmt = '')
     {
@@ -414,8 +541,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * get end date. Provide either the date format, or NULL to re-use the
      * last-used format, or '' to use the default date format
      *
-     * @param string $dt_frmt - string representation of date format defaults to 'F j, Y'
-     * @return        mixed        string on success, FALSE on fail
+     * @param string $dt_frmt   string representation of date format defaults to 'F j, Y'
+     * @return mixed            string on success, FALSE on fail
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function end_date($dt_frmt = '')
     {
@@ -427,6 +559,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * Echoes the end date. See end_date()
      *
      * @param string $dt_frmt
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function e_end_date($dt_frmt = '')
     {
@@ -438,17 +575,29 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * get date_range - meaning the start AND end date
      *
      * @access public
-     * @param string $dt_frmt     - string representation of date format defaults to WP settings
-     * @param string $conjunction - conjunction junction what's your function ? this string joins the start date with
-     *                            the end date ie: Jan 01 "to" Dec 31
-     * @return mixed        string on success, FALSE on fail
-     * @throws \EE_Error
+     * @param string $dt_frmt     string representation of date format defaults to WP settings
+     * @param string $conjunction conjunction junction what's your function ?
+     *                            this string joins the start date with the end date ie: Jan 01 "to" Dec 31
+     * @return mixed              string on success, FALSE on fail
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function date_range($dt_frmt = '', $conjunction = ' - ')
     {
         $dt_frmt = ! empty($dt_frmt) ? $dt_frmt : $this->_dt_frmt;
-        $start   = str_replace(' ', '&nbsp;', $this->get_i18n_datetime('DTT_EVT_start', $dt_frmt));
-        $end     = str_replace(' ', '&nbsp;', $this->get_i18n_datetime('DTT_EVT_end', $dt_frmt));
+        $start   = str_replace(
+            ' ',
+            '&nbsp;',
+            $this->get_i18n_datetime('DTT_EVT_start', $dt_frmt)
+        );
+        $end     = str_replace(
+            ' ',
+            '&nbsp;',
+            $this->get_i18n_datetime('DTT_EVT_end', $dt_frmt)
+        );
         return $start !== $end ? $start . $conjunction . $end : $start;
     }
 
@@ -456,7 +605,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * @param string $dt_frmt
      * @param string $conjunction
-     * @throws \EE_Error
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function e_date_range($dt_frmt = '', $conjunction = ' - ')
     {
@@ -469,6 +622,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      *
      * @param string $tm_format - string representation of time format defaults to 'g:i a'
      * @return mixed        string on success, FALSE on fail
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function start_time($tm_format = '')
     {
@@ -478,6 +636,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
     /**
      * @param string $tm_format
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function e_start_time($tm_format = '')
     {
@@ -488,8 +651,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * get end time
      *
-     * @param string $tm_format - string representation of time format defaults to 'g:i a'
-     * @return mixed        string on success, FALSE on fail
+     * @param string $tm_format     string representation of time format defaults to 'g:i a'
+     * @return mixed                string on success, FALSE on fail
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function end_time($tm_format = '')
     {
@@ -499,6 +667,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
     /**
      * @param string $tm_format
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function e_end_time($tm_format = '')
     {
@@ -514,13 +687,25 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @param string $conjunction conjunction junction what's your function ?
      *                            this string joins the start date with the end date ie: Jan 01 "to" Dec 31
      * @return mixed              string on success, FALSE on fail
-     * @throws \EE_Error
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function time_range($tm_format = '', $conjunction = ' - ')
     {
         $tm_format = ! empty($tm_format) ? $tm_format : $this->_tm_frmt;
-        $start     = str_replace(' ', '&nbsp;', $this->get_i18n_datetime('DTT_EVT_start', $tm_format));
-        $end       = str_replace(' ', '&nbsp;', $this->get_i18n_datetime('DTT_EVT_end', $tm_format));
+        $start     = str_replace(
+            ' ',
+            '&nbsp;',
+            $this->get_i18n_datetime('DTT_EVT_start', $tm_format)
+        );
+        $end       = str_replace(
+            ' ',
+            '&nbsp;',
+            $this->get_i18n_datetime('DTT_EVT_end', $tm_format)
+        );
         return $start !== $end ? $start . $conjunction . $end : $start;
     }
 
@@ -528,7 +713,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * @param string $tm_format
      * @param string $conjunction
-     * @throws \EE_Error
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function e_time_range($tm_format = '', $conjunction = ' - ')
     {
@@ -548,7 +737,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @param string $separator   used between the date and time formats.
      *                            ex: Dec 1, 2016{$separator}2pm
      * @return string
-     * @throws \EE_Error
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function date_and_time_range(
         $dt_format = '',
@@ -590,7 +783,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @param string $tm_format
      * @param string $conjunction
      * @return void
-     * @throws \EE_Error
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function e_date_and_time_range($dt_format = '', $tm_format = '', $conjunction = ' - ')
     {
@@ -604,6 +801,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @param    string $dt_format - string representation of date format defaults to 'F j, Y'
      * @param    string $tm_format - string representation of time format defaults to 'g:i a'
      * @return    mixed    string on success, FALSE on fail
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function start_date_and_time($dt_format = '', $tm_format = '')
     {
@@ -614,6 +816,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * @param string $dt_frmt
      * @param string $tm_format
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function e_start_date_and_time($dt_frmt = '', $tm_format = '')
     {
@@ -630,6 +837,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @param string $units 'seconds','minutes','hours','days'
      * @param bool   $round_up
      * @return float|int|mixed
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function length($units = 'seconds', $round_up = false)
     {
@@ -664,6 +876,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @param string $dt_frmt   - string representation of date format defaults to 'F j, Y'
      * @param string $tm_format - string representation of time format defaults to 'g:i a'
      * @return    mixed                string on success, FALSE on fail
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function end_date_and_time($dt_frmt = '', $tm_format = '')
     {
@@ -674,6 +891,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * @param string $dt_frmt
      * @param string $tm_format
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function e_end_date_and_time($dt_frmt = '', $tm_format = '')
     {
@@ -685,6 +907,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      *        get start timestamp
      *
      * @return        int
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function start()
     {
@@ -696,6 +923,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      *        get end timestamp
      *
      * @return        int
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function end()
     {
@@ -707,6 +939,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      *    get the registration limit for this datetime slot
      *
      * @return        mixed        int on success, FALSE on fail
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function reg_limit()
     {
@@ -718,27 +955,33 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      *    have the tickets sold for this datetime, met or exceed the registration limit ?
      *
      * @return        boolean
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function sold_out()
     {
-        return $this->reg_limit() > 0 && $this->sold() >= $this->reg_limit() ? true : false;
+        return $this->reg_limit() > 0 && $this->sold() >= $this->reg_limit();
     }
 
 
     /**
-     *    return the total number of spaces remaining at this venue.
-     *  This only takes the venue's capacity into account, NOT the tickets available for sale
+     * return the total number of spaces remaining at this venue.
+     * This only takes the venue's capacity into account, NOT the tickets available for sale
      *
-     * @access    public
-     * @param    bool $consider_tickets                                   Whether to consider tickets remaining when
-     *                                                                    determining if there are any spaces left
-     *                                                                    Because if all tickets attached to this
-     *                                                                    datetime have no spaces left, then this
-     *                                                                    datetime IS effectively sold out. However,
-     *                                                                    there are cases where we just want to know
-     *                                                                    the spaces remaining for this particular
-     *                                                                    datetime, hence the flag.
-     * @return    int
+     * @param bool $consider_tickets Whether to consider tickets remaining when determining if there are any spaces left
+     *                               Because if all tickets attached to this datetime have no spaces left,
+     *                               then this datetime IS effectively sold out.
+     *                               However, there are cases where we just want to know the spaces
+     *                               remaining for this particular datetime, hence the flag.
+     * @return int
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function spaces_remaining($consider_tickets = false)
     {
@@ -754,11 +997,16 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     * Counts the total tickets available (from all the different types of tickets which are available for this
-     * datetime).
+     * Counts the total tickets available
+     * (from all the different types of tickets which are available for this datetime).
      *
      * @param array $query_params like EEM_Base::get_all's
      * @return int
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function tickets_remaining($query_params = array())
     {
@@ -789,6 +1037,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      *
      * @param array $query_params like EEM_Base::get_all's
      * @return int
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function sum_tickets_initially_available($query_params = array())
     {
@@ -802,6 +1055,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * that is available for this datetime).
      *
      * @return int
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function total_tickets_available_at_this_datetime()
     {
@@ -810,11 +1068,16 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     * This simply compares the internal dtt for the given string with NOW and determines if the date is upcoming or
-     * not.
+     * This simply compares the internal dtt for the given string with NOW
+     * and determines if the date is upcoming or not.
      *
      * @access public
      * @return boolean
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function is_upcoming()
     {
@@ -823,10 +1086,15 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     * This simply compares the internal datetime for the given string with NOW and returns if the date is active (i.e.
-     * start and end time)
+     * This simply compares the internal datetime for the given string with NOW
+     * and returns if the date is active (i.e. start and end time)
      *
      * @return boolean
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function is_active()
     {
@@ -835,9 +1103,15 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     * This simply compares the internal dtt for the given string with NOW and determines if the date is expired or not.
+     * This simply compares the internal dtt for the given string with NOW
+     * and determines if the date is expired or not.
      *
      * @return boolean
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function is_expired()
     {
@@ -848,7 +1122,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * This returns the active status for whether an event is active, upcoming, or expired
      *
-     * @return int       return value will be one of the EE_Datetime status constants.
+     * @return int return value will be one of the EE_Datetime status constants.
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function get_active_status()
     {
@@ -874,6 +1153,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      *
      * @param  boolean $use_dtt_name if TRUE then we'll use DTT->name() if its not empty.
      * @return string
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function get_dtt_display_name($use_dtt_name = false)
     {
@@ -884,12 +1168,16 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
             }
         }
         //first condition is to see if the months are different
-        if (date('m', $this->get_raw('DTT_EVT_start')) != date('m', $this->get_raw('DTT_EVT_end'))) {
+        if (
+            date('m', $this->get_raw('DTT_EVT_start')) !== date('m', $this->get_raw('DTT_EVT_end'))
+        ) {
             $display_date = $this->start_date('M j\, Y g:i a') . ' - ' . $this->end_date('M j\, Y g:i a');
             //next condition is if its the same month but different day
         } else {
-            if (date('m', $this->get_raw('DTT_EVT_start')) == date('m', $this->get_raw('DTT_EVT_end'))
-                && date('d', $this->get_raw('DTT_EVT_start')) != date('d', $this->get_raw('DTT_EVT_end'))) {
+            if (
+                date('m', $this->get_raw('DTT_EVT_start')) === date('m', $this->get_raw('DTT_EVT_end'))
+                && date('d', $this->get_raw('DTT_EVT_start')) !== date('d', $this->get_raw('DTT_EVT_end'))
+            ) {
                 $display_date = $this->start_date('M j\, g:i a') . ' - ' . $this->end_date('M j\, g:i a Y');
             } else {
                 $display_date = $this->start_date('F j\, Y')
@@ -907,7 +1195,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * Gets all the tickets for this datetime
      *
      * @param array $query_params see EEM_Base::get_all()
-     * @return EE_Ticket[]
+     * @return EE_Base_Class[]|EE_Ticket[]
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function tickets($query_params = array())
     {
@@ -920,11 +1213,16 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      *
      * @param array $query_params like EEM_Base::get_all's
      * @return EE_Ticket[]
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function ticket_types_available_for_purchase($query_params = array())
     {
         // first check if datetime is valid
-        if (! ($this->is_upcoming() || $this->is_active()) || $this->sold_out()) {
+        if ($this->sold_out() || ! ($this->is_upcoming() || $this->is_active())) {
             return array();
         }
         if (empty($query_params)) {
@@ -941,7 +1239,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     * @return EE_Event
+     * @return EE_Base_Class|EE_Event
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function event()
     {
@@ -950,11 +1253,15 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     * Updates the DTT_sold attribute (and saves) based on the number of registrations for this datetime (via the
-     * tickets). into account
+     * Updates the DTT_sold attribute (and saves) based on the number of registrations for this datetime
+     * (via the tickets). into account
      *
      * @return int
-     * @throws \EE_Error
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function update_sold()
     {
