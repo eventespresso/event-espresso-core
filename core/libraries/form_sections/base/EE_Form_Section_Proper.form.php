@@ -1164,6 +1164,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
 
     /**
+     * Changes these inputs' display strategy to be EE_Hidden_Display_Strategy.
+     * prevents form submission)
      * @param array $inputs_to_hide
      * @throws EE_Error
      */
