@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
 
 
@@ -41,7 +44,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
 
 
     /**
-     *
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     protected function _set_hooks_properties()
     {
@@ -265,6 +270,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      *
      * @param  EE_Event $event The Event object we're attaching data to
      * @param  array    $data  The request data from the form
+     * @throws ReflectionException
+     * @throws Exception
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
      * @throws InvalidArgumentException
      */
@@ -283,6 +292,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @param  EE_Event $event Event being updated
      * @param  array    $data  the request data from the form
      * @return EE_Datetime[]
+     * @throws Exception
+     * @throws ReflectionException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws InvalidArgumentException
      * @throws EE_Error
      */
@@ -414,6 +427,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @param  EE_Datetime[] $saved_datetimes an array of datetime ids being updated
      * @param  array         $data            incoming request data
      * @return EE_Ticket[]
+     * @throws Exception
+     * @throws ReflectionException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws InvalidArgumentException
      * @throws EE_Error
      */
@@ -764,6 +781,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @param int        $base_price
      * @param int        $base_price_id
      * @return \EE_Ticket
+     * @throws ReflectionException
+     * @throws \InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws \EE_Error
      */
     protected function _duplicate_ticket(
@@ -818,6 +839,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @param int|bool  $base_price    if FALSE then NOT doing a base price add.
      * @param int|bool  $base_price_id if present then this is the base_price_id being updated.
      * @return EE_Ticket
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
      */
     protected function _add_prices_to_ticket(
@@ -932,6 +957,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
 
 
     /**
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws DomainException
      * @throws EE_Error
      */
@@ -1354,8 +1383,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @param EE_Ticket[]   $all_tickets      This is an array of all tickets attached to the event
      *                                        (or empty in the case of defaults)
      * @return mixed
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws DomainException
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _get_ticket_row(
         $ticket_row,
@@ -1673,8 +1706,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @param bool           $show_trash
      * @param bool           $show_create
      * @return mixed
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws DomainException
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _get_ticket_price_row(
         $ticket_row,
@@ -1766,6 +1803,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @param bool     $default
      * @param bool     $disabled
      * @return mixed
+     * @throws ReflectionException
+     * @throws \InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws DomainException
      * @throws EE_Error
      */
@@ -1821,6 +1862,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @param bool     $default
      * @param bool     $disabled
      * @return mixed
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws DomainException
      * @throws EE_Error
      */
@@ -1974,6 +2019,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @param array $all_datetimes
      * @param array $all_tickets
      * @return mixed
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws DomainException
      * @throws EE_Error
      */
