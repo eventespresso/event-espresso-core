@@ -321,7 +321,10 @@ class EE_Data_Migration_Manager implements ResettableInterface {
 	 * folder name.
 	 */
 	public function get_data_migration_script_folders(){
-		return  apply_filters( 'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',array(EE_CORE.'data_migration_scripts') );
+		return  apply_filters(
+		    'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',
+            array('Core' => EE_CORE.'data_migration_scripts')
+        );
 	}
 
 	/**
@@ -750,7 +753,7 @@ class EE_Data_Migration_Manager implements ResettableInterface {
             foreach ($this->get_data_migration_script_folders() as $eeAddonClass => $folder_path) {
                 // strip any placeholders added to classname to make it a unique array key
                 $eeAddonClass = trim($eeAddonClass, '*');
-                $eeAddonClass = class_exists($eeAddonClass)
+                $eeAddonClass = $eeAddonClass === 'Core' || class_exists($eeAddonClass)
                     ? $eeAddonClass
                     : '';
                 $folder_path  = EEH_File::end_with_directory_separator($folder_path);
