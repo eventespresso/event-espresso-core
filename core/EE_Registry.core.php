@@ -861,6 +861,7 @@ class EE_Registry implements ResettableInterface
      * @param string $class_name
      * @param string $class_prefix
      * @return mixed
+     * @throws OutOfBoundsException
      */
     protected function _get_cached_class($class_name, $class_prefix = '')
     {
@@ -893,6 +894,7 @@ class EE_Registry implements ResettableInterface
      * @param string  $class_name
      * @param boolean $addon
      * @return boolean
+     * @throws OutOfBoundsException
      */
     public function clear_cached_class($class_name, $addon = false)
     {
@@ -1330,6 +1332,7 @@ class EE_Registry implements ResettableInterface
      * @param string $class_prefix
      * @param bool   $from_db
      * @return void
+     * @throws OutOfBoundsException
      */
     protected function _set_cached_class($class_obj, $class_name, $class_prefix = '', $from_db = false)
     {
@@ -1386,6 +1389,7 @@ class EE_Registry implements ResettableInterface
      *
      * @param string $class_name
      * @return EE_Addon
+     * @throws OutOfBoundsException
      */
     public function getAddon($class_name)
     {
