@@ -151,7 +151,7 @@ abstract class EE_Base_Class
             if (! isset($model_fields[ $field_name ])) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'Invalid field (%s) passed to constructor of %s. Allowed fields are :%s',
                             'event_espresso'
                         ),
@@ -359,7 +359,7 @@ abstract class EE_Base_Class
         } else {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'A valid EE_Model_Field_Base could not be found for the given field name: %s',
                         'event_espresso'
                     ),
@@ -570,7 +570,7 @@ abstract class EE_Base_Class
         if (! $relationship_to_model = $this->get_model()->related_settings_for($relationName)) {
             throw new EE_Error(
                 sprintf(
-                    __('There is no relationship to %s on a %s. Cannot cache it', 'event_espresso'),
+                    esc_html__('There is no relationship to %s on a %s. Cannot cache it', 'event_espresso'),
                     $relationName,
                     get_class($this)
                 )
@@ -816,7 +816,7 @@ abstract class EE_Base_Class
         if (! $relationship_to_model) {
             throw new EE_Error(
                 sprintf(
-                    __('There is no relationship to %s on a %s. Cannot clear that cache', 'event_espresso'),
+                    esc_html__('There is no relationship to %s on a %s. Cannot clear that cache', 'event_espresso'),
                     $relationName,
                     get_class($this)
                 )
@@ -982,7 +982,7 @@ abstract class EE_Base_Class
             } else {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'Error retrieving related model objects. Either $1%s is not a model or $2%s is not a model object',
                             'event_espresso'
                         ),
@@ -1216,7 +1216,7 @@ abstract class EE_Base_Class
         if (! $field_settings instanceof EE_Datetime_Field) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The field %s is not an EE_Datetime_Field field.  There is no DateTime object stored on this field type.',
                         'event_espresso'
                     ),
@@ -1502,7 +1502,7 @@ abstract class EE_Base_Class
         }
         throw new EE_Error(
             sprintf(
-                __(
+                esc_html__(
                     'The field name "%s" has been requested for the EE_Base_Class datetime functions and it is not a valid EE_Datetime_Field.  Please check the spelling of the field and make sure it has been setup as a EE_Datetime_Field in the %s model constructor',
                     'event_espresso'
                 ),
@@ -1638,7 +1638,7 @@ abstract class EE_Base_Class
         if (! method_exists($this, $callback)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The method named "%s" given as the callback param in "display_in_my_timezone" does not exist.  Please check your spelling',
                         'event_espresso'
                     ),
@@ -1870,7 +1870,7 @@ abstract class EE_Base_Class
                     if (WP_DEBUG && ! $this->in_entity_map()) {
                         throw new EE_Error(
                             sprintf(
-                                __(
+                                esc_html__(
                                     'Using a model object %1$s that is NOT in the entity map, can lead to unexpected errors. You should either: %4$s 1. Put it in the entity mapper by calling %2$s %4$s 2. Discard this model object and use what is in the entity mapper %4$s 3. Fetch from the database using %3$s',
                                     'event_espresso'
                                 ),
@@ -2136,7 +2136,7 @@ abstract class EE_Base_Class
         if (! $classname) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'What were you thinking calling _get_model(%s)?? You need to specify the class name',
                         'event_espresso'
                     ),
@@ -2204,7 +2204,7 @@ abstract class EE_Base_Class
         if (! $classname) {
             throw new EE_Error(
                 sprintf(
-                    __('What were you thinking calling _get_primary_key_name(%s)', 'event_espresso'),
+                    esc_html__('What were you thinking calling _get_primary_key_name(%s)', 'event_espresso'),
                     $classname
                 )
             );
@@ -2287,7 +2287,7 @@ abstract class EE_Base_Class
             if (! $otherObjectModelObjectOrID instanceof EE_Base_Class) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'Before a model object is saved to the database, calls to _add_relation_to must be passed an actual object, not just an ID. You provided %s as the model object to a %s',
                             'event_espresso'
                         ),
@@ -2684,7 +2684,7 @@ abstract class EE_Base_Class
             if (! $this->_fields[ $property_name ]) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'Trying to retrieve a non-existent property (%s).  Double check the spelling please',
                             'event_espresso'
                         ),
@@ -2753,7 +2753,7 @@ abstract class EE_Base_Class
         if (! has_filter($tagName)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Method %s on class %s does not exist! You can create one with the following code in functions.php or in a plugin: add_filter('%s','my_callback',10,3);function my_callback(\$previousReturnValue,EE_Base_Class \$object, \$argsArray){/*function body*/return \$whatever;}",
                         'event_espresso'
                     ),
@@ -3044,7 +3044,7 @@ abstract class EE_Base_Class
             if (WP_DEBUG) {
                 throw new EE_Error(
                     sprintf(
-                        __('Trying to refresh a model object with ID "%1$s" that\'s not in the entity map? First off: you should put it in the entity map by calling %2$s. Second off, if you want what\'s in the database right now, you should just call %3$s yourself and discard this model object.',
+                        esc_html__('Trying to refresh a model object with ID "%1$s" that\'s not in the entity map? First off: you should put it in the entity map by calling %2$s. Second off, if you want what\'s in the database right now, you should just call %3$s yourself and discard this model object.',
                             'event_espresso'),
                         $this->ID(),
                         get_class($this->get_model()) . '::instance()->add_to_entity_map()',
