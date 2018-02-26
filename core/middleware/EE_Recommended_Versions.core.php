@@ -192,6 +192,7 @@ class EE_Recommended_Versions extends EE_Middleware
     private function displayUpcomingRequiredVersion() {
         if ($this->_request->isAdmin()
             && apply_filters('FHEE__EE_Recommended_Versions__displayUpcomingRequiredVersion', true, $this->_request)
+            && current_user_can('manage_options')
         ) {
             add_action('admin_notices', function () {
                 echo '<div class="notice event-espresso-admin-notice notice-warning"><p>'
