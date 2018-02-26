@@ -56,6 +56,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             'start_date_time' => esc_html__('Event Start', 'event_espresso'),
             'reg_begins'      => esc_html__('On Sale', 'event_espresso'),
             'attendees'       => '<span class="dashicons dashicons-groups ee-icon-color-ee-green ee-icon-size-20">'
+                                 . '<span class="screen-reader-text">'
+                                 . esc_html__('Approved Registrations', 'event_espresso')
+                                 . '</span>'
                                  . '</span>',
             //'tkts_sold' => esc_html__('Tickets Sold', 'event_espresso'),
             'actions'         => esc_html__('Actions', 'event_espresso'),
