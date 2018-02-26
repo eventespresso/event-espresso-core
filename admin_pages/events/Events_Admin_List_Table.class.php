@@ -55,16 +55,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             'venue'           => esc_html__('Venue', 'event_espresso'),
             'start_date_time' => esc_html__('Event Start', 'event_espresso'),
             'reg_begins'      => esc_html__('On Sale', 'event_espresso'),
-            // this column has a span on it just for help tip targeting. The span is stripped in screen options.
-            'attendees'       => sprintf(
-                esc_html_x(
-                    '%sREG%s',
-                    'Shortform for "Registrations". This column header is for approved registrations.',
-                    'event_espresso'
-                ),
-                '<span class="approved-registrations">',
-                '</span>'
-            ),
+            'attendees'       => '<span class="dashicons dashicons-groups ee-icon-color-ee-green ee-icon-size-20">'
+                                 . '</span>',
             //'tkts_sold' => esc_html__('Tickets Sold', 'event_espresso'),
             'actions'         => esc_html__('Actions', 'event_espresso'),
         );

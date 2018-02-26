@@ -32,7 +32,7 @@ class EE_Event_List_Table_Tips extends EE_Qtip_Config {
 		$this->_qtipsa = array(
 			0 => array(
 				'content_id' => 'attendee-column-tip',
-				'target' => '.column-attendees .approved-registrations',
+				'target' => '.column-attendees .dashicons-groups',
 				'content' => sprintf( __('%s Registrations', 'event_espresso'), EEH_Template::pretty_status(EEM_Registration::status_id_approved, FALSE, 'sentence') ),
 				'options' => array( 
 					'position' => array(
