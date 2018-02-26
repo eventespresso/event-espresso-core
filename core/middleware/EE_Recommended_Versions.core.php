@@ -189,7 +189,12 @@ class EE_Recommended_Versions extends EE_Middleware
         }
     }
 
-    private function displayUpcomingRequiredVersion() {
+
+    /**
+     *  Sets a notice for an upcoming required version of PHP in the next update of EE core.
+     */
+    private function displayUpcomingRequiredVersion()
+    {
         if ($this->_request->isAdmin()
             && apply_filters('FHEE__EE_Recommended_Versions__displayUpcomingRequiredVersion', true, $this->_request)
             && current_user_can('manage_options')
