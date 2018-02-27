@@ -14,6 +14,9 @@ use EE_Text_Input;
 use EE_Yes_No_Input;
 use EEH_HTML;
 use EEH_Template;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use InvalidArgumentException;
 use ReflectionException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -49,6 +52,9 @@ class RecaptchaAdminSettings
 
 
     /**
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
      */
     public function adminSettings()
@@ -181,6 +187,24 @@ class RecaptchaAdminSettings
                                 'display_html_label_text' => false,
                             )
                         ),
+                        'recaptcha_badge'     => new EE_Radio_Button_Input(
+                            array(
+                                'bottomleft' => esc_html__('Bottom Left', 'event_espresso'),
+                                'bottomright' => esc_html__('Bottom Right', 'event_espresso'),
+                                'inline' => esc_html__('Inline', 'event_espresso'),
+                            ),
+                            array(
+                                'html_label_text'         => esc_html__('Invisible reCAPTCHA Badge Position', 'event_espresso'),
+                                'html_help_text'          => esc_html__(
+                                    'If using Invisible reCAPTCHA, then this determines the position of the reCAPTCHA badge. "Bottom Left" and "Bottom Right" both will float at the bottom of the screen. "Inline" appears beside the submit button but allows you to control the CSS.',
+                                    'event_espresso'
+                                ),
+                                'default'                 => $this->config->recaptcha_badge !== null
+                                    ? $this->config->recaptcha_badge
+                                    : 'bottomleft',
+                                'display_html_label_text' => false,
+                            )
+                        ),
                         'recaptcha_type'     => new EE_Radio_Button_Input(
                             array(
                                 'image' => esc_html__('Image', 'event_espresso'),
@@ -263,6 +287,9 @@ class RecaptchaAdminSettings
     /**
      * @param EE_Registration_Config $EE_Registration_Config
      * @return EE_Registration_Config
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -308,6 +335,7 @@ class RecaptchaAdminSettings
                     $EE_Registration_Config->recaptcha_privatekey = $valid_data['main_settings']['recaptcha_privatekey'];
                     $EE_Registration_Config->recaptcha_type       = $valid_data['appearance_settings']['recaptcha_type'];
                     $EE_Registration_Config->recaptcha_theme      = $valid_data['appearance_settings']['recaptcha_theme'];
+                    $EE_Registration_Config->recaptcha_badge      = $valid_data['appearance_settings']['recaptcha_badge'];
                     $EE_Registration_Config->recaptcha_language   = $valid_data['appearance_settings']['recaptcha_language'];
                 } else {
                     if ($recaptcha_settings_form->submission_error_message() !== '') {
