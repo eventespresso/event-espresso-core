@@ -1009,9 +1009,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
 
     /**
+     * Returns whether this form has any subforms or inputs
      * @return bool
      */
-    public function has_subsections()
+    public function hasSubsections()
     {
         return ! empty($this->_subsections);
     }
