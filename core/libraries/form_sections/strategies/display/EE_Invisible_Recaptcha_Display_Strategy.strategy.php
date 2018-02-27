@@ -45,7 +45,7 @@ class EE_Invisible_Recaptcha_Display_Strategy extends EE_Display_Strategy_Base
         data-submit_button_id="{$this->input()->submitButtonId()}"
         data-callback="espressoLoadRecaptcha"
         data-size="invisible"
-        data-badge="bottomleft" 
+        data-badge="{$this->input()->badge()}" 
         >
     </div>
 EOD;
