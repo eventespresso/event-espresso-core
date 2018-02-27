@@ -172,6 +172,7 @@ class EED_Recaptcha_Invisible extends EED_Module
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws DomainException
      */
     public static function spcoRegStepForm(EE_Form_Section_Proper $reg_form)
     {
@@ -242,6 +243,8 @@ class EED_Recaptcha_Invisible extends EED_Module
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws DomainException
      */
     public static function ticketSelectorForm($html = '', EE_Event $event, $iframe = false)
     {
