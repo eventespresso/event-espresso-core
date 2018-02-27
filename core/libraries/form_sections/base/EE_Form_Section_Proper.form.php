@@ -52,6 +52,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     protected $_form_submission_error_message = '';
 
     /**
+     * @var array like $_REQUEST
+     */
+    protected $cached_request_data;
+
+    /**
      * Stores all the data that will localized for form validation
      *
      * @var array
@@ -238,6 +243,38 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         return $this->form_data_present_in($form_data);
     }
 
+    /**
+     * Gets the cached request data; but if there is none, or $req_data was set with
+     * something different, refresh the cache, and then return it
+     * @param null $req_data
+     * @return array
+     */
+    protected function getCachedRequest($req_data = null)
+    {
+        if ($this->cached_request_data === null
+            || (
+                $req_data !== null &&
+                $req_data !== $this->cached_request_data
+            )
+        ) {
+            $req_data = apply_filters(
+                'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data',
+                $req_data,
+                $this
+            );
+            if ($req_data === null) {
+                $req_data = array_merge($_GET, $_POST);
+            }
+            $req_data = apply_filters(
+                'FHEE__EE_Form_Section_Proper__receive_form_submission__request_data',
+                $req_data,
+                $this
+            );
+            $this->cached_request_data = (array)$req_data;
+        }
+        return $this->cached_request_data;
+    }
+
 
     /**
      * After the form section is initially created, call this to sanitize the data in the submission
@@ -264,20 +301,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function receive_form_submission($req_data = null, $validate = true)
     {
-        $req_data = apply_filters(
-            'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data',
-            $req_data,
-            $this,
-            $validate
-        );
-        if ($req_data === null) {
-            $req_data = array_merge($_GET, $_POST);
-        }
-        $req_data = apply_filters(
-            'FHEE__EE_Form_Section_Proper__receive_form_submission__request_data',
-            $req_data,
-            $this
-        );
+        $req_data = $this->getCachedRequest($req_data);
         $this->_normalize($req_data);
         if ($validate) {
             $this->_validate();
@@ -1368,9 +1392,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function form_data_present_in($req_data = null)
     {
-        if ($req_data === null) {
-            $req_data = $_POST;
-        }
+        $req_data = $this->getCachedRequest($req_data);
         foreach ($this->subsections() as $subsection) {
             if ($subsection instanceof EE_Form_Input_Base) {
                 if ($subsection->form_data_present_in($req_data)) {
