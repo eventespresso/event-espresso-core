@@ -7,6 +7,7 @@ use EE_Form_Section_Proper;
 use EE_Invisible_Recaptcha_Input;
 use EE_Registration_Config;
 use EE_Request;
+use EE_Session;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
@@ -38,15 +39,36 @@ class InvisibleRecaptcha
      */
     private $config;
 
+    /**
+     * @var EE_Session $session
+     */
+    private $session;
+
+    /**
+     * @var boolean $recaptcha_passed
+     */
+    private $recaptcha_passed;
+
 
     /**
      * InvisibleRecaptcha constructor.
      *
      * @param EE_Registration_Config $registration_config
+     * @param EE_Session             $session
      */
-    public function __construct(EE_Registration_Config $registration_config)
+    public function __construct(EE_Registration_Config $registration_config, EE_Session $session)
     {
         $this->config = $registration_config;
+        $this->session = $session;
+    }
+
+
+    /**
+     * @return boolean
+     */
+    public function useInvisibleRecaptcha()
+    {
+        return $this->config->use_captcha && $this->config->recaptcha_theme === 'invisible';
     }
 
 
@@ -135,10 +157,13 @@ class InvisibleRecaptcha
                 array($this, 'getErrorCode'),
                 $results['error-codes']
             );
-            $errors[] = 'challenge timestamp: ' . $results['challenge_ts'] . '.';
+            if(isset($results['challenge_ts'])) {
+                $errors[] = 'challenge timestamp: ' . $results['challenge_ts'] . '.';
+            }
             $this->generateError(implode(' ', $errors));
         }
         $previous_recaptcha_response[ $grecaptcha_response ] = true;
+        add_action('shutdown', array($this, 'setSessionData'));
         return true;
     }
 
@@ -178,5 +203,65 @@ class InvisibleRecaptcha
             'timeout-or-duplicate'   => 'The request took too long to be sent or was a duplicate of a previous request.',
         );
         return isset($error_codes[ $error_code ]) ? $error_codes[ $error_code ] : '';
+    }
+
+
+    /**
+     * @return array
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidArgumentException
+     */
+    public function getLocalizedVars()
+    {
+        return (array) apply_filters(
+            'FHEE__EventEspresso_caffeinated_modules_recaptcha_invisible_InvisibleRecaptcha__getLocalizedVars__localized_vars',
+            array(
+                'siteKey'          => $this->config->recaptcha_publickey,
+                'recaptcha_passed' => $this->recaptchaPassed(),
+                'wp_debug'         => WP_DEBUG,
+                'mer_active'       => defined('EE_EVENT_QUEUE_BASE_URL'),
+            )
+        );
+    }
+
+
+    /**
+     * @return boolean
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidArgumentException
+     */
+    public function recaptchaPassed()
+    {
+        if ($this->recaptcha_passed !== null) {
+            return $this->recaptcha_passed;
+        }
+        // logged in means you have already passed a turing test of sorts
+        if ($this->useInvisibleRecaptcha() === false || is_user_logged_in()) {
+            $this->recaptcha_passed = true;
+            return $this->recaptcha_passed;
+        }
+        // was test already passed?
+        $this->recaptcha_passed = filter_var(
+            $this->session->get_session_data(
+                InvisibleRecaptcha::SESSION_DATA_KEY_RECAPTCHA_PASSED
+            ),
+            FILTER_VALIDATE_BOOLEAN
+        );
+        return $this->recaptcha_passed;
+    }
+
+
+    /**
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function setSessionData()
+    {
+        $this->session->set_session_data(
+            array(InvisibleRecaptcha::SESSION_DATA_KEY_RECAPTCHA_PASSED => true)
+        );
     }
 }
