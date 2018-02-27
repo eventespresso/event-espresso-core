@@ -1271,33 +1271,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
 
     /**
-     * @param array $previous_form_submission_error_messages
-     * @return array|string
-     * @throws EE_Error
-     */
-    public function all_form_errors(array $previous_form_submission_error_messages = array())
-    {
-        $form_submission_error_messages = array();
-        foreach ($this->subsections() as $subsection) {
-            if($subsection instanceof EE_Form_Section_Proper){
-                $form_submission_error_messages += $subsection->all_form_errors(
-                    $previous_form_submission_error_messages
-                );
-            }
-            if($subsection instanceof EE_Form_Section_Validatable){
-                foreach($subsection->get_validation_errors() as $validation_error) {
-                    $form_submission_error_messages[] = $validation_error->getMessage();
-                }
-            }
-        }
-        if ($this->submission_error_message() !== '') {
-            $form_submission_error_messages[] = $this->submission_error_message();
-        }
-        return $form_submission_error_messages + $previous_form_submission_error_messages;
-    }
-
-
-    /**
      * @return string
      */
     public function submission_error_message()

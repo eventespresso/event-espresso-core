@@ -666,7 +666,7 @@ abstract class FormHandler implements FormHandlerInterface
                     ),
                     $this->form_name,
                     '<br />',
-                    implode('<br />', $this->form()->all_form_errors())
+                    implode('<br />', $this->form()->get_validation_errors_accumulated())
                 )
             );
         }
