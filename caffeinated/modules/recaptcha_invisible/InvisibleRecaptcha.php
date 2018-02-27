@@ -2,6 +2,7 @@
 
 namespace EventEspresso\caffeinated\modules\recaptcha_invisible;
 
+use DomainException;
 use EE_Error;
 use EE_Form_Section_Proper;
 use EE_Invisible_Recaptcha_Input;
@@ -78,6 +79,7 @@ class InvisibleRecaptcha
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
+     * @throws DomainException
      */
     public function getInput(array $input_settings = array())
     {
@@ -95,6 +97,7 @@ class InvisibleRecaptcha
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
+     * @throws DomainException
      */
     public function getInputHtml(array $input_settings = array())
     {
@@ -109,6 +112,7 @@ class InvisibleRecaptcha
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws DomainException
      */
     public function addToFormSection(EE_Form_Section_Proper $form, array $input_settings = array())
     {
@@ -220,7 +224,7 @@ class InvisibleRecaptcha
                 'siteKey'          => $this->config->recaptcha_publickey,
                 'recaptcha_passed' => $this->recaptchaPassed(),
                 'wp_debug'         => WP_DEBUG,
-                'mer_active'       => defined('EE_EVENT_QUEUE_BASE_URL'),
+                'disable_submit'   => defined('EE_EVENT_QUEUE_BASE_URL'),
             )
         );
     }
