@@ -32,7 +32,7 @@ class RecaptchaFactory implements FactoryInterface
      */
     public static function create($arguments = array())
     {
-        return LoaderFactory::getLoader()->getNew(
+        return LoaderFactory::getLoader()->getShared(
             'EventEspresso\caffeinated\modules\recaptcha_invisible\InvisibleRecaptcha',
             $arguments
         );
@@ -49,7 +49,7 @@ class RecaptchaFactory implements FactoryInterface
      */
     public static function getAdminModule($arguments = array())
     {
-        return LoaderFactory::getLoader()->getNew(
+        return LoaderFactory::getLoader()->getShared(
             'EventEspresso\caffeinated\modules\recaptcha_invisible\RecaptchaAdminSettings',
             $arguments
         );
