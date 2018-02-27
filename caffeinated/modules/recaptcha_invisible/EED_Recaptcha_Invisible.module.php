@@ -1,6 +1,5 @@
 <?php
 
-use EventEspresso\caffeinated\modules\recaptcha_invisible\InvisibleRecaptcha;
 use EventEspresso\caffeinated\modules\recaptcha_invisible\RecaptchaFactory;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -27,11 +26,6 @@ class EED_Recaptcha_Invisible extends EED_Module
      */
     private static $config;
 
-    /**
-     * @var array $localized_vars
-     */
-    private static $localized_vars;
-
 
     /**
      * @return EED_Module|EED_Recaptcha
@@ -56,7 +50,7 @@ class EED_Recaptcha_Invisible extends EED_Module
             add_filter(
                 'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
                 array('EED_Recaptcha_Invisible', 'ticketSelectorForm'),
-                10, 2
+                10, 3
             );
             add_action(
                 'EED_Ticket_Selector__process_ticket_selections__before',
@@ -72,7 +66,7 @@ class EED_Recaptcha_Invisible extends EED_Module
                 array('EED_Recaptcha_Invisible', 'receiveSpcoRegStepForm'),
                 10, 2
             );
-            add_action('loop_end', array('EED_Recaptcha_Invisible', 'setLocalizedVars'));
+            add_action('loop_end', array('EED_Recaptcha_Invisible', 'localizeScriptVars'));
         }
     }
 
@@ -122,27 +116,19 @@ class EED_Recaptcha_Invisible extends EED_Module
 
 
 
+
     /**
      * @return void
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws InvalidArgumentException
      */
-    public static function setLocalizedVars()
+    public static function localizeScriptVars()
     {
-        EED_Recaptcha_Invisible::$localized_vars = array(
-            'siteKey'          => EED_Recaptcha_Invisible::$config->recaptcha_publickey,
-            'recaptcha_passed' => EED_Recaptcha_Invisible::recaptchaPassed(),
-            'wp_debug'         => WP_DEBUG,
-            'mer_active'       => defined('EE_EVENT_QUEUE_BASE_URL'),
-        );
         wp_localize_script(
             EE_Invisible_Recaptcha_Input::SCRIPT_HANDLE_ESPRESSO_INVISIBLE_RECAPTCHA,
             'eeRecaptcha',
-            apply_filters(
-                'FHEE__EED_Recaptcha_Invisible__setLocalizedVars__localized_vars',
-                EED_Recaptcha_Invisible::$localized_vars
-            )
+            RecaptchaFactory::create()->getLocalizedVars()
         );
     }
 
@@ -164,33 +150,6 @@ class EED_Recaptcha_Invisible extends EED_Module
     }
 
 
-    /**
-     * @return boolean
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws InvalidArgumentException
-     */
-    public static function recaptchaPassed()
-    {
-        static $recaptcha_passed = null;
-        if($recaptcha_passed !== null) {
-            return $recaptcha_passed;
-        }
-        // logged in means you have already passed a turing test of sorts
-        if (EED_Recaptcha_Invisible::useInvisibleRecaptcha() === false || is_user_logged_in()) {
-            $recaptcha_passed = true;
-            return $recaptcha_passed;
-        }
-        // was test already passed?
-        $recaptcha_passed = filter_var(
-            EE_Registry::instance()->SSN->get_session_data(
-                InvisibleRecaptcha::SESSION_DATA_KEY_RECAPTCHA_PASSED
-            ),
-            FILTER_VALIDATE_BOOLEAN
-        );
-        return $recaptcha_passed;
-    }
-
 
     /**
      * @param EE_Request $request
@@ -202,12 +161,7 @@ class EED_Recaptcha_Invisible extends EED_Module
      */
     public static function verifyToken(EE_Request $request)
     {
-        $invisible_recaptcha = RecaptchaFactory::create();
-        if ($invisible_recaptcha->verifyToken($request)) {
-            add_action('shutdown', array('EED_Recaptcha_Invisible', 'setSessionData'));
-            return true;
-        }
-        return false;
+        return RecaptchaFactory::create()->verifyToken($request);
     }
 
 
@@ -244,7 +198,7 @@ class EED_Recaptcha_Invisible extends EED_Module
     public static function processSpcoRegStepForm(EE_Form_Section_Proper $reg_form)
     {
         return strpos($reg_form->name(), 'reg-step-form') !== false
-               || ! EED_Recaptcha_Invisible::recaptchaPassed();
+               || ! RecaptchaFactory::create()->recaptchaPassed();
     }
 
 
@@ -282,20 +236,26 @@ class EED_Recaptcha_Invisible extends EED_Module
     /**
      * @param string   $html
      * @param EE_Event $event
+     * @param bool     $iframe
      * @return string
+     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws EE_Error
      */
-    public static function ticketSelectorForm($html = '', EE_Event $event)
+    public static function ticketSelectorForm($html = '', EE_Event $event, $iframe = false)
     {
+        $recaptcha = RecaptchaFactory::create();
         // do nothing if test has  already  been passed
-        if (EED_Recaptcha_Invisible::recaptchaPassed()) {
+        if ($recaptcha->recaptchaPassed()) {
             return $html;
         }
-        $html .= RecaptchaFactory::create()->getInputHtml(
-            array('recaptcha_id' => $event->ID())
+        $html .= $recaptcha->getInputHtml(
+            array(
+                'recaptcha_id'   => $event->ID(),
+                'iframe'         => $iframe,
+                'localized_vars' => $recaptcha->getLocalizedVars(),
+            )
         );
         return $html;
     }
@@ -311,7 +271,7 @@ class EED_Recaptcha_Invisible extends EED_Module
     public static function processTicketSelectorForm()
     {
         // do nothing if test has  already  been passed
-        if (EED_Recaptcha_Invisible::recaptchaPassed()) {
+        if (RecaptchaFactory::create()->recaptchaPassed()) {
             return;
         }
         /** @var EE_Request $request */
@@ -323,19 +283,6 @@ class EED_Recaptcha_Invisible extends EED_Module
                 : get_permalink($event_id);
             EEH_URL::safeRedirectAndExit($return_url);
         }
-    }
-
-
-    /**
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    public static function setSessionData()
-    {
-        EE_Registry::instance()->SSN->set_session_data(
-            array(InvisibleRecaptcha::SESSION_DATA_KEY_RECAPTCHA_PASSED => true)
-        );
     }
 
 
