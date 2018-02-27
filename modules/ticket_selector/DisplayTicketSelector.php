@@ -682,7 +682,8 @@ class DisplayTicketSelector
         $html         .= apply_filters(
             'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
             '',
-            $this->event
+            $this->event,
+            $this->iframe
         );
         return $html;
     }
