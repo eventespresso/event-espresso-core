@@ -436,7 +436,7 @@ class EE_Email_messenger extends EE_messenger
             $this->_to,
             //some old values for subject may be expecting HTML entities to be decoded in the subject
             //and subjects aren't interpreted as HTML, so there should be no HTML in them
-            wp_strip_all_tags(wp_specialchars_decode($this->_subject)),
+            wp_strip_all_tags(wp_specialchars_decode($this->_subject, ENT_QUOTES)),
             $this->_body(),
             $this->_headers()
         );
