@@ -2325,6 +2325,14 @@ class EE_Registration_Config extends EE_Config_Base
     public $recaptcha_theme;
 
     /**
+     * ReCaptcha Badge - determines the position of the reCAPTCHA badge if using Invisible ReCaptcha.
+     *
+     * @var string $recaptcha_badge
+     *    options: 'bottomright', 'bottomleft', 'inline'
+     */
+    public $recaptcha_badge;
+
+    /**
      * ReCaptcha Type
      *
      * @var string $recaptcha_type
@@ -2389,6 +2397,7 @@ class EE_Registration_Config extends EE_Config_Base
         $this->use_encryption = true;
         $this->use_captcha = false;
         $this->recaptcha_theme = 'light';
+        $this->recaptcha_badge = 'bottomleft';
         $this->recaptcha_type = 'image';
         $this->recaptcha_language = 'en';
         $this->recaptcha_publickey = null;
