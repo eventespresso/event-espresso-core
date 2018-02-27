@@ -26,7 +26,7 @@ function espressoLoadRecaptcha() {
         }
         // convert truthy values to pure booleans
         eeRecaptcha.recaptcha_passed = eeRecaptcha.recaptcha_passed === 'true' || eeRecaptcha.recaptcha_passed === '1';
-        eeRecaptcha.mer_active = eeRecaptcha.mer_active === 'true' || eeRecaptcha.mer_active === '1';
+        eeRecaptcha.disable_submit = eeRecaptcha.disable_submit === 'true' || eeRecaptcha.disable_submit === '1';
         eeRecaptcha.wp_debug = eeRecaptcha.wp_debug === 'true' || eeRecaptcha.wp_debug === '1';
         console_log_object('eeRecaptcha', eeRecaptcha, 3);
         if (eeRecaptcha.recaptcha_passed !== true) {
@@ -79,7 +79,7 @@ function espressoLoadRecaptcha() {
                             setTimeout(
                                 function() {
                                     $submit.click();
-                                    if (eeRecaptcha.mer_active !== true) {
+                                    if (eeRecaptcha.disable_submit !== true) {
                                         $submit.prop('disabled', true).addClass('disabled ee-button-disabled');
                                     }
                                 },
@@ -102,7 +102,7 @@ function espressoLoadRecaptcha() {
                     if ($submit.data('ee-submitted') !== true && eeRecaptcha.recaptcha_passed !== true) {
                         event.preventDefault();
                         event.stopPropagation();
-                        if (eeRecaptcha.mer_active !== true) {
+                        if (eeRecaptcha.disable_submit !== true) {
                             $submit.prop('disabled', true).addClass('disabled ee-button-disabled');
                         }
                         if (eeRecaptcha.wp_debug) {
@@ -122,3 +122,7 @@ function espressoLoadRecaptcha() {
         }
     });
 }
+
+/*
+
+*/
