@@ -57,6 +57,13 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     protected $cached_request_data;
 
     /**
+     * Stores whether this form (and its sub-sections) were found to be valid or not.
+     * Starts off as null, but once the form is validated, it set to either true or false
+     * @var boolean|null
+     */
+    protected $is_valid;
+
+    /**
      * Stores all the data that will localized for form validation
      *
      * @var array
@@ -575,34 +582,38 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function is_valid()
     {
-        if (! $this->has_received_submission()) {
-            throw new EE_Error(
-                sprintf(
-                    esc_html__(
-                        'You cannot check if a form is valid before receiving the form submission using receive_form_submission',
-                        'event_espresso'
+        if($this->is_valid === null) {
+            if (! $this->has_received_submission()) {
+                throw new EE_Error(
+                    sprintf(
+                        esc_html__(
+                            'You cannot check if a form is valid before receiving the form submission using receive_form_submission',
+                            'event_espresso'
+                        )
                     )
-                )
-            );
-        }
-        if (! parent::is_valid()) {
-            return false;
-        }
-        // ok so no general errors to this entire form section.
-        // so let's check the subsections, but only set errors if that hasn't been done yet
-        $set_submission_errors = $this->submission_error_message() === '';
-        foreach ($this->get_validatable_subsections() as $subsection) {
-            if (! $subsection->is_valid() || $subsection->get_validation_error_string() !== '') {
-                if ($set_submission_errors) {
-                    $this->set_submission_error_message(
-                        $subsection->get_validation_error_string(),
-                        $subsection
-                    );
+                );
+            }
+            if (! parent::is_valid()) {
+                $this->is_valid = false;
+            } else {
+                // ok so no general errors to this entire form section.
+                // so let's check the subsections, but only set errors if that hasn't been done yet
+                $this->is_valid = true;
+                $set_submission_errors = $this->submission_error_message() === '';
+                foreach ($this->get_validatable_subsections() as $subsection) {
+                    if (! $subsection->is_valid() || $subsection->get_validation_error_string() !== '') {
+                        if ($set_submission_errors) {
+                            $this->set_submission_error_message(
+                                $subsection->get_validation_error_string(),
+                                $subsection
+                            );
+                        }
+                        $this->is_valid = false;
+                    }
                 }
-                return false;
             }
         }
-        return true;
+        return $this->is_valid;
     }
 
 
@@ -944,6 +955,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     protected function _validate()
     {
+        //reset the cache of whether this form is valid or not- we're re-validating it now
+        $this->is_valid = null;
         foreach ($this->get_validatable_subsections() as $subsection_name => $subsection) {
             if (method_exists($this, '_validate_' . $subsection_name)) {
                 call_user_func_array(array($this, '_validate_' . $subsection_name), array($subsection));
