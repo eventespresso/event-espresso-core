@@ -45,6 +45,7 @@ class EE_Invisible_Recaptcha_Input extends EE_Form_Input_Base
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws DomainException
      */
     public function __construct(array $input_settings = array(), EE_Registration_Config $registration_config = null)
     {
@@ -60,7 +61,14 @@ class EE_Invisible_Recaptcha_Input extends EE_Form_Input_Base
         $this->submit_button_id = isset($input_settings['submit_button_id'])
             ? $input_settings['submit_button_id']
             : '';
-        $this->registerScripts();
+        if(
+            isset($input_settings['localized_vars'])
+            && filter_var($input_settings['iframe'], FILTER_VALIDATE_BOOLEAN)
+        ) {
+            $this->addIframeAssets($input_settings['localized_vars']);
+        } else {
+            $this->registerScripts();
+        }
     }
 
 
@@ -70,6 +78,15 @@ class EE_Invisible_Recaptcha_Input extends EE_Form_Input_Base
     public function useCaptcha()
     {
         return $this->config->use_captcha && $this->config->recaptcha_theme === 'invisible';
+    }
+
+
+    /**
+     * @return string
+     */
+    public function badge()
+    {
+        return $this->config->recaptcha_badge;
     }
 
 
@@ -119,9 +136,56 @@ class EE_Invisible_Recaptcha_Input extends EE_Form_Input_Base
 
 
     /**
+     * @param array $localized_vars
+     * @throws DomainException
+     */
+    private function addIframeAssets(array $localized_vars)
+    {
+        if (! $this->useCaptcha()) {
+            return;
+        }
+        add_filter(
+            'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js',
+            function(array $iframe_assets) {
+                $iframe_assets[ EE_Invisible_Recaptcha_Input::SCRIPT_HANDLE_ESPRESSO_INVISIBLE_RECAPTCHA ] =
+                    EED_Recaptcha_Invisible::assetsUrl()
+                    . 'espresso_invisible_recaptcha.js?ver='
+                    . EVENT_ESPRESSO_VERSION;
+                $iframe_assets[ EE_Invisible_Recaptcha_Input::SCRIPT_HANDLE_GOOGLE_INVISIBLE_RECAPTCHA ] =
+                    add_query_arg(
+                        array(
+                            'onload' => 'espressoLoadRecaptcha',
+                            'render' => 'explicit',
+                            'hl'     => $this->language(),
+                        ),
+                        'https://www.google.com/recaptcha/api.js?'
+                    );
+                return $iframe_assets;
+            }
+        );
+        add_filter(
+            'FHEE__EventEspresso_modules_ticket_selector_TicketSelectorIframe__construct__js_attributes',
+            function (array $iframe_asset_attributes)
+            {
+                $iframe_asset_attributes[ EE_Invisible_Recaptcha_Input::SCRIPT_HANDLE_GOOGLE_INVISIBLE_RECAPTCHA ]
+                    = ' async="async" defer="defer"';
+                return $iframe_asset_attributes;
+            }
+        );
+        add_action(
+            'AHEE__EventEspresso_modules_ticket_selector_TicketSelectorIframe__construct__complete',
+            function (EventEspresso\modules\ticket_selector\TicketSelectorIframe $ticket_selector_iframe) use ($localized_vars)
+            {
+                $ticket_selector_iframe->addLocalizedVars($localized_vars, 'eeRecaptcha');
+            }
+        );
+    }
+
+
+    /**
      * @return void
      */
-    public function registerScripts()
+    private function registerScripts()
     {
         if (! $this->useCaptcha()) {
             return;
