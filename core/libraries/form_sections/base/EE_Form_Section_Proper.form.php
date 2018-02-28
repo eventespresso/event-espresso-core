@@ -604,7 +604,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                     if (! $subsection->is_valid() || $subsection->get_validation_error_string() !== '') {
                         if ($set_submission_errors) {
                             $this->set_submission_error_message(
-                                $subsection->get_validation_error_string(),
+                                '',
                                 $subsection
                             );
                         }
@@ -1291,24 +1291,25 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
 
     /**
+     * Sets the submission error message (aka validation error message for this form section and all sub-sections)
      * @param string                           $form_submission_error_message
-     * @param EE_Form_Section_Validatable $form_section
+     * @param EE_Form_Section_Validatable $form_section unused
      * @throws EE_Error
      */
     public function set_submission_error_message(
-        $form_submission_error_message = '',
-        EE_Form_Section_Validatable $form_section
+        $form_submission_error_message = ''
     ) {
-        $this->_form_submission_error_message .= ! empty($form_submission_error_message)
-            ? $form_section->name() . ': ' . $form_submission_error_message
-            : sprintf(
-                esc_html__('The "%1$s" form section submission failed due to unknown errors', 'event_espresso'),
-                $form_section->name()
-            );
+        $this->_form_submission_error_message = ! empty($form_submission_error_message)
+            ? $form_submission_error_message
+            : $this->get_validation_error_string();
     }
 
 
     /**
+     * Returns the cached error message. A default value is set for this during _validate(),
+     * (called during receive_form_submission) but it can be explicitly set using
+     * set_submission_error_message
+     *
      * @return string
      */
     public function submission_error_message()
@@ -1318,17 +1319,19 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
 
     /**
+     * Sets a message to display if the data submitted to the form was valid.
      * @param string $form_submission_success_message
      */
-    public function set_submission_success_message($form_submission_success_message)
+    public function set_submission_success_message($form_submission_success_message = '')
     {
-        $this->_form_submission_success_message .= ! empty($form_submission_success_message)
+        $this->_form_submission_success_message = ! empty($form_submission_success_message)
             ? $form_submission_success_message
             : esc_html__('Form submitted successfully', 'event_espresso');
     }
 
 
     /**
+     * Gets a message appropriate for display when the form is correctly submitted
      * @return string
      */
     public function submission_success_message()
@@ -1443,6 +1446,37 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             }
         }
         return $validation_errors;
+    }
+
+    /**
+     * Override's the parent so that we fetch validation errors from children and grandchildren too.
+     * This traverses the form section tree to generate this, but you probably want to instead use
+     * get_form_submission_error_message() which is usually this message cached (or a custom validation error message)
+     *
+     * @return string
+     */
+    public function get_validation_error_string()
+    {
+        $submission_error_messages = array();
+        // bad, bad, bad registrant
+        foreach ($this->get_validation_errors_accumulated() as $validation_error) {
+            if ($validation_error instanceof EE_Validation_Error) {
+                $form_section = $validation_error->get_form_section();
+                if ($form_section instanceof EE_Form_Input_Base) {
+                   $label = $validation_error->get_form_section()->html_label_text();
+                } elseif($form_section instanceof EE_Form_Section_Validatable) {
+                    $label = $validation_error->get_form_section()->name();
+                } else {
+                    $label = esc_html__('Unknown', 'event_espresso');
+                }
+                $submission_error_messages[] = sprintf(
+                    __('%s : %s', 'event_espresso'),
+                    $label,
+                    $validation_error->getMessage()
+                );
+            }
+        }
+        return implode('<br', $submission_error_messages);
     }
 
 
