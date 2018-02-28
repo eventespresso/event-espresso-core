@@ -1199,18 +1199,23 @@ abstract class EE_Base_Class
      * EE_Datetime_Field.
      *
      * @param string $field_name               The field name retrieving the DateTime object.
+     * @param bool   $clone                    Defaults to true.  When true, the returned DateTime object is a clone of
+     *                                         the original (thus a different instance).  Otherwise it will be a
+     *                                         reference to the same internal DateTime object stored here.
+     *                                         Beware:  if you explicitly request the reference, any changes you make
+     *                                         to that DateTime object could have unintended side-effects to other code
+     *                                         referencing the same object.
      * @return mixed null | false | DateTime  If the requested field is NOT a EE_Datetime_Field then
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     *                                         an error is set and false returned.  If the field IS an
+     * @throws EE_Error an error is set and false returned.  If the field IS an
      *                                         EE_Datetime_Field and but the field value is null, then
      *                                         just null is returned (because that indicates that likely
      *                                         this field is nullable).
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public function get_DateTime_object($field_name)
+    public function get_DateTime_object($field_name, $clone = true)
     {
         $field_settings = $this->get_model()->field_settings_for($field_name);
         if (! $field_settings instanceof EE_Datetime_Field) {
@@ -1228,7 +1233,9 @@ abstract class EE_Base_Class
             );
             return false;
         }
-        return $this->_fields[ $field_name ];
+        return $clone && $this->_fields[$field_name] instanceof DateTime
+            ? clone $this->_fields[$field_name]
+            : $this->_fields[$field_name];
     }
 
 
