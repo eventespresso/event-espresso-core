@@ -19,6 +19,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      */
     public function setUp()
     {
+        parent::setUp();
         //register it for realz
         EE_Register_Model::register(
             'Mock',
