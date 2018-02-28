@@ -1,20 +1,16 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+
+
 /**
  * EE_Base_Class_Test
  * Cannot be used until models and model objects are allowed to be located elsewhere besides
  * just in the core directories core/db_models and core/db_classes, respectively
  *
+ * @group core/db_classes
+ *
  * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
- */
-
-
-/**
- * @group core/db_classes
  */
 class EE_Base_Class_Test extends EE_UnitTestCase
 {
