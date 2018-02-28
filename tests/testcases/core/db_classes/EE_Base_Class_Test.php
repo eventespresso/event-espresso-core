@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * EE_Base_Class_Test
  * Cannot be used until models and model objects are allowed to be located elsewhere besides
@@ -14,6 +13,21 @@
  */
 class EE_Base_Class_Test extends EE_UnitTestCase
 {
+
+    /**
+     * @throws EE_Error
+     */
+    public function setUp()
+    {
+        //register it for realz
+        EE_Register_Model::register(
+            'Mock',
+            array(
+                'model_paths' => array(EE_MOCKS_DIR . 'core/db_models/'),
+                'class_paths' => array(EE_MOCKS_DIR . 'core/db_classes/'),
+            )
+        );
+    }
 
     static function setUpBeforeClass()
     {
@@ -1065,20 +1079,18 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      */
     public function testGetDateTimeObject()
     {
-        //use EE_Datetime for tests
-        $ee_datetime = EE_Datetime::new_instance();
+        //use EE_Mock (which simulates EE_Datetime) for tests
+        /** @var EE_Mock $ee_mock */
+        $ee_mock = EE_Mock::new_instance();
 
         //verify we get a DateTime object when requesting one
-        $this->assertInstanceOf('DateTime', $ee_datetime->get_DateTime_object('DTT_EVT_start'));
+        $this->assertInstanceOf('DateTime', $ee_mock->get_DateTime_object('MCK_datetime'));
 
-        //verify we get the same instance of DateTime when retrieving with clone flag as false and different instance
-        //when clone flag is true.
-        $dateTime = $ee_datetime->get_DateTime_object('DTT_EVT_start', false);
-        $notClone = $ee_datetime->get_DateTime_object('DTT_EVT_start', false);
-        $clone = $ee_datetime->get_DateTime_object('DTT_EVT_start');
-
-        $this->assertEquals(spl_object_hash($dateTime), spl_object_hash($notClone));
-        $this->assertNotEquals(spl_object_hash($dateTime), spl_object_hash($clone));
+        //verify we always get a different instance of datetime from what is stored internally when retrieving.
+        $this->assertNotEquals(
+            spl_object_hash($ee_mock->internalDateTimeObject('MCK_datetime')),
+            spl_object_hash($ee_mock->get_DateTime_object('MCK_datetime'))
+        );
     }
 
 
@@ -1092,20 +1104,20 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      */
     public function testClone()
     {
-        //use EE_Datetime for tests
-        $ee_datetime = EE_Datetime::new_instance();
-        $original_datetime = $ee_datetime->get_DateTime_object('DTT_EVT_start', false);
+        /** @var EE_Mock $ee_mock */
+        $ee_mock = EE_Mock::new_instance();
+        $original_datetime = $ee_mock->internalDateTimeObject('MCK_datetime');
 
         //clone our EE_Datetime and verify the DateTime for the same field is also a new instance.
-        $new_ee_datetime = clone $ee_datetime;
+        $new_ee_datetime = clone $ee_mock;
 
         $this->assertEquals(
-            spl_object_hash($ee_datetime->get_DateTime_object('DTT_EVT_start', false)),
+            spl_object_hash($ee_mock->internalDateTimeObject('MCK_datetime')),
             spl_object_hash($original_datetime)
         );
         $this->assertNotEquals(
-            spl_object_hash($ee_datetime->get_DateTime_object('DTT_EVT_start', false)),
-            spl_object_hash($new_ee_datetime->get_DateTime_object('DTT_EVT_start', false))
+            spl_object_hash($ee_mock->internalDateTimeObject('MCK_datetime')),
+            spl_object_hash($new_ee_datetime->internalDateTimeObject('MCK_datetime'))
         );
     }
 }
