@@ -13,7 +13,6 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  */
 
 
-
 /**
  * @group core/db_classes
  */
@@ -31,7 +30,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @return \EE_Attendee
      */
@@ -42,7 +40,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $this->assertInstanceOf('EE_Attendee', $a);
         return $a;
     }
-
 
 
     /**
@@ -60,7 +57,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $expected_date = '2016-24-01';
         $payment_object_to_test = EE_Payment::new_instance(
             array(
-                'PAY_ID' => $payment_object_id,
+                'PAY_ID'        => $payment_object_id,
                 'PAY_timestamp' => '2016-24-01 3:45 pm',
             ),
             '',
@@ -68,7 +65,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         );
         $this->assertEquals($expected_date, $payment_object_to_test->get_date('PAY_timestamp'));
     }
-
 
 
     function test_set_and_get()
@@ -80,7 +76,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $a->set('ATT_fname', 'value2');
         $this->assertEquals($a->get('ATT_fname'), 'value2');
     }
-
 
 
     function test_set_and_get_with_caching()
@@ -98,7 +93,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     function test_save_string_pk()
     {
         //test saving something with an auto-increment PK
@@ -109,7 +103,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $results2 = $c->save();
         $this->assertEquals(true, $results2);
     }
-
 
 
     function test_save_autoincrement_pk()
@@ -125,7 +118,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $existing_t_in_entity_map = EEM_Transaction::instance()->get_from_entity_map($id);
         $this->assertInstanceOf('EE_Transaction', $existing_t_in_entity_map);
     }
-
 
 
     /**
@@ -180,7 +172,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @group 8686
      */
@@ -196,7 +187,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @group 7084
      */
@@ -205,9 +195,9 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $r = EE_Registration::new_instance(array('TXN_ID' => 99));
         $this->assertEquals(99, $r->transaction_ID());
         //the STS_ID should have been set to the default, not left NULL
-        $this->assertEquals(EEM_Registration::instance()->field_settings_for('STS_ID')->get_default_value(), $r->status_ID());
+        $this->assertEquals(EEM_Registration::instance()->field_settings_for('STS_ID')->get_default_value(),
+            $r->status_ID());
     }
-
 
 
     function test_get_first_related()
@@ -222,7 +212,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $t_from_r = $r->get_first_related('Transaction');
         $this->assertEquals($t->ID(), $t_from_r->ID());
     }
-
 
 
     function test_get_many_related()
@@ -243,7 +232,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     function test_cache_related()
     {
         $t = EE_Transaction::new_instance();
@@ -256,7 +244,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $r_from_t = $t->get_first_related('Registration');
         $this->assertEquals($r, $r_from_t);
     }
-
 
 
     /**
@@ -283,7 +270,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @group 8686
      */
@@ -307,7 +293,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     function test_count_related()
     {
         $e1 = EE_Event::new_instance(array('EVT_name' => '1'));
@@ -326,7 +311,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     function test_sum_related()
     {
         $t = EE_Transaction::new_instance();
@@ -341,7 +325,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $t->_remove_relation_to($p2, 'Payment');
         $this->assertEquals($t->sum_related('Payment', array(), 'PAY_amount'), 1);
     }
-
 
 
     function test_cache_specifying_id()
@@ -362,7 +345,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     function test_update_cache_after_save()
     {
         $t = EE_Transaction::new_instance();
@@ -378,14 +360,12 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     function test_is_set()
     {
         $t = EE_Transaction::new_instance();
         $this->assertTrue($t->is_set('TXN_ID'));
         $this->assertFalse($t->is_set('monkey_brains'));
     }
-
 
 
     /**
@@ -418,7 +398,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * test that after we've cached something, we can remove it specifically
      * by only knowing the object
@@ -444,7 +423,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * test that after we've cached something using a specific index,
      * we can remove it using a specific index
@@ -468,7 +446,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * tests that clearing the cache on a belongsTo relation works
      */
@@ -487,7 +464,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     function test_set_and_get_extra_meta()
     {
         $e = EE_Event::new_instance();
@@ -499,9 +475,9 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
-     * Created to attempt to reproduce a bug found when fixing https://events.codebasehq.com/projects/event-espresso/tickets/6373
+     * Created to attempt to reproduce a bug found when fixing
+     * https://events.codebasehq.com/projects/event-espresso/tickets/6373
      *
      * @since 4.5.0
      */
@@ -548,7 +524,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @group 7151
      */
@@ -579,7 +554,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @group 7151
      */
@@ -602,17 +576,19 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     public function test_delete_permanently_with_extra_meta()
     {
-        $attendee = EE_Attendee::new_instance(array('ATT_fname' => 'bob', 'ATT_lname' => 'deleteme', 'ATT_email' => 'ef@ew.dw'));
+        $attendee = EE_Attendee::new_instance(array(
+            'ATT_fname' => 'bob',
+            'ATT_lname' => 'deleteme',
+            'ATT_email' => 'ef@ew.dw',
+        ));
         $attendee->save();
         $attendee->add_extra_meta('shouldnt_prevent_deletion', 'no_sirry');
         $this->assertEquals('no_sirry', $attendee->get_extra_meta('shouldnt_prevent_deletion', true));
         $attendee->delete_permanently();
         //if that didn't throw an error, we're good
     }
-
 
 
     /**
@@ -625,13 +601,13 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $l2->save();
         $l2_from_db = EEM_Line_Item::reset()->get_one_by_ID($l2->ID());
         //double check its NULL in the DB
-        $qty_col_with_one_result = EEM_Line_Item::instance()->get_col(array(array('LIN_ID' => $l2->ID())), 'LIN_quantity');
+        $qty_col_with_one_result = EEM_Line_Item::instance()->get_col(array(array('LIN_ID' => $l2->ID())),
+            'LIN_quantity');
         $qty_col_in_db = reset($qty_col_with_one_result);
         $this->assertTrue(1 == $qty_col_in_db);
         //and now verify get_raw is returning that same value
         $this->assertTrue(1 == $l2_from_db->get_raw('LIN_quantity'));
     }
-
 
 
     /**
@@ -649,7 +625,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $datetime_from_db = EEM_Datetime::reset()->get_one_by_ID($datetime->ID());
         $this->assertEquals($datetime->reg_limit(), $datetime_from_db->reg_limit());
     }
-
 
 
     /**
@@ -686,7 +661,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         //restore timezone
         update_option('timezone_string', $original_timezone);
     }
-
 
 
     /**
@@ -741,7 +715,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @since 4.6.x
      */
@@ -775,7 +748,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
             $pointer++;
         }
     }
-
 
 
     /**
@@ -813,7 +785,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @since 4.6.x
      */
@@ -838,7 +809,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @since 4.6.x
      */
@@ -861,7 +831,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $this->assertTrue(array_key_exists('EVT_ID', $previous_event));
         $this->assertEquals($event->ID() - 1, $previous_event['EVT_ID']);
     }
-
 
 
     /**
@@ -890,7 +859,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @group github-102
      * @group 8589
@@ -917,7 +885,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @group 8686
      */
@@ -938,7 +905,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $reg_payments = $p->registration_payments();
         $this->assertTrue(empty($reg_payments));
     }
-
 
 
     /**
@@ -969,6 +935,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     /**
      * Tests that if you create a model object and immediately change its timezone, the related model
      * objects timezones should be changed too. But currently that isn't the case.
+     *
      * @group 10751
      * @group 10905
      */
@@ -986,15 +953,15 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * Verifies that when we set the timezone on a model object, related objects adopt that same timezone
+     *
      * @group 10905
      */
     public function setTimezone()
     {
         $t = $this->new_typical_transaction();
-        $datetime = EEM_Datetime::instance()->get_one(array(array('EVT_ID'=>$t->primary_registration()->event_ID())));
+        $datetime = EEM_Datetime::instance()->get_one(array(array('EVT_ID' => $t->primary_registration()->event_ID())));
         //set the timezone on the datetime, which should also set it on the ticket
         $datetime->set_timezone('Europe/London');
         $ticket = $datetime->get_first_related('Ticket');
@@ -1015,6 +982,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      * E_Base_Class_Test::test_automatically_set_timezone_on_related_model_obj__same_request
      * except this one asserts setting the event's timezone changes the datetime's timezone when done
      * across multiple requests.
+     *
      * @group 10751
      */
     public function test_automatically_set_timezone_on_related_model_obj__separate_requests()
@@ -1035,9 +1003,9 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * Tests that the f() function correctly escapes the value for display in a form input's value.
+     *
      * @group 11195
      */
     public function testF()
@@ -1045,7 +1013,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $t = $this->new_model_obj_with_dependencies(
             'Ticket',
             array(
-                'TKT_description' => '"</textarea>haha I echo this outside a form!'
+                'TKT_description' => '"</textarea>haha I echo this outside a form!',
             )
         );
         ob_start();
@@ -1058,11 +1026,11 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * Tests if we prepare a model field with f(), then put in a form input,
      * and the browser does it usual converting of HTML entities into what they represent
      * when the form is submitted, that we end up with the same content that we started with.
+     *
      * @group 11195
      */
     public function testFThenSetRoundTrip()
@@ -1071,7 +1039,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $t = $this->new_model_obj_with_dependencies(
             'Ticket',
             array(
-                'TKT_description' => $original_value
+                'TKT_description' => $original_value,
             )
         );
         $value_in_form = $t->get_pretty('TKT_description', 'form_input');
@@ -1080,16 +1048,12 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $submitted_value = html_entity_decode($value_in_form);
         $t2 = EE_Ticket::new_instance(
             array(
-                'TKT_description' => $submitted_value
+                'TKT_description' => $submitted_value,
             )
         );
         $this->assertEquals(
             $original_value,
             $t2->get('TKT_description')
         );
-
     }
 }
-
-// End of file EE_Base_Class_Test.php
-// Location testcases/core/db_classes/EE_Base_Class_Test.php
