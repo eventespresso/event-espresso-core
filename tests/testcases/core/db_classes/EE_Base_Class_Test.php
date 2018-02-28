@@ -1052,4 +1052,60 @@ class EE_Base_Class_Test extends EE_UnitTestCase
             $t2->get('TKT_description')
         );
     }
+
+
+    /**
+     * @group 11344
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \PHPUnit\Framework\Exception
+     */
+    public function testGetDateTimeObject()
+    {
+        //use EE_Datetime for tests
+        $ee_datetime = EE_Datetime::new_instance();
+
+        //verify we get a DateTime object when requesting one
+        $this->assertInstanceOf('DateTime', $ee_datetime->get_DateTime_object('DTT_EVT_start'));
+
+        //verify we get the same instance of DateTime when retrieving with clone flag as false and different instance
+        //when clone flag is true.
+        $dateTime = $ee_datetime->get_DateTime_object('DTT_EVT_start', false);
+        $notClone = $ee_datetime->get_DateTime_object('DTT_EVT_start', false);
+        $clone = $ee_datetime->get_DateTime_object('DTT_EVT_start');
+
+        $this->assertEquals(spl_object_hash($dateTime), spl_object_hash($notClone));
+        $this->assertNotEquals(spl_object_hash($dateTime), spl_object_hash($clone));
+    }
+
+
+    /**
+     * @group 11344
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
+    public function testClone()
+    {
+        //use EE_Datetime for tests
+        $ee_datetime = EE_Datetime::new_instance();
+        $original_datetime = $ee_datetime->get_DateTime_object('DTT_EVT_start', false);
+
+        //clone our EE_Datetime and verify the DateTime for the same field is also a new instance.
+        $new_ee_datetime = clone $ee_datetime;
+
+        $this->assertEquals(
+            spl_object_hash($ee_datetime->get_DateTime_object('DTT_EVT_start', false)),
+            spl_object_hash($original_datetime)
+        );
+        $this->assertNotEquals(
+            spl_object_hash($ee_datetime->get_DateTime_object('DTT_EVT_start', false)),
+            spl_object_hash($new_ee_datetime->get_DateTime_object('DTT_EVT_start', false))
+        );
+    }
 }
