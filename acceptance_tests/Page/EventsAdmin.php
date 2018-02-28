@@ -277,4 +277,17 @@ class EventsAdmin extends CoreAdmin
                . "//tr/td[contains(.,'Registration Approved')]"
                . "//ancestor::tr//select[contains(@class,'message-template-selector')]";
     }
+
+
+    /**
+     * Returns the selector for the action link to the registrations list table view filtered by the given event_id.
+     * Assumes one is in the context of the Events List Table
+     * @param int $event_id
+     * @return string
+     */
+    public static function listTableActionLinkRegistrationsForEvent($event_id)
+    {
+        return "//tbody[@id='the-list']/tr/td[contains(@class, 'column-id') and contains(.,$event_id)]"
+                . "//ancestor::tr/td//a[div[contains(@class, 'dashicons-groups')]]";
+    }
 }

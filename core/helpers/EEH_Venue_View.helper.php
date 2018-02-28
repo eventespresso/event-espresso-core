@@ -48,8 +48,17 @@ class EEH_Venue_View extends EEH_Base {
 	public static function get_venue( $VNU_ID = 0, $look_in_event = TRUE, $privacy_check = true, $password_check = true ) {
 		$VNU_ID = absint( $VNU_ID );
 		// do we already have the Venue you are looking for?
-		if ( EEH_Venue_View::$_venue instanceof EE_Venue && EEH_Venue_View::$_venue->ID() == $VNU_ID ) {
-			return EEH_Venue_View::_get_venue( $privacy_check );
+		if ( EEH_Venue_View::$_venue instanceof EE_Venue && $VNU_ID ) {
+			//If the Venue ID matches $VNU_ID, return the venue.
+			if( EEH_Venue_View::$_venue->ID() === $VNU_ID ) {
+				return EEH_Venue_View::_get_venue( $privacy_check );
+			}
+			//If the Venue ID does not match, try pulling a venue using $VNU_ID.
+			$venue = EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
+			if( $venue instanceof EE_Venue ) {
+				EEH_Venue_View::$_venue = $venue;
+				return EEH_Venue_View::_get_venue( $privacy_check );
+			}
 		}
 		// international newspaper?
 		global $post;
@@ -91,11 +100,9 @@ class EEH_Venue_View extends EEH_Base {
 										break;
 									}
 								}
-								// if the venue being asked for is not related to the global event post,
-								// still return the venue being asked for
 							}
-							// no venue ID ?
-							// then the global post is an events post and this function was called with no argument
+						// no venue ID ?
+						// then the global post is an events post and this function was called with no argument
 						} else {
 							// just grab the first related event venue
 							EEH_Venue_View::$_venue = reset( $venues );

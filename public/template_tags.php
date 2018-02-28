@@ -566,6 +566,52 @@ if ( ! function_exists( 'espresso_event_date_range' )) {
 	}
 }
 
+if ( ! function_exists( 'espresso_next_upcoming_datetime_obj' )) {
+	/**
+	 * espresso_next_upcoming_datetime_obj
+	 * returns the next upcoming datetime object for an event
+	 *
+	 * @param int $EVT_ID
+	 * @return EE_Datetime|null
+	 */
+	function espresso_next_upcoming_datetime_obj( $EVT_ID = 0 ) {
+		return EEH_Event_View::get_next_upcoming_date_obj( $EVT_ID );
+	}
+}
+
+if ( ! function_exists( 'espresso_next_upcoming_datetime' ) ) {
+	/**
+	 * espresso_next_upcoming_datetime
+	 * returns the start date and time for the next upcoming event.
+	 *
+	 * @param string $date_format
+	 * @param string $time_format
+	 * @param int $EVT_ID
+	 * @param bool $echo
+	 * @return string
+	 */
+	function espresso_next_upcoming_datetime( $date_format = '', $time_format = '', $EVT_ID = 0, $echo = true ) {
+
+		$date_format = ! empty( $date_format ) ? $date_format : get_option( 'date_format' );
+		$date_format = apply_filters( 'FHEE__espresso_next_upcoming_datetime__date_format', $date_format );
+
+		$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
+		$time_format = apply_filters( 'FHEE__espresso_next_upcoming_datetime__time_format', $time_format );
+
+		$datetime_format = trim( $date_format . ' ' . $time_format);
+
+		$datetime = espresso_next_upcoming_datetime_obj( $EVT_ID );
+
+		if( ! $datetime instanceof EE_Datetime ) {
+			return '';
+		}
+		if ( $echo ){
+			echo $datetime->get_i18n_datetime( 'DTT_EVT_start', $datetime_format );
+			return '';
+		}
+		return $datetime->get_i18n_datetime( 'DTT_EVT_start', $datetime_format );
+	}
+}
 
 if ( ! function_exists( 'espresso_event_date_as_calendar_page' )) {
 	/**

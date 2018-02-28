@@ -45,9 +45,5 @@
 <strong><?php _e('TKT Option', 'event_espresso'); ?></strong><br />
 <?php _e('This is the name of the ticket that was selected by the registrant.', 'event_espresso'); ?>
 </li>
-<li>
-<strong><?php _e('Actions', 'event_espresso'); ?></strong><br />
-<?php _e('You can click on the small magnifying glass <span class="dashicons dashicons-search"></span> to view all check-in records for this registrant.', 'event_espresso'); ?>
-</li>
 </ul>
 </p>

@@ -1615,7 +1615,7 @@ class EED_Single_Page_Checkout extends EED_Module
             ) < 1;
             EE_Registry::$i18n_js_strings['empty_cart'] = $empty_cart;
             $cookies_not_set_msg = '';
-            if ($empty_cart && ! isset($_COOKIE['ee_cookie_test'])) {
+            if ($empty_cart) {
                 $cookies_not_set_msg = apply_filters(
                     'FHEE__Single_Page_Checkout__display_spco_reg_form__cookies_not_set_msg',
                     sprintf(
@@ -1623,7 +1623,7 @@ class EED_Single_Page_Checkout extends EED_Module
                             '%1$s%3$sIt appears your browser is not currently set to accept Cookies%4$s%5$sIn order to register for events, you need to enable cookies.%7$sIf you require assistance, then click the following link to learn how to %8$senable cookies%9$s%6$s%2$s',
                             'event_espresso'
                         ),
-                        '<div class="ee-attention">',
+                        '<div class="ee-attention hidden" id="ee-cookies-not-set-msg">',
                         '</div>',
                         '<h6 class="important-notice">',
                         '</h6>',
@@ -1650,7 +1650,6 @@ class EED_Single_Page_Checkout extends EED_Module
                                     'next_step'               => $this->checkout->next_step instanceof EE_SPCO_Reg_Step
                                         ? $this->checkout->next_step->slug()
                                         : '',
-                                    'cancel_page_url'         => $this->checkout->cancel_page_url,
                                     'empty_msg'               => apply_filters(
                                         'FHEE__Single_Page_Checkout__display_spco_reg_form__empty_msg',
                                         sprintf(
