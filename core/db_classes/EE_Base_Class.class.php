@@ -3147,6 +3147,21 @@ abstract class EE_Base_Class
     {
         $this->_props_n_values_provided_in_constructor = $this->_fields;
     }
+
+
+    /**
+     * Usage of this magic method is to ensure any internally cached references to object instances that must remain
+     * distinct with the clone host instance are also cloned.
+     */
+    public function __clone()
+    {
+        //handle DateTimes (this is handled in here because there's no one specific child class that uses datetimes).
+        foreach ($this->_fields as $field => $value) {
+            if ($value instanceof DateTime) {
+                $this->_fields[$field] = clone $value;
+            }
+        }
+    }
 }
 
 
