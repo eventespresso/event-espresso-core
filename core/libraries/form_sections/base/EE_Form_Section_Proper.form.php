@@ -317,6 +317,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                 $this->store_submitted_form_data_in_session();
             }
         }
+        if ($this->submission_error_message() === '' && ! $this->is_valid()) {
+            $this->set_submission_error_message();
+        }
         do_action(
             'AHEE__EE_Form_Section_Proper__receive_form_submission__end',
             $req_data,
@@ -599,15 +602,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                 // ok so no general errors to this entire form section.
                 // so let's check the subsections, but only set errors if that hasn't been done yet
                 $this->is_valid = true;
-                $set_submission_errors = $this->submission_error_message() === '';
                 foreach ($this->get_validatable_subsections() as $subsection) {
-                    if (! $subsection->is_valid() || $subsection->get_validation_error_string() !== '') {
-                        if ($set_submission_errors) {
-                            $this->set_submission_error_message(
-                                '',
-                                $subsection
-                            );
-                        }
+                    if (! $subsection->is_valid()) {
                         $this->is_valid = false;
                     }
                 }
@@ -1301,7 +1297,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     ) {
         $this->_form_submission_error_message = ! empty($form_submission_error_message)
             ? $form_submission_error_message
-            : $this->get_validation_error_string();
+            : $this->getValidationErrorsAccumulatedString();
     }
 
 
@@ -1449,13 +1445,13 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     }
 
     /**
-     * Override's the parent so that we fetch validation errors from children and grandchildren too.
+     * Fetch validation errors from children and grandchildren and puts them in a single string.
      * This traverses the form section tree to generate this, but you probably want to instead use
      * get_form_submission_error_message() which is usually this message cached (or a custom validation error message)
      *
      * @return string
      */
-    public function get_validation_error_string()
+    protected function getValidationErrorsAccumulatedString()
     {
         $submission_error_messages = array();
         // bad, bad, bad registrant
