@@ -30,6 +30,13 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         );
     }
 
+
+    public function tearDown()
+    {
+        EE_Register_Model::deregister('Mock');
+        parent::tearDown();
+    }
+
     static function setUpBeforeClass()
     {
         //		EEH_Activation::create_table('esp_mock',
