@@ -39,6 +39,12 @@ class EE_Mock extends EE_Base_Class
     {
         return new self($props_n_values, true);
     }
-}
 
-// End of file EE_Base_Class_Mock.class.php
+    //extra helper method to return the internally cached DateTime object rather than what the public method exposes
+    public function internalDateTimeObject($field_name)
+    {
+        return isset($this->_fields[$field_name])
+            ? $this->_fields[$field_name]
+            : null;
+    }
+}
