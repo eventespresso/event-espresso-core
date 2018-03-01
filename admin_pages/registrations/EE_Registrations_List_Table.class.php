@@ -1,7 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
-
 
 
 /**
@@ -25,9 +24,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
 {
 
 
-
     private $_status;
-
 
 
     /**
@@ -39,7 +36,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     protected $_transaction_details = array();
 
 
-
     /**
      * An array of event details for the related event to the registration being processed.
      * This is set via the _set_related_details method.
@@ -49,13 +45,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     protected $_event_details = array();
 
 
-
     /**
      * @param \Registrations_Admin_Page $admin_page
      */
     public function __construct(Registrations_Admin_Page $admin_page)
     {
-        if ( ! empty($_GET['event_id'])) {
+        if (! empty($_GET['event_id'])) {
             $extra_query_args = array();
             foreach ($admin_page->get_views() as $key => $view_details) {
                 $extra_query_args[$view_details['slug']] = array('event_id' => $_GET['event_id']);
@@ -65,7 +60,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         parent::__construct($admin_page);
         $this->_status = $this->_admin_page->get_registration_status_array();
     }
-
 
 
     /**
@@ -79,7 +73,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $this->_data = $this->_admin_page->get_registrations($this->_per_page);
         $this->_all_data_count = $this->_admin_page->get_registrations($this->_per_page, true, false, false);
     }
-
 
 
     /**
@@ -148,10 +141,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             'extra_request' => array(
                 'use_filters' => true,
                 'filters'     => array_diff_key($this->_req_data, array_flip(array(
-                            'page',
-                            'action',
-                            'default_nonce',
-                        ))),
+                    'page',
+                    'action',
+                    'default_nonce',
+                ))),
                 'return_url'  => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
             ),
         );
@@ -163,10 +156,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
              * Returning a falsey on this filter will result in the default sort to be by firstname rather than last name.
              */
             'ATT_fname'     => array(
-                    'FHEE__EE_Registrations_List_Table___set_properties__default_sort_by_registration_last_name',
-                    true,
-                    $this
-                )
+                'FHEE__EE_Registrations_List_Table___set_properties__default_sort_by_registration_last_name',
+                true,
+                $this,
+            )
                 ? array('ATT_lname' => false)
                 : array('ATT_fname' => false),
             'event_name'    => array('event_name' => false),
@@ -175,7 +168,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         );
         $this->_hidden_columns = array();
     }
-
 
 
     /**
@@ -195,7 +187,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         }
         return $class;
     }
-
 
 
     /**
@@ -232,7 +223,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     }
 
 
-
     /**
      *    _get_table_filters
      *
@@ -265,7 +255,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     }
 
 
-
     /**
      *    _add_view_counts
      *
@@ -285,7 +274,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             $this->_views['trash']['count'] = $this->_total_registrations('trash');
         }
     }
-
 
 
     /**
@@ -315,7 +303,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         }
         return EEM_Registration::instance()->count(array($_where));
     }
-
 
 
     /**
@@ -355,7 +342,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     }
 
 
-
     /**
      * _total_registrations_today
      *
@@ -384,7 +370,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     }
 
 
-
     /**
      * column_cb
      *
@@ -399,16 +384,15 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $transaction = $item->get_first_related('Transaction');
         $payment_count = $transaction instanceof EE_Transaction ? $transaction->count_related('Payment') : 0;
         return $payment_count > 0
-            ||  ! EE_Registry::instance()->CAP->current_user_can(
-                'ee_edit_registration',
-                'registration_list_table_checkbox_input',
-                $item->ID()
-            )
+               || ! EE_Registry::instance()->CAP->current_user_can(
+            'ee_edit_registration',
+            'registration_list_table_checkbox_input',
+            $item->ID()
+        )
             ? sprintf('<input type="checkbox" name="_REG_ID[]" value="%1$d" />', $item->ID())
-                                    . '<span class="ee-lock-icon"></span>'
+              . '<span class="ee-lock-icon"></span>'
             : sprintf('<input type="checkbox" name="_REG_ID[]" value="%1$d" />', $item->ID());
     }
-
 
 
     /**
@@ -431,7 +415,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $content .= '</div>';
         return $content;
     }
-
 
 
     /**
@@ -465,7 +448,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                       . '</span>';
         return $view_link;
     }
-
 
 
     /**
@@ -510,7 +492,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     }
 
 
-
     /**
      * column_DTT_EVT_start
      *
@@ -534,7 +515,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             return __('There is no ticket on this registration', 'event_espresso');
         }
     }
-
 
 
     /**
@@ -618,7 +598,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     }
 
 
-
     /**
      * column_ATT_email
      *
@@ -635,7 +614,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     }
 
 
-
     /**
      * column__REG_count
      *
@@ -647,7 +625,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     {
         return sprintf(__('%1$s / %2$s', 'event_espresso'), $item->count(), $item->group_size());
     }
-
 
 
     /**
@@ -675,7 +652,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     }
 
 
-
     /**
      * column__REG_final_price
      *
@@ -694,7 +670,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $content .= '<span class="reg-pad-rght">' . $item->pretty_final_price() . '</span>';
         return $content;
     }
-
 
 
     /**
@@ -716,7 +691,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         }
         return $content;
     }
-
 
 
     /**
@@ -749,7 +723,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             return __("None", "event_espresso");
         }
     }
-
 
 
     /**
@@ -786,7 +759,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         }
         return '&nbsp;';
     }
-
 
 
     /**
