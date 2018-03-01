@@ -431,6 +431,7 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
     /**
      * validate the form (which caches the result) then re-submit it and verify the cache got cleared
      * @group 11381
+     * @group current
      */
 	public function testIsValidCached()
     {
@@ -438,14 +439,18 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
             array(
                 'name' => 'form',
                 'subsections'=> array(
-                    'email' => new EE_Email_Input()
+                    'int' => new EE_Integer_Input(
+                        array(
+                            'required' => true
+                        )
+                    )
                 )
             )
         );
         $f->receive_form_submission(
             array(
                 'form' => array(
-                    'email' => 'eee@ee.ee'
+                    'int' => '4'
                 )
             )
         );
@@ -456,7 +461,7 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
         $f->receive_form_submission(
             array(
                 'form' => array(
-                    'email' => '1'
+                    'int' => 'saskquatch'
                 )
             )
         );
