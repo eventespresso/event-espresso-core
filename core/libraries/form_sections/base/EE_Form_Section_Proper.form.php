@@ -1297,7 +1297,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     ) {
         $this->_form_submission_error_message = ! empty($form_submission_error_message)
             ? $form_submission_error_message
-            : $this->getValidationErrorsAccumulatedString();
+            : $this->getAllValidationErrorsString();
     }
 
 
@@ -1450,8 +1450,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * get_form_submission_error_message() which is usually this message cached (or a custom validation error message)
      *
      * @return string
+     * @since $VID:$
      */
-    protected function getValidationErrorsAccumulatedString()
+    protected function getAllValidationErrorsString()
     {
         $submission_error_messages = array();
         // bad, bad, bad registrant
