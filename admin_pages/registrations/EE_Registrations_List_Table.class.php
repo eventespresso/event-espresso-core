@@ -603,6 +603,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $content .= '<div class="left">' . array_shift($datetime_strings) . '</div>';
         $content .= $expand_toggle;
         if ($datetime_strings) {
+            $content .= '<div style="clear:both"></div>';
             $content .= '<div class="ee-registration-event-datetimes-container more-items hidden">';
             $content .= implode("<br />", $datetime_strings);
             $content .= '</div>';
