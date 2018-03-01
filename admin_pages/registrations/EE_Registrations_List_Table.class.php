@@ -580,9 +580,35 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             foreach ($datetimes as $datetime) {
                 $datetime_strings[] = $datetime->get_i18n_datetime('DTT_EVT_start');
             }
-            return implode("<br />", $datetime_strings);
+            return $this->generateDisplayForDatetimes($datetime_strings);
         }
         return __('There is no ticket on this registration', 'event_espresso');
+    }
+
+
+    /**
+     * Receives an array of datetime strings to display and converts them to the html container for the column.
+     *
+     * @param array $datetime_strings
+     * @return string
+     */
+    public function generateDisplayForDateTimes(array $datetime_strings)
+    {
+        $content = '<div class="ee-registration-event-datetimes-container">';
+        $expand_toggle = count($datetime_strings) > 1
+            ? ' <span title="' . esc_attr__('Click to view all dates', 'event_espresso')
+              . '" class="ee-js ee-more-datetimes-toggle dashicons dashicons-plus"></span>'
+            : '';
+        //get first item for initial visibility
+        $content .= '<div class="left">' . array_shift($datetime_strings) . '</div>';
+        $content .= $expand_toggle;
+        if ($datetime_strings) {
+            $content .= '<div class="ee-registration-event-datetimes-container more-items hidden">';
+            $content .= implode("<br />", $datetime_strings);
+            $content .= '</div>';
+        }
+        $content .= '</div>';
+        return $content;
     }
 
 

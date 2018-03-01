@@ -70,8 +70,9 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
         $ticket = $item->ticket();
         $datetimes = $ticket instanceof EE_Ticket ? $ticket->datetimes($remove_defaults) : array();
         $EVT_ID = $item->event_ID();
-        $datetime_string = '';
+        $datetimes_for_display = array();
         foreach ($datetimes as $datetime) {
+            $datetime_string = '';
             if (EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_checkin',
                 'espresso_registrations_registration_checkins',
@@ -107,9 +108,9 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
             $datetime_string .= $this->row_actions(
                 array(
                     'event_datetime_filter' => '<a href="' . EE_Admin_Page::add_query_args_and_nonce(
-                            array('event_id' => $EVT_ID, 'datetime_id' => $datetime->ID()),
-                            REG_ADMIN_URL
-                        )
+                        array('event_id' => $EVT_ID, 'datetime_id' => $datetime->ID()),
+                        REG_ADMIN_URL
+                    )
                            . '" title="' . sprintf(
                                esc_attr__(
                                    'Filter this list to only show registrations for this datetime %s',
@@ -121,7 +122,8 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
                            . '</a>',
                 )
             );
+            $datetimes_for_display[] = $datetime_string;
         }
-        return $datetime_string;
+        return $this->generateDisplayForDateTimes($datetimes_for_display);
     }
 }
