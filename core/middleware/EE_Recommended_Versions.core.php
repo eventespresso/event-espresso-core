@@ -128,7 +128,7 @@ class EE_Recommended_Versions extends EE_Middleware
      * @param string $version_required
      * @return bool
      */
-    private function upcomingRequiredPhpVersion($version_required = '5.5.28')
+    private function upcomingRequiredPhpVersion($version_required = '5.5')
     {
         return $this->_check_php_version($version_required);
     }
