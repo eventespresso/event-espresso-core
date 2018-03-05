@@ -683,7 +683,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
          */
         public function pre_upgrade_setup($continue, $hook_extra)
         {
-            if (! empty($hook_extra['plugin']) && $hook_extra['plugin'] == $this->pluginFile) {
+            if (! empty($hook_extra['plugin']) && $hook_extra['plugin'] === $this->pluginFile) {
                 //we need to make sure that the new directory is named correctly
                 add_filter('upgrader_source_selection', array($this, 'fixDirName'), 10, 3);
             }
@@ -705,7 +705,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
          */
         public function tidy_up_after_upgrade($continue, $hook_extra, $install_result)
         {
-            if (! empty($hook_extra['plugin']) && $hook_extra['plugin'] == $this->pluginFile) {
+            if (! empty($hook_extra['plugin']) && $hook_extra['plugin'] === $this->pluginFile) {
                 //gotta make sure bulk updates for other files don't get messed up!!
                 remove_filter('upgrader_source_selection', array($this, 'fixDirName'), 10);
                 //maybe clean up any leftover files from upgrades
@@ -742,12 +742,12 @@ if (! class_exists('PluginUpdateEngineChecker')):
             //if this is a bulk update then we need an alternate method to verify this is an update we need to modify.
             if ($wppu->bulk) {
                 $url_to_check = $wppu->skin->options['url'];
-                $is_good = strpos($url_to_check, urlencode($this->pluginFile)) === false ? false : true;
+                $is_good = strpos($url_to_check, urlencode($this->pluginFile)) !== false;
             } else {
-                $is_good = isset($wppu->skin->plugin) && $wppu->skin->plugin == $this->pluginFile ? true : false;
+                $is_good = isset($wppu->skin->plugin) && $wppu->skin->plugin === $this->pluginFile;
             }
 
-            if ($is_good) {
+            if ($is_good && $wp_filesystem instanceof WP_Filesystem_Base) {
                 $new_dir = $wp_filesystem->wp_content_dir() . 'upgrade/' . $this->slug . '/';
 
                 //make new directory if needed.
@@ -862,8 +862,8 @@ if (! class_exists('PluginUpdateEngineChecker')):
             $chk_file = WP_CONTENT_DIR . '/upgrade/' . $this->slug . '/';
 
             if (is_readable($chk_file)) {
-                if (! is_object($wp_filesystem)) {
-                    require_once(ABSPATH . '/wp-admin/includes/file.php');
+                if (! $wp_filesystem instanceof WP_Filesystem_Base) {
+                    require_once ABSPATH . '/wp-admin/includes/file.php';
                     WP_Filesystem();
                 }
                 $wp_filesystem->delete($chk_file, false, 'd');
@@ -897,12 +897,28 @@ if (! class_exists('PluginUpdateEngineChecker')):
             return $has_triggered;
         }
 
-        function maybe_trigger_update($value, $key, $site_key_search_string)
-        {
-            if ($key == $site_key_search_string || (is_array($value) && isset($value[$site_key_search_string]))) {
 
-                //if $site_key_search_string exists but the actual key field is empty...let's reset the install key as well.
-                if ($value == '' || (is_array($value) && empty($value[$site_key_search_string])) || $value != $this->api_secret_key || (is_array($value) && $value[$site_key_search_string] != $this->api_secret_key)) {
+        /**
+         * Conditionally manually trigger an update check.
+         * @param mixed $value
+         * @param string $key
+         * @param string $site_key_search_string
+         * @return bool
+         */
+        private function maybe_trigger_update($value, $key, $site_key_search_string)
+        {
+            if ($key === $site_key_search_string
+                || (is_array($value) && isset($value[$site_key_search_string]))
+            ) {
+                //if $site_key_search_string exists but the actual key field is empty...let's reset the install key as
+                // well.
+                if (empty($value)
+                    || (! is_array($value) && $value !== $this->api_secret_key)
+                    || (is_array($value) && (
+                            empty($value[$site_key_search_string])
+                            || $value[$site_key_search_string] !== $this->api_secret_key
+                    ))
+                ) {
                     delete_site_option($this->pue_install_key);
                 }
                 $this->api_secret_key = $value;
@@ -915,12 +931,21 @@ if (! class_exists('PluginUpdateEngineChecker')):
                     );
                 }
 
-                //now let's reset some flags if necessary?  in other words IF the user has entered a premium key and the CURRENT version is a free version (NOT a prerelease version) then we need to make sure that we ping for the right version
-                $free_key_match = '/FREE/i';
-
-                //if this condition matches then that means we've got a free active key in place (or a free version from wp WITHOUT an active key) and the user has entered a NON free API key which means they intend to check for premium access.
-                if (! preg_match($free_key_match,
-                        $this->api_secret_key) && ! empty($this->api_secret_key) && ! $this->_is_premium && ! $this->_is_prerelease && $this->_is_freerelease) {
+                //now let's reset some flags if necessary?  in other words IF the user has entered a premium key and
+                //the CURRENT version is a free version (NOT a prerelease version) then we need to make sure that we
+                // ping for the right version
+                //if this condition matches then that means we've got a free active key in place (or a free version
+                // from wp WITHOUT an active key) and the user has entered a NON free API key which means they intend
+                // to check for premium access.
+                if (! empty($this->api_secret_key)
+                    && ! $this->_is_premium
+                    && ! $this->_is_prerelease
+                    && $this->_is_freerelease
+                    && false !== stripos(
+                        $this->api_secret_key,
+                        'FREE'
+                    )
+                ) {
                     $this->_use_wp_update = false;
                     $this->slug = $this->_incoming_slug['premium'][key($this->_incoming_slug['premium'])];
                     $this->_is_premium = true;
@@ -1008,8 +1033,11 @@ if (! class_exists('PluginUpdateEngineChecker')):
             }
 
 
-            if (! is_wp_error($result) && isset($result['response']['code']) && ($result['response']['code'] == 200) && ! empty($result['body'])) {
-
+            if (! is_wp_error($result)
+                && ! empty($result['body'])
+                && isset($result['response']['code'])
+                && ($result['response']['code'] === 200)
+            ) {
                 $pluginInfo = PU_PluginInfo::fromJson($result['body']);
             }
 
@@ -1487,7 +1515,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
             }
 
             //check if we're on the wp update page.  If so get out
-            if ($current_screen->id == 'update') {
+            if ($current_screen->id === 'update') {
                 return;
             }
 
@@ -1661,7 +1689,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
         public function injectInfo($result, $action = null, $args = null)
         {
             $updates = false;
-            $relevant = ($action == 'plugin_information') && isset($args->slug) && ($args->slug == $this->slug);
+            $relevant = ($action === 'plugin_information') && isset($args->slug) && ($args->slug === $this->slug);
             if (! $relevant) {
                 return $result;
             }
@@ -1933,11 +1961,10 @@ if (! class_exists('PluginUpdateUtility')) :
             //we can parse the update JSON as if it was a plugin info string, then copy over
             //the parts that we care about.
             $pluginInfo = PU_PluginInfo::fromJson($json);
-            if ($pluginInfo != null) {
-                return PluginUpdateUtility::fromPluginInfo($pluginInfo);
-            } else {
-                return null;
+            if ($pluginInfo !== null) {
+                return self::fromPluginInfo($pluginInfo);
             }
+            return null;
         }
 
         /**
