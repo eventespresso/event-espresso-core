@@ -361,7 +361,9 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 'checkPeriod'     => 12,
                 'option_key'      => 'pue_site_license_key',
                 'use_wp_download' => false,
-                'extra_stats'     => array() //this is an array of key value pairs for extra stats being tracked.
+                //expected to be a closure that returns an array of key/value pairs for sending as a part of the stats
+                //package
+                'extra_stats'     => null
             );
 
             //let's first make sure requireds are present
@@ -1269,14 +1271,19 @@ if (! class_exists('PluginUpdateEngineChecker')):
         private function _send_extra_stats()
         {
             //first if we don't have a stats array then lets just get out.
-            if (empty($this->extra_stats)) {
+            if (empty($this->extra_stats) || ! $this->extra_stats instanceof Closure) {
                 return;
             }
 
+            $extra_stats = $this->extra_stats;
+            $extra_stats_to_send = $extra_stats();
+            if (! is_array($extra_stats_to_send)) {
+                return;
+            }
 
             //set up args sent in body
             $body = array(
-                'extra_stats'        => $this->extra_stats,
+                'extra_stats'        => $extra_stats_to_send,
                 'user_api_key'       => $this->api_secret_key,
                 'pue_stats_request'  => 1,
                 'domain'             => $this->current_domain,
