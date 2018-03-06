@@ -1931,6 +1931,20 @@ class EE_Core_Config extends EE_Config_Base
         return EE_Core_Config::$ee_ueip_option;
     }
 
+    /**
+     * Utility function for escaping the value of a property and returning.
+     *
+     * @param string $property property name (checks to see if exists).
+     * @return mixed if a detected type found return the escaped value, otherwise just the raw value is returned.
+     * @throws \EE_Error
+     */
+    public function get_pretty($property)
+    {
+        if ($property === 'ee_ueip_optin') {
+            return $this->ee_ueip_optin ? 'yes' : 'no';
+        }
+        return parent::get_pretty($property);
+    }
 
 
     /**
