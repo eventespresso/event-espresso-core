@@ -91,8 +91,7 @@ class Stats
      */
     private function canDisplayNotices()
     {
-        return ! $this->config->isOptedInForUxip()
-               && ! $this->config->hasNotifiedForUxip()
+        return ! $this->config->hasNotifiedForUxip()
                && $this->maintenance_mode->level() !== EE_Maintenance_Mode::level_2_complete_maintenance;
     }
 
