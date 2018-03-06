@@ -665,7 +665,10 @@ class EE_Dependency_Map
                 'EEM_Payment_Method' => EE_Dependency_Map::load_from_cache,
                 'EEM_Event' => EE_Dependency_Map::load_from_cache,
                 'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
-                'EEM_Ticket' => EE_Dependency_Map::load_from_cache
+                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+                'EEM_Registration' => EE_Dependency_Map::load_from_cache,
+                'EEM_Transaction' => EE_Dependency_Map::load_from_cache,
+                'EE_Config' => EE_Dependency_Map::load_from_cache
             )
         );
     }
