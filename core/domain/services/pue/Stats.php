@@ -75,7 +75,6 @@ class Stats
     public function statsCallback()
     {
         //returns a callback that can is used to retrieve the stats to send along to the pue server.
-        //@todo I need to modify pue-client so it expects a callback rather than an array.
         return function () {
             //we only send stats one a week, so let's see if our stat timestamp has expired.
             if (! $this->sendStats()) {
