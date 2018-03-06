@@ -76,7 +76,9 @@ class Config
 
     public function hostServerUrl()
     {
-        return 'https://eventespresso.com';
+        return defined('PUE_UPDATES_ENDPOINT')
+            ? PUE_UPDATES_ENDPOINT
+            : 'https://eventespresso.com';
     }
 
 
