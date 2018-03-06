@@ -198,7 +198,7 @@ class Stats
         }
 
         //update has notified option
-        $this->config->setHasOptedInForUxip();
+        $this->config->setHasNotifiedAboutUxip();
         exit();
     }
 
