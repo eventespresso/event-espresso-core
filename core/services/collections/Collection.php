@@ -4,6 +4,7 @@ namespace EventEspresso\core\services\collections;
 use  EventEspresso\core\exceptions\InvalidEntityException;
 use  EventEspresso\core\exceptions\InvalidInterfaceException;
 use LimitIterator;
+use SplObjectStorage;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -17,7 +18,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
- class Collection extends \SplObjectStorage implements CollectionInterface {
+ class Collection extends SplObjectStorage implements CollectionInterface {
 
 
 	 /**
