@@ -79,6 +79,15 @@ class EED_Recaptcha_Invisible extends EED_Module
      */
     public static function set_hooks_admin()
     {
+        add_action(
+            'EED_Ticket_Selector__process_ticket_selections__before',
+            array('EED_Recaptcha_Invisible', 'processTicketSelectorForm')
+        );
+        add_filter(
+            'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data',
+            array('EED_Recaptcha_Invisible', 'receiveSpcoRegStepForm'),
+            10, 2
+        );
         // admin settings
         add_action(
             'AHEE__Extend_Registration_Form_Admin_Page___reg_form_settings_template',
@@ -199,7 +208,7 @@ class EED_Recaptcha_Invisible extends EED_Module
     public static function processSpcoRegStepForm(EE_Form_Section_Proper $reg_form)
     {
         return strpos($reg_form->name(), 'reg-step-form') !== false
-               || ! RecaptchaFactory::create()->recaptchaPassed();
+               && ! RecaptchaFactory::create()->recaptchaPassed();
     }
 
 
