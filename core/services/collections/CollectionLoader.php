@@ -1,12 +1,17 @@
 <?php
 namespace EventEspresso\core\services\collections;
 
+use EE_Error;
+use EE_Registry;
 use  EventEspresso\core\exceptions\InvalidClassException;
 use  EventEspresso\core\exceptions\InvalidDataTypeException;
 use  EventEspresso\core\exceptions\InvalidEntityException;
 use  EventEspresso\core\exceptions\InvalidFilePathException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\locators\LocatorInterface;
 use EventEspresso\core\services\locators\FileLocator;
+use InvalidArgumentException;
+use ReflectionException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -62,19 +67,21 @@ class CollectionLoader {
 	protected $file_locator;
 
 
-
-	/**
-	 * CollectionLoader constructor.
-	 *
-	 * @param CollectionDetailsInterface $collection_details
-	 * @param CollectionInterface        $collection
-	 * @param LocatorInterface           $file_locator
-	 * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-	 * @throws \EventEspresso\core\exceptions\InvalidClassException
-	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\core\exceptions\InvalidFilePathException
-	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
-	 */
+    /**
+     * CollectionLoader constructor.
+     *
+     * @param CollectionDetailsInterface $collection_details
+     * @param CollectionInterface        $collection
+     * @param LocatorInterface           $file_locator
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws EE_Error
+     * @throws InvalidInterfaceException
+     * @throws InvalidClassException
+     * @throws InvalidDataTypeException
+     * @throws InvalidFilePathException
+     * @throws InvalidEntityException
+     */
 	public function __construct(
 		CollectionDetailsInterface $collection_details,
 		CollectionInterface $collection = null,
@@ -94,7 +101,7 @@ class CollectionLoader {
 
 	/**
 	 * @access public
-	 * @return \EventEspresso\core\services\collections\CollectionInterface
+	 * @return CollectionInterface
 	 */
 	public function getCollection() {
 		return $this->collection;
@@ -104,10 +111,10 @@ class CollectionLoader {
 
 	/**
 	 * @access protected
-	 * @throws \EventEspresso\core\exceptions\InvalidClassException
-	 * @throws \EventEspresso\core\exceptions\InvalidFilePathException
-	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
+	 * @throws InvalidClassException
+	 * @throws InvalidFilePathException
+	 * @throws InvalidDataTypeException
+	 * @throws InvalidEntityException
 	 */
 	protected function loadAllFromFilepaths() {
 		if ( ! $this->file_locator instanceof FileLocator ) {
@@ -139,10 +146,10 @@ class CollectionLoader {
 	 * @access protected
 	 * @param  string $filepath
 	 * @return string
-	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
-	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\core\exceptions\InvalidFilePathException
-	 * @throws \EventEspresso\core\exceptions\InvalidClassException
+	 * @throws InvalidEntityException
+	 * @throws InvalidDataTypeException
+	 * @throws InvalidFilePathException
+	 * @throws InvalidClassException
 	 */
 	protected function loadClassFromFilepath( $filepath ) {
 		if ( ! is_string( $filepath ) ) {
@@ -151,7 +158,7 @@ class CollectionLoader {
 		if ( ! is_readable( $filepath ) ) {
 			throw new InvalidFilePathException( $filepath );
 		}
-		require_once( $filepath );
+		require_once $filepath;
 		// extract filename from path
 		$file_name = basename( $filepath );
 		// now remove any file extensions
@@ -171,7 +178,7 @@ class CollectionLoader {
 	 * @param        $entity
 	 * @param  mixed $identifier
 	 * @return string
-	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
+	 * @throws InvalidEntityException
 	 */
 	protected function addEntityToCollection( $entity, $identifier ) {
 		do_action(
@@ -217,7 +224,7 @@ class CollectionLoader {
 	 * @param        $entity
 	 * @param  mixed $identifier
 	 * @return string
-	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
+	 * @throws InvalidEntityException
 	 */
 	protected function setIdentifier( $entity, $identifier ) {
 	    switch($this->collection_details->identifierType()) {
@@ -260,15 +267,18 @@ class CollectionLoader {
 	}
 
 
-
-	/**
-	 * loadFromFQCNs
-	 *
-	 * @access protected
-	 * @throws \EventEspresso\core\exceptions\InvalidClassException
-	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
-	 */
+    /**
+     * loadFromFQCNs
+     *
+     * @access protected
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws EE_Error
+     * @throws InvalidClassException
+     * @throws InvalidDataTypeException
+     * @throws InvalidEntityException
+     */
 	protected function loadFromFQCNs() {
 		$FQCNs = $this->collection_details->getCollectionFQCNs();
 		$FQCNs = (array) apply_filters(
@@ -283,17 +293,20 @@ class CollectionLoader {
 	}
 
 
-
-	/**
-	 * loadClassFromFQCN
-	 *
-	 * @access protected
-	 * @param  string $FQCN Fully Qualified Class Name
-	 * @return string
-	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
-	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\core\exceptions\InvalidClassException
-	 */
+    /**
+     * loadClassFromFQCN
+     *
+     * @access protected
+     * @param  string $FQCN Fully Qualified Class Name
+     * @return string
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws EE_Error
+     * @throws InvalidEntityException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
+     */
 	protected function loadClassFromFQCN( $FQCN ) {
 		if ( ! is_string( $FQCN ) ) {
 			throw new InvalidDataTypeException( '$FQCN', $FQCN, 'string' );
@@ -302,7 +315,7 @@ class CollectionLoader {
 			throw new InvalidClassException( $FQCN );
 		}
 		return $this->addEntityToCollection(
-			\EE_Registry::instance()->create( $FQCN ),
+			EE_Registry::instance()->create( $FQCN ),
 			$FQCN
 		);
 	}
