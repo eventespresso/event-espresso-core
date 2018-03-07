@@ -26,6 +26,14 @@ interface GutenbergBlockInterface
 {
 
     /**
+     * Perform any early setup required by the block
+     *
+     * @return void
+     */
+    public function initialize();
+
+
+    /**
      * @return WP_Block_Type|false The registered block type on success, or false on failure.
      */
     public function registerBlock();
@@ -35,4 +43,16 @@ interface GutenbergBlockInterface
      * @return WP_Block_Type|false The registered block type on success, or false on failure.
      */
     public function unRegisterBlock();
+
+
+    /**
+     * @return  void
+     */
+    public function registerScripts();
+
+
+    /**
+     * @return void
+     */
+    public function registerStyles();
 }
