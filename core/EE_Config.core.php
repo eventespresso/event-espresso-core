@@ -2088,7 +2088,8 @@ class EE_Organization_Config extends EE_Config_Base
     public function __construct()
     {
         // set default organization settings
-        $this->name = get_bloginfo('name');
+        //decode HTML entities from the WP blogname, because it's stored in the DB with HTML entities encoded
+        $this->name = wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES);
         $this->address_1 = '123 Onna Road';
         $this->address_2 = 'PO Box 123';
         $this->city = 'Inna City';
