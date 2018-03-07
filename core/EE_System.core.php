@@ -943,7 +943,7 @@ final class EE_System implements ResettableInterface
                 )
             );
             // or the even newer newer new way
-            if(defined('GUTENBERG_VERSION')) {
+            if(function_exists('register_block_type')) {
                 $this->loader->getShared(
                     'EventEspresso\core\services\gutenberg\GutenbergBlockManager',
                     array(
