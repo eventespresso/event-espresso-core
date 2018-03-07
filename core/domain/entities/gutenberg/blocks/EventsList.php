@@ -24,7 +24,19 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class EventsList extends GutenbergBlock
 {
+
     const GUTENBERG_BLOCK_TYPE = 'ee-shortcodes/events-list';
+
+
+    /**
+     * Perform any early setup required by the block
+     *
+     * @return void
+     */
+    public function initialize()
+    {
+    }
+
 
     /**
      * @return WP_Block_Type|false The registered block type on success, or false on failure.
@@ -40,18 +52,18 @@ class EventsList extends GutenbergBlock
                     'render_callback' => array($this, 'renderEventsList'),
                     'attributes'      => array(
                         'title'        => array(
-                            'type' => 'string'
+                            'type' => 'string',
                         ),
                         'limit'        => array(
                             'type'    => 'integer',
-                            'default' => 10
+                            'default' => 10,
                         ),
                         'cssClass'     => array(
-                            'type' => 'string'
+                            'type' => 'string',
                         ),
                         'showExpired'  => array(
                             'type'    => 'boolean',
-                            'default' => false
+                            'default' => false,
                         ),
                         'month'        => array(
                             'type' => 'string',
@@ -67,24 +79,49 @@ class EventsList extends GutenbergBlock
                                 'ticket_end',
                                 'venue_title',
                                 'city',
-                                'state'
+                                'state',
                             ),
-                            'default' => 'start_date'
+                            'default' => 'start_date',
                         ),
                         'order'        => array(
                             'type'    => 'string',
                             'default' => 'ASC',
-                            'enum'    => array('ASC', 'DESC')
+                            'enum'    => array('ASC', 'DESC'),
                         ),
                         'showTitle'    => array(
                             'type'    => 'boolean',
-                            'default' => true
-                        )
-                    )
+                            'default' => true,
+                        ),
+                    ),
                 )
             )
         );
         return $this->block_type;
+    }
+
+
+    /**
+     * @return WP_Block_Type|false The registered block type on success, or false on failure.
+     */
+    public function unRegisterBlock()
+    {
+        return unregister_block_type(EventsList::GUTENBERG_BLOCK_TYPE);
+    }
+
+
+    /**
+     * @return  void
+     */
+    public function registerScripts()
+    {
+    }
+
+
+    /**
+     * @return void
+     */
+    public function registerStyles()
+    {
     }
 
 
@@ -119,7 +156,7 @@ class EventsList extends GutenbergBlock
             'categorySlug' => 'category_slug',
             'orderBy'      => 'order_by',
             'order'        => 'sort',
-            'showTitle'    => 'show_title'
+            'showTitle'    => 'show_title',
         );
         $new_attributes = array();
         array_walk(
@@ -132,13 +169,5 @@ class EventsList extends GutenbergBlock
             }
         );
         return $new_attributes;
-    }
-
-    /**
-     * @return WP_Block_Type|false The registered block type on success, or false on failure.
-     */
-    public function unRegisterBlock()
-    {
-        return unregister_block_type(EventsList::GUTENBERG_BLOCK_TYPE);
     }
 }
