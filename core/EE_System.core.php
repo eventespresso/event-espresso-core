@@ -942,6 +942,18 @@ final class EE_System implements ResettableInterface
                     EE_Config::getLegacyShortcodesManager()
                 )
             );
+            // or the even newer newer new way
+            if(defined('GUTENBERG_VERSION')) {
+                $this->loader->getShared(
+                    'EventEspresso\core\services\gutenberg\GutenbergBlockManager',
+                    array(
+                        $this->loader->getShared(
+                            'EventEspresso\core\domain\entities\gutenberg\GutenbergBlockCollection'
+                        ),
+                        $this->request,
+                    )
+                );
+            }
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
         }
