@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
@@ -11,8 +14,15 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
  */
 class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
 {
+
     /**
-     * REG_date
+     * @param EE_Registration $item
+     * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     function column__REG_date(EE_Registration $item)
     {
@@ -27,8 +37,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
             'ee_read_registration',
             'espresso_registrations_registration_checkins',
             $item->ID()
-        )
-                               && EE_Registry::instance()->CAP->current_user_can(
+        ) && EE_Registry::instance()->CAP->current_user_can(
             'ee_read_checkins',
             'espresso_registrations_registration_checkins'
         )
@@ -50,6 +59,10 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
      * @param \EE_Registration $item
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function column_DTT_EVT_start(EE_Registration $item)
     {
@@ -57,8 +70,9 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
         $ticket = $item->ticket();
         $datetimes = $ticket instanceof EE_Ticket ? $ticket->datetimes($remove_defaults) : array();
         $EVT_ID = $item->event_ID();
-        $datetime_string = '';
+        $datetimes_for_display = array();
         foreach ($datetimes as $datetime) {
+            $datetime_string = '';
             if (EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_checkin',
                 'espresso_registrations_registration_checkins',
@@ -94,21 +108,22 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
             $datetime_string .= $this->row_actions(
                 array(
                     'event_datetime_filter' => '<a href="' . EE_Admin_Page::add_query_args_and_nonce(
-                            array('event_id' => $EVT_ID, 'datetime_id' => $datetime->ID()),
-                            REG_ADMIN_URL
-                        )
-                                               . '" title="' . sprintf(
-                                                   esc_attr__(
-                                                       'Filter this list to only show registrations for this datetime %s',
-                                                       'event_espresso'
-                                                   ),
-                                                   $datetime->name()
-                                               ) . '">'
-                                               . esc_html__('View Registrations', 'event_espresso')
-                                               . '</a>',
+                        array('event_id' => $EVT_ID, 'datetime_id' => $datetime->ID()),
+                        REG_ADMIN_URL
+                    )
+                           . '" title="' . sprintf(
+                               esc_attr__(
+                                   'Filter this list to only show registrations for this datetime %s',
+                                   'event_espresso'
+                               ),
+                               $datetime->name()
+                           ) . '">'
+                           . esc_html__('View Registrations', 'event_espresso')
+                           . '</a>',
                 )
             );
+            $datetimes_for_display[] = $datetime_string;
         }
-        return $datetime_string;
+        return $this->generateDisplayForDateTimes($datetimes_for_display);
     }
 }
