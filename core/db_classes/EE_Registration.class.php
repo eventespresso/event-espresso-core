@@ -454,18 +454,24 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * and can increment related ticket reserved and corresponding datetime reserved values
      *
      * @param bool $update_ticket if true, will increment ticket and datetime reserved count
-     *
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function reserve_ticket($update_ticket = false)
     {
         if ($this->get_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true, false) === false) {
             // PLZ NOTE: although checking $update_ticket first would be more efficient,
             // we NEED to ALWAYS call update_extra_meta(), which is why that is done first
-            if ($this->update_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true, false) && $update_ticket) {
+            if (
+                $this->update_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true, false)
+                && $update_ticket
+            ) {
                 $ticket = $this->ticket();
-                $ticket->increase_reserved();
+                $ticket->increase_reserved(1, __LINE__ . "REG: {$this->ID()}");
                 $ticket->save();
             }
         }
@@ -477,9 +483,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * decrements (subtracts) related ticket reserved and corresponding datetime reserved values
      *
      * @param bool $update_ticket if true, will decrement ticket and datetime reserved count
-     *
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function release_reserved_ticket($update_ticket = false)
     {
@@ -488,7 +497,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             // we NEED to ALWAYS call delete_extra_meta(), which is why that is done first
             if ($this->delete_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY) && $update_ticket) {
                 $ticket = $this->ticket();
-                $ticket->decrease_reserved();
+                $ticket->decrease_reserved(1, true, __LINE__ . "REG: {$this->ID()}");
                 $ticket->save();
             }
         }
