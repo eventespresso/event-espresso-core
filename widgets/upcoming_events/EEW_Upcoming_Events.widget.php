@@ -52,12 +52,13 @@ class EEW_Upcoming_Events extends EspressoWidget {
 		$defaults = array(
 			'title' => __('Upcoming Events', 'event_espresso'),
 			'category_name' => '',
-			'show_expired' => FALSE,
+			'show_expired' => 0,
 			'show_desc' => TRUE,
 			'show_dates' => TRUE,
 			'show_everywhere' => FALSE,
 			'date_limit' => 2,
 			'limit' => 10,
+			'sort' => 'ASC',
 			'date_range' => FALSE,
 			'image_size' => 'medium'
 		);
@@ -68,6 +69,10 @@ class EEW_Upcoming_Events extends EspressoWidget {
 		$yes_no_values = array(
 			EE_Question_Option::new_instance( array( 'QSO_value' => FALSE, 'QSO_desc' => __('No', 'event_espresso'))),
 			EE_Question_Option::new_instance( array( 'QSO_value' => TRUE, 'QSO_desc' => __('Yes', 'event_espresso')))
+		);
+		$sort_values = array(
+			EE_Question_Option::new_instance( array( 'QSO_value' => 'ASC', 'QSO_desc' => __('ASC', 'event_espresso'))),
+			EE_Question_Option::new_instance( array( 'QSO_value' => 'DESC', 'QSO_desc' => __('DESC', 'event_espresso')))
 		);
 
 	?>
@@ -120,9 +125,27 @@ class EEW_Upcoming_Events extends EspressoWidget {
 			echo EEH_Form_Fields::select(
 				 __('Show Expired Events:', 'event_espresso'),
 				$instance['show_expired'],
-				$yes_no_values,
+				array(
+					EE_Question_Option::new_instance( array( 'QSO_value' => 0, 'QSO_desc' => __('No', 'event_espresso'))), 
+					EE_Question_Option::new_instance( array( 'QSO_value' => 1, 'QSO_desc' => __('Yes', 'event_espresso'))), 
+					EE_Question_Option::new_instance( array( 'QSO_value' => 2, 'QSO_desc' => __('Show Only Expired', 'event_espresso'))), 
+				),
 				$this->get_field_name('show_expired'),
 				$this->get_field_id('show_expired')
+			);
+			?>
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id('sort'); ?>">
+				<?php _e('Sort Events:', 'event_espresso'); ?>
+			</label>
+			<?php
+			echo EEH_Form_Fields::select(
+				__('Sort Events:', 'event_espresso'),
+				$instance['sort'],
+				$sort_values,
+				$this->get_field_name('sort'),
+				$this->get_field_id('sort')
 			);
 			?>
 		</p>
@@ -238,6 +261,7 @@ class EEW_Upcoming_Events extends EspressoWidget {
 		$instance['category_name'] = $new_instance['category_name'];
 		$instance['show_expired'] = $new_instance['show_expired'];
 		$instance['limit'] = $new_instance['limit'];
+		$instance['sort'] = $new_instance['sort'];
 		$instance['image_size'] = $new_instance['image_size'];
 		$instance['show_desc'] = $new_instance['show_desc'];
 		$instance['show_dates'] = $new_instance['show_dates'];
@@ -292,7 +316,7 @@ class EEW_Upcoming_Events extends EspressoWidget {
 				}
 				// grab widget settings
 				$category = isset( $instance['category_name'] ) && ! empty( $instance['category_name'] ) ? $instance['category_name'] : FALSE;
-				$show_expired = isset( $instance['show_expired'] ) ? (bool) absint( $instance['show_expired'] ) : FALSE;
+				$show_expired = isset( $instance['show_expired'] ) ? absint( $instance['show_expired'] ) : 0;
 				$image_size = isset( $instance['image_size'] ) && ! empty( $instance['image_size'] ) ? $instance['image_size'] : 'medium';
 				$show_desc = isset( $instance['show_desc'] ) ? (bool) absint( $instance['show_desc'] ) : TRUE;
 				$show_dates = isset( $instance['show_dates'] ) ? (bool) absint( $instance['show_dates'] ) : TRUE;
@@ -309,8 +333,13 @@ class EEW_Upcoming_Events extends EspressoWidget {
 					$where['Term_Taxonomy.Term.slug'] = $category;
 				}
 				// if NOT expired then we want events that start today or in the future
-				if ( ! $show_expired ) {
-					$where['Datetime.DTT_EVT_end'] = array( '>=', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) );
+				// if NOT show expired then we want events that start today or in the future 
+				if ( $show_expired == 0 ) { 
+				 	$where['Datetime.DTT_EVT_end'] = array( '>=', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) ); 
+				} 
+				// if show ONLY expired we want events that ended prior to today 
+				if ( $show_expired == 2 ) { 
+					$where['Datetime.DTT_EVT_end'] = array( '<=', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' ) ); 
 				}
 				// allow $where to be filtered
 				$where = apply_filters( 'FHEE__EEW_Upcoming_Events__widget__where', $where, $category, $show_expired );
@@ -319,7 +348,7 @@ class EEW_Upcoming_Events extends EspressoWidget {
 					$where,
 					'limit' => $instance['limit'] > 0 ? '0,' . $instance['limit'] : '0,10',
 					'order_by' => 'Datetime.DTT_EVT_start',
-					'order' => 'ASC',
+					'order' => isset($instance['sort']) ? $instance['sort'] : 'ASC',
 					'group_by' => 'EVT_ID'
 				));
 
