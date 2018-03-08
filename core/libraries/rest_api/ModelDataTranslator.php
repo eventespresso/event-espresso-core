@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
 
+use DomainException;
 use EE_Capabilities;
 use EE_Datetime_Field;
 use EE_Error;
@@ -111,17 +112,18 @@ class ModelDataTranslator
     }
 
 
-
     /**
      * Prepares incoming data from the json or $_REQUEST parameters for the models'
      * "$query_params".
      *
      * @param EE_Model_Field_Base $field_obj
-     * @param mixed                $original_value
-     * @param string               $requested_version
-     * @param string               $timezone_string treat values as being in this timezone
+     * @param mixed               $original_value
+     * @param string              $requested_version
+     * @param string              $timezone_string treat values as being in this timezone
      * @return mixed
      * @throws RestException
+     * @throws DomainException
+     * @throws EE_Error
      */
     public static function prepareFieldValueFromJson(
         $field_obj,
@@ -158,31 +160,75 @@ class ModelDataTranslator
         ) {
             $new_value = EE_INF;
         } elseif ($field_obj instanceof EE_Datetime_Field) {
-            list($offset_sign, $offset_secs) = ModelDataTranslator::parseTimezoneOffset(
-                $field_obj->get_timezone_offset(
-                    new \DateTimeZone($timezone_string),
-                    $original_value
-                )
+            $new_value = rest_parse_date(
+                self::getTimestampWithTimezoneOffset($original_value, $field_obj, $timezone_string)
             );
-            $offset_string =
-                str_pad(
-                    floor($offset_secs / HOUR_IN_SECONDS),
-                    2,
-                    '0',
-                    STR_PAD_LEFT
-                )
-                . ':'
-                . str_pad(
-                    ($offset_secs % HOUR_IN_SECONDS) / MINUTE_IN_SECONDS,
-                    2,
-                    '0',
-                    STR_PAD_LEFT
+            if ($new_value === false) {
+                throw new RestException(
+                    'invalid_format_for_timestamp',
+                    sprintf(
+                        esc_html__(
+                            'Timestamps received on a request as the value for Date and Time fields must be in %1$s/%2$s format.  The timestamp provided (%3$s) is not that format.',
+                            'event_espresso'
+                        ),
+                        'RFC3339',
+                        'ISO8601',
+                        $original_value
+                    ),
+                    array(
+                        'status' => 400
+                    )
                 );
-            $new_value = rest_parse_date($original_value . $offset_sign . $offset_string);
+            }
         } else {
             $new_value = $original_value;
         }
         return $new_value;
+    }
+
+
+    /**
+     * This checks if the incoming timestamp has timezone information already on it and if it doesn't then adds timezone
+     * information via details obtained from the host site.
+     *
+     * @param string            $original_timestamp
+     * @param EE_Datetime_Field $datetime_field
+     * @param                   $timezone_string
+     * @return string
+     * @throws DomainException
+     */
+    private static function getTimestampWithTimezoneOffset(
+        $original_timestamp,
+        EE_Datetime_Field $datetime_field,
+        $timezone_string
+    ) {
+        //already have timezone information?
+        if (preg_match('/Z|(\+|\-)(\d{2}:\d{2})/', $original_timestamp)) {
+            //yes, we're ignoring the timezone.
+            return $original_timestamp;
+        }
+        //need to append timezone
+        list($offset_sign, $offset_secs) = self::parseTimezoneOffset(
+            $datetime_field->get_timezone_offset(
+                new \DateTimeZone($timezone_string),
+                $original_timestamp
+            )
+        );
+        $offset_string =
+            str_pad(
+                floor($offset_secs / HOUR_IN_SECONDS),
+                2,
+                '0',
+                STR_PAD_LEFT
+            )
+            . ':'
+            . str_pad(
+                ($offset_secs % HOUR_IN_SECONDS) / MINUTE_IN_SECONDS,
+                2,
+                '0',
+                STR_PAD_LEFT
+            );
+        return $original_timestamp . $offset_sign . $offset_string;
     }
 
 
@@ -325,7 +371,7 @@ class ModelDataTranslator
      *                         If we're writing to the DB, we don't expect any operators, or any logic query parameters,
      *                         and we also won't accept serialized data unless the current user has unfiltered_html.
      * @return array
-     * @throws \DomainException
+     * @throws DomainException
      * @throws RestException
      * @throws EE_Error
      */
