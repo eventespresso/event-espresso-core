@@ -74,7 +74,6 @@ class EE_Error extends Exception
     }
 
 
-
     /**
      *    error_handler
      *
@@ -244,11 +243,14 @@ class EE_Error extends Exception
     }
 
 
-
     /**
      * @param bool   $check_stored
      * @param string $type_to_check
      * @return bool
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function has_error($check_stored = false, $type_to_check = 'errors')
     {
@@ -257,7 +259,7 @@ class EE_Error extends Exception
             ? true
             : false;
         if ($check_stored && ! $has_error) {
-            $notices = (array)get_option(EE_Error::OPTIONS_KEY_NOTICES, array());
+            $notices = EE_Error::getStoredNotices();
             foreach ($notices as $type => $notice) {
                 if ($type === $type_to_check && $notice) {
                     return true;
@@ -757,16 +759,80 @@ class EE_Error extends Exception
     }
 
 
+    /**
+     * @return string
+     */
+    public static function getNoticesOptionKey()
+    {
+        $user_id = get_current_user_id();
+        if ($user_id) {
+            return EE_Error::OPTIONS_KEY_NOTICES . '-' . $user_id;
+        }
+        return EE_Error::OPTIONS_KEY_NOTICES;
+    }
+
+
+    /**
+     * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public static function getStoredNotices()
+    {
+        if (defined('ESPRESSO_SESSION')) {
+            $session_data = EE_Session::instance()->get_session_data(EE_Error::getNoticesOptionKey());
+            return $session_data !== null ? $session_data : array();
+        }
+        return get_option(EE_Error::getNoticesOptionKey(), array());
+    }
+
+
+    /**
+     * @param array $notices
+     * @return bool|TRUE
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public static function storeNotices(array $notices)
+    {
+        if (defined('ESPRESSO_SESSION')) {
+            return EE_Session::instance()->set_session_data(
+                array(EE_Error::getNoticesOptionKey() => $notices)
+            );
+        }
+        return update_option(EE_Error::getNoticesOptionKey(), $notices);
+    }
+
+
+    /**
+     * @return bool|TRUE
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public static function clearNotices()
+    {
+        if (defined('ESPRESSO_SESSION')) {
+            return EE_Session::instance()->reset_data(EE_Error::getNoticesOptionKey());
+        }
+        return update_option(EE_Error::getNoticesOptionKey(), array());
+    }
+
 
     /**
      * compile all error or success messages into one string
      *
      * @see EE_Error::get_raw_notices if you want the raw notices without any preparations made to them
-     * @param boolean $format_output     whether or not to format the messages for display in the WP admin
-     * @param boolean $save_to_transient whether or not to save notices to the db for retrieval on next request
+     * @param boolean $format_output            whether or not to format the messages for display in the WP admin
+     * @param boolean $save_to_transient        whether or not to save notices to the db for retrieval on next request
      *                                          - ONLY do this just before redirecting
-     * @param boolean $remove_empty      whether or not to unset empty messages
+     * @param boolean $remove_empty             whether or not to unset empty messages
      * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function get_notices($format_output = true, $save_to_transient = false, $remove_empty = true)
     {
@@ -778,17 +844,18 @@ class EE_Error extends Exception
         // EEH_Debug_Tools::printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
         // either save notices to the db
         if ($save_to_transient || isset($_REQUEST['activate-selected'])) {
-            $existing_notices  = get_option(EE_Error::OPTIONS_KEY_NOTICES, array());
+            $existing_notices  = EE_Error::getStoredNotices();
             $existing_notices = is_array($existing_notices) ? $existing_notices : array();
             self::$_espresso_notices = array_merge(
                 $existing_notices,
                 self::$_espresso_notices
             );
-            update_option(EE_Error::OPTIONS_KEY_NOTICES, self::$_espresso_notices);
+            EE_Error::storeNotices(self::$_espresso_notices);
             return array();
         }
         // grab any notices that have been previously saved
-        if ($notices = get_option(EE_Error::OPTIONS_KEY_NOTICES, array())) {
+        $notices = EE_Error::getStoredNotices();
+        if (! empty($notices)) {
             foreach ($notices as $type => $notice) {
                 if (is_array($notice) && ! empty($notice)) {
                     // make sure that existing notice type is an array
@@ -802,7 +869,7 @@ class EE_Error extends Exception
                 }
             }
             // now clear any stored notices
-            update_option(EE_Error::OPTIONS_KEY_NOTICES, array());
+            EE_Error::clearNotices();
         }
         // check for success messages
         if (self::$_espresso_notices['success'] && ! empty(self::$_espresso_notices['success'])) {
