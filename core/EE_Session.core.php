@@ -255,7 +255,9 @@ class EE_Session implements SessionIdentifierInterface
      */
     public static function isLoadedAndActive()
     {
-        return did_action('AHEE__EE_System__core_loaded_and_ready') && EE_Session::instance()->isActive();
+        return did_action('AHEE__EE_System__core_loaded_and_ready')
+               && EE_Session::instance() instanceof EE_Session
+               && EE_Session::instance()->isActive();
     }
 
 
