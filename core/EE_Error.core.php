@@ -772,7 +772,7 @@ class EE_Error extends Exception
             $notices = get_user_option(EE_Error::OPTIONS_KEY_NOTICES, $user_id);
             return is_array($notices) ? $notices : array();
         }
-        if (EE_Session::instance()->isActive()) {
+        if (EE_Session::isLoadedAndActive()) {
             // get notices for user currently engaged in a session
             $session_data = EE_Session::instance()->get_session_data(EE_Error::OPTIONS_KEY_NOTICES);
             return is_array($session_data) ? $session_data : array();
@@ -800,7 +800,7 @@ class EE_Error extends Exception
                 $notices
             );
         }
-        if (EE_Session::instance()->isActive()) {
+        if (EE_Session::isLoadedAndActive()) {
             // store notices for user currently engaged in a session
             return EE_Session::instance()->set_session_data(
                 array(EE_Error::OPTIONS_KEY_NOTICES => $notices)
@@ -827,7 +827,7 @@ class EE_Error extends Exception
                 array()
             );
         }
-        if (EE_Session::instance()->isActive()) {
+        if (EE_Session::isLoadedAndActive()) {
             // clear notices for user currently engaged in a session
             return EE_Session::instance()->reset_data(EE_Error::OPTIONS_KEY_NOTICES);
         }
