@@ -222,9 +222,9 @@ class SettingsForm extends EE_Payment_Method_Form
             return '';
         } else {
             return sprintf(
-                esc_html__('Your PayPal API credentials appear to be invalid. PayPal gave error code %1$s and said "%2$s". Please see tips below.', 'event_espresso'),
-                    isset($response_args['L_ERRORCODE0']) ? $response_args['L_ERRORCODE0'] : 0,
-                    isset($response_args['L_LONGMESSAGE0']) ? $response_args['L_LONGMESSAGE0'] : esc_html__('No error message received from PayPal', 'event_espresso')
+                esc_html__('Your PayPal API credentials appear to be invalid. PayPal said "%1$s (%2$s)". Please see tips below.', 'event_espresso'),
+                    isset($response_args['L_LONGMESSAGE0']) ? $response_args['L_LONGMESSAGE0'] : esc_html__('No error message received from PayPal', 'event_espresso'),
+                isset($response_args['L_ERRORCODE0']) ? $response_args['L_ERRORCODE0'] : 0
             );
         }
     }
