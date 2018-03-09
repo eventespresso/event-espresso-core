@@ -760,11 +760,12 @@ class EE_Error extends Exception
 
 
     /**
+     * @param int $user_id
      * @return string
      */
-    public static function getNoticesOptionKey()
+    public static function getNoticesOptionKey($user_id = 0)
     {
-        $user_id = get_current_user_id();
+        $user_id = absint($user_id) ? $user_id : get_current_user_id();
         if ($user_id) {
             return EE_Error::OPTIONS_KEY_NOTICES . '-' . $user_id;
         }
@@ -780,10 +781,17 @@ class EE_Error extends Exception
      */
     public static function getStoredNotices()
     {
+        $user_id = get_current_user_id();
+        if($user_id)  {
+            // get notices for logged in user
+            return get_option(EE_Error::getNoticesOptionKey($user_id), array());
+        }
         if (defined('ESPRESSO_SESSION')) {
+            // get notices for user currently engaged in a session
             $session_data = EE_Session::instance()->get_session_data(EE_Error::getNoticesOptionKey());
             return $session_data !== null ? $session_data : array();
         }
+        // get global notices and hope they apply to the current site visitor
         return get_option(EE_Error::getNoticesOptionKey(), array());
     }
 
@@ -797,11 +805,18 @@ class EE_Error extends Exception
      */
     public static function storeNotices(array $notices)
     {
+        $user_id = get_current_user_id();
+        if ($user_id) {
+            // store notices for logged in user
+            return update_option(EE_Error::getNoticesOptionKey($user_id), $notices);
+        }
         if (defined('ESPRESSO_SESSION')) {
+            // store notices for user currently engaged in a session
             return EE_Session::instance()->set_session_data(
                 array(EE_Error::getNoticesOptionKey() => $notices)
             );
         }
+        // store global notices and hope they apply to the same site visitor on the next request
         return update_option(EE_Error::getNoticesOptionKey(), $notices);
     }
 
@@ -814,9 +829,16 @@ class EE_Error extends Exception
      */
     public static function clearNotices()
     {
+        $user_id = get_current_user_id();
+        if ($user_id) {
+            // clear notices for logged in user
+            return update_option(EE_Error::getNoticesOptionKey($user_id), array());
+        }
         if (defined('ESPRESSO_SESSION')) {
+            // clear notices for user currently engaged in a session
             return EE_Session::instance()->reset_data(EE_Error::getNoticesOptionKey());
         }
+        // clear global notices and hope none belonged to some for some other site visitor
         return update_option(EE_Error::getNoticesOptionKey(), array());
     }
 
