@@ -126,6 +126,33 @@ class EE_PMT_Paypal_Express extends EE_PMT_Base
                 )
             )
         );
+
+        try{
+            $this->_gateway->testCredentials();
+            $credentials_message = esc_html__('Your API credentials appear to be valid.', 'event_espresso');
+            $happy_style = true;
+        } catch(EE_Error $e) {
+            $credentials_message =  sprintf(
+                esc_html__('Your API credentials appear to be invalid. PayPal gave error code %1$s and said "%2$s"', 'event_espresso'),
+                $e->getCode(),
+                $e->getMessage()
+            );
+            $happy_style = false;
+        }
+        $form->add_subsections(
+            array(
+                'credentials_status' => new EE_Form_Section_HTML(
+                    EEH_HTML::div(
+                        $credentials_message,
+                        '',
+                        ($happy_style ? 'success' : 'error') . ' paypal-credentials-status'
+                    )
+                    . EEH_HTML::divx()
+                )
+            ),
+            'api_signature',
+            false
+        );
         return $form;
     }
 
