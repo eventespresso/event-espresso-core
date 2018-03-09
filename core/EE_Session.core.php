@@ -248,7 +248,19 @@ class EE_Session implements SessionIdentifierInterface
 
 
     /**
-     * @return int
+     * @return bool
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public static function isLoadedAndActive()
+    {
+        return did_action('AHEE__EE_System__core_loaded_and_ready') && EE_Session::instance()->isActive();
+    }
+
+
+    /**
+     * @return bool
      */
     public function isActive()
     {
