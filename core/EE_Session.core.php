@@ -189,9 +189,6 @@ class EE_Session implements SessionIdentifierInterface
             return;
         }
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        if (! defined('ESPRESSO_SESSION')) {
-            define('ESPRESSO_SESSION', true);
-        }
         // default session lifespan in seconds
         $this->_lifespan = apply_filters(
                                'FHEE__EE_Session__construct___lifespan',
@@ -250,6 +247,9 @@ class EE_Session implements SessionIdentifierInterface
         if (! $this->_espresso_session()) {
             // or just start a new one
             $this->_create_espresso_session();
+        }
+        if (! defined('ESPRESSO_SESSION')) {
+            define('ESPRESSO_SESSION', true);
         }
     }
 
@@ -455,14 +455,12 @@ class EE_Session implements SessionIdentifierInterface
     }
 
 
-
     /**
      * retrieve session data
      *
-     * @access    public
      * @param null $key
      * @param bool $reset_cache
-     * @return    array
+     * @return array
      */
     public function get_session_data($key = null, $reset_cache = false)
     {
@@ -478,13 +476,11 @@ class EE_Session implements SessionIdentifierInterface
     }
 
 
-
     /**
-     * set session data
+     * Returns TRUE on success, FALSE on fail
      *
-     * @access    public
-     * @param    array $data
-     * @return    TRUE on success, FALSE on fail
+     * @param array $data
+     * @return bool
      */
     public function set_session_data($data)
     {
@@ -1002,13 +998,12 @@ class EE_Session implements SessionIdentifierInterface
     }
 
 
-
     /**
-     * @resets all non-default session vars
-     * @access public
+     * resets all non-default session vars. Returns TRUE on success, FALSE on fail
+     *
      * @param array|mixed $data_to_reset
      * @param bool        $show_all_notices
-     * @return TRUE on success, FALSE on fail
+     * @return bool
      */
     public function reset_data($data_to_reset = array(), $show_all_notices = false)
     {
