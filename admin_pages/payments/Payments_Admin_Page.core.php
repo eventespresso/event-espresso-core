@@ -788,6 +788,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                 $pmt_form = $this->_generate_payment_method_settings_form($payment_method);
                 if ($pmt_form->form_data_present_in($this->_req_data)) {
                     $correct_pmt_form_to_use = $pmt_form;
+                    $payment_method = $payment_method;
                     break;
                 }
             }
@@ -818,7 +819,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                     sprintf(
                         __('Payment method of type %s was not saved because there were validation errors. They have been marked in the form',
                             'event_espresso'),
-                        $payment_method instanceof EE_PMT_Base ? $payment_method->pretty_name()
+                        $payment_method instanceof EE_Payment_Method ? $payment_method->type_obj()->pretty_name()
                             : __('"(unknown)"', 'event_espresso')
                     ),
                     __FILE__,
