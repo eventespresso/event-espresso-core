@@ -760,20 +760,6 @@ class EE_Error extends Exception
 
 
     /**
-     * @param int $user_id
-     * @return string
-     */
-    public static function getNoticesOptionKey($user_id = 0)
-    {
-        $user_id = absint($user_id) ? $user_id : get_current_user_id();
-        if ($user_id) {
-            return EE_Error::OPTIONS_KEY_NOTICES . '-' . $user_id;
-        }
-        return EE_Error::OPTIONS_KEY_NOTICES;
-    }
-
-
-    /**
      * @return array
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -781,43 +767,47 @@ class EE_Error extends Exception
      */
     public static function getStoredNotices()
     {
-        $user_id = get_current_user_id();
-        if($user_id)  {
+        if ($user_id = get_current_user_id()) {
             // get notices for logged in user
-            return get_option(EE_Error::getNoticesOptionKey($user_id), array());
+            $notices = get_user_option(EE_Error::OPTIONS_KEY_NOTICES, $user_id);
+            return is_array($notices) ? $notices : array();
         }
-        if (defined('ESPRESSO_SESSION')) {
+        if (EE_Session::instance()->isActive()) {
             // get notices for user currently engaged in a session
-            $session_data = EE_Session::instance()->get_session_data(EE_Error::getNoticesOptionKey());
-            return $session_data !== null ? $session_data : array();
+            $session_data = EE_Session::instance()->get_session_data(EE_Error::OPTIONS_KEY_NOTICES);
+            return is_array($session_data) ? $session_data : array();
         }
         // get global notices and hope they apply to the current site visitor
-        return get_option(EE_Error::getNoticesOptionKey(), array());
+        $notices = get_option(EE_Error::OPTIONS_KEY_NOTICES, array());
+        return is_array($notices) ? $notices : array();
     }
 
 
     /**
      * @param array $notices
-     * @return bool|TRUE
+     * @return bool
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
     public static function storeNotices(array $notices)
     {
-        $user_id = get_current_user_id();
-        if ($user_id) {
+        if ($user_id = get_current_user_id()) {
             // store notices for logged in user
-            return update_option(EE_Error::getNoticesOptionKey($user_id), $notices);
+            return (bool) update_user_option(
+                EE_Error::OPTIONS_KEY_NOTICES,
+                $user_id,
+                $notices
+            );
         }
-        if (defined('ESPRESSO_SESSION')) {
+        if (EE_Session::instance()->isActive()) {
             // store notices for user currently engaged in a session
             return EE_Session::instance()->set_session_data(
-                array(EE_Error::getNoticesOptionKey() => $notices)
+                array(EE_Error::OPTIONS_KEY_NOTICES => $notices)
             );
         }
         // store global notices and hope they apply to the same site visitor on the next request
-        return update_option(EE_Error::getNoticesOptionKey(), $notices);
+        return update_option(EE_Error::OPTIONS_KEY_NOTICES, $notices);
     }
 
 
@@ -829,17 +819,20 @@ class EE_Error extends Exception
      */
     public static function clearNotices()
     {
-        $user_id = get_current_user_id();
-        if ($user_id) {
+        if ($user_id = get_current_user_id()) {
             // clear notices for logged in user
-            return update_option(EE_Error::getNoticesOptionKey($user_id), array());
+            return (bool) update_user_option(
+                EE_Error::OPTIONS_KEY_NOTICES,
+                $user_id,
+                array()
+            );
         }
-        if (defined('ESPRESSO_SESSION')) {
+        if (EE_Session::instance()->isActive()) {
             // clear notices for user currently engaged in a session
-            return EE_Session::instance()->reset_data(EE_Error::getNoticesOptionKey());
+            return EE_Session::instance()->reset_data(EE_Error::OPTIONS_KEY_NOTICES);
         }
         // clear global notices and hope none belonged to some for some other site visitor
-        return update_option(EE_Error::getNoticesOptionKey(), array());
+        return update_option(EE_Error::OPTIONS_KEY_NOTICES, array());
     }
 
 
@@ -858,41 +851,19 @@ class EE_Error extends Exception
      */
     public static function get_notices($format_output = true, $save_to_transient = false, $remove_empty = true)
     {
-        // do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $success_messages   = '';
         $attention_messages = '';
         $error_messages     = '';
-        $print_scripts      = false;
-        // EEH_Debug_Tools::printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
         // either save notices to the db
         if ($save_to_transient || isset($_REQUEST['activate-selected'])) {
-            $existing_notices  = EE_Error::getStoredNotices();
-            $existing_notices = is_array($existing_notices) ? $existing_notices : array();
             self::$_espresso_notices = array_merge(
-                $existing_notices,
+                EE_Error::getStoredNotices(),
                 self::$_espresso_notices
             );
             EE_Error::storeNotices(self::$_espresso_notices);
             return array();
         }
-        // grab any notices that have been previously saved
-        $notices = EE_Error::getStoredNotices();
-        if (! empty($notices)) {
-            foreach ($notices as $type => $notice) {
-                if (is_array($notice) && ! empty($notice)) {
-                    // make sure that existing notice type is an array
-                    self::$_espresso_notices[$type] = is_array(self::$_espresso_notices[$type])
-                                                      && ! empty(self::$_espresso_notices[$type])
-                        ? self::$_espresso_notices[$type]
-                        : array();
-                    // merge stored notices with any newly created ones
-                    self::$_espresso_notices[$type] = array_merge(self::$_espresso_notices[$type], $notice);
-                    $print_scripts                  = true;
-                }
-            }
-            // now clear any stored notices
-            EE_Error::clearNotices();
-        }
+        $print_scripts = EE_Error::combineExistingAndNewNotices();
         // check for success messages
         if (self::$_espresso_notices['success'] && ! empty(self::$_espresso_notices['success'])) {
             // combine messages
@@ -915,55 +886,12 @@ class EE_Error extends Exception
             $print_scripts  = true;
         }
         if ($format_output) {
-
-            $notices = '<div id="espresso-notices">';
-            $close = is_admin() ? ''
-                : '<a class="close-espresso-notice hide-if-no-js"><span class="dashicons dashicons-no"></span></a>';
-            if ($success_messages !== '') {
-                $css_id    = is_admin() ? 'message' : 'espresso-notices-success';
-                $css_class = is_admin() ? 'updated fade' : 'success fade-away';
-                //showMessage( $success_messages );
-                $notices .= '<div id="'
-                            . $css_id
-                            . '" class="espresso-notices '
-                            . $css_class
-                            . '" style="display:none;"><p>'
-                            . $success_messages
-                            . '</p>'
-                            . $close
-                            . '</div>';
-            }
-            if ($attention_messages !== '') {
-                $css_id    = is_admin() ? 'message' : 'espresso-notices-attention';
-                $css_class = is_admin() ? 'updated ee-notices-attention' : 'attention fade-away';
-                //showMessage( $error_messages, TRUE );
-                $notices .= '<div id="'
-                            . $css_id
-                            . '" class="espresso-notices '
-                            . $css_class
-                            . '" style="display:none;"><p>'
-                            . $attention_messages
-                            . '</p>'
-                            . $close
-                            . '</div>';
-            }
-            if ($error_messages !== '') {
-                $css_id    = is_admin() ? 'message' : 'espresso-notices-error';
-                $css_class = is_admin() ? 'error' : 'error fade-away';
-                //showMessage( $error_messages, TRUE );
-                $notices .= '<div id="'
-                            . $css_id
-                            . '" class="espresso-notices '
-                            . $css_class
-                            . '" style="display:none;"><p>'
-                            . $error_messages
-                            . '</p>'
-                            . $close
-                            . '</div>';
-            }
-            $notices .= '</div>';
+            $notices = EE_Error::formatNoticesOutput(
+                $success_messages,
+                $attention_messages,
+                $error_messages
+            );
         } else {
-
             $notices = array(
                 'success'   => $success_messages,
                 'attention' => $attention_messages,
@@ -981,6 +909,92 @@ class EE_Error extends Exception
         if ($print_scripts) {
             self::_print_scripts();
         }
+        return $notices;
+    }
+
+
+    /**
+     * @return bool
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    private static function combineExistingAndNewNotices()
+    {
+        $print_scripts = false;
+        // grab any notices that have been previously saved
+        $notices = EE_Error::getStoredNotices();
+        if (! empty($notices)) {
+            $existing_and_new_notices = array(array());
+            foreach ($notices as $type => $notice) {
+                if (is_array($notice) && ! empty($notice)) {
+                    // make sure that existing notice type is an array
+                    self::$_espresso_notices[ $type ] = is_array(self::$_espresso_notices[ $type ])
+                                                        && ! empty(self::$_espresso_notices[ $type ])
+                        ? self::$_espresso_notices[ $type ]
+                        : array();
+                    // add stored notices and any newly created ones into same array
+                    $existing_and_new_notices[ $type ][] = self::$_espresso_notices[ $type ];
+                    $existing_and_new_notices[ $type ][] = $notice;
+                    // self::$_espresso_notices[$type] = array_merge(self::$_espresso_notices[$type], $notice);
+                    $print_scripts = true;
+                }
+            }
+            // now clear any stored notices
+            EE_Error::clearNotices();
+            // merge existing and new notices back into single array (much faster than calling array_merge() in loop)
+            self::$_espresso_notices = call_user_func_array('array_merge', $existing_and_new_notices);
+        }
+        return $print_scripts;
+    }
+
+
+    /**
+     * @param string $success_messages
+     * @param string $attention_messages
+     * @param string $error_messages
+     * @return string
+     */
+    private static function formatNoticesOutput($success_messages, $attention_messages, $error_messages)
+    {
+        $notices = '<div id="espresso-notices">';
+        $close   = is_admin()
+            ? ''
+            : '<a class="close-espresso-notice hide-if-no-js"><span class="dashicons dashicons-no"/></a>';
+        if ($success_messages !== '') {
+            $css_id    = is_admin() ? 'message' : 'espresso-notices-success';
+            $css_class = is_admin() ? 'updated fade' : 'success fade-away';
+            //showMessage( $success_messages );
+            $notices .= '<div id="' . $css_id . '" '
+                        . 'class="espresso-notices ' . $css_class . '" '
+                        . 'style="display:none;">'
+                        . '<p>' . $success_messages . '</p>'
+                        . $close
+                        . '</div>';
+        }
+        if ($attention_messages !== '') {
+            $css_id    = is_admin() ? 'message' : 'espresso-notices-attention';
+            $css_class = is_admin() ? 'updated ee-notices-attention' : 'attention fade-away';
+            //showMessage( $error_messages, TRUE );
+            $notices .= '<div id="' . $css_id . '" '
+                        . 'class="espresso-notices ' . $css_class . '" '
+                        . 'style="display:none;">'
+                        . '<p>' . $attention_messages . '</p>'
+                        . $close
+                        . '</div>';
+        }
+        if ($error_messages !== '') {
+            $css_id    = is_admin() ? 'message' : 'espresso-notices-error';
+            $css_class = is_admin() ? 'error' : 'error fade-away';
+            //showMessage( $error_messages, TRUE );
+            $notices .= '<div id="' . $css_id . '" '
+                        . 'class="espresso-notices ' . $css_class . '" '
+                        . 'style="display:none;">'
+                        . '<p>' . $error_messages . '</p>'
+                        . $close
+                        . '</div>';
+        }
+        $notices .= '</div>';
         return $notices;
     }
 
@@ -1008,7 +1022,7 @@ class EE_Error extends Exception
             return '
 <script>
 /* <![CDATA[ */
-var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
+const ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 /* ]]> */
 </script>
 <script src="' . includes_url() . 'js/jquery/jquery.js" type="text/javascript"></script>
