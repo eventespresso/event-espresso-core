@@ -925,7 +925,6 @@ class EE_Error extends Exception
         // grab any notices that have been previously saved
         $notices = EE_Error::getStoredNotices();
         if (! empty($notices)) {
-            $existing_and_new_notices = array(array());
             foreach ($notices as $type => $notice) {
                 if (is_array($notice) && ! empty($notice)) {
                     // make sure that existing notice type is an array
@@ -933,17 +932,13 @@ class EE_Error extends Exception
                                                         && ! empty(self::$_espresso_notices[ $type ])
                         ? self::$_espresso_notices[ $type ]
                         : array();
-                    // add stored notices and any newly created ones into same array
-                    $existing_and_new_notices[ $type ][] = self::$_espresso_notices[ $type ];
-                    $existing_and_new_notices[ $type ][] = $notice;
-                    // self::$_espresso_notices[$type] = array_merge(self::$_espresso_notices[$type], $notice);
+                    // add newly created notices to existing ones
+                    self::$_espresso_notices[ $type ] += $notice;
                     $print_scripts = true;
                 }
             }
             // now clear any stored notices
             EE_Error::clearNotices();
-            // merge existing and new notices back into single array (much faster than calling array_merge() in loop)
-            self::$_espresso_notices = call_user_func_array('array_merge', $existing_and_new_notices);
         }
         return $print_scripts;
     }
