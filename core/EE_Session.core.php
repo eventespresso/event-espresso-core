@@ -26,6 +26,10 @@ class EE_Session implements SessionIdentifierInterface
 
     const OPTION_NAME_SETTINGS = 'ee_session_settings';
 
+    const EE_SESSION_STATUS_CLOSED = 0;
+
+    const EE_SESSION_STATUS_OPEN = 1;
+
     /**
      * instance of the EE_Session object
      *
@@ -146,6 +150,13 @@ class EE_Session implements SessionIdentifierInterface
      */
     private $_last_gc;
 
+    /**
+     * whether session is active or not
+     *
+     * @var int $status
+     */
+    private $status = EE_Session::EE_SESSION_STATUS_CLOSED;
+
 
 
     /**
@@ -183,12 +194,16 @@ class EE_Session implements SessionIdentifierInterface
      */
     protected function __construct(CacheStorageInterface $cache_storage, EE_Encryption $encryption = null)
     {
-
-        // session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
+        // session loading is turned ON by default,
+        // but prior to the 'AHEE__EE_System__core_loaded_and_ready' hook
+        // (which currently fires on the init hook at priority 9),
+        // can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
         if (! apply_filters('FHEE_load_EE_Session', true)) {
             return;
         }
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+        if (! defined('ESPRESSO_SESSION')) {
+            define('ESPRESSO_SESSION', true);
+        }
         // default session lifespan in seconds
         $this->_lifespan = apply_filters(
                                'FHEE__EE_Session__construct___lifespan',
@@ -232,6 +247,15 @@ class EE_Session implements SessionIdentifierInterface
     }
 
 
+    /**
+     * @return int
+     */
+    public function isActive()
+    {
+        return $this->status === EE_Session::EE_SESSION_STATUS_OPEN;
+    }
+
+
 
     /**
      * @return void
@@ -247,9 +271,6 @@ class EE_Session implements SessionIdentifierInterface
         if (! $this->_espresso_session()) {
             // or just start a new one
             $this->_create_espresso_session();
-        }
-        if (! defined('ESPRESSO_SESSION')) {
-            define('ESPRESSO_SESSION', true);
         }
     }
 
@@ -522,6 +543,7 @@ class EE_Session implements SessionIdentifierInterface
             //starts a new session if one doesn't already exist, or re-initiates an existing one
             session_start();
         }
+        $this->status = EE_Session::EE_SESSION_STATUS_OPEN;
         // get our modified session ID
         $this->_sid = $this->_generate_session_id();
         // and the visitors IP
