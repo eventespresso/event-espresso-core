@@ -130,51 +130,6 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
 
 
     /**
-     * Tests the the PayPal API credentials work ok
-     * @return bool
-     */
-    public function testCredentials()
-    {
-        $token_request_dtls = array(
-            'METHOD'                         => 'GetBalance',
-        );
-        $response = $this->_ppExpress_request($token_request_dtls, 'Credentials Test', null);
-        if (is_wp_error($response) || empty($response['body'])) {
-            // If we got here then there was an error in this request.
-            throw new EE_Error(
-                esc_html__('No response from PayPal', 'event_espresso'),
-                0
-            );
-        }
-        $response_args = array();
-        parse_str(urldecode($response['body']), $response_args);
-
-        if (empty($response_args['ACK'])) {
-            throw new EE_Error(
-                esc_html__('PayPal\'s response is missing its status.', 'event_espresso'),
-                0
-            );
-        }
-        if (in_array(
-            $response_args['ACK'],
-            array(
-                'Success',
-                'SuccessWithWarning'
-            ))) {
-            return true;
-        } else {
-            $message = isset($response_args['L_LONGMESSAGE0']) ? $response_args['L_LONGMESSAGE0'] : esc_html__('No error message received from PayPal', 'event_espresso');
-            $code = isset($response_args['L_ERRORCODE0']) ? $response_args['L_ERRORCODE0'] : 0;
-            throw new EE_Error(
-                $message,
-                $code
-            );
-        }
-    }
-
-
-
-    /**
      * @param EEI_Payment $payment
      * @param array       $billing_info
      * @param string      $return_url
