@@ -747,7 +747,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		$sold = $this->sold() + $qty;
 		// remove ticket reservation, but don't adjust datetime reservations,  because that will happen
 		// via \EE_Datetime::increase_sold() when \EE_Ticket::_increase_sold_for_datetimes() is called
-		$this->decrease_reserved( $qty, false, __LINE__ . ') TKT' );
+		$this->decrease_reserved( $qty, false, "TKT: {$this->ID()} (ln:" . __LINE__ . ')');
 		$this->_increase_sold_for_datetimes( $qty );
 		$this->set_sold( $sold );
 		do_action(
