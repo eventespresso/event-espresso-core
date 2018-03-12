@@ -36,6 +36,7 @@ class EEM_Base_Using_Mock_Model_Test extends EE_UnitTestCase
         EEH_Activation::create_table('esp_mock', '
 			MCK_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 			MCK_value varchar(100),
+			MCK_datetime DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00",
 			PRIMARY KEY  (MCK_ID)'
         );
         $this->assertTableExists('esp_mock');
@@ -92,7 +93,7 @@ class EEM_Base_Using_Mock_Model_Test extends EE_UnitTestCase
     public function test_get_qualified_columns_for_all_fields__as_string()
     {
         $this->assertEquals(
-            'Mock.MCK_ID, Mock.MCK_value',
+            'Mock.MCK_ID, Mock.MCK_value, Mock.MCK_datetime',
             EEM_Mock::instance()->get_qualified_columns_for_all_fields()
         );
     }
@@ -107,6 +108,7 @@ class EEM_Base_Using_Mock_Model_Test extends EE_UnitTestCase
             array(
                 'Mock.MCK_ID',
                 'Mock.MCK_value',
+                'Mock.MCK_datetime',
             ),
             EEM_Mock::instance()->get_qualified_columns_for_all_fields('', false)
         );
@@ -122,6 +124,7 @@ class EEM_Base_Using_Mock_Model_Test extends EE_UnitTestCase
             array(
                 'Extra_Meta__Mock.MCK_ID',
                 'Extra_Meta__Mock.MCK_value',
+                'Extra_Meta__Mock.MCK_datetime',
             ),
             EEM_Mock::instance()->get_qualified_columns_for_all_fields('Extra_Meta', false)
         );
@@ -139,6 +142,7 @@ class EEM_Base_Using_Mock_Model_Test extends EE_UnitTestCase
             array(
                 'Some__Model__Chain__Mock.MCK_ID',
                 'Some__Model__Chain__Mock.MCK_value',
+                'Some__Model__Chain__Mock.MCK_datetime',
             ),
             EEM_Mock::instance()->get_qualified_columns_for_all_fields('Some.Model.Chain', false)
         );
