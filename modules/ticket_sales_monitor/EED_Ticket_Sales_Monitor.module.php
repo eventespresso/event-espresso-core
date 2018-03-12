@@ -334,7 +334,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         if (self::debug) {
             echo '<br /><br /> . . . INCREASE RESERVED: ' . $quantity;
         }
-        $ticket->increase_reserved($quantity, __LINE__ . ') TSM');
+        $ticket->increase_reserved($quantity, 'TicketSalesMonitor:'. __LINE__);
         return $ticket->save();
     }
 
@@ -352,7 +352,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             echo '<br /> . . . ticket->ID: ' . $ticket->ID();
             echo '<br /> . . . ticket->reserved: ' . $ticket->reserved();
         }
-        $ticket->decrease_reserved($quantity, true, __LINE__ . ') TSM');
+        $ticket->decrease_reserved($quantity, true, 'TicketSalesMonitor:'. __LINE__);
         if (self::debug) {
             echo '<br /> . . . ticket->reserved: ' . $ticket->reserved();
         }
@@ -580,6 +580,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         if (self::debug) {
             echo '<br /><br /> ' . __LINE__ . ') ' . __METHOD__ . '() ';
             echo '<br /> . transaction->ID: ' . $transaction->ID();
+            echo '<br /> . TXN status_ID: ' . $transaction->status_ID();
         }
         // check if 'finalize_registration' step has been completed...
         $finalized = $transaction->reg_step_completed('finalize_registration');
@@ -597,23 +598,45 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         // how many tickets were released
         $count = 0;
         if (self::debug) {
-            echo '<br /> . . . finalized: ' . $finalized;
+            echo '<br /> . . . TXN finalized: ' . $finalized;
         }
         $release_tickets_with_TXN_status = array(
             EEM_Transaction::failed_status_code,
             EEM_Transaction::abandoned_status_code,
             EEM_Transaction::incomplete_status_code,
         );
-        // if the session is getting cleared BEFORE the TXN has been finalized
+        $events = array();
+        // if the session is getting cleared BEFORE the TXN has been finalized or the transaction is not completed
         if (! $finalized || in_array($transaction->status_ID(), $release_tickets_with_TXN_status, true)) {
-            // let's cancel any reserved tickets
+            // cancel any reserved tickets for registrations that were not approved
             $registrations = $transaction->registrations();
+            if (self::debug) {
+                echo '<br /> . . . # registrations: ' . count($registrations);
+                $reg    = reset($registrations);
+                $ticket = $reg->ticket();
+                if ($ticket instanceof EE_Ticket) {
+                    $ticket->add_extra_meta(
+                        EE_Ticket::META_KEY_TICKET_RESERVATIONS,
+                        __LINE__ . ') Release All Tickets TXN:' . $transaction->ID()
+                    );
+                }
+            }
             if (! empty($registrations)) {
                 foreach ($registrations as $registration) {
-                    if ($registration instanceof EE_Registration) {
-                        $count += $this->_release_reserved_ticket_for_registration($registration, $transaction);
+                    if (
+                        $registration instanceof EE_Registration
+                        && $this->_release_reserved_ticket_for_registration($registration, $transaction)
+                    ) {
+                        $count++;
+                        $events[ $registration->event_ID() ] = $registration->event();
                     }
                 }
+            }
+        }
+        if ($events !== array()) {
+            foreach ($events as $event) {
+                /** @var EE_Event $event */
+                $event->perform_sold_out_status_check();
             }
         }
         return $count;
@@ -651,14 +674,13 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                 && $registration->status_ID() !== EEM_Registration::status_id_approved
             )
         ) {
-            $ticket = $registration->ticket();
-            if ($ticket instanceof EE_Ticket) {
-                $ticket->add_extra_meta(
-                    EE_Ticket::META_KEY_TICKET_RESERVATIONS,
-                    __LINE__ . ') ' . __METHOD__ . '()'
-                );
+            if (self::debug) {
+                echo '<br /><br /> . . RELEASE RESERVED TICKET';
+                $rsrvd = $registration->get_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true);
+                echo '<br /> . . . registration HAS_RESERVED_TICKET_KEY: ';
+                var_dump($rsrvd);
             }
-            $registration->release_reserved_ticket();
+            $registration->release_reserved_ticket(true, 'TicketSalesMonitor:'. __LINE__);
             return 1;
         }
         return 0;
@@ -999,7 +1021,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                     EE_Ticket::META_KEY_TICKET_RESERVATIONS,
                     __LINE__ . ') ' . $source . '()'
                 );
-                $ticket_with_reservations->decrease_reserved($reserved_qty, true, __LINE__ . ') TSM');
+                $ticket_with_reservations->decrease_reserved($reserved_qty, true, 'TicketSalesMonitor:'. __LINE__);
                 $ticket_with_reservations->save();
                 $total_tickets_released += $reserved_qty;
                 $event = $ticket_with_reservations->get_related_event();
