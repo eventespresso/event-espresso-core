@@ -60,8 +60,8 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base
 
 
     /**
-     * returns a ul html element with all the validation errors in it.
-     * If we want this to be customizable, we may decide to create a strategy for displaying it.
+     * returns a comma-separated list of all the validation errors in it.
+     * If we want this to be customizable, we may decide to create a strategy for displaying it
      *
      * @return string
      */
