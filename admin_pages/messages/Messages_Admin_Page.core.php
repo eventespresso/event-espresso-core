@@ -2708,8 +2708,32 @@ class Messages_Admin_Page extends EE_Admin_Page
                 
             } else {
                 //first validate all fields!
-                $validates = $MTPG->validate($this->_req_data['MTP_template_fields'], $context_slug, $messenger_slug,
-                    $message_type_slug);
+                // this filter allows client code to add its own validation to the template fields as well.
+                // returning an empty array means everything passed validation.
+                // errors in validation should be represented in an array with the following shape:
+                // array(
+                //   'fieldname' => array(
+                //          'msg' => 'error message'
+                //          'value' => 'value for field producing error'
+                // )
+                $custom_validation = (array) apply_filters(
+                    'FHEE__Messages_Admin_Page___insert_or_update_message_template__validates',
+                    array(),
+                    $this->_req_data['MTP_template_fields'],
+                    $context_slug,
+                    $messenger_slug,
+                    $message_type_slug
+                );
+
+                $system_validation = $MTPG->validate(
+                    $this->_req_data['MTP_template_fields'],
+                    $context_slug,
+                    $messenger_slug,
+                    $message_type_slug
+                );
+
+                $system_validation = ! is_array($system_validation) && $system_validation ? array() : $system_validation;
+                $validates = array_merge($custom_validation, $system_validation);
                 
                 //if $validate returned error messages (i.e. is_array()) then we need to process them and setup an
                 // appropriate response. HMM, dang this isn't correct, $validates will ALWAYS be an array.
