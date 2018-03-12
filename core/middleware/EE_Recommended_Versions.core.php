@@ -47,6 +47,11 @@ class EE_Recommended_Versions extends EE_Middleware
         if (! $this->_minimum_php_version_recommended()) {
             $this->_display_minimum_recommended_php_version_notice();
         }
+
+        //upcoming required version
+        if (! $this->upcomingRequiredPhpVersion()) {
+            $this->displayUpcomingRequiredVersion();
+        }
         $this->_response = $this->process_request_stack($this->_request, $this->_response);
         //$this->_response->add_output( "\n\t OUT << " . __CLASS__ );
         return $this->_response;
@@ -101,7 +106,7 @@ class EE_Recommended_Versions extends EE_Middleware
      */
     private function _check_php_version($min_version = EE_MIN_PHP_VER_RECOMMENDED)
     {
-        return version_compare(PHP_VERSION, $min_version, '>=') ? true : false;
+        return version_compare(PHP_VERSION, $min_version, '>=');
     }
 
 
@@ -115,6 +120,17 @@ class EE_Recommended_Versions extends EE_Middleware
     private function _minimum_php_version_recommended()
     {
         return $this->_check_php_version();
+    }
+
+
+    /**
+     * Returns whether the provided php version number is greater than the current version of php installed on the server.
+     * @param string $version_required
+     * @return bool
+     */
+    private function upcomingRequiredPhpVersion($version_required = '5.5')
+    {
+        return $this->_check_php_version($version_required);
     }
 
 
@@ -174,6 +190,30 @@ class EE_Recommended_Versions extends EE_Middleware
     }
 
 
+    /**
+     *  Sets a notice for an upcoming required version of PHP in the next update of EE core.
+     */
+    private function displayUpcomingRequiredVersion()
+    {
+        if ($this->_request->isAdmin()
+            && apply_filters('FHEE__EE_Recommended_Versions__displayUpcomingRequiredVersion', true, $this->_request)
+            && current_user_can('update_plugins')
+        ) {
+            add_action('admin_notices', function () {
+                echo '<div class="notice event-espresso-admin-notice notice-warning"><p>'
+                     . sprintf(
+                         esc_html__(
+                             'Please note: The next update of Event Espresso 4 will %1$srequire%2$s PHP 5.4.45 or greater.  Your web server\'s PHP version is %3$s.  You can contact your host and ask them to update your PHP version to at least PHP 5.6.  Please do not update to the new version of Event Espresso 4 until the PHP update is completed. Read about why keeping your server on the latest version of PHP is a good idea %4$shere%5$s',
+                             'event_espresso'
+                         ),
+                         '<strong>',
+                         '</strong>',
+                         PHP_VERSION,
+                         '<a href="https://wordpress.org/support/upgrade-php/">',
+                         '</a>'
+                     )
+                     . '</p></div>';
+            });
+        }
+    }
 }
-// End of file EE_Recommended_Versions.core.php
-// Location: /EE_Recommended_Versions.core.php
