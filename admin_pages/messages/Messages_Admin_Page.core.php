@@ -2936,18 +2936,29 @@ class Messages_Admin_Page extends EE_Admin_Page
         ) {
             $active_messenger->set_existing_test_settings($this->_req_data['test_settings_fld']);
         }
-        
-        $success = $this->_preview_message(true);
-        
-        if ($success) {
-            EE_Error::add_success(__('Test message sent', 'event_espresso'));
-        } else {
-            EE_Error::add_error(
-                esc_html__('The test message was not sent', 'event_espresso'),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
+
+        /**
+         * Use filter to add additional controls on whether message can send or not
+         */
+        if (apply_filters(
+            'FHEE__Messages_Admin_Page__do_test_send__can_send',
+            true,
+            $context,
+            $this->_req_data,
+            $messenger,
+            $message_type
+        )) {
+            $success = $this->_preview_message(true);
+            if ($success) {
+                EE_Error::add_success(__('Test message sent', 'event_espresso'));
+            } else {
+                EE_Error::add_error(
+                    esc_html__('The test message was not sent', 'event_espresso'),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
+            }
         }
     }
     
