@@ -788,7 +788,6 @@ class Payments_Admin_Page extends EE_Admin_Page
                 $pmt_form = $this->_generate_payment_method_settings_form($payment_method);
                 if ($pmt_form->form_data_present_in($this->_req_data)) {
                     $correct_pmt_form_to_use = $pmt_form;
-                    $payment_method = $payment_method;
                     break;
                 }
             }
