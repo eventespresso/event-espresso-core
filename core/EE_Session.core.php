@@ -26,9 +26,9 @@ class EE_Session implements SessionIdentifierInterface
 
     const OPTION_NAME_SETTINGS = 'ee_session_settings';
 
-    const EE_SESSION_STATUS_CLOSED = 0;
+    const STATUS_CLOSED        = 0;
 
-    const EE_SESSION_STATUS_OPEN = 1;
+    const STATUS_OPEN          = 1;
 
     /**
      * instance of the EE_Session object
@@ -155,7 +155,7 @@ class EE_Session implements SessionIdentifierInterface
      *
      * @var int $status
      */
-    private $status = EE_Session::EE_SESSION_STATUS_CLOSED;
+    private $status = EE_Session::STATUS_CLOSED;
 
 
 
@@ -266,7 +266,7 @@ class EE_Session implements SessionIdentifierInterface
      */
     public function isActive()
     {
-        return $this->status === EE_Session::EE_SESSION_STATUS_OPEN;
+        return $this->status === EE_Session::STATUS_OPEN;
     }
 
 
@@ -557,7 +557,7 @@ class EE_Session implements SessionIdentifierInterface
             //starts a new session if one doesn't already exist, or re-initiates an existing one
             session_start();
         }
-        $this->status = EE_Session::EE_SESSION_STATUS_OPEN;
+        $this->status = EE_Session::STATUS_OPEN;
         // get our modified session ID
         $this->_sid = $this->_generate_session_id();
         // and the visitors IP
