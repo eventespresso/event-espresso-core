@@ -795,8 +795,8 @@ class EE_Error extends Exception
         if ($user_id = get_current_user_id()) {
             // store notices for logged in user
             return (bool) update_user_option(
-                EE_Error::OPTIONS_KEY_NOTICES,
                 $user_id,
+                EE_Error::OPTIONS_KEY_NOTICES,
                 $notices
             );
         }
@@ -822,8 +822,8 @@ class EE_Error extends Exception
         if ($user_id = get_current_user_id()) {
             // clear notices for logged in user
             return (bool) update_user_option(
-                EE_Error::OPTIONS_KEY_NOTICES,
                 $user_id,
+                EE_Error::OPTIONS_KEY_NOTICES,
                 array()
             );
         }
@@ -1017,7 +1017,7 @@ class EE_Error extends Exception
             return '
 <script>
 /* <![CDATA[ */
-const ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
+var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 /* ]]> */
 </script>
 <script src="' . includes_url() . 'js/jquery/jquery.js" type="text/javascript"></script>
