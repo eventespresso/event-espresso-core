@@ -5,6 +5,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\InvalidSessionDataException;
 use EventEspresso\core\services\cache\CacheStorageInterface;
+use EventEspresso\core\services\request\RequestInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
 
@@ -146,11 +147,17 @@ class EE_Session implements SessionIdentifierInterface
      */
     private $_last_gc;
 
+    /**
+     * @var RequestInterface $request
+     */
+    protected $request;
+
 
 
     /**
      * @singleton method used to instantiate class object
      * @param CacheStorageInterface $cache_storage
+     * @param RequestInterface      $request
      * @param EE_Encryption         $encryption
      * @return EE_Session
      * @throws InvalidArgumentException
@@ -159,13 +166,14 @@ class EE_Session implements SessionIdentifierInterface
      */
     public static function instance(
         CacheStorageInterface $cache_storage = null,
+        RequestInterface $request = null,
         EE_Encryption $encryption = null
     ) {
         // check if class object is instantiated
         // session loading is turned ON by default, but prior to the init hook, can be turned back OFF via:
         // add_filter( 'FHEE_load_EE_Session', '__return_false' );
         if (! self::$_instance instanceof EE_Session && apply_filters('FHEE_load_EE_Session', true)) {
-            self::$_instance = new self($cache_storage, $encryption);
+            self::$_instance = new self($cache_storage, $request, $encryption);
         }
         return self::$_instance;
     }
@@ -176,19 +184,23 @@ class EE_Session implements SessionIdentifierInterface
      * protected constructor to prevent direct creation
      *
      * @param CacheStorageInterface $cache_storage
+     * @param RequestInterface      $request
      * @param EE_Encryption         $encryption
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function __construct(CacheStorageInterface $cache_storage, EE_Encryption $encryption = null)
-    {
-
+    protected function __construct(
+        CacheStorageInterface $cache_storage,
+        RequestInterface $request,
+        EE_Encryption $encryption = null
+    ) {
         // session loading is turned ON by default, but prior to the init hook,
         // can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
         if (! apply_filters('FHEE_load_EE_Session', true)) {
             return;
         }
+        $this->request = $request;
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         if (! defined('ESPRESSO_SESSION')) {
             define('ESPRESSO_SESSION', true);
@@ -541,9 +553,9 @@ class EE_Session implements SessionIdentifierInterface
         // get our modified session ID
         $this->_sid = $this->_generate_session_id();
         // and the visitors IP
-        $this->_ip_address = $this->_visitor_ip();
+        $this->_ip_address = $this->request->ipAddress();
         // set the "user agent"
-        $this->_user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? esc_attr($_SERVER['HTTP_USER_AGENT']) : false;
+        $this->_user_agent = $this->request->userAgent();
         // now let's retrieve what's in the db
         $session_data = $this->_retrieve_session_data();
         if (! empty($session_data)) {
@@ -785,7 +797,7 @@ class EE_Session implements SessionIdentifierInterface
                     break;
                 case 'ip_address' :
                     // visitor ip address
-                    $session_data['ip_address'] = $this->_visitor_ip();
+                    $session_data['ip_address'] = $this->request->ipAddress();
                     break;
                 case 'user_agent' :
                     // visitor user_agent
@@ -867,8 +879,9 @@ class EE_Session implements SessionIdentifierInterface
      */
     private function _save_session_to_db($clear_session = false)
     {
-        // unless we're deleting the session data, don't save anything if there isn't a cart
-        if (! $clear_session && ! $this->cart() instanceof EE_Cart) {
+        // don't save sessions for crawlers
+        // and unless we're deleting the session data, don't save anything if there isn't a cart
+        if ($this->request->isBot() || (! $clear_session && ! $this->cart() instanceof EE_Cart)) {
             return false;
         }
         $transaction = $this->transaction();
@@ -899,41 +912,6 @@ class EE_Session implements SessionIdentifierInterface
             $this->_lifespan
         );
     }
-
-
-
-    /**
-     * _visitor_ip
-     *    attempt to get IP address of current visitor from server
-     * plz see: http://stackoverflow.com/a/2031935/1475279
-     *
-     * @access public
-     * @return string
-     */
-    private function _visitor_ip()
-    {
-        $visitor_ip  = '0.0.0.0';
-        $server_keys = array(
-            'HTTP_CLIENT_IP',
-            'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_FORWARDED',
-            'HTTP_X_CLUSTER_CLIENT_IP',
-            'HTTP_FORWARDED_FOR',
-            'HTTP_FORWARDED',
-            'REMOTE_ADDR',
-        );
-        foreach ($server_keys as $key) {
-            if (isset($_SERVER[ $key ])) {
-                foreach (array_map('trim', explode(',', $_SERVER[ $key ])) as $ip) {
-                    if ($ip === '127.0.0.1' || filter_var($ip, FILTER_VALIDATE_IP) !== false) {
-                        $visitor_ip = $ip;
-                    }
-                }
-            }
-        }
-        return $visitor_ip;
-    }
-
 
 
     /**
@@ -1083,10 +1061,7 @@ class EE_Session implements SessionIdentifierInterface
      */
     public function wp_loaded()
     {
-        if (
-            EE_Registry::instance()->REQ instanceof EE_Request_Handler
-            && EE_Registry::instance()->REQ->is_set('clear_session')
-        ) {
+        if ($this->request->requestParamIsSet('clear_session')) {
             $this->clear_session(__CLASS__, __FUNCTION__);
         }
     }
