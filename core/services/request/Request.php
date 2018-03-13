@@ -206,6 +206,80 @@ class Request implements InterminableInterface, RequestInterface
     }
 
 
+    /**
+     * check if a request parameter exists whose key that matches the supplied wildcard pattern
+     * and return the value for the first match found
+     * wildcards can be either of the following:
+     *      ? to represent a single character of any type
+     *      * to represent one or more characters of any type
+     *
+     * @param string     $pattern
+     * @param null|mixed $default
+     * @return false|int
+     */
+    public function getMatch($pattern, $default = null)
+    {
+        return $this->requestParameterDrillDown($pattern, $default, 'match');
+    }
+
+
+    /**
+     * check if a request parameter exists whose key matches the supplied wildcard pattern
+     * wildcards can be either of the following:
+     *      ? to represent a single character of any type
+     *      * to represent one or more characters of any type
+     * returns true if a match is found or false if not
+     *
+     * @param string $pattern
+     * @return false|int
+     */
+    public function matches($pattern)
+    {
+        return $this->requestParameterDrillDown($pattern, null, 'match') !== null;
+    }
+
+
+    /**
+     * @see https://stackoverflow.com/questions/6163055/php-string-matching-with-wildcard
+     * @param string $pattern               A string including wildcards to be converted to a regex pattern
+     *                                      and used to search through the current request's parameter keys
+     * @param array  $request_params        The array of request parameters to search through
+     * @param mixed  $default               [optional] The value to be returned if no match is found.
+     *                                      Default is null
+     * @param string $return                [optional] Controls what kind of value is returned.
+     *                                      Options are:
+     *                                      'bool' will return true or false if match is found or not
+     *                                      'key' will return the first key found that matches the supplied pattern
+     *                                      'value' will return the value for the first request parameter
+     *                                      whose key matches the supplied pattern
+     *                                      Default is 'value'
+     * @return boolean|string
+     */
+    private function match($pattern, array $request_params, $default = null, $return = 'value')
+    {
+        $return = in_array($return, array('bool', 'key', 'value'), true)
+            ? $return
+            : 'is_set';
+        // replace wildcard chars with regex chars
+        $pattern = str_replace(
+            array("\*", "\?"),
+            array('.*', '.'),
+            preg_quote($pattern, '/')
+        );
+        foreach ($request_params as $key => $request_param) {
+            if (preg_match('/^' . $pattern . '$/is', $key)) {
+                // return value for request param
+                if ($return === 'value') {
+                    return $request_params[ $key ];
+                }
+                // or actual key or true just to indicate it was found
+                return $return === 'key' ? $key : true;
+            }
+        }
+        // match not found so return default value or false
+        return $return === 'value' ? $default : false;
+    }
+
 
     /**
      * the supplied key can be a simple string to represent a "top-level" request parameter
@@ -222,20 +296,23 @@ class Request implements InterminableInterface, RequestInterface
      *          )
      *      )
      *  )
-     * would return true
+     * would return true if default parameters were set
      *
+     * @param string $callback
      * @param        $key
      * @param null   $default
-     * @param string $is_set_or_get
      * @param array  $request_params
      * @return bool|mixed|null
      */
     private function requestParameterDrillDown(
         $key,
         $default = null,
-        $is_set_or_get = 'is_set',
+        $callback = 'is_set',
         array $request_params = array()
     ) {
+        $callback       = in_array($callback, array('is_set', 'get', 'match'), true)
+            ? $callback
+            : 'is_set';
         $request_params = ! empty($request_params)
             ? $request_params
             : $this->request;
@@ -245,6 +322,10 @@ class Request implements InterminableInterface, RequestInterface
             $key  = str_replace(']', '', $key);
             $keys = explode('[', $key);
             $key  = array_shift($keys);
+            if ($callback === 'match') {
+                $real_key = $this->match($key, $request_params, $default, 'key');
+                $key      = $real_key ? $real_key : $key;
+            }
             // check if top level key exists
             if (isset($request_params[ $key ])) {
                 // build a new key to pass along like: 'second[third]'
@@ -256,19 +337,21 @@ class Request implements InterminableInterface, RequestInterface
                 return $this->requestParameterDrillDown(
                     $key_string,
                     $default,
-                    $is_set_or_get,
+                    $callback,
                     $request_params[ $key ]
                 );
             }
         }
-        if ($is_set_or_get === 'is_set') {
+        if ($callback === 'is_set') {
             return isset($request_params[ $key ]);
+        }
+        if ($callback === 'match') {
+            return $this->match($key, $request_params, $default);
         }
         return isset($request_params[ $key ])
             ? $request_params[ $key ]
             : $default;
     }
-
 
 
     /**
@@ -362,7 +445,7 @@ class Request implements InterminableInterface, RequestInterface
     public function setUserAgent($user_agent = '')
     {
         if ($user_agent === '' || ! is_string($user_agent)) {
-            $user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? esc_attr($_SERVER['HTTP_USER_AGENT']) : '';
+            $user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? (string) esc_attr($_SERVER['HTTP_USER_AGENT']) : '';
         }
         $this->user_agent = $user_agent;
     }
