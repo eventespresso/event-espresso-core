@@ -228,7 +228,7 @@ class BootstrapCore
             'FHEE__EE_Bootstrap__build_request_stack__stack_apps',
             $stack_apps
         );
-        // load middleware onto stack : FIFO (First In Last Out)
+        // load middleware onto stack : FILO (First In Last Out)
         // items at the beginning of the $stack_apps array will run last
         foreach ((array) $stack_apps as $stack_app => $stack_app_args) {
             $request_stack_builder->push(array($stack_app, $stack_app_args));
