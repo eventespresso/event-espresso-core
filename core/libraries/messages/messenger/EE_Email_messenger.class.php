@@ -574,7 +574,8 @@ class EE_Email_messenger extends EE_messenger
         }
 
         //if from name is "WordPress" let's sub in the site name instead (more friendly!)
-        $from_name = $from_name == 'WordPress' ? get_bloginfo() : $from_name;
+        //but realize the default name is HTML entity-encoded
+        $from_name = $from_name == 'WordPress' ? wp_specialchars_decode(get_bloginfo(), ENT_QUOTES) : $from_name;
 
         return $from_name;
     }
