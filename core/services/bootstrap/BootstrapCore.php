@@ -7,6 +7,7 @@ use EEH_Autoloader;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\InvalidRequestStackMiddlewareException;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\RequestStack;
 use EventEspresso\core\services\request\RequestStackBuilder;
@@ -70,7 +71,9 @@ class BootstrapCore
     protected $request_stack;
 
 
-
+    /**
+     * BootstrapCore constructor.
+     */
     public function __construct()
     {
         // construct request stack and run middleware apps as soon as all WP plugins are loaded
@@ -79,6 +82,7 @@ class BootstrapCore
 
 
     /**
+     * @throws InvalidRequestStackMiddlewareException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -138,11 +142,11 @@ class BootstrapCore
     }
 
 
-
     /**
      * run_request_stack
      * construct request stack and run middleware apps
      *
+     * @throws InvalidRequestStackMiddlewareException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
