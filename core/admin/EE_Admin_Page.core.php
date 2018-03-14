@@ -3825,9 +3825,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                         $this->_current_page,
                         $this->_current_view
                     );
-                    if ($value < 1 || $value > $max_value) {
+                    if ($value < 1) {
                         return;
                     }
+                    $value = min($value, $max_value);
                     break;
                 default:
                     $value = apply_filters(
