@@ -367,8 +367,9 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testMatches()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(),
+            array(),
             array(),
             array()
         );
@@ -384,9 +385,10 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testMatchesWithDrillDown()
     {
-        $request = new EE_Request(
-            array(),
+        $request = $this->getLegacyRequest(
+        array(),
             $this->postParams(),
+            array(),
             array()
         );
         // our post data looks like this:
@@ -419,8 +421,9 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testGetMatch()
     {
-        $request = new EE_Request(
-            $this->getParams(),
+        $request = $this->getLegacyRequest(
+        $this->getParams(),
+            array(),
             array(),
             array()
         );
@@ -438,9 +441,10 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testGetMatchWithDrillDown()
     {
-        $request = new EE_Request(
-            array(),
+        $request = $this->getLegacyRequest(
+        array(),
             $this->postParams(),
+            array(),
             array()
         );
         // our post data looks like this:
