@@ -674,14 +674,14 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\gutenberg\GutenbergBlockManager' => array(
-                'EventEspresso\core\domain\entities\gutenberg\GutenbergBlockCollection' => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\core\services\editor\EditorBlockManager' => array(
+                'EventEspresso\core\domain\entities\editor\EditorBlockCollection' => EE_Dependency_Map::load_from_cache,
                 'EE_Request'                                                            => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\services\gutenberg\loaders\EventsList' => array(
+            'EventEspresso\core\domain\services\editor\loaders\EventsList' => array(
                 'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\entities\gutenberg\blocks\EventsList' => array(
+            'EventEspresso\core\domain\entities\editor\blocks\EventsList' => array(
                 'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
             ),
         );

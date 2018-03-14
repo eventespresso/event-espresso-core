@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\entities\gutenberg;
+namespace EventEspresso\core\domain\entities\editor;
 
 
 use EventEspresso\core\services\loaders\LoaderInterface;
@@ -11,19 +11,19 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class GutenbergBlock
- * Registers a Gutenberg block type with WordPress core,
+ * Class EditorBlock
+ * Registers a Editor block type with WordPress core,
  * specifies all assets required for the block,
  * and executes all logic as necessary
  * ALL blocks should be located in
- *  \core\domain\entities\gutenberg\blocks\
+ *  \core\domain\entities\editor\blocks\
  * under the appropriate namespace root
  *
- * @package EventEspresso\core\services\gutenberg
+ * @package EventEspresso\core\services\editor
  * @author  Brent Christensen
  * @since   $VID:$
  */
-abstract class GutenbergBlock implements GutenbergBlockInterface
+abstract class EditorBlock implements EditorBlockInterface
 {
 
     /**
@@ -38,7 +38,7 @@ abstract class GutenbergBlock implements GutenbergBlockInterface
 
 
     /**
-     * GutenbergBlockLoader constructor.
+     * EditorBlockLoader constructor.
      *
      * @param LoaderInterface $loader
      */

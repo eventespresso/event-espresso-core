@@ -1,9 +1,9 @@
 <?php
 
-namespace EventEspresso\core\domain\entities\gutenberg\blocks;
+namespace EventEspresso\core\domain\entities\editor\blocks;
 
 use EE_Error;
-use EventEspresso\core\domain\entities\gutenberg\GutenbergBlock;
+use EventEspresso\core\domain\entities\editor\EditorBlock;
 use EventEspresso\core\domain\entities\shortcodes\EspressoEvents;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -16,16 +16,16 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Class EventsList
- * GutenbergBlock for the Events List / EspressoEvents shortcode
+ * EditorBlock for the Events List / EspressoEvents shortcode
  *
- * @package EventEspresso\core\domain\entities\gutenberg\blocks
+ * @package EventEspresso\core\domain\entities\editor\blocks
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class EventsList extends GutenbergBlock
+class EventsList extends EditorBlock
 {
 
-    const GUTENBERG_BLOCK_TYPE = 'ee-shortcodes/events-list';
+    const EDITOR_BLOCK_TYPE = 'ee-shortcodes/events-list';
 
 
     /**
@@ -45,7 +45,7 @@ class EventsList extends GutenbergBlock
     {
         $this->block_type = register_block_type(
             new WP_Block_Type(
-                EventsList::GUTENBERG_BLOCK_TYPE,
+                EventsList::EDITOR_BLOCK_TYPE,
                 array(
                     'editor_script'   => 'ee-shortcode-blocks',
                     'editor_style'    => 'ee-block-styles',
@@ -105,7 +105,7 @@ class EventsList extends GutenbergBlock
      */
     public function unRegisterBlock()
     {
-        return unregister_block_type(EventsList::GUTENBERG_BLOCK_TYPE);
+        return unregister_block_type(EventsList::EDITOR_BLOCK_TYPE);
     }
 
 

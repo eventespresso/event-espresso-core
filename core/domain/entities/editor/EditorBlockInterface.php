@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\entities\gutenberg;
+namespace EventEspresso\core\domain\entities\editor;
 
 use WP_Block_Type;
 
@@ -9,20 +9,20 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Interface GutenbergBlockInterface
+ * Interface EditorBlockInterface
  * Classes implementing this interface are responsible for
- * Registering a Gutenberg block type with WordPress core,
+ * Registering a Editor block type with WordPress core,
  * specifying all assets required for the block,
  * and executing all logic as necessary
  * ALL blocks should be located in
- *  \core\domain\entities\gutenberg\blocks\
+ *  \core\domain\entities\editor\blocks\
  * under the appropriate namespace root
  *
- * @package EventEspresso\core\services\gutenberg
+ * @package EventEspresso\core\services\editor
  * @author  Brent Christensen
  * @since   $VID:$
  */
-interface GutenbergBlockInterface
+interface EditorBlockInterface
 {
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\entities\gutenberg;
+namespace EventEspresso\core\domain\entities\editor;
 
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
@@ -10,14 +10,14 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class GutenbergBlockCollection
- * a Collection of GutenbergBlock objects
+ * Class EditorBlockCollection
+ * a Collection of EditorBlock objects
  *
- * @package EventEspresso\core\services\gutenberg
+ * @package EventEspresso\core\services\editor
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class GutenbergBlockCollection extends Collection
+class EditorBlockCollection extends Collection
 {
 
     /**
@@ -27,7 +27,7 @@ class GutenbergBlockCollection extends Collection
      */
     public function __construct()
     {
-        parent::__construct('EventEspresso\core\domain\entities\gutenberg\GutenbergBlockInterface');
+        parent::__construct('EventEspresso\core\domain\entities\editor\EditorBlockInterface');
     }
 
 

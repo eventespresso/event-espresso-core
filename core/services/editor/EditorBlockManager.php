@@ -1,13 +1,11 @@
 <?php
 
-namespace EventEspresso\core\services\gutenberg;
+namespace EventEspresso\core\services\editor;
 
 use EE_Error;
-use EE_Request;
 use EventEspresso\core\domain\EnqueueAssetsInterface;
-use EventEspresso\core\domain\entities\gutenberg\GutenbergBlockCollection;
-use EventEspresso\core\domain\entities\gutenberg\GutenbergBlockInterface;
-use EventEspresso\core\domain\services\gutenberg\GutenbergBlockLoaderInterface;
+use EventEspresso\core\domain\entities\editor\EditorBlockCollection;
+use EventEspresso\core\domain\entities\editor\EditorBlockInterface;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -18,6 +16,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\CollectionDetails;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
+use EventEspresso\core\services\request\RequestInterface;
 use Exception;
 use InvalidArgumentException;
 use ReflectionException;
@@ -28,49 +27,49 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class GutenbergBlockManager
- * Loads GutenbergBlockInterface classes into the injected GutenbergBlockCollection,
+ * Class EditorBlockManager
+ * Loads EditorBlockInterface classes into the injected EditorBlockCollection,
  * which can be used in other classes by retrieving it from EE's Loader.
- * After loading, the GutenbergBlockManager gets each GutenbergBlock to register
+ * After loading, the EditorBlockManager gets each EditorBlock to register
  * its block type and ensures assets are enqueued at the appropriate time
  *
- * @package EventEspresso\core\domain\services\gutenberg
+ * @package EventEspresso\core\domain\services\editor
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class GutenbergBlockManager
+class EditorBlockManager
 {
 
     /**
-     * @var CollectionInterface|GutenbergBlockInterface[] $blocks
+     * @var CollectionInterface|EditorBlockInterface[] $blocks
      */
     private $blocks;
 
     /**
-     * @var EE_Request $request
+     * @var RequestInterface $request
      */
     protected $request;
 
 
     /**
-     * GutenbergBlockManager constructor.
+     * EditorBlockManager constructor.
      *
-     * @param GutenbergBlockCollection $blocks
-     * @param EE_Request               $request
+     * @param EditorBlockCollection $blocks
+     * @param RequestInterface         $request
      */
-    public function __construct(GutenbergBlockCollection $blocks, EE_Request $request)
+    public function __construct(EditorBlockCollection $blocks, RequestInterface $request)
     {
         $this->blocks  = $blocks;
         $this->request = $request;
-        //  populates the GutenbergBlockCollection and calls initialize() on all installed blocks
-        add_action('AHEE__EE_System__core_loaded_and_ready', array($this, 'loadGutenbergBlocks'));
+        //  populates the EditorBlockCollection and calls initialize() on all installed blocks
+        add_action('AHEE__EE_System__core_loaded_and_ready', array($this, 'loadEditorBlocks'));
         //  call initialize() and load assets for all installed blocks
-        add_action('AHEE__EE_System__initialize', array($this, 'registerGutenbergBlocks'));
+        add_action('AHEE__EE_System__initialize', array($this, 'registerEditorBlocks'));
     }
 
 
     /**
-     * @return CollectionInterface|GutenbergBlockInterface[]
+     * @return CollectionInterface|EditorBlockInterface[]
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws EE_Error
@@ -81,18 +80,18 @@ class GutenbergBlockManager
      * @throws InvalidIdentifierException
      * @throws InvalidInterfaceException
      */
-    protected function populateGutenbergBlockCollection()
+    protected function populateEditorBlockCollection()
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
             // collection name
                 'shortcodes',
                 // collection interface
-                'EventEspresso\core\domain\entities\gutenberg\GutenbergBlockInterface',
+                'EventEspresso\core\domain\entities\editor\EditorBlockInterface',
                 // FQCNs for classes to add (all classes within each namespace will be loaded)
                 apply_filters(
-                    'FHEE__EventEspresso_core_services_gutenberg_GutenbergBlockManager__populateGutenbergBlockCollection__collection_FQCNs',
-                    array('EventEspresso\core\domain\entities\gutenberg\blocks')
+                    'FHEE__EventEspresso_core_services_editor_EditorBlockManager__populateEditorBlockCollection__collection_FQCNs',
+                    array('EventEspresso\core\domain\entities\editor\blocks')
                 ),
                 // filepaths to classes to add
                 array(),
@@ -112,10 +111,10 @@ class GutenbergBlockManager
      * @return void
      * @throws Exception
      */
-    public function loadGutenbergBlocks()
+    public function loadEditorBlocks()
     {
         try {
-            $this->populateGutenbergBlockCollection();
+            $this->populateEditorBlockCollection();
             // cycle thru block loaders and initialize each loader
             foreach ($this->blocks as $block) {
                 $block->initialize();
@@ -130,7 +129,7 @@ class GutenbergBlockManager
      * @return void
      * @throws Exception
      */
-    public function registerGutenbergBlocks()
+    public function registerEditorBlocks()
     {
         try {
             // cycle thru block loader folders
@@ -141,14 +140,14 @@ class GutenbergBlockManager
                     throw new InvalidEntityException($block_type, 'WP_Block_Type');
                 }
                 do_action(
-                    'FHEE__EventEspresso_core_services_gutenberg_GutenbergBlockManager__registerGutenbergBlocks__block_type_registered',
+                    'FHEE__EventEspresso_core_services_editor_EditorBlockManager__registerEditorBlocks__block_type_registered',
                     $block,
                     $block_type
                 );
                 if ($block instanceof EnqueueAssetsInterface) {
                     // the following can be refactored in whatever way works best,
                     // but it should be self evident that controlling asset loading from here
-                    // avoids having to add the following lines of code in every GutenbergBlock class
+                    // avoids having to add the following lines of code in every EditorBlock class
                     add_action('enqueue_block_assets', array($block, 'registerScripts'));
                     add_action('enqueue_block_assets', array($block, 'registerStyles'));
                 }
