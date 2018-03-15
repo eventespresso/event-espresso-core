@@ -3,6 +3,9 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\LegacyRequestInterface;
+use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\ResponseInterface;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -59,14 +62,19 @@ class EE_Dependency_Map
     protected static $_instance;
 
     /**
-     * @type EE_Request $request
+     * @type RequestInterface $request
      */
-    protected $_request;
+    protected $request;
 
     /**
-     * @type EE_Response $response
+     * @type LegacyRequestInterface $legacy_request
      */
-    protected $_response;
+    protected $legacy_request;
+
+    /**
+     * @type ResponseInterface $response
+     */
+    protected $response;
 
     /**
      * @type LoaderInterface $loader
@@ -92,15 +100,10 @@ class EE_Dependency_Map
 
     /**
      * EE_Dependency_Map constructor.
-     *
-     * @param EE_Request  $request
-     * @param EE_Response $response
      */
-    protected function __construct(EE_Request $request, EE_Response $response)
+    protected function __construct()
     {
-        $this->_request = $request;
-        $this->_response = $response;
-        add_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading', array($this, 'initialize'));
+        // add_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading', array($this, 'initialize'));
         do_action('EE_Dependency_Map____construct');
     }
 
@@ -122,18 +125,41 @@ class EE_Dependency_Map
 
     /**
      * @singleton method used to instantiate class object
-     * @access    public
-     * @param EE_Request  $request
-     * @param EE_Response $response
      * @return EE_Dependency_Map
      */
-    public static function instance(EE_Request $request = null, EE_Response $response = null)
-    {
+    public static function instance() {
         // check if class object is instantiated, and instantiated properly
         if (! self::$_instance instanceof EE_Dependency_Map) {
-            self::$_instance = new EE_Dependency_Map($request, $response);
+            self::$_instance = new EE_Dependency_Map(/*$request, $response, $legacy_request*/);
         }
         return self::$_instance;
+    }
+
+
+    /**
+     * @param RequestInterface $request
+     */
+    public function setRequest(RequestInterface $request)
+    {
+        $this->request = $request;
+    }
+
+
+    /**
+     * @param LegacyRequestInterface $legacy_request
+     */
+    public function setLegacyRequest(LegacyRequestInterface $legacy_request)
+    {
+        $this->legacy_request = $legacy_request;
+    }
+
+
+    /**
+     * @param ResponseInterface $response
+     */
+    public function setResponse(ResponseInterface $response)
+    {
+        $this->response = $response;
     }
 
 
@@ -190,7 +216,7 @@ class EE_Dependency_Map
         }
         // we need to make sure that any aliases used when registering a dependency
         // get resolved to the correct class name
-        foreach ((array)$dependencies as $dependency => $load_source) {
+        foreach ($dependencies as $dependency => $load_source) {
             $alias = self::$_instance->get_alias($dependency);
             if (
                 $overwrite === EE_Dependency_Map::OVERWRITE_DEPENDENCIES
@@ -305,7 +331,7 @@ class EE_Dependency_Map
             $class_name = 'LEGACY_MODELS';
         }
         $dependency = $this->get_alias($dependency);
-        return isset($this->_dependency_map[$class_name], $this->_dependency_map[$class_name][$dependency])
+        return isset($this->_dependency_map[$class_name][$dependency])
             ? true
             : false;
     }
@@ -388,7 +414,7 @@ class EE_Dependency_Map
      */
     public function has_alias($class_name = '', $for_class = '')
     {
-        return isset($this->_aliases[$for_class], $this->_aliases[$for_class][$class_name])
+        return isset($this->_aliases[$for_class][$class_name])
                || (
                    isset($this->_aliases[$class_name])
                    && ! is_array($this->_aliases[$class_name])
@@ -440,14 +466,14 @@ class EE_Dependency_Map
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
             'EE_System'                                                                                                   => array(
-                'EE_Registry'                                => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
-                'EE_Capabilities'                            => EE_Dependency_Map::load_from_cache,
-                'EE_Request'                                 => EE_Dependency_Map::load_from_cache,
-                'EE_Maintenance_Mode'                        => EE_Dependency_Map::load_from_cache,
+                'EE_Registry'                                 => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+                'EE_Maintenance_Mode'                         => EE_Dependency_Map::load_from_cache,
             ),
             'EE_Session'                                                                                                  => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request'             => EE_Dependency_Map::load_from_cache,
                 'EE_Encryption'                                           => EE_Dependency_Map::load_from_cache,
             ),
             'EE_Cart'                                                                                                     => array(
@@ -677,29 +703,33 @@ class EE_Dependency_Map
     {
         //for PHP5.3 compat, we need to register any properties called here in a variable because `$this` cannot
         //be used in a closure.
-        $request = &$this->_request;
-        $response = &$this->_response;
+        $request = &$this->request;
+        $response = &$this->response;
+        $legacy_request = &$this->legacy_request;
         // $loader = &$this->loader;
         $this->_class_loaders = array(
             //load_core
-            'EE_Capabilities'                      => 'load_core',
-            'EE_Encryption'                        => 'load_core',
-            'EE_Front_Controller'                  => 'load_core',
-            'EE_Module_Request_Router'             => 'load_core',
-            'EE_Registry'                          => 'load_core',
-            'EE_Request'                           => function () use (&$request) {
+            'EE_Capabilities'          => 'load_core',
+            'EE_Encryption'            => 'load_core',
+            'EE_Front_Controller'      => 'load_core',
+            'EE_Module_Request_Router' => 'load_core',
+            'EE_Registry'              => 'load_core',
+            'EE_Request'               => function () use (&$legacy_request) {
+                return $legacy_request;
+            },
+            'EventEspresso\core\services\request\Request' => function () use (&$request) {
                 return $request;
             },
-            'EE_Response'                          => function () use (&$response) {
+            'EventEspresso\core\services\request\Response' => function () use (&$response) {
                 return $response;
             },
-            'EE_Request_Handler'                   => 'load_core',
-            'EE_Session'                           => 'load_core',
-            'EE_Cron_Tasks'                        => 'load_core',
-            'EE_System'                            => 'load_core',
-            'EE_Maintenance_Mode'                  => 'load_core',
-            'EE_Register_CPTs'                     => 'load_core',
-            'EE_Admin'                             => 'load_core',
+            'EE_Request_Handler'       => 'load_core',
+            'EE_Session'               => 'load_core',
+            'EE_Cron_Tasks'            => 'load_core',
+            'EE_System'                => 'load_core',
+            'EE_Maintenance_Mode'      => 'load_core',
+            'EE_Register_CPTs'         => 'load_core',
+            'EE_Admin'                 => 'load_core',
             //load_lib
             'EE_Message_Resource_Manager'          => 'load_lib',
             'EE_Message_Type_Collection'           => 'load_lib',
@@ -798,8 +828,10 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface' => 'EventEspresso\core\domain\services\validation\email\EmailValidationService',
             'NoticeConverterInterface'                                            => 'EventEspresso\core\services\notices\NoticeConverterInterface',
             'EventEspresso\core\services\notices\NoticeConverterInterface'        => 'EventEspresso\core\services\notices\ConvertNoticesToEeErrors',
-            'NoticesContainerInterface'                                            => 'EventEspresso\core\services\notices\NoticesContainerInterface',
-            'EventEspresso\core\services\notices\NoticesContainerInterface'        => 'EventEspresso\core\services\notices\NoticesContainer',
+            'NoticesContainerInterface'                                           => 'EventEspresso\core\services\notices\NoticesContainerInterface',
+            'EventEspresso\core\services\notices\NoticesContainerInterface'       => 'EventEspresso\core\services\notices\NoticesContainer',
+            'EventEspresso\core\services\request\RequestInterface'                => 'EventEspresso\core\services\request\Request',
+            'EventEspresso\core\services\request\ResponseInterface'               => 'EventEspresso\core\services\request\Response',
         );
         if (! (defined('DOING_AJAX') && DOING_AJAX) && is_admin()) {
             $this->_aliases['EventEspresso\core\services\notices\NoticeConverterInterface'] = 'EventEspresso\core\services\notices\ConvertNoticesToAdminNotices';

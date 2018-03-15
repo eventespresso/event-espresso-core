@@ -53,7 +53,14 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 */
 	const onsale = 'TKO';
 
-	/**
+    /**
+     * extra meta key for tracking ticket reservations
+     *
+     * @type string
+     */
+    const META_KEY_TICKET_RESERVATIONS = 'ticket_reservations';
+
+    /**
 	 * cached result from method of the same name
 	 * @var float $_ticket_total_with_taxes
 	 */
@@ -740,7 +747,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		$sold = $this->sold() + $qty;
 		// remove ticket reservation, but don't adjust datetime reservations,  because that will happen
 		// via \EE_Datetime::increase_sold() when \EE_Ticket::_increase_sold_for_datetimes() is called
-		$this->decrease_reserved( $qty, false );
+		$this->decrease_reserved( $qty, false, "TKT: {$this->ID()} (ln:" . __LINE__ . ')');
 		$this->_increase_sold_for_datetimes( $qty );
 		$this->set_sold( $sold );
 		do_action(
@@ -842,25 +849,37 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	}
 
 
-
     /**
      * increments reserved by amount passed by $qty
      *
-     * @param int $qty
+     * @param int    $qty
+     * @param string $source
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
-	public function increase_reserved( $qty = 1 ) {
+	public function increase_reserved( $qty = 1, $source = 'unknown' ) {
 		$qty = absint( $qty );
 		$reserved = $this->reserved() + $qty;
-		$this->_increase_reserved_for_datetimes( $qty );
-		$this->set_reserved( $reserved );
-        do_action(
-            'AHEE__EE_Ticket__increase_reserved',
-            $this,
-            $qty,
+        if (
             $reserved
-        );
+            && $this->add_extra_meta(
+                EE_Ticket::META_KEY_TICKET_RESERVATIONS,
+                "{$qty} from {$source}"
+            )
+        ) {
+            $this->_increase_reserved_for_datetimes($qty);
+            $this->set_reserved($reserved);
+            do_action(
+                'AHEE__EE_Ticket__increase_reserved',
+                $this,
+                $qty,
+                $reserved
+            );
+        }
     }
 
 
@@ -885,27 +904,38 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	}
 
 
-
     /**
      * decrements (subtracts) reserved by amount passed by $qty
      *
-     * @param int  $qty
-     * @param bool $adjust_datetimes
+     * @param int    $qty
+     * @param bool   $adjust_datetimes
+     * @param string $source
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
-	public function decrease_reserved( $qty = 1, $adjust_datetimes = true ) {
+	public function decrease_reserved( $qty = 1, $adjust_datetimes = true, $source = 'unknown' ) {
 		$reserved = $this->reserved() - absint( $qty );
-		if ( $adjust_datetimes ) {
-			$this->_decrease_reserved_for_datetimes( $qty );
-		}
-		$this->set_reserved( $reserved );
-        do_action(
-            'AHEE__EE_Ticket__decrease_reserved',
-            $this,
-            $qty,
-            $reserved
-        );
+        if (
+            $this->add_extra_meta(
+                EE_Ticket::META_KEY_TICKET_RESERVATIONS,
+                "-{$qty} from {$source}"
+            )
+        ) {
+            if ($adjust_datetimes) {
+                $this->_decrease_reserved_for_datetimes($qty);
+            }
+            $this->set_reserved($reserved);
+            do_action(
+                'AHEE__EE_Ticket__decrease_reserved',
+                $this,
+                $qty,
+                $reserved
+            );
+        }
     }
 
 
