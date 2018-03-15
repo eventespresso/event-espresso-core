@@ -837,6 +837,20 @@ class EE_Error extends Exception
 
 
     /**
+     * saves notices to the db for retrieval on next request
+     *
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public static function stashNoticesBeforeRedirect()
+    {
+        EE_Error::get_notices(false, true);
+    }
+
+
+    /**
      * compile all error or success messages into one string
      *
      * @see EE_Error::get_raw_notices if you want the raw notices without any preparations made to them
