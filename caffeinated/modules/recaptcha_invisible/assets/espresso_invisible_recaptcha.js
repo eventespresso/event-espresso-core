@@ -41,7 +41,7 @@ function espressoLoadRecaptcha() {
                     $form          = $(this).parents('form:first'),
                     $submit        = $recaptcha_div.data('submit_button_id') !== ''
                         ? $('#' + $recaptcha_div.data('submit_button_id'))
-                        : $form.find(':submit');
+                        : $form.find(':submit:not(.datetime-selector)');
                 if (eeRecaptcha.wp_debug) {
                     console.log(JSON.stringify('recaptcha id: ' + $recaptcha_id, null, 4));
                     console.log(JSON.stringify('form name: ' + $form.attr('name'), null, 4));
