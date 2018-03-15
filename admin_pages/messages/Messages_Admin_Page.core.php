@@ -2708,8 +2708,32 @@ class Messages_Admin_Page extends EE_Admin_Page
                 
             } else {
                 //first validate all fields!
-                $validates = $MTPG->validate($this->_req_data['MTP_template_fields'], $context_slug, $messenger_slug,
-                    $message_type_slug);
+                // this filter allows client code to add its own validation to the template fields as well.
+                // returning an empty array means everything passed validation.
+                // errors in validation should be represented in an array with the following shape:
+                // array(
+                //   'fieldname' => array(
+                //          'msg' => 'error message'
+                //          'value' => 'value for field producing error'
+                // )
+                $custom_validation = (array) apply_filters(
+                    'FHEE__Messages_Admin_Page___insert_or_update_message_template__validates',
+                    array(),
+                    $this->_req_data['MTP_template_fields'],
+                    $context_slug,
+                    $messenger_slug,
+                    $message_type_slug
+                );
+
+                $system_validation = $MTPG->validate(
+                    $this->_req_data['MTP_template_fields'],
+                    $context_slug,
+                    $messenger_slug,
+                    $message_type_slug
+                );
+
+                $system_validation = ! is_array($system_validation) && $system_validation ? array() : $system_validation;
+                $validates = array_merge($custom_validation, $system_validation);
                 
                 //if $validate returned error messages (i.e. is_array()) then we need to process them and setup an
                 // appropriate response. HMM, dang this isn't correct, $validates will ALWAYS be an array.
@@ -2936,18 +2960,29 @@ class Messages_Admin_Page extends EE_Admin_Page
         ) {
             $active_messenger->set_existing_test_settings($this->_req_data['test_settings_fld']);
         }
-        
-        $success = $this->_preview_message(true);
-        
-        if ($success) {
-            EE_Error::add_success(__('Test message sent', 'event_espresso'));
-        } else {
-            EE_Error::add_error(
-                esc_html__('The test message was not sent', 'event_espresso'),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
+
+        /**
+         * Use filter to add additional controls on whether message can send or not
+         */
+        if (apply_filters(
+            'FHEE__Messages_Admin_Page__do_test_send__can_send',
+            true,
+            $context,
+            $this->_req_data,
+            $messenger,
+            $message_type
+        )) {
+            $success = $this->_preview_message(true);
+            if ($success) {
+                EE_Error::add_success(__('Test message sent', 'event_espresso'));
+            } else {
+                EE_Error::add_error(
+                    esc_html__('The test message was not sent', 'event_espresso'),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
+            }
         }
     }
     

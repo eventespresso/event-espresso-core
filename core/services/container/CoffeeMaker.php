@@ -134,17 +134,20 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
     {
         if ($reflector->getConstructor() === null) {
             return 'NewInstance';
-        } else if ($reflector->isInstantiable()) {
-            return 'NewInstanceArgs';
-        } else if (method_exists($reflector->getName(), 'instance')) {
-            return 'instance';
-        } else if (method_exists($reflector->getName(), 'new_instance')) {
-            return 'new_instance';
-        } else if (method_exists($reflector->getName(), 'new_instance_from_db')) {
-            return 'new_instance_from_db';
-        } else {
-            throw new InstantiationException($reflector->getName());
         }
+        if ($reflector->isInstantiable()) {
+            return 'NewInstanceArgs';
+        }
+        if (method_exists($reflector->getName(), 'instance')) {
+            return 'instance';
+        }
+        if (method_exists($reflector->getName(), 'new_instance')) {
+            return 'new_instance';
+        }
+        if (method_exists($reflector->getName(), 'new_instance_from_db')) {
+            return 'new_instance_from_db';
+        }
+        throw new InstantiationException($reflector->getName());
     }
 
 
