@@ -182,7 +182,7 @@ class SettingsForm extends EE_Payment_Method_Form
                 'httpversion' => '1.1',
                 'cookies'     => array(),
                 'headers'     => array(),
-                'body'        => http_build_query($request_params),
+                'body'        => http_build_query($request_params, '', '&'),
             )
         );
         if (is_wp_error($response) || empty($response['body'])) {
