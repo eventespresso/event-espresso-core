@@ -5,6 +5,7 @@ namespace EventEspresso\core\services\loaders;
 use Closure;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\collections\CollectionInterface;
+use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -18,7 +19,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author        Brent Christensen
  * 
  */
-class CachingLoader extends LoaderDecorator
+class CachingLoader extends CachingLoaderDecorator
 {
 
     /**
@@ -41,8 +42,11 @@ class CachingLoader extends LoaderDecorator
      * @param string                   $identifier
      * @throws InvalidDataTypeException
      */
-    public function __construct(LoaderDecoratorInterface $loader, CollectionInterface $cache, $identifier = '')
-    {
+    public function __construct(
+        LoaderDecoratorInterface $loader,
+        CollectionInterface $cache,
+        $identifier = ''
+    ) {
         parent::__construct($loader);
         $this->cache = $cache;
         $this->setIdentifier($identifier);
@@ -81,12 +85,34 @@ class CachingLoader extends LoaderDecorator
      */
     private function setIdentifier($identifier)
     {
-        if ( ! is_string($identifier)) {
+        if (! is_string($identifier)) {
             throw new InvalidDataTypeException('$identifier', $identifier, 'string');
         }
         $this->identifier = $identifier;
     }
 
+
+    /**
+     * @param string $fqcn
+     * @param mixed  $object
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function share($fqcn, $object)
+    {
+        if ($object instanceof $fqcn) {
+            return $this->cache->add($object, md5($fqcn));
+        }
+        throw new InvalidArgumentException(
+            sprintf(
+                esc_html__(
+                    'The supplied class name "%1$s" must match the class of the supplied object.',
+                    'event_espresso'
+                ),
+                $fqcn
+            )
+        );
+    }
 
 
     /**
@@ -112,11 +138,11 @@ class CachingLoader extends LoaderDecorator
             return $this->loader->load($fqcn, $arguments, false);
         }
         $identifier = md5($fqcn . $this->getIdentifierForArgument($arguments));
-        if($this->cache->has($identifier)){
+        if ($this->cache->has($identifier)) {
             return $this->cache->get($identifier);
         }
         $object = $this->loader->load($fqcn, $arguments, $shared);
-        if($object instanceof $fqcn){
+        if ($object instanceof $fqcn) {
             $this->cache->add($object, $identifier);
         }
         return $object;

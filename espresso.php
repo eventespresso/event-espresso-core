@@ -3,7 +3,7 @@
   Plugin Name:		Event Espresso
   Plugin URI:  		http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: 		Manage events, sell tickets, and receive payments from your WordPress website. Reduce event administration time, cut-out ticketing fees, and own your customer data. | <a href="https://eventespresso.com/add-ons/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Extensions</a> | <a href="https://eventespresso.com/pricing/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Sales</a> | <a href="admin.php?page=espresso_support">Support</a>
-  Version:			4.9.59.rc.005
+  Version:			4.9.59.rc.014
   Author:			Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 		     GPLv2
@@ -102,7 +102,7 @@ if (function_exists('espresso_version')) {
          */
         function espresso_version()
         {
-            return apply_filters('FHEE__espresso__espresso_version', '4.9.59.rc.005');
+            return apply_filters('FHEE__espresso__espresso_version', '4.9.59.rc.014');
         }
 
         /**
@@ -115,121 +115,8 @@ if (function_exists('espresso_version')) {
         }
 
         register_activation_hook(EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation');
-        /**
-         *    espresso_load_error_handling
-         *    this function loads EE's class for handling exceptions and errors
-         */
-        function espresso_load_error_handling()
-        {
-            static $error_handling_loaded = false;
-            if ($error_handling_loaded) {
-                return;
-            }
-            // load debugging tools
-            if (WP_DEBUG === true && is_readable(EE_HELPERS . 'EEH_Debug_Tools.helper.php')) {
-                require_once   EE_HELPERS . 'EEH_Debug_Tools.helper.php';
-                \EEH_Debug_Tools::instance();
-            }
-            // load error handling
-            if (is_readable(EE_CORE . 'EE_Error.core.php')) {
-                require_once EE_CORE . 'EE_Error.core.php';
-            } else {
-                wp_die(esc_html__('The EE_Error core class could not be loaded.', 'event_espresso'));
-            }
-            $error_handling_loaded = true;
-        }
 
-        /**
-         *    espresso_load_required
-         *    given a class name and path, this function will load that file or throw an exception
-         *
-         * @param    string $classname
-         * @param    string $full_path_to_file
-         * @throws    EE_Error
-         */
-        function espresso_load_required($classname, $full_path_to_file)
-        {
-            if (is_readable($full_path_to_file)) {
-                require_once $full_path_to_file;
-            } else {
-                throw new \EE_Error (
-                    sprintf(
-                        esc_html__(
-                            'The %s class file could not be located or is not readable due to file permissions.',
-                            'event_espresso'
-                        ),
-                        $classname
-                    )
-                );
-            }
-        }
-
-        /**
-         * @since 4.9.27
-         * @throws \EE_Error
-         * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-         * @throws \EventEspresso\core\exceptions\InvalidEntityException
-         * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
-         * @throws \EventEspresso\core\exceptions\InvalidClassException
-         * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-         * @throws \EventEspresso\core\services\container\exceptions\ServiceExistsException
-         * @throws \EventEspresso\core\services\container\exceptions\ServiceNotFoundException
-         * @throws \OutOfBoundsException
-         */
-        function bootstrap_espresso()
-        {
-            require_once __DIR__ . '/core/espresso_definitions.php';
-            try {
-                espresso_load_error_handling();
-                espresso_load_required(
-                    'EEH_Base',
-                    EE_CORE . 'helpers' . DS . 'EEH_Base.helper.php'
-                );
-                espresso_load_required(
-                    'EEH_File',
-                    EE_CORE . 'interfaces' . DS . 'EEHI_File.interface.php'
-                );
-                espresso_load_required(
-                    'EEH_File',
-                    EE_CORE . 'helpers' . DS . 'EEH_File.helper.php'
-                );
-                espresso_load_required(
-                    'EEH_Array',
-                    EE_CORE . 'helpers' . DS . 'EEH_Array.helper.php'
-                );
-                // instantiate and configure PSR4 autoloader
-                espresso_load_required(
-                    'Psr4Autoloader',
-                    EE_CORE . 'Psr4Autoloader.php'
-                );
-                espresso_load_required(
-                    'EE_Psr4AutoloaderInit',
-                    EE_CORE . 'EE_Psr4AutoloaderInit.core.php'
-                );
-                $AutoloaderInit = new EE_Psr4AutoloaderInit();
-                $AutoloaderInit->initializeAutoloader();
-                espresso_load_required(
-                    'EE_Request',
-                    EE_CORE . 'request_stack' . DS . 'EE_Request.core.php'
-                );
-                espresso_load_required(
-                    'EE_Response',
-                    EE_CORE . 'request_stack' . DS . 'EE_Response.core.php'
-                );
-                espresso_load_required(
-                    'EE_Bootstrap',
-                    EE_CORE . 'EE_Bootstrap.core.php'
-                );
-                // bootstrap EE and the request stack
-                new EE_Bootstrap(
-                    new EE_Request($_GET, $_POST, $_COOKIE),
-                    new EE_Response()
-                );
-            } catch (Exception $e) {
-                require_once EE_CORE . 'exceptions' . DS . 'ExceptionStackTraceDisplay.php';
-                new EventEspresso\core\exceptions\ExceptionStackTraceDisplay($e);
-            }
-        }
+        require_once __DIR__ . '/core/bootstrap_espresso.php';
         bootstrap_espresso();
     }
 }
