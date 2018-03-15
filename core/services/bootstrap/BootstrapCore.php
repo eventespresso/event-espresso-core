@@ -216,6 +216,7 @@ class BootstrapCore
             array(
                 // first in last out
                 'EventEspresso\core\services\request\middleware\BotDetector' => array(),
+                'EventEspresso\core\services\request\middleware\DetectFileEditorRequest' => array(),
                 'EventEspresso\core\services\request\middleware\PreProductionVersionWarning' => array(),
                 'EventEspresso\core\services\request\middleware\RecommendedVersions' => array(),
                 // last in first out
@@ -227,7 +228,7 @@ class BootstrapCore
             'FHEE__EE_Bootstrap__build_request_stack__stack_apps',
             $stack_apps
         );
-        // load middleware onto stack : FIFO (First In First Out)
+        // load middleware onto stack : FILO (First In Last Out)
         // items at the beginning of the $stack_apps array will run last
         foreach ((array) $stack_apps as $stack_app => $stack_app_args) {
             $request_stack_builder->push(array($stack_app, $stack_app_args));
