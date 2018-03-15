@@ -2,7 +2,9 @@
 
 namespace EventEspresso\core\services\request;
 
+use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use Exception;
 use SplDoublyLinkedList;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -46,7 +48,7 @@ class RequestStackBuilder extends SplDoublyLinkedList
      *
      * @param RequestStackCoreAppInterface $application
      * @return RequestStack
-     * @throws InvalidRequestStackMiddlewareException
+     * @throws Exception
      */
     public function resolve(RequestStackCoreAppInterface $application)
     {
@@ -60,11 +62,19 @@ class RequestStackBuilder extends SplDoublyLinkedList
         // because if we don't, the second stack will end  up in the incorrect order.
         $this->setIteratorMode(SplDoublyLinkedList::IT_MODE_FIFO | SplDoublyLinkedList::IT_MODE_KEEP);
         for ($this->rewind(); $this->valid(); $this->next()) {
-            $middleware_app       = $this->validateMiddlewareAppDetails($this->current(), true);
-            $middleware_app_class = array_shift($middleware_app);
-            $middleware_app_args  = is_array($middleware_app) ? $middleware_app : array();
-            $middleware_app_args  = array($application, $this->loader) + $middleware_app_args;
-            $application = $this->loader->getShared($middleware_app_class, $middleware_app_args);
+            try {
+                $middleware_app       = $this->validateMiddlewareAppDetails($this->current(), true);
+                $middleware_app_class = array_shift($middleware_app);
+                $middleware_app_args  = is_array($middleware_app) ? $middleware_app : array();
+                $middleware_app_args  = array($application, $this->loader) + $middleware_app_args;
+                $application          = $this->loader->getShared($middleware_app_class, $middleware_app_args);
+            } catch (InvalidRequestStackMiddlewareException $exception) {
+                if(WP_DEBUG) {
+                    new ExceptionStackTraceDisplay($exception);
+                    continue;
+                }
+                error_log($exception->getMessage());
+            }
         }
         return new RequestStack($application, $core_app);
     }
@@ -90,6 +100,14 @@ class RequestStackBuilder extends SplDoublyLinkedList
         if(is_array($middleware_app_class)) {
             if ($recurse === true) {
                 return $this->validateMiddlewareAppDetails(array_reverse($middleware_app));
+            }
+            throw new InvalidRequestStackMiddlewareException($middleware_app_class);
+        }
+        // is filter callback working like legacy middleware and sending a numerically indexed array ?
+        if(is_int($middleware_app_class)) {
+            if ($recurse === true) {
+                $middleware_app = array_reverse($middleware_app);
+                return $this->validateMiddlewareAppDetails(array(reset($middleware_app), null));
             }
             throw new InvalidRequestStackMiddlewareException($middleware_app_class);
         }
