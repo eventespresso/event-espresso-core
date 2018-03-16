@@ -21,7 +21,7 @@ export default () => registerBlockType(
     category:   "widgets",
     keywords:   ["events", "recent events"],
     supports:   {
-      html: false,
+      html: false
     },
     transforms: {
       from: [
