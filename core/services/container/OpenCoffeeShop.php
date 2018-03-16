@@ -1,9 +1,15 @@
 <?php
 namespace EventEspresso\core\services\container;
 
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
-}
+use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\exceptions\InvalidIdentifierException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
+use OutOfBoundsException;
+
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
@@ -13,7 +19,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * 
  */
 class OpenCoffeeShop {
 
@@ -22,53 +28,23 @@ class OpenCoffeeShop {
 	 */
 	private $CoffeeShop;
 
-	/**
-	 * @var DependencyInjector $DependencyInjector
-	 */
-	private $DependencyInjector;
 
 
-
-	/**
-	 * OpenCoffeeShop constructor.
-	 */
+    /**
+     * OpenCoffeeShop constructor
+     *
+     * @throws InvalidInterfaceException
+     */
 	public function __construct()
     {
-		// instantiate the container
+        // instantiate the DI container
 		$this->CoffeeShop = new CoffeeShop();
-		// create a dependency injector class for resolving class constructor arguments
-		$this->DependencyInjector = new DependencyInjector(
-			$this->CoffeeShop,
-			new \EEH_Array()
-		);
-		// and some coffeemakers, one for creating new instances
-		$this->CoffeeShop->addCoffeeMaker(
-			new NewCoffeeMaker( $this->CoffeeShop, $this->DependencyInjector ),
-			CoffeeMaker::BREW_NEW
-		);
-		// one for shared services
-		$this->CoffeeShop->addCoffeeMaker(
-			new SharedCoffeeMaker( $this->CoffeeShop, $this->DependencyInjector ),
-			CoffeeMaker::BREW_SHARED
-		);
-		// and one for classes that only get loaded
-		$this->CoffeeShop->addCoffeeMaker(
-			new LoadOnlyCoffeeMaker( $this->CoffeeShop, $this->DependencyInjector ),
-			CoffeeMaker::BREW_LOAD_ONLY
-		);
-		// add default recipe, which should handle loading for most PSR-4 compatible classes
-		// as long as they are not type hinting for interfaces
-		$this->CoffeeShop->addRecipe(
-			new Recipe(
-				Recipe::DEFAULT_ID
-			)
-		);
-	}
+    }
 
 
 
 	/**
-	 * @return \EventEspresso\core\services\container\CoffeeShop
+	 * @return CoffeeShop
 	 */
 	public function CoffeeShop() {
 		return $this->CoffeeShop;
@@ -76,9 +52,51 @@ class OpenCoffeeShop {
 
 
 
-	public function addRecipes() {
+    /**
+     * configure coffee makers which control the different kinds of brews
+     * ( shared services, new factory objects, etc )
+     *
+     * @throws InvalidEntityException
+     */
+	public function setupCoffeeMakers() {
+        // create a dependency injector class for resolving class constructor arguments
+        $DependencyInjector = new DependencyInjector(
+            $this->CoffeeShop,
+            new \EEH_Array()
+        );
+        // and some coffeemakers, one for creating new instances
+        $this->CoffeeShop->addCoffeeMaker(
+            new NewCoffeeMaker($this->CoffeeShop, $DependencyInjector),
+            CoffeeMaker::BREW_NEW
+        );
+        // one for shared services
+        $this->CoffeeShop->addCoffeeMaker(
+            new SharedCoffeeMaker($this->CoffeeShop, $DependencyInjector),
+            CoffeeMaker::BREW_SHARED
+        );
+        // and one for classes that only get loaded
+        $this->CoffeeShop->addCoffeeMaker(
+            new LoadOnlyCoffeeMaker($this->CoffeeShop, $DependencyInjector),
+            CoffeeMaker::BREW_LOAD_ONLY
+        );
+    }
 
-		// PSR-4 compatible class with aliases
+
+
+    /**
+     * Recipes define how to load legacy classes
+     *
+     * @throws InvalidIdentifierException
+     */
+    public function addRecipes() {
+        // add default recipe, which should handle loading for most PSR-4 compatible classes
+        // as long as they are not type hinting for interfaces
+        $this->CoffeeShop->addRecipe(
+            new Recipe(
+                Recipe::DEFAULT_ID
+            )
+        );
+        // PSR-4 compatible class with aliases
 		$this->CoffeeShop->addRecipe(
 			new Recipe(
 				'CommandHandlerManager',
@@ -143,8 +161,6 @@ class OpenCoffeeShop {
 					EE_ADMIN . '*.core.php',
 					EE_CPTS . '*.core.php',
 					EE_CORE . 'data_migration_scripts' . DS . '*.core.php',
-					EE_CORE . 'request_stack' . DS . '*.core.php',
-					EE_CORE . 'middleware' . DS . '*.core.php',
 				)
 			)
 		);
@@ -175,6 +191,27 @@ class OpenCoffeeShop {
 	}
 
 
+
+    /**
+     * bootstrap EE and the request stack
+     *
+     * @throws ServiceNotFoundException
+     * @throws InvalidClassException
+     * @throws InvalidDataTypeException
+     * @throws InvalidIdentifierException
+     * @throws exceptions\ServiceExistsException
+     * @throws OutOfBoundsException
+     * @throws exceptions\InstantiationException
+     */
+    public function firstBrew()
+    {
+        $this->CoffeeShop->brew(
+            'EventEspresso\core\services\request\Request',
+            array($_GET, $_POST, $_COOKIE, $_SERVER)
+        );
+        $this->CoffeeShop->brew('EventEspresso\core\services\request\Response');
+        $this->CoffeeShop->brew('EE_Bootstrap');
+    }
 
 
 }

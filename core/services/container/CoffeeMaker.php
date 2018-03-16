@@ -70,11 +70,12 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
 
     /**
      * @param $type
+     * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
      */
     public static function validateType($type)
     {
         $types = CoffeeMaker::getTypes();
-        if ( ! in_array($type, $types)) {
+        if ( ! in_array($type, $types, true)) {
             throw new InvalidIdentifierException(
                 is_object($type) ? get_class($type) : gettype($type),
                 __(
@@ -127,22 +128,26 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
      *
      * @param \ReflectionClass $reflector
      * @return mixed
+     * @throws InstantiationException
      */
     protected function resolveInstantiationMethod(\ReflectionClass $reflector)
     {
         if ($reflector->getConstructor() === null) {
             return 'NewInstance';
-        } else if ($reflector->isInstantiable()) {
-            return 'NewInstanceArgs';
-        } else if (method_exists($reflector->getName(), 'instance')) {
-            return 'instance';
-        } else if (method_exists($reflector->getName(), 'new_instance')) {
-            return 'new_instance';
-        } else if (method_exists($reflector->getName(), 'new_instance_from_db')) {
-            return 'new_instance_from_db';
-        } else {
-            throw new InstantiationException($reflector->getName());
         }
+        if ($reflector->isInstantiable()) {
+            return 'NewInstanceArgs';
+        }
+        if (method_exists($reflector->getName(), 'instance')) {
+            return 'instance';
+        }
+        if (method_exists($reflector->getName(), 'new_instance')) {
+            return 'new_instance';
+        }
+        if (method_exists($reflector->getName(), 'new_instance_from_db')) {
+            return 'new_instance_from_db';
+        }
+        throw new InstantiationException($reflector->getName());
     }
 
 
@@ -152,6 +157,7 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
      * and then verifies that classes exist where applicable
      *
      * @param RecipeInterface $recipe
+     * @return bool
      * @throws InvalidClassException
      */
     protected function resolveClassAndFilepath(RecipeInterface $recipe)
@@ -174,6 +180,7 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
         if ($recipe->type() !== CoffeeMaker::BREW_LOAD_ONLY && ! class_exists($recipe->fqcn(), false)) {
             throw new InvalidClassException($recipe->identifier());
         }
+        return true;
     }
 
 

@@ -1,7 +1,9 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 
 /**
@@ -614,8 +616,9 @@ abstract class EE_message_type extends EE_Messages_Base
      *
      * @param EE_Messages_incoming_data $data
      * @param string                    $context Limit addressees to specific context.
-     * @return array   An array indexed by context where each context is an array of EE_Messages_Addressee objects for
+     * @return array An array indexed by context where each context is an array of EE_Messages_Addressee objects for
      *                                           that context
+     * @throws EE_Error
      */
     public function get_addressees(EE_Messages_incoming_data $data, $context = '')
     {
@@ -793,6 +796,10 @@ abstract class EE_message_type extends EE_Messages_Base
      *
      * @access protected
      * @return array array of EE_Messages_Addressee objects
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _admin_addressees()
     {
@@ -826,6 +833,7 @@ abstract class EE_message_type extends EE_Messages_Base
      *
      * @access protected
      * @return array of EE_Addressee objects
+     * @throws EE_Error
      */
     protected function _primary_attendee_addressees()
     {
@@ -869,26 +877,25 @@ abstract class EE_message_type extends EE_Messages_Base
                     continue;
                 }
             }
-            if (
-                in_array($details['attendee_email'], $already_processed)
-                && apply_filters(
-                    'FHEE__EE_message_type___attendee_addressees__prevent_duplicate_email_sends',
-                    true,
-                    $this->_data,
-                    $this
-                )
+            if (apply_filters(
+                'FHEE__EE_message_type___attendee_addressees__prevent_duplicate_email_sends',
+                true,
+                $this->_data,
+                $this
+            )
+                && in_array($att_id, $already_processed, true)
             ) {
                 continue;
             }
-            $already_processed[] = $details['attendee_email'];
+            $already_processed[] = $att_id;
             foreach ($details as $item => $value) {
                 $aee[$item] = $value;
-                if ($item == 'line_ref') {
+                if ($item === 'line_ref') {
                     foreach ($value as $event_id) {
                         $aee['events'][$event_id] = $this->_data->events[$event_id];
                     }
                 }
-                if ($item == 'attendee_email') {
+                if ($item === 'attendee_email') {
                     $aee['attendee_email'] = $value;
                 }
                 /*if ( $item == 'registration_id' ) {
@@ -912,13 +919,15 @@ abstract class EE_message_type extends EE_Messages_Base
     /**
      * @param $event_id
      * @return int
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _get_event_admin_id($event_id)
     {
         $event = EEM_Event::instance()->get_one_by_ID($event_id);
         return $event instanceof EE_Event ? $event->wp_user() : 0;
     }
-
-
 }
 //end EE_message_type class

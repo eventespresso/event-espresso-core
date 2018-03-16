@@ -93,6 +93,9 @@ class MessagesAdmin extends CoreAdmin
         "//div[@class='activate_context_on_off_toggle_container']/div[@class='switch']/label";
 
 
+    const SELECTOR_LINK_FINALIZE_PAYMENT_PENDING_PAYMENT_MESSAGE = "//td/p[@class='callout']/a";
+
+
 
     /**
      * @param string $additional_params Any additional request parameters for the generated url should be included as

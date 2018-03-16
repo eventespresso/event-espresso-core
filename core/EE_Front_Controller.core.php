@@ -1,4 +1,5 @@
 <?php
+
 use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 use EventEspresso\widgets\EspressoWidget;
 
@@ -95,10 +96,6 @@ final class EE_Front_Controller
         add_filter('admin_url', array($this, 'maybe_force_admin_ajax_ssl'), 200, 1);
         // action hook EE
         do_action('AHEE__EE_Front_Controller__construct__done', $this);
-        // for checking that browser cookies are enabled
-        if (apply_filters('FHEE__EE_Front_Controller____construct__set_test_cookie', true)) {
-            setcookie('ee_cookie_test', uniqid('ect',true), time() + DAY_IN_SECONDS, '/');
-        }
     }
 
 
@@ -159,10 +156,9 @@ final class EE_Front_Controller
 
 
     /**
-     *    employ_CPT_Strategy
-     *
-     * @access    public
-     * @return    void
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function employ_CPT_Strategy()
     {
@@ -518,6 +514,14 @@ final class EE_Front_Controller
         $this->getLegacyShortcodesManager()->initializeShortcode($shortcode_class, $wp);
     }
 
+
+    /**
+     * @return void
+     * @deprecated 4.9.57.p
+     */
+    public function loadPersistentAdminNoticeManager()
+    {
+    }
 }
 // End of file EE_Front_Controller.core.php
 // Location: /core/EE_Front_Controller.core.php

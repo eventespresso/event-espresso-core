@@ -11,7 +11,7 @@
  * @package       Event Espresso
  * @subpackage    core
  * @author        Brent Christensen
- * @since         $VID:$
+ * 
  */
 class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_Display_Strategy
 {
@@ -26,6 +26,12 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
             'checkbox_dropdown_selector',
             EE_GLOBAL_ASSETS_URL . 'css/checkbox_dropdown_selector.css',
             array('espresso_default'),
+            EVENT_ESPRESSO_VERSION
+        );
+        wp_register_style(
+            'espresso_default',
+            EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css',
+            array('dashicons'),
             EVENT_ESPRESSO_VERSION
         );
         wp_enqueue_style('checkbox_dropdown_selector');

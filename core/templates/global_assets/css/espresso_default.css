@@ -781,7 +781,9 @@ input.ee-register-button {
 .float-left {
 	float: left;
 }
-.clear, .clear-float {
+.clear, 
+.clear-float,
+.ee-clear-float {
 	clear: both;
 }
 .hidden {

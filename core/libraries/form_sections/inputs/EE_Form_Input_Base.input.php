@@ -127,6 +127,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     protected $_normalized_value;
 
+
+    /**
+     * Normalized default value either initially set on the input, or provided by calling
+     * set_default().
+     * @var mixed
+     */
+    protected $_default;
+
     /**
      * Strategy used for displaying this field.
      * Child classes must use _get_display_strategy to access it.
@@ -175,6 +183,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * @type EE_Display_Strategy_Base       $display          strategy
      * @type EE_Normalization_Strategy_Base $normalization_strategy
      * @type EE_Validation_Strategy_Base[]  $validation_strategies
+     * @type boolean                        $ignore_input special argument which can be used to avoid adding any validation strategies,
+     *                                                    and sets the normalization strategy to the Null normalization. This is good
+     *                                                    when you want the input to be totally ignored server-side (like when using
+     *                                                    React.js form inputs)
      *                                                        }
      */
     public function __construct($input_args = array())
@@ -183,11 +195,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         // the following properties must be cast as arrays
         if (isset($input_args['validation_strategies'])) {
             foreach ((array)$input_args['validation_strategies'] as $validation_strategy) {
-                if ($validation_strategy instanceof EE_Validation_Strategy_Base) {
+                if ($validation_strategy instanceof EE_Validation_Strategy_Base && empty($input_args['ignore_input'])) {
                     $this->_validation_strategies[get_class($validation_strategy)] = $validation_strategy;
                 }
             }
             unset($input_args['validation_strategies']);
+        }
+        if(isset($input_args['ignore_input'])) {
+            $this->_validation_strategies = array();
         }
         // loop thru incoming options
         foreach ($input_args as $key => $value) {
@@ -208,13 +223,17 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         foreach ($this->_validation_strategies as $validation_strategy) {
             $validation_strategy->_construct_finalize($this);
         }
+        if (isset($input_args['ignore_input'])) {
+            $this->_normalization_strategy = new EE_Null_Normalization();
+        }
         if (! $this->_normalization_strategy) {
-            $this->_normalization_strategy = new EE_Text_Normalization();
+                $this->_normalization_strategy = new EE_Text_Normalization();
         }
         $this->_normalization_strategy->_construct_finalize($this);
         //at least we can use the normalization strategy to populate the default
         if (isset($input_args['default'])) {
             $this->set_default($input_args['default']);
+            unset($input_args['default']);
         }
         if (! $this->_sensitive_data_removal_strategy) {
             $this->_sensitive_data_removal_strategy = new EE_No_Sensitive_Data_Removal();
@@ -814,6 +833,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function set_default($value)
     {
+        $this->_default = $value;
         $this->_set_normalized_value($value);
         $this->_set_raw_value($value);
     }
@@ -1153,5 +1173,17 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         foreach ($this->get_validation_strategies() as $validation_strategy) {
             $validation_strategy->enqueue_js();
         }
+    }
+
+
+
+    /**
+     * Gets the default value set on the input (not the current value, which may have been
+     * changed because of a form submission). If no default was set, this us null.
+     * @return mixed
+     */
+    public function get_default()
+    {
+        return $this->_default;
     }
 }

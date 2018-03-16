@@ -25,19 +25,19 @@ class EventsAdmin extends CoreAdmin
      * Selector for the Event Title field in the event editor
      * @var string
      */
-    const EVENT_EDITOR_TITLE_FIELD_SELECTOR = "//input[@id='title']";
+    const EVENT_EDITOR_TITLE_FIELD_SELECTOR = ['xpath' => "//input[@id='title']"];
 
     /**
      * Selector for the publish submit button in the event editor.
      * @var string
      */
-    const EVENT_EDITOR_PUBLISH_BUTTON_SELECTOR = "#publish";
+    const EVENT_EDITOR_PUBLISH_BUTTON_SELECTOR = ['xpath'=>"//div[@id='major-publishing-actions']//input[@id='publish']"];
 
 
     /**
      * Selector for the save button in the event editor
      */
-    const EVENT_EDITOR_SAVE_BUTTON_SELECTOR = "#save-post";
+    const EVENT_EDITOR_SAVE_BUTTON_SELECTOR = ['xpath' => "//div[@id='minor-publishing-actions']//input[@id='save-post']"];
 
 
     /**
@@ -276,5 +276,18 @@ class EventsAdmin extends CoreAdmin
                . "//table[@class='messages-custom-template-switcher']"
                . "//tr/td[contains(.,'Registration Approved')]"
                . "//ancestor::tr//select[contains(@class,'message-template-selector')]";
+    }
+
+
+    /**
+     * Returns the selector for the action link to the registrations list table view filtered by the given event_id.
+     * Assumes one is in the context of the Events List Table
+     * @param int $event_id
+     * @return string
+     */
+    public static function listTableActionLinkRegistrationsForEvent($event_id)
+    {
+        return "//tbody[@id='the-list']/tr/td[contains(@class, 'column-id') and contains(.,$event_id)]"
+                . "//ancestor::tr/td//a[div[contains(@class, 'dashicons-groups')]]";
     }
 }

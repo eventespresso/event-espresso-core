@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\core\domain\entities\Context;
+use EventEspresso\core\domain\entities\contexts\ContextInterface;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -141,7 +141,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @param string       $new_STS_ID
      * @param boolean      $use_default
-     * @param Context|null $context
+     * @param ContextInterface|null $context
      * @return bool
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -151,7 +151,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function set_status($new_STS_ID = null, $use_default = false, Context $context = null)
+    public function set_status($new_STS_ID = null, $use_default = false, ContextInterface $context = null)
     {
         // get current REG_Status
         $old_STS_ID = $this->status_ID();
@@ -199,14 +199,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @param string       $new_STS_ID
      * @param string       $old_STS_ID
-     * @param Context|null $context
+     * @param ContextInterface|null $context
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    private function _update_if_canceled_or_declined($new_STS_ID, $old_STS_ID, Context $context = null)
+    private function _update_if_canceled_or_declined($new_STS_ID, $old_STS_ID, ContextInterface $context = null)
     {
         // these reg statuses should not be considered in any calculations involving monies owing
         $closed_reg_statuses = EEM_Registration::closed_reg_statuses();
@@ -232,14 +232,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param array        $closed_reg_statuses
      * @param string       $new_STS_ID
      * @param string       $old_STS_ID
-     * @param Context|null $context
+     * @param ContextInterface|null $context
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    private function updateIfCanceled(array $closed_reg_statuses, $new_STS_ID, $old_STS_ID, Context $context = null)
+    private function updateIfCanceled(array $closed_reg_statuses, $new_STS_ID, $old_STS_ID, ContextInterface $context = null)
     {
         // true if registration has been cancelled or declined
         if (in_array($new_STS_ID, $closed_reg_statuses, true)
@@ -277,14 +277,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param array        $closed_reg_statuses
      * @param string       $new_STS_ID
      * @param string       $old_STS_ID
-     * @param Context|null $context
+     * @param ContextInterface|null $context
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    private function updateIfDeclined(array $closed_reg_statuses, $new_STS_ID, $old_STS_ID, Context $context = null)
+    private function updateIfDeclined(array $closed_reg_statuses, $new_STS_ID, $old_STS_ID, ContextInterface $context = null)
     {
         // true if reinstating cancelled or declined registration
         if (in_array($old_STS_ID, $closed_reg_statuses, true)
@@ -316,10 +316,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     * @param Context|null $context
+     * @param ContextInterface|null $context
      * @return bool
      */
-    private function statusChangeUpdatesTransaction(Context $context = null)
+    private function statusChangeUpdatesTransaction(ContextInterface $context = null)
     {
         $contexts_that_do_not_update_transaction = (array) apply_filters(
             'AHEE__EE_Registration__statusChangeUpdatesTransaction__contexts_that_do_not_update_transaction',
@@ -328,7 +328,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             $this
         );
         return ! (
-            $context instanceof Context
+            $context instanceof ContextInterface
             && in_array($context->slug(), $contexts_that_do_not_update_transaction, true)
         );
     }
@@ -372,7 +372,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     {
         // reserved ticket and datetime counts will be decremented as sold counts are incremented
         // so stop tracking that this reg has a ticket reserved
-        $this->release_reserved_ticket();
+        $this->release_reserved_ticket(false, "REG: {$this->ID()} (ln:". __LINE__ . ')');
         $ticket = $this->ticket();
         $ticket->increase_sold();
         $ticket->save();
@@ -385,8 +385,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * Gets the ticket this registration is for
      *
      * @param boolean $include_archived whether to include archived tickets or not.
+     *
      * @return EE_Ticket|EE_Base_Class
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function ticket($include_archived = true)
     {
@@ -438,7 +439,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * decrements (subtracts) this registration's related ticket sold and corresponding datetime sold values
      *
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     private function _release_registration_space()
     {
@@ -454,16 +455,26 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @param bool $update_ticket if true, will increment ticket and datetime reserved count
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public function reserve_ticket($update_ticket = false)
+    public function reserve_ticket($update_ticket = false, $source = 'unknown')
     {
-        if ($this->get_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true, false) === false) {
-            // PLZ NOTE: although checking $update_ticket first would be more efficient,
+        // only reserve ticket if space is not currently reserved
+        if ((bool) $this->get_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true) !== true) {
+            $this->update_extra_meta('reserve_ticket', "{$this->ticket_ID()} from {$source}");
+            // IMPORTANT !!!
+            // although checking $update_ticket first would be more efficient,
             // we NEED to ALWAYS call update_extra_meta(), which is why that is done first
-            if ($this->update_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true, false) && $update_ticket) {
+            if (
+                $this->update_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true)
+                && $update_ticket
+            ) {
                 $ticket = $this->ticket();
-                $ticket->increase_reserved();
+                $ticket->increase_reserved(1, "REG: {$this->ID()} (ln:" . __LINE__ . ')');
                 $ticket->save();
             }
         }
@@ -476,16 +487,26 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @param bool $update_ticket if true, will decrement ticket and datetime reserved count
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public function release_reserved_ticket($update_ticket = false)
+    public function release_reserved_ticket($update_ticket = false, $source = 'unknown')
     {
-        if ($this->get_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true, false) !== false) {
-            // PLZ NOTE: although checking $update_ticket first would be more efficient,
-            // we NEED to ALWAYS call delete_extra_meta(), which is why that is done first
-            if ($this->delete_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY) && $update_ticket) {
+        // only release ticket if space is currently reserved
+        if ((bool) $this->get_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true) === true) {
+            $this->update_extra_meta('release_reserved_ticket', "{$this->ticket_ID()} from {$source}");
+            // IMPORTANT !!!
+            // although checking $update_ticket first would be more efficient,
+            // we NEED to ALWAYS call update_extra_meta(), which is why that is done first
+            if (
+                $this->update_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, false)
+                && $update_ticket
+            ) {
                 $ticket = $this->ticket();
-                $ticket->decrease_reserved();
+                $ticket->decrease_reserved(1, true, "REG: {$this->ID()} (ln:" . __LINE__ . ')');
                 $ticket->save();
             }
         }
@@ -835,7 +856,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @access public
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function reg_url_link()
     {
@@ -866,39 +887,59 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     * Gets the URL of the thank you page with this registration REG_url_link added as
-     * a query parameter
+     * Gets the URL for the checkout payment options reg step
+     * with this registration's REG_url_link added as a query parameter
      *
      * @param bool $clear_session Set to true when you want to clear the session on revisiting the
      *                            payment overview url.
      * @return string
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     public function payment_overview_url($clear_session = false)
     {
-        return add_query_arg(array(
-            'e_reg_url_link' => $this->reg_url_link(),
-            'step'           => 'payment_options',
-            'revisit'        => true,
-            'clear_session' => (bool) $clear_session
-        ), EE_Registry::instance()->CFG->core->reg_page_url());
+        return add_query_arg(
+            (array) apply_filters(
+                'FHEE__EE_Registration__payment_overview_url__query_args',
+                array(
+                    'e_reg_url_link' => $this->reg_url_link(),
+                    'step'           => 'payment_options',
+                    'revisit'        => true,
+                    'clear_session'  => (bool) $clear_session,
+                ),
+                $this
+            ),
+            EE_Registry::instance()->CFG->core->reg_page_url()
+        );
     }
 
 
     /**
-     * Gets the URL of the thank you page with this registration REG_url_link added as
-     * a query parameter
+     * Gets the URL for the checkout attendee information reg step
+     * with this registration's REG_url_link added as a query parameter
      *
      * @return string
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     public function edit_attendee_information_url()
     {
-        return add_query_arg(array(
-            'e_reg_url_link' => $this->reg_url_link(),
-            'step'           => 'attendee_information',
-            'revisit'        => true,
-        ), EE_Registry::instance()->CFG->core->reg_page_url());
+        return add_query_arg(
+            (array) apply_filters(
+                'FHEE__EE_Registration__edit_attendee_information_url__query_args',
+                array(
+                    'e_reg_url_link' => $this->reg_url_link(),
+                    'step'           => 'attendee_information',
+                    'revisit'        => true,
+                ),
+                $this
+            ),
+            EE_Registry::instance()->CFG->core->reg_page_url()
+        );
     }
 
 
@@ -1512,7 +1553,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * "Latest" is defined by the `DTT_EVT_start` column.
      *
      * @return EE_Datetime|null
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_latest_related_datetime()
     {
@@ -1531,7 +1572,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * Returns the earliest datetime related to this registration (via the ticket attached to the registration).
      * "Earliest" is defined by the `DTT_EVT_start` column.
      *
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_earliest_related_datetime()
     {
@@ -1555,8 +1596,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *                            (if empty we'll get the primary datetime for
      *                            this registration (via event) and use it's ID);
      * @param EE_Checkin $checkin If present, we use the given checkin object rather than the dtt_id.
+     *
      * @return int                Integer representing Check-in status.
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function check_in_status_for_datetime($DTT_ID = 0, $checkin = null)
     {
@@ -1780,8 +1822,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
     /**
      * @param array $query_params
+     *
      * @return \EE_Registration[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function payments($query_params = array())
     {
@@ -1791,8 +1834,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
     /**
      * @param array $query_params
+     *
      * @return \EE_Registration_Payment[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function registration_payments($query_params = array())
     {
@@ -1815,7 +1859,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * @return \EE_Line_Item
      * @throws EntityNotFoundException
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function ticket_line_item()
     {
@@ -1848,8 +1892,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * Soft Deletes this model object.
      *
      * @return boolean | int
-     * @throws \RuntimeException
-     * @throws \EE_Error
+     * @throws RuntimeException
+     * @throws EE_Error
      */
     public function delete()
     {
@@ -1863,8 +1907,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Restores whatever the previous status was on a registration before it was trashed (if possible)
      *
-     * @throws \EE_Error
-     * @throws \RuntimeException
+     * @throws EE_Error
+     * @throws RuntimeException
      */
     public function restore()
     {
@@ -1880,6 +1924,45 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         return parent::restore();
     }
 
+
+    /**
+     * possibly toggle Registration status based on comparison of REG_paid vs REG_final_price
+     *
+     * @param  boolean $trigger_set_status_logic EE_Registration::set_status() can trigger additional logic
+     *                                           depending on whether the reg status changes to or from "Approved"
+     * @return boolean whether the Registration status was updated
+     * @throws EE_Error
+     * @throws RuntimeException
+     */
+    public function updateStatusBasedOnTotalPaid($trigger_set_status_logic = true)
+    {
+        $paid = $this->paid();
+        $price = $this->final_price();
+        switch(true) {
+            // overpaid or paid
+            case EEH_Money::compare_floats($paid, $price, '>'):
+            case EEH_Money::compare_floats($paid, $price):
+                $new_status = EEM_Registration::status_id_approved;
+                break;
+            //  underpaid
+            case EEH_Money::compare_floats($paid, $price, '<'):
+                $new_status = EEM_Registration::status_id_pending_payment;
+                break;
+            // uhhh Houston...
+            default:
+                throw new RuntimeException(
+                    esc_html__('The total paid calculation for this registration is inaccurate.', 'event_espresso')
+                );
+        }
+        if ($new_status !== $this->status_ID()) {
+            if ($trigger_set_status_logic) {
+                return $this->set_status($new_status);
+            }
+            parent::set('STS_ID', $new_status);
+            return true;
+        }
+        return false;
+    }
 
 
     /*************************** DEPRECATED ***************************/

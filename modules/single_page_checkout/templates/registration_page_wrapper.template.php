@@ -63,11 +63,6 @@ if ( ! $empty_cart ) {
 		}
 	}
 	do_action( 'AHEE__SPCO__after_registration_steps' );
-    printf(
-        esc_html__('%1$scancel registration%2$s', 'event_espresso'),
-        '<a class="small-text float-right" href="' . $cancel_page_url . '">',
-        '</a><br class="clear"/><br />'
-    );
 
 } else {
 ?>

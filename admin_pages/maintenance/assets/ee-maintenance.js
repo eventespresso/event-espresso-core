@@ -234,22 +234,15 @@ jQuery(function() {
 		Maintenance_helper.begin_migration();
 	});
 	
-	//start migration, update start-button to be "migrating..." and disable it
+	//confirm users want to not migrate
 	jQuery('#do-not-migrate').click(function(){
-		if ( confirm( 'You have chosen to NOT migrate your existing data.\nAre you sure you want to continue?' )) {
-			return true;
-		}else{
-			return false;
-		}
+		return confirm( ee_maintenance.confirm_skip_migration );
 	});
-	
-	//start migration, update start-button to be "migrating..." and disable it
-	jQuery('#delete-all-data-btn').click(function(){
-		if ( confirm( 'Are you sure you want to permanently delete ALL Event Espresso tables, records and options?\nThis action can NOT be undone.' )) {
-			return true;
-		} else {
-			return false;
-		}
-	});
+
+
+    //confirm users want to reset everything
+    jQuery('.ee-confirm').click(function(){
+        return confirm( ee_maintenance.confirm );
+    });
 	
 });

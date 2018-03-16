@@ -265,8 +265,12 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				OBJ_type varchar(45) DEFAULT NULL,
 				LIN_timestamp datetime NOT NULL DEFAULT '$now_in_mysql',
 				PRIMARY KEY  (LIN_ID),
-				KEY LIN_code (LIN_code(191)),
-				KEY TXN_ID (TXN_ID)";
+				KEY parent_order (LIN_parent,LIN_order),
+				KEY txn_type_timestamp (TXN_ID,LIN_type,LIN_timestamp),
+				KEY txn_obj_id_obj_type (TXN_ID,OBJ_ID,OBJ_type),
+				KEY obj_id_obj_type (OBJ_ID,OBJ_type)";
+        $this->_get_table_manager()->dropIndex('esp_line_item', 'TXN_ID');
+        $this->_get_table_manager()->dropIndex('esp_line_item', 'LIN_code');
         $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_log';
         $sql = "LOG_ID int(11) NOT NULL AUTO_INCREMENT,
@@ -635,7 +639,10 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
      */
     public function verify_db_collations()
     {
-        if (get_option('ee_verified_db_collations', false)) {
+        global $wpdb;
+        //double-check we haven't already done it or that that the DB doesn't support utf8mb4
+        if ('utf8mb4' !== $wpdb->charset
+            || get_option('ee_verified_db_collations', false)) {
             return;
         }
         // grab tables from each model
@@ -691,7 +698,11 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
      * @return void
      */
     public function verify_db_collations_again(){
-        if (get_option('ee_verified_db_collations_again', false)) {
+        global $wpdb;
+        //double-check we haven't already done this or that the DB doesn't support it
+        //compare to how WordPress' upgrade_430() function does this check
+        if ('utf8mb4' !== $wpdb->charset
+            || get_option('ee_verified_db_collations_again', false)) {
             return;
         }
         $tables_to_check = array(

@@ -8,7 +8,7 @@
  * @package         Event Espresso
  * @subpackage    core
  * @author				Brent Christensen
- * @since		 	   $VID:$
+ * 
  *
  */
 class EE_SPCO_JSON_Response {
@@ -279,7 +279,7 @@ class EE_SPCO_JSON_Response {
 	 * @param float $payment_amount
 	 */
 	public function set_payment_amount( $payment_amount ) {
-		$this->_payment_amount = EEH_Money::convert_to_float_from_localized_money( $payment_amount );
+		$this->_payment_amount = (float)$payment_amount;
 	}
 
 

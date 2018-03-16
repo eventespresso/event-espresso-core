@@ -1,13 +1,13 @@
 <?php
 
 use EventEspresso\core\domain\Domain;
-use EventEspresso\core\domain\entities\Context;
+use EventEspresso\core\domain\entities\contexts\Context;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-
+use EventEspresso\core\domain\services\attendee\forms\AttendeeContactDetailsMetaboxFormHandler;
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
 
 
 /**
@@ -367,6 +367,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_edit_registration',
                 'obj_id'     => $reg_id,
             ),
+            'wait_list_and_notify_registration' => array(
+                'func'       => 'wait_list_registration',
+                'noheader'   => true,
+                'args'       => array(true),
+                'capability' => 'ee_edit_registration',
+                'obj_id'     => $reg_id,
+            ),
             'contact_list'                       => array(
                 'func'       => '_attendee_contact_list_table',
                 'capability' => 'ee_read_contacts',
@@ -634,6 +641,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @access private
      * @return void
+     * @throws EE_Error
      */
     private function _get_registration_status_array()
     {
@@ -1013,6 +1021,29 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $EVT_ID                                    = ! empty($this->_req_data['event_id'])
             ? absint($this->_req_data['event_id'])
             : 0;
+        $ATT_ID = !empty($this->_req_data['ATT_ID'])
+            ? absint($this->_req_data['ATT_ID'])
+            : 0;
+        if ($ATT_ID) {
+            $attendee = EEM_Attendee::instance()->get_one_by_ID($ATT_ID);
+            if ($attendee instanceof EE_Attendee) {
+                $this->_template_args['admin_page_header'] = sprintf(
+                    esc_html__(
+                        '%1$s Viewing registrations for %2$s%3$s',
+                        'event_espresso'
+                    ),
+                    '<h3 style="line-height:1.5em;">',
+                    '<a href="' . EE_Admin_Page::add_query_args_and_nonce(
+                        array(
+                            'action' => 'edit_attendee',
+                            'post' => $ATT_ID
+                        ),
+                        REG_ADMIN_URL
+                    ) . '">' . $attendee->full_name() . '</a>',
+                    '</h3>'
+                );
+            }
+        }
         if ($EVT_ID) {
             if (EE_Registry::instance()->CAP->current_user_can(
                 'ee_edit_registrations',
@@ -1073,6 +1104,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @access private
      * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function _set_registration_object()
     {
@@ -1108,6 +1143,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param bool $today
      * @return EE_Registration[]|int
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_registrations(
         $per_page = 10,
@@ -1136,15 +1174,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
     /**
      * Retrieves the query parameters to be used by the Registration model for getting registrations.
      * Note: this listens to values on the request for some of the query parameters.
      *
      * @param array $request
-     * @param int    $per_page
-     * @param bool   $count
+     * @param int   $per_page
+     * @param bool  $count
      * @return array
+     * @throws EE_Error
      */
     protected function _get_registration_query_parameters(
         $request = array(),
@@ -1168,6 +1206,22 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         }
 
         return $query_params;
+    }
+
+
+    /**
+     * This will add ATT_ID to the provided $where array for EE model query parameters.
+     *
+     * @param array $request usually the same as $this->_req_data but not necessarily
+     * @return array
+     */
+    protected function addAttendeeIdToWhereConditions(array $request)
+    {
+        $where = array();
+        if (! empty($request['ATT_ID'])) {
+            $where['ATT_ID'] = absint($request['ATT_ID']);
+        }
+        return $where;
     }
 
 
@@ -1263,6 +1317,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param array $request usually the same as $this->_req_data but not necessarily
      * @return array
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _add_date_to_where_conditions(array $request)
     {
@@ -1389,6 +1446,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         return apply_filters(
             'FHEE__Registrations_Admin_Page___get_where_conditions_for_registrations_query',
             array_merge(
+                $this->addAttendeeIdToWhereConditions($request),
                 $this->_add_event_id_to_where_conditions($request),
                 $this->_add_category_id_to_where_conditions($request),
                 $this->_add_datetime_id_to_where_conditions($request),
@@ -1413,43 +1471,41 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             : '';
         switch ($orderby_field) {
             case '_REG_ID':
-                $orderby_field = 'REG_ID';
+                $orderby = array('REG_ID');
                 break;
             case '_Reg_status':
-                $orderby_field = 'STS_ID';
+                $orderby = array('STS_ID');
                 break;
             case 'ATT_fname':
-                $orderby_field = array('Attendee.ATT_fname', 'Attendee.ATT_lname');
+                $orderby = array('Attendee.ATT_fname', 'Attendee.ATT_lname');
                 break;
             case 'ATT_lname':
-                $orderby_field = array('Attendee.ATT_lname', 'Attendee.ATT_fname');
+                $orderby = array('Attendee.ATT_lname', 'Attendee.ATT_fname');
                 break;
             case 'event_name':
-                $orderby_field = 'Event.EVT_name';
+                $orderby = array('Event.EVT_name');
                 break;
             case 'DTT_EVT_start':
-                $orderby_field = 'Event.Datetime.DTT_EVT_start';
+                $orderby = array('Event.Datetime.DTT_EVT_start');
                 break;
             default: //'REG_date'
-                $orderby_field = 'REG_date';
+                $orderby = array('REG_date');
         }
 
         //order
         $order = ! empty($this->_req_data['order'])
             ? sanitize_text_field($this->_req_data['order'])
             : 'DESC';
-
-        //mutate orderby_field
-        $orderby_field = array_combine(
-            (array) $orderby_field,
-            array_fill(0, count($orderby_field), $order)
+        $orderby = array_combine(
+            $orderby,
+            array_fill(0, count($orderby), $order)
         );
         //because there are many registrations with the same date, define
         //a secondary way to order them, otherwise MySQL seems to be a bit random
-        if (empty($order['REG_ID'])) {
-            $orderby_field['REG_ID'] = $order;
+        if (empty($orderby['REG_ID'])) {
+            $orderby['REG_ID'] = $order;
         }
-        return array('order_by' => $orderby_field);
+        return array('order_by' => $orderby);
     }
 
 
@@ -1494,6 +1550,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return void
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws EntityNotFoundException
      */
     protected function _registration_details()
@@ -1659,10 +1718,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-
     /**
      * @return EE_Form_Section_Proper
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\EntityNotFoundException
      */
     protected function _generate_reg_status_change_form()
     {
@@ -1731,6 +1793,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @return array
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws EntityNotFoundException
      */
     protected function _get_reg_statuses()
@@ -1876,6 +1941,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param  string $STS_ID status id for the registration changed to
      * @param   bool  $notify indicates whether the _set_registration_status_from_request does notifications or not.
      * @return void
+     * @throws EE_Error
      */
     protected function _reg_status_change_return($STS_ID, $notify = false)
     {
@@ -2076,6 +2142,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return void
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws EntityNotFoundException
      */
     public function _reg_details_meta_box()
@@ -2387,6 +2457,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param int $REG_ID
      * @return EE_Registration_Custom_Questions_Form
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _get_reg_custom_questions_form($REG_ID)
     {
@@ -2408,6 +2481,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param bool $REG_ID
      * @return bool
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function _save_reg_custom_questions_form($REG_ID = false)
     {
@@ -2456,6 +2532,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return void
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function _reg_attendees_meta_box()
     {
@@ -2523,6 +2602,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return void
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function _reg_registrant_side_meta_box()
     {
@@ -2575,6 +2657,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param  boolean $trash whether to archive or restore
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws RuntimeException
      * @access protected
      */
@@ -2656,6 +2741,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _delete_registrations()
     {
@@ -2833,6 +2921,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return string html
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _get_registration_step_content()
     {
@@ -2933,6 +3024,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @access private
      * @return bool
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function _set_reg_event()
     {
@@ -2955,6 +3049,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return string
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
      */
     public function process_reg_step()
@@ -3067,6 +3165,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @access public
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function redirect_to_txn()
     {
@@ -3114,6 +3215,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param bool $trash
      * @return array
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @access public
      */
     public function get_attendees($per_page, $count = false, $trash = false)
@@ -3140,6 +3244,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 break;
             case 'CNT_ID':
                 $orderby = 'CNT_ID';
+                break;
+            case 'Registration_Count':
+                $orderby = 'Registration_Count';
                 break;
             default:
                 $orderby = 'ATT_lname';
@@ -3173,38 +3280,29 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'ATT_phone'                         => array('LIKE', $sstr),
                 'Registration.REG_final_price'      => array('LIKE', $sstr),
                 'Registration.REG_code'             => array('LIKE', $sstr),
-                'Registration.REG_count'            => array('LIKE', $sstr),
                 'Registration.REG_group_size'       => array('LIKE', $sstr),
             );
         }
         $offset = ($current_page - 1) * $per_page;
         $limit  = $count ? null : array($offset, $per_page);
+        $query_args = array(
+            $_where,
+            'extra_selects' => array('Registration_Count' => array('Registration.REG_ID', 'count', '%d')),
+            'limit' => $limit
+        );
+        if (! $count) {
+            $query_args['order_by'] = array($orderby => $sort);
+        }
         if ($trash) {
-            $_where['status'] = array('!=', 'publish');
+            $query_args[0]['status'] = array('!=', 'publish');
             $all_attendees    = $count
-                ? $ATT_MDL->count(array(
-                    $_where,
-                    'order_by' => array($orderby => $sort),
-                    'limit'    => $limit,
-                ), 'ATT_ID', true)
-                : $ATT_MDL->get_all(array(
-                    $_where,
-                    'order_by' => array($orderby => $sort),
-                    'limit'    => $limit,
-                ));
+                ? $ATT_MDL->count($query_args, 'ATT_ID', true)
+                : $ATT_MDL->get_all($query_args);
         } else {
-            $_where['status'] = array('IN', array('publish'));
+            $query_args[0]['status'] = array('IN', array('publish'));
             $all_attendees    = $count
-                ? $ATT_MDL->count(array(
-                    $_where,
-                    'order_by' => array($orderby => $sort),
-                    'limit'    => $limit,
-                ), 'ATT_ID', true)
-                : $ATT_MDL->get_all(array(
-                    $_where,
-                    'order_by' => array($orderby => $sort),
-                    'limit'    => $limit,
-                ));
+                ? $ATT_MDL->count($query_args, 'ATT_ID', true)
+                : $ATT_MDL->get_all($query_args);
         }
         return $all_attendees;
     }
@@ -3321,6 +3419,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _duplicate_attendee()
     {
@@ -3359,13 +3460,26 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-    //related to cpt routes
+    /**
+     * Callback invoked by parent EE_Admin_CPT class hooked in on `save_post` wp hook.
+     * @param int      $post_id
+     * @param WP_POST $post
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws LogicException
+     * @throws InvalidFormSubmissionException
+     */
     protected function _insert_update_cpt_item($post_id, $post)
     {
         $success  = true;
-        $attendee = EEM_Attendee::instance()->get_one_by_ID($post_id);
+        $attendee = $post instanceof WP_Post && $post->post_type === 'espresso_attendees'
+            ? EEM_Attendee::instance()->get_one_by_ID($post_id)
+            : null;
         //for attendee updates
-        if ($post->post_type = 'espresso_attendees' && ! empty($attendee)) {
+        if ($attendee instanceof EE_Attendee) {
             //note we should only be UPDATING attendees at this point.
             $updated_fields = array(
                 'ATT_fname'     => $this->_req_data['ATT_fname'],
@@ -3377,13 +3491,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'STA_ID'        => isset($this->_req_data['STA_ID']) ? $this->_req_data['STA_ID'] : '',
                 'CNT_ISO'       => isset($this->_req_data['CNT_ISO']) ? $this->_req_data['CNT_ISO'] : '',
                 'ATT_zip'       => isset($this->_req_data['ATT_zip']) ? $this->_req_data['ATT_zip'] : '',
-                'ATT_email'     => isset($this->_req_data['ATT_email']) ? $this->_req_data['ATT_email'] : '',
-                'ATT_phone'     => isset($this->_req_data['ATT_phone']) ? $this->_req_data['ATT_phone'] : '',
             );
             foreach ($updated_fields as $field => $value) {
                 $attendee->set($field, $value);
             }
-            $success                   = $attendee->save();
+
+            //process contact details metabox form handler (which will also save the attendee)
+            $contact_details_form = $this->getAttendeeContactDetailsMetaboxFormHandler($attendee);
+            $success = $contact_details_form->process($this->_req_data);
+
             $attendee_update_callbacks = apply_filters(
                 'FHEE__Registrations_Admin_Page__insert_update_cpt_item__attendee_update',
                 array()
@@ -3402,6 +3518,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 }
             }
         }
+
         if ($success === false) {
             EE_Error::add_error(
                 esc_html__(
@@ -3497,14 +3614,35 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @param  WP_Post $post wp post object
      * @return string attendee contact info ( and form )
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws LogicException
      * @throws DomainException
      */
     public function attendee_contact_info($post)
     {
         //get attendee object ( should already have it )
-        $this->_template_args['attendee'] = $this->_cpt_model_obj;
-        $template                         = REG_TEMPLATE_PATH . 'attendee_contact_info_metabox_content.template.php';
-        EEH_Template::display_template($template, $this->_template_args);
+        $form = $this->getAttendeeContactDetailsMetaboxFormHandler($this->_cpt_model_obj);
+        $form->enqueueStylesAndScripts();
+        echo $form->display();
+    }
+
+
+    /**
+     * Return form handler for the contact details metabox
+     *
+     * @param EE_Attendee $attendee
+     * @return AttendeeContactDetailsMetaboxFormHandler
+     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    protected function getAttendeeContactDetailsMetaboxFormHandler(EE_Attendee $attendee)
+    {
+        return new AttendeeContactDetailsMetaboxFormHandler($attendee, EE_Registry::instance());
     }
 
 
@@ -3512,7 +3650,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * Metabox for attendee details
      *
      * @param  WP_Post $post wp post object
-     * @return string attendee address details (and form)
      * @throws DomainException
      */
     public function attendee_address_details($post)
@@ -3613,6 +3750,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param boolean $trash - whether to move item to trash (TRUE) or restore it (FALSE)
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @access protected
      */
     protected function _trash_or_restore_attendees($trash = true)

@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\domain\Domain;
+use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\domain\services\factories\EmailAddressFactory;
 use EventEspresso\core\domain\services\validation\email\EmailValidationException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -23,7 +26,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class EED_Core_Rest_Api extends \EED_Module
 {
 
-    const ee_api_namespace           = 'ee/v';
+    const ee_api_namespace           = Domain::API_NAMESPACE;
 
     const ee_api_namespace_for_regex = 'ee\/v([^/]*)\/';
 
@@ -777,15 +780,24 @@ class EED_Core_Rest_Api extends \EED_Module
                     'required' => false,
                     'default'  => array(),
                     'type'     => 'object',
+                    //because we accept an almost infinite list of possible where conditions, WP
+                    // core validation and sanitization freaks out. We'll just validate this argument
+                    // while handling the request
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
                 ),
                 'limit'    => array(
                     'required' => false,
                     'default'  => EED_Core_Rest_Api::get_default_query_limit(),
                     'type'     => array(
-                        'object',
+                        'array',
                         'string',
                         'integer',
                     ),
+                    //because we accept a variety of types, WP core validation and sanitization
+                    //freaks out. We'll just validate this argument while handling the request
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
                 ),
                 'order_by' => array(
                     'required' => false,
@@ -793,7 +805,10 @@ class EED_Core_Rest_Api extends \EED_Module
                     'type'     => array(
                         'object',
                         'string',
-                    ),
+                    ),//because we accept a variety of types, WP core validation and sanitization
+                    //freaks out. We'll just validate this argument while handling the request
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
                 ),
                 'group_by' => array(
                     'required' => false,
@@ -802,16 +817,32 @@ class EED_Core_Rest_Api extends \EED_Module
                         'object',
                         'string',
                     ),
+                    //because we accept  an almost infinite list of possible groupings,
+                    // WP core validation and sanitization
+                    //freaks out. We'll just validate this argument while handling the request
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
                 ),
                 'having'   => array(
                     'required' => false,
                     'default'  => null,
                     'type'     => 'object',
+                    //because we accept an almost infinite list of possible where conditions, WP
+                    // core validation and sanitization freaks out. We'll just validate this argument
+                    // while handling the request
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
                 ),
                 'caps'     => array(
                     'required' => false,
                     'default'  => EEM_Base::caps_read,
                     'type'     => 'string',
+                    'enum'     => array(
+                        EEM_Base::caps_read,
+                        EEM_Base::caps_read_admin,
+                        EEM_Base::caps_edit,
+                        EEM_Base::caps_delete
+                    )
                 ),
             )
         );

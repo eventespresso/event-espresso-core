@@ -1,10 +1,6 @@
 <?php
 namespace EventEspresso\core\services\cache;
 
-use EE_Error;
-use WP_Error;
-use wpdb;
-
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -33,14 +29,14 @@ class TransientCacheStorage implements CacheStorageInterface
     /**
      * @var int $current_time
      */
-    private $current_time = 0;
+    private $current_time;
 
     /**
      * how often to perform transient cleanup
      *
      * @var string $transient_cleanup_frequency
      */
-    private $transient_cleanup_frequency = 'hour';
+    private $transient_cleanup_frequency;
 
     /**
      * options for how often to perform transient cleanup
@@ -52,7 +48,7 @@ class TransientCacheStorage implements CacheStorageInterface
     /**
      * @var array $transients
      */
-    private $transients = array();
+    private $transients;
 
 
 
@@ -75,7 +71,7 @@ class TransientCacheStorage implements CacheStorageInterface
     /**
      * Sets how often transient cleanup occurs
      *
-     * @return int
+     * @return string
      */
     private function setTransientCleanupFrequency()
     {
@@ -116,7 +112,7 @@ class TransientCacheStorage implements CacheStorageInterface
      * @param int    $timestamp [required]
      * @param string $cleanup_frequency
      * @param bool   $round_up
-     * @return false|int
+     * @return int
      */
     private function roundTimestamp($timestamp, $cleanup_frequency = 'hour', $round_up = true)
     {
@@ -155,7 +151,7 @@ class TransientCacheStorage implements CacheStorageInterface
                 $offset = HOUR_IN_SECONDS;
                 break;
         }
-        $rounded_timestamp = strtotime(date("Y-m-d {$hours}:{$minutes}:00", $timestamp));
+        $rounded_timestamp = (int) strtotime(date("Y-m-d {$hours}:{$minutes}:00", $timestamp));
         $rounded_timestamp += $round_up ? $offset : 0;
         return apply_filters(
             'FHEE__TransientCacheStorage__roundTimestamp__timestamp',
@@ -202,21 +198,30 @@ class TransientCacheStorage implements CacheStorageInterface
      */
     public function get($transient_key, $standard_cache = true)
     {
-        // to avoid cache stampedes (AKA:dogpiles) for standard cache items,
-        // check if known cache expires within the next minute,
-        // and if so, remove it from our tracking and and return nothing.
-        // this should trigger the cache content to be regenerated during this request,
-        // while allowing any following requests to still access the existing cache
-        // until it gets replaced with the refreshed content
-        if (
-            $standard_cache
-            && isset($this->transients[$transient_key])
-            && $this->transients[$transient_key] - time() <= MINUTE_IN_SECONDS
-        ) {
-            unset($this->transients[$transient_key]);
-            $this->updateTransients();
-            return null;
+        if (isset($this->transients[ $transient_key ])) {
+            // to avoid cache stampedes (AKA:dogpiles) for standard cache items,
+            // check if known cache expires within the next minute,
+            // and if so, remove it from our tracking and and return nothing.
+            // this should trigger the cache content to be regenerated during this request,
+            // while allowing any following requests to still access the existing cache
+            // until it gets replaced with the refreshed content
+            if (
+                $standard_cache
+                && $this->transients[$transient_key] - time() <= MINUTE_IN_SECONDS
+            ) {
+                unset($this->transients[$transient_key]);
+                $this->updateTransients();
+                return null;
+            }
+
+            // for non standard cache items, remove the key from our tracking,
+            // but proceed to retrieve the transient so that it also gets removed from the db
+            if ($this->transients[$transient_key] <= time()) {
+                unset($this->transients[$transient_key]);
+                $this->updateTransients();
+            }
         }
+
         $content = get_transient($transient_key);
         return $content !== false ? $content : null;
     }
@@ -239,14 +244,18 @@ class TransientCacheStorage implements CacheStorageInterface
      * delete multiple transients and remove tracking
      *
      * @param array $transient_keys [required] array of full or partial transient keys to be deleted
+     * @param bool  $force_delete   [optional] if true, then will not check incoming keys against those being tracked
+     *                              and proceed directly to deleting those entries from the cache storage
      */
-    public function deleteMany(array $transient_keys)
+    public function deleteMany(array $transient_keys, $force_delete = false)
     {
-        $full_transient_keys = array();
-        foreach ($this->transients as $transient_key => $expiration) {
-            foreach ($transient_keys as $transient_key_to_delete) {
-                if (strpos($transient_key, $transient_key_to_delete) !== false) {
-                    $full_transient_keys[] = $transient_key;
+        $full_transient_keys = $force_delete ? $transient_keys : array();
+        if(empty($full_transient_keys)){
+            foreach ($this->transients as $transient_key => $expiration) {
+                foreach ($transient_keys as $transient_key_to_delete) {
+                    if (strpos($transient_key, $transient_key_to_delete) !== false) {
+                        $full_transient_keys[] = $transient_key;
+                    }
                 }
             }
         }
@@ -372,12 +381,20 @@ class TransientCacheStorage implements CacheStorageInterface
             if($counter === $limit){
                 break;
             }
+            // remove any transient prefixes
+            $transient_key = strpos($transient_key,  '_transient_timeout_') === 0
+                ? str_replace('_transient_timeout_', '', $transient_key)
+                : $transient_key;
+            $transient_key = strpos($transient_key,  '_transient_') === 0
+                ? str_replace('_transient_', '', $transient_key)
+                : $transient_key;
             delete_transient($transient_key);
             unset($this->transients[$transient_key]);
             $counter++;
         }
         return $counter > 0;
     }
+
 
 
 }

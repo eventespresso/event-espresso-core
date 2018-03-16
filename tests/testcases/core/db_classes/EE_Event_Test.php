@@ -482,7 +482,112 @@ class EE_Event_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * @group sold_out_status_check
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
+     */
+    public function test_perform_sold_out_status_check()
+    {
+        $this->markTestSkipped('Temporarily skipped because of sporadic, unexplained fails. See https://events.codebasehq.com/projects/event-espresso/tickets/11394');
+        $event = EE_Event::new_instance(
+            array(
+                'status' => 'publish'
+            )
+        );
+        $event->save();
+        $datetime = EE_Datetime::new_instance(
+            array(
+                'EVT_ID'        => $event->ID(),
+                'DTT_EVT_start' => time() + WEEK_IN_SECONDS,
+                'DTT_EVT_end'   => time() + WEEK_IN_SECONDS + DAY_IN_SECONDS,
+                'DTT_reg_limit' => 4,
+                'DTT_sold'      => 2,
+            )
+        );
+        $datetime->save();
+        $ticket_A = EE_Ticket::new_instance(
+            array(
+                'TKT_name' => 'Ticket A',
+                'TKT_qty'  => 4,
+                'TKT_sold' => 2,
+            )
+        );
+        $ticket_A->save();
+        $ticket_A->_add_relation_to($datetime, 'Datetime');
+        $this->assertEquals('publish', $event->status());
+        $this->assertEquals(EE_Datetime::upcoming, $event->get_active_status());
+        $ticket_A->increase_sold(2);
+        $this->assertEquals('publish', $event->status());
+        $this->assertEquals(EE_Datetime::upcoming, $event->get_active_status(true));
+        // now perform sold  out check
+        $sold_out = $event->perform_sold_out_status_check();
+        $this->assertTrue($sold_out);
+        $this->assertEquals(EEM_Event::sold_out, $event->status());
+        $this->assertEquals(EE_Datetime::sold_out, $event->get_active_status(true));
+    }
 
+
+    /**
+     * @group sold_out_status_check
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
+     */
+    public function test_perform_sold_out_status_check_with_expired_ticket()
+    {
+        $event = EE_Event::new_instance(
+            array(
+                'status' => 'publish'
+            )
+        );
+        $event->save();
+        $datetime = EE_Datetime::new_instance(
+            array(
+                'EVT_ID'        => $event->ID(),
+                'DTT_EVT_start' => time() + WEEK_IN_SECONDS,
+                'DTT_EVT_end'   => time() + WEEK_IN_SECONDS + DAY_IN_SECONDS,
+                'DTT_reg_limit' => 4,
+                'DTT_sold'      => 2,
+            )
+        );
+        $datetime->save();
+        // expired early bird ticket
+        $ticket_A = EE_Ticket::new_instance(
+            array(
+                'TKT_name'       => 'Ticket A',
+                'TKT_start_date' => time() - MONTH_IN_SECONDS,
+                'TKT_end_date'   => time() - WEEK_IN_SECONDS,
+                'TKT_qty'        => 4,
+                'TKT_sold'       => 2,
+            )
+        );
+        $ticket_A->save();
+        $ticket_A->_add_relation_to($datetime, 'Datetime');
+        // regular on sale ticket
+        $ticket_B = EE_Ticket::new_instance(
+            array(
+                'TKT_name'       => 'Ticket B',
+                'TKT_start_date' => time() - WEEK_IN_SECONDS,
+                'TKT_end_date'   => time() + WEEK_IN_SECONDS,
+                'TKT_qty'        => 4,
+                'TKT_sold'       => 0,
+            )
+        );
+        $ticket_B->save();
+        $ticket_B->_add_relation_to($datetime, 'Datetime');
+        $this->assertEquals('publish', $event->status());
+        $this->assertEquals(EE_Datetime::upcoming, $event->get_active_status());
+        $ticket_B->increase_sold(2);
+        $this->assertEquals('publish', $event->status());
+        $this->assertEquals(EE_Datetime::upcoming, $event->get_active_status(true));
+        // now perform sold  out check
+        $sold_out = $event->perform_sold_out_status_check();
+        $this->assertTrue($sold_out);
+        $this->assertEquals(EEM_Event::sold_out, $event->status());
+        $this->assertEquals(EE_Datetime::sold_out, $event->get_active_status(true));
+    }
 }
 // End of file EE_Event_Test.php
 // Location: /tests/testcases/core/db_classes/EE_Event_Test.php

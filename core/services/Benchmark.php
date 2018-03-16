@@ -12,7 +12,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ *
  */
 class Benchmark
 {
@@ -191,8 +191,14 @@ class Benchmark
         }
         if (! empty(Benchmark::$memory_usage)) {
             $output .= $formatted
-                ? '<h5>Memory</h5>' . implode('<br />', Benchmark::$memory_usage)
-                : implode("\n", Benchmark::$memory_usage);
+                ? '<h5>Memory</h5>'
+                : "\nMemory";
+            foreach (Benchmark::$memory_usage as $label => $memory_usage) {
+                $output .= $formatted
+                    ? '<br />'
+                    : "\n";
+                $output .= "{$memory_usage} : {$label}";
+            }
         }
         if (empty($output)) {
             return '';

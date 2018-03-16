@@ -5,7 +5,7 @@
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Brent Christensen
- * @since 				$VID:$
+ * 
  *
  */
 

@@ -40,8 +40,9 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 
 	/**
 	 * incoming data is expected to be a EE_Transaction object and (possibly) EE_Payment object in an array.
+	 *
 	 * @param array $data
-	 * @throws \EE_Error
+	 * @throws EE_Error
 	 */
 	public function __construct( $data ) {
 
@@ -134,9 +135,11 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 
 
 
-	/**
-	 * _setup_data
-	 */
+    /**
+     * _setup_data
+     *
+     * @throws EE_Error
+     */
 	protected function _setup_data() {
 
 		$this->reg_info = array();
@@ -154,8 +157,8 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 		$this->ip_address = isset( $session_data['ip_address'] ) ? $session_data['ip_address'] : '';
 		$this->user_agent = isset( $session_data['user_agent'] ) ? $session_data['user_agent'] : '';
 		$this->init_access = $this->last_access = '';
-
-		$this->reg_objs = $this->txn->get_many_related('Registration');
+        //get all non-trashed registrations
+		$this->reg_objs = $this->txn->registrations(array(array('REG_deleted' => false)));
 		$this->_assemble_data();
 
 	}

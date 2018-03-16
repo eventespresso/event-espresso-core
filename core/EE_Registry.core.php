@@ -5,6 +5,7 @@ use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\commands\CommandBusInterface;
+use EventEspresso\core\services\container\RegistryContainer;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -196,11 +197,12 @@ class EE_Registry implements ResettableInterface
     protected function __construct(EE_Dependency_Map $dependency_map)
     {
         $this->_dependency_map = $dependency_map;
-        $this->LIB = new stdClass();
-        $this->addons = new stdClass();
-        $this->modules = new stdClass();
-        $this->shortcodes = new stdClass();
-        $this->widgets = new stdClass();
+        // $registry_container = new RegistryContainer();
+        $this->LIB = new RegistryContainer();
+        $this->addons = new RegistryContainer();
+        $this->modules = new RegistryContainer();
+        $this->shortcodes = new RegistryContainer();
+        $this->widgets = new RegistryContainer();
         add_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading', array($this, 'initialize'));
     }
 
@@ -230,15 +232,19 @@ class EE_Registry implements ResettableInterface
         );
         $this->load_core('Base', array(), true);
         // add our request and response objects to the cache
-        $request_loader = $this->_dependency_map->class_loader('EE_Request');
+        $request_loader = $this->_dependency_map->class_loader(
+            'EventEspresso\core\services\request\Request'
+        );
         $this->_set_cached_class(
             $request_loader(),
-            'EE_Request'
+            'EventEspresso\core\services\request\Request'
         );
-        $response_loader = $this->_dependency_map->class_loader('EE_Response');
+        $response_loader = $this->_dependency_map->class_loader(
+            'EventEspresso\core\services\request\Response'
+        );
         $this->_set_cached_class(
             $response_loader(),
-            'EE_Response'
+            'EventEspresso\core\services\request\Response'
         );
         add_action('AHEE__EE_System__set_hooks_for_core', array($this, 'init'));
     }
@@ -288,7 +294,7 @@ class EE_Registry implements ResettableInterface
             $module_class = get_class($module);
             $this->modules->{$module_class} = $module;
         } else {
-            if (! class_exists('EE_Module_Request_Router')) {
+            if ( ! class_exists('EE_Module_Request_Router', false)) {
                 $this->load_core('Module_Request_Router');
             }
             EE_Module_Request_Router::module_factory($module);
@@ -795,7 +801,7 @@ class EE_Registry implements ResettableInterface
             $class_name = $class_prefix . str_replace($class_prefix, '', $class_name);
         }
         $class_name = $this->_dependency_map->get_alias($class_name);
-        $class_exists = class_exists($class_name);
+        $class_exists = class_exists($class_name, false);
         // if we're only loading the class and it already exists, then let's just return true immediately
         if ($load_only && $class_exists) {
             return true;
@@ -970,10 +976,19 @@ class EE_Registry implements ResettableInterface
      */
     protected function _require_file($path, $class_name, $type = '', $file_paths = array())
     {
+        $this->resolve_legacy_class_parent($class_name);
         // don't give up! you gotta...
         try {
             //does the file exist and can it be read ?
             if (! $path) {
+                // just in case the file has already been autoloaded,
+                // but discrepancies in the naming schema are preventing it from
+                // being loaded via one of the EE_Registry::load_*() methods,
+                // then let's try one last hail mary before throwing an exception
+                // and call class_exists() again, but with autoloading turned ON
+                if(class_exists($class_name)) {
+                    return true;
+                }
                 // so sorry, can't find the file
                 throw new EE_Error (
                     sprintf(
@@ -1006,6 +1021,29 @@ class EE_Registry implements ResettableInterface
             return false;
         }
         return true;
+    }
+
+
+
+    /**
+     * Some of our legacy classes that extended a parent class would simply use a require() statement
+     * before their class declaration in order to ensure that the parent class was loaded.
+     * This is not ideal, but it's nearly impossible to determine the parent class of a non-namespaced class,
+     * without triggering a fatal error because the parent class has yet to be loaded and therefore doesn't exist.
+     *
+     * @param string $class_name
+     */
+    protected function resolve_legacy_class_parent($class_name = '')
+    {
+        try {
+            $legacy_parent_class_map = array(
+                'EE_Payment_Processor' => 'core/business/EE_Processor_Base.class.php'
+            );
+            if(isset($legacy_parent_class_map[$class_name])) {
+                require_once EE_PLUGIN_DIR_PATH . $legacy_parent_class_map[$class_name];
+            }
+        } catch (Exception $exception) {
+        }
     }
 
 
@@ -1348,8 +1386,35 @@ class EE_Registry implements ResettableInterface
 
 
     /**
+     * Gets the addon by its class name
+     *
+     * @param string $class_name
+     * @return EE_Addon
+     */
+    public function getAddon($class_name)
+    {
+        $class_name = str_replace('\\', '_', $class_name);
+        return $this->addons->{$class_name};
+    }
+
+
+    /**
+     * removes the addon from the internal cache
+     *
+     * @param string $class_name
+     * @return void
+     */
+    public function removeAddon($class_name)
+    {
+        $class_name = str_replace('\\', '_', $class_name);
+        unset($this->addons->{$class_name});
+    }
+
+
+
+    /**
      * Gets the addon by its name/slug (not classname. For that, just
-     * use the classname as the property name on EE_Config::instance()->addons)
+     * use the get_addon() method above
      *
      * @param string $name
      * @return EE_Addon
@@ -1367,10 +1432,17 @@ class EE_Registry implements ResettableInterface
 
 
     /**
-     * Gets an array of all the registered addons, where the keys are their names. (ie, what each returns for their
-     * name() function) They're already available on EE_Config::instance()->addons as properties, where each property's
-     * name is the addon's classname. So if you just want to get the addon by classname, use
-     * EE_Config::instance()->addons->{classname}
+     * Gets an array of all the registered addons, where the keys are their names.
+     * (ie, what each returns for their name() function)
+     * They're already available on EE_Registry::instance()->addons as properties,
+     * where each property's name is the addon's classname,
+     * So if you just want to get the addon by classname,
+     * OR use the get_addon() method above.
+     * PLEASE  NOTE:
+     * addons with Fully Qualified Class Names
+     * have had the namespace separators converted to underscores,
+     * so a classname like Fully\Qualified\ClassName
+     * would have been converted to Fully_Qualified_ClassName
      *
      * @return EE_Addon[] where the KEYS are the addon's name()
      */
@@ -1382,7 +1454,6 @@ class EE_Registry implements ResettableInterface
         }
         return $addons;
     }
-
 
 
     /**

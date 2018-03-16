@@ -282,7 +282,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                        . $title
                        . '" id="ee-duplicate-event-button" class="button button-small"  value="duplicate_event">'
                        . $title
-                       . '</button>';
+                       . '</a>';
         }
         return $return;
     }

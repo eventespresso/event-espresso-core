@@ -28,7 +28,10 @@ trait EventsAdmin
      */
     public function publishEvent()
     {
+        $this->actor()->scrollTo(EventsPage::EVENT_EDITOR_TITLE_FIELD_SELECTOR);
+        $this->actor()->wait(3);
         $this->actor()->click(EventsPage::EVENT_EDITOR_PUBLISH_BUTTON_SELECTOR);
+        $this->actor()->waitForText('Event published.', 30);
     }
 
 
@@ -37,6 +40,8 @@ trait EventsAdmin
      */
     public function saveEvent()
     {
+        $this->actor()->scrollTo(EventsPage::EVENT_EDITOR_TITLE_FIELD_SELECTOR);
+        $this->actor()->wait(2);
         $this->actor()->click(EventsPage::EVENT_EDITOR_SAVE_BUTTON_SELECTOR);
     }
 
@@ -53,8 +58,8 @@ trait EventsAdmin
         $this->amOnDefaultEventsListTablePage();
         $this->actor()->fillField(EventsPage::EVENT_LIST_TABLE_SEARCH_INPUT_SELECTOR, $event_title);
         $this->actor()->click(CoreAdmin::LIST_TABLE_SEARCH_SUBMIT_SELECTOR);
-        $this->actor()->waitForText('Displaying search results for');
-        $this->actor()->click(EventsPage::eventListTableEventTitleEditLink($event_title));
+        $this->actor()->waitForText($event_title, 15);
+        $this->actor()->click(EventsPage::eventListTableEventTitleEditLinkSelectorForTitle($event_title));
     }
 
 
@@ -69,6 +74,16 @@ trait EventsAdmin
     {
         $this->actor()->moveMouseOver(EventsPage::eventListTableEventTitleEditLinkSelectorForTitle($event_title));
         $this->actor()->click(EventsPage::eventListTableEventTitleViewLinkSelectorForTitle($event_title));
+    }
+
+
+    /**
+     * Used to retrieve the event id for the event via the list table and for the given event.
+     * @param string $event_title
+     */
+    public function observeEventIdInListTableForEvent($event_title)
+    {
+        return $this->actor()->observeValueFromInputAt(EventsPage::eventListTableEventIdSelectorForTitle($event_title));
     }
 
 

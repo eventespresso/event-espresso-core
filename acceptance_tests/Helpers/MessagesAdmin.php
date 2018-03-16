@@ -170,6 +170,7 @@ trait MessagesAdmin
      */
     public function saveMessageTemplate($and_close = false)
     {
+        $this->actor()->scrollTo(MessagesPage::MESSAGES_CONTEXT_SWITCHER_SELECTOR);
         if ($and_close) {
             $this->actor()->click('Save and Close');
         } else {
@@ -228,16 +229,18 @@ trait MessagesAdmin
             $context,
             $number_in_set
         );
+        $cell_selector = MessagesPage::messagesActivityListTableCellSelectorFor(
+            'to',
+            $message_type_label,
+            $message_status,
+            $messenger,
+            $context,
+            '',
+            $number_in_set
+        );
+        $this->actor()->scrollTo($cell_selector, 0, -30);
         $this->actor()->moveMouseOver(
-            MessagesPage::messagesActivityListTableCellSelectorFor(
-                'to',
-                $message_type_label,
-                $message_status,
-                $messenger,
-                $context,
-                '',
-                $number_in_set
-            ),
+            $cell_selector,
             5,
             5
         );
@@ -247,7 +250,7 @@ trait MessagesAdmin
         $this->actor()->click(
             $delete_action_selector
         );
-        $this->actor()->waitForText('successfully deleted');
+        $this->actor()->waitForText('successfully deleted', 20);
     }
 
 
@@ -258,6 +261,7 @@ trait MessagesAdmin
      */
     public function seeTextInViewMessageModal($text_to_view, $should_not_see = false)
     {
+        $this->actor()->wait(2);
         $this->actor()->waitForElementVisible('.ee-admin-dialog-container-inner-content');
         $this->actor()->switchToIframe('message-view-window');
         $should_not_see ? $this->actor()->dontSee($text_to_view) : $this->actor()->see($text_to_view);
@@ -269,11 +273,14 @@ trait MessagesAdmin
      * This returns the value for the link at the given selector in the message modal.
      * @param string $selector (any selector string accepted by WebDriver)
      */
-    public function observeLinkAtInMessageModal($selector)
+    public function observeLinkAtSelectorInMessageModal($selector)
     {
+        $this->actor()->wait(2);
         $this->actor()->waitForElementVisible('.ee-admin-dialog-container-inner-content');
         $this->actor()->switchToIframe('message-view-window');
-        return $this->actor()->observeLinkUrlAt($selector);
+        $link = $this->actor()->observeLinkUrlAt($selector);
+        $this->actor()->switchToIframe();
+        return $link;
     }
 
 
@@ -290,8 +297,6 @@ trait MessagesAdmin
 
     public function dismissMessageModal()
     {
-        $this->actor()->click('#espresso-admin-page-overlay-dv');
-        //this is needed otherwise phantom js gets stuck in the wrong context and any future element events will fail.
-        $this->actor()->click('form#EE_Message_List_Table-table-frm');
+        $this->actor()->executeJs('window.dialogHelper.closeModal()');
     }
 }

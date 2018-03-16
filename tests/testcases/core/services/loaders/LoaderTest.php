@@ -1,5 +1,5 @@
 <?php
-use EventEspresso\core\services\loaders\Loader;
+use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -12,7 +12,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * 
  * @group LoaderTest
  */
 class LoaderTest extends EE_UnitTestCase

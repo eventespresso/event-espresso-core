@@ -1,12 +1,13 @@
 <?php
 
-use EventEspresso\core\domain\entities\Context;
+use EventEspresso\core\domain\entities\contexts\ContextInterface;
 use EventEspresso\core\domain\entities\RegCode;
 use EventEspresso\core\domain\entities\RegUrlLink;
 use EventEspresso\core\domain\services\registration\CreateRegistrationService;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -64,29 +65,42 @@ class EE_Registration_Processor extends EE_Processor_Base
      */
     protected $_reg_final_price_per_tkt_line_item;
 
+    /**
+     * @var EE_Request $request
+     */
+    protected $request;
+
 
 
     /**
      * @singleton method used to instantiate class object
-     * @access    public
+     * @param EE_Request|null $request
      * @return EE_Registration_Processor instance
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      */
-    public static function instance()
+    public static function instance(EE_Request $request = null)
     {
         // check if class object is instantiated
         if (! self::$_instance instanceof EE_Registration_Processor) {
-            self::$_instance = new self();
+            if(! $request instanceof EE_Request) {
+                $request = LoaderFactory::getLoader()->getShared('EE_Request');
+            }
+            self::$_instance = new self($request);
         }
         return self::$_instance;
     }
 
 
-
     /**
-     * EE_Registration_Processor constructor
+     * EE_Registration_Processor constructor.
+     *
+     * @param EE_Request $request
      */
-    private function __construct()
+    public function __construct(EE_Request $request)
     {
+        $this->request = $request;
     }
 
 
@@ -202,10 +216,13 @@ class EE_Registration_Processor extends EE_Processor_Base
         // toggle reg status but only if it has changed and the user can do so
         if (
             $this->reg_status_updated($registration->ID())
-            && EE_Registry::instance()->CAP->current_user_can(
-                'ee_edit_registration',
-                'toggle_registration_status',
-                $registration->ID()
+            && (
+                (! $this->request->isAdmin() || $this->request->isFrontAjax())
+                || EE_Registry::instance()->CAP->current_user_can(
+                    'ee_edit_registration',
+                    'toggle_registration_status',
+                    $registration->ID()
+                )
             )
         ) {
             // change status to new value
@@ -228,7 +245,7 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @param EE_Registration $registration
      * @param bool            $save TRUE will save the registration if the status is updated, FALSE will leave that up
      *                              to client code
-     * @param Context|null    $context
+     * @param ContextInterface|null    $context
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -241,7 +258,7 @@ class EE_Registration_Processor extends EE_Processor_Base
     public function toggle_incomplete_registration_status_to_default(
         EE_Registration $registration,
         $save = true,
-        Context $context = null
+        ContextInterface $context = null
     ) {
         $existing_reg_status = $registration->status_ID();
         // set initial REG_Status
@@ -609,7 +626,7 @@ class EE_Registration_Processor extends EE_Processor_Base
             return false;
         }
         // release a reserved ticket by decrementing ticket and datetime reserved values
-        $registration->release_reserved_ticket(true);
+        $registration->release_reserved_ticket(true, 'RegProcessor:'. __LINE__);
         $registration->set_final_price(0);
         if ($update_reg) {
             $registration->save();

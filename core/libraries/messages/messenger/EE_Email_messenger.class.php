@@ -433,8 +433,10 @@ class EE_Email_messenger extends EE_messenger
     protected function _send_message()
     {
         $success = wp_mail(
-            html_entity_decode($this->_to, ENT_QUOTES, "UTF-8"),
-            stripslashes(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")),
+            $this->_to,
+            //some old values for subject may be expecting HTML entities to be decoded in the subject
+            //and subjects aren't interpreted as HTML, so there should be no HTML in them
+            wp_strip_all_tags(wp_specialchars_decode($this->_subject, ENT_QUOTES)),
             $this->_body(),
             $this->_headers()
         );
@@ -480,7 +482,7 @@ class EE_Email_messenger extends EE_messenger
     protected function _headers()
     {
         $this->_ensure_has_from_email_address();
-        $from    = stripslashes_deep(html_entity_decode($this->_from, ENT_QUOTES, "UTF-8"));
+        $from    = $this->_from;
         $headers = array(
             'From:' . $from,
             'Reply-To:' . $from,
@@ -572,9 +574,10 @@ class EE_Email_messenger extends EE_messenger
         }
 
         //if from name is "WordPress" let's sub in the site name instead (more friendly!)
-        $from_name = $from_name == 'WordPress' ? get_bloginfo() : $from_name;
+        //but realize the default name is HTML entity-encoded
+        $from_name = $from_name == 'WordPress' ? wp_specialchars_decode(get_bloginfo(), ENT_QUOTES) : $from_name;
 
-        return stripslashes_deep(html_entity_decode($from_name, ENT_QUOTES, "UTF-8"));
+        return $from_name;
     }
 
 
@@ -592,11 +595,7 @@ class EE_Email_messenger extends EE_messenger
         $this->_template_args = array(
             'subject'   => $this->_subject,
             'from'      => $this->_from,
-            'main_body' => wpautop(
-                stripslashes_deep(
-                    html_entity_decode($this->_content, ENT_QUOTES, "UTF-8")
-                )
-            ),
+            'main_body' => wpautop($this->_content),
         );
         $body                 = $this->_get_main_template($preview);
 

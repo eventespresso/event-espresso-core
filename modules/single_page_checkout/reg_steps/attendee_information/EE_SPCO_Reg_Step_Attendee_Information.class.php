@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\core\domain\entities\Context;
+use EventEspresso\core\domain\entities\contexts\Context;
 use EventEspresso\core\services\commands\attendee\CreateAttendeeCommand;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
@@ -314,11 +314,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     {
         // array of params to pass to parent constructor
         $form_args = array(
-            'html_id'         => 'ee-reg-form-qstn-grp-' . $question_group->identifier(),
+            'html_id'         => 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-' . $registration->ID(),
             'html_class'      => $this->checkout->admin_request
                 ? 'form-table ee-reg-form-qstn-grp-dv'
                 : 'ee-reg-form-qstn-grp-dv',
-            'html_label_id'   => 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-lbl',
+            'html_label_id'   => 'ee-reg-form-qstn-grp-' . $question_group->identifier() .  '-' . $registration->ID() . '-lbl',
             'subsections'     => array(
                 'reg_form_qstn_grp_hdr' => $this->_question_group_header($question_group),
             ),
@@ -800,8 +800,16 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         $registrations = $this->checkout->transaction->registrations($this->checkout->reg_cache_where_params);
         // verify we got the goods
         if (empty($registrations)) {
+            //combine the old translated string with a new one, in order to not break translations
+            $error_message = esc_html__( 'Your form data could not be applied to any valid registrations.', 'event_espresso' )
+                             . sprintf(
+                                 esc_html__('%3$sThis can sometimes happen if too much time has been taken to complete the registration process.%3$sPlease return to the %1$sEvent List%2$s and reselect your tickets. If the problem continues, please contact the site administrator.', 'event_espresso'),
+                                 '<a href="' . get_post_type_archive_link('espresso_events') . '" >',
+                                 '</a>',
+                                 '<br />'
+                             );
             EE_Error::add_error(
-                esc_html__('Your form data could not be applied to any valid registrations.', 'event_espresso'),
+                $error_message,
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
