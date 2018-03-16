@@ -27,14 +27,24 @@ abstract class EditorBlock implements EditorBlockInterface
 {
 
     /**
-     * @var WP_Block_Type $block_type
-     */
-    protected $block_type;
-
-    /**
      * @var LoaderInterface $loader
      */
     protected $loader;
+
+    /**
+     * @var string $editor_block_type
+     */
+    private $editor_block_type;
+
+    /**
+     * @var WP_Block_Type $wp_block_type
+     */
+    private $wp_block_type;
+
+    /**
+     * @var array $supported_post_types
+     */
+    private $supported_post_types;
 
 
     /**
@@ -46,4 +56,63 @@ abstract class EditorBlock implements EditorBlockInterface
     {
         $this->loader = $loader;
     }
+
+
+    /**
+     * @return string
+     */
+    public function editorBlockType()
+    {
+        return $this->editor_block_type;
+    }
+
+
+    /**
+     * @param string $editor_block_type
+     */
+    protected function setEditorBlockType($editor_block_type)
+    {
+        $this->editor_block_type = $editor_block_type;
+    }
+
+
+    /**
+     * @param WP_Block_Type $wp_block_type
+     */
+    protected function setWpBlockType($wp_block_type)
+    {
+        $this->wp_block_type = $wp_block_type;
+    }
+
+
+    /**
+     * @param array $supported_post_types
+     */
+    protected function setSupportedPostTypes(array $supported_post_types)
+    {
+        $this->supported_post_types = $supported_post_types;
+    }
+
+
+    /**
+     * @return WP_Block_Type|false The registered block type on success, or false on failure.
+     */
+    public function unRegisterBlock()
+    {
+        return unregister_block_type($this->editorBlockType());
+    }
+
+
+    /**
+     * returns true if the block type applies for the supplied post type
+     * and should be added to that post type's editor
+     *
+     * @param string $post_type
+     * @return boolean
+     */
+    public function appliesToPostType($post_type)
+    {
+        return in_array($post_type, $this->supported_post_types, true);
+    }
+
 }

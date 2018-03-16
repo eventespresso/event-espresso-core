@@ -27,6 +27,7 @@ interface EditorBlockInterface
 
     /**
      * Perform any early setup required by the block
+     * including setting the block type and supported post types
      *
      * @return void
      */
@@ -34,15 +35,43 @@ interface EditorBlockInterface
 
 
     /**
-     * @return WP_Block_Type|false The registered block type on success, or false on failure.
+     * @return string
+     */
+    public function editorBlockType();
+
+
+    /**
+     * Registers the Editor Block with WP core;
+     * Returns the registered block type on success, or false on failure.
+     *
+     * @return WP_Block_Type|false
      */
     public function registerBlock();
 
 
     /**
-     * @return WP_Block_Type|false The registered block type on success, or false on failure.
+     * Un-registers the Editor Block with WP core;
+     * Returns the registered block type on success, or false on failure.
+     *
+     * @return WP_Block_Type|false
      */
     public function unRegisterBlock();
+
+
+    /**
+     * returns true if the block type applies for the supplied post type
+     * and should be added to that post type's editor
+     *
+     * @param string $post_type
+     * @return boolean
+     */
+    public function appliesToPostType($post_type);
+
+
+    /**
+     * @return array
+     */
+    public function getEditorContainer();
 
 
     /**
@@ -55,4 +84,13 @@ interface EditorBlockInterface
      * @return void
      */
     public function registerStyles();
+
+
+    /**
+     * returns the rendered HTML for the block
+     *
+     * @param array $attributes
+     * @return string
+     */
+    public function renderBlock(array $attributes = array());
 }
