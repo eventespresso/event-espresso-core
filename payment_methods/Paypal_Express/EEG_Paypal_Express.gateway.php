@@ -588,7 +588,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                 'httpversion' => '1.1',
                 'cookies'     => array(),
                 'headers'     => array(),
-                'body'        => http_build_query($dtls),
+                'body'        => http_build_query($dtls, '', '&'),
             )
         );
         // Log the response.
