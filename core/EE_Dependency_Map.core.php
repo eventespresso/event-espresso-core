@@ -663,10 +663,10 @@ class EE_Dependency_Map
                 null,
                 'EventEspresso\core\services\database\ModelFieldFactory' => EE_Dependency_Map::load_from_cache,
             ),
-            'EE_Module_Request_Router' => array(
+            'EE_Module_Request_Router'                                               => array(
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
-            'EE_Registration_Processor' => array(
+            'EE_Registration_Processor'                                              => array(
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager' => array(
@@ -674,14 +674,22 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\editor\EditorBlockManager' => array(
+            'EventEspresso\core\services\editor\EditorBlockRegistrationManager'      => array(
                 'EventEspresso\core\domain\entities\editor\EditorBlockCollection' => EE_Dependency_Map::load_from_cache,
-                'EE_Request'                                                            => EE_Dependency_Map::load_from_cache,
+                'EE_Request'                                                      => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\Domain'                                => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\services\editor\loaders\EventsList' => array(
-                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\core\services\editor\EditorBlockAdminManager'             => array(
+                'EE_Request'                       => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\domain\entities\editor\blocks\EventsList' => array(
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\entities\editor\blocks\TicketSelector' => array(
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\entities\editor\blocks\Venue' => array(
                 'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
             ),
         );
@@ -842,6 +850,7 @@ class EE_Dependency_Map
             'EventEspresso\core\services\notices\NoticesContainerInterface'       => 'EventEspresso\core\services\notices\NoticesContainer',
             'EventEspresso\core\services\request\RequestInterface'                => 'EventEspresso\core\services\request\Request',
             'EventEspresso\core\services\request\ResponseInterface'               => 'EventEspresso\core\services\request\Response',
+            'EventEspresso\core\domain\DomainInterface'                             => 'EventEspresso\core\domain\Domain',
         );
         if (! (defined('DOING_AJAX') && DOING_AJAX) && is_admin()) {
             $this->_aliases['EventEspresso\core\services\notices\NoticeConverterInterface'] = 'EventEspresso\core\services\notices\ConvertNoticesToAdminNotices';
