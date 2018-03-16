@@ -2,9 +2,16 @@
 
 namespace EventEspresso\core\services\bootstrap;
 
+use DomainException;
 use EE_Error;
 use EEH_Autoloader;
+use EventEspresso\core\domain\DomainFactory;
+use EventEspresso\core\domain\values\FilePath;
+use EventEspresso\core\domain\values\FullyQualifiedName;
+use EventEspresso\core\domain\values\Version;
+use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
@@ -79,6 +86,9 @@ class BootstrapCore
 
 
     /**
+     * @throws InvalidFilePathException
+     * @throws InvalidClassException
+     * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -88,6 +98,7 @@ class BootstrapCore
     public function initialize()
     {
         $this->bootstrapDependencyInjectionContainer();
+        $this->bootstrapDomain();
         $bootstrap_request = $this->bootstrapRequestResponseObjects();
         add_action(
             'EE_Load_Espresso_Core__handle_request__initialize_core_loading',
@@ -118,6 +129,31 @@ class BootstrapCore
 
 
     /**
+     * configures the Domain object for core
+     *
+     * @return void
+     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
+     * @throws InvalidFilePathException
+     * @throws InvalidInterfaceException
+     */
+    private function bootstrapDomain()
+    {
+        DomainFactory::getShared(
+            new FullyQualifiedName(
+                'EventEspresso\core\domain\Domain'
+            ),
+            array(
+                new FilePath(EVENT_ESPRESSO_MAIN_FILE),
+                Version::fromString(espresso_version())
+            )
+        );
+    }
+
+
+    /**
      * sets up the request and response objects
      *
      * @return BootstrapRequestResponseObjects
@@ -138,16 +174,11 @@ class BootstrapCore
     }
 
 
-
     /**
      * run_request_stack
      * construct request stack and run middleware apps
      *
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
      */
     public function runRequestStack()
     {
