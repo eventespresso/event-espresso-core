@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\loaders;
 
+use InvalidArgumentException;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -37,6 +39,16 @@ interface LoaderInterface
      * @return mixed
      */
     public function getShared($fqcn, $arguments = array());
+
+
+    /**
+     * @param string $fqcn
+     * @param mixed  $object
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function share($fqcn, $object);
+
 
     /**
      * calls reset() on loader if method exists

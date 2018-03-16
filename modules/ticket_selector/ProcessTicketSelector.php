@@ -5,7 +5,6 @@ namespace EventEspresso\modules\ticket_selector;
 use EE_Cart;
 use EE_Core_Config;
 use EE_Error;
-use EE_Request;
 use EE_Session;
 use EE_Ticket;
 use EEH_Event_View;
@@ -14,6 +13,8 @@ use EventEspresso\core\domain\services\factories\CartFactory;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\Request;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -44,9 +45,14 @@ class ProcessTicketSelector
     private $core_config;
 
     /**
-     * @var EE_Request $request
+     * @var Request $request
      */
     private $request;
+
+    /**
+     * @var LoaderInterface $loader
+     */
+    private $loader;
 
     /**
      * @var EE_Session $session
@@ -71,40 +77,37 @@ class ProcessTicketSelector
      * Null values for parameters are only for backwards compatibility but will be removed later on.
      *
      * @param EE_Core_Config                    $core_config
-     * @param EE_Request                        $request
+     * @param Request                           $request
      * @param EE_Session                        $session
      * @param EEM_Ticket                        $ticket_model
      * @param TicketDatetimeAvailabilityTracker $tracker
-     * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
+     * @throws InvalidInterfaceException
      */
     public function __construct(
         EE_Core_Config $core_config = null,
-        EE_Request $request = null,
+        Request $request = null,
         EE_Session $session = null,
         EEM_Ticket $ticket_model = null,
         TicketDatetimeAvailabilityTracker $tracker = null
     ) {
-        $loader = LoaderFactory::getLoader();
+        $this->loader = LoaderFactory::getLoader();
         $this->core_config  = $core_config instanceof EE_Core_Config
             ? $core_config
-            : $loader->getShared('EE_Core_Config');
-        $this->request      = $request instanceof EE_Request
+            : $this->loader->getShared('EE_Core_Config');
+        $this->request      = $request instanceof Request
             ? $request
-            : $loader->getShared('EE_Request');
+            : $this->loader->getShared('EventEspresso\core\services\request\Request');
         $this->session      = $session instanceof EE_Session
             ? $session
-            : $loader->getShared('EE_Session');
+            : $this->loader->getShared('EE_Session');
         $this->ticket_model = $ticket_model instanceof EEM_Ticket
             ? $ticket_model
-            : $loader->getShared('EEM_Ticket');
+            : $this->loader->getShared('EEM_Ticket');
         $this->tracker      = $tracker instanceof TicketDatetimeAvailabilityTracker
             ? $tracker
-            : $loader->getShared('EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker');
+            : $this->loader->getShared('EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker');
     }
 
 
@@ -124,10 +127,10 @@ class ProcessTicketSelector
             return false;
         }
         $this->session->clear_session(__CLASS__, __FUNCTION__);
-        if ($this->request->is_set('event_id')) {
+        if ($this->request->requestParamIsSet('event_id')) {
             wp_safe_redirect(
                 EEH_Event_View::event_link_url(
-                    $this->request->get('event_id')
+                    $this->request->getRequestParam('event_id')
                 )
             );
         } else {
@@ -145,9 +148,6 @@ class ProcessTicketSelector
      * @param  string $nonce_name
      * @param string  $id
      * @return bool
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      */
     private function processTicketSelectorNonce($nonce_name, $id = '')
     {
@@ -184,20 +184,30 @@ class ProcessTicketSelector
      * process_ticket_selections
      *
      * @return array|bool
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function processTicketSelections()
     {
         do_action('EED_Ticket_Selector__process_ticket_selections__before');
-        // unless otherwise requested, clear the session
+        if($this->request->isBot()) {
+            wp_safe_redirect(
+                apply_filters(
+                    'FHEE__EE_Ticket_Selector__process_ticket_selections__bot_redirect_url',
+                    site_url()
+                )
+            );
+            exit();
+        }
+        // do we have an event id?
+        $id = $this->getEventId();
+        // we should really only have 1 registration in the works now
+        // (ie, no MER) so unless otherwise requested, clear the session
         if (apply_filters('FHEE__EE_Ticket_Selector__process_ticket_selections__clear_session', true)) {
             $this->session->clear_session(__CLASS__, __FUNCTION__);
-        }// do we have an event id?
-        $id = $this->getEventId();
+        }
         // validate/sanitize/filter data
         $valid = apply_filters(
             'FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data',
@@ -237,7 +247,8 @@ class ProcessTicketSelector
      */
     private function getEventId()
     {
-        if (! $this->request->is_set('tkt-slctr-event-id')) {
+        // do we have an event id?
+        if (! $this->request->requestParamIsSet('tkt-slctr-event-id')) {
             // $_POST['tkt-slctr-event-id'] was not set ?!?!?!?
             EE_Error::add_error(
                 sprintf(
@@ -253,7 +264,7 @@ class ProcessTicketSelector
             );
         }
         //if event id is valid
-        return absint($this->request->get('tkt-slctr-event-id'));
+        return absint($this->request->getRequestParam('tkt-slctr-event-id'));
     }
 
 
@@ -262,11 +273,6 @@ class ProcessTicketSelector
      *
      * @param int $id
      * @return array|FALSE
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
      */
     private function validatePostData($id = 0)
     {
@@ -297,9 +303,9 @@ class ProcessTicketSelector
         // cycle through $inputs_to_clean array
         foreach ($inputs_to_clean as $what => $input_to_clean) {
             // check for POST data
-            if ($this->request->is_set($input_to_clean . $id)) {
+            if ($this->request->requestParamIsSet($input_to_clean . $id)) {
                 // grab value
-                $input_value = $this->request->get($input_to_clean . $id);
+                $input_value = $this->request->getRequestParam($input_to_clean . $id);
                 switch ($what) {
                     // integers
                     case 'event_id':
@@ -317,8 +323,8 @@ class ProcessTicketSelector
                         // if qty is coming from a radio button input, then we need to assemble an array of rows
                         if (! is_array($row_qty)) {
                             // get number of rows
-                            $rows = $this->request->is_set('tkt-slctr-rows-' . $id)
-                                ? absint($this->request->get('tkt-slctr-rows-' . $id))
+                            $rows = $this->request->requestParamIsSet('tkt-slctr-rows-' . $id)
+                                ? absint($this->request->getRequestParam('tkt-slctr-rows-' . $id))
                                 : 1;
                             // explode integers by the dash
                             $row_qty = explode('-', $row_qty);
@@ -404,7 +410,6 @@ class ProcessTicketSelector
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
      */
     private function addTicketsToCart(array $valid)
     {

@@ -18,10 +18,10 @@ jQuery(document).ready(function($) {
     /**
      * Capture timezone change submissions.
      */
-    $('#message').on('click', '.timezone-submit', function(e) {
+    $('#ee-attention-message').on('click', '.timezone-submit', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        $('.spinner','#message').addClass('is-active');
+        $('.spinner','#ee-attention-message').addClass('is-active');
         $.ajax({
             type: "POST",
             url: ajaxurl,
@@ -40,7 +40,7 @@ jQuery(document).ready(function($) {
                 }
             },
             error: function(response, status, xhr) {
-                $('.spinner', '#message').removeClass('is-active');
+                $('.spinner', '#ee-attention-message').removeClass('is-active');
             }
         })
     });

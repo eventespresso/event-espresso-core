@@ -232,18 +232,7 @@ class EED_Single_Page_Checkout extends EED_Module
         define('SPCO_REG_STEPS_PATH', SPCO_BASE_PATH . 'reg_steps' . DS);
         define('SPCO_TEMPLATES_PATH', SPCO_BASE_PATH . 'templates' . DS);
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(SPCO_BASE_PATH, true);
-        EE_Registry::$i18n_js_strings['registration_expiration_notice'] = sprintf(
-            __('%1$sWe\'re sorry, but you\'re registration time has expired.%2$s%4$sIf you still wish to complete your registration, please return to the %5$sEvent List%6$sEvent List%7$s and reselect your tickets if available. Please except our apologies for any inconvenience this may have caused.%8$s',
-                'event_espresso'),
-            '<h4 class="important-notice">',
-            '</h4>',
-            '<br />',
-            '<p>',
-            '<a href="' . get_post_type_archive_link('espresso_events') . '" title="',
-            '">',
-            '</a>',
-            '</p>'
-        );
+        EE_Registry::$i18n_js_strings['registration_expiration_notice'] = EED_Single_Page_Checkout::getRegistrationExpirationNotice();
     }
 
 
@@ -1308,22 +1297,8 @@ class EED_Single_Page_Checkout extends EED_Module
                         $this->checkout->continue_reg = false;
                         // any form validation errors?
                         if ($this->checkout->current_step->reg_form->submission_error_message() !== '') {
-                            $submission_error_messages = array();
-                            // bad, bad, bad registrant
-                            foreach (
-                                $this->checkout->current_step->reg_form->get_validation_errors_accumulated()
-                                as $validation_error
-                            ) {
-                                if ($validation_error instanceof EE_Validation_Error) {
-                                    $submission_error_messages[] = sprintf(
-                                        __('%s : %s', 'event_espresso'),
-                                        $validation_error->get_form_section()->html_label_text(),
-                                        $validation_error->getMessage()
-                                    );
-                                }
-                            }
                             EE_Error::add_error(
-                                implode('<br />', $submission_error_messages),
+                                $this->checkout->current_step->reg_form->submission_error_message(),
                                 __FILE__, __FUNCTION__, __LINE__
                             );
                         }
@@ -1502,20 +1477,7 @@ class EED_Single_Page_Checkout extends EED_Module
         EE_Registry::$i18n_js_strings['timer_hour'] = __('hour', 'event_espresso');
         EE_Registry::$i18n_js_strings['timer_minute'] = __('minute', 'event_espresso');
         EE_Registry::$i18n_js_strings['timer_second'] = __('second', 'event_espresso');
-        EE_Registry::$i18n_js_strings['registration_expiration_notice'] = sprintf(
-            __(
-                '%1$sWe\'re sorry, but your registration time has expired.%2$s%3$s%4$sIf you still wish to complete your registration, please return to the %5$sEvent List%6$sEvent List%7$s and reselect your tickets if available. Please except our apologies for any inconvenience this may have caused.%8$s',
-                'event_espresso'
-            ),
-            '<h4 class="important-notice">',
-            '</h4>',
-            '<br />',
-            '<p>',
-            '<a href="' . get_post_type_archive_link('espresso_events') . '" title="',
-            '">',
-            '</a>',
-            '</p>'
-        );
+        EE_Registry::$i18n_js_strings['registration_expiration_notice'] = EED_Single_Page_Checkout::getRegistrationExpirationNotice();
         EE_Registry::$i18n_js_strings['ajax_submit'] = apply_filters(
             'FHEE__Single_Page_Checkout__translate_js_strings__ajax_submit',
             true
@@ -1879,7 +1841,28 @@ class EED_Single_Page_Checkout extends EED_Module
         echo '<a id="checkout" style="float: left; margin-left: -999em;"></a>';
     }
 
-
+    /**
+     *    getRegistrationExpirationNotice
+     *
+     * @since $VID:$
+     * @access    public
+     * @return    string
+     */
+    public static function getRegistrationExpirationNotice()
+    {
+        return sprintf(
+            __('%1$sWe\'re sorry, but your registration time has expired.%2$s%3$s%4$sIf you still wish to complete your registration, please return to the %5$sEvent List%6$sEvent List%7$s and reselect your tickets if available. Please accept our apologies for any inconvenience this may have caused.%8$s',
+                'event_espresso'),
+            '<h4 class="important-notice">',
+            '</h4>',
+            '<br />',
+            '<p>',
+            '<a href="' . get_post_type_archive_link('espresso_events') . '" title="',
+            '">',
+            '</a>',
+            '</p>'
+        );
+    }
 
 }
 // End of file EED_Single_Page_Checkout.module.php
