@@ -5,9 +5,6 @@ namespace EventEspresso\core\domain\entities\editor\blocks;
 use EE_Error;
 use EventEspresso\core\domain\entities\editor\EditorBlock;
 use EventEspresso\core\domain\entities\shortcodes\EspressoEvents;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
-use InvalidArgumentException;
 use WP_Block_Type;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -35,7 +32,10 @@ class EventsList extends EditorBlock
      */
     public function initialize()
     {
+        $this->setEditorBlockType(EventsList::EDITOR_BLOCK_TYPE);
+        $this->setSupportedPostTypes(array('espresso_events', 'post', 'page'));
     }
+
 
 
     /**
@@ -43,13 +43,13 @@ class EventsList extends EditorBlock
      */
     public function registerBlock()
     {
-        $this->block_type = register_block_type(
+        $wp_block_type = register_block_type(
             new WP_Block_Type(
-                EventsList::EDITOR_BLOCK_TYPE,
+                $this->editorBlockType(),
                 array(
                     'editor_script'   => 'ee-shortcode-blocks',
                     'editor_style'    => 'ee-block-styles',
-                    'render_callback' => array($this, 'renderEventsList'),
+                    'render_callback' => array($this, 'renderBlock'),
                     'attributes'      => array(
                         'title'        => array(
                             'type' => 'string',
@@ -96,16 +96,21 @@ class EventsList extends EditorBlock
                 )
             )
         );
-        return $this->block_type;
+        $this->setWpBlockType($wp_block_type);
+        return $wp_block_type;
     }
 
 
+
     /**
-     * @return WP_Block_Type|false The registered block type on success, or false on failure.
+     * @return array
      */
-    public function unRegisterBlock()
+    public function getEditorContainer()
     {
-        return unregister_block_type(EventsList::EDITOR_BLOCK_TYPE);
+        return array(
+            'core/paragraph',
+            array('placeholder' => esc_html__('Add description...', 'event_espresso'))
+        );
     }
 
 
@@ -128,12 +133,9 @@ class EventsList extends EditorBlock
     /**
      * @param array $attributes
      * @return string
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws EE_Error
      */
-    public function renderEventsList(array $attributes = array())
+    public function renderBlock(array $attributes = array())
     {
         /** @var EspressoEvents $shortcode */
         $shortcode  = $this->loader->getShared('EventEspresso\core\domain\entities\shortcodes\EspressoEvents');
