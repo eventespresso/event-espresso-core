@@ -111,19 +111,24 @@ class Recipe implements RecipeInterface
      *                              that this Recipe can be used for when resolving OTHER class's dependencies
      * @param array  $paths         if class can not be loaded via PSR-4 autoloading,
      *                              then supply a filepath, or array of filepaths, so that it can be included
+     * @throws InvalidIdentifierException
+     * @throws RuntimeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidClassException
+     * @throws InvalidDataTypeException
      */
     public function __construct(
 	    $identifier,
         $fqcn = '',
-        $filters = array(),
-        $ingredients = array(),
+        array $filters = array(),
+        array $ingredients = array(),
 	    $type = CoffeeMaker::BREW_NEW,
-	    $paths = array()
+        array $paths = array()
     )
     {
         $this->setIdentifier($identifier);
-        $this->setFilters((array)$filters);
-        $this->setIngredients((array)$ingredients);
+        $this->setFilters($filters);
+        $this->setIngredients($ingredients);
         $this->setType($type);
         $this->setPaths($paths);
         $this->setFqcn($fqcn);
@@ -156,7 +161,7 @@ class Recipe implements RecipeInterface
      */
     public function filters()
     {
-        return (array)$this->filters;
+        return $this->filters;
     }
 
 
@@ -186,7 +191,7 @@ class Recipe implements RecipeInterface
      */
     public function paths()
     {
-        return (array)$this->paths;
+        return $this->paths;
     }
 
 
@@ -194,6 +199,7 @@ class Recipe implements RecipeInterface
     /**
      * @param  string $identifier Identifier for the entity class that the Recipe applies to
      *                            Typically a Fully Qualified Class Name
+     * @throws InvalidIdentifierException
      */
     public function setIdentifier($identifier)
     {
@@ -250,6 +256,7 @@ class Recipe implements RecipeInterface
      * @param array $ingredients    an array of dependencies where keys are the aliases and values are the FQCNs
      *                              example:
      *                              array( 'ClassInterface' => 'Fully\Qualified\ClassName' )
+     * @throws InvalidDataTypeException
      */
     public function setIngredients(array $ingredients)
     {
@@ -269,6 +276,7 @@ class Recipe implements RecipeInterface
 
     /**
      * @param string $type one of the class constants returned from CoffeeMaker::getTypes()
+     * @throws InvalidIdentifierException
      */
     public function setType($type = CoffeeMaker::BREW_NEW)
     {
@@ -278,9 +286,10 @@ class Recipe implements RecipeInterface
 
 
     /**
-     * @param array $filters an array of filters where keys are the aliases and values are the FQCNs
+     * @param array $filters    an array of filters where keys are the aliases and values are the FQCNs
      *                          example:
      *                          array( 'ClassInterface' => 'Fully\Qualified\ClassName' )
+     * @throws InvalidDataTypeException
      */
     public function setFilters(array $filters)
     {
@@ -302,12 +311,13 @@ class Recipe implements RecipeInterface
     /**
      * Ensures incoming paths is a valid filepath, or array of valid filepaths,
      * and merges them in with any existing filepaths
-     *
      * PLZ NOTE:
      *  Recipe::setFqcn() has a check to see if Recipe::$paths is empty or not,
      *  therefore you should always call Recipe::setPaths() before Recipe::setFqcn()
      *
      * @param string|array $paths
+     * @throws RuntimeException
+     * @throws InvalidDataTypeException
      */
     public function setPaths($paths = array())
     {
