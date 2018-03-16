@@ -22,6 +22,14 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 
 	 /**
+	  * a unique string for identifying this collection
+	  *
+	  * @type string $collection_identifier
+	  */
+	 protected $collection_identifier;
+
+
+	 /**
 	  * an interface (or class) name to be used for restricting the type of objects added to the storage
 	  * this should be set from within the child class constructor
 	  *
@@ -39,6 +47,37 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	  */
 	 public function __construct( $collection_interface ) {
 		 $this->setCollectionInterface( $collection_interface );
+	     $this->setCollectionIdentifier();
+	 }
+
+
+     /**
+      * @return string
+      */
+     public function collectionIdentifier()
+     {
+         return $this->collection_identifier;
+     }
+
+
+
+	 /**
+      * creates a very readable unique 9 character identifier like:  CF2-532-DAC
+      * and appends it to the non-qualified class name, ex: ThingCollection-CF2-532-DAC
+      *
+	  * @return void
+	  */
+	 protected function setCollectionIdentifier() {
+         // hash a few collection details
+	     $identifier = md5(spl_object_hash($this) . $this->collection_interface . time());
+	     // grab a few characters from the start, middle, and end of the hash
+	     $id = array();
+	     for($x=0; $x<19; $x+=9){
+             $id[] = substr($identifier, $x, 3);
+         }
+         $identifier = basename(str_replace('\\', '/', get_class($this)));
+         $identifier .= '-' . strtoupper(implode('-', $id));
+         $this->collection_identifier = $identifier;
 	 }
 
 
