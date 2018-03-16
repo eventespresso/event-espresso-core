@@ -109,7 +109,7 @@ add_filter(
 
 Now the `$send_reg_cancelled_email->isAllowed($context)` will also return true if the supplied Context slug is equal to 'wait-list-registration-status-change'.
 
-The `ContextChecker::isAllowed()` method uses a simple type sensitive `in_array()` check will be used and return true if the incoming `Context::slug()` is found within the array of `$acceptable_values`. If this logic is not sufficient for your purposes, then when creating a ContextChecker, a callback can be provided for performing this evaluation externally.
+The `ContextChecker::isAllowed()` method uses a simple type sensitive `in_array()` check and will return true if the incoming `Context::slug()` is found within the array of `$acceptable_values`. If this logic is not sufficient for your purposes, then when creating a ContextChecker, a callback can be provided for performing this evaluation externally.
 
 ```php
 $send_reg_cancelled_email_for_any_admin_context = new EventEspresso\core\services\context\ContextChecker(

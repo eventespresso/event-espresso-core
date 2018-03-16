@@ -1,4 +1,8 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+<?php
+
+use EventEspresso\core\services\request\middleware\RecommendedVersions;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -454,7 +458,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         $cpt_has_support = ! empty($cpt_args['page_templates']);
 
         //if the installed version of WP is > 4.7 we do some additional checks.
-        if (EE_Recommended_Versions::check_wp_version('4.7','>=')) {
+        if (RecommendedVersions::compareWordPressVersion('4.7','>=')) {
             $post_templates = wp_get_theme()->get_post_templates();
             //if there are $post_templates for this cpt, then we return false for this method because
             //that means we aren't going to load our page template manager and leave that up to the native
@@ -477,7 +481,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         global $post;
         $template = '';
 
-        if (EE_Recommended_Versions::check_wp_version('4.7','>=')) {
+        if (RecommendedVersions::compareWordPressVersion('4.7','>=')) {
             $page_template_count = count(get_page_templates());
         } else {
             $page_template_count = count(get_page_templates($post));
@@ -951,7 +955,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         //take care of updating any selected page_template IF this cpt supports it.
         if ($this->_supports_page_templates($post->post_type) && ! empty($this->_req_data['page_template'])) {
             //wp version aware.
-            if (EE_Recommended_Versions::check_wp_version('4.7', '>=')) {
+            if (RecommendedVersions::compareWordPressVersion('4.7', '>=')) {
                 $page_templates = wp_get_theme()->get_page_templates();
             } else {
                 $post->page_template = $this->_req_data['page_template'];
@@ -1379,14 +1383,43 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         $post_type        = $this->_cpt_routes[$this->_req_action];
         $post_type_object = $this->_cpt_object;
         $title            = $post_type_object->labels->add_new_item;
-        $editing          = true;
-        wp_enqueue_script('autosave');
         $post    = $post = get_default_post_to_edit($this->_cpt_routes[$this->_req_action], true);
-        $post_ID = $post->ID;
         add_action('admin_print_styles', array($this, 'add_new_admin_page_global'));
         //modify the default editor title field with default title.
         add_filter('enter_title_here', array($this, 'add_custom_editor_default_title'), 10);
-        include_once WP_ADMIN_PATH . 'edit-form-advanced.php';
+        $this->loadEditorTemplate(true);
+    }
+
+
+    /**
+     * Enqueues auto-save and loads the editor template
+     *
+     * @param bool $creating
+     */
+    private function loadEditorTemplate($creating = true) {
+        global $post, $title, $is_IE, $post_type, $post_type_object;
+        //these vars are used by the template
+        $editing = true;
+        $post_ID = $post->ID;
+        if (apply_filters('FHEE__EE_Admin_Page_CPT___create_new_cpt_item__replace_editor', false, $post) === false) {
+            //only enqueue autosave when creating event (necessary to get permalink/url generated)
+            //otherwise EE doesn't support autosave fully, so to prevent user confusion we disable it in edit context.
+            if ($creating) {
+                wp_enqueue_script('autosave');
+            } else {
+                if (isset($this->_cpt_routes[$this->_req_data['action']])
+                    && ! isset($this->_labels['hide_add_button_on_cpt_route'][$this->_req_data['action']])
+                ) {
+                    $create_new_action = apply_filters('FHEE__EE_Admin_Page_CPT___edit_cpt_item__create_new_action',
+                        'create_new', $this);
+                    $post_new_file = EE_Admin_Page::add_query_args_and_nonce(array(
+                        'action' => $create_new_action,
+                        'page'   => $this->page_slug,
+                    ), 'admin.php');
+                }
+            }
+            include_once WP_ADMIN_PATH . 'edit-form-advanced.php';
+        }
     }
 
 
@@ -1425,27 +1458,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         }
 
         // template vars for WP_ADMIN_PATH . 'edit-form-advanced.php'
-        $editing          = true;
-        $post_ID          = $post_id;
         $post_type        = $this->_cpt_routes[$this->_req_action];
         $post_type_object = $this->_cpt_object;
 
         if ( ! wp_check_post_lock($post->ID)) {
-            $active_post_lock = wp_set_post_lock($post->ID);
-            //wp_enqueue_script('autosave');
+            wp_set_post_lock($post->ID);
         }
-        $title = $this->_cpt_object->labels->edit_item;
         add_action('admin_footer', '_admin_notice_post_locked');
-        if (isset($this->_cpt_routes[$this->_req_data['action']])
-            && ! isset($this->_labels['hide_add_button_on_cpt_route'][$this->_req_data['action']])
-        ) {
-            $create_new_action = apply_filters('FHEE__EE_Admin_Page_CPT___edit_cpt_item__create_new_action',
-                'create_new', $this);
-            $post_new_file = EE_Admin_Page::add_query_args_and_nonce(array(
-                'action' => $create_new_action,
-                'page'   => $this->page_slug,
-            ), 'admin.php');
-        }
         if (post_type_supports($this->_cpt_routes[$this->_req_action], 'comments')) {
             wp_enqueue_script('admin-comments');
             enqueue_comment_hotkeys_js();
@@ -1453,7 +1472,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         add_action('admin_print_styles', array($this, 'add_new_admin_page_global'));
         //modify the default editor title field with default title.
         add_filter('enter_title_here', array($this, 'add_custom_editor_default_title'), 10);
-        include_once WP_ADMIN_PATH . 'edit-form-advanced.php';
+        $this->loadEditorTemplate(false);
     }
 
 

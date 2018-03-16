@@ -1133,7 +1133,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     public static function add_query_args_and_nonce(
         $args = array(),
-        $url = '',
+        $url = false,
         $sticky = false,
         $exclude_nonce = false
     ) {
@@ -3773,8 +3773,17 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         $option = 'per_page';
         $args   = array(
-            'label'   => $this->_admin_page_title,
-            'default' => 10,
+            'label'   => esc_html__(
+                    apply_filters(
+                        'FHEE__EE_Admin_Page___per_page_screen_options___label',
+                        $this->_admin_page_title,
+                        $this
+                    )
+            ),
+            'default' => (int) apply_filters(
+                    'FHEE__EE_Admin_Page___per_page_screen_options__default',
+                    10
+            ),
             'option'  => $this->_current_page . '_' . $this->_current_view . '_per_page',
         );
         //ONLY add the screen option if the user has access to it.
@@ -3810,9 +3819,16 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             switch ($map_option) {
                 case $this->_current_page . '_' . $this->_current_view . '_per_page':
                     $value = (int)$value;
-                    if ($value < 1 || $value > 999) {
+                    $max_value = apply_filters(
+                        'FHEE__EE_Admin_Page___set_per_page_screen_options__max_value',
+                        999,
+                        $this->_current_page,
+                        $this->_current_view
+                    );
+                    if ($value < 1) {
                         return;
                     }
+                    $value = min($value, $max_value);
                     break;
                 default:
                     $value = apply_filters(

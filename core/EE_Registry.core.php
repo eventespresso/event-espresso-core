@@ -232,15 +232,19 @@ class EE_Registry implements ResettableInterface
         );
         $this->load_core('Base', array(), true);
         // add our request and response objects to the cache
-        $request_loader = $this->_dependency_map->class_loader('EE_Request');
+        $request_loader = $this->_dependency_map->class_loader(
+            'EventEspresso\core\services\request\Request'
+        );
         $this->_set_cached_class(
             $request_loader(),
-            'EE_Request'
+            'EventEspresso\core\services\request\Request'
         );
-        $response_loader = $this->_dependency_map->class_loader('EE_Response');
+        $response_loader = $this->_dependency_map->class_loader(
+            'EventEspresso\core\services\request\Response'
+        );
         $this->_set_cached_class(
             $response_loader(),
-            'EE_Response'
+            'EventEspresso\core\services\request\Response'
         );
         add_action('AHEE__EE_System__set_hooks_for_core', array($this, 'init'));
     }
