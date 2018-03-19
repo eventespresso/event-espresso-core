@@ -686,7 +686,11 @@ abstract class EE_PMT_Base
      */
     public function get_help_tab_link()
     {
-        return EEH_Template::get_help_tab_link($this->get_help_tab_name());
+        return EEH_Template::get_help_tab_link(
+            $this->get_help_tab_name(),
+            'espresso_payment_settings',
+            'default'
+        );
     }
 
 
