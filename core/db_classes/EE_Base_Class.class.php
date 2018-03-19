@@ -1200,15 +1200,14 @@ abstract class EE_Base_Class
      *
      * @param string $field_name               The field name retrieving the DateTime object.
      * @return mixed null | false | DateTime  If the requested field is NOT a EE_Datetime_Field then
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     *                                         an error is set and false returned.  If the field IS an
+     * @throws EE_Error an error is set and false returned.  If the field IS an
      *                                         EE_Datetime_Field and but the field value is null, then
      *                                         just null is returned (because that indicates that likely
      *                                         this field is nullable).
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_DateTime_object($field_name)
     {
@@ -1228,7 +1227,9 @@ abstract class EE_Base_Class
             );
             return false;
         }
-        return $this->_fields[ $field_name ];
+        return isset($this->_fields[$field_name]) && $this->_fields[$field_name] instanceof DateTime
+            ? clone $this->_fields[$field_name]
+            : null;
     }
 
 
@@ -3139,6 +3140,21 @@ abstract class EE_Base_Class
     public function __wakeup()
     {
         $this->_props_n_values_provided_in_constructor = $this->_fields;
+    }
+
+
+    /**
+     * Usage of this magic method is to ensure any internally cached references to object instances that must remain
+     * distinct with the clone host instance are also cloned.
+     */
+    public function __clone()
+    {
+        //handle DateTimes (this is handled in here because there's no one specific child class that uses datetimes).
+        foreach ($this->_fields as $field => $value) {
+            if ($value instanceof DateTime) {
+                $this->_fields[$field] = clone $value;
+            }
+        }
     }
 }
 

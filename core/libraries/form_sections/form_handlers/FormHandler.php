@@ -598,12 +598,14 @@ abstract class FormHandler implements FormHandlerInterface
     }
 
 
-
     /**
      * takes the generated form and displays it along with ony other non-form HTML that may be required
      * returns a string of HTML that can be directly echoed in a template
      *
      * @return string
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws LogicException
      * @throws EE_Error
      */
@@ -635,13 +637,15 @@ abstract class FormHandler implements FormHandlerInterface
     }
 
 
-
     /**
      * handles processing the form submission
      * returns true or false depending on whether the form was processed successfully or not
      *
      * @param array $submitted_form_data
      * @return array
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws EE_Error
      * @throws LogicException
      * @throws InvalidFormSubmissionException
@@ -662,7 +666,7 @@ abstract class FormHandler implements FormHandlerInterface
                     ),
                     $this->form_name,
                     '<br />',
-                    $this->form()->submission_error_message()
+                    implode('<br />', $this->form()->get_validation_errors_accumulated())
                 )
             );
         }
