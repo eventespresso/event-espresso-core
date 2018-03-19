@@ -1,4 +1,6 @@
 <?php
+
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\domain\services\factories\EmailAddressFactory;
 use EventEspresso\core\domain\services\validation\email\EmailValidationException;
@@ -24,7 +26,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class EED_Core_Rest_Api extends \EED_Module
 {
 
-    const ee_api_namespace           = 'ee/v';
+    const ee_api_namespace           = Domain::API_NAMESPACE;
 
     const ee_api_namespace_for_regex = 'ee\/v([^/]*)\/';
 

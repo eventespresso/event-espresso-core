@@ -314,11 +314,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     {
         // array of params to pass to parent constructor
         $form_args = array(
-            'html_id'         => 'ee-reg-form-qstn-grp-' . $question_group->identifier(),
+            'html_id'         => 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-' . $registration->ID(),
             'html_class'      => $this->checkout->admin_request
                 ? 'form-table ee-reg-form-qstn-grp-dv'
                 : 'ee-reg-form-qstn-grp-dv',
-            'html_label_id'   => 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-lbl',
+            'html_label_id'   => 'ee-reg-form-qstn-grp-' . $question_group->identifier() .  '-' . $registration->ID() . '-lbl',
             'subsections'     => array(
                 'reg_form_qstn_grp_hdr' => $this->_question_group_header($question_group),
             ),

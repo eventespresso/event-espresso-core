@@ -10,6 +10,7 @@ use EEH_Event_View;
 use EEM_Datetime;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use InvalidArgumentException;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
@@ -123,6 +124,16 @@ class ProcessTicketSelector
     public function processTicketSelections()
     {
         do_action('EED_Ticket_Selector__process_ticket_selections__before');
+        $request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\Request');
+        if($request->isBot()) {
+            wp_safe_redirect(
+                apply_filters(
+                    'FHEE__EE_Ticket_Selector__process_ticket_selections__bot_redirect_url',
+                    site_url()
+                )
+            );
+            exit();
+        }
         // do we have an event id?
         if (! EE_Registry::instance()->REQ->is_set('tkt-slctr-event-id')) {
             // $_POST['tkt-slctr-event-id'] was not set ?!?!?!?
