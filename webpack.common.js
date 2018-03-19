@@ -21,7 +21,6 @@ config = [
             filename: '[name].dist.js',
             path: path.resolve(__dirname, 'assets/dist')
         },
-        externals,
         module: {
             rules: [
                 {
