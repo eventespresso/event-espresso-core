@@ -3,7 +3,7 @@
 We use webpack for assembling and building javascript and css files.  The folder structure for our javascript and css is:
 
 ```md
-.\home\webuser\wordpress-install\wp-content\plugins\event-espresso-core\
+.\path\to\your\wordpress-install\wp-content\plugins\event-espresso-core\
 ├── assets
     └── dist
         ... built files with `.dist.js` or `.style.css` extensions
@@ -54,5 +54,5 @@ This will build the js/css using the build environment configuration (including 
 
 ## Automation
 
-Our [Grunt WordPress Plugin Buildmachine](https://github.com/eventespresso/grunt-wp-plugin-buildmachine) will automatically the build script whenever a release of Event Espresso is being built, so there's no need to worry about running `npm run build` unless you need to test that the build process is working as expected.
+Our [Grunt WordPress Plugin Buildmachine](https://github.com/eventespresso/grunt-wp-plugin-buildmachine) will automatically execute the build script whenever a release of Event Espresso is being built, so there's no need to worry about running `npm run build` unless you need to test that the build process is working as expected.
 
