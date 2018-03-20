@@ -620,6 +620,7 @@ class EE_Dependency_Map
             'EventEspresso\core\services\assets\Registry'                                                                 => array(
                 'EE_Template_Config' => EE_Dependency_Map::load_from_cache,
                 'EE_Currency_Config' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache
             ),
             'EventEspresso\core\domain\entities\shortcodes\EspressoCancelled'                                             => array(
                 'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
