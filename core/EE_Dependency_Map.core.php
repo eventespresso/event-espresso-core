@@ -1,8 +1,4 @@
 <?php
-
-use EventEspresso\core\domain\Domain;
-use EventEspresso\core\domain\values\FilePath;
-use EventEspresso\core\domain\values\Version;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -786,12 +782,6 @@ class EE_Dependency_Map
             'EventEspresso\core\services\loaders\Loader' => function () {
                 return LoaderFactory::getLoader();
             },
-            'EventEspresso\core\domain\Domain' => function () {
-                return new Domain(
-                    new FilePath(EVENT_ESPRESSO_MAIN_FILE),
-                    Version::fromString(espresso_version())
-                );
-            }
         );
     }
 
