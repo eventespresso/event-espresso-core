@@ -47,4 +47,17 @@ interface DomainInterface
      * @throws DomainException
      */
     public function version();
+
+
+    /**
+     * @return string
+     */
+    public function distributionAssetsPath();
+
+
+    /**
+     * @return string
+     */
+    public function distributionAssetsUrl();
+
 }
