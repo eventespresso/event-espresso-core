@@ -89,7 +89,7 @@ class RequestStackBuilder extends SplDoublyLinkedList
      * @return array
      * @throws InvalidRequestStackMiddlewareException
      */
-    private function validateMiddlewareAppDetails(array $middleware_app, $recurse = false)
+    protected function validateMiddlewareAppDetails(array $middleware_app, $recurse = false)
     {
         $middleware_app_class = reset($middleware_app);
         // is array empty ?
@@ -107,7 +107,7 @@ class RequestStackBuilder extends SplDoublyLinkedList
         if(is_int($middleware_app_class)) {
             if ($recurse === true) {
                 $middleware_app = array_reverse($middleware_app);
-                return $this->validateMiddlewareAppDetails(array(reset($middleware_app), null));
+                return $this->validateMiddlewareAppDetails(array(reset($middleware_app), array()));
             }
             throw new InvalidRequestStackMiddlewareException($middleware_app_class);
         }
