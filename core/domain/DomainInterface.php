@@ -2,6 +2,7 @@
 namespace EventEspresso\core\domain;
 
 use DomainException;
+use EventEspresso\core\interfaces\InterminableInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -12,7 +13,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Darren Ethier
  * @since   4.9.50
  */
-interface DomainInterface
+interface DomainInterface extends InterminableInterface
 {
 
     /**
