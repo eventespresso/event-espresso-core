@@ -27,6 +27,9 @@ class InvalidRequestStackMiddlewareException extends InvalidDataTypeException
      */
     public function __construct($middleware_app_class, $message = '', $code = 0, Exception $previous = null)
     {
+        if(is_array($middleware_app_class)) {
+            $middleware_app_class = reset($middleware_app_class);
+        }
         if (empty($message)) {
             $message = sprintf(
                 esc_html__(
