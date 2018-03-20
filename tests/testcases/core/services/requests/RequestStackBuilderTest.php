@@ -183,12 +183,11 @@ class RequestStackBuilderTest extends EE_UnitTestCase
      * @param bool   $recurse
      * @param string $expected
      * @throws \EventEspresso\core\services\request\InvalidRequestStackMiddlewareException
-     * @throws \PHPUnit\Framework\Exception
      */
     public function testValidateMiddlewareAppDetails(array $middleware_app, $recurse, $expected)
     {
         if($recurse === false) {
-            $this->expectException('EventEspresso\core\services\request\InvalidRequestStackMiddlewareException');
+            $this->setExpectedException('EventEspresso\core\services\request\InvalidRequestStackMiddlewareException');
             $middleware_app_class = $this->request_stack_builder->validateMiddlewareAppDetails(
                 $middleware_app
             );
