@@ -2,10 +2,8 @@
 
 namespace EventEspresso\core\domain;
 
-use DomainException;
 use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\Version;
-use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
 
@@ -57,8 +55,6 @@ abstract class DomainBase implements DomainInterface
      *
      * @param FilePath $plugin_file
      * @param Version  $version
-     * @throws InvalidArgumentException
-     * @throws DomainException
      */
     public function __construct(FilePath $plugin_file, Version $version)
     {
@@ -129,4 +125,20 @@ abstract class DomainBase implements DomainInterface
     }
 
 
+    /**
+     * @return string
+     */
+    public function distributionAssetsPath()
+    {
+        return $this->pluginPath() . 'assets/dist/';
+    }
+
+
+    /**
+     * @return string
+     */
+    public function distributionAssetsUrl()
+    {
+        return $this->pluginUrl() . 'assets/dist/';
+    }
 }
