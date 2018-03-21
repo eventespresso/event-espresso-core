@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\values\session\SessionLifespan;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\cache\CacheStorageInterface;
@@ -25,10 +26,10 @@ class EE_Session_Mock extends EE_Session {
 	private static $_instance;
 
 
-
     /**
      * @singleton method used to instantiate class object
      * @param CacheStorageInterface $cache_storage
+     * @param SessionLifespan|null  $lifespan
      * @param RequestInterface|null $request
      * @param EE_Encryption         $encryption
      * @return EE_Session_Mock
@@ -38,18 +39,23 @@ class EE_Session_Mock extends EE_Session {
      */
 	public static function instance(
         CacheStorageInterface $cache_storage = null,
+        SessionLifespan $lifespan = null,
         RequestInterface $request = null,
         EE_Encryption $encryption = null
     ) {
 		// check if class object is instantiated
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via:
 		// add_filter( 'FHEE_load_EE_Session', '__return_false' );
-		if ( ! self::$_instance instanceof EE_Session_Mock ) {
-			self::$_instance = new self($cache_storage, $request, $encryption);
+		if ( ! EE_Session_Mock::$_instance instanceof EE_Session_Mock ) {
+            EE_Session_Mock::$_instance = new self(
+			    $cache_storage,
+                $lifespan,
+                $request,
+                $encryption
+            );
 		}
-		return self::$_instance;
+		return EE_Session_Mock::$_instance;
 	}
-
 
 
     /**
@@ -57,15 +63,26 @@ class EE_Session_Mock extends EE_Session {
      *
      * @Constructor
      * @param CacheStorageInterface $cache_storage
+     * @param SessionLifespan       $lifespan
      * @param RequestInterface      $request
      * @param EE_Encryption         $encryption
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-	protected function __construct(CacheStorageInterface $cache_storage, RequestInterface $request, EE_Encryption $encryption = null) {
+	protected function __construct(
+	    CacheStorageInterface $cache_storage,
+        SessionLifespan $lifespan,
+        RequestInterface $request,
+        EE_Encryption $encryption = null
+    ) {
 		add_filter( 'FHEE_load_EE_Session', '__return_false' );
-        parent::__construct($cache_storage, $request, $encryption );
+        parent::__construct(
+            $cache_storage,
+            $lifespan,
+            $request,
+            $encryption
+        );
         $this->cache_storage = $cache_storage;
         $this->request = $request;
         $this->encryption = $encryption;
