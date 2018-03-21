@@ -818,7 +818,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                     sprintf(
                         __('Payment method of type %s was not saved because there were validation errors. They have been marked in the form',
                             'event_espresso'),
-                        $payment_method instanceof EE_PMT_Base ? $payment_method->pretty_name()
+                        $payment_method instanceof EE_Payment_Method ? $payment_method->type_obj()->pretty_name()
                             : __('"(unknown)"', 'event_espresso')
                     ),
                     __FILE__,

@@ -626,7 +626,7 @@ class EE_Registration_Processor extends EE_Processor_Base
             return false;
         }
         // release a reserved ticket by decrementing ticket and datetime reserved values
-        $registration->release_reserved_ticket(true);
+        $registration->release_reserved_ticket(true, 'RegProcessor:'. __LINE__);
         $registration->set_final_price(0);
         if ($update_reg) {
             $registration->save();
