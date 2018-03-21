@@ -451,7 +451,25 @@ class EEH_Event_View extends EEH_Base {
 		}
 	}
 
-
+	/**
+	 *    get_next_upcoming_date_obj - return the next upcoming datetime
+	 *
+	 * @access    public
+	 * @param int $EVT_ID
+	 * @return    EE_Datetime|null
+	 */
+	public static function get_next_upcoming_date_obj( $EVT_ID = 0 ) {
+		$datetime = EEM_Datetime::instance()->get_one(
+			array(
+				array(
+					'Event.EVT_ID' => $EVT_ID,
+					'DTT_EVT_start' => array('>=', current_time('mysql', true))
+				), 
+				'order_by' => array('DTT_EVT_start' => 'asc')
+			)
+		);
+		return $datetime instanceof EE_Datetime ? $datetime : null;
+	}
 
 	/**
 	 *    get_all_date_obj

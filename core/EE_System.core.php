@@ -1,5 +1,7 @@
 <?php
 
+use \EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;
+use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -11,6 +13,7 @@ use EventEspresso\core\services\activation\ActivationsAndUpgradesManager;
 use EventEspresso\core\services\activation\ActivationsFactory;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\activation\RequestType;
 use EventEspresso\core\services\shortcodes\ShortcodesManager;
 
@@ -100,6 +103,11 @@ class EE_System implements ActivatableInterface, ResettableInterface
     private $capabilities;
 
     /**
+     * @var RequestInterface $request
+     */
+    private $request;
+    
+    /**
      * @var EE_Maintenance_Mode $maintenance_mode
      */
     private $maintenance_mode;
@@ -118,11 +126,18 @@ class EE_System implements ActivatableInterface, ResettableInterface
      * @var \EventEspresso\core\services\activation\RequestType $request_type
      */
     private $request_type;
-
+    
     /**
      * @var bool $activation_detected
      */
     private $activation_detected = false;
+    
+    /**
+     * A Context DTO dedicated solely to identifying the current request type.
+     *
+     * @var RequestTypeContextCheckerInterface $request_type
+     */
+    private $request_type;
 
 
 
@@ -130,19 +145,22 @@ class EE_System implements ActivatableInterface, ResettableInterface
      * @singleton method used to instantiate class object
      * @param EE_Registry|null         $registry
      * @param LoaderInterface|null     $loader
+     * @param RequestInterface|null          $request
      * @param EE_Maintenance_Mode|null $maintenance_mode
      * @return EE_System
      */
     public static function instance(
         EE_Registry $registry = null,
         LoaderInterface $loader = null,
+        RequestInterface $request = null,
         EE_Maintenance_Mode $maintenance_mode = null
     ) {
         // check if class object is instantiated
         if (! self::$_instance instanceof EE_System) {
             self::$_instance = new self(
                 $registry,
-                $loader,
+                $loader, 
+                $request,
                 $maintenance_mode
             );
         }
@@ -181,15 +199,18 @@ class EE_System implements ActivatableInterface, ResettableInterface
      *
      * @param EE_Registry         $registry
      * @param LoaderInterface     $loader
+     * @param RequestInterface          $request
      * @param EE_Maintenance_Mode $maintenance_mode
      */
     private function __construct(
         EE_Registry $registry,
         LoaderInterface $loader,
+        RequestInterface $request,
         EE_Maintenance_Mode $maintenance_mode
     ) {
-        $this->registry = $registry;
-        $this->loader = $loader;
+        $this->registry         = $registry;
+        $this->loader           = $loader;
+        $this->request          = $request;
         $this->maintenance_mode = $maintenance_mode;
         do_action('AHEE__EE_System__construct__begin', $this);
         add_action(
@@ -252,7 +273,6 @@ class EE_System implements ActivatableInterface, ResettableInterface
     }
 
 
-
     /**
      * load and setup EE_Capabilities
      *
@@ -267,7 +287,8 @@ class EE_System implements ActivatableInterface, ResettableInterface
         $this->capabilities = $this->loader->getShared('EE_Capabilities');
         add_action(
             'AHEE__EE_Capabilities__init_caps__before_initialization',
-            function() {
+            function ()
+            {
                 LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
             }
         );
@@ -311,8 +332,50 @@ class EE_System implements ActivatableInterface, ResettableInterface
         // set autoloaders for all of the classes implementing EEI_Plugin_API
         // which provide helpers for EE plugin authors to more easily register certain components with EE.
         EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder(EE_LIBRARIES . 'plugin_api');
+        $this->loader->getShared('EE_Request_Handler');
     }
 
+
+    /**
+     * @param string $addon_name
+     * @param string $version_constant
+     * @param string $min_version_required
+     * @param string $load_callback
+     * @param string $plugin_file_constant
+     * @return void
+     */
+    private function deactivateIncompatibleAddon(
+        $addon_name,
+        $version_constant,
+        $min_version_required,
+        $load_callback,
+        $plugin_file_constant
+    ) {
+        if (! defined($version_constant)) {
+            return;
+        }
+        $addon_version = constant($version_constant);
+        if ($addon_version && version_compare($addon_version, $min_version_required, '<')) {
+            remove_action('AHEE__EE_System__load_espresso_addons', $load_callback);
+            if (! function_exists('deactivate_plugins')) {
+                require_once ABSPATH . 'wp-admin/includes/plugin.php';
+            }
+            deactivate_plugins(plugin_basename(constant($plugin_file_constant)));
+            unset($_GET['activate'], $_REQUEST['activate'], $_GET['activate-multi'], $_REQUEST['activate-multi']);
+            EE_Error::add_error(
+                sprintf(
+                    esc_html__(
+                        'We\'re sorry, but the Event Espresso %1$s addon was deactivated because version %2$s or higher is required with this version of Event Espresso core.',
+                        'event_espresso'
+                    ),
+                    $addon_name,
+                    $min_version_required
+                ),
+                __FILE__, __FUNCTION__ . "({$addon_name})", __LINE__
+            );
+            EE_Error::get_notices(false, true);
+        }
+    }
 
 
     /**
@@ -364,10 +427,23 @@ class EE_System implements ActivatableInterface, ResettableInterface
      *    and the WP 'activate_plugin' hook point
      *
      * @return void
-     * @throws EE_Error
      */
     public function load_espresso_addons()
     {
+        $this->deactivateIncompatibleAddon(
+            'Wait Lists',
+            'EE_WAIT_LISTS_VERSION',
+            '1.0.0.beta.074',
+            'load_espresso_wait_lists',
+            'EE_WAIT_LISTS_PLUGIN_FILE'
+        );
+        $this->deactivateIncompatibleAddon(
+            'Automated Upcoming Event Notifications',
+            'EE_AUTOMATED_UPCOMING_EVENT_NOTIFICATION_VERSION',
+            '1.0.0.beta.091',
+            'load_espresso_automated_upcoming_event_notification',
+            'EE_AUTOMATED_UPCOMING_EVENT_NOTIFICATION_PLUGIN_FILE'
+        );
         do_action('AHEE__EE_System__load_espresso_addons');
         //if the WP API basic auth plugin isn't already loaded, load it now.
         //We want it for mobile apps. Just include the entire plugin
@@ -375,15 +451,13 @@ class EE_System implements ActivatableInterface, ResettableInterface
         //it could be the basic auth plugin, and it doesn't check if its methods are already defined
         //and causes a fatal error
         if (
-            ! (
-                isset($_GET['activate'])
-                && $_GET['activate'] === 'true'
-            )
+            $this->request->getRequestParam('activate') !== 'true'
             && ! function_exists('json_basic_auth_handler')
             && ! function_exists('json_basic_auth_error')
-            && ! (
-                isset($_GET['action'])
-                && in_array($_GET['action'], array('activate', 'activate-selected'), true)
+            && ! in_array(
+                $this->request->getRequestParam('action'),
+                array('activate', 'activate-selected'),
+                true
             )
         ) {
             include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
@@ -472,20 +546,20 @@ class EE_System implements ActivatableInterface, ResettableInterface
     private function _parse_model_names()
     {
         //get all the files in the EE_MODELS folder that end in .model.php
-        $models = glob(EE_MODELS . '*.model.php');
-        $model_names = array();
+        $models                 = glob(EE_MODELS . '*.model.php');
+        $model_names            = array();
         $non_abstract_db_models = array();
         foreach ($models as $model) {
             // get model classname
-            $classname = EEH_File::get_classname_from_filepath_with_standard_filename($model);
-            $short_name = str_replace('EEM_', '', $classname);
+            $classname       = EEH_File::get_classname_from_filepath_with_standard_filename($model);
+            $short_name      = str_replace('EEM_', '', $classname);
             $reflectionClass = new ReflectionClass($classname);
             if ($reflectionClass->isSubclassOf('EEM_Base') && ! $reflectionClass->isAbstract()) {
-                $non_abstract_db_models[$short_name] = $classname;
+                $non_abstract_db_models[ $short_name ] = $classname;
             }
-            $model_names[$short_name] = $classname;
+            $model_names[ $short_name ] = $classname;
         }
-        $this->registry->models = apply_filters('FHEE__EE_System__parse_model_names', $model_names);
+        $this->registry->models                 = apply_filters('FHEE__EE_System__parse_model_names', $model_names);
         $this->registry->non_abstract_db_models = apply_filters(
             'FHEE__EE_System__parse_implemented_model_names',
             $non_abstract_db_models
@@ -528,23 +602,25 @@ class EE_System implements ActivatableInterface, ResettableInterface
         if ($this->activation_detected) {
             return;
         }
+        if ($this->request->isFrontend() || $this->request->isIframe()) {
+            try {
+                // load, register, and add shortcodes the new way
+                $this->loader->getShared(
+                    'EventEspresso\core\services\shortcodes\ShortcodesManager',
+                    array(
+                        // and the old way, but we'll put it under control of the new system
+                        EE_Config::getLegacyShortcodesManager(),
+                    )
+                );
+            } catch (Exception $exception) {
+                new ExceptionStackTraceDisplay($exception);
+            }
+        }
+        do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
         // check for addons using old hook point
         if (has_action('AHEE__EE_System__register_shortcodes_modules_and_addons')) {
             $this->_incompatible_addon_error();
         }
-        try {
-            // load, register, and add shortcodes the new way
-            $this->loader->getShared(
-                'EventEspresso\core\services\shortcodes\ShortcodesManager',
-                array(
-                    // and the old way, but we'll put it under control of the new system
-                    EE_Config::getLegacyShortcodesManager()
-                )
-            );
-        } catch (Exception $exception) {
-            new ExceptionStackTraceDisplay($exception);
-        }
-        do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
     }
 
 
@@ -679,10 +755,13 @@ class EE_System implements ActivatableInterface, ResettableInterface
     {
         do_action('AHEE__EE_System__load_controllers__start');
         // let's get it started
-        if (! is_admin() && ! $this->maintenance_mode->level()) {
+        if (
+            ! $this->maintenance_mode->level()
+            && ($this->request->isFrontend() || $this->request->isFrontAjax())
+        ) {
             do_action('AHEE__EE_System__load_controllers__load_front_controllers');
             $this->loader->getShared('EE_Front_Controller');
-        } else if (! EE_FRONT_AJAX) {
+        } elseif ($this->request->isAdmin() || $this->request->isAdminAjax()) {
             do_action('AHEE__EE_System__load_controllers__load_admin_controllers');
             $this->loader->getShared('EE_Admin');
         }
@@ -700,14 +779,25 @@ class EE_System implements ActivatableInterface, ResettableInterface
      */
     public function core_loaded_and_ready()
     {
-        $this->loader->getShared('EE_Session');
+        if (
+            $this->request->isAdmin()
+            || $this->request->isEeAjax()
+            || $this->request->isFrontend()
+        ) {
+            $this->loader->getShared('EE_Session');
+        }
         do_action('AHEE__EE_System__core_loaded_and_ready');
         // load_espresso_template_tags
-        if (is_readable(EE_PUBLIC . 'template_tags.php')) {
-            require_once(EE_PUBLIC . 'template_tags.php');
+        if (
+            is_readable(EE_PUBLIC . 'template_tags.php')
+            && ($this->request->isFrontend() || $this->request->isIframe() || $this->request->isFeed())
+        ) {
+            require_once EE_PUBLIC . 'template_tags.php';
         }
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
-        $this->loader->getShared('EventEspresso\core\services\assets\Registry');
+        if ($this->request->isAdmin() || $this->request->isFrontend() || $this->request->isIframe()) {
+            $this->loader->getShared('EventEspresso\core\services\assets\Registry');
+        }
     }
 
 
@@ -813,7 +903,6 @@ class EE_System implements ActivatableInterface, ResettableInterface
     {
         nocache_headers();
     }
-
 
 
 

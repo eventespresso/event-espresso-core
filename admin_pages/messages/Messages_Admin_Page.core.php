@@ -1424,7 +1424,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                             
                             $template_form_fields[$field_id]['value'] = ! empty($message_templates)
                                                                         && isset($content[$extra_field])
-                                ? stripslashes(html_entity_decode($content[$extra_field], ENT_QUOTES, "UTF-8"))
+                                ? $content[$extra_field]
                                 : '';
                             
                             //do we have a validation error?  if we do then let's use that value instead
@@ -1446,12 +1446,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                             
                             if (isset($extra_array['input']) && $extra_array['input'] === 'wp_editor') {
                                 //we want to decode the entities
-                                $template_form_fields[$field_id]['value'] = stripslashes(
-                                    html_entity_decode(
-                                        $template_form_fields[$field_id]['value'],
-                                        ENT_QUOTES,
-                                        "UTF-8")
-                                );
+                                $template_form_fields[$field_id]['value'] = $template_form_fields[$field_id]['value'];
                                 
                             }/**/
                         }
@@ -2156,7 +2151,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         );
         //setup display of preview.
         $this->_admin_page_title                    = $preview_title;
-        $this->_template_args['admin_page_content'] = $preview_button . '<br />' . stripslashes($preview);
+        $this->_template_args['admin_page_content'] = $preview_button . '<br />' . $preview;
         $this->_template_args['data']['force_json'] = true;
         
         return '';
@@ -2713,8 +2708,32 @@ class Messages_Admin_Page extends EE_Admin_Page
                 
             } else {
                 //first validate all fields!
-                $validates = $MTPG->validate($this->_req_data['MTP_template_fields'], $context_slug, $messenger_slug,
-                    $message_type_slug);
+                // this filter allows client code to add its own validation to the template fields as well.
+                // returning an empty array means everything passed validation.
+                // errors in validation should be represented in an array with the following shape:
+                // array(
+                //   'fieldname' => array(
+                //          'msg' => 'error message'
+                //          'value' => 'value for field producing error'
+                // )
+                $custom_validation = (array) apply_filters(
+                    'FHEE__Messages_Admin_Page___insert_or_update_message_template__validates',
+                    array(),
+                    $this->_req_data['MTP_template_fields'],
+                    $context_slug,
+                    $messenger_slug,
+                    $message_type_slug
+                );
+
+                $system_validation = $MTPG->validate(
+                    $this->_req_data['MTP_template_fields'],
+                    $context_slug,
+                    $messenger_slug,
+                    $message_type_slug
+                );
+
+                $system_validation = ! is_array($system_validation) && $system_validation ? array() : $system_validation;
+                $validates = array_merge($custom_validation, $system_validation);
                 
                 //if $validate returned error messages (i.e. is_array()) then we need to process them and setup an
                 // appropriate response. HMM, dang this isn't correct, $validates will ALWAYS be an array.
@@ -2740,7 +2759,29 @@ class Messages_Admin_Page extends EE_Admin_Page
                         $where_cols_n_values = array(
                             'MTP_ID' => $this->_req_data['MTP_template_fields'][$template_field]['MTP_ID']
                         );
-                        
+                        //if they aren't allowed to use all JS, restrict them to just posty-y tags
+                        if (! current_user_can('unfiltered_html')){
+                            if (is_array($set_column_values['MTP_content'])){
+                                 foreach($set_column_values['MTP_content'] as $key => $value) {
+                                     //remove slashes so wp_kses works properly (its wp_kses_stripslashes() function
+                                     //only removes slashes from double-quotes, so attributes using single quotes always
+                                     //appear invalid.) But currently the models expect slashed data, so after wp_kses
+                                     //runs we need to re-slash the data. Sheesh. See
+                                     //https://events.codebasehq.com/projects/event-espresso/tickets/11211#update-47321587
+                                     $set_column_values['MTP_content'][$key] = addslashes(
+                                             wp_kses(
+                                                 stripslashes($value),
+                                                 wp_kses_allowed_html('post')
+                                             )
+                                     );
+                                 }
+                            } else {
+                                $set_column_values['MTP_content'] = wp_kses(
+                                    $set_column_values['MTP_content'],
+                                    wp_kses_allowed_html('post')
+                                );
+                            }
+                        }
                         $message_template_fields = array(
                             'GRP_ID'             => $set_column_values['GRP_ID'],
                             'MTP_template_field' => $set_column_values['MTP_template_field'],
@@ -2919,18 +2960,29 @@ class Messages_Admin_Page extends EE_Admin_Page
         ) {
             $active_messenger->set_existing_test_settings($this->_req_data['test_settings_fld']);
         }
-        
-        $success = $this->_preview_message(true);
-        
-        if ($success) {
-            EE_Error::add_success(__('Test message sent', 'event_espresso'));
-        } else {
-            EE_Error::add_error(
-                esc_html__('The test message was not sent', 'event_espresso'),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
+
+        /**
+         * Use filter to add additional controls on whether message can send or not
+         */
+        if (apply_filters(
+            'FHEE__Messages_Admin_Page__do_test_send__can_send',
+            true,
+            $context,
+            $this->_req_data,
+            $messenger,
+            $message_type
+        )) {
+            $success = $this->_preview_message(true);
+            if ($success) {
+                EE_Error::add_success(__('Test message sent', 'event_espresso'));
+            } else {
+                EE_Error::add_error(
+                    esc_html__('The test message was not sent', 'event_espresso'),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
+            }
         }
     }
     
@@ -4392,10 +4444,13 @@ class Messages_Admin_Page extends EE_Admin_Page
             }
         }
         if ($deleted_count) {
+            EE_Error::add_success(esc_html(_n('Message successfully deleted', 'Messages successfully deleted', $deleted_count, 'event_espresso')));
             $this->_redirect_after_action(
-                true,
-                _n('message', 'messages', $deleted_count, 'event_espresso'),
-                esc_html__('deleted', 'event_espresso')
+                false,
+                '',
+                '',
+                array(),
+                true
             );
         } else {
             EE_Error::add_error(

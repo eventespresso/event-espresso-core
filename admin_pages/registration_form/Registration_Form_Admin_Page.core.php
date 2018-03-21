@@ -256,20 +256,32 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
 
     public function load_scripts_styles_add_question()
     {
-        $this->load_scripts_styles_forms();
-        wp_register_script('espresso_registration_form_single',
-            REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery-ui-sortable'),
-            EVENT_ESPRESSO_VERSION, true);
-        wp_enqueue_script('espresso_registration_form_single');
+        $this->load_scripts_styles_question_details();
     }
 
     public function load_scripts_styles_edit_question()
+    {
+        $this->load_scripts_styles_question_details();
+    }
+
+    /**
+     * Loads the JS required for adding or editing a question
+     */
+    protected function load_scripts_styles_question_details()
     {
         $this->load_scripts_styles_forms();
         wp_register_script('espresso_registration_form_single',
             REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery-ui-sortable'),
             EVENT_ESPRESSO_VERSION, true);
         wp_enqueue_script('espresso_registration_form_single');
+        wp_localize_script(
+            'espresso_registration_form_single',
+            'ee_question_data',
+            array(
+                'question_types_with_max' => EEM_Question::instance()->questionTypesWithMaxLength(),
+                'question_type_with_options' => EEM_Question::instance()->question_types_with_options()
+            )
+        );
     }
 
 
@@ -347,6 +359,19 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
         //if QST_admin_only, then no matter what QST_required is we disable.
         if (! empty($this->_req_data['QST_admin_only'])) {
             $this->_req_data['QST_required'] = 0;
+        }
+        //if the question shouldn't have a max length, don't let them set one
+        if (! isset(
+            $this->_req_data['QST_type'],
+                $this->_req_data['QST_max']
+            )
+            || ! in_array(
+            $this->_req_data['QST_type'],
+            EEM_Question::instance()->questionTypesWithMaxLength(),
+            true)
+        ) {
+            //they're not allowed to set the max
+            $this->_req_data['QST_max'] = null;
         }
         foreach ($model->field_settings() as $fieldName => $settings) {
             // basically if QSG_identifier is empty or not set
@@ -502,6 +527,9 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             $action_desc = 'added';
         } else {
             $question     = EEM_Question::instance()->get_one_by_ID(absint($this->_req_data['QST_ID']));
+            foreach($set_column_values as $field => $new_value) {
+                $question->set($field, $new_value);
+            }
             $action_desc = 'updated';
         }
         $success = $question->save();

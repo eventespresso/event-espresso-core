@@ -27,6 +27,8 @@ if (defined('WP_DEBUG') && WP_DEBUG === true && defined('EE_ERROR_EMAILS') && EE
 class EE_Error extends Exception
 {
 
+    const OPTIONS_KEY_NOTICES = 'ee_notices';
+
 
     /**
      * name of the file to log exceptions to
@@ -255,7 +257,7 @@ class EE_Error extends Exception
             ? true
             : false;
         if ($check_stored && ! $has_error) {
-            $notices = (array)get_option('ee_notices', array());
+            $notices = (array)get_option(EE_Error::OPTIONS_KEY_NOTICES, array());
             foreach ($notices as $type => $notice) {
                 if ($type === $type_to_check && $notice) {
                     return true;
@@ -718,15 +720,15 @@ class EE_Error extends Exception
     {
         $has_notices = 0;
         // check for success messages
-        $has_notices = self::$_espresso_notices['success'] && ! empty(self::$_espresso_notices['success']) 
+        $has_notices = self::$_espresso_notices['success'] && ! empty(self::$_espresso_notices['success'])
             ? 3
             : $has_notices;
         // check for attention messages
-        $has_notices = self::$_espresso_notices['attention'] && ! empty(self::$_espresso_notices['attention']) 
+        $has_notices = self::$_espresso_notices['attention'] && ! empty(self::$_espresso_notices['attention'])
             ? 2
             : $has_notices;
         // check for error messages
-        $has_notices = self::$_espresso_notices['errors'] && ! empty(self::$_espresso_notices['errors']) 
+        $has_notices = self::$_espresso_notices['errors'] && ! empty(self::$_espresso_notices['errors'])
             ? 1
             : $has_notices;
         return $has_notices;
@@ -768,32 +770,39 @@ class EE_Error extends Exception
      */
     public static function get_notices($format_output = true, $save_to_transient = false, $remove_empty = true)
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+        // do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $success_messages   = '';
         $attention_messages = '';
         $error_messages     = '';
         $print_scripts      = false;
         // EEH_Debug_Tools::printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
         // either save notices to the db
-        if ($save_to_transient) {
-            update_option('ee_notices', self::$_espresso_notices);
+        if ($save_to_transient || isset($_REQUEST['activate-selected'])) {
+            $existing_notices  = get_option(EE_Error::OPTIONS_KEY_NOTICES, array());
+            $existing_notices = is_array($existing_notices) ? $existing_notices : array();
+            self::$_espresso_notices = array_merge(
+                $existing_notices,
+                self::$_espresso_notices
+            );
+            update_option(EE_Error::OPTIONS_KEY_NOTICES, self::$_espresso_notices);
             return array();
         }
         // grab any notices that have been previously saved
-        if ($notices = get_option('ee_notices', false)) {
+        if ($notices = get_option(EE_Error::OPTIONS_KEY_NOTICES, array())) {
             foreach ($notices as $type => $notice) {
                 if (is_array($notice) && ! empty($notice)) {
                     // make sure that existing notice type is an array
                     self::$_espresso_notices[$type] = is_array(self::$_espresso_notices[$type])
                                                       && ! empty(self::$_espresso_notices[$type])
-                        ? self::$_espresso_notices[$type] : array();
+                        ? self::$_espresso_notices[$type]
+                        : array();
                     // merge stored notices with any newly created ones
                     self::$_espresso_notices[$type] = array_merge(self::$_espresso_notices[$type], $notice);
                     $print_scripts                  = true;
                 }
             }
             // now clear any stored notices
-            update_option('ee_notices', false);
+            update_option(EE_Error::OPTIONS_KEY_NOTICES, array());
         }
         // check for success messages
         if (self::$_espresso_notices['success'] && ! empty(self::$_espresso_notices['success'])) {
@@ -822,7 +831,7 @@ class EE_Error extends Exception
             $close = is_admin() ? ''
                 : '<a class="close-espresso-notice hide-if-no-js"><span class="dashicons dashicons-no"></span></a>';
             if ($success_messages !== '') {
-                $css_id    = is_admin() ? 'message' : 'espresso-notices-success';
+                $css_id    = is_admin() ? 'ee-success-message' : 'espresso-notices-success';
                 $css_class = is_admin() ? 'updated fade' : 'success fade-away';
                 //showMessage( $success_messages );
                 $notices .= '<div id="'
@@ -836,7 +845,7 @@ class EE_Error extends Exception
                             . '</div>';
             }
             if ($attention_messages !== '') {
-                $css_id    = is_admin() ? 'message' : 'espresso-notices-attention';
+                $css_id    = is_admin() ? 'ee-attention-message' : 'espresso-notices-attention';
                 $css_class = is_admin() ? 'updated ee-notices-attention' : 'attention fade-away';
                 //showMessage( $error_messages, TRUE );
                 $notices .= '<div id="'
@@ -850,7 +859,7 @@ class EE_Error extends Exception
                             . '</div>';
             }
             if ($error_messages !== '') {
-                $css_id    = is_admin() ? 'message' : 'espresso-notices-error';
+                $css_id    = is_admin() ? 'ee-error-message' : 'espresso-notices-error';
                 $css_class = is_admin() ? 'error' : 'error fade-away';
                 //showMessage( $error_messages, TRUE );
                 $notices .= '<div id="'
@@ -955,6 +964,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 
     /**
      * write exception details to log file
+     * Since 4.9.53.rc.006 this writes to the standard PHP log file, not EE's custom log file
      *
      * @param int   $time
      * @param array $ex
@@ -981,20 +991,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
         $exception_log .= '----------------------------------------------------------------------------------------'
                           . PHP_EOL;
         try {
-            EEH_File::ensure_file_exists_and_is_writable(EVENT_ESPRESSO_UPLOAD_DIR
-                                                         . 'logs'
-                                                         . DS
-                                                         . self::$_exception_log_file);
-            EEH_File::add_htaccess_deny_from_all(EVENT_ESPRESSO_UPLOAD_DIR . 'logs');
-            if (! $clear) {
-                //get existing log file and append new log info
-                $exception_log = EEH_File::get_file_contents(EVENT_ESPRESSO_UPLOAD_DIR
-                                                             . 'logs'
-                                                             . DS
-                                                             . self::$_exception_log_file) . $exception_log;
-            }
-            EEH_File::write_to_file(EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file,
-                $exception_log);
+            error_log($exception_log);
         } catch (EE_Error $e) {
             EE_Error::add_error(sprintf(__('Event Espresso error logging could not be setup because: %s',
                 'event_espresso'), $e->getMessage()));

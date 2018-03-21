@@ -10,7 +10,7 @@ For example, in Event Espresso, we use status IDs to identify the state of an ob
 The Context class is a simple Data Transfer Object (DTO) for conveying the background details about why some other logic is being performed, that can assist with the decision making process or simply enhance logging. In order to create one, you need to provide a "slug" and a "description". 
 
 ```php
-$context = new EventEspresso\core\domain\entities\Context(
+$context = new EventEspresso\core\domain\entities\contexts\Context(
     'context-slug',
     'description of this context'
 );
@@ -19,7 +19,7 @@ $context = new EventEspresso\core\domain\entities\Context(
  The context slug will be used by other systems for identifying the current context, and the description will likely only be used for logging purposes. This however can allow us to make better decisions in other places in our code.
  
  ```php
-$context = new EventEspresso\core\domain\entities\Context(
+$context = new EventEspresso\core\domain\entities\contexts\Context(
     'admin-registration-status-change',
     'Registration status was changed by an admin'
 );
@@ -109,7 +109,7 @@ add_filter(
 
 Now the `$send_reg_cancelled_email->isAllowed($context)` will also return true if the supplied Context slug is equal to 'wait-list-registration-status-change'.
 
-The `ContextChecker::isAllowed()` method uses a simple type sensitive `in_array()` check will be used and return true if the incoming `Context::slug()` is found within the array of `$acceptable_values`. If this logic is not sufficient for your purposes, then when creating a ContextChecker, a callback can be provided for performing this evaluation externally.
+The `ContextChecker::isAllowed()` method uses a simple type sensitive `in_array()` check and will return true if the incoming `Context::slug()` is found within the array of `$acceptable_values`. If this logic is not sufficient for your purposes, then when creating a ContextChecker, a callback can be provided for performing this evaluation externally.
 
 ```php
 $send_reg_cancelled_email_for_any_admin_context = new EventEspresso\core\services\context\ContextChecker(
@@ -129,12 +129,12 @@ If you need to influence a previously constructed ContextChecker and change its 
  "FHEE__EventEspresso_core_domain_entities_context_ContextChecker__" + ContextChecker::identifier() + "__isAllowed"
 ```
 
-So for the last ContextChecker above, we could filter the value it returns from `isAllowed()` using the following:
+So for the last ContextChecker above, we could filter the value it returns from `isAllowed()` using the following: (note that  we are using ContextInterface for type hinting)
 
 ```php
 add_filter(
     'FHEE__EventEspresso_core_domain_entities_context_ContextChecker__send-email-if-registration-cancelled-by-admin__isAllowed',
-    function ($is_allowed, Context $context)
+    function ($is_allowed, ContextInterface $context)
     {
         // if context slug contains the word "automated" return true, else return previously evaluated result
         return strpos($context->slug(), 'automated') !== false

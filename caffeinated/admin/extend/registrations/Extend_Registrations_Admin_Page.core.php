@@ -791,7 +791,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
     protected function _registration_checkin_list_table()
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        $reg_id = isset($this->_req_data['_REGID']) ? $this->_req_data['_REGID'] : null;
+        $reg_id = isset($this->_req_data['_REG_ID']) ? $this->_req_data['_REG_ID'] : null;
         /** @var EE_Registration $registration */
         $registration = EEM_Registration::instance()->get_one_by_ID($reg_id);
         $attendee = $registration->attendee();
@@ -873,7 +873,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             ) . '</h2>'
             : '';
         $this->_template_args['list_table_hidden_fields'] = ! empty($reg_id)
-            ? '<input type="hidden" name="_REGID" value="' . $reg_id . '">' : '';
+            ? '<input type="hidden" name="_REG_ID" value="' . $reg_id . '">' : '';
         $this->_template_args['list_table_hidden_fields'] .= ! empty($dtt_id)
             ? '<input type="hidden" name="DTT_ID" value="' . $dtt_id . '">' : '';
         $this->display_admin_list_table_page_with_no_sidebar();
@@ -1007,7 +1007,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         $query_args = array(
             'action' => 'registration_checkins',
             'DTT_ID' => isset($this->_req_data['DTT_ID']) ? $this->_req_data['DTT_ID'] : 0,
-            '_REGID' => isset($this->_req_data['_REGID']) ? $this->_req_data['_REGID'] : 0,
+            '_REG_ID' => isset($this->_req_data['_REG_ID']) ? $this->_req_data['_REG_ID'] : 0,
         );
         $errors = 0;
         if ( ! empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
@@ -1056,7 +1056,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         $query_args = array(
             'action' => 'registration_checkins',
             'DTT_ID' => isset($this->_req_data['DTT_ID']) ? $this->_req_data['DTT_ID'] : 0,
-            '_REGID' => isset($this->_req_data['_REGID']) ? $this->_req_data['_REGID'] : 0,
+            '_REG_ID' => isset($this->_req_data['_REG_ID']) ? $this->_req_data['_REG_ID'] : 0,
         );
         if ( ! empty($this->_req_data['CHK_ID'])) {
             if ( ! EEM_Checkin::instance()->delete_by_ID($this->_req_data['CHK_ID'])) {
@@ -1126,10 +1126,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             'nocheckinrecord'  => array(
                 'class' => $checked_never->cssClasses(),
                 'desc'  => $checked_never->legendLabel(),
-            ),
-            'view_details'     => array(
-                'class' => 'dashicons dashicons-search',
-                'desc'  => esc_html__('View All Check-in Records for this Registrant', 'event_espresso'),
             ),
             'approved_status'  => array(
                 'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
