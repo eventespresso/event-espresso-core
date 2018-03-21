@@ -39,8 +39,10 @@ class SessionLifespan
      * @param int $lifespan
      * @throws DomainException
      */
-    public function __construct($lifespan)
+    public function __construct($lifespan = 0)
     {
+        $lifespan = absint($lifespan);
+        $lifespan = $lifespan > 0 ? $lifespan : (int) HOUR_IN_SECONDS;
         $this->setLifespan($lifespan);
     }
 
@@ -51,7 +53,7 @@ class SessionLifespan
      */
     protected function setLifespan($lifespan)
     {
-        if(absint($lifespan) < 60) {
+        if($lifespan < 60) {
             throw new DomainException(
                 esc_html__(
                     'The session lifespan needs to be at least 60 seconds, and even that is extremely short',
