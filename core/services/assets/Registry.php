@@ -6,6 +6,7 @@ use EE_Currency_Config;
 use EE_Registry;
 use EE_Template_Config;
 use EEH_Qtip_Loader;
+use EventEspresso\core\domain\DomainInterface;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -49,6 +50,11 @@ class Registry
     protected $script_handles_with_data = array();
 
 
+    /**
+     * @var DomainInterface
+     */
+    protected $domain;
+
 
     /**
      * Registry constructor.
@@ -56,11 +62,16 @@ class Registry
      *
      * @param EE_Template_Config $template_config
      * @param EE_Currency_Config $currency_config
+     * @param DomainInterface    $domain
      */
-    public function __construct(EE_Template_Config $template_config, EE_Currency_Config $currency_config)
-    {
+    public function __construct(
+        EE_Template_Config $template_config,
+        EE_Currency_Config $currency_config,
+        DomainInterface $domain
+    ) {
         $this->template_config = $template_config;
         $this->currency_config = $currency_config;
+        $this->domain = $domain;
         add_action('wp_enqueue_scripts', array($this, 'scripts'), 1);
         add_action('admin_enqueue_scripts', array($this, 'scripts'), 1);
         add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 2);
