@@ -23,8 +23,8 @@ This is just to document the third party libraries in use for EE4 and where to f
 ### moment.js
 
 * link: https://github.com/moment/moment
-* version in use: 2.5.0
-* last updated: EE4.1
+* version in use: 2.29
+* last updated: EE4.9.59
 
 ### qtip2
 
