@@ -1,0 +1,36 @@
+{
+  "name": "@eventespresso/core",
+  "version": "1.0.0",
+  "description": "Event Espresso core js and css.",
+  "main": "webpack.dev.js",
+  "scripts": {
+    "watch": "webpack --watch --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js"
+  },
+  "author": "Event Espresso",
+  "license": "GPL-2.0",
+  "devDependencies": {
+    "@wordpress/babel-preset-default": "^1.1.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-polyfill": "^6.26.0",
+    "clean-webpack-plugin": "^0.1.18",
+    "css-loader": "^0.28.9",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "style-loader": "^0.20.1",
+    "uglifyjs-webpack-plugin": "^1.1.8",
+    "webpack": "^3.10.0",
+    "webpack-combine-loaders": "^2.0.3",
+    "webpack-merge": "^4.1.1"
+  },
+  "dependencies": {
+    "@wordpress/dom-ready": "^1.0.2",
+    "classnames": "^2.2.5",
+    "lodash": "4.17.4",
+    "querystringify": "^1.0.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-redux": "^5.0.6",
+    "redux": "^3.7.2"
+  }
+}
