@@ -3,22 +3,25 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const assets = './assets/src/';
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const combineLoaders = require('webpack-combine-loaders');
+const externals = {
+    jquery: "jQuery"
+};
 /** see below for multiple configurations.
 /** https://webpack.js.org/configuration/configuration-types/#exporting-multiple-configurations */
 config = [
     {
         entry: {
-            //example
-            // 'ee-shortcode-blocks': [
-            //     assets + 'blocks/index.js'
-            // ],
+            'exit-modal-survey': [
+                assets + 'exit-modal-survey/index.js'
+            ],
         },
         plugins: [
             new CleanWebpackPlugin(['assets/dist']),
-            new ExtractTextPlugin('[name].style.css')
+            new ExtractTextPlugin('ee-[name].style.css')
         ],
+        externals,
         output: {
-            filename: '[name].dist.js',
+            filename: 'ee-[name].dist.js',
             path: path.resolve(__dirname, 'assets/dist')
         },
         module: {
