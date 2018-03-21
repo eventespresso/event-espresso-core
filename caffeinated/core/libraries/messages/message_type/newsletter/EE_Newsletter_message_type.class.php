@@ -17,13 +17,13 @@ class EE_Newsletter_message_type extends EE_message_type
     public function __construct()
     {
         $this->name = 'newsletter';
-        $this->description = __(
+        $this->description = esc_html__(
             'Batch message type messages are triggered manually by the admin for sending notifications to a selected group of recipients. This should only be used for more general notification type messages that contain information specific for the recipients. For "newsletter" type messages we recommend using an email list service like MailChimp, because sending non-related mail-outs to contacts increases the risk of your site domain getting added to spam lists, which will prevent messages getting to users.',
             'event_espresso'
         );
         $this->label = array(
-            'singular' => __('batch', 'event_espresso'),
-            'plural'   => __('batches', 'event_espresso'),
+            'singular' => esc_html__('batch', 'event_espresso'),
+            'plural'   => esc_html__('batches', 'event_espresso'),
         );
         $this->_master_templates = array(
             'email' => 'registration',
@@ -81,15 +81,15 @@ class EE_Newsletter_message_type extends EE_message_type
     protected function _set_contexts()
     {
         $this->_context_label = array(
-            'label'       => __('recipient', 'event_espresso'),
-            'plural'      => __('recipients', 'event_espresso'),
-            'description' => __('Recipient\'s are who will receive the message.', 'event_espresso'),
+            'label'       => esc_html__('recipient', 'event_espresso'),
+            'plural'      => esc_html__('recipients', 'event_espresso'),
+            'description' => esc_html__('Recipient\'s are who will receive the message.', 'event_espresso'),
         );
 
         $this->_contexts = array(
             'attendee' => array(
-                'label'       => __('Registrant', 'event_espresso'),
-                'description' => __('This template goes to selected registrants.', 'event_espresso'),
+                'label'       => esc_html__('Registrant', 'event_espresso'),
+                'description' => esc_html__('This template goes to selected registrants.', 'event_espresso'),
             ),
         );
     }
