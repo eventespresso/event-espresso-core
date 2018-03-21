@@ -46,26 +46,30 @@ class EED_Recaptcha_Invisible extends EED_Module
     {
         EED_Recaptcha_Invisible::setProperties();
         if (EED_Recaptcha_Invisible::useInvisibleRecaptcha()) {
-            // ticket selection
-            add_filter(
-                'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
-                array('EED_Recaptcha_Invisible', 'ticketSelectorForm'),
-                10, 3
-            );
-            add_action(
-                'EED_Ticket_Selector__process_ticket_selections__before',
-                array('EED_Recaptcha_Invisible', 'processTicketSelectorForm')
-            );
-            // checkout
-            add_action(
-                'AHEE__EE_SPCO_Reg_Step__display_reg_form__reg_form',
-                array('EED_Recaptcha_Invisible', 'spcoRegStepForm')
-            );
-            add_filter(
-                'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data',
-                array('EED_Recaptcha_Invisible', 'receiveSpcoRegStepForm'),
-                10, 2
-            );
+            if(EED_Recaptcha_Invisible::protectForm('ticket_selector')){
+                // ticket selection
+                add_filter(
+                    'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
+                    array('EED_Recaptcha_Invisible', 'ticketSelectorForm'),
+                    10, 3
+                );
+                add_action(
+                    'EED_Ticket_Selector__process_ticket_selections__before',
+                    array('EED_Recaptcha_Invisible', 'processTicketSelectorForm')
+                );
+            }
+            if (EED_Recaptcha_Invisible::protectForm('registration_form')) {
+                // checkout
+                add_action(
+                    'AHEE__EE_SPCO_Reg_Step__display_reg_form__reg_form',
+                    array('EED_Recaptcha_Invisible', 'spcoRegStepForm')
+                );
+                add_filter(
+                    'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data',
+                    array('EED_Recaptcha_Invisible', 'receiveSpcoRegStepForm'),
+                    10, 2
+                );
+            }
             add_action('loop_end', array('EED_Recaptcha_Invisible', 'localizeScriptVars'));
         }
     }
@@ -79,15 +83,20 @@ class EED_Recaptcha_Invisible extends EED_Module
      */
     public static function set_hooks_admin()
     {
-        add_action(
-            'EED_Ticket_Selector__process_ticket_selections__before',
-            array('EED_Recaptcha_Invisible', 'processTicketSelectorForm')
-        );
-        add_filter(
-            'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data',
-            array('EED_Recaptcha_Invisible', 'receiveSpcoRegStepForm'),
-            10, 2
-        );
+        EED_Recaptcha_Invisible::setProperties();
+        if (EED_Recaptcha_Invisible::protectForm('ticket_selector')) {
+            add_action(
+                'EED_Ticket_Selector__process_ticket_selections__before',
+                array('EED_Recaptcha_Invisible', 'processTicketSelectorForm')
+            );
+        }
+        if (EED_Recaptcha_Invisible::protectForm('registration_form')) {
+            add_filter(
+                'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data',
+                array('EED_Recaptcha_Invisible', 'receiveSpcoRegStepForm'),
+                10, 2
+            );
+        }
         // admin settings
         add_action(
             'AHEE__Extend_Registration_Form_Admin_Page___reg_form_settings_template',
@@ -121,6 +130,17 @@ class EED_Recaptcha_Invisible extends EED_Module
     {
         return EED_Recaptcha_Invisible::$config->use_captcha
                && EED_Recaptcha_Invisible::$config->recaptcha_theme === 'invisible';
+    }
+
+
+    /**
+     * @param string $form
+     * @return boolean
+     */
+    public static function protectForm($form)
+    {
+        return is_array(EED_Recaptcha_Invisible::$config->recaptcha_protected_forms)
+            && in_array($form, EED_Recaptcha_Invisible::$config->recaptcha_protected_forms, true);
     }
 
 
