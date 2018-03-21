@@ -187,4 +187,23 @@ class EE_Newsletter_message_type extends EE_message_type
         }
         return $addressee;
     }
+
+    /**
+     * Allows a message type to specifically exclude template fields for the provided messenger.
+     * Filtered so this can be programmatically altered as well.
+     *
+     * @param string $messenger_name name of messenger
+     * @return array
+     */
+    public function excludedFieldsForMessenger($messenger_name)
+    {
+        $excluded_fields = array(
+            'email' => array('cc')
+        );
+        return isset($excluded_fields[$messenger_name])
+            ? $excluded_fields[$messenger_name]
+            : parent::excludedFieldsForMessenger($messenger_name);
+    }
+
+
 }
