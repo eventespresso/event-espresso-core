@@ -3,6 +3,7 @@
 namespace EventEspresso\caffeinated\modules\recaptcha_invisible;
 
 use EE_Admin_Two_Column_Layout;
+use EE_Checkbox_Multi_Input;
 use EE_Div_Per_Section_Layout;
 use EE_Error;
 use EE_Form_Section_HTML;
@@ -147,6 +148,21 @@ class RecaptchaAdminSettings
                                 'default'         => $this->config->recaptcha_privatekey !== null
                                     ? stripslashes($this->config->recaptcha_privatekey)
                                     : '',
+                            )
+                        ),
+                        'recaptcha_protected_forms' => new EE_Checkbox_Multi_Input(
+                            array(
+                                'ticket_selector'   => esc_html__('Ticket Selector', 'event_espresso'),
+                                'registration_form' => esc_html__('Registration Form', 'event_espresso'),
+                            ),
+                            array(
+                                'html_label_text'         => esc_html__('Invisible reCAPTCHA Protection', 'event_espresso'),
+                                'html_help_text'          => esc_html__('Select which Event Espresso forms you would like to enable Invisible reCAPTCHA on.',
+                                    'event_espresso'),
+                                'default'                 => is_array($this->config->recaptcha_protected_forms)
+                                    ? $this->config->recaptcha_protected_forms
+                                    : array(),
+                                'display_html_label_text' => false,
                             )
                         ),
                     )
@@ -332,6 +348,7 @@ class RecaptchaAdminSettings
                     }
                     $EE_Registration_Config->use_captcha          = $valid_data['main_settings']['use_captcha'];
                     $EE_Registration_Config->recaptcha_publickey  = $valid_data['main_settings']['recaptcha_publickey'];
+                    $EE_Registration_Config->recaptcha_protected_forms = $valid_data['main_settings']['recaptcha_protected_forms'];
                     $EE_Registration_Config->recaptcha_privatekey = $valid_data['main_settings']['recaptcha_privatekey'];
                     $EE_Registration_Config->recaptcha_type       = $valid_data['appearance_settings']['recaptcha_type'];
                     $EE_Registration_Config->recaptcha_theme      = $valid_data['appearance_settings']['recaptcha_theme'];
