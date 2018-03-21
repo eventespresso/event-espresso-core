@@ -154,10 +154,10 @@ class EE_Session implements SessionIdentifierInterface
     protected $request;
 
 
-
     /**
      * @singleton method used to instantiate class object
      * @param CacheStorageInterface $cache_storage
+     * @param SessionLifespan|null  $lifespan
      * @param RequestInterface      $request
      * @param EE_Encryption         $encryption
      * @return EE_Session
