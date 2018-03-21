@@ -2364,6 +2364,13 @@ class EE_Registration_Config extends EE_Config_Base
     public $recaptcha_privatekey;
 
     /**
+     * array of form names protected by ReCaptcha
+     *
+     * @var array $recaptcha_protected_forms
+     */
+    public $recaptcha_protected_forms;
+
+    /**
      * ReCaptcha width
      *
      * @var int $recaptcha_width
@@ -2403,6 +2410,7 @@ class EE_Registration_Config extends EE_Config_Base
         $this->recaptcha_language = 'en';
         $this->recaptcha_publickey = null;
         $this->recaptcha_privatekey = null;
+        $this->recaptcha_protected_forms = array();
         $this->recaptcha_width = 500;
         $this->default_maximum_number_of_tickets = 10;
     }
