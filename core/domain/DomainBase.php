@@ -130,7 +130,7 @@ abstract class DomainBase implements DomainInterface
      */
     public function distributionAssetsPath()
     {
-        return $this->pluginPath() . 'src/assets/dist/';
+        return $this->pluginPath() . 'assets/dist/';
     }
 
 
@@ -139,6 +139,6 @@ abstract class DomainBase implements DomainInterface
      */
     public function distributionAssetsUrl()
     {
-        return $this->pluginUrl() . 'src/assets/dist/';
+        return $this->pluginUrl() . 'assets/dist/';
     }
 }
