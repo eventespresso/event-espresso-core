@@ -383,17 +383,6 @@ abstract class EE_Addon extends EE_Configurable
 
 
     /**
-     * Sets the filepath to the main plugin file
-     *
-     * @param string $filepath
-     */
-    public function set_main_plugin_file($filepath)
-    {
-        $this->_main_plugin_file = $filepath;
-    }
-
-
-    /**
      * gets the filepath to the main file
      *
      * @return string

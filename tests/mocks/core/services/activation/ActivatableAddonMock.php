@@ -4,7 +4,7 @@ namespace EventEspresso\tests\mocks\core\services\activation;
 
 use EventEspresso\core\services\activation\ActivatableInterface;
 use EventEspresso\core\services\activation\ActivationHistory;
-use EventEspresso\core\services\activation\RequestType;
+use EventEspresso\core\services\activation\ActivationType;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -43,21 +43,21 @@ class ActivatableAddonMock implements ActivatableInterface
 
 
     /**
-     * @return RequestType
+     * @return ActivationType
      */
-    public function getRequestType()
+    public function getActivationType()
     {
-        // TODO: Implement getRequestType() method.
+        // TODO: Implement getActivationType() method.
     }
 
 
 
     /**
-     * @param RequestType $request_type
+     * @param ActivationType $activation_type
      */
-    public function setRequestType(RequestType $request_type)
+    public function setActivationType(ActivationType $activation_type)
     {
-        // TODO: Implement setRequestType() method.
+        // TODO: Implement setActivationType() method.
     }
 }
 // Location: ActivatableAddonMock.php

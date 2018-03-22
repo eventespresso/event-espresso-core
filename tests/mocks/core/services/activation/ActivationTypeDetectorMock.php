@@ -3,21 +3,21 @@
 namespace EventEspresso\tests\mocks\core\services\activation;
 
 use EventEspresso\core\services\activation\ActivationHistory;
-use EventEspresso\core\services\activation\RequestTypeDetector;
+use EventEspresso\core\services\activation\ActivationTypeDetector;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 
 /**
- * Class RequestTypeDetectorMock
+ * Class ActivationTypeDetectorMock
  * Description
  *
  * @package EventEspresso\tests\mocks\core\services\activation
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class RequestTypeDetectorMock extends RequestTypeDetector
+class ActivationTypeDetectorMock extends ActivationTypeDetector
 {
 
     /**
@@ -36,4 +36,4 @@ class RequestTypeDetectorMock extends RequestTypeDetector
     }
 
 }
-// Location: RequestTypeDetectorMock.php
+// Location: ActivationTypeDetectorMock.php

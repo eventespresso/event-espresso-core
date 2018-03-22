@@ -2,12 +2,10 @@
 use EventEspresso\core\services\activation\ActivationHandler;
 use EventEspresso\core\services\activation\ActivationHistory;
 use EventEspresso\core\services\activation\ActivationsAndUpgradesManager;
-use EventEspresso\core\services\activation\RequestTypeDetector;
-use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\activation\ActivationTypeDetector;
 use EventEspresso\tests\includes\AddonActivationTestsHelper;
 use EventEspresso\tests\mocks\core\EE_System_Mock;
 use EventEspresso\tests\mocks\core\MaintenanceModeMock;
-use EventEspresso\tests\mocks\core\services\activation\ActivationHistoryExtendedMock;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -25,8 +23,9 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class ActivationsAndUpgradesManagerTest extends EE_UnitTestCase
 {
 
-
-
+    /**
+     * @throws EE_Error
+     */
     public function setUp()
     {
         parent::setUp();
@@ -37,15 +36,21 @@ class ActivationsAndUpgradesManagerTest extends EE_UnitTestCase
     }
 
 
-
     /**
      * tests what happens when a class that does NOT implement ActivatableInterface is passed to constructor
+     *
+     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \PHPUnit\Framework\Exception
      */
     public function testDetectActivationsAndVersionChangesWithBadArguments()
     {
         $ActivationsAndUpgradesManager = new ActivationsAndUpgradesManager(
             new ActivationHandler(MaintenanceModeMock::instance()),
-            new RequestTypeDetector()
+            new ActivationTypeDetector()
         );
         $this->expectException('EventEspresso\core\exceptions\InvalidEntityException');
         $ActivationsAndUpgradesManager->detectActivationsAndVersionChanges(
@@ -53,14 +58,22 @@ class ActivationsAndUpgradesManagerTest extends EE_UnitTestCase
         );
     }
 
+
     /**
      * tests what happens when both core and an addon are activated for the first time
+     *
+     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function testDetectActivationsAndVersionChangesForTwoNewActivations()
     {
         $ActivationsAndUpgradesManager = new ActivationsAndUpgradesManager(
             new ActivationHandler(MaintenanceModeMock::instance()),
-            new RequestTypeDetector()
+            new ActivationTypeDetector()
         );
         $system_mock = new EE_System_Mock();
         $activations = array(

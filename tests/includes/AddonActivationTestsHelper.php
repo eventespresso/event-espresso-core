@@ -6,9 +6,9 @@ use EE_NewAddonMock;
 use EE_Registry;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\activation\ActivationHistory;
-use EventEspresso\core\services\activation\RequestType;
+use EventEspresso\core\services\activation\ActivationType;
 use EventEspresso\tests\mocks\core\services\activation\ActivationHistoryExtendedMock;
-use EventEspresso\tests\mocks\core\services\request\RequestTypeDetectorExtendedMock;
+use EventEspresso\tests\mocks\core\services\activation\ActivationTypeDetectorExtendedMock;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -25,11 +25,11 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class AddonActivationTestsHelper extends ActivationTestsHelper
 {
 
-
-
     /**
      * @return EE_NewAddonMock
-     * @throws \EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     public static function registerAddon()
     {
@@ -115,12 +115,12 @@ class AddonActivationTestsHelper extends ActivationTestsHelper
     }
     /**
      * @param ActivationHistory $activation_history
-     * @return RequestType
+     * @return ActivationType
      * @throws InvalidArgumentException
      */
-    public static function getAndDetectRequestType(ActivationHistory $activation_history) {
-        $detector = new RequestTypeDetectorExtendedMock();
-        return $detector->resolveRequestTypeFromActivationHistory($activation_history);
+    public static function getAndDetectActivationType(ActivationHistory $activation_history) {
+        $detector = new ActivationTypeDetectorExtendedMock();
+        return $detector->resolveActivationTypeFromActivationHistory($activation_history);
     }
 
 
