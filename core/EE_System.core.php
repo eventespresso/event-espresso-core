@@ -11,10 +11,8 @@ use EventEspresso\core\services\activation\ActivatableInterface;
 use EventEspresso\core\services\activation\ActivationsAndUpgradesManager;
 use EventEspresso\core\services\activation\ActivationHistory;
 use EventEspresso\core\services\activation\ActivationsFactory;
-use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
-use EventEspresso\core\services\activation\RequestType;
-use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\activation\ActivationType;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\shortcodes\ShortcodesManager;
 
@@ -30,31 +28,31 @@ final class EE_System implements ActivatableInterface, ResettableInterface
 {
     /**
      * @deprecated 4.9.40
-     * @see        \EventEspresso\core\services\activation\RequestTypeDetector
+     * @see EventEspresso\core\services\activation\ActivationTypeDetector
      */
     const req_type_normal = 0;
 
     /**
      * @deprecated 4.9.40
-     * @see        \EventEspresso\core\services\activation\RequestTypeDetector
+     * @see EventEspresso\core\services\activation\ActivationTypeDetector
      */
     const req_type_new_activation = 1;
 
     /**
      * @deprecated 4.9.40
-     * @see        \EventEspresso\core\services\activation\RequestTypeDetector
+     * @see EventEspresso\core\services\activation\ActivationTypeDetector
      */
     const req_type_reactivation = 2;
 
     /**
      * @deprecated 4.9.40
-     * @see        \EventEspresso\core\services\activation\RequestTypeDetector
+     * @see EventEspresso\core\services\activation\ActivationTypeDetector
      */
     const req_type_upgrade = 3;
 
     /**
      * @deprecated 4.9.40
-     * @see        \EventEspresso\core\services\activation\RequestTypeDetector
+     * @see EventEspresso\core\services\activation\ActivationTypeDetector
      */
     const req_type_downgrade = 4;
 
@@ -71,7 +69,7 @@ final class EE_System implements ActivatableInterface, ResettableInterface
 
     /**
      * @deprecated 4.9.40
-     * @see        \EventEspresso\core\services\activation\RequestTypeDetector
+     * @see EventEspresso\core\services\activation\ActivationTypeDetector
      */
     const addon_activation_history_option_prefix = 'ee_addon_activation_history_';
 
@@ -116,9 +114,9 @@ final class EE_System implements ActivatableInterface, ResettableInterface
     private $activation_history;
 
     /**
-     * @var RequestType $request_type
+     * @var ActivationType $activation_type
      */
-    private $request_type;
+    private $activation_type;
 
     /**
      * @param EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes
@@ -141,7 +139,6 @@ final class EE_System implements ActivatableInterface, ResettableInterface
     private $activation_detected = false;
 
 
-
     /**
      * @singleton method used to instantiate class object
      * @param EE_Registry|null         $registry
@@ -155,12 +152,17 @@ final class EE_System implements ActivatableInterface, ResettableInterface
         LoaderInterface $loader = null,
         RequestInterface $request = null,
         EE_Maintenance_Mode $maintenance_mode = null
-    ) {
+    ): EE_System {
         // check if class object is instantiated
-        if (! self::$_instance instanceof EE_System) {
-            self::$_instance = new self($registry, $loader, $request, $maintenance_mode);
+        if (! EE_System::$_instance instanceof EE_System) {
+            EE_System::$_instance = new self(
+                $registry,
+                $loader,
+                $request,
+                $maintenance_mode
+            );
         }
-        return self::$_instance;
+        return EE_System::$_instance;
     }
 
 
@@ -174,15 +176,15 @@ final class EE_System implements ActivatableInterface, ResettableInterface
      * @throws InvalidArgumentException
      * @throws InvalidEntityException
      */
-    public static function reset()
+    public static function reset(): EE_System
     {
         // make sure none of the old hooks are left hanging around
         remove_all_actions('AHEE__EE_System__perform_activations_upgrades_and_migrations');
         // we need to reset the migration manager in order for it to detect DMSs properly
         EE_Data_Migration_Manager::reset();
-        self::instance()->detect_activations_or_upgrades();
-        self::instance()->activations_and_upgrades_manager->performActivationsAndUpgrades();
-        return self::instance();
+        EE_System::instance()->detect_activations_or_upgrades();
+        EE_System::instance()->activations_and_upgrades_manager->performActivationsAndUpgrades();
+        return EE_System::instance();
     }
 
 
@@ -281,18 +283,15 @@ final class EE_System implements ActivatableInterface, ResettableInterface
      * load and setup EE_Capabilities
      *
      * @return void
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
      */
     public function loadCapabilities()
     {
         $this->capabilities = $this->loader->getShared('EE_Capabilities');
         add_action(
             'AHEE__EE_Capabilities__init_caps__before_initialization',
-            function () {
-                LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
+            function ()
+            {
+                $this->loader->getShared('EE_Payment_Method_Manager');
             }
         );
     }
@@ -306,7 +305,6 @@ final class EE_System implements ActivatableInterface, ResettableInterface
      * so LocateMovedCommands will run first in order to return any new commands
      *
      * @return void
-     * @throws EE_Error
      */
     public function loadCommandBus()
     {
@@ -348,11 +346,11 @@ final class EE_System implements ActivatableInterface, ResettableInterface
      * @return void
      */
     private function deactivateIncompatibleAddon(
-        $addon_name,
-        $version_constant,
-        $min_version_required,
-        $load_callback,
-        $plugin_file_constant
+        string $addon_name,
+        string $version_constant,
+        string $min_version_required,
+        string $load_callback,
+        string $plugin_file_constant
     ) {
         if (! defined($version_constant)) {
             return;
@@ -388,7 +386,7 @@ final class EE_System implements ActivatableInterface, ResettableInterface
      *
      * @return ActivationHistory
      */
-    public function getActivationHistory()
+    public function getActivationHistory(): ActivationHistory
     {
         return $this->activation_history;
     }
@@ -406,21 +404,21 @@ final class EE_System implements ActivatableInterface, ResettableInterface
 
 
     /**
-     * @return RequestType
+     * @return ActivationType
      */
-    public function getRequestType()
+    public function getActivationType(): ActivationType
     {
-        return $this->request_type;
+        return $this->activation_type;
     }
 
 
 
     /**
-     * @param RequestType $request_type
+     * @param ActivationType $activation_type
      */
-    public function setRequestType(RequestType $request_type)
+    public function setActivationType(ActivationType $activation_type)
     {
-        $this->request_type = $request_type;
+        $this->activation_type = $activation_type;
     }
 
     /**
@@ -432,7 +430,6 @@ final class EE_System implements ActivatableInterface, ResettableInterface
      *    and the WP 'activate_plugin' hook point
      *
      * @return void
-     * @throws EE_Error
      */
     public function load_espresso_addons()
     {
@@ -495,17 +492,11 @@ final class EE_System implements ActivatableInterface, ResettableInterface
      */
     public function detect_activations_or_upgrades()
     {
-        if(
-            (defined('DOING_AJAX') && DOING_AJAX)
-            || (defined('REST_REQUEST') && REST_REQUEST)
-        ) {
-            return;
-        }
         $this->activations_and_upgrades_manager = ActivationsFactory::getActivationsAndUpgradesManager();
         $this->activation_detected = $this->activations_and_upgrades_manager->detectActivationsAndVersionChanges(
             array_merge(
                 array($this),
-                get_object_vars($this->registry->addons)
+                $this->registry->addons->returnArray()
             )
         );
     }
@@ -733,7 +724,11 @@ final class EE_System implements ActivatableInterface, ResettableInterface
     public function brew_espresso()
     {
         if ($this->activation_detected) {
+            add_action('init', array($this, 'set_hooks_for_core'), 1);
             add_action('init', array($this, 'perform_activations_upgrades_and_migrations'), 3);
+            add_action('init', array($this, 'load_controllers'), 7);
+            add_action('init', array($this, 'initialize'), 10);
+            add_action('init', array($this, 'initialize_last'), 100);
             return;
         }
         do_action('AHEE__EE_System__brew_espresso__begin', $this);
@@ -930,7 +925,6 @@ final class EE_System implements ActivatableInterface, ResettableInterface
 
     /**
      * @return void
-     * @throws EE_Error
      */
     public function addEspressoToolbar()
     {
@@ -1005,7 +999,7 @@ final class EE_System implements ActivatableInterface, ResettableInterface
      * @param  array $exclude_array any existing pages being excluded are in this array.
      * @return array
      */
-    public function remove_pages_from_wp_list_pages($exclude_array)
+    public function remove_pages_from_wp_list_pages(array $exclude_array): array
     {
         return array_merge($exclude_array, $this->registry->CFG->core->get_critical_pages_array());
     }
@@ -1015,7 +1009,7 @@ final class EE_System implements ActivatableInterface, ResettableInterface
      * Return whether blocks can be registered/loaded or not.
      * @return bool
      */
-    private function canLoadBlocks()
+    private function canLoadBlocks(): bool
     {
         return apply_filters('FHEE__EE_System__canLoadBlocks', true)
                && function_exists('register_block_type')
@@ -1056,9 +1050,9 @@ final class EE_System implements ActivatableInterface, ResettableInterface
      * @param null $espresso_db_update
      * @return int one of the constants on EE_System::req_type_
      */
-    public function detect_req_type($espresso_db_update = null)
+    public function detect_req_type($espresso_db_update = null): int
     {
-        return $this->getRequestType()->getRequestType();
+        return $this->getActivationType()->getActivationType();
     }
 
 
@@ -1067,9 +1061,9 @@ final class EE_System implements ActivatableInterface, ResettableInterface
      * @deprecated 4.9.40
      * @return bool
      */
-    public function is_major_version_change()
+    public function is_major_version_change(): bool
     {
-        return $this->getRequestType()->isMajorVersionChange();
+        return $this->getActivationType()->isMajorVersionChange();
     }
 
 
@@ -1082,31 +1076,31 @@ final class EE_System implements ActivatableInterface, ResettableInterface
      * @return int one of the constants on EE_System::req_type_*
      */
     public static function detect_req_type_given_activation_history(
-        $activation_history_for_addon,
-        $activation_indicator_option_name,
-        $version_to_upgrade_to
-    ) {
-        return EE_System::instance()->getRequestType()->getRequestType();
+        array $activation_history_for_addon,
+        string $activation_indicator_option_name,
+        string $version_to_upgrade_to
+    ): int {
+        return EE_System::instance()->getActivationType()->getActivationType();
     }
 
 
 
     /**
      * @deprecated 4.9.40
-     * @param boolean $initialize_addons_too
-     * @param boolean $verify_schema
+     * @param bool $initialize_addons_too
+     * @param bool $verify_schema
      * @return void
-     * @throws EE_Error
      */
-    public function initialize_db_if_no_migrations_required($initialize_addons_too = false, $verify_schema = true)
-    {
+    public function initialize_db_if_no_migrations_required(
+        bool $initialize_addons_too = false,
+        bool $verify_schema = true
+    ) {
     }
 
 
 
     /**
      * @deprecated 4.9.40
-     * @throws EE_Error
      */
     public function initialize_addons()
     {

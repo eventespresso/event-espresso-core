@@ -67,7 +67,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      */
     public function offsetGet($offset)
     {
-        return $this->offsetExists($offset) ? $this->container[ $offset ] : null;
+        return $this->container[ $offset ] ?? null;
     }
 
 
@@ -177,5 +177,14 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
     public function get($offset)
     {
         return $this->offsetGet($offset);
+    }
+
+
+    /**
+     * @return array
+     */
+    public function returnArray(): array
+    {
+        return $this->container;
     }
 }
