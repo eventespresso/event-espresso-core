@@ -148,5 +148,18 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
         unset($this->container[$offset]);
     }
 
+
+    /**
+     * @return array
+     */
+    public function returnArray()
+    {
+        $contents = array();
+        foreach ($this->container as $offset => $item) {
+            $contents[ $offset] = $item;
+        }
+        return $contents;
+    }
+
 }
 // Location: RegistryContainer.php
