@@ -1,6 +1,5 @@
 <?php
 
-use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -123,18 +122,6 @@ class EE_System implements ActivatableInterface, ResettableInterface
      * @var ActivationType $activation_type
      */
     private $activation_type;
-
-    /**
-     * @var bool $activation_detected
-     */
-    private $activation_detected = false;
-
-    /**
-     * A Context DTO dedicated solely to identifying the current request type.
-     *
-     * @var RequestTypeContextCheckerInterface $request_type
-     */
-    private $request_type;
 
 
     /**
@@ -475,21 +462,14 @@ class EE_System implements ActivatableInterface, ResettableInterface
     public function detect_activations_or_upgrades()
     {
         $this->activations_and_upgrades_manager = ActivationsFactory::getActivationsAndUpgradesManager();
-        $this->activation_detected = $this->activations_and_upgrades_manager->detectActivationsAndVersionChanges(
-            array_merge(
-                array($this),
-                $this->registry->addons->returnArray()
+        $this->request->setIsActivation(
+            $this->activations_and_upgrades_manager->detectActivationsAndVersionChanges(
+                array_merge(
+                    array($this),
+                    $this->registry->addons->returnArray()
+                )
             )
         );
-        // if (
-        //     $this->activation_detected
-        //     && (
-        //         (defined('DOING_AJAX') && DOING_AJAX)
-        //         || (defined('REST_REQUEST') && REST_REQUEST)
-        //     )
-        // ) {
-        //     //exit();
-        // }
     }
 
 
@@ -592,7 +572,7 @@ class EE_System implements ActivatableInterface, ResettableInterface
      */
     public function register_shortcodes_modules_and_widgets()
     {
-        if ($this->activation_detected) {
+        if ($this->request->isActivation()) {
             return;
         }
         if ($this->request->isFrontend() || $this->request->isIframe()) {
@@ -670,7 +650,7 @@ class EE_System implements ActivatableInterface, ResettableInterface
         do_action('AHEE__EE_System__brew_espresso__begin', $this);
         // load some final core systems
         add_action('init', array($this, 'set_hooks_for_core'), 1);
-        if ($this->activation_detected) {
+        if ($this->request->isActivation()) {
             add_action('init', array($this, 'perform_activations_upgrades_and_migrations'), 3);
         }
         add_action('init', array($this, 'load_CPTs_and_session'), 5);
