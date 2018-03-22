@@ -117,9 +117,23 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      *
      * @param string $model_name like Event, Question_Group, etc. omit the EEM_
      * @return EEM_Base
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function _get_model($model_name)
     {
+        if(empty($model_name)) {
+            throw new RuntimeException(
+                sprintf(
+                    esc_html__('Invalid Model name provided: "%1$s".', 'event_espresso'),
+                    $model_name
+                )
+            );
+        }
         $modelInstance = EE_Registry::instance()->load_model($model_name);
         $modelInstance->set_timezone($this->_timezone);
         return $modelInstance;
