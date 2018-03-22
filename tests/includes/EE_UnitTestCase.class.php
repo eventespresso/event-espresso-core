@@ -1040,19 +1040,24 @@ class EE_UnitTestCase extends WP_UnitTestCase
     }
 
 
-
     /**
      * Makes a complete transaction record with all associated data (ie, its line items,
      * registrations, tickets, datetimes, events, attendees, questions, answers, etc).
      *
-     * @param array $options         {
-     * 	@type int    $ticket_types    the number of different ticket types in this transaction. Default 1
-     * 	@type int    $taxable_tickets how many of those ticket types should be taxable. Default EE_INF
-     * }
+     * @param array $options {
+     *      @type int    $ticket_types    the number of different ticket types in this transaction. Default 1
+     *      @type int    $taxable_tickets how many of those ticket types should be taxable. Default EE_INF
+     *  }
      * @return EE_Transaction
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \PHPUnit\Framework\Exception
      */
-    protected function new_typical_transaction($options = array())
+    protected function new_typical_transaction(array $options = array())
     {
         /** @var EE_Transaction $txn */
         $txn = $this->new_model_obj_with_dependencies('Transaction', array('TXN_paid' => 0));
@@ -1080,16 +1085,22 @@ class EE_UnitTestCase extends WP_UnitTestCase
             ? count($options['tickets'])
             : $ticket_types;
         $taxes = EEM_Price::instance()->get_all_prices_that_are_taxes();
+        if($taxable_tickets){
+            $this->assertNotEmpty($taxes);
+        }
         for ($i = 1; $i <= $ticket_types; $i++) {
             /** @var EE_Ticket $ticket */
-            if(isset($options['tickets'], $options['tickets'][$i])){
+            if(isset($options['tickets'][$i])){
                 $ticket = $options['tickets'][$i];
                 $reg_final_price = $ticket->price();
                 $datetime = $ticket->first_datetime();
             } else {
                 $ticket = $this->new_model_obj_with_dependencies(
                     'Ticket',
-                    array('TKT_price' => $i * 10, 'TKT_taxable' => $taxable_tickets-- > 0 ? true : false)
+                    array(
+                        'TKT_price'   => $i * 10,
+                        'TKT_taxable' => $taxable_tickets-- > 0
+                    )
                 );
                 $sum_of_sub_prices = 0;
                 for ($j = 1; $j <= $fixed_ticket_price_modifiers; $j++) {
