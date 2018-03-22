@@ -98,6 +98,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
      */
     public function set_up()
     {
+        $this->markTestSkipped('Legacy activation code');
         parent::set_up();
         $this->_table_analysis = new TableAnalysis();
         $this->_table_manager  = new TableManager($this->_table_analysis);
@@ -233,6 +234,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
      */
     public function test_detect_activations_or_upgrades__new_install()
     {
+        $this->markTestSkipped('Legacy activation code');
         global $wp_actions;
         //its activation history wp option shouldn't exist
         $this->assertWPOptionDoesNotExist($this->_addon->get_activation_history_option_name());
@@ -268,6 +270,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
      */
     public function test_detect_activations_or_upgrades__new_install_on_core_and_addon_simultaneously()
     {
+        $this->markTestSkipped('Legacy activation code');
         global $wp_actions, $wpdb;
         //pretend core was just activated
         delete_option('espresso_db_update');
@@ -327,6 +330,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
 
     public function test_detect_activations_or_upgrades__upgrade_on_activation()
     {
+        $this->markTestSkipped('Legacy activation code');
         global $wp_actions;
         $this->_addon_classname = get_class($this->_addon);
         //first make sure the mock DMS can migrate from v 0.0.1
@@ -377,6 +381,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
      */
     public function test_detect_activations_or_upgrades__upgrade_on_normal_request()
     {
+        $this->markTestSkipped('Legacy activation code');
         global $wp_actions;
         //first make sure the mock DMS can migrate from v 0.0.1
         $dms = new EE_DMS_New_Addon_1_0_0();
@@ -417,6 +422,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
 
     public function test_detect_activations_or_upgrades__reactivation()
     {
+        $this->markTestSkipped('Legacy activation code');
         global $wp_actions;
         $this->assertEquals(
             EE_Maintenance_Mode::level_0_not_in_maintenance,
@@ -464,6 +470,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
      */
     public function test_detect_actiavtions_or_upgrade__activation_during_maintenance_mode()
     {
+        $this->markTestSkipped('Legacy activation code');
         global $wp_actions;
         //its activation history wp option shouldn't exist
         delete_option($this->_addon->get_activation_history_option_name());
@@ -533,6 +540,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
      */
     public function test_detect_actiavtions_or_upgrade__upgrade_during_maintenance_mode()
     {
+        $this->markTestSkipped('Legacy activation code');
         global $wp_actions;
         //pretend an older version of this addon was activated a while ago
         $addon_activation_history = [
