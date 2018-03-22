@@ -4,7 +4,8 @@ const assets = './assets/src/';
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const combineLoaders = require('webpack-combine-loaders');
 const externals = {
-    jquery: "jQuery"
+    jquery: "jQuery",
+    eejs: "eejs"
 };
 /** see below for multiple configurations.
 /** https://webpack.js.org/configuration/configuration-types/#exporting-multiple-configurations */
@@ -17,7 +18,7 @@ config = [
         },
         plugins: [
             new CleanWebpackPlugin(['assets/dist']),
-            new ExtractTextPlugin('ee-[name].style.css')
+            new ExtractTextPlugin('ee-[name].dist.css')
         ],
         externals,
         output: {

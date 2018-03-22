@@ -675,6 +675,9 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\domain\services\admin\ExitModal' => array(
+                'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache
+            )
         );
     }
 

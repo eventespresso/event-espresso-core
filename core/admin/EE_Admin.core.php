@@ -958,9 +958,12 @@ final class EE_Admin implements InterminableInterface
 
     /**
      * Callback on load-plugins.php hook for setting up anything hooking into the wp plugins page.
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function hookIntoWpPluginsPage()
     {
-        new ExitModal();
+        LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\admin\ExitModal');
     }
 }
