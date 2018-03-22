@@ -66,57 +66,57 @@ class ActivationHandler
 
 
     /**
-     * switches handling based on request type
+     * switches handling based on activation type
      *
      * @param ActivatableInterface $system_activated
-     * @param RequestType          $request_type
+     * @param ActivationType       $activation_type
      * @param ActivationHistory    $activation_history
      * @return bool
      * @throws InvalidArgumentException
      */
     public function detectActivationOrVersionChange(
         ActivatableInterface $system_activated,
-        RequestType $request_type,
+        ActivationType $activation_type,
         ActivationHistory $activation_history
     ) {
         $this->verifySystemActivated($system_activated);
         do_action(
-            'AHEE__EventEspresso_core_services_activation_DetectActivationsAndUpgrades__handleActivationRequestTypes__detect__before',
+            'AHEE__EventEspresso_core_services_activation_ActivationHandler__detectActivationOrVersionChange__before_detection',
             $system_activated,
             $this
         );
-        switch ($request_type->getRequestType()) {
-            case RequestType::NEW_ACTIVATION:
+        switch ($activation_type->getActivationType()) {
+            case ActivationType::NEW_ACTIVATION:
                 $activation_detected = $this->handleNewActivation(
                     $system_activated,
                     $activation_history
                 );
                 break;
-            case RequestType::REACTIVATION:
+            case ActivationType::REACTIVATION:
                 $activation_detected = $this->handleReactivation(
                     $system_activated,
                     $activation_history
                 );
                 break;
-            case RequestType::UPGRADE:
+            case ActivationType::UPGRADE:
                 $activation_detected = $this->handleUpgrade(
                     $system_activated,
                     $activation_history
                 );
                 break;
-            case RequestType::DOWNGRADE:
+            case ActivationType::DOWNGRADE:
                 $activation_detected = $this->handleDowngrade(
                     $system_activated,
                     $activation_history
                 );
                 break;
-            case RequestType::NORMAL:
+            case ActivationType::NOT_ACTIVATION:
             default:
                 $activation_detected = $this->handleNormalRequest($system_activated);
                 break;
         }
         do_action(
-            'AHEE__EventEspresso_core_services_activation_DetectActivationsAndUpgrades__handleActivationRequestTypes__detect__complete',
+            'AHEE__EventEspresso_core_services_activation_ActivationHandler__detectActivationOrVersionChange__detection_complete',
             $system_activated,
             $this
         );
@@ -135,7 +135,7 @@ class ActivationHandler
     private function handleNewActivation(ActivatableInterface $system_activated, ActivationHistory $activation_history)
     {
         do_action(
-            'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleNewActivation',
+            'AHEE__EventEspresso_core_services_activation_ActivationHandler__handleNewActivation',
             $system_activated,
             $this
         );
@@ -155,7 +155,7 @@ class ActivationHandler
     private function handleReactivation(ActivatableInterface $system_activated, ActivationHistory $activation_history)
     {
         do_action(
-            'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleReactivation',
+            'AHEE__EventEspresso_core_services_activation_ActivationHandler__handleReactivation',
             $system_activated,
             $this
         );
@@ -175,7 +175,7 @@ class ActivationHandler
     private function handleUpgrade(ActivatableInterface $system_activated, ActivationHistory $activation_history)
     {
         do_action(
-            'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleUpgrade',
+            'AHEE__EventEspresso_core_services_activation_ActivationHandler__handleUpgrade',
             $system_activated,
             $this
         );
@@ -196,7 +196,7 @@ class ActivationHandler
     private function handleDowngrade(ActivatableInterface $system_activated, ActivationHistory $activation_history)
     {
         do_action(
-            'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleDowngrade',
+            'AHEE__EventEspresso_core_services_activation_ActivationHandler__handleDowngrade',
             $system_activated,
             $this
         );
@@ -216,7 +216,7 @@ class ActivationHandler
     private function handleNormalRequest(ActivatableInterface $system_activated)
     {
         do_action(
-            'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleNormalRequest',
+            'AHEE__EventEspresso_core_services_activation_ActivationHandler__handleNormalRequest',
             $system_activated,
             $this
         );
