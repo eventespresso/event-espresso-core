@@ -1,7 +1,7 @@
 <?php
 
 use EventEspresso\core\services\activation\ActivationHistory;
-use EventEspresso\core\services\activation\RequestType;
+use EventEspresso\core\services\activation\ActivationType;
 use EventEspresso\tests\includes\AddonActivationTestsHelper;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -63,7 +63,7 @@ class ActivationIntegrationTests extends EE_UnitTestCase
 
 
     /**
-     * tests RequestTypeDetectorTest::modifyVersion()) to make sure it's working
+     * tests ActivationTypeDetectorTest::modifyVersion()) to make sure it's working
      * (because other tests depend on it)
      */
     public function testModifyVersion()
@@ -87,10 +87,10 @@ class ActivationIntegrationTests extends EE_UnitTestCase
     protected function assertTimeIsAbout($expected_time, $actual_time, $precision = 5)
     {
         if (! is_int($expected_time)) {
-            $expected_time = strtotime($expected_time);
+            $expected_time = (int) strtotime($expected_time);
         }
         if (! is_int($actual_time)) {
-            $actual_time = strtotime($actual_time);
+            $actual_time = (int) strtotime($actual_time);
         }
         PHPUnit_Framework_TestCase::assertLessThanOrEqual(
             $precision,
@@ -99,9 +99,11 @@ class ActivationIntegrationTests extends EE_UnitTestCase
     }
 
 
-
     /**
      * tests assertTimeIsAbout
+     *
+     * @throws \PHPUnit\Framework\Exception
+     * @throws \PHPUnit\Framework\Exception
      */
     public function testAssertTimeIsAbout()
     {
@@ -131,26 +133,30 @@ class ActivationIntegrationTests extends EE_UnitTestCase
     }
 
 
-
     /**
      * Old Unit Tests from EE_System_Test::test_detect_request_type()
      * converted over to use new system, but test same assertions
      *
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws InvalidArgumentException
-     * @throws PHPUnit_Framework_Exception
+     * @throws \PHPUnit\Framework\Exception
+     * @throws \PHPUnit\Framework\Exception
+     * @throws \PHPUnit\Framework\Exception
+     * @throws \PHPUnit\Framework\Exception
+     * @throws \PHPUnit\Framework\Exception
      */
-    public function testDetectRequestType()
+    public function testDetectActivationType()
     {
         $this->setEspressoDbUpdateTo(
             array(
                 espresso_version() => array(current_time('mysql'))
             )
         );
-        RequestTypeDetectorTest::assertRequestTypeDetails(
-            AddonActivationTestsHelper::getAndDetectRequestType(
+        ActivationTypeDetectorTest::assertActivationTypeDetails(
+            AddonActivationTestsHelper::getAndDetectActivationType(
                 new ActivationHistory()
             ),
-            RequestType::NORMAL,
+            ActivationType::NOT_ACTIVATION,
             false
         );
         //check that it detects an upgrade
@@ -162,20 +168,20 @@ class ActivationIntegrationTests extends EE_UnitTestCase
                 ) => array(current_time('mysql'))
             )
         );
-        RequestTypeDetectorTest::assertRequestTypeDetails(
-            AddonActivationTestsHelper::getAndDetectRequestType(
+        ActivationTypeDetectorTest::assertActivationTypeDetails(
+            AddonActivationTestsHelper::getAndDetectActivationType(
                 new ActivationHistory()
             ),
-            RequestType::UPGRADE,
+            ActivationType::UPGRADE,
             true
         );
         //check that it detects activation
         $this->setEspressoDbUpdateTo(null);
-        RequestTypeDetectorTest::assertRequestTypeDetails(
-            AddonActivationTestsHelper::getAndDetectRequestType(
+        ActivationTypeDetectorTest::assertActivationTypeDetails(
+            AddonActivationTestsHelper::getAndDetectActivationType(
                 new ActivationHistory()
             ),
-            RequestType::NEW_ACTIVATION,
+            ActivationType::NEW_ACTIVATION,
             true
         );
         //check that it detects downgrade, even though we don't really care atm
@@ -187,11 +193,11 @@ class ActivationIntegrationTests extends EE_UnitTestCase
                 ) => array(current_time('mysql'))
             )
         );
-        RequestTypeDetectorTest::assertRequestTypeDetails(
-            AddonActivationTestsHelper::getAndDetectRequestType(
+        ActivationTypeDetectorTest::assertActivationTypeDetails(
+            AddonActivationTestsHelper::getAndDetectActivationType(
                 new ActivationHistory()
             ),
-            RequestType::DOWNGRADE,
+            ActivationType::DOWNGRADE,
             true
         );
         //lastly, check that we detect reactivations
@@ -201,21 +207,23 @@ class ActivationIntegrationTests extends EE_UnitTestCase
                 espresso_version() => array(current_time('mysql'))
             )
         );
-        RequestTypeDetectorTest::assertRequestTypeDetails(
-            AddonActivationTestsHelper::getAndDetectRequestType(
+        ActivationTypeDetectorTest::assertActivationTypeDetails(
+            AddonActivationTestsHelper::getAndDetectActivationType(
                 new ActivationHistory()
             ),
-            RequestType::REACTIVATION,
+            ActivationType::REACTIVATION,
             false
         );
     }
 
 
-
     /**
      * check things turn out as expected for NORMAL REQUEST
      *
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \InvalidArgumentException
+     * @throws \PHPUnit\Framework\Exception
+     * @throws \PHPUnit\Framework\Exception
      */
     public function testDetectActivationOrUpgradeNormal()
     {
@@ -230,12 +238,12 @@ class ActivationIntegrationTests extends EE_UnitTestCase
             1,
             $current_activation_history_before[espresso_version()]
         );
-        $request_type = AddonActivationTestsHelper::getAndDetectRequestType(
+        $activation_type = AddonActivationTestsHelper::getAndDetectActivationType(
             new ActivationHistory()
         );
         $current_activation_history_after = get_option(ActivationHistory::EE_ACTIVATION_HISTORY_OPTION_NAME);
         //this should have just added to the number of times this same version was activated
-        PHPUnit_Framework_TestCase::assertEquals(RequestType::NORMAL, $request_type->getRequestType());
+        PHPUnit_Framework_TestCase::assertEquals(ActivationType::NOT_ACTIVATION, $activation_type->getActivationType());
         PHPUnit_Framework_TestCase::assertArrayHasKey(espresso_version(), $current_activation_history_after);
         $this->assertTimeIsAbout(
             current_time('timestamp'),
@@ -244,12 +252,12 @@ class ActivationIntegrationTests extends EE_UnitTestCase
     }
 
 
-
     /**
      * new activation
      *
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \InvalidArgumentException
+     * @throws \PHPUnit\Framework\Exception
      */
     public function test_detect_activation_or_upgrade__new_install()
     {
@@ -263,11 +271,11 @@ class ActivationIntegrationTests extends EE_UnitTestCase
         update_option(ActivationHistory::EE_ACTIVATION_INDICATOR_OPTION_NAME, true);
         $this->assertWPOptionDoesNotExist(ActivationHistory::EE_ACTIVATION_HISTORY_OPTION_NAME);
         $activation_history = new ActivationHistory();
-        $request_type = AddonActivationTestsHelper::getAndDetectRequestType($activation_history);
+        $activation_type = AddonActivationTestsHelper::getAndDetectActivationType($activation_history);
         $activation_history->updateActivationHistory();
         PHPUnit_Framework_TestCase::assertEquals(
-            RequestType::NEW_ACTIVATION,
-            $request_type->getRequestType()
+            ActivationType::NEW_ACTIVATION,
+            $activation_type->getActivationType()
         );
         $current_activation_history = get_option(ActivationHistory::EE_ACTIVATION_HISTORY_OPTION_NAME);
         //check we've added this to the version history

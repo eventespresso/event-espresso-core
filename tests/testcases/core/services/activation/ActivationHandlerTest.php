@@ -2,10 +2,9 @@
 
 use EventEspresso\core\services\activation\ActivationHandler;
 use EventEspresso\core\services\activation\ActivationHistory;
-use EventEspresso\core\services\activation\RequestType;
+use EventEspresso\core\services\activation\ActivationType;
 use EventEspresso\tests\includes\AddonActivationTestsHelper;
 use EventEspresso\tests\mocks\core\MaintenanceModeMock;
-use EventEspresso\tests\mocks\core\services\activation\ActivationHistoryExtendedMock;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -34,7 +33,9 @@ class ActivationHandlerTest extends EE_UnitTestCase
     protected $addon_name = 'EE_NewAddonMock';
 
 
-
+    /**
+     * @throws EE_Error
+     */
     public function setUp()
     {
         parent::setUp();
@@ -43,7 +44,13 @@ class ActivationHandlerTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
     public function tearDown()
     {
         if ($this->addon instanceof EE_Addon) {
@@ -54,19 +61,25 @@ class ActivationHandlerTest extends EE_UnitTestCase
     }
 
 
-
     /**
      * @return ActivationHandler
-     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function getActivationHandler()
     {
-        $this->addon = AddonActivationTestsHelper::registerAddon($this->addon_name);
+        $this->addon = AddonActivationTestsHelper::registerAddon();
         return new ActivationHandler(MaintenanceModeMock::instance());
     }
 
 
-
+    /**
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \PHPUnit\Framework\Exception
+     */
     public function testConstructor()
     {
         PHPUnit_Framework_TestCase::assertInstanceOf(
@@ -76,138 +89,184 @@ class ActivationHandlerTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
     public function testDetectActivationsForNormalRequest()
     {
         $this->assertActivationDetection(
             AddonActivationTestsHelper::getActivationHistoryForNormalRequest(),
-            RequestType::NORMAL,
+            ActivationType::NOT_ACTIVATION,
             false,
-            'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleNormalRequest'
+            'AHEE__EventEspresso_core_services_activation_ActivationHandler__handleNormalRequest'
         );
     }
 
 
-
+    /**
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
     public function testDetectActivationsForNewActivation()
     {
         $this->assertActivationDetection(
             AddonActivationTestsHelper::getActivationHistoryForNewActivation(),
-            RequestType::NEW_ACTIVATION,
+            ActivationType::NEW_ACTIVATION,
             true,
-            'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleNewActivation'
+            'AHEE__EventEspresso_core_services_activation_ActivationHandler__handleNewActivation'
         );
     }
 
 
-
+    /**
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
     public function testDetectActivationsForReactivation()
     {
         $this->assertActivationDetection(
             AddonActivationTestsHelper::getActivationHistoryForReActivation(),
-            RequestType::REACTIVATION,
+            ActivationType::REACTIVATION,
             true,
-            'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleReactivation'
+            'AHEE__EventEspresso_core_services_activation_ActivationHandler__handleReactivation'
         );
     }
 
 
-
+    /**
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
     public function testDetectActivationsForUpgradeActivation()
     {
         $this->assertActivationDetection(
             AddonActivationTestsHelper::getActivationHistoryForUpgradeActivation(),
-            RequestType::UPGRADE,
+            ActivationType::UPGRADE,
             true,
-            'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleUpgrade'
+            'AHEE__EventEspresso_core_services_activation_ActivationHandler__handleUpgrade'
         );
     }
 
 
-
+    /**
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
     public function testDetectActivationsForUpgradeRequest()
     {
         $this->assertActivationDetection(
             AddonActivationTestsHelper::getActivationHistoryForUpgradeRequest(),
-            RequestType::UPGRADE,
+            ActivationType::UPGRADE,
             true,
-            'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleUpgrade'
+            'AHEE__EventEspresso_core_services_activation_ActivationHandler__handleUpgrade'
         );
     }
 
 
-
+    /**
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
     public function testDetectActivationsForNewVersionUpgrade()
     {
         $this->assertActivationDetection(
             AddonActivationTestsHelper::getActivationHistoryForNewVersionUpgrade(),
-            RequestType::UPGRADE,
+            ActivationType::UPGRADE,
             true,
-            'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleUpgrade'
+            'AHEE__EventEspresso_core_services_activation_ActivationHandler__handleUpgrade'
         );
     }
 
 
-
+    /**
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
     public function testDetectActivationsForDowngradeActivation()
     {
         $this->assertActivationDetection(
             AddonActivationTestsHelper::getActivationHistoryForDowngradeActivation(),
-            RequestType::DOWNGRADE,
+            ActivationType::DOWNGRADE,
             true,
-            'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleDowngrade'
+            'AHEE__EventEspresso_core_services_activation_ActivationHandler__handleDowngrade'
         );
     }
 
 
-
+    /**
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
     public function testDetectActivationsForDowngradeRequest()
     {
         $this->assertActivationDetection(
             AddonActivationTestsHelper::getActivationHistoryForDowngradeRequest(),
-            RequestType::DOWNGRADE,
+            ActivationType::DOWNGRADE,
             true,
-            'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleDowngrade'
+            'AHEE__EventEspresso_core_services_activation_ActivationHandler__handleDowngrade'
         );
     }
 
 
-
+    /**
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
     public function testDetectActivationsForNewVersionDowngrade()
     {
         $this->assertActivationDetection(
             AddonActivationTestsHelper::getActivationHistoryForNewVersionDowngrade(),
-            RequestType::DOWNGRADE,
+            ActivationType::DOWNGRADE,
             true,
-            'AHEE__EventEspresso_core_services_activation_ActivationUpgradeHandler__handleDowngrade'
+            'AHEE__EventEspresso_core_services_activation_ActivationHandler__handleDowngrade'
         );
     }
 
 
-
     /**
      * @param ActivationHistory $activation_history
-     * @param int               $expected_request_type
-     * @param bool              $expected_activation_detected
-     * @param string            $action
+     * @param                   $expected_activation_type
+     * @param                   $expected_activation_detected
+     * @param                   $action
      * @throws InvalidArgumentException
-     * @throws PHPUnit_Framework_AssertionFailedError
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function assertActivationDetection(
         ActivationHistory $activation_history,
-        $expected_request_type,
+        $expected_activation_type,
         $expected_activation_detected,
         $action
     ) {
-        $request_type = AddonActivationTestsHelper::getAndDetectRequestType($activation_history);
+        $activation_type = AddonActivationTestsHelper::getAndDetectActivationType($activation_history);
         PHPUnit_Framework_TestCase::assertEquals(
-            $expected_request_type,
-            $request_type->getRequestType()
+            $expected_activation_type,
+            $activation_type->getActivationType()
         );
         $activation_handler = $this->getActivationHandler();
         $activation_detected =  $activation_handler->detectActivationOrVersionChange(
             $this->addon,
-            $request_type,
+            $activation_type,
             $activation_history
         );
 

@@ -16,8 +16,9 @@ use EventEspresso\tests\mocks\core\services\activation\ActivationHistoryExtended
 class ActivationHistoryTest extends EE_UnitTestCase
 {
 
-
-
+    /**
+     * @throws EE_Error
+     */
     public function setUp()
     {
         parent::setUp();
@@ -26,7 +27,10 @@ class ActivationHistoryTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\Exception
+     */
     public function testDefaultConstructor()
     {
         $activation_history = new ActivationHistoryExtendedMock();
@@ -49,7 +53,10 @@ class ActivationHistoryTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\Exception
+     */
     public function testConstructor()
     {
         $test_version = '1.2.3.p';
@@ -77,7 +84,10 @@ class ActivationHistoryTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\Exception
+     */
     public function testConstructorInvalidHistoryOptionNameDataType()
     {
         $this->expectException('EventEspresso\core\exceptions\InvalidDataTypeException');
@@ -89,7 +99,10 @@ class ActivationHistoryTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\Exception
+     */
     public function testConstructorInvalidIndicatorOptionNameDataType()
     {
         $this->expectException('EventEspresso\core\exceptions\InvalidDataTypeException');
@@ -101,7 +114,10 @@ class ActivationHistoryTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\Exception
+     */
     public function testConstructorInvalidVersionDataType()
     {
         $this->expectException('EventEspresso\core\exceptions\InvalidDataTypeException');
@@ -113,7 +129,9 @@ class ActivationHistoryTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     */
     public function testGetCurrentVersion()
     {
         $current_version  = '2.3.4.p';
@@ -126,7 +144,9 @@ class ActivationHistoryTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     */
     public function testGetMostRecentActiveVersion()
     {
         /** @var ActivationHistoryExtendedMock $activation_history */
@@ -149,7 +169,9 @@ class ActivationHistoryTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     */
     public function testUpdateActivationHistory()
     {
         $current_version = '2.3.4.p';
@@ -178,7 +200,10 @@ class ActivationHistoryTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     */
     public function testAddActivationHistory()
     {
         PHPUnit_Framework_TestCase::assertFalse(
@@ -197,7 +222,10 @@ class ActivationHistoryTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     */
     public function testGetActivationIndicator()
     {
         PHPUnit_Framework_TestCase::assertFalse(
@@ -211,7 +239,10 @@ class ActivationHistoryTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     */
     public function testSetActivationIndicator()
     {
         PHPUnit_Framework_TestCase::assertFalse(
@@ -225,7 +256,10 @@ class ActivationHistoryTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     */
     public function testDeleteActivationIndicator()
     {
         PHPUnit_Framework_TestCase::assertFalse(

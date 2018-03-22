@@ -1,8 +1,8 @@
 <?php
 
-use EventEspresso\core\services\activation\RequestType;
+use EventEspresso\core\services\activation\ActivationType;
 use EventEspresso\tests\mocks\core\services\activation\ActivationHistoryExtendedMock;
-use EventEspresso\tests\mocks\core\services\activation\RequestTypeDetectorMock;
+use EventEspresso\tests\mocks\core\services\activation\ActivationTypeDetectorMock;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -32,12 +32,12 @@ class EE_System_Test extends EE_UnitTestCase
     protected $activation_history_mock;
 
     /**
-     * @var RequestTypeDetectorMock $request_type_detector_mock
+     * @var ActivationTypeDetectorMock $request_type_detector_mock
      */
     protected $request_type_detector_mock;
 
     /**
-     * @var RequestType $request_type
+     * @var ActivationType $request_type
      */
     protected $request_type;
 
@@ -52,7 +52,7 @@ class EE_System_Test extends EE_UnitTestCase
             ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_INDICATOR_OPTION_NAME,
             espresso_version()
         );
-        $this->request_type_detector_mock = new RequestTypeDetectorMock();
+        $this->request_type_detector_mock = new ActivationTypeDetectorMock();
         EE_System::reset();
     }
 
@@ -119,7 +119,7 @@ class EE_System_Test extends EE_UnitTestCase
         );
         $version_history_before = $this->activation_history_mock->getMockVersionHistoryOption();
         $this->activation_history_mock->setMockVersionHistory($version_history_before);
-        $this->request_type_detector_mock->resolveRequestTypeFromActivationHistory(
+        $this->request_type_detector_mock->resolveActivationTypeFromActivationHistory(
             $this->activation_history_mock
         );
         $this->assertCount(1, $version_history_before[espresso_version()]);
@@ -519,10 +519,10 @@ class EE_System_Test extends EE_UnitTestCase
      * @throws InvalidArgumentException
      */
     private function getRequestTypeValue() {
-        $this->request_type = $this->request_type_detector_mock->resolveRequestTypeFromActivationHistory(
+        $this->request_type = $this->request_type_detector_mock->resolveActivationTypeFromActivationHistory(
         $this->activation_history_mock
         );
-        return $this->request_type->getRequestType();
+        return $this->request_type->getActivationType();
     }
 
 
