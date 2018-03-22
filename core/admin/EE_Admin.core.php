@@ -965,5 +965,6 @@ final class EE_Admin implements InterminableInterface
     public function hookIntoWpPluginsPage()
     {
         LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\admin\ExitModal');
+        LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\admin\PluginUpsells');
     }
 }
