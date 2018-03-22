@@ -933,13 +933,14 @@ class EE_Dependency_Map
                 null,
                 'EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\services\activation\InitializeCore'                                                       => [
+            'EventEspresso\core\services\activation\InitializeCore' => [
                 null,
-                'EE_Capabilities'           => EE_Dependency_Map::load_from_cache,
-                'EE_Data_Migration_Manager' => EE_Dependency_Map::load_from_cache,
-                'EE_Maintenance_Mode'       => EE_Dependency_Map::load_from_cache,
+                'EE_Capabilities'                             => EE_Dependency_Map::load_from_cache,
+                'EE_Data_Migration_Manager'                   => EE_Dependency_Map::load_from_cache,
+                'EE_Maintenance_Mode'                         => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\services\activation\InitializeAddon'                                                      => [
+            'EventEspresso\core\services\activation\InitializeAddon' => [
                 null,
                 'EE_Data_Migration_Manager' => EE_Dependency_Map::load_from_cache,
                 'EE_Maintenance_Mode'       => EE_Dependency_Map::load_from_cache,
