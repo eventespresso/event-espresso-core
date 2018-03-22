@@ -1,0 +1,10 @@
+/**
+ * Styles for exit modal
+ */
+.ee-cancel-prompt-button {
+    float:right;
+}
+
+.exit-modal-choices .button {
+    margin-left:5px;
+}
