@@ -671,11 +671,12 @@ class EE_Dependency_Map
             'EventEspresso\core\services\activation\ActivationHandler'             => array(
                 'EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\activation\InitializeCore'                => array(
+            'EventEspresso\core\services\activation\InitializeCore' => array(
                 null,
-                'EE_Capabilities'           => EE_Dependency_Map::load_from_cache,
-                'EE_Data_Migration_Manager' => EE_Dependency_Map::load_from_cache,
-                'EE_Maintenance_Mode'       => EE_Dependency_Map::load_from_cache,
+                'EE_Capabilities'                             => EE_Dependency_Map::load_from_cache,
+                'EE_Data_Migration_Manager'                   => EE_Dependency_Map::load_from_cache,
+                'EE_Maintenance_Mode'                         => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\activation\InitializeAddon' => array(
                 null,
