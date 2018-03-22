@@ -715,12 +715,18 @@ class Read extends Base
                 $field_value = $field_obj->prepare_for_set_from_db($field_value);
                 $timezone = $field_value->getTimezone();
                 $field_value->setTimezone(new \DateTimeZone('UTC'));
+                // workaround for php datetime bug
+                // @see https://events.codebasehq.com/projects/event-espresso/tickets/11407
+                $field_value->getTimestamp();
                 $result[$field_name . '_gmt'] = ModelDataTranslator::prepareFieldValuesForJson(
                     $field_obj,
                     $field_value,
                     $this->getModelVersionInfo()->requestedVersion()
                 );
                 $field_value->setTimezone($timezone);
+                // workaround for php datetime bug
+                // @see https://events.codebasehq.com/projects/event-espresso/tickets/11407
+                $field_value->getTimestamp();
                 $result[$field_name] = ModelDataTranslator::prepareFieldValuesForJson(
                     $field_obj,
                     $field_value,
