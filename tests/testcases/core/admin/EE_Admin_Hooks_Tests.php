@@ -28,7 +28,12 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
     /**
      * @var mock_valid_admin_page_Admin_Mock_Valid_Hooks
      */
-    private $_eeAdminHookMock;
+	private $_eeAdminHookMock;
+
+    /**
+     * @var string $_testRoute
+     */
+    private $_testRoute;
 
 
 	/**
