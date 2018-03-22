@@ -2,7 +2,7 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\activation\ActivationHistory;
 use EventEspresso\core\services\activation\ActivatableInterface;
-use EventEspresso\core\services\activation\RequestType;
+use EventEspresso\core\services\activation\ActivationType;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\RequiresDependencyMapInterface;
 use EventEspresso\core\domain\RequiresDomainInterface;
@@ -88,9 +88,9 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     private $activation_history;
 
     /**
-     * @var RequestType $request_type
+     * @var ActivationType $activation_type
      */
-    private $request_type;
+    private $activation_type;
 
 
 
@@ -594,21 +594,21 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
 
 
     /**
-     * @return RequestType
+     * @return ActivationType
      */
-    public function getRequestType()
+    public function getActivationType()
     {
-        return $this->request_type;
+        return $this->activation_type;
     }
 
 
 
     /**
-     * @param RequestType $request_type
+     * @param ActivationType $request_type
      */
-    public function setRequestType(RequestType $request_type)
+    public function setActivationType(ActivationType $request_type)
     {
-        $this->request_type = $request_type;
+        $this->activation_type = $request_type;
     }
 
 
@@ -745,7 +745,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      */
     public function detect_req_type()
     {
-        return $this->getRequestType()->getRequestType();
+        return $this->getActivationType()->getActivationType();
     }
 
 

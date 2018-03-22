@@ -33,15 +33,15 @@ interface ActivatableInterface
 
 
     /**
-     * @return RequestType
+     * @return ActivationType
      */
-    public function getRequestType();
+    public function getActivationType();
 
 
 
     /**
-     * @param RequestType $request_type
+     * @param ActivationType $activation_type
      */
-    public function setRequestType(RequestType $request_type);
+    public function setActivationType(ActivationType $activation_type);
 
 }

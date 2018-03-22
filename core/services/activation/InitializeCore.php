@@ -39,30 +39,30 @@ class InitializeCore implements InitializeInterface
     private $maintenance_mode;
 
     /**
-     * @var RequestType $request_type
+     * @var ActivationType $activation_type
      */
-    private $request_type;
+    private $activation_type;
 
 
 
     /**
      * InitializeDatabase constructor.
      *
-     * @param RequestType               $request_type
+     * @param ActivationType            $activation_type
      * @param EE_Capabilities           $capabilities
      * @param EE_Data_Migration_Manager $data_migration_manager
      * @param EE_Maintenance_Mode       $maintenance_mode
      */
     public function __construct(
-        RequestType $request_type,
+        ActivationType $activation_type,
         EE_Capabilities $capabilities,
         EE_Data_Migration_Manager $data_migration_manager,
         EE_Maintenance_Mode $maintenance_mode
     ) {
-        $this->request_type = $request_type;
-        $this->capabilities = $capabilities;
+        $this->activation_type        = $activation_type;
+        $this->capabilities           = $capabilities;
         $this->data_migration_manager = $data_migration_manager;
-        $this->maintenance_mode = $maintenance_mode;
+        $this->maintenance_mode       = $maintenance_mode;
     }
 
 
@@ -75,7 +75,7 @@ class InitializeCore implements InitializeInterface
      */
     public function initialize($verify_schema = true)
     {
-        $request_type = $this->request_type->getRequestType();
+        $activation_type = $this->activation_type->getActivationType();
         //only initialize system if we're not in maintenance mode.
         if ($this->maintenance_mode->level() !== EE_Maintenance_Mode::level_2_complete_maintenance) {
             update_option('ee_flush_rewrite_rules', true);
@@ -91,11 +91,11 @@ class InitializeCore implements InitializeInterface
         } else {
             $this->data_migration_manager->enqueue_db_initialization_for('Core');
         }
-        if ($request_type === RequestType::NEW_ACTIVATION
-            || $request_type === RequestType::REACTIVATION
+        if ($activation_type === ActivationType::NEW_ACTIVATION
+            || $activation_type === ActivationType::REACTIVATION
             || (
-                $request_type === RequestType::UPGRADE
-                && $this->request_type->isMajorVersionChange()
+                $activation_type === ActivationType::UPGRADE
+                && $this->activation_type->isMajorVersionChange()
             )
         ) {
             add_action('init', array($this, 'redirectToAboutPage'), 1);
@@ -122,10 +122,10 @@ class InitializeCore implements InitializeInterface
             )
         ) {
             $query_params = array('page' => 'espresso_about');
-            $request_type = $this->request_type->getRequestType();
-            if ($request_type === RequestType::NEW_ACTIVATION) {
+            $activation_type = $this->activation_type->getActivationType();
+            if ($activation_type === ActivationType::NEW_ACTIVATION) {
                 $query_params['new_activation'] = true;
-            } else if ($request_type === RequestType::REACTIVATION) {
+            } else if ($activation_type === ActivationType::REACTIVATION) {
                 $query_params['reactivation'] = true;
             }
             wp_safe_redirect(

@@ -75,14 +75,14 @@ class ActivationsFactory
 
 
     /**
-     * @return RequestTypeDetector
+     * @return ActivationTypeDetector
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
     public static function getRequestTypeDetector() {
         return LoaderFactory::getLoader()->getShared(
-            'EventEspresso\core\services\activation\RequestTypeDetector'
+            'EventEspresso\core\services\activation\ActivationTypeDetector'
         );
     }
 
@@ -99,7 +99,7 @@ class ActivationsFactory
         if ($activation instanceof EE_System) {
             return LoaderFactory::getLoader()->getNew(
                 'EventEspresso\core\services\activation\InitializeCore',
-                array($activation->getRequestType())
+                array($activation->getActivationType())
             );
         }
         if ($activation instanceof EE_Addon) {

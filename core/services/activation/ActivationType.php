@@ -8,7 +8,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class RequestType
+ * Class ActivationType
  * DTO for transmitting info regarding the activation request type for core or an addon
  *
  * @package       Event Espresso
@@ -16,7 +16,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author        Michael Nelson, Brent Christensen
  * @since         4.9.40
  */
-class RequestType
+class ActivationType
 {
 
 
@@ -24,7 +24,7 @@ class RequestType
      * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation.
      * So examples of this would be a normal GET request on the frontend or backend, or a POST, etc
      */
-    const NORMAL = 0;
+    const NOT_ACTIVATION = 0;
 
     /**
      * Indicates this is a brand new installation of EE so we should install
@@ -52,12 +52,12 @@ class RequestType
 
 
     /**
-     * Stores which type of request this is, options being one of the REQUEST_TYPE_* constants above.
+     * Stores which type of request this is, options being one of the constants above.
      * It can be a brand-new activation, a reactivation, an upgrade, a downgrade, or a normal request.
      *
-     * @var int $request_type
+     * @var int $activation_type
      */
-    private $request_type;
+    private $activation_type;
 
 
     /**
@@ -70,7 +70,7 @@ class RequestType
 
 
     /**
-     * RequestType constructor.
+     * ActivationType constructor.
      *
      * @param int  $request_type
      * @param bool $major_version_change
@@ -78,7 +78,7 @@ class RequestType
      */
     public function __construct($request_type = 0, $major_version_change = false)
     {
-        $this->setRequestType($request_type);
+        $this->setActivationType($request_type);
         $this->setMajorVersionChange($major_version_change);
     }
 
@@ -87,14 +87,14 @@ class RequestType
     /**
      * @return array
      */
-    public function validRequestTypes()
+    public function validActivationTypes()
     {
         return array(
-            RequestType::NORMAL,
-            RequestType::NEW_ACTIVATION,
-            RequestType::REACTIVATION,
-            RequestType::UPGRADE,
-            RequestType::DOWNGRADE,
+            ActivationType::NOT_ACTIVATION,
+            ActivationType::NEW_ACTIVATION,
+            ActivationType::REACTIVATION,
+            ActivationType::UPGRADE,
+            ActivationType::DOWNGRADE,
         );
     }
 
@@ -103,9 +103,9 @@ class RequestType
     /**
      * @return int
      */
-    public function getRequestType()
+    public function getActivationType()
     {
-        return $this->request_type;
+        return $this->activation_type;
     }
 
 
@@ -114,9 +114,9 @@ class RequestType
      * @param int $request_type
      * @throws InvalidArgumentException
      */
-    public function setRequestType($request_type)
+    public function setActivationType($request_type)
     {
-        if (! in_array($request_type, $this->validRequestTypes(), true)) {
+        if (! in_array($request_type, $this->validActivationTypes(), true)) {
             throw new InvalidArgumentException(
                 sprintf(
                     esc_html__(
@@ -128,7 +128,7 @@ class RequestType
                 )
             );
         }
-        $this->request_type = $request_type;
+        $this->activation_type = $request_type;
     }
 
 

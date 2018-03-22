@@ -5,7 +5,7 @@ namespace EventEspresso\core\services\activation;
 use InvalidArgumentException;
 
 /**
- * Class DetectRequestType
+ * Class ActivationTypeDetector
  * Detects if the current EE Core or Addon version has existed in the list of previously-installed versions
  *
  * @package       Event Espresso
@@ -13,12 +13,12 @@ use InvalidArgumentException;
  * @author        Michael Nelson, Brent Christensen
  * @since         4.9.40
  */
-class RequestTypeDetector
+class ActivationTypeDetector
 {
 
 
     /**
-     * Determines the request type for EE core or any EE addon, given three pieces of info:
+     * Determines the activation type for EE core or any EE addon, given three pieces of info:
      * the current array of activation histories
      *  (for core that' 'espresso_db_update' wp option);
      * the name of the WordPress option which is temporarily set upon activation of the plugin
@@ -27,10 +27,10 @@ class RequestTypeDetector
      *  (for core that will always be espresso_version())
      *
      * @param ActivationHistory $activation_history
-     * @return RequestType
+     * @return ActivationType
      * @throws InvalidArgumentException
      */
-    public function resolveRequestTypeFromActivationHistory(ActivationHistory $activation_history)
+    public function resolveActivationTypeFromActivationHistory(ActivationHistory $activation_history)
     {
         $version_history = $activation_history->getVersionHistory();
         // if $version_history does NOT exist, then this is a completely NEW install
@@ -47,8 +47,8 @@ class RequestTypeDetector
             return $this->reactivation($activation_history);
         }
         // not an activation. just a normal request
-        return new RequestType(
-            RequestType::NORMAL,
+        return new ActivationType(
+            ActivationType::NOT_ACTIVATION,
             $this->detectMajorVersionChange($activation_history)
         );
     }
@@ -57,13 +57,13 @@ class RequestTypeDetector
 
     /**
      * @param ActivationHistory $activation_history
-     * @return RequestType
+     * @return ActivationType
      * @throws InvalidArgumentException
      */
-    private function newActivation(ActivationHistory $activation_history)
+    protected function newActivation(ActivationHistory $activation_history)
     {
-        $request_type = new RequestType(
-            RequestType::NEW_ACTIVATION,
+        $request_type = new ActivationType(
+            ActivationType::NEW_ACTIVATION,
             $this->detectMajorVersionChange($activation_history)
         );
         $activation_history->deleteActivationIndicator();
@@ -75,16 +75,16 @@ class RequestTypeDetector
     /**
      * @param ActivationHistory $activation_history
      * @param int               $version_change
-     * @return RequestType
+     * @return ActivationType
      * @throws InvalidArgumentException
      */
-    private function upgradeOrDowngrade(ActivationHistory $activation_history, $version_change)
+    protected function upgradeOrDowngrade(ActivationHistory $activation_history, $version_change)
     {
         // version change indicates an upgrade or downgrade
-        $request_type = new RequestType(
+        $request_type = new ActivationType(
             $version_change === 1
-                ? RequestType::UPGRADE
-                : RequestType::DOWNGRADE,
+                ? ActivationType::UPGRADE
+                : ActivationType::DOWNGRADE,
             $this->detectMajorVersionChange($activation_history)
         );
         $activation_history->deleteActivationIndicator();
@@ -95,14 +95,14 @@ class RequestTypeDetector
 
     /**
      * @param ActivationHistory $activation_history
-     * @return RequestType
+     * @return ActivationType
      * @throws InvalidArgumentException
      */
-    private function reactivation(ActivationHistory $activation_history)
+    protected function reactivation(ActivationHistory $activation_history)
     {
         // it's an activation. must be a reactivation
-        $request_type = new RequestType(
-            RequestType::REACTIVATION,
+        $request_type = new ActivationType(
+            ActivationType::REACTIVATION,
             $this->detectMajorVersionChange($activation_history)
         );
         $activation_history->deleteActivationIndicator();
@@ -139,7 +139,7 @@ class RequestTypeDetector
      * @param ActivationHistory $activation_history
      * @return bool
      */
-    private function detectMajorVersionChange(ActivationHistory $activation_history)
+    protected function detectMajorVersionChange(ActivationHistory $activation_history)
     {
         $previous_version = $activation_history->getMostRecentActiveVersion();
         $previous_version_parts = explode('.', $previous_version);

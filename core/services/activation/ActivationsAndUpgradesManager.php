@@ -42,21 +42,24 @@ class ActivationsAndUpgradesManager
     private $activation_handler;
 
     /**
-     * @var RequestTypeDetector $request_type_detector
+     * @var ActivationTypeDetector $activation_type_detector
      */
-    private $request_type_detector;
+    private $activation_type_detector;
 
 
 
     /**
      * ActivationsAndUpgradesManager constructor.
      *
-     * @param ActivationHandler   $activation_handler
-     * @param RequestTypeDetector $request_type_detector
+     * @param ActivationHandler      $activation_handler
+     * @param ActivationTypeDetector $activation_type_detector
      */
-    public function __construct(ActivationHandler $activation_handler, RequestTypeDetector $request_type_detector) {
-        $this->activation_handler = $activation_handler;
-        $this->request_type_detector = $request_type_detector;
+    public function __construct(
+        ActivationHandler $activation_handler,
+        ActivationTypeDetector $activation_type_detector
+    ) {
+        $this->activation_handler       = $activation_handler;
+        $this->activation_type_detector = $activation_type_detector;
     }
 
 
@@ -83,7 +86,7 @@ class ActivationsAndUpgradesManager
             if (
                 $this->activation_handler->detectActivationOrVersionChange(
                     $activation,
-                    $this->getRequestType($activation, $activation_history),
+                    $this->getActivationType($activation, $activation_history),
                     $activation_history
                 )
             ) {
@@ -140,19 +143,17 @@ class ActivationsAndUpgradesManager
     /**
      * @param ActivatableInterface $activation
      * @param ActivationHistory    $activation_history
-     * @return RequestType
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @return ActivationType
      * @throws InvalidArgumentException
      */
-    private function getRequestType(ActivatableInterface $activation, ActivationHistory $activation_history)
+    private function getActivationType(ActivatableInterface $activation, ActivationHistory $activation_history)
     {
         // determine whether current request is new activation, upgrade, etc
-        $request_type = $this->request_type_detector->resolveRequestTypeFromActivationHistory(
+        $activation_type = $this->activation_type_detector->resolveActivationTypeFromActivationHistory(
             $activation_history
         );
-        $activation->setRequestType($request_type);
-        return $request_type;
+        $activation->setActivationType($activation_type);
+        return $activation_type;
     }
 
 
