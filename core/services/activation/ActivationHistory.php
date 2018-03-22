@@ -222,7 +222,7 @@ class ActivationHistory
             $this->version_history[$this->current_version] =   array();
         }
         if($add_current) {
-            $this->version_history[$this->current_version][] = date('Y-m-d H:i:s', time());
+            $this->version_history[$this->current_version][] = date('Y-m-d H:i:s');
         }
         return update_option(
             $this->activation_history_option_name,
