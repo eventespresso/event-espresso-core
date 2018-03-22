@@ -7,6 +7,7 @@ use EE_Data_Migration_Manager;
 use EE_Error;
 use EE_Maintenance_Mode;
 use EE_Registry;
+use ReflectionException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -66,7 +67,6 @@ class InitializeAddon implements InitializeInterface
     }
 
 
-
     /**
      * Takes care of double-checking that we're not in maintenance mode, and then
      * initializing this addon's necessary initial data. This is called by default on new activations
@@ -75,6 +75,7 @@ class InitializeAddon implements InitializeInterface
      * @param boolean $verify_schema whether to verify the database's schema for this addon, or just its data.
      *                               This is a resource-intensive job so we prefer to only do it when necessary
      * @return void
+     * @throws ReflectionException
      * @throws EE_Error
      */
     public function initialize($verify_schema = true)
@@ -103,12 +104,14 @@ class InitializeAddon implements InitializeInterface
     }
 
 
-
     /**
      * Used to setup this addon's database tables, but not necessarily any default
      * data in them. The default is to actually use the most up-to-date data migration script
      * for this addon, and just use its schema_changes_before_migration() and schema_changes_after_migration()
      * methods to setup the db.
+     *
+     * @throws ReflectionException
+     * @throws EE_Error
      */
     public function initializeDatabase()
     {
