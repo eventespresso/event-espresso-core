@@ -587,8 +587,7 @@ final class EE_System implements ActivatableInterface, ResettableInterface
     private function _maybe_brew_regular()
     {
         if (
-            ! $this->activation_detected
-            && (! defined('EE_DECAF') || EE_DECAF !== true)
+            (! defined('EE_DECAF') || EE_DECAF !== true)
             && is_readable(EE_CAFF_PATH . 'brewing_regular.php')
         ) {
             require_once EE_CAFF_PATH . 'brewing_regular.php';
@@ -723,17 +722,12 @@ final class EE_System implements ActivatableInterface, ResettableInterface
      */
     public function brew_espresso()
     {
-        if ($this->activation_detected) {
-            add_action('init', array($this, 'set_hooks_for_core'), 1);
-            add_action('init', array($this, 'perform_activations_upgrades_and_migrations'), 3);
-            add_action('init', array($this, 'load_controllers'), 7);
-            add_action('init', array($this, 'initialize'), 10);
-            add_action('init', array($this, 'initialize_last'), 100);
-            return;
-        }
         do_action('AHEE__EE_System__brew_espresso__begin', $this);
         // load some final core systems
         add_action('init', array($this, 'set_hooks_for_core'), 1);
+        if ($this->activation_detected) {
+            add_action('init', array($this, 'perform_activations_upgrades_and_migrations'), 3);
+        }
         add_action('init', array($this, 'load_CPTs_and_session'), 5);
         add_action('init', array($this, 'load_controllers'), 7);
         add_action('init', array($this, 'core_loaded_and_ready'), 9);
