@@ -487,19 +487,19 @@ class Registry
     {
         wp_register_script(
             'ee-exit-modal-survey',
-            $this->domain->distributionAssetsUrl() . 'ee-exit-modal-survey.dist.js',
+            $this->domain->distributionAssetsUrl() . 'ee-wp-plugins-page.dist.js',
             array(
                 'jquery',
                 'eejs-core'
             ),
-            filemtime($this->domain->distributionAssetsPath() . 'ee-exit-modal-survey.dist.js'),
+            filemtime($this->domain->distributionAssetsPath() . 'ee-wp-plugins-page.dist.js'),
             true
         );
         wp_register_style(
             'ee-exit-modal-survey',
-            $this->domain->distributionAssetsUrl() . 'ee-exit-modal-survey.dist.css',
+            $this->domain->distributionAssetsUrl() . 'ee-wp-plugins-page.dist.css',
             array(),
-            filemtime($this->domain->distributionAssetsPath() . 'ee-exit-modal-survey.dist.css')
+            filemtime($this->domain->distributionAssetsPath() . 'ee-wp-plugins-page.dist.css')
         );
     }
 
