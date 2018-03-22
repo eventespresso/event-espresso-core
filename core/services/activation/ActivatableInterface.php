@@ -14,8 +14,6 @@ namespace EventEspresso\core\services\activation;
  */
 interface ActivatableInterface
 {
-
-
     /**
      * Gets the ActivationHistory object for this addon
      *

@@ -15,8 +15,6 @@ use InvalidArgumentException;
  */
 class ActivationType
 {
-
-
     /**
      * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation.
      * So examples of this would be a normal GET request on the frontend or backend, or a POST, etc
@@ -68,13 +66,13 @@ class ActivationType
     /**
      * ActivationType constructor.
      *
-     * @param int  $request_type
+     * @param int  $activation_type
      * @param bool $major_version_change
      * @throws InvalidArgumentException
      */
-    public function __construct(int $request_type = 0, bool $major_version_change = false)
+    public function __construct(int $activation_type = 0, bool $major_version_change = false)
     {
-        $this->setActivationType($request_type);
+        $this->setActivationType($activation_type);
         $this->setMajorVersionChange($major_version_change);
     }
 

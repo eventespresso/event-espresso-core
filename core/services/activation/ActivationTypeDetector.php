@@ -59,12 +59,12 @@ class ActivationTypeDetector
      */
     protected function newActivation(ActivationHistory $activation_history): ActivationType
     {
-        $request_type = new ActivationType(
+        $activation_type = new ActivationType(
             ActivationType::NEW_ACTIVATION,
             $this->detectMajorVersionChange($activation_history)
         );
         $activation_history->deleteActivationIndicator();
-        return $request_type;
+        return $activation_type;
     }
 
 
@@ -77,14 +77,14 @@ class ActivationTypeDetector
     protected function upgradeOrDowngrade(ActivationHistory $activation_history, int $version_change): ActivationType
     {
         // version change indicates an upgrade or downgrade
-        $request_type = new ActivationType(
+        $activation_type = new ActivationType(
             $version_change === 1
                 ? ActivationType::UPGRADE
                 : ActivationType::DOWNGRADE,
             $this->detectMajorVersionChange($activation_history)
         );
         $activation_history->deleteActivationIndicator();
-        return $request_type;
+        return $activation_type;
     }
 
 
@@ -96,12 +96,12 @@ class ActivationTypeDetector
     protected function reactivation(ActivationHistory $activation_history): ActivationType
     {
         // it's an activation. must be a reactivation
-        $request_type = new ActivationType(
+        $activation_type = new ActivationType(
             ActivationType::REACTIVATION,
             $this->detectMajorVersionChange($activation_history)
         );
         $activation_history->deleteActivationIndicator();
-        return $request_type;
+        return $activation_type;
     }
 
 
