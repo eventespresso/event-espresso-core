@@ -7,6 +7,7 @@ use EE_Data_Migration_Manager;
 use EE_Error;
 use EE_Maintenance_Mode;
 use EEH_Activation;
+use EventEspresso\core\services\request\RequestInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -39,10 +40,14 @@ class InitializeCore implements InitializeInterface
     private $maintenance_mode;
 
     /**
+     * @var RequestInterface $request
+     */
+    private $request;
+
+    /**
      * @var ActivationType $activation_type
      */
     private $activation_type;
-
 
 
     /**
@@ -52,17 +57,20 @@ class InitializeCore implements InitializeInterface
      * @param EE_Capabilities           $capabilities
      * @param EE_Data_Migration_Manager $data_migration_manager
      * @param EE_Maintenance_Mode       $maintenance_mode
+     * @param RequestInterface          $request
      */
     public function __construct(
         ActivationType $activation_type,
         EE_Capabilities $capabilities,
         EE_Data_Migration_Manager $data_migration_manager,
-        EE_Maintenance_Mode $maintenance_mode
+        EE_Maintenance_Mode $maintenance_mode,
+        RequestInterface $request
     ) {
         $this->activation_type        = $activation_type;
         $this->capabilities           = $capabilities;
         $this->data_migration_manager = $data_migration_manager;
         $this->maintenance_mode       = $maintenance_mode;
+        $this->request = $request;
     }
 
 
@@ -112,10 +120,10 @@ class InitializeCore implements InitializeInterface
      */
     public function redirectToAboutPage()
     {
-        $notices = EE_Error::get_notices(false);
         //if current user is an admin and it's not an ajax or rest request
         if (
-            ! isset($notices['errors'])
+            $this->request->isAdmin()
+            && EE_Error::has_notices() !== 1
             && apply_filters(
                 'FHEE__EE_System__redirect_to_about_ee__do_redirect',
                 $this->capabilities->current_user_can('manage_options', 'espresso_about_default')
@@ -133,7 +141,4 @@ class InitializeCore implements InitializeInterface
             );
         }
     }
-
-
-
 }
