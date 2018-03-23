@@ -16,7 +16,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Brent Christensen
  * @since   4.9.44
  */
-class Domain extends DomainBase
+class Domain extends DomainBase implements CaffeinatedInterface
 {
 
     /**
