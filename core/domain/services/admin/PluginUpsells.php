@@ -21,6 +21,8 @@ class PluginUpsells
      * @var DomainInterface
      */
     private $domain;
+
+
     /**
      * PluginUpsells constructor.
      *
@@ -29,14 +31,13 @@ class PluginUpsells
     public function __construct(DomainInterface $domain)
     {
         $this->domain = $domain;
-        $this->addDecafUpsells();
     }
 
 
     /**
      * Hook in various upsells for the decaf version of EE.
      */
-    private function addDecafUpsells()
+    public function decafUpsells()
     {
         if ($this->domain instanceof CaffeinatedInterface && ! $this->domain->isCaffeinated()) {
             add_action('after_plugin_row', array($this, 'doPremiumUpsell'), 10, 3);
