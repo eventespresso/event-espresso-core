@@ -166,7 +166,7 @@ class RecommendedVersions extends Middleware
 
 
     /**
-     * Returns whether the provided php version number is greater than the current version of php installed on the server.
+     * Returns whether the provided php version number is less than the current version of php installed on the server.
      *
      * @param string $version_required
      * @return bool
