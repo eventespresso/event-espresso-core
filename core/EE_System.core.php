@@ -1,9 +1,15 @@
 <?php
 
 use EventEspresso\core\domain\Domain;
+use EventEspresso\core\domain\DomainFactory;
 use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
+use EventEspresso\core\domain\values\FilePath;
+use EventEspresso\core\domain\values\FullyQualifiedName;
+use EventEspresso\core\domain\values\Version;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -917,14 +923,25 @@ final class EE_System implements ResettableInterface
      * that need to be setup before our EE_System launches.
      *
      * @return void
+     * @throws DomainException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws InvalidClassException
+     * @throws InvalidFilePathException
      */
     private function _maybe_brew_regular()
     {
         /** @var Domain $domain */
-        $domain = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\Domain');
+        $domain = DomainFactory::getShared(
+            new FullyQualifiedName(
+                'EventEspresso\core\domain\Domain'
+            ),
+            array(
+                new FilePath(EVENT_ESPRESSO_MAIN_FILE),
+                Version::fromString(espresso_version())
+            )
+        );
         if ($domain->isCaffeinated()) {
             require_once EE_CAFF_PATH . 'brewing_regular.php';
         }
