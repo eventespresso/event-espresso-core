@@ -2,7 +2,7 @@
 namespace EventEspresso\core\domain\services\admin;
 
 use DomainException;
-use EE_Event_Editor_Decaf_Tips;
+use EventEspresso\core\domain\CaffeinatedInterface;
 use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\DomainInterface;
 
@@ -38,7 +38,7 @@ class PluginUpsells
      */
     private function addDecafUpsells()
     {
-        if ($this->isDecaf()) {
+        if ($this->domain instanceof CaffeinatedInterface && ! $this->domain->isCaffeinated()) {
             add_action('after_plugin_row', array($this, 'doPremiumUpsell'), 10, 3);
         }
     }
