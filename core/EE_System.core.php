@@ -1,8 +1,10 @@
 <?php
 
-use \EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
@@ -910,16 +912,20 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks
      * that need to be setup before our EE_System launches.
      *
      * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function _maybe_brew_regular()
     {
-        if ((! defined('EE_DECAF') || EE_DECAF !== true) && is_readable(EE_CAFF_PATH . 'brewing_regular.php')) {
+        /** @var Domain $domain */
+        $domain = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\Domain');
+        if ($domain->isCaffeinated()) {
             require_once EE_CAFF_PATH . 'brewing_regular.php';
         }
     }
