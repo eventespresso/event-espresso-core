@@ -45,29 +45,6 @@ class PluginUpsells
 
 
     /**
-     * Helper for returning whether this is a decaf view or not.
-     * @return bool
-     */
-    private function isDecaf()
-    {
-        return $this->domain instanceof Domain && ! $this->domain->isCaffeinated();
-    }
-
-
-    /**
-     * Using the provided plugin file string return whether this is for the plugin row we want to manipulate.
-     *
-     * @param string $plugin_file
-     * @return bool
-     * @throws DomainException
-     */
-    private function isPluginRow($plugin_file)
-    {
-        return $plugin_file === $this->domain->pluginBasename();
-    }
-
-
-    /**
      * Callback for `after_plugin_row` to add upsell info
      * @param string $plugin_file
      * @param array $plugin_data
@@ -76,7 +53,7 @@ class PluginUpsells
      */
     public function doPremiumUpsell($plugin_file, $plugin_data, $status)
     {
-        if ($this->isPluginRow($plugin_file)) {
+        if ($plugin_file === $this->domain->pluginBasename()) {
             list($button_text, $button_url, $upsell_text) = $this->getAfterPluginRowDetails();
             echo '<tr class="plugin-update-tr ee-upsell-plugin-list-table active">
                 <td colspan="3" class="plugin-update colspanchange">
