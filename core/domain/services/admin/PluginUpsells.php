@@ -3,7 +3,6 @@ namespace EventEspresso\core\domain\services\admin;
 
 use DomainException;
 use EventEspresso\core\domain\CaffeinatedInterface;
-use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\DomainInterface;
 
 /**
