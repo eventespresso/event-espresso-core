@@ -40,13 +40,13 @@ class Domain extends DomainBase implements CaffeinatedInterface
      * @since $VID:$
      * @var bool
      */
-    private $is_caffeinated;
+    private $caffeinated;
 
 
     public function __construct(FilePath $plugin_file, Version $version)
     {
         parent::__construct($plugin_file, $version);
-        $this->setIsCaffeinated();
+        $this->setCaffeinated();
     }
 
     /**
@@ -56,7 +56,7 @@ class Domain extends DomainBase implements CaffeinatedInterface
      */
     public function isCaffeinated()
     {
-        return $this->is_caffeinated;
+        return $this->caffeinated;
     }
 
 
@@ -64,9 +64,9 @@ class Domain extends DomainBase implements CaffeinatedInterface
      * Setter for $is_caffeinated property.
      * @since $VID:$
      */
-    private function setIsCaffeinated()
+    private function setCaffeinated()
     {
-        $this->is_caffeinated = file_exists($this->pluginPath() . 'caffeinated');
-        $this->is_caffeinated = defined('EE_DECAF') && EE_DECAF ? false : $this->is_caffeinated;
+        $this->caffeinated = (! defined('EE_DECAF') || EE_DECAF !== true)
+            && is_readable($this->pluginPath() . 'caffeinated/brewing_regular.php');
     }
 }
