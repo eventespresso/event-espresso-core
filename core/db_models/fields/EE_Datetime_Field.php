@@ -396,13 +396,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
             //parse incoming string
             $parsed = date_parse_from_format($this->_time_format, $time_to_set_string);
         }
-
-        //make sure $current is in the correct timezone.
-        $current->setTimezone($this->_DateTimeZone);
-        // workaround for php datetime bug
-        // @see https://events.codebasehq.com/projects/event-espresso/tickets/11407
-        $current->getTimestamp();
-
+        EEH_DTT_Helper::setTimezone($current, $this->_DateTimeZone);
         return $current->setTime($parsed['hour'], $parsed['minute'], $parsed['second']);
     }
 
@@ -428,13 +422,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
             //parse incoming string
             $parsed = date_parse_from_format($this->_date_format, $date_to_set_string);
         }
-
-        //make sure $current is in the correct timezone
-        $current->setTimezone($this->_DateTimeZone);
-        // workaround for php datetime bug
-        // @see https://events.codebasehq.com/projects/event-espresso/tickets/11407
-        $current->getTimestamp();
-
+        EEH_DTT_Helper::setTimezone($current, $this->_DateTimeZone);
         return $current->setDate($parsed['year'], $parsed['month'], $parsed['day']);
     }
 
@@ -510,11 +498,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
             }
         }
         $format_string = $this->_get_date_time_output($schema);
-        //make sure datetime_value is in the correct timezone (in case that's been updated).
-        $DateTime->setTimezone($this->_DateTimeZone);
-        // workaround for php datetime bug
-        // @see https://events.codebasehq.com/projects/event-espresso/tickets/11407
-        $DateTime->getTimestamp();
+        EEH_DTT_Helper::setTimezone($DateTime, $this->_DateTimeZone);
         if ($schema) {
             if ($this->_display_timezone()) {
                 //must be explicit because schema could equal true.
@@ -562,11 +546,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
             if (! $datetime_value instanceof DbSafeDateTime) {
                 $datetime_value = DbSafeDateTime::createFromDateTime($datetime_value);
             }
-
-            $datetime_value->setTimezone($this->get_UTC_DateTimeZone());
-            // workaround for php datetime bug
-            // @see https://events.codebasehq.com/projects/event-espresso/tickets/11407
-            $datetime_value->getTimestamp();
+            EEH_DTT_Helper::setTimezone($datetime_value, $this->get_UTC_DateTimeZone());
             return $datetime_value->format(
                 EE_Datetime_Field::mysql_timestamp_format
             );
@@ -613,12 +593,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
             $DateTime = new DbSafeDateTime(\EE_Datetime_Field::now, $this->get_UTC_DateTimeZone());
         }
         // THEN apply the field's set DateTimeZone
-        $DateTime->setTimezone($this->_DateTimeZone);
-        //apparently in PHP5.6 this is needed to ensure the correct timestamp is internal on this object.  This fixes
-        //failing tests against PHP5.6 for the `Read_Test::test_handle_request_get_one__event` test.
-        //@see https://events.codebasehq.com/projects/event-espresso/tickets/11233
-        // and https://events.codebasehq.com/projects/event-espresso/tickets/11407
-        $DateTime->getTimestamp();
+        EEH_DTT_Helper::setTimezone($DateTime, $this->_DateTimeZone);
         return $DateTime;
     }
 
@@ -667,10 +642,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
 
         // if incoming date
         if ($date_string instanceof DateTime) {
-            $date_string->setTimezone($this->_DateTimeZone);
-            // workaround for php datetime bug
-            // @see https://events.codebasehq.com/projects/event-espresso/tickets/11407
-            $date_string->getTimestamp();
+            EEH_DTT_Helper::setTimezone($date_string, $this->_DateTimeZone);
             return $date_string;
         }
         // if empty date_string and made it here.

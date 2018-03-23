@@ -171,18 +171,12 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 		$passedDateTimeZone = new DateTimeZone( $timezone );
 		// setup start date
 		$start_date = ! empty( $start_date ) ? date_create_from_format( $format, $start_date, $passedDateTimeZone ) : $now;
-		$start_date->setTimezone( $modelDateTimeZone );
-        // workaround for php datetime bug
-        // @see https://events.codebasehq.com/projects/event-espresso/tickets/11407
-        $start_date->getTimestamp();
+		EEH_DTT_Helper::setTimezone($start_date, $modelDateTimeZone);
 		$start_date = $start_date->format( 'Y-m-d' ) . ' 00:00:00';
 		$start_date = strtotime( $start_date );
 		// setup end date
 		$end_date = ! empty( $end_date ) ? date_create_from_format( $format, $end_date, $passedDateTimeZone ) : $now;
-		$end_date->setTimezone( $modelDateTimeZone );
-        // workaround for php datetime bug
-        // @see https://events.codebasehq.com/projects/event-espresso/tickets/11407
-        $end_date->getTimestamp();
+		EEH_DTT_Helper::setTimezone($end_date, $modelDateTimeZone);
 		$end_date = $end_date->format('Y-m-d') . ' 23:59:59';
 		$end_date = strtotime( $end_date );
 
