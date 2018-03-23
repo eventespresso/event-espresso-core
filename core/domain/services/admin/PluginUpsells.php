@@ -79,7 +79,7 @@ class PluginUpsells
      * Provide the details used for the upsell container.
      * @return array
      */
-    private function getAfterPluginRowDetails()
+    protected function getAfterPluginRowDetails()
     {
         return array(
             esc_html__('Upgrade for Support', 'event_espresso'),
