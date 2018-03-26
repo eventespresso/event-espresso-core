@@ -104,8 +104,7 @@ class BootstrapDependencyInjectionContainer
      */
     public function buildLoader()
     {
-        $class_cache = new ClassInterfaceCache();
-        $this->loader = LoaderFactory::getLoader($this->registry, $class_cache);
+        $this->loader = LoaderFactory::getLoader($this->registry, $this->class_cache);
         $this->loader->share('EventEspresso\core\services\loaders\ClassInterfaceCache', $this->class_cache);
         $this->loader->share('EventEspresso\core\services\container\Mirror', $this->mirror);
         $this->dependency_map->setLoader($this->loader);
