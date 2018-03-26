@@ -7,6 +7,8 @@ use EE_Error;
 use EE_Registry;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\container\Mirror;
+use EventEspresso\core\services\loaders\ClassInterfaceCache;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use InvalidArgumentException;
@@ -41,6 +43,16 @@ class BootstrapDependencyInjectionContainer
      */
     protected $registry;
 
+    /**
+     * @var ClassInterfaceCache $class_cache
+     */
+    private $class_cache;
+
+    /**
+     * @var Mirror
+     */
+    private $mirror;
+
 
     /**
      * Can't use this just yet until we exorcise some more of our singleton usage from core
@@ -58,24 +70,28 @@ class BootstrapDependencyInjectionContainer
      * Setups  EE_Registry and EE_Dependency_Map
      *
      * @throws EE_Error
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
      */
     public function buildLegacyDependencyInjectionContainer()
     {
+        $this->class_cache = new ClassInterfaceCache();
+        $this->mirror = new Mirror();
         // EE_Dependency_Map: info about how to load classes required by other classes
         espresso_load_required(
             'EE_Dependency_Map',
             EE_CORE . 'EE_Dependency_Map.core.php'
         );
-        $this->dependency_map = EE_Dependency_Map::instance();
+        $this->dependency_map = EE_Dependency_Map::instance($this->class_cache);
         // EE_Registry: central repository for classes (legacy)
         espresso_load_required(
             'EE_Registry',
             EE_CORE . 'EE_Registry.core.php'
         );
-        $this->registry = EE_Registry::instance($this->dependency_map);
+        $this->registry = EE_Registry::instance(
+            $this->dependency_map,
+            $this->mirror,
+            $this->class_cache
+        );
+
     }
 
 
@@ -88,7 +104,10 @@ class BootstrapDependencyInjectionContainer
      */
     public function buildLoader()
     {
-        $this->loader = LoaderFactory::getLoader($this->registry);
+        $class_cache = new ClassInterfaceCache();
+        $this->loader = LoaderFactory::getLoader($this->registry, $class_cache);
+        $this->loader->share('EventEspresso\core\services\loaders\ClassInterfaceCache', $this->class_cache);
+        $this->loader->share('EventEspresso\core\services\container\Mirror', $this->mirror);
         $this->dependency_map->setLoader($this->loader);
     }
 
