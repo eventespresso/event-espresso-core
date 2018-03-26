@@ -696,34 +696,6 @@ class Transactions_Admin_Page extends EE_Admin_Page
         $this->_template_args['grand_total'] = $this->_transaction->get('TXN_total');
         $this->_template_args['total_paid']  = $this->_transaction->get('TXN_paid');
 
-        if ($attendee instanceof EE_Attendee
-            && EE_Registry::instance()->CAP->current_user_can(
-                'ee_send_message',
-                'espresso_transactions_send_payment_reminder'
-            )
-        ) {
-            $this->_template_args['send_payment_reminder_button'] =
-                EEH_MSG_Template::is_mt_active('payment_reminder')
-                && $this->_transaction->get('STS_ID') !== EEM_Transaction::complete_status_code
-                && $this->_transaction->get('STS_ID') !== EEM_Transaction::overpaid_status_code
-                    ? EEH_Template::get_button_or_link(
-                        EE_Admin_Page::add_query_args_and_nonce(
-                            array(
-                                'action'      => 'send_payment_reminder',
-                                'TXN_ID'      => $this->_transaction->ID(),
-                                'redirect_to' => 'view_transaction',
-                            ),
-                            TXN_ADMIN_URL
-                        ),
-                        __(' Send Payment Reminder', 'event_espresso'),
-                        'button secondary-button right',
-                        'dashicons dashicons-email-alt'
-                    )
-                    : '';
-        } else {
-            $this->_template_args['send_payment_reminder_button'] = '';
-        }
-
         $amount_due = $this->_transaction->get('TXN_total') - $this->_transaction->get('TXN_paid');
         $this->_template_args['amount_due'] = EEH_Template::format_currency(
             $amount_due,
@@ -898,6 +870,94 @@ class Transactions_Admin_Page extends EE_Admin_Page
             $this->_wp_page_slug,
             'side',
             'high'
+        );
+        add_meta_box(
+            'ee-txn-actions-mbox',
+            esc_html__('Actions for this Transaction', 'event_espresso'),
+            array($this, 'transactionActionsMetaBox'),
+            $this->_wp_page_slug,
+            'side',
+            'high'
+        );
+    }
+
+
+    /**
+     * Callback for transaction actions metabox.
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     */
+    public function transactionActionsMetaBox()
+    {
+        $this->_set_transaction_object();
+        /** @var EE_Registration $primary_registration */
+        $primary_registration = $this->_transaction->primary_registration();
+        $attendee = $primary_registration instanceof EE_Registration
+            ? $primary_registration->attendee()
+            : null;
+        $this->_template_args['transaction'] = $this->_transaction;
+        if ($attendee instanceof EE_Attendee
+            && EE_Registry::instance()->CAP->current_user_can(
+                'ee_send_message',
+                'espresso_transactions_send_payment_reminder'
+            )
+        ) {
+            $this->_template_args['send_payment_reminder_button'] =
+                EEH_MSG_Template::is_mt_active('payment_reminder')
+                && $this->_transaction->get('STS_ID') !== EEM_Transaction::complete_status_code
+                && $this->_transaction->get('STS_ID') !== EEM_Transaction::overpaid_status_code
+                    ? '<p>' . EEH_Template::get_button_or_link(
+                        EE_Admin_Page::add_query_args_and_nonce(
+                            array(
+                                'action'      => 'send_payment_reminder',
+                                'TXN_ID'      => $this->_transaction->ID(),
+                                'redirect_to' => 'view_transaction',
+                            ),
+                            TXN_ADMIN_URL
+                        ),
+                        esc_html__(' Send Payment Reminder', 'event_espresso'),
+                        'button secondary-button',
+                        'dashicons dashicons-email-alt'
+                    ) . '</p>'
+                    : '';
+        } else {
+            $this->_template_args['send_payment_reminder_button'] = '';
+        }
+
+        if ($primary_registration instanceof EE_Registration
+            && EEH_MSG_Template::is_mt_active('receipt')
+        ) {
+            $this->_template_args['view_receipt_button'] = '<p>' . EEH_Template::get_button_or_link(
+                $primary_registration->receipt_url(),
+                esc_html__('View Receipt', 'event_espresso'),
+                'button secondary-button',
+                'dashicons dashicons-media-default'
+            ) . '</p>';
+        } else {
+            $this->_template_args['view_receipt_button'] = '';
+        }
+
+        if ($primary_registration instanceof EE_Registration
+            && EEH_MSG_Template::is_mt_active('invoice')
+        ) {
+            $this->_template_args['view_invoice_button'] = '<p>' . EEH_Template::get_button_or_link(
+                $primary_registration->invoice_url(),
+                esc_html__('View Invoice', 'event_espresso'),
+                'button secondary-button',
+                'dashicons dashicons-media-spreadsheet'
+                ) .  '</p>';
+        } else {
+            $this->_template_args['view_invoice_button'] = '';
+        }
+
+        EEH_Template::display_template(
+            TXN_TEMPLATE_PATH . 'txn-details-action-metabox-content.template.php',
+            $this->_template_args
         );
     }
 
