@@ -873,7 +873,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         );
         add_meta_box(
             'ee-txn-actions-mbox',
-            esc_html__('Actions for this Transaction', 'event_espresso'),
+            esc_html__('Transaction Actions', 'event_espresso'),
             array($this, 'transactionActionsMetaBox'),
             $this->_wp_page_slug,
             'side',
@@ -977,7 +977,6 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     public function txn_details_meta_box()
     {
-
         $this->_set_transaction_object();
         $this->_template_args['TXN_ID']   = $this->_transaction->ID();
         $this->_template_args['attendee'] = $this->_transaction->primary_registration() instanceof EE_Registration
