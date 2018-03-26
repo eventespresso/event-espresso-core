@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\loaders;
 
 use Closure;
+use EventEspresso\core\domain\values\FullyQualifiedName;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\collections\CollectionInterface;
 use InvalidArgumentException;
@@ -17,7 +18,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
+ *
  */
 class CachingLoader extends CachingLoaderDecorator
 {
@@ -32,6 +33,10 @@ class CachingLoader extends CachingLoaderDecorator
      */
     protected $identifier;
 
+    /**
+     * @var ClassInterfaceCache $class_cache
+     */
+    private $class_cache;
 
 
     /**
@@ -39,16 +44,19 @@ class CachingLoader extends CachingLoaderDecorator
      *
      * @param LoaderDecoratorInterface $loader
      * @param CollectionInterface      $cache
+     * @param ClassInterfaceCache      $class_cache
      * @param string                   $identifier
      * @throws InvalidDataTypeException
      */
     public function __construct(
         LoaderDecoratorInterface $loader,
         CollectionInterface $cache,
+        ClassInterfaceCache $class_cache,
         $identifier = ''
     ) {
         parent::__construct($loader);
         $this->cache = $cache;
+        $this->class_cache = $class_cache;
         $this->setIdentifier($identifier);
         if ($this->identifier !== '') {
             // to only clear this cache, and assuming an identifier has been set, simply do the following:
@@ -93,7 +101,7 @@ class CachingLoader extends CachingLoaderDecorator
 
 
     /**
-     * @param string $fqcn
+     * @param FullyQualifiedName|string $fqcn
      * @param mixed  $object
      * @return bool
      * @throws InvalidArgumentException
@@ -116,12 +124,13 @@ class CachingLoader extends CachingLoaderDecorator
 
 
     /**
-     * @param string $fqcn
+     * @param FullyQualifiedName|string $fqcn
      * @param array  $arguments
      * @param bool   $shared
+     * @param array  $interfaces
      * @return mixed
      */
-    public function load($fqcn, $arguments = array(), $shared = true)
+    public function load($fqcn, $arguments = array(), $shared = true, array $interfaces = array())
     {
         $fqcn = ltrim($fqcn, '\\');
         // caching can be turned off via the following code:
@@ -137,7 +146,8 @@ class CachingLoader extends CachingLoaderDecorator
             // so we don't want the core loader to cache anything, therefore caching is turned off
             return $this->loader->load($fqcn, $arguments, false);
         }
-        $identifier = md5($fqcn . $this->getIdentifierForArgument($arguments));
+
+        $identifier = $this->getCacheIdentifier($fqcn, $arguments);
         if ($this->cache->has($identifier)) {
             return $this->cache->get($identifier);
         }
@@ -162,13 +172,29 @@ class CachingLoader extends CachingLoaderDecorator
 
 
     /**
+     * generates an identifier for a class
+     *
+     * @param FullyQualifiedName|string $fqcn
+     * @param array                     $arguments
+     * @return string
+     */
+    protected function getCacheIdentifier($fqcn, array $arguments)
+    {
+        return $this->class_cache->hasInterface($fqcn, 'EventEspresso\core\interfaces\ReservedInstanceInterface')
+            ? md5($fqcn)
+            : md5($fqcn . $this->getCacheIdentifierForArgument($arguments));
+    }
+
+
+
+    /**
      * build a string representation of a class' arguments
      * (mostly because Closures can't be serialized)
      *
      * @param array $arguments
      * @return string
      */
-    private function getIdentifierForArgument(array $arguments)
+    protected function getCacheIdentifierForArgument(array $arguments)
     {
         $identifier = '';
         foreach ($arguments as $argument) {
@@ -178,7 +204,7 @@ class CachingLoader extends CachingLoaderDecorator
                     $identifier .= spl_object_hash($argument);
                     break;
                 case is_array($argument) :
-                    $identifier .= $this->getIdentifierForArgument($argument);
+                    $identifier .= $this->getCacheIdentifierForArgument($argument);
                     break;
                 default :
                     $identifier .= $argument;
