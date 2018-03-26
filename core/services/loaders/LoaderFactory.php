@@ -6,6 +6,7 @@ use EE_Registry;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\LooseCollection;
+use EventEspresso\core\services\container\CoffeeShop;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -85,27 +86,28 @@ class LoaderFactory
     private static $loader;
 
 
-
     /**
-     * @param mixed $generator      provided during  very first instantiation in
-     *                              EE_Load_Espresso_Core::handle_request()
-     *                              otherwise can be left null
+     * @param EE_Registry|CoffeeShop   $generator   provided during very first instantiation in
+     *                                              BootstrapDependencyInjectionContainer::buildLoader()
+     *                                              otherwise can be left null
+     * @param ClassInterfaceCache|null $class_cache also provided during first instantiation
      * @return LoaderInterface
      * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
-    public static function getLoader($generator = null)
+    public static function getLoader($generator = null, ClassInterfaceCache $class_cache = null)
     {
-        if (! LoaderFactory::$loader instanceof LoaderInterface) {
-            $generator = $generator !== null ? $generator : EE_Registry::instance();
+        if (! LoaderFactory::$loader instanceof LoaderInterface && $generator !== null && $class_cache !== null) {
             $core_loader = new CoreLoader($generator);
             LoaderFactory::$loader = new Loader(
                 $core_loader,
                 new CachingLoader(
                     $core_loader,
-                    new LooseCollection('')
-                )
+                    new LooseCollection(''),
+                    $class_cache
+                ),
+                $class_cache
             );
         }
         return LoaderFactory::$loader;
