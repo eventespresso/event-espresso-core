@@ -38,6 +38,11 @@ class EE_Registry implements ResettableInterface
     protected $_dependency_map;
 
     /**
+     * @var Mirror
+     */
+    private $mirror;
+
+    /**
      * @var ClassInterfaceCache $class_cache
      */
     private $class_cache;
@@ -173,11 +178,6 @@ class EE_Registry implements ResettableInterface
      * @var boolean $_cache_on
      */
     protected $_cache_on = true;
-
-    /**
-     * @var Mirror
-     */
-    private $mirror;
 
 
     /**
