@@ -1,11 +1,15 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\commands\CommandBusInterface;
+use EventEspresso\core\services\container\Mirror;
 use EventEspresso\core\services\container\RegistryContainer;
+use EventEspresso\core\services\loaders\ClassInterfaceCache;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -32,6 +36,11 @@ class EE_Registry implements ResettableInterface
      * @var EE_Dependency_Map $_dependency_map
      */
     protected $_dependency_map;
+
+    /**
+     * @var ClassInterfaceCache $class_cache
+     */
+    private $class_cache;
 
     /**
      * @var array $_class_abbreviations
@@ -153,6 +162,7 @@ class EE_Registry implements ResettableInterface
     /**
      * array of ReflectionClass objects where the key is the class name
      *
+     * @deprecated $VID:$
      * @var ReflectionClass[] $_reflectors
      */
     public $_reflectors;
@@ -164,39 +174,50 @@ class EE_Registry implements ResettableInterface
      */
     protected $_cache_on = true;
 
+    /**
+     * @var Mirror
+     */
+    private $mirror;
 
 
     /**
      * @singleton method used to instantiate class object
-     * @param  EE_Dependency_Map $dependency_map
+     * @param EE_Dependency_Map|null   $dependency_map
+     * @param Mirror|null              $mirror
+     * @param ClassInterfaceCache|null $class_cache
      * @return EE_Registry instance
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      */
-    public static function instance(EE_Dependency_Map $dependency_map = null)
-    {
+    public static function instance(
+        EE_Dependency_Map $dependency_map = null,
+        Mirror $mirror = null,
+        ClassInterfaceCache $class_cache = null
+    ) {
         // check if class object is instantiated
-        if (! self::$_instance instanceof EE_Registry) {
-            self::$_instance = new self($dependency_map);
+        if (
+            ! EE_Registry::$_instance instanceof EE_Registry
+            && $dependency_map instanceof EE_Dependency_Map
+            && $mirror instanceof Mirror
+            && $class_cache instanceof ClassInterfaceCache
+        ) {
+            EE_Registry::$_instance = new self($dependency_map, $mirror, $class_cache);
         }
-        return self::$_instance;
+        return EE_Registry::$_instance;
     }
-
 
 
     /**
      * protected constructor to prevent direct creation
      *
      * @Constructor
-     * @param  EE_Dependency_Map $dependency_map
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
+     * @param  EE_Dependency_Map  $dependency_map
+     * @param Mirror              $mirror
+     * @param ClassInterfaceCache $class_cache
      */
-    protected function __construct(EE_Dependency_Map $dependency_map)
+    protected function __construct(EE_Dependency_Map $dependency_map, Mirror $mirror, ClassInterfaceCache $class_cache)
     {
         $this->_dependency_map = $dependency_map;
+        $this->mirror = $mirror;
+        $this->class_cache = $class_cache;
         // $registry_container = new RegistryContainer();
         $this->LIB = new RegistryContainer();
         $this->addons = new RegistryContainer();
@@ -650,7 +671,6 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * instantiates, caches, and automatically resolves dependencies
      * for classes that use a Fully Qualified Class Name.
@@ -668,6 +688,9 @@ class EE_Registry implements ResettableInterface
      * @return bool|null|mixed          null = failure to load or instantiate class object.
      *                                  object = class loaded and instantiated successfully.
      *                                  bool = fail or success when $load_only is true
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -680,7 +703,7 @@ class EE_Registry implements ResettableInterface
         $addon = false
     ) {
         $class_name = ltrim($class_name, '\\');
-        $class_name = $this->_dependency_map->get_alias($class_name);
+        $class_name = $this->class_cache->getFqnForAlias($class_name);
         $class_exists = $this->loadOrVerifyClassExists($class_name, $arguments);
         // if a non-FQCN was passed, then verifyClassExists() might return an object
         // or it could return null if the class just could not be found anywhere
@@ -779,6 +802,9 @@ class EE_Registry implements ResettableInterface
      *                                  bool = fail or success when $load_only is true
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
      */
     protected function _load(
         $file_paths = array(),
@@ -800,7 +826,7 @@ class EE_Registry implements ResettableInterface
             // add class prefix ONCE!!!
             $class_name = $class_prefix . str_replace($class_prefix, '', $class_name);
         }
-        $class_name = $this->_dependency_map->get_alias($class_name);
+        $class_name = $this->class_cache->getFqnForAlias($class_name);
         $class_exists = class_exists($class_name, false);
         // if we're only loading the class and it already exists, then let's just return true immediately
         if ($load_only && $class_exists) {
@@ -1047,7 +1073,6 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * _create_object
      * Attempts to instantiate the requested class via any of the
@@ -1070,11 +1095,12 @@ class EE_Registry implements ResettableInterface
      * @return null|object
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws InvalidDataTypeException
      */
     protected function _create_object($class_name, $arguments = array(), $type = '', $from_db = false)
     {
         // create reflection
-        $reflector = $this->get_ReflectionClass($class_name);
+        $reflector = $this->mirror->getReflectionClass($class_name);
         // make sure arguments are an array
         $arguments = is_array($arguments)
             ? $arguments
@@ -1095,7 +1121,11 @@ class EE_Registry implements ResettableInterface
             // $instantiation_mode = "1) no constructor abstract class";
             return true;
         }
-        if (empty($arguments) && $reflector->getConstructor() === null && $reflector->isInstantiable()) {
+        if (
+            empty($arguments)
+            && $this->mirror->getConstructorFromReflection($reflector) === null
+            && $reflector->isInstantiable()
+        ) {
             // no constructor = static methods only... nothing to instantiate, loading file was enough
             // $instantiation_mode = "2) no constructor but instantiable";
             return $reflector->newInstance();
@@ -1141,29 +1171,6 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
-    /**
-     * getReflectionClass
-     * checks if a ReflectionClass object has already been generated for a class
-     * and returns that instead of creating a new one
-     *
-     * @param string $class_name
-     * @return ReflectionClass
-     * @throws ReflectionException
-     */
-    public function get_ReflectionClass($class_name)
-    {
-        if (
-            ! isset($this->_reflectors[$class_name])
-            || ! $this->_reflectors[$class_name] instanceof ReflectionClass
-        ) {
-            $this->_reflectors[$class_name] = new ReflectionClass($class_name);
-        }
-        return $this->_reflectors[$class_name];
-    }
-
-
-
     /**
      * _resolve_dependencies
      * examines the constructor for the requested class to determine
@@ -1182,29 +1189,31 @@ class EE_Registry implements ResettableInterface
      * @param array           $arguments
      * @return array
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @throws InvalidClassException
      */
-    protected function _resolve_dependencies(ReflectionClass $reflector, $class_name, $arguments = array())
+    protected function _resolve_dependencies(ReflectionClass $reflector, $class_name, array $arguments = array())
     {
         // let's examine the constructor
-        $constructor = $reflector->getConstructor();
+        $constructor = $this->mirror->getConstructorFromReflection($reflector);
         // whu? huh? nothing?
         if (! $constructor) {
             return $arguments;
         }
         // get constructor parameters
-        $params = $constructor->getParameters();
+        $params = $this->mirror->getParametersFromReflection($reflector);
         // and the keys for the incoming arguments array so that we can compare existing arguments with what is expected
         $argument_keys = array_keys($arguments);
         // now loop thru all of the constructors expected parameters
         foreach ($params as $index => $param) {
             // is this a dependency for a specific class ?
-            $param_class = $param->getClass()
-                ? $param->getClass()->name
-                : null;
+            $param_class = $this->mirror->getParameterClassName($param, $class_name, $index);
             // BUT WAIT !!! This class may be an alias for something else (or getting replaced at runtime)
-            $param_class = $this->_dependency_map->has_alias($param_class, $class_name)
-                ? $this->_dependency_map->get_alias($param_class, $class_name)
+            $param_class = $this->class_cache->isAlias($param_class, $class_name)
+                ? $this->class_cache->getFqnForAlias($param_class, $class_name)
                 : $param_class;
             if (
                 // param is not even a class
@@ -1239,9 +1248,11 @@ class EE_Registry implements ResettableInterface
                 );
             } else {
                 try {
-                    $arguments[$index] = $param->isDefaultValueAvailable()
-                        ? $param->getDefaultValue()
-                        : null;
+                    $arguments[$index] = $this->mirror->getParameterDefaultValue(
+                        $param,
+                        $class_name,
+                        $index
+                    );
                 } catch (ReflectionException $e) {
                     throw new ReflectionException(
                         sprintf(
@@ -1608,6 +1619,17 @@ class EE_Registry implements ResettableInterface
     }
 
 
+    /**
+     * @deprecated $VID:$
+     * @param string $class_name
+     * @return ReflectionClass
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     */
+    public function get_ReflectionClass($class_name)
+    {
+        return $this->mirror->getReflectionClass($class_name);
+    }
 }
 // End of file EE_Registry.core.php
 // Location: ./core/EE_Registry.core.php
