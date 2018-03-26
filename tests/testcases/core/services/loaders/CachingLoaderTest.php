@@ -27,7 +27,12 @@ class CachingLoaderTest extends EE_UnitTestCase
     private static $loader;
 
 
-
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
     public function setUp()
     {
         //caching is turned off by default in the parent test case.  For tests in here where we're doing a number of
@@ -35,7 +40,8 @@ class CachingLoaderTest extends EE_UnitTestCase
         if (! self::$loader instanceof LoaderDecorator) {
             self::$loader = new CachingLoaderMock(
                 new CoreLoader(EE_Registry::instance()),
-                new LooseCollection('')
+                new LooseCollection(''),
+                new \EventEspresso\core\services\loaders\ClassInterfaceCache()
             );
         }
         parent::setUp();

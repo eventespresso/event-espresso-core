@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php use EventEspresso\core\services\container\Mirror;
+use EventEspresso\core\services\loaders\ClassInterfaceCache;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
  * Class EE_Registry_Mock
  *
@@ -16,26 +19,31 @@ class EE_Registry_Mock extends EE_Registry {
 	 * @var EE_Registry_Mock $_instance
 	 * @access    private
 	 */
-	private static $_instance = null;
+	private static $_instance;
 
-	/**
+    /**
 	 * @access    public
 	 * @var    $Some_Class
 	 */
-	public $Some_Class = null;
+	public $Some_Class;
 
 
-
-	/**
-	 * @singleton method used to instantiate class object
-	 * @access    public
-	 * @param  \EE_Dependency_Map $dependency_map
-	 * @return \EE_Registry_Mock instance
-	 */
-	public static function instance( \EE_Dependency_Map $dependency_map = null ) {
+    /**
+     * @singleton method used to instantiate class object
+     * @access    public
+     * @param  EE_Dependency_Map       $dependency_map
+     * @param Mirror|null              $mirror
+     * @param ClassInterfaceCache|null $class_cache
+     * @return EE_Registry_Mock instance
+     */
+	public static function instance(
+	    EE_Dependency_Map $dependency_map = null,
+        Mirror $mirror = null,
+        ClassInterfaceCache $class_cache = null
+    ) {
 		// check if class object is instantiated
 		if ( ! self::$_instance instanceof EE_Registry_Mock ) {
-			self::$_instance = new EE_Registry_Mock( $dependency_map );
+			self::$_instance = new EE_Registry_Mock( $dependency_map, $mirror, $class_cache );
 		}
 		return self::$_instance;
 	}
