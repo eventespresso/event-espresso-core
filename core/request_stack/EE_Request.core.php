@@ -56,8 +56,12 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
      * @param array $cookie
      * @param array $server
      */
-    public function __construct(array $get, array $post, array $cookie, array $server = array())
-    {
+    public function __construct(
+        array $get = array(),
+        array $post = array(),
+        array $cookie = array(),
+        array $server = array()
+    ) {
     }
 
 
