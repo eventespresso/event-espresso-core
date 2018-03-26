@@ -1,6 +1,9 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\ClassInterfaceCache;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\LegacyRequestInterface;
@@ -62,6 +65,11 @@ class EE_Dependency_Map
     protected static $_instance;
 
     /**
+     * @var ClassInterfaceCache $class_cache
+     */
+    private $class_cache;
+
+    /**
      * @type RequestInterface $request
      */
     protected $request;
@@ -91,28 +99,21 @@ class EE_Dependency_Map
      */
     protected $_class_loaders = array();
 
-    /**
-     * @type array $_aliases
-     */
-    protected $_aliases = array();
-
-
 
     /**
      * EE_Dependency_Map constructor.
+     *
+     * @param ClassInterfaceCache $class_cache
      */
-    protected function __construct()
+    protected function __construct(ClassInterfaceCache $class_cache)
     {
-        // add_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading', array($this, 'initialize'));
-        do_action('EE_Dependency_Map____construct');
+        $this->class_cache = $class_cache;
+        do_action('EE_Dependency_Map____construct', $this);
     }
 
 
-
     /**
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
+     * @return void
      */
     public function initialize()
     {
@@ -122,17 +123,20 @@ class EE_Dependency_Map
     }
 
 
-
     /**
      * @singleton method used to instantiate class object
+     * @param ClassInterfaceCache|null $class_cache
      * @return EE_Dependency_Map
      */
-    public static function instance() {
+    public static function instance(ClassInterfaceCache $class_cache = null) {
         // check if class object is instantiated, and instantiated properly
-        if (! self::$_instance instanceof EE_Dependency_Map) {
-            self::$_instance = new EE_Dependency_Map(/*$request, $response, $legacy_request*/);
+        if (
+            ! EE_Dependency_Map::$_instance instanceof EE_Dependency_Map
+            && $class_cache instanceof ClassInterfaceCache
+        ) {
+            EE_Dependency_Map::$_instance = new EE_Dependency_Map($class_cache);
         }
-        return self::$_instance;
+        return EE_Dependency_Map::$_instance;
     }
 
 
@@ -185,7 +189,7 @@ class EE_Dependency_Map
         array $dependencies,
         $overwrite = EE_Dependency_Map::KEEP_EXISTING_DEPENDENCIES
     ) {
-        return self::$_instance->registerDependencies($class, $dependencies, $overwrite);
+        return EE_Dependency_Map::$_instance->registerDependencies($class, $dependencies, $overwrite);
     }
 
 
@@ -211,16 +215,16 @@ class EE_Dependency_Map
     ) {
         $class = trim($class, '\\');
         $registered = false;
-        if (empty(self::$_instance->_dependency_map[ $class ])) {
-            self::$_instance->_dependency_map[ $class ] = array();
+        if (empty(EE_Dependency_Map::$_instance->_dependency_map[ $class ])) {
+            EE_Dependency_Map::$_instance->_dependency_map[ $class ] = array();
         }
         // we need to make sure that any aliases used when registering a dependency
         // get resolved to the correct class name
         foreach ($dependencies as $dependency => $load_source) {
-            $alias = self::$_instance->get_alias($dependency);
+            $alias = EE_Dependency_Map::$_instance->get_alias($dependency);
             if (
                 $overwrite === EE_Dependency_Map::OVERWRITE_DEPENDENCIES
-                || ! isset(self::$_instance->_dependency_map[ $class ][ $alias ])
+                || ! isset(EE_Dependency_Map::$_instance->_dependency_map[ $class ][ $alias ])
             ) {
                 unset($dependencies[$dependency]);
                 $dependencies[$alias] = $load_source;
@@ -233,13 +237,13 @@ class EE_Dependency_Map
         // ie: with A = B + C, entries in B take precedence over duplicate entries in C
         // Union is way faster than array_merge() but should be used with caution...
         // especially with numerically indexed arrays
-        $dependencies += self::$_instance->_dependency_map[ $class ];
+        $dependencies += EE_Dependency_Map::$_instance->_dependency_map[ $class ];
         // now we need to ensure that the resulting dependencies
         // array only has the entries that are required for the class
         // so first count how many dependencies were originally registered for the class
-        $dependency_count = count(self::$_instance->_dependency_map[ $class ]);
+        $dependency_count = count(EE_Dependency_Map::$_instance->_dependency_map[ $class ]);
         // if that count is non-zero (meaning dependencies were already registered)
-        self::$_instance->_dependency_map[ $class ] = $dependency_count
+        EE_Dependency_Map::$_instance->_dependency_map[ $class ] = $dependency_count
             // then truncate the  final array to match that count
             ? array_slice($dependencies, 0, $dependency_count)
             // otherwise just take the incoming array because nothing previously existed
@@ -280,9 +284,9 @@ class EE_Dependency_Map
                 )
             );
         }
-        $class_name = self::$_instance->get_alias($class_name);
-        if (! isset(self::$_instance->_class_loaders[$class_name])) {
-            self::$_instance->_class_loaders[$class_name] = $loader;
+        $class_name = EE_Dependency_Map::$_instance->get_alias($class_name);
+        if (! isset(EE_Dependency_Map::$_instance->_class_loaders[$class_name])) {
+            EE_Dependency_Map::$_instance->_class_loaders[$class_name] = $loader;
             return true;
         }
         return false;
@@ -388,44 +392,36 @@ class EE_Dependency_Map
     /**
      * adds an alias for a classname
      *
-     * @param string $class_name the class name that should be used (concrete class to replace interface)
-     * @param string $alias      the class name that would be type hinted for (abstract parent or interface)
-     * @param string $for_class  the class that has the dependency (is type hinting for the interface)
+     * @param string $fqcn      the class name that should be used (concrete class to replace interface)
+     * @param string $alias     the class name that would be type hinted for (abstract parent or interface)
+     * @param string $for_class the class that has the dependency (is type hinting for the interface)
      */
-    public function add_alias($class_name, $alias, $for_class = '')
+    public function add_alias($fqcn, $alias, $for_class = '')
     {
-        if ($for_class !== '') {
-            if (! isset($this->_aliases[$for_class])) {
-                $this->_aliases[$for_class] = array();
-            }
-            $this->_aliases[$for_class][$class_name] = $alias;
-        }
-        $this->_aliases[$class_name] = $alias;
+        $this->class_cache->addAlias($alias, $fqcn, $for_class);
     }
 
 
 
     /**
-     * returns TRUE if the provided class name has an alias
+     * PLZ NOTE: a better name for this method would be is_alias()
+     * because it returns TRUE if the provided fully qualified name IS an alias
      *
-     * @param string $class_name
+     * @param string $fqn
      * @param string $for_class
      * @return bool
      */
-    public function has_alias($class_name = '', $for_class = '')
+    public function has_alias($fqn = '', $for_class = '')
     {
-        return isset($this->_aliases[$for_class][$class_name])
-               || (
-                   isset($this->_aliases[$class_name])
-                   && ! is_array($this->_aliases[$class_name])
-               );
+        return $this->class_cache->isAlias($fqn, $for_class);
     }
 
 
 
     /**
-     * returns alias for class name if one exists, otherwise returns the original classname
-     * functions recursively, so that multiple aliases can be used to drill down to a classname
+     * PLZ NOTE: a better name for this method would be get_fqn_for_alias()
+     * because it returns a FQN for provided alias if one exists, otherwise returns the original $alias
+     * functions recursively, so that multiple aliases can be used to drill down to a FQN
      *  for example:
      *      if the following two entries were added to the _aliases array:
      *          array(
@@ -435,19 +431,13 @@ class EE_Dependency_Map
      *      then one could use EE_Registry::instance()->create( 'interface_alias' )
      *      to load an instance of 'some\namespace\classname'
      *
-     * @param string $class_name
+     * @param string $alias
      * @param string $for_class
      * @return string
      */
-    public function get_alias($class_name = '', $for_class = '')
+    public function get_alias($alias = '', $for_class = '')
     {
-        if (! $this->has_alias($class_name, $for_class)) {
-            return $class_name;
-        }
-        if ($for_class !== '' && isset($this->_aliases[ $for_class ][ $class_name ])) {
-            return $this->get_alias($this->_aliases[$for_class][$class_name], $for_class);
-        }
-        return $this->get_alias($this->_aliases[$class_name]);
+        return (string) $this->class_cache->getFqnForAlias($alias, $for_class);
     }
 
 
@@ -679,7 +669,6 @@ class EE_Dependency_Map
     }
 
 
-
     /**
      * Registers how core classes are loaded.
      * This can either be done by simply providing the name of one of the EE_Registry loader methods such as:
@@ -696,9 +685,6 @@ class EE_Dependency_Map
      *            return new A_Class_That_Implements_Required_Interface();
      *        },
      *
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws InvalidArgumentException
      */
     protected function _register_core_class_loaders()
     {
@@ -782,8 +768,10 @@ class EE_Dependency_Map
             'EventEspresso\core\services\loaders\Loader' => function () {
                 return LoaderFactory::getLoader();
             },
+            'EE_Base' => 'load_core',
         );
     }
+
 
 
 
@@ -793,7 +781,7 @@ class EE_Dependency_Map
      */
     protected function _register_core_aliases()
     {
-        $this->_aliases = array(
+        $aliases = array(
             'CommandBusInterface'                                                          => 'EventEspresso\core\services\commands\CommandBusInterface',
             'EventEspresso\core\services\commands\CommandBusInterface'                     => 'EventEspresso\core\services\commands\CommandBus',
             'CommandHandlerManagerInterface'                                               => 'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
@@ -804,8 +792,6 @@ class EE_Dependency_Map
             'CapabilitiesCheckerInterface'                                                 => 'EventEspresso\core\domain\services\capabilities\CapabilitiesCheckerInterface',
             'EventEspresso\core\domain\services\capabilities\CapabilitiesCheckerInterface' => 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
             'CreateRegistrationService'                                                    => 'EventEspresso\core\domain\services\registration\CreateRegistrationService',
-            'CreateRegCodeCommandHandler'                                                  => 'EventEspresso\core\services\commands\registration\CreateRegCodeCommand',
-            'CreateRegUrlLinkCommandHandler'                                               => 'EventEspresso\core\services\commands\registration\CreateRegUrlLinkCommand',
             'CreateRegistrationCommandHandler'                                             => 'EventEspresso\core\services\commands\registration\CreateRegistrationCommand',
             'CopyRegistrationDetailsCommandHandler'                                        => 'EventEspresso\core\services\commands\registration\CopyRegistrationDetailsCommand',
             'CopyRegistrationPaymentsCommandHandler'                                       => 'EventEspresso\core\services\commands\registration\CopyRegistrationPaymentsCommand',
@@ -835,8 +821,14 @@ class EE_Dependency_Map
             'EventEspresso\core\services\request\ResponseInterface'               => 'EventEspresso\core\services\request\Response',
             'EventEspresso\core\domain\DomainInterface'                           => 'EventEspresso\core\domain\Domain',
         );
+        foreach ($aliases as $alias => $fqn) {
+            $this->class_cache->addAlias($fqn, $alias);
+        }
         if (! (defined('DOING_AJAX') && DOING_AJAX) && is_admin()) {
-            $this->_aliases['EventEspresso\core\services\notices\NoticeConverterInterface'] = 'EventEspresso\core\services\notices\ConvertNoticesToAdminNotices';
+            $this->class_cache->addAlias(
+                'EventEspresso\core\services\notices\ConvertNoticesToAdminNotices',
+                'EventEspresso\core\services\notices\NoticeConverterInterface'
+            );
         }
     }
 
@@ -845,10 +837,6 @@ class EE_Dependency_Map
     /**
      * This is used to reset the internal map and class_loaders to their original default state at the beginning of the
      * request Primarily used by unit tests.
-     *
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
      */
     public function reset()
     {
