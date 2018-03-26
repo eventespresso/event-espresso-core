@@ -7,6 +7,7 @@ use EE_Registry;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\container\CoffeeMaker;
 use EventEspresso\core\services\container\CoffeeShop;
@@ -28,7 +29,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
+ *
  */
 class CoreLoader implements LoaderDecoratorInterface
 {
@@ -60,7 +61,6 @@ class CoreLoader implements LoaderDecoratorInterface
     }
 
 
-
     /**
      * Calls the appropriate loading method from the installed generator;
      * If EE_Registry is being used, then the additional parameters for the EE_Registry::create() method
@@ -86,6 +86,7 @@ class CoreLoader implements LoaderDecoratorInterface
      * @throws EE_Error
      * @throws ServiceNotFoundException
      * @throws ReflectionException
+     * @throws InvalidInterfaceException
      */
     public function load($fqcn, $arguments = array(), $shared = true)
     {
@@ -132,9 +133,6 @@ class CoreLoader implements LoaderDecoratorInterface
 
     /**
      * calls reset() on generator if method exists
-     *
-     * @throws EE_Error
-     * @throws ReflectionException
      */
     public function reset()
     {
