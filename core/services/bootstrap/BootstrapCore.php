@@ -14,12 +14,12 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderInterface;
-use EventEspresso\core\services\request\InvalidRequestStackMiddlewareException;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\RequestStack;
 use EventEspresso\core\services\request\RequestStackBuilder;
 use EventEspresso\core\services\request\RequestStackCoreApp;
 use EventEspresso\core\services\request\ResponseInterface;
+use Exception;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -89,7 +89,7 @@ class BootstrapCore
 
 
     /**
-     * @throws InvalidRequestStackMiddlewareException
+     * @throws InvalidFilePathException
      * @throws InvalidClassException
      * @throws DomainException
      * @throws EE_Error
@@ -97,6 +97,7 @@ class BootstrapCore
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @throws Exception
      */
     public function initialize()
     {
@@ -181,10 +182,8 @@ class BootstrapCore
      * run_request_stack
      * construct request stack and run middleware apps
      *
-     * @throws InvalidRequestStackMiddlewareException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws Exception
      */
     public function runRequestStack()
     {
@@ -227,9 +226,9 @@ class BootstrapCore
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_CORE . 'interfaces', true);
         // load helpers
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_HELPERS);
-        // load request stack
+        // register legacy request stack classes just in case
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_CORE . 'request_stack' . DS);
-        // load middleware
+        // register legacy middleware classes just in case
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_CORE . 'middleware' . DS);
     }
 
