@@ -8,6 +8,9 @@
         <?php echo $line_item_table; ?>
         <span id="txn-admin-grand-total" class="hidden"><?php echo $grand_raw_total; ?></span>
     </div>
+    <div id="additional-transaction-actions-dv">
+        <?php echo $action_buttons; ?>
+    </div>
 
     <a id="display-additional-transaction-session-info" class="display-the-hidden smaller-text"
        rel="additional-transaction-session-info">

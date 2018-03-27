@@ -314,6 +314,7 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 	color: #999;
 }
 
-#ee-txn-actions-mbox .inside {
-    text-align: right;
+#additional-transaction-actions-dv ul li {
+    display:inline-block;
+    margin-right: 10px;
 }
