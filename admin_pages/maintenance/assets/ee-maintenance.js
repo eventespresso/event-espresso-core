@@ -111,7 +111,7 @@ var Maintenance_helper = {
 		var kickoff_button = jQuery('#start-migration');
 		kickoff_button.attr('disabled',false);
 		kickoff_button.text(ee_maintenance.next);
-		kickoff_button.unbind('click');
+		kickoff_button.off('click');
 		kickoff_button.click(function(){
 			document.location.href = document.location.href + '&continue_migration=true';
 		});
