@@ -9,7 +9,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
+ *
  */
 class EE_Encryption_Test extends EE_UnitTestCase
 {
@@ -89,24 +89,39 @@ class EE_Encryption_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @param string $encrypt
      * @param string $decrypt
      * @param        $data
+     * @param string $cipher_method
      */
-    private function runEncryptionTest($encrypt, $decrypt, $data)
+    private function runEncryptionTest($encrypt, $decrypt, $data, $cipher_method = '')
     {
-        $this->assertEquals(
-            $data,
-            unserialize(
-                $this->encryption->{$decrypt}(
-                    $this->encryption->{$encrypt}(
-                        serialize($data)
+        if($cipher_method !== '') {
+            $this->assertEquals(
+                $data,
+                unserialize(
+                    $this->encryption->{$decrypt}(
+                        $this->encryption->{$encrypt}(
+                            serialize($data),
+                            $cipher_method
+                        ),
+                        $cipher_method
                     )
                 )
-            )
-        );
+            );
+        } else {
+            $this->assertEquals(
+                $data,
+                unserialize(
+                    $this->encryption->{$decrypt}(
+                        $this->encryption->{$encrypt}(
+                            serialize($data)
+                        )
+                    )
+                )
+            );
+        }
     }
 
 
@@ -122,7 +137,6 @@ class EE_Encryption_Test extends EE_UnitTestCase
             $key
         );
     }
-
 
 
     /**
@@ -153,6 +167,47 @@ class EE_Encryption_Test extends EE_UnitTestCase
             'openssl_decrypt',
             $this->getObjectData()
         );
+    }
+
+
+    /**
+     * @requires function openssl_encrypt
+     * @return void
+     * @throws RuntimeException
+     */
+    public function testOpensslEncryptionWithCipherMethods()
+    {
+        $cipher_methods = openssl_get_cipher_methods();
+        foreach ($cipher_methods as $cipher_method) {
+            // only use ciphers that produce a vector
+            if(openssl_cipher_iv_length($cipher_method) !== false){
+                // with strings
+                $this->assertEquals(
+                    $this->getString(),
+                    $this->encryption->openssl_decrypt(
+                        $this->encryption->openssl_encrypt(
+                            $this->getString(),
+                            $cipher_method
+                        ),
+                        $cipher_method
+                    )
+                );
+                // with arrays
+                $this->runEncryptionTest(
+                    'openssl_encrypt',
+                    'openssl_decrypt',
+                    $this->getArrayData(),
+                    $cipher_method
+                );
+                // with objects
+                $this->runEncryptionTest(
+                    'openssl_encrypt',
+                    'openssl_decrypt',
+                    $this->getObjectData(),
+                    $cipher_method
+                );
+            }
+        }
     }
 
 
