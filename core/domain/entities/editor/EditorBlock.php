@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\editor;
 
 
+use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use WP_Block_Type;
 
@@ -26,6 +27,13 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 abstract class EditorBlock implements EditorBlockInterface
 {
 
+    const NS = 'event-espresso/';
+
+    /**
+     * @var DomainInterface $domain
+     */
+    protected $domain;
+
     /**
      * @var LoaderInterface $loader
      */
@@ -46,14 +54,21 @@ abstract class EditorBlock implements EditorBlockInterface
      */
     private $supported_post_types;
 
+    /**
+     * @var array $attributes
+     */
+    private $attributes;
+
 
     /**
      * EditorBlockLoader constructor.
      *
+     * @param DomainInterface $domain
      * @param LoaderInterface $loader
      */
-    public function __construct(LoaderInterface $loader)
+    public function __construct(DomainInterface $domain, LoaderInterface $loader)
     {
+        $this->domain = $domain;
         $this->loader = $loader;
     }
 
@@ -64,6 +79,15 @@ abstract class EditorBlock implements EditorBlockInterface
     public function editorBlockType()
     {
         return $this->editor_block_type;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function namespacedEditorBlockType()
+    {
+        return EditorBlock::NS . $this->editor_block_type;
     }
 
 
@@ -95,11 +119,55 @@ abstract class EditorBlock implements EditorBlockInterface
 
 
     /**
+     * @return array
+     */
+    public function attributes()
+    {
+        return $this->attributes;
+    }
+
+
+    /**
+     * @param array $attributes
+     */
+    public function setAttributes(array $attributes)
+    {
+        $this->attributes = $attributes;
+    }
+
+
+    /**
+     * Registers the Editor Block with WP core;
+     * Returns the registered block type on success, or false on failure.
+     *
+     * @return WP_Block_Type|false
+     */
+    public function registerBlock()
+    {
+        $wp_block_type = register_block_type(
+            new WP_Block_Type(
+                $this->namespacedEditorBlockType(),
+                array(
+                    'attributes'      => $this->attributes(),
+                    'render_callback' => $this->renderBlock(),
+                    'editor_script'   => 'ee-core-blocks',
+                    'editor_style'    => 'ee-core-blocks',
+                    'script'          => 'ee-core-blocks',
+                    'style'           => 'ee-core-blocks',
+                )
+            )
+        );
+        $this->setWpBlockType($wp_block_type);
+        return $wp_block_type;
+    }
+
+
+    /**
      * @return WP_Block_Type|false The registered block type on success, or false on failure.
      */
     public function unRegisterBlock()
     {
-        return unregister_block_type($this->editorBlockType());
+        return unregister_block_type($this->namespacedEditorBlockType());
     }
 
 
@@ -115,4 +183,48 @@ abstract class EditorBlock implements EditorBlockInterface
         return in_array($post_type, $this->supported_post_types, true);
     }
 
+
+    /**
+     * @return array
+     */
+    public function getEditorContainer()
+    {
+        return array(
+            $this->namespacedEditorBlockType(),
+            array()
+        );
+    }
+
+
+    /**
+     * @return  void
+     */
+    public function registerScripts()
+    {
+        // wp_register_script(
+        //     'core-blocks',
+        //     $this->domain->distributionAssetsUrl() . 'ee-core-blocks.dist.js',
+        //     array(
+        //         'wp-blocks',    // Provides useful functions and components for extending the editor
+        //         'wp-i18n',      // Provides localization functions
+        //         'wp-element',   // Provides React.Component
+        //         'wp-components' // Provides many prebuilt components and controls
+        //     ),
+        //     filemtime($this->domain->distributionAssetsPath() . 'ee-core-blocks.dist.js')
+        // );
+    }
+
+
+    /**
+     * @return void
+     */
+    public function registerStyles()
+    {
+        // wp_register_style(
+        //     'ee-block-styles',
+        //     $this->domain->distributionAssetsUrl() . 'style.css',
+        //     array(),
+        //     filemtime($this->domain->distributionAssetsPath() . 'style.css')
+        // );
+    }
 }
