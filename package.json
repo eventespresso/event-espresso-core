@@ -5,7 +5,8 @@
   "main": "webpack.dev.js",
   "scripts": {
     "watch": "webpack --watch --config webpack.dev.js",
-    "build": "webpack --config webpack.prod.js"
+    "build": "webpack --config webpack.prod.js",
+    "watch-poll": "webpack --watch --watch-poll --config webpack.dev.js"
   },
   "author": "Event Espresso",
   "license": "GPL-2.0",
