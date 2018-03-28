@@ -55,9 +55,9 @@ class EE_Encryption
     protected static $_instance;
 
     /**
-     * @var string $_encryption_key
+     * @var array $_encryption_key
      */
-    protected $_encryption_key;
+    protected $_encryption_keys = array();
 
     /**
      * @var string $cipher_method
@@ -126,29 +126,33 @@ class EE_Encryption
     }
 
 
-
     /**
      * get encryption key
      *
+     * @param string $encryption_key_option option name for which key to use. defaults to 'ee_encryption_key'
      * @return string
      */
-    public function get_encryption_key()
+    public function get_encryption_key($encryption_key_option = '')
     {
+        $encryption_key_option = $encryption_key_option !== ''
+            ? $encryption_key_option
+            : EE_Encryption::ENCRYPTION_OPTION_KEY;
         // if encryption key has not been set
-        if (empty($this->_encryption_key)) {
+        if (empty($this->_encryption_keys[ $encryption_key_option ])) {
+
             // retrieve encryption_key from db
-            $this->_encryption_key = get_option(EE_Encryption::ENCRYPTION_OPTION_KEY, '');
+            $this->_encryption_keys[ $encryption_key_option ] = get_option($encryption_key_option, '');
             // WHAT?? No encryption_key in the db ??
-            if ($this->_encryption_key === '') {
+            if ($this->_encryption_keys[ $encryption_key_option ] === '') {
                 // let's make one. And md5 it to make it just the right size for a key
                 $new_key = md5($this->generate_random_string());
                 // now save it to the db for later
-                add_option(EE_Encryption::ENCRYPTION_OPTION_KEY, $new_key);
+                add_option($encryption_key_option, $new_key);
                 // here's the key - FINALLY !
-                $this->_encryption_key = $new_key;
+                $this->_encryption_keys[ $encryption_key_option ] = $new_key;
             }
         }
-        return $this->_encryption_key;
+        return $this->_encryption_keys[ $encryption_key_option ];
     }
 
 
@@ -218,13 +222,13 @@ class EE_Encryption
     }
 
 
-
     /**
      * decodes string that has been encoded with PHP's base64 encoding
      *
      * @see http://php.net/manual/en/function.base64-encode.php
      * @param string $encoded_string the text to be decoded
      * @return string
+     * @throws RuntimeException
      */
     public function base64_string_decode($encoded_string = '')
     {
@@ -233,7 +237,13 @@ class EE_Encryption
             return $encoded_string;
         }
         // decode
-        return base64_decode($encoded_string);
+        $decoded_string = base64_decode($encoded_string);
+        if ($decoded_string === false) {
+            throw new RuntimeException(
+                esc_html__('Failure occurred while running base64_decode().', 'event_espresso')
+            );
+        }
+        return $decoded_string;
     }
 
 
@@ -258,13 +268,13 @@ class EE_Encryption
     }
 
 
-
     /**
      * decodes  url string that has been encoded with PHP's base64 encoding
      *
      * @see http://php.net/manual/en/function.base64-encode.php
      * @param string $encoded_string the text to be decoded
      * @return string
+     * @throws RuntimeException
      */
     public function base64_url_decode($encoded_string = '')
     {
@@ -275,7 +285,13 @@ class EE_Encryption
         // replace previously removed characters
         $encoded_string = strtr($encoded_string, '-_,', '+/=');
         // decode
-        return base64_decode($encoded_string);
+        $decoded_string = base64_decode($encoded_string);
+        if($decoded_string === false) {
+            throw new RuntimeException(
+                esc_html__('Failure occurred while running base64_decode().', 'event_espresso')
+            );
+        }
+        return $decoded_string;
     }
 
 
@@ -284,11 +300,15 @@ class EE_Encryption
      *
      * @param string $text_string the text to be encrypted
      * @param string $cipher_method
+     * @param string $encryption_key_option option name for which key to use. defaults to 'ee_encryption_key'
      * @return string
      * @throws RuntimeException
      */
-    protected function openssl_encrypt($text_string = '', $cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD)
-    {
+    protected function openssl_encrypt(
+        $text_string = '',
+        $cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD,
+        $encryption_key_option = ''
+    ) {
         // you give me nothing??? GET OUT !
         if (empty($text_string)) {
             return $text_string;
@@ -310,7 +330,7 @@ class EE_Encryption
         $encrypted_text = openssl_encrypt(
             $text_string,
             $this->cipher_method,
-            $this->getDigestHashValue(),
+            $this->getDigestHashValue(EE_Encryption::OPENSSL_DIGEST_METHOD, $encryption_key_option),
             0,
             $iv
         );
@@ -398,18 +418,22 @@ class EE_Encryption
      *
      * @param string $encrypted_text the text to be decrypted
      * @param string $cipher_method
+     * @param string $encryption_key_option option name for which key to use. defaults to 'ee_encryption_key'
      * @return string
      * @throws RuntimeException
      */
-    protected function openssl_decrypt($encrypted_text = '', $cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD)
-    {
+    protected function openssl_decrypt(
+        $encrypted_text = '',
+        $cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD,
+        $encryption_key_option = ''
+    ) {
         // you give me nothing??? GET OUT !
         if (empty($encrypted_text)) {
             return $encrypted_text;
         }
         // decode
         $encrypted_text = $this->valid_base_64($encrypted_text)
-            ? base64_decode($encrypted_text)
+            ? $this->base64_string_decode($encrypted_text)
             : $encrypted_text;
         $encrypted_components = explode(
             EE_Encryption::OPENSSL_IV_DELIMITER,
@@ -424,7 +448,7 @@ class EE_Encryption
         $decrypted_text = openssl_decrypt(
             $encrypted_components[0],
             $this->getCipherMethod($cipher_method),
-            $this->getDigestHashValue(),
+            $this->getDigestHashValue(EE_Encryption::OPENSSL_DIGEST_METHOD, $encryption_key_option),
             0,
             $encrypted_components[1]
         );
@@ -440,13 +464,20 @@ class EE_Encryption
      * then we'll grab the next digest method and recursively try again until something works.
      *
      * @param string $digest_method
+     * @param string $encryption_key_option option name for which key to use. defaults to 'ee_encryption_key'
      * @return string
      * @throws RuntimeException
      */
-    protected function getDigestHashValue($digest_method = EE_Encryption::OPENSSL_DIGEST_METHOD){
-        $digest_hash_value = openssl_digest($this->get_encryption_key(), $digest_method);
+    protected function getDigestHashValue(
+        $digest_method = EE_Encryption::OPENSSL_DIGEST_METHOD,
+        $encryption_key_option
+    ){
+        $digest_hash_value = openssl_digest(
+            $this->get_encryption_key($encryption_key_option),
+            $digest_method
+        );
         if ($digest_hash_value === false) {
-            return $this->getDigestHashValue($this->getDigestMethod());
+            return $this->getDigestHashValue($this->getDigestMethod(), $encryption_key_option);
         }
         return $digest_hash_value;
     }
@@ -530,7 +561,7 @@ class EE_Encryption
         }
         // decode the data ?
         $encrypted_text = $this->valid_base_64($encrypted_text)
-            ? base64_decode($encrypted_text)
+            ? $this->base64_string_decode($encrypted_text)
             : $encrypted_text;
         if (
             $this->_use_mcrypt
@@ -659,7 +690,7 @@ class EE_Encryption
         }
         // decode
         $encrypted_text = $this->valid_base_64($encrypted_text)
-            ? base64_decode($encrypted_text)
+            ? $this->base64_string_decode($encrypted_text)
             : $encrypted_text;
         // get the initialization vector size
         $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
