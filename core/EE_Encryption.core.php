@@ -279,21 +279,21 @@ class EE_Encryption
     }
 
 
-
     /**
      * encrypts data using PHP's openssl functions
      *
      * @param string $text_string the text to be encrypted
+     * @param string $cipher_method
      * @return string
      * @throws RuntimeException
      */
-    protected function openssl_encrypt($text_string = '')
+    protected function openssl_encrypt($text_string = '', $cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD)
     {
         // you give me nothing??? GET OUT !
         if (empty($text_string)) {
             return $text_string;
         }
-        $this->cipher_method = $this->getCipherMethod();
+        $this->cipher_method = $this->getCipherMethod($cipher_method);
         // get initialization vector size
         $iv_size = openssl_cipher_iv_length($this->cipher_method);
         // generate initialization vector.
@@ -393,15 +393,15 @@ class EE_Encryption
     }
 
 
-
     /**
      * decrypts data that has been encrypted with PHP's openssl functions
      *
      * @param string $encrypted_text the text to be decrypted
+     * @param string $cipher_method
      * @return string
      * @throws RuntimeException
      */
-    protected function openssl_decrypt($encrypted_text = '')
+    protected function openssl_decrypt($encrypted_text = '', $cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD)
     {
         // you give me nothing??? GET OUT !
         if (empty($encrypted_text)) {
@@ -423,7 +423,7 @@ class EE_Encryption
         // decrypt it
         $decrypted_text = openssl_decrypt(
             $encrypted_components[0],
-            $this->getCipherMethod(),
+            $this->getCipherMethod($cipher_method),
             $this->getDigestHashValue(),
             0,
             $encrypted_components[1]
