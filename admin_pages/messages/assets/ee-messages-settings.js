@@ -146,7 +146,7 @@ jQuery(document).ready(function($) {
 					});
 
 			//unbind any existing ajax success handler so we don't get repeat fires
-			$(document).unbind('ajaxSuccess');
+			$(document).off('ajaxSuccess');
 			return this;
 		},
 
@@ -249,7 +249,7 @@ jQuery(document).ready(function($) {
 					if ( resp.success ) {
 						$('.mt-settings-content', '.'+messenger+'-content #'+mt+'-messagetype-'+messenger).replaceWith(resp.data.template_args.content).slideToggle();
 						//unbind any existing ajax success handler so we don't get repeat fires
-						$(document).unbind('ajaxSuccess');
+						$(document).off('ajaxSuccess');
 					}
 				}
 			});
@@ -292,7 +292,7 @@ jQuery(document).ready(function($) {
 			}
 
 			//unbind any existing ajax success handler so we don't get repeat fires
-			$(document).unbind('ajaxSuccess');
+			$(document).off('ajaxSuccess');
 
 			//make sure active mts are moved to the right spot
 			if ( typeof(mts) !== 'undefined' ) {

@@ -24,14 +24,6 @@ class EEH_Activation implements ResettableInterface
     const cron_task_no_longer_in_use = 'no_longer_in_use';
 
     /**
-     * option name that will indicate whether or not we still
-     * need to create EE's folders in the uploads directory
-     * (because if EE was installed without file system access,
-     * we need to request credentials before we can create them)
-     */
-    const upload_directories_incomplete_option_name = 'ee_upload_directories_incomplete';
-
-    /**
      * WP_User->ID
      *
      * @var int
@@ -125,9 +117,7 @@ class EEH_Activation implements ResettableInterface
      */
     public static function initialize_db_and_folders()
     {
-        $good_filesystem = EEH_Activation::create_upload_directories();
-        $good_db         = EEH_Activation::create_database_tables();
-        return $good_filesystem && $good_db;
+        return EEH_Activation::create_database_tables();
     }
 
 
@@ -1219,65 +1209,6 @@ class EEH_Activation implements ResettableInterface
 
         }
 
-    }
-
-
-    /**
-     * create_upload_directories
-     * Creates folders in the uploads directory to facilitate addons and templates
-     *
-     * @access public
-     * @static
-     * @return boolean success of verifying upload directories exist
-     */
-    public static function create_upload_directories()
-    {
-        // Create the required folders
-        $folders = array(
-            EVENT_ESPRESSO_TEMPLATE_DIR,
-            EVENT_ESPRESSO_GATEWAY_DIR,
-            EVENT_ESPRESSO_UPLOAD_DIR . 'logs/',
-            EVENT_ESPRESSO_UPLOAD_DIR . 'css/',
-            EVENT_ESPRESSO_UPLOAD_DIR . 'tickets/',
-        );
-        foreach ($folders as $folder) {
-            try {
-                EEH_File::ensure_folder_exists_and_is_writable($folder);
-                @ chmod($folder, 0755);
-            } catch (EE_Error $e) {
-                EE_Error::add_error(
-                    sprintf(
-                        __('Could not create the folder at "%1$s" because: %2$s', 'event_espresso'),
-                        $folder,
-                        '<br />' . $e->getMessage()
-                    ),
-                    __FILE__, __FUNCTION__, __LINE__
-                );
-                //indicate we'll need to fix this later
-                update_option(EEH_Activation::upload_directories_incomplete_option_name, true);
-                return false;
-            }
-        }
-        //just add the .htaccess file to the logs directory to begin with. Even if logging
-        //is disabled, there might be activation errors recorded in there
-        EEH_File::add_htaccess_deny_from_all(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/');
-        //remember EE's folders are all good
-        delete_option(EEH_Activation::upload_directories_incomplete_option_name);
-        return true;
-    }
-
-    /**
-     * Whether the upload directories need to be fixed or not.
-     * If EE is installed but filesystem access isn't initially available,
-     * we need to get the user's filesystem credentials and THEN create them,
-     * so there might be period of time when EE is installed but its
-     * upload directories aren't available. This indicates such a state
-     *
-     * @return boolean
-     */
-    public static function upload_directories_incomplete()
-    {
-        return get_option(EEH_Activation::upload_directories_incomplete_option_name, false);
     }
 
 
