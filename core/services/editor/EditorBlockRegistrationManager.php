@@ -84,7 +84,12 @@ class EditorBlockRegistrationManager extends EditorBlockManager
                 // FQCNs for classes to add (all classes within each namespace will be loaded)
                 apply_filters(
                     'FHEE__EventEspresso_core_services_editor_EditorBlockManager__populateEditorBlockCollection__collection_FQCNs',
-                    array('EventEspresso\core\domain\entities\editor\blocks')
+                    array(
+                        'EventEspresso\core\domain\entities\editor\blocks\common',
+                        'EventEspresso\core\domain\entities\editor\blocks\editor',
+                        'EventEspresso\core\domain\entities\editor\blocks\shortcodes',
+                        'EventEspresso\core\domain\entities\editor\blocks\widgets',
+                    )
                 ),
                 // filepaths to classes to add
                 array(),
@@ -155,22 +160,27 @@ class EditorBlockRegistrationManager extends EditorBlockManager
 
     public function registerStyles()
     {
-        wp_register_style(
-            'ee-block-styles',
-            $this->domain->distributionAssetsUrl() . 'style.css',
-            array(),
-            filemtime($this->domain->distributionAssetsPath() . 'style.css')
-        );
+        // wp_register_style(
+        //     'ee-block-styles',
+        //     $this->domain->distributionAssetsUrl() . 'style.css',
+        //     array(),
+        //     filemtime($this->domain->distributionAssetsPath() . 'style.css')
+        // );
     }
 
 
     public function registerScripts()
     {
         wp_register_script(
-            'ee-shortcode-blocks',
-            $this->domain->distributionAssetsUrl() . 'ee-shortcode-blocks.dist.js',
-            array('wp-blocks'),
-            filemtime($this->domain->distributionAssetsPath() . 'ee-shortcode-blocks.dist.js')
+            'ee-core-blocks',
+            $this->domain->distributionAssetsUrl() . 'ee-core-blocks.dist.js',
+            array(
+                'wp-blocks',    // Provides useful functions and components for extending the editor
+                'wp-i18n',      // Provides localization functions
+                'wp-element',   // Provides React.Component
+                'wp-components' // Provides many prebuilt components and controls
+            ),
+            filemtime($this->domain->distributionAssetsPath() . 'ee-core-blocks.dist.js')
         );
     }
 
