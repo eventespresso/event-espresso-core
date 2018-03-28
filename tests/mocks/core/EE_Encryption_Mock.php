@@ -43,16 +43,12 @@ class EE_Encryption_Mock extends EE_Encryption
      *
      * @param string $text_string the text to be encrypted
      * @param string $cipher_method
-     * @param string $encryption_key_option option name for which key to use. defaults to 'ee_encryption_key'
      * @return string
      * @throws RuntimeException
      */
-    public function openssl_encrypt(
-        $text_string = '',
-        $cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD,
-        $encryption_key_option = ''
-    ) {
-        return parent::openssl_encrypt($text_string, $cipher_method, $encryption_key_option);
+    public function openssl_encrypt($text_string = '', $cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD)
+    {
+        return parent::openssl_encrypt($text_string, $cipher_method);
     }
 
 
@@ -61,16 +57,12 @@ class EE_Encryption_Mock extends EE_Encryption
      *
      * @param string $encrypted_text the text to be decrypted
      * @param string $cipher_method
-     * @param string $encryption_key_option option name for which key to use. defaults to 'ee_encryption_key'
      * @return string
      * @throws RuntimeException
      */
-    public function openssl_decrypt(
-        $encrypted_text = '',
-        $cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD,
-        $encryption_key_option = ''
-    ) {
-        return parent::openssl_decrypt($encrypted_text, $cipher_method, $encryption_key_option);
+    public function openssl_decrypt($encrypted_text = '', $cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD)
+    {
+        return parent::openssl_decrypt($encrypted_text, $cipher_method);
     }
 
 
