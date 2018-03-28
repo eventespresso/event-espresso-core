@@ -46,6 +46,9 @@ config = [
                     )
                 }
             ]
+        },
+        watchOptions: {
+          poll: 1000
         }
     }
 ];
