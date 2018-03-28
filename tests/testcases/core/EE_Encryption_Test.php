@@ -21,7 +21,9 @@ class EE_Encryption_Test extends EE_UnitTestCase
     protected $encryption;
 
 
-
+    /**
+     * @throws EE_Error
+     */
     public function setUp()
     {
         parent::setUp();
@@ -219,7 +221,7 @@ class EE_Encryption_Test extends EE_UnitTestCase
      */
     public function testMcryptEncryption()
     {
-        if (version_compare(PHP_VERSION, '7.1', '>=')) {
+        if (PHP_VERSION_ID >= 70100) {
             $this->markTestSkipped(
                 'The mcrypt extension is deprecated in PHP version 7.1 and therefore can not be tested.'
             );
@@ -273,9 +275,9 @@ class EE_Encryption_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @return void
+     * @throws RuntimeException
      */
     public function testBase64StringEncoding()
     {
@@ -290,9 +292,9 @@ class EE_Encryption_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @return void
+     * @throws RuntimeException
      */
     public function testBase64UrlEncoding()
     {
@@ -306,9 +308,9 @@ class EE_Encryption_Test extends EE_UnitTestCase
     }
 
 
-
     /**
-     * @throws PHPUnit_Framework_AssertionFailedError
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function testValidBase64()
     {
