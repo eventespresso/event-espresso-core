@@ -17,10 +17,10 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class Venue extends EditorBlock
+class VenueEditor extends EditorBlock
 {
 
-    const EDITOR_BLOCK_TYPE = 'ee-event-editor/venue-container';
+    const EDITOR_BLOCK_TYPE = 'event-espresso/editor-venue';
 
 
     /**
@@ -31,8 +31,8 @@ class Venue extends EditorBlock
      */
     public function initialize()
     {
-        $this->setEditorBlockType(Venue::EDITOR_BLOCK_TYPE);
-        $this->setSupportedPostTypes(array('espresso_events', 'post', 'page'));
+        $this->setEditorBlockType(VenueEditor::EDITOR_BLOCK_TYPE);
+        $this->setSupportedPostTypes(array('espresso_venues'));
     }
 
 
@@ -48,8 +48,8 @@ class Venue extends EditorBlock
             new WP_Block_Type(
                 $this->editorBlockType(),
                 array(
-                    'editor_script' => 'ee-event-editor-blocks',
-                    'editor_style'  => 'ee-block-styles',
+                    'editor_script' => 'ee-editor-venue',
+                    'editor_style'  => 'ee-editor-venue',
                     'attributes'    => array(),
                 )
             )
