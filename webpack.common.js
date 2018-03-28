@@ -7,15 +7,14 @@ const externals = {
     jquery: "jQuery",
     eejs: "eejs"
 };
-/** see below for multiple configurations.
+/** see below for multiple configurations.*/
 /** https://webpack.js.org/configuration/configuration-types/#exporting-multiple-configurations */
 config = [
     {
         entry: {
-            //example
-            // 'ee-shortcode-blocks': [
-            //     assets + 'blocks/index.js'
-            // ],
+            'core-blocks': [
+                assets + 'blocks/index.js'
+            ]
         },
         plugins: [
             new CleanWebpackPlugin(['assets/dist']),
