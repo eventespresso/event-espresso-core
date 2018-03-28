@@ -61,8 +61,11 @@ class EditorBlockAdminManager extends EditorBlockManager
         add_filter('FHEE__EE_Admin_Page_CPT___create_new_cpt_item__replace_editor', 'gutenberg_init', 10, 2);
     }
 
+
     /**
      * Manipulate globals related to EE Post Type so gutenberg loads.
+     *
+     * @param array $custom_post_types
      */
     private function modifyWpPostTypes(array $custom_post_types)
     {
