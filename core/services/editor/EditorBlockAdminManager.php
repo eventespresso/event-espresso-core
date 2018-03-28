@@ -57,7 +57,7 @@ class EditorBlockAdminManager extends EditorBlockManager
     public function loadCustomPostTypeBlockEditor(array $custom_post_types)
     {
         $this->modifyWpPostTypes($custom_post_types);
-        add_action('admin_enqueue_scripts', array($this, 'registerAdminScripts'), 20);
+        // add_action('admin_enqueue_scripts', array($this, 'registerAdminScripts'), 20);
         add_filter('FHEE__EE_Admin_Page_CPT___create_new_cpt_item__replace_editor', 'gutenberg_init', 10, 2);
     }
 
@@ -105,11 +105,5 @@ class EditorBlockAdminManager extends EditorBlockManager
 
     public function registerAdminScripts()
     {
-        wp_register_script(
-            'ee-event-editor-blocks',
-            $this->domain->distributionAssetsUrl() . 'ee-event-editor-blocks.dist.js',
-            array('wp-blocks'),
-            filemtime($this->domain->distributionAssetsPath() . 'ee-event-editor-blocks.dist.js')
-        );
     }
 }
