@@ -40,10 +40,11 @@ const modalProps = {
 /**
  * Handler for deactivation trigger
  * @param {Event} e
+ * @param {element} el
  */
-const handleDeactivationClick = (e) => {
+const handleDeactivationClick = (e, el) => {
     e.preventDefault();
-    const link = $(this).attr('href');
+    const link = $(el).attr('href');
     const appContainer = document.getElementById('ee-exit-survey-modal');
     let modalContainer;
     ReactModal.setAppElement(appContainer);
@@ -61,7 +62,7 @@ const handleDeactivationClick = (e) => {
  * EE caffeinated click capture.
  */
 $('tr[data-slug="event-espresso"]').on('click', 'span.deactivate > a', function(e) {
-    handleDeactivationClick(e);
+    handleDeactivationClick(e, this);
 });
 
 
@@ -69,7 +70,7 @@ $('tr[data-slug="event-espresso"]').on('click', 'span.deactivate > a', function(
  * EE decaf click capture.
  */
 $('tr[data-slug="event-espresso-decaf"]').on('click', 'span.deactivate > a', function(e) {
-    handleDeactivationClick(e);
+    handleDeactivationClick(e, this);
 });
 
 
