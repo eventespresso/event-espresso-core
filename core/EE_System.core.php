@@ -1078,10 +1078,6 @@ final class EE_System implements ResettableInterface
      */
     public function perform_activations_upgrades_and_migrations()
     {
-        //first check if we had previously attempted to setup EE's directories but failed
-        if ($this->request->isActivation() && EEH_Activation::upload_directories_incomplete()) {
-            EEH_Activation::create_upload_directories();
-        }
         do_action('AHEE__EE_System__perform_activations_upgrades_and_migrations');
     }
 
