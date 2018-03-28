@@ -20,7 +20,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class TicketSelector extends EditorBlock
 {
 
-    const EDITOR_BLOCK_TYPE = 'ee-event-editor/ticket-editor-container';
+    const EDITOR_BLOCK_TYPE = 'event-espresso/widget-ticket-selector';
 
 
     /**
@@ -48,8 +48,8 @@ class TicketSelector extends EditorBlock
             new WP_Block_Type(
                 $this->editorBlockType(),
                 array(
-                    'editor_script' => 'ee-event-editor-blocks',
-                    'editor_style'  => 'ee-block-styles',
+                    'editor_script' => 'ee-widget-ticket-selector',
+                    'editor_style'  => 'ee-widget-ticket-selector',
                     'attributes'    => array(),
                 )
             )
