@@ -194,14 +194,14 @@ class EE_Registry implements ResettableInterface
     ) {
         // check if class object is instantiated
         if (
-            ! EE_Registry::$_instance instanceof EE_Registry
+            ! self::$_instance instanceof EE_Registry
             && $dependency_map instanceof EE_Dependency_Map
             && $mirror instanceof Mirror
             && $class_cache instanceof ClassInterfaceCache
         ) {
-            EE_Registry::$_instance = new self($dependency_map, $mirror, $class_cache);
+            self::$_instance = new self($dependency_map, $mirror, $class_cache);
         }
-        return EE_Registry::$_instance;
+        return self::$_instance;
     }
 
 

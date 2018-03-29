@@ -128,12 +128,12 @@ class EE_Dependency_Map
     public static function instance(ClassInterfaceCache $class_cache = null) {
         // check if class object is instantiated, and instantiated properly
         if (
-            ! EE_Dependency_Map::$_instance instanceof EE_Dependency_Map
+            ! self::$_instance instanceof EE_Dependency_Map
             && $class_cache instanceof ClassInterfaceCache
         ) {
-            EE_Dependency_Map::$_instance = new EE_Dependency_Map($class_cache);
+            self::$_instance = new EE_Dependency_Map($class_cache);
         }
-        return EE_Dependency_Map::$_instance;
+        return self::$_instance;
     }
 
 
@@ -186,7 +186,7 @@ class EE_Dependency_Map
         array $dependencies,
         $overwrite = EE_Dependency_Map::KEEP_EXISTING_DEPENDENCIES
     ) {
-        return EE_Dependency_Map::$_instance->registerDependencies($class, $dependencies, $overwrite);
+        return self::$_instance->registerDependencies($class, $dependencies, $overwrite);
     }
 
 
@@ -212,16 +212,16 @@ class EE_Dependency_Map
     ) {
         $class = trim($class, '\\');
         $registered = false;
-        if (empty(EE_Dependency_Map::$_instance->_dependency_map[ $class ])) {
-            EE_Dependency_Map::$_instance->_dependency_map[ $class ] = array();
+        if (empty(self::$_instance->_dependency_map[ $class ])) {
+            self::$_instance->_dependency_map[ $class ] = array();
         }
         // we need to make sure that any aliases used when registering a dependency
         // get resolved to the correct class name
         foreach ($dependencies as $dependency => $load_source) {
-            $alias = EE_Dependency_Map::$_instance->get_alias($dependency);
+            $alias = self::$_instance->get_alias($dependency);
             if (
                 $overwrite === EE_Dependency_Map::OVERWRITE_DEPENDENCIES
-                || ! isset(EE_Dependency_Map::$_instance->_dependency_map[ $class ][ $alias ])
+                || ! isset(self::$_instance->_dependency_map[ $class ][ $alias ])
             ) {
                 unset($dependencies[$dependency]);
                 $dependencies[$alias] = $load_source;
@@ -234,13 +234,13 @@ class EE_Dependency_Map
         // ie: with A = B + C, entries in B take precedence over duplicate entries in C
         // Union is way faster than array_merge() but should be used with caution...
         // especially with numerically indexed arrays
-        $dependencies += EE_Dependency_Map::$_instance->_dependency_map[ $class ];
+        $dependencies += self::$_instance->_dependency_map[ $class ];
         // now we need to ensure that the resulting dependencies
         // array only has the entries that are required for the class
         // so first count how many dependencies were originally registered for the class
-        $dependency_count = count(EE_Dependency_Map::$_instance->_dependency_map[ $class ]);
+        $dependency_count = count(self::$_instance->_dependency_map[ $class ]);
         // if that count is non-zero (meaning dependencies were already registered)
-        EE_Dependency_Map::$_instance->_dependency_map[ $class ] = $dependency_count
+        self::$_instance->_dependency_map[ $class ] = $dependency_count
             // then truncate the  final array to match that count
             ? array_slice($dependencies, 0, $dependency_count)
             // otherwise just take the incoming array because nothing previously existed
@@ -281,9 +281,9 @@ class EE_Dependency_Map
                 )
             );
         }
-        $class_name = EE_Dependency_Map::$_instance->get_alias($class_name);
-        if (! isset(EE_Dependency_Map::$_instance->_class_loaders[$class_name])) {
-            EE_Dependency_Map::$_instance->_class_loaders[$class_name] = $loader;
+        $class_name = self::$_instance->get_alias($class_name);
+        if (! isset(self::$_instance->_class_loaders[$class_name])) {
+            self::$_instance->_class_loaders[$class_name] = $loader;
             return true;
         }
         return false;
