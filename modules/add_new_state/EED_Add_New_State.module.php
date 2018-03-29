@@ -189,7 +189,7 @@ class EED_Add_New_State extends EED_Module
             return $question_group_reg_form;
         }
         // we're only doing this for state select inputs
-        if ($input instanceof EE_State_Select_Input) {
+        if ($input instanceof EE_State_Select_Input && ! $input->get_display_strategy() instanceof EE_Hidden_Display_Strategy) {
             // grab any set values from the request
             $country_name        = str_replace('state', 'nsmf_new_state_country', $input->html_name());
             $state_name          = str_replace('state', 'nsmf_new_state_name', $input->html_name());

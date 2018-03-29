@@ -434,7 +434,9 @@ class EE_Email_messenger extends EE_messenger
     {
         $success = wp_mail(
             $this->_to,
-            $this->_subject,
+            //some old values for subject may be expecting HTML entities to be decoded in the subject
+            //and subjects aren't interpreted as HTML, so there should be no HTML in them
+            wp_strip_all_tags(wp_specialchars_decode($this->_subject, ENT_QUOTES)),
             $this->_body(),
             $this->_headers()
         );
@@ -487,7 +489,12 @@ class EE_Email_messenger extends EE_messenger
             'Content-Type:text/html; charset=utf-8',
         );
 
-        if (! empty($this->_cc)) {
+        /**
+         * Second condition added as a result of https://events.codebasehq.com/projects/event-espresso/tickets/11416 to
+         * cover back compat where there may be users who have saved cc values in their db for the newsletter message
+         * type which they are no longer able to change.
+         */
+        if (! empty($this->_cc) && ! $this->_incoming_message_type instanceof EE_Newsletter_message_type) {
             $headers[] = 'cc: ' . $this->_cc;
         }
 
@@ -572,7 +579,8 @@ class EE_Email_messenger extends EE_messenger
         }
 
         //if from name is "WordPress" let's sub in the site name instead (more friendly!)
-        $from_name = $from_name == 'WordPress' ? get_bloginfo() : $from_name;
+        //but realize the default name is HTML entity-encoded
+        $from_name = $from_name == 'WordPress' ? wp_specialchars_decode(get_bloginfo(), ENT_QUOTES) : $from_name;
 
         return $from_name;
     }
