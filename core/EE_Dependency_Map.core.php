@@ -1,8 +1,5 @@
 <?php
 
-use EventEspresso\core\exceptions\InvalidClassException;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\ClassInterfaceCache;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
