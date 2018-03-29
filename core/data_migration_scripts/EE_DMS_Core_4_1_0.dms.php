@@ -1588,7 +1588,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
         }
         try {
             $date_obj = new DateTime($DATETIME_string, new DateTimeZone($timezone));
-            $date_obj->setTimezone(new DateTimeZone('UTC'));
+            EEH_DTT_Helper::setTimezone($date_obj, new DateTimeZone('UTC'));
         } catch (Exception $e) {
             $stage->add_error(sprintf(esc_html__("Could not convert time string '%s' using timezone '%s' into a proper DATETIME. Using current time instead.",
                     "event_espresso"), $DATETIME_string, $timezone));
