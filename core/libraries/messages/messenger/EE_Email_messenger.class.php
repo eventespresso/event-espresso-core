@@ -489,7 +489,12 @@ class EE_Email_messenger extends EE_messenger
             'Content-Type:text/html; charset=utf-8',
         );
 
-        if (! empty($this->_cc)) {
+        /**
+         * Second condition added as a result of https://events.codebasehq.com/projects/event-espresso/tickets/11416 to
+         * cover back compat where there may be users who have saved cc values in their db for the newsletter message
+         * type which they are no longer able to change.
+         */
+        if (! empty($this->_cc) && ! $this->_incoming_message_type instanceof EE_Newsletter_message_type) {
             $headers[] = 'cc: ' . $this->_cc;
         }
 
