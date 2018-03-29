@@ -299,4 +299,21 @@ abstract class EE_Messages_Base extends EE_Base {
 		return $content;
 	}
 
+
+    /**
+     * Allows a message type to specifically exclude template fields for the provided messenger.
+     * Filtered so this can be programmatically altered as well.
+     * @param string $messenger_name name of messenger
+     * @return array
+     */
+	public function excludedFieldsForMessenger($messenger_name)
+    {
+        return apply_filters(
+            'FHEE__EE_Messages_Base__excludedFieldForMessenger',
+            array(),
+            $messenger_name,
+            $this->name,
+            $this
+        );
+    }
 }
