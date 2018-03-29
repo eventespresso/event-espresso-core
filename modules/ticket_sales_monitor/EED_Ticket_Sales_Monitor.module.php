@@ -4,6 +4,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\InvalidSessionDataException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
 
@@ -204,7 +205,10 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             );
             return;
         }
-        $expired = current_time('timestamp') - EE_Registry::instance()->SSN->lifespan();
+        /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+        $session_lifespan = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\domain\values\session\SessionLifespan'
+        );
         foreach ($total_line_items as $total_line_item) {
             /** @var EE_Line_Item $total_line_item */
             $ticket_line_items = EED_Ticket_Sales_Monitor::get_ticket_line_items_for_grand_total($total_line_item);
@@ -212,7 +216,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                 if (! $ticket_line_item instanceof EE_Line_Item) {
                     continue;
                 }
-                if ($total_line_item->timestamp(true) <= $expired) {
+                if ($total_line_item->timestamp(true) <= $session_lifespan->expiration()) {
                     $expired_ticket_IDs[ $ticket_line_item->OBJ_ID() ] = $ticket_line_item->OBJ_ID();
                 } else {
                     $valid_ticket_line_items[ $ticket_line_item->OBJ_ID() ] = $ticket_line_item;
@@ -1058,12 +1062,16 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     {
         /** @type WPDB $wpdb */
         global $wpdb;
+        /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+        $session_lifespan = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\domain\values\session\SessionLifespan'
+        );
         return $wpdb->query(
             $wpdb->prepare(
                 'DELETE FROM ' . EEM_Line_Item::instance()->table() . '
                 WHERE TXN_ID = 0 AND LIN_timestamp <= %s',
                 // use GMT time because that's what LIN_timestamps are in
-                date('Y-m-d H:i:s', time() - EE_Registry::instance()->SSN->lifespan())
+                date('Y-m-d H:i:s', $session_lifespan->expiration())
             )
         );
     }
