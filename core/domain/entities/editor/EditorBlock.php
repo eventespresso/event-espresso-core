@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\domain\entities\editor;
 
-
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use WP_Block_Type;
@@ -58,6 +57,14 @@ abstract class EditorBlock implements EditorBlockInterface
      * @var array $attributes
      */
     private $attributes;
+
+    /**
+     * If set to true, then the block will render its content client side
+     * If false, then the block will render its content server side using the renderBlock() method
+     *
+     * @var bool $dynamic
+     */
+    private $dynamic = false;
 
 
     /**
@@ -137,6 +144,24 @@ abstract class EditorBlock implements EditorBlockInterface
 
 
     /**
+     * @return bool
+     */
+    public function isDynamic()
+    {
+        return $this->dynamic;
+    }
+
+
+    /**
+     * @param bool $dynamic
+     */
+    public function setDynamic($dynamic = true)
+    {
+        $this->dynamic = filter_var($dynamic, FILTER_VALIDATE_BOOLEAN);
+    }
+
+
+    /**
      * Registers the Editor Block with WP core;
      * Returns the registered block type on success, or false on failure.
      *
@@ -144,17 +169,22 @@ abstract class EditorBlock implements EditorBlockInterface
      */
     public function registerBlock()
     {
+        $context ='core';
+        // todo add route detection (ie inject route) and change context based on route
+        $args          = array(
+            'attributes'      => $this->attributes(),
+            'editor_script'   => "ee-{$context}-blocks",
+            'editor_style'    => "ee-{$context}-blocks",
+            'script'          => "ee-{$context}-blocks",
+            'style'           => "ee-{$context}-blocks",
+        );
+        if(! $this->isDynamic()) {
+            $args['render_callback'] = $this->renderBlock();
+        }
         $wp_block_type = register_block_type(
             new WP_Block_Type(
                 $this->namespacedEditorBlockType(),
-                array(
-                    'attributes'      => $this->attributes(),
-                    'render_callback' => $this->renderBlock(),
-                    'editor_script'   => 'ee-core-blocks',
-                    'editor_style'    => 'ee-core-blocks',
-                    'script'          => 'ee-core-blocks',
-                    'style'           => 'ee-core-blocks',
-                )
+                $args
             )
         );
         $this->setWpBlockType($wp_block_type);
