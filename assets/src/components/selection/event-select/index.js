@@ -126,8 +126,7 @@ const whereConditions = ({showExpired, categorySlug, month}) => {
   let where = [];
   const GREATER_AND_EQUAL = encodeURIComponent('>=');
   const LESS_AND_EQUAL = encodeURIComponent('<=');
-  //using .replace('Z', '') on the end of our moment strings because EE currently has a bug with parsing default
-  //moment formatted strings (@see https://events.codebasehq.com/projects/event-espresso/tickets/11368)
+  
   if (! showExpired) {
     where.push('where[Datetime.DTT_EVT_end**expired][]=>&where[Datetime.DTT_EVT_end**expired][]='
         + nowDateAndTime.local().format());
