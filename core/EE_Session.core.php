@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\services\session\SessionIdentifierInterface;
+use EventEspresso\core\domain\values\session\SessionLifespan;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\InvalidSessionDataException;
@@ -73,11 +74,11 @@ class EE_Session implements SessionIdentifierInterface
 
     /**
      * how long an EE session lasts
-     * default session lifespan of 2 hours (for not so instant IPNs)
+     * default session lifespan of 1 hour (for not so instant IPNs)
      *
-     * @var int
+     * @var SessionLifespan $session_lifespan
      */
-    private $_lifespan;
+    private $session_lifespan;
 
     /**
      * session expiration time as Unix timestamp in GMT
@@ -168,6 +169,7 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * @singleton method used to instantiate class object
      * @param CacheStorageInterface $cache_storage
+     * @param SessionLifespan|null  $lifespan
      * @param RequestInterface      $request
      * @param EE_Encryption         $encryption
      * @return EE_Session
@@ -177,6 +179,7 @@ class EE_Session implements SessionIdentifierInterface
      */
     public static function instance(
         CacheStorageInterface $cache_storage = null,
+        SessionLifespan $lifespan = null,
         RequestInterface $request = null,
         EE_Encryption $encryption = null
     ) {
@@ -184,17 +187,22 @@ class EE_Session implements SessionIdentifierInterface
         // session loading is turned ON by default, but prior to the init hook, can be turned back OFF via:
         // add_filter( 'FHEE_load_EE_Session', '__return_false' );
         if (! self::$_instance instanceof EE_Session && apply_filters('FHEE_load_EE_Session', true)) {
-            self::$_instance = new self($cache_storage, $request, $encryption);
+            self::$_instance = new self(
+                $cache_storage,
+                $lifespan,
+                $request,
+                $encryption
+            );
         }
         return self::$_instance;
     }
-
 
 
     /**
      * protected constructor to prevent direct creation
      *
      * @param CacheStorageInterface $cache_storage
+     * @param SessionLifespan       $lifespan
      * @param RequestInterface      $request
      * @param EE_Encryption         $encryption
      * @throws InvalidArgumentException
@@ -203,6 +211,7 @@ class EE_Session implements SessionIdentifierInterface
      */
     protected function __construct(
         CacheStorageInterface $cache_storage,
+        SessionLifespan $lifespan,
         RequestInterface $request,
         EE_Encryption $encryption = null
     ) {
@@ -213,21 +222,11 @@ class EE_Session implements SessionIdentifierInterface
         if (! apply_filters('FHEE_load_EE_Session', true)) {
             return;
         }
-        $this->request = $request;
+        $this->session_lifespan = $lifespan;
+        $this->request          = $request;
         if (! defined('ESPRESSO_SESSION')) {
             define('ESPRESSO_SESSION', true);
         }
-        // default session lifespan in seconds
-        $this->_lifespan = apply_filters(
-                               'FHEE__EE_Session__construct___lifespan',
-                               60 * MINUTE_IN_SECONDS
-                           ) + 1;
-        /*
-         * do something like the following to adjust the session lifespan:
-         * 		public static function session_lifespan() {
-         * 			return 15 * MINUTE_IN_SECONDS;
-         * 		}
-         */
         // retrieve session options from db
         $session_settings = (array) get_option(EE_Session::OPTION_NAME_SETTINGS, array());
         if (! empty($session_settings)) {
@@ -358,7 +357,7 @@ class EE_Session implements SessionIdentifierInterface
      */
     public function lifespan()
     {
-        return $this->_lifespan;
+        return $this->session_lifespan->inSeconds();
     }
 
 
@@ -585,7 +584,7 @@ class EE_Session implements SessionIdentifierInterface
             // and reset the session expiration
             $this->_expiration = isset($session_data['expiration'])
                 ? $session_data['expiration']
-                : $this->_time + $this->_lifespan;
+                : $this->_time + $this->session_lifespan->inSeconds();
         } else {
             // set initial site access time and the session expiration
             $this->_set_init_access_and_expiration();
@@ -778,7 +777,7 @@ class EE_Session implements SessionIdentifierInterface
     protected function _set_init_access_and_expiration()
     {
         $this->_time       = time();
-        $this->_expiration = $this->_time + $this->_lifespan;
+        $this->_expiration = $this->_time + $this->session_lifespan->inSeconds();
         // set initial site access time
         $this->_session_data['init_access'] = $this->_time;
         // and the session expiration
@@ -835,7 +834,7 @@ class EE_Session implements SessionIdentifierInterface
                     // when the session expires
                     $session_data['expiration'] = ! empty($this->_expiration)
                         ? $this->_expiration
-                        : $session_data['init_access'] + $this->_lifespan;
+                        : $session_data['init_access'] + $this->session_lifespan->inSeconds();
                     break;
                 case 'user_id' :
                     // current user if logged in
@@ -923,14 +922,14 @@ class EE_Session implements SessionIdentifierInterface
             $this->cache_storage->add(
                 EE_Session::hash_check_prefix . $this->_sid,
                 md5($session_data),
-                $this->_lifespan
+                $this->session_lifespan->inSeconds()
             );
         }
         // we're using the Transient API for storing session data,
         return $this->cache_storage->add(
             EE_Session::session_id_prefix . $this->_sid,
             $session_data,
-            $this->_lifespan
+            $this->session_lifespan->inSeconds()
         );
     }
 

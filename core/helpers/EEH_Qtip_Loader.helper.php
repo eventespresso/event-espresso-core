@@ -62,13 +62,11 @@ class EEH_Qtip_Loader extends EEH_Base {
 	 */
 	public function register_and_enqueue() {
 		$qtips_js = !defined('SCRIPT_DEBUG') ? EE_THIRD_PARTY_URL . 'qtip/jquery.qtip.min.js' : EE_THIRD_PARTY_URL . 'qtip/jquery.qtip.js';
-		$qtip_images_loaded = EE_THIRD_PARTY_URL . 'qtip/imagesloaded.pkg.min.js';
 		$qtip_map = EE_THIRD_PARTY_URL . 'qtip/jquery.qtip.min.map';
 		$qtipcss = !defined('SCRIPT_DEBUG') ? EE_THIRD_PARTY_URL . 'qtip/jquery.qtip.min.css' : EE_THIRD_PARTY_URL . 'qtip/jquery.qtip.css';
 
 		wp_register_script('qtip-map', $qtip_map, array(), '3', TRUE );
-		wp_register_script('qtip-images-loaded', $qtip_images_loaded, array(), '2.2.0', TRUE );
-		wp_register_script('qtip', $qtips_js, array('jquery'), '2.2.0', TRUE );
+		wp_register_script('qtip', $qtips_js, array('jquery'), '3.0.3', TRUE );
 		wp_register_script('ee-qtip-helper', EE_HELPERS_ASSETS . 'ee-qtip-helper.js', array('qtip', 'jquery-cookie'), EVENT_ESPRESSO_VERSION, TRUE );
 
 		wp_register_style('qtip-css', $qtipcss, array(), '2.2' );
