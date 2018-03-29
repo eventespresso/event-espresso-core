@@ -4,6 +4,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\InvalidSessionDataException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
 
@@ -193,7 +194,11 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     {
         do_action('AHEE__EED_Ticket_Sales_Monitor__release_tickets_for_expired_carts__begin');
         $expired_ticket_IDs = array();
-        $timestamp                 = time() - EE_Registry::instance()->SSN->lifespan();
+        /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+        $session_lifespan = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\domain\values\session\SessionLifespan'
+        );
+        $timestamp                 = time() - $session_lifespan->expiration();
         $expired_ticket_line_items = EEM_Line_Item::instance()->getTicketLineItemsForExpiredCarts($timestamp);
         if (! empty($expired_ticket_line_items)) {
             foreach ($expired_ticket_line_items as $expired_ticket_line_item) {
@@ -1036,12 +1041,16 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     public static function clear_expired_line_items_with_no_transaction($timestamp = 0)
     {
+       /** @type WPDB $wpdb */
+        global $wpdb;
+        /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+        $session_lifespan = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\domain\values\session\SessionLifespan'
+        );
         $timestamp = absint($timestamp) !== 0
             ? $timestamp
-            : time() - EE_Registry::instance()->SSN->lifespan();
-        /** @type WPDB $wpdb */
-        global $wpdb;
-        return $wpdb->query(
+            : time() - $session_lifespan->expiration();
+         return $wpdb->query(
             $wpdb->prepare(
                 'DELETE FROM ' . EEM_Line_Item::instance()->table() . '
                 WHERE TXN_ID = 0 AND LIN_timestamp <= %s',

@@ -2,8 +2,9 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
+if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 /**
  * Event Espresso
@@ -431,9 +432,13 @@ class EEM_Line_Item extends EEM_Base
             'LIN_type' => 'total',
         );
         if ($expired !== null) {
+            /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+            $session_lifespan = LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\domain\values\session\SessionLifespan'
+            );
             $where_params['LIN_timestamp'] = array(
                 $expired ? '<=' : '>',
-                time() - EE_Registry::instance()->SSN->lifespan(),
+                $session_lifespan->expiration(),
             );
         }
         return $this->get_all(array($where_params));

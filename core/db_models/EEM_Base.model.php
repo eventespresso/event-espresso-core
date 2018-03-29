@@ -1600,7 +1600,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         //load EEH_DTT_Helper
         $set_timezone = empty($timezone) ? EEH_DTT_Helper::get_timezone() : $timezone;
         $incomingDateTime = date_create_from_format($incoming_format, $timestring, new DateTimeZone($set_timezone));
-        return \EventEspresso\core\domain\entities\DbSafeDateTime::createFromDateTime( $incomingDateTime->setTimezone(new DateTimeZone($this->_timezone)) );
+        EEH_DTT_Helper::setTimezone($incomingDateTime, new DateTimeZone($this->_timezone));
+        return \EventEspresso\core\domain\entities\DbSafeDateTime::createFromDateTime($incomingDateTime);
     }
 
 

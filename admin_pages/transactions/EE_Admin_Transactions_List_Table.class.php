@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\values\session\SessionLifespan;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
@@ -16,15 +17,22 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
 {
 
+    /**
+     * @var SessionLifespan $session_lifespan
+     */
+    private $session_lifespan;
+
     private $_status;
 
 
     /**
      * @param \Transactions_Admin_Page $admin_page
+     * @param SessionLifespan          $lifespan
      */
-    public function __construct(\Transactions_Admin_Page $admin_page)
+    public function __construct(\Transactions_Admin_Page $admin_page, SessionLifespan $lifespan)
     {
         parent::__construct($admin_page);
+        $this->session_lifespan = $lifespan;
         $this->_status = $this->_admin_page->get_transaction_status_array();
     }
 
@@ -182,12 +190,9 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
      */
     protected function _get_txn_timestamp(EE_Transaction $transaction)
     {
-        //txn timestamp
         // is TXN less than 2 hours old ?
         if (($transaction->failed() || $transaction->is_abandoned())
-            && (
-                (time() - EE_Registry::instance()->SSN->lifespan()) < $transaction->datetime(false, true)
-            )
+            && $this->session_lifespan->expiration() < $transaction->datetime(false, true)
         ) {
             $timestamp = esc_html__('TXN in progress...', 'event_espresso');
         } else {
