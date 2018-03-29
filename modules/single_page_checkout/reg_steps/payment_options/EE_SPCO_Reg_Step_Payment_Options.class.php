@@ -1921,7 +1921,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             return false;
         }
         foreach ($registrations as $registration) {
-            if ($registration instanceof EE_Registration) {
+            if ($registration instanceof EE_Registration && ! $registration->is_approved()) {
                 $event = $registration->event_obj();
                 if ($event instanceof EE_Event && $event->is_sold_out(true)) {
                     EE_Error::add_error(
