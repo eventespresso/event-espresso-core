@@ -25,7 +25,7 @@ abstract class ClassToLoad
      *
      * @param array $args
      */
-    public function __construct(array $args)
+    public function __construct(array $args = array())
     {
         $this->args = $args;
     }
