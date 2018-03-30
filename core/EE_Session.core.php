@@ -28,6 +28,10 @@ class EE_Session implements SessionIdentifierInterface
 
     const OPTION_NAME_SETTINGS = 'ee_session_settings';
 
+    const STATUS_CLOSED        = 0;
+
+    const STATUS_OPEN          = 1;
+
     /**
      * instance of the EE_Session object
      *
@@ -153,6 +157,14 @@ class EE_Session implements SessionIdentifierInterface
      */
     protected $request;
 
+    /**
+     * whether session is active or not
+     *
+     * @var int $status
+     */
+    private $status = EE_Session::STATUS_CLOSED;
+
+
 
     /**
      * @singleton method used to instantiate class object
@@ -203,13 +215,15 @@ class EE_Session implements SessionIdentifierInterface
         RequestInterface $request,
         EE_Encryption $encryption = null
     ) {
-        // session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
+        // session loading is turned ON by default,
+        // but prior to the 'AHEE__EE_System__core_loaded_and_ready' hook
+        // (which currently fires on the init hook at priority 9),
+        // can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
         if (! apply_filters('FHEE_load_EE_Session', true)) {
             return;
         }
         $this->session_lifespan = $lifespan;
         $this->request          = $request;
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         if (! defined('ESPRESSO_SESSION')) {
             define('ESPRESSO_SESSION', true);
         }
@@ -242,6 +256,29 @@ class EE_Session implements SessionIdentifierInterface
         add_action('shutdown', array($this, 'update'), 100);
         add_action('shutdown', array($this, 'garbageCollection'), 1000);
         $this->configure_garbage_collection_filters();
+    }
+
+
+    /**
+     * @return bool
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public static function isLoadedAndActive()
+    {
+        return did_action('AHEE__EE_System__core_loaded_and_ready')
+               && EE_Session::instance() instanceof EE_Session
+               && EE_Session::instance()->isActive();
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->status === EE_Session::STATUS_OPEN;
     }
 
 
@@ -465,14 +502,12 @@ class EE_Session implements SessionIdentifierInterface
     }
 
 
-
     /**
      * retrieve session data
      *
-     * @access    public
      * @param null $key
      * @param bool $reset_cache
-     * @return    array
+     * @return array
      */
     public function get_session_data($key = null, $reset_cache = false)
     {
@@ -488,13 +523,11 @@ class EE_Session implements SessionIdentifierInterface
     }
 
 
-
     /**
-     * set session data
+     * Returns TRUE on success, FALSE on fail
      *
-     * @access    public
-     * @param    array $data
-     * @return    TRUE on success, FALSE on fail
+     * @param array $data
+     * @return bool
      */
     public function set_session_data($data)
     {
@@ -536,6 +569,7 @@ class EE_Session implements SessionIdentifierInterface
             //starts a new session if one doesn't already exist, or re-initiates an existing one
             session_start();
         }
+        $this->status = EE_Session::STATUS_OPEN;
         // get our modified session ID
         $this->_sid = $this->_generate_session_id();
         // and the visitors IP
@@ -977,13 +1011,12 @@ class EE_Session implements SessionIdentifierInterface
     }
 
 
-
     /**
-     * @resets all non-default session vars
-     * @access public
+     * resets all non-default session vars. Returns TRUE on success, FALSE on fail
+     *
      * @param array|mixed $data_to_reset
      * @param bool        $show_all_notices
-     * @return TRUE on success, FALSE on fail
+     * @return bool
      */
     public function reset_data($data_to_reset = array(), $show_all_notices = false)
     {
