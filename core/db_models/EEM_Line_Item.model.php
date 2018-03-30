@@ -411,19 +411,17 @@ class EEM_Line_Item extends EEM_Base
     }
 
 
-
-
-
     /**
      * Returns an array of grand total line items where the TXN_ID is 0.
      * If $expired is set to true, then only line items for expired sessions will be returned.
      * If $expired is set to false, then only line items for active sessions will be returned.
      *
+     * @param null $expired
      * @return EE_Base_Class[]|EE_Line_Item[]
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      * @throws EE_Error
      * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function get_total_line_items_for_carts($expired = null)
     {
@@ -458,9 +456,13 @@ class EEM_Line_Item extends EEM_Base
      */
     public function getTicketLineItemsForExpiredCarts($timestamp = 0)
     {
-        $timestamp  = absint($timestamp) !== 0
-            ? $timestamp
-            : time() - EE_Registry::instance()->SSN->lifespan();
+        if(! absint($timestamp)) {
+            /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+            $session_lifespan = LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\domain\values\session\SessionLifespan'
+            );
+            $timestamp = $session_lifespan->expiration();
+        }
         return $this->get_all(
             array(
                 array(
