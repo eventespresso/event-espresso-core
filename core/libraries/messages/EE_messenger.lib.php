@@ -647,8 +647,15 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 		if ( $send ) {
 			//are we overriding any existing template fields?
-			$settings = $this->get_existing_test_settings();
-			if ( ! empty( $settings ) ) {
+            $settings = apply_filters(
+                'FHEE__EE_messenger__get_preview__messenger_test_settings',
+                $this->get_existing_test_settings(),
+                $this,
+                $send,
+                $message,
+                $message_type
+            );
+            if ( ! empty( $settings ) ) {
 				foreach ( $settings as $field => $value ) {
 					$this->_set_template_value( $field, $value );
 				}

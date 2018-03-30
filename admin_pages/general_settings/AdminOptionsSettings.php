@@ -25,7 +25,7 @@ defined('ABSPATH') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * 
  */
 class AdminOptionsSettings extends FormHandler
 {

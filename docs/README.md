@@ -11,6 +11,7 @@ All the links to the table of contents for each folder in this documentation:
 | Topic | Purpose |
 | ----- | ------- |
 [Best Practices](A--Best-Practices) | Documents outlining best-practices and standards being used in developing for Event Espresso.
+[Javascript and CSS in EE](AA--Javascript-in-EE) | Various documentation related to javascript and CSS within Event Espresso.
 [Automated Testing](B--Automated-Testing) | Documents outlining how automated testing is done in Event Espresso development.
 [REST API](C--REST-API) | All documentation related to the EE REST API
 [Addon API](D--Addon-API) | All documentation pertaining to the system provided for extending Event Espresso via add-ons.

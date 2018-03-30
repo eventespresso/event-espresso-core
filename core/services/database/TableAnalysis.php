@@ -11,7 +11,7 @@ namespace EventEspresso\core\services\database;
  * @package         Event Espresso
  * @subpackage
  * @author				Mike Nelson
- * @since		 	   $VID:$
+ * 
  *
  */
 class TableAnalysis extends \EE_Base {

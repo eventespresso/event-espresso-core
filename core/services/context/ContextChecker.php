@@ -3,7 +3,7 @@
 namespace EventEspresso\core\services\context;
 
 use Closure;
-use EventEspresso\core\domain\entities\Context;
+use EventEspresso\core\domain\entities\contexts\ContextInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -17,7 +17,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\core\services
  * @author  Brent Christensen
- * @since   $VID:$
+ * 
  */
 class ContextChecker
 {
@@ -87,7 +87,7 @@ class ContextChecker
     {
         $this->evaluation_callback = $evaluation_callback instanceof Closure
             ? $evaluation_callback
-            : function (Context $context, $acceptable_values) {
+            : function (ContextInterface $context, $acceptable_values) {
                 return in_array($context->slug(), $acceptable_values, true);
             };
     }
@@ -140,7 +140,7 @@ class ContextChecker
      *  example:
      *      add_filter(
      *          'FHEE__EventEspresso_core_domain_entities_context_ContextChecker__registration-checkout-type__isAllowed',
-     *          function ($is_allowed, Context $context) {
+     *          function ($is_allowed, ContextInterface $context) {
      *              return $context->slug() === 'wait-list-checkout'
      *                  ? true
      *                  : $is_allowed;
@@ -149,10 +149,10 @@ class ContextChecker
      *          2
      *      );
      *
-     * @param Context $context
+     * @param ContextInterface $context
      * @return boolean
      */
-    public function isAllowed(Context $context)
+    public function isAllowed(ContextInterface $context)
     {
         $evaluation_callback = $this->evaluationCallback();
         return filter_var(

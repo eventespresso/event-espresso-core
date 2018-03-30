@@ -3,6 +3,7 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
 
@@ -1133,7 +1134,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     public static function add_query_args_and_nonce(
         $args = array(),
-        $url = '',
+        $url = false,
         $sticky = false,
         $exclude_nonce = false
     ) {
@@ -2168,12 +2169,15 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     }
 
 
-
     /**
      * _set_list_table_object
      * WP_List_Table objects need to be loaded fairly early so automatic stuff WP does is taken care of.
      *
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws EE_Error
+     * @throws InvalidInterfaceException
      */
     protected function _set_list_table_object()
     {
@@ -2190,8 +2194,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     )
                 );
             }
-            $list_table               = $this->_route_config['list_table'];
-            $this->_list_table_object = new $list_table($this);
+            $this->_list_table_object = LoaderFactory::getLoader()->getShared(
+                $this->_route_config['list_table'],
+                array($this)
+            );
         }
     }
 
@@ -3773,8 +3779,17 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         $option = 'per_page';
         $args   = array(
-            'label'   => $this->_admin_page_title,
-            'default' => 10,
+            'label'   => esc_html__(
+                    apply_filters(
+                        'FHEE__EE_Admin_Page___per_page_screen_options___label',
+                        $this->_admin_page_title,
+                        $this
+                    )
+            ),
+            'default' => (int) apply_filters(
+                    'FHEE__EE_Admin_Page___per_page_screen_options__default',
+                    10
+            ),
             'option'  => $this->_current_page . '_' . $this->_current_view . '_per_page',
         );
         //ONLY add the screen option if the user has access to it.
@@ -3810,9 +3825,16 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             switch ($map_option) {
                 case $this->_current_page . '_' . $this->_current_view . '_per_page':
                     $value = (int)$value;
-                    if ($value < 1 || $value > 999) {
+                    $max_value = apply_filters(
+                        'FHEE__EE_Admin_Page___set_per_page_screen_options__max_value',
+                        999,
+                        $this->_current_page,
+                        $this->_current_view
+                    );
+                    if ($value < 1) {
                         return;
                     }
+                    $value = min($value, $max_value);
                     break;
                 default:
                     $value = apply_filters(

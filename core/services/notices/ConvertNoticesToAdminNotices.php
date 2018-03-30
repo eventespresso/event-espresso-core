@@ -14,7 +14,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\core\services\notices
  * @author  Brent Christensen
- * @since   $VID:$
+ * 
  */
 class ConvertNoticesToAdminNotices extends NoticeConverter
 {

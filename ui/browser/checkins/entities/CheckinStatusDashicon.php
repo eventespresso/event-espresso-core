@@ -16,7 +16,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\ui\browser\checkins\entities
  * @author  Brent Christensen
- * @since   $VID:$
+ * 
  */
 class CheckinStatusDashicon
 {

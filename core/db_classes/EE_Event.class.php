@@ -135,6 +135,8 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
                 $this->delete_post_meta('_previous_event_status');
                 do_action('AHEE__EE_Event__set_status__from_sold_out', $this, $old_status, $new_status);
             }
+            //clear out the active status so that it gets reset the next time it is requested
+            $this->_active_status = null;
             // update status
             parent::set('status', $new_status, $use_default);
             do_action('AHEE__EE_Event__set_status__after_update', $this);
@@ -876,9 +878,21 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     public function perform_sold_out_status_check()
     {
         // get all unexpired untrashed tickets
-        $tickets = $this->active_tickets();
+        $tickets = $this->tickets(
+            array(
+                array('TKT_deleted' => false),
+                'order_by' => array('TKT_qty' => 'ASC'),
+            )
+        );
+        $all_expired = true;
+        foreach ($tickets as $ticket) {
+            if(!$ticket->is_expired()){
+                $all_expired = false;
+                break;
+            }
+        }
         // if all the tickets are just expired, then don't update the event status to sold out
-        if (empty($tickets)) {
+        if ($all_expired) {
             return true;
         }
         $spaces_remaining = $this->spaces_remaining($tickets);
@@ -1209,6 +1223,42 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
         $query_params[0]['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
         $query_params[0]['Term_Taxonomy.Event.EVT_ID'] = $this->ID();
         return EEM_Term::instance()->get_all($query_params);
+    }
+
+
+    /**
+     * Adds a question group to this event
+     *
+     * @param EE_Question_Group|int $question_group_id_or_obj
+     * @param bool                  $for_primary if true, the question group will be added for the primary
+     *                                           registrant, if false will be added for others. default: false
+     * @return EE_Base_Class|EE_Question_Group
+     * @throws EE_Error
+     */
+    public function add_question_group($question_group_id_or_obj, $for_primary = false)
+    {
+        $extra = $for_primary
+            ? array('EQG_primary' => 1)
+            : array();
+        return $this->_add_relation_to($question_group_id_or_obj, 'Question_Group', $extra);
+    }
+
+
+    /**
+     * Removes a question group from the event
+     *
+     * @param EE_Question_Group|int $question_group_id_or_obj
+     * @param bool                  $for_primary if true, the question group will be removed from the primary
+     *                                           registrant, if false will be removed from others. default: false
+     * @return EE_Base_Class|EE_Question_Group
+     * @throws EE_Error
+     */
+    public function remove_question_group($question_group_id_or_obj, $for_primary = false)
+    {
+        $where = $for_primary
+            ? array('EQG_primary' => 1)
+            : array();
+        return $this->_remove_relation_to($question_group_id_or_obj, 'Question_Group', $where);
     }
 
 

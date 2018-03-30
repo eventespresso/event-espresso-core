@@ -12,7 +12,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\tests\testcases\core\services\notices
  * @author  Brent Christensen
- * @since   $VID:$
+ * 
  * @group   Notices
  */
 class NoticesContainerTest extends EE_UnitTestCase

@@ -1,4 +1,10 @@
-<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+
+if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 /**
  * Event Espresso
@@ -381,7 +387,7 @@ class EEM_Line_Item extends EEM_Base
 
     /**
      * @return EE_Base_Class[]|EE_Line_Item[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_total_line_items_with_no_transaction()
     {
@@ -391,7 +397,7 @@ class EEM_Line_Item extends EEM_Base
 
     /**
      * @return EE_Base_Class[]|EE_Line_Item[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_total_line_items_for_active_carts()
     {
@@ -401,7 +407,7 @@ class EEM_Line_Item extends EEM_Base
 
     /**
      * @return EE_Base_Class[]|EE_Line_Item[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_total_line_items_for_expired_carts()
     {
@@ -416,7 +422,10 @@ class EEM_Line_Item extends EEM_Base
      *
      * @param bool|null $expired
      * @return EE_Base_Class[]|EE_Line_Item[]
-     * @throws \EE_Error
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     private function get_total_line_items_for_carts($expired = null)
     {
@@ -425,9 +434,13 @@ class EEM_Line_Item extends EEM_Base
             'LIN_type' => 'total',
         );
         if ($expired !== null) {
+            /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+            $session_lifespan = LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\domain\values\session\SessionLifespan'
+            );
             $where_params['LIN_timestamp'] = array(
                 $expired ? '<=' : '>',
-                time() - EE_Registry::instance()->SSN->lifespan(),
+                $session_lifespan->expiration(),
             );
         }
         return $this->get_all(array($where_params));
