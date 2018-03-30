@@ -396,8 +396,10 @@ class EEH_Debug_Tools
         $var_name = ucwords(str_replace('$', '', $var_name));
         $is_method = method_exists($var_name, $var);
         $var_name = ucwords(str_replace('_', ' ', $var_name));
-        $heading_tag = is_int($heading_tag) ? "h{$heading_tag}" : 'h5';
-        $result = EEH_Debug_Tools::heading($var_name, $heading_tag, $margin, $line);
+        $heading_tag = absint($heading_tag);
+        $result = $heading_tag < 3 ? "\n" : '';
+        $heading_tag = $heading_tag > 0 && $heading_tag < 7 ? "h{$heading_tag}" : 'h5';
+        $result .= EEH_Debug_Tools::heading($var_name, $heading_tag, $margin, $line);
         $result .= $is_method
             ? EEH_Debug_Tools::grey_span('::') . EEH_Debug_Tools::orange_span($var . '()')
             : EEH_Debug_Tools::grey_span(' : ') . EEH_Debug_Tools::orange_span($var);
