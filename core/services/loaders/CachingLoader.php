@@ -137,7 +137,7 @@ class CachingLoader extends CachingLoaderDecorator
             // so we don't want the core loader to cache anything, therefore caching is turned off
             return $this->loader->load($fqcn, $arguments, false);
         }
-        $identifier = md5($fqcn . $this->getIdentifierForArgument($arguments));
+        $identifier = $this->getClassIdentifier($fqcn, $arguments);
         if ($this->cache->has($identifier)) {
             return $this->cache->get($identifier);
         }
@@ -158,7 +158,21 @@ class CachingLoader extends CachingLoaderDecorator
         $this->cache->trashAndDetachAll();
         $this->loader->reset();
     }
-
+    /**
+     * build a string representation of a class' name and arguments
+     *
+     * @param string $fqcn
+     * @param array $arguments
+     * @return string
+     */
+    private function getClassIdentifier($fqcn, $arguments = array())
+    {
+        $identifier = $this->getIdentifierForArguments($arguments);
+        if(!empty($identifier)) {
+            $fqcn .= '||' . md5($identifier);
+        }
+        return $fqcn;
+    }
 
 
     /**
@@ -168,8 +182,11 @@ class CachingLoader extends CachingLoaderDecorator
      * @param array $arguments
      * @return string
      */
-    private function getIdentifierForArgument(array $arguments)
+    private function getIdentifierForArguments(array $arguments)
     {
+        if(empty($arguments)){
+            return '';
+        }
         $identifier = '';
         foreach ($arguments as $argument) {
             switch (true) {
@@ -178,7 +195,7 @@ class CachingLoader extends CachingLoaderDecorator
                     $identifier .= spl_object_hash($argument);
                     break;
                 case is_array($argument) :
-                    $identifier .= $this->getIdentifierForArgument($argument);
+                    $identifier .= $this->getIdentifierForArguments($argument);
                     break;
                 default :
                     $identifier .= $argument;
