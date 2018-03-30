@@ -79,8 +79,8 @@ class EE_Registry_Mock extends EE_Registry {
 	 * @param string $class_prefix
 	 * @return null|object
 	 */
-	public function get_cached_class( $class_name, $class_prefix = '' ) {
-		return $this->_get_cached_class( $class_name, $class_prefix );
+	public function get_cached_class($class_name, $class_prefix = '', $arguments = array()) {
+		return $this->_get_cached_class($class_name, $class_prefix, $arguments);
 	}
 
 
