@@ -119,7 +119,7 @@ class Registry
         );
         wp_register_script(
             'ee-vendor-react',
-            $this->getAssetUrl('eejs', self::ASSET_TYPE_JS),
+            $this->getAssetUrl('vendorReact', self::ASSET_TYPE_JS),
             array('eejs-core'),
             null,
             true
