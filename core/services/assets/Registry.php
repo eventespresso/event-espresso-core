@@ -105,21 +105,21 @@ class Registry
         global $wp_version;
         wp_register_script(
             'ee-manifest',
-            $this->getAssetPath('manifest', self::ASSET_TYPE_JS),
+            $this->getAssetUrl('manifest', self::ASSET_TYPE_JS),
             array(),
             null,
             true
         );
         wp_register_script(
             'eejs-core',
-            $this->getAssetPath('eejs', self::ASSET_TYPE_JS),
+            $this->getAssetUrl('eejs', self::ASSET_TYPE_JS),
             array('ee-manifest'),
             null,
             true
         );
         wp_register_script(
             'ee-vendor-react',
-            $this->getAssetPath('eejs', self::ASSET_TYPE_JS),
+            $this->getAssetUrl('eejs', self::ASSET_TYPE_JS),
             array('eejs-core'),
             null,
             true
@@ -286,19 +286,19 @@ class Registry
     /**
      * Get the actual asset path for asset manifests.
      * If there is no asset path found for the given $chunk_name, then the $chunk_name is returned.
-     * @param $chunk_name
-     * @param $asset_type
-     * @return mixed
+     * @param string $chunk_name
+     * @param string $asset_type
+     * @return string
      * @throws InvalidFilePathException
      * @since $VID:$
      */
-    private function getAssetPath($chunk_name, $asset_type)
+    private function getAssetUrl($chunk_name, $asset_type)
     {
         if (empty($this->cached_manifests)) {
             $this->registerManifests();
         }
         return isset($this->cached_manifests[$chunk_name][$asset_type])
-            ? $this->cached_manifests[$chunk_name][$asset_type]
+            ? $this->domain->distributionAssetsUrl() . $this->cached_manifests[$chunk_name][$asset_type]
             : $chunk_name;
     }
 
@@ -311,7 +311,7 @@ class Registry
     private function registerManifests()
     {
         if (! empty($this->cached_manifests)) {
-            //already registered get out.  This usually means that a $chunk_name (argument for getAssetPath call) either
+            //already registered get out.  This usually means that a $chunk_name (argument for getAssetUrl call) either
             //doesn't exist in any registered manifest files.  This could be because the $chunk_name is an actual file
             //url and thus not registered in the manifest, or a plugin registered its manifest files too late.
             return;
