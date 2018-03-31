@@ -269,6 +269,8 @@ class Iframe
         foreach ( $vars as $handle => $var ) {
             if ( $var_name === 'eei18n' ) {
                 EE_Registry::$i18n_js_strings[ $handle ] = $var;
+            } elseif ($var_name === 'eeCAL' && $handle === 'espresso_calendar') {
+                $this->localized_vars[ $var_name ] = $var;
             } else {
                 if ( ! isset( $this->localized_vars[ $var_name ] ) ) {
                     $this->localized_vars[ $var_name ] = array();
