@@ -7,6 +7,7 @@ use EE_Registry;
 use EE_Template_Config;
 use EEH_Qtip_Loader;
 use EventEspresso\core\domain\DomainInterface;
+use EventEspresso\core\exceptions\InvalidFilePathException;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -23,6 +24,9 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class Registry
 {
+
+    const ASSET_TYPE_CSS = 'css';
+    const ASSET_TYPE_JS = 'js';
 
     /**
      * @var EE_Template_Config $template_config
@@ -57,6 +61,14 @@ class Registry
 
 
     /**
+     * Holds a cache of all registered asset manifests.
+     * Manifests are maps of asset chunk name to actual built filenames.
+     * @var array
+     */
+    private $cached_manifests = array();
+
+
+    /**
      * Registry constructor.
      * Hooking into WP actions for script registry.
      *
@@ -81,20 +93,35 @@ class Registry
     }
 
 
-
     /**
      * Callback for the WP script actions.
      * Used to register globally accessible core scripts.
      * Also used to add the eejs.data object to the source for any js having eejs-core as a dependency.
+     *
+     * @throws InvalidFilePathException
      */
     public function scripts()
     {
         global $wp_version;
         wp_register_script(
-            'eejs-core',
-            EE_PLUGIN_DIR_URL . 'core/services/assets/core_assets/eejs-core.js',
+            'ee-manifest',
+            $this->getAssetPath('manifest', self::ASSET_TYPE_JS),
             array(),
-            EVENT_ESPRESSO_VERSION,
+            null,
+            true
+        );
+        wp_register_script(
+            'eejs-core',
+            $this->getAssetPath('eejs', self::ASSET_TYPE_JS),
+            array('ee-manifest'),
+            null,
+            true
+        );
+        wp_register_script(
+            'ee-vendor-react',
+            $this->getAssetPath('eejs', self::ASSET_TYPE_JS),
+            array('eejs-core'),
+            null,
             true
         );
         //only run this if WordPress 4.4.0 > is in use.
@@ -130,7 +157,7 @@ class Registry
     public function enqueueData()
     {
         $this->removeAlreadyRegisteredDataForScriptHandles();
-        wp_localize_script('eejs-core', 'eejs', array('data' => $this->jsdata));
+        wp_localize_script('eejs-core', 'eejsdata', array('data' => $this->jsdata));
         wp_localize_script('espresso_core', 'eei18n', EE_Registry::$i18n_js_strings);
         $this->localizeAccountingJs();
         $this->addRegisteredScriptHandlesWithData('eejs-core');
@@ -253,6 +280,57 @@ class Registry
         return isset($this->jsdata[$key])
             ? $this->jsdata[$key]
             : false;
+    }
+
+
+    /**
+     * Get the actual asset path for asset manifests.
+     * If there is no asset path found for the given $chunk_name, then the $chunk_name is returned.
+     * @param $chunk_name
+     * @param $asset_type
+     * @return mixed
+     * @throws InvalidFilePathException
+     * @since $VID:$
+     */
+    private function getAssetPath($chunk_name, $asset_type)
+    {
+        if (empty($this->cached_manifests)) {
+            $this->registerManifests();
+        }
+        return isset($this->cached_manifests[$chunk_name][$asset_type])
+            ? $this->cached_manifests[$chunk_name][$asset_type]
+            : $chunk_name;
+    }
+
+
+    /**
+     * Register any asset manifests.
+     * @throws InvalidFilePathException
+     * @since $VID:$
+     */
+    private function registerManifests()
+    {
+        if (! empty($this->cached_manifests)) {
+            //already registered get out.  This usually means that a $chunk_name (argument for getAssetPath call) either
+            //doesn't exist in any registered manifest files.  This could be because the $chunk_name is an actual file
+            //url and thus not registered in the manifest, or a plugin registered its manifest files too late.
+            return;
+        }
+        $registered_manifest_files = apply_filters(
+            'FHEE__EventEspresso_core_services_assets_Registry__registerManifests__registered_manifest_files',
+            $this->domain->distributionAssetsPath() . 'build-manifest.json'
+        );
+        foreach ($registered_manifest_files as $file) {
+            if (! file_exists($file)) {
+                throw new InvalidFilePathException($file);
+            }
+            /** recommended to avoid array_merge in loops */
+            $this->cached_manifests[] = json_decode(file_get_contents($file), true);
+        }
+        //PHP below 5.6
+        $this->cached_manifests = call_user_func_array('array_merge', $this->cached_manifests);
+        //We can use this once we support PHP5.6+
+        //$this->cached_manifests = array_merge(...$this->cached_manifests);
     }
 
 

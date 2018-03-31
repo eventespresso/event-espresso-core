@@ -1,4 +1,6 @@
 const merge = require('webpack-merge');
+const AssetsPlugin = require('assets-webpack-plugin');
+const path = require('path');
 let common = require('./webpack.common.js');
 const webpack = require('webpack');
 common.forEach((config, index) => {
@@ -16,6 +18,11 @@ common.forEach((config, index) => {
                     comments: false,
                 }
             }),
+            new AssetsPlugin({
+              filename: 'build-manifest.json',
+              path: path.resolve(__dirname, 'assets/dist'),
+              update: true
+            })
         ]
     })
 });
