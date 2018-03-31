@@ -292,7 +292,7 @@ class Registry
      * @throws InvalidFilePathException
      * @since $VID:$
      */
-    private function getAssetUrl($chunk_name, $asset_type)
+    public function getAssetUrl($chunk_name, $asset_type)
     {
         if (empty($this->cached_manifests)) {
             $this->registerManifests();
