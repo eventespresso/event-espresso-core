@@ -6,7 +6,8 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const combineLoaders = require('webpack-combine-loaders');
 const autoprefixer = require('autoprefixer');
 const externals = {
-    jquery: "jQuery"
+    jquery: "jQuery",
+    '@eventespresso/eejs' : 'eejs'
 };
 const reactVendorPackages = [
     'react',
@@ -44,7 +45,8 @@ config = [
     },
     {
         entry: {
-            reactVendor: reactVendorPackages
+            reactVendor: reactVendorPackages,
+            test: [assets + 'index.js']
             //example
             // 'ee-shortcode-blocks': [
             //     assets + 'blocks/index.js'
