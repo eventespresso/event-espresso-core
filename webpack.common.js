@@ -46,7 +46,6 @@ config = [
     {
         entry: {
             reactVendor: reactVendorPackages,
-            test: [assets + 'index.js']
             //example
             // 'ee-shortcode-blocks': [
             //     assets + 'blocks/index.js'
