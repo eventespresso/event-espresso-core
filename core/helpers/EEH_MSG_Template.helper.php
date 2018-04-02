@@ -1201,9 +1201,15 @@ class EEH_MSG_Template {
 		if ( ! EEH_MSG_Template::message_type_has_active_templates_for_messenger( $messenger, $message_type ) ) {
 			return array();
 		}
+
+        $excluded_fields_for_messenger = $message_type->excludedFieldsForMessenger($messenger_name);
+
 		//okay now let's assemble an array with the messenger template fields added to the message_type contexts.
 		foreach ( $message_type->get_contexts() as $context => $details ) {
 			foreach ( $messenger->get_template_fields() as $field => $value ) {
+			    if (in_array($field, $excluded_fields_for_messenger, true)) {
+			        continue;
+                }
 				$template_fields[ $context ][ $field ] = $value;
 			}
 		}

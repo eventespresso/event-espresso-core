@@ -176,6 +176,9 @@ abstract class EE_Form_Section_Layout_Base
      */
     public function display_label($input)
     {
+        if($input->get_display_strategy() instanceof EE_Hidden_Display_Strategy){
+            return '';
+        }
         $class = $input->required()
             ? 'ee-required-label ' . $input->html_label_class()
             : $input->html_label_class();

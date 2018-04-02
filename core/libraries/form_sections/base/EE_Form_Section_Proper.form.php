@@ -52,6 +52,18 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     protected $_form_submission_error_message = '';
 
     /**
+     * @var array like $_REQUEST
+     */
+    protected $cached_request_data;
+
+    /**
+     * Stores whether this form (and its sub-sections) were found to be valid or not.
+     * Starts off as null, but once the form is validated, it set to either true or false
+     * @var boolean|null
+     */
+    protected $is_valid;
+
+    /**
      * Stores all the data that will localized for form validation
      *
      * @var array
@@ -238,6 +250,38 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         return $this->form_data_present_in($form_data);
     }
 
+    /**
+     * Gets the cached request data; but if there is none, or $req_data was set with
+     * something different, refresh the cache, and then return it
+     * @param null $req_data
+     * @return array
+     */
+    protected function getCachedRequest($req_data = null)
+    {
+        if ($this->cached_request_data === null
+            || (
+                $req_data !== null &&
+                $req_data !== $this->cached_request_data
+            )
+        ) {
+            $req_data = apply_filters(
+                'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data',
+                $req_data,
+                $this
+            );
+            if ($req_data === null) {
+                $req_data = array_merge($_GET, $_POST);
+            }
+            $req_data = apply_filters(
+                'FHEE__EE_Form_Section_Proper__receive_form_submission__request_data',
+                $req_data,
+                $this
+            );
+            $this->cached_request_data = (array)$req_data;
+        }
+        return $this->cached_request_data;
+    }
+
 
     /**
      * After the form section is initially created, call this to sanitize the data in the submission
@@ -264,20 +308,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function receive_form_submission($req_data = null, $validate = true)
     {
-        $req_data = apply_filters(
-            'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data',
-            $req_data,
-            $this,
-            $validate
-        );
-        if ($req_data === null) {
-            $req_data = array_merge($_GET, $_POST);
-        }
-        $req_data = apply_filters(
-            'FHEE__EE_Form_Section_Proper__receive_form_submission__request_data',
-            $req_data,
-            $this
-        );
+        $req_data = $this->getCachedRequest($req_data);
         $this->_normalize($req_data);
         if ($validate) {
             $this->_validate();
@@ -285,6 +316,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             if (! $this->is_valid()) {
                 $this->store_submitted_form_data_in_session();
             }
+        }
+        if ($this->submission_error_message() === '' && ! $this->is_valid()) {
+            $this->set_submission_error_message();
         }
         do_action(
             'AHEE__EE_Form_Section_Proper__receive_form_submission__end',
@@ -551,33 +585,31 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function is_valid()
     {
-        if (! $this->has_received_submission()) {
-            throw new EE_Error(
-                sprintf(
-                    esc_html__(
-                        'You cannot check if a form is valid before receiving the form submission using receive_form_submission',
-                        'event_espresso'
+        if($this->is_valid === null) {
+            if (! $this->has_received_submission()) {
+                throw new EE_Error(
+                    sprintf(
+                        esc_html__(
+                            'You cannot check if a form is valid before receiving the form submission using receive_form_submission',
+                            'event_espresso'
+                        )
                     )
-                )
-            );
-        }
-        if (! parent::is_valid()) {
-            return false;
-        }
-        // ok so no general errors to this entire form section.
-        // so let's check the subsections, but only set errors if that hasn't been done yet
-        $set_submission_errors = $this->submission_error_message() === '';
-        foreach ($this->get_validatable_subsections() as $subsection) {
-            if (! $subsection->is_valid() || $subsection->get_validation_error_string() !== '') {
-                if ($set_submission_errors) {
-                    $this->set_submission_error_message(
-                        $subsection->get_validation_error_string()
-                    );
+                );
+            }
+            if (! parent::is_valid()) {
+                $this->is_valid = false;
+            } else {
+                // ok so no general errors to this entire form section.
+                // so let's check the subsections, but only set errors if that hasn't been done yet
+                $this->is_valid = true;
+                foreach ($this->get_validatable_subsections() as $subsection) {
+                    if (! $subsection->is_valid()) {
+                        $this->is_valid = false;
+                    }
                 }
-                return false;
             }
         }
-        return true;
+        return $this->is_valid;
     }
 
 
@@ -919,6 +951,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     protected function _validate()
     {
+        //reset the cache of whether this form is valid or not- we're re-validating it now
+        $this->is_valid = null;
         foreach ($this->get_validatable_subsections() as $subsection_name => $subsection) {
             if (method_exists($this, '_validate_' . $subsection_name)) {
                 call_user_func_array(array($this, '_validate_' . $subsection_name), array($subsection));
@@ -1004,6 +1038,16 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             $this->ensure_construct_finalized_called();
         }
         return $this->_subsections;
+    }
+
+
+    /**
+     * Returns whether this form has any subforms or inputs
+     * @return bool
+     */
+    public function hasSubsections()
+    {
+        return ! empty($this->_subsections);
     }
 
 
@@ -1164,6 +1208,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
 
     /**
+     * Changes these inputs' display strategy to be EE_Hidden_Display_Strategy.
      * @param array $inputs_to_hide
      * @throws EE_Error
      */
@@ -1243,17 +1288,25 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
 
     /**
-     * @param string $form_submission_error_message
+     * Sets the submission error message (aka validation error message for this form section and all sub-sections)
+     * @param string                           $form_submission_error_message
+     * @param EE_Form_Section_Validatable $form_section unused
+     * @throws EE_Error
      */
-    public function set_submission_error_message($form_submission_error_message = '')
-    {
-        $this->_form_submission_error_message .= ! empty($form_submission_error_message)
+    public function set_submission_error_message(
+        $form_submission_error_message = ''
+    ) {
+        $this->_form_submission_error_message = ! empty($form_submission_error_message)
             ? $form_submission_error_message
-            : esc_html__('Form submission failed due to errors', 'event_espresso');
+            : $this->getAllValidationErrorsString();
     }
 
 
     /**
+     * Returns the cached error message. A default value is set for this during _validate(),
+     * (called during receive_form_submission) but it can be explicitly set using
+     * set_submission_error_message
+     *
      * @return string
      */
     public function submission_error_message()
@@ -1263,17 +1316,19 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
 
     /**
+     * Sets a message to display if the data submitted to the form was valid.
      * @param string $form_submission_success_message
      */
-    public function set_submission_success_message($form_submission_success_message)
+    public function set_submission_success_message($form_submission_success_message = '')
     {
-        $this->_form_submission_success_message .= ! empty($form_submission_success_message)
+        $this->_form_submission_success_message = ! empty($form_submission_success_message)
             ? $form_submission_success_message
             : esc_html__('Form submitted successfully', 'event_espresso');
     }
 
 
     /**
+     * Gets a message appropriate for display when the form is correctly submitted
      * @return string
      */
     public function submission_success_message()
@@ -1350,9 +1405,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function form_data_present_in($req_data = null)
     {
-        if ($req_data === null) {
-            $req_data = $_POST;
-        }
+        $req_data = $this->getCachedRequest($req_data);
         foreach ($this->subsections() as $subsection) {
             if ($subsection instanceof EE_Form_Input_Base) {
                 if ($subsection->form_data_present_in($req_data)) {
@@ -1390,6 +1443,38 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             }
         }
         return $validation_errors;
+    }
+
+    /**
+     * Fetch validation errors from children and grandchildren and puts them in a single string.
+     * This traverses the form section tree to generate this, but you probably want to instead use
+     * get_form_submission_error_message() which is usually this message cached (or a custom validation error message)
+     *
+     * @return string
+     * @since $VID:$
+     */
+    protected function getAllValidationErrorsString()
+    {
+        $submission_error_messages = array();
+        // bad, bad, bad registrant
+        foreach ($this->get_validation_errors_accumulated() as $validation_error) {
+            if ($validation_error instanceof EE_Validation_Error) {
+                $form_section = $validation_error->get_form_section();
+                if ($form_section instanceof EE_Form_Input_Base) {
+                   $label = $validation_error->get_form_section()->html_label_text();
+                } elseif($form_section instanceof EE_Form_Section_Validatable) {
+                    $label = $validation_error->get_form_section()->name();
+                } else {
+                    $label = esc_html__('Unknown', 'event_espresso');
+                }
+                $submission_error_messages[] = sprintf(
+                    __('%s : %s', 'event_espresso'),
+                    $label,
+                    $validation_error->getMessage()
+                );
+            }
+        }
+        return implode('<br', $submission_error_messages);
     }
 
 
