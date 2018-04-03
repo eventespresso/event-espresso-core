@@ -8,8 +8,15 @@ import $ from 'jquery';
 import ExitModal, { CLOSE_MODAL_EVENT } from '@eventespresso/react-exit-modal-typeform';
 import './style.css';
 import { data } from 'eejs';
+import { stringify } from 'querystringify';
 
-const i18n = data.exitModali18n;
+const { exitModali18n: i18n = {}, exitModalInfo: info = {}} = data;
+
+const queryString = stringify({
+    firstname: info.firstname,
+    emailaddress: info.emailaddress,
+    website: info.website
+});
 
 const modalProps = {
     styles: {
@@ -27,7 +34,7 @@ const modalProps = {
             height: '400px'
         }
     },
-    typeFormUrl: 'https://eventespresso.typeform.com/to/fPT4T0',
+    typeFormUrl: 'https://eventespresso.typeform.com/to/O1DDym?' + queryString,
     introText: i18n.introText,
     doSurveyButtonText: i18n.doSurveyButtonText,
     skipButtonText: i18n.skipButtonText,
