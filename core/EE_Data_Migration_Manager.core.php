@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
 
 use EventEspresso\core\services\database\TableManager;
@@ -126,6 +129,11 @@ class EE_Data_Migration_Manager implements ResettableInterface {
 	 * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
 	 */
 	protected $_table_analysis;
+
+	/**
+	 * @var array $script_migration_versions
+	 */
+	protected $script_migration_versions;
 
 	/**
      * 	@var EE_Data_Migration_Manager $_instance
@@ -313,7 +321,10 @@ class EE_Data_Migration_Manager implements ResettableInterface {
 	 * folder name.
 	 */
 	public function get_data_migration_script_folders(){
-		return  apply_filters( 'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',array(EE_CORE.'data_migration_scripts') );
+		return  apply_filters(
+		    'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',
+            array('Core' => EE_CORE.'data_migration_scripts')
+        );
 	}
 
 	/**
@@ -325,11 +336,16 @@ class EE_Data_Migration_Manager implements ResettableInterface {
 	 * }
 	 * @throws EE_Error
 	 */
-	public function script_migrates_to_version($migration_script_name){
+	public function script_migrates_to_version($migration_script_name, $eeAddonClass = ''){
+	    if(isset($this->script_migration_versions[ $migration_script_name ])){
+	        return $this->script_migration_versions[ $migration_script_name ];
+        }
 		$dms_info = $this->parse_dms_classname($migration_script_name);
-		return array(
-			'slug'=> $dms_info[ 'slug' ],
-			'version'=> $dms_info[ 'major_version' ] . "." . $dms_info[ 'minor_version' ] . "." . $dms_info[ 'micro_version' ] );
+        $this->script_migration_versions[ $migration_script_name ] = array(
+			'slug'=> $eeAddonClass !== '' ? $eeAddonClass : $dms_info[ 'slug' ],
+			'version'=> $dms_info[ 'major_version' ] . "." . $dms_info[ 'minor_version' ] . "." . $dms_info[ 'micro_version' ]
+        );
+        return $this->script_migration_versions[ $migration_script_name ];
 	}
 
 	/**
@@ -720,55 +736,60 @@ class EE_Data_Migration_Manager implements ResettableInterface {
 	}
 
 
-
     /**
      * Gets all the data migration scripts available in the core folder and folders
      * in addons. Has the side effect of adding them for autoloading
      *
      * @return array keys are expected classnames, values are their filepaths
-     * @throws \EE_Error
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
      */
-	public function get_all_data_migration_scripts_available(){
-		if( ! $this->_data_migration_class_to_filepath_map){
-			$this->_data_migration_class_to_filepath_map = array();
-			foreach($this->get_data_migration_script_folders() as $folder_path){
-                $folder_path = EEH_File::end_with_directory_separator($folder_path);
-				$files = glob( $folder_path. '*.dms.php' );
-
-				if ( empty( $files ) ) {
-					continue;
-				}
-
-				foreach($files as $file){
-					$pos_of_last_slash = strrpos($file,DS);
-					$classname = str_replace('.dms.php', '', substr($file, $pos_of_last_slash + 1));
-					$migrates_to = $this->script_migrates_to_version( $classname );
-					$slug = $migrates_to[ 'slug' ];
-					//check that the slug as contained in the DMS is associated with
-					//the slug of an addon or core
-					if( $slug !== 'Core' ){
-						if( ! EE_Registry::instance()->get_addon_by_name( $slug ) ) {
-							EE_Error::doing_it_wrong(
-							    __FUNCTION__,
-                                sprintf(
-                                    __( 'The data migration script "%s" migrates the "%s" data, but there is no EE addon with that name. There is only: %s. ', 'event_espresso' ),
-                                    $classname,
-                                    $slug,
-                                    implode(', ', array_keys( EE_Registry::instance()->get_addons_by_name() ) )
+    public function get_all_data_migration_scripts_available()
+    {
+        if (! $this->_data_migration_class_to_filepath_map) {
+            $this->_data_migration_class_to_filepath_map = array();
+            foreach ($this->get_data_migration_script_folders() as $eeAddonClass => $folder_path) {
+                // strip any placeholders added to classname to make it a unique array key
+                $eeAddonClass = trim($eeAddonClass, '*');
+                $eeAddonClass = $eeAddonClass === 'Core' || class_exists($eeAddonClass)
+                    ? $eeAddonClass
+                    : '';
+                $folder_path  = EEH_File::end_with_directory_separator($folder_path);
+                $files        = glob($folder_path . '*.dms.php');
+                if (empty($files)) {
+                    continue;
+                }
+                foreach ($files as $file) {
+                    $pos_of_last_slash = strrpos($file, DS);
+                    $classname         = str_replace('.dms.php', '', substr($file, $pos_of_last_slash + 1));
+                    $migrates_to       = $this->script_migrates_to_version($classname, $eeAddonClass);
+                    $slug              = $migrates_to['slug'];
+                    //check that the slug as contained in the DMS is associated with
+                    //the slug of an addon or core
+                    if ($slug !== 'Core' && EE_Registry::instance()->get_addon_by_name($slug) === null) {
+                        EE_Error::doing_it_wrong(
+                            __FUNCTION__,
+                            sprintf(
+                                esc_html__(
+                                    'The data migration script "%s" migrates the "%s" data, but there is no EE addon with that name. There is only: %s. ',
+                                    'event_espresso'
                                 ),
-                                '4.3.0.alpha.019'
-                            );
-						}
-					}
-					$this->_data_migration_class_to_filepath_map[$classname] = $file;
-
-				}
-
-			}
-			EEH_Autoloader::register_autoloader($this->_data_migration_class_to_filepath_map);
-		}
-		return $this->_data_migration_class_to_filepath_map;
-	}
+                                $classname,
+                                $slug,
+                                implode(', ', array_keys(EE_Registry::instance()->get_addons_by_name()))
+                            ),
+                            '4.3.0.alpha.019'
+                        );
+                    }
+                    $this->_data_migration_class_to_filepath_map[ $classname ] = $file;
+                }
+            }
+            EEH_Autoloader::register_autoloader($this->_data_migration_class_to_filepath_map);
+        }
+        return $this->_data_migration_class_to_filepath_map;
+    }
 
 
 
@@ -944,7 +965,7 @@ class EE_Data_Migration_Manager implements ResettableInterface {
 	 * so we can again attempt to migrate
 	 *
 	 * @return bool
-	 * @throws \EE_Error
+	 * @throws EE_Error
 	 */
 	public function reattempt(){
 		//find if the last-ran script was borked
@@ -1035,14 +1056,15 @@ class EE_Data_Migration_Manager implements ResettableInterface {
 
 	/**
 	 * Gets the injected table analyzer, or throws an exception
+	 *
 	 * @return TableAnalysis
-	 * @throws \EE_Error
+	 * @throws EE_Error
 	 */
 	protected function _get_table_analysis() {
 		if( $this->_table_analysis instanceof TableAnalysis ) {
 			return $this->_table_analysis;
 		} else {
-			throw new \EE_Error(
+			throw new EE_Error(
 				sprintf(
 					__( 'Table analysis class on class %1$s is not set properly.', 'event_espresso'),
 					get_class( $this )
@@ -1053,14 +1075,15 @@ class EE_Data_Migration_Manager implements ResettableInterface {
 
 	/**
 	 * Gets the injected table manager, or throws an exception
+	 *
 	 * @return TableManager
-	 * @throws \EE_Error
+	 * @throws EE_Error
 	 */
 	protected function _get_table_manager() {
 		if( $this->_table_manager instanceof TableManager ) {
 			return $this->_table_manager;
 		} else {
-			throw new \EE_Error(
+			throw new EE_Error(
 				sprintf(
 					__( 'Table manager class on class %1$s is not set properly.', 'event_espresso'),
 					get_class( $this )

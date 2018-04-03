@@ -16,9 +16,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
 class EE_Cart_Test extends EE_UnitTestCase{
 
 	/**
-	 *    instance of the EE_Session object
-	 * @access    protected
-	 * @var EE_Session $_session
+	 * @var EE_Session_Mock $_session
 	 */
 	protected $_session = null;
 

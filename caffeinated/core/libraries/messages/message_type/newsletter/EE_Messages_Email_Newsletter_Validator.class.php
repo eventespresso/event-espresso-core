@@ -1,14 +1,6 @@
 <?php
-/**
- * This file contains the EE_Messages_Email_Newsletter_Validator class.
- *
- * @package         Event Espresso
- * @subpackage      helpers
- * @since           4.3.0
- */
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
  * Holds any special validation rules for template fields with Email messenger and Newsletter
@@ -21,7 +13,15 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EE_Messages_Email_Newsletter_Validator extends EE_Messages_Validator
 {
-    public function __construct($fields, $context)
+    /**
+     * EE_Messages_Email_Newsletter_Validator constructor.
+     *
+     * @param array $fields
+     * @param string $context
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function __construct(array $fields, $context)
     {
         $this->_m_name = 'email';
         $this->_mt_name = 'newsletter';
@@ -34,7 +34,7 @@ class EE_Messages_Email_Newsletter_Validator extends EE_Messages_Validator
      */
     protected function _modify_validator()
     {
-        if ($this->_context == 'attendee') {
+        if ($this->_context === 'attendee') {
             $this->_valid_shortcodes_modifier[$this->_context]['from'] = array(
                 'recipient_details',
                 'email',
@@ -71,9 +71,14 @@ class EE_Messages_Email_Newsletter_Validator extends EE_Messages_Validator
             '[CO_LINKEDIN_URL]',
             '[CO_INSTAGRAM_URL]',
         );
-        $this->_specific_shortcode_excludes['from'] = array_merge($this->_specific_shortcode_excludes['from'],
-            $add_excludes);
-        $this->_specific_shortcode_excludes['content'] = array_merge($this->_specific_shortcode_excludes['content'],
-            array('[DISPLAY_PDF_URL]', '[DISPLAY_PDF_BUTTON]'));
+        $this->_specific_shortcode_excludes['from'] =
+            array_merge(
+                $this->_specific_shortcode_excludes['from'],
+                $add_excludes
+            );
+        $this->_specific_shortcode_excludes['content'] = array_merge(
+            $this->_specific_shortcode_excludes['content'],
+            array('[DISPLAY_PDF_URL]', '[DISPLAY_PDF_BUTTON]')
+        );
     }
 }
