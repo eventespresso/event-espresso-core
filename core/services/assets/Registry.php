@@ -63,9 +63,8 @@ class Registry
 
 
     /**
-     * Holds the manifest maps setup the first time a manifest map is requested via loading the
-     * $registered_manifest_files
-     * Manifests are maps of asset chunk name to actual built asset filenames.
+     * Holds the manifest data obtained from registered manifest files.
+     * Manifests are maps of asset chunk name to actual built asset file names.
      * Shape of this array is:
      *
      * array(
