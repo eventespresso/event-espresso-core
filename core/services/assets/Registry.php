@@ -61,11 +61,20 @@ class Registry
 
 
     /**
-     * Holds a cache of all registered asset manifests.
-     * Manifests are maps of asset chunk name to actual built filenames.
+     * Holds all the registered asset manifest files.
      * @var array
      */
-    private $cached_manifests = array();
+    private $registered_manifest_files = array();
+
+
+    /**
+     * Holds the manifest maps setup the first time a manifest map is requested via loading the
+     * $registered_manifest_files
+     * Manifests are maps of asset chunk name to actual built asset filenames.
+     *
+     * @var array
+     */
+    private $cached_manifest = array();
 
 
     /**
@@ -140,6 +149,7 @@ class Registry
         if (! is_admin()) {
             $this->loadCoreCss();
         }
+        $this->registerManifestFile($this->domain->distributionAssetsPath() . 'build-manifest.json');
         $this->loadCoreJs();
         $this->loadJqueryValidate();
         $this->loadAccountingJs();
@@ -294,12 +304,27 @@ class Registry
      */
     public function getAssetUrl($chunk_name, $asset_type)
     {
-        if (empty($this->cached_manifests)) {
+        if (empty($this->cached_manifest)) {
             $this->registerManifests();
         }
         return isset($this->cached_manifests[$chunk_name][$asset_type])
             ? $this->domain->distributionAssetsUrl() . $this->cached_manifests[$chunk_name][$asset_type]
             : $chunk_name;
+    }
+
+
+    /**
+     * Used to register a js/css manifest file with the cached_manifests property.
+     *
+     * @param string $manifest_file  The absolute path to the manifest file.
+     * @throws InvalidFilePathException
+     */
+    public function registerManifestFile($manifest_file)
+    {
+        if (! file_exists($manifest_file)) {
+            throw new InvalidFilePathException($manifest_file);
+        }
+        $this->registered_manifest_files[] = $manifest_file;
     }
 
 
@@ -310,25 +335,25 @@ class Registry
      */
     private function registerManifests()
     {
-        if (! empty($this->cached_manifests)) {
+        if (! empty($this->cached_manifest)) {
             //already registered get out.  This usually means that a $chunk_name (argument for getAssetUrl call) either
             //doesn't exist in any registered manifest files.  This could be because the $chunk_name is an actual file
             //url and thus not registered in the manifest, or a plugin registered its manifest files too late.
             return;
         }
-        $registered_manifest_files = apply_filters(
+        $this->registered_manifest_files = (array) apply_filters(
             'FHEE__EventEspresso_core_services_assets_Registry__registerManifests__registered_manifest_files',
-            $this->domain->distributionAssetsPath() . 'build-manifest.json'
+            $this->registered_manifest_files
         );
-        foreach ($registered_manifest_files as $file) {
+        foreach ($this->registered_manifest_files as $file) {
             if (! file_exists($file)) {
                 throw new InvalidFilePathException($file);
             }
             /** recommended to avoid array_merge in loops */
-            $this->cached_manifests[] = json_decode(file_get_contents($file), true);
+            $this->cached_manifest[] = json_decode(file_get_contents($file), true);
         }
         //PHP below 5.6
-        $this->cached_manifests = call_user_func_array('array_merge', $this->cached_manifests);
+        $this->cached_manifest = call_user_func_array('array_merge', $this->cached_manifest);
         //We can use this once we support PHP5.6+
         //$this->cached_manifests = array_merge(...$this->cached_manifests);
     }
