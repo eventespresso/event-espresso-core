@@ -91,10 +91,12 @@ config = [
                                 },
                                 //can't use minimize because cssnano (the
                                 // dependency) doesn't parser the browserlist
-                                // extension in packag.json correctly, there's
+                                // extension in package.json correctly, there's
                                 // a pending update for it but css-loader
-                                // doesn't have the latest yet. options: {
-                                // minimize: true }
+                                // doesn't have the latest yet.
+                                // options: {
+                                //     minimize: true
+                                // }
                             },
                             {
                                 loader: 'postcss-loader',
