@@ -105,8 +105,7 @@ class Registry
         $this->registerManifestFile(
             self::ASSET_NAMESPACE,
             $this->domain->distributionAssetsUrl(),
-            $this->domain->distributionAssetsPath(),
-            'build-manifest.json'
+            $this->domain->distributionAssetsPath() . 'build-manifest.json'
         );
         add_action('wp_enqueue_scripts', array($this, 'scripts'), 1);
         add_action('admin_enqueue_scripts', array($this, 'scripts'), 1);
@@ -337,15 +336,14 @@ class Registry
     /**
      * Used to register a js/css manifest file with the registered_manifest_files property.
      *
-     * @param string $namespace          Provided to associate the manifest file with a specific namespace.
-     * @param string $url_base           The url base for the manifest file location.
-     * @param string $path_base          The path base to the manifest file (server absolute path).
-     * @param string $manifest_file_name The absolute path to the manifest file.
+     * @param string $namespace     Provided to associate the manifest file with a specific namespace.
+     * @param string $url_base      The url base for the manifest file location.
+     * @param string $manifest_file The absolute path to the manifest file.
      * @throws InvalidArgumentException
      * @throws InvalidFilePathException
      * @since $VID:$
      */
-    public function registerManifestFile($namespace, $url_base, $path_base, $manifest_file_name)
+    public function registerManifestFile($namespace, $url_base, $manifest_file)
     {
         if (isset($this->manifest_data[$namespace])) {
             throw new InvalidArgumentException(
@@ -370,7 +368,7 @@ class Registry
                 )
             );
         }
-        $this->manifest_data[$namespace] = $this->decodeManifestFile(trailingslashit($path_base) . $manifest_file_name);
+        $this->manifest_data[$namespace] = $this->decodeManifestFile($manifest_file);
         if (! isset($this->manifest_data[$namespace]['url_base'])) {
             $this->manifest_data[$namespace]['url_base'] = trailingslashit($url_base);
         }
