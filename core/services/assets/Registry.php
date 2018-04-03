@@ -307,14 +307,14 @@ class Registry
         if (empty($this->cached_manifest)) {
             $this->registerManifests();
         }
-        return isset($this->cached_manifests[$chunk_name][$asset_type])
-            ? $this->domain->distributionAssetsUrl() . $this->cached_manifests[$chunk_name][$asset_type]
+        return isset($this->cached_manifest[$chunk_name][$asset_type])
+            ? $this->domain->distributionAssetsUrl() . $this->cached_manifest[$chunk_name][$asset_type]
             : $chunk_name;
     }
 
 
     /**
-     * Used to register a js/css manifest file with the cached_manifests property.
+     * Used to register a js/css manifest file with the registered_manifest_files property.
      *
      * @param string $manifest_file  The absolute path to the manifest file.
      * @throws InvalidFilePathException
@@ -355,8 +355,8 @@ class Registry
         }
         //PHP below 5.6
         $this->cached_manifest = call_user_func_array('array_merge', $this->cached_manifest);
-        //We can use this once we support PHP5.6+
-        //$this->cached_manifests = array_merge(...$this->cached_manifests);
+        //We can use this once we require PHP5.6+
+        //$this->cached_manifest = array_merge(...$this->cached_manifest);
     }
 
 
