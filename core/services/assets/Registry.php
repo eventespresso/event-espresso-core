@@ -318,6 +318,7 @@ class Registry
      *
      * @param string $manifest_file  The absolute path to the manifest file.
      * @throws InvalidFilePathException
+     * @since $VID:$
      */
     public function registerManifestFile($manifest_file)
     {
