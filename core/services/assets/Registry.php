@@ -9,6 +9,7 @@ use EEH_Qtip_Loader;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use InvalidArgumentException;
+use function trailingslashit;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -27,6 +28,7 @@ class Registry
 
     const ASSET_TYPE_CSS = 'css';
     const ASSET_TYPE_JS = 'js';
+    const ASSET_NAMESPACE = 'core';
 
     /**
      * @var EE_Template_Config $template_config
@@ -60,21 +62,26 @@ class Registry
     protected $domain;
 
 
-    /**
-     * Holds all the registered asset manifest files.
-     * @var array
-     */
-    private $registered_manifest_files = array();
-
 
     /**
      * Holds the manifest maps setup the first time a manifest map is requested via loading the
      * $registered_manifest_files
      * Manifests are maps of asset chunk name to actual built asset filenames.
+     * Shape of this array is:
+     *
+     * array(
+     *  'some_namespace_slug' => array(
+     *      'some_chunk_name' => array(
+     *          'js' => 'filename.js'
+     *          'css' => 'filename.js'
+     *      ),
+     *      'url_base' => 'https://baseurl.com/to/assets
+     *  )
+     * )
      *
      * @var array
      */
-    private $cached_manifest = array();
+    private $manifest_data = array();
 
 
     /**
@@ -84,6 +91,8 @@ class Registry
      * @param EE_Template_Config $template_config
      * @param EE_Currency_Config $currency_config
      * @param DomainInterface    $domain
+     * @throws InvalidArgumentException
+     * @throws InvalidFilePathException
      */
     public function __construct(
         EE_Template_Config $template_config,
@@ -93,6 +102,12 @@ class Registry
         $this->template_config = $template_config;
         $this->currency_config = $currency_config;
         $this->domain = $domain;
+        $this->registerManifestFile(
+            self::ASSET_NAMESPACE,
+            $this->domain->distributionAssetsUrl(),
+            $this->domain->distributionAssetsPath(),
+            'build-manifest.json'
+        );
         add_action('wp_enqueue_scripts', array($this, 'scripts'), 1);
         add_action('admin_enqueue_scripts', array($this, 'scripts'), 1);
         add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 2);
@@ -101,34 +116,32 @@ class Registry
         add_action('admin_print_footer_scripts', array($this, 'enqueueData'), 1);
     }
 
-
     /**
      * Callback for the WP script actions.
      * Used to register globally accessible core scripts.
      * Also used to add the eejs.data object to the source for any js having eejs-core as a dependency.
      *
-     * @throws InvalidFilePathException
      */
     public function scripts()
     {
         global $wp_version;
         wp_register_script(
             'ee-manifest',
-            $this->getAssetUrl('manifest', self::ASSET_TYPE_JS),
+            $this->getAssetUrl(self::ASSET_NAMESPACE, 'manifest', self::ASSET_TYPE_JS),
             array(),
             null,
             true
         );
         wp_register_script(
             'eejs-core',
-            $this->getAssetUrl('eejs', self::ASSET_TYPE_JS),
+            $this->getAssetUrl(self::ASSET_NAMESPACE, 'eejs', self::ASSET_TYPE_JS),
             array('ee-manifest'),
             null,
             true
         );
         wp_register_script(
             'ee-vendor-react',
-            $this->getAssetUrl('vendorReact', self::ASSET_TYPE_JS),
+            $this->getAssetUrl(self::ASSET_NAMESPACE, 'vendorReact', self::ASSET_TYPE_JS),
             array('eejs-core'),
             null,
             true
@@ -149,7 +162,6 @@ class Registry
         if (! is_admin()) {
             $this->loadCoreCss();
         }
-        $this->registerManifestFile($this->domain->distributionAssetsPath() . 'build-manifest.json');
         $this->loadCoreJs();
         $this->loadJqueryValidate();
         $this->loadAccountingJs();
@@ -296,67 +308,90 @@ class Registry
     /**
      * Get the actual asset path for asset manifests.
      * If there is no asset path found for the given $chunk_name, then the $chunk_name is returned.
+     * @param string $namespace  The namespace associated with the manifest file hosting the map of chunk_name to actual
+     *                           asset file location.
      * @param string $chunk_name
      * @param string $asset_type
      * @return string
-     * @throws InvalidFilePathException
      * @since $VID:$
      */
-    public function getAssetUrl($chunk_name, $asset_type)
+    public function getAssetUrl($namespace, $chunk_name, $asset_type)
     {
-        if (empty($this->cached_manifest)) {
-            $this->registerManifests();
-        }
-        return isset($this->cached_manifest[$chunk_name][$asset_type])
-            ? $this->domain->distributionAssetsUrl() . $this->cached_manifest[$chunk_name][$asset_type]
+        $url = isset(
+            $this->manifest_data[$namespace][$chunk_name][$asset_type],
+            $this->manifest_data[$namespace]['url_base']
+        )
+            ? $this->manifest_data[$namespace]['url_base']
+              . $this->manifest_data[$namespace][$chunk_name][$asset_type]
             : $chunk_name;
+        return apply_filters(
+            'FHEE__EventEspresso_core_services_assets_Registry__getAssetUrl',
+            $url,
+            $namespace,
+            $chunk_name,
+            $asset_type
+        );
     }
 
 
     /**
      * Used to register a js/css manifest file with the registered_manifest_files property.
      *
-     * @param string $manifest_file  The absolute path to the manifest file.
+     * @param string $namespace          Provided to associate the manifest file with a specific namespace.
+     * @param string $url_base           The url base for the manifest file location.
+     * @param string $path_base          The path base to the manifest file (server absolute path).
+     * @param string $manifest_file_name The absolute path to the manifest file.
+     * @throws InvalidArgumentException
      * @throws InvalidFilePathException
      * @since $VID:$
      */
-    public function registerManifestFile($manifest_file)
+    public function registerManifestFile($namespace, $url_base, $path_base, $manifest_file_name)
+    {
+        if (isset($this->manifest_data[$namespace])) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    esc_html__(
+                        'The namespace for this manifest file has already been registered, choose a namespace other than %s',
+                        'event_espresso'
+                    ),
+                    $namespace
+                )
+            );
+        }
+        if (filter_var($url_base, FILTER_VALIDATE_URL) === false) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    esc_html__(
+                        'The provided value for %1$s is not a valid url.  The url provided was: %2$s',
+                        'event_espresso'
+                    ),
+                    '$url_base',
+                    $url_base
+                )
+            );
+        }
+        $this->manifest_data[$namespace] = $this->decodeManifestFile(trailingslashit($path_base) . $manifest_file_name);
+        if (! isset($this->manifest_data[$namespace]['url_base'])) {
+            $this->manifest_data[$namespace]['url_base'] = trailingslashit($url_base);
+        }
+    }
+
+
+
+    /**
+     * Decodes json from the provided manifest file.
+     *
+     * @since $VID:$
+     * @param string $manifest_file Path to manifest file.
+     * @return array
+     * @throws InvalidFilePathException
+     */
+    private function decodeManifestFile($manifest_file)
     {
         if (! file_exists($manifest_file)) {
             throw new InvalidFilePathException($manifest_file);
         }
-        $this->registered_manifest_files[] = $manifest_file;
-    }
-
-
-    /**
-     * Register any asset manifests.
-     * @throws InvalidFilePathException
-     * @since $VID:$
-     */
-    private function registerManifests()
-    {
-        if (! empty($this->cached_manifest)) {
-            //already registered get out.  This usually means that a $chunk_name (argument for getAssetUrl call) either
-            //doesn't exist in any registered manifest files.  This could be because the $chunk_name is an actual file
-            //url and thus not registered in the manifest, or a plugin registered its manifest files too late.
-            return;
-        }
-        $this->registered_manifest_files = (array) apply_filters(
-            'FHEE__EventEspresso_core_services_assets_Registry__registerManifests__registered_manifest_files',
-            $this->registered_manifest_files
-        );
-        foreach ($this->registered_manifest_files as $file) {
-            if (! file_exists($file)) {
-                throw new InvalidFilePathException($file);
-            }
-            /** recommended to avoid array_merge in loops */
-            $this->cached_manifest[] = json_decode(file_get_contents($file), true);
-        }
-        //PHP below 5.6
-        $this->cached_manifest = call_user_func_array('array_merge', $this->cached_manifest);
-        //We can use this once we require PHP5.6+
-        //$this->cached_manifest = array_merge(...$this->cached_manifest);
+        return json_decode(file_get_contents($manifest_file), true);
     }
 
 
