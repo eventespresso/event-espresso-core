@@ -1275,6 +1275,29 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
 
     /**
+     * @param string $subsection_name
+     * @param bool   $recursive
+     * @return bool
+     */
+    public function has_subsection($subsection_name, $recursive = false)
+    {
+        foreach ($this->_subsections as $name => $subsection) {if(
+                $name === $subsection_name
+                || (
+                    $recursive
+                    && $subsection instanceof EE_Form_Section_Proper
+                    && $subsection->has_subsection($subsection_name, $recursive)
+                )
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+    /**
      * Just gets all validatable subsections to clean their sensitive data
      *
      * @throws EE_Error
