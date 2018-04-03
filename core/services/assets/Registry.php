@@ -9,7 +9,6 @@ use EEH_Qtip_Loader;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use InvalidArgumentException;
-use function trailingslashit;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
