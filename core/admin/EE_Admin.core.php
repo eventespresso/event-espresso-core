@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+use EventEspresso\core\domain\services\admin\ExitModal;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
@@ -85,6 +86,7 @@ final class EE_Admin implements InterminableInterface
         add_action('network_admin_notices', array($this, 'display_admin_notices'), 10);
         add_filter('pre_update_option', array($this, 'check_for_invalid_datetime_formats'), 100, 2);
         add_filter('admin_footer_text', array($this, 'espresso_admin_footer'));
+        add_action('load-plugins.php', array($this, 'hookIntoWpPluginsPage'));
         //reset Environment config (we only do this on admin page loads);
         EE_Registry::instance()->CFG->environment->recheck_values();
         do_action('AHEE__EE_Admin__loaded');
@@ -951,5 +953,20 @@ final class EE_Admin implements InterminableInterface
             '4.9.27'
         );
         $this->persistent_admin_notice_manager->dismissNotice();
+    }
+
+
+    /**
+     * Callback on load-plugins.php hook for setting up anything hooking into the wp plugins page.
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function hookIntoWpPluginsPage()
+    {
+        LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\admin\ExitModal');
+        LoaderFactory::getLoader()
+                     ->getShared('EventEspresso\core\domain\services\admin\PluginUpsells')
+                     ->decafUpsells();
     }
 }
