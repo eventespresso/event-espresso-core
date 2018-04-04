@@ -679,58 +679,48 @@ class EE_Registry implements ResettableInterface
         $load_only = false,
         $addon = false
     ) {
-        try {
-            $class_name = ltrim($class_name, '\\');
-            $class_name = $this->_dependency_map->get_alias($class_name);
-            $class_exists =
-                $this->loadOrVerifyClassExists($class_name,
-                    $arguments);// if a non-FQCN was passed, then verifyClassExists() might return an object
-            // or it could return null if the class just could not be found anywhere
-            if ($class_exists instanceof $class_name || $class_exists === null) {
-                // either way, return the results
-                return $class_exists;
-            }
-            $class_name =
-                $class_exists;// if we're only loading the class and it already exists, then let's just return true immediately
-            if ($load_only) {
-                return true;
-            }
-            $addon = $addon
-                ? 'addon'
-                : '';// $this->_cache_on is toggled during the recursive loading that can occur with dependency injection
-            // $cache is controlled by individual calls to separate Registry loader methods like load_class()
-            // $load_only is also controlled by individual calls to separate Registry loader methods like load_file()
-            if ($this->_cache_on && $cache && ! $load_only) {
-                // return object if it's already cached
-                $cached_class = $this->_get_cached_class($class_name, $addon, $arguments);
-                if ($cached_class !== null) {
-                    return $cached_class;
-                }
-            }// obtain the loader method from the dependency map
-            $loader = $this->_dependency_map->class_loader($class_name);// instantiate the requested object
-            if ($loader instanceof Closure) {
-                $class_obj = $loader($arguments);
-            } else {
-                if ($loader && method_exists($this, $loader)) {
-                    $class_obj = $this->{$loader}($class_name, $arguments);
-                } else {
-                    $class_obj = $this->_create_object($class_name, $arguments, $addon, $from_db);
-                }
-            }
-            if (($this->_cache_on && $cache) || $this->get_class_abbreviation($class_name, '')) {
-                // save it for later... kinda like gum  { : $
-                $this->_set_cached_class($class_obj, $class_name, $addon, $from_db, $arguments);
-            }
-            $this->_cache_on = true;
-            return $class_obj;
-        } catch (Exception $exception) {
-            new \EventEspresso\core\exceptions\ExceptionStackTraceDisplay($exception);
-        } catch (Error $e) {
-            new \EventEspresso\core\exceptions\ExceptionStackTraceDisplay(
-                new Exception($e->getMessage())
-            );
-            exit();
+        $class_name = ltrim($class_name, '\\');
+        $class_name = $this->_dependency_map->get_alias($class_name);
+        $class_exists = $this->loadOrVerifyClassExists($class_name, $arguments);
+        // if a non-FQCN was passed, then
+        // verifyClassExists() might return an object
+        // or it could return null if the class just could not be found anywhere
+        if ($class_exists instanceof $class_name || $class_exists === null) {
+            // either way, return the results
+            return $class_exists;
         }
+        $class_name = $class_exists;
+        // if we're only loading the class and it already exists, then let's just return true immediately
+        if ($load_only) {
+            return true;
+        }
+        $addon = $addon ? 'addon' : '';
+        // $this->_cache_on is toggled during the recursive loading that can occur with dependency injection
+        // $cache is controlled by individual calls to separate Registry loader methods like load_class()
+        // $load_only is also controlled by individual calls to separate Registry loader methods like load_file()
+        if ($this->_cache_on && $cache && ! $load_only) {
+            // return object if it's already cached
+            $cached_class = $this->_get_cached_class($class_name, $addon, $arguments);
+            if ($cached_class !== null) {
+                return $cached_class;
+            }
+        }// obtain the loader method from the dependency map
+        $loader = $this->_dependency_map->class_loader($class_name);// instantiate the requested object
+        if ($loader instanceof Closure) {
+            $class_obj = $loader($arguments);
+        } else {
+            if ($loader && method_exists($this, $loader)) {
+                $class_obj = $this->{$loader}($class_name, $arguments);
+            } else {
+                $class_obj = $this->_create_object($class_name, $arguments, $addon, $from_db);
+            }
+        }
+        if (($this->_cache_on && $cache) || $this->get_class_abbreviation($class_name, '')) {
+            // save it for later... kinda like gum  { : $
+            $this->_set_cached_class($class_obj, $class_name, $addon, $from_db, $arguments);
+        }
+        $this->_cache_on = true;
+        return $class_obj;
     }
 
 
@@ -799,59 +789,54 @@ class EE_Registry implements ResettableInterface
         $cache = true,
         $load_only = false
     ) {
-        try {
-            $class_name = ltrim($class_name, '\\');
-            // strip php file extension
-            $class_name = str_replace('.php', '', trim($class_name));
-            // does the class have a prefix ?
-            if (! empty($class_prefix) && $class_prefix !== 'addon') {
-                // make sure $class_prefix is uppercase
-                $class_prefix = strtoupper(trim($class_prefix));
-                // add class prefix ONCE!!!
-                $class_name = $class_prefix . str_replace($class_prefix, '', $class_name);
-            }
-            $class_name = $this->_dependency_map->get_alias($class_name);
-            $class_exists = class_exists($class_name, false);
-            // if we're only loading the class and it already exists, then let's just return true immediately
-            if ($load_only && $class_exists) {
-                return true;
-            }
-            // $this->_cache_on is toggled during the recursive loading that can occur with dependency injection
-            // $cache is controlled by individual calls to separate Registry loader methods like load_class()
-            // $load_only is also controlled by individual calls to separate Registry loader methods like load_file()
-            if ($this->_cache_on && $cache && ! $load_only) {
-                // return object if it's already cached
-                $cached_class = $this->_get_cached_class($class_name, $class_prefix, $arguments);
-                if ($cached_class !== null) {
-                    return $cached_class;
-                }
-            }
-            // if the class doesn't already exist.. then we need to try and find the file and load it
-            if (! $class_exists) {
-                // get full path to file
-                $path = $this->_resolve_path($class_name, $type, $file_paths);
-                // load the file
-                $loaded = $this->_require_file($path, $class_name, $type, $file_paths);
-                // if loading failed, or we are only loading a file but NOT instantiating an object
-                if (! $loaded || $load_only) {
-                    // return boolean if only loading, or null if an object was expected
-                    return $load_only
-                        ? $loaded
-                        : null;
-                }
-            }
-            // instantiate the requested object
-            $class_obj = $this->_create_object($class_name, $arguments, $type, $from_db);
-            if ($this->_cache_on && $cache) {
-                // save it for later... kinda like gum  { : $
-                $this->_set_cached_class($class_obj, $class_name, $class_prefix, $from_db, $arguments);
-            }
-            $this->_cache_on = true;
-            return $class_obj;
-        } catch (Exception $exception) {
-            new \EventEspresso\core\exceptions\ExceptionStackTraceDisplay($exception);
+        $class_name = ltrim($class_name, '\\');
+        // strip php file extension
+        $class_name = str_replace('.php', '', trim($class_name));
+        // does the class have a prefix ?
+        if (! empty($class_prefix) && $class_prefix !== 'addon') {
+            // make sure $class_prefix is uppercase
+            $class_prefix = strtoupper(trim($class_prefix));
+            // add class prefix ONCE!!!
+            $class_name = $class_prefix . str_replace($class_prefix, '', $class_name);
         }
-
+        $class_name = $this->_dependency_map->get_alias($class_name);
+        $class_exists = class_exists($class_name, false);
+        // if we're only loading the class and it already exists, then let's just return true immediately
+        if ($load_only && $class_exists) {
+            return true;
+        }
+        // $this->_cache_on is toggled during the recursive loading that can occur with dependency injection
+        // $cache is controlled by individual calls to separate Registry loader methods like load_class()
+        // $load_only is also controlled by individual calls to separate Registry loader methods like load_file()
+        if ($this->_cache_on && $cache && ! $load_only) {
+            // return object if it's already cached
+            $cached_class = $this->_get_cached_class($class_name, $class_prefix, $arguments);
+            if ($cached_class !== null) {
+                return $cached_class;
+            }
+        }
+        // if the class doesn't already exist.. then we need to try and find the file and load it
+        if (! $class_exists) {
+            // get full path to file
+            $path = $this->_resolve_path($class_name, $type, $file_paths);
+            // load the file
+            $loaded = $this->_require_file($path, $class_name, $type, $file_paths);
+            // if loading failed, or we are only loading a file but NOT instantiating an object
+            if (! $loaded || $load_only) {
+                // return boolean if only loading, or null if an object was expected
+                return $load_only
+                    ? $loaded
+                    : null;
+            }
+        }
+        // instantiate the requested object
+        $class_obj = $this->_create_object($class_name, $arguments, $type, $from_db);
+        if ($this->_cache_on && $cache) {
+            // save it for later... kinda like gum  { : $
+            $this->_set_cached_class($class_obj, $class_name, $class_prefix, $from_db, $arguments);
+        }
+        $this->_cache_on = true;
+        return $class_obj;
     }
 
 
@@ -903,31 +888,16 @@ class EE_Registry implements ResettableInterface
             return $this->addons->{$class_name};
         }
         $class_identifier = $this->getClassIdentifier($class_name, $arguments);
-        if(
-            strpos($class_identifier, 'SharedClassToLoad') !== false
-            || strpos($class_identifier, 'Domain') !== false
-        ) {
-            \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
-            \EEH_Debug_Tools::printr($class_name, '$fqcn', __FILE__, __LINE__);
-            \EEH_Debug_Tools::printr($class_identifier, '$class_identifier', __FILE__, __LINE__);
-            \EEH_Debug_Tools::printr($arguments, '$arguments', __FILE__, __LINE__);
-            \EEH_Debug_Tools::printr(isset($this->LIB->{$class_identifier}), 'isset($this->LIB->{$class_identifier})', __FILE__, __LINE__);
-        }
-
         if (isset($this->LIB->{$class_identifier})) {
             return $this->LIB->{$class_identifier};
         }
         foreach ($this->LIB as $key => $object) {
             if (
-                // request does not contain new arguments and therfore no args identifier
-                strpos($class_identifier, '||') === 0
+                // request does not contain new arguments and therefore no args identifier
+                strpos($class_identifier, '____') === false
                 // but previously cached class with args was found
-                && strpos($key, $class_name . '||') === 0
+                && strpos($key, $class_name . '____') === 0
             ) {
-                if(strpos($class_identifier, 'SharedClassToLoad') !== false) {
-                    \EEH_Debug_Tools::printr($class_identifier, 'FOUND', __FILE__, __LINE__);
-                }
-
                 return $object;
             }
 
@@ -1032,20 +1002,10 @@ class EE_Registry implements ResettableInterface
     private function getClassIdentifier($class_name, $arguments = array())
     {
         $identifier = $this->getIdentifierForArguments($arguments);
-        $class_name2 = $class_name;
         if(!empty($identifier)) {
-            $class_name2 =  $class_name . '||' . md5($identifier);
+            $class_name .= '____' . md5($identifier);
         }
-        if(
-            $class_name === 'EventEspresso_tests_mocks_core_services_loaders_SharedClassToLoad'
-            || $class_name === 'EventEspresso_core_domain_Domain'
-        ) {
-            \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
-            \EEH_Debug_Tools::printr($class_name, '$class_name', __FILE__, __LINE__);
-            \EEH_Debug_Tools::printr($class_name2, '$class_name + id', __FILE__, __LINE__);
-            \EEH_Debug_Tools::printr($identifier, '$identifier', __FILE__, __LINE__);
-        }
-        return $class_name2;
+        return $class_name;
     }
 
 
@@ -1443,7 +1403,7 @@ class EE_Registry implements ResettableInterface
         // we might have a dependency...
         // let's MAYBE try and find it in our cache if that's what's been requested
         $cached_class = $cache_on
-            ? $this->_get_cached_class($param_class, '', $arguments)
+            ? $this->_get_cached_class($param_class)
             : null;
         // and grab it if it exists
         if ($cached_class instanceof $param_class) {
