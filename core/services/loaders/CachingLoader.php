@@ -18,7 +18,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- *
  */
 class CachingLoader extends CachingLoaderDecorator
 {
@@ -55,7 +54,7 @@ class CachingLoader extends CachingLoaderDecorator
         $identifier = ''
     ) {
         parent::__construct($loader);
-        $this->cache = $cache;
+        $this->cache       = $cache;
         $this->class_cache = $class_cache;
         $this->setIdentifier($identifier);
         if ($this->identifier !== '') {
@@ -76,7 +75,6 @@ class CachingLoader extends CachingLoaderDecorator
     }
 
 
-
     /**
      * @return string
      */
@@ -84,7 +82,6 @@ class CachingLoader extends CachingLoaderDecorator
     {
         return $this->identifier;
     }
-
 
 
     /**
@@ -102,7 +99,7 @@ class CachingLoader extends CachingLoaderDecorator
 
     /**
      * @param FullyQualifiedName|string $fqcn
-     * @param mixed  $object
+     * @param mixed                     $object
      * @return bool
      * @throws InvalidArgumentException
      */
@@ -125,9 +122,9 @@ class CachingLoader extends CachingLoaderDecorator
 
     /**
      * @param FullyQualifiedName|string $fqcn
-     * @param array  $arguments
-     * @param bool   $shared
-     * @param array  $interfaces
+     * @param array                     $arguments
+     * @param bool                      $shared
+     * @param array                     $interfaces
      * @return mixed
      */
     public function load($fqcn, $arguments = array(), $shared = true, array $interfaces = array())
@@ -135,13 +132,13 @@ class CachingLoader extends CachingLoaderDecorator
         $fqcn = ltrim($fqcn, '\\');
         // caching can be turned off via the following code:
         // add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
-        if(
+        if (
             apply_filters(
                 'FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache',
                 false,
                 $this
             )
-        ){
+        ) {
             // even though $shared might be true, caching could be bypassed for whatever reason,
             // so we don't want the core loader to cache anything, therefore caching is turned off
             return $this->loader->load($fqcn, $arguments, false);
@@ -158,7 +155,6 @@ class CachingLoader extends CachingLoaderDecorator
     }
 
 
-
     /**
      * empties cache and calls reset() on loader if method exists
      */
@@ -169,23 +165,25 @@ class CachingLoader extends CachingLoaderDecorator
     }
 
 
-
     /**
      * build a string representation of a class' name and arguments
      *
      * @param string $fqcn
-     * @param array $arguments
+     * @param array  $arguments
      * @return string
      */
-    private function getClassIdentifier($fqcn, $arguments = array())
+    private function getClassIdentifier($fqcn, array $arguments = array())
     {
-        $identifier = $this->getIdentifierForArguments($arguments);
-        if(!empty($identifier)) {
+        // only build identifier from arguments if class is not ReservedInstanceInterface
+        $identifier = ! $this->class_cache->hasInterface($fqcn,
+            'EventEspresso\core\interfaces\ReservedInstanceInterface')
+            ? $this->getIdentifierForArguments($arguments)
+            : '';
+        if (! empty($identifier)) {
             $fqcn .= '____' . md5($identifier);
         }
         return $fqcn;
     }
-
 
 
     /**
@@ -197,7 +195,7 @@ class CachingLoader extends CachingLoaderDecorator
      */
     protected function getIdentifierForArguments(array $arguments)
     {
-        if(empty($arguments)){
+        if (empty($arguments)) {
             return '';
         }
         $identifier = '';
@@ -217,8 +215,6 @@ class CachingLoader extends CachingLoaderDecorator
         }
         return $identifier;
     }
-
-
 }
 // End of file CachingLoader.php
 // Location: EventEspresso\core\services\loaders/CachingLoader.php
