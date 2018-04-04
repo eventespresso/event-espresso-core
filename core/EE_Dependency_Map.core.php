@@ -472,9 +472,10 @@ class EE_Dependency_Map
                 'EE_Maintenance_Mode'                         => EE_Dependency_Map::load_from_cache,
             ),
             'EE_Session'                                                                                                  => array(
-                'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\request\Request'             => EE_Dependency_Map::load_from_cache,
-                'EE_Encryption'                                           => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\cache\TransientCacheStorage'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request'              => EE_Dependency_Map::load_from_cache,
+                'EE_Encryption'                                            => EE_Dependency_Map::load_from_cache,
             ),
             'EE_Cart'                                                                                                     => array(
                 'EE_Session' => EE_Dependency_Map::load_from_cache,
@@ -699,6 +700,23 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\entities\editor\blocks\common\NextUpcomingEventDatetime' => array(
                 'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EE_Admin_Transactions_List_Table' => array(
+                null,
+                'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\services\admin\ExitModal' => array(
+                'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\domain\services\admin\PluginUpsells' => array(
+                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\caffeinated\modules\recaptcha_invisible\InvisibleRecaptcha' => array(
+                'EE_Registration_Config' => EE_Dependency_Map::load_from_cache,
+                'EE_Session'             => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\caffeinated\modules\recaptcha_invisible\RecaptchaAdminSettings' => array(
+                'EE_Registration_Config' => EE_Dependency_Map::load_from_cache,
             ),
         );
     }

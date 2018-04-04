@@ -15,7 +15,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\tests\testcases\core\request_stack
  * @author  Brent Christensen
- * 
+ *
  */
 class RequestTest extends PHPUnit_Framework_TestCase
 {
@@ -23,8 +23,9 @@ class RequestTest extends PHPUnit_Framework_TestCase
     public function getParams(array $params = array())
     {
         return $params + array(
-            'action' => 'edit',
-            'id'     => 123,
+            'action'         => 'edit',
+            'id'             => 123,
+            'event-name-123' => 'Event 123',
         );
     }
 
@@ -363,5 +364,121 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $_SERVER = $EXISTING_SERVER;
     }
 
+
+    public function testMatches()
+    {
+        $request = $this->getLegacyRequest(
+            $this->getParams(),
+            array(),
+            array(),
+            array()
+        );
+        $this->assertTrue($request->matches('event-*'));
+        $this->assertTrue($request->matches('*-name-*'));
+        $this->assertTrue($request->matches('event-name-*'));
+        $this->assertTrue($request->matches('event*name*'));
+        $this->assertTrue($request->matches('event?name*'));
+        $this->assertTrue($request->matches('event-name-123'));
+        $this->assertFalse($request->matches('event-name-?'));
+    }
+
+
+    public function testMatchesWithDrillDown()
+    {
+        $request = $this->getLegacyRequest(
+        array(),
+            $this->postParams(),
+            array(),
+            array()
+        );
+        // our post data looks like this:
+        //  array(
+        //    'input-a' => 'A',
+        //    'input-b' => 'B',
+        //    'sub' => array(
+        //        'sub-a'   => 'AA',
+        //        'sub-b'   => 'BB',
+        //        'sub-sub' => array(
+        //            'sub-sub-a'   => 'AAA',
+        //            'sub-sub-b'   => 'BBB',
+        //          )
+        //      )
+        //  );
+        // top-level value
+        $this->assertTrue($request->matches('input-?'));
+        $this->assertTrue($request->matches('input-*'));
+        // second level
+        $this->assertTrue($request->matches('sub[sub-?]'));
+        $this->assertTrue($request->matches('sub[sub-*]'));
+        // third level
+        $this->assertTrue($request->matches('sub[sub-sub][sub-sub-?]'));
+        $this->assertTrue($request->matches('sub[sub-sub][sub-sub-*]'));
+        // not set
+        $this->assertFalse($request->matches('input-c-*'));
+        $this->assertFalse($request->matches('sub[sub-c-*]'));
+        $this->assertFalse($request->matches('sub[sub-sub-*][sub-sub-c]'));
+    }
+
+    public function testGetMatch()
+    {
+        $request = $this->getLegacyRequest(
+        $this->getParams(),
+            array(),
+            array(),
+            array()
+        );
+        $this->assertEquals('Event 123', $request->getMatch('event-*'));
+        $this->assertEquals('Event 123', $request->getMatch('*-name-*'));
+        $this->assertEquals('Event 123', $request->getMatch('event-name-*'));
+        $this->assertEquals('Event 123', $request->getMatch('event*name*'));
+        $this->assertEquals('Event 123', $request->getMatch('event?name*'));
+        $this->assertEquals('Event 123', $request->getMatch('event-name-123'));
+        $this->assertNull($request->getMatch('event-name-?'));
+        // with default
+        $this->assertEquals('default', $request->getMatch('event-name-?', 'default'));
+    }
+
+
+    public function testGetMatchWithDrillDown()
+    {
+        $request = $this->getLegacyRequest(
+        array(),
+            $this->postParams(),
+            array(),
+            array()
+        );
+        // our post data looks like this:
+        //  array(
+        //    'input-a' => 'A',
+        //    'input-b' => 'B',
+        //    'sub' => array(
+        //        'sub-a'   => 'AA',
+        //        'sub-b'   => 'BB',
+        //        'sub-sub' => array(
+        //            'sub-sub-a'   => 'AAA',
+        //            'sub-sub-b'   => 'BBB',
+        //          )
+        //      )
+        //  );
+        // top-level value
+        $this->assertEquals('A', $request->getMatch('input-?'));
+        $this->assertEquals('A', $request->getMatch('input-*'));
+        // with default
+        $this->assertEquals('default', $request->getMatch('not-an-input-?', 'default'));
+        // second level
+        $this->assertEquals('AA', $request->getMatch('sub[sub-?]'));
+        $this->assertEquals('AA', $request->getMatch('sub[sub-*]'));
+        // with default
+        $this->assertEquals('default', $request->getMatch('sub[not-an-input-?]', 'default'));
+        // third level
+        $this->assertEquals('AAA', $request->getMatch('sub[sub-sub][sub-sub-?]'));
+        $this->assertEquals('AAA', $request->getMatch('sub[sub-sub][sub-sub-*]'));
+        // with default
+        $this->assertEquals('default', $request->getMatch('sub[sub-sub][not-an-input-?]', 'default'));
+        // not set
+        $this->assertNull($request->getMatch('input-c-*'));
+        $this->assertNull($request->getMatch('sub[sub-c-*]'));
+        $this->assertNull($request->getMatch('sub[sub-sub-*][sub-sub-c]'));
+    }
 }
 // Location: tests/testcases/core/request_stack/RequestTest.php

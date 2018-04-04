@@ -7,6 +7,7 @@ use EE_Error;
 use EE_Registry;
 use EE_Ticket;
 use EEH_Event_View;
+use EEH_URL;
 use EEM_Datetime;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -254,13 +255,12 @@ class ProcessTicketSelector
                         return true;
                     }
                     EE_Error::get_notices(false, true);
-                    wp_safe_redirect(
+                    EEH_URL::safeRedirectAndExit(
                         apply_filters(
                             'FHEE__EE_Ticket_Selector__process_ticket_selections__success_redirect_url',
                             EE_Registry::instance()->CFG->core->reg_page_url()
                         )
                     );
-                    exit();
                 } else {
                     if (! EE_Error::has_error() && ! EE_Error::has_error(true, 'attention')) {
                         // nothing added to cart
@@ -280,16 +280,12 @@ class ProcessTicketSelector
             return false;
         }
         if ($valid['return_url']) {
-            EE_Error::get_notices(false, true);
-            wp_safe_redirect($valid['return_url']);
-            exit();
-        } elseif (isset($event_to_add['id'])) {
-            EE_Error::get_notices(false, true);
-            wp_safe_redirect(get_permalink($event_to_add['id']));
-            exit();
-        } else {
-            echo EE_Error::get_notices();
+            EEH_URL::safeRedirectAndExit($valid['return_url']);
         }
+        if ($id) {
+            EEH_URL::safeRedirectAndExit(get_permalink($id));
+        }
+        echo EE_Error::get_notices();
         return false;
     }
 

@@ -1,4 +1,6 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\libraries\form_sections\strategies\filter\FormHtmlFilter;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
@@ -88,11 +90,11 @@ abstract class EE_Form_Section_Base
     protected $_form_html_filter;
 
 
-
     /**
      * @param array $options_array {
      * @type        $name          string the name for this form section, if you want to explicitly define it
      *                             }
+     * @throws InvalidDataTypeException
      */
     public function __construct($options_array = array())
     {
@@ -102,6 +104,9 @@ abstract class EE_Form_Section_Base
             $key = '_' . $key;
             if (property_exists($this, $key) && empty($this->{$key})) {
                 $this->{$key} = $value;
+                if($key === '_subsections' && ! is_array($value)) {
+                    throw new InvalidDataTypeException($key, $value, 'array');
+                }
             }
         }
         // set parser which allows the form section's rendered HTML to be filtered
@@ -247,13 +252,13 @@ abstract class EE_Form_Section_Base
      *
      * @return string
      */
-    public abstract function get_html();
-
+    abstract public function get_html();
 
 
     /**
      * @param bool $add_pound_sign
      * @return string
+     * @throws EE_Error
      */
     public function html_id($add_pound_sign = false)
     {
@@ -361,7 +366,6 @@ abstract class EE_Form_Section_Base
     }
 
 
-
     /**
      * returns HTML for generating the opening form HTML tag (<form>)
      *
@@ -369,6 +373,7 @@ abstract class EE_Form_Section_Base
      * @param string $method           POST (default) or GET
      * @param string $other_attributes anything else added to the form open tag, MUST BE VALID HTML
      * @return string
+     * @throws EE_Error
      */
     public function form_open($action = '', $method = '', $other_attributes = '')
     {
@@ -382,6 +387,7 @@ abstract class EE_Form_Section_Base
         $html .= $this->html_id() !== '' ? ' id="' . $this->get_html_id_for_form($this->html_id()) . '"' : '';
         $html .= ' action="' . $this->action() . '"';
         $html .= ' method="' . $this->method() . '"';
+        $html .= ' name="' . $this->name() . '"';
         $html .= $other_attributes . '>';
         return $html;
     }
@@ -405,11 +411,11 @@ abstract class EE_Form_Section_Base
     }
 
 
-
     /**
      * returns HTML for generating the closing form HTML tag (</form>)
      *
      * @return string
+     * @throws EE_Error
      */
     public function form_close()
     {
@@ -486,7 +492,8 @@ abstract class EE_Form_Section_Base
             $form_section_path = substr($form_section_path, strlen('../'));
             if ($parent instanceof EE_Form_Section_Base) {
                 return $parent->find_section_from_path($form_section_path);
-            } elseif (empty($form_section_path)) {
+            }
+            if (empty($form_section_path)) {
                 return $this;
             }
         }

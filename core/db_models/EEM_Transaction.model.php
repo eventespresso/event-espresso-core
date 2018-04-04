@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -436,12 +437,16 @@ class EEM_Transaction extends EEM_Base
         $comparison = $comparison === '>=' || $comparison === '<='
             ? $comparison
             : '>=';
+        /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+        $session_lifespan = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\domain\values\session\SessionLifespan'
+        );
         return $this->get_all(
             array(
                 array(
                     'TXN_timestamp' => array(
                         $comparison,
-                        time() - EE_Registry::instance()->SSN->lifespan()
+                        $session_lifespan->expiration()
                     ),
                     'STS_ID' => array(
                         '!=',
