@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\editor;
 
 use EventEspresso\core\domain\DomainInterface;
+use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use WP_Block_Type;
 
@@ -38,6 +39,12 @@ abstract class EditorBlock implements EditorBlockInterface
      */
     protected $loader;
 
+
+    /**
+     * @var Registry
+     */
+    protected $assets_registry;
+
     /**
      * @var string $editor_block_type
      */
@@ -72,11 +79,16 @@ abstract class EditorBlock implements EditorBlockInterface
      *
      * @param DomainInterface $domain
      * @param LoaderInterface $loader
+     * @param Registry        $assets_registry
      */
-    public function __construct(DomainInterface $domain, LoaderInterface $loader)
-    {
+    public function __construct(
+        DomainInterface $domain,
+        LoaderInterface $loader,
+        Registry $assets_registry
+    ) {
         $this->domain = $domain;
         $this->loader = $loader;
+        $this->assets_registry = $assets_registry;
     }
 
 
