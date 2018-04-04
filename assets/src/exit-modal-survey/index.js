@@ -7,7 +7,7 @@ import ReactModal from 'react-modal';
 import $ from 'jquery';
 import ExitModal, { CLOSE_MODAL_EVENT } from '@eventespresso/react-exit-modal-typeform';
 import './style.css';
-import { data } from 'eejs';
+import { data } from '@eventespresso/eejs';
 import { stringify } from 'querystringify';
 
 const { exitModali18n: i18n = {}, exitModalInfo: info = {}} = data;
