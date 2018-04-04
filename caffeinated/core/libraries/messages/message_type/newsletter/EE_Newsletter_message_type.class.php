@@ -1,14 +1,5 @@
 <?php
-/**
- * This file contains the EE_Newsletter_message_type class.
- *
- * @package         Event Espresso
- * @subpackage      helpers
- * @since           4.3.0
- */
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed.');
 
 /**
  * The message type for newsletter type of messages.
@@ -26,11 +17,13 @@ class EE_Newsletter_message_type extends EE_message_type
     public function __construct()
     {
         $this->name = 'newsletter';
-        $this->description = __('Batch message type messages are triggered manually by the admin for sending notifications to a selected group of recipients. This should only be used for more general notification type messages that contain information specific for the recipients. For "newsletter" type messages we recommend using an email list service like MailChimp, because sending non-related mail-outs to contacts increases the risk of your site domain getting added to spam lists, which will prevent messages getting to users.',
-            'event_espresso');
+        $this->description = esc_html__(
+            'Batch message type messages are triggered manually by the admin for sending notifications to a selected group of recipients. This should only be used for more general notification type messages that contain information specific for the recipients. For "newsletter" type messages we recommend using an email list service like MailChimp, because sending non-related mail-outs to contacts increases the risk of your site domain getting added to spam lists, which will prevent messages getting to users.',
+            'event_espresso'
+        );
         $this->label = array(
-            'singular' => __('batch', 'event_espresso'),
-            'plural'   => __('batches', 'event_espresso'),
+            'singular' => esc_html__('batch', 'event_espresso'),
+            'plural'   => esc_html__('batches', 'event_espresso'),
         );
         $this->_master_templates = array(
             'email' => 'registration',
@@ -40,12 +33,18 @@ class EE_Newsletter_message_type extends EE_message_type
     }
 
 
+    /**
+     * Sets admin_registered_pages property
+     */
     protected function _set_admin_pages()
     {
         $this->admin_registered_pages = array(); //no admin pages to register this with.
     }
 
 
+    /**
+     * Sets property related to data handler.
+     */
     protected function _set_data_handler()
     {
         $this->_data_handler = 'Registrations';
@@ -53,6 +52,13 @@ class EE_Newsletter_message_type extends EE_message_type
     }
 
 
+    /**
+     * Returns the data for the given context for this message type.
+     * @param string          $context
+     * @param EE_Registration $registration
+     * @param int             $id
+     * @return array|mixed
+     */
     protected function _get_data_for_context($context, EE_Registration $registration, $id)
     {
         //newsletter message type data handler is 'Registrations' and it expects an array of EE_Registration objects.
@@ -60,24 +66,30 @@ class EE_Newsletter_message_type extends EE_message_type
     }
 
 
+    /**
+     * Sets the admin settings fields property for this message type.
+     */
     protected function _set_admin_settings_fields()
     {
         $this->_admin_settings_fields = array();
     }
 
 
+    /**
+     * Sets the contexts for this message type.
+     */
     protected function _set_contexts()
     {
         $this->_context_label = array(
-            'label'       => __('recipient', 'event_espresso'),
-            'plural'      => __('recipients', 'event_espresso'),
-            'description' => __('Recipient\'s are who will receive the message.', 'event_espresso'),
+            'label'       => esc_html__('recipient', 'event_espresso'),
+            'plural'      => esc_html__('recipients', 'event_espresso'),
+            'description' => esc_html__('Recipient\'s are who will receive the message.', 'event_espresso'),
         );
 
         $this->_contexts = array(
             'attendee' => array(
-                'label'       => __('Registrant', 'event_espresso'),
-                'description' => __('This template goes to selected registrants.', 'event_espresso'),
+                'label'       => esc_html__('Registrant', 'event_espresso'),
+                'description' => esc_html__('This template goes to selected registrants.', 'event_espresso'),
             ),
         );
     }
@@ -103,19 +115,25 @@ class EE_Newsletter_message_type extends EE_message_type
 
         foreach ($this->_valid_shortcodes as $context => $shortcodes) {
             foreach ($shortcodes as $key => $shortcode) {
-                if (! in_array($shortcode, $included_shortcodes)) {
+                if (! in_array($shortcode, $included_shortcodes, true)) {
                     unset($this->_valid_shortcodes[$context][$key]);
                 }
             }
             $this->_valid_shortcodes[$context][] = 'newsletter';
         }
-
     }
 
 
     /**
      * Override default _attendee_addressees in EE_message_type because we want to loop through the registrations
      * for EE_message_type.
+     *
+     * @return array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function _attendee_addressees()
     {
@@ -168,6 +186,23 @@ class EE_Newsletter_message_type extends EE_message_type
             $addressee[] = new EE_Messages_Addressee($aee);
         }
         return $addressee;
+    }
+
+    /**
+     * Allows a message type to specifically exclude template fields for the provided messenger.
+     * Filtered so this can be programmatically altered as well.
+     *
+     * @param string $messenger_name name of messenger
+     * @return array
+     */
+    public function excludedFieldsForMessenger($messenger_name)
+    {
+        $excluded_fields = array(
+            'email' => array('cc')
+        );
+        return isset($excluded_fields[$messenger_name])
+            ? $excluded_fields[$messenger_name]
+            : parent::excludedFieldsForMessenger($messenger_name);
     }
 
 

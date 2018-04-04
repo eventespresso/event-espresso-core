@@ -94,11 +94,19 @@ final class EE_Module_Request_Router implements InterminableInterface
             $current_route = null;
             // grab all routes
             $routes = EE_Config::get_routes();
-            //d( $routes );
             foreach ($routes as $key => $route) {
+                // first determine if route key uses w?ldc*rds
+                $uses_wildcards = strpos($key, '?') !== false
+                                  || strpos($key, '*') !== false;
                 // check request for module route
-                if ($this->request->is_set($key)) {
-                    $current_route = sanitize_text_field($this->request->get($key));
+                $route_found = $uses_wildcards
+                    ? $this->request->matches($key)
+                    : $this->request->is_set($key);
+                if ($route_found) {
+                    $current_route = $uses_wildcards
+                        ? $this->request->getMatch($key)
+                        : $this->request->get($key);
+                    $current_route = sanitize_text_field($current_route);
                     if ($current_route) {
                         $current_route = array($key, $current_route);
                         break;
