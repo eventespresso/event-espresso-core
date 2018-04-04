@@ -2,7 +2,6 @@
 namespace EventEspresso\core\domain\services\admin;
 
 use EventEspresso\core\services\assets\Registry;
-use const FILTER_VALIDATE_BOOLEAN;
 use InvalidArgumentException;
 use WP_User;
 
