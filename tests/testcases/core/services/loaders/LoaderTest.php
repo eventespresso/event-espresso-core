@@ -23,6 +23,12 @@ class LoaderTest extends EE_UnitTestCase
     private static $loader;
 
 
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
     public function setUp()
     {
         self::$loader = LoaderFactory::getLoader();
@@ -32,6 +38,9 @@ class LoaderTest extends EE_UnitTestCase
 
     /**
      * testNewLoader
+     *
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \PHPUnit\Framework\Exception
      */
     public function testNewLoader()
     {
@@ -57,6 +66,9 @@ class LoaderTest extends EE_UnitTestCase
 
     /**
      * testSharedLoader
+     *
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \PHPUnit\Framework\Exception
      */
     public function testSharedLoader()
     {
@@ -82,7 +94,10 @@ class LoaderTest extends EE_UnitTestCase
 
     /**
      * testSharedLoader
+     *
      * @group loaderArgs
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \PHPUnit\Framework\Exception
      */
     public function testSharedLoaderWithArgs()
     {
@@ -107,7 +122,10 @@ class LoaderTest extends EE_UnitTestCase
         $object2 = self::$loader->load($fqcn, array(array(4, 5, 6)));
         $this->assertFalse($object->sameInstance($object2));
         $this->assertNotEquals($original_args, $object2->args());
-
+        // now let's request another instance but  with no args, which *should* return the first instance
+        $object3 = self::$loader->load($fqcn);
+        $this->assertTrue($object->sameInstance($object3));
+        $this->assertEquals($original_args, $object3->args());
     }
 }
 // End of file LoaderTest.php
