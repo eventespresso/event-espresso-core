@@ -14,7 +14,7 @@ wp_register_script(
 
 You may be wondering, **why?**.  
 
-With hash based caching (which is what we are using for [cache control over assets](asset-caching-by-filename.md)), in order to keep changes in file to a minimum, the build process [extracts webpack boilerplate and manifest](https://webpack.js.org/guides/caching/#extracting-boilerplate) into its own file.  However, this extracted base bundle _must_ be loaded on a page _before_ any other built bundles.  Hence the importance of it being a dependency.
+With hash based caching (which is what we are using for [cache control over assets](asset-caching-by-filename.md)), in order to keep changes in a file to a minimum, the build process [extracts webpack boilerplate and manifest](https://webpack.js.org/guides/caching/#extracting-boilerplate) into its own file.  However, this extracted base bundle _must_ be loaded on a page _before_ any other built bundles.  Hence the importance of it being a dependency.
 
 Along with this, the Event Espresso build process includes a php asset registry helper for transferring arbitrary data from php to js and exposed via a global `eejs` object.  In order for that to be of any use, it too, must be loaded before any built file.
 
