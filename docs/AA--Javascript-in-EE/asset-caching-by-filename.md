@@ -1,6 +1,6 @@
 ## Asset Caching by Filename
 
-As a part of our new [build process](build-process.md) for Event Espresso. We are switching away from using version strings to signal changes within an asset file for various asset caching mechanisms. Historically the go-to method for cache-busting assets stored by browser clients is to use the query argument method which WordPress facilitates.  While somewhat reliable, this is can be problematic because depending on how a server is setup, query arguments _can_ be ignored in some environments.
+As a part of our new [build process](build-process.md) for Event Espresso, we are switching away from using version strings to signal changes within an asset file for various asset caching mechanisms. Historically the go-to method for cache-busting assets stored by browser clients is to use the query argument method which WordPress facilitates.  While somewhat reliable, this is can be problematic because depending on how a server is setup, query arguments _can_ be ignored in some environments.
 
 We also briefly considered using `filemtime` as the "version" generator for our assets.  However besides having the same issues regarding usage of query arguments, the use of filemtime can cause unnecessary server load for servers that don't cache filesystem stats.  It also means with our build process that _every_ build will bust browser caches!
 
