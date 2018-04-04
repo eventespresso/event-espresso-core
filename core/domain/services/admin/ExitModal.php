@@ -2,6 +2,7 @@
 namespace EventEspresso\core\domain\services\admin;
 
 use EventEspresso\core\services\assets\Registry;
+use const FILTER_VALIDATE_BOOLEAN;
 use InvalidArgumentException;
 use WP_User;
 
@@ -84,10 +85,28 @@ class ExitModal
             array(
                 'firstname' => htmlspecialchars($current_user->user_firstname),
                 'emailaddress' => htmlspecialchars($current_user->user_email),
-                'website' => htmlspecialchars(site_url())
+                'website' => htmlspecialchars(site_url()),
+                'isModalActive' => $this->isModalActive()
             )
         );
-        wp_enqueue_script('ee-exit-modal-survey');
-        wp_enqueue_style('ee-exit-modal-survey');
+
+        wp_enqueue_script('ee-wp-plugins-page');
+        wp_enqueue_style('ee-wp-plugins-page');
+    }
+
+
+    /**
+     * Exposes a filter switch for turning off the enqueueing of the modal script.
+     * @return bool
+     */
+    private function isModalActive()
+    {
+        return filter_var(
+            apply_filters(
+                'FHEE__EventEspresso_core_domain_services_admin_ExitModal__isModalActive',
+                true
+            ),
+            FILTER_VALIDATE_BOOLEAN
+        );
     }
 }

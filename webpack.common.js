@@ -50,9 +50,9 @@ config = [
         configName: 'base',
         entry: {
             reactVendor: reactVendorPackages,
-            'exit-modal-survey': [
-                assets + 'exit-modal-survey/index.js'
-            ],
+            'wp-plugins-page': [
+                assets + 'wp-plugins-page/index.js'
+            ]
         },
         externals,
         output: {

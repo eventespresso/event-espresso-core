@@ -621,8 +621,8 @@ class Registry
     private function registerAdminAssets()
     {
         wp_register_script(
-            'ee-exit-modal-survey',
-            $this->getAssetUrl(self::ASSET_NAMESPACE, 'exit-modal-survey', self::ASSET_TYPE_JS),
+            'ee-wp-plugins-page',
+            $this->getAssetUrl(self::ASSET_NAMESPACE, 'wp-plugins-page', self::ASSET_TYPE_JS),
             array(
                 'jquery',
                 'ee-vendor-react'
@@ -631,11 +631,10 @@ class Registry
             true
         );
         wp_register_style(
-            'ee-exit-modal-survey',
-            $this->getAssetUrl(self::ASSET_NAMESPACE, 'exit-modal-survey', self::ASSET_TYPE_CSS),
+            'ee-wp-plugins-page',
+            $this->getAssetUrl(self::ASSET_NAMESPACE, 'wp-plugins-page', self::ASSET_TYPE_CSS),
             array(),
             null
         );
     }
-
 }
