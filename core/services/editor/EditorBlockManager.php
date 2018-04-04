@@ -5,9 +5,9 @@ namespace EventEspresso\core\services\editor;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\entities\editor\EditorBlockCollection;
 use EventEspresso\core\domain\entities\editor\EditorBlockInterface;
+use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\request\RequestInterface;
-
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -60,18 +60,30 @@ abstract class EditorBlockManager
      */
     protected $action;
 
+
+    /**
+     * @var Registry
+     */
+    protected $assets_registry;
+
     /**
      * EditorBlockManager constructor.
      *
      * @param EditorBlockCollection $blocks
      * @param RequestInterface      $request
      * @param DomainInterface       $domain
+     * @param Registry              $assets_registry
      */
-    public function __construct(EditorBlockCollection $blocks, RequestInterface $request, DomainInterface $domain)
-    {
+    public function __construct(
+        EditorBlockCollection $blocks,
+        RequestInterface $request,
+        DomainInterface $domain,
+        Registry $assets_registry
+    ) {
         $this->blocks  = $blocks;
         $this->request = $request;
         $this->domain  = $domain;
+        $this->assets_registry = $assets_registry;
         $this->request_post_type = $this->request->getRequestParam('post_type', '');
         $this->page = $this->request->getRequestParam('page', '');
         $this->action = $this->request->getRequestParam('action', '');
