@@ -621,7 +621,7 @@ class Registry
     private function registerAdminAssets()
     {
         wp_register_script(
-            'ee-exit-modal-survey',
+            'ee-wp-plugins-page',
             $this->getAssetUrl(self::ASSET_NAMESPACE, 'wp-plugins-page', self::ASSET_TYPE_JS),
             array(
                 'jquery',
@@ -631,7 +631,7 @@ class Registry
             true
         );
         wp_register_style(
-            'ee-exit-modal-survey',
+            'ee-wp-plugins-page',
             $this->getAssetUrl(self::ASSET_NAMESPACE, 'wp-plugins-page', self::ASSET_TYPE_CSS),
             array(),
             null

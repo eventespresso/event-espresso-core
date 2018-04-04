@@ -66,19 +66,22 @@ const handleDeactivationClick = (e, el) => {
 };
 
 /**
- * EE caffeinated click capture.
+ * EE caffeinated click capture but only if feature is active
  */
-$('tr[data-slug="event-espresso"]').on('click', 'span.deactivate > a', function(e) {
-    handleDeactivationClick(e, this);
-});
+if (info.isModalActive) {
+    $('tr[data-slug="event-espresso"]')
+        .on('click', 'span.deactivate > a', function(e) {
+            handleDeactivationClick(e, this);
+        });
 
-
-/**
- * EE decaf click capture.
- */
-$('tr[data-slug="event-espresso-decaf"]').on('click', 'span.deactivate > a', function(e) {
-    handleDeactivationClick(e, this);
-});
+    /**
+     * EE decaf click capture.
+     */
+    $('tr[data-slug="event-espresso-decaf"]')
+        .on('click', 'span.deactivate > a', function(e) {
+            handleDeactivationClick(e, this);
+        });
+}
 
 
 
