@@ -146,8 +146,7 @@ class CachingLoader extends CachingLoaderDecorator
             // so we don't want the core loader to cache anything, therefore caching is turned off
             return $this->loader->load($fqcn, $arguments, false);
         }
-
-        $identifier = $this->getCacheIdentifier($fqcn, $arguments);
+        $identifier = $this->getClassIdentifier($fqcn, $arguments);
         if ($this->cache->has($identifier)) {
             return $this->cache->get($identifier);
         }
@@ -172,17 +171,19 @@ class CachingLoader extends CachingLoaderDecorator
 
 
     /**
-     * generates an identifier for a class
+     * build a string representation of a class' name and arguments
      *
-     * @param FullyQualifiedName|string $fqcn
-     * @param array                     $arguments
+     * @param string $fqcn
+     * @param array $arguments
      * @return string
      */
-    protected function getCacheIdentifier($fqcn, array $arguments)
+    private function getClassIdentifier($fqcn, $arguments = array())
     {
-        return $this->class_cache->hasInterface($fqcn, 'EventEspresso\core\interfaces\ReservedInstanceInterface')
-            ? md5($fqcn)
-            : md5($fqcn . $this->getCacheIdentifierForArgument($arguments));
+        $identifier = $this->getIdentifierForArguments($arguments);
+        if(!empty($identifier)) {
+            $fqcn .= '____' . md5($identifier);
+        }
+        return $fqcn;
     }
 
 
@@ -194,8 +195,11 @@ class CachingLoader extends CachingLoaderDecorator
      * @param array $arguments
      * @return string
      */
-    protected function getCacheIdentifierForArgument(array $arguments)
+    protected function getIdentifierForArguments(array $arguments)
     {
+        if(empty($arguments)){
+            return '';
+        }
         $identifier = '';
         foreach ($arguments as $argument) {
             switch (true) {
@@ -204,7 +208,7 @@ class CachingLoader extends CachingLoaderDecorator
                     $identifier .= spl_object_hash($argument);
                     break;
                 case is_array($argument) :
-                    $identifier .= $this->getCacheIdentifierForArgument($argument);
+                    $identifier .= $this->getIdentifierForArguments($argument);
                     break;
                 default :
                     $identifier .= $argument;

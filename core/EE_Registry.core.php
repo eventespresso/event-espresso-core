@@ -705,9 +705,10 @@ class EE_Registry implements ResettableInterface
         $class_name = ltrim($class_name, '\\');
         $class_name = $this->class_cache->getFqnForAlias($class_name);
         $class_exists = $this->loadOrVerifyClassExists($class_name, $arguments);
-        // if a non-FQCN was passed, then verifyClassExists() might return an object
+        // if a non-FQCN was passed, then
+        // verifyClassExists() might return an object
         // or it could return null if the class just could not be found anywhere
-        if ($class_exists instanceof $class_name || $class_exists === null){
+        if ($class_exists instanceof $class_name || $class_exists === null) {
             // either way, return the results
             return $class_exists;
         }
@@ -716,32 +717,30 @@ class EE_Registry implements ResettableInterface
         if ($load_only) {
             return true;
         }
-        $addon = $addon
-            ? 'addon'
-            : '';
+        $addon = $addon ? 'addon' : '';
         // $this->_cache_on is toggled during the recursive loading that can occur with dependency injection
         // $cache is controlled by individual calls to separate Registry loader methods like load_class()
         // $load_only is also controlled by individual calls to separate Registry loader methods like load_file()
         if ($this->_cache_on && $cache && ! $load_only) {
             // return object if it's already cached
-            $cached_class = $this->_get_cached_class($class_name, $addon);
+            $cached_class = $this->_get_cached_class($class_name, $addon, $arguments);
             if ($cached_class !== null) {
                 return $cached_class;
             }
-        }
-        // obtain the loader method from the dependency map
-        $loader = $this->_dependency_map->class_loader($class_name);
-        // instantiate the requested object
+        }// obtain the loader method from the dependency map
+        $loader = $this->_dependency_map->class_loader($class_name);// instantiate the requested object
         if ($loader instanceof Closure) {
             $class_obj = $loader($arguments);
-        } else if ($loader && method_exists($this, $loader)) {
-            $class_obj = $this->{$loader}($class_name, $arguments);
         } else {
-            $class_obj = $this->_create_object($class_name, $arguments, $addon, $from_db);
+            if ($loader && method_exists($this, $loader)) {
+                $class_obj = $this->{$loader}($class_name, $arguments);
+            } else {
+                $class_obj = $this->_create_object($class_name, $arguments, $addon, $from_db);
+            }
         }
         if (($this->_cache_on && $cache) || $this->get_class_abbreviation($class_name, '')) {
             // save it for later... kinda like gum  { : $
-            $this->_set_cached_class($class_obj, $class_name, $addon, $from_db);
+            $this->_set_cached_class($class_obj, $class_name, $addon, $from_db, $arguments);
         }
         $this->_cache_on = true;
         return $class_obj;
@@ -837,7 +836,7 @@ class EE_Registry implements ResettableInterface
         // $load_only is also controlled by individual calls to separate Registry loader methods like load_file()
         if ($this->_cache_on && $cache && ! $load_only) {
             // return object if it's already cached
-            $cached_class = $this->_get_cached_class($class_name, $class_prefix);
+            $cached_class = $this->_get_cached_class($class_name, $class_prefix, $arguments);
             if ($cached_class !== null) {
                 return $cached_class;
             }
@@ -860,7 +859,7 @@ class EE_Registry implements ResettableInterface
         $class_obj = $this->_create_object($class_name, $arguments, $type, $from_db);
         if ($this->_cache_on && $cache) {
             // save it for later... kinda like gum  { : $
-            $this->_set_cached_class($class_obj, $class_name, $class_prefix, $from_db);
+            $this->_set_cached_class($class_obj, $class_name, $class_prefix, $from_db, $arguments);
         }
         $this->_cache_on = true;
         return $class_obj;
@@ -880,6 +879,7 @@ class EE_Registry implements ResettableInterface
             : $default;
     }
 
+
     /**
      * attempts to find a cached version of the requested class
      * by looking in the following places:
@@ -890,31 +890,46 @@ class EE_Registry implements ResettableInterface
      *
      * @param string $class_name
      * @param string $class_prefix
+     * @param array  $arguments
      * @return mixed
      */
-    protected function _get_cached_class($class_name, $class_prefix = '')
-    {
+    protected function _get_cached_class(
+        $class_name,
+        $class_prefix = '',
+        $arguments = array()
+    ) {
         if ($class_name === 'EE_Registry') {
             return $this;
         }
         $class_abbreviation = $this->get_class_abbreviation($class_name);
-        $class_name = str_replace('\\', '_', $class_name);
         // check if class has already been loaded, and return it if it has been
         if (isset($this->{$class_abbreviation})) {
             return $this->{$class_abbreviation};
         }
+        $class_name = str_replace('\\', '_', $class_name);
         if (isset ($this->{$class_name})) {
             return $this->{$class_name};
-        }
-        if (isset ($this->LIB->{$class_name})) {
-            return $this->LIB->{$class_name};
         }
         if ($class_prefix === 'addon' && isset ($this->addons->{$class_name})) {
             return $this->addons->{$class_name};
         }
+        $class_identifier = $this->getClassIdentifier($class_name, $arguments);
+        if (isset($this->LIB->{$class_identifier})) {
+            return $this->LIB->{$class_identifier};
+        }
+        foreach ($this->LIB as $key => $object) {
+            if (
+                // request does not contain new arguments and therefore no args identifier
+                strpos($class_identifier, '____') === false
+                // but previously cached class with args was found
+                && strpos($key, $class_name . '____') === 0
+            ) {
+                return $object;
+            }
+
+        }
         return null;
     }
-
 
 
     /**
@@ -922,30 +937,134 @@ class EE_Registry implements ResettableInterface
      *
      * @param string  $class_name
      * @param boolean $addon
+     * @param array   $arguments
      * @return boolean
      */
-    public function clear_cached_class($class_name, $addon = false)
-    {
+    public function clear_cached_class(
+        $class_name,
+        $addon = false,
+        $arguments = array()
+    ) {
         $class_abbreviation = $this->get_class_abbreviation($class_name);
-        $class_name = str_replace('\\', '_', $class_name);
         // check if class has already been loaded, and return it if it has been
         if (isset($this->{$class_abbreviation})) {
             $this->{$class_abbreviation} = null;
             return true;
         }
+        $class_name = str_replace('\\', '_', $class_name);
         if (isset($this->{$class_name})) {
             $this->{$class_name} = null;
-            return true;
-        }
-        if (isset($this->LIB->{$class_name})) {
-            unset($this->LIB->{$class_name});
             return true;
         }
         if ($addon && isset($this->addons->{$class_name})) {
             unset($this->addons->{$class_name});
             return true;
         }
+        $class_name = $this->getClassIdentifier($class_name, $arguments);
+        if (isset($this->LIB->{$class_name})) {
+            unset($this->LIB->{$class_name});
+            return true;
+        }
         return false;
+    }
+
+
+    /**
+     * _set_cached_class
+     * attempts to cache the instantiated class locally
+     * in one of the following places, in the following order:
+     *        $this->{class_abbreviation}   ie:    $this->CART
+     *        $this->{$class_name}          ie:    $this->Some_Class
+     *        $this->addon->{$$class_name}    ie:    $this->addon->Some_Addon_Class
+     *        $this->LIB->{$class_name}     ie:    $this->LIB->Some_Class
+     *
+     * @param object $class_obj
+     * @param string $class_name
+     * @param string $class_prefix
+     * @param bool   $from_db
+     * @param array  $arguments
+     * @return void
+     */
+    protected function _set_cached_class(
+        $class_obj,
+        $class_name,
+        $class_prefix = '',
+        $from_db = false,
+        $arguments = array()
+    ) {
+        if ($class_name === 'EE_Registry' || empty($class_obj)) {
+            return;
+        }
+        // return newly instantiated class
+        $class_abbreviation = $this->get_class_abbreviation($class_name, '');
+        if ($class_abbreviation) {
+            $this->{$class_abbreviation} = $class_obj;
+            return;
+        }
+        $class_name = str_replace('\\', '_', $class_name);
+        if (property_exists($this, $class_name)) {
+            $this->{$class_name} = $class_obj;
+            return;
+        }
+        if ($class_prefix === 'addon') {
+            $this->addons->{$class_name} = $class_obj;
+            return;
+        }
+        if (! $from_db) {
+            $class_name = $this->getClassIdentifier($class_name, $arguments);
+            $this->LIB->{$class_name} = $class_obj;
+        }
+    }
+
+
+
+    /**
+     * build a string representation of a class' name and arguments
+     *
+     * @param string $class_name
+     * @param array $arguments
+     * @return string
+     */
+    private function getClassIdentifier($class_name, $arguments = array())
+    {
+        $identifier = $this->getIdentifierForArguments($arguments);
+        if(!empty($identifier)) {
+            $class_name .= '____' . md5($identifier);
+        }
+        return $class_name;
+    }
+
+
+
+    /**
+     * build a string representation of a class' arguments
+     * (mostly because Closures can't be serialized)
+     *
+     * @param array $arguments
+     * @return string
+     */
+    private function getIdentifierForArguments($arguments = array())
+    {
+        if(empty($arguments)){
+            return '';
+        }
+        $identifier = '';
+        $arguments = is_array($arguments) ? $arguments : array();
+        foreach ($arguments as $argument) {
+            switch (true) {
+                case is_object($argument) :
+                case $argument instanceof Closure :
+                    $identifier .= spl_object_hash($argument);
+                    break;
+                case is_array($argument) :
+                    $identifier .= $this->getIdentifierForArguments($argument);
+                    break;
+                default :
+                    $identifier .= $argument;
+                    break;
+            }
+        }
+        return $identifier;
     }
 
 
@@ -1327,48 +1446,6 @@ class EE_Registry implements ResettableInterface
             $arguments[$index] = $dependency;
         }
         return $arguments;
-    }
-
-
-
-    /**
-     * _set_cached_class
-     * attempts to cache the instantiated class locally
-     * in one of the following places, in the following order:
-     *        $this->{class_abbreviation}   ie:    $this->CART
-     *        $this->{$class_name}          ie:    $this->Some_Class
-     *        $this->addon->{$$class_name}    ie:    $this->addon->Some_Addon_Class
-     *        $this->LIB->{$class_name}     ie:    $this->LIB->Some_Class
-     *
-     * @param object $class_obj
-     * @param string $class_name
-     * @param string $class_prefix
-     * @param bool   $from_db
-     * @return void
-     */
-    protected function _set_cached_class($class_obj, $class_name, $class_prefix = '', $from_db = false)
-    {
-        if ($class_name === 'EE_Registry' || empty($class_obj)) {
-            return;
-        }
-        // return newly instantiated class
-        $class_abbreviation = $this->get_class_abbreviation($class_name, '');
-        if ($class_abbreviation) {
-            $this->{$class_abbreviation} = $class_obj;
-            return;
-        }
-        $class_name = str_replace('\\', '_', $class_name);
-        if (property_exists($this, $class_name)) {
-            $this->{$class_name} = $class_obj;
-            return;
-        }
-        if ($class_prefix === 'addon') {
-            $this->addons->{$class_name} = $class_obj;
-            return;
-        }
-        if (! $from_db) {
-            $this->LIB->{$class_name} = $class_obj;
-        }
     }
 
 
