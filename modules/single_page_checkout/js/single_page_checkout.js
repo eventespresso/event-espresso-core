@@ -725,7 +725,7 @@ jQuery(document).ready( function($) {
 		enable_submit_buttons : function() {
 			//console.log( JSON.stringify( '**enable_submit_buttons**', null, 4 ) );
 			$('.spco-next-step-btn').each( function() {
-				$(this).prop( 'disabled', false ).removeClass( 'disabled spco-disabled-submit-btn' );
+				$(this).prop( 'disabled', false ).removeClass( 'disabled spco-disabled-submit-btn ee-button-disabled' );
 			});
 		},
 
@@ -737,7 +737,7 @@ jQuery(document).ready( function($) {
 		disable_submit_buttons : function() {
 			//console.log( JSON.stringify( '**disable_submit_buttons**', null, 4 ) );
 			$('.spco-next-step-btn').each( function() {
-				$(this).prop( 'disabled', true ).addClass('disabled spco-disabled-submit-btn');
+				$(this).prop( 'disabled', true ).addClass('disabled spco-disabled-submit-btn ee-button-disabled');
 			});
 		},
 

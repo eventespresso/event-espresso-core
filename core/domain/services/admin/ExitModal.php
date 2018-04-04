@@ -3,6 +3,7 @@ namespace EventEspresso\core\domain\services\admin;
 
 use EventEspresso\core\services\assets\Registry;
 use InvalidArgumentException;
+use WP_User;
 
 /**
  * ExitModal
@@ -51,6 +52,7 @@ class ExitModal
      */
     public function enqueues()
     {
+        $current_user = new WP_User(get_current_user_id());
         $this->assets_registry->addData(
             'exitModali18n',
             array(
@@ -75,6 +77,14 @@ class ExitModal
                     ),
                     ENT_NOQUOTES
                 )
+            )
+        );
+        $this->assets_registry->addData(
+            'exitModalInfo',
+            array(
+                'firstname' => htmlspecialchars($current_user->user_firstname),
+                'emailaddress' => htmlspecialchars($current_user->user_email),
+                'website' => htmlspecialchars(site_url())
             )
         );
         wp_enqueue_script('ee-exit-modal-survey');

@@ -259,4 +259,17 @@ class EEH_URL
     {
         return remove_query_arg($query_parameters, EEH_URL::current_url());
     }
+
+
+    /**
+     * @param string $location
+     * @param int    $status
+     * @param string $exit_notice
+     */
+    public static function safeRedirectAndExit($location, $status = 302, $exit_notice = '')
+    {
+        EE_Error::get_notices(false, true);
+        wp_safe_redirect($location, $status);
+        exit($exit_notice);
+    }
 }
