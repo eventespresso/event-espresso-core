@@ -6,7 +6,7 @@ We use webpack for assembling and building javascript and css files.  The folder
 .\path\to\your\wordpress-install\wp-content\plugins\event-espresso-core\
 ├── assets
     └── dist
-        ... built files with `.dist.js` or `.style.css` extensions
+        ... built files with `.dist.js` or `.dist.css` extensions
     └── src
         .babelrc //this contains specific babel configuration for the files in this tree.
         ... folders and files containing all src js and css files.
