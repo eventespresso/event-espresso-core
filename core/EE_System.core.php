@@ -566,7 +566,11 @@ final class EE_System implements ResettableInterface
         $request_type = $this->detect_req_type();
         //only initialize system if we're not in maintenance mode.
         if ($this->maintenance_mode->level() !== EE_Maintenance_Mode::level_2_complete_maintenance) {
-            update_option('ee_flush_rewrite_rules', true);
+            /** @var EventEspresso\core\domain\services\custom_post_types\RewriteRules $rewrite_rules */
+            $rewrite_rules = $this->loader->getShared(
+                'EventEspresso\core\domain\services\custom_post_types\RewriteRules'
+            );
+            $rewrite_rules->flush();
             if ($verify_schema) {
                 EEH_Activation::initialize_db_and_folders();
             }
@@ -883,6 +887,9 @@ final class EE_System implements ResettableInterface
         $this->_parse_model_names();
         //load caf stuff a chance to play during the activation process too.
         $this->_maybe_brew_regular();
+        // configure custom post type definitions
+        $this->loader->getShared('EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions');
+        $this->loader->getShared('EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions');
         do_action('AHEE__EE_System__load_core_configuration__complete', $this);
     }
 
@@ -1105,17 +1112,24 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
-     *    load_CPTs_and_session
-     *
-     * @access public
-     * @return    void
+     * @return void
+     * @throws DomainException
      */
     public function load_CPTs_and_session()
     {
         do_action('AHEE__EE_System__load_CPTs_and_session__start');
-        // register Custom Post Types
+        /** @var EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies $register_custom_taxonomies */
+        $register_custom_taxonomies = $this->loader->getShared(
+            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies'
+        );
+        $register_custom_taxonomies->registerCustomTaxonomies();
+        /** @var EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes $register_custom_post_types */
+        $register_custom_post_types = $this->loader->getShared(
+            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes'
+        );
+        $register_custom_post_types->registerCustomPostTypes();
+        // register Custom Post Types and Taxonomies
         $this->loader->getShared('EE_Register_CPTs');
         do_action('AHEE__EE_System__load_CPTs_and_session__complete');
     }
@@ -1207,6 +1221,11 @@ final class EE_System implements ResettableInterface
     public function initialize_last()
     {
         do_action('AHEE__EE_System__initialize_last');
+        /** @var EventEspresso\core\domain\services\custom_post_types\RewriteRules $rewrite_rules */
+        $rewrite_rules = $this->loader->getShared(
+            'EventEspresso\core\domain\services\custom_post_types\RewriteRules'
+        );
+        $rewrite_rules->flushRewriteRules();
         add_action('admin_bar_init', array($this, 'addEspressoToolbar'));
     }
 
