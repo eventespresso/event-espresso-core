@@ -228,10 +228,14 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * initialize
      *
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -303,9 +307,13 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * @param mixed string | EED_Module $module
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -336,7 +344,6 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * loads core classes - must be singletons
      *
@@ -344,8 +351,13 @@ class EE_Registry implements ResettableInterface
      * @param mixed  $arguments
      * @param bool   $load_only
      * @return mixed
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
      */
     public function load_core($class_name, $arguments = array(), $load_only = false)
     {
@@ -375,7 +387,6 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * loads service classes
      *
@@ -383,8 +394,13 @@ class EE_Registry implements ResettableInterface
      * @param mixed  $arguments
      * @param bool   $load_only
      * @return mixed
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
      */
     public function load_service($class_name, $arguments = array(), $load_only = false)
     {
@@ -408,15 +424,19 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * loads data_migration_scripts
      *
      * @param string $class_name - class name for the DMS ie: EE_DMS_Core_4_2_0
      * @param mixed  $arguments
      * @return EE_Data_Migration_Script_Base|mixed
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
      */
     public function load_dms($class_name, $arguments = array())
     {
@@ -433,7 +453,6 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * loads object creating classes - must be singletons
      *
@@ -446,8 +465,13 @@ class EE_Registry implements ResettableInterface
      * @param bool   $load_only  whether or not to just load the file and NOT instantiate, or load AND instantiate
      *                           (default)
      * @return EE_Base_Class | bool
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
      */
     public function load_class($class_name, $arguments = array(), $from_db = false, $cache = true, $load_only = false)
     {
@@ -472,7 +496,6 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * loads helper classes - must be singletons
      *
@@ -480,8 +503,13 @@ class EE_Registry implements ResettableInterface
      * @param mixed  $arguments
      * @param bool   $load_only
      * @return EEH_Base | bool
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
      */
     public function load_helper($class_name, $arguments = array(), $load_only = true)
     {
@@ -501,7 +529,6 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * loads core classes - must be singletons
      *
@@ -510,8 +537,13 @@ class EE_Registry implements ResettableInterface
      * @param bool   $load_only
      * @param bool   $cache      whether to cache the object or not.
      * @return mixed
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
      */
     public function load_lib($class_name, $arguments = array(), $load_only = false, $cache = true)
     {
@@ -536,7 +568,6 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * loads model classes - must be singletons
      *
@@ -544,8 +575,13 @@ class EE_Registry implements ResettableInterface
      * @param mixed  $arguments
      * @param bool   $load_only
      * @return EEM_Base | bool
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
      */
     public function load_model($class_name, $arguments = array(), $load_only = false)
     {
@@ -569,7 +605,6 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * loads model classes - must be singletons
      *
@@ -577,8 +612,13 @@ class EE_Registry implements ResettableInterface
      * @param mixed  $arguments
      * @param bool   $load_only
      * @return mixed | bool
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
      */
     public function load_model_class($class_name, $arguments = array(), $load_only = true)
     {
@@ -615,7 +655,6 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * generic class loader
      *
@@ -625,8 +664,13 @@ class EE_Registry implements ResettableInterface
      * @param mixed  $arguments
      * @param bool   $load_only
      * @return mixed
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
      */
     public function load_file($path_to_file, $file_name, $type = '', $arguments = array(), $load_only = true)
     {
@@ -644,7 +688,6 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * @param string $path_to_file - directory path to file location, not including filename
      * @param string $class_name   - full class name  ie:  My_Class
@@ -652,8 +695,13 @@ class EE_Registry implements ResettableInterface
      * @param mixed  $arguments
      * @param bool   $load_only
      * @return bool|EE_Addon|object
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
      */
     public function load_addon($path_to_file, $class_name, $type = 'class', $arguments = array(), $load_only = false)
     {
@@ -688,11 +736,12 @@ class EE_Registry implements ResettableInterface
      * @return bool|null|mixed          null = failure to load or instantiate class object.
      *                                  object = class loaded and instantiated successfully.
      *                                  bool = fail or success when $load_only is true
+     * @throws OutOfBoundsException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
-     * @throws InvalidClassException
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws InvalidArgumentException
      */
     public function create(
         $class_name = false,
@@ -751,7 +800,7 @@ class EE_Registry implements ResettableInterface
     /**
      * Recursively checks that a class exists and potentially attempts to load classes with non-FQCNs
      *
-     * @param string $class_name
+     * @param string|object $class_name
      * @param array  $arguments
      * @param int    $attempt
      * @return mixed
@@ -783,7 +832,6 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * instantiates, caches, and injects dependencies for classes
      *
@@ -799,11 +847,12 @@ class EE_Registry implements ResettableInterface
      * @return bool|null|object null = failure to load or instantiate class object.
      *                                  object = class loaded and instantiated successfully.
      *                                  bool = fail or success when $load_only is true
+     * @throws OutOfBoundsException
      * @throws EE_Error
      * @throws ReflectionException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
-     * @throws InvalidClassException
+     * @throws InvalidArgumentException
      */
     protected function _load(
         $file_paths = array(),
@@ -892,7 +941,6 @@ class EE_Registry implements ResettableInterface
      * @param string $class_prefix
      * @param array  $arguments
      * @return mixed
-     * @throws OutOfBoundsException
      */
     protected function _get_cached_class(
         $class_name,
@@ -940,7 +988,6 @@ class EE_Registry implements ResettableInterface
      * @param boolean $addon
      * @param array   $arguments
      * @return boolean
-     * @throws OutOfBoundsException
      */
     public function clear_cached_class(
         $class_name,
@@ -1213,10 +1260,13 @@ class EE_Registry implements ResettableInterface
      * @param array  $arguments
      * @param string $type
      * @param bool   $from_db
-     * @return null|object
+     * @return null|object|bool
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
      * @throws EE_Error
      * @throws ReflectionException
      * @throws InvalidDataTypeException
+     * @throws OutOfBoundsException
      */
     protected function _create_object($class_name, $arguments = array(), $type = '', $from_db = false)
     {
@@ -1309,12 +1359,10 @@ class EE_Registry implements ResettableInterface
      * @param string          $class_name
      * @param array           $arguments
      * @return array
-     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @throws InvalidClassException
      */
     protected function _resolve_dependencies(ReflectionClass $reflector, $class_name, array $arguments = array())
     {
@@ -1390,7 +1438,6 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * @param string $class_name
      * @param string $param_class
@@ -1398,8 +1445,6 @@ class EE_Registry implements ResettableInterface
      * @param mixed  $index
      * @param array  $argument_keys
      * @return array
-     * @throws EE_Error
-     * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
@@ -1480,7 +1525,6 @@ class EE_Registry implements ResettableInterface
      *
      * @param string $class_name
      * @return EE_Addon
-     * @throws OutOfBoundsException
      */
     public function getAddon($class_name)
     {
@@ -1576,7 +1620,6 @@ class EE_Registry implements ResettableInterface
     }
 
 
-
     /**
      * Resets the registry.
      * The criteria for what gets reset is based on what can be shared between sites on the same request when
@@ -1604,8 +1647,13 @@ class EE_Registry implements ResettableInterface
      *                                  code instead can just change the model context to a different blog id if
      *                                  necessary
      * @return EE_Registry
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidClassException
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
      */
     public static function reset($hard = false, $reinstantiate = true, $reset_models = true)
     {
