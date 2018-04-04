@@ -1,0 +1,15 @@
+{
+  "eejs": {
+    "js": "ee-eejs.9beae6424f9ca5198925.dist.js"
+  },
+  "wp-plugins-page": {
+    "js": "ee-wp-plugins-page.b765df3d92609f8ddc8e.dist.js",
+    "css": "ee-wp-plugins-page.b95fd8de563b99ef70791b8e24629567.dist.css"
+  },
+  "reactVendor": {
+    "js": "ee-reactVendor.b5799c8665b24642d1cd.dist.js"
+  },
+  "manifest": {
+    "js": "ee-manifest.f5984092809447a8fba8.dist.js"
+  }
+}

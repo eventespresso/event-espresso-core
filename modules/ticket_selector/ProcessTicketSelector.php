@@ -10,13 +10,13 @@ use EE_Ticket;
 use EEH_Event_View;
 use EEM_Ticket;
 use EventEspresso\core\domain\services\factories\CartFactory;
+use EEH_URL;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\Request;
 use InvalidArgumentException;
-use ReflectionException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -48,11 +48,6 @@ class ProcessTicketSelector
      * @var Request $request
      */
     private $request;
-
-    /**
-     * @var LoaderInterface $loader
-     */
-    private $loader;
 
     /**
      * @var EE_Session $session
@@ -92,29 +87,30 @@ class ProcessTicketSelector
         EEM_Ticket $ticket_model = null,
         TicketDatetimeAvailabilityTracker $tracker = null
     ) {
-        $this->loader = LoaderFactory::getLoader();
+        /** @var LoaderInterface $loader */
+        $loader             = LoaderFactory::getLoader();
         $this->core_config  = $core_config instanceof EE_Core_Config
             ? $core_config
-            : $this->loader->getShared('EE_Core_Config');
+            : $loader->getShared('EE_Core_Config');
         $this->request      = $request instanceof Request
             ? $request
-            : $this->loader->getShared('EventEspresso\core\services\request\Request');
+            : $loader->getShared('EventEspresso\core\services\request\Request');
         $this->session      = $session instanceof EE_Session
             ? $session
-            : $this->loader->getShared('EE_Session');
+            : $loader->getShared('EE_Session');
         $this->ticket_model = $ticket_model instanceof EEM_Ticket
             ? $ticket_model
-            : $this->loader->getShared('EEM_Ticket');
+            : $loader->getShared('EEM_Ticket');
         $this->tracker      = $tracker instanceof TicketDatetimeAvailabilityTracker
             ? $tracker
-            : $this->loader->getShared('EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker');
+            : $loader->getShared('EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker');
     }
 
 
     /**
      * cancelTicketSelections
      *
-     * @return        string
+     * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -128,17 +124,16 @@ class ProcessTicketSelector
         }
         $this->session->clear_session(__CLASS__, __FUNCTION__);
         if ($this->request->requestParamIsSet('event_id')) {
-            wp_safe_redirect(
+            EEH_URL::safeRedirectAndExit(
                 EEH_Event_View::event_link_url(
                     $this->request->getRequestParam('event_id')
                 )
             );
-        } else {
-            wp_safe_redirect(
-                site_url('/' . $this->core_config->event_cpt_slug . '/')
-            );
         }
-        exit();
+        EEH_URL::safeRedirectAndExit(
+            site_url('/' . $this->core_config->event_cpt_slug . '/')
+        );
+        return true;
     }
 
 
@@ -193,13 +188,12 @@ class ProcessTicketSelector
     {
         do_action('EED_Ticket_Selector__process_ticket_selections__before');
         if($this->request->isBot()) {
-            wp_safe_redirect(
+            EEH_URL::safeRedirectAndExit(
                 apply_filters(
                     'FHEE__EE_Ticket_Selector__process_ticket_selections__bot_redirect_url',
                     site_url()
                 )
             );
-            exit();
         }
         // do we have an event id?
         $id = $this->getEventId();
@@ -228,14 +222,10 @@ class ProcessTicketSelector
             return false;
         }
         if ($valid['return_url']) {
-            EE_Error::get_notices(false, true);
-            wp_safe_redirect($valid['return_url']);
-            exit();
+            EEH_URL::safeRedirectAndExit($valid['return_url']);
         }
         if ($id) {
-            EE_Error::get_notices(false, true);
-            wp_safe_redirect(get_permalink($id));
-            exit();
+            EEH_URL::safeRedirectAndExit(get_permalink($id));
         }
         echo EE_Error::get_notices();
         return false;
@@ -322,6 +312,7 @@ class ProcessTicketSelector
                         $row_qty = $input_value;
                         // if qty is coming from a radio button input, then we need to assemble an array of rows
                         if (! is_array($row_qty)) {
+                            /** @var string $row_qty */
                             // get number of rows
                             $rows = $this->request->requestParamIsSet('tkt-slctr-rows-' . $id)
                                 ? absint($this->request->getRequestParam('tkt-slctr-rows-' . $id))
@@ -529,7 +520,7 @@ class ProcessTicketSelector
      */
     private function processSuccessfulCart($tickets_added)
     {
-        // die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
+        // exit('KILL REDIRECT BEFORE CART UPDATE'); // <<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
         if (apply_filters('FHEE__EED_Ticket_Selector__process_ticket_selections__success', $tickets_added)) {
             // make sure cart is loaded
             if(! $this->cart  instanceof EE_Cart){
@@ -547,14 +538,12 @@ class ProcessTicketSelector
             if ($this->request->isAdmin() || $this->request->isFrontAjax()) {
                 return true;
             }
-            EE_Error::get_notices(false, true);
-            wp_safe_redirect(
+            EEH_URL::safeRedirectAndExit(
                 apply_filters(
                     'FHEE__EE_Ticket_Selector__process_ticket_selections__success_redirect_url',
                     $this->core_config->reg_page_url()
                 )
             );
-            exit();
         }
         if (! EE_Error::has_error() && ! EE_Error::has_error(true, 'attention')) {
             // nothing added to cart
