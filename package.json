@@ -32,6 +32,7 @@
     "webpack-merge": "^4.1.1"
   },
   "dependencies": {
+    "@eventespresso/react-exit-modal-typeform": "^1.0.4",
     "@wordpress/dom-ready": "^1.0.2",
     "classnames": "^2.2.5",
     "lodash": "4.17.4",

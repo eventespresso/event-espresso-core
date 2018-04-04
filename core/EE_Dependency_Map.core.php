@@ -680,6 +680,9 @@ class EE_Dependency_Map
                 null,
                 'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\domain\services\admin\ExitModal' => array(
+                'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache
+            ),
             'EventEspresso\caffeinated\modules\recaptcha_invisible\InvisibleRecaptcha' => array(
                 'EE_Registration_Config' => EE_Dependency_Map::load_from_cache,
                 'EE_Session'             => EE_Dependency_Map::load_from_cache,

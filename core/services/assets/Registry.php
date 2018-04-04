@@ -163,6 +163,7 @@ class Registry
         $this->loadJqueryValidate();
         $this->loadAccountingJs();
         $this->loadQtipJs();
+        $this->registerAdminAssets();
     }
 
 
@@ -613,5 +614,28 @@ class Registry
         }
     }
 
+
+    /**
+     * Registers assets that are used in the WordPress admin.
+     */
+    private function registerAdminAssets()
+    {
+        wp_register_script(
+            'ee-exit-modal-survey',
+            $this->getAssetUrl(self::ASSET_NAMESPACE, 'exit-modal-survey', self::ASSET_TYPE_JS),
+            array(
+                'jquery',
+                'ee-vendor-react'
+            ),
+            null,
+            true
+        );
+        wp_register_style(
+            'ee-exit-modal-survey',
+            $this->getAssetUrl(self::ASSET_NAMESPACE, 'exit-modal-survey', self::ASSET_TYPE_CSS),
+            array(),
+            null
+        );
+    }
 
 }

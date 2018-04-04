@@ -50,6 +50,9 @@ config = [
         configName: 'base',
         entry: {
             reactVendor: reactVendorPackages,
+            'exit-modal-survey': [
+                assets + 'exit-modal-survey/index.js'
+            ],
         },
         externals,
         output: {
