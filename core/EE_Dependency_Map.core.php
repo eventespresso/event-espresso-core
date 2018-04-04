@@ -680,6 +680,7 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\entities\editor\EditorBlockCollection' => EE_Dependency_Map::load_from_cache,
                 'EE_Request'                                                      => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\Domain'                                => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache
             ),
             'EventEspresso\core\services\editor\EditorBlockAdminManager'      => array(
                 'EE_Request'                       => EE_Dependency_Map::load_from_cache,
