@@ -3,7 +3,24 @@ const AssetsPlugin = require('assets-webpack-plugin');
 const path = require('path');
 let common = require('./webpack.common.js');
 const webpack = require('webpack');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 common.forEach((config, index) => {
+    if (common[index].configName === 'base') {
+        common[index].plugins = [
+            new CleanWebpackPlugin(['assets/dist']),
+            new ExtractTextPlugin('ee-[name].[contenthash].dist.css'),
+            new webpack.HashedModuleIdsPlugin(),
+            new webpack.optimize.CommonsChunkPlugin({
+                name: 'reactVendor',
+                minChunks: Infinity,
+            }),
+            new webpack.optimize.CommonsChunkPlugin({
+                name: 'manifest',
+                minChunks: Infinity,
+            }),
+        ]
+    }
     common[index] = merge(config,{
         devtool: 'source-map',
         plugins: [
@@ -24,6 +41,8 @@ common.forEach((config, index) => {
               update: true
             })
         ]
-    })
+    });
+    //delete temporary named config item so no config errors
+    delete common[index].configName;
 });
 module.exports = common;

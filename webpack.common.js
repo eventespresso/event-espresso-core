@@ -1,6 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
 const assets = './assets/src/';
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const combineLoaders = require('webpack-combine-loaders');
@@ -21,6 +19,7 @@ const reactVendorPackages = [
  /** https://webpack.js.org/configuration/configuration-types/#exporting-multiple-configurations */
 config = [
     {
+        configName: 'eejs',
         externals: {
             '@eventespresso/eejs': {
                 this: 'eejs',
@@ -41,32 +40,17 @@ config = [
             ],
         },
         output: {
-            filename: '[name].[chunkhash].dist.js',
+            filename: 'ee-[name].[chunkhash].dist.js',
             path: path.resolve(__dirname, 'assets/dist'),
             library: ['eejs'],
             libraryTarget: 'this',
         },
     },
     {
+        configName: 'base',
         entry: {
             reactVendor: reactVendorPackages,
-            //example
-            // 'ee-shortcode-blocks': [
-            //     assets + 'blocks/index.js'
-            // ],
         },
-        plugins: [
-            new CleanWebpackPlugin(['assets/dist']),
-            new ExtractTextPlugin('ee-[name].[contenthash].dist.css'),
-            new webpack.NamedModulesPlugin(),
-            new webpack.optimize.CommonsChunkPlugin({
-                name: 'reactVendor',
-                minChunks: Infinity,
-            }),
-            new webpack.optimize.CommonsChunkPlugin({
-                name: 'manifest',
-            }),
-        ],
         externals,
         output: {
             filename: 'ee-[name].[chunkhash].dist.js',
