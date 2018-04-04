@@ -138,7 +138,7 @@ class Registry
         );
         wp_register_script(
             'ee-vendor-react',
-            $this->getAssetUrl(self::ASSET_NAMESPACE, 'vendorReact', self::ASSET_TYPE_JS),
+            $this->getAssetUrl(self::ASSET_NAMESPACE, 'reactVendor', self::ASSET_TYPE_JS),
             array('eejs-core'),
             null,
             true
