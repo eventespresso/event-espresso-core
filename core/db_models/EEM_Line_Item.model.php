@@ -50,13 +50,14 @@ class EEM_Line_Item extends EEM_Base
     /**
      * Tax sub-total is just the total of all the taxes, which should be children
      * of this line item. There should only ever be one tax sub-total, and it should
-     * be a direct child of
+     * be a direct child of. Its quantity and LIN_unit_price = 1.
      */
     const type_tax_sub_total = 'tax-sub-total';
 
     /**
      * Tax line items indicate a tax applied to all the taxable line items.
-     * Should not have any children line items.
+     * Should not have any children line items. Its LIN_unit_price = 0. Its LIN_percent is a percent, not a decimal
+     * (eg 10% tax = 10, not 0.1). Its LIN_total = LIN_unit_price * pre-tax-total. Quantity = 1.
      */
     const type_tax = 'tax';
 
@@ -64,27 +65,38 @@ class EEM_Line_Item extends EEM_Base
      * Indicating individual items purchased, or discounts or surcharges.
      * The sum of all the regular line items  plus the tax items should equal
      * the grand total.
-     * Possible children fo sub-line-items and cancellations.
+     * Possible children are sub-line-items and cancellations.
+     * For flat items, LIN_unit_price * LIN_quantity = LIN_total. Its LIN_total is the sum of all the children
+     * LIN_totals. Its LIN_percent = 0.
+     * For percent items, its LIN_unit_price = 0. Its LIN_percent is a percent, not a decimal (eg 10% = 10, not 0.1).
+     * Its LIN_total is LIN_percent / 100 * sum of lower-priority sibling line items. Quantity = 1.
      */
     const type_line_item = 'line-item';
 
     /**
-     * line item indicating all the factors that make a single line item.
+     * Line item indicating all the factors that make a single line item.
      * Sub-line items should have NO children line items.
+     * For flat sub-items, their quantity should match their parent item, their LIN_unit_price should be this sub-item's
+     * contribution towards the price of ONE of their parent items, and its LIN_total should be
+     *  = LIN_quantity * LIN_unit_price. Its LIN_percent = 0.
+     * For percent sub-items, the quantity should be 1, LIN_unit_price should be 0, and its LIN_total should
+     * = LIN_percent / 100 * sum of lower-priority sibling line items..
      */
     const type_sub_line_item = 'sub-item';
 
     /**
-     * line item indicating a sub-total (eg total for an event, or before taxes).
-     * Direct children can be line items and other sub-totals
+     * Line item indicating a sub-total (eg total for an event, or pre-tax subtotal).
+     * Direct children should be event subtotals.
+     * Should have quantity of 1, and a LIN_total and LIN_unit_price of the sum of all its sub-items' LIN_totals.
      *
      */
     const type_sub_total = 'sub-total';
 
     /**
-     * line item for teh grand total of an order. Its direct children
-     * should be tax subtotals and subtotals, and possibly a regular line item
-     * indicating a transaction-wide discount/surcharge
+     * Line item for the grand total of an order. Its direct children
+     * should be tax subtotals and (pre-tax) subtotals, and possibly a regular line item
+     * indicating a transaction-wide discount/surcharge. Should have a quantity of 1, a LIN_total and LIN_unit_price of
+     * the entire order's mount.
      */
     const type_total = 'total';
 
@@ -98,6 +110,7 @@ class EEM_Line_Item extends EEM_Base
      * to teh payment model object which actually refunded the payment.
      * Cancellations should NOT have any children line items; the should NOT affect
      * any calculations, and are only meant as a record that cancellations have occurred.
+     * Their LIN_percent should be 0.
      */
     const type_cancellation = 'cancellation';
 

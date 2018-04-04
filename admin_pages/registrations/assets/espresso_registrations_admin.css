@@ -212,6 +212,12 @@
 
 .tkt-slctr-tbl .tckt-slctr-tbl-td-qty { padding-right : 0; }
 
+@media only screen and (max-width: 600px) {
+    .tkt-slctr-tbl {
+        min-width: auto;
+    } 
+}
+
 /** Check-in status manipulation **/
 
 /**never checked in**/

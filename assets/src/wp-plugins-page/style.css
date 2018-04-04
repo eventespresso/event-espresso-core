@@ -1,0 +1,10 @@
+/** styles for plugin upsells **/
+.ee-upsell-container {
+    padding: 20px;
+}
+
+.ee-upsell-inner-container {
+    float: left;
+    display: inline-block;
+    margin-right: 10px;
+}
