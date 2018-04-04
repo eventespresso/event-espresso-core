@@ -11,6 +11,7 @@ use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\collections\CollectionDetails;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
@@ -84,12 +85,13 @@ class EditorBlockRegistrationManager extends EditorBlockManager
                 // FQCNs for classes to add (all classes within each namespace will be loaded)
                 apply_filters(
                     'FHEE__EventEspresso_core_services_editor_EditorBlockManager__populateEditorBlockCollection__collection_FQCNs',
-                    array(
-                        'EventEspresso\core\domain\entities\editor\blocks\common',
-                        'EventEspresso\core\domain\entities\editor\blocks\editor',
-                        'EventEspresso\core\domain\entities\editor\blocks\shortcodes',
-                        'EventEspresso\core\domain\entities\editor\blocks\widgets',
-                    )
+                    array()
+                    // array(
+                    //     'EventEspresso\core\domain\entities\editor\blocks\common',
+                    //     'EventEspresso\core\domain\entities\editor\blocks\editor',
+                    //     'EventEspresso\core\domain\entities\editor\blocks\shortcodes',
+                    //     'EventEspresso\core\domain\entities\editor\blocks\widgets',
+                    // )
                 ),
                 // filepaths to classes to add
                 array(),
@@ -173,14 +175,16 @@ class EditorBlockRegistrationManager extends EditorBlockManager
     {
         wp_register_script(
             'ee-core-blocks',
-            $this->domain->distributionAssetsUrl() . 'ee-core-blocks.dist.js',
+            $this->assets_registry->getAssetUrl(Registry::ASSET_NAMESPACE, 'core-blocks', Registry::ASSET_TYPE_JS),
             array(
+                'eejs-core',
                 'wp-blocks',    // Provides useful functions and components for extending the editor
                 'wp-i18n',      // Provides localization functions
                 'wp-element',   // Provides React.Component
                 'wp-components' // Provides many prebuilt components and controls
             ),
-            filemtime($this->domain->distributionAssetsPath() . 'ee-core-blocks.dist.js')
+            null,
+            true
         );
     }
 
