@@ -37,8 +37,6 @@ class RegisterCustomTaxonomies
         $this->custom_taxonomies = $custom_taxonomies;
     }
 
-    // WP_Error|void WP_Error, if errors.
-
 
     /**
      * @return void
