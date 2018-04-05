@@ -2,6 +2,9 @@
 
 namespace EventEspresso\core\services;
 
+use EE_Error;
+use EEH_File;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -234,11 +237,11 @@ class Benchmark
     }
 
 
-
     /**
      * @param string $filepath
      * @param bool   $formatted
      * @param bool   $append
+     * @throws EE_Error
      */
     public static function writeResultsToFile($filepath = '', $formatted = true, $append = true)
     {
@@ -248,6 +251,7 @@ class Benchmark
         if( empty($filepath)) {
             $filepath = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-' . date('Y-m-d') . '.html';
         }
+        EEH_File::ensure_file_exists_and_is_writable($filepath);
         file_put_contents(
             $filepath,
             "\n" . date('Y-m-d H:i:s') . Benchmark::generateResults($formatted),

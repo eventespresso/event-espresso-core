@@ -448,6 +448,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws RuntimeException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     private function _set_transaction_object()
     {
@@ -666,6 +667,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws RuntimeException
+     * @throws ReflectionException
      */
     protected function _transaction_details()
     {
@@ -695,34 +697,6 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
         $this->_template_args['grand_total'] = $this->_transaction->get('TXN_total');
         $this->_template_args['total_paid']  = $this->_transaction->get('TXN_paid');
-
-        if ($attendee instanceof EE_Attendee
-            && EE_Registry::instance()->CAP->current_user_can(
-                'ee_send_message',
-                'espresso_transactions_send_payment_reminder'
-            )
-        ) {
-            $this->_template_args['send_payment_reminder_button'] =
-                EEH_MSG_Template::is_mt_active('payment_reminder')
-                && $this->_transaction->get('STS_ID') !== EEM_Transaction::complete_status_code
-                && $this->_transaction->get('STS_ID') !== EEM_Transaction::overpaid_status_code
-                    ? EEH_Template::get_button_or_link(
-                        EE_Admin_Page::add_query_args_and_nonce(
-                            array(
-                                'action'      => 'send_payment_reminder',
-                                'TXN_ID'      => $this->_transaction->ID(),
-                                'redirect_to' => 'view_transaction',
-                            ),
-                            TXN_ADMIN_URL
-                        ),
-                        __(' Send Payment Reminder', 'event_espresso'),
-                        'button secondary-button right',
-                        'dashicons dashicons-email-alt'
-                    )
-                    : '';
-        } else {
-            $this->_template_args['send_payment_reminder_button'] = '';
-        }
 
         $amount_due = $this->_transaction->get('TXN_total') - $this->_transaction->get('TXN_paid');
         $this->_template_args['amount_due'] = EEH_Template::format_currency(
@@ -860,6 +834,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws RuntimeException
+     * @throws ReflectionException
      */
     protected function _transaction_details_metaboxes()
     {
@@ -903,10 +878,93 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
 
     /**
+     * Callback for transaction actions metabox.
+     *
+     * @param EE_Transaction|null $transaction
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     */
+    public function getActionButtons(EE_Transaction $transaction = null)
+    {
+        $content = '';
+        $actions = array();
+        if (! $transaction instanceof EE_Transaction) {
+            return $content;
+        }
+        /** @var EE_Registration $primary_registration */
+        $primary_registration = $transaction->primary_registration();
+        $attendee = $primary_registration instanceof EE_Registration
+            ? $primary_registration->attendee()
+            : null;
+
+        if ($attendee instanceof EE_Attendee
+            && EE_Registry::instance()->CAP->current_user_can(
+                'ee_send_message',
+                'espresso_transactions_send_payment_reminder'
+            )
+        ) {
+            $actions['payment_reminder'] =
+                EEH_MSG_Template::is_mt_active('payment_reminder')
+                && $this->_transaction->get('STS_ID') !== EEM_Transaction::complete_status_code
+                && $this->_transaction->get('STS_ID') !== EEM_Transaction::overpaid_status_code
+                    ? EEH_Template::get_button_or_link(
+                        EE_Admin_Page::add_query_args_and_nonce(
+                            array(
+                                'action'      => 'send_payment_reminder',
+                                'TXN_ID'      => $this->_transaction->ID(),
+                                'redirect_to' => 'view_transaction',
+                            ),
+                            TXN_ADMIN_URL
+                        ),
+                        esc_html__(' Send Payment Reminder', 'event_espresso'),
+                        'button secondary-button',
+                        'dashicons dashicons-email-alt'
+                    )
+                    : '';
+        }
+
+        if ($primary_registration instanceof EE_Registration
+            && EEH_MSG_Template::is_mt_active('receipt')
+        ) {
+            $actions['receipt'] = EEH_Template::get_button_or_link(
+                $primary_registration->receipt_url(),
+                esc_html__('View Receipt', 'event_espresso'),
+                'button secondary-button',
+                'dashicons dashicons-media-default'
+            );
+        }
+
+        if ($primary_registration instanceof EE_Registration
+            && EEH_MSG_Template::is_mt_active('invoice')
+        ) {
+            $actions['invoice'] = EEH_Template::get_button_or_link(
+                $primary_registration->invoice_url(),
+                esc_html__('View Invoice', 'event_espresso'),
+                'button secondary-button',
+                'dashicons dashicons-media-spreadsheet'
+            );
+        }
+        $actions = array_filter(
+            apply_filters('FHEE__Transactions_Admin_Page__getActionButtons__actions', $actions, $transaction)
+        );
+        if ($actions) {
+            $content = '<ul>';
+            $content .= '<li>' . implode('</li><li>', $actions) . '</li>';
+            $content .= '</uL>';
+        }
+        return $content;
+    }
+
+
+    /**
      * txn_details_meta_box
      * generates HTML for the Transaction main meta box
      *
-     * @access public
      * @return void
      * @throws DomainException
      * @throws EE_Error
@@ -914,10 +972,10 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws RuntimeException
+     * @throws ReflectionException
      */
     public function txn_details_meta_box()
     {
-
         $this->_set_transaction_object();
         $this->_template_args['TXN_ID']   = $this->_transaction->ID();
         $this->_template_args['attendee'] = $this->_transaction->primary_registration() instanceof EE_Registration
@@ -1062,6 +1120,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
             'action' => 'espresso_delete_payment',
         ), WP_AJAX_URL);
 
+        $this->_template_args['action_buttons'] = $this->getActionButtons($this->_transaction);
+
         // 'espresso_delete_payment_nonce'
 
         $template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_txn_details.template.php';
@@ -1080,6 +1140,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _get_registration_payment_IDs($payments = array())
     {
@@ -1257,6 +1318,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     private function _get_payment_methods($payments = array())
     {
@@ -1409,6 +1471,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function txn_registrant_side_meta_box()
     {
@@ -1564,6 +1627,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * _validate_payment_request_data
      *
      * @return array
+     * @throws EE_Error
      */
     protected function _validate_payment_request_data()
     {
@@ -1609,6 +1673,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * _generate_payment_form_section
      *
      * @return EE_Form_Section_Proper
+     * @throws EE_Error
      */
     protected function _generate_payment_form_section()
     {
@@ -2006,6 +2071,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _build_payment_json_response(
         EE_Payment $payment,
@@ -2145,6 +2211,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _registration_payment_data_array($REG_IDs)
     {

@@ -21,7 +21,8 @@
     "src\/wp-assets\/**",
     "src\/.travis.yml",
     "src\/ISSUE_TEMPLATE.md",
-    "src\/PULL_REQUEST_TEMPLATE.md"
+    "src\/PULL_REQUEST_TEMPLATE.md",
+    "src\/assets\/src\/**"
   ],
   "decafFilesRemove": [
     "src\/tests\/**",
@@ -33,7 +34,8 @@
     "src\/caffeinated",
     "src\/wp-assets\/**",
     "src\/ISSUE_TEMPLATE.md",
-    "src\/PULL_REQUEST_TEMPLATE.md"
+    "src\/PULL_REQUEST_TEMPLATE.md",
+    "src\/assets\/src\/**"
   ],
   "github": true,
   "awsbucket": "",

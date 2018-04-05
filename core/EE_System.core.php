@@ -1,8 +1,16 @@
 <?php
 
-use \EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;
+use EventEspresso\core\domain\Domain;
+use EventEspresso\core\domain\DomainFactory;
 use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
+use EventEspresso\core\domain\values\FilePath;
+use EventEspresso\core\domain\values\FullyQualifiedName;
+use EventEspresso\core\domain\values\Version;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidFilePathException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
@@ -910,16 +918,31 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks
      * that need to be setup before our EE_System launches.
      *
      * @return void
+     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidClassException
+     * @throws InvalidFilePathException
      */
     private function _maybe_brew_regular()
     {
-        if ((! defined('EE_DECAF') || EE_DECAF !== true) && is_readable(EE_CAFF_PATH . 'brewing_regular.php')) {
+        /** @var Domain $domain */
+        $domain = DomainFactory::getShared(
+            new FullyQualifiedName(
+                'EventEspresso\core\domain\Domain'
+            ),
+            array(
+                new FilePath(EVENT_ESPRESSO_MAIN_FILE),
+                Version::fromString(espresso_version())
+            )
+        );
+        if ($domain->isCaffeinated()) {
             require_once EE_CAFF_PATH . 'brewing_regular.php';
         }
     }
@@ -1052,6 +1075,7 @@ final class EE_System implements ResettableInterface
     {
         $this->_deactivate_incompatible_addons();
         do_action('AHEE__EE_System__set_hooks_for_core');
+        $this->loader->getShared('EventEspresso\core\domain\values\session\SessionLifespan');
         //caps need to be initialized on every request so that capability maps are set.
         //@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
         $this->registry->CAP->init_caps();
@@ -1089,10 +1113,6 @@ final class EE_System implements ResettableInterface
      */
     public function perform_activations_upgrades_and_migrations()
     {
-        //first check if we had previously attempted to setup EE's directories but failed
-        if ($this->request->isActivation() && EEH_Activation::upload_directories_incomplete()) {
-            EEH_Activation::create_upload_directories();
-        }
         do_action('AHEE__EE_System__perform_activations_upgrades_and_migrations');
     }
 

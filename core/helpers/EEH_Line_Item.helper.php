@@ -29,14 +29,11 @@ class EEH_Line_Item
 
 
     /**
-     * Adds a simple item ( unrelated to any other model object) to the total line item
-     * in the correct spot in the line item tree (also verifying it doesn't add a duplicate based on the LIN_code)
-     * beneath the pre-tax-total (alongside event subtotals).
-     * Automatically re-calculates the line item totals and updates the related transaction. But
-     * DOES NOT automatically upgrade the transaction's registrations' final prices (which
-     * should probably change because of this).
-     * You should call EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
-     * after using this, to keep the registration final prices in-sync with the transaction's total.
+     * Adds a simple item (unrelated to any other model object) to the provided PARENT line item.
+     * Does NOT automatically re-calculate the line item totals or update the related transaction.
+     * You should call recalculate_total_including_taxes() on the grant total line item after this
+     * to update the subtotals, and EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
+     * to keep the registration final prices in-sync with the transaction's total.
      *
      * @param EE_Line_Item $parent_line_item
      * @param string $name
@@ -96,7 +93,7 @@ class EEH_Line_Item
             'LIN_desc' => $description,
             'LIN_unit_price' => 0,
             'LIN_percent' => $percentage_amount,
-            'LIN_quantity' => NULL,
+            'LIN_quantity' => 1,
             'LIN_is_taxable' => $taxable,
             'LIN_total' => (float)($percentage_amount * ($parent_line_item->total() / 100)),
             'LIN_type' => EEM_Line_Item::type_line_item,

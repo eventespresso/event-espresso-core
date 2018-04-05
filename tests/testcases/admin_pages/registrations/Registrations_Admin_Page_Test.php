@@ -26,14 +26,32 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
     protected $_admin_page;
 
 
+    /**
+     * @var string
+     */
+    protected $original_timezone_string;
+
+
+
     public function setUp()
     {
         parent::setUp();
+        $this->original_timezone_string = get_option('timezone_string');
+        //set timezone of site to 'America/Vancouver' for tests.
+        update_option('timezone_string', 'America/Vancover');
         $this->delayedAdminPageMocks('registrations');
         //need to set a user with registration privileges for default queries in the admin.
         $user = $this->factory->user->create_and_get();
         $user->add_role('administrator');
         wp_set_current_user( $user->ID );
+    }
+
+
+    public function tearDown()
+    {
+        //restore timezone to original setting
+        update_option('timezone_string', $this->original_timezone_string);
+        parent::tearDown();
     }
 
 
@@ -117,6 +135,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         // echo "\n\n now : " . $now->format( 'M j, Y g:i a' );
         // echo "\n prev: " . $prev_month->format( 'M j, Y g:i a' );
         // echo "\n next: " . $next_month->format( 'M j, Y g:i a' );
+
         //let's setup some registrations to test.
         // first create a txn
         /** @var EE_Transaction $transaction */
