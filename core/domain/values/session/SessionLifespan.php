@@ -104,11 +104,11 @@ class SessionLifespan
      *
      * @param bool $utc If true, displays expiration in UTC
      *                  If false, displays expiration in local time
-     * @return float
+     * @return int
      */
     public function expiration($utc = true)
     {
-        return current_time('timestamp', $utc) - $this->lifespan;
+        return (int) current_time('timestamp', $utc) - $this->lifespan;
     }
 
 
