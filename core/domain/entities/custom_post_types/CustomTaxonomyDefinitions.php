@@ -29,7 +29,7 @@ class CustomTaxonomyDefinitions
     public function __construct()
     {
         $this->setTaxonomies();
-        add_filter('pre_term_description', array($this, 'ee_filter_ee_term_description_not_wp'), 1, 2);
+        add_filter('pre_term_description', array($this, 'filterCustomTermDescription'), 1, 2);
     }
 
 
