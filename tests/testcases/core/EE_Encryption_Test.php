@@ -53,6 +53,20 @@ class EE_Encryption_Test extends EE_UnitTestCase
     /**
      * @return string
      */
+    private function generatePropertyOrKeyName()
+    {
+        $property = str_replace(' ', '', $this->generateRandomString(mt_rand(5, 10)));
+        if(empty($property)) {
+            return $this->generatePropertyOrKeyName();
+        }
+        return $property;
+    }
+
+
+
+    /**
+     * @return string
+     */
     private function getString()
     {
         return 'LPT: Change all of your passwords to "incorrect" so that your computer just tells you when you forget!';
@@ -68,7 +82,9 @@ class EE_Encryption_Test extends EE_UnitTestCase
         $array = array();
         $array_size = mt_rand(5, 10);
         for ($x = 0; $x <= $array_size; $x++) {
-            $key = mt_rand(0, 1) ? trim($this->generateRandomString(mt_rand(5, 10))) : count($array);
+            $key = mt_rand(0, 1)
+                ? $this->generatePropertyOrKeyName()
+                : count($array);
             $array[$key] = $this->generateRandomString(mt_rand(10, 50));
         }
         return $array;
@@ -84,7 +100,7 @@ class EE_Encryption_Test extends EE_UnitTestCase
         $object = new stdClass();
         $array_size = mt_rand(5, 10);
         for ($x = 0; $x <= $array_size; $x++) {
-            $property = trim($this->generateRandomString(mt_rand(5, 10)));
+            $property = $this->generatePropertyOrKeyName();
             $object->{$property} = $this->generateRandomString(mt_rand(10, 50));
         }
         return $object;
