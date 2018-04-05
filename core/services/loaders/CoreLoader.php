@@ -29,7 +29,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- *
  */
 class CoreLoader implements LoaderDecoratorInterface
 {
@@ -40,7 +39,6 @@ class CoreLoader implements LoaderDecoratorInterface
     private $generator;
 
 
-
     /**
      * CoreLoader constructor.
      *
@@ -49,7 +47,7 @@ class CoreLoader implements LoaderDecoratorInterface
      */
     public function __construct($generator)
     {
-        if(!($generator instanceof EE_Registry || $generator instanceof CoffeeShop)) {
+        if (! ($generator instanceof EE_Registry || $generator instanceof CoffeeShop)) {
             throw new InvalidArgumentException(
                 esc_html__(
                     'The CoreLoader class must receive an instance of EE_Registry or the CoffeeShop DI container.',
@@ -87,11 +85,12 @@ class CoreLoader implements LoaderDecoratorInterface
      * @throws ServiceNotFoundException
      * @throws ReflectionException
      * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function load($fqcn, $arguments = array(), $shared = true)
     {
         $shared = filter_var($shared, FILTER_VALIDATE_BOOLEAN);
-        if($this->generator instanceof EE_Registry) {
+        if ($this->generator instanceof EE_Registry) {
             // check if additional EE_Registry::create() arguments have been passed
             // from_db
             $from_db = isset($arguments['EE_Registry::create(from_db)'])
@@ -126,9 +125,7 @@ class CoreLoader implements LoaderDecoratorInterface
             $arguments,
             $shared ? CoffeeMaker::BREW_SHARED : CoffeeMaker::BREW_NEW
         );
-
     }
-
 
 
     /**
@@ -140,7 +137,6 @@ class CoreLoader implements LoaderDecoratorInterface
             $this->generator->reset();
         }
     }
-
 }
 // End of file CoreLoader.php
 // Location: core/services/loaders/CoreLoader.php

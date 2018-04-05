@@ -33,7 +33,6 @@ class ClassInterfaceCache
     protected $aliases = array();
 
 
-
     /**
      * @param string $fqn
      * @return string
@@ -42,7 +41,6 @@ class ClassInterfaceCache
     {
         return $fqn instanceof FullyQualifiedName ? $fqn->string() : $fqn;
     }
-
 
 
     /**
@@ -73,7 +71,7 @@ class ClassInterfaceCache
      */
     public function hasInterface($fqn, $interface)
     {
-        $fqn = $this->getFqn($fqn);
+        $fqn        = $this->getFqn($fqn);
         $interfaces = $this->getInterfaces($fqn);
         return in_array($interface, $interfaces, true);
     }
@@ -88,7 +86,7 @@ class ClassInterfaceCache
      */
     public function addAlias($fqn, $alias, $for_class = '')
     {
-        $fqn = $this->getFqn($fqn);
+        $fqn   = $this->getFqn($fqn);
         $alias = $this->getFqn($alias);
         if ($for_class !== '') {
             if (! isset($this->aliases[ $for_class ])) {
@@ -113,7 +111,7 @@ class ClassInterfaceCache
         if ($this->isAliasForClass($fqn, $for_class)) {
             return true;
         }
-        if($this->isDirectAlias($fqn)) {
+        if ($this->isDirectAlias($fqn)) {
             return true;
         }
         return false;
