@@ -68,7 +68,7 @@ class EE_Cart implements ResettableInterface
      */
     public static function instance(EE_Line_Item $grand_total = null, EE_Session $session = null)
     {
-        if ( ! empty($grand_total)) {
+        if ($grand_total instanceof EE_Line_Item && $grand_total->is_total()) {
             self::$_instance = new self($grand_total, $session);
         }
         // or maybe retrieve an existing one ?

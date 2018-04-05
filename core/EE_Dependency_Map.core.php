@@ -693,6 +693,16 @@ class EE_Dependency_Map
             'EventEspresso\caffeinated\modules\recaptcha_invisible\RecaptchaAdminSettings' => array(
                 'EE_Registration_Config' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\modules\ticket_selector\ProcessTicketSelector' => array(
+                'EE_Core_Config' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+                'EE_Session' => EE_Dependency_Map::load_from_cache,
+                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker' => array(
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+            ),
             'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions' => array(
                 'EE_Core_Config' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
