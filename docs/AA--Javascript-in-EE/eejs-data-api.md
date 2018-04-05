@@ -3,7 +3,7 @@
 One common problem encountered with WordPress development is transferring arbitrary data from php (the server) to javascript (client).  WordPress natively has [`wp_localize_script`](https://developer.wordpress.org/reference/functions/wp_localize_script/) to assist with that and it usually is sufficient.  However, one caveat with `wp_localize_script` is you need to define a reference to the js object that will hold that arbitrary data and attach it to the script needing it.  This creates some potential issues such as:
 
 - Greater chance of collisions between other scripts that register a data object named the same.
-- Greater chance of duplicating setting the same data across multiple inline js objects.
+- Greater chance of setting the same data across multiple inline js objects.
 - Somewhat complicates importing and using that data in any js build process.
 
 To help with some of these issues, Event Espresso has developed an api for registering data to a global object.  This api is represented in two contexts: php, and js.
