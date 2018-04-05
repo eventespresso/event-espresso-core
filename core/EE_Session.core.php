@@ -241,7 +241,6 @@ class EE_Session implements SessionIdentifierInterface
         // are we using encryption?
         $this->_use_encryption = $encryption instanceof EE_Encryption
                                  && EE_Registry::instance()->CFG->admin->encode_session_data();
-        // \EEH_Debug_Tools::printr($this->_use_encryption, '$this->_use_encryption', __FILE__, __LINE__);
         // encrypt data via: $this->encryption->encrypt();
         $this->encryption = $encryption;
         // filter hook allows outside functions/classes/plugins to change default empty cart
@@ -531,17 +530,29 @@ class EE_Session implements SessionIdentifierInterface
      */
     public function set_session_data($data)
     {
-
         // nothing ??? bad data ??? go home!
         if (empty($data) || ! is_array($data)) {
-            EE_Error::add_error(__('No session data or invalid session data was provided.', 'event_espresso'), __FILE__,
-                __FUNCTION__, __LINE__);
+            EE_Error::add_error(
+                esc_html__(
+                    'No session data or invalid session data was provided.',
+                    'event_espresso'
+                ),
+                __FILE__, __FUNCTION__, __LINE__
+            );
             return false;
         }
         foreach ($data as $key => $value) {
             if (isset($this->_default_session_vars[ $key ])) {
-                EE_Error::add_error(sprintf(__('Sorry! %s is a default session datum and can not be reset.',
-                    'event_espresso'), $key), __FILE__, __FUNCTION__, __LINE__);
+                EE_Error::add_error(
+                    sprintf(
+                        esc_html__(
+                            'Sorry! %s is a default session datum and can not be reset.',
+                            'event_espresso'
+                        ),
+                        $key
+                    ),
+                    __FILE__, __FUNCTION__, __LINE__
+                );
                 return false;
             }
             $this->_session_data[ $key ] = $value;
@@ -999,6 +1010,11 @@ class EE_Session implements SessionIdentifierInterface
      */
     public function clear_session($class = '', $function = '')
     {
+//         echo '
+// <h3 style="color:#999;line-height:.9em;">
+// <span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '( ' . $class . '::' . $function . '() )</span><br/>
+// <span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b>
+// </h3>';
         do_action('AHEE_log', __FILE__, __FUNCTION__, 'session cleared by : ' . $class . '::' . $function . '()');
         $this->reset_cart();
         $this->reset_checkout();

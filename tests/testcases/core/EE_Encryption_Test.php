@@ -9,7 +9,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
+ *
  */
 class EE_Encryption_Test extends EE_UnitTestCase
 {
@@ -21,7 +21,9 @@ class EE_Encryption_Test extends EE_UnitTestCase
     protected $encryption;
 
 
-
+    /**
+     * @throws EE_Error
+     */
     public function setUp()
     {
         parent::setUp();
@@ -89,24 +91,39 @@ class EE_Encryption_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @param string $encrypt
      * @param string $decrypt
      * @param        $data
+     * @param string $cipher_method
      */
-    private function runEncryptionTest($encrypt, $decrypt, $data)
+    private function runEncryptionTest($encrypt, $decrypt, $data, $cipher_method = '')
     {
-        $this->assertEquals(
-            $data,
-            unserialize(
-                $this->encryption->{$decrypt}(
-                    $this->encryption->{$encrypt}(
-                        serialize($data)
+        if($cipher_method !== '') {
+            $this->assertEquals(
+                $data,
+                unserialize(
+                    $this->encryption->{$decrypt}(
+                        $this->encryption->{$encrypt}(
+                            serialize($data),
+                            $cipher_method
+                        ),
+                        $cipher_method
                     )
                 )
-            )
-        );
+            );
+        } else {
+            $this->assertEquals(
+                $data,
+                unserialize(
+                    $this->encryption->{$decrypt}(
+                        $this->encryption->{$encrypt}(
+                            serialize($data)
+                        )
+                    )
+                )
+            );
+        }
     }
 
 
@@ -122,7 +139,6 @@ class EE_Encryption_Test extends EE_UnitTestCase
             $key
         );
     }
-
 
 
     /**
@@ -156,6 +172,47 @@ class EE_Encryption_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * @requires function openssl_encrypt
+     * @return void
+     * @throws RuntimeException
+     */
+    public function testOpensslEncryptionWithCipherMethods()
+    {
+        $cipher_methods = openssl_get_cipher_methods();
+        foreach ($cipher_methods as $cipher_method) {
+            // only use ciphers that produce a vector
+            if(openssl_cipher_iv_length($cipher_method) !== false){
+                // with strings
+                $this->assertEquals(
+                    $this->getString(),
+                    $this->encryption->openssl_decrypt(
+                        $this->encryption->openssl_encrypt(
+                            $this->getString(),
+                            $cipher_method
+                        ),
+                        $cipher_method
+                    )
+                );
+                // with arrays
+                $this->runEncryptionTest(
+                    'openssl_encrypt',
+                    'openssl_decrypt',
+                    $this->getArrayData(),
+                    $cipher_method
+                );
+                // with objects
+                $this->runEncryptionTest(
+                    'openssl_encrypt',
+                    'openssl_decrypt',
+                    $this->getObjectData(),
+                    $cipher_method
+                );
+            }
+        }
+    }
+
+
 
     /**
      * @requires function mcrypt_encrypt
@@ -164,7 +221,7 @@ class EE_Encryption_Test extends EE_UnitTestCase
      */
     public function testMcryptEncryption()
     {
-        if (version_compare(PHP_VERSION, '7.1', '>=')) {
+        if (PHP_VERSION_ID >= 70100) {
             $this->markTestSkipped(
                 'The mcrypt extension is deprecated in PHP version 7.1 and therefore can not be tested.'
             );
@@ -218,9 +275,9 @@ class EE_Encryption_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @return void
+     * @throws RuntimeException
      */
     public function testBase64StringEncoding()
     {
@@ -235,9 +292,9 @@ class EE_Encryption_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @return void
+     * @throws RuntimeException
      */
     public function testBase64UrlEncoding()
     {
@@ -251,9 +308,10 @@ class EE_Encryption_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * @throws PHPUnit_Framework_AssertionFailedError
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function testValidBase64()
     {

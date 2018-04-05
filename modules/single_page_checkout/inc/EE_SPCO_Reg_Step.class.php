@@ -481,54 +481,52 @@ abstract class EE_SPCO_Reg_Step
                     ),
                 )
             );
-        } else {
-            $default_form_action = apply_filters(
-                'FHEE__EE_SPCO_Reg_Step__reg_step_hidden_inputs__default_form_action',
-                empty($this->checkout->reg_url_link)
-                    ? 'process_reg_step'
-                    : 'update_reg_step',
-                $this
-            );
-            // hidden inputs for frontend registrations
-            return new EE_Form_Section_Proper(
-                array(
-                    'layout_strategy' => new EE_Div_Per_Section_Layout(),
-                    'html_id'         => 'ee-' . $this->slug() . '-hidden-inputs',
-                    'subsections'     => array(
-                        'action'         => new EE_Fixed_Hidden_Input(
-                            array(
-                                'html_name' => 'action',
-                                'html_id'   => 'spco-' . $this->slug() . '-action',
-                                'default'   => $default_form_action,
-                            )
-                        ),
-                        'next_step'      => new EE_Fixed_Hidden_Input(
-                            array(
-                                'html_name' => 'next_step',
-                                'html_id'   => 'spco-' . $this->slug() . '-next-step',
-                                'default'   => $this->checkout->next_step instanceof EE_SPCO_Reg_Step
-                                    ? $this->checkout->next_step->slug()
-                                    : '',
-                            )
-                        ),
-                        'e_reg_url_link' => new EE_Fixed_Hidden_Input(
-                            array(
-                                'html_name' => 'e_reg_url_link',
-                                'html_id'   => 'spco-reg_url_link',
-                                'default'   => $this->checkout->reg_url_link,
-                            )
-                        ),
-                        'revisit'        => new EE_Fixed_Hidden_Input(
-                            array(
-                                'html_name' => 'revisit',
-                                'html_id'   => 'spco-revisit',
-                                'default'   => $this->checkout->revisit,
-                            )
-                        ),
-                    ),
-                )
-            );
         }
+        // hidden inputs for frontend registrations
+        return new EE_Form_Section_Proper(
+            array(
+                'layout_strategy' => new EE_Div_Per_Section_Layout(),
+                'html_id'         => 'ee-' . $this->slug() . '-hidden-inputs',
+                'subsections'     => array(
+                    'action'         => new EE_Fixed_Hidden_Input(
+                        array(
+                            'html_name' => 'action',
+                            'html_id'   => 'spco-' . $this->slug() . '-action',
+                            'default'   => apply_filters(
+                                'FHEE__EE_SPCO_Reg_Step__reg_step_hidden_inputs__default_form_action',
+                                empty($this->checkout->reg_url_link)
+                                    ? 'process_reg_step'
+                                    : 'update_reg_step',
+                                $this
+                            ),
+                        )
+                    ),
+                    'next_step'      => new EE_Fixed_Hidden_Input(
+                        array(
+                            'html_name' => 'next_step',
+                            'html_id'   => 'spco-' . $this->slug() . '-next-step',
+                            'default'   => $this->checkout->next_step instanceof EE_SPCO_Reg_Step
+                                ? $this->checkout->next_step->slug()
+                                : '',
+                        )
+                    ),
+                    'e_reg_url_link' => new EE_Fixed_Hidden_Input(
+                        array(
+                            'html_name' => 'e_reg_url_link',
+                            'html_id'   => 'spco-reg_url_link',
+                            'default'   => $this->checkout->reg_url_link,
+                        )
+                    ),
+                    'revisit'        => new EE_Fixed_Hidden_Input(
+                        array(
+                            'html_name' => 'revisit',
+                            'html_id'   => 'spco-revisit',
+                            'default'   => $this->checkout->revisit,
+                        )
+                    ),
+                ),
+            )
+        );
     }
 
 
@@ -563,6 +561,7 @@ abstract class EE_SPCO_Reg_Step
     {
         $html = '';
         if ($this->reg_form instanceof EE_Form_Section_Proper) {
+            do_action('AHEE__EE_SPCO_Reg_Step__display_reg_form__reg_form', $this->reg_form, $this);
             $html .= ! $this->checkout->admin_request ? $this->reg_form->form_open($this->reg_step_url()) : '';
             if (EE_Registry::instance()->REQ->ajax) {
                 $this->reg_form->localize_validation_rules();
@@ -597,13 +596,15 @@ abstract class EE_SPCO_Reg_Step
         );
         $html = ob_get_clean();
         // generate submit button
-        $sbmt_btn = new EE_Submit_Input(array(
-            'html_name'             => 'spco-go-to-step-' . $this->checkout->next_step->slug(),
-            'html_id'               => 'spco-go-to-step-' . $this->checkout->next_step->slug(),
-            'html_class'            => 'spco-next-step-btn',
-            'other_html_attributes' => ' rel="' . $this->slug() . '"',
-            'default'               => $this->submit_button_text(),
-        ));
+        $sbmt_btn = new EE_Submit_Input(
+            array(
+                'html_name'             => 'spco-go-to-step-' . $this->checkout->next_step->slug(),
+                'html_id'               => 'spco-go-to-step-' . $this->checkout->next_step->slug(),
+                'html_class'            => 'spco-next-step-btn',
+                'other_html_attributes' => ' rel="' . $this->slug() . '"',
+                'default'               => $this->submit_button_text(),
+            )
+        );
         $sbmt_btn->set_button_css_attributes(true, 'large');
         $sbmt_btn_html = $sbmt_btn->get_html_for_input();
         $html .= EEH_HTML::div(
