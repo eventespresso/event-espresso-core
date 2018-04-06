@@ -680,6 +680,9 @@ class EE_Dependency_Map
             'EventEspresso\caffeinated\modules\recaptcha_invisible\RecaptchaAdminSettings' => array(
                 'EE_Registration_Config' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\services\loaders\ObjectIdentifier' => array(
+                'EventEspresso\core\services\loaders\ClassInterfaceCache' => EE_Dependency_Map::load_from_cache,
+            ),
         );
     }
 
