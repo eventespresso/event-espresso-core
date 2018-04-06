@@ -4,6 +4,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\InvalidSessionDataException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
 
@@ -24,6 +25,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
 {
 
     const debug = false;    //	true false
+
+    private static $nl = '';
 
     /**
      * an array of raw ticket data from EED_Ticket_Selector
@@ -64,6 +67,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     public static function set_hooks()
     {
+        self::$nl = defined('EE_TESTS_DIR')? "\n" : '<br />';
         // release tickets for expired carts
         add_action(
             'EED_Ticket_Selector__process_ticket_selections__before',
@@ -191,52 +195,51 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     public static function release_tickets_for_expired_carts()
     {
-        do_action('AHEE__EED_Ticket_Sales_Monitor__release_tickets_for_expired_carts__begin');
-        $expired_ticket_IDs      = array();
-        $valid_ticket_line_items = array();
-        $total_line_items        = EEM_Line_Item::instance()->get_total_line_items_with_no_transaction();
-        if (empty($total_line_items)) {
-            do_action(
-                'AHEE__EED_Ticket_Sales_Monitor__release_tickets_for_expired_carts__end',
-                $total_line_items,
-                $valid_ticket_line_items,
-                $expired_ticket_IDs
-            );
-            return;
+        if (self::debug) {
+            echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '()';
         }
-        $expired = current_time('timestamp') - EE_Registry::instance()->SSN->lifespan();
-        foreach ($total_line_items as $total_line_item) {
-            /** @var EE_Line_Item $total_line_item */
-            $ticket_line_items = EED_Ticket_Sales_Monitor::get_ticket_line_items_for_grand_total($total_line_item);
-            foreach ($ticket_line_items as $ticket_line_item) {
-                if (! $ticket_line_item instanceof EE_Line_Item) {
+        do_action('AHEE__EED_Ticket_Sales_Monitor__release_tickets_for_expired_carts__begin');
+        $expired_ticket_IDs = array();
+        /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+        $session_lifespan = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\domain\values\session\SessionLifespan'
+        );
+        $timestamp = $session_lifespan->expiration();
+        $expired_ticket_line_items = EEM_Line_Item::instance()->getTicketLineItemsForExpiredCarts($timestamp);
+        if (self::debug) {
+            echo self::$nl . ' . time(): ' . time();
+            echo self::$nl . ' . time() as date: ' . date('Y-m-d H:i a');
+            echo self::$nl . ' . session expiration: ' . $session_lifespan->expiration();
+            echo self::$nl . ' . session expiration as date: ' . date('Y-m-d H:i a', $session_lifespan->expiration());
+            echo self::$nl . ' . timestamp: ' . $timestamp;
+            echo self::$nl . ' . $expired_ticket_line_items: ' . count($expired_ticket_line_items);
+        }
+        if (! empty($expired_ticket_line_items)) {
+            foreach ($expired_ticket_line_items as $expired_ticket_line_item) {
+                if (! $expired_ticket_line_item instanceof EE_Line_Item) {
                     continue;
                 }
-                if ($total_line_item->timestamp(true) <= $expired) {
-                    $expired_ticket_IDs[ $ticket_line_item->OBJ_ID() ] = $ticket_line_item->OBJ_ID();
-                } else {
-                    $valid_ticket_line_items[ $ticket_line_item->OBJ_ID() ] = $ticket_line_item;
+                $expired_ticket_IDs[ $expired_ticket_line_item->OBJ_ID() ] = $expired_ticket_line_item->OBJ_ID();
+                if (self::debug) {
+                    echo self::$nl . ' . $expired_ticket_line_item->OBJ_ID(): ' . $expired_ticket_line_item->OBJ_ID();
+                    echo self::$nl . ' . $expired_ticket_line_item->timestamp(): ' . date('Y-m-d h:i a',
+                            $expired_ticket_line_item->timestamp(true));
                 }
             }
-        }
-        if (! empty($expired_ticket_IDs)) {
-            EED_Ticket_Sales_Monitor::release_reservations_for_tickets(
-                \EEM_Ticket::instance()->get_tickets_with_IDs($expired_ticket_IDs),
-                $valid_ticket_line_items,
-                __FUNCTION__
-            );
-            // let's get rid of expired line items so that they can't interfere with tracking
-            add_action(
-                'shutdown',
-                array('EED_Ticket_Sales_Monitor', 'clear_expired_line_items_with_no_transaction'),
-                999
-            );
+            if (! empty($expired_ticket_IDs)) {
+                EED_Ticket_Sales_Monitor::release_reservations_for_tickets(
+                    \EEM_Ticket::instance()->get_tickets_with_IDs($expired_ticket_IDs),
+                    array(),
+                    __FUNCTION__
+                );
+                // now  let's get rid of expired line items so that they can't interfere with tracking
+                EED_Ticket_Sales_Monitor::clear_expired_line_items_with_no_transaction($timestamp);
+            }
         }
         do_action(
             'AHEE__EED_Ticket_Sales_Monitor__release_tickets_for_expired_carts__end',
-            $total_line_items,
-            $valid_ticket_line_items,
-            $expired_ticket_IDs
+            $expired_ticket_IDs,
+            $expired_ticket_line_items
         );
     }
 
@@ -262,8 +265,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             $qty = EED_Ticket_Sales_Monitor::instance()->_validate_ticket_sale($ticket, $qty);
         }
         if (self::debug) {
-            echo '<br /><br /> ' . __LINE__ . ') ' . __METHOD__ . '()';
-            echo '<br /><br /><b> RETURNED QTY: ' . $qty . '</b>';
+            echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '()';
+            echo self::$nl . self::$nl . '<b> RETURNED QTY: ' . $qty . '</b>';
         }
         return $qty;
     }
@@ -282,36 +285,36 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     protected function _validate_ticket_sale(EE_Ticket $ticket, $qty = 1)
     {
         if (self::debug) {
-            echo '<br /><br /> ' . __LINE__ . ') ' . __METHOD__ . '() ';
+            echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
         }
         if (! $ticket instanceof EE_Ticket) {
             return 0;
         }
         if (self::debug) {
-            echo '<br /><b> . ticket->ID: ' . $ticket->ID() . '</b>';
-            echo '<br /> . original ticket->reserved: ' . $ticket->reserved();
+            echo self::$nl . '<b> . ticket->ID: ' . $ticket->ID() . '</b>';
+            echo self::$nl . ' . original ticket->reserved: ' . $ticket->reserved();
         }
         $ticket->refresh_from_db();
         // first let's determine the ticket availability based on sales
         $available = $ticket->qty('saleable');
         if (self::debug) {
-            echo '<br /> . . . ticket->qty: ' . $ticket->qty();
-            echo '<br /> . . . ticket->sold: ' . $ticket->sold();
-            echo '<br /> . . . ticket->reserved: ' . $ticket->reserved();
-            echo '<br /> . . . ticket->qty(saleable): ' . $ticket->qty('saleable');
-            echo '<br /> . . . available: ' . $available;
+            echo self::$nl . ' . . . ticket->qty: ' . $ticket->qty();
+            echo self::$nl . ' . . . ticket->sold: ' . $ticket->sold();
+            echo self::$nl . ' . . . ticket->reserved: ' . $ticket->reserved();
+            echo self::$nl . ' . . . ticket->qty(saleable): ' . $ticket->qty('saleable');
+            echo self::$nl . ' . . . available: ' . $available;
         }
         if ($available < 1) {
             $this->_ticket_sold_out($ticket);
             return 0;
         }
         if (self::debug) {
-            echo '<br /> . . . qty: ' . $qty;
+            echo self::$nl . ' . . . qty: ' . $qty;
         }
         if ($available < $qty) {
             $qty = $available;
             if (self::debug) {
-                echo '<br /> . . . QTY ADJUSTED: ' . $qty;
+                echo self::$nl . ' . . . QTY ADJUSTED: ' . $qty;
             }
             $this->_ticket_quantity_decremented($ticket);
         }
@@ -332,7 +335,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     protected function _reserve_ticket(EE_Ticket $ticket, $quantity = 1)
     {
         if (self::debug) {
-            echo '<br /><br /> . . . INCREASE RESERVED: ' . $quantity;
+            echo self::$nl . self::$nl . ' . . . INCREASE RESERVED: ' . $quantity;
         }
         $ticket->increase_reserved($quantity, 'TicketSalesMonitor:'. __LINE__);
         return $ticket->save();
@@ -349,12 +352,12 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     protected function _release_reserved_ticket(EE_Ticket $ticket, $quantity = 1)
     {
         if (self::debug) {
-            echo '<br /> . . . ticket->ID: ' . $ticket->ID();
-            echo '<br /> . . . ticket->reserved: ' . $ticket->reserved();
+            echo self::$nl . ' . . . ticket->ID: ' . $ticket->ID();
+            echo self::$nl . ' . . . ticket->reserved: ' . $ticket->reserved();
         }
         $ticket->decrease_reserved($quantity, true, 'TicketSalesMonitor:'. __LINE__);
         if (self::debug) {
-            echo '<br /> . . . ticket->reserved: ' . $ticket->reserved();
+            echo self::$nl . ' . . . ticket->reserved: ' . $ticket->reserved();
         }
         return $ticket->save() ? 1 : 0;
     }
@@ -372,8 +375,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     protected function _ticket_sold_out(EE_Ticket $ticket)
     {
         if (self::debug) {
-            echo '<br /><br /> ' . __LINE__ . ') ' . __METHOD__ . '() ';
-            echo '<br /> . . ticket->name: ' . $this->_get_ticket_and_event_name($ticket);
+            echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
+            echo self::$nl . ' . . ticket->name: ' . $this->_get_ticket_and_event_name($ticket);
         }
         $this->sold_out_tickets[] = $this->_get_ticket_and_event_name($ticket);
     }
@@ -391,8 +394,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     protected function _ticket_quantity_decremented(EE_Ticket $ticket)
     {
         if (self::debug) {
-            echo '<br /><br /> ' . __LINE__ . ') ' . __METHOD__ . '() ';
-            echo '<br /> . . ticket->name: ' . $this->_get_ticket_and_event_name($ticket);
+            echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
+            echo self::$nl . ' . . ticket->name: ' . $this->_get_ticket_and_event_name($ticket);
         }
         $this->decremented_tickets[] = $this->_get_ticket_and_event_name($ticket);
     }
@@ -506,7 +509,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     protected function _post_notices()
     {
         if (self::debug) {
-            echo '<br /><br /> ' . __LINE__ . ') ' . __METHOD__ . '() ';
+            echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
         }
         $refresh_msg    = '';
         $none_added_msg = '';
@@ -578,9 +581,9 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     protected function _release_all_reserved_tickets_for_transaction(EE_Transaction $transaction)
     {
         if (self::debug) {
-            echo '<br /><br /> ' . __LINE__ . ') ' . __METHOD__ . '() ';
-            echo '<br /> . transaction->ID: ' . $transaction->ID();
-            echo '<br /> . TXN status_ID: ' . $transaction->status_ID();
+            echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
+            echo self::$nl . ' . transaction->ID: ' . $transaction->ID();
+            echo self::$nl . ' . TXN status_ID: ' . $transaction->status_ID();
         }
         // check if 'finalize_registration' step has been completed...
         $finalized = $transaction->reg_step_completed('finalize_registration');
@@ -598,7 +601,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         // how many tickets were released
         $count = 0;
         if (self::debug) {
-            echo '<br /> . . . TXN finalized: ' . $finalized;
+            echo self::$nl . ' . . . TXN finalized: ' . $finalized;
         }
         $release_tickets_with_TXN_status = array(
             EEM_Transaction::failed_status_code,
@@ -611,7 +614,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             // cancel any reserved tickets for registrations that were not approved
             $registrations = $transaction->registrations();
             if (self::debug) {
-                echo '<br /> . . . # registrations: ' . count($registrations);
+                echo self::$nl . ' . . . # registrations: ' . count($registrations);
                 $reg    = reset($registrations);
                 $ticket = $reg->ticket();
                 if ($ticket instanceof EE_Ticket) {
@@ -659,10 +662,10 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     ) {
         $STS_ID = $transaction->status_ID();
         if (self::debug) {
-            echo '<br /><br /> ' . __LINE__ . ') ' . __METHOD__ . '() ';
-            echo '<br /> . . registration->ID: ' . $registration->ID();
-            echo '<br /> . . registration->status_ID: ' . $registration->status_ID();
-            echo '<br /> . . transaction->status_ID(): ' . $STS_ID;
+            echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
+            echo self::$nl . ' . . registration->ID: ' . $registration->ID();
+            echo self::$nl . ' . . registration->status_ID: ' . $registration->status_ID();
+            echo self::$nl . ' . . transaction->status_ID(): ' . $STS_ID;
         }
         if (
             // release Tickets for Failed Transactions and Abandoned Transactions
@@ -675,9 +678,9 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             )
         ) {
             if (self::debug) {
-                echo '<br /><br /> . . RELEASE RESERVED TICKET';
+                echo self::$nl . self::$nl . ' . . RELEASE RESERVED TICKET';
                 $rsrvd = $registration->get_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true);
-                echo '<br /> . . . registration HAS_RESERVED_TICKET_KEY: ';
+                echo self::$nl . ' . . . registration HAS_RESERVED_TICKET_KEY: ';
                 var_dump($rsrvd);
             }
             $registration->release_reserved_ticket(true, 'TicketSalesMonitor:'. __LINE__);
@@ -706,7 +709,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     public static function session_cart_reset(EE_Session $session)
     {
         if (self::debug) {
-            echo '<br /><br /> ' . __LINE__ . ') ' . __METHOD__ . '() ';
+            echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
         }
         // first check of the session has a valid Checkout object
         $checkout = $session->checkout();
@@ -718,12 +721,12 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         $cart = $session->cart();
         if ($cart instanceof EE_Cart) {
             if (self::debug) {
-                echo '<br /><br /> cart instance of EE_Cart: ';
+                echo self::$nl . self::$nl . ' cart instance of EE_Cart: ';
             }
             EED_Ticket_Sales_Monitor::instance()->_session_cart_reset($cart, $session);
         } else {
             if (self::debug) {
-                echo '<br /><br /> invalid EE_Cart: ';
+                echo self::$nl . self::$nl . ' invalid EE_Cart: ';
                 var_export($cart, true);
             }
         }
@@ -745,7 +748,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     protected function _session_cart_reset(EE_Cart $cart, EE_Session $session)
     {
         if (self::debug) {
-            echo '<br /><br /> ' . __LINE__ . ') ' . __METHOD__ . '() ';
+            echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
         }
         EE_Registry::instance()->load_helper('Line_Item');
         $ticket_line_items = $cart->get_tickets();
@@ -754,17 +757,17 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         }
         foreach ($ticket_line_items as $ticket_line_item) {
             if (self::debug) {
-                echo '<br /> . ticket_line_item->ID(): ' . $ticket_line_item->ID();
+                echo self::$nl . ' . ticket_line_item->ID(): ' . $ticket_line_item->ID();
             }
             if ($ticket_line_item instanceof EE_Line_Item && $ticket_line_item->OBJ_type() === 'Ticket') {
                 if (self::debug) {
-                    echo '<br /> . . ticket_line_item->OBJ_ID(): ' . $ticket_line_item->OBJ_ID();
+                    echo self::$nl . ' . . ticket_line_item->OBJ_ID(): ' . $ticket_line_item->OBJ_ID();
                 }
                 $ticket = EEM_Ticket::instance()->get_one_by_ID($ticket_line_item->OBJ_ID());
                 if ($ticket instanceof EE_Ticket) {
                     if (self::debug) {
-                        echo '<br /> . . ticket->ID(): ' . $ticket->ID();
-                        echo '<br /> . . ticket_line_item->quantity(): ' . $ticket_line_item->quantity();
+                        echo self::$nl . ' . . ticket->ID(): ' . $ticket->ID();
+                        echo self::$nl . ' . . ticket_line_item->quantity(): ' . $ticket_line_item->quantity();
                     }
                     $ticket->add_extra_meta(
                         EE_Ticket::META_KEY_TICKET_RESERVATIONS,
@@ -775,7 +778,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             }
         }
         if (self::debug) {
-            echo '<br /><br /> RESET COMPLETED ';
+            echo self::$nl . self::$nl . ' RESET COMPLETED ';
         }
     }
 
@@ -814,7 +817,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     protected function _session_checkout_reset(EE_Checkout $checkout)
     {
         if (self::debug) {
-            echo '<br /><br /> ' . __LINE__ . ') ' . __METHOD__ . '() ';
+            echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
         }
         // we want to release the each registration's reserved tickets if the session was cleared, but not if this is a revisit
         if ($checkout->revisit || ! $checkout->transaction instanceof EE_Transaction) {
@@ -1001,6 +1004,9 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         array $valid_reserved_ticket_line_items = array(),
         $source
     ) {
+        if (self::debug) {
+            echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '()';
+        }
         $total_tickets_released = 0;
         $sold_out_events = array();
         foreach ($tickets_with_reservations as $ticket_with_reservations) {
@@ -1008,11 +1014,18 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                 continue;
             }
             $reserved_qty = $ticket_with_reservations->reserved();
+            if (self::debug) {
+                echo self::$nl . ' . $ticket_with_reservations->ID(): ' . $ticket_with_reservations->ID();
+                echo self::$nl . ' . $reserved_qty: ' . $reserved_qty;
+            }
             foreach ($valid_reserved_ticket_line_items as $valid_reserved_ticket_line_item) {
                 if (
                     $valid_reserved_ticket_line_item instanceof EE_Line_Item
                     && $valid_reserved_ticket_line_item->OBJ_ID() === $ticket_with_reservations->ID()
                 ) {
+                    if (self::debug) {
+                        echo self::$nl . ' . $valid_reserved_ticket_line_item->quantity(): ' . $valid_reserved_ticket_line_item->quantity();
+                    }
                     $reserved_qty -= $valid_reserved_ticket_line_item->quantity();
                 }
             }
@@ -1031,6 +1044,9 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                 }
             }
         }
+        if (self::debug) {
+            echo self::$nl . ' . $total_tickets_released: ' . $total_tickets_released;
+        }
         // double check whether sold out events should remain sold out after releasing tickets
         if($sold_out_events !== array()){
             foreach ($sold_out_events as $sold_out_event) {
@@ -1048,22 +1064,30 @@ class EED_Ticket_Sales_Monitor extends EED_Module
 
 
     /**
+     * @param int $timestamp
      * @return false|int
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function clear_expired_line_items_with_no_transaction()
+    public static function clear_expired_line_items_with_no_transaction($timestamp = 0)
     {
-        /** @type WPDB $wpdb */
+       /** @type WPDB $wpdb */
         global $wpdb;
-        return $wpdb->query(
+        if (! absint($timestamp)) {
+            /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+            $session_lifespan = LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\domain\values\session\SessionLifespan'
+            );
+            $timestamp = $session_lifespan->expiration();
+        }
+         return $wpdb->query(
             $wpdb->prepare(
                 'DELETE FROM ' . EEM_Line_Item::instance()->table() . '
                 WHERE TXN_ID = 0 AND LIN_timestamp <= %s',
                 // use GMT time because that's what LIN_timestamps are in
-                date('Y-m-d H:i:s', time() - EE_Registry::instance()->SSN->lifespan())
+                date('Y-m-d H:i:s', $timestamp)
             )
         );
     }
