@@ -11,6 +11,7 @@ use EventEspresso\core\services\container\Mirror;
 use EventEspresso\core\services\loaders\ClassInterfaceCache;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\loaders\ObjectIdentifier;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -53,6 +54,11 @@ class BootstrapDependencyInjectionContainer
      */
     private $mirror;
 
+    /**
+     * @var ObjectIdentifier
+     */
+    private $object_identifier;
+
 
     /**
      * Can't use this just yet until we exorcise some more of our singleton usage from core
@@ -74,6 +80,7 @@ class BootstrapDependencyInjectionContainer
     public function buildLegacyDependencyInjectionContainer()
     {
         $this->class_cache = new ClassInterfaceCache();
+        $this->object_identifier = new ObjectIdentifier($this->class_cache);
         $this->mirror = new Mirror();
         // EE_Dependency_Map: info about how to load classes required by other classes
         espresso_load_required(
@@ -89,7 +96,8 @@ class BootstrapDependencyInjectionContainer
         $this->registry = EE_Registry::instance(
             $this->dependency_map,
             $this->mirror,
-            $this->class_cache
+            $this->class_cache,
+            $this->object_identifier
         );
 
     }
@@ -104,8 +112,13 @@ class BootstrapDependencyInjectionContainer
      */
     public function buildLoader()
     {
-        $this->loader = LoaderFactory::getLoader($this->registry, $this->class_cache);
+        $this->loader = LoaderFactory::getLoader(
+            $this->registry,
+            $this->class_cache,
+            $this->object_identifier
+        );
         $this->loader->share('EventEspresso\core\services\loaders\ClassInterfaceCache', $this->class_cache);
+        $this->loader->share('EventEspresso\core\services\loaders\ObjectIdentifier', $this->object_identifier);
         $this->loader->share('EventEspresso\core\services\container\Mirror', $this->mirror);
         $this->dependency_map->setLoader($this->loader);
     }
