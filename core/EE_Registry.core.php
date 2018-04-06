@@ -970,7 +970,7 @@ class EE_Registry implements ResettableInterface
                 // request does not contain new arguments and therefore no args identifier
                 ! $this->object_identifier->hasArguments($object_identifier)
                 // but previously cached class with args was found
-                && $this->object_identifier->fqcnMatchesObjectIdentifierWithArguments($class_name, $key)
+                && $this->object_identifier->fqcnMatchesObjectIdentifier($class_name, $key)
             ) {
                 return $object;
             }
