@@ -91,21 +91,31 @@ class LoaderFactory
      *                                              BootstrapDependencyInjectionContainer::buildLoader()
      *                                              otherwise can be left null
      * @param ClassInterfaceCache|null $class_cache also provided during first instantiation
+     * @param ObjectIdentifier|null    $object_identifier
      * @return LoaderInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function getLoader($generator = null, ClassInterfaceCache $class_cache = null)
-    {
-        if (! LoaderFactory::$loader instanceof LoaderInterface && $generator !== null && $class_cache !== null) {
+    public static function getLoader(
+        $generator = null,
+        ClassInterfaceCache $class_cache = null,
+        ObjectIdentifier $object_identifier = null
+    ) {
+        if (
+            ! LoaderFactory::$loader instanceof LoaderInterface
+            && ($generator instanceof EE_Registry || $generator instanceof CoffeeShop)
+            && $class_cache instanceof ClassInterfaceCache
+            && $object_identifier instanceof ObjectIdentifier
+        ) {
             $core_loader = new CoreLoader($generator);
             LoaderFactory::$loader = new Loader(
                 $core_loader,
                 new CachingLoader(
+                    '',
                     $core_loader,
                     new LooseCollection(''),
-                    $class_cache
+                    $object_identifier
                 ),
                 $class_cache
             );
