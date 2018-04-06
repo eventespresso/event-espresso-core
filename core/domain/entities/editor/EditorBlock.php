@@ -257,4 +257,16 @@ abstract class EditorBlock implements EditorBlockInterface
         //     filemtime($this->domain->distributionAssetsPath() . 'style.css')
         // );
     }
+
+
+    /**
+     * returns the rendered HTML for the block
+     *
+     * @param array $attributes
+     * @return string
+     */
+    public function renderBlock(array $attributes = array())
+    {
+        return '';
+    }
 }
