@@ -8,7 +8,7 @@
  * @package         Event Espresso
  * @subpackage    core
  * @author				Brent Christensen
- * 
+ *
  *
  */
 class EE_SPCO_JSON_Response {
@@ -84,10 +84,7 @@ class EE_SPCO_JSON_Response {
 
 	/**
 	 *    class constructor
-	 *
-	 * @access    public
-	 * @return    \EE_SPCO_JSON_Response
-	 */
+   */
 	public function __construct(  ) {
 	}
 
@@ -171,7 +168,7 @@ class EE_SPCO_JSON_Response {
 		// filter final array
 		$JSON_response = apply_filters( 'FHEE__EE_SPCO_JSON_Response___toString__JSON_response', $JSON_response );
 		// return encoded array
-		return wp_json_encode( $JSON_response );
+		return (string) wp_json_encode( $JSON_response );
 	}
 
 
@@ -274,10 +271,10 @@ class EE_SPCO_JSON_Response {
 	}
 
 
-
-	/**
-	 * @param float $payment_amount
-	 */
+    /**
+     * @param float $payment_amount
+     * @throws EE_Error
+     */
 	public function set_payment_amount( $payment_amount ) {
 		$this->_payment_amount = (float)$payment_amount;
 	}
@@ -395,7 +392,7 @@ class EE_SPCO_JSON_Response {
 	/**
 	 * @param array $validation_rules
 	 */
-	public function add_validation_rules( $validation_rules = array() ) {
+	public function add_validation_rules(array $validation_rules = array()) {
 		if ( is_array( $validation_rules ) && ! empty( $validation_rules )) {
 			$this->_validation_rules = array_merge( $this->_validation_rules, $validation_rules );
 		}
@@ -411,8 +408,11 @@ class EE_SPCO_JSON_Response {
 	}
 
 
-
-
+    public function echoAndExit()
+    {
+        echo $this;
+        exit();
+    }
 
 }
 // End of file EE_SPCO_JSON_Response.php

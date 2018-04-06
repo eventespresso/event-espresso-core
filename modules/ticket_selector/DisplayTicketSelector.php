@@ -522,18 +522,20 @@ class DisplayTicketSelector
     {
         // if redirecting, we don't need any anything else
         if ($external_url) {
-            $html = '<form method="GET" action="' . EEH_URL::refactor_url($external_url) . '"';
+            $html = '<form method="GET" ';
+            $html .= 'action="' . EEH_URL::refactor_url($external_url) . '" ';
+            $html .= 'name="ticket-selector-form-' . $ID . '"';
             // open link in new window ?
-            $html       .= apply_filters(
+            $html .= apply_filters(
                 'FHEE__EventEspresso_modules_ticket_selector_DisplayTicketSelector__formOpen__external_url_target_blank',
                 $this->isIframe(),
                 $this
             )
                 ? ' target="_blank"'
                 : '';
-            $html       .= '>';
+            $html .= '>';
             $query_args = EEH_URL::get_query_string($external_url);
-            foreach ((array)$query_args as $query_arg => $value) {
+            foreach ((array) $query_args as $query_arg => $value) {
                 $html .= '<input type="hidden" name="' . $query_arg . '" value="' . $value . '">';
             }
             return $html;
@@ -554,10 +556,13 @@ class DisplayTicketSelector
         }
         // set no cache headers and constants
         EE_System::do_not_cache();
-        $extra_params = $this->iframe ? ' target="_blank"' : '';
-        $html         = '<form method="POST" action="' . $checkout_url . '"' . $extra_params . '>';
-        $html         .= '<input type="hidden" name="ee" value="process_ticket_selections">';
-        $html         = apply_filters('FHEE__EE_Ticket_Selector__ticket_selector_form_open__html', $html, $this->event);
+        $html = '<form method="POST" ';
+        $html .= 'action="' . $checkout_url . '" ';
+        $html .= 'name="ticket-selector-form-' . $ID . '"';
+        $html .= $this->iframe ? ' target="_blank"' : '';
+        $html .= '>';
+        $html .= '<input type="hidden" name="ee" value="process_ticket_selections">';
+        $html = apply_filters('FHEE__EE_Ticket_Selector__ticket_selector_form_open__html', $html, $this->event);
         return $html;
     }
 
@@ -677,7 +682,8 @@ class DisplayTicketSelector
         $html         .= apply_filters(
             'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
             '',
-            $this->event
+            $this->event,
+            $this->iframe
         );
         return $html;
     }
