@@ -2,12 +2,12 @@ const {__}                = wp.i18n; // Import __() from wp.i18n
 const {registerBlockType} = wp.blocks; // Import registerBlockType() from wp.blocks
 
 registerBlockType(
-    'event-espresso/common-event-attendees',
+    'event-espresso/widgets-event-attendees',
     {
       title:       __('Event Attendees'),
       description: 'Displays a list of people that have registered for the specified event',
       icon:        'groups',
-      category:    'common',
+      category:    'widgets',
       keywords:    [__('event'), __('attendees'), __('list')],
       useOnce:     false,
       supports:    {
