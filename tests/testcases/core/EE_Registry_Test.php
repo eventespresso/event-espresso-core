@@ -51,7 +51,8 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		EE_Registry_Mock::instance(
 		    EE_Dependency_Map::instance(),
             $loader->getShared('EventEspresso\core\services\container\Mirror'),
-            $loader->getShared('EventEspresso\core\services\loaders\ClassInterfaceCache')
+            $loader->getShared('EventEspresso\core\services\loaders\ClassInterfaceCache'),
+            $loader->getShared('EventEspresso\core\services\loaders\ObjectIdentifier')
         );
 		EE_Registry_Mock::instance()->initialize();
 		parent::setUp();
