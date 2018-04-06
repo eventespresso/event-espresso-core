@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\services\loaders;
 
-use Closure;
 use EventEspresso\core\domain\values\FullyQualifiedName;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\collections\CollectionInterface;
@@ -23,39 +22,39 @@ class CachingLoader extends CachingLoaderDecorator
 {
 
     /**
-     * @var CollectionInterface $cache
-     */
-    protected $cache;
-
-    /**
      * @var string $identifier
      */
     protected $identifier;
 
     /**
-     * @var ClassInterfaceCache $class_cache
+     * @var CollectionInterface $cache
      */
-    private $class_cache;
+    protected $cache;
+
+    /**
+     * @var ObjectIdentifier
+     */
+    private $object_identifier;
 
 
     /**
      * CachingLoader constructor.
      *
+     * @param string                   $identifier
      * @param LoaderDecoratorInterface $loader
      * @param CollectionInterface      $cache
-     * @param ClassInterfaceCache      $class_cache
-     * @param string                   $identifier
+     * @param ObjectIdentifier         $object_identifier
      * @throws InvalidDataTypeException
      */
     public function __construct(
+        $identifier = '',
         LoaderDecoratorInterface $loader,
         CollectionInterface $cache,
-        ClassInterfaceCache $class_cache,
-        $identifier = ''
+        ObjectIdentifier $object_identifier
     ) {
         parent::__construct($loader);
         $this->cache       = $cache;
-        $this->class_cache = $class_cache;
+        $this->object_identifier = $object_identifier;
         $this->setIdentifier($identifier);
         if ($this->identifier !== '') {
             // to only clear this cache, and assuming an identifier has been set, simply do the following:
@@ -143,13 +142,13 @@ class CachingLoader extends CachingLoaderDecorator
             // so we don't want the core loader to cache anything, therefore caching is turned off
             return $this->loader->load($fqcn, $arguments, false);
         }
-        $identifier = $this->getClassIdentifier($fqcn, $arguments);
-        if ($this->cache->has($identifier)) {
-            return $this->cache->get($identifier);
+        $object_identifier = $this->object_identifier->getIdentifier($fqcn, $arguments);
+        if ($this->cache->has($object_identifier)) {
+            return $this->cache->get($object_identifier);
         }
         $object = $this->loader->load($fqcn, $arguments, $shared);
         if ($object instanceof $fqcn) {
-            $this->cache->add($object, $identifier);
+            $this->cache->add($object, $object_identifier);
         }
         return $object;
     }
@@ -165,56 +164,7 @@ class CachingLoader extends CachingLoaderDecorator
     }
 
 
-    /**
-     * build a string representation of a class' name and arguments
-     *
-     * @param string $fqcn
-     * @param array  $arguments
-     * @return string
-     */
-    private function getClassIdentifier($fqcn, array $arguments = array())
-    {
-        // only build identifier from arguments if class is not ReservedInstanceInterface
-        $identifier = ! $this->class_cache->hasInterface($fqcn,
-            'EventEspresso\core\interfaces\ReservedInstanceInterface')
-            ? $this->getIdentifierForArguments($arguments)
-            : '';
-        if (! empty($identifier)) {
-            $fqcn .= '____' . md5($identifier);
-        }
-        return $fqcn;
-    }
 
-
-    /**
-     * build a string representation of a class' arguments
-     * (mostly because Closures can't be serialized)
-     *
-     * @param array $arguments
-     * @return string
-     */
-    protected function getIdentifierForArguments(array $arguments)
-    {
-        if (empty($arguments)) {
-            return '';
-        }
-        $identifier = '';
-        foreach ($arguments as $argument) {
-            switch (true) {
-                case is_object($argument) :
-                case $argument instanceof Closure :
-                    $identifier .= spl_object_hash($argument);
-                    break;
-                case is_array($argument) :
-                    $identifier .= $this->getIdentifierForArguments($argument);
-                    break;
-                default :
-                    $identifier .= $argument;
-                    break;
-            }
-        }
-        return $identifier;
-    }
 }
 // End of file CachingLoader.php
 // Location: EventEspresso\core\services\loaders/CachingLoader.php

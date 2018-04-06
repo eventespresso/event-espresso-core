@@ -10,6 +10,7 @@ use EventEspresso\core\services\container\Mirror;
 use EventEspresso\core\services\container\RegistryContainer;
 use EventEspresso\core\services\loaders\ClassInterfaceCache;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\ObjectIdentifier;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -74,7 +75,7 @@ class EE_Registry implements ResettableInterface
     /**
      * StdClass object for storing library classes in
      *
-     * @var StdClass $LIB
+     * @var RegistryContainer $LIB
      */
     public $LIB;
 
@@ -175,18 +176,25 @@ class EE_Registry implements ResettableInterface
      */
     protected $_cache_on = true;
 
+    /**
+     * @var ObjectIdentifier
+     */
+    private $object_identifier;
+
 
     /**
      * @singleton method used to instantiate class object
      * @param EE_Dependency_Map|null   $dependency_map
      * @param Mirror|null              $mirror
      * @param ClassInterfaceCache|null $class_cache
+     * @param ObjectIdentifier|null    $object_identifier
      * @return EE_Registry instance
      */
     public static function instance(
         EE_Dependency_Map $dependency_map = null,
         Mirror $mirror = null,
-        ClassInterfaceCache $class_cache = null
+        ClassInterfaceCache $class_cache = null,
+        ObjectIdentifier $object_identifier = null
     ) {
         // check if class object is instantiated
         if (
@@ -194,8 +202,14 @@ class EE_Registry implements ResettableInterface
             && $dependency_map instanceof EE_Dependency_Map
             && $mirror instanceof Mirror
             && $class_cache instanceof ClassInterfaceCache
+            && $object_identifier instanceof ObjectIdentifier
         ) {
-            self::$_instance = new self($dependency_map, $mirror, $class_cache);
+            self::$_instance = new self(
+                $dependency_map,
+                $mirror,
+                $class_cache,
+                $object_identifier
+            );
         }
         return self::$_instance;
     }
@@ -208,12 +222,18 @@ class EE_Registry implements ResettableInterface
      * @param  EE_Dependency_Map  $dependency_map
      * @param Mirror              $mirror
      * @param ClassInterfaceCache $class_cache
+     * @param ObjectIdentifier    $object_identifier
      */
-    protected function __construct(EE_Dependency_Map $dependency_map, Mirror $mirror, ClassInterfaceCache $class_cache)
-    {
-        $this->_dependency_map = $dependency_map;
-        $this->mirror          = $mirror;
-        $this->class_cache     = $class_cache;
+    protected function __construct(
+        EE_Dependency_Map $dependency_map,
+        Mirror $mirror,
+        ClassInterfaceCache $class_cache,
+        ObjectIdentifier $object_identifier
+    ) {
+        $this->_dependency_map   = $dependency_map;
+        $this->mirror            = $mirror;
+        $this->class_cache       = $class_cache;
+        $this->object_identifier = $object_identifier;
         // $registry_container = new RegistryContainer();
         $this->LIB        = new RegistryContainer();
         $this->addons     = new RegistryContainer();
@@ -941,16 +961,16 @@ class EE_Registry implements ResettableInterface
         if ($class_prefix === 'addon' && isset ($this->addons->{$class_name})) {
             return $this->addons->{$class_name};
         }
-        $class_identifier = $this->getClassIdentifier($class_name, $arguments);
-        if (isset($this->LIB->{$class_identifier})) {
-            return $this->LIB->{$class_identifier};
+        $object_identifier = $this->object_identifier->getIdentifier($class_name, $arguments);
+        if (isset($this->LIB->{$object_identifier})) {
+            return $this->LIB->{$object_identifier};
         }
         foreach ($this->LIB as $key => $object) {
             if (
                 // request does not contain new arguments and therefore no args identifier
-                strpos($class_identifier, '____') === false
+                ! $this->object_identifier->hasArguments($object_identifier)
                 // but previously cached class with args was found
-                && strpos($key, $class_name . '____') === 0
+                && $this->object_identifier->fqcnMatchesObjectIdentifierWithArguments($class_name, $key)
             ) {
                 return $object;
             }
@@ -987,7 +1007,7 @@ class EE_Registry implements ResettableInterface
             unset($this->addons->{$class_name});
             return true;
         }
-        $class_name = $this->getClassIdentifier($class_name, $arguments);
+        $class_name = $this->object_identifier->getIdentifier($class_name, $arguments);
         if (isset($this->LIB->{$class_name})) {
             unset($this->LIB->{$class_name});
             return true;
@@ -1038,59 +1058,11 @@ class EE_Registry implements ResettableInterface
             return;
         }
         if (! $from_db) {
-            $class_name               = $this->getClassIdentifier($class_name, $arguments);
+            $class_name               = $this->object_identifier->getIdentifier($class_name, $arguments);
             $this->LIB->{$class_name} = $class_obj;
         }
     }
 
-
-    /**
-     * build a string representation of a class' name and arguments
-     *
-     * @param string $class_name
-     * @param array  $arguments
-     * @return string
-     */
-    private function getClassIdentifier($class_name, $arguments = array())
-    {
-        $identifier = $this->getIdentifierForArguments($arguments);
-        if (! empty($identifier)) {
-            $class_name .= '____' . md5($identifier);
-        }
-        return $class_name;
-    }
-
-
-    /**
-     * build a string representation of a class' arguments
-     * (mostly because Closures can't be serialized)
-     *
-     * @param array $arguments
-     * @return string
-     */
-    private function getIdentifierForArguments($arguments = array())
-    {
-        if (empty($arguments)) {
-            return '';
-        }
-        $identifier = '';
-        $arguments  = is_array($arguments) ? $arguments : array();
-        foreach ($arguments as $argument) {
-            switch (true) {
-                case is_object($argument) :
-                case $argument instanceof Closure :
-                    $identifier .= spl_object_hash($argument);
-                    break;
-                case is_array($argument) :
-                    $identifier .= $this->getIdentifierForArguments($argument);
-                    break;
-                default :
-                    $identifier .= $argument;
-                    break;
-            }
-        }
-        return $identifier;
-    }
 
 
     /**
