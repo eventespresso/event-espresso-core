@@ -890,12 +890,14 @@ class EE_Registry implements ResettableInterface
             $path = $this->_resolve_path($class_name, $type, $file_paths);
             // load the file
             $loaded = $this->_require_file($path, $class_name, $type, $file_paths);
-            // if loading failed, or we are only loading a file but NOT instantiating an object
-            if (! $loaded || $load_only) {
-                // return boolean if only loading, or null if an object was expected
-                return $load_only
-                    ? $loaded
-                    : null;
+            // if we are only loading a file but NOT instantiating an object
+            // then return boolean for whether class was loaded or not
+            if ($load_only) {
+                return $loaded;
+            }
+            // if an object was expected but loading failed, then return nothing
+            if (! $loaded) {
+                return null;
             }
         }
         // instantiate the requested object
@@ -1062,7 +1064,6 @@ class EE_Registry implements ResettableInterface
             $this->LIB->{$class_name} = $class_obj;
         }
     }
-
 
 
     /**
@@ -1358,26 +1359,14 @@ class EE_Registry implements ResettableInterface
                     $class_name,
                     $param_class,
                     $arguments,
-                    $index,
-                    $argument_keys
+                    $index
                 );
             } else {
-                try {
-                    $arguments[ $index ] = $this->mirror->getParameterDefaultValue(
-                        $param,
-                        $class_name,
-                        $index
-                    );
-                } catch (ReflectionException $e) {
-                    throw new ReflectionException(
-                        sprintf(
-                            esc_html__('%1$s for parameter "$%2$s on classname "%3$s"', 'event_espresso'),
-                            $e->getMessage(),
-                            $param->getName(),
-                            $class_name
-                        )
-                    );
-                }
+                $arguments[ $index ] = $this->mirror->getParameterDefaultValue(
+                    $param,
+                    $class_name,
+                    $index
+                );
             }
         }
         return $arguments;
@@ -1389,13 +1378,12 @@ class EE_Registry implements ResettableInterface
      * @param string $param_class
      * @param array  $arguments
      * @param mixed  $index
-     * @param array  $argument_keys
      * @return array
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      */
-    protected function _resolve_dependency($class_name, $param_class, $arguments, $index, array $argument_keys)
+    protected function _resolve_dependency($class_name, $param_class, $arguments, $index)
     {
         $dependency = null;
         // should dependency be loaded from cache ?
