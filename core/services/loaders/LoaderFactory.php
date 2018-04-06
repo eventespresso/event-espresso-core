@@ -112,7 +112,6 @@ class LoaderFactory
             LoaderFactory::$loader = new Loader(
                 $core_loader,
                 new CachingLoader(
-                    '',
                     $core_loader,
                     new LooseCollection(''),
                     $object_identifier

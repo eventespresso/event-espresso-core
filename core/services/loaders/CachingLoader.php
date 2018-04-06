@@ -40,17 +40,17 @@ class CachingLoader extends CachingLoaderDecorator
     /**
      * CachingLoader constructor.
      *
-     * @param string                   $identifier
      * @param LoaderDecoratorInterface $loader
      * @param CollectionInterface      $cache
      * @param ObjectIdentifier         $object_identifier
+     * @param string                   $identifier
      * @throws InvalidDataTypeException
      */
     public function __construct(
-        $identifier = '',
         LoaderDecoratorInterface $loader,
         CollectionInterface $cache,
-        ObjectIdentifier $object_identifier
+        ObjectIdentifier $object_identifier,
+        $identifier = ''
     ) {
         parent::__construct($loader);
         $this->cache       = $cache;
