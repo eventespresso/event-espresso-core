@@ -11,6 +11,7 @@ use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\collections\CollectionDetails;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
@@ -172,14 +173,16 @@ class EditorBlockRegistrationManager extends EditorBlockManager
     {
         wp_register_script(
             'ee-core-blocks',
-            $this->domain->distributionAssetsUrl() . 'ee-core-blocks.dist.js',
+            $this->assets_registry->getJsUrl(Registry::ASSET_NAMESPACE, 'core-blocks'),
             array(
+                'eejs-core',
                 'wp-blocks',    // Provides useful functions and components for extending the editor
                 'wp-i18n',      // Provides localization functions
                 'wp-element',   // Provides React.Component
                 'wp-components' // Provides many prebuilt components and controls
             ),
-            filemtime($this->domain->distributionAssetsPath() . 'ee-core-blocks.dist.js')
+            null,
+            true
         );
     }
 

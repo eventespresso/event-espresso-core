@@ -9,7 +9,10 @@
   "reactVendor": {
     "js": "ee-reactVendor.b5799c8665b24642d1cd.dist.js"
   },
+  "core-blocks": {
+    "js": "ee-core-blocks.e21565420ee5a573da6d.dist.js"
+  },
   "manifest": {
-    "js": "ee-manifest.f5984092809447a8fba8.dist.js"
+    "js": "ee-manifest.84871ecdc22c246e9b73.dist.js"
   }
 }
