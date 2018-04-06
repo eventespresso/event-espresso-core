@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\entities\editor\blocks\common;
+namespace EventEspresso\core\domain\entities\editor\blocks\widgets;
 
 use EventEspresso\core\domain\entities\editor\EditorBlock;
 
@@ -19,7 +19,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class EventAttendees extends EditorBlock
 {
 
-    const BLOCK_TYPE = 'common-event-attendees';
+    const BLOCK_TYPE = 'widgets-event-attendees';
 
 
     /**
@@ -36,17 +36,4 @@ class EventAttendees extends EditorBlock
             array()
         );
     }
-
-
-    /**
-     * returns the rendered HTML for the block
-     *
-     * @param array $attributes
-     * @return string
-     */
-    public function renderBlock(array $attributes = array())
-    {
-        return '';
-    }
-
 }
