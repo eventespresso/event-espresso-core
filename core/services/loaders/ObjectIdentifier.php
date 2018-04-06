@@ -59,8 +59,8 @@ class ObjectIdentifier
 
 
     /**
-     * Returns true if the supplied FQCN matches
-     * the FQCN portion of the supplied $object_identifier
+     * Returns true if the supplied FQCN equals the supplied $object_identifier
+     * OR the supplied FQCN matches the FQCN portion of the supplied $object_identifier
      * AND that $object_identifier is for an object with arguments.
      * This allows a request for an object using a FQCN to match
      * a previously instantiated object with arguments
@@ -70,9 +70,10 @@ class ObjectIdentifier
      * @param string $object_identifier
      * @return bool
      */
-    public function fqcnMatchesObjectIdentifierWithArguments($fqcn, $object_identifier)
+    public function fqcnMatchesObjectIdentifier($fqcn, $object_identifier)
     {
-        return strpos($object_identifier, $fqcn . ObjectIdentifier::DELIMITER) === 0;
+        return $fqcn === $object_identifier
+               || strpos($object_identifier, $fqcn . ObjectIdentifier::DELIMITER) === 0;
     }
 
 
