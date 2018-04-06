@@ -712,20 +712,8 @@ class EE_Dependency_Map
                 'EE_Request'                       => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\entities\editor\blocks\shortcodes\EventsList'     => array(
-                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
-            ),
-            'EventEspresso\core\domain\entities\editor\blocks\TicketSelector'                   => array(
-                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
-            ),
-            'EventEspresso\core\domain\entities\editor\blocks\VenueEditor'                      => array(
-                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
-            ),
-            'EventEspresso\core\domain\entities\editor\blocks\common\NextUpcomingEventDatetime' => array(
-                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\core\domain\entities\editor\blocks\widgets\EventAttendees' => array(
+                'EventEspresso\core\domain\Domain'           => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
             ),
         );
