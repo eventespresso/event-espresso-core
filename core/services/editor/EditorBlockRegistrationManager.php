@@ -85,9 +85,8 @@ class EditorBlockRegistrationManager extends EditorBlockManager
                 apply_filters(
                     'FHEE__EventEspresso_core_services_editor_EditorBlockManager__populateEditorBlockCollection__collection_FQCNs',
                     array(
-                        'EventEspresso\core\domain\entities\editor\blocks\common',
-                        'EventEspresso\core\domain\entities\editor\blocks\editor',
-                        'EventEspresso\core\domain\entities\editor\blocks\shortcodes',
+                        // 'EventEspresso\core\domain\entities\editor\blocks\common',
+                        // 'EventEspresso\core\domain\entities\editor\blocks\editor',
                         'EventEspresso\core\domain\entities\editor\blocks\widgets',
                     )
                 ),
