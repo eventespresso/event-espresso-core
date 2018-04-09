@@ -89,7 +89,7 @@ class CustomPostTypeDefinitions
                     ),
                     'taxonomies'        => array(
                         'espresso_event_categories',
-                        // 'espresso_event_type',
+                        'espresso_event_type',
                         'post_tag',
                     ),
                     'page_templates'    => true,

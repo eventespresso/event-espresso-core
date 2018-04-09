@@ -68,23 +68,23 @@ class CustomTaxonomyDefinitions
                     'rewrite'           => array('slug' => esc_html__('venue-category', 'event_espresso')),
                 ),
             ),
-            // 'espresso_event_type'       => array(
-            //     'singular_name' => esc_html__('Event Type', 'event_espresso'),
-            //     'plural_name'   => esc_html__('Event Types', 'event_espresso'),
-            //     'args'          => array(
-            //         'public'       => true,
-            //         'show_ui'      => false,
-            //         'show_in_rest' => true,
-            //         'capabilities' => array(
-            //             'manage_terms' => 'ee_read_event_type',
-            //             'edit_terms'   => 'ee_edit_event_type',
-            //             'delete_terms' => 'ee_delete_event_type',
-            //             'assign_terms' => 'ee_assign_event_type',
-            //         ),
-            //         'rewrite'      => array('slug' => esc_html__('event-type', 'event_espresso')),
-            //         'hierarchical' => true,
-            //     ),
-            // ),
+            'espresso_event_type'       => array(
+                'singular_name' => esc_html__('Event Type', 'event_espresso'),
+                'plural_name'   => esc_html__('Event Types', 'event_espresso'),
+                'args'          => array(
+                    'public'       => true,
+                    'show_ui'      => false,
+                    'show_in_rest' => true,
+                    'capabilities' => array(
+                        'manage_terms' => 'ee_read_event_type',
+                        'edit_terms'   => 'ee_edit_event_type',
+                        'delete_terms' => 'ee_delete_event_type',
+                        'assign_terms' => 'ee_assign_event_type',
+                    ),
+                    'rewrite'      => array('slug' => esc_html__('event-type', 'event_espresso')),
+                    'hierarchical' => true,
+                ),
+            ),
         );
     }
 
