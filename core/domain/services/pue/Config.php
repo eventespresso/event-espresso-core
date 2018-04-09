@@ -11,7 +11,7 @@ use EE_Network_Config;
  *
  * @package EventEspresso\core\domain\services\pue
  * @author  Darren Ethier
- * @since   $VID:$
+ * @since   4.9.59.p
  */
 class Config
 {

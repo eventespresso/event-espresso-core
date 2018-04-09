@@ -10,7 +10,7 @@ use PluginUpdateEngineChecker;
  *
  * @package EventEspresso\core\services\licensing
  * @author  Darren Ethier
- * @since   $VID:$
+ * @since   4.9.59.p
  */
 class LicenseService
 {

@@ -11,7 +11,7 @@ use EventEspresso\core\domain\DomainInterface;
  *
  * @package EventEspresso\core\domain\services\admin
  * @author  Darren Ethier
- * @since   $VID:$
+ * @since   4.9.59.p
  */
 class PluginUpsells
 {

@@ -21,7 +21,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\modules\ticket_selector
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.59.p
  */
 class TicketDatetimeAvailabilityTracker
 {

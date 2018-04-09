@@ -13,7 +13,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\core\libraries\form_sections\strategies\display
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.59.p
  */
 class EE_Invisible_Recaptcha_Display_Strategy extends EE_Display_Strategy_Base
 {

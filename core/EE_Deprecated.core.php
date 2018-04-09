@@ -1180,7 +1180,7 @@ class EE_Event_List_Query extends WP_Query
  * @package        Event Espresso
  * @subpackage     includes/core/
  * @author         Darren Ethier
- * @deprecated     $VID:$
+ * @deprecated     4.9.59.p
  */
 class EE_PUE implements InterminableInterface
 {
@@ -1189,7 +1189,7 @@ class EE_PUE implements InterminableInterface
     /**
      *    class constructor
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.59.p
      */
     public function __construct()
     {
@@ -1200,7 +1200,7 @@ class EE_PUE implements InterminableInterface
                 __CLASS__,
                 'EventEspresso\core\services\licensing\LicenseServices'
             ),
-            '$VID:$'
+            '4.9.59.p'
         );
     }
 
@@ -1211,7 +1211,7 @@ class EE_PUE implements InterminableInterface
      *
      * @param bool $extra
      * @return string html.
-     * @deprecated $VID:$
+     * @deprecated 4.9.59.p
      */
     public static function espresso_data_collection_optin_text($extra = true)
     {
@@ -1222,7 +1222,7 @@ class EE_PUE implements InterminableInterface
                 __METHOD__,
                 'EventEspresso\core\domain\services\Stats::optinText'
             ),
-            '$VID:$'
+            '4.9.59.p'
         );
         Stats::optinText($extra);
     }
@@ -1233,7 +1233,7 @@ class EE_PUE implements InterminableInterface
      * @param  string $basename Use the equivalent result from plugin_basename() for this param as WP uses that to
      *                          identify plugins. Defaults to core update
      * @return boolean           True if update available, false if not.
-     * @deprecated $VID:$
+     * @deprecated 4.9.59.p
      */
     public static function is_update_available($basename = '')
     {
@@ -1244,7 +1244,7 @@ class EE_PUE implements InterminableInterface
                 __METHOD__,
                 'EventEspresso\core\services\licensing\LicenseService::isUpdateAvailable'
             ),
-            '$VID:$'
+            '4.9.59.p'
         );
         return LicenseService::isUpdateAvailable($basename);
     }

@@ -311,7 +311,7 @@ class Registry
      * @param string $chunk_name
      * @param string $asset_type
      * @return string
-     * @since $VID:$
+     * @since 4.9.59.p
      */
     public function getAssetUrl($namespace, $chunk_name, $asset_type)
     {
@@ -366,7 +366,7 @@ class Registry
      * @param string $manifest_file The absolute path to the manifest file.
      * @throws InvalidArgumentException
      * @throws InvalidFilePathException
-     * @since $VID:$
+     * @since 4.9.59.p
      */
     public function registerManifestFile($namespace, $url_base, $manifest_file)
     {
@@ -404,7 +404,7 @@ class Registry
     /**
      * Decodes json from the provided manifest file.
      *
-     * @since $VID:$
+     * @since 4.9.59.p
      * @param string $manifest_file Path to manifest file.
      * @return array
      * @throws InvalidFilePathException

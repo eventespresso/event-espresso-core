@@ -1474,7 +1474,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * get_form_submission_error_message() which is usually this message cached (or a custom validation error message)
      *
      * @return string
-     * @since $VID:$
+     * @since 4.9.59.p
      */
     protected function getAllValidationErrorsString()
     {
