@@ -4,8 +4,6 @@ namespace EventEspresso\core\domain\services\pue;
 use EE_Config;
 use EE_Core_Config;
 use EE_Network_Config;
-use const FILTER_VALIDATE_BOOLEAN;
-use const FILTER_VALIDATE_EMAIL;
 
 /**
  * Config

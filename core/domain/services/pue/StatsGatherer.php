@@ -10,8 +10,6 @@ use EEM_Registration;
 use EEM_Ticket;
 use EEM_Transaction;
 use Exception;
-use const PHP_MINOR_VERSION;
-use const PHP_RELEASE_VERSION;
 
 class StatsGatherer
 {

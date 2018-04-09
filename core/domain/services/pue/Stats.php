@@ -8,7 +8,6 @@ use EE_Maintenance_Mode;
 use EEH_Template;
 use EEM_Payment_Method;
 use Exception;
-use const WEEK_IN_SECONDS;
 
 /**
  * Stats
