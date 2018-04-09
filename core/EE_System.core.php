@@ -1129,7 +1129,12 @@ final class EE_System implements ResettableInterface
             'EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes'
         );
         $register_custom_post_types->registerCustomPostTypes();
-        // register Custom Post Types and Taxonomies
+        /** @var EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomyTerms $register_custom_taxonomy_terms */
+        $register_custom_taxonomy_terms = $this->loader->getShared(
+            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomyTerms'
+        );
+        $register_custom_taxonomy_terms->registerCustomTaxonomyTerms();
+        // load legacy Custom Post Types and Taxonomies
         $this->loader->getShared('EE_Register_CPTs');
         do_action('AHEE__EE_System__load_CPTs_and_session__complete');
     }
