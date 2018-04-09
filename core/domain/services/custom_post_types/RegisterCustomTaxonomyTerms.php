@@ -84,7 +84,8 @@ class RegisterCustomTaxonomyTerms
     {
         if (empty($this->custom_taxonomy_terms)) {
             return;
-        } //no default terms set so lets just exit.
+        }
+        //no default terms set so lets just exit.
         foreach ($this->custom_taxonomy_terms as $custom_taxonomy_terms) {
             foreach ($custom_taxonomy_terms as $custom_taxonomy_term) {
                 if (
