@@ -9,6 +9,9 @@ common.forEach( ( config, index ) => {
 	if ( common[ index ].configName === 'base' ) {
 		common[ index ].plugins = [
 			new CleanWebpackPlugin( [ 'assets/dist' ] ),
+			new webpack.ProvidePlugin( {
+				'React': 'react', // eslint-disable-line quote-props
+			} ),
 			new ExtractTextPlugin( 'ee-[name].[contenthash].dist.css' ),
 			new webpack.HashedModuleIdsPlugin(),
 			new webpack.optimize.CommonsChunkPlugin( {
