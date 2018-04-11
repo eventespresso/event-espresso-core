@@ -113,7 +113,7 @@ class GatewayDataFormatter implements GatewayDataFormatterInterface
             'FHEE__EE_Gateway___order_description',
             sprintf(
                 __('Event Registrations from %1$s for %2$s', "event_espresso"),
-                get_bloginfo('name'),
+                wp_specialchars_decode(get_bloginfo(), ENT_QUOTES),
                 $payment->get_first_event_name()
             ),
             $this,

@@ -1,6 +1,11 @@
 <?php
 namespace EventEspresso\core\libraries\iframe_display;
 
+use DomainException;
+use EE_Registry;
+use EE_System;
+use EEH_Template;
+
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
     exit( 'No direct script access allowed' );
 }
@@ -49,10 +54,22 @@ class Iframe
     protected $header_js = array();
 
     /*
+    * an array of additional attributes to be added to <script> tags for header JS
+    * @var array $footer_js
+    */
+    protected $header_js_attributes = array();
+
+    /*
     * an array of JS URLs to be displayed before the HTML </body> tag
     * @var array $footer_js
     */
     protected $footer_js = array();
+
+    /*
+    * an array of additional attributes to be added to <script> tags for footer JS
+    * @var array $footer_js_attributes
+    */
+    protected $footer_js_attributes = array();
 
     /*
     * an array of JSON vars to be set in the HTML header.
@@ -67,7 +84,7 @@ class Iframe
      *
      * @param string $title
      * @param string $content
-     * @throws \DomainException
+     * @throws DomainException
      */
     public function __construct( $title, $content )
     {
@@ -121,12 +138,12 @@ class Iframe
 
     /**
      * @param string $title
-     * @throws \DomainException
+     * @throws DomainException
      */
     public function setTitle( $title )
     {
         if ( empty( $title ) ) {
-            throw new \DomainException(
+            throw new DomainException(
                 esc_html__( 'You must provide a page title in order to create an iframe.', 'event_espresso' )
             );
         }
@@ -137,12 +154,12 @@ class Iframe
 
     /**
      * @param string $content
-     * @throws \DomainException
+     * @throws DomainException
      */
     public function setContent( $content )
     {
         if ( empty( $content ) ) {
-            throw new \DomainException(
+            throw new DomainException(
                 esc_html__( 'You must provide content in order to create an iframe.', 'event_espresso' )
             );
         }
@@ -163,12 +180,12 @@ class Iframe
 
     /**
      * @param array $stylesheets
-     * @throws \DomainException
+     * @throws DomainException
      */
     public function addStylesheets( array $stylesheets )
     {
         if ( empty( $stylesheets ) ) {
-            throw new \DomainException(
+            throw new DomainException(
                 esc_html__(
                     'A non-empty array of URLs, is required to add a CSS stylesheet to an iframe.',
                     'event_espresso'
@@ -185,12 +202,12 @@ class Iframe
     /**
      * @param array $scripts
      * @param bool  $add_to_header
-     * @throws \DomainException
+     * @throws DomainException
      */
     public function addScripts( array $scripts, $add_to_header = false )
     {
         if ( empty( $scripts ) ) {
-            throw new \DomainException(
+            throw new DomainException(
                 esc_html__(
                     'A non-empty array of URLs, is required to add Javascript to an iframe.',
                     'event_espresso'
@@ -209,14 +226,40 @@ class Iframe
 
 
     /**
+     * @param array $script_attributes
+     * @param bool  $add_to_header
+     * @throws DomainException
+     */
+    public function addScriptAttributes( array $script_attributes, $add_to_header = false )
+    {
+        if ( empty($script_attributes ) ) {
+            throw new DomainException(
+                esc_html__(
+                    'A non-empty array of strings, is required to add attributes to iframe Javascript.',
+                    'event_espresso'
+                )
+            );
+        }
+        foreach ($script_attributes as $handle => $script_attribute ) {
+            if ( $add_to_header ) {
+                $this->header_js_attributes[ $handle ] = $script_attribute;
+            } else {
+                $this->footer_js_attributes[ $handle ] = $script_attribute;
+            }
+        }
+    }
+
+
+
+    /**
      * @param array  $vars
      * @param string $var_name
-     * @throws \DomainException
+     * @throws DomainException
      */
     public function addLocalizedVars( array $vars, $var_name = 'eei18n' )
     {
         if ( empty( $vars ) ) {
-            throw new \DomainException(
+            throw new DomainException(
                 esc_html__(
                     'A non-empty array of vars, is required to add localized Javascript vars to an iframe.',
                     'event_espresso'
@@ -225,7 +268,9 @@ class Iframe
         }
         foreach ( $vars as $handle => $var ) {
             if ( $var_name === 'eei18n' ) {
-                \EE_Registry::$i18n_js_strings[ $handle ] = $var;
+                EE_Registry::$i18n_js_strings[ $handle ] = $var;
+            } elseif ($var_name === 'eeCAL' && $handle === 'espresso_calendar') {
+                $this->localized_vars[ $var_name ] = $var;
             } else {
                 if ( ! isset( $this->localized_vars[ $var_name ] ) ) {
                     $this->localized_vars[ $var_name ] = array();
@@ -239,16 +284,16 @@ class Iframe
 
     /**
      * @param string $utm_content
-     * @throws \DomainException
+     * @throws DomainException
      */
     public function display($utm_content = '')
     {
-        $this->content .= \EEH_Template::powered_by_event_espresso(
+        $this->content .= EEH_Template::powered_by_event_espresso(
             '',
             '',
             ! empty($utm_content) ? array('utm_content' => $utm_content) : array()
         );
-        \EE_System::do_not_cache();
+        EE_System::do_not_cache();
         echo $this->getTemplate();
         exit;
     }
@@ -257,11 +302,11 @@ class Iframe
 
     /**
      * @return string
-     * @throws \DomainException
+     * @throws DomainException
      */
     public function getTemplate()
     {
-        return \EEH_Template::display_template(
+        return EEH_Template::display_template(
             __DIR__ . DIRECTORY_SEPARATOR . 'iframe_wrapper.template.php',
             array(
                 'title'             => apply_filters(
@@ -289,17 +334,27 @@ class Iframe
                     $this->header_js,
                     $this
                 ),
+                'header_js_attributes' => (array) apply_filters(
+                    'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__header_js_attributes',
+                    $this->header_js_attributes,
+                    $this
+                ),
                 'footer_js'         => (array)apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__footer_js_urls',
                     $this->footer_js,
                     $this
                 ),
-                'eei18n'            => apply_filters(
-                    'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__eei18n_js_strings',
-                    \EE_Registry::localize_i18n_js_strings() . $this->localizeJsonVars(),
+                'footer_js_attributes'         => (array)apply_filters(
+                    'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__footer_js_attributes',
+                    $this->footer_js_attributes,
                     $this
                 ),
-                'notices'           => \EEH_Template::display_template(
+                'eei18n'            => apply_filters(
+                    'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__eei18n_js_strings',
+                    EE_Registry::localize_i18n_js_strings() . $this->localizeJsonVars(),
+                    $this
+                ),
+                'notices'           => EEH_Template::display_template(
                     EE_TEMPLATES . 'espresso-ajax-notices.template.php',
                     array(),
                     true
@@ -321,9 +376,7 @@ class Iframe
     {
         $JSON = '';
         foreach ( (array)$this->localized_vars as $var_name => $vars ) {
-            foreach ( (array)$vars as $key => $value ) {
-                $this->localized_vars[ $var_name ] = $this->encodeJsonVars( $value );
-            }
+            $this->localized_vars[ $var_name ] = $this->encodeJsonVars($vars );
             $JSON .= "/* <![CDATA[ */ var {$var_name} = ";
             $JSON .= wp_json_encode( $this->localized_vars[ $var_name ] );
             $JSON .= '; /* ]]> */';
@@ -345,7 +398,8 @@ class Iframe
                 $localized_vars[ $key ] = $this->encodeJsonVars( $value );
             }
             return $localized_vars;
-        } else if ( is_scalar( $var ) ) {
+        }
+        if ( is_scalar( $var ) ) {
             return html_entity_decode( (string)$var, ENT_QUOTES, 'UTF-8' );
         }
         return null;

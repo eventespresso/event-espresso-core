@@ -1931,6 +1931,20 @@ class EE_Core_Config extends EE_Config_Base
         return EE_Core_Config::$ee_ueip_option;
     }
 
+    /**
+     * Utility function for escaping the value of a property and returning.
+     *
+     * @param string $property property name (checks to see if exists).
+     * @return mixed if a detected type found return the escaped value, otherwise just the raw value is returned.
+     * @throws \EE_Error
+     */
+    public function get_pretty($property)
+    {
+        if ($property === 'ee_ueip_optin') {
+            return $this->ee_ueip_optin ? 'yes' : 'no';
+        }
+        return parent::get_pretty($property);
+    }
 
 
     /**
@@ -2321,9 +2335,17 @@ class EE_Registration_Config extends EE_Config_Base
      * ReCaptcha Theme
      *
      * @var string $recaptcha_theme
-     *    options: 'dark    ', 'light'
+     *    options: 'dark', 'light', 'invisible'
      */
     public $recaptcha_theme;
+
+    /**
+     * ReCaptcha Badge - determines the position of the reCAPTCHA badge if using Invisible ReCaptcha.
+     *
+     * @var string $recaptcha_badge
+     *    options: 'bottomright', 'bottomleft', 'inline'
+     */
+    public $recaptcha_badge;
 
     /**
      * ReCaptcha Type
@@ -2354,6 +2376,13 @@ class EE_Registration_Config extends EE_Config_Base
      * @var string $recaptcha_privatekey
      */
     public $recaptcha_privatekey;
+
+    /**
+     * array of form names protected by ReCaptcha
+     *
+     * @var array $recaptcha_protected_forms
+     */
+    public $recaptcha_protected_forms;
 
     /**
      * ReCaptcha width
@@ -2390,10 +2419,12 @@ class EE_Registration_Config extends EE_Config_Base
         $this->use_encryption = true;
         $this->use_captcha = false;
         $this->recaptcha_theme = 'light';
+        $this->recaptcha_badge = 'bottomleft';
         $this->recaptcha_type = 'image';
         $this->recaptcha_language = 'en';
         $this->recaptcha_publickey = null;
         $this->recaptcha_privatekey = null;
+        $this->recaptcha_protected_forms = array();
         $this->recaptcha_width = 500;
         $this->default_maximum_number_of_tickets = 10;
     }

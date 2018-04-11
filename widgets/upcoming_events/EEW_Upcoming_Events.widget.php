@@ -302,8 +302,9 @@ class EEW_Upcoming_Events extends EspressoWidget {
 				// add function to make the title a link
 	            add_filter('widget_title', array($this, 'make_the_title_a_link'), 15);
 
+				$title = isset( $instance['title'] ) && ! empty( $instance['title'] ) ? $instance['title'] : '';
 				// filter the title
-				$title = apply_filters('widget_title', $instance['title']);
+				$title = apply_filters('widget_title', $title);
 
 				// remove the function from the filter, so it does not affect other widgets
 	            remove_filter('widget_title', array($this, 'make_the_title_a_link'), 15);
@@ -346,7 +347,9 @@ class EEW_Upcoming_Events extends EspressoWidget {
 				// run the query
 				$events = EE_Registry::instance()->load_model( 'Event' )->get_all( array(
 					$where,
-					'limit' => $instance['limit'] > 0 ? '0,' . $instance['limit'] : '0,10',
+					'limit' => isset($instance['limit']) && $instance['limit'] > 0 
+								? '0,' . $instance['limit'] 
+								: '0,10',
 					'order_by' => 'Datetime.DTT_EVT_start',
 					'order' => isset($instance['sort']) ? $instance['sort'] : 'ASC',
 					'group_by' => 'EVT_ID'

@@ -15,7 +15,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\core\services\request
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.59.p
  */
 interface RequestInterface extends RequestTypeContextCheckerInterface
 {
@@ -83,6 +83,33 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
      * @return bool
      */
     public function requestParamIsSet($key);
+
+
+    /**
+     * check if a request parameter exists whose key that matches the supplied wildcard pattern
+     * and return the value for the first match found
+     * wildcards can be either of the following:
+     *      ? to represent a single character of any type
+     *      * to represent one or more characters of any type
+     *
+     * @param string     $pattern
+     * @param null|mixed $default
+     * @return false|int
+     */
+    public function getMatch($pattern, $default = null);
+
+
+    /**
+     * check if a request parameter exists whose key matches the supplied wildcard pattern
+     * wildcards can be either of the following:
+     *      ? to represent a single character of any type
+     *      * to represent one or more characters of any type
+     * returns true if a match is found or false if not
+     *
+     * @param string $pattern
+     * @return false|int
+     */
+    public function matches($pattern);
 
 
     /**

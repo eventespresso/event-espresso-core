@@ -19,7 +19,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  *
  * @package        Event Espresso
  * @author         Mike Nelson
- * @since          $VID:$
+ * @since          4.9.59.p
  */
 class SettingsForm extends EE_Payment_Method_Form
 {

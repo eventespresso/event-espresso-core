@@ -1,4 +1,9 @@
 <?php
+
+use EventEspresso\core\domain\services\pue\Stats;
+use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\services\licensing\LicenseService;
+
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -1166,4 +1171,81 @@ class EE_Event_List_Query extends WP_Query
         return $event_list_css;
     }
 
+}
+
+
+/**
+ * EE_PUE
+ *
+ * @package        Event Espresso
+ * @subpackage     includes/core/
+ * @author         Darren Ethier
+ * @deprecated     4.9.59.p
+ */
+class EE_PUE implements InterminableInterface
+{
+
+
+    /**
+     *    class constructor
+     *
+     * @deprecated 4.9.59.p
+     */
+    public function __construct()
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                esc_html__('%1$s has been replaced by %2$s.', 'event_espresso'),
+                __CLASS__,
+                'EventEspresso\core\services\licensing\LicenseServices'
+            ),
+            '4.9.59.p'
+        );
+    }
+
+
+    /**
+     * The purpose of this function is to display information about Event Espresso data collection
+     * and a optin selection for extra data collecting by users.
+     *
+     * @param bool $extra
+     * @return string html.
+     * @deprecated 4.9.59.p
+     */
+    public static function espresso_data_collection_optin_text($extra = true)
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                esc_html__('%1$s has been replaced by %2$s.', 'event_espresso'),
+                __METHOD__,
+                'EventEspresso\core\domain\services\Stats::optinText'
+            ),
+            '4.9.59.p'
+        );
+        Stats::optinText($extra);
+    }
+
+    /**
+     * This is a handy helper method for retrieving whether there is an update available for the given plugin.
+     *
+     * @param  string $basename Use the equivalent result from plugin_basename() for this param as WP uses that to
+     *                          identify plugins. Defaults to core update
+     * @return boolean           True if update available, false if not.
+     * @deprecated 4.9.59.p
+     */
+    public static function is_update_available($basename = '')
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                esc_html__('%1$s has been replaced by %2$s.', 'event_espresso'),
+                __METHOD__,
+                'EventEspresso\core\services\licensing\LicenseService::isUpdateAvailable'
+            ),
+            '4.9.59.p'
+        );
+        return LicenseService::isUpdateAvailable($basename);
+    }
 }
