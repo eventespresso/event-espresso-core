@@ -37,7 +37,7 @@ class Domain extends DomainBase implements CaffeinatedInterface
 
     /**
      * Whether or not EE core is the full premium version.
-     * @since $VID:$
+     * @since 4.9.59.p
      * @var bool
      */
     private $caffeinated;
@@ -51,7 +51,7 @@ class Domain extends DomainBase implements CaffeinatedInterface
 
     /**
      * Whether or not EE core is the full premium version.
-     * @since $VID:$
+     * @since 4.9.59.p
      * @return bool
      */
     public function isCaffeinated()
@@ -62,7 +62,7 @@ class Domain extends DomainBase implements CaffeinatedInterface
 
     /**
      * Setter for $is_caffeinated property.
-     * @since $VID:$
+     * @since 4.9.59.p
      */
     private function setCaffeinated()
     {

@@ -18,7 +18,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\caffeinated\modules\recaptcha_invisible
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.59.p
  */
 class RecaptchaFactory implements FactoryInterface
 {
