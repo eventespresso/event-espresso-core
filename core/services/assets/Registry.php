@@ -406,7 +406,10 @@ class Registry
                         $url_base,
                         'plugins_url',
                         'WP_PLUGIN_URL'
-                    )
+                    ),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
                 );
             }
             return;
