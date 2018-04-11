@@ -1,0 +1,19 @@
+{
+	"rootDir": "../../../",
+	"collectCoverageFrom": [
+		"assets/src/**/*.js",
+		"!**/node_modules/**",
+		"!**/vendor/**"
+	],
+	"moduleNameMapper": {
+		"@eventespresso\\/(eejs)": "$1"
+	},
+	"setupFiles": [
+		"<rootDir>/tests/javascript-config/unit/setup-globals.js"
+	],
+	"preset": "@wordpress/jest-preset-default",
+	"testPathIgnorePatterns": [
+		"/node_modules/",
+		"/test/e2e"
+	]
+}
