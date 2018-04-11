@@ -20,12 +20,12 @@ npm run lint:fix
 
 The former will go through all js files in the `assets` folder and root path and report on any eslint rule violations.  The latter will automatically fix any rule violations for things that can be automatically fixed.
 
-## Setting up in PHPStorm
+## Setting up in PhpStorm
 
-If you use PHPStorm the following steps will assist you with setting up your environment for using our javascript styles:
+If you use PhpStorm the following steps will assist you with setting up your environment for using our javascript styles:
 
 - Go to `Languages & Frameworks > Javascript > Code Quality Tools > ESLint` and make sure the checkbox labelled `Enable` is checked.  The default options _should_ work unless you've already modified it.
-- Enable `.editorconfig` support if you haven't already.  You can do this by installing the `EditorConfig` phpstorm plugin and then go to `Editor > Code Style` and click the `EditorConfig` checkbox.  This will make sure line indentation and spacing is setup correctly.
+- Enable `.editorconfig` support if you haven't already.  You can do this by installing the `EditorConfig` PhpStorm plugin and then go to `Editor > Code Style` and click the `EditorConfig` checkbox.  This will make sure line indentation and spacing is setup correctly.
 - Import the `EE-Code-Styles.xml` configuration from our [project configuration](https://github.com/eventespresso/project-configuration/tree/master/phpstorm/code-styles
 ) repository.
 
