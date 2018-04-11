@@ -399,7 +399,7 @@ class Registry
                 EE_Error::add_error(
                     sprintf(
                         esc_html__(
-                            'The url given for %1$s is invalid.  The url provided was: "%2$s". This usually happens when another plugin or theme on a site is using the "%3$s" filter or has an invalid url set for the "%4$s" constant',
+                            'The url given for %1$s assets is invalid.  The url provided was: "%2$s". This usually happens when another plugin or theme on a site is using the "%3$s" filter or has an invalid url set for the "%4$s" constant',
                             'event_espresso'
                         ),
                         'Event Espresso',
