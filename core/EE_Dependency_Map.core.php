@@ -822,7 +822,7 @@ class EE_Dependency_Map
             },
             'EE_Config' => function () {
                 return EE_Config::instance();
-            }
+            },
             'EE_Base' => 'load_core',
         );
     }
