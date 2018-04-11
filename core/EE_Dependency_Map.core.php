@@ -663,9 +663,31 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
-            'EE_Admin_Transactions_List_Table' => array(
+            'EventEspresso\core\services\licensing\LicenseService' => array(
+                'EventEspresso\core\domain\services\pue\Stats' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\pue\Config' => EE_Dependency_Map::load_from_cache
+            ),
+			'EE_Admin_Transactions_List_Table' => array(
                 null,
                 'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
+			),
+            'EventEspresso\core\domain\services\pue\Stats' => array(
+                'EventEspresso\core\domain\services\pue\Config' => EE_Dependency_Map::load_from_cache,
+                'EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\pue\StatsGatherer' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\domain\services\pue\Config' => array(
+                'EE_Network_Config' => EE_Dependency_Map::load_from_cache,
+                'EE_Config' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\domain\services\pue\StatsGatherer' => array(
+                'EEM_Payment_Method' => EE_Dependency_Map::load_from_cache,
+                'EEM_Event' => EE_Dependency_Map::load_from_cache,
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+                'EEM_Registration' => EE_Dependency_Map::load_from_cache,
+                'EEM_Transaction' => EE_Dependency_Map::load_from_cache,
+                'EE_Config' => EE_Dependency_Map::load_from_cache
             ),
             'EventEspresso\core\domain\services\admin\ExitModal' => array(
                 'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache
@@ -679,6 +701,16 @@ class EE_Dependency_Map
             ),
             'EventEspresso\caffeinated\modules\recaptcha_invisible\RecaptchaAdminSettings' => array(
                 'EE_Registration_Config' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\modules\ticket_selector\ProcessTicketSelector' => array(
+                'EE_Core_Config' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+                'EE_Session' => EE_Dependency_Map::load_from_cache,
+                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker' => array(
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\loaders\ObjectIdentifier' => array(
                 'EventEspresso\core\services\loaders\ClassInterfaceCache' => EE_Dependency_Map::load_from_cache,
@@ -763,10 +795,6 @@ class EE_Dependency_Map
                     false
                 );
             },
-            //load_model
-            // 'EEM_Attendee'                         => 'load_model',
-            // 'EEM_Message_Template_Group'           => 'load_model',
-            // 'EEM_Message_Template'                 => 'load_model',
             //load_helper
             'EEH_Parse_Shortcodes'                 => function () {
                 if (EE_Registry::instance()->load_helper('Parse_Shortcodes')) {
@@ -783,9 +811,18 @@ class EE_Dependency_Map
             'EE_Registration_Config'                   => function () {
                 return EE_Config::instance()->registration;
             },
+            'EE_Core_Config'                   => function () {
+                return EE_Config::instance()->core;
+            },
             'EventEspresso\core\services\loaders\Loader' => function () {
                 return LoaderFactory::getLoader();
             },
+            'EE_Network_Config' => function() {
+                return EE_Network_Config::instance();
+            },
+            'EE_Config' => function () {
+                return EE_Config::instance();
+            }
             'EE_Base' => 'load_core',
         );
     }

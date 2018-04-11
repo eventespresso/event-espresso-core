@@ -1,4 +1,6 @@
-<?php use EventEspresso\core\interfaces\InterminableInterface;
+<?php
+
+use EventEspresso\core\interfaces\InterminableInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -14,7 +16,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  * @subpackage includes/functions
  * @author     Brent Christensen
  */
-class EE_Encryption
+class EE_Encryption implements InterminableInterface
 {
 
     /**
@@ -119,10 +121,10 @@ class EE_Encryption
     public static function instance()
     {
         // check if class object is instantiated
-        if (! self::$_instance instanceof EE_Encryption) {
-            self::$_instance = new self();
+        if (! EE_Encryption::$_instance instanceof EE_Encryption) {
+            EE_Encryption::$_instance = new self();
         }
-        return self::$_instance;
+        return EE_Encryption::$_instance;
     }
 
 
@@ -218,13 +220,13 @@ class EE_Encryption
     }
 
 
-
     /**
      * decodes string that has been encoded with PHP's base64 encoding
      *
      * @see http://php.net/manual/en/function.base64-encode.php
      * @param string $encoded_string the text to be decoded
      * @return string
+     * @throws RuntimeException
      */
     public function base64_string_decode($encoded_string = '')
     {
@@ -233,7 +235,13 @@ class EE_Encryption
             return $encoded_string;
         }
         // decode
-        return base64_decode($encoded_string);
+        $decoded_string = base64_decode($encoded_string);
+        if ($decoded_string === false) {
+            throw new RuntimeException(
+                esc_html__('Base 64 decoding failed.', 'event_espresso')
+            );
+        }
+        return $decoded_string;
     }
 
 
@@ -258,13 +266,13 @@ class EE_Encryption
     }
 
 
-
     /**
      * decodes  url string that has been encoded with PHP's base64 encoding
      *
      * @see http://php.net/manual/en/function.base64-encode.php
      * @param string $encoded_string the text to be decoded
      * @return string
+     * @throws RuntimeException
      */
     public function base64_url_decode($encoded_string = '')
     {
@@ -275,25 +283,35 @@ class EE_Encryption
         // replace previously removed characters
         $encoded_string = strtr($encoded_string, '-_,', '+/=');
         // decode
-        return base64_decode($encoded_string);
+        $decoded_string = base64_decode($encoded_string);
+        if ($decoded_string === false) {
+            throw new RuntimeException(
+                esc_html__('Base 64 decoding failed.', 'event_espresso')
+            );
+        }
+        return $decoded_string;
     }
-
 
 
     /**
      * encrypts data using PHP's openssl functions
      *
      * @param string $text_string the text to be encrypted
+     * @param string $cipher_method
+     * @param string $encryption_key
      * @return string
      * @throws RuntimeException
      */
-    protected function openssl_encrypt($text_string = '')
-    {
+    protected function openssl_encrypt(
+        $text_string = '',
+        $cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD,
+        $encryption_key = ''
+    ) {
         // you give me nothing??? GET OUT !
         if (empty($text_string)) {
             return $text_string;
         }
-        $this->cipher_method = $this->getCipherMethod();
+        $this->cipher_method = $this->getCipherMethod($cipher_method);
         // get initialization vector size
         $iv_size = openssl_cipher_iv_length($this->cipher_method);
         // generate initialization vector.
@@ -310,7 +328,7 @@ class EE_Encryption
         $encrypted_text = openssl_encrypt(
             $text_string,
             $this->cipher_method,
-            $this->getDigestHashValue(),
+            $this->getDigestHashValue(EE_Encryption::OPENSSL_DIGEST_METHOD, $encryption_key),
             0,
             $iv
         );
@@ -393,23 +411,27 @@ class EE_Encryption
     }
 
 
-
     /**
      * decrypts data that has been encrypted with PHP's openssl functions
      *
      * @param string $encrypted_text the text to be decrypted
+     * @param string $cipher_method
+     * @param string $encryption_key
      * @return string
      * @throws RuntimeException
      */
-    protected function openssl_decrypt($encrypted_text = '')
-    {
+    protected function openssl_decrypt(
+        $encrypted_text = '',
+        $cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD,
+        $encryption_key = ''
+    ) {
         // you give me nothing??? GET OUT !
         if (empty($encrypted_text)) {
             return $encrypted_text;
         }
         // decode
         $encrypted_text = $this->valid_base_64($encrypted_text)
-            ? base64_decode($encrypted_text)
+            ? $this->base64_url_decode($encrypted_text)
             : $encrypted_text;
         $encrypted_components = explode(
             EE_Encryption::OPENSSL_IV_DELIMITER,
@@ -423,8 +445,8 @@ class EE_Encryption
         // decrypt it
         $decrypted_text = openssl_decrypt(
             $encrypted_components[0],
-            $this->getCipherMethod(),
-            $this->getDigestHashValue(),
+            $this->getCipherMethod($cipher_method),
+            $this->getDigestHashValue(EE_Encryption::OPENSSL_DIGEST_METHOD,$encryption_key),
             0,
             $encrypted_components[1]
         );
@@ -433,18 +455,21 @@ class EE_Encryption
     }
 
 
-
     /**
      * Computes the digest hash value using the specified digest method.
      * If that digest method fails to produce a valid hash value,
      * then we'll grab the next digest method and recursively try again until something works.
      *
      * @param string $digest_method
+     * @param string $encryption_key
      * @return string
      * @throws RuntimeException
      */
-    protected function getDigestHashValue($digest_method = EE_Encryption::OPENSSL_DIGEST_METHOD){
-        $digest_hash_value = openssl_digest($this->get_encryption_key(), $digest_method);
+    protected function getDigestHashValue($digest_method = EE_Encryption::OPENSSL_DIGEST_METHOD, $encryption_key = ''){
+        $encryption_key = $encryption_key !== ''
+            ? $encryption_key
+            : $this->get_encryption_key();
+        $digest_hash_value = openssl_digest($encryption_key, $digest_method);
         if ($digest_hash_value === false) {
             return $this->getDigestHashValue($this->getDigestMethod());
         }
@@ -530,7 +555,7 @@ class EE_Encryption
         }
         // decode the data ?
         $encrypted_text = $this->valid_base_64($encrypted_text)
-            ? base64_decode($encrypted_text)
+            ? $this->base64_url_decode($encrypted_text)
             : $encrypted_text;
         if (
             $this->_use_mcrypt
@@ -659,7 +684,7 @@ class EE_Encryption
         }
         // decode
         $encrypted_text = $this->valid_base_64($encrypted_text)
-            ? base64_decode($encrypted_text)
+            ? $this->base64_url_decode($encrypted_text)
             : $encrypted_text;
         // get the initialization vector size
         $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);

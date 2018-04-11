@@ -22,7 +22,6 @@ common.forEach((config, index) => {
         ]
     }
     common[index] = merge(config,{
-        devtool: 'source-map',
         plugins: [
             new webpack.DefinePlugin({
                 'process.env': {

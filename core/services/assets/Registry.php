@@ -124,21 +124,21 @@ class Registry
         global $wp_version;
         wp_register_script(
             'ee-manifest',
-            $this->getAssetUrl(self::ASSET_NAMESPACE, 'manifest', self::ASSET_TYPE_JS),
+            $this->getJsUrl(self::ASSET_NAMESPACE, 'manifest'),
             array(),
             null,
             true
         );
         wp_register_script(
             'eejs-core',
-            $this->getAssetUrl(self::ASSET_NAMESPACE, 'eejs', self::ASSET_TYPE_JS),
+            $this->getJsUrl(self::ASSET_NAMESPACE, 'eejs'),
             array('ee-manifest'),
             null,
             true
         );
         wp_register_script(
             'ee-vendor-react',
-            $this->getAssetUrl(self::ASSET_NAMESPACE, 'reactVendor', self::ASSET_TYPE_JS),
+            $this->getJsUrl(self::ASSET_NAMESPACE, 'reactVendor'),
             array('eejs-core'),
             null,
             true
@@ -311,7 +311,7 @@ class Registry
      * @param string $chunk_name
      * @param string $asset_type
      * @return string
-     * @since $VID:$
+     * @since 4.9.59.p
      */
     public function getAssetUrl($namespace, $chunk_name, $asset_type)
     {
@@ -333,6 +333,32 @@ class Registry
 
 
     /**
+     * Return the url to a js file for the given namespace and chunk name.
+     *
+     * @param string $namespace
+     * @param string $chunk_name
+     * @return string
+     */
+    public function getJsUrl($namespace, $chunk_name)
+    {
+        return $this->getAssetUrl($namespace, $chunk_name, self::ASSET_TYPE_JS);
+    }
+
+
+    /**
+     * Return the url to a css file for the given namespace and chunk name.
+     *
+     * @param string $namespace
+     * @param string $chunk_name
+     * @return string
+     */
+    public function getCssUrl($namespace, $chunk_name)
+    {
+        return $this->getAssetUrl($namespace, $chunk_name, self::ASSET_TYPE_CSS);
+    }
+
+
+    /**
      * Used to register a js/css manifest file with the registered_manifest_files property.
      *
      * @param string $namespace     Provided to associate the manifest file with a specific namespace.
@@ -340,7 +366,7 @@ class Registry
      * @param string $manifest_file The absolute path to the manifest file.
      * @throws InvalidArgumentException
      * @throws InvalidFilePathException
-     * @since $VID:$
+     * @since 4.9.59.p
      */
     public function registerManifestFile($namespace, $url_base, $manifest_file)
     {
@@ -378,7 +404,7 @@ class Registry
     /**
      * Decodes json from the provided manifest file.
      *
-     * @since $VID:$
+     * @since 4.9.59.p
      * @param string $manifest_file Path to manifest file.
      * @return array
      * @throws InvalidFilePathException
@@ -622,7 +648,7 @@ class Registry
     {
         wp_register_script(
             'ee-wp-plugins-page',
-            $this->getAssetUrl(self::ASSET_NAMESPACE, 'wp-plugins-page', self::ASSET_TYPE_JS),
+            $this->getJsUrl(self::ASSET_NAMESPACE, 'wp-plugins-page'),
             array(
                 'jquery',
                 'ee-vendor-react'
@@ -632,7 +658,7 @@ class Registry
         );
         wp_register_style(
             'ee-wp-plugins-page',
-            $this->getAssetUrl(self::ASSET_NAMESPACE, 'wp-plugins-page', self::ASSET_TYPE_CSS),
+            $this->getCssUrl(self::ASSET_NAMESPACE, 'wp-plugins-page'),
             array(),
             null
         );
