@@ -8,11 +8,14 @@ describe( 'eejs', () => {
 	} );
 
 	describe( 'exception', () => {
-		it( 'it should throw error with msg "error thrown"', () => {
-			const t = () => {
-				throw new exception( 'error thrown' );
-			};
+		const t = () => {
+			throw new exception( 'error thrown' );
+		};
+		it( 'should throw error with msg "error thrown"', () => {
 			expect( t ).toThrowError( 'error thrown' );
+		} );
+		it( 'should throw an error which is an instance of "exception"', () => {
+			expect( t ).toThrowError( exception );
 		} );
 	} );
 } );
