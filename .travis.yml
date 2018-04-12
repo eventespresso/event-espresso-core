@@ -52,7 +52,12 @@ before_script:
   - phpunit --version
   - phpenv versions
 
+script: npm run test-php
+
 jobs:
+  fast_finish: true
+  allow_failures:
+    - php: nightly
   include:
     - stage: php-tests
       php: 7.2
@@ -75,14 +80,11 @@ jobs:
       env: WP_VERSION=4.2
     - php: 5.6
       env: WP_VERSION=4.2 WP_MULTISITE=1
+    - php: nightly
     - stage: javascript-tests
       script:
         - npm install || exit 1
         - npm run ci || exit 1
-    # nightly builds
-  allow_failures:
-    - stage: php-tests
-      php: nightly
 notifications:
   slack:
     rooms:
