@@ -1,7 +1,8 @@
 /**
  * Setup globals used in various tests
  */
-// Set up `wp.*` aliases.  Handled by Webpack outside of the test build.
+// Setup eejsdata global. This is something set in EE core via
+// wp_localize_script so its outside of the build process.
 global.eejsdata = {
 	data: {
 		testData: true
