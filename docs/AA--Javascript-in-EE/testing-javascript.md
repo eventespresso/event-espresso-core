@@ -6,7 +6,7 @@ At Event Espresso we recognize the value of automated testing of code and how th
 
 ### Framework
 
-The framework we use for unit testing javascript in Event Espresso is [jest](https://facebook.github.io/jest/).  Jest is a testing framework developed by Facebook and one of its benefits is along with the ability to unit test native javascript, out of the box it also works for testing any React project.  Since React is/will be used for much of the javascript functionality we build in EE, it's a good fit.
+The framework we use for unit testing javascript in Event Espresso is [jest](https://facebook.github.io/jest/).  Jest is a testing framework developed by Facebook and one of its benefits (along with the ability to unit test native javascript) is that out of the box it also works for testing any React project.  Since React is/will be used for much of the javascript functionality we build in EE, it's a good fit.
 
 ### Folder Structure 
 
