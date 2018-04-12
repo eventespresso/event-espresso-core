@@ -3,3 +3,4 @@ core/third_party_libs/dompdf/lib/fonts/log.htm
 .idea
 node_modules
 .DS_Store
+coverage
