@@ -15,36 +15,6 @@ env:
   global:
     - WP_VERSION=latest WP_MULTISITE=0
 
-matrix:
-  include:
-  - php: 7.2
-  - php: 7.1
-  - php: 7.0
-  - php: 5.6
-  - php: 5.5
-  - php: 5.4
-  # multisite builds
-  - php: 7.2
-    env: WP_MULTISITE=1
-  - php: 7.1
-    env: WP_MULTISITE=1
-  - php: 7.0
-    env: WP_MULTISITE=1
-  - php: 5.6
-    env: WP_MULTISITE=1
-  # WP 4.2 builds
-  - php: 5.6
-    env: WP_VERSION=4.2
-  - php: 5.6
-    env: WP_VERSION=4.2 WP_MULTISITE=1
-  # nightly builds
-  - php: nightly
-  - php: nightly
-    env: WP_MULTISITE=1
-  allow_failures:
-  - php: nightly
-  fast_finish: true
-
 before_install:
    - nvm install && nvm use
    - |
@@ -82,14 +52,37 @@ before_script:
   - phpunit --version
   - phpenv versions
 
-script: cd tests; phpunit;
-
 jobs:
   include:
+    - stage: php-tests
+      php: 7.2
+    - php: 7.1
+    - php: 7.0
+    - php: 5.6
+    - php: 5.5
+    - php: 5.4
+    # multisite
+    - php: 7.2
+      env: WP_MULTISITE=1
+    - php: 7.1
+      env: WP_MULTISITE=1
+    - php: 7.0
+      env: WP_MULTISITE=1
+    - php: 5.6
+      env: WP_MULTISITE=1
+    # wp 4.2 builds
+    - php: 5.6
+      env: WP_VERSION=4.2
+    - php: 5.6
+      env: WP_VERSION=4.2 WP_MULTISITE=1
     - stage: javascript-tests
       script:
         - npm install || exit 1
         - npm run ci || exit 1
+    # nightly builds
+  allow_failures:
+    - stage: php-tests
+      php: nightly
 notifications:
   slack:
     rooms:
