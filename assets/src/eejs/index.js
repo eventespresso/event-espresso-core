@@ -14,5 +14,5 @@ export const data = eejsdata.data || {};
  * @param {string} msg
  */
 export const exception = function( msg ) {
-	this.msg = msg;
+	this.message = msg;
 };
