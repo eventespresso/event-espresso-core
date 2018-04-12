@@ -383,33 +383,24 @@ class Registry
             );
         }
         if (filter_var($url_base, FILTER_VALIDATE_URL) === false) {
+            $message = printf(
+                esc_html__(
+                    'The url given for %1$s assets is invalid.  The url provided was: "%2$s". This usually happens when another plugin or theme on a site is using the "%3$s" filter or has an invalid url set for the "%4$s" constant',
+                    'event_espresso'
+                ),
+                'Event Espresso',
+                $url_base,
+                'plugins_url',
+                'WP_PLUGIN_URL'
+            );
             if ( WP_DEBUG ) {
                 throw new InvalidArgumentException(
-                    sprintf(
-                        esc_html__(
-                            'The provided value for %1$s is not a valid url.  The url provided was: %2$s',
-                            'event_espresso'
-                        ),
-                        '$url_base',
-                        $url_base
-                    )
+                    $message
                 );
             }
             if (is_admin()) {
                 EE_Error::add_error(
-                    sprintf(
-                        esc_html__(
-                            'The url given for %1$s assets is invalid.  The url provided was: "%2$s". This usually happens when another plugin or theme on a site is using the "%3$s" filter or has an invalid url set for the "%4$s" constant',
-                            'event_espresso'
-                        ),
-                        'Event Espresso',
-                        $url_base,
-                        'plugins_url',
-                        'WP_PLUGIN_URL'
-                    ),
-                    __FILE__,
-                    __FUNCTION__,
-                    __LINE__
+                    $message
                 );
             }
             return;
