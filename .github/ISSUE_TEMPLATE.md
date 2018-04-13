@@ -26,8 +26,11 @@ BEFORE POSTING YOUR ISSUE:
 ## Environment Data:
 
 Version of EE: <!-- Can be a branch name or the version of EE the issue happened in. -->
+
 Version of WordPress:
+
 PHP Version:  <!-- if known, add your php version here -->
+
 Browser used:  <!-- also include your browser version if possible -->
 
 
