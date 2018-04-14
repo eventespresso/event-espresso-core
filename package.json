@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"description": "Event Espresso core js and css.",
 	"main": "webpack.dev.js",
+	"repository": "git+https://github.com/eventespresso/event-espresso-core.git",
 	"scripts": {
 		"watch": "webpack --watch --config webpack.dev.js",
 		"build": "webpack --config webpack.prod.js",
