@@ -196,19 +196,19 @@ class EED_Ical  extends EED_Module {
 				header( 'Expires: Sat, 26 Jul 1997 05:00:00 GMT' ); // past date
 				ini_set( 'zlib.output_compression', '0' );
 				// echo the output
-				echo "BEGIN:VCALENDAR" . PHP_EOL;
-				echo "VERSION:2.0" . PHP_EOL;
-				echo "PRODID:-//{$organizer_name}//NONSGML PDA Calendar Version 1.0//EN" . PHP_EOL;
-				echo "CALSCALE:GREGORIAN" . PHP_EOL;
-				echo "BEGIN:VEVENT" . PHP_EOL;
+				echo "BEGIN:VCALENDAR\r\n";
+				echo "VERSION:2.0\r\n";
+				echo "PRODID:-//{$organizer_name}//NONSGML PDA Calendar Version 1.0//EN\r\n";
+				echo "CALSCALE:GREGORIAN\r\n";
+				echo "BEGIN:VEVENT\r\n";
 				
 				//Output all remaining values from ics_data.
 				foreach( $ics_data as $key => $value ) {
-					echo $key . ':' . $value . PHP_EOL;
+					echo $key . ':' . $value . "\r\n";
 				}
 
-				echo "END:VEVENT" . PHP_EOL;
-				echo "END:VCALENDAR" . PHP_EOL;
+				echo "END:VEVENT\r\n";
+				echo "END:VCALENDAR\r\n";
 			}
 		}
 		die();
