@@ -28,7 +28,9 @@ common.forEach( ( config, index ) => {
 	if ( common[ index ].configName === 'eejs' ) {
 		common[ index ].plugins = [
 			new wpi18nExtractor( {
-				eejs: 'eejs-core',
+				aliases: {
+					eejs: 'eejs-core',
+				},
 			} ),
 		];
 	}
@@ -40,7 +42,9 @@ common.forEach( ( config, index ) => {
 				},
 			} ),
 			new wpi18nExtractor( {
-				'wp-plugins-page': 'ee-wp-plugins-page',
+				aliases: {
+					'wp-plugins-page': 'ee-wp-plugins-page',
+				},
 			} ),
 			new webpack.optimize.UglifyJsPlugin( {
 				sourceMap: true,
