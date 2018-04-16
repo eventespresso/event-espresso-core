@@ -618,9 +618,13 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\database\TableManager'  => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\services\assets\I18nRegistry' => array(
+                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache
+            ),
             'EventEspresso\core\services\assets\Registry'                                                                 => array(
                 'EE_Template_Config' => EE_Dependency_Map::load_from_cache,
                 'EE_Currency_Config' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\I18nRegistry' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache
             ),
             'EventEspresso\core\domain\entities\shortcodes\EspressoCancelled'                                             => array(
