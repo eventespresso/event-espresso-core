@@ -1,6 +1,6 @@
 const recast = require( 'recast' );
 const { forEach, reduce, includes, isEmpty, isFunction } = require( 'lodash' );
-const { writeFileSync } = require( 'fs' );
+const { readFileSync, writeFileSync } = require( 'fs' );
 const NormalModule = require( 'webpack/lib/NormalModule' );
 
 class wpi18nExtractor {
@@ -117,7 +117,8 @@ class wpi18nExtractor {
 			translationMap,
 			parseSourcesToMap,
 		} = extractor;
-		let chunkName;
+		let chunkName,
+			finalMap;
 		forEach( chunks, function( chunk ) {
 			if ( chunk.name ) {
 				//get chunk.name from alias if it exists
@@ -127,8 +128,15 @@ class wpi18nExtractor {
 				parseSourcesToMap( chunk._modules, chunkName, extractor );
 			}
 		} );
+		//get existing json and merge
+		try {
+			finalMap = JSON.parse( readFileSync( './' + options.filename ) );
+		} catch ( e ) {
+			finalMap = {};
+		}
+		finalMap = Object.assign( {}, finalMap, translationMap );
 		writeFileSync( './' + options.filename,
-			JSON.stringify( translationMap, null, 2 ),
+			JSON.stringify( finalMap, null, 2 ),
 			'utf-8'
 		);
 	}
