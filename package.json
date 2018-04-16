@@ -6,7 +6,7 @@
 	"repository": "git+https://github.com/eventespresso/event-espresso-core.git",
 	"scripts": {
 		"watch": "webpack --watch --config webpack.dev.js",
-		"build": "webpack --config webpack.prod.js",
+		"build": "cross-env NODE_ENV=production webpack --config webpack.prod.js",
 		"watch-poll": "webpack --watch --watch-poll --config webpack.dev.js",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
@@ -42,6 +42,7 @@
 		"clean-webpack-plugin": "^0.1.18",
 		"codecov": "^3.0.0",
 		"concurrently": "^3.5.1",
+		"cross-env": "^5.1.4",
 		"css-loader": "^0.28.11",
 		"eslint": "^4.19.1",
 		"eslint-config-wordpress": "^2.0.0",
