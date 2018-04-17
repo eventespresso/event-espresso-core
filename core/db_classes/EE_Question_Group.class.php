@@ -125,7 +125,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class {
 	 * a question group integral to the system, whose questions
 	 * relate to the attendee table)
 	 * @access public
-	 * @return boolean
+	 * @return int
 	 */
 	public function system_group() {
 		return $this->get( 'QSG_system' );

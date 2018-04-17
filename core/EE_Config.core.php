@@ -445,8 +445,7 @@ final class EE_Config implements ResettableInterface
         $this->_addon_option_names = array();
         foreach ($this->addons as $addon_name => $addon_config_obj) {
             $addon_config_obj = maybe_unserialize($addon_config_obj);
-            $config_class = get_class($addon_config_obj);
-            if ($addon_config_obj instanceof $config_class && ! $addon_config_obj instanceof __PHP_Incomplete_Class) {
+            if ($addon_config_obj instanceof EE_Config_Base) {
                 $this->update_config('addons', $addon_name, $addon_config_obj, false);
             }
             $this->addons->{$addon_name} = null;
@@ -1932,6 +1931,20 @@ class EE_Core_Config extends EE_Config_Base
         return EE_Core_Config::$ee_ueip_option;
     }
 
+    /**
+     * Utility function for escaping the value of a property and returning.
+     *
+     * @param string $property property name (checks to see if exists).
+     * @return mixed if a detected type found return the escaped value, otherwise just the raw value is returned.
+     * @throws \EE_Error
+     */
+    public function get_pretty($property)
+    {
+        if ($property === 'ee_ueip_optin') {
+            return $this->ee_ueip_optin ? 'yes' : 'no';
+        }
+        return parent::get_pretty($property);
+    }
 
 
     /**
@@ -2089,7 +2102,8 @@ class EE_Organization_Config extends EE_Config_Base
     public function __construct()
     {
         // set default organization settings
-        $this->name = get_bloginfo('name');
+        //decode HTML entities from the WP blogname, because it's stored in the DB with HTML entities encoded
+        $this->name = wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES);
         $this->address_1 = '123 Onna Road';
         $this->address_2 = 'PO Box 123';
         $this->city = 'Inna City';
@@ -2321,9 +2335,17 @@ class EE_Registration_Config extends EE_Config_Base
      * ReCaptcha Theme
      *
      * @var string $recaptcha_theme
-     *    options: 'dark    ', 'light'
+     *    options: 'dark', 'light', 'invisible'
      */
     public $recaptcha_theme;
+
+    /**
+     * ReCaptcha Badge - determines the position of the reCAPTCHA badge if using Invisible ReCaptcha.
+     *
+     * @var string $recaptcha_badge
+     *    options: 'bottomright', 'bottomleft', 'inline'
+     */
+    public $recaptcha_badge;
 
     /**
      * ReCaptcha Type
@@ -2354,6 +2376,13 @@ class EE_Registration_Config extends EE_Config_Base
      * @var string $recaptcha_privatekey
      */
     public $recaptcha_privatekey;
+
+    /**
+     * array of form names protected by ReCaptcha
+     *
+     * @var array $recaptcha_protected_forms
+     */
+    public $recaptcha_protected_forms;
 
     /**
      * ReCaptcha width
@@ -2390,10 +2419,12 @@ class EE_Registration_Config extends EE_Config_Base
         $this->use_encryption = true;
         $this->use_captcha = false;
         $this->recaptcha_theme = 'light';
+        $this->recaptcha_badge = 'bottomleft';
         $this->recaptcha_type = 'image';
         $this->recaptcha_language = 'en';
         $this->recaptcha_publickey = null;
         $this->recaptcha_privatekey = null;
+        $this->recaptcha_protected_forms = array();
         $this->recaptcha_width = 500;
         $this->default_maximum_number_of_tickets = 10;
     }

@@ -1,7 +1,7 @@
 <?php use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\modules\ticket_selector\DisplayTicketSelector;
-use EventEspresso\modules\ticket_selector\ProcessTicketSelector;
 use EventEspresso\modules\ticket_selector\TicketSelectorIframe;
 use EventEspresso\modules\ticket_selector\TicketSelectorIframeEmbedButton;
 
@@ -224,25 +224,33 @@ class EED_Ticket_Selector extends EED_Module
     }
 
 
-
     /**
      * @return array  or FALSE
-     * @throws EE_Error
+     * @throws \ReflectionException
+     * @throws \EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public function process_ticket_selections()
     {
-        $form = new ProcessTicketSelector();
+        /** @var EventEspresso\modules\ticket_selector\ProcessTicketSelector $form */
+        $form = LoaderFactory::getLoader()->getShared('EventEspresso\modules\ticket_selector\ProcessTicketSelector');
         return $form->processTicketSelections();
     }
 
 
-
     /**
      * @return string
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public static function cancel_ticket_selections()
     {
-        $form = new ProcessTicketSelector();
+        /** @var EventEspresso\modules\ticket_selector\ProcessTicketSelector $form */
+        $form = LoaderFactory::getLoader()->getShared('EventEspresso\modules\ticket_selector\ProcessTicketSelector');
         return $form->cancelTicketSelections();
     }
 

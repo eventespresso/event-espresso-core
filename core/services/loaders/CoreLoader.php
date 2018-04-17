@@ -7,6 +7,7 @@ use EE_Registry;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
+use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\container\CoffeeMaker;
 use EventEspresso\core\services\container\CoffeeShop;
 use EventEspresso\core\services\container\exceptions\InstantiationException;
@@ -27,7 +28,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * 
  */
 class CoreLoader implements LoaderDecoratorInterface
 {
@@ -137,7 +138,7 @@ class CoreLoader implements LoaderDecoratorInterface
      */
     public function reset()
     {
-        if (method_exists($this->generator, 'reset')) {
+        if ($this->generator instanceof ResettableInterface) {
             $this->generator->reset();
         }
     }

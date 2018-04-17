@@ -183,6 +183,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * @type EE_Display_Strategy_Base       $display          strategy
      * @type EE_Normalization_Strategy_Base $normalization_strategy
      * @type EE_Validation_Strategy_Base[]  $validation_strategies
+     * @type boolean                        $ignore_input special argument which can be used to avoid adding any validation strategies,
+     *                                                    and sets the normalization strategy to the Null normalization. This is good
+     *                                                    when you want the input to be totally ignored server-side (like when using
+     *                                                    React.js form inputs)
      *                                                        }
      */
     public function __construct($input_args = array())
@@ -191,11 +195,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         // the following properties must be cast as arrays
         if (isset($input_args['validation_strategies'])) {
             foreach ((array)$input_args['validation_strategies'] as $validation_strategy) {
-                if ($validation_strategy instanceof EE_Validation_Strategy_Base) {
+                if ($validation_strategy instanceof EE_Validation_Strategy_Base && empty($input_args['ignore_input'])) {
                     $this->_validation_strategies[get_class($validation_strategy)] = $validation_strategy;
                 }
             }
             unset($input_args['validation_strategies']);
+        }
+        if(isset($input_args['ignore_input'])) {
+            $this->_validation_strategies = array();
         }
         // loop thru incoming options
         foreach ($input_args as $key => $value) {
@@ -216,8 +223,11 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         foreach ($this->_validation_strategies as $validation_strategy) {
             $validation_strategy->_construct_finalize($this);
         }
+        if (isset($input_args['ignore_input'])) {
+            $this->_normalization_strategy = new EE_Null_Normalization();
+        }
         if (! $this->_normalization_strategy) {
-            $this->_normalization_strategy = new EE_Text_Normalization();
+                $this->_normalization_strategy = new EE_Text_Normalization();
         }
         $this->_normalization_strategy->_construct_finalize($this);
         //at least we can use the normalization strategy to populate the default

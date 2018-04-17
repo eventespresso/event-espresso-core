@@ -7,6 +7,7 @@
  * @subpackage    tests
  */
 
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * This is used to override any existing WP_UnitTestCase methods that need specific handling in EE.  We
@@ -905,6 +906,16 @@ class EE_UnitTestCase extends WP_UnitTestCase
             ) {
                 $value = NULL;
             } elseif (
+                $field_name === 'TKT_start_date' ||
+                $field_name === 'DTT_EVT_start'
+            ) {
+                $value = time() + MONTH_IN_SECONDS;
+            } elseif (
+                $field_name === 'TKT_end_date' ||
+                $field_name === 'DTT_EVT_end'
+            ) {
+                $value = time() + MONTH_IN_SECONDS + DAY_IN_SECONDS;
+            } elseif (
                 $field instanceof EE_Enum_Integer_Field ||
                 $field instanceof EE_Enum_Text_Field ||
                 $field instanceof EE_Boolean_Field ||
@@ -1160,6 +1171,13 @@ class EE_UnitTestCase extends WP_UnitTestCase
         $ticket_args['TKT_taxable'] = isset($options['TKT_taxable'])
             ? filter_var($options['TKT_taxable'], FILTER_VALIDATE_BOOLEAN)
             : true;
+        //  make sure ticket start and end dates are set else they will default to NOW !!!
+        $ticket_args['TKT_start_date'] = isset($options['TKT_start_date'])
+            ? $options['TKT_start_date']
+            : time() + MONTH_IN_SECONDS;
+        $ticket_args['TKT_end_date'] = isset($options['TKT_end_date'])
+            ? $options['TKT_end_date']
+            : time() + MONTH_IN_SECONDS + DAY_IN_SECONDS;
         // now dump any other elements that came from the incoming options that are not ticket properties
         $ticket_args = array_intersect_key(
             $ticket_args,
@@ -1237,7 +1255,14 @@ class EE_UnitTestCase extends WP_UnitTestCase
             $datetimes = isset($options['datetimes']) ? $options['datetimes'] : 1;
             $event = $this->new_model_obj_with_dependencies('Event', array('EVT_wp_user' => $current_user->ID));
             for ($i = 0; $i <= $datetimes; $i++) {
-                $ddt = $this->new_model_obj_with_dependencies('Datetime', array('EVT_ID' => $event->ID()));
+                $ddt = $this->new_model_obj_with_dependencies(
+                    'Datetime',
+                    array(
+                        'EVT_ID' => $event->ID(),
+                        'DTT_EVT_start' => time() + MONTH_IN_SECONDS,
+                        'DTT_EVT_end'   => time() + MONTH_IN_SECONDS + DAY_IN_SECONDS,
+                    )
+                );
                 $ticket->_add_relation_to($ddt, 'Datetime');
                 $this->assertArrayContains($ddt, $ticket->datetimes());
             }
@@ -1350,5 +1375,21 @@ class EE_UnitTestCase extends WP_UnitTestCase
     }
 
 
+    protected function loadShortcodesManagerAndShortcodes()
+    {
+        // load, register, and add shortcodes the new way
+        LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\services\shortcodes\ShortcodesManager',
+            array(
+                // and the old way, but we'll put it under control of the new system
+                EE_Config::getLegacyShortcodesManager()
+            )
+        );
+        do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
+        do_action('AHEE__EE_System__core_loaded_and_ready');
+        global $wp_query;
+        do_action('parse_query', $wp_query);
+        require_once EE_PUBLIC . 'template_tags.php';
+    }
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\core\domain\entities\Context;
+use EventEspresso\core\domain\entities\contexts\Context;
 use EventEspresso\core\services\commands\attendee\CreateAttendeeCommand;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
@@ -144,7 +144,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                 if ($registration instanceof EE_Registration
                     && $this->checkout->visit_allows_processing_of_this_registration($registration)
                 ) {
-                    $subsections[$registration->reg_url_link()] = $this->_registrations_reg_form($registration);
+                    $subsection = $this->_registrations_reg_form($registration);
+                    if(!$subsection instanceof EE_Form_Section_Proper) {
+                        continue;
+                    }
+                    $subsections[ $registration->reg_url_link() ] = $subsection;
                     if (! $this->checkout->admin_request) {
                         $template_args['registrations'][$registration->reg_url_link()]    = $registration;
                         $template_args['ticket_count'][$registration->ticket()->ID()]     = isset(
@@ -187,7 +191,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                 }
             }
         }
-
         return new EE_Form_Section_Proper(
             array(
                 'name'            => $this->reg_form_name(),
@@ -274,7 +277,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
             }
         }
         $attendee_nmbr++;
-        return ! empty($form_args) ? new EE_Form_Section_Proper($form_args) : new EE_Form_Section_HTML();
+        return ! empty($form_args) ? new EE_Form_Section_Proper($form_args) : null;
     }
 
 
@@ -314,11 +317,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     {
         // array of params to pass to parent constructor
         $form_args = array(
-            'html_id'         => 'ee-reg-form-qstn-grp-' . $question_group->identifier(),
+            'html_id'         => 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-' . $registration->ID(),
             'html_class'      => $this->checkout->admin_request
                 ? 'form-table ee-reg-form-qstn-grp-dv'
                 : 'ee-reg-form-qstn-grp-dv',
-            'html_label_id'   => 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-lbl',
+            'html_label_id'   => 'ee-reg-form-qstn-grp-' . $question_group->identifier() .  '-' . $registration->ID() . '-lbl',
             'subsections'     => array(
                 'reg_form_qstn_grp_hdr' => $this->_question_group_header($question_group),
             ),

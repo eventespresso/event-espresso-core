@@ -976,69 +976,6 @@ class EED_Events_Archive_Filters  extends EED_Module {
 }
 
 
-/*
-function espresso_get_event_list_ID() {
-	EED_Events_Archive_Filters::$espresso_event_list_ID++;
-	EED_Events_Archive_Filters::$espresso_grid_event_lists[] = EED_Events_Archive_Filters::$espresso_event_list_ID;
-	return EED_Events_Archive_Filters::$espresso_event_list_ID;
-}
-
-function espresso_event_list_title() {
-	return EED_Events_Archive_Filters::event_list_title();
-}
-
-function espresso_event_list_css( $extra_class = '' ) {
-	return EED_Events_Archive_Filters::event_list_css( $extra_class );
-}
-
-function espresso_get_event_categories() {
-	return EED_Events_Archive_Filters::event_categories();
-}
-
-function espresso_display_full_description_in_event_list() {
-	return EED_Events_Archive_Filters::display_description( 2 );
-}
-
-function espresso_display_excerpt_in_event_list() {
-	return EED_Events_Archive_Filters::display_description( 1 );
-}
-
-function espresso_event_list_template_part() {
-	return EED_Events_Archive_Filters::get_template_part();
-}
-
-function espresso_display_venue_details_in_event_list() {
-	return EED_Events_Archive_Filters::display_venue_details();
-}
-
-function espresso_display_venue_address_in_event_list() {
-	return EED_Events_Archive_Filters::display_address();
-}
-
-function espresso_event_list_pagination() {
-	echo EED_Events_Archive_Filters::pagination();
-}
-
-function espresso_event_list_grid_size_btn() {
-	switch( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive_Filters->event_list_grid_size ) {
-		case 'tiny' :
-		case 'small' :
-			return 'small';
-			break;
-		case 'medium' :
-			return 'medium';
-			break;
-		case 'large' :
-			return 'big';
-			break;
-		case 'huge' :
-			return 'huge';
-			break;
-	}
-}
-*/
-
-
 
 
 // End of file EED_Events_Archive_Filters.module.php

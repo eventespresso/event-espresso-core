@@ -29,7 +29,6 @@ $I->amOnDefaultEventsListTablePage();
 $I->click(EventsAdmin::ADD_NEW_EVENT_BUTTON_SELECTOR);
 $I->fillField(EventsAdmin::EVENT_EDITOR_TITLE_FIELD_SELECTOR, 'Event RSM A');
 $I->publishEvent();
-$I->waitForText('Event published.');
 $event_a_link = $I->observeLinkUrlAt(EventsAdmin::EVENT_EDITOR_VIEW_LINK_AFTER_PUBLISH_SELECTOR);
 $event_a_id = $I->observeValueFromInputAt(EventsAdmin::EVENT_EDITOR_EVT_ID_SELECTOR);
 
@@ -39,7 +38,6 @@ $I->click(EventsAdmin::ADD_NEW_EVENT_BUTTON_SELECTOR);
 $I->fillField(EventsAdmin::EVENT_EDITOR_TITLE_FIELD_SELECTOR, 'Event RSM B');
 $I->changeDefaultRegistrationStatusTo(RegistrationsAdmin::REGISTRATION_STATUS_NOT_APPROVED);
 $I->publishEvent();
-$I->waitForText('Event published.');
 $event_b_link = $I->observeLinkUrlAt(EventsAdmin::EVENT_EDITOR_VIEW_LINK_AFTER_PUBLISH_SELECTOR);
 $event_b_id = $I->observeValueFromInputAt(EventsAdmin::EVENT_EDITOR_EVT_ID_SELECTOR);
 
@@ -47,7 +45,6 @@ $I->amOnDefaultEventsListTablePage();
 $I->click(EventsAdmin::ADD_NEW_EVENT_BUTTON_SELECTOR);
 $I->fillField(EventsAdmin::EVENT_EDITOR_TITLE_FIELD_SELECTOR, 'Event RSM C');
 $I->publishEvent();
-$I->waitForText('Event published.');
 $event_c_link = $I->observeLinkUrlAt(EventsAdmin::EVENT_EDITOR_VIEW_LINK_AFTER_PUBLISH_SELECTOR);
 $event_c_id = $I->observeValueFromInputAt(EventsAdmin::EVENT_EDITOR_EVT_ID_SELECTOR);
 
@@ -157,5 +154,5 @@ $I->verifyMatchingCountofTextInMessageActivityListTableFor(
 //deactivate MER plugin so its not active for future tests
 $I->ensurePluginDeactivated(
     'event-espresso-mer-multi-event-registration',
-    'Plugin deactivated'
+    'plugins deactivated'
 );

@@ -59,6 +59,6 @@ trait CountrySettingsAdmin
     {
         $this->actor()->click(CountrySettings::COUNTRY_SETTINGS_SAVE_BUTTON);
         //no indicator on the page when stuff has been updated so just give a bit of time for it to finish.
-        $this->actor()->wait(5);
+        $this->actor()->wait(10);
     }
 }

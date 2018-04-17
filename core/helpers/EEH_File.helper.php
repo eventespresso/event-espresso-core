@@ -19,7 +19,7 @@
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Brent Christensen
- * @since 				$VID:$
+ * 
  *
  */
 class EEH_File extends EEH_Base implements EEHI_File {

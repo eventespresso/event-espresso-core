@@ -1,7 +1,9 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+use DateTimeZone;
 use EE_Model_Field_Base;
+use EEH_DTT_Helper;
 use EventEspresso\core\libraries\rest_api\ObjectDetectedException;
 use Exception;
 use WP_Error;
@@ -714,13 +716,13 @@ class Read extends Base
             } elseif ($field_obj instanceof \EE_Datetime_Field) {
                 $field_value = $field_obj->prepare_for_set_from_db($field_value);
                 $timezone = $field_value->getTimezone();
-                $field_value->setTimezone(new \DateTimeZone('UTC'));
+                EEH_DTT_Helper::setTimezone($field_value, new DateTimeZone('UTC'));
                 $result[$field_name . '_gmt'] = ModelDataTranslator::prepareFieldValuesForJson(
                     $field_obj,
                     $field_value,
                     $this->getModelVersionInfo()->requestedVersion()
                 );
-                $field_value->setTimezone($timezone);
+                EEH_DTT_Helper::setTimezone($field_value, $timezone);
                 $result[$field_name] = ModelDataTranslator::prepareFieldValuesForJson(
                     $field_obj,
                     $field_value,

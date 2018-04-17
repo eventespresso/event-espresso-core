@@ -3,9 +3,12 @@
 namespace EventEspresso\core\services\assets;
 
 use EE_Currency_Config;
+use EE_Error;
 use EE_Registry;
 use EE_Template_Config;
 use EEH_Qtip_Loader;
+use EventEspresso\core\domain\DomainInterface;
+use EventEspresso\core\exceptions\InvalidFilePathException;
 use InvalidArgumentException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -22,6 +25,10 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class Registry
 {
+
+    const ASSET_TYPE_CSS = 'css';
+    const ASSET_TYPE_JS = 'js';
+    const ASSET_NAMESPACE = 'core';
 
     /**
      * @var EE_Template_Config $template_config
@@ -49,6 +56,38 @@ class Registry
     protected $script_handles_with_data = array();
 
 
+    /**
+     * @var DomainInterface
+     */
+    protected $domain;
+
+
+    /**
+     * @var I18nRegistry
+     */
+    private $i18n_registry;
+
+
+
+    /**
+     * Holds the manifest data obtained from registered manifest files.
+     * Manifests are maps of asset chunk name to actual built asset file names.
+     * Shape of this array is:
+     *
+     * array(
+     *  'some_namespace_slug' => array(
+     *      'some_chunk_name' => array(
+     *          'js' => 'filename.js'
+     *          'css' => 'filename.js'
+     *      ),
+     *      'url_base' => 'https://baseurl.com/to/assets
+     *  )
+     * )
+     *
+     * @var array
+     */
+    private $manifest_data = array();
+
 
     /**
      * Registry constructor.
@@ -56,11 +95,26 @@ class Registry
      *
      * @param EE_Template_Config $template_config
      * @param EE_Currency_Config $currency_config
+     * @param I18nRegistry       $i18n_registry
+     * @param DomainInterface    $domain
+     * @throws InvalidArgumentException
+     * @throws InvalidFilePathException
      */
-    public function __construct(EE_Template_Config $template_config, EE_Currency_Config $currency_config)
-    {
+    public function __construct(
+        EE_Template_Config $template_config,
+        EE_Currency_Config $currency_config,
+        I18nRegistry $i18n_registry,
+        DomainInterface $domain
+    ) {
         $this->template_config = $template_config;
         $this->currency_config = $currency_config;
+        $this->domain = $domain;
+        $this->i18n_registry = $i18n_registry;
+        $this->registerManifestFile(
+            self::ASSET_NAMESPACE,
+            $this->domain->distributionAssetsUrl(),
+            $this->domain->distributionAssetsPath() . 'build-manifest.json'
+        );
         add_action('wp_enqueue_scripts', array($this, 'scripts'), 1);
         add_action('admin_enqueue_scripts', array($this, 'scripts'), 1);
         add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 2);
@@ -70,20 +124,45 @@ class Registry
     }
 
 
+    /**
+     * For classes that have Registry as a dependency, this provides a handy way to register script handles for i18n
+     * translation handling.
+     *
+     * @return I18nRegistry
+     */
+    public function getI18nRegistry()
+    {
+        return $this->i18n_registry;
+    }
 
     /**
      * Callback for the WP script actions.
      * Used to register globally accessible core scripts.
      * Also used to add the eejs.data object to the source for any js having eejs-core as a dependency.
+     *
      */
     public function scripts()
     {
         global $wp_version;
         wp_register_script(
-            'eejs-core',
-            EE_PLUGIN_DIR_URL . 'core/services/assets/core_assets/eejs-core.js',
+            'ee-manifest',
+            $this->getJsUrl(self::ASSET_NAMESPACE, 'manifest'),
             array(),
-            EVENT_ESPRESSO_VERSION,
+            null,
+            true
+        );
+        wp_register_script(
+            'eejs-core',
+            $this->getJsUrl(self::ASSET_NAMESPACE, 'eejs'),
+            array('ee-manifest'),
+            null,
+            true
+        );
+        wp_register_script(
+            'ee-vendor-react',
+            $this->getJsUrl(self::ASSET_NAMESPACE, 'reactVendor'),
+            array('eejs-core'),
+            null,
             true
         );
         //only run this if WordPress 4.4.0 > is in use.
@@ -102,10 +181,12 @@ class Registry
         if (! is_admin()) {
             $this->loadCoreCss();
         }
+        $this->registerTranslationsForHandles(array('eejs-core'));
         $this->loadCoreJs();
         $this->loadJqueryValidate();
         $this->loadAccountingJs();
         $this->loadQtipJs();
+        $this->registerAdminAssets();
     }
 
 
@@ -119,7 +200,7 @@ class Registry
     public function enqueueData()
     {
         $this->removeAlreadyRegisteredDataForScriptHandles();
-        wp_localize_script('eejs-core', 'eejs', array('data' => $this->jsdata));
+        wp_localize_script('eejs-core', 'eejsdata', array('data' => $this->jsdata));
         wp_localize_script('espresso_core', 'eei18n', EE_Registry::$i18n_js_strings);
         $this->localizeAccountingJs();
         $this->addRegisteredScriptHandlesWithData('eejs-core');
@@ -242,6 +323,129 @@ class Registry
         return isset($this->jsdata[$key])
             ? $this->jsdata[$key]
             : false;
+    }
+
+
+    /**
+     * Get the actual asset path for asset manifests.
+     * If there is no asset path found for the given $chunk_name, then the $chunk_name is returned.
+     * @param string $namespace  The namespace associated with the manifest file hosting the map of chunk_name to actual
+     *                           asset file location.
+     * @param string $chunk_name
+     * @param string $asset_type
+     * @return string
+     * @since 4.9.59.p
+     */
+    public function getAssetUrl($namespace, $chunk_name, $asset_type)
+    {
+        $url = isset(
+            $this->manifest_data[$namespace][$chunk_name][$asset_type],
+            $this->manifest_data[$namespace]['url_base']
+        )
+            ? $this->manifest_data[$namespace]['url_base']
+              . $this->manifest_data[$namespace][$chunk_name][$asset_type]
+            : $chunk_name;
+        return apply_filters(
+            'FHEE__EventEspresso_core_services_assets_Registry__getAssetUrl',
+            $url,
+            $namespace,
+            $chunk_name,
+            $asset_type
+        );
+    }
+
+
+    /**
+     * Return the url to a js file for the given namespace and chunk name.
+     *
+     * @param string $namespace
+     * @param string $chunk_name
+     * @return string
+     */
+    public function getJsUrl($namespace, $chunk_name)
+    {
+        return $this->getAssetUrl($namespace, $chunk_name, self::ASSET_TYPE_JS);
+    }
+
+
+    /**
+     * Return the url to a css file for the given namespace and chunk name.
+     *
+     * @param string $namespace
+     * @param string $chunk_name
+     * @return string
+     */
+    public function getCssUrl($namespace, $chunk_name)
+    {
+        return $this->getAssetUrl($namespace, $chunk_name, self::ASSET_TYPE_CSS);
+    }
+
+
+    /**
+     * Used to register a js/css manifest file with the registered_manifest_files property.
+     *
+     * @param string $namespace     Provided to associate the manifest file with a specific namespace.
+     * @param string $url_base      The url base for the manifest file location.
+     * @param string $manifest_file The absolute path to the manifest file.
+     * @throws InvalidArgumentException
+     * @throws InvalidFilePathException
+     * @since 4.9.59.p
+     */
+    public function registerManifestFile($namespace, $url_base, $manifest_file)
+    {
+        if (isset($this->manifest_data[$namespace])) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    esc_html__(
+                        'The namespace for this manifest file has already been registered, choose a namespace other than %s',
+                        'event_espresso'
+                    ),
+                    $namespace
+                )
+            );
+        }
+        if (filter_var($url_base, FILTER_VALIDATE_URL) === false) {
+            if (is_admin()) {
+                EE_Error::add_error(
+                    sprintf(
+                        esc_html__(
+                            'The url given for %1$s assets is invalid.  The url provided was: "%2$s". This usually happens when another plugin or theme on a site is using the "%3$s" filter or has an invalid url set for the "%4$s" constant',
+                            'event_espresso'
+                        ),
+                        'Event Espresso',
+                        $url_base,
+                        'plugins_url',
+                        'WP_PLUGIN_URL'
+                    ),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
+            }
+            return;
+        }
+        $this->manifest_data[$namespace] = $this->decodeManifestFile($manifest_file);
+        if (! isset($this->manifest_data[$namespace]['url_base'])) {
+            $this->manifest_data[$namespace]['url_base'] = trailingslashit($url_base);
+        }
+    }
+
+
+
+    /**
+     * Decodes json from the provided manifest file.
+     *
+     * @since 4.9.59.p
+     * @param string $manifest_file Path to manifest file.
+     * @return array
+     * @throws InvalidFilePathException
+     */
+    private function decodeManifestFile($manifest_file)
+    {
+        if (! file_exists($manifest_file)) {
+            throw new InvalidFilePathException($manifest_file);
+        }
+        return json_decode(file_get_contents($manifest_file), true);
     }
 
 
@@ -468,4 +672,40 @@ class Registry
     }
 
 
+    /**
+     * Registers assets that are used in the WordPress admin.
+     */
+    private function registerAdminAssets()
+    {
+        wp_register_script(
+            'ee-wp-plugins-page',
+            $this->getJsUrl(self::ASSET_NAMESPACE, 'wp-plugins-page'),
+            array(
+                'jquery',
+                'ee-vendor-react'
+            ),
+            null,
+            true
+        );
+        wp_register_style(
+            'ee-wp-plugins-page',
+            $this->getCssUrl(self::ASSET_NAMESPACE, 'wp-plugins-page'),
+            array(),
+            null
+        );
+        $this->registerTranslationsForHandles(array('ee-wp-plugins-page'));
+    }
+
+
+    /**
+     * All handles that are registered via the registry that might have translations have their translations registered
+     *
+     * @param array $handles_to_register
+     */
+    private function registerTranslationsForHandles(array $handles_to_register)
+    {
+        foreach($handles_to_register as $handle) {
+            $this->i18n_registry->registerScriptI18n($handle);
+        }
+    }
 }

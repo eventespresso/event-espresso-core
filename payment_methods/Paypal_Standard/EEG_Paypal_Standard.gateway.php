@@ -20,7 +20,7 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  * @package             Event Espresso
  * @subpackage          core
  * @author              Mike Nelson
- * @since               $VID:$
+ *
  */
 class EEG_Paypal_Standard extends EE_Offsite_Gateway
 {

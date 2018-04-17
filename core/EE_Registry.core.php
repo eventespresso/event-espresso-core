@@ -232,15 +232,19 @@ class EE_Registry implements ResettableInterface
         );
         $this->load_core('Base', array(), true);
         // add our request and response objects to the cache
-        $request_loader = $this->_dependency_map->class_loader('EE_Request');
+        $request_loader = $this->_dependency_map->class_loader(
+            'EventEspresso\core\services\request\Request'
+        );
         $this->_set_cached_class(
             $request_loader(),
-            'EE_Request'
+            'EventEspresso\core\services\request\Request'
         );
-        $response_loader = $this->_dependency_map->class_loader('EE_Response');
+        $response_loader = $this->_dependency_map->class_loader(
+            'EventEspresso\core\services\request\Response'
+        );
         $this->_set_cached_class(
             $response_loader(),
-            'EE_Response'
+            'EventEspresso\core\services\request\Response'
         );
         add_action('AHEE__EE_System__set_hooks_for_core', array($this, 'init'));
     }
@@ -861,6 +865,7 @@ class EE_Registry implements ResettableInterface
      * @param string $class_name
      * @param string $class_prefix
      * @return mixed
+     * @throws OutOfBoundsException
      */
     protected function _get_cached_class($class_name, $class_prefix = '')
     {
@@ -893,6 +898,7 @@ class EE_Registry implements ResettableInterface
      * @param string  $class_name
      * @param boolean $addon
      * @return boolean
+     * @throws OutOfBoundsException
      */
     public function clear_cached_class($class_name, $addon = false)
     {
@@ -1330,6 +1336,7 @@ class EE_Registry implements ResettableInterface
      * @param string $class_prefix
      * @param bool   $from_db
      * @return void
+     * @throws OutOfBoundsException
      */
     protected function _set_cached_class($class_obj, $class_name, $class_prefix = '', $from_db = false)
     {
@@ -1386,6 +1393,7 @@ class EE_Registry implements ResettableInterface
      *
      * @param string $class_name
      * @return EE_Addon
+     * @throws OutOfBoundsException
      */
     public function getAddon($class_name)
     {

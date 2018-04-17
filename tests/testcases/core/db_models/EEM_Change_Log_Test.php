@@ -9,7 +9,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package        Event Espresso
  * @author         Mike Nelson
- * @since          $VID:$
+ * 
  */
 class EEM_Change_Log_Test extends EE_UnitTestCase
 {

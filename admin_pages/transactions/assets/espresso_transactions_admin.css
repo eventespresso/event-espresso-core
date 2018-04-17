@@ -313,3 +313,8 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 #txn-admin-transaction-attendees-table .reg-status-RCN {
 	color: #999;
 }
+
+#additional-transaction-actions-dv ul li {
+    display:inline-block;
+    margin-right: 10px;
+}

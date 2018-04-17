@@ -11,7 +11,7 @@
  * @package            Event Espresso
  * @subpackage         eea-paypal-express
  * @author             Event Espresso
- * @version            $VID:$
+ * 
  * ----------------------------------------------
  */
 //Quickfix to address https://events.codebasehq.com/projects/event-espresso/tickets/11089 ASAP
@@ -588,7 +588,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                 'httpversion' => '1.1',
                 'cookies'     => array(),
                 'headers'     => array(),
-                'body'        => http_build_query($dtls),
+                'body'        => http_build_query($dtls, '', '&'),
             )
         );
         // Log the response.

@@ -1,4 +1,6 @@
 <?php
+
+use EventEspresso\core\domain\values\model\CustomSelects;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
@@ -368,6 +370,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         'on_join_limit',
         'default_where_conditions',
         'caps',
+        'extra_selects'
     );
 
     /**
@@ -392,9 +395,10 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
     /**
      * When using _get_all_wpdb_results, you can specify a custom selection. If you do so,
-     * it gets saved on this property so those selections can be used in WHERE, GROUP_BY, etc.
+     * it gets saved on this property as an instance of CustomSelects so those selections can be used in
+     * WHERE, GROUP_BY, etc.
      *
-     * @var array
+     * @var CustomSelects
      */
     protected $_custom_selections = array();
 
@@ -1030,7 +1034,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     }
 
 
-
     /**
      * Used internally to get WPDB results, because other functions, besides get_all, may want to do some queries, but
      * may want to preserve the WPDB results (eg, update, which first queries to make sure we have all the tables on
@@ -1048,19 +1051,45 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                  Eg, array('count'=>array('COUNT(REG_ID)','%d'))
      * @return array | stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
      * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     protected function _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null)
     {
-        // remember the custom selections, if any, and type cast as array
-        // (unless $columns_to_select is an object, then just set as an empty array)
-        // Note: (array) 'some string' === array( 'some string' )
-        $this->_custom_selections = ! is_object($columns_to_select) ? (array)$columns_to_select : array();
+        $this->_custom_selections = $this->getCustomSelection($query_params, $columns_to_select);;
         $model_query_info = $this->_create_model_query_info_carrier($query_params);
-        $select_expressions = $columns_to_select !== null
-            ? $this->_construct_select_from_input($columns_to_select)
-            : $this->_construct_default_select_sql($model_query_info);
+        $select_expressions = $columns_to_select === null
+            ? $this->_construct_default_select_sql($model_query_info)
+            : '';
+        if ($this->_custom_selections instanceof CustomSelects) {
+            $custom_expressions = $this->_custom_selections->columnsToSelectExpression();
+            $select_expressions .= $select_expressions
+                ? ', ' . $custom_expressions
+                : $custom_expressions;
+        }
+
         $SQL = "SELECT $select_expressions " . $this->_construct_2nd_half_of_select_query($model_query_info);
         return $this->_do_wpdb_query('get_results', array($SQL, $output));
+    }
+
+
+    /**
+     * Get a CustomSelects object if the $query_params or $columns_to_select allows for it.
+     * Note: $query_params['extra_selects'] will always override any $columns_to_select values. It is the preferred
+     * method of including extra select information.
+     *
+     * @param array             $query_params
+     * @param null|array|string $columns_to_select
+     * @return null|CustomSelects
+     * @throws InvalidArgumentException
+     */
+    protected function getCustomSelection(array $query_params, $columns_to_select = null)
+    {
+        if (! isset($query_params['extra_selects']) && $columns_to_select === null) {
+            return null;
+        }
+        $selects = isset($query_params['extra_selects']) ? $query_params['extra_selects'] : $columns_to_select;
+        $selects = is_string($selects) ? explode(',', $selects) : $selects;
+        return new CustomSelects($selects);
     }
 
 
@@ -1571,7 +1600,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         //load EEH_DTT_Helper
         $set_timezone = empty($timezone) ? EEH_DTT_Helper::get_timezone() : $timezone;
         $incomingDateTime = date_create_from_format($incoming_format, $timestring, new DateTimeZone($set_timezone));
-        return \EventEspresso\core\domain\entities\DbSafeDateTime::createFromDateTime( $incomingDateTime->setTimezone(new DateTimeZone($this->_timezone)) );
+        EEH_DTT_Helper::setTimezone($incomingDateTime, new DateTimeZone($this->_timezone));
+        return \EventEspresso\core\domain\entities\DbSafeDateTime::createFromDateTime($incomingDateTime);
     }
 
 
@@ -3220,6 +3250,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 'force_join'
             );
         }
+        $this->extractRelatedModelsFromCustomSelects($query_info_carrier);
         return $query_info_carrier;
     }
 
@@ -3882,8 +3913,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         $query_param = $this->_remove_stars_and_anything_after_from_condition_query_param_key($query_param);
         /** @var $allow_logic_query_params bool whether or not to allow logic_query_params like 'NOT','OR', or 'AND' */
-        $allow_logic_query_params = in_array($query_param_type, array('where', 'having'));
-        $allow_fields = in_array($query_param_type, array('where', 'having', 'order_by', 'group_by', 'order'));
+        $allow_logic_query_params = in_array($query_param_type, array('where', 'having', 0, 'custom_selects'), true);
+        $allow_fields = in_array(
+            $query_param_type,
+            array('where', 'having', 'order_by', 'group_by', 'order', 'custom_selects', 0),
+            true
+        );
         //check to see if we have a field on this model
         $this_model_fields = $this->field_settings(true);
         if (array_key_exists($query_param, $this_model_fields)) {
@@ -3929,41 +3964,124 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             );
         }
         //check if it's a custom selection
-        if (array_key_exists($query_param, $this->_custom_selections)) {
+        if ($this->_custom_selections instanceof CustomSelects
+            && in_array($query_param, $this->_custom_selections->columnAliases(), true)
+        ) {
             return;
         }
         //check if has a model name at the beginning
         //and
         //check if it's a field on a related model
-        foreach ($this->_model_relations as $valid_related_model_name => $relation_obj) {
-            if (strpos($query_param, $valid_related_model_name . ".") === 0) {
-                $this->_add_join_to_model($valid_related_model_name, $passed_in_query_info, $original_query_param);
-                $query_param = substr($query_param, strlen($valid_related_model_name . "."));
-                if ($query_param === '') {
-                    //nothing left to $query_param
-                    //we should actually end in a field name, not a model like this!
-                    throw new EE_Error(sprintf(__("Query param '%s' (of type %s on model %s) shouldn't end on a period (.) ",
-                        "event_espresso"),
-                        $query_param, $query_param_type, get_class($this), $valid_related_model_name));
-                }
-                $related_model_obj = $this->get_related_model_obj($valid_related_model_name);
-                $related_model_obj->_extract_related_model_info_from_query_param(
-                    $query_param,
-                    $passed_in_query_info, $query_param_type, $original_query_param
-                );
-                return;
-            }
-            if ($query_param === $valid_related_model_name) {
-                $this->_add_join_to_model($valid_related_model_name, $passed_in_query_info, $original_query_param);
-                return;
-            }
+        if ($this->extractJoinModelFromQueryParams(
+            $passed_in_query_info,
+            $query_param,
+            $original_query_param,
+            $query_param_type
+        )) {
+            return;
         }
+
         //ok so $query_param didn't start with a model name
         //and we previously confirmed it wasn't a logic query param or field on the current model
         //it's wack, that's what it is
-        throw new EE_Error(sprintf(__("There is no model named '%s' related to %s. Query param type is %s and original query param is %s",
-            "event_espresso"),
-            $query_param, get_class($this), $query_param_type, $original_query_param));
+        throw new EE_Error(
+            sprintf(
+                esc_html__(
+                    "There is no model named '%s' related to %s. Query param type is %s and original query param is %s",
+                    "event_espresso"
+                ),
+                $query_param,
+                get_class($this),
+                $query_param_type,
+                $original_query_param
+            )
+        );
+    }
+
+
+    /**
+     * Extracts any possible join model information from the provided possible_join_string.
+     * This method will read the provided $possible_join_string value and determine if there are any possible model join
+     * parts that should be added to the query.
+     *
+     * @param EE_Model_Query_Info_Carrier $query_info_carrier
+     * @param string                      $possible_join_string  Such as Registration.REG_ID, or Registration
+     * @param null|string                 $original_query_param
+     * @param string                      $query_parameter_type  The type for the source of the $possible_join_string
+     *                                                           ('where', 'order_by', 'group_by', 'custom_selects' etc.)
+     * @return bool  returns true if a join was added and false if not.
+     * @throws EE_Error
+     */
+    private function extractJoinModelFromQueryParams(
+        EE_Model_Query_Info_Carrier $query_info_carrier,
+        $possible_join_string,
+        $original_query_param,
+        $query_parameter_type
+    ) {
+        foreach ($this->_model_relations as $valid_related_model_name => $relation_obj) {
+            if (strpos($possible_join_string, $valid_related_model_name . ".") === 0) {
+                $this->_add_join_to_model($valid_related_model_name, $query_info_carrier, $original_query_param);
+                $possible_join_string = substr($possible_join_string, strlen($valid_related_model_name . "."));
+                if ($possible_join_string === '') {
+                    //nothing left to $query_param
+                    //we should actually end in a field name, not a model like this!
+                    throw new EE_Error(
+                        sprintf(
+                            esc_html__(
+                                "Query param '%s' (of type %s on model %s) shouldn't end on a period (.) ",
+                                "event_espresso"
+                            ),
+                            $possible_join_string,
+                            $query_parameter_type,
+                            get_class($this),
+                            $valid_related_model_name
+                        )
+                    );
+                }
+                $related_model_obj = $this->get_related_model_obj($valid_related_model_name);
+                $related_model_obj->_extract_related_model_info_from_query_param(
+                    $possible_join_string,
+                    $query_info_carrier,
+                    $query_parameter_type,
+                    $original_query_param
+                );
+                return true;
+            }
+            if ($possible_join_string === $valid_related_model_name) {
+                $this->_add_join_to_model(
+                    $valid_related_model_name,
+                    $query_info_carrier,
+                    $original_query_param
+                );
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * Extracts related models from Custom Selects and sets up any joins for those related models.
+     * @param EE_Model_Query_Info_Carrier $query_info_carrier
+     * @throws EE_Error
+     */
+    private function extractRelatedModelsFromCustomSelects(EE_Model_Query_Info_Carrier $query_info_carrier)
+    {
+        if ($this->_custom_selections instanceof CustomSelects
+            && ($this->_custom_selections->type() === CustomSelects::TYPE_STRUCTURED
+                || $this->_custom_selections->type() == CustomSelects::TYPE_COMPLEX
+            )
+        ) {
+            $original_selects = $this->_custom_selections->originalSelects();
+            foreach ($original_selects as $alias => $select_configuration) {
+                $this->extractJoinModelFromQueryParams(
+                    $query_info_carrier,
+                    $select_configuration[0],
+                    $select_configuration[0],
+                    'custom_selects'
+                );
+            }
+        }
     }
 
 
@@ -4097,8 +4215,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 $field_obj = $this->_deduce_field_from_query_param($query_param);
                 //if it's not a normal field, maybe it's a custom selection?
                 if (! $field_obj) {
-                    if (isset($this->_custom_selections[$query_param][1])) {
-                        $field_obj = $this->_custom_selections[$query_param][1];
+                    if ($this->_custom_selections instanceof CustomSelects) {
+                        $field_obj = $this->_custom_selections->getDataTypeForAlias($query_param);
                     } else {
                         throw new EE_Error(sprintf(__("%s is neither a valid model field name, nor a custom selection",
                             "event_espresso"), $query_param));
@@ -4128,17 +4246,22 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 $query_param);
             return $table_alias_prefix . $field->get_qualified_column();
         }
-        if (array_key_exists($query_param, $this->_custom_selections)) {
+        if ($this->_custom_selections instanceof CustomSelects
+            && in_array($query_param, $this->_custom_selections->columnAliases(), true)
+        ) {
             //maybe it's custom selection item?
             //if so, just use it as the "column name"
             return $query_param;
         }
+        $custom_select_aliases = $this->_custom_selections instanceof CustomSelects
+            ? implode(',', $this->_custom_selections->columnAliases())
+            : '';
         throw new EE_Error(
             sprintf(
                 __(
                     "%s is not a valid field on this model, nor a custom selection (%s)",
                     "event_espresso"
-                ), $query_param, implode(",", $this->_custom_selections)
+                ), $query_param, $custom_select_aliases
             )
         );
     }
@@ -4959,10 +5082,60 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     }
                 }
             }
+            //also, if this was a custom select query, let's see if there are any results for the custom select fields
+            //and add them to the object as well.  We'll convert according to the set data_type if there's any set for
+            //the field in the CustomSelects object
+            if ($this->_custom_selections instanceof CustomSelects) {
+                $classInstance->setCustomSelectsValues(
+                    $this->getValuesForCustomSelectAliasesFromResults($row)
+                );
+            }
         }
         return $array_of_objects;
     }
 
+
+    /**
+     * This will parse a given row of results from the db and see if any keys in the results match an alias within the
+     * current CustomSelects object. This will be used to build an array of values indexed by those keys.
+     *
+     * @param array $db_results_row
+     * @return array
+     */
+    protected function getValuesForCustomSelectAliasesFromResults(array $db_results_row)
+    {
+        $results = array();
+        if ($this->_custom_selections instanceof CustomSelects) {
+            foreach ($this->_custom_selections->columnAliases() as $alias) {
+                if (isset($db_results_row[$alias])) {
+                    $results[$alias] = $this->convertValueToDataType(
+                        $db_results_row[$alias],
+                        $this->_custom_selections->getDataTypeForAlias($alias)
+                    );
+                }
+            }
+        }
+        return $results;
+    }
+
+
+    /**
+     * This will set the value for the given alias
+     * @param string $value
+     * @param string $datatype (one of %d, %s, %f)
+     * @return int|string|float (int for %d, string for %s, float for %f)
+     */
+    protected function convertValueToDataType($value, $datatype)
+    {
+        switch ($datatype) {
+            case '%f':
+                return (float) $value;
+            case '%d':
+                return (int) $value;
+            default:
+                return (string) $value;
+        }
+    }
 
 
     /**

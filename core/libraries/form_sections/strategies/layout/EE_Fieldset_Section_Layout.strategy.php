@@ -11,7 +11,7 @@
  * @package               Event Espresso
  * @subpackage            core
  * @author                Brent Christensen
- * @since                 $VID:$
+ * 
  */
 class EE_Fieldset_Section_Layout extends EE_Div_Per_Section_Layout
 {

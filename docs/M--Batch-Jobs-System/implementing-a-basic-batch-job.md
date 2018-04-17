@@ -13,7 +13,7 @@ To do a basic batch job, which can run from the same admin page as other basic j
  * @package         Event Espresso
  * @subpackage
  * @author				Mike Nelson
- * @since		 	   $VID:$
+ * 
  *
  */
 

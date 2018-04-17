@@ -1,5 +1,10 @@
 <?php
 
+use EventEspresso\core\domain\DomainFactory;
+use EventEspresso\core\domain\values\FilePath;
+use EventEspresso\core\domain\values\FullyQualifiedName;
+use EventEspresso\core\domain\values\Version;
+use EventEspresso\core\services\assets\I18nRegistry;
 use EventEspresso\core\services\assets\Registry;
 
 /**
@@ -19,11 +24,32 @@ class RegistryTest extends EE_UnitTestCase
      */
     protected $registry;
 
+
+    /**
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidClassException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidFilePathException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
     public function setUp()
     {
+        $domain = DomainFactory::getShared(
+            new FullyQualifiedName(
+                'EventEspresso\core\domain\Domain'
+            ),
+            array(
+                new FilePath(EVENT_ESPRESSO_MAIN_FILE),
+                Version::fromString(espresso_version())
+            )
+        );
         $this->registry = new Registry(
             EE_Config::instance()->template_settings,
-            EE_Config::instance()->currency
+            EE_Config::instance()->currency,
+            new i18nRegistry(array(), $domain),
+            $domain
         );
         parent::setUp();
     }
@@ -36,6 +62,9 @@ class RegistryTest extends EE_UnitTestCase
     }
 
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function test_addData_no_previous_scalar()
     {
         $this->registry->addData('test', 'has_data');
@@ -44,6 +73,9 @@ class RegistryTest extends EE_UnitTestCase
     }
 
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function test_addData_no_previous_array()
     {
         $this->registry->addData('test', array('has_data'));
@@ -84,6 +116,7 @@ class RegistryTest extends EE_UnitTestCase
 
     /**
      * @group 10304
+     * @throws InvalidArgumentException
      */
     public function test_getTemplate()
     {
