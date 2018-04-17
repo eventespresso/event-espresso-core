@@ -13,7 +13,7 @@ use WP_User;
  *
  * @package EventEspresso\core\domain\services\admin
  * @author  Darren Ethier
- * @since   $VID:$
+ * @since   4.9.59.p
  */
 class ExitModal
 {
@@ -53,32 +53,6 @@ class ExitModal
     public function enqueues()
     {
         $current_user = new WP_User(get_current_user_id());
-        $this->assets_registry->addData(
-            'exitModali18n',
-            array(
-                'introText' => htmlspecialchars(
-                    __(
-                        'Do you have a moment to share why you are deactivating Event Espresso?',
-                        'event_espresso'
-                    ),
-                    ENT_NOQUOTES
-                ),
-                'doSurveyButtonText' => htmlspecialchars(
-                    __(
-                        'Sure I\'ll help',
-                        'event_espresso'
-                    ),
-                    ENT_NOQUOTES
-                ),
-                'skipButtonText' => htmlspecialchars(
-                    __(
-                        'Skip',
-                        'event_espresso'
-                    ),
-                    ENT_NOQUOTES
-                )
-            )
-        );
         $this->assets_registry->addData(
             'exitModalInfo',
             array(

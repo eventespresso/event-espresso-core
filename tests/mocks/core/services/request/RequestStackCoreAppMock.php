@@ -17,7 +17,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\tests\mocks\core\services\request
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.59.p
  */
 class RequestStackCoreAppMock implements RequestDecoratorInterface, RequestStackCoreAppInterface
 {

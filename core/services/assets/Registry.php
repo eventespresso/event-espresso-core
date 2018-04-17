@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\assets;
 
 use EE_Currency_Config;
+use EE_Error;
 use EE_Registry;
 use EE_Template_Config;
 use EEH_Qtip_Loader;
@@ -61,6 +62,12 @@ class Registry
     protected $domain;
 
 
+    /**
+     * @var I18nRegistry
+     */
+    private $i18n_registry;
+
+
 
     /**
      * Holds the manifest data obtained from registered manifest files.
@@ -88,6 +95,7 @@ class Registry
      *
      * @param EE_Template_Config $template_config
      * @param EE_Currency_Config $currency_config
+     * @param I18nRegistry       $i18n_registry
      * @param DomainInterface    $domain
      * @throws InvalidArgumentException
      * @throws InvalidFilePathException
@@ -95,11 +103,13 @@ class Registry
     public function __construct(
         EE_Template_Config $template_config,
         EE_Currency_Config $currency_config,
+        I18nRegistry $i18n_registry,
         DomainInterface $domain
     ) {
         $this->template_config = $template_config;
         $this->currency_config = $currency_config;
         $this->domain = $domain;
+        $this->i18n_registry = $i18n_registry;
         $this->registerManifestFile(
             self::ASSET_NAMESPACE,
             $this->domain->distributionAssetsUrl(),
@@ -111,6 +121,18 @@ class Registry
         add_action('admin_enqueue_scripts', array($this, 'enqueueData'), 2);
         add_action('wp_print_footer_scripts', array($this, 'enqueueData'), 1);
         add_action('admin_print_footer_scripts', array($this, 'enqueueData'), 1);
+    }
+
+
+    /**
+     * For classes that have Registry as a dependency, this provides a handy way to register script handles for i18n
+     * translation handling.
+     *
+     * @return I18nRegistry
+     */
+    public function getI18nRegistry()
+    {
+        return $this->i18n_registry;
     }
 
     /**
@@ -159,6 +181,7 @@ class Registry
         if (! is_admin()) {
             $this->loadCoreCss();
         }
+        $this->registerTranslationsForHandles(array('eejs-core'));
         $this->loadCoreJs();
         $this->loadJqueryValidate();
         $this->loadAccountingJs();
@@ -311,7 +334,7 @@ class Registry
      * @param string $chunk_name
      * @param string $asset_type
      * @return string
-     * @since $VID:$
+     * @since 4.9.59.p
      */
     public function getAssetUrl($namespace, $chunk_name, $asset_type)
     {
@@ -366,7 +389,7 @@ class Registry
      * @param string $manifest_file The absolute path to the manifest file.
      * @throws InvalidArgumentException
      * @throws InvalidFilePathException
-     * @since $VID:$
+     * @since 4.9.59.p
      */
     public function registerManifestFile($namespace, $url_base, $manifest_file)
     {
@@ -382,16 +405,24 @@ class Registry
             );
         }
         if (filter_var($url_base, FILTER_VALIDATE_URL) === false) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    esc_html__(
-                        'The provided value for %1$s is not a valid url.  The url provided was: %2$s',
-                        'event_espresso'
+            if (is_admin()) {
+                EE_Error::add_error(
+                    sprintf(
+                        esc_html__(
+                            'The url given for %1$s assets is invalid.  The url provided was: "%2$s". This usually happens when another plugin or theme on a site is using the "%3$s" filter or has an invalid url set for the "%4$s" constant',
+                            'event_espresso'
+                        ),
+                        'Event Espresso',
+                        $url_base,
+                        'plugins_url',
+                        'WP_PLUGIN_URL'
                     ),
-                    '$url_base',
-                    $url_base
-                )
-            );
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
+            }
+            return;
         }
         $this->manifest_data[$namespace] = $this->decodeManifestFile($manifest_file);
         if (! isset($this->manifest_data[$namespace]['url_base'])) {
@@ -404,7 +435,7 @@ class Registry
     /**
      * Decodes json from the provided manifest file.
      *
-     * @since $VID:$
+     * @since 4.9.59.p
      * @param string $manifest_file Path to manifest file.
      * @return array
      * @throws InvalidFilePathException
@@ -662,5 +693,19 @@ class Registry
             array(),
             null
         );
+        $this->registerTranslationsForHandles(array('ee-wp-plugins-page'));
+    }
+
+
+    /**
+     * All handles that are registered via the registry that might have translations have their translations registered
+     *
+     * @param array $handles_to_register
+     */
+    private function registerTranslationsForHandles(array $handles_to_register)
+    {
+        foreach($handles_to_register as $handle) {
+            $this->i18n_registry->registerScriptI18n($handle);
+        }
     }
 }
