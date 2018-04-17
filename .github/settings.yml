@@ -1,0 +1,126 @@
+repository:
+# Updates the default branch for this repository.
+  default_branch: master
+
+  # Either `true` to allow squash-merging pull requests, or `false` to prevent
+  # squash-merging.
+  allow_squash_merge: true
+
+  # Either `true` to allow merging pull requests with a merge commit, or `false`
+  # to prevent merging pull requests with merge commits.
+  allow_merge_commit: true
+
+  # Either `true` to allow rebase-merging pull requests, or `false` to prevent
+  # rebase-merging.
+  allow_rebase_merge: false
+
+# Labels: define labels for Issues and Pull Requests
+labels:
+  - name: "status:needs-documentation"
+    color: pink
+  - name: "status:add-sales-page"
+    color: grey
+  - name: "status:duplicate"
+    color: grey
+    oldname: duplicate
+  - name: "status:unit-tests-required"
+    color: orange
+  - name: "status:triage"
+    color: red
+  - name: "category:security"
+    color: 84b6eb
+  - name: "category:assets"
+    color: c67b25
+    oldname: assets
+  - name: "category:payment-methods-&-gateways"
+    color: 84b6eb
+  - name: "category:admin-pages-&-functionality"
+    color: 84b6eb
+  - name: "category:spco-&-registration"
+    color: 84b6eb
+  - name: "category:core-plugin"
+    color: 84b6eb
+  - name: "category:frontend-ui-&-ux"
+    color: 84b6eb
+  - name: "category:admin-page-ui-&-ux"
+    color: 84b6eb
+  - name: "category:messaging-&-messengers"
+    color: 84b6eb
+  - name: "category:i18n"
+    color: 84b6eb
+    oldname: i18n
+  - name: "category:templates-shortcodes-and-widgets"
+    color: 84b6eb
+  - name: "category:models-and-data-infrastructure"
+    color: 84b6eb
+  - name: "category:general"
+    color: 84b6eb
+  - name: "category:activation-installation-and-migration"
+    color: 84b6eb
+  - name: "category:wp-multi-site"
+    color: 84b6eb
+  - name: "category:3rd-party-integrations"
+    color: 84b6eb
+  - name: "category:decision-analytics"
+    color: 84b6eb
+  - name: "category:pue-uxip-and-licensing"
+    color: 84b6eb
+  - name: "category:unit-tests"
+    color: 84b6eb
+  - name: "category:forms-systems"
+    color: 84b6eb
+  - name: "category:reports-exporting-importing"
+    color: 84b6eb
+  - name: "category:user-management"
+    color: 84b6eb
+  - name: "category:accessibility"
+    color: 84b6eb
+  - name: "category:command-bus-and-command-handlers"
+    color: 84b6eb
+  - name: "category:gutenberg"
+    color: 84b6eb
+    oldname: gutenberg
+  - name: "category:has-codebase-ticket"
+    color: c1c924
+    oldname: has codebase ticket
+  - name: "category:community-contribution"
+    color: 006b75
+    oldname: community-contribution
+  - name: "priority:critical"
+    color: red
+  - name: "priority:high"
+    color: red
+  - name: "priority:normal"
+    color: blue
+  - name: "priority:low"
+    color: grey
+  - name: "type:bug"
+    color: ebf7a0
+    oldname: bug
+  - name: "type:build-process"
+    color: dcfc5d
+    oldname: build-process
+  - name: "type:enhancement"
+    color: ebf7a0
+    oldname: enhancement
+  - name: "type:task"
+    color: ebf7a0
+  - name: "type:feature-request"
+    color: ebf7a0
+    oldname: feature request
+  - name: "type:documentation"
+    color: ebf7a0
+    oldname: documentation
+  - name: "type:design"
+    color: ebf7a0
+  - name: "type:user-proofing"
+    color: ebf7a0
+  - name: "type:theme/plugin-conflict"
+    color: ebf7a0
+  - name: "type:question"
+    color: cc317c
+    oldname: question
+
+teams:
+  - name: staff
+    permission: push
