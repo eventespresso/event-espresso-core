@@ -3,7 +3,8 @@
 	"collectCoverageFrom": [
 		"assets/src/**/*.js",
 		"!**/node_modules/**",
-		"!**/vendor/**"
+		"!**/vendor/**",
+		"!**/test/**"
 	],
 	"moduleNameMapper": {
 		"@eventespresso\\/(eejs)": "$1"
