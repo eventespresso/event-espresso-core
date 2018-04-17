@@ -117,6 +117,8 @@
     - name: "priority:low"
       color: efefef
     # type labels
+    - name: "type:support"
+      color: ebf7a0
     - name: "type:bug"
       color: ebf7a0
       previousNames:
