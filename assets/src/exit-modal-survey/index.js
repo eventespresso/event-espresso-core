@@ -8,8 +8,9 @@ import ExitModal, { CLOSE_MODAL_EVENT } from '@eventespresso/react-exit-modal-ty
 import './style.css';
 import { data } from '@eventespresso/eejs';
 import { stringify } from 'querystringify';
+import { __ } from '@wordpress/i18n';
 
-const { exitModali18n: i18n = {}, exitModalInfo: info = {} } = data;
+const { exitModalInfo: info = {} } = data;
 
 const queryString = stringify( {
 	firstname: info.firstname,
@@ -34,9 +35,18 @@ const modalProps = {
 		},
 	},
 	typeFormUrl: 'https://eventespresso.typeform.com/to/O1DDym?' + queryString,
-	introText: i18n.introText,
-	doSurveyButtonText: i18n.doSurveyButtonText,
-	skipButtonText: i18n.skipButtonText,
+	introText: __(
+		'Do you have a moment to share why you are deactivating Event Espresso?',
+		'event_espresso'
+	),
+	doSurveyButtonText: __(
+		'Sure I\'ll help',
+		'event_espresso'
+	),
+	skipButtonText: __(
+		'Skip',
+		'event_espresso'
+	),
 	buttonClass: {
 		doSurvey: 'button button-primary',
 		closeModal: 'button button-secondary',
