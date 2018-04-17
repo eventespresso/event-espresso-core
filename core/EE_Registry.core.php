@@ -874,6 +874,7 @@ class EE_Registry implements ResettableInterface
         if ($load_only && $class_exists) {
             return true;
         }
+        $arguments = is_array($arguments) ? $arguments : array($arguments);
         // $this->_cache_on is toggled during the recursive loading that can occur with dependency injection
         // $cache is controlled by individual calls to separate Registry loader methods like load_class()
         // $load_only is also controlled by individual calls to separate Registry loader methods like load_file()
