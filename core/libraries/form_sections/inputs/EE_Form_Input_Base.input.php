@@ -514,7 +514,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * @return string
      * @throws \EE_Error
      */
-    public function  get_html_for_input()
+    public function get_html_for_input()
     {
         return $this->_form_html_filter
             ? $this->_form_html_filter->filterHtml(
