@@ -16,6 +16,7 @@ repository:
 
 # Labels: define labels for Issues and Pull Requests
 labels:
+  # status labels
   - name: "status:needs-documentation"
     color: fcb3e8
   - name: "status:add-sales-page"
@@ -27,6 +28,7 @@ labels:
     color: fcb3e8
   - name: "status:triage"
     color: b60205
+  # category labels
   - name: "category:security"
     color: 84b6eb
   - name: "category:assets"
@@ -86,14 +88,16 @@ labels:
   - name: "category:community-contribution"
     color: 006b75
     oldname: community-contribution
+  # priority labels
   - name: "priority:critical"
     color: b60205
   - name: "priority:high"
-    color: b60205
+    color: d93f0b
   - name: "priority:normal"
     color: 0052cc
   - name: "priority:low"
     color: efefef
+  # type labels
   - name: "type:bug"
     color: ebf7a0
     oldname: bug
