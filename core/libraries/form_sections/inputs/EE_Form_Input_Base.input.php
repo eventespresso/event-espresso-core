@@ -593,7 +593,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     protected function _validate()
     {
-        if ($this->disabled()) {
+        if ($this->isDisabled()) {
             return true;
         }
         foreach ($this->_validation_strategies as $validation_strategy) {
@@ -642,7 +642,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         //any existing validation errors don't apply so clear them
         $this->_validation_errors = array();
         //if the input is disabled, ignore whatever input was sent in
-        if($this->disabled()) {
+        if($this->isDisabled()) {
             $this->_set_raw_value(null);
             $this->_set_normalized_value($this->get_default());
             return false;
@@ -1231,8 +1231,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     public function disable($disable = true)
     {
         $disabled_attribute = ' disabled="disabled"';
-        $this->disabled = $disable;
-        if($disable) {
+        $this->disabled = filter_var($disable, FILTER_VALIDATE_BOOLEAN);
+        if($this->disabled) {
             if (strpos($this->_other_html_attributes,$disabled_attribute) === false){
                 $this->_other_html_attributes .= $disabled_attribute;
             }
@@ -1249,7 +1249,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * Returns whether or not this input is currently disabled.
      * @return bool
      */
-    public function disabled()
+    public function isDisabled()
     {
         return $this->disabled;
     }
