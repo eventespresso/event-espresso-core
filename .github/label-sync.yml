@@ -38,6 +38,8 @@
       color: efefef
       previousNames:
         - duplicate
+    - name: "status:stale"
+      color: efefef
     - name: "status:unit-tests-required"
       color: efefef
     - name: "status:triage"
