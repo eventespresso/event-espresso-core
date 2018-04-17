@@ -326,8 +326,11 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         // display submit button since we have tickets available
         add_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
         $this->hidden_input_qty = false;
-        $html = '<select name="tkt-slctr-qty-' . $this->EVT_ID . '[]"';
-        $html .= ' id="ticket-selector-tbl-qty-slct-' . $this->EVT_ID . '-' . $this->row . '"';
+        $id = 'ticket-selector-tbl-qty-slct-' . $this->EVT_ID . '-' . $this->row;
+        $html = '<label class="ee-a11y-screen-reader-text" for="' . $id . '">';
+        $html .= esc_html__('Quantity', 'event_espresso') . '</label>';
+        $html .= '<select name="tkt-slctr-qty-' . $this->EVT_ID . '[]"';
+        $html .= ' id="' . $id . '"';
         $html .= ' class="ticket-selector-tbl-qty-slct">';
         // this ensures that non-required tickets with non-zero MIN QTYs don't HAVE to be purchased
         if ($this->min !== 0 && ! $this->ticket->required()) {
