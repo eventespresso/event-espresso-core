@@ -17,16 +17,16 @@ repository:
 # Labels: define labels for Issues and Pull Requests
 labels:
   - name: "status:needs-documentation"
-    color: pink
+    color: fcb3e8
   - name: "status:add-sales-page"
-    color: grey
+    color: efefef
   - name: "status:duplicate"
-    color: grey
+    color: efefef
     oldname: duplicate
   - name: "status:unit-tests-required"
-    color: orange
+    color: fcb3e8
   - name: "status:triage"
-    color: red
+    color: b60205
   - name: "category:security"
     color: 84b6eb
   - name: "category:assets"
@@ -87,13 +87,13 @@ labels:
     color: 006b75
     oldname: community-contribution
   - name: "priority:critical"
-    color: red
+    color: b60205
   - name: "priority:high"
-    color: red
+    color: b60205
   - name: "priority:normal"
-    color: blue
+    color: 0052cc
   - name: "priority:low"
-    color: grey
+    color: efefef
   - name: "type:bug"
     color: ebf7a0
     oldname: bug
