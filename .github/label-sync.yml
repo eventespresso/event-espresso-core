@@ -30,6 +30,8 @@
   # status labels
     - name: "status:needs-documentation"
       color: efefef
+    - name: "status:needs-more-info"
+      color: efefef
     - name: "status:add-sales-page"
       color: efefef
     - name: "status:duplicate"
