@@ -87,8 +87,10 @@ class ObjectIdentifier
     public function getIdentifier($fqcn, array $arguments = array())
     {
         // only build identifier from arguments if class is not ReservedInstanceInterface
-        $identifier = ! $this->class_cache->hasInterface($fqcn,
-            'EventEspresso\core\interfaces\ReservedInstanceInterface')
+        $identifier = ! $this->class_cache->hasInterface(
+            $fqcn,
+            'EventEspresso\core\interfaces\ReservedInstanceInterface'
+        )
             ? $this->getIdentifierForArguments($arguments)
             : '';
         if (! empty($identifier)) {
