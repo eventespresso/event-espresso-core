@@ -48,7 +48,7 @@ class RegistryTest extends EE_UnitTestCase
         $this->registry = new Registry(
             EE_Config::instance()->template_settings,
             EE_Config::instance()->currency,
-            new i18nRegistry($domain),
+            new i18nRegistry(array(), $domain),
             $domain
         );
         parent::setUp();

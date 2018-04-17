@@ -705,7 +705,7 @@ class Registry
     private function registerTranslationsForHandles(array $handles_to_register)
     {
         foreach($handles_to_register as $handle) {
-            $this->i18n_registry->registerScriptI18n($handle, 'event_espresso');
+            $this->i18n_registry->registerScriptI18n($handle);
         }
     }
 }

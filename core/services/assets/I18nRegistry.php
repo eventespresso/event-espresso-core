@@ -47,12 +47,12 @@ class I18nRegistry
     /**
      * I18nRegistry constructor.
      *
-     * @param DomainInterface $domain
      * @param array() $i18n_map  An array of script handle names and the strings translated for those handles.  If not
      *                            provided, the class will look for map in root of plugin with filename of
      *                            'translation-map.json'.
+     * @param DomainInterface $domain
      */
-    public function __construct(DomainInterface $domain, array $i18n_map = array())
+    public function __construct(array $i18n_map = array(), DomainInterface $domain)
     {
         $this->domain = $domain;
         $this->setI18nMap($i18n_map);
@@ -66,7 +66,7 @@ class I18nRegistry
      * @param string $handle The script handle reference.
      * @param string $domain The i18n domain for the strings.
      */
-    public function registerScriptI18n($handle, $domain)
+    public function registerScriptI18n($handle, $domain = 'event_espresso')
     {
         $this->registered_i18n[$handle] = $domain;
     }
@@ -108,11 +108,11 @@ class I18nRegistry
      * @param string $domain       Domain for translations.  If left empty then strings are registered with the default
      *                             domain for the javascript.
      */
-    private function registerInlineScript($handle, array $translations, $domain = '')
+    private function registerInlineScript($handle, array $translations, $domain)
     {
         $script = $domain ?
-            'wp.i18n.setLocaleData( ' . json_encode($translations) . ', ' . $domain . ' );' :
-            'wp.i18n.setLocaleData( ' . json_encode($translations) . ' );';
+            'wp.i18n.setLocaleData( ' . wp_json_encode($translations) . ', ' . $domain . ' );' :
+            'wp.i18n.setLocaleData( ' . wp_json_encode($translations) . ' );';
         wp_add_inline_script($handle, $script, 'before');
     }
 
