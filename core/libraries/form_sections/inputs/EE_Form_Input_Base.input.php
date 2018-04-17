@@ -164,6 +164,17 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     protected $_sensitive_data_removal_strategy;
 
+    /**
+     * Whether this input has been disabled or not.
+     * If it's disabled while rendering, an extra hidden input is added that indicates it has been knowingly disabled.
+     * (Client-side code that wants to dynamically disable it must also add this hidden input).
+     * When the form is submitted, if the input is disabled in the PHP formsection, then input is ignored.
+     * If the input is missing from the $_REQUEST data but the hidden input indicating the input is disabled, then the input is again ignored.
+     *
+     * @var boolean
+     */
+    protected $disabled = false;
+
 
 
     /**
@@ -503,7 +514,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * @return string
      * @throws \EE_Error
      */
-    public function get_html_for_input()
+    public function  get_html_for_input()
     {
         return $this->_form_html_filter
             ? $this->_form_html_filter->filterHtml(
@@ -582,6 +593,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     protected function _validate()
     {
+        if ($this->disabled()) {
+            return true;
+        }
         foreach ($this->_validation_strategies as $validation_strategy) {
             if ($validation_strategy instanceof EE_Validation_Strategy_Base) {
                 try {
@@ -627,6 +641,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         //any existing validation errors don't apply so clear them
         $this->_validation_errors = array();
+        //if the input is disabled, ignore whatever input was sent in
+        if($this->disabled()) {
+            $this->_set_raw_value(null);
+            $this->_set_normalized_value($this->get_default());
+            return false;
+        }
         try {
             $raw_input = $this->find_form_data_for_this_section($req_data);
             //super simple sanitization for now
@@ -641,8 +661,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
             }
             //we want to mostly leave the input alone in case we need to re-display it to the user
             $this->_set_normalized_value($this->_normalization_strategy->normalize($this->raw_value()));
+            return false;
         } catch (EE_Validation_Error $e) {
             $this->add_validation_error($e);
+            return true;
         }
     }
 
@@ -1046,6 +1068,25 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function find_form_data_for_this_section($req_data)
     {
+        $name_parts = $this->getInputNameParts();
+        // now get the value for the input
+        $value = $this->findRequestForSectionUsingNameParts($name_parts, $req_data);
+        // check if this thing's name is at the TOP level of the request data
+        if ($value === null && isset($req_data[$this->name()])) {
+            $value = $req_data[$this->name()];
+        }
+        return $value;
+    }
+
+
+
+    /**
+     * If this input's name is something like "foo[bar][baz]"
+     * returns an array like `array('foo','bar',baz')`
+     * @return array
+     */
+    protected function getInputNameParts()
+    {
         // break up the html name by "[]"
         if (strpos($this->html_name(), '[') !== false) {
             $before_any_brackets = substr($this->html_name(), 0, strpos($this->html_name(), '['));
@@ -1060,13 +1101,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         } else {
             $name_parts = array($before_any_brackets);
         }
-        // now get the value for the input
-        $value = $this->_find_form_data_for_this_section_using_name_parts($name_parts, $req_data);
-        // check if this thing's name is at the TOP level of the request data
-        if ($value === null && isset($req_data[$this->name()])) {
-            $value = $req_data[$this->name()];
-        }
-        return $value;
+        return $name_parts;
     }
 
 
@@ -1076,14 +1111,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * @param array $req_data
      * @return array | NULL
      */
-    public function _find_form_data_for_this_section_using_name_parts($html_name_parts, $req_data)
+    public function findRequestForSectionUsingNameParts($html_name_parts, $req_data)
     {
         $first_part_to_consider = array_shift($html_name_parts);
         if (isset($req_data[$first_part_to_consider])) {
             if (empty($html_name_parts)) {
                 return $req_data[$first_part_to_consider];
             } else {
-                return $this->_find_form_data_for_this_section_using_name_parts(
+                return $this->findRequestForSectionUsingNameParts(
                     $html_name_parts,
                     $req_data[$first_part_to_consider]
                 );
@@ -1185,5 +1220,37 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     public function get_default()
     {
         return $this->_default;
+    }
+
+
+
+    /**
+     * Makes this input disabled. That means it will have the HTML attribute 'disabled="disabled"',
+     * and server-side if any input was received it will be ignored
+     */
+    public function disable($disable = true)
+    {
+        $disabled_attribute = ' disabled="disabled"';
+        $this->disabled = $disable;
+        if($disable) {
+            if (strpos($this->_other_html_attributes,$disabled_attribute) === false){
+                $this->_other_html_attributes .= $disabled_attribute;
+            }
+            $this->_set_normalized_value($this->get_default());
+        } else {
+            $this->_other_html_attributes = str_replace($disabled_attribute,'', $this->_other_html_attributes);
+        }
+
+    }
+
+
+
+    /**
+     * Returns whether or not this input is currently disabled.
+     * @return bool
+     */
+    public function disabled()
+    {
+        return $this->disabled;
     }
 }
