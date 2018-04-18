@@ -65,7 +65,7 @@ const handleDeactivationClick = ( e, el ) => {
 	const appContainer = document.getElementById( 'ee-exit-survey-modal' );
     let modalContainer;
 	ReactModal.setAppElement( appContainer );
-	const modalContainer = ReactDOM.render( <ExitModal { ...modalProps } />, //eslint-disable-line react/no-render-return-value
+	modalContainer = ReactDOM.render( <ExitModal { ...modalProps } />, //eslint-disable-line react/no-render-return-value
 		appContainer,
 	);
 	modalContainer.el.addEventListener(

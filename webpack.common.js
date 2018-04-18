@@ -53,9 +53,9 @@ const config = [
 			'wp-plugins-page': [
 				assets + 'wp-plugins-page/index.js',
 			],
-            'core-blocks': [
-                assets + 'blocks/index.js'
-            ]
+			'core-blocks': [
+				assets + 'blocks/index.js',
+			],
 		},
 		externals,
 		output: {
