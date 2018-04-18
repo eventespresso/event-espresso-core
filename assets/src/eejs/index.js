@@ -6,12 +6,13 @@
  * This will hold arbitrary data assigned by the Assets Registry.
  * @type {{}}
  */
-export let data = eejsdata.data || {};
+export const data = eejsdata.data || {};
 
 /**
  * use this for eejs exceptions
  * Usage: throw new eejs.exception('some message')
+ * @param {string} msg
  */
-export let exception = function( msg ) {
-  this.msg = msg;
-}
+export const exception = function( msg ) {
+	this.message = msg;
+};

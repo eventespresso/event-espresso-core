@@ -9,39 +9,49 @@ import ExitModal, { CLOSE_MODAL_EVENT } from '@eventespresso/react-exit-modal-ty
 import './style.css';
 import { data } from '@eventespresso/eejs';
 import { stringify } from 'querystringify';
+import { __ } from '@wordpress/i18n';
 
-const { exitModali18n: i18n = {}, exitModalInfo: info = {}} = data;
+const { exitModalInfo: info = {} } = data;
 
-const queryString = stringify({
-    firstname: info.firstname,
-    emailaddress: info.emailaddress,
-    website: info.website
-});
+const queryString = stringify( {
+	firstname: info.firstname,
+	emailaddress: info.emailaddress,
+	website: info.website,
+} );
 
 const modalProps = {
-    styles: {
-        content: {
-            display: 'flex',
-            top: '80px',
-            left: '50%',
-            bottom: 'auto',
-            right: 'auto',
-            WebkitTransform: 'translateX(-50%)',
-            transform: 'translateX(-50%)'
-        },
-        typeFormStyle: {
-            width: '600px',
-            height: '400px'
-        }
-    },
-    typeFormUrl: 'https://eventespresso.typeform.com/to/O1DDym?' + queryString,
-    introText: i18n.introText,
-    doSurveyButtonText: i18n.doSurveyButtonText,
-    skipButtonText: i18n.skipButtonText,
-    buttonClass: {
-        doSurvey: 'button button-primary',
-        closeModal: 'button button-secondary'
-    }
+	styles: {
+		content: {
+			display: 'flex',
+			top: '80px',
+			left: '50%',
+			bottom: 'auto',
+			right: 'auto',
+			WebkitTransform: 'translateX(-50%)',
+			transform: 'translateX(-50%)',
+		},
+		typeFormStyle: {
+			width: '600px',
+			height: '400px',
+		},
+	},
+	typeFormUrl: 'https://eventespresso.typeform.com/to/O1DDym?' + queryString,
+	introText: __(
+		'Do you have a moment to share why you are deactivating Event Espresso?',
+		'event_espresso'
+	),
+	doSurveyButtonText: __(
+		'Sure I\'ll help',
+		'event_espresso'
+	),
+	skipButtonText: __(
+		'Skip',
+		'event_espresso'
+	),
+	buttonClass: {
+		doSurvey: 'button button-primary',
+		closeModal: 'button button-secondary',
+	},
 };
 
 /**
@@ -49,38 +59,40 @@ const modalProps = {
  * @param {Event} e
  * @param {element} el
  */
-const handleDeactivationClick = (e, el) => {
-    e.preventDefault();
-    const link = $(el).attr('href');
-    const appContainer = document.getElementById('ee-exit-survey-modal');
+const handleDeactivationClick = ( e, el ) => {
+	e.preventDefault();
+	const link = $( el ).attr( 'href' );
+	const appContainer = document.getElementById( 'ee-exit-survey-modal' );
     let modalContainer;
-    ReactModal.setAppElement(appContainer);
-    modalContainer = ReactDOM.render(<ExitModal {...modalProps} />, appContainer);
-    modalContainer.el.addEventListener(
-        CLOSE_MODAL_EVENT,
-        function(e){
-            window.location.href = link;
-        },
-        {once: true}
-    );
+	ReactModal.setAppElement( appContainer );
+	const modalContainer = ReactDOM.render( <ExitModal { ...modalProps } />, //eslint-disable-line react/no-render-return-value
+		appContainer,
+	);
+	modalContainer.el.addEventListener(
+		CLOSE_MODAL_EVENT,
+		function() {
+			window.location.href = link;
+		},
+		{ once: true },
+	);
 };
 
 /**
  * EE caffeinated click capture but only if feature is active
  */
-if (info.isModalActive) {
-    $('tr[data-slug="event-espresso"]')
-        .on('click', 'span.deactivate > a', function(e) {
-            handleDeactivationClick(e, this);
-        });
+if ( info.isModalActive ) {
+	$( 'tr[data-slug="event-espresso"]' )
+		.on( 'click', 'span.deactivate > a', function( e ) {
+			handleDeactivationClick( e, this );
+		} );
 
-    /**
-     * EE decaf click capture.
-     */
-    $('tr[data-slug="event-espresso-decaf"]')
-        .on('click', 'span.deactivate > a', function(e) {
-            handleDeactivationClick(e, this);
-        });
+	/**
+	 * EE decaf click capture.
+	 */
+	$( 'tr[data-slug="event-espresso-decaf"]' )
+		.on( 'click', 'span.deactivate > a', function( e ) {
+			handleDeactivationClick( e, this );
+		} );
 }
 
 

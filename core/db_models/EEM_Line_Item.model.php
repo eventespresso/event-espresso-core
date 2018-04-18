@@ -387,7 +387,10 @@ class EEM_Line_Item extends EEM_Base
 
     /**
      * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     public function get_total_line_items_with_no_transaction()
     {
@@ -397,7 +400,10 @@ class EEM_Line_Item extends EEM_Base
 
     /**
      * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     public function get_total_line_items_for_active_carts()
     {
@@ -407,7 +413,10 @@ class EEM_Line_Item extends EEM_Base
 
     /**
      * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     public function get_total_line_items_for_expired_carts()
     {
@@ -420,12 +429,14 @@ class EEM_Line_Item extends EEM_Base
      * If $expired is set to true, then only line items for expired sessions will be returned.
      * If $expired is set to false, then only line items for active sessions will be returned.
      *
-     * @param bool|null $expired
+     * @param null $expired
      * @return EE_Base_Class[]|EE_Line_Item[]
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function get_total_line_items_for_carts($expired = null)
     {
@@ -446,5 +457,36 @@ class EEM_Line_Item extends EEM_Base
         return $this->get_all(array($where_params));
     }
 
+
+    /**
+     * Returns an array of ticket total line items where the TXN_ID is 0
+     * AND the timestamp is older than the session lifespan.
+     *
+     * @param int $timestamp
+     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function getTicketLineItemsForExpiredCarts($timestamp = 0)
+    {
+        if(! absint($timestamp)) {
+            /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+            $session_lifespan = LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\domain\values\session\SessionLifespan'
+            );
+            $timestamp = $session_lifespan->expiration();
+        }
+        return $this->get_all(
+            array(
+                array(
+                    'TXN_ID'        => 0,
+                    'OBJ_type'      => 'Ticket',
+                    'LIN_timestamp' => array('<=', $timestamp),
+                )
+            )
+        );
+    }
 
 }
