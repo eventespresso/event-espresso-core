@@ -200,7 +200,11 @@ class Registry
     public function enqueueData()
     {
         $this->removeAlreadyRegisteredDataForScriptHandles();
-        wp_localize_script('eejs-core', 'eejsdata', array('data' => $this->jsdata));
+        wp_add_inline_script(
+            'eejs-core',
+            'var eejsdata=' . wp_json_encode(array('data' => $this->jsdata)),
+            'before'
+        );
         wp_localize_script('espresso_core', 'eei18n', EE_Registry::$i18n_js_strings);
         $this->localizeAccountingJs();
         $this->addRegisteredScriptHandlesWithData('eejs-core');
@@ -641,7 +645,7 @@ class Registry
     }
 
 
-    /**
+    /**i
      * Checks WP_Scripts for all of each script handle registered internally as having data and unsets from the
      * Dependency stored in WP_Scripts if its set.
      */
@@ -664,8 +668,20 @@ class Registry
     {
         if (isset($this->script_handles_with_data[$script_handle])) {
             global $wp_scripts;
+            $unset_handle = false;
             if ($wp_scripts->get_data($script_handle, 'data')) {
                 unset($wp_scripts->registered[$script_handle]->extra['data']);
+                $unset_handle = true;
+            }
+            //deal with inline_scripts
+            if ($wp_scripts->get_data($script_handle, 'before')) {
+                unset($wp_scripts->registered[$script_handle]->extra['before']);
+                $unset_handle = true;
+            }
+            if ($wp_scripts->get_data($script_handle, 'after')) {
+                unset($wp_scripts->registered[$script_handle]->extra['after']);
+            }
+            if ($unset_handle) {
                 unset($this->script_handles_with_data[$script_handle]);
             }
         }
