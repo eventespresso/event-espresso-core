@@ -25,6 +25,13 @@ abstract class EE_REST_TestCase extends EE_UnitTestCase
                 'Test being run on a version of WP that does not have the REST framework installed'
             );
         }
+
+        if (! function_exists('rest_validate_value_from_schema')) {
+            $this->markTestSkipped(
+                'Test being run on a version of WP that does not have the `rest_validate_value_from_schema` function available.'
+            );
+        }
+
         add_filter('rest_url', array($this, 'filter_rest_url_for_leading_slash'), 10, 2);
         /** @var WP_REST_Server $wp_rest_server */
         global $wp_rest_server;
