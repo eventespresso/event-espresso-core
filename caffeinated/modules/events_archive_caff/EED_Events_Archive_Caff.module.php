@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * Event Espresso
  *
@@ -183,15 +186,16 @@ class EED_Events_Archive_Caff  extends EED_Events_Archive {
 	}
 
 
-
-	/**
-	 * update_event_single_order
-	 *
-	 * @access    public
-	 * @return    void
-	 */
+    /**
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
 	public static function update_event_archive_order() {
-		$config_saved = false;
+        /** @var EE_Config $config */
+        $config = EE_Registry::instance()->CFG;
+        $config_saved = false;
 		$template_parts = sanitize_text_field( $_POST[ 'elements' ] );
 		if ( ! empty( $template_parts ) ) {
 			$template_parts = explode( ',', trim( $template_parts, ',' ) );
@@ -199,16 +203,17 @@ class EED_Events_Archive_Caff  extends EED_Events_Archive {
 				$template_part = "display_order_$template_part";
 				$priority = ( $key * 10 ) + EED_Events_Archive::EVENT_DETAILS_PRIORITY;
 				if (
-					property_exists(
-						EE_Registry::instance()->CFG->template_settings->EED_Events_Archive,
+                    $config->template_settings->EED_Events_Archive instanceof EE_Events_Archive_Config
+                    && property_exists(
+                        $config->template_settings->EED_Events_Archive,
 						$template_part
 					)
 				) {
-					EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->{$template_part} = $priority;
+                    $config->template_settings->EED_Events_Archive->{$template_part} = $priority;
 				}
 				do_action( "AHEE__EED_Events_Archive__update_event_archive_order__$template_part", $priority );
 			}
-			$config_saved = EE_Registry::instance()->CFG->update_espresso_config( false, false );
+			$config_saved = $config->update_espresso_config( false, false );
 		}
 		if ( $config_saved ) {
 			EE_Error::add_success( __( 'Display Order has been successfully updated.', 'event_espresso' ) );
