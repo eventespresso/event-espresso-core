@@ -31,7 +31,7 @@
 					<?php
                     echo apply_filters(
                         'FHEE__ticket_selector_chart_template__table_header_available_tickets',
-                        esc_html(''),
+                        esc_html__( 'Details', 'event_espresso' ),
                         $EVT_ID
                     );
                     ?>
