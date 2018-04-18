@@ -30,6 +30,20 @@
   # status labels
     - name: "status:needs-documentation"
       color: efefef
+    - name: "status:backlog"
+      color: efefef
+    - name: "status:in-progress"
+      color: efefef
+    - name: "status:next"
+      color: efefef
+    - name: "status:needs-testing"
+      color: efefef
+    - name: "status:merge"
+      color: efefef
+    - name: "status:review"
+      color: efefef
+    - name: "status:feedback-needed"
+      color: efefef
     - name: "status:needs-more-info"
       color: efefef
     - name: "status:add-sales-page"
