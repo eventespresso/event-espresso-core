@@ -90,16 +90,17 @@ class RegisterCustomTaxonomyTerms
             foreach ($custom_taxonomy_terms as $custom_taxonomy_term) {
                 if (
                     $post->post_status === 'publish'
-                    && in_array($post->post_type, $custom_taxonomy_term->cpt_slugs, true)
+                    && $custom_taxonomy_term instanceof CustomTaxonomyTerm
+                    && in_array($post->post_type, $custom_taxonomy_term->customPostTypeSlugs(), true)
                 ) {
                     //note some error proofing going on here to save unnecessary db queries
                     $taxonomies = get_object_taxonomies($post->post_type);
                     foreach ($taxonomies as $taxonomy) {
                         $terms = wp_get_post_terms($post_id, $taxonomy);
-                        if (empty($terms) && $taxonomy === $custom_taxonomy_term->taxonomy) {
+                        if (empty($terms) && $taxonomy === $custom_taxonomy_term->taxonomySlug()) {
                             wp_set_object_terms(
                                 $post_id,
-                                array($custom_taxonomy_term->term_slug),
+                                array($custom_taxonomy_term->termSlug()),
                                 $taxonomy
                             );
                         }
