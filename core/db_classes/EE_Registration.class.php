@@ -4,6 +4,7 @@ use EventEspresso\core\domain\entities\contexts\ContextInterface;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
 
@@ -362,26 +363,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     * increments this registration's related ticket sold and corresponding datetime sold values
-     *
-     * @return void
-     * @throws EE_Error
-     * @throws EntityNotFoundException
-     */
-    private function _reserve_registration_space()
-    {
-        // reserved ticket and datetime counts will be decremented as sold counts are incremented
-        // so stop tracking that this reg has a ticket reserved
-        $this->release_reserved_ticket(false, "REG: {$this->ID()} (ln:". __LINE__ . ')');
-        $ticket = $this->ticket();
-        $ticket->increase_sold();
-        $ticket->save();
-        // possibly set event status to sold out
-        $this->event()->perform_sold_out_status_check();
-    }
-
-
-    /**
      * Gets the ticket this registration is for
      *
      * @param boolean $include_archived whether to include archived tickets or not.
@@ -436,16 +417,51 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
+     * increments this registration's related ticket sold and corresponding datetime sold values
+     *
+     * @return void
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws UnexpectedEntityException
+     */
+    private function _reserve_registration_space()
+    {
+        // reserved ticket and datetime counts will be decremented as sold counts are incremented
+        // so stop tracking that this reg has a ticket reserved
+        $this->release_reserved_ticket(false, "REG: {$this->ID()} (ln:" . __LINE__ . ')');
+        $ticket = $this->ticket();
+        $ticket->increase_sold();
+        $ticket->save();
+        // possibly set event status to sold out
+        $this->event()->perform_sold_out_status_check();
+    }
+
+
+    /**
      * decrements (subtracts) this registration's related ticket sold and corresponding datetime sold values
      *
      * @return void
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws UnexpectedEntityException
      */
     private function _release_registration_space()
     {
         $ticket = $this->ticket();
         $ticket->decrease_sold();
         $ticket->save();
+        // possibly change event status from sold out back to previous status
+        $this->event()->perform_sold_out_status_check();
     }
 
 
