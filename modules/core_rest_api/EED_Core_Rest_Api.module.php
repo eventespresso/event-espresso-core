@@ -894,11 +894,15 @@ class EED_Core_Rest_Api extends \EED_Module
                 $model_version_info->requestedVersion()
             );
             //we do our own validation and sanitization within the controller
-            $arg_info['sanitize_callback'] =
-                array(
+            if(function_exists('rest_validate_value_from_schema')){
+                $sanitize_callback = array(
                     'EED_Core_Rest_Api',
                     'default_sanitize_callback',
                 );
+            } else {
+                $sanitize_callback = null;
+            }
+            $arg_info['sanitize_callback'] = $sanitize_callback;
             $args_info[$field_name] = $arg_info;
             if ($field_obj instanceof EE_Datetime_Field) {
                 $gmt_arg_info = $arg_info;
