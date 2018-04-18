@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactModal from 'react-modal';
 import $ from 'jquery';
@@ -38,15 +37,15 @@ const modalProps = {
 	typeFormUrl: 'https://eventespresso.typeform.com/to/O1DDym?' + queryString,
 	introText: __(
 		'Do you have a moment to share why you are deactivating Event Espresso?',
-		'event_espresso'
+		'event_espresso',
 	),
 	doSurveyButtonText: __(
 		'Sure I\'ll help',
-		'event_espresso'
+		'event_espresso',
 	),
 	skipButtonText: __(
 		'Skip',
-		'event_espresso'
+		'event_espresso',
 	),
 	buttonClass: {
 		doSurvey: 'button button-primary',
@@ -63,9 +62,8 @@ const handleDeactivationClick = ( e, el ) => {
 	e.preventDefault();
 	const link = $( el ).attr( 'href' );
 	const appContainer = document.getElementById( 'ee-exit-survey-modal' );
-    let modalContainer;
 	ReactModal.setAppElement( appContainer );
-	modalContainer = ReactDOM.render( <ExitModal { ...modalProps } />, //eslint-disable-line react/no-render-return-value
+	const modalContainer = ReactDOM.render( <ExitModal { ...modalProps } />, //eslint-disable-line react/no-render-return-value
 		appContainer,
 	);
 	modalContainer.el.addEventListener(
@@ -94,6 +92,3 @@ if ( info.isModalActive ) {
 			handleDeactivationClick( e, this );
 		} );
 }
-
-
-
