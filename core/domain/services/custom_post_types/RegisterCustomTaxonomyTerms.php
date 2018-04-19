@@ -34,6 +34,10 @@ class RegisterCustomTaxonomyTerms
         // hook into save_post so that we can make sure that the default terms get saved on publish of registered cpts
         // IF they don't have a term for that taxonomy set.
         add_action('save_post', array($this, 'saveDefaultTerm'), 100, 2);
+        do_action(
+            'AHEE__EventEspresso_core_domain_services_custom_post_types_RegisterCustomTaxonomyTerms__construct_end',
+            $this
+        );
     }
 
 
