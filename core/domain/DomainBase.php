@@ -135,24 +135,6 @@ abstract class DomainBase implements DomainInterface
     /**
      * @return string
      */
-    public function sourceAssetsPath()
-    {
-        return $this->pluginPath() . 'assets/src/';
-    }
-
-
-    /**
-     * @return string
-     */
-    public function sourceAssetsUrl()
-    {
-        return $this->pluginUrl() . 'assets/src/';
-    }
-
-
-    /**
-     * @return string
-     */
     public function distributionAssetsPath()
     {
         return $this->pluginPath() . 'assets/dist/';
