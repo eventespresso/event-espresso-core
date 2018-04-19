@@ -73,4 +73,10 @@ interface DomainInterface extends InterminableInterface
      */
     public function distributionAssetsUrl();
 
+
+    /**
+     * @return string
+     */
+    public function assetNamespace();
+
 }

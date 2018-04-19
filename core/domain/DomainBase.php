@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain;
 
 use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\Version;
+use EventEspresso\core\services\assets\Registry;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
 
@@ -48,6 +49,11 @@ abstract class DomainBase implements DomainInterface
      */
     private $plugin_url;
 
+    /**
+     * @var string $asset_namespace
+     */
+    private $asset_namespace;
+
 
 
     /**
@@ -63,6 +69,7 @@ abstract class DomainBase implements DomainInterface
         $this->plugin_basename = plugin_basename($this->pluginFile());
         $this->plugin_path = plugin_dir_path($this->pluginFile());
         $this->plugin_url = plugin_dir_url($this->pluginFile());
+        $this->setAssetNamespace();
     }
 
 
@@ -159,4 +166,29 @@ abstract class DomainBase implements DomainInterface
     {
         return $this->pluginUrl() . 'assets/dist/';
     }
+
+
+    /**
+     * @return string
+     */
+    public function assetNamespace()
+    {
+        return $this->asset_namespace;
+    }
+
+
+    /**
+     * @return void
+     */
+    private function setAssetNamespace()
+    {
+        $asset_namespace  = explode('/', $this->plugin_basename);
+        $asset_namespace = reset($asset_namespace);
+        $asset_namespace = $asset_namespace === 'event-espresso-core'
+            ? Registry::ASSET_NAMESPACE_CORE
+            : $asset_namespace;
+        $this->asset_namespace = $asset_namespace;
+    }
+
+
 }
