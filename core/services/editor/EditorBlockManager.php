@@ -60,11 +60,11 @@ abstract class EditorBlockManager
      */
     protected $action;
 
-
     /**
      * @var Registry
      */
-    protected $assets_registry;
+    protected $registry;
+
 
     /**
      * EditorBlockManager constructor.
@@ -72,21 +72,21 @@ abstract class EditorBlockManager
      * @param EditorBlockCollection $blocks
      * @param RequestInterface      $request
      * @param DomainInterface       $domain
-     * @param Registry              $assets_registry
+     * @param Registry              $registry
      */
     public function __construct(
         EditorBlockCollection $blocks,
         RequestInterface $request,
         DomainInterface $domain,
-        Registry $assets_registry
+        Registry $registry
     ) {
-        $this->blocks  = $blocks;
-        $this->request = $request;
-        $this->domain  = $domain;
-        $this->assets_registry = $assets_registry;
+        $this->blocks            = $blocks;
+        $this->request           = $request;
+        $this->domain            = $domain;
+        $this->registry          = $registry;
         $this->request_post_type = $this->request->getRequestParam('post_type', '');
-        $this->page = $this->request->getRequestParam('page', '');
-        $this->action = $this->request->getRequestParam('action', '');
+        $this->page              = $this->request->getRequestParam('page', '');
+        $this->action            = $this->request->getRequestParam('action', '');
         add_action($this->init_hook(), array($this, 'initialize'));
     }
 
@@ -114,6 +114,4 @@ abstract class EditorBlockManager
     {
         return $this->request_post_type;
     }
-
-
 }
