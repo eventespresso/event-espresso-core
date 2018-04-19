@@ -1,4 +1,9 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('NO direct script access allowed');
 }
@@ -184,6 +189,10 @@ class EEH_Template
      *                                      generate a custom template or not. Used in places where you don't actually
      *                                      load the template, you just want to know if there's a custom version of it.
      * @return mixed
+     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function locate_template(
         $templates = array(),
@@ -205,8 +214,12 @@ class EEH_Template
             if (empty($templates)) {
                 // get post_type
                 $post_type = EE_Registry::instance()->REQ->get('post_type');
+                /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
+                $custom_post_types = LoaderFactory::getLoader()->getShared(
+                    'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
+                );
                 // get array of EE Custom Post Types
-                $EE_CPTs = EE_Register_CPTs::get_CPTs();
+                $EE_CPTs = $custom_post_types->getDefinitions();
                 // build template name based on request
                 if (isset($EE_CPTs[$post_type])) {
                     $archive_or_single = is_archive() ? 'archive' : '';
