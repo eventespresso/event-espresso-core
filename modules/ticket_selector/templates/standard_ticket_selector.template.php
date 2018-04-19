@@ -27,17 +27,17 @@
 	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl">
 		<thead>
 			<tr>
-				<th scope="col" class="ee-ticket-selector-ticket-details-th">
+				<th id="details-<?php echo $EVT_ID; ?>" scope="col" class="ee-ticket-selector-ticket-details-th">
 					<?php
                     echo apply_filters(
                         'FHEE__ticket_selector_chart_template__table_header_available_tickets',
-                        esc_html(''),
+                        esc_html__( 'Details', 'event_espresso' ),
                         $EVT_ID
                     );
                     ?>
 				</th>
 				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE ) ) { ?>
-				<th scope="col" class="ee-ticket-selector-ticket-price-th cntr">
+				<th id="price-<?php echo $EVT_ID; ?>" scope="col" class="ee-ticket-selector-ticket-price-th cntr">
 					<?php
 						/**
 						 * Filters the text printed for the header of the price column in the ticket selector table
@@ -55,7 +55,7 @@
 					?>
 				</th>
 				<?php } ?>
-				<th scope="col" class="ee-ticket-selector-ticket-qty-th cntr">
+				<th id="quantity-<?php echo $EVT_ID; ?>" scope="col" class="ee-ticket-selector-ticket-qty-th cntr">
 					<?php
 						/**
 						* Filters the text printed for the header of the quantity column in the ticket selector table
