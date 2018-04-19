@@ -3,6 +3,8 @@
 namespace EventEspresso\core\domain\entities\editor;
 
 use EventEspresso\core\domain\DomainInterface;
+use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\services\assets\AssetRegisterInterface;
 use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use WP_Block_Type;
@@ -39,16 +41,22 @@ abstract class EditorBlock implements EditorBlockInterface
      */
     protected $loader;
 
-
     /**
      * @var Registry
      */
-    protected $assets_registry;
+    protected $registry;
 
     /**
      * @var string $editor_block_type
      */
     private $editor_block_type;
+
+    /**
+     * AssetRegister that this editor block uses for asset registration
+     *
+     * @var AssetRegisterInterface $asset_register_fqcn
+     */
+    private $asset_register;
 
     /**
      * @var WP_Block_Type $wp_block_type
@@ -86,9 +94,9 @@ abstract class EditorBlock implements EditorBlockInterface
         LoaderInterface $loader,
         Registry $assets_registry
     ) {
-        $this->domain = $domain;
-        $this->loader = $loader;
-        $this->assets_registry = $assets_registry;
+        $this->domain   = $domain;
+        $this->loader   = $loader;
+        $this->registry = $assets_registry;
     }
 
 
@@ -116,6 +124,26 @@ abstract class EditorBlock implements EditorBlockInterface
     protected function setEditorBlockType($editor_block_type)
     {
         $this->editor_block_type = $editor_block_type;
+    }
+
+
+    /**
+     * AssetRegister that this editor block uses for asset registration
+     *
+     * @return AssetRegisterInterface
+     */
+    public function assetRegister()
+    {
+        return $this->asset_register;
+    }
+
+
+    /**
+     * @param string asset_register_fqcn
+     */
+    protected function setAssetRegisterFqcn($asset_register_fqcn)
+    {
+        $this->asset_register = $this->loader->getShared($asset_register_fqcn);
     }
 
 
@@ -185,10 +213,10 @@ abstract class EditorBlock implements EditorBlockInterface
         // todo add route detection (ie inject route) and change context based on route
         $args          = array(
             'attributes'      => $this->attributes(),
-            'editor_script'   => "ee-{$context}-blocks",
-            'editor_style'    => "ee-{$context}-blocks",
-            'script'          => "ee-{$context}-blocks",
-            'style'           => "ee-{$context}-blocks",
+            'editor_script'   => "{$context}-blocks",
+            'editor_style'    => "{$context}-blocks",
+            'script'          => "{$context}-blocks",
+            'style'           => "{$context}-blocks",
         );
         if(! $this->isDynamic()) {
             $args['render_callback'] = $this->renderBlock();
@@ -237,38 +265,6 @@ abstract class EditorBlock implements EditorBlockInterface
         );
     }
 
-
-    /**
-     * @return  void
-     */
-    public function registerScripts()
-    {
-        // wp_register_script(
-        //     'core-blocks',
-        //     $this->domain->distributionAssetsUrl() . 'ee-core-blocks.dist.js',
-        //     array(
-        //         'wp-blocks',    // Provides useful functions and components for extending the editor
-        //         'wp-i18n',      // Provides localization functions
-        //         'wp-element',   // Provides React.Component
-        //         'wp-components' // Provides many prebuilt components and controls
-        //     ),
-        //     filemtime($this->domain->distributionAssetsPath() . 'ee-core-blocks.dist.js')
-        // );
-    }
-
-
-    /**
-     * @return void
-     */
-    public function registerStyles()
-    {
-        // wp_register_style(
-        //     'ee-block-styles',
-        //     $this->domain->distributionAssetsUrl() . 'style.css',
-        //     array(),
-        //     filemtime($this->domain->distributionAssetsPath() . 'style.css')
-        // );
-    }
 
 
     /**
