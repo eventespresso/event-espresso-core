@@ -1,0 +1,169 @@
+# github label sync configuration file for EE repos
+# install `https://github.com/Xiphe/github-sync-labels-milestones`
+- repositories:
+    - eventespresso/event-espresso-core
+    - eventespresso/ee4-events-calendar
+    - eventespresso/eea-authnet-accept
+    - eventespresso/eea-stripe-gateway
+    - eventespresso/eea-wait-lists
+    - eventespresso/eea-barcode-scanner
+    - eventespresso/eea-attendee-mover
+    - eventespresso/eea-wpuser-integration
+    - eventespresso/eea-mailchimp
+    - eventespresso/eea-gutenberg
+    - eventespresso/eea-people-addon
+    - eventespresso/ee4-infusionsoft
+    - eventespresso/ee4-promotions
+    - eventespresso/eea-ticketing
+    - eventespresso/eea-beaver-builder
+    - eventespresso/eea-flexible-payment-method
+    - eventespresso/ee4-mer
+    - eventespresso/eea-affiliatewp
+    - eventespresso/eea-payment-methods-pro
+    - eventespresso/eea-automated-upcoming-event-notifications
+    - eventespresso/eea-buddypress
+    - eventespresso/eea-events-blog
+    - eventespresso/eea-chase-orbital
+    - eventespresso/eea-vanco-pm
+    - eventespresso/eea-authnet-sim
+  labels:
+  # status labels
+    - name: "status:needs-documentation"
+      color: efefef
+    - name: "status:backlog"
+      color: efefef
+    - name: "status:in-progress"
+      color: efefef
+    - name: "status:next"
+      color: efefef
+    - name: "status:needs-testing"
+      color: efefef
+    - name: "status:merge"
+      color: efefef
+    - name: "status:review"
+      color: efefef
+    - name: "status:feedback-needed"
+      color: efefef
+    - name: "status:needs-more-info"
+      color: efefef
+    - name: "status:add-sales-page"
+      color: efefef
+    - name: "status:duplicate"
+      color: efefef
+      previousNames:
+        - duplicate
+    - name: "status:stale"
+      color: efefef
+    - name: "status:unit-tests-required"
+      color: efefef
+    - name: "status:triage"
+      color: efefef
+    # category labels
+    - name: "category:security"
+      color: 84b6eb
+    - name: "category:assets"
+      color: 84b6eb
+      previousNames:
+        - assets
+    - name: "category:payment-methods-&-gateways"
+      color: 84b6eb
+    - name: "category:admin-pages-&-functionality"
+      color: 84b6eb
+    - name: "category:spco-&-registration"
+      color: 84b6eb
+    - name: "category:core-plugin"
+      color: 84b6eb
+    - name: "category:frontend-ui-&-ux"
+      color: 84b6eb
+    - name: "category:admin-page-ui-&-ux"
+      color: 84b6eb
+    - name: "category:messaging-&-messengers"
+      color: 84b6eb
+    - name: "category:i18n"
+      color: 84b6eb
+      previousNames:
+        - i18n
+    - name: "category:templates-shortcodes-and-widgets"
+      color: 84b6eb
+    - name: "category:models-and-data-infrastructure"
+      color: 84b6eb
+    - name: "category:general"
+      color: 84b6eb
+    - name: "category:activation-installation-and-migration"
+      color: 84b6eb
+    - name: "category:wp-multi-site"
+      color: 84b6eb
+    - name: "category:3rd-party-integrations"
+      color: 84b6eb
+    - name: "category:decision-analytics"
+      color: 84b6eb
+    - name: "category:pue-uxip-and-licensing"
+      color: 84b6eb
+    - name: "category:unit-tests"
+      color: 84b6eb
+    - name: "category:forms-systems"
+      color: 84b6eb
+    - name: "category:reports-exporting-importing"
+      color: 84b6eb
+    - name: "category:user-management"
+      color: 84b6eb
+    - name: "category:accessibility"
+      color: 84b6eb
+    - name: "category:command-bus-and-command-handlers"
+      color: 84b6eb
+    - name: "category:gutenberg"
+      color: 84b6eb
+      previousNames:
+        - gutenberg
+    - name: "category:has-codebase-ticket"
+      color: 84b6eb
+      previousNames:
+        - has codebase ticket
+    - name: "category:community-contribution"
+      color: 84b6eb
+      previousNames:
+        - community-contribution
+    # priority labels
+    - name: "priority:critical"
+      color: b60205
+    - name: "priority:high"
+      color: d93f0b
+    - name: "priority:normal"
+      color: 0052cc
+    - name: "priority:low"
+      color: efefef
+    # type labels
+    - name: "type:support"
+      color: ebf7a0
+    - name: "type:bug"
+      color: ebf7a0
+      previousNames:
+        - bug
+    - name: "type:build-process"
+      color: ebf7a0
+      previousNames:
+        - build-process
+    - name: "type:enhancement"
+      color: ebf7a0
+      previousNames:
+        - enhancement
+    - name: "type:task"
+      color: ebf7a0
+    - name: "type:feature-request"
+      color: ebf7a0
+      previousNames:
+        - feature request
+    - name: "type:documentation"
+      color: ebf7a0
+      previousNames:
+        - documentation
+    - name: "type:design"
+      color: ebf7a0
+    - name: "type:user-proofing"
+      color: ebf7a0
+    - name: "type:theme/plugin-conflict"
+      color: ebf7a0
+    - name: "type:question"
+      color: ebf7a0
+      previousNames:
+        - question

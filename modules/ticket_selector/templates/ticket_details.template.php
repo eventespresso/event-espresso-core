@@ -18,7 +18,7 @@
         <div id="<?php echo $ticket_details_css_id; ?>-dv" class="tckt-slctr-tkt-details-dv" style="display: none;">
 
             <section class="tckt-slctr-tkt-details-sctn">
-                <h3><?php echo esc_html__( 'Details', 'event_espresso' ); ?></h3>
+                <h4><?php echo esc_html__( 'Details', 'event_espresso' ); ?></h4>
                 <p><?php echo $ticket->description(); ?></p>
 
                 <?php

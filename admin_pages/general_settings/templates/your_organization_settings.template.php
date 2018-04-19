@@ -1,7 +1,12 @@
+<?php
+use EventEspresso\core\domain\services\pue\Stats;
+?>
+
 <div class="padding">
 	<?php
 		//we'll only show site-license keys if this is main_site() (which works for both multi-site and single-site wp installations)
-		if ( is_main_site() ) { ?>
+
+    if ( is_main_site() ) { ?>
 		<h2 class="ee-admin-settings-hdr" style="width:300px;">
 			<?php _e('Your Event Espresso License Key', 'event_espresso'); ?>
 		</h2>
@@ -258,7 +263,7 @@
 
 	<?php if ( is_main_site() ) : ?>
 		<p>
-			<?php echo  EE_PUE::espresso_data_collection_optin_text( FALSE ); ?>
+			<?php Stats::optinText(false); ?>
 		</p>
 
 		<table class="form-table">

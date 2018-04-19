@@ -14,7 +14,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * to be added to Event Espresso's form system
  *
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.59.p
  */
 class EE_Invisible_Recaptcha_Input extends EE_Form_Input_Base
 {

@@ -1844,7 +1844,7 @@ class EED_Single_Page_Checkout extends EED_Module
     /**
      *    getRegistrationExpirationNotice
      *
-     * @since $VID:$
+     * @since 4.9.59.p
      * @access    public
      * @return    string
      */

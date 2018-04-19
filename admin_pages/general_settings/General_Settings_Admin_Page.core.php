@@ -463,7 +463,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         //UXIP settings
         $this->_template_args['ee_ueip_optin'] = isset(EE_Registry::instance()->CFG->core->ee_ueip_optin)
             ? EE_Registry::instance()->CFG->core->get_pretty('ee_ueip_optin')
-            : true;
+            : 'yes';
 
         $STA_ID                         = isset(EE_Registry::instance()->CFG->organization->STA_ID)
             ? EE_Registry::instance()->CFG->organization->STA_ID
@@ -596,7 +596,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             : EE_Registry::instance()->CFG->organization->instagram;
         EE_Registry::instance()->CFG->core->ee_ueip_optin     = isset($this->_req_data['ueip_optin'])
                                                                 && ! empty($this->_req_data['ueip_optin'])
-            ? $this->_req_data['ueip_optin']
+            ? filter_var($this->_req_data['ueip_optin'], FILTER_VALIDATE_BOOLEAN)
             : EE_Registry::instance()->CFG->core->ee_ueip_optin;
 
         EE_Registry::instance()->CFG->currency = new EE_Currency_Config(

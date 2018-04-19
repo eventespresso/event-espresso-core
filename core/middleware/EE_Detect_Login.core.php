@@ -12,7 +12,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package       Event Espresso
  * @subpackage    core
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9.59.p
  */
 class EE_Detect_Login extends EE_Middleware {
 

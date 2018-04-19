@@ -2,9 +2,9 @@
 
 ## Getting Started
 
-Our build process is Node.js based.  You will need to have [https://node.js.org/en/](Node.js installed).  You should be running a Node version matching the [current active LTS release](https://github.com/nodejs/Release#release-schedule) or newer in order to use the build process.  You can check your Node.js version by typing `node -v` in the Terminal prompt.
+Our build process is Node.js based.  You will need to have [Node.js installed](https://node.js.org/en/).  You should be running a Node version matching the [current active LTS release](https://github.com/nodejs/Release#release-schedule) or newer in order to use the build process.  You can check your Node.js version by typing `node -v` in the Terminal prompt.
 
-You will also need the latest release of [https://npmjs.org](npm installed). Npm is a separate project from Node.js and is updated frequently. If you've just installed Node.js which includes a version of npm within the installation you most likely will need to also update your npm install.  To update npm, type this into your terminal:
+You will also need the latest release of [npm installed](https://npmjs.org). Npm is a separate project from Node.js and is updated frequently. If you've just installed Node.js which includes a version of npm within the installation you most likely will need to also update your npm install.  To update npm, type this into your terminal:
 
 ```bash
 npm install npm@latest -g

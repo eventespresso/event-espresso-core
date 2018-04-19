@@ -618,9 +618,14 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\database\TableManager'  => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\services\assets\I18nRegistry' => array(
+                array(),
+                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache
+            ),
             'EventEspresso\core\services\assets\Registry'                                                                 => array(
                 'EE_Template_Config' => EE_Dependency_Map::load_from_cache,
                 'EE_Currency_Config' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\I18nRegistry' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache
             ),
             'EventEspresso\core\domain\entities\shortcodes\EspressoCancelled'                                             => array(
@@ -679,6 +684,28 @@ class EE_Dependency_Map
             'EE_Admin_Transactions_List_Table' => array(
                 null,
                 'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\services\licensing\LicenseService' => array(
+                'EventEspresso\core\domain\services\pue\Stats' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\pue\Config' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\domain\services\pue\Stats' => array(
+                'EventEspresso\core\domain\services\pue\Config' => EE_Dependency_Map::load_from_cache,
+                'EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\pue\StatsGatherer' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\domain\services\pue\Config' => array(
+                'EE_Network_Config' => EE_Dependency_Map::load_from_cache,
+                'EE_Config' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\domain\services\pue\StatsGatherer' => array(
+                'EEM_Payment_Method' => EE_Dependency_Map::load_from_cache,
+                'EEM_Event' => EE_Dependency_Map::load_from_cache,
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+                'EEM_Registration' => EE_Dependency_Map::load_from_cache,
+                'EEM_Transaction' => EE_Dependency_Map::load_from_cache,
+                'EE_Config' => EE_Dependency_Map::load_from_cache
             ),
             'EventEspresso\core\domain\services\admin\ExitModal' => array(
                 'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache
@@ -803,10 +830,6 @@ class EE_Dependency_Map
                     false
                 );
             },
-            //load_model
-            // 'EEM_Attendee'                         => 'load_model',
-            // 'EEM_Message_Template_Group'           => 'load_model',
-            // 'EEM_Message_Template'                 => 'load_model',
             //load_helper
             'EEH_Parse_Shortcodes'                 => function () {
                 if (EE_Registry::instance()->load_helper('Parse_Shortcodes')) {
@@ -829,6 +852,12 @@ class EE_Dependency_Map
             'EventEspresso\core\services\loaders\Loader' => function () {
                 return LoaderFactory::getLoader();
             },
+            'EE_Network_Config' => function() {
+                return EE_Network_Config::instance();
+            },
+            'EE_Config' => function () {
+                return EE_Config::instance();
+            }
         );
     }
 

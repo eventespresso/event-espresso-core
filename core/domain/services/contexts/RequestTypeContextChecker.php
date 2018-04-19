@@ -15,7 +15,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\core\domain\services\contexts
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.59.p
  */
 class RequestTypeContextChecker extends ContextChecker implements RequestTypeContextCheckerInterface
 {

@@ -4110,7 +4110,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         //remove any options that are NOT going to be saved with the config settings.
         if (isset($config->core->ee_ueip_optin)) {
-            $config->core->ee_ueip_has_notified = true;
             // TODO: remove the following two lines and make sure values are migrated from 3.1
             update_option('ee_ueip_optin', $config->core->ee_ueip_optin);
             update_option('ee_ueip_has_notified', true);
