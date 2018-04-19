@@ -1,18 +1,18 @@
 {
+  "core-blocks": {
+    "js": "ee-core-blocks.806e5f79ad93d0da5144.dist.js"
+  },
   "eejs": {
-    "js": "ee-eejs.9beae6424f9ca5198925.dist.js"
+    "js": "ee-eejs.6bd80768f8aac9646a59.dist.js"
   },
   "wp-plugins-page": {
-    "js": "ee-wp-plugins-page.b765df3d92609f8ddc8e.dist.js",
-    "css": "ee-wp-plugins-page.b95fd8de563b99ef70791b8e24629567.dist.css"
+    "js": "ee-wp-plugins-page.07fcb24132c049b0b20f.dist.js",
+    "css": "ee-wp-plugins-page.6ce1ef98b3b927daed4f331f6930ee17.dist.css"
   },
   "reactVendor": {
     "js": "ee-reactVendor.b5799c8665b24642d1cd.dist.js"
   },
-  "core-blocks": {
-    "js": "ee-core-blocks.e21565420ee5a573da6d.dist.js"
-  },
   "manifest": {
-    "js": "ee-manifest.84871ecdc22c246e9b73.dist.js"
+    "js": "ee-manifest.f5984092809447a8fba8.dist.js"
   }
 }
