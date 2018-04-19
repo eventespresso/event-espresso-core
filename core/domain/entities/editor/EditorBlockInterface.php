@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\entities\editor;
 
+use EventEspresso\core\services\assets\AssetRegisterInterface;
 use WP_Block_Type;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -41,6 +42,14 @@ interface EditorBlockInterface
 
 
     /**
+     * AssetRegister that this editor block uses for asset registration
+     *
+     * @return AssetRegisterInterface
+     */
+    public function assetRegister();
+
+
+    /**
      * Registers the Editor Block with WP core;
      * Returns the registered block type on success, or false on failure.
      *
@@ -72,18 +81,6 @@ interface EditorBlockInterface
      * @return array
      */
     public function getEditorContainer();
-
-
-    /**
-     * @return  void
-     */
-    public function registerScripts();
-
-
-    /**
-     * @return void
-     */
-    public function registerStyles();
 
 
     /**
