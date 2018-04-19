@@ -229,16 +229,13 @@ class CustomPostTypeDefinitions
         $cpts = $this->getDefinitions();
         //first if slug passed in...
         if (! empty($post_type_slug)) {
-            //match?
+            // check that slug and cpt match
+            if (! isset($cpts[ $post_type_slug ])) {
+                return array();
+            }
             if (
-                ! isset($cpts[ $post_type_slug ])
-                || (
-                    isset($cpts[ $post_type_slug ])
-                    && (
-                        empty($cpts[ $post_type_slug ]['class_name'])
-                        && empty($cpts[ $post_type_slug ]['model_name'])
-                    )
-                )
+                empty($cpts[ $post_type_slug ]['class_name'])
+                && empty($cpts[ $post_type_slug ]['model_name'])
             ) {
                 return array();
             }
