@@ -3,6 +3,8 @@
 namespace EventEspresso\core\services\editor;
 
 use EE_Error;
+use EventEspresso\core\domain\DomainInterface;
+use EventEspresso\core\domain\entities\editor\EditorBlockCollection;
 use EventEspresso\core\domain\entities\editor\EditorBlockInterface;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidClassException;
@@ -11,10 +13,12 @@ use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\assets\AssetRegisterCollection;
 use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\collections\CollectionDetails;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
+use EventEspresso\core\services\request\RequestInterface;
 use Exception;
 use InvalidArgumentException;
 use ReflectionException;
@@ -37,6 +41,34 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class EditorBlockRegistrationManager extends EditorBlockManager
 {
+
+    /**
+     * @var AssetRegisterCollection $asset_register_collection
+     */
+    protected $asset_register_collection;
+
+
+    /**
+     * EditorBlockRegistrationManager constructor.
+     *
+     * @param AssetRegisterCollection $asset_register_collection
+     * @param EditorBlockCollection   $blocks
+     * @param RequestInterface        $request
+     * @param DomainInterface         $domain
+     * @param Registry                $registry
+     */
+    public function __construct(
+        AssetRegisterCollection $asset_register_collection,
+        EditorBlockCollection $blocks,
+        RequestInterface $request,
+        DomainInterface $domain,
+        Registry $registry
+    ) {
+        parent::__construct($blocks, $request, $domain, $registry);
+        $this->asset_register_collection = $asset_register_collection;
+    }
+
+
 
     /**
      *  Returns the name of a hookpoint to be used to call initialize()
@@ -134,9 +166,6 @@ class EditorBlockRegistrationManager extends EditorBlockManager
     public function registerEditorBlocks()
     {
         try {
-            // register primary assets
-            add_action('enqueue_block_assets', array($this, 'registerStyles'));
-            add_action('enqueue_block_assets', array($this, 'registerScripts'));
             // cycle thru block loader folders
             foreach ($this->blocks as $block) {
                 // perform any setup required for the block
@@ -144,13 +173,19 @@ class EditorBlockRegistrationManager extends EditorBlockManager
                 if (! $block_type instanceof WP_Block_Type) {
                     throw new InvalidEntityException($block_type, 'WP_Block_Type');
                 }
-                add_action('enqueue_block_assets', array($block, 'registerStyles'));
-                add_action('enqueue_block_assets', array($block, 'registerScripts'));
+                if(! $this->asset_register_collection->has($block->assetRegister())){
+                    $this->asset_register_collection->add($block->assetRegister());
+                }
                 do_action(
                     'FHEE__EventEspresso_core_services_editor_EditorBlockManager__registerEditorBlocks__block_type_registered',
                     $block,
                     $block_type
                 );
+            }
+            if ($this->asset_register_collection->hasObjects()) {
+                $this->asset_register_collection->registerManifestFile();
+                // register primary assets
+                add_action('enqueue_block_assets', array($this, 'registerAssets'));
             }
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
@@ -158,32 +193,14 @@ class EditorBlockRegistrationManager extends EditorBlockManager
     }
 
 
-    public function registerStyles()
+    /**
+     * Registers assets for all classes in the AssetRegisterCollection
+     */
+    public function registerAssets()
     {
-        // wp_register_style(
-        //     'ee-block-styles',
-        //     $this->domain->distributionAssetsUrl() . 'style.css',
-        //     array(),
-        //     filemtime($this->domain->distributionAssetsPath() . 'style.css')
-        // );
+        $this->asset_register_collection->registerScripts();
+        $this->asset_register_collection->registerStyles();
     }
 
-
-    public function registerScripts()
-    {
-        wp_register_script(
-            'ee-core-blocks',
-            $this->assets_registry->getJsUrl(Registry::ASSET_NAMESPACE, 'core-blocks'),
-            array(
-                'eejs-core',
-                'wp-blocks',    // Provides useful functions and components for extending the editor
-                'wp-i18n',      // Provides localization functions
-                'wp-element',   // Provides React.Component
-                'wp-components' // Provides many prebuilt components and controls
-            ),
-            null,
-            true
-        );
-    }
 
 }
