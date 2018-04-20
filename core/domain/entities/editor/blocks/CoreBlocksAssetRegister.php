@@ -4,7 +4,7 @@ namespace EventEspresso\core\domain\entities\editor\blocks;
 
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\services\assets\Registry;
-use EventEspresso\core\services\editor\EditorBlockAssetRegister;
+use EventEspresso\core\services\editor\BlockAssetRegister;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -18,7 +18,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class CoreBlocksAssetRegister extends EditorBlockAssetRegister
+class CoreBlocksAssetRegister extends BlockAssetRegister
 {
     /**
      * CoreBlocksAssetRegister constructor.
