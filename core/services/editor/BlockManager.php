@@ -2,10 +2,8 @@
 
 namespace EventEspresso\core\services\editor;
 
-use EventEspresso\core\domain\DomainInterface;
-use EventEspresso\core\domain\entities\editor\EditorBlockCollection;
-use EventEspresso\core\domain\entities\editor\EditorBlockInterface;
-use EventEspresso\core\services\assets\Registry;
+use EventEspresso\core\domain\entities\editor\BlockCollection;
+use EventEspresso\core\domain\entities\editor\BlockInterface;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\request\RequestInterface;
 
@@ -14,18 +12,18 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class EditorBlockManager
+ * Class BlockManager
  * Description
  *
  * @package EventEspresso\core\services\editor
  * @author  Brent Christensen
  * @since   $VID:$
  */
-abstract class EditorBlockManager
+abstract class BlockManager
 {
 
     /**
-     * @var CollectionInterface|EditorBlockInterface[] $blocks
+     * @var CollectionInterface|BlockInterface[] $blocks
      */
     protected $blocks;
 
@@ -33,11 +31,6 @@ abstract class EditorBlockManager
      * @var RequestInterface $request
      */
     protected $request;
-
-    /**
-     * @var DomainInterface $domain
-     */
-    protected $domain;
 
     /**
      * the post type that the current request applies to
@@ -60,30 +53,19 @@ abstract class EditorBlockManager
      */
     protected $action;
 
-    /**
-     * @var Registry
-     */
-    protected $registry;
-
 
     /**
-     * EditorBlockManager constructor.
+     * BlockManager constructor.
      *
-     * @param EditorBlockCollection $blocks
+     * @param BlockCollection $blocks
      * @param RequestInterface      $request
-     * @param DomainInterface       $domain
-     * @param Registry              $registry
      */
     public function __construct(
-        EditorBlockCollection $blocks,
-        RequestInterface $request,
-        DomainInterface $domain,
-        Registry $registry
+        BlockCollection $blocks,
+        RequestInterface $request
     ) {
         $this->blocks            = $blocks;
         $this->request           = $request;
-        $this->domain            = $domain;
-        $this->registry          = $registry;
         $this->request_post_type = $this->request->getRequestParam('post_type', '');
         $this->page              = $this->request->getRequestParam('page', '');
         $this->action            = $this->request->getRequestParam('action', '');
