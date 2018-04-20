@@ -3,7 +3,6 @@
 namespace EventEspresso\core\domain\entities\editor;
 
 use EventEspresso\core\domain\DomainInterface;
-use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\assets\AssetRegisterInterface;
 use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\loaders\LoaderInterface;
@@ -14,9 +13,8 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class EditorBlock
- * Registers a Editor block type with WordPress core,
- * specifies all assets required for the block,
+ * Class Block
+ * Registers a Block type with WordPress core
  * and executes all logic as necessary
  * ALL blocks should be located in
  *  \core\domain\entities\editor\blocks\
@@ -26,37 +24,22 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-abstract class EditorBlock implements EditorBlockInterface
+abstract class Block implements BlockInterface
 {
 
     const NS = 'event-espresso/';
-
-    /**
-     * @var DomainInterface $domain
-     */
-    protected $domain;
-
-    /**
-     * @var LoaderInterface $loader
-     */
-    protected $loader;
-
-    /**
-     * @var Registry
-     */
-    protected $registry;
-
-    /**
-     * @var string $editor_block_type
-     */
-    private $editor_block_type;
 
     /**
      * AssetRegister that this editor block uses for asset registration
      *
      * @var AssetRegisterInterface $asset_register_fqcn
      */
-    private $asset_register;
+    protected $asset_register;
+
+    /**
+     * @var string $editor_block_type
+     */
+    private $editor_block_type;
 
     /**
      * @var WP_Block_Type $wp_block_type
@@ -83,27 +66,19 @@ abstract class EditorBlock implements EditorBlockInterface
 
 
     /**
-     * EditorBlockLoader constructor.
+     * BlockLoader constructor.
      *
-     * @param DomainInterface $domain
-     * @param LoaderInterface $loader
-     * @param Registry        $assets_registry
+     * @param AssetRegisterInterface $asset_register
      */
-    public function __construct(
-        DomainInterface $domain,
-        LoaderInterface $loader,
-        Registry $assets_registry
-    ) {
-        $this->domain   = $domain;
-        $this->loader   = $loader;
-        $this->registry = $assets_registry;
+    public function __construct(AssetRegisterInterface $asset_register) {
+        $this->asset_register = $asset_register;
     }
 
 
     /**
      * @return string
      */
-    public function editorBlockType()
+    public function blockType()
     {
         return $this->editor_block_type;
     }
@@ -112,16 +87,16 @@ abstract class EditorBlock implements EditorBlockInterface
     /**
      * @return string
      */
-    public function namespacedEditorBlockType()
+    public function namespacedBlockType()
     {
-        return EditorBlock::NS . $this->editor_block_type;
+        return Block::NS . $this->editor_block_type;
     }
 
 
     /**
      * @param string $editor_block_type
      */
-    protected function setEditorBlockType($editor_block_type)
+    protected function setBlockType($editor_block_type)
     {
         $this->editor_block_type = $editor_block_type;
     }
@@ -137,14 +112,6 @@ abstract class EditorBlock implements EditorBlockInterface
         return $this->asset_register;
     }
 
-
-    /**
-     * @param string asset_register_fqcn
-     */
-    protected function setAssetRegisterFqcn($asset_register_fqcn)
-    {
-        $this->asset_register = $this->loader->getShared($asset_register_fqcn);
-    }
 
 
     /**
@@ -223,7 +190,7 @@ abstract class EditorBlock implements EditorBlockInterface
         }
         $wp_block_type = register_block_type(
             new WP_Block_Type(
-                $this->namespacedEditorBlockType(),
+                $this->namespacedBlockType(),
                 $args
             )
         );
@@ -237,7 +204,7 @@ abstract class EditorBlock implements EditorBlockInterface
      */
     public function unRegisterBlock()
     {
-        return unregister_block_type($this->namespacedEditorBlockType());
+        return unregister_block_type($this->namespacedBlockType());
     }
 
 
@@ -260,7 +227,7 @@ abstract class EditorBlock implements EditorBlockInterface
     public function getEditorContainer()
     {
         return array(
-            $this->namespacedEditorBlockType(),
+            $this->namespacedBlockType(),
             array()
         );
     }
