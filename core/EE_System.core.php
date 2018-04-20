@@ -976,7 +976,7 @@ final class EE_System implements ResettableInterface
                 // or the even newer newer new way
                 if ($this->request->isFrontend() || $this->request->isIframe() || $this->request->isAdmin()) {
                     $this->loader->getShared(
-                        'EventEspresso\core\services\editor\EditorBlockRegistrationManager'
+                        'EventEspresso\core\services\editor\BlockRegistrationManager'
                     );
                 }
             }
