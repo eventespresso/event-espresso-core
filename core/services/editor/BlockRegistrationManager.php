@@ -3,9 +3,8 @@
 namespace EventEspresso\core\services\editor;
 
 use EE_Error;
-use EventEspresso\core\domain\DomainInterface;
-use EventEspresso\core\domain\entities\editor\EditorBlockCollection;
-use EventEspresso\core\domain\entities\editor\EditorBlockInterface;
+use EventEspresso\core\domain\entities\editor\BlockCollection;
+use EventEspresso\core\domain\entities\editor\BlockInterface;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -14,7 +13,6 @@ use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\assets\AssetRegisterCollection;
-use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\collections\CollectionDetails;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
@@ -29,17 +27,17 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class EditorBlockRegistrationManager
- * Loads EditorBlockInterface classes into the injected EditorBlockCollection,
+ * Class BlockRegistrationManager
+ * Loads BlockInterface classes into the injected BlockCollection,
  * which can be used in other classes by retrieving it from EE's Loader.
- * After loading, the EditorBlockManager gets each EditorBlock to register
+ * After loading, the BlockManager gets each Block to register
  * its block type and ensures assets are enqueued at the appropriate time
  *
  * @package EventEspresso\core\domain\services\editor
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class EditorBlockRegistrationManager extends EditorBlockManager
+class BlockRegistrationManager extends BlockManager
 {
 
     /**
@@ -49,25 +47,20 @@ class EditorBlockRegistrationManager extends EditorBlockManager
 
 
     /**
-     * EditorBlockRegistrationManager constructor.
+     * BlockRegistrationManager constructor.
      *
      * @param AssetRegisterCollection $asset_register_collection
-     * @param EditorBlockCollection   $blocks
+     * @param BlockCollection         $blocks
      * @param RequestInterface        $request
-     * @param DomainInterface         $domain
-     * @param Registry                $registry
      */
     public function __construct(
         AssetRegisterCollection $asset_register_collection,
-        EditorBlockCollection $blocks,
-        RequestInterface $request,
-        DomainInterface $domain,
-        Registry $registry
+        BlockCollection $blocks,
+        RequestInterface $request
     ) {
-        parent::__construct($blocks, $request, $domain, $registry);
         $this->asset_register_collection = $asset_register_collection;
+        parent::__construct($blocks, $request);
     }
-
 
 
     /**
@@ -89,13 +82,13 @@ class EditorBlockRegistrationManager extends EditorBlockManager
      */
     public function initialize()
     {
-        $this->loadEditorBlocks();
-        add_action('AHEE__EE_System__initialize', array($this, 'registerEditorBlocks'));
+        $this->loadBlocks();
+        add_action('AHEE__EE_System__initialize', array($this, 'registerBlocks'));
     }
 
 
     /**
-     * @return CollectionInterface|EditorBlockInterface[]
+     * @return CollectionInterface|BlockInterface[]
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws EE_Error
@@ -106,17 +99,17 @@ class EditorBlockRegistrationManager extends EditorBlockManager
      * @throws InvalidIdentifierException
      * @throws InvalidInterfaceException
      */
-    protected function populateEditorBlockCollection()
+    protected function populateBlockCollection()
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
             // collection name
                 'shortcodes',
                 // collection interface
-                'EventEspresso\core\domain\entities\editor\EditorBlockInterface',
+                'EventEspresso\core\domain\entities\editor\BlockInterface',
                 // FQCNs for classes to add (all classes within each namespace will be loaded)
                 apply_filters(
-                    'FHEE__EventEspresso_core_services_editor_EditorBlockManager__populateEditorBlockCollection__collection_FQCNs',
+                    'FHEE__EventEspresso_core_services_editor_BlockManager__populateBlockCollection__collection_FQCNs',
                     array(
                         // 'EventEspresso\core\domain\entities\editor\blocks\common',
                         // 'EventEspresso\core\domain\entities\editor\blocks\editor',
@@ -138,15 +131,15 @@ class EditorBlockRegistrationManager extends EditorBlockManager
 
 
     /**
-     * populates the EditorBlockCollection and calls initialize() on all installed blocks
+     * populates the BlockCollection and calls initialize() on all installed blocks
      *
      * @return void
      * @throws Exception
      */
-    public function loadEditorBlocks()
+    public function loadBlocks()
     {
         try {
-            $this->populateEditorBlockCollection();
+            $this->populateBlockCollection();
             // cycle thru block loaders and initialize each loader
             foreach ($this->blocks as $block) {
                 $block->initialize();
@@ -163,7 +156,7 @@ class EditorBlockRegistrationManager extends EditorBlockManager
      * @return void
      * @throws Exception
      */
-    public function registerEditorBlocks()
+    public function registerBlocks()
     {
         try {
             // cycle thru block loader folders
@@ -173,11 +166,11 @@ class EditorBlockRegistrationManager extends EditorBlockManager
                 if (! $block_type instanceof WP_Block_Type) {
                     throw new InvalidEntityException($block_type, 'WP_Block_Type');
                 }
-                if(! $this->asset_register_collection->has($block->assetRegister())){
+                if (! $this->asset_register_collection->has($block->assetRegister())) {
                     $this->asset_register_collection->add($block->assetRegister());
                 }
                 do_action(
-                    'FHEE__EventEspresso_core_services_editor_EditorBlockManager__registerEditorBlocks__block_type_registered',
+                    'FHEE__EventEspresso_core_services_editor_BlockManager__registerBlocks__block_type_registered',
                     $block,
                     $block_type
                 );
@@ -201,6 +194,4 @@ class EditorBlockRegistrationManager extends EditorBlockManager
         $this->asset_register_collection->registerScripts();
         $this->asset_register_collection->registerStyles();
     }
-
-
 }
