@@ -14,6 +14,18 @@
 	"env": {
 		"test": {
 			"presets" : [["env"]]
+		},
+		"production": {
+			"plugins": [
+				[
+					"@wordpress/babel-plugin-makepot",
+					{
+						"output": "languages/ee-js.pot"
+					}
+				],
+				"transform-object-rest-spread",
+				"transform-react-jsx"
+			]
 		}
 	}
 }

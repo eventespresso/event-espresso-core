@@ -10,10 +10,12 @@
 	"wpOrgPluginUrl": "https:\/\/eventespresso.com\/pricing\/?ee_ver=ee4&utm_source=ee4_decaf_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link",
 	"name": "Event Espresso Core",
 	"jsBuildDirectory": ".\/",
+	"wpi18nJsPotFilePath": ".\/languages\/ee-js.pot",
 	"srcBuildFolderName": "event-espresso-core",
 	"releaseFilesRemove": [
 		"src\/tests\/**",
 		"src\/acceptance_tests\/**",
+		"src\/bin\/**",
 		"src\/docs\/**",
 		"src\/info.json",
 		"src\/circle.yml",
@@ -33,6 +35,7 @@
 	"decafFilesRemove": [
 		"src\/tests\/**",
 		"src\/acceptance_tests\/**",
+		"src\/bin\/**",
 		"src\/docs\/**",
 		"src\/info.json",
 		"src\/circle.yml",
