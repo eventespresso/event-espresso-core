@@ -12,14 +12,14 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class EditorBlockAssetRegister
+ * Class BlockAssetRegister
  * Abstract parent for classes that handle asset registration for one or more editor blocks that share the same assets
  *
  * @package EventEspresso\core\services\editor
  * @author  Brent Christensen
  * @since   $VID:$
  */
-abstract class EditorBlockAssetRegister implements AssetRegisterInterface
+abstract class BlockAssetRegister implements AssetRegisterInterface
 {
 
     /**
@@ -54,7 +54,7 @@ abstract class EditorBlockAssetRegister implements AssetRegisterInterface
 
 
     /**
-     * EditorBlockAssetRegister constructor.
+     * BlockAssetRegister constructor.
      *
      * @param string          $script_handle
      * @param array           $script_dependencies
