@@ -10,7 +10,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Interface EditorBlockInterface
+ * Interface BlockInterface
  * Classes implementing this interface are responsible for
  * Registering a Editor block type with WordPress core,
  * specifying all assets required for the block,
@@ -23,7 +23,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-interface EditorBlockInterface
+interface BlockInterface
 {
 
     /**
@@ -38,7 +38,7 @@ interface EditorBlockInterface
     /**
      * @return string
      */
-    public function editorBlockType();
+    public function blockType();
 
 
     /**
