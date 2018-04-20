@@ -717,7 +717,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         // if ignore_route_check is true, then get the model name via CustomPostTypeDefinitions
         if ($ignore_route_check) {
             $post_type   = get_post_type($id);
-            \EEH_Debug_Tools::printr($post_type, '$post_type', __FILE__, __LINE__);
             /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
             $custom_post_types = LoaderFactory::getLoader()->getShared(
                 'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
