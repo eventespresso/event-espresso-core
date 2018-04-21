@@ -10,14 +10,14 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class EditorBlockCollection
- * a Collection of EditorBlock objects
+ * Class BlockCollection
+ * a Collection of Block objects
  *
  * @package EventEspresso\core\services\editor
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class EditorBlockCollection extends Collection
+class BlockCollection extends Collection
 {
 
     /**
@@ -27,7 +27,7 @@ class EditorBlockCollection extends Collection
      */
     public function __construct()
     {
-        parent::__construct('EventEspresso\core\domain\entities\editor\EditorBlockInterface');
+        parent::__construct('EventEspresso\core\domain\entities\editor\BlockInterface');
     }
 
 

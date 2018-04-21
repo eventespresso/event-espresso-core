@@ -1,4 +1,7 @@
 {
+  "core-blocks": {
+    "js": "ee-core-blocks.806e5f79ad93d0da5144.dist.js"
+  },
   "eejs": {
     "js": "ee-eejs.a8ec0e900bc29c599579.dist.js"
   },

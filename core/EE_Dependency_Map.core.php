@@ -681,12 +681,6 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\editor\EditorBlockRegistrationManager'      => array(
-                'EventEspresso\core\domain\entities\editor\EditorBlockCollection' => EE_Dependency_Map::load_from_cache,
-                'EE_Request'                                                      => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\Domain'                                => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache
-            ),
             'EE_Admin_Transactions_List_Table' => array(
                 null,
                 'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
@@ -735,6 +729,22 @@ class EE_Dependency_Map
             ),
             'EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker' => array(
                 'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\services\editor\BlockRegistrationManager'      => array(
+                'EventEspresso\core\services\assets\AssetRegisterCollection'      => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\entities\editor\BlockCollection' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request'                     => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\Domain'                                => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\Registry'                     => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\domain\entities\editor\blocks\widgets\EventAttendees' => array(
+                'EventEspresso\core\domain\Domain'            => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetRegister' => array(
+                'EventEspresso\core\domain\Domain'            => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache
             ),
         );
     }

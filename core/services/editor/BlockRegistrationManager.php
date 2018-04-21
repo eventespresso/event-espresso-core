@@ -3,7 +3,8 @@
 namespace EventEspresso\core\services\editor;
 
 use EE_Error;
-use EventEspresso\core\domain\entities\editor\EditorBlockInterface;
+use EventEspresso\core\domain\entities\editor\BlockCollection;
+use EventEspresso\core\domain\entities\editor\BlockInterface;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -11,10 +12,11 @@ use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\assets\Registry;
+use EventEspresso\core\services\assets\AssetRegisterCollection;
 use EventEspresso\core\services\collections\CollectionDetails;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
+use EventEspresso\core\services\request\RequestInterface;
 use Exception;
 use InvalidArgumentException;
 use ReflectionException;
@@ -25,18 +27,41 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class EditorBlockRegistrationManager
- * Loads EditorBlockInterface classes into the injected EditorBlockCollection,
+ * Class BlockRegistrationManager
+ * Loads BlockInterface classes into the injected BlockCollection,
  * which can be used in other classes by retrieving it from EE's Loader.
- * After loading, the EditorBlockManager gets each EditorBlock to register
+ * After loading, the BlockManager gets each Block to register
  * its block type and ensures assets are enqueued at the appropriate time
  *
  * @package EventEspresso\core\domain\services\editor
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class EditorBlockRegistrationManager extends EditorBlockManager
+class BlockRegistrationManager extends BlockManager
 {
+
+    /**
+     * @var AssetRegisterCollection $asset_register_collection
+     */
+    protected $asset_register_collection;
+
+
+    /**
+     * BlockRegistrationManager constructor.
+     *
+     * @param AssetRegisterCollection $asset_register_collection
+     * @param BlockCollection         $blocks
+     * @param RequestInterface        $request
+     */
+    public function __construct(
+        AssetRegisterCollection $asset_register_collection,
+        BlockCollection $blocks,
+        RequestInterface $request
+    ) {
+        $this->asset_register_collection = $asset_register_collection;
+        parent::__construct($blocks, $request);
+    }
+
 
     /**
      *  Returns the name of a hookpoint to be used to call initialize()
@@ -57,13 +82,13 @@ class EditorBlockRegistrationManager extends EditorBlockManager
      */
     public function initialize()
     {
-        $this->loadEditorBlocks();
-        add_action('AHEE__EE_System__initialize', array($this, 'registerEditorBlocks'));
+        $this->loadBlocks();
+        add_action('AHEE__EE_System__initialize', array($this, 'registerBlocks'));
     }
 
 
     /**
-     * @return CollectionInterface|EditorBlockInterface[]
+     * @return CollectionInterface|BlockInterface[]
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws EE_Error
@@ -74,24 +99,22 @@ class EditorBlockRegistrationManager extends EditorBlockManager
      * @throws InvalidIdentifierException
      * @throws InvalidInterfaceException
      */
-    protected function populateEditorBlockCollection()
+    protected function populateBlockCollection()
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
             // collection name
                 'shortcodes',
                 // collection interface
-                'EventEspresso\core\domain\entities\editor\EditorBlockInterface',
+                'EventEspresso\core\domain\entities\editor\BlockInterface',
                 // FQCNs for classes to add (all classes within each namespace will be loaded)
                 apply_filters(
-                    'FHEE__EventEspresso_core_services_editor_EditorBlockManager__populateEditorBlockCollection__collection_FQCNs',
-                    array()
-                    // array(
-                    //     'EventEspresso\core\domain\entities\editor\blocks\common',
-                    //     'EventEspresso\core\domain\entities\editor\blocks\editor',
-                    //     'EventEspresso\core\domain\entities\editor\blocks\shortcodes',
-                    //     'EventEspresso\core\domain\entities\editor\blocks\widgets',
-                    // )
+                    'FHEE__EventEspresso_core_services_editor_BlockManager__populateBlockCollection__collection_FQCNs',
+                    array(
+                        // 'EventEspresso\core\domain\entities\editor\blocks\common',
+                        // 'EventEspresso\core\domain\entities\editor\blocks\editor',
+                        'EventEspresso\core\domain\entities\editor\blocks\widgets',
+                    )
                 ),
                 // filepaths to classes to add
                 array(),
@@ -108,15 +131,15 @@ class EditorBlockRegistrationManager extends EditorBlockManager
 
 
     /**
-     * populates the EditorBlockCollection and calls initialize() on all installed blocks
+     * populates the BlockCollection and calls initialize() on all installed blocks
      *
      * @return void
      * @throws Exception
      */
-    public function loadEditorBlocks()
+    public function loadBlocks()
     {
         try {
-            $this->populateEditorBlockCollection();
+            $this->populateBlockCollection();
             // cycle thru block loaders and initialize each loader
             foreach ($this->blocks as $block) {
                 $block->initialize();
@@ -133,12 +156,9 @@ class EditorBlockRegistrationManager extends EditorBlockManager
      * @return void
      * @throws Exception
      */
-    public function registerEditorBlocks()
+    public function registerBlocks()
     {
         try {
-            // register primary assets
-            add_action('enqueue_block_assets', array($this, 'registerStyles'));
-            add_action('enqueue_block_assets', array($this, 'registerScripts'));
             // cycle thru block loader folders
             foreach ($this->blocks as $block) {
                 // perform any setup required for the block
@@ -146,13 +166,19 @@ class EditorBlockRegistrationManager extends EditorBlockManager
                 if (! $block_type instanceof WP_Block_Type) {
                     throw new InvalidEntityException($block_type, 'WP_Block_Type');
                 }
-                add_action('enqueue_block_assets', array($block, 'registerStyles'));
-                add_action('enqueue_block_assets', array($block, 'registerScripts'));
+                if (! $this->asset_register_collection->has($block->assetRegister())) {
+                    $this->asset_register_collection->add($block->assetRegister());
+                }
                 do_action(
-                    'FHEE__EventEspresso_core_services_editor_EditorBlockManager__registerEditorBlocks__block_type_registered',
+                    'FHEE__EventEspresso_core_services_editor_BlockManager__registerBlocks__block_type_registered',
                     $block,
                     $block_type
                 );
+            }
+            if ($this->asset_register_collection->hasObjects()) {
+                $this->asset_register_collection->registerManifestFile();
+                // register primary assets
+                add_action('enqueue_block_assets', array($this, 'registerAssets'));
             }
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
@@ -160,32 +186,12 @@ class EditorBlockRegistrationManager extends EditorBlockManager
     }
 
 
-    public function registerStyles()
+    /**
+     * Registers assets for all classes in the AssetRegisterCollection
+     */
+    public function registerAssets()
     {
-        // wp_register_style(
-        //     'ee-block-styles',
-        //     $this->domain->distributionAssetsUrl() . 'style.css',
-        //     array(),
-        //     filemtime($this->domain->distributionAssetsPath() . 'style.css')
-        // );
+        $this->asset_register_collection->registerScripts();
+        $this->asset_register_collection->registerStyles();
     }
-
-
-    public function registerScripts()
-    {
-        wp_register_script(
-            'ee-core-blocks',
-            $this->assets_registry->getAssetUrl(Registry::ASSET_NAMESPACE, 'core-blocks', Registry::ASSET_TYPE_JS),
-            array(
-                'eejs-core',
-                'wp-blocks',    // Provides useful functions and components for extending the editor
-                'wp-i18n',      // Provides localization functions
-                'wp-element',   // Provides React.Component
-                'wp-components' // Provides many prebuilt components and controls
-            ),
-            null,
-            true
-        );
-    }
-
 }

@@ -1,1 +1,1 @@
-
+import './event-attendees';

@@ -973,14 +973,10 @@ final class EE_System implements ResettableInterface
                 );
             }
             if (function_exists('register_block_type')) {
-                $editor_block_collection = $this->loader->getShared(
-                    'EventEspresso\core\domain\entities\editor\EditorBlockCollection'
-                );
                 // or the even newer newer new way
                 if ($this->request->isFrontend() || $this->request->isIframe() || $this->request->isAdmin()) {
                     $this->loader->getShared(
-                        'EventEspresso\core\services\editor\EditorBlockRegistrationManager',
-                        array($editor_block_collection, $this->request)
+                        'EventEspresso\core\services\editor\BlockRegistrationManager'
                     );
                 }
             }

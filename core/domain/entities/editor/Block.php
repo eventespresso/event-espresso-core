@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\editor;
 
 use EventEspresso\core\domain\DomainInterface;
+use EventEspresso\core\services\assets\AssetRegisterInterface;
 use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use WP_Block_Type;
@@ -12,9 +13,8 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
- * Class EditorBlock
- * Registers a Editor block type with WordPress core,
- * specifies all assets required for the block,
+ * Class Block
+ * Registers a Block type with WordPress core
  * and executes all logic as necessary
  * ALL blocks should be located in
  *  \core\domain\entities\editor\blocks\
@@ -24,26 +24,17 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-abstract class EditorBlock implements EditorBlockInterface
+abstract class Block implements BlockInterface
 {
 
     const NS = 'event-espresso/';
 
     /**
-     * @var DomainInterface $domain
+     * AssetRegister that this editor block uses for asset registration
+     *
+     * @var AssetRegisterInterface $asset_register_fqcn
      */
-    protected $domain;
-
-    /**
-     * @var LoaderInterface $loader
-     */
-    protected $loader;
-
-
-    /**
-     * @var Registry
-     */
-    protected $assets_registry;
+    protected $asset_register;
 
     /**
      * @var string $editor_block_type
@@ -75,27 +66,19 @@ abstract class EditorBlock implements EditorBlockInterface
 
 
     /**
-     * EditorBlockLoader constructor.
+     * BlockLoader constructor.
      *
-     * @param DomainInterface $domain
-     * @param LoaderInterface $loader
-     * @param Registry        $assets_registry
+     * @param AssetRegisterInterface $asset_register
      */
-    public function __construct(
-        DomainInterface $domain,
-        LoaderInterface $loader,
-        Registry $assets_registry
-    ) {
-        $this->domain = $domain;
-        $this->loader = $loader;
-        $this->assets_registry = $assets_registry;
+    public function __construct(AssetRegisterInterface $asset_register) {
+        $this->asset_register = $asset_register;
     }
 
 
     /**
      * @return string
      */
-    public function editorBlockType()
+    public function blockType()
     {
         return $this->editor_block_type;
     }
@@ -104,19 +87,31 @@ abstract class EditorBlock implements EditorBlockInterface
     /**
      * @return string
      */
-    public function namespacedEditorBlockType()
+    public function namespacedBlockType()
     {
-        return EditorBlock::NS . $this->editor_block_type;
+        return Block::NS . $this->editor_block_type;
     }
 
 
     /**
      * @param string $editor_block_type
      */
-    protected function setEditorBlockType($editor_block_type)
+    protected function setBlockType($editor_block_type)
     {
         $this->editor_block_type = $editor_block_type;
     }
+
+
+    /**
+     * AssetRegister that this editor block uses for asset registration
+     *
+     * @return AssetRegisterInterface
+     */
+    public function assetRegister()
+    {
+        return $this->asset_register;
+    }
+
 
 
     /**
@@ -185,17 +180,17 @@ abstract class EditorBlock implements EditorBlockInterface
         // todo add route detection (ie inject route) and change context based on route
         $args          = array(
             'attributes'      => $this->attributes(),
-            'editor_script'   => "ee-{$context}-blocks",
-            'editor_style'    => "ee-{$context}-blocks",
-            'script'          => "ee-{$context}-blocks",
-            'style'           => "ee-{$context}-blocks",
+            'editor_script'   => "{$context}-blocks",
+            'editor_style'    => "{$context}-blocks",
+            'script'          => "{$context}-blocks",
+            'style'           => "{$context}-blocks",
         );
         if(! $this->isDynamic()) {
             $args['render_callback'] = $this->renderBlock();
         }
         $wp_block_type = register_block_type(
             new WP_Block_Type(
-                $this->namespacedEditorBlockType(),
+                $this->namespacedBlockType(),
                 $args
             )
         );
@@ -209,7 +204,7 @@ abstract class EditorBlock implements EditorBlockInterface
      */
     public function unRegisterBlock()
     {
-        return unregister_block_type($this->namespacedEditorBlockType());
+        return unregister_block_type($this->namespacedBlockType());
     }
 
 
@@ -232,41 +227,21 @@ abstract class EditorBlock implements EditorBlockInterface
     public function getEditorContainer()
     {
         return array(
-            $this->namespacedEditorBlockType(),
+            $this->namespacedBlockType(),
             array()
         );
     }
 
 
-    /**
-     * @return  void
-     */
-    public function registerScripts()
-    {
-        // wp_register_script(
-        //     'core-blocks',
-        //     $this->domain->distributionAssetsUrl() . 'ee-core-blocks.dist.js',
-        //     array(
-        //         'wp-blocks',    // Provides useful functions and components for extending the editor
-        //         'wp-i18n',      // Provides localization functions
-        //         'wp-element',   // Provides React.Component
-        //         'wp-components' // Provides many prebuilt components and controls
-        //     ),
-        //     filemtime($this->domain->distributionAssetsPath() . 'ee-core-blocks.dist.js')
-        // );
-    }
-
 
     /**
-     * @return void
+     * returns the rendered HTML for the block
+     *
+     * @param array $attributes
+     * @return string
      */
-    public function registerStyles()
+    public function renderBlock(array $attributes = array())
     {
-        // wp_register_style(
-        //     'ee-block-styles',
-        //     $this->domain->distributionAssetsUrl() . 'style.css',
-        //     array(),
-        //     filemtime($this->domain->distributionAssetsPath() . 'style.css')
-        // );
+        return '';
     }
 }

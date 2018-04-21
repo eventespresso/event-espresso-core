@@ -53,18 +53,6 @@ interface DomainInterface extends InterminableInterface
     /**
      * @return string
      */
-    public function sourceAssetsPath();
-
-
-    /**
-     * @return string
-     */
-    public function sourceAssetsUrl();
-
-
-    /**
-     * @return string
-     */
     public function distributionAssetsPath();
 
 
@@ -72,5 +60,11 @@ interface DomainInterface extends InterminableInterface
      * @return string
      */
     public function distributionAssetsUrl();
+
+
+    /**
+     * @return string
+     */
+    public function assetNamespace();
 
 }
