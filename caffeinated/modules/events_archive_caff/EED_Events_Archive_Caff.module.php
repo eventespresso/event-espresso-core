@@ -156,6 +156,9 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
     public static function update_template_settings($CFG, $REQ)
     {
         $config = new EE_Events_Archive_Config();
+        $CFG->EED_Events_Archive = $CFG->EED_Events_Archive instanceof EE_Events_Archive_Config
+            ? $CFG->EED_Events_Archive
+            : $config;
         // unless we are resetting the config...
         if (
             ! isset($REQ['EED_Events_Archive_reset_event_list_settings'])
