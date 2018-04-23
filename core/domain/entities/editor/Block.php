@@ -2,10 +2,7 @@
 
 namespace EventEspresso\core\domain\entities\editor;
 
-use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\services\assets\AssetRegisterInterface;
-use EventEspresso\core\services\assets\Registry;
-use EventEspresso\core\services\loaders\LoaderInterface;
 use WP_Block_Type;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -37,21 +34,6 @@ abstract class Block implements BlockInterface
     protected $asset_register;
 
     /**
-     * @var string $editor_block_type
-     */
-    private $editor_block_type;
-
-    /**
-     * @var WP_Block_Type $wp_block_type
-     */
-    private $wp_block_type;
-
-    /**
-     * @var array $supported_post_types
-     */
-    private $supported_post_types;
-
-    /**
      * @var array $attributes
      */
     private $attributes;
@@ -63,6 +45,21 @@ abstract class Block implements BlockInterface
      * @var bool $dynamic
      */
     private $dynamic = false;
+
+    /**
+     * @var string $editor_block_type
+     */
+    private $editor_block_type;
+
+    /**
+     * @var array $supported_post_types
+     */
+    private $supported_post_types;
+
+    /**
+     * @var WP_Block_Type $wp_block_type
+     */
+    private $wp_block_type;
 
 
     /**
@@ -176,14 +173,12 @@ abstract class Block implements BlockInterface
      */
     public function registerBlock()
     {
-        $context ='core';
-        // todo add route detection (ie inject route) and change context based on route
         $args          = array(
             'attributes'      => $this->attributes(),
-            'editor_script'   => "{$context}-blocks",
-            'editor_style'    => "{$context}-blocks",
-            'script'          => "{$context}-blocks",
-            'style'           => "{$context}-blocks",
+            'editor_script'   => $this->asset_register->scriptHandle(),
+            'editor_style'    => $this->asset_register->styleHandle(),
+            'script'          => $this->asset_register->scriptHandle(),
+            'style'           => $this->asset_register->styleHandle(),
         );
         if(! $this->isDynamic()) {
             $args['render_callback'] = $this->renderBlock();
