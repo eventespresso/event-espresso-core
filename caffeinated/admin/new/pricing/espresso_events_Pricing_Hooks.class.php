@@ -996,7 +996,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         $event                 = $this->_adminpage_obj->get_cpt_model_obj();
         //set is_creating_event property.
         $EVT_ID                   = $event->ID();
-        $this->_is_creating_event = absint($EVT_ID) === 0;
+        $this->_is_creating_event = empty($this->_req_data['post']);
         //default main template args
         $main_template_args = array(
             'event_datetime_help_link' => EEH_Template::get_help_tab_link(
