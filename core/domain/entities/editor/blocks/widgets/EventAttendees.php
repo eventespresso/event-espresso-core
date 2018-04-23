@@ -2,13 +2,8 @@
 
 namespace EventEspresso\core\domain\entities\editor\blocks\widgets;
 
-use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\entities\editor\Block;
 use EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetRegister;
-use EventEspresso\core\exceptions\InvalidEntityException;
-use EventEspresso\core\services\assets\AssetRegisterInterface;
-use EventEspresso\core\services\assets\Registry;
-use EventEspresso\core\services\loaders\LoaderInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
