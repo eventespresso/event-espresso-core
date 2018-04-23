@@ -62,6 +62,7 @@ abstract class BlockAssetRegister implements AssetRegisterInterface
      * @param array           $style_dependencies
      * @param DomainInterface $domain
      * @param Registry        $registry
+     * @throws InvalidDataTypeException
      */
     public function __construct(
         $script_handle,
@@ -71,10 +72,10 @@ abstract class BlockAssetRegister implements AssetRegisterInterface
         DomainInterface $domain,
         Registry $registry
     ) {
-        $this->script_handle       = $script_handle;
-        $this->script_dependencies = $script_dependencies;
-        $this->style_handle        = $style_handle;
-        $this->style_dependencies  = $style_dependencies;
+        $this->setScriptHandle($script_handle);
+        $this->setScriptDependencies($script_dependencies);
+        $this->setStyleHandle($style_handle);
+        $this->setStyleDependencies($style_dependencies);
         $this->domain              = $domain;
         $this->registry            = $registry;
     }
@@ -93,7 +94,7 @@ abstract class BlockAssetRegister implements AssetRegisterInterface
      * @param string $script_handle
      * @throws InvalidDataTypeException
      */
-    public function setScriptHandle($script_handle)
+    private function setScriptHandle($script_handle)
     {
         if (! is_string($script_handle)) {
             throw new InvalidDataTypeException('$script_handle', $script_handle, 'string');
@@ -115,7 +116,7 @@ abstract class BlockAssetRegister implements AssetRegisterInterface
      * @param string $style_handle
      * @throws InvalidDataTypeException
      */
-    public function setStyleHandle($style_handle)
+    private function setStyleHandle($style_handle)
     {
         if (! is_string($style_handle)) {
             throw new InvalidDataTypeException('$style_handle', $style_handle, 'string');
@@ -127,7 +128,7 @@ abstract class BlockAssetRegister implements AssetRegisterInterface
     /**
      * @return array
      */
-    public function scriptDependencies()
+    private function scriptDependencies()
     {
         return $this->script_dependencies;
     }
@@ -136,7 +137,7 @@ abstract class BlockAssetRegister implements AssetRegisterInterface
     /**
      * @param array $script_dependencies
      */
-    public function setScriptDependencies($script_dependencies)
+    private function setScriptDependencies(array $script_dependencies)
     {
         $this->script_dependencies = $script_dependencies + array(
                 'eejs-core',
@@ -151,7 +152,7 @@ abstract class BlockAssetRegister implements AssetRegisterInterface
     /**
      * @return array
      */
-    public function styleDependencies()
+    private function styleDependencies()
     {
         return $this->style_dependencies;
     }
@@ -160,7 +161,7 @@ abstract class BlockAssetRegister implements AssetRegisterInterface
     /**
      * @param array $style_dependencies
      */
-    public function setStyleDependencies($style_dependencies)
+    private function setStyleDependencies(array $style_dependencies)
     {
         $this->style_dependencies = $style_dependencies;
     }
