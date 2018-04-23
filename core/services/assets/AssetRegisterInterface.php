@@ -16,21 +16,28 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 interface AssetRegisterInterface
 {
-
     /**
      * @return  void
      */
     public function registerManifestFile();
-
 
     /**
      * @return  void
      */
     public function registerScripts();
 
-
     /**
      * @return void
      */
     public function registerStyles();
+
+    /**
+     * @return string
+     */
+    public function scriptHandle();
+
+    /**
+     * @return string
+     */
+    public function styleHandle();
 }
