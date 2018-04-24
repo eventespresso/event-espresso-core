@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\editor\blocks;
 
 use EventEspresso\core\domain\DomainInterface;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\editor\BlockAssetRegister;
 
@@ -20,11 +21,13 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class CoreBlocksAssetRegister extends BlockAssetRegister
 {
+
     /**
      * CoreBlocksAssetRegister constructor.
      *
      * @param DomainInterface $domain
      * @param Registry        $registry
+     * @throws InvalidDataTypeException
      */
     public function __construct(DomainInterface $domain, Registry $registry) {
         parent::__construct(
