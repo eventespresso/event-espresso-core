@@ -17,7 +17,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class AssetRegisterCollection extends Collection implements AssetRegisterInterface
+class AssetRegisterCollection extends Collection
 {
 
     /**
