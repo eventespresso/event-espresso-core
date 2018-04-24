@@ -219,7 +219,7 @@ class EE_Dependency_Map
         // we need to make sure that any aliases used when registering a dependency
         // get resolved to the correct class name
         foreach ($dependencies as $dependency => $load_source) {
-            $alias = self::$_instance->get_alias($dependency);
+            $alias = self::$_instance->getFqnForAlias($dependency);
             if (
                 $overwrite === EE_Dependency_Map::OVERWRITE_DEPENDENCIES
                 || ! isset(self::$_instance->_dependency_map[ $class ][ $alias ])
@@ -282,7 +282,7 @@ class EE_Dependency_Map
                 )
             );
         }
-        $class_name = self::$_instance->get_alias($class_name);
+        $class_name = self::$_instance->getFqnForAlias($class_name);
         if (! isset(self::$_instance->_class_loaders[$class_name])) {
             self::$_instance->_class_loaders[$class_name] = $loader;
             return true;
@@ -332,7 +332,7 @@ class EE_Dependency_Map
         if (strpos($class_name, 'EEM_') === 0) {
             $class_name = 'LEGACY_MODELS';
         }
-        $dependency = $this->get_alias($dependency, $class_name);
+        $dependency = $this->getFqnForAlias($dependency, $class_name);
         return isset($this->_dependency_map[$class_name][$dependency])
             ? true
             : false;
@@ -353,7 +353,7 @@ class EE_Dependency_Map
         if (strpos($class_name, 'EEM_') === 0) {
             $class_name = 'LEGACY_MODELS';
         }
-        $dependency = $this->get_alias($dependency);
+        $dependency = $this->getFqnForAlias($dependency);
         return $this->has_dependency_for_class($class_name, $dependency)
             ? $this->_dependency_map[$class_name][$dependency]
             : EE_Dependency_Map::not_registered;
@@ -371,7 +371,7 @@ class EE_Dependency_Map
         if(strpos($class_name, 'EEM_') === 0){
             return 'load_model';
         }
-        $class_name = $this->get_alias($class_name);
+        $class_name = $this->getFqnForAlias($class_name);
         return isset($this->_class_loaders[$class_name]) ? $this->_class_loaders[$class_name] : '';
     }
 
@@ -402,8 +402,7 @@ class EE_Dependency_Map
 
 
     /**
-     * PLZ NOTE: a better name for this method would be is_alias()
-     * because it returns TRUE if the provided fully qualified name IS an alias
+     * Returns TRUE if the provided fully qualified name IS an alias
      * WHY?
      * Because if a class is type hinting for a concretion,
      * then why would we need to find another class to supply it?
@@ -420,7 +419,7 @@ class EE_Dependency_Map
      * @param string $for_class
      * @return bool
      */
-    public function has_alias($fqn = '', $for_class = '')
+    public function isAlias($fqn = '', $for_class = '')
     {
         return $this->class_cache->isAlias($fqn, $for_class);
     }
@@ -428,8 +427,7 @@ class EE_Dependency_Map
 
 
     /**
-     * PLZ NOTE: a better name for this method would be get_fqn_for_alias()
-     * because it returns a FQN for provided alias if one exists, otherwise returns the original $alias
+     * Returns a FQN for provided alias if one exists, otherwise returns the original $alias
      * functions recursively, so that multiple aliases can be used to drill down to a FQN
      *  for example:
      *      if the following two entries were added to the _aliases array:
@@ -444,7 +442,7 @@ class EE_Dependency_Map
      * @param string $for_class
      * @return string
      */
-    public function get_alias($alias = '', $for_class = '')
+    public function getFqnForAlias($alias = '', $for_class = '')
     {
         return (string) $this->class_cache->getFqnForAlias($alias, $for_class);
     }
@@ -926,6 +924,54 @@ class EE_Dependency_Map
     }
 
 
+    /**
+     * PLZ NOTE: a better name for this method would be is_alias()
+     * because it returns TRUE if the provided fully qualified name IS an alias
+     * WHY?
+     * Because if a class is type hinting for a concretion,
+     * then why would we need to find another class to supply it?
+     * ie: if a class asks for `Fully/Qualified/Namespace/SpecificClassName`,
+     * then give it an instance of `Fully/Qualified/Namespace/SpecificClassName`.
+     * Don't go looking for some substitute.
+     * Whereas if a class is type hinting for an interface...
+     * then we need to find an actual class to use.
+     * So the interface IS the alias for some other FQN,
+     * and we need to find out if `Fully/Qualified/Namespace/SomeInterface`
+     * represents some other class.
+     *
+     * @deprecated $VID:$
+     * @param string $fqn
+     * @param string $for_class
+     * @return bool
+     */
+    public function has_alias($fqn = '', $for_class = '')
+    {
+        return $this->isAlias($fqn, $for_class);
+    }
+
+
+    /**
+     * PLZ NOTE: a better name for this method would be get_fqn_for_alias()
+     * because it returns a FQN for provided alias if one exists, otherwise returns the original $alias
+     * functions recursively, so that multiple aliases can be used to drill down to a FQN
+     *  for example:
+     *      if the following two entries were added to the _aliases array:
+     *          array(
+     *              'interface_alias'           => 'some\namespace\interface'
+     *              'some\namespace\interface'  => 'some\namespace\classname'
+     *          )
+     *      then one could use EE_Registry::instance()->create( 'interface_alias' )
+     *      to load an instance of 'some\namespace\classname'
+     *
+     * @deprecated $VID:$
+     * @param string $alias
+     * @param string $for_class
+     * @return string
+     */
+    public function get_alias($alias = '', $for_class = '')
+    {
+        return $this->getFqnForAlias($alias, $for_class);
+    }
 }
 // End of file EE_Dependency_Map.core.php
 // Location: /EE_Dependency_Map.core.php
