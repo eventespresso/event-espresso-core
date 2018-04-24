@@ -2412,7 +2412,7 @@ class EE_Registration_Config extends EE_Config_Base
         $this->default_STS_ID = EEM_Registration::status_id_pending_payment;
         $this->email_validation_level = 'wp_default';
         $this->show_pending_payment_options = true;
-        $this->skip_reg_confirmation = false;
+        $this->skip_reg_confirmation = true;
         $this->reg_steps = array();
         $this->reg_confirmation_last = false;
         $this->use_bot_trap = true;
