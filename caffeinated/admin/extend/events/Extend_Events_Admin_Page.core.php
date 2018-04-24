@@ -1,4 +1,9 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 
@@ -834,6 +839,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
 
     /**
      * Handler for updating template settings.
+     *
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidArgumentException
      */
     protected function _update_template_settings()
     {
@@ -860,7 +869,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             __LINE__
         );
         if (EE_Registry::instance()->CFG->core->event_cpt_slug != $old_slug) {
-            update_option('ee_flush_rewrite_rules', true);
+            /** @var EventEspresso\core\domain\services\custom_post_types\RewriteRules $rewrite_rules */
+            $rewrite_rules =  LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\domain\services\custom_post_types\RewriteRules'
+            );
+            $rewrite_rules->flush();
         }
         $this->_redirect_after_action($success, $what, 'updated', array('action' => 'template_settings'));
     }

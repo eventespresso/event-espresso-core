@@ -1,6 +1,7 @@
-<?php 
+<?php
 
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+use EventEspresso\core\domain\services\custom_post_types\RewriteRules;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\interfaces\ResettableInterface;
 
@@ -1552,7 +1553,7 @@ class EEH_Activation implements ResettableInterface
             'ee_no_ticket_prices'                => true,
             'ee_active_messengers'               => true,
             'ee_has_activated_messenger'         => true,
-            'ee_flush_rewrite_rules'             => true,
+            RewriteRules::OPTION_KEY_FLUSH_REWRITE_RULES => true,
             'ee_config'                          => false,
             'ee_data_migration_current_db_state' => true,
             'ee_data_migration_mapping_'         => false,

@@ -403,7 +403,7 @@ class EEH_Debug_Tools
         $result .= $is_method
             ? EEH_Debug_Tools::grey_span('::') . EEH_Debug_Tools::orange_span($var . '()')
             : EEH_Debug_Tools::grey_span(' : ') . EEH_Debug_Tools::orange_span($var);
-        $result .= EEH_Debug_Tools::file_and_line($file, $line);
+        $result .= EEH_Debug_Tools::file_and_line($file, $line, $heading_tag);
         $result .= EEH_Debug_Tools::headingX($heading_tag);
         if ($die) {
             die($result);
@@ -428,7 +428,12 @@ class EEH_Debug_Tools
     protected static function heading($var_name = '', $heading_tag = 'h5', $margin = '', $line = 0)
     {
         if (EEH_Debug_Tools::plainOutput()) {
-            return "\n{$line}) {$var_name}";
+            $heading = '';
+            if($heading_tag === 'h1' || $heading_tag === 'h2') {
+                $heading .= "\n";
+            }
+            $heading .= "\n{$line}) {$var_name}";
+            return $heading;
         }
         $margin = "25px 0 0 {$margin}";
         return '<' . $heading_tag . ' style="color:#2EA2CC; margin:' . $margin . ';"><b>' . $var_name . '</b>';
@@ -469,9 +474,16 @@ class EEH_Debug_Tools
      * @param int    $line
      * @return string
      */
-    protected static function file_and_line($file, $line)
+    protected static function file_and_line($file, $line, $heading_tag)
     {
-        if ($file === '' || $line === '' || EEH_Debug_Tools::plainOutput()) {
+        if ($file === '' || $line === '') {
+            return '';
+        }
+        $file = str_replace(EE_PLUGIN_DIR_PATH, '/', $file);
+        if (EEH_Debug_Tools::plainOutput()) {
+            if ($heading_tag === 'h1' || $heading_tag === 'h2') {
+                return " ({$file})";
+            }
             return '';
         }
         return '<br /><span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">'
@@ -555,7 +567,7 @@ class EEH_Debug_Tools
         $result .= EEH_Debug_Tools::grey_span(' : ') . EEH_Debug_Tools::orange_span(
                 EEH_Debug_Tools::pre_span($var)
             );
-        $result .= EEH_Debug_Tools::file_and_line($file, $line);
+        $result .= EEH_Debug_Tools::file_and_line($file, $line, $heading_tag);
         $result .= EEH_Debug_Tools::headingX($heading_tag);
         if ($die) {
             die($result);

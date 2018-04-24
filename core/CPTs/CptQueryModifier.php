@@ -1,6 +1,11 @@
 <?php
 namespace EventEspresso\core\CPTs;
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use InvalidArgumentException;
+
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -14,7 +19,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package       Event Espresso
  * @subpackage    core
  * @author        Brent Christensen
- * 
+ *
  */
 class CptQueryModifier {
 
@@ -24,7 +29,7 @@ class CptQueryModifier {
 	protected $post_type = '';
 
 	/**
-	 * CPT details from \EE_Register_CPTs::get_CPTs() for specific post type
+	 * CPT details from CustomPostTypeDefinitions for specific post type
 	 *
 	 * @var array $cpt_details
 	 */
@@ -235,23 +240,28 @@ class CptQueryModifier {
 	}
 
 
-
-	/**
-	 * initializeTaxonomies
-	 *
-	 * @access protected
-	 * @return void
-	 */
+    /**
+     * @return void
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     */
 	protected function initializeTaxonomies() {
 		// check if taxonomies have already been set and that this CPT has taxonomies registered for it
 		if (
 			empty( $this->taxonomies )
-			&& isset( $this->cpt_details['args'], $this->cpt_details['args']['taxonomies'] )
+			&& isset($this->cpt_details['args']['taxonomies'])
 		) {
 			// if so then grab them, but we want the taxonomy name as the key
 			$taxonomies = array_flip( $this->cpt_details['args']['taxonomies'] );
 			// then grab the list of ALL taxonomies
-			$all_taxonomies = \EE_Register_CPTs::get_taxonomies();
+            /** @var \EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions
+             * $taxonomy_definitions
+             */
+            $taxonomy_definitions = LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions'
+            );
+			$all_taxonomies = $taxonomy_definitions->getCustomTaxonomyDefinitions();
 			foreach ( $taxonomies as $taxonomy => &$details ) {
 				// add details to our taxonomies if they exist
 				$details = isset( $all_taxonomies[ $taxonomy ] )
