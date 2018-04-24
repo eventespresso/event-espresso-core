@@ -32,6 +32,8 @@
       color: efefef
     - name: "status:backlog"
       color: efefef
+    - name: "status:on-hold"
+      color: efefef
     - name: "status:in-progress"
       color: efefef
     - name: "status:next"

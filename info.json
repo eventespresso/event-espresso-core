@@ -52,7 +52,6 @@
 		"src\/.nvmrc",
 		"src\/.postcss.config.js"
 	],
-	"github": true,
 	"awsbucket": "",
 	"awsregion": "",
 	"remoteNamesToPushTo": [
