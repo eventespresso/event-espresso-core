@@ -159,12 +159,18 @@ class CachingLoader extends CachingLoaderDecorator
      */
     public function reset()
     {
-        $this->cache->trashAndDetachAll();
+        $this->clearCache();
         $this->loader->reset();
     }
 
 
-
+    /**
+     * unsets and detaches ALL objects from the cache
+     */
+    public function clearCache()
+    {
+        $this->cache->trashAndDetachAll();
+    }
 }
 // End of file CachingLoader.php
 // Location: EventEspresso\core\services\loaders/CachingLoader.php
