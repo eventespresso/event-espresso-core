@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\DomainFactory;
 use EventEspresso\core\services\loaders\ClassInterfaceCache;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
@@ -331,7 +332,7 @@ class EE_Dependency_Map
         if (strpos($class_name, 'EEM_') === 0) {
             $class_name = 'LEGACY_MODELS';
         }
-        $dependency = $this->get_alias($dependency);
+        $dependency = $this->get_alias($dependency, $class_name);
         return isset($this->_dependency_map[$class_name][$dependency])
             ? true
             : false;
@@ -395,7 +396,7 @@ class EE_Dependency_Map
      */
     public function add_alias($fqcn, $alias, $for_class = '')
     {
-        $this->class_cache->addAlias($alias, $fqcn, $for_class);
+        $this->class_cache->addAlias($fqcn, $alias, $for_class);
     }
 
 
@@ -403,6 +404,17 @@ class EE_Dependency_Map
     /**
      * PLZ NOTE: a better name for this method would be is_alias()
      * because it returns TRUE if the provided fully qualified name IS an alias
+     * WHY?
+     * Because if a class is type hinting for a concretion,
+     * then why would we need to find another class to supply it?
+     * ie: if a class asks for `Fully/Qualified/Namespace/SpecificClassName`,
+     * then give it an instance of `Fully/Qualified/Namespace/SpecificClassName`.
+     * Don't go looking for some substitute.
+     * Whereas if a class is type hinting for an interface...
+     * then we need to find an actual class to use.
+     * So the interface IS the alias for some other FQN,
+     * and we need to find out if `Fully/Qualified/Namespace/SomeInterface`
+     * represents some other class.
      *
      * @param string $fqn
      * @param string $for_class
@@ -765,13 +777,14 @@ class EE_Dependency_Map
             'EventEspresso\core\services\request\Response' => function () use (&$response) {
                 return $response;
             },
-            'EE_Request_Handler'       => 'load_core',
-            'EE_Session'               => 'load_core',
-            'EE_Cron_Tasks'            => 'load_core',
-            'EE_System'                => 'load_core',
-            'EE_Maintenance_Mode'      => 'load_core',
-            'EE_Register_CPTs'         => 'load_core',
-            'EE_Admin'                 => 'load_core',
+            'EE_Base'             => 'load_core',
+            'EE_Request_Handler'  => 'load_core',
+            'EE_Session'          => 'load_core',
+            'EE_Cron_Tasks'       => 'load_core',
+            'EE_System'           => 'load_core',
+            'EE_Maintenance_Mode' => 'load_core',
+            'EE_Register_CPTs'    => 'load_core',
+            'EE_Admin'            => 'load_core',
             //load_lib
             'EE_Message_Resource_Manager'          => 'load_lib',
             'EE_Message_Type_Collection'           => 'load_lib',
@@ -828,7 +841,9 @@ class EE_Dependency_Map
             'EE_Config' => function () {
                 return EE_Config::instance();
             },
-            'EE_Base' => 'load_core',
+            'EventEspresso\core\domain\Domain' => function () {
+                return DomainFactory::getEventEspressoCoreDomain();
+            },
         );
     }
 
@@ -882,6 +897,12 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\DomainInterface'                           => 'EventEspresso\core\domain\Domain',
         );
         foreach ($aliases as $alias => $fqn) {
+            if(is_array($fqn)) {
+                foreach ($fqn as $class => $for_class) {
+                    $this->class_cache->addAlias($class, $alias, $for_class);
+                }
+                continue;
+            }
             $this->class_cache->addAlias($fqn, $alias);
         }
         if (! (defined('DOING_AJAX') && DOING_AJAX) && is_admin()) {
