@@ -69,6 +69,8 @@
         - assets
     - name: "category:payment-methods-&-gateways"
       color: 84b6eb
+    - name: "category:accessibility"
+      color: 84b6eb
     - name: "category:admin-pages-&-functionality"
       color: 84b6eb
     - name: "category:spco-&-registration"
