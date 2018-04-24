@@ -1269,6 +1269,25 @@ class EED_Core_Rest_Api extends \EED_Module
     }
 
 
+    /**
+     *
+     * @param string $version api version string (i.e. '4.8.36')
+     * @return array
+     */
+    public static function getCollectionRoutesIndexedByModelName($version = '')
+    {
+        $version = empty($version) ? self::latest_rest_api_version() : $version;
+        $model_names = self::model_names_with_plural_routes($version);
+        $collection_routes = array();
+        foreach ($model_names as $model_name => $model_class_name) {
+            $collection_routes[strtolower($model_name)] = rest_url(
+                self::ee_api_namespace . $version . '/' . EEH_Inflector::pluralize_and_lower($model_name)
+            );
+        }
+        return $collection_routes;
+    }
+
+
 
     /**
      *    run - initial module setup
