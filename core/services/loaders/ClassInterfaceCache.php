@@ -88,11 +88,14 @@ class ClassInterfaceCache
     {
         $fqn   = $this->getFqn($fqn);
         $alias = $this->getFqn($alias);
+        // are we adding an alias for a specific class?
         if ($for_class !== '') {
+            // make sure it's set up as an array
             if (! isset($this->aliases[ $for_class ])) {
                 $this->aliases[ $for_class ] = array();
             }
             $this->aliases[ $for_class ][ $alias ] = $fqn;
+            return;
         }
         $this->aliases[ $alias ] = $fqn;
     }
@@ -111,7 +114,7 @@ class ClassInterfaceCache
         if ($this->isAliasForClass($fqn, $for_class)) {
             return true;
         }
-        if ($this->isDirectAlias($fqn)) {
+        if ($for_class === '' && $this->isDirectAlias($fqn)) {
             return true;
         }
         return false;
@@ -126,7 +129,7 @@ class ClassInterfaceCache
      */
     protected function isDirectAlias($fqn = '')
     {
-        return isset($this->aliases[ (string) $fqn ]);
+        return isset($this->aliases[ (string) $fqn ]) && ! is_array($this->aliases[ (string) $fqn ]);
     }
 
 
