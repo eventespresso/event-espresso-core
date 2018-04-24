@@ -157,12 +157,12 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
     {
         $interface = 'Dummy_Interface';
         $class_name = 'Dummy_Class';
-        $this->assertFalse($this->_dependency_map->has_alias($class_name));
+        $this->assertFalse($this->_dependency_map->has_alias($interface));
         $this->_dependency_map->add_alias($class_name, $interface);
-        $this->assertTrue($this->_dependency_map->has_alias($class_name));
+        $this->assertTrue($this->_dependency_map->has_alias($interface));
         $this->assertEquals(
-            $interface,
-            $this->_dependency_map->get_alias($class_name)
+            $class_name,
+            $this->_dependency_map->get_alias($interface)
         );
     }
 
@@ -177,12 +177,12 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
         $interface = 'Dummy_Interface_2';
         $class_name = 'Dummy_Class_2';
         $for_class = 'Other_Class';
-        $this->assertFalse($this->_dependency_map->has_alias($class_name, $for_class));
+        $this->assertFalse($this->_dependency_map->has_alias($interface, $for_class));
         $this->_dependency_map->add_alias($class_name, $interface, $for_class);
-        $this->assertTrue($this->_dependency_map->has_alias($class_name, $for_class));
+        $this->assertTrue($this->_dependency_map->has_alias($interface, $for_class));
         $this->assertEquals(
-            $interface,
-            $this->_dependency_map->get_alias($class_name, $for_class)
+            $class_name,
+            $this->_dependency_map->get_alias($interface, $for_class)
         );
     }
 
