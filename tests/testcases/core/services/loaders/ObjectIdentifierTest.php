@@ -55,26 +55,32 @@ class ObjectIdentifierTest extends EE_UnitTestCase
         $object1hash = spl_object_hash($object1);
         return array(
             // $fqcn, $arguments, $expected
-            array(
+            0 => array(
                 'fully/qualified/class/name/DoesNotNeedToBeReal',
                 array(),
                 'fully/qualified/class/name/DoesNotNeedToBeReal',
             ),
-            array(
+            1 => array(
                 'fully/qualified/class/name/DoesNotNeedToBeReal',
                 array(1, 2, 3, 4),
                 'fully/qualified/class/name/DoesNotNeedToBeReal' . ObjectIdentifier::DELIMITER . md5('1234'),
             ),
-            array(
+            2 => array(
                 'fully/qualified/class/name/DoesNotNeedToBeReal',
                 array($object1),
                 'fully/qualified/class/name/DoesNotNeedToBeReal' . ObjectIdentifier::DELIMITER . md5($object1hash),
             ),
-            array(
+            3 => array(
                 'fully/qualified/class/name/DoesNotNeedToBeReal',
                 array(1, 2, 3, 4, $object1),
                 'fully/qualified/class/name/DoesNotNeedToBeReal'
                 . ObjectIdentifier::DELIMITER . md5('1234' . $object1hash),
+            ),
+            // test class that implements EventEspresso\core\interfaces\ReservedInstanceInterface
+            4 => array(
+                'EventEspresso\core\services\request\Request',
+                array(array(1, 2, 3, 4), array(), array(), array()),
+                'EventEspresso\core\services\request\Request',
             ),
         );
     }
