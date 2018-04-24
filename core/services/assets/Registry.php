@@ -26,9 +26,10 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class Registry
 {
 
-    const ASSET_TYPE_CSS = 'css';
-    const ASSET_TYPE_JS = 'js';
-    const ASSET_NAMESPACE = 'core';
+    const ASSET_TYPE_CSS           = 'css';
+    const ASSET_TYPE_JS            = 'js';
+    const ASSET_NAMESPACE_CORE     = 'core';
+    const FILE_NAME_BUILD_MANIFEST = 'build-manifest.json';
 
     /**
      * @var EE_Template_Config $template_config
@@ -111,9 +112,9 @@ class Registry
         $this->domain = $domain;
         $this->i18n_registry = $i18n_registry;
         $this->registerManifestFile(
-            self::ASSET_NAMESPACE,
+            self::ASSET_NAMESPACE_CORE,
             $this->domain->distributionAssetsUrl(),
-            $this->domain->distributionAssetsPath() . 'build-manifest.json'
+            $this->domain->distributionAssetsPath() . self::FILE_NAME_BUILD_MANIFEST
         );
         add_action('wp_enqueue_scripts', array($this, 'scripts'), 1);
         add_action('admin_enqueue_scripts', array($this, 'scripts'), 1);
@@ -146,21 +147,21 @@ class Registry
         global $wp_version;
         wp_register_script(
             'ee-manifest',
-            $this->getJsUrl(self::ASSET_NAMESPACE, 'manifest'),
+            $this->getJsUrl(self::ASSET_NAMESPACE_CORE, 'manifest'),
             array(),
             null,
             true
         );
         wp_register_script(
             'eejs-core',
-            $this->getJsUrl(self::ASSET_NAMESPACE, 'eejs'),
+            $this->getJsUrl(self::ASSET_NAMESPACE_CORE, 'eejs'),
             array('ee-manifest'),
             null,
             true
         );
         wp_register_script(
             'ee-vendor-react',
-            $this->getJsUrl(self::ASSET_NAMESPACE, 'reactVendor'),
+            $this->getJsUrl(self::ASSET_NAMESPACE_CORE, 'reactVendor'),
             array('eejs-core'),
             null,
             true
@@ -309,7 +310,7 @@ class Registry
      */
     public function getTemplate($template_reference)
     {
-        return isset($this->jsdata['templates'], $this->jsdata['templates'][$template_reference])
+        return isset($this->jsdata['templates'][$template_reference])
             ? $this->jsdata['templates'][$template_reference]
             : '';
     }
@@ -357,6 +358,7 @@ class Registry
             $asset_type
         );
     }
+
 
 
     /**
@@ -695,7 +697,7 @@ class Registry
     {
         wp_register_script(
             'ee-wp-plugins-page',
-            $this->getJsUrl(self::ASSET_NAMESPACE, 'wp-plugins-page'),
+            $this->getJsUrl(self::ASSET_NAMESPACE_CORE, 'wp-plugins-page'),
             array(
                 'jquery',
                 'ee-vendor-react'
@@ -705,7 +707,7 @@ class Registry
         );
         wp_register_style(
             'ee-wp-plugins-page',
-            $this->getCssUrl(self::ASSET_NAMESPACE, 'wp-plugins-page'),
+            $this->getCssUrl(self::ASSET_NAMESPACE_CORE, 'wp-plugins-page'),
             array(),
             null
         );

@@ -1,6 +1,12 @@
 <?php
 namespace EventEspresso\core\services\collections;
 
+
+use ArrayAccess;
+use Countable;
+use Iterator;
+use Serializable;
+
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -14,7 +20,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  * @package EventEspresso\core\services\collections
  */
-interface CollectionInterface {
+interface CollectionInterface extends Countable, Iterator, Serializable, ArrayAccess {
 
 	/**
 	 * add

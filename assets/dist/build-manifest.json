@@ -1,15 +1,21 @@
 {
+  "core-blocks": {
+    "js": "ee-core-blocks.806e5f79ad93d0da5144.dist.js"
+  },
   "eejs": {
     "js": "ee-eejs.a8ec0e900bc29c599579.dist.js"
   },
   "wp-plugins-page": {
-    "js": "ee-wp-plugins-page.d4baf8b080ddc71432aa.dist.js",
+    "js": "ee-wp-plugins-page.257216518776edc4fe70.dist.js",
     "css": "ee-wp-plugins-page.b95fd8de563b99ef70791b8e24629567.dist.css"
   },
   "reactVendor": {
-    "js": "ee-reactVendor.b5799c8665b24642d1cd.dist.js"
+    "js": "ee-reactVendor.7eaf96fc28e4d8e911cd.dist.js"
+  },
+  "core-blocks": {
+    "js": "ee-core-blocks.e21565420ee5a573da6d.dist.js"
   },
   "manifest": {
-    "js": "ee-manifest.f5984092809447a8fba8.dist.js"
+    "js": "ee-manifest.84871ecdc22c246e9b73.dist.js"
   }
 }
