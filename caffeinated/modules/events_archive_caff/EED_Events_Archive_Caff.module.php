@@ -155,10 +155,10 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
      */
     public static function update_template_settings($CFG, $REQ)
     {
-        $config = new EE_Events_Archive_Config();
-        $CFG->EED_Events_Archive = $CFG->EED_Events_Archive instanceof EE_Events_Archive_Config
+        /** @var EE_Events_Archive_Config $config */
+        $config = $CFG->EED_Events_Archive instanceof EE_Events_Archive_Config
             ? $CFG->EED_Events_Archive
-            : $config;
+            : new EE_Events_Archive_Config();
         // unless we are resetting the config...
         if (
             ! isset($REQ['EED_Events_Archive_reset_event_list_settings'])
@@ -185,21 +185,21 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
             $config->use_sortable_display_order = isset($REQ['EED_Events_Archive_use_sortable_display_order'])
                 ? absint($REQ['EED_Events_Archive_use_sortable_display_order'])
                 : 0;
-            $config->display_order_event        = $CFG->EED_Events_Archive->display_order_event !== null
+            $config->display_order_event        = $config->display_order_event !== null
                                                   && $config->use_sortable_display_order
-                ? $CFG->EED_Events_Archive->display_order_event
+                ? $config->display_order_event
                 : EED_Events_Archive::EVENT_DETAILS_PRIORITY;
-            $config->display_order_datetimes    = $CFG->EED_Events_Archive->display_order_datetimes !== null
+            $config->display_order_datetimes    = $config->display_order_datetimes !== null
                                                   && $config->use_sortable_display_order
-                ? $CFG->EED_Events_Archive->display_order_datetimes
+                ? $config->display_order_datetimes
                 : EED_Events_Archive::EVENT_DATETIMES_PRIORITY;
-            $config->display_order_tickets      = $CFG->EED_Events_Archive->display_order_tickets !== null
+            $config->display_order_tickets      = $config->display_order_tickets !== null
                                                   && $config->use_sortable_display_order
-                ? $CFG->EED_Events_Archive->display_order_tickets
+                ? $config->display_order_tickets
                 : EED_Events_Archive::EVENT_TICKETS_PRIORITY;
-            $config->display_order_venue        = $CFG->EED_Events_Archive->display_order_venue !== null
+            $config->display_order_venue        = $config->display_order_venue !== null
                                                   && $config->use_sortable_display_order
-                ? $CFG->EED_Events_Archive->display_order_venue
+                ? $config->display_order_venue
                 : EED_Events_Archive::EVENT_VENUES_PRIORITY;
         }
         $CFG->EED_Events_Archive = $config;
