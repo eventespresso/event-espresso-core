@@ -670,10 +670,10 @@ class EE_Dependency_Map
                 null,
                 'EventEspresso\core\services\database\ModelFieldFactory' => EE_Dependency_Map::load_from_cache,
             ),
-            'EE_Module_Request_Router' => array(
+            'EE_Module_Request_Router'                                               => array(
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
-            'EE_Registration_Processor' => array(
+            'EE_Registration_Processor'                                              => array(
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager' => array(
@@ -681,14 +681,20 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\services\editor\EditorBlockRegistrationManager'      => array(
+                'EventEspresso\core\domain\entities\editor\EditorBlockCollection' => EE_Dependency_Map::load_from_cache,
+                'EE_Request'                                                      => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\Domain'                                => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache
+            ),
+            'EE_Admin_Transactions_List_Table' => array(
+                null,
+                'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
+            ),
             'EventEspresso\core\services\licensing\LicenseService' => array(
                 'EventEspresso\core\domain\services\pue\Stats' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\services\pue\Config' => EE_Dependency_Map::load_from_cache
             ),
-			'EE_Admin_Transactions_List_Table' => array(
-                null,
-                'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
-			),
             'EventEspresso\core\domain\services\pue\Stats' => array(
                 'EventEspresso\core\domain\services\pue\Config' => EE_Dependency_Map::load_from_cache,
                 'EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache,

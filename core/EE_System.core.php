@@ -961,9 +961,9 @@ final class EE_System implements ResettableInterface
      */
     public function register_shortcodes_modules_and_widgets()
     {
-        if ($this->request->isFrontend() || $this->request->isIframe()) {
-            try {
-                // load, register, and add shortcodes the new way
+        try {
+            // load, register, and add shortcodes the new way
+            if ($this->request->isFrontend() || $this->request->isIframe()) {
                 $this->loader->getShared(
                     'EventEspresso\core\services\shortcodes\ShortcodesManager',
                     array(
@@ -971,9 +971,21 @@ final class EE_System implements ResettableInterface
                         EE_Config::getLegacyShortcodesManager(),
                     )
                 );
-            } catch (Exception $exception) {
-                new ExceptionStackTraceDisplay($exception);
             }
+            if (function_exists('register_block_type')) {
+                $editor_block_collection = $this->loader->getShared(
+                    'EventEspresso\core\domain\entities\editor\EditorBlockCollection'
+                );
+                // or the even newer newer new way
+                if ($this->request->isFrontend() || $this->request->isIframe() || $this->request->isAdmin()) {
+                    $this->loader->getShared(
+                        'EventEspresso\core\services\editor\EditorBlockRegistrationManager',
+                        array($editor_block_collection, $this->request)
+                    );
+                }
+            }
+        } catch (Exception $exception) {
+            new ExceptionStackTraceDisplay($exception);
         }
         do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
         // check for addons using old hook point
@@ -1170,7 +1182,12 @@ final class EE_System implements ResettableInterface
         // load_espresso_template_tags
         if (
             is_readable(EE_PUBLIC . 'template_tags.php')
-            && ($this->request->isFrontend() || $this->request->isIframe() || $this->request->isFeed())
+            && (
+                $this->request->isFrontend()
+                || $this->request->isAdmin()
+                || $this->request->isIframe()
+                || $this->request->isFeed()
+            )
         ) {
             require_once EE_PUBLIC . 'template_tags.php';
         }

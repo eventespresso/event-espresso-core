@@ -90,6 +90,7 @@ class BootstrapCore
 
     /**
      * @throws InvalidRequestStackMiddlewareException
+     * @throws InvalidFilePathException
      * @throws InvalidClassException
      * @throws DomainException
      * @throws EE_Error
