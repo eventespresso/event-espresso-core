@@ -6,9 +6,6 @@ use DomainException;
 use EE_Error;
 use EEH_Autoloader;
 use EventEspresso\core\domain\DomainFactory;
-use EventEspresso\core\domain\values\FilePath;
-use EventEspresso\core\domain\values\FullyQualifiedName;
-use EventEspresso\core\domain\values\Version;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
@@ -21,6 +18,7 @@ use EventEspresso\core\services\request\RequestStackCoreApp;
 use EventEspresso\core\services\request\ResponseInterface;
 use Exception;
 use InvalidArgumentException;
+use OutOfBoundsException;
 use ReflectionException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -89,15 +87,16 @@ class BootstrapCore
 
 
     /**
-     * @throws InvalidFilePathException
-     * @throws InvalidClassException
      * @throws DomainException
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
      * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidClassException
+     * @throws InvalidDataTypeException
+     * @throws InvalidFilePathException
+     * @throws InvalidInterfaceException
+     * @throws OutOfBoundsException
+     * @throws ReflectionException
      */
     public function initialize()
     {
@@ -118,6 +117,7 @@ class BootstrapCore
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws OutOfBoundsException
      */
     private function bootstrapDependencyInjectionContainer()
     {
@@ -145,15 +145,7 @@ class BootstrapCore
      */
     private function bootstrapDomain()
     {
-        DomainFactory::getShared(
-            new FullyQualifiedName(
-                'EventEspresso\core\domain\Domain'
-            ),
-            array(
-                new FilePath(EVENT_ESPRESSO_MAIN_FILE),
-                Version::fromString(espresso_version())
-            )
-        );
+        DomainFactory::getEventEspressoCoreDomain();
     }
 
 
