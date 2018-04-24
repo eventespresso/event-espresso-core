@@ -738,9 +738,7 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\assets\Registry'                     => EE_Dependency_Map::load_from_cache
             ),
             'EventEspresso\core\domain\entities\editor\blocks\widgets\EventAttendees' => array(
-                'EventEspresso\core\domain\Domain'            => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache
+                'EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetRegister' => EE_Dependency_Map::load_from_cache
             ),
             'EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetRegister' => array(
                 'EventEspresso\core\domain\Domain'            => EE_Dependency_Map::load_from_cache,
