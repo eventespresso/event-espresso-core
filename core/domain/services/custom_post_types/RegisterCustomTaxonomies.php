@@ -82,7 +82,7 @@ class RegisterCustomTaxonomies
             'map_meta_cap'      => true
         );
         if (! empty($override_args)) {
-            $args = array_merge_recursive($args, $override_args);
+            $args = array_replace_recursive($args, $override_args);
         }
         $result = register_taxonomy($taxonomy_name, null, $args);
         if ($result instanceof WP_Error) {

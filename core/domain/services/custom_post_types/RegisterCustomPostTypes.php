@@ -112,7 +112,7 @@ class RegisterCustomPostTypes
         // WordPress doesn't actually have that in their register_post_type api.
         $args = $this->getDefaultArguments($labels, $post_type, $plural_slug);
         if (! empty($override_args)) {
-            $args = $override_args + $args;
+            $args = array_replace_recursive($args, $override_args);
         }
         $wp_post_type = register_post_type($post_type, $args);
         if ($wp_post_type instanceof WP_Error) {
