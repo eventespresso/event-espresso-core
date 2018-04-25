@@ -7,7 +7,9 @@
  * @return {Array} Returns an array of items for the given model and query.
  */
 export function getItems( state, modelName, queryString ) {
-	return state[ modelName ][ queryString ];
+	return state[ modelName ] && state[ modelName ][ queryString ] ?
+		state[ modelName ][ queryString ] :
+		[];
 }
 
 /**
@@ -20,5 +22,8 @@ export function getItems( state, modelName, queryString ) {
  * @return {boolean} Whether items are being requested or not.
  */
 export function isRequestingItems( state, modelName, queryString ) {
-	return state[ modelName ][ queryString ] === null;
+	if ( state[ modelName ] && state[ modelName ][ queryString ] ) {
+		return state[ modelName ][ queryString ] === null;
+	}
+	return true;
 }

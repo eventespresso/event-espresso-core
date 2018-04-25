@@ -30,7 +30,7 @@ export function listItems( state = DEFAULT_STATE, action ) {
 	const { type, modelName, queryString, items = {} } = action;
 	switch ( type ) {
 		case 'SET_REQUESTED':
-			if ( state[ modelName ].hasOwnProperty( queryString ) ) {
+			if ( ! state[ modelName ] || state[ modelName ].hasOwnProperty( queryString ) ) {
 				return state;
 			}
 			return {
@@ -47,6 +47,7 @@ export function listItems( state = DEFAULT_STATE, action ) {
 				},
 			};
 	}
+	return state;
 }
 
 export default listItems;
