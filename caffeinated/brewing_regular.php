@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\database\TableAnalysis;
 
@@ -39,8 +41,8 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
      * EE_Brewing_Regular constructor.
      * @throws \DomainException
      * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws \InvalidArgumentException
      */
     public function __construct(TableAnalysis $table_analysis)
@@ -206,14 +208,35 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
     }
 
 
-
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
     public function caffeinated_init()
     {
-        // EE_Register_CPTs hooks
-        add_filter('FHEE__EE_Register_CPTs__get_taxonomies__taxonomies', array($this, 'filter_taxonomies'), 10);
-        add_filter('FHEE__EE_Register_CPTs__get_CPTs__cpts', array($this, 'filter_cpts'), 10);
-        add_filter('FHEE__EE_Admin__get_extra_nav_menu_pages_items', array($this, 'nav_metabox_items'), 10);
-        EE_Registry::instance()->load_file(EE_CAFF_PATH, 'EE_Caf_Messages', 'class', array(), false);
+        // Custom Post Type hooks
+        add_filter(
+            'FHEE__EventEspresso_core_domain_entities_custom_post_types_TaxonomyDefinitions__getTaxonomies',
+            array($this, 'filter_taxonomies')
+        );
+        add_filter(
+            'FHEE__EventEspresso_core_domain_entities_custom_post_types_CustomPostTypeDefinitions__getCustomPostTypes',
+            array($this, 'filter_cpts')
+        );
+        add_filter(
+            'FHEE__EE_Admin__get_extra_nav_menu_pages_items',
+            array($this, 'nav_metabox_items')
+        );
+        EE_Registry::instance()->load_file(
+            EE_CAFF_PATH,
+            'EE_Caf_Messages',
+            'class',
+            array(),
+            false
+        );
         // caffeinated_init__complete hook
         do_action('AHEE__EE_Brewing_Regular__caffeinated_init__complete');
     }

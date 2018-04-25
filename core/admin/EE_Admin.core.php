@@ -586,8 +586,11 @@ final class EE_Admin implements InterminableInterface
          * - instantiate the corresponding EE CPT model for the post_type being processed.
          */
         if (isset($_POST['action'], $_POST['post_type']) && $_POST['action'] === 'editpost') {
-            EE_Registry::instance()->load_core('Register_CPTs');
-            EE_Register_CPTs::instantiate_cpt_models($_POST['post_type']);
+            /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
+            $custom_post_types = LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
+            );
+            $custom_post_types->getCustomPostTypeModels($_POST['post_type']);
         }
 
 

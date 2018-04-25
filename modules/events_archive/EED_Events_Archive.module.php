@@ -1,6 +1,9 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\iframe_display\EventListIframeEmbedButton;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\modules\events_archive\EventsArchiveIframe;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
@@ -63,16 +66,21 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
-     *    set_hooks - for hooking into EE Core, other modules, etc
+     * set_hooks - for hooking into EE Core, other modules, etc
      *
-     * @access    public
-     * @return    void
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function set_hooks()
     {
-        $custom_post_types = EE_Register_CPTs::get_CPTs();
+        /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_type_definitions */
+        $custom_post_type_definitions = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
+        );
+        $custom_post_types = $custom_post_type_definitions->getDefinitions();
         EE_Config::register_route(
             $custom_post_types['espresso_events']['plural_slug'],
             'Events_Archive',

@@ -3,6 +3,9 @@
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\RequiresDependencyMapInterface;
 use EventEspresso\core\domain\RequiresDomainInterface;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
@@ -362,6 +365,9 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *                               This is a resource-intensive job so we prefer to only do it when necessary
      * @return void
      * @throws \EE_Error
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidArgumentException
      */
     public function initialize_db_if_no_migrations_required($verify_schema = true)
     {
@@ -391,7 +397,11 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
              * other data needs to be verified)
              */
             EEH_Activation::initialize_db_content();
-            update_option('ee_flush_rewrite_rules', true);
+            /** @var EventEspresso\core\domain\services\custom_post_types\RewriteRules $rewrite_rules */
+            $rewrite_rules = LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\domain\services\custom_post_types\RewriteRules'
+            );
+            $rewrite_rules->flushRewriteRules();
             //in case there are lots of addons being activated at once, let's force garbage collection
             //to help avoid memory limit errors
             //EEH_Debug_Tools::instance()->measure_memory( 'db content initialized for ' . get_class( $this), true );
