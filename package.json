@@ -46,6 +46,7 @@
 		"core-js": "^2.5.5",
 		"cross-env": "^5.1.4",
 		"css-loader": "^0.28.11",
+		"deep-freeze": "0.0.1",
 		"eslint": "^4.19.1",
 		"eslint-config-wordpress": "^2.0.0",
 		"eslint-plugin-jest": "^21.15.1",
