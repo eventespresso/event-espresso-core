@@ -9,7 +9,8 @@
 	],
 	"plugins": [
 		"transform-object-rest-spread",
-		"transform-react-jsx"
+		"transform-react-jsx",
+		"transform-async-generator-functions"
 	],
 	"env": {
 		"test": {
@@ -24,7 +25,8 @@
 					}
 				],
 				"transform-object-rest-spread",
-				"transform-react-jsx"
+				"transform-react-jsx",
+				"transform-async-generator-functions"
 			]
 		}
 	}

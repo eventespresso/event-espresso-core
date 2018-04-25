@@ -10,6 +10,7 @@
 		"@eventespresso\\/(eejs)": "$1"
 	},
 	"setupFiles": [
+		"core-js/fn/symbol/async-iterator",
 		"<rootDir>/tests/javascript-config/unit/setup-globals.js"
 	],
 	"preset": "@wordpress/jest-preset-default",
