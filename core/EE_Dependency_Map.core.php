@@ -736,6 +736,20 @@ class EE_Dependency_Map
             'EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker' => array(
                 'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions' => array(
+                'EE_Core_Config' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes'   => array(
+                'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies'   => array(
+                'EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EE_CPT_Strategy'   => array(
+                'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions' => EE_Dependency_Map::load_from_cache,
+            ),
         );
     }
 
@@ -792,6 +806,7 @@ class EE_Dependency_Map
             'EE_Maintenance_Mode'      => 'load_core',
             'EE_Register_CPTs'         => 'load_core',
             'EE_Admin'                 => 'load_core',
+            'EE_CPT_Strategy'          => 'load_core',
             //load_lib
             'EE_Message_Resource_Manager'          => 'load_lib',
             'EE_Message_Type_Collection'           => 'load_lib',

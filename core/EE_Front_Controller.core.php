@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 use EventEspresso\widgets\EspressoWidget;
 
@@ -131,9 +134,6 @@ final class EE_Front_Controller
 
 
     /***********************************************        INIT ACTION HOOK         ***********************************************/
-
-
-
     /**
      * filter_wp_comments
      * This simply makes sure that any "private" EE CPTs do not have their comments show up in any wp comment
@@ -141,12 +141,19 @@ final class EE_Front_Controller
      *
      * @param  array $clauses array of comment clauses setup by WP_Comment_Query
      * @return array array of comment clauses with modifications.
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function filter_wp_comments($clauses)
     {
         global $wpdb;
         if (strpos($clauses['join'], $wpdb->posts) !== false) {
-            $cpts = EE_Register_CPTs::get_private_CPTs();
+            /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
+            $custom_post_types = LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
+            );
+            $cpts = $custom_post_types->getPrivateCustomPostTypes();
             foreach ($cpts as $cpt => $details) {
                 $clauses['where'] .= $wpdb->prepare(" AND $wpdb->posts.post_type != %s", $cpt);
             }
@@ -157,13 +164,14 @@ final class EE_Front_Controller
 
     /**
      * @return void
-     * @throws EE_Error
-     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function employ_CPT_Strategy()
     {
         if (apply_filters('FHEE__EE_Front_Controller__employ_CPT_Strategy', true)) {
-            $this->Registry->load_core('CPT_Strategy');
+            LoaderFactory::getLoader()->getShared('EE_CPT_Strategy');
         }
     }
 
