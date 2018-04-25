@@ -8,7 +8,6 @@ import { reduce } from 'lodash';
  */
 import { endpoints } from '../model/endpoints';
 
-
 const DEFAULT_STATE = reduce( endpoints,
 	function( defaultState, endpoint, modelName ) {
 		defaultState[ modelName ] = [];
