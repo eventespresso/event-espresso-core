@@ -10,8 +10,8 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 /**
- * Class Core
- * Description
+ * Class PrivacyPolicy
+ * Class describes the Event Espresso core plugin's privacy policy.
  *
  * @package        Event Espresso
  * @author         Mike Nelson
@@ -47,5 +47,5 @@ class PrivacyPolicy implements PrivacyPolicyInterface
 
 
 }
-// End of file Core.php
-// Location: EventEspresso\core\domain\services\admin/Core.php
+// End of file PrivacyPolicy.php
+// Location: EventEspresso\core\domain\services\admin\privacy_policy\PrivacyPolicy.php

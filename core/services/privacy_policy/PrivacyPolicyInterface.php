@@ -8,7 +8,10 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 /**
  * Class PrivacyPolicyInterface
- * Description
+ * Interfacing for classes that define a suggested privacy policy section for WordPress'
+ * special privacy policy editing page (see https://core.trac.wordpress.org/ticket/43620).
+ * The results of `getName()` will be inserted into the privacy policy postbox' title,
+ * and the results of `getContent()` will be the body of the suggested privacy policy section.
  *
  * @package        Event Espresso
  * @author         Mike Nelson
