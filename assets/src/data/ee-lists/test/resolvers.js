@@ -6,7 +6,7 @@ import apiRequest from '@wordpress/api-request';
 /**
  * Internal dependencies
  */
-import { getEvents } from '../resolvers';
+import { getItems } from '../resolvers';
 import { setRequested, receiveResponse } from '../actions';
 
 jest.mock( '@wordpress/api-request' );
@@ -16,7 +16,7 @@ jest.mock( '@eventespresso/eejs', () => ( {
 	},
 } ) );
 
-describe( 'getEvents', () => {
+describe( 'getItems', () => {
 	const EVENTS = [ { id: 1 } ];
 
 	beforeAll( () => {
@@ -28,7 +28,7 @@ describe( 'getEvents', () => {
 	} );
 
 	it( 'yields with requested events', async () => {
-		const fulfillment = getEvents( {}, 'some_event=1' );
+		const fulfillment = getItems( {}, 'event', 'some_event=1' );
 		const requested = ( await fulfillment.next() ).value;
 		expect( requested.type ).toBe( setRequested().type );
 		const received = ( await fulfillment.next() ).value;

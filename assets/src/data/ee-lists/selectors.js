@@ -27,3 +27,14 @@ export function isRequestingItems( state, modelName, queryString ) {
 	}
 	return true;
 }
+
+/**
+ * Selector specific to events.
+ *
+ * @param {Object} state  Data state.
+ * @param {string} queryString The query string for the request
+ * @return {Array} An array of event entities for the given model and query.
+ */
+export function getEvents( state, queryString ) {
+	return getItems( state, 'event', queryString );
+}
