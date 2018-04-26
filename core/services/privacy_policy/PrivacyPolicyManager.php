@@ -25,7 +25,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  * @author         Mike Nelson
  * @since          $VID:$
  */
-class Manager
+class PrivacyPolicyManager
 {
 
     public function __construct()
