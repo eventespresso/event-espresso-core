@@ -442,10 +442,18 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      */
     public function testPrepareFieldValuesForJson($expected, $input, $field_obj)
     {
-        $this->assertEquals(
-            $expected,
-            ModelDataTranslator::prepareFieldValuesForJson($field_obj, $input, '4.8.36')
-        );
+        if ($field_obj instanceof EE_DateTime_Field && ! empty($expected)) {
+            $this->assertDateWithinOneMinute(
+                $expected,
+                ModelDataTranslator::prepareFieldValuesForJson($field_obj, $input, '4.8.36'),
+                'Y-m-d\TH:i:s'
+            );
+        } else {
+            $this->assertEquals(
+                $expected,
+                ModelDataTranslator::prepareFieldValuesForJson($field_obj, $input, '4.8.36')
+            );
+        }
     }
 
 
