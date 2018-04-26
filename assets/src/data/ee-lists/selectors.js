@@ -38,3 +38,14 @@ export function isRequestingItems( state, modelName, queryString ) {
 export function getEvents( state, queryString ) {
 	return getItems( state, 'event', queryString );
 }
+
+/**
+ * Selector specific to events for checking if requesting events.
+ *
+ * @param {Object} state Data state.
+ * @param {string} queryString The query string for the request
+ * @return {boolean} Whether items are being requested or not.
+ */
+export function isRequestingEvents( state, queryString ) {
+	return isRequestingItems( state, 'event', queryString );
+}
