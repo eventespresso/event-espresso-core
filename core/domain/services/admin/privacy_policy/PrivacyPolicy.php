@@ -3,7 +3,7 @@
 namespace EventEspresso\core\domain\services\admin\privacy_policy;
 
 use EEH_Template;
-use EventEspresso\core\services\privacy_policy\PolicyGeneratorInterface;
+use EventEspresso\core\services\privacy_policy\PrivacyPolicyInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -17,7 +17,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  * @author         Mike Nelson
  * @since          $VID:$
  */
-class PolicyGenerator implements PolicyGeneratorInterface
+class PrivacyPolicy implements PrivacyPolicyInterface
 {
 
     /**

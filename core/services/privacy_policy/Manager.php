@@ -30,13 +30,16 @@ class Manager
 
     public function __construct()
     {
-        add_action( 'edit_form_after_title', array( $this, 'possiblyAddPrivacyPolicy' ), 9 );
+        if (function_exists('wp_add_privacy_policy_content')) {
+            add_action('edit_form_after_title', array($this, 'possiblyAddPrivacyPolicy'), 9);
+        }
     }
 
 
 
     /**
-     * For all the registered `PrivacyPolicyGeneratorInterface`s, add their privacy policy content
+     * For all the registered `PrivacyPolicyInterface`s, add their privacy policy content
+     *
      * @param WP_Post $post
      */
     public function possiblyAddPrivacyPolicy($post)
@@ -50,16 +53,15 @@ class Manager
         }
         //load all the privacy policy stuff
         //add post policy text
-        foreach($this->loadPolicyGeneratorCollection() as $policy_generator) {
-            wp_add_privacy_policy_content($policy_generator->getName(), $policy_generator->getContent());
+        foreach ($this->loadPrivacyPolicyCollection() as $privacy_policy) {
+            wp_add_privacy_policy_content($privacy_policy->getName(), $privacy_policy->getContent());
         }
     }
 
 
 
-
     /**
-     * @return CollectionInterface|EventEspresso\core\services\privacy_policy\PolicyGeneratorInterface[]
+     * @return CollectionInterface|EventEspresso\core\services\privacy_policy\PrivacyPolicyInterface[]
      * @throws InvalidIdentifierException
      * @throws InvalidInterfaceException
      * @throws InvalidFilePathException
@@ -67,18 +69,18 @@ class Manager
      * @throws InvalidDataTypeException
      * @throws InvalidClassException
      */
-    protected function loadPolicyGeneratorCollection()
+    protected function loadPrivacyPolicyCollection()
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
             // collection name
                 'privacy_policies',
                 // collection interface
-                'EventEspresso\core\services\privacy_policy\PolicyGeneratorInterface',
+                'EventEspresso\core\services\privacy_policy\PrivacyPolicyInterface',
                 // FQCNs for classes to add (all classes within that namespace will be loaded)
                 apply_filters(
-                    'FHEE__EventEspresso_core_domain_services_admin_privacy_policy_Manager__generators',
-                    array('EventEspresso\core\domain\services\admin\privacy_policy\PolicyGenerator')
+                    'FHEE__EventEspresso_core_domain_services_admin_privacy_policy_Manager__privacy_policies',
+                    array('EventEspresso\core\domain\services\admin\privacy_policy\PrivacyPolicy')
                 ),
                 // filepaths to classes to add
                 array(),
