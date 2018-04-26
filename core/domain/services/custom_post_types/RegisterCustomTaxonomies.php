@@ -60,15 +60,38 @@ class RegisterCustomTaxonomies
      * Registers a custom taxonomy. Should be called before registering custom post types,
      * otherwise you should link the taxonomy to the custom post type using 'register_taxonomy_for_object_type'.
      *
-     * @param string $taxonomy_name , eg 'books'
-     * @param string $singular_name internationalized singular name
-     * @param string $plural_name   internationalized plural name
-     * @param array  $override_args like $args on http://codex.wordpress.org/Function_Reference/register_taxonomy
+     * @param string $taxonomy_name      , eg 'books'
+     * @param string $singular_name      internationalized singular name
+     * @param string $plural_name        internationalized plural name
+     * @param array  $override_arguments like $args on http://codex.wordpress.org/Function_Reference/register_taxonomy
      * @throws DomainException
      */
-    public function registerCustomTaxonomy($taxonomy_name, $singular_name, $plural_name, array $override_args)
+    public function registerCustomTaxonomy($taxonomy_name, $singular_name, $plural_name, array $override_arguments)
     {
-        $args = array(
+        $result = register_taxonomy(
+            $taxonomy_name,
+            null,
+            $this->prepareArguments(
+                $singular_name,
+                $plural_name,
+                $override_arguments
+            )
+        );
+        if ($result instanceof WP_Error) {
+            throw new DomainException($result->get_error_message());
+        }
+    }
+
+
+    /**
+     * @param string $singular_name
+     * @param string $plural_name
+     * @param array  $override_arguments
+     * @since $VID:$
+     * @return array
+     */
+    protected function prepareArguments($singular_name, $plural_name, array $override_arguments){
+        $arguments = array(
             'hierarchical'      => true,
             'labels'            => array(
                 'name'          => $plural_name,
@@ -81,12 +104,13 @@ class RegisterCustomTaxonomies
             'show_in_nav_menus' => false,
             'map_meta_cap'      => true
         );
-        if (! empty($override_args)) {
-            $args = array_merge_recursive($args, $override_args);
+        if ($override_arguments) {
+            if (isset($override_args['labels'])) {
+                $labels         = array_merge($arguments['labels'], $override_arguments['labels']);
+                $arguments['labels'] = $labels;
+            }
+            $arguments = array_merge($arguments, $override_arguments);
         }
-        $result = register_taxonomy($taxonomy_name, null, $args);
-        if ($result instanceof WP_Error) {
-            throw new DomainException($result->get_error_message());
-        }
+        return $arguments;
     }
 }
