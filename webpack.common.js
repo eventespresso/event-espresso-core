@@ -6,6 +6,21 @@ const autoprefixer = require( 'autoprefixer' );
 const externals = {
 	jquery: 'jQuery',
 	'@eventespresso/eejs': 'eejs',
+	'@wordpress/api-request': {
+		this: [ 'wp', 'apiRequest' ],
+	},
+	'@wordpress/data': {
+		this: [ 'wp', 'data' ],
+	},
+	'@wordpress/element': {
+		this: [ 'wp', 'element' ],
+	},
+	'@wordpress/components': {
+		this: [ 'wp', 'components' ],
+	},
+	'@wordpress/i18n': {
+		this: [ 'wp', 'i18n' ],
+	},
 };
 const reactVendorPackages = [
 	'react',
