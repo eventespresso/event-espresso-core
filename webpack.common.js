@@ -18,9 +18,6 @@ const externals = {
 	'@wordpress/components': {
 		this: [ 'wp', 'components' ],
 	},
-	'@wordpress/i18n': {
-		this: [ 'wp', 'i18n' ],
-	},
 };
 const reactVendorPackages = [
 	'react',
