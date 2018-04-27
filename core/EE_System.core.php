@@ -1168,16 +1168,26 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      * core_loaded_and_ready
      * all of the basic EE core should be loaded at this point and available regardless of M-Mode
      *
      * @access public
      * @return void
+     * @throws Exception
      */
     public function core_loaded_and_ready()
     {
+        if ($this->request->isAdmin() || $this->request->isFrontend() || $this->request->isIframe()) {
+            try {
+                $this->loader->getShared('EventEspresso\core\services\assets\Registry');
+                /** @var \EventEspresso\core\domain\services\assets\CoreAssetManager $core_asset_manager */
+                $core_asset_manager = $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
+                $core_asset_manager->addAssets();
+            } catch (Exception $exception) {
+                new ExceptionStackTraceDisplay($exception);
+            }
+        }
         if (
             $this->request->isAdmin()
             || $this->request->isEeAjax()
@@ -1194,9 +1204,6 @@ final class EE_System implements ResettableInterface
             require_once EE_PUBLIC . 'template_tags.php';
         }
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
-        if ($this->request->isAdmin() || $this->request->isFrontend() || $this->request->isIframe()) {
-            $this->loader->getShared('EventEspresso\core\services\assets\Registry');
-        }
     }
 
 
