@@ -61,7 +61,7 @@ class PrivacyPolicyManager
 
 
     /**
-     * @return CollectionInterface|EventEspresso\core\services\privacy_policy\PrivacyPolicyInterface[]
+     * @return CollectionInterface|PrivacyPolicyInterface[]
      * @throws InvalidIdentifierException
      * @throws InvalidInterfaceException
      * @throws InvalidFilePathException
@@ -79,7 +79,7 @@ class PrivacyPolicyManager
                 'EventEspresso\core\services\privacy_policy\PrivacyPolicyInterface',
                 // FQCNs for classes to add (all classes within that namespace will be loaded)
                 apply_filters(
-                    'FHEE__EventEspresso_core_domain_services_admin_privacy_policy_Manager__privacy_policies',
+                    'FHEE__EventEspresso_core_services_privacy_policy_PrivacyPolicyManager__privacy_policies',
                     array('EventEspresso\core\domain\services\admin\privacy_policy\PrivacyPolicy')
                 ),
                 // filepaths to classes to add
