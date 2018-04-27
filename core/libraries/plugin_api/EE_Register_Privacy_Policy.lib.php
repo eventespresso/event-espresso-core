@@ -30,7 +30,7 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
      * @param array $FQNSs can be the fully qualified namespaces each containing only privacy policies,
      *              OR fully qualified class names of privacy policies
      */
-    public static function register($plugin_id = null, $FQCNs = null)
+    public static function register($plugin_id = null, $FQCNs = array())
     {
         self::$privacy_policies[$plugin_id] = $FQCNs;
         // add to list of modules to be registered
