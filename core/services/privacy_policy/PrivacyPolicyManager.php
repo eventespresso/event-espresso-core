@@ -31,7 +31,7 @@ class PrivacyPolicyManager
     public function __construct()
     {
         if (function_exists('wp_add_privacy_policy_content')) {
-            add_action('edit_form_after_title', array($this, 'maybeAddPrivacyPolicy'), 9);
+            add_action('edit_form_after_title', array($this, 'addPrivacyPolicy'), 9);
         }
     }
 
