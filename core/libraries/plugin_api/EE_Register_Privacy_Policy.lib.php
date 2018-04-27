@@ -58,7 +58,7 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
      * @param string[] $privacy_policies
      * @return string[]
      */
-    public static function addPrivacyPolicies($privacy_policies)
+    public static function addPrivacyPolicies(array $privacy_policies)
     {
         foreach (self::$privacy_policies as $privacy_policies_per_addon) {
             $privacy_policies = array_merge(
