@@ -76,8 +76,8 @@ class Registry
     {
         $this->assets        = $assets;
         $this->i18n_registry = $i18n_registry;
-        add_action('wp_enqueue_scripts', array($this, 'registerScripts'), 1);
-        add_action('admin_enqueue_scripts', array($this, 'registerScripts'), 1);
+        add_action('wp_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 1);
+        add_action('admin_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 1);
         add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 2);
         add_action('admin_enqueue_scripts', array($this, 'enqueueData'), 2);
         add_action('wp_print_footer_scripts', array($this, 'enqueueData'), 1);
@@ -105,12 +105,11 @@ class Registry
      * @since $VID:$
      * @throws InvalidDataTypeException
      */
-    public function registerScripts()
+    public function registerScriptsAndStyles()
     {
-        $scripts = $this->assets->getJavascriptAssets();
-        foreach ($scripts as $script) {
+        foreach ($this->assets->getJavascriptAssets() as $script) {
             do_action(
-                'AHEE__EventEspresso_core_services_assets_Registry__registerScripts__before_script',
+                'AHEE__EventEspresso_core_services_assets_Registry__registerScriptsAndStyles__before_script',
                 $script
             );
             wp_register_script(
@@ -127,8 +126,25 @@ class Registry
                 $this->addRegisteredScriptHandlesWithData($script->handle());
             }
             do_action(
-                'AHEE__EventEspresso_core_services_assets_Registry__registerScripts__after_script',
+                'AHEE__EventEspresso_core_services_assets_Registry__registerScriptsAndStyles__after_script',
                 $script
+            );
+        }
+        foreach ($this->assets->getStylesheetAssets() as $style) {
+            do_action(
+                'AHEE__EventEspresso_core_services_assets_Registry__registerScriptsAndStyles__before_style',
+                $style
+            );
+            wp_enqueue_style(
+                $style->handle(),
+                $style->source(),
+                $style->dependencies(),
+                $style->version(),
+                $style->media()
+            );
+            do_action(
+                'AHEE__EventEspresso_core_services_assets_Registry__registerScriptsAndStyles__after_style',
+                $style
             );
         }
     }
