@@ -3,61 +3,51 @@
  */
 import { stringify } from 'querystringify';
 import moment from 'moment';
-import { isUndefined, pickBy, reduce, isEmpty } from 'lodash';
+import { isUndefined, pickBy, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
  * WP dependencies
  */
-const { Component } = wp.element;
-const { Placeholder, SelectControl, withAPIData, Spinner } = wp.components;
-const { __ } = wp.i18n;
+import { Placeholder, SelectControl, Spinner } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { withSelect } from '@wordpress/data';
+
+/**
+ * Internal dependencies
+ */
+import { buildEventOptions } from './build-event-options';
 
 const nowDateAndTime = moment();
 
-const buildEventOptions = ( events ) => {
-	reduce( events, function( options, event ) {
-		options.push(
-			{
-				label: event.EVT_name,
-				value: event.EVT_ID,
-			},
-		);
-		return options;
-	}, [] );
-};
-
-export class EventSelect extends Component {
-	render() {
-		const {
-			events = [],
-			onEventSelect,
-			selectLabel = __( 'Select Event' ),
-			selectedEventId,
-			isLoading = true,
-		} = this.props;
-		if ( isLoading || isEmpty( events ) ) {
-			return <Placeholder key="placeholder"
-				icon="calendar"
-				label={ __( 'EventSelect' ) }
-			>
-				{ isLoading ?
-					<Spinner /> :
-					__(
-						'There are no events to select from. You need to create an event first.',
-						'event_espresso'
-					)
-				}
-			</Placeholder>;
-		}
-
-		return <SelectControl
-			label={ selectLabel }
-			value={ selectedEventId }
-			options={ buildEventOptions( events ) }
-			onChange={ ( value ) => onEventSelect( value ) }
-		/>;
+export const EventSelect = ( {
+	events,
+	onEventSelect,
+	selectLabel,
+	selectedEventId,
+	isLoading,
+} ) => {
+	if ( isLoading || isEmpty( events ) ) {
+		return <Placeholder key="placeholder"
+			icon="calendar"
+			label={ __( 'EventSelect', 'event_espresso' ) }
+		>
+			{ isLoading ?
+				<Spinner /> :
+				__(
+					'There are no events to select from. You need to create an event first.',
+					'event_espresso'
+				)
+			}
+		</Placeholder>;
 	}
+
+	return <SelectControl
+		label={ selectLabel }
+		value={ selectedEventId }
+		options={ buildEventOptions( events ) }
+		onChange={ ( value ) => onEventSelect( value ) }
+	/>;
 }
 
 /**
@@ -69,11 +59,11 @@ export class EventSelect extends Component {
  *   categorySlug: *, month: *}}}
  */
 EventSelect.propTypes = {
-	events: PropTypes.shape( {
+	events: PropTypes.arrayOf( PropTypes.shape( {
 		EVT_name: PropTypes.string.required,
 		EVT_ID: PropTypes.number.required,
-	} ),
-	onEventSelect: PropTypes.func.required,
+	} ) ),
+	onEventSelect: PropTypes.func,
 	selectLabel: PropTypes.string,
 	selectedEventId: PropTypes.number,
 	isLoading: PropTypes.bool,
@@ -101,6 +91,9 @@ EventSelect.defaultProps = {
 		order: 'desc',
 		showExpired: false,
 	},
+	selectLabel: __( 'Select Event', 'event_espresso' ),
+	isLoading: true,
+	events: [],
 };
 
 /**
@@ -145,9 +138,10 @@ const whereConditions = ( { showExpired, categorySlug, month } ) => {
 	return where.join( '&' );
 };
 
-export default withAPIData( ( props ) => {
-	const { limit, order, orderBy } = props.attributes;
-	const where = whereConditions( props.attributes );
+export default withSelect( ( select, ownProps ) => {
+	const { limit, order, orderBy } = ownProps.attributes;
+	const where = whereConditions( ownProps.attributes );
+	const { getEvents, isRequestingEvents } = select( 'eventespresso/lists' );
 	const queryArgs = {
 		limit,
 		order,
@@ -160,9 +154,8 @@ export default withAPIData( ( props ) => {
 	if ( where ) {
 		queryString += '&' + where;
 	}
-
 	return {
-		events: `/ee/v4.8.36/events?${ queryString }`,
-		isLoading: false,
+		events: getEvents( queryString ),
+		isLoading: isRequestingEvents( queryString ),
 	};
 } )( EventSelect );

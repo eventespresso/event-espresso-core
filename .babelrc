@@ -14,7 +14,9 @@
 	],
 	"env": {
 		"test": {
-			"presets" : [["env"]]
+			"presets" : [
+				"@wordpress/default"
+			]
 		},
 		"production": {
 			"plugins": [
