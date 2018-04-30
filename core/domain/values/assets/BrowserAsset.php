@@ -112,7 +112,13 @@ class BrowserAsset extends Asset
     {
         // if version is NOT set and this asset was NOT built for distribution,
         // then set the version equal to the EE core plugin version
-        if ($this->version === null && substr($this->source, -8) !== '.dist.js') {
+        if (
+            $this->version === null
+            && (
+                substr($this->source, -8) !== Asset::FILE_EXTENSION_DISTRIBUTION_JS
+                || substr($this->source, -9) !== Asset::FILE_EXTENSION_DISTRIBUTION_CSS
+            )
+        ) {
             $this->setVersion();
         }
         return $this->version;
