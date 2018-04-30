@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\middleware\RecommendedVersions;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
@@ -442,18 +445,23 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     }
 
 
-
     /**
      * Determine whether the current cpt supports page templates or not.
      *
      * @since %VER%
      * @param string $cpt_name The cpt slug we're checking on.
      * @return bool True supported, false not.
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function _supports_page_templates($cpt_name)
     {
-
-        $cpt_args = EE_Register_CPTs::get_CPTs();
+        /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
+        $custom_post_types = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
+        );
+        $cpt_args = $custom_post_types->getDefinitions();
         $cpt_args = isset($cpt_args[$cpt_name]) ? $cpt_args[$cpt_name]['args'] : array();
         $cpt_has_support = ! empty($cpt_args['page_templates']);
 
@@ -677,15 +685,18 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     }
 
 
-
     /**
      * Sets the _cpt_model_object property using what has been set for the _cpt_model_name and a given id.
      *
      * @access protected
-     * @param int  $id The id to retrieve the model object for. If empty we set a default object.
-     * @param bool $ignore_route_check
+     * @param int    $id       The id to retrieve the model object for. If empty we set a default object.
+     * @param bool   $ignore_route_check
      * @param string $req_type whether the current route is for inserting, updating, or deleting the CPT
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _set_model_object($id = null, $ignore_route_check = false, $req_type = '')
     {
@@ -703,10 +714,14 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             //get out cuz we either don't have a model name OR the object has already been set and it has the same id as what has been sent.
             return;
         }
-        //if ignore_route_check is true, then get the model name via EE_Register_CPTs
+        // if ignore_route_check is true, then get the model name via CustomPostTypeDefinitions
         if ($ignore_route_check) {
-            $model_names = EE_Register_CPTs::get_cpt_model_names();
             $post_type   = get_post_type($id);
+            /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
+            $custom_post_types = LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
+            );
+            $model_names = $custom_post_types->getCustomPostTypeModelNames($post_type);
             if (isset($model_names[$post_type])) {
                 $model = EE_Registry::instance()->load_model($model_names[$post_type]);
             }

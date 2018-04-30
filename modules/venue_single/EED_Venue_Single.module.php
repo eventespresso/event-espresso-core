@@ -1,4 +1,8 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * Event Espresso
  *
@@ -31,15 +35,20 @@ class EED_Venue_Single  extends EED_Module {
 	}
 
 
-
     /**
-	 * 	set_hooks - for hooking into EE Core, other modules, etc
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
+     * set_hooks - for hooking into EE Core, other modules, etc
+     *
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
 	public static function set_hooks() {
-        $custom_post_types = EE_Register_CPTs::get_CPTs();
+        /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_type_definitions */
+        $custom_post_type_definitions = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
+        );
+        $custom_post_types = $custom_post_type_definitions->getDefinitions();
         EE_Config::register_route(
             $custom_post_types['espresso_venues']['singular_slug'],
             'Venue_Single',
