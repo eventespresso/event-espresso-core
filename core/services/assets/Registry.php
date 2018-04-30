@@ -76,10 +76,12 @@ class Registry
     {
         $this->assets        = $assets;
         $this->i18n_registry = $i18n_registry;
-        add_action('wp_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 1);
-        add_action('admin_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 1);
-        add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 2);
-        add_action('admin_enqueue_scripts', array($this, 'enqueueData'), 2);
+        add_action('wp_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
+        add_action('admin_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
+        add_action('wp_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 3);
+        add_action('admin_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 3);
+        add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 4);
+        add_action('admin_enqueue_scripts', array($this, 'enqueueData'), 4);
         add_action('wp_print_footer_scripts', array($this, 'enqueueData'), 1);
         add_action('admin_print_footer_scripts', array($this, 'enqueueData'), 1);
     }
@@ -122,9 +124,6 @@ class Registry
             if ($script->requiresTranslation()) {
                 $this->registerTranslation($script->handle());
             }
-            if ($script->hasLocalizedData()) {
-                $this->addRegisteredScriptHandlesWithData($script->handle());
-            }
             do_action(
                 'AHEE__EventEspresso_core_services_assets_Registry__registerScriptsAndStyles__after_script',
                 $script
@@ -166,6 +165,7 @@ class Registry
         );
         $scripts = $this->assets->getJavascriptAssetsWithData();
         foreach ($scripts as $script) {
+            $this->addRegisteredScriptHandlesWithData($script->handle());
             if ($script->hasLocalizationCallback()) {
                 $localize = $script->localizationCallback();
                 $localize();
