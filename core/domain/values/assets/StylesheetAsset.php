@@ -28,11 +28,11 @@ class StylesheetAsset extends BrowserAsset
      * @param                 $handle
      * @param string          $source
      * @param array           $dependencies
-     * @param                 $media
      * @param DomainInterface $domain
+     * @param                 $media
      * @throws InvalidDataTypeException
      */
-    public function __construct($handle, $source, array $dependencies, $media, DomainInterface $domain)
+    public function __construct($handle, $source, array $dependencies, DomainInterface $domain, $media = 'all')
     {
         parent::__construct(Asset::TYPE_CSS, $handle, $source, $dependencies, $domain);
         $this->setMedia($media);
