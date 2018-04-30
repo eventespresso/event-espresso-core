@@ -4,7 +4,7 @@
 import { reduce } from 'lodash';
 
 export const buildEventOptions = ( events ) => {
-	reduce( events, function( options, event ) {
+	return reduce( events, function( options, event ) {
 		options.push(
 			{
 				label: event.EVT_name,
