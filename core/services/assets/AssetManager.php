@@ -49,6 +49,10 @@ abstract class AssetManager implements AssetManagerInterface
         $this->domain   = $domain;
         $this->assets   = $assets;
         $this->registry = $registry;
+        add_action('wp_enqueue_scripts', array($this, 'addManifestFile'), 0);
+        add_action('admin_enqueue_scripts', array($this, 'addManifestFile'), 0);
+        add_action('wp_enqueue_scripts', array($this, 'addAssets'), 2);
+        add_action('admin_enqueue_scripts', array($this, 'addAssets'), 2);
     }
 
 
@@ -59,7 +63,7 @@ abstract class AssetManager implements AssetManagerInterface
 
 
     /**
-     * @return ManifestFile
+     * @return void
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -69,11 +73,10 @@ abstract class AssetManager implements AssetManagerInterface
     {
         // if a manifest file has already been added for this domain, then just return that one
         if ($this->assets->has($this->domain->assetNamespace())) {
-            return $this->assets->get($this->domain->assetNamespace());
+            return;
         }
         $asset = new ManifestFile($this->domain);
         $this->assets->add($asset, $this->domain->assetNamespace());
-        return $asset;
     }
 
 
@@ -147,8 +150,8 @@ abstract class AssetManager implements AssetManagerInterface
             $handle,
             $source,
             $dependencies,
-            $media,
-            $this->domain
+            $this->domain,
+            $media
         );
         $this->assets->add($asset, $handle);
         return $asset;
