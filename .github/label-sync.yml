@@ -167,5 +167,7 @@
       color: ebf7a0
     - name: "type:question"
       color: ebf7a0
+    - name: "type:impacts-eventsmart"
+      color: 00f2ff
       previousNames:
         - question
