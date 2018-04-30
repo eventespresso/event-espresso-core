@@ -1181,9 +1181,7 @@ final class EE_System implements ResettableInterface
         if ($this->request->isAdmin() || $this->request->isFrontend() || $this->request->isIframe()) {
             try {
                 $this->loader->getShared('EventEspresso\core\services\assets\Registry');
-                /** @var \EventEspresso\core\domain\services\assets\CoreAssetManager $core_asset_manager */
-                $core_asset_manager = $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
-                $core_asset_manager->addAssets();
+                $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
             } catch (Exception $exception) {
                 new ExceptionStackTraceDisplay($exception);
             }
