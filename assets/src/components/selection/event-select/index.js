@@ -48,7 +48,7 @@ export const EventSelect = ( {
 		options={ buildEventOptions( events ) }
 		onChange={ ( value ) => onEventSelect( value ) }
 	/>;
-}
+};
 
 /**
  * @todo some of these proptypes are likely reusable in various place so we may
