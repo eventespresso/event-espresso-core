@@ -20,6 +20,21 @@ import { buildEventOptions } from './build-event-options';
 
 const nowDateAndTime = moment();
 
+/**
+ * EventSelect component.
+ * A react component for an event selector.
+ *
+ * @param {Array} events  An empty array or array of Event Entities. See
+ *                          prop-types for shape.
+ * @param {function} onEventSelect  The callback on selection of event.
+ * @param {string} selectLabel The label for the select input.
+ * @param {number} selectedEventId  If provided, the id of the event to
+ *   pre-select.
+ * @param {boolean} isLoading  Whether or not the selector should start in a
+ *                               loading state
+ * @return {Function}  A pure component function.
+ * @constructor
+ */
 export const EventSelect = ( {
 	events,
 	onEventSelect,
@@ -36,7 +51,7 @@ export const EventSelect = ( {
 				<Spinner /> :
 				__(
 					'There are no events to select from. You need to create an event first.',
-					'event_espresso'
+					'event_espresso',
 				)
 			}
 		</Placeholder>;
@@ -54,9 +69,6 @@ export const EventSelect = ( {
  * @todo some of these proptypes are likely reusable in various place so we may
  * want to consider extracting them into a separate file/object that can be
  * included as needed.
- * @type {{events: *, onEventSelect, selectLabel: *, selectedEventId: *,
- *   isLoading: *, attributes: {limit: *, orderBy: *, order: *, showExpired: *,
- *   categorySlug: *, month: *}}}
  */
 EventSelect.propTypes = {
 	events: PropTypes.arrayOf( PropTypes.shape( {
@@ -105,7 +117,7 @@ EventSelect.defaultProps = {
  * @param {string} orderBy
  *
  * @return { string } Returns an actual orderBy string for the REST query for
- * 					  the provided alias
+ *                      the provided alias
  */
 const mapOrderBy = ( orderBy ) => {
 	const orderByMap = {
@@ -114,9 +126,21 @@ const mapOrderBy = ( orderBy ) => {
 		ticket_start: 'Datetime.Ticket.TKT_start_date',
 		ticket_end: 'Datetime.Ticket.TKT_end_date',
 	};
-	return isUndefined( orderByMap[ orderBy ] ) ? orderBy : orderByMap[ orderBy ];
+	return isUndefined( orderByMap[ orderBy ] ) ?
+		orderBy :
+		orderByMap[ orderBy ];
 };
 
+/**
+ * Builds where conditions for an events endpoint request using provided
+ * information.
+ *
+ * @param {boolean} showExpired  Whether or not to include expired events.
+ * @param {string} categorySlug  Return events for the given categorySlug
+ * @param {string} month         Return events for the given month.  Can be any
+ *                                 in any month format recognized by moment.
+ * @return {string} 			 The assembled where conditions.
+ */
 const whereConditions = ( { showExpired, categorySlug, month } ) => {
 	const where = [];
 	const GREATER_AND_EQUAL = encodeURIComponent( '>=' );
@@ -130,14 +154,23 @@ const whereConditions = ( { showExpired, categorySlug, month } ) => {
 		where.push( 'where[Term_Relationship.Term_Taxonomy.Term.slug]=' + categorySlug );
 	}
 	if ( month && month !== 'none' ) {
-		where.push( 'where[Datetime.DTT_EVT_start][]=' + GREATER_AND_EQUAL + '&where[Datetime.DTT_EVT_start][]=' +
+		where.push( 'where[Datetime.DTT_EVT_start][]=' +
+			GREATER_AND_EQUAL +
+			'&where[Datetime.DTT_EVT_start][]=' +
 			moment().month( month ).startOf( 'month' ).local().format() );
-		where.push( 'where[Datetime.DTT_EVT_end][]=' + LESS_AND_EQUAL + '&where[Datetime.DTT_EVT_end][]=' +
+		where.push( 'where[Datetime.DTT_EVT_end][]=' +
+			LESS_AND_EQUAL +
+			'&where[Datetime.DTT_EVT_end][]=' +
 			moment().month( month ).endOf( 'month' ).local().format() );
 	}
 	return where.join( '&' );
 };
 
+/**
+ * The EventSelect Component wrapped in the `withSelect` higher order component.
+ * This subscribes the EventSelect component to the state maintained via the
+ * eventespresso/lists store.
+ */
 export default withSelect( ( select, ownProps ) => {
 	const { limit, order, orderBy } = ownProps.attributes;
 	const where = whereConditions( ownProps.attributes );

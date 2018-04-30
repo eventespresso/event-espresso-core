@@ -11,6 +11,13 @@ import { sprintf } from '@wordpress/i18n';
 
 export const { collection_endpoints: endpoints = {} } = data;
 
+/**
+ * Retrieves the endpoint for the provided model.
+ *
+ * @param {string} modelName  What model to retrieve the endpoint for.
+ * @return {string}  The endpoint for the provided model.
+ * @throws {GeneralException}
+ */
 const getEndpoint = ( modelName ) => {
 	if ( isUndefined( endpoints[ modelName ] ) ) {
 		throw new GeneralException(
@@ -23,6 +30,12 @@ const getEndpoint = ( modelName ) => {
 	return endpoints[ modelName ];
 };
 
+/**
+ * Applies the provided queryString to the endpoint for the provided model name.
+ * @param {string} modelName  What model the final string is for.
+ * @param {string} queryString  The query being appended to the endpoint.
+ * @return {string} The final assembled query string.
+ */
 export const applyQueryString = ( modelName, queryString ) => {
 	return getEndpoint( modelName ) + '?' + queryString;
 };

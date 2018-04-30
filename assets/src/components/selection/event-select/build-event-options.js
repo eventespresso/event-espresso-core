@@ -9,7 +9,8 @@ import { reduce } from 'lodash';
  * SelectControl component.
  *
  * @param { Array } events
- * @return { Array }
+ * @return { Array }  Returns an array of simple objects formatted for the
+ * 					  WordPress SelectControl component.
  */
 export const buildEventOptions = ( events ) => {
 	return reduce( events, function( options, event ) {
