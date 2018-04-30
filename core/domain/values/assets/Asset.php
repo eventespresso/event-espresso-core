@@ -17,6 +17,16 @@ abstract class Asset
 {
 
     /**
+     * indicates the file extension for a build distribution CSS file
+     */
+    const FILE_EXTENSION_DISTRIBUTION_CSS = '.dist.css';
+
+    /**
+     * indicates the file extension for a build distribution JS file
+     */
+    const FILE_EXTENSION_DISTRIBUTION_JS = '.dist.js';
+
+    /**
      * indicates a Cascading Style Sheet asset
      */
     const TYPE_CSS = 'css';
