@@ -1032,4 +1032,20 @@ class EEH_DTT_Helper
             : 'EventEspresso\core\services\helpers\datetime\PhpCompatGreaterFiveSixHelper';
         return LoaderFactory::getLoader()->getShared($dtt_helper_fqcn);
     }
+
+
+    /**
+     * Helper function for setting the timezone on a DateTime object.
+     * This is implemented to standardize a workaround for a PHP bug outlined in
+     * https://events.codebasehq.com/projects/event-espresso/tickets/11407 and
+     * https://events.codebasehq.com/projects/event-espresso/tickets/11233
+     *
+     * @param DateTime     $datetime
+     * @param DateTimeZone $timezone
+     */
+    public static function setTimezone(DateTime $datetime, DateTimeZone $timezone)
+    {
+        $datetime->setTimezone($timezone);
+        $datetime->getTimestamp();
+    }
 }

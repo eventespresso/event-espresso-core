@@ -130,15 +130,22 @@ class CoreLoader
     }
 
 
+    /**
+     * @throws \DomainException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     */
     public function setupDependencyMap()
     {
         EE_Dependency_Map::register_class_loader('EE_Session_Mock');
         EE_Dependency_Map::register_dependencies(
             'EE_Session_Mock',
             array(
-                'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\request\Request'             => EE_Dependency_Map::load_from_cache,
-                'EE_Encryption'                                           => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\cache\TransientCacheStorage'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request'              => EE_Dependency_Map::load_from_cache,
+                'EE_Encryption'                                            => EE_Dependency_Map::load_from_cache,
             )
         );
         EE_Dependency_Map::register_dependencies(
@@ -166,6 +173,13 @@ class CoreLoader
 
     public function postLoadWPandEE()
     {
+        // ensure date and time formats are set
+        if (! get_option('date_format')) {
+            update_option('date_format', 'F j, Y');
+        }
+        if (! get_option('time_format')) {
+            update_option('time_format', 'g:i a');
+        }
         EE_Registry::instance()->SSN = EE_Registry::instance()->load_core('EE_Session_Mock');
     }
 
@@ -204,7 +218,7 @@ class CoreLoader
     public function registerPsr4Path(array $maps)
     {
         foreach ($maps as $prefix => $base_dir) {
-            EE_Psr4AutoloaderInit::psr4_loader()->addNameSpace(
+            EE_Psr4AutoloaderInit::psr4_loader()->addNamespace(
                 $prefix,
                 $base_dir
             );

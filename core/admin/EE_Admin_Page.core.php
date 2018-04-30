@@ -3,6 +3,7 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
 
@@ -2168,12 +2169,15 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     }
 
 
-
     /**
      * _set_list_table_object
      * WP_List_Table objects need to be loaded fairly early so automatic stuff WP does is taken care of.
      *
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws EE_Error
+     * @throws InvalidInterfaceException
      */
     protected function _set_list_table_object()
     {
@@ -2190,8 +2194,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     )
                 );
             }
-            $list_table               = $this->_route_config['list_table'];
-            $this->_list_table_object = new $list_table($this);
+            $this->_list_table_object = LoaderFactory::getLoader()->getShared(
+                $this->_route_config['list_table'],
+                array($this)
+            );
         }
     }
 
@@ -4104,7 +4110,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         //remove any options that are NOT going to be saved with the config settings.
         if (isset($config->core->ee_ueip_optin)) {
-            $config->core->ee_ueip_has_notified = true;
             // TODO: remove the following two lines and make sure values are migrated from 3.1
             update_option('ee_ueip_optin', $config->core->ee_ueip_optin);
             update_option('ee_ueip_has_notified', true);

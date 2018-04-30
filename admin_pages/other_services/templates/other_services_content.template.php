@@ -657,29 +657,3 @@
 													</div>
 													
 												</div>
-												<?php /*
-												<div class="service-div-settings">
-													<div class="service-div-settings-top">
-														<div class="service-div-inner-content">
-															<div class="name column-name">
-																<h3>VIP Member Pass</h3>
-															</div>
-															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/vip-membership/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=vip_membership&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/vip231x151.jpg"></a>Whether you are an event manager, webmaster, WordPress developer or designer we understand that you (or your clients) are busy trying to get more people to sign up for events and need to reduce the amount of work needed to manage the registration process. You have the choice to use a 3rd party application that charges high fees, use a free plugin gives you some new features but little help to get up and running or get it fixed when something goes wrong, or you can use a premium plugin that increases the power of your website and saves you a lot of time and money for a minimal fee. With an Event Espresso membership, you join the Event Espresso community of developers, designers, event managers, publishers and webmasters that use Event Espresso tools to maximize the power and success of their events. An Event Espresso membership grants you immediate and premier access to:</p>
-																<ul>
-																<li>- Beta or development versions of Event Espresso and add-ons</li>
-																<li>- Premium support forums with a guaranteed 24-48 hour responses</li>
-																<li>- Premium user and developer tutorials</li>
-																</ul>
-															</div>
-														</div>
-														<div class="action-links">
-															<ul class="plugin-action-buttons-custom">
-																<li>
-																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/vip-membership/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=vip_membership&ap_id=EEspresso" target="_blank">Buy Now</a>
-																</li>
-															</ul>
-														</div>
-													</div>
-													
-												</div> */

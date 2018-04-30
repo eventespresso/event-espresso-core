@@ -9,7 +9,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
+ *
  */
 class EE_Encryption_Mock extends EE_Encryption
 {
@@ -31,38 +31,46 @@ class EE_Encryption_Mock extends EE_Encryption
     public static function instance()
     {
         // check if class object is instantiated
-        if (! self::$_instance instanceof EE_Encryption_Mock) {
-            self::$_instance = new self();
+        if (! EE_Encryption_Mock::$_instance instanceof EE_Encryption_Mock) {
+            EE_Encryption_Mock::$_instance = new self();
         }
-        return self::$_instance;
+        return EE_Encryption_Mock::$_instance;
     }
-
 
 
     /**
      * encrypts data using PHP's openssl functions
      *
      * @param string $text_string the text to be encrypted
+     * @param string $cipher_method
+     * @param string $encryption_key
      * @return string
      * @throws RuntimeException
      */
-    public function openssl_encrypt($text_string = '')
-    {
-        return parent::openssl_encrypt($text_string);
+    public function openssl_encrypt(
+        $text_string = '',
+        $cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD,
+        $encryption_key = ''
+    ) {
+        return parent::openssl_encrypt($text_string, $cipher_method, $encryption_key);
     }
-
 
 
     /**
      * decrypts data that has been encrypted with PHP's openssl functions
      *
      * @param string $encrypted_text the text to be decrypted
+     * @param string $cipher_method
+     * @param string $encryption_key
      * @return string
      * @throws RuntimeException
      */
-    public function openssl_decrypt($encrypted_text = '')
-    {
-        return parent::openssl_decrypt($encrypted_text);
+    public function openssl_decrypt(
+        $encrypted_text = '',
+        $cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD,
+        $encryption_key = ''
+    ) {
+        return parent::openssl_decrypt($encrypted_text, $cipher_method, $encryption_key);
     }
 
 
@@ -80,13 +88,13 @@ class EE_Encryption_Mock extends EE_Encryption
     }
 
 
-
     /**
      * decrypts data for acme servers that didn't bother to install PHP mcrypt
      *
      * @see http://stackoverflow.com/questions/800922/how-to-encrypt-string-without-mcrypt-library-in-php
      * @param string $encrypted_text the text to be decrypted
      * @return string
+     * @throws RuntimeException
      */
     public function acme_decrypt($encrypted_text = '')
     {

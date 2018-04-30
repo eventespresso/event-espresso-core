@@ -56,8 +56,12 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
      * @param array $cookie
      * @param array $server
      */
-    public function __construct(array $get, array $post, array $cookie, array $server = array())
-    {
+    public function __construct(
+        array $get = array(),
+        array $post = array(),
+        array $cookie = array(),
+        array $server = array()
+    ) {
     }
 
 
@@ -210,7 +214,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     }
 
 
-
     /**
      * remove param
      *
@@ -344,6 +347,44 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
         $this->request()->setIsBot($is_bot);
     }
 
+
+    /**
+     * check if a request parameter exists whose key that matches the supplied wildcard pattern
+     * and return the value for the first match found
+     * wildcards can be either of the following:
+     *      ? to represent a single character of any type
+     *      * to represent one or more characters of any type
+     *
+     * @param string     $pattern
+     * @param null|mixed $default
+     * @return false|int
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     */
+    public function getMatch($pattern, $default = null)
+    {
+        return $this->request()->getMatch($pattern, $default);
+    }
+
+
+    /**
+     * check if a request parameter exists whose key matches the supplied wildcard pattern
+     * wildcards can be either of the following:
+     *      ? to represent a single character of any type
+     *      * to represent one or more characters of any type
+     * returns true if a match is found or false if not
+     *
+     * @param string $pattern
+     * @return false|int
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     */
+    public function matches($pattern)
+    {
+        return $this->request()->matches($pattern);
+    }
 
 
 }

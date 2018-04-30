@@ -3,6 +3,7 @@
 use EventEspresso\core\domain\services\capabilities\PublicCapabilities;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -306,12 +307,6 @@ class EED_Single_Page_Checkout extends EED_Module
                     'file_path'  => SPCO_REG_STEPS_PATH . 'attendee_information',
                     'class_name' => 'EE_SPCO_Reg_Step_Attendee_Information',
                     'slug'       => 'attendee_information',
-                    'has_hooks'  => false,
-                ),
-                20  => array(
-                    'file_path'  => SPCO_REG_STEPS_PATH . 'registration_confirmation',
-                    'class_name' => 'EE_SPCO_Reg_Step_Registration_Confirmation',
-                    'slug'       => 'registration_confirmation',
                     'has_hooks'  => false,
                 ),
                 30  => array(
@@ -723,14 +718,14 @@ class EED_Single_Page_Checkout extends EED_Module
     }
 
 
-
     /**
-     *    _load_and_instantiate_reg_steps
-     *  instantiates each reg step based on the loaded reg_steps array
+     * instantiates each reg step based on the loaded reg_steps array
      *
-     * @access    private
-     * @throws EE_Error
      * @return    bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function _load_and_instantiate_reg_steps()
     {
@@ -746,18 +741,16 @@ class EED_Single_Page_Checkout extends EED_Module
                     return false;
                 }
             }
-            EE_Registry::instance()->CFG->registration->skip_reg_confirmation = true;
-            EE_Registry::instance()->CFG->registration->reg_confirmation_last = true;
-            // skip the registration_confirmation page ?
-            if (EE_Registry::instance()->CFG->registration->skip_reg_confirmation) {
-                // just remove it from the reg steps array
-                $this->checkout->remove_reg_step('registration_confirmation', false);
-            } else if (
-                isset($this->checkout->reg_steps['registration_confirmation'])
-                && EE_Registry::instance()->CFG->registration->reg_confirmation_last
-            ) {
-                // set the order to something big like 100
-                $this->checkout->set_reg_step_order('registration_confirmation', 100);
+            if(isset($this->checkout->reg_steps['registration_confirmation'])){
+                // skip the registration_confirmation page ?
+                if (EE_Registry::instance()->CFG->registration->skip_reg_confirmation) {
+                    // just remove it from the reg steps array
+                    $this->checkout->remove_reg_step('registration_confirmation', false);
+                } elseif (EE_Registry::instance()->CFG->registration->reg_confirmation_last
+                ) {
+                    // set the order to something big like 100
+                    $this->checkout->set_reg_step_order('registration_confirmation', 100);
+                }
             }
             // filter the array for good luck
             $this->checkout->reg_steps = apply_filters(
@@ -1844,7 +1837,7 @@ class EED_Single_Page_Checkout extends EED_Module
     /**
      *    getRegistrationExpirationNotice
      *
-     * @since $VID:$
+     * @since 4.9.59.p
      * @access    public
      * @return    string
      */

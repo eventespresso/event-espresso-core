@@ -1,8 +1,16 @@
 <?php
 
-use \EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;
+use EventEspresso\core\domain\Domain;
+use EventEspresso\core\domain\DomainFactory;
 use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
+use EventEspresso\core\domain\values\FilePath;
+use EventEspresso\core\domain\values\FullyQualifiedName;
+use EventEspresso\core\domain\values\Version;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidFilePathException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
@@ -558,7 +566,11 @@ final class EE_System implements ResettableInterface
         $request_type = $this->detect_req_type();
         //only initialize system if we're not in maintenance mode.
         if ($this->maintenance_mode->level() !== EE_Maintenance_Mode::level_2_complete_maintenance) {
-            update_option('ee_flush_rewrite_rules', true);
+            /** @var EventEspresso\core\domain\services\custom_post_types\RewriteRules $rewrite_rules */
+            $rewrite_rules = $this->loader->getShared(
+                'EventEspresso\core\domain\services\custom_post_types\RewriteRules'
+            );
+            $rewrite_rules->flush();
             if ($verify_schema) {
                 EEH_Activation::initialize_db_and_folders();
             }
@@ -875,6 +887,9 @@ final class EE_System implements ResettableInterface
         $this->_parse_model_names();
         //load caf stuff a chance to play during the activation process too.
         $this->_maybe_brew_regular();
+        // configure custom post type definitions
+        $this->loader->getShared('EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions');
+        $this->loader->getShared('EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions');
         do_action('AHEE__EE_System__load_core_configuration__complete', $this);
     }
 
@@ -910,16 +925,31 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks
      * that need to be setup before our EE_System launches.
      *
      * @return void
+     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidClassException
+     * @throws InvalidFilePathException
      */
     private function _maybe_brew_regular()
     {
-        if ((! defined('EE_DECAF') || EE_DECAF !== true) && is_readable(EE_CAFF_PATH . 'brewing_regular.php')) {
+        /** @var Domain $domain */
+        $domain = DomainFactory::getShared(
+            new FullyQualifiedName(
+                'EventEspresso\core\domain\Domain'
+            ),
+            array(
+                new FilePath(EVENT_ESPRESSO_MAIN_FILE),
+                Version::fromString(espresso_version())
+            )
+        );
+        if ($domain->isCaffeinated()) {
             require_once EE_CAFF_PATH . 'brewing_regular.php';
         }
     }
@@ -1021,7 +1051,7 @@ final class EE_System implements ResettableInterface
         add_action('init', array($this, 'initialize_last'), 100);
         if (is_admin() && apply_filters('FHEE__EE_System__brew_espresso__load_pue', true)) {
             // pew pew pew
-            $this->loader->getShared('EE_PUE');
+            $this->loader->getShared('EventEspresso\core\services\licensing\LicenseService');
             do_action('AHEE__EE_System__brew_espresso__after_pue_init');
         }
         do_action('AHEE__EE_System__brew_espresso__complete', $this);
@@ -1040,6 +1070,7 @@ final class EE_System implements ResettableInterface
     {
         $this->_deactivate_incompatible_addons();
         do_action('AHEE__EE_System__set_hooks_for_core');
+        $this->loader->getShared('EventEspresso\core\domain\values\session\SessionLifespan');
         //caps need to be initialized on every request so that capability maps are set.
         //@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
         $this->registry->CAP->init_caps();
@@ -1077,25 +1108,33 @@ final class EE_System implements ResettableInterface
      */
     public function perform_activations_upgrades_and_migrations()
     {
-        //first check if we had previously attempted to setup EE's directories but failed
-        if ($this->request->isActivation() && EEH_Activation::upload_directories_incomplete()) {
-            EEH_Activation::create_upload_directories();
-        }
         do_action('AHEE__EE_System__perform_activations_upgrades_and_migrations');
     }
 
 
-
     /**
-     *    load_CPTs_and_session
-     *
-     * @access public
-     * @return    void
+     * @return void
+     * @throws DomainException
      */
     public function load_CPTs_and_session()
     {
         do_action('AHEE__EE_System__load_CPTs_and_session__start');
-        // register Custom Post Types
+        /** @var EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies $register_custom_taxonomies */
+        $register_custom_taxonomies = $this->loader->getShared(
+            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies'
+        );
+        $register_custom_taxonomies->registerCustomTaxonomies();
+        /** @var EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes $register_custom_post_types */
+        $register_custom_post_types = $this->loader->getShared(
+            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes'
+        );
+        $register_custom_post_types->registerCustomPostTypes();
+        /** @var EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomyTerms $register_custom_taxonomy_terms */
+        $register_custom_taxonomy_terms = $this->loader->getShared(
+            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomyTerms'
+        );
+        $register_custom_taxonomy_terms->registerCustomTaxonomyTerms();
+        // load legacy Custom Post Types and Taxonomies
         $this->loader->getShared('EE_Register_CPTs');
         do_action('AHEE__EE_System__load_CPTs_and_session__complete');
     }
@@ -1187,6 +1226,11 @@ final class EE_System implements ResettableInterface
     public function initialize_last()
     {
         do_action('AHEE__EE_System__initialize_last');
+        /** @var EventEspresso\core\domain\services\custom_post_types\RewriteRules $rewrite_rules */
+        $rewrite_rules = $this->loader->getShared(
+            'EventEspresso\core\domain\services\custom_post_types\RewriteRules'
+        );
+        $rewrite_rules->flushRewriteRules();
         add_action('admin_bar_init', array($this, 'addEspressoToolbar'));
     }
 
