@@ -6,6 +6,7 @@ use EE_Currency_Config;
 use EE_Error;
 use EE_Registry;
 use EE_Template_Config;
+use EED_Core_Rest_Api;
 use EEH_Qtip_Loader;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\exceptions\InvalidFilePathException;
@@ -176,7 +177,10 @@ class Registry
                 true
             );
             $this->jsdata['eejs_api_nonce'] = wp_create_nonce('wp_rest');
-            $this->jsdata['paths'] = array('rest_route' => rest_url('ee/v4.8.36/'));
+            $this->jsdata['paths'] = array(
+                'rest_route' => rest_url('ee/v4.8.36/'),
+                'collection_endpoints' => EED_Core_Rest_Api::getCollectionRoutesIndexedByModelName()
+            );
         }
         if (! is_admin()) {
             $this->loadCoreCss();
