@@ -15,17 +15,12 @@ use EventEspresso\core\libraries\form_sections\form_handlers\FormHandler;
 use InvalidArgumentException;
 use LogicException;
 
-defined('ABSPATH') || exit;
-
-
-
 /**
  * Class AdminOptionsSettings
  * class for handling admin options settings
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class AdminOptionsSettings extends FormHandler
 {
@@ -37,7 +32,8 @@ class AdminOptionsSettings extends FormHandler
      *
      * @param \EE_Registry $registry
      */
-    public function __construct(\EE_Registry $registry) {
+    public function __construct(\EE_Registry $registry)
+    {
         parent::__construct(
             esc_html__('Admin Options', 'event_espresso'),
             esc_html__('Admin Options', 'event_espresso'),
@@ -82,7 +78,8 @@ class AdminOptionsSettings extends FormHandler
                                 EEH_Template::get_help_tab_link('help_tour_activation_info'),
                                 'help_tour_activation'
                             ),
-                            '', 'ee-admin-settings-hdr'
+                            '',
+                            'ee-admin-settings-hdr'
                         )
                     ),
                     'help_tour_activation' => new EE_Yes_No_Input(
@@ -101,7 +98,8 @@ class AdminOptionsSettings extends FormHandler
                     'compatibility_hdr'   => new EE_Form_Section_HTML(
                         EEH_HTML::h2(
                             esc_html__('Compatibility Settings', 'event_espresso'),
-                            '', 'ee-admin-settings-hdr'
+                            '',
+                            'ee-admin-settings-hdr'
                         )
                     ),
                     'encode_session_data' => new EE_Yes_No_Input(
@@ -121,12 +119,10 @@ class AdminOptionsSettings extends FormHandler
                 )
             )
         );
-        if (
-            $this->registry->CAP->current_user_can(
-                'manage_options',
-                'display_admin_settings_options_promote_and_affiliate'
-            )
-        ) {
+        if ($this->registry->CAP->current_user_can(
+            'manage_options',
+            'display_admin_settings_options_promote_and_affiliate'
+        ) ) {
             $form->add_subsections(
                 array(
                     'promote_ee_hdr'  => new EE_Form_Section_HTML(
@@ -137,15 +133,16 @@ class AdminOptionsSettings extends FormHandler
                                 EEH_Template::get_help_tab_link('affiliate_info'),
                                 'affiliate_info'
                             ),
-                            '', 'ee-admin-settings-hdr'
+                            '',
+                            'ee-admin-settings-hdr'
                         )
                     ),
                     'show_reg_footer' => new EE_Yes_No_Input(
                         array(
                             'html_label_text' => esc_html__(
-                                                     'Link to Event Espresso in your Registration Page?',
-                                                     'event_espresso'
-                                                 )
+                                'Link to Event Espresso in your Registration Page?',
+                                'event_espresso'
+                            )
                                                  . EEH_Template::get_help_tab_link('email_validation_info'),
                             'html_help_text'  => esc_html__(
                                 'adds an unobtrusive link to Event Espresso\'s website in the footer of your registration form. Get an affiliate link (see below) and make money if people click the link and purchase Event Espresso.',
@@ -160,7 +157,7 @@ class AdminOptionsSettings extends FormHandler
                     'affiliate_id'    => new EE_Text_Input(
                         array(
                             'html_label_text' => sprintf(
-                                esc_html__('Event Espresso %sAffiliate%s ID', 'event_espresso'),
+                                esc_html__('Event Espresso %1$sAffiliate%2$s ID', 'event_espresso'),
                                 '<a href="http://eventespresso.com/affiliates/" target="_blank">',
                                 '</a>'
                             ),
@@ -234,21 +231,18 @@ class AdminOptionsSettings extends FormHandler
         if (empty($valid_data)) {
             return false;
         }
-        $this->registry->CFG->admin->show_reg_footer = isset( $form_data['show_reg_footer'] )
-            ? absint( $form_data['show_reg_footer'] )
+        $this->registry->CFG->admin->show_reg_footer = isset($form_data['show_reg_footer'])
+            ? absint($form_data['show_reg_footer'])
             : $this->registry->CFG->admin->show_reg_footer;
-        $this->registry->CFG->admin->affiliate_id = isset( $form_data['affiliate_id'] )
-            ? sanitize_text_field( $form_data['affiliate_id'] )
+        $this->registry->CFG->admin->affiliate_id = isset($form_data['affiliate_id'])
+            ? sanitize_text_field($form_data['affiliate_id'])
             : $this->registry->CFG->admin->affiliate_id;
-        $this->registry->CFG->admin->help_tour_activation = isset( $form_data['help_tour_activation'] )
-            ? absint( $form_data['help_tour_activation'])
+        $this->registry->CFG->admin->help_tour_activation = isset($form_data['help_tour_activation'])
+            ? absint($form_data['help_tour_activation'])
             : $this->registry->CFG->admin->help_tour_activation;
         if (isset($form_data['encode_session_data'])) {
             $this->registry->CFG->admin->set_encode_session_data($form_data['encode_session_data']);
         }
         return false;
     }
-
 }
-// End of file AdminOptionsSettings.php
-// Location: EventEspresso\admin_pages\general_settings/AdminOptionsSettings.php
