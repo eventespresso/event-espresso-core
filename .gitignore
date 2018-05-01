@@ -8,5 +8,6 @@ translation-map.json
 # local project files that should not be committed
 *.mo
 .idea
-node_modules
+node_modules/
 .DS_Store
+vendor/
