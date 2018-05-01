@@ -14,7 +14,6 @@
     <arg value="sp"/>
 
     <rule ref="EventEspresso">
-        <exclude name="WordPress.WP.PreparedSQL.NotPrepared"/><!-- TODO audit raw queries -->
         <exclude name="WordPress.Functions.DontExtract" /><!-- TODO audit usage & replace -->
     </rule>
 </ruleset>
