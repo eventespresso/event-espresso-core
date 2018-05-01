@@ -156,7 +156,8 @@ class Benchmark
             'shutdown',
             function () use ($formatted) {
                 Benchmark::displayResults(true, $formatted);
-            }
+            },
+            999999
         );
     }
 
@@ -177,7 +178,8 @@ class Benchmark
             'shutdown',
             function () use ($filepath, $formatted, $append) {
                 Benchmark::writeResultsToFile($filepath, $formatted, $append);
-            }
+            },
+            999999
         );
     }
 
