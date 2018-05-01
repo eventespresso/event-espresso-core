@@ -5,6 +5,9 @@
  * @subpackage plugin api, custom post type, custom taxonomy
  * @since           4.5.0
  */
+
+use EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomyTerms;
+
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 /**
@@ -22,7 +25,7 @@ class EE_Register_CPT implements EEI_Plugin_API {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @var array
+	 * @var array[][][]
 	 */
 	protected static $_registry = array();
 
@@ -36,7 +39,7 @@ class EE_Register_CPT implements EEI_Plugin_API {
 	 *                           An array of required values for registering the cpts and taxonomies
 	 *                           @type array $cpts {
 	 *                                 An array of cpts and their arguments.(short example below)
-	 *                                 @see EE_Register_CPTs.core.php get_CPTs() for a more complete example.
+	 *                                 @see CustomPostTypeDefinitions::setDefinitions for a more complete example.
 	 *                                 'people' => array(
 	 *                                 		'singular_name' => __('People', 'event_espresso'),
 	 *                                 		'plural_name' => __('People', 'event_espresso'),
@@ -47,7 +50,7 @@ class EE_Register_CPT implements EEI_Plugin_API {
 	 *                           },
 	 *                           @type array $cts {
 	 *                                 An array of custom taxonomies and their arguments (short example below).
-	 *                                 @see EE_Register_CPTs.core.php get_taxonomies() for a more complete example.
+	 *                                 @see CustomTaxonomyDefinitions::setTaxonomies() for a more complete example.
 	 *                                 'espresso_people_type' => array(
 	 *                                 		'singular_name' => __('People Type', 'event_espresso'),
 	 *                                 		'plural_name' => __('People Types', 'event_espresso'),
@@ -62,13 +65,12 @@ class EE_Register_CPT implements EEI_Plugin_API {
 	 *                                 )
 	 *                           }
 	 * }
-	 *
 	 * @throws  EE_Error
 	 * @return void
 	 */
 	public static function register( $cpt_ref = NULL, $setup_args = array() ) {
 
-		//check for requred params
+		//check for required params
 		if ( empty( $cpt_ref ) ) {
 			throw new EE_Error(
 				__('In order to register custom post types and custom taxonomies, you must include a value to reference what had been registered', 'event_espresso' )
@@ -102,31 +104,112 @@ class EE_Register_CPT implements EEI_Plugin_API {
 				'4.5.0'
 			);
 		}
-
-		//validate incoming args
-		$validated = array(
-			'cpts' => isset( $setup_args['cpts'] ) ? (array) $setup_args['cpts'] : array(),
-			'cts' => isset( $setup_args['cts'] ) ? (array) $setup_args['cts'] : array(),
-			'default_terms' => isset( $setup_args['default_terms'] ) ? (array) $setup_args['default_terms'] : array()
-			);
+        //validate incoming args
+        $validated = array(
+            'cpts'          => isset($setup_args['cpts'])
+                ? (array) $setup_args['cpts']
+                : array(),
+            'cts'           => isset($setup_args['cts'])
+                ? (array) $setup_args['cts']
+                : array(),
+            'default_terms' => isset($setup_args['default_terms'])
+                ? (array) $setup_args['default_terms']
+                : array(),
+        );
 
 		self::$_registry[$cpt_ref] = $validated;
 
 		//hook into to cpt system
-		add_filter( 'FHEE__EE_Register_CPTs__get_CPTs__cpts', array( __CLASS__, 'filter_cpts' ), 5 );
-		add_filter( 'FHEE__EE_Register_CPTs__get_taxonomies__taxonomies', array( __CLASS__, 'filter_cts' ), 5 );
-		add_action( 'AHEE__EE_Register_CPTs__construct_end', array( __CLASS__, 'default_terms'), 5 );
+		add_filter(
+		    'FHEE__EventEspresso_core_domain_entities_custom_post_types_CustomPostTypeDefinitions__getCustomPostTypes',
+            array( __CLASS__, 'filterCustomPostTypeDefinitions' ),
+            5
+        );
+		add_filter(
+		    'FHEE__EventEspresso_core_domain_entities_custom_post_types_TaxonomyDefinitions__getTaxonomies',
+            array( __CLASS__, 'filterCustomTaxonomyDefinitions' ),
+            5
+        );
+		add_action(
+		    'AHEE__EventEspresso_core_domain_services_custom_post_types_RegisterCustomTaxonomyTerms__construct_end',
+            array( __CLASS__, 'registerCustomTaxonomyTerm'),
+            5
+        );
 	}
 
 
 
 
 	/**
-	 * Callback for FHEE__EE_Register_CPTs__get_CPTs__cpts that adds additional custom post types to be
-	 * registered.
+     * Callback for
+     * FHEE__EventEspresso_core_domain_entities_custom_post_types_CustomPostTypeDefinitions__getCustomPostTypes
+     * that adds additional custom post types to be registered.
 	 *
+	 * @param array $custom_post_type_definitions array of cpts that are already set
+	 * @return array new array of cpts and their registration information
+	 */
+	public static function filterCustomPostTypeDefinitions( $custom_post_type_definitions ) {
+		foreach( self::$_registry as  $registries ) {
+			foreach ( $registries['cpts'] as $cpt_name => $cpt_settings ) {
+                $custom_post_type_definitions[$cpt_name] = $cpt_settings;
+			}
+		}
+		return $custom_post_type_definitions;
+	}
+
+
+
+	/**
+     * Callback for
+     * FHEE__EventEspresso_core_domain_entities_custom_post_types_TaxonomyDefinitions__getTaxonomies
+     * that adds additional custom taxonomies to be registered.
+	 *
+	 * @param array $custom_taxonomy_definitions array of cts that are already set.
+	 * @return array new array of cts and their registration information.
+	 */
+	public static function filterCustomTaxonomyDefinitions( $custom_taxonomy_definitions ) {
+		foreach( self::$_registry as $registries ) {
+			foreach( $registries['cts'] as $ct_name => $ct_settings ) {
+                $custom_taxonomy_definitions[$ct_name] = $ct_settings;
+			}
+		}
+		return $custom_taxonomy_definitions;
+	}
+
+
+
+
+	/**
+     * Callback for
+     * AHEE__EventEspresso_core_domain_services_custom_post_types_RegisterCustomTaxonomyTerms__construct_end
+     * which is used to set the default terms
+	 *
+	 * @param RegisterCustomTaxonomyTerms $register_custom_taxonomy_terms
+	 * @return void
+	 */
+    public static function registerCustomTaxonomyTerm(RegisterCustomTaxonomyTerms $register_custom_taxonomy_terms)
+    {
+        foreach (self::$_registry as $registries) {
+            foreach ($registries['default_terms'] as $taxonomy => $terms) {
+                foreach ($terms as $term => $cpts) {
+                    $register_custom_taxonomy_terms->registerCustomTaxonomyTerm(
+                        $taxonomy,
+                        $term,
+                        $cpts
+                    );
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+	/**
+     * @deprecated $VID:$
 	 * @param array $cpts array of cpts that are already set
-	 *
 	 * @return array new array of cpts and their registration information
 	 */
 	public static function filter_cpts( $cpts ) {
@@ -141,11 +224,8 @@ class EE_Register_CPT implements EEI_Plugin_API {
 
 
 	/**
-	 * Callback for FHEE__EE_Register_CPTs__get_taxonomies__taxonomies that adds additional custom
-	 * taxonomies to be registered.
-	 *
+     * @deprecated $VID:$
 	 * @param array $cts array of cts that are already set.
-	 *
 	 * @return array new array of cts and their registration information.
 	 */
 	public static function filter_cts( $cts ) {
@@ -161,10 +241,8 @@ class EE_Register_CPT implements EEI_Plugin_API {
 
 
 	/**
-	 * Callback for AHEE__EE_Register_CPTs__construct_end which is used to set the default terms
-	 *
-	 * @param EE_Register_CPTs $cpt_class
-	 *
+     * @deprecated $VID:$
+     * @param EE_Register_CPTs $cpt_class
 	 * @return void
 	 */
 	public static function default_terms( EE_Register_CPTs $cpt_class ) {
