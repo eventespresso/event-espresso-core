@@ -12,7 +12,7 @@ namespace EventEspresso\core\domain\entities;
  */
 class GenericAddress implements \EEI_Address
 {
-
+    // phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
     private $_address = '';
 
     private $_address2 = '';
@@ -28,8 +28,9 @@ class GenericAddress implements \EEI_Address
     private $_country_ID = '';
 
     private $_country_obj = '';
+    // phpcs:enable
 
-
+    // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     /**
      * @param string               $address
      * @param string               $address2
@@ -87,6 +88,7 @@ class GenericAddress implements \EEI_Address
     }
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
     /**
      * @return \EE_State
      */

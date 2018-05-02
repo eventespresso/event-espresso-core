@@ -13,7 +13,7 @@ namespace EventEspressoBatchRequest\Helpers;
  */
 class JobStepResponse
 {
-
+    // phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
     /**
      * Description fo what happened during this step
      *
@@ -32,6 +32,7 @@ class JobStepResponse
      * @var array
      */
     protected $_extra_data = array();
+    // phpcs:enable
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     /**
@@ -43,7 +44,7 @@ class JobStepResponse
     {
         $this->_job_parameters = $job_parameters;
         $this->_update_text = $update_text;
-        $this->_extra_data = (array)$extra_data;
+        $this->_extra_data = (array) $extra_data;
     }
 
 

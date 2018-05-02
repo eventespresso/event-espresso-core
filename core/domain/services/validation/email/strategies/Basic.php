@@ -49,7 +49,7 @@ class Basic implements EmailValidatorInterface
                 esc_html__('Email local-part (before the @) must not begin with a period.', 'event_espresso')
             );
         }
-        if ($local[$localLen - 1] === '.') {
+        if ($local[ $localLen - 1 ] === '.') {
             // local part starts or ends with '.'
             throw new EmailValidationException(
                 esc_html__('Email local-part (before the @) must not end with a period.', 'event_espresso')

@@ -117,7 +117,7 @@ class EspressoEvents extends EspressoShortcode
     private function getAttributes(array $attributes)
     {
         return array_merge(
-            (array)apply_filters(
+            (array) apply_filters(
                 'EES_Espresso_Events__process_shortcode__default_espresso_events_shortcode_atts',
                 array(
                     'title'         => '',

@@ -231,7 +231,7 @@ class Stats
             return true;
         }
 
-        if (time() > (int)$current_expiry) {
+        if (time() > (int) $current_expiry) {
             update_option(self::OPTIONS_KEY_EXPIRY_TIMESTAMP_FOR_SENDING_STATS, time() + WEEK_IN_SECONDS);
             return true;
         }

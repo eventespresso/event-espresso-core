@@ -105,12 +105,12 @@ class AttendeesReport extends JobHandlerFile
             foreach (\EEM_Attendee::instance()->field_settings() as $field_name => $field_obj) {
                 if ($field_name == 'STA_ID') {
                     $state_name_field = \EEM_State::instance()->field_settings_for('STA_name');
-                    $csv_row[__('State', 'event_espresso')] = $attendee_row[$state_name_field->get_qualified_column()];
+                    $csv_row[ __('State', 'event_espresso') ] = $attendee_row[ $state_name_field->get_qualified_column() ];
                 } elseif ($field_name == 'CNT_ISO') {
                     $country_name_field = \EEM_Country::instance()->field_settings_for('CNT_name');
-                    $csv_row[__('Country', 'event_espresso')] = $attendee_row[$country_name_field->get_qualified_column()];
+                    $csv_row[ __('Country', 'event_espresso') ] = $attendee_row[ $country_name_field->get_qualified_column() ];
                 } else {
-                    $csv_row[wp_specialchars_decode($field_obj->get_nicename(), ENT_QUOTES)] = $attendee_row[$field_obj->get_qualified_column()];
+                    $csv_row[ wp_specialchars_decode($field_obj->get_nicename(), ENT_QUOTES) ] = $attendee_row[ $field_obj->get_qualified_column() ];
                 }
             }
             $csv_data[] = apply_filters(

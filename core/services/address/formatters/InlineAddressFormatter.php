@@ -36,7 +36,7 @@ class InlineAddressFormatter extends AddressFormatter implements \EEI_Address_Fo
             )
         );
         // if the incoming country has a set format, use that, else use the default
-        $formatted_address = isset($address_formats[$CNT_ISO]) ? $address_formats[$CNT_ISO]
+        $formatted_address = isset($address_formats[ $CNT_ISO ]) ? $address_formats[ $CNT_ISO ]
             : $address_formats['ZZZ'];
         return $this->parse_formatted_address(
             $address,

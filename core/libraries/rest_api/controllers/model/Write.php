@@ -140,7 +140,7 @@ class Write extends Base
                 array('status' => 403)
             );
         }
-        $submitted_json_data = array_merge((array)$request->get_body_params(), (array)$request->get_json_params());
+        $submitted_json_data = array_merge((array) $request->get_body_params(), (array) $request->get_json_params());
         $model_data = ModelDataTranslator::prepareConditionsQueryParamsForModels(
             $submitted_json_data,
             $model,
@@ -261,7 +261,7 @@ class Write extends Base
         $requested_allow_blocking = filter_var($request->get_param('allow_blocking'), FILTER_VALIDATE_BOOLEAN);
         if ($requested_permanent_delete) {
             $previous = $this->returnModelObjAsJsonResponse($model_obj, $request);
-            $deleted = (bool)$model->delete_permanently_by_ID($obj_id, $requested_allow_blocking);
+            $deleted = (bool) $model->delete_permanently_by_ID($obj_id, $requested_allow_blocking);
             return array(
                 'deleted'  => $deleted,
                 'previous' => $previous,
@@ -307,7 +307,7 @@ class Write extends Base
             } else {
                 $raw_value = $model_obj->get_raw($field_name);
             }
-            $simulated_db_row[$field_obj->get_qualified_column()] = $field_obj->prepare_for_use_in_db($raw_value);
+            $simulated_db_row[ $field_obj->get_qualified_column() ] = $field_obj->prepare_for_use_in_db($raw_value);
         }
         $read_controller = new Read();
         $read_controller->setRequestedVersion($this->getRequestedVersion());

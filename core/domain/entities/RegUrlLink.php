@@ -92,7 +92,7 @@ class RegUrlLink
                 )
             );
         }
-        $this->reg_url_link = (string)apply_filters(
+        $this->reg_url_link = (string) apply_filters(
             'FHEE__\EventEspresso\core\domain\entities\RegUrlLink__construct__reg_url_link',
             $reg_count . '-' . md5($base_code . microtime()),
             $reg_count,

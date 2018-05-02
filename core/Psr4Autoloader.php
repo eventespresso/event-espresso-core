@@ -69,7 +69,7 @@ class Psr4Autoloader
     {
         if (! empty($prefix)) {
             // are there any base directories for this namespace prefix?
-            return isset($this->prefixes[$prefix]) ? $this->prefixes[$prefix] : array();
+            return isset($this->prefixes[ $prefix ]) ? $this->prefixes[ $prefix ] : array();
         }
         return $this->prefixes;
     }
@@ -104,14 +104,14 @@ class Psr4Autoloader
         // normalize the base directory with a trailing separator
         $base_dir = \EEH_File::standardise_and_end_with_directory_separator($base_dir);
         // initialize the namespace prefix array
-        if (isset($this->prefixes[$prefix]) === false) {
-            $this->prefixes[$prefix] = array();
+        if (isset($this->prefixes[ $prefix ]) === false) {
+            $this->prefixes[ $prefix ] = array();
         }
         // retain the base directory for the namespace prefix
         if ($prepend) {
-            array_unshift($this->prefixes[$prefix], $base_dir);
+            array_unshift($this->prefixes[ $prefix ], $base_dir);
         } else {
-            $this->prefixes[$prefix][] = $base_dir;
+            $this->prefixes[ $prefix ][] = $base_dir;
         }
     }
 

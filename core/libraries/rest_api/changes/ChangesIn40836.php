@@ -151,7 +151,7 @@ class ChangesIn40836 extends ChangesInBase
             && $model instanceof \EEM_CPT_Base
         ) {
             $attachment = wp_get_attachment_image_src(
-                get_post_thumbnail_id($entity_response_array[$model->primary_key_name()]),
+                get_post_thumbnail_id($entity_response_array[ $model->primary_key_name() ]),
                 'full'
             );
             $entity_response_array['featured_image_url'] = ! empty($attachment) ? $attachment[0] : null;

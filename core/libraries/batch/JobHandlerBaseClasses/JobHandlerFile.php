@@ -19,6 +19,7 @@ abstract class JobHandlerFile extends JobHandler
     // phpcs:disable Generic.NamingConventions.UpperCaseConstantName.ClassConstantNotUpperCase
     const temp_folder_name = 'batch_temp_folder';
 
+    // phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
     /**
      * @var \EEHI_File
      */

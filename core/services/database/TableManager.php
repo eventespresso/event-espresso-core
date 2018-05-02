@@ -132,7 +132,7 @@ class TableManager extends \EE_Base
         foreach ($table_names as $table_name) {
             $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
             if ($this->getTableAnalysis()->tableExists($table_name)) {
-                $tables_to_delete[$table_name] = $table_name;
+                $tables_to_delete[ $table_name ] = $table_name;
             }
         }
         if (! empty($tables_to_delete)) {
@@ -251,7 +251,7 @@ class TableManager extends \EE_Base
         }
         foreach ($index_entries as $index_entry) {
             if ($column_name === $index_entry->Column_name
-                && (string)$desired_index_size !== $index_entry->Sub_part) {
+                && (string) $desired_index_size !== $index_entry->Sub_part) {
                 return $this->dropIndex($table_name, $index_name);
             }
         }

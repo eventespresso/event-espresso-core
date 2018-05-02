@@ -70,12 +70,12 @@ class DependencyInjector implements InjectorInterface
      */
     public function getReflectionClass($class_name)
     {
-        if (! isset($this->reflectors[$class_name])
-            || ! $this->reflectors[$class_name] instanceof ReflectionClass
+        if (! isset($this->reflectors[ $class_name ])
+            || ! $this->reflectors[ $class_name ] instanceof ReflectionClass
         ) {
-            $this->reflectors[$class_name] = new ReflectionClass($class_name);
+            $this->reflectors[ $class_name ] = new ReflectionClass($class_name);
         }
-        return $this->reflectors[$class_name];
+        return $this->reflectors[ $class_name ];
     }
 
 
@@ -89,12 +89,12 @@ class DependencyInjector implements InjectorInterface
      */
     protected function getConstructor(ReflectionClass $reflector)
     {
-        if (! isset($this->constructors[$reflector->getName()])
-            || ! $this->constructors[$reflector->getName()] instanceof ReflectionMethod
+        if (! isset($this->constructors[ $reflector->getName() ])
+            || ! $this->constructors[ $reflector->getName() ] instanceof ReflectionMethod
         ) {
-            $this->constructors[$reflector->getName()] = $reflector->getConstructor();
+            $this->constructors[ $reflector->getName() ] = $reflector->getConstructor();
         }
-        return $this->constructors[$reflector->getName()];
+        return $this->constructors[ $reflector->getName() ];
     }
 
 
@@ -108,10 +108,10 @@ class DependencyInjector implements InjectorInterface
      */
     protected function getParameters(ReflectionMethod $constructor)
     {
-        if (! isset($this->parameters[$constructor->class])) {
-            $this->parameters[$constructor->class] = $constructor->getParameters();
+        if (! isset($this->parameters[ $constructor->class ])) {
+            $this->parameters[ $constructor->class ] = $constructor->getParameters();
         }
-        return $this->parameters[$constructor->class];
+        return $this->parameters[ $constructor->class ];
     }
 
 
@@ -166,37 +166,37 @@ class DependencyInjector implements InjectorInterface
             $param_class = $param->getClass() ? $param->getClass()->name : '';
             $param_name = $param->getName() ? $param->getName() : '';
             if (// param is not a class but is specified in the list of ingredients for this Recipe
-                is_string($param_name) && isset($ingredients[$param_name])
+                is_string($param_name) && isset($ingredients[ $param_name ])
             ) {
                 // attempt to inject the dependency
-                $resolved_parameters[$index] = $ingredients[$param_name];
-            } else if (// param is specified in the list of ingredients for this Recipe
-                        isset($ingredients[$param_class])
+                $resolved_parameters[ $index ] = $ingredients[ $param_name ];
+            } elseif (// param is specified in the list of ingredients for this Recipe
+            isset($ingredients[ $param_class ])
             ) { // attempt to inject the dependency
-                $resolved_parameters[$index] = $this->injectDependency($reflector, $ingredients[$param_class]);
-            } else if (// param is not even a class
-                        empty($param_class)
-                        // and something already exists in the incoming arguments for this param
-                        && isset($argument_keys[$index], $arguments[$argument_keys[$index]])
+                $resolved_parameters[ $index ] = $this->injectDependency($reflector, $ingredients[ $param_class ]);
+            } elseif (// param is not even a class
+                empty($param_class)
+                // and something already exists in the incoming arguments for this param
+                && isset($argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ])
             ) {
                 // add parameter from incoming arguments
-                $resolved_parameters[$index] = $arguments[$argument_keys[$index]];
-            } else if (// parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
+                $resolved_parameters[ $index ] = $arguments[ $argument_keys[ $index ] ];
+            } elseif (// parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
                 ! empty($param_class)
-                && isset($argument_keys[$index], $arguments[$argument_keys[$index]])
-                && $arguments[$argument_keys[$index]] instanceof $param_class
+                && isset($argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ])
+                && $arguments[ $argument_keys[ $index ] ] instanceof $param_class
             ) {
                 // add parameter from incoming arguments
-                $resolved_parameters[$index] = $arguments[$argument_keys[$index]];
-            } else if (// parameter is type hinted as a class, and should be injected
-                       ! empty($param_class)
+                $resolved_parameters[ $index ] = $arguments[ $argument_keys[ $index ] ];
+            } elseif (// parameter is type hinted as a class, and should be injected
+            ! empty($param_class)
             ) {
                 // attempt to inject the dependency
-                $resolved_parameters[$index] = $this->injectDependency($reflector, $param_class);
-            } else if ($param->isOptional()) {
-                $resolved_parameters[$index] = $param->getDefaultValue();
+                $resolved_parameters[ $index ] = $this->injectDependency($reflector, $param_class);
+            } elseif ($param->isOptional()) {
+                $resolved_parameters[ $index ] = $param->getDefaultValue();
             } else {
-                $resolved_parameters[$index] = null;
+                $resolved_parameters[ $index ] = null;
             }
         }
         return $resolved_parameters;

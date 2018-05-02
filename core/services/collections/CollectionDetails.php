@@ -249,8 +249,8 @@ class CollectionDetails implements CollectionDetailsInterface
     protected function setIdentifierType($identifier_type)
     {
         if (! ($identifier_type === CollectionDetails::ID_CLASS_NAME
-            || $identifier_type === CollectionDetails::ID_OBJECT_HASH
-            || $identifier_type === CollectionDetails::ID_CALLBACK_METHOD
+               || $identifier_type === CollectionDetails::ID_OBJECT_HASH
+               || $identifier_type === CollectionDetails::ID_CALLBACK_METHOD
         )) {
             throw new InvalidIdentifierException(
                 $identifier_type,
@@ -332,7 +332,7 @@ class CollectionDetails implements CollectionDetailsInterface
      */
     public function setCollectionFQCNs($collection_FQCNs)
     {
-        foreach ((array)$collection_FQCNs as $collection_FQCN) {
+        foreach ((array) $collection_FQCNs as $collection_FQCN) {
             if (! empty($collection_FQCN)) {
                 if (class_exists($collection_FQCN)) {
                     $this->collection_FQCNs[] = $collection_FQCN;
@@ -380,7 +380,7 @@ class CollectionDetails implements CollectionDetailsInterface
      */
     public function setCollectionPaths($collection_paths)
     {
-        foreach ((array)$collection_paths as $collection_path) {
+        foreach ((array) $collection_paths as $collection_path) {
             if (! empty($collection_path)) {
                 if (! is_readable($collection_path)) {
                     throw new InvalidFilePathException($collection_path);

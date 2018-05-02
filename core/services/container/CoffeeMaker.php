@@ -50,7 +50,7 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
      */
     public static function getTypes()
     {
-        return (array)apply_filters(
+        return (array) apply_filters(
             'FHEE__EventEspresso\core\services\container\CoffeeMaker__getTypes',
             array(
                 CoffeeMaker::BREW_NEW,

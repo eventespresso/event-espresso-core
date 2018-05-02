@@ -37,7 +37,7 @@ class MultiLineAddressFormatter extends AddressFormatter implements \EEI_Address
             )
         );
         // if the incoming country has a set format, use that, else use the default
-        $formatted_address = isset($address_formats[$CNT_ISO]) ? $address_formats[$CNT_ISO]
+        $formatted_address = isset($address_formats[ $CNT_ISO ]) ? $address_formats[ $CNT_ISO ]
             : $address_formats['ZZ'];
         return $this->parse_formatted_address(
             $address,

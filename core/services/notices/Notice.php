@@ -85,7 +85,7 @@ class Notice implements NoticeInterface
      */
     private function types()
     {
-        return (array)apply_filters(
+        return (array) apply_filters(
             'FHEE__EventEspresso_core_services_notices_Notice__types',
             array(
                 Notice::ERROR,

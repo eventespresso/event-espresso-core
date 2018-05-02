@@ -42,7 +42,7 @@ class FqcnLocator extends Locator
         if (! is_string($namespace_base_dir)) {
             throw new InvalidDataTypeException('$namespace_base_dir', $namespace_base_dir, 'string');
         }
-        $this->namespaces[$namespace] = $namespace_base_dir;
+        $this->namespaces[ $namespace ] = $namespace_base_dir;
     }
 
 
@@ -80,9 +80,9 @@ class FqcnLocator extends Locator
         if (! (is_string($namespaces) || is_array($namespaces))) {
             throw new InvalidDataTypeException('$namespaces', $namespaces, 'string or array');
         }
-        foreach ((array)$namespaces as $namespace) {
+        foreach ((array) $namespaces as $namespace) {
             foreach ($this->FindFQCNsByNamespace($namespace) as $key => $file) {
-                $this->FQCNs[$key] = $file;
+                $this->FQCNs[ $key ] = $file;
             }
         }
         return $this->FQCNs;
@@ -90,6 +90,7 @@ class FqcnLocator extends Locator
 
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
     /**
      * given a partial namespace, will find all files in that folder
      * ** PLZ NOTE **

@@ -159,7 +159,7 @@ class ProgressStep implements ProgressStepInterface
         $html_class = $this->html_class;
         if ($this->isCurrent()) {
             $html_class .= ' progress-step-active';
-        } else if ($this->isCompleted()) {
+        } elseif ($this->isCompleted()) {
             $html_class .= ' progress-step-completed';
         }
         return $html_class;

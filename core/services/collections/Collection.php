@@ -337,7 +337,7 @@ class Collection extends \SplObjectStorage implements CollectionInterface
         // check to ensure that objects don't already exist in the collection
         foreach ($objects as $key => $object) {
             if ($this->contains($object)) {
-                unset($objects[$key]);
+                unset($objects[ $key ]);
             }
         }
         // do we have any objects left?

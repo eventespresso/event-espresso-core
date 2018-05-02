@@ -71,10 +71,11 @@ class ExceptionStackTraceDisplay
 					<th scope="col" align="right" style="width:2.5%;">#</th>
 					<th scope="col" align="right" style="width:3.5%;">Line</th>
 					<th scope="col" align="left" style="width:40%;">File</th>
-					<th scope="col" align="left">' . __('Class', 'event_espresso') . '->' . __(
-                'Method( arguments )',
-                'event_espresso'
-            ) . '</th>
+					<th scope="col" align="left">' . __('Class', 'event_espresso') . '->'
+                              . __(
+                                  'Method( arguments )',
+                                  'event_espresso'
+                              ) . '</th>
 				</tr>';
             $last_on_stack = count($trace) - 1;
             // reverse array so that stack is in proper chronological order
@@ -228,6 +229,8 @@ class ExceptionStackTraceDisplay
 
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+    // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+
     /**
      * generate string from exception trace args
      *
@@ -266,7 +269,7 @@ class ExceptionStackTraceDisplay
                     $indent++;
                     $args[] = ' array(' . $this->_convert_args_to_string($arg, $indent, true) . ')';
                     $indent--;
-                } else if ($arg_count === 0) {
+                } elseif ($arg_count === 0) {
                     $args[] = ' array()';
                 } else {
                     $args[] = ' array( ' . $this->_convert_args_to_string($arg) . ' )';

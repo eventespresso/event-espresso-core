@@ -55,7 +55,7 @@ class Response implements ResponseInterface, ReservedInstanceInterface
      */
     public function setNotice($key, $value)
     {
-        $this->notice[$key] = $value;
+        $this->notice[ $key ] = $value;
     }
 
 
@@ -65,7 +65,7 @@ class Response implements ResponseInterface, ReservedInstanceInterface
      */
     public function getNotice($key)
     {
-        return isset($this->notice[$key]) ? $this->notice[$key] : null;
+        return isset($this->notice[ $key ]) ? $this->notice[ $key ] : null;
     }
 
 

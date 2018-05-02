@@ -60,7 +60,7 @@ class ModelDataTranslator
         ) {
             $new_value_maybe_array = array();
             foreach ($original_value_maybe_array as $array_key => $array_item) {
-                $new_value_maybe_array[$array_key] = ModelDataTranslator::prepareFieldValueFromJson(
+                $new_value_maybe_array[ $array_key ] = ModelDataTranslator::prepareFieldValueFromJson(
                     $field_obj,
                     $array_item,
                     $requested_version,
@@ -92,7 +92,11 @@ class ModelDataTranslator
         if (is_array($original_value_maybe_array)) {
             $new_value = array();
             foreach ($original_value_maybe_array as $key => $value) {
-                $new_value[$key] = ModelDataTranslator::prepareFieldValuesForJson($field_obj, $value, $request_version);
+                $new_value[ $key ] = ModelDataTranslator::prepareFieldValuesForJson(
+                    $field_obj,
+                    $value,
+                    $request_version
+                );
             }
         } else {
             $new_value = ModelDataTranslator::prepareFieldValueForJson(
@@ -264,10 +268,10 @@ class ModelDataTranslator
      */
     private static function parseTimezoneOffset($timezone_offset)
     {
-        $first_char = substr((string)$timezone_offset, 0, 1);
+        $first_char = substr((string) $timezone_offset, 0, 1);
         if ($first_char === '+' || $first_char === '-') {
             $offset_sign = $first_char;
-            $offset_secs = substr((string)$timezone_offset, 1);
+            $offset_secs = substr((string) $timezone_offset, 1);
         } else {
             $offset_sign = '+';
             $offset_secs = $timezone_offset;
@@ -293,7 +297,7 @@ class ModelDataTranslator
                 // did they submit a string of a unix timestamp?
                 if (is_numeric($original_value)) {
                     $datetime_obj = new \DateTime();
-                    $datetime_obj->setTimestamp((int)$original_value);
+                    $datetime_obj->setTimestamp((int) $original_value);
                 } else {
                     // first, check if its a MySQL timestamp in GMT
                     $datetime_obj = \DateTime::createFromFormat('Y-m-d H:i:s', $original_value);
@@ -316,7 +320,7 @@ class ModelDataTranslator
                 throw new \EE_Error(
                     sprintf(
                         esc_html__(
-                            // @codingStandardsIgnoreStart
+                        // @codingStandardsIgnoreStart
                             'The value "%1$s" for the field "%2$s" on model "%3$s" could not be understood. It should be a PHP DateTime, unix timestamp, MySQL date, or string in the format "%4$s".',
                             // @codingStandardsIgnoreEnd
                             'event_espresso'
@@ -426,7 +430,7 @@ class ModelDataTranslator
                     }
                     // did they specify an operator?
                     if (isset($query_param_value[0])
-                        && isset($valid_operators[$query_param_value[0]])
+                        && isset($valid_operators[ $query_param_value[0] ])
                     ) {
                         $op = $query_param_value[0];
                         $translated_value = array($op);
@@ -535,7 +539,7 @@ class ModelDataTranslator
                         $timezone
                     );
                 }
-                if ((isset($query_param_for_models[$query_param_key]) && $is_gmt_datetime_field)
+                if ((isset($query_param_for_models[ $query_param_key ]) && $is_gmt_datetime_field)
                     || $translated_value === null
                 ) {
                     // they have already provided a non-gmt field, ignore the gmt one. That's what WP core
@@ -543,7 +547,7 @@ class ModelDataTranslator
                     // OR we couldn't create a translated value from their input
                     continue;
                 }
-                $query_param_for_models[$query_param_key] = $translated_value;
+                $query_param_for_models[ $query_param_key ] = $translated_value;
             } else {
                 // so this param doesn't correspond to a field eh?
                 if ($writing) {
@@ -562,7 +566,7 @@ class ModelDataTranslator
                         $query_param_sans_stars,
                         $model->logic_query_param_keys()
                     )) {
-                        $query_param_for_models[$query_param_key] = ModelDataTranslator::prepareConditionsQueryParamsForModels(
+                        $query_param_for_models[ $query_param_key ] = ModelDataTranslator::prepareConditionsQueryParamsForModels(
                             $query_param_value,
                             $model,
                             $requested_version
@@ -659,7 +663,7 @@ class ModelDataTranslator
     {
         $new_array = array();
         foreach ($field_names as $key => $field_name) {
-            $new_array[$key] = ModelDataTranslator::prepareFieldNameFromJson($field_name);
+            $new_array[ $key ] = ModelDataTranslator::prepareFieldNameFromJson($field_name);
         }
         return $new_array;
     }
@@ -676,7 +680,7 @@ class ModelDataTranslator
     {
         $new_array = array();
         foreach ($field_names_as_keys as $field_name => $value) {
-            $new_array[ModelDataTranslator::prepareFieldNameFromJson($field_name)] = $value;
+            $new_array[ ModelDataTranslator::prepareFieldNameFromJson($field_name) ] = $value;
         }
         return $new_array;
     }
@@ -769,10 +773,10 @@ class ModelDataTranslator
                         $requested_version
                     );
                 }
-                $query_param_for_models[$query_param_key] = $translated_value;
+                $query_param_for_models[ $query_param_key ] = $translated_value;
             } else {
                 // so it's not for a field, assume it's a logic query param key
-                $query_param_for_models[$query_param_key] = ModelDataTranslator::prepareConditionsQueryParamsForRestApi(
+                $query_param_for_models[ $query_param_key ] = ModelDataTranslator::prepareConditionsQueryParamsForRestApi(
                     $query_param_value,
                     $model,
                     $requested_version
@@ -824,13 +828,13 @@ class ModelDataTranslator
             );
         }
         $number_of_parts = count($query_param_parts);
-        $last_query_param_part = $query_param_parts[count($query_param_parts) - 1];
+        $last_query_param_part = $query_param_parts[ count($query_param_parts) - 1 ];
         if ($number_of_parts === 1) {
             $field_name = $last_query_param_part;
         } else {// $number_of_parts >= 2
             // the last part is the column name, and there are only 2parts. therefore...
             $field_name = $last_query_param_part;
-            $model = \EE_Registry::instance()->load_model($query_param_parts[$number_of_parts - 2]);
+            $model = \EE_Registry::instance()->load_model($query_param_parts[ $number_of_parts - 2 ]);
         }
         try {
             return $model->field_settings_for($field_name, false);

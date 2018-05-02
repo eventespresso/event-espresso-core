@@ -25,6 +25,7 @@ class DbSafeDateTime extends DateTime
     const db_safe_timestamp_format = 'Y-m-d H:i:s O e';
     // phpcs:enable
 
+    // phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
     /**
      * DateTime object converted to a string that includes the date, time, UTC offset, and timezone identifier
      *
@@ -38,6 +39,7 @@ class DbSafeDateTime extends DateTime
      * @type string $_error_log_dir
      */
     protected $_error_log_dir = '';
+    // phpcs:enable
 
 
     /**

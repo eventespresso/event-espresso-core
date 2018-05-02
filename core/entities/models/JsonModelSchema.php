@@ -69,19 +69,19 @@ class JsonModelSchema
             if (! $model_field instanceof EE_Model_Field_Base) {
                 continue;
             }
-            $schema['properties'][$field] = $model_field->getSchema();
+            $schema['properties'][ $field ] = $model_field->getSchema();
 
             // if this is a primary key field add the primary key item
             if ($model_field instanceof EE_Primary_Key_Field_Base) {
-                $schema['properties'][$field]['primary_key'] = true;
+                $schema['properties'][ $field ]['primary_key'] = true;
                 if ($model_field instanceof EE_Primary_Key_Int_Field) {
-                    $schema['properties'][$field]['readonly'] = true;
+                    $schema['properties'][ $field ]['readonly'] = true;
                 }
             }
 
             // if this is a foreign key field add the foreign key item
             if ($model_field instanceof EE_Foreign_Key_Field_Base) {
-                $schema['properties'][$field]['foreign_key'] = array(
+                $schema['properties'][ $field ]['foreign_key'] = array(
                     'description' => esc_html__(
                         'This is a foreign key the points to the given models.',
                         'event_espresso'
@@ -110,8 +110,8 @@ class JsonModelSchema
             $model_name_for_schema = $relation instanceof EE_Belongs_To_Relation
                 ? strtolower($model_name)
                 : EEH_Inflector::pluralize_and_lower($model_name);
-            $schema['properties'][$model_name_for_schema] = $relation->getSchema();
-            $schema['properties'][$model_name_for_schema]['relation_model'] = $model_name;
+            $schema['properties'][ $model_name_for_schema ] = $relation->getSchema();
+            $schema['properties'][ $model_name_for_schema ]['relation_model'] = $model_name;
         }
         return $schema;
     }

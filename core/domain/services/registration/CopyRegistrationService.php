@@ -83,7 +83,7 @@ class CopyRegistrationService extends DomainService
         $reindexed_answers = array();
         foreach ($answers as $answer) {
             if ($answer instanceof EE_Answer) {
-                $reindexed_answers[$answer->question_ID()] = $answer->value();
+                $reindexed_answers[ $answer->question_ID() ] = $answer->value();
             }
         }
         return $reindexed_answers;
@@ -103,8 +103,8 @@ class CopyRegistrationService extends DomainService
         EE_Registration $registration,
         $previous_answers
     ) {
-        $old_answer_value = isset($previous_answers[$question->ID()])
-            ? $previous_answers[$question->ID()]
+        $old_answer_value = isset($previous_answers[ $question->ID() ])
+            ? $previous_answers[ $question->ID() ]
             : '';
         $new_answer = EE_Answer::new_instance(
             array(

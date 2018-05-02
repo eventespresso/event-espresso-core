@@ -107,7 +107,7 @@ class EspressoEventAttendees extends EspressoShortcode
     public function processShortcode($attributes = array())
     {
         // grab attributes and merge with defaults
-        $attributes = $this->getAttributes((array)$attributes);
+        $attributes = $this->getAttributes((array) $attributes);
         $archive = is_archive();
         $display_on_archives = filter_var($attributes['display_on_archives'], FILTER_VALIDATE_BOOLEAN);
         // don't display on archives unless 'display_on_archives' is true
@@ -146,7 +146,7 @@ class EspressoEventAttendees extends EspressoShortcode
      */
     private function getAttributes(array $attributes)
     {
-        return (array)apply_filters(
+        return (array) apply_filters(
             'EES_Espresso_Event_Attendees__process_shortcode__default_shortcode_atts',
             $attributes + array(
                 'event_id'            => null,
@@ -347,11 +347,11 @@ class EspressoEventAttendees extends EspressoShortcode
     private function setAdditionalQueryParams(array $attributes)
     {
         $reg_status_array = EEM_Registration::reg_status_array();
-        if ($attributes['status'] !== 'all' && isset($reg_status_array[$attributes['status']])) {
+        if ($attributes['status'] !== 'all' && isset($reg_status_array[ $attributes['status'] ])) {
             $this->query_params[0]['Registration.STS_ID'] = $attributes['status'];
         }
         $this->query_params['group_by'] = array('ATT_ID');
-        $this->query_params['order_by'] = (array)apply_filters(
+        $this->query_params['order_by'] = (array) apply_filters(
             'FHEE__EES_Espresso_Event_Attendees__process_shortcode__order_by',
             array('ATT_lname' => 'ASC', 'ATT_fname' => 'ASC')
         );

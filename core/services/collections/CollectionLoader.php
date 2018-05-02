@@ -111,7 +111,7 @@ class CollectionLoader
         // find all of the files that match the file mask in the specified folder
         $this->file_locator->locate($this->collection_details->getCollectionPaths());
         // filter the results
-        $filepaths = (array)apply_filters(
+        $filepaths = (array) apply_filters(
             'FHEE__CollectionLoader__loadAllFromFilepath__filepaths',
             $this->file_locator->getFilePaths(),
             $this->collection_details->collectionName(),
@@ -264,7 +264,7 @@ class CollectionLoader
     protected function loadFromFQCNs()
     {
         $FQCNs = $this->collection_details->getCollectionFQCNs();
-        $FQCNs = (array)apply_filters(
+        $FQCNs = (array) apply_filters(
             'FHEE__CollectionLoader__loadAllFromFQCNs__FQCNs',
             $FQCNs,
             $this->collection_details->collectionName(),

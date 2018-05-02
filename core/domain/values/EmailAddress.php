@@ -21,7 +21,6 @@ class EmailAddress
     private $email_address;
 
 
-
     /**
      * EmailAddress constructor.
      *
@@ -36,7 +35,6 @@ class EmailAddress
     }
 
 
-
     /**
      * returns the string value for this EmailAddress
      *
@@ -48,7 +46,6 @@ class EmailAddress
     }
 
 
-
     /**
      * compare another EmailAddress to this one to determine if they are the same
      *
@@ -57,7 +54,7 @@ class EmailAddress
      */
     public function equals(EmailAddress $address)
     {
-        return strtolower((string)$this) === strtolower((string)$address);
+        return strtolower((string) $this) === strtolower((string) $address);
     }
 
 

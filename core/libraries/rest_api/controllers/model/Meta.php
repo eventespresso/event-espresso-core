@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
 use Exception;
@@ -37,7 +38,6 @@ class Meta extends Base
             return $controller->sendResponse($e);
         }
     }
-
 
 
     /*
@@ -80,13 +80,13 @@ class Meta extends Base
                     'table_alias'         => $field_obj->get_table_alias(),
                     'table_column'        => $field_obj->get_table_column(),
                 );
-                $fields_json[$field_json['name']] = $field_json;
+                $fields_json[ $field_json['name'] ] = $field_json;
             }
             $fields_json = array_merge(
                 $fields_json,
                 $this->getModelVersionInfo()->extraResourcePropertiesForModel($model)
             );
-            $response[$model_name]['fields'] = apply_filters(
+            $response[ $model_name ]['fields'] = apply_filters(
                 'FHEE__Meta__handle_request_models_meta__fields',
                 $fields_json,
                 $model
@@ -98,9 +98,9 @@ class Meta extends Base
                     'type'   => str_replace('EE_', '', get_class($relation_obj)),
                     'single' => $relation_obj instanceof \EE_Belongs_To_Relation ? true : false,
                 );
-                $relations_json[$relation_name] = $relation_json;
+                $relations_json[ $relation_name ] = $relation_json;
             }
-            $response[$model_name]['relations'] = apply_filters(
+            $response[ $model_name ]['relations'] = apply_filters(
                 'FHEE__Meta__handle_request_models_meta__relations',
                 $relations_json,
                 $model
@@ -108,7 +108,6 @@ class Meta extends Base
         }
         return $response;
     }
-
 
 
     /**
@@ -126,7 +125,7 @@ class Meta extends Base
                 'name'    => $addon->name(),
                 'version' => $addon->version(),
             );
-            $addons[$addon_json['name']] = $addon_json;
+            $addons[ $addon_json['name'] ] = $addon_json;
         }
         $response_data['ee'] = array(
             'version'              => EEM_System_Status::instance()->get_ee_version(),

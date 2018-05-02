@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\services\capabilities;
 
 use EE_Capabilities;
@@ -23,7 +24,6 @@ class CapabilitiesChecker implements CapabilitiesCheckerInterface
     private $capabilities;
 
 
-
     /**
      * CapabilitiesChecker constructor
      *
@@ -35,7 +35,6 @@ class CapabilitiesChecker implements CapabilitiesCheckerInterface
     }
 
 
-
     /**
      * @return EE_Capabilities
      */
@@ -43,7 +42,6 @@ class CapabilitiesChecker implements CapabilitiesCheckerInterface
     {
         return $this->capabilities;
     }
-
 
 
     /**
@@ -73,7 +71,7 @@ class CapabilitiesChecker implements CapabilitiesCheckerInterface
         if ($cap_check instanceof PublicCapabilities) {
             return true;
         }
-        $capabilities = (array)$cap_check->capability();
+        $capabilities = (array) $cap_check->capability();
         foreach ($capabilities as $capability) {
             if (! $this->capabilities()->current_user_can(
                 $capability,
@@ -85,7 +83,6 @@ class CapabilitiesChecker implements CapabilitiesCheckerInterface
         }
         return true;
     }
-
 
 
     /**

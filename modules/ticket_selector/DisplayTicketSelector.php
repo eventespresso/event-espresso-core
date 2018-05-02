@@ -228,7 +228,7 @@ class DisplayTicketSelector
             return $this->noTicketAvailableMessage();
         }
         // redirecting to another site for registration ??
-        $external_url = (string)$this->event->external_url();
+        $external_url = (string) $this->event->external_url();
         // if redirecting to another site for registration, then we don't load the TS
         $ticket_selector = $external_url
             ? $this->externalEventRegistration()
@@ -512,7 +512,7 @@ class DisplayTicketSelector
                 : '';
             $html .= '>';
             $query_args = EEH_URL::get_query_string($external_url);
-            foreach ((array)$query_args as $query_arg => $value) {
+            foreach ((array) $query_args as $query_arg => $value) {
                 $html .= '<input type="hidden" name="' . $query_arg . '" value="' . $value . '">';
             }
             return $html;
@@ -590,7 +590,7 @@ class DisplayTicketSelector
                     // sold out DWMTS event, no TS, no submit or view details button, but has additional content
                     $html .= $this->ticketSelectorEndDiv();
                 } elseif (apply_filters('FHEE__EE_Ticket_Selector__hide_ticket_selector', false)
-                    && ! is_single()
+                          && ! is_single()
                 ) {
                     // this is a "Dude Where's my Ticket Selector?" (DWMTS) type event,
                     // but no tickets are available, so display event's "View Details" button.

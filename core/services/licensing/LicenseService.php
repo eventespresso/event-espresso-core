@@ -92,7 +92,7 @@ class LicenseService
         $plugins = get_plugins($folder);
         $current = get_site_transient('update_plugins');
 
-        foreach ((array)$plugins as $plugin_file => $plugin_data) {
+        foreach ((array) $plugins as $plugin_file => $plugin_data) {
             if (isset($current->response['plugin_file'])) {
                 $update = true;
             }

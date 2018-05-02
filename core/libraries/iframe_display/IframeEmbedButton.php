@@ -186,8 +186,8 @@ abstract class IframeEmbedButton
     public function embedButtonHtml($query_args = array(), $button_class = '')
     {
         // incoming args will replace the defaults listed here in the second array (union preserves first array)
-        $query_args = (array)$query_args + array($this->route_name => 'iframe');
-        $query_args = (array)apply_filters(
+        $query_args = (array) $query_args + array($this->route_name => 'iframe');
+        $query_args = (array) apply_filters(
             'FHEE__EventEspresso_core_libraries_iframe_display_IframeEmbedButton__embedButtonHtml__query_args',
             $query_args
         );
@@ -195,7 +195,7 @@ abstract class IframeEmbedButton
         $iframe_module_routes = isset(\EE_Registry::$i18n_js_strings['iframe_module_routes'])
             ? \EE_Registry::$i18n_js_strings['iframe_module_routes']
             : array();
-        $iframe_module_routes[$this->route_name] = $this->route_name;
+        $iframe_module_routes[ $this->route_name ] = $this->route_name;
         \EE_Registry::$i18n_js_strings['iframe_module_routes'] = $iframe_module_routes;
         $iframe_embed_html = \EEH_HTML::link(
             '#',
@@ -263,7 +263,7 @@ abstract class IframeEmbedButton
      */
     public function addIframeEmbedButtonsSection(array $embed_buttons)
     {
-        $embed_buttons = (array)apply_filters(
+        $embed_buttons = (array) apply_filters(
             'FHEE__EventEspresso_core_libraries_iframe_display_IframeEmbedButton__addIframeEmbedButtonsSection__embed_buttons',
             $embed_buttons
         );

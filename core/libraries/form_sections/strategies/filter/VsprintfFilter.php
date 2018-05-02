@@ -54,7 +54,7 @@ class VsprintfFilter extends FormHtmlFilter
         $this->args[] = $html;
         if ($form_section instanceof EE_Form_Section_Proper) {
             $subsections = $form_section->subsections();
-            foreach ((array)$subsections as $subsection) {
+            foreach ((array) $subsections as $subsection) {
                 $this->args[] = $subsection->get_html();
             }
         }

@@ -65,7 +65,7 @@ class RegisterCustomTaxonomyTerms
      */
     public function registerCustomTaxonomyTerm($taxonomy, $term_slug, array $cpt_slugs = array())
     {
-        $this->custom_taxonomy_terms[][$term_slug] = new CustomTaxonomyTerm(
+        $this->custom_taxonomy_terms[][ $term_slug ] = new CustomTaxonomyTerm(
             $taxonomy,
             $term_slug,
             $cpt_slugs
@@ -181,7 +181,7 @@ class RegisterCustomTaxonomyTerms
      */
     public function setMustUseTerms($taxonomy, $term_details)
     {
-        $term_details = (array)$term_details;
+        $term_details = (array) $term_details;
         foreach ($term_details as $slug => $details) {
             if (isset($details['term'], $details['desc']) && ! term_exists($slug, $taxonomy)) {
                 $insert_arr = array(

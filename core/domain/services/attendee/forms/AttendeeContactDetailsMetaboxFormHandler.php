@@ -98,7 +98,7 @@ class AttendeeContactDetailsMetaboxFormHandler extends FormHandler
      */
     public function process($form_data = array())
     {
-        $valid_data = (array)parent::process($form_data);
+        $valid_data = (array) parent::process($form_data);
         if (empty($valid_data)) {
             return false;
         }

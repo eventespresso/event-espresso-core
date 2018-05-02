@@ -85,7 +85,7 @@ class Benchmark
             return;
         }
         $timer_name = $timer_name !== '' ? $timer_name : get_called_class();
-        Benchmark::$start_times[$timer_name] = microtime(true);
+        Benchmark::$start_times[ $timer_name ] = microtime(true);
     }
 
 
@@ -100,13 +100,13 @@ class Benchmark
             return;
         }
         $timer_name = $timer_name !== '' ? $timer_name : get_called_class();
-        if (isset(Benchmark::$start_times[$timer_name])) {
-            $start_time = Benchmark::$start_times[$timer_name];
-            unset(Benchmark::$start_times[$timer_name]);
+        if (isset(Benchmark::$start_times[ $timer_name ])) {
+            $start_time = Benchmark::$start_times[ $timer_name ];
+            unset(Benchmark::$start_times[ $timer_name ]);
         } else {
             $start_time = array_pop(Benchmark::$start_times);
         }
-        Benchmark::$times[$timer_name] = number_format(microtime(true) - $start_time, 8);
+        Benchmark::$times[ $timer_name ] = number_format(microtime(true) - $start_time, 8);
     }
 
 
@@ -124,7 +124,7 @@ class Benchmark
             return;
         }
         $memory_used = Benchmark::convert(memory_get_usage(true));
-        Benchmark::$memory_usage[$label] = $memory_used;
+        Benchmark::$memory_usage[ $label ] = $memory_used;
         if ($output_now) {
             echo $formatted
                 ? "<br>{$label} : {$memory_used}"
@@ -285,7 +285,7 @@ class Benchmark
         return round(
             $size / pow(1024, $i = floor(log($size, 1024))),
             2
-        ) . ' ' . $unit[absint($i)];
+        ) . ' ' . $unit[ absint($i) ];
     }
 
 

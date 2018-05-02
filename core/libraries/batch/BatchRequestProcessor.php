@@ -23,7 +23,8 @@ use EventEspressoBatchRequest\Helpers\JobStepResponse;
  */
 class BatchRequestProcessor
 {
-
+    // phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
+    // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     /**
      * Current job's ID (if assigned)
      *

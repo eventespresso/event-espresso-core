@@ -57,7 +57,7 @@ class RegisterCustomPostTypes
     {
         $custom_post_types = $this->custom_post_types->getDefinitions();
         foreach ($custom_post_types as $custom_post_type => $CPT) {
-            $this->wp_post_types[$custom_post_type] = $this->registerCustomPostType(
+            $this->wp_post_types[ $custom_post_type ] = $this->registerCustomPostType(
                 $custom_post_type,
                 $CPT['singular_name'],
                 $CPT['plural_name'],

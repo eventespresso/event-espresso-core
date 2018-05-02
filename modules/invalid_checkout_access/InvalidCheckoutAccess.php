@@ -44,16 +44,16 @@ class InvalidCheckoutAccess
                 $ee_bot_checkout = array();
                 add_option(InvalidCheckoutAccess::OPTION_KEY, $ee_bot_checkout, '', false);
             }
-            if (! isset($ee_bot_checkout[$ip_address])) {
-                $ee_bot_checkout[$ip_address] = array();
+            if (! isset($ee_bot_checkout[ $ip_address ])) {
+                $ee_bot_checkout[ $ip_address ] = array();
             }
             $http_referer = isset($_SERVER['HTTP_REFERER'])
                 ? esc_attr($_SERVER['HTTP_REFERER'])
                 : 0;
-            if (! isset($ee_bot_checkout[$ip_address][$http_referer])) {
-                $ee_bot_checkout[$ip_address][$http_referer] = 0;
+            if (! isset($ee_bot_checkout[ $ip_address ][ $http_referer ])) {
+                $ee_bot_checkout[ $ip_address ][ $http_referer ] = 0;
             }
-            $ee_bot_checkout[$ip_address][$http_referer]++;
+            $ee_bot_checkout[ $ip_address ][ $http_referer ]++;
             update_option(InvalidCheckoutAccess::OPTION_KEY, $ee_bot_checkout);
             if (WP_DEBUG) {
                 \EE_Error::add_error(

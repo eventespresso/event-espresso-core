@@ -91,7 +91,7 @@ class ModelVersionInfo
      */
     public function __construct($requested_version)
     {
-        $this->requested_version = (string)$requested_version;
+        $this->requested_version = (string) $requested_version;
         $this->model_changes = array(
             '4.8.29' => array(
                 // first version where the REST API is in EE core, so no need
@@ -114,10 +114,10 @@ class ModelVersionInfo
         foreach ($this->resource_changes as $version => $model_classnames) {
             foreach ($model_classnames as $model_classname => $extra_fields) {
                 foreach ($extra_fields as $fieldname => $field_data) {
-                    $this->resource_changes[$model_classname][$fieldname]['name'] = $fieldname;
+                    $this->resource_changes[ $model_classname ][ $fieldname ]['name'] = $fieldname;
                     foreach ($defaults as $attribute => $default_value) {
-                        if (! isset($this->resource_changes[$model_classname][$fieldname][$attribute])) {
-                            $this->resource_changes[$model_classname][$fieldname][$attribute] = $default_value;
+                        if (! isset($this->resource_changes[ $model_classname ][ $fieldname ][ $attribute ])) {
+                            $this->resource_changes[ $model_classname ][ $fieldname ][ $attribute ] = $default_value;
                         }
                     }
                 }
@@ -139,7 +139,7 @@ class ModelVersionInfo
             $model_changes = array();
             foreach ($this->modelChanges() as $version => $models_changed_in_version) {
                 if ($version <= EED_Core_Rest_Api::core_version() && $version > $this->requestedVersion()) {
-                    $model_changes[$version] = $models_changed_in_version;
+                    $model_changes[ $version ] = $models_changed_in_version;
                 }
             }
             $this->cached_model_changes_between_requested_version_and_current = $model_changes;
@@ -161,7 +161,7 @@ class ModelVersionInfo
             $resource_changes = array();
             foreach ($this->resourceChanges() as $version => $model_classnames) {
                 if ($version <= EED_Core_Rest_Api::core_version() && $version > $this->requestedVersion()) {
-                    $resource_changes[$version] = $model_classnames;
+                    $resource_changes[ $version ] = $model_classnames;
                 }
             }
             $this->cached_resource_changes_between_requested_version_and_current = $resource_changes;
@@ -212,7 +212,7 @@ class ModelVersionInfo
             foreach ($this->modelChangesBetweenRequestedVersionAndCurrent() as $version => $models_changed) {
                 foreach ($models_changed as $model_name => $new_indicator_or_fields_added) {
                     if ($new_indicator_or_fields_added === ModelVersionInfo::MODEL_ADDED) {
-                        unset($all_models_in_current_version[$model_name]);
+                        unset($all_models_in_current_version[ $model_name ]);
                     }
                 }
             }
@@ -237,7 +237,7 @@ class ModelVersionInfo
     public function isModelNameInThisVersion($model_name)
     {
         $model_names = $this->modelsForRequestedVersion();
-        if (isset($model_names[$model_name])) {
+        if (isset($model_names[ $model_name ])) {
             return true;
         } else {
             return false;
@@ -280,19 +280,19 @@ class ModelVersionInfo
      */
     public function fieldsOnModelInThisVersion($model)
     {
-        if (! isset($this->cached_fields_on_models[$model->get_this_model_name()])) {
+        if (! isset($this->cached_fields_on_models[ $model->get_this_model_name() ])) {
             // get all model changes between the requested version and current core version
             $changes = $this->modelChangesBetweenRequestedVersionAndCurrent();
             // fetch all fields currently on this model
             $current_fields = $model->field_settings();
             // remove all fields that have been added since
             foreach ($changes as $version => $changes_in_version) {
-                if (isset($changes_in_version[$model->get_this_model_name()])
-                    && $changes_in_version[$model->get_this_model_name()] !== ModelVersionInfo::MODEL_ADDED
+                if (isset($changes_in_version[ $model->get_this_model_name() ])
+                    && $changes_in_version[ $model->get_this_model_name() ] !== ModelVersionInfo::MODEL_ADDED
                 ) {
                     $current_fields = array_diff_key(
                         $current_fields,
-                        array_flip($changes_in_version[$model->get_this_model_name()])
+                        array_flip($changes_in_version[ $model->get_this_model_name() ])
                     );
                 }
             }
@@ -447,7 +447,7 @@ class ModelVersionInfo
         $relations = array();
         foreach ($model->relation_settings() as $relation_name => $relation_obj) {
             if ($this->isModelNameInThisVersion($relation_name)) {
-                $relations[$relation_name] = $relation_obj;
+                $relations[ $relation_name ] = $relation_obj;
             }
         }
         // filter the results, but use the old filter name

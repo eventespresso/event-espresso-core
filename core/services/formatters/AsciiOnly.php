@@ -24,7 +24,7 @@ class AsciiOnly extends FormatterBase
     public function format($input)
     {
         // in case an int or float etc was passed in
-        $input = (string)$input;
+        $input = (string) $input;
         $input = $this->convertAscii($input);
         return $input;
     }

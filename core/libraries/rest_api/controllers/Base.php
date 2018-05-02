@@ -96,7 +96,7 @@ class Base
      */
     protected function setDebugInfo($key, $info)
     {
-        $this->debug_info[$key] = $info;
+        $this->debug_info[ $key ] = $info;
     }
 
 
@@ -117,7 +117,7 @@ class Base
             }
         } else {
             $prefix = $use_ee_prefix ? Base::HEADER_PREFIX_FOR_EE : Base::HEADER_PREFIX_FOR_WP;
-            $this->response_headers[$prefix . $header_key] = $value;
+            $this->response_headers[ $prefix . $header_key ] = $value;
         }
     }
 
@@ -190,7 +190,7 @@ class Base
                 if (is_array($debug_info)) {
                     $debug_info = wp_json_encode($debug_info);
                 }
-                $headers['X-EE4-Debug-' . ucwords($debug_key)] = $debug_info;
+                $headers[ 'X-EE4-Debug-' . ucwords($debug_key) ] = $debug_info;
             }
         }
         $headers = array_merge(
@@ -220,8 +220,8 @@ class Base
             $status = 500;
         }
         $errors = array();
-        foreach ((array)$wp_error->errors as $code => $messages) {
-            foreach ((array)$messages as $message) {
+        foreach ((array) $wp_error->errors as $code => $messages) {
+            foreach ((array) $messages as $message) {
                 $errors[] = array(
                     'code'    => $code,
                     'message' => $message,
@@ -253,11 +253,11 @@ class Base
                 continue;
             }
             foreach ($sub_notices as $notice_code => $sub_notice) {
-                $headers['X-EE4-Notices-'
-                         . EEH_Inflector::humanize($notice_type)
-                         . '['
-                         . $notice_code
-                         . ']'] = strip_tags($sub_notice);
+                $headers[ 'X-EE4-Notices-'
+                          . EEH_Inflector::humanize($notice_type)
+                          . '['
+                          . $notice_code
+                          . ']' ] = strip_tags($sub_notice);
             }
         }
         return apply_filters(
@@ -320,10 +320,10 @@ class Base
         if (is_array($matches)) {
             // skip the overall regex match. Who cares
             for ($i = 1; $i <= count($match_keys); $i++) {
-                if (! isset($matches[$i])) {
+                if (! isset($matches[ $i ])) {
                     $success = false;
                 } else {
-                    $indexed_matches[$match_keys[$i - 1]] = $matches[$i];
+                    $indexed_matches[ $match_keys[ $i - 1 ] ] = $matches[ $i ];
                 }
             }
         }
@@ -347,8 +347,8 @@ class Base
     {
         // $request->get_params();
         return array_merge(
-            (array)$request->get_body_params(),
-            (array)$request->get_json_params()
+            (array) $request->get_body_params(),
+            (array) $request->get_json_params()
         );
         // return array_diff_key(
         //    $request->get_params(),

@@ -56,7 +56,7 @@ class TransientCacheStorage implements CacheStorageInterface
         $this->transient_cleanup_frequency = $this->setTransientCleanupFrequency();
         // round current time down to closest 5 minutes to simplify scheduling
         $this->current_time = $this->roundTimestamp(time(), '5-minutes', false);
-        $this->transients = (array)get_option(TransientCacheStorage::TRANSIENT_SCHEDULE_OPTIONS_KEY, array());
+        $this->transients = (array) get_option(TransientCacheStorage::TRANSIENT_SCHEDULE_OPTIONS_KEY, array());
         if (! (defined('DOING_AJAX') && DOING_AJAX) && $this->transient_cleanup_frequency !== 'off') {
             add_action('shutdown', array($this, 'checkTransientCleanupSchedule'), 999);
         }
@@ -122,17 +122,17 @@ class TransientCacheStorage implements CacheStorageInterface
         $hours = 'H';
         switch ($cleanup_frequency) {
             case '5-minutes':
-                $minutes = floor((int)date('i', $timestamp) / 5) * 5;
+                $minutes = floor((int) date('i', $timestamp) / 5) * 5;
                 $minutes = str_pad($minutes, 2, '0', STR_PAD_LEFT);
                 $offset = MINUTE_IN_SECONDS * 5;
                 break;
             case '15-minutes':
-                $minutes = floor((int)date('i', $timestamp) / 15) * 15;
+                $minutes = floor((int) date('i', $timestamp) / 15) * 15;
                 $minutes = str_pad($minutes, 2, '0', STR_PAD_LEFT);
                 $offset = MINUTE_IN_SECONDS * 15;
                 break;
             case '12-hours':
-                $hours = floor((int)date('H', $timestamp) / 12) * 12;
+                $hours = floor((int) date('H', $timestamp) / 12) * 12;
                 $hours = str_pad($hours, 2, '0', STR_PAD_LEFT);
                 $offset = HOUR_IN_SECONDS * 12;
                 break;
@@ -145,7 +145,7 @@ class TransientCacheStorage implements CacheStorageInterface
                 $offset = HOUR_IN_SECONDS;
                 break;
         }
-        $rounded_timestamp = (int)strtotime(date("Y-m-d {$hours}:{$minutes}:00", $timestamp));
+        $rounded_timestamp = (int) strtotime(date("Y-m-d {$hours}:{$minutes}:00", $timestamp));
         $rounded_timestamp += $round_up ? $offset : 0;
         return apply_filters(
             'FHEE__TransientCacheStorage__roundTimestamp__timestamp',
@@ -168,7 +168,7 @@ class TransientCacheStorage implements CacheStorageInterface
      */
     public function add($transient_key, $data, $expiration = 0)
     {
-        $expiration = (int)abs($expiration);
+        $expiration = (int) abs($expiration);
         $saved = set_transient($transient_key, $data, $expiration);
         if ($saved && $expiration) {
             $this->scheduleTransientCleanup($transient_key, $expiration);
@@ -190,7 +190,7 @@ class TransientCacheStorage implements CacheStorageInterface
      */
     public function get($transient_key, $standard_cache = true)
     {
-        if (isset($this->transients[$transient_key])) {
+        if (isset($this->transients[ $transient_key ])) {
             // to avoid cache stampedes (AKA:dogpiles) for standard cache items,
             // check if known cache expires within the next minute,
             // and if so, remove it from our tracking and and return nothing.
@@ -198,17 +198,17 @@ class TransientCacheStorage implements CacheStorageInterface
             // while allowing any following requests to still access the existing cache
             // until it gets replaced with the refreshed content
             if ($standard_cache
-                && $this->transients[$transient_key] - time() <= MINUTE_IN_SECONDS
+                && $this->transients[ $transient_key ] - time() <= MINUTE_IN_SECONDS
             ) {
-                unset($this->transients[$transient_key]);
+                unset($this->transients[ $transient_key ]);
                 $this->updateTransients();
                 return null;
             }
 
             // for non standard cache items, remove the key from our tracking,
             // but proceed to retrieve the transient so that it also gets removed from the db
-            if ($this->transients[$transient_key] <= time()) {
-                unset($this->transients[$transient_key]);
+            if ($this->transients[ $transient_key ] <= time()) {
+                unset($this->transients[ $transient_key ]);
                 $this->updateTransients();
             }
         }
@@ -281,7 +281,7 @@ class TransientCacheStorage implements CacheStorageInterface
         // and round to the closest 15 minutes
         $expiration = $this->roundTimestamp($expiration);
         // save transients to clear using their ID as the key to avoid duplicates
-        $this->transients[$transient_key] = $expiration;
+        $this->transients[ $transient_key ] = $expiration;
         $this->updateTransients();
     }
 
@@ -320,7 +320,7 @@ class TransientCacheStorage implements CacheStorageInterface
     {
         $update = false;
         // filter the query limit. Set to 0 to turn off garbage collection
-        $limit = (int)abs(
+        $limit = (int) abs(
             apply_filters(
                 'FHEE__TransientCacheStorage__clearExpiredTransients__limit',
                 50
@@ -334,7 +334,7 @@ class TransientCacheStorage implements CacheStorageInterface
                     continue;
                 }
                 if (! $expiration || ! $transient_key) {
-                    unset($this->transients[$transient_key]);
+                    unset($this->transients[ $transient_key ]);
                     $update = true;
                     continue;
                 }
@@ -373,7 +373,7 @@ class TransientCacheStorage implements CacheStorageInterface
                 ? str_replace('_transient_', '', $transient_key)
                 : $transient_key;
             delete_transient($transient_key);
-            unset($this->transients[$transient_key]);
+            unset($this->transients[ $transient_key ]);
             $counter++;
         }
         return $counter > 0;

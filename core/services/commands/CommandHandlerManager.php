@@ -74,7 +74,7 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
         if (empty($command)) {
             throw new InvalidCommandHandlerException($command);
         }
-        $this->command_handlers[$command] = $command_handler;
+        $this->command_handlers[ $command ] = $command_handler;
     }
 
 
@@ -96,9 +96,9 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
         $handler = null;
         // has a command handler already been set for this class ?
         // if not, can we find one via the FQCN ?
-        if (isset($this->command_handlers[$command_name])) {
-            $handler = $this->command_handlers[$command_name];
-        } else if (class_exists($command_handler)) {
+        if (isset($this->command_handlers[ $command_name ])) {
+            $handler = $this->command_handlers[ $command_name ];
+        } elseif (class_exists($command_handler)) {
             $handler = $this->loader->getShared($command_handler);
         }
         // if Handler requires an instance of the CommandBus, but that has not yet been set

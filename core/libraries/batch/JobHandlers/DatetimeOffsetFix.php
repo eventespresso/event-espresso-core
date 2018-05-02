@@ -61,6 +61,7 @@ class DatetimeOffsetFix extends JobHandler
     protected $models_with_datetime_fields = array();
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
     /**
      * Performs any necessary setup for starting the job. This is also a good
      * place to setup the $job_arguments which will be used for subsequent HTTP requests
@@ -164,10 +165,10 @@ class DatetimeOffsetFix extends JobHandler
             $inner_query = array();
             foreach ($model->_get_fields_for_table($table->get_table_alias()) as $model_field) {
                 if ($model_field instanceof EE_Datetime_Field) {
-                    $inner_query[$model_field->get_table_column()] = $model_field->get_table_column() . ' = '
-                                                                     . $sql_date_function . '('
-                                                                     . $model_field->get_table_column()
-                                                                     . ", INTERVAL {$offset} MINUTE)";
+                    $inner_query[ $model_field->get_table_column() ] = $model_field->get_table_column() . ' = '
+                                                                       . $sql_date_function . '('
+                                                                       . $model_field->get_table_column()
+                                                                       . ", INTERVAL {$offset} MINUTE)";
                     $fields_affected[] = $model_field;
                 }
             }
@@ -241,7 +242,7 @@ class DatetimeOffsetFix extends JobHandler
                 if (! $error_message) {
                     $error_message = esc_html__('Unknown mysql error occured.', 'event_espresso');
                 }
-                $errors[$field_name] = $error_message;
+                $errors[ $field_name ] = $error_message;
             }
         }
         return $errors;
@@ -372,7 +373,7 @@ class DatetimeOffsetFix extends JobHandler
      */
     private function updateCountOfModelsProcessed($count = 1)
     {
-        $count = $this->getCountOfModelsProcessed() + (int)$count;
+        $count = $this->getCountOfModelsProcessed() + (int) $count;
         update_option(self::COUNT_OF_MODELS_PROCESSED, $count);
     }
 
@@ -384,7 +385,7 @@ class DatetimeOffsetFix extends JobHandler
      */
     private function getCountOfModelsProcessed()
     {
-        return (int)get_option(self::COUNT_OF_MODELS_PROCESSED, 0);
+        return (int) get_option(self::COUNT_OF_MODELS_PROCESSED, 0);
     }
 
 
@@ -420,7 +421,7 @@ class DatetimeOffsetFix extends JobHandler
      */
     public static function getOffset()
     {
-        return (float)get_option(self::OFFSET_TO_APPLY_OPTION_KEY, 0);
+        return (float) get_option(self::OFFSET_TO_APPLY_OPTION_KEY, 0);
     }
 
 

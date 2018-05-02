@@ -104,7 +104,7 @@ class CreateRegistrationService extends DomainService
             $ticket_line_item
         );
         $final_price = $final_price !== null ? $final_price : $ticket->get_ticket_total_with_taxes();
-        return (float)$final_price;
+        return (float) $final_price;
     }
 
 

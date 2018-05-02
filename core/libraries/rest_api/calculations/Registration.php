@@ -73,7 +73,7 @@ class Registration extends Calculations_Base
                     $status_pretty = 'NEVER';
                     break;
             }
-            $checkin_stati[$datetime_id] = $status_pretty;
+            $checkin_stati[ $datetime_id ] = $status_pretty;
         }
         return $checkin_stati;
     }

@@ -296,7 +296,7 @@ class StatsGatherer
             );
             if ($active_payment_methods) {
                 foreach ($active_payment_methods as $payment_method) {
-                    $payment_method_stats[$payment_method->name() . '_active_payment_method'] = 1;
+                    $payment_method_stats[ $payment_method->name() . '_active_payment_method' ] = 1;
                 }
             }
         } catch (Exception $e) {

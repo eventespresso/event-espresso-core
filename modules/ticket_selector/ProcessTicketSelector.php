@@ -20,6 +20,7 @@ use InvalidArgumentException;
 
 // phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersSingle
 // phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersPlural
+
 /**
  * Class ProcessTicketSelector
  * Description
@@ -296,12 +297,12 @@ class ProcessTicketSelector
                 switch ($what) {
                     // integers
                     case 'event_id':
-                        $valid_data[$what] = absint($input_value);
+                        $valid_data[ $what ] = absint($input_value);
                         // get event via the event id we put in the form
                         break;
                     case 'rows':
                     case 'max_atndz':
-                        $valid_data[$what] = absint($input_value);
+                        $valid_data[ $what ] = absint($input_value);
                         break;
                     // arrays of integers
                     case 'qty':
@@ -320,8 +321,8 @@ class ProcessTicketSelector
                             $qty = isset($row_qty[1]) ? absint($row_qty[1]) : 0;
                             $row_qty = array($row => $qty);
                             for ($x = 1; $x <= $rows; $x++) {
-                                if (! isset($row_qty[$x])) {
-                                    $row_qty[$x] = 0;
+                                if (! isset($row_qty[ $x ])) {
+                                    $row_qty[ $x ] = 0;
                                 }
                             }
                         }
@@ -330,16 +331,16 @@ class ProcessTicketSelector
                         foreach ($row_qty as $qty) {
                             $qty = absint($qty);
                             // sanitize as integers
-                            $valid_data[$what][] = $qty;
+                            $valid_data[ $what ][] = $qty;
                             $valid_data['total_tickets'] += $qty;
                         }
                         break;
                     // array of integers
                     case 'ticket_id':
                         // cycle thru values
-                        foreach ((array)$input_value as $key => $value) {
+                        foreach ((array) $input_value as $key => $value) {
                             // allow only integers
-                            $valid_data[$what][$key] = absint($value);
+                            $valid_data[ $what ][ $key ] = absint($value);
                         }
                         break;
                     case 'return_url':
@@ -353,7 +354,7 @@ class ProcessTicketSelector
                             // use event list url instead, but append anchor
                             $input_value = EEH_Event_View::event_archive_url() . '#' . $input_value;
                         }
-                        $valid_data[$what] = $input_value;
+                        $valid_data[ $what ] = $input_value;
                         break;
                 }    // end switch $what
             }
@@ -409,7 +410,7 @@ class ProcessTicketSelector
             // cycle thru the number of data rows sent from the event listing
             for ($x = 0; $x < $valid['rows']; $x++) {
                 // does this row actually contain a ticket quantity?
-                if (isset($valid['qty'][$x]) && $valid['qty'][$x] > 0) {
+                if (isset($valid['qty'][ $x ]) && $valid['qty'][ $x ] > 0) {
                     // YES we have a ticket quantity
                     $tickets_selected = true;
                     $valid_ticket = false;
@@ -418,14 +419,14 @@ class ProcessTicketSelector
                     //     '$valid[\'ticket_id\'][ $x ]',
                     //     __FILE__, __LINE__
                     // );
-                    if (isset($valid['ticket_id'][$x])) {
+                    if (isset($valid['ticket_id'][ $x ])) {
                         // get ticket via the ticket id we put in the form
-                        $ticket = $this->ticket_model->get_one_by_ID($valid['ticket_id'][$x]);
+                        $ticket = $this->ticket_model->get_one_by_ID($valid['ticket_id'][ $x ]);
                         if ($ticket instanceof EE_Ticket) {
                             $valid_ticket = true;
                             $tickets_added += $this->addTicketToCart(
                                 $ticket,
-                                $valid['qty'][$x]
+                                $valid['qty'][ $x ]
                             );
                         }
                     }

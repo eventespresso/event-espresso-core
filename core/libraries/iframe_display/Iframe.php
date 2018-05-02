@@ -181,7 +181,7 @@ class Iframe
             );
         }
         foreach ($stylesheets as $handle => $stylesheet) {
-            $this->css[$handle] = $stylesheet;
+            $this->css[ $handle ] = $stylesheet;
         }
     }
 
@@ -203,9 +203,9 @@ class Iframe
         }
         foreach ($scripts as $handle => $script) {
             if ($add_to_header) {
-                $this->header_js[$handle] = $script;
+                $this->header_js[ $handle ] = $script;
             } else {
-                $this->footer_js[$handle] = $script;
+                $this->footer_js[ $handle ] = $script;
             }
         }
     }
@@ -228,9 +228,9 @@ class Iframe
         }
         foreach ($script_attributes as $handle => $script_attribute) {
             if ($add_to_header) {
-                $this->header_js_attributes[$handle] = $script_attribute;
+                $this->header_js_attributes[ $handle ] = $script_attribute;
             } else {
-                $this->footer_js_attributes[$handle] = $script_attribute;
+                $this->footer_js_attributes[ $handle ] = $script_attribute;
             }
         }
     }
@@ -253,14 +253,14 @@ class Iframe
         }
         foreach ($vars as $handle => $var) {
             if ($var_name === 'eei18n') {
-                EE_Registry::$i18n_js_strings[$handle] = $var;
+                EE_Registry::$i18n_js_strings[ $handle ] = $var;
             } elseif ($var_name === 'eeCAL' && $handle === 'espresso_calendar') {
-                $this->localized_vars[$var_name] = $var;
+                $this->localized_vars[ $var_name ] = $var;
             } else {
-                if (! isset($this->localized_vars[$var_name])) {
-                    $this->localized_vars[$var_name] = array();
+                if (! isset($this->localized_vars[ $var_name ])) {
+                    $this->localized_vars[ $var_name ] = array();
                 }
-                $this->localized_vars[$var_name][$handle] = $var;
+                $this->localized_vars[ $var_name ][ $handle ] = $var;
             }
         }
     }
@@ -307,27 +307,27 @@ class Iframe
                     $this->enqueue_wp_assets,
                     $this
                 ),
-                'css'                  => (array)apply_filters(
+                'css'                  => (array) apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__css_urls',
                     $this->css,
                     $this
                 ),
-                'header_js'            => (array)apply_filters(
+                'header_js'            => (array) apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__header_js_urls',
                     $this->header_js,
                     $this
                 ),
-                'header_js_attributes' => (array)apply_filters(
+                'header_js_attributes' => (array) apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__header_js_attributes',
                     $this->header_js_attributes,
                     $this
                 ),
-                'footer_js'            => (array)apply_filters(
+                'footer_js'            => (array) apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__footer_js_urls',
                     $this->footer_js,
                     $this
                 ),
-                'footer_js_attributes' => (array)apply_filters(
+                'footer_js_attributes' => (array) apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__footer_js_attributes',
                     $this->footer_js_attributes,
                     $this
@@ -357,10 +357,10 @@ class Iframe
     public function localizeJsonVars()
     {
         $JSON = '';
-        foreach ((array)$this->localized_vars as $var_name => $vars) {
-            $this->localized_vars[$var_name] = $this->encodeJsonVars($vars);
+        foreach ((array) $this->localized_vars as $var_name => $vars) {
+            $this->localized_vars[ $var_name ] = $this->encodeJsonVars($vars);
             $JSON .= "/* <![CDATA[ */ var {$var_name} = ";
-            $JSON .= wp_json_encode($this->localized_vars[$var_name]);
+            $JSON .= wp_json_encode($this->localized_vars[ $var_name ]);
             $JSON .= '; /* ]]> */';
         }
         return $JSON;
@@ -375,13 +375,13 @@ class Iframe
     {
         if (is_array($var)) {
             $localized_vars = array();
-            foreach ((array)$var as $key => $value) {
-                $localized_vars[$key] = $this->encodeJsonVars($value);
+            foreach ((array) $var as $key => $value) {
+                $localized_vars[ $key ] = $this->encodeJsonVars($value);
             }
             return $localized_vars;
         }
         if (is_scalar($var)) {
-            return html_entity_decode((string)$var, ENT_QUOTES, 'UTF-8');
+            return html_entity_decode((string) $var, ENT_QUOTES, 'UTF-8');
         }
         return null;
     }

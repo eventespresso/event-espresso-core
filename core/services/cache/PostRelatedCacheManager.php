@@ -94,13 +94,13 @@ class PostRelatedCacheManager extends BasicCacheManager
     {
         $post_related_cache = $this->getPostRelatedCache();
         // if post is not already being tracked
-        if (! isset($post_related_cache[$post_ID])) {
+        if (! isset($post_related_cache[ $post_ID ])) {
             // add array to add cache ids to
-            $post_related_cache[$post_ID] = array();
+            $post_related_cache[ $post_ID ] = array();
         }
-        if (! in_array($id_prefix, $post_related_cache[$post_ID], true)) {
+        if (! in_array($id_prefix, $post_related_cache[ $post_ID ], true)) {
             // add cache id to be tracked
-            $post_related_cache[$post_ID][] = $id_prefix;
+            $post_related_cache[ $post_ID ][] = $id_prefix;
             $this->updatePostRelatedCache($post_related_cache);
         }
     }
@@ -116,18 +116,18 @@ class PostRelatedCacheManager extends BasicCacheManager
     {
         $post_related_cache = $this->getPostRelatedCache();
         // if post is not being tracked
-        if (! isset($post_related_cache[$post_ID])) {
+        if (! isset($post_related_cache[ $post_ID ])) {
             // let's clean up some of the duplicate IDs that were getting added
             foreach ($post_related_cache as $other_post_ID => $cache_IDs) {
                 // remove duplicates
-                $post_related_cache[$other_post_ID] = array_unique($post_related_cache[$other_post_ID]);
+                $post_related_cache[ $other_post_ID ] = array_unique($post_related_cache[ $other_post_ID ]);
             }
             $this->updatePostRelatedCache($post_related_cache);
             return;
         }
         // get cache id prefixes for post, and delete their corresponding transients
-        $this->clear($post_related_cache[$post_ID]);
-        unset($post_related_cache[$post_ID]);
+        $this->clear($post_related_cache[ $post_ID ]);
+        unset($post_related_cache[ $post_ID ]);
         $this->updatePostRelatedCache($post_related_cache);
     }
 }

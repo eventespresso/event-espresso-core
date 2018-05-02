@@ -393,7 +393,7 @@ class CoffeeShop implements CoffeePotInterface
             // is the wildcard recipe prefix in the identifier ?
             if (strpos($identifier, $wildcard) !== false) {
                 // track matches and use the number of wildcard characters matched for the key
-                $matches[strlen($wildcard)] = $default_recipe;
+                $matches[ strlen($wildcard) ] = $default_recipe;
             }
         }
         if (count($matches) > 0) {
@@ -432,8 +432,8 @@ class CoffeeShop implements CoffeePotInterface
             return;
         }
         $identifier = $this->processIdentifier($identifier);
-        foreach ((array)$aliases as $alias) {
-            $this->filters[$this->processIdentifier($alias)] = $identifier;
+        foreach ((array) $aliases as $alias) {
+            $this->filters[ $this->processIdentifier($alias) ] = $identifier;
         }
     }
 
@@ -475,8 +475,8 @@ class CoffeeShop implements CoffeePotInterface
     private function filterIdentifier($identifier)
     {
         $identifier = $this->processIdentifier($identifier);
-        return isset($this->filters[$identifier]) && ! empty($this->filters[$identifier])
-            ? $this->filters[$identifier]
+        return isset($this->filters[ $identifier ]) && ! empty($this->filters[ $identifier ])
+            ? $this->filters[ $identifier ]
             : $identifier;
     }
 
@@ -537,7 +537,7 @@ class CoffeeShop implements CoffeePotInterface
             // does this recipe use a wildcard ? (but is NOT the global default)
             if ($identifier !== Recipe::DEFAULT_ID && strpos($identifier, '*') !== false) {
                 // strip the wildcard and use identifier as key
-                $default_recipes[str_replace('*', '', $identifier)] = $this->recipes->current();
+                $default_recipes[ str_replace('*', '', $identifier) ] = $this->recipes->current();
             }
             $this->recipes->next();
         }

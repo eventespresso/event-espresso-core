@@ -16,6 +16,7 @@ class JobParameters
 {
     // phpcs:disable Generic.NamingConventions.UpperCaseConstantName.ClassConstantNotUpperCase
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+    // phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
     /**
      * status indicating the job should continue
      */
@@ -227,8 +228,8 @@ class JobParameters
      */
     public function request_datum($key, $default = '')
     {
-        if (isset($this->_request_data[$key])) {
-            return $this->_request_data[$key];
+        if (isset($this->_request_data[ $key ])) {
+            return $this->_request_data[ $key ];
         } else {
             return $default;
         }
@@ -244,8 +245,8 @@ class JobParameters
      */
     public function extra_datum($key, $default = '')
     {
-        if (isset($this->_extra_data[$key])) {
-            return $this->_extra_data[$key];
+        if (isset($this->_extra_data[ $key ])) {
+            return $this->_extra_data[ $key ];
         } else {
             return $default;
         }
@@ -260,7 +261,7 @@ class JobParameters
      */
     public function add_extra_data($key, $value)
     {
-        $this->_extra_data[$key] = $value;
+        $this->_extra_data[ $key ] = $value;
     }
 
 

@@ -75,9 +75,9 @@ class FileLocator extends Locator
         if (! (is_string($directory_paths) || is_array($directory_paths))) {
             throw new InvalidDataTypeException('$directory_paths', $directory_paths, 'string or array');
         }
-        foreach ((array)$directory_paths as $directory_path) {
+        foreach ((array) $directory_paths as $directory_path) {
             foreach ($this->findFilesByPath($directory_path) as $key => $file) {
-                $this->filepaths[$key] = \EEH_File::standardise_directory_separators($file);
+                $this->filepaths[ $key ] = \EEH_File::standardise_directory_separators($file);
             }
         }
         return $this->filepaths;

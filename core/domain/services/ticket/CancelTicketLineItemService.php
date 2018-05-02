@@ -55,7 +55,7 @@ class CancelTicketLineItemService extends DomainService
         // first we need to decrement the ticket quantity
         \EEH_Line_Item::decrement_quantity($ticket_line_item, $quantity);
         // no tickets left for this line item ?
-        if ((int)$ticket_line_item->quantity() === 0) {
+        if ((int) $ticket_line_item->quantity() === 0) {
             // then just set this line item as cancelled, save, and get out
             $ticket_line_item->set_type(\EEM_Line_Item::type_cancellation);
             $success = $ticket_line_item->save();
@@ -75,14 +75,14 @@ class CancelTicketLineItemService extends DomainService
                         $ticket_line_item->desc(),
                         date('Y-m-d h:i a')
                     ),
-                    'LIN_unit_price' => (float)$ticket_line_item->unit_price(),
+                    'LIN_unit_price' => (float) $ticket_line_item->unit_price(),
                     'LIN_quantity'   => $quantity,
                     'LIN_percent'    => null,
                     'LIN_is_taxable' => false,
                     'LIN_order'      => $items_subtotal instanceof \EE_Line_Item
                         ? count($items_subtotal->children())
                         : 0,
-                    'LIN_total'      => (float)$ticket_line_item->unit_price(),
+                    'LIN_total'      => (float) $ticket_line_item->unit_price(),
                     'LIN_type'       => \EEM_Line_Item::type_cancellation,
                 )
             );

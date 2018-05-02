@@ -312,7 +312,7 @@ class Recipe implements RecipeInterface
                 __('string or array of strings (full server filepath(s))', 'event_espresso')
             );
         }
-        $paths = (array)$paths;
+        $paths = (array) $paths;
         foreach ($paths as $path) {
             if (strpos($path, '*') === false && ! is_readable($path)) {
                 throw new RuntimeException(

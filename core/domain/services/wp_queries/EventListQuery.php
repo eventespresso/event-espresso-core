@@ -69,7 +69,7 @@ class EventListQuery extends WP_Query
      */
     public function __construct($args = array())
     {
-        $args = $this->parseArgs((array)$args);
+        $args = $this->parseArgs((array) $args);
         $this->setupEventQueryHelper();
         $this->setupFilters();
         $args = $this->getQueryArgs($args);
@@ -91,7 +91,7 @@ class EventListQuery extends WP_Query
                 // set the property value
                 $this->{$property} = $value;
                 // then remove it from the array of args that will later be passed to WP_Query()
-                unset($args[$property]);
+                unset($args[ $property ]);
             }
         }
         return $args;
@@ -165,6 +165,7 @@ class EventListQuery extends WP_Query
     }
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
     /**
      * show_event_list_title
      *

@@ -159,11 +159,11 @@ class Read extends Base
      */
     protected function translateDefaultsForRestResponse($field_name, EE_Model_Field_Base $field, array $schema)
     {
-        if (isset($schema['properties'][$field_name]['default'])) {
-            if (is_array($schema['properties'][$field_name]['default'])) {
-                foreach ($schema['properties'][$field_name]['default'] as $default_key => $default_value) {
+        if (isset($schema['properties'][ $field_name ]['default'])) {
+            if (is_array($schema['properties'][ $field_name ]['default'])) {
+                foreach ($schema['properties'][ $field_name ]['default'] as $default_key => $default_value) {
                     if ($default_key === 'raw') {
-                        $schema['properties'][$field_name]['default'][$default_key] =
+                        $schema['properties'][ $field_name ]['default'][ $default_key ] =
                             ModelDataTranslator::prepareFieldValueForJson(
                                 $field,
                                 $default_value,
@@ -172,9 +172,9 @@ class Read extends Base
                     }
                 }
             } else {
-                $schema['properties'][$field_name]['default'] = ModelDataTranslator::prepareFieldValueForJson(
+                $schema['properties'][ $field_name ]['default'] = ModelDataTranslator::prepareFieldValueForJson(
                     $field,
-                    $schema['properties'][$field_name]['default'],
+                    $schema['properties'][ $field_name ]['default'],
                     $this->getModelVersionInfo()->requestedVersion()
                 );
             }
@@ -196,9 +196,9 @@ class Read extends Base
     protected function maybeAddExtraFieldsToSchema($field_name, EE_Model_Field_Base $field, array $schema)
     {
         if ($field instanceof EE_Datetime_Field) {
-            $schema['properties'][$field_name . '_gmt'] = $field->getSchema();
+            $schema['properties'][ $field_name . '_gmt' ] = $field->getSchema();
             // modify the description
-            $schema['properties'][$field_name . '_gmt']['description'] = sprintf(
+            $schema['properties'][ $field_name . '_gmt' ]['description'] = sprintf(
                 esc_html__('%s - the value for this field is in GMT.', 'event_espresso'),
                 wp_specialchars_decode($field->get_nicename(), ENT_QUOTES)
             );
@@ -432,9 +432,9 @@ class Read extends Base
         }
         $query_params = $this->createModelQueryParams($relation->get_other_model(), $request->get_params());
         foreach ($primary_model_query_params[0] as $where_condition_key => $where_condition_value) {
-            $query_params[0][$relation->get_this_model()->get_this_model_name()
-                             . '.'
-                             . $where_condition_key] = $where_condition_value;
+            $query_params[0][ $relation->get_this_model()->get_this_model_name()
+                              . '.'
+                              . $where_condition_key ] = $where_condition_value;
         }
         $query_params['default_where_conditions'] = 'none';
         $query_params['caps'] = $context;
@@ -645,7 +645,7 @@ class Read extends Base
         if ($do_chevy_shuffle) {
             global $post;
             $old_post = $post;
-            $post = get_post($result[$model->primary_key_name()]);
+            $post = get_post($result[ $model->primary_key_name() ]);
             if (! $post instanceof \WP_Post) {
                 // well that's weird, because $result is what we JUST fetched from the database
                 throw new RestException(
@@ -667,13 +667,13 @@ class Read extends Base
         foreach ($result as $field_name => $field_value) {
             $field_obj = $model->field_settings_for($field_name);
             if ($this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsIgnored())) {
-                unset($result[$field_name]);
+                unset($result[ $field_name ]);
             } elseif ($this->isSubclassOfOne(
                 $field_obj,
                 $this->getModelVersionInfo()->fieldsThatHaveRenderedFormat()
             )
             ) {
-                $result[$field_name] = array(
+                $result[ $field_name ] = array(
                     'raw'      => $this->prepareFieldObjValueForJson($field_obj, $field_value),
                     'rendered' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
                 );
@@ -682,7 +682,7 @@ class Read extends Base
                 $this->getModelVersionInfo()->fieldsThatHavePrettyFormat()
             )
             ) {
-                $result[$field_name] = array(
+                $result[ $field_name ] = array(
                     'raw'    => $this->prepareFieldObjValueForJson($field_obj, $field_value),
                     'pretty' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
                 );
@@ -690,19 +690,19 @@ class Read extends Base
                 $field_value = $field_obj->prepare_for_set_from_db($field_value);
                 $timezone = $field_value->getTimezone();
                 EEH_DTT_Helper::setTimezone($field_value, new DateTimeZone('UTC'));
-                $result[$field_name . '_gmt'] = ModelDataTranslator::prepareFieldValuesForJson(
+                $result[ $field_name . '_gmt' ] = ModelDataTranslator::prepareFieldValuesForJson(
                     $field_obj,
                     $field_value,
                     $this->getModelVersionInfo()->requestedVersion()
                 );
                 EEH_DTT_Helper::setTimezone($field_value, $timezone);
-                $result[$field_name] = ModelDataTranslator::prepareFieldValuesForJson(
+                $result[ $field_name ] = ModelDataTranslator::prepareFieldValuesForJson(
                     $field_obj,
                     $field_value,
                     $this->getModelVersionInfo()->requestedVersion()
                 );
             } else {
-                $result[$field_name] = $this->prepareFieldObjValueForJson($field_obj, $field_value);
+                $result[ $field_name ] = $this->prepareFieldObjValueForJson($field_obj, $field_value);
             }
         }
         if ($do_chevy_shuffle) {
@@ -754,7 +754,7 @@ class Read extends Base
     protected function addExtraFields(EEM_Base $model, $db_row, $entity_array)
     {
         if ($model instanceof EEM_CPT_Base) {
-            $entity_array['link'] = get_permalink($db_row[$model->get_primary_key_field()->get_qualified_column()]);
+            $entity_array['link'] = get_permalink($db_row[ $model->get_primary_key_field()->get_qualified_column() ]);
         }
         return $entity_array;
     }
@@ -779,7 +779,7 @@ class Read extends Base
                     'href' => $this->getVersionedLinkTo(
                         EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
                         . '/'
-                        . $entity_array[$model->primary_key_name()]
+                        . $entity_array[ $model->primary_key_name() ]
                     ),
                 ),
             );
@@ -795,12 +795,12 @@ class Read extends Base
         if ($model->has_primary_key_field()) {
             foreach ($this->getModelVersionInfo()->relationSettings($model) as $relation_name => $relation_obj) {
                 $related_model_part = Read::getRelatedEntityName($relation_name, $relation_obj);
-                $links[EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part] = array(
+                $links[ EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part ] = array(
                     array(
                         'href'   => $this->getVersionedLinkTo(
                             EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
                             . '/'
-                            . $entity_array[$model->primary_key_name()]
+                            . $entity_array[ $model->primary_key_name() ]
                             . '/'
                             . $related_model_part
                         ),
@@ -881,9 +881,9 @@ class Read extends Base
                     $relation_obj,
                     $pretend_related_request
                 );
-                $entity_array[Read::getRelatedEntityName($relation_name, $relation_obj)] = $related_results
-                                                                                           instanceof
-                                                                                           WP_Error
+                $entity_array[ Read::getRelatedEntityName($relation_name, $relation_obj) ] = $related_results
+                                                                                             instanceof
+                                                                                             WP_Error
                     ? null
                     : $related_results;
             }
@@ -1122,7 +1122,7 @@ class Read extends Base
         if (isset($query_parameters['limit'])) {
             // limit should be either a string like '23' or '23,43', or an array with two items in it
             if (! is_array($query_parameters['limit'])) {
-                $limit_array = explode(',', (string)$query_parameters['limit']);
+                $limit_array = explode(',', (string) $query_parameters['limit']);
             } else {
                 $limit_array = $query_parameters['limit'];
             }
@@ -1141,7 +1141,7 @@ class Read extends Base
                         )
                     );
                 }
-                $sanitized_limit[] = (int)$limit_part;
+                $sanitized_limit[] = (int) $limit_part;
             }
             $model_query_params['limit'] = implode(',', $sanitized_limit);
         } else {
@@ -1174,9 +1174,9 @@ class Read extends Base
         $model_ready_query_params = array();
         foreach ($query_params as $key => $value) {
             if (is_array($value)) {
-                $model_ready_query_params[$key] = $this->prepareRestQueryParamsKeyForModels($model, $value);
+                $model_ready_query_params[ $key ] = $this->prepareRestQueryParamsKeyForModels($model, $value);
             } else {
-                $model_ready_query_params[$key] = $value;
+                $model_ready_query_params[ $key ] = $value;
             }
         }
         return $model_ready_query_params;
@@ -1194,9 +1194,9 @@ class Read extends Base
         $model_ready_query_params = array();
         foreach ($query_params as $key => $value) {
             if (is_array($value)) {
-                $model_ready_query_params[$key] = $this->prepareRestQueryParamsValuesForModels($model, $value);
+                $model_ready_query_params[ $key ] = $this->prepareRestQueryParamsValuesForModels($model, $value);
             } else {
-                $model_ready_query_params[$key] = $value;
+                $model_ready_query_params[ $key ] = $value;
             }
         }
         return $model_ready_query_params;

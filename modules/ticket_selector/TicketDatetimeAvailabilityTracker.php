@@ -62,24 +62,24 @@ class TicketDatetimeAvailabilityTracker
     public function ticketDatetimeAvailability(EE_Ticket $ticket, $get_original_ticket_spaces = false)
     {
         // if the $_available_spaces array has not been set up yet...
-        if (! isset($this->available_spaces['tickets'][$ticket->ID()])) {
+        if (! isset($this->available_spaces['tickets'][ $ticket->ID() ])) {
             $this->setInitialTicketDatetimeAvailability($ticket);
         }
         $available_spaces = $ticket->qty() - $ticket->sold();
-        if (isset($this->available_spaces['tickets'][$ticket->ID()])) {
+        if (isset($this->available_spaces['tickets'][ $ticket->ID() ])) {
             // loop thru tickets, which will ALSO include individual ticket records AND a total
-            foreach ($this->available_spaces['tickets'][$ticket->ID()] as $DTD_ID => $spaces) {
+            foreach ($this->available_spaces['tickets'][ $ticket->ID() ] as $DTD_ID => $spaces) {
                 // if we want the original datetime availability BEFORE we started subtracting tickets ?
                 if ($get_original_ticket_spaces) {
                     // then grab the available spaces from the "tickets" array
                     // and compare with the above to get the lowest number
                     $available_spaces = min(
                         $available_spaces,
-                        $this->available_spaces['tickets'][$ticket->ID()][$DTD_ID]
+                        $this->available_spaces['tickets'][ $ticket->ID() ][ $DTD_ID ]
                     );
                 } else {
                     // we want the updated ticket availability as stored in the "datetimes" array
-                    $available_spaces = min($available_spaces, $this->available_spaces['datetimes'][$DTD_ID]);
+                    $available_spaces = min($available_spaces, $this->available_spaces['datetimes'][ $DTD_ID ]);
                 }
             }
         }
@@ -118,17 +118,17 @@ class TicketDatetimeAvailabilityTracker
                     $spaces_remaining = $datetime->spaces_remaining();
                     // save the total available spaces ( the lesser of the ticket qty minus the number of tickets sold
                     // or the datetime spaces remaining) to this ticket using the datetime ID as the key
-                    $this->available_spaces['tickets'][$ticket->ID()][$datetime->ID()] = min(
+                    $this->available_spaces['tickets'][ $ticket->ID() ][ $datetime->ID() ] = min(
                         $ticket->qty() - $ticket->sold(),
                         $spaces_remaining
                     );
                     // if the remaining spaces for this datetime is already set,
                     // then compare that against the datetime spaces remaining, and take the lowest number,
                     // else just take the datetime spaces remaining, and assign to the datetimes array
-                    $this->available_spaces['datetimes'][$datetime->ID()] = isset(
-                        $this->available_spaces['datetimes'][$datetime->ID()]
+                    $this->available_spaces['datetimes'][ $datetime->ID() ] = isset(
+                        $this->available_spaces['datetimes'][ $datetime->ID() ]
                     )
-                        ? min($this->available_spaces['datetimes'][$datetime->ID()], $spaces_remaining)
+                        ? min($this->available_spaces['datetimes'][ $datetime->ID() ], $spaces_remaining)
                         : $spaces_remaining;
                 }
             }
@@ -144,11 +144,11 @@ class TicketDatetimeAvailabilityTracker
      */
     public function recalculateTicketDatetimeAvailability(EE_Ticket $ticket, $qty = 0)
     {
-        if (isset($this->available_spaces['tickets'][$ticket->ID()])) {
+        if (isset($this->available_spaces['tickets'][ $ticket->ID() ])) {
             // loop thru tickets, which will ALSO include individual ticket records AND a total
-            foreach ($this->available_spaces['tickets'][$ticket->ID()] as $DTD_ID => $spaces) {
+            foreach ($this->available_spaces['tickets'][ $ticket->ID() ] as $DTD_ID => $spaces) {
                 // subtract the qty of selected tickets from each datetime's available spaces this ticket has access to,
-                $this->available_spaces['datetimes'][$DTD_ID] -= $qty;
+                $this->available_spaces['datetimes'][ $DTD_ID ] -= $qty;
             }
         }
     }

@@ -105,7 +105,7 @@ class DatetimeSelector
             if (! $ticket_datetime instanceof \EE_Datetime) {
                 continue;
             }
-            $datetimes[$ticket_datetime->ID()] = $ticket_datetime;
+            $datetimes[ $ticket_datetime->ID() ] = $ticket_datetime;
         }
         return $datetimes;
     }
@@ -146,7 +146,7 @@ class DatetimeSelector
             if (! $datetime instanceof \EE_Datetime) {
                 continue;
             }
-            $datetime_options[$datetime->date_and_time_range('Y_m_d', 'H_i', '-', '_')] =
+            $datetime_options[ $datetime->date_and_time_range('Y_m_d', 'H_i', '-', '_') ] =
                 $datetime->date_and_time_range($date_format, $time_format, ' - ');
         }
         return $datetime_options;

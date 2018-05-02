@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\CPTs;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -215,6 +216,7 @@ class CptQueryModifier
     }
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
     /**
      * @return \WP_Query
      */
@@ -257,8 +259,8 @@ class CptQueryModifier
             $all_taxonomies = $taxonomy_definitions->getCustomTaxonomyDefinitions();
             foreach ($taxonomies as $taxonomy => &$details) {
                 // add details to our taxonomies if they exist
-                $details = isset($all_taxonomies[$taxonomy])
-                    ? $all_taxonomies[$taxonomy]
+                $details = isset($all_taxonomies[ $taxonomy ])
+                    ? $all_taxonomies[ $taxonomy ]
                     : array();
             }
             // ALWAYS unset() variables that were passed by reference
@@ -348,7 +350,7 @@ class CptQueryModifier
                 // ie: set "ee" to "events"
                 $this->request->set('ee', $this->cpt_details['plural_slug']);
                 // or does it match a single page CPT like /event/
-            } else if (is_single() && \EE_Config::get_route($this->cpt_details['singular_slug'])) {
+            } elseif (is_single() && \EE_Config::get_route($this->cpt_details['singular_slug'])) {
                 // ie: set "ee" to "event"
                 $this->request->set('ee', $this->cpt_details['singular_slug']);
             }
@@ -381,10 +383,10 @@ class CptQueryModifier
         $this->setModel($model);
         $this->setModelTables($this->model->get_tables());
         // is there a Meta Table for this CPT?
-        if (isset($this->cpt_details['tables'][$model_name . '_Meta'])
-            && $this->cpt_details['tables'][$model_name . '_Meta'] instanceof \EE_Secondary_Table
+        if (isset($this->cpt_details['tables'][ $model_name . '_Meta' ])
+            && $this->cpt_details['tables'][ $model_name . '_Meta' ] instanceof \EE_Secondary_Table
         ) {
-            $this->setMetaTable($this->cpt_details['tables'][$model_name . '_Meta']);
+            $this->setMetaTable($this->cpt_details['tables'][ $model_name . '_Meta' ]);
         }
     }
 

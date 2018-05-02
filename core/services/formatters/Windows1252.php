@@ -26,7 +26,7 @@ class Windows1252 extends FormatterBase
     public function format($input)
     {
         // in case an int or float etc was passed in
-        $input = (string)$input;
+        $input = (string) $input;
         if (function_exists('iconv')) {
             $input = iconv('utf-8', 'cp1252//TRANSLIT', $input);
         } elseif (WP_DEBUG) {

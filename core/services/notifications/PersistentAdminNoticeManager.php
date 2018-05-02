@@ -160,7 +160,7 @@ class PersistentAdminNoticeManager
                         $this->notice_collection->add(
                             new PersistentAdminNotice(
                                 $name,
-                                (string)$details,
+                                (string) $details,
                                 false,
                                 '',
                                 '',
@@ -349,10 +349,10 @@ class PersistentAdminNoticeManager
             foreach ($this->notice_collection as $persistent_admin_notice) {
                 // are we deleting this notice ?
                 if ($persistent_admin_notice->getPurge()) {
-                    unset($persistent_admin_notices[$persistent_admin_notice->getName()]);
+                    unset($persistent_admin_notices[ $persistent_admin_notice->getName() ]);
                 } else {
                     /** @var PersistentAdminNotice $persistent_admin_notice */
-                    $persistent_admin_notices[$persistent_admin_notice->getName()] = array(
+                    $persistent_admin_notices[ $persistent_admin_notice->getName() ] = array(
                         'message'     => $persistent_admin_notice->getMessage(),
                         'capability'  => $persistent_admin_notice->getCapability(),
                         'cap_context' => $persistent_admin_notice->getCapContext(),

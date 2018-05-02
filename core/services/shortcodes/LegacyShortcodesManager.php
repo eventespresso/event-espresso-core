@@ -406,7 +406,7 @@ class LegacyShortcodesManager
     {
         static $shortcode_tags = array();
         if (empty($shortcode_tags)) {
-            $shortcode_tags = array_keys((array)$this->registry->shortcodes);
+            $shortcode_tags = array_keys((array) $this->registry->shortcodes);
         }
         return $shortcode_tags;
     }
