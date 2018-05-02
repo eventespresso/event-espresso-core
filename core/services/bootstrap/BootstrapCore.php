@@ -83,6 +83,7 @@ class BootstrapCore
      */
     public function __construct()
     {
+        do_action('AHEE__EventEspresso_core_services_bootstrap_BootstrapCore___construct');
         // construct request stack and run middleware apps as soon as all WP plugins are loaded
         add_action('plugins_loaded', array($this, 'initialize'), 0);
     }
