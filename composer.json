@@ -36,12 +36,10 @@
 	},
 	"scripts": {
 		"config-eventespressocs": [
-			"\"./vendor/bin/phpcs\" --config-set installed_paths ../../../vendor/wp-coding-standards/wpcs,../../../vendor/wimg/php-compatibility,../../../vendor/eventespresso/ee-coding-standards",
-			"\"./vendor/bin/phpcs\" --config-set default_standard EventEspresso"
+			"\"vendor/bin/phpcs\" --config-set installed_paths ../../../vendor/wp-coding-standards/wpcs,../../../vendor/wimg/php-compatibility,../../../vendor/eventespresso/ee-coding-standards",
+			"\"vendor/bin/phpcs\" --config-set default_standard EventEspresso"
 		],
 		"lint": "vendor/bin/phpcs",
-		"lint:fix": "vendor/bin/phpcbf",
-		"post-install-cmd": "[[ -e \"./vendor/bin/phpcs\" ]] && composer config-eventespressocs || echo \"Failed to configure phpcs because not installed.\"",
-		"post-update-cmd": "[[ -e \"./vendor/bin/phpcs\" ]] && composer config-eventespressocs || echo \"Failed to configure phpcs because not installed.\""
+		"lint:fix": "vendor/bin/phpcbf"
 	}
 }
