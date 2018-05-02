@@ -134,12 +134,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/eventespresso/ee-coding-standards.git",
-                "reference": "46ca5079008475eb152b17bfc60fd8c7fbadb4ad"
+                "reference": "d7b8c6723d4e5217db3a16d42e8a1dc8bded422e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eventespresso/ee-coding-standards/zipball/46ca5079008475eb152b17bfc60fd8c7fbadb4ad",
-                "reference": "46ca5079008475eb152b17bfc60fd8c7fbadb4ad",
+                "url": "https://api.github.com/repos/eventespresso/ee-coding-standards/zipball/d7b8c6723d4e5217db3a16d42e8a1dc8bded422e",
+                "reference": "d7b8c6723d4e5217db3a16d42e8a1dc8bded422e",
                 "shasum": ""
             },
             "require": {
@@ -188,7 +188,7 @@
                 "issues": "https://github.com/eventespresso/ee-coding-standards/issues",
                 "source": "https://github.com/eventespresso/ee-coding-standards/tree/master"
             },
-            "time": "2018-05-01T20:47:27+00:00"
+            "time": "2018-05-02 12:01:39"
         },
         {
             "name": "roave/security-advisories",
