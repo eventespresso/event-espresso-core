@@ -4,6 +4,7 @@ namespace EventEspresso\core\services\request;
 
 use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
 use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\interfaces\ReservedInstanceInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -17,7 +18,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Brent Christensen
  * @since   4.9.53
  */
-class Request implements InterminableInterface, RequestInterface
+class Request implements InterminableInterface, RequestInterface, ReservedInstanceInterface
 {
 
     /**

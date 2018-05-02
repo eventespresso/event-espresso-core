@@ -57,6 +57,15 @@ class FullyQualifiedName
     /**
      * @return string
      */
+    public function string()
+    {
+        return $this->fully_qualified_name;
+    }
+
+
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->fully_qualified_name;

@@ -6,21 +6,19 @@ use DomainException;
 use EE_Error;
 use EEH_Autoloader;
 use EventEspresso\core\domain\DomainFactory;
-use EventEspresso\core\domain\values\FilePath;
-use EventEspresso\core\domain\values\FullyQualifiedName;
-use EventEspresso\core\domain\values\Version;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderInterface;
-use EventEspresso\core\services\request\InvalidRequestStackMiddlewareException;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\RequestStack;
 use EventEspresso\core\services\request\RequestStackBuilder;
 use EventEspresso\core\services\request\RequestStackCoreApp;
 use EventEspresso\core\services\request\ResponseInterface;
+use Exception;
 use InvalidArgumentException;
+use OutOfBoundsException;
 use ReflectionException;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -90,13 +88,15 @@ class BootstrapCore
 
 
     /**
-     * @throws InvalidRequestStackMiddlewareException
-     * @throws InvalidClassException
      * @throws DomainException
      * @throws EE_Error
+     * @throws Exception
      * @throws InvalidArgumentException
+     * @throws InvalidClassException
      * @throws InvalidDataTypeException
+     * @throws InvalidFilePathException
      * @throws InvalidInterfaceException
+     * @throws OutOfBoundsException
      * @throws ReflectionException
      */
     public function initialize()
@@ -118,6 +118,7 @@ class BootstrapCore
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws OutOfBoundsException
      */
     private function bootstrapDependencyInjectionContainer()
     {
@@ -145,15 +146,7 @@ class BootstrapCore
      */
     private function bootstrapDomain()
     {
-        DomainFactory::getShared(
-            new FullyQualifiedName(
-                'EventEspresso\core\domain\Domain'
-            ),
-            array(
-                new FilePath(EVENT_ESPRESSO_MAIN_FILE),
-                Version::fromString(espresso_version())
-            )
-        );
+        DomainFactory::getEventEspressoCoreDomain();
     }
 
 
@@ -182,10 +175,8 @@ class BootstrapCore
      * run_request_stack
      * construct request stack and run middleware apps
      *
-     * @throws InvalidRequestStackMiddlewareException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws Exception
      */
     public function runRequestStack()
     {
@@ -228,9 +219,9 @@ class BootstrapCore
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_CORE . 'interfaces', true);
         // load helpers
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_HELPERS);
-        // load request stack
+        // register legacy request stack classes just in case
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_CORE . 'request_stack' . DS);
-        // load middleware
+        // register legacy middleware classes just in case
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_CORE . 'middleware' . DS);
     }
 
