@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\libraries\rest_api\controllers;
 
 use Exception;
@@ -9,12 +10,6 @@ use EventEspresso\core\libraries\rest_api\RestException;
 use EE_Error;
 use EED_Core_Rest_Api;
 use EEH_Inflector;
-
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Base
@@ -74,14 +69,12 @@ class Base
     protected $response_headers = array();
 
 
-
     public function __construct()
     {
         $this->debug_mode = defined('EE_REST_API_DEBUG_MODE') ? EE_REST_API_DEBUG_MODE : false;
-        //we are handling a REST request. Don't show a fancy HTML error message is any error comes up
+        // we are handling a REST request. Don't show a fancy HTML error message is any error comes up
         add_filter('FHEE__EE_Error__get_error__show_normal_exceptions', '__return_true');
     }
-
 
 
     /**
@@ -95,7 +88,6 @@ class Base
     }
 
 
-
     /**
      * Sets some debug info that we'll send back in headers
      *
@@ -106,7 +98,6 @@ class Base
     {
         $this->debug_info[$key] = $info;
     }
-
 
 
     /**
@@ -131,7 +122,6 @@ class Base
     }
 
 
-
     /**
      * Returns a flat array of headers to be added to the response
      *
@@ -146,7 +136,6 @@ class Base
             $this->requested_version
         );
     }
-
 
 
     /**
@@ -168,7 +157,6 @@ class Base
         }
         return $wp_error_response;
     }
-
 
 
     /**
@@ -215,7 +203,6 @@ class Base
     }
 
 
-
     /**
      * Converts the \WP_Error into `WP_REST_Response.
      * Mostly this is just a copy-and-paste from \WP_REST_Server::error_to_response
@@ -252,7 +239,6 @@ class Base
     }
 
 
-
     /**
      * Array of headers derived from EE success, attention, and error messages
      *
@@ -283,7 +269,6 @@ class Base
     }
 
 
-
     /**
      * Finds which version of the API was requested given the route, and returns it.
      * eg in a request to "mysite.com/wp-json/ee/v4.8.29/events/123" this would return
@@ -312,7 +297,6 @@ class Base
     }
 
 
-
     /**
      * Applies the regex to the route, then creates an array using the values of
      * $match_keys as keys (but ignores the full pattern match). Returns the array of matches.
@@ -334,7 +318,7 @@ class Base
         $indexed_matches = array();
         $success = preg_match($regex, $route, $matches);
         if (is_array($matches)) {
-            //skip the overall regex match. Who cares
+            // skip the overall regex match. Who cares
             for ($i = 1; $i <= count($match_keys); $i++) {
                 if (! isset($matches[$i])) {
                     $success = false;
@@ -353,7 +337,6 @@ class Base
     }
 
 
-
     /**
      * Gets the body's params (either from JSON or parsed body), which EXCLUDES the GET params and URL params
      *
@@ -362,7 +345,7 @@ class Base
      */
     protected function getBodyParams(\WP_REST_Request $request)
     {
-        //$request->get_params();
+        // $request->get_params();
         return array_merge(
             (array)$request->get_body_params(),
             (array)$request->get_json_params()
@@ -374,5 +357,3 @@ class Base
         // );
     }
 }
-
-// End of file Base.php

@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\libraries\rest_api;
 
 use DomainException;
@@ -10,12 +11,6 @@ use EE_Maybe_Serialized_Simple_HTML_Field;
 use EE_Model_Field_Base;
 use EE_Serialized_Text_Field;
 use EEM_Base;
-
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class Model_Data_Translator
@@ -44,14 +39,13 @@ class ModelDataTranslator
     const EE_INF_IN_REST = null;
 
 
-
     /**
      * Prepares a possible array of input values from JSON for use by the models
      *
      * @param EE_Model_Field_Base $field_obj
-     * @param mixed                $original_value_maybe_array
-     * @param string               $requested_version
-     * @param string               $timezone_string treat values as being in this timezone
+     * @param mixed               $original_value_maybe_array
+     * @param string              $requested_version
+     * @param string              $timezone_string treat values as being in this timezone
      * @return mixed
      * @throws RestException
      */
@@ -85,13 +79,12 @@ class ModelDataTranslator
     }
 
 
-
     /**
      * Prepares an array of field values FOR use in JSON/REST API
      *
      * @param EE_Model_Field_Base $field_obj
-     * @param mixed                $original_value_maybe_array
-     * @param string               $request_version (eg 4.8.36)
+     * @param mixed               $original_value_maybe_array
+     * @param string              $request_version (eg 4.8.36)
      * @return array
      */
     public static function prepareFieldValuesForJson($field_obj, $original_value_maybe_array, $request_version)
@@ -131,7 +124,7 @@ class ModelDataTranslator
         $requested_version,
         $timezone_string = 'UTC' // UTC
     ) {
-        //check if they accidentally submitted an error value. If so throw an exception
+        // check if they accidentally submitted an error value. If so throw an exception
         if (is_array($original_value)
             && isset($original_value['error_code'], $original_value['error_message'])) {
             throw new RestException(
@@ -148,11 +141,11 @@ class ModelDataTranslator
                 )
             );
         }
-        //double-check for serialized PHP. We never accept serialized PHP. No way Jose.
+        // double-check for serialized PHP. We never accept serialized PHP. No way Jose.
         ModelDataTranslator::throwExceptionIfContainsSerializedData($original_value);
         $timezone_string = $timezone_string !== '' ? $timezone_string : get_option('timezone_string', '');
         $new_value = null;
-        //walk through the submitted data and double-check for serialized PHP. We never accept serialized PHP. No
+        // walk through the submitted data and double-check for serialized PHP. We never accept serialized PHP. No
         // way Jose.
         ModelDataTranslator::throwExceptionIfContainsSerializedData($original_value);
         if ($field_obj instanceof EE_Infinite_Integer_Field
@@ -176,7 +169,7 @@ class ModelDataTranslator
                         $original_value
                     ),
                     array(
-                        'status' => 400
+                        'status' => 400,
                     )
                 );
             }
@@ -202,12 +195,12 @@ class ModelDataTranslator
         EE_Datetime_Field $datetime_field,
         $timezone_string
     ) {
-        //already have timezone information?
+        // already have timezone information?
         if (preg_match('/Z|(\+|\-)(\d{2}:\d{2})/', $original_timestamp)) {
-            //yes, we're ignoring the timezone.
+            // yes, we're ignoring the timezone.
             return $original_timestamp;
         }
-        //need to append timezone
+        // need to append timezone
         list($offset_sign, $offset_secs) = self::parseTimezoneOffset(
             $datetime_field->get_timezone_offset(
                 new \DateTimeZone($timezone_string),
@@ -232,10 +225,10 @@ class ModelDataTranslator
     }
 
 
-
     /**
      * Throws an exception if $data is a serialized PHP string (or somehow an actually PHP object, although I don't
      * think that can happen). If $data is an array, recurses into its keys and values
+     *
      * @param mixed $data
      * @throws RestException
      * @return void
@@ -252,7 +245,7 @@ class ModelDataTranslator
                 throw new RestException(
                     'serialized_data_submission_prohibited',
                     esc_html__(
-                        // @codingStandardsIgnoreStart
+                    // @codingStandardsIgnoreStart
                         'You tried to submit a string of serialized text. Serialized PHP is prohibited over the EE4 REST API.',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
@@ -261,7 +254,6 @@ class ModelDataTranslator
             }
         }
     }
-
 
 
     /**
@@ -284,13 +276,12 @@ class ModelDataTranslator
     }
 
 
-
     /**
      * Prepares a field's value for display in the API
      *
      * @param EE_Model_Field_Base $field_obj
-     * @param mixed                $original_value
-     * @param string               $requested_version
+     * @param mixed               $original_value
+     * @param string              $requested_version
      * @return mixed
      */
     public static function prepareFieldValueForJson($field_obj, $original_value, $requested_version)
@@ -299,16 +290,16 @@ class ModelDataTranslator
             $new_value = ModelDataTranslator::EE_INF_IN_REST;
         } elseif ($field_obj instanceof EE_Datetime_Field) {
             if (is_string($original_value)) {
-                //did they submit a string of a unix timestamp?
+                // did they submit a string of a unix timestamp?
                 if (is_numeric($original_value)) {
                     $datetime_obj = new \DateTime();
                     $datetime_obj->setTimestamp((int)$original_value);
                 } else {
-                    //first, check if its a MySQL timestamp in GMT
+                    // first, check if its a MySQL timestamp in GMT
                     $datetime_obj = \DateTime::createFromFormat('Y-m-d H:i:s', $original_value);
                 }
                 if (! $datetime_obj instanceof \DateTime) {
-                    //so it's not a unix timestamp or a MySQL timestamp. Maybe its in the field's date/time format?
+                    // so it's not a unix timestamp or a MySQL timestamp. Maybe its in the field's date/time format?
                     $datetime_obj = $field_obj->prepare_for_set($original_value);
                 }
                 $original_value = $datetime_obj;
@@ -317,18 +308,18 @@ class ModelDataTranslator
                 $new_value = $original_value->format('Y-m-d H:i:s');
             } elseif (is_int($original_value) || is_float($original_value)) {
                 $new_value = date('Y-m-d H:i:s', $original_value);
-            } elseif($original_value === null || $original_value === '') {
+            } elseif ($original_value === null || $original_value === '') {
                 $new_value = null;
             } else {
-                //so it's not a datetime object, unix timestamp (as string or int),
-                //MySQL timestamp, or even a string in the field object's format. So no idea what it is
+                // so it's not a datetime object, unix timestamp (as string or int),
+                // MySQL timestamp, or even a string in the field object's format. So no idea what it is
                 throw new \EE_Error(
                     sprintf(
                         esc_html__(
-                        // @codingStandardsIgnoreStart
+                            // @codingStandardsIgnoreStart
                             'The value "%1$s" for the field "%2$s" on model "%3$s" could not be understood. It should be a PHP DateTime, unix timestamp, MySQL date, or string in the format "%4$s".',
                             // @codingStandardsIgnoreEnd
-                            'event_espressso'
+                            'event_espresso'
                         ),
                         $original_value,
                         $field_obj->get_name(),
@@ -341,12 +332,15 @@ class ModelDataTranslator
         } else {
             $new_value = $original_value;
         }
-        //are we about to send an object? just don't. We have no good way to represent it in JSON.
+        // are we about to send an object? just don't. We have no good way to represent it in JSON.
         // can't just check using is_object() because that missed PHP incomplete objects
         if (! ModelDataTranslator::isRepresentableInJson($new_value)) {
             $new_value = array(
-                'error_code' => 'php_object_not_return',
-                'error_message' => esc_html__('The value of this field in the database is a PHP object, which can\'t be represented in JSON.', 'event_espresso')
+                'error_code'    => 'php_object_not_return',
+                'error_message' => esc_html__(
+                    'The value of this field in the database is a PHP object, which can\'t be represented in JSON.',
+                    'event_espresso'
+                ),
             );
         }
         return apply_filters(
@@ -359,17 +353,17 @@ class ModelDataTranslator
     }
 
 
-
     /**
      * Prepares condition-query-parameters (like what's in where and having) from
      * the format expected in the API to use in the models
      *
-     * @param array     $inputted_query_params_of_this_type
+     * @param array    $inputted_query_params_of_this_type
      * @param EEM_Base $model
-     * @param string    $requested_version
-     * @param boolean $writing whether this data will be written to the DB, or if we're just building a query.
-     *                         If we're writing to the DB, we don't expect any operators, or any logic query parameters,
-     *                         and we also won't accept serialized data unless the current user has unfiltered_html.
+     * @param string   $requested_version
+     * @param boolean  $writing whether this data will be written to the DB, or if we're just building a query.
+     *                          If we're writing to the DB, we don't expect any operators, or any logic query
+     *                          parameters, and we also won't accept serialized data unless the current user has
+     *                          unfiltered_html.
      * @return array
      * @throws DomainException
      * @throws RestException
@@ -392,11 +386,11 @@ class ModelDataTranslator
                 $query_param_sans_stars,
                 $model
             );
-            //double-check is it a *_gmt field?
+            // double-check is it a *_gmt field?
             if (! $field instanceof EE_Model_Field_Base
                 && ModelDataTranslator::isGmtDateFieldName($query_param_sans_stars)
             ) {
-                //yep, take off '_gmt', and find the field
+                // yep, take off '_gmt', and find the field
                 $query_param_key = ModelDataTranslator::removeGmtFromFieldName($query_param_sans_stars);
                 $field = ModelDataTranslator::deduceFieldFromQueryParam(
                     $query_param_key,
@@ -405,10 +399,10 @@ class ModelDataTranslator
                 $timezone = 'UTC';
                 $is_gmt_datetime_field = true;
             } elseif ($field instanceof EE_Datetime_Field) {
-                //so it's not a GMT field. Set the timezone on the model to the default
+                // so it's not a GMT field. Set the timezone on the model to the default
                 $timezone = \EEH_DTT_Helper::get_valid_timezone_string();
             } else {
-                //just keep using what's already set for the timezone
+                // just keep using what's already set for the timezone
                 $timezone = $model->get_timezone();
             }
             if ($field instanceof EE_Model_Field_Base) {
@@ -430,7 +424,7 @@ class ModelDataTranslator
                             );
                         }
                     }
-                    //did they specify an operator?
+                    // did they specify an operator?
                     if (isset($query_param_value[0])
                         && isset($valid_operators[$query_param_value[0]])
                     ) {
@@ -447,8 +441,8 @@ class ModelDataTranslator
                                 $timezone
                             );
                         } elseif (array_key_exists($op, $model->valid_between_style_operators())
-                            && isset($query_param_value[1], $query_param_value[2])
-                            && !isset($query_param_value[3])
+                                  && isset($query_param_value[1], $query_param_value[2])
+                                  && ! isset($query_param_value[3])
                         ) {
                             $translated_value[] = ModelDataTranslator::prepareFieldValuesFromJson(
                                 $field,
@@ -463,30 +457,30 @@ class ModelDataTranslator
                                 $timezone
                             );
                         } elseif (array_key_exists($op, $model->valid_like_style_operators())
-                            && isset($query_param_value[1])
-                            && ! isset($query_param_value[2])
+                                  && isset($query_param_value[1])
+                                  && ! isset($query_param_value[2])
                         ) {
-                            //we want to leave this value mostly-as-is (eg don't force it to be a float
-                            //or a boolean or an enum value. Leave it as-is with wildcards etc)
-                            //but do verify it at least doesn't have any serialized data
+                            // we want to leave this value mostly-as-is (eg don't force it to be a float
+                            // or a boolean or an enum value. Leave it as-is with wildcards etc)
+                            // but do verify it at least doesn't have any serialized data
                             ModelDataTranslator::throwExceptionIfContainsSerializedData($query_param_value[1]);
                             $translated_value[] = $query_param_value[1];
                         } elseif (array_key_exists($op, $model->valid_null_style_operators())
-                            && !isset($query_param_value[1])) {
-                            //no arguments should have been provided, so don't look for any
+                                  && ! isset($query_param_value[1])) {
+                            // no arguments should have been provided, so don't look for any
                         } elseif (isset($query_param_value[1])
-                            && !isset($query_param_value[2])
-                            && ! array_key_exists(
-                                $op,
-                                array_merge(
-                                    $model->valid_in_style_operators(),
-                                    $model->valid_null_style_operators(),
-                                    $model->valid_like_style_operators(),
-                                    $model->valid_between_style_operators()
-                                )
-                            )
+                                  && ! isset($query_param_value[2])
+                                  && ! array_key_exists(
+                                      $op,
+                                      array_merge(
+                                          $model->valid_in_style_operators(),
+                                          $model->valid_null_style_operators(),
+                                          $model->valid_like_style_operators(),
+                                          $model->valid_between_style_operators()
+                                      )
+                                  )
                         ) {
-                            //it's a valid operator, but none of the exceptions. Treat it normally.
+                            // it's a valid operator, but none of the exceptions. Treat it normally.
                             $translated_value[] = ModelDataTranslator::prepareFieldValuesFromJson(
                                 $field,
                                 $query_param_value[1],
@@ -494,7 +488,7 @@ class ModelDataTranslator
                                 $timezone
                             );
                         } else {
-                            //so they provided a valid operator, but wrong number of arguments
+                            // so they provided a valid operator, but wrong number of arguments
                             if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
                                 throw new RestException(
                                     'wrong_number_of_arguments',
@@ -513,7 +507,7 @@ class ModelDataTranslator
                             $translated_value = null;
                         }
                     } else {
-                        //so they didn't provide a valid operator
+                        // so they didn't provide a valid operator
                         if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
                             throw new RestException(
                                 'invalid_operator',
@@ -530,7 +524,7 @@ class ModelDataTranslator
                                 )
                             );
                         }
-                        //if we aren't in debug mode, then just try our best to fulfill the user's request
+                        // if we aren't in debug mode, then just try our best to fulfill the user's request
                         $translated_value = null;
                     }
                 } else {
@@ -541,22 +535,20 @@ class ModelDataTranslator
                         $timezone
                     );
                 }
-                if (
-                    (isset($query_param_for_models[$query_param_key]) && $is_gmt_datetime_field)
-                    ||
-                    $translated_value === null
+                if ((isset($query_param_for_models[$query_param_key]) && $is_gmt_datetime_field)
+                    || $translated_value === null
                 ) {
-                    //they have already provided a non-gmt field, ignore the gmt one. That's what WP core
-                    //currently does (they might change it though). See https://core.trac.wordpress.org/ticket/39954
-                    //OR we couldn't create a translated value from their input
+                    // they have already provided a non-gmt field, ignore the gmt one. That's what WP core
+                    // currently does (they might change it though). See https://core.trac.wordpress.org/ticket/39954
+                    // OR we couldn't create a translated value from their input
                     continue;
                 }
                 $query_param_for_models[$query_param_key] = $translated_value;
             } else {
-                //so this param doesn't correspond to a field eh?
+                // so this param doesn't correspond to a field eh?
                 if ($writing) {
-                    //always tell API clients about invalid parameters when they're creating data. Otherwise,
-                    //they are probably going to create invalid data
+                    // always tell API clients about invalid parameters when they're creating data. Otherwise,
+                    // they are probably going to create invalid data
                     throw new RestException(
                         'invalid_field',
                         sprintf(
@@ -565,7 +557,7 @@ class ModelDataTranslator
                         )
                     );
                 } else {
-                    //so it's not for a field, is it a logic query param key?
+                    // so it's not for a field, is it a logic query param key?
                     if (in_array(
                         $query_param_sans_stars,
                         $model->logic_query_param_keys()
@@ -576,8 +568,8 @@ class ModelDataTranslator
                             $requested_version
                         );
                     } elseif (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
-                        //only tell API clients they got it wrong if we're in debug mode
-                        //otherwise try our best ot fulfill their request by ignoring this invalid data
+                        // only tell API clients they got it wrong if we're in debug mode
+                        // otherwise try our best ot fulfill their request by ignoring this invalid data
                         throw new RestException(
                             'invalid_parameter',
                             sprintf(
@@ -599,7 +591,6 @@ class ModelDataTranslator
     }
 
 
-
     /**
      * Mostly checks if the last 4 characters are "_gmt", indicating its a
      * gmt date field name
@@ -615,7 +606,6 @@ class ModelDataTranslator
             4
         ) === '_gmt';
     }
-
 
 
     /**
@@ -644,7 +634,6 @@ class ModelDataTranslator
     }
 
 
-
     /**
      * Takes a field name from the REST API and prepares it for the model querying
      *
@@ -658,7 +647,6 @@ class ModelDataTranslator
         }
         return $field_name;
     }
-
 
 
     /**
@@ -675,7 +663,6 @@ class ModelDataTranslator
         }
         return $new_array;
     }
-
 
 
     /**
@@ -695,13 +682,12 @@ class ModelDataTranslator
     }
 
 
-
     /**
      * Prepares an array of model query params for use in the REST API
      *
-     * @param array     $model_query_params
+     * @param array    $model_query_params
      * @param EEM_Base $model
-     * @param string    $requested_version eg "4.8.36". If null is provided, defaults to the latest release of the EE4
+     * @param string   $requested_version  eg "4.8.36". If null is provided, defaults to the latest release of the EE4
      *                                     REST API
      * @return array which can be passed into the EE4 REST API when querying a model resource
      * @throws EE_Error
@@ -740,18 +726,17 @@ class ModelDataTranslator
     }
 
 
-
     /**
      * Prepares all the sub-conditions query parameters (eg having or where conditions) for use in the rest api
      *
-     * @param array     $inputted_query_params_of_this_type eg like the "where" or "having" conditions query params
+     * @param array    $inputted_query_params_of_this_type  eg like the "where" or "having" conditions query params
      *                                                      passed into EEM_Base::get_all()
      * @param EEM_Base $model
-     * @param string    $requested_version                  eg "4.8.36"
+     * @param string   $requested_version                   eg "4.8.36"
      * @return array ready for use in the rest api query params
      * @throws EE_Error
      * @throws ObjectDetectedException if somehow a PHP object were in the query params' values,
-     *                                     (which would be really unusual)
+     *                                                      (which would be really unusual)
      */
     public static function prepareConditionsQueryParamsForRestApi(
         $inputted_query_params_of_this_type,
@@ -765,7 +750,7 @@ class ModelDataTranslator
                 $model
             );
             if ($field instanceof EE_Model_Field_Base) {
-                //did they specify an operator?
+                // did they specify an operator?
                 if (is_array($query_param_value)) {
                     $op = $query_param_value[0];
                     $translated_value = array($op);
@@ -786,7 +771,7 @@ class ModelDataTranslator
                 }
                 $query_param_for_models[$query_param_key] = $translated_value;
             } else {
-                //so it's not for a field, assume it's a logic query param key
+                // so it's not for a field, assume it's a logic query param key
                 $query_param_for_models[$query_param_key] = ModelDataTranslator::prepareConditionsQueryParamsForRestApi(
                     $query_param_value,
                     $model,
@@ -796,7 +781,6 @@ class ModelDataTranslator
         }
         return $query_param_for_models;
     }
-
 
 
     /**
@@ -815,19 +799,18 @@ class ModelDataTranslator
     }
 
 
-
     /**
      * Takes the input parameter and finds the model field that it indicates.
      *
-     * @param string    $query_param_name like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
+     * @param string   $query_param_name like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
      * @param EEM_Base $model
      * @return EE_Model_Field_Base
      * @throws EE_Error
      */
     public static function deduceFieldFromQueryParam($query_param_name, EEM_Base $model)
     {
-        //ok, now proceed with deducing which part is the model's name, and which is the field's name
-        //which will help us find the database table and column
+        // ok, now proceed with deducing which part is the model's name, and which is the field's name
+        // which will help us find the database table and column
         $query_param_parts = explode('.', $query_param_name);
         if (empty($query_param_parts)) {
             throw new EE_Error(
@@ -845,7 +828,7 @@ class ModelDataTranslator
         if ($number_of_parts === 1) {
             $field_name = $last_query_param_part;
         } else {// $number_of_parts >= 2
-            //the last part is the column name, and there are only 2parts. therefore...
+            // the last part is the column name, and there are only 2parts. therefore...
             $field_name = $last_query_param_part;
             $model = \EE_Registry::instance()->load_model($query_param_parts[$number_of_parts - 2]);
         }
@@ -857,10 +840,10 @@ class ModelDataTranslator
     }
 
 
-
     /**
      * Returns true if $data can be easily represented in JSON.
      * Basically, objects and resources can't be represented in JSON easily.
+     *
      * @param mixed $data
      * @return bool
      */
