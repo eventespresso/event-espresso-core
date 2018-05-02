@@ -59,7 +59,10 @@ jobs:
   fast_finish: true
   allow_failures:
     - php: nightly
-    - env: PHP_LINT_WITH_WARNINGS=yes
+    - php: 7.2
+      env:
+        - PHP_LINT=1
+        - PHP_LINT_WITH_WARNINGS=yes
   include:
     - stage: test
       php: 7.2
