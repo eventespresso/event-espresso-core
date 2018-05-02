@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\admin;
 
+// phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
 /**
  * Class PostShortcodeTracking.
  *
