@@ -82,14 +82,16 @@ class EspressoCancelled extends EspressoShortcode
         if (EE_Registry::instance()->CART instanceof EE_Cart) {
             EE_Registry::instance()->CART->delete_cart();
         }
+        // phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersText
         EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__);
         return sprintf(
             __(
-                '%1$sAll unsaved registration information entered during this session has been deleted.%2$s',
+                '%sAll unsaved registration information entered during this session has been deleted.%s',
                 'event_espresso'
             ),
             '<p class="ee-registrations-cancelled-pg ee-attention">',
             '</p>'
         );
+        // phpcs:enable
     }
 }
