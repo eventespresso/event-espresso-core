@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\request;
 
+use EventEspresso\core\interfaces\ReservedInstanceInterface;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -15,7 +17,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author          Brent Christensen
  * ------------------------------------------------------------------------
  */
-class Response implements ResponseInterface
+class Response implements ResponseInterface, ReservedInstanceInterface
 {
 
     /**

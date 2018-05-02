@@ -1,9 +1,9 @@
 <?php
+
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
-
 
 
 /**
@@ -12,8 +12,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
- * @group LoaderTest
+ * @group         LoaderTest
  */
 class LoaderTest extends EE_UnitTestCase
 {
@@ -24,8 +23,12 @@ class LoaderTest extends EE_UnitTestCase
     private static $loader;
 
 
-
-
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
     public function setUp()
     {
         self::$loader = LoaderFactory::getLoader();
@@ -33,15 +36,18 @@ class LoaderTest extends EE_UnitTestCase
     }
 
 
-
     /**
      * testNewLoader
+     *
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \PHPUnit\Framework\Exception
      */
     public function testNewLoader()
     {
         // first turn caching on
         add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false');
-        $fqcn = 'EventEspresso\core\services\address\formatters\AddressFormatter';
+        $fqcn = 'EventEspresso\tests\mocks\core\services\loaders\NewClassToLoad';
+        /** @var EventEspresso\tests\mocks\core\services\loaders\NewClassToLoad $object */
         $object = self::$loader->load($fqcn, array(), false);
         $this->assertInstanceOf(
             $fqcn,
@@ -52,36 +58,74 @@ class LoaderTest extends EE_UnitTestCase
                 $fqcn
             )
         );
-        $obj1ID = spl_object_hash($object);
         // none of these objects are getting cached because it is turned off for unit testing
         $object2 = self::$loader->load($fqcn, array(), false);
-        $this->assertNotEquals($obj1ID, spl_object_hash($object2));
+        $this->assertFalse($object->sameInstance($object2));
     }
-
 
 
     /**
      * testSharedLoader
+     *
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \PHPUnit\Framework\Exception
      */
     public function testSharedLoader()
     {
         // first turn caching on
         add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false');
-        $fqcn = 'EventEspresso\core\services\address\formatters\AddressFormatter';
-        $object3 = self::$loader->load($fqcn);
+        $fqcn = 'EventEspresso\tests\mocks\core\services\loaders\SharedClassToLoad';
+        /** @var EventEspresso\tests\mocks\core\services\loaders\SharedClassToLoad $object */
+        $object = self::$loader->load($fqcn);
         $this->assertInstanceOf(
             $fqcn,
-            $object3,
+            $object,
             sprintf(
                 '%1$s is not an instance of $fqcn',
-                is_object($object3) ? get_class($object3) : print_r($object3, true),
+                is_object($object) ? get_class($object) : print_r($object, true),
                 $fqcn
             )
         );
-        $obj3ID = spl_object_hash($object3);
-        // these objects are getting cached so we should get the same one again
-        $object4 = self::$loader->load($fqcn);
-        $this->assertEquals($obj3ID, spl_object_hash($object4));
+        // caching is on and we want a shared instance, so we should get the same object again
+        $object2 = self::$loader->load($fqcn);
+        $this->assertTrue($object->sameInstance($object2));
+    }
+
+
+    /**
+     * testSharedLoader
+     *
+     * @group loaderArgs
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \PHPUnit\Framework\Exception
+     */
+    public function testSharedLoaderWithArgs()
+    {
+        // first turn caching on
+        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false');
+        $fqcn = 'EventEspresso\tests\mocks\core\services\loaders\SharedClassToLoad';
+        $original_args = array(1, 2, 3);
+        /** @var EventEspresso\tests\mocks\core\services\loaders\SharedClassToLoad $object */
+        $object = self::$loader->load($fqcn, array($original_args));
+        $this->assertInstanceOf(
+            $fqcn,
+            $object,
+            sprintf(
+                '%1$s is not an instance of $fqcn',
+                is_object($object) ? get_class($object) : print_r($object, true),
+                $fqcn
+            )
+        );
+        $this->assertEquals($original_args, $object->args());
+        // caching is on and we want a shared instance,
+        // but we are passing new args, so we should get a new object
+        $object2 = self::$loader->load($fqcn, array(array(4, 5, 6)));
+        $this->assertFalse($object->sameInstance($object2));
+        $this->assertNotEquals($original_args, $object2->args());
+        // now let's request another instance but  with no args, which *should* return the first instance
+        $object3 = self::$loader->load($fqcn);
+        $this->assertTrue($object->sameInstance($object3));
+        $this->assertEquals($original_args, $object3->args());
     }
 }
 // End of file LoaderTest.php
