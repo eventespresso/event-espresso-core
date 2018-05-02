@@ -18,10 +18,8 @@ use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\Request;
 use InvalidArgumentException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
-
+// phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersSingle
+// phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersPlural
 /**
  * Class ProcessTicketSelector
  * Description
@@ -88,20 +86,20 @@ class ProcessTicketSelector
         TicketDatetimeAvailabilityTracker $tracker = null
     ) {
         /** @var LoaderInterface $loader */
-        $loader             = LoaderFactory::getLoader();
-        $this->core_config  = $core_config instanceof EE_Core_Config
+        $loader = LoaderFactory::getLoader();
+        $this->core_config = $core_config instanceof EE_Core_Config
             ? $core_config
             : $loader->getShared('EE_Core_Config');
-        $this->request      = $request instanceof Request
+        $this->request = $request instanceof Request
             ? $request
             : $loader->getShared('EventEspresso\core\services\request\Request');
-        $this->session      = $session instanceof EE_Session
+        $this->session = $session instanceof EE_Session
             ? $session
             : $loader->getShared('EE_Session');
         $this->ticket_model = $ticket_model instanceof EEM_Ticket
             ? $ticket_model
             : $loader->getShared('EEM_Ticket');
-        $this->tracker      = $tracker instanceof TicketDatetimeAvailabilityTracker
+        $this->tracker = $tracker instanceof TicketDatetimeAvailabilityTracker
             ? $tracker
             : $loader->getShared('EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker');
     }
@@ -147,8 +145,7 @@ class ProcessTicketSelector
     private function processTicketSelectorNonce($nonce_name, $id = '')
     {
         $nonce_name_with_id = ! empty($id) ? "{$nonce_name}_nonce_{$id}" : "{$nonce_name}_nonce";
-        if (
-            ! $this->request->isAdmin()
+        if (! $this->request->isAdmin()
             && (
                 ! $this->request->is_set($nonce_name_with_id)
                 || ! wp_verify_nonce(
@@ -187,7 +184,7 @@ class ProcessTicketSelector
     public function processTicketSelections()
     {
         do_action('EED_Ticket_Selector__process_ticket_selections__before');
-        if($this->request->isBot()) {
+        if ($this->request->isBot()) {
             EEH_URL::safeRedirectAndExit(
                 apply_filters(
                     'FHEE__EE_Ticket_Selector__process_ticket_selections__bot_redirect_url',
@@ -207,7 +204,7 @@ class ProcessTicketSelector
             'FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data',
             $this->validatePostData($id)
         );
-        //check total tickets ordered vs max number of attendees that can register
+        // check total tickets ordered vs max number of attendees that can register
         if ($valid['total_tickets'] > $valid['max_atndz']) {
             $this->maxAttendeesViolation($valid);
         } else {
@@ -253,7 +250,7 @@ class ProcessTicketSelector
                 __LINE__
             );
         }
-        //if event id is valid
+        // if event id is valid
         return absint($this->request->getRequestParam('tkt-slctr-event-id'));
     }
 
@@ -299,12 +296,12 @@ class ProcessTicketSelector
                 switch ($what) {
                     // integers
                     case 'event_id':
-                        $valid_data[ $what ] = absint($input_value);
+                        $valid_data[$what] = absint($input_value);
                         // get event via the event id we put in the form
                         break;
                     case 'rows':
                     case 'max_atndz':
-                        $valid_data[ $what ] = absint($input_value);
+                        $valid_data[$what] = absint($input_value);
                         break;
                     // arrays of integers
                     case 'qty':
@@ -319,12 +316,12 @@ class ProcessTicketSelector
                                 : 1;
                             // explode integers by the dash
                             $row_qty = explode('-', $row_qty);
-                            $row     = isset($row_qty[0]) ? absint($row_qty[0]) : 1;
-                            $qty     = isset($row_qty[1]) ? absint($row_qty[1]) : 0;
+                            $row = isset($row_qty[0]) ? absint($row_qty[0]) : 1;
+                            $qty = isset($row_qty[1]) ? absint($row_qty[1]) : 0;
                             $row_qty = array($row => $qty);
                             for ($x = 1; $x <= $rows; $x++) {
-                                if (! isset($row_qty[ $x ])) {
-                                    $row_qty[ $x ] = 0;
+                                if (! isset($row_qty[$x])) {
+                                    $row_qty[$x] = 0;
                                 }
                             }
                         }
@@ -333,19 +330,19 @@ class ProcessTicketSelector
                         foreach ($row_qty as $qty) {
                             $qty = absint($qty);
                             // sanitize as integers
-                            $valid_data[ $what ][]       = $qty;
+                            $valid_data[$what][] = $qty;
                             $valid_data['total_tickets'] += $qty;
                         }
                         break;
                     // array of integers
                     case 'ticket_id':
                         // cycle thru values
-                        foreach ((array) $input_value as $key => $value) {
+                        foreach ((array)$input_value as $key => $value) {
                             // allow only integers
-                            $valid_data[ $what ][ $key ] = absint($value);
+                            $valid_data[$what][$key] = absint($value);
                         }
                         break;
-                    case 'return_url' :
+                    case 'return_url':
                         // grab and sanitize return-url
                         $input_value = esc_url_raw($input_value);
                         // was the request coming from an iframe ? if so, then:
@@ -356,7 +353,7 @@ class ProcessTicketSelector
                             // use event list url instead, but append anchor
                             $input_value = EEH_Event_View::event_archive_url() . '#' . $input_value;
                         }
-                        $valid_data[ $what ] = $input_value;
+                        $valid_data[$what] = $input_value;
                         break;
                 }    // end switch $what
             }
@@ -379,7 +376,7 @@ class ProcessTicketSelector
                 'event_espresso'
             )
         );
-        $limit_error_1        = sprintf($total_tickets_string, $valid['total_tickets']);
+        $limit_error_1 = sprintf($total_tickets_string, $valid['total_tickets']);
         // dev only message
         $max_attendees_string = esc_html(
             _n(
@@ -389,7 +386,7 @@ class ProcessTicketSelector
                 'event_espresso'
             )
         );
-        $limit_error_2    = sprintf($max_attendees_string, $valid['max_atndz'], $valid['max_atndz']);
+        $limit_error_2 = sprintf($max_attendees_string, $valid['max_atndz'], $valid['max_atndz']);
         EE_Error::add_error($limit_error_1 . '<br/>' . $limit_error_2, __FILE__, __FUNCTION__, __LINE__);
     }
 
@@ -406,29 +403,29 @@ class ProcessTicketSelector
     {
         $tickets_added = 0;
         $tickets_selected = false;
-        if($valid['total_tickets'] > 0){
+        if ($valid['total_tickets'] > 0) {
             // load cart using factory because we don't want to do so until actually needed
             $this->cart = CartFactory::getCart();
             // cycle thru the number of data rows sent from the event listing
             for ($x = 0; $x < $valid['rows']; $x++) {
                 // does this row actually contain a ticket quantity?
-                if (isset($valid['qty'][ $x ]) && $valid['qty'][ $x ] > 0) {
+                if (isset($valid['qty'][$x]) && $valid['qty'][$x] > 0) {
                     // YES we have a ticket quantity
                     $tickets_selected = true;
-                    $valid_ticket     = false;
+                    $valid_ticket = false;
                     // \EEH_Debug_Tools::printr(
                     //     $valid['ticket_id'][ $x ],
                     //     '$valid[\'ticket_id\'][ $x ]',
                     //     __FILE__, __LINE__
                     // );
-                    if (isset($valid['ticket_id'][ $x ])) {
+                    if (isset($valid['ticket_id'][$x])) {
                         // get ticket via the ticket id we put in the form
-                        $ticket = $this->ticket_model->get_one_by_ID($valid['ticket_id'][ $x ]);
+                        $ticket = $this->ticket_model->get_one_by_ID($valid['ticket_id'][$x]);
                         if ($ticket instanceof EE_Ticket) {
-                            $valid_ticket  = true;
+                            $valid_ticket = true;
                             $tickets_added += $this->addTicketToCart(
                                 $ticket,
-                                $valid['qty'][ $x ]
+                                $valid['qty'][$x]
                             );
                         }
                     }
@@ -442,7 +439,9 @@ class ProcessTicketSelector
                                 ),
                                 '<br/>'
                             ),
-                            __FILE__, __FUNCTION__, __LINE__
+                            __FILE__,
+                            __FUNCTION__,
+                            __LINE__
                         );
                     }
                     if (EE_Error::has_error()) {
@@ -460,19 +459,20 @@ class ProcessTicketSelector
             // no ticket quantities were selected
             EE_Error::add_error(
                 esc_html__('You need to select a ticket quantity before you can proceed.', 'event_espresso'),
-                __FILE__, __FUNCTION__, __LINE__
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
         }
         return $tickets_added;
     }
 
 
-
     /**
      * adds a ticket to the cart
      *
      * @param EE_Ticket $ticket
-     * @param int        $qty
+     * @param int       $qty
      * @return TRUE on success, FALSE on fail
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -486,15 +486,13 @@ class ProcessTicketSelector
         // compare available spaces against the number of tickets being purchased
         if ($available_spaces >= $qty) {
             // allow addons to prevent a ticket from being added to cart
-            if (
-                ! apply_filters(
-                    'FHEE__EE_Ticket_Selector___add_ticket_to_cart__allow_add_to_cart',
-                    true,
-                    $ticket,
-                    $qty,
-                    $available_spaces
-                )
-            ) {
+            if (! apply_filters(
+                'FHEE__EE_Ticket_Selector___add_ticket_to_cart__allow_add_to_cart',
+                true,
+                $ticket,
+                $qty,
+                $available_spaces
+            )) {
                 return false;
             }
             $qty = absint(apply_filters('FHEE__EE_Ticket_Selector___add_ticket_to_cart__ticket_qty', $qty, $ticket));
@@ -523,7 +521,7 @@ class ProcessTicketSelector
         // exit('KILL REDIRECT BEFORE CART UPDATE'); // <<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
         if (apply_filters('FHEE__EED_Ticket_Selector__process_ticket_selections__success', $tickets_added)) {
             // make sure cart is loaded
-            if(! $this->cart  instanceof EE_Cart){
+            if (! $this->cart instanceof EE_Cart) {
                 $this->cart = CartFactory::getCart();
             }
             do_action(
@@ -549,11 +547,11 @@ class ProcessTicketSelector
             // nothing added to cart
             EE_Error::add_attention(
                 esc_html__('No tickets were added for the event', 'event_espresso'),
-                __FILE__, __FUNCTION__, __LINE__
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
         }
         return false;
     }
 }
-// End of file ProcessTicketSelector.php
-// Location: /ProcessTicketSelector.php
