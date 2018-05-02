@@ -5,10 +5,6 @@ namespace EventEspresso\core\domain\services\capabilities;
 use EventEspresso\core\exceptions\InsufficientPermissionsException;
 use EventEspresso\core\exceptions\InvalidClassException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class CapabilitiesChecker
  * Public contract for CapabilitiesChecker
@@ -30,7 +26,6 @@ interface CapabilitiesCheckerInterface
      * @throws InsufficientPermissionsException
      */
     public function processCapCheck($cap_check);
-
 
 
     /**

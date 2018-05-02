@@ -7,10 +7,6 @@ use EventEspresso\core\services\request\RequestDecoratorInterface;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\ResponseInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class Middleware
  * Parent class for Middleware Request decorators.
@@ -50,7 +46,6 @@ abstract class Middleware implements RequestDecoratorInterface
     protected $loader;
 
 
-
     /**
      * @param RequestDecoratorInterface $request_stack_app
      * @param LoaderInterface           $loader
@@ -62,24 +57,20 @@ abstract class Middleware implements RequestDecoratorInterface
     }
 
 
-
     /**
      * process_request_stack
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface      $response
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
      * @return ResponseInterface
      */
     protected function processRequestStack(RequestInterface $request, ResponseInterface $response)
     {
-        $this->request  = $request;
+        $this->request = $request;
         $this->response = $response;
         if (! $this->response->requestTerminated()) {
             $this->response = $this->request_stack_app->handleRequest($this->request, $this->response);
         }
         return $this->response;
     }
-
-
 }
-// Location: Middleware.php

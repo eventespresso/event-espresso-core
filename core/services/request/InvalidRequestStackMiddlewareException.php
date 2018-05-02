@@ -5,10 +5,6 @@ namespace EventEspresso\core\services\request;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use Exception;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class InvalidRequestStackMiddlewareException
  *
@@ -20,14 +16,14 @@ class InvalidRequestStackMiddlewareException extends InvalidDataTypeException
 {
 
     /**
-     * @param  mixed     $middleware_app_class
-     * @param  string    $message
-     * @param int        $code
+     * @param  mixed    $middleware_app_class
+     * @param  string   $message
+     * @param int       $code
      * @param Exception $previous
      */
     public function __construct($middleware_app_class, $message = '', $code = 0, Exception $previous = null)
     {
-        if(is_array($middleware_app_class)) {
+        if (is_array($middleware_app_class)) {
             $middleware_app_class = reset($middleware_app_class);
         }
         if (empty($message)) {

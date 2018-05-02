@@ -5,9 +5,6 @@ namespace EventEspresso\core\domain;
 use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\Version;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 /**
  * DomainBase Class
  * A container for all domain data related to Event Espresso Core

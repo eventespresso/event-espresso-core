@@ -2,12 +2,7 @@
 
 namespace EventEspresso\core\domain\services\validation\email;
 
-
 use EventEspresso\core\domain\services\validation\email\EmailValidationException;
-
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
 
 /**
  * Class EmailValidationInterface
@@ -15,7 +10,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  *
  * @package        Event Espresso
  * @author         Mike Nelson
- * 
  */
 interface EmailValidatorInterface
 {
@@ -28,8 +22,4 @@ interface EmailValidatorInterface
      * @throws EmailValidationException
      */
     public function validate($email_address);
-
-
 }
-// End of file EmailValidationInterface.php
-// Location: core\services\validation\strategies/EmailValidationInterface.php

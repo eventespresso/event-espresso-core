@@ -1,11 +1,8 @@
 <?php
+
 namespace EventEspresso\core\services\container;
 
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class CoffeeMill
@@ -24,7 +21,6 @@ class CoffeeMill
     private static $coffee_shop;
 
 
-
     /**
      * @return mixed
      */
@@ -34,7 +30,6 @@ class CoffeeMill
     }
 
 
-
     /**
      * @param CoffeeShop $coffee_shop
      */
@@ -42,7 +37,6 @@ class CoffeeMill
     {
         self::$coffee_shop = $coffee_shop;
     }
-
 
 
     /**
@@ -56,7 +50,6 @@ class CoffeeMill
     {
         return self::$coffee_shop->brew($identifier, $arguments, $type);
     }
-
 
 
     /**
@@ -77,7 +70,4 @@ class CoffeeMill
     {
         return self::$coffee_shop->brew($identifier, $arguments, $type);
     }
-
 }
-// End of file CoffeeMill.php
-// Location: core/services/container/CoffeeMill.php

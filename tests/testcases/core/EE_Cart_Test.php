@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 if (!defined('EVENT_ESPRESSO_VERSION')) {
 	exit('No direct script access allowed');
 }
@@ -21,12 +23,17 @@ class EE_Cart_Test extends EE_UnitTestCase{
 	protected $_session = null;
 
 
-
-	public function setUp(){
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
+    public function setUp(){
 		parent::setUp();
 		require_once EE_TESTS_DIR . 'mocks' . DS . 'core' . DS . 'EE_Session_Mock.core.php';
-		$this->_session = EE_Session_Mock::instance();
-		EE_Cart::reset( null, $this->_session );
+		$this->_session = LoaderFactory::getLoader()->getShared('EE_Session_Mock');
+        EE_Cart::reset( null, $this->_session );
 	}
 
 	public function test_get_cart_from_txn(){

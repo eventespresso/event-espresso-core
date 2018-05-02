@@ -5,12 +5,6 @@ use EventEspresso\core\libraries\rest_api\controllers\Base as Controller_Base;
 use EventEspresso\core\libraries\rest_api\ModelVersionInfo;
 use EE_Error;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Base
  * Base controller which also has something to do with models

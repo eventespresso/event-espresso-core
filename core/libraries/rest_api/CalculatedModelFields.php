@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\libraries\rest_api;
 
 use EEM_Base;
@@ -15,12 +16,6 @@ use EEH_Inflector;
  * @author                Mike Nelson
  * @since                 4.8.35.rc.001
  */
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 class CalculatedModelFields
 {
 
@@ -28,7 +23,6 @@ class CalculatedModelFields
      * @var array
      */
     protected $mapping;
-
 
 
     /**
@@ -48,7 +42,6 @@ class CalculatedModelFields
         }
         return $this->mapping;
     }
-
 
 
     /**
@@ -94,7 +87,6 @@ class CalculatedModelFields
     }
 
 
-
     /**
      * Gets the known calculated fields for model
      *
@@ -104,13 +96,12 @@ class CalculatedModelFields
     public function retrieveCalculatedFieldsForModel(EEM_Base $model)
     {
         $mapping = $this->mapping();
-        if (isset($mapping[$model->get_this_model_name()])) {
-            return array_keys($mapping[$model->get_this_model_name()]);
+        if (isset($mapping[ $model->get_this_model_name() ])) {
+            return array_keys($mapping[ $model->get_this_model_name() ]);
         } else {
             return array();
         }
     }
-
 
 
     /**
@@ -132,10 +123,10 @@ class CalculatedModelFields
         Base $controller
     ) {
         $mapping = $this->mapping();
-        if (isset($mapping[$model->get_this_model_name()])
-            && isset($mapping[$model->get_this_model_name()][$field_name])
+        if (isset($mapping[ $model->get_this_model_name() ])
+            && isset($mapping[ $model->get_this_model_name() ][ $field_name ])
         ) {
-            $classname = $mapping[$model->get_this_model_name()][$field_name];
+            $classname = $mapping[ $model->get_this_model_name() ][ $field_name ];
             $class_method_name = EEH_Inflector::camelize_all_but_first($field_name);
             return call_user_func(array($classname, $class_method_name), $wpdb_row, $rest_request, $controller);
         }
