@@ -95,7 +95,6 @@ class BootstrapDependencyInjectionContainer
             $this->class_cache,
             $this->object_identifier
         );
-
     }
 
 

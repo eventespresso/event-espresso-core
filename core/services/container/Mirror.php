@@ -9,10 +9,6 @@ use ReflectionMethod;
 use ReflectionParameter;
 use ReflectionProperty;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class Mirror
  * Utility class for obtaining details about classes using PHP Reflection.
