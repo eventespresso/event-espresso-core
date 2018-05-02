@@ -6,6 +6,24 @@
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
 	>
+    <filter>
+        <whitelist>
+            <directory>../</directory>
+            <exclude>
+                <directory>../acceptance_tests</directory>
+                <directory>../assets</directory>
+                <directory>../bin</directory>
+                <directory>../docs</directory>
+                <directory>../eslint</directory>
+                <directory>../languages</directory>
+                <directory>../node_modules</directory>
+                <directory>../public</directory>
+                <directory>../tests</directory>
+                <directory>../vendor</directory>
+                <directory>../wp-assets</directory>
+            </exclude>
+        </whitelist>
+    </filter>
 	<testsuites>
 		<testsuite>
 			<directory suffix=".php">./testcases/</directory>
@@ -32,18 +50,4 @@
 	<php>
 		<ini name="display_errors" value="1" />
 	</php>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./</directory>
-            <exclude>
-                <directory>./acceptance_tests</directory>
-                <directory>./vendor</directory>
-                <directory>./wp-assets</directory>
-                <directory>./widgets</directory>
-                <directory>./public</directory>
-                <directory>./node_modules</directory>
-                <directory>./languages</directory>
-            </exclude>
-        </whitelist>
-    </filter>
 </phpunit>
