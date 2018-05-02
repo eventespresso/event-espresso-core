@@ -32,4 +32,20 @@
 	<php>
 		<ini name="display_errors" value="1" />
 	</php>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./</directory>
+            <exclude>
+                <directory>./acceptance_tests</directory>
+                <directory>./bin</directory>
+                <directory>./tests</directory>
+                <directory>./vendor</directory>
+                <directory>./wp-assets</directory>
+                <directory>./widgets</directory>
+                <directory>./public</directory>
+                <directory>./node_modules</directory>
+                <directory>./languages</directory>
+            </exclude>
+        </whitelist>
+    </filter>
 </phpunit>

@@ -60,7 +60,7 @@ jobs:
   allow_failures:
     - php: nightly
   include:
-    - stage: php-tests
+    - stage: test
       php: 7.2
       env:
         - PHP_LINT=1
