@@ -5,16 +5,12 @@ namespace EventEspresso\core\domain\values;
 use EventEspresso\core\domain\services\validation\email\EmailValidationException;
 use EventEspresso\core\domain\services\validation\email\EmailValidatorInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 /**
  * Class EmailAddress
  * Value Object for representing a valid email address
  *
  * @package       EventEspresso\core\domain\values
  * @author        Brent Christensen
- * 
  */
 class EmailAddress
 {
@@ -74,8 +70,4 @@ class EmailAddress
     {
         return $this->email_address;
     }
-
-
-
 }
-// Location: EmailAddress.php

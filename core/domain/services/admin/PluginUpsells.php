@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\services\admin;
 
 use DomainException;
@@ -46,8 +47,9 @@ class PluginUpsells
 
     /**
      * Callback for `after_plugin_row` to add upsell info
+     *
      * @param string $plugin_file
-     * @param array $plugin_data
+     * @param array  $plugin_data
      * @param string $status
      * @throws DomainException
      */
@@ -77,6 +79,7 @@ class PluginUpsells
 
     /**
      * Provide the details used for the upsell container.
+     *
      * @return array
      */
     protected function getAfterPluginRowDetails()
@@ -91,7 +94,7 @@ class PluginUpsells
                 ),
                 '<strong>',
                 '</strong>'
-            )
+            ),
         );
     }
 }

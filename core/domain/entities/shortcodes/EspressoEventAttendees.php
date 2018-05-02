@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\entities\shortcodes;
 
 use EE_Datetime;
@@ -15,10 +16,6 @@ use EEM_Ticket;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class EspressoEventAttendees
  * ESPRESSO_EVENT_ATTENDEES shortcode
@@ -31,14 +28,14 @@ class EspressoEventAttendees extends EspressoShortcode
 {
 
     private $query_params = array(
-        0 => array()
+        0 => array(),
     );
 
     private $template_args = array(
-        'contacts'      => array(),
-        'event'         => null,
-        'datetime'      => null,
-        'ticket'        => null,
+        'contacts' => array(),
+        'event'    => null,
+        'datetime' => null,
+        'ticket'   => null,
     );
 
     /**
@@ -52,7 +49,6 @@ class EspressoEventAttendees extends EspressoShortcode
     }
 
 
-
     /**
      * the time in seconds to cache the results of the processShortcode() method
      * 0 means the processShortcode() results will NOT be cached at all
@@ -63,7 +59,6 @@ class EspressoEventAttendees extends EspressoShortcode
     {
         return 0;
     }
-
 
 
     /**
@@ -133,15 +128,14 @@ class EspressoEventAttendees extends EspressoShortcode
             return '';
         }
         $this->setAdditionalQueryParams($attributes);
-        //get contacts!
+        // get contacts!
         $this->template_args['contacts'] = EEM_Attendee::instance()->get_all($this->query_params);
-        //all set let's load up the template and return.
+        // all set let's load up the template and return.
         return EEH_Template::locate_template(
             'loop-espresso_event_attendees.php',
             $this->template_args
         );
     }
-
 
 
     /**
@@ -152,7 +146,7 @@ class EspressoEventAttendees extends EspressoShortcode
      */
     private function getAttributes(array $attributes)
     {
-        return (array) apply_filters(
+        return (array)apply_filters(
             'EES_Espresso_Event_Attendees__process_shortcode__default_shortcode_atts',
             $attributes + array(
                 'event_id'            => null,
@@ -168,7 +162,6 @@ class EspressoEventAttendees extends EspressoShortcode
 
     /**
      * Set all the base template arguments from the incoming attributes.
-     *
      * * Note: because of the relationship between event_id, ticket_id, and datetime_id:
      * If more than one of those params is included, then preference is given to the following:
      *  - event_id is used whenever its present and any others are ignored.
@@ -196,6 +189,7 @@ class EspressoEventAttendees extends EspressoShortcode
 
     /**
      * Validates the presence of entities for the given attribute values.
+     *
      * @param array $attributes
      * @throws EntityNotFoundException
      */
@@ -234,20 +228,20 @@ class EspressoEventAttendees extends EspressoShortcode
         switch (true) {
             case $this->template_args['datetime'] instanceof EE_Datetime:
                 $this->query_params = array(
-                    0 => array(
-                        'Registration.Ticket.Datetime.DTT_ID' => $this->template_args['datetime']->ID()
+                    0                          => array(
+                        'Registration.Ticket.Datetime.DTT_ID' => $this->template_args['datetime']->ID(),
                     ),
-                    'default_where_conditions' => 'this_model_only'
+                    'default_where_conditions' => 'this_model_only',
                 );
                 break;
             case $this->template_args['ticket'] instanceof EE_Ticket:
                 $this->query_params[0] = array(
-                    'Registration.TKT_ID' => $this->template_args['ticket']->ID()
+                    'Registration.TKT_ID' => $this->template_args['ticket']->ID(),
                 );
                 break;
             case $this->template_args['event'] instanceof EE_Event:
                 $this->query_params[0] = array(
-                    'Registration.EVT_ID' => $this->template_args['event']->ID()
+                    'Registration.EVT_ID' => $this->template_args['event']->ID(),
                 );
                 break;
         }
@@ -271,15 +265,15 @@ class EspressoEventAttendees extends EspressoShortcode
             case ! empty($attributes['datetime_id']):
                 $event = EEM_Event::instance()->get_one(array(
                     array(
-                        'Datetime.DTT_ID' => $attributes['datetime_id']
-                    )
+                        'Datetime.DTT_ID' => $attributes['datetime_id'],
+                    ),
                 ));
                 break;
             case ! empty($attributes['ticket_id']):
                 $event = EEM_Event::instance()->get_one(array(
                     array(
-                        'Datetime.Ticket.TKT_ID' => $attributes['ticket_id']
-                    )
+                        'Datetime.Ticket.TKT_ID' => $attributes['ticket_id'],
+                    ),
                 ));
                 break;
             case is_espresso_event():
@@ -290,13 +284,13 @@ class EspressoEventAttendees extends EspressoShortcode
                 // try getting the earliest active event
                 $events = EEM_Event::instance()->get_active_events(array(
                     'limit'    => 1,
-                    'order_by' => array('Datetime.DTT_EVT_start' => 'ASC')
+                    'order_by' => array('Datetime.DTT_EVT_start' => 'ASC'),
                 ));
                 //  if none then get the next upcoming
                 $events = empty($events)
                     ? EEM_Event::instance()->get_upcoming_events(array(
                         'limit'    => 1,
-                        'order_by' => array('Datetime.DTT_EVT_start' => 'ASC')
+                        'order_by' => array('Datetime.DTT_EVT_start' => 'ASC'),
                     ))
                     : $events;
                 $event = reset($events);
@@ -307,7 +301,7 @@ class EspressoEventAttendees extends EspressoShortcode
 
 
     /**
-     * @param array         $attributes
+     * @param array $attributes
      * @return EE_Datetime|null
      * @throws EE_Error
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
@@ -346,7 +340,6 @@ class EspressoEventAttendees extends EspressoShortcode
     }
 
 
-
     /**
      * @param array $attributes
      * @throws EE_Error
@@ -358,14 +351,9 @@ class EspressoEventAttendees extends EspressoShortcode
             $this->query_params[0]['Registration.STS_ID'] = $attributes['status'];
         }
         $this->query_params['group_by'] = array('ATT_ID');
-        $this->query_params['order_by'] = (array) apply_filters(
+        $this->query_params['order_by'] = (array)apply_filters(
             'FHEE__EES_Espresso_Event_Attendees__process_shortcode__order_by',
             array('ATT_lname' => 'ASC', 'ATT_fname' => 'ASC')
         );
     }
-
-
-
 }
-// End of file EspressoEventAttendees.php
-// Location: EventEspresso\core\domain\entities\shortcodes/EspressoEventAttendees.php

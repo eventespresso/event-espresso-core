@@ -5,9 +5,6 @@ namespace EventEspresso\core\domain;
 use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\Version;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
-
-
 /**
  * DomainBase Class
  * A container for all domain data related to the plugin

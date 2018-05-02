@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\services\pue;
 
 use Closure;
@@ -61,7 +62,7 @@ class Stats
             add_action('admin_notices', array($this, 'optinNotice'));
             add_action('admin_enqueue_scripts', array($this, 'enqueueScripts'));
             add_action('wp_ajax_espresso_data_optin', array($this, 'ajaxHandler'));
-            //makes sure optin defaults to yes even if its currently empty.
+            // makes sure optin defaults to yes even if its currently empty.
             $this->config->setHasOptedInForUxip();
         }
     }
@@ -69,13 +70,14 @@ class Stats
 
     /**
      * This returns the callback that PluginUpdateEngineChecker will use for getting any extra stats to send.
+     *
      * @return Closure
      */
     public function statsCallback()
     {
-        //returns a callback that can is used to retrieve the stats to send along to the pue server.
+        // returns a callback that can is used to retrieve the stats to send along to the pue server.
         return function () {
-            //we only send stats one a week, so let's see if our stat timestamp has expired.
+            // we only send stats one a week, so let's see if our stat timestamp has expired.
             if (! $this->sendStats()) {
                 return array();
             }
@@ -86,6 +88,7 @@ class Stats
 
     /**
      * Return whether notices can be displayed or not
+     *
      * @return bool
      */
     private function canDisplayNotices()
@@ -118,6 +121,7 @@ class Stats
 
     /**
      * Retrieves the optin text (static so it can be used in multiple places as necessary).
+     *
      * @param bool $extra
      */
     public static function optinText($extra = true)
@@ -131,7 +135,7 @@ class Stats
                  . '</h2>';
             printf(
                 esc_html__(
-                    '%sPlease help us make Event Espresso better and vote for your favorite features.%s The %sUser eXperience Improvement Program (UXIP)%s, has been created so when you use Event Espresso you are voting for the features and settings that are important to you. The UXIP helps us understand how you use our products and services, track problems and in what context. If you opt-out of the UXIP you essentially elect for us to disregard how you use Event Espresso as we build new features and make changes. Participation in the program is completely voluntary but it is enabled by default. The end results of the UXIP are software improvements to better meet your needs. The data we collect will never be sold, traded, or misused in any way. %sPlease see our %sPrivacy Policy%s for more information.',
+                    '%1$sPlease help us make Event Espresso better and vote for your favorite features.%2$s The %3$sUser eXperience Improvement Program (UXIP)%4$s, has been created so when you use Event Espresso you are voting for the features and settings that are important to you. The UXIP helps us understand how you use our products and services, track problems and in what context. If you opt-out of the UXIP you essentially elect for us to disregard how you use Event Espresso as we build new features and make changes. Participation in the program is completely voluntary but it is enabled by default. The end results of the UXIP are software improvements to better meet your needs. The data we collect will never be sold, traded, or misused in any way. %5$sPlease see our %6$sPrivacy Policy%7$s for more information.',
                     'event_espresso'
                 ),
                 '<p><em>',
@@ -150,7 +154,7 @@ class Stats
             $settings_url .= '#UXIP_settings';
             printf(
                 esc_html__(
-                    'The Event Espresso UXIP feature is active on your site. For %smore info%s and to opt-out %sclick here%s.',
+                    'The Event Espresso UXIP feature is active on your site. For %1$smore info%2$s and to opt-out %3$sclick here%4$s.',
                     'event_espresso'
                 ),
                 '<a href="https://eventespresso.com/about/user-experience-improvement-program-uxip/" target="_blank">',
@@ -191,12 +195,12 @@ class Stats
      */
     public function ajaxHandler()
     {
-        //verify nonce
+        // verify nonce
         if (isset($_POST['nonce']) && ! wp_verify_nonce($_POST['nonce'], 'ee-data-optin')) {
             exit();
         }
 
-        //update has notified option
+        // update has notified option
         $this->config->setHasNotifiedAboutUxip();
         exit();
     }
@@ -208,14 +212,15 @@ class Stats
     private function sendStats()
     {
         return $this->config->isOptedInForUxip()
-            && $this->maintenance_mode->level() !== EE_Maintenance_Mode::level_2_complete_maintenance
-            && $this->statSendTimestampExpired();
+               && $this->maintenance_mode->level() !== EE_Maintenance_Mode::level_2_complete_maintenance
+               && $this->statSendTimestampExpired();
     }
 
 
     /**
      * Returns true when the timestamp used to track whether stats get sent (currently a weekly interval) is expired.
      * Returns false otherwise.
+     *
      * @return bool
      */
     private function statSendTimestampExpired()
@@ -226,7 +231,7 @@ class Stats
             return true;
         }
 
-        if (time() > (int) $current_expiry) {
+        if (time() > (int)$current_expiry) {
             update_option(self::OPTIONS_KEY_EXPIRY_TIMESTAMP_FOR_SENDING_STATS, time() + WEEK_IN_SECONDS);
             return true;
         }

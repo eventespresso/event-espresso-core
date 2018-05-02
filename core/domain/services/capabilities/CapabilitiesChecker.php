@@ -1,17 +1,10 @@
 <?php
-
 namespace EventEspresso\core\domain\services\capabilities;
 
 use EE_Capabilities;
 use EventEspresso\core\exceptions\InsufficientPermissionsException;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
-
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class CapabilitiesChecker
@@ -82,13 +75,11 @@ class CapabilitiesChecker implements CapabilitiesCheckerInterface
         }
         $capabilities = (array)$cap_check->capability();
         foreach ($capabilities as $capability) {
-            if (
-            ! $this->capabilities()->current_user_can(
+            if (! $this->capabilities()->current_user_can(
                 $capability,
                 $cap_check->context(),
                 $cap_check->ID()
-            )
-            ) {
+            )) {
                 throw new InsufficientPermissionsException($cap_check->context());
             }
         }
@@ -110,9 +101,4 @@ class CapabilitiesChecker implements CapabilitiesCheckerInterface
     {
         return $this->processCapCheck(new CapCheck($capability, $context, $ID));
     }
-
-
-
 }
-// End of file CapabilitiesChecker.php
-// Location: core/domain/services/capabilities/CapabilitiesChecker.php

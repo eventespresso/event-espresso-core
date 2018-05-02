@@ -1,14 +1,9 @@
 <?php
+
 namespace EventEspresso\core\domain\services\ticket;
 
 use EventEspresso\core\domain\services\DomainService;
 use EventEspresso\core\exceptions\EntityNotFoundException;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class CancelTicketLineItemService
@@ -30,7 +25,8 @@ class CancelTicketLineItemService extends DomainService
      * @param int              $quantity
      * @return bool|int
      */
-    public function forRegistration(\EE_Registration $registration,$quantity = 1) {
+    public function forRegistration(\EE_Registration $registration, $quantity = 1)
+    {
         return $this->cancel(
             $registration->transaction(),
             $registration->ticket(),
@@ -87,12 +83,12 @@ class CancelTicketLineItemService extends DomainService
                         ? count($items_subtotal->children())
                         : 0,
                     'LIN_total'      => (float)$ticket_line_item->unit_price(),
-                    'LIN_type'       => \EEM_Line_Item::type_cancellation
+                    'LIN_type'       => \EEM_Line_Item::type_cancellation,
                 )
             );
             $success = \EEH_Line_Item::add_item($transaction->total_line_item(), $cancelled_line_item);
         }
-        if ( ! $success) {
+        if (! $success) {
             throw new \RuntimeException(
                 sprintf(
                     __('An error occurred while attempting to cancel ticket line item %1$s', 'event_espresso'),
@@ -102,7 +98,6 @@ class CancelTicketLineItemService extends DomainService
         }
         return $success;
     }
-
 
 
     /**
@@ -121,8 +116,7 @@ class CancelTicketLineItemService extends DomainService
             array($ticket->ID())
         );
         foreach ($ticket_line_items as $ticket_line_item) {
-            if (
-                $ticket_line_item instanceof \EE_Line_Item
+            if ($ticket_line_item instanceof \EE_Line_Item
                 && $ticket_line_item->OBJ_type() === 'Ticket'
                 && $ticket_line_item->OBJ_ID() === $ticket->ID()
             ) {
@@ -130,13 +124,9 @@ class CancelTicketLineItemService extends DomainService
                 break;
             }
         }
-        if ( ! ($line_item instanceof \EE_Line_Item && $line_item->OBJ_type() === 'Ticket')) {
+        if (! ($line_item instanceof \EE_Line_Item && $line_item->OBJ_type() === 'Ticket')) {
             throw new EntityNotFoundException('Line Item Ticket ID', $ticket->ID());
         }
         return $line_item;
     }
-
-
 }
-// End of file CancelTicketLineItemService.php
-// Location: /CancelTicketLineItemService.php

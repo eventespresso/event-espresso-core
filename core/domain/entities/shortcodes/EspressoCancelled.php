@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\entities\shortcodes;
 
 use EE_Cart;
@@ -6,10 +7,6 @@ use EE_Registration;
 use EE_Registry;
 use EE_Transaction;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class EspressoCancelled
@@ -23,7 +20,6 @@ class EspressoCancelled extends EspressoShortcode
 {
 
 
-
     /**
      * the actual shortcode tag that gets registered with WordPress
      *
@@ -33,7 +29,6 @@ class EspressoCancelled extends EspressoShortcode
     {
         return 'ESPRESSO_CANCELLED';
     }
-
 
 
     /**
@@ -90,14 +85,11 @@ class EspressoCancelled extends EspressoShortcode
         EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__);
         return sprintf(
             __(
-                '%sAll unsaved registration information entered during this session has been deleted.%s',
+                '%1$sAll unsaved registration information entered during this session has been deleted.%2$s',
                 'event_espresso'
             ),
             '<p class="ee-registrations-cancelled-pg ee-attention">',
             '</p>'
         );
     }
-
 }
-// End of file EspressoCancelled.php
-// Location: EventEspresso\core\domain\entities\shortcodes/EspressoCancelled.php

@@ -98,10 +98,10 @@ class CustomSelects
      */
     private function deriveType(array $selects)
     {
-        //first if the first key for this array is an integer then its coming in as a simple format, so we'll also
+        // first if the first key for this array is an integer then its coming in as a simple format, so we'll also
         // ensure all elements of the array are simple.
         if (is_int(key($selects))) {
-            //let's ensure all keys are ints
+            // let's ensure all keys are ints
             $invalid_keys = array_filter(
                 array_keys($selects),
                 function ($value) {
@@ -122,15 +122,15 @@ class CustomSelects
             $this->type = self::TYPE_SIMPLE;
             return;
         }
-        //made it here so that means we've got either complex or structured selects.  Let's find out which by popping
-        //the first array element off.
+        // made it here so that means we've got either complex or structured selects.  Let's find out which by popping
+        // the first array element off.
         $first_element = reset($selects);
 
         if (! is_array($first_element)) {
             throw new InvalidArgumentException(
                 sprintf(
                     esc_html__(
-                        'Incoming array looks like its formatted as a "%1$s" or "%2$%s" type.  However, the values in the array must be arrays themselves and they are not.',
+                        'Incoming array looks like its formatted as a "%1$s" or "%2$s" type.  However, the values in the array must be arrays themselves and they are not.',
                         'event_espresso'
                     ),
                     self::TYPE_COMPLEX,
@@ -201,7 +201,7 @@ class CustomSelects
                 )
             );
         }
-        //validate data type.
+        // validate data type.
         $data_type = $this->type === self::TYPE_COMPLEX ? $select_parts[1] : '';
         $data_type = $this->type === self::TYPE_STRUCTURED ? $select_parts[2] : $data_type;
 
@@ -227,7 +227,8 @@ class CustomSelects
      * @param string $type
      * @return int
      */
-    private function expectedSelectPartCountForType($type = '') {
+    private function expectedSelectPartCountForType($type = '')
+    {
         $type = $type === '' ? $this->type : $type;
         $types_count_map = array(
             self::TYPE_COMPLEX => 2,
@@ -247,7 +248,7 @@ class CustomSelects
     private function assembleSelectStringWithOperator(array $select_parts, $alias)
     {
         $operator = strtoupper($select_parts[1]);
-        //validate operator
+        // validate operator
         if (! in_array($operator, $this->valid_operators, true)) {
             throw new InvalidArgumentException(
                 sprintf(
