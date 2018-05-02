@@ -5,12 +5,6 @@ namespace EventEspresso\core\services\commands;
 use DomainException;
 use EventEspresso\core\services\loaders\LoaderInterface;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Class CommandHandlerManager
  * Connects a Command with its corresponding Command Handler
@@ -35,7 +29,6 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
     private $loader;
 
 
-
     /**
      * CommandHandlerManager constructor
      *
@@ -45,7 +38,6 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
     {
         $this->loader = $loader;
     }
-
 
 
     /**
@@ -86,10 +78,9 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
     }
 
 
-
     /**
-     * @param CommandInterface $command
-     * @param CommandBusInterface       $command_bus
+     * @param CommandInterface    $command
+     * @param CommandBusInterface $command_bus
      * @return mixed
      * @throws DomainException
      * @throws CommandHandlerNotFoundException
@@ -127,8 +118,4 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
         }
         throw new CommandHandlerNotFoundException($command_handler);
     }
-
-
 }
-// End of file CommandHandlerManager.php
-// Location: core/services/commands/CommandHandlerManager.php

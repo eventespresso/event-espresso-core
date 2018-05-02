@@ -7,10 +7,6 @@ use EventEspresso\core\services\request\ResponseInterface;
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RecommendedVersions
  * checks required and recommended versions for both WP and PHP
@@ -26,14 +22,14 @@ class RecommendedVersions extends Middleware
     /**
      * converts a Request to a Response
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface      $response
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
      * @return ResponseInterface
      * @throws InvalidDataTypeException
      */
     public function handleRequest(RequestInterface $request, ResponseInterface $response)
     {
-        $this->request  = $request;
+        $this->request = $request;
         $this->response = $response;
         // check required WP version
         if (! $this->minimumWordPressVersionRequired()) {
@@ -46,7 +42,7 @@ class RecommendedVersions extends Middleware
         if (! $this->minimumPhpVersionRecommended()) {
             $this->displayMinimumRecommendedPhpVersionNotice();
         }
-        //upcoming required version
+        // upcoming required version
         if (! $this->upcomingRequiredPhpVersion()) {
             $this->displayUpcomingRequiredVersion();
         }
@@ -69,8 +65,8 @@ class RecommendedVersions extends Middleware
     {
         global $wp_version;
         return version_compare(
-        // first account for wp_version being pre-release
-        // (like RC, beta etc) which are usually in the format like 4.7-RC3-39519
+            // first account for wp_version being pre-release
+            // (like RC, beta etc) which are usually in the format like 4.7-RC3-39519
             strpos($wp_version, '-') > 0
                 ? substr($wp_version, 0, strpos($wp_version, '-'))
                 : $wp_version,
@@ -80,7 +76,6 @@ class RecommendedVersions extends Middleware
     }
 
 
-
     /**
      * @return boolean
      */
@@ -88,7 +83,6 @@ class RecommendedVersions extends Middleware
     {
         return RecommendedVersions::compareWordPressVersion();
     }
-
 
 
     /**
@@ -101,7 +95,6 @@ class RecommendedVersions extends Middleware
     }
 
 
-
     /**
      * @return boolean
      */
@@ -109,7 +102,6 @@ class RecommendedVersions extends Middleware
     {
         return $this->checkPhpVersion();
     }
-
 
 
     /**
@@ -123,8 +115,10 @@ class RecommendedVersions extends Middleware
             <p>
                 <?php
                 printf(
-                    __('We\'re sorry, but Event Espresso requires WordPress version %1$s or greater in order to operate. You are currently running version %2$s.%3$sFor information on how to update your version of WordPress, please go to %4$s.',
-                        'event_espresso'),
+                    __(
+                        'We\'re sorry, but Event Espresso requires WordPress version %1$s or greater in order to operate. You are currently running version %2$s.%3$sFor information on how to update your version of WordPress, please go to %4$s.',
+                        'event_espresso'
+                    ),
                     EE_MIN_WP_VER_REQUIRED,
                     $wp_version,
                     '<br/>',
@@ -135,7 +129,6 @@ class RecommendedVersions extends Middleware
         </div>
         <?php
     }
-
 
 
     /**
@@ -174,7 +167,7 @@ class RecommendedVersions extends Middleware
     private function upcomingRequiredPhpVersion($version_required = '5.5')
     {
         return true;
-        //return $this->checkPhpVersion($version_required);
+        // return $this->checkPhpVersion($version_required);
     }
 
 
@@ -187,8 +180,7 @@ class RecommendedVersions extends Middleware
             && apply_filters('FHEE__EE_Recommended_Versions__displayUpcomingRequiredVersion', true, $this->request)
             && current_user_can('update_plugins')
         ) {
-            add_action('admin_notices', function ()
-            {
+            add_action('admin_notices', function () {
                 echo '<div class="notice event-espresso-admin-notice notice-warning"><p>'
                      . sprintf(
                          esc_html__(
@@ -206,4 +198,3 @@ class RecommendedVersions extends Middleware
         }
     }
 }
-// Location: RecommendedVersions.php

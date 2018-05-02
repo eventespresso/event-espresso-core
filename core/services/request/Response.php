@@ -4,10 +4,6 @@ namespace EventEspresso\core\services\request;
 
 use EventEspresso\core\interfaces\ReservedInstanceInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * class Response
  * Passes output, notices, and request termination status between Middleware classes
@@ -52,7 +48,6 @@ class Response implements ResponseInterface, ReservedInstanceInterface
     }
 
 
-
     /**
      * @param $key
      * @param $value
@@ -60,9 +55,8 @@ class Response implements ResponseInterface, ReservedInstanceInterface
      */
     public function setNotice($key, $value)
     {
-        $this->notice[ $key ] = $value;
+        $this->notice[$key] = $value;
     }
-
 
 
     /**
@@ -71,9 +65,8 @@ class Response implements ResponseInterface, ReservedInstanceInterface
      */
     public function getNotice($key)
     {
-        return isset($this->notice[ $key ]) ? $this->notice[ $key ] : null;
+        return isset($this->notice[$key]) ? $this->notice[$key] : null;
     }
-
 
 
     /**
@@ -83,7 +76,6 @@ class Response implements ResponseInterface, ReservedInstanceInterface
     {
         return $this->notice;
     }
-
 
 
     /**
@@ -96,7 +88,6 @@ class Response implements ResponseInterface, ReservedInstanceInterface
     }
 
 
-
     /**
      * @return string
      */
@@ -104,7 +95,6 @@ class Response implements ResponseInterface, ReservedInstanceInterface
     {
         return $this->output;
     }
-
 
 
     /**
@@ -116,7 +106,6 @@ class Response implements ResponseInterface, ReservedInstanceInterface
     }
 
 
-
     /**
      * @param boolean $request_terminated
      */
@@ -124,7 +113,6 @@ class Response implements ResponseInterface, ReservedInstanceInterface
     {
         $this->request_terminated = filter_var($request_terminated, FILTER_VALIDATE_BOOLEAN);
     }
-
 
 
     /**
@@ -136,7 +124,6 @@ class Response implements ResponseInterface, ReservedInstanceInterface
     }
 
 
-
     /**
      * sets $deactivate_plugin to true
      */
@@ -144,8 +131,4 @@ class Response implements ResponseInterface, ReservedInstanceInterface
     {
         $this->deactivate_plugin = true;
     }
-
-
 }
-// End of file EE_Response.core.php
-// Location: /core/EE_Response.core.php

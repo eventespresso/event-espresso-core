@@ -1,15 +1,10 @@
 <?php
+
 namespace EventEspresso\core\services\container;
 
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\services\container\exceptions\InstantiationException;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class CoffeeMaker
@@ -50,7 +45,6 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
     private $injector;
 
 
-
     /**
      * @return array
      */
@@ -67,7 +61,6 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
     }
 
 
-
     /**
      * @param $type
      * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
@@ -75,7 +68,7 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
     public static function validateType($type)
     {
         $types = CoffeeMaker::getTypes();
-        if ( ! in_array($type, $types, true)) {
+        if (! in_array($type, $types, true)) {
             throw new InvalidIdentifierException(
                 is_object($type) ? get_class($type) : gettype($type),
                 __(
@@ -86,7 +79,6 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
         }
         return $type;
     }
-
 
 
     /**
@@ -102,7 +94,6 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
     }
 
 
-
     /**
      * @return \EventEspresso\core\services\container\CoffeePotInterface
      */
@@ -112,7 +103,6 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
     }
 
 
-
     /**
      * @return \EventEspresso\core\services\container\DependencyInjector
      */
@@ -120,7 +110,6 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
     {
         return $this->injector;
     }
-
 
 
     /**
@@ -151,7 +140,6 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
     }
 
 
-
     /**
      * Ensures files for classes that are not PSR-4 compatible are loaded
      * and then verifies that classes exist where applicable
@@ -163,7 +151,7 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
     protected function resolveClassAndFilepath(RecipeInterface $recipe)
     {
         $paths = $recipe->paths();
-        if ( ! empty($paths)) {
+        if (! empty($paths)) {
             foreach ($paths as $path) {
                 if (strpos($path, '*') === false && is_readable($path)) {
                     require_once($path);
@@ -182,10 +170,4 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
         }
         return true;
     }
-
-
-
-
 }
-// End of file CoffeeMaker.php
-// Location: /CoffeeMaker.php

@@ -6,10 +6,6 @@ use ArrayAccess;
 use ArrayIterator;
 use OutOfBoundsException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RegistryContainer
  * Object for storing data that behaves as an array
@@ -147,6 +143,4 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
     {
         unset($this->container[$offset]);
     }
-
 }
-// Location: RegistryContainer.php

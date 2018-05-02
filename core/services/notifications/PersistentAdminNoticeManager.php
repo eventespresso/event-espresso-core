@@ -17,9 +17,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 use Exception;
 use InvalidArgumentException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
+// phpcs:disable PEAR.Functions.ValidDefaultValue.NotAtEnd
 
 /**
  * Class PersistentAdminNoticeManager
@@ -58,11 +56,10 @@ class PersistentAdminNoticeManager
     private $request;
 
 
-
     /**
      * PersistentAdminNoticeManager constructor
      *
-     * @param string              $return_url  where to  redirect to after dismissing notices
+     * @param string              $return_url where to  redirect to after dismissing notices
      * @param CapabilitiesChecker $capabilities_checker
      * @param EE_Request          $request
      * @throws InvalidDataTypeException
@@ -71,7 +68,7 @@ class PersistentAdminNoticeManager
     {
         $this->setReturnUrl($return_url);
         $this->capabilities_checker = $capabilities_checker;
-        $this->request              = $request;
+        $this->request = $request;
         // setup up notices at priority 9 because `EE_Admin::display_admin_notices()` runs at priority 10,
         // and we want to retrieve and generate any nag notices at the last possible moment
         add_action('admin_notices', array($this, 'displayNotices'), 9);
@@ -79,7 +76,6 @@ class PersistentAdminNoticeManager
         add_action('wp_ajax_dismiss_ee_nag_notice', array($this, 'dismissNotice'));
         add_action('shutdown', array($this, 'registerAndSaveNotices'), 998);
     }
-
 
 
     /**
@@ -93,7 +89,6 @@ class PersistentAdminNoticeManager
         }
         $this->return_url = $return_url;
     }
-
 
 
     /**
@@ -116,7 +111,6 @@ class PersistentAdminNoticeManager
     }
 
 
-
     /**
      * generates PersistentAdminNotice objects for all non-dismissed notices saved to the db
      *
@@ -132,14 +126,12 @@ class PersistentAdminNoticeManager
         if (! empty($persistent_admin_notices)) {
             foreach ($persistent_admin_notices as $name => $details) {
                 if (is_array($details)) {
-                    if (
-                        ! isset(
-                            $details['message'],
-                            $details['capability'],
-                            $details['cap_context'],
-                            $details['dismissed']
-                        )
-                    ) {
+                    if (! isset(
+                        $details['message'],
+                        $details['capability'],
+                        $details['cap_context'],
+                        $details['dismissed']
+                    )) {
                         throw new DomainException(
                             sprintf(
                                 esc_html__(
@@ -186,7 +178,6 @@ class PersistentAdminNoticeManager
     }
 
 
-
     /**
      * exposes the Persistent Admin Notice Collection via an action
      * so that PersistentAdminNotice objects can be added and/or removed
@@ -199,7 +190,6 @@ class PersistentAdminNoticeManager
             $this->notice_collection
         );
     }
-
 
 
     /**
@@ -243,7 +233,6 @@ class PersistentAdminNoticeManager
     }
 
 
-
     /**
      * does what it's named
      *
@@ -281,7 +270,6 @@ class PersistentAdminNoticeManager
     }
 
 
-
     /**
      * displayPersistentAdminNoticeHtml
      *
@@ -290,11 +278,10 @@ class PersistentAdminNoticeManager
     protected function displayPersistentAdminNotice(PersistentAdminNotice $persistent_admin_notice)
     {
         // used in template
-        $persistent_admin_notice_name    = $persistent_admin_notice->getName();
+        $persistent_admin_notice_name = $persistent_admin_notice->getName();
         $persistent_admin_notice_message = $persistent_admin_notice->getMessage();
         require EE_TEMPLATES . DS . 'notifications' . DS . 'persistent_admin_notice.template.php';
     }
-
 
 
     /**
@@ -311,7 +298,7 @@ class PersistentAdminNoticeManager
      */
     public function dismissNotice($pan_name = '', $purge = false, $return = false)
     {
-        $pan_name                = $this->request->get('ee_nag_notice', $pan_name);
+        $pan_name = $this->request->get('ee_nag_notice', $pan_name);
         $this->notice_collection = $this->getPersistentAdminNoticeCollection();
         if (! empty($pan_name) && $this->notice_collection->has($pan_name)) {
             /** @var PersistentAdminNotice $persistent_admin_notice */
@@ -342,7 +329,6 @@ class PersistentAdminNoticeManager
     }
 
 
-
     /**
      * saveNotices
      *
@@ -356,7 +342,7 @@ class PersistentAdminNoticeManager
         $this->notice_collection = $this->getPersistentAdminNoticeCollection();
         if ($this->notice_collection->hasObjects()) {
             $persistent_admin_notices = get_option(PersistentAdminNoticeManager::WP_OPTION_KEY, array());
-            //maybe initialize persistent_admin_notices
+            // maybe initialize persistent_admin_notices
             if (empty($persistent_admin_notices)) {
                 add_option(PersistentAdminNoticeManager::WP_OPTION_KEY, array(), '', 'no');
             }
@@ -377,7 +363,6 @@ class PersistentAdminNoticeManager
             update_option(PersistentAdminNoticeManager::WP_OPTION_KEY, $persistent_admin_notices);
         }
     }
-
 
 
     /**
@@ -412,12 +397,8 @@ class PersistentAdminNoticeManager
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
         );
         // if shutdown has already run, then call registerAndSaveNotices() manually
-        if(did_action('shutdown')){
+        if (did_action('shutdown')) {
             $persistent_admin_notice_manager->registerAndSaveNotices();
         }
     }
-
-
 }
-// End of file PersistentAdminNoticeManager.php
-// Location: EventEspresso\core\services\notifications/PersistentAdminNoticeManager.php
