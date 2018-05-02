@@ -15,6 +15,7 @@
 		"test-php": "cd tests && phpunit",
 		"test-php:coverage-ci": "npm run test-php -- --coverage-clover=coverage.xml && codecov",
 		"lint-php": "composer run-script lint",
+		"lint-php:skip-warnings": "composer run-script lint:skip-warnings",
 		"lint-php:fix": "composer run-script lint-fix",
 		"test-unit": "wp-scripts test-unit-js --config tests/javascript-config/unit/jest.config.json",
 		"test-unit:coverage": "npm run test-unit -- --coverage",

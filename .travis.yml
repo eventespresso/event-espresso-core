@@ -69,7 +69,7 @@ jobs:
       script:
         - composer install || exit 1
         - composer config-eventespressocs || exit 1
-        - npm run lint-php -- -n || exit 1
+        - npm run lint-php:skip-warnings || exit 1
     - php: 7.2
       env:
         - PHP_LINT=1
