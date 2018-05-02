@@ -59,11 +59,21 @@ jobs:
   fast_finish: true
   allow_failures:
     - php: nightly
+    - env: PHP_LINT_WITH_WARNINGS=yes
   include:
     - stage: test
       php: 7.2
       env:
         - PHP_LINT=1
+        - PHP_LINT_WITH_WARNINGS=no
+      script:
+        - composer install || exit 1
+        - composer config-eventespressocs || exit 1
+        - npm run lint-php -- -n || exit 1
+    - php: 7.2
+      env:
+        - PHP_LINT=1
+        - PHP_LINT_WITH_WARNINGS=yes
       script:
         - composer install || exit 1
         - composer config-eventespressocs || exit 1
