@@ -1,16 +1,11 @@
 <?php
+
 namespace EventEspresso\core\services\commands\registration;
 
 use EventEspresso\core\domain\services\registration\CreateRegistrationService;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class CreateRegistrationCommandHandler
@@ -29,7 +24,6 @@ class CreateRegistrationCommandHandler extends CommandHandler
     private $registration_service;
 
 
-
     /**
      * Command constructor
      *
@@ -39,7 +33,6 @@ class CreateRegistrationCommandHandler extends CommandHandler
     {
         $this->registration_service = $registration_service;
     }
-
 
 
     /**
@@ -53,7 +46,7 @@ class CreateRegistrationCommandHandler extends CommandHandler
     public function handle(CommandInterface $command)
     {
         /** @var CreateRegistrationCommand $command */
-        if ( ! $command instanceof CreateRegistrationCommand) {
+        if (! $command instanceof CreateRegistrationCommand) {
             throw new InvalidEntityException(get_class($command), 'CreateRegistrationCommand');
         }
         // now create a new registration for the ticket
@@ -67,9 +60,4 @@ class CreateRegistrationCommandHandler extends CommandHandler
             $command->regStatus()
         );
     }
-
-
-
 }
-// End of file CreateRegistrationCommandHandler.php
-// Location: /CreateRegistrationCommandHandler.php

@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
 use EventEspresso\core\libraries\rest_api\RestException;
@@ -11,14 +12,7 @@ use EEH_Inflector;
  * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
- * 
  */
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 class Base
 {
 
@@ -34,7 +28,7 @@ class Base
                 'permission_denied',
                 sprintf(
                     __(
-                        // @codingStandardsIgnoreStart
+                    // @codingStandardsIgnoreStart
                         'Permission denied, you cannot calculate %1$s on %2$s because you do not have the capability "%3$s"',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
@@ -46,7 +40,6 @@ class Base
             );
         }
     }
-
 
 
     /**

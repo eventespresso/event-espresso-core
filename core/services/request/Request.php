@@ -6,10 +6,6 @@ use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterfa
 use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\interfaces\ReservedInstanceInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class Request
  * Representation of an incoming, server-side HTTP request
@@ -81,21 +77,20 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     private $is_bot;
 
 
-
     /**
-     * @param array                              $get
-     * @param array                              $post
-     * @param array                              $cookie
-     * @param array                              $server
+     * @param array $get
+     * @param array $post
+     * @param array $cookie
+     * @param array $server
      */
     public function __construct(array $get, array $post, array $cookie, array $server)
     {
         // grab request vars
-        $this->get        = $get;
-        $this->post       = $post;
-        $this->cookie     = $cookie;
-        $this->server     = $server;
-        $this->request    = array_merge($this->get, $this->post);
+        $this->get = $get;
+        $this->post = $post;
+        $this->cookie = $cookie;
+        $this->server = $server;
+        $this->request = array_merge($this->get, $this->post);
         $this->ip_address = $this->visitorIp();
     }
 
@@ -109,7 +104,6 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     }
 
 
-
     /**
      * @return array
      */
@@ -119,7 +113,6 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     }
 
 
-
     /**
      * @return array
      */
@@ -127,7 +120,6 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     {
         return $this->post;
     }
-
 
 
     /**
@@ -148,7 +140,6 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     }
 
 
-
     /**
      * returns contents of $_REQUEST
      *
@@ -160,7 +151,6 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     }
 
 
-
     /**
      * @param      $key
      * @param      $value
@@ -170,15 +160,13 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     public function setRequestParam($key, $value, $override_ee = false)
     {
         // don't allow "ee" to be overwritten unless explicitly instructed to do so
-        if (
-            $key !== 'ee'
+        if ($key !== 'ee'
             || ($key === 'ee' && empty($this->request['ee']))
             || ($key === 'ee' && ! empty($this->request['ee']) && $override_ee)
         ) {
             $this->request[ $key ] = $value;
         }
     }
-
 
 
     /**
@@ -192,7 +180,6 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     {
         return $this->requestParameterDrillDown($key, $default, 'get');
     }
-
 
 
     /**
@@ -311,7 +298,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
         $callback = 'is_set',
         array $request_params = array()
     ) {
-        $callback       = in_array($callback, array('is_set', 'get', 'match'), true)
+        $callback = in_array($callback, array('is_set', 'get', 'match'), true)
             ? $callback
             : 'is_set';
         $request_params = ! empty($request_params)
@@ -320,12 +307,12 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
         // does incoming key represent an array like 'first[second][third]'  ?
         if (strpos($key, '[') !== false) {
             // turn it into an actual array
-            $key  = str_replace(']', '', $key);
+            $key = str_replace(']', '', $key);
             $keys = explode('[', $key);
-            $key  = array_shift($keys);
+            $key = array_shift($keys);
             if ($callback === 'match') {
                 $real_key = $this->match($key, $request_params, $default, 'key');
-                $key      = $real_key ? $real_key : $key;
+                $key = $real_key ? $real_key : $key;
             }
             // check if top level key exists
             if (isset($request_params[ $key ])) {
@@ -370,7 +357,6 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     }
 
 
-
     /**
      * @return string
      */
@@ -389,7 +375,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     private function visitorIp()
     {
-        $visitor_ip  = '0.0.0.0';
+        $visitor_ip = '0.0.0.0';
         $server_keys = array(
             'HTTP_CLIENT_IP',
             'HTTP_X_FORWARDED_FOR',
@@ -588,7 +574,6 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     }
 
 
-
     /**
      * @return bool
      */
@@ -605,7 +590,4 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     {
         return $this->request_type->slug();
     }
-
-
 }
-// Location: Request.php

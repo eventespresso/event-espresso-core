@@ -31,6 +31,7 @@ use EE_Error;
  * If so, they will be automatically loaded on all rest api requests, and their
  * "set_hooks" method will be called automatically during "rest_api_init"
  */
+
 abstract class ChangesInBase
 {
 
@@ -40,7 +41,6 @@ abstract class ChangesInBase
      * @var string
      */
     protected $version = null;
-
 
 
     /**
@@ -53,7 +53,6 @@ abstract class ChangesInBase
      * @return void
      */
     abstract public function setHooks();
-
 
 
     /**
@@ -73,7 +72,6 @@ abstract class ChangesInBase
         }
         return false;
     }
-
 
 
     /**
@@ -103,7 +101,7 @@ abstract class ChangesInBase
                     )
                 );
             }
-            $this->version = (int)$matches[1] . '.' . (int)$matches[2] . '.' . (int)$matches[3];
+            $this->version = (int) $matches[1] . '.' . (int) $matches[2] . '.' . (int) $matches[3];
         }
         return $this->version;
     }

@@ -8,10 +8,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use InvalidArgumentException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RecaptchaFactory
  * Factory class for generating InvisibleRecaptcha or RecaptchaAdminSettings objects

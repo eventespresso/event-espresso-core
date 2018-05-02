@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
 use EventEspresso\core\libraries\rest_api\calculations\Base as Calculations_Base;
@@ -6,21 +7,6 @@ use EventEspresso\core\libraries\rest_api\controllers\model\Base as Controller_B
 use EEM_Datetime;
 use EEM_Registration;
 use EE_Datetime;
-
-/**
- * Class Datetime
- * Calculations relating to datetimes
- *
- * @package               Event Espresso
- * @subpackage
- * @author                Mike Nelson
- * 
- */
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 class Datetime extends Calculations_Base
 {
@@ -49,7 +35,7 @@ class Datetime extends Calculations_Base
             throw new \EE_Error(
                 sprintf(
                     __(
-                        // @codingStandardsIgnoreStart
+                    // @codingStandardsIgnoreStart
                         'Cannot calculate spaces_remaining_considering_tickets because the datetime with ID %1$s (from database row %2$s) was not found',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
@@ -60,7 +46,6 @@ class Datetime extends Calculations_Base
             );
         }
     }
-
 
 
     /**
@@ -79,7 +64,7 @@ class Datetime extends Calculations_Base
             throw new \EE_Error(
                 sprintf(
                     __(
-                        // @codingStandardsIgnoreStart
+                    // @codingStandardsIgnoreStart
                         'Cannot calculate registrations_checked_in_count because the database row %1$s does not have an entry for "Datetime.DTT_ID"',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
@@ -90,9 +75,8 @@ class Datetime extends Calculations_Base
         }
         self::verifyCurrentUserCan('ee_read_checkins', 'registrations_checked_in_count');
         return EEM_Registration::instance()
-                                ->count_registrations_checked_into_datetime($wpdb_row['Datetime.DTT_ID'], true);
+                               ->count_registrations_checked_into_datetime($wpdb_row['Datetime.DTT_ID'], true);
     }
-
 
 
     /**
@@ -111,7 +95,7 @@ class Datetime extends Calculations_Base
             throw new \EE_Error(
                 sprintf(
                     __(
-                        // @codingStandardsIgnoreStart
+                    // @codingStandardsIgnoreStart
                         'Cannot calculate registrations_checked_out_count because the database row %1$s does not have an entry for "Datetime.DTT_ID"',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
@@ -122,9 +106,8 @@ class Datetime extends Calculations_Base
         }
         self::verifyCurrentUserCan('ee_read_checkins', 'registrations_checked_out_count');
         return EEM_Registration::instance()
-                                ->count_registrations_checked_into_datetime($wpdb_row['Datetime.DTT_ID'], false);
+                               ->count_registrations_checked_into_datetime($wpdb_row['Datetime.DTT_ID'], false);
     }
-
 
 
     /**
@@ -144,7 +127,7 @@ class Datetime extends Calculations_Base
             throw new \EE_Error(
                 sprintf(
                     __(
-                        // @codingStandardsIgnoreStart
+                    // @codingStandardsIgnoreStart
                         'Cannot calculate spots_taken_pending_payment because the database row %1$s does not have an entry for "Datetime.DTT_ID"',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'

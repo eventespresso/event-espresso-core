@@ -13,10 +13,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class DomainFactory
  * Factory class for generating addon Domain objects
@@ -86,7 +82,3 @@ class DomainFactory
         return $domain;
     }
 }
-
-
-
-// Location: DomainFactory.php

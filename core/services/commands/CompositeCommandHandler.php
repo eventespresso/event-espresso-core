@@ -2,12 +2,6 @@
 
 namespace EventEspresso\core\services\commands;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Class CompositeCommandHandler
  * abstract parent class for CommandHandlers
@@ -32,7 +26,6 @@ abstract class CompositeCommandHandler extends CommandHandler
     private $command_factory;
 
 
-
     /**
      * CompositeCommandHandler constructor.
      *
@@ -46,7 +39,6 @@ abstract class CompositeCommandHandler extends CommandHandler
     }
 
 
-
     /**
      * @param CommandBusInterface $command_bus
      */
@@ -54,7 +46,6 @@ abstract class CompositeCommandHandler extends CommandHandler
     {
         $this->command_bus = $command_bus;
     }
-
 
 
     /**
@@ -66,7 +57,6 @@ abstract class CompositeCommandHandler extends CommandHandler
     }
 
 
-
     /**
      * @return CommandFactoryInterface
      */
@@ -74,9 +64,4 @@ abstract class CompositeCommandHandler extends CommandHandler
     {
         return $this->command_factory;
     }
-
-
-
 }
-// End of file CompositeCommandHandler.php
-// Location: core/services/commands/CompositeCommandHandler.php

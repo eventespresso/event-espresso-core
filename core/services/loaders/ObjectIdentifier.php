@@ -4,10 +4,6 @@ namespace EventEspresso\core\services\loaders;
 
 use Closure;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class ObjectIdentifier
  * Builds a string representation of an object's FQCN and arguments
@@ -115,14 +111,14 @@ class ObjectIdentifier
         $identifier = '';
         foreach ($arguments as $argument) {
             switch (true) {
-                case is_object($argument) :
-                case $argument instanceof Closure :
+                case is_object($argument):
+                case $argument instanceof Closure:
                     $identifier .= spl_object_hash($argument);
                     break;
-                case is_array($argument) :
+                case is_array($argument):
                     $identifier .= $this->getIdentifierForArguments($argument);
                     break;
-                default :
+                default:
                     $identifier .= $argument;
                     break;
             }

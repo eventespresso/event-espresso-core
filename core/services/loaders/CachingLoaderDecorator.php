@@ -2,10 +2,6 @@
 
 namespace EventEspresso\core\services\loaders;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class CachingLoaderDecorator
  * abstract parent class for classes that add additional logic to the loading process

@@ -4,10 +4,6 @@ namespace EventEspresso\core\domain;
 
 use EE_Dependency_Map;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Interface RequiresDependencyMap
  * Indicates a class that utilizes the EE_Dependency_Map class
@@ -29,6 +25,4 @@ interface RequiresDependencyMapInterface
      * @return EE_Dependency_Map
      */
     public function dependencyMap();
-
 }
-// Location: RequiresDependencyMap.php

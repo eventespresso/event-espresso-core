@@ -1,11 +1,6 @@
 <?php
+
 namespace EventEspresso\core\services\container\exceptions;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class ServiceExistsException
@@ -41,8 +36,4 @@ class ServiceExistsException extends \OutOfRangeException
         }
         parent::__construct($message, $code, $previous);
     }
-
-
 }
-// End of file ServiceExistsException.php
-// Location: /ServiceExistsException.php

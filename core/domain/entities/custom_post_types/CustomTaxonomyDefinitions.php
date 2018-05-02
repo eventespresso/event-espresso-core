@@ -2,10 +2,6 @@
 
 namespace EventEspresso\core\domain\entities\custom_post_types;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class CustomTaxonomyDefinitions
  * Information about Event Espresso's Taxonomies
@@ -57,7 +53,7 @@ class CustomTaxonomyDefinitions
                 'plural_name'   => esc_html__('Venue Categories', 'event_espresso'),
                 'args'          => array(
                     'public'            => true,
-                    'show_in_nav_menus' => false, //by default this doesn't show for decaf
+                    'show_in_nav_menus' => false, // by default this doesn't show for decaf
                     'show_in_rest'      => true,
                     'capabilities'      => array(
                         'manage_terms' => 'ee_manage_venue_categories',
@@ -132,13 +128,13 @@ class CustomTaxonomyDefinitions
      */
     public function filterCustomTermDescription($description, $taxonomy)
     {
-        //get a list of EE taxonomies
+        // get a list of EE taxonomies
         $custom_taxonomies = $this->getCustomTaxonomySlugs();
-        //only do our own thing if the taxonomy listed is an ee taxonomy.
+        // only do our own thing if the taxonomy listed is an ee taxonomy.
         if (in_array($taxonomy, $custom_taxonomies, true)) {
-            //remove default wp filter
+            // remove default wp filter
             remove_filter('pre_term_description', 'wp_filter_kses');
-            //sanitize THIS content.
+            // sanitize THIS content.
             $description = wp_kses($description, wp_kses_allowed_html('post'));
         }
         return $description;

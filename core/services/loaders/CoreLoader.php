@@ -18,10 +18,6 @@ use InvalidArgumentException;
 use OutOfBoundsException;
 use ReflectionException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class CoreLoader
  * Currently uses EE_Registry for instantiating classes,
@@ -138,5 +134,3 @@ class CoreLoader implements LoaderDecoratorInterface
         }
     }
 }
-// End of file CoreLoader.php
-// Location: core/services/loaders/CoreLoader.php
