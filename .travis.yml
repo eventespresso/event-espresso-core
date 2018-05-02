@@ -53,7 +53,7 @@ before_script:
   - phpunit --version
   - phpenv versions
 
-script: composer install && npm run test-php
+script: npm run test-php
 
 jobs:
   fast_finish: true
@@ -64,7 +64,9 @@ jobs:
       php: 7.2
       env:
         - PHP_LINT=1
-      script: composer install && npm run lint-php
+      script:
+        - composer install || exit 1
+        - npm run lint-php || exit 1
     - env:
         - JAVASCRIPT_TESTS=1
       script:
@@ -73,7 +75,10 @@ jobs:
     - php: 7.2
       env:
         - CODE_COVERAGE=1
-      script: composer install && phpenv config-add /tmp/xdebug.ini && npm run test-php:coverage-ci
+      script:
+        - composer install && phpenv config-add /tmp/xdebug.ini || exit 1
+        - npm install || exit 1
+        - npm run test-php:coverage-ci
     - php: 7.1
     - php: 7.0
     - php: 5.6
