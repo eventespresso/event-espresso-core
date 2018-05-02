@@ -15,12 +15,6 @@ use EEH_Inflector;
  * @author                Mike Nelson
  * @since                 4.8.35.rc.001
  */
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 class CalculatedModelFields
 {
 

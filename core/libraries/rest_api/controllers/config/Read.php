@@ -8,12 +8,6 @@ use EE_Capabilities;
 use EE_Restriction_Generator_Base;
 use EEH_DTT_Helper;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * _Read
  * For handling READ requests for config data
