@@ -22,10 +22,6 @@ use InvalidArgumentException;
 use ReflectionException;
 use WP_Block_Type;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class BlockRegistrationManager
  * Loads BlockInterface classes into the injected BlockCollection,
@@ -68,7 +64,7 @@ class BlockRegistrationManager extends BlockManager
      *
      * @return string
      */
-    public function init_hook()
+    public function initHook()
     {
         return 'AHEE__EE_System__set_hooks_for_core';
     }
@@ -103,7 +99,7 @@ class BlockRegistrationManager extends BlockManager
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
-            // collection name
+                // collection name
                 'shortcodes',
                 // collection interface
                 'EventEspresso\core\domain\entities\editor\BlockInterface',

@@ -1,9 +1,6 @@
 <?php
+
 namespace EventEspresso\widgets;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class EspressoWidget
@@ -11,11 +8,9 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class EspressoWidget extends \WP_Widget
 {
-
 
 
     /**
@@ -34,7 +29,6 @@ class EspressoWidget extends \WP_Widget
     }
 
 
-
     /**
      * @param string $widget_class
      * @return string
@@ -43,8 +37,4 @@ class EspressoWidget extends \WP_Widget
     {
         return sanitize_title(str_replace(array('EEW_', '_'), array('EE_', '-'), $widget_class)) . '-widget';
     }
-
-
 }
-// End of file EspressoWidget.php
-// Location: EventEspresso\widgets/EspressoWidget.php

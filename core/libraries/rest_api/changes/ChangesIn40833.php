@@ -1,7 +1,7 @@
 <?php namespace EventEspresso\core\libraries\rest_api\changes;
 
-/* 
- * The checkin and checkout endpoints were added in 4.8.33, 
+/**
+ * The checkin and checkout endpoints were added in 4.8.33,
  * so remove them from any requests for 4.8.29 etc.
  */
 class ChangesIn40833 extends ChangesInBase
@@ -12,8 +12,8 @@ class ChangesIn40833 extends ChangesInBase
      */
     public function setHooks()
     {
-        //set a hook to remove the checkout/checkout endpoints if the request
-        //is for lower than 4.8.33
+        // set a hook to remove the checkout/checkout endpoints if the request
+        // is for lower than 4.8.33
         add_filter(
             'FHEE__EED_Core_Rest_Api___register_rpc_routes__this_versions_routes',
             array($this, 'removeCheckinRoutesEarlierThan4833'),
@@ -27,7 +27,6 @@ class ChangesIn40833 extends ChangesInBase
             2
         );
     }
-
 
 
     /**
@@ -45,7 +44,6 @@ class ChangesIn40833 extends ChangesInBase
         }
         return $routes_on_this_version;
     }
-
 
 
     /**

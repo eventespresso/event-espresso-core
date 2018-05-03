@@ -1,9 +1,6 @@
 <?php
+
 namespace EventEspresso\modules\ticket_selector;
-
-defined('ABSPATH') || exit;
-
-
 
 /**
  * Class DatetimeSelector
@@ -11,7 +8,6 @@ defined('ABSPATH') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class DatetimeSelector
 {
@@ -47,7 +43,6 @@ class DatetimeSelector
     protected $active = false;
 
 
-
     /**
      * DatetimeSelector constructor.
      *
@@ -74,7 +69,6 @@ class DatetimeSelector
     }
 
 
-
     /**
      * @param \EE_Ticket[] $tickets
      * @return array
@@ -90,7 +84,6 @@ class DatetimeSelector
     }
 
 
-
     /**
      * @param \EE_Ticket      $ticket
      * @param  \EE_Datetime[] $datetimes
@@ -103,13 +96,13 @@ class DatetimeSelector
             array(
                 'order_by'                 => array(
                     'DTT_order'     => 'ASC',
-                    'DTT_EVT_start' => 'ASC'
+                    'DTT_EVT_start' => 'ASC',
                 ),
                 'default_where_conditions' => 'none',
             )
         );
         foreach ($ticket_datetimes as $ticket_datetime) {
-            if ( ! $ticket_datetime instanceof \EE_Datetime) {
+            if (! $ticket_datetime instanceof \EE_Datetime) {
                 continue;
             }
             $datetimes[ $ticket_datetime->ID() ] = $ticket_datetime;
@@ -118,20 +111,20 @@ class DatetimeSelector
     }
 
 
-
     /**
-     * @param \EE_Ticket                 $ticket
+     * @param \EE_Ticket $ticket
      * @return string
      * @throws \EE_Error
      */
-    public function getTicketDatetimeClasses( \EE_Ticket $ticket ) {
-        if ( ! $this->active) {
+    public function getTicketDatetimeClasses(\EE_Ticket $ticket)
+    {
+        if (! $this->active) {
             return '';
         }
         $ticket_datetimes = $this->getTicketDatetimes($ticket);
         $classes = '';
         foreach ($this->datetimes as $datetime) {
-            if ( ! $datetime instanceof \EE_Datetime || ! in_array($datetime, $ticket_datetimes, true)) {
+            if (! $datetime instanceof \EE_Datetime || ! in_array($datetime, $ticket_datetimes, true)) {
                 continue;
             }
             $classes .= ' ee-ticket-datetimes-' . $datetime->date_and_time_range('Y_m_d', 'H_i', '-', '_');
@@ -140,33 +133,33 @@ class DatetimeSelector
     }
 
 
-
     /**
      * @param string $date_format
      * @param string $time_format
      * @return array
      * @throws \EE_Error
      */
-    public function getUniqueDatetimeOptions($date_format = 'Y-m-d', $time_format = 'g:i a') {
+    public function getUniqueDatetimeOptions($date_format = 'Y-m-d', $time_format = 'g:i a')
+    {
         $datetime_options = array();
         foreach ($this->datetimes as $datetime) {
-            if ( ! $datetime instanceof \EE_Datetime) {
+            if (! $datetime instanceof \EE_Datetime) {
                 continue;
             }
-            $datetime_options[$datetime->date_and_time_range('Y_m_d', 'H_i', '-', '_')] =
+            $datetime_options[ $datetime->date_and_time_range('Y_m_d', 'H_i', '-', '_') ] =
                 $datetime->date_and_time_range($date_format, $time_format, ' - ');
         }
         return $datetime_options;
     }
 
 
-
     /**
      * @return string
      * @throws \EE_Error
      */
-    public function getDatetimeSelector() {
-        if ( ! $this->active) {
+    public function getDatetimeSelector()
+    {
+        if (! $this->active) {
             return '';
         }
         $dropdown_selector = new \EE_Checkbox_Dropdown_Selector_Input(
@@ -175,19 +168,15 @@ class DatetimeSelector
                 'html_id'               => 'datetime-selector-' . $this->event->ID(),
                 'html_name'             => 'datetime_selector_' . $this->event->ID(),
                 'html_class'            => 'datetime-selector',
-                'select_button_text'       => '<span class="dashicons dashicons-calendar-alt"></span> '
-                                            . esc_html__('Filter by Date', 'event_espresso'),
+                'select_button_text'    => '<span class="dashicons dashicons-calendar-alt"></span> '
+                                           . esc_html__('Filter by Date', 'event_espresso'),
                 'other_html_attributes' => ' data-tkt_slctr_evt="' . $this->event->ID() . '"',
             )
         );
         return \EEH_HTML::div(
             $dropdown_selector->get_html_for_input(),
-            '', 'datetime_selector-dv'
+            '',
+            'datetime_selector-dv'
         );
     }
-
-
-
 }
-// End of file DatetimeSelector.php
-// Location: EventEspresso\modules\ticket_selector/DatetimeSelector.php

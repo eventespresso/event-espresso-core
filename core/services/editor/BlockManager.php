@@ -7,10 +7,6 @@ use EventEspresso\core\domain\entities\editor\BlockInterface;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\request\RequestInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class BlockManager
  * Description
@@ -78,7 +74,7 @@ abstract class BlockManager
      *
      * @return string
      */
-    abstract public function init_hook();
+    abstract public function initHook();
 
 
     /**

@@ -5,10 +5,6 @@ namespace EventEspresso\core\exceptions;
 use Exception;
 use InvalidArgumentException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class InvalidEntityException
  * thrown when an entity is not of the expected instance
@@ -46,7 +42,4 @@ class InvalidEntityException extends InvalidArgumentException
         }
         parent::__construct($message, $code, $previous);
     }
-
 }
-// End of file InvalidEntityException.php
-// Location: /InvalidEntityException.php

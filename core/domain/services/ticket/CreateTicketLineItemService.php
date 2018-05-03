@@ -1,14 +1,9 @@
 <?php
+
 namespace EventEspresso\core\domain\services\ticket;
 
 use EventEspresso\core\domain\services\DomainService;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class CreateTicketLineItemService
@@ -33,8 +28,7 @@ class CreateTicketLineItemService extends DomainService
         \EE_Transaction $transaction,
         \EE_Ticket $ticket,
         $quantity = 1
-    )
-    {
+    ) {
         $total_line_item = $transaction->total_line_item();
         if (! $total_line_item instanceof \EE_Line_Item) {
             throw new UnexpectedEntityException($total_line_item, 'EE_Line_Item');
@@ -45,7 +39,7 @@ class CreateTicketLineItemService extends DomainService
             $ticket,
             $quantity
         );
-        if ( ! $ticket_line_item instanceof \EE_Line_Item) {
+        if (! $ticket_line_item instanceof \EE_Line_Item) {
             throw new UnexpectedEntityException($ticket_line_item, 'EE_Line_Item');
         }
         $total_line_item->save_this_and_descendants_to_txn($transaction->ID());
@@ -59,9 +53,4 @@ class CreateTicketLineItemService extends DomainService
         );
         return $ticket_line_item;
     }
-
-
-
 }
-// End of file CreateTicketLineItemService.php
-// Location: /CreateTicketLineItemService.php

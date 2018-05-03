@@ -4,10 +4,6 @@ namespace EventEspresso\core\domain\entities;
 
 use EventEspresso\core\domain\entities\contexts\ContextInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class Context
  * NAMESPACE MOVED : PLZ USE : \EventEspresso\core\domain\entities\contexts\Context
@@ -75,6 +71,4 @@ class Context implements ContextInterface
     {
         $this->description = sanitize_text_field($description);
     }
-
 }
-// Location: Context.php

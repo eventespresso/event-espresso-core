@@ -2,10 +2,6 @@
 
 namespace EventEspresso\core\domain\entities\custom_post_types;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class CustomTaxonomyTerm
  * Simple class for representing a custom taxonomy term
@@ -42,8 +38,8 @@ class CustomTaxonomyTerm
      */
     public function __construct($taxonomy_slug, $term_slug, array $custom_post_type_slugs = array())
     {
-        $this->taxonomy_slug          = $taxonomy_slug;
-        $this->term_slug              = $term_slug;
+        $this->taxonomy_slug = $taxonomy_slug;
+        $this->term_slug = $term_slug;
         $this->custom_post_type_slugs = $custom_post_type_slugs;
     }
 

@@ -5,10 +5,6 @@ namespace EventEspresso\core\domain\entities\editor;
 use EventEspresso\core\services\assets\AssetRegisterInterface;
 use WP_Block_Type;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class Block
  * Registers a Block type with WordPress core
@@ -180,7 +176,7 @@ abstract class Block implements BlockInterface
             'script'          => $this->asset_register->scriptHandle(),
             'style'           => $this->asset_register->styleHandle(),
         );
-        if(! $this->isDynamic()) {
+        if (! $this->isDynamic()) {
             $args['render_callback'] = $this->renderBlock();
         }
         $wp_block_type = register_block_type(
