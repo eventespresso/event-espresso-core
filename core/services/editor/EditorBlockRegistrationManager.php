@@ -20,10 +20,6 @@ use InvalidArgumentException;
 use ReflectionException;
 use WP_Block_Type;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class EditorBlockRegistrationManager
  * Loads EditorBlockInterface classes into the injected EditorBlockCollection,
@@ -43,7 +39,7 @@ class EditorBlockRegistrationManager extends EditorBlockManager
      *
      * @return string
      */
-    public function init_hook()
+    public function initHook()
     {
         return 'AHEE__EE_System__set_hooks_for_core';
     }
@@ -78,7 +74,7 @@ class EditorBlockRegistrationManager extends EditorBlockManager
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
-            // collection name
+                // collection name
                 'shortcodes',
                 // collection interface
                 'EventEspresso\core\domain\entities\editor\EditorBlockInterface',
@@ -187,5 +183,4 @@ class EditorBlockRegistrationManager extends EditorBlockManager
             true
         );
     }
-
 }

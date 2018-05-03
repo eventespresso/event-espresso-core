@@ -9,10 +9,6 @@ use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\request\RequestInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class EditorBlockManager
  * Description
@@ -96,7 +92,7 @@ abstract class EditorBlockManager
      *
      * @return string
      */
-    abstract public function init_hook();
+    abstract public function initHook();
 
 
     /**
@@ -114,6 +110,4 @@ abstract class EditorBlockManager
     {
         return $this->request_post_type;
     }
-
-
 }

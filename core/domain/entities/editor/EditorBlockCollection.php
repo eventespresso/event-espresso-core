@@ -5,10 +5,6 @@ namespace EventEspresso\core\domain\entities\editor;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class EditorBlockCollection
  * a Collection of EditorBlock objects

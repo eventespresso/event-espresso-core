@@ -214,7 +214,7 @@ class CollectionLoader
     {
         switch ($this->collection_details->identifierType()) {
             // every unique object gets added to the collection, but not duplicates of the exact same object
-            case CollectionDetails::ID_OBJECT_HASH :
+            case CollectionDetails::ID_OBJECT_HASH:
                 $identifier = spl_object_hash($entity);
                 break;
             // only one entity per class can be added to collection, like a singleton

@@ -7,10 +7,6 @@ use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use WP_Block_Type;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class EditorBlock
  * Registers a Editor block type with WordPress core,
@@ -190,7 +186,7 @@ abstract class EditorBlock implements EditorBlockInterface
             'script'          => "ee-{$context}-blocks",
             'style'           => "ee-{$context}-blocks",
         );
-        if(! $this->isDynamic()) {
+        if (! $this->isDynamic()) {
             $args['render_callback'] = $this->renderBlock();
         }
         $wp_block_type = register_block_type(
