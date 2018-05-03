@@ -1,9 +1,9 @@
 <?php
 
-namespace EventEspresso\core\domain\services\admin\privacy_policy;
+namespace EventEspresso\core\domain\services\admin\privacy\policy;
 
 use EEH_Template;
-use EventEspresso\core\services\privacy_policy\PrivacyPolicyInterface;
+use EventEspresso\core\services\privacy\policy\PrivacyPolicyInterface;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
@@ -48,4 +48,4 @@ class PrivacyPolicy implements PrivacyPolicyInterface
 
 }
 // End of file PrivacyPolicy.php
-// Location: EventEspresso\core\domain\services\admin\privacy_policy\PrivacyPolicy.php
+// Location: EventEspresso\core\domain\services\admin\privacy\policy\PrivacyPolicy.php

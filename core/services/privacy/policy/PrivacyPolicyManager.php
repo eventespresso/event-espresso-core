@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\privacy_policy;
+namespace EventEspresso\core\services\privacy\policy;
 
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -76,11 +76,11 @@ class PrivacyPolicyManager
             // collection name
                 'privacy_policies',
                 // collection interface
-                'EventEspresso\core\services\privacy_policy\PrivacyPolicyInterface',
+                'EventEspresso\core\services\privacy\policy\PrivacyPolicyInterface',
                 // FQCNs for classes to add (all classes within that namespace will be loaded)
                 apply_filters(
                     'FHEE__EventEspresso_core_services_privacy_policy_PrivacyPolicyManager__privacy_policies',
-                    array('EventEspresso\core\domain\services\admin\privacy_policy\PrivacyPolicy')
+                    array('EventEspresso\core\domain\services\admin\privacy\policy\PrivacyPolicy')
                 ),
                 // filepaths to classes to add
                 array(),

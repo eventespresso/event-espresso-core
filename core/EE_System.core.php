@@ -1209,7 +1209,7 @@ final class EE_System implements ResettableInterface
         do_action('AHEE__EE_System__initialize_last');
         add_action('admin_bar_init', array($this, 'addEspressoToolbar'));
         if($this->request->isAdmin()) {
-            $this->loader->getShared('EventEspresso\core\services\privacy_policy\PrivacyPolicyManager');
+            $this->loader->getShared('EventEspresso\core\services\privacy\policy\PrivacyPolicyManager');
         }
     }
 
