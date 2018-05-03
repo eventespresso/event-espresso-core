@@ -2,10 +2,6 @@
 
 namespace EventEspresso\core\domain\entities\contexts;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class ContextInterface
  * Simple DTO for conveying the background details about why some other logic is being performed,

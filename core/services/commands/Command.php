@@ -1,14 +1,8 @@
 <?php
+
 namespace EventEspresso\core\services\commands;
 
-
 use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
-
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
-}
-
-
 
 /**
  * Class Command
@@ -29,7 +23,6 @@ abstract class Command implements CommandInterface
     protected $cap_check;
 
 
-
     /**
      * @return mixed
      */
@@ -39,7 +32,6 @@ abstract class Command implements CommandInterface
     }
 
 
-
     /**
      * @param CapCheckInterface $cap_check
      */
@@ -47,7 +39,4 @@ abstract class Command implements CommandInterface
     {
         $this->cap_check = $cap_check;
     }
-
 }
-// End of file Command.php
-// Location: /Command.php

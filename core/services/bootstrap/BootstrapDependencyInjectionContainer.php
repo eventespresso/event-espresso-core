@@ -14,10 +14,6 @@ use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\loaders\ObjectIdentifier;
 use InvalidArgumentException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class BootstrapDependencyInjectionContainer
  * Builds the main DI container
@@ -99,7 +95,6 @@ class BootstrapDependencyInjectionContainer
             $this->class_cache,
             $this->object_identifier
         );
-
     }
 
 
@@ -142,7 +137,6 @@ class BootstrapDependencyInjectionContainer
     }
 
 
-
     /**
      * @return LoaderInterface
      */
@@ -150,5 +144,4 @@ class BootstrapDependencyInjectionContainer
     {
         return $this->loader;
     }
-
 }

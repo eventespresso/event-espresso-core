@@ -6,10 +6,6 @@ use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\ResponseInterface;
 use EventEspressoVendor\Jaybizzle\CrawlerDetect\CrawlerDetect;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class BotDetector
  * attempts to determine if current user is a bot
@@ -24,13 +20,13 @@ class BotDetector extends Middleware
     /**
      * converts a Request to a Response
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface      $response
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
      * @return ResponseInterface
      */
     public function handleRequest(RequestInterface $request, ResponseInterface $response)
     {
-        $this->request  = $request;
+        $this->request = $request;
         $this->response = $response;
         /** @var CrawlerDetect $CrawlerDetect */
         $CrawlerDetect = $this->loader->getShared('EventEspressoVendor\Jaybizzle\CrawlerDetect\CrawlerDetect');
@@ -40,6 +36,4 @@ class BotDetector extends Middleware
         $this->response = $this->processRequestStack($this->request, $this->response);
         return $this->response;
     }
-
 }
-// Location: BotDetector.php

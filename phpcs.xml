@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<ruleset name="Event Espresso Core">
+    <description>Event Espresso Core rules for PHP_CodeSniffer</description>
+
+    <file>./</file>
+
+    <arg name="extensions" value="php"/>
+    <arg value="sp"/>
+    <arg name="colors" />
+
+    <rule ref="EventEspresso" />
+
+</ruleset>

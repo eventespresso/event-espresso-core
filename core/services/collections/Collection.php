@@ -41,7 +41,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * Collection constructor
      *
      * @param string $collection_interface
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidInterfaceException
      */
     public function __construct($collection_interface)
     {
@@ -74,8 +74,8 @@ class Collection extends SplObjectStorage implements CollectionInterface
         for ($x = 0; $x < 19; $x += 9) {
             $id[] = substr($identifier, $x, 3);
         }
-        $identifier                  = basename(str_replace('\\', '/', get_class($this)));
-        $identifier                  .= '-' . strtoupper(implode('-', $id));
+        $identifier = basename(str_replace('\\', '/', get_class($this)));
+        $identifier .= '-' . strtoupper(implode('-', $id));
         $this->collection_identifier = $identifier;
     }
 
@@ -135,7 +135,9 @@ class Collection extends SplObjectStorage implements CollectionInterface
      */
     public function setIdentifier($object, $identifier = null)
     {
-        $identifier = ! empty($identifier) ? $identifier : spl_object_hash($object);
+        $identifier = ! empty($identifier)
+            ? $identifier
+            : spl_object_hash($object);
         $this->rewind();
         while ($this->valid()) {
             if ($object === $this->current()) {
@@ -357,7 +359,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      */
     public function slice($offset, $length)
     {
-        $slice    = array();
+        $slice = array();
         $iterator = new LimitIterator($this, $offset, $length);
         foreach ($iterator as $object) {
             $slice[] = $object;
@@ -487,5 +489,3 @@ class Collection extends SplObjectStorage implements CollectionInterface
         }
     }
 }
-// End of file Collection.php
-// Location: /Collection.php

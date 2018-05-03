@@ -5,17 +5,12 @@ namespace EventEspresso\core\services;
 use EE_Error;
 use EEH_File;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class Benchmark
  * Useful for measuring the performance of a block of code
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- *
  */
 class Benchmark
 {
@@ -70,7 +65,6 @@ class Benchmark
     }
 
 
-
     /**
      * resetTimes
      */
@@ -78,7 +72,6 @@ class Benchmark
     {
         Benchmark::$times = array();
     }
-
 
 
     /**
@@ -92,9 +85,8 @@ class Benchmark
             return;
         }
         $timer_name = $timer_name !== '' ? $timer_name : get_called_class();
-        Benchmark::$start_times[$timer_name] = microtime(true);
+        Benchmark::$start_times[ $timer_name ] = microtime(true);
     }
-
 
 
     /**
@@ -108,15 +100,14 @@ class Benchmark
             return;
         }
         $timer_name = $timer_name !== '' ? $timer_name : get_called_class();
-        if (isset(Benchmark::$start_times[$timer_name])) {
-            $start_time = Benchmark::$start_times[$timer_name];
-            unset(Benchmark::$start_times[$timer_name]);
+        if (isset(Benchmark::$start_times[ $timer_name ])) {
+            $start_time = Benchmark::$start_times[ $timer_name ];
+            unset(Benchmark::$start_times[ $timer_name ]);
         } else {
             $start_time = array_pop(Benchmark::$start_times);
         }
-        Benchmark::$times[$timer_name] = number_format(microtime(true) - $start_time, 8);
+        Benchmark::$times[ $timer_name ] = number_format(microtime(true) - $start_time, 8);
     }
-
 
 
     /**
@@ -133,14 +124,13 @@ class Benchmark
             return;
         }
         $memory_used = Benchmark::convert(memory_get_usage(true));
-        Benchmark::$memory_usage[$label] = $memory_used;
+        Benchmark::$memory_usage[ $label ] = $memory_used;
         if ($output_now) {
             echo $formatted
                 ? "<br>{$label} : {$memory_used}"
                 : "\n {$label} : {$memory_used}";
         }
     }
-
 
 
     /**
@@ -160,7 +150,6 @@ class Benchmark
             999999
         );
     }
-
 
 
     /**
@@ -184,7 +173,6 @@ class Benchmark
     }
 
 
-
     /**
      * @param bool $formatted
      * @return string
@@ -201,10 +189,10 @@ class Benchmark
                 : '';
             foreach (Benchmark::$times as $timer_name => $total_time) {
                 Benchmark::$output .= Benchmark::formatTime($timer_name, $total_time, $formatted);
-                Benchmark::$output .= $formatted ? '<br />'  : "\n";
+                Benchmark::$output .= $formatted ? '<br />' : "\n";
                 $total += $total_time;
             }
-            if($formatted) {
+            if ($formatted) {
                 Benchmark::$output .= '<br />';
                 Benchmark::$output .= '<h4>TOTAL TIME</h4>';
                 Benchmark::$output .= Benchmark::formatTime('', $total, $formatted);
@@ -246,7 +234,6 @@ class Benchmark
     }
 
 
-
     /**
      * @param bool $echo
      * @param bool $formatted
@@ -274,7 +261,7 @@ class Benchmark
         $filepath = ! empty($filepath) && is_readable(dirname($filepath))
             ? $filepath
             : '';
-        if( empty($filepath)) {
+        if (empty($filepath)) {
             $filepath = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-' . date('Y-m-d') . '.html';
         }
         EEH_File::ensure_file_exists_and_is_writable($filepath);
@@ -284,7 +271,6 @@ class Benchmark
             $append ? FILE_APPEND | LOCK_EX : LOCK_EX
         );
     }
-
 
 
     /**
@@ -299,9 +285,8 @@ class Benchmark
         return round(
             $size / pow(1024, $i = floor(log($size, 1024))),
             2
-        ) . ' ' . $unit[absint($i)];
+        ) . ' ' . $unit[ absint($i) ];
     }
-
 
 
     /**
@@ -314,43 +299,40 @@ class Benchmark
     {
         $total_time *= 1000;
         switch ($total_time) {
-            case $total_time > 12500 :
+            case $total_time > 12500:
                 $color = 'red';
                 $bold = 'bold';
                 break;
-            case $total_time > 2500 :
+            case $total_time > 2500:
                 $color = 'darkorange';
                 $bold = 'bold';
                 break;
-            case $total_time > 500 :
+            case $total_time > 500:
                 $color = 'gold';
                 $bold = 'bold';
                 break;
-            case $total_time > 100 :
+            case $total_time > 100:
                 $color = 'limegreen';
                 $bold = 'normal';
                 break;
-            case $total_time > 20 :
+            case $total_time > 20:
                 $color = 'deepskyblue';
                 $bold = 'normal';
                 break;
-            default :
+            default:
                 $color = 'mediumpurple';
                 $bold = 'normal';
                 break;
         }
         return $formatted
             ? '<span style="min-width: 10px; margin:0 1em; color:'
-               . $color
-               . '; font-weight:'
-               . $bold
-               . '; font-size:1.2em;">'
-               . str_pad(number_format($total_time, 3), 9, '0', STR_PAD_LEFT)
-               . '</span> '
-               . $timer_name
-            :  str_pad(number_format($total_time, 3), 9, '0', STR_PAD_LEFT);
+              . $color
+              . '; font-weight:'
+              . $bold
+              . '; font-size:1.2em;">'
+              . str_pad(number_format($total_time, 3), 9, '0', STR_PAD_LEFT)
+              . '</span> '
+              . $timer_name
+            : str_pad(number_format($total_time, 3), 9, '0', STR_PAD_LEFT);
     }
-
-
-
 }

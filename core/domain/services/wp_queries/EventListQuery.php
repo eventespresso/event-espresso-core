@@ -1,12 +1,9 @@
 <?php
+
 namespace EventEspresso\core\domain\services\wp_queries;
 
 use EEH_Event_Query;
 use WP_Query;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class EventListQuery
@@ -27,7 +24,7 @@ class EventListQuery extends WP_Query
     /**
      * @var integer $limit
      */
-    private $limit        = 10;
+    private $limit = 10;
 
     /**
      * @var string $css_class
@@ -65,7 +62,6 @@ class EventListQuery extends WP_Query
     private $show_title = true;
 
 
-
     /**
      * EE_Event_List_Query Constructor     *
      *
@@ -73,14 +69,13 @@ class EventListQuery extends WP_Query
      */
     public function __construct($args = array())
     {
-        $args = $this->parseArgs((array)$args);
+        $args = $this->parseArgs((array) $args);
         $this->setupEventQueryHelper();
         $this->setupFilters();
         $args = $this->getQueryArgs($args);
         // run the query
         parent::__construct($args);
     }
-
 
 
     /**
@@ -96,17 +91,16 @@ class EventListQuery extends WP_Query
                 // set the property value
                 $this->{$property} = $value;
                 // then remove it from the array of args that will later be passed to WP_Query()
-                unset($args[$property]);
+                unset($args[ $property ]);
             }
         }
         return $args;
     }
 
 
-
     private function setupEventQueryHelper()
     {
-        //add query filters
+        // add query filters
         EEH_Event_Query::add_query_filters();
         // set params that will get used by the filters
         EEH_Event_Query::set_query_params(
@@ -117,7 +111,6 @@ class EventListQuery extends WP_Query
             $this->sort
         );
     }
-
 
 
     private function setupFilters()
@@ -153,7 +146,6 @@ class EventListQuery extends WP_Query
     }
 
 
-
     private function getQueryArgs(array $args)
     {
         // the current "page" we are viewing
@@ -172,7 +164,7 @@ class EventListQuery extends WP_Query
         );
     }
 
-
+    // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 
     /**
      * show_event_list_title
@@ -188,7 +180,6 @@ class EventListQuery extends WP_Query
     }
 
 
-
     /**
      * callback for FHEE__archive_espresso_events_template__upcoming_events_h1 filter
      *
@@ -197,12 +188,11 @@ class EventListQuery extends WP_Query
      */
     public function event_list_title($event_list_title = '')
     {
-        if ( ! empty($this->title)) {
+        if (! empty($this->title)) {
             return $this->title;
         }
         return $event_list_title;
     }
-
 
 
     /**
@@ -219,7 +209,5 @@ class EventListQuery extends WP_Query
         $event_list_css .= ! empty($this->category_slug) ? $this->category_slug : '';
         return $event_list_css;
     }
-
+    // phpcs:enable
 }
-// End of file EventListQuery.php
-// Location: EventEspresso\core\domain\services\wp_queries/EventListQuery.php

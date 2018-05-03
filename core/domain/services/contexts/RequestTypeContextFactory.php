@@ -5,10 +5,6 @@ namespace EventEspresso\core\domain\services\contexts;
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
 use EventEspresso\core\services\loaders\LoaderInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RequestTypeContextFactory
  * Factory class for generating RequestTypeContext objects
@@ -45,68 +41,68 @@ class RequestTypeContextFactory
     public function create($slug)
     {
         switch ($slug) {
-            case RequestTypeContext::ACTIVATION :
+            case RequestTypeContext::ACTIVATION:
                 $description = esc_html__(
                     'The current request is for some form of activation',
                     'event_espresso'
                 );
                 break;
-            case RequestTypeContext::API :
+            case RequestTypeContext::API:
                 $description = esc_html__(
                     'The current request is for the REST API',
                     'event_espresso'
                 );
                 break;
-            case RequestTypeContext::AJAX_FRONT :
+            case RequestTypeContext::AJAX_FRONT:
                 $description = esc_html__(
                     'The current request is for the frontend via AJAX',
                     'event_espresso'
                 );
                 break;
-            case RequestTypeContext::AJAX_ADMIN :
+            case RequestTypeContext::AJAX_ADMIN:
                 $description = esc_html__(
                     'The current request is for the admin via AJAX',
                     'event_espresso'
                 );
                 break;
-            case RequestTypeContext::AJAX_OTHER :
+            case RequestTypeContext::AJAX_OTHER:
                 $description = esc_html__(
                     'The current request is for non-EE related code via AJAX',
                     'event_espresso'
                 );
                 break;
-            case RequestTypeContext::CRON :
+            case RequestTypeContext::CRON:
                 $description = esc_html__(
                     'The current request is for a WP_Cron',
                     'event_espresso'
                 );
                 break;
-            case RequestTypeContext::CLI :
+            case RequestTypeContext::CLI:
                 $description = esc_html__(
                     'The current request is from the command line',
                     'event_espresso'
                 );
                 break;
-            case RequestTypeContext::ADMIN :
+            case RequestTypeContext::ADMIN:
                 $description = esc_html__(
                     'The current request is for the admin',
                     'event_espresso'
                 );
                 break;
-            case RequestTypeContext::IFRAME :
+            case RequestTypeContext::IFRAME:
                 $description = esc_html__(
                     'The current request is for an iframe',
                     'event_espresso'
                 );
                 break;
-            case RequestTypeContext::FEED :
+            case RequestTypeContext::FEED:
                 $description = esc_html__(
                     'The current request is for a feed (ie: RSS)',
                     'event_espresso'
                 );
                 break;
-            case RequestTypeContext::FRONTEND :
-            default :
+            case RequestTypeContext::FRONTEND:
+            default:
                 $description = esc_html__(
                     'The current request is for the frontend',
                     'event_espresso'
@@ -121,7 +117,4 @@ class RequestTypeContextFactory
             array($slug, $description)
         );
     }
-
-
 }
-// Location: RequestTypeContextFactory.php

@@ -6,10 +6,6 @@ use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class FullyQualifiedName
  * Value Object representing a Fully Qualified Class or Interface Name
@@ -70,5 +66,4 @@ class FullyQualifiedName
     {
         return $this->fully_qualified_name;
     }
-
 }

@@ -5,10 +5,6 @@ namespace EventEspresso\core\domain\values;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class FilePath
  * Value Object representing a valid readable filepath
@@ -56,6 +52,4 @@ class FilePath
     {
         return $this->file_path;
     }
-
-
 }

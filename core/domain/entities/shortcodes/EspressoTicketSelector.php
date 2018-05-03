@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\entities\shortcodes;
 
 use EE_Event;
@@ -7,21 +8,15 @@ use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
 use InvalidArgumentException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class EspressoTicketSelector
  * ESPRESSO_TICKET_SELECTOR shortcode
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class EspressoTicketSelector extends EspressoShortcode
 {
-
 
 
     /**
@@ -33,7 +28,6 @@ class EspressoTicketSelector extends EspressoShortcode
     {
         return 'ESPRESSO_TICKET_SELECTOR';
     }
-
 
 
     /**
@@ -60,7 +54,6 @@ class EspressoTicketSelector extends EspressoShortcode
         add_filter('FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true');
         $this->shortcodeHasBeenInitialized();
     }
-
 
 
     /**
@@ -100,8 +93,4 @@ class EspressoTicketSelector extends EspressoShortcode
         do_action('AHEE_event_details_after_post');
         return ob_get_clean();
     }
-
-
 }
-// End of file EspressoTicketSelector.php
-// Location: EventEspresso\core\domain\entities\shortcodes/EspressoTicketSelector.php

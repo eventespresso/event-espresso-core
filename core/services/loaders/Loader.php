@@ -5,10 +5,6 @@ namespace EventEspresso\core\services\loaders;
 use EventEspresso\core\domain\values\FullyQualifiedName;
 use InvalidArgumentException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class Loader
  * Provides a common interface for generating new or shared instantiations of classes
@@ -33,7 +29,6 @@ class Loader implements LoaderInterface
      * @var ClassInterfaceCache $class_cache
      */
     private $class_cache;
-
 
     /**
      * Loader constructor.
@@ -132,5 +127,3 @@ class Loader implements LoaderInterface
         $this->shared_loader->reset();
     }
 }
-// End of file Loader.php
-// Location: EventEspresso\core\services\loaders/Loader.php

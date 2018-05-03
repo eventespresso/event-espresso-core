@@ -5,12 +5,6 @@ namespace EventEspresso\core\services\commands;
 use DomainException;
 use EventEspresso\core\services\loaders\LoaderInterface;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Class CommandHandlerManager
  * Connects a Command with its corresponding Command Handler
@@ -35,7 +29,6 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
     private $loader;
 
 
-
     /**
      * CommandHandlerManager constructor
      *
@@ -45,7 +38,6 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
     {
         $this->loader = $loader;
     }
-
 
 
     /**
@@ -82,14 +74,13 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
         if (empty($command)) {
             throw new InvalidCommandHandlerException($command);
         }
-        $this->command_handlers[$command] = $command_handler;
+        $this->command_handlers[ $command ] = $command_handler;
     }
 
 
-
     /**
-     * @param CommandInterface $command
-     * @param CommandBusInterface       $command_bus
+     * @param CommandInterface    $command
+     * @param CommandBusInterface $command_bus
      * @return mixed
      * @throws DomainException
      * @throws CommandHandlerNotFoundException
@@ -105,9 +96,9 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
         $handler = null;
         // has a command handler already been set for this class ?
         // if not, can we find one via the FQCN ?
-        if (isset($this->command_handlers[$command_name])) {
-            $handler = $this->command_handlers[$command_name];
-        } else if (class_exists($command_handler)) {
+        if (isset($this->command_handlers[ $command_name ])) {
+            $handler = $this->command_handlers[ $command_name ];
+        } elseif (class_exists($command_handler)) {
             $handler = $this->loader->getShared($command_handler);
         }
         // if Handler requires an instance of the CommandBus, but that has not yet been set
@@ -127,8 +118,4 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
         }
         throw new CommandHandlerNotFoundException($command_handler);
     }
-
-
 }
-// End of file CommandHandlerManager.php
-// Location: core/services/commands/CommandHandlerManager.php

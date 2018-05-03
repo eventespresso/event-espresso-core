@@ -5,7 +5,6 @@ namespace EventEspresso\core\exceptions;
 use Exception;
 use InvalidArgumentException;
 
-
 class InvalidStatusException extends InvalidArgumentException
 {
     /**

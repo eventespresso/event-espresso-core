@@ -7,10 +7,6 @@ use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitio
 use WP_Error;
 use WP_Post_Type;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RegisterCustomPostTypes
  * Handles the actual registration for each of Event Espresso's Custom Post Types
@@ -122,8 +118,8 @@ class RegisterCustomPostTypes
      * @param string $plural_name        a pre-internationalized string for the plural name of the objects
      * @param string $singular_slug
      * @param string $plural_slug
-     * @param array $override_arguments The default values set in this function will be overridden
-     *                                  by whatever you set in $override_arguments
+     * @param array  $override_arguments The default values set in this function will be overridden
+     *                                   by whatever you set in $override_arguments
      * @return array
      */
     protected function prepareArguments(
@@ -136,8 +132,8 @@ class RegisterCustomPostTypes
     ) {
         // verify plural slug and singular slug, if they aren't we'll use $singular_name and $plural_name
         $singular_slug = ! empty($singular_slug) ? $singular_slug : $singular_name;
-        $plural_slug   = ! empty($plural_slug) ? $plural_slug : $plural_name;
-        $labels        = $this->getLabels(
+        $plural_slug = ! empty($plural_slug) ? $plural_slug : $plural_name;
+        $labels = $this->getLabels(
             $singular_name,
             $plural_name,
             $singular_slug,
@@ -150,7 +146,7 @@ class RegisterCustomPostTypes
             if (isset($override_arguments['labels'])) {
                 $labels = array_merge($arguments['labels'], $override_arguments['labels']);
             }
-            $arguments           = array_merge($arguments, $override_arguments);
+            $arguments = array_merge($arguments, $override_arguments);
             $arguments['labels'] = $labels;
         }
         return $arguments;

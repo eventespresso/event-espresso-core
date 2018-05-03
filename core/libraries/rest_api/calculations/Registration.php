@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
 use EE_Checkin;
@@ -14,14 +15,7 @@ use EEM_Datetime;
  * @package               Registration Espresso
  * @subpackage
  * @author                Mike Nelson
- * 
  */
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 class Registration extends Calculations_Base
 {
 
@@ -46,7 +40,7 @@ class Registration extends Calculations_Base
             throw new \EE_Error(
                 sprintf(
                     __(
-                        // @codingStandardsIgnoreStart
+                    // @codingStandardsIgnoreStart
                         'Cannot calculate datetime_checkin_stati because the registration with ID %1$s (from database row %2$s) was not found',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
@@ -61,7 +55,7 @@ class Registration extends Calculations_Base
                 array(
                     'Ticket.TKT_ID' => $reg->ticket_ID(),
                 ),
-                'default_where_conditions' => \EEM_Base::default_where_conditions_minimum_all
+                'default_where_conditions' => \EEM_Base::default_where_conditions_minimum_all,
             )
         );
         $checkin_stati = array();
@@ -79,7 +73,7 @@ class Registration extends Calculations_Base
                     $status_pretty = 'NEVER';
                     break;
             }
-            $checkin_stati[$datetime_id] = $status_pretty;
+            $checkin_stati[ $datetime_id ] = $status_pretty;
         }
         return $checkin_stati;
     }

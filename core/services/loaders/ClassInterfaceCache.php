@@ -4,10 +4,6 @@ namespace EventEspresso\core\services\loaders;
 
 use EventEspresso\core\domain\values\FullyQualifiedName;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class ClassInterfaceCache
  * Tracks and caches the interfaces and their aliases implemented by classes
