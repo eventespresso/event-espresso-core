@@ -13,55 +13,47 @@ use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
 use WP_Post;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
-
 /**
- * Class PrivacyPolicyManager
+ * Class PrivateDataExporterManager
  * Manages setting up the hooks to add the EE core and add-ons' privacy policies
  *
  * @package        Event Espresso
  * @author         Mike Nelson
  * @since          $VID:$
  */
-class PrivacyPolicyManager
+class PrivateDataExporterManager
 {
 
     public function __construct()
     {
-        if (function_exists('wp_add_privacy_policy_content')) {
-            add_action('edit_form_after_title', array($this, 'addPrivacyPolicy'), 9);
-        }
+        add_action('admin_init', array($this, 'addPrivateDataExporters'), 9);
     }
 
 
-
     /**
-     * For all the registered `PrivacyPolicyInterface`s, add their privacy policy content
+     * For all the registered `PrivateDataExporterInterface`s, add their privacy policy content
      *
      * @param WP_Post $post
      */
-    public function addPrivacyPolicy($post)
+    public function addPrivateDataExporters($post)
     {
-        if (! ($post instanceof \WP_Post)) {
+        $current_screen = get_current_screen();
+        if ($current_screen->id !== 'user' && ! (defined('DOING_AJAX') && DOING_AJAX)) {
             return;
         }
-        $policy_page_id = (int)get_option('wp_page_for_privacy_policy');
-        if (! $policy_page_id || $policy_page_id != $post->ID) {
-            return;
-        }
-        //load all the privacy policy stuff
-        //add post policy text
-        foreach ($this->loadPrivacyPolicyCollection() as $privacy_policy) {
-            wp_add_privacy_policy_content($privacy_policy->getName(), $privacy_policy->getContent());
+        // load all the privacy policy stuff
+        // add post policy text
+        foreach ($this->loadPrivateDataExporterCollection() as $exporter) {
+            add_filter(
+                'wp_privacy_personal_data_exporters',
+                array($exporter,'export')
+            );
         }
     }
 
 
-
     /**
-     * @return CollectionInterface|PrivacyErasureInterface[]
+     * @return CollectionInterface|PrivateDataExporterInterface[]
      * @throws InvalidIdentifierException
      * @throws InvalidInterfaceException
      * @throws InvalidFilePathException
@@ -69,18 +61,18 @@ class PrivacyPolicyManager
      * @throws InvalidDataTypeException
      * @throws InvalidClassException
      */
-    protected function loadPrivacyPolicyCollection()
+    protected function loadPrivateDataExporterCollection()
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
-            // collection name
+                // collection name
                 'privacy_policies',
                 // collection interface
                 'EventEspresso\core\services\privacy\policy\PrivacyErasureInterface',
                 // FQCNs for classes to add (all classes within that namespace will be loaded)
                 apply_filters(
-                    'FHEE__EventEspresso_core_services_privacy_policy_PrivacyPolicyManager__privacy_policies',
-                    array('EventEspresso\core\domain\services\admin\privacy\policy\PrivacyPolicy')
+                    'FHEE__EventEspresso_core_services_privacy_export_PrivateDataExporterManager__exporters',
+                    array('EventEspresso\core\domain\services\admin\privacy\policy\PrivateDataExporter')
                 ),
                 // filepaths to classes to add
                 array(),
@@ -93,9 +85,6 @@ class PrivacyPolicyManager
         );
         return $loader->getCollection();
     }
-
-
-
 }
-// End of file PrivacyPolicyManager.php
-// Location: EventEspresso\core\domain\services\admin/PrivacyPolicyManager.php
+// End of file PrivateDataExporterManager.php
+// Location: EventEspresso\core\domain\services\admin/PrivateDataExporterManager.php

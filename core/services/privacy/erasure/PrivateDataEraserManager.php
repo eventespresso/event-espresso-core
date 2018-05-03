@@ -11,57 +11,50 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\CollectionDetails;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
-use WP_Post;
-
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
 
 /**
- * Class PrivacyPolicyManager
- * Manages setting up the hooks to add the EE core and add-ons' privacy policies
+ * Class PrivateDataEraserManager
+ * Manages setting up the hooks to add the EE core and add-ons' privacy erasers
  *
  * @package        Event Espresso
  * @author         Mike Nelson
  * @since          $VID:$
  */
-class PrivacyPolicyManager
+class PrivateDataEraserManager
 {
 
     public function __construct()
     {
-        if (function_exists('wp_add_privacy_policy_content')) {
-            add_action('edit_form_after_title', array($this, 'addPrivacyPolicy'), 9);
-        }
+        // this is mostly just needed during AJAX requests and on the user.php page
+        add_action('admin_init', array($this, 'addPrivateDateEraser'));
     }
 
 
-
     /**
-     * For all the registered `PrivacyPolicyInterface`s, add their privacy policy content
+     * For all the registered `PrivateDataEraserInterface`s, add them as erasers
      *
-     * @param WP_Post $post
      */
-    public function addPrivacyPolicy($post)
+    public function addPrivateDateEraser()
     {
-        if (! ($post instanceof \WP_Post)) {
+
+        // on ajax requests or the user.php page
+        $current_screen = get_current_screen();
+        if ($current_screen->id !== 'user' && !(defined('DOING_AJAX') && DOING_AJAX)) {
             return;
         }
-        $policy_page_id = (int)get_option('wp_page_for_privacy_policy');
-        if (! $policy_page_id || $policy_page_id != $post->ID) {
-            return;
-        }
-        //load all the privacy policy stuff
-        //add post policy text
-        foreach ($this->loadPrivacyPolicyCollection() as $privacy_policy) {
-            wp_add_privacy_policy_content($privacy_policy->getName(), $privacy_policy->getContent());
+        // load all the privacy policy stuff
+        // add post policy text
+        foreach ($this->loadPrivateDataEraserCollection() as $eraser) {
+            add_filter(
+                'wp_privacy_personal_data_erasers',
+                array($eraser, 'erase')
+            );
         }
     }
 
 
-
     /**
-     * @return CollectionInterface|PrivacyErasureInterface[]
+     * @return CollectionInterface|PrivateDataEraserInterface[]
      * @throws InvalidIdentifierException
      * @throws InvalidInterfaceException
      * @throws InvalidFilePathException
@@ -69,18 +62,18 @@ class PrivacyPolicyManager
      * @throws InvalidDataTypeException
      * @throws InvalidClassException
      */
-    protected function loadPrivacyPolicyCollection()
+    protected function loadPrivateDataEraserCollection()
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
-            // collection name
+                // collection name
                 'privacy_policies',
                 // collection interface
-                'EventEspresso\core\services\privacy\policy\PrivacyErasureInterface',
+                'EventEspresso\core\services\privacy\policy\PrivateDataEraserInterface',
                 // FQCNs for classes to add (all classes within that namespace will be loaded)
                 apply_filters(
-                    'FHEE__EventEspresso_core_services_privacy_policy_PrivacyPolicyManager__privacy_policies',
-                    array('EventEspresso\core\domain\services\admin\privacy\policy\PrivacyPolicy')
+                    'FHEE__EventEspresso_core_services_privacy_erasure_PrivateDataEraserManager__erasers',
+                    array('EventEspresso\core\domain\services\admin\privacy\policy\PrivateDataEraser')
                 ),
                 // filepaths to classes to add
                 array(),
@@ -93,9 +86,6 @@ class PrivacyPolicyManager
         );
         return $loader->getCollection();
     }
-
-
-
 }
-// End of file PrivacyPolicyManager.php
-// Location: EventEspresso\core\domain\services\admin/PrivacyPolicyManager.php
+// End of file PrivateDataEraserManager.php
+// Location: EventEspresso\core\domain\services\admin/PrivateDataEraserManager.php
