@@ -6,10 +6,6 @@ use EE_Core_Config;
 use EEM_CPT_Base;
 use EventEspresso\core\services\loaders\LoaderInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class CustomPostTypeDefinitions
  * Information about Event Espresso's Custom Post Types
@@ -46,7 +42,7 @@ class CustomPostTypeDefinitions
     public function __construct(EE_Core_Config $core_config, LoaderInterface $loader)
     {
         $this->core_config = $core_config;
-        $this->loader      = $loader;
+        $this->loader = $loader;
         $this->setDefinitions();
     }
 
@@ -104,7 +100,7 @@ class CustomPostTypeDefinitions
                 'model_name'    => 'EEM_Venue',
                 'args'          => array(
                     'public'            => true,
-                    'show_in_nav_menus' => false, //by default this doesn't show for decaf,
+                    'show_in_nav_menus' => false, // by default this doesn't show for decaf,
                     'capability_type'   => 'venue',
                     'capabilities'      => array(
                         'edit_post'              => 'ee_edit_venue',
@@ -227,14 +223,13 @@ class CustomPostTypeDefinitions
     public function getCustomPostTypeModelNames($post_type_slug = '')
     {
         $cpts = $this->getDefinitions();
-        //first if slug passed in...
+        // first if slug passed in...
         if (! empty($post_type_slug)) {
             // check that slug and cpt match
             if (! isset($cpts[ $post_type_slug ])) {
                 return array();
             }
-            if (
-                empty($cpts[ $post_type_slug ]['class_name'])
+            if (empty($cpts[ $post_type_slug ]['class_name'])
                 && empty($cpts[ $post_type_slug ]['model_name'])
             ) {
                 return array();
@@ -242,7 +237,7 @@ class CustomPostTypeDefinitions
             // k let's get the model name for this cpt.
             return $this->getCustomPostTypeModelName($post_type_slug, $cpts[ $post_type_slug ]);
         }
-        //if we made it here then we're returning an array of cpt model names indexed by post_type_slug.
+        // if we made it here then we're returning an array of cpt model names indexed by post_type_slug.
         $cpt_models = array();
         foreach ($cpts as $slug => $args) {
             $model = $this->getCustomPostTypeModelName($post_type_slug, $cpts[ $post_type_slug ]);
@@ -261,12 +256,12 @@ class CustomPostTypeDefinitions
      */
     private function getCustomPostTypeModelName($post_type_slug, array $cpt)
     {
-        if(! empty($cpt['model_name'])) {
+        if (! empty($cpt['model_name'])) {
             return array($post_type_slug => $cpt['model_name']);
         }
         if (! empty($cpt['class_name'])) {
             return array(
-                $post_type_slug => $this->deriveCptModelNameFromClassName($cpt['class_name'])
+                $post_type_slug => $this->deriveCptModelNameFromClassName($cpt['class_name']),
             );
         }
         return array();
@@ -296,7 +291,7 @@ class CustomPostTypeDefinitions
     public function getCustomPostTypeModels($post_type_slug = '')
     {
         $cpt_model_names = $this->getCustomPostTypeModelNames($post_type_slug);
-        $instantiated    = array();
+        $instantiated = array();
         foreach ($cpt_model_names as $slug => $model_name) {
             $model = $this->loader->getShared($model_name);
             if ($model instanceof EEM_CPT_Base) {

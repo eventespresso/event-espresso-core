@@ -6,10 +6,6 @@ use DomainException;
 use EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions;
 use WP_Error;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RegisterCustomTaxonomies
  * Handles the actual registration for each of Event Espresso's Taxonomies
@@ -90,7 +86,8 @@ class RegisterCustomTaxonomies
      * @since $VID:$
      * @return array
      */
-    protected function prepareArguments($singular_name, $plural_name, array $override_arguments){
+    protected function prepareArguments($singular_name, $plural_name, array $override_arguments)
+    {
         $arguments = array(
             'hierarchical'      => true,
             'labels'            => array(
@@ -102,11 +99,11 @@ class RegisterCustomTaxonomies
             'show_admin_column' => true,
             'query_var'         => true,
             'show_in_nav_menus' => false,
-            'map_meta_cap'      => true
+            'map_meta_cap'      => true,
         );
         if ($override_arguments) {
             if (isset($override_args['labels'])) {
-                $labels         = array_merge($arguments['labels'], $override_arguments['labels']);
+                $labels = array_merge($arguments['labels'], $override_arguments['labels']);
                 $arguments['labels'] = $labels;
             }
             $arguments = array_merge($arguments, $override_arguments);

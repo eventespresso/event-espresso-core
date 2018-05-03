@@ -2,10 +2,6 @@
 
 namespace EventEspresso\core\domain\services\custom_post_types;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RewriteRules
  * Manages the flushing of rewrite rules

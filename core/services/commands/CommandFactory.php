@@ -7,28 +7,21 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use InvalidArgumentException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class CommandFactory
  * Uses a LoaderInterface class to build and return Command
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class CommandFactory implements CommandFactoryInterface
 {
-
 
 
     /**
      * @var LoaderInterface $loader
      */
     private $loader;
-
 
 
     /**
@@ -41,9 +34,8 @@ class CommandFactory implements CommandFactoryInterface
      */
     public function __construct(LoaderInterface $loader = null)
     {
-       $this->loader = $loader;
+        $this->loader = $loader;
     }
-
 
 
     /**
@@ -58,9 +50,4 @@ class CommandFactory implements CommandFactoryInterface
     {
         return $this->loader->getNew($command_fqcn, $arguments);
     }
-
-
-
 }
-// End of file CommandFactory.php
-// Location: EventEspresso\core\services\commands/CommandFactory.php

@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\services\pue;
 
 use EE_Config;
@@ -107,38 +108,42 @@ class StatsGatherer
 
     /**
      * Return the stats array for PUE UXIP stats.
+     *
      * @return array
      */
     public function stats()
     {
         $stats = $this->paymentMethodStats();
-        //a-ok so let's setup our stats.
+        // a-ok so let's setup our stats.
         $stats = array_merge($stats, array(
-            'is_multisite' => is_multisite() && is_main_site(),
-            'active_theme' => $this->getActiveThemeStat(),
-            'ee4_all_events_count' => $this->getCountFor(self::COUNT_ALL_EVENTS),
-            'ee4_active_events_count' => $this->getCountFor(self::COUNT_ACTIVE_EVENTS),
-            'all_dtts_count' => $this->getCountFor(self::COUNT_DATETIMES),
-            'dtt_sold' => $this->getCountFor(self::COUNT_DATETIMES_SOLD),
-            'all_tkt_count' => $this->getCountFor(self::COUNT_TICKETS),
-            'free_tkt_count' => $this->getCountFor(self::COUNT_TICKETS_FREE),
-            'paid_tkt_count' => $this->getCountFor(self::COUNT_TICKETS_PAID),
-            'tkt_sold' => $this->getCountFor(self::COUNT_TICKETS_SOLD),
-            'approve_registration_count' => $this->getCountFor(self::COUNT_REGISTRATIONS_APPROVED),
-            'pending_registration_count' => $this->getCountFor(self::COUNT_REGISTRATIONS_PENDING),
+            'is_multisite'                    => is_multisite() && is_main_site(),
+            'active_theme'                    => $this->getActiveThemeStat(),
+            'ee4_all_events_count'            => $this->getCountFor(self::COUNT_ALL_EVENTS),
+            'ee4_active_events_count'         => $this->getCountFor(self::COUNT_ACTIVE_EVENTS),
+            'all_dtts_count'                  => $this->getCountFor(self::COUNT_DATETIMES),
+            'dtt_sold'                        => $this->getCountFor(self::COUNT_DATETIMES_SOLD),
+            'all_tkt_count'                   => $this->getCountFor(self::COUNT_TICKETS),
+            'free_tkt_count'                  => $this->getCountFor(self::COUNT_TICKETS_FREE),
+            'paid_tkt_count'                  => $this->getCountFor(self::COUNT_TICKETS_PAID),
+            'tkt_sold'                        => $this->getCountFor(self::COUNT_TICKETS_SOLD),
+            'approve_registration_count'      => $this->getCountFor(self::COUNT_REGISTRATIONS_APPROVED),
+            'pending_registration_count'      => $this->getCountFor(self::COUNT_REGISTRATIONS_PENDING),
             'not_approved_registration_count' => $this->getCountFor(self::COUNT_REGISTRATIONS_NOT_APPROVED),
-            'incomplete_registration_count' => $this->getCountFor(self::COUNT_REGISTRATIONS_INCOMPLETE),
-            'cancelled_registration_count' => $this->getCountFor(self::COUNT_REGISTRATIONS_CANCELLED),
-            'declined_registration_count' => $this->getCountFor(self::COUNT_REGISTRATIONS_DECLINED),
-            'all_registration_count' => $this->getCountFor(self::COUNT_REGISTRATIONS_ALL),
+            'incomplete_registration_count'   => $this->getCountFor(self::COUNT_REGISTRATIONS_INCOMPLETE),
+            'cancelled_registration_count'    => $this->getCountFor(self::COUNT_REGISTRATIONS_CANCELLED),
+            'declined_registration_count'     => $this->getCountFor(self::COUNT_REGISTRATIONS_DECLINED),
+            'all_registration_count'          => $this->getCountFor(self::COUNT_REGISTRATIONS_ALL),
             'completed_transaction_total_sum' => $this->getCountFor(self::SUM_TRANSACTIONS_COMPLETE_TOTAL),
-            'all_transaction_paid_sum' => $this->getCountFor(self::SUM_TRANSACTIONS_ALL_PAID),
-            self::INFO_SITE_CURRENCY => $this->config->currency instanceof EE_Currency_Config
+            'all_transaction_paid_sum'        => $this->getCountFor(self::SUM_TRANSACTIONS_ALL_PAID),
+            self::INFO_SITE_CURRENCY          => $this->config->currency instanceof EE_Currency_Config
                 ? $this->config->currency->code
                 : 'unknown',
-            'phpversion' => implode('.', array(PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION))
+            'phpversion'                      => implode(
+                '.',
+                array(PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION)
+            ),
         ));
-        //remove any values that equal null.  This ensures any stats that weren't retrieved successfully are excluded.
+        // remove any values that equal null.  This ensures any stats that weren't retrieved successfully are excluded.
         return array_filter($stats, function ($value) {
             return $value !== null;
         });
@@ -168,14 +173,18 @@ class StatsGatherer
                     $count = $this->datetime_model->sum(array(), 'DTT_sold');
                     break;
                 case self::COUNT_TICKETS_FREE:
-                    $count = $this->ticket_model->count(array(array(
-                        'TKT_price' => 0
-                    )));
+                    $count = $this->ticket_model->count(array(
+                        array(
+                            'TKT_price' => 0,
+                        ),
+                    ));
                     break;
                 case self::COUNT_TICKETS_PAID:
-                    $count = $this->ticket_model->count(array(array(
-                        'TKT_price' => array('>', 0)
-                    )));
+                    $count = $this->ticket_model->count(array(
+                        array(
+                            'TKT_price' => array('>', 0),
+                        ),
+                    ));
                     break;
                 case self::COUNT_TICKETS_SOLD:
                     $count = $this->ticket_model->sum(array(), 'TKT_sold');
@@ -187,8 +196,8 @@ class StatsGatherer
                     $count = $this->registration_model->count(
                         array(
                             array(
-                                'STS_ID' => EEM_Registration::status_id_cancelled
-                            )
+                                'STS_ID' => EEM_Registration::status_id_cancelled,
+                            ),
                         )
                     );
                     break;
@@ -196,8 +205,8 @@ class StatsGatherer
                     $count = $this->registration_model->count(
                         array(
                             array(
-                                'STS_ID' => EEM_Registration::status_id_incomplete
-                            )
+                                'STS_ID' => EEM_Registration::status_id_incomplete,
+                            ),
                         )
                     );
                     break;
@@ -205,8 +214,8 @@ class StatsGatherer
                     $count = $this->registration_model->count(
                         array(
                             array(
-                                'STS_ID' => EEM_Registration::status_id_not_approved
-                            )
+                                'STS_ID' => EEM_Registration::status_id_not_approved,
+                            ),
                         )
                     );
                     break;
@@ -214,8 +223,8 @@ class StatsGatherer
                     $count = $this->registration_model->count(
                         array(
                             array(
-                                'STS_ID' => EEM_Registration::status_id_declined
-                            )
+                                'STS_ID' => EEM_Registration::status_id_declined,
+                            ),
                         )
                     );
                     break;
@@ -223,8 +232,8 @@ class StatsGatherer
                     $count = $this->registration_model->count(
                         array(
                             array(
-                                'STS_ID' => EEM_Registration::status_id_pending_payment
-                            )
+                                'STS_ID' => EEM_Registration::status_id_pending_payment,
+                            ),
                         )
                     );
                     break;
@@ -232,8 +241,8 @@ class StatsGatherer
                     $count = $this->registration_model->count(
                         array(
                             array(
-                                'STS_ID' => EEM_Registration::status_id_approved
-                            )
+                                'STS_ID' => EEM_Registration::status_id_approved,
+                            ),
                         )
                     );
                     break;
@@ -241,8 +250,8 @@ class StatsGatherer
                     $count = $this->transaction_model->sum(
                         array(
                             array(
-                                'STS_ID' => EEM_Transaction::complete_status_code
-                            )
+                                'STS_ID' => EEM_Transaction::complete_status_code,
+                            ),
                         ),
                         'TXN_total'
                     );
@@ -265,6 +274,7 @@ class StatsGatherer
 
     /**
      * Return the active theme.
+     *
      * @return false|string
      */
     private function getActiveThemeStat()
@@ -286,11 +296,11 @@ class StatsGatherer
             );
             if ($active_payment_methods) {
                 foreach ($active_payment_methods as $payment_method) {
-                    $payment_method_stats[$payment_method->name() . '_active_payment_method'] = 1;
+                    $payment_method_stats[ $payment_method->name() . '_active_payment_method' ] = 1;
                 }
             }
         } catch (Exception $e) {
-            //do nothing just prevents fatals.
+            // do nothing just prevents fatals.
         }
         return $payment_method_stats;
     }

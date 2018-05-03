@@ -5,10 +5,6 @@ namespace EventEspresso\core\services\request\middleware;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\ResponseInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class DetectFileEditorRequest
  * Detects File Editor requests and executes any logic needing set on those requests.

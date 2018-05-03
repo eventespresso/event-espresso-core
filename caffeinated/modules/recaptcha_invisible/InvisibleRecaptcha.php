@@ -15,10 +15,6 @@ use InvalidArgumentException;
 use RuntimeException;
 use WP_Error;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class ProcessInvisibleRecaptcha
  * Provides methods for integrating Google's Invisible reCAPTCHA into EE Forms
@@ -161,7 +157,7 @@ class InvisibleRecaptcha
                 array($this, 'getErrorCode'),
                 $results['error-codes']
             );
-            if(isset($results['challenge_ts'])) {
+            if (isset($results['challenge_ts'])) {
                 $errors[] = 'challenge timestamp: ' . $results['challenge_ts'] . '.';
             }
             $this->generateError(implode(' ', $errors));

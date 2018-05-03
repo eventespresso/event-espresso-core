@@ -20,10 +20,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
 use ReflectionException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RecaptchaAdminSettings
  * Generates and processes forms for administrating Event Espresso's Google's reCAPTCHA settings
@@ -92,7 +88,8 @@ class RecaptchaAdminSettings
                         'required_fields_note'    => new EE_Form_Section_HTML(
                             EEH_HTML::p(
                                 esc_html__('All fields marked with a * are required fields', 'event_espresso'),
-                                '', 'grey-text'
+                                '',
+                                'grey-text'
                             )
                         ),
                     )
@@ -121,8 +118,10 @@ class RecaptchaAdminSettings
                             array(
                                 'html_label_text'         => esc_html__('Use reCAPTCHA', 'event_espresso'),
                                 'html_help_text'          => sprintf(
-                                    esc_html__('reCAPTCHA is a free service that  protects your website from spam and abuse. It employs advanced risk analysis technology to separate humans from abusive actors. Sign up %1$shere%2$s to receive your Public and Private keys.',
-                                        'event_espresso'),
+                                    esc_html__(
+                                        'reCAPTCHA is a free service that  protects your website from spam and abuse. It employs advanced risk analysis technology to separate humans from abusive actors. Sign up %1$shere%2$s to receive your Public and Private keys.',
+                                        'event_espresso'
+                                    ),
                                     '<a href="https://www.google.com/recaptcha/intro/index.html">',
                                     '</a>'
                                 ),
@@ -134,8 +133,10 @@ class RecaptchaAdminSettings
                         'recaptcha_publickey'  => new EE_Text_Input(
                             array(
                                 'html_label_text' => esc_html__('Site Key', 'event_espresso'),
-                                'html_help_text'  => esc_html__('The site key is used to display the widget on your site.',
-                                    'event_espresso'),
+                                'html_help_text'  => esc_html__(
+                                    'The site key is used to display the widget on your site.',
+                                    'event_espresso'
+                                ),
                                 'default'         => $this->config->recaptcha_publickey !== null
                                     ? stripslashes($this->config->recaptcha_publickey) : '',
                             )
@@ -143,8 +144,10 @@ class RecaptchaAdminSettings
                         'recaptcha_privatekey' => new EE_Text_Input(
                             array(
                                 'html_label_text' => esc_html__('Secret Key', 'event_espresso'),
-                                'html_help_text'  => esc_html__('The secret key authorizes communication between your application backend and the reCAPTCHA server to verify the user\'s response. The secret key needs to be kept safe for security purposes.',
-                                    'event_espresso'),
+                                'html_help_text'  => esc_html__(
+                                    'The secret key authorizes communication between your application backend and the reCAPTCHA server to verify the user\'s response. The secret key needs to be kept safe for security purposes.',
+                                    'event_espresso'
+                                ),
                                 'default'         => $this->config->recaptcha_privatekey !== null
                                     ? stripslashes($this->config->recaptcha_privatekey)
                                     : '',
@@ -156,9 +159,14 @@ class RecaptchaAdminSettings
                                 'registration_form' => esc_html__('Registration Form', 'event_espresso'),
                             ),
                             array(
-                                'html_label_text'         => esc_html__('Invisible reCAPTCHA Protection', 'event_espresso'),
-                                'html_help_text'          => esc_html__('Select which Event Espresso forms you would like to enable Invisible reCAPTCHA on.',
-                                    'event_espresso'),
+                                'html_label_text'         => esc_html__(
+                                    'Invisible reCAPTCHA Protection',
+                                    'event_espresso'
+                                ),
+                                'html_help_text'          => esc_html__(
+                                    'Select which Event Espresso forms you would like to enable Invisible reCAPTCHA on.',
+                                    'event_espresso'
+                                ),
                                 'default'                 => is_array($this->config->recaptcha_protected_forms)
                                     ? $this->config->recaptcha_protected_forms
                                     : array(),
@@ -195,8 +203,10 @@ class RecaptchaAdminSettings
                             ),
                             array(
                                 'html_label_text'         => esc_html__('Theme', 'event_espresso'),
-                                'html_help_text'          => esc_html__('The color theme of the widget.',
-                                    'event_espresso'),
+                                'html_help_text'          => esc_html__(
+                                    'The color theme of the widget.',
+                                    'event_espresso'
+                                ),
                                 'default'                 => $this->config->recaptcha_theme !== null
                                     ? $this->config->recaptcha_theme
                                     : 'invisible',
@@ -210,7 +220,10 @@ class RecaptchaAdminSettings
                                 'inline' => esc_html__('Inline', 'event_espresso'),
                             ),
                             array(
-                                'html_label_text'         => esc_html__('Invisible reCAPTCHA Badge Position', 'event_espresso'),
+                                'html_label_text'         => esc_html__(
+                                    'Invisible reCAPTCHA Badge Position',
+                                    'event_espresso'
+                                ),
                                 'html_help_text'          => esc_html__(
                                     'If using Invisible reCAPTCHA, then this determines the position of the reCAPTCHA badge. "Bottom Left" and "Bottom Right" both will float at the bottom of the screen. "Inline" appears beside the submit button but allows you to control the CSS.',
                                     'event_espresso'
@@ -228,8 +241,10 @@ class RecaptchaAdminSettings
                             ),
                             array(
                                 'html_label_text'         => esc_html__('Type', 'event_espresso'),
-                                'html_help_text'          => esc_html__('The type of CAPTCHA to serve.',
-                                    'event_espresso'),
+                                'html_help_text'          => esc_html__(
+                                    'The type of CAPTCHA to serve.',
+                                    'event_espresso'
+                                ),
                                 'default'                 => $this->config->recaptcha_type !== null
                                     ? $this->config->recaptcha_type
                                     : 'image',
@@ -287,8 +302,10 @@ class RecaptchaAdminSettings
                             ),
                             array(
                                 'html_label_text' => esc_html__('Language', 'event_espresso'),
-                                'html_help_text'  => esc_html__('Forces the widget to render in a specific language.',
-                                    'event_espresso'),
+                                'html_help_text'  => esc_html__(
+                                    'Forces the widget to render in a specific language.',
+                                    'event_espresso'
+                                ),
                                 'default'         => $this->config->recaptcha_language !== null
                                     ? $this->config->recaptcha_language : 'en',
                             )
@@ -322,8 +339,7 @@ class RecaptchaAdminSettings
                     // grab validated data from form
                     $valid_data = $recaptcha_settings_form->valid_data();
                     // user proofing recaptcha:  If Use reCAPTCHA is set to yes but we dont' have site or secret keys then set Use reCAPTCHA to FALSE and give error message.
-                    if (
-                        $valid_data['main_settings']['use_captcha']
+                    if ($valid_data['main_settings']['use_captcha']
                         && (
                             ! $EE_Registration_Config->use_captcha
                             && (
@@ -343,7 +359,9 @@ class RecaptchaAdminSettings
                                 'The use reCAPTCHA setting has been reset to "no". In order to enable the reCAPTCHA service, you must enter a Site Key and Secret Key.',
                                 'event_espresso'
                             ),
-                            __FILE__, __FUNCTION__, __LINE__
+                            __FILE__,
+                            __FUNCTION__,
+                            __LINE__
                         );
                     }
                     $EE_Registration_Config->use_captcha          = $valid_data['main_settings']['use_captcha'];
@@ -358,7 +376,9 @@ class RecaptchaAdminSettings
                     if ($recaptcha_settings_form->submission_error_message() !== '') {
                         EE_Error::add_error(
                             $recaptcha_settings_form->submission_error_message(),
-                            __FILE__, __FUNCTION__, __LINE__
+                            __FILE__,
+                            __FUNCTION__,
+                            __LINE__
                         );
                     }
                 }

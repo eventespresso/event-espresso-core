@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
 use EventEspresso\core\libraries\rest_api\calculations\Base as Calculations_Base;
@@ -16,14 +17,7 @@ use EEM_Registration;
  * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
- * 
  */
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 class Event extends Calculations_Base
 {
 
@@ -50,7 +44,7 @@ class Event extends Calculations_Base
         throw new EE_Error(
             sprintf(
                 __(
-                    // @codingStandardsIgnoreStart
+                // @codingStandardsIgnoreStart
                     'Cannot calculate optimum_sales_at_start because the event with ID %1$s (from database row %2$s) was not found',
                     // @codingStandardsIgnoreEnd
                     'event_espresso'
@@ -60,7 +54,6 @@ class Event extends Calculations_Base
             )
         );
     }
-
 
 
     /**
@@ -86,7 +79,7 @@ class Event extends Calculations_Base
         throw new EE_Error(
             sprintf(
                 __(
-                    // @codingStandardsIgnoreStart
+                // @codingStandardsIgnoreStart
                     'Cannot calculate optimum_sales_now because the event with ID %1$s (from database row %2$s) was not found',
                     // @codingStandardsIgnoreEnd
                     'event_espresso'
@@ -96,7 +89,6 @@ class Event extends Calculations_Base
             )
         );
     }
-
 
 
     /**
@@ -121,7 +113,7 @@ class Event extends Calculations_Base
         throw new EE_Error(
             sprintf(
                 __(
-                    // @codingStandardsIgnoreStart
+                // @codingStandardsIgnoreStart
                     'Cannot calculate spaces_remaining because the event with ID %1$s (from database row %2$s) was not found',
                     // @codingStandardsIgnoreEnd
                     'event_espresso'
@@ -131,7 +123,6 @@ class Event extends Calculations_Base
             )
         );
     }
-
 
 
     /**
@@ -150,7 +141,7 @@ class Event extends Calculations_Base
             throw new EE_Error(
                 sprintf(
                     __(
-                        // @codingStandardsIgnoreStart
+                    // @codingStandardsIgnoreStart
                         'Cannot calculate spots_taken because the database row %1$s does not have a valid entry for "Event_CPT.ID"',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
@@ -172,7 +163,6 @@ class Event extends Calculations_Base
     }
 
 
-
     /**
      * Counts the number of pending-payment registrations for this event (regardless
      * of how many datetimes each registrations' ticket purchase is for)
@@ -190,7 +180,7 @@ class Event extends Calculations_Base
             throw new EE_Error(
                 sprintf(
                     __(
-                        // @codingStandardsIgnoreStart
+                    // @codingStandardsIgnoreStart
                         'Cannot calculate spots_taken_pending_payment because the database row %1$s does not have an entry for "Event_CPT.ID"',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
@@ -213,7 +203,6 @@ class Event extends Calculations_Base
     }
 
 
-
     /**
      * Counts all the registrations who have checked into one of this events' datetimes
      * See EE_Event::total_available_spaces( false );
@@ -231,7 +220,7 @@ class Event extends Calculations_Base
             throw new EE_Error(
                 sprintf(
                     __(
-                        // @codingStandardsIgnoreStart
+                    // @codingStandardsIgnoreStart
                         'Cannot calculate registrations_checked_in_count because the database row %1$s does not have an entry for "Event_CPT.ID"',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
@@ -243,7 +232,6 @@ class Event extends Calculations_Base
         self::verifyCurrentUserCan('ee_read_checkins', 'registrations_checked_in_count');
         return EEM_Registration::instance()->count_registrations_checked_into_event($wpdb_row['Event_CPT.ID'], true);
     }
-
 
 
     /**
@@ -263,7 +251,7 @@ class Event extends Calculations_Base
             throw new EE_Error(
                 sprintf(
                     __(
-                        // @codingStandardsIgnoreStart
+                    // @codingStandardsIgnoreStart
                         'Cannot calculate registrations_checked_out_count because the database row %1$s does not have an entry for "Event_CPT.ID"',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
@@ -275,7 +263,6 @@ class Event extends Calculations_Base
         self::verifyCurrentUserCan('ee_read_checkins', 'registrations_checked_out_count');
         return EEM_Registration::instance()->count_registrations_checked_into_event($wpdb_row['Event_CPT.ID'], false);
     }
-
 
 
     /**
@@ -293,7 +280,6 @@ class Event extends Calculations_Base
     }
 
 
-
     /**
      * Gets the medium image
      *
@@ -307,7 +293,6 @@ class Event extends Calculations_Base
     {
         return self::calculateImageData($wpdb_row, 'medium');
     }
-
 
 
     /**
@@ -325,7 +310,6 @@ class Event extends Calculations_Base
     }
 
 
-
     /**
      * Gets the large image
      *
@@ -339,7 +323,6 @@ class Event extends Calculations_Base
     {
         return self::calculateImageData($wpdb_row, 'large');
     }
-
 
 
     /**
@@ -357,7 +340,6 @@ class Event extends Calculations_Base
     }
 
 
-
     /**
      * Gets the full size image
      *
@@ -373,12 +355,11 @@ class Event extends Calculations_Base
     }
 
 
-
     /**
      * Gets image specs and formats them for the display in the API,
      * according to the image size requested
      *
-     * @param array    $wpdb_row
+     * @param array  $wpdb_row
      * @param string $image_size one of these: thumbnail, medium, medium_large, large, post-thumbnail, full
      * @return array|false if no such image exists. If array it will have keys 'url', 'width', 'height' and 'original'
      * @throws EE_Error
@@ -417,9 +398,9 @@ class Event extends Calculations_Base
     }
 
 
-
     /**
      * Returns true if the array of data contains 'Event_CPT.ID'. False otherwise
+     *
      * @param array $wpdb_row
      * @return bool
      */

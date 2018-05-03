@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\services\shortcodes;
 
 use EE_Error;
@@ -8,17 +9,12 @@ use EventEspresso\core\domain\EnqueueAssetsInterface;
 use EventEspresso\core\services\cache\PostRelatedCacheManager;
 use WP_Post;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class EspressoShortcode
  * base class for all EE shortcode classes
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 abstract class EspressoShortcode implements ShortcodeInterface
 {
@@ -44,7 +40,6 @@ abstract class EspressoShortcode implements ShortcodeInterface
     private $initialized = false;
 
 
-
     /**
      * EspressoShortcode constructor
      *
@@ -56,7 +51,6 @@ abstract class EspressoShortcode implements ShortcodeInterface
     }
 
 
-
     /**
      * @return void
      */
@@ -64,7 +58,6 @@ abstract class EspressoShortcode implements ShortcodeInterface
     {
         $this->initialized = true;
     }
-
 
 
     /**
@@ -87,7 +80,6 @@ abstract class EspressoShortcode implements ShortcodeInterface
             $this->sanitizeAttributes((array)$attributes)
         );
     }
-
 
 
     /**
@@ -113,7 +105,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
             wp_json_encode($attributes),
             // Closure for generating content if cache is expired
             function () use ($shortcode, $attributes) {
-                if($shortcode->initialized() === false){
+                if ($shortcode->initialized() === false) {
                     $shortcode->initializeShortcode();
                 }
                 return $shortcode->processShortcode($attributes);
@@ -127,7 +119,6 @@ abstract class EspressoShortcode implements ShortcodeInterface
             )
         );
     }
-
 
 
     /**
@@ -150,7 +141,6 @@ abstract class EspressoShortcode implements ShortcodeInterface
     }
 
 
-
     /**
      * @param int $post_ID
      * @return string
@@ -161,7 +151,6 @@ abstract class EspressoShortcode implements ShortcodeInterface
         $tag = str_replace('ESPRESSO_', '', $this->getTag());
         return "SC_{$tag}-{$post_ID}";
     }
-
 
 
     /**
@@ -185,7 +174,6 @@ abstract class EspressoShortcode implements ShortcodeInterface
     {
         return array();
     }
-
 
 
     /**
@@ -215,20 +203,20 @@ abstract class EspressoShortcode implements ShortcodeInterface
                 }
             }
             switch (true) {
-                case $value === null :
-                case is_int($value) :
-                case is_float($value) :
+                case $value === null:
+                case is_int($value):
+                case is_float($value):
                     // typical booleans
-                case in_array($value, array(true, 'true', '1', 'on', 'yes', false, 'false', '0', 'off', 'no'), true) :
+                case in_array($value, array(true, 'true', '1', 'on', 'yes', false, 'false', '0', 'off', 'no'), true):
                     $attributes[$key] = $value;
                     break;
-                case is_string($value) :
+                case is_string($value):
                     $attributes[$key] = sanitize_text_field($value);
                     break;
-                case is_array($value) :
+                case is_array($value):
                     $attributes[$key] = $this->sanitizeAttributes($value);
                     break;
-                default :
+                default:
                     // only remaining data types are Object and Resource
                     // which are not allowed as shortcode attributes
                     $attributes[$key] = null;
@@ -239,17 +227,13 @@ abstract class EspressoShortcode implements ShortcodeInterface
     }
 
 
-
     /**
      * Returns whether or not this shortcode has been initialized
+     *
      * @return boolean
      */
-    public function initialized(){
+    public function initialized()
+    {
         return $this->initialized;
     }
-
-
-
 }
-// End of file EspressoShortcode.php
-// Location: EventEspresso\core\services\shortcodes/EspressoShortcode.php
