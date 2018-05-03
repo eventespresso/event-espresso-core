@@ -7,8 +7,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use LimitIterator;
 use SplObjectStorage;
 
-defined('EVENT_ESPRESSO_VERSION') || exit();
-
 /**
  * Class Collection
  * class for managing a set of entities that all adhere to the same interface
