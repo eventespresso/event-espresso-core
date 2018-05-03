@@ -678,13 +678,13 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
-            'EE_Admin_Transactions_List_Table' => array(
-                null,
-                'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
-            ),
             'EventEspresso\core\services\licensing\LicenseService' => array(
                 'EventEspresso\core\domain\services\pue\Stats' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\services\pue\Config' => EE_Dependency_Map::load_from_cache
+            ),
+            'EE_Admin_Transactions_List_Table' => array(
+                null,
+                'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\domain\services\pue\Stats' => array(
                 'EventEspresso\core\domain\services\pue\Config' => EE_Dependency_Map::load_from_cache,
