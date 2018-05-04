@@ -6,12 +6,6 @@ use DateTime;
 use DateTimeZone;
 use DomainException;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Class DbSafeDateTime
  * Some versions of PHP do bad things when you try to serialize a DateTime object for storage.
@@ -20,16 +14,18 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- *
  */
 class DbSafeDateTime extends DateTime
 {
 
+    // phpcs:disable Generic.NamingConventions.UpperCaseConstantName.ClassConstantNotUpperCase
     /**
      * @type string db_safe_timestamp_format
      */
     const db_safe_timestamp_format = 'Y-m-d H:i:s O e';
+    // phpcs:enable
 
+    // phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
     /**
      * DateTime object converted to a string that includes the date, time, UTC offset, and timezone identifier
      *
@@ -43,7 +39,7 @@ class DbSafeDateTime extends DateTime
      * @type string $_error_log_dir
      */
     protected $_error_log_dir = '';
-
+    // phpcs:enable
 
 
     /**
@@ -58,7 +54,6 @@ class DbSafeDateTime extends DateTime
     }
 
 
-
     /**
      * @return string
      */
@@ -68,15 +63,16 @@ class DbSafeDateTime extends DateTime
     }
 
 
-
     /**
      * @return array
      */
     public function __sleep()
     {
         $this->_datetime_string = $this->format(DbSafeDateTime::db_safe_timestamp_format);
-        $date                   = DateTime::createFromFormat(DbSafeDateTime::db_safe_timestamp_format,
-            $this->_datetime_string);
+        $date = DateTime::createFromFormat(
+            DbSafeDateTime::db_safe_timestamp_format,
+            $this->_datetime_string
+        );
         if (! $date instanceof DateTime) {
             try {
                 // we want a stack trace to determine where the malformed date came from, so...
@@ -102,7 +98,6 @@ class DbSafeDateTime extends DateTime
     }
 
 
-
     /**
      * if an empty or null value got saved to the db for a datetime,
      * then some servers and/or PHP itself will incorrectly convert that date string
@@ -121,8 +116,10 @@ class DbSafeDateTime extends DateTime
             '0000-00-00',
             $this->_datetime_string
         );
-        $date                   = DateTime::createFromFormat(DbSafeDateTime::db_safe_timestamp_format,
-            $this->_datetime_string);
+        $date = DateTime::createFromFormat(
+            DbSafeDateTime::db_safe_timestamp_format,
+            $this->_datetime_string
+        );
         if (! $date instanceof DateTime) {
             $this->writeToErrorLog(
                 sprintf(
@@ -173,8 +170,4 @@ class DbSafeDateTime extends DateTime
             error_log($message);
         }
     }
-
-
 }
-// End of file DbSafeDateTime.php
-// Location: EventEspresso\core\domain\entities/DbSafeDateTime.php

@@ -4,26 +4,21 @@ namespace EventEspresso\core\services\notices;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class Notice
  * DTO for temporarily holding notification information until it can be processed
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class Notice implements NoticeInterface
 {
 
-    const ERROR       = 'error';
+    const ERROR = 'error';
 
-    const SUCCESS     = 'success';
+    const SUCCESS = 'success';
 
-    const ATTENTION   = 'attention'; // alias for warning
+    const ATTENTION = 'attention'; // alias for warning
 
     const INFORMATION = 'information';
 
@@ -63,7 +58,6 @@ class Notice implements NoticeInterface
     private $dismissible;
 
 
-
     /**
      * Notice constructor.
      *
@@ -86,13 +80,12 @@ class Notice implements NoticeInterface
     }
 
 
-
     /**
      * @return array
      */
     private function types()
     {
-        return (array)apply_filters(
+        return (array) apply_filters(
             'FHEE__EventEspresso_core_services_notices_Notice__types',
             array(
                 Notice::ERROR,
@@ -104,7 +97,6 @@ class Notice implements NoticeInterface
     }
 
 
-
     /**
      * @return string
      */
@@ -112,7 +104,6 @@ class Notice implements NoticeInterface
     {
         return $this->type;
     }
-
 
 
     /**
@@ -124,7 +115,6 @@ class Notice implements NoticeInterface
     }
 
 
-
     /**
      * @return string
      */
@@ -134,7 +124,6 @@ class Notice implements NoticeInterface
     }
 
 
-
     /**
      * @return string
      */
@@ -142,7 +131,6 @@ class Notice implements NoticeInterface
     {
         return $this->func;
     }
-
 
 
     /**
@@ -180,7 +168,6 @@ class Notice implements NoticeInterface
     }
 
 
-
     /**
      * gets the $invalid_type_message string
      */
@@ -200,7 +187,6 @@ class Notice implements NoticeInterface
     }
 
 
-
     /**
      * @param string $message
      * @throws InvalidDataTypeException
@@ -216,7 +202,6 @@ class Notice implements NoticeInterface
         }
         $this->message = $message;
     }
-
 
 
     /**
@@ -236,7 +221,6 @@ class Notice implements NoticeInterface
     }
 
 
-
     /**
      * @param string $func
      * @throws InvalidDataTypeException
@@ -252,7 +236,6 @@ class Notice implements NoticeInterface
         }
         $this->func = $func;
     }
-
 
 
     /**
@@ -280,5 +263,4 @@ class Notice implements NoticeInterface
     {
         $this->dismissible = filter_var($dismissible, FILTER_VALIDATE_BOOLEAN);
     }
-
 }

@@ -3,15 +3,15 @@
 namespace EventEspresso\core\domain;
 
 use DomainException;
+use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\FullyQualifiedName;
+use EventEspresso\core\domain\values\Version;
+use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
 use EventEspresso\core\services\loaders\LoaderFactory;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class DomainFactory
@@ -63,8 +63,22 @@ class DomainFactory
         return $domain;
     }
 
+
+    /**
+     * @return Domain
+     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidFilePathException
+     * @throws InvalidInterfaceException
+     */
+    public static function getEventEspressoCoreDomain()
+    {
+        $domain = new Domain(
+            new FilePath(EVENT_ESPRESSO_MAIN_FILE),
+            Version::fromString(espresso_version())
+        );
+        LoaderFactory::getLoader()->share('EventEspresso\core\domain\Domain', $domain);
+        return $domain;
+    }
 }
-
-
-
-// Location: DomainFactory.php

@@ -2,12 +2,10 @@
 
 use EventEspresso\core\libraries\rest_api\controllers\Base;
 
-/* 
- * The checkin and checkout endpoints were added in 4.8.34, 
+/**
+ * The checkin and checkout endpoints were added in 4.8.34,
  * where we just added a response headers
  */
-
-
 
 class ChangesIn40834 extends ChangesInBase
 {
@@ -17,8 +15,8 @@ class ChangesIn40834 extends ChangesInBase
      */
     public function setHooks()
     {
-        //set a hook to remove the checkout/checkout endpoints if the request
-        //is for lower than 4.8.33
+        // set a hook to remove the checkout/checkout endpoints if the request
+        // is for lower than 4.8.33
         add_filter(
             'FHEE__EventEspresso\core\libraries\rest_api\controllers\Base___get_response_headers',
             array($this, 'removeResponseHeaders'),
@@ -26,7 +24,6 @@ class ChangesIn40834 extends ChangesInBase
             3
         );
     }
-
 
 
     /**

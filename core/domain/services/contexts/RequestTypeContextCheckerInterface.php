@@ -1,7 +1,6 @@
 <?php
-namespace EventEspresso\core\domain\services\contexts;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
+namespace EventEspresso\core\domain\services\contexts;
 
 /**
  * RequestTypeContextCheckerInterface

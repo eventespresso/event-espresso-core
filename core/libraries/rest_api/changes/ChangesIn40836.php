@@ -11,8 +11,6 @@ use EEM_Base;
  * where we just added a response headers
  */
 
-
-
 class ChangesIn40836 extends ChangesInBase
 {
 
@@ -21,38 +19,38 @@ class ChangesIn40836 extends ChangesInBase
      */
     public function setHooks()
     {
-        //set a hook to remove the "calculate" query param
+        // set a hook to remove the "calculate" query param
         add_filter(
             'FHEE__EED_Core_Rest_Api___get_response_selection_query_params',
             array($this, 'removeCalculateQueryParam'),
             10,
             3
         );
-        //don't add the _calculated_fields either
+        // don't add the _calculated_fields either
         add_filter(
             'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
             array($this, 'removeCalculatedFieldsFromResponse'),
             10,
             5
         );
-        //and also don't add the count headers
+        // and also don't add the count headers
         add_filter(
             'FHEE__EventEspresso\core\libraries\rest_api\controllers\Base___get_response_headers',
             array($this, 'removeHeadersNewInThisVersion'),
             10,
             3
         );
-        //remove the old featured_image part of the response...
+        // remove the old featured_image part of the response...
         add_filter(
             'FHEE__Read__create_entity_from_wpdb_results__entity_before_including_requested_models',
             array($this, 'addOldFeaturedImagePartOfCptEntities'),
             10,
             5
         );
-        //assuming ticket 9425's change gets pushed with 9406, we don't need to
-        //remove it from the calculated fields on older requests (because this will
-        //be the first version with calculated fields)
-        //before this, infinity was -1, now it's null
+        // assuming ticket 9425's change gets pushed with 9406, we don't need to
+        // remove it from the calculated fields on older requests (because this will
+        // be the first version with calculated fields)
+        // before this, infinity was -1, now it's null
         add_filter(
             'FHEE__EventEspresso\core\libraries\rest_api\Model_Data_Translator__prepare_field_for_rest_api',
             array($this, 'useNegativeOneForInfinityBeforeThisVersion'),
@@ -62,13 +60,12 @@ class ChangesIn40836 extends ChangesInBase
     }
 
 
-
     /**
      * Don't show "calculate" as an query param option in the index
      *
-     * @param array     $query_params
+     * @param array    $query_params
      * @param EEM_Base $model
-     * @param string    $version
+     * @param string   $version
      * @return array
      */
     public function removeCalculateQueryParam($query_params, EEM_Base $model, $version)
@@ -80,15 +77,14 @@ class ChangesIn40836 extends ChangesInBase
     }
 
 
-
     /**
      * Removes the "_calculate_fields" part of entity responses before 4.8.36
      *
-     * @param array            $entity_response_array
+     * @param array           $entity_response_array
      * @param EEM_Base        $model
-     * @param string           $request_context
+     * @param string          $request_context
      * @param WP_REST_Request $request
-     * @param Read             $controller
+     * @param Read            $controller
      * @return array
      */
     public function removeCalculatedFieldsFromResponse(
@@ -103,7 +99,6 @@ class ChangesIn40836 extends ChangesInBase
         }
         return $entity_response_array;
     }
-
 
 
     /**
@@ -135,15 +130,14 @@ class ChangesIn40836 extends ChangesInBase
     }
 
 
-
     /**
      * Puts the 'featured_image_url' back in for responses before 4.8.36.
      *
-     * @param array            $entity_response_array
+     * @param array           $entity_response_array
      * @param EEM_Base        $model
-     * @param string           $request_context
+     * @param string          $request_context
      * @param WP_REST_Request $request
-     * @param Read             $controller
+     * @param Read            $controller
      * @return array
      */
     public function addOldFeaturedImagePartOfCptEntities(
@@ -157,14 +151,13 @@ class ChangesIn40836 extends ChangesInBase
             && $model instanceof \EEM_CPT_Base
         ) {
             $attachment = wp_get_attachment_image_src(
-                get_post_thumbnail_id($entity_response_array[$model->primary_key_name()]),
+                get_post_thumbnail_id($entity_response_array[ $model->primary_key_name() ]),
                 'full'
             );
             $entity_response_array['featured_image_url'] = ! empty($attachment) ? $attachment[0] : null;
         }
         return $entity_response_array;
     }
-
 
 
     /**
@@ -186,7 +179,7 @@ class ChangesIn40836 extends ChangesInBase
         if ($this->appliesToVersion($requested_value)
             && $original_value === EE_INF
         ) {
-            //return the old representation of infinity in the JSON
+            // return the old representation of infinity in the JSON
             return -1;
         }
         return $new_value;
