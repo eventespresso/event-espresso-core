@@ -400,7 +400,7 @@ class EE_Register_Addon implements EEI_Plugin_API
                 ? (string) $setup_args['main_file_path']
                 : '',
             // instance of \EventEspresso\core\domain\DomainInterface
-            'domain'                => $setup_args['domain'] instanceof DomainInterface
+            'domain'                => isset($setup_args['domain']) && $setup_args['domain'] instanceof DomainInterface
                 ? $setup_args['domain']
                 : null,
             // Fully Qualified Class Name for the addon's Domain class
