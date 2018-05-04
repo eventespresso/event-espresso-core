@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\privacy\policy;
+namespace EventEspresso\core\services\privacy\erasure;
 
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;

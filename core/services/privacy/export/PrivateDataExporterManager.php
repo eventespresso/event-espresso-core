@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\privacy\policy;
+namespace EventEspresso\core\services\privacy\export;
 
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -11,7 +11,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\CollectionDetails;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
-use WP_Post;
 
 /**
  * Class PrivateDataExporterManager
@@ -26,29 +25,29 @@ class PrivateDataExporterManager
 
     public function __construct()
     {
-        add_action('admin_init', array($this, 'addPrivateDataExporters'), 9);
+        add_filter(
+            'wp_privacy_personal_data_exporters',
+            array($this, 'hookInExporters')
+        );
     }
 
 
     /**
-     * For all the registered `PrivateDataExporterInterface`s, add their privacy policy content
-     *
-     * @param WP_Post $post
+     * Adds EE's exporters to the list of WP exporters
+     * @param array $exporters
+     * @return array
      */
-    public function addPrivateDataExporters($post)
+    public function hookInExporters($exporters)
     {
-        $current_screen = get_current_screen();
-        if ($current_screen->id !== 'user' && ! (defined('DOING_AJAX') && DOING_AJAX)) {
-            return;
-        }
         // load all the privacy policy stuff
         // add post policy text
         foreach ($this->loadPrivateDataExporterCollection() as $exporter) {
-            add_filter(
-                'wp_privacy_personal_data_exporters',
-                array($exporter,'export')
+            $exporters[] = array(
+                'exporter_friendly_name' => 'ofo',
+                'callback' => array($exporter,'export')
             );
         }
+        return $exporters;
     }
 
 
@@ -65,14 +64,14 @@ class PrivateDataExporterManager
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
-                // collection name
+            // collection name
                 'privacy_policies',
                 // collection interface
-                'EventEspresso\core\services\privacy\policy\PrivacyErasureInterface',
+                'EventEspresso\core\services\privacy\export\PrivateDataExporterInterface',
                 // FQCNs for classes to add (all classes within that namespace will be loaded)
                 apply_filters(
                     'FHEE__EventEspresso_core_services_privacy_export_PrivateDataExporterManager__exporters',
-                    array('EventEspresso\core\domain\services\admin\privacy\policy\PrivateDataExporter')
+                    array('EventEspresso\core\domain\services\admin\privacy\export')
                 ),
                 // filepaths to classes to add
                 array(),
@@ -86,5 +85,6 @@ class PrivateDataExporterManager
         return $loader->getCollection();
     }
 }
+
 // End of file PrivateDataExporterManager.php
 // Location: EventEspresso\core\domain\services\admin/PrivateDataExporterManager.php

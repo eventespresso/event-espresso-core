@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\privacy\policy;
+namespace EventEspresso\core\services\privacy\erasure;
 
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 

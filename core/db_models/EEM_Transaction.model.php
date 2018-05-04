@@ -122,7 +122,6 @@ class EEM_Transaction extends EEM_Base
         );
         $this->_model_chain_to_wp_user = 'Registration.Event';
         parent::__construct($timezone);
-
     }
 
 
