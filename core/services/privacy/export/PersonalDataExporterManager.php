@@ -64,7 +64,7 @@ class PersonalDataExporterManager
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
-            // collection name
+                // collection name
                 'personal_data_exporters',
                 // collection interface
                 'EventEspresso\core\services\privacy\export\PersonalDataExporterInterface',
