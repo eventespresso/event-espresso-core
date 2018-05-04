@@ -13,10 +13,6 @@ use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
 use WP_Post;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
-
 /**
  * Class PrivacyPolicyManager
  * Manages setting up the hooks to add the EE core and add-ons' privacy policies
@@ -36,7 +32,6 @@ class PrivacyPolicyManager
     }
 
 
-
     /**
      * For all the registered `PrivacyPolicyInterface`s, add their privacy policy content
      *
@@ -47,17 +42,16 @@ class PrivacyPolicyManager
         if (! ($post instanceof \WP_Post)) {
             return;
         }
-        $policy_page_id = (int)get_option('wp_page_for_privacy_policy');
+        $policy_page_id = (int) get_option('wp_page_for_privacy_policy');
         if (! $policy_page_id || $policy_page_id != $post->ID) {
             return;
         }
-        //load all the privacy policy stuff
-        //add post policy text
+        // load all the privacy policy stuff
+        // add post policy text
         foreach ($this->loadPrivacyPolicyCollection() as $privacy_policy) {
             wp_add_privacy_policy_content($privacy_policy->getName(), $privacy_policy->getContent());
         }
     }
-
 
 
     /**
@@ -73,7 +67,7 @@ class PrivacyPolicyManager
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
-            // collection name
+                // collection name
                 'privacy_policies',
                 // collection interface
                 'EventEspresso\core\services\privacy\policy\PrivacyErasureInterface',
@@ -93,9 +87,6 @@ class PrivacyPolicyManager
         );
         return $loader->getCollection();
     }
-
-
-
 }
 // End of file PrivacyPolicyManager.php
 // Location: EventEspresso\core\domain\services\admin/PrivacyPolicyManager.php

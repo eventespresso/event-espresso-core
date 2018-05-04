@@ -2,10 +2,6 @@
 
 namespace EventEspresso\core\services\privacy\policy;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
-
 /**
  * Class PrivacyPolicyInterface
  * Interfacing for classes that define a suggested privacy policy section for WordPress'
@@ -28,15 +24,12 @@ interface PrivacyPolicyInterface
     public function getName();
 
 
-
     /**
      * Returns the suggested privacy policy content for this plugin. May contain HTML
      *
      * @return string
      */
     public function getContent();
-
-
 }
 // End of file PrivacyPolicyInterface.php
 // Location: EventEspresso\core\domain\services\admin/PrivacyPolicyInterface.php

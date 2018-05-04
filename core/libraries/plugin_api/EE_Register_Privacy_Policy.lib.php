@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
 
 /**
  * Class EE_Register_Privacy_Policy
@@ -35,7 +32,7 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
         self::$privacy_policies[$plugin_id] = $FQCNs;
         // add to list of modules to be registered
         add_filter(
-            'FHEE__EventEspresso_core_domain_services_admin_privacy_policy_Manager__privacy_policies',
+            'FHEE__EventEspresso_core_services_privacy_policy_PrivacyPolicyManager__privacy_policies',
             array('EE_Register_Privacy_Policy', 'addPrivacyPolicies')
         );
     }
