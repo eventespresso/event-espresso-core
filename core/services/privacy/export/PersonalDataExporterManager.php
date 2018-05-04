@@ -43,7 +43,7 @@ class PersonalDataExporterManager
         // add post policy text
         foreach ($this->loadPrivateDataExporterCollection() as $exporter) {
             $exporters[] = array(
-                'exporter_friendly_name' => 'ofo',
+                'exporter_friendly_name' => $exporter->name(),
                 'callback' => array($exporter,'export')
             );
         }
@@ -65,7 +65,7 @@ class PersonalDataExporterManager
         $loader = new CollectionLoader(
             new CollectionDetails(
             // collection name
-                'privacy_policies',
+                'personal_data_exporters',
                 // collection interface
                 'EventEspresso\core\services\privacy\export\PersonalDataExporterInterface',
                 // FQCNs for classes to add (all classes within that namespace will be loaded)
