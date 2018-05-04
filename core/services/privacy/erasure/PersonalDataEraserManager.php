@@ -32,14 +32,13 @@ class PersonalDataEraserManager
 
     /**
      * For all the registered `PrivateDataEraserInterface`s, add them as erasers
-     *
      */
     public function addErasers()
     {
 
         // on ajax requests or the user.php page
         $current_screen = get_current_screen();
-        if ($current_screen->id !== 'user' && !(defined('DOING_AJAX') && DOING_AJAX)) {
+        if ($current_screen->id !== 'user' && ! (defined('DOING_AJAX') && DOING_AJAX)) {
             return;
         }
         // load all the privacy policy stuff

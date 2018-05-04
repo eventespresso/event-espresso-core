@@ -5,7 +5,6 @@ namespace EventEspresso\core\services\privacy\erasure;
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
-
 /**
  * Class PersonalDataEraserInterface
  * Interfacing for classes that define a private data eraser (see https://core.trac.wordpress.org/ticket/43602).
@@ -22,13 +21,13 @@ interface PersonalDataEraserInterface
      * Erases a "page" of personal user data
      *
      * @return array {
-     * @type boolean $items_removed whether items were removed successfully or not
+     * @type boolean $items_removed  whether items were removed successfully or not
      * @type boolean $items_retained whether any items were skipped or not
-     * @type array $messages values are messages to show
-     * @type boolean $done whether this eraser is done or has more pages
+     * @type array   $messages       values are messages to show
+     * @type boolean $done           whether this eraser is done or has more pages
      *               }
      */
-    public function erase($email,$page = 1);
+    public function erase($email, $page = 1);
 
 
 }

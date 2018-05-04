@@ -84,7 +84,7 @@ class ExportTransaction implements PersonalDataExporterInterface
             $data = array();
             foreach ($export_fields as $field_name => $field_obj) {
                 if ($field_name === 'TXN_session_data') {
-                    $value = $transaction->get_pretty($field_name,'print_r');
+                    $value = $transaction->get_pretty($field_name, 'print_r');
                 } else {
                     $value = $transaction->get_pretty($field_name);
                 }

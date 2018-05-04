@@ -19,6 +19,7 @@ class ExportAttendee implements PersonalDataExporterInterface
      * @var EEM_Attendee
      */
     protected $attendee_model;
+
     /**
      * ExportAttendee constructor.
      *
@@ -56,15 +57,15 @@ class ExportAttendee implements PersonalDataExporterInterface
         $attendees = $this->attendee_model->get_all(
             array(
                 array(
-                    'ATT_email' => $email_address
-                )
+                    'ATT_email' => $email_address,
+                ),
             )
         );
 
         if (empty($attendees)) {
             return array(
                 'data' => array(),
-                'done' => true
+                'done' => true,
             );
         }
 
@@ -98,7 +99,7 @@ class ExportAttendee implements PersonalDataExporterInterface
                 }
                 $data[] = array(
                     'name'  => $field_obj->get_nicename(),
-                    'value' => $value
+                    'value' => $value,
                 );
             }
             $export_items[] =
@@ -106,12 +107,12 @@ class ExportAttendee implements PersonalDataExporterInterface
                     'group_id'    => 'att-' . $attendee->ID(),
                     'group_label' => esc_html__('Contact Profiles', 'event_espresso'),
                     'item_id'     => $attendee->ID(),
-                    'data'        => $data
+                    'data'        => $data,
                 );
         }
         return array(
             'data' => $export_items,
-            'done' => true
+            'done' => true,
         );
     }
 
