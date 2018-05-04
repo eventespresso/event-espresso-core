@@ -1,9 +1,9 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
 
 /**
  * Messages_Template_List_Table
  * extends EE_Admin_List_Table class
+ *
  * @package         Event Espresso
  * @subpackage      /includes/core/admin/messages
  * @author          Darren Ethier
@@ -17,7 +17,7 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
      */
     protected function _setup_data()
     {
-        $this->_data           = $this->get_admin_page()->get_message_templates(
+        $this->_data = $this->get_admin_page()->get_message_templates(
             $this->_per_page,
             $this->_view,
             false,
@@ -43,19 +43,19 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
         $this->_wp_list_args = array(
             'singular' => esc_html__('Message Template Group', 'event_espresso'),
             'plural'   => esc_html__('Message Template', 'event_espresso'),
-            'ajax'     => true, //for now,
+            'ajax'     => true, // for now,
             'screen'   => $this->get_admin_page()->get_current_screen()->id,
         );
 
         $this->_columns = array_merge(
             array(
-                'cb' => '<input type="checkbox" />',
+                'cb'   => '<input type="checkbox" />',
                 'name' => esc_html__('Template Name', 'event_espresso'),
             ),
             $this->_columns,
             array(
-                'events' => esc_html__('Events', 'event_espresso'),
-                'actions' => ''
+                'events'  => esc_html__('Events', 'event_espresso'),
+                'actions' => '',
             )
         );
     }
@@ -135,7 +135,7 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
     protected function _add_view_counts()
     {
         foreach ($this->_views as $view => $args) {
-            $this->_views[$view]['count'] = $this->get_admin_page()->get_message_templates(
+            $this->_views[ $view ]['count'] = $this->get_admin_page()->get_message_templates(
                 $this->_per_page,
                 $view,
                 true,
@@ -161,6 +161,7 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
 
     /**
      * Add additional actions for custom message template list view.
+     *
      * @param EE_Message_Template_Group $item
      * @return array
      * @throws EE_Error
@@ -169,20 +170,23 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
     {
         $actions = parent::_get_actions_for_messenger_column($item);
 
-        //add additional actions for trash/restore etc.
-        $trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array('action'   => 'trash_message_template',
-                                                                       'id'       => $item->GRP_ID(),
-                                                                       'noheader' => true,
+        // add additional actions for trash/restore etc.
+        $trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
+            'action'   => 'trash_message_template',
+            'id'       => $item->GRP_ID(),
+            'noheader' => true,
         ), EE_MSG_ADMIN_URL);
         // restore link
-        $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array('action'   => 'restore_message_template',
-                                                                         'id'       => $item->GRP_ID(),
-                                                                         'noheader' => true,
+        $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
+            'action'   => 'restore_message_template',
+            'id'       => $item->GRP_ID(),
+            'noheader' => true,
         ), EE_MSG_ADMIN_URL);
         // delete price link
-        $delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array('action'   => 'delete_message_template',
-                                                                        'id'       => $item->GRP_ID(),
-                                                                        'noheader' => true,
+        $delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
+            'action'   => 'delete_message_template',
+            'id'       => $item->GRP_ID(),
+            'noheader' => true,
         ), EE_MSG_ADMIN_URL);
 
         if (! $item->get('MTP_deleted')
@@ -234,6 +238,7 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
 
     /**
      * Generate dropdown filter select input for messengers
+     *
      * @param bool $global
      * @return string
      * @throws EE_Error
@@ -246,6 +251,7 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
 
     /**
      * Generate dropdown filter select input for message types
+     *
      * @param bool $global
      * @return string
      * @throws EE_Error
