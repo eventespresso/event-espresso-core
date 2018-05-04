@@ -8,10 +8,6 @@ use EventEspresso\core\services\request\RequestInterface;
 use InvalidArgumentException;
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RequestTypeContextDetector
  * Basically a Factory class for generating a RequestTypeContext DTO based on the current request
@@ -98,7 +94,7 @@ class RequestTypeContextDetector
     private function isEspressoRestApiRequest()
     {
         $ee_rest_url_prefix = RecommendedVersions::compareWordPressVersion('4.4.0')
-            ?  trim(rest_get_url_prefix(), '/')
+            ? trim(rest_get_url_prefix(), '/')
             : 'wp-json';
         $ee_rest_url_prefix .= '/' . Domain::API_NAMESPACE;
         return $this->uriPathMatches($ee_rest_url_prefix);
@@ -130,8 +126,8 @@ class RequestTypeContextDetector
     private function uriPathMatches($component)
     {
         $request_uri = $this->request->requestUri();
-        $parts       = explode('?', $request_uri);
-        $path        = trim(reset($parts), '/');
+        $parts = explode('?', $request_uri);
+        $path = trim(reset($parts), '/');
         return strpos($path, $component) === 0;
     }
 
@@ -150,6 +146,4 @@ class RequestTypeContextDetector
         );
         return filter_var($is_iframe_route, FILTER_VALIDATE_BOOLEAN);
     }
-
 }
-// Location: RequestTypeContextDetector.php

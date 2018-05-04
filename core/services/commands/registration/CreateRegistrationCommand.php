@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\services\commands\registration;
 
 use EE_Line_Item;
@@ -11,12 +12,6 @@ use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\Command;
 use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class CreateRegistrationCommand
@@ -65,15 +60,14 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
     protected $registration;
 
 
-
     /**
      * CreateRegistrationCommand constructor.
      *
      * @param EE_Transaction $transaction
      * @param EE_Line_Item   $ticket_line_item
-     * @param int             $reg_count
-     * @param int             $reg_group_size
-     * @param string          $reg_status
+     * @param int            $reg_count
+     * @param int            $reg_group_size
+     * @param string         $reg_status
      * @throws InvalidEntityException
      */
     public function __construct(
@@ -85,7 +79,7 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
     ) {
         // grab the related ticket object for this line_item
         $this->ticket = $ticket_line_item->ticket();
-        if ( ! $this->ticket instanceof EE_Ticket) {
+        if (! $this->ticket instanceof EE_Ticket) {
             throw new InvalidEntityException(
                 is_object($this->ticket) ? get_class($this->ticket) : gettype($this->ticket),
                 'EE_Ticket',
@@ -103,19 +97,17 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
     }
 
 
-
     /**
      * @return \EventEspresso\core\domain\services\capabilities\CapCheckInterface
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      */
     public function getCapCheck()
     {
-        if ( ! $this->cap_check instanceof CapCheckInterface) {
+        if (! $this->cap_check instanceof CapCheckInterface) {
             return new CapCheck('ee_edit_registrations', 'create_new_registration');
         }
         return $this->cap_check;
     }
-
 
 
     /**
@@ -127,7 +119,6 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
     }
 
 
-
     /**
      * @return EE_Ticket
      */
@@ -135,7 +126,6 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
     {
         return $this->ticket;
     }
-
 
 
     /**
@@ -147,7 +137,6 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
     }
 
 
-
     /**
      * @return int
      */
@@ -155,7 +144,6 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
     {
         return $this->reg_count;
     }
-
 
 
     /**
@@ -167,7 +155,6 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
     }
 
 
-
     /**
      * @return string
      */
@@ -177,7 +164,6 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
     }
 
 
-
     /**
      * @return EE_Registration
      */
@@ -185,9 +171,4 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
     {
         return $this->registration;
     }
-
-
-
 }
-// End of file CreateRegistrationCommand.php
-// Location: /CreateRegistrationCommand.php

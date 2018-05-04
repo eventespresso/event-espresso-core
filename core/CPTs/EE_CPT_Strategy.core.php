@@ -1,4 +1,9 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
+<?php use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions;
+use EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 /**
  * CPT_Strategy
  *
@@ -24,9 +29,8 @@ class EE_CPT_Strategy extends EE_Base {
 	protected $CPT;
 
 	/**
-	 * return value from \EE_Register_CPTs::get_CPTs()
-	 * @var 	array 	$_CPTs
-	 * @access 	protected
+	 * return value from CustomPostTypeDefinitions::getDefinitions()
+	 * @var array $_CPTs
 	 */
 	protected $_CPTs = array();
 
@@ -61,33 +65,43 @@ class EE_CPT_Strategy extends EE_Base {
 	protected $query_modifier;
 
 
-
-	/**
-	 *@ singleton method used to instantiate class object
-	 *@ access public
-	 *@ return EE_CPT_Strategy instance
-	 */
-	public static function instance() {
+    /**
+     * @singleton method used to instantiate class object
+     * @param CustomPostTypeDefinitions|null $custom_post_types
+     * @param CustomTaxonomyDefinitions|null $taxonomies
+     * @return EE_CPT_Strategy
+     */
+	public static function instance(
+        CustomPostTypeDefinitions $custom_post_types = null,
+        CustomTaxonomyDefinitions $taxonomies = null
+    ) {
 		// check if class object is instantiated
-		if ( ! self::$_instance instanceof EE_CPT_Strategy ) {
-			self::$_instance = new self();
+		if (
+		    ! self::$_instance instanceof EE_CPT_Strategy
+		    && $custom_post_types instanceof CustomPostTypeDefinitions
+		    && $taxonomies instanceof CustomTaxonomyDefinitions
+        ) {
+			self::$_instance = new self($custom_post_types, $taxonomies);
 		}
 		return self::$_instance;
 	}
 
 
-
-	/**
-	 * @access protected
-	 * @return \EE_CPT_Strategy
-	 */
-	protected function __construct() {
+    /**
+     * @access protected
+     * @param CustomPostTypeDefinitions                                                       $custom_post_types
+     * @param CustomTaxonomyDefinitions $taxonomies
+     */
+	protected function __construct(
+        CustomPostTypeDefinitions $custom_post_types,
+        CustomTaxonomyDefinitions $taxonomies
+    ) {
 		// get CPT data
-		$this->_CPTs = EE_Register_CPTs::get_CPTs();
+		$this->_CPTs = $custom_post_types->getDefinitions();
 		$this->_CPT_endpoints = $this->_set_CPT_endpoints();
-		$this->_CPT_taxonomies = EE_Register_CPTs::get_taxonomies();
+		$this->_CPT_taxonomies = $taxonomies->getCustomTaxonomyDefinitions();
 		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 5 );
-	}
+    }
 
 
 

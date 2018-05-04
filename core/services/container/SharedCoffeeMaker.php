@@ -1,11 +1,6 @@
 <?php
+
 namespace EventEspresso\core\services\container;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class SharedCoffeeMaker
@@ -23,7 +18,6 @@ class SharedCoffeeMaker extends CoffeeMaker
 {
 
 
-
     /**
      * @return string
      */
@@ -31,7 +25,6 @@ class SharedCoffeeMaker extends CoffeeMaker
     {
         return CoffeeMaker::BREW_SHARED;
     }
-
 
 
     /**
@@ -45,26 +38,23 @@ class SharedCoffeeMaker extends CoffeeMaker
         $reflector = $this->injector()->getReflectionClass($recipe->fqcn());
         $method = $this->resolveInstantiationMethod($reflector);
         switch ($method) {
-            case 'instance' :
-            case 'new_instance' :
-            case 'new_instance_from_db';
+            case 'instance':
+            case 'new_instance':
+            case 'new_instance_from_db':
                 $service = call_user_func_array(
                     array($reflector->getName(), $method),
                     $this->injector()->resolveDependencies($recipe, $reflector, $arguments)
                 );
                 break;
-            case 'newInstance' :
+            case 'newInstance':
                 $service = $reflector->newInstance();
                 break;
-            case 'newInstanceArgs' :
-            default :
+            case 'newInstanceArgs':
+            default:
                 $service = $reflector->newInstanceArgs(
                     $this->injector()->resolveDependencies($recipe, $reflector, $arguments)
                 );
         }
         return $this->coffeePot()->addService($recipe->identifier(), $service);
     }
-
 }
-// End of file SharedCoffeeMaker.php
-// Location: /SharedCoffeeMaker.php

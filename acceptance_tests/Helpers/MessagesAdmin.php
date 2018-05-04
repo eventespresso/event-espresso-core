@@ -155,6 +155,7 @@ trait MessagesAdmin
      */
     public function toggleContextState($context_string, $expected_state_is_active = true)
     {
+        $this->actor()->scrollTo(MessagesPage::MESSAGES_CONTEXT_SWITCHER_SELECTOR);
         $this->actor()->click(MessagesPage::MESSAGES_CONTEXT_ACTIVE_STATE_TOGGLE);
         if ($expected_state_is_active) {
             $this->actor()->waitForText("The template for $context_string is currently active.");

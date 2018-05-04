@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\services\shortcodes;
 
 use EE_Config;
@@ -9,10 +10,6 @@ use ReflectionClass;
 use WP;
 use WP_Query;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class LegacyShortcodesManager
  * Legacy code extracted from EE_Config, will be deprecated sometime in the future.
@@ -20,7 +17,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class LegacyShortcodesManager
 {
@@ -29,8 +25,6 @@ class LegacyShortcodesManager
      * @var EE_Registry $registry
      */
     private $registry;
-
-
 
 
     /**
@@ -44,7 +38,6 @@ class LegacyShortcodesManager
     }
 
 
-
     /**
      * @return EE_Registry
      */
@@ -52,7 +45,6 @@ class LegacyShortcodesManager
     {
         return $this->registry;
     }
-
 
 
     /**
@@ -64,7 +56,6 @@ class LegacyShortcodesManager
     {
         $this->registry->shortcodes = $this->getShortcodes();
     }
-
 
 
     /**
@@ -83,7 +74,7 @@ class LegacyShortcodesManager
             'FHEE__EE_Config__register_shortcodes__shortcodes_to_register',
             array()
         );
-        if ( ! empty($shortcodes_to_register)) {
+        if (! empty($shortcodes_to_register)) {
             // cycle thru shortcode folders
             foreach ($shortcodes_to_register as $shortcode_path) {
                 // add to list of installed shortcode modules
@@ -98,7 +89,6 @@ class LegacyShortcodesManager
                 : array()
         );
     }
-
 
 
     /**
@@ -141,10 +131,10 @@ class LegacyShortcodesManager
         // add class prefix
         $shortcode_class = 'EES_' . $shortcode;
         // does the shortcode exist ?
-        if ( ! is_readable($shortcode_path . DS . $shortcode_class . $shortcode_ext)) {
+        if (! is_readable($shortcode_path . DS . $shortcode_class . $shortcode_ext)) {
             $msg = sprintf(
                 esc_html__(
-                    'The requested %s shortcode file could not be found or is not readable due to file permissions. It should be in %s',
+                    'The requested %1$s shortcode file could not be found or is not readable due to file permissions. It should be in %2$s',
                     'event_espresso'
                 ),
                 $shortcode_class,
@@ -156,7 +146,7 @@ class LegacyShortcodesManager
         // load the shortcode class file
         require_once($shortcode_path . $shortcode_class . $shortcode_ext);
         // verify that class exists
-        if ( ! class_exists($shortcode_class)) {
+        if (! class_exists($shortcode_class)) {
             $msg = sprintf(
                 esc_html__('The requested %s shortcode class does not exist.', 'event_espresso'),
                 $shortcode_class
@@ -169,7 +159,6 @@ class LegacyShortcodesManager
         $this->registry->shortcodes->{$shortcode} = $shortcode_path . $shortcode_class . $shortcode_ext;
         return true;
     }
-
 
 
     /**
@@ -200,7 +189,7 @@ class LegacyShortcodesManager
                 $shortcode_tag = strtoupper($shortcode);
                 // but first check if the shortcode has already
                 // been added before assigning 'fallback_shortcode_processor'
-                if ( ! shortcode_exists($shortcode_tag)) {
+                if (! shortcode_exists($shortcode_tag)) {
                     // NOTE: this shortcode declaration will get overridden if the shortcode
                     // is successfully detected in the post content in initializeShortcode()
                     add_shortcode($shortcode_tag, array($shortcode_class, 'fallback_shortcode_processor'));
@@ -208,7 +197,6 @@ class LegacyShortcodesManager
             }
         }
     }
-
 
 
     /**
@@ -259,8 +247,7 @@ class LegacyShortcodesManager
         }
         // in case $current_post is hierarchical like: /parent-page/current-page
         $current_post = basename($current_post);
-        if (
-            // is current page/post the "blog" page ?
+        if (// is current page/post the "blog" page ?
             $current_post === EE_Config::get_page_for_posts()
             // or are we on a category page?
             || (
@@ -289,7 +276,6 @@ class LegacyShortcodesManager
     }
 
 
-
     /**
      * checks supplied content against list of legacy shortcodes,
      * then initializes any found shortcodes, and returns true.
@@ -303,7 +289,7 @@ class LegacyShortcodesManager
     {
         $has_shortcode = false;
         foreach ($this->registry->shortcodes as $shortcode_class => $shortcode) {
-            if ($load_all || has_shortcode($content, $shortcode_class) ) {
+            if ($load_all || has_shortcode($content, $shortcode_class)) {
                 // load up the shortcode
                 $this->initializeShortcode($shortcode_class);
                 $has_shortcode = true;
@@ -311,7 +297,6 @@ class LegacyShortcodesManager
         }
         return $has_shortcode;
     }
-
 
 
     /**
@@ -323,8 +308,7 @@ class LegacyShortcodesManager
     public function initializeShortcode($shortcode_class = '', WP $wp = null)
     {
         // don't do anything if shortcode is already initialized
-        if (
-            empty($this->registry->shortcodes->{$shortcode_class})
+        if (empty($this->registry->shortcodes->{$shortcode_class})
             || ! is_string($this->registry->shortcodes->{$shortcode_class})
         ) {
             return;
@@ -332,8 +316,7 @@ class LegacyShortcodesManager
         // let's pause to reflect on this...
         $sc_reflector = new ReflectionClass(LegacyShortcodesManager::addShortcodeClassPrefix($shortcode_class));
         // ensure that class is actually a shortcode
-        if (
-            defined('WP_DEBUG')
+        if (defined('WP_DEBUG')
             && WP_DEBUG === true
             && ! $sc_reflector->isSubclassOf('EES_Shortcode')
         ) {
@@ -360,7 +343,6 @@ class LegacyShortcodesManager
     }
 
 
-
     /**
      * get classname, remove EES_prefix, and convert to UPPERCASE
      *
@@ -371,7 +353,6 @@ class LegacyShortcodesManager
     {
         return strtoupper(str_replace('EES_', '', $class_name));
     }
-
 
 
     /**
@@ -385,15 +366,15 @@ class LegacyShortcodesManager
         // order of operation runs from inside to out
         // 5) maybe add prefix
         return LegacyShortcodesManager::addShortcodeClassPrefix(
-        // 4) find spaces, replace with underscores
+            // 4) find spaces, replace with underscores
             str_replace(
                 ' ',
                 '_',
                 // 3) capitalize first letter of each word
                 ucwords(
-                // 2) also change to lowercase so ucwords() will work
+                    // 2) also change to lowercase so ucwords() will work
                     strtolower(
-                    // 1) find underscores, replace with spaces so ucwords() will work
+                        // 1) find underscores, replace with spaces so ucwords() will work
                         str_replace(
                             '_',
                             ' ',
@@ -404,7 +385,6 @@ class LegacyShortcodesManager
             )
         );
     }
-
 
 
     /**
@@ -419,7 +399,6 @@ class LegacyShortcodesManager
     }
 
 
-
     /**
      * @return array
      */
@@ -427,11 +406,10 @@ class LegacyShortcodesManager
     {
         static $shortcode_tags = array();
         if (empty($shortcode_tags)) {
-            $shortcode_tags = array_keys((array)$this->registry->shortcodes);
+            $shortcode_tags = array_keys((array) $this->registry->shortcodes);
         }
         return $shortcode_tags;
     }
-
 
 
     /**
@@ -448,10 +426,4 @@ class LegacyShortcodesManager
         }
         return do_shortcode($content);
     }
-
-
-
-
 }
-// End of file LegacyShortcodesManager.php
-// Location: EventEspresso\core\services\shortcodes/LegacyShortcodesManager.php

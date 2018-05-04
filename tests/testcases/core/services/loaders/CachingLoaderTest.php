@@ -1,10 +1,14 @@
 <?php
-use EventEspresso\core\exceptions\InvalidEntityException;
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\LooseCollection;
-use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
+use EventEspresso\core\services\loaders\ClassInterfaceCache;
 use EventEspresso\core\services\loaders\CoreLoader;
 use EventEspresso\core\services\loaders\LoaderDecorator;
+use EventEspresso\core\services\loaders\ObjectIdentifier;
 use EventEspresso\tests\mocks\core\services\loaders\CachingLoaderMock;
+use PHPUnit\Framework\Exception;
 
 /**
  * CachingLoaderTest
@@ -27,7 +31,12 @@ class CachingLoaderTest extends EE_UnitTestCase
     private static $loader;
 
 
-
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
     public function setUp()
     {
         //caching is turned off by default in the parent test case.  For tests in here where we're doing a number of
@@ -35,7 +44,8 @@ class CachingLoaderTest extends EE_UnitTestCase
         if (! self::$loader instanceof LoaderDecorator) {
             self::$loader = new CachingLoaderMock(
                 new CoreLoader(EE_Registry::instance()),
-                new LooseCollection('')
+                new LooseCollection(''),
+                new ObjectIdentifier(new ClassInterfaceCache())
             );
         }
         parent::setUp();
@@ -48,9 +58,10 @@ class CachingLoaderTest extends EE_UnitTestCase
     }
 
 
-
     /**
      * This ensures there is no persistence with caching off (caching is off by default in unit tests).
+     *
+     * @throws Exception
      */
     public function testLoadCachingOff()
     {
@@ -80,9 +91,6 @@ class CachingLoaderTest extends EE_UnitTestCase
 
     /**
      * This tests persistence with caching on.
-     *
-     * @throws InvalidEntityException
-     * @throws ServiceNotFoundException
      */
     public function testLoadCachingOn()
     {
@@ -95,9 +103,10 @@ class CachingLoaderTest extends EE_UnitTestCase
     }
 
 
-
     /**
      * This tests the resetting of cache
+     *
+     * @throws Exception
      */
     public function testResetCache()
     {

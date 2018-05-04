@@ -379,7 +379,7 @@ class EEH_Debug_Tools
      * @param string     $var_name
      * @param string     $file
      * @param int|string $line
-     * @param int        $heading_tag
+     * @param int|string $heading_tag
      * @param bool       $die
      * @param string     $margin
      */
@@ -396,19 +396,33 @@ class EEH_Debug_Tools
         $var_name = ucwords(str_replace('$', '', $var_name));
         $is_method = method_exists($var_name, $var);
         $var_name = ucwords(str_replace('_', ' ', $var_name));
-        $heading_tag = absint($heading_tag);
-        $result = $heading_tag < 3 ? "\n" : '';
-        $heading_tag = $heading_tag > 0 && $heading_tag < 7 ? "h{$heading_tag}" : 'h5';
+        $heading_tag = EEH_Debug_Tools::headingTag($heading_tag);
+        $result = EEH_Debug_Tools::headingSpacer($heading_tag);
         $result .= EEH_Debug_Tools::heading($var_name, $heading_tag, $margin, $line);
         $result .= $is_method
             ? EEH_Debug_Tools::grey_span('::') . EEH_Debug_Tools::orange_span($var . '()')
             : EEH_Debug_Tools::grey_span(' : ') . EEH_Debug_Tools::orange_span($var);
-        $result .= EEH_Debug_Tools::file_and_line($file, $line);
+        $result .= EEH_Debug_Tools::file_and_line($file, $line, $heading_tag);
         $result .= EEH_Debug_Tools::headingX($heading_tag);
         if ($die) {
             die($result);
         }
         echo $result;
+    }
+
+
+    protected static function headingTag($heading_tag)
+    {
+        $heading_tag = absint($heading_tag);
+        return $heading_tag > 0 && $heading_tag < 7 ? "h{$heading_tag}" : 'h5';
+    }
+
+
+    protected static function headingSpacer($heading_tag)
+    {
+        return EEH_Debug_Tools::plainOutput() && ($heading_tag === 'h1' || $heading_tag === 'h2')
+            ? "\n"
+            : '';
     }
 
 
@@ -428,7 +442,12 @@ class EEH_Debug_Tools
     protected static function heading($var_name = '', $heading_tag = 'h5', $margin = '', $line = 0)
     {
         if (EEH_Debug_Tools::plainOutput()) {
-            return "\n{$line}) {$var_name}";
+            $heading = '';
+            if($heading_tag === 'h1' || $heading_tag === 'h2') {
+                $heading .= "\n";
+            }
+            $heading .= "\n{$line}) {$var_name}";
+            return $heading;
         }
         $margin = "25px 0 0 {$margin}";
         return '<' . $heading_tag . ' style="color:#2EA2CC; margin:' . $margin . ';"><b>' . $var_name . '</b>';
@@ -469,9 +488,16 @@ class EEH_Debug_Tools
      * @param int    $line
      * @return string
      */
-    protected static function file_and_line($file, $line)
+    protected static function file_and_line($file, $line, $heading_tag)
     {
-        if ($file === '' || $line === '' || EEH_Debug_Tools::plainOutput()) {
+        if ($file === '' || $line === '') {
+            return '';
+        }
+        $file = str_replace(EE_PLUGIN_DIR_PATH, '/', $file);
+        if (EEH_Debug_Tools::plainOutput()) {
+            if ($heading_tag === 'h1' || $heading_tag === 'h2') {
+                return " ({$file})";
+            }
             return '';
         }
         return '<br /><span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">'
@@ -507,7 +533,7 @@ class EEH_Debug_Tools
         var_dump($var);
         $var = ob_get_clean();
         if (EEH_Debug_Tools::plainOutput()) {
-            return "\n" . $var;
+            return $var;
         }
         return '<pre style="color:#999; padding:1em; background: #fff">' . $var . '</pre>';
     }
@@ -519,7 +545,7 @@ class EEH_Debug_Tools
      * @param string     $var_name
      * @param string     $file
      * @param int|string $line
-     * @param int        $heading_tag
+     * @param int|string $heading_tag
      * @param bool       $die
      */
     public static function printr(
@@ -550,12 +576,13 @@ class EEH_Debug_Tools
             $var_name = ! $var_name ? 'null' : $var_name;
         }
         $var_name = ucwords(str_replace(array('$', '_'), array('', ' '), $var_name));
-        $heading_tag = is_int($heading_tag) ? "h{$heading_tag}" : 'h5';
-        $result = EEH_Debug_Tools::heading($var_name, $heading_tag, $margin, $line);
+        $heading_tag = EEH_Debug_Tools::headingTag($heading_tag);
+        $result = EEH_Debug_Tools::headingSpacer($heading_tag);
+        $result .= EEH_Debug_Tools::heading($var_name, $heading_tag, $margin, $line);
         $result .= EEH_Debug_Tools::grey_span(' : ') . EEH_Debug_Tools::orange_span(
                 EEH_Debug_Tools::pre_span($var)
             );
-        $result .= EEH_Debug_Tools::file_and_line($file, $line);
+        $result .= EEH_Debug_Tools::file_and_line($file, $line, $heading_tag);
         $result .= EEH_Debug_Tools::headingX($heading_tag);
         if ($die) {
             die($result);
