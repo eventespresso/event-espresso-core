@@ -13,20 +13,20 @@ use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
 
 /**
- * Class PrivateDataEraserManager
+ * Class PersonalDataEraserManager
  * Manages setting up the hooks to add the EE core and add-ons' privacy erasers
  *
  * @package        Event Espresso
  * @author         Mike Nelson
  * @since          $VID:$
  */
-class PrivateDataEraserManager
+class PersonalDataEraserManager
 {
 
     public function __construct()
     {
         // this is mostly just needed during AJAX requests and on the user.php page
-        add_action('admin_init', array($this, 'addPrivateDateEraser'));
+        add_action('admin_init', array($this, 'addErasers'));
     }
 
 
@@ -34,7 +34,7 @@ class PrivateDataEraserManager
      * For all the registered `PrivateDataEraserInterface`s, add them as erasers
      *
      */
-    public function addPrivateDateEraser()
+    public function addErasers()
     {
 
         // on ajax requests or the user.php page
@@ -72,7 +72,7 @@ class PrivateDataEraserManager
                 'EventEspresso\core\services\privacy\policy\PrivateDataEraserInterface',
                 // FQCNs for classes to add (all classes within that namespace will be loaded)
                 apply_filters(
-                    'FHEE__EventEspresso_core_services_privacy_erasure_PrivateDataEraserManager__erasers',
+                    'FHEE__EventEspresso_core_services_privacy_erasure_PersonalDataEraserManager__erasers',
                     array('EventEspresso\core\domain\services\admin\privacy\policy\PrivateDataEraser')
                 ),
                 // filepaths to classes to add
@@ -87,5 +87,5 @@ class PrivateDataEraserManager
         return $loader->getCollection();
     }
 }
-// End of file PrivateDataEraserManager.php
-// Location: EventEspresso\core\domain\services\admin/PrivateDataEraserManager.php
+// End of file PersonalDataEraserManager.php
+// Location: EventEspresso\core\domain\services\admin/PersonalDataEraserManager.php

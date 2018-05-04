@@ -7,19 +7,19 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 /**
- * Class PrivateDataEraserInterface
+ * Class PersonalDataEraserInterface
  * Interfacing for classes that define a private data eraser (see https://core.trac.wordpress.org/ticket/43602).
- * When a request to erase an email address' data, WordPress invokes the erasers, and the PrivateDataEraserManager
+ * When a request to erase an email address' data, WordPress invokes the erasers, and the PersonalDataEraserManager
  * will take care of registering this class' erase method as a private data eraser.
  *
  * @package        Event Espresso
  * @author         Mike Nelson
  * @since          $VID:$
  */
-interface PrivateDataEraserInterface
+interface PersonalDataEraserInterface
 {
     /**
-     * Erases a "page" of private user data
+     * Erases a "page" of personal user data
      *
      * @return array {
      * @type boolean $items_removed whether items were removed successfully or not
@@ -32,5 +32,5 @@ interface PrivateDataEraserInterface
 
 
 }
-// End of file PrivateDataEraserInterface.php
-// Location: EventEspresso\core\domain\services\admin/PrivateDataEraserInterface.php
+// End of file PersonalDataEraserInterface.php
+// Location: EventEspresso\core\domain\services\admin/PersonalDataEraserInterface.php
