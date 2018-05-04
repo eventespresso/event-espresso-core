@@ -25,35 +25,32 @@ class PersonalDataEraserManager
 
     public function __construct()
     {
-        // this is mostly just needed during AJAX requests and on the user.php page
-        add_action('admin_init', array($this, 'addErasers'));
+        add_filter(
+            'wp_privacy_personal_data_erasers',
+            array($this, 'hookInErasers')
+        );
     }
 
 
     /**
      * For all the registered `PrivateDataEraserInterface`s, add them as erasers
      */
-    public function addErasers()
+    public function hookInErasers($erasers)
     {
-
-        // on ajax requests or the user.php page
-        $current_screen = get_current_screen();
-        if ($current_screen->id !== 'user' && ! (defined('DOING_AJAX') && DOING_AJAX)) {
-            return;
-        }
         // load all the privacy policy stuff
         // add post policy text
         foreach ($this->loadPrivateDataEraserCollection() as $eraser) {
-            add_filter(
-                'wp_privacy_personal_data_erasers',
-                array($eraser, 'erase')
+            $erasers[] = array(
+                'eraser_friendly_name' => $eraser->name(),
+                'callback' => array($eraser,'erase')
             );
         }
+        return $erasers;
     }
 
 
     /**
-     * @return CollectionInterface|PrivateDataEraserInterface[]
+     * @return CollectionInterface|PersonalDataEraserInterface[]
      * @throws InvalidIdentifierException
      * @throws InvalidInterfaceException
      * @throws InvalidFilePathException
@@ -66,13 +63,13 @@ class PersonalDataEraserManager
         $loader = new CollectionLoader(
             new CollectionDetails(
                 // collection name
-                'privacy_policies',
+                'privacy_erasers',
                 // collection interface
-                'EventEspresso\core\services\privacy\policy\PrivateDataEraserInterface',
+                'EventEspresso\core\services\privacy\erasure\PersonalDataEraserInterface',
                 // FQCNs for classes to add (all classes within that namespace will be loaded)
                 apply_filters(
                     'FHEE__EventEspresso_core_services_privacy_erasure_PersonalDataEraserManager__erasers',
-                    array('EventEspresso\core\domain\services\admin\privacy\policy\PrivateDataEraser')
+                    array('EventEspresso\core\domain\services\admin\privacy\erasure')
                 ),
                 // filepaths to classes to add
                 array(),

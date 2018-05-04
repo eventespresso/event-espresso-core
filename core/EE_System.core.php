@@ -1236,9 +1236,11 @@ final class EE_System implements ResettableInterface
             $this->loader->getShared('EventEspresso\core\services\privacy\policy\PrivacyPolicyManager');
 
             $this->loader->getShared('EventEspresso\core\services\privacy\export\PersonalDataExporterManager');
+            $this->loader->getShared('EventEspresso\core\services\privacy\erasure\PersonalDataEraserManager');
         }
         if ($this->request->isAjax()) {
             $this->loader->getShared('EventEspresso\core\services\privacy\export\PersonalDataExporterManager');
+            $this->loader->getShared('EventEspresso\core\services\privacy\erasure\PersonalDataEraserManager');
         }
     }
 

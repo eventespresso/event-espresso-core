@@ -18,6 +18,11 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 interface PersonalDataEraserInterface
 {
     /**
+     * Gets a translated string name for the data eraser
+     * @return string
+     */
+    public function name();
+    /**
      * Erases a "page" of personal user data
      *
      * @return array {
@@ -27,7 +32,7 @@ interface PersonalDataEraserInterface
      * @type boolean $done           whether this eraser is done or has more pages
      *               }
      */
-    public function erase($email, $page = 1);
+    public function erase($email_address, $page = 1);
 
 
 }

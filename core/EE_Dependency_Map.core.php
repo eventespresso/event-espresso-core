@@ -760,6 +760,13 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\services\admin\privacy\export\ExportTransaction' => array(
                 'EEM_Transaction' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\domain\services\admin\privacy\erasure\EraseAttendeeData' => array(
+                'EEM_Attendee' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\services\admin\privacy\erasure\EraseAnswers' => array(
+                'EEM_Answer' => EE_Dependency_Map::load_from_cache,
+                'EEM_Question' => EE_Dependency_Map::load_from_cache,
+            ),
         );
     }
 
