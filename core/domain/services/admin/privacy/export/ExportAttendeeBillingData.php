@@ -5,7 +5,7 @@ namespace EventEspresso\core\domain\services\admin\privacy\export;
 use EE_Error;
 use EEM_Attendee;
 use EEM_Payment_Method;
-use EventEspresso\core\services\privacy\export\PrivateDataExporterInterface;
+use EventEspresso\core\services\privacy\export\PersonalDataExporterInterface;
 
 /**
  * Class ExportAttendeeBillingData
@@ -15,7 +15,7 @@ use EventEspresso\core\services\privacy\export\PrivateDataExporterInterface;
  * @author         Mike Nelson
  * @since          $VID:$
  */
-class ExportAttendeeBillingData implements PrivateDataExporterInterface
+class ExportAttendeeBillingData implements PersonalDataExporterInterface
 {
     /**
      * @var EEM_Attendee

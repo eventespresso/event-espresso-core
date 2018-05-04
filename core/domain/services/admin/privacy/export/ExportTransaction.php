@@ -3,7 +3,7 @@
 namespace EventEspresso\core\domain\services\admin\privacy\export;
 
 use EEM_Transaction;
-use EventEspresso\core\services\privacy\export\PrivateDataExporterInterface;
+use EventEspresso\core\services\privacy\export\PersonalDataExporterInterface;
 
 /**
  * Class ExportTransaction
@@ -13,7 +13,7 @@ use EventEspresso\core\services\privacy\export\PrivateDataExporterInterface;
  * @author         Mike Nelson
  * @since          $VID:$
  */
-class ExportTransaction implements PrivateDataExporterInterface
+class ExportTransaction implements PersonalDataExporterInterface
 {
     /**
      * @var EEM_Transaction $transaction_model

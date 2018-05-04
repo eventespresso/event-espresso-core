@@ -4,7 +4,7 @@ namespace EventEspresso\core\domain\services\admin\privacy\export;
 
 use EE_Registration;
 use EEM_Checkin;
-use EventEspresso\core\services\privacy\export\PrivateDataExporterInterface;
+use EventEspresso\core\services\privacy\export\PersonalDataExporterInterface;
 
 /**
  * Class ExportCheckins
@@ -14,7 +14,7 @@ use EventEspresso\core\services\privacy\export\PrivateDataExporterInterface;
  * @author         Mike Nelson
  * @since          $VID:$
  */
-class ExportCheckins implements PrivateDataExporterInterface
+class ExportCheckins implements PersonalDataExporterInterface
 {
     /**
      * @var EEM_Checkin

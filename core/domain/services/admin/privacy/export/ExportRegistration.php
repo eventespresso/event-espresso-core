@@ -6,7 +6,7 @@ use EE_Registration;
 use EE_Ticket;
 use EEM_Answer;
 use EEM_Registration;
-use EventEspresso\core\services\privacy\export\PrivateDataExporterInterface;
+use EventEspresso\core\services\privacy\export\PersonalDataExporterInterface;
 
 /**
  * Class ExportRegistration
@@ -16,7 +16,7 @@ use EventEspresso\core\services\privacy\export\PrivateDataExporterInterface;
  * @author         Mike Nelson
  * @since          $VID:$
  */
-class ExportRegistration implements PrivateDataExporterInterface
+class ExportRegistration implements PersonalDataExporterInterface
 {
     /**
      * @var EEM_Registration

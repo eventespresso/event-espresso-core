@@ -6,16 +6,16 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 
 /**
- * Class PrivateDataExporterInterface
+ * Class PersonalDataExporterInterface
  * Interfacing for classes that add data to the private data export (see https://core.trac.wordpress.org/ticket/43546).
- * PrivateDataExporterManager takes care of registering these classes as exporters, and WordPress will call them when
+ * PersonalDataExporterManager takes care of registering these classes as exporters, and WordPress will call them when
  * a request to export data is invoked.
  *
  * @package        Event Espresso
  * @author         Mike Nelson
  * @since          $VID:$
  */
-interface PrivateDataExporterInterface
+interface PersonalDataExporterInterface
 {
     /**
      * Gets the Translated name of this exporter
@@ -49,5 +49,5 @@ interface PrivateDataExporterInterface
 
 
 }
-// End of file PrivateDataExporterInterface.php
-// Location: EventEspresso\core\domain\services\admin/PrivateDataExporterInterface.php
+// End of file PersonalDataExporterInterface.php
+// Location: EventEspresso\core\domain\services\admin/PersonalDataExporterInterface.php

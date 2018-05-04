@@ -3,7 +3,7 @@
 namespace EventEspresso\core\domain\services\admin\privacy\export;
 
 use EEM_Attendee;
-use EventEspresso\core\services\privacy\export\PrivateDataExporterInterface;
+use EventEspresso\core\services\privacy\export\PersonalDataExporterInterface;
 
 /**
  * Class ExportAttendee
@@ -13,7 +13,7 @@ use EventEspresso\core\services\privacy\export\PrivateDataExporterInterface;
  * @author         Mike Nelson
  * @since          $VID:$
  */
-class ExportAttendee implements PrivateDataExporterInterface
+class ExportAttendee implements PersonalDataExporterInterface
 {
     /**
      * @var EEM_Attendee

@@ -13,14 +13,14 @@ use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
 
 /**
- * Class PrivateDataExporterManager
+ * Class PersonalDataExporterManager
  * Manages setting up the hooks to add the EE core and add-ons' privacy policies
  *
  * @package        Event Espresso
  * @author         Mike Nelson
  * @since          $VID:$
  */
-class PrivateDataExporterManager
+class PersonalDataExporterManager
 {
 
     public function __construct()
@@ -52,7 +52,7 @@ class PrivateDataExporterManager
 
 
     /**
-     * @return CollectionInterface|PrivateDataExporterInterface[]
+     * @return CollectionInterface|PersonalDataExporterInterface[]
      * @throws InvalidIdentifierException
      * @throws InvalidInterfaceException
      * @throws InvalidFilePathException
@@ -67,10 +67,10 @@ class PrivateDataExporterManager
             // collection name
                 'privacy_policies',
                 // collection interface
-                'EventEspresso\core\services\privacy\export\PrivateDataExporterInterface',
+                'EventEspresso\core\services\privacy\export\PersonalDataExporterInterface',
                 // FQCNs for classes to add (all classes within that namespace will be loaded)
                 apply_filters(
-                    'FHEE__EventEspresso_core_services_privacy_export_PrivateDataExporterManager__exporters',
+                    'FHEE__EventEspresso_core_services_privacy_export_PersonalDataExporterManager__exporters',
                     array('EventEspresso\core\domain\services\admin\privacy\export')
                 ),
                 // filepaths to classes to add
@@ -86,5 +86,5 @@ class PrivateDataExporterManager
     }
 }
 
-// End of file PrivateDataExporterManager.php
-// Location: EventEspresso\core\domain\services\admin/PrivateDataExporterManager.php
+// End of file PersonalDataExporterManager.php
+// Location: EventEspresso\core\domain\services\admin/PersonalDataExporterManager.php
