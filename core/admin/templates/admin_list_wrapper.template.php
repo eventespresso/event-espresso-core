@@ -10,11 +10,11 @@
 /** @var string $after_list_table */
 ?>
 <?php echo $before_list_table; ?>
-<form id="<?php echo $list_table_class; ?>-table-frm" action="<?php echo $table_url;?>" method="get">
-	<?php $list_table->search_box( $search['btn_label'], $current_page ); ?><br />
-	<?php echo $sortable_list_table_form_fields; ?>
-	<?php $list_table->display_views(); ?>
-	<?php $list_table->display(); ?>
-	<?php echo $list_table_hidden_fields; ?>
+<form id="<?php echo $list_table_class; ?>-table-frm" action="<?php echo $table_url; ?>" method="get">
+    <?php $list_table->search_box($search['btn_label'], $current_page); ?><br/>
+    <?php echo $sortable_list_table_form_fields; ?>
+    <?php $list_table->display_views(); ?>
+    <?php $list_table->display(); ?>
+    <?php echo $list_table_hidden_fields; ?>
 </form>
 <?php echo $after_list_table; ?>
