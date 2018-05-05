@@ -12,10 +12,6 @@ use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\RequestStackCoreAppInterface;
 use EventEspresso\core\services\request\ResponseInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * EE_Load_Espresso_Core
  * This is the core application loader class at the center of the EE Middleware Request Stack.
@@ -59,7 +55,8 @@ class EE_Load_Espresso_Core implements RequestDecoratorInterface, RequestStackCo
      * @param EE_Dependency_Map $dependency_map
      * @throws EE_Error
      */
-	public function __construct(EE_Registry $registry, EE_Dependency_Map $dependency_map) {
+    public function __construct(EE_Registry $registry, EE_Dependency_Map $dependency_map)
+    {
         EE_Error::doing_it_wrong(
             __METHOD__,
             sprintf(
@@ -82,8 +79,8 @@ class EE_Load_Espresso_Core implements RequestDecoratorInterface, RequestStackCo
      * provides "AHEE__EE_System__construct__complete" hook for EE Addons to use as their starting point
      * starting EE Addons from any other point may lead to problems
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface      $response
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
      * @return ResponseInterface
      * @throws EE_Error
      * @throws InvalidDataTypeException
@@ -96,7 +93,6 @@ class EE_Load_Espresso_Core implements RequestDecoratorInterface, RequestStackCo
     }
 
 
-
     /**
      * @return RequestInterface
      */
@@ -105,14 +101,12 @@ class EE_Load_Espresso_Core implements RequestDecoratorInterface, RequestStackCo
     }
 
 
-
     /**
      * @return ResponseInterface
      */
     public function response()
     {
     }
-
 
 
     /**
@@ -124,7 +118,6 @@ class EE_Load_Espresso_Core implements RequestDecoratorInterface, RequestStackCo
     }
 
 
-
     /**
      * @return EE_Registry
      * @throws EE_Error
@@ -134,23 +127,14 @@ class EE_Load_Espresso_Core implements RequestDecoratorInterface, RequestStackCo
     }
 
 
-
-
-
-
     /**
      * called after the request stack has been fully processed
      * if any of the middleware apps has requested the plugin be deactivated, then we do that now
      *
-     * @param RequestInterface $request
+     * @param RequestInterface  $request
      * @param ResponseInterface $response
      */
     public function handleResponse(RequestInterface $request, ResponseInterface $response)
     {
     }
-
-
-
 }
-// End of file EE_Load_Espresso_Core.core.php
-// Location: /core/EE_Load_Espresso_Core.core.php
