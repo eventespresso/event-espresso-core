@@ -1,8 +1,5 @@
 <?php
 
-defined('EVENT_ESPRESSO_MAIN_FILE') || exit;
-
-
 /**
  *    espresso_load_error_handling
  *    this function loads EE's class for handling exceptions and errors
@@ -41,7 +38,7 @@ function espresso_load_required($classname, $full_path_to_file)
     if (is_readable($full_path_to_file)) {
         require_once $full_path_to_file;
     } else {
-        throw new \EE_Error (
+        throw new \EE_Error(
             sprintf(
                 esc_html__(
                     'The %s class file could not be located or is not readable due to file permissions.',
@@ -105,7 +102,3 @@ function bootstrap_espresso()
         new EventEspresso\core\exceptions\ExceptionStackTraceDisplay($e);
     }
 }
-
-
-
-

@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class EE_Integer_Input
@@ -46,7 +43,4 @@ class EE_Integer_Input extends EE_Form_Input_Base
         );
         parent::__construct($input_settings);
     }
-
 }
-// End of file EE_Integer_Input.php
-// Location: core/libraries/form_sections/inputs/EE_Integer_Input.php

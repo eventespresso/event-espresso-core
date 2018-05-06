@@ -3,8 +3,6 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
-
 /**
  * Extend_EE_Registrations_List_Table
  *
@@ -24,11 +22,11 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    function column__REG_date(EE_Registration $item)
+    public function column__REG_date(EE_Registration $item)
     {
         $date_linked = parent::column__REG_date($item);
         $actions = array();
-        //Build row actions
+        // Build row actions
         $check_in_url = EE_Admin_Page::add_query_args_and_nonce(array(
             'action'   => 'event_registrations',
             'event_id' => $item->event_ID(),
@@ -111,15 +109,15 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
                         array('event_id' => $EVT_ID, 'datetime_id' => $datetime->ID()),
                         REG_ADMIN_URL
                     )
-                           . '" title="' . sprintf(
-                               esc_attr__(
-                                   'Filter this list to only show registrations for this datetime %s',
-                                   'event_espresso'
-                               ),
-                               $datetime->name()
-                           ) . '">'
-                           . esc_html__('View Registrations', 'event_espresso')
-                           . '</a>',
+                                               . '" title="' . sprintf(
+                                                   esc_attr__(
+                                                       'Filter this list to only show registrations for this datetime %s',
+                                                       'event_espresso'
+                                                   ),
+                                                   $datetime->name()
+                                               ) . '">'
+                                               . esc_html__('View Registrations', 'event_espresso')
+                                               . '</a>',
                 )
             );
             $datetimes_for_display[] = $datetime_string;

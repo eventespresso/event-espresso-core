@@ -1,1 +1,1 @@
-<?php _e('Registration Not Approved', 'event_espresso'); ?>
+<?php _e('Registration Not Approved', 'event_espresso');

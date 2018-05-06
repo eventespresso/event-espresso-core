@@ -3,9 +3,6 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
-
-
 /**
  * EE_Attendee_Contact_List_Table
  * List table for the EE_Attendee records in the admin.
@@ -42,28 +39,28 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
         );
 
         $this->_columns = array(
-            'cb'          => '<input type="checkbox" />', //Render a checkbox instead of text
-            'ATT_ID'      => esc_html__('ID', 'event_espresso'),
-            'ATT_fname'   => esc_html__('First Name', 'event_espresso'),
-            'ATT_lname'   => esc_html__('Last Name', 'event_espresso'),
-            'ATT_email'   => esc_html__('Email Address', 'event_espresso'),
+            'cb'                 => '<input type="checkbox" />', // Render a checkbox instead of text
+            'ATT_ID'             => esc_html__('ID', 'event_espresso'),
+            'ATT_fname'          => esc_html__('First Name', 'event_espresso'),
+            'ATT_lname'          => esc_html__('Last Name', 'event_espresso'),
+            'ATT_email'          => esc_html__('Email Address', 'event_espresso'),
             'Registration_Count' => esc_html__('# Registrations', 'event_espresso'),
-            'ATT_phone'   => esc_html__('Phone', 'event_espresso'),
-            'ATT_address' => esc_html__('Address', 'event_espresso'),
-            'ATT_city'    => esc_html__('City', 'event_espresso'),
-            'STA_ID'      => esc_html__('State/Province', 'event_espresso'),
-            'CNT_ISO'     => esc_html__('Country', 'event_espresso'),
+            'ATT_phone'          => esc_html__('Phone', 'event_espresso'),
+            'ATT_address'        => esc_html__('Address', 'event_espresso'),
+            'ATT_city'           => esc_html__('City', 'event_espresso'),
+            'STA_ID'             => esc_html__('State/Province', 'event_espresso'),
+            'CNT_ISO'            => esc_html__('Country', 'event_espresso'),
         );
 
         $this->_sortable_columns = array(
-            'ATT_ID'    => array('ATT_ID' => false),
-            'ATT_lname' => array('ATT_lname' => true), //true means its already sorted
-            'ATT_fname' => array('ATT_fname' => false),
-            'ATT_email' => array('ATT_email' => false),
+            'ATT_ID'             => array('ATT_ID' => false),
+            'ATT_lname'          => array('ATT_lname' => true), // true means its already sorted
+            'ATT_fname'          => array('ATT_fname' => false),
+            'ATT_email'          => array('ATT_email' => false),
             'Registration_Count' => array('Registration_Count' => false),
-            'ATT_city'  => array('ATT_city' => false),
-            'STA_ID'    => array('STA_ID' => false),
-            'CNT_ISO'   => array('CNT_ISO' => false),
+            'ATT_city'           => array('ATT_city' => false),
+            'STA_ID'             => array('STA_ID' => false),
+            'CNT_ISO'            => array('CNT_ISO' => false),
         );
 
         $this->_hidden_columns = array(
@@ -71,13 +68,14 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
             'ATT_address',
             'ATT_city',
             'STA_ID',
-            'CNT_ISO'
+            'CNT_ISO',
         );
     }
 
 
     /**
      * Initial setup of filters
+     *
      * @return array
      */
     protected function _get_table_filters()
@@ -88,6 +86,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
 
     /**
      * Initial setup of counts for views
+     *
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -106,6 +105,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
 
     /**
      * Get count of attendees.
+     *
      * @return int
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -121,7 +121,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
     /**
      * Checkbox column
      *
-     * @param EE_Attendee $attendee  Unable to typehint this method because overrides parent.
+     * @param EE_Attendee $attendee Unable to typehint this method because overrides parent.
      * @return string
      * @throws EE_Error
      */
@@ -197,7 +197,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
      */
     public function column_ATT_fname(EE_Attendee $attendee)
     {
-        //Build row actions
+        // Build row actions
         $actions = array();
         // edit attendee link
         if (EE_Registry::instance()->CAP->current_user_can(
@@ -239,20 +239,26 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
                 'espresso_registrations_restore_attendees'
             )) {
                 // restore attendee link
-                $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-                    'action' => 'restore_attendees',
-                    'ATT_ID' => $attendee->ID(),
-                ), REG_ADMIN_URL);
+                $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+                    array(
+                        'action' => 'restore_attendees',
+                        'ATT_ID' => $attendee->ID(),
+                    ),
+                    REG_ADMIN_URL
+                );
                 $actions['restore'] = '<a href="' . $restore_lnk_url . '" title="'
                                       . esc_attr__('Restore Contact', 'event_espresso') . '">'
                                       . esc_html__('Restore', 'event_espresso') . '</a>';
             }
         }
 
-        $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-            'action' => 'edit_attendee',
-            'post'   => $attendee->ID(),
-        ), REG_ADMIN_URL);
+        $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'action' => 'edit_attendee',
+                'post'   => $attendee->ID(),
+            ),
+            REG_ADMIN_URL
+        );
         $name_link = EE_Registry::instance()->CAP->current_user_can(
             'ee_edit_contacts',
             'espresso_registrations_edit_attendee'
@@ -261,7 +267,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
               . esc_attr__('Edit Contact', 'event_espresso') . '">' . $attendee->fname() . '</a>'
             : $attendee->fname();
 
-        //Return the name contents
+        // Return the name contents
         return sprintf('%1$s %2$s', $name_link, $this->row_actions($actions));
     }
 
@@ -291,7 +297,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
         $link = EEH_URL::add_query_args_and_nonce(
             array(
                 'action' => 'default',
-                'ATT_ID' => $attendee->ID()
+                'ATT_ID' => $attendee->ID(),
             ),
             REG_ADMIN_URL
         );
@@ -338,8 +344,8 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
     public function column_STA_ID(EE_Attendee $attendee)
     {
         $states = EEM_State::instance()->get_all_states();
-        $state = isset($states[$attendee->state_ID()])
-            ? $states[$attendee->state_ID()]->get('STA_name')
+        $state = isset($states[ $attendee->state_ID() ])
+            ? $states[ $attendee->state_ID() ]->get('STA_name')
             : $attendee->state_ID();
         return ! is_numeric($state) ? $state : '';
     }
@@ -358,8 +364,8 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
     public function column_CNT_ISO(EE_Attendee $attendee)
     {
         $countries = EEM_Country::instance()->get_all_countries();
-        $country = isset($countries[$attendee->country_ID()])
-            ? $countries[$attendee->country_ID()]->get('CNT_name')
+        $country = isset($countries[ $attendee->country_ID() ])
+            ? $countries[ $attendee->country_ID() ]->get('CNT_name')
             : $attendee->country_ID();
         return ! is_numeric($country) ? $country : '';
     }

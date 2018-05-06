@@ -67,11 +67,11 @@
 </li>
 <li style="list-style-type: none;">
 <strong><?php _e('View Registration Details <span class="dashicons dashicons-clipboard"></span>', 'event_espresso'); ?></strong><br />
-<?php echo sprintf(__('Clicking this icon will take you to the registration page for this transaction. You can also get there via the %sRegistrations page%s.', 'event_espresso'), '<a href="admin.php?page=espresso_registrations">','</a>'); ?>
+<?php echo sprintf(__('Clicking this icon will take you to the registration page for this transaction. You can also get there via the %sRegistrations page%s.', 'event_espresso'), '<a href="admin.php?page=espresso_registrations">', '</a>'); ?>
 </li>
 <li style="list-style-type: none;">
 <strong><?php _e('Send Payment Reminder <span class="dashicons dashicons-email-alt"></span>', 'event_espresso'); ?></strong><br />
-<?php echo sprintf(__('Emails the primary registrant the Payment Reminder message. This is set up in the %sMessages page%s.', 'event_espresso'),'<a href="admin.php?page=espresso_messages">','</a>'); ?>
+<?php echo sprintf(__('Emails the primary registrant the Payment Reminder message. This is set up in the %sMessages page%s.', 'event_espresso'), '<a href="admin.php?page=espresso_messages">', '</a>'); ?>
 </li>
 </ul>
 </li>

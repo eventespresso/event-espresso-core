@@ -6,7 +6,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 // if you're a dev and want to receive all errors via email
 // add this to your wp-config.php: define( 'EE_ERROR_EMAILS', TRUE );
@@ -14,7 +13,6 @@ if (defined('WP_DEBUG') && WP_DEBUG === true && defined('EE_ERROR_EMAILS') && EE
     set_error_handler(array('EE_Error', 'error_handler'));
     register_shutdown_function(array('EE_Error', 'fatal_error_handler'));
 }
-
 
 
 /**
@@ -57,7 +55,6 @@ class EE_Error extends Exception
     private static $_espresso_notices = array('success' => false, 'errors' => false, 'attention' => false);
 
 
-
     /**
      * @override default exception handling
      * @param string         $message
@@ -88,18 +85,18 @@ class EE_Error extends Exception
         $type = EE_Error::error_type($code);
         $site = site_url();
         switch ($site) {
-            case 'http://ee4.eventespresso.com/' :
-            case 'http://ee4decaf.eventespresso.com/' :
-            case 'http://ee4hf.eventespresso.com/' :
-            case 'http://ee4a.eventespresso.com/' :
-            case 'http://ee4ad.eventespresso.com/' :
-            case 'http://ee4b.eventespresso.com/' :
-            case 'http://ee4bd.eventespresso.com/' :
-            case 'http://ee4d.eventespresso.com/' :
-            case 'http://ee4dd.eventespresso.com/' :
+            case 'http://ee4.eventespresso.com/':
+            case 'http://ee4decaf.eventespresso.com/':
+            case 'http://ee4hf.eventespresso.com/':
+            case 'http://ee4a.eventespresso.com/':
+            case 'http://ee4ad.eventespresso.com/':
+            case 'http://ee4b.eventespresso.com/':
+            case 'http://ee4bd.eventespresso.com/':
+            case 'http://ee4d.eventespresso.com/':
+            case 'http://ee4dd.eventespresso.com/':
                 $to = 'developers@eventespresso.com';
                 break;
-            default :
+            default:
                 $to = get_option('admin_email');
         }
         $subject = $type . ' ' . $message . ' in ' . EVENT_ESPRESSO_VERSION . ' on ' . site_url();
@@ -112,7 +109,6 @@ class EE_Error extends Exception
         echo $type . ': ' . $message . '<br />' . $file . ' line ' . $line;
         echo '<br /></p></div>';
     }
-
 
 
     /**
@@ -162,7 +158,6 @@ class EE_Error extends Exception
     }
 
 
-
     /**
      *    fatal_error_handler
      *
@@ -175,7 +170,6 @@ class EE_Error extends Exception
             EE_Error::error_handler(E_ERROR, $last_error['message'], $last_error['file'], $last_error['line']);
         }
     }
-
 
 
     /**
@@ -199,7 +193,6 @@ class EE_Error extends Exception
     }
 
 
-
     /**
      * set_content_type
      *
@@ -210,7 +203,6 @@ class EE_Error extends Exception
     {
         return 'text/html';
     }
-
 
 
     /**
@@ -230,15 +222,15 @@ class EE_Error extends Exception
         $msg = WP_DEBUG ? $dev_msg : $user_msg;
         // add details to _all_exceptions array
         $x_time = time();
-        self::$_all_exceptions[$x_time]['name'] = get_class($this);
-        self::$_all_exceptions[$x_time]['file'] = $this->getFile();
-        self::$_all_exceptions[$x_time]['line'] = $this->getLine();
-        self::$_all_exceptions[$x_time]['msg'] = $msg;
-        self::$_all_exceptions[$x_time]['code'] = $this->getCode();
-        self::$_all_exceptions[$x_time]['trace'] = $this->getTrace();
-        self::$_all_exceptions[$x_time]['string'] = $this->getTraceAsString();
+        self::$_all_exceptions[ $x_time ]['name'] = get_class($this);
+        self::$_all_exceptions[ $x_time ]['file'] = $this->getFile();
+        self::$_all_exceptions[ $x_time ]['line'] = $this->getLine();
+        self::$_all_exceptions[ $x_time ]['msg'] = $msg;
+        self::$_all_exceptions[ $x_time ]['code'] = $this->getCode();
+        self::$_all_exceptions[ $x_time ]['trace'] = $this->getTrace();
+        self::$_all_exceptions[ $x_time ]['string'] = $this->getTraceAsString();
         self::$_error_count++;
-        //add_action( 'shutdown', array( $this, 'display_errors' ));
+        // add_action( 'shutdown', array( $this, 'display_errors' ));
         $this->display_errors();
     }
 
@@ -254,8 +246,8 @@ class EE_Error extends Exception
      */
     public static function has_error($check_stored = false, $type_to_check = 'errors')
     {
-        $has_error = isset(self::$_espresso_notices[$type_to_check])
-                     && ! empty(self::$_espresso_notices[$type_to_check])
+        $has_error = isset(self::$_espresso_notices[ $type_to_check ])
+                     && ! empty(self::$_espresso_notices[ $type_to_check ])
             ? true
             : false;
         if ($check_stored && ! $has_error) {
@@ -268,7 +260,6 @@ class EE_Error extends Exception
         }
         return $has_error;
     }
-
 
 
     /**
@@ -374,7 +365,7 @@ class EE_Error extends Exception
                         $file = $a->getFileName();
                         if (empty($line) && ! empty($function)) {
                             try {
-                                //if $function is a closure, this throws an exception
+                                // if $function is a closure, this throws an exception
                                 $b = new ReflectionMethod($class, $function);
                                 $line = $b->getStartLine();
                             } catch (Exception $closure_exception) {
@@ -487,7 +478,6 @@ class EE_Error extends Exception
     }
 
 
-
     /**
      *    generate string from exception trace args
      *
@@ -528,7 +518,6 @@ class EE_Error extends Exception
     }
 
 
-
     /**
      *    add error message
      *
@@ -544,7 +533,6 @@ class EE_Error extends Exception
         self::_add_notice('errors', $msg, $file, $func, $line);
         self::$_error_count++;
     }
-
 
 
     /**
@@ -566,7 +554,6 @@ class EE_Error extends Exception
     }
 
 
-
     /**
      *    add success message
      *
@@ -581,7 +568,6 @@ class EE_Error extends Exception
     {
         self::_add_notice('success', $msg, $file, $func, $line);
     }
-
 
 
     /**
@@ -600,11 +586,10 @@ class EE_Error extends Exception
     }
 
 
-
     /**
      * @param string $type whether the message is for a success or error notification
-     * @param string $msg the message to display to users or developers
-     *                    - adding a double pipe || (OR) creates separate messages for user || dev
+     * @param string $msg  the message to display to users or developers
+     *                     - adding a double pipe || (OR) creates separate messages for user || dev
      * @param string $file the file that the error occurred in - just use __FILE__
      * @param string $func the function/method that the error occurred in - just use __FUNCTION__
      * @param string $line the line number where the error occurred - just use __LINE__
@@ -616,8 +601,10 @@ class EE_Error extends Exception
             EE_Error::doing_it_wrong(
                 'EE_Error::add_' . $type . '()',
                 sprintf(
-                    __('Notifications are not much use without a message! Please add a message to the EE_Error::add_%s() call made in %s on line %d',
-                        'event_espresso'),
+                    __(
+                        'Notifications are not much use without a message! Please add a message to the EE_Error::add_%s() call made in %s on line %d',
+                        'event_espresso'
+                    ),
                     $type,
                     $file,
                     $line
@@ -628,15 +615,17 @@ class EE_Error extends Exception
         if ($type === 'errors' && (empty($file) || empty($func) || empty($line))) {
             EE_Error::doing_it_wrong(
                 'EE_Error::add_error()',
-                __('You need to provide the file name, function name, and line number that the error occurred on in order to better assist with debugging.',
-                    'event_espresso'),
+                __(
+                    'You need to provide the file name, function name, and line number that the error occurred on in order to better assist with debugging.',
+                    'event_espresso'
+                ),
                 EVENT_ESPRESSO_VERSION
             );
         }
         // get separate user and developer messages if they exist
-        $msg      = explode('||', $msg);
+        $msg = explode('||', $msg);
         $user_msg = $msg[0];
-        $dev_msg  = isset($msg[1]) ? $msg[1] : $msg[0];
+        $dev_msg = isset($msg[1]) ? $msg[1] : $msg[0];
         /**
          * Do an action so other code can be triggered when a notice is created
          *
@@ -658,9 +647,9 @@ class EE_Error extends Exception
             }
             // add notice. Index by code if it's not blank
             if ($notice_code) {
-                self::$_espresso_notices[$type][$notice_code] = $msg;
+                self::$_espresso_notices[ $type ][ $notice_code ] = $msg;
             } else {
-                self::$_espresso_notices[$type][] = $msg;
+                self::$_espresso_notices[ $type ][] = $msg;
             }
             add_action('wp_footer', array('EE_Error', 'enqueue_error_scripts'), 1);
         }
@@ -678,7 +667,6 @@ class EE_Error extends Exception
     }
 
 
-
     /**
      * in some case it may be necessary to overwrite the existing attention messages
      *
@@ -688,7 +676,6 @@ class EE_Error extends Exception
     {
         self::$_espresso_notices['attention'] = false;
     }
-
 
 
     /**
@@ -702,17 +689,15 @@ class EE_Error extends Exception
     }
 
 
-
     /**
      * @return void
      */
     public static function reset_notices()
     {
-        self::$_espresso_notices['success']   = false;
+        self::$_espresso_notices['success'] = false;
         self::$_espresso_notices['attention'] = false;
-        self::$_espresso_notices['errors']    = false;
+        self::$_espresso_notices['errors'] = false;
     }
-
 
 
     /**
@@ -865,9 +850,9 @@ class EE_Error extends Exception
      */
     public static function get_notices($format_output = true, $save_to_transient = false, $remove_empty = true)
     {
-        $success_messages   = '';
+        $success_messages = '';
         $attention_messages = '';
-        $error_messages     = '';
+        $error_messages = '';
         // either save notices to the db
         if ($save_to_transient || isset($_REQUEST['activate-selected'])) {
             self::$_espresso_notices = array_merge(
@@ -882,13 +867,13 @@ class EE_Error extends Exception
         if (self::$_espresso_notices['success'] && ! empty(self::$_espresso_notices['success'])) {
             // combine messages
             $success_messages .= implode(self::$_espresso_notices['success'], '<br />');
-            $print_scripts    = true;
+            $print_scripts = true;
         }
         // check for attention messages
         if (self::$_espresso_notices['attention'] && ! empty(self::$_espresso_notices['attention'])) {
             // combine messages
             $attention_messages .= implode(self::$_espresso_notices['attention'], '<br />');
-            $print_scripts      = true;
+            $print_scripts = true;
         }
         // check for error messages
         if (self::$_espresso_notices['errors'] && ! empty(self::$_espresso_notices['errors'])) {
@@ -897,7 +882,7 @@ class EE_Error extends Exception
                 : __('An error has occurred:<br />', 'event_espresso');
             // combine messages
             $error_messages .= implode(self::$_espresso_notices['errors'], '<br />');
-            $print_scripts  = true;
+            $print_scripts = true;
         }
         if ($format_output) {
             $notices = EE_Error::formatNoticesOutput(
@@ -915,7 +900,7 @@ class EE_Error extends Exception
                 // remove empty notices
                 foreach ($notices as $type => $notice) {
                     if (empty($notice)) {
-                        unset($notices[$type]);
+                        unset($notices[ $type ]);
                     }
                 }
             }
@@ -967,13 +952,13 @@ class EE_Error extends Exception
     private static function formatNoticesOutput($success_messages, $attention_messages, $error_messages)
     {
         $notices = '<div id="espresso-notices">';
-        $close   = is_admin()
+        $close = is_admin()
             ? ''
             : '<a class="close-espresso-notice hide-if-no-js"><span class="dashicons dashicons-no"/></a>';
         if ($success_messages !== '') {
-            $css_id    = is_admin() ? 'ee-success-message' : 'espresso-notices-success';
+            $css_id = is_admin() ? 'ee-success-message' : 'espresso-notices-success';
             $css_class = is_admin() ? 'updated fade' : 'success fade-away';
-            //showMessage( $success_messages );
+            // showMessage( $success_messages );
             $notices .= '<div id="' . $css_id . '" '
                         . 'class="espresso-notices ' . $css_class . '" '
                         . 'style="display:none;">'
@@ -982,9 +967,9 @@ class EE_Error extends Exception
                         . '</div>';
         }
         if ($attention_messages !== '') {
-            $css_id    = is_admin() ? 'ee-attention-message' : 'espresso-notices-attention';
+            $css_id = is_admin() ? 'ee-attention-message' : 'espresso-notices-attention';
             $css_class = is_admin() ? 'updated ee-notices-attention' : 'attention fade-away';
-            //showMessage( $error_messages, TRUE );
+            // showMessage( $error_messages, TRUE );
             $notices .= '<div id="' . $css_id . '" '
                         . 'class="espresso-notices ' . $css_class . '" '
                         . 'style="display:none;">'
@@ -993,9 +978,9 @@ class EE_Error extends Exception
                         . '</div>';
         }
         if ($error_messages !== '') {
-            $css_id    = is_admin() ? 'ee-error-message' : 'espresso-notices-error';
+            $css_id = is_admin() ? 'ee-error-message' : 'espresso-notices-error';
             $css_class = is_admin() ? 'error' : 'error fade-away';
-            //showMessage( $error_messages, TRUE );
+            // showMessage( $error_messages, TRUE );
             $notices .= '<div id="' . $css_id . '" '
                         . 'class="espresso-notices ' . $css_class . '" '
                         . 'style="display:none;">'
@@ -1006,7 +991,6 @@ class EE_Error extends Exception
         $notices .= '</div>';
         return $notices;
     }
-
 
 
     /**
@@ -1043,7 +1027,6 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
     }
 
 
-
     /**
      * @return void
      */
@@ -1051,7 +1034,6 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
     {
         self::_print_scripts();
     }
-
 
 
     /**
@@ -1065,13 +1047,12 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
      */
     public static function generate_error_code($file = '', $func = '', $line = '')
     {
-        $file       = explode('.', basename($file));
+        $file = explode('.', basename($file));
         $error_code = ! empty($file[0]) ? $file[0] : '';
         $error_code .= ! empty($func) ? ' - ' . $func : '';
         $error_code .= ! empty($line) ? ' - ' . $line : '';
         return $error_code;
     }
-
 
 
     /**
@@ -1105,11 +1086,17 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
         try {
             error_log($exception_log);
         } catch (EE_Error $e) {
-            EE_Error::add_error(sprintf(__('Event Espresso error logging could not be setup because: %s',
-                'event_espresso'), $e->getMessage()));
+            EE_Error::add_error(
+                sprintf(
+                    __(
+                        'Event Espresso error logging could not be setup because: %s',
+                        'event_espresso'
+                    ),
+                    $e->getMessage()
+                )
+            );
         }
     }
-
 
 
     /**
@@ -1146,21 +1133,19 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
     }
 
 
-
     /**
      * Like get_notices, but returns an array of all the notices of the given type.
      *
      * @return array {
-     *  @type array $success   all the success messages
-     *  @type array $errors    all the error messages
-     *  @type array $attention all the attention messages
+     * @type array $success   all the success messages
+     * @type array $errors    all the error messages
+     * @type array $attention all the attention messages
      * }
      */
     public static function get_raw_notices()
     {
         return self::$_espresso_notices;
     }
-
 
 
     /**
@@ -1187,7 +1172,6 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
             '4.9.27'
         );
     }
-
 
 
     /**
@@ -1219,7 +1203,6 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
     }
 
 
-
     /**
      * @deprecated 4.9.27
      * @param  string $pan_name    the name, or key of the Persistent Admin Notice to be stored
@@ -1239,7 +1222,6 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
     }
 
 
-
     /**
      * @deprecated 4.9.27
      * @param string $return_url
@@ -1255,10 +1237,8 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
             '4.9.27'
         );
     }
-
-
-
 }
+
 // end of Class EE_Exceptions
 
 

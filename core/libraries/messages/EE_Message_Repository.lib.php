@@ -1,8 +1,4 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
 
 /**
  * Serves as a repository for EE_Message objects
@@ -37,8 +33,8 @@ class EE_Message_Repository extends EE_Base_Class_Repository
     public function add($message, $info = null)
     {
         $attached = parent::add($message);
-        //ensure $info is an array if not already
-        $info = $info === null ? $info = array() : (array)$info;
+        // ensure $info is an array if not already
+        $info = $info === null ? $info = array() : (array) $info;
         $data = $this->_init_data($info, $attached, $message);
         if ($attached) {
             $this->set_info($message, $data);
@@ -79,9 +75,9 @@ class EE_Message_Repository extends EE_Base_Class_Repository
         }
         if ($attached && $message->STS_ID() === EEM_Message::status_incomplete) {
             $generation_data = isset($info['MSG_generation_data']) ? $info['MSG_generation_data'] : array();
-            //if data isn't in $info...let's see if its available via the message object
+            // if data isn't in $info...let's see if its available via the message object
             $generation_data = ! $generation_data ? $message->get_generation_data() : $generation_data;
-            //still empty then let's just use info
+            // still empty then let's just use info
             $generation_data                     = ! $generation_data ? $info : $generation_data;
             $data['data']['MSG_generation_data'] = $generation_data;
         }
@@ -105,7 +101,7 @@ class EE_Message_Repository extends EE_Base_Class_Repository
 
         if (! $do_hooks_only) {
             $this->rewind();
-            //exit early if there is nothing to save.
+            // exit early if there is nothing to save.
             if ($this->count() < 1) {
                 return $save_tracking;
             }
@@ -119,7 +115,7 @@ class EE_Message_Repository extends EE_Base_Class_Repository
                 } else {
                     $save_tracking['notupdated']++;
                 }
-                //maybe persist generation data if this is an incomplete EE_Message.
+                // maybe persist generation data if this is an incomplete EE_Message.
                 $this->_maybe_persist_attached_data();
 
                 $this->next();
@@ -158,8 +154,8 @@ class EE_Message_Repository extends EE_Base_Class_Repository
      */
     public function get_generation_data()
     {
-        //first verify we're at a valid iterator point.
-        if ( ! $this->valid()) {
+        // first verify we're at a valid iterator point.
+        if (! $this->valid()) {
             return array();
         }
         $info = $this->getInfo();
@@ -174,7 +170,7 @@ class EE_Message_Repository extends EE_Base_Class_Repository
      */
     public function get_data_handler()
     {
-        if ( ! $this->valid()) {
+        if (! $this->valid()) {
             return '';
         }
         $info = $this->getInfo();
@@ -189,7 +185,7 @@ class EE_Message_Repository extends EE_Base_Class_Repository
      */
     public function is_preview()
     {
-        if ( ! $this->valid()) {
+        if (! $this->valid()) {
             return false;
         }
         $info = $this->getInfo();
@@ -204,7 +200,7 @@ class EE_Message_Repository extends EE_Base_Class_Repository
      */
     public function is_test_send()
     {
-        if ( ! $this->valid()) {
+        if (! $this->valid()) {
             return false;
         }
         $info = $this->getInfo();
@@ -218,7 +214,7 @@ class EE_Message_Repository extends EE_Base_Class_Repository
      */
     protected function _maybe_persist_attached_data()
     {
-        if ( ! $this->valid()) {
+        if (! $this->valid()) {
             return;
         }
 
@@ -241,15 +237,17 @@ class EE_Message_Repository extends EE_Base_Class_Repository
      */
     public function count_by_priority_and_status($priority, $status = array())
     {
-        if ( ! empty($status)) {
+        if (! empty($status)) {
             $status = is_array($status) ? $status : array($status);
         }
 
         $count = 0;
         $this->rewind();
         while ($this->valid()) {
-            if ($this->current()->priority() === $priority && (($status && in_array($this->current()->STS_ID(),
-                            $status)) || ! $status)
+            if ($this->current()->priority() === $priority && (($status && in_array(
+                $this->current()->STS_ID(),
+                $status
+            )) || ! $status)
             ) {
                 $count++;
             }
@@ -266,6 +264,4 @@ class EE_Message_Repository extends EE_Base_Class_Repository
     {
         return parent::current();
     }
-
-
 }
