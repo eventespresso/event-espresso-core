@@ -1,4 +1,4 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php
 /**
  * ESPRESSO_EVENTS
  *
@@ -7,40 +7,45 @@
  * @subpackage  /shortcodes/
  * @author      Brent Christensen
  */
-class EES_Espresso_Events  extends EES_Shortcode {
+class EES_Espresso_Events extends EES_Shortcode
+{
 
-	/**
+    /**
      * @deprecated 4.9.27
-     *  @return 	void
-	 */
-	public static function set_hooks() {
-	}
+     *  @return     void
+     */
+    public static function set_hooks()
+    {
+    }
 
-	/**
+    /**
      * @deprecated 4.9.27
-     *  @return 	void
-	 */
-	public static function set_hooks_admin() {
-	}
+     *  @return     void
+     */
+    public static function set_hooks_admin()
+    {
+    }
 
 
 
-	/**
+    /**
      * @deprecated 4.9.27
      * @param WP $WP
-	 * @return    void
-	 */
-	public function run( WP $WP ) {
-	}
+     * @return    void
+     */
+    public function run(WP $WP)
+    {
+    }
 
 
 
-	/**
+    /**
      * @deprecated 4.9.27
-     *  @param 	array 	$attributes
-	 *  @return 	string
-	 */
-	public function process_shortcode( $attributes = array() ) {
+     *  @param  array   $attributes
+     *  @return     string
+     */
+    public function process_shortcode($attributes = array())
+    {
         \EE_Error::doing_it_wrong(
             __METHOD__,
             __(
@@ -51,17 +56,4 @@ class EES_Espresso_Events  extends EES_Shortcode {
         );
         return '';
     }
-
-
-
 }
-
-
-
-
-
-
-
-
-// End of file EES_Espresso_Events.shortcode.php
-// Location: /shortcodes/EES_Espresso_Events.shortcode.php
