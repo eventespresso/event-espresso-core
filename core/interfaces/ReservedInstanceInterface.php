@@ -2,10 +2,6 @@
 
 namespace EventEspresso\core\interfaces;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Interface ReservedInstanceInterface
  * Classes implementing this interface will always be shared by the DI container

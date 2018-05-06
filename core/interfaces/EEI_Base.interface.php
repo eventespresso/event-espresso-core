@@ -1,6 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
 
 /**
  * Interface EEI_Base
@@ -84,7 +82,7 @@ interface EEI_Base
      * @param mixed   $default if we don't find anything, what should we return?
      * @return mixed single value if $single; array if ! $single
      */
-    public function get_extra_meta($meta_key, $single = false, $default = NULL);
+    public function get_extra_meta($meta_key, $single = false, $default = null);
 
 
 
@@ -101,9 +99,4 @@ interface EEI_Base
      * @throws \EE_Error
      */
     public function get_pretty($field_name, $extra_cache_ref);
-
-
-
 }
-// End of file EEI_Base.interface.php
-// Location: core/interfaces/EEI_Base.interface.php
