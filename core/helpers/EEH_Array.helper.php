@@ -1,9 +1,4 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
-
-require_once(EE_HELPERS . 'EEH_Base.helper.php');
 
 /**
  * EE_Array
@@ -70,12 +65,12 @@ class EEH_Array extends EEH_Base
         if (is_array($arr)) {
             $first_item = reset($arr);
             if (is_array($first_item)) {
-                return true;//yep, there's at least 2 levels to this array
+                return true;// yep, there's at least 2 levels to this array
             } else {
-                return false;//nope, only 1 level
+                return false;// nope, only 1 level
             }
         } else {
-            return false;//its not an array at all!
+            return false;// its not an array at all!
         }
     }
 
@@ -89,7 +84,7 @@ class EEH_Array extends EEH_Base
      */
     public static function is_set($arr, $index, $default)
     {
-        return isset($arr[$index]) ? $arr[$index] : $default;
+        return isset($arr[ $index ]) ? $arr[ $index ] : $default;
     }
 
     /**
@@ -101,7 +96,7 @@ class EEH_Array extends EEH_Base
     public static function maybe_unserialize($value)
     {
         $data = maybe_unserialize($value);
-        //it's possible that this still has serialized data if its the session.  WP has a bug, http://core.trac.wordpress.org/ticket/26118 that doesnt' unserialize this automatically.
+        // it's possible that this still has serialized data if its the session.  WP has a bug, http://core.trac.wordpress.org/ticket/26118 that doesnt' unserialize this automatically.
         $token = 'C';
         $data = is_string($data) ? trim($data) : $data;
         if (is_string($data) && strlen($data) > 1 && $data[0] == $token && preg_match("/^{$token}:[0-9]+:/s", $data)) {
@@ -130,8 +125,8 @@ class EEH_Array extends EEH_Base
         $preserve_keys = true
     ) {
         // ensure incoming arrays are actually arrays
-        $target_array = (array)$target_array;
-        $array_to_insert = (array)$array_to_insert;
+        $target_array = (array) $target_array;
+        $array_to_insert = (array) $array_to_insert;
         // if no offset key was supplied
         if (empty($offset)) {
             // use start or end of $target_array based on whether we are adding before or not
@@ -148,8 +143,12 @@ class EEH_Array extends EEH_Base
             // take a slice of the target array from the beginning till the offset,
             // then add the new data
             // then add another slice that starts at the offset and goes till the end
-            return array_slice($target_array, 0, $offset, true) + $array_to_insert + array_slice($target_array, $offset,
-                    null, true);
+            return array_slice($target_array, 0, $offset, true) + $array_to_insert + array_slice(
+                $target_array,
+                $offset,
+                null,
+                true
+            );
         } else {
             // since we don't want to preserve keys, we can use array_splice
             array_splice($target_array, $offset, 0, $array_to_insert);
@@ -172,7 +171,7 @@ class EEH_Array extends EEH_Base
     public static function merge_arrays_and_overwrite_keys(array $array1, array $array2)
     {
         foreach ($array2 as $key => $value) {
-            $array1[$key] = $value;
+            $array1[ $key ] = $value;
         }
         return $array1;
     }
@@ -194,8 +193,8 @@ class EEH_Array extends EEH_Base
         $multidimensional = array();
         $reference = &$multidimensional;
         foreach ($flat_array as $key) {
-            $reference[$key] = array();
-            $reference = &$reference[$key];
+            $reference[ $key ] = array();
+            $reference = &$reference[ $key ];
         }
         if ($final_value !== null) {
             $reference = $final_value;
@@ -213,6 +212,4 @@ class EEH_Array extends EEH_Base
     {
         return ! empty($array) ? array_keys($array) === range(0, count($array) - 1) : true;
     }
-
-
-} //end EEH_Template class
+}
