@@ -776,7 +776,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     public static function session_checkout_reset(EE_Session $session)
     {
         // don't release tickets if cart was already reset
-        if(did_action('AHEE__EE_Session__reset_cart__before_reset')) {
+        if (did_action('AHEE__EE_Session__reset_cart__before_reset')) {
             return;
         }
         $checkout = $session->checkout();
