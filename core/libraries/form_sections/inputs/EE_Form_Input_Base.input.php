@@ -1,9 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
+<?php
 /**
  * EE_Form_Input_Base
  * For representing a single form input. Extends EE_Form_Section_Base because
@@ -202,17 +197,17 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function __construct($input_args = array())
     {
-        $input_args = (array)apply_filters('FHEE__EE_Form_Input_Base___construct__input_args', $input_args, $this);
+        $input_args = (array) apply_filters('FHEE__EE_Form_Input_Base___construct__input_args', $input_args, $this);
         // the following properties must be cast as arrays
         if (isset($input_args['validation_strategies'])) {
-            foreach ((array)$input_args['validation_strategies'] as $validation_strategy) {
+            foreach ((array) $input_args['validation_strategies'] as $validation_strategy) {
                 if ($validation_strategy instanceof EE_Validation_Strategy_Base && empty($input_args['ignore_input'])) {
-                    $this->_validation_strategies[get_class($validation_strategy)] = $validation_strategy;
+                    $this->_validation_strategies[ get_class($validation_strategy) ] = $validation_strategy;
                 }
             }
             unset($input_args['validation_strategies']);
         }
-        if(isset($input_args['ignore_input'])) {
+        if (isset($input_args['ignore_input'])) {
             $this->_validation_strategies = array();
         }
         // loop thru incoming options
@@ -225,11 +220,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         }
         // ensure that "required" is set correctly
         $this->set_required(
-            $this->_required, isset($input_args['required_validation_error_message'])
+            $this->_required,
+            isset($input_args['required_validation_error_message'])
             ? $input_args['required_validation_error_message']
             : null
         );
-        //$this->_html_name_specified = isset( $input_args['html_name'] ) ? TRUE : FALSE;
+        // $this->_html_name_specified = isset( $input_args['html_name'] ) ? TRUE : FALSE;
         $this->_display_strategy->_construct_finalize($this);
         foreach ($this->_validation_strategies as $validation_strategy) {
             $validation_strategy->_construct_finalize($this);
@@ -241,7 +237,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
                 $this->_normalization_strategy = new EE_Text_Normalization();
         }
         $this->_normalization_strategy->_construct_finalize($this);
-        //at least we can use the normalization strategy to populate the default
+        // at least we can use the normalization strategy to populate the default
         if (isset($input_args['default'])) {
             $this->set_default($input_args['default']);
             unset($input_args['default']);
@@ -462,11 +458,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     public function remove_validation_strategy($validation_strategy_classname)
     {
         foreach ($this->_validation_strategies as $key => $validation_strategy) {
-            if (
-                $validation_strategy instanceof $validation_strategy_classname
+            if ($validation_strategy instanceof $validation_strategy_classname
                 || is_subclass_of($validation_strategy, $validation_strategy_classname)
             ) {
-                unset($this->_validation_strategies[$key]);
+                unset($this->_validation_strategies[ $key ]);
             }
         }
     }
@@ -639,27 +634,27 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     protected function _normalize($req_data)
     {
-        //any existing validation errors don't apply so clear them
+        // any existing validation errors don't apply so clear them
         $this->_validation_errors = array();
-        //if the input is disabled, ignore whatever input was sent in
-        if($this->isDisabled()) {
+        // if the input is disabled, ignore whatever input was sent in
+        if ($this->isDisabled()) {
             $this->_set_raw_value(null);
             $this->_set_normalized_value($this->get_default());
             return false;
         }
         try {
             $raw_input = $this->find_form_data_for_this_section($req_data);
-            //super simple sanitization for now
+            // super simple sanitization for now
             if (is_array($raw_input)) {
                 $raw_value = array();
                 foreach ($raw_input as $key => $value) {
-                    $raw_value[$key] = $this->_sanitize($value);
+                    $raw_value[ $key ] = $this->_sanitize($value);
                 }
                 $this->_set_raw_value($raw_value);
             } else {
                 $this->_set_raw_value($this->_sanitize($raw_input));
             }
-            //we want to mostly leave the input alone in case we need to re-display it to the user
+            // we want to mostly leave the input alone in case we need to re-display it to the user
             $this->_set_normalized_value($this->_normalization_strategy->normalize($this->raw_value()));
             return false;
         } catch (EE_Validation_Error $e) {
@@ -838,7 +833,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         }
         if (! empty($jquery_validation_rules)) {
             foreach ($this->get_display_strategy()->get_html_input_ids(true) as $html_id_with_pound_sign) {
-                $jquery_validation_js[$html_id_with_pound_sign] = $jquery_validation_rules;
+                $jquery_validation_js[ $html_id_with_pound_sign ] = $jquery_validation_rules;
             }
         }
         return $jquery_validation_js;
@@ -910,7 +905,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     public function set_required($required = true, $required_text = null)
     {
         $required = filter_var($required, FILTER_VALIDATE_BOOLEAN);
-        //whether $required is a string or a boolean, we want to add a required validation strategy
+        // whether $required is a string or a boolean, we want to add a required validation strategy
         if ($required) {
             $this->_add_validation_strategy(new EE_Required_Validation_Strategy($required_text));
         } else {
@@ -986,14 +981,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function clean_sensitive_data()
     {
-        //if we do ANY kind of sensitive data removal on this, then just clear out the raw value
-        //if we need more logic than this we'll make a strategy for it
+        // if we do ANY kind of sensitive data removal on this, then just clear out the raw value
+        // if we need more logic than this we'll make a strategy for it
         if ($this->_sensitive_data_removal_strategy
             && ! $this->_sensitive_data_removal_strategy instanceof EE_No_Sensitive_Data_Removal
         ) {
             $this->_set_raw_value(null);
         }
-        //and clean the normalized value according to the appropriate strategy
+        // and clean the normalized value according to the appropriate strategy
         $this->_set_normalized_value(
             $this->get_sensitive_data_removal_strategy()->remove_sensitive_data(
                 $this->_normalized_value
@@ -1013,24 +1008,24 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         $button_css_attributes = 'button';
         $button_css_attributes .= $primary === true ? ' button-primary' : ' button-secondary';
         switch ($button_size) {
-            case 'xs' :
-            case 'extra-small' :
+            case 'xs':
+            case 'extra-small':
                 $button_css_attributes .= ' button-xs';
                 break;
-            case 'sm' :
-            case 'small' :
+            case 'sm':
+            case 'small':
                 $button_css_attributes .= ' button-sm';
                 break;
-            case 'lg' :
-            case 'large' :
+            case 'lg':
+            case 'large':
                 $button_css_attributes .= ' button-lg';
                 break;
-            case 'block' :
+            case 'block':
                 $button_css_attributes .= ' button-block';
                 break;
-            case 'md' :
-            case 'medium' :
-            default :
+            case 'md':
+            case 'medium':
+            default:
                 $button_css_attributes .= '';
         }
         $this->_button_css_attributes .= ! empty($other_attributes)
@@ -1072,8 +1067,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         // now get the value for the input
         $value = $this->findRequestForSectionUsingNameParts($name_parts, $req_data);
         // check if this thing's name is at the TOP level of the request data
-        if ($value === null && isset($req_data[$this->name()])) {
-            $value = $req_data[$this->name()];
+        if ($value === null && isset($req_data[ $this->name() ])) {
+            $value = $req_data[ $this->name() ];
         }
         return $value;
     }
@@ -1114,13 +1109,13 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     public function findRequestForSectionUsingNameParts($html_name_parts, $req_data)
     {
         $first_part_to_consider = array_shift($html_name_parts);
-        if (isset($req_data[$first_part_to_consider])) {
+        if (isset($req_data[ $first_part_to_consider ])) {
             if (empty($html_name_parts)) {
-                return $req_data[$first_part_to_consider];
+                return $req_data[ $first_part_to_consider ];
             } else {
                 return $this->findRequestForSectionUsingNameParts(
                     $html_name_parts,
-                    $req_data[$first_part_to_consider]
+                    $req_data[ $first_part_to_consider ]
                 );
             }
         } else {
@@ -1191,7 +1186,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function enqueue_js()
     {
-        //ask our display strategy and validation strategies if they have js to enqueue
+        // ask our display strategy and validation strategies if they have js to enqueue
         $this->enqueue_js_from_strategies();
     }
 
@@ -1232,15 +1227,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         $disabled_attribute = ' disabled="disabled"';
         $this->disabled = filter_var($disable, FILTER_VALIDATE_BOOLEAN);
-        if($this->disabled) {
-            if (strpos($this->_other_html_attributes,$disabled_attribute) === false){
+        if ($this->disabled) {
+            if (strpos($this->_other_html_attributes, $disabled_attribute) === false) {
                 $this->_other_html_attributes .= $disabled_attribute;
             }
             $this->_set_normalized_value($this->get_default());
         } else {
-            $this->_other_html_attributes = str_replace($disabled_attribute,'', $this->_other_html_attributes);
+            $this->_other_html_attributes = str_replace($disabled_attribute, '', $this->_other_html_attributes);
         }
-
     }
 
 

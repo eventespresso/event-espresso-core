@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\services\commands\attendee;
 
 use EE_Registration;
@@ -9,17 +10,12 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\commands\Command;
 use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class CreateAttendeeCommand
  * DTO for passing data to a CreateAttendeeCommandHandler
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class CreateAttendeeCommand extends Command implements CommandRequiresCapCheckInterface
 {
@@ -39,11 +35,10 @@ class CreateAttendeeCommand extends Command implements CommandRequiresCapCheckIn
     protected $registration;
 
 
-
     /**
      * CreateAttendeeCommand constructor.
      *
-     * @param array            $attendee_details
+     * @param array           $attendee_details
      * @param EE_Registration $registration
      */
     public function __construct(array $attendee_details, EE_Registration $registration)
@@ -51,7 +46,6 @@ class CreateAttendeeCommand extends Command implements CommandRequiresCapCheckIn
         $this->attendee_details = $attendee_details;
         $this->registration = $registration;
     }
-
 
 
     /**
@@ -63,7 +57,6 @@ class CreateAttendeeCommand extends Command implements CommandRequiresCapCheckIn
     }
 
 
-
     /**
      * @return EE_Registration
      */
@@ -71,7 +64,6 @@ class CreateAttendeeCommand extends Command implements CommandRequiresCapCheckIn
     {
         return $this->registration;
     }
-
 
 
     /**
@@ -86,9 +78,4 @@ class CreateAttendeeCommand extends Command implements CommandRequiresCapCheckIn
         }
         return new PublicCapabilities('', 'create_new_contact');
     }
-
-
-
 }
-// End of file CreateAttendeeCommand.php
-// Location: EventEspresso\core\services\commands\attendee/CreateAttendeeCommand.php

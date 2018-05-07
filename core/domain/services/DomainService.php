@@ -1,11 +1,6 @@
 <?php
+
 namespace EventEspresso\core\domain\services;
-
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
-}
-
-
 
 /**
  * Class DomainService
@@ -22,15 +17,13 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.1
  */
-abstract class DomainService implements DomainServiceInterface {
+abstract class DomainService implements DomainServiceInterface
+{
 
-	/**
-	 * DomainService constructor.
-	 */
-	public function __construct()
-	{
-	}
-
+    /**
+     * DomainService constructor.
+     */
+    public function __construct()
+    {
+    }
 }
-// End of file DomainService.php
-// Location: /DomainService.php

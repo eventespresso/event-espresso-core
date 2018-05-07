@@ -4,8 +4,6 @@ use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
-
 /**
  * EE_Messages_incoming_data
  * This is the parent class for all incoming data to EE_messages objects.  We create different data handlers for
@@ -316,7 +314,7 @@ abstract class EE_Messages_incoming_data
      */
     protected function _assemble_data()
     {
-        //verify that reg_objs is set
+        // verify that reg_objs is set
         if (! is_array($this->reg_objs)
             && ! reset($this->reg_objs) instanceof EE_Registration
         ) {
@@ -328,7 +326,7 @@ abstract class EE_Messages_incoming_data
             );
         }
 
-        //get all attendee and events associated with the registrations in this transaction
+        // get all attendee and events associated with the registrations in this transaction
         $events             = $event_setup = $evtcache = $tickets = $datetimes = array();
         $answers            = $questions = $attendees = $line_items = $registrations = array();
         $total_ticket_count = 0;
@@ -347,7 +345,7 @@ abstract class EE_Messages_incoming_data
                 $ticket          = $reg->get_first_related('Ticket');
                 $attendee = $reg->attendee();
                 $event = $reg->event();
-                //if none of the following entities are available, then we can't setup other data reliably,
+                // if none of the following entities are available, then we can't setup other data reliably,
                 // so let's just skip.
                 if (! $ticket instanceof EE_Ticket
                     || ! $attendee instanceof EE_Attendee
@@ -357,65 +355,65 @@ abstract class EE_Messages_incoming_data
                 }
                 $relateddatetime = $ticket->datetimes();
                 $total_ticket_count++;
-                $tickets[$ticket->ID()]['ticket']                        = $ticket;
-                $tickets[$ticket->ID()]['count']                         = is_array($tickets[$ticket->ID()])
-                                                                           && isset($tickets[$ticket->ID()]['count'])
-                    ? $tickets[$ticket->ID()]['count'] + 1
+                $tickets[ $ticket->ID() ]['ticket']                        = $ticket;
+                $tickets[ $ticket->ID() ]['count']                         = is_array($tickets[ $ticket->ID() ])
+                                                                           && isset($tickets[ $ticket->ID() ]['count'])
+                    ? $tickets[ $ticket->ID() ]['count'] + 1
                     : 1;
-                $tickets[$ticket->ID()]['att_objs'][$attendee->ID()] = $attendee;
-                $tickets[$ticket->ID()]['dtt_objs']                      = $relateddatetime;
-                $tickets[$ticket->ID()]['reg_objs'][$reg->ID()]          = $reg;
-                $tickets[$ticket->ID()]['EE_Event']                      = $event;
-                $evtcache[$evt_id]                                       = $event;
-                $eventsetup[$evt_id]['reg_objs'][$reg->ID()]             = $reg;
-                $eventsetup[$evt_id]['tkt_objs'][$ticket->ID()]          = $ticket;
-                $eventsetup[$evt_id]['att_objs'][$attendee->ID()]    = $attendee;
-                $event_attendee_count[$evt_id]                           = isset($event_attendee_count[$evt_id])
-                    ? $event_attendee_count[$evt_id] + 1
+                $tickets[ $ticket->ID() ]['att_objs'][ $attendee->ID() ] = $attendee;
+                $tickets[ $ticket->ID() ]['dtt_objs']                      = $relateddatetime;
+                $tickets[ $ticket->ID() ]['reg_objs'][ $reg->ID() ]          = $reg;
+                $tickets[ $ticket->ID() ]['EE_Event']                      = $event;
+                $evtcache[ $evt_id ]                                       = $event;
+                $eventsetup[ $evt_id ]['reg_objs'][ $reg->ID() ]             = $reg;
+                $eventsetup[ $evt_id ]['tkt_objs'][ $ticket->ID() ]          = $ticket;
+                $eventsetup[ $evt_id ]['att_objs'][ $attendee->ID() ]    = $attendee;
+                $event_attendee_count[ $evt_id ]                           = isset($event_attendee_count[ $evt_id ])
+                    ? $event_attendee_count[ $evt_id ] + 1
                     : 0;
-                $attendees[$reg->attendee_ID()]['line_ref'][]            = $evt_id;
-                $attendees[$reg->attendee_ID()]['att_obj']               = $attendee;
-                $attendees[$reg->attendee_ID()]['reg_objs'][$reg->ID()]  = $reg;
-                //$attendees[ $reg->attendee_ID() ]['registration_id'] = $reg->ID();
-                $attendees[$reg->attendee_ID()]['attendee_email']          = $attendee->email();
-                $attendees[$reg->attendee_ID()]['tkt_objs'][$ticket->ID()] = $ticket;
-                $attendees[$reg->attendee_ID()]['evt_objs'][$evt_id]       = $event;
+                $attendees[ $reg->attendee_ID() ]['line_ref'][]            = $evt_id;
+                $attendees[ $reg->attendee_ID() ]['att_obj']               = $attendee;
+                $attendees[ $reg->attendee_ID() ]['reg_objs'][ $reg->ID() ]  = $reg;
+                // $attendees[ $reg->attendee_ID() ]['registration_id'] = $reg->ID();
+                $attendees[ $reg->attendee_ID() ]['attendee_email']          = $attendee->email();
+                $attendees[ $reg->attendee_ID() ]['tkt_objs'][ $ticket->ID() ] = $ticket;
+                $attendees[ $reg->attendee_ID() ]['evt_objs'][ $evt_id ]       = $event;
 
-                //registrations
-                $registrations[$reg->ID()]['tkt_obj'] = $ticket;
-                $registrations[$reg->ID()]['evt_obj'] = $event;
-                $registrations[$reg->ID()]['reg_obj'] = $reg;
-                $registrations[$reg->ID()]['att_obj'] = $attendee;
+                // registrations
+                $registrations[ $reg->ID() ]['tkt_obj'] = $ticket;
+                $registrations[ $reg->ID() ]['evt_obj'] = $event;
+                $registrations[ $reg->ID() ]['reg_obj'] = $reg;
+                $registrations[ $reg->ID() ]['att_obj'] = $attendee;
 
-                //set up answer objects
+                // set up answer objects
                 $rel_ans = $reg->get_many_related('Answer');
                 foreach ($rel_ans as $ansid => $answer) {
-                    if (! isset($questions[$ansid])) {
-                        $questions[$ansid] = $answer->get_first_related('Question');
+                    if (! isset($questions[ $ansid ])) {
+                        $questions[ $ansid ] = $answer->get_first_related('Question');
                     }
-                    $answers[$ansid]                               = $answer;
-                    $registrations[$reg->ID()]['ans_objs'][$ansid] = $answer;
+                    $answers[ $ansid ]                               = $answer;
+                    $registrations[ $reg->ID() ]['ans_objs'][ $ansid ] = $answer;
                 }
                 /**
                  * @var int $dtt_id
                  * @var EE_Datetime $datetime
                  */
                 foreach ($relateddatetime as $dtt_id => $datetime) {
-                    $eventsetup[$evt_id]['dtt_objs'][$dtt_id]       = $datetime;
-                    $registrations[$reg->ID()]['dtt_objs'][$dtt_id] = $datetime;
+                    $eventsetup[ $evt_id ]['dtt_objs'][ $dtt_id ]       = $datetime;
+                    $registrations[ $reg->ID() ]['dtt_objs'][ $dtt_id ] = $datetime;
 
-                    if (isset($datetimes[$dtt_id])) {
-                        continue; //already have this info in the datetimes array.
+                    if (isset($datetimes[ $dtt_id ])) {
+                        continue; // already have this info in the datetimes array.
                     }
 
-                    $datetimes[$dtt_id]['tkt_objs'][]           = $ticket;
-                    $datetimes[$dtt_id]['datetime']             = $datetime;
-                    $datetimes[$dtt_id]['evt_objs'][$evt_id]    = $event;
-                    $datetimes[$dtt_id]['reg_objs'][$reg->ID()] = $reg;
+                    $datetimes[ $dtt_id ]['tkt_objs'][]           = $ticket;
+                    $datetimes[ $dtt_id ]['datetime']             = $datetime;
+                    $datetimes[ $dtt_id ]['evt_objs'][ $evt_id ]    = $event;
+                    $datetimes[ $dtt_id ]['reg_objs'][ $reg->ID() ] = $reg;
                 }
             }
 
-            //let's loop through the unique event=>reg items and setup data on them
+            // let's loop through the unique event=>reg items and setup data on them
 
             if (! empty($eventsetup)) {
                 foreach ($eventsetup as $evt_id => $items) {
@@ -431,11 +429,11 @@ abstract class EE_Messages_incoming_data
                             )
                         );
                     }
-                    $events[$evt_id] = array(
+                    $events[ $evt_id ] = array(
                         'ID'              => $evt_id,
-                        'event'           => $evtcache[$evt_id],
-                        'name'            => $evtcache[$evt_id] instanceof EE_Event ? $evtcache[$evt_id]->name() : '',
-                        'total_attendees' => $event_attendee_count[$evt_id],
+                        'event'           => $evtcache[ $evt_id ],
+                        'name'            => $evtcache[ $evt_id ] instanceof EE_Event ? $evtcache[ $evt_id ]->name() : '',
+                        'total_attendees' => $event_attendee_count[ $evt_id ],
                         'reg_objs'        => $items['reg_objs'],
                         'tkt_objs'        => $items['tkt_objs'],
                         'att_objs'        => $items['att_objs'],
@@ -443,13 +441,13 @@ abstract class EE_Messages_incoming_data
                         'line_items'      => $ticket_line_items_for_event,
                     );
 
-                    //make sure the tickets have the line items setup for them.
+                    // make sure the tickets have the line items setup for them.
                     foreach ($ticket_line_items_for_event as $line_id => $line_item) {
                         if ($line_item instanceof EE_Line_Item) {
-                            $tickets[$line_item->ticket()->ID()]['line_item']      = $line_item;
-                            $tickets[$line_item->ticket()->ID()]['sub_line_items'] = $line_item->children();
-                            $line_items[$line_item->ID()]['children']              = $line_item->children();
-                            $line_items[$line_item->ID()]['EE_Ticket']             = $line_item->ticket();
+                            $tickets[ $line_item->ticket()->ID() ]['line_item']      = $line_item;
+                            $tickets[ $line_item->ticket()->ID() ]['sub_line_items'] = $line_item->children();
+                            $line_items[ $line_item->ID() ]['children']              = $line_item->children();
+                            $line_items[ $line_item->ID() ]['EE_Ticket']             = $line_item->ticket();
                         }
                     }
                 }
@@ -460,7 +458,7 @@ abstract class EE_Messages_incoming_data
                 : null;
         }
 
-        //lets set the attendees and events properties
+        // lets set the attendees and events properties
         $this->attendees                = $attendees;
         $this->events                   = $events;
         $this->tickets                  = $tickets;
@@ -476,15 +474,15 @@ abstract class EE_Messages_incoming_data
             $this->additional_line_items = $this->txn->non_ticket_line_items();
             $this->payments              = $this->txn->payments();
 
-            //setup primary registration if we have a single transaction object to work with
+            // setup primary registration if we have a single transaction object to work with
 
-            //let's get just the primary_attendee_data!  First we get the primary registration object.
+            // let's get just the primary_attendee_data!  First we get the primary registration object.
             $primary_reg = $this->txn->primary_registration();
             // verify
             if ($primary_reg instanceof EE_Registration) {
                 // get attendee object
                 if ($primary_reg->attendee() instanceof EE_Attendee) {
-                    //now we can setup the primary_attendee_data array
+                    // now we can setup the primary_attendee_data array
                     $this->primary_attendee_data = array(
                         'registration_id' => $primary_reg->ID(),
                         'att_obj'         => $primary_reg->attendee(),
@@ -492,7 +490,6 @@ abstract class EE_Messages_incoming_data
                         'primary_att_obj' => $primary_reg->attendee(),
                         'primary_reg_obj' => $primary_reg,
                     );
-
                 } else {
                     EE_Error::add_error(
                         esc_html__(
@@ -532,9 +529,7 @@ abstract class EE_Messages_incoming_data
             return false;
         }
 
-        //if we made it here then we just compare the filtered_reg_status with the registration status and return that
+        // if we made it here then we just compare the filtered_reg_status with the registration status and return that
         return $this->filtered_reg_status !== $registration->status_ID();
     }
-
-
 }

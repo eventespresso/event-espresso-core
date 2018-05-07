@@ -10,10 +10,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class TicketDatetimeAvailabilityTracker
  * keeps track of event datetime ticket availability for the Ticket Selector
@@ -174,15 +170,13 @@ class TicketDatetimeAvailabilityTracker
         $available_spaces = $this->ticketDatetimeAvailability($ticket, true);
         // greedy greedy greedy eh?
         if ($available_spaces > 0) {
-            if (
-            apply_filters(
+            if (apply_filters(
                 'FHEE__EE_Ticket_Selector___add_ticket_to_cart__allow_display_availability_error',
                 true,
                 $ticket,
                 $qty,
                 $available_spaces
-            )
-            ) {
+            )) {
                 $this->availabilityError(
                     $available_spaces,
                     $total_ticket_count
@@ -194,7 +188,9 @@ class TicketDatetimeAvailabilityTracker
                     'We\'re sorry, but there are no available spaces left for this event at this particular date and time.',
                     'event_espresso'
                 ),
-                __FILE__, __FUNCTION__, __LINE__
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
         }
     }

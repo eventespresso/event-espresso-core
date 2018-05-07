@@ -6,6 +6,24 @@
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
 	>
+    <filter>
+        <whitelist>
+            <directory>../</directory>
+            <exclude>
+                <directory>../acceptance_tests</directory>
+                <directory>../assets</directory>
+                <directory>../bin</directory>
+                <directory>../docs</directory>
+                <directory>../eslint</directory>
+                <directory>../languages</directory>
+                <directory>../node_modules</directory>
+                <directory>../public</directory>
+                <directory>../tests</directory>
+                <directory>../vendor</directory>
+                <directory>../wp-assets</directory>
+            </exclude>
+        </whitelist>
+    </filter>
 	<testsuites>
 		<testsuite>
 			<directory suffix=".php">./testcases/</directory>

@@ -1,40 +1,37 @@
 <?php
+
 use EventEspresso\core\Psr4Autoloader;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class EE_Psr4AutoloaderInit
  *
  * Loads the Psr4Autoloader class and registers namespaces
  *
- * @package 			Event Espresso
- * @subpackage 	core
- * @author 				Brent Christensen
- * @since 				4.8
+ * @package               Event Espresso
+ * @subpackage            core
+ * @author                Brent Christensen
+ * @since                 4.8
  *
  */
-
-class EE_Psr4AutoloaderInit {
-
-
-	/**
-	 * @type \EventEspresso\core\Psr4Autoloader
-	 */
-	protected static $psr4_loader;
+class EE_Psr4AutoloaderInit
+{
 
 
+    /**
+     * @type \EventEspresso\core\Psr4Autoloader
+     */
+    protected static $psr4_loader;
 
-	/**
-	 * @return \EventEspresso\core\Psr4Autoloader
-	 */
-	public function initializeAutoloader() {
+
+    /**
+     * @return \EventEspresso\core\Psr4Autoloader
+     */
+    public function initializeAutoloader()
+    {
         static $initialized = false;
-        if ( ! $initialized) {
+        if (! $initialized) {
             // instantiate PSR4 autoloader
-			espresso_load_required( 'Psr4Autoloader', EE_CORE . 'Psr4Autoloader.php' );
+            espresso_load_required('Psr4Autoloader', EE_CORE . 'Psr4Autoloader.php');
             EE_Psr4AutoloaderInit::$psr4_loader = new Psr4Autoloader();
             // register the autoloader
             EE_Psr4AutoloaderInit::$psr4_loader->register();
@@ -47,16 +44,11 @@ class EE_Psr4AutoloaderInit {
     }
 
 
-
-	/**
-	 * @return \EventEspresso\core\Psr4Autoloader
-	 */
-	public static function psr4_loader() {
-		return self::$psr4_loader;
-	}
-
-
-
+    /**
+     * @return \EventEspresso\core\Psr4Autoloader
+     */
+    public static function psr4_loader()
+    {
+        return self::$psr4_loader;
+    }
 }
-// End of file EE_Psr4AutoloaderInit.core.php
-// Location: /core/EE_Psr4AutoloaderInit.core.php

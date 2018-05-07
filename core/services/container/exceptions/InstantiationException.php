@@ -1,13 +1,8 @@
 <?php
+
 namespace EventEspresso\core\services\container\exceptions;
 
 use BadMethodCallException;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class InstantiationException
@@ -23,7 +18,7 @@ class InstantiationException extends BadMethodCallException
     /**
      * InstantiationException constructor.
      *
-     * @param string $identifier the name of the requested entity or service
+     * @param string     $identifier the name of the requested entity or service
      * @param string     $message
      * @param int        $code
      * @param \Exception $previous
@@ -41,7 +36,4 @@ class InstantiationException extends BadMethodCallException
         }
         parent::__construct($message, $code, $previous);
     }
-
 }
-// End of file InstantiationException.php
-// Location: /InstantiationException.php

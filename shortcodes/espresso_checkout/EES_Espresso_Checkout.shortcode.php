@@ -1,33 +1,36 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php
 /**
  * EES_Espresso_Checkout
  *
  * @deprecated  4.9.27
  * @package     Event Espresso
- * @subpackage	/shortcodes/
+ * @subpackage  /shortcodes/
  * @author      Brent Christensen
 
  * ------------------------------------------------------------------------
  */
-class EES_Espresso_Checkout  extends EES_Shortcode {
+class EES_Espresso_Checkout extends EES_Shortcode
+{
 
-	/**
-	 * 	set_hooks - for hooking into EE Core, modules, etc
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function set_hooks() {
-	}
+    /**
+     *  set_hooks - for hooking into EE Core, modules, etc
+     *
+     *  @access     public
+     *  @return     void
+     */
+    public static function set_hooks()
+    {
+    }
 
-	/**
-	 * 	set_hooks_admin - for hooking into EE Admin Core, modules, etc
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function set_hooks_admin() {
-	}
+    /**
+     *  set_hooks_admin - for hooking into EE Admin Core, modules, etc
+     *
+     *  @access     public
+     *  @return     void
+     */
+    public static function set_hooks_admin()
+    {
+    }
 
 
 
@@ -40,19 +43,21 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
      * @return    void
      * @throws \EE_Error
      */
-	public function run( WP $WP ) {
-	}
+    public function run(WP $WP)
+    {
+    }
 
 
 
-	/**
-	 * 	process_shortcode - ESPRESSO_CHECKOUT
-	 *
-	 *  @access 	public
-	 *  @param		array 	$attributes
-	 *  @return 	string
-	 */
-	public function process_shortcode( $attributes = array() ) {
+    /**
+     *  process_shortcode - ESPRESSO_CHECKOUT
+     *
+     *  @access     public
+     *  @param      array   $attributes
+     *  @return     string
+     */
+    public function process_shortcode($attributes = array())
+    {
         \EE_Error::doing_it_wrong(
             __METHOD__,
             __(
@@ -63,7 +68,4 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
         );
         return '';
     }
-
 }
-// End of file EES_Espresso_Checkout.shortcode.php
-// Location: /shortcodes/EES_Espresso_Checkout.shortcode.php

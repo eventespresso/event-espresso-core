@@ -1,8 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
+<?php
 
 /**
  * Class EE_SPCO_Reg_Step
@@ -122,12 +118,10 @@ abstract class EE_SPCO_Reg_Step
     public $checkout;
 
 
-
     /**
      * @return void
      */
     abstract public function translate_js_strings();
-
 
 
     /**
@@ -136,12 +130,10 @@ abstract class EE_SPCO_Reg_Step
     abstract public function enqueue_styles_and_scripts();
 
 
-
     /**
      * @return boolean
      */
     abstract public function initialize_reg_step();
-
 
 
     /**
@@ -150,19 +142,16 @@ abstract class EE_SPCO_Reg_Step
     abstract public function generate_reg_form();
 
 
-
     /**
      * @return boolean
      */
     abstract public function process_reg_step();
 
 
-
     /**
      * @return boolean
      */
     abstract public function update_reg_step();
-
 
 
     /**
@@ -174,17 +163,15 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
     /**
      * set_completed - toggles $_completed to TRUE
      */
     public function set_completed()
     {
         // DEBUG LOG
-        //$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
+        // $this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
         $this->_completed = apply_filters('FHEE__EE_SPCO_Reg_Step__set_completed___completed', true, $this);
     }
-
 
 
     /**
@@ -196,7 +183,6 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
     /**
      * @return string
      */
@@ -206,7 +192,6 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
     /**
      * @return string
      */
@@ -214,7 +199,6 @@ abstract class EE_SPCO_Reg_Step
     {
         return $this->_slug;
     }
-
 
 
     /**
@@ -229,7 +213,6 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
     /**
      * set_submit_button_text
      * sets the text that appears on the reg step form submit button
@@ -240,7 +223,7 @@ abstract class EE_SPCO_Reg_Step
     {
         if (! empty($submit_button_text)) {
             $this->_submit_button_text = $submit_button_text;
-        } else if ($this->checkout->next_step instanceof EE_SPCO_Reg_Step) {
+        } elseif ($this->checkout->next_step instanceof EE_SPCO_Reg_Step) {
             if ($this->checkout->revisit) {
                 $this->_submit_button_text = sprintf(
                     __('Update %s', 'event_espresso'),
@@ -262,7 +245,6 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
     /**
      * @param boolean $is_current_step
      */
@@ -270,7 +252,6 @@ abstract class EE_SPCO_Reg_Step
     {
         $this->_is_current_step = $is_current_step;
     }
-
 
 
     /**
@@ -282,7 +263,6 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
     /**
      * @return boolean
      */
@@ -290,7 +270,6 @@ abstract class EE_SPCO_Reg_Step
     {
         return $this instanceof EE_SPCO_Reg_Step_Finalize_Registration ? true : false;
     }
-
 
 
     /**
@@ -302,7 +281,6 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
     /**
      * @return int
      */
@@ -310,7 +288,6 @@ abstract class EE_SPCO_Reg_Step
     {
         return $this->_order;
     }
-
 
 
     /**
@@ -322,7 +299,6 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
     /**
      * @return string
      */
@@ -330,7 +306,6 @@ abstract class EE_SPCO_Reg_Step
     {
         return $this->_success_message;
     }
-
 
 
     /**
@@ -344,7 +319,6 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
     /**
      * _reset_success_message
      *
@@ -356,7 +330,6 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
     /**
      * @return string
      */
@@ -364,7 +337,6 @@ abstract class EE_SPCO_Reg_Step
     {
         return $this->_instructions;
     }
-
 
 
     /**
@@ -380,7 +352,6 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
     /**
      * @param array $valid_data
      */
@@ -388,7 +359,6 @@ abstract class EE_SPCO_Reg_Step
     {
         $this->_valid_data = $valid_data;
     }
-
 
 
     /**
@@ -403,7 +373,6 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
     /**
      * @return string
      */
@@ -416,7 +385,6 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
     /**
      * @param string $reg_form_name
      */
@@ -424,7 +392,6 @@ abstract class EE_SPCO_Reg_Step
     {
         $this->_reg_form_name = $reg_form_name;
     }
-
 
 
     /**
@@ -451,7 +418,6 @@ abstract class EE_SPCO_Reg_Step
         }
         return add_query_arg($query_args, $this->checkout->reg_page_base_url);
     }
-
 
 
     /**
@@ -530,7 +496,6 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
     /**
      * generate_reg_form_for_actions
      *
@@ -550,7 +515,6 @@ abstract class EE_SPCO_Reg_Step
         );
         $this->checkout->generate_reg_form = in_array($this->checkout->action, $actions, true) ? true : false;
     }
-
 
 
     /**
@@ -573,7 +537,6 @@ abstract class EE_SPCO_Reg_Step
         }
         return $html;
     }
-
 
 
     /**
@@ -616,7 +579,6 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
     /**
      * div_class - returns nothing for current step, but a css class of "hidden" for others
      *
@@ -626,7 +588,6 @@ abstract class EE_SPCO_Reg_Step
     {
         return $this->is_current_step() ? '' : ' hidden';
     }
-
 
 
     /**
@@ -640,7 +601,6 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
     /**
      * div_class - returns  a css class of "hidden" for current step, but nothing for others
      *
@@ -650,7 +610,6 @@ abstract class EE_SPCO_Reg_Step
     {
         return $this->is_current_step() ? ' hidden' : '';
     }
-
 
 
     /**
@@ -667,9 +626,6 @@ abstract class EE_SPCO_Reg_Step
     }
 
 
-
-
-
     /**
      *    __sleep
      * to conserve db space, let's remove the reg_form and the EE_Checkout object from EE_SPCO_Reg_Step objects upon
@@ -683,9 +639,4 @@ abstract class EE_SPCO_Reg_Step
         // remove the reg form and the checkout
         return array_diff(array_keys(get_object_vars($this)), array('reg_form', 'checkout'));
     }
-
-
-
 }
-// End of file EE_SPCO_Reg_Step.class.php
-// Location: /EE_SPCO_Reg_Step.class.php

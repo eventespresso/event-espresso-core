@@ -7,14 +7,10 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\LegacyRequestInterface;
 use EventEspresso\core\services\request\RequestInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
-
 /**
  * class EE_Request
  *
- * @deprecated 4.9.53
+ * @deprecated  4.9.53
  * @package     Event Espresso
  * @subpackage  /core/
  * @author      Brent Christensen
@@ -73,7 +69,7 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
      */
     private function request()
     {
-        if($this->request instanceof RequestInterface){
+        if ($this->request instanceof RequestInterface) {
             return $this->request;
         }
         $loader = LoaderFactory::getLoader();
@@ -91,7 +87,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     }
 
 
-
     /**
      * @deprecated 4.9.53
      * @return array
@@ -105,7 +100,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     }
 
 
-
     /**
      * @deprecated 4.9.53
      * @return array
@@ -117,7 +111,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     {
         return $this->request()->postParams();
     }
-
 
 
     /**
@@ -146,7 +139,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     }
 
 
-
     /**
      * returns contents of $_REQUEST
      *
@@ -160,7 +152,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     {
         return $this->request()->requestParams();
     }
-
 
 
     /**
@@ -179,7 +170,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     }
 
 
-
     /**
      * returns   the value for a request param if the given key exists
      *
@@ -195,7 +185,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     {
         return $this->request()->getRequestParam($key, $default);
     }
-
 
 
     /**
@@ -228,7 +217,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     {
         $this->request()->unSetRequestParam($key, $unset_from_global_too);
     }
-
 
 
     /**
@@ -385,8 +373,4 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     {
         return $this->request()->matches($pattern);
     }
-
-
 }
-// End of file EE_Request.core.php
-// Location: /core/request/EE_Request.core.php

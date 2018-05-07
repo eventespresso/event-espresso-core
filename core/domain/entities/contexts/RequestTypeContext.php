@@ -4,10 +4,6 @@ namespace EventEspresso\core\domain\entities\contexts;
 
 use InvalidArgumentException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RequestTypeContext
  * A Context DTO dedicated solely to identifying the current request type.
@@ -153,8 +149,4 @@ class RequestTypeContext extends Context
     {
         $this->is_activation = filter_var($is_activation, FILTER_VALIDATE_BOOLEAN);
     }
-
-
-
 }
-// Location: RequestTypeContext.php

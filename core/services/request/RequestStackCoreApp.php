@@ -9,10 +9,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use InvalidArgumentException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RequestStackCoreApp
  * This is the core application loader class at the center of the Middleware Request Stack.
@@ -38,8 +34,6 @@ class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCore
     protected $response;
 
 
-
-
     /**
      * handle
      * sets hooks for running rest of system
@@ -57,7 +51,7 @@ class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCore
      */
     public function handleRequest(RequestInterface $request, ResponseInterface $response)
     {
-        $this->request  = $request;
+        $this->request = $request;
         $this->response = $response;
         espresso_load_required('EE_Base', EE_CORE . 'EE_Base.core.php');
         espresso_load_required('EE_Deprecated', EE_CORE . 'EE_Deprecated.core.php');
@@ -112,6 +106,4 @@ class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCore
             espresso_deactivate_plugin(EE_PLUGIN_BASENAME);
         }
     }
-
 }
-// Location: RequestStackCoreApp.php

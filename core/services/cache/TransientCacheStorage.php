@@ -1,9 +1,6 @@
 <?php
+
 namespace EventEspresso\core\services\cache;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class TransientCacheStorage
@@ -51,7 +48,6 @@ class TransientCacheStorage implements CacheStorageInterface
     private $transients;
 
 
-
     /**
      * TransientCacheStorage constructor.
      */
@@ -60,12 +56,11 @@ class TransientCacheStorage implements CacheStorageInterface
         $this->transient_cleanup_frequency = $this->setTransientCleanupFrequency();
         // round current time down to closest 5 minutes to simplify scheduling
         $this->current_time = $this->roundTimestamp(time(), '5-minutes', false);
-        $this->transients = (array)get_option(TransientCacheStorage::TRANSIENT_SCHEDULE_OPTIONS_KEY, array());
-        if ( ! (defined('DOING_AJAX') && DOING_AJAX) && $this->transient_cleanup_frequency !== 'off') {
+        $this->transients = (array) get_option(TransientCacheStorage::TRANSIENT_SCHEDULE_OPTIONS_KEY, array());
+        if (! (defined('DOING_AJAX') && DOING_AJAX) && $this->transient_cleanup_frequency !== 'off') {
             add_action('shutdown', array($this, 'checkTransientCleanupSchedule'), 999);
         }
     }
-
 
 
     /**
@@ -100,7 +95,6 @@ class TransientCacheStorage implements CacheStorageInterface
     }
 
 
-
     /**
      * we need to be able to round timestamps off to match the set transient cleanup frequency
      * so if a transient is set to expire at 1:17 pm for example, and our cleanup schedule is every hour,
@@ -127,27 +121,27 @@ class TransientCacheStorage implements CacheStorageInterface
         $minutes = '00';
         $hours = 'H';
         switch ($cleanup_frequency) {
-            case '5-minutes' :
-                $minutes = floor((int)date('i', $timestamp) / 5) * 5;
+            case '5-minutes':
+                $minutes = floor((int) date('i', $timestamp) / 5) * 5;
                 $minutes = str_pad($minutes, 2, '0', STR_PAD_LEFT);
                 $offset = MINUTE_IN_SECONDS * 5;
                 break;
-            case '15-minutes' :
-                $minutes = floor((int)date('i', $timestamp) / 15) * 15;
+            case '15-minutes':
+                $minutes = floor((int) date('i', $timestamp) / 15) * 15;
                 $minutes = str_pad($minutes, 2, '0', STR_PAD_LEFT);
                 $offset = MINUTE_IN_SECONDS * 15;
                 break;
-            case '12-hours' :
-                $hours = floor((int)date('H', $timestamp) / 12) * 12;
+            case '12-hours':
+                $hours = floor((int) date('H', $timestamp) / 12) * 12;
                 $hours = str_pad($hours, 2, '0', STR_PAD_LEFT);
                 $offset = HOUR_IN_SECONDS * 12;
                 break;
-            case 'day' :
+            case 'day':
                 $hours = '03'; // run cleanup at 3:00 am (or first site hit after that)
                 $offset = DAY_IN_SECONDS;
                 break;
-            case 'hour' :
-            default :
+            case 'hour':
+            default:
                 $offset = HOUR_IN_SECONDS;
                 break;
         }
@@ -163,7 +157,6 @@ class TransientCacheStorage implements CacheStorageInterface
     }
 
 
-
     /**
      * Saves supplied data to a transient
      * if an expiration is set, then it automatically schedules the transient for cleanup
@@ -175,14 +168,13 @@ class TransientCacheStorage implements CacheStorageInterface
      */
     public function add($transient_key, $data, $expiration = 0)
     {
-        $expiration = (int)abs($expiration);
+        $expiration = (int) abs($expiration);
         $saved = set_transient($transient_key, $data, $expiration);
         if ($saved && $expiration) {
             $this->scheduleTransientCleanup($transient_key, $expiration);
         }
         return $saved;
     }
-
 
 
     /**
@@ -205,19 +197,18 @@ class TransientCacheStorage implements CacheStorageInterface
             // this should trigger the cache content to be regenerated during this request,
             // while allowing any following requests to still access the existing cache
             // until it gets replaced with the refreshed content
-            if (
-                $standard_cache
-                && $this->transients[$transient_key] - time() <= MINUTE_IN_SECONDS
+            if ($standard_cache
+                && $this->transients[ $transient_key ] - time() <= MINUTE_IN_SECONDS
             ) {
-                unset($this->transients[$transient_key]);
+                unset($this->transients[ $transient_key ]);
                 $this->updateTransients();
                 return null;
             }
 
             // for non standard cache items, remove the key from our tracking,
             // but proceed to retrieve the transient so that it also gets removed from the db
-            if ($this->transients[$transient_key] <= time()) {
-                unset($this->transients[$transient_key]);
+            if ($this->transients[ $transient_key ] <= time()) {
+                unset($this->transients[ $transient_key ]);
                 $this->updateTransients();
             }
         }
@@ -225,7 +216,6 @@ class TransientCacheStorage implements CacheStorageInterface
         $content = get_transient($transient_key);
         return $content !== false ? $content : null;
     }
-
 
 
     /**
@@ -239,7 +229,6 @@ class TransientCacheStorage implements CacheStorageInterface
     }
 
 
-
     /**
      * delete multiple transients and remove tracking
      *
@@ -250,7 +239,7 @@ class TransientCacheStorage implements CacheStorageInterface
     public function deleteMany(array $transient_keys, $force_delete = false)
     {
         $full_transient_keys = $force_delete ? $transient_keys : array();
-        if(empty($full_transient_keys)){
+        if (empty($full_transient_keys)) {
             foreach ($this->transients as $transient_key => $expiration) {
                 foreach ($transient_keys as $transient_key_to_delete) {
                     if (strpos($transient_key, $transient_key_to_delete) !== false) {
@@ -263,7 +252,6 @@ class TransientCacheStorage implements CacheStorageInterface
             $this->updateTransients();
         }
     }
-
 
 
     /**
@@ -280,7 +268,6 @@ class TransientCacheStorage implements CacheStorageInterface
     }
 
 
-
     /**
      * schedules a transient for cleanup by adding it to the transient tracking
      *
@@ -294,10 +281,9 @@ class TransientCacheStorage implements CacheStorageInterface
         // and round to the closest 15 minutes
         $expiration = $this->roundTimestamp($expiration);
         // save transients to clear using their ID as the key to avoid duplicates
-        $this->transients[$transient_key] = $expiration;
+        $this->transients[ $transient_key ] = $expiration;
         $this->updateTransients();
     }
-
 
 
     /**
@@ -323,7 +309,6 @@ class TransientCacheStorage implements CacheStorageInterface
     }
 
 
-
     /**
      * loops through the array of tracked transients,
      * compiles a list of those that have expired, and sends that list off for deletion.
@@ -335,7 +320,7 @@ class TransientCacheStorage implements CacheStorageInterface
     {
         $update = false;
         // filter the query limit. Set to 0 to turn off garbage collection
-        $limit = (int)abs(
+        $limit = (int) abs(
             apply_filters(
                 'FHEE__TransientCacheStorage__clearExpiredTransients__limit',
                 50
@@ -348,8 +333,8 @@ class TransientCacheStorage implements CacheStorageInterface
                 if ($expiration > $this->current_time) {
                     continue;
                 }
-                if ( ! $expiration || ! $transient_key) {
-                    unset($this->transients[$transient_key]);
+                if (! $expiration || ! $transient_key) {
+                    unset($this->transients[ $transient_key ]);
                     $update = true;
                     continue;
                 }
@@ -357,11 +342,10 @@ class TransientCacheStorage implements CacheStorageInterface
             }
             // delete expired keys, but maintain value of $update if nothing is deleted
             $update = $this->deleteTransientKeys($transient_keys, $limit) ? true : $update;
-            do_action( 'FHEE__TransientCacheStorage__clearExpiredTransients__end', $this);
+            do_action('FHEE__TransientCacheStorage__clearExpiredTransients__end', $this);
         }
         return $update;
     }
-
 
 
     /**
@@ -378,25 +362,20 @@ class TransientCacheStorage implements CacheStorageInterface
         }
         $counter = 0;
         foreach ($transient_keys as $transient_key) {
-            if($counter === $limit){
+            if ($counter === $limit) {
                 break;
             }
             // remove any transient prefixes
-            $transient_key = strpos($transient_key,  '_transient_timeout_') === 0
+            $transient_key = strpos($transient_key, '_transient_timeout_') === 0
                 ? str_replace('_transient_timeout_', '', $transient_key)
                 : $transient_key;
-            $transient_key = strpos($transient_key,  '_transient_') === 0
+            $transient_key = strpos($transient_key, '_transient_') === 0
                 ? str_replace('_transient_', '', $transient_key)
                 : $transient_key;
             delete_transient($transient_key);
-            unset($this->transients[$transient_key]);
+            unset($this->transients[ $transient_key ]);
             $counter++;
         }
         return $counter > 0;
     }
-
-
-
 }
-// End of file TransientCacheStorage.php
-// Location: EventEspresso\core\services\cache/TransientCacheStorage.php

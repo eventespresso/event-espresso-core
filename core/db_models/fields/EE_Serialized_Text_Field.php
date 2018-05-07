@@ -1,5 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Serialized text field should basically: accept either an array or serialized text as input.
@@ -29,19 +28,19 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base
      * @param array $value_of_field_on_model_object
      * @return string
      */
-    function prepare_for_use_in_db($value_of_field_on_model_object)
+    public function prepare_for_use_in_db($value_of_field_on_model_object)
     {
         return maybe_serialize($value_of_field_on_model_object);
     }
 
-    function prepare_for_set($value_inputted_for_field_on_model_object)
+    public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
         $value_inputted_for_field_on_model_object = EEH_Array::maybe_unserialize($value_inputted_for_field_on_model_object);
         if (is_string($value_inputted_for_field_on_model_object)) {
             return parent::prepare_for_set($value_inputted_for_field_on_model_object);
         } elseif (is_array($value_inputted_for_field_on_model_object)) {
             return array_map(array($this, 'prepare_for_set'), $value_inputted_for_field_on_model_object);
-        } else {//so they passed NULL or an INT or something wack
+        } else {// so they passed NULL or an INT or something wack
             return $value_inputted_for_field_on_model_object;
         }
     }
@@ -52,7 +51,7 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base
      * @param string $value_found_in_db_for_model_object
      * @return array
      */
-    function prepare_for_set_from_db($value_found_in_db_for_model_object)
+    public function prepare_for_set_from_db($value_found_in_db_for_model_object)
     {
         return EEH_Array::maybe_unserialize($value_found_in_db_for_model_object);
     }
@@ -64,7 +63,7 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base
      * @param string $schema , possible values are ',', others can be added
      * @return string
      */
-    function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
+    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
     {
         switch ($schema) {
             case 'print_r':

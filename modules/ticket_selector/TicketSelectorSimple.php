@@ -1,13 +1,10 @@
 <?php
+
 namespace EventEspresso\modules\ticket_selector;
 
 use EE_Error;
 use EE_Event;
 use EE_Ticket;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class TicketSelectorSimple
@@ -28,14 +25,13 @@ class TicketSelectorSimple extends TicketSelector
     protected $ticket;
 
 
-
     /**
      * TicketSelectorSimple constructor.
      *
      * @param EE_Event  $event
      * @param EE_Ticket $ticket
-     * @param int        $max_attendees
-     * @param array      $template_args
+     * @param int       $max_attendees
+     * @param array     $template_args
      * @throws EE_Error
      */
     public function __construct(EE_Event $event, EE_Ticket $ticket, $max_attendees, array $template_args)
@@ -48,7 +44,6 @@ class TicketSelectorSimple extends TicketSelector
             $template_args
         );
     }
-
 
 
     /**
@@ -77,8 +72,4 @@ class TicketSelectorSimple extends TicketSelector
         $this->template_args['ticket_description'] = $ticket_selector_row->getTicketDescription();
         $this->template_args['template_path'] = TICKET_SELECTOR_TEMPLATES_PATH . 'simple_ticket_selector.template.php';
     }
-
-
 }
-// End of file TicketSelectorSimple.php
-// Location: EventEspresso\modules\ticket_selector/TicketSelectorSimple.php

@@ -1,11 +1,8 @@
 <?php
+
 namespace EventEspresso\core\services\formatters;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class LeaveAlone
@@ -41,5 +38,3 @@ class LeaveAlone extends FormatterBase
         return $input;
     }
 }
-// End of file LeaveAlonel.php
-// Location: core\services\formatters/LeaveAlonel.php

@@ -4,10 +4,6 @@ namespace EventEspresso\core\services\request;
 
 use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * RequestInterface
  * Representation of an incoming, server-side HTTP request
