@@ -24,7 +24,7 @@ const config = [
 		externals: {
 			'@eventespresso/eejs': {
 				this: 'eejs',
-			}
+			},
 		},
 		entry: {
 			eejs: [
