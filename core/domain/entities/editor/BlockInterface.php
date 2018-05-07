@@ -5,10 +5,6 @@ namespace EventEspresso\core\domain\entities\editor;
 use EventEspresso\core\services\assets\BlockAssetManagerInterface;
 use WP_Block_Type;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Interface BlockInterface
  * Classes implementing this interface are responsible for
