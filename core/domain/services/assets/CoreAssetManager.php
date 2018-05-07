@@ -120,7 +120,7 @@ class CoreAssetManager extends AssetManager
         $this->loadJqueryValidate();
         $this->loadAccountingJs();
         add_action(
-            'AHEE__EventEspresso_core_services_assets_Registry__registerScriptsAndStyles__before_script',
+            'AHEE__EventEspresso_core_services_assets_Registry__registerScripts__before_script',
             array($this, 'loadQtipJs')
         );
         $this->registerAdminAssets();
