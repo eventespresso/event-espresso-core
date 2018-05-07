@@ -3,11 +3,7 @@
 namespace EventEspresso\core\domain\entities\editor\blocks\widgets;
 
 use EventEspresso\core\domain\entities\editor\Block;
-use EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetRegister;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
+use EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager;
 
 /**
  * Class EventAttendees
@@ -26,11 +22,11 @@ class EventAttendees extends Block
     /**
      * EventAttendees constructor.
      *
-     * @param CoreBlocksAssetRegister $asset_register
+     * @param CoreBlocksAssetManager $block_asset_manager
      */
-    public function __construct(CoreBlocksAssetRegister $asset_register)
+    public function __construct(CoreBlocksAssetManager $block_asset_manager)
     {
-        parent::__construct($asset_register);
+        parent::__construct($block_asset_manager);
     }
 
 
@@ -42,7 +38,7 @@ class EventAttendees extends Block
      */
     public function initialize()
     {
-        $this->setBlockType(EventAttendees::BLOCK_TYPE);
+        $this->setBlockType(self::BLOCK_TYPE);
         $this->setSupportedPostTypes(array('espresso_events', 'post', 'page'));
         $this->setAttributes(array());
     }
