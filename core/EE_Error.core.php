@@ -1267,9 +1267,9 @@ function espresso_error_enqueue_scripts()
 }
 
 if (is_admin()) {
-    add_action('admin_enqueue_scripts', 'espresso_error_enqueue_scripts', 2);
+    add_action('admin_enqueue_scripts', 'espresso_error_enqueue_scripts', 5);
 } else {
-    add_action('wp_enqueue_scripts', 'espresso_error_enqueue_scripts', 2);
+    add_action('wp_enqueue_scripts', 'espresso_error_enqueue_scripts', 5);
 }
 
 
