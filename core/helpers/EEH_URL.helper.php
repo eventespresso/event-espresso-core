@@ -1,7 +1,5 @@
 <?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
-
 /**
  * EEH_URL helper
  * Helper class for URL-related PHP functions
@@ -60,7 +58,7 @@ class EEH_URL
             }
         }
 
-        //finally, let's always add a return address (if present) :)
+        // finally, let's always add a return address (if present) :)
         $args = ! empty($_REQUEST['action']) && ! isset($_REQUEST['return'])
             ? array_merge($args, array('return' => $_REQUEST['action']))
             : $args;
@@ -168,7 +166,7 @@ class EEH_URL
             // break apart the key value pairs
             $query_args = explode('=', $query_args);
             // and add to our results array
-            $query_params[$query_args[0]] = $query_args[1];
+            $query_params[ $query_args[0] ] = $query_args[1];
         }
         return $query_params;
     }
@@ -220,11 +218,11 @@ class EEH_URL
         );
         $server_variable  = strtoupper($server_variable);
         // whitelist INPUT_SERVER var
-        if (isset($server_variables[$server_variable])) {
+        if (isset($server_variables[ $server_variable ])) {
             $URL = filter_input(INPUT_SERVER, $server_variable, FILTER_SANITIZE_URL, FILTER_NULL_ON_FAILURE);
             if (empty($URL)) {
                 // fallback sanitization if the above fails
-                $URL = wp_sanitize_redirect($_SERVER[$server_variable]);
+                $URL = wp_sanitize_redirect($_SERVER[ $server_variable ]);
             }
         }
         return $URL;

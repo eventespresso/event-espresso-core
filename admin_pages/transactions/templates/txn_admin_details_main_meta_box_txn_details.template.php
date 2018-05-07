@@ -14,16 +14,20 @@
 
     <a id="display-additional-transaction-session-info" class="display-the-hidden smaller-text"
        rel="additional-transaction-session-info">
-        <span class="dashicons dashicons-plus-alt"></span><?php esc_html_e('view additional transaction session details',
-            'event_espresso'); ?>
+        <span class="dashicons dashicons-plus-alt"></span><?php esc_html_e(
+            'view additional transaction session details',
+            'event_espresso'
+        ); ?>
     </a>
 
     <div id="additional-transaction-session-info-dv" class="hidden">
 
         <a id="hide-additional-transaction-session-info" class="hide-the-displayed hidden smaller-text"
            rel="additional-transaction-session-info">
-            <span class="dashicons dashicons-dismiss"></span><?php esc_html_e('hide additional transaction session details',
-                'event_espresso'); ?>
+            <span class="dashicons dashicons-dismiss"></span><?php esc_html_e(
+                'hide additional transaction session details',
+                'event_espresso'
+            ); ?>
         </a>
         <br class="clear"/>
 
@@ -85,8 +89,8 @@
                 <?php if ($payments) : ?>
                     <?php $payment_total = 0; ?>
                     <?php foreach ($payments as $PAY_ID => $payment) :
-                        $existing_reg_payment_json = isset($existing_reg_payments[$PAY_ID])
-                            ? wp_json_encode($existing_reg_payments[$PAY_ID])
+                        $existing_reg_payment_json = isset($existing_reg_payments[ $PAY_ID ])
+                            ? wp_json_encode($existing_reg_payments[ $PAY_ID ])
                             : '{}';
                         ?>
                         <tr id="txn-admin-payment-tr-<?php echo $PAY_ID; ?>">
@@ -102,20 +106,20 @@
                                 <ul class="txn-overview-actions-ul">
                                     <li>
                                         <?php if ($can_edit_payments) : ?>
-                                        <a class="txn-admin-payment-action-edit-lnk"
-                                           title="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
-                                           data-payment-id="<?php echo $PAY_ID; ?>">
-                                            <div class="dashicons dashicons-edit" style="margin: 0;"></div>
-                                        </a>
+                                            <a class="txn-admin-payment-action-edit-lnk"
+                                               title="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
+                                               data-payment-id="<?php echo $PAY_ID; ?>">
+                                                <div class="dashicons dashicons-edit" style="margin: 0;"></div>
+                                            </a>
                                         <?php endif; ?>
                                     </li>
                                     <li>
                                         <?php if ($can_delete_payments) : ?>
-                                        <a class="txn-admin-payment-action-delete-lnk"
-                                           title="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
-                                           data-payment-id="<?php echo $PAY_ID; ?>">
-                                            <div class="dashicons dashicons-trash" style="margin: 0;"></div>
-                                        </a>
+                                            <a class="txn-admin-payment-action-delete-lnk"
+                                               title="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
+                                               data-payment-id="<?php echo $PAY_ID; ?>">
+                                                <div class="dashicons dashicons-trash" style="margin: 0;"></div>
+                                            </a>
                                         <?php endif; ?>
                                     </li>
                                 </ul>
@@ -134,17 +138,24 @@
                             </td>
                             <td class=" jst-left">
                                 <div id="payment-gateway-<?php echo $PAY_ID; ?>">
-                                    <?php echo $payment->payment_method() ? $payment->payment_method()->admin_name() : esc_html__("Unknown",
-                                        'event_espresso'); ?>
+                                    <?php echo $payment->payment_method()
+                                        ? $payment->payment_method()->admin_name()
+                                        : esc_html__(
+                                            "Unknown",
+                                            'event_espresso'
+                                        ); ?>
                                 </div>
                                 <div id="payment-gateway-id-<?php echo $PAY_ID; ?>"
-                                     class="hidden"><?php echo $payment->payment_method() ? $payment->payment_method()->ID() : 0; ?></div>
+                                     class="hidden"><?php echo $payment->payment_method()
+                                        ? $payment->payment_method()->ID()
+                                        : 0; ?></div>
                             </td>
                             <td class=" jst-left">
                                 <div id="payment-response-<?php echo $PAY_ID; ?>"><?php echo $payment->gateway_response(); ?></div>
                             </td>
                             <td class=" jst-left">
-                                <div id="payment-txn-id-chq-nmbr-<?php echo $PAY_ID; ?>"><?php echo $payment->txn_id_chq_nmbr(); ?></div>
+                                <div
+                                    id="payment-txn-id-chq-nmbr-<?php echo $PAY_ID; ?>"><?php echo $payment->txn_id_chq_nmbr(); ?></div>
                             </td>
                             <td class=" jst-left">
                                 <div id="payment-po-nmbr-<?php echo $PAY_ID; ?>"><?php echo $payment->po_number(); ?></div>
@@ -153,12 +164,17 @@
                                 <div id="payment-accntng-<?php echo $PAY_ID; ?>"><?php echo $payment->extra_accntng(); ?></div>
                             </td>
                             <td class=" jst-rght">
-                                <?php $payment_class = $payment->amount() > 0 ? 'txn-admin-payment-status-' . $payment->STS_ID() : 'txn-admin-payment-status-PDC'; ?>
+                                <?php $payment_class = $payment->amount() > 0
+                                    ? 'txn-admin-payment-status-' . $payment->STS_ID()
+                                    : 'txn-admin-payment-status-PDC'; ?>
                                 <span class="<?php echo $payment_class; ?>">
-							<div id="payment-amount-<?php echo $PAY_ID; ?>"
-                                 style="display:inline;"><?php echo EEH_Template::format_currency($payment->amount(),
-                                    false, false); ?></div>
-						</span>
+                                <div id="payment-amount-<?php echo $PAY_ID; ?>" style="display:inline;">
+                                <?php echo EEH_Template::format_currency(
+                                    $payment->amount(),
+                                    false,
+                                    false
+                                ); ?></div>
+                            </span>
                             </td>
                         </tr>
                         <?php
@@ -167,8 +183,10 @@
                     <?php endforeach; // $payment?>
                     <?php
                     $pay_totals_class = $payment_total > $grand_raw_total ? ' important-notice' : '';
-                    $overpaid = $payment_total > $grand_raw_total ? '<span id="overpaid">' . esc_html__('This transaction has been overpaid ! ',
-                            'event_espresso') . '</span>' : '';
+                    $overpaid = $payment_total > $grand_raw_total
+                        ? '<span id="overpaid">' . esc_html__('This transaction has been overpaid ! ', 'event_espresso')
+                          . '</span>'
+                        : '';
                     ?>
                     <tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr hidden">
                         <td class=" jst-rght" colspan="11">
@@ -178,12 +196,22 @@
                     <tr id="txn-admin-payments-total-tr"
                         class="admin-primary-mbox-total-tr<?php echo $pay_totals_class; ?>">
                         <th class=" jst-rght" colspan="10"><span
-                                    id="payments-total-spn"><?php echo $overpaid . sprintf(esc_html__('Payments Total %s',
-                                        'event_espresso'),
-                                        '(' . EE_Registry::instance()->CFG->currency->code . ')'); ?></span></th>
+                                id="payments-total-spn">
+                                <?php echo $overpaid
+                                           . sprintf(
+                                               esc_html__(
+                                                   'Payments Total %s',
+                                                   'event_espresso'
+                                               ),
+                                               '(' . EE_Registry::instance()->CFG->currency->code . ')'
+                                           ); ?></span></th>
                         <th class=" jst-rght"><span
-                                    id="txn-admin-payment-total"><?php echo EEH_Template::format_currency($payment_total,
-                                    false, false); ?></span></th>
+                                id="txn-admin-payment-total">
+                                <?php echo EEH_Template::format_currency(
+                                    $payment_total,
+                                    false,
+                                    false
+                                ); ?></span></th>
                     </tr>
                 <?php else : ?>
                     <tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr">
@@ -193,8 +221,11 @@
                     </tr>
                     <tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr hidden">
                         <th class=" jst-rght" colspan="10"><span
-                                    id="payments-total-spn"><?php echo esc_html__('Payments Total',
-                                    'event_espresso'); ?></span></th>
+                                id="payments-total-spn">
+                                <?php echo esc_html__(
+                                    'Payments Total',
+                                    'event_espresso'
+                                ); ?></span></th>
                         <th class=" jst-rght"><span id="txn-admin-payment-total"></span></th>
                     </tr>
                 <?php endif; // $payments
@@ -250,10 +281,10 @@
                         <div id="payment-accntng-PAY_ID"></div>
                     </td>
                     <td class=" jst-rght">
-						<span class="">
-							<div id="payment-amount-PAY_ID" style="display:inline;">
-							</div>
-						</span>
+                    <span class="">
+                        <div id="payment-amount-PAY_ID" style="display:inline;">
+                        </div>
+                    </span>
                     </td>
                 </tr>
 
@@ -278,8 +309,11 @@
                 </li>
             <?php else : ?>
                 <li>
-                    <p><?php esc_html__('You do not have access to apply payments or refunds.',
-                            'event_espresso'); ?></p>
+                    <p>
+                        <?php esc_html__(
+                            'You do not have access to apply payments or refunds.',
+                            'event_espresso'
+                        ); ?></p>
                 </li>
             <?php endif; ?>
         </ul>
@@ -345,56 +379,97 @@
                                value="<?php echo date('Y-m-d h:i a', current_time('timestamp')); ?>"/>
 
                         <div class="txn-admin-apply-payment-date-dv admin-modal-dialog-row">
-                            <div class="validation-notice-dv"><?php esc_html_e('The following is  a required field',
-                                    'event_espresso'); ?></div>
-                            <label for="txn-admin-payment-date-inp" class=""><?php esc_html_e('Payment Date',
-                                    'event_espresso'); ?></label>
+                            <div class="validation-notice-dv">
+                                <?php esc_html_e(
+                                    'The following is  a required field',
+                                    'event_espresso'
+                                ); ?></div>
+                            <label for="txn-admin-payment-date-inp" class="">
+                                <?php esc_html_e(
+                                    'Payment Date',
+                                    'event_espresso'
+                                ); ?></label>
                             <input name="txn_admin_payment[date]" id="txn-admin-payment-date-inp"
                                    class="txn-admin-apply-payment-inp required" type="text"
                                    value="<?php echo date('Y-m-d g:i a', current_time('timestamp')); ?>"/>
-                            <p class="description"><?php esc_html_e('The date the payment was actually made on',
-                                    'event_espresso'); ?></p>
+                            <p class="description">
+                                <?php esc_html_e(
+                                    'The date the payment was actually made on',
+                                    'event_espresso'
+                                ); ?></p>
                         </div>
 
                         <div class="txn-admin-apply-payment-amount-dv admin-modal-dialog-row">
-                            <div class="validation-notice-dv"><?php esc_html_e('The following is  a required field',
-                                    'event_espresso'); ?></div>
-                            <label for="txn-admin-payment-amount-inp" class=""><?php esc_html_e('Amount',
-                                    'event_espresso'); ?></label>
+                            <div class="validation-notice-dv">
+                                <?php esc_html_e(
+                                    'The following is  a required field',
+                                    'event_espresso'
+                                ); ?></div>
+                            <label for="txn-admin-payment-amount-inp" class="">
+                                <?php esc_html_e(
+                                    'Amount',
+                                    'event_espresso'
+                                ); ?></label>
                             <input name="txn_admin_payment[amount]" id="txn-admin-payment-amount-inp"
                                    class="txn-admin-apply-payment-inp required" type="text" value=""/>
-                            <p class="description"><?php esc_html_e('The amount of the payment',
-                                    'event_espresso'); ?></p>
+                            <p class="description">
+                                <?php esc_html_e(
+                                    'The amount of the payment',
+                                    'event_espresso'
+                                ); ?></p>
                         </div>
 
                         <div class="txn-admin-apply-payment-method-dv admin-modal-dialog-row">
-                            <div class="validation-notice-dv"><?php esc_html_e('The following is  a required field',
-                                    'event_espresso'); ?></div>
-                            <label for="txn-admin-payment-method-inp" class=""><?php esc_html_e('Method of Payment',
-                                    'event_espresso'); ?></label>
+                            <div class="validation-notice-dv">
+                                <?php esc_html_e(
+                                    'The following is  a required field',
+                                    'event_espresso'
+                                ); ?></div>
+                            <label for="txn-admin-payment-method-inp" class="">
+                                <?php esc_html_e(
+                                    'Method of Payment',
+                                    'event_espresso'
+                                ); ?></label>
                             <select name="txn_admin_payment[PMD_ID]" id="txn-admin-payment-method-slct"
                                     class="txn-admin-apply-payment-slct required" type="text">
                                 <?php foreach ($payment_methods as $method) : ?>
                                     <?php $selected = $method->slug() == 'cash' ? ' selected="selected"' : ''; ?>
                                     <option id="payment-method-opt-<?php echo $method->slug(); ?>"
-                                            value="<?php echo $method->ID(); ?>"<?php echo $selected; ?>><?php echo sanitize_key($method->admin_desc()) ? substr($method->admin_desc(),
-                                            0, 128) : $method->admin_name(); ?>&nbsp;&nbsp;
+                                            value="<?php echo $method->ID(); ?>"<?php echo $selected; ?>>
+                                        <?php echo sanitize_key(
+                                            $method->admin_desc()
+                                        )
+                                            ? substr(
+                                                $method->admin_desc(),
+                                                0,
+                                                128
+                                            )
+                                            : $method->admin_name(); ?>&nbsp;&nbsp;
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-                            <p class="description"><?php esc_html_e('Whether the payment was made via PayPal, Credit Card, Cheque, or Cash',
-                                    'event_espresso'); ?></p>
+                            <p class="description">
+                                <?php esc_html_e(
+                                    'Whether the payment was made via PayPal, Credit Card, Cheque, or Cash',
+                                    'event_espresso'
+                                ); ?></p>
                         </div>
 
                         <div class="mop-PP mop-CC mop-CHQ mop">
                             <div class="txn-admin-apply-payment-gw-txn-id-dv admin-modal-dialog-row">
-                                <label for="txn-admin-payment-txn-id-inp" class=""><?php esc_html_e('TXN ID / CHQ #',
-                                        'event_espresso'); ?></label>
+                                <label for="txn-admin-payment-txn-id-inp" class="">
+                                    <?php esc_html_e(
+                                        'TXN ID / CHQ #',
+                                        'event_espresso'
+                                    ); ?></label>
                                 <input name="txn_admin_payment[txn_id_chq_nmbr]"
                                        id="txn-admin-payment-txn-id-chq-nmbr-inp" class="txn-admin-apply-payment-inp"
                                        type="text" maxlength="100"/>
-                                <p class="description"><?php esc_html_e('The Transaction ID sent back from the payment gateway, or the Cheque #',
-                                        'event_espresso'); ?></p>
+                                <p class="description">
+                                    <?php esc_html_e(
+                                        'The Transaction ID sent back from the payment gateway, or the Cheque #',
+                                        'event_espresso'
+                                    ); ?></p>
                             </div>
                         </div>
 
@@ -405,15 +480,21 @@
                                 <input name="txn_admin_payment[gateway_response]"
                                        id="txn-admin-payment-gateway-response-inp" class="txn-admin-apply-payment-inp"
                                        type="text"/>
-                                <p class="description"><?php esc_html_e('The gateway response string (optional)',
-                                        'event_espresso'); ?></p>
+                                <p class="description">
+                                    <?php esc_html_e(
+                                        'The gateway response string (optional)',
+                                        'event_espresso'
+                                    ); ?></p>
                             </div>
                         </div>
 
                         <div class="mop-PP mop-CC mop">
                             <div class="txn-admin-apply-payment-status-dv admin-modal-dialog-row">
-                                <label for="txn-admin-payment-status-inp" class=""><?php esc_html_e('Payment Status',
-                                        'event_espresso'); ?></label>
+                                <label for="txn-admin-payment-status-inp" class="">
+                                    <?php esc_html_e(
+                                        'Payment Status',
+                                        'event_espresso'
+                                    ); ?></label>
                                 <select name="txn_admin_payment[status]" id="txn-admin-payment-status-slct"
                                         class="txn-admin-apply-payment-slct" type="text">
                                     <?php foreach ($payment_status as $STS_ID => $STS_code) : ?>
@@ -424,36 +505,54 @@
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
-                                <p class="description"><?php esc_html_e('Whether the payment was approved, cancelled, declined or failed after submission to the gateway',
-                                        'event_espresso'); ?></p>
+                                <p class="description">
+                                    <?php esc_html_e(
+                                        'Whether the payment was approved, cancelled, declined or failed after submission to the gateway',
+                                        'event_espresso'
+                                    ); ?></p>
                             </div>
                         </div>
 
                         <div class="txn-admin-apply-payment-po-nmbr-dv admin-modal-dialog-row">
-                            <label for="txn-admin-payment-po-nmbr-inp" class=""><?php esc_html_e('P.O. / S.O. #',
-                                    'event_espresso'); ?></label>
+                            <label for="txn-admin-payment-po-nmbr-inp" class="">
+                                <?php esc_html_e(
+                                    'P.O. / S.O. #',
+                                    'event_espresso'
+                                ); ?></label>
                             <input name="txn_admin_payment[po_number]" id="txn-admin-payment-po-nmbr-inp"
                                    class="txn-admin-apply-payment-inp" type="text" maxlength="100"/>
-                            <p class="description"><?php esc_html_e('The Purchase or Sales Order Number if any (optional)',
-                                    'event_espresso'); ?></p>
+                            <p class="description">
+                                <?php esc_html_e(
+                                    'The Purchase or Sales Order Number if any (optional)',
+                                    'event_espresso'
+                                ); ?></p>
                         </div>
 
                         <div class="txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
                             <label for="txn-admin-payment-accounting-inp"
-                                   class="last"><?php esc_html_e('Notes / Extra Accounting',
-                                    'event_espresso'); ?></label>
+                                   class="last">
+                                <?php esc_html_e(
+                                    'Notes / Extra Accounting',
+                                    'event_espresso'
+                                ); ?></label>
                             <input name="txn_admin_payment[accounting]" id="txn-admin-payment-accounting-inp"
                                    class="txn-admin-apply-payment-inp" type="text" value="<?php echo $REG_code; ?>"
                                    maxlength="100"/> <input type="hidden" id="txn-admin-reg-code-inp"
                                                             value="<?php echo $REG_code; ?>"/>
-                            <p class="description"><?php esc_html_e('An extra field you may use for accounting purposes or simple notes. Defaults to the primary registrant\'s registration code.',
-                                    'event_espresso'); ?></p>
+                            <p class="description">
+                                <?php esc_html_e(
+                                    'An extra field you may use for accounting purposes or simple notes. Defaults to the primary registrant\'s registration code.',
+                                    'event_espresso'
+                                ); ?></p>
                         </div>
 
                         <div class="txn-admin-apply-payment-registrations-dv admin-modal-dialog-row">
                             <label for="txn-admin-payment-registrations-inp"
-                                   class="last"><?php esc_html_e('Registrations to Apply Payment to:',
-                                    'event_espresso'); ?></label>
+                                   class="last">
+                                <?php esc_html_e(
+                                    'Registrations to Apply Payment to:',
+                                    'event_espresso'
+                                ); ?></label>
                             <label class="txn-admin-apply-payment-to-registrations-lbl">
                                 <input type="radio" value="1" id="txn-admin-apply-payment-to-all-registrations-inp"
                                        name="txn_admin_payment[apply_to_all_registrations]" checked="checked"/>
@@ -469,11 +568,17 @@
 
                         <div class="txn-admin-payment-reg-status-dv admin-modal-dialog-row">
                             <label for="txn-admin-payment-reg-status-inp"
-                                   class="last"><?php esc_html_e('Change Registration Status?',
-                                    'event_espresso'); ?></label>
+                                   class="last">
+                                <?php esc_html_e(
+                                    'Change Registration Status?',
+                                    'event_espresso'
+                                ); ?></label>
                             <?php echo $status_change_select; ?>
-                            <p class="description"><?php esc_html_e('If you wish to change the status for the registrations selected above, then select which status from this dropdown.',
-                                    'event_espresso'); ?></p>
+                            <p class="description">
+                                <?php esc_html_e(
+                                    'If you wish to change the status for the registrations selected above, then select which status from this dropdown.',
+                                    'event_espresso'
+                                ); ?></p>
                             <br/>
                         </div>
 
@@ -492,8 +597,16 @@
                                 <?php esc_html_e('Registration Messages?', 'event_espresso'); ?>
                             </label>
                             <br class="clear-float"/>
-                            <p class="description"><?php printf(esc_html__('By default %1$sa payment message is sent to the primary registrant%2$s after submitting this form.%3$sHowever, if you check the "Registration Messages" box, the system will also send any related messages matching the status of the registrations to %1$seach registration for this transaction%2$s.',
-                                    'event_espresso'), '<strong>', '</strong>', '<br />'); ?></p>
+                            <p class="description">
+                                <?php printf(
+                                    esc_html__(
+                                        'By default %1$sa payment message is sent to the primary registrant%2$s after submitting this form.%3$sHowever, if you check the "Registration Messages" box, the system will also send any related messages matching the status of the registrations to %1$seach registration for this transaction%2$s.',
+                                        'event_espresso'
+                                    ),
+                                    '<strong>',
+                                    '</strong>',
+                                    '<br />'
+                                ); ?></p>
                             <label></label>
                         </div>
                         <div class="clear"></div>
@@ -532,8 +645,11 @@
                         </a>
                     </li>
                     <li>
-                        <span id="ee-ajax-processing-text" style="display:none;"><?php esc_html_e('Processing...',
-                                'event_espresso'); ?></span>
+                        <span id="ee-ajax-processing-text" style="display:none;">
+                            <?php esc_html_e(
+                                'Processing...',
+                                'event_espresso'
+                            ); ?></span>
                     </li>
                 </ul>
 
@@ -547,8 +663,10 @@
             <h2 id="admin-modal-dialog-delete-payment-h2" class="admin-modal-dialog-h2 hdr-has-icon"
                 style="display:none;">
                 <span class="ee-icon ee-icon-cash-add"></span>
-                <?php echo esc_html__('Delete Payment/Refund for Transaction #',
-                        'event_espresso') . $txn_nmbr['value']; ?>
+                <?php echo esc_html__(
+                    'Delete Payment/Refund for Transaction #',
+                    'event_espresso'
+                ) . $txn_nmbr['value']; ?>
             </h2>
 
             <form name="txn-admin-delete-payment-frm" id="txn-admin-delete-payment-frm"
@@ -568,19 +686,32 @@
 
                         <div class="txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
                             <label for="delete-txn-admin-payment-reg-status-inp"
-                                   class="last"><?php esc_html_e('Change Registration Status?',
-                                    'event_espresso'); ?></label>
+                                   class="last">
+                                <?php esc_html_e(
+                                    'Change Registration Status?',
+                                    'event_espresso'
+                                ); ?></label>
                             <?php echo $delete_status_change_select; ?>
-                            <p class="description"><?php printf(esc_html__('If you wish to change the status of all the registrations associated with this transaction after deleting this payment/refund, then select which status from this dropdown. %sNote: ALL registrations associated with this transaction will be updated to this new status.%s',
-                                    'event_espresso'), '<strong>', '</strong>'); ?></p>
+                            <p class="description">
+                                <?php printf(
+                                    esc_html__(
+                                        'If you wish to change the status of all the registrations associated with this transaction after deleting this payment/refund, then select which status from this dropdown. %sNote: ALL registrations associated with this transaction will be updated to this new status.%s',
+                                        'event_espresso'
+                                    ),
+                                    '<strong>',
+                                    '</strong>'
+                                ); ?></p>
                         </div>
 
                         <div class="ee-attention txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
                             <label for="delete-txn-admin-payment-accounting-inp"
                                    class="last"><?php esc_html_e('Send Related Messages?', 'event_espresso'); ?></label>
                             <input type="checkbox" value="1" name="delete_txn_reg_status_change[send_notifications]">
-                            <p class="description"><?php esc_html_e('If you check this box, the system will send any related registration messages matching the status of the registrations to each registration for this transaction. No Payment notifications are sent when deleting a payment.',
-                                    'event_espresso'); ?></p>
+                            <p class="description">
+                                <?php esc_html_e(
+                                    'If you check this box, the system will send any related registration messages matching the status of the registrations to each registration for this transaction. No Payment notifications are sent when deleting a payment.',
+                                    'event_espresso'
+                                ); ?></p>
                         </div>
                         <div class="clear"></div>
 
@@ -614,11 +745,14 @@
     <?php
     if (WP_DEBUG) {
         $delivered_messages = get_option('EED_Messages__payment', array());
-        if (isset($delivered_messages[$TXN_ID])) {
+        if (isset($delivered_messages[ $TXN_ID ])) {
             ?>
             <h4 class="admin-primary-mbox-h4 hdr-has-icon"><span
-                        class="dashicons dashicons-email-alt"></span><?php esc_html_e('Messages Sent to Primary Registrant',
-                    'event_espresso'); ?></h4>
+                    class="dashicons dashicons-email-alt"></span>
+                <?php esc_html_e(
+                    'Messages Sent to Primary Registrant',
+                    'event_espresso'
+                ); ?></h4>
 
             <div class="admin-primary-mbox-tbl-wrap">
                 <table class="admin-primary-mbox-tbl">
@@ -631,14 +765,20 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($delivered_messages[$TXN_ID] as $timestamp => $delivered_message) :
+                    <?php foreach ($delivered_messages[ $TXN_ID ] as $timestamp => $delivered_message) :
                         ?>
                         <tr>
-                            <td class="jst-left"><?php echo date(get_option('date_format') . ' ' . get_option('time_format'),
-                                    ($timestamp + (get_option('gmt_offset') * HOUR_IN_SECONDS))); ?></td>
-                            <td class="jst-left"><?php echo isset($delivered_message['message_type']) ? $delivered_message['message_type'] : ''; ?></td>
-                            <td class="jst-left"><?php echo isset($delivered_message['pay_status']) ? $delivered_message['pay_status'] : ''; ?></td>
-                            <td class="jst-left"><?php echo isset($delivered_message['txn_status']) ? $delivered_message['txn_status'] : ''; ?></td>
+                            <td class="jst-left">
+                                <?php echo date(
+                                    get_option('date_format') . ' ' . get_option('time_format'),
+                                    ($timestamp + (get_option('gmt_offset') * HOUR_IN_SECONDS))
+                                ); ?></td>
+                            <td class="jst-left"><?php echo isset($delivered_message['message_type'])
+                                    ? $delivered_message['message_type'] : ''; ?></td>
+                            <td class="jst-left"><?php echo isset($delivered_message['pay_status'])
+                                    ? $delivered_message['pay_status'] : ''; ?></td>
+                            <td class="jst-left"><?php echo isset($delivered_message['txn_status'])
+                                    ? $delivered_message['txn_status'] : ''; ?></td>
                         </tr>
                     <?php endforeach; // $delivered_messages?>
                     </tbody>
@@ -648,7 +788,4 @@
         }
     }
     ?>
-
-
 </div>
-

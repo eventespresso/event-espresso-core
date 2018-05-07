@@ -1,7 +1,4 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
 
 /**
  * EE_Message_List_Table
@@ -26,7 +23,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table
 
     protected function _setup_data()
     {
-        $this->_data           = $this->_get_messages($this->_per_page, $this->_view);
+        $this->_data = $this->_get_messages($this->_per_page, $this->_view);
         $this->_all_data_count = $this->_get_messages($this->_per_page, $this->_view, true);
     }
 
@@ -80,7 +77,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table
     protected function _get_row_class($item)
     {
         $class = parent::_get_row_class($item);
-        //add status class
+        // add status class
         $class .= ' ee-status-strip msg-status-' . $item->STS_ID();
         if ($this->_has_checkbox_column) {
             $class .= ' has-checkbox-column';
@@ -103,14 +100,14 @@ class EE_Message_List_Table extends EE_Admin_List_Table
     {
         $filters = array();
 
-        //get select_inputs
+        // get select_inputs
         $select_inputs = array(
             $this->_get_messengers_dropdown_filter(),
             $this->_get_message_types_dropdown_filter(),
             $this->_get_contexts_for_message_types_dropdown_filter(),
         );
 
-        //set filters to select inputs if they aren't empty
+        // set filters to select inputs if they aren't empty
         foreach ($select_inputs as $select_input) {
             if ($select_input) {
                 $filters[] = $select_input;
@@ -123,7 +120,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table
     protected function _add_view_counts()
     {
         foreach ($this->_views as $view => $args) {
-            $this->_views[$view]['count'] = $this->_get_messages($this->_per_page, $view, true, true);
+            $this->_views[ $view ]['count'] = $this->_get_messages($this->_per_page, $view, true, true);
         }
     }
 
@@ -158,16 +155,16 @@ class EE_Message_List_Table extends EE_Admin_List_Table
     public function column_to(EE_Message $message)
     {
         EE_Registry::instance()->load_helper('URL');
-        $actions           = array();
+        $actions = array();
         $actions['delete'] = '<a href="'
                              . EEH_URL::add_query_args_and_nonce(
-                array(
-                    'page'   => 'espresso_messages',
-                    'action' => 'delete_ee_message',
-                    'MSG_ID' => $message->ID(),
-                ),
-                admin_url('admin.php')
-            )
+                                 array(
+                                    'page'   => 'espresso_messages',
+                                    'action' => 'delete_ee_message',
+                                    'MSG_ID' => $message->ID(),
+                                 ),
+                                 admin_url('admin.php')
+                             )
                              . '">' . __('Delete', 'event_espresso') . '</a>';
         return esc_html($message->to()) . $this->row_actions($actions);
     }
@@ -238,25 +235,25 @@ class EE_Message_List_Table extends EE_Admin_List_Table
             'queue_for_resending' => EEH_MSG_Template::get_message_action_link('queue_for_resending', $message),
             'view_transaction'    => EEH_MSG_Template::get_message_action_link('view_transaction', $message),
         );
-        $content      = '';
+        $content = '';
         switch ($message->STS_ID()) {
-            case EEM_Message::status_sent :
+            case EEM_Message::status_sent:
                 $content = $action_links['view'] . $action_links['queue_for_resending'] . $action_links['view_transaction'];
                 break;
-            case EEM_Message::status_resend :
+            case EEM_Message::status_resend:
                 $content = $action_links['view'] . $action_links['send_now'] . $action_links['view_transaction'];
                 break;
-            case EEM_Message::status_retry :
+            case EEM_Message::status_retry:
                 $content = $action_links['view'] . $action_links['send_now'] . $action_links['error'] . $action_links['view_transaction'];
                 break;
-            case EEM_Message::status_failed :
-            case EEM_Message::status_debug_only :
+            case EEM_Message::status_failed:
+            case EEM_Message::status_debug_only:
                 $content = $action_links['error'] . $action_links['view_transaction'];
                 break;
-            case EEM_Message::status_idle :
+            case EEM_Message::status_idle:
                 $content = $action_links['view'] . $action_links['send_now'] . $action_links['view_transaction'];
                 break;
-            case EEM_Message::status_incomplete;
+            case EEM_Message::status_incomplete:
                 $content = $action_links['generate_now'] . $action_links['view_transaction'];
                 break;
         }
@@ -285,8 +282,8 @@ class EE_Message_List_Table extends EE_Admin_List_Table
             ? $this->_req_data['perpage']
             : $perpage;
 
-        $offset       = ($current_page - 1) * $per_page;
-        $limit        = $all || $count ? null : array($offset, $per_page);
+        $offset = ($current_page - 1) * $per_page;
+        $limit = $all || $count ? null : array($offset, $per_page);
         $query_params = array(
             'order_by' => empty($this->_req_data['orderby']) ? 'MSG_modified' : $this->_req_data['orderby'],
             'order'    => empty($this->_req_data['order']) ? 'DESC' : $this->_req_data['order'],
@@ -298,12 +295,12 @@ class EE_Message_List_Table extends EE_Admin_List_Table
          */
         if (isset($this->_req_data['filterby'])) {
             $query_params = array_merge($query_params, EEM_Message::instance()->filter_by_query_params());
-            if ( ! $count) {
+            if (! $count) {
                 $query_params['group_by'] = 'MSG_ID';
             }
         }
 
-        //view conditionals
+        // view conditionals
         if ($view !== 'all' && $count && $all) {
             $query_params[0]['AND*view_conditional'] = array(
                 'STS_ID' => strtoupper($view),
@@ -315,14 +312,14 @@ class EE_Message_List_Table extends EE_Admin_List_Table
                 ? array(
                     'STS_ID' => array(
                         'IN',
-                        array(EEM_Message::status_failed, EEM_Message::status_messenger_executing)
-                    )
+                        array(EEM_Message::status_failed, EEM_Message::status_messenger_executing),
+                    ),
                 )
-                : array( 'STS_ID' => strtoupper($this->_req_data['status']) );
+                : array('STS_ID' => strtoupper($this->_req_data['status']));
         }
 
         if (! $all && ! empty($this->_req_data['s'])) {
-            $search_string         = '%' . $this->_req_data['s'] . '%';
+            $search_string = '%' . $this->_req_data['s'] . '%';
             $query_params[0]['OR'] = array(
                 'MSG_to'      => array('LIKE', $search_string),
                 'MSG_from'    => array('LIKE', $search_string),
@@ -331,17 +328,17 @@ class EE_Message_List_Table extends EE_Admin_List_Table
             );
         }
 
-        //account for debug only status.  We don't show Messages with the EEM_Message::status_debug_only to clients when
-        //the messages system is in debug mode.
-        //Note: for backward compat with previous iterations, this is necessary because there may be EEM_Message::status_debug_only
-        //messages in the database.
+        // account for debug only status.  We don't show Messages with the EEM_Message::status_debug_only to clients when
+        // the messages system is in debug mode.
+        // Note: for backward compat with previous iterations, this is necessary because there may be EEM_Message::status_debug_only
+        // messages in the database.
         if (! EEM_Message::debug()) {
             $query_params[0]['AND*debug_only_conditional'] = array(
                 'STS_ID' => array('!=', EEM_Message::status_debug_only),
             );
         }
 
-        //account for filters
+        // account for filters
         if (! $all
             && isset($this->_req_data['ee_messenger_filter_by'])
             && $this->_req_data['ee_messenger_filter_by'] !== 'none_selected'
@@ -383,13 +380,13 @@ class EE_Message_List_Table extends EE_Admin_List_Table
      */
     protected function _get_messengers_dropdown_filter()
     {
-        $messenger_options                    = array();
+        $messenger_options = array();
         $active_messages_grouped_by_messenger = EEM_Message::instance()->get_all(array('group_by' => 'MSG_messenger'));
 
-        //setup array of messenger options
+        // setup array of messenger options
         foreach ($active_messages_grouped_by_messenger as $active_message) {
             if ($active_message instanceof EE_Message) {
-                $messenger_options[$active_message->messenger()] = ucwords($active_message->messenger_label());
+                $messenger_options[ $active_message->messenger() ] = ucwords($active_message->messenger_label());
             }
         }
         return $this->get_admin_page()->get_messengers_select_input($messenger_options);
@@ -403,13 +400,17 @@ class EE_Message_List_Table extends EE_Admin_List_Table
      */
     protected function _get_message_types_dropdown_filter()
     {
-        $message_type_options                    = array();
-        $active_messages_grouped_by_message_type = EEM_Message::instance()->get_all(array('group_by' => 'MSG_message_type'));
+        $message_type_options = array();
+        $active_messages_grouped_by_message_type = EEM_Message::instance()->get_all(
+            array('group_by' => 'MSG_message_type')
+        );
 
-        //setup array of message type options
+        // setup array of message type options
         foreach ($active_messages_grouped_by_message_type as $active_message) {
             if ($active_message instanceof EE_Message) {
-                $message_type_options[$active_message->message_type()] = ucwords($active_message->message_type_label());
+                $message_type_options[ $active_message->message_type() ] = ucwords(
+                    $active_message->message_type_label()
+                );
             }
         }
         return $this->get_admin_page()->get_message_types_select_input($message_type_options);
@@ -423,17 +424,17 @@ class EE_Message_List_Table extends EE_Admin_List_Table
      */
     protected function _get_contexts_for_message_types_dropdown_filter()
     {
-        $context_options                    = array();
+        $context_options = array();
         $active_messages_grouped_by_context = EEM_Message::instance()->get_all(array('group_by' => 'MSG_context'));
 
-        //setup array of context options
+        // setup array of context options
         foreach ($active_messages_grouped_by_context as $active_message) {
             if ($active_message instanceof EE_Message) {
                 $message_type = $active_message->message_type_object();
                 if ($message_type instanceof EE_message_type) {
                     foreach ($message_type->get_contexts() as $context => $context_details) {
                         if (isset($context_details['label'])) {
-                            $context_options[$context] = $context_details['label'];
+                            $context_options[ $context ] = $context_details['label'];
                         }
                     }
                 }
@@ -441,4 +442,4 @@ class EE_Message_List_Table extends EE_Admin_List_Table
         }
         return $this->get_admin_page()->get_contexts_for_message_types_select_input($context_options);
     }
-} //end EE_Message_List_Table class
+}

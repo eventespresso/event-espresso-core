@@ -2,10 +2,6 @@
 
 namespace EventEspresso\core\services\request;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Interface ResponseInterface
  *
@@ -79,6 +75,4 @@ interface ResponseInterface
      * sets $deactivate_plugin to true
      */
     public function deactivatePlugin();
-
 }
-// Location: ResponseInterface.php

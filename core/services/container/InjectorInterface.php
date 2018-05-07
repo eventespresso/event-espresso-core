@@ -1,12 +1,6 @@
 <?php
 namespace EventEspresso\core\services\container;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Interface InjectorInterface
  * for classes that recursively resolve and inject dependencies
@@ -50,7 +44,4 @@ interface InjectorInterface
      * @return array
      */
     public function resolveDependencies(RecipeInterface $recipe, \ReflectionClass $reflector, $arguments = array());
-
 }
-// End of file InjectorInterface.php
-// Location: /InjectorInterface.php
