@@ -1,5 +1,4 @@
 <?php
-defined( 'EVENT_ESPRESSO_VERSION') || exit;
 
 class EE_Boolean_Field extends EE_Integer_Field
 {

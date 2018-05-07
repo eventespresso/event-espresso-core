@@ -4,8 +4,6 @@ use EventEspresso\core\domain\services\validation\email\EmailValidationException
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
 /**
  * Class EE_Email_Field
  *

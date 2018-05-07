@@ -1,7 +1,4 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
+<?php
 /**
  * Message Model
  *
@@ -114,7 +111,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
         $this->singular_item = __('Message', 'event_espresso');
         $this->plural_item   = __('Messages', 'event_espresso');
 
-        //used for token generator
+        // used for token generator
         EE_Registry::instance()->load_helper('URL');
 
         $this->_tables = array(
@@ -130,42 +127,110 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
         $this->_fields          = array(
             'Message' => array(
                 'MSG_ID'             => new EE_Primary_Key_Int_Field('MSG_ID', __('Message ID', 'event_espresso')),
-                'MSG_token'          => new EE_Plain_Text_Field('MSG_token',
-                    __('Unique Token used to represent this row in publicly viewable contexts (eg. a url).',
-                        'event_espresso'), false, EEH_URL::generate_unique_token()),
-                'GRP_ID'             => new EE_Foreign_Key_Int_Field('GRP_ID',
-                    __('Foreign key to the EEM_Message_Template_Group table.', 'event_espresso'), true, 0,
-                    'Message_Template_Group'),
-                'TXN_ID'             => new EE_Foreign_Key_Int_Field('TXN_ID',
-                    __('Foreign key to the related EE_Transaction.  This is required to give context for regenerating the specific message',
-                        'event_espresso'), true, 0, 'Transaction'),
-                'MSG_messenger'      => new EE_Plain_Text_Field('MSG_messenger',
-                    __('Corresponds to the EE_messenger::name used to send this message. This will also be used to attempt any resending of the message.',
-                        'event_espresso'), false, 'email'),
-                'MSG_message_type'   => new EE_Plain_Text_Field('MSG_message_type',
+                'MSG_token'          => new EE_Plain_Text_Field(
+                    'MSG_token',
+                    __(
+                        'Unique Token used to represent this row in publicly viewable contexts (eg. a url).',
+                        'event_espresso'
+                    ),
+                    false,
+                    EEH_URL::generate_unique_token()
+                ),
+                'GRP_ID'             => new EE_Foreign_Key_Int_Field(
+                    'GRP_ID',
+                    __('Foreign key to the EEM_Message_Template_Group table.', 'event_espresso'),
+                    true,
+                    0,
+                    'Message_Template_Group'
+                ),
+                'TXN_ID'             => new EE_Foreign_Key_Int_Field(
+                    'TXN_ID',
+                    __(
+                        'Foreign key to the related EE_Transaction.  This is required to give context for regenerating the specific message',
+                        'event_espresso'
+                    ),
+                    true,
+                    0,
+                    'Transaction'
+                ),
+                'MSG_messenger'      => new EE_Plain_Text_Field(
+                    'MSG_messenger',
+                    __(
+                        'Corresponds to the EE_messenger::name used to send this message. This will also be used to attempt any resending of the message.',
+                        'event_espresso'
+                    ),
+                    false,
+                    'email'
+                ),
+                'MSG_message_type'   => new EE_Plain_Text_Field(
+                    'MSG_message_type',
                     __('Corresponds to the EE_message_type::name used to generate this message.', 'event_espresso'),
-                    false, 'receipt'),
+                    false,
+                    'receipt'
+                ),
                 'MSG_context'        => new EE_Plain_Text_Field('MSG_context', __('Context', 'event_espresso'), false),
-                'MSG_recipient_ID'   => new EE_Foreign_Key_Int_Field('MSG_recipient_ID',
-                    __('Recipient ID', 'event_espresso'), true, null, array('Registration', 'Attendee', 'WP_User')),
-                'MSG_recipient_type' => new EE_Any_Foreign_Model_Name_Field('MSG_recipient_type',
-                    __('Recipient Type', 'event_espresso'), true, null, array('Registration', 'Attendee', 'WP_User')),
-                'MSG_content'        => new EE_Maybe_Serialized_Text_Field('MSG_content',
-                    __('Content', 'event_espresso'), true, ''),
-                'MSG_to'             => new EE_Maybe_Serialized_Text_Field('MSG_to', __('Address To', 'event_espresso'),
-                    true),
-                'MSG_from'           => new EE_Maybe_Serialized_Text_Field('MSG_from',
-                    __('Address From', 'event_espresso'), true),
-                'MSG_subject'        => new EE_Maybe_Serialized_Text_Field('MSG_subject',
-                    __('Subject', 'event_espresso'), true, ''),
-                'MSG_priority'       => new EE_Enum_Integer_Field('MSG_priority', __('Priority', 'event_espresso'),
-                    false, self::priority_low, $allowed_priority),
-                'STS_ID'             => new EE_Foreign_Key_String_Field('STS_ID', __('Status', 'event_espresso'), false,
-                    self::status_incomplete, 'Status'),
-                'MSG_created'        => new EE_Datetime_Field('MSG_created', __('Created', 'event_espresso'), false,
-                    EE_Datetime_Field::now),
-                'MSG_modified'       => new EE_Datetime_Field('MSG_modified', __('Modified', 'event_espresso'), true,
-                    EE_Datetime_Field::now),
+                'MSG_recipient_ID'   => new EE_Foreign_Key_Int_Field(
+                    'MSG_recipient_ID',
+                    __('Recipient ID', 'event_espresso'),
+                    true,
+                    null,
+                    array('Registration', 'Attendee', 'WP_User')
+                ),
+                'MSG_recipient_type' => new EE_Any_Foreign_Model_Name_Field(
+                    'MSG_recipient_type',
+                    __('Recipient Type', 'event_espresso'),
+                    true,
+                    null,
+                    array('Registration', 'Attendee', 'WP_User')
+                ),
+                'MSG_content'        => new EE_Maybe_Serialized_Text_Field(
+                    'MSG_content',
+                    __('Content', 'event_espresso'),
+                    true,
+                    ''
+                ),
+                'MSG_to'             => new EE_Maybe_Serialized_Text_Field(
+                    'MSG_to',
+                    __('Address To', 'event_espresso'),
+                    true
+                ),
+                'MSG_from'           => new EE_Maybe_Serialized_Text_Field(
+                    'MSG_from',
+                    __('Address From', 'event_espresso'),
+                    true
+                ),
+                'MSG_subject'        => new EE_Maybe_Serialized_Text_Field(
+                    'MSG_subject',
+                    __('Subject', 'event_espresso'),
+                    true,
+                    ''
+                ),
+                'MSG_priority'       => new EE_Enum_Integer_Field(
+                    'MSG_priority',
+                    __('Priority', 'event_espresso'),
+                    false,
+                    self::priority_low,
+                    $allowed_priority
+                ),
+                'STS_ID'             => new EE_Foreign_Key_String_Field(
+                    'STS_ID',
+                    __('Status', 'event_espresso'),
+                    false,
+                    self::status_incomplete,
+                    'Status'
+                ),
+                'MSG_created'        => new EE_Datetime_Field(
+                    'MSG_created',
+                    __('Created', 'event_espresso'),
+                    false,
+                    EE_Datetime_Field::now
+                ),
+                'MSG_modified'       => new EE_Datetime_Field(
+                    'MSG_modified',
+                    __('Modified', 'event_espresso'),
+                    true,
+                    EE_Datetime_Field::now
+                ),
             ),
         );
         $this->_model_relations = array(
@@ -282,8 +347,10 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
      */
     public function stati_indicating_to_send()
     {
-        return apply_filters('FHEE__EEM_Message__stati_indicating_to_send',
-            array(self::status_idle, self::status_resend));
+        return apply_filters(
+            'FHEE__EEM_Message__stati_indicating_to_send',
+            array(self::status_idle, self::status_resend)
+        );
     }
 
 
@@ -299,7 +366,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
             self::status_retry,
             self::status_messenger_executing,
         );
-        //if WP_DEBUG is set, then let's include debug_only fails
+        // if WP_DEBUG is set, then let's include debug_only fails
         if (WP_DEBUG) {
             $failed_stati[] = self::status_debug_only;
         }
@@ -344,20 +411,20 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
         foreach ($expected_vars as $request_key => $model_name) {
             $request_value = EE_Registry::instance()->REQ->get($request_key);
             if ($request_value) {
-                //special case
+                // special case
                 switch ($request_key) {
-                    case '_REG_ID' :
+                    case '_REG_ID':
                         $query_params[0]['AND**filter_by']['OR**filter_by_REG_ID'] = array(
                             'Transaction.Registration.REG_ID' => $request_value,
                         );
                         break;
-                    case 'EVT_ID' :
+                    case 'EVT_ID':
                         $query_params[0]['AND**filter_by']['OR**filter_by_EVT_ID'] = array(
                             'Transaction.Registration.EVT_ID' => $request_value,
                         );
                         break;
-                    default :
-                        $query_params[0]['AND**filter_by']['OR**filter_by_' . $request_key][$model_name . '.' . $request_key] = $request_value;
+                    default:
+                        $query_params[0]['AND**filter_by'][ 'OR**filter_by_' . $request_key ][ $model_name . '.' . $request_key ] = $request_value;
                         break;
                 }
             }
@@ -378,33 +445,33 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
             $model = EE_Registry::instance()->load_model($model_name);
             if ($model_field_value = EE_Registry::instance()->REQ->get($request_key)) {
                 switch ($request_key) {
-                    case '_REG_ID' :
+                    case '_REG_ID':
                         $label_parts[] = sprintf(
                             esc_html__('Registration with the ID: %s', 'event_espresso'),
                             $model_field_value
                         );
                         break;
-                    case 'ATT_ID' :
+                    case 'ATT_ID':
                         /** @var EE_Attendee $attendee */
                         $attendee      = $model->get_one_by_ID($model_field_value);
                         $label_parts[] = $attendee instanceof EE_Attendee
                             ? sprintf(esc_html__('Attendee %s', 'event_espresso'), $attendee->full_name())
                             : sprintf(esc_html__('Attendee ID: %s', 'event_espresso'), $model_field_value);
                         break;
-                    case 'ID' :
+                    case 'ID':
                         /** @var EE_WP_User $wpUser */
                         $wpUser        = $model->get_one_by_ID($model_field_value);
                         $label_parts[] = $wpUser instanceof EE_WP_User
                             ? sprintf(esc_html__('WP User: %s', 'event_espresso'), $wpUser->name())
                             : sprintf(esc_html__('WP User ID: %s', 'event_espresso'), $model_field_value);
                         break;
-                    case 'TXN_ID' :
+                    case 'TXN_ID':
                         $label_parts[] = sprintf(
                             esc_html__('Transaction with the ID: %s', 'event_espresso'),
                             $model_field_value
                         );
                         break;
-                    case 'EVT_ID' :
+                    case 'EVT_ID':
                         /** @var EE_Event $Event */
                         $Event         = $model->get_one_by_ID($model_field_value);
                         $label_parts[] = $Event instanceof EE_Event
@@ -416,11 +483,10 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
         }
 
         if ($label_parts) {
-
-            //prepend to the last element of $label_parts an "and".
+            // prepend to the last element of $label_parts an "and".
             if (count($label_parts) > 1) {
                 $label_parts_index_to_prepend               = count($label_parts) - 1;
-                $label_parts[$label_parts_index_to_prepend] = 'and' . $label_parts[$label_parts_index_to_prepend];
+                $label_parts[ $label_parts_index_to_prepend ] = 'and' . $label_parts[ $label_parts_index_to_prepend ];
             }
 
             $pretty_label .= sprintf(
@@ -475,16 +541,16 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
     {
         static $is_debugging = null;
 
-        //initialize (use constant if set).
+        // initialize (use constant if set).
         if (is_null($set_debug) && is_null($is_debugging)) {
             $is_debugging = defined('EE_DEBUG_MESSAGES') && EE_DEBUG_MESSAGES;
         }
 
-        if ( ! is_null($set_debug)) {
+        if (! is_null($set_debug)) {
             $is_debugging = filter_var($set_debug, FILTER_VALIDATE_BOOLEAN);
         }
 
-        //return filtered value
+        // return filtered value
         return apply_filters('FHEE__EEM_Message__debug', $is_debugging);
     }
 
@@ -530,7 +596,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
             )
         );
 
-        //first get all the ids of messages being deleted
+        // first get all the ids of messages being deleted
         $message_ids_to_delete = EEM_Message::instance()->get_col(
             array(
                 0 => array(
@@ -540,7 +606,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
             )
         );
 
-        if(! empty($message_ids_to_delete) && is_array($message_ids_to_delete)) {
+        if (! empty($message_ids_to_delete) && is_array($message_ids_to_delete)) {
             global $wpdb;
             $number_deleted = $wpdb->query('
                 DELETE
@@ -562,7 +628,4 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
         }
         return $number_deleted;
     }
-
 }
-// End of file EEM_Message.model.php
-// Location: /includes/models/EEM_Message.model.php

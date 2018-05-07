@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * EES_Espresso_Cancelled
@@ -65,7 +62,4 @@ class EES_Espresso_Cancelled extends EES_Shortcode
         );
         return '';
     }
-
 }
-// End of file EES_Espresso_Cancelled.shortcode.php
-// Location: /shortcodes/EES_Espresso_Cancelled.shortcode.php

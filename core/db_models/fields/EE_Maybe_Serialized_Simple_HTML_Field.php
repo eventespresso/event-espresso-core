@@ -1,7 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
+<?php
 /**
  * EE_Maybe_Serialized_Simple_HTML_Field
  *
@@ -20,7 +17,7 @@ class EE_Maybe_Serialized_Simple_HTML_Field extends EE_Maybe_Serialized_Text_Fie
      * @param string $value_inputted_for_field_on_model_object
      * @return string
      */
-    function prepare_for_set($value_inputted_for_field_on_model_object)
+    public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
         return parent::prepare_for_set($this->_remove_tags($value_inputted_for_field_on_model_object));
     }
@@ -35,7 +32,7 @@ class EE_Maybe_Serialized_Simple_HTML_Field extends EE_Maybe_Serialized_Text_Fie
     {
         if (is_array($value)) {
             foreach ($value as $key => $v) {
-                $value[$key] = $this->_remove_tags($v);
+                $value[ $key ] = $this->_remove_tags($v);
             }
         } elseif (is_string($value)) {
             $value = wp_kses("$value", $this->_get_allowed_tags());
@@ -49,7 +46,7 @@ class EE_Maybe_Serialized_Simple_HTML_Field extends EE_Maybe_Serialized_Text_Fie
      * @param array|string $value_found_in_db_for_model_object
      * @return array|string
      */
-    function prepare_for_set_from_db($value_found_in_db_for_model_object)
+    public function prepare_for_set_from_db($value_found_in_db_for_model_object)
     {
         return $this->_remove_tags(parent::prepare_for_set_from_db($value_found_in_db_for_model_object));
     }
@@ -61,9 +58,12 @@ class EE_Maybe_Serialized_Simple_HTML_Field extends EE_Maybe_Serialized_Text_Fie
      * @global array $allowedtags
      * @return array
      */
-    function _get_allowed_tags()
+    public function _get_allowed_tags()
     {
-        return apply_filters('FHEE__EE_Maybe_Serialized_Simple_HTML_Field___get_allowed_tags',
-            EEH_HTML::get_simple_tags(), $this);
+        return apply_filters(
+            'FHEE__EE_Maybe_Serialized_Simple_HTML_Field___get_allowed_tags',
+            EEH_HTML::get_simple_tags(),
+            $this
+        );
     }
 }

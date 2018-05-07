@@ -103,12 +103,12 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             $options_array,
             $this
         );
-        //call parent first, as it may be setting the name
+        // call parent first, as it may be setting the name
         parent::__construct($options_array);
-        //if they've included subsections in the constructor, add them now
+        // if they've included subsections in the constructor, add them now
         if (isset($options_array['include'])) {
-            //we are going to make sure we ONLY have those subsections to include
-            //AND we are going to make sure they're in that specified order
+            // we are going to make sure we ONLY have those subsections to include
+            // AND we are going to make sure they're in that specified order
             $reordered_subsections = array();
             foreach ($options_array['include'] as $input_name) {
                 if (isset($this->_subsections[ $input_name ])) {
@@ -128,11 +128,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             $this->_layout_strategy = is_admin() ? new EE_Admin_Two_Column_Layout() : new EE_Two_Column_Layout();
         }
         $this->_layout_strategy->_construct_finalize($this);
-        //ok so we are definitely going to want the forms JS,
-        //so enqueue it or remember to enqueue it during wp_enqueue_scripts
+        // ok so we are definitely going to want the forms JS,
+        // so enqueue it or remember to enqueue it during wp_enqueue_scripts
         if (did_action('wp_enqueue_scripts') || did_action('admin_enqueue_scripts')) {
-            //ok so they've constructed this object after when they should have.
-            //just enqueue the generic form scripts and initialize the form immediately in the JS
+            // ok so they've constructed this object after when they should have.
+            // just enqueue the generic form scripts and initialize the form immediately in the JS
             EE_Form_Section_Proper::wp_enqueue_scripts(true);
         } else {
             add_action('wp_enqueue_scripts', array('EE_Form_Section_Proper', 'wp_enqueue_scripts'));
@@ -277,7 +277,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                 $req_data,
                 $this
             );
-            $this->cached_request_data = (array)$req_data;
+            $this->cached_request_data = (array) $req_data;
         }
         return $this->cached_request_data;
     }
@@ -312,7 +312,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         $this->_normalize($req_data);
         if ($validate) {
             $this->_validate();
-            //if it's invalid, we're going to want to re-display so remember what they submitted
+            // if it's invalid, we're going to want to re-display so remember what they submitted
             if (! $this->is_valid()) {
                 $this->store_submitted_form_data_in_session();
             }
@@ -585,7 +585,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function is_valid()
     {
-        if($this->is_valid === null) {
+        if ($this->is_valid === null) {
             if (! $this->has_received_submission()) {
                 throw new EE_Error(
                     sprintf(
@@ -733,9 +733,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     public function _enqueue_and_localize_form_js()
     {
         $this->ensure_construct_finalized_called();
-        //actually, we don't want to localize just yet. There may be other forms on the page.
-        //so we need to add our form section data to a static variable accessible by all form sections
-        //and localize it just before the footer
+        // actually, we don't want to localize just yet. There may be other forms on the page.
+        // so we need to add our form section data to a static variable accessible by all form sections
+        // and localize it just before the footer
         $this->localize_validation_rules();
         add_action('wp_footer', array('EE_Form_Section_Proper', 'localize_script_for_all_forms'), 2);
         add_action('admin_footer', array('EE_Form_Section_Proper', 'localize_script_for_all_forms'));
@@ -835,7 +835,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public static function localize_script_for_all_forms()
     {
-        //allow inputs and stuff to hook in their JS and stuff here
+        // allow inputs and stuff to hook in their JS and stuff here
         do_action('AHEE__EE_Form_Section_Proper__localize_script_for_all_forms__begin');
         EE_Form_Section_Proper::$_js_localization['localized_error_messages'] = EE_Form_Section_Proper::_get_localized_error_messages();
         $email_validation_level = isset(EE_Registry::instance()->CFG->registration->email_validation_level)
@@ -951,7 +951,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     protected function _validate()
     {
-        //reset the cache of whether this form is valid or not- we're re-validating it now
+        // reset the cache of whether this form is valid or not- we're re-validating it now
         $this->is_valid = null;
         foreach ($this->get_validatable_subsections() as $subsection_name => $subsection) {
             if (method_exists($this, '_validate_' . $subsection_name)) {
@@ -1281,8 +1281,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function has_subsection($subsection_name, $recursive = false)
     {
-        foreach ($this->_subsections as $name => $subsection) {if(
-                $name === $subsection_name
+        foreach ($this->_subsections as $name => $subsection) {
+            if ($name === $subsection_name
                 || (
                     $recursive
                     && $subsection instanceof EE_Form_Section_Proper
@@ -1484,8 +1484,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             if ($validation_error instanceof EE_Validation_Error) {
                 $form_section = $validation_error->get_form_section();
                 if ($form_section instanceof EE_Form_Input_Base) {
-                   $label = $validation_error->get_form_section()->html_label_text();
-                } elseif($form_section instanceof EE_Form_Section_Validatable) {
+                    $label = $validation_error->get_form_section()->html_label_text();
+                } elseif ($form_section instanceof EE_Form_Section_Validatable) {
                     $label = $validation_error->get_form_section()->name();
                 } else {
                     $label = esc_html__('Unknown', 'event_espresso');
@@ -1519,7 +1519,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     public function find_section_from_path($form_section_path)
     {
-        //check if we can find the input from purely going straight up the tree
+        // check if we can find the input from purely going straight up the tree
         $input = parent::find_section_from_path($form_section_path);
         if ($input instanceof EE_Form_Section_Base) {
             return $input;
@@ -1539,4 +1539,3 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         return null;
     }
 }
-
