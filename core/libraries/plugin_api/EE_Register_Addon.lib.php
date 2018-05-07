@@ -980,7 +980,9 @@ class EE_Register_Addon implements EEI_Plugin_API
                     )
                 );
             }
-            $addon->setDomain($domain);
+            if ($domain instanceof DomainInterface) {
+                $addon->setDomain($domain);
+            }
         }
         $addon->set_name($addon_name);
         $addon->set_plugin_slug(self::$_settings[ $addon_name ]['plugin_slug']);
