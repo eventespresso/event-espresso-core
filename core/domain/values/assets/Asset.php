@@ -56,6 +56,11 @@ abstract class Asset
      */
     private $handle;
 
+    /**
+     * @var bool $registered
+     */
+    private $registered = false;
+
 
     /**
      * Asset constructor.
@@ -144,5 +149,21 @@ abstract class Asset
     public function handle()
     {
         return $this->handle;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRegistered()
+    {
+        return $this->registered;
+    }
+
+    /**
+     * @param bool $registered
+     */
+    public function setRegistered($registered = true)
+    {
+        $this->registered = filter_var($registered, FILTER_VALIDATE_BOOLEAN);
     }
 }
