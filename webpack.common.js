@@ -9,6 +9,7 @@ const externals = {
 	'@wordpress/api-request': {
 		this: [ 'wp', 'apiRequest' ],
 	},
+	'@eventespresso/i18n': 'eejs.i18n',
 	'@wordpress/data': {
 		this: [ 'wp', 'data' ],
 	},
