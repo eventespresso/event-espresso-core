@@ -4,6 +4,8 @@ namespace EventEspresso\core\services\assets;
 
 use EE_Error;
 use EventEspresso\core\domain\values\assets\Asset;
+use EventEspresso\core\domain\values\assets\JavascriptAsset;
+use EventEspresso\core\domain\values\assets\StylesheetAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use InvalidArgumentException;
@@ -100,38 +102,76 @@ class Registry
 
 
     /**
-     * Callback for the WP script actions.
-     * Used to register globally accessible core scripts.
-     * Also used to add the eejs.data object to the source for any js having eejs-core as a dependency.
+     * Callback for the wp_enqueue_scripts actions used to register assets.
      *
      * @since $VID:$
+     * @throws AssetRegistrationException
      * @throws InvalidDataTypeException
      */
     public function registerScriptsAndStyles()
     {
-        foreach ($this->assets->getJavascriptAssets() as $script) {
+        $this->registerScripts($this->assets->getJavascriptAssets());
+        $this->registerStyles($this->assets->getStylesheetAssets());
+    }
+
+
+    /**
+     * Registers JS assets with WP core
+     *
+     * @since $VID:$
+     * @param JavascriptAsset[] $scripts
+     * @throws AssetRegistrationException
+     * @throws InvalidDataTypeException
+     */
+    public function registerScripts(array $scripts)
+    {
+        foreach ($scripts as $script) {
+            // skip to next script if this has already been done
+            if($script->isRegistered()) {
+                continue;
+            }
             do_action(
-                'AHEE__EventEspresso_core_services_assets_Registry__registerScriptsAndStyles__before_script',
+                'AHEE__EventEspresso_core_services_assets_Registry__registerScripts__before_script',
                 $script
             );
-            wp_register_script(
+            $registered = wp_register_script(
                 $script->handle(),
                 $script->source(),
                 $script->dependencies(),
                 $script->version(),
                 $script->loadInFooter()
             );
+            if(WP_DEBUG && ! $registered) {
+                throw new AssetRegistrationException($script->handle());
+            }
+            $script->setRegistered($registered);
             if ($script->requiresTranslation()) {
                 $this->registerTranslation($script->handle());
             }
             do_action(
-                'AHEE__EventEspresso_core_services_assets_Registry__registerScriptsAndStyles__after_script',
+                'AHEE__EventEspresso_core_services_assets_Registry__registerScripts__after_script',
                 $script
             );
         }
-        foreach ($this->assets->getStylesheetAssets() as $style) {
+    }
+
+
+    /**
+     * Registers CSS assets with WP core
+     *
+     * @since $VID:$
+     * @param StylesheetAsset[] $styles
+     * @throws InvalidDataTypeException
+     */
+    public function registerStyles(array $styles)
+    {
+        foreach ($styles as $style) {
+            // skip to next style if this has already been done
+            if ($style->isRegistered()) {
+                continue;
+            }
             do_action(
-                'AHEE__EventEspresso_core_services_assets_Registry__registerScriptsAndStyles__before_style',
+                'AHEE__EventEspresso_core_services_assets_Registry__registerStyles__before_style',
                 $style
             );
             wp_enqueue_style(
@@ -141,13 +181,13 @@ class Registry
                 $style->version(),
                 $style->media()
             );
+            $style->setRegistered();
             do_action(
-                'AHEE__EventEspresso_core_services_assets_Registry__registerScriptsAndStyles__after_style',
+                'AHEE__EventEspresso_core_services_assets_Registry__registerStyles__after_style',
                 $style
             );
         }
     }
-
 
     /**
      * Call back for the script print in frontend and backend.
