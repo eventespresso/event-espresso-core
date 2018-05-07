@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\entities\shortcodes;
 
 use EE_Cart;
@@ -6,10 +7,6 @@ use EE_Registration;
 use EE_Registry;
 use EE_Transaction;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class EspressoCancelled
@@ -23,7 +20,6 @@ class EspressoCancelled extends EspressoShortcode
 {
 
 
-
     /**
      * the actual shortcode tag that gets registered with WordPress
      *
@@ -33,7 +29,6 @@ class EspressoCancelled extends EspressoShortcode
     {
         return 'ESPRESSO_CANCELLED';
     }
-
 
 
     /**
@@ -87,6 +82,7 @@ class EspressoCancelled extends EspressoShortcode
         if (EE_Registry::instance()->CART instanceof EE_Cart) {
             EE_Registry::instance()->CART->delete_cart();
         }
+        // phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersText
         EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__);
         return sprintf(
             __(
@@ -96,8 +92,6 @@ class EspressoCancelled extends EspressoShortcode
             '<p class="ee-registrations-cancelled-pg ee-attention">',
             '</p>'
         );
+        // phpcs:enable
     }
-
 }
-// End of file EspressoCancelled.php
-// Location: EventEspresso\core\domain\entities\shortcodes/EspressoCancelled.php

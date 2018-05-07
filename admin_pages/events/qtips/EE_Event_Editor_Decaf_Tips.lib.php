@@ -1,9 +1,9 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 /**
  * EE_Event_Editor_Decaf_Tips
  * Qtip config for the event editor.
+ *
  * @package         Event Espresso
  * @subpackage      /admin_pages/events/qtips/EE_Event_Editor_Decaf_Tips.helper.php
  * @author          Darren Ethier

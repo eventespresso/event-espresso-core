@@ -1,8 +1,7 @@
-<?php use EventEspresso\core\exceptions\InvalidDataTypeException;
+<?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
 
 /**
  * EE_Datetime class
@@ -54,7 +53,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * @param array  $props_n_values    incoming values
      * @param string $timezone          incoming timezone (if not set the timezone set for the website will be used.)
-     * @param array $date_formats       incoming date_formats in an array where the first value is the date_format
+     * @param array  $date_formats      incoming date_formats in an array where the first value is the date_format
      *                                  and the second value is the time format
      * @return EE_Datetime
      * @throws ReflectionException
@@ -489,7 +488,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
         $echo = false
     ) {
         $field_name = "DTT_EVT_{$start_or_end}";
-        $dtt        = $this->_get_datetime(
+        $dtt = $this->_get_datetime(
             $field_name,
             $dt_frmt,
             $tm_frmt,
@@ -507,7 +506,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * get event start date.  Provide either the date format, or NULL to re-use the
      * last-used format, or '' to use the default date format
      *
-     * @param string $dt_frmt   string representation of date format defaults to 'F j, Y'
+     * @param string $dt_frmt string representation of date format defaults to 'F j, Y'
      * @return mixed            string on success, FALSE on fail
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -541,7 +540,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * get end date. Provide either the date format, or NULL to re-use the
      * last-used format, or '' to use the default date format
      *
-     * @param string $dt_frmt   string representation of date format defaults to 'F j, Y'
+     * @param string $dt_frmt string representation of date format defaults to 'F j, Y'
      * @return mixed            string on success, FALSE on fail
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -588,12 +587,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     public function date_range($dt_frmt = '', $conjunction = ' - ')
     {
         $dt_frmt = ! empty($dt_frmt) ? $dt_frmt : $this->_dt_frmt;
-        $start   = str_replace(
+        $start = str_replace(
             ' ',
             '&nbsp;',
             $this->get_i18n_datetime('DTT_EVT_start', $dt_frmt)
         );
-        $end     = str_replace(
+        $end = str_replace(
             ' ',
             '&nbsp;',
             $this->get_i18n_datetime('DTT_EVT_end', $dt_frmt)
@@ -651,7 +650,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * get end time
      *
-     * @param string $tm_format     string representation of time format defaults to 'g:i a'
+     * @param string $tm_format string representation of time format defaults to 'g:i a'
      * @return mixed                string on success, FALSE on fail
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -696,12 +695,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     public function time_range($tm_format = '', $conjunction = ' - ')
     {
         $tm_format = ! empty($tm_format) ? $tm_format : $this->_tm_frmt;
-        $start     = str_replace(
+        $start = str_replace(
             ' ',
             '&nbsp;',
             $this->get_i18n_datetime('DTT_EVT_start', $tm_format)
         );
-        $end       = str_replace(
+        $end = str_replace(
             ' ',
             '&nbsp;',
             $this->get_i18n_datetime('DTT_EVT_end', $tm_format)
@@ -749,23 +748,23 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
         $conjunction = ' - ',
         $separator = ' '
     ) {
-        $dt_format   = ! empty($dt_format) ? $dt_format : $this->_dt_frmt;
-        $tm_format   = ! empty($tm_format) ? $tm_format : $this->_tm_frmt;
+        $dt_format = ! empty($dt_format) ? $dt_format : $this->_dt_frmt;
+        $tm_format = ! empty($tm_format) ? $tm_format : $this->_tm_frmt;
         $full_format = $dt_format . $separator . $tm_format;
-        //the range output depends on various conditions
+        // the range output depends on various conditions
         switch (true) {
-            //start date timestamp and end date timestamp are the same.
-            case ($this->get_raw('DTT_EVT_start') === $this->get_raw('DTT_EVT_end')) :
+            // start date timestamp and end date timestamp are the same.
+            case ($this->get_raw('DTT_EVT_start') === $this->get_raw('DTT_EVT_end')):
                 $output = $this->get_i18n_datetime('DTT_EVT_start', $full_format);
                 break;
-            //start and end date are the same but times are different
-            case ($this->start_date() === $this->end_date()) :
+            // start and end date are the same but times are different
+            case ($this->start_date() === $this->end_date()):
                 $output = $this->get_i18n_datetime('DTT_EVT_start', $full_format)
                           . $conjunction
                           . $this->get_i18n_datetime('DTT_EVT_end', $tm_format);
                 break;
-            //all other conditions
-            default :
+            // all other conditions
+            default:
                 $output = $this->get_i18n_datetime('DTT_EVT_start', $full_format)
                           . $conjunction
                           . $this->get_i18n_datetime('DTT_EVT_end', $full_format);
@@ -845,24 +844,28 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      */
     public function length($units = 'seconds', $round_up = false)
     {
-        $start           = $this->get_raw('DTT_EVT_start');
-        $end             = $this->get_raw('DTT_EVT_end');
+        $start = $this->get_raw('DTT_EVT_start');
+        $end = $this->get_raw('DTT_EVT_end');
         $length_in_units = $end - $start;
         switch ($units) {
-            //NOTE: We purposefully don't use "break;" in order to chain the divisions
+            // NOTE: We purposefully don't use "break;" in order to chain the divisions
             /** @noinspection PhpMissingBreakStatementInspection */
+            // phpcs:disable PSR2.ControlStructures.SwitchDeclaration.TerminatingComment
             case 'days':
                 $length_in_units /= 24;
             /** @noinspection PhpMissingBreakStatementInspection */
             case 'hours':
+                // fall through is intentional
                 $length_in_units /= 60;
             /** @noinspection PhpMissingBreakStatementInspection */
             case 'minutes':
+                // fall through is intentional
                 $length_in_units /= 60;
             case 'seconds':
             default:
                 $length_in_units = ceil($length_in_units);
         }
+        // phpcs:enable
         if ($round_up) {
             $length_in_units = max($length_in_units, 1);
         }
@@ -986,7 +989,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     public function spaces_remaining($consider_tickets = false)
     {
         // tickets remaining available for purchase
-        //no need for special checks for infinite, because if DTT_reg_limit == EE_INF, then EE_INF - x = EE_INF
+        // no need for special checks for infinite, because if DTT_reg_limit == EE_INF, then EE_INF - x = EE_INF
         $dtt_remaining = $this->reg_limit() - $this->sold_and_reserved();
         if (! $consider_tickets) {
             return $dtt_remaining;
@@ -1010,7 +1013,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      */
     public function tickets_remaining($query_params = array())
     {
-        $sum     = 0;
+        $sum = 0;
         $tickets = $this->tickets($query_params);
         if (! empty($tickets)) {
             foreach ($tickets as $ticket) {
@@ -1167,15 +1170,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
                 return $dtt_name;
             }
         }
-        //first condition is to see if the months are different
-        if (
-            date('m', $this->get_raw('DTT_EVT_start')) !== date('m', $this->get_raw('DTT_EVT_end'))
+        // first condition is to see if the months are different
+        if (date('m', $this->get_raw('DTT_EVT_start')) !== date('m', $this->get_raw('DTT_EVT_end'))
         ) {
             $display_date = $this->start_date('M j\, Y g:i a') . ' - ' . $this->end_date('M j\, Y g:i a');
-            //next condition is if its the same month but different day
+            // next condition is if its the same month but different day
         } else {
-            if (
-                date('m', $this->get_raw('DTT_EVT_start')) === date('m', $this->get_raw('DTT_EVT_end'))
+            if (date('m', $this->get_raw('DTT_EVT_start')) === date('m', $this->get_raw('DTT_EVT_end'))
                 && date('d', $this->get_raw('DTT_EVT_start')) !== date('d', $this->get_raw('DTT_EVT_end'))
             ) {
                 $display_date = $this->start_date('M j\, g:i a') . ' - ' . $this->end_date('M j\, g:i a Y');
@@ -1274,7 +1275,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
                 ),
             )
         );
-        $sold                         = $this->sold();
+        $sold = $this->sold();
         if ($count_regs_for_this_datetime > $sold) {
             $this->increase_sold($count_regs_for_this_datetime - $sold);
             $this->save();
@@ -1285,6 +1286,3 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
         return $count_regs_for_this_datetime;
     }
 }
-
-/* End of file EE_Datetime.class.php */
-/* Location: includes/classes/EE_Datetime.class.php */

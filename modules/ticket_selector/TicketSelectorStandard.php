@@ -1,9 +1,6 @@
 <?php
+
 namespace EventEspresso\modules\ticket_selector;
-
-defined('ABSPATH') || exit;
-
-
 
 /**
  * Class TicketSelectorStandard
@@ -38,7 +35,6 @@ class TicketSelectorStandard extends TicketSelector
     protected $tax_config;
 
 
-
     /**
      * TicketSelectorSimple constructor.
      *
@@ -64,18 +60,17 @@ class TicketSelectorStandard extends TicketSelector
         $this->date_format = $date_format;
         $this->time_format = $time_format;
         // get EE_Ticket_Selector_Config and TicketDetails
-        $this->ticket_selector_config = isset (\EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector)
+        $this->ticket_selector_config = isset(\EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector)
             ? \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector
             : new \EE_Ticket_Selector_Config();
         // $template_settings->setDatetimeSelectorThreshold(2);
         // \EEH_Debug_Tools::printr($template_settings->getShowDatetimeSelector(), 'getShowDatetimeSelector', __FILE__, __LINE__);
         // \EEH_Debug_Tools::printr($template_settings->getDatetimeSelectorThreshold(), 'getDatetimeSelectorThreshold', __FILE__, __LINE__);
-        $this->tax_config = isset (\EE_Registry::instance()->CFG->tax_settings)
+        $this->tax_config = isset(\EE_Registry::instance()->CFG->tax_settings)
             ? \EE_Registry::instance()->CFG->tax_settings
             : new \EE_Tax_Config();
         parent::__construct($event, $tickets, $max_attendees, $template_args);
     }
-
 
 
     /**
@@ -93,8 +88,7 @@ class TicketSelectorStandard extends TicketSelector
         $taxable_tickets = false;
         $datetime_selector = null;
         $this->template_args['datetime_selector'] = '';
-        if (
-            $this->ticket_selector_config->getShowDatetimeSelector()
+        if ($this->ticket_selector_config->getShowDatetimeSelector()
             !== \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR
         ) {
             $datetime_selector = new DatetimeSelector(
@@ -137,9 +131,4 @@ class TicketSelectorStandard extends TicketSelector
         $this->template_args['template_path'] = TICKET_SELECTOR_TEMPLATES_PATH . 'standard_ticket_selector.template.php';
         remove_all_filters('FHEE__EE_Ticket_Selector__hide_ticket_selector');
     }
-
-
-
 }
-// End of file TicketSelectorStandard.php
-// Location: EventEspresso\modules\ticket_selector/TicketSelectorStandard.php

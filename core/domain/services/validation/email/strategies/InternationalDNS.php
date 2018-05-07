@@ -4,10 +4,6 @@ namespace EventEspresso\core\domain\services\validation\email\strategies;
 
 use EventEspresso\core\domain\services\validation\email\EmailValidationException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
-
 /**
  * Class EmailValidationInternationalDNS
  * Validates the email in the same way as the parent, but also
@@ -15,7 +11,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  *
  * @package        Event Espresso
  * @author         Mike Nelson
- * 
  */
 class InternationalDNS extends International
 {
@@ -23,6 +18,7 @@ class InternationalDNS extends International
     /**
      * Validates the email in teh same way as the parent, but also
      * verifies the domain exists.
+     *
      * @param string $email_address
      * @return bool
      * @throws EmailValidationException
@@ -38,7 +34,7 @@ class InternationalDNS extends International
             // domain not found in MX records
             throw new EmailValidationException(
                 __(
-                    // @codingStandardsIgnoreStart
+                // @codingStandardsIgnoreStart
                     'Although the email address provided is formatted correctly, a valid "MX record" could not be located for that address and domain. Please enter a valid email address.',
                     // @codingStandardsIgnoreEnd
                     'event_espresso'
@@ -49,7 +45,7 @@ class InternationalDNS extends International
             // domain not found in A records
             throw new EmailValidationException(
                 __(
-                    // @codingStandardsIgnoreStart
+                // @codingStandardsIgnoreStart
                     'Although the email address provided is formatted correctly, a valid "A record" could not be located for that address and domain. Please enter a valid email address.',
                     // @codingStandardsIgnoreEnd
                     'event_espresso'
@@ -58,8 +54,4 @@ class InternationalDNS extends International
         }
         return true;
     }
-
-
 }
-// End of file EmailValidationInternationalDNS.php
-// Location: core\services\validation/EmailValidationInternationalDNS.php

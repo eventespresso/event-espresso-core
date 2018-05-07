@@ -1,17 +1,12 @@
 <?php
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
+
+use EventEspresso\core\domain\DomainFactory;
+use EventEspresso\core\services\loaders\ClassInterfaceCache;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\LegacyRequestInterface;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\ResponseInterface;
-
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class EE_Dependency_Map
@@ -55,11 +50,15 @@ class EE_Dependency_Map
     const OVERWRITE_DEPENDENCIES = 1;
 
 
-
     /**
      * @type EE_Dependency_Map $_instance
      */
     protected static $_instance;
+
+    /**
+     * @var ClassInterfaceCache $class_cache
+     */
+    private $class_cache;
 
     /**
      * @type RequestInterface $request
@@ -91,28 +90,21 @@ class EE_Dependency_Map
      */
     protected $_class_loaders = array();
 
-    /**
-     * @type array $_aliases
-     */
-    protected $_aliases = array();
-
-
 
     /**
      * EE_Dependency_Map constructor.
+     *
+     * @param ClassInterfaceCache $class_cache
      */
-    protected function __construct()
+    protected function __construct(ClassInterfaceCache $class_cache)
     {
-        // add_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading', array($this, 'initialize'));
-        do_action('EE_Dependency_Map____construct');
+        $this->class_cache = $class_cache;
+        do_action('EE_Dependency_Map____construct', $this);
     }
 
 
-
     /**
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
+     * @return void
      */
     public function initialize()
     {
@@ -122,15 +114,18 @@ class EE_Dependency_Map
     }
 
 
-
     /**
      * @singleton method used to instantiate class object
+     * @param ClassInterfaceCache|null $class_cache
      * @return EE_Dependency_Map
      */
-    public static function instance() {
+    public static function instance(ClassInterfaceCache $class_cache = null)
+    {
         // check if class object is instantiated, and instantiated properly
-        if (! self::$_instance instanceof EE_Dependency_Map) {
-            self::$_instance = new EE_Dependency_Map(/*$request, $response, $legacy_request*/);
+        if (! self::$_instance instanceof EE_Dependency_Map
+            && $class_cache instanceof ClassInterfaceCache
+        ) {
+            self::$_instance = new EE_Dependency_Map($class_cache);
         }
         return self::$_instance;
     }
@@ -163,7 +158,6 @@ class EE_Dependency_Map
     }
 
 
-
     /**
      * @param LoaderInterface $loader
      */
@@ -171,7 +165,6 @@ class EE_Dependency_Map
     {
         $this->loader = $loader;
     }
-
 
 
     /**
@@ -187,7 +180,6 @@ class EE_Dependency_Map
     ) {
         return self::$_instance->registerDependencies($class, $dependencies, $overwrite);
     }
-
 
 
     /**
@@ -217,13 +209,12 @@ class EE_Dependency_Map
         // we need to make sure that any aliases used when registering a dependency
         // get resolved to the correct class name
         foreach ($dependencies as $dependency => $load_source) {
-            $alias = self::$_instance->get_alias($dependency);
-            if (
-                $overwrite === EE_Dependency_Map::OVERWRITE_DEPENDENCIES
+            $alias = self::$_instance->getFqnForAlias($dependency);
+            if ($overwrite === EE_Dependency_Map::OVERWRITE_DEPENDENCIES
                 || ! isset(self::$_instance->_dependency_map[ $class ][ $alias ])
             ) {
-                unset($dependencies[$dependency]);
-                $dependencies[$alias] = $load_source;
+                unset($dependencies[ $dependency ]);
+                $dependencies[ $alias ] = $load_source;
                 $registered = true;
             }
         }
@@ -248,7 +239,6 @@ class EE_Dependency_Map
     }
 
 
-
     /**
      * @param string $class_name
      * @param string $loader
@@ -263,8 +253,7 @@ class EE_Dependency_Map
             );
         }
         // check that loader is callable or method starts with "load_" and exists in EE_Registry
-        if (
-            ! is_callable($loader)
+        if (! is_callable($loader)
             && (
                 strpos($loader, 'load_') !== 0
                 || ! method_exists('EE_Registry', $loader)
@@ -280,14 +269,13 @@ class EE_Dependency_Map
                 )
             );
         }
-        $class_name = self::$_instance->get_alias($class_name);
-        if (! isset(self::$_instance->_class_loaders[$class_name])) {
-            self::$_instance->_class_loaders[$class_name] = $loader;
+        $class_name = self::$_instance->getFqnForAlias($class_name);
+        if (! isset(self::$_instance->_class_loaders[ $class_name ])) {
+            self::$_instance->_class_loaders[ $class_name ] = $loader;
             return true;
         }
         return false;
     }
-
 
 
     /**
@@ -297,7 +285,6 @@ class EE_Dependency_Map
     {
         return $this->_dependency_map;
     }
-
 
 
     /**
@@ -312,9 +299,8 @@ class EE_Dependency_Map
         if (strpos($class_name, 'EEM_') === 0) {
             $class_name = 'LEGACY_MODELS';
         }
-        return isset($this->_dependency_map[$class_name]) ? true : false;
+        return isset($this->_dependency_map[ $class_name ]) ? true : false;
     }
-
 
 
     /**
@@ -330,12 +316,11 @@ class EE_Dependency_Map
         if (strpos($class_name, 'EEM_') === 0) {
             $class_name = 'LEGACY_MODELS';
         }
-        $dependency = $this->get_alias($dependency);
-        return isset($this->_dependency_map[$class_name][$dependency])
+        $dependency = $this->getFqnForAlias($dependency, $class_name);
+        return isset($this->_dependency_map[ $class_name ][ $dependency ])
             ? true
             : false;
     }
-
 
 
     /**
@@ -351,12 +336,11 @@ class EE_Dependency_Map
         if (strpos($class_name, 'EEM_') === 0) {
             $class_name = 'LEGACY_MODELS';
         }
-        $dependency = $this->get_alias($dependency);
+        $dependency = $this->getFqnForAlias($dependency);
         return $this->has_dependency_for_class($class_name, $dependency)
-            ? $this->_dependency_map[$class_name][$dependency]
+            ? $this->_dependency_map[ $class_name ][ $dependency ]
             : EE_Dependency_Map::not_registered;
     }
-
 
 
     /**
@@ -366,13 +350,12 @@ class EE_Dependency_Map
     public function class_loader($class_name)
     {
         // all legacy models use load_model()
-        if(strpos($class_name, 'EEM_') === 0){
+        if (strpos($class_name, 'EEM_') === 0) {
             return 'load_model';
         }
-        $class_name = $this->get_alias($class_name);
-        return isset($this->_class_loaders[$class_name]) ? $this->_class_loaders[$class_name] : '';
+        $class_name = $this->getFqnForAlias($class_name);
+        return isset($this->_class_loaders[ $class_name ]) ? $this->_class_loaders[ $class_name ] : '';
     }
-
 
 
     /**
@@ -384,48 +367,46 @@ class EE_Dependency_Map
     }
 
 
-
     /**
      * adds an alias for a classname
      *
-     * @param string $class_name the class name that should be used (concrete class to replace interface)
-     * @param string $alias      the class name that would be type hinted for (abstract parent or interface)
-     * @param string $for_class  the class that has the dependency (is type hinting for the interface)
+     * @param string $fqcn      the class name that should be used (concrete class to replace interface)
+     * @param string $alias     the class name that would be type hinted for (abstract parent or interface)
+     * @param string $for_class the class that has the dependency (is type hinting for the interface)
      */
-    public function add_alias($class_name, $alias, $for_class = '')
+    public function add_alias($fqcn, $alias, $for_class = '')
     {
-        if ($for_class !== '') {
-            if (! isset($this->_aliases[$for_class])) {
-                $this->_aliases[$for_class] = array();
-            }
-            $this->_aliases[$for_class][$class_name] = $alias;
-        }
-        $this->_aliases[$class_name] = $alias;
+        $this->class_cache->addAlias($fqcn, $alias, $for_class);
     }
 
 
-
     /**
-     * returns TRUE if the provided class name has an alias
+     * Returns TRUE if the provided fully qualified name IS an alias
+     * WHY?
+     * Because if a class is type hinting for a concretion,
+     * then why would we need to find another class to supply it?
+     * ie: if a class asks for `Fully/Qualified/Namespace/SpecificClassName`,
+     * then give it an instance of `Fully/Qualified/Namespace/SpecificClassName`.
+     * Don't go looking for some substitute.
+     * Whereas if a class is type hinting for an interface...
+     * then we need to find an actual class to use.
+     * So the interface IS the alias for some other FQN,
+     * and we need to find out if `Fully/Qualified/Namespace/SomeInterface`
+     * represents some other class.
      *
-     * @param string $class_name
+     * @param string $fqn
      * @param string $for_class
      * @return bool
      */
-    public function has_alias($class_name = '', $for_class = '')
+    public function isAlias($fqn = '', $for_class = '')
     {
-        return isset($this->_aliases[$for_class][$class_name])
-               || (
-                   isset($this->_aliases[$class_name])
-                   && ! is_array($this->_aliases[$class_name])
-               );
+        return $this->class_cache->isAlias($fqn, $for_class);
     }
 
 
-
     /**
-     * returns alias for class name if one exists, otherwise returns the original classname
-     * functions recursively, so that multiple aliases can be used to drill down to a classname
+     * Returns a FQN for provided alias if one exists, otherwise returns the original $alias
+     * functions recursively, so that multiple aliases can be used to drill down to a FQN
      *  for example:
      *      if the following two entries were added to the _aliases array:
      *          array(
@@ -435,21 +416,14 @@ class EE_Dependency_Map
      *      then one could use EE_Registry::instance()->create( 'interface_alias' )
      *      to load an instance of 'some\namespace\classname'
      *
-     * @param string $class_name
+     * @param string $alias
      * @param string $for_class
      * @return string
      */
-    public function get_alias($class_name = '', $for_class = '')
+    public function getFqnForAlias($alias = '', $for_class = '')
     {
-        if (! $this->has_alias($class_name, $for_class)) {
-            return $class_name;
-        }
-        if ($for_class !== '' && isset($this->_aliases[ $for_class ][ $class_name ])) {
-            return $this->get_alias($this->_aliases[$for_class][$class_name], $for_class);
-        }
-        return $this->get_alias($this->_aliases[$class_name]);
+        return (string) $this->class_cache->getFqnForAlias($alias, $for_class);
     }
-
 
 
     /**
@@ -618,15 +592,15 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\database\TableManager'  => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\assets\I18nRegistry' => array(
+            'EventEspresso\core\services\assets\I18nRegistry'                                                             => array(
                 array(),
-                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache
+                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\assets\Registry'                                                                 => array(
-                'EE_Template_Config' => EE_Dependency_Map::load_from_cache,
-                'EE_Currency_Config' => EE_Dependency_Map::load_from_cache,
+                'EE_Template_Config'                              => EE_Dependency_Map::load_from_cache,
+                'EE_Currency_Config'                              => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\assets\I18nRegistry' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache
+                'EventEspresso\core\domain\Domain'                => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\domain\entities\shortcodes\EspressoCancelled'                                             => array(
                 'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
@@ -649,90 +623,106 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\entities\shortcodes\EspressoTxnPage'                                               => array(
                 'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\cache\BasicCacheManager'                        => array(
+            'EventEspresso\core\services\cache\BasicCacheManager'                                                         => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\cache\PostRelatedCacheManager'                  => array(
+            'EventEspresso\core\services\cache\PostRelatedCacheManager'                                                   => array(
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\services\validation\email\EmailValidationService' => array(
-                'EE_Registration_Config'                                  => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\core\domain\services\validation\email\EmailValidationService'                                  => array(
+                'EE_Registration_Config'                     => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\values\EmailAddress'                              => array(
+            'EventEspresso\core\domain\values\EmailAddress'                                                               => array(
                 null,
                 'EventEspresso\core\domain\services\validation\email\EmailValidationService' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\orm\ModelFieldFactory' => array(
-                'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\core\services\orm\ModelFieldFactory'                                                           => array(
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
             ),
-            'LEGACY_MODELS'                                                   => array(
+            'LEGACY_MODELS'                                                                                               => array(
                 null,
                 'EventEspresso\core\services\database\ModelFieldFactory' => EE_Dependency_Map::load_from_cache,
             ),
-            'EE_Module_Request_Router' => array(
+            'EE_Module_Request_Router'                                                                                    => array(
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
-            'EE_Registration_Processor' => array(
+            'EE_Registration_Processor'                                                                                   => array(
                 'EE_Request' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\notifications\PersistentAdminNoticeManager' => array(
+            'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'                                      => array(
                 null,
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
-                'EE_Request' => EE_Dependency_Map::load_from_cache,
+                'EE_Request'                                                          => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\services\licensing\LicenseService' => array(
-                'EventEspresso\core\domain\services\pue\Stats' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\services\pue\Config' => EE_Dependency_Map::load_from_cache
+            'EventEspresso\core\services\licensing\LicenseService'                                                        => array(
+                'EventEspresso\core\domain\services\pue\Stats'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\pue\Config' => EE_Dependency_Map::load_from_cache,
             ),
-			'EE_Admin_Transactions_List_Table' => array(
+            'EE_Admin_Transactions_List_Table'                                                                            => array(
                 null,
                 'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
-			),
-            'EventEspresso\core\domain\services\pue\Stats' => array(
-                'EventEspresso\core\domain\services\pue\Config' => EE_Dependency_Map::load_from_cache,
-                'EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\services\pue\StatsGatherer' => EE_Dependency_Map::load_from_cache
             ),
-            'EventEspresso\core\domain\services\pue\Config' => array(
+            'EventEspresso\core\domain\services\pue\Stats'                                                                => array(
+                'EventEspresso\core\domain\services\pue\Config'        => EE_Dependency_Map::load_from_cache,
+                'EE_Maintenance_Mode'                                  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\pue\StatsGatherer' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\services\pue\Config'                                                               => array(
                 'EE_Network_Config' => EE_Dependency_Map::load_from_cache,
-                'EE_Config' => EE_Dependency_Map::load_from_cache
+                'EE_Config'         => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\services\pue\StatsGatherer' => array(
+            'EventEspresso\core\domain\services\pue\StatsGatherer'                                                        => array(
                 'EEM_Payment_Method' => EE_Dependency_Map::load_from_cache,
-                'EEM_Event' => EE_Dependency_Map::load_from_cache,
-                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
-                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
-                'EEM_Registration' => EE_Dependency_Map::load_from_cache,
-                'EEM_Transaction' => EE_Dependency_Map::load_from_cache,
-                'EE_Config' => EE_Dependency_Map::load_from_cache
+                'EEM_Event'          => EE_Dependency_Map::load_from_cache,
+                'EEM_Datetime'       => EE_Dependency_Map::load_from_cache,
+                'EEM_Ticket'         => EE_Dependency_Map::load_from_cache,
+                'EEM_Registration'   => EE_Dependency_Map::load_from_cache,
+                'EEM_Transaction'    => EE_Dependency_Map::load_from_cache,
+                'EE_Config'          => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\services\admin\ExitModal' => array(
-                'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache
+            'EventEspresso\core\domain\services\admin\ExitModal'                                                          => array(
+                'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\services\admin\PluginUpsells' => array(
-                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache
+            'EventEspresso\core\domain\services\admin\PluginUpsells'                                                      => array(
+                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\caffeinated\modules\recaptcha_invisible\InvisibleRecaptcha' => array(
+            'EventEspresso\caffeinated\modules\recaptcha_invisible\InvisibleRecaptcha'                                    => array(
                 'EE_Registration_Config' => EE_Dependency_Map::load_from_cache,
                 'EE_Session'             => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\caffeinated\modules\recaptcha_invisible\RecaptchaAdminSettings' => array(
+            'EventEspresso\caffeinated\modules\recaptcha_invisible\RecaptchaAdminSettings'                                => array(
                 'EE_Registration_Config' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\modules\ticket_selector\ProcessTicketSelector' => array(
-                'EE_Core_Config' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
-                'EE_Session' => EE_Dependency_Map::load_from_cache,
-                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\modules\ticket_selector\ProcessTicketSelector'                                                 => array(
+                'EE_Core_Config'                                                          => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request'                             => EE_Dependency_Map::load_from_cache,
+                'EE_Session'                                                              => EE_Dependency_Map::load_from_cache,
+                'EEM_Ticket'                                                              => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker' => array(
+            'EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker'                                     => array(
                 'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'                              => array(
+                'EE_Core_Config'                             => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes'                                => array(
+                'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies'                               => array(
+                'EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EE_CPT_Strategy'                                                                                             => array(
+                'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\services\loaders\ObjectIdentifier'                                                        => array(
+                'EventEspresso\core\services\loaders\ClassInterfaceCache' => EE_Dependency_Map::load_from_cache,
             ),
         );
     }
-
 
 
     /**
@@ -751,54 +741,53 @@ class EE_Dependency_Map
      *            return new A_Class_That_Implements_Required_Interface();
      *        },
      *
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws InvalidArgumentException
      */
     protected function _register_core_class_loaders()
     {
-        //for PHP5.3 compat, we need to register any properties called here in a variable because `$this` cannot
-        //be used in a closure.
+        // for PHP5.3 compat, we need to register any properties called here in a variable because `$this` cannot
+        // be used in a closure.
         $request = &$this->request;
         $response = &$this->response;
         $legacy_request = &$this->legacy_request;
         // $loader = &$this->loader;
         $this->_class_loaders = array(
-            //load_core
-            'EE_Capabilities'          => 'load_core',
-            'EE_Encryption'            => 'load_core',
-            'EE_Front_Controller'      => 'load_core',
-            'EE_Module_Request_Router' => 'load_core',
-            'EE_Registry'              => 'load_core',
-            'EE_Request'               => function () use (&$legacy_request) {
+            // load_core
+            'EE_Capabilities'                              => 'load_core',
+            'EE_Encryption'                                => 'load_core',
+            'EE_Front_Controller'                          => 'load_core',
+            'EE_Module_Request_Router'                     => 'load_core',
+            'EE_Registry'                                  => 'load_core',
+            'EE_Request'                                   => function () use (&$legacy_request) {
                 return $legacy_request;
             },
-            'EventEspresso\core\services\request\Request' => function () use (&$request) {
+            'EventEspresso\core\services\request\Request'  => function () use (&$request) {
                 return $request;
             },
             'EventEspresso\core\services\request\Response' => function () use (&$response) {
                 return $response;
             },
-            'EE_Request_Handler'       => 'load_core',
-            'EE_Session'               => 'load_core',
-            'EE_Cron_Tasks'            => 'load_core',
-            'EE_System'                => 'load_core',
-            'EE_Maintenance_Mode'      => 'load_core',
-            'EE_Register_CPTs'         => 'load_core',
-            'EE_Admin'                 => 'load_core',
-            //load_lib
-            'EE_Message_Resource_Manager'          => 'load_lib',
-            'EE_Message_Type_Collection'           => 'load_lib',
-            'EE_Message_Type_Collection_Loader'    => 'load_lib',
-            'EE_Messenger_Collection'              => 'load_lib',
-            'EE_Messenger_Collection_Loader'       => 'load_lib',
-            'EE_Messages_Processor'                => 'load_lib',
-            'EE_Message_Repository'                => 'load_lib',
-            'EE_Messages_Queue'                    => 'load_lib',
-            'EE_Messages_Data_Handler_Collection'  => 'load_lib',
-            'EE_Message_Template_Group_Collection' => 'load_lib',
-            'EE_Payment_Method_Manager'            => 'load_lib',
-            'EE_Messages_Generator'                => function () {
+            'EE_Base'                                      => 'load_core',
+            'EE_Request_Handler'                           => 'load_core',
+            'EE_Session'                                   => 'load_core',
+            'EE_Cron_Tasks'                                => 'load_core',
+            'EE_System'                                    => 'load_core',
+            'EE_Maintenance_Mode'                          => 'load_core',
+            'EE_Register_CPTs'                             => 'load_core',
+            'EE_Admin'                                     => 'load_core',
+            'EE_CPT_Strategy'                              => 'load_core',
+            // load_lib
+            'EE_Message_Resource_Manager'                  => 'load_lib',
+            'EE_Message_Type_Collection'                   => 'load_lib',
+            'EE_Message_Type_Collection_Loader'            => 'load_lib',
+            'EE_Messenger_Collection'                      => 'load_lib',
+            'EE_Messenger_Collection_Loader'               => 'load_lib',
+            'EE_Messages_Processor'                        => 'load_lib',
+            'EE_Message_Repository'                        => 'load_lib',
+            'EE_Messages_Queue'                            => 'load_lib',
+            'EE_Messages_Data_Handler_Collection'          => 'load_lib',
+            'EE_Message_Template_Group_Collection'         => 'load_lib',
+            'EE_Payment_Method_Manager'                    => 'load_lib',
+            'EE_Messages_Generator'                        => function () {
                 return EE_Registry::instance()->load_lib(
                     'Messages_Generator',
                     array(),
@@ -806,7 +795,7 @@ class EE_Dependency_Map
                     false
                 );
             },
-            'EE_Messages_Template_Defaults'        => function ($arguments = array()) {
+            'EE_Messages_Template_Defaults'                => function ($arguments = array()) {
                 return EE_Registry::instance()->load_lib(
                     'Messages_Template_Defaults',
                     $arguments,
@@ -814,37 +803,39 @@ class EE_Dependency_Map
                     false
                 );
             },
-            //load_helper
-            'EEH_Parse_Shortcodes'                 => function () {
+            // load_helper
+            'EEH_Parse_Shortcodes'                         => function () {
                 if (EE_Registry::instance()->load_helper('Parse_Shortcodes')) {
                     return new EEH_Parse_Shortcodes();
                 }
                 return null;
             },
-            'EE_Template_Config'                   => function () {
+            'EE_Template_Config'                           => function () {
                 return EE_Config::instance()->template_settings;
             },
-            'EE_Currency_Config'                   => function () {
+            'EE_Currency_Config'                           => function () {
                 return EE_Config::instance()->currency;
             },
-            'EE_Registration_Config'                   => function () {
+            'EE_Registration_Config'                       => function () {
                 return EE_Config::instance()->registration;
             },
-            'EE_Core_Config'                   => function () {
+            'EE_Core_Config'                               => function () {
                 return EE_Config::instance()->core;
             },
-            'EventEspresso\core\services\loaders\Loader' => function () {
+            'EventEspresso\core\services\loaders\Loader'   => function () {
                 return LoaderFactory::getLoader();
             },
-            'EE_Network_Config' => function() {
+            'EE_Network_Config'                            => function () {
                 return EE_Network_Config::instance();
             },
-            'EE_Config' => function () {
+            'EE_Config'                                    => function () {
                 return EE_Config::instance();
-            }
+            },
+            'EventEspresso\core\domain\Domain'             => function () {
+                return DomainFactory::getEventEspressoCoreDomain();
+            },
         );
     }
-
 
 
     /**
@@ -853,7 +844,7 @@ class EE_Dependency_Map
      */
     protected function _register_core_aliases()
     {
-        $this->_aliases = array(
+        $aliases = array(
             'CommandBusInterface'                                                          => 'EventEspresso\core\services\commands\CommandBusInterface',
             'EventEspresso\core\services\commands\CommandBusInterface'                     => 'EventEspresso\core\services\commands\CommandBus',
             'CommandHandlerManagerInterface'                                               => 'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
@@ -864,16 +855,14 @@ class EE_Dependency_Map
             'CapabilitiesCheckerInterface'                                                 => 'EventEspresso\core\domain\services\capabilities\CapabilitiesCheckerInterface',
             'EventEspresso\core\domain\services\capabilities\CapabilitiesCheckerInterface' => 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
             'CreateRegistrationService'                                                    => 'EventEspresso\core\domain\services\registration\CreateRegistrationService',
-            'CreateRegCodeCommandHandler'                                                  => 'EventEspresso\core\services\commands\registration\CreateRegCodeCommand',
-            'CreateRegUrlLinkCommandHandler'                                               => 'EventEspresso\core\services\commands\registration\CreateRegUrlLinkCommand',
             'CreateRegistrationCommandHandler'                                             => 'EventEspresso\core\services\commands\registration\CreateRegistrationCommand',
             'CopyRegistrationDetailsCommandHandler'                                        => 'EventEspresso\core\services\commands\registration\CopyRegistrationDetailsCommand',
             'CopyRegistrationPaymentsCommandHandler'                                       => 'EventEspresso\core\services\commands\registration\CopyRegistrationPaymentsCommand',
             'CancelRegistrationAndTicketLineItemCommandHandler'                            => 'EventEspresso\core\services\commands\registration\CancelRegistrationAndTicketLineItemCommandHandler',
             'UpdateRegistrationAndTransactionAfterChangeCommandHandler'                    => 'EventEspresso\core\services\commands\registration\UpdateRegistrationAndTransactionAfterChangeCommandHandler',
             'CreateTicketLineItemCommandHandler'                                           => 'EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommand',
-            'CreateTransactionCommandHandler'                                     => 'EventEspresso\core\services\commands\transaction\CreateTransactionCommandHandler',
-            'CreateAttendeeCommandHandler'                                        => 'EventEspresso\core\services\commands\attendee\CreateAttendeeCommandHandler',
+            'CreateTransactionCommandHandler'                                              => 'EventEspresso\core\services\commands\transaction\CreateTransactionCommandHandler',
+            'CreateAttendeeCommandHandler'                                                 => 'EventEspresso\core\services\commands\attendee\CreateAttendeeCommandHandler',
             'TableManager'                                                                 => 'EventEspresso\core\services\database\TableManager',
             'TableAnalysis'                                                                => 'EventEspresso\core\services\database\TableAnalysis',
             'EspressoShortcode'                                                            => 'EventEspresso\core\services\shortcodes\EspressoShortcode',
@@ -882,33 +871,40 @@ class EE_Dependency_Map
             'EventEspresso\core\services\cache\CacheStorageInterface'                      => 'EventEspresso\core\services\cache\TransientCacheStorage',
             'LoaderInterface'                                                              => 'EventEspresso\core\services\loaders\LoaderInterface',
             'EventEspresso\core\services\loaders\LoaderInterface'                          => 'EventEspresso\core\services\loaders\Loader',
-            'CommandFactoryInterface'                                                     => 'EventEspresso\core\services\commands\CommandFactoryInterface',
-            'EventEspresso\core\services\commands\CommandFactoryInterface'                => 'EventEspresso\core\services\commands\CommandFactory',
-            'EventEspresso\core\domain\services\session\SessionIdentifierInterface'       => 'EE_Session',
-            'EmailValidatorInterface'                                                     => 'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface',
-            'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface' => 'EventEspresso\core\domain\services\validation\email\EmailValidationService',
-            'NoticeConverterInterface'                                            => 'EventEspresso\core\services\notices\NoticeConverterInterface',
-            'EventEspresso\core\services\notices\NoticeConverterInterface'        => 'EventEspresso\core\services\notices\ConvertNoticesToEeErrors',
-            'NoticesContainerInterface'                                           => 'EventEspresso\core\services\notices\NoticesContainerInterface',
-            'EventEspresso\core\services\notices\NoticesContainerInterface'       => 'EventEspresso\core\services\notices\NoticesContainer',
-            'EventEspresso\core\services\request\RequestInterface'                => 'EventEspresso\core\services\request\Request',
-            'EventEspresso\core\services\request\ResponseInterface'               => 'EventEspresso\core\services\request\Response',
-            'EventEspresso\core\domain\DomainInterface'                           => 'EventEspresso\core\domain\Domain',
+            'CommandFactoryInterface'                                                      => 'EventEspresso\core\services\commands\CommandFactoryInterface',
+            'EventEspresso\core\services\commands\CommandFactoryInterface'                 => 'EventEspresso\core\services\commands\CommandFactory',
+            'EventEspresso\core\domain\services\session\SessionIdentifierInterface'        => 'EE_Session',
+            'EmailValidatorInterface'                                                      => 'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface',
+            'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface'  => 'EventEspresso\core\domain\services\validation\email\EmailValidationService',
+            'NoticeConverterInterface'                                                     => 'EventEspresso\core\services\notices\NoticeConverterInterface',
+            'EventEspresso\core\services\notices\NoticeConverterInterface'                 => 'EventEspresso\core\services\notices\ConvertNoticesToEeErrors',
+            'NoticesContainerInterface'                                                    => 'EventEspresso\core\services\notices\NoticesContainerInterface',
+            'EventEspresso\core\services\notices\NoticesContainerInterface'                => 'EventEspresso\core\services\notices\NoticesContainer',
+            'EventEspresso\core\services\request\RequestInterface'                         => 'EventEspresso\core\services\request\Request',
+            'EventEspresso\core\services\request\ResponseInterface'                        => 'EventEspresso\core\services\request\Response',
+            'EventEspresso\core\domain\DomainInterface'                                    => 'EventEspresso\core\domain\Domain',
         );
+        foreach ($aliases as $alias => $fqn) {
+            if (is_array($fqn)) {
+                foreach ($fqn as $class => $for_class) {
+                    $this->class_cache->addAlias($class, $alias, $for_class);
+                }
+                continue;
+            }
+            $this->class_cache->addAlias($fqn, $alias);
+        }
         if (! (defined('DOING_AJAX') && DOING_AJAX) && is_admin()) {
-            $this->_aliases['EventEspresso\core\services\notices\NoticeConverterInterface'] = 'EventEspresso\core\services\notices\ConvertNoticesToAdminNotices';
+            $this->class_cache->addAlias(
+                'EventEspresso\core\services\notices\ConvertNoticesToAdminNotices',
+                'EventEspresso\core\services\notices\NoticeConverterInterface'
+            );
         }
     }
-
 
 
     /**
      * This is used to reset the internal map and class_loaders to their original default state at the beginning of the
      * request Primarily used by unit tests.
-     *
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
      */
     public function reset()
     {
@@ -917,6 +913,52 @@ class EE_Dependency_Map
     }
 
 
+    /**
+     * PLZ NOTE: a better name for this method would be is_alias()
+     * because it returns TRUE if the provided fully qualified name IS an alias
+     * WHY?
+     * Because if a class is type hinting for a concretion,
+     * then why would we need to find another class to supply it?
+     * ie: if a class asks for `Fully/Qualified/Namespace/SpecificClassName`,
+     * then give it an instance of `Fully/Qualified/Namespace/SpecificClassName`.
+     * Don't go looking for some substitute.
+     * Whereas if a class is type hinting for an interface...
+     * then we need to find an actual class to use.
+     * So the interface IS the alias for some other FQN,
+     * and we need to find out if `Fully/Qualified/Namespace/SomeInterface`
+     * represents some other class.
+     *
+     * @deprecated $VID:$
+     * @param string $fqn
+     * @param string $for_class
+     * @return bool
+     */
+    public function has_alias($fqn = '', $for_class = '')
+    {
+        return $this->isAlias($fqn, $for_class);
+    }
+
+
+    /**
+     * PLZ NOTE: a better name for this method would be get_fqn_for_alias()
+     * because it returns a FQN for provided alias if one exists, otherwise returns the original $alias
+     * functions recursively, so that multiple aliases can be used to drill down to a FQN
+     *  for example:
+     *      if the following two entries were added to the _aliases array:
+     *          array(
+     *              'interface_alias'           => 'some\namespace\interface'
+     *              'some\namespace\interface'  => 'some\namespace\classname'
+     *          )
+     *      then one could use EE_Registry::instance()->create( 'interface_alias' )
+     *      to load an instance of 'some\namespace\classname'
+     *
+     * @deprecated $VID:$
+     * @param string $alias
+     * @param string $for_class
+     * @return string
+     */
+    public function get_alias($alias = '', $for_class = '')
+    {
+        return $this->getFqnForAlias($alias, $for_class);
+    }
 }
-// End of file EE_Dependency_Map.core.php
-// Location: /EE_Dependency_Map.core.php

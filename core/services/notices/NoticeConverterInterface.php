@@ -2,17 +2,13 @@
 
 namespace EventEspresso\core\services\notices;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class NoticeConverter
  * Converts notifications in a NoticesContainerInterface container into another format such as EE_Error notifications
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
+ *
  */
 interface NoticeConverterInterface
 {
@@ -44,6 +40,4 @@ interface NoticeConverterInterface
      * @return void;
      */
     public function clearNotices();
-
-
 }

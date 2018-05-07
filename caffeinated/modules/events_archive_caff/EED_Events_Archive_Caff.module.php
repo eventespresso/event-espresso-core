@@ -31,26 +31,39 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
     {
     }
 
-
     /**
-     * set_hooks_admin - for hooking into EE Admin Core, other modules, etc
+     *    set_hooks_admin - for hooking into EE Admin Core, other modules, etc
      *
+     * @access    public
      * @return    void
      */
     public static function set_hooks_admin()
     {
-        define('EVENTS_ARCHIVE_CAFF_TEMPLATES_PATH',
-            str_replace('\\', DS, plugin_dir_path(__FILE__)) . 'templates' . DS);
+        define(
+            'EVENTS_ARCHIVE_CAFF_TEMPLATES_PATH',
+            str_replace('\\', DS, plugin_dir_path(__FILE__)) . 'templates' . DS
+        );
         define('EVENT_ARCHIVE_CAFF_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets' . DS);
-        add_action('AHEE__template_settings__template__before_settings_form',
-            array('EED_Events_Archive_Caff', 'template_settings_form'), 10);
-        add_filter('FHEE__General_Settings_Admin_Page__update_template_settings__data',
-            array('EED_Events_Archive_Caff', 'update_template_settings'), 10, 2);
+        add_action(
+            'AHEE__template_settings__template__before_settings_form',
+            array('EED_Events_Archive_Caff', 'template_settings_form'),
+            10
+        );
+        add_filter(
+            'FHEE__General_Settings_Admin_Page__update_template_settings__data',
+            array('EED_Events_Archive_Caff', 'update_template_settings'),
+            10,
+            2
+        );
         // AJAX
-        add_action('wp_ajax_espresso_update_event_archive_order',
-            array('EED_Events_Archive_Caff', 'update_event_archive_order'));
-        add_action('wp_ajax_nopriv_espresso_update_event_archive_order',
-            array('EED_Events_Archive_Caff', 'update_event_archive_order'));
+        add_action(
+            'wp_ajax_espresso_update_event_archive_order',
+            array('EED_Events_Archive_Caff', 'update_event_archive_order')
+        );
+        add_action(
+            'wp_ajax_nopriv_espresso_update_event_archive_order',
+            array('EED_Events_Archive_Caff', 'update_event_archive_order')
+        );
     }
 
 
@@ -246,10 +259,3 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
         exit();
     }
 }
-
-
-
-
-
-// End of file EED_Events_Archive.module.php
-// Location: /modules/events_archive_caff/EED_Events_Archive.module.php

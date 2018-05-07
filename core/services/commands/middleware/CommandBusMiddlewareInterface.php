@@ -4,12 +4,6 @@ namespace EventEspresso\core\services\commands\middleware;
 use Closure;
 use EventEspresso\core\services\commands\CommandInterface;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Interface CommandBusMiddlewareInterface
  *
@@ -24,7 +18,4 @@ interface CommandBusMiddlewareInterface
      * @return mixed
      */
     public function handle(CommandInterface $command, Closure $next);
-
 }
-// End of file CommandBusMiddlewareInterface.php
-// Location: /CommandBusMiddlewareInterface.php
