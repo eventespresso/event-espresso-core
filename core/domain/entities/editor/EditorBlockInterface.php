@@ -4,10 +4,6 @@ namespace EventEspresso\core\domain\entities\editor;
 
 use WP_Block_Type;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Interface EditorBlockInterface
  * Classes implementing this interface are responsible for
