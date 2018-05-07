@@ -6,10 +6,6 @@ use ReCaptcha\ReCaptcha;
 use ReCaptcha\RequestMethod\SocketPost;
 use ReCaptcha\Response;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
-
-
-
 /**
  * EED_Recaptcha
  * PLZ NOTE: ALL ADMIN SETTINGS FUNCTIONALITY HAS BEEN MOVED TO
@@ -59,8 +55,7 @@ class EED_Recaptcha extends EED_Module
     {
         EED_Recaptcha::$config = EE_Registry::instance()->CFG->registration;
         // use_captcha ?
-        if (
-            EED_Recaptcha::useRecaptcha()
+        if (EED_Recaptcha::useRecaptcha()
             && EED_Recaptcha::notPaymentOptionsRevisit()
         ) {
             EED_Recaptcha::set_definitions();
@@ -68,7 +63,9 @@ class EED_Recaptcha extends EED_Module
             add_action('wp', array('EED_Recaptcha', 'set_late_hooks'), 1, 0);
             add_action(
                 'AHEE__before_spco_whats_next_buttons',
-                array('EED_Recaptcha', 'display_recaptcha'), 10, 0
+                array('EED_Recaptcha', 'display_recaptcha'),
+                10,
+                0
             );
             add_filter(
                 'FHEE__EED_Single_Page_Checkout__init___continue_reg',
@@ -103,8 +100,7 @@ class EED_Recaptcha extends EED_Module
         EED_Recaptcha::$config = EE_Registry::instance()->CFG->registration;
         EED_Recaptcha::set_definitions();
         // use_captcha ?
-        if (
-            EED_Recaptcha::useRecaptcha()
+        if (EED_Recaptcha::useRecaptcha()
             && EED_Recaptcha::notPaymentOptionsRevisit()
             && EE_Registry::instance()->REQ->get('step', '') !== ''
         ) {
@@ -200,7 +196,7 @@ class EED_Recaptcha extends EED_Module
             EVENT_ESPRESSO_VERSION,
             true
         );
-        EE_Registry::$i18n_js_strings['no_SPCO_error']      = __(
+        EE_Registry::$i18n_js_strings['no_SPCO_error'] = __(
             'It appears the Single Page Checkout javascript was not loaded properly! Please refresh the page and try again or contact support.',
             'event_espresso'
         );
@@ -208,7 +204,7 @@ class EED_Recaptcha extends EED_Module
             'There appears to be a problem with the reCAPTCHA configuration! Please check the admin settings or contact support.',
             'event_espresso'
         );
-        EE_Registry::$i18n_js_strings['recaptcha_fail']     = __(
+        EE_Registry::$i18n_js_strings['recaptcha_fail'] = __(
             'Please complete the anti-spam test before proceeding.',
             'event_espresso'
         );
@@ -386,8 +382,8 @@ class EED_Recaptcha extends EED_Module
         // Was there a reCAPTCHA response?
         if ($recaptcha_response) {
             // if allow_url_fopen is Off, then set a different request method
-            $request_method     = ! ini_get('allow_url_fopen') ? new SocketPost() : null;
-            $recaptcha          = new ReCaptcha(
+            $request_method = ! ini_get('allow_url_fopen') ? new SocketPost() : null;
+            $recaptcha = new ReCaptcha(
                 EED_Recaptcha::$config->recaptcha_privatekey,
                 $request_method
             );
@@ -399,5 +395,3 @@ class EED_Recaptcha extends EED_Module
         return $recaptcha_response instanceof Response && $recaptcha_response->isSuccess();
     }
 }
-// End of file EED_Recaptcha.module.php
-// Location: /modules/recaptcha/EED_Recaptcha.module.php

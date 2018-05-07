@@ -1,14 +1,11 @@
-<?php use EventEspresso\core\exceptions\InvalidDataTypeException;
+<?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\modules\ticket_selector\DisplayTicketSelector;
 use EventEspresso\modules\ticket_selector\TicketSelectorIframe;
 use EventEspresso\modules\ticket_selector\TicketSelectorIframeEmbedButton;
-
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
-
 
 /**
  * Ticket Selector  class
@@ -31,7 +28,6 @@ class EED_Ticket_Selector extends EED_Module
     private static $iframe_embed_button;
 
 
-
     /**
      * @return EED_Module|EED_Ticket_Selector
      */
@@ -39,7 +35,6 @@ class EED_Ticket_Selector extends EED_Module
     {
         return parent::get_instance(__CLASS__);
     }
-
 
 
     /**
@@ -51,7 +46,6 @@ class EED_Ticket_Selector extends EED_Module
         $this->set_config_class('EE_Ticket_Selector_Config');
         $this->set_config_name('EED_Ticket_Selector');
     }
-
 
 
     /**
@@ -86,7 +80,6 @@ class EED_Ticket_Selector extends EED_Module
     }
 
 
-
     /**
      *    set_hooks_admin - for hooking into EE Admin Core, other modules, etc
      *
@@ -113,7 +106,6 @@ class EED_Ticket_Selector extends EED_Module
     }
 
 
-
     /**
      *    set_definitions
      *
@@ -133,15 +125,14 @@ class EED_Ticket_Selector extends EED_Module
             'TICKET_SELECTOR_TEMPLATES_PATH',
             str_replace('\\', DS, plugin_dir_path(__FILE__)) . 'templates' . DS
         );
-        //if config is not set, initialize
-        if (
-            ! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
+        // if config is not set, initialize
+        if (! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
         ) {
             EED_Ticket_Selector::instance()->set_config();
-            EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = EED_Ticket_Selector::instance()->config();
+            EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = EED_Ticket_Selector::instance(
+            )->config();
         }
     }
-
 
 
     /**
@@ -167,7 +158,6 @@ class EED_Ticket_Selector extends EED_Module
     }
 
 
-
     /**
      * @return TicketSelectorIframeEmbedButton
      */
@@ -178,7 +168,6 @@ class EED_Ticket_Selector extends EED_Module
         }
         return self::$iframe_embed_button;
     }
-
 
 
     /**
@@ -194,7 +183,6 @@ class EED_Ticket_Selector extends EED_Module
     }
 
 
-
     /**
      * ticket_selector_iframe
      *
@@ -207,7 +195,6 @@ class EED_Ticket_Selector extends EED_Module
         $ticket_selector_iframe = new TicketSelectorIframe();
         $ticket_selector_iframe->display();
     }
-
 
 
     /**
@@ -255,7 +242,6 @@ class EED_Ticket_Selector extends EED_Module
     }
 
 
-
     /**
      * @return void
      */
@@ -266,7 +252,6 @@ class EED_Ticket_Selector extends EED_Module
             'event_espresso'
         );
     }
-
 
 
     /**
@@ -299,7 +284,6 @@ class EED_Ticket_Selector extends EED_Module
     }
 
 
-
     /**
      * @return void
      */
@@ -326,7 +310,6 @@ class EED_Ticket_Selector extends EED_Module
     }
 
 
-
     /**
      * Informs the rest of the forms system what CSS and JS is needed to display the input
      *
@@ -338,7 +321,6 @@ class EED_Ticket_Selector extends EED_Module
         $iframe_css['ticket_selector'] = TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css';
         return $iframe_css;
     }
-
 
 
     /**
@@ -357,7 +339,6 @@ class EED_Ticket_Selector extends EED_Module
     /****************************** DEPRECATED ******************************/
 
 
-
     /**
      * @deprecated
      * @return string
@@ -370,7 +351,6 @@ class EED_Ticket_Selector extends EED_Module
     }
 
 
-
     /**
      * @deprecated
      * @return string
@@ -381,7 +361,6 @@ class EED_Ticket_Selector extends EED_Module
         // todo add doing_it_wrong() notice during next major version
         return EED_Ticket_Selector::ticketSelector()->displaySubmitButton();
     }
-
 
 
     /**
@@ -398,8 +377,7 @@ class EED_Ticket_Selector extends EED_Module
     public static function iframe_code_button($permalink_string, $id, $new_title = '', $new_slug = '')
     {
         // todo add doing_it_wrong() notice during next major version
-        if (
-            EE_Registry::instance()->REQ->get('page') === 'espresso_events'
+        if (EE_Registry::instance()->REQ->get('page') === 'espresso_events'
             && EE_Registry::instance()->REQ->get('action') === 'edit'
         ) {
             $iframe_embed_button = EED_Ticket_Selector::getIframeEmbedButton();
@@ -407,7 +385,6 @@ class EED_Ticket_Selector extends EED_Module
         }
         return '';
     }
-
 
 
     /**
@@ -423,7 +400,6 @@ class EED_Ticket_Selector extends EED_Module
     }
 
 
-
     /**
      * @deprecated
      * @return string
@@ -433,7 +409,6 @@ class EED_Ticket_Selector extends EED_Module
         // todo add doing_it_wrong() notice during next major version
         return EED_Ticket_Selector::ticketSelector()->formClose();
     }
-
 
 
     /**
@@ -447,7 +422,6 @@ class EED_Ticket_Selector extends EED_Module
     }
 
 
-
     /**
      * @deprecated 4.9.13
      * @return string
@@ -456,7 +430,6 @@ class EED_Ticket_Selector extends EED_Module
     {
         return EED_Ticket_Selector::ticketSelector()->clearTicketSelector();
     }
-
 
 
     /**
@@ -469,23 +442,17 @@ class EED_Ticket_Selector extends EED_Module
     }
 
 
-
     /**
      * @deprecated
      */
     public static function load_tckt_slctr_assets_admin()
     {
         // todo add doing_it_wrong() notice during next major version
-        if (
-            EE_Registry::instance()->REQ->get('page') === 'espresso_events'
+        if (EE_Registry::instance()->REQ->get('page') === 'espresso_events'
             && EE_Registry::instance()->REQ->get('action') === 'edit'
         ) {
             $iframe_embed_button = EED_Ticket_Selector::getIframeEmbedButton();
             $iframe_embed_button->embedButtonAssets();
         }
     }
-
-
 }
-// End of file EED_Ticket_Selector.module.php
-// Location: modules/ticket_selector/EED_Ticket_Selector.module.php

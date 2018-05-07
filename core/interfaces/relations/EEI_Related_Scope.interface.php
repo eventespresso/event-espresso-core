@@ -1,4 +1,4 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php
 
 /**
  * Related Scope interface
@@ -12,27 +12,27 @@
  * @since   4.8.0
  * @author  Darren Ethier
  */
-interface EEI_Related_Scope {
+interface EEI_Related_Scope
+{
 
-	/**
-	 * Used to return the related scope object.
-	 * @return object  This may not necessarily be a EE_Base_Class object.
-	 */
-	public function get_related_scope_object();
-
-
-
-	/**
-	 * Return the name representing the related_scope_object (i.e. Event Title, or Ticket Name).
-	 * @return string
-	 */
-	public function get_related_scope_name();
+    /**
+     * Used to return the related scope object.
+     * @return object  This may not necessarily be a EE_Base_Class object.
+     */
+    public function get_related_scope_object();
 
 
-	/**
-	 * Return the related scope ID.
-	 * @return mixed int|string
-	 */
-	public function get_ID();
 
-} //end EEi_Related_Scope interface
+    /**
+     * Return the name representing the related_scope_object (i.e. Event Title, or Ticket Name).
+     * @return string
+     */
+    public function get_related_scope_name();
+
+
+    /**
+     * Return the related scope ID.
+     * @return mixed int|string
+     */
+    public function get_ID();
+}

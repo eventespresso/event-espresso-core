@@ -4,22 +4,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
-if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package            Event Espresso
- * @ author                Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                    http://www.eventespresso.com
- * @ version            4.0
- *
- * ------------------------------------------------------------------------
- *
  * Line Item Model. Mostly used for storing a snapshot of all the items in a transaction
  * as they were recorded at the time of being added to the cart.
  * There are different 'types' of line items: item, sub-item, tax, sub-total, and total.
@@ -115,7 +100,7 @@ class EEM_Line_Item extends EEM_Base
     const type_cancellation = 'cancellation';
 
     // private instance of the EEM_Line_Item object
-    protected static $_instance = NULL;
+    protected static $_instance = null;
 
 
     /**
@@ -137,18 +122,18 @@ class EEM_Line_Item extends EEM_Base
         $this->_fields = array(
             'Line_Item' => array(
                 'LIN_ID' => new EE_Primary_Key_Int_Field('LIN_ID', __("ID", "event_espresso")),
-                'LIN_code' => new EE_Slug_Field('LIN_code', __("Code for index into Cart", "event_espresso"), TRUE),
-                'TXN_ID' => new EE_Foreign_Key_Int_Field('TXN_ID', __("Transaction ID", "event_espresso"), TRUE, NULL, 'Transaction'),
-                'LIN_name' => new EE_Full_HTML_Field('LIN_name', __("Line Item Name", "event_espresso"), FALSE, ''),
-                'LIN_desc' => new EE_Full_HTML_Field('LIN_desc', __("Line Item Description", "event_espresso"), TRUE),
-                'LIN_unit_price' => new EE_Money_Field('LIN_unit_price', __("Unit Price", "event_espresso"), FALSE, 0),
-                'LIN_percent' => new EE_Float_Field('LIN_percent', __("Percent", "event_espresso"), FALSE, 0),
-                'LIN_is_taxable' => new EE_Boolean_Field('LIN_is_taxable', __("Taxable", "event_espresso"), FALSE, FALSE),
-                'LIN_order' => new EE_Integer_Field('LIN_order', __("Order of Application towards total of parent", "event_espresso"), FALSE, 1),
-                'LIN_total' => new EE_Money_Field('LIN_total', __("Total (unit price x quantity)", "event_espresso"), FALSE, 0),
-                'LIN_quantity' => new EE_Integer_Field('LIN_quantity', __("Quantity", "event_espresso"), TRUE, 1),
-                'LIN_parent' => new EE_Integer_Field('LIN_parent', __("Parent ID (this item goes towards that Line Item's total)", "event_espresso"), TRUE, NULL),
-                'LIN_type' => new EE_Enum_Text_Field('LIN_type', __("Type", "event_espresso"), FALSE, 'line-item', array(
+                'LIN_code' => new EE_Slug_Field('LIN_code', __("Code for index into Cart", "event_espresso"), true),
+                'TXN_ID' => new EE_Foreign_Key_Int_Field('TXN_ID', __("Transaction ID", "event_espresso"), true, null, 'Transaction'),
+                'LIN_name' => new EE_Full_HTML_Field('LIN_name', __("Line Item Name", "event_espresso"), false, ''),
+                'LIN_desc' => new EE_Full_HTML_Field('LIN_desc', __("Line Item Description", "event_espresso"), true),
+                'LIN_unit_price' => new EE_Money_Field('LIN_unit_price', __("Unit Price", "event_espresso"), false, 0),
+                'LIN_percent' => new EE_Float_Field('LIN_percent', __("Percent", "event_espresso"), false, 0),
+                'LIN_is_taxable' => new EE_Boolean_Field('LIN_is_taxable', __("Taxable", "event_espresso"), false, false),
+                'LIN_order' => new EE_Integer_Field('LIN_order', __("Order of Application towards total of parent", "event_espresso"), false, 1),
+                'LIN_total' => new EE_Money_Field('LIN_total', __("Total (unit price x quantity)", "event_espresso"), false, 0),
+                'LIN_quantity' => new EE_Integer_Field('LIN_quantity', __("Quantity", "event_espresso"), true, 1),
+                'LIN_parent' => new EE_Integer_Field('LIN_parent', __("Parent ID (this item goes towards that Line Item's total)", "event_espresso"), true, null),
+                'LIN_type' => new EE_Enum_Text_Field('LIN_type', __("Type", "event_espresso"), false, 'line-item', array(
                         self::type_line_item => __("Line Item", "event_espresso"),
                         self::type_sub_line_item => __("Sub-Item", "event_espresso"),
                         self::type_sub_total => __("Subtotal", "event_espresso"),
@@ -156,10 +141,9 @@ class EEM_Line_Item extends EEM_Base
                         self::type_tax => __("Tax", "event_espresso"),
                         self::type_total => __("Total", "event_espresso"),
                         self::type_cancellation => __('Cancellation', 'event_espresso')
-                    )
-                ),
-                'OBJ_ID' => new EE_Foreign_Key_Int_Field('OBJ_ID', __('ID of Item purchased.', 'event_espresso'), TRUE, NULL, $line_items_can_be_for),
-                'OBJ_type' => new EE_Any_Foreign_Model_Name_Field('OBJ_type', __("Model Name this Line Item is for", "event_espresso"), TRUE, NULL, $line_items_can_be_for),
+                    )),
+                'OBJ_ID' => new EE_Foreign_Key_Int_Field('OBJ_ID', __('ID of Item purchased.', 'event_espresso'), true, null, $line_items_can_be_for),
+                'OBJ_type' => new EE_Any_Foreign_Model_Name_Field('OBJ_type', __("Model Name this Line Item is for", "event_espresso"), true, null, $line_items_can_be_for),
                 'LIN_timestamp' => new EE_Datetime_Field('LIN_timestamp', __('When the line item was created', 'event_espresso'), false, EE_Datetime_Field::now, $timezone),
             )
         );
@@ -220,7 +204,8 @@ class EEM_Line_Item extends EEM_Base
         /** @type WPDB $wpdb */
         global $wpdb;
         $time_to_leave_alone = apply_filters(
-            'FHEE__EEM_Line_Item__delete_line_items_with_no_transaction__time_to_leave_alone', WEEK_IN_SECONDS
+            'FHEE__EEM_Line_Item__delete_line_items_with_no_transaction__time_to_leave_alone',
+            WEEK_IN_SECONDS
         );
         $query = $wpdb->prepare(
             'DELETE li
@@ -471,7 +456,7 @@ class EEM_Line_Item extends EEM_Base
      */
     public function getTicketLineItemsForExpiredCarts($timestamp = 0)
     {
-        if(! absint($timestamp)) {
+        if (! absint($timestamp)) {
             /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
             $session_lifespan = LoaderFactory::getLoader()->getShared(
                 'EventEspresso\core\domain\values\session\SessionLifespan'
@@ -488,5 +473,4 @@ class EEM_Line_Item extends EEM_Base
             )
         );
     }
-
 }

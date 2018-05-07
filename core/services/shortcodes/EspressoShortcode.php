@@ -77,7 +77,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
             }
         }
         return $this->shortcodeContent(
-            $this->sanitizeAttributes((array)$attributes)
+            $this->sanitizeAttributes((array) $attributes)
         );
     }
 
@@ -191,14 +191,14 @@ abstract class EspressoShortcode implements ShortcodeInterface
         $custom_sanitization = $this->customAttributeSanitizationMap();
         foreach ($attributes as $key => $value) {
             // is a custom sanitization callback specified ?
-            if (isset($custom_sanitization[$key])) {
-                $callback = $custom_sanitization[$key];
+            if (isset($custom_sanitization[ $key ])) {
+                $callback = $custom_sanitization[ $key ];
                 if ($callback === 'skip_sanitization') {
-                    $attributes[$key] = $value;
+                    $attributes[ $key ] = $value;
                     continue;
                 }
                 if (function_exists($callback)) {
-                    $attributes[$key] = $callback($value);
+                    $attributes[ $key ] = $callback($value);
                     continue;
                 }
             }
@@ -208,18 +208,18 @@ abstract class EspressoShortcode implements ShortcodeInterface
                 case is_float($value):
                     // typical booleans
                 case in_array($value, array(true, 'true', '1', 'on', 'yes', false, 'false', '0', 'off', 'no'), true):
-                    $attributes[$key] = $value;
+                    $attributes[ $key ] = $value;
                     break;
                 case is_string($value):
-                    $attributes[$key] = sanitize_text_field($value);
+                    $attributes[ $key ] = sanitize_text_field($value);
                     break;
                 case is_array($value):
-                    $attributes[$key] = $this->sanitizeAttributes($value);
+                    $attributes[ $key ] = $this->sanitizeAttributes($value);
                     break;
                 default:
                     // only remaining data types are Object and Resource
                     // which are not allowed as shortcode attributes
-                    $attributes[$key] = null;
+                    $attributes[ $key ] = null;
                     break;
             }
         }

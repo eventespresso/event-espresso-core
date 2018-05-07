@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Interface EEMI_Payment_Log
@@ -18,9 +15,4 @@ interface EEMI_Payment_Log
      * @return EE_Log
      */
     public function gateway_log($message, $id, $model_name);
-
-
-
 }
-// End of file EEMI_Payment_Log.interface.php
-// Location: ${NAMESPACE}/EEMI_Payment_Log.interface.php

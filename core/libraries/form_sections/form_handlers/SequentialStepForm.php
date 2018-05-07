@@ -7,12 +7,6 @@ use EE_Registry;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use InvalidArgumentException;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Class SequentialStepForm
  * abstract parent class for building a form that is one part of a multi-stepped sequential form.
@@ -180,7 +174,7 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
                 esc_html__('The redirect argument can not be an empty array.', 'event_espresso')
             );
         }
-        $this->redirect_args = array_merge($this->redirect_args, (array)$redirect_args);
+        $this->redirect_args = array_merge($this->redirect_args, (array) $redirect_args);
     }
 
 
@@ -205,7 +199,7 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
             );
         }
         foreach ($redirect_arg_keys_to_remove as $redirect_arg_key) {
-            unset($this->redirect_args[$redirect_arg_key]);
+            unset($this->redirect_args[ $redirect_arg_key ]);
         }
     }
 
@@ -227,17 +221,16 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
      */
     public function setRedirectTo($redirect_to)
     {
-        if (
-            ! in_array(
-                $redirect_to,
-                array(
+        if (! in_array(
+            $redirect_to,
+            array(
                     SequentialStepForm::REDIRECT_TO_NEXT_STEP,
                     SequentialStepForm::REDIRECT_TO_CURRENT_STEP,
                     SequentialStepForm::REDIRECT_TO_PREV_STEP,
                     SequentialStepForm::REDIRECT_TO_OTHER,
                 ),
-                true
-            )
+            true
+        )
         ) {
             throw new InvalidDataTypeException(
                 'setRedirectTo()',
@@ -247,8 +240,6 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
         }
         $this->redirect_to = $redirect_to;
     }
-
-
 }
 // End of file SequentialStepForm.php
 // Location: /SequentialStepForm.php

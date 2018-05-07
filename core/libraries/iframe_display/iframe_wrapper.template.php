@@ -21,33 +21,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title><?php echo $title; ?></title>
-<?php if ( $enqueue_wp_assets ) : ?>
-	<?php wp_head(); ?>
-<?php else : ?>
-	<?php foreach ( $css as $url ) : ?>
-	<link rel="stylesheet" type="text/css" href="<?php echo $url;?>">
-	<?php endforeach; ?>
-	<script type="text/javascript">
-		<?php echo $eei18n; ?>
-	</script>
-	<?php foreach ( $header_js as $key => $url ) : ?>
+    <title><?php echo $title; ?></title>
+    <?php if ($enqueue_wp_assets) : ?>
+        <?php wp_head(); ?>
+    <?php else : ?>
+        <?php foreach ($css as $url) :?>
+    <link rel="stylesheet" type="text/css" href="<?php echo $url; ?>">
+        <?php endforeach; ?>
+            <script type="text/javascript">
+                <?php echo $eei18n; ?>
+            </script>
+    <?php foreach ($header_js as $key => $url) :?>
     <?php $header_attributes = isset($header_js_attributes[ $key ]) ? $header_js_attributes[ $key ] : ''; ?>
-    <script type="text/javascript" src="<?php echo $url; ?>"<?php echo $header_attributes; ?>></script>
-	<?php endforeach; ?>
-<?php endif; ?>
+        <script type="text/javascript" src="<?php echo $url; ?>"<?php echo $header_attributes; ?>></script>
+    <?php endforeach; ?>
+    <?php endif; ?>
 </head>
 <body>
-	<?php echo $notices; ?>
-    <div style="padding: 1em;">
-        <?php echo $content; ?>
-    </div>
-    <?php foreach ( $footer_js as $key => $url ) : ?>
-        <?php $footer_attributes = isset($footer_js_attributes[$key]) ? $footer_js_attributes[ $key ] : '';  ?>
-		<script type="text/javascript" src="<?php echo $url; ?>"<?php echo $footer_attributes;?>></script>
-	<?php endforeach; ?>
-<?php if ( $enqueue_wp_assets ) : ?>
-	<?php wp_footer(); ?>
+<?php echo $notices; ?>
+<div style="padding: 1em;">
+    <?php echo $content; ?>
+</div>
+<?php foreach ($footer_js as $key => $url) : ?>
+    <?php $footer_attributes = isset($footer_js_attributes[ $key ]) ? $footer_js_attributes[ $key ] : ''; ?>
+    <script type="text/javascript" src="<?php echo $url; ?>"<?php echo $footer_attributes; ?>></script>
+<?php endforeach; ?>
+<?php if ($enqueue_wp_assets) : ?>
+    <?php wp_footer(); ?>
 <?php endif; ?>
 </body>
 </html>

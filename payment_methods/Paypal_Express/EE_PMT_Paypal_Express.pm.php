@@ -2,12 +2,6 @@
 
 use EventEspresso\payment_methods\Paypal_Express\forms\SettingsForm;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
-
-
-
 /**
  * ----------------------------------------------
  * Class  EE_PMT_Paypal_Express
@@ -108,4 +102,3 @@ class EE_PMT_Paypal_Express extends EE_PMT_Base
         return false;
     }
 }
-// End of file EE_PMT_Paypal_Express.pm.php
