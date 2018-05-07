@@ -1,5 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed.');
 
 /**
  * EE_Float_Input

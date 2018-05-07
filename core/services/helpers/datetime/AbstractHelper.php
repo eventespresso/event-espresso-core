@@ -76,11 +76,11 @@ abstract class AbstractHelper implements HelperInterface
      */
     public function getSiteTimezoneGmtOffset()
     {
-        $timezone_string = (string)get_option('timezone_string');
+        $timezone_string = (string) get_option('timezone_string');
         if ($timezone_string) {
             try {
                 $timezone = new DateTimeZone($timezone_string);
-                return $timezone->getOffset(new DateTime()); //in WordPress DateTime defaults to UTC
+                return $timezone->getOffset(new DateTime()); // in WordPress DateTime defaults to UTC
             } catch (Exception $e) {
             }
         }
@@ -124,7 +124,7 @@ abstract class AbstractHelper implements HelperInterface
         // get WP date time format
         $datetime_format = get_option('date_format') . ' ' . get_option('time_format');
         // if passed a value, then use that, else get WP option
-        $timezone_string = ! empty($timezone_string) ? $timezone_string : (string)get_option('timezone_string');
+        $timezone_string = ! empty($timezone_string) ? $timezone_string : (string) get_option('timezone_string');
         // check if the timezone is valid but don't throw any errors if it isn't
         $timezone_string = $this->validateTimezone($timezone_string, false)
             ? $timezone_string
@@ -143,28 +143,32 @@ abstract class AbstractHelper implements HelperInterface
         }
         ?>
         <p>
-            <label for="timezone_string"><?php _e('timezone'); ?></label>
+            <label for="timezone_string"><?php _e('timezone', 'event_espresso'); ?></label>
             <select id="timezone_string" name="timezone_string">
                 <?php echo wp_timezone_choice($timezone_string); ?>
             </select>
             <br/>
-            <span class="description"><?php _e('Choose a city in the same timezone as the event.'); ?></span>
+            <span class="description"><?php _e('Choose a city in the same timezone as the event.', 'event_espresso'); ?></span>
         </p>
 
         <p>
-        <span><?php
+        <span>
+            <?php
             printf(
-                __('%1$sUTC%2$s time is %3$s'),
+                __('%1$sUTC%2$s time is %3$s', 'event_espresso'),
                 '<abbr title="Coordinated Universal Time">',
                 '</abbr>',
                 '<code>' . date_i18n($datetime_format, false, true) . '</code>'
             );
             ?></span>
-        <?php if (! empty($timezone_string) || ! empty($gmt_offset)) : ?>
-        <br/><span><?php printf(__('Local time is %1$s'), '<code>' . date_i18n($datetime_format) . '</code>'); ?></span>
-    <?php endif; ?>
+        <?php
+        if (! empty($timezone_string) || ! empty($gmt_offset)) : ?>
+        <br/><span><?php printf(__('Local time is %1$s', 'event_espresso'), '<code>' . date_i18n($datetime_format) . '</code>'); ?></span>
+    <?php
+        endif; ?>
 
-        <?php if ($check_zone_info && $timezone_string) : ?>
+        <?php
+        if ($check_zone_info && $timezone_string) : ?>
         <br/>
         <span>
                 <?php
@@ -172,9 +176,9 @@ abstract class AbstractHelper implements HelperInterface
                 date_default_timezone_set($timezone_string);
                 $now = localtime(time(), true);
                 if ($now['tm_isdst']) {
-                    _e('This timezone is currently in daylight saving time.');
+                    _e('This timezone is currently in daylight saving time.', 'event_espresso');
                 } else {
-                    _e('This timezone is currently in standard time.');
+                    _e('This timezone is currently in standard time.', 'event_espresso');
                 }
                 ?>
             <br/>
@@ -193,8 +197,8 @@ abstract class AbstractHelper implements HelperInterface
                 }
                 if ($found) {
                     $message = $tr['isdst']
-                        ? __(' Daylight saving time begins on: %s.')
-                        : __(' Standard time begins  on: %s.');
+                        ? __(' Daylight saving time begins on: %s.', 'event_espresso')
+                        : __(' Standard time begins  on: %s.', 'event_espresso');
                     // Add the difference between the current offset and the new offset to ts to get the correct
                     // transition time from date_i18n().
                     printf(
@@ -202,15 +206,15 @@ abstract class AbstractHelper implements HelperInterface
                         '<code >' . date_i18n($datetime_format, $tr['ts'] + ($tz_offset - $tr['offset'])) . '</code >'
                     );
                 } else {
-                    _e('This timezone does not observe daylight saving time.');
+                    _e('This timezone does not observe daylight saving time.', 'event_espresso');
                 }
             }
             // Set back to UTC.
             date_default_timezone_set('UTC');
             ?>
         </span></p>
-    <?php
-    endif;
+        <?php
+        endif;
     }
 
 
@@ -279,18 +283,18 @@ abstract class AbstractHelper implements HelperInterface
      */
     protected function sanitizeInitialIncomingGmtOffsetForGettingTimezoneString($gmt_offset)
     {
-        //if there is no incoming gmt_offset, then because WP hooks in on timezone_string, we need to see if that is
-        //set because it will override `gmt_offset` via `pre_get_option` filter.  If that's set, then let's just use
-        //that!  Otherwise we'll leave timezone_string at the default of 'UTC' before doing other logic.
+        // if there is no incoming gmt_offset, then because WP hooks in on timezone_string, we need to see if that is
+        // set because it will override `gmt_offset` via `pre_get_option` filter.  If that's set, then let's just use
+        // that!  Otherwise we'll leave timezone_string at the default of 'UTC' before doing other logic.
         if ($gmt_offset === '') {
-            //autoloaded so no need to set to a variable.  There will not be multiple hits to the db.
+            // autoloaded so no need to set to a variable.  There will not be multiple hits to the db.
             if (get_option('timezone_string')) {
                 return (string) get_option('timezone_string');
             }
         }
         $gmt_offset = $gmt_offset !== '' ? $gmt_offset : (string) get_option('gmt_offset');
         $gmt_offset = (float) $gmt_offset;
-        //if $gmt_offset is 0 or is still an empty string, then just return UTC
+        // if $gmt_offset is 0 or is still an empty string, then just return UTC
         if ($gmt_offset === (float) 0) {
             return 'UTC';
         }

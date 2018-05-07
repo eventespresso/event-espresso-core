@@ -1,8 +1,6 @@
 <?php
 use EventEspresso\core\entities\interfaces\HasSchemaInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
 /**
  * EE_Model_Field_Base class
  * Base class for all EE_*_Field classes. These classes are for providing information and functions specific to each
@@ -129,10 +127,16 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
         /**
          * allow for changing the defaults
          */
-        $this->_nicename      = apply_filters('FHEE__EE_Model_Field_Base___construct_finalize___nicename',
-            $this->_nicename, $this);
-        $this->_default_value = apply_filters('FHEE__EE_Model_Field_Base___construct_finalize___default_value',
-            $this->_default_value, $this);
+        $this->_nicename      = apply_filters(
+            'FHEE__EE_Model_Field_Base___construct_finalize___nicename',
+            $this->_nicename,
+            $this
+        );
+        $this->_default_value = apply_filters(
+            'FHEE__EE_Model_Field_Base___construct_finalize___default_value',
+            $this->_default_value,
+            $this
+        );
     }
 
     public function get_table_alias()
@@ -164,8 +168,10 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
         if ($this->_name) {
             return $this->_name;
         } else {
-            throw new EE_Error(sprintf(__("Model field '%s' has no name set. Did you make a model and forget to call the parent model constructor?",
-                "event_espresso"), get_class($this)));
+            throw new EE_Error(sprintf(__(
+                "Model field '%s' has no name set. Did you make a model and forget to call the parent model constructor?",
+                "event_espresso"
+            ), get_class($this)));
         }
     }
 
@@ -356,17 +362,17 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
         $default_value = $this->prepare_for_use_in_db($this->prepare_for_set($this->get_default_value()));
         $schema_properties = $this->getSchemaProperties();
 
-        //if this schema has properties than shape the default value to match the properties shape.
+        // if this schema has properties than shape the default value to match the properties shape.
         if ($schema_properties) {
             $value_to_return = array();
             foreach ($schema_properties as $property_key => $property_schema) {
                 switch ($property_key) {
                     case 'pretty':
                     case 'rendered':
-                        $value_to_return[$property_key] = $this->prepare_for_pretty_echoing($this->prepare_for_set($default_value));
+                        $value_to_return[ $property_key ] = $this->prepare_for_pretty_echoing($this->prepare_for_set($default_value));
                         break;
                     default:
-                        $value_to_return[$property_key] = $default_value;
+                        $value_to_return[ $property_key ] = $default_value;
                         break;
                 }
             }
@@ -464,11 +470,11 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      * @uses get_schema_type()
      * @return string
      */
-    protected function _get_wpdb_data_type($type='')
+    protected function _get_wpdb_data_type($type = '')
     {
         $type = empty($type) ? $this->getSchemaType() : $type;
 
-        //if type is an array, then different parsing is required.
+        // if type is an array, then different parsing is required.
         if (is_array($type)) {
             return $this->_get_wpdb_data_type_for_type_array($type);
         }
@@ -487,7 +493,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
                 if (isset($properties['raw'], $properties['raw']['type'])) {
                     $wpdb_type = $this->_get_wpdb_data_type($properties['raw']['type']);
                 }
-                break; //leave at default
+                break; // leave at default
         }
         return $wpdb_type;
     }
@@ -497,27 +503,27 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
     protected function _get_wpdb_data_type_for_type_array($type)
     {
         $type = (array) $type;
-        //first let's flip because then we can do a faster key check
+        // first let's flip because then we can do a faster key check
         $type = array_flip($type);
 
-        //check for things that mean '%s'
-        if (isset($type['string'],$type['object'],$type['array'])) {
+        // check for things that mean '%s'
+        if (isset($type['string'], $type['object'], $type['array'])) {
             return '%s';
         }
 
-        //if makes it past the above condition and there's float in the array
-        //then the type is %f
+        // if makes it past the above condition and there's float in the array
+        // then the type is %f
         if (isset($type['number'])) {
             return '%f';
         }
 
-        //if it makes it above the above conditions and there is an integer in the array
-        //then the type is %d
+        // if it makes it above the above conditions and there is an integer in the array
+        // then the type is %d
         if (isset($type['integer'])) {
             return '%d';
         }
 
-        //anything else is a string
+        // anything else is a string
         return '%s';
     }
 
@@ -537,7 +543,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
             'default' => $this->getSchemaDefault()
         );
 
-        //optional properties of the schema
+        // optional properties of the schema
         $enum = $this->getSchemaEnum();
         $properties = $this->getSchemaProperties();
         $format = $this->getSchemaFormat();
@@ -587,8 +593,8 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
             );
         }
 
-        //validate allowable types.
-        //@link http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2
+        // validate allowable types.
+        // @link http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2
         $allowable_types = array_flip(
             array(
                 'string',
@@ -608,7 +614,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
             return;
         }
 
-        if (! isset($allowable_types[$type])) {
+        if (! isset($allowable_types[ $type ])) {
             throw new InvalidArgumentException(
                 sprintf(
                     esc_html__('The incoming argument (%1$s) must be one of the allowable types: %2$s', 'event_espresso'),
@@ -636,8 +642,8 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
             );
         }
 
-        //validate allowable format values
-        //@link http://json-schema.org/latest/json-schema-validation.html#rfc.section.7
+        // validate allowable format values
+        // @link http://json-schema.org/latest/json-schema-validation.html#rfc.section.7
         $allowable_formats = array_flip(
             array(
                 'date-time',
@@ -650,7 +656,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
             )
         );
 
-        if (! isset($allowable_formats[$format])) {
+        if (! isset($allowable_formats[ $format ])) {
             throw new InvalidArgumentException(
                 sprintf(
                     esc_html__('The incoming argument (%1$s) must be one of the allowable formats: %2$s', 'event_espresso'),

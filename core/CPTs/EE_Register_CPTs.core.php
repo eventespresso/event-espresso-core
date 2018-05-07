@@ -7,19 +7,13 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * EE_Register_CPTs
  *
  * @package               Event Espresso
  * @subpackage            includes/core/
  * @author                Darren Ethier
- * @deprecated $VID:$
+ * @deprecated            $VID:$
  */
 class EE_Register_CPTs
 {
@@ -324,8 +318,6 @@ class EE_Register_CPTs
     }
 }
 
-
-
 /**
  * This is just a utility object for holding the settings of a default term that gets used in the wp 'save_post' hook
  * when a particular custom post type is published.
@@ -335,8 +327,8 @@ class EE_Register_CPTs
 class EE_Default_Term
 {
 
-    //props holding the items
-    public $taxonomy  = '';
+    // props holding the items
+    public $taxonomy = '';
 
     public $cpt_slugs = array();
 
@@ -345,13 +337,13 @@ class EE_Default_Term
 
     /**
      * @deprecated $VID:$
-     * @param string $taxonomy The taxonomy the default term belongs to
+     * @param string $taxonomy  The taxonomy the default term belongs to
      * @param string $term_slug The slug of the term that will be the default.
      * @param array  $cpt_slugs The custom post type the default term gets saved with
      */
     public function __construct($taxonomy, $term_slug, $cpt_slugs = array())
     {
-        $this->taxonomy  = $taxonomy;
+        $this->taxonomy = $taxonomy;
         $this->cpt_slugs = (array) $cpt_slugs;
         $this->term_slug = $term_slug;
     }

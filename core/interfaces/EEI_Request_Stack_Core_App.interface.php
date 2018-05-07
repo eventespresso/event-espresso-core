@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Interface EEI_Request_Stack_Core_App
@@ -17,7 +14,4 @@ interface EEI_Request_Stack_Core_App
      * @param EE_Response   $response
      */
     public function handle_response(EE_Request $request, EE_Response $response);
-
 }
-// End of file EEI_Request_Stack_Core_App.interface.php
-// Location: core/interfaces/EEI_Request_Stack_Core_App.interface.php

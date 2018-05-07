@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Interface EEHI_Template
@@ -28,6 +25,3 @@ interface EEHI_Template
         $cur_code_span_class = 'currency-code'
     );
 }
-
-// End of file EEHI_Template.interface.php
-// Location: core/interfaces/EEHI_Template.interface.php

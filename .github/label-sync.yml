@@ -26,6 +26,7 @@
     - eventespresso/eea-chase-orbital
     - eventespresso/eea-vanco-pm
     - eventespresso/eea-authnet-sim
+  milestones: []
   labels:
   # status labels
     - name: "status:needs-documentation"
@@ -33,6 +34,8 @@
     - name: "status:backlog"
       color: efefef
     - name: "status:on-hold"
+      color: efefef
+    - name: "status:waiting-refresh"
       color: efefef
     - name: "status:in-progress"
       color: efefef

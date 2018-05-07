@@ -28,7 +28,7 @@ class EE_Submit_Input_Display_Strategy extends EE_Display_Strategy_Base
                 array(
                     'type'  => 'submit',
                     'value' => $default_value,
-                    //overwrite the standard id with the backwards compatible one
+                    // overwrite the standard id with the backwards compatible one
                     'id' => $this->_input->html_id() . '-submit',
                     'class' => $this->_input->html_class() . ' ' . $this->_input->button_css_attributes()
                 )
@@ -36,5 +36,5 @@ class EE_Submit_Input_Display_Strategy extends EE_Display_Strategy_Base
         );
         $html .= $this->_close_tag();
         return $html;
-	}
+    }
 }

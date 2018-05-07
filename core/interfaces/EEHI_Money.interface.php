@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Money-related helper
@@ -22,5 +19,3 @@ interface EEHI_Money
      */
     public function compare_floats($float1, $float2, $operator = '=');
 }
-// End of file EEHI_Money.interface.php
-// Location: core/interfaces/EEHI_Money.interface.php

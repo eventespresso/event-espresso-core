@@ -5,10 +5,6 @@ namespace EventEspresso\core\services\loaders;
 use EventEspresso\core\domain\values\FullyQualifiedName;
 use InvalidArgumentException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 interface LoaderInterface
 {
 
@@ -58,5 +54,3 @@ interface LoaderInterface
      */
     public function reset();
 }
-// End of file LoaderInterface.php
-// Location: core/services/loaders/LoaderInterface.php

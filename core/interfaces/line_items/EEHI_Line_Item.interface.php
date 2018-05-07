@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Interface EEHI_Line_Item
@@ -94,5 +91,3 @@ interface EEHI_Line_Item
      */
     public static function get_taxes_subtotal(EE_Line_Item $total_line_item);
 }
-// End of file EEHI_Line_Item.interface.php
-// Location: core/interfaces/line_items/EEHI_Line_Item.interface.php

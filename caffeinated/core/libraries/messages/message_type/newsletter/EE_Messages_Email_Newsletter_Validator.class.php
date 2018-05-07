@@ -1,7 +1,5 @@
 <?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
-
 /**
  * Holds any special validation rules for template fields with Email messenger and Newsletter
  * message type.
@@ -35,17 +33,17 @@ class EE_Messages_Email_Newsletter_Validator extends EE_Messages_Validator
     protected function _modify_validator()
     {
         if ($this->_context === 'attendee') {
-            $this->_valid_shortcodes_modifier[$this->_context]['from'] = array(
+            $this->_valid_shortcodes_modifier[ $this->_context ]['from'] = array(
                 'recipient_details',
                 'email',
                 'organization',
             );
         }
 
-        //excluded shortcodes
+        // excluded shortcodes
         $fields = array('to', 'from', 'subject', 'content', 'newsletter_content');
         foreach ($fields as $field) {
-            $this->_specific_shortcode_excludes[$field] = array(
+            $this->_specific_shortcode_excludes[ $field ] = array(
                 '[RECIPIENT_REGISTRATION_CODE]',
                 '[EVENT_AUTHOR_FORMATTED_EMAIL]',
                 '[EVENT_AUTHOR_EMAIL]',

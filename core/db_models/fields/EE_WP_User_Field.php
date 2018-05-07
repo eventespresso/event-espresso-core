@@ -1,17 +1,5 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
+<?php
 /**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package            Event Espresso
- * @ author            Event Espresso
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                    http://www.eventespresso.com
- * @ version            4.0
- * ------------------------------------------------------------------------
  * EE_WP_User_Field
  *
  * @package               Event Espresso
@@ -32,7 +20,7 @@ class EE_WP_User_Field extends EE_Foreign_Key_Int_Field
      * @param string  $nicename     should eb internationalized with __('blah','event_espresso')
      * @param boolean $nullable
      */
-    function __construct($table_column, $nicename, $nullable)
+    public function __construct($table_column, $nicename, $nullable)
     {
         parent::__construct($table_column, $nicename, $nullable, null, 'WP_User');
     }
@@ -43,14 +31,19 @@ class EE_WP_User_Field extends EE_Foreign_Key_Int_Field
      *
      * @return mixed
      */
-    function get_default_value()
+    public function get_default_value()
     {
         if (did_action('init')) {
             return get_current_user_id();
         } else {
-            EE_Error::doing_it_wrong('EE_WP_User_Field::get_default_value',
-                __('You cant get a default value for a wp_User_Field because the "init" action is called, because current_user global hasnt yet been setup. Consider doing your business logic on the "init" hook or later.',
-                    'event_espresso'), '4.6.20');
+            EE_Error::doing_it_wrong(
+                'EE_WP_User_Field::get_default_value',
+                __(
+                    'You cant get a default value for a wp_User_Field because the "init" action is called, because current_user global hasnt yet been setup. Consider doing your business logic on the "init" hook or later.',
+                    'event_espresso'
+                ),
+                '4.6.20'
+            );
             return 1;
         }
     }

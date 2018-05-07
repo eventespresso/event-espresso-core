@@ -2,9 +2,16 @@
 
 use EventEspresso\core\interfaces\InterminableInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
+// phpcs:disable PHPCompatibility.PHP.RemovedExtensions.mcryptDeprecatedRemoved
+// phpcs:disable PHPCompatibility.PHP.DeprecatedFunctions.mcrypt_get_iv_sizeDeprecatedRemoved
+// phpcs:disable PHPCompatibility.PHP.RemovedConstants.mcrypt_rijndael_256DeprecatedRemoved
+// phpcs:disable PHPCompatibility.PHP.RemovedConstants.mcrypt_mode_ecbDeprecatedRemoved
+// phpcs:disable PHPCompatibility.PHP.DeprecatedFunctions.mcrypt_create_ivDeprecatedRemoved
+// phpcs:disable PHPCompatibility.PHP.RemovedConstants.mcrypt_randDeprecatedRemoved
+// phpcs:disable PHPCompatibility.PHP.DeprecatedFunctions.mcrypt_encryptDeprecatedRemoved
+// phpcs:disable PHPCompatibility.PHP.DeprecatedFunctions.mcrypt_decryptDeprecatedRemoved
 
-
+// mcrypt methods are removed in php7.2 but we have a condition in this class that only uses them if they are available.
 
 /**
  * EE_Encryption class
@@ -50,7 +57,6 @@ class EE_Encryption implements InterminableInterface
     const ACME_ENCRYPTION_FLAG = '::ae';
 
 
-
     /**
      * instance of the EE_Encryption object
      */
@@ -92,7 +98,6 @@ class EE_Encryption implements InterminableInterface
     protected $_use_base64_encode = false;
 
 
-
     /**
      * protected constructor to prevent direct creation
      */
@@ -103,14 +108,13 @@ class EE_Encryption implements InterminableInterface
         }
         if (extension_loaded('openssl')) {
             $this->_use_openssl_encrypt = true;
-        } else if (extension_loaded('mcrypt')) {
+        } elseif (extension_loaded('mcrypt')) {
             $this->_use_mcrypt = true;
         }
         if (function_exists('base64_encode')) {
             $this->_use_base64_encode = true;
         }
     }
-
 
 
     /**
@@ -126,7 +130,6 @@ class EE_Encryption implements InterminableInterface
         }
         return EE_Encryption::$_instance;
     }
-
 
 
     /**
@@ -154,7 +157,6 @@ class EE_Encryption implements InterminableInterface
     }
 
 
-
     /**
      * encrypts data
      *
@@ -175,7 +177,6 @@ class EE_Encryption implements InterminableInterface
         }
         return $encrypted_text;
     }
-
 
 
     /**
@@ -199,7 +200,6 @@ class EE_Encryption implements InterminableInterface
         }
         return $decrypted_text;
     }
-
 
 
     /**
@@ -243,7 +243,6 @@ class EE_Encryption implements InterminableInterface
         }
         return $decoded_string;
     }
-
 
 
     /**
@@ -341,7 +340,6 @@ class EE_Encryption implements InterminableInterface
     }
 
 
-
     /**
      * Returns a cipher method that has been verified to work.
      * First checks if the cached cipher has been set already and if so, returns that.
@@ -356,7 +354,7 @@ class EE_Encryption implements InterminableInterface
      */
     protected function getCipherMethod($cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD)
     {
-        if($this->cipher_method !== ''){
+        if ($this->cipher_method !== '') {
             return $this->cipher_method;
         }
         // verify that the default cipher method can produce an initialization vector
@@ -364,13 +362,12 @@ class EE_Encryption implements InterminableInterface
             // nope? okay let's get what we found in the past to work
             $cipher_method = get_option(EE_Encryption::OPENSSL_CIPHER_METHOD_OPTION_NAME, '');
             // oops... haven't tested available cipher methods yet
-            if($cipher_method === '' || openssl_cipher_iv_length($cipher_method) === false) {
+            if ($cipher_method === '' || openssl_cipher_iv_length($cipher_method) === false) {
                 $cipher_method = $this->getAvailableCipherMethod($cipher_method);
             }
         }
         return $cipher_method;
     }
-
 
 
     /**
@@ -390,7 +387,7 @@ class EE_Encryption implements InterminableInterface
                 // then grab the first item from the list
                 $cipher_method = reset($this->cipher_methods);
             }
-            if($cipher_method === false){
+            if ($cipher_method === false) {
                 throw new RuntimeException(
                     esc_html__(
                         'OpenSSL support appears to be enabled on the server, but no cipher methods are available. Please contact the server administrator.',
@@ -446,7 +443,7 @@ class EE_Encryption implements InterminableInterface
         $decrypted_text = openssl_decrypt(
             $encrypted_components[0],
             $this->getCipherMethod($cipher_method),
-            $this->getDigestHashValue(EE_Encryption::OPENSSL_DIGEST_METHOD,$encryption_key),
+            $this->getDigestHashValue(EE_Encryption::OPENSSL_DIGEST_METHOD, $encryption_key),
             0,
             $encrypted_components[1]
         );
@@ -465,7 +462,8 @@ class EE_Encryption implements InterminableInterface
      * @return string
      * @throws RuntimeException
      */
-    protected function getDigestHashValue($digest_method = EE_Encryption::OPENSSL_DIGEST_METHOD, $encryption_key = ''){
+    protected function getDigestHashValue($digest_method = EE_Encryption::OPENSSL_DIGEST_METHOD, $encryption_key = '')
+    {
         $encryption_key = $encryption_key !== ''
             ? $encryption_key
             : $this->get_encryption_key();
@@ -477,7 +475,6 @@ class EE_Encryption implements InterminableInterface
     }
 
 
-
     /**
      * Returns the NEXT element in the $digest_methods array.
      * If the $digest_methods array is empty, then we populate it
@@ -486,7 +483,8 @@ class EE_Encryption implements InterminableInterface
      * @return string
      * @throws \RuntimeException
      */
-    protected function getDigestMethod(){
+    protected function getDigestMethod()
+    {
         $digest_method = prev($this->digest_methods);
         if (empty($this->digest_methods)) {
             $this->digest_methods = openssl_get_md_methods();
@@ -527,8 +525,8 @@ class EE_Encryption implements InterminableInterface
         );
         $string_bits = str_split($text_string);
         foreach ($string_bits as $k => $v) {
-            $temp = ord($v) + ord($key_bits[$k]);
-            $string_bits[$k] = chr($temp > 255 ? ($temp - 256) : $temp);
+            $temp = ord($v) + ord($key_bits[ $k ]);
+            $string_bits[ $k ] = chr($temp > 255 ? ($temp - 256) : $temp);
         }
         $encrypted_text = implode('', $string_bits);
         $encrypted_text .= EE_Encryption::ACME_ENCRYPTION_FLAG;
@@ -536,7 +534,6 @@ class EE_Encryption implements InterminableInterface
             ? base64_encode($encrypted_text)
             : $encrypted_text;
     }
-
 
 
     /**
@@ -557,10 +554,9 @@ class EE_Encryption implements InterminableInterface
         $encrypted_text = $this->valid_base_64($encrypted_text)
             ? $this->base64_url_decode($encrypted_text)
             : $encrypted_text;
-        if (
-            $this->_use_mcrypt
+        if ($this->_use_mcrypt
             && strpos($encrypted_text, EE_Encryption::ACME_ENCRYPTION_FLAG) === false
-        ){
+        ) {
             return $this->m_decrypt($encrypted_text);
         }
         $encrypted_text = substr($encrypted_text, 0, -4);
@@ -574,12 +570,11 @@ class EE_Encryption implements InterminableInterface
         );
         $string_bits = str_split($encrypted_text);
         foreach ($string_bits as $k => $v) {
-            $temp = ord($v) - ord($key_bits[$k]);
-            $string_bits[$k] = chr($temp < 0 ? ($temp + 256) : $temp);
+            $temp = ord($v) - ord($key_bits[ $k ]);
+            $string_bits[ $k ] = chr($temp < 0 ? ($temp + 256) : $temp);
         }
         return implode('', $string_bits);
     }
-
 
 
     /**
@@ -607,7 +602,6 @@ class EE_Encryption implements InterminableInterface
     }
 
 
-
     /**
      * generate random string
      *
@@ -625,7 +619,6 @@ class EE_Encryption implements InterminableInterface
         $random_string = substr($random_string, 0, $length);
         return $random_string;
     }
-
 
 
     /**
@@ -667,7 +660,6 @@ class EE_Encryption implements InterminableInterface
     }
 
 
-
     /**
      * decrypts data that has been encrypted with PHP's mcrypt functions
      *
@@ -705,7 +697,4 @@ class EE_Encryption implements InterminableInterface
         $decrypted_text = trim($decrypted_text);
         return $decrypted_text;
     }
-
 }
-/* End of file EE_Encryption.class.php */
-/* Location: /includes/core/EE_Encryption.core.php */
