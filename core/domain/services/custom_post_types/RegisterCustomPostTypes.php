@@ -7,10 +7,6 @@ use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitio
 use WP_Error;
 use WP_Post_Type;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RegisterCustomPostTypes
  * Handles the actual registration for each of Event Espresso's Custom Post Types
@@ -77,17 +73,16 @@ class RegisterCustomPostTypes
      * Registers a new custom post type. Sets default settings given only the following params.
      * Returns the registered post type object, or an error object.
      *
-     * @param string $post_type     the actual post type name
-     *                              IMPORTANT:
-     *                              this must match what the slug is for admin pages related to this CPT
-     *                              Also any models must use this slug as well
-     * @param string $singular_name a pre-internationalized string for the singular name of the objects
-     * @param string $plural_name   a pre-internationalized string for the plural name of the objects
+     * @param string $post_type          the actual post type name
+     *                                   IMPORTANT:
+     *                                   this must match what the slug is for admin pages related to this CPT
+     *                                   Also any models must use this slug as well
+     * @param string $singular_name      a pre-internationalized string for the singular name of the objects
+     * @param string $plural_name        a pre-internationalized string for the plural name of the objects
      * @param string $singular_slug
      * @param string $plural_slug
-     * @param array  $override_args exactly like $args as described in
-     *                              http://codex.wordpress.org/Function_Reference/register_post_type The default values
-     *                              set in this function will be overridden by whatever you set in $override_args
+     * @param array  $override_arguments exactly like $args as described in
+     *                                   http://codex.wordpress.org/Function_Reference/register_post_type
      * @return WP_Post_Type|WP_Error
      * @throws DomainException
      */
@@ -97,11 +92,47 @@ class RegisterCustomPostTypes
         $plural_name,
         $singular_slug = '',
         $plural_slug = '',
-        array $override_args = array()
+        array $override_arguments = array()
+    ) {
+        $wp_post_type = register_post_type(
+            $post_type,
+            $this->prepareArguments(
+                $post_type,
+                $singular_name,
+                $plural_name,
+                $singular_slug,
+                $plural_slug,
+                $override_arguments
+            )
+        );
+        if ($wp_post_type instanceof WP_Error) {
+            throw new DomainException($wp_post_type->get_error_message());
+        }
+        return $wp_post_type;
+    }
+
+
+    /**
+     * @param string $post_type          the actual post type name
+     * @param string $singular_name      a pre-internationalized string for the singular name of the objects
+     * @param string $plural_name        a pre-internationalized string for the plural name of the objects
+     * @param string $singular_slug
+     * @param string $plural_slug
+     * @param array  $override_arguments The default values set in this function will be overridden
+     *                                   by whatever you set in $override_arguments
+     * @return array
+     */
+    protected function prepareArguments(
+        $post_type,
+        $singular_name,
+        $plural_name,
+        $singular_slug,
+        $plural_slug,
+        array $override_arguments = array()
     ) {
         // verify plural slug and singular slug, if they aren't we'll use $singular_name and $plural_name
         $singular_slug = ! empty($singular_slug) ? $singular_slug : $singular_name;
-        $plural_slug   = ! empty($plural_slug) ? $plural_slug : $plural_name;
+        $plural_slug = ! empty($plural_slug) ? $plural_slug : $plural_name;
         $labels = $this->getLabels(
             $singular_name,
             $plural_name,
@@ -110,15 +141,15 @@ class RegisterCustomPostTypes
         );
         // note the page_templates arg in the supports index is something specific to EE.
         // WordPress doesn't actually have that in their register_post_type api.
-        $args = $this->getDefaultArguments($labels, $post_type, $plural_slug);
-        if (! empty($override_args)) {
-            $args = $override_args + $args;
+        $arguments = $this->getDefaultArguments($labels, $post_type, $plural_slug);
+        if ($override_arguments) {
+            if (isset($override_arguments['labels'])) {
+                $labels = array_merge($arguments['labels'], $override_arguments['labels']);
+            }
+            $arguments = array_merge($arguments, $override_arguments);
+            $arguments['labels'] = $labels;
         }
-        $wp_post_type = register_post_type($post_type, $args);
-        if ($wp_post_type instanceof WP_Error) {
-            throw new DomainException($wp_post_type->get_error_message());
-        }
-        return $wp_post_type;
+        return $arguments;
     }
 
 

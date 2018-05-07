@@ -1,7 +1,6 @@
 <?php
 namespace EventEspresso\core\domain\services\capabilities;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
 /**
  * Class CapCheck
  * DTO for passing details regarding a required Capabilities Check
@@ -27,7 +26,4 @@ interface CapCheckInterface
      * @return int|string
      */
     public function ID();
-
 }
-// End of file CapCheckInterface.php
-// Location: core\domain\services\capabilities\CapCheckInterface.php

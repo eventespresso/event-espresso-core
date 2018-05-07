@@ -2,12 +2,8 @@
 
 namespace EventEspresso\core\domain\entities\editor;
 
-use EventEspresso\core\services\assets\AssetRegisterInterface;
+use EventEspresso\core\services\assets\BlockAssetManagerInterface;
 use WP_Block_Type;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Interface BlockInterface
@@ -25,6 +21,8 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 interface BlockInterface
 {
+
+    const NAME_SPACE = 'event-espresso/';
 
     /**
      * Perform any early setup required by the block
@@ -44,9 +42,9 @@ interface BlockInterface
     /**
      * AssetRegister that this editor block uses for asset registration
      *
-     * @return AssetRegisterInterface
+     * @return BlockAssetManagerInterface
      */
-    public function assetRegister();
+    public function assetManager();
 
 
     /**

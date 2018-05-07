@@ -12,7 +12,8 @@ use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\assets\AssetRegisterCollection;
+use EventEspresso\core\services\assets\BlockAssetManagerCollection;
+use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\collections\CollectionDetails;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
@@ -21,10 +22,6 @@ use Exception;
 use InvalidArgumentException;
 use ReflectionException;
 use WP_Block_Type;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class BlockRegistrationManager
@@ -41,24 +38,33 @@ class BlockRegistrationManager extends BlockManager
 {
 
     /**
-     * @var AssetRegisterCollection $asset_register_collection
+     * @var BlockAssetManagerCollection $block_asset_manager_collection
      */
-    protected $asset_register_collection;
+    protected $block_asset_manager_collection;
+
+    /**
+     * @var Registry
+     * @since $VID:$
+     */
+    private $registry;
 
 
     /**
      * BlockRegistrationManager constructor.
      *
-     * @param AssetRegisterCollection $asset_register_collection
-     * @param BlockCollection         $blocks
-     * @param RequestInterface        $request
+     * @param BlockAssetManagerCollection $block_asset_manager_collection
+     * @param BlockCollection             $blocks
+     * @param RequestInterface            $request
+     * @param Registry                    $registry
      */
     public function __construct(
-        AssetRegisterCollection $asset_register_collection,
+        BlockAssetManagerCollection $block_asset_manager_collection,
         BlockCollection $blocks,
-        RequestInterface $request
+        RequestInterface $request,
+        Registry $registry
     ) {
-        $this->asset_register_collection = $asset_register_collection;
+        $this->block_asset_manager_collection = $block_asset_manager_collection;
+        $this->registry = $registry;
         parent::__construct($blocks, $request);
     }
 
@@ -68,7 +74,7 @@ class BlockRegistrationManager extends BlockManager
      *
      * @return string
      */
-    public function init_hook()
+    public function initHook()
     {
         return 'AHEE__EE_System__set_hooks_for_core';
     }
@@ -103,7 +109,7 @@ class BlockRegistrationManager extends BlockManager
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
-            // collection name
+                // collection name
                 'shortcodes',
                 // collection interface
                 'EventEspresso\core\domain\entities\editor\BlockInterface',
@@ -166,8 +172,8 @@ class BlockRegistrationManager extends BlockManager
                 if (! $block_type instanceof WP_Block_Type) {
                     throw new InvalidEntityException($block_type, 'WP_Block_Type');
                 }
-                if (! $this->asset_register_collection->has($block->assetRegister())) {
-                    $this->asset_register_collection->add($block->assetRegister());
+                if (! $this->block_asset_manager_collection->has($block->assetManager())) {
+                    $this->block_asset_manager_collection->add($block->assetManager());
                 }
                 do_action(
                     'FHEE__EventEspresso_core_services_editor_BlockManager__registerBlocks__block_type_registered',
@@ -175,8 +181,8 @@ class BlockRegistrationManager extends BlockManager
                     $block_type
                 );
             }
-            if ($this->asset_register_collection->hasObjects()) {
-                $this->asset_register_collection->registerManifestFile();
+            if ($this->block_asset_manager_collection->hasObjects()) {
+                $this->block_asset_manager_collection->addAssets();
                 // register primary assets
                 add_action('enqueue_block_assets', array($this, 'registerAssets'));
             }
@@ -187,11 +193,11 @@ class BlockRegistrationManager extends BlockManager
 
 
     /**
-     * Registers assets for all classes in the AssetRegisterCollection
+     * @since $VID:$
+     * @throws InvalidDataTypeException
      */
     public function registerAssets()
     {
-        $this->asset_register_collection->registerScripts();
-        $this->asset_register_collection->registerStyles();
+        $this->registry->registerScriptsAndStyles();
     }
 }

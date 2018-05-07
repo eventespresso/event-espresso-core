@@ -9,10 +9,6 @@ use EE_Text_Input;
 use EE_Yes_No_Input;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
-
 /**
  * Class PayPal Express SettingsForm
  * Has some custom validation that verifies the credentials work ok.
@@ -122,7 +118,7 @@ class SettingsForm extends EE_Payment_Method_Form
             throw new EntityNotFoundException('EEG_Paypal_Express', '$this->_payment_method_type->get_gateway()');
         }
         $credentials_message = $this->checkForCredentialsErrors();
-        if( $credentials_message !== '') {
+        if ($credentials_message !== '') {
             $this->add_validation_error($credentials_message);
             $this->get_input('PMD_debug_mode')->add_validation_error(
                 esc_html__('If you are using PayPal Sandbox (test) credentials, Debug mode should be set to "Yes". Otherwise, if you are using live PayPal credentials, set this to "No".', 'event_espresso')
@@ -154,7 +150,8 @@ class SettingsForm extends EE_Payment_Method_Form
      * Gets the HTML to show the link to the help tab
      * @return string
      */
-    protected function helpTabLink(){
+    protected function helpTabLink()
+    {
         return $this->helpTabLink;
     }
     /**
@@ -187,7 +184,7 @@ class SettingsForm extends EE_Payment_Method_Form
         );
         if (is_wp_error($response) || empty($response['body'])) {
             // If we got here then there was an error in this request.
-            //maybe is turned off. We don't know the credentials are invalid
+            // maybe is turned off. We don't know the credentials are invalid
             EE_Error::add_error(
                 sprintf(
                     esc_html__('Your PayPal credentials could not be verified. There was an error communicating with PayPal, it was %1$s', 'event_espresso'),
@@ -209,8 +206,7 @@ class SettingsForm extends EE_Payment_Method_Form
                 __LINE__
             );
         }
-        if (
-        in_array(
+        if (in_array(
             $response_args['ACK'],
             array(
                 'Success',
@@ -223,11 +219,9 @@ class SettingsForm extends EE_Payment_Method_Form
         } else {
             return sprintf(
                 esc_html__('Your PayPal API credentials appear to be invalid. PayPal said "%1$s (%2$s)". Please see tips below.', 'event_espresso'),
-                    isset($response_args['L_LONGMESSAGE0']) ? $response_args['L_LONGMESSAGE0'] : esc_html__('No error message received from PayPal', 'event_espresso'),
+                isset($response_args['L_LONGMESSAGE0']) ? $response_args['L_LONGMESSAGE0'] : esc_html__('No error message received from PayPal', 'event_espresso'),
                 isset($response_args['L_ERRORCODE0']) ? $response_args['L_ERRORCODE0'] : 0
             );
         }
     }
 }
-// End of file SettingsForm.php
-// Location: EventEspresso\payment_methods\Paypal_Express\forms/SettingsForm.php

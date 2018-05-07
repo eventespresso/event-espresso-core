@@ -3,8 +3,6 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
-
 /**
  * Event Espresso
  * Event Registration and Management Plugin for WordPress
@@ -39,12 +37,12 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     protected function __construct($fieldValues = null, $bydb = false, $timezone = null, $date_formats = array())
     {
         if (! isset($fieldValues['ATT_full_name'])) {
-            $fname                        = isset($fieldValues['ATT_fname']) ? $fieldValues['ATT_fname'] . ' ' : '';
-            $lname                        = isset($fieldValues['ATT_lname']) ? $fieldValues['ATT_lname'] : '';
+            $fname = isset($fieldValues['ATT_fname']) ? $fieldValues['ATT_fname'] . ' ' : '';
+            $lname = isset($fieldValues['ATT_lname']) ? $fieldValues['ATT_lname'] : '';
             $fieldValues['ATT_full_name'] = $fname . $lname;
         }
         if (! isset($fieldValues['ATT_slug'])) {
-            //			$fieldValues['ATT_slug'] = sanitize_key(wp_generate_password(20));
+            // $fieldValues['ATT_slug'] = sanitize_key(wp_generate_password(20));
             $fieldValues['ATT_slug'] = sanitize_title($fieldValues['ATT_full_name']);
         }
         if (! isset($fieldValues['ATT_short_bio']) && isset($fieldValues['ATT_bio'])) {
@@ -323,7 +321,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      */
     public function full_address_as_array()
     {
-        $full_address_array     = array();
+        $full_address_array = array();
         $initial_address_fields = array('ATT_address', 'ATT_address2', 'ATT_city',);
         foreach ($initial_address_fields as $address_field_name) {
             $address_fields_value = $this->get($address_field_name);
@@ -331,7 +329,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
                 $full_address_array[] = $address_fields_value;
             }
         }
-        //now handle state and country
+        // now handle state and country
         $state_obj = $this->state_obj();
         if ($state_obj instanceof EE_State) {
             $full_address_array[] = $state_obj->name();
@@ -340,7 +338,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
         if ($country_obj instanceof EE_Country) {
             $full_address_array[] = $country_obj->name();
         }
-        //lastly get the xip
+        // lastly get the xip
         $zip_value = $this->zip();
         if (! empty($zip_value)) {
             $full_address_array[] = $zip_value;
@@ -580,7 +578,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
         return $this->get_first_related(
             'Registration',
             array('order_by' => array('REG_date' => 'DESC'))
-        ); //null, 'REG_date', 'DESC', '=', 'OBJECT_K');
+        ); // null, 'REG_date', 'DESC', '=', 'OBJECT_K');
     }
 
 
@@ -632,15 +630,15 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
             return null;
         }
         $billing_form = $pm_type->billing_form();
-        //double-check the form isn't totally hidden, in which case pretend there is no form
+        // double-check the form isn't totally hidden, in which case pretend there is no form
         $form_totally_hidden = true;
-        foreach($billing_form->inputs_in_subsections() as $input){
-            if(! $input->get_display_strategy() instanceof EE_Hidden_Display_Strategy) {
+        foreach ($billing_form->inputs_in_subsections() as $input) {
+            if (! $input->get_display_strategy() instanceof EE_Hidden_Display_Strategy) {
                 $form_totally_hidden = false;
                 break;
             }
         }
-        if($form_totally_hidden) {
+        if ($form_totally_hidden) {
             return null;
         }
         if ($billing_form instanceof EE_Form_Section_Proper) {

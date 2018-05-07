@@ -69,7 +69,7 @@ abstract class BlockManager
         $this->request_post_type = $this->request->getRequestParam('post_type', '');
         $this->page              = $this->request->getRequestParam('page', '');
         $this->action            = $this->request->getRequestParam('action', '');
-        add_action($this->init_hook(), array($this, 'initialize'));
+        add_action($this->initHook(), array($this, 'initialize'));
     }
 
 
@@ -78,7 +78,7 @@ abstract class BlockManager
      *
      * @return string
      */
-    abstract public function init_hook();
+    abstract public function initHook();
 
 
     /**

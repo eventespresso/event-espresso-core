@@ -2,9 +2,7 @@
 
 namespace EventEspresso\core\services\request;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
+use EventEspresso\core\interfaces\ReservedInstanceInterface;
 
 /**
  * class Response
@@ -15,7 +13,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author          Brent Christensen
  * ------------------------------------------------------------------------
  */
-class Response implements ResponseInterface
+class Response implements ResponseInterface, ReservedInstanceInterface
 {
 
     /**
@@ -50,7 +48,6 @@ class Response implements ResponseInterface
     }
 
 
-
     /**
      * @param $key
      * @param $value
@@ -60,7 +57,6 @@ class Response implements ResponseInterface
     {
         $this->notice[ $key ] = $value;
     }
-
 
 
     /**
@@ -73,7 +69,6 @@ class Response implements ResponseInterface
     }
 
 
-
     /**
      * @return array
      */
@@ -81,7 +76,6 @@ class Response implements ResponseInterface
     {
         return $this->notice;
     }
-
 
 
     /**
@@ -94,7 +88,6 @@ class Response implements ResponseInterface
     }
 
 
-
     /**
      * @return string
      */
@@ -102,7 +95,6 @@ class Response implements ResponseInterface
     {
         return $this->output;
     }
-
 
 
     /**
@@ -114,7 +106,6 @@ class Response implements ResponseInterface
     }
 
 
-
     /**
      * @param boolean $request_terminated
      */
@@ -122,7 +113,6 @@ class Response implements ResponseInterface
     {
         $this->request_terminated = filter_var($request_terminated, FILTER_VALIDATE_BOOLEAN);
     }
-
 
 
     /**
@@ -134,7 +124,6 @@ class Response implements ResponseInterface
     }
 
 
-
     /**
      * sets $deactivate_plugin to true
      */
@@ -142,8 +131,4 @@ class Response implements ResponseInterface
     {
         $this->deactivate_plugin = true;
     }
-
-
 }
-// End of file EE_Response.core.php
-// Location: /core/EE_Response.core.php

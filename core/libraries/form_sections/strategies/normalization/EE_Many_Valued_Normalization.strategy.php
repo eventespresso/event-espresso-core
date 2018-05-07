@@ -1,8 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
+<?php
 
 /**
  * EE_Many_Valued_Normalization
@@ -40,14 +36,14 @@ class EE_Many_Valued_Normalization extends EE_Normalization_Strategy_Base
     {
         if (is_array($value_to_normalize)) {
             $items_to_normalize = $value_to_normalize;
-        } else if ($value_to_normalize !== null) {
+        } elseif ($value_to_normalize !== null) {
             $items_to_normalize = array($value_to_normalize);
         } else {
             $items_to_normalize = array();
         }
         $normalized_array_value = array();
         foreach ($items_to_normalize as $key => $individual_item) {
-            $normalized_array_value[$key] = $this->normalize_one($individual_item);
+            $normalized_array_value[ $key ] = $this->normalize_one($individual_item);
         }
         return $normalized_array_value;
     }
@@ -83,7 +79,7 @@ class EE_Many_Valued_Normalization extends EE_Normalization_Strategy_Base
         }
         $non_normal_values = array();
         foreach ($normalized_values as $key => $value) {
-            $non_normal_values[$key] = $this->unnormalize_one($value);
+            $non_normal_values[ $key ] = $this->unnormalize_one($value);
         }
         return $non_normal_values;
     }
@@ -101,4 +97,3 @@ class EE_Many_Valued_Normalization extends EE_Normalization_Strategy_Base
         return $this->_individual_item_normalization_strategy->unnormalize($individual_value_to_unnormalize);
     }
 }
-// End of file EE_Many_Valued_Normalization.strategy.php

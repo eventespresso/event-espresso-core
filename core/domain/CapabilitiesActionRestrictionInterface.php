@@ -30,8 +30,6 @@ interface CapabilitiesActionRestrictionInterface
     public function canRead(Context $context);
 
 
-
-
     /**
      * Return whether the item can be deleted for the given context.
      * @param Context $context

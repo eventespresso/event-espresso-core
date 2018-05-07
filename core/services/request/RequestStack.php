@@ -2,10 +2,6 @@
 
 namespace EventEspresso\core\services\request;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RequestStack
  * Basically a container class for holding

@@ -9,14 +9,8 @@ namespace EventEspresso\core\libraries\rest_api;
  * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
- * 
+ *
  */
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 class RestException extends \EE_Error
 {
 

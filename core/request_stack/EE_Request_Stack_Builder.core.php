@@ -1,19 +1,17 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class EE_Request_Stack_Builder
  * Assembles the EE_Request_Stack
  *
- * @deprecated  4.9.53
- * @package 	Event Espresso
- * @subpackage 	core
- * @author 		Brent Christensen
- * @since 		4.8.20
+ * @deprecated    4.9.53
+ * @package       Event Espresso
+ * @subpackage    core
+ * @author        Brent Christensen
+ * @since         4.8.20
  */
-class EE_Request_Stack_Builder {
+class EE_Request_Stack_Builder
+{
 
     /**
      * EE_Request_Stack_Builder
@@ -38,27 +36,23 @@ class EE_Request_Stack_Builder {
     /**
      * @deprecated  4.9.53
      */
-	public function unshift( /*$class_name, $args*/ ) {
+    public function unshift()
+    {
     }
 
 
+    /**
+     * @deprecated  4.9.53
+     */
+    public function push()
+    {
+    }
+
 
     /**
      * @deprecated  4.9.53
      */
-	public function push( /*$class_name, $args...*/ ) {
-	}
-
-
-
-    /**
-     * @deprecated  4.9.53
-     */
-	public function resolve( EEI_Request_Decorator $application ) {
-	}
-
-
-
+    public function resolve(EEI_Request_Decorator $application)
+    {
+    }
 }
-// End of file EE_Request_Stack_Builder.php
-// Location: core/EE_Request_Stack_Builder.php

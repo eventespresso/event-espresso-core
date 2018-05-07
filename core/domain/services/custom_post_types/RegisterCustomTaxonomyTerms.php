@@ -5,10 +5,6 @@ namespace EventEspresso\core\domain\services\custom_post_types;
 use EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyTerm;
 use WP_Post;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RegisterCustomTaxonomyTerms
  * Handles the actual registration for each of Event Espresso's Taxonomy Terms
@@ -49,9 +45,9 @@ class RegisterCustomTaxonomyTerms
         // (think event_types) and register_activation_hook only reliably runs when a user manually activates the plugin.
         // Keep in mind that this will READ these terms if they are deleted by the user.  Hence MUST use terms.
         // if ( is_admin() ) {
-        // 	$this->set_must_use_event_types();
+        // $this->set_must_use_event_types();
         // }
-        //set default terms
+        // set default terms
         $this->registerCustomTaxonomyTerm(
             'espresso_event_type',
             'single-event',
@@ -80,7 +76,7 @@ class RegisterCustomTaxonomyTerms
     /**
      * hooked into the wp 'save_post' action hook for setting our default terms found in the $_default_terms property
      *
-     * @param  int    $post_id ID of CPT being saved
+     * @param  int     $post_id ID of CPT being saved
      * @param  WP_Post $post    Post object
      * @return void
      */
@@ -89,15 +85,14 @@ class RegisterCustomTaxonomyTerms
         if (empty($this->custom_taxonomy_terms)) {
             return;
         }
-        //no default terms set so lets just exit.
+        // no default terms set so lets just exit.
         foreach ($this->custom_taxonomy_terms as $custom_taxonomy_terms) {
             foreach ($custom_taxonomy_terms as $custom_taxonomy_term) {
-                if (
-                    $post->post_status === 'publish'
+                if ($post->post_status === 'publish'
                     && $custom_taxonomy_term instanceof CustomTaxonomyTerm
                     && in_array($post->post_type, $custom_taxonomy_term->customPostTypeSlugs(), true)
                 ) {
-                    //note some error proofing going on here to save unnecessary db queries
+                    // note some error proofing going on here to save unnecessary db queries
                     $taxonomies = get_object_taxonomies($post->post_type);
                     foreach ($taxonomies as $taxonomy) {
                         $terms = wp_get_post_terms($post_id, $taxonomy);
@@ -121,7 +116,7 @@ class RegisterCustomTaxonomyTerms
     public function setMustUseEventTypes()
     {
         $term_details = array(
-            //Attendee's register for the first date-time only
+            // Attendee's register for the first date-time only
             'single-event'    => array(
                 'term' => esc_html__('Single Event', 'event_espresso'),
                 'desc' => esc_html__(
@@ -129,8 +124,8 @@ class RegisterCustomTaxonomyTerms
                     'event_espresso'
                 ),
             ),
-            //example: a party or two-day long workshop
-            //Attendee's can register for any of the date-times
+            // example: a party or two-day long workshop
+            // Attendee's can register for any of the date-times
             'multi-event'     => array(
                 'term' => esc_html__('Multi Event', 'event_espresso'),
                 'desc' => esc_html__(
@@ -138,8 +133,8 @@ class RegisterCustomTaxonomyTerms
                     'event_espresso'
                 ),
             ),
-            //example: a three day music festival or week long conference
-            //Attendee's register for the first date-time only
+            // example: a three day music festival or week long conference
+            // Attendee's register for the first date-time only
             'event-series'    => array(
                 'term' => esc_html__('Event Series', 'event_espresso'),
                 'desc' => esc_html__(
@@ -147,8 +142,8 @@ class RegisterCustomTaxonomyTerms
                     'event_espresso'
                 ),
             ),
-            //example: an 8 week introduction to basket weaving course
-            //Attendee's can register for any of the date-times.
+            // example: an 8 week introduction to basket weaving course
+            // Attendee's can register for any of the date-times.
             'recurring-event' => array(
                 'term' => esc_html__('Recurring Event', 'event_espresso'),
                 'desc' => esc_html__(
@@ -156,7 +151,7 @@ class RegisterCustomTaxonomyTerms
                     'event_espresso'
                 ),
             ),
-            //example: a yoga class
+            // example: a yoga class
             'ongoing'         => array(
                 'term' => esc_html__('Ongoing Event', 'event_espresso'),
                 'desc' => esc_html__(
@@ -164,11 +159,11 @@ class RegisterCustomTaxonomyTerms
                     'event_espresso'
                 ),
             )
-            //example: access to a museum
-            //'walk-in' => array( esc_html__('Walk In', 'event_espresso'), esc_html__('Single datetime and single entry recurring events. Attendees register for one or multiple datetimes individually.', 'event_espresso') ),
-            //'reservation' => array( esc_html__('Reservation', 'event_espresso'), esc_html__('Reservations are created by specifying available datetimes and quantities. Attendees choose from the available datetimes and specify the quantity available (if the maximum is greater than 1)') ), //@TODO to avoid confusion we'll implement this in a later iteration > EE4.1
+            // example: access to a museum
+            // 'walk-in' => array( esc_html__('Walk In', 'event_espresso'), esc_html__('Single datetime and single entry recurring events. Attendees register for one or multiple datetimes individually.', 'event_espresso') ),
+            // 'reservation' => array( esc_html__('Reservation', 'event_espresso'), esc_html__('Reservations are created by specifying available datetimes and quantities. Attendees choose from the available datetimes and specify the quantity available (if the maximum is greater than 1)') ), //@TODO to avoid confusion we'll implement this in a later iteration > EE4.1
             // 'multiple-session' => array( esc_html__('Multiple Session', 'event_espresso'), esc_html__('Multiple event, multiple datetime, hierarchically organized, custom entry events. Attendees may be required to register for a parent event before being allowed to register for child events. Attendees can register for any combination of child events as long as the datetimes do not conflict. Parent and child events may have additional fees or registration questions.') ), //@TODO to avoid confusion we'll implement this in a later iteration > EE4.1
-            //'appointment' => array( esc_html__('Appointments', 'event_espresso'), esc_html__('Time slotted events where datetimes are generally in hours or minutes. For example, attendees can register for a single 15 minute or 1 hour time slot and this type of availability frequently reoccurs.', 'event_espresso') )
+            // 'appointment' => array( esc_html__('Appointments', 'event_espresso'), esc_html__('Time slotted events where datetimes are generally in hours or minutes. For example, attendees can register for a single 15 minute or 1 hour time slot and this type of availability frequently reoccurs.', 'event_espresso') )
         );
         $this->setMustUseTerms('espresso_event_type', $term_details);
     }
@@ -197,5 +192,4 @@ class RegisterCustomTaxonomyTerms
             }
         }
     }
-
 }

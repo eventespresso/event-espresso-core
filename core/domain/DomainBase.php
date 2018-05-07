@@ -6,9 +6,6 @@ use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\Version;
 use EventEspresso\core\services\assets\Registry;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
-
-
 /**
  * DomainBase Class
  * A container for all domain data related to the plugin
@@ -164,13 +161,6 @@ abstract class DomainBase implements DomainInterface
      */
     private function setAssetNamespace()
     {
-        $asset_namespace  = explode('/', $this->plugin_basename);
-        $asset_namespace = reset($asset_namespace);
-        $asset_namespace = $asset_namespace === 'event-espresso-core'
-            ? Registry::ASSET_NAMESPACE_CORE
-            : $asset_namespace;
-        $this->asset_namespace = $asset_namespace;
+        $this->asset_namespace = sanitize_key($this->plugin_basename);
     }
-
-
 }

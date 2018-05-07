@@ -7,10 +7,6 @@ use EventEspresso\core\services\request\ResponseInterface;
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class NonProductionReadyVersionWarning
  * Displays a warning banner if a non-production version of EE is being run
@@ -25,19 +21,18 @@ class PreProductionVersionWarning extends Middleware
     /**
      * converts a Request to a Response
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface      $response
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
      * @return ResponseInterface
      */
     public function handleRequest(RequestInterface $request, ResponseInterface $response)
     {
-        $this->request  = $request;
+        $this->request = $request;
         $this->response = $response;
         $this->displayPreProductionVersionWarning();
         $this->response = $this->processRequestStack($this->request, $this->response);
         return $this->response;
     }
-
 
 
     /**
@@ -66,7 +61,6 @@ class PreProductionVersionWarning extends Middleware
             add_action('shutdown', array($this, 'preProductionVersionWarningNotice'), 10);
         }
     }
-
 
 
     /**
@@ -111,6 +105,4 @@ class PreProductionVersionWarning extends Middleware
             '</strong>'
         );
     }
-
 }
-// Location: NonProductionReadyVersionWarning.php

@@ -1,9 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
+<?php
 /**
  * Class EE_Display_Strategy_Base
  *
@@ -209,7 +204,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      */
     protected function _attribute($attribute, $value = '')
     {
-        if( $value === null) {
+        if ($value === null) {
             return '';
         }
         $value = esc_attr($value);
@@ -228,7 +223,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      */
     protected function _data_attribute($attribute, $value = '')
     {
-        if( $value === null) {
+        if ($value === null) {
             return '';
         }
         $value = esc_attr($value);
@@ -248,5 +243,4 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
     {
         return $add ? " {$attribute}" : '';
     }
-
 }

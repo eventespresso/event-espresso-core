@@ -1,9 +1,8 @@
 <?php
+
 namespace EventEspresso\modules\ticket_selector;
 
-defined('ABSPATH') || exit;
-
-
+// phpcs:disable PEAR.Functions.ValidDefaultValue.NotAtEnd
 
 /**
  * Class TicketDetails
@@ -11,7 +10,6 @@ defined('ABSPATH') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class TicketDetails
 {
@@ -43,7 +41,6 @@ class TicketDetails
     protected $event_is_expired;
 
 
-
     /**
      * TicketDetails constructor.
      *
@@ -55,15 +52,13 @@ class TicketDetails
         \EE_Ticket $ticket,
         \EE_Ticket_Selector_Config $template_settings,
         array $template_args
-    )
-    {
-        $this->ticket            = $ticket;
+    ) {
+        $this->ticket = $ticket;
         $this->template_settings = $template_settings;
-        $this->date_format       = $template_args['date_format'];
-        $this->time_format       = $template_args['time_format'];
-        $this->event_is_expired  = $template_args['event_is_expired'];
+        $this->date_format = $template_args['date_format'];
+        $this->time_format = $template_args['time_format'];
+        $this->event_is_expired = $template_args['event_is_expired'];
     }
-
 
 
     /**
@@ -75,7 +70,6 @@ class TicketDetails
     }
 
 
-
     /**
      * @return bool
      */
@@ -83,7 +77,6 @@ class TicketDetails
     {
         return $this->template_settings->show_ticket_details;
     }
-
 
 
     /**
@@ -95,7 +88,6 @@ class TicketDetails
     }
 
 
-
     /**
      * @return string
      */
@@ -103,7 +95,6 @@ class TicketDetails
     {
         return $this->date_format;
     }
-
 
 
     /**
@@ -115,13 +106,12 @@ class TicketDetails
     }
 
 
-
     /**
      * @return string
      */
     public function getShowHideLinks()
     {
-        if ( ! $this->showTicketDetails()) {
+        if (! $this->showTicketDetails()) {
             return '';
         }
         return \EEH_HTML::link(
@@ -154,7 +144,6 @@ class TicketDetails
     }
 
 
-
     /**
      * @return string
      */
@@ -165,7 +154,6 @@ class TicketDetails
             "tckt-slctr-tkt-details-{$this->ticket->get_event_ID()}-{$this->ticket->ID()}"
         );
     }
-
 
 
     /**
@@ -209,7 +197,4 @@ class TicketDetails
             $template_args
         );
     }
-
 }
-// End of file TicketDetails.php
-// Location: EventEspresso\modules\ticket_selector/TicketDetails.php

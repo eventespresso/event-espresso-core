@@ -1,14 +1,10 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
+<?php
 
 /**
  * class EE_Response
  * Passes output, notices, and request termination status between EE_Middleware classes
  *
- * @deprecated  4.9.53
+ * @deprecated      4.9.53
  * @package         Event Espresso
  * @subpackage      /core/
  * @author          Brent Christensen
@@ -44,7 +40,6 @@ class EE_Response
     protected $deactivate_plugin = false;
 
 
-
     /**
      * @deprecated  4.9.53
      * @return \EE_Response
@@ -68,7 +63,6 @@ class EE_Response
     }
 
 
-
     /**
      * @deprecated  4.9.53
      * @param $key
@@ -79,7 +73,6 @@ class EE_Response
     {
         $this->_notice[ $key ] = $value;
     }
-
 
 
     /**
@@ -93,7 +86,6 @@ class EE_Response
     }
 
 
-
     /**
      * @deprecated  4.9.53
      * @return    array
@@ -102,7 +94,6 @@ class EE_Response
     {
         return $this->_notice;
     }
-
 
 
     /**
@@ -116,7 +107,6 @@ class EE_Response
     }
 
 
-
     /**
      * @deprecated  4.9.53
      * @return    string
@@ -125,7 +115,6 @@ class EE_Response
     {
         return $this->_output;
     }
-
 
 
     /**
@@ -138,7 +127,6 @@ class EE_Response
     }
 
 
-
     /**
      * @deprecated  4.9.53
      * @param boolean $request_terminated
@@ -147,7 +135,6 @@ class EE_Response
     {
         $this->request_terminated = filter_var($request_terminated, FILTER_VALIDATE_BOOLEAN);
     }
-
 
 
     /**
@@ -160,7 +147,6 @@ class EE_Response
     }
 
 
-
     /**
      * @deprecated  4.9.53
      * sets $deactivate_plugin to true
@@ -169,8 +155,4 @@ class EE_Response
     {
         $this->deactivate_plugin = true;
     }
-
-
 }
-// End of file EE_Response.core.php
-// Location: /core/EE_Response.core.php

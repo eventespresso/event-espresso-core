@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * EE_Datepicker_Input
@@ -20,7 +17,7 @@ class EE_Datepicker_Input extends EE_Form_Input_Base
     {
         $this->_set_display_strategy(new EE_Text_Input_Display_Strategy('datepicker'));
         $this->_set_normalization_strategy(new EE_Text_Normalization());
-        //we could do better for validation, but at least verify its plaintext
+        // we could do better for validation, but at least verify its plaintext
         $this->_add_validation_strategy(
             new EE_Plaintext_Validation_Strategy(
                 isset($input_settings['validation_error_message'])
@@ -54,9 +51,4 @@ class EE_Datepicker_Input extends EE_Form_Input_Base
         );
         wp_enqueue_style('espresso-ui-theme');
     }
-
-
-
 }
-// End of file EE_Datepicker_Input.php
-// Location: /EE_Datepicker_Input.php
