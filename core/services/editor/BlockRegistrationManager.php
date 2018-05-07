@@ -195,6 +195,7 @@ class BlockRegistrationManager extends BlockManager
     /**
      * @since $VID:$
      * @throws InvalidDataTypeException
+     * @throws \EventEspresso\core\services\assets\AssetRegistrationException
      */
     public function registerAssets()
     {

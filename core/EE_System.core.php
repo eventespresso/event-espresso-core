@@ -952,13 +952,13 @@ final class EE_System implements ResettableInterface
                     )
                 );
             }
-            if (function_exists('register_block_type')) {
+            if (function_exists('register_block_type')
+                && ($this->request->isFrontend() || $this->request->isIframe() || $this->request->isAdmin())
+            ) {
                 // or the even newer newer new way
-                if ($this->request->isFrontend() || $this->request->isIframe() || $this->request->isAdmin()) {
-                    $this->loader->getShared(
-                        'EventEspresso\core\services\editor\BlockRegistrationManager'
-                    );
-                }
+                $this->loader->getShared(
+                    'EventEspresso\core\services\editor\BlockRegistrationManager'
+                );
             }
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
