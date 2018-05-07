@@ -64,5 +64,4 @@ interface DomainInterface extends InterminableInterface
      * @return string
      */
     public function assetNamespace();
-
 }
