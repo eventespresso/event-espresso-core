@@ -6,8 +6,10 @@ use EE_Error;
 use EventEspresso\core\domain\values\assets\Asset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
+use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
+use Exception;
 use InvalidArgumentException;
 
 /**
@@ -107,11 +109,16 @@ class Registry
      * @since $VID:$
      * @throws AssetRegistrationException
      * @throws InvalidDataTypeException
+     * @throws Exception
      */
     public function registerScriptsAndStyles()
     {
-        $this->registerScripts($this->assets->getJavascriptAssets());
-        $this->registerStyles($this->assets->getStylesheetAssets());
+        try {
+            $this->registerScripts($this->assets->getJavascriptAssets());
+            $this->registerStyles($this->assets->getStylesheetAssets());
+        } catch (Exception $exception) {
+            new ExceptionStackTraceDisplay($exception);
+        }
     }
 
 
