@@ -338,11 +338,11 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     {
         if (self::debug) {
             echo self::$nl . ' . . . ticket->ID: ' . $ticket->ID();
-            echo self::$nl . ' . . . ticket->reserved: ' . $ticket->reserved();
+            echo self::$nl . ' . . . ticket->reserved before: ' . $ticket->reserved();
         }
         $ticket->decrease_reserved($quantity, true, 'TicketSalesMonitor:' . __LINE__);
         if (self::debug) {
-            echo self::$nl . ' . . . ticket->reserved: ' . $ticket->reserved();
+            echo self::$nl . ' . . . ticket->reserved after: ' . $ticket->reserved();
         }
         return $ticket->save() ? 1 : 0;
     }
@@ -681,6 +681,10 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     public static function session_cart_reset(EE_Session $session)
     {
+        // don't release tickets if checkout was already reset
+        if (did_action('AHEE__EE_Session__reset_checkout__before_reset')) {
+            return;
+        }
         if (self::debug) {
             echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
         }
@@ -722,10 +726,12 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         if (self::debug) {
             echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
         }
-        EE_Registry::instance()->load_helper('Line_Item');
         $ticket_line_items = $cart->get_tickets();
         if (empty($ticket_line_items)) {
             return;
+        }
+        if (self::debug) {
+            echo '<br /> . ticket_line_item count: ' . count($ticket_line_items);
         }
         foreach ($ticket_line_items as $ticket_line_item) {
             if (self::debug) {
@@ -769,6 +775,10 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     public static function session_checkout_reset(EE_Session $session)
     {
+        // don't release tickets if cart was already reset
+        if(did_action('AHEE__EE_Session__reset_cart__before_reset')) {
+            return;
+        }
         $checkout = $session->checkout();
         if ($checkout instanceof EE_Checkout) {
             EED_Ticket_Sales_Monitor::instance()->_session_checkout_reset($checkout);
