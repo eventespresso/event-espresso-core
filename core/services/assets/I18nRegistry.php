@@ -111,8 +111,8 @@ class I18nRegistry
     private function registerInlineScript($handle, array $translations, $domain)
     {
         $script = $domain ?
-            'wp.i18n.setLocaleData( ' . wp_json_encode($translations) . ', ' . $domain . ' );' :
-            'wp.i18n.setLocaleData( ' . wp_json_encode($translations) . ' );';
+            'eejs.i18n.setLocaleData( ' . wp_json_encode($translations) . ', "' . $domain . '" );' :
+            'eejs.i18n.setLocaleData( ' . wp_json_encode($translations) . ' );';
         wp_add_inline_script($handle, $script, 'before');
     }
 
@@ -127,7 +127,7 @@ class I18nRegistry
         if (isset($this->registered_i18n[$handle])) {
             $domain = $this->registered_i18n[$handle];
             $translations = $this->getJedLocaleDataForDomainAndChunk($handle, $domain);
-            if (count($translations) > 1) {
+            if (count($translations) > 0) {
                 $this->queued_handle_translations[$handle] = array(
                     'domain'       => $domain,
                     'translations' => $translations,
