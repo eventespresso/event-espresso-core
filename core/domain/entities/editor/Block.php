@@ -2,7 +2,7 @@
 
 namespace EventEspresso\core\domain\entities\editor;
 
-use EventEspresso\core\services\assets\AssetRegisterInterface;
+use EventEspresso\core\services\assets\BlockAssetManagerInterface;
 use WP_Block_Type;
 
 /**
@@ -20,14 +20,12 @@ use WP_Block_Type;
 abstract class Block implements BlockInterface
 {
 
-    const NS = 'event-espresso/';
-
     /**
-     * AssetRegister that this editor block uses for asset registration
+     * BlockAssetManager that this editor block uses for asset registration
      *
-     * @var AssetRegisterInterface $asset_register_fqcn
+     * @var BlockAssetManagerInterface $block_asset_manager
      */
-    protected $asset_register;
+    protected $block_asset_manager;
 
     /**
      * @var array $attributes
@@ -61,10 +59,11 @@ abstract class Block implements BlockInterface
     /**
      * BlockLoader constructor.
      *
-     * @param AssetRegisterInterface $asset_register
+     * @param BlockAssetManagerInterface $block_asset_manager
      */
-    public function __construct(AssetRegisterInterface $asset_register) {
-        $this->asset_register = $asset_register;
+    public function __construct(BlockAssetManagerInterface $block_asset_manager)
+    {
+        $this->block_asset_manager = $block_asset_manager;
     }
 
 
@@ -82,7 +81,7 @@ abstract class Block implements BlockInterface
      */
     public function namespacedBlockType()
     {
-        return Block::NS . $this->editor_block_type;
+        return self::NAME_SPACE . $this->editor_block_type;
     }
 
 
@@ -96,15 +95,14 @@ abstract class Block implements BlockInterface
 
 
     /**
-     * AssetRegister that this editor block uses for asset registration
+     * BlockAssetManager that this editor block uses for asset registration
      *
-     * @return AssetRegisterInterface
+     * @return BlockAssetManagerInterface
      */
-    public function assetRegister()
+    public function assetManager()
     {
-        return $this->asset_register;
+        return $this->block_asset_manager;
     }
-
 
 
     /**
@@ -169,12 +167,12 @@ abstract class Block implements BlockInterface
      */
     public function registerBlock()
     {
-        $args          = array(
-            'attributes'      => $this->attributes(),
-            'editor_script'   => $this->asset_register->scriptHandle(),
-            'editor_style'    => $this->asset_register->styleHandle(),
-            'script'          => $this->asset_register->scriptHandle(),
-            'style'           => $this->asset_register->styleHandle(),
+        $args = array(
+            'attributes'    => $this->attributes(),
+            'editor_script' => $this->block_asset_manager->getEditorScriptHandle(),
+            'editor_style'  => $this->block_asset_manager->getEditorStyleHandle(),
+            'script'        => $this->block_asset_manager->getScriptHandle(),
+            'style'         => $this->block_asset_manager->getStyleHandle(),
         );
         if (! $this->isDynamic()) {
             $args['render_callback'] = $this->renderBlock();
@@ -219,10 +217,9 @@ abstract class Block implements BlockInterface
     {
         return array(
             $this->namespacedBlockType(),
-            array()
+            array(),
         );
     }
-
 
 
     /**
