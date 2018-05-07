@@ -1,9 +1,5 @@
 <?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Interface EEI_Payment
  * allows gateways to be used by different systems other than Event Espresso
@@ -136,7 +132,4 @@ interface EEI_Payment extends EEI_Base
      * @param string $extra_accounting_info
      */
     public function set_extra_accntng($extra_accounting_info);
-
 }
-// End of file EEI_Payment.interface.php
-// Location: EventEspresso\core\libraries\payment_methods/EEI_Payment.interface.php

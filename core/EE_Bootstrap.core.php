@@ -1,9 +1,5 @@
 <?php
 
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 /**
  * Class EE_Bootstrap
  * Just a frame for attaching the rest of the system to
@@ -30,7 +26,6 @@ class EE_Bootstrap
     }
 
 
-
     /**
      * detect_activations_or_upgrades
      * runs during the WP 'plugins_loaded' action at priority 3
@@ -41,7 +36,6 @@ class EE_Bootstrap
     {
         do_action('AHEE__EE_Bootstrap__detect_activations_or_upgrades');
     }
-
 
 
     /**
@@ -56,7 +50,6 @@ class EE_Bootstrap
     }
 
 
-
     /**
      * register_shortcodes_modules_and_widgets
      * runs during the WP 'plugins_loaded' action at priority 7
@@ -67,7 +60,6 @@ class EE_Bootstrap
     {
         do_action('AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets');
     }
-
 
 
     /**
@@ -82,7 +74,6 @@ class EE_Bootstrap
     }
 
 
-
     /**
      * @deprecated 4.9.53
      */
@@ -91,14 +82,10 @@ class EE_Bootstrap
     }
 
 
-
     /**
      * @deprecated 4.9.53
      */
     public function build_request_stack()
     {
     }
-
 }
-// End of file EE_Bootstrap.core.php
-// Location: /EE_Bootstrap.core.php

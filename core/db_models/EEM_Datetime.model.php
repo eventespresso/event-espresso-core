@@ -1,9 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
+<?php
 /**
  * Class Datetime Model
  *
@@ -110,7 +105,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
                 ),
                 'DTT_parent'      => new EE_Integer_Field(
                     'DTT_parent',
-                    esc_html__('Indicates what DTT_ID is the parent of this DTT_ID'),
+                    esc_html__('Indicates what DTT_ID is the parent of this DTT_ID', 'event_espresso'),
                     true,
                     0
                 ),
@@ -128,7 +123,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
             'Checkin' => new EE_Has_Many_Relation(),
         );
         $this->_model_chain_to_wp_user = 'Event';
-        //this model is generally available for reading
+        // this model is generally available for reading
         $this->_cap_restriction_generators[ EEM_Base::caps_read ]       = new EE_Restriction_Generator_Event_Related_Public(
             'Event'
         );
@@ -155,7 +150,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      */
     public function create_new_blank_datetime()
     {
-        //makes sure timezone is always set.
+        // makes sure timezone is always set.
         $timezone_string = $this->get_timezone();
         $blank_datetime  = EE_Datetime::new_instance(
             array(
@@ -225,7 +220,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         $include_deleted = true,
         $limit = null
     ) {
-        //sanitize EVT_ID
+        // sanitize EVT_ID
         $EVT_ID         = absint($EVT_ID);
         $old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
         $this->assume_values_already_prepared_by_model_object(EEM_Base::prepared_for_use_in_db);
@@ -348,7 +343,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         $include_deleted = true,
         $limit = null
     ) {
-        //sanitize EVT_ID
+        // sanitize EVT_ID
         $EVT_ID         = absint($EVT_ID);
         $old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
         $this->assume_values_already_prepared_by_model_object(EEM_Base::prepared_for_use_in_db);
@@ -386,7 +381,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         $include_deleted = true,
         $limit = null
     ) {
-        //sanitize TKT_ID
+        // sanitize TKT_ID
         $TKT_ID         = absint($TKT_ID);
         $old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
         $this->assume_values_already_prepared_by_model_object(EEM_Base::prepared_for_use_in_db);
@@ -425,7 +420,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         $include_deleted = true,
         $limit = null
     ) {
-        //sanitize id.
+        // sanitize id.
         $TKT_ID         = absint($TKT_ID);
         $old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
         $this->assume_values_already_prepared_by_model_object(EEM_Base::prepared_for_use_in_db);
@@ -488,22 +483,24 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         $current_time_for_DTT_EVT_start = $this->current_time_for_query('DTT_EVT_start');
         $current_time_for_DTT_EVT_end   = $this->current_time_for_query('DTT_EVT_end');
         switch ($evt_active_status) {
-            case 'upcoming' :
+            case 'upcoming':
                 $where_params['Event.status'] = 'publish';
-                //if there are already query_params matching DTT_EVT_start then we need to modify that to add them.
+                // if there are already query_params matching DTT_EVT_start then we need to modify that to add them.
                 if (isset($where_params['DTT_EVT_start'])) {
                     $where_params['DTT_EVT_start*****'] = $where_params['DTT_EVT_start'];
                 }
                 $where_params['DTT_EVT_start'] = array('>', $current_time_for_DTT_EVT_start);
                 break;
-            case 'expired' :
+            case 'expired':
                 if (isset($where_params['Event.status'])) {
                     unset($where_params['Event.status']);
                 }
-                //get events to exclude
-                $exclude_query[0] = array_merge($where_params,
-                    array('DTT_EVT_end' => array('>', $current_time_for_DTT_EVT_end)));
-                //first get all events that have datetimes where its not expired.
+                // get events to exclude
+                $exclude_query[0] = array_merge(
+                    $where_params,
+                    array('DTT_EVT_end' => array('>', $current_time_for_DTT_EVT_end))
+                );
+                // first get all events that have datetimes where its not expired.
                 $event_ids = $this->_get_all_wpdb_results(
                     $exclude_query,
                     OBJECT_K,
@@ -516,7 +513,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
                 $where_params['DTT_EVT_end']  = array('<', $current_time_for_DTT_EVT_end);
                 $where_params['Event.EVT_ID'] = array('NOT IN', $event_ids);
                 break;
-            case 'active' :
+            case 'active':
                 $where_params['Event.status'] = 'publish';
                 if (isset($where_params['DTT_EVT_start'])) {
                     $where_params['Datetime.DTT_EVT_start******'] = $where_params['DTT_EVT_start'];
@@ -527,7 +524,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
                 $where_params['DTT_EVT_start'] = array('<', $current_time_for_DTT_EVT_start);
                 $where_params['DTT_EVT_end']   = array('>', $current_time_for_DTT_EVT_end);
                 break;
-            case 'inactive' :
+            case 'inactive':
                 if (isset($where_params['Event.status'])) {
                     unset($where_params['Event.status']);
                 }
@@ -548,8 +545,10 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         $query_params[0]          = $where_params;
         $query_params['group_by'] = array('dtt_year', 'dtt_month');
         $query_params['order_by'] = array('DTT_EVT_start' => 'DESC');
-        $query_interval           = EEH_DTT_Helper::get_sql_query_interval_for_offset($this->get_timezone(),
-            'DTT_EVT_start');
+        $query_interval           = EEH_DTT_Helper::get_sql_query_interval_for_offset(
+            $this->get_timezone(),
+            'DTT_EVT_start'
+        );
         $columns_to_select        = array(
             'dtt_year'      => array('YEAR(' . $query_interval . ')', '%s'),
             'dtt_month'     => array('MONTHNAME(' . $query_interval . ')', '%s'),
@@ -616,7 +615,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      */
     public function get_datetime_counts_by_status(array $stati_to_include = array(), array $query_params = array())
     {
-        //only accept where conditions for this query.
+        // only accept where conditions for this query.
         $_where            = isset($query_params[0]) ? $query_params[0] : array();
         $status_query_args = array(
             EE_Datetime::active   => array_merge(
@@ -639,7 +638,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
                 }
             }
         }
-        //loop through and query counts for each stati.
+        // loop through and query counts for each stati.
         $status_query_results = array();
         foreach ($status_query_args as $status => $status_where_conditions) {
             $status_query_results[ $status ] = EEM_Datetime::count(
@@ -666,5 +665,3 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         return ! empty($count[ $status ]) ? $count[ $status ] : 0;
     }
 }
-// End of file EEM_Datetime.model.php
-// Location: /includes/models/EEM_Datetime.model.php

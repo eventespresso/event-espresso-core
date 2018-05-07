@@ -5,10 +5,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
-
-
-
 /**
  * EED_Recaptcha_Invisible
  * Integrates Google's Invisible reCAPTCHA into the form submission process
@@ -46,12 +42,13 @@ class EED_Recaptcha_Invisible extends EED_Module
     {
         EED_Recaptcha_Invisible::setProperties();
         if (EED_Recaptcha_Invisible::useInvisibleRecaptcha()) {
-            if(EED_Recaptcha_Invisible::protectForm('ticket_selector')){
+            if (EED_Recaptcha_Invisible::protectForm('ticket_selector')) {
                 // ticket selection
                 add_filter(
                     'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
                     array('EED_Recaptcha_Invisible', 'ticketSelectorForm'),
-                    10, 3
+                    10,
+                    3
                 );
                 add_action(
                     'EED_Ticket_Selector__process_ticket_selections__before',
@@ -67,7 +64,8 @@ class EED_Recaptcha_Invisible extends EED_Module
                 add_filter(
                     'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data',
                     array('EED_Recaptcha_Invisible', 'receiveSpcoRegStepForm'),
-                    10, 2
+                    10,
+                    2
                 );
             }
             add_action('loop_end', array('EED_Recaptcha_Invisible', 'localizeScriptVars'));
@@ -94,7 +92,8 @@ class EED_Recaptcha_Invisible extends EED_Module
             add_filter(
                 'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data',
                 array('EED_Recaptcha_Invisible', 'receiveSpcoRegStepForm'),
-                10, 2
+                10,
+                2
             );
         }
         // admin settings
@@ -122,7 +121,6 @@ class EED_Recaptcha_Invisible extends EED_Module
     }
 
 
-
     /**
      * @return boolean
      */
@@ -140,10 +138,8 @@ class EED_Recaptcha_Invisible extends EED_Module
     public static function protectForm($form)
     {
         return is_array(EED_Recaptcha_Invisible::$config->recaptcha_protected_forms)
-            && in_array($form, EED_Recaptcha_Invisible::$config->recaptcha_protected_forms, true);
+               && in_array($form, EED_Recaptcha_Invisible::$config->recaptcha_protected_forms, true);
     }
-
-
 
 
     /**
@@ -177,7 +173,6 @@ class EED_Recaptcha_Invisible extends EED_Module
     public function run($WP)
     {
     }
-
 
 
     /**
@@ -309,7 +304,7 @@ class EED_Recaptcha_Invisible extends EED_Module
         /** @var EE_Request $request */
         $request = LoaderFactory::getLoader()->getShared('EE_Request');
         if (! EED_Recaptcha_Invisible::verifyToken($request)) {
-            $event_id   = $request->get('tkt-slctr-event-id');
+            $event_id = $request->get('tkt-slctr-event-id');
             $return_url = $request->is_set("tkt-slctr-return-url-{$event_id}")
                 ? $request->get("tkt-slctr-return-url-{$event_id}")
                 : get_permalink($event_id);

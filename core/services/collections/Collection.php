@@ -104,11 +104,15 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * @param  mixed $identifier
      * @return bool
      * @throws InvalidEntityException
+     * @throws DuplicateCollectionIdentifierException
      */
     public function add($object, $identifier = null)
     {
         if (! $object instanceof $this->collection_interface) {
             throw new InvalidEntityException($object, $this->collection_interface);
+        }
+        if ($this->contains($object)) {
+            throw new DuplicateCollectionIdentifierException($identifier);
         }
         $this->attach($object);
         $this->setIdentifier($object, $identifier);
@@ -358,6 +362,46 @@ class Collection extends SplObjectStorage implements CollectionInterface
             $slice[] = $object;
         }
         return $slice;
+    }
+
+
+    /**
+     * Inserts an object at a certain point
+     *
+     * @see http://stackoverflow.com/a/8736013
+     * @param mixed $object A single object
+     * @param int   $index
+     * @param mixed $identifier
+     * @return bool
+     * @throws DuplicateCollectionIdentifierException
+     * @throws InvalidEntityException
+     */
+    public function insertObjectAt($object, $index, $identifier = null)
+    {
+        // check to ensure that objects don't already exist in the collection
+        if ($this->has($identifier)) {
+            throw new DuplicateCollectionIdentifierException($identifier);
+        }
+        // detach any objects at or past this index
+        $remaining_objects = array();
+        if ($index < $this->count()) {
+            $remaining_objects = $this->slice($index, $this->count() - $index);
+            foreach ($remaining_objects as $key => $remaining_object) {
+                // we need to grab the identifiers for each object and use them as keys
+                $remaining_objects[ $remaining_object->getInfo() ] = $remaining_object;
+                // and then remove the object from the current tracking array
+                unset($remaining_objects[ $key ]);
+                // and then remove it from the Collection
+                $this->detach($remaining_object);
+            }
+        }
+        // add the new object we're splicing in
+        $this->add($object, $identifier);
+        // attach the objects we previously detached
+        foreach ($remaining_objects as $key => $remaining_object) {
+            $this->add($remaining_object, $key);
+        }
+        return $this->contains($object);
     }
 
 

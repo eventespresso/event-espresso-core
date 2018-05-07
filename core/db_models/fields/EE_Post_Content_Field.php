@@ -1,5 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Field to only allow tags that are normally allowed on post_content:
@@ -46,13 +45,12 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
      */
     public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
     {
-        switch($schema){
+        switch ($schema) {
             case 'form_input':
                 return parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema);
             case 'the_content':
-
-                if(doing_filter( 'the_content')){
-                    if( defined('WP_DEBUG') && WP_DEBUG){
+                if (doing_filter('the_content')) {
+                    if (defined('WP_DEBUG') && WP_DEBUG) {
                         throw new EE_Error(
                             sprintf(
                                 esc_html__('You have recursively called "%1$s" with %2$s set to %3$s which uses "%2$s" filter. You should use it with %2$s "%3$s" instead here.', 'event_espresso'),
@@ -83,10 +81,10 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
                         $schema
                     )
                 );
-                //ya know what? adding these filters is super fast. Let's just
-                //avoid needing to maintain global state and set this up as-needed
+                // ya know what? adding these filters is super fast. Let's just
+                // avoid needing to maintain global state and set this up as-needed
                 remove_all_filters('the_content_wp_core_only');
-                do_action( 'AHEE__EE_Post_Content_Field__prepare_for_pretty_echoing__the_content_wp_core_only__done');
+                do_action('AHEE__EE_Post_Content_Field__prepare_for_pretty_echoing__the_content_wp_core_only__done');
                 return $return_value;
         }
     }
@@ -104,7 +102,7 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
         add_filter('the_content_wp_core_only', 'wpautop', 10);
         add_filter('the_content_wp_core_only', 'shortcode_unautop', 10);
         add_filter('the_content_wp_core_only', 'prepend_attachment', 10);
-        if(function_exists('wp_make_content_images_responsive')) {
+        if (function_exists('wp_make_content_images_responsive')) {
             add_filter('the_content_wp_core_only', 'wp_make_content_images_responsive', 10);
         }
         add_filter('the_content_wp_core_only', 'do_shortcode', 11);

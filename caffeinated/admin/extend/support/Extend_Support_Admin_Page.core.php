@@ -1,11 +1,5 @@
 <?php
 
-
-defined('EVENT_ESPRESSO_VERSION')|| exit('NO direct script access allowed');
-
-
-
-
 /**
  * Extend_Support_Admin_Page
  * This contains the logic for setting up the Help and Support related admin pages.  Any methods without phpdoc
@@ -25,19 +19,18 @@ class Extend_Support_Admin_Page extends Support_Admin_Page
     }
 
 
-
     protected function _extend_page_config()
     {
         $this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'support';
-        //new routes and new configs (or overrides )
-        $new_page_routes    = array(
+        // new routes and new configs (or overrides )
+        $new_page_routes = array(
             'faq' => array(
                 'func'       => '_faq',
                 'capability' => 'ee_read_ee',
             ),
         );
         $this->_page_routes = array_merge($this->_page_routes, $new_page_routes);
-        $new_page_config    = array(
+        $new_page_config = array(
             'faq' => array(
                 'nav'           => array(
                     'label' => esc_html__('FAQ', 'event_espresso'),
@@ -52,7 +45,6 @@ class Extend_Support_Admin_Page extends Support_Admin_Page
     }
 
 
-
     protected function _faq()
     {
         $template_path = EE_SUPPORT_CAF_ADMIN_TEMPLATE_PATH . 'support_admin_details_faq.template.php';
@@ -65,7 +57,6 @@ class Extend_Support_Admin_Page extends Support_Admin_Page
     }
 
 
-
     protected function _installation_boxes()
     {
         $callback_args = array(
@@ -75,8 +66,7 @@ class Extend_Support_Admin_Page extends Support_Admin_Page
         add_meta_box(
             'espresso_additional_information_support',
             esc_html__('Additional Information', 'event_espresso'),
-            function ($post, $metabox)
-            {
+            function ($post, $metabox) {
                 echo EEH_Template::display_template(
                     $metabox['args']['template_path'],
                     '',
@@ -89,7 +79,4 @@ class Extend_Support_Admin_Page extends Support_Admin_Page
             $callback_args
         );
     }
-
-
-
-} //end class Extend_Support_Admin_Page
+}

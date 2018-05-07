@@ -2,19 +2,13 @@
 
 namespace EventEspresso\core\services\assets;
 
-use EE_Currency_Config;
 use EE_Error;
-use EE_Registry;
-use EE_Template_Config;
-use EED_Core_Rest_Api;
-use EEH_Qtip_Loader;
-use EventEspresso\core\domain\DomainInterface;
+use EventEspresso\core\domain\values\assets\Asset;
+use EventEspresso\core\domain\values\assets\JavascriptAsset;
+use EventEspresso\core\domain\values\assets\StylesheetAsset;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use InvalidArgumentException;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Used for registering assets used in EE.
@@ -27,20 +21,17 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class Registry
 {
 
-    const ASSET_TYPE_CSS           = 'css';
-    const ASSET_TYPE_JS            = 'js';
-    const ASSET_NAMESPACE_CORE     = 'core';
     const FILE_NAME_BUILD_MANIFEST = 'build-manifest.json';
 
     /**
-     * @var EE_Template_Config $template_config
+     * @var AssetCollection $assets
      */
-    protected $template_config;
+    protected $assets;
 
     /**
-     * @var EE_Currency_Config $currency_config
+     * @var I18nRegistry
      */
-    protected $currency_config;
+    private $i18n_registry;
 
     /**
      * This holds the jsdata data object that will be exposed on pages that enqueue the `eejs-core` script.
@@ -49,33 +40,18 @@ class Registry
      */
     protected $jsdata = array();
 
-
     /**
      * This keeps track of all scripts with registered data.  It is used to prevent duplicate data objects setup in the
      * page source.
+     *
      * @var array
      */
-    protected $script_handles_with_data = array();
-
-
-    /**
-     * @var DomainInterface
-     */
-    protected $domain;
-
-
-    /**
-     * @var I18nRegistry
-     */
-    private $i18n_registry;
-
-
+    private $script_handles_with_data = array();
 
     /**
      * Holds the manifest data obtained from registered manifest files.
      * Manifests are maps of asset chunk name to actual built asset file names.
      * Shape of this array is:
-     *
      * array(
      *  'some_namespace_slug' => array(
      *      'some_chunk_name' => array(
@@ -95,32 +71,19 @@ class Registry
      * Registry constructor.
      * Hooking into WP actions for script registry.
      *
-     * @param EE_Template_Config $template_config
-     * @param EE_Currency_Config $currency_config
-     * @param I18nRegistry       $i18n_registry
-     * @param DomainInterface    $domain
-     * @throws InvalidArgumentException
-     * @throws InvalidFilePathException
+     * @param AssetCollection $assets
+     * @param I18nRegistry    $i18n_registry
      */
-    public function __construct(
-        EE_Template_Config $template_config,
-        EE_Currency_Config $currency_config,
-        I18nRegistry $i18n_registry,
-        DomainInterface $domain
-    ) {
-        $this->template_config = $template_config;
-        $this->currency_config = $currency_config;
-        $this->domain = $domain;
+    public function __construct(AssetCollection $assets, I18nRegistry $i18n_registry)
+    {
+        $this->assets        = $assets;
         $this->i18n_registry = $i18n_registry;
-        $this->registerManifestFile(
-            self::ASSET_NAMESPACE_CORE,
-            $this->domain->distributionAssetsUrl(),
-            $this->domain->distributionAssetsPath() . self::FILE_NAME_BUILD_MANIFEST
-        );
-        add_action('wp_enqueue_scripts', array($this, 'scripts'), 1);
-        add_action('admin_enqueue_scripts', array($this, 'scripts'), 1);
-        add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 2);
-        add_action('admin_enqueue_scripts', array($this, 'enqueueData'), 2);
+        add_action('wp_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
+        add_action('admin_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
+        add_action('wp_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 3);
+        add_action('admin_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 3);
+        add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 4);
+        add_action('admin_enqueue_scripts', array($this, 'enqueueData'), 4);
         add_action('wp_print_footer_scripts', array($this, 'enqueueData'), 1);
         add_action('admin_print_footer_scripts', array($this, 'enqueueData'), 1);
     }
@@ -137,64 +100,94 @@ class Registry
         return $this->i18n_registry;
     }
 
+
     /**
-     * Callback for the WP script actions.
-     * Used to register globally accessible core scripts.
-     * Also used to add the eejs.data object to the source for any js having eejs-core as a dependency.
+     * Callback for the wp_enqueue_scripts actions used to register assets.
      *
+     * @since $VID:$
+     * @throws AssetRegistrationException
+     * @throws InvalidDataTypeException
      */
-    public function scripts()
+    public function registerScriptsAndStyles()
     {
-        global $wp_version;
-        wp_register_script(
-            'ee-manifest',
-            $this->getJsUrl(self::ASSET_NAMESPACE_CORE, 'manifest'),
-            array(),
-            null,
-            true
-        );
-        wp_register_script(
-            'eejs-core',
-            $this->getJsUrl(self::ASSET_NAMESPACE_CORE, 'eejs'),
-            array('ee-manifest'),
-            null,
-            true
-        );
-        wp_register_script(
-            'ee-vendor-react',
-            $this->getJsUrl(self::ASSET_NAMESPACE_CORE, 'reactVendor'),
-            array('eejs-core'),
-            null,
-            true
-        );
-        //only run this if WordPress 4.4.0 > is in use.
-        if (version_compare($wp_version, '4.4.0', '>')) {
-            //js.api
-            wp_register_script(
-                'eejs-api',
-                EE_LIBRARIES_URL . 'rest_api/assets/js/eejs-api.min.js',
-                array('underscore', 'eejs-core'),
-                EVENT_ESPRESSO_VERSION,
-                true
-            );
-            $this->jsdata['eejs_api_nonce'] = wp_create_nonce('wp_rest');
-            $this->jsdata['paths'] = array(
-                'rest_route' => rest_url('ee/v4.8.36/'),
-                'collection_endpoints' => EED_Core_Rest_Api::getCollectionRoutesIndexedByModelName()
-            );
-        }
-        if (! is_admin()) {
-            $this->loadCoreCss();
-        }
-        $this->registerTranslationsForHandles(array('eejs-core'));
-        $this->loadCoreJs();
-        $this->loadJqueryValidate();
-        $this->loadAccountingJs();
-        $this->loadQtipJs();
-        $this->registerAdminAssets();
+        $this->registerScripts($this->assets->getJavascriptAssets());
+        $this->registerStyles($this->assets->getStylesheetAssets());
     }
 
 
+    /**
+     * Registers JS assets with WP core
+     *
+     * @since $VID:$
+     * @param JavascriptAsset[] $scripts
+     * @throws AssetRegistrationException
+     * @throws InvalidDataTypeException
+     */
+    public function registerScripts(array $scripts)
+    {
+        foreach ($scripts as $script) {
+            // skip to next script if this has already been done
+            if($script->isRegistered()) {
+                continue;
+            }
+            do_action(
+                'AHEE__EventEspresso_core_services_assets_Registry__registerScripts__before_script',
+                $script
+            );
+            $registered = wp_register_script(
+                $script->handle(),
+                $script->source(),
+                $script->dependencies(),
+                $script->version(),
+                $script->loadInFooter()
+            );
+            if(WP_DEBUG && ! $registered) {
+                throw new AssetRegistrationException($script->handle());
+            }
+            $script->setRegistered($registered);
+            if ($script->requiresTranslation()) {
+                $this->registerTranslation($script->handle());
+            }
+            do_action(
+                'AHEE__EventEspresso_core_services_assets_Registry__registerScripts__after_script',
+                $script
+            );
+        }
+    }
+
+
+    /**
+     * Registers CSS assets with WP core
+     *
+     * @since $VID:$
+     * @param StylesheetAsset[] $styles
+     * @throws InvalidDataTypeException
+     */
+    public function registerStyles(array $styles)
+    {
+        foreach ($styles as $style) {
+            // skip to next style if this has already been done
+            if ($style->isRegistered()) {
+                continue;
+            }
+            do_action(
+                'AHEE__EventEspresso_core_services_assets_Registry__registerStyles__before_style',
+                $style
+            );
+            wp_enqueue_style(
+                $style->handle(),
+                $style->source(),
+                $style->dependencies(),
+                $style->version(),
+                $style->media()
+            );
+            $style->setRegistered();
+            do_action(
+                'AHEE__EventEspresso_core_services_assets_Registry__registerStyles__after_style',
+                $style
+            );
+        }
+    }
 
     /**
      * Call back for the script print in frontend and backend.
@@ -210,12 +203,15 @@ class Registry
             'var eejsdata=' . wp_json_encode(array('data' => $this->jsdata)),
             'before'
         );
-        wp_localize_script('espresso_core', 'eei18n', EE_Registry::$i18n_js_strings);
-        $this->localizeAccountingJs();
-        $this->addRegisteredScriptHandlesWithData('eejs-core');
-        $this->addRegisteredScriptHandlesWithData('espresso_core');
+        $scripts = $this->assets->getJavascriptAssetsWithData();
+        foreach ($scripts as $script) {
+            $this->addRegisteredScriptHandlesWithData($script->handle());
+            if ($script->hasLocalizationCallback()) {
+                $localize = $script->localizationCallback();
+                $localize();
+            }
+        }
     }
-
 
 
     /**
@@ -234,10 +230,9 @@ class Registry
     public function addData($key, $value)
     {
         if ($this->verifyDataNotExisting($key)) {
-            $this->jsdata[$key] = $value;
+            $this->jsdata[ $key ] = $value;
         }
     }
-
 
 
     /**
@@ -256,10 +251,10 @@ class Registry
      */
     public function pushData($key, $value)
     {
-        if (isset($this->jsdata[$key])
-            && ! is_array($this->jsdata[$key])
+        if (isset($this->jsdata[ $key ])
+            && ! is_array($this->jsdata[ $key ])
         ) {
-            throw new invalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf(
                     __(
                         'The value for %1$s is already set and it is not an array. The %2$s method can only be used to
@@ -271,9 +266,8 @@ class Registry
                 )
             );
         }
-        $this->jsdata[$key][] = $value;
+        $this->jsdata[ $key ][] = $value;
     }
-
 
 
     /**
@@ -290,8 +284,8 @@ class Registry
             $this->jsdata['templates'] = array();
         }
         //no overrides allowed.
-        if (isset($this->jsdata['templates'][$template_reference])) {
-            throw new invalidArgumentException(
+        if (isset($this->jsdata['templates'][ $template_reference ])) {
+            throw new InvalidArgumentException(
                 sprintf(
                     __(
                         'The %1$s key already exists for the templates array in the js data array.  No overrides are allowed.',
@@ -301,9 +295,8 @@ class Registry
                 )
             );
         }
-        $this->jsdata['templates'][$template_reference] = $template_content;
+        $this->jsdata['templates'][ $template_reference ] = $template_content;
     }
-
 
 
     /**
@@ -314,11 +307,10 @@ class Registry
      */
     public function getTemplate($template_reference)
     {
-        return isset($this->jsdata['templates'][$template_reference])
-            ? $this->jsdata['templates'][$template_reference]
+        return isset($this->jsdata['templates'][ $template_reference ])
+            ? $this->jsdata['templates'][ $template_reference ]
             : '';
     }
-
 
 
     /**
@@ -329,15 +321,56 @@ class Registry
      */
     public function getData($key)
     {
-        return isset($this->jsdata[$key])
-            ? $this->jsdata[$key]
+        return isset($this->jsdata[ $key ])
+            ? $this->jsdata[ $key ]
             : false;
+    }
+
+
+    /**
+     * Verifies whether the given data exists already on the jsdata array.
+     * Overriding data is not allowed.
+     *
+     * @param string $key Index for data.
+     * @return bool        If valid then return true.
+     * @throws InvalidArgumentException if data already exists.
+     */
+    protected function verifyDataNotExisting($key)
+    {
+        if (isset($this->jsdata[ $key ])) {
+            if (is_array($this->jsdata[ $key ])) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        __(
+                            'The value for %1$s already exists in the Registry::eejs object.
+                            Overrides are not allowed. Since the value of this data is an array, you may want to use the
+                            %2$s method to push your value to the array.',
+                            'event_espresso'
+                        ),
+                        $key,
+                        'pushData()'
+                    )
+                );
+            }
+            throw new InvalidArgumentException(
+                sprintf(
+                    __(
+                        'The value for %1$s already exists in the Registry::eejs object. Overrides are not
+                        allowed.  Consider attaching your value to a different key',
+                        'event_espresso'
+                    ),
+                    $key
+                )
+            );
+        }
+        return true;
     }
 
 
     /**
      * Get the actual asset path for asset manifests.
      * If there is no asset path found for the given $chunk_name, then the $chunk_name is returned.
+     *
      * @param string $namespace  The namespace associated with the manifest file hosting the map of chunk_name to actual
      *                           asset file location.
      * @param string $chunk_name
@@ -348,11 +381,11 @@ class Registry
     public function getAssetUrl($namespace, $chunk_name, $asset_type)
     {
         $url = isset(
-            $this->manifest_data[$namespace][$chunk_name][$asset_type],
-            $this->manifest_data[$namespace]['url_base']
+            $this->manifest_data[ $namespace ][ $chunk_name ][ $asset_type ],
+            $this->manifest_data[ $namespace ]['url_base']
         )
-            ? $this->manifest_data[$namespace]['url_base']
-              . $this->manifest_data[$namespace][$chunk_name][$asset_type]
+            ? $this->manifest_data[ $namespace ]['url_base']
+              . $this->manifest_data[ $namespace ][ $chunk_name ][ $asset_type ]
             : $chunk_name;
         return apply_filters(
             'FHEE__EventEspresso_core_services_assets_Registry__getAssetUrl',
@@ -374,7 +407,7 @@ class Registry
      */
     public function getJsUrl($namespace, $chunk_name)
     {
-        return $this->getAssetUrl($namespace, $chunk_name, self::ASSET_TYPE_JS);
+        return $this->getAssetUrl($namespace, $chunk_name, Asset::TYPE_JS);
     }
 
 
@@ -387,7 +420,25 @@ class Registry
      */
     public function getCssUrl($namespace, $chunk_name)
     {
-        return $this->getAssetUrl($namespace, $chunk_name, self::ASSET_TYPE_CSS);
+        return $this->getAssetUrl($namespace, $chunk_name, Asset::TYPE_CSS);
+    }
+
+
+    /**
+     * @since $VID:$
+     * @throws InvalidArgumentException
+     * @throws InvalidFilePathException
+     */
+    public function registerManifestFiles()
+    {
+        $manifest_files = $this->assets->getManifestFiles();
+        foreach ($manifest_files as $manifest_file) {
+            $this->registerManifestFile(
+                $manifest_file->assetNamespace(),
+                $manifest_file->urlBase(),
+                $manifest_file->filepath() . Registry::FILE_NAME_BUILD_MANIFEST
+            );
+        }
     }
 
 
@@ -403,7 +454,7 @@ class Registry
      */
     public function registerManifestFile($namespace, $url_base, $manifest_file)
     {
-        if (isset($this->manifest_data[$namespace])) {
+        if (isset($this->manifest_data[ $namespace ])) {
             throw new InvalidArgumentException(
                 sprintf(
                     esc_html__(
@@ -434,12 +485,11 @@ class Registry
             }
             return;
         }
-        $this->manifest_data[$namespace] = $this->decodeManifestFile($manifest_file);
-        if (! isset($this->manifest_data[$namespace]['url_base'])) {
-            $this->manifest_data[$namespace]['url_base'] = trailingslashit($url_base);
+        $this->manifest_data[ $namespace ] = $this->decodeManifestFile($manifest_file);
+        if (! isset($this->manifest_data[ $namespace ]['url_base'])) {
+            $this->manifest_data[ $namespace ]['url_base'] = trailingslashit($url_base);
         }
     }
-
 
 
     /**
@@ -459,195 +509,14 @@ class Registry
     }
 
 
-
-    /**
-     * Verifies whether the given data exists already on the jsdata array.
-     * Overriding data is not allowed.
-     *
-     * @param string $key Index for data.
-     * @return bool        If valid then return true.
-     * @throws InvalidArgumentException if data already exists.
-     */
-    protected function verifyDataNotExisting($key)
-    {
-        if (isset($this->jsdata[$key])) {
-            if (is_array($this->jsdata[$key])) {
-                throw new InvalidArgumentException(
-                    sprintf(
-                        __(
-                            'The value for %1$s already exists in the Registry::eejs object.
-                            Overrides are not allowed. Since the value of this data is an array, you may want to use the
-                            %2$s method to push your value to the array.',
-                            'event_espresso'
-                        ),
-                        $key,
-                        'pushData()'
-                    )
-                );
-            }
-            throw new InvalidArgumentException(
-                sprintf(
-                    __(
-                        'The value for %1$s already exists in the Registry::eejs object. Overrides are not
-                        allowed.  Consider attaching your value to a different key',
-                        'event_espresso'
-                    ),
-                    $key
-                )
-            );
-        }
-        return true;
-    }
-
-
-
-    /**
-     * registers core default stylesheets
-     */
-    private function loadCoreCss()
-    {
-        if ($this->template_config->enable_default_style) {
-            $default_stylesheet_path = is_readable(EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css')
-                ? EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css'
-                : EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css';
-            wp_register_style(
-                'espresso_default',
-                $default_stylesheet_path,
-                array('dashicons'),
-                EVENT_ESPRESSO_VERSION
-            );
-            //Load custom style sheet if available
-            if ($this->template_config->custom_style_sheet !== null) {
-                wp_register_style(
-                    'espresso_custom_css',
-                    EVENT_ESPRESSO_UPLOAD_URL . 'css/' . $this->template_config->custom_style_sheet,
-                    array('espresso_default'),
-                    EVENT_ESPRESSO_VERSION
-                );
-            }
-        }
-    }
-
-
-
-    /**
-     * registers core default javascript
-     */
-    private function loadCoreJs()
-    {
-        // load core js
-        wp_register_script(
-            'espresso_core',
-            EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js',
-            array('jquery'),
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
-    }
-
-
-
-    /**
-     * registers jQuery Validate for form validation
-     */
-    private function loadJqueryValidate()
-    {
-        // register jQuery Validate and additional methods
-        wp_register_script(
-            'jquery-validate',
-            EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js',
-            array('jquery'),
-            '1.15.0',
-            true
-        );
-        wp_register_script(
-            'jquery-validate-extra-methods',
-            EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js',
-            array('jquery', 'jquery-validate'),
-            '1.15.0',
-            true
-        );
-    }
-
-
-
-    /**
-     * registers accounting.js for performing client-side calculations
-     */
-    private function loadAccountingJs()
-    {
-        //accounting.js library
-        // @link http://josscrowcroft.github.io/accounting.js/
-        wp_register_script(
-            'ee-accounting-core',
-            EE_THIRD_PARTY_URL . 'accounting/accounting.js',
-            array('underscore'),
-            '0.3.2',
-            true
-        );
-        wp_register_script(
-            'ee-accounting',
-            EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js',
-            array('ee-accounting-core'),
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
-    }
-
-
-
-    /**
-     * registers accounting.js for performing client-side calculations
-     */
-    private function localizeAccountingJs()
-    {
-        wp_localize_script(
-            'ee-accounting',
-            'EE_ACCOUNTING_CFG',
-            array(
-                'currency' => array(
-                    'symbol'    => $this->currency_config->sign,
-                    'format'    => array(
-                        'pos'  => $this->currency_config->sign_b4 ? '%s%v' : '%v%s',
-                        'neg'  => $this->currency_config->sign_b4 ? '- %s%v' : '- %v%s',
-                        'zero' => $this->currency_config->sign_b4 ? '%s--' : '--%s',
-                    ),
-                    'decimal'   => $this->currency_config->dec_mrk,
-                    'thousand'  => $this->currency_config->thsnds,
-                    'precision' => $this->currency_config->dec_plc,
-                ),
-                'number'   => array(
-                    'precision' => $this->currency_config->dec_plc,
-                    'thousand'  => $this->currency_config->thsnds,
-                    'decimal'   => $this->currency_config->dec_mrk,
-                ),
-            )
-        );
-        $this->addRegisteredScriptHandlesWithData('ee-accounting');
-    }
-
-
-
-    /**
-     * registers assets for cleaning your ears
-     */
-    private function loadQtipJs()
-    {
-        // qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook,
-        // can be turned back on again via: add_filter('FHEE_load_qtip', '__return_true' );
-        if (apply_filters('FHEE_load_qtip', false)) {
-            EEH_Qtip_Loader::instance()->register_and_enqueue();
-        }
-    }
-
-
     /**
      * This is used to set registered script handles that have data.
+     *
      * @param string $script_handle
      */
     private function addRegisteredScriptHandlesWithData($script_handle)
     {
-        $this->script_handles_with_data[$script_handle] = $script_handle;
+        $this->script_handles_with_data[ $script_handle ] = $script_handle;
     }
 
 
@@ -668,66 +537,40 @@ class Registry
 
     /**
      * Removes any data dependency registered in WP_Scripts if its set.
+     *
      * @param string $script_handle
      */
     private function removeAlreadyRegisteredDataForScriptHandle($script_handle)
     {
-        if (isset($this->script_handles_with_data[$script_handle])) {
+        if (isset($this->script_handles_with_data[ $script_handle ])) {
             global $wp_scripts;
             $unset_handle = false;
             if ($wp_scripts->get_data($script_handle, 'data')) {
-                unset($wp_scripts->registered[$script_handle]->extra['data']);
+                unset($wp_scripts->registered[ $script_handle ]->extra['data']);
                 $unset_handle = true;
             }
             //deal with inline_scripts
             if ($wp_scripts->get_data($script_handle, 'before')) {
-                unset($wp_scripts->registered[$script_handle]->extra['before']);
+                unset($wp_scripts->registered[ $script_handle ]->extra['before']);
                 $unset_handle = true;
             }
             if ($wp_scripts->get_data($script_handle, 'after')) {
-                unset($wp_scripts->registered[$script_handle]->extra['after']);
+                unset($wp_scripts->registered[ $script_handle ]->extra['after']);
             }
             if ($unset_handle) {
-                unset($this->script_handles_with_data[$script_handle]);
+                unset($this->script_handles_with_data[ $script_handle ]);
             }
         }
     }
 
 
     /**
-     * Registers assets that are used in the WordPress admin.
-     */
-    private function registerAdminAssets()
-    {
-        wp_register_script(
-            'ee-wp-plugins-page',
-            $this->getJsUrl(self::ASSET_NAMESPACE_CORE, 'wp-plugins-page'),
-            array(
-                'jquery',
-                'ee-vendor-react'
-            ),
-            null,
-            true
-        );
-        wp_register_style(
-            'ee-wp-plugins-page',
-            $this->getCssUrl(self::ASSET_NAMESPACE_CORE, 'wp-plugins-page'),
-            array(),
-            null
-        );
-        $this->registerTranslationsForHandles(array('ee-wp-plugins-page'));
-    }
-
-
-    /**
-     * All handles that are registered via the registry that might have translations have their translations registered
+     * register translations for a registered script
      *
-     * @param array $handles_to_register
+     * @param string $handle
      */
-    private function registerTranslationsForHandles(array $handles_to_register)
+    public function registerTranslation($handle)
     {
-        foreach($handles_to_register as $handle) {
-            $this->i18n_registry->registerScriptI18n($handle);
-        }
+        $this->i18n_registry->registerScriptI18n($handle);
     }
 }

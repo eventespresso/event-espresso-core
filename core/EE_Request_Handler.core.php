@@ -1,7 +1,6 @@
-<?php use EventEspresso\core\interfaces\InterminableInterface;
+<?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
+use EventEspresso\core\interfaces\InterminableInterface;
 
 /**
  * class EE_Request_Handler
@@ -45,7 +44,6 @@ final class EE_Request_Handler implements InterminableInterface
     public $front_ajax = false;
 
 
-
     /**
      * @param  EE_Request $request
      */
@@ -58,7 +56,6 @@ final class EE_Request_Handler implements InterminableInterface
     }
 
 
-
     /**
      * @param WP $wp
      * @return void
@@ -67,13 +64,12 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function parse_request($wp = null)
     {
-        //if somebody forgot to provide us with WP, that's ok because its global
+        // if somebody forgot to provide us with WP, that's ok because its global
         if (! $wp instanceof WP) {
             global $wp;
         }
         $this->set_request_vars($wp);
     }
-
 
 
     /**
@@ -97,7 +93,6 @@ final class EE_Request_Handler implements InterminableInterface
     }
 
 
-
     /**
      * @param WP $wp
      * @return int
@@ -119,7 +114,6 @@ final class EE_Request_Handler implements InterminableInterface
         }
         return $post_id;
     }
-
 
 
     /**
@@ -165,7 +159,6 @@ final class EE_Request_Handler implements InterminableInterface
     }
 
 
-
     /**
      * @param WP $wp
      * @return mixed
@@ -179,7 +172,6 @@ final class EE_Request_Handler implements InterminableInterface
             ? $wp->query_vars['post_type']
             : null;
     }
-
 
 
     /**
@@ -207,7 +199,6 @@ final class EE_Request_Handler implements InterminableInterface
     }
 
 
-
     /**
      * @return bool
      * @throws EE_Error
@@ -221,7 +212,7 @@ final class EE_Request_Handler implements InterminableInterface
         $espresso_CPT_taxonomies = $EE_CPT_Strategy->get_CPT_taxonomies();
         if (is_array($espresso_CPT_taxonomies)) {
             foreach ($espresso_CPT_taxonomies as $espresso_CPT_taxonomy => $details) {
-                if (isset($wp->query_vars, $wp->query_vars[$espresso_CPT_taxonomy])) {
+                if (isset($wp->query_vars, $wp->query_vars[ $espresso_CPT_taxonomy ])) {
                     return true;
                 }
             }
@@ -229,15 +220,15 @@ final class EE_Request_Handler implements InterminableInterface
         // load espresso CPT endpoints
         $espresso_CPT_endpoints = $EE_CPT_Strategy->get_CPT_endpoints();
         $post_type_CPT_endpoints = array_flip($espresso_CPT_endpoints);
-        $post_types = (array)$this->get('post_type');
+        $post_types = (array) $this->get('post_type');
         foreach ($post_types as $post_type) {
             // was a post name passed ?
-            if (isset($post_type_CPT_endpoints[$post_type])) {
+            if (isset($post_type_CPT_endpoints[ $post_type ])) {
                 // kk we know this is an espresso page, but is it a specific post ?
                 if (! $this->get('post_name')) {
                     // there's no specific post name set, so maybe it's one of our endpoints like www.domain.com/events
-                    $post_name = isset($post_type_CPT_endpoints[$this->get('post_type')])
-                        ? $post_type_CPT_endpoints[$this->get('post_type')]
+                    $post_name = isset($post_type_CPT_endpoints[ $this->get('post_type') ])
+                        ? $post_type_CPT_endpoints[ $this->get('post_type') ]
                         : '';
                     // if the post type matches on of our then set the endpoint
                     if ($post_name) {
@@ -249,6 +240,7 @@ final class EE_Request_Handler implements InterminableInterface
         }
         return false;
     }
+
     /**
      * @param $key
      * @param $value
@@ -256,9 +248,8 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function set_notice($key, $value)
     {
-        $this->_notice[$key] = $value;
+        $this->_notice[ $key ] = $value;
     }
-
 
 
     /**
@@ -267,11 +258,10 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function get_notice($key)
     {
-        return isset($this->_notice[$key])
-            ? $this->_notice[$key]
+        return isset($this->_notice[ $key ])
+            ? $this->_notice[ $key ]
             : null;
     }
-
 
 
     /**
@@ -284,7 +274,6 @@ final class EE_Request_Handler implements InterminableInterface
     }
 
 
-
     /**
      * @return string
      */
@@ -292,7 +281,6 @@ final class EE_Request_Handler implements InterminableInterface
     {
         return $this->_output;
     }
-
 
 
     /**
@@ -305,7 +293,6 @@ final class EE_Request_Handler implements InterminableInterface
             ? sanitize_email($item)
             : sanitize_text_field($item);
     }
-
 
 
     /**
@@ -325,7 +312,6 @@ final class EE_Request_Handler implements InterminableInterface
     }
 
 
-
     /**
      * @return    mixed
      */
@@ -333,7 +319,6 @@ final class EE_Request_Handler implements InterminableInterface
     {
         return $this->request->is_set('is_espresso_page');
     }
-
 
 
     /**
@@ -345,7 +330,6 @@ final class EE_Request_Handler implements InterminableInterface
     {
         return $this->request->params();
     }
-
 
 
     /**
@@ -360,7 +344,6 @@ final class EE_Request_Handler implements InterminableInterface
     }
 
 
-
     /**
      * @param      $key
      * @param null $default
@@ -370,7 +353,6 @@ final class EE_Request_Handler implements InterminableInterface
     {
         return $this->request->get($key, $default);
     }
-
 
 
     /**
@@ -385,7 +367,6 @@ final class EE_Request_Handler implements InterminableInterface
     }
 
 
-
     /**
      * remove param
      *
@@ -396,9 +377,4 @@ final class EE_Request_Handler implements InterminableInterface
     {
         $this->request->un_set($key);
     }
-
-
-
 }
-// End of file EE_Request_Handler.core.php
-// Location: /core/EE_Request_Handler.core.php

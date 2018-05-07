@@ -2,10 +2,6 @@
 
 namespace EventEspresso\core\services\request;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Interface RequestDecoratorInterface
  *
@@ -34,4 +30,3 @@ interface RequestDecoratorInterface
      */
     public function handleRequest(RequestInterface $request, ResponseInterface $response);
 }
-// Location: RequestDecoratorInterface.php

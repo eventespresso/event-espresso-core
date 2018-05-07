@@ -21,10 +21,6 @@ use InvalidArgumentException;
 use OutOfBoundsException;
 use ReflectionException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class BootstrapCore
  * Bootstraps the main DI container as well as the Request and Response objects.
@@ -166,7 +162,7 @@ class BootstrapCore
         );
         $bootstrap_request->buildRequestResponse();
         $bootstrap_request->shareRequestResponse();
-        $this->request  = $this->loader->getShared('EventEspresso\core\services\request\Request');
+        $this->request = $this->loader->getShared('EventEspresso\core\services\request\Request');
         $this->response = $this->loader->getShared('EventEspresso\core\services\request\Response');
         return $bootstrap_request;
     }
@@ -184,7 +180,7 @@ class BootstrapCore
         $this->loadAutoloader();
         $this->setAutoloadersForRequiredFiles();
         $this->request_stack_builder = $this->buildRequestStack();
-        $this->request_stack         = $this->request_stack_builder->resolve(
+        $this->request_stack = $this->request_stack_builder->resolve(
             new RequestStackCoreApp()
         );
         $this->request_stack->handleRequest($this->request, $this->response);
@@ -208,7 +204,6 @@ class BootstrapCore
     }
 
 
-
     /**
      * load_required_files
      *
@@ -227,7 +222,6 @@ class BootstrapCore
     }
 
 
-
     /**
      * build_request_stack
      *
@@ -241,20 +235,20 @@ class BootstrapCore
          * so items at the beginning of the final middleware stack will run last.
          * First parameter is the middleware classname, second is an array of arguments
          */
-        $stack_apps            = apply_filters(
+        $stack_apps = apply_filters(
             'FHEE__EventEspresso_core_services_bootstrap_BootstrapCore__buildRequestStack__stack_apps',
             array(
                 // first in last out
-                'EventEspresso\core\services\request\middleware\BotDetector' => array(),
-                'EventEspresso\core\services\request\middleware\DetectFileEditorRequest' => array(),
+                'EventEspresso\core\services\request\middleware\BotDetector'                 => array(),
+                'EventEspresso\core\services\request\middleware\DetectFileEditorRequest'     => array(),
                 'EventEspresso\core\services\request\middleware\PreProductionVersionWarning' => array(),
-                'EventEspresso\core\services\request\middleware\RecommendedVersions' => array(),
+                'EventEspresso\core\services\request\middleware\RecommendedVersions'         => array(),
                 // last in first out
-                'EventEspresso\core\services\request\middleware\DetectLogin' => array(),
+                'EventEspresso\core\services\request\middleware\DetectLogin'                 => array(),
             )
         );
         // legacy filter for backwards compatibility
-        $stack_apps            = apply_filters(
+        $stack_apps = apply_filters(
             'FHEE__EE_Bootstrap__build_request_stack__stack_apps',
             $stack_apps
         );
@@ -273,7 +267,4 @@ class BootstrapCore
             $request_stack_builder
         );
     }
-
-
 }
-// Location: BootstrapCore.php

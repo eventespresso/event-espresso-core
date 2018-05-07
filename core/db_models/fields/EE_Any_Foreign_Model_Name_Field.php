@@ -1,5 +1,4 @@
 <?php
-require_once(EE_MODELS . 'fields/EE_DB_Only_Field_Base.php');
 
 /**
  * Used by EE_Belongs_To_Any_Relations and EE_Has_Many_Any_Relations to identify the model the foreign key points to.

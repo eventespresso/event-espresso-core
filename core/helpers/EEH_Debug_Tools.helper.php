@@ -1,11 +1,5 @@
 <?php use EventEspresso\core\services\Benchmark;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Class EEH_Debug_Tools
  *
@@ -63,7 +57,7 @@ class EEH_Debug_Tools
             require_once(EE_PLUGIN_DIR_PATH . 'tests' . DS . 'kint' . DS . 'Kint.class.php');
         }
         // if ( ! defined('DOING_AJAX') || $_REQUEST['noheader'] !== 'true' || ! isset( $_REQUEST['noheader'], $_REQUEST['TB_iframe'] ) ) {
-        //add_action( 'shutdown', array($this,'espresso_session_footer_dump') );
+        // add_action( 'shutdown', array($this,'espresso_session_footer_dump') );
         // }
         $plugin = basename(EE_PLUGIN_DIR_PATH);
         add_action("activate_{$plugin}", array('EEH_Debug_Tools', 'ee_plugin_activation_errors'));
@@ -99,8 +93,7 @@ class EEH_Debug_Tools
      */
     public function espresso_session_footer_dump()
     {
-        if (
-            (defined('WP_DEBUG') && WP_DEBUG)
+        if ((defined('WP_DEBUG') && WP_DEBUG)
             && ! defined('DOING_AJAX')
             && class_exists('Kint')
             && function_exists('wp_get_current_user')
@@ -109,7 +102,7 @@ class EEH_Debug_Tools
         ) {
             Kint::dump(EE_Registry::instance()->SSN->id());
             Kint::dump(EE_Registry::instance()->SSN);
-            //			Kint::dump( EE_Registry::instance()->SSN->get_session_data('cart')->get_tickets() );
+            //          Kint::dump( EE_Registry::instance()->SSN->get_session_data('cart')->get_tickets() );
             $this->espresso_list_hooked_functions();
             Benchmark::displayResults();
         }
@@ -130,8 +123,8 @@ class EEH_Debug_Tools
         global $wp_filter;
         echo '<br/><br/><br/><h3>Hooked Functions</h3>';
         if ($tag) {
-            $hook[$tag] = $wp_filter[$tag];
-            if (! is_array($hook[$tag])) {
+            $hook[ $tag ] = $wp_filter[ $tag ];
+            if (! is_array($hook[ $tag ])) {
                 trigger_error("Nothing found for '$tag' hook", E_USER_WARNING);
                 return;
             }
@@ -164,12 +157,12 @@ class EEH_Debug_Tools
     {
         $filters = array();
         global $wp_filter;
-        if (isset($wp_filter[$hook_name])) {
-            $filters[$hook_name] = array();
-            foreach ($wp_filter[$hook_name] as $priority => $callbacks) {
-                $filters[$hook_name][$priority] = array();
+        if (isset($wp_filter[ $hook_name ])) {
+            $filters[ $hook_name ] = array();
+            foreach ($wp_filter[ $hook_name ] as $priority => $callbacks) {
+                $filters[ $hook_name ][ $priority ] = array();
                 foreach ($callbacks as $callback) {
-                    $filters[$hook_name][$priority][] = $callback['function'];
+                    $filters[ $hook_name ][ $priority ][] = $callback['function'];
                 }
             }
         }
@@ -210,7 +203,9 @@ class EEH_Debug_Tools
                             ),
                             $e->getMessage()
                         ),
-                        __FILE__, __FUNCTION__, __LINE__
+                        __FILE__,
+                        __FUNCTION__,
+                        __LINE__
                     );
                 }
             } else {
@@ -281,14 +276,14 @@ class EEH_Debug_Tools
         // instead we'll add a transient EE_Error notice that in theory should show on the next request.
         if (defined('DOING_AJAX') && DOING_AJAX) {
             $error_message .= ' ' . esc_html__(
-                    'This is a doing_it_wrong message that was triggered during an ajax request.  The request params on this request were: ',
-                    'event_espresso'
-                );
+                'This is a doing_it_wrong message that was triggered during an ajax request.  The request params on this request were: ',
+                'event_espresso'
+            );
             $error_message .= '<ul><li>';
             $error_message .= implode('</li><li>', EE_Registry::instance()->REQ->params());
             $error_message .= '</ul>';
             EE_Error::add_error($error_message, 'debug::doing_it_wrong', $function, '42');
-            //now we set this on the transient so it shows up on the next request.
+            // now we set this on the transient so it shows up on the next request.
             EE_Error::get_notices(false, true);
         } else {
             trigger_error($error_message, $error_type);
@@ -333,10 +328,10 @@ class EEH_Debug_Tools
             // don't serialize objects
             $info = self::strip_objects($info);
             $index = ! empty($debug_index) ? $debug_index : 0;
-            if (! isset($debug_data[$index])) {
-                $debug_data[$index] = array();
+            if (! isset($debug_data[ $index ])) {
+                $debug_data[ $index ] = array();
             }
-            $debug_data[$index][microtime()] = array_merge($default_data, $info);
+            $debug_data[ $index ][ microtime() ] = array_merge($default_data, $info);
             update_option($debug_key, $debug_data);
         }
     }
@@ -353,23 +348,23 @@ class EEH_Debug_Tools
     {
         foreach ($info as $key => $value) {
             if (is_array($value)) {
-                $info[$key] = self::strip_objects($value);
-            } else if (is_object($value)) {
+                $info[ $key ] = self::strip_objects($value);
+            } elseif (is_object($value)) {
                 $object_class = get_class($value);
-                $info[$object_class] = array();
-                $info[$object_class]['ID'] = method_exists($value, 'ID') ? $value->ID() : spl_object_hash($value);
+                $info[ $object_class ] = array();
+                $info[ $object_class ]['ID'] = method_exists($value, 'ID') ? $value->ID() : spl_object_hash($value);
                 if (method_exists($value, 'ID')) {
-                    $info[$object_class]['ID'] = $value->ID();
+                    $info[ $object_class ]['ID'] = $value->ID();
                 }
                 if (method_exists($value, 'status')) {
-                    $info[$object_class]['status'] = $value->status();
-                } else if (method_exists($value, 'status_ID')) {
-                    $info[$object_class]['status'] = $value->status_ID();
+                    $info[ $object_class ]['status'] = $value->status();
+                } elseif (method_exists($value, 'status_ID')) {
+                    $info[ $object_class ]['status'] = $value->status_ID();
                 }
-                unset($info[$key]);
+                unset($info[ $key ]);
             }
         }
-        return (array)$info;
+        return (array) $info;
     }
 
 
@@ -443,7 +438,7 @@ class EEH_Debug_Tools
     {
         if (EEH_Debug_Tools::plainOutput()) {
             $heading = '';
-            if($heading_tag === 'h1' || $heading_tag === 'h2') {
+            if ($heading_tag === 'h1' || $heading_tag === 'h2') {
                 $heading .= "\n";
             }
             $heading .= "\n{$line}) {$var_name}";
@@ -559,20 +554,20 @@ class EEH_Debug_Tools
         // return;
         $file = str_replace(rtrim(ABSPATH, '\\/'), '', $file);
         $margin = is_admin() ? ' 180px' : '0';
-        //$print_r = false;
+        // $print_r = false;
         if (is_string($var)) {
             EEH_Debug_Tools::printv($var, $var_name, $file, $line, $heading_tag, $die, $margin);
             return;
         }
         if (is_object($var)) {
             $var_name = ! $var_name ? 'object' : $var_name;
-            //$print_r = true;
-        } else if (is_array($var)) {
+            // $print_r = true;
+        } elseif (is_array($var)) {
             $var_name = ! $var_name ? 'array' : $var_name;
-            //$print_r = true;
-        } else if (is_numeric($var)) {
+            // $print_r = true;
+        } elseif (is_numeric($var)) {
             $var_name = ! $var_name ? 'numeric' : $var_name;
-        } else if ($var === null) {
+        } elseif ($var === null) {
             $var_name = ! $var_name ? 'null' : $var_name;
         }
         $var_name = ucwords(str_replace(array('$', '_'), array('', ' '), $var_name));
@@ -580,8 +575,8 @@ class EEH_Debug_Tools
         $result = EEH_Debug_Tools::headingSpacer($heading_tag);
         $result .= EEH_Debug_Tools::heading($var_name, $heading_tag, $margin, $line);
         $result .= EEH_Debug_Tools::grey_span(' : ') . EEH_Debug_Tools::orange_span(
-                EEH_Debug_Tools::pre_span($var)
-            );
+            EEH_Debug_Tools::pre_span($var)
+        );
         $result .= EEH_Debug_Tools::file_and_line($file, $line, $heading_tag);
         $result .= EEH_Debug_Tools::headingX($heading_tag);
         if ($die) {
@@ -675,9 +670,6 @@ class EEH_Debug_Tools
     {
         return Benchmark::formatTime($timer_name, $total_time);
     }
-
-
-
 }
 
 

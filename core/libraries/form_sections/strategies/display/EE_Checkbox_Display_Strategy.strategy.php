@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class EE_Checkbox_Display_Strategy
@@ -41,7 +38,7 @@ class EE_Checkbox_Display_Strategy extends EE_Compound_Input_Display_Strategy
                 '4.8.1'
             );
         }
-        $input_raw_value = (array)$input->raw_value();
+        $input_raw_value = (array) $input->raw_value();
         foreach ($input->options() as $value => $display_text) {
             $value = $input->get_normalization_strategy()->unnormalize_one($value);
             $html_id = $this->get_sub_input_id($value);
@@ -70,7 +67,4 @@ class EE_Checkbox_Display_Strategy extends EE_Compound_Input_Display_Strategy
         }
         return $html;
     }
-
-
-
 }
