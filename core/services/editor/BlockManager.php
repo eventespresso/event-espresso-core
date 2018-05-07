@@ -7,6 +7,10 @@ use EventEspresso\core\domain\entities\editor\BlockInterface;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\request\RequestInterface;
 
+defined('EVENT_ESPRESSO_VERSION') || exit;
+
+
+
 /**
  * Class BlockManager
  * Description
@@ -65,7 +69,7 @@ abstract class BlockManager
         $this->request_post_type = $this->request->getRequestParam('post_type', '');
         $this->page              = $this->request->getRequestParam('page', '');
         $this->action            = $this->request->getRequestParam('action', '');
-        add_action($this->init_hook(), array($this, 'initialize'));
+        add_action($this->initHook(), array($this, 'initialize'));
     }
 
 
