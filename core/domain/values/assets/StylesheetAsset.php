@@ -63,4 +63,13 @@ class StylesheetAsset extends BrowserAsset
         }
         $this->media = $media;
     }
+
+
+    /**
+     * @since $VID:$
+     */
+    public function enqueueAsset()
+    {
+        wp_enqueue_style($this->handle());
+    }
 }
