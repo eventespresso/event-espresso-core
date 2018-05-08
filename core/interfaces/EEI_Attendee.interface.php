@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Interface EEI_Attendee
@@ -72,7 +69,4 @@ interface EEI_Attendee
 
 
     public function zip();
-
 }
-// End of file EEI_Attendee.interface.php
-// Location: ${NAMESPACE}/EEI_Attendee.interface.php

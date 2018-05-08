@@ -6,21 +6,40 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 
 if ($display_ticket_price) { ?>
     <section class="tckt-slctr-tkt-price-sctn">
-        <h5><?php echo apply_filters('FHEE__ticket_selector_chart_template__ticket_details_price_breakdown_heading',
-                esc_html__('Price', 'event_espresso')); ?></h5>
+        <h5><?php
+            echo apply_filters(
+                'FHEE__ticket_selector_chart_template__ticket_details_price_breakdown_heading',
+                esc_html__('Price', 'event_espresso')
+            ); ?></h5>
         <div class="tckt-slctr-tkt-details-tbl-wrap-dv">
             <table class="tckt-slctr-tkt-details-tbl">
                 <thead>
                 <tr>
-                    <th class="ee-third-width"><span class="small-text"><?php esc_html_e('Name', 'event_espresso'); ?></span>
+                    <th class="ee-third-width"><span class="small-text">
+                            <?php
+                            esc_html_e(
+                                'Name',
+                                'event_espresso'
+                            ); ?></span>
                     </th>
-                    <th class="jst-cntr"><span class="small-text"><?php esc_html_e('Description', 'event_espresso'); ?></span>
+                    <th class="jst-cntr"><span class="small-text">
+                            <?php
+                            esc_html_e(
+                                'Description',
+                                'event_espresso'
+                            ); ?></span>
                     </th>
-                    <th class="ee-fourth-width jst-rght"><span class="small-text"><?php esc_html_e('Amount', 'event_espresso'); ?></span></th>
+                    <th class="ee-fourth-width jst-rght"><span class="small-text">
+                            <?php
+                            esc_html_e(
+                                'Amount',
+                                'event_espresso'
+                            ); ?></span></th>
                 </tr>
                 </thead>
                 <tbody>
-                <?php if ($ticket->base_price() instanceof EE_Price) { ?>
+                <?php
+                if ($ticket->base_price() instanceof EE_Price) { ?>
                     <tr>
                         <td data-th="<?php esc_html_e('Name', 'event_espresso'); ?>" class="small-text">
                             <b><?php echo $ticket->base_price()->name(); ?></b></td>
@@ -57,15 +76,23 @@ if ($display_ticket_price) { ?>
                                 : $price_mod->amount(); ?>
                         <?php } ?>
                         <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>"
-                            class="jst-rght small-text"><?php echo EEH_Template::format_currency($new_sub_total); ?></td>
+                            class="jst-rght small-text">
+                            <?php
+                            echo EEH_Template::format_currency(
+                                $new_sub_total
+                            ); ?></td>
                         <?php $running_total += $new_sub_total; ?>
                     </tr>
                 <?php } ?>
                 <?php if ($ticket->taxable()) { ?>
-                    <?php //$ticket_subtotal =$ticket->get_ticket_subtotal(); ?>
+                    <?php // $ticket_subtotal =$ticket->get_ticket_subtotal(); ?>
                     <tr>
-                        <td colspan="2" class="jst-rght small-text sbttl"><b><?php esc_html_e('subtotal',
-                                    'event_espresso'); ?></b></td>
+                        <td colspan="2" class="jst-rght small-text sbttl"><b>
+                                <?php
+                                esc_html_e(
+                                    'subtotal',
+                                    'event_espresso'
+                                ); ?></b></td>
                         <td data-th="<?php esc_html_e('subtotal', 'event_espresso'); ?>" class="jst-rght small-text">
                             <b><?php echo EEH_Template::format_currency($running_total); ?></b></td>
                     </tr>
@@ -79,17 +106,27 @@ if ($display_ticket_price) { ?>
                             </td>
                             <?php $tax_amount = $running_total * ($tax->amount() / 100); ?>
                             <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>"
-                                class="jst-rght small-text"><?php echo EEH_Template::format_currency($tax_amount); ?></td>
+                                class="jst-rght small-text">
+                                <?php
+                                echo EEH_Template::format_currency(
+                                    $tax_amount
+                                ); ?></td>
                             <?php $running_total += $tax_amount; ?>
                         </tr>
                     <?php } ?>
                 <?php } ?>
                 <tr>
                     <td colspan="2" class="jst-rght small-text ttl-lbl-td">
-                        <b><?php echo apply_filters('FHEE__ticket_selector_chart_template__ticket_details_total_price',
-                                esc_html__('Total', 'event_espresso')); ?></b></td>
-                    <td data-th="<?php echo apply_filters('FHEE__ticket_selector_chart_template__ticket_details_total_price',
-                        esc_html__('Total', 'event_espresso')); ?>" class="jst-rght small-text">
+                        <b><?php
+                            echo apply_filters(
+                                'FHEE__ticket_selector_chart_template__ticket_details_total_price',
+                                esc_html__('Total', 'event_espresso')
+                            ); ?></b></td>
+                    <td data-th="<?php
+                                    echo apply_filters(
+                                        'FHEE__ticket_selector_chart_template__ticket_details_total_price',
+                                        esc_html__('Total', 'event_espresso')
+                                    ); ?>" class="jst-rght small-text">
                         <b><?php echo EEH_Template::format_currency($running_total); ?></b></td>
                 </tr>
                 </tbody>
@@ -97,5 +134,4 @@ if ($display_ticket_price) { ?>
         </div>
     </section>
     <br/>
-<?php } ?>
-
+<?php }

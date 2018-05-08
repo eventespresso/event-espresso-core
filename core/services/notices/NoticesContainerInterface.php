@@ -2,16 +2,13 @@
 
 namespace EventEspresso\core\services\notices;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 /**
  * NoticesContainerInterface
  * Container for holding multiple Notice objects until they can be processed
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
+ *
  */
 interface NoticesContainerInterface
 {
