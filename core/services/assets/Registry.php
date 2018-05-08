@@ -148,7 +148,7 @@ class Registry
                 $script->version(),
                 $script->loadInFooter()
             );
-            if(WP_DEBUG && ! $registered) {
+            if (defined('EE_DEBUG') && EE_DEBUG && ! $registered) {
                 throw new AssetRegistrationException($script->handle());
             }
             $script->setRegistered($registered);
