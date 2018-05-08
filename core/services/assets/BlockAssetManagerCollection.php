@@ -39,4 +39,18 @@ class BlockAssetManagerCollection extends Collection
         }
         $this->rewind();
     }
+
+
+    /**
+     * @return  void
+     */
+    public function enqueueAssets()
+    {
+        $this->rewind();
+        while ($this->valid()) {
+            $this->current()->enqueueAssets();
+            $this->next();
+        }
+        $this->rewind();
+    }
 }
