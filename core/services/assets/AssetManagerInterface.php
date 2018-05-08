@@ -21,6 +21,12 @@ interface AssetManagerInterface
 {
 
     /**
+     * @since $VID:$
+     */
+    public function addAssets();
+
+
+    /**
      * @return ManifestFile
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
@@ -87,4 +93,12 @@ interface AssetManagerInterface
      * @since $VID:$
      */
     public function getStylesheetAssets();
+
+
+    /**
+     * @param string $handle
+     * @return bool
+     * @since $VID:$
+     */
+    public function enqueueAsset($handle);
 }
