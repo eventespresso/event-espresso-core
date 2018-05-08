@@ -7,7 +7,7 @@ import { isUndefined } from 'lodash';
 /**
  * WP Dependencies
  */
-import { sprintf } from '@wordpress/i18n';
+import { sprintf } from '@eventespresso/i18n';
 
 export const { collection_endpoints: endpoints = {} } = data;
 
