@@ -13,7 +13,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class BrowserAsset extends Asset
+abstract class BrowserAsset extends Asset
 {
 
     /**
@@ -48,6 +48,12 @@ class BrowserAsset extends Asset
         $this->setSource($source);
         $this->setDependencies($dependencies);
     }
+
+
+    /**
+     * @since $VID:$
+     */
+    abstract public function enqueueAsset();
 
 
     /**
