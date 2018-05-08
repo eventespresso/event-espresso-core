@@ -14,24 +14,34 @@ interface BlockAssetManagerInterface
 {
 
     /**
+     * @since $VID:$
+     * @return void
+     */
+    public function setAssetHandles();
+
+    /**
+     * @since $VID:$
      * @return string
      */
     public function getEditorScriptHandle();
 
 
     /**
+     * @since $VID:$
      * @return string
      */
     public function getEditorStyleHandle();
 
 
     /**
+     * @since $VID:$
      * @return string
      */
     public function getScriptHandle();
 
 
     /**
+     * @since $VID:$
      * @return string
      */
     public function getStyleHandle();
