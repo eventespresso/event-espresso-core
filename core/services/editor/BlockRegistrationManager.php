@@ -13,7 +13,6 @@ use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\assets\BlockAssetManagerCollection;
-use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\collections\CollectionDetails;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
@@ -42,12 +41,6 @@ class BlockRegistrationManager extends BlockManager
      */
     protected $block_asset_manager_collection;
 
-    /**
-     * @var Registry
-     * @since $VID:$
-     */
-    private $registry;
-
 
     /**
      * BlockRegistrationManager constructor.
@@ -55,16 +48,13 @@ class BlockRegistrationManager extends BlockManager
      * @param BlockAssetManagerCollection $block_asset_manager_collection
      * @param BlockCollection             $blocks
      * @param RequestInterface            $request
-     * @param Registry                    $registry
      */
     public function __construct(
         BlockAssetManagerCollection $block_asset_manager_collection,
         BlockCollection $blocks,
-        RequestInterface $request,
-        Registry $registry
+        RequestInterface $request
     ) {
         $this->block_asset_manager_collection = $block_asset_manager_collection;
-        $this->registry = $registry;
         parent::__construct($blocks, $request);
     }
 
@@ -76,7 +66,7 @@ class BlockRegistrationManager extends BlockManager
      */
     public function initHook()
     {
-        return 'AHEE__EE_System__set_hooks_for_core';
+        return 'AHEE__EE_System__core_loaded_and_ready';
     }
 
 
@@ -88,7 +78,7 @@ class BlockRegistrationManager extends BlockManager
      */
     public function initialize()
     {
-        $this->loadBlocks();
+        $this->initializeBlocks();
         add_action('AHEE__EE_System__initialize', array($this, 'registerBlocks'));
     }
 
@@ -142,13 +132,21 @@ class BlockRegistrationManager extends BlockManager
      * @return void
      * @throws Exception
      */
-    public function loadBlocks()
+    public function initializeBlocks()
     {
         try {
             $this->populateBlockCollection();
             // cycle thru block loaders and initialize each loader
             foreach ($this->blocks as $block) {
                 $block->initialize();
+                if (! $this->block_asset_manager_collection->has($block->assetManager())) {
+                    $this->block_asset_manager_collection->add($block->assetManager());
+                    $block->assetManager()->setAssetHandles();
+                }
+            }
+            if ($this->block_asset_manager_collection->hasObjects()) {
+                // register primary assets
+                add_action('enqueue_block_assets', array($this, 'enqueueAssets'));
             }
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
@@ -172,19 +170,11 @@ class BlockRegistrationManager extends BlockManager
                 if (! $block_type instanceof WP_Block_Type) {
                     throw new InvalidEntityException($block_type, 'WP_Block_Type');
                 }
-                if (! $this->block_asset_manager_collection->has($block->assetManager())) {
-                    $this->block_asset_manager_collection->add($block->assetManager());
-                }
                 do_action(
                     'FHEE__EventEspresso_core_services_editor_BlockManager__registerBlocks__block_type_registered',
                     $block,
                     $block_type
                 );
-            }
-            if ($this->block_asset_manager_collection->hasObjects()) {
-                $this->block_asset_manager_collection->addAssets();
-                // register primary assets
-                add_action('enqueue_block_assets', array($this, 'registerAssets'));
             }
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
@@ -194,10 +184,9 @@ class BlockRegistrationManager extends BlockManager
 
     /**
      * @since $VID:$
-     * @throws InvalidDataTypeException
      */
-    public function registerAssets()
+    public function enqueueAssets()
     {
-        $this->registry->registerScriptsAndStyles();
+        $this->block_asset_manager_collection->enqueueAssets();
     }
 }
