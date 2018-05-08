@@ -1,18 +1,1 @@
-{
-	"eejs":{
-		"js":"ee-eejs.46337f785c8714cdb33d.dist.js"
-	},
-	"wp-plugins-page":{
-		"js":"ee-wp-plugins-page.8056000b74197c80531e.dist.js",
-		"css":"ee-wp-plugins-page.6ce1ef98b3b927daed4f331f6930ee17.dist.css"
-	},
-	"reactVendor":{
-		"js":"ee-reactVendor.ae86ad27467d50d3fcac.dist.js"
-	},
-	"core-blocks":{
-		"js":"ee-core-blocks.f3390651b5dd25f19b95.dist.js"
-	},
-	"manifest":{
-		"js":"ee-manifest.84871ecdc22c246e9b73.dist.js"
-	}
-}
+{"eejs":{"js":"ee-eejs.e5f96acaded214f31f9a.dist.js"},"wp-plugins-page":{"js":"ee-wp-plugins-page.4465816f3b688bcc1787.dist.js","css":"ee-wp-plugins-page.6ce1ef98b3b927daed4f331f6930ee17.dist.css"},"reactVendor":{"js":"ee-reactVendor.ae86ad27467d50d3fcac.dist.js"},"manifest":{"js":"ee-manifest.f5984092809447a8fba8.dist.js"}}
