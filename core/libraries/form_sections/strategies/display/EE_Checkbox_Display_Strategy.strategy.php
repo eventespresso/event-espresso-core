@@ -61,6 +61,7 @@ class EE_Checkbox_Display_Strategy extends EE_Compound_Input_Display_Strategy
                 ? ' checked="checked"'
                 : '';
             $html .= ' ' . $this->_input->other_html_attributes();
+            $html .= ' data-question_label="' . $input->html_label_id() . '"';
             $html .= '>&nbsp;';
             $html .= $display_text;
             $html .= EEH_HTML::nl(-1, 'checkbox') . '</label>';
