@@ -142,11 +142,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                 if ($registration instanceof EE_Registration
                     && $this->checkout->visit_allows_processing_of_this_registration($registration)
                 ) {
-                    $subsection = $this->_registrations_reg_form($registration);
-                    if (! $subsection instanceof EE_Form_Section_Proper) {
-                        continue;
-                    }
-                    $subsections[ $registration->reg_url_link() ] = $subsection;
+                    $subsections[ $registration->reg_url_link() ] = $this->_registrations_reg_form($registration);
                     if (! $this->checkout->admin_request) {
                         $template_args['registrations'][ $registration->reg_url_link() ] = $registration;
                         $template_args['ticket_count'][ $registration->ticket()->ID() ] = isset(
@@ -217,6 +213,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @throws \EventEspresso\core\exceptions\EntityNotFoundException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws ReflectionException
      */
     private function _registrations_reg_form(EE_Registration $registration)
     {
@@ -277,7 +274,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
             }
         }
         $attendee_nmbr++;
-        return ! empty($form_args) ? new EE_Form_Section_Proper($form_args) : null;
+        return ! empty($form_args)
+            ? new EE_Form_Section_Proper($form_args)
+            : new EE_Form_Section_HTML();
     }
 
 
