@@ -170,9 +170,9 @@ abstract class AssetManager implements AssetManagerInterface
     public function enqueueAsset($handle)
     {
         if ($this->assets->has($handle)) {
-            $script = $this->assets->get($handle);
-            if ($script->isRegistered()) {
-                $script->enqueueAsset();
+            $asset = $this->assets->get($handle);
+            if ($asset->isRegistered()) {
+                $asset->enqueueAsset();
                 return true;
             }
         }
