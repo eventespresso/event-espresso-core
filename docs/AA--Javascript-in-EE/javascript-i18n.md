@@ -39,7 +39,7 @@ See: http://www.diveintojavascript.com/projects/javascript-sprintf
 Within the javascript files, make sure you import the wpi18n package via:
 
 ```js
-import { __ } from '@wordpress/i18n'
+import { __ } from '@eventespresso/i18n'
 ```
 
 Obviously, you'll import more than just the `__` function if you use others.  If the javascript you are adding will involve adding a new built entry record in the `webpack.common.js` config, then you also need to make sure you modify the `aliases` entry for the options object passed through to the `wpi18nExtractor` webpack plugin.  It simply needs to be a map of entry chunk name to the handle the script will be registered as php side.
@@ -64,3 +64,4 @@ This document is geared towards the basics for implementing usage of the `@wordp
 
 - the `.pot` for the javascript is being generated as a part of the production build process.
 - the translations are generated in part by the `pot-to-php` script included with the `@wordpress/i18n` which is used to generate the stand-in php file for any automated pot generation. This in turn is the source pot used for building translations via tools like glotpress.  EE core and official add-ons are setup out of the gate for that via our in house implementation of the [grunt buildmachine for WordPress plugins](https://github.com/eventespresso/grunt-wp-plugin-buildmachine).
+- `wp.i18n` is imported via `@eventespresso/i18n` which is an alias for the global `eejs.i18n` property.  `eejs.i18n` in turn is wrapping `@wordpress/i18n`.  This is needed because WordPress core still doesn't have `wp.i18n` exposed natively so we need a way to ensure we exposed the `i18n` object for implementing `setLocaleData` for loading translated javascript strings on each view.
