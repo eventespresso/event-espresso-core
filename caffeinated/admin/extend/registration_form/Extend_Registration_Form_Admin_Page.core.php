@@ -21,7 +21,6 @@
 class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 {
 
-
     /**
      * @Constructor
      * @param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
@@ -340,6 +339,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         $this->load_sortable_question_script();
     }
 
+
     public function load_scripts_styles_edit_question_group()
     {
         $this->load_scripts_styles_forms();
@@ -430,11 +430,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     protected function _questions_overview_list_table()
     {
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-            'add_question',
-            'add_question',
-            array(),
-            'add-new-h2'
-        );
+                'add_question',
+                'add_question',
+                array(),
+                'add-new-h2'
+            );
         parent::_questions_overview_list_table();
     }
 
@@ -443,11 +443,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     {
         $this->_search_btn_label = esc_html__('Question Groups', 'event_espresso');
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-            'add_question_group',
-            'add_question_group',
-            array(),
-            'add-new-h2'
-        );
+                'add_question_group',
+                'add_question_group',
+                array(),
+                'add-new-h2'
+            );
         $this->display_admin_list_table_page_with_sidebar();
     }
 
@@ -515,6 +515,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         return $success;
     }
 
+
     /**
      * Deletes the specified question (and its associated question options) or question group
      *
@@ -537,9 +538,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     protected function _edit_question_group($type = 'add')
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        $ID = isset($this->_req_data['QSG_ID']) && ! empty($this->_req_data['QSG_ID']) ? absint(
-            $this->_req_data['QSG_ID']
-        ) : false;
+        $ID = isset($this->_req_data['QSG_ID']) && ! empty($this->_req_data['QSG_ID'])
+            ? absint($this->_req_data['QSG_ID'])
+            : false;
 
         switch ($this->_req_action) {
             case 'add_question_group':
@@ -693,6 +694,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             true
         );
     }
+
 
     /**
      * duplicates a question and all its question options and redirects to the new question.
