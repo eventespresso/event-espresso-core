@@ -1,30 +1,21 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
- * Event Espresso
- * Event Registration and Management Plugin for Wordpress
+ * Class Extend_Registration_Form_Admin_Page
+ * This is the caffeinated version of the Registration Form admin pages.
  *
- * @package         Event Espresso
- * @author          Seth Shoultes
- * @copyright    (c)2009-2012 Event Espresso All Rights Reserved.
- * @license         http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
- * @link            http://www.eventespresso.com
- * @version         4.0
- *                  ------------------------------------------------------------------------
- *                  Extend_Registration_Form_Admin_Page
- *                  This is the caffeinated version of the Registration Form admin pages.
- * @package         Extend_Registration_Form_Admin_Page
- * @subpackage      caffeinated/admin/extend/Extend_Registration_Form_Admin_Page.core.php
- * @author          Darren Ethier
- *                  ------------------------------------------------------------------------
+ * @package     Extend_Registration_Form_Admin_Page
+ * @subpackage  caffeinated/admin/extend/Extend_Registration_Form_Admin_Page.core.php
+ * @author      Darren Ethier
  */
 class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 {
 
     /**
-     * @Constructor
      * @param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
-     * @access public
      */
     public function __construct($routing = true)
     {
@@ -37,6 +28,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     }
 
 
+    /**
+     * @return void
+     */
     protected function _extend_page_config()
     {
         $this->_admin_base_path = REGISTRATION_FORM_CAF_ADMIN;
@@ -321,18 +315,27 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     }
 
 
+    /**
+     * @return void
+     */
     protected function _ajax_hooks()
     {
         add_action('wp_ajax_espresso_update_question_group_order', array($this, 'update_question_group_order'));
     }
 
 
+    /**
+     * @return void
+     */
     public function load_scripts_styles_question_groups()
     {
         wp_enqueue_script('espresso_ajax_table_sorting');
     }
 
 
+    /**
+     * @return void
+     */
     public function load_scripts_styles_add_question_group()
     {
         $this->load_scripts_styles_forms();
@@ -340,6 +343,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     }
 
 
+    /**
+     * @return void
+     */
     public function load_scripts_styles_edit_question_group()
     {
         $this->load_scripts_styles_forms();
@@ -365,6 +371,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     }
 
 
+    /**
+     * @return void
+     */
     protected function _set_list_table_views_default()
     {
         $this->_views = array(
@@ -396,6 +405,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     }
 
 
+    /**
+     * @return void
+     */
     protected function _set_list_table_views_question_groups()
     {
         $this->_views = array(
@@ -427,31 +439,53 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     }
 
 
+    /**
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
     protected function _questions_overview_list_table()
     {
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-                'add_question',
-                'add_question',
-                array(),
-                'add-new-h2'
-            );
+            'add_question',
+            'add_question',
+            array(),
+            'add-new-h2'
+        );
         parent::_questions_overview_list_table();
     }
 
 
+    /**
+     * @return void
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
     protected function _question_groups_overview_list_table()
     {
         $this->_search_btn_label = esc_html__('Question Groups', 'event_espresso');
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-                'add_question_group',
-                'add_question_group',
-                array(),
-                'add-new-h2'
-            );
+            'add_question_group',
+            'add_question_group',
+            array(),
+            'add-new-h2'
+        );
         $this->display_admin_list_table_page_with_sidebar();
     }
 
 
+    /**
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
     protected function _delete_question()
     {
         $success = $this->_delete_items($this->_question_model);
@@ -464,6 +498,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     }
 
 
+    /**
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
     protected function _delete_questions()
     {
         $success = $this->_delete_items($this->_question_model);
@@ -481,6 +522,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      *
      * @param EEM_Soft_Delete_Base $model
      * @return int number of items deleted permanently
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function _delete_items(EEM_Soft_Delete_Base $model)
     {
@@ -522,6 +567,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      * @param int                  $id
      * @param EEM_Soft_Delete_Base $model
      * @return boolean
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _delete_item($id, $model)
     {
@@ -535,6 +584,15 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     /******************************    QUESTION GROUPS    ******************************/
 
 
+    /**
+     * @param string $type
+     * @return void
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
     protected function _edit_question_group($type = 'add')
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
@@ -583,6 +641,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     }
 
 
+    /**
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
     protected function _delete_question_groups()
     {
         $success = $this->_delete_items($this->_question_group_model);
@@ -597,6 +662,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 
     /**
      * @param bool $new_question_group
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _insert_or_update_question_group($new_question_group = true)
     {
@@ -614,7 +683,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             EEM_Attendee::system_question_phone
         );
         // update the existing related questions
-        // BUT FIRST...  delete the phone question from the Question_Group_Question if it is being added to this question group (therefore removed from the existing group)
+        // BUT FIRST...  delete the phone question from the Question_Group_Question
+        // if it is being added to this question group (therefore removed from the existing group)
         if (isset($this->_req_data['questions'], $this->_req_data['questions'][ $phone_question_id ])) {
             // delete where QST ID = system phone question ID and Question Group ID is NOT this group
             EEM_Question_Group_Question::instance()->delete(
@@ -648,7 +718,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             if (isset($this->_req_data['questions'], $this->_req_data['questions'][ $question_ID ])) {
                 $question_group->add_question($question_ID);
             } else {
-                // not found, remove it (but only if not a system question for the personal group with the exception of lname system question - we allow removal of it)
+                // not found, remove it (but only if not a system question for the personal group
+                // with the exception of lname system question - we allow removal of it)
                 if (in_array(
                     $question->system_ID(),
                     EEM_Question::instance()->required_system_questions_in_system_question_group(
@@ -698,6 +769,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 
     /**
      * duplicates a question and all its question options and redirects to the new question.
+     *
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function _duplicate_question()
     {
@@ -750,6 +828,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 
     /**
      * @param bool $trash
+     * @throws EE_Error
      */
     protected function _trash_or_restore_question_groups($trash = true)
     {
@@ -759,6 +838,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 
     /**
      *_trash_question
+     *
+     * @return void
+     * @throws EE_Error
      */
     protected function _trash_question()
     {
@@ -770,6 +852,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 
     /**
      * @param bool $trash
+     * @throws EE_Error
      */
     protected function _trash_or_restore_questions($trash = true)
     {
@@ -783,6 +866,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      *
      * @param EEM_Soft_Delete_Base $model
      * @param boolean              $trash whether to trash or restore
+     * @throws EE_Error
      */
     private function _trash_or_restore_items(EEM_Soft_Delete_Base $model, $trash = true)
     {
@@ -843,7 +927,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      * @param            $per_page
      * @param int        $current_page
      * @param bool|false $count
-     * @return \EE_Soft_Delete_Base_Class[]|int
+     * @return EE_Soft_Delete_Base_Class[]|int
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_trashed_questions($per_page, $current_page = 1, $count = false)
     {
@@ -865,7 +953,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      * @param            $per_page
      * @param int        $current_page
      * @param bool|false $count
-     * @return \EE_Soft_Delete_Base_Class[]
+     * @return EE_Soft_Delete_Base_Class[]|int
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_question_groups($per_page, $current_page = 1, $count = false)
     {
@@ -885,7 +977,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      * @param      $per_page
      * @param int  $current_page
      * @param bool $count
-     * @return \EE_Soft_Delete_Base_Class[]|int
+     * @return EE_Soft_Delete_Base_Class[]|int
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_trashed_question_groups($per_page, $current_page = 1, $count = false)
     {
@@ -905,7 +1001,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     /**
      * method for performing updates to question order
      *
-     * @return array results array
+     * @return void results array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function update_question_group_order()
     {
@@ -954,13 +1054,15 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 
 
 
-    /***************************************        REGISTRATION SETTINGS        ***************************************/
+    /***************************************       REGISTRATION SETTINGS       ***************************************/
 
 
     /**
-     * _reg_form_settings
-     *
-     * @throws \EE_Error
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _reg_form_settings()
     {
@@ -986,7 +1088,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 
 
     /**
-     * _update_reg_form_settings
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _update_reg_form_settings()
     {
@@ -1014,11 +1121,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 
 
     /**
-     * email_validation_settings_form
-     *
-     * @access    public
-     * @return    void
-     * @throws \EE_Error
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function email_validation_settings_form()
     {
@@ -1076,11 +1183,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 
 
     /**
-     * update_email_validation_settings_form
-     *
-     * @access    public
-     * @param \EE_Registration_Config $EE_Registration_Config
-     * @return \EE_Registration_Config
+     * @param EE_Registration_Config $EE_Registration_Config
+     * @return EE_Registration_Config
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function update_email_validation_settings_form(EE_Registration_Config $EE_Registration_Config)
     {
@@ -1146,8 +1255,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      * confirms that the server's PHP version has the PCRE module enabled,
      * and that the PCRE version works with our i18n email validation
      *
-     * @param \EE_Registration_Config $EE_Registration_Config
-     * @param string                  $email_validation_level
+     * @param EE_Registration_Config $EE_Registration_Config
+     * @param string                 $email_validation_level
      * @return bool
      */
     private function _verify_pcre_support(EE_Registration_Config $EE_Registration_Config, $email_validation_level)
