@@ -146,4 +146,13 @@ class JavascriptAsset extends BrowserAsset
         $this->setHasLocalizedData();
         return $this;
     }
+
+
+    /**
+     * @since $VID:$
+     */
+    public function enqueueAsset()
+    {
+        wp_enqueue_script($this->handle());
+    }
 }

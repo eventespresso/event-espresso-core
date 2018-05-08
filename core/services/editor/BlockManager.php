@@ -7,10 +7,6 @@ use EventEspresso\core\domain\entities\editor\BlockInterface;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\request\RequestInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class BlockManager
  * Description

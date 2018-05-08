@@ -22,14 +22,11 @@ class CoreBlocksAssetManager extends BlockAssetManager
 
     /**
      * @since $VID:$
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
-     * @throws DuplicateCollectionIdentifierException
      */
-    public function addAssets()
+    public function setAssetHandles()
     {
-        $this->addEditorScript(self::JS_HANDLE_CORE_BLOCKS);
-        $this->addEditorStyle(self::CSS_HANDLE_CORE_BLOCKS);
+        $this->setEditorScriptHandle(self::JS_HANDLE_CORE_BLOCKS);
+        $this->setEditorStyleHandle(self::CSS_HANDLE_CORE_BLOCKS);
         $this->setScriptHandle(self::JS_HANDLE_CORE_BLOCKS);
         $this->setStyleHandle(self::CSS_HANDLE_CORE_BLOCKS);
     }

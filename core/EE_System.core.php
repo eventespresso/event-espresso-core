@@ -952,14 +952,6 @@ final class EE_System implements ResettableInterface
                     )
                 );
             }
-            if (function_exists('register_block_type')
-                && ($this->request->isFrontend() || $this->request->isIframe() || $this->request->isAdmin())
-            ) {
-                // or the even newer newer new way
-                $this->loader->getShared(
-                    'EventEspresso\core\services\editor\BlockRegistrationManager'
-                );
-            }
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
         }
@@ -1158,6 +1150,11 @@ final class EE_System implements ResettableInterface
             try {
                 $this->loader->getShared('EventEspresso\core\services\assets\Registry');
                 $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
+                if (function_exists('register_block_type')) {
+                    $this->loader->getShared(
+                        'EventEspresso\core\services\editor\BlockRegistrationManager'
+                    );
+                }
             } catch (Exception $exception) {
                 new ExceptionStackTraceDisplay($exception);
             }

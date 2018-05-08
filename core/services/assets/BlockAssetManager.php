@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\assets;
 
+use EventEspresso\core\domain\services\assets\CoreAssetManager;
+use EventEspresso\core\domain\values\assets\BrowserAsset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -111,6 +113,20 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
         $this->style_handle = $style_handle;
     }
 
+    /**
+     * @since $VID:$
+     * @throws InvalidDataTypeException
+     * @throws InvalidEntityException
+     * @throws DuplicateCollectionIdentifierException
+     */
+    public function addAssets()
+    {
+        $this->addEditorScript($this->getEditorScriptHandle());
+        $this->addEditorStyle($this->getEditorStyleHandle());
+        $this->setScriptHandle($this->getScriptHandle());
+        $this->setStyleHandle($this->getStyleHandle());
+    }
+
 
     /**
      * @param       $handle
@@ -123,7 +139,9 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function addEditorScript($handle, array $dependencies = array())
     {
-        $this->setEditorStyleHandle($handle);
+        if($this->assets->has($handle)){
+            return $this->assets->get($handle);
+        }
         return parent::addJavascript(
             $handle,
             $this->registry->getJsUrl(
@@ -146,7 +164,9 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function addEditorStyle($handle, array $dependencies = array())
     {
-        $this->setEditorStyleHandle($handle);
+        if ($this->assets->has($handle)) {
+            return $this->assets->get($handle);
+        }
         return parent::addStylesheet(
             $handle,
             $this->registry->getCssUrl(
@@ -169,7 +189,9 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function addScript($handle, array $dependencies = array())
     {
-        $this->setScriptHandle($handle);
+        if ($this->assets->has($handle)) {
+            return $this->assets->get($handle);
+        }
         return parent::addJavascript(
             $handle,
             $this->registry->getJsUrl(
@@ -192,7 +214,9 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function addStyle($handle, array $dependencies = array())
     {
-        $this->setStyleHandle($handle);
+        if ($this->assets->has($handle)) {
+            return $this->assets->get($handle);
+        }
         return parent::addStylesheet(
             $handle,
             $this->registry->getCssUrl(
@@ -210,12 +234,83 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     protected function addDefaultBlockScriptDependencies(array $dependencies)
     {
-        return $dependencies + array(
-                'eejs-core',
+        $dependencies += array(
+                CoreAssetManager::JS_HANDLE_EE_JS_CORE,
                 'wp-blocks',    // Provides useful functions and components for extending the editor
                 'wp-i18n',      // Provides localization functions
                 'wp-element',   // Provides React.Component
                 'wp-components' // Provides many prebuilt components and controls
             );
+        return $dependencies;
     }
+
+
+    /**
+     * @param string $handle
+     * @since $VID:$
+     * @return mixed|null
+     */
+    public function getAsset($handle)
+    {
+        if ($this->assets->has($handle)) {
+            return $this->assets->get($handle);
+        }
+        return null;
+    }
+
+
+    /**
+     * @return JavascriptAsset|null
+     */
+    public function getEditorScript()
+    {
+        return $this->getAsset($this->editor_script_handle);
+    }
+
+
+    /**
+     * @return StylesheetAsset|null
+     */
+    public function getEditorStyle()
+    {
+        return $this->getAsset($this->editor_style_handle);
+    }
+
+
+    /**
+     * @return JavascriptAsset|null
+     */
+    public function getScript()
+    {
+        return $this->getAsset($this->script_handle);
+    }
+
+
+    /**
+     * @return StylesheetAsset|null
+     */
+    public function getStyle()
+    {
+        return $this->getAsset($this->style_handle);
+    }
+
+
+    /**
+     * @return  void
+     */
+    public function enqueueAssets()
+    {
+        $assets = array(
+            $this->getEditorScript(),
+            $this->getEditorStyle(),
+            $this->getScript(),
+            $this->getStyle(),
+        );
+        foreach ($assets as $asset) {
+            if ($asset instanceof BrowserAsset && $asset->isRegistered()) {
+                $asset->enqueueAsset();
+            }
+        }
+    }
+
 }
