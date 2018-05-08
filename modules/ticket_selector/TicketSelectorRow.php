@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\modules\ticket_selector;
 
 use EE_Datetime;
@@ -7,17 +8,12 @@ use EE_Ticket;
 use EEH_HTML;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class TicketSelectorRow
  * abstract parent class for a single ticket selector ticket row
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 abstract class TicketSelectorRow
 {
@@ -98,7 +94,6 @@ abstract class TicketSelectorRow
     protected $status_class = 'ticket-sales-sold-out lt-grey-text';
 
 
-
     /**
      * @param EE_Ticket $ticket
      * @param int       $max_attendees
@@ -127,7 +122,6 @@ abstract class TicketSelectorRow
     }
 
 
-
     /**
      * getTicketStatusClasses
      *
@@ -141,7 +135,7 @@ abstract class TicketSelectorRow
         // then mark this ticket as sold out as well.
         // tickets that go on sale at a later date than the required ticket  will NOT be affected
         $this->ticket_status_id = $this->required_ticket_sold_out !== false
-                      && $this->required_ticket_sold_out === $this->ticket->start_date()
+                                  && $this->required_ticket_sold_out === $this->ticket->start_date()
             ? EE_Ticket::sold_out
             : $this->ticket->ticket_status();
         $this->ticket_status_id = $this->event_status === EE_Datetime::sold_out
@@ -150,28 +144,28 @@ abstract class TicketSelectorRow
         // check ticket status
         switch ($this->ticket_status_id) {
             // sold_out
-            case EE_Ticket::sold_out :
+            case EE_Ticket::sold_out:
                 $ticket_status_class = 'ticket-sales-sold-out';
                 $this->status_class = 'ticket-sales-sold-out lt-grey-text';
                 break;
             // expired
-            case EE_Ticket::expired :
+            case EE_Ticket::expired:
                 $ticket_status_class = 'ticket-sales-expired';
                 $this->status_class = 'ticket-sales-expired lt-grey-text';
                 break;
             // archived
-            case EE_Ticket::archived :
+            case EE_Ticket::archived:
                 $ticket_status_class = 'archived-ticket';
                 $this->status_class = 'archived-ticket hidden';
                 break;
             // pending
-            case EE_Ticket::pending :
+            case EE_Ticket::pending:
                 $ticket_status_class = 'ticket-pending';
                 $this->status_class = 'ticket-pending';
                 break;
             // on sale
-            case EE_Ticket::onsale :
-            default :
+            case EE_Ticket::onsale:
+            default:
                 $ticket_status_class = 'ticket-on-sale';
                 $this->status_class = 'ticket-on-sale';
                 break;
@@ -193,14 +187,14 @@ abstract class TicketSelectorRow
     }
 
 
-
     /**
      * setTicketStatusDisplay
      *
-     * @param int    $remaining
+     * @param int $remaining
      * @throws EE_Error
      */
-    protected function setTicketStatusDisplay($remaining) {
+    protected function setTicketStatusDisplay($remaining)
+    {
         $this->ticket_status_display = '';
         // now depending on the ticket and other circumstances...
         if ($this->max_attendees === 0) {
@@ -222,7 +216,6 @@ abstract class TicketSelectorRow
     }
 
 
-
     /**
      * registrationClosed
      */
@@ -233,10 +226,10 @@ abstract class TicketSelectorRow
                 'FHEE__ticket_selector_chart_template__ticket_closed_msg',
                 __('Closed', 'event_espresso')
             ),
-            '', 'sold-out'
+            '',
+            'sold-out'
         );
     }
-
 
 
     /**
@@ -249,10 +242,10 @@ abstract class TicketSelectorRow
                 'FHEE__ticket_selector_chart_template__ticket_sold_out_msg',
                 __('Sold&nbsp;Out', 'event_espresso')
             ),
-            '', 'sold-out'
+            '',
+            'sold-out'
         );
     }
-
 
 
     /**
@@ -268,7 +261,8 @@ abstract class TicketSelectorRow
                     'FHEE__ticket_selector_chart_template__ticket_goes_on_sale_msg',
                     __('Goes&nbsp;On&nbsp;Sale', 'event_espresso')
                 ),
-                '', 'ticket-pending'
+                '',
+                'ticket-pending'
             )
             . EEH_HTML::br()
             . EEH_HTML::span(
@@ -279,12 +273,13 @@ abstract class TicketSelectorRow
                         $this->date_format
                     )
                 ),
-                '', 'small-text'
+                '',
+                'small-text'
             ),
-            '', 'ticket-pending-pg'
+            '',
+            'ticket-pending-pg'
         );
     }
-
 
 
     /**
@@ -298,13 +293,14 @@ abstract class TicketSelectorRow
                     'FHEE__ticket_selector_chart_template__ticket_not_available_msg',
                     __('Not Available', 'event_espresso')
                 ),
-                '', 'archived-ticket small-text'
+                '',
+                'archived-ticket small-text'
             )
             . EEH_HTML::br(),
-            '', 'archived-ticket-pg'
+            '',
+            'archived-ticket-pg'
         );
     }
-
 
 
     /**
@@ -343,7 +339,8 @@ abstract class TicketSelectorRow
      *
      * @return string|bool
      */
-    protected function getFilteredRowHtml() {
+    protected function getFilteredRowHtml()
+    {
         return apply_filters(
             'FHEE__ticket_selector_chart_template__do_ticket_entire_row',
             false,
@@ -358,7 +355,6 @@ abstract class TicketSelectorRow
             $this
         );
     }
-
 
 
     /**
@@ -386,7 +382,4 @@ abstract class TicketSelectorRow
             $this
         );
     }
-
 }
-// End of file TicketSelectorRow.php
-// Location: EventEspresso\modules\ticket_selector/TicketSelectorRow.php

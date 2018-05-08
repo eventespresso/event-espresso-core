@@ -1,12 +1,6 @@
 <?php
 namespace EventEspresso\core\services\commands;
 
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
-}
-
-
-
 /**
  * Interface CommandHandlerInterface
  *
@@ -15,12 +9,9 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 interface CommandHandlerInterface
 {
 
-	/**
-	 * @param \EventEspresso\core\services\commands\CommandInterface $command
-	 * @return mixed
-	 */
-	public function handle( CommandInterface $command );
-
+    /**
+     * @param \EventEspresso\core\services\commands\CommandInterface $command
+     * @return mixed
+     */
+    public function handle(CommandInterface $command);
 }
-// End of file CommandHandlerInterface.php
-// Location: core/services/commands/CommandHandlerInterface.php

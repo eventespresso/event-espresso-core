@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\services\container;
 
 use EventEspresso\core\exceptions\InvalidClassException;
@@ -14,10 +15,6 @@ use EventEspresso\core\services\container\exceptions\InvalidServiceException;
 use EventEspresso\core\services\container\exceptions\ServiceExistsException;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use OutOfBoundsException;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class CoffeeShop
@@ -71,7 +68,6 @@ class CoffeeShop implements CoffeePotInterface
     private $reservoir;
 
 
-
     /**
      * CoffeeShop constructor
      *
@@ -82,7 +78,7 @@ class CoffeeShop implements CoffeePotInterface
         // array for storing class aliases
         $this->filters = array();
         // create collection for storing shared services
-        $this->carafe = new LooseCollection( '' );
+        $this->carafe = new LooseCollection('');
         // create collection for storing recipes that tell us how to build services and entities
         $this->recipes = new Collection('EventEspresso\core\services\container\RecipeInterface');
         // create collection for storing closures for constructing new entities
@@ -90,7 +86,6 @@ class CoffeeShop implements CoffeePotInterface
         // create collection for storing the generators that build our services and entity closures
         $this->coffee_makers = new Collection('EventEspresso\core\services\container\CoffeeMakerInterface');
     }
-
 
 
     /**
@@ -111,7 +106,6 @@ class CoffeeShop implements CoffeePotInterface
     }
 
 
-
     /**
      * finds a previously brewed (SHARED) service and returns it
      *
@@ -129,7 +123,6 @@ class CoffeeShop implements CoffeePotInterface
         }
         throw new ServiceNotFoundException($identifier);
     }
-
 
 
     /**
@@ -161,7 +154,7 @@ class CoffeeShop implements CoffeePotInterface
         // is a shared service being requested and already exists in the carafe?
         $brewed = $this->getShared($identifier, $type);
         // then return whatever was found
-        if($brewed !== false) {
+        if ($brewed !== false) {
             return $brewed;
         }
         // if the reservoir doesn't have a closure already for the requested identifier,
@@ -171,7 +164,7 @@ class CoffeeShop implements CoffeePotInterface
             $brewed = $this->makeCoffee($identifier, $arguments, $type);
         }
         // did the requested class only require loading, and if so, was that successful?
-        if($this->brewedLoadOnly($brewed, $identifier, $type) === true) {
+        if ($this->brewedLoadOnly($brewed, $identifier, $type) === true) {
             return true;
         }
         // was the brewed item a callable factory function ?
@@ -189,7 +182,6 @@ class CoffeeShop implements CoffeePotInterface
         // then either a cached closure already existed, or was just brewed
         return $this->brewedClosure($identifier, $arguments);
     }
-
 
 
     /**
@@ -211,7 +203,6 @@ class CoffeeShop implements CoffeePotInterface
         }
         return false;
     }
-
 
 
     /**
@@ -246,7 +237,6 @@ class CoffeeShop implements CoffeePotInterface
     }
 
 
-
     /**
      * @param string $identifier
      * @param array  $arguments
@@ -271,7 +261,6 @@ class CoffeeShop implements CoffeePotInterface
     }
 
 
-
     /**
      * @param CoffeeMakerInterface $coffee_maker
      * @param string               $type
@@ -286,7 +275,6 @@ class CoffeeShop implements CoffeePotInterface
     }
 
 
-
     /**
      * @param string   $identifier
      * @param callable $closure
@@ -296,7 +284,7 @@ class CoffeeShop implements CoffeePotInterface
      */
     public function addClosure($identifier, $closure)
     {
-        if ( ! is_callable($closure)) {
+        if (! is_callable($closure)) {
             throw new InvalidDataTypeException('$closure', $closure, 'Closure');
         }
         $identifier = $this->processIdentifier($identifier);
@@ -305,7 +293,6 @@ class CoffeeShop implements CoffeePotInterface
         }
         return null;
     }
-
 
 
     /**
@@ -321,7 +308,6 @@ class CoffeeShop implements CoffeePotInterface
         }
         return false;
     }
-
 
 
     /**
@@ -340,7 +326,6 @@ class CoffeeShop implements CoffeePotInterface
     }
 
 
-
     /**
      * @param string $identifier
      * @return boolean
@@ -354,7 +339,6 @@ class CoffeeShop implements CoffeePotInterface
         }
         return false;
     }
-
 
 
     /**
@@ -372,7 +356,6 @@ class CoffeeShop implements CoffeePotInterface
     }
 
 
-
     /**
      * @param string $identifier The Recipe's identifier
      * @return boolean
@@ -386,7 +369,6 @@ class CoffeeShop implements CoffeePotInterface
         }
         return false;
     }
-
 
 
     /**
@@ -411,7 +393,7 @@ class CoffeeShop implements CoffeePotInterface
             // is the wildcard recipe prefix in the identifier ?
             if (strpos($identifier, $wildcard) !== false) {
                 // track matches and use the number of wildcard characters matched for the key
-                $matches[strlen($wildcard)] = $default_recipe;
+                $matches[ strlen($wildcard) ] = $default_recipe;
             }
         }
         if (count($matches) > 0) {
@@ -435,7 +417,6 @@ class CoffeeShop implements CoffeePotInterface
     }
 
 
-
     /**
      * adds class name aliases to list of filters
      *
@@ -451,11 +432,10 @@ class CoffeeShop implements CoffeePotInterface
             return;
         }
         $identifier = $this->processIdentifier($identifier);
-        foreach ((array)$aliases as $alias) {
-            $this->filters[$this->processIdentifier($alias)] = $identifier;
+        foreach ((array) $aliases as $alias) {
+            $this->filters[ $this->processIdentifier($alias) ] = $identifier;
         }
     }
-
 
 
     /**
@@ -484,7 +464,6 @@ class CoffeeShop implements CoffeePotInterface
     }
 
 
-
     /**
      * filters alias identifiers to find the real class name
      *
@@ -496,11 +475,10 @@ class CoffeeShop implements CoffeePotInterface
     private function filterIdentifier($identifier)
     {
         $identifier = $this->processIdentifier($identifier);
-        return isset($this->filters[$identifier]) && ! empty($this->filters[$identifier])
-            ? $this->filters[$identifier]
+        return isset($this->filters[ $identifier ]) && ! empty($this->filters[ $identifier ])
+            ? $this->filters[ $identifier ]
             : $identifier;
     }
-
 
 
     /**
@@ -513,7 +491,7 @@ class CoffeeShop implements CoffeePotInterface
      */
     private function processIdentifier($identifier)
     {
-        if ( ! is_string($identifier)) {
+        if (! is_string($identifier)) {
             throw new InvalidIdentifierException(
                 is_object($identifier) ? get_class($identifier) : gettype($identifier),
                 '\Fully\Qualified\ClassName'
@@ -521,7 +499,6 @@ class CoffeeShop implements CoffeePotInterface
         }
         return ltrim($identifier, '\\');
     }
-
 
 
     /**
@@ -533,14 +510,13 @@ class CoffeeShop implements CoffeePotInterface
      */
     private function getCoffeeMaker($type)
     {
-        if ( ! $this->coffee_makers->has($type)) {
+        if (! $this->coffee_makers->has($type)) {
             throw new OutOfBoundsException(
                 __('The requested coffee maker is either missing or invalid.', 'event_espresso')
             );
         }
         return $this->coffee_makers->get($type);
     }
-
 
 
     /**
@@ -561,13 +537,12 @@ class CoffeeShop implements CoffeePotInterface
             // does this recipe use a wildcard ? (but is NOT the global default)
             if ($identifier !== Recipe::DEFAULT_ID && strpos($identifier, '*') !== false) {
                 // strip the wildcard and use identifier as key
-                $default_recipes[str_replace('*', '', $identifier)] = $this->recipes->current();
+                $default_recipes[ str_replace('*', '', $identifier) ] = $this->recipes->current();
             }
             $this->recipes->next();
         }
         return $default_recipes;
     }
-
 
 
     /**
@@ -582,7 +557,7 @@ class CoffeeShop implements CoffeePotInterface
     private function copyDefaultRecipe(RecipeInterface $default_recipe, $identifier, $type = '')
     {
         $recipe = clone $default_recipe;
-        if ( ! empty($type)) {
+        if (! empty($type)) {
             $recipe->setType($type);
         }
         // is this the base default recipe ?
@@ -603,17 +578,16 @@ class CoffeeShop implements CoffeePotInterface
     }
 
 
-
     /**
      * @param  string $identifier Identifier for the entity class that the service applies to
      *                            Typically a Fully Qualified Class Name
-     * @param mixed  $service
+     * @param mixed   $service
      * @return mixed
      * @throws InvalidServiceException
      */
     private function validateService($identifier, $service)
     {
-        if ( ! is_object($service)) {
+        if (! is_object($service)) {
             throw new InvalidServiceException(
                 $identifier,
                 $service
@@ -621,7 +595,4 @@ class CoffeeShop implements CoffeePotInterface
         }
         return $service;
     }
-
 }
-// End of file CoffeeShop.php
-// Location: /CoffeeShop.php

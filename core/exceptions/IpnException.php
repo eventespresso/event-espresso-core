@@ -1,11 +1,6 @@
 <?php
+
 namespace EventEspresso\core\exceptions;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class IPNException
@@ -16,16 +11,15 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  *
  * @package       Event Espresso
  * @author        Michael Nelson
- *
  */
 class IpnException extends \LogicException
 {
 
-    const DUPLICATE          = 1;
+    const DUPLICATE = 1;
 
     const UNABLE_TO_VALIDATE = 2;
 
-    const UNSUPPORTED        = 3;
+    const UNSUPPORTED = 3;
 
     /**
      * @var \EE_Payment
@@ -36,7 +30,6 @@ class IpnException extends \LogicException
      * @var mixed IPN data, usually an array or object
      */
     protected $ipn_data;
-
 
 
     public function __construct(
@@ -52,7 +45,6 @@ class IpnException extends \LogicException
     }
 
 
-
     /**
      * Gets the payment associated with this IPN, if known
      *
@@ -62,7 +54,6 @@ class IpnException extends \LogicException
     {
         return $this->payment;
     }
-
 
 
     /**
@@ -77,7 +68,6 @@ class IpnException extends \LogicException
     }
 
 
-
     /**
      * Returns an array, object, or string, however, the IPN data was received
      *
@@ -87,5 +77,4 @@ class IpnException extends \LogicException
     {
         return $this->ipn_data;
     }
-
 }

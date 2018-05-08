@@ -2,11 +2,6 @@
 
 namespace EventEspresso\core\exceptions;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 /**
  * Class InvalidEntityException
  * thrown when an entity is not of the expected instance
@@ -44,7 +39,4 @@ class InvalidEntityException extends \InvalidArgumentException
         }
         parent::__construct($message, $code, $previous);
     }
-
 }
-// End of file InvalidEntityException.php
-// Location: /InvalidEntityException.php

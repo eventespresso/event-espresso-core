@@ -1,15 +1,15 @@
 <?php defined('ABSPATH') || exit('No direct script access allowed');
 /*
-  Plugin Name:		Event Espresso
-  Plugin URI:  		http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
-  Description: 		Manage events, sell tickets, and receive payments from your WordPress website. Reduce event administration time, cut-out ticketing fees, and own your customer data. | <a href="https://eventespresso.com/add-ons/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Extensions</a> | <a href="https://eventespresso.com/pricing/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Sales</a> | <a href="admin.php?page=espresso_support">Support</a>
-  Version:			4.9.62.rc.024
-  Author:			Event Espresso
-  Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
-  License: 		     GPLv2
-  Text Domain: 		 event_espresso
+  Plugin Name:Event Espresso
+  Plugin URI: http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
+  Description: Manage events, sell tickets, and receive payments from your WordPress website. Reduce event administration time, cut-out ticketing fees, and own your customer data. | <a href="https://eventespresso.com/add-ons/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Extensions</a> | <a href="https://eventespresso.com/pricing/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Sales</a> | <a href="admin.php?page=espresso_support">Support</a>
+  Version: 4.9.62.rc.041
+  Author: Event Espresso
+  Author URI: http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
+  License: GPLv2
+  Text Domain: event_espresso
   GitHub Plugin URI: https://github.com/eventespresso/event-espresso-core
-  Copyright 		(c) 2008-2017 Event Espresso  All Rights Reserved.
+  Copyright (c) 2008-2017 Event Espresso  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,13 +29,13 @@
  * Event Espresso
  * Event Registration and Management Plugin for WordPress
  *
- * @package     Event Espresso
- * @author      Seth Shoultes
+ * @package         Event Espresso
+ * @author          Seth Shoultes
  * @copyright   (c) 2008-2018 Event Espresso  All Rights Reserved.
- * @license     {@link http://eventespresso.com/support/terms-conditions/}
- * @see         Plugin Licensing
- * @link        {@link http://www.eventespresso.com}
- * @since       4.0
+ * @license         {@link http://eventespresso.com/support/terms-conditions/}
+ * @see             Plugin Licensing
+ * @link            {@link http://www.eventespresso.com}
+ * @since           4.0
  */
 if (function_exists('espresso_version')) {
     if (! function_exists('espresso_duplicate_plugin_error')) {
@@ -60,12 +60,12 @@ if (function_exists('espresso_version')) {
         }
     }
     add_action('admin_notices', 'espresso_duplicate_plugin_error', 1);
-
 } else {
     define('EE_MIN_PHP_VER_REQUIRED', '5.4.0');
     if (! version_compare(PHP_VERSION, EE_MIN_PHP_VER_REQUIRED, '>=')) {
         /**
          * espresso_minimum_php_version_error
+         *
          * @return void
          */
         function espresso_minimum_php_version_error()
@@ -102,7 +102,7 @@ if (function_exists('espresso_version')) {
          */
         function espresso_version()
         {
-            return apply_filters('FHEE__espresso__espresso_version', '4.9.62.rc.024');
+            return apply_filters('FHEE__espresso__espresso_version', '4.9.62.rc.041');
         }
 
         /**

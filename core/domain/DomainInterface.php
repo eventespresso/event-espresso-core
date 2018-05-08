@@ -4,8 +4,6 @@ namespace EventEspresso\core\domain;
 use DomainException;
 use EventEspresso\core\interfaces\InterminableInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
 /**
  * DomainInterface
  *
@@ -60,5 +58,4 @@ interface DomainInterface extends InterminableInterface
      * @return string
      */
     public function distributionAssetsUrl();
-
 }

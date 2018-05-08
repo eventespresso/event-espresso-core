@@ -1,14 +1,11 @@
 <?php
+
 namespace EventEspresso\core\domain\entities\shortcodes;
 
 use EED_Events_Archive;
 use EEH_Template;
 use EventEspresso\core\domain\services\wp_queries\EventListQuery;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class EspressoEvents
@@ -33,7 +30,6 @@ class EspressoEvents extends EspressoShortcode
 {
 
 
-
     /**
      * the actual shortcode tag that gets registered with WordPress
      *
@@ -43,7 +39,6 @@ class EspressoEvents extends EspressoShortcode
     {
         return 'ESPRESSO_EVENTS';
     }
-
 
 
     /**
@@ -58,7 +53,6 @@ class EspressoEvents extends EspressoShortcode
     }
 
 
-
     /**
      * a place for adding any initialization code that needs to run prior to wp_header().
      * this may be required for shortcodes that utilize a corresponding module,
@@ -71,7 +65,6 @@ class EspressoEvents extends EspressoShortcode
         EED_Events_Archive::instance()->event_list();
         $this->shortcodeHasBeenInitialized();
     }
-
 
 
     /**
@@ -115,7 +108,6 @@ class EspressoEvents extends EspressoShortcode
     }
 
 
-
     /**
      * merge incoming attributes with filtered defaults
      *
@@ -125,7 +117,7 @@ class EspressoEvents extends EspressoShortcode
     private function getAttributes(array $attributes)
     {
         return array_merge(
-            (array)apply_filters(
+            (array) apply_filters(
                 'EES_Espresso_Events__process_shortcode__default_espresso_events_shortcode_atts',
                 array(
                     'title'         => '',
@@ -142,7 +134,6 @@ class EspressoEvents extends EspressoShortcode
             $attributes
         );
     }
-
 
 
     /**
@@ -167,9 +158,4 @@ class EspressoEvents extends EspressoShortcode
             'sort'          => 'skip_sanitization',
         );
     }
-
-
-
 }
-// End of file EspressoEvents.php
-// Location: EventEspresso\core\domain\entities\shortcodes/EspressoEvents.php

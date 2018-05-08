@@ -1,8 +1,5 @@
 <?php
 
-require_once(EE_MODELS . 'relations/EE_Model_Relation_Base.php');
-
-
 /**
  * Class EE_HABTM_Relation
  *
@@ -62,24 +59,32 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
      */
     public function get_join_to_intermediate_model_statement($model_relation_chain)
     {
-        //create sql like
-        //LEFT JOIN join_table AS join_table_alias ON this_table_alias.this_table_pk = join_table_alias.join_table_fk_to_this
-        //LEFT JOIN other_table AS other_table_alias ON join_table_alias.join_table_fk_to_other = other_table_alias.other_table_pk
-        //remember the model relation chain to the JOIN model, because we'll
-        //need it for get_join_statement()
+        // create sql like
+        // LEFT JOIN join_table AS join_table_alias ON this_table_alias.this_table_pk = join_table_alias.join_table_fk_to_this
+        // LEFT JOIN other_table AS other_table_alias ON join_table_alias.join_table_fk_to_other = other_table_alias.other_table_pk
+        // remember the model relation chain to the JOIN model, because we'll
+        // need it for get_join_statement()
         $this->_model_relation_chain_to_join_model = $model_relation_chain;
-        $this_table_pk_field                       = $this->get_this_model()->get_primary_key_field();//get_foreign_key_to($this->get_other_model()->get_this_model_name());
+        $this_table_pk_field                       = $this->get_this_model()->get_primary_key_field();// get_foreign_key_to($this->get_other_model()->get_this_model_name());
         $join_table_fk_field_to_this_table         = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
-        $this_table_alias                          = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain,
-                $this->get_this_model()->get_this_model_name()) . $this_table_pk_field->get_table_alias();
+        $this_table_alias                          = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix(
+            $model_relation_chain,
+            $this->get_this_model()->get_this_model_name()
+        ) . $this_table_pk_field->get_table_alias();
 
-        $join_table_alias = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain,
-                $this->get_join_model()->get_this_model_name()) . $join_table_fk_field_to_this_table->get_table_alias();
+        $join_table_alias = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix(
+            $model_relation_chain,
+            $this->get_join_model()->get_this_model_name()
+        ) . $join_table_fk_field_to_this_table->get_table_alias();
         $join_table       = $this->get_join_model()->get_table_for_alias($join_table_alias);
-        //phew! ok, we have all the info we need, now we can create the SQL join string
-        $SQL = $this->_left_join($join_table, $join_table_alias, $join_table_fk_field_to_this_table->get_table_column(),
-                $this_table_alias,
-                $this_table_pk_field->get_table_column()) . $this->get_join_model()->_construct_internal_join_to_table_with_alias($join_table_alias);
+        // phew! ok, we have all the info we need, now we can create the SQL join string
+        $SQL = $this->_left_join(
+            $join_table,
+            $join_table_alias,
+            $join_table_fk_field_to_this_table->get_table_column(),
+            $this_table_alias,
+            $this_table_pk_field->get_table_column()
+        ) . $this->get_join_model()->_construct_internal_join_to_table_with_alias($join_table_alias);
 
         return $SQL;
     }
@@ -99,21 +104,31 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
     public function get_join_statement($model_relation_chain)
     {
         if ($this->_model_relation_chain_to_join_model === null) {
-            throw new EE_Error(sprintf(__('When using EE_HABTM_Relation to create a join, you must call get_join_to_intermediate_model_statement BEFORE get_join_statement',
-                'event_espresso')));
+            throw new EE_Error(sprintf(__(
+                'When using EE_HABTM_Relation to create a join, you must call get_join_to_intermediate_model_statement BEFORE get_join_statement',
+                'event_espresso'
+            )));
         }
         $join_table_fk_field_to_this_table  = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
-        $join_table_alias                   = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($this->_model_relation_chain_to_join_model,
-                $this->get_join_model()->get_this_model_name()) . $join_table_fk_field_to_this_table->get_table_alias();
+        $join_table_alias                   = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix(
+            $this->_model_relation_chain_to_join_model,
+            $this->get_join_model()->get_this_model_name()
+        ) . $join_table_fk_field_to_this_table->get_table_alias();
         $other_table_pk_field               = $this->get_other_model()->get_primary_key_field();
         $join_table_fk_field_to_other_table = $this->get_join_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
-        $other_table_alias                  = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain,
-                $this->get_other_model()->get_this_model_name()) . $other_table_pk_field->get_table_alias();
+        $other_table_alias                  = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix(
+            $model_relation_chain,
+            $this->get_other_model()->get_this_model_name()
+        ) . $other_table_pk_field->get_table_alias();
         $other_table                        = $this->get_other_model()->get_table_for_alias($other_table_alias);
 
-        $SQL = $this->_left_join($other_table, $other_table_alias, $other_table_pk_field->get_table_column(),
-                $join_table_alias,
-                $join_table_fk_field_to_other_table->get_table_column()) . $this->get_other_model()->_construct_internal_join_to_table_with_alias($other_table_alias);
+        $SQL = $this->_left_join(
+            $other_table,
+            $other_table_alias,
+            $other_table_pk_field->get_table_column(),
+            $join_table_alias,
+            $join_table_fk_field_to_other_table->get_table_column()
+        ) . $this->get_other_model()->_construct_internal_join_to_table_with_alias($other_table_alias);
         return $SQL;
     }
 
@@ -136,7 +151,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
     {
         $this_model_obj  = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
         $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
-        //check if such a relationship already exists
+        // check if such a relationship already exists
         $join_model_fk_to_this_model  = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
         $join_model_fk_to_other_model = $this->get_join_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
 
@@ -145,15 +160,18 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
             $join_model_fk_to_other_model->get_name() => $other_model_obj->ID(),
         );
 
-        //if $where_query exists lets add them to the query_params.
+        // if $where_query exists lets add them to the query_params.
         if (! empty($extra_join_model_fields_n_values)) {
-            //make sure we strip any of the join model names from the $where_query cause we don't need that in here (why? because client code may have used the same conditionals for get_all_related which DOES need the join model name)
-            //make sure we strip THIS models name from the query param
+            // make sure we strip any of the join model names from the $where_query cause we don't need that in here (why? because client code may have used the same conditionals for get_all_related which DOES need the join model name)
+            // make sure we strip THIS models name from the query param
             $parsed_query = array();
             foreach ($extra_join_model_fields_n_values as $query_param => $val) {
-                $query_param                = str_replace($this->get_join_model()->get_this_model_name() . ".", "",
-                    $query_param);
-                $parsed_query[$query_param] = $val;
+                $query_param                = str_replace(
+                    $this->get_join_model()->get_this_model_name() . ".",
+                    "",
+                    $query_param
+                );
+                $parsed_query[ $query_param ] = $val;
             }
             $cols_n_values = array_merge($cols_n_values, $parsed_query);
         }
@@ -162,9 +180,9 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
 
 
         $existing_entry_in_join_table = $this->get_join_model()->get_one($query_params);
-        //if there is already an entry in the join table, indicating a relationship, we're done
-        //again, if you want more sophisticated logic or insertions (handling more columns than just 2 foreign keys to
-        //the other tables, use the joining model directly!
+        // if there is already an entry in the join table, indicating a relationship, we're done
+        // again, if you want more sophisticated logic or insertions (handling more columns than just 2 foreign keys to
+        // the other tables, use the joining model directly!
         if (! $existing_entry_in_join_table) {
             $this->get_join_model()->insert($cols_n_values);
         }
@@ -186,7 +204,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
     {
         $this_model_obj  = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
         $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
-        //check if such a relationship already exists
+        // check if such a relationship already exists
         $join_model_fk_to_this_model  = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
         $join_model_fk_to_other_model = $this->get_join_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
 
@@ -195,15 +213,18 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
             $join_model_fk_to_other_model->get_name() => $other_model_obj->ID(),
         );
 
-        //if $where_query exists lets add them to the query_params.
+        // if $where_query exists lets add them to the query_params.
         if (! empty($where_query)) {
-            //make sure we strip any of the join model names from the $where_query cause we don't need that in here (why? because client code may have used the same conditionals for get_all_related which DOES need the join model name)
-            //make sure we strip THIS models name from the query param
+            // make sure we strip any of the join model names from the $where_query cause we don't need that in here (why? because client code may have used the same conditionals for get_all_related which DOES need the join model name)
+            // make sure we strip THIS models name from the query param
             $parsed_query = array();
             foreach ($where_query as $query_param => $val) {
-                $query_param                = str_replace($this->get_join_model()->get_this_model_name() . ".", "",
-                    $query_param);
-                $parsed_query[$query_param] = $val;
+                $query_param                = str_replace(
+                    $this->get_join_model()->get_this_model_name() . ".",
+                    "",
+                    $query_param
+                );
+                $parsed_query[ $query_param ] = $val;
             }
             $cols_n_values = array_merge($cols_n_values, $parsed_query);
         }
@@ -211,5 +232,4 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
         $this->get_join_model()->delete(array($cols_n_values));
         return $other_model_obj;
     }
-
 }

@@ -1,6 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
-
 
 /**
  * EE_Detect_File_Editor_Request
@@ -37,5 +35,4 @@ class EE_Detect_File_Editor_Request extends EE_Middleware
         );
         return $response;
     }
-
 }

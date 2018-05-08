@@ -1,14 +1,15 @@
 <?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * Event Details
  *
  * @package        Event Espresso
- * @subpackage    /modules/event_details/
- * @author        Brent Christensen
+ * @subpackage     /modules/event_details/
+ * @author         Brent Christensen
  */
 class EED_Event_Single extends EED_Module
 {
@@ -42,13 +43,20 @@ class EED_Event_Single extends EED_Module
     /**
      * set_hooks - for hooking into EE Core, other modules, etc
      *
-     * @return    void
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function set_hooks()
     {
         add_filter('FHEE_run_EE_wp', '__return_true');
         add_action('wp_loaded', array('EED_Event_Single', 'set_definitions'), 2);
-        $custom_post_types = EE_Register_CPTs::get_CPTs();
+        /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_type_definitions */
+        $custom_post_type_definitions = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
+        );
+        $custom_post_types = $custom_post_type_definitions->getDefinitions();
         EE_Config::register_route(
             $custom_post_types['espresso_events']['singular_slug'],
             'Event_Single',
@@ -167,13 +175,12 @@ class EED_Event_Single extends EED_Module
             add_filter('the_title', array('EED_Event_Single', 'the_title'), 100, 2);
         }
         // not a custom template?
-        if (
-            !post_password_required($post)
+        if (! post_password_required($post)
             && (
                 apply_filters('FHEE__EED_Event_Single__template_include__allow_custom_selected_template', false)
                 || EE_Registry::instance()
-                    ->load_core('Front_Controller')
-                    ->get_selected_template() !== 'single-espresso_events.php'
+                              ->load_core('Front_Controller')
+                              ->get_selected_template() !== 'single-espresso_events.php'
             )
 
         ) {
@@ -211,13 +218,13 @@ class EED_Event_Single extends EED_Module
      * the_title
      *
      * @param    string $title
-     * @param    int $id
+     * @param    int    $id
      * @return    string
      */
     public static function the_title($title = '', $id = 0)
     {
         global $post;
-        return in_the_loop() && $post->ID === (int)$id
+        return in_the_loop() && $post->ID === (int) $id
             ? espresso_event_status_banner($post->ID) . $title
             : $title;
     }
@@ -262,11 +269,10 @@ class EED_Event_Single extends EED_Module
     {
         global $post;
         static $current_post_ID = 0;
-        if (
-            $current_post_ID !== $post->ID
+        if ($current_post_ID !== $post->ID
             && $post->post_type === 'espresso_events'
-            && !EED_Event_Single::$using_get_the_excerpt
-            && !post_password_required()
+            && ! EED_Event_Single::$using_get_the_excerpt
+            && ! post_password_required()
         ) {
             // Set current post ID to prevent showing content twice, but only if headers have definitely been sent.
             // Reason being is that some plugins, like Yoast, need to run through a copy of the loop early
@@ -283,7 +289,8 @@ class EED_Event_Single extends EED_Module
                     array('EED_Event_Single', 'event_details'),
                     EED_Event_Single::EVENT_DETAILS_PRIORITY
                 );
-                EED_Event_Single::instance()->template_parts = EED_Event_Single::instance()->initialize_template_parts();
+                EED_Event_Single::instance()->template_parts = EED_Event_Single::instance()->initialize_template_parts(
+                );
                 $content = EEH_Template::locate_template('content-espresso_events-details.php');
                 $content = EED_Event_Single::instance()->template_parts->apply_template_part_filters($content);
                 add_filter(
@@ -317,7 +324,7 @@ class EED_Event_Single extends EED_Module
             array('EED_Event_Single', 'event_details'),
             EED_Event_Single::EVENT_DETAILS_PRIORITY
         );
-        //now add additional content
+        // now add additional content
         add_filter(
             'the_content',
             array('EED_Event_Single', 'event_datetimes'),
@@ -339,7 +346,7 @@ class EED_Event_Single extends EED_Module
         do_action('AHEE__EED_Event_Single__use_filterable_display_order__after_add_filters');
         // now load our template
         $content = EEH_Template::locate_template('content-espresso_events-details.php');
-        //now add our filter back in, plus some others
+        // now add our filter back in, plus some others
         add_filter(
             'the_content',
             array('EED_Event_Single', 'event_details'),
@@ -435,9 +442,8 @@ class EED_Event_Single extends EED_Module
     public function wp_enqueue_scripts()
     {
         // get some style
-        if (
-            apply_filters('FHEE_enable_default_espresso_css', TRUE)
-            && apply_filters('FHEE__EED_Event_Single__wp_enqueue_scripts__enable_css', TRUE)
+        if (apply_filters('FHEE_enable_default_espresso_css', true)
+            && apply_filters('FHEE__EED_Event_Single__wp_enqueue_scripts__enable_css', true)
         ) {
             // first check uploads folder
             if (is_readable(get_stylesheet_directory() . $this->theme . DS . 'style.css')) {
@@ -472,10 +478,8 @@ class EED_Event_Single extends EED_Module
         $config = EED_Event_Single::instance()->config();
         $display_venue = $config->display_venue === null ? true : $config->display_venue;
         $venue_name = EEH_Venue_View::venue_name();
-        return $display_venue && !empty($venue_name);
+        return $display_venue && ! empty($venue_name);
     }
-
-
 }
 
 
@@ -489,8 +493,3 @@ function espresso_display_venue_in_event_details()
 {
     return EED_Event_Single::display_venue();
 }
-
-
-
-// End of file EED_Event_Single.module.php
-// Location: /modules/event_details/EED_Event_Single.module.php

@@ -1,9 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
+<?php
 /**
  * EE_Normalization_Strategy_Base
  *
@@ -70,4 +65,3 @@ abstract class EE_Normalization_Strategy_Base extends EE_Form_Input_Strategy_Bas
         return $this->unnormalize($individual_item_to_unnormalize);
     }
 }
-// End of file EE_Normalization_Strategy_Base.strategy.php

@@ -3,9 +3,6 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
 /**
  * Class EEH_Event_Query
  * Description
@@ -67,7 +64,7 @@ class EEH_Event_Query
      */
     public static function add_query_filters()
     {
-        //add query filters
+        // add query filters
         add_action('pre_get_posts', array('EEH_Event_Query', 'filter_query_parts'), 10, 1);
     }
 
@@ -270,20 +267,19 @@ class EEH_Event_Query
         $SQL = ', MIN( ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start ) as event_start_date ';
         foreach ($orderby_params as $orderby) {
             switch ($orderby) {
-
-                case 'ticket_start' :
+                case 'ticket_start':
                     $SQL .= ', ' . EEM_Ticket::instance()->table() . '.TKT_start_date';
                     break;
-                case 'ticket_end' :
+                case 'ticket_end':
                     $SQL .= ', ' . EEM_Ticket::instance()->table() . '.TKT_end_date';
                     break;
-                case 'venue_title' :
+                case 'venue_title':
                     $SQL .= ', Venue.post_title AS venue_title';
                     break;
-                case 'city' :
+                case 'city':
                     $SQL .= ', ' . EEM_Venue::instance()->second_table() . '.VNU_city';
                     break;
-                case 'state' :
+                case 'state':
                     $SQL .= ', ' . EEM_State::instance()->table() . '.STA_name';
                     break;
             }
@@ -373,8 +369,8 @@ class EEH_Event_Query
     {
         foreach ($orderby_params as $orderby) {
             switch ($orderby) {
-                case 'ticket_start' :
-                case 'ticket_end' :
+                case 'ticket_start':
+                case 'ticket_end':
                     $SQL .= EEH_Event_Query::_posts_join_for_datetime(
                         $SQL,
                         EEM_Datetime_Ticket::instance()->table() . '.' . EEM_Datetime::instance()->primary_key_name()
@@ -386,16 +382,16 @@ class EEH_Event_Query
                     $SQL .= EEM_Ticket::instance()->table() . '.' . EEM_Ticket::instance()->primary_key_name();
                     $SQL .= ' )';
                     break;
-                case 'venue_title' :
-                case 'city' :
+                case 'venue_title':
+                case 'city':
                     $SQL .= EEH_Event_Query::_posts_join_for_event_venue($SQL);
                     break;
-                case 'state' :
+                case 'state':
                     $SQL .= EEH_Event_Query::_posts_join_for_event_venue($SQL);
                     $SQL .= EEH_Event_Query::_posts_join_for_venue_state($SQL);
                     break;
-                case 'start_date' :
-                default :
+                case 'start_date':
+                default:
                     $SQL .= EEH_Event_Query::_posts_join_for_datetime($SQL, EEM_Event::instance()->table() . '.ID');
                     break;
             }
@@ -632,7 +628,7 @@ class EEH_Event_Query
         $sort    = in_array($sort, array('ASC', 'asc', 'DESC', 'desc'), true)
             ? strtoupper($sort)
             : 'ASC';
-        //make sure 'orderby' is set in query params
+        // make sure 'orderby' is set in query params
         if (! isset(self::$_query_params['orderby'])) {
             self::$_query_params['orderby'] = array();
         }
@@ -649,36 +645,36 @@ class EEH_Event_Query
             $glue = $counter === 0 || $counter === count($orderby_params) ? ' ' : ', ';
             // ok what's we dealing with?
             switch ($orderby) {
-                case 'id' :
-                case 'ID' :
+                case 'id':
+                case 'ID':
                     $SQL .= $glue . $wpdb->posts . '.ID ' . $sort;
                     break;
-                case 'end_date' :
+                case 'end_date':
                     $SQL .= $glue . EEM_Datetime::instance()->table() . '.DTT_EVT_end ' . $sort;
                     break;
-                case 'event_name' :
+                case 'event_name':
                     $SQL .= $glue . $wpdb->posts . '.post_title ' . $sort;
                     break;
-                case 'category_slug' :
+                case 'category_slug':
                     $SQL .= $glue . $wpdb->terms . '.slug ' . $sort;
                     break;
-                case 'ticket_start' :
+                case 'ticket_start':
                     $SQL .= $glue . EEM_Ticket::instance()->table() . '.TKT_start_date ' . $sort;
                     break;
-                case 'ticket_end' :
+                case 'ticket_end':
                     $SQL .= $glue . EEM_Ticket::instance()->table() . '.TKT_end_date ' . $sort;
                     break;
-                case 'venue_title' :
+                case 'venue_title':
                     $SQL .= $glue . 'venue_title ' . $sort;
                     break;
-                case 'city' :
+                case 'city':
                     $SQL .= $glue . EEM_Venue::instance()->second_table() . '.VNU_city ' . $sort;
                     break;
-                case 'state' :
+                case 'state':
                     $SQL .= $glue . EEM_State::instance()->table() . '.STA_name ' . $sort;
                     break;
-                case 'start_date' :
-                default :
+                case 'start_date':
+                default:
                     $SQL .= $glue . ' event_start_date ' . $sort;
                     break;
             }
@@ -688,6 +684,4 @@ class EEH_Event_Query
         }
         return $SQL;
     }
-
-
 }

@@ -4,10 +4,6 @@ namespace EventEspresso\core\domain\values\session;
 
 use DomainException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class SessionLifespan
  * Value Object for storing and sharing session lifespan information.
@@ -53,14 +49,13 @@ class SessionLifespan
      */
     protected function setLifespan($lifespan)
     {
-        if($lifespan < 60) {
+        if ($lifespan < 60) {
             throw new DomainException(
                 esc_html__(
                     'The session lifespan needs to be at least 60 seconds, and even that is extremely short',
                     'event_espresso'
                 )
             );
-
         }
         $this->lifespan = apply_filters(
             'FHEE__EventEspresso_core_domain_values_session_SessionLifespan__setLifespan___lifespan',

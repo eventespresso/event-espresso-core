@@ -2,8 +2,6 @@
 
 use EventEspresso\core\exceptions\EntityNotFoundException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
-
 /**
  * EE_Venue_Shortcodes
  * this is a child class for the EE_Shortcodes library.  The EE_Venue_Shortcodes lists all shortcodes related to venue
@@ -39,7 +37,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
      */
     protected function _init_props()
     {
-        $this->label       = esc_html__('Venue Shortcodes', 'event_espresso');
+        $this->label = esc_html__('Venue Shortcodes', 'event_espresso');
         $this->description = esc_html__('All shortcodes specific to venue related data', 'event_espresso');
         $this->_shortcodes = array(
             '[VENUE_TITLE]'             => esc_html__('The title for the event venue', 'event_espresso'),
@@ -89,7 +87,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
     protected function _parser($shortcode)
     {
         $this->_venue = $this->_get_venue();
-        //If there is no venue object by now then get out.
+        // If there is no venue object by now then get out.
         if (! $this->_venue instanceof EE_Venue) {
             return '';
         }
@@ -158,18 +156,16 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
             case '[VENUE_DETAILS_URL]':
                 return $this->_venue('permalink');
                 break;
-
         }
 
         if (strpos($shortcode, '[VENUE_META_*') !== false) {
             $shortcode = str_replace('[VENUE_META_*', '', $shortcode);
             $shortcode = trim(str_replace(']', '', $shortcode));
 
-            //pull the meta value from the venue post
+            // pull the meta value from the venue post
             $venue_meta = $this->_venue->get_post_meta($shortcode, true);
 
             return ! empty($venue_meta) ? $venue_meta : '';
-
         }
     }
 
@@ -183,10 +179,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
     private function _get_venue()
     {
 
-        //we need the EE_Event object to get the venue.
+        // we need the EE_Event object to get the venue.
         $this->_event = $this->_data instanceof EE_Event ? $this->_data : null;
 
-        //if no event, then let's see if there is a reg_obj.  If there IS, then we'll try and grab the event from the
+        // if no event, then let's see if there is a reg_obj.  If there IS, then we'll try and grab the event from the
         // reg_obj instead.
         if (! $this->_event instanceof EE_Event) {
             $aee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
@@ -196,21 +192,21 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
                 ? $aee->reg_obj->event()
                 : null;
 
-            //if still empty do we have a ticket data item?
+            // if still empty do we have a ticket data item?
             $this->_event = ! $this->_event instanceof EE_Event
                             && $this->_data instanceof EE_Ticket
                             && $this->_extra_data['data'] instanceof EE_Messages_Addressee
-                ? $this->_extra_data['data']->tickets[$this->_data->ID()]['EE_Event']
+                ? $this->_extra_data['data']->tickets[ $this->_data->ID() ]['EE_Event']
                 : $this->_event;
 
-            //if STILL empty event, let's try to get the first event in the list of events via EE_Messages_Addressee
+            // if STILL empty event, let's try to get the first event in the list of events via EE_Messages_Addressee
             // and use that.
-            $this->_event       = ! $this->_event instanceof EE_Event && $aee instanceof EE_Messages_Addressee
+            $this->_event = ! $this->_event instanceof EE_Event && $aee instanceof EE_Messages_Addressee
                 ? reset($aee->events)
                 : $this->_event;
         }
 
-        //If we have an event object use it to pull the venue.
+        // If we have an event object use it to pull the venue.
         if ($this->_event instanceof EE_Event) {
             return $this->_event->get_first_related('Venue');
         }
@@ -314,9 +310,9 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
      */
     protected function get_map_attributes(EE_Venue $venue, $field = 'gmap_link')
     {
-        $state   = $venue->state_obj();
+        $state = $venue->state_obj();
         $country = $venue->country_obj();
-        $atts    = array(
+        $atts = array(
             'id'      => $venue->ID(),
             'address' => $venue->get('VNU_address'),
             'city'    => $venue->get('VNU_city'),

@@ -7,10 +7,6 @@ use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\ResponseInterface;
 use InvalidArgumentException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class SetRequestTypeContextChecker
  * Request Stack Middleware class for setting the RequestTypeContext
