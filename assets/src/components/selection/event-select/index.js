@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
  * WP dependencies
  */
 import { Placeholder, SelectControl, Spinner } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __ } from '@eventespresso/i18n';
 import { withSelect } from '@wordpress/data';
 
 /**

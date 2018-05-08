@@ -11,7 +11,8 @@
 		"@eventespresso\\/(eejs)": "assets/src/$1",
 		"@wordpress\\/(blocks|components|date|editor|element|data|utils|edit-post|viewport|plugins|core-data)": "<rootDir>/node_modules/gutenberg/$1",
 		"tinymce": "<rootDir>/tests/javascript-config/unit/mocks/tinymce",
-		"@wordpress/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n"
+		"@wordpress/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
+		"@eventespresso/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n"
 	},
 	"setupFiles": [
 		"core-js/fn/symbol/async-iterator",
