@@ -1,8 +1,5 @@
 <?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
-
-
 /**
  * Class EE_Register_Data_Migration_Scripts
  * EEI_Plugin_API class for registering addons for use with EE core.
@@ -32,15 +29,15 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
      * @since 4.3.0
      * @param string $addon_name EE_Addon class name that this set of data migration scripts belongs to
      *                           If EE_Addon class is namespaced, then this needs to be the Fully Qualified Class Name
-     * @param array $setup_args {
-     *      @type string  $dms_paths an array of full server paths to folders that contain data migration scripts
-     *  }
+     * @param array  $setup_args {
+     * @type string  $dms_paths  an array of full server paths to folders that contain data migration scripts
+     *                           }
      * @throws EE_Error
      * @return void
      */
     public static function register($addon_name = '', $setup_args = array())
     {
-        //required fields MUST be present, so let's make sure they are.
+        // required fields MUST be present, so let's make sure they are.
         if (empty($addon_name) || ! is_array($setup_args) || empty($setup_args['dms_paths'])) {
             throw new EE_Error(
                 esc_html__(
@@ -49,11 +46,11 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
                 )
             );
         }
-        //make sure we don't register twice
+        // make sure we don't register twice
         if (isset(self::$_settings[ $addon_name ])) {
             return;
         }
-        //make sure this was called in the right place!
+        // make sure this was called in the right place!
         if (! did_action('AHEE__EE_System__load_espresso_addons')
             || did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin')
         ) {
@@ -66,9 +63,9 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
                 '4.3.0'
             );
         }
-        //setup $_settings array from incoming values.
+        // setup $_settings array from incoming values.
         self::$_settings[ $addon_name ] = array(
-            'dms_paths' => (array) $setup_args['dms_paths']
+            'dms_paths' => (array) $setup_args['dms_paths'],
         );
         // setup DMS
         add_filter(
@@ -112,5 +109,3 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
         unset(self::$_settings[ $addon_name ]);
     }
 }
-// End of file EE_Register_Data_Migration_Scripts.lib.php
-// Location: /core/libraries/plugin_api/EE_Register_Data_Migration_Scripts.lib.php

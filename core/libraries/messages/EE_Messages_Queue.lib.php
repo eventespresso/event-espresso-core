@@ -1,9 +1,5 @@
 <?php
-use \EventEspresso\core\exceptions\SendMessageException;
-
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+use EventEspresso\core\exceptions\SendMessageException;
 
 /**
  * This class is used for managing and interacting with the EE_messages Queue.  An instance
@@ -110,7 +106,7 @@ class EE_Messages_Queue
     public function remove(EE_Message $message, $persist = false)
     {
         if ($persist && $this->_message_repository->current() !== $message) {
-            //get pointer on right message
+            // get pointer on right message
             if ($this->_message_repository->has($message)) {
                 $this->_message_repository->rewind();
                 while ($this->_message_repository->valid()) {
@@ -166,7 +162,7 @@ class EE_Messages_Queue
             return false;
         }
 
-        //lock batch generation to prevent race conditions.
+        // lock batch generation to prevent race conditions.
         $this->lock_queue(EE_Messages_Queue::action_generating);
 
         $query_args = array(
@@ -177,8 +173,8 @@ class EE_Messages_Queue
         );
         $messages   = EEM_Message::instance()->get_all($query_args);
 
-        if ( ! $messages) {
-            return false; //nothing to generate
+        if (! $messages) {
+            return false; // nothing to generate
         }
 
         foreach ($messages as $message) {
@@ -229,15 +225,15 @@ class EE_Messages_Queue
         $messages_to_send = EEM_Message::instance()->get_all($query_args);
 
 
-        //any to send?
-        if ( ! $messages_to_send) {
+        // any to send?
+        if (! $messages_to_send) {
             $this->unlock_queue(EE_Messages_Queue::action_sending);
             return false;
         }
 
         $queue_count = 0;
 
-        //add to queue.
+        // add to queue.
         foreach ($messages_to_send as $message) {
             if ($message instanceof EE_Message) {
                 $queue_count++;
@@ -245,12 +241,12 @@ class EE_Messages_Queue
             }
         }
 
-        //send messages  (this also updates the rate limit)
+        // send messages  (this also updates the rate limit)
         $this->execute();
 
-        //release lock
+        // release lock
         $this->unlock_queue(EE_Messages_Queue::action_sending);
-        //update rate limit
+        // update rate limit
         $this->set_rate_limit($queue_count);
         return true;
     }
@@ -374,8 +370,7 @@ class EE_Messages_Queue
          * @see usage of this filter in EE_Messages_Queue::initiate_request_by_priority() method.
          *            Also implemented here because messages processed on the same request should not have any locks applied.
          */
-        if (
-            apply_filters('FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false)
+        if (apply_filters('FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false)
             || EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
         ) {
             $is_locked = false;
@@ -402,7 +397,7 @@ class EE_Messages_Queue
         $expiry = isset($stored_rate_info[1])
             ? (int) $stored_rate_info[1]
             : 0;
-        //set the default for tracking?
+        // set the default for tracking?
         if (empty($stored_rate_info) || time() > $expiry) {
             $expiry = $this->_get_rate_limit_expiry();
             $rate_limit = $this->_default_rate_limit();
@@ -419,11 +414,11 @@ class EE_Messages_Queue
      */
     protected function set_rate_limit($batch_completed)
     {
-        //first get the most up to date rate limit (in case its expired and reset)
+        // first get the most up to date rate limit (in case its expired and reset)
         $rate_limit = $this->get_rate_limit();
         $expiry = $this->get_rate_limit(true);
         $new_limit  = $rate_limit - $batch_completed;
-        //updating the transient option directly to avoid resetting the expiry.
+        // updating the transient option directly to avoid resetting the expiry.
 
         update_option($this->_get_rate_limit_key(), array($new_limit, $expiry));
     }
@@ -440,7 +435,7 @@ class EE_Messages_Queue
      */
     public function initiate_request_by_priority($task = 'generate', $priority = EEM_Message::priority_high)
     {
-        //determine what status is matched with the priority as part of the trigger conditions.
+        // determine what status is matched with the priority as part of the trigger conditions.
         $status = $task == 'generate'
             ? EEM_Message::status_incomplete
             : EEM_Message::instance()->stati_indicating_to_send();
@@ -457,16 +452,15 @@ class EE_Messages_Queue
          * - any race condition protection (locks) are removed because they don't apply when things are processed on
          *   the same request.
          */
-        if (
-            apply_filters('FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false)
+        if (apply_filters('FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false)
             || EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
         ) {
             $messages_processor = EE_Registry::instance()->load_lib('Messages_Processor');
             if ($messages_processor instanceof EE_Messages_Processor) {
                 return $messages_processor->process_immediately_from_queue($this);
             }
-            //if we get here then that means the messages processor couldn't be loaded so messages will just remain
-            //queued for manual triggering by end user.
+            // if we get here then that means the messages processor couldn't be loaded so messages will just remain
+            // queued for manual triggering by end user.
         }
 
         if ($this->_message_repository->count_by_priority_and_status($priority, $status)) {
@@ -505,17 +499,17 @@ class EE_Messages_Queue
             $error_messages = array();
             /** @type EE_Message $message */
             $message = $this->_message_repository->current();
-            //only process things that are queued for sending
+            // only process things that are queued for sending
             if (! in_array($message->STS_ID(), EEM_Message::instance()->stati_indicating_to_send())) {
                 $this->_message_repository->next();
                 continue;
             }
-            //if $by_priority is set and does not match then continue;
+            // if $by_priority is set and does not match then continue;
             if ($by_priority && $by_priority != $message->priority()) {
                 $this->_message_repository->next();
                 continue;
             }
-            //error checking
+            // error checking
             if (! $message->valid_messenger()) {
                 $error_messages[] = sprintf(
                     __('The %s messenger is not active at time of sending.', 'event_espresso'),
@@ -543,10 +537,10 @@ class EE_Messages_Queue
                 }
             }
             $this->_set_error_message($message, $error_messages);
-            //add modified time
+            // add modified time
             $message->set_modified(time());
-            //we save each message after its processed to make sure its status persists in case PHP times-out or runs
-            //out of memory. @see https://events.codebasehq.com/projects/event-espresso/tickets/10281
+            // we save each message after its processed to make sure its status persists in case PHP times-out or runs
+            // out of memory. @see https://events.codebasehq.com/projects/event-espresso/tickets/10281
             if ($save) {
                 $message->save();
             }
@@ -572,9 +566,8 @@ class EE_Messages_Queue
         // these *should* have been validated in the execute() method above
         $messenger    = $message->messenger_object();
         $message_type = $message->message_type_object();
-        //do actions for sending messenger if it differs from generating messenger and swap values.
-        if (
-            $sending_messenger instanceof EE_messenger
+        // do actions for sending messenger if it differs from generating messenger and swap values.
+        if ($sending_messenger instanceof EE_messenger
             && $messenger instanceof EE_messenger
             && $sending_messenger->name != $messenger->name
         ) {
@@ -583,12 +576,12 @@ class EE_Messages_Queue
         }
         // send using messenger, but double check objects
         if ($messenger instanceof EE_messenger && $message_type instanceof EE_message_type) {
-            //set hook for message type (but only if not using another messenger to send).
-            if ( ! isset($this->_did_hook[$message_type->name])) {
+            // set hook for message type (but only if not using another messenger to send).
+            if (! isset($this->_did_hook[ $message_type->name ])) {
                 $message_type->do_messenger_hooks($messenger);
-                $this->_did_hook[$message_type->name] = 1;
+                $this->_did_hook[ $message_type->name ] = 1;
             }
-            //if preview then use preview method
+            // if preview then use preview method
             return $this->_message_repository->is_preview()
                 ? $this->_do_preview($message, $messenger, $message_type, $this->_message_repository->is_test_send())
                 : $this->_do_send($message, $messenger, $message_type);
@@ -637,7 +630,7 @@ class EE_Messages_Queue
         $test_send
     ) {
         if ($preview = $messenger->get_preview($message, $message_type, $test_send)) {
-            if ( ! $test_send) {
+            if (! $test_send) {
                 $message->set_content($preview);
             }
             $message->set_STS_ID(EEM_Message::status_sent);
@@ -687,7 +680,7 @@ class EE_Messages_Queue
      */
     protected function _set_error_message(EE_Message $message, $error_messages)
     {
-        $error_messages = (array)$error_messages;
+        $error_messages = (array) $error_messages;
         if (in_array($message->STS_ID(), EEM_Message::instance()->stati_indicating_failed_sending())) {
             $notices          = EE_Error::has_notices();
             $error_messages[] = __(
@@ -706,5 +699,4 @@ class EE_Messages_Queue
             $message->set_error_message($msg);
         }
     }
-
-} //end EE_Messages_Queue class
+}

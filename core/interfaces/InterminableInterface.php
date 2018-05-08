@@ -1,12 +1,6 @@
 <?php
 namespace EventEspresso\core\interfaces;
 
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
-}
-
-
-
 /**
  * Interface InterminableInterface
  * denotes that any class implementing this interface should NOT be terminated, unset(),
@@ -16,10 +10,8 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package EventEspresso\core\interfaces
  * @since 4.9.2
  */
-interface InterminableInterface {
+interface InterminableInterface
+{
 
-	// no specific methods required
-
+    // no specific methods required
 }
-// End of file InterminableInterface.php
-// Location: /InterminableInterface.php

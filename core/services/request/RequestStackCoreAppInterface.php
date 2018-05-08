@@ -2,10 +2,6 @@
 
 namespace EventEspresso\core\services\request;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Interface RequestStackCoreApp
  *
@@ -23,6 +19,4 @@ interface RequestStackCoreAppInterface
      * @param ResponseInterface      $response
      */
     public function handleResponse(RequestInterface $request, ResponseInterface $response);
-
 }
-// Location: RequestStackCoreApp.php

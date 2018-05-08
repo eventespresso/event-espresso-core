@@ -1,11 +1,7 @@
 <?php use EventEspresso\core\exceptions\EntityNotFoundException;
+
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
 
 /**
  * Event Espresso
@@ -60,7 +56,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         if (! empty($_GET['event_id'])) {
             $extra_query_args = array();
             foreach ($admin_page->get_views() as $key => $view_details) {
-                $extra_query_args[$view_details['slug']] = array('event_id' => $_GET['event_id']);
+                $extra_query_args[ $view_details['slug'] ] = array('event_id' => $_GET['event_id']);
             }
             $this->_views = $admin_page->get_list_table_view_RLs($extra_query_args);
         }
@@ -102,7 +98,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $ID_column_name .= '</span> ';
         if (isset($_GET['event_id'])) {
             $this->_columns = array(
-                'cb'               => '<input type="checkbox" />', //Render a checkbox instead of text
+                'cb'               => '<input type="checkbox" />', // Render a checkbox instead of text
                 '_REG_ID'          => $ID_column_name,
                 'ATT_fname'        => __('Name', 'event_espresso'),
                 'ATT_email'        => __('Email', 'event_espresso'),
@@ -124,7 +120,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             );
         } else {
             $this->_columns = array(
-                'cb'               => '<input type="checkbox" />', //Render a checkbox instead of text
+                'cb'               => '<input type="checkbox" />', // Render a checkbox instead of text
                 '_REG_ID'          => $ID_column_name,
                 'ATT_fname'        => __('Name', 'event_espresso'),
                 '_REG_date'        => __('TXN Date', 'event_espresso'),
@@ -147,17 +143,22 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             'route'         => 'registrations_report',
             'extra_request' => array(
                 'use_filters' => true,
-                'filters'     => array_diff_key($this->_req_data, array_flip(array(
-                    'page',
-                    'action',
-                    'default_nonce',
-                ))),
+                'filters'     => array_diff_key(
+                    $this->_req_data,
+                    array_flip(
+                        array(
+                            'page',
+                            'action',
+                            'default_nonce',
+                        )
+                    )
+                ),
                 'return_url'  => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
             ),
         );
         $this->_primary_column = '_REG_ID';
         $this->_sortable_columns = array(
-            '_REG_date'     => array('_REG_date' => true),   //true means its already sorted
+            '_REG_date'     => array('_REG_date' => true),   // true means its already sorted
             /**
              * Allows users to change the default sort if they wish.
              * Returning a falsey on this filter will result in the default sort to be by firstname rather than last
@@ -188,7 +189,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     protected function _get_row_class($item)
     {
         $class = parent::_get_row_class($item);
-        //add status class
+        // add status class
         $class .= ' ee-status-strip reg-status-' . $item->status_ID();
         if ($this->_has_checkbox_column) {
             $class .= ' has-checkbox-column';
@@ -248,7 +249,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     protected function _get_table_filters()
     {
         $filters = array();
-        //todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as
+        // todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as
         // methods.
         $cur_date = isset($this->_req_data['month_range']) ? $this->_req_data['month_range'] : '';
         $cur_category = isset($this->_req_data['EVT_CAT']) ? $this->_req_data['EVT_CAT'] : -1;
@@ -351,7 +352,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $time_end = ' 23:59:59';
         $this_month_r = date('m', current_time('timestamp'));
         $days_this_month = date('t', current_time('timestamp'));
-        //setup date query.
+        // setup date query.
         $beginning_string = EEM_Registration::instance()->convert_datetime_for_query(
             'REG_date',
             $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start,
@@ -483,24 +484,27 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     public function column__REG_date(EE_Registration $item)
     {
         $this->_set_related_details($item);
-        //Build row actions
-        $view_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-            'action' => 'view_transaction',
-            'TXN_ID' => $this->_transaction_details['id'],
-        ), TXN_ADMIN_URL);
+        // Build row actions
+        $view_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'action' => 'view_transaction',
+                'TXN_ID' => $this->_transaction_details['id'],
+            ),
+            TXN_ADMIN_URL
+        );
         $view_link = EE_Registry::instance()->CAP->current_user_can(
             'ee_read_transaction',
             'espresso_transactions_view_transaction'
         )
             ? '<a class="ee-status-color-'
-                . $this->_transaction_details['status']
-                . '" href="'
-                . $view_lnk_url
-                . '" title="'
-                . esc_attr($this->_transaction_details['title_attr'])
-                . '">'
-                . $item->get_i18n_datetime('REG_date')
-                . '</a>' : $item->get_i18n_datetime('REG_date');
+              . $this->_transaction_details['status']
+              . '" href="'
+              . $view_lnk_url
+              . '" title="'
+              . esc_attr($this->_transaction_details['title_attr'])
+              . '">'
+              . $item->get_i18n_datetime('REG_date')
+              . '</a>' : $item->get_i18n_datetime('REG_date');
         $view_link .= '<br><span class="ee-status-text-small">'
                       . EEH_Template::pretty_status($this->_transaction_details['status'], false, 'sentence')
                       . '</span>';
@@ -599,7 +603,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             ? ' <span title="' . esc_attr__('Click to view all dates', 'event_espresso')
               . '" class="ee-js ee-more-datetimes-toggle dashicons dashicons-plus"></span>'
             : '';
-        //get first item for initial visibility
+        // get first item for initial visibility
         $content .= '<div class="left">' . array_shift($datetime_strings) . '</div>';
         $content .= $expand_toggle;
         if ($datetime_strings) {
@@ -628,10 +632,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     public function column_ATT_fname(EE_Registration $item)
     {
         $attendee = $item->attendee();
-        $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-            'action'  => 'view_registration',
-            '_REG_ID' => $item->ID(),
-        ), REG_ADMIN_URL);
+        $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'action'  => 'view_registration',
+                '_REG_ID' => $item->ID(),
+            ),
+            REG_ADMIN_URL
+        );
         $attendee_name = $attendee instanceof EE_Attendee ? $attendee->full_name() : '';
         $link = EE_Registry::instance()->CAP->current_user_can(
             'ee_read_registration',
@@ -639,25 +646,25 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             $item->ID()
         )
             ? '<a href="'
-               . $edit_lnk_url
-               . '" title="'
-               . esc_attr__('View Registration Details', 'event_espresso')
-               . '">'
-               . $attendee_name
-               . '</a>' : $attendee_name;
+              . $edit_lnk_url
+              . '" title="'
+              . esc_attr__('View Registration Details', 'event_espresso')
+              . '">'
+              . $attendee_name
+              . '</a>' : $attendee_name;
         $link .= $item->count() === 1
             ? '&nbsp;<sup><div class="dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8"></div></sup>' : '';
         $t = $item->get_first_related('Transaction');
         $payment_count = $t instanceof EE_Transaction ? $t->count_related('Payment') : 0;
-        //append group count to name
+        // append group count to name
         $link .= '&nbsp;' . sprintf(__('(%1$s / %2$s)', 'event_espresso'), $item->count(), $item->group_size());
-        //append reg_code
+        // append reg_code
         $link .= '<br>' . sprintf(__('Reg Code: %s', 'event_espresso'), $item->get('REG_code'));
-        //reg status text for accessibility
+        // reg status text for accessibility
         $link .= '<br><span class="ee-status-text-small">'
                  . EEH_Template::pretty_status($item->status_ID(), false, 'sentence')
                  . '</span>';
-        //trash/restore/delete actions
+        // trash/restore/delete actions
         $actions = array();
         if ($this->_view !== 'trash'
             && $payment_count === 0
@@ -666,10 +673,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'espresso_registrations_trash_registrations',
                 $item->ID()
             )) {
-            $trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-                'action'  => 'trash_registrations',
-                '_REG_ID' => $item->ID(),
-            ), REG_ADMIN_URL);
+            $trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+                array(
+                    'action'  => 'trash_registrations',
+                    '_REG_ID' => $item->ID(),
+                ),
+                REG_ADMIN_URL
+            );
             $actions['trash'] = '<a href="'
                                 . $trash_lnk_url
                                 . '" title="'
@@ -682,10 +692,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'espresso_registrations_restore_registrations',
                 $item->ID()
             )) {
-                $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-                    'action'  => 'restore_registrations',
-                    '_REG_ID' => $item->ID(),
-                ), REG_ADMIN_URL);
+                $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+                    array(
+                        'action'  => 'restore_registrations',
+                        '_REG_ID' => $item->ID(),
+                    ),
+                    REG_ADMIN_URL
+                );
                 $actions['restore'] = '<a href="'
                                       . $restore_lnk_url
                                       . '" title="'
@@ -697,10 +710,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'espresso_registrations_ee_delete_registrations',
                 $item->ID()
             )) {
-                $delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-                    'action'  => 'delete_registrations',
-                    '_REG_ID' => $item->ID(),
-                ), REG_ADMIN_URL);
+                $delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+                    array(
+                        'action'  => 'delete_registrations',
+                        '_REG_ID' => $item->ID(),
+                    ),
+                    REG_ADMIN_URL
+                );
                 $actions['delete'] = '<a href="'
                                      . $delete_lnk_url
                                      . '" title="'
@@ -835,10 +851,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     public function column_TXN_total(EE_Registration $item)
     {
         if ($item->transaction()) {
-            $view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-                'action' => 'view_transaction',
-                'TXN_ID' => $item->transaction_ID(),
-            ), TXN_ADMIN_URL);
+            $view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+                array(
+                    'action' => 'view_transaction',
+                    'TXN_ID' => $item->transaction_ID(),
+                ),
+                TXN_ADMIN_URL
+            );
             return EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_transaction',
                 'espresso_transactions_view_transaction',
@@ -878,10 +897,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             if ($transaction->paid() >= $transaction->total()) {
                 return '<span class="reg-pad-rght"><div class="dashicons dashicons-yes green-icon"></div></span>';
             } else {
-                $view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-                    'action' => 'view_transaction',
-                    'TXN_ID' => $item->transaction_ID(),
-                ), TXN_ADMIN_URL);
+                $view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+                    array(
+                        'action' => 'view_transaction',
+                        'TXN_ID' => $item->transaction_ID(),
+                    ),
+                    TXN_ADMIN_URL
+                );
                 return EE_Registry::instance()->CAP->current_user_can(
                     'ee_read_transaction',
                     'espresso_transactions_view_transaction',
@@ -919,22 +941,32 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $actions = array();
         $attendee = $item->attendee();
         $this->_set_related_details($item);
-        //Build row actions
-        $view_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-            'action'  => 'view_registration',
-            '_REG_ID' => $item->ID(),
-        ), REG_ADMIN_URL);
-        $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-            'action' => 'edit_attendee',
-            'post'   => $item->attendee_ID(),
-        ), REG_ADMIN_URL);
+        // Build row actions
+        $view_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'action'  => 'view_registration',
+                '_REG_ID' => $item->ID(),
+            ),
+            REG_ADMIN_URL
+        );
+        $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'action' => 'edit_attendee',
+                'post'   => $item->attendee_ID(),
+            ),
+            REG_ADMIN_URL
+        );
         // page=attendees&event_admin_reports=resend_email&registration_id=43653465634&event_id=2&form_action=resend_email
-        //$resend_reg_lnk_url_params = array( 'action'=>'resend_registration', '_REG_ID'=>$item->REG_ID );
-        $resend_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-            'action'  => 'resend_registration',
-            '_REG_ID' => $item->ID(),
-        ), REG_ADMIN_URL, true);
-        //Build row actions
+        // $resend_reg_lnk_url_params = array( 'action'=>'resend_registration', '_REG_ID'=>$item->REG_ID );
+        $resend_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'action'  => 'resend_registration',
+                '_REG_ID' => $item->ID(),
+            ),
+            REG_ADMIN_URL,
+            true
+        );
+        // Build row actions
         $actions['view_lnk'] = EE_Registry::instance()->CAP->current_user_can(
             'ee_read_registration',
             'espresso_registrations_view_registration',
@@ -965,22 +997,25 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                                          'ee_send_message',
                                          'espresso_registrations_resend_registration',
                                          $item->ID()
-        )
+                                     )
             ? '
 			<li>
 			<a href="'
-                 . $resend_reg_lnk_url
-                 . '" title="'
-                 . esc_attr__('Resend Registration Details', 'event_espresso')
-                 . '" class="tiny-text">
+              . $resend_reg_lnk_url
+              . '" title="'
+              . esc_attr__('Resend Registration Details', 'event_espresso')
+              . '" class="tiny-text">
 				<div class="dashicons dashicons-email-alt"></div>
 			</a>
 			</li>' : '';
         // page=transactions&action=view_transaction&txn=256&_wpnonce=6414da4dbb
-        $view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-            'action' => 'view_transaction',
-            'TXN_ID' => $this->_transaction_details['id'],
-        ), TXN_ADMIN_URL);
+        $view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'action' => 'view_transaction',
+                'TXN_ID' => $this->_transaction_details['id'],
+            ),
+            TXN_ADMIN_URL
+        );
         $actions['view_txn_lnk'] = EE_Registry::instance()->CAP->current_user_can(
             'ee_read_transaction',
             'espresso_transactions_view_transaction',
@@ -989,19 +1024,19 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             ? '
 			<li>
 			<a class="ee-status-color-'
-               . $this->_transaction_details['status']
-               . ' tiny-text" href="'
-               . $view_txn_lnk_url
-               . '"  title="'
-               . $this->_transaction_details['title_attr']
-               . '">
+              . $this->_transaction_details['status']
+              . ' tiny-text" href="'
+              . $view_txn_lnk_url
+              . '"  title="'
+              . $this->_transaction_details['title_attr']
+              . '">
 				<div class="dashicons dashicons-cart"></div>
 			</a>
 			</li>' : '';
-        //invoice link
+        // invoice link
         $actions['dl_invoice_lnk'] = '';
         $dl_invoice_lnk_url = $item->invoice_url();
-        //only show invoice link if message type is active.
+        // only show invoice link if message type is active.
         if ($attendee instanceof EE_Attendee
             && $item->is_primary_registrant()
             && EEH_MSG_Template::is_mt_active('invoice')
@@ -1009,23 +1044,23 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             $actions['dl_invoice_lnk'] = '
 		<li>
 			<a title="'
-                 . esc_attr__('View Transaction Invoice', 'event_espresso')
-                 . '" target="_blank" href="'
-                 . $dl_invoice_lnk_url
-                 . '" class="tiny-text">
+                                         . esc_attr__('View Transaction Invoice', 'event_espresso')
+                                         . '" target="_blank" href="'
+                                         . $dl_invoice_lnk_url
+                                         . '" class="tiny-text">
 				<span class="dashicons dashicons-media-spreadsheet ee-icon-size-18"></span>
 			</a>
 		</li>';
         }
         $actions['filtered_messages_link'] = '';
-        //message list table link (filtered by REG_ID
+        // message list table link (filtered by REG_ID
         if (EE_Registry::instance()->CAP->current_user_can('ee_read_global_messages', 'view_filtered_messages')) {
             $actions['filtered_messages_link'] = '<li>'
-                     . EEH_MSG_Template::get_message_action_link(
-                         'see_notifications_for',
-                         null,
-                         array('_REG_ID' => $item->ID())
-                     ) . '</li>';
+                                                 . EEH_MSG_Template::get_message_action_link(
+                                                     'see_notifications_for',
+                                                     null,
+                                                     array('_REG_ID' => $item->ID())
+                                                 ) . '</li>';
         }
         $actions = apply_filters('FHEE__EE_Registrations_List_Table__column_actions__actions', $actions, $item, $this);
         return $this->_action_string(implode('', $actions), $item, 'ul', 'reg-overview-actions-ul');

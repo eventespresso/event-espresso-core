@@ -1,15 +1,15 @@
 <p>
-	<strong>
+    <strong>
 <?php _e('Templates', 'event_espresso'); ?>
-	</strong>
+    </strong>
 </p>
 <p>
 <?php _e('This page shows options for single event pages and event list pages.', 'event_espresso'); ?>
 </p>
 <p>
-	<strong>
+    <strong>
 <?php _e('Single Event Pages', 'event_espresso'); ?>
-	</strong>
+    </strong>
 </p>
 <ul>
 <li>
@@ -41,7 +41,14 @@
 </li>
 <li>
 <strong><?php _e('Display Descriptions', 'event_espresso'); ?></strong><br />
-<?php printf( __('Whether descriptions should be shown on the event list page.%sSelecting "none" will NOT display any of the text content you entered into the main text editor on the event admin page.%sSelecting "excerpt" will display the text you entered into the "Excerpt" textarea on the event admin page, OR, any text in the main text editor above the "' . htmlentities( '<!--more-->' ) . '" tag.%sSelecting "full description" will display ALL of the text content you entered into the main text editor on the event admin page.', 'event_espresso'), '<br/>', '<br/>', '<br/>' );?>
+<?php printf(
+    __(
+        'Whether descriptions should be shown on the event list page.%1$sSelecting "none" will NOT display any of the text content you entered into the main text editor on the event admin page.%1$sSelecting "excerpt" will display the text you entered into the "Excerpt" textarea on the event admin page, OR, any text in the main text editor above the %2$s tag.%1$sSelecting "full description" will display ALL of the text content you entered into the main text editor on the event admin page.',
+        'event_espresso'
+    ),
+    '<br/>',
+    htmlentities('<!--more-->')
+);?>
 </li>
 <li>
 <strong><?php _e('Display Ticket Selector', 'event_espresso'); ?></strong><br />

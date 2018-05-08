@@ -4,6 +4,6 @@
  */
 ?>
 <tr>
-	<th>[QUESTION]</th>
-	<td>[ANSWER]</td>
+    <th>[QUESTION]</th>
+    <td>[ANSWER]</td>
 </tr>
