@@ -41,6 +41,9 @@ const config = [
 			eejs: [
 				assets + 'eejs/index.js',
 			],
+			'core-blocks': [
+				assets + 'blocks/index.js',
+			],
 		},
 		module: {
 			rules: [
