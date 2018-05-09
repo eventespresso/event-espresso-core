@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\admin\privacy\export;
 
 use EE_Error;
+use EE_Form_Section_Proper;
 use EEM_Attendee;
 use EEM_Payment_Method;
 use EventEspresso\core\services\privacy\export\PersonalDataExporterInterface;
@@ -88,7 +89,7 @@ class ExportAttendeeBillingData implements PersonalDataExporterInterface
                 } catch (EE_Error $e) {
                     $billing_info = null;
                 }
-                if (! $billing_info || ! $billing_info instanceof EE_Form_Section_Proper) {
+                if (! $billing_info instanceof EE_Form_Section_Proper) {
                     continue;
                 }
                 $found_something = true;

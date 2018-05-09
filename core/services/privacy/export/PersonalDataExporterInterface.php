@@ -2,9 +2,6 @@
 
 namespace EventEspresso\core\services\privacy\export;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
 /**
  * Class PersonalDataExporterInterface
  * Interfacing for classes that add data to the private data export (see https://core.trac.wordpress.org/ticket/43546).

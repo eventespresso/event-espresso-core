@@ -341,7 +341,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             );
         }
         // check that addon has not already been registered with that name
-        if (isset(self::$_settings[$addon_name]) && ! did_action('activate_plugin')) {
+        if (isset(self::$_settings[ $addon_name ]) && ! did_action('activate_plugin')) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -395,8 +395,8 @@ class EE_Register_Addon implements EEI_Plugin_API
                 ? (string)$setup_args['plugin_slug']
                 : '',
             // page slug to be used when generating the "Settings" link on the WP plugin page
-            'plugin_action_slug'    => isset($setup_args['plugin_action_slug'])
-                ? (string)$setup_args['plugin_action_slug']
+            'plugin_action_slug' => isset($setup_args['plugin_action_slug'])
+                ? (string) $setup_args['plugin_action_slug']
                 : '',
             // the "software" version for the addon
             'version'               => isset($setup_args['version'])

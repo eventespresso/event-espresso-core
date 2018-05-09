@@ -2,9 +2,6 @@
 
 namespace EventEspresso\core\services\privacy\erasure;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
 /**
  * Class PersonalDataEraserInterface
  * Interfacing for classes that define a private data eraser (see https://core.trac.wordpress.org/ticket/43602).
