@@ -23,4 +23,6 @@ BEFORE POSTING YOUR ISSUE:
 <!-- A clear and concise description of any alternative solutions or features you've considered. -->
 
 **Additional context**
-<!-- Add any other context or screenshots about the feature request here. -->
+<!-- 
+Add any other context or screenshots about the feature request here. If you were directed to create an issue here by the EE support team, you can include the link to your original EE support forum thread.
+-->
