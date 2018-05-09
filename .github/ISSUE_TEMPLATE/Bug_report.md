@@ -40,4 +40,6 @@ Steps to reproduce the behavior:
  - PHP Version <!-- [e.g. 5.6.2] -->
 
 **Additional context**
-<!-- Add any other context about the problem here. -->
+<!-- 
+Add any other context about the problem here. If you were directed to create an issue here by the EE support team, you can include the link to your original EE support forum thread
+-->
