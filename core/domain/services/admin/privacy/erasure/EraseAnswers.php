@@ -61,6 +61,7 @@ class EraseAnswers implements PersonalDataEraserInterface
      */
     public function erase($email_address, $page = 1)
     {
+        $multi_answer_enum_question_types = $this->question_model->question_types_in_category('multi-answer-enum');
         $normal_questions_updated = $this->answer_model->update(
             array(
                 'ANS_value' => '',
@@ -70,7 +71,7 @@ class EraseAnswers implements PersonalDataEraserInterface
                     'Registration.Attendee.ATT_email' => $email_address,
                     'Question.QST_type'               => array(
                         'NOT_IN',
-                        $this->question_model->question_types_in_category('multi-answer-enum'),
+                        $multi_answer_enum_question_types,
                     ),
                 ),
             )
@@ -84,7 +85,7 @@ class EraseAnswers implements PersonalDataEraserInterface
                     'Registration.Attendee.ATT_email' => $email_address,
                     'Question.QST_type'               => array(
                         'IN',
-                        $this->question_model->question_types_in_category('multi-answer-enum'),
+                        $multi_answer_enum_question_types,
                     ),
                 ),
             )
