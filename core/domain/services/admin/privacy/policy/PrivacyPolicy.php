@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\domain\services\admin\privacy\policy;
 
+use EE_Offsite_Gateway;
+use EE_Onsite_Gateway;
 use EEH_Template;
 use EEM_Payment_Method;
 use EventEspresso\core\domain\values\session\SessionLifespan;
@@ -32,6 +34,7 @@ class PrivacyPolicy implements PrivacyPolicyInterface
      * PrivacyPolicy constructor.
      *
      * @param EEM_Payment_Method $payment_method_model
+     * @param SessionLifespan    $session_lifespan
      */
     public function __construct(EEM_Payment_Method $payment_method_model, SessionLifespan $session_lifespan)
     {
@@ -64,9 +67,9 @@ class PrivacyPolicy implements PrivacyPolicyInterface
         $active_offsite_pms = false;
         foreach ($active_payment_methods as $payment_method) {
             if ($payment_method->type_obj() instanceof \EE_PMT_Base) {
-                if ($payment_method->type_obj()->get_gateway() instanceof \EE_Onsite_Gateway) {
+                if ($payment_method->type_obj()->get_gateway() instanceof EE_Onsite_Gateway) {
                     $active_onsite_pms[] = $payment_method->name();
-                } elseif ($payment_method->type_obj()->get_gateway() instanceof \EE_Offsite_Gateway) {
+                } elseif ($payment_method->type_obj()->get_gateway() instanceof EE_Offsite_Gateway) {
                     $active_offsite_pms[] = $payment_method->name();
                 }
             }
@@ -78,10 +81,11 @@ class PrivacyPolicy implements PrivacyPolicyInterface
                 'active_onsite_payment_methods' => $active_onsite_pms,
                 'active_offsite_payment_methods' => $active_offsite_pms,
                 'session_lifespan' => sprintf(
-                    _n(
+                    _nx(
                         '%1$s hour',
                         '%1$s hours',
                         $session_lifespan_in_hours,
+                        '2 hours',
                         'event_espresso'
                     ),
                     $session_lifespan_in_hours

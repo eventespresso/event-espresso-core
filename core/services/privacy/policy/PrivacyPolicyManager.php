@@ -26,9 +26,7 @@ class PrivacyPolicyManager
 
     public function __construct()
     {
-        if (function_exists('wp_add_privacy_policy_content')) {
-            add_action('edit_form_after_title', array($this, 'addPrivacyPolicy'), 9);
-        }
+        add_action('edit_form_after_title', array($this, 'addPrivacyPolicy'), 9);
     }
 
 
@@ -39,7 +37,7 @@ class PrivacyPolicyManager
      */
     public function addPrivacyPolicy($post)
     {
-        if (! ($post instanceof \WP_Post)) {
+        if (! ($post instanceof WP_Post)) {
             return;
         }
         $policy_page_id = (int) get_option('wp_page_for_privacy_policy');

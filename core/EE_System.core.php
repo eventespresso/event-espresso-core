@@ -1195,7 +1195,7 @@ final class EE_System implements ResettableInterface
         );
         $rewrite_rules->flushRewriteRules();
         add_action('admin_bar_init', array($this, 'addEspressoToolbar'));
-        if($this->request->isAdmin()) {
+        if($this->request->isAdmin() && function_exists('wp_add_privacy_policy_content')) {
             $this->loader->getShared('EventEspresso\core\services\privacy\policy\PrivacyPolicyManager');
         }
     }
