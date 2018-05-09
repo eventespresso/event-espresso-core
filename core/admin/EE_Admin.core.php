@@ -472,7 +472,7 @@ final class EE_Admin implements InterminableInterface
                     <input type="submit"<?php wp_nav_menu_disabled_check($nav_menu_selected_id); ?>
                            class="button-secondary submit-add-to-menu right"
                            value="<?php esc_attr_e('Add to Menu', 'event_espresso'); ?>" name="add-post-type-menu-item"
-                           id="<?php esc_attr('submit-posttype-extra-nav-menu-pages'); ?>"/>
+                           id="<?php echo esc_attr('submit-posttype-extra-nav-menu-pages'); ?>"/>
                     <span class="spinner"></span>
                 </span>
             </p>
