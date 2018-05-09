@@ -1,5 +1,4 @@
 <?php
-require_once(EE_MODELS . 'fields/EE_Text_Field_Base.php');
 
 /**
  * Only allows a select, small number of html tags:

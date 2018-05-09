@@ -20,9 +20,9 @@ $class_to_filepath = array();
 foreach ($stages as $filepath) {
     $matches = array();
     preg_match('~4_7_0_stages/(.*).dmsstage.php~', $filepath, $matches);
-    $class_to_filepath[$matches[1]] = $filepath;
+    $class_to_filepath[ $matches[1] ] = $filepath;
 }
-//give addons a chance to autoload their stages too
+// give addons a chance to autoload their stages too
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_7_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
@@ -65,8 +65,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base
     public function can_migrate_from_version($version_array)
     {
         $version_string = $version_array['Core'];
-        if (
-            (
+        if ((
                 version_compare($version_string, '4.7.0', '<=')
                 && version_compare($version_string, '4.6.0', '>=')
             )
@@ -77,9 +76,9 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base
             )
         ) {
             return true;
-        } elseif ( ! $version_string) {
-            //no version string provided... this must be pre 4.3
-            return false;//changed mind. dont want people thinking they should migrate yet because they cant
+        } elseif (! $version_string) {
+            // no version string provided... this must be pre 4.3
+            return false;// changed mind. dont want people thinking they should migrate yet because they cant
         } else {
             return false;
         }
@@ -92,7 +91,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base
      */
     public function schema_changes_before_migration()
     {
-        //relies on 4.1's EEH_Activation::create_table
+        // relies on 4.1's EEH_Activation::create_table
         require_once(EE_HELPERS . 'EEH_Activation.helper.php');
         $table_name = 'esp_answer';
         $sql = " ANS_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -476,7 +475,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base
 			KEY STA_ID (STA_ID),
 			KEY CNT_ISO (CNT_ISO)";
         $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
-        //modified tables
+        // modified tables
         $table_name = "esp_price";
         $sql = "PRC_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 					  PRT_ID TINYINT(3) UNSIGNED NOT NULL,
@@ -544,7 +543,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base
         $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         /** @var EE_DMS_Core_4_1_0 $script_4_1_defaults */
         $script_4_1_defaults = EE_Registry::instance()->load_dms('Core_4_1_0');
-        //(because many need to convert old string states to foreign keys into the states table)
+        // (because many need to convert old string states to foreign keys into the states table)
         $script_4_1_defaults->insert_default_states();
         $script_4_1_defaults->insert_default_countries();
         /** @var EE_DMS_Core_4_5_0 $script_4_5_defaults */

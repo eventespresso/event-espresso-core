@@ -3,12 +3,6 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\libraries\form_sections\strategies\filter\FormHtmlFilter;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * EE_Form_Section_Base
  * For shared functionality between form sections that are for display-only, and
@@ -104,7 +98,7 @@ abstract class EE_Form_Section_Base
             $key = '_' . $key;
             if (property_exists($this, $key) && empty($this->{$key})) {
                 $this->{$key} = $value;
-                if($key === '_subsections' && ! is_array($value)) {
+                if ($key === '_subsections' && ! is_array($value)) {
                     throw new InvalidDataTypeException($key, $value, 'array');
                 }
             }
@@ -184,11 +178,11 @@ abstract class EE_Form_Section_Base
     public function set_method($method)
     {
         switch ($method) {
-            case 'get' :
-            case 'GET' :
+            case 'get':
+            case 'GET':
                 $this->_method = 'GET';
                 break;
-            default :
+            default:
                 $this->_method = 'POST';
         }
     }
@@ -347,8 +341,10 @@ abstract class EE_Form_Section_Base
     public function name()
     {
         if (! $this->_construction_finalized) {
-            throw new EE_Error(sprintf(__('You cannot use the form section\s name until _construct_finalize has been called on it (when we set the name). It was called on a form section of type \'s\'',
-                'event_espresso'), get_class($this)));
+            throw new EE_Error(sprintf(__(
+                'You cannot use the form section\s name until _construct_finalize has been called on it (when we set the name). It was called on a form section of type \'s\'',
+                'event_espresso'
+            ), get_class($this)));
         }
         return $this->_name;
     }
@@ -439,7 +435,7 @@ abstract class EE_Form_Section_Base
      */
     public function enqueue_js()
     {
-        //defaults to enqueue NO js or css
+        // defaults to enqueue NO js or css
     }
 
 
@@ -497,10 +493,8 @@ abstract class EE_Form_Section_Base
                 return $this;
             }
         }
-        //couldn't find it using simple parent following
+        // couldn't find it using simple parent following
         return null;
     }
-
-
 }
 // End of file EE_Form_Section_Base.form.php

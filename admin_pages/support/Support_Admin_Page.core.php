@@ -1,9 +1,4 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
-
-
 
 /**
  * Support_Admin_Page
@@ -18,7 +13,6 @@ class Support_Admin_Page extends EE_Admin_Page
 {
 
 
-
     protected function _init_page_props()
     {
         $this->page_slug = EE_SUPPORT_PG_SLUG;
@@ -28,11 +22,9 @@ class Support_Admin_Page extends EE_Admin_Page
     }
 
 
-
     protected function _ajax_hooks()
     {
     }
-
 
 
     protected function _define_page_props()
@@ -40,7 +32,6 @@ class Support_Admin_Page extends EE_Admin_Page
         $this->_labels = array();
         $this->_admin_page_title = $this->page_label;
     }
-
 
 
     protected function _set_page_routes()
@@ -60,7 +51,6 @@ class Support_Admin_Page extends EE_Admin_Page
             ),
         );
     }
-
 
 
     protected function _set_page_config()
@@ -94,12 +84,10 @@ class Support_Admin_Page extends EE_Admin_Page
     }
 
 
-
-    //none of the below group are currently used for Support pages
+    // none of the below group are currently used for Support pages
     protected function _add_screen_options()
     {
     }
-
 
 
     protected function _add_feature_pointers()
@@ -107,11 +95,9 @@ class Support_Admin_Page extends EE_Admin_Page
     }
 
 
-
     public function admin_init()
     {
     }
-
 
 
     public function admin_notices()
@@ -119,17 +105,14 @@ class Support_Admin_Page extends EE_Admin_Page
     }
 
 
-
     public function admin_footer_scripts()
     {
     }
 
 
-
     public function load_scripts_styles()
     {
     }
-
 
 
     protected function _installation()
@@ -144,12 +127,10 @@ class Support_Admin_Page extends EE_Admin_Page
     }
 
 
-
     protected function _resources()
     {
         $this->display_admin_page_with_sidebar();
     }
-
 
 
     protected function _add_settings_metabox($box, $label, array $args)
@@ -173,7 +154,6 @@ class Support_Admin_Page extends EE_Admin_Page
             )
         );
     }
-
 
 
     protected function _resources_boxes()
@@ -202,12 +182,10 @@ class Support_Admin_Page extends EE_Admin_Page
     }
 
 
-
     protected function _shortcodes()
     {
         $this->display_admin_page_with_sidebar();
     }
-
 
 
     protected function _shortcodes_boxes()
@@ -236,12 +214,10 @@ class Support_Admin_Page extends EE_Admin_Page
     }
 
 
-
     protected function _contact_support()
     {
         $this->display_admin_page_with_sidebar();
     }
-
 
 
     protected function _support_boxes()
@@ -266,7 +242,6 @@ class Support_Admin_Page extends EE_Admin_Page
     }
 
 
-
     protected function _developers()
     {
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
@@ -276,7 +251,4 @@ class Support_Admin_Page extends EE_Admin_Page
         );
         $this->display_admin_page_with_sidebar();
     }
-
-
-
-} //end Support_Admin_Page class
+}

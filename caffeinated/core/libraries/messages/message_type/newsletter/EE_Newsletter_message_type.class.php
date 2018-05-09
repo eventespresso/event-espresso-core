@@ -1,5 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed.');
 
 /**
  * The message type for newsletter type of messages.
@@ -38,7 +37,7 @@ class EE_Newsletter_message_type extends EE_message_type
      */
     protected function _set_admin_pages()
     {
-        $this->admin_registered_pages = array(); //no admin pages to register this with.
+        $this->admin_registered_pages = array(); // no admin pages to register this with.
     }
 
 
@@ -61,7 +60,7 @@ class EE_Newsletter_message_type extends EE_message_type
      */
     protected function _get_data_for_context($context, EE_Registration $registration, $id)
     {
-        //newsletter message type data handler is 'Registrations' and it expects an array of EE_Registration objects.
+        // newsletter message type data handler is 'Registrations' and it expects an array of EE_Registration objects.
         return array($registration);
     }
 
@@ -116,10 +115,10 @@ class EE_Newsletter_message_type extends EE_message_type
         foreach ($this->_valid_shortcodes as $context => $shortcodes) {
             foreach ($shortcodes as $key => $shortcode) {
                 if (! in_array($shortcode, $included_shortcodes, true)) {
-                    unset($this->_valid_shortcodes[$context][$key]);
+                    unset($this->_valid_shortcodes[ $context ][ $key ]);
                 }
             }
-            $this->_valid_shortcodes[$context][] = 'newsletter';
+            $this->_valid_shortcodes[ $context ][] = 'newsletter';
         }
     }
 
@@ -139,12 +138,12 @@ class EE_Newsletter_message_type extends EE_message_type
     {
         $addressee = array();
 
-        //looping through registrations
+        // looping through registrations
         foreach ($this->_data->registrations as $reg_id => $details) {
-            //set $attendee array to blank on each loop
+            // set $attendee array to blank on each loop
             $aee = array();
 
-            //need to get the attendee from this registration.
+            // need to get the attendee from this registration.
             $attendee = isset($details['att_obj']) && $details['att_obj'] instanceof EE_Attendee
                 ? $details['att_obj']
                 : null;
@@ -153,19 +152,19 @@ class EE_Newsletter_message_type extends EE_message_type
                 continue;
             }
 
-            //set $aee from attendee object
+            // set $aee from attendee object
             $aee['att_obj'] = $attendee;
-            $aee['reg_objs'] = isset($this->_data->attendees[$attendee->ID()]['reg_objs'])
-                ? $this->_data->attendees[$attendee->ID()]['reg_objs']
+            $aee['reg_objs'] = isset($this->_data->attendees[ $attendee->ID() ]['reg_objs'])
+                ? $this->_data->attendees[ $attendee->ID() ]['reg_objs']
                 : array();
             $aee['attendee_email'] = $attendee->email();
-            $aee['tkt_objs'] = isset($this->_data->attendees[$attendee->ID()]['tkt_objs'])
-                ? $this->_data->attendees[$attendee->ID()]['tkt_objs']
+            $aee['tkt_objs'] = isset($this->_data->attendees[ $attendee->ID() ]['tkt_objs'])
+                ? $this->_data->attendees[ $attendee->ID() ]['tkt_objs']
                 : array();
 
-            if (isset($this->_data->attendees[$attendee->ID()]['evt_objs'])) {
-                $aee['evt_objs'] = $this->_data->attendees[$attendee->ID()]['evt_objs'];
-                $aee['events'] = $this->_data->attendees[$attendee->ID()]['evt_objs'];
+            if (isset($this->_data->attendees[ $attendee->ID() ]['evt_objs'])) {
+                $aee['evt_objs'] = $this->_data->attendees[ $attendee->ID() ]['evt_objs'];
+                $aee['events'] = $this->_data->attendees[ $attendee->ID() ]['evt_objs'];
             } else {
                 $aee['evt_objs'] = $aee['events'] = array();
             }
@@ -175,10 +174,10 @@ class EE_Newsletter_message_type extends EE_message_type
                 : null;
             $aee['attendees'] = $this->_data->attendees;
 
-            //merge in the primary attendee data
+            // merge in the primary attendee data
             $aee = array_merge($this->_default_addressee_data, $aee);
 
-            //make sure txn is set
+            // make sure txn is set
             if (empty($aee['txn']) && $aee['reg_obj'] instanceof EE_Registration) {
                 $aee['txn'] = $aee['reg_obj']->transaction();
             }
@@ -200,10 +199,8 @@ class EE_Newsletter_message_type extends EE_message_type
         $excluded_fields = array(
             'email' => array('cc')
         );
-        return isset($excluded_fields[$messenger_name])
-            ? $excluded_fields[$messenger_name]
+        return isset($excluded_fields[ $messenger_name ])
+            ? $excluded_fields[ $messenger_name ]
             : parent::excludedFieldsForMessenger($messenger_name);
     }
-
-
 }

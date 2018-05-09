@@ -2,12 +2,6 @@
 
 use EventEspresso\core\services\orm\ModelFieldFactory;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * WP User Model. Not intended to replace WP_User, but this just allows
  * for EE model queries to more easily integrate with the WP User table
@@ -108,12 +102,12 @@ class EEM_WP_User extends EEM_Base
         );
         $this->_wp_core_model = true;
         $this->_caps_slug = 'users';
-        $this->_cap_contexts_to_cap_action_map[EEM_Base::caps_read] = 'list';
-        $this->_cap_contexts_to_cap_action_map[EEM_Base::caps_read_admin] = 'list';
+        $this->_cap_contexts_to_cap_action_map[ EEM_Base::caps_read ] = 'list';
+        $this->_cap_contexts_to_cap_action_map[ EEM_Base::caps_read_admin ] = 'list';
         foreach ($this->_cap_contexts_to_cap_action_map as $context => $action) {
-            $this->_cap_restriction_generators[$context] = new EE_Restriction_Generator_WP_User();
+            $this->_cap_restriction_generators[ $context ] = new EE_Restriction_Generator_WP_User();
         }
-        //@todo: account for create_users controls whether they can create users at all
+        // @todo: account for create_users controls whether they can create users at all
         parent::__construct($timezone);
     }
 
@@ -141,9 +135,4 @@ class EEM_WP_User extends EEM_Base
     {
         return true;
     }
-
-
-
 }
-// End of file EEM_WP_User.model.php
-// Location: /core/db_models/EEM_WP_User.model.php

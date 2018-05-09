@@ -1,9 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
+<?php
 /**
  * EE_Int_Normalization
  * Casts the string to an int. If the user inputs anything but numbers, we growl at them
@@ -35,7 +30,7 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
             return null;
         }
         if (is_int($value_to_normalize) || is_float($value_to_normalize)) {
-            return (int)$value_to_normalize;
+            return (int) $value_to_normalize;
         }
         if (! is_string($value_to_normalize)) {
             throw new EE_Validation_Error(
@@ -60,20 +55,20 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
                 // if first match is the negative sign,
                 // then the number needs to be multiplied by -1 to remain negative
                 return $matches[1] === '-'
-                    ? (int)$matches[2] * -1
-                    : (int)$matches[2];
+                    ? (int) $matches[2] * -1
+                    : (int) $matches[2];
             }
         }
-        //find if this input has a int validation strategy
-        //in which case, use its message
+        // find if this input has a int validation strategy
+        // in which case, use its message
         $validation_error_message = null;
         foreach ($this->_input->get_validation_strategies() as $validation_strategy) {
             if ($validation_strategy instanceof EE_Int_Validation_Strategy) {
                 $validation_error_message = $validation_strategy->get_validation_error_message();
             }
         }
-        //this really shouldn't ever happen because fields with a int normalization strategy
-        //should also have a int validation strategy, but in case it doesn't use the default
+        // this really shouldn't ever happen because fields with a int normalization strategy
+        // should also have a int validation strategy, but in case it doesn't use the default
         if (! $validation_error_message) {
             $default_validation_strategy = new EE_Int_Validation_Strategy();
             $validation_error_message = $default_validation_strategy->get_validation_error_message();
@@ -100,4 +95,3 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
         return "$normalized_value";
     }
 }
-// End of file EE_Int_Normalization.strategy.php

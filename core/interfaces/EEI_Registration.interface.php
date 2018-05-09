@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Interface EEI_Registration
@@ -33,7 +30,4 @@ interface EEI_Registration extends EEI_Base
      * @return string
      */
     public function event_name();
-
 }
-// End of file EEI_Registration.interface.php
-// Location: ${NAMESPACE}/EEI_Registration.interface.php

@@ -1,21 +1,6 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
-
-
 
 /**
- * Event Espresso
- * Event Registration and Management Plugin for Wordpress
- *
- * @package         Event Espresso
- * @author          Seth Shoultes
- * @copyright    (c)2009-2012 Event Espresso All Rights Reserved.
- * @license         http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
- * @link            http://www.eventespresso.com
- * @version         4.0
- * ------------------------------------------------------------------------
  * EE_Admin_Hooks
  * This is the abstract parent class used by children to contains any hooks that run on different EE Admin pages.
  * @abstract
@@ -36,7 +21,6 @@ abstract class EE_Admin_Hooks extends EE_Base
     public $caller;
 
 
-
     /**
      * this is just a flag set automatically to indicate whether we've got an extended hook class running (i.e.
      * espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Registration_Form_Hooks).  This flag is
@@ -47,14 +31,12 @@ abstract class EE_Admin_Hooks extends EE_Base
     protected $_extend;
 
 
-
     /**
      * child classes MUST set this property so that the page object can be loaded correctly
      *
      * @var string
      */
     protected $_name;
-
 
 
     /**
@@ -77,7 +59,6 @@ abstract class EE_Admin_Hooks extends EE_Base
      * @var array
      */
     protected $_init_func;
-
 
 
     /**
@@ -104,7 +85,6 @@ abstract class EE_Admin_Hooks extends EE_Base
     protected $_metaboxes;
 
 
-
     /**
      * This is an array of values that indicate any metaboxes we want removed from a given page route.  Usually this is
      * used when caffeinated functionality is replacing decaffeinated functionality.  Use the following format for the
@@ -123,7 +103,6 @@ abstract class EE_Admin_Hooks extends EE_Base
      * @var array
      */
     protected $_remove_metaboxes;
-
 
 
     /**
@@ -169,7 +148,6 @@ abstract class EE_Admin_Hooks extends EE_Base
     protected $_current_route;
 
 
-
     /**
      * this optional property can be set by child classes to override the priority for the automatic action/filter hook
      * loading in the `_load_routed_hooks()` method.  Please follow this format: array(
@@ -182,14 +160,12 @@ abstract class EE_Admin_Hooks extends EE_Base
     protected $_wp_action_filters_priority;
 
 
-
     /**
      * This just holds a merged array of the $_POST and $_GET vars in favor of $_POST
      *
      * @var array
      */
     protected $_req_data;
-
 
 
     /**
@@ -200,7 +176,6 @@ abstract class EE_Admin_Hooks extends EE_Base
     protected $_page_object;
 
 
-
     /**
      * This holds the EE_Admin_Page object from the calling admin page that this object hooks into.
      *
@@ -209,14 +184,12 @@ abstract class EE_Admin_Hooks extends EE_Base
     protected $_adminpage_obj;
 
 
-
     /**
      * Holds EE_Registry object
      *
      * @var EE_Registry
      */
     protected $EE = null;
-
 
 
     /**
@@ -228,17 +201,17 @@ abstract class EE_Admin_Hooks extends EE_Base
     {
 
         $this->_adminpage_obj = $adminpage;
-        $this->_req_data      = array_merge($_GET, $_POST);
+        $this->_req_data = array_merge($_GET, $_POST);
         $this->_set_defaults();
         $this->_set_hooks_properties();
-        //first let's verify we're on the right page
+        // first let's verify we're on the right page
         if (! isset($this->_req_data['page'])
             || (isset($this->_req_data['page'])
                 && $this->_adminpage_obj->page_slug
                    != $this->_req_data['page'])) {
             return;
         } //get out nothing more to be done here.
-        //allow for extends to modify properties
+        // allow for extends to modify properties
         if (method_exists($this, '_extend_properties')) {
             $this->_extend_properties();
         }
@@ -251,7 +224,6 @@ abstract class EE_Admin_Hooks extends EE_Base
         add_action('admin_enqueue_scripts', array($this, 'remove_metaboxes'), 15);
         $this->_ajax_hooks();
     }
-
 
 
     /**
@@ -273,7 +245,6 @@ abstract class EE_Admin_Hooks extends EE_Base
     abstract protected function _set_hooks_properties();
 
 
-
     /**
      * The hooks for enqueue_scripts and enqueue_styles will be run in here.  Child classes need to define their
      * scripts and styles in the relevant $_scripts and $_styles properties.  Child classes must have also already
@@ -286,7 +257,7 @@ abstract class EE_Admin_Hooks extends EE_Base
     {
 
         if (! empty($this->_scripts_styles)) {
-            //first let's do all the registrations
+            // first let's do all the registrations
             if (! isset($this->_scripts_styles['registers'])) {
                 $msg[] = __(
                     'There is no "registers" index in the <code>$this->_scripts_styles</code> property.',
@@ -309,11 +280,11 @@ abstract class EE_Admin_Hooks extends EE_Base
                     'version' => EVENT_ESPRESSO_VERSION,
                     'footer'  => true,
                 );
-                $details  = wp_parse_args($details, $defaults);
+                $details = wp_parse_args($details, $defaults);
                 extract($details);
-                //let's make sure that we set the 'registers' type if it's not set! We need it later to determine whhich enqueu we do
-                $this->_scripts_styles['registers'][$ref]['type'] = $type;
-                //let's make sure we're not missing any REQUIRED parameters
+                // let's make sure that we set the 'registers' type if it's not set! We need it later to determine whhich enqueu we do
+                $this->_scripts_styles['registers'][ $ref ]['type'] = $type;
+                // let's make sure we're not missing any REQUIRED parameters
                 if (empty($url)) {
                     $msg[] = sprintf(
                         __('Missing the url for the requested %s', 'event_espresso'),
@@ -329,39 +300,39 @@ abstract class EE_Admin_Hooks extends EE_Base
                     );
                     throw new EE_Error(implode('||', $msg));
                 }
-                //made it here so let's do the appropriate registration
+                // made it here so let's do the appropriate registration
                 $type == 'js'
                     ? wp_register_script($ref, $url, $depends, $version, $footer)
                     : wp_register_style(
-                    $ref,
-                    $url,
-                    $depends,
-                    $version
-                );
+                        $ref,
+                        $url,
+                        $depends,
+                        $version
+                    );
             }
-            //k now lets do the enqueues
+            // k now lets do the enqueues
             if (! isset($this->_scripts_styles['enqueues'])) {
                 return;
             }  //not sure if we should throw an error here or not.
             foreach ($this->_scripts_styles['enqueues'] as $ref => $routes) {
-                //make sure $routes is an array
-                $routes = (array)$routes;
+                // make sure $routes is an array
+                $routes = (array) $routes;
                 if (in_array($this->_current_route, $routes)) {
-                    $this->_scripts_styles['registers'][$ref]['type'] == 'js' ? wp_enqueue_script($ref)
+                    $this->_scripts_styles['registers'][ $ref ]['type'] == 'js' ? wp_enqueue_script($ref)
                         : wp_enqueue_style($ref);
-                    //if we have a localization for the script let's do that too.
-                    if (isset($this->_scripts_styles['localize'][$ref])) {
-                        foreach ($this->_scripts_styles['localize'][$ref] as $object_name => $indexes) {
+                    // if we have a localization for the script let's do that too.
+                    if (isset($this->_scripts_styles['localize'][ $ref ])) {
+                        foreach ($this->_scripts_styles['localize'][ $ref ] as $object_name => $indexes) {
                             wp_localize_script(
                                 $ref,
                                 $object_name,
-                                $this->_scripts_styles['localize'][$ref][$object_name]
+                                $this->_scripts_styles['localize'][ $ref ][ $object_name ]
                             );
                         }
                     }
                 }
             }
-            //let's do the deregisters
+            // let's do the deregisters
             if (! isset($this->_scripts_styles['deregisters'])) {
                 return;
             }
@@ -369,13 +340,12 @@ abstract class EE_Admin_Hooks extends EE_Base
                 $defaults = array(
                     'type' => 'js',
                 );
-                $details  = wp_parse_args($details, $defaults);
+                $details = wp_parse_args($details, $defaults);
                 extract($details);
                 $type == 'js' ? wp_deregister_script($ref) : wp_deregister_style($ref);
             }
         }
     }
-
 
 
     /**
@@ -386,12 +356,11 @@ abstract class EE_Admin_Hooks extends EE_Base
      */
     private function _set_defaults()
     {
-        $this->_ajax_func     = $this->_init_func = $this->_metaboxes = $this->_scripts = $this->_styles = $this->_wp_action_filters_priority = array();
+        $this->_ajax_func = $this->_init_func = $this->_metaboxes = $this->_scripts = $this->_styles = $this->_wp_action_filters_priority = array();
         $this->_current_route = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'default';
-        $this->caller         = get_class($this);
-        $this->_extend        = stripos($this->caller, 'Extend') ? true : false;
+        $this->caller = get_class($this);
+        $this->_extend = stripos($this->caller, 'Extend') ? true : false;
     }
-
 
 
     /**
@@ -402,7 +371,7 @@ abstract class EE_Admin_Hooks extends EE_Base
      */
     protected function _set_page_object()
     {
-        //first make sure $this->_name is set
+        // first make sure $this->_name is set
         if (empty($this->_name)) {
             $msg[] = __('We can\'t load the page object', 'event_espresso');
             $msg[] = sprintf(
@@ -411,20 +380,20 @@ abstract class EE_Admin_Hooks extends EE_Base
             );
             throw new EE_Error(implode('||', $msg));
         }
-        $ref = str_replace('_', ' ', $this->_name); //take the_message -> the message
-        $ref = str_replace(' ', '_', ucwords($ref)) . '_Admin_Page'; //take the message -> The_Message
-        //first default file (if exists)
+        $ref = str_replace('_', ' ', $this->_name); // take the_message -> the message
+        $ref = str_replace(' ', '_', ucwords($ref)) . '_Admin_Page'; // take the message -> The_Message
+        // first default file (if exists)
         $decaf_file = EE_ADMIN_PAGES . $this->_name . DS . $ref . '.core.php';
         if (is_readable($decaf_file)) {
             require_once($decaf_file);
         }
-        //now we have to do require for extended file (if needed)
+        // now we have to do require for extended file (if needed)
         if ($this->_extend) {
             require_once(EE_CORE_CAF_ADMIN_EXTEND . $this->_name . DS . 'Extend_' . $ref . '.core.php');
         }
-        //if we've got an extended class we use that!
+        // if we've got an extended class we use that!
         $ref = $this->_extend ? 'Extend_' . $ref : $ref;
-        //let's make sure the class exists
+        // let's make sure the class exists
         if (! class_exists($ref)) {
             $msg[] = __('We can\'t load the page object', 'event_espresso');
             $msg[] = sprintf(
@@ -436,7 +405,7 @@ abstract class EE_Admin_Hooks extends EE_Base
             );
             throw new EE_Error(implode('||', $msg));
         }
-        $a                  = new ReflectionClass($ref);
+        $a = new ReflectionClass($ref);
         $this->_page_object = $a->newInstance(false);
     }
 
@@ -459,13 +428,13 @@ abstract class EE_Admin_Hooks extends EE_Base
          * @since 4.3.0
          */
         $method_callback = $this->_current_route == 'default' ? 'default_callback' : $this->_current_route;
-        //these run before the Admin_Page route executes.
+        // these run before the Admin_Page route executes.
         if (method_exists($this, $method_callback)) {
             call_user_func(array($this, $method_callback));
         }
-        //these run via the _redirect_after_action method in EE_Admin_Page which usually happens after non_UI methods in EE_Admin_Page classes.  There are two redirect actions, the first fires before $query_args might be manipulated by "save and close" actions and the seond fires right before the actual redirect happens.
-        //first the actions
-        //note that these action hooks will have the $query_args value available.
+        // these run via the _redirect_after_action method in EE_Admin_Page which usually happens after non_UI methods in EE_Admin_Page classes.  There are two redirect actions, the first fires before $query_args might be manipulated by "save and close" actions and the seond fires right before the actual redirect happens.
+        // first the actions
+        // note that these action hooks will have the $query_args value available.
         $admin_class_name = get_class($this->_adminpage_obj);
         if (method_exists($this, '_redirect_action_early_' . $this->_current_route)) {
             add_action(
@@ -484,7 +453,7 @@ abstract class EE_Admin_Hooks extends EE_Base
                 10
             );
         }
-        //let's hook into the _redirect itself and allow for changing where the user goes after redirect.  This will have $query_args and $redirect_url available.
+        // let's hook into the _redirect itself and allow for changing where the user goes after redirect.  This will have $query_args and $redirect_url available.
         if (method_exists($this, '_redirect_filter_' . $this->_current_route)) {
             add_filter(
                 'FHEE_redirect_' . $admin_class_name . $this->_current_route,
@@ -494,7 +463,6 @@ abstract class EE_Admin_Hooks extends EE_Base
             );
         }
     }
-
 
 
     /**
@@ -507,7 +475,7 @@ abstract class EE_Admin_Hooks extends EE_Base
     private function _load_routed_hooks()
     {
 
-        //this array provides the hook action names that will be referenced.  Key is the action. Value is an array with the type (action or filter) and the number of parameters for the hook.  We'll default all priorities for automatic hooks to 10.
+        // this array provides the hook action names that will be referenced.  Key is the action. Value is an array with the type (action or filter) and the number of parameters for the hook.  We'll default all priorities for automatic hooks to 10.
         $hook_filter_array = array(
             'admin_footer'                                                                            => array(
                 'type'     => 'action',
@@ -537,8 +505,8 @@ abstract class EE_Admin_Hooks extends EE_Base
         );
         foreach ($hook_filter_array as $hook => $args) {
             if (method_exists($this, $this->_current_route . '_' . $hook)) {
-                if (isset($this->_wp_action_filters_priority[$hook])) {
-                    $args['priority'] = $this->_wp_action_filters_priority[$hook];
+                if (isset($this->_wp_action_filters_priority[ $hook ])) {
+                    $args['priority'] = $this->_wp_action_filters_priority[ $hook ];
                 }
                 if ($args['type'] == 'action') {
                     add_action(
@@ -572,12 +540,12 @@ abstract class EE_Admin_Hooks extends EE_Base
             return;
         } //get out there's nothing to take care of.
         foreach ($this->_ajax_func as $action => $method) {
-            //make sure method exists
+            // make sure method exists
             if (! method_exists($this, $method)) {
                 $msg[] = __(
-                             'There is no corresponding method for the hook labeled in the _ajax_func array',
-                             'event_espresso'
-                         ) . '<br />';
+                    'There is no corresponding method for the hook labeled in the _ajax_func array',
+                    'event_espresso'
+                ) . '<br />';
                 $msg[] = sprintf(
                     __(
                         'The method name given in the array is %s, check the spelling and make sure it exists in the %s class',
@@ -593,7 +561,6 @@ abstract class EE_Admin_Hooks extends EE_Base
     }
 
 
-
     /**
      * Loop throught the $_init_func array and add_actions for the array.
      *
@@ -604,15 +571,15 @@ abstract class EE_Admin_Hooks extends EE_Base
         if (empty($this->_init_func)) {
             return;
         } //get out there's nothing to take care of.
-        //We need to determine what page_route we are on!
-        $current_route = isset ($_REQUEST['action']) ? $_REQUEST['action'] : 'default';
+        // We need to determine what page_route we are on!
+        $current_route = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'default';
         foreach ($this->_init_func as $route => $method) {
-            //make sure method exists
+            // make sure method exists
             if (! method_exists($this, $method)) {
                 $msg[] = __(
-                             'There is no corresponding method for the hook labeled in the _init_func array',
-                             'event_espresso'
-                         ) . '<br />';
+                    'There is no corresponding method for the hook labeled in the _init_func array',
+                    'event_espresso'
+                ) . '<br />';
                 $msg[] = sprintf(
                     __(
                         'The method name given in the array is %s, check the spelling and make sure it exists in the %s class',
@@ -628,7 +595,6 @@ abstract class EE_Admin_Hooks extends EE_Base
             }
         }
     }
-
 
 
     /**
@@ -647,7 +613,6 @@ abstract class EE_Admin_Hooks extends EE_Base
     }
 
 
-
     private function _handle_metabox_array($boxes, $add = true)
     {
 
@@ -655,8 +620,8 @@ abstract class EE_Admin_Hooks extends EE_Base
             if (! isset($box['page_route'])) {
                 continue;
             } //we dont' have a valid array
-            //let's make sure $box['page_route'] is an array so the "foreach" will work.
-            $box['page_route'] = (array)$box['page_route'];
+            // let's make sure $box['page_route'] is an array so the "foreach" will work.
+            $box['page_route'] = (array) $box['page_route'];
             foreach ($box['page_route'] as $route) {
                 if ($route != $this->_current_route) {
                     continue;
@@ -669,7 +634,6 @@ abstract class EE_Admin_Hooks extends EE_Base
             }
         }
     }
-
 
 
     /**
@@ -697,9 +661,9 @@ abstract class EE_Admin_Hooks extends EE_Base
     private function _add_metabox($args)
     {
         $current_screen = get_current_screen();
-        $screen_id      = is_object($current_screen) ? $current_screen->id : null;
-        $func           = isset($args['func']) ? $args['func'] : 'some_invalid_callback';
-        //set defaults
+        $screen_id = is_object($current_screen) ? $current_screen->id : null;
+        $func = isset($args['func']) ? $args['func'] : 'some_invalid_callback';
+        // set defaults
         $defaults = array(
             'func'          => $func,
             'id'            => $this->caller . '_' . $func . '_metabox',
@@ -711,7 +675,7 @@ abstract class EE_Admin_Hooks extends EE_Base
         );
         $args = wp_parse_args($args, $defaults);
         extract($args);
-        //make sure method exists
+        // make sure method exists
         if (! method_exists($this, $func)) {
             $msg[] = __('There is no corresponding method to display the metabox content', 'event_espresso') . '<br />';
             $msg[] = sprintf(
@@ -724,18 +688,17 @@ abstract class EE_Admin_Hooks extends EE_Base
             );
             throw new EE_Error(implode('||', $msg));
         }
-        //everything checks out so lets add the metabox
+        // everything checks out so lets add the metabox
         add_meta_box($id, $label, array($this, $func), $page, $context, $priority, $callback_args);
     }
-
 
 
     private function _remove_metabox($args)
     {
         $current_screen = get_current_screen();
-        $screen_id      = is_object($current_screen) ? $current_screen->id : null;
-        $func           = isset($args['func']) ? $args['func'] : 'some_invalid_callback';
-        //set defaults
+        $screen_id = is_object($current_screen) ? $current_screen->id : null;
+        $func = isset($args['func']) ? $args['func'] : 'some_invalid_callback';
+        // set defaults
         $defaults = array(
             'id'      => isset($args['id'])
                 ? $args['id']
@@ -746,11 +709,11 @@ abstract class EE_Admin_Hooks extends EE_Base
                   . $func
                   . '_metabox',
             'context' => 'default',
-            'screen'  => isset($args['screen']) ? $args['screen'] : $screen_id
+            'screen'  => isset($args['screen']) ? $args['screen'] : $screen_id,
         );
         $args = wp_parse_args($args, $defaults);
         extract($args);
-        //everything checks out so lets remove the box!
+        // everything checks out so lets remove the box!
         remove_meta_box($id, $screen, $context);
     }
 }
