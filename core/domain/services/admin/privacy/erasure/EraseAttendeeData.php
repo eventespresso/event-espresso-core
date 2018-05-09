@@ -55,7 +55,7 @@ class EraseAttendeeData implements PersonalDataEraserInterface
         $rows_updated = $this->attendee_model->update(
             array(
                 'ATT_fname' => esc_html__('Anonymous', 'event_espresso'),
-                'ATT_lname' => esc_html__('Anonymous', 'event_espresso'),
+                'ATT_lname' => '',
                 'ATT_email' => '',
                 'ATT_address' => '',
                 'ATT_address2' => '',
