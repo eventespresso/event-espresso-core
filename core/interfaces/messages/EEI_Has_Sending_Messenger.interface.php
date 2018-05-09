@@ -1,7 +1,4 @@
 <?php
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
-}
 
 /**
  * Has Sending Messenger Interface
@@ -11,12 +8,13 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @since      4.9.0
  * @author     Darren Ethier
  */
-interface EEI_Has_Sending_Messenger {
+interface EEI_Has_Sending_Messenger
+{
 
 
-	/**
-	 * Expect a EE_messenger object back that is serving as the sending messenger for a message.
-	 * @return EE_messenger
-	 */
-	public function sending_messenger();
+    /**
+     * Expect a EE_messenger object back that is serving as the sending messenger for a message.
+     * @return EE_messenger
+     */
+    public function sending_messenger();
 }

@@ -1,16 +1,5 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
 /**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package            Event Espresso
- * @ author                Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                    http://www.eventespresso.com
- * @ version            4.0
- * ------------------------------------------------------------------------
  * Post Meta Model
  * Model for accessing the wp core postmeta table. Generally it's better to use the
  * built-in wp functions directly, but this is useful if you want to use the EE models
@@ -26,10 +15,6 @@
  * @author                Michael Nelson
  * ------------------------------------------------------------------------
  */
-require_once(EE_MODELS . 'EEM_Base.model.php');
-
-
-
 class EEM_Post_Meta extends EEM_Base
 {
 
@@ -74,19 +59,15 @@ class EEM_Post_Meta extends EEM_Base
         );
         $this->_model_relations = array();
         foreach ($models_this_can_attach_to as $model) {
-            $this->_model_relations[$model] = new EE_Belongs_To_Relation();
+            $this->_model_relations[ $model ] = new EE_Belongs_To_Relation();
         }
         $this->_wp_core_model = true;
         foreach ($this->cap_contexts_to_cap_action_map() as $cap_context => $action) {
-            $this->_cap_restriction_generators[$cap_context] = new EE_Restriction_Generator_Meta(
+            $this->_cap_restriction_generators[ $cap_context ] = new EE_Restriction_Generator_Meta(
                 'meta_key',
                 'meta_value'
             );
         }
         parent::__construct($timezone);
     }
-
-
 }
-// End of file EEM_Post_Meta.model.php
-// Location: /includes/models/EEM_Post_Meta.model.php

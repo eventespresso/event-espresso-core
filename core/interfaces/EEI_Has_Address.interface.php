@@ -1,5 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Interface EEI_Has_Address
@@ -37,5 +36,3 @@ interface EEI_Has_Address
 
     public function zip();
 }
-// End of file EEI_Has_Address.interface.php
-// Location: core/interfaces/EEI_Has_Address.interface.php

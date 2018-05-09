@@ -1,5 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * For storing integers which can assume the value of INFINITY. They're stored in the DB as -1,
@@ -24,7 +23,7 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base
     }
 
 
-    function prepare_for_use_in_db($value_of_field_on_model_object)
+    public function prepare_for_use_in_db($value_of_field_on_model_object)
     {
         if ($value_of_field_on_model_object === EE_INF) {
             return EE_INF_IN_DB;
@@ -33,7 +32,7 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base
         }
     }
 
-    function prepare_for_set($value_inputted_for_field_on_model_object)
+    public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
         if ($value_inputted_for_field_on_model_object === EE_INF_IN_DB ||
             $value_inputted_for_field_on_model_object === EE_INF ||
@@ -46,7 +45,7 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base
         }
     }
 
-    function prepare_for_set_from_db($value_inputted_for_field_on_model_object)
+    public function prepare_for_set_from_db($value_inputted_for_field_on_model_object)
     {
         $intval = intval($value_inputted_for_field_on_model_object);
         if ($intval == EE_INF_IN_DB) {
@@ -65,7 +64,7 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base
      * @param string $schema input, symbol, text; or any string you want to show if the value equals EE_INF
      * @return string
      */
-    function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
+    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
     {
         if ($value_on_field_to_be_outputted === EE_INF) {
             switch ($schema) {

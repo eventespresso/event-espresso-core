@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Interface EEI_Address_Formatter
@@ -20,6 +17,3 @@ interface EEI_Address_Formatter
      */
     public function format($address, $address2, $city, $state, $zip, $country, $CNT_ISO);
 }
-
-// End of file EEI_Address_Formatter.interface.php
-// Location: core/interfaces/EEI_Address_Formatter.interface.php

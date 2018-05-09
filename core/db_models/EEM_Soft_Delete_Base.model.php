@@ -1,10 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-require_once(EE_MODELS . 'EEM_Base.model.php');
-
-
-
+<?php
 /**
  * EEM_Soft_Delete_Base
  * About this class: modifies parent EEM_Base's behaviour to make usage of soft-deletable models
@@ -58,8 +52,10 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
         if ($field) {
             return $field->get_name();
         } else {
-            throw new EE_Error(sprintf(__('We are trying to find the deleted flag field on %s, but none was found. Are you sure there is a field of type EE_Trashed_Flag_Field in %s constructor?',
-                'event_espresso'), get_class($this), get_class($this)));
+            throw new EE_Error(sprintf(__(
+                'We are trying to find the deleted flag field on %s, but none was found. Are you sure there is a field of type EE_Trashed_Flag_Field in %s constructor?',
+                'event_espresso'
+            ), get_class($this), get_class($this)));
         }
     }
 
@@ -136,7 +132,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
     protected function _alter_query_params_so_only_trashed_items_included($query_params)
     {
         $deletedFlagFieldName = $this->deleted_field_name();
-        $query_params[0][$deletedFlagFieldName] = true;
+        $query_params[0][ $deletedFlagFieldName ] = true;
         return $query_params;
     }
 
@@ -307,8 +303,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
         if (! $ID) {
             return false;
         }
-        if (
-        $this->delete_or_restore(
+        if ($this->delete_or_restore(
             $delete,
             $this->alter_query_params_to_restrict_by_ID($ID)
         )
@@ -333,7 +328,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      */
     public function delete($query_params = array(), $block_deletes = false)
     {
-        //no matter what, we WON'T block soft deletes.
+        // no matter what, we WON'T block soft deletes.
         return $this->delete_or_restore(true, $query_params);
     }
 
@@ -360,7 +355,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * @param array   $query_params like EEM_Base::get_all
      * @return boolean
      */
-    function delete_or_restore($delete = true, $query_params = array())
+    public function delete_or_restore($delete = true, $query_params = array())
     {
         $deletedFlagFieldName = $this->deleted_field_name();
         $query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);

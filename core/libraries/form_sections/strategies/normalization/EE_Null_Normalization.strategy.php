@@ -1,9 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
+<?php
 /**
  * EE_Null_Normalization
  * Replaces input with null. This is for inputs whose value should be totally ignored server-side
@@ -36,5 +31,4 @@ class EE_Null_Normalization extends EE_Normalization_Strategy_Base
     {
         return '';
     }
-
 }
