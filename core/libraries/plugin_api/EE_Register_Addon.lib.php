@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\RequiresDependencyMapInterface;
 use EventEspresso\core\domain\RequiresDomainInterface;
 use EventEspresso\core\exceptions\ExceptionLogger;
@@ -129,6 +130,8 @@ class EE_Register_Addon implements EEI_Plugin_API
      *                                                                  "1.0.0.rc.043" for a version in progress
      * @type string                   $main_file_path                   the full server path to the main file
      *                                                                  loaded directly by WP
+     * @type DomainInterface $domain                                    child class of
+     *                                                                  EventEspresso\core\domain\DomainBase
      * @type string                   $domain_fqcn                      Fully Qualified Class Name
      *                                                                  for the addon's Domain class
      *                                                                  (see EventEspresso\core\domain\Domain)
@@ -398,6 +401,10 @@ class EE_Register_Addon implements EEI_Plugin_API
             'main_file_path'        => isset($setup_args['main_file_path'])
                 ? (string) $setup_args['main_file_path']
                 : '',
+            // instance of \EventEspresso\core\domain\DomainInterface
+            'domain'                => isset($setup_args['domain']) && $setup_args['domain'] instanceof DomainInterface
+                ? $setup_args['domain']
+                : null,
             // Fully Qualified Class Name for the addon's Domain class
             'domain_fqcn'           => isset($setup_args['domain_fqcn'])
                 ? (string) $setup_args['domain_fqcn']
@@ -983,18 +990,29 @@ class EE_Register_Addon implements EEI_Plugin_API
         }
         // setter inject domain if required
         if ($addon instanceof RequiresDomainInterface
-            && self::$_settings[ $addon_name ]['domain_fqcn'] !== ''
             && $addon->domain() === null
         ) {
-            $addon->setDomain(
-                $loader->getShared(
+            // using supplied Domain object
+            $domain = self::$_settings[ $addon_name ]['domain'] instanceof DomainInterface
+                ? self::$_settings[ $addon_name ]['domain']
+                : null;
+            // or construct one using Domain FQCN
+            if ($domain === null && self::$_settings[ $addon_name ]['domain_fqcn'] !== '') {
+                $domain = $loader->getShared(
                     self::$_settings[ $addon_name ]['domain_fqcn'],
                     array(
-                        self::$_settings[ $addon_name ]['main_file_path'],
-                        self::$_settings[ $addon_name ]['version'],
+                        new EventEspresso\core\domain\values\FilePath(
+                            self::$_settings[ $addon_name ]['main_file_path']
+                        ),
+                        EventEspresso\core\domain\values\Version::fromString(
+                            self::$_settings[ $addon_name ]['version']
+                        ),
                     )
-                )
-            );
+                );
+            }
+            if ($domain instanceof DomainInterface) {
+                $addon->setDomain($domain);
+            }
         }
         $addon->set_name($addon_name);
         $addon->set_plugin_slug(self::$_settings[ $addon_name ]['plugin_slug']);

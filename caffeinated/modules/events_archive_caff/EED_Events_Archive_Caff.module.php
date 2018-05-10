@@ -1,19 +1,20 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  * EED_Events_Archive_Caff
  *
  * @package        Event Espresso
  * @subpackage     /modules/events_archive_caff/
  * @author         Brent Christensen
- *
- * ------------------------------------------------------------------------
  */
 class EED_Events_Archive_Caff extends EED_Events_Archive
 {
 
-
     /**
-     * @return EED_Events_Archive_Caff
+     * @return EED_Events_Archive_Caff|EED_Module
      */
     public static function instance()
     {
@@ -22,9 +23,8 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
 
 
     /**
-     *    set_hooks - for hooking into EE Core, other modules, etc
+     * set_hooks - for hooking into EE Core, other modules, etc
      *
-     * @access    public
      * @return    void
      */
     public static function set_hooks()
@@ -68,9 +68,8 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
 
 
     /**
-     *    run - initial module setup
+     * run - initial module setup
      *
-     * @access    public
      * @param    WP $WP
      * @return    void
      */
@@ -80,11 +79,11 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
 
 
     /**
-     *    template_settings_form
-     *
-     * @access    public
-     * @static
-     * @return    void
+     * @return void
+     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function template_settings_form()
     {
@@ -100,10 +99,14 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
         // first just grab the template settings
         $config = EE_Registry::instance()->CFG->template_settings;
         // then if the Event Archive config is valid, use that, else create a new one
-        $config = isset($config->EED_Events_Archive) && $config->EED_Events_Archive instanceof EE_Events_Archive_Config
+        $config = $config instanceof EE_Template_Config
+                  && $config->EED_Events_Archive instanceof EE_Events_Archive_Config
             ? $config->EED_Events_Archive
             : new EE_Events_Archive_Config();
-        $config = apply_filters('FHEE__EED_Events_Archive__template_settings_form__event_list_config', $config);
+        $config = apply_filters(
+            'FHEE__EED_Events_Archive__template_settings_form__event_list_config',
+            $config
+        );
         $config->display_status_banner = isset($config->display_status_banner)
             ? $config->display_status_banner
             : 0;
@@ -155,52 +158,56 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
 
 
     /**
-     *    update_template_settings
-     *
-     * @access    public
-     * @param    EE_Template_Config $CFG
-     * @param    array              $REQ
-     * @return    EE_Events_Archive_Config
+     * @param EE_Template_Config $CFG
+     * @param array              $REQ
+     * @return EE_Template_Config
      */
     public static function update_template_settings($CFG, $REQ)
     {
-        $config = new EE_Events_Archive_Config();
+        /** @var EE_Events_Archive_Config $config */
+        $config = $CFG->EED_Events_Archive instanceof EE_Events_Archive_Config
+            ? $CFG->EED_Events_Archive
+            : new EE_Events_Archive_Config();
         // unless we are resetting the config...
         if (! isset($REQ['EED_Events_Archive_reset_event_list_settings'])
             || absint($REQ['EED_Events_Archive_reset_event_list_settings']) !== 1
         ) {
-            $config->display_status_banner = isset($REQ['EED_Events_Archive_display_status_banner']) ? absint(
-                $REQ['EED_Events_Archive_display_status_banner']
-            ) : 0;
-            $config->display_description = isset($REQ['EED_Events_Archive_display_description']) ? absint(
-                $REQ['EED_Events_Archive_display_description']
-            ) : 1;
-            $config->display_ticket_selector = isset($REQ['EED_Events_Archive_display_ticket_selector']) ? absint(
-                $REQ['EED_Events_Archive_display_ticket_selector']
-            ) : 0;
-            $config->display_datetimes = isset($REQ['EED_Events_Archive_display_datetimes']) ? absint(
-                $REQ['EED_Events_Archive_display_datetimes']
-            ) : 1;
-            $config->display_venue = isset($REQ['EED_Events_Archive_display_venue']) ? absint(
-                $REQ['EED_Events_Archive_display_venue']
-            ) : 0;
-            $config->display_expired_events = isset($REQ['EED_Events_Archive_display_expired_events']) ? absint(
-                $REQ['EED_Events_Archive_display_expired_events']
-            ) : 0;
-            $config->use_sortable_display_order = isset($REQ['EED_Events_Archive_use_sortable_display_order']) ? absint(
-                $REQ['EED_Events_Archive_use_sortable_display_order']
-            ) : 0;
-            $config->display_order_event = isset($CFG->EED_Events_Archive->display_order_event) && $config->use_sortable_display_order
-                ? $CFG->EED_Events_Archive->display_order_event
+            $config->display_status_banner = isset($REQ['EED_Events_Archive_display_status_banner'])
+                ? absint($REQ['EED_Events_Archive_display_status_banner'])
+                : 0;
+            $config->display_description = isset($REQ['EED_Events_Archive_display_description'])
+                ? absint($REQ['EED_Events_Archive_display_description'])
+                : 1;
+            $config->display_ticket_selector = isset($REQ['EED_Events_Archive_display_ticket_selector'])
+                ? absint($REQ['EED_Events_Archive_display_ticket_selector'])
+                : 0;
+            $config->display_datetimes = isset($REQ['EED_Events_Archive_display_datetimes'])
+                ? absint($REQ['EED_Events_Archive_display_datetimes'])
+                : 1;
+            $config->display_venue = isset($REQ['EED_Events_Archive_display_venue'])
+                ? absint($REQ['EED_Events_Archive_display_venue'])
+                : 0;
+            $config->display_expired_events = isset($REQ['EED_Events_Archive_display_expired_events'])
+                ? absint($REQ['EED_Events_Archive_display_expired_events'])
+                : 0;
+            $config->use_sortable_display_order = isset($REQ['EED_Events_Archive_use_sortable_display_order'])
+                ? absint($REQ['EED_Events_Archive_use_sortable_display_order'])
+                : 0;
+            $config->display_order_event = $config->display_order_event !== null
+                                           && $config->use_sortable_display_order
+                ? $config->display_order_event
                 : EED_Events_Archive::EVENT_DETAILS_PRIORITY;
-            $config->display_order_datetimes = isset($CFG->EED_Events_Archive->display_order_datetimes) && $config->use_sortable_display_order
-                ? $CFG->EED_Events_Archive->display_order_datetimes
+            $config->display_order_datetimes = $config->display_order_datetimes !== null
+                                               && $config->use_sortable_display_order
+                ? $config->display_order_datetimes
                 : EED_Events_Archive::EVENT_DATETIMES_PRIORITY;
-            $config->display_order_tickets = isset($CFG->EED_Events_Archive->display_order_tickets) && $config->use_sortable_display_order
-                ? $CFG->EED_Events_Archive->display_order_tickets
+            $config->display_order_tickets = $config->display_order_tickets !== null
+                                             && $config->use_sortable_display_order
+                ? $config->display_order_tickets
                 : EED_Events_Archive::EVENT_TICKETS_PRIORITY;
-            $config->display_order_venue = isset($CFG->EED_Events_Archive->display_order_venue) && $config->use_sortable_display_order
-                ? $CFG->EED_Events_Archive->display_order_venue
+            $config->display_order_venue = $config->display_order_venue !== null
+                                           && $config->use_sortable_display_order
+                ? $config->display_order_venue
                 : EED_Events_Archive::EVENT_VENUES_PRIORITY;
         }
         $CFG->EED_Events_Archive = $config;
@@ -210,13 +217,15 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
 
 
     /**
-     * update_event_single_order
-     *
-     * @access    public
-     * @return    void
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function update_event_archive_order()
     {
+        /** @var EE_Config $config */
+        $config = EE_Registry::instance()->CFG;
         $config_saved = false;
         $template_parts = sanitize_text_field($_POST['elements']);
         if (! empty($template_parts)) {
@@ -224,15 +233,17 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
             foreach ($template_parts as $key => $template_part) {
                 $template_part = "display_order_$template_part";
                 $priority = ($key * 10) + EED_Events_Archive::EVENT_DETAILS_PRIORITY;
-                if (property_exists(
-                    EE_Registry::instance()->CFG->template_settings->EED_Events_Archive,
-                    $template_part
-                )) {
-                    EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->{$template_part} = $priority;
+                if ($config->template_settings->EED_Events_Archive instanceof EE_Events_Archive_Config
+                    && property_exists(
+                        $config->template_settings->EED_Events_Archive,
+                        $template_part
+                    )
+                ) {
+                    $config->template_settings->EED_Events_Archive->{$template_part} = $priority;
                 }
                 do_action("AHEE__EED_Events_Archive__update_event_archive_order__$template_part", $priority);
             }
-            $config_saved = EE_Registry::instance()->CFG->update_espresso_config(false, false);
+            $config_saved = $config->update_espresso_config(false, false);
         }
         if ($config_saved) {
             EE_Error::add_success(__('Display Order has been successfully updated.', 'event_espresso'));
