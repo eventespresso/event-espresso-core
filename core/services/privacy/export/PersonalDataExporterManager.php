@@ -34,6 +34,7 @@ class PersonalDataExporterManager
 
     /**
      * Adds EE's exporters to the list of WP exporters
+     *
      * @param array $exporters
      * @return array
      */
@@ -42,9 +43,9 @@ class PersonalDataExporterManager
         // load all the privacy policy stuff
         // add post policy text
         foreach ($this->loadPrivateDataExporterCollection() as $exporter) {
-            $exporters[get_class($exporter)] = array(
+            $exporters[ get_class($exporter) ] = array(
                 'exporter_friendly_name' => $exporter->name(),
-                'callback' => array($exporter,'export')
+                'callback'               => array($exporter, 'export'),
             );
         }
         return $exporters;
