@@ -40,9 +40,9 @@ class PersonalDataEraserManager
         // load all the privacy policy stuff
         // add post policy text
         foreach ($this->loadPrivateDataEraserCollection() as $eraser) {
-            $erasers[get_class($eraser)] = array(
+            $erasers[ get_class($eraser) ] = array(
                 'eraser_friendly_name' => $eraser->name(),
-                'callback' => array($eraser,'erase')
+                'callback'             => array($eraser, 'erase'),
             );
         }
         return $erasers;
@@ -62,7 +62,7 @@ class PersonalDataEraserManager
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
-                // collection name
+            // collection name
                 'privacy_erasers',
                 // collection interface
                 'EventEspresso\core\services\privacy\erasure\PersonalDataEraserInterface',
