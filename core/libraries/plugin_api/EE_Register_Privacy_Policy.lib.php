@@ -21,7 +21,6 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
     protected static $privacy_policies = array();
 
 
-
     /*
      * @param string $plugin_id
      * @param array $FQNSs can be the fully qualified namespaces each containing only privacy policies,
@@ -29,7 +28,7 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
      */
     public static function register($plugin_id = null, $FQCNs = array())
     {
-        self::$privacy_policies[$plugin_id] = $FQCNs;
+        self::$privacy_policies[ $plugin_id ] = $FQCNs;
         // add to list of modules to be registered
         add_filter(
             'FHEE__EventEspresso_core_services_privacy_policy_PrivacyPolicyManager__privacy_policies',
@@ -38,15 +37,13 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
     }
 
 
-
     /**
      * @param null $ID
      */
     public static function deregister($ID = null)
     {
-        unset(self::$privacy_policies[$ID]);
+        unset(self::$privacy_policies[ $ID ]);
     }
-
 
 
     /**
@@ -65,8 +62,6 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
         }
         return $privacy_policies;
     }
-
-
 }
 // End of file EE_Register_Privacy_Policy.lib.php
 // Location: ${NAMESPACE}/EE_Register_Privacy_Policy.lib.php
