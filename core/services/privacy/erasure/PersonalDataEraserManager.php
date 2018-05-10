@@ -40,7 +40,7 @@ class PersonalDataEraserManager
         // load all the privacy policy stuff
         // add post policy text
         foreach ($this->loadPrivateDataEraserCollection() as $eraser) {
-            $erasers[] = array(
+            $erasers[get_class($eraser)] = array(
                 'eraser_friendly_name' => $eraser->name(),
                 'callback' => array($eraser,'erase')
             );
