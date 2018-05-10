@@ -942,11 +942,6 @@ class EE_Register_Addon implements EEI_Plugin_API
     /**
      * @param string $addon_name
      * @return void
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws DomainException
-     * @throws EE_Error
      */
     private static function registerPrivacyPolicies($addon_name)
     {
