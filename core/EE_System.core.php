@@ -27,7 +27,6 @@ use EventEspresso\core\services\request\RequestInterface;
 final class EE_System implements ResettableInterface
 {
 
-
     /**
      * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation.
      * So examples of this would be a normal GET request on the frontend or backend, or a POST, etc
@@ -73,7 +72,6 @@ final class EE_System implements ResettableInterface
      * option prefix for recording the activation history (like core's "espresso_db_update") of addons
      */
     const addon_activation_history_option_prefix = 'ee_addon_activation_history_';
-
 
     /**
      * @var EE_System $_instance

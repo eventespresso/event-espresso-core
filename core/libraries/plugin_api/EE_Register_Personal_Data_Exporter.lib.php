@@ -21,7 +21,6 @@ class EE_Register_Personal_Data_Exporter implements EEI_Plugin_API
     protected static $exporters = array();
 
 
-
     /*
      * @param string $plugin_id
      * @param array $FQNSs can be the fully qualified namespaces each containing only privacy policies,
@@ -29,7 +28,7 @@ class EE_Register_Personal_Data_Exporter implements EEI_Plugin_API
      */
     public static function register($plugin_id = null, $FQCNs = array())
     {
-        self::$exporters[$plugin_id] = $FQCNs;
+        self::$exporters[ $plugin_id ] = $FQCNs;
         // add to list of modules to be registered
         add_filter(
             'FHEE__EventEspresso_core_services_privacy_export_PersonalDataExporterManager__exporters',
@@ -38,15 +37,13 @@ class EE_Register_Personal_Data_Exporter implements EEI_Plugin_API
     }
 
 
-
     /**
      * @param null $ID
      */
     public static function deregister($ID = null)
     {
-        unset(self::$exporters[$ID]);
+        unset(self::$exporters[ $ID ]);
     }
-
 
 
     /**
@@ -65,8 +62,6 @@ class EE_Register_Personal_Data_Exporter implements EEI_Plugin_API
         }
         return $exporters;
     }
-
-
 }
 // End of file EE_Register_Personal_Data_Exporter.lib.php
 // Location: ${NAMESPACE}/EE_Register_Personal_Data_Exporter.lib.php

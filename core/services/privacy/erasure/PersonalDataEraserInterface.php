@@ -14,11 +14,15 @@ namespace EventEspresso\core\services\privacy\erasure;
  */
 interface PersonalDataEraserInterface
 {
+
     /**
      * Gets a translated string name for the data eraser
+     *
      * @return string
      */
     public function name();
+
+
     /**
      * Erases a "page" of personal user data
      *
@@ -30,8 +34,6 @@ interface PersonalDataEraserInterface
      *               }
      */
     public function erase($email_address, $page = 1);
-
-
 }
 // End of file PersonalDataEraserInterface.php
 // Location: EventEspresso\core\domain\services\admin/PersonalDataEraserInterface.php

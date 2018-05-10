@@ -15,10 +15,12 @@ use EventEspresso\core\services\privacy\erasure\PersonalDataEraserInterface;
  */
 class EraseAttendeeData implements PersonalDataEraserInterface
 {
+
     /**
      * @var EEM_Attendee
      */
     protected $attendee_model;
+
 
     /**
      * EraseAttendeeData constructor.
@@ -30,6 +32,7 @@ class EraseAttendeeData implements PersonalDataEraserInterface
         $this->attendee_model = $attendee_model;
     }
 
+
     /**
      * Gets a translated string name for the data eraser
      *
@@ -40,6 +43,7 @@ class EraseAttendeeData implements PersonalDataEraserInterface
         return esc_html__('Event Espresso Attendee Data', 'event_espresso');
     }
 
+
     /**
      * Erases a "page" of personal user data
      *
@@ -49,33 +53,34 @@ class EraseAttendeeData implements PersonalDataEraserInterface
      * @type array   $messages       values are messages to show
      * @type boolean $done           whether this eraser is done or has more pages
      *               }
+     * @throws \EE_Error
      */
     public function erase($email_address, $page = 1)
     {
         $rows_updated = $this->attendee_model->update(
             array(
-                'ATT_fname' => esc_html__('Anonymous', 'event_espresso'),
-                'ATT_lname' => '',
-                'ATT_email' => '',
-                'ATT_address' => '',
+                'ATT_fname'    => esc_html__('Anonymous', 'event_espresso'),
+                'ATT_lname'    => '',
+                'ATT_email'    => '',
+                'ATT_address'  => '',
                 'ATT_address2' => '',
-                'ATT_city' => '',
-                'STA_ID' => 0,
-                'CNT_ISO' => '',
-                'ATT_zip' => '',
+                'ATT_city'     => '',
+                'STA_ID'       => 0,
+                'CNT_ISO'      => '',
+                'ATT_zip'      => '',
             ),
             array(
                 array(
                     'ATT_email' => $email_address,
-                )
+                ),
             )
         );
 
         return array(
-            'items_removed' => (bool)$rows_updated,
+            'items_removed'  => (bool) $rows_updated,
             'items_retained' => false, // always false in this example
-            'messages' => array(),
-            'done' => true,
+            'messages'       => array(),
+            'done'           => true,
         );
     }
 }
