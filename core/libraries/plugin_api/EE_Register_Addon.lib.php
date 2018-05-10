@@ -53,7 +53,6 @@ class EE_Register_Addon implements EEI_Plugin_API
     );
 
 
-
     /**
      * We should always be comparing core to a version like '4.3.0.rc.000',
      * not just '4.3.0'.
@@ -84,7 +83,6 @@ class EE_Register_Addon implements EEI_Plugin_API
     }
 
 
-
     /**
      * Returns whether or not the min core version requirement of the addon is met
      *
@@ -102,7 +100,6 @@ class EE_Register_Addon implements EEI_Plugin_API
             '>='
         );
     }
-
 
 
     /**
@@ -236,15 +233,15 @@ class EE_Register_Addon implements EEI_Plugin_API
      *                                                                  namespace.
      *                                                                  }
      *                                                                  }
-     * @type string $privacy_policies                                   FQNSs (namespaces, each of which contains only
-     *                                                                  privacy policy classes) or FQCNs (specific classnames
-     *                                                                  of privacy policy classes)
-     * @type string $personal_data_exporters                            FQNSs (namespaces, each of which contains only
-     *                                                                  privacy policy classes) or FQCNs (specific classnames
-     *                                                                  of privacy policy classes)
-     * @type string $personal_data_erasers                              FQNSs (namespaces, each of which contains only
-     *                                                                  privacy policy classes) or FQCNs (specific classnames
-     *                                                                  of privacy policy classes)
+     * @type string                   $privacy_policies                 FQNSs (namespaces, each of which contains only
+     *                                                                  privacy policy classes) or FQCNs (specific
+     *                                                                  classnames of privacy policy classes)
+     * @type string                   $personal_data_exporters          FQNSs (namespaces, each of which contains only
+     *                                                                  privacy policy classes) or FQCNs (specific
+     *                                                                  classnames of privacy policy classes)
+     * @type string                   $personal_data_erasers            FQNSs (namespaces, each of which contains only
+     *                                                                  privacy policy classes) or FQCNs (specific
+     *                                                                  classnames of privacy policy classes)
      * @return void
      * @throws DomainException
      * @throws EE_Error
@@ -311,7 +308,6 @@ class EE_Register_Addon implements EEI_Plugin_API
     }
 
 
-
     /**
      * @param string $addon_name
      * @param array  $setup_args
@@ -355,7 +351,6 @@ class EE_Register_Addon implements EEI_Plugin_API
     }
 
 
-
     /**
      * @param string $addon_name
      * @param array  $setup_args
@@ -378,7 +373,6 @@ class EE_Register_Addon implements EEI_Plugin_API
     }
 
 
-
     /**
      * @param string $class_name
      * @param array  $setup_args
@@ -392,114 +386,114 @@ class EE_Register_Addon implements EEI_Plugin_API
             'class_name'            => $class_name,
             // the addon slug for use in URLs, etc
             'plugin_slug'           => isset($setup_args['plugin_slug'])
-                ? (string)$setup_args['plugin_slug']
+                ? (string) $setup_args['plugin_slug']
                 : '',
             // page slug to be used when generating the "Settings" link on the WP plugin page
-            'plugin_action_slug' => isset($setup_args['plugin_action_slug'])
+            'plugin_action_slug'    => isset($setup_args['plugin_action_slug'])
                 ? (string) $setup_args['plugin_action_slug']
                 : '',
             // the "software" version for the addon
             'version'               => isset($setup_args['version'])
-                ? (string)$setup_args['version']
+                ? (string) $setup_args['version']
                 : '',
             // the minimum version of EE Core that the addon will work with
             'min_core_version'      => isset($setup_args['min_core_version'])
-                ? (string)$setup_args['min_core_version']
+                ? (string) $setup_args['min_core_version']
                 : '',
             // the minimum version of WordPress that the addon will work with
             'min_wp_version'        => isset($setup_args['min_wp_version'])
-                ? (string)$setup_args['min_wp_version']
+                ? (string) $setup_args['min_wp_version']
                 : EE_MIN_WP_VER_REQUIRED,
             // full server path to main file (file loaded directly by WP)
             'main_file_path'        => isset($setup_args['main_file_path'])
-                ? (string)$setup_args['main_file_path']
+                ? (string) $setup_args['main_file_path']
                 : '',
             // Fully Qualified Class Name for the addon's Domain class
             'domain_fqcn'           => isset($setup_args['domain_fqcn'])
-                ? (string)$setup_args['domain_fqcn']
+                ? (string) $setup_args['domain_fqcn']
                 : '',
             // path to folder containing files for integrating with the EE core admin and/or setting up EE admin pages
             'admin_path'            => isset($setup_args['admin_path'])
-                ? (string)$setup_args['admin_path'] : '',
+                ? (string) $setup_args['admin_path'] : '',
             // a method to be called when the EE Admin is first invoked, can be used for hooking into any admin page
             'admin_callback'        => isset($setup_args['admin_callback'])
-                ? (string)$setup_args['admin_callback']
+                ? (string) $setup_args['admin_callback']
                 : '',
             // the section name for this addon's configuration settings section (defaults to "addons")
             'config_section'        => isset($setup_args['config_section'])
-                ? (string)$setup_args['config_section']
+                ? (string) $setup_args['config_section']
                 : 'addons',
             // the class name for this addon's configuration settings object
             'config_class'          => isset($setup_args['config_class'])
                 ? (string) $setup_args['config_class'] : '',
             // the name given to the config for this addons' configuration settings object (optional)
             'config_name'           => isset($setup_args['config_name'])
-                ? (string)$setup_args['config_name'] : '',
+                ? (string) $setup_args['config_name'] : '',
             // an array of "class names" => "full server paths" for any classes that might be invoked by the addon
             'autoloader_paths'      => isset($setup_args['autoloader_paths'])
-                ? (array)$setup_args['autoloader_paths']
+                ? (array) $setup_args['autoloader_paths']
                 : array(),
             // an array of  "full server paths" for any folders containing classes that might be invoked by the addon
             'autoloader_folders'    => isset($setup_args['autoloader_folders'])
-                ? (array)$setup_args['autoloader_folders']
+                ? (array) $setup_args['autoloader_folders']
                 : array(),
             // array of full server paths to any EE_DMS data migration scripts used by the addon.
             // The key should be the EE_Addon class name that this set of data migration scripts belongs to.
             // If the EE_Addon class is namespaced, then this needs to be the Fully Qualified Class Name
             'dms_paths'             => isset($setup_args['dms_paths'])
-                ? (array)$setup_args['dms_paths']
+                ? (array) $setup_args['dms_paths']
                 : array(),
             // array of full server paths to any EED_Modules used by the addon
             'module_paths'          => isset($setup_args['module_paths'])
-                ? (array)$setup_args['module_paths']
+                ? (array) $setup_args['module_paths']
                 : array(),
             // array of full server paths to any EES_Shortcodes used by the addon
             'shortcode_paths'       => isset($setup_args['shortcode_paths'])
-                ? (array)$setup_args['shortcode_paths']
+                ? (array) $setup_args['shortcode_paths']
                 : array(),
             'shortcode_fqcns'       => isset($setup_args['shortcode_fqcns'])
-                ? (array)$setup_args['shortcode_fqcns']
+                ? (array) $setup_args['shortcode_fqcns']
                 : array(),
             // array of full server paths to any WP_Widgets used by the addon
             'widget_paths'          => isset($setup_args['widget_paths'])
-                ? (array)$setup_args['widget_paths']
+                ? (array) $setup_args['widget_paths']
                 : array(),
             // array of PUE options used by the addon
             'pue_options'           => isset($setup_args['pue_options'])
-                ? (array)$setup_args['pue_options']
+                ? (array) $setup_args['pue_options']
                 : array(),
             'message_types'         => isset($setup_args['message_types'])
-                ? (array)$setup_args['message_types']
+                ? (array) $setup_args['message_types']
                 : array(),
             'capabilities'          => isset($setup_args['capabilities'])
-                ? (array)$setup_args['capabilities']
+                ? (array) $setup_args['capabilities']
                 : array(),
             'capability_maps'       => isset($setup_args['capability_maps'])
-                ? (array)$setup_args['capability_maps']
+                ? (array) $setup_args['capability_maps']
                 : array(),
             'model_paths'           => isset($setup_args['model_paths'])
-                ? (array)$setup_args['model_paths']
+                ? (array) $setup_args['model_paths']
                 : array(),
             'class_paths'           => isset($setup_args['class_paths'])
-                ? (array)$setup_args['class_paths']
+                ? (array) $setup_args['class_paths']
                 : array(),
             'model_extension_paths' => isset($setup_args['model_extension_paths'])
-                ? (array)$setup_args['model_extension_paths']
+                ? (array) $setup_args['model_extension_paths']
                 : array(),
             'class_extension_paths' => isset($setup_args['class_extension_paths'])
-                ? (array)$setup_args['class_extension_paths']
+                ? (array) $setup_args['class_extension_paths']
                 : array(),
             'custom_post_types'     => isset($setup_args['custom_post_types'])
-                ? (array)$setup_args['custom_post_types']
+                ? (array) $setup_args['custom_post_types']
                 : array(),
             'custom_taxonomies'     => isset($setup_args['custom_taxonomies'])
-                ? (array)$setup_args['custom_taxonomies']
+                ? (array) $setup_args['custom_taxonomies']
                 : array(),
             'payment_method_paths'  => isset($setup_args['payment_method_paths'])
-                ? (array)$setup_args['payment_method_paths']
+                ? (array) $setup_args['payment_method_paths']
                 : array(),
             'default_terms'         => isset($setup_args['default_terms'])
-                ? (array)$setup_args['default_terms']
+                ? (array) $setup_args['default_terms']
                 : array(),
             // if not empty, inserts a new table row after this plugin's row on the WP Plugins page
             // that can be used for adding upgrading/marketing info
@@ -510,10 +504,10 @@ class EE_Register_Addon implements EEI_Plugin_API
                 $setup_args['namespace']['FQNS'],
                 $setup_args['namespace']['DIR']
             )
-                ? (array)$setup_args['namespace']
+                ? (array) $setup_args['namespace']
                 : array(),
             'privacy_policies'      => isset($setup_args['privacy_policies'])
-                ? (array)$setup_args['privacy_policies']
+                ? (array) $setup_args['privacy_policies']
                 : '',
         );
         // if plugin_action_slug is NOT set, but an admin page path IS set,
@@ -528,7 +522,6 @@ class EE_Register_Addon implements EEI_Plugin_API
     }
 
 
-
     /**
      * @param string $addon_name
      * @param array  $addon_settings
@@ -541,7 +534,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         // check whether this addon version is compatible with EE core
         if (isset(EE_Register_Addon::$_incompatible_addons[ $addon_name ])
             && ! self::_meets_min_core_version_requirement(
-                EE_Register_Addon::$_incompatible_addons[$addon_name],
+                EE_Register_Addon::$_incompatible_addons[ $addon_name ],
                 $addon_settings['version']
             )
         ) {
@@ -552,7 +545,7 @@ class EE_Register_Addon implements EEI_Plugin_API
                 ),
                 $addon_name,
                 '<br />',
-                EE_Register_Addon::$_incompatible_addons[$addon_name],
+                EE_Register_Addon::$_incompatible_addons[ $addon_name ],
                 '<span style="font-weight: bold; color: #D54E21;">',
                 '</span><br />'
             );
@@ -599,7 +592,6 @@ class EE_Register_Addon implements EEI_Plugin_API
     }
 
 
-
     /**
      * if plugin update engine is being used for auto-updates,
      * then let's set that up now before going any further so that ALL addons can be updated
@@ -613,18 +605,18 @@ class EE_Register_Addon implements EEI_Plugin_API
     private static function _parse_pue_options($addon_name, $class_name, array $setup_args)
     {
         if (! empty($setup_args['pue_options'])) {
-            self::$_settings[$addon_name]['pue_options'] = array(
+            self::$_settings[ $addon_name ]['pue_options'] = array(
                 'pue_plugin_slug' => isset($setup_args['pue_options']['pue_plugin_slug'])
-                    ? (string)$setup_args['pue_options']['pue_plugin_slug']
+                    ? (string) $setup_args['pue_options']['pue_plugin_slug']
                     : 'espresso_' . strtolower($class_name),
                 'plugin_basename' => isset($setup_args['pue_options']['plugin_basename'])
-                    ? (string)$setup_args['pue_options']['plugin_basename']
+                    ? (string) $setup_args['pue_options']['plugin_basename']
                     : plugin_basename($setup_args['main_file_path']),
                 'checkPeriod'     => isset($setup_args['pue_options']['checkPeriod'])
-                    ? (string)$setup_args['pue_options']['checkPeriod']
+                    ? (string) $setup_args['pue_options']['checkPeriod']
                     : '24',
                 'use_wp_update'   => isset($setup_args['pue_options']['use_wp_update'])
-                    ? (string)$setup_args['pue_options']['use_wp_update']
+                    ? (string) $setup_args['pue_options']['use_wp_update']
                     : false,
             );
             add_action(
@@ -633,7 +625,6 @@ class EE_Register_Addon implements EEI_Plugin_API
             );
         }
     }
-
 
 
     /**
@@ -657,7 +648,6 @@ class EE_Register_Addon implements EEI_Plugin_API
     }
 
 
-
     /**
      * @param string $addon_name
      * @param array  $addon_settings
@@ -671,7 +661,9 @@ class EE_Register_Addon implements EEI_Plugin_API
     private static function _addon_activation($addon_name, array $addon_settings)
     {
         // this is an activation request
-        if (did_action('activate_plugin')) {// to find if THIS is the addon that was activated, just check if we have already registered it or not
+        if (did_action(
+            'activate_plugin'
+        )) {// to find if THIS is the addon that was activated, just check if we have already registered it or not
             // (as the newly-activated addon wasn't around the first time addons were registered).
             // Note: the presence of pue_options in the addon registration options will initialize the $_settings
             // property for the add-on, but the add-on is only partially initialized.  Hence, the additional check.
@@ -705,14 +697,13 @@ class EE_Register_Addon implements EEI_Plugin_API
             );
         }
         // make sure addon settings are set correctly without overwriting anything existing
-        if (isset(self::$_settings[$addon_name])) {
-            self::$_settings[$addon_name] += $addon_settings;
+        if (isset(self::$_settings[ $addon_name ])) {
+            self::$_settings[ $addon_name ] += $addon_settings;
         } else {
-            self::$_settings[$addon_name] = $addon_settings;
+            self::$_settings[ $addon_name ] = $addon_settings;
         }
         return false;
     }
-
 
 
     /**
@@ -722,18 +713,17 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _setup_autoloaders($addon_name)
     {
-        if (! empty(self::$_settings[$addon_name]['autoloader_paths'])) {
+        if (! empty(self::$_settings[ $addon_name ]['autoloader_paths'])) {
             // setup autoloader for single file
-            EEH_Autoloader::instance()->register_autoloader(self::$_settings[$addon_name]['autoloader_paths']);
+            EEH_Autoloader::instance()->register_autoloader(self::$_settings[ $addon_name ]['autoloader_paths']);
         }
         // setup autoloaders for folders
-        if (! empty(self::$_settings[$addon_name]['autoloader_folders'])) {
-            foreach ((array)self::$_settings[$addon_name]['autoloader_folders'] as $autoloader_folder) {
+        if (! empty(self::$_settings[ $addon_name ]['autoloader_folders'])) {
+            foreach ((array) self::$_settings[ $addon_name ]['autoloader_folders'] as $autoloader_folder) {
                 EEH_Autoloader::register_autoloaders_for_each_file_in_folder($autoloader_folder);
             }
         }
     }
-
 
 
     /**
@@ -752,8 +742,8 @@ class EE_Register_Addon implements EEI_Plugin_API
             EE_Register_Model::register(
                 $addon_name,
                 array(
-                    'model_paths' => self::$_settings[$addon_name]['model_paths'],
-                    'class_paths' => self::$_settings[$addon_name]['class_paths'],
+                    'model_paths' => self::$_settings[ $addon_name ]['model_paths'],
+                    'class_paths' => self::$_settings[ $addon_name ]['class_paths'],
                 )
             );
         }
@@ -764,13 +754,12 @@ class EE_Register_Addon implements EEI_Plugin_API
             EE_Register_Model_Extensions::register(
                 $addon_name,
                 array(
-                    'model_extension_paths' => self::$_settings[$addon_name]['model_extension_paths'],
-                    'class_extension_paths' => self::$_settings[$addon_name]['class_extension_paths'],
+                    'model_extension_paths' => self::$_settings[ $addon_name ]['model_extension_paths'],
+                    'class_extension_paths' => self::$_settings[ $addon_name ]['class_extension_paths'],
                 )
             );
         }
     }
-
 
 
     /**
@@ -781,14 +770,13 @@ class EE_Register_Addon implements EEI_Plugin_API
     private static function _register_data_migration_scripts($addon_name)
     {
         // setup DMS
-        if (! empty(self::$_settings[$addon_name]['dms_paths'])) {
+        if (! empty(self::$_settings[ $addon_name ]['dms_paths'])) {
             EE_Register_Data_Migration_Scripts::register(
                 $addon_name,
-                array('dms_paths' => self::$_settings[$addon_name]['dms_paths'])
+                array('dms_paths' => self::$_settings[ $addon_name ]['dms_paths'])
             );
         }
     }
-
 
 
     /**
@@ -799,17 +787,16 @@ class EE_Register_Addon implements EEI_Plugin_API
     private static function _register_config($addon_name)
     {
         // if config_class is present let's register config.
-        if (! empty(self::$_settings[$addon_name]['config_class'])) {
+        if (! empty(self::$_settings[ $addon_name ]['config_class'])) {
             EE_Register_Config::register(
-                self::$_settings[$addon_name]['config_class'],
+                self::$_settings[ $addon_name ]['config_class'],
                 array(
-                    'config_section' => self::$_settings[$addon_name]['config_section'],
-                    'config_name'    => self::$_settings[$addon_name]['config_name'],
+                    'config_section' => self::$_settings[ $addon_name ]['config_section'],
+                    'config_name'    => self::$_settings[ $addon_name ]['config_name'],
                 )
             );
         }
     }
-
 
 
     /**
@@ -819,14 +806,13 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _register_admin_pages($addon_name)
     {
-        if (! empty(self::$_settings[$addon_name]['admin_path'])) {
+        if (! empty(self::$_settings[ $addon_name ]['admin_path'])) {
             EE_Register_Admin_Page::register(
                 $addon_name,
-                array('page_path' => self::$_settings[$addon_name]['admin_path'])
+                array('page_path' => self::$_settings[ $addon_name ]['admin_path'])
             );
         }
     }
-
 
 
     /**
@@ -836,14 +822,13 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _register_modules($addon_name)
     {
-        if (! empty(self::$_settings[$addon_name]['module_paths'])) {
+        if (! empty(self::$_settings[ $addon_name ]['module_paths'])) {
             EE_Register_Module::register(
                 $addon_name,
-                array('module_paths' => self::$_settings[$addon_name]['module_paths'])
+                array('module_paths' => self::$_settings[ $addon_name ]['module_paths'])
             );
         }
     }
-
 
 
     /**
@@ -853,23 +838,22 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _register_shortcodes($addon_name)
     {
-        if (! empty(self::$_settings[$addon_name]['shortcode_paths'])
-            || ! empty(self::$_settings[$addon_name]['shortcode_fqcns'])
+        if (! empty(self::$_settings[ $addon_name ]['shortcode_paths'])
+            || ! empty(self::$_settings[ $addon_name ]['shortcode_fqcns'])
         ) {
             EE_Register_Shortcode::register(
                 $addon_name,
                 array(
-                    'shortcode_paths' => isset(self::$_settings[$addon_name]['shortcode_paths'])
-                        ? self::$_settings[$addon_name]['shortcode_paths']
+                    'shortcode_paths' => isset(self::$_settings[ $addon_name ]['shortcode_paths'])
+                        ? self::$_settings[ $addon_name ]['shortcode_paths']
                         : array(),
-                    'shortcode_fqcns' => isset(self::$_settings[$addon_name]['shortcode_fqcns'])
-                        ? self::$_settings[$addon_name]['shortcode_fqcns']
+                    'shortcode_fqcns' => isset(self::$_settings[ $addon_name ]['shortcode_fqcns'])
+                        ? self::$_settings[ $addon_name ]['shortcode_fqcns']
                         : array(),
                 )
             );
         }
     }
-
 
 
     /**
@@ -879,14 +863,13 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _register_widgets($addon_name)
     {
-        if (! empty(self::$_settings[$addon_name]['widget_paths'])) {
+        if (! empty(self::$_settings[ $addon_name ]['widget_paths'])) {
             EE_Register_Widget::register(
                 $addon_name,
-                array('widget_paths' => self::$_settings[$addon_name]['widget_paths'])
+                array('widget_paths' => self::$_settings[ $addon_name ]['widget_paths'])
             );
         }
     }
-
 
 
     /**
@@ -896,17 +879,16 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _register_capabilities($addon_name)
     {
-        if (! empty(self::$_settings[$addon_name]['capabilities'])) {
+        if (! empty(self::$_settings[ $addon_name ]['capabilities'])) {
             EE_Register_Capabilities::register(
                 $addon_name,
                 array(
-                    'capabilities'    => self::$_settings[$addon_name]['capabilities'],
-                    'capability_maps' => self::$_settings[$addon_name]['capability_maps'],
+                    'capabilities'    => self::$_settings[ $addon_name ]['capabilities'],
+                    'capability_maps' => self::$_settings[ $addon_name ]['capability_maps'],
                 )
             );
         }
     }
-
 
 
     /**
@@ -916,14 +898,13 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _register_message_types($addon_name)
     {
-        if (! empty(self::$_settings[$addon_name]['message_types'])) {
+        if (! empty(self::$_settings[ $addon_name ]['message_types'])) {
             add_action(
                 'EE_Brewing_Regular___messages_caf',
                 array('EE_Register_Addon', 'register_message_types')
             );
         }
     }
-
 
 
     /**
@@ -939,14 +920,13 @@ class EE_Register_Addon implements EEI_Plugin_API
             EE_Register_CPT::register(
                 $addon_name,
                 array(
-                    'cpts'          => self::$_settings[$addon_name]['custom_post_types'],
-                    'cts'           => self::$_settings[$addon_name]['custom_taxonomies'],
-                    'default_terms' => self::$_settings[$addon_name]['default_terms'],
+                    'cpts'          => self::$_settings[ $addon_name ]['custom_post_types'],
+                    'cts'           => self::$_settings[ $addon_name ]['custom_taxonomies'],
+                    'default_terms' => self::$_settings[ $addon_name ]['default_terms'],
                 )
             );
         }
     }
-
 
 
     /**
@@ -960,14 +940,13 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _register_payment_methods($addon_name)
     {
-        if (! empty(self::$_settings[$addon_name]['payment_method_paths'])) {
+        if (! empty(self::$_settings[ $addon_name ]['payment_method_paths'])) {
             EE_Register_Payment_Method::register(
                 $addon_name,
-                array('payment_method_paths' => self::$_settings[$addon_name]['payment_method_paths'])
+                array('payment_method_paths' => self::$_settings[ $addon_name ]['payment_method_paths'])
             );
         }
     }
-
 
 
     /**
@@ -981,10 +960,10 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function registerPrivacyPolicies($addon_name)
     {
-        if (! empty(self::$_settings[$addon_name]['privacy_policies'])) {
+        if (! empty(self::$_settings[ $addon_name ]['privacy_policies'])) {
             EE_Register_Privacy_Policy::register(
                 $addon_name,
-                self::$_settings[$addon_name]['privacy_policies']
+                self::$_settings[ $addon_name ]['privacy_policies']
             );
         }
     }
@@ -1001,14 +980,13 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function registerPersonalDataExporters($addon_name)
     {
-        if (! empty(self::$_settings[$addon_name]['personal_data_exporters'])) {
+        if (! empty(self::$_settings[ $addon_name ]['personal_data_exporters'])) {
             EE_Register_Personal_Data_Eraser::register(
                 $addon_name,
-                self::$_settings[$addon_name]['personal_data_exporters']
+                self::$_settings[ $addon_name ]['personal_data_exporters']
             );
         }
     }
-
 
 
     /**
@@ -1022,14 +1000,13 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function registerPersonalDataErasers($addon_name)
     {
-        if (! empty(self::$_settings[$addon_name]['personal_data_erasers'])) {
+        if (! empty(self::$_settings[ $addon_name ]['personal_data_erasers'])) {
             EE_Register_Personal_Data_Eraser::register(
                 $addon_name,
-                self::$_settings[$addon_name]['personal_data_erasers']
+                self::$_settings[ $addon_name ]['personal_data_erasers']
             );
         }
     }
-
 
 
     /**
@@ -1061,10 +1038,10 @@ class EE_Register_Addon implements EEI_Plugin_API
         ) {
             $addon->setDomain(
                 $loader->getShared(
-                    self::$_settings[$addon_name]['domain_fqcn'],
+                    self::$_settings[ $addon_name ]['domain_fqcn'],
                     array(
-                        self::$_settings[$addon_name]['main_file_path'],
-                        self::$_settings[$addon_name]['version'],
+                        self::$_settings[ $addon_name ]['main_file_path'],
+                        self::$_settings[ $addon_name ]['version'],
                     )
                 )
             );
@@ -1084,15 +1061,14 @@ class EE_Register_Addon implements EEI_Plugin_API
         // the plugin mainfile's path upon construction.
         register_deactivation_hook($addon->get_main_plugin_file(), array($addon, 'deactivation'));
         // call any additional admin_callback functions during load_admin_controller hook
-        if (! empty(self::$_settings[$addon_name]['admin_callback'])) {
+        if (! empty(self::$_settings[ $addon_name ]['admin_callback'])) {
             add_action(
                 'AHEE__EE_System__load_controllers__load_admin_controllers',
-                array($addon, self::$_settings[$addon_name]['admin_callback'])
+                array($addon, self::$_settings[ $addon_name ]['admin_callback'])
             );
         }
         return $addon;
     }
-
 
 
     /**
@@ -1112,7 +1088,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             if (! empty($settings['pue_options'])) {
                 // initiate the class and start the plugin update engine!
                 new PluginUpdateEngineChecker(
-                    // host file URL
+                // host file URL
                     'https://eventespresso.com',
                     // plugin slug(s)
                     array(
@@ -1136,7 +1112,6 @@ class EE_Register_Addon implements EEI_Plugin_API
     }
 
 
-
     /**
      * Callback for EE_Brewing_Regular__messages_caf hook used to register message types.
      *
@@ -1148,13 +1123,12 @@ class EE_Register_Addon implements EEI_Plugin_API
     {
         foreach (self::$_settings as $addon_name => $settings) {
             if (! empty($settings['message_types'])) {
-                foreach ((array)$settings['message_types'] as $message_type => $message_type_settings) {
+                foreach ((array) $settings['message_types'] as $message_type => $message_type_settings) {
                     EE_Register_Message_Type::register($message_type, $message_type_settings);
                 }
             }
         }
     }
-
 
 
     /**
@@ -1170,44 +1144,44 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     public static function deregister($addon_name = null)
     {
-        if (isset(self::$_settings[$addon_name]['class_name'])) {
+        if (isset(self::$_settings[ $addon_name ]['class_name'])) {
             try {
                 do_action('AHEE__EE_Register_Addon__deregister__before', $addon_name);
-                $class_name = self::$_settings[$addon_name]['class_name'];
-                if (! empty(self::$_settings[$addon_name]['dms_paths'])) {
+                $class_name = self::$_settings[ $addon_name ]['class_name'];
+                if (! empty(self::$_settings[ $addon_name ]['dms_paths'])) {
                     // setup DMS
                     EE_Register_Data_Migration_Scripts::deregister($addon_name);
                 }
-                if (! empty(self::$_settings[$addon_name]['admin_path'])) {
+                if (! empty(self::$_settings[ $addon_name ]['admin_path'])) {
                     // register admin page
                     EE_Register_Admin_Page::deregister($addon_name);
                 }
-                if (! empty(self::$_settings[$addon_name]['module_paths'])) {
+                if (! empty(self::$_settings[ $addon_name ]['module_paths'])) {
                     // add to list of modules to be registered
                     EE_Register_Module::deregister($addon_name);
                 }
-                if (! empty(self::$_settings[$addon_name]['shortcode_paths'])
-                    || ! empty(self::$_settings[$addon_name]['shortcode_fqcns'])
+                if (! empty(self::$_settings[ $addon_name ]['shortcode_paths'])
+                    || ! empty(self::$_settings[ $addon_name ]['shortcode_fqcns'])
                 ) {
                     // add to list of shortcodes to be registered
                     EE_Register_Shortcode::deregister($addon_name);
                 }
-                if (! empty(self::$_settings[$addon_name]['config_class'])) {
+                if (! empty(self::$_settings[ $addon_name ]['config_class'])) {
                     // if config_class present let's register config.
-                    EE_Register_Config::deregister(self::$_settings[$addon_name]['config_class']);
+                    EE_Register_Config::deregister(self::$_settings[ $addon_name ]['config_class']);
                 }
-                if (! empty(self::$_settings[$addon_name]['widget_paths'])) {
+                if (! empty(self::$_settings[ $addon_name ]['widget_paths'])) {
                     // add to list of widgets to be registered
                     EE_Register_Widget::deregister($addon_name);
                 }
-                if (! empty(self::$_settings[$addon_name]['model_paths'])
-                    || ! empty(self::$_settings[$addon_name]['class_paths'])
+                if (! empty(self::$_settings[ $addon_name ]['model_paths'])
+                    || ! empty(self::$_settings[ $addon_name ]['class_paths'])
                 ) {
                     // add to list of shortcodes to be registered
                     EE_Register_Model::deregister($addon_name);
                 }
-                if (! empty(self::$_settings[$addon_name]['model_extension_paths'])
-                    || ! empty(self::$_settings[$addon_name]['class_extension_paths'])
+                if (! empty(self::$_settings[ $addon_name ]['model_extension_paths'])
+                    || ! empty(self::$_settings[ $addon_name ]['class_extension_paths'])
                 ) {
                     // add to list of shortcodes to be registered
                     EE_Register_Model_Extensions::deregister($addon_name);
@@ -1227,7 +1201,7 @@ class EE_Register_Addon implements EEI_Plugin_API
                 if (! empty(self::$_settings[ $addon_name ]['custom_post_types'])) {
                     EE_Register_CPT::deregister($addon_name);
                 }
-                if (! empty(self::$_settings[$addon_name]['payment_method_paths'])) {
+                if (! empty(self::$_settings[ $addon_name ]['payment_method_paths'])) {
                     EE_Register_Payment_Method::deregister($addon_name);
                 }
                 $addon = EE_Registry::instance()->getAddon($class_name);
@@ -1256,7 +1230,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             } catch (Exception $e) {
                 new ExceptionLogger($e);
             }
-            unset(self::$_settings[$addon_name]);
+            unset(self::$_settings[ $addon_name ]);
             do_action('AHEE__EE_Register_Addon__deregister__after', $addon_name);
         }
     }
