@@ -25,8 +25,6 @@ interface PersonalDataEraserInterface
      *               }
      */
     public function erase($email, $page = 1);
-
-
 }
 // End of file PersonalDataEraserInterface.php
 // Location: EventEspresso\core\domain\services\admin/PersonalDataEraserInterface.php

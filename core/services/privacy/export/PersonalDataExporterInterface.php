@@ -43,8 +43,6 @@ interface PersonalDataExporterInterface
      *                                 }
      */
     public function export($email_address, $page = 1);
-
-
 }
 // End of file PersonalDataExporterInterface.php
 // Location: EventEspresso\core\domain\services\admin/PersonalDataExporterInterface.php
