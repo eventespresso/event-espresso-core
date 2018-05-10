@@ -2,14 +2,17 @@
 
 ?>
 <h1><?php esc_html_e("Data Migration Error", "event_espresso"); ?></h1>
-<p class='error'>
-    <?php printf(
-        esc_html__("Your last Database Update had a %s FATAL ERROR, and CANNOT be continued%s.", "event_espresso"),
+<p class='error'><?php
+    printf(
+        esc_html__(
+            "Your last Database Update had a %s fatal error and was halted%s.",
+            "event_espresso"
+        ),
         "<b>",
         "</b>"
     ); ?></p>
-<a id="show-hide-migration-warnings" class="display-the-hidden">
-    <?php esc_html_e(
+<a id="show-hide-migration-warnings" class="display-the-hidden"><?php
+    esc_html_e(
         "Show Errors",
         'event_espresso'
     ); ?></a>
