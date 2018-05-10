@@ -42,7 +42,7 @@ class PersonalDataExporterManager
         // load all the privacy policy stuff
         // add post policy text
         foreach ($this->loadPrivateDataExporterCollection() as $exporter) {
-            $exporters[] = array(
+            $exporters[get_class($exporter)] = array(
                 'exporter_friendly_name' => $exporter->name(),
                 'callback' => array($exporter,'export')
             );
