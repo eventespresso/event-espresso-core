@@ -719,10 +719,6 @@ class EE_Dependency_Map
             'EventEspresso\core\services\loaders\ObjectIdentifier'                                                        => array(
                 'EventEspresso\core\services\loaders\ClassInterfaceCache' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\services\admin\privacy\policy\PrivacyPolicy' => array(
-                'EEM_Payment_Method' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache
-            ),
             'EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager'                                     => array(
                 'EventEspresso\core\domain\Domain'            => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache,
@@ -738,6 +734,26 @@ class EE_Dependency_Map
                 'EE_Template_Config'                                 => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\services\admin\privacy\policy\PrivacyPolicy' => array(
+                'EEM_Payment_Method' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\domain\services\admin\privacy\export\ExportAttendee' => array(
+                'EEM_Attendee' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\services\admin\privacy\export\ExportAttendeeBillingData' => array(
+                'EEM_Attendee' => EE_Dependency_Map::load_from_cache,
+                'EEM_Payment_Method' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\domain\services\admin\privacy\export\ExportCheckins' => array(
+                'EEM_Checkin' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\services\admin\privacy\export\ExportRegistration' => array(
+                'EEM_Registration' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\services\admin\privacy\export\ExportTransaction' => array(
+                'EEM_Transaction' => EE_Dependency_Map::load_from_cache,
             ),
         );
     }
