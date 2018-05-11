@@ -46,20 +46,14 @@ abstract class AssetManager implements AssetManagerInterface
      */
     public function __construct(DomainInterface $domain, AssetCollection $assets, Registry $registry)
     {
-        $this->domain   = $domain;
-        $this->assets   = $assets;
+        $this->domain = $domain;
+        $this->assets = $assets;
         $this->registry = $registry;
         add_action('wp_enqueue_scripts', array($this, 'addManifestFile'), 0);
         add_action('admin_enqueue_scripts', array($this, 'addManifestFile'), 0);
         add_action('wp_enqueue_scripts', array($this, 'addAssets'), 2);
         add_action('admin_enqueue_scripts', array($this, 'addAssets'), 2);
     }
-
-
-    /**
-     * @since $VID:$
-     */
-    abstract public function addAssets();
 
 
     /**
@@ -169,33 +163,19 @@ abstract class AssetManager implements AssetManagerInterface
 
 
     /**
-     * @return void
+     * @param string $handle
+     * @return bool
      * @since $VID:$
      */
-    public function enqueueJsAsset($handle)
-    {
-        if($this->assets->has($handle)){
-            /** @var JavascriptAsset $script */
-            $script = $this->assets->get($handle);
-            if ($script->isRegistered()){
-                wp_enqueue_script($handle);
-            }
-        }
-    }
-
-
-    /**
-     * @return void
-     * @since $VID:$
-     */
-    public function enqueueCssSAsset($handle)
+    public function enqueueAsset($handle)
     {
         if ($this->assets->has($handle)) {
-            /** @var StylesheetAsset $script */
-            $stylesheet = $this->assets->get($handle);
-            if ($stylesheet->isRegistered()) {
-                wp_enqueue_style($handle);
+            $asset = $this->assets->get($handle);
+            if ($asset->isRegistered()) {
+                $asset->enqueueAsset();
+                return true;
             }
         }
+        return false;
     }
 }
