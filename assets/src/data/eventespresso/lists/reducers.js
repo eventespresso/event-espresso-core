@@ -1,19 +1,7 @@
 /**
- * External dependencies
- */
-import { reduce } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { endpoints } from '../model/endpoints';
-
-const DEFAULT_STATE = reduce( endpoints,
-	function( defaultState, endpoint, modelName ) {
-		defaultState[ modelName ] = [];
-	},
-	{},
-);
+import { DEFAULT_STATE } from '../../model';
 
 /**
  * Reducer managing item list state.
@@ -27,7 +15,7 @@ const DEFAULT_STATE = reduce( endpoints,
  * action for that?
  */
 export function listItems( state = DEFAULT_STATE, action ) {
-	const { type, modelName, queryString, items = {} } = action;
+	const { type, modelName, queryString, items = [] } = action;
 	switch ( type ) {
 		case 'SET_REQUESTED':
 			if ( ! state[ modelName ] || state[ modelName ].hasOwnProperty( queryString ) ) {

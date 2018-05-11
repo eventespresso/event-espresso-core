@@ -7,7 +7,7 @@ import apiRequest from '@wordpress/api-request';
  * Internal dependencies
  */
 import { setRequested, receiveResponse } from './actions';
-import { applyQueryString } from '../model/endpoints';
+import { applyQueryString } from '../../model';
 
 /**
  * Resolver for generic items returned from an endpoint.

@@ -1,19 +1,14 @@
 /**
- * External dependencies
- */
-import deepFreeze from 'deep-freeze';
-
-/**
  * Internal dependencies
  */
 import { getItems, isRequestingItems } from '../selectors';
 
 describe( 'getItems()', () => {
-	const state = deepFreeze( {
+	const state = {
 		event: {
 			'some_query_string=1': [ { id: 1 } ],
 		},
-	} );
+	};
 	it( 'returns empty array when modelName or queryString not found in state',
 		() => {
 			expect( getItems( state, 'event', 'notPresent=0' ) ).toEqual( [] );
@@ -29,11 +24,11 @@ describe( 'getItems()', () => {
 } );
 
 describe( 'isRequestingItems', () => {
-	const state = deepFreeze( {
+	const state = {
 		event: {
 			'some_query_string=1': [ { id: 1 } ],
 		},
-	} );
+	};
 	it( 'returns true when invalid model name provided', () => {
 		expect( isRequestingItems( state, 'invalid', 'some_query_string=1' ) )
 			.toBe( true );
@@ -48,11 +43,11 @@ describe( 'isRequestingItems', () => {
 	);
 	it( 'returns true when the provided arguments are set and the value is null for them in the state',
 		() => {
-			const nullState = deepFreeze( {
+			const nullState = {
 				event: {
 					'some_query_string=1': null,
 				},
-			} );
+			};
 			expect( isRequestingItems( nullState,
 				'event',
 				'some_query_string=1',

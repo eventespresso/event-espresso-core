@@ -11,11 +11,9 @@ import * as selectors from './selectors';
 import * as actions from './actions';
 import * as resolvers from './resolvers';
 
-const store = registerStore( 'eventespresso/lists', {
+export default registerStore( 'eventespresso/lists', {
 	reducers,
 	actions,
 	selectors,
 	resolvers,
 } );
-
-export default store;
