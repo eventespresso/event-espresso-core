@@ -63,8 +63,8 @@ class PrivacyPolicy implements PrivacyPolicyInterface
     {
         // do they have any offsite payment methods? or onsite payment methods?
         $active_payment_methods = $this->payment_method_model->get_all_active(EEM_Payment_Method::scope_cart);
-        $active_onsite_pms = false;
-        $active_offsite_pms = false;
+        $active_onsite_pms = array();
+        $active_offsite_pms = array();
         foreach ($active_payment_methods as $payment_method) {
             if ($payment_method->type_obj() instanceof \EE_PMT_Base) {
                 if ($payment_method->type_obj()->get_gateway() instanceof EE_Onsite_Gateway) {
