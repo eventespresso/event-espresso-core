@@ -5,6 +5,7 @@ namespace EventEspresso\core\domain\services\assets;
 use EE_Currency_Config;
 use EE_Registry;
 use EE_Template_Config;
+use EED_Core_Rest_Api;
 use EEH_Qtip_Loader;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
@@ -181,7 +182,13 @@ class CoreAssetManager extends AssetManager
                 )
             );
             $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
-            $this->registry->addData('paths', array('rest_route' => rest_url('ee/v4.8.36/')));
+            $this->registry->addData(
+                'paths',
+                array(
+                    'rest_route' => rest_url('ee/v4.8.36/'),
+                    'collection_endpoints' => EED_Core_Rest_Api::getCollectionRoutesIndexedByModelName(),
+                )
+            );
         }
 
         $this->addJavascript(
