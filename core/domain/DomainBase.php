@@ -45,6 +45,11 @@ abstract class DomainBase implements DomainInterface
      */
     private $plugin_url;
 
+    /**
+     * @var string $asset_namespace
+     */
+    private $asset_namespace;
+
 
 
     /**
@@ -60,6 +65,7 @@ abstract class DomainBase implements DomainInterface
         $this->plugin_basename = plugin_basename($this->pluginFile());
         $this->plugin_path = plugin_dir_path($this->pluginFile());
         $this->plugin_url = plugin_dir_url($this->pluginFile());
+        $this->setAssetNamespace();
     }
 
 
@@ -137,5 +143,23 @@ abstract class DomainBase implements DomainInterface
     public function distributionAssetsUrl()
     {
         return $this->pluginUrl() . 'assets/dist/';
+    }
+
+
+    /**
+     * @return string
+     */
+    public function assetNamespace()
+    {
+        return $this->asset_namespace;
+    }
+
+
+    /**
+     * @return void
+     */
+    private function setAssetNamespace()
+    {
+        $this->asset_namespace = sanitize_key($this->plugin_basename);
     }
 }

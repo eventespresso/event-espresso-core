@@ -2,6 +2,9 @@
 
 namespace EventEspresso\core\exceptions;
 
+use Exception;
+use InvalidArgumentException;
+
 /**
  * Class InvalidIdentifierException
  * thrown when an identifier is invalid
@@ -10,7 +13,7 @@ namespace EventEspresso\core\exceptions;
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class InvalidIdentifierException extends \InvalidArgumentException
+class InvalidIdentifierException extends InvalidArgumentException
 {
 
     /**
@@ -20,9 +23,9 @@ class InvalidIdentifierException extends \InvalidArgumentException
      * @param string     $expected example of an acceptable identifier
      * @param string     $message
      * @param int        $code
-     * @param \Exception $previous
+     * @param Exception $previous
      */
-    public function __construct($actual, $expected, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct($actual, $expected, $message = '', $code = 0, Exception $previous = null)
     {
         if (empty($message)) {
             $message = sprintf(
@@ -37,3 +40,4 @@ class InvalidIdentifierException extends \InvalidArgumentException
         parent::__construct($message, $code, $previous);
     }
 }
+// Location: core/exceptions/InvalidIdentifierException.php
