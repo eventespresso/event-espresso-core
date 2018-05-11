@@ -62,7 +62,7 @@ class PersonalDataEraserManager
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
-            // collection name
+                // collection name
                 'privacy_erasers',
                 // collection interface
                 'EventEspresso\core\services\privacy\erasure\PersonalDataEraserInterface',
