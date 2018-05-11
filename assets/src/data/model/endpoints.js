@@ -1,15 +1,14 @@
 /**
  * External imports
  */
-import { data, exception as GeneralException } from '@eventespresso/eejs';
-import { isUndefined } from 'lodash';
+import { data } from '@eventespresso/eejs';
 
 /**
- * WP Dependencies
+ * Internal imports
  */
-import { sprintf } from '@eventespresso/i18n';
+import { validateEntityHasKey } from './validators';
 
-export const { collection_endpoints: endpoints = {} } = data;
+export const { collection_endpoints: endpoints = {} } = data.paths;
 
 /**
  * Retrieves the endpoint for the provided model.
@@ -18,15 +17,8 @@ export const { collection_endpoints: endpoints = {} } = data;
  * @return {string}  The endpoint for the provided model.
  * @throws {GeneralException}
  */
-const getEndpoint = ( modelName ) => {
-	if ( isUndefined( endpoints[ modelName ] ) ) {
-		throw new GeneralException(
-			sprintf(
-				'There is no registered endpoint for the provided model name reference (%s)',
-				modelName,
-			),
-		);
-	}
+export const getEndpoint = ( modelName ) => {
+	validateEntityHasKey( modelName, endpoints );
 	return endpoints[ modelName ];
 };
 
@@ -39,5 +31,3 @@ const getEndpoint = ( modelName ) => {
 export const applyQueryString = ( modelName, queryString ) => {
 	return getEndpoint( modelName ) + '?' + queryString;
 };
-
-export default getEndpoint;
