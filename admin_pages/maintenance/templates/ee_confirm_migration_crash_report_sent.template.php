@@ -57,7 +57,7 @@
                         ),
                         "<a href='" . EE_SUPPORT_EMAIL . "' target='_blank'>",
                         '</a>',
-                        '<pre lang="php">define( EE_MIGRATION_STEP_SIZE, 10 );</pre>',
+                        '<pre lang="php">define( \'EE_MIGRATION_STEP_SIZE\', 10 );</pre>',
                         '<b>',
                         '</b>'
                     );

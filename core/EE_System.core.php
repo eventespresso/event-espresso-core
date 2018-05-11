@@ -1195,13 +1195,15 @@ final class EE_System implements ResettableInterface
         add_action('admin_bar_init', array($this, 'addEspressoToolbar'));
         if ($this->request->isAdmin()) {
             $this->loader->getShared('EventEspresso\core\services\privacy\policy\PrivacyPolicyManager');
-
             $this->loader->getShared('EventEspresso\core\services\privacy\export\PersonalDataExporterManager');
             $this->loader->getShared('EventEspresso\core\services\privacy\erasure\PersonalDataEraserManager');
         }
         if ($this->request->isAjax()) {
             $this->loader->getShared('EventEspresso\core\services\privacy\export\PersonalDataExporterManager');
             $this->loader->getShared('EventEspresso\core\services\privacy\erasure\PersonalDataEraserManager');
+        }
+        if ($this->request->isAdmin() && function_exists('wp_add_privacy_policy_content')) {
+            $this->loader->getShared('EventEspresso\core\services\privacy\policy\PrivacyPolicyManager');
         }
     }
 
