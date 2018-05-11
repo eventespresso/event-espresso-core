@@ -236,6 +236,9 @@ class EE_Register_Addon implements EEI_Plugin_API
      *                                                                  namespace.
      *                                                                  }
      *                                                                  }
+     * @type string                   $privacy_policies                 FQNSs (namespaces, each of which contains only
+     *                                                                  privacy policy classes) or FQCNs (specific
+     *                                                                  classnames of privacy policy classes)
      * @return void
      * @throws DomainException
      * @throws EE_Error
@@ -289,6 +292,8 @@ class EE_Register_Addon implements EEI_Plugin_API
         EE_Register_Addon::_register_custom_post_types($addon_name);
         // and any payment methods
         EE_Register_Addon::_register_payment_methods($addon_name);
+        // and privacy policy generators
+        EE_Register_Addon::registerPrivacyPolicies($addon_name);
         // load and instantiate main addon class
         $addon = EE_Register_Addon::_load_and_init_addon_class($addon_name);
         // delay calling after_registration hook on each addon until after all add-ons have been registered.
@@ -498,6 +503,9 @@ class EE_Register_Addon implements EEI_Plugin_API
             )
                 ? (array) $setup_args['namespace']
                 : array(),
+            'privacy_policies'      => isset($setup_args['privacy_policies'])
+                ? (array) $setup_args['privacy_policies']
+                : '',
         );
         // if plugin_action_slug is NOT set, but an admin page path IS set,
         // then let's just use the plugin_slug since that will be used for linking to the admin page
@@ -650,8 +658,9 @@ class EE_Register_Addon implements EEI_Plugin_API
     private static function _addon_activation($addon_name, array $addon_settings)
     {
         // this is an activation request
-        if (did_action('activate_plugin')) {
-            // to find if THIS is the addon that was activated, just check if we have already registered it or not
+        if (did_action(
+            'activate_plugin'
+        )) {// to find if THIS is the addon that was activated, just check if we have already registered it or not
             // (as the newly-activated addon wasn't around the first time addons were registered).
             // Note: the presence of pue_options in the addon registration options will initialize the $_settings
             // property for the add-on, but the add-on is only partially initialized.  Hence, the additional check.
@@ -932,6 +941,26 @@ class EE_Register_Addon implements EEI_Plugin_API
             EE_Register_Payment_Method::register(
                 $addon_name,
                 array('payment_method_paths' => self::$_settings[ $addon_name ]['payment_method_paths'])
+            );
+        }
+    }
+
+
+    /**
+     * @param string $addon_name
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws DomainException
+     * @throws EE_Error
+     */
+    private static function registerPrivacyPolicies($addon_name)
+    {
+        if (! empty(self::$_settings[ $addon_name ]['privacy_policies'])) {
+            EE_Register_Privacy_Policy::register(
+                $addon_name,
+                self::$_settings[ $addon_name ]['privacy_policies']
             );
         }
     }

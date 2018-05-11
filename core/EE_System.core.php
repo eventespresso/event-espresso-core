@@ -27,7 +27,6 @@ use EventEspresso\core\services\request\RequestInterface;
 final class EE_System implements ResettableInterface
 {
 
-
     /**
      * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation.
      * So examples of this would be a normal GET request on the frontend or backend, or a POST, etc
@@ -73,7 +72,6 @@ final class EE_System implements ResettableInterface
      * option prefix for recording the activation history (like core's "espresso_db_update") of addons
      */
     const addon_activation_history_option_prefix = 'ee_addon_activation_history_';
-
 
     /**
      * @var EE_System $_instance
@@ -1142,9 +1140,18 @@ final class EE_System implements ResettableInterface
      *
      * @access public
      * @return void
+     * @throws Exception
      */
     public function core_loaded_and_ready()
     {
+        if ($this->request->isAdmin() || $this->request->isFrontend() || $this->request->isIframe()) {
+            try {
+                $this->loader->getShared('EventEspresso\core\services\assets\Registry');
+                $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
+            } catch (Exception $exception) {
+                new ExceptionStackTraceDisplay($exception);
+            }
+        }
         if ($this->request->isAdmin()
             || $this->request->isEeAjax()
             || $this->request->isFrontend()
@@ -1164,9 +1171,6 @@ final class EE_System implements ResettableInterface
             require_once EE_PUBLIC . 'template_tags.php';
         }
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
-        if ($this->request->isAdmin() || $this->request->isFrontend() || $this->request->isIframe()) {
-            $this->loader->getShared('EventEspresso\core\services\assets\Registry');
-        }
     }
 
 
@@ -1200,6 +1204,9 @@ final class EE_System implements ResettableInterface
         );
         $rewrite_rules->flushRewriteRules();
         add_action('admin_bar_init', array($this, 'addEspressoToolbar'));
+        if ($this->request->isAdmin() && function_exists('wp_add_privacy_policy_content')) {
+            $this->loader->getShared('EventEspresso\core\services\privacy\policy\PrivacyPolicyManager');
+        }
     }
 
 
