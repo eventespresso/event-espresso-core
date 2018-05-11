@@ -721,6 +721,10 @@ class EE_Dependency_Map
             'EventEspresso\core\services\loaders\ObjectIdentifier'                                                        => array(
                 'EventEspresso\core\services\loaders\ClassInterfaceCache' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\domain\services\admin\privacy\policy\PrivacyPolicy' => array(
+                'EEM_Payment_Method' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache
+            ),
             'EventEspresso\core\domain\services\admin\privacy\export\ExportAttendee' => array(
                 'EEM_Attendee' => EE_Dependency_Map::load_from_cache,
             ),
