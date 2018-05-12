@@ -418,6 +418,7 @@ final class EE_Front_Controller
             && is_main_query()
             && ! is_feed()
             && in_the_loop()
+            && did_action('wp_head')
             && $this->Request_Handler->is_espresso_page()
         ) {
             echo EE_Error::get_notices();
