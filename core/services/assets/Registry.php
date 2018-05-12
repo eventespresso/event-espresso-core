@@ -49,7 +49,7 @@ class Registry
      * @var array
      */
     private $script_handles_with_data = array();
-    
+
 
     /**
      * Holds the manifest data obtained from registered manifest files.

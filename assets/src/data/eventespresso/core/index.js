@@ -4,7 +4,7 @@
 import { registerStore } from '@wordpress/data';
 
 /**
- * Internal depdencies
+ * Internal dependencies
  */
 import reducer from './reducers';
 import * as selectors from './selectors';
