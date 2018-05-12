@@ -1,4 +1,4 @@
-import { data, exception } from '../index.js';
+import { data, Exception } from '../index.js';
 
 describe( 'eejs', () => {
 	describe( 'data', () => {
@@ -7,15 +7,15 @@ describe( 'eejs', () => {
 		} );
 	} );
 
-	describe( 'exception', () => {
+	describe( 'Exception', () => {
 		const t = () => {
-			throw new exception( 'error thrown' );
+			throw new Exception( 'error thrown' );
 		};
 		it( 'should throw error with msg "error thrown"', () => {
 			expect( t ).toThrowError( 'error thrown' );
 		} );
-		it( 'should throw an error which is an instance of "exception"', () => {
-			expect( t ).toThrowError( exception );
+		it( 'should throw an error which is an instance of "Exception"', () => {
+			expect( t ).toThrow( Exception );
 		} );
 	} );
 } );

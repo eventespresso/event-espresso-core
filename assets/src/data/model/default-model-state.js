@@ -1,16 +1,18 @@
 /**
  * External dependencies
  */
-import { reduce } from 'lodash';
+import { mapValues } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { endpoints } from './endpoints.js';
 
-export const DEFAULT_STATE = reduce( endpoints,
-	function( defaultState, endpoint, modelName ) {
-		defaultState[ modelName ] = [];
+/**
+ * Provides the default state to be used by our stores.
+ */
+export const DEFAULT_STATE = mapValues( endpoints,
+	function() {
+		return [];
 	},
-	{},
 );

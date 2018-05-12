@@ -8,6 +8,11 @@ import { data } from '@eventespresso/eejs';
  */
 import { validateEntityHasKey } from './validators';
 
+/**
+ * All available endpoints exposed via the eejs.data global from the server.
+ *
+ * @type {{}}
+ */
 export const { collection_endpoints: endpoints = {} } = data.paths;
 
 /**
@@ -15,7 +20,7 @@ export const { collection_endpoints: endpoints = {} } = data.paths;
  *
  * @param {string} modelName  What model to retrieve the endpoint for.
  * @return {string}  The endpoint for the provided model.
- * @throws {GeneralException}
+ * @throws {Exception}
  */
 export const getEndpoint = ( modelName ) => {
 	validateEntityHasKey( modelName, endpoints );
