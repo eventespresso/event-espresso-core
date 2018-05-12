@@ -129,4 +129,3 @@
         'You have the right to request your personal data be sent to you electronically, and the right to request your registration data be erased after the event. To do so, please contact the event manager or site administrator.',
         'event_espresso'
     ); ?></p>
-
