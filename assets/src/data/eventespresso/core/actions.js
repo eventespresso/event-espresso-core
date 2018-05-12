@@ -15,58 +15,37 @@ export function receiveEntityRecords( modelName, entities = [] ) {
 }
 
 /**
- * Returns an action object used to update the dirty state for the provided
- * entities.
+ * Returns an action object used to update the entity with the given id in the
+ * store so that it is considered "clean" not dirty (sets dirty flag to false).
+ * Typically, this will get used by save/persist to server actions.
  *
  * @param { string } modelName
- * @param { boolean } dirty
- * @param { Array } entities
- * @return {{type: string, modelName: string, dirty: boolean, entities: Array}}
- *            Object for action
+ * @param { number } entityId
+ * @return {{type: string, modelName: *, entityId: *}}
+ * 			Object for action.
  */
-export function setEntitiesDirty( modelName, dirty = true, entities = [] ) {
+export function cleanEntityById( modelName, entityId ) {
 	return {
-		type: 'SET_DIRTY',
+		type: 'CLEAN_ENTITY',
 		modelName,
-		dirty,
-		entities,
-	};
-}
-
-/**
- * Returns an action object used to update the dirty state for a single
- * provided entity.
- *
- * @param { string } modelName
- * @param { boolean } dirty
- * @param { Object } entity
- * @return {{type: string, modelName: string, dirty: boolean, entities: Array}}
- *            Object for action
- */
-export function setEntityDirty( modelName, dirty = true, entity = {} ) {
-	return {
-		type: 'SET_DIRTY',
-		modelName,
-		dirty,
-		entity,
-	};
-}
-
-/**
- * Returns an action object used to update the dirty state for the provided
- * entityId.
- *
- * @param { string } modelName
- * @param { boolean } dirty
- * @param { number|string } entityId
- * @return {{type: string, modelName: string, dirty: boolean, entityId: number|string}}
- *            Object for action
- */
-export function setEntityDirtyById( modelName, dirty = true, entityId ) {
-	return {
-		type: 'SET_DIRTY',
-		modelName,
-		dirty,
 		entityId,
+	};
+}
+
+/**
+ * Returns an action object used to update the given entities in the store so
+ * that they are considered "clean" not dirty (sets dirty flag to false).
+ * Typically, this will get used by save/persist to server actions.
+ *
+ * @param { string } modelName
+ * @param { Array } entities
+ * @return {{type: string, modelName: *, entities: Array}}
+ * 			Object for action.
+ */
+export function cleanEntities( modelName, entities = [] ) {
+	return {
+		type: 'CLEAN_ENTITIES',
+		modelName,
+		entities,
 	};
 }
