@@ -9,10 +9,6 @@ import { DEFAULT_STATE } from '../../model';
  * @param {Object} state  Current state.
  * @param {Object} action	Dispatched action.
  * @return {Object}	Updated state.
- *
- * @todo still need to work out how this will update/interact with the
- * `eventespresso/core-data` store.  We might want to have a special dispatched
- * action for that?
  */
 export function listItems( state = DEFAULT_STATE, action ) {
 	const { type, modelName, queryString, items = [] } = action;
