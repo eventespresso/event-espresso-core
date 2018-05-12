@@ -3,6 +3,7 @@
  */
 import { mapValues, pick, keys } from 'lodash';
 import isShallowEqual from '@wordpress/is-shallow-equal/objects';
+import { combineReducers } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -179,3 +180,9 @@ export function receiveEntityRecords( state = DEFAULT_STATE, action ) {
 	}
 	return state;
 }
+
+export default combineReducers(
+	cleanEntities,
+	cleanEntityById,
+	receiveEntityRecords
+);
