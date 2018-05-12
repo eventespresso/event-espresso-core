@@ -48,7 +48,7 @@ describe( 'listItems()', () => {
 				modelName: 'event',
 				queryString: '?some_value=1',
 			} );
-			expect( state ).toEqual( originalState );
+			expect( state ).toBe( originalState );
 		},
 	);
 	it( 'returns with received events for known model', () => {
