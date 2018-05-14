@@ -135,6 +135,7 @@ class EE_CPT_Base_Test extends EE_UnitTestCase{
         );
         $this->assertTrue($ee_term_taxonomy instanceof EE_Term_Taxonomy);
         $this->assertNotEquals(0, $ee_term_taxonomy);
+        $this->assertEquals('espresso_event_categories', $ee_term_taxonomy->taxonomy());
     }
 }
 
