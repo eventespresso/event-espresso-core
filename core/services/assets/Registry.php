@@ -78,7 +78,7 @@ class Registry
      */
     public function __construct(AssetCollection $assets, I18nRegistry $i18n_registry)
     {
-        $this->assets        = $assets;
+        $this->assets = $assets;
         $this->i18n_registry = $i18n_registry;
         add_action('wp_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
         add_action('admin_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
@@ -107,8 +107,6 @@ class Registry
      * Callback for the wp_enqueue_scripts actions used to register assets.
      *
      * @since $VID:$
-     * @throws AssetRegistrationException
-     * @throws InvalidDataTypeException
      * @throws Exception
      */
     public function registerScriptsAndStyles()
@@ -134,7 +132,7 @@ class Registry
     {
         foreach ($scripts as $script) {
             // skip to next script if this has already been done
-            if($script->isRegistered()) {
+            if ($script->isRegistered()) {
                 continue;
             }
             do_action(
@@ -148,7 +146,7 @@ class Registry
                 $script->version(),
                 $script->loadInFooter()
             );
-            if(WP_DEBUG && ! $registered) {
+            if (defined('EE_DEBUG') && EE_DEBUG && ! $registered) {
                 throw new AssetRegistrationException($script->handle());
             }
             $script->setRegistered($registered);
@@ -195,6 +193,7 @@ class Registry
             );
         }
     }
+
 
     /**
      * Call back for the script print in frontend and backend.

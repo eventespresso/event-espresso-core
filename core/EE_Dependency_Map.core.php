@@ -719,6 +719,14 @@ class EE_Dependency_Map
             'EventEspresso\core\services\loaders\ObjectIdentifier'                                                        => array(
                 'EventEspresso\core\services\loaders\ClassInterfaceCache' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\domain\services\admin\privacy\policy\PrivacyPolicy' => array(
+                'EEM_Payment_Method' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager'                                     => array(
+                'EventEspresso\core\domain\Domain'            => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache,
+            ),
             'EventEspresso\core\services\assets\AssetManager'                                                             => array(
                 'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
@@ -735,11 +743,6 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\assets\BlockAssetManagerCollection' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\entities\editor\BlockCollection'      => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'                    => EE_Dependency_Map::load_from_cache,
-            ),
-            'EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager' => array(
-                'EventEspresso\core\domain\Domain'                   => self::load_from_cache,
-                'EventEspresso\core\services\assets\AssetCollection' => self::load_from_cache,
-                'EventEspresso\core\services\assets\Registry'        => self::load_from_cache,
             ),
             'EventEspresso\core\domain\entities\editor\blocks\widgets\EventAttendees' => array(
                 'EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager' => self::load_from_cache,
