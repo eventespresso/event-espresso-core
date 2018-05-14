@@ -134,7 +134,7 @@ class EE_CPT_Base_Test extends EE_UnitTestCase{
             'Events look at important Rebel Space Ships'
         );
         $this->assertTrue($ee_term_taxonomy instanceof EE_Term_Taxonomy);
-        $this->assertNotEquals(0, $ee_term_taxonomy);
+        $this->assertNotEquals(0, $ee_term_taxonomy->get('term_count'));
     }
 }
 
