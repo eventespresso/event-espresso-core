@@ -325,6 +325,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
                         'name' => $category_name,
                         'slug' => $category_slug,
                     ),
+                    'Term_Taxonomy.taxonomy' => self::EVENT_CATEGORY_TAXONOMY
                 ),
             )
         );

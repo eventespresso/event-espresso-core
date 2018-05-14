@@ -172,7 +172,7 @@ class EE_CPT_Base_Test extends EE_UnitTestCase{
                 'taxonomy' => EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY
             )
         );
-        //when adding the term to this event, it shouldn't createn a  new one
+        //when adding the term to this event, it shouldn't creating a new one
         $term_taxonomy_used_for_relation = $e->add_event_category(
             'cars',
             'an actual ee category'
