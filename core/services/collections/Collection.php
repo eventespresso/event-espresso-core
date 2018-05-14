@@ -5,6 +5,7 @@ namespace EventEspresso\core\services\collections;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use LimitIterator;
+use SplObjectStorage;
 
 /**
  * Class Collection
@@ -15,9 +16,15 @@ use LimitIterator;
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class Collection extends \SplObjectStorage implements CollectionInterface
+class Collection extends SplObjectStorage implements CollectionInterface
 {
 
+    /**
+     * a unique string for identifying this collection
+     *
+     * @type string $collection_identifier
+     */
+    protected $collection_identifier;
 
     /**
      * an interface (or class) name to be used for restricting the type of objects added to the storage
@@ -32,11 +39,42 @@ class Collection extends \SplObjectStorage implements CollectionInterface
      * Collection constructor
      *
      * @param string $collection_interface
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidInterfaceException
      */
     public function __construct($collection_interface)
     {
         $this->setCollectionInterface($collection_interface);
+        $this->setCollectionIdentifier();
+    }
+
+
+    /**
+     * @return string
+     */
+    public function collectionIdentifier()
+    {
+        return $this->collection_identifier;
+    }
+
+
+    /**
+     * creates a very readable unique 9 character identifier like:  CF2-532-DAC
+     * and appends it to the non-qualified class name, ex: ThingCollection-CF2-532-DAC
+     *
+     * @return void
+     */
+    protected function setCollectionIdentifier()
+    {
+        // hash a few collection details
+        $identifier = md5(spl_object_hash($this) . $this->collection_interface . time());
+        // grab a few characters from the start, middle, and end of the hash
+        $id = array();
+        for ($x = 0; $x < 19; $x += 9) {
+            $id[] = substr($identifier, $x, 3);
+        }
+        $identifier = basename(str_replace('\\', '/', get_class($this)));
+        $identifier .= '-' . strtoupper(implode('-', $id));
+        $this->collection_identifier = $identifier;
     }
 
 
@@ -66,12 +104,16 @@ class Collection extends \SplObjectStorage implements CollectionInterface
      * @param        $object
      * @param  mixed $identifier
      * @return bool
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws InvalidEntityException
+     * @throws DuplicateCollectionIdentifierException
      */
     public function add($object, $identifier = null)
     {
         if (! $object instanceof $this->collection_interface) {
             throw new InvalidEntityException($object, $this->collection_interface);
+        }
+        if ($this->contains($object)) {
+            throw new DuplicateCollectionIdentifierException($identifier);
         }
         $this->attach($object);
         $this->setIdentifier($object, $identifier);
@@ -91,7 +133,9 @@ class Collection extends \SplObjectStorage implements CollectionInterface
      */
     public function setIdentifier($object, $identifier = null)
     {
-        $identifier = ! empty($identifier) ? $identifier : spl_object_hash($object);
+        $identifier = ! empty($identifier)
+            ? $identifier
+            : spl_object_hash($object);
         $this->rewind();
         while ($this->valid()) {
             if ($object === $this->current()) {
@@ -319,6 +363,46 @@ class Collection extends \SplObjectStorage implements CollectionInterface
             $slice[] = $object;
         }
         return $slice;
+    }
+
+
+    /**
+     * Inserts an object at a certain point
+     *
+     * @see http://stackoverflow.com/a/8736013
+     * @param mixed $object A single object
+     * @param int   $index
+     * @param mixed $identifier
+     * @return bool
+     * @throws DuplicateCollectionIdentifierException
+     * @throws InvalidEntityException
+     */
+    public function insertObjectAt($object, $index, $identifier = null)
+    {
+        // check to ensure that objects don't already exist in the collection
+        if ($this->has($identifier)) {
+            throw new DuplicateCollectionIdentifierException($identifier);
+        }
+        // detach any objects at or past this index
+        $remaining_objects = array();
+        if ($index < $this->count()) {
+            $remaining_objects = $this->slice($index, $this->count() - $index);
+            foreach ($remaining_objects as $key => $remaining_object) {
+                // we need to grab the identifiers for each object and use them as keys
+                $remaining_objects[ $remaining_object->getInfo() ] = $remaining_object;
+                // and then remove the object from the current tracking array
+                unset($remaining_objects[ $key ]);
+                // and then remove it from the Collection
+                $this->detach($remaining_object);
+            }
+        }
+        // add the new object we're splicing in
+        $this->add($object, $identifier);
+        // attach the objects we previously detached
+        foreach ($remaining_objects as $key => $remaining_object) {
+            $this->add($remaining_object, $key);
+        }
+        return $this->contains($object);
     }
 
 
