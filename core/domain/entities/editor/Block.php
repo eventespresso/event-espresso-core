@@ -41,9 +41,9 @@ abstract class Block implements BlockInterface
     private $dynamic = false;
 
     /**
-     * @var string $editor_block_type
+     * @var string $block_type
      */
-    private $editor_block_type;
+    private $block_type;
 
     /**
      * @var array $supported_post_types
@@ -72,7 +72,7 @@ abstract class Block implements BlockInterface
      */
     public function blockType()
     {
-        return $this->editor_block_type;
+        return $this->block_type;
     }
 
 
@@ -81,16 +81,16 @@ abstract class Block implements BlockInterface
      */
     public function namespacedBlockType()
     {
-        return self::NAME_SPACE . $this->editor_block_type;
+        return self::NAME_SPACE . $this->block_type;
     }
 
 
     /**
-     * @param string $editor_block_type
+     * @param string $block_type
      */
-    protected function setBlockType($editor_block_type)
+    protected function setBlockType($block_type)
     {
-        $this->editor_block_type = $editor_block_type;
+        $this->block_type = $block_type;
     }
 
 

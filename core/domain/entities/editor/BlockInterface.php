@@ -22,7 +22,7 @@ use WP_Block_Type;
 interface BlockInterface
 {
 
-    const NAME_SPACE = 'event-espresso/';
+    const NAME_SPACE = 'eventespresso/';
 
     /**
      * Perform any early setup required by the block
