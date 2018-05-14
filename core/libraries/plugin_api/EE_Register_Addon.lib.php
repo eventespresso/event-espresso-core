@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\RequiresDependencyMapInterface;
 use EventEspresso\core\domain\RequiresDomainInterface;
 use EventEspresso\core\exceptions\ExceptionLogger;
@@ -129,6 +130,8 @@ class EE_Register_Addon implements EEI_Plugin_API
      *                                                                  "1.0.0.rc.043" for a version in progress
      * @type string                   $main_file_path                   the full server path to the main file
      *                                                                  loaded directly by WP
+     * @type DomainInterface $domain                                    child class of
+     *                                                                  EventEspresso\core\domain\DomainBase
      * @type string                   $domain_fqcn                      Fully Qualified Class Name
      *                                                                  for the addon's Domain class
      *                                                                  (see EventEspresso\core\domain\Domain)
@@ -233,6 +236,15 @@ class EE_Register_Addon implements EEI_Plugin_API
      *                                                                  namespace.
      *                                                                  }
      *                                                                  }
+     * @type string                   $privacy_policies                 FQNSs (namespaces, each of which contains only
+     *                                                                  privacy policy classes) or FQCNs (specific
+     *                                                                  classnames of privacy policy classes)
+     * @type string                   $personal_data_exporters          FQNSs (namespaces, each of which contains only
+     *                                                                  privacy policy classes) or FQCNs (specific
+     *                                                                  classnames of privacy policy classes)
+     * @type string                   $personal_data_erasers            FQNSs (namespaces, each of which contains only
+     *                                                                  privacy policy classes) or FQCNs (specific
+     *                                                                  classnames of privacy policy classes)
      * @return void
      * @throws DomainException
      * @throws EE_Error
@@ -286,6 +298,12 @@ class EE_Register_Addon implements EEI_Plugin_API
         EE_Register_Addon::_register_custom_post_types($addon_name);
         // and any payment methods
         EE_Register_Addon::_register_payment_methods($addon_name);
+        // and privacy policy generators
+        EE_Register_Addon::registerPrivacyPolicies($addon_name);
+        // and privacy policy generators
+        EE_Register_Addon::registerPersonalDataExporters($addon_name);
+        // and privacy policy generators
+        EE_Register_Addon::registerPersonalDataErasers($addon_name);
         // load and instantiate main addon class
         $addon = EE_Register_Addon::_load_and_init_addon_class($addon_name);
         // delay calling after_registration hook on each addon until after all add-ons have been registered.
@@ -393,6 +411,10 @@ class EE_Register_Addon implements EEI_Plugin_API
             'main_file_path'        => isset($setup_args['main_file_path'])
                 ? (string) $setup_args['main_file_path']
                 : '',
+            // instance of \EventEspresso\core\domain\DomainInterface
+            'domain'                => isset($setup_args['domain']) && $setup_args['domain'] instanceof DomainInterface
+                ? $setup_args['domain']
+                : null,
             // Fully Qualified Class Name for the addon's Domain class
             'domain_fqcn'           => isset($setup_args['domain_fqcn'])
                 ? (string) $setup_args['domain_fqcn']
@@ -491,6 +513,9 @@ class EE_Register_Addon implements EEI_Plugin_API
             )
                 ? (array) $setup_args['namespace']
                 : array(),
+            'privacy_policies'      => isset($setup_args['privacy_policies'])
+                ? (array) $setup_args['privacy_policies']
+                : '',
         );
         // if plugin_action_slug is NOT set, but an admin page path IS set,
         // then let's just use the plugin_slug since that will be used for linking to the admin page
@@ -643,8 +668,9 @@ class EE_Register_Addon implements EEI_Plugin_API
     private static function _addon_activation($addon_name, array $addon_settings)
     {
         // this is an activation request
-        if (did_action('activate_plugin')) {
-            // to find if THIS is the addon that was activated, just check if we have already registered it or not
+        if (did_action(
+            'activate_plugin'
+        )) {// to find if THIS is the addon that was activated, just check if we have already registered it or not
             // (as the newly-activated addon wasn't around the first time addons were registered).
             // Note: the presence of pue_options in the addon registration options will initialize the $_settings
             // property for the add-on, but the add-on is only partially initialized.  Hence, the additional check.
@@ -931,6 +957,56 @@ class EE_Register_Addon implements EEI_Plugin_API
 
 
     /**
+     * @param string $addon_name
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws DomainException
+     * @throws EE_Error
+     */
+    private static function registerPrivacyPolicies($addon_name)
+    {
+        if (! empty(self::$_settings[ $addon_name ]['privacy_policies'])) {
+            EE_Register_Privacy_Policy::register(
+                $addon_name,
+                self::$_settings[ $addon_name ]['privacy_policies']
+            );
+        }
+    }
+
+
+    /**
+     * @param string $addon_name
+     * @return void
+     */
+    private static function registerPersonalDataExporters($addon_name)
+    {
+        if (! empty(self::$_settings[ $addon_name ]['personal_data_exporters'])) {
+            EE_Register_Personal_Data_Eraser::register(
+                $addon_name,
+                self::$_settings[ $addon_name ]['personal_data_exporters']
+            );
+        }
+    }
+
+
+    /**
+     * @param string $addon_name
+     * @return void
+     */
+    private static function registerPersonalDataErasers($addon_name)
+    {
+        if (! empty(self::$_settings[ $addon_name ]['personal_data_erasers'])) {
+            EE_Register_Personal_Data_Eraser::register(
+                $addon_name,
+                self::$_settings[ $addon_name ]['personal_data_erasers']
+            );
+        }
+    }
+
+
+    /**
      * Loads and instantiates the EE_Addon class and adds it onto the registry
      *
      * @param string $addon_name
@@ -954,18 +1030,29 @@ class EE_Register_Addon implements EEI_Plugin_API
         }
         // setter inject domain if required
         if ($addon instanceof RequiresDomainInterface
-            && self::$_settings[ $addon_name ]['domain_fqcn'] !== ''
             && $addon->domain() === null
         ) {
-            $addon->setDomain(
-                $loader->getShared(
+            // using supplied Domain object
+            $domain = self::$_settings[ $addon_name ]['domain'] instanceof DomainInterface
+                ? self::$_settings[ $addon_name ]['domain']
+                : null;
+            // or construct one using Domain FQCN
+            if ($domain === null && self::$_settings[ $addon_name ]['domain_fqcn'] !== '') {
+                $domain = $loader->getShared(
                     self::$_settings[ $addon_name ]['domain_fqcn'],
                     array(
-                        self::$_settings[ $addon_name ]['main_file_path'],
-                        self::$_settings[ $addon_name ]['version'],
+                        new EventEspresso\core\domain\values\FilePath(
+                            self::$_settings[ $addon_name ]['main_file_path']
+                        ),
+                        EventEspresso\core\domain\values\Version::fromString(
+                            self::$_settings[ $addon_name ]['version']
+                        ),
                     )
-                )
-            );
+                );
+            }
+            if ($domain instanceof DomainInterface) {
+                $addon->setDomain($domain);
+            }
         }
         $addon->set_name($addon_name);
         $addon->set_plugin_slug(self::$_settings[ $addon_name ]['plugin_slug']);
