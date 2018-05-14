@@ -28,9 +28,7 @@ class EE_Checkbox_Display_Strategy extends EE_Compound_Input_Display_Strategy
                 sprintf(
                     esc_html_x(
                         'Input values for checkboxes should be an array of values, but the value for input "%1$s" is "%2$s". Please verify that the input name is exactly "%3$s"',
-                        'Input values for checkboxes should be an array of values,
-                         but the value for input "form-input-id" is "form-input-value".
-                          Please verify that the input name is exactly "form_input_name[]"',
+                        'Input values for checkboxes should be an array of values, but the value for input "form-input-id" is "form-input-value". Please verify that the input name is exactly "form_input_name[]"',
                         'event_espresso'
                     ),
                     $input->html_id(),
