@@ -239,6 +239,12 @@ class EE_Register_Addon implements EEI_Plugin_API
      * @type string                   $privacy_policies                 FQNSs (namespaces, each of which contains only
      *                                                                  privacy policy classes) or FQCNs (specific
      *                                                                  classnames of privacy policy classes)
+     * @type string                   $personal_data_exporters          FQNSs (namespaces, each of which contains only
+     *                                                                  privacy policy classes) or FQCNs (specific
+     *                                                                  classnames of privacy policy classes)
+     * @type string                   $personal_data_erasers            FQNSs (namespaces, each of which contains only
+     *                                                                  privacy policy classes) or FQCNs (specific
+     *                                                                  classnames of privacy policy classes)
      * @return void
      * @throws DomainException
      * @throws EE_Error
@@ -294,6 +300,10 @@ class EE_Register_Addon implements EEI_Plugin_API
         EE_Register_Addon::_register_payment_methods($addon_name);
         // and privacy policy generators
         EE_Register_Addon::registerPrivacyPolicies($addon_name);
+        // and privacy policy generators
+        EE_Register_Addon::registerPersonalDataExporters($addon_name);
+        // and privacy policy generators
+        EE_Register_Addon::registerPersonalDataErasers($addon_name);
         // load and instantiate main addon class
         $addon = EE_Register_Addon::_load_and_init_addon_class($addon_name);
         // delay calling after_registration hook on each addon until after all add-ons have been registered.
@@ -961,6 +971,36 @@ class EE_Register_Addon implements EEI_Plugin_API
             EE_Register_Privacy_Policy::register(
                 $addon_name,
                 self::$_settings[ $addon_name ]['privacy_policies']
+            );
+        }
+    }
+
+
+    /**
+     * @param string $addon_name
+     * @return void
+     */
+    private static function registerPersonalDataExporters($addon_name)
+    {
+        if (! empty(self::$_settings[ $addon_name ]['personal_data_exporters'])) {
+            EE_Register_Personal_Data_Eraser::register(
+                $addon_name,
+                self::$_settings[ $addon_name ]['personal_data_exporters']
+            );
+        }
+    }
+
+
+    /**
+     * @param string $addon_name
+     * @return void
+     */
+    private static function registerPersonalDataErasers($addon_name)
+    {
+        if (! empty(self::$_settings[ $addon_name ]['personal_data_erasers'])) {
+            EE_Register_Personal_Data_Eraser::register(
+                $addon_name,
+                self::$_settings[ $addon_name ]['personal_data_erasers']
             );
         }
     }
