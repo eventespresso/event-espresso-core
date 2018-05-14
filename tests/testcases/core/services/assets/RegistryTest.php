@@ -4,6 +4,7 @@ use EventEspresso\core\domain\DomainFactory;
 use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\FullyQualifiedName;
 use EventEspresso\core\domain\values\Version;
+use EventEspresso\core\services\assets\AssetCollection;
 use EventEspresso\core\services\assets\I18nRegistry;
 use EventEspresso\core\services\assets\Registry;
 
@@ -46,10 +47,8 @@ class RegistryTest extends EE_UnitTestCase
             )
         );
         $this->registry = new Registry(
-            EE_Config::instance()->template_settings,
-            EE_Config::instance()->currency,
-            new i18nRegistry(array(), $domain),
-            $domain
+            new AssetCollection(),
+            new i18nRegistry(array(), $domain)
         );
         parent::setUp();
     }
@@ -124,3 +123,4 @@ class RegistryTest extends EE_UnitTestCase
         $this->assertEquals('some test content', $this->registry->getTemplate('test'));
     }
 }
+// location: tests/testcases/core/services/assets/RegistryTest.php

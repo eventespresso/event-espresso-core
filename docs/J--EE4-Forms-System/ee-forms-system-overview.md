@@ -189,6 +189,7 @@ Representing a piece of data we want to retrieve from the user in the form, and 
 
 | Option | Description |
 | ------ | ----------- |
+default | normalized default/initial value (eg, if providing the default for a Yes_No_Input, you should provide TRUE or FALSE, not '1' or '0')
 html_name | the value of the "name" attribute on the HTML input tag. Best left as the default
 html_label_id | The value of the "id" attribute on the label tag
 html_label_class | The value of the "class" attribute on the label tag

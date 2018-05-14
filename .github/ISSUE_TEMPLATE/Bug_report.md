@@ -35,6 +35,7 @@ Steps to reproduce the behavior:
 <!-- If applicable, add screenshots to help explain your problem. -->
 
 **Environment:**
+ - Version of Event Espresso:  <!-- tagged release version if known or branch name.  e.g. 4.9.59.p -->
  - Version of WordPress: <!-- e.g. 4.9.6] -->
  - Browser <!-- [e.g. chrome, safari (include youre browser version if possible)] -->
  - PHP Version <!-- [e.g. 5.6.2] -->
