@@ -2587,7 +2587,7 @@ class EE_Admin_Config extends EE_Config_Base
      */
     public function gatewayLogLifespanOptions()
     {
-        return (array)apply_filters(
+        return (array) apply_filters(
             'FHEE_EE_Admin_Config__gatewayLogLifespanOptions',
             array(
                 '1 second' => esc_html__('Don\'t Log At All', 'event_espresso'),
