@@ -14,7 +14,7 @@ import { values } from 'lodash';
  */
 export function isEntityDirty( state, modelName, entityId ) {
 	return state.dirty.hasOwnProperty( modelName ) &&
-		state.dirty[ modelName ].indexOf( String( entityId ) ) > - 1;
+		state.dirty[ modelName ].indexOf( String( entityId ) ) > -1;
 }
 
 /**

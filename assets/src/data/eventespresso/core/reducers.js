@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { map, pick, keys, difference, without } from 'lodash';
+import { map, keys, difference, without } from 'lodash';
 import isShallowEqual from '@wordpress/is-shallow-equal/objects';
 import { combineReducers } from '@wordpress/data';
 import { mergeAndDeDuplicateArrays } from '@eventespresso/eejs';
@@ -40,21 +40,6 @@ const getDirtyEntityIds = ( modelName, state, entities ) => {
 };
 
 /**
- * Recieves state and entities and returns any matching entities within
- * the state.
- *
- * @param { string } modelName
- * @param { Object } state
- * @param { Array }  entities
- * @return {*}  A new collection of entities matching what already exists in the
- *                state.
- */
-const getMatchingStateEntities = ( modelName, state, entities ) => {
-	entities = keyEntitiesByPrimaryKeyValue( modelName, entities );
-	return pick( state[ modelName ], keys( entities ) );
-};
-
-/**
  * This reducer sets the dirty property to false for all entity records matching
  * given entities in the state.  Entities themselves are NOT updated.
  *
@@ -70,10 +55,6 @@ export function cleanEntities( state = DEFAULT_CORE_STATE, action ) {
 	const { type, modelName, entities: incomingEntities = [] } = action;
 	if ( type === 'CLEAN_ENTITIES' &&
 		state.dirty.hasOwnProperty( modelName ) ) {
-		// const entities = getMatchingStateEntities( modelName,
-		// 	state,
-		// 	incomingEntities,
-		// );
 		const entityIds = map(
 			incomingEntities,
 			function( entity ) {
