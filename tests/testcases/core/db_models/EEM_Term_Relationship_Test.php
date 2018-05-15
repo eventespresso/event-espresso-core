@@ -60,6 +60,74 @@ class EEM_Term_Relationship_Test extends EE_UnitTestCase{
 //		$this->assertEquals( 0, $tt_1->count() );
 //		$this->assertEquals(0,$tt_2->count() );
 	}
+
+
+    /**
+     * @group current
+     */
+	public function testUpdateTermTaxonomyCountsPassNull()
+    {
+        //create a few term taxonomies
+        $term1 = $this->factory()->term->create_and_get();
+        $term2 = $this->factory()->term->create_and_get();
+        $term3 = $this->factory()->term->create_and_get();
+        //add them to some posts
+        $post1 = $this->factory()->post->create_and_get();
+        $post2 = $this->factory()->post->create_and_get();
+        wp_set_post_terms($post1->ID, array($term1->term_id, $term2->term_id));
+        wp_set_post_terms($post2->ID,array($term2->term_id, $term3->term_id));
+        wp_cache_flush();
+        $term1 = get_term($term1->term_id);
+        $term2 = get_term($term2->term_id);
+        $term3 = get_term($term3->term_id);
+
+        $this->assertEquals(1, $term1->count);
+        $this->assertEquals(2, $term2->count);
+        $this->assertEquals(1, $term3->count);
+        //verify that when we update the counts, they aren't set to zero
+        EEM_Term_Relationship::instance()->update_term_taxonomy_counts();
+        wp_cache_flush();
+        $term1 = get_term($term1->term_id);
+        $term2 = get_term($term2->term_id);
+        $term3 = get_term($term3->term_id);
+        $this->assertEquals(1, $term1->count);
+        $this->assertEquals(2, $term2->count);
+        $this->assertEquals(1, $term3->count);
+    }
+
+
+    /**
+     * @group current
+     */
+    public function testUpdateTermTaxonomyCountsPassInt()
+    {
+        //create a few term taxonomies
+        $term1 = $this->factory()->term->create_and_get();
+        $term2 = $this->factory()->term->create_and_get();
+        $term3 = $this->factory()->term->create_and_get();
+        //add them to some posts
+        $post1 = $this->factory()->post->create_and_get();
+        $post2 = $this->factory()->post->create_and_get();
+        wp_set_post_terms($post1->ID, array($term1->term_id, $term2->term_id));
+        wp_set_post_terms($post2->ID,array($term2->term_id, $term3->term_id));
+        wp_cache_flush();
+        $term1 = get_term($term1->term_id);
+        $term2 = get_term($term2->term_id);
+        $term3 = get_term($term3->term_id);
+
+        $this->assertEquals(1, $term1->count);
+        $this->assertEquals(2, $term2->count);
+        $this->assertEquals(1, $term3->count);
+        //verify that when we update the counts, they aren't set to zero
+        EEM_Term_Relationship::instance()->update_term_taxonomy_counts($term2->term_id);
+        wp_cache_flush();
+        $term1 = get_term($term1->term_id);
+        $term2 = get_term($term2->term_id);
+        $term3 = get_term($term3->term_id);
+        $this->assertEquals(1, $term1->count);
+        $this->assertEquals(2, $term2->count);
+        $this->assertEquals(1, $term3->count);
+    }
 }
 
 // End of file EEM_Term_Relationship_Test.php
