@@ -335,7 +335,11 @@ abstract class EE_Gateway
             $type = 'Payment_Method';
             $id = $this->_ID;
         }
-        $this->_pay_log->gateway_log($message, $id, $type);
+        //only log if we're going to store it for longer than the minimum time
+        $admin_config = LoaderFactory::getLoader()->load('EE_Admin_Config');
+        if($admin_config->gateway_log_lifespan !== '1 second') {
+            $this->_pay_log->gateway_log($message, $id, $type);
+        }
     }
 
     /**

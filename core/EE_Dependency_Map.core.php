@@ -874,6 +874,9 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\Domain'             => function () {
                 return DomainFactory::getEventEspressoCoreDomain();
             },
+            'EE_Admin_Config'                              => function() {
+                return EE_Config::instance()->admin;
+            }
         );
     }
 
