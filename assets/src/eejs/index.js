@@ -31,3 +31,5 @@ export const Exception = function( msg ) {
 };
 
 Exception.prototype = new Error;
+
+export * from './utils/merge-and-de-duplicate';
