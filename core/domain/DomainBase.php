@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain;
 
 use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\Version;
+use EventEspresso\core\services\assets\Registry;
 
 /**
  * DomainBase Class
@@ -125,24 +126,6 @@ abstract class DomainBase implements DomainInterface
     public function versionValueObject()
     {
         return $this->version;
-    }
-
-
-    /**
-     * @return string
-     */
-    public function sourceAssetsPath()
-    {
-        return $this->pluginPath() . 'assets/src/';
-    }
-
-
-    /**
-     * @return string
-     */
-    public function sourceAssetsUrl()
-    {
-        return $this->pluginUrl() . 'assets/src/';
     }
 
 

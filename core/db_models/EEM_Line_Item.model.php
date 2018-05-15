@@ -416,8 +416,6 @@ class EEM_Line_Item extends EEM_Base
      *
      * @param null $expired
      * @return EE_Base_Class[]|EE_Line_Item[]
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException

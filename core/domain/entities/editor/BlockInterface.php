@@ -2,10 +2,11 @@
 
 namespace EventEspresso\core\domain\entities\editor;
 
+use EventEspresso\core\services\assets\BlockAssetManagerInterface;
 use WP_Block_Type;
 
 /**
- * Interface EditorBlockInterface
+ * Interface BlockInterface
  * Classes implementing this interface are responsible for
  * Registering a Editor block type with WordPress core,
  * specifying all assets required for the block,
@@ -18,8 +19,10 @@ use WP_Block_Type;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-interface EditorBlockInterface
+interface BlockInterface
 {
+
+    const NAME_SPACE = 'eventespresso/';
 
     /**
      * Perform any early setup required by the block
@@ -33,7 +36,15 @@ interface EditorBlockInterface
     /**
      * @return string
      */
-    public function editorBlockType();
+    public function blockType();
+
+
+    /**
+     * AssetRegister that this editor block uses for asset registration
+     *
+     * @return BlockAssetManagerInterface
+     */
+    public function assetManager();
 
 
     /**
@@ -68,18 +79,6 @@ interface EditorBlockInterface
      * @return array
      */
     public function getEditorContainer();
-
-
-    /**
-     * @return  void
-     */
-    public function registerScripts();
-
-
-    /**
-     * @return void
-     */
-    public function registerStyles();
 
 
     /**

@@ -51,18 +51,6 @@ interface DomainInterface extends InterminableInterface
     /**
      * @return string
      */
-    public function sourceAssetsPath();
-
-
-    /**
-     * @return string
-     */
-    public function sourceAssetsUrl();
-
-
-    /**
-     * @return string
-     */
     public function distributionAssetsPath();
 
 

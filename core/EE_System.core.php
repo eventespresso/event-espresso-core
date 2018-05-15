@@ -1148,6 +1148,11 @@ final class EE_System implements ResettableInterface
             try {
                 $this->loader->getShared('EventEspresso\core\services\assets\Registry');
                 $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
+                if (function_exists('register_block_type')) {
+                    $this->loader->getShared(
+                        'EventEspresso\core\services\editor\BlockRegistrationManager'
+                    );
+                }
             } catch (Exception $exception) {
                 new ExceptionStackTraceDisplay($exception);
             }
@@ -1161,8 +1166,7 @@ final class EE_System implements ResettableInterface
         do_action('AHEE__EE_System__core_loaded_and_ready');
         // load_espresso_template_tags
         if (is_readable(EE_PUBLIC . 'template_tags.php')
-            && (
-                $this->request->isFrontend()
+            && ($this->request->isFrontend()
                 || $this->request->isAdmin()
                 || $this->request->isIframe()
                 || $this->request->isFeed()
