@@ -2590,7 +2590,7 @@ class EE_Admin_Config extends EE_Config_Base
         return (array)apply_filters(
             'FHEE_EE_Admin_Config__gatewayLogLifespanOptions',
             array(
-                'none' => esc_html__('Disabled', 'event_espresso'),
+                'none' => esc_html__('Don\'t Log At All', 'event_espresso'),
                 '1 day' => esc_html__('A Day', 'event_espresso'),
                 '1 week' => esc_html__('A Week', 'event_espresso'),
                 '5 weeks' => esc_html__('5 Weeks', 'event_espresso')
