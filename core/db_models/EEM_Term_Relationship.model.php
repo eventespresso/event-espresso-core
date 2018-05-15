@@ -119,33 +119,38 @@ class EEM_Term_Relationship extends EEM_Base
     }
 
 
-
     /**
      * Makes sure all term-taxonomy counts are correct
      *
      * @param int   $term_taxonomy_id the id of the term taxonomy to update. If NULL, updates ALL
      * @global wpdb $wpdb
      * @return int the number of rows affected
+     * @throws EE_Error
      */
     public function update_term_taxonomy_counts($term_taxonomy_id = null)
     {
         // because this uses a subquery and sometimes assigning to column to be another column's
         // value, we just write the SQL directly.
         global $wpdb;
+
+        $query = "
+                UPDATE {$wpdb->term_taxonomy} AS tt 
+                SET count = (
+                    select count(*) as proper_count from {$wpdb->term_relationships} AS tr 
+                    WHERE tt.term_taxonomy_id = tr.term_taxonomy_id
+                )";
+
         if ($term_taxonomy_id) {
-            $second_operand = $wpdb->prepare('%d', $term_taxonomy_id);
-        } else {
-            $second_operand = 'tr.term_taxonomy_id';
+            $query .= ' WHERE tt.term_taxonomy_id = %d'; $wpdb->prepare('%d', $term_taxonomy_id);
+            $query = $wpdb->prepare(
+                $query,
+                $term_taxonomy_id
+            );
         }
         $rows_affected = $this->_do_wpdb_query(
             'query',
             array(
-                "
-                UPDATE {$wpdb->term_taxonomy} AS tt 
-                SET count = (
-                    select count(*) as proper_count from {$wpdb->term_relationships} AS tr 
-                    WHERE tt.term_taxonomy_id = $second_operand
-                )",
+                $query,
             )
         );
         return $rows_affected;
