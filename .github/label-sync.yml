@@ -26,43 +26,70 @@
     - eventespresso/eea-chase-orbital
     - eventespresso/eea-vanco-pm
     - eventespresso/eea-authnet-sim
+    - eventespresso/eventsmart.com-website
+    - eventespresso/eea-ipay88-gateway
+    - eventespresso/eea-calendar-table-template
+    - eventespresso/eea-category-accordian-template
+    - eventespresso/eea-events-grid-view-template
+    - eventespresso/eea-aim-echeck
+    - eventespresso/eea-braintree-gateway
+    - eventespresso/eea-evertec
+    - eventespresso/eea-ideal-mollie-gateway
+    - eventespresso/eea-migs-payment-method
+    - eventespresso/eea-payflow-pro-gateway
+    - eventespresso/eea-recurring-events-manager
+    - eventespresso/eea-events-table-template
+    - eventespresso/eea-social-buttons
+    - eventespresso/eea-paygov-payment-method
+    - eventespresso/eea-multisite
+    - eventespresso/connect-oauth-middleman
+    - eventespresso/eventespresso.com-website
+    - eventespresso/eea-transfirst-gateway
+    - eventespresso/eea-sage-pay-gateway
+    - eventespresso/eea-quickbooks-gateway
+    - eventespresso/eea-omise-payment-method
+    - eventespresso/eea-firstdata-payeezy
+    - eventespresso/eea-cybersource-gateway
+    - eventespresso/eea-chase-orbital
   milestones: []
   labels:
   # status labels
     - name: "status:needs-documentation"
-      color: efefef
+      color: 3297c3
     - name: "status:backlog"
-      color: efefef
+      color: 5c7145
     - name: "status:on-hold"
-      color: efefef
+      color: 4f4a33
     - name: "status:waiting-refresh"
-      color: efefef
+      color: 2460a7
     - name: "status:in-progress"
-      color: efefef
+      color: 93b343
     - name: "status:next"
-      color: efefef
+      color: 5c7145
     - name: "status:needs-testing"
-      color: efefef
+      color: eb4f21
     - name: "status:merge"
-      color: efefef
+      color: 93b343
     - name: "status:review"
-      color: efefef
+      color: f7d500
     - name: "status:feedback-needed"
-      color: efefef
+      color: a16ec6
     - name: "status:needs-more-info"
-      color: efefef
+      color: e47e33
     - name: "status:add-sales-page"
-      color: efefef
+      color: 9ddde4
     - name: "status:duplicate"
-      color: efefef
+      color: a0a5a5
       previousNames:
         - duplicate
     - name: "status:stale"
-      color: efefef
+      color: a08e58
     - name: "status:unit-tests-required"
-      color: efefef
+      color: 9ddde4
     - name: "status:triage"
-      color: efefef
+      color: f06291
+    - name: "status:please-fix"
+      color: c52e75
     # category labels
     - name: "category:security"
       color: 84b6eb
@@ -129,8 +156,10 @@
       previousNames:
         - community-contribution
     # priority labels
-    - name: "priority:critical"
+    - name: "priority:critical 🔥"
       color: b60205
+      previousNames:
+        - "priority:critical"
     - name: "priority:high"
       color: d93f0b
     - name: "priority:normal"
@@ -140,37 +169,103 @@
     # type labels
     - name: "type:support"
       color: ebf7a0
-    - name: "type:bug"
-      color: ebf7a0
+    - name: "type:bug 🐞"
+      color: efefef
       previousNames:
         - bug
-    - name: "type:build-process"
-      color: ebf7a0
+        - "type:bug"
+        - "type:bug 🐛"
+    - name: "type:build-process 🔨"
+      color: efefef
       previousNames:
         - build-process
-    - name: "type:enhancement"
-      color: ebf7a0
+        - "type:build-process"
+    - name: "type:enhancement 🎉"
+      color: efefef
       previousNames:
         - enhancement
-    - name: "type:task"
-      color: ebf7a0
-    - name: "type:feature-request"
-      color: ebf7a0
+        - "type:enhancement"
+    - name: "type:task ✅"
+      color: efefef
+      previousNames:
+        - "type:task"
+    - name: "type:feature-request 🙏"
+      color: efefef
       previousNames:
         - feature request
-    - name: "type:documentation"
-      color: ebf7a0
+        - "type:feature-request"
+    - name: "type:documentation 📖"
+      color: efefef
       previousNames:
         - documentation
+        - "type:documentation"
     - name: "type:design"
-      color: ebf7a0
+      color: efefef
     - name: "type:user-proofing"
-      color: ebf7a0
+      color: efefef
     - name: "type:theme/plugin-conflict"
       color: ebf7a0
-    - name: "type:question"
-      color: ebf7a0
-    - name: "type:impacts-eventsmart"
-      color: 00f2ff
+    - name: "type:question ❓"
+      color: efefef
       previousNames:
         - question
+        - "type:question"
+    - name: "type-invalid 🦄"
+      color: efefef
+      previousNames:
+        - invalid
+        - "type:invalid"
+    - name: "type:impacts-eventsmart"
+      color: 00f2ff
+  options:
+    ignoreMilestones:
+      - eventespresso/event-espresso-core
+      - eventespresso/ee4-events-calendar
+      - eventespresso/eea-authnet-accept
+      - eventespresso/eea-stripe-gateway
+      - eventespresso/eea-wait-lists
+      - eventespresso/eea-barcode-scanner
+      - eventespresso/eea-attendee-mover
+      - eventespresso/eea-wpuser-integration
+      - eventespresso/eea-mailchimp
+      - eventespresso/eea-gutenberg
+      - eventespresso/eea-people-addon
+      - eventespresso/ee4-infusionsoft
+      - eventespresso/ee4-promotions
+      - eventespresso/eea-ticketing
+      - eventespresso/eea-beaver-builder
+      - eventespresso/eea-flexible-payment-method
+      - eventespresso/ee4-mer
+      - eventespresso/eea-affiliatewp
+      - eventespresso/eea-payment-methods-pro
+      - eventespresso/eea-automated-upcoming-event-notifications
+      - eventespresso/eea-buddypress
+      - eventespresso/eea-events-blog
+      - eventespresso/eea-chase-orbital
+      - eventespresso/eea-vanco-pm
+      - eventespresso/eea-authnet-sim
+      - eventespresso/eventsmart.com-website
+      - eventespresso/eea-ipay88-gateway
+      - eventespresso/eea-calendar-table-template
+      - eventespresso/eea-category-accordian-template
+      - eventespresso/eea-events-grid-view-template
+      - eventespresso/eea-aim-echeck
+      - eventespresso/eea-braintree-gateway
+      - eventespresso/eea-evertec
+      - eventespresso/eea-ideal-mollie-gateway
+      - eventespresso/eea-migs-payment-method
+      - eventespresso/eea-payflow-pro-gateway
+      - eventespresso/eea-recurring-events-manager
+      - eventespresso/eea-events-table-template
+      - eventespresso/eea-social-buttons
+      - eventespresso/eea-paygov-payment-method
+      - eventespresso/eea-multisite
+      - eventespresso/connect-oauth-middleman
+      - eventespresso/eventespresso.com-website
+      - eventespresso/eea-transfirst-gateway
+      - eventespresso/eea-sage-pay-gateway
+      - eventespresso/eea-quickbooks-gateway
+      - eventespresso/eea-omise-payment-method
+      - eventespresso/eea-firstdata-payeezy
+      - eventespresso/eea-cybersource-gateway
+      - eventespresso/eea-chase-orbital
