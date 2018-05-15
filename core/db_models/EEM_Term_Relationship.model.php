@@ -141,7 +141,7 @@ class EEM_Term_Relationship extends EEM_Base
                 )";
 
         if ($term_taxonomy_id) {
-            $query .= ' WHERE tt.term_taxonomy_id = %d'; $wpdb->prepare('%d', $term_taxonomy_id);
+            $query .= ' WHERE tt.term_taxonomy_id = %d';
             $query = $wpdb->prepare(
                 $query,
                 $term_taxonomy_id
