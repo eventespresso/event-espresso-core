@@ -139,7 +139,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
         $session_data = EE_Registry::instance()->SSN->get_session_data(null, true);
         // anonymize the last part of the IP address, now that the transaction is complete (we won't be using the IP address
         // for spam or bot detection now)
-        if(function_exists('wp_privacy_anonymize_ip') && isset($session_data['ip_address'])) {
+        if (function_exists('wp_privacy_anonymize_ip') && isset($session_data['ip_address'])) {
             $session_data['ip_address'] = wp_privacy_anonymize_ip($session_data['ip_address']);
         }
         $this->checkout->transaction->set_txn_session_data($session_data);
