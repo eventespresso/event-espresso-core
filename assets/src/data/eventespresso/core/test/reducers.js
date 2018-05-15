@@ -18,45 +18,26 @@ import {
 } from '../actions';
 
 const mockStateForTests = {
-	events: {
-		10: {
-			entity: { EVT_ID: 10, name: 'Event 10' },
-			dirty: false,
+	entities: {
+		events: {
+			10: { EVT_ID: 10, name: 'Event 10' },
+			20: { EVT_ID: 20, name: 'Event 20' },
+			30: { EVT_ID: 30, name: 'Event 30' },
 		},
-		20: {
-			entity: { EVT_ID: 20, name: 'Event 20' },
-			dirty: true,
-		},
-		30: {
-			entity: { EVT_ID: 30, name: 'Event 30' },
-			dirty: false,
+		terms: {
+			'10:10': { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
+			'20:20': { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
 		},
 	},
-	terms: {
-		'10.10': {
-			entity: { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
-			dirty: false,
-		},
-		'20.20': {
-			entity: { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
-			dirty: true,
-		},
+	entityIds: {
+		events: [ '10', '20', '30' ],
+		terms: [ '10:10', '20:20' ],
+	},
+	dirty: {
+		events: [ '20' ],
+		terms: [ '20:20' ],
 	},
 };
-
-jest.mock( '@eventespresso/eejs', () => ( {
-	data: {
-		paths: {
-			primary_keys: {
-				events: 'EVT_ID',
-				terms: [
-					'TERM_ID',
-					'TAXONOMY_ID',
-				],
-			},
-		},
-	},
-} ) );
 
 describe( 'receiveEntityRecords()', () => {
 	const originalState = deepFreeze( mockStateForTests );
@@ -82,7 +63,7 @@ describe( 'receiveEntityRecords()', () => {
 			),
 		);
 
-		expect( originalState ).not.toEqual( state );
+		expect( originalState ).not.toBe( state );
 		expect( originalState ).toEqual( mockStateForTests );
 	} );
 
@@ -94,26 +75,30 @@ describe( 'receiveEntityRecords()', () => {
 				[ { EVT_ID: 40, name: 'Event 40' } ],
 			),
 		);
-		const expectedEventsEntities = {
-			10: {
-				entity: { EVT_ID: 10, name: 'Event 10' },
-				dirty: false,
+		const expectedState = {
+			entities: {
+				events: {
+					10: { EVT_ID: 10, name: 'Event 10' },
+					20: { EVT_ID: 20, name: 'Event 20' },
+					30: { EVT_ID: 30, name: 'Event 30' },
+					40: { EVT_ID: 40, name: 'Event 40' },
+				},
+				terms: {
+					'10:10': { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
+					'20:20': { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
+				},
 			},
-			20: {
-				entity: { EVT_ID: 20, name: 'Event 20' },
-				dirty: true,
+			entityIds: {
+				events: [ '10', '20', '30', '40' ],
+				terms: [ '10:10', '20:20' ],
 			},
-			30: {
-				entity: { EVT_ID: 30, name: 'Event 30' },
-				dirty: false,
-			},
-			40: {
-				entity: { EVT_ID: 40, name: 'Event 40' },
-				dirty: false,
+			dirty: {
+				events: [ '20' ],
+				terms: [ '20:20' ],
 			},
 		};
 
-		expect( state.events ).toEqual( expectedEventsEntities );
+		expect( state ).toEqual( expectedState );
 	} );
 
 	it( 'adds a new record to state for a model entity with combined primary' +
@@ -125,22 +110,30 @@ describe( 'receiveEntityRecords()', () => {
 				[ { TERM_ID: 20, TAXONOMY_ID: 30, name: 'Term 20' } ],
 			),
 		);
-		const expectedTermsEntities = {
-			'10.10': {
-				entity: { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
-				dirty: false,
+		const expectedState = {
+			entities: {
+				events: {
+					10: { EVT_ID: 10, name: 'Event 10' },
+					20: { EVT_ID: 20, name: 'Event 20' },
+					30: { EVT_ID: 30, name: 'Event 30' },
+				},
+				terms: {
+					'10:10': { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
+					'20:20': { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
+					'20:30': { TERM_ID: 20, TAXONOMY_ID: 30, name: 'Term 20' },
+				},
 			},
-			'20.20': {
-				entity: { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
-				dirty: true,
+			entityIds: {
+				events: [ '10', '20', '30' ],
+				terms: [ '10:10', '20:20', '20:30' ],
 			},
-			'20.30': {
-				entity: { TERM_ID: 20, TAXONOMY_ID: 30, name: 'Term 20' },
-				dirty: false,
+			dirty: {
+				events: [ '20' ],
+				terms: [ '20:20' ],
 			},
 		};
 
-		expect( state.terms ).toEqual( expectedTermsEntities );
+		expect( state ).toEqual( expectedState );
 	} );
 
 	it( 'leaves an existing record alone when there are no changes and' +
@@ -156,26 +149,30 @@ describe( 'receiveEntityRecords()', () => {
 				],
 			),
 		);
-		const expectedEventsEntities = {
-			10: {
-				entity: { EVT_ID: 10, name: 'Event 10' },
-				dirty: false,
+		const expectedState = {
+			entities: {
+				events: {
+					10: { EVT_ID: 10, name: 'Event 10' },
+					20: { EVT_ID: 20, name: 'Event 20' },
+					30: { EVT_ID: 30, name: 'Event 30' },
+					50: { EVT_ID: 50, name: 'Event 50' },
+				},
+				terms: {
+					'10:10': { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
+					'20:20': { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
+				},
 			},
-			20: {
-				entity: { EVT_ID: 20, name: 'Event 20' },
-				dirty: true,
+			entityIds: {
+				events: [ '10', '20', '30', '50' ],
+				terms: [ '10:10', '20:20' ],
 			},
-			30: {
-				entity: { EVT_ID: 30, name: 'Event 30' },
-				dirty: false,
-			},
-			50: {
-				entity: { EVT_ID: 50, name: 'Event 50' },
-				dirty: false,
+			dirty: {
+				events: [ '20' ],
+				terms: [ '20:20' ],
 			},
 		};
 
-		expect( state.events ).toEqual( expectedEventsEntities );
+		expect( state ).toEqual( expectedState );
 	} );
 
 	it( 'modifies an existing record when there are changes and' +
@@ -191,26 +188,30 @@ describe( 'receiveEntityRecords()', () => {
 				],
 			),
 		);
-		const expectedEventsEntities = {
-			10: {
-				entity: { EVT_ID: 10, name: 'Event 10 Modified' },
-				dirty: true,
+		const expectedState = {
+			entities: {
+				events: {
+					10: { EVT_ID: 10, name: 'Event 10 Modified' },
+					20: { EVT_ID: 20, name: 'Event 20' },
+					30: { EVT_ID: 30, name: 'Event 30' },
+					50: { EVT_ID: 50, name: 'Event 50' },
+				},
+				terms: {
+					'10:10': { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
+					'20:20': { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
+				},
 			},
-			20: {
-				entity: { EVT_ID: 20, name: 'Event 20' },
-				dirty: true,
+			entityIds: {
+				events: [ '10', '20', '30', '50' ],
+				terms: [ '10:10', '20:20' ],
 			},
-			30: {
-				entity: { EVT_ID: 30, name: 'Event 30' },
-				dirty: false,
-			},
-			50: {
-				entity: { EVT_ID: 50, name: 'Event 50' },
-				dirty: false,
+			dirty: {
+				events: [ '20', '10' ],
+				terms: [ '20:20' ],
 			},
 		};
 
-		expect( state.events ).toEqual( expectedEventsEntities );
+		expect( state ).toEqual( expectedState );
 	} );
 } );
 
@@ -254,21 +255,28 @@ describe( 'cleanEntities()', () => {
 				],
 			),
 		);
-		const expectedStateEntities = {
-			10: {
-				entity: { EVT_ID: 10, name: 'Event 10' },
-				dirty: false,
+		const expectedState = {
+			entities: {
+				events: {
+					10: { EVT_ID: 10, name: 'Event 10' },
+					20: { EVT_ID: 20, name: 'Event 20' },
+					30: { EVT_ID: 30, name: 'Event 30' },
+				},
+				terms: {
+					'10:10': { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
+					'20:20': { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
+				},
 			},
-			20: {
-				entity: { EVT_ID: 20, name: 'Event 20' },
-				dirty: false,
+			entityIds: {
+				events: [ '10', '20', '30' ],
+				terms: [ '10:10', '20:20' ],
 			},
-			30: {
-				entity: { EVT_ID: 30, name: 'Event 30' },
-				dirty: false,
+			dirty: {
+				events: [],
+				terms: [ '20:20' ],
 			},
 		};
-		expect( state.events ).toEqual( expectedStateEntities );
+		expect( state ).toEqual( expectedState );
 	} );
 
 	it( 'sets dirty property correctly for provided entities belonging to' +
@@ -282,17 +290,28 @@ describe( 'cleanEntities()', () => {
 				],
 			),
 		);
-		const expectedStateEntities = {
-			'10.10': {
-				entity: { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
-				dirty: false,
+		const expectedState = {
+			entities: {
+				events: {
+					10: { EVT_ID: 10, name: 'Event 10' },
+					20: { EVT_ID: 20, name: 'Event 20' },
+					30: { EVT_ID: 30, name: 'Event 30' },
+				},
+				terms: {
+					'10:10': { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
+					'20:20': { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
+				},
 			},
-			'20.20': {
-				entity: { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
-				dirty: false,
+			entityIds: {
+				events: [ '10', '20', '30' ],
+				terms: [ '10:10', '20:20' ],
+			},
+			dirty: {
+				events: [ '20' ],
+				terms: [],
 			},
 		};
-		expect( state.terms ).toEqual( expectedStateEntities );
+		expect( state ).toEqual( expectedState );
 	} );
 } );
 
@@ -323,19 +342,34 @@ describe( 'cleanEntitybyId()', () => {
 			cleanEntityByIdAction( 'events', 20 ),
 		);
 		expect( state ).not.toBe( originalState );
-		expect( state.events ).toEqual(
+		expect( state ).toEqual(
 			{
-				10: {
-					entity: { EVT_ID: 10, name: 'Event 10' },
-					dirty: false,
+				entities: {
+					events: {
+						10: { EVT_ID: 10, name: 'Event 10' },
+						20: { EVT_ID: 20, name: 'Event 20' },
+						30: { EVT_ID: 30, name: 'Event 30' },
+					},
+					terms: {
+						'10:10': {
+							TERM_ID: 10,
+							TAXONOMY_ID: 10,
+							name: 'Term 10',
+						},
+						'20:20': {
+							TERM_ID: 20,
+							TAXONOMY_ID: 20,
+							name: 'Term 20',
+						},
+					},
 				},
-				20: {
-					entity: { EVT_ID: 20, name: 'Event 20' },
-					dirty: false,
+				entityIds: {
+					events: [ '10', '20', '30' ],
+					terms: [ '10:10', '20:20' ],
 				},
-				30: {
-					entity: { EVT_ID: 30, name: 'Event 30' },
-					dirty: false,
+				dirty: {
+					events: [],
+					terms: [ '20:20' ],
 				},
 			},
 		);
@@ -345,18 +379,37 @@ describe( 'cleanEntitybyId()', () => {
 		' part of a combined primary keys model', () => {
 		const state = cleanEntityById(
 			originalState,
-			cleanEntityByIdAction( 'terms', '20.20' ),
+			cleanEntityByIdAction( 'terms', '20:20' ),
 		);
 		expect( state ).not.toBe( originalState );
-		expect( state.terms ).toEqual(
+		expect( state ).toEqual(
 			{
-				'10.10': {
-					entity: { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
-					dirty: false,
+				entities: {
+					events: {
+						10: { EVT_ID: 10, name: 'Event 10' },
+						20: { EVT_ID: 20, name: 'Event 20' },
+						30: { EVT_ID: 30, name: 'Event 30' },
+					},
+					terms: {
+						'10:10': {
+							TERM_ID: 10,
+							TAXONOMY_ID: 10,
+							name: 'Term 10',
+						},
+						'20:20': {
+							TERM_ID: 20,
+							TAXONOMY_ID: 20,
+							name: 'Term 20',
+						},
+					},
 				},
-				'20.20': {
-					entity: { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
-					dirty: false,
+				entityIds: {
+					events: [ '10', '20', '30' ],
+					terms: [ '10:10', '20:20' ],
+				},
+				dirty: {
+					events: [ '20' ],
+					terms: [],
 				},
 			},
 		);

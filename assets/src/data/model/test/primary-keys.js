@@ -50,7 +50,7 @@ describe( 'valuesForCombinedPrimaryKeys()', () => {
 				[ 'TERM_ID', 'TAXONOMY_ID' ],
 				{ TERM_ID: 20, TAXONOMY_ID: 30, extra: 'something' },
 			),
-		).toEqual( '20.30' );
+		).toEqual( '20:30' );
 	} );
 } );
 
@@ -100,7 +100,7 @@ describe( 'getEntityPrimaryKeyValues()', () => {
 		expect( getEntityPrimaryKeyValues(
 			'terms',
 			{ TERM_ID: 10, TAXONOMY_ID: 20 },
-		) ).toEqual( '10.20' );
+		) ).toEqual( '10:20' );
 	} );
 } );
 
@@ -142,9 +142,9 @@ describe( 'keyEntitiesByPrimaryKeyValue()', () => {
 		'collection indexed by the primary keys for the entities' +
 		' (combined primary keys)', () => {
 		const expectedObject = {
-			'10.20': { TERM_ID: 10, TAXONOMY_ID: 20 },
-			'20.10': { TERM_ID: 20, TAXONOMY_ID: 10 },
-			50.6: { TERM_ID: 50, TAXONOMY_ID: 6 },
+			'10:20': { TERM_ID: 10, TAXONOMY_ID: 20 },
+			'20:10': { TERM_ID: 20, TAXONOMY_ID: 10 },
+			'50:6': { TERM_ID: 50, TAXONOMY_ID: 6 },
 		};
 		expect( keyEntitiesByPrimaryKeyValue(
 			'terms',

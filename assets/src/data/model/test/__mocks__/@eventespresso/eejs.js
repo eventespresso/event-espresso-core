@@ -1,4 +1,8 @@
-const { Exception } = require( '../../../../../eejs/index' );
+const {
+	Exception,
+	mergeAndDeDuplicateArrays,
+	mergeAndDeDuplicateObjects,
+} = require( '../../../../../eejs/index' );
 
 module.exports.data = {
 	paths: {
@@ -18,3 +22,5 @@ module.exports.data = {
 };
 
 module.exports.Exception = Exception;
+module.exports.mergeAndDeDuplicateArrays = mergeAndDeDuplicateArrays;
+module.exports.mergeAndDeDuplicateObjects = mergeAndDeDuplicateObjects;

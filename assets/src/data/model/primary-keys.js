@@ -36,9 +36,9 @@ export const valuesForCombinedPrimaryKeys = memoize( ( keys, entity ) => {
 	}
 	const primaryKey = reduce( keys, function( result, key ) {
 		validateEntityHasKey( key, entity );
-		return entity[ result ] + '.' + entity[ key ];
+		return entity[ result ] + ':' + entity[ key ];
 	} );
-	return trimEnd( primaryKey, '.' );
+	return trimEnd( primaryKey, ':' );
 } );
 
 /**

@@ -1,76 +1,42 @@
 /**
  * External dependencies
  */
-import { mapValues, pick, keys } from 'lodash';
+import { map, pick, keys, difference, without } from 'lodash';
 import isShallowEqual from '@wordpress/is-shallow-equal/objects';
 import { combineReducers } from '@wordpress/data';
+import { mergeAndDeDuplicateArrays } from '@eventespresso/eejs';
 
 /**
  * Internal dependencies
  */
 import {
-	DEFAULT_STATE,
+	DEFAULT_CORE_STATE,
 	getEntityPrimaryKeyValues,
 	keyEntitiesByPrimaryKeyValue,
 } from '../../model';
 
 /**
- * Constructs a collection of entity records indexed by entity primary keys
- * and each record containing the entity object and a boolean to indicate its
- * "dirty" state.
- * A record is set to dirty if the entity passed in has an id match in the
- * existing state and differs from the entity in the existing state.
+ * Returns an array of dirty entity ids from the provided entities.
  *
  * @param { string } modelName
  * @param { Object } state
  * @param { Array } entities
- * @return {*}  Returns an object.
+ * @return { Array }  Returns an array.
  */
-const constructEntityRecordsAutoDirty = ( modelName, state, entities ) => {
-	let dirty = false,
-		primaryKey,
-		entity;
-
-	return mapValues( entities, function( entityRecord ) {
-		// ensure we have the entity record
-		entity = entityRecord.hasOwnProperty( 'entity' ) ?
-			entityRecord.entity :
-			entityRecord;
-
+const getDirtyEntityIds = ( modelName, state, entities ) => {
+	const dirty = [];
+	let id;
+	entities.forEach( function( entity ) {
 		// dirty if not equal
-		primaryKey = getEntityPrimaryKeyValues( modelName, entity );
-		dirty = state.hasOwnProperty( modelName ) &&
-			state[ modelName ].hasOwnProperty( primaryKey ) &&
-			! isShallowEqual( entity, state[ modelName ][ primaryKey ].entity );
-		return {
-			entity,
-			dirty,
-		};
+		id = getEntityPrimaryKeyValues( modelName, entity );
+		if ( state.entities.hasOwnProperty( modelName ) &&
+			state.entities[ modelName ].hasOwnProperty( id ) &&
+			! isShallowEqual( entity, state.entities[ modelName ][ id ] )
+		) {
+			dirty.push( String( id ) );
+		}
 	} );
-};
-
-/**
- * Constructs entity records for the given entities and sets them all to the
- * provided dirty state.
- *
- * @param { string } modelName
- * @param { Array } entities
- * @param { boolean } dirty
- * @return {*} Returns a collection indexed by entity primary key with each
- *            object in the collection containing an entity and its dirty state.
- */
-const constructEntityRecords = ( modelName, entities, dirty ) => {
-	let entity;
-	return mapValues( entities, function( entityRecord ) {
-		// ensure we have the entity from the record
-		entity = entityRecord.hasOwnProperty( 'entity' ) ?
-			entityRecord.entity :
-			entityRecord;
-		return {
-			entity,
-			dirty,
-		};
-	} );
+	return dirty;
 };
 
 /**
@@ -100,19 +66,27 @@ const getMatchingStateEntities = ( modelName, state, entities ) => {
  * @return { Object }  The new state if dirty state is flushed and the original
  *                       state if not.
  */
-export function cleanEntities( state = DEFAULT_STATE, action ) {
+export function cleanEntities( state = DEFAULT_CORE_STATE, action ) {
 	const { type, modelName, entities: incomingEntities = [] } = action;
-	if ( type === 'CLEAN_ENTITIES' && state.hasOwnProperty( modelName ) ) {
-		const entities = constructEntityRecords(
-			modelName,
-			getMatchingStateEntities( modelName, state, incomingEntities ),
-			false,
+	if ( type === 'CLEAN_ENTITIES' &&
+		state.dirty.hasOwnProperty( modelName ) ) {
+		// const entities = getMatchingStateEntities( modelName,
+		// 	state,
+		// 	incomingEntities,
+		// );
+		const entityIds = map(
+			incomingEntities,
+			function( entity ) {
+				return String( getEntityPrimaryKeyValues( modelName, entity ) );
+			},
 		);
 		return {
 			...state,
-			[ modelName ]: {
-				...state[ modelName ],
-				...entities,
+			dirty: {
+				...state.dirty,
+				[ modelName ]: [
+					...difference( state.dirty[ modelName ], entityIds ),
+				],
 			},
 		};
 	}
@@ -128,22 +102,22 @@ export function cleanEntities( state = DEFAULT_STATE, action ) {
  * @return { Object }  The new state if the entity record is flushed and the
  *                       original state if not.
  */
-export function cleanEntityById( state = DEFAULT_STATE, action ) {
+export function cleanEntityById( state = DEFAULT_CORE_STATE, action ) {
 	const { type, modelName, entityId } = action;
-	const id = String( entityId );
 	if ( type === 'CLEAN_ENTITY' &&
-		state.hasOwnProperty( modelName ) &&
-		state[ modelName ].hasOwnProperty( id )
+		state.dirty.hasOwnProperty( modelName ) &&
+		state.entities.hasOwnProperty( modelName ) &&
+		state.entities[ modelName ].hasOwnProperty( entityId )
 	) {
 		return {
 			...state,
-			[ modelName ]: {
-				...state[ modelName ],
-				[ id ]: {
-					...state[ modelName ][ id ],
-					dirty: false,
-				},
-			},
+			dirty: {
+				...state.dirty,
+				[ modelName ]: [
+					...without( state.dirty[ modelName ], String( entityId ) ),
+				],
+			}
+			,
 		};
 	}
 	return state;
@@ -161,20 +135,36 @@ export function cleanEntityById( state = DEFAULT_STATE, action ) {
  * @return {*}  Returns original state if no additions or updates are done.
  *                Returns new state if additions or updates are done.
  */
-export function receiveEntityRecords( state = DEFAULT_STATE, action ) {
+export function receiveEntityRecords( state = DEFAULT_CORE_STATE, action ) {
 	const { type, modelName, entities: incomingEntities = [] } = action;
 	if ( type === 'RECEIVE_ENTITY_RECORDS' &&
-		state.hasOwnProperty( modelName ) ) {
-		const entities = constructEntityRecordsAutoDirty(
-			modelName,
-			state,
-			keyEntitiesByPrimaryKeyValue( modelName, incomingEntities ),
+		state.entities.hasOwnProperty( modelName ) ) {
+		const entities = keyEntitiesByPrimaryKeyValue( modelName,
+			incomingEntities,
 		);
+		const dirty = getDirtyEntityIds( modelName, state, incomingEntities );
 		return {
 			...state,
-			[ modelName ]: {
-				...state[ modelName ],
-				...entities,
+			entities: {
+				...state.entities,
+				[ modelName ]: {
+					...state.entities[ modelName ],
+					...entities,
+				},
+			},
+			entityIds: {
+				...state.entityIds,
+				[ modelName ]: mergeAndDeDuplicateArrays(
+					state.entityIds[ modelName ],
+					keys( entities ),
+				),
+			},
+			dirty: {
+				...state.dirty,
+				[ modelName ]: mergeAndDeDuplicateArrays(
+					state.dirty[ modelName ],
+					dirty,
+				),
 			},
 		};
 	}
@@ -184,5 +174,5 @@ export function receiveEntityRecords( state = DEFAULT_STATE, action ) {
 export default combineReducers(
 	cleanEntities,
 	cleanEntityById,
-	receiveEntityRecords
+	receiveEntityRecords,
 );

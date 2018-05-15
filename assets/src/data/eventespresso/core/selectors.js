@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { map, values } from 'lodash';
+import { values } from 'lodash';
 
 /**
  * Returns whether the entity in the state for the given id is dirty.
@@ -13,11 +13,8 @@ import { map, values } from 'lodash';
  * @return {boolean} True means the entity is dirty, false it is not.
  */
 export function isEntityDirty( state, modelName, entityId ) {
-	//make sure entityId is a string, because objects are indexed by strings.
-	entityId = String( entityId );
-	return state[ modelName ] && state[ modelName ][ entityId ] ?
-		state[ modelName ][ entityId ].dirty :
-		false;
+	return state.dirty.hasOwnProperty( modelName ) &&
+		state.dirty[ modelName ].indexOf( String( entityId ) ) > - 1;
 }
 
 /**
@@ -30,41 +27,26 @@ export function isEntityDirty( state, modelName, entityId ) {
  * returned.
  */
 export function getEntityRecordsForModel( state, modelName ) {
-	return state[ modelName ] ?
-		state[ modelName ] :
+	return state.entities[ modelName ] ?
+		state.entities[ modelName ] :
 		null;
 }
 
 /**
- * Returns all entities for the given model in state (just the entities)
+ * Returns all entities for the given model in state.
+ *
+ * This differs from getEntityRecordsForModel in that this returns the entity
+ * objects in an array as opposed to a collection indexed by entity primary key.
  *
  * @param { Object } state
  * @param { string } modelName
  * @return {null|{}} This differs from getEntityRecordsForModel in that it
- *   will return an array of entities only as opposed to a collection of entity
- *   records. If there are no entities available in the state then null is
- *   returned.
+ *   will return an array of entities only. If there are no entities available
+ *   in the state then null is returned.
  */
 export function getEntitiesForModel( state, modelName ) {
-	return state[ modelName ] ?
-		map( values( state[ modelName ] ), 'entity' ) :
-		null;
-}
-
-/**
- * Return an entity record (if it exists) for the given entityId.
- *
- * @param { Object } state
- * @param { string } modelName
- * @param { number } entityId
- * @return {null|{}}  Returns an entity record (which contains the keys 'entity'
- * and 'dirty')
- */
-export function getEntityRecordById( state, modelName, entityId ) {
-	//make sure entityId is a string, because objects are indexed by strings.
-	entityId = String( entityId );
-	return state[ modelName ] && state[ modelName ][ entityId ] ?
-		state[ modelName ][ entityId ] :
+	return state.entities[ modelName ] ?
+		values( state.entities[ modelName ] ) :
 		null;
 }
 
@@ -76,9 +58,7 @@ export function getEntityRecordById( state, modelName, entityId ) {
  * @return {null|{}} Returns the entity object.
  */
 export function getEntityById( state, modelName, entityId ) {
-	//make sure entityId is a string, because objects are indexed by strings.
-	entityId = String( entityId );
-	return state[ modelName ] && state[ modelName ][ entityId ] ?
-		state[ modelName ][ entityId ].entity :
+	return state.entities[ modelName ] && state.entities[ modelName ][ entityId ] ?
+		state.entities[ modelName ][ entityId ] :
 		null;
 }

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { DEFAULT_STATE } from '../../model';
+import { DEFAULT_LISTS_STATE } from '../../model';
 
 /**
  * Reducer managing item list state.
@@ -10,7 +10,7 @@ import { DEFAULT_STATE } from '../../model';
  * @param {Object} action	Dispatched action.
  * @return {Object}	Updated state.
  */
-export function listItems( state = DEFAULT_STATE, action ) {
+export function listItems( state = DEFAULT_LISTS_STATE, action ) {
 	const { type, modelName, queryString, items = [] } = action;
 	switch ( type ) {
 		case 'SET_REQUESTED':
