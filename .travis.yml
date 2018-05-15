@@ -17,6 +17,7 @@ env:
 
 before_install:
    - nvm install && nvm use
+   - npm install npm -g
    - |
       if [[ "$SKIP_XDEBUG_REMOVE" != "true" ]]; then
         cp $HOME/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini /tmp

@@ -719,7 +719,7 @@ class EE_Dependency_Map
             'EventEspresso\core\services\loaders\ObjectIdentifier'                                                        => array(
                 'EventEspresso\core\services\loaders\ClassInterfaceCache' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\services\assets\CoreAssetManager' => array(
+            'EventEspresso\core\domain\services\assets\CoreAssetManager'                                                  => array(
                 'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
                 'EE_Currency_Config'                                 => EE_Dependency_Map::load_from_cache,
                 'EE_Template_Config'                                 => EE_Dependency_Map::load_from_cache,
