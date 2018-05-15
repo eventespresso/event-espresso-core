@@ -2490,6 +2490,8 @@ class EE_Admin_Config extends EE_Config_Base
      */
     public $help_tour_activation;
 
+    public $gateway_log_lifetime = '1 week';
+
     /**
      * adds extra layer of encoding to session data to prevent serialization errors
      * but is incompatible with some server configuration errors
@@ -2520,6 +2522,7 @@ class EE_Admin_Config extends EE_Config_Base
         $this->affiliate_id = 'default';
         $this->help_tour_activation = true;
         $this->encode_session_data = false;
+        $this->gateway_log_lifetime = '1 week';
     }
 
 
@@ -2575,6 +2578,24 @@ class EE_Admin_Config extends EE_Config_Base
     public function set_encode_session_data($encode_session_data)
     {
         $this->encode_session_data = filter_var($encode_session_data, FILTER_VALIDATE_BOOLEAN);
+    }
+
+
+    /**
+     * Gets the options to make availalbe for the gateway log lifespan
+     * @return array
+     */
+    public function gatewayLogLifespanOptions()
+    {
+        return (array)apply_filters(
+            'FHEE_EE_Admin_Config__gatewayLogLifespanOptions',
+            array(
+                'none' => esc_html__('Disabled', 'event_espresso'),
+                '1 day' => esc_html__('A Day', 'event_espresso'),
+                '1 week' => esc_html__('A Week', 'event_espresso'),
+                '5 weeks' => esc_html__('5 Weeks', 'event_espresso')
+            )
+        );
     }
 }
 
