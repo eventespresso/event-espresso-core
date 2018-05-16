@@ -238,11 +238,6 @@
         - "type-invalid 🦄"
     - name: "type:impacts-eventsmart"
       color: 00f2ff
-    # other labels
-    - name: "Epic 🤘"
-      color: 5d498c
-      previousNames:
-        - Epic
   options:
     ignoreMilestones:
       - eventespresso/event-espresso-core
