@@ -1,15 +1,19 @@
 /**
  * External imports
  */
-import { data, Exception } from '@eventespresso/eejs';
+import { data } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
-import { isArray, reduce, trimEnd, keyBy, isEmpty } from 'lodash';
+import { isArray, reduce, trimEnd, keyBy } from 'lodash';
 import memoize from 'memize';
 
 /**
  * Internal imports
  */
-import { validateEntityHasKey } from './validators';
+import {
+	validateEntityHasKey,
+	validateIsArray,
+	validateIsNotEmpty,
+} from './validators';
 
 /**
  * Exposes a map of modelname to primary key exposed by the eejs.data global
@@ -29,11 +33,7 @@ export const { primary_keys: primaryKeys = {} } = data.paths;
  * @throws { Exception }
  */
 export const valuesForCombinedPrimaryKeys = memoize( ( keys, entity ) => {
-	if ( ! isArray( keys ) ) {
-		throw new Exception(
-			__( 'The provided value is not an array.', 'event_espresso' ),
-		);
-	}
+	validateIsArray( keys );
 	const primaryKey = reduce( keys, function( result, key ) {
 		validateEntityHasKey( key, entity );
 		return entity[ result ] + ':' + entity[ key ];
@@ -92,22 +92,14 @@ export const getEntityPrimaryKeyValues = memoize( ( modelName, entity ) => {
  * @throws { Exception }
  */
 export const keyEntitiesByPrimaryKeyValue = ( modelName, entities = [] ) => {
-	if ( isEmpty( entities ) ) {
-		throw new Exception(
-			__(
-				'The provided array of entities must not be empty',
-				'event_espresso',
-			),
-		);
-	}
-	if ( ! isArray( entities ) ) {
-		throw new Exception(
-			__(
-				'The provided entities argument must be an array.',
-				'event_espresso',
-			),
-		);
-	}
+	validateIsNotEmpty(
+		entities,
+		__(
+			'The provided array of entities must not be empty',
+			'event_espresso',
+		)
+	);
+	validateIsArray( entities );
 	return keyBy( entities, function( entity ) {
 		return String( getEntityPrimaryKeyValues( modelName, entity ) );
 	} );

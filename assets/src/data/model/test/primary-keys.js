@@ -119,7 +119,7 @@ describe( 'keyEntitiesByPrimaryKeyValue()', () => {
 		};
 		expect( t ).toThrow( Exception );
 		expect( t )
-			.toThrowError( 'The provided entities argument must be an array.' );
+			.toThrowError( 'The provided value is not an array.' );
 	} );
 	it( 'returns the expected format for the entity records which is a ' +
 		'collection indexed by the primary keys for the entities' +
