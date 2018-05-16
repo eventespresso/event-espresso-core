@@ -69,7 +69,7 @@
     - name: "status:needs-testing"
       color: eb4f21
     - name: "status:merge"
-      color: 93b343
+      color: 66b3aa
     - name: "status:review"
       color: f7d500
     - name: "status:feedback-needed"
@@ -88,71 +88,83 @@
       color: 9ddde4
     - name: "status:triage"
       color: f06291
+      previousNames:
+        - "triage"
     - name: "status:please-fix"
       color: c52e75
+    - name: "status:potential-duplicate"
+      color: c2d800
+      previousNames:
+        - "potential-duplicate"
     # category labels
     - name: "category:security"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:assets"
-      color: 84b6eb
+      color: abc2c1
       previousNames:
         - assets
-    - name: "category:payment-methods-&-gateways"
-      color: 84b6eb
-    - name: "category:admin-pages-&-functionality"
-      color: 84b6eb
+    - name: "category:payment-methods"
+      color: abc2c1
+      previousNames:
+        - "category:payment-methods-&-gateways"
+    - name: "category:admin-pages"
+      color: abc2c1
+      previousNames:
+        - "category:admin-pages-&-functionality"
     - name: "category:spco-&-registration"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:core-plugin"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:frontend-ui-&-ux"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:admin-page-ui-&-ux"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:messaging-&-messengers"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:i18n"
-      color: 84b6eb
+      color: abc2c1
       previousNames:
         - i18n
     - name: "category:templates-shortcodes-and-widgets"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:models-and-data-infrastructure"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:general"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:activation-installation-and-migration"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:wp-multi-site"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:3rd-party-integrations"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:decision-analytics"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:pue-uxip-and-licensing"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:unit-tests"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:forms-systems"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:reports-exporting-importing"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:user-management"
-      color: 84b6eb
+      color: abc2c1
     - name: "category:accessibility"
-      color: 84b6eb
-    - name: "category:command-bus-and-command-handlers"
-      color: 84b6eb
+      color: abc2c1
+    - name: "category:command-bus"
+      color: abc2c1
+      previousNames:
+        - "category:command-bus-and-command-handlers"
     - name: "category:gutenberg"
-      color: 84b6eb
+      color: abc2c1
       previousNames:
         - gutenberg
     - name: "category:has-codebase-ticket"
-      color: 84b6eb
+      color: abc2c1
       previousNames:
         - has codebase ticket
     - name: "category:community-contribution"
-      color: 84b6eb
+      color: abc2c1
       previousNames:
         - community-contribution
     # priority labels
@@ -161,14 +173,16 @@
       previousNames:
         - "priority:critical"
     - name: "priority:high"
-      color: d93f0b
+      color: f7d500
     - name: "priority:normal"
-      color: 0052cc
+      color: 93b343
     - name: "priority:low"
-      color: efefef
+      color: 9ddde4
     # type labels
-    - name: "type:support"
-      color: ebf7a0
+    - name: "type:support 🆘"
+      color: efefef
+      previousNames:
+        - "type:support"
     - name: "type:bug 🐞"
       color: efefef
       previousNames:
@@ -199,22 +213,29 @@
       previousNames:
         - documentation
         - "type:documentation"
-    - name: "type:design"
+    - name: "type:design 📐"
       color: efefef
-    - name: "type:user-proofing"
+      previousNames:
+        - "type:design"
+    - name: "type:user-proofing 🛡"
       color: efefef
-    - name: "type:theme/plugin-conflict"
-      color: ebf7a0
+      previousNames:
+        - "type:user-proofing"
+    - name: "type:theme/plugin-conflict 💥"
+      color: efefef
+      previousNames:
+        - "type:theme/plugin-conflict"
     - name: "type:question ❓"
       color: efefef
       previousNames:
         - question
         - "type:question"
-    - name: "type-invalid 🦄"
+    - name: "type:invalid 🦄"
       color: efefef
       previousNames:
         - invalid
         - "type:invalid"
+        - "type-invalid 🦄"
     - name: "type:impacts-eventsmart"
       color: 00f2ff
   options:
