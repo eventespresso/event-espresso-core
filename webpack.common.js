@@ -1,7 +1,6 @@
 const path = require( 'path' );
 const assets = './assets/src/';
-const ExtractTextPlugin = require( 'extract-text-webpack-plugin' );
-const combineLoaders = require( 'webpack-combine-loaders' );
+const miniExtract = require( 'mini-css-extract-plugin' );
 const autoprefixer = require( 'autoprefixer' );
 const externals = {
 	jquery: 'jQuery',
@@ -81,34 +80,33 @@ const config = [
 				},
 				{
 					test: /\.css$/,
-					loader: ExtractTextPlugin.extract(
-						combineLoaders( [
-							{
-								loader: 'css-loader',
-								query: {
-									modules: true,
-									localIdentName: '[local]',
-								},
-								//can't use minimize because cssnano (the
-								// dependency) doesn't parser the browserlist
-								// extension in package.json correctly, there's
-								// a pending update for it but css-loader
-								// doesn't have the latest yet.
-								// options: {
-								//     minimize: true
-								// }
+					use: [
+						miniExtract.loader,
+						{
+							loader: 'css-loader',
+							query: {
+								modules: true,
+								localIdentName: '[local]',
 							},
-							{
-								loader: 'postcss-loader',
-								options: {
-									plugins: function() {
-										return [ autoprefixer ];
-									},
-									sourceMap: true,
+							//can't use minimize because cssnano (the
+							// dependency) doesn't parser the browserlist
+							// extension in package.json correctly, there's
+							// a pending update for it but css-loader
+							// doesn't have the latest yet.
+							// options: {
+							//     minimize: true
+							// }
+						},
+						{
+							loader: 'postcss-loader',
+							options: {
+								plugins: function() {
+									return [ autoprefixer ];
 								},
+								sourceMap: true,
 							},
-						] ),
-					),
+						},
+					],
 				},
 			],
 		},
