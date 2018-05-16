@@ -9,8 +9,9 @@
 	"moduleDirectories": ["node_modules"],
 	"moduleNameMapper": {
 		"@eventespresso\\/(eejs)": "assets/src/$1",
+		"@wordpress/dom-ready": "<rootDir>/node_modules/@wordpress/dom-ready",
 		"@wordpress\\/(blocks|components|editor|data|utils|edit-post|viewport|plugins|core-data)": "<rootDir>/node_modules/gutenberg/$1",
-		"@wordpress\\/(date|element)": "<rootDir>/node_modules/gutenberg/packages/$1/src",
+		"@wordpress\\/(date|element|dom)": "<rootDir>/node_modules/gutenberg/packages/$1/src",
 		"tinymce": "<rootDir>/tests/javascript-config/unit/mocks/tinymce",
 		"@wordpress/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
 		"@eventespresso/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n"
