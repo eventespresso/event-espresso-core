@@ -52,6 +52,7 @@
     - eventespresso/eea-cybersource-gateway
     - eventespresso/eea-chase-orbital
     - eventespresso/eea-event-app-customization
+    - eventespresso/grunt-wp-plugin-buildmachine
   milestones: []
   labels:
   # status labels
@@ -292,3 +293,4 @@
       - eventespresso/eea-cybersource-gateway
       - eventespresso/eea-chase-orbital
       - eventespresso/eea-event-app-customization
+      - eventespresso/grunt-wp-plugin-buildmachine
