@@ -11,20 +11,21 @@ import { isArray, isEmpty } from 'lodash';
  *
  * @param { string } key
  * @param { Object } entity
- * @param { string } customMessage
+ * @param { string } message
  * @throws { Exception }  Throws an exception if the provided entity does not
- * 						  have the given key.
+ *                          have the given key.
  */
-export const validateEntityHasKey = ( key, entity, customMessage = '' ) => {
-	const message = customMessage === '' ?
-		sprintf(
-			__( 'The provided entity (%s) does not have the given property (%s)',
+export const validateEntityHasKey = ( key, entity, message = '' ) => {
+	if ( message === '' ) {
+		message = sprintf(
+			__(
+				'The provided entity (%s) does not have the given property (%s)',
 				'event_espresso',
 			),
 			entity,
 			key,
-		) :
-		customMessage;
+		);
+	}
 	if ( ! entity.hasOwnProperty( key ) ) {
 		throw new Exception( message );
 	}
@@ -34,14 +35,14 @@ export const validateEntityHasKey = ( key, entity, customMessage = '' ) => {
  * Validates whether the given value is an array.
  *
  * @param {*} items
- * @param { string }  customMessage
+ * @param { string }  message
  * @throws { Exception } Throws an exception if the provided value is not an
- * 						  array.
+ *                          array.
  */
-export const validateIsArray = ( items, customMessage = '' ) => {
-	const message = customMessage === '' ?
-		__( 'The provided value is not an array.', 'event_espresso' ) :
-		customMessage;
+export const validateIsArray = ( items, message = '' ) => {
+	if ( message === '' ) {
+		message = __( 'The provided value is not an array.', 'event_espresso' );
+	}
 	if ( ! isArray( items ) ) {
 		throw new Exception( message );
 	}
@@ -53,13 +54,16 @@ export const validateIsArray = ( items, customMessage = '' ) => {
  * Call this validator when you want to make sure the value is NOT empty.
  *
  * @param {*} items
- * @param { string } customMessage
+ * @param { string } message
  * @throws { Exception } Throws an exception if the provided value is empty.
  */
-export const validateIsNotEmpty = ( items, customMessage = '' ) => {
-	const message = customMessage === '' ?
-		__( 'The provided items must not be empty', 'event_espresso' ) :
-		customMessage;
+export const validateIsNotEmpty = ( items, message = '' ) => {
+	if ( message === '' ) {
+		message = __(
+			'The provided items must not be empty',
+			'event_espresso',
+		);
+	}
 	if ( isEmpty( items ) ) {
 		throw new Exception( message );
 	}
