@@ -387,11 +387,11 @@ class Registry
     public function getAssetUrl($namespace, $chunk_name, $asset_type)
     {
         $url = isset(
-            $this->manifest_data[ $namespace ][ $chunk_name ][ $asset_type ],
+            $this->manifest_data[ $namespace ][ $chunk_name . '.' . $asset_type ],
             $this->manifest_data[ $namespace ]['url_base']
         )
             ? $this->manifest_data[ $namespace ]['url_base']
-              . $this->manifest_data[ $namespace ][ $chunk_name ][ $asset_type ]
+              . $this->manifest_data[ $namespace ][ $chunk_name . '.' . $asset_type ]
             : $chunk_name;
         return apply_filters(
             'FHEE__EventEspresso_core_services_assets_Registry__getAssetUrl',
