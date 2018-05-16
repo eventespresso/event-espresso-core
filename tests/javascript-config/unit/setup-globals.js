@@ -5,7 +5,7 @@
 // wp_localize_script so its outside of the build process.
 global.eejsdata = {
 	data: {
-		testData: true
+		testData: true,
 	},
 };
 
@@ -18,12 +18,11 @@ global.wp = {
 	},
 };
 
+//non packaged WP stuff
 [
-	'element',
 	'components',
 	'utils',
 	'blocks',
-	'date',
 	'editor',
 	'data',
 	'core-data',
@@ -33,5 +32,15 @@ global.wp = {
 ].forEach( entryPointName => {
 	Object.defineProperty( global.wp, entryPointName, {
 		get: () => require( 'gutenberg/' + entryPointName ),
+	} );
+} );
+
+//packaged WP stuff
+[
+	'element',
+	'date',
+].forEach( entryPointName => {
+	Object.defineProperty( global.wp, entryPointName, {
+		get: () => require( 'gutenberg/packages/' + entryPointName + '/src' ),
 	} );
 } );
