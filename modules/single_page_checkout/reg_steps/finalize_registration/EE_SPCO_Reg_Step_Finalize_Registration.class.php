@@ -136,9 +136,13 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
         // maybe update status, but don't save transaction just yet
         $this->checkout->transaction->update_status_based_on_total_paid(false);
         // this will result in the base session properties getting saved to the TXN_Session_data field
-        $this->checkout->transaction->set_txn_session_data(
-            EE_Registry::instance()->SSN->get_session_data(null, true)
-        );
+        $session_data = EE_Registry::instance()->SSN->get_session_data(null, true);
+        // anonymize the last part of the IP address, now that the transaction is complete (we won't be using the IP address
+        // for spam or bot detection now)
+        if (function_exists('wp_privacy_anonymize_ip') && isset($session_data['ip_address'])) {
+            $session_data['ip_address'] = wp_privacy_anonymize_ip($session_data['ip_address']);
+        }
+        $this->checkout->transaction->set_txn_session_data($session_data);
         // update the TXN if payment conditions have changed, but do NOT trigger notifications,
         // because we will do that in process_reg_step() after setting some more triggers
         return $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
