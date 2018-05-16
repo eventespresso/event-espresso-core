@@ -30,16 +30,6 @@ common.forEach( ( config, index ) => {
 			new miniExtract( {
 				filename: 'ee-[name].[contenthash].dist.css',
 			} ),
-			// new ExtractTextPlugin( 'ee-[name].[contenthash].dist.css' ),
-			// new webpack.HashedModuleIdsPlugin(),
-			// new webpack.optimize.CommonsChunkPlugin( {
-			// 	name: 'reactVendor',
-			// 	minChunks: Infinity,
-			// } ),
-			// new webpack.optimize.CommonsChunkPlugin( {
-			// 	name: 'manifest',
-			// 	minChunks: Infinity,
-			// } ),
 		];
 	}
 	if ( common[ index ].configName === 'eejs' ) {
