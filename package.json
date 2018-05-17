@@ -57,7 +57,7 @@
 		"eslint-plugin-react": "^7.8.2",
 		"eslint-plugin-wordpress": "git://github.com/WordPress-Coding-Standards/eslint-plugin-wordpress.git#1774343f6226052a46b081e01db3fca8793cc9f1",
 		"mini-css-extract-plugin": "^0.4.0",
-		"gutenberg": "Wordpress/gutenberg#master",
+		"gutenberg": "nerrad/gutenberg#BUG-try-removing-optional-dependencies",
 		"pegjs": "^0.10.0",
 		"pegjs-loader": "^0.5.4",
 		"postcss-loader": "^2.1.5",
