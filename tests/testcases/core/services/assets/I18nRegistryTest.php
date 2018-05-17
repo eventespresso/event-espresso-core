@@ -67,6 +67,7 @@ class I18nRegistryTest extends EE_UnitTestCase
 
         //let's trigger `print_scripts_array` twice.
         apply_filters('print_scripts_array', array('test'));
+        apply_filters('print_scripts_array', array('test'));
 
         //now we expect `registerInlineScript to have been called only once
         $this->assertEquals( 1, $this->i18n->getCountOfMethodCalled(
