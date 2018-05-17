@@ -163,7 +163,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
             ),
             $this->addDefaultBlockScriptDependencies($dependencies)
         )
-        ->setHasLocalizedData();
+        ->setRequiresTranslation();
     }
 
 
@@ -214,7 +214,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
             ),
             $this->addDefaultBlockScriptDependencies($dependencies)
         )
-        ->setHasLocalizedData();
+        ->setRequiresTranslation();
     }
 
 
