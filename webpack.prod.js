@@ -32,15 +32,6 @@ common.forEach( ( config, index ) => {
 			} ),
 		];
 	}
-	if ( common[ index ].configName === 'eejs' ) {
-		common[ index ].plugins = [
-			new wpi18nExtractor( {
-				aliases: {
-					eejs: 'eejs-core',
-				},
-			} ),
-		];
-	}
 	common[ index ] = merge( config, {
 		plugins: [
 			new webpack.DefinePlugin( {
