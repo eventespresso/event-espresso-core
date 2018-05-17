@@ -95,7 +95,7 @@ class AssetCollection extends Collection
         while ($this->valid()) {
             /** @var \EventEspresso\core\domain\values\assets\JavascriptAsset $asset */
             $asset = $this->current();
-            if ($asset->type() === Asset::TYPE_JS && $asset->hasLocalizedData()) {
+            if ($asset->type() === Asset::TYPE_JS && $asset->hasInlineData()) {
                 $files[ $asset->handle() ] = $asset;
             }
             $this->next();
