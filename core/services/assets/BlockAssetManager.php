@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\assets;
 
+use EventEspresso\core\domain\entities\editor\BlockInterface;
 use EventEspresso\core\domain\services\assets\CoreAssetManager;
 use EventEspresso\core\domain\values\assets\BrowserAsset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
@@ -56,6 +57,9 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function setEditorScriptHandle($editor_script_handle)
     {
+        if(strpos($editor_script_handle, BlockInterface::NAME_SPACE . '-') !== 0) {
+            $editor_script_handle = BlockInterface::NAME_SPACE . '-' . $editor_script_handle;
+        }
         $this->editor_script_handle = $editor_script_handle;
     }
 
@@ -74,6 +78,9 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function setEditorStyleHandle($editor_style_handle)
     {
+        if (strpos($editor_style_handle, BlockInterface::NAME_SPACE . '-') !== 0) {
+            $editor_style_handle = BlockInterface::NAME_SPACE . '-' . $editor_style_handle;
+        }
         $this->editor_style_handle = $editor_style_handle;
     }
 
@@ -92,6 +99,9 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function setScriptHandle($script_handle)
     {
+        if (strpos($script_handle, BlockInterface::NAME_SPACE . '-') !== 0) {
+            $script_handle = BlockInterface::NAME_SPACE . '-' . $script_handle;
+        }
         $this->script_handle = $script_handle;
     }
 
@@ -110,6 +120,9 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function setStyleHandle($style_handle)
     {
+        if (strpos($style_handle, BlockInterface::NAME_SPACE . '-') !== 0) {
+            $style_handle = BlockInterface::NAME_SPACE . '-' . $style_handle;
+        }
         $this->style_handle = $style_handle;
     }
 
