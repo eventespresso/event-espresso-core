@@ -142,7 +142,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
         if($this->assets->has($handle)){
             return $this->assets->get($handle);
         }
-        return parent::addJavascript(
+        $asset = parent::addJavascript(
             $handle,
             $this->registry->getJsUrl(
                 $this->domain->assetNamespace(),
@@ -150,6 +150,8 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
             ),
             $this->addDefaultBlockScriptDependencies($dependencies)
         );
+        $asset->setHasLocalizedData();
+        return $asset;
     }
 
 
@@ -192,7 +194,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
         if ($this->assets->has($handle)) {
             return $this->assets->get($handle);
         }
-        return parent::addJavascript(
+        $asset = parent::addJavascript(
             $handle,
             $this->registry->getJsUrl(
                 $this->domain->assetNamespace(),
@@ -200,6 +202,8 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
             ),
             $this->addDefaultBlockScriptDependencies($dependencies)
         );
+        $asset->setHasLocalizedData();
+        return $asset;
     }
 
 
