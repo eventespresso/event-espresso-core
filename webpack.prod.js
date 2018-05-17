@@ -43,6 +43,7 @@ common.forEach( ( config, index ) => {
 				aliases: {
 					'wp-plugins-page': 'ee-wp-plugins-page',
 				},
+				excludes: [ 'eejs' ],
 			} ),
 			new WebpackAssetsManifest( {
 				output: path.resolve( __dirname,
