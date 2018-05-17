@@ -307,10 +307,9 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
         $payment_method_name = $payment_method instanceof EE_Payment_Method
             ? $payment_method->admin_name()
             : esc_html__('Unknown', 'event_espresso');
-        $transaction_paid_content = $transaction_paid !== 0 ? $transaction->get_pretty('TXN_paid') : $transaction_paid;
 
         $content = '<span class="' . $span_class . ' txn-pad-rght">'
-                   . $transaction_paid_content
+                   . $transaction->get_pretty('TXN_paid')
                    . '</span>';
         if ($transaction_paid > 0) {
             $content .= '<br><span class="ee-status-text-small">'
