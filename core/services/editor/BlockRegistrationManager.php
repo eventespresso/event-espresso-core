@@ -144,10 +144,6 @@ class BlockRegistrationManager extends BlockManager
                     $block->assetManager()->setAssetHandles();
                 }
             }
-            if ($this->block_asset_manager_collection->hasObjects()) {
-                // register primary assets
-                add_action('enqueue_block_assets', array($this, 'enqueueAssets'));
-            }
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
         }
@@ -179,14 +175,5 @@ class BlockRegistrationManager extends BlockManager
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
         }
-    }
-
-
-    /**
-     * @since $VID:$
-     */
-    public function enqueueAssets()
-    {
-        $this->block_asset_manager_collection->enqueueAssets();
     }
 }
