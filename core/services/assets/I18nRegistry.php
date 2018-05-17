@@ -108,7 +108,7 @@ class I18nRegistry
      * @param string $domain       Domain for translations.  If left empty then strings are registered with the default
      *                             domain for the javascript.
      */
-    private function registerInlineScript($handle, array $translations, $domain)
+    protected function registerInlineScript($handle, array $translations, $domain)
     {
         $script = $domain ?
             'eejs.i18n.setLocaleData( ' . wp_json_encode($translations) . ', "' . $domain . '" );' :
