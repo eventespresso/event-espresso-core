@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\entities\editor\blocks\widgets;
 
 use EventEspresso\core\domain\entities\editor\Block;
 use EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager;
+use EventEspresso\core\domain\entities\shortcodes\EspressoEventAttendees;
 
 /**
  * Class EventAttendees
@@ -18,15 +19,22 @@ class EventAttendees extends Block
 
     const BLOCK_TYPE = 'widgets-event-attendees';
 
+    /**
+     * @var EspressoEventAttendees $shortcode
+     */
+    protected $shortcode;
+
 
     /**
      * EventAttendees constructor.
      *
      * @param CoreBlocksAssetManager $block_asset_manager
+     * @param EspressoEventAttendees $shortcode
      */
-    public function __construct(CoreBlocksAssetManager $block_asset_manager)
+    public function __construct(CoreBlocksAssetManager $block_asset_manager, EspressoEventAttendees $shortcode)
     {
         parent::__construct($block_asset_manager);
+        $this->shortcode = $shortcode;
     }
 
 
@@ -41,5 +49,21 @@ class EventAttendees extends Block
         $this->setBlockType(self::BLOCK_TYPE);
         $this->setSupportedPostTypes(array('espresso_events', 'post', 'page'));
         $this->setAttributes(array());
+    }
+
+
+    /**
+     * returns the rendered HTML for the block
+     *
+     * @param array $attributes
+     * @return string
+     * @throws \EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     */
+    public function renderBlock(array $attributes = array())
+    {
+        return $this->shortcode->processShortcode($attributes);
     }
 }
