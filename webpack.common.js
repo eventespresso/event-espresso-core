@@ -41,9 +41,6 @@ const config = [
 			eejs: [
 				assets + 'eejs/index.js',
 			],
-			'core-blocks': [
-				assets + 'blocks/index.js',
-			],
 		},
 		module: {
 			rules: [
@@ -67,6 +64,9 @@ const config = [
 			reactVendor: reactVendorPackages,
 			'wp-plugins-page': [
 				assets + 'wp-plugins-page/index.js',
+			],
+			'core-blocks': [
+				assets + 'blocks/index.js',
 			],
 		},
 		externals,
