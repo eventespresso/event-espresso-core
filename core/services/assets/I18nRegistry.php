@@ -10,7 +10,7 @@ use EventEspresso\core\domain\DomainInterface;
  *
  * @package EventEspresso\core\services\assets
  * @author  Darren Ethier
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class I18nRegistry
 {

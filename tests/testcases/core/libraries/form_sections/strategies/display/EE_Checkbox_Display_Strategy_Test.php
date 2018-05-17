@@ -11,7 +11,7 @@ class EE_Checkbox_Display_Strategy_Test extends EE_UnitTestCase
 {
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws EE_Error
      */
     public function test_display_flat_array()

@@ -203,7 +203,7 @@ class EE_Register_CPT implements EEI_Plugin_API
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param array $cpts array of cpts that are already set
      * @return array new array of cpts and their registration information
      */
@@ -219,7 +219,7 @@ class EE_Register_CPT implements EEI_Plugin_API
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param array $cts array of cts that are already set.
      * @return array new array of cts and their registration information.
      */
@@ -235,7 +235,7 @@ class EE_Register_CPT implements EEI_Plugin_API
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param EE_Register_CPTs $cpt_class
      * @return void
      */
