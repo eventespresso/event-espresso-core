@@ -58,7 +58,8 @@ class I18nRegistryTest extends EE_UnitTestCase
 
 
     /**
-     * @group testing
+     * see https://github.com/eventespresso/event-espresso-core/pull/458
+     * @group 458
      */
     public function testInlineScriptsOnlyQueuedOnce()
     {
@@ -70,6 +71,17 @@ class I18nRegistryTest extends EE_UnitTestCase
         apply_filters('print_scripts_array', array('test'));
 
         //now we expect `registerInlineScript to have been called only once
+        $this->assertEquals( 1, $this->i18n->getCountOfMethodCalled(
+            'EventEspresso\tests\mocks\core\services\assets\I18nRegistryMock::registerInlineScript'
+        ) );
+
+        //register script again *gasp*
+        $this->i18n->registerScriptI18n('test');
+
+        //call apply_filters again
+        apply_filters('print_scripts_array', array('test'));
+
+        //still should only have been called once
         $this->assertEquals( 1, $this->i18n->getCountOfMethodCalled(
             'EventEspresso\tests\mocks\core\services\assets\I18nRegistryMock::registerInlineScript'
         ) );
