@@ -160,7 +160,6 @@ class CoreAssetManager extends AssetManager
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'eejs'),
             array(CoreAssetManager::JS_HANDLE_EE_MANIFEST)
         )
-        ->setRequiresTranslation()
         ->setHasLocalizedData();
 
         $this->addJavascript(
