@@ -23,7 +23,7 @@ common.forEach( ( config, index ) => {
 			},
 		};
 		common[ index ].plugins = [
-			new CleanWebpackPlugin( [ 'assets/dist' ] ),
+			new CleanWebpackPlugin( [ 'assets/dist', 'translation-map.json' ] ),
 			new webpack.ProvidePlugin( {
 				'React': 'react', // eslint-disable-line quote-props
 			} ),
