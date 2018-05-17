@@ -21,9 +21,15 @@ export const i18n = wpI18n;
 
 /**
  * use this for eejs exceptions
- * Usage: throw new eejs.exception('some message')
+ * Usage: throw new eejs.Exception('some message')
  * @param {string} msg
  */
-export const exception = function( msg ) {
+export const Exception = function( msg ) {
 	this.message = msg;
+	this.name = 'Exception';
+	this.stack = ( new Error() ).stack;
 };
+
+Exception.prototype = new Error;
+
+export * from './utils/merge-and-de-duplicate';
