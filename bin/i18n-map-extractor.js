@@ -15,6 +15,7 @@ class wpi18nExtractor {
 		this.options = options || {};
 		this.options.aliases = this.options.aliases || {};
 		this.options.filename = this.options.filename || 'translation-map.json';
+		this.options.excludes = this.options.excludes || [];
 		this.translationMap = {};
 		this.functionNames = this.options.functionNames || DEFAULT_FUNCTIONS;
 	}
@@ -48,14 +49,16 @@ class wpi18nExtractor {
 			types.visit( ast, {
 				visitCallExpression: function( path ) {
 					const node = path.node;
-					if ( includes( extractor.functionNames, node.callee.name ) &&
+					if ( includes( extractor.functionNames,
+						node.callee.name,
+					) &&
 						node.arguments
 					) {
 						strings = strings.concat(
 							extractor.extractStringFromFunctionCall(
 								types.getFieldValue( node, 'arguments' ),
 								node.callee.name,
-							)
+							),
 						);
 					}
 					this.traverse( path );
@@ -84,7 +87,7 @@ class wpi18nExtractor {
 					.concat( getStringsFromModule( module, extractor ) );
 				return mapped;
 			},
-			extractor.translationMap
+			extractor.translationMap,
 		);
 	}
 
@@ -96,15 +99,23 @@ class wpi18nExtractor {
 		 * webpack 4 registration
 		 */
 		if ( compiler.hasOwnProperty( 'hooks' ) ) {
-			compiler.hooks.thisCompilation.tap( 'webpack-i18n-map-extractor', compilation => {
-				compilation.hooks.optimizeChunks.tap( 'webpack-i18n-map-extractor', chunks => {
-					processChunks( chunks, extractor );
-				} );
-			} );
+			compiler.hooks.thisCompilation.tap( 'webpack-i18n-map-extractor',
+				compilation => {
+					compilation.hooks.optimizeChunks.tap(
+						'webpack-i18n-map-extractor',
+						chunks => {
+							processChunks( chunks, extractor );
+						},
+					);
+				},
+			);
 			// webpack 3 registration.
 		} else {
 			compiler.plugin( 'this-compilation', ( compilation ) => {
-				compilation.plugin( [ 'optimize-chunks', 'optimize-extracted-chunks' ], ( chunks ) => {
+				compilation.plugin( [
+					'optimize-chunks',
+					'optimize-extracted-chunks',
+				], ( chunks ) => {
 					processChunks( chunks, extractor );
 				} );
 			} );
@@ -120,7 +131,9 @@ class wpi18nExtractor {
 		let chunkName,
 			finalMap;
 		forEach( chunks, function( chunk ) {
-			if ( chunk.name ) {
+			// only process if chunk.name is available and not in the list of
+			// chunks to exclude
+			if ( chunk.name && options.excludes.indexOf( chunk.name ) === -1 ) {
 				//get chunk.name from alias if it exists
 				chunkName = options.aliases.hasOwnProperty( chunk.name ) ?
 					options.aliases[ chunk.name ] :
@@ -137,7 +150,7 @@ class wpi18nExtractor {
 		finalMap = Object.assign( {}, finalMap, translationMap );
 		writeFileSync( './' + options.filename,
 			JSON.stringify( finalMap, null, 2 ),
-			'utf-8'
+			'utf-8',
 		);
 	}
 }

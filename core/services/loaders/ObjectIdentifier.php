@@ -11,7 +11,7 @@ use Closure;
  *
  * @package EventEspresso\core\services\loaders
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class ObjectIdentifier
 {

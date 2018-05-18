@@ -16,7 +16,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  *
  * @package EventEspresso\core\services\assets
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 abstract class AssetManager implements AssetManagerInterface
 {
@@ -61,7 +61,7 @@ abstract class AssetManager implements AssetManagerInterface
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     public function addManifestFile()
     {
@@ -76,7 +76,7 @@ abstract class AssetManager implements AssetManagerInterface
 
     /**
      * @return ManifestFile[]
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     public function getManifestFile()
     {
@@ -93,7 +93,7 @@ abstract class AssetManager implements AssetManagerInterface
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     public function addJavascript(
         $handle,
@@ -115,7 +115,7 @@ abstract class AssetManager implements AssetManagerInterface
 
     /**
      * @return JavascriptAsset[]
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     public function getJavascriptAssets()
     {
@@ -132,7 +132,7 @@ abstract class AssetManager implements AssetManagerInterface
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     public function addStylesheet(
         $handle,
@@ -154,7 +154,7 @@ abstract class AssetManager implements AssetManagerInterface
 
     /**
      * @return StylesheetAsset[]
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     public function getStylesheetAssets()
     {
@@ -165,7 +165,7 @@ abstract class AssetManager implements AssetManagerInterface
     /**
      * @param string $handle
      * @return bool
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     public function enqueueAsset($handle)
     {

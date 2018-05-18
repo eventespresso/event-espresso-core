@@ -17,7 +17,7 @@
     <li><?php esc_html_e('Mailing address', 'event_espresso'); ?></li>
     <li><?php esc_html_e('Email address', 'event_espresso'); ?></li>
     <li><?php esc_html_e('Phone number', 'event_espresso'); ?></li>
-    <li><?php esc_html_e('Location and traffic data (including IP address and browser type)', 'event_espresso'); ?></li>
+    <li><?php esc_html_e('Location and traffic data (including partial IP address and browser type)', 'event_espresso'); ?></li>
     <li><?php
         esc_html_e(
             'Any other details that might be requested from you for the purpose of processing your registration or ticket purchase',

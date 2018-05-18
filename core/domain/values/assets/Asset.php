@@ -11,7 +11,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  *
  * @package EventEspresso\core\domain\values
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 abstract class Asset
 {

@@ -12,7 +12,7 @@ use EventEspresso\core\services\privacy\erasure\PersonalDataEraserInterface;
  *
  * @package        Event Espresso
  * @author         Mike Nelson
- * @since          $VID:$
+ * @since          4.9.62.p
  */
 class EraseAnswers implements PersonalDataEraserInterface
 {

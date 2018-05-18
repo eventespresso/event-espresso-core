@@ -118,6 +118,24 @@ class EE_CPT_Base_Test extends EE_UnitTestCase{
             "'{$event_with_reg_desc}' should not be the same as '{$other_event_desc}'"
         );
     }
+
+
+    /**
+     * @ticket 418 https://github.com/eventespresso/event-espresso-core/issues/418
+     */
+    public function testAddEventCategory()
+    {
+        $e = $this->new_model_obj_with_dependencies('Event');
+        /**
+         * @var $e EE_Event
+         */
+        $ee_term_taxonomy = $e->add_event_category(
+            'Rebel Ships',
+            'Events look at important Rebel Space Ships'
+        );
+        $this->assertTrue($ee_term_taxonomy instanceof EE_Term_Taxonomy);
+        $this->assertNotEquals(0, $ee_term_taxonomy->get('term_count'));
+    }
 }
 
 // End of file EE_CPT_Base_Test.php
