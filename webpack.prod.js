@@ -43,6 +43,7 @@ common.forEach( ( config, index ) => {
 				aliases: {
 					'wp-plugins-page': 'ee-wp-plugins-page',
 					'data-stores': 'eventespresso-data-stores',
+					'core-blocks': 'eventespresso-core-blocks',
 				},
 				excludes: [ 'eejs' ],
 			} ),
