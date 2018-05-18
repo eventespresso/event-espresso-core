@@ -1,5 +1,6 @@
 {
-  "eejs.js": "ee-eejs.557420181205eef54763.dist.js",
+  "data-stores.js": "ee-data-stores.4dc970c521a926dac133.dist.js",
+  "eejs.js": "ee-eejs.640ad9b64ea0d1a3505d.dist.js",
   "entrypoints": {
     "wp-plugins-page": {
       "js": [
@@ -9,6 +10,13 @@
       ],
       "css": [
         "ee-wp-plugins-page.18b028a8d6163577ccd1.dist.css"
+      ]
+    },
+    "data-stores": {
+      "js": [
+        "ee-manifest.3b66c2f77d3b01c1b09a.dist.js",
+        "ee-reactVendor.814709a0f9fdbb9b2d40.dist.js",
+        "ee-data-stores.4dc970c521a926dac133.dist.js"
       ]
     }
   },

@@ -46,6 +46,8 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_EE_VENDOR_REACT    = 'ee-vendor-react';
 
+    const JS_HANDLE_EE_DATA_STORES     = 'eventespresso-data-stores';
+
     const JS_HANDLE_EE_JS_API          = 'eejs-api';
 
     const JS_HANDLE_EE_CORE            = 'espresso_core';
@@ -168,6 +170,13 @@ class CoreAssetManager extends AssetManager
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'reactVendor'),
             array(CoreAssetManager::JS_HANDLE_EE_JS_CORE)
         );
+
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'data-stores'),
+            array(CoreAssetManager::JS_HANDLE_EE_VENDOR_REACT, 'wp-data')
+        )
+        ->setRequiresTranslation();
 
         global $wp_version;
         if (version_compare($wp_version, '4.4.0', '>')) {

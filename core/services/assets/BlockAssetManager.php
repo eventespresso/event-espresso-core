@@ -250,7 +250,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     protected function addDefaultBlockScriptDependencies(array $dependencies)
     {
         $dependencies += array(
-                CoreAssetManager::JS_HANDLE_EE_JS_CORE,
+                CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
                 'wp-blocks',    // Provides useful functions and components for extending the editor
                 'wp-i18n',      // Provides localization functions
                 'wp-element',   // Provides React.Component
