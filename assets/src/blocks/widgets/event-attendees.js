@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __ } from '@eventespresso/i18n';
 import { data } from '@eventespresso/eejs';
 import { EventSelect } from '../../components/selection/event-select/index';
 import { registerBlockType } from '@wordpress/blocks';
