@@ -5,6 +5,8 @@
 	"main": "webpack.dev.js",
 	"repository": "git+https://github.com/eventespresso/event-espresso-core.git",
 	"scripts": {
+		"prebuild": "check-node-version --package",
+		"prewatch": "check-node-version --package",
 		"watch": "webpack --watch --config webpack.dev.js",
 		"build": "cross-env NODE_ENV=production webpack --config webpack.prod.js",
 		"watch-poll": "webpack --watch --watch-poll --config webpack.dev.js",
@@ -42,6 +44,7 @@
 		"babel-loader": "^7.1.2",
 		"babel-plugin-transform-react-jsx": "^6.24.1",
 		"babel-polyfill": "^6.26.0",
+		"check-node-version": "^3.2.0",
 		"clean-webpack-plugin": "^0.1.18",
 		"codecov": "^3.0.2",
 		"concurrently": "^3.5.1",
