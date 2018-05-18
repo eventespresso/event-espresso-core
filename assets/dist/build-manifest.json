@@ -1,5 +1,6 @@
 {
-  "eejs.js": "ee-eejs.1497b4c75eb0b2d67285.dist.js",
+  "data-stores.js": "ee-data-stores.4dc970c521a926dac133.dist.js",
+  "eejs.js": "ee-eejs.640ad9b64ea0d1a3505d.dist.js",
   "entrypoints": {
     "wp-plugins-page": {
       "js": [
@@ -11,10 +12,11 @@
         "ee-wp-plugins-page.3a17ba32e666bf5cbdaf.dist.css"
       ]
     },
-    "eventespresso-core-blocks": {
+    "data-stores": {
       "js": [
-        "ee-manifest.943039ef4ea4d65fdbb9.dist.js",
-        "ee-eventespresso-core-blocks.79bc2537ae34dc963f6b.dist.js"
+        "ee-manifest.3b66c2f77d3b01c1b09a.dist.js",
+        "ee-reactVendor.814709a0f9fdbb9b2d40.dist.js",
+        "ee-data-stores.4dc970c521a926dac133.dist.js"
       ]
     }
   },
