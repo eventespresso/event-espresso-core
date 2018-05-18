@@ -147,7 +147,7 @@ class Registry
                 $script->version(),
                 $script->loadInFooter()
             );
-            if (defined('EE_DEBUG') && EE_DEBUG && ! $registered) {
+            if (! $registered && defined('EE_DEBUG') && EE_DEBUG) {
                 throw new AssetRegistrationException($script->handle());
             }
             $script->setRegistered($registered);
@@ -213,8 +213,8 @@ class Registry
         $scripts = $this->assets->getJavascriptAssetsWithData();
         foreach ($scripts as $script) {
             $this->addRegisteredScriptHandlesWithData($script->handle());
-            if ($script->hasLocalizationCallback()) {
-                $localize = $script->localizationCallback();
+            if ($script->hasInlineDataCallback()) {
+                $localize = $script->inlineDataCallback();
                 $localize();
             }
         }

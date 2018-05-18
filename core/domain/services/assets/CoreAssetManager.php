@@ -161,7 +161,7 @@ class CoreAssetManager extends AssetManager
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'eejs'),
             array(CoreAssetManager::JS_HANDLE_EE_MANIFEST)
         )
-        ->setHasLocalizedData();
+        ->setHasInlineData();
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_VENDOR_REACT,
@@ -196,7 +196,7 @@ class CoreAssetManager extends AssetManager
             EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js',
             array(CoreAssetManager::JS_HANDLE_JQUERY)
         )
-        ->setLocalizationCallback(
+        ->setInlineDataCallback(
             function () {
                 wp_localize_script(
                     CoreAssetManager::JS_HANDLE_EE_CORE,
@@ -287,7 +287,7 @@ class CoreAssetManager extends AssetManager
             EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js',
             array(CoreAssetManager::JS_HANDLE_ACCOUNTING_CORE)
         )
-        ->setLocalizationCallback(
+        ->setInlineDataCallback(
             function () use ($currency_config) {
                  wp_localize_script(
                      CoreAssetManager::JS_HANDLE_EE_ACCOUNTING,
