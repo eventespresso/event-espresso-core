@@ -17,7 +17,7 @@ import { applyQueryString } from '../../model';
  * @param {string} queryString  Additional query string parameters passed on to
  *   the REST request.
  */
-export async function * getItems( state, modelName, queryString ) {
+export async function* getItems( state, modelName, queryString ) {
 	if ( state[ modelName ] &&
 		state[ modelName ].hasOwnProperty( queryString ) &&
 		state[ modelName ][ queryString ] !== null
