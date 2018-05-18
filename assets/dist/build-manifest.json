@@ -1,10 +1,26 @@
 {
   "eejs.js": "ee-eejs.1497b4c75eb0b2d67285.dist.js",
   "entrypoints": {
-    "eejs": {
+    "wp-plugins-page": {
       "js": [
-        "ee-eejs.1497b4c75eb0b2d67285.dist.js"
+        "ee-manifest.943039ef4ea4d65fdbb9.dist.js",
+        "ee-reactVendor.19991cdce15d648aa18a.dist.js",
+        "ee-wp-plugins-page.ac7c8a7afd1ca841f13b.dist.js"
+      ],
+      "css": [
+        "ee-wp-plugins-page.3a17ba32e666bf5cbdaf.dist.css"
+      ]
+    },
+    "eventespresso-core-blocks": {
+      "js": [
+        "ee-manifest.943039ef4ea4d65fdbb9.dist.js",
+        "ee-eventespresso-core-blocks.79bc2537ae34dc963f6b.dist.js"
       ]
     }
-  }
+  },
+  "eventespresso-core-blocks.js": "ee-eventespresso-core-blocks.79bc2537ae34dc963f6b.dist.js",
+  "manifest.js": "ee-manifest.943039ef4ea4d65fdbb9.dist.js",
+  "reactVendor.js": "ee-reactVendor.19991cdce15d648aa18a.dist.js",
+  "wp-plugins-page.css": "ee-wp-plugins-page.3a17ba32e666bf5cbdaf.dist.css",
+  "wp-plugins-page.js": "ee-wp-plugins-page.ac7c8a7afd1ca841f13b.dist.js"
 }
