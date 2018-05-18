@@ -131,9 +131,38 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
             array('set_tax_rate' => true)
         );
         /** @var $subsections EE_Form_Section_Proper[] */
+        $extra_inputs_section = $this->reg_step_hidden_inputs();
         $subsections = array(
-            'default_hidden_inputs' => $this->reg_step_hidden_inputs(),
+            'default_hidden_inputs' => $extra_inputs_section,
         );
+        //if this isn't a revisit, add the consent box
+        if(! $this->checkout->revisit) {
+            $extra_inputs_section->add_subsections(
+                array(
+                    'consent_box' => new EE_Form_Section_Proper(
+                        array(
+                            'layout_strategy' => new EE_Div_Per_Section_Layout(),
+                            'subsections'     => array(
+                                'consent' => new EE_Checkbox_Multi_Input(
+                                    array(
+                                        'consent' => esc_html__(
+                                            'I agree to the %1$s privacy policy%2$s, specifically to storing my registration data at least until the event.',
+                                            'event_espresso'
+                                        ),
+                                    ),
+                                    array(
+                                        'required'        => true,
+                                        'html_label_text' => esc_html__('Consent ot Privacy Policy', 'event_espresso'),
+                                    )
+                                ),
+                            ),
+                        )
+                    ),
+                ),
+                null,
+                false
+            );
+        }
         $template_args = array(
             'revisit'       => $this->checkout->revisit,
             'registrations' => array(),
