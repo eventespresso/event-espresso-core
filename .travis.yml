@@ -88,11 +88,16 @@ jobs:
         - npm install || exit 1
         - npm run ci || exit 1
     - php: 7.2
+      env:
+        - LICENSE_CHECK=1
+      script:
+        - npm install || exit 1
+        - npm run lc || exit 1
+    - php: 7.2
     - php: 7.1
     - php: 7.0
     - php: 5.6
     - php: 5.5
-    - php: 5.4
     # multisite
     - php: 7.2
       env: WP_MULTISITE=1
