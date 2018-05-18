@@ -1,9 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import { data } from '@eventespresso/eejs';
 import { EventSelect } from '../../components/selection/event-select/index';
-
-const { registerBlockType } = wp.blocks;
-const { Component } = wp.element;
+import { registerBlockType } from '@wordpress/blocks';
+import { Component } from '@wordpress/element';
 
 class eventespressoEventAttendeesBlock extends Component
 {
