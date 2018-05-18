@@ -1,5 +1,6 @@
 {
 	"presets": [
+		"@wordpress/default",
 		[
 			"env",
 			{
@@ -30,6 +31,6 @@
 				"transform-react-jsx",
 				"transform-async-generator-functions"
 			]
-		}
+		},
 	}
 }
