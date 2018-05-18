@@ -6,18 +6,11 @@ const externals = {
 	jquery: 'jQuery',
 	'@eventespresso/eejs': 'eejs',
 	'@eventespresso/i18n': 'eejs.i18n',
-	'@wordpress/api-request': {
-		this: [ 'wp', 'apiRequest' ],
-	},
-	'@wordpress/data': {
-		this: [ 'wp', 'data' ],
-	},
-	'@wordpress/element': {
-		this: [ 'wp', 'element' ],
-	},
-	'@wordpress/components': {
-		this: [ 'wp', 'components' ],
-	},
+	'@wordpress/api-request': 'wp.apiRequest',
+	'@wordpress/data': 'wp.data',
+	'@wordpress/element': 'wp.element',
+	'@wordpress/components': 'wp.components',
+	'@wordpress/blocks': 'wp.blocks',
 };
 const reactVendorPackages = [
 	'react',

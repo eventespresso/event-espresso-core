@@ -12,7 +12,7 @@ import * as actions from './actions';
 import * as resolvers from './resolvers';
 
 export default registerStore( 'eventespresso/lists', {
-	reducers,
+	reducer: reducers,
 	actions,
 	selectors,
 	resolvers,
