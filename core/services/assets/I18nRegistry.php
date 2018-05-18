@@ -20,7 +20,7 @@ class I18nRegistry
     private $domain;
 
     /**
-     * Will hold all registered i18n scripts.
+     * Will hold all registered i18n scripts.  Prevents script handles from being registered more than once.
      *
      * @var array
      */
@@ -33,6 +33,13 @@ class I18nRegistry
      * @var array
      */
     private $queued_handle_translations = array();
+
+    /**
+     * Used to track script handles queued for adding translation strings as inline data in the dom.
+     *
+     * @var array
+     */
+    private $queued_scripts = array();
 
 
     /**
@@ -68,7 +75,10 @@ class I18nRegistry
      */
     public function registerScriptI18n($handle, $domain = 'event_espresso')
     {
-        $this->registered_i18n[$handle] = $domain;
+        if(! isset($this->registered_i18n[$handle])) {
+            $this->registered_i18n[ $handle ] = 1;
+            $this->queued_scripts[ $handle ] = $domain;
+        }
     }
 
 
@@ -81,7 +91,7 @@ class I18nRegistry
      */
     public function queueI18n(array $handles)
     {
-        if (empty($this->registered_i18n) || empty($this->i18n_map)) {
+        if (empty($this->queued_scripts) || empty($this->i18n_map)) {
             return $handles;
         }
         foreach ($handles as $handle) {
@@ -108,7 +118,7 @@ class I18nRegistry
      * @param string $domain       Domain for translations.  If left empty then strings are registered with the default
      *                             domain for the javascript.
      */
-    private function registerInlineScript($handle, array $translations, $domain)
+    protected function registerInlineScript($handle, array $translations, $domain)
     {
         $script = $domain ?
             'eejs.i18n.setLocaleData( ' . wp_json_encode($translations) . ', "' . $domain . '" );' :
@@ -124,8 +134,8 @@ class I18nRegistry
      */
     private function queueI18nTranslationsForHandle($handle)
     {
-        if (isset($this->registered_i18n[$handle])) {
-            $domain = $this->registered_i18n[$handle];
+        if (isset($this->queued_scripts[$handle])) {
+            $domain = $this->queued_scripts[$handle];
             $translations = $this->getJedLocaleDataForDomainAndChunk($handle, $domain);
             if (count($translations) > 0) {
                 $this->queued_handle_translations[$handle] = array(
@@ -133,7 +143,7 @@ class I18nRegistry
                     'translations' => $translations,
                 );
             }
-            unset($this->registered_i18n[$handle]);
+            unset($this->queued_scripts[$handle]);
         }
     }
 
