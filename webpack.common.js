@@ -68,7 +68,7 @@ const config = [
 			'data-stores': [
 				assets + 'data/index.js',
 			],
-			'core-blocks': [
+			'eventespresso-core-blocks': [
 				assets + 'blocks/index.js',
 			],
 		},
