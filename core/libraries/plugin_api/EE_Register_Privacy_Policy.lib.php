@@ -8,7 +8,7 @@
  *
  * @package        Event Espresso
  * @author         Mike Nelson
- * @since          $VID:$
+ * @since          4.9.62.p
  */
 class EE_Register_Privacy_Policy implements EEI_Plugin_API
 {

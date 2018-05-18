@@ -81,7 +81,7 @@ abstract class Block implements BlockInterface
      */
     public function namespacedBlockType()
     {
-        return self::NAME_SPACE . $this->block_type;
+        return self::NAME_SPACE . '/' . $this->block_type;
     }
 
 

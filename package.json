@@ -46,7 +46,7 @@
 		"clean-webpack-plugin": "^0.1.18",
 		"codecov": "^3.0.2",
 		"concurrently": "^3.5.1",
-		"core-js": "^2.5.5",
+		"core-js": "^2.5.6",
 		"cross-env": "^5.1.5",
 		"css-loader": "^0.28.11",
 		"deep-freeze": "0.0.1",
@@ -57,7 +57,7 @@
 		"eslint-plugin-react": "^7.8.2",
 		"eslint-plugin-wordpress": "git://github.com/WordPress-Coding-Standards/eslint-plugin-wordpress.git#1774343f6226052a46b081e01db3fca8793cc9f1",
 		"mini-css-extract-plugin": "^0.4.0",
-		"gutenberg": "Wordpress/gutenberg#master",
+		"gutenberg": "wordpress/gutenberg#master",
 		"pegjs": "^0.10.0",
 		"pegjs-loader": "^0.5.4",
 		"postcss-loader": "^2.1.5",
@@ -72,16 +72,15 @@
 		"@eventespresso/react-exit-modal-typeform": "^1.0.4",
 		"@wordpress/dom-ready": "^1.0.2",
 		"@wordpress/i18n": "^1.1.0",
+		"@wordpress/is-shallow-equal": "^1.0.2",
 		"@wordpress/jest-preset-default": "^1.0.5",
 		"classnames": "^2.2.5",
 		"lodash": "^4.17.10",
+		"memize": "^1.0.5",
 		"querystringify": "^1.0.0",
 		"react": "^16.3.0",
 		"react-dom": "^16.3.0",
 		"react-redux": "^5.0.6",
 		"redux": "^3.7.2"
-	},
-	"optionalDepedencies": {
-		"fsevents": "1.2.4"
 	}
 }

@@ -23,21 +23,12 @@ common.forEach( ( config, index ) => {
 			},
 		};
 		common[ index ].plugins = [
-			new CleanWebpackPlugin( [ 'assets/dist' ] ),
+			new CleanWebpackPlugin( [ 'assets/dist', 'translation-map.json' ] ),
 			new webpack.ProvidePlugin( {
 				'React': 'react', // eslint-disable-line quote-props
 			} ),
 			new miniExtract( {
 				filename: 'ee-[name].[contenthash].dist.css',
-			} ),
-		];
-	}
-	if ( common[ index ].configName === 'eejs' ) {
-		common[ index ].plugins = [
-			new wpi18nExtractor( {
-				aliases: {
-					eejs: 'eejs-core',
-				},
 			} ),
 		];
 	}
@@ -52,6 +43,7 @@ common.forEach( ( config, index ) => {
 				aliases: {
 					'wp-plugins-page': 'ee-wp-plugins-page',
 				},
+				excludes: [ 'eejs' ],
 			} ),
 			new WebpackAssetsManifest( {
 				output: path.resolve( __dirname,

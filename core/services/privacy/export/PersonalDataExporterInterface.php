@@ -10,7 +10,7 @@ namespace EventEspresso\core\services\privacy\export;
  *
  * @package        Event Espresso
  * @author         Mike Nelson
- * @since          $VID:$
+ * @since          4.9.62.p
  */
 interface PersonalDataExporterInterface
 {

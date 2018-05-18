@@ -12,7 +12,9 @@ import { setRequested, receiveResponse } from '../actions';
 jest.mock( '@wordpress/api-request' );
 jest.mock( '@eventespresso/eejs', () => ( {
 	data: {
-		collection_endpoints: { event: '/ee/v4.8.36/events' },
+		paths: {
+			collection_endpoints: { event: '/ee/v4.8.36/events' },
+		},
 	},
 } ) );
 

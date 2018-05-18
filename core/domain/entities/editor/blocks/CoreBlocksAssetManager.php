@@ -2,10 +2,7 @@
 
 namespace EventEspresso\core\domain\entities\editor\blocks;
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\assets\BlockAssetManager;
-use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
 
 /**
  * Class CoreBlocksAssetManager

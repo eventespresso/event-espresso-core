@@ -9,9 +9,11 @@ import deepFreeze from 'deep-freeze';
 import { listItems } from '../reducers';
 
 describe( 'listItems()', () => {
-	it( 'returns an empty object by default', () => {
+	it( 'returns the expected default object (from mock data)', () => {
 		const state = listItems( undefined, {} );
-		expect( state ).toEqual( {} );
+		expect( state ).toEqual(
+			{ events: [], terms: [], tickets: [], venues: [] },
+		);
 	} );
 
 	it( 'assigns requested model and queryString to null (for known model)',
@@ -48,7 +50,7 @@ describe( 'listItems()', () => {
 				modelName: 'event',
 				queryString: '?some_value=1',
 			} );
-			expect( state ).toEqual( originalState );
+			expect( state ).toBe( originalState );
 		},
 	);
 	it( 'returns with received events for known model', () => {

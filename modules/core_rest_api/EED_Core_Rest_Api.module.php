@@ -1251,6 +1251,30 @@ class EED_Core_Rest_Api extends \EED_Module
     }
 
 
+    /**
+     * Returns an array of primary key names indexed by model names.
+     * @param string $version
+     * @return array
+     */
+    public static function getPrimaryKeyNamesIndexedByModelName($version = '')
+    {
+        $version = empty($version) ? self::latest_rest_api_version() : $version;
+        $model_names = self::model_names_with_plural_routes($version);
+        $primary_key_items = array();
+        foreach ($model_names as $model_name => $model_class_name) {
+            $primary_keys = $model_class_name::instance()->get_combined_primary_key_fields();
+            foreach ($primary_keys as $primary_key_name => $primary_key_field) {
+                if (count($primary_keys) > 1) {
+                    $primary_key_items[ strtolower($model_name) ][] = $primary_key_name;
+                } else {
+                    $primary_key_items[ strtolower($model_name) ] = $primary_key_name;
+                }
+            }
+        }
+        return $primary_key_items;
+    }
+
+
 
     /**
      *    run - initial module setup
