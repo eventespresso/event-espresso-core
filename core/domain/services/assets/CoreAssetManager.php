@@ -46,7 +46,7 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_EE_VENDOR_REACT    = 'ee-vendor-react';
 
-    const JS_HANDLE_EE_DATA_STORES     = 'ee-data-stores';
+    const JS_HANDLE_EE_DATA_STORES     = 'eventespresso-data-stores';
 
     const JS_HANDLE_EE_JS_API          = 'eejs-api';
 

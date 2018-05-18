@@ -42,7 +42,7 @@ common.forEach( ( config, index ) => {
 			new wpi18nExtractor( {
 				aliases: {
 					'wp-plugins-page': 'ee-wp-plugins-page',
-					'data-stores': 'ee-data-stores',
+					'data-stores': 'eventespresso-data-stores',
 				},
 				excludes: [ 'eejs' ],
 			} ),
