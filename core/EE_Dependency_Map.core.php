@@ -972,7 +972,7 @@ class EE_Dependency_Map
      * and we need to find out if `Fully/Qualified/Namespace/SomeInterface`
      * represents some other class.
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param string $fqn
      * @param string $for_class
      * @return bool
@@ -996,7 +996,7 @@ class EE_Dependency_Map
      *      then one could use EE_Registry::instance()->create( 'interface_alias' )
      *      to load an instance of 'some\namespace\classname'
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param string $alias
      * @param string $for_class
      * @return string

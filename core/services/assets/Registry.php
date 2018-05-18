@@ -107,7 +107,7 @@ class Registry
     /**
      * Callback for the wp_enqueue_scripts actions used to register assets.
      *
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws Exception
      */
     public function registerScriptsAndStyles()
@@ -124,7 +124,7 @@ class Registry
     /**
      * Registers JS assets with WP core
      *
-     * @since $VID:$
+     * @since 4.9.62.p
      * @param JavascriptAsset[] $scripts
      * @throws AssetRegistrationException
      * @throws InvalidDataTypeException
@@ -165,7 +165,7 @@ class Registry
     /**
      * Registers CSS assets with WP core
      *
-     * @since $VID:$
+     * @since 4.9.62.p
      * @param StylesheetAsset[] $styles
      * @throws InvalidDataTypeException
      */
@@ -432,7 +432,7 @@ class Registry
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws InvalidArgumentException
      * @throws InvalidFilePathException
      */

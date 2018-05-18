@@ -20,7 +20,7 @@ use InvalidArgumentException;
  * @group CustomPostTypes
  * @package EventEspresso\tests\testcases\core\domain\services\custom_post_types
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class RegisterCustomTaxonomiesTest extends EE_UnitTestCase
 {
@@ -37,7 +37,7 @@ class RegisterCustomTaxonomiesTest extends EE_UnitTestCase
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -62,7 +62,7 @@ class RegisterCustomTaxonomiesTest extends EE_UnitTestCase
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     public function testPrepareArguments()
     {
@@ -81,7 +81,7 @@ class RegisterCustomTaxonomiesTest extends EE_UnitTestCase
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @param string $taxonomy
      * @return array|mixed
      */

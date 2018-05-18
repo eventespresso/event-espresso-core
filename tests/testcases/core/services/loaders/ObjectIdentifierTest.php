@@ -17,7 +17,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\tests\testcases\core\services\loaders
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class ObjectIdentifierTest extends EE_UnitTestCase
 {

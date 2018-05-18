@@ -10,7 +10,7 @@ namespace EventEspresso\core\services\privacy\erasure;
  *
  * @package        Event Espresso
  * @author         Mike Nelson
- * @since          $VID:$
+ * @since          4.9.62.p
  */
 interface PersonalDataEraserInterface
 {

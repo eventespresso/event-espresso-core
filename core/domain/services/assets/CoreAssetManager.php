@@ -23,7 +23,7 @@ use InvalidArgumentException;
  *
  * @package EventEspresso\core\services\assets
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class CoreAssetManager extends AssetManager
 {
@@ -95,7 +95,7 @@ class CoreAssetManager extends AssetManager
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -109,7 +109,7 @@ class CoreAssetManager extends AssetManager
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -129,7 +129,7 @@ class CoreAssetManager extends AssetManager
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -143,7 +143,7 @@ class CoreAssetManager extends AssetManager
     /**
      * core default javascript
      *
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -161,7 +161,6 @@ class CoreAssetManager extends AssetManager
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'eejs'),
             array(CoreAssetManager::JS_HANDLE_EE_MANIFEST)
         )
-        ->setRequiresTranslation()
         ->setHasLocalizedData();
 
         $this->addJavascript(
@@ -210,7 +209,7 @@ class CoreAssetManager extends AssetManager
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -240,7 +239,7 @@ class CoreAssetManager extends AssetManager
     /**
      * jQuery Validate for form validation
      *
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -266,7 +265,7 @@ class CoreAssetManager extends AssetManager
     /**
      * accounting.js for performing client-side calculations
      *
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -339,7 +338,7 @@ class CoreAssetManager extends AssetManager
     /**
      * assets that are used in the WordPress admin
      *
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException

@@ -12,7 +12,7 @@ use WP_Error;
  *
  * @package EventEspresso\core\domain\entities\custom_post_types
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class RegisterCustomTaxonomies
 {
@@ -83,7 +83,7 @@ class RegisterCustomTaxonomies
      * @param string $singular_name
      * @param string $plural_name
      * @param array  $override_arguments
-     * @since $VID:$
+     * @since 4.9.62.p
      * @return array
      */
     protected function prepareArguments($singular_name, $plural_name, array $override_arguments)
