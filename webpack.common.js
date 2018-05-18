@@ -65,6 +65,9 @@ const config = [
 			'wp-plugins-page': [
 				assets + 'wp-plugins-page/index.js',
 			],
+			'data-stores': [
+				assets + 'data/index.js',
+			],
 		},
 		externals,
 		output: {
