@@ -7,7 +7,7 @@ import apiRequest from '@wordpress/api-request';
  * Internal dependencies
  */
 import { getItems } from '../resolvers';
-import { setRequested, receiveResponse } from '../actions';
+import { receiveResponse } from '../actions';
 
 jest.mock( '@wordpress/api-request' );
 jest.mock( '@eventespresso/eejs', () => ( {
@@ -31,10 +31,8 @@ describe( 'getItems', () => {
 
 	it( 'yields with requested events', async () => {
 		const fulfillment = getItems( {}, 'event', 'some_event=1' );
-		const requested = ( await fulfillment.next() ).value;
-		expect( requested.type ).toBe( setRequested().type );
-		const received = ( await fulfillment.next() ).value;
-		expect( received ).toEqual(
+		const recieved = ( await fulfillment.next() ).value;
+		expect( recieved ).toEqual(
 			receiveResponse( 'event', 'some_event=1', EVENTS ),
 		);
 	} );
