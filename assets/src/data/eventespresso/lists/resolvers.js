@@ -6,7 +6,7 @@ import apiRequest from '@wordpress/api-request';
 /**
  * Internal dependencies
  */
-import { setRequested, receiveResponse } from './actions';
+import { receiveResponse } from './actions';
 import { applyQueryString } from '../../model';
 
 /**
@@ -18,16 +18,6 @@ import { applyQueryString } from '../../model';
  *   the REST request.
  */
 export async function* getItems( state, modelName, queryString ) {
-	if ( state[ modelName ] &&
-		state[ modelName ].hasOwnProperty( queryString ) &&
-		state[ modelName ][ queryString ] !== null
-	) {
-		yield receiveResponse( modelName,
-			queryString,
-			state[ modelName ][ queryString ],
-		);
-	}
-	yield setRequested( modelName, queryString );
 	const items = await apiRequest( {
 		path: applyQueryString( modelName,
 			queryString,
