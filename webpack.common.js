@@ -11,6 +11,7 @@ const externals = {
 	'@wordpress/element': 'wp.element',
 	'@wordpress/components': 'wp.components',
 	'@wordpress/blocks': 'wp.blocks',
+	'@wordpress/editor': 'wp.editor',
 	react: 'eejs.vendor.react',
 	'react-dom': 'eejs.vendor.reactDom',
 	'react-redux': 'eejs.vendor.reactRedux',
@@ -76,6 +77,9 @@ const config = [
 			],
 		},
 		externals,
+		resolve: {
+			alias,
+		},
 		output: {
 			filename: 'ee-[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
