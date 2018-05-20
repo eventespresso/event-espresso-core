@@ -5,13 +5,14 @@ import { stringify } from 'querystringify';
 import moment from 'moment';
 import { isUndefined, pickBy, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
+import { __ } from '@eventespresso/i18n';
 
 /**
  * WP dependencies
  */
 import { Placeholder, SelectControl, Spinner } from '@wordpress/components';
-import { __ } from '@eventespresso/i18n';
 import { withSelect } from '@wordpress/data';
+import { Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -42,27 +43,35 @@ export const EventSelect = ( {
 	selectedEventId,
 	isLoading,
 } ) => {
-	if ( isLoading || isEmpty( events ) ) {
-		return <Placeholder key="placeholder"
-			icon="calendar"
-			label={ __( 'EventSelect', 'event_espresso' ) }
-		>
-			{ isLoading ?
-				<Spinner /> :
-				__(
-					'There are no events to select from. You need to create an event first.',
-					'event_espresso',
-				)
-			}
-		</Placeholder>;
+	if ( isEmpty( events ) ) {
+		return (
+			<Fragment>
+				<Placeholder
+					icon="calendar"
+					label={ __( 'EventSelect', 'event_espresso' ) }
+				>
+					{ ! isLoading && isEmpty( events ) ?
+						__(
+							'There are no events to select from. You need to create an event first.',
+							'event_espresso',
+						) :
+						<Spinner />
+					}
+				</Placeholder>
+			</Fragment>
+		);
 	}
 
-	return <SelectControl
-		label={ selectLabel }
-		value={ selectedEventId }
-		options={ buildEventOptions( events ) }
-		onChange={ ( value ) => onEventSelect( value ) }
-	/>;
+	return (
+		<Fragment>
+			<SelectControl
+				label={ selectLabel }
+				value={ selectedEventId }
+				options={ buildEventOptions( events ) }
+				onChange={ ( value ) => onEventSelect( value ) }
+			/>
+		</Fragment>
+	);
 };
 
 /**
@@ -105,6 +114,7 @@ EventSelect.defaultProps = {
 	},
 	selectLabel: __( 'Select Event', 'event_espresso' ),
 	isLoading: true,
+	selectedEventId: 0,
 	events: [],
 };
 
@@ -139,9 +149,9 @@ const mapOrderBy = ( orderBy ) => {
  * @param {string} categorySlug  Return events for the given categorySlug
  * @param {string} month         Return events for the given month.  Can be any
  *                                 in any month format recognized by moment.
- * @return {string} 			 The assembled where conditions.
+ * @return {string}             The assembled where conditions.
  */
-const whereConditions = ( { showExpired, categorySlug, month } ) => {
+const whereConditions = ( { showExpired = true, categorySlug = null, month = 'none' } ) => {
 	const where = [];
 	const GREATER_AND_EQUAL = encodeURIComponent( '>=' );
 	const LESS_AND_EQUAL = encodeURIComponent( '<=' );
@@ -172,8 +182,9 @@ const whereConditions = ( { showExpired, categorySlug, month } ) => {
  * eventespresso/lists store.
  */
 export default withSelect( ( select, ownProps ) => {
-	const { limit, order, orderBy } = ownProps.attributes;
-	const where = whereConditions( ownProps.attributes );
+	const { attributes = EventSelect.defaultProps.attributes } = ownProps;
+	const { limit, order, orderBy } = attributes;
+	const where = whereConditions( attributes );
 	const { getEvents, isRequestingEvents } = select( 'eventespresso/lists' );
 	const queryArgs = {
 		limit,
