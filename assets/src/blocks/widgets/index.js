@@ -1,1 +1,1 @@
-import './event-attendees.js';
+import './event-attendees';
