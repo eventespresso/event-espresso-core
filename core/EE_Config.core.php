@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 
 /**
@@ -2338,6 +2339,18 @@ class EE_Registration_Config extends EE_Config_Base
      */
     protected $track_invalid_checkout_access = true;
 
+    /**
+     * Whether or not to show the privacy policy consent checkbox
+     * @var bool
+     */
+    public $consent_checkbox_enabled;
+
+    /**
+     * Label text to show on the checkbox
+     * @var string
+     */
+    public $consent_checkbox_label_text;
+
 
     /**
      *    class constructor
@@ -2365,8 +2378,9 @@ class EE_Registration_Config extends EE_Config_Base
         $this->recaptcha_protected_forms = array();
         $this->recaptcha_width = 500;
         $this->default_maximum_number_of_tickets = 10;
+        $this->consent_checkbox_enabled = true;
+        $this->consent_checkbox_label_text = esc_html__('I Consent to Privacy Policy', 'event_espresso');
     }
-
 
     /**
      * This is called by the config loader and hooks are initialized AFTER the config has been populated.
@@ -2377,6 +2391,7 @@ class EE_Registration_Config extends EE_Config_Base
     {
         add_action('AHEE__EE_Config___load_core_config__end', array($this, 'set_default_reg_status_on_EEM_Event'));
         add_action('AHEE__EE_Config___load_core_config__end', array($this, 'set_default_max_ticket_on_EEM_Event'));
+        add_action('setup_theme', array($this,'setDefaultCheckboxLabelText'));
     }
 
 
@@ -2401,6 +2416,47 @@ class EE_Registration_Config extends EE_Config_Base
 
 
     /**
+     * Sets the default consent checkbox text. This needs to be done a bit later than when EE_Registration_Config is
+     * constructed because that happens before we can get the privacy policy page's permalink.
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
+    public function setDefaultCheckboxLabelText()
+    {
+        if ($this->getConsentCheckboxLabelText() === null
+        || $this->getConsentCheckboxLabelText() === '') {
+            $opening_a_tag = '';
+            $closing_a_tag = '';
+            if( function_exists('get_privacy_policy_url')) {
+                $privacy_page_url = get_privacy_policy_url();
+                if(! empty($privacy_page_url)) {
+                    $opening_a_tag = '<a href="' . $privacy_page_url . '" target="_blank">';
+                    $closing_a_tag = '</a>';
+                }
+            }
+            $loader = LoaderFactory::getLoader();
+            $org_config = $loader->getShared('EE_Organization_Config');
+            /**
+             * @var $org_config EE_Organization_Config
+             */
+
+            $this->setConsentCheckboxLabelText(
+                sprintf(
+                    esc_html__(
+                        'I consent to %1$s storing and using my personal information, according to their %2$sprivacy policy%3$s.',
+                        'event_espresso'
+                    ),
+                    $org_config->name,
+                    $opening_a_tag,
+                    $closing_a_tag
+                )
+            );
+        }
+    }
+
+
+    /**
      * @return boolean
      */
     public function track_invalid_checkout_access()
@@ -2419,6 +2475,47 @@ class EE_Registration_Config extends EE_Config_Base
             FILTER_VALIDATE_BOOLEAN
         );
     }
+
+
+    /**
+     * @return bool
+     */
+    public function isConsentCheckboxEnabled()
+    {
+        return $this->consent_checkbox_enabled;
+    }
+
+
+    /**
+     * @param bool $consent_checkbox_enabled
+     */
+    public function setConsentCheckboxEnabled($consent_checkbox_enabled)
+    {
+        $this->consent_checkbox_enabled = filter_var(
+            $consent_checkbox_enabled,
+            FILTER_VALIDATE_BOOLEAN
+        );
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getConsentCheckboxLabelText()
+    {
+        return $this->consent_checkbox_label_text;
+    }
+
+
+    /**
+     * @param string $consent_checkbox_label_text
+     */
+    public function setConsentCheckboxLabelText($consent_checkbox_label_text)
+    {
+        $this->consent_checkbox_label_text = (string) $consent_checkbox_label_text;
+    }
+
+
 }
 
 

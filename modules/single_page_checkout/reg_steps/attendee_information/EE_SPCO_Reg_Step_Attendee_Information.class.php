@@ -5,6 +5,7 @@ use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\commands\attendee\CreateAttendeeCommand;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * Class EE_SPCO_Reg_Step_Attendee_Information
@@ -135,24 +136,33 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         $subsections = array(
             'default_hidden_inputs' => $extra_inputs_section,
         );
-        //if this isn't a revisit, add the consent box
-        if(! $this->checkout->revisit) {
+
+        /**
+         * @var $reg_config EE_Registration_Config
+         */
+        $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
+        //if this isn't a revisit, and they have the privacy consent box enalbed, add it
+        if(! $this->checkout->revisit && $reg_config->isConsentCheckboxEnabled()) {
+
             $extra_inputs_section->add_subsections(
                 array(
                     'consent_box' => new EE_Form_Section_Proper(
                         array(
-                            'layout_strategy' => new EE_Div_Per_Section_Layout(),
+                            'layout_strategy' =>
+                                new EE_Template_Layout(
+                                array(
+                                    'input_template_file' => SPCO_REG_STEPS_PATH . $this->_slug . DS . 'privacy_consent.template.php'
+                                )
+                            ),
                             'subsections'     => array(
                                 'consent' => new EE_Checkbox_Multi_Input(
                                     array(
-                                        'consent' => esc_html__(
-                                            'I agree to the %1$s privacy policy%2$s, specifically to storing my registration data at least until the event.',
-                                            'event_espresso'
-                                        ),
+                                        'consent' =>  $reg_config->getConsentCheckboxLabelText(),
                                     ),
                                     array(
-                                        'required'        => true,
-                                        'html_label_text' => esc_html__('Consent ot Privacy Policy', 'event_espresso'),
+                                        'required' => true,
+                                        'required_validation_error_message' => esc_html__('You must consent to these terms in order to register.', 'event_espresso'),
+                                        'html_label_text' => '',
                                     )
                                 ),
                             ),

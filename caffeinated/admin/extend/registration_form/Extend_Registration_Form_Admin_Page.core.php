@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * Class Extend_Registration_Form_Admin_Page
@@ -1072,6 +1073,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             array($this, 'email_validation_settings_form'),
             2
         );
+        add_action(
+            'AHEE__Extend_Registration_Form_Admin_Page___reg_form_settings_template',
+            array($this, 'privacyConsentFormContent'),
+            1
+        );
         $this->_template_args = (array) apply_filters(
             'FHEE__Extend_Registration_Form_Admin_Page___reg_form_settings___template_args',
             $this->_template_args
@@ -1098,6 +1104,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     protected function _update_reg_form_settings()
     {
         EE_Registry::instance()->CFG->registration = $this->update_email_validation_settings_form(
+            EE_Registry::instance()->CFG->registration
+        );
+        EE_Registry::instance()->CFG->registration = $this->updatePrivacyConsentCheckboxSettingsForm(
             EE_Registry::instance()->CFG->registration
         );
         EE_Registry::instance()->CFG->registration = apply_filters(
@@ -1183,6 +1192,66 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 
 
     /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function privacyConsentFormContent()
+    {
+        echo $this->getPrivacyConsentForm()->get_html_and_js();
+    }
+
+
+    /**
+     * @return EE_Form_Section_Proper
+     * @throws EE_Error
+     */
+    protected function getPrivacyConsentForm()
+    {
+        /**
+         * @var $reg_config EE_Registration_Config
+         */
+        $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
+        return new EE_Form_Section_Proper(
+            array(
+                'name' => 'privacy_consent_settings',
+                'subsections' => array(
+                    'privacy_consent_form_hdr'   => new EE_Form_Section_HTML(
+                        EEH_HTML::h2(esc_html__('Privacy Policy Consent Settings', 'event_espresso'))
+                    ),
+                    'enable' => new EE_Select_Reveal_Input(
+                        array(
+                            'enable-privacy-consent' => esc_html__('Enabled', 'event_espresso'),
+                            'disable' => esc_html__('Disabled', 'event_espresso')
+                        ),
+                        array(
+                            'default' => $reg_config->isConsentCheckboxEnabled() ? 'enable-privacy-consent' : 'disable',
+                            'html_label_text' => esc_html__('Privacy Consent Checkbox', 'event_espresso'),
+                            'html_help_text' => esc_html__('When enabled, a checkbox appears in the registration form requiring users to consent to your site\'s privacy policy.', 'event_espresso')
+                        )
+                    ),
+                    'enable-privacy-consent' => new EE_Form_Section_Proper(
+                        array(
+                            'subsections' => array(
+                                'consent_assertion' => new EE_Text_Area_Input(
+                                    array(
+                                        'default' => $reg_config->getConsentCheckboxLabelText(),
+                                        'html_label_text' => esc_html__('Consent Text', 'event_espresso'),
+                                        'html_help_text' => esc_html__('Text describing what the registrant is consenting to by submitting their personal data in the registration form.', 'event_espresso'),
+                                        'validation_strategies' => array(new EE_Full_HTML_Validation_Strategy()),
+                                    )
+                                ),
+                            )
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+
+    /**
      * @param EE_Registration_Config $EE_Registration_Config
      * @return EE_Registration_Config
      * @throws EE_Error
@@ -1248,6 +1317,43 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             $e->get_error();
         }
         return $EE_Registration_Config;
+    }
+
+
+    /**
+     * Updates the registration config with the privacy consent request data
+     *
+     * @param EE_Registration_Config $reg_config
+     * @return EE_Registration_Config
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function updatePrivacyConsentCheckboxSettingsForm( EE_Registration_Config $reg_config)
+    {
+        try {
+            /**
+             * @var $privacy_consent_form EE_Form_Section_Proper
+             */
+            $privacy_consent_form = $this->getPrivacyConsentForm();
+            // if not displaying a form, then check for form submission
+            if ($privacy_consent_form->was_submitted()) {
+                // capture form data
+                $privacy_consent_form->receive_form_submission();
+                // validate form data
+                if ($privacy_consent_form->is_valid()) {
+                    $valid_data = $privacy_consent_form->valid_data();
+                    $reg_config->setConsentCheckboxEnabled($valid_data['enable'] === 'enable-privacy-consent');
+                    $reg_config->setConsentCheckboxLabelText($valid_data['enable-privacy-consent']['consent_assertion']);
+                }
+            }
+        } catch(EE_Error $e) {
+            $e->get_error();
+        }
+        return $reg_config;
+
     }
 
 
