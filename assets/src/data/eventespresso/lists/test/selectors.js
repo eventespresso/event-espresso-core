@@ -3,6 +3,21 @@
  */
 import { getItems, isRequestingItems } from '../selectors';
 
+/**
+ * WordPress dependencies
+ */
+import { select } from '@wordpress/data';
+
+/**
+ * External dependencies
+ */
+import { Exception } from '@eventespresso/eejs';
+
+jest.mock( '@wordpress/data', () => ( {
+	...require.requireActual( '@wordpress/data' ),
+	select: jest.fn().mockReturnValue( {} ),
+} ) );
+
 describe( 'getItems()', () => {
 	const state = {
 		event: {
@@ -25,34 +40,53 @@ describe( 'getItems()', () => {
 
 describe( 'isRequestingItems', () => {
 	const state = {
-		event: {
-			'some_query_string=1': [ { id: 1 } ],
-		},
+		event: {},
 	};
-	it( 'returns true when invalid model name provided', () => {
-		expect( isRequestingItems( state, 'invalid', 'some_query_string=1' ) )
-			.toBe( true );
-		expect( isRequestingItems( state, 'event', 'invalid_query_string' ) )
-			.toBe( true );
+	beforeAll( () => {
+		select( 'core/data' ).isResolving = jest.fn().mockReturnValue( false );
 	} );
-	it( 'returns false when the provided arguments are set and there\'s a non null value in the state for them',
+	afterAll( () => {
+		select( 'core/data' ).isResolving.mockRestore();
+	} );
+
+	function setIsResolving( isResolving ) {
+		select( 'core/data' ).isResolving.mockImplementation(
+			( reducerKey, selectorName ) => (
+				isResolving &&
+				reducerKey === 'eventespresso/lists' &&
+				selectorName === 'getItems'
+			),
+		);
+	}
+
+	it( 'throws an exception when modelName is invalid', () => {
+		const t = () => {
+			isRequestingItems( state, 'invalid', 'some_query_string=1' );
+		};
+		expect( t ).toThrowError( Exception );
+	} );
+
+	it( 'returns false if never requested',
 		() => {
 			expect( isRequestingItems( state, 'event', 'some_query_string=1' ) )
 				.toBe( false );
 		},
 	);
-	it( 'returns true when the provided arguments are set and the value is null for them in the state',
+	it( 'returns false if items resolution for model is finished',
 		() => {
-			const nullState = {
-				event: {
-					'some_query_string=1': null,
-				},
-			};
-			expect( isRequestingItems( nullState,
+			expect( isRequestingItems( state,
 				'event',
 				'some_query_string=1',
 			) )
-				.toBe( true );
+				.toBe( false );
 		},
 	);
+	it( 'returns true if items resolution for model is started', () => {
+		setIsResolving( true );
+		expect( isRequestingItems( state,
+			'event',
+			'some_query_string=1',
+		) )
+			.toBe( true );
+	} );
 } );

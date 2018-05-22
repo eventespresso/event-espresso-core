@@ -11,6 +11,7 @@ const externals = {
 	'@wordpress/element': 'wp.element',
 	'@wordpress/components': 'wp.components',
 	'@wordpress/blocks': 'wp.blocks',
+	'@wordpress/editor': 'wp.editor',
 	react: 'eejs.vendor.react',
 	'react-dom': 'eejs.vendor.reactDom',
 	'react-redux': 'eejs.vendor.reactRedux',
@@ -66,6 +67,28 @@ const config = [
 		},
 	},
 	{
+		configName: 'components',
+		entry: {
+			components: assets + 'components/index.js',
+		},
+		externals,
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', '[name]' ],
+			libraryTarget: 'var',
+		},
+	},
+	{
 		configName: 'base',
 		entry: {
 			'wp-plugins-page': [
@@ -75,7 +98,9 @@ const config = [
 				assets + 'data/index.js',
 			],
 		},
-		externals,
+		externals: Object.assign( externals, {
+			'@eventespresso/components': 'eejs.components',
+		} ),
 		output: {
 			filename: 'ee-[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
