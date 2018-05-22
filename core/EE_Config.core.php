@@ -2338,6 +2338,12 @@ class EE_Registration_Config extends EE_Config_Base
      */
     protected $track_invalid_checkout_access = true;
 
+    /**
+     * String describing how long to keep payment logs. Passed into DateTime constructor
+     * @var string
+     */
+    public $gateway_log_lifespan = '1 week';
+
 
     /**
      *    class constructor
@@ -2365,6 +2371,7 @@ class EE_Registration_Config extends EE_Config_Base
         $this->recaptcha_protected_forms = array();
         $this->recaptcha_width = 500;
         $this->default_maximum_number_of_tickets = 10;
+        $this->gateway_log_lifespan = '7 days';
     }
 
 
@@ -2417,6 +2424,25 @@ class EE_Registration_Config extends EE_Config_Base
         $this->track_invalid_checkout_access = filter_var(
             $track_invalid_checkout_access,
             FILTER_VALIDATE_BOOLEAN
+        );
+    }
+
+
+    /**
+     * Gets the options to make availalbe for the gateway log lifespan
+     * @return array
+     */
+    public function gatewayLogLifespanOptions()
+    {
+        return (array) apply_filters(
+            'FHEE_EE_Admin_Config__gatewayLogLifespanOptions',
+            array(
+                '1 second' => esc_html__('Don\'t Log At All', 'event_espresso'),
+                '1 day' => esc_html__('1 Day', 'event_espresso'),
+                '7 days' => esc_html__('7 Days', 'event_espresso'),
+                '14 days' => esc_html__('14 Days', 'event_espresso'),
+                '30 days' => esc_html__('30 Days', 'event_espresso')
+            )
         );
     }
 }
