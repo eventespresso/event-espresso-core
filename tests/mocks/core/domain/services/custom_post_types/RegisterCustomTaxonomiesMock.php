@@ -14,7 +14,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\tests\mocks\core\domain\services\custom_post_types
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class RegisterCustomTaxonomiesMock extends RegisterCustomTaxonomies
 {

@@ -8,7 +8,7 @@ namespace EventEspresso\core\domain\services\custom_post_types;
  *
  * @package EventEspresso\core\domain\services\custom_post_types
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class RewriteRules
 {

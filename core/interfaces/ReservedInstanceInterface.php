@@ -9,7 +9,7 @@ namespace EventEspresso\core\interfaces;
  *
  * @package EventEspresso\core\interfaces
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 interface ReservedInstanceInterface
 {

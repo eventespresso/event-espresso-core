@@ -11,7 +11,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  *
  * @package EventEspresso\core\domain\values\assets
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class ManifestFile extends Asset
 {

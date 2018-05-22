@@ -31,7 +31,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws PHPUnit_Framework_AssertionFailedError
      */
     public function test_core_dependencies() {
@@ -74,7 +74,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws \PHPUnit\Framework\AssertionFailedError
      * @throws \PHPUnit\Framework\Exception
      */
@@ -110,7 +110,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
@@ -134,7 +134,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DomainException
      * @throws \PHPUnit\Framework\AssertionFailedError
      */
@@ -153,7 +153,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function test_register_dependency() {

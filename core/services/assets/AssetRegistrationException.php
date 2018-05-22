@@ -12,7 +12,7 @@ use RuntimeException;
  *
  * @package EventEspresso\core\services\assets
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class AssetRegistrationException extends RuntimeException
 {
