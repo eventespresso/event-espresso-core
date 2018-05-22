@@ -2438,7 +2438,7 @@ class EE_Registration_Config extends EE_Config_Base
             'FHEE_EE_Admin_Config__gatewayLogLifespanOptions',
             array(
                 '1 second' => esc_html__('Don\'t Log At All', 'event_espresso'),
-                '1 day' => esc_html__('A Day', 'event_espresso'),
+                '1 day' => esc_html__('1 Day', 'event_espresso'),
                 '7 days' => esc_html__('7 Days', 'event_espresso'),
                 '14 days' => esc_html__('14 Days', 'event_espresso'),
                 '30 days' => esc_html__('30 Days', 'event_espresso')
