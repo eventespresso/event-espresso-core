@@ -9,27 +9,12 @@ const wpi18nExtractor = require( './bin/i18n-map-extractor.js' );
 common.forEach( ( config, index ) => {
 	if ( common[ index ].configName === 'base' ) {
 		common[ index ].optimization = {
-			splitChunks: {
-				cacheGroups: {
-					vendors: {
-						test: 'reactVendor',
-						name: 'reactVendor',
-						chunks: 'all',
-					},
-				},
-			},
 			runtimeChunk: {
 				name: 'manifest',
 			},
 		};
 		common[ index ].plugins = [
 			new CleanWebpackPlugin( [ 'assets/dist', 'translation-map.json' ] ),
-			new webpack.ProvidePlugin( {
-				'React': 'react', // eslint-disable-line quote-props
-			} ),
-			new miniExtract( {
-				filename: 'ee-[name].[contenthash].dist.css',
-			} ),
 		];
 	}
 	common[ index ] = merge( config, {
@@ -44,14 +29,20 @@ common.forEach( ( config, index ) => {
 					'wp-plugins-page': 'ee-wp-plugins-page',
 					'data-stores': 'eventespresso-data-stores',
 				},
-				excludes: [ 'eejs' ],
+				excludes: [ 'eejs', 'vendor' ],
 			} ),
 			new WebpackAssetsManifest( {
 				output: path.resolve( __dirname,
 					'assets/dist/build-manifest.json',
 				),
 				merge: true,
-				entrypoints: true,
+				entrypoints: false,
+			} ),
+			new webpack.ProvidePlugin( {
+				React: 'react',
+			} ),
+			new miniExtract( {
+				filename: 'ee-[name].[contenthash].dist.css',
 			} ),
 		],
 		mode: 'production',

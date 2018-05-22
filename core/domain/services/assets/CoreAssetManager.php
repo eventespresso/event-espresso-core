@@ -44,7 +44,7 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_EE_JS_CORE         = 'eejs-core';
 
-    const JS_HANDLE_EE_VENDOR_REACT    = 'ee-vendor-react';
+    const JS_HANDLE_EE_VENDOR           = 'eventespresso-vendor';
 
     const JS_HANDLE_EE_DATA_STORES     = 'eventespresso-data-stores';
 
@@ -166,8 +166,8 @@ class CoreAssetManager extends AssetManager
         ->setHasInlineData();
 
         $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_EE_VENDOR_REACT,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'reactVendor'),
+            CoreAssetManager::JS_HANDLE_EE_VENDOR,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'vendor'),
             array(CoreAssetManager::JS_HANDLE_EE_JS_CORE)
         );
 
@@ -359,7 +359,7 @@ class CoreAssetManager extends AssetManager
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'wp-plugins-page'),
             array(
                 CoreAssetManager::JS_HANDLE_JQUERY,
-                CoreAssetManager::JS_HANDLE_EE_VENDOR_REACT,
+                CoreAssetManager::JS_HANDLE_EE_VENDOR,
             )
         )
         ->setRequiresTranslation();
