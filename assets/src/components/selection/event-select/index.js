@@ -50,7 +50,7 @@ export const EventSelect = ( {
 					icon="calendar"
 					label={ __( 'EventSelect', 'event_espresso' ) }
 				>
-					{ ! isLoading && isEmpty( events ) ?
+					{ ! isLoading ?
 						__(
 							'There are no events to select from. You need to create an event first.',
 							'event_espresso',
