@@ -1,19 +1,7 @@
 {
-  "eejs.js": "ee-eejs.0027f7deea766130d950.dist.js",
-  "entrypoints": {
-    "wp-plugins-page": {
-      "js": [
-        "ee-manifest.3b66c2f77d3b01c1b09a.dist.js",
-        "ee-reactVendor.814709a0f9fdbb9b2d40.dist.js",
-        "ee-wp-plugins-page.5d91e78c312b162c6450.dist.js"
-      ],
-      "css": [
-        "ee-wp-plugins-page.18b028a8d6163577ccd1.dist.css"
-      ]
-    }
-  },
+  "eejs.js": "ee-eejs.f110338acc2bc2da6dae.dist.js",
   "manifest.js": "ee-manifest.3b66c2f77d3b01c1b09a.dist.js",
-  "reactVendor.js": "ee-reactVendor.814709a0f9fdbb9b2d40.dist.js",
-  "wp-plugins-page.css": "ee-wp-plugins-page.18b028a8d6163577ccd1.dist.css",
-  "wp-plugins-page.js": "ee-wp-plugins-page.5d91e78c312b162c6450.dist.js"
+  "vendor.js": "ee-vendor.4d87d4d2bcb9de9d56bd.dist.js",
+  "wp-plugins-page.css": "ee-wp-plugins-page.12612f6ab71570ab1af8.dist.css",
+  "wp-plugins-page.js": "ee-wp-plugins-page.2d53dd52679d995d5e4b.dist.js"
 }
