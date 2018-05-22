@@ -2522,7 +2522,7 @@ class EE_Admin_Config extends EE_Config_Base
         $this->affiliate_id = 'default';
         $this->help_tour_activation = true;
         $this->encode_session_data = false;
-        $this->gateway_log_lifespan = '1 week';
+        $this->gateway_log_lifespan = '7 days';
     }
 
 
@@ -2592,8 +2592,9 @@ class EE_Admin_Config extends EE_Config_Base
             array(
                 '1 second' => esc_html__('Don\'t Log At All', 'event_espresso'),
                 '1 day' => esc_html__('A Day', 'event_espresso'),
-                '1 week' => esc_html__('A Week', 'event_espresso'),
-                '5 weeks' => esc_html__('5 Weeks', 'event_espresso')
+                '7 days' => esc_html__('7 Days', 'event_espresso'),
+                '14 days' => esc_html__('14 Days', 'event_espresso'),
+                '30 days' => esc_html__('30 Days', 'event_espresso')
             )
         );
     }
