@@ -76,6 +76,7 @@
 		"classnames": "^2.2.5",
 		"js-green-licenses": "^0.5.0",
 		"lodash": "^4.17.10",
+		"moment": "^2.22.1",
 		"querystringify": "^1.0.0",
 		"react": "^16.3.0",
 		"react-dom": "^16.3.0",
