@@ -892,9 +892,9 @@ class Payments_Admin_Page extends EE_Admin_Page
     protected function _update_payment_settings()
     {
         $form = $this->getPaymentSettingsForm();
-        if($form->was_submitted($this->_req_data)) {
+        if ($form->was_submitted($this->_req_data)) {
             $form->receive_form_submission($this->_req_data);
-            if($form->is_valid()) {
+            if ($form->is_valid()) {
                 /**
                  * @var $reg_config EE_Registration_Config
                  */
