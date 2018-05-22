@@ -1215,20 +1215,24 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
         return new EE_Form_Section_Proper(
             array(
-                'name' => 'privacy_consent_settings',
+                'name'  => 'privacy_consent_settings',
                 'subsections' => array(
-                    'privacy_consent_form_hdr'   => new EE_Form_Section_HTML(
+                    'privacy_consent_form_hdr' => new EE_Form_Section_HTML(
                         EEH_HTML::h2(esc_html__('Privacy Policy Consent Settings', 'event_espresso'))
                     ),
                     'enable' => new EE_Select_Reveal_Input(
                         array(
                             'enable-privacy-consent' => esc_html__('Enabled', 'event_espresso'),
-                            'disable' => esc_html__('Disabled', 'event_espresso')
+                            'disable'                => esc_html__('Disabled', 'event_espresso'),
                         ),
                         array(
-                            'default' => $reg_config->isConsentCheckboxEnabled() ? 'enable-privacy-consent' : 'disable',
+                            'default' => $reg_config->isConsentCheckboxEnabled() ? 'enable-privacy-consent'
+                                : 'disable',
                             'html_label_text' => esc_html__('Privacy Consent Checkbox', 'event_espresso'),
-                            'html_help_text' => esc_html__('When enabled, a checkbox appears in the registration form requiring users to consent to your site\'s privacy policy.', 'event_espresso')
+                            'html_help_text' => esc_html__(
+                                'When enabled, a checkbox appears in the registration form requiring users to consent to your site\'s privacy policy.',
+                                'event_espresso'
+                            ),
                         )
                     ),
                     'enable-privacy-consent' => new EE_Form_Section_Proper(
@@ -1238,14 +1242,17 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                                     array(
                                         'default' => $reg_config->getConsentCheckboxLabelText(),
                                         'html_label_text' => esc_html__('Consent Text', 'event_espresso'),
-                                        'html_help_text' => esc_html__('Text describing what the registrant is consenting to by submitting their personal data in the registration form.', 'event_espresso'),
+                                        'html_help_text' => esc_html__(
+                                            'Text describing what the registrant is consenting to by submitting their personal data in the registration form.',
+                                            'event_espresso'
+                                        ),
                                         'validation_strategies' => array(new EE_Full_HTML_Validation_Strategy()),
                                     )
                                 ),
-                            )
+                            ),
                         )
-                    )
-                )
+                    ),
+                ),
             )
         );
     }
@@ -1331,7 +1338,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function updatePrivacyConsentCheckboxSettingsForm( EE_Registration_Config $reg_config)
+    public function updatePrivacyConsentCheckboxSettingsForm(EE_Registration_Config $reg_config)
     {
         try {
             /**
@@ -1346,14 +1353,15 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                 if ($privacy_consent_form->is_valid()) {
                     $valid_data = $privacy_consent_form->valid_data();
                     $reg_config->setConsentCheckboxEnabled($valid_data['enable'] === 'enable-privacy-consent');
-                    $reg_config->setConsentCheckboxLabelText($valid_data['enable-privacy-consent']['consent_assertion']);
+                    $reg_config->setConsentCheckboxLabelText(
+                        $valid_data['enable-privacy-consent']['consent_assertion']
+                    );
                 }
             }
-        } catch(EE_Error $e) {
+        } catch (EE_Error $e) {
             $e->get_error();
         }
         return $reg_config;
-
     }
 
 

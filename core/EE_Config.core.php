@@ -22,7 +22,6 @@ final class EE_Config implements ResettableInterface
 
     const ADDON_OPTION_NAMES = 'ee_config_option_names';
 
-
     /**
      *    instance of the EE_Config object
      *
@@ -99,7 +98,6 @@ final class EE_Config implements ResettableInterface
      * @var EE_Tax_Config
      */
     public $tax_settings;
-
 
     /**
      * Settings pertaining to global messages settings.
@@ -1603,7 +1601,6 @@ class EE_Config_Base
     }
 }
 
-
 /**
  * Class for defining what's in the EE_Config relating to registration settings
  */
@@ -1662,7 +1659,6 @@ class EE_Core_Config extends EE_Config_Base
      * The next vars relate to the custom slugs for EE CPT routes
      */
     public $event_cpt_slug;
-
 
     /**
      * This caches the _ee_ueip_option in case this config is reset in the same
@@ -1875,6 +1871,7 @@ class EE_Core_Config extends EE_Config_Base
         return EE_Core_Config::$ee_ueip_option;
     }
 
+
     /**
      * Utility function for escaping the value of a property and returning.
      *
@@ -1905,7 +1902,6 @@ class EE_Core_Config extends EE_Config_Base
         return array_keys(get_object_vars($this));
     }
 }
-
 
 /**
  * Config class for storing info on the Organization
@@ -1961,13 +1957,11 @@ class EE_Organization_Config extends EE_Config_Base
      */
     public $email;
 
-
     /**
      * @var string $phone
      * eg. 111-111-1111
      */
     public $phone;
-
 
     /**
      * @var string $vat
@@ -1981,7 +1975,6 @@ class EE_Organization_Config extends EE_Config_Base
      */
     public $logo_url;
 
-
     /**
      * The below are all various properties for holding links to organization social network profiles
      *
@@ -1994,14 +1987,12 @@ class EE_Organization_Config extends EE_Config_Base
      */
     public $facebook;
 
-
     /**
      * twitter (twitter.com/twitter_handle)
      *
      * @var string
      */
     public $twitter;
-
 
     /**
      * linkedin (linkedin.com/in/profile_name)
@@ -2010,7 +2001,6 @@ class EE_Organization_Config extends EE_Config_Base
      */
     public $linkedin;
 
-
     /**
      * pinterest (www.pinterest.com/profile_name)
      *
@@ -2018,14 +2008,12 @@ class EE_Organization_Config extends EE_Config_Base
      */
     public $pinterest;
 
-
     /**
      * google+ (google.com/+profileName)
      *
      * @var string
      */
     public $google;
-
 
     /**
      * instagram (instagram.com/handle)
@@ -2063,7 +2051,6 @@ class EE_Organization_Config extends EE_Config_Base
         $this->instagram = '';
     }
 }
-
 
 /**
  * Class for defining what's in the EE_Config relating to currency
@@ -2184,7 +2171,6 @@ class EE_Currency_Config extends EE_Config_Base
     }
 }
 
-
 /**
  * Class for defining what's in the EE_Config relating to registration settings
  */
@@ -2199,7 +2185,6 @@ class EE_Registration_Config extends EE_Config_Base
      */
     public $default_STS_ID;
 
-
     /**
      * For new events, this will be the default value for the maximum number of tickets (equivalent to maximum number of
      * registrations)
@@ -2207,7 +2192,6 @@ class EE_Registration_Config extends EE_Config_Base
      * @var int
      */
     public $default_maximum_number_of_tickets;
-
 
     /**
      * level of validation to apply to email addresses
@@ -2341,12 +2325,14 @@ class EE_Registration_Config extends EE_Config_Base
 
     /**
      * Whether or not to show the privacy policy consent checkbox
+     *
      * @var bool
      */
     public $consent_checkbox_enabled;
 
     /**
      * Label text to show on the checkbox
+     *
      * @var string
      */
     public $consent_checkbox_label_text;
@@ -2382,6 +2368,7 @@ class EE_Registration_Config extends EE_Config_Base
         $this->consent_checkbox_label_text = esc_html__('I Consent to Privacy Policy', 'event_espresso');
     }
 
+
     /**
      * This is called by the config loader and hooks are initialized AFTER the config has been populated.
      *
@@ -2391,7 +2378,7 @@ class EE_Registration_Config extends EE_Config_Base
     {
         add_action('AHEE__EE_Config___load_core_config__end', array($this, 'set_default_reg_status_on_EEM_Event'));
         add_action('AHEE__EE_Config___load_core_config__end', array($this, 'set_default_max_ticket_on_EEM_Event'));
-        add_action('setup_theme', array($this,'setDefaultCheckboxLabelText'));
+        add_action('setup_theme', array($this, 'setDefaultCheckboxLabelText'));
     }
 
 
@@ -2418,6 +2405,7 @@ class EE_Registration_Config extends EE_Config_Base
     /**
      * Sets the default consent checkbox text. This needs to be done a bit later than when EE_Registration_Config is
      * constructed because that happens before we can get the privacy policy page's permalink.
+     *
      * @throws InvalidArgumentException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
@@ -2425,12 +2413,12 @@ class EE_Registration_Config extends EE_Config_Base
     public function setDefaultCheckboxLabelText()
     {
         if ($this->getConsentCheckboxLabelText() === null
-        || $this->getConsentCheckboxLabelText() === '') {
+            || $this->getConsentCheckboxLabelText() === '') {
             $opening_a_tag = '';
             $closing_a_tag = '';
-            if( function_exists('get_privacy_policy_url')) {
+            if (function_exists('get_privacy_policy_url')) {
                 $privacy_page_url = get_privacy_policy_url();
-                if(! empty($privacy_page_url)) {
+                if (! empty($privacy_page_url)) {
                     $opening_a_tag = '<a href="' . $privacy_page_url . '" target="_blank">';
                     $closing_a_tag = '</a>';
                 }
@@ -2514,10 +2502,7 @@ class EE_Registration_Config extends EE_Config_Base
     {
         $this->consent_checkbox_label_text = (string) $consent_checkbox_label_text;
     }
-
-
 }
-
 
 /**
  * Class for defining what's in the EE_Config relating to admin settings
@@ -2675,7 +2660,6 @@ class EE_Admin_Config extends EE_Config_Base
     }
 }
 
-
 /**
  * Class for defining what's in the EE_Config relating to template settings
  */
@@ -2747,7 +2731,6 @@ class EE_Template_Config extends EE_Config_Base
         $this->EED_Ticket_Selector = null;
     }
 }
-
 
 /**
  * Class for defining what's in the EE_Config relating to map settings
@@ -2865,7 +2848,6 @@ class EE_Map_Config extends EE_Config_Base
     }
 }
 
-
 /**
  * stores Events_Archive settings
  */
@@ -2914,7 +2896,6 @@ class EE_Events_Archive_Config extends EE_Config_Base
     }
 }
 
-
 /**
  * Stores Event_Single_Config settings
  */
@@ -2950,7 +2931,6 @@ class EE_Event_Single_Config extends EE_Config_Base
         $this->display_order_venue = 130;
     }
 }
-
 
 /**
  * Stores Ticket_Selector_Config settings
@@ -3100,7 +3080,6 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
     }
 }
 
-
 /**
  * Stores any EE Environment values that are referenced through the code.
  *
@@ -3188,7 +3167,6 @@ class EE_Environment_Config extends EE_Config_Base
     }
 }
 
-
 /**
  * Stores any options pertaining to taxes
  *
@@ -3216,7 +3194,6 @@ class EE_Tax_Config extends EE_Config_Base
     }
 }
 
-
 /**
  * Holds all global messages configuration options.
  *
@@ -3236,12 +3213,12 @@ class EE_Messages_Config extends EE_Config_Base
      */
     public $delete_threshold;
 
+
     public function __construct()
     {
         $this->delete_threshold = 0;
     }
 }
-
 
 /**
  * stores payment gateway info

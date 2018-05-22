@@ -1,11 +1,12 @@
 <?php
+
 /**
  * Class EE_Full_HTML_Validation_Strategy
  *
  * Makes sure there are only 'simple' html tags in the normalized value. Eg, line breaks, lists, links. No js etc though
  *
  * @package             Event Espresso
- * @subpackage  core
+ * @subpackage          core
  * @author              Mike Nelson
  * @since               4.6
  *
@@ -29,7 +30,6 @@ class EE_Full_HTML_Validation_Strategy extends EE_Validation_Strategy_Base
     }
 
 
-
     /**
      * get_list_of_allowed_tags
      *
@@ -47,6 +47,7 @@ class EE_Full_HTML_Validation_Strategy extends EE_Validation_Strategy_Base
 
     /**
      * Returns an array whose keys are allowed tags and values are an array of allowed attributes
+     *
      * @return array
      */
     protected function getAllowedTags()
@@ -56,9 +57,7 @@ class EE_Full_HTML_Validation_Strategy extends EE_Validation_Strategy_Base
             $allowedposttags,
             EEH_HTML::get_simple_tags()
         );
-
     }
-
 
 
     /**
@@ -68,7 +67,7 @@ class EE_Full_HTML_Validation_Strategy extends EE_Validation_Strategy_Base
     public function validate($normalized_value)
     {
         parent::validate($normalized_value);
-        $normalized_value_sans_tags =  wp_kses("$normalized_value", $this->getAllowedTags());
+        $normalized_value_sans_tags = wp_kses("$normalized_value", $this->getAllowedTags());
         if (strlen($normalized_value) > strlen($normalized_value_sans_tags)) {
             throw new EE_Validation_Error($this->get_validation_error_message(), 'complex_html_tags');
         }
