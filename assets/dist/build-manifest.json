@@ -1,7 +1,8 @@
 {
-  "components.js": "ee-components.a6d4a8a4f40a18d4c94e.dist.js",
+  "components.js": "ee-components.9e5e6b7f3141b83ba13c.dist.js",
   "data-stores.js": "ee-data-stores.37c3681d948ca4d9d79b.dist.js",
   "eejs.js": "ee-eejs.079eec177a6d0cb54b86.dist.js",
+  "eventespresso-core-blocks.js": "ee-eventespresso-core-blocks.08e32581f05586745284.dist.js",
   "manifest.js": "ee-manifest.3b66c2f77d3b01c1b09a.dist.js",
   "vendor.js": "ee-vendor.4d87d4d2bcb9de9d56bd.dist.js",
   "wp-plugins-page.css": "ee-wp-plugins-page.12612f6ab71570ab1af8.dist.css",
