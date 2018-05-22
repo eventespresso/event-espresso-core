@@ -11,7 +11,7 @@ use WP_Post;
  *
  * @package EventEspresso\core\domain\services\custom_post_types
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class RegisterCustomTaxonomyTerms
 {

@@ -15,7 +15,7 @@ use EventEspresso\core\domain\values\assets\Asset;
  *
  * @package EventEspresso\core\services\assets
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class AssetCollection extends Collection
 {
@@ -34,7 +34,7 @@ class AssetCollection extends Collection
 
     /**
      * @return StylesheetAsset[]
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     public function getStylesheetAssets()
     {
@@ -44,7 +44,7 @@ class AssetCollection extends Collection
 
     /**
      * @return JavascriptAsset[]
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     public function getJavascriptAssets()
     {
@@ -54,7 +54,7 @@ class AssetCollection extends Collection
 
     /**
      * @return ManifestFile[]
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     public function getManifestFiles()
     {
@@ -65,7 +65,7 @@ class AssetCollection extends Collection
     /**
      * @param $type
      * @return array
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     protected function getAssetsOfType($type)
     {
@@ -86,7 +86,7 @@ class AssetCollection extends Collection
 
     /**
      * @return JavascriptAsset[]
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     public function getJavascriptAssetsWithData()
     {

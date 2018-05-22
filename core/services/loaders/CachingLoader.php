@@ -161,7 +161,7 @@ class CachingLoader extends CachingLoaderDecorator
     /**
      * unsets and detaches ALL objects from the cache
      *
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     public function clearCache()
     {

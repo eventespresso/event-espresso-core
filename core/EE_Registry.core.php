@@ -160,7 +160,7 @@ class EE_Registry implements ResettableInterface
     /**
      * array of ReflectionClass objects where the key is the class name
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @var ReflectionClass[] $_reflectors
      */
     public $_reflectors;
@@ -1673,7 +1673,7 @@ class EE_Registry implements ResettableInterface
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param string $class_name
      * @return ReflectionClass
      * @throws ReflectionException

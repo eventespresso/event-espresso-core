@@ -12,7 +12,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\tests\mocks\core\services\loaders
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 abstract class ClassToLoad
 {

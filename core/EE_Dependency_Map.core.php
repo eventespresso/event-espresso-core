@@ -719,15 +719,6 @@ class EE_Dependency_Map
             'EventEspresso\core\services\loaders\ObjectIdentifier'                                                        => array(
                 'EventEspresso\core\services\loaders\ClassInterfaceCache' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager'                                     => array(
-                'EventEspresso\core\domain\Domain'            => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache,
-            ),
-            'EventEspresso\core\services\assets\AssetManager'                                                             => array(
-                'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
-            ),
             'EventEspresso\core\domain\services\assets\CoreAssetManager'                                                  => array(
                 'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
                 'EE_Currency_Config'                                 => EE_Dependency_Map::load_from_cache,
@@ -971,7 +962,7 @@ class EE_Dependency_Map
      * and we need to find out if `Fully/Qualified/Namespace/SomeInterface`
      * represents some other class.
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param string $fqn
      * @param string $for_class
      * @return bool
@@ -995,7 +986,7 @@ class EE_Dependency_Map
      *      then one could use EE_Registry::instance()->create( 'interface_alias' )
      *      to load an instance of 'some\namespace\classname'
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param string $alias
      * @param string $for_class
      * @return string

@@ -13,7 +13,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  * @package               Event Espresso
  * @subpackage            includes/core/
  * @author                Darren Ethier
- * @deprecated            $VID:$
+ * @deprecated            4.9.62.p
  */
 class EE_Register_CPTs
 {
@@ -22,7 +22,7 @@ class EE_Register_CPTs
     /**
      * instantiated at init priority 5
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      */
     public function __construct()
     {
@@ -33,7 +33,7 @@ class EE_Register_CPTs
     /**
      * This will flush rewrite rules on demand.  This actually gets called around wp init priority level 100.
      *
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @return void
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
@@ -64,7 +64,7 @@ class EE_Register_CPTs
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param string $description The description content.
      * @param string $taxonomy    The taxonomy name for the taxonomy being filtered.
      * @return string
@@ -80,7 +80,7 @@ class EE_Register_CPTs
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @return array
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -108,7 +108,7 @@ class EE_Register_CPTs
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @return array
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -122,7 +122,7 @@ class EE_Register_CPTs
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @return array
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -136,7 +136,7 @@ class EE_Register_CPTs
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param string $post_type_slug              If a slug is included, then attempt to retrieve the model name for
      *                                            the given cpt slug.  Otherwise if empty, then we'll return all cpt
      *                                            model names for cpts registered in EE.
@@ -154,7 +154,7 @@ class EE_Register_CPTs
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param string $post_type_slug If valid slug is provided, then will instantiate the model only for
      *                               the cpt matching the given slug.  Otherwise all cpt models will be
      *                               instantiated (if possible).
@@ -172,7 +172,7 @@ class EE_Register_CPTs
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param string $taxonomy_name , eg 'books'
      * @param string $singular_name internationalized singular name
      * @param string $plural_name   internationalized plural name
@@ -198,7 +198,7 @@ class EE_Register_CPTs
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param string $post_type     the actual post type name
      *                              (VERY IMPORTANT: this much match what the slug is for admin pages related to this
      *                              cpt Also any models must use this slug as well)
@@ -253,7 +253,7 @@ class EE_Register_CPTs
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -266,7 +266,7 @@ class EE_Register_CPTs
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param string $taxonomy     The name of the taxonomy
      * @param array  $term_details An array of term details indexed by slug and containing Name of term, and
      *                             description as the elements in the array
@@ -283,7 +283,7 @@ class EE_Register_CPTs
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param string $taxonomy  The taxonomy we're using for the default term
      * @param string $term_slug The slug of the term that will be the default.
      * @param array  $cpt_slugs An array of custom post types we want the default assigned to
@@ -303,7 +303,7 @@ class EE_Register_CPTs
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param  int     $post_id ID of CPT being saved
      * @param  WP_Post $post    Post object
      * @return void
@@ -322,7 +322,7 @@ class EE_Register_CPTs
  * This is just a utility object for holding the settings of a default term that gets used in the wp 'save_post' hook
  * when a particular custom post type is published.
  *
- * @deprecated $VID:$
+ * @deprecated 4.9.62.p
  */
 class EE_Default_Term
 {
@@ -336,7 +336,7 @@ class EE_Default_Term
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.62.p
      * @param string $taxonomy  The taxonomy the default term belongs to
      * @param string $term_slug The slug of the term that will be the default.
      * @param array  $cpt_slugs The custom post type the default term gets saved with
