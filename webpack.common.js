@@ -60,22 +60,6 @@ const config = [
 			libraryTarget: 'var',
 		},
 	},
-		module: {
-			rules: [
-				{
-					test: /\.js$/,
-					exclude: /node_modules/,
-					loader: 'babel-loader',
-				},
-			],
-		},
-		output: {
-			filename: 'ee-[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
-			library: [ 'eejs' ],
-			libraryTarget: 'this',
-		},
-	},
 	{
 		configName: 'base',
 		entry: {
