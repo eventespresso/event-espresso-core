@@ -67,6 +67,28 @@ const config = [
 		},
 	},
 	{
+		configName: 'components',
+		entry: {
+			components: assets + 'components/index.js',
+		},
+		externals,
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', '[name]' ],
+			libraryTarget: 'var',
+		},
+	},
+	{
 		configName: 'base',
 		entry: {
 			'wp-plugins-page': [
@@ -76,10 +98,9 @@ const config = [
 				assets + 'data/index.js',
 			],
 		},
-		externals,
-		resolve: {
-			alias,
-		},
+		externals: Object.assign( externals, {
+			'@eventespresso/components': 'eejs.components',
+		} ),
 		output: {
 			filename: 'ee-[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
