@@ -337,8 +337,8 @@ abstract class EE_Gateway
             $id = $this->_ID;
         }
         // only log if we're going to store it for longer than the minimum time
-        $admin_config = LoaderFactory::getLoader()->load('EE_Admin_Config');
-        if ($admin_config->gateway_log_lifespan !== '1 second') {
+        $reg_config = LoaderFactory::getLoader()->load('EE_Registration_Config');
+        if ($reg_config->gateway_log_lifespan !== '1 second') {
             $this->_pay_log->gateway_log($message, $id, $type);
         }
     }

@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 /**
  * Payments_Admin_Page
  * This contains the logic for setting up the Event Payments related admin pages.  Any methods without
@@ -859,21 +861,20 @@ class Payments_Admin_Page extends EE_Admin_Page
     }
 
 
+    /**
+     * Displays payment settings (not payment METHOD settings, that's _payment_method_settings)
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
     protected function _payment_settings()
     {
-        $this->_template_args['values'] = $this->_yes_no_values;
-        $this->_template_args['show_pending_payment_options'] = isset(
-            EE_Registry::instance()->CFG->registration->show_pending_payment_options
-        )
-            ? absint(EE_Registry::instance()->CFG->registration->show_pending_payment_options) : false;
+        $form = $this->getPaymentSettingsForm();
         $this->_set_add_edit_form_tags('update_payment_settings');
         $this->_set_publish_post_box_vars(null, false, false, null, false);
-        $this->_template_args['admin_page_content'] = EEH_Template::display_template(
-            EE_PAYMENTS_TEMPLATE_PATH
-            . 'payment_settings.template.php',
-            $this->_template_args,
-            true
-        );
+        $this->_template_args['admin_page_content'] =  $form->get_html_and_js();
         $this->display_admin_page_with_sidebar();
     }
 
@@ -882,17 +883,35 @@ class Payments_Admin_Page extends EE_Admin_Page
      *        _update_payment_settings
      *
      * @access protected
-     * @return array
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function _update_payment_settings()
     {
-        EE_Registry::instance(
-        )->CFG->registration->show_pending_payment_options = isset($this->_req_data['show_pending_payment_options'])
-            ? $this->_req_data['show_pending_payment_options'] : false;
+        $form = $this->getPaymentSettingsForm();
+        if($form->was_submitted($this->_req_data)) {
+            $form->receive_form_submission($this->_req_data);
+            if($form->is_valid()) {
+                /**
+                 * @var $reg_config EE_Registration_Config
+                 */
+                $loader = LoaderFactory::getLoader();
+                $reg_config = $loader->getShared('EE_Registration_Config');
+                $valid_data = $form->valid_data();
+                $reg_config->show_pending_payment_options = $valid_data['show_pending_payment_options'];
+                $reg_config->gateway_log_lifespan = $valid_data['gateway_log_lifespan'];
+            }
+        }
         EE_Registry::instance()->CFG = apply_filters(
             'FHEE__Payments_Admin_Page___update_payment_settings__CFG',
             EE_Registry::instance()->CFG
         );
+
+        $cfg =  EE_Registry::instance()->CFG ;
+
         $what = __('Payment Settings', 'event_espresso');
         $success = $this->_update_espresso_configuration(
             $what,
@@ -906,6 +925,50 @@ class Payments_Admin_Page extends EE_Admin_Page
             $what,
             __('updated', 'event_espresso'),
             array('action' => 'payment_settings')
+        );
+    }
+
+
+    /**
+     * Gets the form used for updating payment settings
+     *
+     * @return EE_Form_Section_Proper
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
+    protected function getPaymentSettingsForm()
+    {
+        /**
+         * @var $reg_config EE_Registration_Config
+         */
+        $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
+        return new EE_Form_Section_Proper(
+            array(
+                'name' => 'payment-settings',
+                'layout_strategy' => new EE_Admin_Two_Column_Layout(),
+                'subsections' => array(
+                    'show_pending_payment_options' => new EE_Yes_No_Input(
+                        array(
+                            'html_name' => 'show_pending_payment_options',
+                            'default' => $reg_config->show_pending_payment_options,
+                            'html_help_text' => esc_html__(
+                                "If a payment is marked as 'Pending Payment', or if payment is deferred (ie, an offline gateway like Check, Bank, or Invoice is used), then give registrants the option to retry payment. ",
+                                'event_espresso'
+                            )
+                        )
+                    ),
+                    'gateway_log_lifespan' => new \EE_Select_Input(
+                        $reg_config->gatewayLogLifespanOptions(),
+                        array(
+                            'html_label_text' => esc_html__('Gateway Logs Lifespan', 'event_espresso'),
+                            'html_help_text' => esc_html__('If issues arise with payments being made through a payment gateway, it\'s helpful to log non-sensitive communications with the payment gateway. But it\'s a security responsibility, so it\'s a good idea to not keep them for any longer than necessary.', 'event_espresso'),
+                            'default' => $reg_config->gateway_log_lifespan,
+                        )
+                    )
+                )
+            )
         );
     }
 

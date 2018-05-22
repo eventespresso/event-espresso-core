@@ -530,10 +530,10 @@ class EE_Cron_Tasks extends EE_Base
     public static function clean_out_old_gateway_logs()
     {
         if (EE_Maintenance_Mode::instance()->models_can_query()) {
-            $admin_config = LoaderFactory::getLoader()->load('EE_Admin_Config');
+            $reg_config = LoaderFactory::getLoader()->load('EE_Registration_Config');
             $time_diff_for_comparison = apply_filters(
                 'FHEE__EE_Cron_Tasks__clean_out_old_gateway_logs__time_diff_for_comparison',
-                '-' . $admin_config->gateway_log_lifespan
+                '-' . $reg_config->gateway_log_lifespan
             );
             EEM_Change_Log::instance()->delete_gateway_logs_older_than(new DateTime($time_diff_for_comparison));
         }

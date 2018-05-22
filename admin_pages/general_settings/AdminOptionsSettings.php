@@ -115,15 +115,6 @@ class AdminOptionsSettings extends FormHandler
                             'required'        => false,
                         )
                     ),
-                    'gateway_log_lifespan' => new \EE_Select_Input(
-                        $this->registry->CFG->admin->gatewayLogLifespanOptions(),
-                        array(
-                            'html_label_text' => esc_html__('Gateway Logs Lifespan', 'event_espresso'),
-                            'html_help_text' => esc_html__('If issues arise with payments being made through a payment gateway, it\'s helpful to log non-sensitive communications with the payment gateway. But it\'s a security responsibility, so it\'s a good idea to not keep them for any longer than necessary.', 'event_espresso'),
-                            'default' => $this->registry->CFG->admin->gateway_log_lifespan,
-                            'required' => true
-                        )
-                    )
                 ),
             )
         );
@@ -247,9 +238,6 @@ class AdminOptionsSettings extends FormHandler
             : $this->registry->CFG->admin->help_tour_activation;
         if (isset($form_data['encode_session_data'])) {
             $this->registry->CFG->admin->set_encode_session_data($form_data['encode_session_data']);
-        }
-        if (isset($form_data['gateway_log_lifespan'])) {
-            $this->registry->CFG->admin->gateway_log_lifespan = ($form_data['gateway_log_lifespan']);
         }
         return false;
     }
