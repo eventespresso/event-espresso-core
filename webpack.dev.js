@@ -8,27 +8,12 @@ const miniExtract = require( 'mini-css-extract-plugin' );
 common.forEach( ( config, index ) => {
 	if ( common[ index ].configName === 'base' ) {
 		common[ index ].optimization = {
-			splitChunks: {
-				cacheGroups: {
-					vendors: {
-						test: 'reactVendor',
-						name: 'reactVendor',
-						chunks: 'all',
-					},
-				},
-			},
 			runtimeChunk: {
 				name: 'manifest',
 			},
 		};
 		common[ index ].plugins = [
 			new CleanWebpackPlugin( [ 'assets/dist' ] ),
-			new webpack.ProvidePlugin( {
-				'React': 'react', // eslint-disable-line quote-props
-			} ),
-			new miniExtract( {
-				filename: 'ee-[name].[contenthash].dist.css',
-			} ),
 		];
 	}
 	common[ index ] = merge( config, {
@@ -39,7 +24,13 @@ common.forEach( ( config, index ) => {
 					'assets/dist/build-manifest.json',
 				),
 				merge: true,
-				entrypoints: true,
+				entrypoints: false,
+			} ),
+			new webpack.ProvidePlugin( {
+				React: 'react',
+			} ),
+			new miniExtract( {
+				filename: 'ee-[name].[contenthash].dist.css',
 			} ),
 		],
 		mode: 'development',

@@ -11,29 +11,23 @@ const externals = {
 	'@wordpress/element': 'wp.element',
 	'@wordpress/components': 'wp.components',
 	'@wordpress/blocks': 'wp.blocks',
+	'@wordpress/editor': 'wp.editor',
+	react: 'eejs.vendor.react',
+	'react-dom': 'eejs.vendor.reactDom',
+	'react-redux': 'eejs.vendor.reactRedux',
+	redux: 'eejs.vendor.redux',
+	classnames: 'eejs.vendor.classnames',
+	lodash: 'eejs.vendor.lodash',
+	moment: 'eejs.vendor.moment',
 };
-const reactVendorPackages = [
-	'react',
-	'react-dom',
-	'react-redux',
-	'redux',
-	'classnames',
-	'lodash',
-];
+
 /** see below for multiple configurations.
  /** https://webpack.js.org/configuration/configuration-types/#exporting-multiple-configurations */
 const config = [
 	{
 		configName: 'eejs',
-		externals: {
-			'@eventespresso/eejs': {
-				this: 'eejs',
-			},
-		},
 		entry: {
-			eejs: [
-				assets + 'eejs/index.js',
-			],
+			eejs: assets + 'eejs/index.js',
 		},
 		module: {
 			rules: [
@@ -48,13 +42,55 @@ const config = [
 			filename: 'ee-[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
 			library: [ 'eejs' ],
-			libraryTarget: 'this',
+			libraryTarget: 'var',
+		},
+	},
+	{
+		configName: 'eejsVendor',
+		entry: {
+			vendor: assets + 'eejs/vendor/index.js',
+		},
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', '[name]' ],
+			libraryTarget: 'var',
+		},
+	},
+	{
+		configName: 'components',
+		entry: {
+			components: assets + 'components/index.js',
+		},
+		externals,
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', '[name]' ],
+			libraryTarget: 'var',
 		},
 	},
 	{
 		configName: 'base',
 		entry: {
-			reactVendor: reactVendorPackages,
 			'wp-plugins-page': [
 				assets + 'wp-plugins-page/index.js',
 			],
@@ -65,7 +101,9 @@ const config = [
 				assets + 'blocks/index.js',
 			],
 		},
-		externals,
+		externals: Object.assign( externals, {
+			'@eventespresso/components': 'eejs.components',
+		} ),
 		output: {
 			filename: 'ee-[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),

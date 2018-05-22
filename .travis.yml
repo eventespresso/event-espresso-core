@@ -101,17 +101,9 @@ jobs:
     # multisite
     - php: 7.2
       env: WP_MULTISITE=1
-    - php: 7.1
-      env: WP_MULTISITE=1
-    - php: 7.0
-      env: WP_MULTISITE=1
-    - php: 5.6
-      env: WP_MULTISITE=1
     # wp 4.5 builds
     - php: 5.6
       env: WP_VERSION=4.5
-    - php: 5.6
-      env: WP_VERSION=4.5 WP_MULTISITE=1
     - php: nightly
 
 notifications:

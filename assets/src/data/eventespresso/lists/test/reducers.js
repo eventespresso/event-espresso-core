@@ -15,45 +15,8 @@ describe( 'listItems()', () => {
 			{ events: [], terms: [], tickets: [], venues: [] },
 		);
 	} );
-
-	it( 'assigns requested model and queryString to null (for known model)',
-		() => {
-			const originalState = deepFreeze( { event: {} } );
-			const state = listItems( originalState, {
-				type: 'SET_REQUESTED',
-				modelName: 'event',
-				queryString: '?some_value=1',
-			} );
-			expect( state ).toEqual( {
-				event: {
-					'?some_value=1': null,
-				},
-			} );
-		},
-	);
-	it( 'does not assign requested model and queryString to null for unknown model',
-		() => {
-			const originalState = deepFreeze( {} );
-			const state = listItems( originalState, {
-				type: 'SET_REQUESTED',
-				modelName: 'nonExistent',
-				queryString: '?some_value=1',
-			} );
-			expect( state ).toEqual( {} );
-		},
-	);
-	it( 'does not assign set the state for requested model and queryString to null for existing values already in state',
-		() => {
-			const originalState = deepFreeze( { event: { '?some_value=1': [] } } );
-			const state = listItems( originalState, {
-				type: 'SET_REQUESTED',
-				modelName: 'event',
-				queryString: '?some_value=1',
-			} );
-			expect( state ).toBe( originalState );
-		},
-	);
-	it( 'returns with received events for known model', () => {
+	it( 'returns with received events for known model and does not affect' +
+		' original state', () => {
 		const originalState = deepFreeze( { event: {} } );
 		const state = listItems( originalState, {
 			type: 'RECEIVE_LIST',
@@ -61,10 +24,45 @@ describe( 'listItems()', () => {
 			queryString: '?some_value=1',
 			items: [ { id: 1 } ],
 		} );
+		expect( state ).not.toEqual( originalState );
 		expect( state ).toEqual( {
 			event: {
 				'?some_value=1': [ { id: 1 } ],
 			},
 		} );
+	} );
+	it( 'returns correct state for multiple consecutive queries', () => {
+		const originalState = deepFreeze( { event: {} } );
+		const state1 = listItems( originalState, {
+			type: 'RECEIVE_LIST',
+			modelName: 'event',
+			queryString: '?some_value=1',
+			items: [ { id: 1 } ],
+		} );
+		const state2 = listItems( state1, {
+			type: 'RECEIVE_LIST',
+			modelName: 'event',
+			queryString: '?some_other_value=1',
+			items: [ { id: 1 } ],
+		} );
+		const state3 = listItems( state2, {
+			type: 'RECEIVE_LIST',
+			modelName: 'event',
+			queryString: '?some_value=1',
+			items: [ { id: 1 } ],
+		} );
+		expect( state1 ).not.toEqual( originalState );
+		expect( state1 ).toEqual( {
+			event: {
+				'?some_value=1': [ { id: 1 } ],
+			},
+		} );
+		expect( state2 ).toEqual( {
+			event: {
+				'?some_value=1': [ { id: 1 } ],
+				'?some_other_value=1': [ { id: 1 } ],
+			},
+		} );
+		expect( state3 ).toBe( state2 );
 	} );
 } );

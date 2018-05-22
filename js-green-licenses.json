@@ -10,24 +10,21 @@
 		"BSD",
 		"BSD-2-Clause",
 		"BSD-3-Clause",
-		"CC0-1.0"
+		"CC0-1.0",
+		"CC-BY-3.0"
 	],
 	"packageWhitelist": [
 		"@eventespresso/react-exit-modal-typeform",
-		"@wordpress/jest-preset-default",
 		"js-green-licenses",
 		"@typeform/embed",
 		"scrollbar-width",
 		"webfontloader",
 		"validate-npm-package-license",
 		"spdx-correct",
-		"spdx-exceptions",
 		"domutils",
-		"domelementtype",
 		"domelementtype",
 		"nomnom",
 		"colors",
-		"underscore",
-		"spdx-ranges"
+		"underscore"
 	]
 }

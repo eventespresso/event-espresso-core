@@ -11,7 +11,9 @@ import * as selectors from './selectors';
 import * as actions from './actions';
 import * as resolvers from './resolvers';
 
-export default registerStore( 'eventespresso/lists', {
+export const REDUCER_KEY = 'eventespresso/lists';
+
+export default registerStore( REDUCER_KEY, {
 	reducer: reducers,
 	actions,
 	selectors,

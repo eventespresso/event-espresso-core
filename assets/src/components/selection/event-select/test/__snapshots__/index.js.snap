@@ -1,40 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`EventSelect with 2 events should render and match snapshot 1`] = `
-<_class
-  label="Select Event"
-  onChange={[Function]}
-  options={
-    Array [
-      Object {
-        "label": "Event A",
-        "value": 1,
-      },
-      Object {
-        "label": "Event B",
-        "value": 2,
-      },
-    ]
-  }
-/>
+<React.Fragment>
+  <_class
+    label="Select Event"
+    onChange={[Function]}
+    options={
+      Array [
+        Object {
+          "label": "Event A",
+          "value": 1,
+        },
+        Object {
+          "label": "Event B",
+          "value": 2,
+        },
+      ]
+    }
+    value={0}
+  />
+</React.Fragment>
 `;
 
 exports[`EventSelect with default options should render and match snapshot 1`] = `
-<Placeholder
-  icon="calendar"
-  key="placeholder"
-  label="EventSelect"
->
-  <Component />
-</Placeholder>
+<React.Fragment>
+  <Placeholder
+    icon="calendar"
+    label="EventSelect"
+  >
+    <Component />
+  </Placeholder>
+</React.Fragment>
 `;
 
 exports[`EventSelect with no events and finished loading should render and match snapshot 1`] = `
-<Placeholder
-  icon="calendar"
-  key="placeholder"
-  label="EventSelect"
->
-  There are no events to select from. You need to create an event first.
-</Placeholder>
+<React.Fragment>
+  <Placeholder
+    icon="calendar"
+    label="EventSelect"
+  >
+    There are no events to select from. You need to create an event first.
+  </Placeholder>
+</React.Fragment>
 `;

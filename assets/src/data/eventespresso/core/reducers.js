@@ -153,7 +153,9 @@ export function receiveEntityRecords( state = DEFAULT_CORE_STATE, action ) {
 }
 
 export default combineReducers(
-	cleanEntities,
-	cleanEntityById,
-	receiveEntityRecords,
+	{
+		cleanEntities,
+		cleanEntityById,
+		receiveEntityRecords,
+	},
 );

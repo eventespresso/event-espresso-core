@@ -10,4 +10,4 @@ translation-map.json
 .idea
 node_modules/
 .DS_Store
-vendor/
+/vendor/
