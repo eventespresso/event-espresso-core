@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\admin_pages\general_settings\AdminOptionsSettings;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * General_Settings_Admin_Page
@@ -127,6 +128,16 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ),
+            'privacy_settings' => array(
+                'func' => 'privacySettings',
+                'capability' => 'manage_options',
+            ),
+            'update_privacy_settings' => array(
+                'func' => 'updatePrivacySettings',
+                'capability' => 'manage_options',
+                'noheader' => true,
+                'headers_sent_route' => 'privacy_settings'
+            )
         );
     }
 
@@ -196,6 +207,14 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'help_tour'     => array('Countries_Help_Tour'),
                 'require_nonce' => false,
             ),
+            'privacy_settings' => array(
+                'nav' => array(
+                    'label' => esc_html__('Privacy', 'event_espresso'),
+                    'order' => 80
+                ),
+                'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_publish_post_box')),
+                'require_nonce' => false
+            )
         );
     }
 
@@ -1416,4 +1435,108 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             }
         }
     }
+
+    public function privacySettings()
+    {
+        $this->_set_add_edit_form_tags('update_privacy_settings');
+        $this->_set_publish_post_box_vars(null, false, false, null, false);
+        $this->_template_args['admin_page_content'] = $this->getPrivacyConsentForm()->get_html_and_js();
+        $this->display_admin_page_with_sidebar();
+    }
+
+    /**
+     * @return EE_Form_Section_Proper
+     * @throws EE_Error
+     */
+    protected function getPrivacyConsentForm()
+    {
+        /**
+         * @var $reg_config EE_Registration_Config
+         */
+        $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
+        return new EE_Form_Section_Proper(
+            array(
+                'name'  => 'privacy_consent_settings',
+                'subsections' => array(
+                    'privacy_consent_form_hdr' => new EE_Form_Section_HTML(
+                        EEH_HTML::h2(esc_html__('Privacy Policy Consent Settings', 'event_espresso'))
+                    ),
+                    'enable' => new EE_Select_Reveal_Input(
+                        array(
+                            'enable-privacy-consent' => esc_html__('Enabled', 'event_espresso'),
+                            'disable'                => esc_html__('Disabled', 'event_espresso'),
+                        ),
+                        array(
+                            'default' => $reg_config->isConsentCheckboxEnabled() ? 'enable-privacy-consent'
+                                : 'disable',
+                            'html_label_text' => esc_html__('Privacy Consent Checkbox', 'event_espresso'),
+                            'html_help_text' => esc_html__(
+                                'When enabled, a checkbox appears in the registration form requiring users to consent to your site\'s privacy policy.',
+                                'event_espresso'
+                            ),
+                        )
+                    ),
+                    'enable-privacy-consent' => new EE_Form_Section_Proper(
+                        array(
+                            'subsections' => array(
+                                'consent_assertion' => new EE_Text_Area_Input(
+                                    array(
+                                        'default' => $reg_config->getConsentCheckboxLabelText(),
+                                        'html_label_text' => esc_html__('Consent Text', 'event_espresso'),
+                                        'html_help_text' => esc_html__(
+                                            'Text describing what the registrant is consenting to by submitting their personal data in the registration form.',
+                                            'event_espresso'
+                                        ),
+                                        'validation_strategies' => array(new EE_Full_HTML_Validation_Strategy()),
+                                    )
+                                ),
+                            ),
+                        )
+                    ),
+                ),
+            )
+        );
+    }
+
+    public function updatePrivacySettings()
+    {
+        $reg_config = EE_Config::instance()->registration;
+        try {
+            /**
+             * @var $privacy_consent_form EE_Form_Section_Proper
+             */
+            $privacy_consent_form = $this->getPrivacyConsentForm();
+            // if not displaying a form, then check for form submission
+            if ($privacy_consent_form->was_submitted()) {
+                // capture form data
+                $privacy_consent_form->receive_form_submission();
+                // validate form data
+                if ($privacy_consent_form->is_valid()) {
+                    $valid_data = $privacy_consent_form->valid_data();
+                    $reg_config->setConsentCheckboxEnabled($valid_data['enable'] === 'enable-privacy-consent');
+                    $reg_config->setConsentCheckboxLabelText(
+                        $valid_data['enable-privacy-consent']['consent_assertion']
+                    );
+                }
+            }
+        } catch (EE_Error $e) {
+            $e->get_error();
+        }
+
+        $success = $this->_update_espresso_configuration(
+            esc_html__('Registration Form Options', 'event_espresso'),
+            EE_Registry::instance()->CFG,
+            __FILE__,
+            __FUNCTION__,
+            __LINE__
+        );
+        $this->_redirect_after_action(
+            $success,
+            esc_html__('Registration Form Options', 'event_espresso'),
+            'updated',
+            array('action' => 'privacy_settings')
+        );
+
+    }
+
 }
