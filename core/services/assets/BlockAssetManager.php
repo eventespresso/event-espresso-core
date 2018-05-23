@@ -4,6 +4,7 @@ namespace EventEspresso\core\services\assets;
 
 use EventEspresso\core\domain\entities\editor\BlockInterface;
 use EventEspresso\core\domain\services\assets\CoreAssetManager;
+use EventEspresso\core\domain\values\assets\Asset;
 use EventEspresso\core\domain\values\assets\BrowserAsset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
@@ -152,8 +153,8 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function addEditorScript($handle, array $dependencies = array())
     {
-        if($this->assets->has($handle)){
-            return $this->assets->get($handle);
+        if($this->assets->hasJavascriptAsset($handle)){
+            return $this->assets->getJavascriptAsset($handle);
         }
         return parent::addJavascript(
             $handle,
@@ -178,8 +179,8 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function addEditorStyle($handle, array $dependencies = array())
     {
-        if ($this->assets->has($handle)) {
-            return $this->assets->get($handle);
+        if ($this->assets->hasStylesheetAsset($handle)) {
+            return $this->assets->getStylesheetAsset($handle);
         }
         return parent::addStylesheet(
             $handle,
@@ -203,8 +204,8 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function addScript($handle, array $dependencies = array())
     {
-        if ($this->assets->has($handle)) {
-            return $this->assets->get($handle);
+        if ($this->assets->hasJavascriptAsset($handle)) {
+            return $this->assets->getJavascriptAsset($handle);
         }
         return parent::addJavascript(
             $handle,
@@ -229,8 +230,8 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function addStyle($handle, array $dependencies = array())
     {
-        if ($this->assets->has($handle)) {
-            return $this->assets->get($handle);
+        if ($this->assets->hasStylesheetAsset($handle)) {
+            return $this->assets->getStylesheetAsset($handle);
         }
         return parent::addStylesheet(
             $handle,
@@ -262,13 +263,14 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
 
     /**
      * @param string $handle
-     * @since $VID:$
+     * @param string $type
      * @return mixed|null
+     * @since $VID:$
      */
-    public function getAsset($handle)
+    public function getAsset($handle, $type)
     {
-        if ($this->assets->has($handle)) {
-            return $this->assets->get($handle);
+        if ($this->assets->hasAssetOfType($handle, $type)) {
+            return $this->assets->getAssetOfType($handle, $type);
         }
         return null;
     }
@@ -279,7 +281,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function getEditorScript()
     {
-        return $this->getAsset($this->editor_script_handle);
+        return $this->assets->getJavascriptAsset($this->editor_script_handle);
     }
 
 
@@ -288,7 +290,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function getEditorStyle()
     {
-        return $this->getAsset($this->editor_style_handle);
+        return $this->assets->getStylesheetAsset($this->editor_style_handle);
     }
 
 
@@ -297,7 +299,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function getScript()
     {
-        return $this->getAsset($this->script_handle);
+        return $this->assets->getJavascriptAsset($this->script_handle);
     }
 
 
@@ -306,7 +308,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      */
     public function getStyle()
     {
-        return $this->getAsset($this->style_handle);
+        return $this->assets->getStylesheetAsset($this->style_handle);
     }
 
 

@@ -135,6 +135,49 @@ class EE_CPT_Base_Test extends EE_UnitTestCase{
         );
         $this->assertTrue($ee_term_taxonomy instanceof EE_Term_Taxonomy);
         $this->assertNotEquals(0, $ee_term_taxonomy->get('term_count'));
+        $this->assertEquals('espresso_event_categories', $ee_term_taxonomy->taxonomy());
+    }
+
+
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
+    public function testAddEventCategoryNoDuplicates()
+    {
+        $e = $this->new_model_obj_with_dependencies('Event');
+        $wp_term = $this->factory()->term->create_and_get(
+            array(
+                'name' => 'cars',
+                'taxonomy' => 'category',
+                'description' => 'regardless of whether this is a valid taxonomy, its certainl not the EE event category'
+            )
+        );
+        $this->assertNotInstanceOf('WP_Error', $wp_term);
+        $ee_term = $this->new_model_obj_with_dependencies(
+            'Term',
+            array(
+                'name' => 'cars',
+                'slug' => 'cars',
+
+            )
+        );
+        $ee_term_taxonomy = $this->new_model_obj_with_dependencies(
+            'Term_Taxonomy',
+            array(
+                'term_id' => $ee_term->ID(),
+                'taxonomy' => EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY
+            )
+        );
+        //when adding the term to this event, it shouldn't creating a new one
+        $term_taxonomy_used_for_relation = $e->add_event_category(
+            'cars',
+            'an actual ee category'
+        );
+        $this->assertEquals($ee_term_taxonomy, $term_taxonomy_used_for_relation);
     }
 }
 
