@@ -61,13 +61,19 @@ export class EventAttendees extends Component {
 		const { attendees } = this.props;
 		return (
 			<div key="events-attendees-block">
-				{ __( 'Attendees for Event', 'event_espresso' ) }
-				<ul
-					className="event-attendees-list"
-				>
+				{ __( 'Event Attendees', 'event_espresso' ) }
+				<ul className="event-attendees-ul">
 					{ attendees.map( ( attendee, i ) =>
-						<li key={i}>
-							<p>{ attendee.ATT_full_name }</p>
+						<li key={i} className="event-attendee-li">
+							<p>
+								<img
+									src={ attendee._calculated_fields.userAvatar }
+									className="event-attendee-avatar-img avatar avatar-32 photo"
+									height="32"
+									width="32"
+								/>
+								<span className="event-attendee-name-span">{ attendee.ATT_full_name }</span>
+							</p>
 						</li>,
 					) }
 				</ul>
@@ -119,7 +125,7 @@ export default withSelect( ( select, ownProps ) => {
 	const { selectedEventId = 0 } = attributes;
 	const { getItems, isRequestingItems } = select( 'eventespresso/lists' );
 	if ( selectedEventId ) {
-		const queryString = `Registration.EVT_ID=${ selectedEventId }`;
+		const queryString = `Registration.EVT_ID=${ selectedEventId }&calculate=userAvatar`;
 		return {
 			attendees: getItems( 'attendee', queryString ),
 			isLoading: isRequestingItems( 'attendee', queryString ),
