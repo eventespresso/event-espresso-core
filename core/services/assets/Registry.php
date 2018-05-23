@@ -106,7 +106,7 @@ class Registry
     /**
      * Callback for the wp_enqueue_scripts actions used to register assets.
      *
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws Exception
      */
     public function registerScriptsAndStyles()
@@ -123,7 +123,7 @@ class Registry
     /**
      * Registers JS assets with WP core
      *
-     * @since $VID:$
+     * @since 4.9.62.p
      * @param JavascriptAsset[] $scripts
      * @throws AssetRegistrationException
      * @throws InvalidDataTypeException
@@ -146,7 +146,7 @@ class Registry
                 $script->version(),
                 $script->loadInFooter()
             );
-            if (defined('EE_DEBUG') && EE_DEBUG && ! $registered) {
+            if (! $registered && defined('EE_DEBUG') && EE_DEBUG) {
                 throw new AssetRegistrationException($script->handle());
             }
             $script->setRegistered($registered);
@@ -164,7 +164,7 @@ class Registry
     /**
      * Registers CSS assets with WP core
      *
-     * @since $VID:$
+     * @since 4.9.62.p
      * @param StylesheetAsset[] $styles
      * @throws InvalidDataTypeException
      */
@@ -212,8 +212,8 @@ class Registry
         $scripts = $this->assets->getJavascriptAssetsWithData();
         foreach ($scripts as $script) {
             $this->addRegisteredScriptHandlesWithData($script->handle());
-            if ($script->hasLocalizationCallback()) {
-                $localize = $script->localizationCallback();
+            if ($script->hasInlineDataCallback()) {
+                $localize = $script->inlineDataCallback();
                 $localize();
             }
         }
@@ -387,11 +387,11 @@ class Registry
     public function getAssetUrl($namespace, $chunk_name, $asset_type)
     {
         $url = isset(
-            $this->manifest_data[ $namespace ][ $chunk_name ][ $asset_type ],
+            $this->manifest_data[ $namespace ][ $chunk_name . '.' . $asset_type ],
             $this->manifest_data[ $namespace ]['url_base']
         )
             ? $this->manifest_data[ $namespace ]['url_base']
-              . $this->manifest_data[ $namespace ][ $chunk_name ][ $asset_type ]
+              . $this->manifest_data[ $namespace ][ $chunk_name . '.' . $asset_type ]
             : $chunk_name;
         return apply_filters(
             'FHEE__EventEspresso_core_services_assets_Registry__getAssetUrl',
@@ -430,7 +430,7 @@ class Registry
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws InvalidArgumentException
      * @throws InvalidFilePathException
      */

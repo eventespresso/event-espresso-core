@@ -12,7 +12,7 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  *
  * @package EventEspresso\core\domain\entities\custom_post_types
  * @author  Darren Ethier / Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class CustomPostTypeDefinitions
 {

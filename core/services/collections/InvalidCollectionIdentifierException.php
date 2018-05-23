@@ -11,7 +11,7 @@ use OutOfBoundsException;
  *
  * @package EventEspresso\core\services\collections
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class InvalidCollectionIdentifierException extends OutOfBoundsException
 {

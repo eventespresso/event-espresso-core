@@ -1,37 +1,20 @@
 const merge = require( 'webpack-merge' );
-const AssetsPlugin = require( 'assets-webpack-plugin' );
+const WebpackAssetsManifest = require( 'webpack-assets-manifest' );
 const path = require( 'path' );
 const common = require( './webpack.common.js' );
 const webpack = require( 'webpack' );
 const CleanWebpackPlugin = require( 'clean-webpack-plugin' );
-const ExtractTextPlugin = require( 'extract-text-webpack-plugin' );
+const miniExtract = require( 'mini-css-extract-plugin' );
 const wpi18nExtractor = require( './bin/i18n-map-extractor.js' );
 common.forEach( ( config, index ) => {
 	if ( common[ index ].configName === 'base' ) {
-		common[ index ].plugins = [
-			new CleanWebpackPlugin( [ 'assets/dist' ] ),
-			new webpack.ProvidePlugin( {
-				'React': 'react', // eslint-disable-line quote-props
-			} ),
-			new ExtractTextPlugin( 'ee-[name].[contenthash].dist.css' ),
-			new webpack.HashedModuleIdsPlugin(),
-			new webpack.optimize.CommonsChunkPlugin( {
-				name: 'reactVendor',
-				minChunks: Infinity,
-			} ),
-			new webpack.optimize.CommonsChunkPlugin( {
+		common[ index ].optimization = {
+			runtimeChunk: {
 				name: 'manifest',
-				minChunks: Infinity,
-			} ),
-		];
-	}
-	if ( common[ index ].configName === 'eejs' ) {
+			},
+		};
 		common[ index ].plugins = [
-			new wpi18nExtractor( {
-				aliases: {
-					eejs: 'eejs-core',
-				},
-			} ),
+			new CleanWebpackPlugin( [ 'assets/dist', 'translation-map.json' ] ),
 		];
 	}
 	common[ index ] = merge( config, {
@@ -45,19 +28,23 @@ common.forEach( ( config, index ) => {
 				aliases: {
 					'wp-plugins-page': 'ee-wp-plugins-page',
 				},
+				excludes: [ 'eejs', 'vendor' ],
 			} ),
-			new webpack.optimize.UglifyJsPlugin( {
-				sourceMap: true,
-				output: {
-					comments: false,
-				},
+			new WebpackAssetsManifest( {
+				output: path.resolve( __dirname,
+					'assets/dist/build-manifest.json',
+				),
+				merge: true,
+				entrypoints: false,
 			} ),
-			new AssetsPlugin( {
-				filename: 'build-manifest.json',
-				path: path.resolve( __dirname, 'assets/dist' ),
-				update: true,
+			new webpack.ProvidePlugin( {
+				React: 'react',
+			} ),
+			new miniExtract( {
+				filename: 'ee-[name].[contenthash].dist.css',
 			} ),
 		],
+		mode: 'production',
 	} );
 	//delete temporary named config item so no config errors
 	delete common[ index ].configName;

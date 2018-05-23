@@ -22,7 +22,7 @@ use InvalidArgumentException;
  *
  * @package EventEspresso\core\services\assets
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class CoreAssetManager extends AssetManager
 {
@@ -43,7 +43,7 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_EE_JS_CORE         = 'eejs-core';
 
-    const JS_HANDLE_EE_VENDOR_REACT    = 'ee-vendor-react';
+    const JS_HANDLE_EE_VENDOR           = 'eventespresso-vendor';
 
     const JS_HANDLE_EE_JS_API          = 'eejs-api';
 
@@ -94,7 +94,7 @@ class CoreAssetManager extends AssetManager
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -108,7 +108,7 @@ class CoreAssetManager extends AssetManager
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -128,7 +128,7 @@ class CoreAssetManager extends AssetManager
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -142,7 +142,7 @@ class CoreAssetManager extends AssetManager
     /**
      * core default javascript
      *
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -160,12 +160,11 @@ class CoreAssetManager extends AssetManager
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'eejs'),
             array(CoreAssetManager::JS_HANDLE_EE_MANIFEST)
         )
-        ->setRequiresTranslation()
-        ->setHasLocalizedData();
+        ->setHasInlineData();
 
         $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_EE_VENDOR_REACT,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'reactVendor'),
+            CoreAssetManager::JS_HANDLE_EE_VENDOR,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'vendor'),
             array(CoreAssetManager::JS_HANDLE_EE_JS_CORE)
         );
 
@@ -189,7 +188,7 @@ class CoreAssetManager extends AssetManager
             EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js',
             array(CoreAssetManager::JS_HANDLE_JQUERY)
         )
-        ->setLocalizationCallback(
+        ->setInlineDataCallback(
             function () {
                 wp_localize_script(
                     CoreAssetManager::JS_HANDLE_EE_CORE,
@@ -202,7 +201,7 @@ class CoreAssetManager extends AssetManager
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -232,7 +231,7 @@ class CoreAssetManager extends AssetManager
     /**
      * jQuery Validate for form validation
      *
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -258,7 +257,7 @@ class CoreAssetManager extends AssetManager
     /**
      * accounting.js for performing client-side calculations
      *
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -280,7 +279,7 @@ class CoreAssetManager extends AssetManager
             EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js',
             array(CoreAssetManager::JS_HANDLE_ACCOUNTING_CORE)
         )
-        ->setLocalizationCallback(
+        ->setInlineDataCallback(
             function () use ($currency_config) {
                  wp_localize_script(
                      CoreAssetManager::JS_HANDLE_EE_ACCOUNTING,
@@ -331,7 +330,7 @@ class CoreAssetManager extends AssetManager
     /**
      * assets that are used in the WordPress admin
      *
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -343,7 +342,7 @@ class CoreAssetManager extends AssetManager
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'wp-plugins-page'),
             array(
                 CoreAssetManager::JS_HANDLE_JQUERY,
-                CoreAssetManager::JS_HANDLE_EE_VENDOR_REACT,
+                CoreAssetManager::JS_HANDLE_EE_VENDOR,
             )
         )
         ->setRequiresTranslation();

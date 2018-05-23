@@ -12,7 +12,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  *
  * @package EventEspresso\core\domain\values\assets
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class JavascriptAsset extends BrowserAsset
 {
@@ -28,14 +28,14 @@ class JavascriptAsset extends BrowserAsset
     private $requires_translation = false;
 
     /**
-     * @var boolean $has_localized_data
+     * @var boolean $has_inline_data
      */
-    private $has_localized_data = false;
+    private $has_inline_data = false;
 
     /**
-     * @var Closure $localization_callback
+     * @var Closure $inline_data_callback
      */
-    private $localization_callback;
+    private $inline_data_callback;
 
 
     /**
@@ -101,19 +101,19 @@ class JavascriptAsset extends BrowserAsset
     /**
      * @return bool
      */
-    public function hasLocalizedData()
+    public function hasInlineData()
     {
-        return $this->has_localized_data;
+        return $this->has_inline_data;
     }
 
 
     /**
-     * @param bool $has_localized_data
+     * @param bool $has_inline_data
      * @return JavascriptAsset
      */
-    public function setHasLocalizedData($has_localized_data = true)
+    public function setHasInlineData($has_inline_data = true)
     {
-        $this->has_localized_data = filter_var($has_localized_data, FILTER_VALIDATE_BOOLEAN);
+        $this->has_inline_data = filter_var($has_inline_data, FILTER_VALIDATE_BOOLEAN);
         return $this;
     }
 
@@ -121,35 +121,35 @@ class JavascriptAsset extends BrowserAsset
     /**
      * @return Closure
      */
-    public function localizationCallback()
+    public function inlineDataCallback()
     {
-        return $this->localization_callback;
+        return $this->inline_data_callback;
     }
 
 
     /**
      * @return bool
      */
-    public function hasLocalizationCallback()
+    public function hasInlineDataCallback()
     {
-        return $this->localization_callback instanceof Closure;
+        return $this->inline_data_callback instanceof Closure;
     }
 
 
     /**
-     * @param Closure $localization_callback
+     * @param Closure $inline_data_callback
      * @return JavascriptAsset
      */
-    public function setLocalizationCallback(Closure $localization_callback)
+    public function setInlineDataCallback(Closure $inline_data_callback)
     {
-        $this->localization_callback = $localization_callback;
-        $this->setHasLocalizedData();
+        $this->inline_data_callback = $inline_data_callback;
+        $this->setHasInlineData();
         return $this;
     }
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     public function enqueueAsset()
     {

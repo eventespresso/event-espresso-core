@@ -1,15 +1,7 @@
 {
-  "eejs": {
-    "js": "ee-eejs.11944d5561d9bf2a12e9.dist.js"
-  },
-  "wp-plugins-page": {
-    "js": "ee-wp-plugins-page.c751f4c30cdab7646561.dist.js",
-    "css": "ee-wp-plugins-page.b95fd8de563b99ef70791b8e24629567.dist.css"
-  },
-  "reactVendor": {
-    "js": "ee-reactVendor.7eaf96fc28e4d8e911cd.dist.js"
-  },
-  "manifest": {
-    "js": "ee-manifest.f5984092809447a8fba8.dist.js"
-  }
+  "eejs.js": "ee-eejs.f110338acc2bc2da6dae.dist.js",
+  "manifest.js": "ee-manifest.3b66c2f77d3b01c1b09a.dist.js",
+  "vendor.js": "ee-vendor.4d87d4d2bcb9de9d56bd.dist.js",
+  "wp-plugins-page.css": "ee-wp-plugins-page.12612f6ab71570ab1af8.dist.css",
+  "wp-plugins-page.js": "ee-wp-plugins-page.2d53dd52679d995d5e4b.dist.js"
 }
