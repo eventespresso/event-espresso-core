@@ -61,7 +61,7 @@ export class EventAttendees extends Component {
 		const { attendees } = this.props;
 		return (
 			<div key="events-attendees-block">
-				{ __( 'Event Attendees', 'event_espresso' ) }
+				<h3>{ __( 'Event Attendees', 'event_espresso' ) }</h3>
 				<ul className="event-attendees-ul">
 					{ attendees.map( ( attendee, i ) =>
 						<li key={i} className="event-attendee-li">
