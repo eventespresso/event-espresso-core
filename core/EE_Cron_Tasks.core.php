@@ -2,6 +2,8 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\Loader;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * Class EE_Cron_Tasks
@@ -528,9 +530,10 @@ class EE_Cron_Tasks extends EE_Base
     public static function clean_out_old_gateway_logs()
     {
         if (EE_Maintenance_Mode::instance()->models_can_query()) {
+            $reg_config = LoaderFactory::getLoader()->load('EE_Registration_Config');
             $time_diff_for_comparison = apply_filters(
                 'FHEE__EE_Cron_Tasks__clean_out_old_gateway_logs__time_diff_for_comparison',
-                '-1 week'
+                '-' . $reg_config->gateway_log_lifespan
             );
             EEM_Change_Log::instance()->delete_gateway_logs_older_than(new DateTime($time_diff_for_comparison));
         }
