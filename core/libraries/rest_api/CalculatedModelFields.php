@@ -55,6 +55,7 @@ class CalculatedModelFields
         $event_calculations_class = $rest_api_calculations_namespace . 'Event';
         $datetime_calculations_class = $rest_api_calculations_namespace . 'Datetime';
         $registration_class = $rest_api_calculations_namespace . 'Registration';
+        $attendee_class = $rest_api_calculations_namespace . 'Attendee';
         return apply_filters(
             'FHEE__EventEspresso\core\libraries\rest_api\Calculated_Model_Fields__mapping',
             array(
@@ -81,6 +82,9 @@ class CalculatedModelFields
                 ),
                 'Registration' => array(
                     'datetime_checkin_stati' => $registration_class,
+                ),
+                'Attendee' => array(
+                    'userAvatar' => $attendee_class,
                 ),
             )
         );
