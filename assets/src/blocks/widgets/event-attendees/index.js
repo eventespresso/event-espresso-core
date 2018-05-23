@@ -12,6 +12,7 @@ import { __ } from '@eventespresso/i18n';
  * Internal dependencies
  */
 import EventAttendees from './block';
+import './style.css';
 
 registerBlockType(
 	'eventespresso/widgets-event-attendees',
