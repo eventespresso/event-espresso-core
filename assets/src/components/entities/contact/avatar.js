@@ -3,15 +3,11 @@
  */
 import PropTypes from 'prop-types';
 
-
 const ContactAvatar = ( { avatar } ) => {
-	const baseClass = avatar.baseClass;
-	const divClass = baseClass + "-div";
-	const imgClass = baseClass + "-avatar-img avatar";
 	return (
-		<div className={ divClass }>
+		<div className={ avatar.baseClass + "-div" }>
 			<img
-				className={ imgClass }
+				className={ avatar.baseClass + "-avatar-img avatar" }
 				src={ avatar.url }
 				height={ avatar.height }
 				width={ avatar.width }
