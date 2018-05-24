@@ -16,8 +16,7 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { EventSelect } from '@eventespresso/components';
-import { ContactAvatar } from '../../common/contact/ContactAvatar';
+import { EventSelect, ContactAvatar } from '@eventespresso/components';
 
 export class EventAttendees extends Component {
 
