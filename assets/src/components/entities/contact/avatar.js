@@ -1,18 +1,20 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
 import PropTypes from 'prop-types';
 
 
 const ContactAvatar = ( { avatar } ) => {
+	const baseClass = avatar.baseClass;
+	const divClass = baseClass + "-div";
+	const imgClass = baseClass + "-avatar-img avatar";
 	return (
-		<div className="{avatar.baseClass}-div">
+		<div className={ divClass }>
 			<img
-				className="{avatar.baseClass}-avatar-img avatar"
-				src={avatar.url}
-				height="{avatar.height}"
-				width="{avatar.width}"
+				className={ imgClass }
+				src={ avatar.url }
+				height={ avatar.height }
+				width={ avatar.width }
 			/>
 		</div>
 	);
