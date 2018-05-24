@@ -111,10 +111,10 @@ class AssetCollection extends Collection
      * depending on whether the object is within the Collection
      * based on the supplied $identifier and type
      *
-     * @access public
      * @param  mixed $identifier
      * @param string $type
      * @return bool
+     * @since $VID:$
      */
     public function hasAssetOfType($identifier, $type = Asset::TYPE_JS)
     {
@@ -136,9 +136,9 @@ class AssetCollection extends Collection
      * depending on whether the Stylesheet Asset is within the Collection
      * based on the supplied $identifier
      *
-     * @access public
      * @param  mixed $identifier
      * @return bool
+     * @since $VID:$
      */
     public function hasStylesheetAsset($identifier)
     {
@@ -152,9 +152,9 @@ class AssetCollection extends Collection
      * depending on whether the Javascript Asset is within the Collection
      * based on the supplied $identifier
      *
-     * @access public
      * @param  mixed $identifier
      * @return bool
+     * @since $VID:$
      */
     public function hasJavascriptAsset($identifier)
     {
@@ -167,10 +167,10 @@ class AssetCollection extends Collection
      * depending on whether the object is within the Collection
      * based on the supplied $identifier and type
      *
-     * @access public
      * @param  mixed $identifier
      * @param string $type
      * @return JavascriptAsset|StylesheetAsset
+     * @since $VID:$
      */
     public function getAssetOfType($identifier, $type = Asset::TYPE_JS)
     {
@@ -194,9 +194,9 @@ class AssetCollection extends Collection
      * depending on whether the Stylesheet Asset is within the Collection
      * based on the supplied $identifier
      *
-     * @access public
      * @param  mixed $identifier
      * @return StylesheetAsset
+     * @since $VID:$
      */
     public function getStylesheetAsset($identifier)
     {
@@ -210,9 +210,9 @@ class AssetCollection extends Collection
      * depending on whether the Javascript Asset is within the Collection
      * based on the supplied $identifier
      *
-     * @access public
      * @param  mixed $identifier
      * @return JavascriptAsset
+     * @since $VID:$
      */
     public function getJavascriptAsset($identifier)
     {
