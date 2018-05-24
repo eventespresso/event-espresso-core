@@ -120,7 +120,7 @@ class AssetCollection extends Collection
     {
         $this->rewind();
         while ($this->valid()) {
-            if ($this->getInfo() === $identifier && $this->current() === $type) {
+            if ($this->getInfo() === $identifier && $this->current()->type() === $type) {
                 $this->rewind();
                 return true;
             }
@@ -176,7 +176,7 @@ class AssetCollection extends Collection
     {
         $this->rewind();
         while ($this->valid()) {
-            if ($this->getInfo() === $identifier && $this->current() === $type) {
+            if ($this->getInfo() === $identifier && $this->current()->type() === $type) {
                 /** @var JavascriptAsset|StylesheetAsset $object */
                 $object = $this->current();
                 $this->rewind();
