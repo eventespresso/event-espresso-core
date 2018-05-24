@@ -17,6 +17,7 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { EventSelect } from '@eventespresso/components';
+import { ContactAvatar } from '../../common/contact/ContactAvatar';
 
 export class EventAttendees extends Component {
 
@@ -64,14 +65,14 @@ export class EventAttendees extends Component {
 				<h3>{ __( 'Event Attendees', 'event_espresso' ) }</h3>
 				<ul className="event-attendees-ul">
 					{ attendees.map( ( attendee, i ) =>
-						<li key={i} className="event-attendee-li">
+						<li key={ i } className="event-attendee-li">
 							<p>
-								<img
-									src={ attendee._calculated_fields.userAvatar }
-									className="event-attendee-avatar-img avatar avatar-32 photo"
-									height="32"
-									width="32"
-								/>
+								<ContactAvatar avatar={{
+									url: attendee._calculated_fields.userAvatar,
+									baseClass: 'event-attendee',
+									height: 32,
+									width: 32
+								}}/>
 								<span className="event-attendee-name-span">{ attendee.ATT_full_name }</span>
 							</p>
 						</li>,
