@@ -18,12 +18,13 @@ import { isEmpty } from 'lodash';
  */
 import { EventSelect, ContactAvatar } from '@eventespresso/components';
 
-export class EventAttendees extends Component {
+export class EventAttendees extends Component
+{
 
 	getPlaceHolderContent() {
 		const { isLoading, attributes } = this.props;
 
-		if ( ! isLoading && attributes.selectedEventId ) {
+		if ( !isLoading && attributes.selectedEventId ) {
 			return <p>
 				{
 					__(
@@ -33,7 +34,7 @@ export class EventAttendees extends Component {
 				}
 			</p>;
 		}
-		if ( ! isLoading && ! attributes.selectedEventId ) {
+		if ( !isLoading && !attributes.selectedEventId ) {
 			return <p>
 				{ __(
 					'Please select an event to display attendees for.',
@@ -41,7 +42,7 @@ export class EventAttendees extends Component {
 				) }
 			</p>;
 		}
-		return <Spinner />;
+		return <Spinner/>;
 	}
 
 	getNoAttendeesContent() {
@@ -57,25 +58,29 @@ export class EventAttendees extends Component {
 		);
 	}
 
+	static getAttendeeDisplay( attendee, index ) {
+		const attendeeAvatar = {
+			url: attendee._calculated_fields.userAvatar,
+			baseClass: "event-attendee",
+		};
+		return (
+			<li key={ index } className="event-attendee-li">
+				<p>
+					<ContactAvatar avatar={ attendeeAvatar }/>
+					<span
+						className="event-attendee-name-span"> - { attendee.ATT_full_name }</span>
+				</p>
+			</li>
+		);
+	}
+
 	getAttendeesDisplay() {
 		const { attendees } = this.props;
 		return (
 			<div key="events-attendees-block">
 				<h3>{ __( 'Event Attendees', 'event_espresso' ) }</h3>
 				<ul className="event-attendees-ul">
-					{ attendees.map( ( attendee, i ) =>
-						<li key={ i } className="event-attendee-li">
-							<p>
-								<ContactAvatar avatar={{
-									url: attendee._calculated_fields.userAvatar,
-									baseClass: 'event-attendee',
-									height: 32,
-									width: 32
-								}}/>
-								<span className="event-attendee-name-span">{ attendee.ATT_full_name }</span>
-							</p>
-						</li>,
-					) }
+					{ attendees.map( EventAttendees.getAttendeeDisplay ) }
 				</ul>
 			</div>
 		);
