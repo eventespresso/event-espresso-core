@@ -5,26 +5,26 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 
 
-export const ContactAvatar = ( props ) => {
+const ContactAvatar = ( { avatar } ) => {
 	return (
-		<div className="{props.avatar.baseClass}-div">
+		<div className="{avatar.baseClass}-div">
 			<img
-				src={props.avatar.url}
-				className="{props.avatar.baseClass}-avatar-img avatar"
-				height="{props.avatar.height}"
-				width="{props.avatar.width}"
+				className="{avatar.baseClass}-avatar-img avatar"
+				src={avatar.url}
+				height="{avatar.height}"
+				width="{avatar.width}"
 			/>
 		</div>
 	);
 };
 
 ContactAvatar.propTypes = {
-	avatar: PropTypes.shape( {
-		url: PropTypes.string,
+	avatar: PropTypes.shape({
+		url: PropTypes.string.required,
 		baseClass: PropTypes.string,
 		height: PropTypes.number,
 		width: PropTypes.number,
-	} ),
+	})
 };
 
 ContactAvatar.defaultProps = {
@@ -35,3 +35,5 @@ ContactAvatar.defaultProps = {
 		width: 32,
 	},
 };
+
+export default ContactAvatar
