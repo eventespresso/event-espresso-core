@@ -3,35 +3,36 @@
  */
 import PropTypes from 'prop-types';
 
-const ContactAvatar = ( { avatar } ) => {
+const ContactAvatar = ( {
+	avatarUrl,
+	avatarClass,
+	avatarHeight,
+	avatarWidth
+} ) => {
 	return (
-		<div className={ avatar.baseClass + "-div" }>
+		<div className={ avatarClass + "-div" }>
 			<img
-				className={ avatar.baseClass + "-avatar-img avatar" }
-				src={ avatar.url }
-				height={ avatar.height }
-				width={ avatar.width }
+				className={ avatarClass + "-avatar-img avatar" }
+				src={ avatarUrl }
+				height={ avatarHeight }
+				width={ avatarWidth }
 			/>
 		</div>
 	);
 };
 
 ContactAvatar.propTypes = {
-	avatar: PropTypes.shape({
-		url: PropTypes.string.required,
-		baseClass: PropTypes.string,
-		height: PropTypes.number,
-		width: PropTypes.number,
-	})
+	avatarUrl: PropTypes.string.required,
+	avatarClass: PropTypes.string,
+	avatarHeight: PropTypes.number,
+	avatarWidth: PropTypes.number,
 };
 
 ContactAvatar.defaultProps = {
-	avatar: {
-		url: '',
-		baseClass: '',
-		height: 32,
-		width: 32,
-	},
+	avatarUrl: '',
+	avatarClass: 'contact',
+	avatarHeight: 32,
+	avatarWidth: 32,
 };
 
 export default ContactAvatar
