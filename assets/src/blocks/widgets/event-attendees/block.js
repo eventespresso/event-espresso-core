@@ -58,29 +58,25 @@ export class EventAttendees extends Component
 		);
 	}
 
-	static getAttendeeDisplay( attendee, index ) {
-		const attendeeAvatar = {
-			url: attendee._calculated_fields.userAvatar,
-			baseClass: "event-attendee",
-		};
-		return (
-			<li key={ index } className="event-attendee-li">
-				<p>
-					<ContactAvatar avatar={ attendeeAvatar }/>
-					<span
-						className="event-attendee-name-span"> - { attendee.ATT_full_name }</span>
-				</p>
-			</li>
-		);
-	}
-
 	getAttendeesDisplay() {
 		const { attendees } = this.props;
 		return (
 			<div key="events-attendees-block">
 				<h3>{ __( 'Event Attendees', 'event_espresso' ) }</h3>
 				<ul className="event-attendees-ul">
-					{ attendees.map( EventAttendees.getAttendeeDisplay ) }
+					{ attendees.map( ( attendee, index ) => {
+						return (
+							<li key={ index } className="event-attendee-li">
+								<p>
+									<ContactAvatar
+										avatarUrl={ attendee._calculated_fields.userAvatar }
+										avatarClass={ 'event-attendee' }
+									/>
+									<span className="event-attendee-name-span">{ attendee.ATT_full_name }</span>
+								</p>
+							</li>
+						);
+					} ) }
 				</ul>
 			</div>
 		);
