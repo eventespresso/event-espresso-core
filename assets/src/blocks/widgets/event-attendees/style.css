@@ -1,6 +1,9 @@
 #editor .event-attendees-ul {
     list-style-type: none;
 }
+.event-attendee-div {
+    display: inline-block;
+}
 .event-attendee-avatar-img {
     margin:0 1em -.5em 0;
 }
