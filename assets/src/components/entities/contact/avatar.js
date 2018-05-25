@@ -10,7 +10,7 @@ const ContactAvatar = ( {
 	avatarWidth
 } ) => {
 	return (
-		<div className={ avatarClass + "-div" }>
+		<div className={ avatarClass + "-image-wrap-div" }>
 			<img
 				className={ avatarClass + "-avatar-img avatar" }
 				src={ avatarUrl }
