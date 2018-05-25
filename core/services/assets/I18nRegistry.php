@@ -91,7 +91,7 @@ class I18nRegistry
      */
     public function queueI18n(array $handles)
     {
-        if (empty($this->queued_scripts) || empty($this->i18n_map)) {
+        if (empty($this->queued_scripts)) {
             return $handles;
         }
         foreach ($handles as $handle) {
