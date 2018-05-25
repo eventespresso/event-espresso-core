@@ -16,7 +16,7 @@
 abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
 {
 
-    const EVENT_CATEGORY_TAXONOMY = 'espresso_event_category';
+    const EVENT_CATEGORY_TAXONOMY = 'espresso_event_categories';
 
     /**
      * @var string post_status_publish - the wp post status for published cpts
@@ -325,6 +325,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
                         'name' => $category_name,
                         'slug' => $category_slug,
                     ),
+                    'Term_Taxonomy.taxonomy' => self::EVENT_CATEGORY_TAXONOMY
                 ),
             )
         );
