@@ -16,7 +16,8 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { EventSelect, ContactAvatar } from '@eventespresso/components';
+import { EventSelect } from '@eventespresso/components';
+import EventAttendeesList from './list';
 
 export class EventAttendees extends Component
 {
@@ -61,24 +62,7 @@ export class EventAttendees extends Component
 	getAttendeesDisplay() {
 		const { attendees } = this.props;
 		return (
-			<div key="events-attendees-block">
-				<h3>{ __( 'Event Attendees', 'event_espresso' ) }</h3>
-				<ul className="event-attendees-ul">
-					{ attendees.map( ( attendee, index ) => {
-						return (
-							<li key={ index } className="event-attendee-li">
-								<p>
-									<ContactAvatar
-										avatarUrl={ attendee._calculated_fields.userAvatar }
-										avatarClass={ 'event-attendee' }
-									/>
-									<span className="event-attendee-name-span">{ attendee.ATT_full_name }</span>
-								</p>
-							</li>
-						);
-					} ) }
-				</ul>
-			</div>
+			<EventAttendeesList attendees={ attendees }/>
 		);
 	}
 
@@ -90,7 +74,11 @@ export class EventAttendees extends Component
 					key="attendees-event-select"
 					selectedEventId={ attributes.selectedEventId }
 					onEventSelect={ ( selectedEventId ) =>
-						setAttributes( { selectedEventId } ) }
+						setAttributes( {
+								selectedEventId: parseInt( selectedEventId )
+							}
+						)
+					}
 				/>
 			</InspectorControls>
 		);
