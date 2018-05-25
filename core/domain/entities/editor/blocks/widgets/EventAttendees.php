@@ -65,7 +65,7 @@ class EventAttendees extends Block
      */
     public function renderBlock(array $attributes = array())
     {
-        if(! isset($attributes['selectedEventId'])) {
+        if (! isset($attributes['selectedEventId'])) {
             return '<h2>' . __METHOD__ . '()</h2>' . var_export($attributes, true);
         }
         $attributes['event_id'] = absint($attributes['selectedEventId']);
