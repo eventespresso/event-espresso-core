@@ -49,6 +49,7 @@ class EventAttendees extends Block
         $this->setBlockType(self::BLOCK_TYPE);
         $this->setSupportedPostTypes(array('espresso_events', 'post', 'page'));
         $this->setAttributes(array());
+        $this->setDynamic();
     }
 
 
@@ -64,6 +65,10 @@ class EventAttendees extends Block
      */
     public function renderBlock(array $attributes = array())
     {
+        if(! isset($attributes['selectedEventId'])) {
+            return '<h2>' . __METHOD__ . '()</h2>' . var_export($attributes, true);
+        }
+        $attributes['event_id'] = absint($attributes['selectedEventId']);
         return $this->shortcode->processShortcode($attributes);
     }
 }
