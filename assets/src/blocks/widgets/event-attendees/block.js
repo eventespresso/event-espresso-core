@@ -73,12 +73,16 @@ export class EventAttendees extends Component
 				<EventSelect
 					key="attendees-event-select"
 					selectedEventId={ attributes.selectedEventId }
-					onEventSelect={ ( selectedEventId ) =>
+					onEventSelect={ ( selectedEventId ) => {
 						setAttributes( {
 								selectedEventId: parseInt( selectedEventId )
 							}
-						)
-					}
+						);
+						console.log('** onEventSelect **');
+						console.log('  selectedEventId: ' + selectedEventId);
+						console.log('  attributes: ');
+						console.log(attributes);
+					}}
 				/>
 			</InspectorControls>
 		);
@@ -114,6 +118,8 @@ export default withSelect( ( select, ownProps ) => {
 	const { selectedEventId = 0 } = attributes;
 	const { getItems, isRequestingItems } = select( 'eventespresso/lists' );
 	if ( selectedEventId ) {
+		console.log( '** withSelect **' );
+		console.log( '  selectedEventId: ' + selectedEventId );
 		const queryString = `Registration.EVT_ID=${ selectedEventId }&calculate=userAvatar`;
 		return {
 			attendees: getItems( 'attendee', queryString ),
