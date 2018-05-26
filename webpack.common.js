@@ -97,6 +97,9 @@ const config = [
 			'data-stores': [
 				assets + 'data/index.js',
 			],
+			'eventespresso-core-blocks': [
+				assets + 'blocks/index.js',
+			],
 		},
 		externals: Object.assign( externals, {
 			'@eventespresso/components': 'eejs.components',
