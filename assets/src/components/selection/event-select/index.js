@@ -81,8 +81,8 @@ export const EventSelect = ( {
  */
 EventSelect.propTypes = {
 	events: PropTypes.arrayOf( PropTypes.shape( {
-		EVT_name: PropTypes.string.required,
-		EVT_ID: PropTypes.number.required,
+		EVT_name: PropTypes.string.isRequired,
+		EVT_ID: PropTypes.number.isRequired,
 	} ) ),
 	onEventSelect: PropTypes.func,
 	selectLabel: PropTypes.string,
