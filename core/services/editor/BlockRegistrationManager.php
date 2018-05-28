@@ -109,6 +109,7 @@ class BlockRegistrationManager extends BlockManager
                     array(
                         // 'EventEspresso\core\domain\entities\editor\blocks\common',
                         // 'EventEspresso\core\domain\entities\editor\blocks\editor',
+                        'EventEspresso\core\domain\entities\editor\blocks\test',
                         // 'EventEspresso\core\domain\entities\editor\blocks\widgets',
                     )
                 ),
