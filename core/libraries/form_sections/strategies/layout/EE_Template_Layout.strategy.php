@@ -112,7 +112,6 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout
      */
     public function layout_input($input)
     {
-        echo "layotu input;";
         if ($this->_input_template_file) {
             return EEH_Template::locate_template($this->_input_template_file, array('input' => $input), true, true);
         }
