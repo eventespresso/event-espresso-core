@@ -63,7 +63,9 @@ export const QueryLimit = ( {
 	min = DEFAULT_MIN,
 	max = DEFAULT_MAX,
 } ) => {
-	return onLimitChange && (
+	return ! onLimitChange ? (
+		null
+	) : (
 		<RangeControl
 			key={ 'query-limit' }
 			value={ limit }
