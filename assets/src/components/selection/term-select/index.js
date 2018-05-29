@@ -7,7 +7,7 @@ import { __ } from '@eventespresso/i18n';
 /**
  * WordPress dependencies
  */
-const { SelectControl } = '@wordpress/components';
+import { SelectControl } from '@wordpress/components';
 
 function getSelectOptions( terms, level = 0 ) {
 	return flatMap( terms, ( term ) => [
