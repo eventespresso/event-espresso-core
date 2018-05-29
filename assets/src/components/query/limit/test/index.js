@@ -25,6 +25,7 @@ describe( 'QueryLimit with no optional parameters passed', () => {
 		expect( onChange ).toHaveBeenCalledWith( 5 );
 	} );
 } );
+
 describe( 'QueryLimit with all parameters passed', () => {
 	it( 'should not have default values', () => {
 		const onChange = jest.fn();
@@ -48,5 +49,12 @@ describe( 'QueryLimit with all parameters passed', () => {
 		// test onChange
 		limit.simulate( 'change', { target: { value: '30' } } );
 		expect( onChange ).toHaveBeenCalledWith( 30 );
+	} );
+} );
+
+describe( 'QueryLimit with no onLimitChange callback provided', () => {
+	it( 'should return nothing', () => {
+		const wrapper = mount( <QueryLimit /> );
+		expect( wrapper.instance() ).toBe( null );
 	} );
 } );
