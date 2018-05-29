@@ -52,13 +52,15 @@ import { __ } from '@eventespresso/i18n';
  **/
 import { RangeControl } from '@wordpress/components';
 
+const DEFAULT_LIMIT = 10;
+const DEFAULT_LABEL = __( 'Limit', 'event_espresso' );
 const DEFAULT_MIN = 1;
 const DEFAULT_MAX = 100;
 
 export const QueryLimit = ( {
 	onLimitChange,
-	limit = 10,
-	label = __( 'Limit', 'event_espresso' ),
+	limit = DEFAULT_LIMIT,
+	label = DEFAULT_LABEL,
 	min = DEFAULT_MIN,
 	max = DEFAULT_MAX,
 } ) => {
