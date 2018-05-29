@@ -299,7 +299,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 $span_class = 'txn-overview-no-payment-spn';
             }
         } else {
-            //transaction_total == 0 so this is a free event
+            // transaction_total == 0 so this is a free event
             $span_class = 'txn-overview-free-event-spn';
         }
 
