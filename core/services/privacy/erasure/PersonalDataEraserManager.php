@@ -18,7 +18,7 @@ use EventEspresso\core\services\collections\CollectionLoader;
  *
  * @package        Event Espresso
  * @author         Mike Nelson
- * @since          $VID:$
+ * @since          4.9.62.p
  */
 class PersonalDataEraserManager
 {

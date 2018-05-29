@@ -16,7 +16,7 @@ use ReflectionProperty;
  *
  * @package EventEspresso\core\services\container
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class Mirror
 {

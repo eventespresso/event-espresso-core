@@ -11,7 +11,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  *
  * @package EventEspresso\core\domain\values\assets
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 abstract class BrowserAsset extends Asset
 {
@@ -51,7 +51,7 @@ abstract class BrowserAsset extends Asset
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     abstract public function enqueueAsset();
 
@@ -75,7 +75,7 @@ abstract class BrowserAsset extends Asset
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @return bool
      */
     public function hasDependencies()

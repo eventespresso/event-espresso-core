@@ -22,7 +22,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @group CustomPostTypes
  * @package EventEspresso\tests\testcases\core\domain\services\custom_post_types
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.62.p
  */
 class RegisterCustomPostTypesTest extends EE_UnitTestCase
 {
@@ -39,7 +39,7 @@ class RegisterCustomPostTypesTest extends EE_UnitTestCase
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -64,7 +64,7 @@ class RegisterCustomPostTypesTest extends EE_UnitTestCase
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      */
     public function testPrepareArguments()
     {
@@ -87,7 +87,7 @@ class RegisterCustomPostTypesTest extends EE_UnitTestCase
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.62.p
      * @param string $custom_post_type
      * @return array|mixed
      */
