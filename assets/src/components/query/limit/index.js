@@ -6,14 +6,14 @@
  *
  * Step 1: import the following external dependencies:
  *
- * 		import { __ } from '@eventespresso/i18n';
- * 		import { QueryLimit } from '@eventespresso/components';
- * 		import { PanelBody } from '@wordpress/components';
- * 		import { InspectorControls } from '@wordpress/editor';
+ *        import { __ } from '@eventespresso/i18n';
+ *        import { QueryLimit } from '@eventespresso/components';
+ *        import { PanelBody } from '@wordpress/components';
+ *        import { InspectorControls } from '@wordpress/editor';
  *
  * Step 2: add a "limit" attribute:
  *
- * 		attributes: {
+ *        attributes: {
  * 		  	limit: {
  * 		  		type: 'number',
  * 		  		default: 5, (10 is already set as default)
@@ -24,7 +24,7 @@
  * the InspectorControls and PanelBody components
  * (currently shown within a block's edit() function)
  *
- * 		edit: ( ( { attributes, setAttributes } ) => {
+ *        edit: ( ( { attributes, setAttributes } ) => {
  * 			const { limit } = attributes;
  * 			return (
  * 				<InspectorControls>
@@ -44,7 +44,6 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { __ } from '@eventespresso/i18n';
 
 /**
@@ -73,5 +72,5 @@ export const QueryLimit = ( {
 			max={ max }
 			onChange={ onLimitChange }
 		/>
-	)
+	);
 };
