@@ -1475,5 +1475,4 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             array('action' => 'privacy_settings')
         );
     }
-
 }
