@@ -34,7 +34,7 @@ class RecommendedVersions extends Middleware
         // check required WP version
         if (! $this->minimumWordPressVersionRequired()) {
             $this->request->unSetRequestParam('activate', true);
-            add_action('admin_notices', array($this, 'minimum_wp_version_error'), 1);
+            add_action('admin_notices', array($this, 'minimumWpVersionError'), 1);
             $this->response->terminateRequest();
             $this->response->deactivatePlugin();
         }
