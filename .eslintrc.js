@@ -14,9 +14,6 @@ module.exports = {
 		wpApiSettings: true,
 		eejsdata: true
 	},
-	rules: {
-		"linebreak-style": 0
-	},
 	overrides: [
 		{
 			files: [ 'test/e2e/**/*.js' ],
