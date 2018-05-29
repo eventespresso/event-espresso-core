@@ -5,6 +5,7 @@ module.exports = {
 	],
 	'plugins': [
 		'wordpress',
+		'jest',
 	],
 	env: {
 		'jest/globals': true,
@@ -13,9 +14,9 @@ module.exports = {
 		wpApiSettings: true,
 		eejsdata: true
 	},
-	plugins: [
-		'jest',
-	],
+	rules: {
+		"linebreak-style": 0
+	},
 	overrides: [
 		{
 			files: [ 'test/e2e/**/*.js' ],
