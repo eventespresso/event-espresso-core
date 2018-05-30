@@ -33,7 +33,7 @@ const TermSelectControl = ( {
 	noSelectionLabel = __( 'Please make a selection', 'event_espresso' ),
 	onChange,
 } ) => {
-	if ( !onChange || isEmpty( terms ) ) {
+	if ( ! onChange || isEmpty( terms ) ) {
 		return null;
 	}
 	const options = compact( [
