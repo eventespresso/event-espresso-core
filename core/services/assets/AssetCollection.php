@@ -64,7 +64,7 @@ class AssetCollection extends Collection
 
     /**
      * @param $type
-     * @return array
+     * @return JavascriptAsset[]|StylesheetAsset[]|ManifestFile[]
      * @since 4.9.62.p
      */
     protected function getAssetsOfType($type)
@@ -72,7 +72,7 @@ class AssetCollection extends Collection
         $files = array();
         $this->rewind();
         while ($this->valid()) {
-            /** @var \EventEspresso\core\domain\values\assets\Asset $asset */
+            /** @var Asset $asset */
             $asset = $this->current();
             if ($asset->type() === $type) {
                 $files[ $asset->handle() ] = $asset;
@@ -93,7 +93,7 @@ class AssetCollection extends Collection
         $files = array();
         $this->rewind();
         while ($this->valid()) {
-            /** @var \EventEspresso\core\domain\values\assets\JavascriptAsset $asset */
+            /** @var JavascriptAsset $asset */
             $asset = $this->current();
             if ($asset->type() === Asset::TYPE_JS && $asset->hasInlineData()) {
                 $files[ $asset->handle() ] = $asset;
@@ -102,5 +102,120 @@ class AssetCollection extends Collection
         }
         $this->rewind();
         return $files;
+    }
+
+
+    /**
+     * has
+     * returns TRUE or FALSE
+     * depending on whether the object is within the Collection
+     * based on the supplied $identifier and type
+     *
+     * @param  mixed $identifier
+     * @param string $type
+     * @return bool
+     * @since $VID:$
+     */
+    public function hasAssetOfType($identifier, $type = Asset::TYPE_JS)
+    {
+        $this->rewind();
+        while ($this->valid()) {
+            if ($this->getInfo() === $identifier && $this->current()->type() === $type) {
+                $this->rewind();
+                return true;
+            }
+            $this->next();
+        }
+        return false;
+    }
+
+
+    /**
+     * has
+     * returns TRUE or FALSE
+     * depending on whether the Stylesheet Asset is within the Collection
+     * based on the supplied $identifier
+     *
+     * @param  mixed $identifier
+     * @return bool
+     * @since $VID:$
+     */
+    public function hasStylesheetAsset($identifier)
+    {
+        return $this->hasAssetOfType($identifier, Asset::TYPE_CSS);
+    }
+
+
+    /**
+     * has
+     * returns TRUE or FALSE
+     * depending on whether the Javascript Asset is within the Collection
+     * based on the supplied $identifier
+     *
+     * @param  mixed $identifier
+     * @return bool
+     * @since $VID:$
+     */
+    public function hasJavascriptAsset($identifier)
+    {
+        return $this->hasAssetOfType($identifier, Asset::TYPE_JS);
+    }
+
+    /**
+     * has
+     * returns TRUE or FALSE
+     * depending on whether the object is within the Collection
+     * based on the supplied $identifier and type
+     *
+     * @param  mixed $identifier
+     * @param string $type
+     * @return JavascriptAsset|StylesheetAsset
+     * @since $VID:$
+     */
+    public function getAssetOfType($identifier, $type = Asset::TYPE_JS)
+    {
+        $this->rewind();
+        while ($this->valid()) {
+            if ($this->getInfo() === $identifier && $this->current()->type() === $type) {
+                /** @var JavascriptAsset|StylesheetAsset $object */
+                $object = $this->current();
+                $this->rewind();
+                return $object;
+            }
+            $this->next();
+        }
+        return null;
+    }
+
+
+    /**
+     * has
+     * returns TRUE or FALSE
+     * depending on whether the Stylesheet Asset is within the Collection
+     * based on the supplied $identifier
+     *
+     * @param  mixed $identifier
+     * @return StylesheetAsset
+     * @since $VID:$
+     */
+    public function getStylesheetAsset($identifier)
+    {
+        return $this->getAssetOfType($identifier, Asset::TYPE_CSS);
+    }
+
+
+    /**
+     * has
+     * returns TRUE or FALSE
+     * depending on whether the Javascript Asset is within the Collection
+     * based on the supplied $identifier
+     *
+     * @param  mixed $identifier
+     * @return JavascriptAsset
+     * @since $VID:$
+     */
+    public function getJavascriptAsset($identifier)
+    {
+        return $this->getAssetOfType($identifier, Asset::TYPE_JS);
     }
 }
