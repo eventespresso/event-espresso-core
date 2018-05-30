@@ -1,2 +1,2 @@
 export { default as EventSelect } from './selection/event-select';
-export { TermSelectControl } from './selection/term-select';
+export { default as TermSelectControl } from './selection/term-select';
