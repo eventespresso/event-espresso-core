@@ -111,7 +111,6 @@ class AssetCollection extends Collection
      * depending on whether the object is within the Collection
      * based on the supplied $identifier and type
      *
-     * @access public
      * @param  mixed $identifier
      * @param string $type
      * @return bool
@@ -134,27 +133,9 @@ class AssetCollection extends Collection
     /**
      * has
      * returns TRUE or FALSE
-     * depending on whether the Stylesheet Asset is within the Collection
-     * based on the supplied $identifier
-     *
-     * @access public
-     * @param  mixed $identifier
-     * @return bool
-     * @since $VID:$
-     */
-    public function hasStylesheetAsset($identifier)
-    {
-        return $this->hasAssetOfType($identifier, Asset::TYPE_CSS);
-    }
-
-
-    /**
-     * has
-     * returns TRUE or FALSE
      * depending on whether the Javascript Asset is within the Collection
      * based on the supplied $identifier
      *
-     * @access public
      * @param  mixed $identifier
      * @return bool
      * @since $VID:$
@@ -164,13 +145,28 @@ class AssetCollection extends Collection
         return $this->hasAssetOfType($identifier, Asset::TYPE_JS);
     }
 
+
+    /**
+     * has
+     * returns TRUE or FALSE
+     * depending on whether the Stylesheet Asset is within the Collection
+     * based on the supplied $identifier
+     *
+     * @param  mixed $identifier
+     * @return bool
+     * @since $VID:$
+     */
+    public function hasStylesheetAsset($identifier)
+    {
+        return $this->hasAssetOfType($identifier, Asset::TYPE_CSS);
+    }
+
     /**
      * has
      * returns TRUE or FALSE
      * depending on whether the object is within the Collection
      * based on the supplied $identifier and type
      *
-     * @access public
      * @param  mixed $identifier
      * @param string $type
      * @return JavascriptAsset|StylesheetAsset
@@ -198,7 +194,6 @@ class AssetCollection extends Collection
      * depending on whether the Stylesheet Asset is within the Collection
      * based on the supplied $identifier
      *
-     * @access public
      * @param  mixed $identifier
      * @return StylesheetAsset
      * @since $VID:$
@@ -215,7 +210,6 @@ class AssetCollection extends Collection
      * depending on whether the Javascript Asset is within the Collection
      * based on the supplied $identifier
      *
-     * @access public
      * @param  mixed $identifier
      * @return JavascriptAsset
      * @since $VID:$
