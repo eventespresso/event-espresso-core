@@ -1,7 +1,14 @@
 /**
  * External dependencies
  */
-import { unescape as unescapeString, repeat, flatMap, compact } from 'lodash';
+import {
+	unescape,
+	repeat,
+	flatMap,
+	compact,
+	isEmpty,
+} from 'lodash';
+import PropTypes from 'prop-types';
 import { __ } from '@eventespresso/i18n';
 
 /**
@@ -13,21 +20,24 @@ function getSelectOptions( terms, level = 0 ) {
 	return flatMap( terms, ( term ) => [
 		{
 			value: term.slug,
-			label: repeat( '\u00A0', level * 3 ) + unescapeString( term.name ),
+			label: repeat( '\u00A0', level * 3 ) + unescape( term.name ),
 		},
 		...getSelectOptions( term.children, level + 1 ),
 	] );
 }
 
-export const TermSelectControl = ( {
+const TermSelectControl = ( {
 	selectedTerm,
 	terms,
 	label,
-	noOptionLabel,
+	noSelectionLabel = __( 'Please make a selection', 'event_espresso' ),
 	onChange,
 } ) => {
+	if ( !onChange || isEmpty( terms ) ) {
+		return null;
+	}
 	const options = compact( [
-		noOptionLabel && { value: '', label: noOptionLabel },
+		noSelectionLabel && { value: '', label: noSelectionLabel },
 		...getSelectOptions( terms ),
 	] );
 	return (
@@ -37,3 +47,19 @@ export const TermSelectControl = ( {
 		/>
 	);
 };
+
+TermSelectControl.propTypes = {
+	selectedTerm: PropTypes.string,
+	terms: PropTypes.arrayOf(
+		PropTypes.shape( {
+			slug: PropTypes.string.required,
+			name: PropTypes.string.required,
+			children: PropTypes.array,
+		} ),
+	),
+	label: PropTypes.string,
+	noSelectionLabel: PropTypes.string,
+	onChange: PropTypes.func,
+};
+
+export default TermSelectControl;
