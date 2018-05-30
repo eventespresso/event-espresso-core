@@ -21,3 +21,4 @@
 * [ ] My code is tested.
 * [ ] My code follows the Event Espresso code style.
 * [ ] My code has proper inline documentation.
+* [ ] My code accounts for when the site is Maintenance Mode (MM2 especially disallows usage of models)
