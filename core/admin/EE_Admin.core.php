@@ -194,24 +194,7 @@ final class EE_Admin implements InterminableInterface
     {
         // only enable most of the EE_Admin IF we're not in full maintenance mode
         if (EE_Maintenance_Mode::instance()->models_can_query()) {
-            // ok so we want to enable the entire admin
-            $this->persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(
-                'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
-            );
-            $this->persistent_admin_notice_manager->setReturnUrl(
-                EE_Admin_Page::add_query_args_and_nonce(
-                    array(
-                        'page'   => EE_Registry::instance()->REQ->get('page', ''),
-                        'action' => EE_Registry::instance()->REQ->get('action', ''),
-                    ),
-                    EE_ADMIN_URL
-                )
-            );
-            $this->maybeSetDatetimeWarningNotice();
-            // at a glance dashboard widget
-            add_filter('dashboard_glance_items', array($this, 'dashboard_glance_items'), 10);
-            // filter for get_edit_post_link used on comments for custom post types
-            add_filter('get_edit_post_link', array($this, 'modify_edit_post_link'), 10, 2);
+           $this->initModelsReady();
         }
         // run the admin page factory but ONLY if we are doing an ee admin ajax request
         if (! defined('DOING_AJAX') || EE_ADMIN_AJAX) {
@@ -228,6 +211,39 @@ final class EE_Admin implements InterminableInterface
         add_action('admin_head', array($this, 'register_custom_nav_menu_boxes'), 10);
         // exclude EE critical pages from all nav menus and wp_list_pages
         add_filter('nav_menu_meta_box_object', array($this, 'remove_pages_from_nav_menu'), 10);
+    }
+
+
+    /**
+     * Method that's fired on admin requests (including admin ajax) but only when the models are usable
+     * (ie, the site isn't in maintenance mode)
+     * @since $VID:$
+     * @return void
+     */
+    protected function initModelsReady()
+    {
+        $loader = LoaderFactory::getLoader();
+        // ok so we want to enable the entire admin
+        $this->persistent_admin_notice_manager = $loader->getShared(
+            'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+        );
+        $this->persistent_admin_notice_manager->setReturnUrl(
+            EE_Admin_Page::add_query_args_and_nonce(
+                array(
+                    'page'   => EE_Registry::instance()->REQ->get('page', ''),
+                    'action' => EE_Registry::instance()->REQ->get('action', ''),
+                ),
+                EE_ADMIN_URL
+            )
+        );
+        $this->maybeSetDatetimeWarningNotice();
+        // at a glance dashboard widget
+        add_filter('dashboard_glance_items', array($this, 'dashboard_glance_items'), 10);
+        // filter for get_edit_post_link used on comments for custom post types
+        add_filter('get_edit_post_link', array($this, 'modify_edit_post_link'), 10, 2);
+        if (function_exists('wp_add_privacy_policy_content')) {
+            $loader->getShared('EventEspresso\core\services\privacy\policy\PrivacyPolicyManager');
+        }
     }
 
 
