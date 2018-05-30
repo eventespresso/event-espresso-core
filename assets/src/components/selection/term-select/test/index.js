@@ -57,7 +57,7 @@ describe( 'TermSelectControl with no selected Term', () => {
 		expect( termSelect.props().value ).toBe( '' );
 		// and options
 		const termSelectOptions = wrapper.find( 'option' );
-		expect( termSelectOptions.length ).toEqual( terms.length + 1 );
+		expect( termSelectOptions ).toHaveLength( terms.length + 1 );
 		expect( termSelectOptions.at( 0 ).props().value ).toBe( '' );
 		expect( termSelectOptions.at( 0 ).text() ).toEqual(
 			'Please make a selection'
