@@ -6,6 +6,7 @@ const webpack = require( 'webpack' );
 const CleanWebpackPlugin = require( 'clean-webpack-plugin' );
 const miniExtract = require( 'mini-css-extract-plugin' );
 const wpi18nExtractor = require( './bin/i18n-map-extractor.js' );
+const assetsData = Object.create( null );
 common.forEach( ( config, index ) => {
 	if ( common[ index ].configName === 'base' ) {
 		common[ index ].optimization = {
@@ -35,8 +36,7 @@ common.forEach( ( config, index ) => {
 				output: path.resolve( __dirname,
 					'assets/dist/build-manifest.json',
 				),
-				merge: true,
-				entrypoints: false,
+				assets: assetsData,
 			} ),
 			new webpack.ProvidePlugin( {
 				React: 'react',
