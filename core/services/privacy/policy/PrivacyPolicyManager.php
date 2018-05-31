@@ -11,7 +11,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\CollectionDetails;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
-use WP_Post;
+use WP_Screen;
 
 /**
  * Class PrivacyPolicyManager
@@ -30,16 +30,20 @@ class PrivacyPolicyManager
     }
 
 
-
     /**
      * For all the registered `PrivacyPolicyInterface`s, add their privacy policy content
      *
-     * @param WP_Post $post
+     * @param WP_Screen $screen
+     * @throws InvalidClassException
+     * @throws InvalidDataTypeException
+     * @throws InvalidEntityException
+     * @throws InvalidFilePathException
+     * @throws InvalidIdentifierException
+     * @throws InvalidInterfaceException
      */
-    public function addPrivacyPolicy()
+    public function addPrivacyPolicy(WP_Screen $screen)
     {
-        $screen = get_current_screen();
-        if ($screen instanceof \WP_Screen
+        if ($screen instanceof WP_Screen
             && $screen->id === 'tools'
             && isset($_GET['wp-privacy-policy-guide'])) {
             // load all the privacy policy stuff
