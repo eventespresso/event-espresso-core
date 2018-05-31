@@ -80,7 +80,8 @@ class PrivacySettingsFormHandler extends FormHandler
                             'disable'                => esc_html__('Disabled', 'event_espresso'),
                         ),
                         array(
-                            'default'         => $reg_config->isConsentCheckboxEnabled() ? 'enable-privacy-consent'
+                            'default'         => $reg_config->isConsentCheckboxEnabled()
+                                ? 'enable-privacy-consent'
                                 : 'disable',
                             'html_label_text' => esc_html__('Privacy Consent Checkbox', 'event_espresso'),
                             'html_help_text'  => esc_html__(
