@@ -106,7 +106,6 @@ class AssetCollection extends Collection
 
 
     /**
-     * has
      * returns TRUE or FALSE
      * depending on whether the object is within the Collection
      * based on the supplied $identifier and type
@@ -131,7 +130,6 @@ class AssetCollection extends Collection
 
 
     /**
-     * has
      * returns TRUE or FALSE
      * depending on whether the Javascript Asset is within the Collection
      * based on the supplied $identifier
@@ -147,7 +145,6 @@ class AssetCollection extends Collection
 
 
     /**
-     * has
      * returns TRUE or FALSE
      * depending on whether the Stylesheet Asset is within the Collection
      * based on the supplied $identifier
@@ -162,9 +159,7 @@ class AssetCollection extends Collection
     }
 
     /**
-     * has
-     * returns TRUE or FALSE
-     * depending on whether the object is within the Collection
+     * returns the object from the Collection
      * based on the supplied $identifier and type
      *
      * @param  mixed $identifier
@@ -189,9 +184,7 @@ class AssetCollection extends Collection
 
 
     /**
-     * has
-     * returns TRUE or FALSE
-     * depending on whether the Stylesheet Asset is within the Collection
+     * returns the Stylesheet Asset from the Collection
      * based on the supplied $identifier
      *
      * @param  mixed $identifier
@@ -205,9 +198,7 @@ class AssetCollection extends Collection
 
 
     /**
-     * has
-     * returns TRUE or FALSE
-     * depending on whether the Javascript Asset is within the Collection
+     * returns the Javascript Asset from the Collection
      * based on the supplied $identifier
      *
      * @param  mixed $identifier
