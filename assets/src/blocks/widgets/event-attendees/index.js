@@ -11,7 +11,7 @@ import { __ } from '@eventespresso/i18n';
 /**
  * Internal dependencies
  */
-import EventAttendees from './block';
+import EventAttendees from './edit';
 import './style.css';
 
 registerBlockType(
