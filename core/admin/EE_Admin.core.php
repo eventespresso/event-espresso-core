@@ -241,9 +241,6 @@ final class EE_Admin implements InterminableInterface
         add_filter('dashboard_glance_items', array($this, 'dashboard_glance_items'), 10);
         // filter for get_edit_post_link used on comments for custom post types
         add_filter('get_edit_post_link', array($this, 'modify_edit_post_link'), 10, 2);
-        if (function_exists('wp_add_privacy_policy_content')) {
-            $loader->getShared('EventEspresso\core\services\privacy\policy\PrivacyPolicyManager');
-        }
     }
 
 
@@ -585,6 +582,7 @@ final class EE_Admin implements InterminableInterface
      */
     public function admin_init()
     {
+        $loader = LoaderFactory::getLoader();
 
         /**
          * our cpt models must be instantiated on WordPress post processing routes (wp-admin/post.php),
@@ -595,7 +593,7 @@ final class EE_Admin implements InterminableInterface
          */
         if (isset($_POST['action'], $_POST['post_type']) && $_POST['action'] === 'editpost') {
             /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
-            $custom_post_types = LoaderFactory::getLoader()->getShared(
+            $custom_post_types = $loader->getShared(
                 'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
             );
             $custom_post_types->getCustomPostTypeModels($_POST['post_type']);
@@ -609,6 +607,21 @@ final class EE_Admin implements InterminableInterface
          * This is for user-proofing.
          */
         add_filter('wp_dropdown_pages', array($this, 'modify_dropdown_pages'));
+        if (EE_Maintenance_Mode::instance()->models_can_query()) {
+            $this->adminInitModelsReady();
+        }
+    }
+
+
+    /**
+     * Runs on admin_init but only if models are usable (ie, we're not in maintenanc emode)
+     */
+    protected function adminInitModelsReady()
+    {
+        if (function_exists('wp_add_privacy_policy_content')) {
+            $loader = LoaderFactory::getLoader();
+            $loader->getShared('EventEspresso\core\services\privacy\policy\PrivacyPolicyManager');
+        }
     }
 
 
