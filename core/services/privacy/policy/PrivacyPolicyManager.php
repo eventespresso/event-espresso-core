@@ -26,8 +26,9 @@ class PrivacyPolicyManager
 
     public function __construct()
     {
-        add_action('admin_init', array($this, 'addPrivacyPolicy'), 9);
+        add_action('current_screen', array($this, 'addPrivacyPolicy'), 9);
     }
+
 
 
     /**
@@ -37,14 +38,15 @@ class PrivacyPolicyManager
      */
     public function addPrivacyPolicy()
     {
-        $policy_page_id = (int) get_option('wp_page_for_privacy_policy');
-        if (! $policy_page_id) {
-            return;
-        }
-        // load all the privacy policy stuff
-        // add post policy text
-        foreach ($this->loadPrivacyPolicyCollection() as $privacy_policy) {
-            wp_add_privacy_policy_content($privacy_policy->getName(), $privacy_policy->getContent());
+        $screen = get_current_screen();
+        if ($screen instanceof \WP_Screen
+            && $screen->id === 'tools'
+            && isset($_GET['wp-privacy-policy-guide'])) {
+            // load all the privacy policy stuff
+            // add post policy text
+            foreach ($this->loadPrivacyPolicyCollection() as $privacy_policy) {
+                wp_add_privacy_policy_content($privacy_policy->getName(), $privacy_policy->getContent());
+            }
         }
     }
 
