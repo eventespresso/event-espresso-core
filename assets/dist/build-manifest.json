@@ -1,9 +1,11 @@
 {
-  "components.js": "ee-components.087f2cab23168d611909.dist.js",
+  "components.js": "ee-components.3d4bd75a007ca698fa34.dist.js",
   "data-stores.js": "ee-data-stores.37c3681d948ca4d9d79b.dist.js",
   "eejs.js": "ee-eejs.079eec177a6d0cb54b86.dist.js",
+  "eventespresso-core-blocks.css": "ee-eventespresso-core-blocks.6f37663dd27a4f5488eb.dist.css",
+  "eventespresso-core-blocks.js": "ee-eventespresso-core-blocks.6553a0354ebe12168d6a.dist.js",
   "manifest.js": "ee-manifest.3b66c2f77d3b01c1b09a.dist.js",
   "vendor.js": "ee-vendor.4d87d4d2bcb9de9d56bd.dist.js",
-  "wp-plugins-page.css": "ee-wp-plugins-page.12612f6ab71570ab1af8.dist.css",
-  "wp-plugins-page.js": "ee-wp-plugins-page.1700d8fd2144a931cb59.dist.js"
+  "wp-plugins-page.css": "ee-wp-plugins-page.6bf5b0c4985bf9cc730a.dist.css",
+  "wp-plugins-page.js": "ee-wp-plugins-page.955c372519f507d64cb7.dist.js"
 }
