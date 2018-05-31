@@ -8,6 +8,7 @@ use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
+use WPStaging\Utils\Loader;
 
 /**
  * EE_Admin
@@ -28,6 +29,11 @@ final class EE_Admin implements InterminableInterface
      * @var PersistentAdminNoticeManager $persistent_admin_notice_manager
      */
     private $persistent_admin_notice_manager;
+
+    /**
+     * @var Loader
+     */
+    protected $loader;
 
     /**
      * @singleton method used to instantiate class object
@@ -215,6 +221,22 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
+     * Gets the loader (and if it wasn't previously set, sets it)
+     * @return \EventEspresso\core\services\loaders\LoaderInterface|Loader
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    protected function getLoader()
+    {
+        if (! $this->loader instanceof Loader){
+            $this->loader = LoaderFactory::getLoader();
+        }
+        return $this->loader;
+    }
+
+
+    /**
      * Method that's fired on admin requests (including admin ajax) but only when the models are usable
      * (ie, the site isn't in maintenance mode)
      * @since $VID:$
@@ -222,9 +244,8 @@ final class EE_Admin implements InterminableInterface
      */
     protected function initModelsReady()
     {
-        $loader = LoaderFactory::getLoader();
         // ok so we want to enable the entire admin
-        $this->persistent_admin_notice_manager = $loader->getShared(
+        $this->persistent_admin_notice_manager = $this->getLoader()->getShared(
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
         );
         $this->persistent_admin_notice_manager->setReturnUrl(
@@ -582,8 +603,6 @@ final class EE_Admin implements InterminableInterface
      */
     public function admin_init()
     {
-        $loader = LoaderFactory::getLoader();
-
         /**
          * our cpt models must be instantiated on WordPress post processing routes (wp-admin/post.php),
          * so any hooking into core WP routes is taken care of.  So in this next few lines of code:
@@ -593,7 +612,7 @@ final class EE_Admin implements InterminableInterface
          */
         if (isset($_POST['action'], $_POST['post_type']) && $_POST['action'] === 'editpost') {
             /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
-            $custom_post_types = $loader->getShared(
+            $custom_post_types = $this->getLoader()->getShared(
                 'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
             );
             $custom_post_types->getCustomPostTypeModels($_POST['post_type']);
@@ -619,8 +638,7 @@ final class EE_Admin implements InterminableInterface
     protected function adminInitModelsReady()
     {
         if (function_exists('wp_add_privacy_policy_content')) {
-            $loader = LoaderFactory::getLoader();
-            $loader->getShared('EventEspresso\core\services\privacy\policy\PrivacyPolicyManager');
+            $this->getLoader()->getShared('EventEspresso\core\services\privacy\policy\PrivacyPolicyManager');
         }
     }
 
@@ -986,8 +1004,8 @@ final class EE_Admin implements InterminableInterface
      */
     public function hookIntoWpPluginsPage()
     {
-        LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\admin\ExitModal');
-        LoaderFactory::getLoader()
+        $this->getLoader()->getShared('EventEspresso\core\domain\services\admin\ExitModal');
+        $this->getLoader()
                      ->getShared('EventEspresso\core\domain\services\admin\PluginUpsells')
                      ->decafUpsells();
     }
