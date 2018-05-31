@@ -194,7 +194,7 @@ final class EE_Admin implements InterminableInterface
     {
         // only enable most of the EE_Admin IF we're not in full maintenance mode
         if (EE_Maintenance_Mode::instance()->models_can_query()) {
-           $this->initModelsReady();
+            $this->initModelsReady();
         }
         // run the admin page factory but ONLY if we are doing an ee admin ajax request
         if (! defined('DOING_AJAX') || EE_ADMIN_AJAX) {
