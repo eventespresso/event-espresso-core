@@ -11,6 +11,11 @@ use EventEspresso\core\services\request\RequestInterface;
 /**
  * EE_Session class
  *
+ * Please note that the session doesn't save by default, except when it has a cart set on it.
+ * In order for it to save on other pages, you must execute
+ * `add_action('FHEE__EE_Session___save_session_to_db__abort_session_save', '__return_false');`
+ * somewhere during the request
+ *
  * @package    Event Espresso
  * @subpackage includes/classes
  * @author     Brent Christensen
