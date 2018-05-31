@@ -1,7 +1,22 @@
 {
+  "components": [
+    "Limit",
+    "EventSelect",
+    "There are no events to select from. You need to create an event first.",
+    "Select Event"
+  ],
   "ee-wp-plugins-page": [
     "Do you have a moment to share why you are deactivating Event Espresso?",
     "Sure I'll help",
     "Skip"
+  ],
+  "eventespresso-data-stores": [
+    null,
+    "The given modelName (%s) does not exist in the state.",
+    "The provided array of entities must not be empty",
+    null,
+    "The provided entity (%s) does not have the given property (%s)",
+    "The provided value is not an array.",
+    "The provided items must not be empty"
   ]
 }
