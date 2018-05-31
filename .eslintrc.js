@@ -5,6 +5,7 @@ module.exports = {
 	],
 	'plugins': [
 		'wordpress',
+		'jest',
 	],
 	env: {
 		'jest/globals': true,
@@ -13,9 +14,6 @@ module.exports = {
 		wpApiSettings: true,
 		eejsdata: true
 	},
-	plugins: [
-		'jest',
-	],
 	overrides: [
 		{
 			files: [ 'test/e2e/**/*.js' ],
