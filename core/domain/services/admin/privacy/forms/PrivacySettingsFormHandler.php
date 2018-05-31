@@ -61,6 +61,8 @@ class PrivacySettingsFormHandler extends FormHandler
      */
     public function generate()
     {
+        //this form makes use of the session for passing around invalid form submission data, so make sure its enabled
+        add_filter('FHEE__EE_Session___save_session_to_db__abort_session_save', '__return_false');
         /**
          * @var $reg_config EE_Registration_Config
          */
