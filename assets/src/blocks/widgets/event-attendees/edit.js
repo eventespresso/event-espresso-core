@@ -120,7 +120,7 @@ export default withSelect( ( select, ownProps ) => {
 	if ( selectedEventId ) {
 		console.log( '** withSelect **' );
 		console.log( '  selectedEventId: ' + selectedEventId );
-		const queryString = `Registration.EVT_ID=${ selectedEventId }&calculate=userAvatar`;
+		const queryString = `where[Registration.EVT_ID]=${ selectedEventId }&calculate=userAvatar`;
 		return {
 			attendees: getItems( 'attendee', queryString ),
 			isLoading: isRequestingItems( 'attendee', queryString ),
