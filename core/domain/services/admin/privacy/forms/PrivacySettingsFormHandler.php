@@ -130,7 +130,7 @@ class PrivacySettingsFormHandler extends FormHandler
             );
             return $this->config->update_espresso_config(false, false);
         } catch (InvalidFormSubmissionException $e) {
-            //the form was invalid, it show be re-displayed with errors
+            // the form was invalid, it should be re-displayed with errors
             return false;
         }
     }
