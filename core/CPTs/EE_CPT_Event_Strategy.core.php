@@ -49,9 +49,9 @@ class EE_CPT_Event_Strategy
         if ($WP_Query instanceof WP_Query) {
             $WP_Query->is_espresso_event_single = is_singular()
                                                   && isset($WP_Query->query->post_type)
-                                                  && $WP_Query->query->post_type == 'espresso_events';
-            $WP_Query->is_espresso_event_archive = is_post_type_archive('espresso_events') ? true : false;
-            $WP_Query->is_espresso_event_taxonomy = is_tax('espresso_event_categories') ? true : false;
+                                                  && $WP_Query->query->post_type === 'espresso_events';
+            $WP_Query->is_espresso_event_archive = is_post_type_archive('espresso_events');
+            $WP_Query->is_espresso_event_taxonomy = is_tax('espresso_event_categories');
         }
     }
 
@@ -124,7 +124,9 @@ class EE_CPT_Event_Strategy
             $SQL .= ', ' . EEM_Datetime::instance()->table() . '.* ';
             if ($wp_query->is_espresso_event_archive || $wp_query->is_espresso_event_taxonomy) {
                 // because we only want to retrieve the next upcoming datetime for each event:
-                // add something like ", MIN( wp_esp_datetime.DTT_EVT_start ) as event_start_date " to WP Query SELECT statement
+                // add something like:
+                // ", MIN( wp_esp_datetime.DTT_EVT_start ) as event_start_date "
+                // to WP Query SELECT statement
                 $SQL .= ', MIN( ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start ) as event_start_date ';
             }
         }
@@ -151,7 +153,9 @@ class EE_CPT_Event_Strategy
                 || $wp_query->is_espresso_event_taxonomy
             )
         ) {
-            // adds something like " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
+            // adds something like:
+            // " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) "
+            // to WP Query JOIN statement
             $SQL .= ' INNER JOIN ' . EEM_Datetime::instance()->table() . ' ON ( ' . EEM_Event::instance()->table()
                     . '.ID = ' . EEM_Datetime::instance()->table() . '.'
                     . EEM_Event::instance()->primary_key_name() . ' ) ';
@@ -225,7 +229,8 @@ class EE_CPT_Event_Strategy
             )
         ) {
             // TODO: add event list option for displaying ALL datetimes in event list or only primary datetime (default)
-            // we're joining to the datetimes table, where there can be MANY datetimes for a single event, but we want to only show each event only once
+            // we're joining to the datetimes table, where there can be MANY datetimes for a single event,
+            // but we want to only show each event only once
             // (whereas if we didn't group them by the post's ID, then we would end up with many repeats)
             global $wpdb;
             $SQL = $wpdb->posts . '.ID ';
