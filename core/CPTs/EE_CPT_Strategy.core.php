@@ -265,10 +265,10 @@ class EE_CPT_Strategy extends EE_Base
                     // but which CPT does that correspond to??? hmmm... guess we gotta go looping
                     foreach ($this->_CPTs as $post_type => $CPT) {
                         // verify our CPT has args, is public and has taxonomies set
-                        if (isset($CPT['args'], $CPT['args']['public'])
+                        if (isset($CPT['args']['public'])
                             && $CPT['args']['public']
                             && ! empty($CPT['args']['taxonomies'])
-                            && in_array($CPT_taxonomy, $CPT['args']['taxonomies'])
+                            && in_array($CPT_taxonomy, $CPT['args']['taxonomies'], true)
                         ) {
                             // if so, then add this CPT post_type to the current query's array of post_types'
                             $WP_Query->query_vars['post_type'] = isset($WP_Query->query_vars['post_type'])
