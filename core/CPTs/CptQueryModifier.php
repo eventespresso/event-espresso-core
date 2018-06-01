@@ -4,7 +4,8 @@ namespace EventEspresso\core\CPTs;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\RequestInterface;
 use InvalidArgumentException;
 
 /**
@@ -55,15 +56,24 @@ class CptQueryModifier
     protected $model;
 
     /**
-     * @var \EE_Request_Handler $request
+     * @var \EE_Request_Handler $request_handler
      */
-    protected $request;
+    protected $request_handler;
 
     /**
      * @var \WP_Query $wp_query
      */
     protected $wp_query;
 
+    /**
+     * @var LoaderInterface $loader
+     */
+    protected $loader;
+
+    /**
+     * @var RequestInterface $request
+     */
+    protected $request;
 
     /**
      * CptQueryModifier constructor
@@ -71,15 +81,21 @@ class CptQueryModifier
      * @param string              $post_type
      * @param array               $cpt_details
      * @param \WP_Query           $WP_Query
-     * @param \EE_Request_Handler $request
+     * @param \EE_Request_Handler $request_handler
+     * @param RequestInterface    $request
+     * @param LoaderInterface     $loader
      */
     public function __construct(
         $post_type,
         array $cpt_details,
         \WP_Query $WP_Query,
-        \EE_Request_Handler $request
+        \EE_Request_Handler $request_handler,
+        RequestInterface $request,
+        LoaderInterface $loader
     ) {
-        $this->setRequest($request);
+        $this->loader = $loader;
+        $this->request = $request;
+        $this->request_handler = $request_handler;
         $this->setWpQuery($WP_Query);
         $this->setPostType($post_type);
         $this->setCptDetails($cpt_details);
@@ -199,21 +215,15 @@ class CptQueryModifier
 
 
     /**
+     * @deprecated $VID:$
      * @return \EE_Request_Handler
      */
     public function request()
     {
-        return $this->request;
+        return $this->request_handler;
     }
 
 
-    /**
-     * @param \EE_Request_Handler $request
-     */
-    protected function setRequest(\EE_Request_Handler $request)
-    {
-        $this->request = $request;
-    }
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 
@@ -253,8 +263,8 @@ class CptQueryModifier
             /** @var \EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions
              * $taxonomy_definitions
              */
-            $taxonomy_definitions = LoaderFactory::getLoader()->getShared(
-                'EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions'
+            $taxonomy_definitions = $this->loader->getShared(
+            'EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions'
             );
             $all_taxonomies = $taxonomy_definitions->getCustomTaxonomyDefinitions();
             foreach ($taxonomies as $taxonomy => &$details) {
@@ -315,9 +325,9 @@ class CptQueryModifier
     protected function setAdditionalCptDetails()
     {
         // the post or category or term that is triggering EE
-        $this->cpt_details['espresso_page'] = $this->request->is_espresso_page();
+        $this->cpt_details['espresso_page'] = $this->request_handler->is_espresso_page();
         // requested post name
-        $this->cpt_details['post_name'] = $this->request->get('post_name');
+        $this->cpt_details['post_name'] = $this->request->getRequestParam('post_name');
         // add support for viewing 'private', 'draft', or 'pending' posts
         if (isset($this->wp_query->query_vars['p'])
             && $this->wp_query->query_vars['p'] !== 0
@@ -327,7 +337,7 @@ class CptQueryModifier
             // we can just inject directly into the WP_Query object
             $this->wp_query->query['post_status'] = array('publish', 'private', 'draft', 'pending');
             // now set the main 'ee' request var so that the appropriate module can load the appropriate template(s)
-            $this->request->set('ee', $this->cpt_details['singular_slug']);
+            $this->request->setRequestParam('ee', $this->cpt_details['singular_slug']);
         }
     }
 
@@ -344,15 +354,15 @@ class CptQueryModifier
     public function setRequestVarsIfCpt()
     {
         // check if ee action var has been set
-        if (! $this->request->is_set('ee')) {
+        if (! $this->request->requestParamIsSet('ee')) {
             // check that route exists for CPT archive slug
             if (is_archive() && \EE_Config::get_route($this->cpt_details['plural_slug'])) {
                 // ie: set "ee" to "events"
-                $this->request->set('ee', $this->cpt_details['plural_slug']);
+                $this->request->setRequestParam('ee', $this->cpt_details['plural_slug']);
                 // or does it match a single page CPT like /event/
             } elseif (is_single() && \EE_Config::get_route($this->cpt_details['singular_slug'])) {
                 // ie: set "ee" to "event"
-                $this->request->set('ee', $this->cpt_details['singular_slug']);
+                $this->request->setRequestParam('ee', $this->cpt_details['singular_slug']);
             }
         }
     }
@@ -368,7 +378,10 @@ class CptQueryModifier
     protected function setupModelsAndTables($model_name)
     {
         // get CPT table data via CPT Model
-        $model = \EE_Registry::instance()->load_model($model_name);
+        $full_model_name = strpos($model_name, 'EEM_') !== 0
+            ? 'EEM_' . $model_name
+            : $model_name;
+        $model = $this->loader->getShared($full_model_name);
         if (! $model instanceof \EEM_Base) {
             throw new \EE_Error(
                 sprintf(
@@ -376,7 +389,7 @@ class CptQueryModifier
                         'The "%1$s" model could not be loaded.',
                         'event_espresso'
                     ),
-                    $model_name
+                    $full_model_name
                 )
             );
         }
@@ -401,15 +414,15 @@ class CptQueryModifier
     protected function cptStrategyClass($model_name)
     {
         // creates classname like:  CPT_Event_Strategy
-        $CPT_Strategy_class_name = 'CPT_' . $model_name . '_Strategy';
+        $CPT_Strategy_class_name = 'EE_CPT_' . $model_name . '_Strategy';
         // load and instantiate
-        $CPT_Strategy = \EE_Registry::instance()->load_core(
-            $CPT_Strategy_class_name,
+        $CPT_Strategy = $this->loader->getShared(
+        $CPT_Strategy_class_name,
             array('WP_Query' => $this->wp_query, 'CPT' => $this->cpt_details)
         );
         if ($CPT_Strategy === null) {
-            $CPT_Strategy = \EE_Registry::instance()->load_core(
-                'CPT_Default_Strategy',
+            $CPT_Strategy = $this->loader->getShared(
+            'EE_CPT_Default_Strategy',
                 array('WP_Query' => $this->wp_query, 'CPT' => $this->cpt_details)
             );
         }
