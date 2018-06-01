@@ -356,7 +356,7 @@ class EE_Dependency_Map
         // EE_CPT_*_Strategy classes like EE_CPT_Event_Strategy, EE_CPT_Venue_Strategy, etc
         // perform strpos() first to avoid loading regex every time we load a class
         if (strpos($class_name, 'EE_CPT_') === 0
-            && preg_match('^EE_CPT_([a-zA-Z]+)_Strategy$', $class_name)
+            && preg_match('/^EE_CPT_([a-zA-Z]+)_Strategy$/', $class_name)
         ) {
             return 'load_core';
         }
