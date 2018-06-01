@@ -753,6 +753,14 @@ class EE_Dependency_Map
                 'EEM_Answer' => EE_Dependency_Map::load_from_cache,
                 'EEM_Question' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\CPTs\CptQueryModifier' => array(
+                null,
+                null,
+                null,
+                'EE_Request_Handler'                          => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+            ),
         );
     }
 
@@ -806,6 +814,10 @@ class EE_Dependency_Map
             'EE_Register_CPTs'                             => 'load_core',
             'EE_Admin'                                     => 'load_core',
             'EE_CPT_Strategy'                              => 'load_core',
+            'EE_CPT_Default_Strategy'                      => 'load_core',
+            'EE_CPT_Attendee_Strategy'                     => 'load_core',
+            'EE_CPT_Event_Strategy'                        => 'load_core',
+            'EE_CPT_Venue_Strategy'                        => 'load_core',
             // load_lib
             'EE_Message_Resource_Manager'                  => 'load_lib',
             'EE_Message_Type_Collection'                   => 'load_lib',
@@ -867,7 +879,7 @@ class EE_Dependency_Map
             },
             'EE_Admin_Config'                              => function () {
                 return EE_Config::instance()->admin;
-            }
+            },
         );
     }
 
