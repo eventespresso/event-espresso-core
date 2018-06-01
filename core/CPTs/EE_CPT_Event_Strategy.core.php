@@ -72,8 +72,19 @@ class EE_CPT_Event_Strategy
         // add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
         add_filter('posts_orderby', array($this, 'posts_orderby'), 1, 2);
         add_filter('posts_groupby', array($this, 'posts_groupby'), 1, 2);
+        add_action('posts_selection', array($this, 'remove_filters'));
     }
 
+
+    /**
+     * public access to _remove_filters()
+     *
+     * @since $VID:$
+     */
+    public function remove_filters()
+    {
+        $this->_remove_filters();
+    }
 
     /**
      * Should eb called when the last filter or hook is fired for this CPT strategy.
@@ -88,6 +99,7 @@ class EE_CPT_Event_Strategy
         // remove_filter( 'the_posts', array( $this, 'the_posts' ), 1 );
         remove_filter('posts_orderby', array($this, 'posts_orderby'), 1);
         remove_filter('posts_groupby', array($this, 'posts_groupby'), 1);
+        remove_action('posts_selection', array($this, 'remove_filters'));
     }
 
 
