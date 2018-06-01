@@ -62,12 +62,6 @@ interface AssetManagerInterface
     );
 
 
-    /**
-     * @return JavascriptAsset[]
-     * @since 4.9.62.p
-     */
-    public function getJavascriptAssets();
-
 
     /**
      * @param string $handle
@@ -86,13 +80,6 @@ interface AssetManagerInterface
         array $dependencies = array(),
         $media = 'all'
     );
-
-
-    /**
-     * @return StylesheetAsset[]
-     * @since 4.9.62.p
-     */
-    public function getStylesheetAssets();
 
 
     /**

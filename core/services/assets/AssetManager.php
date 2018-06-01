@@ -113,15 +113,6 @@ abstract class AssetManager implements AssetManagerInterface
     }
 
 
-    /**
-     * @return JavascriptAsset[]
-     * @since 4.9.62.p
-     */
-    public function getJavascriptAssets()
-    {
-        return $this->assets->getJavascriptAssets();
-    }
-
 
     /**
      * @param string $handle
@@ -149,16 +140,6 @@ abstract class AssetManager implements AssetManagerInterface
         );
         $this->assets->add($asset, $handle);
         return $asset;
-    }
-
-
-    /**
-     * @return StylesheetAsset[]
-     * @since 4.9.62.p
-     */
-    public function getStylesheetAssets()
-    {
-        return $this->assets->getStylesheetAssets();
     }
 
 
