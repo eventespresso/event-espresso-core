@@ -2,6 +2,7 @@
 use EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * CPT_Strategy
@@ -344,14 +345,19 @@ class EE_CPT_Strategy extends EE_Base
     /**
      * @param \WP_Query $WP_Query
      * @param string    $post_type
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _generate_CptQueryModifier(WP_Query $WP_Query, $post_type)
     {
-        $this->query_modifier = new EventEspresso\core\CPTs\CptQueryModifier(
-            $post_type,
-            $this->_CPTs[ $post_type ],
-            $WP_Query,
-            EE_Registry::instance()->REQ
+        $this->query_modifier = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\CPTs\CptQueryModifier',
+            array(
+                $post_type,
+                $this->_CPTs[ $post_type ],
+                $WP_Query,
+            )
         );
         $this->_CPT_taxonomies = $this->query_modifier->taxonomies();
     }
