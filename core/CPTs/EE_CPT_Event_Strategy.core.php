@@ -1,30 +1,27 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  *EE_CPT_Event_Strategy
  *
- * @package               Event Espresso
- * @subpackage            /core/CPTs/EE_CPT_Event_Strategy.core.php
- * @author                Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  /core/CPTs/EE_CPT_Event_Strategy.core.php
+ * @author      Brent Christensen
  */
 class EE_CPT_Event_Strategy
 {
 
     /**
-     * $CPT - the current page, if it utilizes CPTs
+     * the current page, if it utilizes CPTs
      *
-     * @var    object
-     * @access    protected
+     * @var object $CPT
      */
-    protected $CPT = null;
+    protected $CPT;
 
 
     /**
-     *    class constructor
-     *
-     * @access    public
      * @param WP_Query $wp_query
      * @param array    $CPT
      */
@@ -86,6 +83,7 @@ class EE_CPT_Event_Strategy
         $this->_remove_filters();
     }
 
+
     /**
      * Should eb called when the last filter or hook is fired for this CPT strategy.
      * This is to avoid applying this CPT strategy for other posts or CPTs (eg,
@@ -104,12 +102,13 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     *    posts_fields
-     *
-     * @access    public
-     * @param          $SQL
+     * @param string   $SQL
      * @param WP_Query $wp_query
      * @return    string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function posts_fields($SQL, WP_Query $wp_query)
     {
@@ -134,13 +133,13 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     *    posts_join
-     *
-     * @access    public
-     * @param          $SQL
+     * @param string   $SQL
      * @param WP_Query $wp_query
-     * @internal  param \WP_Query $WP_Query
-     * @return    string
+     * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function posts_join($SQL, WP_Query $wp_query)
     {
@@ -162,12 +161,13 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     *    posts_where
-     *
-     * @access    public
-     * @param          $SQL
+     * @param string   $SQL
      * @param WP_Query $wp_query
-     * @return    string
+     * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function posts_where($SQL, WP_Query $wp_query)
     {
@@ -191,12 +191,9 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     *    posts_orderby
-     *
-     * @access    public
-     * @param    string   $SQL
-     * @param    WP_Query $wp_query
-     * @return    string
+     * @param string   $SQL
+     * @param WP_Query $wp_query
+     * @return string
      */
     public function posts_orderby($SQL, WP_Query $wp_query)
     {
@@ -214,12 +211,9 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     *    posts_groupby
-     *
-     * @access    public
-     * @param          $SQL
+     * @param string   $SQL
      * @param WP_Query $wp_query
-     * @return    string
+     * @return string
      */
     public function posts_groupby($SQL, WP_Query $wp_query)
     {
@@ -241,12 +235,9 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     *    the_posts
-     *
-     * @access    public
-     * @param          $posts
+     * @param array    $posts
      * @param WP_Query $wp_query
-     * @return    array
+     * @return array
      */
     public function the_posts($posts, WP_Query $wp_query)
     {
@@ -255,9 +246,6 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     *    get_EE_post_type_metadata
-     *
-     * @access    public
      * @param null $meta_value
      * @param      $post_id
      * @param      $meta_key
