@@ -35,9 +35,31 @@ registerBlockType(
 		],
 
 		attributes: {
-			selectedEventId: {
-				type: 'number'
-			}
+			// eventId, datetimeId, ticketId, status, showGravatar, displayOnArchives
+			eventId: {
+				type: 'number',
+				'default': 0,
+			},
+			datetimeId: {
+				type: 'number',
+				'default': 0,
+			},
+			ticketId: {
+				type: 'number',
+				'default': 0,
+			},
+			status: {
+				type: 'string',
+				'default': 'RAP',
+			},
+			showGravatar: {
+				type: 'boolean',
+				'default': false,
+			},
+			displayOnArchives: {
+				type: 'boolean',
+				'default': false,
+			},
 		},
 
 		edit: EventAttendees,
