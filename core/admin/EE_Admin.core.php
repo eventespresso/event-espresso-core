@@ -8,7 +8,7 @@ use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
-use WPStaging\Utils\Loader;
+use EventEspresso\core\services\loaders\LoaderInterface;
 
 /**
  * EE_Admin
@@ -31,7 +31,7 @@ final class EE_Admin implements InterminableInterface
     private $persistent_admin_notice_manager;
 
     /**
-     * @var Loader
+     * @var LoaderInterface
      */
     protected $loader;
 
@@ -222,14 +222,14 @@ final class EE_Admin implements InterminableInterface
 
     /**
      * Gets the loader (and if it wasn't previously set, sets it)
-     * @return \EventEspresso\core\services\loaders\LoaderInterface|Loader
+     * @return LoaderInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
     protected function getLoader()
     {
-        if (! $this->loader instanceof Loader){
+        if (! $this->loader instanceof LoaderInterface) {
             $this->loader = LoaderFactory::getLoader();
         }
         return $this->loader;
