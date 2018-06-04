@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\entities\editor\blocks\widgets;
 
+use EEM_Registration;
 use EventEspresso\core\domain\entities\editor\Block;
 use EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager;
 use EventEspresso\core\domain\entities\shortcodes\EspressoEventAttendees;
@@ -48,8 +49,81 @@ class EventAttendees extends Block
     {
         $this->setBlockType(self::BLOCK_TYPE);
         $this->setSupportedPostTypes(array('espresso_events', 'post', 'page'));
-        $this->setAttributes(array());
+        $this->setAttributes(
+            array(
+                'eventId'            => array(
+                    'type'    => 'number',
+                    'default' => 0,
+                ),
+                'datetimeId'         => array(
+                    'type'    => 'number',
+                    'default' => 0,
+                ),
+                'ticketId'           => array(
+                    'type'    => 'number',
+                    'default' => 0,
+                ),
+                'status'              => array(
+                    'type'    => 'string',
+                    'default' => EEM_Registration::status_id_approved,
+                ),
+                'showGravatar'       => array(
+                    'type'    => 'boolean',
+                    'default' => false,
+                ),
+                'displayOnArchives' => array(
+                    'type'    => 'boolean',
+                    'default' => false,
+                ),
+            )
+        );
         $this->setDynamic();
+    }
+
+
+    /**
+     * returns an array where the key corresponds to the incoming attribute name from the WP block
+     * and the value corresponds to the attribute name for the existing EspressoEventAttendees shortcode
+     *
+     * @since $VID:$
+     * @return array
+     */
+    private function getAttributesMap()
+    {
+        return array(
+            'eventId'           => array('attribute' => 'event_id', 'sanitize' => 'absint'),
+            'datetimeId'        => array('attribute' => 'datetime_id', 'sanitize' => 'absint'),
+            'ticketId'          => array('attribute' => 'ticket_id', 'sanitize' => 'absint'),
+            'status'            => array('attribute' => 'status', 'sanitize' => 'sanitize_text_field'),
+            'showGravatar'      => array('attribute' => 'show_gravatar', 'sanitize' => 'bool'),
+            'displayOnArchives' => array('attribute' => 'display_on_archives', 'sanitize' => 'bool'),
+        );
+    }
+
+
+    /**
+     * @param array $attributes
+     * @since $VID:$
+     * @return array
+     */
+    private function parseAttributes(array $attributes)
+    {
+        foreach ($attributes as $attribute => $value) {
+            $convert = $this->getAttributesMap();
+            if (isset($convert[ $attribute ])) {
+                $sanitize = $convert[ $attribute ]['sanitize'];
+                if($sanitize === 'bool') {
+                    $attributes[ $convert[ $attribute ]['attribute'] ] = filter_var(
+                        $value,
+                        FILTER_VALIDATE_BOOLEAN
+                    );
+                } else {
+                    $attributes[ $convert[ $attribute ]['attribute'] ] = $sanitize($value);
+                }
+                unset($attributes[ $attribute ]);
+            }
+        }
+        return $attributes;
     }
 
 
@@ -65,10 +139,6 @@ class EventAttendees extends Block
      */
     public function renderBlock(array $attributes = array())
     {
-        if (! isset($attributes['selectedEventId'])) {
-            return '<h2>' . __METHOD__ . '()</h2>' . var_export($attributes, true);
-        }
-        $attributes['event_id'] = absint($attributes['selectedEventId']);
-        return $this->shortcode->processShortcode($attributes);
+        return $this->shortcode->processShortcode($this->parseAttributes($attributes));
     }
 }
