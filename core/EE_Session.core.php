@@ -890,10 +890,13 @@ class EE_Session implements SessionIdentifierInterface
     {
         // don't save sessions for crawlers
         // and unless we're deleting the session data, don't save anything if there isn't a cart
-        if (apply_filters(
-            'FHEE__EE_Session___save_session_to_db__abort_session_save',
-            $this->request->isBot() || (! $clear_session && ! $this->cart() instanceof EE_Cart)
-        )) {
+        if ($this->request->isBot()
+            || (
+                ! $clear_session
+                && ! $this->cart() instanceof EE_Cart
+                && apply_filters('FHEE__EE_Session___save_session_to_db__abort_session_save', true)
+            )
+        ) {
             return false;
         }
         $transaction = $this->transaction();
