@@ -2,10 +2,20 @@
 
 namespace EventEspresso\core\CPTs;
 
+use EE_Config;
+use EE_Error;
+use EE_Request_Handler;
+use EE_Secondary_Table;
+use EE_Table_Base;
+use EEM_Base;
+use EEM_CPT_Base;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\RequestInterface;
 use InvalidArgumentException;
+use WP_Post;
+use WP_Query;
 
 /**
  * Class CptQueryModifier
@@ -31,7 +41,7 @@ class CptQueryModifier
     protected $cpt_details = array();
 
     /**
-     * @var \EE_Table_Base[] $model_tables
+     * @var EE_Table_Base[] $model_tables
      */
     protected $model_tables = array();
 
@@ -43,43 +53,60 @@ class CptQueryModifier
     /**
      * meta table for the related CPT
      *
-     * @var \EE_Secondary_Table $meta_table
+     * @var EE_Secondary_Table $meta_table
      */
     protected $meta_table;
 
     /**
      * EEM_CPT_Base model for the related CPT
      *
-     * @var \EEM_CPT_Base $model
+     * @var EEM_CPT_Base $model
      */
     protected $model;
 
     /**
-     * @var \EE_Request_Handler $request
+     * @var EE_Request_Handler $request_handler
      */
-    protected $request;
+    protected $request_handler;
 
     /**
-     * @var \WP_Query $wp_query
+     * @var WP_Query $wp_query
      */
     protected $wp_query;
+
+    /**
+     * @var LoaderInterface $loader
+     */
+    protected $loader;
+
+    /**
+     * @var RequestInterface $request
+     */
+    protected $request;
 
 
     /**
      * CptQueryModifier constructor
      *
-     * @param string              $post_type
-     * @param array               $cpt_details
-     * @param \WP_Query           $WP_Query
-     * @param \EE_Request_Handler $request
+     * @param string             $post_type
+     * @param array              $cpt_details
+     * @param WP_Query           $WP_Query
+     * @param EE_Request_Handler $request_handler
+     * @param RequestInterface   $request
+     * @param LoaderInterface    $loader
+     * @throws EE_Error
      */
     public function __construct(
         $post_type,
         array $cpt_details,
-        \WP_Query $WP_Query,
-        \EE_Request_Handler $request
+        WP_Query $WP_Query,
+        EE_Request_Handler $request_handler,
+        RequestInterface $request,
+        LoaderInterface $loader
     ) {
-        $this->setRequest($request);
+        $this->loader = $loader;
+        $this->request = $request;
+        $this->request_handler = $request_handler;
         $this->setWpQuery($WP_Query);
         $this->setPostType($post_type);
         $this->setCptDetails($cpt_details);
@@ -124,7 +151,7 @@ class CptQueryModifier
 
 
     /**
-     * @return \EE_Table_Base[]
+     * @return EE_Table_Base[]
      */
     public function modelTables()
     {
@@ -133,7 +160,7 @@ class CptQueryModifier
 
 
     /**
-     * @param \EE_Table_Base[] $model_tables
+     * @param EE_Table_Base[] $model_tables
      */
     protected function setModelTables($model_tables)
     {
@@ -143,6 +170,9 @@ class CptQueryModifier
 
     /**
      * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function taxonomies()
     {
@@ -163,7 +193,7 @@ class CptQueryModifier
 
 
     /**
-     * @return \EE_Secondary_Table
+     * @return EE_Secondary_Table
      */
     public function metaTable()
     {
@@ -172,16 +202,16 @@ class CptQueryModifier
 
 
     /**
-     * @param \EE_Secondary_Table $meta_table
+     * @param EE_Secondary_Table $meta_table
      */
-    public function setMetaTable(\EE_Secondary_Table $meta_table)
+    public function setMetaTable(EE_Secondary_Table $meta_table)
     {
         $this->meta_table = $meta_table;
     }
 
 
     /**
-     * @return \EEM_Base
+     * @return EEM_Base
      */
     public function model()
     {
@@ -190,35 +220,30 @@ class CptQueryModifier
 
 
     /**
-     * @param \EEM_Base $CPT_model
+     * @param EEM_Base $CPT_model
      */
-    protected function setModel(\EEM_Base $CPT_model)
+    protected function setModel(EEM_Base $CPT_model)
     {
         $this->model = $CPT_model;
     }
 
 
     /**
-     * @return \EE_Request_Handler
+     * @deprecated $VID:$
+     * @return EE_Request_Handler
      */
     public function request()
     {
-        return $this->request;
+        return $this->request_handler;
     }
 
 
-    /**
-     * @param \EE_Request_Handler $request
-     */
-    protected function setRequest(\EE_Request_Handler $request)
-    {
-        $this->request = $request;
-    }
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 
+
     /**
-     * @return \WP_Query
+     * @return WP_Query
      */
     public function WpQuery()
     {
@@ -226,10 +251,11 @@ class CptQueryModifier
     }
     // phpcs:enable
 
+
     /**
-     * @param \WP_Query $wp_query
+     * @param WP_Query $wp_query
      */
-    public function setWpQuery(\WP_Query $wp_query)
+    public function setWpQuery(WP_Query $wp_query)
     {
         $this->wp_query = $wp_query;
     }
@@ -253,7 +279,7 @@ class CptQueryModifier
             /** @var \EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions
              * $taxonomy_definitions
              */
-            $taxonomy_definitions = LoaderFactory::getLoader()->getShared(
+            $taxonomy_definitions = $this->loader->getShared(
                 'EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions'
             );
             $all_taxonomies = $taxonomy_definitions->getCustomTaxonomyDefinitions();
@@ -270,6 +296,10 @@ class CptQueryModifier
     }
 
 
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     */
     protected function init()
     {
         $this->setAdditionalCptDetails();
@@ -315,9 +345,9 @@ class CptQueryModifier
     protected function setAdditionalCptDetails()
     {
         // the post or category or term that is triggering EE
-        $this->cpt_details['espresso_page'] = $this->request->is_espresso_page();
+        $this->cpt_details['espresso_page'] = $this->request_handler->is_espresso_page();
         // requested post name
-        $this->cpt_details['post_name'] = $this->request->get('post_name');
+        $this->cpt_details['post_name'] = $this->request->getRequestParam('post_name');
         // add support for viewing 'private', 'draft', or 'pending' posts
         if (isset($this->wp_query->query_vars['p'])
             && $this->wp_query->query_vars['p'] !== 0
@@ -327,7 +357,7 @@ class CptQueryModifier
             // we can just inject directly into the WP_Query object
             $this->wp_query->query['post_status'] = array('publish', 'private', 'draft', 'pending');
             // now set the main 'ee' request var so that the appropriate module can load the appropriate template(s)
-            $this->request->set('ee', $this->cpt_details['singular_slug']);
+            $this->request->setRequestParam('ee', $this->cpt_details['singular_slug']);
         }
     }
 
@@ -344,15 +374,15 @@ class CptQueryModifier
     public function setRequestVarsIfCpt()
     {
         // check if ee action var has been set
-        if (! $this->request->is_set('ee')) {
+        if (! $this->request->requestParamIsSet('ee')) {
             // check that route exists for CPT archive slug
-            if (is_archive() && \EE_Config::get_route($this->cpt_details['plural_slug'])) {
+            if (is_archive() && EE_Config::get_route($this->cpt_details['plural_slug'])) {
                 // ie: set "ee" to "events"
-                $this->request->set('ee', $this->cpt_details['plural_slug']);
+                $this->request->setRequestParam('ee', $this->cpt_details['plural_slug']);
                 // or does it match a single page CPT like /event/
-            } elseif (is_single() && \EE_Config::get_route($this->cpt_details['singular_slug'])) {
+            } elseif (is_single() && EE_Config::get_route($this->cpt_details['singular_slug'])) {
                 // ie: set "ee" to "event"
-                $this->request->set('ee', $this->cpt_details['singular_slug']);
+                $this->request->setRequestParam('ee', $this->cpt_details['singular_slug']);
             }
         }
     }
@@ -363,30 +393,34 @@ class CptQueryModifier
      *
      * @access protected
      * @param string $model_name
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function setupModelsAndTables($model_name)
     {
         // get CPT table data via CPT Model
-        $model = \EE_Registry::instance()->load_model($model_name);
-        if (! $model instanceof \EEM_Base) {
-            throw new \EE_Error(
+        $full_model_name = strpos($model_name, 'EEM_') !== 0
+            ? 'EEM_' . $model_name
+            : $model_name;
+        $model = $this->loader->getShared($full_model_name);
+        if (! $model instanceof EEM_Base) {
+            throw new EE_Error(
                 sprintf(
                     __(
                         'The "%1$s" model could not be loaded.',
                         'event_espresso'
                     ),
-                    $model_name
+                    $full_model_name
                 )
             );
         }
         $this->setModel($model);
         $this->setModelTables($this->model->get_tables());
+        $meta_model = $model_name . '_Meta';
         // is there a Meta Table for this CPT?
-        if (isset($this->cpt_details['tables'][ $model_name . '_Meta' ])
-            && $this->cpt_details['tables'][ $model_name . '_Meta' ] instanceof \EE_Secondary_Table
+        if (isset($this->cpt_details['tables'][ $meta_model ])
+            && $this->cpt_details['tables'][ $meta_model ] instanceof EE_Secondary_Table
         ) {
-            $this->setMetaTable($this->cpt_details['tables'][ $model_name . '_Meta' ]);
+            $this->setMetaTable($this->cpt_details['tables'][ $meta_model ]);
         }
     }
 
@@ -401,15 +435,15 @@ class CptQueryModifier
     protected function cptStrategyClass($model_name)
     {
         // creates classname like:  CPT_Event_Strategy
-        $CPT_Strategy_class_name = 'CPT_' . $model_name . '_Strategy';
+        $CPT_Strategy_class_name = 'EE_CPT_' . $model_name . '_Strategy';
         // load and instantiate
-        $CPT_Strategy = \EE_Registry::instance()->load_core(
+        $CPT_Strategy = $this->loader->getShared(
             $CPT_Strategy_class_name,
             array('WP_Query' => $this->wp_query, 'CPT' => $this->cpt_details)
         );
         if ($CPT_Strategy === null) {
-            $CPT_Strategy = \EE_Registry::instance()->load_core(
-                'CPT_Default_Strategy',
+            $CPT_Strategy = $this->loader->getShared(
+                'EE_CPT_Default_Strategy',
                 array('WP_Query' => $this->wp_query, 'CPT' => $this->cpt_details)
             );
         }
@@ -427,7 +461,7 @@ class CptQueryModifier
     public function postsFields($SQL)
     {
         // does this CPT have a meta table ?
-        if ($this->meta_table instanceof \EE_Secondary_Table) {
+        if ($this->meta_table instanceof EE_Secondary_Table) {
             // adds something like ", wp_esp_event_meta.* " to WP Query SELECT statement
             $SQL .= ', ' . $this->meta_table->get_table_name() . '.* ';
         }
@@ -446,7 +480,7 @@ class CptQueryModifier
     public function postsJoin($SQL)
     {
         // does this CPT have a meta table ?
-        if ($this->meta_table instanceof \EE_Secondary_Table) {
+        if ($this->meta_table instanceof EE_Secondary_Table) {
             global $wpdb;
             // adds something like " LEFT JOIN wp_esp_event_meta ON ( wp_esp_event_meta.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
             $SQL .= ' LEFT JOIN '
@@ -468,14 +502,14 @@ class CptQueryModifier
      * thePosts
      *
      * @access public
-     * @param  \WP_Post[] $posts
-     * @return \WP_Post[]
+     * @param  WP_Post[] $posts
+     * @return WP_Post[]
      */
     public function thePosts($posts)
     {
         $CPT_class = $this->cpt_details['class_name'];
         // loop thru posts
-        if (is_array($posts) && $this->model instanceof \EEM_CPT_Base) {
+        if (is_array($posts) && $this->model instanceof EEM_CPT_Base) {
             foreach ($posts as $key => $post) {
                 if ($post->post_type === $this->post_type) {
                     $post->{$CPT_class} = $this->model->instantiate_class_from_post_object($post);
@@ -498,7 +532,7 @@ class CptQueryModifier
         global $post;
         // notice if the cpt is registered with `show_ee_ui` set to false, we take that to mean that the WordPress core ui
         // for interacting with the CPT is desired and there is no EE UI for interacting with the CPT in the admin.
-        if (! $post instanceof \WP_Post
+        if (! $post instanceof WP_Post
             || $post->post_type !== $this->post_type
             || (
                 isset($this->cpt_details['args']['show_ee_ui'])
