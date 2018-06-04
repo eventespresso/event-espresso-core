@@ -80,9 +80,13 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
      */
     public function test_core_class_loaders() {
 		$skip = array(
-			'EE_Admin' => 'messes with other unit tests',
-			'EE_Session' => 'session doesn\'t load during unit tests',
-			'EE_Messages_Template_Defaults' => 'Closure has required arguments'
+            'EE_Admin'                      => 'messes with other unit tests',
+            'EE_Session'                    => 'session doesn\'t load during unit tests',
+            'EE_Messages_Template_Defaults' => 'Closure has required arguments',
+            'EE_CPT_Default_Strategy'       => 'has required arguments',
+            'EE_CPT_Attendee_Strategy'      => 'has required arguments',
+            'EE_CPT_Event_Strategy'         => 'has required arguments',
+            'EE_CPT_Venue_Strategy'         => 'has required arguments',
 		);
 		//loop through and verify the class loader can successfully load the class it is set for
 		foreach ( $this->_dependency_map->class_loaders() as $class => $loader ) {

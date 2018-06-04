@@ -1,7 +1,10 @@
-<?php use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions;
+<?php
+
+use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions;
 use EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * CPT_Strategy
@@ -14,19 +17,14 @@ class EE_CPT_Strategy extends EE_Base
 {
 
     /**
-     *    EE_CPT_Strategy Object
-     *
-     * @private    _instance
-     * @private    protected
+     * @var EE_CPT_Strategy $_instance
      */
     private static $_instance;
 
-
     /**
-     * $CPT - the current page, if it utilizes CPTs
+     * the current page, if it utilizes CPTs
      *
-     * @var    array
-     * @access    protected
+     * @var array $CPT
      */
     protected $CPT;
 
@@ -38,32 +36,27 @@ class EE_CPT_Strategy extends EE_Base
     protected $_CPTs = array();
 
     /**
-     * @var    array $_CPT_taxonomies
-     * @access    protected
+     * @var array $_CPT_taxonomies
      */
     protected $_CPT_taxonomies = array();
 
     /**
-     * @var    array $_CPT_terms
-     * @access    protected
+     * @var array $_CPT_terms
      */
     protected $_CPT_terms = array();
 
     /**
-     * @var    array $_CPT_endpoints
-     * @access    protected
+     * @var array $_CPT_endpoints
      */
     protected $_CPT_endpoints = array();
 
     /**
-     * $CPT_model
-     * @var EEM_Base
-     * @access    protected
+     * @var EEM_Base $CPT_model
      */
     protected $CPT_model;
 
     /**
-     * @var EventEspresso\Core\CPTs\CptQueryModifier
+     * @var EventEspresso\Core\CPTs\CptQueryModifier $query_modifier
      */
     protected $query_modifier;
 
@@ -90,7 +83,6 @@ class EE_CPT_Strategy extends EE_Base
 
 
     /**
-     * @access protected
      * @param CustomPostTypeDefinitions $custom_post_types
      * @param CustomTaxonomyDefinitions $taxonomies
      */
@@ -107,9 +99,6 @@ class EE_CPT_Strategy extends EE_Base
 
 
     /**
-     *    _get_espresso_CPT_endpoints
-     *
-     * @access public
      * @return array
      */
     public function get_CPT_endpoints()
@@ -128,9 +117,8 @@ class EE_CPT_Strategy extends EE_Base
 
 
     /**
-     *    _set_CPT_endpoints - add CPT "slugs" to array of default espresso "pages"
+     * add CPT "slugs" to array of default espresso "pages"
      *
-     * @access private
      * @return array
      */
     private function _set_CPT_endpoints()
@@ -146,14 +134,16 @@ class EE_CPT_Strategy extends EE_Base
 
 
     /**
-     *    pre_get_posts
      * If this query (not just "main" queries (ie, for WP's infamous "loop")) is for an EE CPT, then we want to
      * supercharge the get_posts query to add our EE stuff (like joining to our tables, selecting extra columns, and
      * adding EE objects to the post to facilitate further querying of related data etc)
      *
-     * @access public
      * @param WP_Query $WP_Query
      * @return void
+     * @throws \EE_Error
+     * @throws \InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      */
     public function pre_get_posts($WP_Query)
     {
@@ -175,9 +165,6 @@ class EE_CPT_Strategy extends EE_Base
 
 
     /**
-     *    _set_EE_tags_on_WP_Query
-     *
-     * @access private
      * @param WP_Query $WP_Query
      * @return void
      */
@@ -193,10 +180,11 @@ class EE_CPT_Strategy extends EE_Base
 
 
     /**
-     *    _set_CPT_terms
-     *
-     * @access private
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function _set_CPT_terms()
     {
@@ -212,11 +200,12 @@ class EE_CPT_Strategy extends EE_Base
 
 
     /**
-     *    _set_post_type_for_terms
-     *
-     * @access private
-     * @param $WP_Query
+     * @param WP_Query $WP_Query
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function _set_post_type_for_terms(WP_Query $WP_Query)
     {
@@ -249,9 +238,6 @@ class EE_CPT_Strategy extends EE_Base
 
 
     /**
-     *    _set_paging
-     *
-     * @access public
      * @param WP_Query $WP_Query
      * @return void
      */
@@ -266,7 +252,6 @@ class EE_CPT_Strategy extends EE_Base
 
 
     /**
-     * @access protected
      * @param \WP_Query $WP_Query
      */
     protected function _set_CPT_taxonomies_on_WP_Query(WP_Query $WP_Query)
@@ -280,10 +265,10 @@ class EE_CPT_Strategy extends EE_Base
                     // but which CPT does that correspond to??? hmmm... guess we gotta go looping
                     foreach ($this->_CPTs as $post_type => $CPT) {
                         // verify our CPT has args, is public and has taxonomies set
-                        if (isset($CPT['args'], $CPT['args']['public'])
+                        if (isset($CPT['args']['public'])
                             && $CPT['args']['public']
                             && ! empty($CPT['args']['taxonomies'])
-                            && in_array($CPT_taxonomy, $CPT['args']['taxonomies'])
+                            && in_array($CPT_taxonomy, $CPT['args']['taxonomies'], true)
                         ) {
                             // if so, then add this CPT post_type to the current query's array of post_types'
                             $WP_Query->query_vars['post_type'] = isset($WP_Query->query_vars['post_type'])
@@ -313,8 +298,10 @@ class EE_CPT_Strategy extends EE_Base
 
 
     /**
-     * @access public
      * @param \WP_Query $WP_Query
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _process_WP_Query_post_types(WP_Query $WP_Query)
     {
@@ -344,14 +331,19 @@ class EE_CPT_Strategy extends EE_Base
     /**
      * @param \WP_Query $WP_Query
      * @param string    $post_type
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _generate_CptQueryModifier(WP_Query $WP_Query, $post_type)
     {
-        $this->query_modifier = new EventEspresso\core\CPTs\CptQueryModifier(
-            $post_type,
-            $this->_CPTs[ $post_type ],
-            $WP_Query,
-            EE_Registry::instance()->REQ
+        $this->query_modifier = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\CPTs\CptQueryModifier',
+            array(
+                $post_type,
+                $this->_CPTs[ $post_type ],
+                $WP_Query,
+            )
         );
         $this->_CPT_taxonomies = $this->query_modifier->taxonomies();
     }
@@ -363,7 +355,6 @@ class EE_CPT_Strategy extends EE_Base
      * we need to first inject what looks like one of our shortcodes,
      * so that it can be replaced with the actual M-Mode notice
      *
-     * @access public
      * @return string
      */
     public function inject_EE_shortcode_placeholder()
@@ -375,7 +366,6 @@ class EE_CPT_Strategy extends EE_Base
     /**
      * @deprecated
      * @since  4.8.41
-     * @access public
      * @return void
      */
     public function _possibly_set_ee_request_var()
@@ -387,7 +377,6 @@ class EE_CPT_Strategy extends EE_Base
     /**
      * @deprecated
      * @since  4.8.41
-     * @access public
      * @param  $SQL
      * @return string
      */
@@ -403,7 +392,6 @@ class EE_CPT_Strategy extends EE_Base
     /**
      * @deprecated
      * @since  4.8.41
-     * @access public
      * @param  $SQL
      * @return string
      */
@@ -419,7 +407,6 @@ class EE_CPT_Strategy extends EE_Base
     /**
      * @deprecated
      * @since  4.8.41
-     * @access public
      * @param  \WP_Post[] $posts
      * @return \WP_Post[]
      */
@@ -435,7 +422,6 @@ class EE_CPT_Strategy extends EE_Base
     /**
      * @deprecated
      * @since  4.8.41
-     * @access public
      * @param $url
      * @param $ID
      * @return string
@@ -452,7 +438,6 @@ class EE_CPT_Strategy extends EE_Base
     /**
      * @deprecated
      * @since  4.8.41
-     * @access public
      * @param null $WP_Query
      */
     protected function _do_template_filters($WP_Query = null)
@@ -466,7 +451,6 @@ class EE_CPT_Strategy extends EE_Base
     /**
      * @deprecated
      * @since  4.8.41
-     * @access public
      * @param string $current_template Existing default template path derived for this page call.
      * @return string the path to the full template file.
      */
