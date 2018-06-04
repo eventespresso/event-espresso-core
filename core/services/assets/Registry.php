@@ -179,7 +179,7 @@ class Registry
                 'AHEE__EventEspresso_core_services_assets_Registry__registerStyles__before_style',
                 $style
             );
-            wp_enqueue_style(
+            wp_register_style(
                 $style->handle(),
                 $style->source(),
                 $style->dependencies(),
