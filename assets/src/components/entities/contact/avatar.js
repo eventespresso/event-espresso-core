@@ -9,7 +9,7 @@ const ContactAvatar = ( {
 	avatarHeight,
 	avatarWidth
 } ) => {
-	return (
+	return avatarUrl ? (
 		<div className={ avatarClass + "-image-wrap-div" }>
 			<img
 				className={ avatarClass + "-avatar-img avatar" }
@@ -18,11 +18,13 @@ const ContactAvatar = ( {
 				width={ avatarWidth }
 			/>
 		</div>
+	) : (
+		null
 	);
 };
 
 ContactAvatar.propTypes = {
-	avatarUrl: PropTypes.string.required,
+	avatarUrl: PropTypes.string,
 	avatarClass: PropTypes.string,
 	avatarHeight: PropTypes.number,
 	avatarWidth: PropTypes.number,
