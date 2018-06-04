@@ -2,13 +2,14 @@
  * External dependencies
  */
 import { __ } from '@eventespresso/i18n';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { ContactAvatar } from '@eventespresso/components';
 
-const EventAttendeesList = ( { attendees } ) => {
+export const EventAttendeesList = ( { attendees } ) => {
 	return (
 		<div key="events-attendees-block"
 			 className="event-attendees-block-div" >
@@ -33,5 +34,3 @@ const EventAttendeesList = ( { attendees } ) => {
 		</div>
 	);
 };
-
-export default EventAttendeesList
