@@ -2370,7 +2370,7 @@ class EE_Registration_Config extends EE_Config_Base
         $this->recaptcha_protected_forms = array();
         $this->recaptcha_width = 500;
         $this->default_maximum_number_of_tickets = 10;
-        $this->consent_checkbox_enabled = true;
+        $this->consent_checkbox_enabled = false;
         $this->consent_checkbox_label_text = '';
         $this->gateway_log_lifespan = '7 days';
     }
