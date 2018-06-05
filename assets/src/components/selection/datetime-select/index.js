@@ -8,11 +8,11 @@ import PropTypes from 'prop-types';
 import { __ } from '@eventespresso/i18n';
 
 /**
- * WP dependencies
+ * WordPress dependencies
  */
 import { Placeholder, SelectControl, Spinner } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
-import { Fragment } from '@wordpress/element';
+import { Component, Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -31,26 +31,28 @@ const nowDateAndTime = moment();
  * @param {string} selectLabel The label for the select input.
  * @param {number} selectedDatetimeId  If provided, the id of the datetime to
  *   pre-select.
+ * @param {number} forEventId   ID for Event to retrieve datetimes from
  * @param {boolean} isLoading  Whether or not the selector should start in a
  *                               loading state
  * @return {Function}  A pure component function.
  * @constructor
  */
-export const DatetimeSelect = ( {
-	datetimes,
-	onDatetimeSelect,
-	selectLabel,
-	selectedDatetimeId,
-	isLoading,
-} ) => {
-	if ( isEmpty( datetimes ) ) {
+class DatetimeSelect extends Component
+{
+	constructor() {
+		super( ...arguments );
+		this.placeHolder = this.placeHolder.bind( this );
+	}
+
+	placeHolder() {
+		const { isLoading, selectLabel } = this.props;
 		return (
 			<Fragment>
 				<Placeholder
 					icon="calendar"
-					label={ __( 'DatetimeSelect', 'event_espresso' ) }
+					label={ selectLabel }
 				>
-					{ !isLoading ?
+					{ ! isLoading ?
 						__(
 							'There are no datetimes to select from. You need' +
 							' to create a datetime first.',
@@ -63,17 +65,31 @@ export const DatetimeSelect = ( {
 		);
 	}
 
-	return (
-		<Fragment>
-			<SelectControl
-				label={ selectLabel }
-				value={ selectedDatetimeId }
-				options={ datetimeSelectOptions( datetimes ) }
-				onChange={ ( value ) => onDatetimeSelect( value ) }
-			/>
-		</Fragment>
-	);
-};
+	render() {
+
+		const {
+			datetimes,
+			selectLabel,
+			selectedDatetimeId,
+			onDatetimeSelect,
+		} = this.props;
+
+		if ( isEmpty( datetimes ) ) {
+			return this.placeHolder();
+		}
+
+		return (
+			<Fragment>
+				<SelectControl
+					label={ selectLabel }
+					value={ selectedDatetimeId }
+					options={ datetimeSelectOptions( datetimes ) }
+					onChange={ onDatetimeSelect }
+				/>
+			</Fragment>
+		);
+	}
+}
 
 /**
  * @todo some of these proptypes are likely reusable in various place so we may
@@ -88,6 +104,7 @@ DatetimeSelect.propTypes = {
 	onDatetimeSelect: PropTypes.func,
 	selectLabel: PropTypes.string,
 	selectedDatetimeId: PropTypes.number,
+	forEventId: PropTypes.number,
 	isLoading: PropTypes.bool,
 	attributes: PropTypes.shape( {
 		limit: PropTypes.number,
@@ -104,16 +121,17 @@ DatetimeSelect.propTypes = {
 };
 
 DatetimeSelect.defaultProps = {
+	datetimes: [],
+	selectLabel: __( 'Select Datetime', 'event_espresso' ),
+	selectedDatetimeId: 0,
+	forEventId: 0,
+	isLoading: true,
 	attributes: {
 		limit: 20,
 		orderBy: 'start_date',
 		order: 'desc',
 		showExpired: false,
 	},
-	selectLabel: __( 'Select Datetime', 'event_espresso' ),
-	isLoading: true,
-	selectedDatetimeId: 0,
-	datetimes: [],
 };
 
 /**
@@ -141,17 +159,23 @@ const mapOrderBy = ( orderBy ) => {
  * Builds where conditions for an datetimes endpoint request using provided
  * information.
  *
- * @param {boolean} showExpired  Whether or not to include expired datetimes.
- * @param {string} month         Return datetimes for the given month.  Can be any
- *                                 in any month format recognized by moment.
+ * @param {boolean} showExpired Whether or not to include expired datetimes.
+ * @param {string} month        Return datetimes for the given month.  Can be
+ *                            any in any month format recognized by moment.
+ * @param {number} forEventId   ID for Event to retrieve datetimes from
  * @return {string}             The assembled where conditions.
  */
-const whereConditions = ( { showExpired = true, month = 'none' } ) => {
+const whereConditions = ( {
+	forEventId = 0,
+	showExpired = true,
+	month = 'none',
+} ) => {
+
 	const where = [];
 	const GREATER_AND_EQUAL = encodeURIComponent( '>=' );
 	const LESS_AND_EQUAL = encodeURIComponent( '<=' );
 
-	if ( !showExpired ) {
+	if ( ! showExpired ) {
 		where.push( 'where[DTT_EVT_end**expired][]=>&where[DTT_EVT_end**expired][]=' +
 			nowDateAndTime.local().format() );
 	}
@@ -165,26 +189,34 @@ const whereConditions = ( { showExpired = true, month = 'none' } ) => {
 			'&where[DTT_EVT_end][]=' +
 			moment().month( month ).endOf( 'month' ).local().format() );
 	}
+	if ( parseInt( forEventId ) !== 0 ) {
+		where.push( 'where[Event.EVT_ID]=' + forEventId );
+	}
 	return where.join( '&' );
 };
 
 /**
- * The DatetimeSelect Component wrapped in the `withSelect` higher order component.
- * This subscribes the DatetimeSelect component to the state maintained via the
- * eventespresso/lists store.
+ * The DatetimeSelect Component wrapped in the `withSelect` higher order
+ * component. This subscribes the DatetimeSelect component to the state
+ * maintained via the eventespresso/lists store.
  */
 export default withSelect( ( select, ownProps ) => {
 	const { attributes = DatetimeSelect.defaultProps.attributes } = ownProps;
+	const { selectedDatetimeId, forEventId } = ownProps;
+	attributes.forEventId = forEventId;
 	const { limit, order, orderBy } = attributes;
 	const where = whereConditions( attributes );
-	const { getDatetimes, isRequestingDatetimes } = select( 'eventespresso/lists' );
+	const {
+		getDatetimes,
+		isRequestingDatetimes
+	} = select( 'eventespresso/lists' );
 	const queryArgs = {
 		limit,
 		order,
 		order_by: mapOrderBy( orderBy ),
 	};
 	let queryString = stringify( pickBy( queryArgs,
-		value => !isUndefined( value ),
+		value => ! isUndefined( value ),
 	) );
 
 	if ( where ) {
@@ -193,5 +225,7 @@ export default withSelect( ( select, ownProps ) => {
 	return {
 		datetimes: getDatetimes( queryString ),
 		isLoading: isRequestingDatetimes( queryString ),
+		selectedDatetimeId: selectedDatetimeId,
+		forEventId: forEventId,
 	};
 } )( DatetimeSelect );
