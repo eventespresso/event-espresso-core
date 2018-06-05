@@ -98,7 +98,7 @@ class PrivacySettingsFormHandler extends FormHandler
                                         'default'               => $reg_config->getConsentCheckboxLabelText(),
                                         'html_label_text'       => esc_html__('Consent Text', 'event_espresso'),
                                         'html_help_text'        => esc_html__(
-                                            'Text describing what the registrant is consenting to by submitting their personal data in the registration form.',
+                                            'Text describing what the registrant is consenting to by submitting their personal data in the registration form. To reset to default value, remove all this text and save.',
                                             'event_espresso'
                                         ),
                                         'validation_strategies' => array(new EE_Full_HTML_Validation_Strategy()),
