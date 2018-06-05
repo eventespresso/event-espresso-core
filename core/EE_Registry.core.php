@@ -1454,7 +1454,11 @@ class EE_Registry implements ResettableInterface
     public function getAddon($class_name)
     {
         $class_name = str_replace('\\', '_', $class_name);
-        return $this->addons->{$class_name};
+        if (isset($this->addons->{$class_name})) {
+            return $this->addons->{$class_name};
+        } else {
+            return null;
+        }
     }
 
 
