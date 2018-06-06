@@ -1,9 +1,9 @@
 {
-  "components.js": "ee-components.bba02b415268288cd27b.dist.js",
-  "data-stores.js": "ee-data-stores.01e1a0773f04d037c1fa.dist.js",
-  "eejs.js": "ee-eejs.fa4c1e5cb44c64ce3f9f.dist.js",
-  "manifest.js": "ee-manifest.943039ef4ea4d65fdbb9.dist.js",
-  "vendor.js": "ee-vendor.ab1e9a64d17ed6c435c3.dist.js",
-  "wp-plugins-page.css": "ee-wp-plugins-page.155d92575cc957df9ae2.dist.css",
-  "wp-plugins-page.js": "ee-wp-plugins-page.1a6786b0b8bf3a64846d.dist.js"
+  "components.js": "ee-components.f0b0d74007761a1e0c6d.dist.js",
+  "data-stores.js": "ee-data-stores.7cbf939209f1378b61ad.dist.js",
+  "eejs.js": "ee-eejs.079eec177a6d0cb54b86.dist.js",
+  "manifest.js": "ee-manifest.3b66c2f77d3b01c1b09a.dist.js",
+  "vendor.js": "ee-vendor.a7c50608201c56d1424c.dist.js",
+  "wp-plugins-page.css": "ee-wp-plugins-page.6bf5b0c4985bf9cc730a.dist.css",
+  "wp-plugins-page.js": "ee-wp-plugins-page.955c372519f507d64cb7.dist.js"
 }
