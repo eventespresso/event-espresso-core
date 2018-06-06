@@ -23,18 +23,17 @@ const nowDateAndTime = moment();
 
 /**
  * DatetimeSelect component.
- * A react component for an datetime selector.
+ * Generates a datetime select input.
  *
- * @param {Array} datetimes  An empty array or array of Datetime Entities. See
- *                          prop-types for shape.
- * @param {function} onDatetimeSelect  The callback on selection of datetime.
- * @param {string} selectLabel The label for the select input.
- * @param {number} selectedDatetimeId  If provided, the id of the datetime to
- *   pre-select.
- * @param {number} forEventId   ID for Event to retrieve datetimes from
- * @param {boolean} isLoading  Whether or not the selector should start in a
- *                               loading state
- * @return {Function}  A pure component function.
+ * @param {Array} datetimes            An empty array or array of Datetime
+ *                                        Entities. See prop-types for shape.
+ * @param {function} onDatetimeSelect    The callback on selection of datetime.
+ * @param {string} selectLabel            The label for the select input.
+ * @param {number} selectedDatetimeId    The ID of the datetime to pre-select.
+ * @param {number} forEventId        ID for Event to retrieve datetimes from
+ * @param {boolean} isLoading            Whether or not the selector should
+ *                                        start in a loading state
+ * @return {Function}                    A pure component function.
  * @constructor
  */
 class DatetimeSelect extends Component {
@@ -65,18 +64,24 @@ class DatetimeSelect extends Component {
 			selectLabel,
 			selectedDatetimeId,
 			onDatetimeSelect,
+			addAllOption,
+			addAllOptionLabel,
 		} = this.props;
-
 		if ( isEmpty( datetimes ) ) {
 			return this.placeHolder();
 		}
-
 		return (
 			<Fragment>
 				<SelectControl
 					label={ selectLabel }
 					value={ selectedDatetimeId }
-					options={ datetimeSelectOptions( datetimes ) }
+					options={
+						datetimeSelectOptions(
+							datetimes,
+							addAllOption,
+							addAllOptionLabel,
+						)
+					}
 					onChange={ onDatetimeSelect }
 				/>
 			</Fragment>
@@ -99,6 +104,8 @@ DatetimeSelect.propTypes = {
 	selectedDatetimeId: PropTypes.number,
 	forEventId: PropTypes.number,
 	isLoading: PropTypes.bool,
+	addAllOption: PropTypes.bool,
+	addAllOptionLabel: PropTypes.string,
 	attributes: PropTypes.shape( {
 		limit: PropTypes.number,
 		orderBy: PropTypes.oneOf( [
@@ -119,6 +126,8 @@ DatetimeSelect.defaultProps = {
 	selectedDatetimeId: 0,
 	forEventId: 0,
 	isLoading: true,
+	addAllOption: true,
+	addAllOptionLabel: __( 'All Datetimes', 'event_espresso' ),
 	attributes: {
 		limit: 20,
 		orderBy: 'start_date',
@@ -194,7 +203,12 @@ const whereConditions = ( {
  */
 export default withSelect( ( select, ownProps ) => {
 	const { attributes = DatetimeSelect.defaultProps.attributes } = ownProps;
-	const { selectedDatetimeId, forEventId } = ownProps;
+	const {
+		selectedDatetimeId,
+		forEventId,
+		addAllOption,
+		addAllOptionLabel,
+	} = ownProps;
 	attributes.forEventId = forEventId;
 	const { limit, order, orderBy } = attributes;
 	const where = whereConditions( attributes );
@@ -210,7 +224,6 @@ export default withSelect( ( select, ownProps ) => {
 	let queryString = stringify( pickBy( queryArgs,
 		value => ! isUndefined( value ),
 	) );
-
 	if ( where ) {
 		queryString += '&' + where;
 	}
@@ -219,5 +232,7 @@ export default withSelect( ( select, ownProps ) => {
 		isLoading: isRequestingDatetimes( queryString ),
 		selectedDatetimeId: selectedDatetimeId,
 		forEventId: forEventId,
+		addAllOption: addAllOption,
+		addAllOptionLabel: addAllOptionLabel,
 	};
 } )( DatetimeSelect );
