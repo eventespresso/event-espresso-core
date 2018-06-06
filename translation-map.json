@@ -1,10 +1,4 @@
 {
-  "components": [
-    "Limit",
-    "EventSelect",
-    "There are no events to select from. You need to create an event first.",
-    "Select Event"
-  ],
   "ee-wp-plugins-page": [
     "Do you have a moment to share why you are deactivating Event Espresso?",
     "Sure I'll help",
@@ -18,5 +12,14 @@
     "The provided entity (%s) does not have the given property (%s)",
     "The provided value is not an array.",
     "The provided items must not be empty"
+  ],
+  "components": [
+    "Limit",
+    "EventSelect",
+    "There are no events to select from. You need to create an event first.",
+    "Select Event",
+    null,
+    "Select Datetime",
+    "All Datetimes"
   ]
 }
