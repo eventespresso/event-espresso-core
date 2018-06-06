@@ -11,7 +11,7 @@ import { __ } from '@eventespresso/i18n';
 /**
  * Internal dependencies
  */
-import EventAttendees from './edit';
+import EventAttendeesEditor from './edit';
 import './style.css';
 
 registerBlockType(
@@ -38,31 +38,31 @@ registerBlockType(
 			// eventId, datetimeId, ticketId, status, showGravatar, displayOnArchives
 			eventId: {
 				type: 'number',
-				'default': 0,
+				default: 0,
 			},
 			datetimeId: {
 				type: 'number',
-				'default': 0,
+				default: 0,
 			},
 			ticketId: {
 				type: 'number',
-				'default': 0,
+				default: 0,
 			},
 			status: {
 				type: 'string',
-				'default': 'RAP',
+				default: 'RAP',
 			},
 			showGravatar: {
 				type: 'boolean',
-				'default': false,
+				default: false,
 			},
 			displayOnArchives: {
 				type: 'boolean',
-				'default': false,
+				default: false,
 			},
 		},
 
-		edit: EventAttendees,
+		edit: EventAttendeesEditor,
 
 		save() {
 			return null;
