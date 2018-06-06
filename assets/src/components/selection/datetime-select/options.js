@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { reduce } from 'lodash';
-import { __ } from '@eventespresso/i18n';
 
 export const EE_OPTION_DATETIME_SELECT_ALL = 'ALL_DATETIMES';
 
