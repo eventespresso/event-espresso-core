@@ -262,21 +262,6 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
 
 
     /**
-     * @param string $handle
-     * @param string $type
-     * @return mixed|null
-     * @since $VID:$
-     */
-    public function getAsset($handle, $type)
-    {
-        if ($this->assets->hasAssetOfType($handle, $type)) {
-            return $this->assets->getAssetOfType($handle, $type);
-        }
-        return null;
-    }
-
-
-    /**
      * @return JavascriptAsset|null
      */
     public function getEditorScript()
