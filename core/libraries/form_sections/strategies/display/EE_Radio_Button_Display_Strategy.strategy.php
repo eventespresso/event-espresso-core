@@ -46,6 +46,6 @@ class EE_Radio_Button_Display_Strategy extends EE_Compound_Input_Display_Strateg
         }
         $html .= EEH_HTML::div('', '', 'clear-float');
         $html .= EEH_HTML::divx();
-        return $html;
+        return apply_filters('FHEE__EE_Radio_Button_Display_Strategy__display',$html, $this, $this->_input);
     }
 }
