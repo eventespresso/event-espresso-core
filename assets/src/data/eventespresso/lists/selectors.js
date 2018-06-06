@@ -85,3 +85,47 @@ export function getEvents( state, queryString ) {
 export function isRequestingEvents( state, queryString ) {
 	return isResolving( 'getEvents', queryString );
 }
+
+/**
+ * Selector specific to datetimes.
+ *
+ * @param {Object} state  Data state.
+ * @param {string} queryString The query string for the request
+ * @return {Array} An array of event entities for the given model and query.
+ */
+export function getDatetimes( state, queryString ) {
+	return getItems( state, 'datetime', queryString );
+}
+
+/**
+ * Selector specific to datetimes for checking if requesting datetimes.
+ *
+ * @param {Object} state Data state.
+ * @param {string} queryString The query string for the request
+ * @return {boolean} Whether items are being requested or not.
+ */
+export function isRequestingDatetimes( state, queryString ) {
+	return isResolving( 'getDatetimes', queryString );
+}
+
+/**
+ * Selector specific to tickets.
+ *
+ * @param {Object} state  Data state.
+ * @param {string} queryString The query string for the request
+ * @return {Array} An array of event entities for the given model and query.
+ */
+export function getTickets( state, queryString ) {
+	return getItems( state, 'ticket', queryString );
+}
+
+/**
+ * Selector specific to tickets for checking if requesting tickets.
+ *
+ * @param {Object} state Data state.
+ * @param {string} queryString The query string for the request
+ * @return {boolean} Whether items are being requested or not.
+ */
+export function isRequestingTickets( state, queryString ) {
+	return isResolving( 'getTickets', queryString );
+}

@@ -353,6 +353,13 @@ class EE_Dependency_Map
         if (strpos($class_name, 'EEM_') === 0) {
             return 'load_model';
         }
+        // EE_CPT_*_Strategy classes like EE_CPT_Event_Strategy, EE_CPT_Venue_Strategy, etc
+        // perform strpos() first to avoid loading regex every time we load a class
+        if (strpos($class_name, 'EE_CPT_') === 0
+            && preg_match('/^EE_CPT_([a-zA-Z]+)_Strategy$/', $class_name)
+        ) {
+            return 'load_core';
+        }
         $class_name = $this->getFqnForAlias($class_name);
         return isset($this->_class_loaders[ $class_name ]) ? $this->_class_loaders[ $class_name ] : '';
     }
@@ -753,6 +760,14 @@ class EE_Dependency_Map
                 'EEM_Answer' => EE_Dependency_Map::load_from_cache,
                 'EEM_Question' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\CPTs\CptQueryModifier' => array(
+                null,
+                null,
+                null,
+                'EE_Request_Handler'                          => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+            ),
             'EventEspresso\core\services\editor\BlockRegistrationManager'                                                 => array(
                 'EventEspresso\core\services\assets\BlockAssetManagerCollection' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\entities\editor\BlockCollection'      => EE_Dependency_Map::load_from_cache,
@@ -880,7 +895,7 @@ class EE_Dependency_Map
             },
             'EE_Admin_Config'                              => function () {
                 return EE_Config::instance()->admin;
-            }
+            },
         );
     }
 
