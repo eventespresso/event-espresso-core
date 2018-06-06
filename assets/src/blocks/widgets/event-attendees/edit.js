@@ -10,7 +10,11 @@ import { Placeholder, Spinner, ToggleControl } from '@wordpress/components';
  * External dependencies
  */
 import { __ } from '@eventespresso/i18n';
-import { EventSelect } from '@eventespresso/components';
+import {
+	DatetimeSelect,
+	EventSelect,
+	TicketSelect
+} from '@eventespresso/components';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 
@@ -19,39 +23,59 @@ import { isEmpty } from 'lodash';
  */
 import { EventAttendeesList } from './list';
 
-export class EventAttendees extends Component
-{
+class EventAttendeesEditor extends Component {
 	constructor() {
 		super( ...arguments );
 		this.setEventId = this.setEventId.bind( this );
 		this.setDatetimeId = this.setDatetimeId.bind( this );
 		this.setTicketId = this.setTicketId.bind( this );
+		this.setStatus = this.setStatus.bind( this );
 		this.toggleShowGravatar = this.toggleShowGravatar.bind( this );
-		this.toggleDisplayOnArchives = this.toggleDisplayOnArchives.bind( this );
+		this.toggleDisplayOnArchives
+			= this.toggleDisplayOnArchives.bind( this );
+	}
+
+	setEventId( eventId ) {
+		this.props.setAttributes( { eventId: parseInt( eventId ) } );
+	}
+
+	setDatetimeId( datetimeId ) {
+		this.props.setAttributes( { datetimeId: parseInt( datetimeId ) } );
+	}
+
+	setTicketId( ticketId ) {
+		this.props.setAttributes( { ticketId: parseInt( ticketId ) } );
+	}
+
+	setStatus() {
+		this.props.setAttributes( { status: status } );
+	}
+
+	toggleShowGravatar( showGravatar ) {
+		this.props.setAttributes( { showGravatar: ! showGravatar } );
+	}
+
+	toggleDisplayOnArchives( displayOnArchives ) {
+		this.props.setAttributes( { displayOnArchives: ! displayOnArchives } );
 	}
 
 	getPlaceHolderContent() {
-		const { isLoading, attributes } = this.props;
-
-		if ( ! isLoading && attributes.eventId ) {
-			return <p>
-				{
-					__(
-						'There are no attendees for the selected Event yet.',
-						'event_espresso',
-					)
-				}
-			</p>;
+		if ( ! this.props.isLoading && this.props.attributes.eventId ) {
+			return (
+				<p> { __( 'No attendees... yet!', 'event_espresso' ) } </p>
+			);
 		}
-		if ( ! isLoading && ! attributes.eventId ) {
-			return <p>
-				{ __(
-					'Please select an event to display attendees for.',
-					'event_espresso'
-				) }
-			</p>;
+		if ( ! this.props.isLoading && ! this.props.attributes.eventId ) {
+			return (
+				<p>
+					{ __(
+						'Please select an event to display attendees for.',
+						'event_espresso'
+					) }
+				</p>
+			);
 		}
-		return <Spinner/>;
+		return <Spinner />;
 	}
 
 	getNoAttendeesContent() {
@@ -68,53 +92,44 @@ export class EventAttendees extends Component
 	}
 
 	getAttendeesDisplay() {
-		const { attendees } = this.props;
 		return (
-			<EventAttendeesList attendees={ attendees }/>
+			<EventAttendeesList attendees={ this.props.attendees }/>
 		);
-	}
-
-	setEventId( eventId ) {
-		const { setAttributes } = this.props;
-		setAttributes( { eventId: parseInt( eventId ) } );
-	}
-
-	setDatetimeId() {
-		const { setAttributes } = this.props;
-		const { datetimeId } = this.props.attributes;
-		setAttributes( { eventId: parseInt( datetimeId ) } );
-	}
-
-	setTicketId() {
-		const { setAttributes } = this.props;
-		const { ticketId } = this.props.attributes;
-		setAttributes( { eventId: parseInt( ticketId ) } );
-	}
-	/*
-		status: attributes.status,
-	*/
-
-	toggleShowGravatar() {
-		const { setAttributes } = this.props;
-		const { showGravatar } = this.props.attributes;
-		setAttributes( { showGravatar: ! showGravatar } );
-	}
-
-	toggleDisplayOnArchives() {
-		const { setAttributes } = this.props;
-		const { displayOnArchives } = this.props.attributes;
-		setAttributes( { displayOnArchives: ! displayOnArchives } );
 	}
 
 	render() {
 		const { attendees, attributes } = this.props;
+
 		const inspectorControls = (
 			<InspectorControls>
 
 				<EventSelect
 					key="attendees-event-select"
-					eventId={ attributes.eventId }
+					selectedEventId={ attributes.eventId }
 					onEventSelect={ this.setEventId }
+				/>
+
+				<DatetimeSelect
+					key="attendees-datetime-select"
+					selectedDatetimeId={ attributes.datetimeId }
+					forEventId={ attributes.eventId }
+					onDatetimeSelect={ this.setDatetimeId }
+					addAllOptionLabel={
+						__( 'Show Attendees for All Datetimes',
+							'event_espresso'
+						)
+					}
+				/>
+
+				<TicketSelect
+					key="attendees-ticket-select"
+					selectedTicketId={ attributes.ticketId }
+					forEventId={ attributes.eventId }
+					forDatetimeId={ attributes.datetimeId }
+					onTicketSelect={ this.setTicketId }
+					addAllOptionLabel={
+						__( 'Show Attendees for All Tickets', 'event_espresso' )
+					}
 				/>
 
 				<ToggleControl
@@ -142,46 +157,55 @@ export class EventAttendees extends Component
 	}
 }
 
-EventAttendees.propTypes = {
+EventAttendeesEditor.propTypes = {
 	attendees: PropTypes.array,
 	isLoading: PropTypes.bool,
 	attributes: PropTypes.shape( {
 		eventId: PropTypes.number,
+		datetimeId: PropTypes.number,
+		ticketId: PropTypes.number,
+		status: PropTypes.string,
+		showGravatar: PropTypes.bool,
+		displayOnArchives: PropTypes.bool,
 	} ),
 };
 
-EventAttendees.defaultProps = {
+EventAttendeesEditor.defaultProps = {
 	attendees: [],
 	isLoading: true,
 	attributes: {
 		eventId: 0,
+		datetimeId: 0,
+		ticketId: 0,
+		status: 'RAP',
+		showGravatar: PropTypes.bool,
+		displayOnArchives: PropTypes.bool,
 	},
 };
 
 export default withSelect( ( select, ownProps ) => {
 	const { attributes } = ownProps;
-	const { eventId, datetimeId, ticketId, status, showGravatar } = attributes;
+	let { eventId, datetimeId, ticketId, status, showGravatar } = attributes;
 	let queryParams = [];
-	console.log( 'attributes: ');
-	console.log( attributes );
-	if ( parseInt( ticketId ) !== 0 ) {
-		console.log( ' > SET ticketId: ' + ticketId );
+	ticketId = parseInt( ticketId );
+	datetimeId = parseInt( datetimeId );
+	eventId = parseInt( eventId );
+	if ( ticketId !== 0 && ! isNaN( ticketId ) ) {
 		queryParams.push( `[Registration.Ticket.TKT_ID]=${ ticketId }` );
-	} else if ( parseInt( datetimeId ) !== 0 ) {
-		console.log( ' > SET datetimeId: ' + datetimeId );
+	} else if ( datetimeId !== 0 && ! isNaN( datetimeId ) ) {
 		queryParams.push( `[Registration.Ticket.Datetime.DTT_ID]=${ datetimeId }` );
-	} else if ( parseInt( eventId ) !== 0 ) {
-		console.log( ' > SET eventId: ' + eventId );
+	} else if ( eventId !== 0 && ! isNaN( eventId ) ) {
 		queryParams.push( `[Registration.EVT_ID]=${ eventId }` );
 	}
 	if ( status !== '' ) {
-		queryParams.push( `[Registration.STS_ID]=${ status }`);
+		queryParams.push( `[Registration.STS_ID]=${ status }` );
 	}
 	if ( showGravatar === true ) {
-		queryParams.push( 'calculate=userAvatar');
+		queryParams.push( 'calculate=userAvatar' );
 	}
 	if ( ! isEmpty( queryParams ) ) {
 		const queryString = 'where' + queryParams.join( '&' );
+		// console.log( '    EventAttendees > withSelect() queryString = ' + queryString );
 		const { getItems, isRequestingItems } = select( 'eventespresso/lists' );
 		return {
 			attendees: getItems( 'attendee', queryString ),
@@ -192,4 +216,4 @@ export default withSelect( ( select, ownProps ) => {
 		attendees: [],
 		isLoading: false,
 	};
-} )( EventAttendees );
+} )( EventAttendeesEditor );
