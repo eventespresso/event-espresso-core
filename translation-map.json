@@ -1,7 +1,37 @@
 {
+  "components": [
+    "Limit",
+    "EventSelect",
+    "There are no events to select from. You need to create an event first.",
+    "Select Event"
+  ],
   "ee-wp-plugins-page": [
     "Do you have a moment to share why you are deactivating Event Espresso?",
     "Sure I'll help",
     "Skip"
+  ],
+  "eventespresso-data-stores": [
+    null,
+    "The given modelName (%s) does not exist in the state.",
+    "The provided array of entities must not be empty",
+    null,
+    "The provided entity (%s) does not have the given property (%s)",
+    "The provided value is not an array.",
+    "The provided items must not be empty"
+  ],
+  "eventespresso-core-blocks": [
+    "Event Attendees",
+    "Displays a list of people that have registered for the specified event",
+    "event",
+    "attendees",
+    "list",
+    "No attendees... yet!",
+    "Please select an event to display attendees for.",
+    "Event Attendees Block",
+    "Show Attendees for All Datetimes",
+    "Show Attendees for All Tickets",
+    "Display Gravatar",
+    "Display on Archives",
+    "Event Attendees"
   ]
 }

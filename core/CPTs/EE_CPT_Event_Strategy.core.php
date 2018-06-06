@@ -1,30 +1,27 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  *EE_CPT_Event_Strategy
  *
- * @package               Event Espresso
- * @subpackage            /core/CPTs/EE_CPT_Event_Strategy.core.php
- * @author                Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  /core/CPTs/EE_CPT_Event_Strategy.core.php
+ * @author      Brent Christensen
  */
 class EE_CPT_Event_Strategy
 {
 
     /**
-     * $CPT - the current page, if it utilizes CPTs
+     * the current page, if it utilizes CPTs
      *
-     * @var    object
-     * @access    protected
+     * @var object $CPT
      */
-    protected $CPT = null;
+    protected $CPT;
 
 
     /**
-     *    class constructor
-     *
-     * @access    public
      * @param WP_Query $wp_query
      * @param array    $CPT
      */
@@ -52,9 +49,9 @@ class EE_CPT_Event_Strategy
         if ($WP_Query instanceof WP_Query) {
             $WP_Query->is_espresso_event_single = is_singular()
                                                   && isset($WP_Query->query->post_type)
-                                                  && $WP_Query->query->post_type == 'espresso_events';
-            $WP_Query->is_espresso_event_archive = is_post_type_archive('espresso_events') ? true : false;
-            $WP_Query->is_espresso_event_taxonomy = is_tax('espresso_event_categories') ? true : false;
+                                                  && $WP_Query->query->post_type === 'espresso_events';
+            $WP_Query->is_espresso_event_archive = is_post_type_archive('espresso_events');
+            $WP_Query->is_espresso_event_taxonomy = is_tax('espresso_event_categories');
         }
     }
 
@@ -72,6 +69,18 @@ class EE_CPT_Event_Strategy
         // add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
         add_filter('posts_orderby', array($this, 'posts_orderby'), 1, 2);
         add_filter('posts_groupby', array($this, 'posts_groupby'), 1, 2);
+        add_action('posts_selection', array($this, 'remove_filters'));
+    }
+
+
+    /**
+     * public access to _remove_filters()
+     *
+     * @since $VID:$
+     */
+    public function remove_filters()
+    {
+        $this->_remove_filters();
     }
 
 
@@ -88,16 +97,18 @@ class EE_CPT_Event_Strategy
         // remove_filter( 'the_posts', array( $this, 'the_posts' ), 1 );
         remove_filter('posts_orderby', array($this, 'posts_orderby'), 1);
         remove_filter('posts_groupby', array($this, 'posts_groupby'), 1);
+        remove_action('posts_selection', array($this, 'remove_filters'));
     }
 
 
     /**
-     *    posts_fields
-     *
-     * @access    public
-     * @param          $SQL
+     * @param string   $SQL
      * @param WP_Query $wp_query
      * @return    string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function posts_fields($SQL, WP_Query $wp_query)
     {
@@ -113,7 +124,9 @@ class EE_CPT_Event_Strategy
             $SQL .= ', ' . EEM_Datetime::instance()->table() . '.* ';
             if ($wp_query->is_espresso_event_archive || $wp_query->is_espresso_event_taxonomy) {
                 // because we only want to retrieve the next upcoming datetime for each event:
-                // add something like ", MIN( wp_esp_datetime.DTT_EVT_start ) as event_start_date " to WP Query SELECT statement
+                // add something like:
+                // ", MIN( wp_esp_datetime.DTT_EVT_start ) as event_start_date "
+                // to WP Query SELECT statement
                 $SQL .= ', MIN( ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start ) as event_start_date ';
             }
         }
@@ -122,13 +135,13 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     *    posts_join
-     *
-     * @access    public
-     * @param          $SQL
+     * @param string   $SQL
      * @param WP_Query $wp_query
-     * @internal  param \WP_Query $WP_Query
-     * @return    string
+     * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function posts_join($SQL, WP_Query $wp_query)
     {
@@ -140,7 +153,9 @@ class EE_CPT_Event_Strategy
                 || $wp_query->is_espresso_event_taxonomy
             )
         ) {
-            // adds something like " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
+            // adds something like:
+            // " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) "
+            // to WP Query JOIN statement
             $SQL .= ' INNER JOIN ' . EEM_Datetime::instance()->table() . ' ON ( ' . EEM_Event::instance()->table()
                     . '.ID = ' . EEM_Datetime::instance()->table() . '.'
                     . EEM_Event::instance()->primary_key_name() . ' ) ';
@@ -150,12 +165,13 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     *    posts_where
-     *
-     * @access    public
-     * @param          $SQL
+     * @param string   $SQL
      * @param WP_Query $wp_query
-     * @return    string
+     * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function posts_where($SQL, WP_Query $wp_query)
     {
@@ -179,12 +195,9 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     *    posts_orderby
-     *
-     * @access    public
-     * @param    string   $SQL
-     * @param    WP_Query $wp_query
-     * @return    string
+     * @param string   $SQL
+     * @param WP_Query $wp_query
+     * @return string
      */
     public function posts_orderby($SQL, WP_Query $wp_query)
     {
@@ -202,12 +215,9 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     *    posts_groupby
-     *
-     * @access    public
-     * @param          $SQL
+     * @param string   $SQL
      * @param WP_Query $wp_query
-     * @return    string
+     * @return string
      */
     public function posts_groupby($SQL, WP_Query $wp_query)
     {
@@ -219,7 +229,8 @@ class EE_CPT_Event_Strategy
             )
         ) {
             // TODO: add event list option for displaying ALL datetimes in event list or only primary datetime (default)
-            // we're joining to the datetimes table, where there can be MANY datetimes for a single event, but we want to only show each event only once
+            // we're joining to the datetimes table, where there can be MANY datetimes for a single event,
+            // but we want to only show each event only once
             // (whereas if we didn't group them by the post's ID, then we would end up with many repeats)
             global $wpdb;
             $SQL = $wpdb->posts . '.ID ';
@@ -229,12 +240,9 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     *    the_posts
-     *
-     * @access    public
-     * @param          $posts
+     * @param array    $posts
      * @param WP_Query $wp_query
-     * @return    array
+     * @return array
      */
     public function the_posts($posts, WP_Query $wp_query)
     {
@@ -243,9 +251,6 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     *    get_EE_post_type_metadata
-     *
-     * @access    public
      * @param null $meta_value
      * @param      $post_id
      * @param      $meta_key

@@ -4,7 +4,7 @@ exports[`EventSelect with 2 events should render and match snapshot 1`] = `
 <React.Fragment>
   <_class
     label="Select Event"
-    onChange={[Function]}
+    onChange={[MockFunction]}
     options={
       Array [
         Object {

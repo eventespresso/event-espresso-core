@@ -1,9 +1,9 @@
 {
-  "components.js": "ee-components.cfe5cca2975cb6f4e8f2.dist.js",
-  "data-stores.js": "ee-data-stores.37c3681d948ca4d9d79b.dist.js",
+  "components.js": "ee-components.1cfe19bf252b7c6d2fcb.dist.js",
+  "data-stores.js": "ee-data-stores.7cbf939209f1378b61ad.dist.js",
   "eejs.js": "ee-eejs.079eec177a6d0cb54b86.dist.js",
-  "eventespresso-core-blocks.css": "ee-eventespresso-core-blocks.021bebea4e2f5d4c9c19.dist.css",
-  "eventespresso-core-blocks.js": "ee-eventespresso-core-blocks.afd18f68b90a3ea1d648.dist.js",
+  "eventespresso-core-blocks.css": "ee-eventespresso-core-blocks.033e69672d82f0b5a77e.dist.css",
+  "eventespresso-core-blocks.js": "ee-eventespresso-core-blocks.c315f07f86607cfe2463.dist.js",
   "manifest.js": "ee-manifest.3b66c2f77d3b01c1b09a.dist.js",
   "vendor.js": "ee-vendor.a7c50608201c56d1424c.dist.js",
   "wp-plugins-page.css": "ee-wp-plugins-page.6bf5b0c4985bf9cc730a.dist.css",
