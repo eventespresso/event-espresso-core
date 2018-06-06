@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { __ } from '@eventespresso/i18n';
-import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,8 +10,7 @@ import { ContactAvatar } from '@eventespresso/components';
 
 export const EventAttendeesList = ( { attendees } ) => {
 	return (
-		<div key="events-attendees-block"
-			 className="event-attendees-block-div" >
+		<div key="events-attendees-block" className="event-attendees-block-div">
 			<h3>{ __( 'Event Attendees', 'event_espresso' ) }</h3>
 			<ul className="event-attendees-ul">
 				{ attendees.map( ( attendee, index ) => {
@@ -20,7 +18,9 @@ export const EventAttendeesList = ( { attendees } ) => {
 						<li key={ index } className="event-attendee-li">
 							<p>
 								<ContactAvatar
-									avatarUrl={ attendee._calculated_fields.userAvatar }
+									avatarUrl={
+										attendee._calculated_fields.userAvatar
+									}
 									avatarClass={ 'event-attendee' }
 								/>
 								<span className="event-attendee-name-span">
