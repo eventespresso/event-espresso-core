@@ -1199,7 +1199,8 @@ final class EE_System implements ResettableInterface
         );
         $rewrite_rules->flushRewriteRules();
         add_action('admin_bar_init', array($this, 'addEspressoToolbar'));
-        if ($this->request->isAjax() && $this->maintenance_mode->models_can_query()) {
+        if (($this->request->isAjax() || $this->request->isAdmin())
+            && $this->maintenance_mode->models_can_query()) {
             $this->loader->getShared('EventEspresso\core\services\privacy\export\PersonalDataExporterManager');
             $this->loader->getShared('EventEspresso\core\services\privacy\erasure\PersonalDataEraserManager');
         }
