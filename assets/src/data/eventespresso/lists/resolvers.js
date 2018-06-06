@@ -37,3 +37,27 @@ export async function* getItems( state, modelName, queryString ) {
 export function getEvents( state, queryString ) {
 	return getItems( state, 'event', queryString );
 }
+
+/**
+ * Resolver for datetime entities.
+ *
+ * @param {Object} state Data in state.
+ * @param {string} queryString Additional query string parameters passed on to
+ *   the REST request.
+ * @return {IterableIterator<*>} A async iterable.
+ */
+export function getDatetimes( state, queryString ) {
+	return getItems( state, 'datetime', queryString );
+}
+
+/**
+ * Resolver for ticket entities.
+ *
+ * @param {Object} state Data in state.
+ * @param {string} queryString Additional query string parameters passed on to
+ *   the REST request.
+ * @return {IterableIterator<*>} A async iterable.
+ */
+export function getTickets( state, queryString ) {
+	return getItems( state, 'ticket', queryString );
+}
