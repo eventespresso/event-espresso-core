@@ -38,11 +38,6 @@ const nowDateAndTime = moment();
  * @constructor
  */
 class DatetimeSelect extends Component {
-	constructor() {
-		super( ...arguments );
-		this.placeHolder = this.placeHolder.bind( this );
-	}
-
 	placeHolder() {
 		const { isLoading, selectLabel } = this.props;
 		return (
