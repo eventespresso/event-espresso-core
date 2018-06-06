@@ -3,7 +3,13 @@
     "Limit",
     "EventSelect",
     "There are no events to select from. You need to create an event first.",
-    "Select Event"
+    "Select Event",
+    null,
+    "Select Datetime",
+    "All Datetimes",
+    null,
+    "Select Ticket",
+    "All Tickets"
   ],
   "ee-wp-plugins-page": [
     "Do you have a moment to share why you are deactivating Event Espresso?",
