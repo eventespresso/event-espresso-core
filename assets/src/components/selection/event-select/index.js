@@ -68,7 +68,7 @@ export const EventSelect = ( {
 				label={ selectLabel }
 				value={ selectedEventId }
 				options={ buildEventOptions( events ) }
-				onChange={ ( value ) => onEventSelect( value ) }
+				onChange={ onEventSelect }
 			/>
 		</Fragment>
 	);
