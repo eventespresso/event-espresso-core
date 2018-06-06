@@ -112,7 +112,7 @@ class EventAttendees extends Block
             $convert = $this->getAttributesMap();
             if (isset($convert[ $attribute ])) {
                 $sanitize = $convert[ $attribute ]['sanitize'];
-                if($sanitize === 'bool') {
+                if ($sanitize === 'bool') {
                     $attributes[ $convert[ $attribute ]['attribute'] ] = filter_var(
                         $value,
                         FILTER_VALIDATE_BOOLEAN
