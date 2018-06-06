@@ -37,8 +37,7 @@ const nowDateAndTime = moment();
  * @return {Function}  A pure component function.
  * @constructor
  */
-class DatetimeSelect extends Component
-{
+class DatetimeSelect extends Component {
 	constructor() {
 		super( ...arguments );
 		this.placeHolder = this.placeHolder.bind( this );
@@ -58,7 +57,7 @@ class DatetimeSelect extends Component
 							' to create a datetime first.',
 							'event_espresso',
 						) :
-						<Spinner/>
+						<Spinner />
 					}
 				</Placeholder>
 			</Fragment>
@@ -66,7 +65,6 @@ class DatetimeSelect extends Component
 	}
 
 	render() {
-
 		const {
 			datetimes,
 			selectLabel,
@@ -148,7 +146,7 @@ DatetimeSelect.defaultProps = {
 const mapOrderBy = ( orderBy ) => {
 	const orderByMap = {
 		start_date: 'DTT_EVT_start',
-		end_date: 'DTT_EVT_end'
+		end_date: 'DTT_EVT_end',
 	};
 	return isUndefined( orderByMap[ orderBy ] ) ?
 		orderBy :
@@ -170,7 +168,6 @@ const whereConditions = ( {
 	showExpired = true,
 	month = 'none',
 } ) => {
-
 	const where = [];
 	const GREATER_AND_EQUAL = encodeURIComponent( '>=' );
 	const LESS_AND_EQUAL = encodeURIComponent( '<=' );
@@ -208,7 +205,7 @@ export default withSelect( ( select, ownProps ) => {
 	const where = whereConditions( attributes );
 	const {
 		getDatetimes,
-		isRequestingDatetimes
+		isRequestingDatetimes,
 	} = select( 'eventespresso/lists' );
 	const queryArgs = {
 		limit,
