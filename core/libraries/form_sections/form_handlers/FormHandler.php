@@ -587,7 +587,7 @@ abstract class FormHandler implements FormHandlerInterface
         ) {
             $form_html .= $this->form()->form_open($this->formAction());
         }
-        $form_html .= $this->form(true)->get_html($this->form_has_errors);
+        $form_html .= $this->form(true)->get_html();
         if ($form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
             || $form_config === FormHandler::ADD_FORM_TAGS_ONLY
         ) {

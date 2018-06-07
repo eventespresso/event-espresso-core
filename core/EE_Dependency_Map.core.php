@@ -768,6 +768,10 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler' => array(
+                'EE_Registry' => EE_Dependency_Map::load_from_cache,
+                'EE_Config' => EE_Dependency_Map::load_from_cache
+            ),
             'EventEspresso\core\services\editor\BlockRegistrationManager'                                                 => array(
                 'EventEspresso\core\services\assets\BlockAssetManagerCollection' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\entities\editor\BlockCollection'      => EE_Dependency_Map::load_from_cache,

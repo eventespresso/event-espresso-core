@@ -1,6 +1,8 @@
 <?php
 
 use EventEspresso\admin_pages\general_settings\AdminOptionsSettings;
+use EventEspresso\core\exceptions\InvalidFormSubmissionException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * General_Settings_Admin_Page
@@ -127,6 +129,16 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ),
+            'privacy_settings' => array(
+                'func' => 'privacySettings',
+                'capability' => 'manage_options',
+            ),
+            'update_privacy_settings' => array(
+                'func' => 'updatePrivacySettings',
+                'capability' => 'manage_options',
+                'noheader' => true,
+                'headers_sent_route' => 'privacy_settings'
+            )
         );
     }
 
@@ -196,6 +208,14 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'help_tour'     => array('Countries_Help_Tour'),
                 'require_nonce' => false,
             ),
+            'privacy_settings' => array(
+                'nav' => array(
+                    'label' => esc_html__('Privacy', 'event_espresso'),
+                    'order' => 80
+                ),
+                'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_publish_post_box')),
+                'require_nonce' => false
+            )
         );
     }
 
@@ -1415,5 +1435,44 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 parent_dropdown($default, $item->ID, $level + 1);
             }
         }
+    }
+
+
+    /**
+     * Loads the scripts for the privacy settings form
+     */
+    public function load_scripts_styles_privacy_settings()
+    {
+        $form_handler = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler');
+        $form_handler->enqueueStylesAndScripts();
+    }
+
+
+    /**
+     * display the privacy settings form
+     */
+    public function privacySettings()
+    {
+        $this->_set_add_edit_form_tags('update_privacy_settings');
+        $this->_set_publish_post_box_vars(null, false, false, null, false);
+        $form_handler = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler');
+        $this->_template_args['admin_page_content'] = $form_handler->display();
+        $this->display_admin_page_with_sidebar();
+    }
+
+
+    /**
+     * Update the privacy settings from form data
+     */
+    public function updatePrivacySettings()
+    {
+        $form_handler = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler');
+        $success = $form_handler->process($this->get_request_data());
+        $this->_redirect_after_action(
+            $success,
+            esc_html__('Registration Form Options', 'event_espresso'),
+            'updated',
+            array('action' => 'privacy_settings')
+        );
     }
 }

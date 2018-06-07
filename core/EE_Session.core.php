@@ -11,6 +11,11 @@ use EventEspresso\core\services\request\RequestInterface;
 /**
  * EE_Session class
  *
+ * Please note that the session doesn't save by default, except when it has a cart set on it.
+ * In order for it to save on other pages, you must execute
+ * `add_action('FHEE__EE_Session___save_session_to_db__abort_session_save', '__return_false');`
+ * somewhere during the request
+ *
  * @package    Event Espresso
  * @subpackage includes/classes
  * @author     Brent Christensen
@@ -885,7 +890,13 @@ class EE_Session implements SessionIdentifierInterface
     {
         // don't save sessions for crawlers
         // and unless we're deleting the session data, don't save anything if there isn't a cart
-        if ($this->request->isBot() || (! $clear_session && ! $this->cart() instanceof EE_Cart)) {
+        if ($this->request->isBot()
+            || (
+                ! $clear_session
+                && ! $this->cart() instanceof EE_Cart
+                && apply_filters('FHEE__EE_Session___save_session_to_db__abort_session_save', true)
+            )
+        ) {
             return false;
         }
         $transaction = $this->transaction();
