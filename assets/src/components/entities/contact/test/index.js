@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
@@ -10,12 +10,12 @@ import { ContactAvatar } from '../avatar';
 
 describe( 'ContactAvatar', () => {
 	it( 'with no avatarUrl provided should return nothing', () => {
-		const wrapper = mount( <ContactAvatar /> );
+		const wrapper = shallow( <ContactAvatar /> );
 		expect( wrapper.html() ).toBeNull();
 	} );
 	it( 'with only avatarUrl provided should have default options', () => {
 		const avatarUrl = 'www.example.com';
-		const wrapper = mount(
+		const wrapper = shallow(
 			<ContactAvatar avatarUrl={ avatarUrl } />
 		);
 		const avatarImage = wrapper.find( 'img' );
@@ -33,7 +33,7 @@ describe( 'ContactAvatar', () => {
 		const avatarHeight = 64;
 		const avatarWidth = 64;
 		const avatarAltText = 'this is some alt text';
-		const wrapper = mount(
+		const wrapper = shallow(
 			<ContactAvatar
 				avatarUrl={ avatarUrl }
 				avatarClass={ avatarClass }
