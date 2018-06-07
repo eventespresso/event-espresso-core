@@ -378,7 +378,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      */
-    protected function flush_submitted_form_data_from_session()
+    public static function flush_submitted_form_data_from_session()
     {
         return EE_Registry::instance()->SSN->reset_data(
             array(EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY)
@@ -405,7 +405,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             return false;
         }
         $this->receive_form_submission($form_data_in_session);
-        $this->flush_submitted_form_data_from_session();
+        add_action('shutdown', array('EE_Form_Section_Proper', 'flush_submitted_form_data_from_session'));
         if ($this->form_data_present_in($form_data_in_session)) {
             return true;
         }
