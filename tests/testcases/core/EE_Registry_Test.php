@@ -752,6 +752,26 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	}
 
 
+    /**
+     * Corresponds to https://github.com/eventespresso/eventsmart.com-website/issues/36
+     * where fetching an add-on that isn't yet registered causes an error
+     */
+	public function testGetAddonThatDoesntExist()
+    {
+        EE_Registry_Mock::instance()->getAddon('foobar');
+        $this->assertTrue(true);
+    }
+
+
+    /**
+     * Corresponds to https://github.com/eventespresso/eventsmart.com-website/issues/36
+     * where fetching an add-on that isn't yet registered causes an error
+     */
+    public function testremoveAddonThatDoesntExist()
+    {
+        EE_Registry_Mock::instance()->removeAddon('foobar');
+        $this->assertTrue(true);
+    }
 
 }
 // End of file EE_Registry_Test.php
