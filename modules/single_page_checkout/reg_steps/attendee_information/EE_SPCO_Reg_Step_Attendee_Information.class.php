@@ -5,6 +5,7 @@ use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\commands\attendee\CreateAttendeeCommand;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * Class EE_SPCO_Reg_Step_Attendee_Information
@@ -131,9 +132,49 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
             array('set_tax_rate' => true)
         );
         /** @var $subsections EE_Form_Section_Proper[] */
+        $extra_inputs_section = $this->reg_step_hidden_inputs();
         $subsections = array(
-            'default_hidden_inputs' => $this->reg_step_hidden_inputs(),
+            'default_hidden_inputs' => $extra_inputs_section,
         );
+
+        /**
+         * @var $reg_config EE_Registration_Config
+         */
+        $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
+        // if this isn't a revisit, and they have the privacy consent box enalbed, add it
+        if (! $this->checkout->revisit && $reg_config->isConsentCheckboxEnabled()) {
+            $extra_inputs_section->add_subsections(
+                array(
+                    'consent_box' => new EE_Form_Section_Proper(
+                        array(
+                            'layout_strategy' =>
+                                new EE_Template_Layout(
+                                    array(
+                                        'input_template_file' => SPCO_REG_STEPS_PATH . $this->_slug . DS . 'privacy_consent.template.php',
+                                    )
+                                ),
+                            'subsections'     => array(
+                                'consent' => new EE_Checkbox_Multi_Input(
+                                    array(
+                                        'consent' => $reg_config->getConsentCheckboxLabelText(),
+                                    ),
+                                    array(
+                                        'required'                          => true,
+                                        'required_validation_error_message' => esc_html__(
+                                            'You must consent to these terms in order to register.',
+                                            'event_espresso'
+                                        ),
+                                        'html_label_text'                   => '',
+                                    )
+                                ),
+                            ),
+                        )
+                    ),
+                ),
+                null,
+                false
+            );
+        }
         $template_args = array(
             'revisit'       => $this->checkout->revisit,
             'registrations' => array(),
@@ -524,7 +565,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                     $item_name .= $registration->ticket()->description() !== ''
                         ? ' - ' . $registration->ticket()->description()
                         : '';
-                    $copy_attendee_info_inputs[ 'spco_copy_attendee_chk[ticket-' . $registration->ticket()->ID() . ']' ] =
+                    $copy_attendee_info_inputs[ 'spco_copy_attendee_chk[ticket-' . $registration->ticket()->ID(
+                    ) . ']' ] =
                         new EE_Form_Section_HTML(
                             '<h6 class="spco-copy-attendee-event-hdr">' . $item_name . '</h6>'
                         );
