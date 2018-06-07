@@ -485,3 +485,11 @@
 		min-width: 100%;
 	}
 }
+
+.ee-privacy-consent-assertion{
+    text-align:center;
+    max-width:600px;
+    min-width:200px;
+    margin-left:auto;
+    margin-right:auto;
+}
