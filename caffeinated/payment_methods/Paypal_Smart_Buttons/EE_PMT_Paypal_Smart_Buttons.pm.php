@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\caffeinated\payment_methods\Paypal_Smart_Buttons\forms\PayPalSmartButtonSettingsForm;
+
 /**
  * EEPMT_Paypal_Smart_Buttons
  *
@@ -34,57 +36,8 @@ class EE_PMT_Paypal_Smart_Buttons extends EE_PMT_Base
      */
     public function generate_new_settings_form()
     {
-        $form =  new EE_Payment_Method_Form(array(
-            'extra_meta_inputs'=>array(
-                'client_id'=>new EE_Text_Input(array(
-                    'html_label_text'=>  sprintf(__("Paypal REST API App Client ID %s", "event_espresso"), $this->get_help_tab_link()),
-                    'required' => true
-                )),
-                'secret'=>new EE_Text_Input(array(
-                    'html_label_text'=>  sprintf(__("Paypal REST API App Secret %s", "event_espresso"), $this->get_help_tab_link()),
-                    'required' => true
-                )),
-                'button_color' => new EE_Select_Input(
-                    array(
-                        '' => esc_html__('Default', 'event_espresso'),
-                        'gold' => esc_html__('Gold', 'event_espresso'),
-                        'blue' => esc_html__('Blue', 'event_espresso'),
-                        'darkblue' => esc_html__('Dark Blue', 'event_espresso'),
-                        'silver' => esc_html__('Silver', 'event_espresso'),
-                        'black' => esc_html__('Black', 'event_espresso')
-                    ),
-                    array(
-                        'html_label_text' => esc_html__('Button Color', 'event_espresso'),
-                        'default' => ''
-                    )
-                ),
-                'button_shape' => new EE_Select_Input(
-                    array(
-                        'pill' => esc_html__('Pill (Recommended)', 'event_espresso'),
-                        'rect' => esc_html__('Rectangular', 'event_espresso')
-                    ),
-                    array(
-                        'html_label_text' => esc_html__('Button Shape', 'event_espresso'),
-                        'default' => 'pill'
-                    )
-                ),
-                'button_size' => new EE_Select_Input(
-                    array(
-                        'medium' => esc_html__('Medium (250px by 35px)', 'event_espresso'),
-                        'large' => esc_html__('Large (350px by 40px)', 'event_espresso'),
-                        'responsive' => esc_html__('Responsive (fills the page)', 'event_espresso')
-                    ),
-                    array(
-                        'html_label_text' => esc_html__('Button Size', 'event_espresso'),
-                        'default' => 'medium',
-                    )
-                ),
-                )
-            ));
-        $form->exclude(
-            array(
-                'PMD_button_url'
-            )
+        $form =  new PayPalSmartButtonSettingsForm(
+            $this->get_help_tab_link()
         );
         return $form;
     }
