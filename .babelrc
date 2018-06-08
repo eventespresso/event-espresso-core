@@ -18,7 +18,10 @@
 		"test": {
 			"presets" : [
 				"@wordpress/default"
-			]
+			],
+			"plugins": [
+				"transform-class-properties"
+			],
 		},
 		"production": {
 			"plugins": [

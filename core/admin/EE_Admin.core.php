@@ -8,6 +8,7 @@ use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
+use EventEspresso\core\services\loaders\LoaderInterface;
 
 /**
  * EE_Admin
@@ -28,6 +29,11 @@ final class EE_Admin implements InterminableInterface
      * @var PersistentAdminNoticeManager $persistent_admin_notice_manager
      */
     private $persistent_admin_notice_manager;
+
+    /**
+     * @var LoaderInterface
+     */
+    protected $loader;
 
     /**
      * @singleton method used to instantiate class object
@@ -194,24 +200,7 @@ final class EE_Admin implements InterminableInterface
     {
         // only enable most of the EE_Admin IF we're not in full maintenance mode
         if (EE_Maintenance_Mode::instance()->models_can_query()) {
-            // ok so we want to enable the entire admin
-            $this->persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(
-                'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
-            );
-            $this->persistent_admin_notice_manager->setReturnUrl(
-                EE_Admin_Page::add_query_args_and_nonce(
-                    array(
-                        'page'   => EE_Registry::instance()->REQ->get('page', ''),
-                        'action' => EE_Registry::instance()->REQ->get('action', ''),
-                    ),
-                    EE_ADMIN_URL
-                )
-            );
-            $this->maybeSetDatetimeWarningNotice();
-            // at a glance dashboard widget
-            add_filter('dashboard_glance_items', array($this, 'dashboard_glance_items'), 10);
-            // filter for get_edit_post_link used on comments for custom post types
-            add_filter('get_edit_post_link', array($this, 'modify_edit_post_link'), 10, 2);
+            $this->initModelsReady();
         }
         // run the admin page factory but ONLY if we are doing an ee admin ajax request
         if (! defined('DOING_AJAX') || EE_ADMIN_AJAX) {
@@ -228,6 +217,51 @@ final class EE_Admin implements InterminableInterface
         add_action('admin_head', array($this, 'register_custom_nav_menu_boxes'), 10);
         // exclude EE critical pages from all nav menus and wp_list_pages
         add_filter('nav_menu_meta_box_object', array($this, 'remove_pages_from_nav_menu'), 10);
+    }
+
+
+    /**
+     * Gets the loader (and if it wasn't previously set, sets it)
+     * @return LoaderInterface
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    protected function getLoader()
+    {
+        if (! $this->loader instanceof LoaderInterface) {
+            $this->loader = LoaderFactory::getLoader();
+        }
+        return $this->loader;
+    }
+
+
+    /**
+     * Method that's fired on admin requests (including admin ajax) but only when the models are usable
+     * (ie, the site isn't in maintenance mode)
+     * @since $VID:$
+     * @return void
+     */
+    protected function initModelsReady()
+    {
+        // ok so we want to enable the entire admin
+        $this->persistent_admin_notice_manager = $this->getLoader()->getShared(
+            'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+        );
+        $this->persistent_admin_notice_manager->setReturnUrl(
+            EE_Admin_Page::add_query_args_and_nonce(
+                array(
+                    'page'   => EE_Registry::instance()->REQ->get('page', ''),
+                    'action' => EE_Registry::instance()->REQ->get('action', ''),
+                ),
+                EE_ADMIN_URL
+            )
+        );
+        $this->maybeSetDatetimeWarningNotice();
+        // at a glance dashboard widget
+        add_filter('dashboard_glance_items', array($this, 'dashboard_glance_items'), 10);
+        // filter for get_edit_post_link used on comments for custom post types
+        add_filter('get_edit_post_link', array($this, 'modify_edit_post_link'), 10, 2);
     }
 
 
@@ -569,7 +603,6 @@ final class EE_Admin implements InterminableInterface
      */
     public function admin_init()
     {
-
         /**
          * our cpt models must be instantiated on WordPress post processing routes (wp-admin/post.php),
          * so any hooking into core WP routes is taken care of.  So in this next few lines of code:
@@ -579,7 +612,7 @@ final class EE_Admin implements InterminableInterface
          */
         if (isset($_POST['action'], $_POST['post_type']) && $_POST['action'] === 'editpost') {
             /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
-            $custom_post_types = LoaderFactory::getLoader()->getShared(
+            $custom_post_types = $this->getLoader()->getShared(
                 'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
             );
             $custom_post_types->getCustomPostTypeModels($_POST['post_type']);
@@ -593,6 +626,20 @@ final class EE_Admin implements InterminableInterface
          * This is for user-proofing.
          */
         add_filter('wp_dropdown_pages', array($this, 'modify_dropdown_pages'));
+        if (EE_Maintenance_Mode::instance()->models_can_query()) {
+            $this->adminInitModelsReady();
+        }
+    }
+
+
+    /**
+     * Runs on admin_init but only if models are usable (ie, we're not in maintenanc emode)
+     */
+    protected function adminInitModelsReady()
+    {
+        if (function_exists('wp_add_privacy_policy_content')) {
+            $this->getLoader()->getShared('EventEspresso\core\services\privacy\policy\PrivacyPolicyManager');
+        }
     }
 
 
@@ -957,8 +1004,8 @@ final class EE_Admin implements InterminableInterface
      */
     public function hookIntoWpPluginsPage()
     {
-        LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\admin\ExitModal');
-        LoaderFactory::getLoader()
+        $this->getLoader()->getShared('EventEspresso\core\domain\services\admin\ExitModal');
+        $this->getLoader()
                      ->getShared('EventEspresso\core\domain\services\admin\PluginUpsells')
                      ->decafUpsells();
     }
