@@ -1,68 +1,92 @@
 	// Render the PayPal button
-	jQuery(document).ready(function(){
-		jQuery(document).on('spco_display_step',function(){
-
-			paypal.Button.render({
-
-				// Set your environment
-
-				env: 'sandbox', // sandbox | production
-
-				// Specify the style of the button
-
-				style: {
-					layout: 'vertical',  // horizontal | vertical
-					size:   'medium',    // medium | large | responsive
-					shape:  'rect',      // pill | rect
-					color:  'gold'       // gold | blue | silver | black
-				},
-
-				// Specify allowed and disallowed funding sources
-				//
-				// Options:
-				// - paypal.FUNDING.CARD
-				// - paypal.FUNDING.CREDIT
-				// - paypal.FUNDING.ELV
-
-				funding: {
-					allowed: [ paypal.FUNDING.CARD, paypal.FUNDING.CREDIT ],
-					disallowed: [ ]
-				},
-
-				// PayPal Client IDs - replace with your own
-				// Create a PayPal app: https://developer.paypal.com/developer/applications/create
-
-				client: {
-					sandbox:    'AbdGVrza9U1_msrsJEfhuf5T2oTDM-gLxnh4ihMVlttoP8Re_Lz1C2zp0_RQ1dlTV4fMhM_K-ZNdF_Ob',
-					production: '<insert production client id>'
-				},
-
-				payment: function(data, actions) {
-					return actions.payment.create({
-						payment: {
-							transactions: [
-								{
-									amount: { total: '0.01', currency: 'USD' }
-								}
-							]
-						}
-					});
-				},
-
-				onAuthorize: function(data, actions) {
-					return actions.payment.execute().then(function() {
-						//window.alert('Payment Complete!');
-						SPCO.display_payment_method(
-							'paypal_smart_buttons'
-						);
-						// wait for the payment method to be fully displayed, then submit it
-						jQuery(document).on('spco_switch_payment_methods', function(){
-							jQuery( '#spco-go-to-step-finalize_registration-submit').trigger( 'click' );
-						});
-
-					});
-				}
-
-			}, '#paypal-button-container');
-		});
+	jQuery(document).ready(function() {
+		jQuery( document ).on( 'spco_display_step', 'initialize_smart_button' );
+		initialize_smart_button();
 	});
+
+function initialize_smart_button()
+{
+	paypal.Button.render({
+
+		// Set your environment
+
+		env: 'sandbox', // sandbox | production
+
+		// Specify the style of the button
+		// locale: 'en_BR',
+		style: {
+			layout: 'vertical',  // horizontal | vertical
+			size:   'responsive',    // small, medium | large | responsive
+			shape:  'pill',      // pill | rect
+			color:  '',       // gold | blue | silver | black
+		},
+
+		// Specify allowed and disallowed funding sources
+		//
+		// Options:
+		// - paypal.FUNDING.CARD
+		// - paypal.FUNDING.CREDIT
+		// - paypal.FUNDING.ELV
+
+		funding: {
+			allowed: [ paypal.FUNDING.CARD, paypal.FUNDING.CREDIT ],
+			disallowed: [ ]
+		},
+
+		// PayPal Client IDs - replace with your own
+		// Create a PayPal app: https://developer.paypal.com/developer/applications/create
+
+		client: {
+			sandbox:    'AbdGVrza9U1_msrsJEfhuf5T2oTDM-gLxnh4ihMVlttoP8Re_Lz1C2zp0_RQ1dlTV4fMhM_K-ZNdF_Ob',
+			production: '<insert production client id>'
+		},
+
+		payment: function(data, actions) {
+			return actions.payment.create({
+				payment: {
+					transactions: [
+						{
+							amount: { total: '0.01', currency: 'USD' }
+						}
+					]
+				}
+			});
+		},
+
+		// onClick: function() {
+		// 	SPCO.display_payment_method(
+		// 		'paypal_smart_buttons'
+		// 	);
+		// 	//if we did this, we just need to call jQuery( '#spco-go-to-step-finalize_registration-submit').trigger( 'click' );
+		// 	//from onAuthorize
+		// },
+
+		onAuthorize: function(data, actions) {
+			// don't execute the payment here. Let's do it server-side where it's more secure
+			// return actions.payment.execute().then(function() {
+				//window.alert('Payment Complete!');
+				SPCO.display_payment_method(
+					'paypal_smart_buttons'
+				);
+				// wait for the payment method to be fully displayed, then submit it
+				jQuery(document).on('spco_switch_payment_methods', function(){
+					jQuery( '#spco-go-to-step-finalize_registration-submit').trigger( 'click' );
+				});
+
+			// });
+		},
+		onError: function( data, actions){
+			if( typeof(data) !== 'undefined' && typeof(data.message) !== 'undefined') {
+				var error = data.message;
+			} else {
+				var error = 'An error occurred while processing payment with PayPal';
+			}
+			var messages = {
+				errors : error
+			};
+			SPCO.display_messages(messages,false);
+		}
+
+	}, '#paypal-button-container');
+
+}
