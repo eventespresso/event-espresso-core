@@ -69,5 +69,5 @@ export function getTickets( state, queryString ) {
  * @return {IterableIterator<*>} A async iterable.
  */
 export function getRegistrationStatuses( state ) {
-	return getItems( state, 'statuses', 'where[STS_type]=registration' );
+	return getItems( state, 'status', 'where[STS_type]=registration' );
 }

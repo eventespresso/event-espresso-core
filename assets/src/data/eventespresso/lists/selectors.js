@@ -137,7 +137,7 @@ export function isRequestingTickets( state, queryString ) {
  * @return {Array} An array of event entities for the given model and query.
  */
 export function getRegistrationStatuses( state ) {
-	return getItems( state, 'statuses', 'where[STS_type]=registration' );
+	return getItems( state, 'status', 'where[STS_type]=registration' );
 }
 
 /**
