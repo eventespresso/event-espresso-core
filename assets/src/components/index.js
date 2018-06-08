@@ -1,3 +1,5 @@
+// entity components
+export { ContactAvatar } from './entities/contact';
 // query components
 export { QueryLimit } from './query/limit';
 // selection components
