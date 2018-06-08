@@ -44,8 +44,8 @@ describe( 'ModelSelect props check', () => {
 				modelName={ 'event' }
 				modelEntities={ simulatedResponse }
 				selectLabel={ 'Label for Select' }
-			/>
+			/>,
 		);
-		expect( wrapper.childAt(0).text() ).toEqual( 'Label for Select' );
+		expect( wrapper.childAt( 0 ).text() ).toEqual( 'Label for Select' );
 	} );
 } );

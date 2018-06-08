@@ -4,7 +4,6 @@
 import moment from 'moment';
 import { isUndefined } from 'lodash';
 import PropTypes from 'prop-types';
-import { __ } from '@eventespresso/i18n';
 
 /**
  * Internal imports

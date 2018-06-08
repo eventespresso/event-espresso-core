@@ -43,7 +43,6 @@ import {
  *   `mapOptionsCallback`.
  */
 export class ModelSelect extends Component {
-
 	static propTypes = {
 		selectConfiguration: PropTypes.shape( {
 			...REACT_SELECT_TYPES,
