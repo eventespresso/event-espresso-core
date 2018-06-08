@@ -61,3 +61,13 @@ export function getDatetimes( state, queryString ) {
 export function getTickets( state, queryString ) {
 	return getItems( state, 'ticket', queryString );
 }
+
+/**
+ * Resolver for registration status entities.
+ *
+ * @param {Object} state Data in state.
+ * @return {IterableIterator<*>} A async iterable.
+ */
+export function getRegistrationStatuses( state ) {
+	return getItems( state, 'status', 'where[STS_type]=registration' );
+}

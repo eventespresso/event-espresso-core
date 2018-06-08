@@ -129,3 +129,25 @@ export function getTickets( state, queryString ) {
 export function isRequestingTickets( state, queryString ) {
 	return isResolving( 'getTickets', queryString );
 }
+
+/**
+ * Selector specific to registration statuses.
+ *
+ * @param {Object} state  Data state.
+ * @return {Array} An array of event entities for the given model and query.
+ */
+export function getRegistrationStatuses( state ) {
+	return getItems( state, 'status', 'where[STS_type]=registration' );
+}
+
+/**
+ * Selector specific checking if requesting registration statuses.
+ *
+ * @return {boolean} Whether items are being requested or not.
+ */
+export function isRequestingRegistrationStatuses() {
+	return isResolving(
+		'getRegistrationStatuses',
+		'where[STS_type]=registration'
+	);
+}
