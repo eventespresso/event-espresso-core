@@ -3,7 +3,7 @@
 exports[`EventSelect() matches snapshot with default props 1`] = `
 <WithSelect(ModelSelect)
   getQueryString={[Function]}
-  modelName="events"
+  modelName="event"
   queryData={
     Object {
       "limit": 100,
@@ -14,10 +14,13 @@ exports[`EventSelect() matches snapshot with default props 1`] = `
   }
   selectConfiguration={
     Object {
+      "defaultValue": undefined,
       "loadingMessage": [Function],
       "noOptionsMessage": [Function],
+      "onChange": undefined,
       "placeholder": "Select Event...",
     }
   }
+  selectLabel="Select Event..."
 />
 `;
