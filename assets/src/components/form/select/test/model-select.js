@@ -9,7 +9,7 @@ const simulatedResponse = [
 describe( 'ModelSelect Snapshot with default options (with required modelName)',
 	() => {
 		it( 'should render and match snapshot', () => {
-			const wrapper = shallow( <ModelSelect modelName={ 'events' } /> );
+			const wrapper = shallow( <ModelSelect modelName={ 'event' } /> );
 			expect( wrapper ).toMatchSnapshot();
 		} );
 	},
@@ -19,7 +19,7 @@ describe( 'ModelSelect props check', () => {
 	it( 'should render and have passed in props match expectation', () => {
 		const wrapper = shallow(
 			<ModelSelect
-				modelName={ 'events' }
+				modelName={ 'event' }
 				modelEntities={ simulatedResponse }
 				selectConfiguration={ {
 					isClearable: false,
@@ -27,14 +27,25 @@ describe( 'ModelSelect props check', () => {
 				} }
 			/>,
 		);
-		expect( wrapper.prop( 'options' ) ).toEqual(
+		const selectWrapper = wrapper.childAt( 0 );
+		expect( selectWrapper.prop( 'options' ) ).toEqual(
 			[
 				{ label: 'Event A', value: 1 },
 				{ label: 'Event B', value: 2 },
 			],
 		);
-		expect( wrapper.prop( 'isClearable' ) ).toEqual( false );
-		expect( wrapper.prop( 'isLoading' ) ).toEqual( false );
-		expect( wrapper.prop( 'placeholder' ) ).toEqual( 'Select...' );
+		expect( selectWrapper.prop( 'isClearable' ) ).toEqual( false );
+		expect( selectWrapper.prop( 'isLoading' ) ).toEqual( false );
+		expect( selectWrapper.prop( 'placeholder' ) ).toEqual( 'Select...' );
+	} );
+	it( 'should render a label when selectLabel is provided', () => {
+		const wrapper = shallow(
+			<ModelSelect
+				modelName={ 'event' }
+				modelEntities={ simulatedResponse }
+				selectLabel={ 'Label for Select' }
+			/>
+		);
+		expect( wrapper.childAt(0).text() ).toEqual( 'Label for Select' );
 	} );
 } );

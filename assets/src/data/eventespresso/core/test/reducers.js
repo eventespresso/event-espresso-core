@@ -19,23 +19,23 @@ import {
 
 const mockStateForTests = {
 	entities: {
-		events: {
+		event: {
 			10: { EVT_ID: 10, name: 'Event 10' },
 			20: { EVT_ID: 20, name: 'Event 20' },
 			30: { EVT_ID: 30, name: 'Event 30' },
 		},
-		terms: {
+		term: {
 			'10:10': { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
 			'20:20': { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
 		},
 	},
 	entityIds: {
-		events: [ '10', '20', '30' ],
-		terms: [ '10:10', '20:20' ],
+		event: [ '10', '20', '30' ],
+		term: [ '10:10', '20:20' ],
 	},
 	dirty: {
-		events: [ '20' ],
-		terms: [ '20:20' ],
+		event: [ '20' ],
+		term: [ '20:20' ],
 	},
 };
 
@@ -46,7 +46,7 @@ describe( 'receiveEntityRecords()', () => {
 			const state = receiveEntityRecords(
 				originalState,
 				receiveRecordsAction(
-					'tickets',
+					'ticket',
 					[ { TKT_ID: 10, name: 'Ticket 10' } ],
 				),
 			);
@@ -58,7 +58,7 @@ describe( 'receiveEntityRecords()', () => {
 		const state = receiveEntityRecords(
 			originalState,
 			receiveRecordsAction(
-				'events',
+				'event',
 				[ { EVT_ID: 40, name: 'Event 40' } ],
 			),
 		);
@@ -71,30 +71,30 @@ describe( 'receiveEntityRecords()', () => {
 		const state = receiveEntityRecords(
 			originalState,
 			receiveRecordsAction(
-				'events',
+				'event',
 				[ { EVT_ID: 40, name: 'Event 40' } ],
 			),
 		);
 		const expectedState = {
 			entities: {
-				events: {
+				event: {
 					10: { EVT_ID: 10, name: 'Event 10' },
 					20: { EVT_ID: 20, name: 'Event 20' },
 					30: { EVT_ID: 30, name: 'Event 30' },
 					40: { EVT_ID: 40, name: 'Event 40' },
 				},
-				terms: {
+				term: {
 					'10:10': { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
 					'20:20': { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
 				},
 			},
 			entityIds: {
-				events: [ '10', '20', '30', '40' ],
-				terms: [ '10:10', '20:20' ],
+				event: [ '10', '20', '30', '40' ],
+				term: [ '10:10', '20:20' ],
 			},
 			dirty: {
-				events: [ '20' ],
-				terms: [ '20:20' ],
+				event: [ '20' ],
+				term: [ '20:20' ],
 			},
 		};
 
@@ -106,30 +106,30 @@ describe( 'receiveEntityRecords()', () => {
 		const state = receiveEntityRecords(
 			originalState,
 			receiveRecordsAction(
-				'terms',
+				'term',
 				[ { TERM_ID: 20, TAXONOMY_ID: 30, name: 'Term 20' } ],
 			),
 		);
 		const expectedState = {
 			entities: {
-				events: {
+				event: {
 					10: { EVT_ID: 10, name: 'Event 10' },
 					20: { EVT_ID: 20, name: 'Event 20' },
 					30: { EVT_ID: 30, name: 'Event 30' },
 				},
-				terms: {
+				term: {
 					'10:10': { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
 					'20:20': { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
 					'20:30': { TERM_ID: 20, TAXONOMY_ID: 30, name: 'Term 20' },
 				},
 			},
 			entityIds: {
-				events: [ '10', '20', '30' ],
-				terms: [ '10:10', '20:20', '20:30' ],
+				event: [ '10', '20', '30' ],
+				term: [ '10:10', '20:20', '20:30' ],
 			},
 			dirty: {
-				events: [ '20' ],
-				terms: [ '20:20' ],
+				event: [ '20' ],
+				term: [ '20:20' ],
 			},
 		};
 
@@ -142,7 +142,7 @@ describe( 'receiveEntityRecords()', () => {
 		const state = receiveEntityRecords(
 			originalState,
 			receiveRecordsAction(
-				'events',
+				'event',
 				[
 					{ EVT_ID: 10, name: 'Event 10' },
 					{ EVT_ID: 50, name: 'Event 50' },
@@ -151,24 +151,24 @@ describe( 'receiveEntityRecords()', () => {
 		);
 		const expectedState = {
 			entities: {
-				events: {
+				event: {
 					10: { EVT_ID: 10, name: 'Event 10' },
 					20: { EVT_ID: 20, name: 'Event 20' },
 					30: { EVT_ID: 30, name: 'Event 30' },
 					50: { EVT_ID: 50, name: 'Event 50' },
 				},
-				terms: {
+				term: {
 					'10:10': { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
 					'20:20': { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
 				},
 			},
 			entityIds: {
-				events: [ '10', '20', '30', '50' ],
-				terms: [ '10:10', '20:20' ],
+				event: [ '10', '20', '30', '50' ],
+				term: [ '10:10', '20:20' ],
 			},
 			dirty: {
-				events: [ '20' ],
-				terms: [ '20:20' ],
+				event: [ '20' ],
+				term: [ '20:20' ],
 			},
 		};
 
@@ -181,7 +181,7 @@ describe( 'receiveEntityRecords()', () => {
 		const state = receiveEntityRecords(
 			originalState,
 			receiveRecordsAction(
-				'events',
+				'event',
 				[
 					{ EVT_ID: 10, name: 'Event 10 Modified' },
 					{ EVT_ID: 50, name: 'Event 50' },
@@ -190,24 +190,24 @@ describe( 'receiveEntityRecords()', () => {
 		);
 		const expectedState = {
 			entities: {
-				events: {
+				event: {
 					10: { EVT_ID: 10, name: 'Event 10 Modified' },
 					20: { EVT_ID: 20, name: 'Event 20' },
 					30: { EVT_ID: 30, name: 'Event 30' },
 					50: { EVT_ID: 50, name: 'Event 50' },
 				},
-				terms: {
+				term: {
 					'10:10': { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
 					'20:20': { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
 				},
 			},
 			entityIds: {
-				events: [ '10', '20', '30', '50' ],
-				terms: [ '10:10', '20:20' ],
+				event: [ '10', '20', '30', '50' ],
+				term: [ '10:10', '20:20' ],
 			},
 			dirty: {
-				events: [ '20', '10' ],
-				terms: [ '20:20' ],
+				event: [ '20', '10' ],
+				term: [ '20:20' ],
 			},
 		};
 
@@ -223,7 +223,7 @@ describe( 'cleanEntities()', () => {
 		const state = cleanEntities(
 			originalState,
 			cleanEntitiesAction(
-				'tickets',
+				'ticket',
 				[ { TKT_ID: 10, name: 'Ticket 10' } ],
 			),
 		);
@@ -234,7 +234,7 @@ describe( 'cleanEntities()', () => {
 		const state = cleanEntities(
 			originalState,
 			cleanEntitiesAction(
-				'events',
+				'event',
 				[
 					{ EVT_ID: 20, name: 'Event 20' },
 				],
@@ -248,7 +248,7 @@ describe( 'cleanEntities()', () => {
 		const state = cleanEntities(
 			originalState,
 			cleanEntitiesAction(
-				'events',
+				'event',
 				[
 					{ EVT_ID: 20, name: 'Event 20' },
 					{ EVT_ID: 50, name: 'Event 50' },
@@ -257,23 +257,23 @@ describe( 'cleanEntities()', () => {
 		);
 		const expectedState = {
 			entities: {
-				events: {
+				event: {
 					10: { EVT_ID: 10, name: 'Event 10' },
 					20: { EVT_ID: 20, name: 'Event 20' },
 					30: { EVT_ID: 30, name: 'Event 30' },
 				},
-				terms: {
+				term: {
 					'10:10': { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
 					'20:20': { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
 				},
 			},
 			entityIds: {
-				events: [ '10', '20', '30' ],
-				terms: [ '10:10', '20:20' ],
+				event: [ '10', '20', '30' ],
+				term: [ '10:10', '20:20' ],
 			},
 			dirty: {
-				events: [],
-				terms: [ '20:20' ],
+				event: [],
+				term: [ '20:20' ],
 			},
 		};
 		expect( state ).toEqual( expectedState );
@@ -284,7 +284,7 @@ describe( 'cleanEntities()', () => {
 		const state = cleanEntities(
 			originalState,
 			cleanEntitiesAction(
-				'terms',
+				'term',
 				[
 					{ TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
 				],
@@ -292,23 +292,23 @@ describe( 'cleanEntities()', () => {
 		);
 		const expectedState = {
 			entities: {
-				events: {
+				event: {
 					10: { EVT_ID: 10, name: 'Event 10' },
 					20: { EVT_ID: 20, name: 'Event 20' },
 					30: { EVT_ID: 30, name: 'Event 30' },
 				},
-				terms: {
+				term: {
 					'10:10': { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
 					'20:20': { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
 				},
 			},
 			entityIds: {
-				events: [ '10', '20', '30' ],
-				terms: [ '10:10', '20:20' ],
+				event: [ '10', '20', '30' ],
+				term: [ '10:10', '20:20' ],
 			},
 			dirty: {
-				events: [ '20' ],
-				terms: [],
+				event: [ '20' ],
+				term: [],
 			},
 		};
 		expect( state ).toEqual( expectedState );
@@ -321,7 +321,7 @@ describe( 'cleanEntitybyId()', () => {
 		' passed in.', () => {
 		const state = cleanEntityById(
 			originalState,
-			cleanEntityByIdAction( 'tickets', 10 ),
+			cleanEntityByIdAction( 'ticket', 10 ),
 		);
 		expect( state ).toBe( originalState );
 	} );
@@ -330,7 +330,7 @@ describe( 'cleanEntitybyId()', () => {
 		' exist in state', () => {
 		const state = cleanEntityById(
 			originalState,
-			cleanEntityByIdAction( 'events', 50 ),
+			cleanEntityByIdAction( 'event', 50 ),
 		);
 		expect( state ).toBe( originalState );
 	} );
@@ -339,18 +339,18 @@ describe( 'cleanEntitybyId()', () => {
 		' not false', () => {
 		const state = cleanEntityById(
 			originalState,
-			cleanEntityByIdAction( 'events', 20 ),
+			cleanEntityByIdAction( 'event', 20 ),
 		);
 		expect( state ).not.toBe( originalState );
 		expect( state ).toEqual(
 			{
 				entities: {
-					events: {
+					event: {
 						10: { EVT_ID: 10, name: 'Event 10' },
 						20: { EVT_ID: 20, name: 'Event 20' },
 						30: { EVT_ID: 30, name: 'Event 30' },
 					},
-					terms: {
+					term: {
 						'10:10': {
 							TERM_ID: 10,
 							TAXONOMY_ID: 10,
@@ -364,12 +364,12 @@ describe( 'cleanEntitybyId()', () => {
 					},
 				},
 				entityIds: {
-					events: [ '10', '20', '30' ],
-					terms: [ '10:10', '20:20' ],
+					event: [ '10', '20', '30' ],
+					term: [ '10:10', '20:20' ],
 				},
 				dirty: {
-					events: [],
-					terms: [ '20:20' ],
+					event: [],
+					term: [ '20:20' ],
 				},
 			},
 		);
@@ -379,18 +379,18 @@ describe( 'cleanEntitybyId()', () => {
 		' part of a combined primary keys model', () => {
 		const state = cleanEntityById(
 			originalState,
-			cleanEntityByIdAction( 'terms', '20:20' ),
+			cleanEntityByIdAction( 'term', '20:20' ),
 		);
 		expect( state ).not.toBe( originalState );
 		expect( state ).toEqual(
 			{
 				entities: {
-					events: {
+					event: {
 						10: { EVT_ID: 10, name: 'Event 10' },
 						20: { EVT_ID: 20, name: 'Event 20' },
 						30: { EVT_ID: 30, name: 'Event 30' },
 					},
-					terms: {
+					term: {
 						'10:10': {
 							TERM_ID: 10,
 							TAXONOMY_ID: 10,
@@ -404,12 +404,12 @@ describe( 'cleanEntitybyId()', () => {
 					},
 				},
 				entityIds: {
-					events: [ '10', '20', '30' ],
-					terms: [ '10:10', '20:20' ],
+					event: [ '10', '20', '30' ],
+					term: [ '10:10', '20:20' ],
 				},
 				dirty: {
-					events: [ '20' ],
-					terms: [],
+					event: [ '20' ],
+					term: [],
 				},
 			},
 		);

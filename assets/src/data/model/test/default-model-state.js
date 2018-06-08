@@ -7,10 +7,10 @@ describe( 'DEFAULT_LISTS_STATE', () => {
 	it( 'matches expected initial state for the models exposed ' +
 		'on the endpoints', () => {
 		const expectedState = {
-			events: [],
-			tickets: [],
-			venues: [],
-			terms: [],
+			event: [],
+			ticket: [],
+			venue: [],
+			term: [],
 		};
 		expect( DEFAULT_LISTS_STATE ).toEqual( expectedState );
 	} );
@@ -21,22 +21,22 @@ describe( 'DEFAULT_CORE_STATE', () => {
 		' on the endpoints', () => {
 		const expectedState = {
 			entities: {
-				events: {},
-				tickets: {},
-				venues: {},
-				terms: {},
+				event: {},
+				ticket: {},
+				venue: {},
+				term: {},
 			},
 			entityIds: {
-				events: [],
-				tickets: [],
-				venues: [],
-				terms: [],
+				event: [],
+				ticket: [],
+				venue: [],
+				term: [],
 			},
 			dirty: {
-				events: [],
-				tickets: [],
-				venues: [],
-				terms: [],
+				event: [],
+				ticket: [],
+				venue: [],
+				term: [],
 			},
 		};
 		expect( DEFAULT_CORE_STATE ).toEqual( expectedState );
