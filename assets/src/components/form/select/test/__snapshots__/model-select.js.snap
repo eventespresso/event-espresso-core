@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ModelSelect Snapshot with default options (with required modelName) should render and match snapshot 1`] = `
+<StateManager
+  defaultInputValue=""
+  defaultMenuIsOpen={false}
+  defaultValue={null}
+  isClearable={true}
+  isLoading={true}
+  placeholder="Select..."
+/>
+`;
