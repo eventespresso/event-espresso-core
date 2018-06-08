@@ -52,11 +52,11 @@ class EventAttendeesEditor extends Component {
 	}
 
 	toggleShowGravatar( showGravatar ) {
-		this.props.setAttributes( { showGravatar: ! showGravatar } );
+		this.props.setAttributes( { showGravatar: showGravatar } );
 	}
 
 	toggleDisplayOnArchives( displayOnArchives ) {
-		this.props.setAttributes( { displayOnArchives: ! displayOnArchives } );
+		this.props.setAttributes( { displayOnArchives: displayOnArchives } );
 	}
 
 	getPlaceHolderContent() {
