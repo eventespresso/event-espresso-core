@@ -111,6 +111,6 @@ export const whereConditions = ( { showExpired = true, categorySlug, month = 'no
  * @return { string }  Returns the query string.
  */
 export const getQueryString = ( queryData = {} ) => {
-	queryData = Object.assign( defaultQueryData.queryData, queryData );
+	queryData = { ...defaultQueryData.queryData, ...queryData };
 	return baseGetQueryString( queryData, whereConditions, mapOrderBy );
 };
