@@ -8,7 +8,7 @@ import { reduce } from 'lodash';
  * @type {Object}
  */
 const DEFAULT_MODEL_OPTIONS_MAP = {
-	events: {
+	event: {
 		label: 'EVT_name',
 		value: 'EVT_ID',
 	},

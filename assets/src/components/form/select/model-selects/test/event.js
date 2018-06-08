@@ -1,4 +1,4 @@
-import { EventSelect } from '../event';
+import EventSelect from '../event';
 import { shallow } from 'enzyme';
 
 describe( 'EventSelect()', () => {
@@ -17,10 +17,10 @@ describe( 'EventSelect()', () => {
 		expect( wrapper.prop( 'selectConfiguration' ).placeholder ).toEqual(
 			'Select Event...',
 		);
-		expect( wrapper.prop( 'modelName' ) ).toEqual( 'events' );
+		expect( wrapper.prop( 'modelName' ) ).toEqual( 'event' );
 	} );
 	it( 'does not allow overriding the modelName', () => {
 		const wrapper = shallow( <EventSelect modelName={ 'tickets' } /> );
-		expect( wrapper.prop( 'modelName' ) ).toEqual( 'events' );
+		expect( wrapper.prop( 'modelName' ) ).toEqual( 'event' );
 	} );
 } );

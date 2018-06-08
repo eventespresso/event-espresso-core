@@ -2,8 +2,8 @@
  * External imports
  */
 import Select from 'react-select';
-import { Component } from '@wordpress/element';
-import { isEmpty } from 'lodash';
+import { Component, Fragment } from '@wordpress/element';
+import { isEmpty, uniqueId, find, isUndefined } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -43,6 +43,7 @@ import {
  *   `mapOptionsCallback`.
  */
 export class ModelSelect extends Component {
+
 	static propTypes = {
 		selectConfiguration: PropTypes.shape( {
 			...REACT_SELECT_TYPES,
@@ -57,11 +58,13 @@ export class ModelSelect extends Component {
 			order: PropTypes.oneOf( [ 'asc', 'desc' ] ),
 		} ),
 		getQueryString: PropTypes.func,
+		selectLabel: PropTypes.string,
 	};
 
 	static defaultProps = {
 		selectConfiguration: {
 			...REACT_SELECT_DEFAULTS,
+			name: uniqueId( 'model-select-' ),
 		},
 		modelEntities: [],
 		modelName: '',
@@ -71,19 +74,34 @@ export class ModelSelect extends Component {
 			limit: 100,
 			order: 'desc',
 		},
+		selectLabel: '',
 	};
 
-	getSelectConfiguration() {
+	static getDerivedStateFromProps( props ) {
+		const { selectConfiguration } = props;
+		const options = ModelSelect.getOptions( props );
+		const updated = {
+			options,
+			value: ModelSelect.getOptionObjectForValue(
+				selectConfiguration.defaultValue, options
+			),
+		};
+		return {
+			...REACT_SELECT_DEFAULTS,
+			...selectConfiguration,
+			...updated,
+		};
+	}
+
+	static getOptions( props ) {
 		const {
-			selectConfiguration,
 			modelEntities,
 			modelName,
-			mapOptionsCallback,
 			optionsEntityMap,
-		} = this.props;
-
+			mapOptionsCallback,
+		} = props;
 		if ( ! isEmpty( modelEntities ) ) {
-			selectConfiguration.options = optionsEntityMap !== null ?
+			return optionsEntityMap !== null ?
 				mapOptionsCallback(
 					modelEntities,
 					modelName,
@@ -94,11 +112,35 @@ export class ModelSelect extends Component {
 					modelName,
 				);
 		}
-		return selectConfiguration;
+		return [];
+	}
+
+	static getOptionObjectForValue( value, options ) {
+		if ( ! isEmpty( options ) ) {
+			const match = find( options, function( option ) {
+				return option.value === value;
+			} );
+			return ! isUndefined( match ) ?
+				match :
+				null;
+		}
+		return {};
+	}
+
+	getSelectLabel() {
+		const { selectLabel, selectConfiguration } = this.props;
+		return selectLabel ?
+			<label htmlFor={ selectConfiguration.name }>{ selectLabel }</label> :
+			'';
 	}
 
 	render() {
-		return <Select { ...REACT_SELECT_DEFAULTS } { ...this.getSelectConfiguration() } />;
+		return (
+			<Fragment>
+				{ this.getSelectLabel() }
+				<Select { ...this.state } />
+			</Fragment>
+		);
 	}
 }
 
@@ -108,11 +150,17 @@ export class ModelSelect extends Component {
  * eventespresso/lists store.
  */
 export default withSelect( ( select, ownProps ) => {
-	const { getQueryString, modelName } = ownProps;
+	const { getQueryString, modelName, selectConfiguration } = ownProps;
 	const queryString = getQueryString( ownProps.queryData );
 	const { getItems, isRequestingItems } = select( 'eventespresso/lists' );
 	return {
-		entities: getItems( modelName, queryString ),
-		isLoading: isRequestingItems( modelName, queryString ),
+		...ModelSelect.defaultProps,
+		...ownProps,
+		modelEntities: getItems( modelName, queryString ),
+		selectConfiguration: {
+			...ModelSelect.defaultProps.selectConfiguration,
+			...selectConfiguration,
+			isLoading: isRequestingItems( modelName, queryString ),
+		},
 	};
 } )( ModelSelect );

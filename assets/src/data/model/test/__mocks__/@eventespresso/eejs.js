@@ -7,16 +7,16 @@ const {
 module.exports.data = {
 	paths: {
 		collection_endpoints: {
-			events: '/ee/v4.8.36/events',
-			tickets: '/ee/v4.8.36/tickets',
-			venues: '/ee/v4.8.36/venues',
-			terms: '/ee/v4.8.36/terms',
+			event: '/ee/v4.8.36/events',
+			ticket: '/ee/v4.8.36/tickets',
+			venue: '/ee/v4.8.36/venues',
+			term: '/ee/v4.8.36/terms',
 		},
 		primary_keys: {
-			events: 'EVT_ID',
-			tickets: 'TKT_ID',
-			venues: 'VNU_ID',
-			terms: [ 'TERM_ID', 'TAXONOMY_ID' ],
+			event: 'EVT_ID',
+			ticket: 'TKT_ID',
+			venue: 'VNU_ID',
+			term: [ 'TERM_ID', 'TAXONOMY_ID' ],
 		},
 	},
 };

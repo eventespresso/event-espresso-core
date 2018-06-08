@@ -14,7 +14,7 @@ describe( 'buildOptions()', () => {
 		},
 	];
 	const customMap = {
-		events: {
+		event: {
 			label: 'custom_prop',
 			value: 'EVT_name',
 		},
@@ -24,7 +24,7 @@ describe( 'buildOptions()', () => {
 	} );
 	it( 'returns expected values for options when entities for existing model' +
 		' in map provided using default map.', () => {
-		expect( buildOptions( testResponse, 'events' ) ).toEqual(
+		expect( buildOptions( testResponse, 'event' ) ).toEqual(
 			[
 				{ label: 'Test A', value: 2 },
 				{ label: 'Test B', value: 3 },
@@ -32,7 +32,7 @@ describe( 'buildOptions()', () => {
 		);
 	} );
 	it( 'returns expected values for options with a custom map.', () => {
-		expect( buildOptions( testResponse, 'events', customMap ) ).toEqual(
+		expect( buildOptions( testResponse, 'event', customMap ) ).toEqual(
 			[
 				{ label: 'Custom Property A', value: 'Test A' },
 				{ label: 'Custom Property B', value: 'Test B' },

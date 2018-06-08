@@ -9,10 +9,11 @@ import * as eventModel from '../../../../data/model/event';
  */
 import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
+import PropTypes from 'prop-types';
 
-export class EventSelect extends Component {
+export default class EventSelect extends Component {
 	state = {
-		modelName: 'events',
+		modelName: 'event',
 	};
 
 	static defaultProps = {
@@ -26,13 +27,30 @@ export class EventSelect extends Component {
 		},
 		...eventModel.defaultQueryData,
 		getQueryString: eventModel.getQueryString,
+		selectLabel: __( 'Select Event', 'event_espresso' ),
 	};
 
 	static propTypes = {
 		...eventModel.queryDataTypes,
+		selectedEventId: PropTypes.number,
+		onEventSelect: PropTypes.func,
+		selectLabel: PropTypes.string,
 	};
 
 	render() {
-		return <ModelSelect { ...this.props } { ...this.state } />;
+		const { selectedEventId, onEventSelect } = this.props;
+		const selectOpts = {
+			selectConfiguration: {
+				defaultValue: selectedEventId,
+				onChange: onEventSelect,
+				...this.props.selectConfiguration,
+			},
+		};
+		const props = {
+			...this.props,
+			...selectOpts,
+			...this.state,
+		};
+		return <ModelSelect { ...props } />;
 	}
 }
