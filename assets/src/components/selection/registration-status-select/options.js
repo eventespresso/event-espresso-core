@@ -14,7 +14,7 @@ export const EE_OPTION_REG_STATUS_SELECT_ALL = 'ALL_REG_STATUSES';
  * @param { Array } regStatuses        An array of registration status entities
  * @param { boolean } addAllOption     If true, will prepend options array
  *                                     with an "ALL" option meaning that all
- *                                     regStatuses are essentially selected
+ *                                     statuses are essentially selected
  * @param { string } addAllOptionLabel label displayed for "ALL" option
  * @return { Array }                   Returns an array of simple objects
  *                                     formatted for the WordPress
@@ -27,11 +27,11 @@ export const registrationStatusSelectOptions = (
 ) => {
 	const regStatusOptions = reduce(
 		regStatuses,
-		function( options, regStatus ) {
+		function( options, status ) {
 			options.push(
 				{
-					value: regStatus.STS_ID,
-					label: regStatus.STS_code,
+					value: status.STS_ID,
+					label: status.STS_code,
 				},
 			);
 			return options;
