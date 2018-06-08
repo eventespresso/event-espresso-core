@@ -2,7 +2,7 @@
  * External imports
  */
 import Select from 'react-select';
-import { Component, Fragment } from '@wordpress/element';
+import { Component } from '@wordpress/element';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -81,6 +81,7 @@ export class ModelSelect extends Component {
 			mapOptionsCallback,
 			optionsEntityMap,
 		} = this.props;
+
 		if ( ! isEmpty( modelEntities ) ) {
 			selectConfiguration.options = optionsEntityMap !== null ?
 				mapOptionsCallback(
@@ -97,11 +98,7 @@ export class ModelSelect extends Component {
 	}
 
 	render() {
-		return (
-			<Fragment>
-				<Select { ...this.getSelectConfiguration() } />
-			</Fragment>
-		);
+		return <Select { ...REACT_SELECT_DEFAULTS } { ...this.getSelectConfiguration() } />;
 	}
 }
 
