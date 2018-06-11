@@ -23,7 +23,7 @@ export default class EventSelect extends Component {
 		selectConfiguration: {
 			loadingMessage: () => __( 'Retrieving Events.', 'event_espresso' ),
 			noOptionsMessage: () => __(
-				'There are no events available to select from.',
+				'No Events.',
 				'event_espresso',
 			),
 			placeholder: __( 'Select Event...', 'event_espresso' ),

@@ -23,7 +23,7 @@ export default class DatetimeSelect extends Component {
 		selectConfiguration: {
 			loadingMessage: () => __( 'Retrieving Datetimes.', 'event_espresso' ),
 			noOptionsMessage: () => __(
-				'There are no datetimes available to select from.',
+				'No Datetimes.',
 				'event_espresso',
 			),
 			placeholder: __( 'Select Datetime...', 'event_espresso' ),
