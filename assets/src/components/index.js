@@ -4,7 +4,6 @@ export { ContactAvatar } from './entities/contact';
 export { QueryLimit } from './query/limit';
 // selection components
 export * from './form/select';
-export { default as DatetimeSelect } from './selection/datetime-select';
 export {
 	default as RegistrationStatusSelect,
 } from './selection/registration-status-select';

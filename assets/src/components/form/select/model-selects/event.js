@@ -11,6 +11,9 @@ import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
 import PropTypes from 'prop-types';
 
+/**
+ * Select Component for the Event Model.
+ */
 export default class EventSelect extends Component {
 	state = {
 		modelName: 'event',

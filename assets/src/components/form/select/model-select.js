@@ -58,6 +58,7 @@ export class ModelSelect extends Component {
 		} ),
 		getQueryString: PropTypes.func,
 		selectLabel: PropTypes.string,
+		addAllOptionLabel: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -74,6 +75,7 @@ export class ModelSelect extends Component {
 			order: 'desc',
 		},
 		selectLabel: '',
+		addAllOptionLabel: '',
 	};
 
 	static getDerivedStateFromProps( props ) {
@@ -98,17 +100,20 @@ export class ModelSelect extends Component {
 			modelName,
 			optionsEntityMap,
 			mapOptionsCallback,
+			addAllOptionLabel,
 		} = props;
 		if ( ! isEmpty( modelEntities ) ) {
 			return optionsEntityMap !== null ?
 				mapOptionsCallback(
 					modelEntities,
 					modelName,
+					addAllOptionLabel,
 					optionsEntityMap,
 				) :
 				mapOptionsCallback(
 					modelEntities,
 					modelName,
+					addAllOptionLabel,
 				);
 		}
 		return [];
