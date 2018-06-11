@@ -46,7 +46,7 @@ const buildOptions = (
 	map = DEFAULT_MODEL_OPTIONS_MAP,
 ) => {
 	const MAP_FOR_MODEL = map[ modelName ] ? map[ modelName ] : false;
-	const generatedOptions = entities && modelName && MAP_FOR_MODEL ?
+	const generatedOptions = entities && MAP_FOR_MODEL ?
 		reduce( entities, function( options, entity ) {
 			if ( entity[ MAP_FOR_MODEL.label ] &&
 				entity[ MAP_FOR_MODEL.value ] ) {
@@ -60,7 +60,7 @@ const buildOptions = (
 			return options;
 		}, [] ) :
 		[];
-	if ( addAllOptionLabel !== '' ) {
+	if ( entities && addAllOptionLabel !== '' ) {
 		generatedOptions.unshift( {
 			label: addAllOptionLabel,
 			value: OPTION_SELECT_ALL,
