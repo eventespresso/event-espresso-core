@@ -1,11 +1,19 @@
 	// Render the PayPal button
 	jQuery(document).ready(function() {
-		jQuery( document ).on( 'spco_display_step', 'initialize_smart_button' );
+		SPCO.main_container.on( 'spco_display_step', function(){
+			initialize_smart_button();
+		} );
 		initialize_smart_button();
 	});
 
 function initialize_smart_button()
 {
+	var payment_div_id = '#paypal-button-container';
+	var payment_div = jQuery(payment_div_id);
+	if( payment_div.length == 0 ){
+		//if there payment div doesn't exist, don't do anything more
+		return;
+	}
 	paypal.Button.render({
 
 		// Set your environment
@@ -65,6 +73,10 @@ function initialize_smart_button()
 			// don't execute the payment here. Let's do it server-side where it's more secure
 			// return actions.payment.execute().then(function() {
 				//window.alert('Payment Complete!');
+			data.paymentID
+			data.payerID
+			data.paymentToken
+			data.orderID
 				SPCO.display_payment_method(
 					'paypal_smart_buttons'
 				);
@@ -87,6 +99,6 @@ function initialize_smart_button()
 			SPCO.display_messages(messages,false);
 		}
 
-	}, '#paypal-button-container');
+	}, payment_div_id);
 
 }
