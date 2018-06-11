@@ -91,9 +91,10 @@ class PayPalSmartButtonSettingsForm extends EE_Payment_Method_Form
                             'default'         => 'medium',
                         )
                     ),
-                    'access_token' => new EE_Hidden_Input(
-
-                    )
+                    // store the access token like other extra meta inputs
+                    // except hide it, because we don't ask users for it directly. We will retrieve it from
+                    // PayPal upon form submission
+                    'access_token' => new EE_Hidden_Input()
                 ),
                 'exclude'           => array(
                     'PMD_button_url',
