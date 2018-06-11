@@ -31,3 +31,7 @@ export const getQueryString = (
 	}
 	return queryString;
 };
+
+export const QUERY_ORDER_ASC = 'ASC';
+export const QUERY_ORDER_DESC = 'DESC';
+export const ALLOWED_ORDER_VALUES = [ 'asc', 'desc', 'ASC', 'DESC' ];

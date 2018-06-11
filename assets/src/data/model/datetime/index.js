@@ -7,6 +7,8 @@ import PropTypes from 'prop-types';
 
 import {
 	getQueryString as baseGetQueryString,
+	QUERY_ORDER_DESC,
+	ALLOWED_ORDER_VALUES,
 } from '../base';
 
 export const nowDateAndTime = moment();
@@ -24,7 +26,7 @@ export const queryDataTypes = {
 			'start_date',
 			'end_date',
 		] ),
-		order: PropTypes.oneOf( [ 'asc', 'desc' ] ),
+		order: PropTypes.oneOf( ALLOWED_ORDER_VALUES ),
 		showExpired: PropTypes.bool,
 		month: PropTypes.month,
 	} ),
@@ -32,14 +34,22 @@ export const queryDataTypes = {
 
 /**
  * Default attributes for this model
- * @type {{attributes: {limit: number, orderBy: string, order: string,
- *   showExpired: boolean}}}
+ * @type @type {
+ * 	{
+ * 		attributes: {
+ * 			limit: number,
+ * 			orderBy: string,
+ * 			order: string,
+ *   		showExpired: boolean
+ *   	}
+ *   }
+ * }
  */
 export const defaultQueryData = {
 	queryData: {
 		limit: 100,
 		orderBy: 'start_date',
-		order: 'desc',
+		order: QUERY_ORDER_DESC,
 		showExpired: false,
 	},
 };

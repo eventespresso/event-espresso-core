@@ -8,7 +8,11 @@ import PropTypes from 'prop-types';
 /**
  * Internal imports
  */
-import { getQueryString as baseGetQueryString } from '../base';
+import {
+	getQueryString as baseGetQueryString,
+	QUERY_ORDER_DESC,
+	ALLOWED_ORDER_VALUES,
+} from '../base';
 
 export const nowDateAndTime = moment();
 
@@ -27,7 +31,7 @@ export const queryDataTypes = {
 			'ticket_start',
 			'ticket_end',
 		] ),
-		order: PropTypes.oneOf( [ 'asc', 'desc' ] ),
+		order: PropTypes.oneOf( ALLOWED_ORDER_VALUES ),
 		showExpired: PropTypes.bool,
 		categorySlug: PropTypes.string,
 		month: PropTypes.month,
@@ -36,14 +40,22 @@ export const queryDataTypes = {
 
 /**
  * Default attributes for this model
- * @type {{attributes: {limit: number, orderBy: string, order: string,
- *   showExpired: boolean}}}
+ * @type {
+ * 	{
+ * 		attributes: {
+ * 			limit: number,
+ * 			orderBy: string,
+ * 			order: string,
+ *   		showExpired: boolean
+ *   	}
+ *   }
+ * }
  */
 export const defaultQueryData = {
 	queryData: {
 		limit: 100,
 		orderBy: 'start_date',
-		order: 'desc',
+		order: QUERY_ORDER_DESC,
 		showExpired: false,
 	},
 };

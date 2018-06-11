@@ -64,7 +64,7 @@ describe( 'whereConditions()', () => {
 describe( 'getQueryString', () => {
 	it( 'returns expected default for no arguments passed in', () => {
 		expect( getQueryString() ).toEqual(
-			'limit=100&order=desc&order_by=Datetime.DTT_EVT_start' +
+			'limit=100&order=DESC&order_by=Datetime.DTT_EVT_start' +
 			'&where[Datetime.DTT_EVT_end**expired][]=>' +
 			'&where[Datetime.DTT_EVT_end**expired][]=' +
 			nowDateAndTime.local().format()
