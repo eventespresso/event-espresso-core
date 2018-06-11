@@ -1,1 +1,0 @@
-export { ContactAvatar } from './avatar';

@@ -9,7 +9,7 @@ import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
 
 /**
- * ContactAvatar
+ * AvatarImage
  *
  * @constructor
  * @param {string} avatarUrl        gravatar URL
@@ -19,7 +19,7 @@ import { Component } from '@wordpress/element';
  * @param {string} avatarAltText	image alt text
  * @return {Function}  				A pure component function.
  */
-export class ContactAvatar extends Component {
+export class AvatarImage extends Component {
 	static propTypes = {
 		avatarUrl: PropTypes.string,
 		avatarClass: PropTypes.string,
