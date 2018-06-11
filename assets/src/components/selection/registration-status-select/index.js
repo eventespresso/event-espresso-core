@@ -131,8 +131,8 @@ export default withSelect( ( select, ownProps ) => {
 		addAllOptionLabel,
 	} = ownProps;
 	const {
-		getRegistrationStatuss,
-		isRequestingRegistrationStatuss,
+		getRegistrationStatuses,
+		isRequestingRegistrationStatuses,
 	} = select( 'eventespresso/lists' );
 	const queryArgs = {
 		limit: attributes.limit,
@@ -143,8 +143,8 @@ export default withSelect( ( select, ownProps ) => {
 		value => ! isUndefined( value ),
 	) );
 	return {
-		regStatuses: getRegistrationStatuss( queryString ),
-		isLoading: isRequestingRegistrationStatuss( queryString ),
+		regStatuses: getRegistrationStatuses( queryString ),
+		isLoading: isRequestingRegistrationStatuses( queryString ),
 		selectedRegStatusId: selectedRegStatusId,
 		addAllOption: addAllOption,
 		addAllOptionLabel: addAllOptionLabel,
