@@ -12,7 +12,7 @@ describe( 'listItems()', () => {
 	it( 'returns the expected default object (from mock data)', () => {
 		const state = listItems( undefined, {} );
 		expect( state ).toEqual(
-			{ events: [], terms: [], tickets: [], venues: [] },
+			{ event: [], term: [], ticket: [], venue: [] },
 		);
 	} );
 	it( 'returns with received events for known model and does not affect' +

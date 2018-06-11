@@ -13,10 +13,10 @@ describe( 'primaryKeys', () => {
 	it( 'has the expected values from the mock data', () => {
 		expect( primaryKeys ).toEqual(
 			{
-				events: 'EVT_ID',
-				tickets: 'TKT_ID',
-				venues: 'VNU_ID',
-				terms: [ 'TERM_ID', 'TAXONOMY_ID' ],
+				event: 'EVT_ID',
+				ticket: 'TKT_ID',
+				venue: 'VNU_ID',
+				term: [ 'TERM_ID', 'TAXONOMY_ID' ],
 			},
 		);
 	} );
@@ -83,8 +83,8 @@ describe( 'getPrimaryKey()', () => {
 
 	it( 'returns the expected key from the mock data for the provided' +
 		' modelName', () => {
-		expect( getPrimaryKey( 'events' ) ).toEqual( 'EVT_ID' );
-		expect( getPrimaryKey( 'terms' ) )
+		expect( getPrimaryKey( 'event' ) ).toEqual( 'EVT_ID' );
+		expect( getPrimaryKey( 'term' ) )
 			.toEqual( [ 'TERM_ID', 'TAXONOMY_ID' ] );
 	} );
 } );
@@ -92,13 +92,13 @@ describe( 'getPrimaryKey()', () => {
 describe( 'getEntityPrimaryKeyValues()', () => {
 	it( 'returns expected value from provided entity belonging to a model' +
 		' with a singular primary key', () => {
-		expect( getEntityPrimaryKeyValues( 'events', { EVT_ID: 10 } ) )
+		expect( getEntityPrimaryKeyValues( 'event', { EVT_ID: 10 } ) )
 			.toEqual( 10 );
 	} );
 	it( 'returns expected value from provided entity belonging to a model ' +
 		'with combined primary keys', () => {
 		expect( getEntityPrimaryKeyValues(
-			'terms',
+			'term',
 			{ TERM_ID: 10, TAXONOMY_ID: 20 },
 		) ).toEqual( '10:20' );
 	} );
@@ -107,7 +107,7 @@ describe( 'getEntityPrimaryKeyValues()', () => {
 describe( 'keyEntitiesByPrimaryKeyValue()', () => {
 	it( 'throws an error if entities is empty', () => {
 		const t = () => {
-			keyEntitiesByPrimaryKeyValue( 'events', [] );
+			keyEntitiesByPrimaryKeyValue( 'event', [] );
 		};
 		expect( t ).toThrow( Exception );
 		expect( t )
@@ -115,7 +115,7 @@ describe( 'keyEntitiesByPrimaryKeyValue()', () => {
 	} );
 	it( 'throws an error if entities is not an array', () => {
 		const t = () => {
-			keyEntitiesByPrimaryKeyValue( 'events', { EVT_ID: 10 } );
+			keyEntitiesByPrimaryKeyValue( 'event', { EVT_ID: 10 } );
 		};
 		expect( t ).toThrow( Exception );
 		expect( t )
@@ -130,7 +130,7 @@ describe( 'keyEntitiesByPrimaryKeyValue()', () => {
 			50: { EVT_ID: 50 },
 		};
 		expect( keyEntitiesByPrimaryKeyValue(
-			'events',
+			'event',
 			[
 				{ EVT_ID: 10 },
 				{ EVT_ID: 20 },
@@ -147,7 +147,7 @@ describe( 'keyEntitiesByPrimaryKeyValue()', () => {
 			'50:6': { TERM_ID: 50, TAXONOMY_ID: 6 },
 		};
 		expect( keyEntitiesByPrimaryKeyValue(
-			'terms',
+			'term',
 			[
 				{ TERM_ID: 10, TAXONOMY_ID: 20 },
 				{ TERM_ID: 20, TAXONOMY_ID: 10 },

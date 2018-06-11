@@ -10,10 +10,10 @@ describe( 'endpoints', () => {
 	it( 'has the expected values from eejs.data', () => {
 		expect( endpoints ).toEqual(
 			{
-				events: '/ee/v4.8.36/events',
-				tickets: '/ee/v4.8.36/tickets',
-				venues: '/ee/v4.8.36/venues',
-				terms: '/ee/v4.8.36/terms',
+				event: '/ee/v4.8.36/events',
+				ticket: '/ee/v4.8.36/tickets',
+				venue: '/ee/v4.8.36/venues',
+				term: '/ee/v4.8.36/terms',
 			},
 		);
 	} );
@@ -30,7 +30,7 @@ describe( 'getEndpoint()', () => {
 
 	it( 'returns the correct endpoint value for the requested model', () => {
 		expect(
-			getEndpoint( 'events' ),
+			getEndpoint( 'event' ),
 		).toEqual( '/ee/v4.8.36/events' );
 	} );
 } );
@@ -40,7 +40,7 @@ describe( 'applyQueryString()', () => {
 		' for a valid model', () => {
 		const queryString = 'something=1';
 		expect(
-			applyQueryString( 'events', queryString ),
+			applyQueryString( 'event', queryString ),
 		).toEqual( '/ee/v4.8.36/events?' + queryString );
 	} );
 } );
