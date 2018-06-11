@@ -6,17 +6,17 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import { ContactAvatar } from '../avatar';
+import { AvatarImage } from '../avatar';
 
-describe( 'ContactAvatar', () => {
+describe( 'AvatarImage()', () => {
 	it( 'with no avatarUrl provided should return nothing', () => {
-		const wrapper = shallow( <ContactAvatar /> );
+		const wrapper = shallow( <AvatarImage /> );
 		expect( wrapper.html() ).toBeNull();
 	} );
 	it( 'with only avatarUrl provided should have default options', () => {
 		const avatarUrl = 'www.example.com';
 		const wrapper = shallow(
-			<ContactAvatar avatarUrl={ avatarUrl } />
+			<AvatarImage avatarUrl={ avatarUrl } />
 		);
 		const avatarImage = wrapper.find( 'img' );
 		expect( avatarImage.props().src ).toEqual( avatarUrl );
@@ -34,7 +34,7 @@ describe( 'ContactAvatar', () => {
 		const avatarWidth = 64;
 		const avatarAltText = 'this is some alt text';
 		const wrapper = shallow(
-			<ContactAvatar
+			<AvatarImage
 				avatarUrl={ avatarUrl }
 				avatarClass={ avatarClass }
 				avatarHeight={ avatarHeight }
