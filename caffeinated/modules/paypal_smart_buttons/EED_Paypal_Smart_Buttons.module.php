@@ -51,8 +51,9 @@ class EED_Paypal_Smart_Buttons extends EED_Module
         wp_enqueue_script(
             'ee_paypal_smart_buttons',
             $this_dir_url . '/ee_pp_smart_buttons.js',
-            array('paypal_smart_buttons', 'jquery'),
-            '1.0.3');
+            array('paypal_smart_buttons', 'jquery', 'espresso_core', 'single_page_checkout'),
+            '1.0.6',
+            true);
         wp_enqueue_style(
             'ee_paypal_smart_buttons_style',
             $this_dir_url . '/ee_pp_smart_buttons.css'
@@ -69,7 +70,9 @@ class EED_Paypal_Smart_Buttons extends EED_Module
      */
     public static function ee_pp_add_smart_button_to_pms($html, $display_strategy_instance, $input)
     {
-        $html = '<div id="paypal-button-container"></div>' . $html;
+        if($input->parent_section()->name() === 'available_payment_methods') {
+            $html = '<div id="paypal-button-container"></div>' . $html;
+        }
         return $html;
     }
 
