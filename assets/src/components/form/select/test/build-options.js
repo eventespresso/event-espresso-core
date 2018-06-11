@@ -1,4 +1,4 @@
-import buildOptions from '../build-options';
+import buildOptions, { OPTION_SELECT_ALL } from '../build-options';
 
 describe( 'buildOptions()', () => {
 	const testResponse = [
@@ -32,8 +32,22 @@ describe( 'buildOptions()', () => {
 		);
 	} );
 	it( 'returns expected values for options with a custom map.', () => {
-		expect( buildOptions( testResponse, 'event', customMap ) ).toEqual(
+		expect( buildOptions( testResponse, 'event', '', customMap ) ).toEqual(
 			[
+				{ label: 'Custom Property A', value: 'Test A' },
+				{ label: 'Custom Property B', value: 'Test B' },
+			]
+		);
+	} );
+	it( 'returns expected values for options when an "all options" label' +
+		' is included"', () => {
+		expect( buildOptions( testResponse,
+			'event',
+			'All Options',
+			customMap )
+		).toEqual(
+			[
+				{ label: 'All Options', value: OPTION_SELECT_ALL },
 				{ label: 'Custom Property A', value: 'Test A' },
 				{ label: 'Custom Property B', value: 'Test B' },
 			]

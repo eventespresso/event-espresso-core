@@ -1,9 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EventSelect() matches snapshot with default props 1`] = `
+exports[`DatetimeSelect() matches snapshot with default props 1`] = `
 <WithSelect(ModelSelect)
+  addAllOptionLabel="All Datetimes"
   getQueryString={[Function]}
-  modelName="event"
+  modelName="datetime"
   queryData={
     Object {
       "limit": 100,
@@ -18,9 +19,9 @@ exports[`EventSelect() matches snapshot with default props 1`] = `
       "loadingMessage": [Function],
       "noOptionsMessage": [Function],
       "onChange": undefined,
-      "placeholder": "Select Event...",
+      "placeholder": "Select Datetime...",
     }
   }
-  selectLabel="Select Event"
+  selectLabel="Select Datetime"
 />
 `;
