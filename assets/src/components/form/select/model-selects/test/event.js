@@ -10,7 +10,7 @@ describe( 'EventSelect()', () => {
 		const wrapper = shallow( <EventSelect /> );
 		expect( wrapper.prop( 'queryData' ) ).toEqual( {
 			limit: 100,
-			order: 'desc',
+			order: 'DESC',
 			orderBy: 'start_date',
 			showExpired: false,
 		} );

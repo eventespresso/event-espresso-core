@@ -7,7 +7,7 @@ exports[`EventSelect() matches snapshot with default props 1`] = `
   queryData={
     Object {
       "limit": 100,
-      "order": "desc",
+      "order": "DESC",
       "orderBy": "start_date",
       "showExpired": false,
     }
