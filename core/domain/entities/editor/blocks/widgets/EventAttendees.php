@@ -67,6 +67,10 @@ class EventAttendees extends Block
                     'type'    => 'string',
                     'default' => EEM_Registration::status_id_approved,
                 ),
+                'numberOfAttendeesToDisplay' => array(
+                    'type'    => 'number',
+                    'default' => -1,
+                ),
                 'showGravatar'       => array(
                     'type'    => 'boolean',
                     'default' => false,

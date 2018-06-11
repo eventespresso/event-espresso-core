@@ -52,6 +52,10 @@ registerBlockType(
 				type: 'string',
 				default: 'RAP',
 			},
+			numberOfAttendeesToDisplay: {
+				type: 'number',
+				default: -1,
+			},
 			showGravatar: {
 				type: 'boolean',
 				default: false,
