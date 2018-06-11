@@ -30,16 +30,17 @@ export default class DatetimeSelect extends Component {
 		},
 		...datetimeModel.defaultQueryData,
 		getQueryString: datetimeModel.getQueryString,
-		selectLabel: __( 'Select Datetime...', 'event_espresso' ),
-		forEventId: 0,
-		selectedDatetimeId: 0,
+		selectLabel: __( 'Select Datetime', 'event_espresso' ),
 		addAllOptionLabel: __( 'All Datetimes', 'event_espresso' ),
 	};
 
 	static propTypes = {
 		...datetimeModel.queryDataTypes,
 		forEventId: PropTypes.number,
-		selectedDatetimeId: PropTypes.number,
+		selectedDatetimeId: PropTypes.oneOfType( [
+			PropTypes.number,
+			PropTypes.string,
+		] ),
 		onDatetimeSelect: PropTypes.func,
 		selectLabel: PropTypes.string,
 	};

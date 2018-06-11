@@ -30,12 +30,15 @@ export default class EventSelect extends Component {
 		},
 		...eventModel.defaultQueryData,
 		getQueryString: eventModel.getQueryString,
-		selectLabel: __( 'Select Event...', 'event_espresso' ),
+		selectLabel: __( 'Select Event', 'event_espresso' ),
 	};
 
 	static propTypes = {
 		...eventModel.queryDataTypes,
-		selectedEventId: PropTypes.number,
+		selectedEventId: PropTypes.oneOfType( [
+			PropTypes.number,
+			PropTypes.string,
+		] ),
 		onEventSelect: PropTypes.func,
 		selectLabel: PropTypes.string,
 	};
