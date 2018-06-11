@@ -13,6 +13,8 @@ import { __ } from '@eventespresso/i18n';
 import {
 	DatetimeSelect,
 	EventSelect,
+	QueryLimit,
+	RegistrationStatusSelect,
 	TicketSelect
 } from '@eventespresso/components';
 import PropTypes from 'prop-types';
@@ -24,12 +26,40 @@ import { isEmpty } from 'lodash';
 import { EventAttendeesList } from './list';
 
 class EventAttendeesEditor extends Component {
+	static propTypes = {
+		attendees: PropTypes.array,
+		isLoading: PropTypes.bool,
+		attributes: PropTypes.shape( {
+			eventId: PropTypes.number,
+			datetimeId: PropTypes.number,
+			ticketId: PropTypes.number,
+			status: PropTypes.string,
+			showGravatar: PropTypes.bool,
+			displayOnArchives: PropTypes.bool,
+		} ),
+	}
+
+	static defaultProps = {
+		attendees: [],
+		isLoading: true,
+		attributes: {
+			eventId: 0,
+			datetimeId: 0,
+			ticketId: 0,
+			status: 'RAP',
+			showGravatar: PropTypes.bool,
+			displayOnArchives: PropTypes.bool,
+		},
+	}
+
 	constructor() {
 		super( ...arguments );
 		this.setEventId = this.setEventId.bind( this );
 		this.setDatetimeId = this.setDatetimeId.bind( this );
 		this.setTicketId = this.setTicketId.bind( this );
 		this.setStatus = this.setStatus.bind( this );
+		this.setNumberOfAttendeesToDisplay
+			= this.setNumberOfAttendeesToDisplay.bind( this );
 		this.toggleShowGravatar = this.toggleShowGravatar.bind( this );
 		this.toggleDisplayOnArchives
 			= this.toggleDisplayOnArchives.bind( this );
@@ -47,8 +77,16 @@ class EventAttendeesEditor extends Component {
 		this.props.setAttributes( { ticketId: parseInt( ticketId ) } );
 	}
 
-	setStatus() {
+	setStatus( status ) {
 		this.props.setAttributes( { status: status } );
+	}
+
+	setNumberOfAttendeesToDisplay( numberOfAttendeesToDisplay ) {
+		this.props.setAttributes( {
+			numberOfAttendeesToDisplay: parseInt(
+				numberOfAttendeesToDisplay
+			)
+		} );
 	}
 
 	toggleShowGravatar( showGravatar ) {
@@ -132,6 +170,18 @@ class EventAttendeesEditor extends Component {
 					}
 				/>
 
+				<RegistrationStatusSelect
+					key="attendees-registration-status-select"
+					selectedRegStatusId={ attributes.status }
+					onRegStatusSelect={ this.setStatus }
+					addAllOptionLabel={
+						__(
+							'Show Attendees for All Registration Statuses',
+							'event_espresso'
+						)
+					}
+				/>
+
 				<ToggleControl
 					label={ __( 'Display Gravatar', 'event_espresso' ) }
 					checked={ attributes.showGravatar }
@@ -157,32 +207,6 @@ class EventAttendeesEditor extends Component {
 	}
 }
 
-EventAttendeesEditor.propTypes = {
-	attendees: PropTypes.array,
-	isLoading: PropTypes.bool,
-	attributes: PropTypes.shape( {
-		eventId: PropTypes.number,
-		datetimeId: PropTypes.number,
-		ticketId: PropTypes.number,
-		status: PropTypes.string,
-		showGravatar: PropTypes.bool,
-		displayOnArchives: PropTypes.bool,
-	} ),
-};
-
-EventAttendeesEditor.defaultProps = {
-	attendees: [],
-	isLoading: true,
-	attributes: {
-		eventId: 0,
-		datetimeId: 0,
-		ticketId: 0,
-		status: 'RAP',
-		showGravatar: PropTypes.bool,
-		displayOnArchives: PropTypes.bool,
-	},
-};
-
 export default withSelect( ( select, ownProps ) => {
 	const { attributes } = ownProps;
 	let { eventId, datetimeId, ticketId, status, showGravatar } = attributes;
@@ -198,7 +222,7 @@ export default withSelect( ( select, ownProps ) => {
 		queryParams.push( `[Registration.EVT_ID]=${ eventId }` );
 	}
 	if ( status !== '' ) {
-		queryParams.push( `[Registration.STS_ID]=${ status }` );
+		queryParams.push( `STS_ID=${ status }` );
 	}
 	if ( showGravatar === true ) {
 		queryParams.push( 'calculate=userAvatar' );
