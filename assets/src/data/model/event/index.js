@@ -87,29 +87,36 @@ export const mapOrderBy = ( orderBy ) => {
  *
  * @param {boolean} showExpired  Whether or not to include expired events.
  * @param {string} categorySlug  Return events for the given categorySlug
- * @param {string} month         Return events for the given month.  Can be any
- *                                 in any month format recognized by moment.
- * @return {string}             The assembled where conditions.
+ * @param {string} month         Return events for the given month.
+ * 								 Can be any month format recognized by moment.
+ * @return {string}              The assembled where conditions.
  */
-export const whereConditions = ( { showExpired = true, categorySlug, month = 'none' } ) => {
+export const whereConditions = ( {
+	showExpired = false,
+	categorySlug,
+	month = 'none',
+} ) => {
 	const where = [];
 	const GREATER_AND_EQUAL = encodeURIComponent( '>=' );
 	const LESS_AND_EQUAL = encodeURIComponent( '<=' );
 
 	if ( ! showExpired ) {
-		where.push( 'where[Datetime.DTT_EVT_end**expired][]=>&where[Datetime.DTT_EVT_end**expired][]=' +
-			nowDateAndTime.local().format() );
+		where.push(
+			'where[Datetime.DTT_EVT_end**expired][]=>' +
+			'&where[Datetime.DTT_EVT_end**expired][]=' +
+			nowDateAndTime.local().format()
+		);
 	}
 	if ( categorySlug ) {
-		where.push( 'where[Term_Relationship.Term_Taxonomy.Term.slug]=' + categorySlug );
+		where.push(
+			'where[Term_Relationship.Term_Taxonomy.Term.slug]=' + categorySlug
+		);
 	}
 	if ( month && month !== 'none' ) {
-		where.push( 'where[Datetime.DTT_EVT_start][]=' +
-			GREATER_AND_EQUAL +
+		where.push( 'where[Datetime.DTT_EVT_start][]=' + GREATER_AND_EQUAL +
 			'&where[Datetime.DTT_EVT_start][]=' +
 			moment().month( month ).startOf( 'month' ).local().format() );
-		where.push( 'where[Datetime.DTT_EVT_end][]=' +
-			LESS_AND_EQUAL +
+		where.push( 'where[Datetime.DTT_EVT_end][]=' + LESS_AND_EQUAL +
 			'&where[Datetime.DTT_EVT_end][]=' +
 			moment().month( month ).endOf( 'month' ).local().format() );
 	}
