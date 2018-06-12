@@ -1,4 +1,4 @@
-# <ModelSelect />
+# `<ModelSelect />` and `<ModelEnhancedSelect />`
 
 ModelSelect is a component that exposed the [`react-select`](https://deploy-preview-2289--react-select.netlify.com/home) component for displaying provided EE model data for selection. While it can be used on its own, its intended to be utilized within more concrete "wrapper" components specific to a model (eg `EventSelect`).  There are actually 2 components exposed for `ModelSelect`:  a standalone component, `<ModelSelect />` and a `withSelect` Higher Order Component wrapped default export which is exposed as `<ModelEnhancedSelect />`
 
@@ -76,7 +76,7 @@ This informs what model the incoming modelEntities are for.  This should corresp
 
 ### mapOptionsCallback
 
-This should be a function that converts incoming modelEntities into an array of option objects usable by the react-select component.  By default, this is the built-in [`buildOptions`](../../../../../src/components/form/select/build-options.js) callback and that can be used as a reference for how any custom function should behave.
+This should be a function that converts incoming modelEntities into an array of option objects usable by the react-select component.  By default, this is the built-in [`buildOptions`](../../../../../assets/src/components/form/select/build-options.js) callback and that can be used as a reference for how any custom function should behave.
 
 - Type: `Function`
 - Required: No
