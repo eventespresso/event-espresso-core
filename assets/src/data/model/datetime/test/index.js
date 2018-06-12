@@ -6,6 +6,8 @@ import {
 } from '../';
 import moment from 'moment';
 
+const expectedNow = nowDateAndTime.local().format();
+
 describe( 'mapOrderBy()', () => {
 	it( 'correctly maps incoming values to the correct expectation', () => {
 		const incomingToExpectedMap = {
@@ -22,7 +24,10 @@ describe( 'mapOrderBy()', () => {
 
 describe( 'whereConditions()', () => {
 	it( 'returns expected default for empty object passed in', () => {
-		expect( whereConditions( {} ) ).toEqual( '' );
+		expect( whereConditions( {} ) ).toEqual(
+			'where[DTT_EVT_end**expired][]=>' +
+			'&where[DTT_EVT_end**expired][]=' + expectedNow
+		);
 	} );
 	it( 'returns expected string for values passed in', () => {
 		const expectedEndofDate = moment()
@@ -44,16 +49,11 @@ describe( 'whereConditions()', () => {
 		};
 		expect( whereConditions( testObject ) ).toEqual(
 			'where[DTT_EVT_end**expired][]=>' +
-			'&where[DTT_EVT_end**expired][]=' +
-			nowDateAndTime.local().format() +
-			'&where[DTT_EVT_start][]=' +
-			GREATER_AND_EQUAL +
-			'&where[DTT_EVT_start][]=' +
-			expectedStartofDate +
-			'&where[DTT_EVT_end][]=' +
-			LESS_AND_EQUAL +
-			'&where[DTT_EVT_end][]=' +
-			expectedEndofDate +
+			'&where[DTT_EVT_end**expired][]=' + expectedNow +
+			'&where[DTT_EVT_start][]=' + GREATER_AND_EQUAL +
+			'&where[DTT_EVT_start][]=' + expectedStartofDate +
+			'&where[DTT_EVT_end][]=' + LESS_AND_EQUAL +
+			'&where[DTT_EVT_end][]=' + expectedEndofDate +
 			'&where[Event.EVT_ID]=' + 20
 		);
 	} );
@@ -64,8 +64,7 @@ describe( 'getQueryString', () => {
 		expect( getQueryString() ).toEqual(
 			'limit=100&order=DESC&order_by=DTT_EVT_start' +
 			'&where[DTT_EVT_end**expired][]=>' +
-			'&where[DTT_EVT_end**expired][]=' +
-			nowDateAndTime.local().format()
+			'&where[DTT_EVT_end**expired][]=' + expectedNow
 		);
 	} );
 } );
