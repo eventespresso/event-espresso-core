@@ -3,6 +3,8 @@ import {
 	whereConditions,
 	getQueryString,
 	nowDateAndTime,
+	GREATER_THAN,
+	LESS_THAN,
 } from '../';
 import moment from 'moment';
 
@@ -35,25 +37,19 @@ describe( 'whereConditions()', () => {
 			.startOf( 'month' )
 			.local()
 			.format();
-		const GREATER_AND_EQUAL = encodeURIComponent( '>=' );
-		const LESS_AND_EQUAL = encodeURIComponent( '<=' );
 		const testObject = {
 			showExpired: false,
 			forEventId: 20,
 			month: 'may',
 		};
 		expect( whereConditions( testObject ) ).toEqual(
-			'where[DTT_EVT_end**expired][]=>' +
+			'where[DTT_EVT_end**expired][]=' + GREATER_THAN +
 			'&where[DTT_EVT_end**expired][]=' +
 			nowDateAndTime.local().format() +
-			'&where[DTT_EVT_start][]=' +
-			GREATER_AND_EQUAL +
-			'&where[DTT_EVT_start][]=' +
-			expectedStartofDate +
-			'&where[DTT_EVT_end][]=' +
-			LESS_AND_EQUAL +
-			'&where[DTT_EVT_end][]=' +
-			expectedEndofDate +
+			'&where[DTT_EVT_start][]=' + GREATER_THAN +
+			'&where[DTT_EVT_start][]=' + expectedStartofDate +
+			'&where[DTT_EVT_end][]=' + LESS_THAN +
+			'&where[DTT_EVT_end][]=' + expectedEndofDate +
 			'&where[Event.EVT_ID]=' + 20
 		);
 	} );
@@ -63,7 +59,7 @@ describe( 'getQueryString', () => {
 	it( 'returns expected default for no arguments passed in', () => {
 		expect( getQueryString() ).toEqual(
 			'limit=100&order=DESC&order_by=DTT_EVT_start' +
-			'&where[DTT_EVT_end**expired][]=>' +
+			'&where[DTT_EVT_end**expired][]=' + GREATER_THAN +
 			'&where[DTT_EVT_end**expired][]=' +
 			nowDateAndTime.local().format()
 		);
