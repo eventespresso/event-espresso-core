@@ -56,7 +56,26 @@ class EE_PMT_Paypal_Smart_Buttons extends EE_PMT_Base
             array(
                 'subsections' =>
                 array(
-                    'token' => new EE_Hidden_Input(),
+                    'payment_token' => new EE_Hidden_Input(
+                        array(
+                            'html_id' => 'paypal-payment-token',
+                        )
+                    ),
+                    'payment_id' => new EE_Hidden_Input(
+                        array(
+                            'html_id' => 'paypal-payment-id',
+                        )
+                    ),
+                    'order_id' => new EE_Hidden_Input(
+                        array(
+                            'html_id' => 'paypal-order-id'
+                        )
+                    ),
+                    'payer_id' => new EE_Hidden_Input(
+                        array(
+                            'html_id' => 'paypal-payer-id'
+                        )
+                    ),
                 )
             )
         );

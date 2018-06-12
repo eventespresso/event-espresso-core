@@ -73,16 +73,16 @@ function initialize_smart_button()
 			// don't execute the payment here. Let's do it server-side where it's more secure
 			// return actions.payment.execute().then(function() {
 				//window.alert('Payment Complete!');
-			data.paymentID
-			data.payerID
-			data.paymentToken
-			data.orderID
 				SPCO.display_payment_method(
 					'paypal_smart_buttons'
 				);
 				// wait for the payment method to be fully displayed, then submit it
 				jQuery(document).on('spco_switch_payment_methods', function(){
-					jQuery( '#spco-go-to-step-finalize_registration-submit').trigger( 'click' );
+					jQuery('#paypal-payer-id').val(data.payerID);
+					jQuery('#paypal-payment-id').val(data.paymentID);
+					jQuery('#paypal-payment-token').val(data.paymentToken);
+					jQuery('#paypal-order-id').val(data.orderID);
+					jQuery('#spco-go-to-step-finalize_registration-submit').trigger( 'click' );
 				});
 
 			// });

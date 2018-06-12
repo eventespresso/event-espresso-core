@@ -52,7 +52,7 @@ class EED_Paypal_Smart_Buttons extends EED_Module
             'ee_paypal_smart_buttons',
             $this_dir_url . '/ee_pp_smart_buttons.js',
             array('paypal_smart_buttons', 'jquery', 'espresso_core', 'single_page_checkout'),
-            '1.0.6',
+            '1.0.8',
             true);
         wp_enqueue_style(
             'ee_paypal_smart_buttons_style',
