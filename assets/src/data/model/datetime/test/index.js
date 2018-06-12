@@ -26,7 +26,7 @@ describe( 'mapOrderBy()', () => {
 describe( 'whereConditions()', () => {
 	it( 'returns expected default for empty object passed in', () => {
 		expect( whereConditions( {} ) ).toEqual(
-			'where[DTT_EVT_end**expired][]=>' +
+			'where[DTT_EVT_end**expired][]=' + GREATER_THAN +
 			'&where[DTT_EVT_end**expired][]=' + expectedNow
 		);
 	} );
