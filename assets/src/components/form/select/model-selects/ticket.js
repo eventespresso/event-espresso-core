@@ -34,6 +34,7 @@ export default class TicketSelect extends Component {
 	static propTypes = {
 		...ticketModel.queryDataTypes,
 		forEventId: PropTypes.number,
+		forDatetimeId: PropTypes.number,
 		selectedTicketId: PropTypes.oneOfType( [
 			PropTypes.number,
 			PropTypes.string,
