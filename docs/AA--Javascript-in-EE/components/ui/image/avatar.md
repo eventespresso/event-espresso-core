@@ -59,8 +59,9 @@ This will be used for the value of the `alt` attribute on the `img` tag.
 
 ## Usage Overview
 
-This component
-is exposed two ways:
+Note: if you plan on exposing something wrapping this component as a component itself on `eejs.components` (this will be the case if you are adding your new component to the `components` folder), then import this component directly via relative path.
+
+This component is exposed two ways:
 
 **`eejs.components` global**
 
