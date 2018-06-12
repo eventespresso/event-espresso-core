@@ -1,4 +1,4 @@
-# <EventSelect />
+# `<EventSelect />`
 
 EventSelect is a component that exposed the [`react-select`](https://deploy-preview-2289--react-select.netlify.com/home) component for displaying provided EE Event model data for selection. It is a wrapper surrounding the [`<ModelEnhancedSelect />`](model-select.md) higher order component.
 
@@ -89,7 +89,7 @@ This callback will receive two arguments with the following schema:
 | Argument | Possible Types | Details |
 | -------- | --------------- | ------- |
 | selection | `null`, `undefined`, `Array<Object>`, `Object` | the object is in the shape of `{ value: 10, label: 'Some label'}` (essentially the data associated with the selected option) |
-| action | Object | An object with the sampe of `{action: <string>}` and the possible values are `select-option`, `deselect-option`, `remove-value`, `pop-value`, `set-value`, `clear`, `create-option` |
+| action | Object | An object with the shape of `{action: <string>}` and the possible values are `select-option`, `deselect-option`, `remove-value`, `pop-value`, `set-value`, `clear`, `create-option` |
 
 
 - Type: `Function`
