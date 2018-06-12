@@ -9,8 +9,6 @@ import {
 	getQueryString as baseGetQueryString,
 	QUERY_ORDER_DESC,
 	ALLOWED_ORDER_VALUES,
-	GREATER_THAN,
-	LESS_THAN,
 } from '../base';
 
 export const nowDateAndTime = moment();
@@ -23,8 +21,8 @@ export const queryDataTypes = {
 	queryData: PropTypes.shape( {
 		limit: PropTypes.number,
 		orderBy: PropTypes.oneOf( [
-			'DTT_name',
-			'DTT_ID',
+			'TKT_name',
+			'TKT_ID',
 			'start_date',
 			'end_date',
 		] ),
@@ -58,7 +56,7 @@ export const defaultQueryData = {
 
 /**
  * Used to map an orderBy string to the actual value used in a REST query from
- * the context of an event.
+ * the context of a ticket.
  *
  * @param {string} orderBy
  *
@@ -67,8 +65,8 @@ export const defaultQueryData = {
  */
 export const mapOrderBy = ( orderBy ) => {
 	const orderByMap = {
-		start_date: 'DTT_EVT_start',
-		end_date: 'DTT_EVT_end',
+		start_date: 'TKT_start_date',
+		end_date: 'TKT_end_date',
 	};
 	return isUndefined( orderByMap[ orderBy ] ) ?
 		orderBy :
@@ -76,42 +74,52 @@ export const mapOrderBy = ( orderBy ) => {
 };
 
 /**
- * Builds where conditions for an events endpoint request using provided
+ * Builds where conditions for an tickets endpoint request using provided
  * information.
  *
- * @param {number} forEventId  ID for Event to retrieve datetimes from
- * @param {boolean} showExpired  Whether or not to include expired events.
- * @param {string} month         Return events for the given month.  Can be any
- *                                 in any month format recognized by moment.
- * @return {string}             The assembled where conditions.
+ * @param {boolean} showExpired 	Whether or not to include expired tickets.
+ * @param {string} month            Return tickets for the given month. Can be
+ *                                	in any month format recognized by moment
+ * @param {number} forEventId    	ID of Event to retrieve tickets for
+ * @param {number} forDatetimeId    ID of Datetime to retrieve tickets for
+ * @return {string}                	The assembled where conditions.
  */
 export const whereConditions = ( {
 	forEventId = 0,
+	forDatetimeId = 0,
 	showExpired = false,
 	month = 'none',
 } ) => {
 	const where = [];
+	const GREATER_AND_EQUAL = encodeURIComponent( '>=' );
+	const LESS_AND_EQUAL = encodeURIComponent( '<=' );
+
 	if ( ! showExpired ) {
 		where.push(
-			'where[DTT_EVT_end**expired][]=' + GREATER_THAN +
-			'&where[DTT_EVT_end**expired][]=' +
+			'where[TKT_end_date**expired][]=>' +
+			'&where[TKT_end_date**expired][]=' +
 			nowDateAndTime.local().format()
 		);
 	}
 	if ( month && month !== 'none' ) {
 		where.push(
-			'where[DTT_EVT_start][]=' + GREATER_THAN +
-			'&where[DTT_EVT_start][]=' +
+			'where[TKT_start_date][]=' + GREATER_AND_EQUAL +
+			'&where[TKT_start_date][]=' +
 			moment().month( month ).startOf( 'month' ).local().format()
 		);
 		where.push(
-			'where[DTT_EVT_end][]=' + LESS_THAN +
-			'&where[DTT_EVT_end][]=' +
+			'where[TKT_end_date][]=' + LESS_AND_EQUAL +
+			'&where[TKT_end_date][]=' +
 			moment().month( month ).endOf( 'month' ).local().format()
 		);
 	}
-	if ( parseInt( forEventId, 10 ) !== 0 ) {
-		where.push( 'where[Event.EVT_ID]=' + forEventId );
+	forEventId = parseInt( forEventId, 10 );
+	if ( forEventId !== 0 && ! isNaN( forEventId ) ) {
+		where.push( 'where[Datetime.Event.EVT_ID]=' + forEventId );
+	}
+	forDatetimeId = parseInt( forDatetimeId, 10 );
+	if ( forDatetimeId !== 0 && ! isNaN( forDatetimeId ) ) {
+		where.push( 'where[Datetime.DTT_ID]=' + forDatetimeId );
 	}
 	return where.join( '&' );
 };

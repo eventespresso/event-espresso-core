@@ -4,7 +4,6 @@ import {
 	getQueryString,
 	nowDateAndTime,
 } from '../';
-import { GREATER_THAN, LESS_THAN } from '../../base';
 import moment from 'moment';
 
 const expectedNow = nowDateAndTime.local().format();
@@ -12,9 +11,8 @@ const expectedNow = nowDateAndTime.local().format();
 describe( 'mapOrderBy()', () => {
 	it( 'correctly maps incoming values to the correct expectation', () => {
 		const incomingToExpectedMap = {
-			start_date: 'DTT_EVT_start',
-			end_date: 'DTT_EVT_end',
-			DTT_ID: 'DTT_ID',
+			start_date: 'TKT_start_date',
+			end_date: 'TKT_end_date',
 		};
 		for ( const incomingOrderBy in incomingToExpectedMap ) {
 			const expectedValue = incomingToExpectedMap[ incomingOrderBy ];
@@ -26,8 +24,8 @@ describe( 'mapOrderBy()', () => {
 describe( 'whereConditions()', () => {
 	it( 'returns expected default for empty object passed in', () => {
 		expect( whereConditions( {} ) ).toEqual(
-			'where[DTT_EVT_end**expired][]=>' +
-			'&where[DTT_EVT_end**expired][]=' + expectedNow
+			'where[TKT_end_date**expired][]=>' +
+			'&where[TKT_end_date**expired][]=' + expectedNow
 		);
 	} );
 	it( 'returns expected string for values passed in', () => {
@@ -41,19 +39,23 @@ describe( 'whereConditions()', () => {
 			.startOf( 'month' )
 			.local()
 			.format();
+		const GREATER_AND_EQUAL = encodeURIComponent( '>=' );
+		const LESS_AND_EQUAL = encodeURIComponent( '<=' );
 		const testObject = {
 			showExpired: false,
 			forEventId: 20,
+			forDatetimeId: 123,
 			month: 'may',
 		};
 		expect( whereConditions( testObject ) ).toEqual(
-			'where[DTT_EVT_end**expired][]=' + GREATER_THAN +
-			'&where[DTT_EVT_end**expired][]=' + expectedNow +
-			'&where[DTT_EVT_start][]=' + GREATER_THAN +
-			'&where[DTT_EVT_start][]=' + expectedStartofDate +
-			'&where[DTT_EVT_end][]=' + LESS_THAN +
-			'&where[DTT_EVT_end][]=' + expectedEndofDate +
-			'&where[Event.EVT_ID]=' + 20
+			'where[TKT_end_date**expired][]=>' +
+			'&where[TKT_end_date**expired][]=' + expectedNow +
+			'&where[TKT_start_date][]=' + GREATER_AND_EQUAL +
+			'&where[TKT_start_date][]=' + expectedStartofDate +
+			'&where[TKT_end_date][]=' + LESS_AND_EQUAL +
+			'&where[TKT_end_date][]=' + expectedEndofDate +
+			'&where[Datetime.Event.EVT_ID]=' + 20 +
+			'&where[Datetime.DTT_ID]=' + 123
 		);
 	} );
 } );
@@ -61,9 +63,9 @@ describe( 'whereConditions()', () => {
 describe( 'getQueryString', () => {
 	it( 'returns expected default for no arguments passed in', () => {
 		expect( getQueryString() ).toEqual(
-			'limit=100&order=DESC&order_by=DTT_EVT_start' +
-			'&where[DTT_EVT_end**expired][]=' + GREATER_THAN +
-			'&where[DTT_EVT_end**expired][]=' + expectedNow
+			'limit=100&order=DESC&order_by=TKT_start_date' +
+			'&where[TKT_end_date**expired][]=>' +
+			'&where[TKT_end_date**expired][]=' + expectedNow
 		);
 	} );
 } );
