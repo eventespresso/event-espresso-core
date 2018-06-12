@@ -3,9 +3,8 @@ import {
 	whereConditions,
 	getQueryString,
 	nowDateAndTime,
-	GREATER_THAN,
-	LESS_THAN,
 } from '../';
+import { GREATER_THAN, LESS_THAN } from '../../base';
 import moment from 'moment';
 
 describe( 'mapOrderBy()', () => {
