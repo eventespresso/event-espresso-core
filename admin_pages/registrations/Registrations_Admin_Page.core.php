@@ -1506,7 +1506,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         if (empty($orderby['REG_ID'])) {
             $orderby['REG_ID'] = $order;
         }
-        return array('order_by' => $orderby);
+        return apply_filters(
+            'FHEE__Registrations_Admin_Page___get_orderby_for_registrations_query', 
+            array(
+                'order_by' => $orderby
+            ),
+            $this->_req_data
+        );
     }
 
 
