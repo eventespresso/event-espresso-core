@@ -6,6 +6,8 @@ import {
 } from '../';
 import moment from 'moment';
 
+const expectedNow = nowDateAndTime.local().format();
+
 describe( 'mapOrderBy()', () => {
 	it( 'correctly maps incoming values to the correct expectation', () => {
 		const incomingToExpectedMap = {
@@ -24,7 +26,10 @@ describe( 'mapOrderBy()', () => {
 
 describe( 'whereConditions()', () => {
 	it( 'returns expected default for empty object passed in', () => {
-		expect( whereConditions( {} ) ).toEqual( '' );
+		expect( whereConditions( {} ) ).toEqual(
+			'where[Datetime.DTT_EVT_end**expired][]=>' +
+			'&where[Datetime.DTT_EVT_end**expired][]=' + expectedNow
+		);
 	} );
 	it( 'returns expected string for values passed in', () => {
 		const expectedEndofDate = moment()
@@ -46,17 +51,12 @@ describe( 'whereConditions()', () => {
 		};
 		expect( whereConditions( testObject ) ).toEqual(
 			'where[Datetime.DTT_EVT_end**expired][]=>' +
-			'&where[Datetime.DTT_EVT_end**expired][]=' +
-			nowDateAndTime.local().format() +
+			'&where[Datetime.DTT_EVT_end**expired][]=' + expectedNow +
 			'&where[Term_Relationship.Term_Taxonomy.Term.slug]=test' +
-			'&where[Datetime.DTT_EVT_start][]=' +
-			GREATER_AND_EQUAL +
-			'&where[Datetime.DTT_EVT_start][]=' +
-			expectedStartofDate +
-			'&where[Datetime.DTT_EVT_end][]=' +
-			LESS_AND_EQUAL +
-			'&where[Datetime.DTT_EVT_end][]=' +
-			expectedEndofDate,
+			'&where[Datetime.DTT_EVT_start][]=' + GREATER_AND_EQUAL +
+			'&where[Datetime.DTT_EVT_start][]=' + expectedStartofDate +
+			'&where[Datetime.DTT_EVT_end][]=' + LESS_AND_EQUAL +
+			'&where[Datetime.DTT_EVT_end][]=' + expectedEndofDate,
 		);
 	} );
 } );
@@ -66,8 +66,7 @@ describe( 'getQueryString', () => {
 		expect( getQueryString() ).toEqual(
 			'limit=100&order=DESC&order_by=Datetime.DTT_EVT_start' +
 			'&where[Datetime.DTT_EVT_end**expired][]=>' +
-			'&where[Datetime.DTT_EVT_end**expired][]=' +
-			nowDateAndTime.local().format()
+			'&where[Datetime.DTT_EVT_end**expired][]=' + expectedNow
 		);
 	} );
 } );
