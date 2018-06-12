@@ -85,7 +85,7 @@ export const mapOrderBy = ( orderBy ) => {
  */
 export const whereConditions = ( {
 	forEventId = 0,
-	showExpired = true,
+	showExpired = false,
 	month = 'none',
 } ) => {
 	const where = [];
