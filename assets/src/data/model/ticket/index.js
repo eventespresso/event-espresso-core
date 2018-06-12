@@ -84,7 +84,7 @@ export const mapOrderBy = ( orderBy ) => {
  * @param {number} forDatetimeId    ID of Datetime to retrieve tickets for
  * @return {string}                	The assembled where conditions.
  */
-const whereConditions = ( {
+export const whereConditions = ( {
 	forEventId = 0,
 	forDatetimeId = 0,
 	showExpired = false,
