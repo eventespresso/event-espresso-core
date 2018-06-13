@@ -27,19 +27,39 @@ class EE_Radio_Button_Display_Strategy extends EE_Compound_Input_Display_Strateg
 
             $html_id = $this->get_sub_input_id($value);
             $html .= EEH_HTML::nl(0, 'radio');
-            $html .= '<label for="' . $html_id . '"';
-            $html .= ' id="' . $html_id . '-lbl"';
-            $html .= ' class="ee-radio-label-after' . $label_size_class . '">';
+
+            $html .= $this->_opening_tag('label');
+            $html .= $this->_attributes_string(
+                array(
+                    'for' => $html_id,
+                    'id' => $html_id . '-lbl',
+                    'class' => apply_filters(
+                        'FHEE__EE_Radio_Button_Display_Strategy__display__option_label_class',
+                        'ee-radio-label-after' . $label_size_class,
+                        $this,
+                        $input,
+                        $value
+                    )
+                )
+            );
+            $html .= '>';
             $html .= EEH_HTML::nl(1, 'radio');
-            $html .= '<input id="' . $html_id . '"';
-            $html .= ' name="' . $input->html_name() . '"';
-            $html .= ' class="' . $input->html_class() . '"';
-            $html .= ' style="' . $input->html_style() . '"';
-            $html .= ' type="radio"';
-            $html .= ' value="' . esc_attr($value) . '"';
-            $html .= $input->raw_value() === $value ? ' checked="checked"' : '';
-            $html .= ' ' . $this->_input->other_html_attributes();
-            $html .= ' data-question_label="'. $input->html_label_id().'"';
+            $html .= $this->_opening_tag('input');
+            $attributes = array(
+                'id' => $html_id,
+                'name' => $input->html_name(),
+                'class' => $input->html_class(),
+                'style' => $input->html_style(),
+                'type' => 'radio',
+                'value' => $value,
+                0 => $input->other_html_attributes(),
+                'data-question_label' => $input->html_label_id()
+            );
+            if ($input->raw_value() === $value) {
+                $attributes['checked'] = 'checked';
+            }
+            $html .= $this->_attributes_string($attributes);
+
             $html .= '>&nbsp;';
             $html .= $display_text;
             $html .= EEH_HTML::nl(-1, 'radio') . '</label>';
