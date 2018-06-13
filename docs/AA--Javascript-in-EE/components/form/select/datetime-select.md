@@ -1,6 +1,6 @@
 # `<DatetimeSelect />`
 
-DatetimeSelect is a component that exposed the [`react-select`](https://deploy-preview-2289--react-select.netlify.com/home) component for displaying provided EE Datetime model data for selection. It is a wrapper surrounding the [`<ModelEnhancedSelect />`](model-select.md) higher order component.
+DatetimeSelect exposes the [`react-select`](https://deploy-preview-2289--react-select.netlify.com/home) component and generates a select input for choosing from the provided EE Datetime model data. It is a wrapper surrounding the [`<ModelEnhancedSelect />`](model-select.md) higher order component.
 
 ## Shape
 
@@ -68,7 +68,7 @@ This is a function that returns the queryString used to retrieve the Datetime mo
 
 ### selectLabel
 
-If provided, a `<label>` will be prepended before the Select element using the text provided by the value on this property.  It will be linked (the label `for` attribute) to the select input via the `selectConfiguration.name` property.
+If provided, a `<label>` will be prepended before the Select element using the text provided by the value on this property.  It will be linked (via the label `for` attribute) to the select input via the `selectConfiguration.name` property.
 
 - Type: `String`
 - Required: No
