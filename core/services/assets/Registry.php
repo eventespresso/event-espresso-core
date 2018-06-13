@@ -81,13 +81,13 @@ class Registry
         $this->assets = $assets;
         $this->i18n_registry = $i18n_registry;
         add_action('wp_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
-        add_action('admin_enqueue_scripts', array($this, 'adminRegisterManifestFiles'), 1);
+        add_action('admin_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
         add_action('wp_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 3);
-        add_action('admin_enqueue_scripts', array($this, 'adminRegisterScriptsAndStyles'), 3);
+        add_action('admin_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 3);
         add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 4);
-        add_action('admin_enqueue_scripts', array($this, 'adminEnqueueData'), 4);
+        add_action('admin_enqueue_scripts', array($this, 'enqueueData'), 4);
         add_action('wp_print_footer_scripts', array($this, 'enqueueData'), 1);
-        add_action('admin_print_footer_scripts', array($this, 'adminEnqueueData'), 1);
+        add_action('admin_print_footer_scripts', array($this, 'enqueueData'), 1);
     }
 
 
@@ -102,19 +102,6 @@ class Registry
         return $this->i18n_registry;
     }
 
-
-    /**
-     * @param string $hook_suffix
-     * @since $VID:$
-     * @throws Exception
-     */
-    public function adminRegisterScriptsAndStyles($hook_suffix)
-    {
-        if ($this->dontRegisterForLocation($hook_suffix)) {
-            return;
-        }
-        $this->registerScriptsAndStyles();
-    }
 
     /**
      * Callback for the wp_enqueue_scripts actions used to register assets.
@@ -159,7 +146,7 @@ class Registry
                 $script->version(),
                 $script->loadInFooter()
             );
-            if (! $registered && $this->debug()) {
+            if (! $registered && defined('EE_DEBUG') && EE_DEBUG) {
                 throw new AssetRegistrationException($script->handle());
             }
             $script->setRegistered($registered);
@@ -205,19 +192,6 @@ class Registry
                 $style
             );
         }
-    }
-
-
-    /**
-     * @param string $hook_suffix
-     * @since $VID:$
-     */
-    public function adminEnqueueData($hook_suffix)
-    {
-        if ($this->dontRegisterForLocation($hook_suffix)) {
-            return;
-        }
-        $this->enqueueData();
     }
 
 
@@ -286,9 +260,6 @@ class Registry
         if (isset($this->jsdata[ $key ])
             && ! is_array($this->jsdata[ $key ])
         ) {
-            if(! $this->debug()) {
-                return;
-            }
             throw new InvalidArgumentException(
                 sprintf(
                     __(
@@ -320,9 +291,6 @@ class Registry
         }
         //no overrides allowed.
         if (isset($this->jsdata['templates'][ $template_reference ])) {
-            if (! $this->debug()) {
-                return;
-            }
             throw new InvalidArgumentException(
                 sprintf(
                     __(
@@ -376,9 +344,6 @@ class Registry
     protected function verifyDataNotExisting($key)
     {
         if (isset($this->jsdata[ $key ])) {
-            if (! $this->debug()) {
-                return false;
-            }
             if (is_array($this->jsdata[ $key ])) {
                 throw new InvalidArgumentException(
                     sprintf(
@@ -465,21 +430,6 @@ class Registry
 
 
     /**
-     * @param string $hook_suffix
-     * @since $VID:$
-     * @throws InvalidArgumentException
-     * @throws InvalidFilePathException
-     */
-    public function adminRegisterManifestFiles($hook_suffix)
-    {
-        if ($this->dontRegisterForLocation($hook_suffix)) {
-            return;
-        }
-        $this->registerManifestFiles();
-    }
-
-
-    /**
      * @since 4.9.62.p
      * @throws InvalidArgumentException
      * @throws InvalidFilePathException
@@ -510,9 +460,6 @@ class Registry
     public function registerManifestFile($namespace, $url_base, $manifest_file)
     {
         if (isset($this->manifest_data[ $namespace ])) {
-            if(! $this->debug()){
-                return;
-            }
             throw new InvalidArgumentException(
                 sprintf(
                     esc_html__(
@@ -630,42 +577,5 @@ class Registry
     public function registerTranslation($handle)
     {
         $this->i18n_registry->registerScriptI18n($handle);
-    }
-
-
-    /**
-     * Returns true if the supplied hook suffix is for an admin location
-     * that we do NOT want to register scripts for, such as nav menus or widgets.
-     * This does not mean that scripts won't be registered,
-     * but just that it won't happen at that exact moment.
-     *
-     * @param string $hook_suffix
-     * @since $VID:$
-     * @return bool
-     */
-    public function dontRegisterForLocation($hook_suffix)
-    {
-        return in_array(
-            $hook_suffix,
-            array(
-                'media-upload-popup',
-                'nav-menus.php',
-                'widgets.php',
-            ),
-            true
-        );
-    }
-
-
-    /**
-     * @since $VID:$
-     * @return bool
-     */
-    private function debug()
-    {
-        return apply_filters(
-            'FHEE__EventEspresso_core_services_assets_Registry__debug',
-            defined('EE_DEBUG') && EE_DEBUG
-        );
     }
 }
