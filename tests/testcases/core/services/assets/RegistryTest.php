@@ -37,6 +37,7 @@ class RegistryTest extends EE_UnitTestCase
      */
     public function setUp()
     {
+        add_filter('FHEE__EventEspresso_core_services_assets_Registry__debug', '__return_true');
         $domain = DomainFactory::getShared(
             new FullyQualifiedName(
                 'EventEspresso\core\domain\Domain'

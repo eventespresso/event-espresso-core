@@ -663,6 +663,9 @@ class Registry
      */
     private function debug()
     {
-        return defined('EE_DEBUG') && EE_DEBUG;
+        return apply_filters(
+            'FHEE__EventEspresso_core_services_assets_Registry__debug',
+            defined('EE_DEBUG') && EE_DEBUG
+        );
     }
 }
