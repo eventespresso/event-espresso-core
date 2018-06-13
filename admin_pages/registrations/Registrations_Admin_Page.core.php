@@ -1469,7 +1469,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     {
         $orderby_field = ! empty($this->_req_data['orderby'])
             ? sanitize_text_field($this->_req_data['orderby'])
-            : '';
+            : 'REG_date';
         switch ($orderby_field) {
             case '_REG_ID':
                 $orderby = array('REG_ID');
