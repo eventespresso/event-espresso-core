@@ -1489,7 +1489,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             case 'DTT_EVT_start':
                 $orderby = array('Event.Datetime.DTT_EVT_start');
                 break;
-            default: // 'REG_date'
+            case 'REG_date':
                 $orderby = array('REG_date');
         }
 
