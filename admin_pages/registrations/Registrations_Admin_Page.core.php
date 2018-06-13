@@ -1492,9 +1492,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             case 'REG_date':
                 $orderby = array('REG_date');
                 break;
-            default :
+            default:
                 $orderby = array($orderby_field);
-                break; 
+                break;
         }
 
         // order
@@ -1512,7 +1512,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         }
 
         $orderby = apply_filters(
-            'FHEE__Registrations_Admin_Page___get_orderby_for_registrations_query', 
+            'FHEE__Registrations_Admin_Page___get_orderby_for_registrations_query',
             $orderby,
             $this->_req_data
         );
