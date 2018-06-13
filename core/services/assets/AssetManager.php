@@ -50,9 +50,25 @@ abstract class AssetManager implements AssetManagerInterface
         $this->assets = $assets;
         $this->registry = $registry;
         add_action('wp_enqueue_scripts', array($this, 'addManifestFile'), 0);
-        add_action('admin_enqueue_scripts', array($this, 'addManifestFile'), 0);
+        add_action('admin_enqueue_scripts', array($this, 'adminAddManifestFile'), 0);
         add_action('wp_enqueue_scripts', array($this, 'addAssets'), 2);
-        add_action('admin_enqueue_scripts', array($this, 'addAssets'), 2);
+        add_action('admin_enqueue_scripts', array($this, 'adminAddAssets'), 2);
+    }
+
+
+    /**
+     * @param string $hook_suffix
+     * @since $VID:$
+     * @throws DuplicateCollectionIdentifierException
+     * @throws InvalidDataTypeException
+     * @throws InvalidEntityException
+     */
+    public function adminAddManifestFile($hook_suffix)
+    {
+        if ($this->registry->dontRegisterForLocation($hook_suffix)) {
+            return;
+        }
+        $this->addManifestFile();
     }
 
 
@@ -81,6 +97,19 @@ abstract class AssetManager implements AssetManagerInterface
     public function getManifestFile()
     {
         return $this->assets->getManifestFiles();
+    }
+
+
+    /**
+     * @param string $hook_suffix
+     * @since $VID:$
+     */
+    public function adminAddAssets($hook_suffix)
+    {
+        if($this->registry->dontRegisterForLocation($hook_suffix)){
+            return;
+        }
+        $this->addAssets();
     }
 
 
