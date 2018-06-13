@@ -1491,6 +1491,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 break;
             case 'REG_date':
                 $orderby = array('REG_date');
+                break;
+            default :
+                $orderby = array($orderby_field);
+                break; 
         }
 
         // order
