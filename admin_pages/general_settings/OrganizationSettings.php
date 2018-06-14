@@ -198,7 +198,7 @@ class OrganizationSettings extends FormHandler
                     ),
                     'company_logo_hdr'        => new EE_Form_Section_HTML(
                         EEH_HTML::h2(
-                            esc_html__('Company Logo', 'event_espresso', 'event_espresso')
+                            esc_html__('Company Logo', 'event_espresso')
                             . ' '
                             . EEH_HTML::span(EEH_Template::get_help_tab_link('organization_logo_info')),
                             '',
@@ -219,7 +219,7 @@ class OrganizationSettings extends FormHandler
                     ),
                     'social_links_hdr'        => new EE_Form_Section_HTML(
                         EEH_HTML::h2(
-                            esc_html__('Social Links', 'event_espresso', 'event_espresso')
+                            esc_html__('Social Links', 'event_espresso')
                             . ' '
                             . EEH_HTML::span(EEH_Template::get_help_tab_link('social_links_info'))
                             . EEH_HTML::br()
@@ -417,8 +417,8 @@ class OrganizationSettings extends FormHandler
         $this->registry->CFG->organization->instagram = isset($form_data['organization_instagram'])
             ? esc_url_raw($form_data['organization_instagram'])
             : $this->registry->CFG->organization->instagram;
-        $this->registry->CFG->core->ee_ueip_optin = isset($form_data[EE_Core_Config::OPTION_NAME_UXIP][0])
-            ? filter_var($form_data[EE_Core_Config::OPTION_NAME_UXIP][0], FILTER_VALIDATE_BOOLEAN)
+        $this->registry->CFG->core->ee_ueip_optin = isset($form_data[ EE_Core_Config::OPTION_NAME_UXIP ][0])
+            ? filter_var($form_data[ EE_Core_Config::OPTION_NAME_UXIP ][0], FILTER_VALIDATE_BOOLEAN)
             : false;
         $this->registry->CFG->core->ee_ueip_has_notified = true;
 
@@ -465,6 +465,7 @@ class OrganizationSettings extends FormHandler
                 'html_name' => 'site_license_key',
                 'html_id' => 'site_license_key',
                 'html_label_text' => esc_html__('Support License Key', 'event_espresso'),
+                /** phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersText */
                 'html_help_text'  => sprintf(
                     esc_html__(
                         'Adding a valid Support License Key will enable automatic update notifications and backend updates for Event Espresso Core and any installed add-ons. If this is a Development or Test site, %sDO NOT%s enter your Support License Key.',
@@ -473,6 +474,7 @@ class OrganizationSettings extends FormHandler
                     '<strong>',
                     '</strong>'
                 ),
+                /** phpcs:enable */
                 'default'         => isset($this->registry->NET_CFG->core->site_license_key)
                     ? $this->registry->NET_CFG->core->site_license_key
                     : '',
