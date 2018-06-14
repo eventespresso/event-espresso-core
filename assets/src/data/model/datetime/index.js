@@ -9,6 +9,9 @@ import {
 	getQueryString as baseGetQueryString,
 	QUERY_ORDER_DESC,
 	ALLOWED_ORDER_VALUES,
+	GREATER_THAN,
+	GREATER_THAN_AND_EQUAL,
+	LESS_THAN_AND_EQUAL,
 } from '../base';
 
 export const nowDateAndTime = moment();
@@ -34,7 +37,7 @@ export const queryDataTypes = {
 
 /**
  * Default attributes for this model
- * @type @type {
+ * @type {
  * 	{
  * 		attributes: {
  * 			limit: number,
@@ -89,22 +92,24 @@ export const whereConditions = ( {
 	month = 'none',
 } ) => {
 	const where = [];
-	const GREATER_AND_EQUAL = encodeURIComponent( '>=' );
-	const LESS_AND_EQUAL = encodeURIComponent( '<=' );
-
 	if ( ! showExpired ) {
-		where.push( 'where[DTT_EVT_end**expired][]=>&where[DTT_EVT_end**expired][]=' +
-			nowDateAndTime.local().format() );
+		where.push(
+			'where[DTT_EVT_end**expired][]=' + GREATER_THAN +
+			'&where[DTT_EVT_end**expired][]=' +
+			nowDateAndTime.local().format()
+		);
 	}
 	if ( month && month !== 'none' ) {
-		where.push( 'where[DTT_EVT_start][]=' +
-			GREATER_AND_EQUAL +
+		where.push(
+			'where[DTT_EVT_start][]=' + GREATER_THAN_AND_EQUAL +
 			'&where[DTT_EVT_start][]=' +
-			moment().month( month ).startOf( 'month' ).local().format() );
-		where.push( 'where[DTT_EVT_end][]=' +
-			LESS_AND_EQUAL +
+			moment().month( month ).startOf( 'month' ).local().format()
+		);
+		where.push(
+			'where[DTT_EVT_end][]=' + LESS_THAN_AND_EQUAL +
 			'&where[DTT_EVT_end][]=' +
-			moment().month( month ).endOf( 'month' ).local().format() );
+			moment().month( month ).endOf( 'month' ).local().format()
+		);
 	}
 	if ( parseInt( forEventId, 10 ) !== 0 ) {
 		where.push( 'where[Event.EVT_ID]=' + forEventId );

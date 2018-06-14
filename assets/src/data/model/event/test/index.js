@@ -4,7 +4,15 @@ import {
 	getQueryString,
 	nowDateAndTime,
 } from '../';
+import {
+	GREATER_THAN,
+	GREATER_THAN_AND_EQUAL,
+	LESS_THAN_AND_EQUAL,
+} from '../../base';
+
 import moment from 'moment';
+
+const expectedNow = nowDateAndTime.local().format();
 
 describe( 'mapOrderBy()', () => {
 	it( 'correctly maps incoming values to the correct expectation', () => {
@@ -24,7 +32,10 @@ describe( 'mapOrderBy()', () => {
 
 describe( 'whereConditions()', () => {
 	it( 'returns expected default for empty object passed in', () => {
-		expect( whereConditions( {} ) ).toEqual( '' );
+		expect( whereConditions( {} ) ).toEqual(
+			'where[Datetime.DTT_EVT_end**expired][]=' + GREATER_THAN +
+			'&where[Datetime.DTT_EVT_end**expired][]=' + expectedNow
+		);
 	} );
 	it( 'returns expected string for values passed in', () => {
 		const expectedEndofDate = moment()
@@ -37,26 +48,19 @@ describe( 'whereConditions()', () => {
 			.startOf( 'month' )
 			.local()
 			.format();
-		const GREATER_AND_EQUAL = encodeURIComponent( '>=' );
-		const LESS_AND_EQUAL = encodeURIComponent( '<=' );
 		const testObject = {
 			showExpired: false,
 			categorySlug: 'test',
 			month: 'may',
 		};
 		expect( whereConditions( testObject ) ).toEqual(
-			'where[Datetime.DTT_EVT_end**expired][]=>' +
-			'&where[Datetime.DTT_EVT_end**expired][]=' +
-			nowDateAndTime.local().format() +
+			'where[Datetime.DTT_EVT_end**expired][]=' + GREATER_THAN +
+			'&where[Datetime.DTT_EVT_end**expired][]=' + expectedNow +
 			'&where[Term_Relationship.Term_Taxonomy.Term.slug]=test' +
-			'&where[Datetime.DTT_EVT_start][]=' +
-			GREATER_AND_EQUAL +
-			'&where[Datetime.DTT_EVT_start][]=' +
-			expectedStartofDate +
-			'&where[Datetime.DTT_EVT_end][]=' +
-			LESS_AND_EQUAL +
-			'&where[Datetime.DTT_EVT_end][]=' +
-			expectedEndofDate,
+			'&where[Datetime.DTT_EVT_start][]=' + GREATER_THAN_AND_EQUAL +
+			'&where[Datetime.DTT_EVT_start][]=' + expectedStartofDate +
+			'&where[Datetime.DTT_EVT_end][]=' + LESS_THAN_AND_EQUAL +
+			'&where[Datetime.DTT_EVT_end][]=' + expectedEndofDate,
 		);
 	} );
 } );
@@ -65,9 +69,8 @@ describe( 'getQueryString', () => {
 	it( 'returns expected default for no arguments passed in', () => {
 		expect( getQueryString() ).toEqual(
 			'limit=100&order=DESC&order_by=Datetime.DTT_EVT_start' +
-			'&where[Datetime.DTT_EVT_end**expired][]=>' +
-			'&where[Datetime.DTT_EVT_end**expired][]=' +
-			nowDateAndTime.local().format()
+			'&where[Datetime.DTT_EVT_end**expired][]=' + GREATER_THAN +
+			'&where[Datetime.DTT_EVT_end**expired][]=' + expectedNow
 		);
 	} );
 } );

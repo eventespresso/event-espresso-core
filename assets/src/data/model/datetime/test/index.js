@@ -4,6 +4,11 @@ import {
 	getQueryString,
 	nowDateAndTime,
 } from '../';
+import {
+	GREATER_THAN,
+	GREATER_THAN_AND_EQUAL,
+	LESS_THAN_AND_EQUAL,
+} from '../../base';
 import moment from 'moment';
 
 const expectedNow = nowDateAndTime.local().format();
@@ -25,7 +30,7 @@ describe( 'mapOrderBy()', () => {
 describe( 'whereConditions()', () => {
 	it( 'returns expected default for empty object passed in', () => {
 		expect( whereConditions( {} ) ).toEqual(
-			'where[DTT_EVT_end**expired][]=>' +
+			'where[DTT_EVT_end**expired][]=' + GREATER_THAN +
 			'&where[DTT_EVT_end**expired][]=' + expectedNow
 		);
 	} );
@@ -40,19 +45,17 @@ describe( 'whereConditions()', () => {
 			.startOf( 'month' )
 			.local()
 			.format();
-		const GREATER_AND_EQUAL = encodeURIComponent( '>=' );
-		const LESS_AND_EQUAL = encodeURIComponent( '<=' );
 		const testObject = {
 			showExpired: false,
 			forEventId: 20,
 			month: 'may',
 		};
 		expect( whereConditions( testObject ) ).toEqual(
-			'where[DTT_EVT_end**expired][]=>' +
+			'where[DTT_EVT_end**expired][]=' + GREATER_THAN +
 			'&where[DTT_EVT_end**expired][]=' + expectedNow +
-			'&where[DTT_EVT_start][]=' + GREATER_AND_EQUAL +
+			'&where[DTT_EVT_start][]=' + GREATER_THAN_AND_EQUAL +
 			'&where[DTT_EVT_start][]=' + expectedStartofDate +
-			'&where[DTT_EVT_end][]=' + LESS_AND_EQUAL +
+			'&where[DTT_EVT_end][]=' + LESS_THAN_AND_EQUAL +
 			'&where[DTT_EVT_end][]=' + expectedEndofDate +
 			'&where[Event.EVT_ID]=' + 20
 		);
@@ -63,7 +66,7 @@ describe( 'getQueryString', () => {
 	it( 'returns expected default for no arguments passed in', () => {
 		expect( getQueryString() ).toEqual(
 			'limit=100&order=DESC&order_by=DTT_EVT_start' +
-			'&where[DTT_EVT_end**expired][]=>' +
+			'&where[DTT_EVT_end**expired][]=' + GREATER_THAN +
 			'&where[DTT_EVT_end**expired][]=' + expectedNow
 		);
 	} );

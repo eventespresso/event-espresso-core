@@ -12,6 +12,9 @@ import {
 	getQueryString as baseGetQueryString,
 	QUERY_ORDER_DESC,
 	ALLOWED_ORDER_VALUES,
+	GREATER_THAN,
+	GREATER_THAN_AND_EQUAL,
+	LESS_THAN_AND_EQUAL,
 } from '../base';
 
 export const nowDateAndTime = moment();
@@ -87,31 +90,40 @@ export const mapOrderBy = ( orderBy ) => {
  *
  * @param {boolean} showExpired  Whether or not to include expired events.
  * @param {string} categorySlug  Return events for the given categorySlug
- * @param {string} month         Return events for the given month.  Can be any
- *                                 in any month format recognized by moment.
- * @return {string}             The assembled where conditions.
+ * @param {string} month         Return events for the given month.
+ * 								 Can be any month format recognized by moment.
+ * @return {string}              The assembled where conditions.
  */
-export const whereConditions = ( { showExpired = true, categorySlug, month = 'none' } ) => {
+export const whereConditions = ( {
+	showExpired = false,
+	categorySlug,
+	month = 'none',
+} ) => {
 	const where = [];
-	const GREATER_AND_EQUAL = encodeURIComponent( '>=' );
-	const LESS_AND_EQUAL = encodeURIComponent( '<=' );
 
 	if ( ! showExpired ) {
-		where.push( 'where[Datetime.DTT_EVT_end**expired][]=>&where[Datetime.DTT_EVT_end**expired][]=' +
-			nowDateAndTime.local().format() );
+		where.push(
+			'where[Datetime.DTT_EVT_end**expired][]=' + GREATER_THAN +
+			'&where[Datetime.DTT_EVT_end**expired][]=' +
+			nowDateAndTime.local().format()
+		);
 	}
 	if ( categorySlug ) {
-		where.push( 'where[Term_Relationship.Term_Taxonomy.Term.slug]=' + categorySlug );
+		where.push(
+			'where[Term_Relationship.Term_Taxonomy.Term.slug]=' + categorySlug
+		);
 	}
 	if ( month && month !== 'none' ) {
-		where.push( 'where[Datetime.DTT_EVT_start][]=' +
-			GREATER_AND_EQUAL +
+		where.push(
+			'where[Datetime.DTT_EVT_start][]=' + GREATER_THAN_AND_EQUAL +
 			'&where[Datetime.DTT_EVT_start][]=' +
-			moment().month( month ).startOf( 'month' ).local().format() );
-		where.push( 'where[Datetime.DTT_EVT_end][]=' +
-			LESS_AND_EQUAL +
+			moment().month( month ).startOf( 'month' ).local().format()
+		);
+		where.push(
+			'where[Datetime.DTT_EVT_end][]=' + LESS_THAN_AND_EQUAL +
 			'&where[Datetime.DTT_EVT_end][]=' +
-			moment().month( month ).endOf( 'month' ).local().format() );
+			moment().month( month ).endOf( 'month' ).local().format()
+		);
 	}
 	return where.join( '&' );
 };
