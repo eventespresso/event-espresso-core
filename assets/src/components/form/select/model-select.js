@@ -76,6 +76,7 @@ export class ModelSelect extends Component {
 		},
 		selectLabel: '',
 		addAllOptionLabel: '',
+		getQueryString: () => '',
 	};
 
 	static getDerivedStateFromProps( props ) {

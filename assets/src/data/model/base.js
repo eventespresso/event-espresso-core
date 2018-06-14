@@ -1,6 +1,14 @@
 import { isUndefined, pickBy } from 'lodash';
 import { stringify } from 'querystringify';
 
+export const QUERY_ORDER_ASC = 'ASC';
+export const QUERY_ORDER_DESC = 'DESC';
+export const ALLOWED_ORDER_VALUES = [ 'asc', 'desc', 'ASC', 'DESC' ];
+export const GREATER_THAN = encodeURIComponent( '>' );
+export const LESS_THAN = encodeURIComponent( '<' );
+export const GREATER_THAN_AND_EQUAL = encodeURIComponent( '>=' );
+export const LESS_THAN_AND_EQUAL = encodeURIComponent( '<=' );
+
 /**
  * Return a query string for use by a REST request given a set of queryData.
  * @param { Object } queryData
@@ -31,7 +39,3 @@ export const getQueryString = (
 	}
 	return queryString;
 };
-
-export const QUERY_ORDER_ASC = 'ASC';
-export const QUERY_ORDER_DESC = 'DESC';
-export const ALLOWED_ORDER_VALUES = [ 'asc', 'desc', 'ASC', 'DESC' ];

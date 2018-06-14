@@ -9,6 +9,9 @@ import {
 	getQueryString as baseGetQueryString,
 	QUERY_ORDER_DESC,
 	ALLOWED_ORDER_VALUES,
+	GREATER_THAN,
+	GREATER_THAN_AND_EQUAL,
+	LESS_THAN_AND_EQUAL,
 } from '../base';
 
 export const nowDateAndTime = moment();
@@ -91,24 +94,21 @@ export const whereConditions = ( {
 	month = 'none',
 } ) => {
 	const where = [];
-	const GREATER_AND_EQUAL = encodeURIComponent( '>=' );
-	const LESS_AND_EQUAL = encodeURIComponent( '<=' );
-
 	if ( ! showExpired ) {
 		where.push(
-			'where[TKT_end_date**expired][]=>' +
+			'where[TKT_end_date**expired][]=' + GREATER_THAN +
 			'&where[TKT_end_date**expired][]=' +
 			nowDateAndTime.local().format()
 		);
 	}
 	if ( month && month !== 'none' ) {
 		where.push(
-			'where[TKT_start_date][]=' + GREATER_AND_EQUAL +
+			'where[TKT_start_date][]=' + GREATER_THAN_AND_EQUAL +
 			'&where[TKT_start_date][]=' +
 			moment().month( month ).startOf( 'month' ).local().format()
 		);
 		where.push(
-			'where[TKT_end_date][]=' + LESS_AND_EQUAL +
+			'where[TKT_end_date][]=' + LESS_THAN_AND_EQUAL +
 			'&where[TKT_end_date][]=' +
 			moment().month( month ).endOf( 'month' ).local().format()
 		);
