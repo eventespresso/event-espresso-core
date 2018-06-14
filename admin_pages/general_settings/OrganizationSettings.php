@@ -446,13 +446,15 @@ class OrganizationSettings extends FormHandler
      */
     private function licenseKeyVerified()
     {
-        $ver_option_key = 'puevererr_' . basename(EE_PLUGIN_BASENAME);
-        $verify_fail = get_option($ver_option_key);
-        return $verify_fail
-               || ! empty($verify_fail)
-               || (empty($this->registry->NET_CFG->core->site_license_key)
-                   && empty($verify_fail)
-               );
+        if (empty($this->registry->NET_CFG->core->site_license_key)) {
+            return false;
+        }
+        $ver_option_key = 'puvererr_' . basename(EE_PLUGIN_BASENAME);
+        $verify_fail = get_option($ver_option_key, false);
+        return $verify_fail === false
+                  || (! empty($this->registry->NET_CFG->core->site_license_key)
+                        && $verify_fail === false
+                  );
     }
 
 
