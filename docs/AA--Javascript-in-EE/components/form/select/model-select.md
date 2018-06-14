@@ -33,7 +33,7 @@ The following is the shape of the main component with its default props:
 
 ### selectConfiguration
 
-This is an object that can contain any values components higher in the tree want to pass down to the `react-select` component.  You can read about all the possible values that can be passed down via [this document](https://deploy-preview-2289--react-select.netlify.com/props).
+This is an object that can contain any values components higher in the tree that you want to pass down to the `react-select` component.  You can read about all the possible values that can be passed down via [this document](https://deploy-preview-2289--react-select.netlify.com/props).
 
 The following options in this object are generated and set in the ModelSelect component:
 
@@ -86,6 +86,16 @@ If null, this is ignored and the default map found in [build-options.js](../../.
 
 ```js
 const map = {
+    $modelName: {
+        label: 'model-field-to-use-for-label'
+        value: 'model-field-to-use-for-value'
+    }
+}
+```
+
+**Example:**
+```js
+const map = {
     event: {
         label: 'EVT_name',
         value: 'EVT_ID',
@@ -100,7 +110,7 @@ const map = {
 
 ### selectLabel
 
-If provided, a `<label>` will be prepended before the Select element using the text provided by the value on this property.  It will be linked (the label `for` attribute) to the select input via the `selectConfiguration.name` property.
+If provided, a `<label>` will be prepended before the Select element using the text provided by the value on this property.  It will be linked (via the label `for` attribute) to the select input via the `selectConfiguration.name` property.
 
 - Type: `String`
 - Required: No

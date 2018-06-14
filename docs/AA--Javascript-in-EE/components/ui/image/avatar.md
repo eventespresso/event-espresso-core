@@ -18,7 +18,7 @@ The following is the shape of the Component:
 
 ### avatarUrl
 
-The url to the image used for the avatar.
+The url to the image used for the avatar.  If no url is provided, the component will return null.
 
 - Type: `String`
 - Required: No

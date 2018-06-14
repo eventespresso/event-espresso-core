@@ -35,7 +35,7 @@ Along with the below props, this component passes through any props usable by th
 
 ### selectConfiguration
 
-This is an object that can contain any values components higher in the tree want to pass down to the `react-select` component.  You can read about all the possible values that can be passed down via [this document](https://deploy-preview-2289--react-select.netlify.com/props).
+This is an object that can contain any values components higher in the tree that you want to pass down to the `react-select` component.  You can read about all the possible values that can be passed down via [this document](https://deploy-preview-2289--react-select.netlify.com/props).
 
 - Type: `Object`
 - Required: No
