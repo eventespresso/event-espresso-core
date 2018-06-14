@@ -11,6 +11,13 @@ import {
 	ALLOWED_ORDER_VALUES,
 } from '../base';
 
+export const STATUS_TYPE_EMAIL = 'email';
+export const STATUS_TYPE_EVENT = 'event';
+export const STATUS_TYPE_MESSAGE = 'message';
+export const STATUS_TYPE_PAYMENT = 'payment';
+export const STATUS_TYPE_REGISTRATION = 'registration';
+export const STATUS_TYPE_TRANSACTION = 'transaction';
+
 export const nowDateAndTime = moment();
 
 /**
