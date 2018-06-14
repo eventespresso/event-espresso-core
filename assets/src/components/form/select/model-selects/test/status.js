@@ -1,14 +1,23 @@
 import StatusSelect from '../status';
 import { shallow } from 'enzyme';
 import { QUERY_ORDER_DESC } from 'assets/src/data/model/base';
+import * as statusModel from 'assets/src/data/model/status';
 
 describe( 'StatusSelect()', () => {
-	it( 'matches snapshot with default props', () => {
-		const wrapper = shallow( <StatusSelect /> );
+	it( 'matches snapshot with default props plus provided statusType', () => {
+		const wrapper = shallow(
+			<StatusSelect
+				statusType={ statusModel.STATUS_TYPE_REGISTRATION }
+			/>
+		);
 		expect( wrapper ).toMatchSnapshot();
 	} );
-	it( 'matches expected default props', () => {
-		const wrapper = shallow( <StatusSelect /> );
+	it( 'matches expected default props plus provided statusType', () => {
+		const wrapper = shallow(
+			<StatusSelect
+				statusType={ statusModel.STATUS_TYPE_REGISTRATION }
+			/>
+		);
 		expect( wrapper.prop( 'queryData' ) ).toEqual( {
 			limit: 25,
 			orderBy: 'statusCode',
