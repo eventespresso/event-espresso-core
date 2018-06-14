@@ -4,7 +4,11 @@ import {
 	getQueryString,
 	nowDateAndTime,
 } from '../';
-import { GREATER_THAN, LESS_THAN } from '../../base';
+import {
+	GREATER_THAN,
+	GREATER_THAN_AND_EQUAL,
+	LESS_THAN_AND_EQUAL,
+} from '../../base';
 
 import moment from 'moment';
 
@@ -53,9 +57,9 @@ describe( 'whereConditions()', () => {
 			'where[Datetime.DTT_EVT_end**expired][]=' + GREATER_THAN +
 			'&where[Datetime.DTT_EVT_end**expired][]=' + expectedNow +
 			'&where[Term_Relationship.Term_Taxonomy.Term.slug]=test' +
-			'&where[Datetime.DTT_EVT_start][]=' + GREATER_THAN +
+			'&where[Datetime.DTT_EVT_start][]=' + GREATER_THAN_AND_EQUAL +
 			'&where[Datetime.DTT_EVT_start][]=' + expectedStartofDate +
-			'&where[Datetime.DTT_EVT_end][]=' + LESS_THAN +
+			'&where[Datetime.DTT_EVT_end][]=' + LESS_THAN_AND_EQUAL +
 			'&where[Datetime.DTT_EVT_end][]=' + expectedEndofDate,
 		);
 	} );

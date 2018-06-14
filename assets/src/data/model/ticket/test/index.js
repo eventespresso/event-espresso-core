@@ -4,7 +4,11 @@ import {
 	getQueryString,
 	nowDateAndTime,
 } from '../';
-import { GREATER_THAN, LESS_THAN } from '../../base';
+import {
+	GREATER_THAN,
+	GREATER_THAN_AND_EQUAL,
+	LESS_THAN_AND_EQUAL,
+} from '../../base';
 import moment from 'moment';
 
 const expectedNow = nowDateAndTime.local().format();
@@ -49,9 +53,9 @@ describe( 'whereConditions()', () => {
 		expect( whereConditions( testObject ) ).toEqual(
 			'where[TKT_end_date**expired][]=' + GREATER_THAN +
 			'&where[TKT_end_date**expired][]=' + expectedNow +
-			'&where[TKT_start_date][]=' + GREATER_THAN +
+			'&where[TKT_start_date][]=' + GREATER_THAN_AND_EQUAL +
 			'&where[TKT_start_date][]=' + expectedStartofDate +
-			'&where[TKT_end_date][]=' + LESS_THAN +
+			'&where[TKT_end_date][]=' + LESS_THAN_AND_EQUAL +
 			'&where[TKT_end_date][]=' + expectedEndofDate +
 			'&where[Datetime.Event.EVT_ID]=' + 20 +
 			'&where[Datetime.DTT_ID]=' + 123
