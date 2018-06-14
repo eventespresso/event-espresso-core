@@ -2,7 +2,9 @@
 
 use EventEspresso\admin_pages\general_settings\AdminOptionsSettings;
 use EventEspresso\admin_pages\general_settings\OrganizationSettings;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFormSubmissionException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
@@ -329,6 +331,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      * _espresso_page_settings
      *
      * @throws \EE_Error
+     * @throws DomainException
+     * @throws DomainException
+     * @throws InvalidDataTypeException
+     * @throws InvalidArgumentException
      */
     protected function _espresso_page_settings()
     {
@@ -374,6 +380,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
 
     /**
      * Handler for updating espresso page settings.
+     *
+     * @throws EE_Error
      */
     protected function _update_espresso_page_settings()
     {
@@ -418,11 +426,23 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     /*************        Your Organization        *************/
 
 
+    /**
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
     protected function _your_organization_settings()
     {
         $this->_template_args['admin_page_content'] = '';
         try {
-            $organization_settings_form = new OrganizationSettings(EE_Registry::instance());
+            $organization_settings_form = new OrganizationSettings(
+                EE_Registry::instance(),
+                EE_Registry::instance()->CFG->organization,
+                EE_Registry::instance()->CFG->core,
+                EE_Registry::instance()->NET_CFG->core
+            );
             $this->_template_args['admin_page_content'] = $organization_settings_form->display();
         } catch (Exception $e) {
             EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
@@ -442,7 +462,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     protected function _update_your_organization_settings()
     {
         try {
-            $organization_settings_form = new OrganizationSettings(EE_Registry::instance());
+            $organization_settings_form = new OrganizationSettings(
+                EE_Registry::instance(),
+                EE_Registry::instance()->CFG->organization,
+                EE_Registry::instance()->CFG->core,
+                EE_Registry::instance()->NET_CFG->core
+            );
             $success = $organization_settings_form->process($this->_req_data);
             EE_Registry::instance()->CFG = apply_filters(
                 'FHEE__General_Settings_Admin_Page___update_your_organization_settings__CFG',
@@ -500,7 +525,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      * _update_admin_option_settings
      *
      * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidFormSubmissionException
      * @throws \InvalidArgumentException
      * @throws \LogicException
@@ -921,6 +946,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      *
      * @access    public
      * @return        boolean
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public function delete_state()
     {
@@ -1282,6 +1309,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
 
     /**
      * Update the privacy settings from form data
+     *
+     * @throws EE_Error
      */
     public function updatePrivacySettings()
     {

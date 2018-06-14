@@ -2,6 +2,7 @@
 
 namespace EventEspresso\admin_pages\general_settings;
 
+use DomainException;
 use EE_Admin_File_Uploader_Input;
 use EE_Admin_Two_Column_Layout;
 use EE_Checkbox_Multi_Input;
@@ -12,6 +13,8 @@ use EE_Error;
 use EE_Form_Section_HTML;
 use EE_Form_Section_Proper;
 use EE_License_Key_Display_Strategy;
+use EE_Network_Core_Config;
+use EE_Organization_Config;
 use EE_Registry;
 use EE_State_Select_Input;
 use EE_Text_Input;
@@ -22,6 +25,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\form_sections\form_handlers\FormHandler;
+use EventEspresso\core\libraries\form_sections\strategies\filter\VsprintfFilter;
 use InvalidArgumentException;
 use LogicException;
 
@@ -37,19 +41,45 @@ class OrganizationSettings extends FormHandler
 {
 
     /**
+     * @var EE_Organization_Config
+     */
+    protected $organization_config;
+
+    /**
+     * @var EE_Core_Config
+     */
+    protected $core_config;
+
+
+    /**
+     * @var EE_Network_Core_Config
+     */
+    protected $network_core_config;
+
+    /**
      * Form constructor.
      *
-     * @param EE_Registry $registry
-     * @throws \DomainException
-     * @throws InvalidDataTypeException
+     * @param EE_Registry             $registry
+     * @param EE_Organization_Config  $organization_config
+     * @param EE_Core_Config          $core_config
+     * @param EE_Network_Core_Config $network_core_config
      * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws DomainException
      */
-    public function __construct(EE_Registry $registry)
-    {
+    public function __construct(
+        EE_Registry $registry,
+        EE_Organization_Config $organization_config,
+        EE_Core_Config $core_config,
+        EE_Network_Core_Config $network_core_config
+    ) {
+        $this->organization_config = $organization_config;
+        $this->core_config = $core_config;
+        $this->network_core_config = $network_core_config;
         parent::__construct(
-            esc_html__('Admin Options', 'event_espresso'),
-            esc_html__('Admin Options', 'event_espresso'),
-            'admin_option_settings',
+            esc_html__('Your Organization Settings', 'event_espresso'),
+            esc_html__('Your Organization Settings', 'event_espresso'),
+            'organization_settings',
             '',
             FormHandler::DO_NOT_SETUP_FORM,
             $registry
@@ -102,7 +132,7 @@ class OrganizationSettings extends FormHandler
                                 'Displayed on all emails and invoices.',
                                 'event_espresso'
                             ),
-                            'default'         => $this->registry->CFG->organization->get_pretty('name'),
+                            'default'         => $this->organization_config->get_pretty('name'),
                             'required'        => false,
                         )
                     ),
@@ -110,7 +140,7 @@ class OrganizationSettings extends FormHandler
                         array(
                             'html_name' => 'organization_address_1',
                             'html_label_text' => esc_html__('Street Address', 'event_espresso'),
-                            'default'         => $this->registry->CFG->organization->get_pretty('address_1'),
+                            'default'         => $this->organization_config->get_pretty('address_1'),
                             'required'        => false,
                         )
                     ),
@@ -118,7 +148,7 @@ class OrganizationSettings extends FormHandler
                         array(
                             'html_name' => 'organization_address_2',
                             'html_label_text' => esc_html__('Street Address 2', 'event_espresso'),
-                            'default'         => $this->registry->CFG->organization->get_pretty('address_2'),
+                            'default'         => $this->organization_config->get_pretty('address_2'),
                             'required'        => false,
                         )
                     ),
@@ -126,7 +156,7 @@ class OrganizationSettings extends FormHandler
                         array(
                             'html_name' => 'organization_city',
                             'html_label_text' => esc_html__('City', 'event_espresso'),
-                            'default'         => $this->registry->CFG->organization->get_pretty('city'),
+                            'default'         => $this->organization_config->get_pretty('city'),
                             'required'        => false,
                         )
                     ),
@@ -135,7 +165,7 @@ class OrganizationSettings extends FormHandler
                         array(
                             'html_name' => 'organization_state',
                             'html_label_text' => esc_html__('State/Province', 'event_espresso'),
-                            'default'         => $this->registry->CFG->organization->STA_ID,
+                            'default'         => $this->organization_config->STA_ID,
                             'required'        => false,
                         )
                     ),
@@ -144,7 +174,7 @@ class OrganizationSettings extends FormHandler
                         array(
                             'html_name' => 'organization_country',
                             'html_label_text' => esc_html__('Country', 'event_espresso'),
-                            'default'         => $this->registry->CFG->organization->CNT_ISO,
+                            'default'         => $this->organization_config->CNT_ISO,
                             'required'        => false,
                         )
                     ),
@@ -152,7 +182,7 @@ class OrganizationSettings extends FormHandler
                         array(
                             'html_name' => 'organization_zip',
                             'html_label_text' => esc_html__('Zip/Postal Code', 'event_espresso'),
-                            'default'         => $this->registry->CFG->organization->get_pretty('zip'),
+                            'default'         => $this->organization_config->get_pretty('zip'),
                             'required'        => false,
                         )
                     ),
@@ -168,7 +198,7 @@ class OrganizationSettings extends FormHandler
                                 '<code>[CO_FORMATTED_EMAIL]</code>',
                                 '<code>[CO_EMAIL]</code>'
                             ),
-                            'default'         => $this->registry->CFG->organization->get_pretty('email'),
+                            'default'         => $this->organization_config->get_pretty('email'),
                             'required'        => false,
                         )
                     ),
@@ -180,7 +210,7 @@ class OrganizationSettings extends FormHandler
                                 'The phone number for your organization.',
                                 'event_espresso'
                             ),
-                            'default'         => $this->registry->CFG->organization->get_pretty('phone'),
+                            'default'         => $this->organization_config->get_pretty('phone'),
                             'required'        => false,
                         )
                     ),
@@ -192,7 +222,7 @@ class OrganizationSettings extends FormHandler
                                 'The VAT/Tax Number may be displayed on invoices and receipts.',
                                 'event_espresso'
                             ),
-                            'default'         => $this->registry->CFG->organization->get_pretty('vat'),
+                            'default'         => $this->organization_config->get_pretty('vat'),
                             'required'        => false,
                         )
                     ),
@@ -213,7 +243,7 @@ class OrganizationSettings extends FormHandler
                                 'Your logo will be used on custom invoices, tickets, certificates, and payment templates.',
                                 'event_espresso'
                             ),
-                            'default'         => $this->registry->CFG->organization->get_pretty('logo_url'),
+                            'default'         => $this->organization_config->get_pretty('logo_url'),
                             'required'        => false,
                         )
                     ),
@@ -240,7 +270,7 @@ class OrganizationSettings extends FormHandler
                             'html_name' => 'organization_facebook',
                             'html_label_text' => esc_html__('Facebook', 'event_espresso'),
                             'other_html_attributes' => ' placeholder="facebook.com/profile.name"',
-                            'default'         => $this->registry->CFG->organization->get_pretty('facebook'),
+                            'default'         => $this->organization_config->get_pretty('facebook'),
                             'required'        => false,
                         )
                     ),
@@ -249,7 +279,7 @@ class OrganizationSettings extends FormHandler
                             'html_name' => 'organization_twitter',
                             'html_label_text' => esc_html__('Twitter', 'event_espresso'),
                             'other_html_attributes' => ' placeholder="twitter.com/twitterhandle"',
-                            'default'         => $this->registry->CFG->organization->get_pretty('twitter'),
+                            'default'         => $this->organization_config->get_pretty('twitter'),
                             'required'        => false,
                         )
                     ),
@@ -258,7 +288,7 @@ class OrganizationSettings extends FormHandler
                             'html_name' => 'organization_linkedin',
                             'html_label_text' => esc_html__('LinkedIn', 'event_espresso'),
                             'other_html_attributes' => ' placeholder="linkedin.com/in/profilename"',
-                            'default'         => $this->registry->CFG->organization->get_pretty('linkedin'),
+                            'default'         => $this->organization_config->get_pretty('linkedin'),
                             'required'        => false,
                         )
                     ),
@@ -267,7 +297,7 @@ class OrganizationSettings extends FormHandler
                             'html_name' => 'organization_pinterest',
                             'html_label_text' => esc_html__('Pinterest', 'event_espresso'),
                             'other_html_attributes' => ' placeholder="pinterest.com/profilename"',
-                            'default'         => $this->registry->CFG->organization->get_pretty('pinterest'),
+                            'default'         => $this->organization_config->get_pretty('pinterest'),
                             'required'        => false,
                         )
                     ),
@@ -276,7 +306,7 @@ class OrganizationSettings extends FormHandler
                             'html_name' => 'organization_google',
                             'html_label_text' => esc_html__('Google+', 'event_espresso'),
                             'other_html_attributes' => ' placeholder="google.com/+profilename"',
-                            'default'         => $this->registry->CFG->organization->get_pretty('google'),
+                            'default'         => $this->organization_config->get_pretty('google'),
                             'required'        => false,
                         )
                     ),
@@ -285,7 +315,7 @@ class OrganizationSettings extends FormHandler
                             'html_name' => 'organization_instagram',
                             'html_label_text' => esc_html__('Instagram', 'event_espresso'),
                             'other_html_attributes' => ' placeholder="instagram.com/handle"',
-                            'default'         => $this->registry->CFG->organization->get_pretty('instagram'),
+                            'default'         => $this->organization_config->get_pretty('instagram'),
                             'required'        => false,
                         )
                     ),
@@ -308,8 +338,8 @@ class OrganizationSettings extends FormHandler
                                 'UXIP Opt In?',
                                 'event_espresso'
                             ),
-                            'default'         => isset($this->registry->CFG->core->ee_ueip_optin)
-                                ? filter_var($this->registry->CFG->core->ee_ueip_optin, FILTER_VALIDATE_BOOLEAN)
+                            'default'         => isset($this->core_config->ee_ueip_optin)
+                                ? filter_var($this->core_config->ee_ueip_optin, FILTER_VALIDATE_BOOLEAN)
                                 : false,
                             'required'        => false,
                         )
@@ -362,68 +392,68 @@ class OrganizationSettings extends FormHandler
         }
 
         if (is_main_site()) {
-            $this->registry->NET_CFG->core->site_license_key = isset($form_data['site_license_key'])
+            $this->network_core_config->site_license_key = isset($form_data['site_license_key'])
                 ? sanitize_text_field($form_data['site_license_key'])
-                : $this->registry->NET_CFG->core->site_license_key;
+                : $this->network_core_config->site_license_key;
         }
-        $this->registry->CFG->organization->name = isset($form_data['organization_name'])
+        $this->organization_config->name = isset($form_data['organization_name'])
             ? sanitize_text_field($form_data['organization_name'])
-            : $this->registry->CFG->organization->name;
-        $this->registry->CFG->organization->address_1 = isset($form_data['organization_address_1'])
+            : $this->organization_config->name;
+        $this->organization_config->address_1 = isset($form_data['organization_address_1'])
             ? sanitize_text_field($form_data['organization_address_1'])
-            : $this->registry->CFG->organization->address_1;
-        $this->registry->CFG->organization->address_2 = isset($form_data['organization_address_2'])
+            : $this->organization_config->address_1;
+        $this->organization_config->address_2 = isset($form_data['organization_address_2'])
             ? sanitize_text_field($form_data['organization_address_2'])
-            : $this->registry->CFG->organization->address_2;
-        $this->registry->CFG->organization->city = isset($form_data['organization_city'])
+            : $this->organization_config->address_2;
+        $this->organization_config->city = isset($form_data['organization_city'])
             ? sanitize_text_field($form_data['organization_city'])
-            : $this->registry->CFG->organization->city;
-        $this->registry->CFG->organization->STA_ID = isset($form_data['organization_state'])
+            : $this->organization_config->city;
+        $this->organization_config->STA_ID = isset($form_data['organization_state'])
             ? absint($form_data['organization_state'])
-            : $this->registry->CFG->organization->STA_ID;
-        $this->registry->CFG->organization->CNT_ISO = isset($form_data['organization_country'])
+            : $this->organization_config->STA_ID;
+        $this->organization_config->CNT_ISO = isset($form_data['organization_country'])
             ? sanitize_text_field($form_data['organization_country'])
-            : $this->registry->CFG->organization->CNT_ISO;
-        $this->registry->CFG->organization->zip = isset($form_data['organization_zip'])
+            : $this->organization_config->CNT_ISO;
+        $this->organization_config->zip = isset($form_data['organization_zip'])
             ? sanitize_text_field($form_data['organization_zip'])
-            : $this->registry->CFG->organization->zip;
-        $this->registry->CFG->organization->email = isset($form_data['organization_email'])
+            : $this->organization_config->zip;
+        $this->organization_config->email = isset($form_data['organization_email'])
             ? sanitize_email($form_data['organization_email'])
-            : $this->registry->CFG->organization->email;
-        $this->registry->CFG->organization->vat = isset($form_data['organization_vat'])
+            : $this->organization_config->email;
+        $this->organization_config->vat = isset($form_data['organization_vat'])
             ? sanitize_text_field($form_data['organization_vat'])
-            : $this->registry->CFG->organization->vat;
-        $this->registry->CFG->organization->phone = isset($form_data['organization_phone'])
+            : $this->organization_config->vat;
+        $this->organization_config->phone = isset($form_data['organization_phone'])
             ? sanitize_text_field($form_data['organization_phone'])
-            : $this->registry->CFG->organization->phone;
-        $this->registry->CFG->organization->logo_url = isset($form_data['organization_logo_url'])
+            : $this->organization_config->phone;
+        $this->organization_config->logo_url = isset($form_data['organization_logo_url'])
             ? esc_url_raw($form_data['organization_logo_url'])
-            : $this->registry->CFG->organization->logo_url;
-        $this->registry->CFG->organization->facebook = isset($form_data['organization_facebook'])
+            : $this->organization_config->logo_url;
+        $this->organization_config->facebook = isset($form_data['organization_facebook'])
             ? esc_url_raw($form_data['organization_facebook'])
-            : $this->registry->CFG->organization->facebook;
-        $this->registry->CFG->organization->twitter = isset($form_data['organization_twitter'])
+            : $this->organization_config->facebook;
+        $this->organization_config->twitter = isset($form_data['organization_twitter'])
             ? esc_url_raw($form_data['organization_twitter'])
-            : $this->registry->CFG->organization->twitter;
-        $this->registry->CFG->organization->linkedin = isset($form_data['organization_linkedin'])
+            : $this->organization_config->twitter;
+        $this->organization_config->linkedin = isset($form_data['organization_linkedin'])
             ? esc_url_raw($form_data['organization_linkedin'])
-            : $this->registry->CFG->organization->linkedin;
-        $this->registry->CFG->organization->pinterest = isset($form_data['organization_pinterest'])
+            : $this->organization_config->linkedin;
+        $this->organization_config->pinterest = isset($form_data['organization_pinterest'])
             ? esc_url_raw($form_data['organization_pinterest'])
-            : $this->registry->CFG->organization->pinterest;
-        $this->registry->CFG->organization->google = isset($form_data['organization_google'])
+            : $this->organization_config->pinterest;
+        $this->organization_config->google = isset($form_data['organization_google'])
             ? esc_url_raw($form_data['organization_google'])
-            : $this->registry->CFG->organization->google;
-        $this->registry->CFG->organization->instagram = isset($form_data['organization_instagram'])
+            : $this->organization_config->google;
+        $this->organization_config->instagram = isset($form_data['organization_instagram'])
             ? esc_url_raw($form_data['organization_instagram'])
-            : $this->registry->CFG->organization->instagram;
-        $this->registry->CFG->core->ee_ueip_optin = isset($form_data[ EE_Core_Config::OPTION_NAME_UXIP ][0])
+            : $this->organization_config->instagram;
+        $this->core_config->ee_ueip_optin = isset($form_data[ EE_Core_Config::OPTION_NAME_UXIP ][0])
             ? filter_var($form_data[ EE_Core_Config::OPTION_NAME_UXIP ][0], FILTER_VALIDATE_BOOLEAN)
             : false;
-        $this->registry->CFG->core->ee_ueip_has_notified = true;
+        $this->core_config->ee_ueip_has_notified = true;
 
         $this->registry->CFG->currency = new EE_Currency_Config(
-            $this->registry->CFG->organization->CNT_ISO
+            $this->organization_config->CNT_ISO
         );
         return true;
     }
@@ -446,18 +476,21 @@ class OrganizationSettings extends FormHandler
      */
     private function licenseKeyVerified()
     {
-        if (empty($this->registry->NET_CFG->core->site_license_key)) {
+        if (empty($this->network_core_config->site_license_key)) {
             return false;
         }
         $ver_option_key = 'puvererr_' . basename(EE_PLUGIN_BASENAME);
         $verify_fail = get_option($ver_option_key, false);
         return $verify_fail === false
-                  || (! empty($this->registry->NET_CFG->core->site_license_key)
+                  || (! empty($this->network_core_config->site_license_key)
                         && $verify_fail === false
                   );
     }
 
 
+    /**
+     * @return EE_Text_Input
+     */
     private function getSiteLicenseKeyField()
     {
         $text_input = new EE_Text_Input(
@@ -475,13 +508,26 @@ class OrganizationSettings extends FormHandler
                     '</strong>'
                 ),
                 /** phpcs:enable */
-                'default'         => isset($this->registry->NET_CFG->core->site_license_key)
-                    ? $this->registry->NET_CFG->core->site_license_key
+                'default'         => isset($this->network_core_config->site_license_key)
+                    ? $this->network_core_config->site_license_key
                     : '',
                 'required'        => false,
+                'form_html_filter' => new VsprintfFilter(
+                    '%2$s %1$s',
+                    array($this->getValidationIndicator())
+                )
             )
         );
-        $text_input->set_display_strategy(new EE_License_Key_Display_Strategy($this->licenseKeyVerified()));
         return $text_input;
+    }
+
+
+    /**
+     * @return string
+     */
+    private function getValidationIndicator()
+    {
+        $verified_class = $this->licenseKeyVerified() ? 'ee-icon-color-ee-green' : 'ee-icon-color-ee-red';
+        return '<span class="dashicons dashicons-admin-network ' . $verified_class . ' ee-icon-size-20"></span>';
     }
 }
