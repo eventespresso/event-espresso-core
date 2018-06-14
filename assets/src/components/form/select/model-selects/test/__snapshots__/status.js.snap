@@ -22,6 +22,5 @@ exports[ `StatusSelect() matches snapshot with default props 1` ] = `
     }
   }
   selectLabel="Select Status"
-  selectedType="registration"
 />
 `;
