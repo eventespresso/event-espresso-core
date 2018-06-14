@@ -4,9 +4,7 @@ ModelSelect is a component that exposed the [`react-select`](https://deploy-prev
 
 The HOC automatically takes care of populating the select options as directed from provided props (see below).
 
-## Shape
-
-The following is the shape of the main Component with its default props:
+The following is the shape of the main component with its default props:
 
 ```jsx
 <ModelSelect
@@ -145,7 +143,7 @@ This is another item only used by the `ModelEnhancedSelect` HOC (but is passed t
 - Default: `() => ''`
 
 
-## Usage Overview
+## Usage
 
 Note: if you plan on exposing something wrapping this component as a component itself on `eejs.components` (this will be the case if you are adding your new component to the `components` folder), then import these components directly via relative path.
 

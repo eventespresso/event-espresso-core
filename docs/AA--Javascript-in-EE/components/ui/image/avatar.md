@@ -1,8 +1,6 @@
-# <AvatarImage />
+# `<AvatarImage />`
 
 Outputs a styled image for the provided avatar details.
-
-## Shape
 
 The following is the shape of the Component:
 
@@ -57,7 +55,7 @@ This will be used for the value of the `alt` attribute on the `img` tag.
 - Type: `String`
 - Required: No
 
-## Usage Overview
+## Usage
 
 Note: if you plan on exposing something wrapping this component as a component itself on `eejs.components` (this will be the case if you are adding your new component to the `components` folder), then import this component directly via relative path.
 

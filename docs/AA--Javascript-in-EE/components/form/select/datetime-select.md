@@ -2,9 +2,7 @@
 
 DatetimeSelect exposes the [`react-select`](https://deploy-preview-2289--react-select.netlify.com/home) component and generates a select input for choosing from the provided EE Datetime model data. It is a wrapper surrounding the [`<ModelEnhancedSelect />`](model-select.md) higher order component.
 
-## Shape
-
-The following is the shape of the Component with its default props:
+The following is the shape of the component with its default props:
 
 ```jsx
 <Datetime
@@ -31,7 +29,7 @@ The following is the shape of the Component with its default props:
 
 The `DatetimeSelect` component also has one `state` property: `modelName`.  This is set to `datetime`.  It is passed on to `ModelEnhancedSelect` and informs what data is being queried.
 
-## `DatetimeSelect` Props
+## Props
 
 Along with the below props, this component passes through any props usable by the [`<ModelEnhancedSelect />`](model-select.md) component.
 
@@ -111,7 +109,7 @@ This callback will receive two arguments with the following schema:
 - Type: `Function`
 - Required: No
 
-## Usage Overview
+## Usage
 
 This component can be utilized one of two ways:
 
