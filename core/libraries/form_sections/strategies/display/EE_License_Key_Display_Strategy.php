@@ -17,8 +17,9 @@ class EE_License_Key_Display_Strategy extends EE_Text_Input_Display_Strategy
      */
     private $verified;
 
-    public function __construct($verified = true)
+    public function __construct($verified = false)
     {
+        $this->verified = $verified;
         parent::__construct('text');
     }
 
