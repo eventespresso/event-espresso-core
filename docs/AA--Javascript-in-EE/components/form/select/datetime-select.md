@@ -5,7 +5,7 @@ DatetimeSelect exposes the [`react-select`](https://deploy-preview-2289--react-s
 The following is the shape of the component with its default props:
 
 ```jsx
-<Datetime
+<DatetimeSelect
     selectConfiguration={
         {
             loadingMessage: () => 'Retrieving Datetimes',
@@ -43,7 +43,7 @@ This is an object that can contain any values components higher in the tree that
 ```js
 {
     loadingMessage: 'Retrieving Datetimes.',
-    noOptionsMessage: 'No Datetimes.'
+    noOptionsMessage: 'No Datetimes.',
     placeholder: 'Select Datetime...'
 }
 ```
@@ -89,7 +89,7 @@ This is used to restrict the datetimes retrieved to those belonging to the provi
 
 ### selectedDatetimeId
 
-This is used to indicate what event is selected as the current option value.  Internally the component will automatically pass that through as the `selectConfiguration.defaultValue`.
+This is used to indicate what datetime is selected as the current option value.  Internally the component will automatically pass that through as the `selectConfiguration.defaultValue`.
 
 - Type: `Number` | `String`
 - Required: No
