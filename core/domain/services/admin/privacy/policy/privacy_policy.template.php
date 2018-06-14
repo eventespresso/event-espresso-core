@@ -72,7 +72,7 @@
                 'event_espresso'
             ); ?></p>
     <?php } // IF OFFSITE PAYMENT METHOD ACTIVE
-    elseif (! empty($active_onsite_payment_methods)) { ?>
+    elseif (! empty($active_offsite_payment_methods)) { ?>
         <p><?php
             printf(
                 esc_html_x(
