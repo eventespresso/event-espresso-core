@@ -40,7 +40,7 @@ export default class StatusSelect extends Component {
 			statusModel.STATUS_TYPE_PAYMENT,
 			statusModel.STATUS_TYPE_REGISTRATION,
 			statusModel.STATUS_TYPE_TRANSACTION,
-		] ),
+		] ).isRequired,
 		selectedStatusId: PropTypes.string,
 		onStatusSelect: PropTypes.func,
 		selectLabel: PropTypes.string,
