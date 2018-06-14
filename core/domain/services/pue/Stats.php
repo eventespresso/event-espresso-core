@@ -62,8 +62,6 @@ class Stats
             add_action('admin_notices', array($this, 'optinNotice'));
             add_action('admin_enqueue_scripts', array($this, 'enqueueScripts'));
             add_action('wp_ajax_espresso_data_optin', array($this, 'ajaxHandler'));
-            // makes sure optin defaults to yes even if its currently empty.
-            $this->config->setHasOptedInForUxip();
         }
     }
 
@@ -154,7 +152,7 @@ class Stats
             $settings_url .= '#UXIP_settings';
             printf(
                 esc_html__(
-                    'The Event Espresso UXIP feature is active on your site. For %1$smore info%2$s and to opt-out %3$sclick here%4$s.',
+                    'The Event Espresso UXIP feature is not yet active on your site. For %1$smore info%2$s and to opt-in %3$sclick here%4$s.',
                     'event_espresso'
                 ),
                 '<a href="https://eventespresso.com/about/user-experience-improvement-program-uxip/" target="_blank">',
