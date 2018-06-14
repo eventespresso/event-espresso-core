@@ -12,8 +12,8 @@ import {
 	getQueryString as baseGetQueryString,
 	QUERY_ORDER_DESC,
 	ALLOWED_ORDER_VALUES,
-	GREATER_THAN,
-	LESS_THAN,
+	GREATER_THAN_AND_EQUAL,
+	LESS_THAN_AND_EQUAL,
 } from '../base';
 
 export const nowDateAndTime = moment();
@@ -102,7 +102,7 @@ export const whereConditions = ( {
 
 	if ( ! showExpired ) {
 		where.push(
-			'where[Datetime.DTT_EVT_end**expired][]=' + GREATER_THAN +
+			'where[Datetime.DTT_EVT_end**expired][]=' + GREATER_THAN_AND_EQUAL +
 			'&where[Datetime.DTT_EVT_end**expired][]=' +
 			nowDateAndTime.local().format()
 		);
@@ -114,12 +114,12 @@ export const whereConditions = ( {
 	}
 	if ( month && month !== 'none' ) {
 		where.push(
-			'where[Datetime.DTT_EVT_start][]=' + GREATER_THAN +
+			'where[Datetime.DTT_EVT_start][]=' + GREATER_THAN_AND_EQUAL +
 			'&where[Datetime.DTT_EVT_start][]=' +
 			moment().month( month ).startOf( 'month' ).local().format()
 		);
 		where.push(
-			'where[Datetime.DTT_EVT_end][]=' + LESS_THAN +
+			'where[Datetime.DTT_EVT_end][]=' + LESS_THAN_AND_EQUAL +
 			'&where[Datetime.DTT_EVT_end][]=' +
 			moment().month( month ).endOf( 'month' ).local().format()
 		);
