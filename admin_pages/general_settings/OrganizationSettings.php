@@ -420,6 +420,7 @@ class OrganizationSettings extends FormHandler
         $this->registry->CFG->core->ee_ueip_optin = isset($form_data[EE_Core_Config::OPTION_NAME_UXIP][0])
             ? filter_var($form_data[EE_Core_Config::OPTION_NAME_UXIP][0], FILTER_VALIDATE_BOOLEAN)
             : false;
+        $this->registry->CFG->core->ee_ueip_has_notified = true;
 
         $this->registry->CFG->currency = new EE_Currency_Config(
             $this->registry->CFG->organization->CNT_ISO
