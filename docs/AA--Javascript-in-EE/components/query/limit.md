@@ -1,5 +1,4 @@
-QueryLimit
-=======
+# QueryLimit
 
 A React component for adding a numeric Range Control input for setting the number of items returned by a query
 
