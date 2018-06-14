@@ -27,14 +27,20 @@ export default class StatusSelect extends Component {
 		},
 		...statusModel.defaultQueryData,
 		getQueryString: statusModel.getQueryString,
-		selectedType: 'registration',
 		selectLabel: __( 'Select Status', 'event_espresso' ),
 		addAllOptionLabel: __( 'All Statuses', 'event_espresso' ),
 	};
 
 	static propTypes = {
 		...statusModel.queryDataTypes,
-		selectedType: PropTypes.string.isRequired,
+		statusType: PropTypes.oneOf( [
+			statusModel.STATUS_TYPE_EMAIL,
+			statusModel.STATUS_TYPE_EVENT,
+			statusModel.STATUS_TYPE_MESSAGE,
+			statusModel.STATUS_TYPE_PAYMENT,
+			statusModel.STATUS_TYPE_REGISTRATION,
+			statusModel.STATUS_TYPE_TRANSACTION,
+		] ),
 		selectedStatusId: PropTypes.string,
 		onStatusSelect: PropTypes.func,
 		selectLabel: PropTypes.string,
