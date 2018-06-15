@@ -26,12 +26,34 @@ Some fields have a "raw", "rendered" or "pretty" version. Querying is always bas
 
 ### Related Resources' Fields are also queryable
 
-You can also use fields on related fields, so long as you also specify how they're related. Eg for a resource that's directly related, put the resource's capitalized, singular name first, then a period, then the field you wish to use. For example, the Answer resource is related to the `Registration`, `Question`, `Extra_Meta`, and `Change_Log` resources. You can also use fields on any of those indirectly related resources, by putting putting first the directly related resource's name, period, then the indirectly related resource's name, period, and the indirectly related resource's field (etc). Again see the section on "entities" to find out what relations exist.
-You may also use fields on indirectly related resources by specifying the resource chain to follow to arrive at the resource you wish to use in the
+You can also use fields on related fields, so long as you also specify how they're related. Eg for a resource that's directly related, put the resource's capitalized, singular name first, then a period, then the field you wish to use. For example, the Answer resource is related to the `Registration`, `Question`, `Extra_Meta`, and `Change_Log` resources. So `Question.QST_ID` is how you would specify a field on a related resource.
+
+You can also use fields on any of those indirectly related resources, by putting putting first the directly related resource's name, period, then the indirectly related resource's name, period, and the indirectly related resource's field (etc). Again see the section on "entities" to find out what relations exist. So, the Answer resource is related to the `Registration` resource, which is related to the `Transaction` resource. So an example of this would be `Registration.Transaction.TXN_ID`
+
+You may also use fields on indirectly related resources by specifying the resource chain to follow to arrive at the resource you wish to use in the query. Eg
 
 ```php
 //Gets all the answers to question 23 that were for registrations for transaction 43.
 http://demoee.org/wp-json/ee/v4.8.36/answers?where[Question.QST_ID]=23&where[Registration.Transaction.TXN_ID]=43
+```
+
+**Gotcha** When including a related resource in a query, entities will be returned if ANY of the related entities match the query, not if ALL of the related entities match the query.
+
+For example, 
+
+```php
+http://demoee.org/wp-json/ee/v4.8.36/events?where[Registration.REG_ID]=!%3D&where[Registration.REG_ID]=2
+```
+will return all events, so long as ONE of those related registrations' REG_IDs isn't 23. So if an event has registrations with REG_ID 1 and another registration with REG_ID 2, that event will STILL be returned because one of the registrations (the one with REG_ID 1) doesn't have REG_ID 2.
+
+So, how would you query for an event where NONE of the registrations have REG_ID 2? Right now there isn't a great solution. You probably need to request all events who DO have a registration with REG_ID 2, and take the inverse (ie, then query for ALL events, and remove the events you found earlier were related to registration with REG_ID 2), eg 
+
+```php
+//get all events who have a registration with REG_ID 2
+http://demoee.org/wp-json/ee/v4.8.36/events?where[Registration.REG_ID]=2
+//get all events
+http://demoee.org/wp-json/ee/v4.8.36/events
+//and then manually remove the results from the first list from the second list
 ```
 
 ### Specifying Binary Operators: =, !=, <, <=, >, >=, LIKE,

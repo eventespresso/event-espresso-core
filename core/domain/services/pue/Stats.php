@@ -62,8 +62,6 @@ class Stats
             add_action('admin_notices', array($this, 'optinNotice'));
             add_action('admin_enqueue_scripts', array($this, 'enqueueScripts'));
             add_action('wp_ajax_espresso_data_optin', array($this, 'ajaxHandler'));
-            // makes sure optin defaults to yes even if its currently empty.
-            $this->config->setHasOptedInForUxip();
         }
     }
 
@@ -135,7 +133,7 @@ class Stats
                  . '</h2>';
             printf(
                 esc_html__(
-                    '%1$sPlease help us make Event Espresso better and vote for your favorite features.%2$s The %3$sUser eXperience Improvement Program (UXIP)%4$s, has been created so when you use Event Espresso you are voting for the features and settings that are important to you. The UXIP helps us understand how you use our products and services, track problems and in what context. If you opt-out of the UXIP you essentially elect for us to disregard how you use Event Espresso as we build new features and make changes. Participation in the program is completely voluntary but it is enabled by default. The end results of the UXIP are software improvements to better meet your needs. The data we collect will never be sold, traded, or misused in any way. %5$sPlease see our %6$sPrivacy Policy%7$s for more information.',
+                    '%1$sPlease help us make Event Espresso better and vote for your favorite features.%2$s The %3$sUser eXperience Improvement Program (UXIP)%4$s, has been created so when you use Event Espresso you are voting for the features and settings that are important to you. The UXIP helps us understand how you use our products and services, track problems and in what context. If you opt-out of the UXIP you essentially elect for us to disregard how you use Event Espresso as we build new features and make changes. Participation in the program is completely voluntary and it is disabled by default. The end results of the UXIP are software improvements to better meet your needs. The data we collect will never be sold, traded, or misused in any way. %5$sPlease see our %6$sPrivacy Policy%7$s for more information.',
                     'event_espresso'
                 ),
                 '<p><em>',
@@ -154,7 +152,7 @@ class Stats
             $settings_url .= '#UXIP_settings';
             printf(
                 esc_html__(
-                    'The Event Espresso UXIP feature is active on your site. For %1$smore info%2$s and to opt-out %3$sclick here%4$s.',
+                    'The Event Espresso UXIP feature is not yet active on your site. For %1$smore info%2$s and to opt-in %3$sclick here%4$s.',
                     'event_espresso'
                 ),
                 '<a href="https://eventespresso.com/about/user-experience-improvement-program-uxip/" target="_blank">',

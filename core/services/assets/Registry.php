@@ -146,7 +146,7 @@ class Registry
                 $script->version(),
                 $script->loadInFooter()
             );
-            if (! $registered && defined('EE_DEBUG') && EE_DEBUG) {
+            if (! $registered && $this->debug()) {
                 throw new AssetRegistrationException($script->handle());
             }
             $script->setRegistered($registered);
@@ -260,6 +260,9 @@ class Registry
         if (isset($this->jsdata[ $key ])
             && ! is_array($this->jsdata[ $key ])
         ) {
+            if (! $this->debug()) {
+                return;
+            }
             throw new InvalidArgumentException(
                 sprintf(
                     __(
@@ -291,6 +294,9 @@ class Registry
         }
         //no overrides allowed.
         if (isset($this->jsdata['templates'][ $template_reference ])) {
+            if (! $this->debug()) {
+                return;
+            }
             throw new InvalidArgumentException(
                 sprintf(
                     __(
@@ -344,6 +350,9 @@ class Registry
     protected function verifyDataNotExisting($key)
     {
         if (isset($this->jsdata[ $key ])) {
+            if (! $this->debug()) {
+                return false;
+            }
             if (is_array($this->jsdata[ $key ])) {
                 throw new InvalidArgumentException(
                     sprintf(
@@ -460,6 +469,9 @@ class Registry
     public function registerManifestFile($namespace, $url_base, $manifest_file)
     {
         if (isset($this->manifest_data[ $namespace ])) {
+            if (! $this->debug()) {
+                return;
+            }
             throw new InvalidArgumentException(
                 sprintf(
                     esc_html__(
@@ -577,5 +589,18 @@ class Registry
     public function registerTranslation($handle)
     {
         $this->i18n_registry->registerScriptI18n($handle);
+    }
+
+
+    /**
+     * @since $VID:$
+     * @return bool
+     */
+    private function debug()
+    {
+        return apply_filters(
+            'FHEE__EventEspresso_core_services_assets_Registry__debug',
+            defined('EE_DEBUG') && EE_DEBUG
+        );
     }
 }
