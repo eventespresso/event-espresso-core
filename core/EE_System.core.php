@@ -1158,6 +1158,8 @@ final class EE_System implements ResettableInterface
         ) {
             $this->loader->getShared('EE_Session');
         }
+        // integrate WP_Query with the EE models
+        $this->loader->getShared('EE_CPT_Strategy');
         do_action('AHEE__EE_System__core_loaded_and_ready');
         // load_espresso_template_tags
         if (is_readable(EE_PUBLIC . 'template_tags.php')
@@ -1179,13 +1181,6 @@ final class EE_System implements ResettableInterface
     public function initialize()
     {
         do_action('AHEE__EE_System__initialize');
-        if (($this->request->isFrontend() || $this->request->isAjax())
-            && apply_filters('FHEE__EE_Front_Controller__employ_CPT_Strategy', true)
-            && ! $this->maintenance_mode->level()
-        ) {
-            // determine how to integrate WP_Query with the EE models
-            $this->loader->getShared('EE_CPT_Strategy');
-        }
     }
 
 
