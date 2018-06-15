@@ -164,7 +164,6 @@ final class EE_Admin implements InterminableInterface
     public function get_request()
     {
         EE_Registry::instance()->load_core('Request_Handler');
-        EE_Registry::instance()->load_core('CPT_Strategy');
     }
 
 
