@@ -1,3 +1,6 @@
+<?php
+do_action('AHEE__venue_address_metabox_content__before', $template_args);
+?>
 <table class="form-table">
     <tr>
         <td valign="top">
@@ -32,3 +35,5 @@
         </td>
     </tr>
 </table>
+<?php
+do_action('AHEE__venue_address_metabox_content__after', $template_args);
