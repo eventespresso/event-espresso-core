@@ -239,7 +239,7 @@ final class EE_Admin implements InterminableInterface
     /**
      * Method that's fired on admin requests (including admin ajax) but only when the models are usable
      * (ie, the site isn't in maintenance mode)
-     * @since $VID:$
+     * @since 4.9.63.p
      * @return void
      */
     protected function initModelsReady()

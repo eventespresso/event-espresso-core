@@ -83,7 +83,7 @@ For all testers on GitHub, please take note of the following when reporting issu
 4. Don't "bump" bug reports if we don't respond right away.  We see every report coming in, but we'll only reply if we need clarification or if we think its invalid.  Otherwise, we're likely working on a fix and the issue will be updated when the fix is complete.
 
 ## Pull Requests
-One of the reasons we created this private repo on GitHub is because we wanted to open up EE development to 3rd party developers who might want to contribute to the codebase. GitHub makes this really easy to do so via pull requests.  If you don't know what pull requests are, please read up on them via the GitHub help/documentation.
+One of the reasons we published this repository on GitHub is because we wanted to open up EE development to 3rd party developers who might want to contribute to the codebase. GitHub makes this really easy to do so via pull requests.  If you don't know what pull requests are, please read up on them via the GitHub help/documentation.
 
 Here's how we deal with pull requests for our repo:
 

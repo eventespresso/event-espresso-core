@@ -22,7 +22,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  *
  * @package        Event Espresso
  * @author         Mike Nelson
- * @since          $VID:$
+ * @since          4.9.63.p
  *
  */
 class PrivacySettingsFormHandler extends FormHandler
