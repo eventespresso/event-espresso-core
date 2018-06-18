@@ -76,7 +76,7 @@ class EE_CPT_Event_Strategy
     /**
      * public access to _remove_filters()
      *
-     * @since $VID:$
+     * @since 4.9.63.p
      */
     public function remove_filters()
     {

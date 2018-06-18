@@ -113,7 +113,7 @@ class AssetCollection extends Collection
      * @param  mixed $identifier
      * @param string $type
      * @return bool
-     * @since $VID:$
+     * @since 4.9.63.p
      */
     public function hasAssetOfType($identifier, $type = Asset::TYPE_JS)
     {
@@ -136,7 +136,7 @@ class AssetCollection extends Collection
      *
      * @param  mixed $identifier
      * @return bool
-     * @since $VID:$
+     * @since 4.9.63.p
      */
     public function hasJavascriptAsset($identifier)
     {
@@ -151,7 +151,7 @@ class AssetCollection extends Collection
      *
      * @param  mixed $identifier
      * @return bool
-     * @since $VID:$
+     * @since 4.9.63.p
      */
     public function hasStylesheetAsset($identifier)
     {
@@ -165,7 +165,7 @@ class AssetCollection extends Collection
      * @param  mixed $identifier
      * @param string $type
      * @return JavascriptAsset|StylesheetAsset
-     * @since $VID:$
+     * @since 4.9.63.p
      */
     public function getAssetOfType($identifier, $type = Asset::TYPE_JS)
     {
@@ -189,7 +189,7 @@ class AssetCollection extends Collection
      *
      * @param  mixed $identifier
      * @return StylesheetAsset
-     * @since $VID:$
+     * @since 4.9.63.p
      */
     public function getStylesheetAsset($identifier)
     {
@@ -203,7 +203,7 @@ class AssetCollection extends Collection
      *
      * @param  mixed $identifier
      * @return JavascriptAsset
-     * @since $VID:$
+     * @since 4.9.63.p
      */
     public function getJavascriptAsset($identifier)
     {
