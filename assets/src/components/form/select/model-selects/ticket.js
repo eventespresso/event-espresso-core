@@ -9,6 +9,7 @@ import * as ticketModel from '../../../../data/model/ticket';
  */
 import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
+import { EditorSelect } from './editor-select';
 import { PropTypes } from 'prop-types';
 
 /**
@@ -60,3 +61,18 @@ export default class TicketSelect extends Component {
 		return <ModelSelect { ...props } />;
 	}
 }
+
+/**
+ * TicketSelect Component wrapped in a BaseControl component.
+ */
+export class EditorTicketSelect extends Component {
+	render() {
+		const { selectProps, editorProps } = EditorSelect.getProps();
+		return (
+			<EditorSelect { ...editorProps } >
+				<TicketSelect { ...selectProps } />
+			</EditorSelect>
+		);
+	}
+}
+

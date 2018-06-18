@@ -8,9 +8,9 @@ import * as statusModel from '../../../../data/model/status';
  * External imports
  */
 import { __ } from '@eventespresso/i18n';
-import { BaseControl, Component, withInstanceId } from '@wordpress/element';
+import { Component } from '@wordpress/element';
+import { EditorSelect } from './editor-select';
 import { PropTypes } from 'prop-types';
-import { isFunction } from 'lodash';
 
 /**
  * Select Component for the Status Model.
@@ -66,29 +66,15 @@ export default class StatusSelect extends Component {
 }
 
 /**
- * Select Component for the Status Model.
+ * Select Component for the Status Model wrapped in a BaseControl component.
  */
-class EditorStatusSelect extends Component {
+export class EditorStatusSelect extends Component {
 	render() {
-		const { label, checked, help, instanceId } = this.props;
-		const id = `inspector-status-select-control-${ instanceId }`;
-
-		let helpLabel;
-		if ( help ) {
-			helpLabel = isFunction( help ) ? help( checked ) : help;
-		}
-
+		const { selectProps, editorProps } = EditorSelect.getProps();
 		return (
-			<BaseControl
-				label={ label }
-				id={ id }
-				help={ helpLabel }
-				className="components-select-control"
-			>
-				<StatusSelect { ...this.props } />
-			</BaseControl>
+			<EditorSelect { ...editorProps } >
+				<StatusSelect { ...selectProps } />
+			</EditorSelect>
 		);
 	}
 }
-
-export const editorStatusSelect = withInstanceId( EditorStatusSelect );
