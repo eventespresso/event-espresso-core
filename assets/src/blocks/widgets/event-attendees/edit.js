@@ -14,9 +14,10 @@ import {
 	DatetimeSelect,
 	EventSelect,
 	QueryLimit,
-	RegistrationStatusSelect,
+	StatusSelect,
 	TicketSelect
 } from '@eventespresso/components';
+import * as statusModel from '../../../data/model/status';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 
@@ -170,10 +171,11 @@ class EventAttendeesEditor extends Component {
 					}
 				/>
 
-				<RegistrationStatusSelect
-					key="attendees-registration-status-select"
-					selectedRegStatusId={ attributes.status }
-					onRegStatusSelect={ this.setStatus }
+				<StatusSelect
+					statusType={ statusModel.STATUS_TYPE_REGISTRATION }
+					selectedStatusId={ attributes.status }
+					onStatusSelect={ this.setStatus }
+					selectLabel={ 'Select Registration Status' }
 					addAllOptionLabel={
 						__(
 							'Show Attendees for All Registration Statuses',
