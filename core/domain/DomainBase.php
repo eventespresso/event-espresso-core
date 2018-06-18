@@ -161,6 +161,9 @@ abstract class DomainBase implements DomainInterface
      */
     private function setAssetNamespace()
     {
-        $this->asset_namespace = sanitize_key($this->plugin_basename);
+        $this->asset_namespace = sanitize_key(
+            // convert directory separators to dashes and remove file extension
+            str_replace(array('/', '.php'), array('-', ''), $this->plugin_basename)
+        );
     }
 }

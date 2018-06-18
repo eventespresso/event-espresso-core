@@ -1607,6 +1607,9 @@ class EE_Config_Base
 class EE_Core_Config extends EE_Config_Base
 {
 
+    const OPTION_NAME_UXIP = 'ee_ueip_optin';
+
+
     public $current_blog_id;
 
     public $ee_ueip_optin;
@@ -1828,22 +1831,22 @@ class EE_Core_Config extends EE_Config_Base
      * This accounts for multisite and this value being requested for a subsite.  In multisite, the value is set
      * on the main site only.
      *
-     * @return mixed|void
+     * @return bool
      */
     protected function _get_main_ee_ueip_optin()
     {
         // if this is the main site then we can just bypass our direct query.
         if (is_main_site()) {
-            return get_option('ee_ueip_optin', false);
+            return get_option(self::OPTION_NAME_UXIP, false);
         }
         // is this already cached for this request?  If so use it.
-        if (! empty(EE_Core_Config::$ee_ueip_option)) {
+        if (EE_Core_Config::$ee_ueip_option !== null) {
             return EE_Core_Config::$ee_ueip_option;
         }
         global $wpdb;
         $current_network_main_site = is_multisite() ? get_current_site() : null;
         $current_main_site_id = ! empty($current_network_main_site) ? $current_network_main_site->blog_id : 1;
-        $option = 'ee_ueip_optin';
+        $option = self::OPTION_NAME_UXIP;
         // set correct table for query
         $table_name = $wpdb->get_blog_prefix($current_main_site_id) . 'options';
         // rather than getting blog option for the $current_main_site_id, we do a direct $wpdb query because
@@ -1865,7 +1868,8 @@ class EE_Core_Config extends EE_Config_Base
         if (is_object($row)) {
             $value = $row->option_value;
         } else { // option does not exist so use default.
-            return apply_filters('default_option_' . $option, false, $option);
+            EE_Core_Config::$ee_ueip_option =  apply_filters('default_option_' . $option, false, $option);
+            return EE_Core_Config::$ee_ueip_option;
         }
         EE_Core_Config::$ee_ueip_option = apply_filters('option_' . $option, maybe_unserialize($value), $option);
         return EE_Core_Config::$ee_ueip_option;
@@ -1881,7 +1885,7 @@ class EE_Core_Config extends EE_Config_Base
      */
     public function get_pretty($property)
     {
-        if ($property === 'ee_ueip_optin') {
+        if ($property === self::OPTION_NAME_UXIP) {
             return $this->ee_ueip_optin ? 'yes' : 'no';
         }
         return parent::get_pretty($property);

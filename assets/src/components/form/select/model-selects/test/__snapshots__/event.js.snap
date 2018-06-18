@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EventSelect() matches snapshot with default props 1`] = `
+<WithSelect(ModelSelect)
+  getQueryString={[Function]}
+  modelName="event"
+  queryData={
+    Object {
+      "limit": 100,
+      "order": "DESC",
+      "orderBy": "start_date",
+      "showExpired": false,
+    }
+  }
+  selectConfiguration={
+    Object {
+      "defaultValue": undefined,
+      "loadingMessage": [Function],
+      "noOptionsMessage": [Function],
+      "onChange": undefined,
+      "placeholder": "Select Event...",
+    }
+  }
+  selectLabel="Select Event"
+/>
+`;
