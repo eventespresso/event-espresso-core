@@ -31,7 +31,7 @@
     </li>
 </ul>
 <p>
-    <?php printf(__('For testing please use a %1$s PaypPal Sandbox account%2$s.', 'event_espresso'), '<a target="_blank" href="https://developer.paypal.com">', '</a>'); ?>
+    <?php printf(__('For testing please use a %1$s PayPal Sandbox account%2$s.', 'event_espresso'), '<a target="_blank" href="https://developer.paypal.com">', '</a>'); ?>
 </p>
 <p>
     <?php printf(__('Don\'t have PayPal? %1$sSign up for an account%2$s to get start right away.', 'event_espresso'), '<a target="_blank" href="hhttps://eventespresso.com/go/paypalstandard/">', '</a>'); ?>
