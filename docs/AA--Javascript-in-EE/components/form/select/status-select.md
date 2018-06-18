@@ -19,7 +19,7 @@ The following is the shape of the component with its default props:
     queryData={
         {
             limit: 25,
-            orderBy: 'start_date',
+            orderBy: 'statusCode',
             order: 'DESC'
         }
     }
