@@ -593,7 +593,7 @@ class Registry
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.63.p
      * @return bool
      */
     private function debug()
