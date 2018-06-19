@@ -17,6 +17,7 @@ import { PropTypes } from 'prop-types';
 export default class StatusSelect extends Component {
 	state = {
 		modelName: 'status',
+		queryData: {},
 	};
 
 	static defaultProps = {
@@ -45,6 +46,27 @@ export default class StatusSelect extends Component {
 		onStatusSelect: PropTypes.func,
 		selectLabel: PropTypes.string,
 	};
+
+	addStatusTypeToQueryData( statusType ) {
+		this.setState( {
+			queryData: {
+				...this.state.queryData,
+				statusType,
+			},
+		} );
+	}
+
+	componentDidMount() {
+		this.setState( {
+			queryData: { ...this.props.queryData },
+		} );
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.statusType !== this.props.statusType) {
+			this.addStatusTypeToQueryData( this.props.statusType );
+		}
+	}
 
 	render() {
 		const { selectedStatusId, onStatusSelect } = this.props;
