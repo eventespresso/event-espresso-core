@@ -229,7 +229,7 @@ class CptQueryModifier
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.9.63.p
      * @return EE_Request_Handler
      */
     public function request()
@@ -297,7 +297,7 @@ class CptQueryModifier
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.63.p
      * @throws EE_Error
      */
     protected function init()

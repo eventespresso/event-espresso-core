@@ -35,7 +35,7 @@ use LogicException;
  *
  * @package EventEspresso\admin_pages\general_settings
  * @author  Darren Ethier
- * @since   $VID:$
+ * @since   4.9.63.p
  */
 class OrganizationSettings extends FormHandler
 {
