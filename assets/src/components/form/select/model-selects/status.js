@@ -22,7 +22,9 @@ export default class StatusSelect extends Component {
 
 	static defaultProps = {
 		selectConfiguration: {
-			loadingMessage: () => __( 'Retrieving Statuses.', 'event_espresso' ),
+			loadingMessage: () => __( 'Retrieving Statuses.',
+				'event_espresso',
+			),
 			noOptionsMessage: () => __( 'No Statuses.', 'event_espresso' ),
 			placeholder: __( 'Select Status...', 'event_espresso' ),
 		},
@@ -63,7 +65,7 @@ export default class StatusSelect extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.statusType !== this.props.statusType) {
+		if ( prevProps.statusType !== this.props.statusType ) {
 			this.addStatusTypeToQueryData( this.props.statusType );
 		}
 	}
