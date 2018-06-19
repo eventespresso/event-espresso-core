@@ -8,11 +8,21 @@ import * as modelSelect from '../model-select';
  */
 import { Component } from '@wordpress/element';
 import { BaseControl, withInstanceId } from '@wordpress/components';
+import { PropTypes } from 'prop-types';
 
 /**
  * ModelSelect Component wrapped in a BaseControl component.
  */
 class EditorSelect extends Component {
+	static propTypes = {
+		selectLabel: PropTypes.string,
+		instanceId: PropTypes.oneOfType( [
+			PropTypes.number,
+			PropTypes.string,
+		] ),
+		className: PropTypes.string,
+		help: PropTypes.string,
+	};
 	render() {
 		const { selectLabel, instanceId, className, help, children } = this.props;
 		const id = `inspector-status-select-control-${ instanceId }`;
@@ -24,8 +34,8 @@ class EditorSelect extends Component {
 			<BaseControl
 				label={ selectLabel }
 				id={ id }
-				help={ help }
 				className={ className }
+				help={ help }
 			>
 				{ children }
 			</BaseControl>
