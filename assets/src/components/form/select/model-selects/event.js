@@ -9,7 +9,8 @@ import * as eventModel from '../../../../data/model/event';
  */
 import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
-import PropTypes from 'prop-types';
+import { default as EditorSelect, getEditorSelectProps } from './editor-select';
+import { PropTypes } from 'prop-types';
 
 /**
  * Select Component for the Event Model.
@@ -60,3 +61,25 @@ export default class EventSelect extends Component {
 		return <ModelSelect { ...props } />;
 	}
 }
+
+/**
+ * EventSelect Component wrapped in a BaseControl component.
+ */
+export class EditorEventSelect extends Component {
+	static defaultProps = {
+		selectLabel: __( 'Select Event', 'event_espresso' ),
+	};
+	static propTypes = {
+		selectLabel: PropTypes.string,
+	};
+	render() {
+		const props = { ...this.props };
+		const { editorProps, ...selectProps } = getEditorSelectProps( props );
+		return (
+			<EditorSelect { ...editorProps } >
+				<EventSelect { ...selectProps } />
+			</EditorSelect>
+		);
+	}
+}
+
