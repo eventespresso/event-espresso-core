@@ -60,7 +60,10 @@ export default class StatusSelect extends Component {
 
 	componentDidMount() {
 		this.setState( {
-			queryData: { ...this.props.queryData },
+			queryData: {
+				...this.props.queryData,
+				statusType: this.props.statusType,
+			},
 		} );
 	}
 
