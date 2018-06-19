@@ -17,6 +17,7 @@ import { PropTypes } from 'prop-types';
 export default class TicketSelect extends Component {
 	state = {
 		modelName: 'ticket',
+		queryData: {},
 	};
 
 	static defaultProps = {
@@ -42,6 +43,45 @@ export default class TicketSelect extends Component {
 		onTicketSelect: PropTypes.func,
 		selectLabel: PropTypes.string,
 	};
+
+	addEventIdToQueryData( forEventId ) {
+		this.setState( {
+			queryData: {
+				...this.state.queryData,
+				forEventId,
+			},
+		} );
+	}
+
+	addDatetimeIdToQueryData( forDatetimeId ) {
+		this.setState( {
+			queryData: {
+				...this.state.queryData,
+				forDatetimeId,
+			},
+		} );
+	}
+
+	componentDidMount() {
+		this.setState( {
+			queryData: { ...this.props.queryData },
+		} );
+		if ( this.props.forEventId > 0 ) {
+			this.addEventIdToQueryData( this.props.forEventId );
+		}
+		if ( this.props.forDatetimeId > 0 ) {
+			this.addDatetimeIdToQueryData( this.props.forDatetimeId );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.forEventId !== this.props.forEventId ) {
+			this.addEventIdToQueryData( this.props.forEventId );
+		}
+		if ( prevProps.forDatetimeId !== this.props.forDatetimeId ) {
+			this.addDatetimeIdToQueryData( this.props.forDatetimeId );
+		}
+	}
 
 	render() {
 		const { selectedTicketId, onTicketSelect } = this.props;

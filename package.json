@@ -43,6 +43,7 @@
 		"babel-core": "^6.26.3",
 		"babel-eslint": "^8.2.2",
 		"babel-loader": "^7.1.2",
+		"babel-plugin-dev-expression": "^0.2.1",
 		"babel-plugin-transform-async-generator-functions": "^6.24.1",
 		"babel-plugin-transform-class-properties": "^6.24.1",
 		"babel-plugin-transform-react-jsx": "^6.24.1",
@@ -90,6 +91,7 @@
 		"react-dom": "^16.3.0",
 		"react-redux": "^5.0.6",
 		"react-select": "^2.0.0-beta.6",
-		"redux": "^3.7.2"
+		"redux": "^3.7.2",
+		"warning": "^4.0.1"
 	}
 }

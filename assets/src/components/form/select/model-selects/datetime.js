@@ -17,6 +17,7 @@ import { PropTypes } from 'prop-types';
 export default class DatetimeSelect extends Component {
 	state = {
 		modelName: 'datetime',
+		queryData: {},
 	};
 
 	static defaultProps = {
@@ -44,6 +45,30 @@ export default class DatetimeSelect extends Component {
 		onDatetimeSelect: PropTypes.func,
 		selectLabel: PropTypes.string,
 	};
+
+	addEventIdToQueryData( forEventId ) {
+		this.setState( {
+			queryData: {
+				...this.state.queryData,
+				forEventId,
+			},
+		} );
+	}
+
+	componentDidMount() {
+		this.setState( {
+			queryData: { ...this.props.queryData },
+		} );
+		if ( this.props.forEventId > 0 ) {
+			this.addEventIdToQueryData( this.props.forEventId );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.forEventId !== this.props.forEventId ) {
+			this.addEventIdToQueryData( this.props.forEventId );
+		}
+	}
 
 	render() {
 		const { selectedDatetimeId, onDatetimeSelect } = this.props;

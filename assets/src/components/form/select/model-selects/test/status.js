@@ -4,6 +4,12 @@ import { QUERY_ORDER_DESC } from 'assets/src/data/model/base';
 import * as statusModel from 'assets/src/data/model/status';
 
 describe( 'StatusSelect()', () => {
+	const expectedDefaultQueryData = {
+		limit: 25,
+		orderBy: 'statusCode',
+		order: QUERY_ORDER_DESC,
+		statusType: statusModel.STATUS_TYPE_REGISTRATION,
+	};
 	it( 'matches snapshot with default props plus provided statusType', () => {
 		const wrapper = shallow(
 			<StatusSelect
@@ -18,11 +24,8 @@ describe( 'StatusSelect()', () => {
 				statusType={ statusModel.STATUS_TYPE_REGISTRATION }
 			/>
 		);
-		expect( wrapper.prop( 'queryData' ) ).toEqual( {
-			limit: 25,
-			orderBy: 'statusCode',
-			order: QUERY_ORDER_DESC,
-		} );
+		expect( wrapper.prop( 'queryData' ) )
+			.toEqual( expectedDefaultQueryData );
 		expect( wrapper.prop( 'selectConfiguration' ).placeholder ).toEqual(
 			'Select Status...',
 		);

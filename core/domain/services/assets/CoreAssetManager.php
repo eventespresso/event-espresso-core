@@ -176,7 +176,7 @@ class CoreAssetManager extends AssetManager
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'data-stores'),
-            array(CoreAssetManager::JS_HANDLE_EE_VENDOR, 'wp-data')
+            array(CoreAssetManager::JS_HANDLE_EE_VENDOR, 'wp-data', 'wp-api-request')
         )
         ->setRequiresTranslation();
 
