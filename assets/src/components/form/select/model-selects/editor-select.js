@@ -44,14 +44,13 @@ class EditorSelect extends Component {
 
 export default withInstanceId( EditorSelect );
 
-export const getEditorSelectProps = () => {
-	const args = arguments[ 0 ];
+export const getEditorSelectProps = ( selectProps ) => {
 	const editorProps = {
-		selectLabel: args.selectLabel,
-		className: args.className,
-		help: args.help,
+		selectLabel: selectProps.selectLabel,
+		className: selectProps.className,
+		help: selectProps.help,
 	};
-	args.selectLabel = modelSelect.MODEL_SELECT_LABEL_NONE;
-	delete args.help;
-	return { editorProps, ...args };
+	selectProps.selectLabel = modelSelect.MODEL_SELECT_LABEL_NONE;
+	delete selectProps.help;
+	return { editorProps, selectProps };
 };
