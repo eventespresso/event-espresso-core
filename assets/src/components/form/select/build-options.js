@@ -1,7 +1,12 @@
 /**
  * External dependencies
  */
-import { reduce } from 'lodash';
+import { reduce, isFunction } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { dateTimeModel } from '../../../data/model';
 
 /**
  * A default map used for mapping options for select.
@@ -13,7 +18,9 @@ const DEFAULT_MODEL_OPTIONS_MAP = {
 		value: 'EVT_ID',
 	},
 	datetime: {
-		label: 'DTT_name',
+		label: ( entity ) => {
+			return dateTimeModel.prettyDateFromDateTime( entity );
+		},
 		value: 'DTT_ID',
 	},
 	ticket: {
@@ -48,14 +55,14 @@ const buildOptions = (
 	const MAP_FOR_MODEL = map[ modelName ] ? map[ modelName ] : false;
 	const generatedOptions = entities && MAP_FOR_MODEL ?
 		reduce( entities, function( options, entity ) {
-			if ( entity[ MAP_FOR_MODEL.label ] &&
-				entity[ MAP_FOR_MODEL.value ] ) {
-				options.push(
-					{
-						label: entity[ MAP_FOR_MODEL.label ],
-						value: entity[ MAP_FOR_MODEL.value ],
-					},
-				);
+			const label = isFunction( MAP_FOR_MODEL.label ) ?
+				MAP_FOR_MODEL.label( entity ) :
+				entity[ MAP_FOR_MODEL.label ];
+			const value = isFunction( MAP_FOR_MODEL.value ) ?
+				MAP_FOR_MODEL.value( entity ) :
+				entity[ MAP_FOR_MODEL.value ];
+			if ( label && value ) {
+				options.push( { label, value } );
 			}
 			return options;
 		}, [] ) :
