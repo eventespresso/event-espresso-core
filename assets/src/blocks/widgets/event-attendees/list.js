@@ -6,7 +6,7 @@ import { __ } from '@eventespresso/i18n';
 /**
  * Internal dependencies
  */
-import { ContactAvatar } from '@eventespresso/components';
+import { AvatarImage } from '@eventespresso/components';
 
 export const EventAttendeesList = ( { attendees } ) => {
 	return (
@@ -17,7 +17,7 @@ export const EventAttendeesList = ( { attendees } ) => {
 					return (
 						<li key={ index } className="event-attendee-li">
 							<p>
-								<ContactAvatar
+								<AvatarImage
 									avatarUrl={
 										attendee._calculated_fields.userAvatar
 									}
