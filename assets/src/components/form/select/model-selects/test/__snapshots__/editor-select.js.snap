@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+
+exports[`<EditorSelect /> matches snapshot with no props provided 1`] = `
+<EditorSelect
+  instanceId={0}
+/>
+`;
+
+exports[ `<EditorSelect /> matches snapshot with all props provided but no child component 1` ] = `
+<EditorSelect
+  className="not-so-unique"
+  help="try not to fall down stairs!"
+  id="i-am-unique"
+  instanceId={1}
+  label="not a default label"
+/>
+`;
+
+exports[ `<EditorSelect /> matches snapshot with only child component provided 1` ] = `
+<EditorSelect
+  instanceId={2}
+>
+  <p>
+    child component
+  </p>
+</EditorSelect>
+`;

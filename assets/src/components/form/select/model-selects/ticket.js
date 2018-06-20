@@ -9,7 +9,7 @@ import * as ticketModel from '../../../../data/model/ticket';
  */
 import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
-import { EditorSelect } from './editor-select';
+import { default as EditorSelect, getEditorSelectProps } from './editor-select';
 import { PropTypes } from 'prop-types';
 
 /**
@@ -18,6 +18,7 @@ import { PropTypes } from 'prop-types';
 export default class TicketSelect extends Component {
 	state = {
 		modelName: 'ticket',
+		queryData: {},
 	};
 
 	static defaultProps = {
@@ -44,6 +45,45 @@ export default class TicketSelect extends Component {
 		selectLabel: PropTypes.string,
 	};
 
+	addEventIdToQueryData( forEventId ) {
+		this.setState( {
+			queryData: {
+				...this.state.queryData,
+				forEventId,
+			},
+		} );
+	}
+
+	addDatetimeIdToQueryData( forDatetimeId ) {
+		this.setState( {
+			queryData: {
+				...this.state.queryData,
+				forDatetimeId,
+			},
+		} );
+	}
+
+	componentDidMount() {
+		this.setState( {
+			queryData: { ...this.props.queryData },
+		} );
+		if ( this.props.forEventId > 0 ) {
+			this.addEventIdToQueryData( this.props.forEventId );
+		}
+		if ( this.props.forDatetimeId > 0 ) {
+			this.addDatetimeIdToQueryData( this.props.forDatetimeId );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.forEventId !== this.props.forEventId ) {
+			this.addEventIdToQueryData( this.props.forEventId );
+		}
+		if ( prevProps.forDatetimeId !== this.props.forDatetimeId ) {
+			this.addDatetimeIdToQueryData( this.props.forDatetimeId );
+		}
+	}
+
 	render() {
 		const { selectedTicketId, onTicketSelect } = this.props;
 		const selectOpts = {
@@ -66,8 +106,16 @@ export default class TicketSelect extends Component {
  * TicketSelect Component wrapped in a BaseControl component.
  */
 export class EditorTicketSelect extends Component {
+	static defaultProps = {
+		selectLabel: __( 'Select Ticket', 'event_espresso' ),
+	};
+	static propTypes = {
+		selectLabel: PropTypes.string,
+	};
+
 	render() {
-		const { selectProps, editorProps } = EditorSelect.getProps();
+		const props = { ...this.props };
+		const { editorProps, ...selectProps } = getEditorSelectProps( props );
 		return (
 			<EditorSelect { ...editorProps } >
 				<TicketSelect { ...selectProps } />

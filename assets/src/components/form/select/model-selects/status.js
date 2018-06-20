@@ -9,7 +9,7 @@ import * as statusModel from '../../../../data/model/status';
  */
 import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
-import { EditorSelect } from './editor-select';
+import { default as EditorSelect, getEditorSelectProps } from './editor-select';
 import { PropTypes } from 'prop-types';
 
 /**
@@ -18,11 +18,14 @@ import { PropTypes } from 'prop-types';
 export default class StatusSelect extends Component {
 	state = {
 		modelName: 'status',
+		queryData: {},
 	};
 
 	static defaultProps = {
 		selectConfiguration: {
-			loadingMessage: () => __( 'Retrieving Statuses.', 'event_espresso' ),
+			loadingMessage: () => __( 'Retrieving Statuses.',
+				'event_espresso',
+			),
 			noOptionsMessage: () => __( 'No Statuses.', 'event_espresso' ),
 			placeholder: __( 'Select Status...', 'event_espresso' ),
 		},
@@ -47,6 +50,30 @@ export default class StatusSelect extends Component {
 		selectLabel: PropTypes.string,
 	};
 
+	addStatusTypeToQueryData( statusType ) {
+		this.setState( {
+			queryData: {
+				...this.state.queryData,
+				statusType,
+			},
+		} );
+	}
+
+	componentDidMount() {
+		this.setState( {
+			queryData: {
+				...this.props.queryData,
+				statusType: this.props.statusType,
+			},
+		} );
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.statusType !== this.props.statusType ) {
+			this.addStatusTypeToQueryData( this.props.statusType );
+		}
+	}
+
 	render() {
 		const { selectedStatusId, onStatusSelect } = this.props;
 		const selectOpts = {
@@ -69,8 +96,16 @@ export default class StatusSelect extends Component {
  * Select Component for the Status Model wrapped in a BaseControl component.
  */
 export class EditorStatusSelect extends Component {
+	static defaultProps = {
+		selectLabel: __( 'Select Status', 'event_espresso' ),
+	};
+	static propTypes = {
+		selectLabel: PropTypes.string,
+	};
+
 	render() {
-		const { selectProps, editorProps } = EditorSelect.getProps();
+		const props = { ...this.props };
+		const { editorProps, ...selectProps } = getEditorSelectProps( props );
 		return (
 			<EditorSelect { ...editorProps } >
 				<StatusSelect { ...selectProps } />

@@ -9,7 +9,7 @@ import * as datetimeModel from '../../../../data/model/datetime';
  */
 import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
-import { EditorSelect } from './editor-select';
+import { default as EditorSelect, getEditorSelectProps } from './editor-select';
 import { PropTypes } from 'prop-types';
 
 /**
@@ -18,6 +18,7 @@ import { PropTypes } from 'prop-types';
 export default class DatetimeSelect extends Component {
 	state = {
 		modelName: 'datetime',
+		queryData: {},
 	};
 
 	static defaultProps = {
@@ -46,6 +47,30 @@ export default class DatetimeSelect extends Component {
 		selectLabel: PropTypes.string,
 	};
 
+	addEventIdToQueryData( forEventId ) {
+		this.setState( {
+			queryData: {
+				...this.state.queryData,
+				forEventId,
+			},
+		} );
+	}
+
+	componentDidMount() {
+		this.setState( {
+			queryData: { ...this.props.queryData },
+		} );
+		if ( this.props.forEventId > 0 ) {
+			this.addEventIdToQueryData( this.props.forEventId );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.forEventId !== this.props.forEventId ) {
+			this.addEventIdToQueryData( this.props.forEventId );
+		}
+	}
+
 	render() {
 		const { selectedDatetimeId, onDatetimeSelect } = this.props;
 		const selectOpts = {
@@ -68,8 +93,16 @@ export default class DatetimeSelect extends Component {
  * DatetimeSelect Component wrapped in a BaseControl component.
  */
 export class EditorDatetimeSelect extends Component {
+	static defaultProps = {
+		selectLabel: __( 'Select Datetime', 'event_espresso' ),
+	};
+	static propTypes = {
+		selectLabel: PropTypes.string,
+	};
+
 	render() {
-		const { selectProps, editorProps } = EditorSelect.getProps();
+		const props = { ...this.props };
+		const { editorProps, ...selectProps } = getEditorSelectProps( props );
 		return (
 			<EditorSelect { ...editorProps } >
 				<DatetimeSelect { ...selectProps } />

@@ -21,6 +21,8 @@ import {
 	REACT_SELECT_TYPES,
 } from './default-select-configuration';
 
+export const MODEL_SELECT_LABEL_NONE = 'model-select-label-none';
+
 /**
  * ModelSelect component.
  * This is a component that will generate a react-select input for a given
@@ -43,6 +45,8 @@ import {
  *   `mapOptionsCallback`.
  */
 export class ModelSelect extends Component {
+	state = {};
+
 	static propTypes = {
 		selectConfiguration: PropTypes.shape( {
 			...REACT_SELECT_TYPES,
@@ -74,7 +78,7 @@ export class ModelSelect extends Component {
 			limit: 100,
 			order: 'desc',
 		},
-		selectLabel: '',
+		selectLabel: MODEL_SELECT_LABEL_NONE,
 		addAllOptionLabel: '',
 		getQueryString: () => '',
 	};
@@ -82,12 +86,17 @@ export class ModelSelect extends Component {
 	static getDerivedStateFromProps( props ) {
 		const { selectConfiguration } = props;
 		const options = ModelSelect.getOptions( props );
-		const updated = {
-			options,
-			value: ModelSelect.getOptionObjectForValue(
-				selectConfiguration.defaultValue, options
-			),
-		};
+		const selectedValue = ModelSelect.getOptionObjectForValue(
+			selectConfiguration.defaultValue, options
+		);
+		const updated = selectedValue !== null ?
+			{
+				options,
+				value: selectedValue,
+			} :
+			{
+				options,
+			};
 		return {
 			...REACT_SELECT_DEFAULTS,
 			...selectConfiguration,
@@ -129,12 +138,12 @@ export class ModelSelect extends Component {
 				match :
 				null;
 		}
-		return {};
+		return null;
 	}
 
 	getSelectLabel() {
 		const { selectLabel, selectConfiguration } = this.props;
-		return selectLabel ?
+		return selectLabel !== MODEL_SELECT_LABEL_NONE ?
 			<label htmlFor={ selectConfiguration.name }>{ selectLabel }</label> :
 			'';
 	}

@@ -1,31 +1,41 @@
 /**
+ * Internal imports
+ */
+import * as modelSelect from '../model-select';
+
+/**
  * External imports
  */
 import { Component } from '@wordpress/element';
 import { BaseControl, withInstanceId } from '@wordpress/components';
-import { isFunction } from 'lodash';
+import { PropTypes } from 'prop-types';
 
 /**
  * ModelSelect Component wrapped in a BaseControl component.
  */
 class EditorSelect extends Component {
+	static propTypes = {
+		selectLabel: PropTypes.string,
+		instanceId: PropTypes.oneOfType( [
+			PropTypes.number,
+			PropTypes.string,
+		] ),
+		className: PropTypes.string,
+		help: PropTypes.string,
+	};
 	render() {
-		const { children, selectLabel, checked, help, instanceId } = this.props;
+		const { selectLabel, instanceId, className, help, children } = this.props;
 		const id = `inspector-status-select-control-${ instanceId }`;
-		let helpLabel;
 		this.props.selectLabel = null;
-
 		if ( help ) {
 			this.props[ 'aria-describedby' ] = id + '__help';
-			helpLabel = isFunction( help ) ? help( checked ) : help;
 		}
-
 		return (
 			<BaseControl
 				label={ selectLabel }
 				id={ id }
-				help={ helpLabel }
-				className="components-select-control"
+				className={ className }
+				help={ help }
 			>
 				{ children }
 			</BaseControl>
@@ -35,15 +45,14 @@ class EditorSelect extends Component {
 
 export default withInstanceId( EditorSelect );
 
-export function getProps() {
-	const selectProps = arguments;
+export function getEditorSelectProps() {
+	const args = arguments[ 0 ];
 	const editorProps = {
-		selectLabel: selectProps.selectLabel,
-		checked: selectProps.checked,
-		help: selectProps.help,
+		selectLabel: args.selectLabel,
+		className: args.className,
+		help: args.help,
 	};
-	delete selectProps.selectLabel;
-	delete selectProps.checked;
-	delete selectProps.help;
-	return { selectProps, editorProps };
+	args.selectLabel = modelSelect.MODEL_SELECT_LABEL_NONE;
+	delete args.help;
+	return { editorProps, ...args };
 }
