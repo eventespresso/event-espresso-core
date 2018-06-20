@@ -54,35 +54,46 @@ class EventAttendeesEditor extends Component {
 	};
 
 	setEventId = ( eventId ) => {
-		this.props.setAttributes( { eventId: parseInt( eventId, 10 ) } );
+		this.props.setAttributes(
+			{
+				eventId: parseInt( eventId.value, 10 ),
+				datetimeId: 0,
+				ticketId: 0,
+			}
+		);
 	};
 
 	setDatetimeId = ( datetimeId ) => {
-		this.props.setAttributes( { datetimeId: parseInt( datetimeId, 10 ) } );
+		this.props.setAttributes(
+			{
+				datetimeId: parseInt( datetimeId.value, 10 ),
+				ticketId: 0,
+			}
+		);
 	};
 
 	setTicketId = ( ticketId ) => {
-		this.props.setAttributes( { ticketId: parseInt( ticketId, 10 ) } );
+		this.props.setAttributes( { ticketId: parseInt( ticketId.value, 10 ) } );
 	};
 
 	setStatus = ( status ) => {
-		this.props.setAttributes( { status: status } );
+		this.props.setAttributes( { status: status.value } );
 	};
 
 	setNumberOfAttendeesToDisplay = ( numberOfAttendeesToDisplay ) => {
 		this.props.setAttributes( {
 			numberOfAttendeesToDisplay: parseInt(
-				numberOfAttendeesToDisplay
+				numberOfAttendeesToDisplay.value
 			)
 		} );
 	};
 
 	toggleShowGravatar = ( showGravatar ) => {
-		this.props.setAttributes( { showGravatar: showGravatar } );
+		this.props.setAttributes( { showGravatar: showGravatar.value } );
 	};
 
 	toggleDisplayOnArchives = ( displayOnArchives ) => {
-		this.props.setAttributes( { displayOnArchives: displayOnArchives } );
+		this.props.setAttributes( { displayOnArchives: displayOnArchives.value } );
 	};
 
 	getPlaceHolderContent() {
@@ -190,9 +201,9 @@ export default withSelect( ( select, ownProps ) => {
 	const { attributes } = ownProps;
 	let { eventId, datetimeId, ticketId, status, showGravatar } = attributes;
 	let queryParams = [];
-	ticketId = parseInt( ticketId );
-	datetimeId = parseInt( datetimeId );
-	eventId = parseInt( eventId );
+	ticketId = parseInt( ticketId, 10 );
+	datetimeId = parseInt( datetimeId, 10 );
+	eventId = parseInt( eventId, 10 );
 	if ( ticketId !== 0 && ! isNaN( ticketId ) ) {
 		queryParams.push( `[Registration.Ticket.TKT_ID]=${ ticketId }` );
 	} else if ( datetimeId !== 0 && ! isNaN( datetimeId ) ) {
