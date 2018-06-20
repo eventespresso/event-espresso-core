@@ -78,7 +78,7 @@ export class ModelSelect extends Component {
 			limit: 100,
 			order: 'desc',
 		},
-		selectLabel: '',
+		selectLabel: MODEL_SELECT_LABEL_NONE,
 		addAllOptionLabel: '',
 		getQueryString: () => '',
 	};
