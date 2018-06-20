@@ -4,18 +4,18 @@
 import { InspectorControls } from '@wordpress/editor';
 import { Component, Fragment } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
-import { Placeholder, Spinner, ToggleControl } from '@wordpress/components';
+import { PanelBody, Placeholder, Spinner, ToggleControl } from '@wordpress/components';
 
 /**
  * External dependencies
  */
 import { __ } from '@eventespresso/i18n';
 import {
-	DatetimeSelect,
-	EventSelect,
+	EditorDatetimeSelect,
+	EditorEventSelect,
+	EditorStatusSelect,
+	EditorTicketSelect,
 	QueryLimit,
-	StatusSelect,
-	TicketSelect
 } from '@eventespresso/components';
 import * as statusModel from '../../../data/model/status';
 import PropTypes from 'prop-types';
@@ -38,7 +38,7 @@ class EventAttendeesEditor extends Component {
 			showGravatar: PropTypes.bool,
 			displayOnArchives: PropTypes.bool,
 		} ),
-	}
+	};
 
 	static defaultProps = {
 		attendees: [],
@@ -51,52 +51,39 @@ class EventAttendeesEditor extends Component {
 			showGravatar: PropTypes.bool,
 			displayOnArchives: PropTypes.bool,
 		},
-	}
+	};
 
-	constructor() {
-		super( ...arguments );
-		this.setEventId = this.setEventId.bind( this );
-		this.setDatetimeId = this.setDatetimeId.bind( this );
-		this.setTicketId = this.setTicketId.bind( this );
-		this.setStatus = this.setStatus.bind( this );
-		this.setNumberOfAttendeesToDisplay
-			= this.setNumberOfAttendeesToDisplay.bind( this );
-		this.toggleShowGravatar = this.toggleShowGravatar.bind( this );
-		this.toggleDisplayOnArchives
-			= this.toggleDisplayOnArchives.bind( this );
-	}
+	setEventId = ( eventId ) => {
+		this.props.setAttributes( { eventId: parseInt( eventId, 10 ) } );
+	};
 
-	setEventId( eventId ) {
-		this.props.setAttributes( { eventId: parseInt( eventId ) } );
-	}
+	setDatetimeId = ( datetimeId ) => {
+		this.props.setAttributes( { datetimeId: parseInt( datetimeId, 10 ) } );
+	};
 
-	setDatetimeId( datetimeId ) {
-		this.props.setAttributes( { datetimeId: parseInt( datetimeId ) } );
-	}
+	setTicketId = ( ticketId ) => {
+		this.props.setAttributes( { ticketId: parseInt( ticketId, 10 ) } );
+	};
 
-	setTicketId( ticketId ) {
-		this.props.setAttributes( { ticketId: parseInt( ticketId ) } );
-	}
-
-	setStatus( status ) {
+	setStatus = ( status ) => {
 		this.props.setAttributes( { status: status } );
-	}
+	};
 
-	setNumberOfAttendeesToDisplay( numberOfAttendeesToDisplay ) {
+	setNumberOfAttendeesToDisplay = ( numberOfAttendeesToDisplay ) => {
 		this.props.setAttributes( {
 			numberOfAttendeesToDisplay: parseInt(
 				numberOfAttendeesToDisplay
 			)
 		} );
-	}
+	};
 
-	toggleShowGravatar( showGravatar ) {
+	toggleShowGravatar = ( showGravatar ) => {
 		this.props.setAttributes( { showGravatar: showGravatar } );
-	}
+	};
 
-	toggleDisplayOnArchives( displayOnArchives ) {
+	toggleDisplayOnArchives = ( displayOnArchives ) => {
 		this.props.setAttributes( { displayOnArchives: displayOnArchives } );
-	}
+	};
 
 	getPlaceHolderContent() {
 		if ( ! this.props.isLoading && this.props.attributes.eventId ) {
@@ -138,73 +125,63 @@ class EventAttendeesEditor extends Component {
 
 	render() {
 		const { attendees, attributes } = this.props;
-
-		const inspectorControls = (
-			<InspectorControls>
-
-				<EventSelect
-					key="attendees-event-select"
-					selectedEventId={ attributes.eventId }
-					onEventSelect={ this.setEventId }
-				/>
-
-				<DatetimeSelect
-					key="attendees-datetime-select"
-					selectedDatetimeId={ attributes.datetimeId }
-					forEventId={ attributes.eventId }
-					onDatetimeSelect={ this.setDatetimeId }
-					addAllOptionLabel={
-						__( 'Show Attendees for All Datetimes',
-							'event_espresso'
-						)
-					}
-				/>
-
-				<TicketSelect
-					key="attendees-ticket-select"
-					selectedTicketId={ attributes.ticketId }
-					forEventId={ attributes.eventId }
-					forDatetimeId={ attributes.datetimeId }
-					onTicketSelect={ this.setTicketId }
-					addAllOptionLabel={
-						__( 'Show Attendees for All Tickets', 'event_espresso' )
-					}
-				/>
-
-				<StatusSelect
-					statusType={ statusModel.STATUS_TYPE_REGISTRATION }
-					selectedStatusId={ attributes.status }
-					onStatusSelect={ this.setStatus }
-					selectLabel={ 'Select Registration Status' }
-					addAllOptionLabel={
-						__(
-							'Show Attendees for All Registration Statuses',
-							'event_espresso'
-						)
-					}
-				/>
-
-				<ToggleControl
-					label={ __( 'Display Gravatar', 'event_espresso' ) }
-					checked={ attributes.showGravatar }
-					onChange={ this.toggleShowGravatar }
-				/>
-
-				<ToggleControl
-					label={ __( 'Display on Archives', 'event_espresso' ) }
-					checked={ attributes.displayOnArchives }
-					onChange={ this.toggleDisplayOnArchives }
-				/>
-
-			</InspectorControls>
-		);
 		const attendeesBlock = isEmpty( attendees ) ?
 			this.getNoAttendeesContent() :
 			this.getAttendeesDisplay();
-
+		const inspectorControls = (
+			<InspectorControls>
+				<PanelBody title={ __( 'Event Attendees Settings', 'event_espresso' ) }>
+					<EditorEventSelect
+						key="attendees-event-select"
+						selectedEventId={ attributes.eventId }
+						onEventSelect={ this.setEventId }
+					/>
+					<EditorDatetimeSelect
+						key="attendees-datetime-select"
+						selectedDatetimeId={ attributes.datetimeId }
+						forEventId={ attributes.eventId }
+						onDatetimeSelect={ this.setDatetimeId }
+						addAllOptionLabel={
+							__( 'Show Attendees for All Datetimes',
+								'event_espresso'
+							)
+						}
+					/>
+					<EditorTicketSelect
+						key="attendees-ticket-select"
+						selectedTicketId={ attributes.ticketId }
+						forEventId={ attributes.eventId }
+						forDatetimeId={ attributes.datetimeId }
+						onTicketSelect={ this.setTicketId }
+						addAllOptionLabel={
+							__( 'Show Attendees for All Tickets', 'event_espresso' )
+						}
+					/>
+					<EditorStatusSelect
+						statusType={ statusModel.STATUS_TYPE_REGISTRATION }
+						selectedStatusId={ attributes.status }
+						onStatusSelect={ this.setStatus }
+						selectLabel={ __( 'Select Registration Status', 'event_espresso' ) }
+						addAllOptionLabel={
+							__( 'Show Attendees for All Registration Statuses', 'event_espresso' )
+						}
+					/>
+					<ToggleControl
+						label={ __( 'Display Gravatar', 'event_espresso' ) }
+						checked={ attributes.showGravatar }
+						onChange={ this.toggleShowGravatar }
+					/>
+					<ToggleControl
+						label={ __( 'Display on Archives', 'event_espresso' ) }
+						checked={ attributes.displayOnArchives }
+						onChange={ this.toggleDisplayOnArchives }
+					/>
+				</PanelBody>
+			</InspectorControls>
+		);
 		return [
-			inspectorControls,
 			attendeesBlock,
+			inspectorControls
 		];
 	}
 }
@@ -231,7 +208,7 @@ export default withSelect( ( select, ownProps ) => {
 	}
 	if ( ! isEmpty( queryParams ) ) {
 		const queryString = 'where' + queryParams.join( '&' );
-		// console.log( '    EventAttendees > withSelect() queryString = ' + queryString );
+		console.log( '    EventAttendees > withSelect() queryString = ' + queryString );
 		const { getItems, isRequestingItems } = select( 'eventespresso/lists' );
 		return {
 			attendees: getItems( 'attendee', queryString ),
