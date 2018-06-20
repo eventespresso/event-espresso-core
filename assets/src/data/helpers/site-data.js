@@ -3,6 +3,8 @@
  */
 import { data } from '@eventespresso/eejs';
 
+data.site_formats = data.site_formats || {};
+
 /**
  * All available site formats exposed via the eejs.data global from the server.
  * @type {{}}
