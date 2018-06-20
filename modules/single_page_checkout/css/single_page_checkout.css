@@ -288,7 +288,7 @@
 	padding: 0;
 	margin:0 .5em;
 	vertical-align: middle;
-	*overflow: hidden;
+	overflow: hidden;
 }
 .ee-radio-label-before,
 .ee-checkbox-label-before {
