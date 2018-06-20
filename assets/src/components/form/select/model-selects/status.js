@@ -11,7 +11,6 @@ import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
 import { default as EditorSelect, getEditorSelectProps } from './editor-select';
 import { PropTypes } from 'prop-types';
-import { isFunction } from 'lodash';
 
 /**
  * Select Component for the Status Model.
@@ -76,8 +75,6 @@ export default class StatusSelect extends Component {
 	}
 
 	render() {
-		console.log( 'StatusSelect.props' );
-		console.log( this.props );
 		const { selectedStatusId, onStatusSelect } = this.props;
 		const selectOpts = {
 			selectConfiguration: {
@@ -105,20 +102,14 @@ export class EditorStatusSelect extends Component {
 	static propTypes = {
 		selectLabel: PropTypes.string,
 	};
+
 	render() {
 		const props = { ...this.props };
 		const { editorProps, ...selectProps } = getEditorSelectProps( props );
 		return (
-			<BaseControl
-				label={ label }
-				id={ id }
-				help={ helpLabel }
-				className="components-select-control"
-			>
-				<StatusSelect { ...this.props } />
-			</BaseControl>
+			<EditorSelect { ...editorProps } >
+				<StatusSelect { ...selectProps } />
+			</EditorSelect>
 		);
 	}
 }
-
-export const editorStatusSelect = withInstanceId( EditorStatusSelect );
