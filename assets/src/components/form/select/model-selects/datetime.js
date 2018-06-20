@@ -2,7 +2,7 @@
  * Internal imports
  */
 import ModelSelect from '../model-select';
-import * as datetimeModel from '../../../../data/model/datetime';
+import { dateTimeModel } from '../../../../data/model';
 
 /**
  * External imports
@@ -29,14 +29,14 @@ export default class DatetimeSelect extends Component {
 			),
 			placeholder: __( 'Select Datetime...', 'event_espresso' ),
 		},
-		...datetimeModel.defaultQueryData,
-		getQueryString: datetimeModel.getQueryString,
+		...dateTimeModel.defaultQueryData,
+		getQueryString: dateTimeModel.getQueryString,
 		selectLabel: __( 'Select Datetime', 'event_espresso' ),
 		addAllOptionLabel: __( 'All Datetimes', 'event_espresso' ),
 	};
 
 	static propTypes = {
-		...datetimeModel.queryDataTypes,
+		...dateTimeModel.queryDataTypes,
 		forEventId: PropTypes.number,
 		selectedDatetimeId: PropTypes.oneOfType( [
 			PropTypes.number,
