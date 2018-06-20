@@ -10,6 +10,7 @@ exports[`StatusSelect() matches snapshot with default props plus provided status
       "limit": 25,
       "order": "DESC",
       "orderBy": "statusCode",
+      "statusType": "registration",
     }
   }
   selectConfiguration={

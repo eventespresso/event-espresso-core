@@ -19,11 +19,14 @@ import { isFunction } from 'lodash';
 export default class StatusSelect extends Component {
 	state = {
 		modelName: 'status',
+		queryData: {},
 	};
 
 	static defaultProps = {
 		selectConfiguration: {
-			loadingMessage: () => __( 'Retrieving Statuses.', 'event_espresso' ),
+			loadingMessage: () => __( 'Retrieving Statuses.',
+				'event_espresso',
+			),
 			noOptionsMessage: () => __( 'No Statuses.', 'event_espresso' ),
 			placeholder: __( 'Select Status...', 'event_espresso' ),
 		},
@@ -47,6 +50,30 @@ export default class StatusSelect extends Component {
 		onStatusSelect: PropTypes.func,
 		selectLabel: PropTypes.string,
 	};
+
+	addStatusTypeToQueryData( statusType ) {
+		this.setState( {
+			queryData: {
+				...this.state.queryData,
+				statusType,
+			},
+		} );
+	}
+
+	componentDidMount() {
+		this.setState( {
+			queryData: {
+				...this.props.queryData,
+				statusType: this.props.statusType,
+			},
+		} );
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.statusType !== this.props.statusType ) {
+			this.addStatusTypeToQueryData( this.props.statusType );
+		}
+	}
 
 	render() {
 		console.log( 'StatusSelect.props' );
