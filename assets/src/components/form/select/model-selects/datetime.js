@@ -102,7 +102,7 @@ export class EditorDatetimeSelect extends Component {
 
 	render() {
 		const props = { ...this.props };
-		const { editorProps, ...selectProps } = getEditorSelectProps( props );
+		const { editorProps, selectProps } = getEditorSelectProps( props );
 		return (
 			<EditorSelect { ...editorProps } >
 				<DatetimeSelect { ...selectProps } />

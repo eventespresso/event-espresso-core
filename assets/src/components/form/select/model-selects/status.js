@@ -105,7 +105,7 @@ export class EditorStatusSelect extends Component {
 
 	render() {
 		const props = { ...this.props };
-		const { editorProps, ...selectProps } = getEditorSelectProps( props );
+		const { editorProps, selectProps } = getEditorSelectProps( props );
 		return (
 			<EditorSelect { ...editorProps } >
 				<StatusSelect { ...selectProps } />
