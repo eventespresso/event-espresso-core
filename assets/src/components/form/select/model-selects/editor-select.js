@@ -26,7 +26,6 @@ class EditorSelect extends Component {
 	render() {
 		const { selectLabel, instanceId, className, help, children } = this.props;
 		const id = `inspector-status-select-control-${ instanceId }`;
-		this.props.selectLabel = null;
 		if ( help ) {
 			this.props[ 'aria-describedby' ] = id + '__help';
 		}
@@ -45,7 +44,7 @@ class EditorSelect extends Component {
 
 export default withInstanceId( EditorSelect );
 
-export function getEditorSelectProps() {
+export const getEditorSelectProps = () => {
 	const args = arguments[ 0 ];
 	const editorProps = {
 		selectLabel: args.selectLabel,
@@ -55,4 +54,4 @@ export function getEditorSelectProps() {
 	args.selectLabel = modelSelect.MODEL_SELECT_LABEL_NONE;
 	delete args.help;
 	return { editorProps, ...args };
-}
+};
