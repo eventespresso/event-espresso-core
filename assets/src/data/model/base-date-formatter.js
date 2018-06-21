@@ -105,7 +105,7 @@ export const formatEntitiesDatesToMysql = (
  *   to the local timezone for the host.
  * @return { Object }  Returns a new entity with the date field values formatted
  */
-export const formatEntityDateToMysql = (
+export const formatEntityDatesToMysql = (
 	entity = {},
 	entityDateFields = [],
 	local = true,
