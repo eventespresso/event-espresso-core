@@ -1158,6 +1158,8 @@ final class EE_System implements ResettableInterface
         ) {
             $this->loader->getShared('EE_Session');
         }
+        // integrate WP_Query with the EE models
+        $this->loader->getShared('EE_CPT_Strategy');
         do_action('AHEE__EE_System__core_loaded_and_ready');
         // load_espresso_template_tags
         if (($this->request->isFrontend()
