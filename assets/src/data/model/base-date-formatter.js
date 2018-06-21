@@ -81,7 +81,7 @@ export const formatDatesOnEntity = (
  * @return { Array }  Returns a new array of new entities with the date field
  *   values formatted
  */
-export const datesToMysqlFormatOnEntities = (
+export const formatEntitiesDatesToMysql = (
 	entities = [],
 	entityDateFields = [],
 	local = true,
@@ -105,7 +105,7 @@ export const datesToMysqlFormatOnEntities = (
  *   to the local timezone for the host.
  * @return { Object }  Returns a new entity with the date field values formatted
  */
-export const datesToMysqlFormatOnEntity = (
+export const formatEntityDateToMysql = (
 	entity = {},
 	entityDateFields = [],
 	local = true,
@@ -130,7 +130,7 @@ export const datesToMysqlFormatOnEntity = (
  * @return { Array }  Returns a new array of new entities with the date field
  *   values formatted
  */
-export const datesToSiteFormatOnEntities = (
+export const formatEntitiesDatesToSite = (
 	entities = [],
 	entityDateFields = [],
 	local = true,
@@ -154,7 +154,7 @@ export const datesToSiteFormatOnEntities = (
  *   to the local timezone for the host.
  * @return { Object }  Returns a new entity with the date field values formatted
  */
-export const datesToSiteFormatOnEntity = (
+export const formatEntityDatesToSite = (
 	entity = {},
 	entityDateFields = [],
 	local = true,
@@ -177,7 +177,7 @@ export const datesToSiteFormatOnEntity = (
  * @return { Array } Returns a new array of new entities with the date field
  *   values converted to moment objects.
  */
-export const datesToMomentOnEntities = (
+export const convertEntitiesDatesToMoment = (
 	entities = [],
 	entityDateFields = [],
 ) => {
@@ -186,7 +186,7 @@ export const datesToMomentOnEntities = (
 	}
 	const formattedEntities = [];
 	entities.forEach( ( entity ) => {
-		formattedEntities.push( datesToMomentOnEntity(
+		formattedEntities.push( convertEntityDatesToMoment(
 			entity,
 			entityDateFields,
 		) );
@@ -204,7 +204,7 @@ export const datesToMomentOnEntities = (
  * @return { Object } Returns a new entity with the date field values converted
  *   to moment objects.
  */
-export const datesToMomentOnEntity = (
+export const convertEntityDatesToMoment = (
 	entity = {},
 	entityDateFields = [],
 ) => {

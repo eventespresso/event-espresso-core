@@ -66,8 +66,8 @@ forOwn( baseFormatter, ( implementation, functionName ) => {
  *    DateTimeEntity.
  */
 export const prettyDateFromDateTime = ( DateTimeEntity = {} ) => {
-	let content = DateTimeEntity.DTT_name ? DateTimeEntity.DTT_name + ' (' : '';
-	DateTimeEntity = formatters.datesToMomentOnEntity( DateTimeEntity );
+	let content = '';
+	DateTimeEntity = formatters.convertEntityDatesToMoment( DateTimeEntity );
 	if ( DateTimeEntity.DTT_EVT_start && DateTimeEntity.DTT_EVT_end ) {
 		if ( DateTimeEntity.DTT_EVT_start.local().format( 'md' ) ===
 			DateTimeEntity.DTT_EVT_end.local().format( 'md' ) ) {
@@ -103,8 +103,9 @@ export const prettyDateFromDateTime = ( DateTimeEntity = {} ) => {
 			);
 		}
 	}
-
-	content += DateTimeEntity.DTT_name ? ')' : '';
+	content = DateTimeEntity.DTT_name ?
+		`${ DateTimeEntity.DTT_name } (${ content })` :
+		content;
 	return content;
 };
 

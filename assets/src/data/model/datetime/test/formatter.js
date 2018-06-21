@@ -9,9 +9,9 @@ import {
 
 const {
 	formatDatesOnEntities,
-	datesToMysqlFormatOnEntities,
-	datesToSiteFormatOnEntities,
-	datesToMomentOnEntities,
+	formatEntitiesDatesToMysql,
+	formatEntitiesDatesToSite,
+	convertEntitiesDatesToMoment,
 } = formatters;
 
 const testMoment = moment()
@@ -162,15 +162,15 @@ describe( 'formatDatesOnEntities', () => {
 	} );
 } );
 
-describe( 'datesToMysqlFormatOnEntities()', () => {
+describe( 'formatEntitiesDatesToMysql()', () => {
 	it( 'returns expected entity with formatted date fields for default',
 		() => {
-			expect( datesToMysqlFormatOnEntities() ).toEqual( [] );
+			expect( formatEntitiesDatesToMysql() ).toEqual( [] );
 		},
 	);
 	it( 'returns expected entities with formatted date fields for defaults',
 		() => {
-			expect( datesToMysqlFormatOnEntities( testEntities ) ).toEqual(
+			expect( formatEntitiesDatesToMysql( testEntities ) ).toEqual(
 				[
 					{
 						DTT_name: 'Test Date A',
@@ -218,7 +218,7 @@ describe( 'datesToMysqlFormatOnEntities()', () => {
 	);
 	it( 'returns expected entities with formatted date fields for local set' +
 		' false', () => {
-		expect( datesToMysqlFormatOnEntities( testEntities, false ) ).toEqual(
+		expect( formatEntitiesDatesToMysql( testEntities, false ) ).toEqual(
 			[
 				{
 					DTT_name: 'Test Date A',
@@ -265,15 +265,15 @@ describe( 'datesToMysqlFormatOnEntities()', () => {
 	} );
 } );
 
-describe( 'datesToSiteFormatOnEntities()', () => {
+describe( 'formatEntitiesDatesToSite()', () => {
 	it( 'returns expected entity with formatted date fields for default',
 		() => {
-			expect( datesToSiteFormatOnEntities() ).toEqual( [] );
+			expect( formatEntitiesDatesToSite() ).toEqual( [] );
 		},
 	);
 	it( 'returns expected entities with formatted date fields for defaults',
 		() => {
-			expect( datesToSiteFormatOnEntities( testEntities ) ).toEqual(
+			expect( formatEntitiesDatesToSite( testEntities ) ).toEqual(
 				[
 					{
 						DTT_name: 'Test Date A',
@@ -321,7 +321,7 @@ describe( 'datesToSiteFormatOnEntities()', () => {
 	);
 	it( 'returns expected entities with formatted date fields for local set' +
 		' false', () => {
-		expect( datesToSiteFormatOnEntities( testEntities, false ) ).toEqual(
+		expect( formatEntitiesDatesToSite( testEntities, false ) ).toEqual(
 			[
 				{
 					DTT_name: 'Test Date A',
@@ -368,15 +368,15 @@ describe( 'datesToSiteFormatOnEntities()', () => {
 	} );
 } );
 
-describe( 'datesToMomentOnEntities()', () => {
+describe( 'convertEntitiesDatesToMoment()', () => {
 	it( 'returns expected entity with formatted date fields for default',
 		() => {
-			expect( datesToMomentOnEntities() ).toEqual( [] );
+			expect( convertEntitiesDatesToMoment() ).toEqual( [] );
 		},
 	);
 	it( 'returns expected entities with formatted date fields for defaults',
 		() => {
-			const actual = datesToMomentOnEntities( testEntities );
+			const actual = convertEntitiesDatesToMoment( testEntities );
 			const valuesToTest = [
 				actual[ 0 ].DTT_EVT_start,
 				actual[ 0 ].DTT_EVT_end,
