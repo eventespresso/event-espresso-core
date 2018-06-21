@@ -17,7 +17,7 @@ The headings used for the changelog are:
 - Fixed (bug fixes)
 - Security (vulnerability fixes)
 
-**Only add a heading when its used**
+**Only add a heading when there is content for it.**
 
 ## Every Pull Request requires a changelog entry.
 
