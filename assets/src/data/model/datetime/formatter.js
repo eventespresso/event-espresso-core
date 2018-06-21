@@ -6,6 +6,7 @@ import {
 	TIME_FORMAT_SITE,
 	DATE_TIME_FORMAT_SITE,
 	allDateTimesAsString,
+	SEPARATOR_SPACE_DASH_SPACE,
 } from '@eventespresso/helpers';
 
 /**
@@ -72,7 +73,7 @@ export const prettyDateFromDateTime = ( DateTimeEntity = {} ) => {
 		if ( DateTimeEntity.DTT_EVT_start.local().format( 'md' ) ===
 			DateTimeEntity.DTT_EVT_end.local().format( 'md' ) ) {
 			content += allDateTimesAsString(
-				' - ',
+				SEPARATOR_SPACE_DASH_SPACE,
 				DateTimeEntity.DTT_EVT_start.format(
 					DATE_TIME_FORMAT_SITE
 				),
@@ -82,7 +83,7 @@ export const prettyDateFromDateTime = ( DateTimeEntity = {} ) => {
 			);
 		} else {
 			content += allDateTimesAsString(
-				' - ',
+				SEPARATOR_SPACE_DASH_SPACE,
 				DateTimeEntity.DTT_EVT_start.format(
 					DATE_TIME_FORMAT_SITE
 				),
