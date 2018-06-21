@@ -164,7 +164,6 @@ final class EE_Admin implements InterminableInterface
     public function get_request()
     {
         EE_Registry::instance()->load_core('Request_Handler');
-        EE_Registry::instance()->load_core('CPT_Strategy');
     }
 
 
@@ -239,7 +238,7 @@ final class EE_Admin implements InterminableInterface
     /**
      * Method that's fired on admin requests (including admin ajax) but only when the models are usable
      * (ie, the site isn't in maintenance mode)
-     * @since $VID:$
+     * @since 4.9.63.p
      * @return void
      */
     protected function initModelsReady()
