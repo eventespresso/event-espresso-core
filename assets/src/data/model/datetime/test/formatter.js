@@ -14,7 +14,14 @@ const {
 	datesToMomentOnEntities,
 } = formatters;
 
-const testMoment = moment().millisecond( 0 );
+const testMoment = moment()
+	.year( 2017 )
+	.month( 6 )
+	.day( 25 )
+	.hour( 10 )
+	.minute( 24 )
+	.second( 34 )
+	.millisecond( 0 );
 const testLocalMoment = moment( testMoment ).local();
 
 const testEntities = [
