@@ -3,7 +3,7 @@ import {
 	whereConditions,
 	getQueryString,
 	nowDateAndTime,
-} from '../';
+} from '../query';
 import {
 	GREATER_THAN,
 	GREATER_THAN_AND_EQUAL,

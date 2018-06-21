@@ -67,11 +67,35 @@ const config = [
 		},
 	},
 	{
+		configName: 'helpers',
+		entry: {
+			helpers: assets + 'data/helpers/index.js',
+		},
+		externals,
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', '[name]' ],
+			libraryTarget: 'var',
+		},
+	},
+	{
 		configName: 'components',
 		entry: {
 			components: assets + 'components/index.js',
 		},
-		externals,
+		externals: Object.assign( externals, {
+			'@eventespresso/helpers': 'eejs.helpers',
+		} ),
 		module: {
 			rules: [
 				{
@@ -100,6 +124,7 @@ const config = [
 		},
 		externals: Object.assign( externals, {
 			'@eventespresso/components': 'eejs.components',
+			'@eventespresso/helpers': 'eejs.helpers',
 		} ),
 		output: {
 			filename: 'ee-[name].[chunkhash].dist.js',

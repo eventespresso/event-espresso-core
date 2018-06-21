@@ -1,4 +1,9 @@
 import buildOptions, { OPTION_SELECT_ALL } from '../build-options';
+import moment from 'moment';
+import {
+	DATE_TIME_FORMAT_SITE,
+	TIME_FORMAT_SITE,
+} from '@eventespresso/helpers';
 
 describe( 'buildOptions()', () => {
 	const testResponse = [
@@ -50,6 +55,30 @@ describe( 'buildOptions()', () => {
 				{ label: 'All Options', value: OPTION_SELECT_ALL },
 				{ label: 'Custom Property A', value: 'Test A' },
 				{ label: 'Custom Property B', value: 'Test B' },
+			]
+		);
+	} );
+	it( 'returns expected values for options using default map with datetime', () => {
+		const testLocalMoment = moment().local();
+		const dateTimeResponse = [
+			{
+				DTT_ID: 30,
+				DTT_name: 'DateTime 1',
+				DTT_EVT_start: moment( testLocalMoment ).format(),
+				DTT_EVT_end: moment( testLocalMoment ).add( 1, 'h' ).format(),
+			},
+		];
+		const expectedLabel = 'DateTime 1' + ' (' +
+			moment( testLocalMoment ).format( DATE_TIME_FORMAT_SITE ) +
+			' - ' +
+			moment( testLocalMoment ).add( 1, 'h' ).format( TIME_FORMAT_SITE ) +
+			')';
+		expect( buildOptions( dateTimeResponse, 'datetime' ) ).toEqual(
+			[
+				{
+					value: 30,
+					label: expectedLabel,
+				},
 			]
 		);
 	} );
