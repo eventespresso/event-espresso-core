@@ -26,7 +26,4 @@ Headings should be (only add headings as needed):
 - Fixed section heading closing tag in `content-espresso_events-header.php` ([541](https://github.com/eventespresso/event-espresso-core/pull/541))
 - Fixed typo in paypal pro ([535](https://github.com/eventespresso/event-espresso-core/pull/535))
 - Fixed EE CPT objects not being added to WP_Post objects during Ajax Requests ([531](https://github.com/eventespresso/event-espresso-core/pull/531))
-
-### Changed
-
-- Link payment logs to the transaction if an EE_Transaction object is passed to the log call (545(https://github.com/eventespresso/event-espresso-core/pull/545))
+- Fixed transaction not being assigned to payment log entry when created using an EE_Transaction object ([545](https://github.com/eventespresso/event-espresso-core/pull/545))
