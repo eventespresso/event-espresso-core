@@ -2,7 +2,7 @@
  * Internal imports
  */
 import ModelSelect from '../model-select';
-import * as statusModel from '../../../../data/model/status';
+import * as model from '../../../../data/model/status';
 
 /**
  * External imports
@@ -17,7 +17,7 @@ import { PropTypes } from 'prop-types';
  */
 export default class StatusSelect extends Component {
 	state = {
-		modelName: 'status',
+		modelName: model.MODEL_NAME,
 		queryData: {},
 	};
 
@@ -29,21 +29,21 @@ export default class StatusSelect extends Component {
 			noOptionsMessage: () => __( 'No Statuses.', 'event_espresso' ),
 			placeholder: __( 'Select Status...', 'event_espresso' ),
 		},
-		...statusModel.defaultQueryData,
-		getQueryString: statusModel.getQueryString,
+		...model.defaultQueryData,
+		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Status', 'event_espresso' ),
 		addAllOptionLabel: __( 'All Statuses', 'event_espresso' ),
 	};
 
 	static propTypes = {
-		...statusModel.queryDataTypes,
+		...model.queryDataTypes,
 		statusType: PropTypes.oneOf( [
-			statusModel.STATUS_TYPE_EMAIL,
-			statusModel.STATUS_TYPE_EVENT,
-			statusModel.STATUS_TYPE_MESSAGE,
-			statusModel.STATUS_TYPE_PAYMENT,
-			statusModel.STATUS_TYPE_REGISTRATION,
-			statusModel.STATUS_TYPE_TRANSACTION,
+			model.STATUS_TYPE_EMAIL,
+			model.STATUS_TYPE_EVENT,
+			model.STATUS_TYPE_MESSAGE,
+			model.STATUS_TYPE_PAYMENT,
+			model.STATUS_TYPE_REGISTRATION,
+			model.STATUS_TYPE_TRANSACTION,
 		] ).isRequired,
 		selectedStatusId: PropTypes.string,
 		onStatusSelect: PropTypes.func,
@@ -105,6 +105,7 @@ export class EditorStatusSelect extends Component {
 
 	render() {
 		const props = { ...this.props };
+		props.modelName = model.MODEL_NAME;
 		const { editorProps, selectProps } = getEditorSelectProps( props );
 		return (
 			<EditorSelect { ...editorProps } >

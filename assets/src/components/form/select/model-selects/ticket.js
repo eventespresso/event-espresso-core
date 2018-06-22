@@ -2,7 +2,7 @@
  * Internal imports
  */
 import ModelSelect from '../model-select';
-import * as ticketModel from '../../../../data/model/ticket';
+import * as model from '../../../../data/model/ticket';
 
 /**
  * External imports
@@ -17,7 +17,7 @@ import { PropTypes } from 'prop-types';
  */
 export default class TicketSelect extends Component {
 	state = {
-		modelName: 'ticket',
+		modelName: model.MODEL_NAME,
 		queryData: {},
 	};
 
@@ -27,14 +27,14 @@ export default class TicketSelect extends Component {
 			noOptionsMessage: () => __( 'No Tickets.', 'event_espresso' ),
 			placeholder: __( 'Select Ticket...', 'event_espresso' ),
 		},
-		...ticketModel.defaultQueryData,
-		getQueryString: ticketModel.getQueryString,
+		...model.defaultQueryData,
+		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Ticket', 'event_espresso' ),
 		addAllOptionLabel: __( 'All Tickets', 'event_espresso' ),
 	};
 
 	static propTypes = {
-		...ticketModel.queryDataTypes,
+		...model.queryDataTypes,
 		forEventId: PropTypes.number,
 		forDatetimeId: PropTypes.number,
 		selectedTicketId: PropTypes.oneOfType( [
@@ -115,6 +115,7 @@ export class EditorTicketSelect extends Component {
 
 	render() {
 		const props = { ...this.props };
+		props.modelName = model.MODEL_NAME;
 		const { editorProps, selectProps } = getEditorSelectProps( props );
 		return (
 			<EditorSelect { ...editorProps } >

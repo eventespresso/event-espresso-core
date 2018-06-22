@@ -2,7 +2,7 @@
  * Internal imports
  */
 import ModelSelect from '../model-select';
-import * as eventModel from '../../../../data/model/event';
+import * as model from '../../../../data/model/event';
 
 /**
  * External imports
@@ -17,7 +17,7 @@ import { PropTypes } from 'prop-types';
  */
 export default class EventSelect extends Component {
 	state = {
-		modelName: 'event',
+		modelName: model.MODEL_NAME,
 	};
 
 	static defaultProps = {
@@ -29,13 +29,13 @@ export default class EventSelect extends Component {
 			),
 			placeholder: __( 'Select Event...', 'event_espresso' ),
 		},
-		...eventModel.defaultQueryData,
-		getQueryString: eventModel.getQueryString,
+		...model.defaultQueryData,
+		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Event', 'event_espresso' ),
 	};
 
 	static propTypes = {
-		...eventModel.queryDataTypes,
+		...model.queryDataTypes,
 		selectedEventId: PropTypes.oneOfType( [
 			PropTypes.number,
 			PropTypes.string,
@@ -74,6 +74,7 @@ export class EditorEventSelect extends Component {
 	};
 	render() {
 		const props = { ...this.props };
+		props.modelName = model.MODEL_NAME;
 		const { editorProps, selectProps } = getEditorSelectProps( props );
 		return (
 			<EditorSelect { ...editorProps } >

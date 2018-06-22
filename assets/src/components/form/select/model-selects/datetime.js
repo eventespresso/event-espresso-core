@@ -2,7 +2,7 @@
  * Internal imports
  */
 import ModelSelect from '../model-select';
-import * as datetimeModel from '../../../../data/model/datetime';
+import * as model from '../../../../data/model/datetime';
 
 /**
  * External imports
@@ -17,7 +17,7 @@ import { PropTypes } from 'prop-types';
  */
 export default class DatetimeSelect extends Component {
 	state = {
-		modelName: 'datetime',
+		modelName: model.MODEL_NAME,
 		queryData: {},
 	};
 
@@ -30,14 +30,14 @@ export default class DatetimeSelect extends Component {
 			),
 			placeholder: __( 'Select Datetime...', 'event_espresso' ),
 		},
-		...datetimeModel.defaultQueryData,
-		getQueryString: datetimeModel.getQueryString,
+		...model.defaultQueryData,
+		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Datetime', 'event_espresso' ),
 		addAllOptionLabel: __( 'All Datetimes', 'event_espresso' ),
 	};
 
 	static propTypes = {
-		...datetimeModel.queryDataTypes,
+		...model.queryDataTypes,
 		forEventId: PropTypes.number,
 		selectedDatetimeId: PropTypes.oneOfType( [
 			PropTypes.number,
@@ -102,6 +102,7 @@ export class EditorDatetimeSelect extends Component {
 
 	render() {
 		const props = { ...this.props };
+		props.modelName = model.MODEL_NAME;
 		const { editorProps, selectProps } = getEditorSelectProps( props );
 		return (
 			<EditorSelect { ...editorProps } >
