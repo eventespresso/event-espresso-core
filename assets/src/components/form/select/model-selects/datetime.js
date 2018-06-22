@@ -2,7 +2,7 @@
  * Internal imports
  */
 import ModelSelect from '../model-select';
-import * as datetimeModel from '../../../../data/model/datetime';
+import { dateTimeModel } from '../../../../data/model';
 
 /**
  * External imports
@@ -17,6 +17,7 @@ import { PropTypes } from 'prop-types';
 export default class DatetimeSelect extends Component {
 	state = {
 		modelName: 'datetime',
+		queryData: {},
 	};
 
 	static defaultProps = {
@@ -28,14 +29,14 @@ export default class DatetimeSelect extends Component {
 			),
 			placeholder: __( 'Select Datetime...', 'event_espresso' ),
 		},
-		...datetimeModel.defaultQueryData,
-		getQueryString: datetimeModel.getQueryString,
+		...dateTimeModel.defaultQueryData,
+		getQueryString: dateTimeModel.getQueryString,
 		selectLabel: __( 'Select Datetime', 'event_espresso' ),
 		addAllOptionLabel: __( 'All Datetimes', 'event_espresso' ),
 	};
 
 	static propTypes = {
-		...datetimeModel.queryDataTypes,
+		...dateTimeModel.queryDataTypes,
 		forEventId: PropTypes.number,
 		selectedDatetimeId: PropTypes.oneOfType( [
 			PropTypes.number,
@@ -44,6 +45,30 @@ export default class DatetimeSelect extends Component {
 		onDatetimeSelect: PropTypes.func,
 		selectLabel: PropTypes.string,
 	};
+
+	addEventIdToQueryData( forEventId ) {
+		this.setState( {
+			queryData: {
+				...this.state.queryData,
+				forEventId,
+			},
+		} );
+	}
+
+	componentDidMount() {
+		this.setState( {
+			queryData: { ...this.props.queryData },
+		} );
+		if ( this.props.forEventId > 0 ) {
+			this.addEventIdToQueryData( this.props.forEventId );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.forEventId !== this.props.forEventId ) {
+			this.addEventIdToQueryData( this.props.forEventId );
+		}
+	}
 
 	render() {
 		const { selectedDatetimeId, onDatetimeSelect } = this.props;

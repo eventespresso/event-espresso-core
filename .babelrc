@@ -12,7 +12,8 @@
 		"transform-object-rest-spread",
 		"transform-react-jsx",
 		"transform-async-generator-functions",
-		"transform-class-properties"
+		"transform-class-properties",
+		"dev-expression"
 	],
 	"env": {
 		"test": {
@@ -34,7 +35,8 @@
 				"transform-object-rest-spread",
 				"transform-react-jsx",
 				"transform-async-generator-functions",
-				"transform-class-properties"
+				"transform-class-properties",
+				"dev-expression"
 			]
 		}
 	}

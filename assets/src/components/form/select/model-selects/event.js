@@ -2,7 +2,7 @@
  * Internal imports
  */
 import ModelSelect from '../model-select';
-import * as eventModel from '../../../../data/model/event';
+import { eventModel } from '../../../../data/model';
 
 /**
  * External imports

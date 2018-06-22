@@ -1,0 +1,20 @@
+/**
+ * Styles for exit modal
+ */
+.ee-cancel-prompt-button {
+    float:right;
+}
+
+.exit-modal-choices .button {
+    margin-left:5px;
+}
+/** styles for plugin upsells **/
+.ee-upsell-container {
+    padding: 20px;
+}
+
+.ee-upsell-inner-container {
+    float: left;
+    display: inline-block;
+    margin-right: 10px;
+}

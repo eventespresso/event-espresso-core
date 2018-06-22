@@ -19,6 +19,14 @@ module.exports.data = {
 			term: [ 'TERM_ID', 'TAXONOMY_ID' ],
 		},
 	},
+	site_formats: {
+		date_formats: {
+			moment_split: {
+				date: 'YYYY-MM-DD',
+				time: 'HH:mm:ss',
+			},
+		},
+	},
 };
 
 module.exports.Exception = Exception;
