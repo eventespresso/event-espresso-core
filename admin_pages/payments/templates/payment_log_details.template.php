@@ -20,7 +20,7 @@
             <tr>
                 <th>
                     <label>
-                        <?php _e('ID', 'event_espresso'); ?>
+                        <?php esc_html_e('ID', 'event_espresso'); ?>
                     </label>
                 </th>
                 <td>
@@ -31,34 +31,40 @@
             <tr>
                 <th>
                     <label>
-                        <?php _e('Payment Method', 'event_espresso'); ?>
+                        <?php esc_html_e('Payment Method', 'event_espresso'); ?>
                     </label>
                 </th>
                 <td>
-                    <?php echo $payment_method
-                        ? $payment_method->admin_name()
-                        : __(
-                            "No Longer Exists",
-                            'event_espresso'
-                        ) ?>
+                    <?php 
+                        if($payment_log->object() instanceof EE_Transaction) {
+                            esc_html_e('Unknown', 'event_espresso');
+                        } else {
+                            echo $payment_method
+                            ? $payment_method->admin_name()
+                            : esc_html__(
+                                "No Longer Exists",
+                                'event_espresso'
+                            );
+                        }
+                    ?>
 
                 </td>
             </tr>
             <tr>
                 <th>
                     <label>
-                        <?php _e('Transaction', 'event_espresso'); ?>
+                        <?php esc_html_e('Transaction', 'event_espresso'); ?>
                     </label>
                 </th>
                 <td>
-                    <?php echo $transaction ? $transaction->ID() : __("Could not be determined", 'event_espresso'); ?>
+                    <?php echo $transaction ? $transaction->ID() : esc_html__("Could not be determined", 'event_espresso'); ?>
 
                 </td>
             </tr>
             <tr>
                 <th>
                     <label>
-                        <?php _e('Content', 'event_espresso'); ?>
+                        <?php esc_html_e('Content', 'event_espresso'); ?>
                     </label>
                 </th>
                 <td>
