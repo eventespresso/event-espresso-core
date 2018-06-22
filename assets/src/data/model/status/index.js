@@ -5,11 +5,16 @@ import moment from 'moment';
 import { isUndefined } from 'lodash';
 import PropTypes from 'prop-types';
 
+/**
+ * Internal imports
+ */
 import {
 	getQueryString as baseGetQueryString,
 	QUERY_ORDER_DESC,
 	ALLOWED_ORDER_VALUES,
 } from '../base';
+
+export const MODEL_NAME = 'status';
 
 export const STATUS_TYPE_EMAIL = 'email';
 export const STATUS_TYPE_EVENT = 'event';

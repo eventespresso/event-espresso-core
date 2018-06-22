@@ -5,6 +5,9 @@ import moment from 'moment';
 import { isUndefined } from 'lodash';
 import PropTypes from 'prop-types';
 
+/**
+ * Internal imports
+ */
 import {
 	getQueryString as baseGetQueryString,
 	QUERY_ORDER_DESC,
@@ -13,6 +16,8 @@ import {
 	GREATER_THAN_AND_EQUAL,
 	LESS_THAN_AND_EQUAL,
 } from '../base';
+
+export const MODEL_NAME = 'datetime';
 
 export const nowDateAndTime = moment();
 

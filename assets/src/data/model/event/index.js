@@ -17,6 +17,8 @@ import {
 	LESS_THAN_AND_EQUAL,
 } from '../base';
 
+export const MODEL_NAME = 'event';
+
 export const nowDateAndTime = moment();
 
 /**
