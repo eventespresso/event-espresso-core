@@ -15,6 +15,7 @@ import { PropTypes } from 'prop-types';
  */
 class EditorSelect extends Component {
 	static propTypes = {
+		modelName: PropTypes.string,
 		selectLabel: PropTypes.string,
 		instanceId: PropTypes.oneOfType( [
 			PropTypes.number,
@@ -24,8 +25,8 @@ class EditorSelect extends Component {
 		help: PropTypes.string,
 	};
 	render() {
-		const { selectLabel, instanceId, className, help, children } = this.props;
-		const id = `inspector-status-select-control-${ instanceId }`;
+		const { modelName, selectLabel, instanceId, className, help, children } = this.props;
+		const id = `inspector-${ modelName }-select-control-${ instanceId }`;
 		if ( help ) {
 			this.props[ 'aria-describedby' ] = id + '__help';
 		}
@@ -46,6 +47,7 @@ export default withInstanceId( EditorSelect );
 
 export const getEditorSelectProps = ( selectProps ) => {
 	const editorProps = {
+		modelName: selectProps.modelName,
 		selectLabel: selectProps.selectLabel,
 		className: selectProps.className,
 		help: selectProps.help,
