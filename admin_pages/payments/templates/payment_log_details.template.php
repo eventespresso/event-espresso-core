@@ -35,17 +35,17 @@
                     </label>
                 </th>
                 <td>
-                    <?php 
-                        if($payment_log->object() instanceof EE_Transaction) {
-                            esc_html_e('Unknown', 'event_espresso');
-                        } else {
-                            echo $payment_method
-                            ? $payment_method->admin_name()
-                            : esc_html__(
-                                "No Longer Exists",
-                                'event_espresso'
-                            );
-                        }
+                    <?php
+                    if ($payment_log->object() instanceof EE_Transaction) {
+                        esc_html_e('Unknown', 'event_espresso');
+                    } else {
+                        echo $payment_method
+                        ? $payment_method->admin_name()
+                        : esc_html__(
+                            "No Longer Exists",
+                            'event_espresso'
+                        );
+                    }
                     ?>
 
                 </td>

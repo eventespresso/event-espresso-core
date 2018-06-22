@@ -198,10 +198,10 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
             return $item->object()->admin_name();
         } elseif ($item->object() instanceof EE_Payment && $item->object()->payment_method()) {
             return $item->object()->payment_method()->admin_name();
-        } elseif ($item->object() instanceof EE_Transaction) { 
+        } elseif ($item->object() instanceof EE_Transaction) {
             return __('Unknown', 'event_espresso');
         } else {
-            return __("No longer exists", 'event_espresso');        
+            return __("No longer exists", 'event_espresso');
         }
     }
 
@@ -216,10 +216,10 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
     {
         if ($item->object() instanceof EE_Payment) {
             $transaction_id = $item->object()->TXN_ID();
-        } elseif ($item->object() instanceof EE_Transaction) { 
-            $transaction_id = $item->object()->ID(); 
-        } else { 
-            $transaction_id = null; 
+        } elseif ($item->object() instanceof EE_Transaction) {
+            $transaction_id = $item->object()->ID();
+        } else {
+            $transaction_id = null;
         }
         if ($transaction_id
             && EE_Registry::instance()->CAP->current_user_can(
@@ -242,7 +242,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
                    . sprintf(__('view txn %s', 'event_espresso'), $item->object()->TXN_ID())
                    . '</a>';
         }
-        //No transaction id or use can not view the transaction.
+        // No transaction id or use can not view the transaction.
         return __("Unable to find transaction", 'event_espresso');
     }
 }
