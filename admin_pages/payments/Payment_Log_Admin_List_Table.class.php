@@ -199,9 +199,9 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
         } elseif ($item->object() instanceof EE_Payment && $item->object()->payment_method()) {
             return $item->object()->payment_method()->admin_name();
         } elseif ($item->object() instanceof EE_Transaction) {
-            return __('Unknown', 'event_espresso');
+            return esc_html__('Unknown', 'event_espresso');
         } else {
-            return __("No longer exists", 'event_espresso');
+            return esc_html__("No longer exists", 'event_espresso');
         }
     }
 
@@ -239,7 +239,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
                        $item->object()->TXN_ID()
                    )
                    . '">'
-                   . sprintf(__('view txn %s', 'event_espresso'), $item->object()->TXN_ID())
+                   . sprintf(esc_html__('view txn %s', 'event_espresso'), $item->object()->TXN_ID())
                    . '</a>';
         }
         // No transaction id or use can not view the transaction.
