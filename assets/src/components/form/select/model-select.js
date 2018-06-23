@@ -52,7 +52,7 @@ export class ModelSelect extends Component {
 			...REACT_SELECT_TYPES,
 		} ),
 		modelEntities: PropTypes.array,
-		modelName: PropTypes.oneOf( MODEL_NAMES ),
+		modelName: PropTypes.oneOf( MODEL_NAMES ).isRequired,
 		mapOptionsCallback: PropTypes.func,
 		optionsEntityMap: PropTypes.object,
 		queryData: PropTypes.shape( {
