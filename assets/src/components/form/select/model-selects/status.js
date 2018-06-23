@@ -61,11 +61,11 @@ export default class StatusSelect extends Component {
 
 	componentDidMount() {
 		this.setState( {
-			queryData: {
-				...this.props.queryData,
-				statusType: this.props.statusType,
-			},
+			queryData: { ...this.props.queryData },
 		} );
+		if ( this.props.statusType ) {
+			this.addStatusTypeToQueryData( this.props.statusType );
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -87,6 +87,7 @@ export default class StatusSelect extends Component {
 			...this.props,
 			...selectOpts,
 			...this.state,
+			optionsEntityMap: model.optionsEntityMap,
 		};
 		return <ModelSelect { ...props } />;
 	}
