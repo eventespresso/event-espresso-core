@@ -34,7 +34,7 @@ export const OPTION_SELECT_ALL = 'ALL';
  * @param { string } addAllOptionLabel  If present then options array will be
  * 										prepended with an "ALL" option meaning
  * 										that all options are selected.
- * @param { Object } map
+ * @param { Object } optionsEntityMap
  * @return { Array }  Returns an array of simple objects formatted for any
  * select control that receives its options in the format of an array of objects
  * with label and value keys.
@@ -43,9 +43,9 @@ const buildOptions = (
 	entities,
 	modelName,
 	addAllOptionLabel = '',
-	map = DEFAULT_MODEL_OPTIONS_MAP,
+	optionsEntityMap = DEFAULT_MODEL_OPTIONS_MAP,
 ) => {
-	const MAP_FOR_MODEL = map[ modelName ] ? map[ modelName ] : false;
+	const MAP_FOR_MODEL = optionsEntityMap[ modelName ] ? optionsEntityMap[ modelName ] : false;
 	const generatedOptions = entities && MAP_FOR_MODEL ?
 		reduce( entities, function( options, entity ) {
 			if ( entity[ MAP_FOR_MODEL.label ] &&
