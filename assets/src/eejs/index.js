@@ -13,6 +13,11 @@ export { default as data } from './data';
  * eejs.i18n;
  */
 export const i18n = wpI18n;
+/**
+ * exporting routes to a named var
+ */
+import * as r from './routes';
+export const routes = r;
 
 /**
  * use this for eejs exceptions
