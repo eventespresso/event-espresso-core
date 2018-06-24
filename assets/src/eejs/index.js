@@ -6,12 +6,7 @@ import * as wpI18n from '@wordpress/i18n';
 /**
  * Exported to the `eejs` global.
  */
-
-/**
- * This will hold arbitrary data assigned by the Assets Registry.
- * @type {{}}
- */
-export const data = eejsdata.data || {};
+export { default as data } from './data';
 
 /**
  * Wrapper around wp.i18n functionality so its exposed on the eejs global as
