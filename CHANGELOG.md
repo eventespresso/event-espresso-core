@@ -20,6 +20,7 @@ Headings should be (only add headings as needed):
 - Adds project changelog ([539](https://github.com/eventespresso/event-espresso-core/pull/539))
 - Adds hooks to venue address metabox ([538](https://github.com/eventespresso/event-espresso-core/pull/538))
 - Adds filters to `EE_Radio_Button_Display_Strategy.strategy.php` ([517](https://github.com/eventespresso/event-espresso-core/pull/517))
+- Exposed "routes" information on the `eejs` global and update packages ([547](https://github.com/eventespresso/event-espresso-core/pull/547))
 
 ### Fixed
 
