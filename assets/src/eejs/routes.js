@@ -32,13 +32,13 @@ export const ADMIN_URL = paths.admin_url || '';
  * @type { { string: string } }
  */
 export const ADMIN_ROUTES = {
-	EVENT: 'espresso_events',
-	REGISTRATION: 'espresso_registrations',
-	TRANSACTION: 'espresso_transactions',
-	MESSAGE: 'espresso_messages',
-	PRICE: 'pricing',
-	REGISTRATION_FORM: 'registration_form',
-	VENUE: 'espresso_venues',
+	EVENTS: 'espresso_events',
+	REGISTRATIONS: 'espresso_registrations',
+	TRANSACTIONS: 'espresso_transactions',
+	MESSAGES: 'espresso_messages',
+	PRICES: 'pricing',
+	REGISTRATION_FORMS: 'registration_form',
+	VENUES: 'espresso_venues',
 	GENERAL_SETTINGS: 'espresso_general_settings',
 	PAYMENT_METHODS: 'espresso_payment_settings',
 	EXTENSIONS_AND_SERVICES: 'espresso_packages',
@@ -63,40 +63,40 @@ export const ADMIN_ROUTE_ACTION_DEFAULT = 'default';
  * @type { { string: { string: string } } }
  */
 export const ADMIN_ROUTE_ACTIONS = {
-	[ ADMIN_ROUTES.EVENT ]: {
+	[ ADMIN_ROUTES.EVENTS ]: {
 		OVERVIEW: ADMIN_ROUTE_ACTION_DEFAULT,
 		CATEGORY_LIST: 'category_list',
 		TEMPLATES: 'template_settings',
 		DEFAULT_SETTINGS: 'default_event_settings',
 		DEFAULT_TICKETS: 'ticket_list_table',
 	},
-	[ ADMIN_ROUTES.REGISTRATION ]: {
+	[ ADMIN_ROUTES.REGISTRATIONS ]: {
 		OVERVIEW: ADMIN_ROUTE_ACTION_DEFAULT,
 		EVENT_CHECKIN: 'event_registrations',
 		CONTACT_LIST: 'contact_list',
 		REPORTS: 'reports',
 	},
-	[ ADMIN_ROUTES.TRANSACTION ]: {
+	[ ADMIN_ROUTES.TRANSACTIONS ]: {
 		OVERVIEW: ADMIN_ROUTE_ACTION_DEFAULT,
 		REPORTS: 'reports',
 	},
-	[ ADMIN_ROUTES.MESSAGE ]: {
+	[ ADMIN_ROUTES.MESSAGES ]: {
 		MESSAGE_ACTIVITY: ADMIN_ROUTE_ACTION_DEFAULT,
 		DEFAULT_MESSAGE_TEMPLATES: 'global_mtps',
 		CUSTOM_MESSAGE_TEMPLATES: 'custom_mtps',
 		SETTINGS: 'settings',
 	},
-	[ ADMIN_ROUTES.PRICE ]: {
+	[ ADMIN_ROUTES.PRICES ]: {
 		DEFAULT_PRICING: ADMIN_ROUTE_ACTION_DEFAULT,
 		PRICE_TYPES: 'price_types',
 		TAX_SETTINGS: 'tax_settings',
 	},
-	[ ADMIN_ROUTES.REGISTRATION_FORM ]: {
+	[ ADMIN_ROUTES.REGISTRATION_FORMS ]: {
 		QUESTIONS: ADMIN_ROUTE_ACTION_DEFAULT,
 		QUESTION_GROUPS: 'question_groups',
 		REG_FORM_SETTINGS: 'view_reg_form_settings',
 	},
-	[ ADMIN_ROUTES.VENUE ]: {
+	[ ADMIN_ROUTES.VENUES ]: {
 		OVERVIEW: ADMIN_ROUTE_ACTION_DEFAULT,
 		CATEGORIES: 'category_list',
 		GOOGLE_MAPS: 'google_map_settings',
@@ -141,7 +141,7 @@ export const ADMIN_ROUTE_ACTIONS = {
  * @return { string } A full url for the given arguments.
  */
 export const getAdminUrl = (
-	page = ADMIN_ROUTES.EVENT,
+	page = ADMIN_ROUTES.EVENTS,
 	action = ADMIN_ROUTE_ACTION_DEFAULT
 ) => {
 	return `${ ADMIN_URL }?admin.php&page=${ page }&action=${ action }`;
