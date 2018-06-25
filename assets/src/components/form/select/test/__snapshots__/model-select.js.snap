@@ -11,6 +11,7 @@ exports[`ModelSelect Snapshot with default options (with required modelName) sho
     name="model-select-1"
     options={Array []}
     placeholder="Select..."
+    value={null}
   />
 </React.Fragment>
 `;
