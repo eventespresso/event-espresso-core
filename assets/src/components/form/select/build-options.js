@@ -29,8 +29,6 @@ const DEFAULT_MODEL_OPTIONS_MAP = {
 	},
 };
 
-export const OPTION_SELECT_ALL = 'ALL';
-
 /**
  * Receives an array of event entities and returns an array of simple objects
  * that can be passed along to the options array used for the WordPress
@@ -38,9 +36,6 @@ export const OPTION_SELECT_ALL = 'ALL';
  *
  * @param { Array } entities
  * @param { string } modelName
- * @param { string } addAllOptionLabel  If present then options array will be
- * 										prepended with an "ALL" option meaning
- * 										that all options are selected.
  * @param { Object } map
  * @return { Array }  Returns an array of simple objects formatted for any
  * select control that receives its options in the format of an array of objects
@@ -49,11 +44,10 @@ export const OPTION_SELECT_ALL = 'ALL';
 const buildOptions = (
 	entities,
 	modelName,
-	addAllOptionLabel = '',
 	map = DEFAULT_MODEL_OPTIONS_MAP,
 ) => {
 	const MAP_FOR_MODEL = map[ modelName ] ? map[ modelName ] : false;
-	const generatedOptions = entities && MAP_FOR_MODEL ?
+	return entities && MAP_FOR_MODEL ?
 		reduce( entities, function( options, entity ) {
 			const label = isFunction( MAP_FOR_MODEL.label ) ?
 				MAP_FOR_MODEL.label( entity ) :
@@ -67,13 +61,6 @@ const buildOptions = (
 			return options;
 		}, [] ) :
 		[];
-	if ( entities && addAllOptionLabel !== '' ) {
-		generatedOptions.unshift( {
-			label: addAllOptionLabel,
-			value: OPTION_SELECT_ALL,
-		} );
-	}
-	return generatedOptions;
 };
 
 export default buildOptions;
