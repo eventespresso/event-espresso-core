@@ -85,14 +85,11 @@ export class ModelSelect extends Component {
 		const selectedValue = ModelSelect.getOptionObjectForValue(
 			selectConfiguration.defaultValue, options
 		);
-		const updated = selectedValue !== null ?
-			{
-				options,
-				value: selectedValue,
-			} :
-			{
-				options,
-			};
+		const updated = {
+			options,
+			value: selectedValue,
+		};
+
 		return {
 			...REACT_SELECT_DEFAULTS,
 			...selectConfiguration,
