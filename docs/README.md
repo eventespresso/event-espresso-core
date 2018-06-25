@@ -4,6 +4,8 @@ In this docs folder is all the developer documentation specific to EE core.  Loc
 
 > We generally add new documentation, or edit existing documentation specific to the code in the branch this folder lives.  So depending on the branch you are viewing this in, the documentation could be different than other branches.
 
+Please note that notable changes for each released version of the project can be found in our [changelog](../CHANGELOG.md)
+
 ## Table of Contents
 
 All the links to the table of contents for each folder in this documentation:

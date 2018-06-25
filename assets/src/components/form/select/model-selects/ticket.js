@@ -2,7 +2,7 @@
  * Internal imports
  */
 import ModelSelect from '../model-select';
-import * as model from '../../../../data/model/ticket';
+import { ticketModel } from '../../../../data/model';
 
 /**
  * External imports

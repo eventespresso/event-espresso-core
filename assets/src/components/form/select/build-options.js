@@ -1,7 +1,12 @@
 /**
  * External dependencies
  */
-import { reduce } from 'lodash';
+import { reduce, isFunction } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { dateTimeModel } from '../../../data/model';
 
 /**
  * A default map used for mapping options for select.
@@ -13,7 +18,9 @@ const DEFAULT_MODEL_OPTIONS_MAP = {
 		value: 'EVT_ID',
 	},
 	datetime: {
-		label: 'DTT_name',
+		label: ( entity ) => {
+			return dateTimeModel.prettyDateFromDateTime( entity );
+		},
 		value: 'DTT_ID',
 	},
 	ticket: {
@@ -22,8 +29,6 @@ const DEFAULT_MODEL_OPTIONS_MAP = {
 	},
 };
 
-export const OPTION_SELECT_ALL = 'ALL';
-
 /**
  * Receives an array of event entities and returns an array of simple objects
  * that can be passed along to the options array used for the WordPress
@@ -31,9 +36,6 @@ export const OPTION_SELECT_ALL = 'ALL';
  *
  * @param { Array } entities
  * @param { string } modelName
- * @param { string } addAllOptionLabel  If present then options array will be
- * 										prepended with an "ALL" option meaning
- * 										that all options are selected.
  * @param { Object } optionsEntityMap
  * @return { Array }  Returns an array of simple objects formatted for any
  * select control that receives its options in the format of an array of objects
@@ -42,31 +44,23 @@ export const OPTION_SELECT_ALL = 'ALL';
 const buildOptions = (
 	entities,
 	modelName,
-	addAllOptionLabel = '',
 	optionsEntityMap = DEFAULT_MODEL_OPTIONS_MAP,
 ) => {
 	const MAP_FOR_MODEL = optionsEntityMap[ modelName ] ? optionsEntityMap[ modelName ] : false;
-	const generatedOptions = entities && MAP_FOR_MODEL ?
+	return entities && MAP_FOR_MODEL ?
 		reduce( entities, function( options, entity ) {
-			if ( entity[ MAP_FOR_MODEL.label ] &&
-				entity[ MAP_FOR_MODEL.value ] ) {
-				options.push(
-					{
-						label: entity[ MAP_FOR_MODEL.label ],
-						value: entity[ MAP_FOR_MODEL.value ],
-					},
-				);
+			const label = isFunction( MAP_FOR_MODEL.label ) ?
+				MAP_FOR_MODEL.label( entity ) :
+				entity[ MAP_FOR_MODEL.label ];
+			const value = isFunction( MAP_FOR_MODEL.value ) ?
+				MAP_FOR_MODEL.value( entity ) :
+				entity[ MAP_FOR_MODEL.value ];
+			if ( label && value ) {
+				options.push( { label, value } );
 			}
 			return options;
 		}, [] ) :
 		[];
-	if ( entities && addAllOptionLabel !== '' ) {
-		generatedOptions.unshift( {
-			label: addAllOptionLabel,
-			value: OPTION_SELECT_ALL,
-		} );
-	}
-	return generatedOptions;
 };
 
 export default buildOptions;

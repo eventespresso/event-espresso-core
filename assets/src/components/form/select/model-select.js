@@ -62,7 +62,6 @@ export class ModelSelect extends Component {
 		} ),
 		getQueryString: PropTypes.func,
 		selectLabel: PropTypes.string,
-		addAllOptionLabel: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -78,8 +77,7 @@ export class ModelSelect extends Component {
 			limit: 100,
 			order: 'desc',
 		},
-		selectLabel: MODEL_SELECT_LABEL_NONE,
-		addAllOptionLabel: '',
+		selectLabel: '',
 		getQueryString: () => '',
 	};
 
@@ -89,14 +87,11 @@ export class ModelSelect extends Component {
 		const selectedValue = ModelSelect.getOptionObjectForValue(
 			selectConfiguration.defaultValue, options
 		);
-		const updated = selectedValue !== null ?
-			{
-				options,
-				value: selectedValue,
-			} :
-			{
-				options,
-			};
+		const updated = {
+			options,
+			value: selectedValue,
+		};
+
 		return {
 			...REACT_SELECT_DEFAULTS,
 			...selectConfiguration,
@@ -110,20 +105,17 @@ export class ModelSelect extends Component {
 			modelName,
 			optionsEntityMap,
 			mapOptionsCallback,
-			addAllOptionLabel,
 		} = props;
 		if ( ! isEmpty( modelEntities ) ) {
 			return optionsEntityMap !== null ?
 				mapOptionsCallback(
 					modelEntities,
 					modelName,
-					addAllOptionLabel,
 					optionsEntityMap,
 				) :
 				mapOptionsCallback(
 					modelEntities,
 					modelName,
-					addAllOptionLabel,
 				);
 		}
 		return [];
