@@ -48,3 +48,5 @@ describe( 'getQueryString', () => {
 		expect( getQueryString() ).toEqual( 'limit=100&order=DESC&order_by=REG_date' );
 	} );
 } );
+
+// location: assets/src/data/model/registration/test/index.js
