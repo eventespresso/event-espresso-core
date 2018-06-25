@@ -1,4 +1,4 @@
-import buildOptions, { OPTION_SELECT_ALL } from '../build-options';
+import buildOptions from '../build-options';
 import moment from 'moment';
 import {
 	DATE_TIME_FORMAT_SITE,
