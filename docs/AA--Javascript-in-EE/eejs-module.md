@@ -47,7 +47,7 @@ This property holds various route information and accessors.  Currently the foll
 
 ## `eejs.vendor`
 
-This property contains references to various third party libraries used as dependencies in EE code.  This allows us to do have one file containing all the various vendors we use so that its cached in users browser longer.  EE specific js will then  be much smaller built files and can change more often without breaking the vendor caches.  Currently this vendor file contains a lot of third party code and at some point it will be broken out into smaller individual vendor files.
+This property contains references to various third party libraries used as dependencies in EE code.  This allows us to have one file containing all the various vendors we use so that it's cached in user's browsers longer.  EE specific js will then  be much smaller built files and can change more often without breaking the vendor caches.  Currently this vendor file contains a lot of third party code and at some point it will be broken out into smaller individual vendor files.
 
 The following third party libraries are built into this file and exposed on the `eejs.vendor` global.
 
