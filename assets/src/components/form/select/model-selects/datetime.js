@@ -17,7 +17,7 @@ import { PropTypes } from 'prop-types';
  */
 export default class DatetimeSelect extends Component {
 	state = {
-		modelName: model.MODEL_NAME,
+		modelName: dateTimeModel.MODEL_NAME,
 		queryData: {},
 	};
 
@@ -102,7 +102,7 @@ export class EditorDatetimeSelect extends Component {
 
 	render() {
 		const props = { ...this.props };
-		props.modelName = model.MODEL_NAME;
+		props.modelName = dateTimeModel.MODEL_NAME;
 		const { editorProps, selectProps } = getEditorSelectProps( props );
 		return (
 			<EditorSelect { ...editorProps } >

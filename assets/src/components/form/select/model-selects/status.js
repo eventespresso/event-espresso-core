@@ -17,7 +17,7 @@ import { PropTypes } from 'prop-types';
  */
 export default class StatusSelect extends Component {
 	state = {
-		modelName: model.MODEL_NAME,
+		modelName: statusModel.MODEL_NAME,
 		queryData: {},
 	};
 
@@ -29,21 +29,21 @@ export default class StatusSelect extends Component {
 			noOptionsMessage: () => __( 'No Statuses.', 'event_espresso' ),
 			placeholder: __( 'Select Status...', 'event_espresso' ),
 		},
-		...model.defaultQueryData,
-		getQueryString: model.getQueryString,
+		...statusModel.defaultQueryData,
+		getQueryString: statusModel.getQueryString,
 		selectLabel: __( 'Select Status', 'event_espresso' ),
 		addAllOptionLabel: __( 'All Statuses', 'event_espresso' ),
 	};
 
 	static propTypes = {
-		...model.queryDataTypes,
+		...statusModel.queryDataTypes,
 		statusType: PropTypes.oneOf( [
-			model.STATUS_TYPE_EMAIL,
-			model.STATUS_TYPE_EVENT,
-			model.STATUS_TYPE_MESSAGE,
-			model.STATUS_TYPE_PAYMENT,
-			model.STATUS_TYPE_REGISTRATION,
-			model.STATUS_TYPE_TRANSACTION,
+			statusModel.STATUS_TYPE_EMAIL,
+			statusModel.STATUS_TYPE_EVENT,
+			statusModel.STATUS_TYPE_MESSAGE,
+			statusModel.STATUS_TYPE_PAYMENT,
+			statusModel.STATUS_TYPE_REGISTRATION,
+			statusModel.STATUS_TYPE_TRANSACTION,
 		] ).isRequired,
 		selectedStatusId: PropTypes.string,
 		onStatusSelect: PropTypes.func,
@@ -87,7 +87,7 @@ export default class StatusSelect extends Component {
 			...this.props,
 			...selectOpts,
 			...this.state,
-			optionsEntityMap: model.optionsEntityMap,
+			optionsEntityMap: statusModel.optionsEntityMap,
 		};
 		return <ModelSelect { ...props } />;
 	}
@@ -106,7 +106,7 @@ export class EditorStatusSelect extends Component {
 
 	render() {
 		const props = { ...this.props };
-		props.modelName = model.MODEL_NAME;
+		props.modelName = statusModel.MODEL_NAME;
 		const { editorProps, selectProps } = getEditorSelectProps( props );
 		return (
 			<EditorSelect { ...editorProps } >
