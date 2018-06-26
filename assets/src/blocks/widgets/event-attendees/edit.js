@@ -4,21 +4,22 @@
 import { InspectorControls } from '@wordpress/editor';
 import { Component, Fragment } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
-import { Placeholder, Spinner, ToggleControl } from '@wordpress/components';
+import { PanelBody, Placeholder, Spinner, ToggleControl } from '@wordpress/components';
 
 /**
  * External dependencies
  */
 import { __ } from '@eventespresso/i18n';
 import {
-	DatetimeSelect,
-	EventSelect,
+	EditorDatetimeSelect,
+	EditorEventSelect,
+	EditorStatusSelect,
+	EditorTicketSelect,
 	QueryLimit,
-	RegistrationStatusSelect,
-	TicketSelect
 } from '@eventespresso/components';
+import * as statusModel from '../../../data/model/status';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
+import { isEmpty, uniqBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,8 +37,9 @@ class EventAttendeesEditor extends Component {
 			status: PropTypes.string,
 			showGravatar: PropTypes.bool,
 			displayOnArchives: PropTypes.bool,
+			limit: PropTypes.number,
 		} ),
-	}
+	};
 
 	static defaultProps = {
 		attendees: [],
@@ -47,55 +49,64 @@ class EventAttendeesEditor extends Component {
 			datetimeId: 0,
 			ticketId: 0,
 			status: 'RAP',
-			showGravatar: PropTypes.bool,
-			displayOnArchives: PropTypes.bool,
+			showGravatar: true,
+			displayOnArchives: false,
+			limit: -1
 		},
-	}
+	};
 
-	constructor() {
-		super( ...arguments );
-		this.setEventId = this.setEventId.bind( this );
-		this.setDatetimeId = this.setDatetimeId.bind( this );
-		this.setTicketId = this.setTicketId.bind( this );
-		this.setStatus = this.setStatus.bind( this );
-		this.setNumberOfAttendeesToDisplay
-			= this.setNumberOfAttendeesToDisplay.bind( this );
-		this.toggleShowGravatar = this.toggleShowGravatar.bind( this );
-		this.toggleDisplayOnArchives
-			= this.toggleDisplayOnArchives.bind( this );
-	}
+	setEventId = ( eventId ) => {
+		const value = eventId !== null && eventId.value ?
+			parseInt( eventId.value, 10 ) :
+			0;
+		this.props.setAttributes(
+			{
+				eventId: value,
+				datetimeId: 0,
+				ticketId: 0,
+			}
+		);
+	};
 
-	setEventId( eventId ) {
-		this.props.setAttributes( { eventId: parseInt( eventId ) } );
-	}
+	setDatetimeId = ( datetimeId ) => {
+		const value = datetimeId !== null && datetimeId.value ?
+			parseInt( datetimeId.value, 10 ) :
+			0;
+		this.props.setAttributes(
+			{
+				datetimeId: value,
+				ticketId: 0,
+			}
+		);
+	};
 
-	setDatetimeId( datetimeId ) {
-		this.props.setAttributes( { datetimeId: parseInt( datetimeId ) } );
-	}
+	setTicketId = ( ticketId ) => {
+		const value = ticketId !== null && ticketId.value ?
+			parseInt( ticketId.value, 10 ) :
+			0;
+		this.props.setAttributes( { ticketId: value } );
+	};
 
-	setTicketId( ticketId ) {
-		this.props.setAttributes( { ticketId: parseInt( ticketId ) } );
-	}
+	setStatus = ( status ) => {
+		const value = status !== null && status.value ? status.value : 'ANY';
+		console.log( 'status: ' + value );
+		this.props.setAttributes( { status: value } );
+		console.log( 'this.props.attributes.status: ' + this.props.attributes.status );
+	};
 
-	setStatus( status ) {
-		this.props.setAttributes( { status: status } );
-	}
-
-	setNumberOfAttendeesToDisplay( numberOfAttendeesToDisplay ) {
+	setLimit = ( limit ) => {
 		this.props.setAttributes( {
-			numberOfAttendeesToDisplay: parseInt(
-				numberOfAttendeesToDisplay
-			)
+			limit: parseInt( limit, 10 )
 		} );
-	}
+	};
 
-	toggleShowGravatar( showGravatar ) {
+	toggleShowGravatar = ( showGravatar ) => {
 		this.props.setAttributes( { showGravatar: showGravatar } );
-	}
+	};
 
-	toggleDisplayOnArchives( displayOnArchives ) {
+	toggleDisplayOnArchives = ( displayOnArchives ) => {
 		this.props.setAttributes( { displayOnArchives: displayOnArchives } );
-	}
+	};
 
 	getPlaceHolderContent() {
 		if ( ! this.props.isLoading && this.props.attributes.eventId ) {
@@ -136,108 +147,117 @@ class EventAttendeesEditor extends Component {
 	}
 
 	render() {
-		const { attendees, attributes } = this.props;
-
-		const inspectorControls = (
-			<InspectorControls>
-
-				<EventSelect
-					key="attendees-event-select"
-					selectedEventId={ attributes.eventId }
-					onEventSelect={ this.setEventId }
-				/>
-
-				<DatetimeSelect
-					key="attendees-datetime-select"
-					selectedDatetimeId={ attributes.datetimeId }
-					forEventId={ attributes.eventId }
-					onDatetimeSelect={ this.setDatetimeId }
-					addAllOptionLabel={
-						__( 'Show Attendees for All Datetimes',
-							'event_espresso'
-						)
-					}
-				/>
-
-				<TicketSelect
-					key="attendees-ticket-select"
-					selectedTicketId={ attributes.ticketId }
-					forEventId={ attributes.eventId }
-					forDatetimeId={ attributes.datetimeId }
-					onTicketSelect={ this.setTicketId }
-					addAllOptionLabel={
-						__( 'Show Attendees for All Tickets', 'event_espresso' )
-					}
-				/>
-
-				<RegistrationStatusSelect
-					key="attendees-registration-status-select"
-					selectedRegStatusId={ attributes.status }
-					onRegStatusSelect={ this.setStatus }
-					addAllOptionLabel={
-						__(
-							'Show Attendees for All Registration Statuses',
-							'event_espresso'
-						)
-					}
-				/>
-
-				<ToggleControl
-					label={ __( 'Display Gravatar', 'event_espresso' ) }
-					checked={ attributes.showGravatar }
-					onChange={ this.toggleShowGravatar }
-				/>
-
-				<ToggleControl
-					label={ __( 'Display on Archives', 'event_espresso' ) }
-					checked={ attributes.displayOnArchives }
-					onChange={ this.toggleDisplayOnArchives }
-				/>
-
-			</InspectorControls>
-		);
+		const { attributes } = this.props;
+		let { attendees } = this.props;
+		attendees = uniqBy( attendees, 'ATT_ID' );
 		const attendeesBlock = isEmpty( attendees ) ?
 			this.getNoAttendeesContent() :
 			this.getAttendeesDisplay();
-
+		const inspectorControls = (
+			<InspectorControls>
+				<PanelBody title={ __( 'Event Attendees Settings', 'event_espresso' ) }>
+					<EditorEventSelect
+						key="attendees-event-select"
+						selectedEventId={ attributes.eventId }
+						onEventSelect={ this.setEventId }
+					/>
+					<EditorDatetimeSelect
+						key="attendees-datetime-select"
+						selectedDatetimeId={ attributes.datetimeId }
+						forEventId={ attributes.eventId }
+						onDatetimeSelect={ this.setDatetimeId }
+						addAllOptionLabel={
+							__( 'Show Attendees for All Datetimes',
+								'event_espresso'
+							)
+						}
+					/>
+					<EditorTicketSelect
+						key="attendees-ticket-select"
+						selectedTicketId={ attributes.ticketId }
+						forEventId={ attributes.eventId }
+						forDatetimeId={ attributes.datetimeId }
+						onTicketSelect={ this.setTicketId }
+						addAllOptionLabel={
+							__( 'Show Attendees for All Tickets', 'event_espresso' )
+						}
+					/>
+					<EditorStatusSelect
+						statusType={ statusModel.STATUS_TYPE_REGISTRATION }
+						selectedStatusId={ attributes.status }
+						onStatusSelect={ this.setStatus }
+						selectLabel={ __( 'Select Registration Status', 'event_espresso' ) }
+						addAllOptionLabel={
+							__( 'Show Attendees for All Registration Statuses', 'event_espresso' )
+						}
+					/>
+					<QueryLimit
+						label={ __( 'Number of Attendees to Display', 'event_espresso' ) }
+						limit={ attributes.limit }
+						onLimitChange={ this.setLimit }
+						min={ -1 }
+					/>
+					<ToggleControl
+						label={ __( 'Display Gravatar', 'event_espresso' ) }
+						limit={ attributes.limit }
+						checked={ attributes.showGravatar }
+						onChange={ this.toggleShowGravatar }
+					/>
+					<ToggleControl
+						label={ __( 'Display on Archives', 'event_espresso' ) }
+						checked={ attributes.displayOnArchives }
+						onChange={ this.toggleDisplayOnArchives }
+					/>
+				</PanelBody>
+			</InspectorControls>
+		);
 		return [
-			inspectorControls,
 			attendeesBlock,
+			inspectorControls
 		];
 	}
 }
 
 export default withSelect( ( select, ownProps ) => {
 	const { attributes } = ownProps;
-	let { eventId, datetimeId, ticketId, status, showGravatar } = attributes;
-	let queryParams = [];
-	ticketId = parseInt( ticketId );
-	datetimeId = parseInt( datetimeId );
-	eventId = parseInt( eventId );
-	if ( ticketId !== 0 && ! isNaN( ticketId ) ) {
-		queryParams.push( `[Registration.Ticket.TKT_ID]=${ ticketId }` );
-	} else if ( datetimeId !== 0 && ! isNaN( datetimeId ) ) {
-		queryParams.push( `[Registration.Ticket.Datetime.DTT_ID]=${ datetimeId }` );
-	} else if ( eventId !== 0 && ! isNaN( eventId ) ) {
-		queryParams.push( `[Registration.EVT_ID]=${ eventId }` );
+	let { eventId, datetimeId, ticketId, status, showGravatar, limit } = attributes;
+	const { getItems, isRequestingItems } = select( 'eventespresso/lists' );
+	limit = parseInt( limit, 10 );
+	limit = !isNaN( limit ) ? limit : -1;
+	if ( limit === 0 ) {
+		return {
+			attendees: [],
+			isLoading: false,
+		};
 	}
-	if ( status !== '' ) {
-		queryParams.push( `STS_ID=${ status }` );
+	// ensure that entity IDs are integers
+	ticketId = parseInt( ticketId, 10 );
+	datetimeId = parseInt( datetimeId, 10 );
+	eventId = parseInt( eventId, 10 );
+	const queryParams = [];
+	// add query param for entity we are filtering for
+	if ( ticketId !== 0 && !isNaN( ticketId ) ) {
+		queryParams.push( `where[Registration.Ticket.TKT_ID]=${ ticketId }` );
+	} else if ( datetimeId !== 0 && !isNaN( datetimeId ) ) {
+		queryParams.push( `where[Registration.Ticket.Datetime.DTT_ID]=${ datetimeId }` );
+	} else if ( eventId !== 0 && !isNaN( eventId ) ) {
+		queryParams.push( `where[Registration.EVT_ID]=${ eventId }` );
+	}
+	if ( status !== '' && status !== null && status !== 'ANY' ) {
+		queryParams.push( `where[Registration.Status.STS_ID]=${ status }` );
 	}
 	if ( showGravatar === true ) {
 		queryParams.push( 'calculate=userAvatar' );
 	}
-	if ( ! isEmpty( queryParams ) ) {
-		const queryString = 'where' + queryParams.join( '&' );
-		// console.log( '    EventAttendees > withSelect() queryString = ' + queryString );
-		const { getItems, isRequestingItems } = select( 'eventespresso/lists' );
-		return {
-			attendees: getItems( 'attendee', queryString ),
-			isLoading: isRequestingItems( 'attendee', queryString ),
-		};
+	if ( limit > 0 ) {
+		queryParams.push( `limit=${ limit }` );
 	}
+	queryParams.push( 'order_by[ATT_lname]=ASC' );
+	queryParams.push( 'order_by[ATT_fname]=ASC' );
+	const queryString = queryParams.join( '&' );
+	// console.log( 'GET attendees ' + queryString );
 	return {
-		attendees: [],
-		isLoading: false,
+		attendees: getItems( 'attendee', queryString ),
+		isLoading: isRequestingItems( 'attendee', queryString ),
 	};
 } )( EventAttendeesEditor );

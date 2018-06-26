@@ -1,16 +1,21 @@
 /**
  * External imports
  */
-import moment from 'moment';
 import { isUndefined } from 'lodash';
 import PropTypes from 'prop-types';
 
+/**
+ * Internal imports
+ */
 import {
 	getQueryString as baseGetQueryString,
-	QUERY_ORDER_DESC,
+	QUERY_ORDER_ASC,
 	ALLOWED_ORDER_VALUES,
 } from '../base';
 
+export const MODEL_NAME = 'status';
+
+export const STATUS_TYPE_ANY = 'ANY';
 export const STATUS_TYPE_EMAIL = 'email';
 export const STATUS_TYPE_EVENT = 'event';
 export const STATUS_TYPE_MESSAGE = 'message';
@@ -18,7 +23,12 @@ export const STATUS_TYPE_PAYMENT = 'payment';
 export const STATUS_TYPE_REGISTRATION = 'registration';
 export const STATUS_TYPE_TRANSACTION = 'transaction';
 
-export const nowDateAndTime = moment();
+const map = {};
+map[ MODEL_NAME ] = {
+	value: 'STS_ID',
+	label: 'STS_code',
+};
+export const optionsEntityMap = map;
 
 /**
  * Described attributes for this model
@@ -26,6 +36,14 @@ export const nowDateAndTime = moment();
  */
 export const queryDataTypes = {
 	queryData: PropTypes.shape( {
+		statusType: PropTypes.oneOf( [
+			STATUS_TYPE_EMAIL,
+			STATUS_TYPE_EVENT,
+			STATUS_TYPE_MESSAGE,
+			STATUS_TYPE_PAYMENT,
+			STATUS_TYPE_REGISTRATION,
+			STATUS_TYPE_TRANSACTION,
+		] ),
 		limit: PropTypes.number,
 		orderBy: PropTypes.string,
 		order: PropTypes.oneOf( ALLOWED_ORDER_VALUES ),
@@ -37,6 +55,7 @@ export const queryDataTypes = {
  * @type {
  * 	{
  * 		attributes: {
+ * 			statusType: string,
  * 			limit: number,
  * 			orderBy: string,
  * 			order: string,
@@ -48,7 +67,7 @@ export const defaultQueryData = {
 	queryData: {
 		limit: 25,
 		orderBy: 'statusCode',
-		order: QUERY_ORDER_DESC,
+		order: QUERY_ORDER_ASC,
 	},
 };
 

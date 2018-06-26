@@ -9,6 +9,7 @@ import { ticketModel } from '../../../../data/model';
  */
 import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
+import { default as EditorSelect, getEditorSelectProps } from './editor-select';
 import { PropTypes } from 'prop-types';
 
 /**
@@ -16,7 +17,7 @@ import { PropTypes } from 'prop-types';
  */
 export default class TicketSelect extends Component {
 	state = {
-		modelName: 'ticket',
+		modelName: ticketModel.MODEL_NAME,
 		queryData: {},
 	};
 
@@ -96,7 +97,32 @@ export default class TicketSelect extends Component {
 			...this.props,
 			...selectOpts,
 			...this.state,
+			optionsEntityMap: ticketModel.optionsEntityMap,
 		};
 		return <ModelSelect { ...props } />;
 	}
 }
+
+/**
+ * TicketSelect Component wrapped in a BaseControl component.
+ */
+export class EditorTicketSelect extends Component {
+	static defaultProps = {
+		selectLabel: __( 'Select Ticket', 'event_espresso' ),
+	};
+	static propTypes = {
+		selectLabel: PropTypes.string,
+	};
+
+	render() {
+		const props = { ...this.props };
+		props.modelName = ticketModel.MODEL_NAME;
+		const { editorProps, selectProps } = getEditorSelectProps( props );
+		return (
+			<EditorSelect { ...editorProps } >
+				<TicketSelect { ...selectProps } />
+			</EditorSelect>
+		);
+	}
+}
+

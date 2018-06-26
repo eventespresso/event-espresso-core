@@ -5,6 +5,9 @@ import moment from 'moment';
 import { isUndefined } from 'lodash';
 import PropTypes from 'prop-types';
 
+/**
+ * Internal imports
+ */
 import {
 	getQueryString as baseGetQueryString,
 	QUERY_ORDER_DESC,
@@ -14,7 +17,16 @@ import {
 	LESS_THAN_AND_EQUAL,
 } from '../base';
 
+export const MODEL_NAME = 'ticket';
+
 export const nowDateAndTime = moment();
+
+const map = {};
+map[ MODEL_NAME ] = {
+	label: 'TKT_name',
+	value: 'TKT_ID',
+};
+export const optionsEntityMap = map;
 
 /**
  * Described attributes for this model

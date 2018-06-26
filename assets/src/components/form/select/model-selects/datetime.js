@@ -9,6 +9,7 @@ import { dateTimeModel } from '../../../../data/model';
  */
 import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
+import { default as EditorSelect, getEditorSelectProps } from './editor-select';
 import { PropTypes } from 'prop-types';
 
 /**
@@ -16,7 +17,7 @@ import { PropTypes } from 'prop-types';
  */
 export default class DatetimeSelect extends Component {
 	state = {
-		modelName: 'datetime',
+		modelName: dateTimeModel.MODEL_NAME,
 		queryData: {},
 	};
 
@@ -83,7 +84,31 @@ export default class DatetimeSelect extends Component {
 			...this.props,
 			...selectOpts,
 			...this.state,
+			optionsEntityMap: dateTimeModel.optionsEntityMap,
 		};
 		return <ModelSelect { ...props } />;
+	}
+}
+
+/**
+ * DatetimeSelect Component wrapped in a BaseControl component.
+ */
+export class EditorDatetimeSelect extends Component {
+	static defaultProps = {
+		selectLabel: __( 'Select Datetime', 'event_espresso' ),
+	};
+	static propTypes = {
+		selectLabel: PropTypes.string,
+	};
+
+	render() {
+		const props = { ...this.props };
+		props.modelName = dateTimeModel.MODEL_NAME;
+		const { editorProps, selectProps } = getEditorSelectProps( props );
+		return (
+			<EditorSelect { ...editorProps } >
+				<DatetimeSelect { ...selectProps } />
+			</EditorSelect>
+		);
 	}
 }

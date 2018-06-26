@@ -52,7 +52,7 @@ registerBlockType(
 				type: 'string',
 				default: 'RAP',
 			},
-			numberOfAttendeesToDisplay: {
+			limit: {
 				type: 'number',
 				default: -1,
 			},

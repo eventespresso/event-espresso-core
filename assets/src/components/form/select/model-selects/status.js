@@ -9,6 +9,7 @@ import { statusModel } from '../../../../data/model';
  */
 import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
+import { default as EditorSelect, getEditorSelectProps } from './editor-select';
 import { PropTypes } from 'prop-types';
 
 /**
@@ -16,7 +17,7 @@ import { PropTypes } from 'prop-types';
  */
 export default class StatusSelect extends Component {
 	state = {
-		modelName: 'status',
+		modelName: statusModel.MODEL_NAME,
 		queryData: {},
 	};
 
@@ -37,6 +38,7 @@ export default class StatusSelect extends Component {
 	static propTypes = {
 		...statusModel.queryDataTypes,
 		statusType: PropTypes.oneOf( [
+			statusModel.STATUS_TYPE_ANY,
 			statusModel.STATUS_TYPE_EMAIL,
 			statusModel.STATUS_TYPE_EVENT,
 			statusModel.STATUS_TYPE_MESSAGE,
@@ -60,11 +62,11 @@ export default class StatusSelect extends Component {
 
 	componentDidMount() {
 		this.setState( {
-			queryData: {
-				...this.props.queryData,
-				statusType: this.props.statusType,
-			},
+			queryData: { ...this.props.queryData },
 		} );
+		if ( this.props.statusType ) {
+			this.addStatusTypeToQueryData( this.props.statusType );
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -86,8 +88,31 @@ export default class StatusSelect extends Component {
 			...this.props,
 			...selectOpts,
 			...this.state,
+			optionsEntityMap: statusModel.optionsEntityMap,
 		};
 		return <ModelSelect { ...props } />;
 	}
 }
 
+/**
+ * Select Component for the Status Model wrapped in a BaseControl component.
+ */
+export class EditorStatusSelect extends Component {
+	static defaultProps = {
+		selectLabel: __( 'Select Status', 'event_espresso' ),
+	};
+	static propTypes = {
+		selectLabel: PropTypes.string,
+	};
+
+	render() {
+		const props = { ...this.props };
+		props.modelName = statusModel.MODEL_NAME;
+		const { editorProps, selectProps } = getEditorSelectProps( props );
+		return (
+			<EditorSelect { ...editorProps } >
+				<StatusSelect { ...selectProps } />
+			</EditorSelect>
+		);
+	}
+}

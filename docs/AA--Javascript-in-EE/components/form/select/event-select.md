@@ -132,3 +132,9 @@ wp_register_script(
     true
 );
 ```
+
+
+## See Also
+
+- [`<EditorEventSelect />`](editor-event-select.md) - a wrapper for EventSelect that applies WordPress admin formatting.
+- [`<ModelSelect />`](model-select.md) - a component for displaying provided EE model data for selection.

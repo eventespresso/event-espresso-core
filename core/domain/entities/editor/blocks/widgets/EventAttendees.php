@@ -2,10 +2,15 @@
 
 namespace EventEspresso\core\domain\entities\editor\blocks\widgets;
 
+use DomainException;
+use EE_Error;
 use EEM_Registration;
 use EventEspresso\core\domain\entities\editor\Block;
 use EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager;
 use EventEspresso\core\domain\entities\shortcodes\EspressoEventAttendees;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use InvalidArgumentException;
 
 /**
  * Class EventAttendees
@@ -67,7 +72,7 @@ class EventAttendees extends Block
                     'type'    => 'string',
                     'default' => EEM_Registration::status_id_approved,
                 ),
-                'numberOfAttendeesToDisplay' => array(
+                'limit' => array(
                     'type'    => 'number',
                     'default' => -1,
                 ),
@@ -99,6 +104,7 @@ class EventAttendees extends Block
             'datetimeId'        => array('attribute' => 'datetime_id', 'sanitize' => 'absint'),
             'ticketId'          => array('attribute' => 'ticket_id', 'sanitize' => 'absint'),
             'status'            => array('attribute' => 'status', 'sanitize' => 'sanitize_text_field'),
+            'limit'             => array('attribute' => 'limit', 'sanitize' => 'intval'),
             'showGravatar'      => array('attribute' => 'show_gravatar', 'sanitize' => 'bool'),
             'displayOnArchives' => array('attribute' => 'display_on_archives', 'sanitize' => 'bool'),
         );
@@ -124,7 +130,9 @@ class EventAttendees extends Block
                 } else {
                     $attributes[ $convert[ $attribute ]['attribute'] ] = $sanitize($value);
                 }
-                unset($attributes[ $attribute ]);
+                if($attribute !== $convert[$attribute]['attribute']) {
+                    unset($attributes[$attribute]);
+                }
             }
         }
         return $attributes;
@@ -136,10 +144,11 @@ class EventAttendees extends Block
      *
      * @param array $attributes
      * @return string
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws DomainException
      */
     public function renderBlock(array $attributes = array())
     {

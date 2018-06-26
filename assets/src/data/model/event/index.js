@@ -17,7 +17,16 @@ import {
 	LESS_THAN_AND_EQUAL,
 } from '../base';
 
+export const MODEL_NAME = 'event';
+
 export const nowDateAndTime = moment();
+
+const map = {};
+map[ MODEL_NAME ] = {
+	label: 'EVT_name',
+	value: 'EVT_ID',
+};
+export const optionsEntityMap = map;
 
 /**
  * Described attributes for this model
