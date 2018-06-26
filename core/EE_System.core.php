@@ -939,7 +939,7 @@ final class EE_System implements ResettableInterface
      */
     public function register_shortcodes_modules_and_widgets()
     {
-        if ($this->request->isFrontend() || $this->request->isIframe()) {
+        if ($this->request->isFrontend() || $this->request->isIframe() || $this->request->isAjax()) {
             try {
                 // load, register, and add shortcodes the new way
                 $this->loader->getShared(
@@ -1162,8 +1162,11 @@ final class EE_System implements ResettableInterface
         $this->loader->getShared('EE_CPT_Strategy');
         do_action('AHEE__EE_System__core_loaded_and_ready');
         // load_espresso_template_tags
-        if (is_readable(EE_PUBLIC . 'template_tags.php')
-            && ($this->request->isFrontend() || $this->request->isIframe() || $this->request->isFeed())
+        if (($this->request->isFrontend()
+             || $this->request->isIframe()
+             || $this->request->isFeed()
+             ||  $this->request->isAjax()
+            ) && is_readable(EE_PUBLIC . 'template_tags.php')
         ) {
             require_once EE_PUBLIC . 'template_tags.php';
         }

@@ -15,11 +15,14 @@ Headings should be (only add headings as needed):
 
 ## [$VID:$]
 
+## [4.9.64.p]
+
 ### Added
 
 - Adds project changelog ([539](https://github.com/eventespresso/event-espresso-core/pull/539))
 - Adds hooks to venue address metabox ([538](https://github.com/eventespresso/event-espresso-core/pull/538))
 - Adds filters to `EE_Radio_Button_Display_Strategy.strategy.php` ([517](https://github.com/eventespresso/event-espresso-core/pull/517))
+- Exposed "routes" information on the `eejs` global and update packages ([547](https://github.com/eventespresso/event-espresso-core/pull/547))
 
 ### Fixed
 
@@ -27,3 +30,4 @@ Headings should be (only add headings as needed):
 - Fixed typo in paypal pro ([535](https://github.com/eventespresso/event-espresso-core/pull/535))
 - Fixed EE CPT objects not being added to WP_Post objects during Ajax Requests ([531](https://github.com/eventespresso/event-espresso-core/pull/531))
 - Fixed transaction not being assigned to payment log entry when created using an EE_Transaction object ([545](https://github.com/eventespresso/event-espresso-core/pull/545))
+- Fixed shortcode and template tag loading during AJAX requests ([537](https://github.com/eventespresso/event-espresso-core/pull/537))
