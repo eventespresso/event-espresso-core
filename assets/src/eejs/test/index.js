@@ -1,9 +1,10 @@
 import {
 	data,
 	Exception,
+	routes,
 	mergeAndDeDuplicateArrays,
 	mergeAndDeDuplicateObjects,
-} from '../index.js';
+} from '../';
 
 describe( 'eejs', () => {
 	describe( 'data', () => {
@@ -66,6 +67,13 @@ describe( 'eejs', () => {
 					{ id: 50, name: 'fifty' },
 					{ id: 15, name: 'fifteen' },
 				],
+			);
+		} );
+	} );
+	describe( 'routes', () => {
+		it( 'provides the url to the events admin page by default.', () => {
+			expect( routes.getAdminUrl() ).toEqual(
+				'https://eetest.test/wp-admin/?admin.php&page=espresso_events&action=default'
 			);
 		} );
 	} );

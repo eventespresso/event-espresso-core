@@ -145,7 +145,4 @@ var data = eejs.data || {},
 
 ## Anything else?
 
-Glad you asked.  By default `eejs.data` will always have the following properties exposed on it:
-
-- `eejs_api_nonce`: This is the value of `wp_create_nonce('wp_rest')` in case you need to set the nonce headers for WP Rest requests in a WordPress context.
-- `paths.rest_route`:  This is the value returned by `rest_url('ee/v4.8.36/')`, so basically the base endpoint for all EE Rest API requests.  
+You can read more about the `eejs` global module in [this document](eejs-module.md).
