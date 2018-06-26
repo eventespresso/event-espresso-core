@@ -484,7 +484,7 @@ final class EE_Front_Controller
 
     /**
      * @return void
-     * @deprecated $VID:$
+     * @deprecated 4.9.64.p
      */
     public function employ_CPT_Strategy()
     {

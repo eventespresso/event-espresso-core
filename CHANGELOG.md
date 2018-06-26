@@ -15,6 +15,8 @@ Headings should be (only add headings as needed):
 
 ## [$VID:$]
 
+## [4.9.64.p]
+
 ### Added
 
 - Adds project changelog ([539](https://github.com/eventespresso/event-espresso-core/pull/539))
