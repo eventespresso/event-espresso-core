@@ -6,6 +6,10 @@
 global.eejsdata = {
 	data: {
 		testData: true,
+		paths: {
+			site_url: 'https://eetest.test/',
+			admin_url: 'https://eetest.test/wp-admin/',
+		}
 	},
 };
 
