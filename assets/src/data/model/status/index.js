@@ -15,6 +15,7 @@ import {
 
 export const MODEL_NAME = 'status';
 
+export const STATUS_TYPE_ANY = 'ANY';
 export const STATUS_TYPE_EMAIL = 'email';
 export const STATUS_TYPE_EVENT = 'event';
 export const STATUS_TYPE_MESSAGE = 'message';
