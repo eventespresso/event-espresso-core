@@ -19,7 +19,6 @@ global.wp = {
 	shortcode: {
 		next() {},
 		regexp: jest.fn().mockReturnValue( new RegExp() ),
-		}
 	},
 };
 
