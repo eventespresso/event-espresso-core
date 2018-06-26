@@ -38,6 +38,7 @@ export default class StatusSelect extends Component {
 	static propTypes = {
 		...statusModel.queryDataTypes,
 		statusType: PropTypes.oneOf( [
+			statusModel.STATUS_TYPE_ANY,
 			statusModel.STATUS_TYPE_EMAIL,
 			statusModel.STATUS_TYPE_EVENT,
 			statusModel.STATUS_TYPE_MESSAGE,
