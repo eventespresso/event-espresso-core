@@ -97,6 +97,7 @@ export default class TicketSelect extends Component {
 			...this.props,
 			...selectOpts,
 			...this.state,
+			optionsEntityMap: ticketModel.optionsEntityMap,
 		};
 		return <ModelSelect { ...props } />;
 	}

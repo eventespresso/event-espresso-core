@@ -57,6 +57,7 @@ export default class EventSelect extends Component {
 			...this.props,
 			...selectOpts,
 			...this.state,
+			optionsEntityMap: eventModel.optionsEntityMap,
 		};
 		return <ModelSelect { ...props } />;
 	}

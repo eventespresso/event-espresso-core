@@ -21,6 +21,13 @@ export const MODEL_NAME = 'ticket';
 
 export const nowDateAndTime = moment();
 
+const map = {};
+map[ MODEL_NAME ] = {
+	label: 'TKT_name',
+	value: 'TKT_ID',
+};
+export const optionsEntityMap = map;
+
 /**
  * Described attributes for this model
  * @type {{attributes: *}}

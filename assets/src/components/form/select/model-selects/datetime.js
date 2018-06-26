@@ -84,6 +84,7 @@ export default class DatetimeSelect extends Component {
 			...this.props,
 			...selectOpts,
 			...this.state,
+			optionsEntityMap: dateTimeModel.optionsEntityMap,
 		};
 		return <ModelSelect { ...props } />;
 	}
