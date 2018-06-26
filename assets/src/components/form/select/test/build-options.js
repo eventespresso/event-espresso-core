@@ -4,6 +4,7 @@ import {
 	DATE_TIME_FORMAT_SITE,
 	TIME_FORMAT_SITE,
 } from '@eventespresso/helpers';
+import { prettyDateFromDateTime } from '../../../../data/model/datetime/formatter';
 
 describe( 'buildOptions()', () => {
 	const testResponse = [
@@ -18,6 +19,20 @@ describe( 'buildOptions()', () => {
 			custom_prop: 'Custom Property B',
 		},
 	];
+	const eventMap = {
+		event: {
+			label: 'EVT_name',
+			value: 'EVT_ID',
+		},
+	};
+	const datetimeMap = {
+		datetime: {
+			label: ( entity ) => {
+				return prettyDateFromDateTime( entity );
+			},
+			value: 'DTT_ID',
+		},
+	};
 	const customMap = {
 		event: {
 			label: 'custom_prop',
@@ -29,7 +44,7 @@ describe( 'buildOptions()', () => {
 	} );
 	it( 'returns expected values for options when entities for existing model' +
 		' in map provided using default map.', () => {
-		expect( buildOptions( testResponse, 'event' ) ).toEqual(
+		expect( buildOptions( testResponse, 'event', eventMap ) ).toEqual(
 			[
 				{ label: 'Test A', value: 2 },
 				{ label: 'Test B', value: 3 },
@@ -59,7 +74,7 @@ describe( 'buildOptions()', () => {
 			' - ' +
 			moment( testLocalMoment ).add( 1, 'h' ).format( TIME_FORMAT_SITE ) +
 			')';
-		expect( buildOptions( dateTimeResponse, 'datetime' ) ).toEqual(
+		expect( buildOptions( dateTimeResponse, 'datetime', datetimeMap ) ).toEqual(
 			[
 				{
 					value: 30,
@@ -69,3 +84,5 @@ describe( 'buildOptions()', () => {
 		);
 	} );
 } );
+
+// location: assets/src/components/form/select/test/build-options.js
