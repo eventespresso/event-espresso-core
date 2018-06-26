@@ -18,7 +18,7 @@ import { reduce, isFunction } from 'lodash';
 const buildOptions = (
 	entities,
 	modelName,
-	optionsEntityMap,
+	optionsEntityMap = [],
 ) => {
 	const MAP_FOR_MODEL = optionsEntityMap[ modelName ] ? optionsEntityMap[ modelName ] : false;
 	return entities && MAP_FOR_MODEL ?
