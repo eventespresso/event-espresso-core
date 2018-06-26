@@ -19,7 +19,7 @@ import {
 } from '@eventespresso/components';
 import * as statusModel from '../../../data/model/status';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
+import { isEmpty, uniqBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,6 +37,7 @@ class EventAttendeesEditor extends Component {
 			status: PropTypes.string,
 			showGravatar: PropTypes.bool,
 			displayOnArchives: PropTypes.bool,
+			limit: PropTypes.number,
 		} ),
 	};
 
@@ -48,15 +49,19 @@ class EventAttendeesEditor extends Component {
 			datetimeId: 0,
 			ticketId: 0,
 			status: 'RAP',
-			showGravatar: PropTypes.bool,
-			displayOnArchives: PropTypes.bool,
+			showGravatar: true,
+			displayOnArchives: false,
+			limit: -1
 		},
 	};
 
 	setEventId = ( eventId ) => {
+		const value = eventId !== null && eventId.value ?
+			parseInt( eventId.value, 10 ) :
+			0;
 		this.props.setAttributes(
 			{
-				eventId: parseInt( eventId.value, 10 ),
+				eventId: value,
 				datetimeId: 0,
 				ticketId: 0,
 			}
@@ -64,36 +69,43 @@ class EventAttendeesEditor extends Component {
 	};
 
 	setDatetimeId = ( datetimeId ) => {
+		const value = datetimeId !== null && datetimeId.value ?
+			parseInt( datetimeId.value, 10 ) :
+			0;
 		this.props.setAttributes(
 			{
-				datetimeId: parseInt( datetimeId.value, 10 ),
+				datetimeId: value,
 				ticketId: 0,
 			}
 		);
 	};
 
 	setTicketId = ( ticketId ) => {
-		this.props.setAttributes( { ticketId: parseInt( ticketId.value, 10 ) } );
+		const value = ticketId !== null && ticketId.value ?
+			parseInt( ticketId.value, 10 ) :
+			0;
+		this.props.setAttributes( { ticketId: value } );
 	};
 
 	setStatus = ( status ) => {
-		this.props.setAttributes( { status: status.value } );
+		const value = status !== null && status.value ? status.value : 'ANY';
+		console.log( 'status: ' + value );
+		this.props.setAttributes( { status: value } );
+		console.log( 'this.props.attributes.status: ' + this.props.attributes.status );
 	};
 
-	setNumberOfAttendeesToDisplay = ( numberOfAttendeesToDisplay ) => {
+	setLimit = ( limit ) => {
 		this.props.setAttributes( {
-			numberOfAttendeesToDisplay: parseInt(
-				numberOfAttendeesToDisplay.value
-			)
+			limit: parseInt( limit, 10 )
 		} );
 	};
 
 	toggleShowGravatar = ( showGravatar ) => {
-		this.props.setAttributes( { showGravatar: showGravatar.value } );
+		this.props.setAttributes( { showGravatar: showGravatar } );
 	};
 
 	toggleDisplayOnArchives = ( displayOnArchives ) => {
-		this.props.setAttributes( { displayOnArchives: displayOnArchives.value } );
+		this.props.setAttributes( { displayOnArchives: displayOnArchives } );
 	};
 
 	getPlaceHolderContent() {
@@ -135,7 +147,9 @@ class EventAttendeesEditor extends Component {
 	}
 
 	render() {
-		const { attendees, attributes } = this.props;
+		const { attributes } = this.props;
+		let { attendees } = this.props;
+		attendees = uniqBy( attendees, 'ATT_ID' );
 		const attendeesBlock = isEmpty( attendees ) ?
 			this.getNoAttendeesContent() :
 			this.getAttendeesDisplay();
@@ -177,8 +191,15 @@ class EventAttendeesEditor extends Component {
 							__( 'Show Attendees for All Registration Statuses', 'event_espresso' )
 						}
 					/>
+					<QueryLimit
+						label={ __( 'Number of Attendees to Display', 'event_espresso' ) }
+						limit={ attributes.limit }
+						onLimitChange={ this.setLimit }
+						min={ -1 }
+					/>
 					<ToggleControl
 						label={ __( 'Display Gravatar', 'event_espresso' ) }
+						limit={ attributes.limit }
 						checked={ attributes.showGravatar }
 						onChange={ this.toggleShowGravatar }
 					/>
@@ -199,35 +220,44 @@ class EventAttendeesEditor extends Component {
 
 export default withSelect( ( select, ownProps ) => {
 	const { attributes } = ownProps;
-	let { eventId, datetimeId, ticketId, status, showGravatar } = attributes;
-	let queryParams = [];
+	let { eventId, datetimeId, ticketId, status, showGravatar, limit } = attributes;
+	const { getItems, isRequestingItems } = select( 'eventespresso/lists' );
+	limit = parseInt( limit, 10 );
+	limit = !isNaN( limit ) ? limit : -1;
+	if ( limit === 0 ) {
+		return {
+			attendees: [],
+			isLoading: false,
+		};
+	}
+	// ensure that entity IDs are integers
 	ticketId = parseInt( ticketId, 10 );
 	datetimeId = parseInt( datetimeId, 10 );
 	eventId = parseInt( eventId, 10 );
-	if ( ticketId !== 0 && ! isNaN( ticketId ) ) {
-		queryParams.push( `[Registration.Ticket.TKT_ID]=${ ticketId }` );
-	} else if ( datetimeId !== 0 && ! isNaN( datetimeId ) ) {
-		queryParams.push( `[Registration.Ticket.Datetime.DTT_ID]=${ datetimeId }` );
-	} else if ( eventId !== 0 && ! isNaN( eventId ) ) {
-		queryParams.push( `[Registration.EVT_ID]=${ eventId }` );
+	const queryParams = [];
+	// add query param for entity we are filtering for
+	if ( ticketId !== 0 && !isNaN( ticketId ) ) {
+		queryParams.push( `where[Registration.Ticket.TKT_ID]=${ ticketId }` );
+	} else if ( datetimeId !== 0 && !isNaN( datetimeId ) ) {
+		queryParams.push( `where[Registration.Ticket.Datetime.DTT_ID]=${ datetimeId }` );
+	} else if ( eventId !== 0 && !isNaN( eventId ) ) {
+		queryParams.push( `where[Registration.EVT_ID]=${ eventId }` );
 	}
-	if ( status !== '' ) {
-		queryParams.push( `STS_ID=${ status }` );
+	if ( status !== '' && status !== null && status !== 'ANY' ) {
+		queryParams.push( `where[Registration.Status.STS_ID]=${ status }` );
 	}
 	if ( showGravatar === true ) {
 		queryParams.push( 'calculate=userAvatar' );
 	}
-	if ( ! isEmpty( queryParams ) ) {
-		const queryString = 'where' + queryParams.join( '&' );
-		console.log( '    EventAttendees > withSelect() queryString = ' + queryString );
-		const { getItems, isRequestingItems } = select( 'eventespresso/lists' );
-		return {
-			attendees: getItems( 'attendee', queryString ),
-			isLoading: isRequestingItems( 'attendee', queryString ),
-		};
+	if ( limit > 0 ) {
+		queryParams.push( `limit=${ limit }` );
 	}
+	queryParams.push( 'order_by[ATT_lname]=ASC' );
+	queryParams.push( 'order_by[ATT_fname]=ASC' );
+	const queryString = queryParams.join( '&' );
+	// console.log( 'GET attendees ' + queryString );
 	return {
-		attendees: [],
-		isLoading: false,
+		attendees: getItems( 'attendee', queryString ),
+		isLoading: isRequestingItems( 'attendee', queryString ),
 	};
 } )( EventAttendeesEditor );
