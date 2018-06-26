@@ -1,4 +1,4 @@
-import { data, exception } from '../index.js';
+import { data, exception, routes } from '../';
 
 describe( 'eejs', () => {
 	describe( 'data', () => {
@@ -16,6 +16,16 @@ describe( 'eejs', () => {
 		} );
 		it( 'should throw an error which is an instance of "exception"', () => {
 			expect( t ).toThrowError( exception );
+		} );
+	} );
+
+	describe( 'routes', () => {
+		describe( 'getAdminUrl()', () => {
+			it( 'provides the url to the events admin page by default.', () => {
+				expect( routes.getAdminUrl() ).toEqual(
+					'https://eetest.test/wp-admin/?admin.php&page=espresso_events&action=default'
+				);
+			} );
 		} );
 	} );
 } );
