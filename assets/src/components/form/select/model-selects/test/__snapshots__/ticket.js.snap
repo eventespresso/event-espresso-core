@@ -5,6 +5,14 @@ exports[ `TicketSelect() matches snapshot with default props 1` ] = `
   addAllOptionLabel="All Tickets"
   getQueryString={[Function]}
   modelName="ticket"
+  optionsEntityMap={
+    Object {
+      "ticket": Object {
+        "label": "TKT_name",
+        "value": "TKT_ID",
+      },
+    }
+  }
   queryData={
     Object {
       "limit": 100,
