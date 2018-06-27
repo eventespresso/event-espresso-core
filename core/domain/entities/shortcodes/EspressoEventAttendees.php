@@ -113,7 +113,7 @@ class EspressoEventAttendees extends EspressoShortcode
     {
         // grab attributes and merge with defaults
         $attributes = $this->getAttributes((array) $attributes);
-        $attributes['limit'] = (int)$attributes['limit'];
+        $attributes['limit'] = (int) $attributes['limit'];
         $display_on_archives = filter_var($attributes['display_on_archives'], FILTER_VALIDATE_BOOLEAN);
         // don't display on archives unless 'display_on_archives' is true
         if ($attributes['limit'] === 0 || (! $display_on_archives && is_archive())) {

@@ -130,8 +130,8 @@ class EventAttendees extends Block
                 } else {
                     $attributes[ $convert[ $attribute ]['attribute'] ] = $sanitize($value);
                 }
-                if($attribute !== $convert[$attribute]['attribute']) {
-                    unset($attributes[$attribute]);
+                if ($attribute !== $convert[ $attribute ]['attribute']) {
+                    unset($attributes[ $attribute ]);
                 }
             }
         }
