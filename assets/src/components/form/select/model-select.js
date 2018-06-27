@@ -107,16 +107,11 @@ export class ModelSelect extends Component {
 			mapOptionsCallback,
 		} = props;
 		if ( ! isEmpty( modelEntities ) ) {
-			return optionsEntityMap !== null ?
-				mapOptionsCallback(
-					modelEntities,
-					modelName,
-					optionsEntityMap,
-				) :
-				mapOptionsCallback(
-					modelEntities,
-					modelName,
-				);
+			return mapOptionsCallback(
+				modelEntities,
+				modelName,
+				optionsEntityMap,
+			);
 		}
 		return [];
 	}
