@@ -1,6 +1,13 @@
 import { shallow } from 'enzyme';
 import { ModelSelect } from '../model-select';
 
+const optionsEntityMap = {
+	event: {
+		label: 'EVT_name',
+		value: 'EVT_ID',
+	},
+};
+
 const simulatedResponse = [
 	{ EVT_ID: 1, EVT_name: 'Event A' },
 	{ EVT_ID: 2, EVT_name: 'Event B' },
@@ -9,7 +16,12 @@ const simulatedResponse = [
 describe( 'ModelSelect Snapshot with default options (with required modelName)',
 	() => {
 		it( 'should render and match snapshot', () => {
-			const wrapper = shallow( <ModelSelect modelName={ 'event' } /> );
+			const wrapper = shallow(
+				<ModelSelect
+					modelName={ 'event' }
+					optionsEntityMap={ optionsEntityMap }
+				/>
+			);
 			expect( wrapper ).toMatchSnapshot();
 		} );
 	},
@@ -25,9 +37,10 @@ describe( 'ModelSelect props check', () => {
 					isClearable: false,
 					isLoading: false,
 				} }
+				optionsEntityMap={ optionsEntityMap }
 			/>,
 		);
-		const selectWrapper = wrapper.childAt( 0 );
+		const selectWrapper = wrapper.childAt( 1 );
 		expect( selectWrapper.prop( 'options' ) ).toEqual(
 			[
 				{ label: 'Event A', value: 1 },
@@ -44,8 +57,11 @@ describe( 'ModelSelect props check', () => {
 				modelName={ 'event' }
 				modelEntities={ simulatedResponse }
 				selectLabel={ 'Label for Select' }
+				optionsEntityMap={ optionsEntityMap }
 			/>,
 		);
 		expect( wrapper.childAt( 0 ).text() ).toEqual( 'Label for Select' );
 	} );
 } );
+
+// location: assets/src/components/form/select/test/model-select.js
