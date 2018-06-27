@@ -184,7 +184,8 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes
             }
 
             foreach ($primary_registration->questions as $ansid => $question) {
-                if (trim($question->get('QST_display_text')) == trim($shortcode)
+                if ($question instanceof EE_Question
+                    && trim($question->get('QST_display_text')) == trim($shortcode)
                     && isset($primary_registration->registrations[ $primary_reg->ID() ]['ans_objs'][ $ansid ])
                 ) {
                     return $primary_registration->registrations[ $primary_reg->ID() ]['ans_objs'][ $ansid ]->get_pretty(
