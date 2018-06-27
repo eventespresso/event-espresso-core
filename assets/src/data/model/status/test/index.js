@@ -62,7 +62,7 @@ describe( 'getQueryString()', () => {
 				expect( getQueryString( testParams[ i ] ) )
 					.toEqual(
 						'limit=25&' +
-						'order=DESC&' +
+						'order=ASC&' +
 						'order_by=STS_code&' +
 						'where[STS_type]=' + testParams[ i ].expected
 					);
