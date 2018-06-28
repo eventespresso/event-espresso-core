@@ -33,7 +33,6 @@ export default class DatetimeSelect extends Component {
 		...dateTimeModel.defaultQueryData,
 		getQueryString: dateTimeModel.getQueryString,
 		selectLabel: __( 'Select Datetime', 'event_espresso' ),
-		addAllOptionLabel: __( 'All Datetimes', 'event_espresso' ),
 	};
 
 	static propTypes = {
@@ -90,7 +89,7 @@ export default class DatetimeSelect extends Component {
 }
 
 /**
- * Enhanced Datetime Select for the WordPress Editor
+ * Enhanced Datetime Select for the WordPress editor
  */
 export const EditorDatetimeSelect = withBaseControl(
 	'select-datetime'
