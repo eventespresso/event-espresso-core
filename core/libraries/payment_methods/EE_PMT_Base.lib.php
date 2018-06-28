@@ -721,7 +721,7 @@ abstract class EE_PMT_Base
      * this method.
      * @return string
      */
-    public function default_frontend_name()
+    public function defaultFrontendName()
     {
         return $this->pretty_name();
     }
