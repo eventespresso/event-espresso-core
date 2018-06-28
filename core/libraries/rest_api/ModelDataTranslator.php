@@ -445,20 +445,25 @@ class ModelDataTranslator
                                 $timezone
                             );
                         } elseif (array_key_exists($op, $model->valid_between_style_operators())
-                                  && isset($query_param_value[1], $query_param_value[2])
-                                  && ! isset($query_param_value[3])
+                                  && isset($query_param_value[1])
+                                  && is_array($query_param_value[1])
+                                  && isset($query_param_key[1][0],$query_param_value[1][1])
+                                  && ! isset($query_param_value[1][2])
+                                  && ! isset($query_param_value[2])
                         ) {
-                            $translated_value[] = ModelDataTranslator::prepareFieldValuesFromJson(
-                                $field,
-                                $query_param_value[1],
-                                $requested_version,
-                                $timezone
-                            );
-                            $translated_value[] = ModelDataTranslator::prepareFieldValuesFromJson(
-                                $field,
-                                $query_param_value[2],
-                                $requested_version,
-                                $timezone
+                            $translated_value[] = array(
+                                ModelDataTranslator::prepareFieldValuesFromJson(
+                                    $field,
+                                    $query_param_value[1][0],
+                                    $requested_version,
+                                    $timezone
+                                ),
+                                ModelDataTranslator::prepareFieldValuesFromJson(
+                                    $field,
+                                    $query_param_value[1][1],
+                                    $requested_version,
+                                    $timezone
+                                )
                             );
                         } elseif (array_key_exists($op, $model->valid_like_style_operators())
                                   && isset($query_param_value[1])
