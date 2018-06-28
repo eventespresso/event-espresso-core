@@ -1,5 +1,7 @@
 import DatetimeSelect, { EditorDatetimeSelect } from '../datetime';
-import { shallow } from 'enzyme';
+import { shallow, render } from 'enzyme';
+
+jest.mock( '../../model-select', () => () => <span>DatetimeSelect</span> );
 
 describe( 'DatetimeSelect()', () => {
 	const expectedDefaultQueryData = {
@@ -38,7 +40,7 @@ describe( 'DatetimeSelect()', () => {
 
 describe( 'EditorDatetimeSelect()', () => {
 	it( 'matches snapshot with default props', () => {
-		const wrapper = shallow( <EditorDatetimeSelect /> );
+		const wrapper = render( <EditorDatetimeSelect /> );
 		expect( wrapper ).toMatchSnapshot();
 	} );
 } );

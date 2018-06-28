@@ -1,5 +1,7 @@
 import TicketSelect, { EditorTicketSelect } from '../ticket';
-import { shallow } from 'enzyme';
+import { shallow, render } from 'enzyme';
+
+jest.mock( '../../model-select', () => () => <span>TicketSelect</span> );
 
 describe( 'TicketSelect()', () => {
 	const expectedDefaultQueryData = {
@@ -42,7 +44,7 @@ describe( 'TicketSelect()', () => {
 
 describe( 'EditorTicketSelect()', () => {
 	it( 'matches snapshot with default props', () => {
-		const wrapper = shallow( <EditorTicketSelect /> );
+		const wrapper = render( <EditorTicketSelect /> );
 		expect( wrapper ).toMatchSnapshot();
 	} );
 } );

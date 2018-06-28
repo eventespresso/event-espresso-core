@@ -1,5 +1,7 @@
 import EventSelect, { EditorEventSelect } from '../event';
-import { shallow } from 'enzyme';
+import { shallow, render } from 'enzyme';
+
+jest.mock( '../../model-select', () => () => <span>EventSelect</span> );
 
 describe( 'EventSelect()', () => {
 	it( 'matches snapshot with default props', () => {
@@ -27,7 +29,7 @@ describe( 'EventSelect()', () => {
 
 describe( 'EditorEventSelect()', () => {
 	it( 'matches snapshot with default props', () => {
-		const wrapper = shallow( <EditorEventSelect /> );
+		const wrapper = render( <EditorEventSelect /> );
 		expect( wrapper ).toMatchSnapshot();
 	} );
 } );
