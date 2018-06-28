@@ -25,13 +25,6 @@ export const queryDataTypes = {
 	} ),
 };
 
-export const optionsEntityMap = {
-	default: {
-		value: 'STS_ID',
-		label: 'STS_code',
-	},
-};
-
 /**
  * Default attributes for this model
  * @type {

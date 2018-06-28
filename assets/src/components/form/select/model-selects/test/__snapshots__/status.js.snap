@@ -2,9 +2,16 @@
 
 exports[`StatusSelect() matches snapshot with default props plus provided statusType 1`] = `
 <WithSelect(ModelSelect)
-  addAllOptionLabel="All Statuses"
   getQueryString={[Function]}
   modelName="status"
+  optionsEntityMap={
+    Object {
+      "default": Object {
+        "label": "STS_code",
+        "value": "STS_ID",
+      },
+    }
+  }
   queryData={
     Object {
       "limit": 25,
