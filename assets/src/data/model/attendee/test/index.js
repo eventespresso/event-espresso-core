@@ -78,4 +78,4 @@ describe( 'getQueryString', () => {
 	} );
 } );
 
-// location: assets/src/data/model/registration/test/index.js
+// location: assets/src/data/model/attendee/test/index.js
