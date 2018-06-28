@@ -1,4 +1,4 @@
-import TicketSelect from '../ticket';
+import TicketSelect, { EditorTicketSelect } from '../ticket';
 import { shallow } from 'enzyme';
 
 describe( 'TicketSelect()', () => {
@@ -21,7 +21,6 @@ describe( 'TicketSelect()', () => {
 		);
 		expect( wrapper.prop( 'modelName' ) ).toEqual( 'ticket' );
 		expect( wrapper.prop( 'selectLabel' ) ).toEqual( 'Select Ticket' );
-		expect( wrapper.prop( 'addAllOptionLabel' ) ).toEqual( 'All Tickets' );
 	} );
 	it( 'matches expected update to queryData state with forEventId prop',
 		() => {
@@ -39,4 +38,11 @@ describe( 'TicketSelect()', () => {
 				forDatetimeId: 20,
 			} );
 		} );
+} );
+
+describe( 'EditorTicketSelect()', () => {
+	it( 'matches snapshot with default props', () => {
+		const wrapper = shallow( <EditorTicketSelect /> );
+		expect( wrapper ).toMatchSnapshot();
+	} );
 } );

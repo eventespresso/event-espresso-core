@@ -1,4 +1,4 @@
-import DatetimeSelect from '../datetime';
+import DatetimeSelect, { EditorDatetimeSelect } from '../datetime';
 import { shallow } from 'enzyme';
 
 describe( 'DatetimeSelect()', () => {
@@ -24,8 +24,6 @@ describe( 'DatetimeSelect()', () => {
 		);
 		expect( wrapper.prop( 'modelName' ) ).toEqual( 'datetime' );
 		expect( wrapper.prop( 'selectLabel' ) ).toEqual( 'Select Datetime' );
-		expect( wrapper.prop( 'addAllOptionLabel' ) )
-			.toEqual( 'All Datetimes' );
 	} );
 	it( 'matches expected update to queryData state with forEventId prop',
 		() => {
@@ -36,4 +34,11 @@ describe( 'DatetimeSelect()', () => {
 			} );
 		},
 	);
+} );
+
+describe( 'EditorDatetimeSelect()', () => {
+	it( 'matches snapshot with default props', () => {
+		const wrapper = shallow( <EditorDatetimeSelect /> );
+		expect( wrapper ).toMatchSnapshot();
+	} );
 } );

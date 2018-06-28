@@ -2,7 +2,6 @@
 
 exports[`DatetimeSelect() matches snapshot with default props 1`] = `
 <WithSelect(ModelSelect)
-  addAllOptionLabel="All Datetimes"
   getQueryString={[Function]}
   modelName="datetime"
   queryData={
@@ -23,5 +22,11 @@ exports[`DatetimeSelect() matches snapshot with default props 1`] = `
     }
   }
   selectLabel="Select Datetime"
+/>
+`;
+
+exports[`EditorDatetimeSelect() matches snapshot with default props 1`] = `
+<_class
+  instanceId={0}
 />
 `;

@@ -1,4 +1,4 @@
-import StatusSelect from '../status';
+import StatusSelect, { EditorStatusSelect } from '../status';
 import { shallow } from 'enzyme';
 import { QUERY_ORDER_DESC } from 'assets/src/data/model/base';
 import * as statusModel from 'assets/src/data/model/status';
@@ -31,6 +31,12 @@ describe( 'StatusSelect()', () => {
 		);
 		expect( wrapper.prop( 'modelName' ) ).toEqual( 'status' );
 		expect( wrapper.prop( 'selectLabel' ) ).toEqual( 'Select Status' );
-		expect( wrapper.prop( 'addAllOptionLabel' ) ).toEqual( 'All Statuses' );
+	} );
+} );
+
+describe( 'EditorStatusSelect()', () => {
+	it( 'matches snapshot with default props', () => {
+		const wrapper = shallow( <EditorStatusSelect /> );
+		expect( wrapper ).toMatchSnapshot();
 	} );
 } );

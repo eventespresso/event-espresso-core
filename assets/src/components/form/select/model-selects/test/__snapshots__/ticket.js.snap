@@ -1,8 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[ `TicketSelect() matches snapshot with default props 1` ] = `
+exports[`EditorTicketSelect() matches snapshot with default props 1`] = `
+<_class
+  instanceId={0}
+/>
+`;
+
+exports[`TicketSelect() matches snapshot with default props 1`] = `
 <WithSelect(ModelSelect)
-  addAllOptionLabel="All Tickets"
   getQueryString={[Function]}
   modelName="ticket"
   queryData={

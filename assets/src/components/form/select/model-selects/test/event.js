@@ -1,4 +1,4 @@
-import EventSelect from '../event';
+import EventSelect, { EditorEventSelect } from '../event';
 import { shallow } from 'enzyme';
 
 describe( 'EventSelect()', () => {
@@ -22,5 +22,12 @@ describe( 'EventSelect()', () => {
 	it( 'does not allow overriding the modelName', () => {
 		const wrapper = shallow( <EventSelect modelName={ 'tickets' } /> );
 		expect( wrapper.prop( 'modelName' ) ).toEqual( 'event' );
+	} );
+} );
+
+describe( 'EditorEventSelect()', () => {
+	it( 'matches snapshot with default props', () => {
+		const wrapper = shallow( <EditorEventSelect /> );
+		expect( wrapper ).toMatchSnapshot();
 	} );
 } );

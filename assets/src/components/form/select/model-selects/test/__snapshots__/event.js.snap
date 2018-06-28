@@ -1,5 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`EditorEventSelect() matches snapshot with default props 1`] = `
+<_class
+  instanceId={0}
+/>
+`;
+
 exports[`EventSelect() matches snapshot with default props 1`] = `
 <WithSelect(ModelSelect)
   getQueryString={[Function]}
