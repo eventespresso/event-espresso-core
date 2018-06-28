@@ -56,7 +56,7 @@ If provided, this string will be used as the content for accessible help text de
 
 ## Usage
 
-Note: If this HOC is being used in an ee core component then please import it directly as opposed to using the package name.  This ensures that the built component bundle will have the necessary code from the hoc in the bundle.
+Note: If this HOC is being used in an ee core component then please import it directly as opposed to using the package name.  This ensures that the built component bundle will have the necessary code from the HOC in the bundle.
 
 This component is exposed two ways:
 
@@ -82,7 +82,7 @@ module.exports = {
 }
 ```
 
-You will also need to ensure that the eventespresso-hocComponents script handle is a dependency for your implemented code. You could do something like this:
+You will also need to ensure that the `eventespresso-hoc` Components script handle is a dependency for your implemented code. You could do something like this:
 
 ```php
 use EventEspresso\core\domain\services\assets\CoreAssetManager;
