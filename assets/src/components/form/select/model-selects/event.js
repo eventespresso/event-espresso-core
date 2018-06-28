@@ -3,6 +3,7 @@
  */
 import ModelSelect from '../model-select';
 import { eventModel } from '../../../../data/model';
+import { withBaseControl } from '../../../../higher-order-components';
 
 /**
  * External imports
@@ -60,3 +61,10 @@ export default class EventSelect extends Component {
 		return <ModelSelect { ...props } />;
 	}
 }
+
+/**
+ * Enhanced EventSelect for the WordPress editor.
+ */
+export const EditorEventSelect = withBaseControl(
+	'select-event'
+)( EventSelect );
