@@ -39,7 +39,7 @@ export default ( customId = '' ) => createHigherOrderComponent(
 							className={ className }
 							help={ help }
 						>
-							<WrappedComponent { ...this.props } />
+							<WrappedComponent { ...this.props } id={ id } />
 						</BaseControl>
 					);
 				}
