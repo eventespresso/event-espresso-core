@@ -24,8 +24,6 @@ describe( 'DatetimeSelect()', () => {
 		);
 		expect( wrapper.prop( 'modelName' ) ).toEqual( 'datetime' );
 		expect( wrapper.prop( 'selectLabel' ) ).toEqual( 'Select Datetime' );
-		expect( wrapper.prop( 'addAllOptionLabel' ) )
-			.toEqual( 'All Datetimes' );
 	} );
 	it( 'matches expected update to queryData state with forEventId prop',
 		() => {

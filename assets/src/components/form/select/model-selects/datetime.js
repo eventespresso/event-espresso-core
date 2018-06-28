@@ -11,6 +11,19 @@ import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
 import { PropTypes } from 'prop-types';
 
+const optionsEntityMap = {
+	default: {
+		value: 'DTT_ID',
+		label: ( entity ) => {
+			return model.prettyDateFromDateTime( entity );
+		},
+	},
+	name: {
+		value: 'DTT_ID',
+		label: 'DTT_name',
+	},
+};
+
 /**
  * Select Component for the Datetime Model.
  */
@@ -32,7 +45,7 @@ export default class DatetimeSelect extends Component {
 		...model.defaultQueryData,
 		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Datetime', 'event_espresso' ),
-		addAllOptionLabel: __( 'All Datetimes', 'event_espresso' ),
+		optionsEntityMap: optionsEntityMap,
 	};
 
 	static propTypes = {
@@ -44,6 +57,7 @@ export default class DatetimeSelect extends Component {
 		] ),
 		onDatetimeSelect: PropTypes.func,
 		selectLabel: PropTypes.string,
+		optionsEntityMap: PropTypes.object,
 	};
 
 	addEventIdToQueryData( forEventId ) {

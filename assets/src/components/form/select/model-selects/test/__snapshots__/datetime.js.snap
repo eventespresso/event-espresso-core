@@ -2,9 +2,20 @@
 
 exports[`DatetimeSelect() matches snapshot with default props 1`] = `
 <WithSelect(ModelSelect)
-  addAllOptionLabel="All Datetimes"
   getQueryString={[Function]}
   modelName="datetime"
+  optionsEntityMap={
+    Object {
+      "default": Object {
+        "label": [Function],
+        "value": "DTT_ID",
+      },
+      "name": Object {
+        "label": "DTT_name",
+        "value": "DTT_ID",
+      },
+    }
+  }
   queryData={
     Object {
       "limit": 100,

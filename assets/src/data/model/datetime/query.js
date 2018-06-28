@@ -39,19 +39,6 @@ export const queryDataTypes = {
 	} ),
 };
 
-export const optionsEntityMap = {
-	default: {
-		value: 'DTT_ID',
-		label: ( entity ) => {
-			return prettyDateFromDateTime( entity );
-		},
-	},
-	name: {
-		value: 'DTT_ID',
-		label: 'DTT_name',
-	},
-};
-
 /**
  * Default attributes for this model
  * @type {
