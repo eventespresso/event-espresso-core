@@ -80,10 +80,10 @@ http://demoee.org/wp-json/ee/v4.8.36/events?where[Registration.REG_ID][]=IS_NULL
 ### Specifying Ternary Operator: BETWEEN
 
 You may also provide a ternary operator: BETWEEN, which is used with dates. You need to provide an array with the first item being "BETWEEN", and the second item is itself an array with two sub-items: the lower limit (older) date, and lastly the upper limit (newer) date.
-
+(So, because you're passing an array with two items, the string "BETWEEN", then an array with two dates in it, this is technically another binary operator.)
 ```php
 //Gets all events created between february 7 2015 and march 7 2015
-http://demoee.org/wp-json/ee/v4.8.36/events?where[filter][EVT_created][0]=BETWEEN&where[filter][EVT_created][1][]=2015-02-07T23:19:57&where[filter][EVT_created][1][]=2015-03-07T23:19:57
+http://demoee.org/wp-json/ee/v4.8.36/events?where[EVT_created][0]=BETWEEN&where[EVT_created][1][]=2015-02-07T23:19:57&where[EVT_created][1][]=2015-03-07T23:19:57
 ```
 
 ### Specifying N-Ary Operators: IN, NOT_IN
