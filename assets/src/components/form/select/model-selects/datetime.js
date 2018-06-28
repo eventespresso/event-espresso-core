@@ -3,6 +3,7 @@
  */
 import ModelSelect from '../model-select';
 import { dateTimeModel } from '../../../../data/model';
+import { withBaseControl } from '../../../../higher-order-components';
 
 /**
  * External imports
@@ -87,3 +88,10 @@ export default class DatetimeSelect extends Component {
 		return <ModelSelect { ...props } />;
 	}
 }
+
+/**
+ * Enhanced Datetime Select for the WordPress Editor
+ */
+export const EditorDatetimeSelect = withBaseControl(
+	'select-datetime'
+)( DatetimeSelect );
