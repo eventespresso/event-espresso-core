@@ -35,13 +35,6 @@ export const queryDataTypes = {
 	} ),
 };
 
-export const optionsEntityMap = {
-	default: {
-		value: 'TKT_ID',
-		label: 'TKT_name',
-	},
-};
-
 /**
  * Default attributes for this model
  * @type {

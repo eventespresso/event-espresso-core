@@ -21,7 +21,6 @@ describe( 'TicketSelect()', () => {
 		);
 		expect( wrapper.prop( 'modelName' ) ).toEqual( 'ticket' );
 		expect( wrapper.prop( 'selectLabel' ) ).toEqual( 'Select Ticket' );
-		expect( wrapper.prop( 'addAllOptionLabel' ) ).toEqual( 'All Tickets' );
 	} );
 	it( 'matches expected update to queryData state with forEventId prop',
 		() => {
