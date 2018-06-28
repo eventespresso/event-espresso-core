@@ -9,16 +9,16 @@ import {
 	QUERY_ORDER_ASC,
 	ALLOWED_ORDER_VALUES,
 } from '../base';
+import * as statusModel from '../status/constants';
 
-// import from constants file when that gets added
 const REGISTRATION_STATUS_IDS = [
-	'RAP',
-	'RCN',
-	'RDC',
-	'RIC',
-	'RNA',
-	'RPP',
-	'RWL',
+	statusModel.STATUS_ID_REGISTRATION_APPROVED,
+	statusModel.STATUS_ID_REGISTRATION_CANCELLED,
+	statusModel.STATUS_ID_REGISTRATION_DECLINED,
+	statusModel.STATUS_ID_REGISTRATION_INCOMPLETE,
+	statusModel.STATUS_ID_REGISTRATION_NOT_APPROVED,
+	statusModel.STATUS_ID_REGISTRATION_PENDING_PAYMENT,
+	statusModel.STATUS_ID_REGISTRATION_WAIT_LIST,
 ];
 export const orderByMap = {
 	id: 'ATT_ID',
