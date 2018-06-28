@@ -41,6 +41,13 @@ export const queryDataTypes = {
 	} ),
 };
 
+export const optionsEntityMap = {
+	default: {
+		value: 'EVT_ID',
+		label: 'EVT_name',
+	},
+};
+
 /**
  * Default attributes for this model
  * @type {

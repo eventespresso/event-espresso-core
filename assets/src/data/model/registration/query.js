@@ -1,7 +1,6 @@
 /**
  * External imports
  */
-import moment from 'moment';
 import { isUndefined } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -14,8 +13,6 @@ import {
 	ALLOWED_ORDER_VALUES,
 } from '../base';
 import * as statusModel from '../status/constants';
-
-export const nowDateAndTime = moment();
 
 /**
  * Described attributes for this model
@@ -43,6 +40,13 @@ export const queryDataTypes = {
 		] ),
 		order: PropTypes.oneOf( ALLOWED_ORDER_VALUES ),
 	} ),
+};
+
+export const optionsEntityMap = {
+	default: {
+		value: 'REG_ID',
+		label: 'REG_code',
+	},
 };
 
 /**

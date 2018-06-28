@@ -5,6 +5,9 @@ import moment from 'moment';
 import { isUndefined } from 'lodash';
 import PropTypes from 'prop-types';
 
+/**
+ * Internal dependencies
+ */
 import {
 	getQueryString as baseGetQueryString,
 	QUERY_ORDER_DESC,
@@ -13,6 +16,7 @@ import {
 	GREATER_THAN_AND_EQUAL,
 	LESS_THAN_AND_EQUAL,
 } from '../base';
+import { prettyDateFromDateTime } from './formatter';
 
 export const nowDateAndTime = moment();
 
@@ -33,6 +37,19 @@ export const queryDataTypes = {
 		showExpired: PropTypes.bool,
 		month: PropTypes.month,
 	} ),
+};
+
+export const optionsEntityMap = {
+	default: {
+		value: 'DTT_ID',
+		label: ( entity ) => {
+			return prettyDateFromDateTime( entity );
+		},
+	},
+	name: {
+		value: 'DTT_ID',
+		label: 'DTT_name',
+	},
 };
 
 /**

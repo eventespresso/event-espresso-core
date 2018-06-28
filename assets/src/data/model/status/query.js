@@ -1,7 +1,6 @@
 /**
  * External imports
  */
-import moment from 'moment';
 import { isUndefined } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -14,8 +13,6 @@ import {
 	ALLOWED_ORDER_VALUES,
 } from '../base';
 
-export const nowDateAndTime = moment();
-
 /**
  * Described attributes for this model
  * @type {{attributes: *}}
@@ -26,6 +23,13 @@ export const queryDataTypes = {
 		orderBy: PropTypes.string,
 		order: PropTypes.oneOf( ALLOWED_ORDER_VALUES ),
 	} ),
+};
+
+export const optionsEntityMap = {
+	default: {
+		value: 'STS_ID',
+		label: 'STS_code',
+	},
 };
 
 /**
