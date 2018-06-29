@@ -15,6 +15,10 @@ Headings should be (only add headings as needed):
 
 ## [$VID:$]
 
+### Fixed
+
+-  Fixed state and country question types shortcode output ([552](https://github.com/eventespresso/event-espresso-core/pull/552))
+
 ## [4.9.64.p]
 
 ### Added
