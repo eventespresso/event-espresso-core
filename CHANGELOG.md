@@ -18,6 +18,7 @@ Headings should be (only add headings as needed):
 ### Fixed
 
 -  Fixed state and country question types shortcode output ([552](https://github.com/eventespresso/event-espresso-core/pull/552))
+-  Added CSS bulletproofing to protect registration form from worse-case scenarios ([542](https://github.com/eventespresso/event-espresso-core/pull/542))
 
 ## [4.9.64.p]
 
@@ -27,7 +28,7 @@ Headings should be (only add headings as needed):
 - Adds hooks to venue address metabox ([538](https://github.com/eventespresso/event-espresso-core/pull/538))
 - Adds filters to `EE_Radio_Button_Display_Strategy.strategy.php` ([517](https://github.com/eventespresso/event-espresso-core/pull/517))
 - Exposed "routes" information on the `eejs` global and update packages ([547](https://github.com/eventespresso/event-espresso-core/pull/547))
-
+- Adds method `EE_PMT_Base::defaultFrontendName` ([558](https://github.com/eventespresso/event-espresso-core/pull/558))
 ### Fixed
 
 - Fixed section heading closing tag in `content-espresso_events-header.php` ([541](https://github.com/eventespresso/event-espresso-core/pull/541))
