@@ -2,7 +2,7 @@
  * Internal imports
  */
 import ModelSelect from '../model-select';
-import { eventModel } from '../../../../data/model';
+import { eventModel as model } from '../../../../data/model';
 import { withBaseControl } from '../../../../higher-order-components';
 
 /**
@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
  */
 export default class EventSelect extends Component {
 	state = {
-		modelName: 'event',
+		modelName: model.MODEL_NAME,
 	};
 
 	static defaultProps = {
@@ -29,13 +29,13 @@ export default class EventSelect extends Component {
 			),
 			placeholder: __( 'Select Event...', 'event_espresso' ),
 		},
-		...eventModel.defaultQueryData,
-		getQueryString: eventModel.getQueryString,
+		...model.defaultQueryData,
+		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Event', 'event_espresso' ),
 	};
 
 	static propTypes = {
-		...eventModel.queryDataTypes,
+		...model.queryDataTypes,
 		selectedEventId: PropTypes.oneOfType( [
 			PropTypes.number,
 			PropTypes.string,

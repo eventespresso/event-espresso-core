@@ -2,7 +2,7 @@
  * Internal imports
  */
 import ModelSelect from '../model-select';
-import { dateTimeModel } from '../../../../data/model';
+import { dateTimeModel as model } from '../../../../data/model';
 import { withBaseControl } from '../../../../higher-order-components';
 
 /**
@@ -17,7 +17,7 @@ import { PropTypes } from 'prop-types';
  */
 export default class DatetimeSelect extends Component {
 	state = {
-		modelName: 'datetime',
+		modelName: model.MODEL_NAME,
 		queryData: {},
 	};
 
@@ -30,13 +30,13 @@ export default class DatetimeSelect extends Component {
 			),
 			placeholder: __( 'Select Datetime...', 'event_espresso' ),
 		},
-		...dateTimeModel.defaultQueryData,
-		getQueryString: dateTimeModel.getQueryString,
+		...model.defaultQueryData,
+		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Datetime', 'event_espresso' ),
 	};
 
 	static propTypes = {
-		...dateTimeModel.queryDataTypes,
+		...model.queryDataTypes,
 		forEventId: PropTypes.number,
 		selectedDatetimeId: PropTypes.oneOfType( [
 			PropTypes.number,
