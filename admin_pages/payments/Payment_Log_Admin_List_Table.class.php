@@ -225,10 +225,10 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_transaction',
                 'espresso_transactions_view_transaction',
-                $item->object()->TXN_ID()
+                $transaction_id
             )) {
             $view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
-                array('action' => 'view_transaction', 'TXN_ID' => $item->object()->TXN_ID()),
+                array('action' => 'view_transaction', 'TXN_ID' => $transaction_id),
                 TXN_ADMIN_URL
             );
             return '<a href="'
@@ -239,7 +239,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
                        $item->object()->TXN_ID()
                    )
                    . '">'
-                   . sprintf(esc_html__('view txn %s', 'event_espresso'), $item->object()->TXN_ID())
+                   . sprintf(esc_html__('view txn %s', 'event_espresso'), $transaction_id)
                    . '</a>';
         }
         // No transaction id or use can not view the transaction.
