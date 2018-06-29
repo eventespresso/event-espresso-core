@@ -1,5 +1,7 @@
-import TicketSelect from '../ticket';
-import { shallow } from 'enzyme';
+import TicketSelect, { EditorTicketSelect } from '../ticket';
+import { shallow, render } from 'enzyme';
+
+jest.mock( '../../model-select', () => () => <span>TicketSelect</span> );
 
 describe( 'TicketSelect()', () => {
 	const expectedDefaultQueryData = {
@@ -38,4 +40,11 @@ describe( 'TicketSelect()', () => {
 				forDatetimeId: 20,
 			} );
 		} );
+} );
+
+describe( 'EditorTicketSelect()', () => {
+	it( 'matches snapshot with default props', () => {
+		const wrapper = render( <EditorTicketSelect /> );
+		expect( wrapper ).toMatchSnapshot();
+	} );
 } );

@@ -360,7 +360,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
         $payment_method = EE_Payment_Method::new_instance(
             array(
                 'PMD_type'       => $pm_type_obj->system_name(),
-                'PMD_name'       => $pm_type_obj->pretty_name(),
+                'PMD_name'       => $pm_type_obj->defaultFrontendName(),
                 'PMD_admin_name' => $pm_type_obj->pretty_name(),
                 'PMD_slug'       => $pm_type_obj->system_name(),// automatically converted to slug
                 'PMD_wp_user'    => $current_user->ID,

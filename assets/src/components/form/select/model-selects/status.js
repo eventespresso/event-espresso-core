@@ -3,6 +3,7 @@
  */
 import ModelSelect from '../model-select';
 import { statusModel as model } from '../../../../data/model';
+import { withBaseControl } from '../../../../higher-order-components';
 
 /**
  * External imports
@@ -99,3 +100,9 @@ export default class StatusSelect extends Component {
 	}
 }
 
+/**
+ * Enhanced Status Select for the WordPress editor
+ */
+export const EditorStatusSelect = withBaseControl(
+	'select-status'
+)( StatusSelect );

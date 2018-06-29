@@ -1,7 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`EditorStatusSelect() matches snapshot with default props 1`] = `
+<div
+  class="components-base-control"
+>
+  <div
+    class="components-base-control__field"
+  >
+    <span>
+      StatusSelect
+    </span>
+  </div>
+</div>
+`;
+
 exports[`StatusSelect() matches snapshot with default props plus provided statusType 1`] = `
-<WithSelect(ModelSelect)
+<Component
   getQueryString={[Function]}
   modelName="status"
   optionsEntityMap={

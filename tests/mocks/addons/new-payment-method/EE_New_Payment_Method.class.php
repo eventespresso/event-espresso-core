@@ -1,4 +1,4 @@
-<?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) { exit(); }
+<?php
 
 // define the plugin directory path and URL
 define( 'EE_NEW_PAYMENT_METHOD_BASENAME', plugin_basename( EE_NEW_PAYMENT_METHOD_PLUGIN_FILE ));
@@ -76,7 +76,7 @@ Class  EE_New_Payment_Method extends EE_Addon {
 	public function plugin_actions( $links, $file ) {
 		if ( $file == EE_NEW_PAYMENT_METHOD_BASENAME ) {
 			// before other links
-			array_unshift( $links, '<a href="admin.php?page=espresso_payment_settings">' . __('Settings') . '</a>' );
+			array_unshift( $links, '<a href="admin.php?page=espresso_payment_settings">' . __('Settings', 'event_espresso') . '</a>' );
 		}
 		return $links;
 	}

@@ -272,6 +272,13 @@
 
 }
 
+.ee-select-input-dv {
+	display: table;
+}
+.ee-select-input-dv select {
+	width: 100%;
+	text-overflow: ellipsis;
+}
 #ee-single-page-checkout-dv input[type=radio],
 #ee-single-page-checkout-dv input[type=checkbox] {
 	position: relative;
@@ -281,7 +288,7 @@
 	padding: 0;
 	margin:0 .5em;
 	vertical-align: middle;
-	*overflow: hidden;
+	overflow: hidden;
 }
 .ee-radio-label-before,
 .ee-checkbox-label-before {
