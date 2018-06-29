@@ -3,7 +3,7 @@
  */
 import Select from 'react-select';
 import { Component, Fragment } from '@wordpress/element';
-import { isEmpty, uniqueId, find, isUndefined } from 'lodash';
+import { isEmpty, uniqueId, find, isUndefined, isFunction } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -29,18 +29,18 @@ import {
  * @see https://deploy-preview-2289--react-select.netlify.com/props#prop-types
  *   for options that can be passed through via the selectConfiguration prop.
  *
- * @param { Object } selectConfiguration  An object containing options for the
+ * @param { Object } selectConfiguration 	An object containing options for the
  *                                          react-select component.
- * @param { Array } modelEntities          Array of model entities
+ * @param { Array } modelEntities          	Array of model entities
  * @param { string } modelName              The name of the Model the entities
  *                                          belong to.
- * @param { function } mapOptionsCallback  This function will receive by
- *   default the modelEntities, the modelName (and any custom Map provided) and
- *   is expected to return an array of options to be used for the react-select
- *   component.
- * @param { Object } optionsEntityMap    If provided, it is expected to be a
- *   map of modelName fields to `label` and `value` keys used by
- *   `mapOptionsCallback`.
+ * @param { function } mapOptionsCallback  	This function will receive by default
+ * 											the modelEntities and optionsEntityMap,
+ * 											and is expected to return an array of options
+ * 											to be used for the react-select component.
+ * @param { Object } optionsEntityMap    	Object of key value pairs where values are the
+ *                                        	'label:value' pairings used by `mapOptionsCallback`
+ * @param { string } mapSelection        	Determines which optionEntityMap pairing to use
  */
 export class ModelSelect extends Component {
 	state = {};
@@ -53,6 +53,7 @@ export class ModelSelect extends Component {
 		modelName: PropTypes.oneOf( MODEL_NAMES ),
 		mapOptionsCallback: PropTypes.func,
 		optionsEntityMap: PropTypes.object,
+		mapSelection: PropTypes.string,
 		queryData: PropTypes.shape( {
 			limit: PropTypes.number,
 			orderBy: PropTypes.string,
@@ -68,9 +69,8 @@ export class ModelSelect extends Component {
 			name: uniqueId( 'model-select-' ),
 		},
 		modelEntities: [],
-		modelName: '',
 		mapOptionsCallback: buildOptions,
-		optionsEntityMap: null,
+		mapSelection: 'default',
 		queryData: {
 			limit: 100,
 			order: 'desc',
@@ -99,22 +99,17 @@ export class ModelSelect extends Component {
 
 	static getOptions( props ) {
 		const {
-			modelEntities,
-			modelName,
-			optionsEntityMap,
 			mapOptionsCallback,
+			modelEntities,
+			optionsEntityMap,
+			mapSelection,
 		} = props;
-		if ( ! isEmpty( modelEntities ) ) {
-			return optionsEntityMap !== null ?
-				mapOptionsCallback(
-					modelEntities,
-					modelName,
-					optionsEntityMap,
-				) :
-				mapOptionsCallback(
-					modelEntities,
-					modelName,
-				);
+		if ( isFunction( mapOptionsCallback ) && ! isEmpty( modelEntities ) ) {
+			return mapOptionsCallback(
+				modelEntities,
+				optionsEntityMap,
+				mapSelection
+			);
 		}
 		return [];
 	}

@@ -12,6 +12,13 @@ import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
 import { PropTypes } from 'prop-types';
 
+const optionsEntityMap = {
+	default: {
+		value: 'STS_ID',
+		label: 'STS_code',
+	},
+};
+
 /**
  * Select Component for the Status Model.
  */
@@ -32,6 +39,7 @@ export default class StatusSelect extends Component {
 		...model.defaultQueryData,
 		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Status', 'event_espresso' ),
+		optionsEntityMap,
 	};
 
 	static propTypes = {
@@ -47,6 +55,7 @@ export default class StatusSelect extends Component {
 		selectedStatusId: PropTypes.string,
 		onStatusSelect: PropTypes.func,
 		selectLabel: PropTypes.string,
+		optionsEntityMap: PropTypes.object,
 	};
 
 	addStatusTypeToQueryData( statusType ) {

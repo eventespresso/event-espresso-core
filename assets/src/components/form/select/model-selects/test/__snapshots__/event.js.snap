@@ -18,6 +18,14 @@ exports[`EventSelect() matches snapshot with default props 1`] = `
 <Component
   getQueryString={[Function]}
   modelName="event"
+  optionsEntityMap={
+    Object {
+      "default": Object {
+        "label": "EVT_name",
+        "value": "EVT_ID",
+      },
+    }
+  }
   queryData={
     Object {
       "limit": 100,

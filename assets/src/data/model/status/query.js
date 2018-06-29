@@ -1,7 +1,6 @@
 /**
  * External imports
  */
-import moment from 'moment';
 import { isUndefined } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -13,8 +12,6 @@ import {
 	QUERY_ORDER_DESC,
 	ALLOWED_ORDER_VALUES,
 } from '../base';
-
-export const nowDateAndTime = moment();
 
 /**
  * Described attributes for this model

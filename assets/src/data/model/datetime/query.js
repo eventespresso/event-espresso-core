@@ -5,6 +5,9 @@ import moment from 'moment';
 import { isUndefined } from 'lodash';
 import PropTypes from 'prop-types';
 
+/**
+ * Internal dependencies
+ */
 import {
 	getQueryString as baseGetQueryString,
 	QUERY_ORDER_DESC,

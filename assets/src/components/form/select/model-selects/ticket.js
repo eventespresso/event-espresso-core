@@ -12,6 +12,13 @@ import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
 import { PropTypes } from 'prop-types';
 
+const optionsEntityMap = {
+	default: {
+		value: 'TKT_ID',
+		label: 'TKT_name',
+	},
+};
+
 /**
  * Select Component for the Ticket Model.
  */
@@ -30,6 +37,7 @@ export default class TicketSelect extends Component {
 		...model.defaultQueryData,
 		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Ticket', 'event_espresso' ),
+		optionsEntityMap,
 	};
 
 	static propTypes = {
@@ -42,6 +50,7 @@ export default class TicketSelect extends Component {
 		] ),
 		onTicketSelect: PropTypes.func,
 		selectLabel: PropTypes.string,
+		optionsEntityMap: PropTypes.object,
 	};
 
 	addEventIdToQueryData( forEventId ) {

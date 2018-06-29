@@ -12,6 +12,13 @@ import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
 import PropTypes from 'prop-types';
 
+const optionsEntityMap = {
+	default: {
+		value: 'EVT_ID',
+		label: 'EVT_name',
+	},
+};
+
 /**
  * Select Component for the Event Model.
  */
@@ -32,6 +39,7 @@ export default class EventSelect extends Component {
 		...model.defaultQueryData,
 		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Event', 'event_espresso' ),
+		optionsEntityMap,
 	};
 
 	static propTypes = {
