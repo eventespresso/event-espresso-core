@@ -89,6 +89,30 @@ const config = [
 		},
 	},
 	{
+		configName: 'hocComponents',
+		entry: {
+			hocComponents: assets + 'higher-order-components/index.js',
+		},
+		externals: Object.assign( externals, {
+			'@eventespresso/helpers': 'eejs.helpers',
+		} ),
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', '[name]' ],
+			libraryTarget: 'var',
+		},
+	},
+	{
 		configName: 'components',
 		entry: {
 			components: assets + 'components/index.js',
@@ -123,6 +147,7 @@ const config = [
 			],
 		},
 		externals: Object.assign( externals, {
+			'@eventespresso/higher-order-components': 'eejs.hocComponents',
 			'@eventespresso/components': 'eejs.components',
 			'@eventespresso/helpers': 'eejs.helpers',
 		} ),

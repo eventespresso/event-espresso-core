@@ -1,7 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`EditorEventSelect() matches snapshot with default props 1`] = `
+<div
+  class="components-base-control"
+>
+  <div
+    class="components-base-control__field"
+  >
+    <span>
+      EventSelect
+    </span>
+  </div>
+</div>
+`;
+
 exports[`EventSelect() matches snapshot with default props 1`] = `
-<WithSelect(ModelSelect)
+<Component
   getQueryString={[Function]}
   modelName="event"
   queryData={

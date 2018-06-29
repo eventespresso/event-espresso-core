@@ -1,1 +1,13 @@
+import * as statusModel from '../status/constants';
+
 export const MODEL_NAME = 'registration';
+
+export const REGISTRATION_STATUS_IDS = [
+	statusModel.STATUS_ID_REGISTRATION_APPROVED,
+	statusModel.STATUS_ID_REGISTRATION_CANCELLED,
+	statusModel.STATUS_ID_REGISTRATION_DECLINED,
+	statusModel.STATUS_ID_REGISTRATION_INCOMPLETE,
+	statusModel.STATUS_ID_REGISTRATION_NOT_APPROVED,
+	statusModel.STATUS_ID_REGISTRATION_PENDING_PAYMENT,
+	statusModel.STATUS_ID_REGISTRATION_WAIT_LIST,
+];

@@ -3,6 +3,7 @@
  */
 import ModelSelect from '../model-select';
 import { dateTimeModel as model } from '../../../../data/model';
+import { withBaseControl } from '../../../../higher-order-components';
 
 /**
  * External imports
@@ -32,7 +33,6 @@ export default class DatetimeSelect extends Component {
 		...model.defaultQueryData,
 		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Datetime', 'event_espresso' ),
-		addAllOptionLabel: __( 'All Datetimes', 'event_espresso' ),
 	};
 
 	static propTypes = {
@@ -87,3 +87,10 @@ export default class DatetimeSelect extends Component {
 		return <ModelSelect { ...props } />;
 	}
 }
+
+/**
+ * Enhanced Datetime Select for the WordPress editor
+ */
+export const EditorDatetimeSelect = withBaseControl(
+	'select-datetime'
+)( DatetimeSelect );

@@ -3,6 +3,7 @@
  */
 import ModelSelect from '../model-select';
 import { ticketModel as model } from '../../../../data/model';
+import { withBaseControl } from '../../../../higher-order-components';
 
 /**
  * External imports
@@ -29,7 +30,6 @@ export default class TicketSelect extends Component {
 		...model.defaultQueryData,
 		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Ticket', 'event_espresso' ),
-		addAllOptionLabel: __( 'All Tickets', 'event_espresso' ),
 	};
 
 	static propTypes = {
@@ -100,3 +100,10 @@ export default class TicketSelect extends Component {
 		return <ModelSelect { ...props } />;
 	}
 }
+
+/**
+ * Enhanced Ticket Select for the WordPress editor
+ */
+export const EditorTicketSelect = withBaseControl(
+	'select-ticket'
+)( TicketSelect );

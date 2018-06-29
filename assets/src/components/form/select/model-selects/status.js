@@ -3,6 +3,7 @@
  */
 import ModelSelect from '../model-select';
 import { statusModel as model } from '../../../../data/model';
+import { withBaseControl } from '../../../../higher-order-components';
 
 /**
  * External imports
@@ -31,7 +32,6 @@ export default class StatusSelect extends Component {
 		...model.defaultQueryData,
 		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Status', 'event_espresso' ),
-		addAllOptionLabel: __( 'All Statuses', 'event_espresso' ),
 	};
 
 	static propTypes = {
@@ -91,3 +91,9 @@ export default class StatusSelect extends Component {
 	}
 }
 
+/**
+ * Enhanced Status Select for the WordPress editor
+ */
+export const EditorStatusSelect = withBaseControl(
+	'select-status'
+)( StatusSelect );

@@ -29,6 +29,9 @@ common.forEach( ( config, index ) => {
 				aliases: {
 					'wp-plugins-page': 'ee-wp-plugins-page',
 					'data-stores': 'eventespresso-data-stores',
+					components: 'eventespresso-components',
+					helpers: 'eventespresso-helpers',
+					hocComponents: 'eventespresso-hoc-components',
 				},
 				excludes: [ 'eejs', 'vendor' ],
 			} ),
