@@ -24,12 +24,6 @@ const buildOptions = (
 	mapSelection = 'default'
 ) => {
 	if ( isEmpty( entities ) ) {
-		warning(
-			false,
-			'A valid array of entities must be supplied ' +
-			'in order to build options for a ModelSelect component',
-			entities
-		);
 		return [];
 	}
 	if ( isEmpty( optionsEntityMap ) ) {
