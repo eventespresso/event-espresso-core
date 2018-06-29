@@ -236,7 +236,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
                    . '"  title="'
                    . sprintf(
                        esc_attr__('click to view transaction #%s', 'event_espresso'),
-                       $item->object()->TXN_ID()
+                       $transaction_id
                    )
                    . '">'
                    . sprintf(esc_html__('view txn %s', 'event_espresso'), $transaction_id)
