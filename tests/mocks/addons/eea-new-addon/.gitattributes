@@ -1,0 +1,29 @@
+# Set default behaviour, in case users don't have core.autocrlf set.
+* text=auto
+
+# Explicitly declare text files we want to always be normalized and converted 
+# to native line endings on checkout. But on commit, they should be given unix-style line endings (LFs)
+*.c text
+*.h text
+*.php text
+*.js text
+*.html text 
+*.css text
+*.txt text
+*.md text
+*.csv text
+*.po text
+*.pot text
+*.afm text
+*.LGPL text
+
+
+# Declare files that will always have CRLF line endings on checkout.
+*.sln text eol=crlf
+
+# Denote all files that are truly binary and should not be modified.
+*.png binary
+*.jpg binary
+*.gif binary
+*.mo binary
+*.pdf binary

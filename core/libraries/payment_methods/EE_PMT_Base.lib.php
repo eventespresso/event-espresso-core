@@ -717,6 +717,17 @@ abstract class EE_PMT_Base
 
 
     /**
+     * A pretty i18n version of the PMT name. Often the same as the "pretty_name", but you can change it by overriding
+     * this method.
+     * @return string
+     */
+    public function defaultFrontendName()
+    {
+        return $this->pretty_name();
+    }
+
+
+    /**
      * A pretty i18n version of the PMT name
      *
      * @return string
