@@ -18,6 +18,7 @@ Headings should be (only add headings as needed):
 ### Fixed
 
 -  Fixed state and country question types shortcode output ([552](https://github.com/eventespresso/event-espresso-core/pull/552))
+-  Added CSS bulletproofing to protect registration form from worse-case scenarios ([542](https://github.com/eventespresso/event-espresso-core/pull/542))
 
 ## [4.9.64.p]
 
