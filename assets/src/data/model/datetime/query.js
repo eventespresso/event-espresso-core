@@ -16,7 +16,6 @@ import {
 	GREATER_THAN_AND_EQUAL,
 	LESS_THAN_AND_EQUAL,
 } from '../base';
-import { prettyDateFromDateTime } from './formatter';
 
 export const nowDateAndTime = moment();
 
