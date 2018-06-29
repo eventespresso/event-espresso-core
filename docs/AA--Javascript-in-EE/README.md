@@ -13,4 +13,5 @@ This folder has various documentation surrounding javascript in Event Espresso
 | [Testing Javascript](testing-javascript.md) | Testing Javascript for EE.  The framework we use and how to run tests.
 | [i18n in Javascript](javascript-i18n.md) | How to do i18n within EE javascript |
 | [Blocks](blocks/README.md) | Various available blocks available in EE core. |
-| [Components](components/README.md) | Various available components available in EE core. |
+| [Components](components/README.md) | Various components available in EE core. |
+| [Higher Order Components](higher-order-components/README.md) | Various higher order components available in EE core. |

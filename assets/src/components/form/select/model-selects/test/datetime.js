@@ -1,5 +1,7 @@
-import DatetimeSelect from '../datetime';
-import { shallow } from 'enzyme';
+import DatetimeSelect, { EditorDatetimeSelect } from '../datetime';
+import { shallow, render } from 'enzyme';
+
+jest.mock( '../../model-select', () => () => <span>DatetimeSelect</span> );
 
 describe( 'DatetimeSelect()', () => {
 	const expectedDefaultQueryData = {
@@ -24,8 +26,6 @@ describe( 'DatetimeSelect()', () => {
 		);
 		expect( wrapper.prop( 'modelName' ) ).toEqual( 'datetime' );
 		expect( wrapper.prop( 'selectLabel' ) ).toEqual( 'Select Datetime' );
-		expect( wrapper.prop( 'addAllOptionLabel' ) )
-			.toEqual( 'All Datetimes' );
 	} );
 	it( 'matches expected update to queryData state with forEventId prop',
 		() => {
@@ -36,4 +36,11 @@ describe( 'DatetimeSelect()', () => {
 			} );
 		},
 	);
+} );
+
+describe( 'EditorDatetimeSelect()', () => {
+	it( 'matches snapshot with default props', () => {
+		const wrapper = render( <EditorDatetimeSelect /> );
+		expect( wrapper ).toMatchSnapshot();
+	} );
 } );

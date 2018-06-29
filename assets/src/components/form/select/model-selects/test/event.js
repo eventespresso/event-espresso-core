@@ -1,5 +1,7 @@
-import EventSelect from '../event';
-import { shallow } from 'enzyme';
+import EventSelect, { EditorEventSelect } from '../event';
+import { shallow, render } from 'enzyme';
+
+jest.mock( '../../model-select', () => () => <span>EventSelect</span> );
 
 describe( 'EventSelect()', () => {
 	it( 'matches snapshot with default props', () => {
@@ -22,5 +24,12 @@ describe( 'EventSelect()', () => {
 	it( 'does not allow overriding the modelName', () => {
 		const wrapper = shallow( <EventSelect modelName={ 'tickets' } /> );
 		expect( wrapper.prop( 'modelName' ) ).toEqual( 'event' );
+	} );
+} );
+
+describe( 'EditorEventSelect()', () => {
+	it( 'matches snapshot with default props', () => {
+		const wrapper = render( <EditorEventSelect /> );
+		expect( wrapper ).toMatchSnapshot();
 	} );
 } );
