@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { isEmpty, isFunction, isUndefined, reduce } from 'lodash';
+import warning from 'warning';
 
 /**
  * Receives an array of event entities and returns an array of simple objects
@@ -22,21 +23,36 @@ const buildOptions = (
 	optionsEntityMap,
 	mapSelection = 'default'
 ) => {
-	if ( isEmpty( entities ) || isEmpty( optionsEntityMap ) ) {
+	if ( isEmpty( entities ) ) {
+		warning(
+			false,
+			'A valid array of entities must be supplied ' +
+			'in order to build options for a ModelSelect component',
+			entities
+		);
+		return [];
+	}
+	if ( isEmpty( optionsEntityMap ) ) {
+		warning(
+			false,
+			'A valid optionsEntityMap must be supplied ' +
+			'in order to build options for a ModelSelect component',
+			optionsEntityMap
+		);
+		return [];
+	}
+	if ( isUndefined( optionsEntityMap[ mapSelection ] ) ) {
+		warning(
+			false,
+			'A valid optionsEntityMap[ mapSelection ] must be supplied ' +
+			'in order to build options for a ModelSelect component',
+			optionsEntityMap,
+			mapSelection
+		);
 		return [];
 	}
 	// if requested mapSelection exists then use that
-	let map = ! isUndefined( optionsEntityMap[ mapSelection ] ) ?
-		optionsEntityMap[ mapSelection ] :
-		null;
-	// if not but default exists then use that
-	map = map === null && ! isUndefined( optionsEntityMap.default ) ?
-		optionsEntityMap.default :
-		null;
-	// if default doesn't exist then just grab first option
-	map = map === null ?
-		optionsEntityMap[ Object.keys( optionsEntityMap )[ 0 ] ] :
-		map;
+	const map = optionsEntityMap[ mapSelection ];
 	return ! isEmpty( map ) ?
 		reduce(
 			entities,
