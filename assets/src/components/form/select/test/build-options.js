@@ -24,6 +24,10 @@ describe( 'buildOptions()', () => {
 			value: 'EVT_ID',
 			label: 'EVT_name',
 		},
+		custom: {
+			value: 'EVT_ID',
+			label: 'custom_prop',
+		},
 	};
 	const customMap = {
 		default: {
@@ -39,11 +43,25 @@ describe( 'buildOptions()', () => {
 			},
 		},
 	};
-	it( 'returns an empty array for defaults', () => {
-		expect( buildOptions() ).toEqual( [] );
+	it( 'displays a console error when no arguments are provided', () => {
+		buildOptions();
+		expect( console ).toHaveErroredWith(
+			'Warning: A valid array of entities must be supplied in order to build options for a ModelSelect component'
+		);
 	} );
-	it( 'returns expected values for options when entities for existing model' +
-		' in map provided using default map.', () => {
+	it( 'displays a console error when an empty optionsEntityMap is provided', () => {
+		buildOptions( testResponse );
+		expect( console ).toHaveErroredWith(
+			'Warning: A valid optionsEntityMap must be supplied in order to build options for a ModelSelect component'
+		);
+	} );
+	it( 'displays a console error when an invalid mapSelection is provided', () => {
+		buildOptions( testResponse, eventOptionsEntityMap, 'invalid' );
+		expect( console ).toHaveErroredWith(
+			'Warning: A valid optionsEntityMap[ mapSelection ] must be supplied in order to build options for a ModelSelect component'
+		);
+	} );
+	it( 'returns expected values for options using default optionsEntityMap for EventSelect.', () => {
 		expect( buildOptions( testResponse, eventOptionsEntityMap ) ).toEqual(
 			[
 				{ label: 'Test A', value: 2 },
@@ -51,7 +69,7 @@ describe( 'buildOptions()', () => {
 			]
 		);
 	} );
-	it( 'returns expected values for options with a custom map.', () => {
+	it( 'returns expected values for options with a custom mapSelection.', () => {
 		expect( buildOptions( testResponse, customMap ) ).toEqual(
 			[
 				{ label: 'Custom Property A', value: 'Test A' },
@@ -59,7 +77,15 @@ describe( 'buildOptions()', () => {
 			]
 		);
 	} );
-	it( 'returns expected values for options using default map with datetime', () => {
+	it( 'returns expected values for options with a custom optionsEntityMap.', () => {
+		expect( buildOptions( testResponse, eventOptionsEntityMap, 'custom' ) ).toEqual(
+			[
+				{ label: 'Custom Property A', value: 2 },
+				{ label: 'Custom Property B', value: 3 },
+			]
+		);
+	} );
+	it( 'returns expected values for options using default optionsEntityMap for DatetimeSelect', () => {
 		const testLocalMoment = moment().local();
 		const dateTimeResponse = [
 			{
@@ -84,3 +110,5 @@ describe( 'buildOptions()', () => {
 		);
 	} );
 } );
+
+// location: assets/src/components/form/select/test/build-options.js
