@@ -46,7 +46,7 @@ export default class DatetimeSelect extends Component {
 		...model.defaultQueryData,
 		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Datetime', 'event_espresso' ),
-		optionsEntityMap: optionsEntityMap,
+		optionsEntityMap,
 	};
 
 	static propTypes = {

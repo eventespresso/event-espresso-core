@@ -37,7 +37,7 @@ export default class TicketSelect extends Component {
 		...model.defaultQueryData,
 		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Ticket', 'event_espresso' ),
-		optionsEntityMap: optionsEntityMap,
+		optionsEntityMap,
 	};
 
 	static propTypes = {
