@@ -43,11 +43,8 @@ describe( 'buildOptions()', () => {
 			},
 		},
 	};
-	it( 'displays a console error when no arguments are provided', () => {
-		buildOptions();
-		expect( console ).toHaveErroredWith(
-			'Warning: A valid array of entities must be supplied in order to build options for a ModelSelect component'
-		);
+	it( 'returns an empty array when no entities are provided', () => {
+		expect( buildOptions() ).toEqual( [] );
 	} );
 	it( 'displays a console error when an empty optionsEntityMap is provided', () => {
 		buildOptions( testResponse );
