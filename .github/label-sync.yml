@@ -53,6 +53,7 @@
     - eventespresso/eea-chase-orbital
     - eventespresso/eea-event-app-customization
     - eventespresso/grunt-wp-plugin-buildmachine
+    - eventespresso/eea-paypal-smart-buttons
   milestones: []
   labels:
   # status labels
