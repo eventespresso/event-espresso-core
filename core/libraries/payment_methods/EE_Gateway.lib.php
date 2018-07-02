@@ -327,14 +327,17 @@ abstract class EE_Gateway
      * @param $message
      * @param $payment
      */
-    public function log($message, $payment)
+    public function log($message, $object_logged)
     {
-        if ($payment instanceof EEI_Payment) {
+        if ($object_logged instanceof EEI_Payment) {
             $type = 'Payment';
-            $id = $payment->ID();
-        } else {
+            $id = $object_logged->ID();
+        } elseif ($object_logged instanceof EEI_Payment_Method) {
             $type = 'Payment_Method';
             $id = $this->_ID;
+        } elseif ($object_logged instanceof EEI_Transaction) {
+            $type = 'Transaction';
+            $id = $object_logged->ID();
         }
         // only log if we're going to store it for longer than the minimum time
         $reg_config = LoaderFactory::getLoader()->load('EE_Registration_Config');
