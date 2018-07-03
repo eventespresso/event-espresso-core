@@ -32,6 +32,7 @@ common.forEach( ( config, index ) => {
 					components: 'eventespresso-components',
 					helpers: 'eventespresso-helpers',
 					hocComponents: 'eventespresso-hoc-components',
+					model: 'eventespresso-model',
 				},
 				excludes: [ 'eejs', 'vendor' ],
 			} ),

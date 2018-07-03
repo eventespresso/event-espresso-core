@@ -51,6 +51,8 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_EE_HELPERS = 'eventespresso-helpers';
 
+    const JS_HANDLE_EE_MODEL = 'eventespresso-model';
+
     const JS_HANDLE_EE_HOC_COMPONENTS = 'eventespresso-hoc-components';
 
     const JS_HANDLE_EE_COMPONENTS = 'eventespresso-components';
@@ -188,6 +190,14 @@ class CoreAssetManager extends AssetManager
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_HELPERS,
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'helpers')
+        )->setRequiresTranslation();
+
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_MODEL,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'model'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_HELPERS
+            )
         )->setRequiresTranslation();
 
         $this->addJavascript(
