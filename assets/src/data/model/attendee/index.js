@@ -28,6 +28,7 @@ export const queryDataTypes = {
 	forDatetimeId: PropTypes.number,
 	forTicketId: PropTypes.number,
 	forStatusId: PropTypes.oneOf( REGISTRATION_STATUS_IDS ),
+	forRegistrationId: PropTypes.number,
 	queryData: PropTypes.shape( {
 		limit: PropTypes.number,
 		orderBy: PropTypes.oneOf( Object.keys( orderByMap ) ),
@@ -75,6 +76,7 @@ export const mapOrderBy = ( orderBy ) => {
  * @param {number} forEventId    	ID of Event to retrieve attendees for
  * @param {number} forDatetimeId 	ID of Datetime to retrieve attendees for
  * @param {number} forTicketId 		ID of Ticket to retrieve attendees for
+ * @param forRegistrationId
  * @param {string} forStatusId 		ID of Status to retrieve attendees for
  * @param {string} showGravatar 	Boolean toggle for whether to display user Gravatar
  * @return {string}                	The assembled where conditions.
@@ -83,6 +85,7 @@ export const whereConditions = ( {
 	forEventId = 0,
 	forDatetimeId = 0,
 	forTicketId = 0,
+	forRegistrationId = 0,
 	forStatusId = 'RAP',
 	showGravatar = false,
 } ) => {
@@ -91,6 +94,7 @@ export const whereConditions = ( {
 	forTicketId = parseInt( forTicketId, 10 );
 	forDatetimeId = parseInt( forDatetimeId, 10 );
 	forEventId = parseInt( forEventId, 10 );
+	forRegistrationId = parseInt( forRegistrationId, 10 );
 	// add query param for entity we are filtering for
 	if ( forTicketId !== 0 && ! isNaN( forTicketId ) ) {
 		where.push( `where[Registration.Ticket.TKT_ID]=${ forTicketId }` );
@@ -98,6 +102,8 @@ export const whereConditions = ( {
 		where.push( `where[Registration.Ticket.Datetime.DTT_ID]=${ forDatetimeId }` );
 	} else if ( forEventId !== 0 && ! isNaN( forEventId ) ) {
 		where.push( `where[Registration.EVT_ID]=${ forEventId }` );
+	} else if ( forRegistrationId !== 0 && ! isNaN( forRegistrationId ) ) {
+		where.push( `where[Registration.REG_ID]=${ forRegistrationId }` );
 	}
 	if ( REGISTRATION_STATUS_IDS.includes( forStatusId ) ) {
 		where.push( `where[Registration.Status.STS_ID]=${ forStatusId }` );
