@@ -198,8 +198,10 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
             return $item->object()->admin_name();
         } elseif ($item->object() instanceof EE_Payment && $item->object()->payment_method()) {
             return $item->object()->payment_method()->admin_name();
+        } elseif ($item->object() instanceof EE_Transaction) {
+            return esc_html__('Unknown', 'event_espresso');
         } else {
-            return __("No longer exists", 'event_espresso');
+            return esc_html__("No longer exists", 'event_espresso');
         }
     }
 
@@ -213,28 +215,34 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
     public function column_TXN_ID(EE_Change_Log $item)
     {
         if ($item->object() instanceof EE_Payment) {
-            if (EE_Registry::instance()->CAP->current_user_can(
+            $transaction_id = $item->object()->TXN_ID();
+        } elseif ($item->object() instanceof EE_Transaction) {
+            $transaction_id = $item->object()->ID();
+        } else {
+            $transaction_id = null;
+        }
+        if ($transaction_id
+            && EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_transaction',
                 'espresso_transactions_view_transaction',
-                $item->object()->TXN_ID()
+                $transaction_id
             )) {
-                $view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
-                    array('action' => 'view_transaction', 'TXN_ID' => $item->object()->TXN_ID()),
-                    TXN_ADMIN_URL
-                );
-                return '<a href="'
-                       . $view_txn_lnk_url
-                       . '"  title="'
-                       . sprintf(
-                           esc_attr__('click to view transaction #%s', 'event_espresso'),
-                           $item->object()->TXN_ID()
-                       )
-                       . '">'
-                       . sprintf(__('view txn %s', 'event_espresso'), $item->object()->TXN_ID())
-                       . '</a>';
-            }
-        } else {
-            return __("Unable to find transaction", 'event_espresso');
+            $view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+                array('action' => 'view_transaction', 'TXN_ID' => $transaction_id),
+                TXN_ADMIN_URL
+            );
+            return '<a href="'
+                   . $view_txn_lnk_url
+                   . '"  title="'
+                   . sprintf(
+                       esc_attr__('click to view transaction #%s', 'event_espresso'),
+                       $transaction_id
+                   )
+                   . '">'
+                   . sprintf(esc_html__('view txn %s', 'event_espresso'), $transaction_id)
+                   . '</a>';
         }
+        // No transaction id or use can not view the transaction.
+        return __("Unable to find transaction", 'event_espresso');
     }
 }

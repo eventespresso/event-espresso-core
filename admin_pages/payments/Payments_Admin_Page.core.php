@@ -1122,6 +1122,9 @@ class Payments_Admin_Page extends EE_Admin_Page
                 $transaction = $payment_log->object()->transaction();
             } elseif ($payment_log->object() instanceof EE_Payment_Method) {
                 $payment_method = $payment_log->object();
+            } elseif ($payment_log->object() instanceof EE_Transaction) {
+                $transaction = $payment_log->object();
+                $payment_method = $transaction->payment_method();
             }
         }
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
