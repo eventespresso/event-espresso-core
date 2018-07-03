@@ -76,7 +76,7 @@ export const mapOrderBy = ( orderBy ) => {
  * @param {number} forEventId    	ID of Event to retrieve attendees for
  * @param {number} forDatetimeId 	ID of Datetime to retrieve attendees for
  * @param {number} forTicketId 		ID of Ticket to retrieve attendees for
- * @param forRegistrationId
+ * @param {number} forRegistrationId
  * @param {string} forStatusId 		ID of Status to retrieve attendees for
  * @param {string} showGravatar 	Boolean toggle for whether to display user Gravatar
  * @return {string}                	The assembled where conditions.
