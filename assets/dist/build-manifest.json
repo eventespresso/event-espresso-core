@@ -5,6 +5,7 @@
   "helpers.js": "ee-helpers.242dcad45e91c8f65693.dist.js",
   "hocComponents.js": "ee-hocComponents.47a40292d57831a0f42b.dist.js",
   "manifest.js": "ee-manifest.db11f08f044e318032a1.dist.js",
+  "model.js": "ee-model.a3f18c4fad21e24ab2a1.dist.js",
   "vendor.js": "ee-vendor.1a4ecfa3d030b7cd1ee2.dist.js",
   "wp-plugins-page.css": "ee-wp-plugins-page.12612f6ab71570ab1af8.dist.css",
   "wp-plugins-page.js": "ee-wp-plugins-page.901ce38ce3c9df680e03.dist.js"
