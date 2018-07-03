@@ -205,7 +205,8 @@ class CoreAssetManager extends AssetManager
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'hocComponents'),
             array(
                 CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
-                CoreAssetManager::JS_HANDLE_EE_HELPERS
+                CoreAssetManager::JS_HANDLE_EE_HELPERS,
+                'wp-components',
             )
         )->setRequiresTranslation();
 
@@ -214,7 +215,8 @@ class CoreAssetManager extends AssetManager
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'components'),
             array(
                 CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
-                CoreAssetManager::JS_HANDLE_EE_HELPERS
+                CoreAssetManager::JS_HANDLE_EE_HELPERS,
+                'wp-components',
             )
         )
         ->setRequiresTranslation();
