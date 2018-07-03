@@ -14,6 +14,9 @@ Headings should be (only add headings as needed):
 - Security (vulnerability fixes)
 
 ## [$VID:$]
+### Added
+
+- Added classname to the markup that wraps the Event phone ([563](https://github.com/eventespresso/event-espresso-core/pull/563))
 
 ### Fixed
 
