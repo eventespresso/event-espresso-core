@@ -87,6 +87,7 @@
 		"lodash": "^4.17.10",
 		"memize": "^1.0.5",
 		"moment": "^2.22.2",
+		"prop-types": "^15.6.2",
 		"querystringify": "^1.0.0",
 		"react": "^16.4.1",
 		"react-dom": "^16.4.1",
