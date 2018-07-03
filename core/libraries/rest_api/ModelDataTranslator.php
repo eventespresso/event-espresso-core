@@ -447,7 +447,7 @@ class ModelDataTranslator
                         } elseif (array_key_exists($op, $model->valid_between_style_operators())
                                   && isset($query_param_value[1])
                                   && is_array($query_param_value[1])
-                                  && isset($query_param_key[1][0],$query_param_value[1][1])
+                                  && isset($query_param_key[1][0], $query_param_value[1][1])
                                   && ! isset($query_param_value[1][2])
                                   && ! isset($query_param_value[2])
                         ) {
