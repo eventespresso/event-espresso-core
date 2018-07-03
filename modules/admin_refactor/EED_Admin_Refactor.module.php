@@ -220,7 +220,7 @@ class EED_Admin_Refactor extends EED_Module
             <span style="">' . esc_html__('expired', 'event_espresso') . '</span>
         </div>
     </div>
-    <div class="ee-editor-dates-add-datetime-button-div" style="background-color: #93b343; border-radius:5px; color: #fff; cursor: pointer; display: inline-block; float: right; font-size: 18px; font-weight: bold; padding:10px 20px 10px 10px; box-shadow: 0 3px 3px rgba(0,0,0,.5)" onMouseOver="document.getElementById(\'ee-add-datetime-button-plus\').style.color=\'rgba(255,255,255,1)\'"
+    <div class="ee-editor-dates-add-datetime-button-div" style="background-color: #93b343; border-radius:5px; color: #fff; cursor: pointer; display: inline-block; float: right; font-size: 18px; font-weight: bold; padding:10px 20px 10px 10px; box-shadow: 0 2px 3px rgba(0,0,0,.5)" onMouseOver="document.getElementById(\'ee-add-datetime-button-plus\').style.color=\'rgba(255,255,255,1)\'"
    onMouseOut="document.getElementById(\'ee-add-datetime-button-plus\').style.color=\'rgba(255,255,255,.75)\'">
         <span id="ee-add-datetime-button-plus" class="dashicons dashicons-plus" style="color: rgba(255,255,255,.75); font-size:24px; font-weight: normal; line-height: 15px; top:0;"></span>' . esc_html__('Add Datetime', 'event_espresso') . '
     </div>
