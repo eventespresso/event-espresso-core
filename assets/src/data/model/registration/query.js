@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { isUndefined } from 'lodash';
+import { isUndefined, values } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -23,15 +23,7 @@ export const queryDataTypes = {
 	forAttendeeId: PropTypes.number,
 	forTransactionId: PropTypes.number,
 	forTicketId: PropTypes.number,
-	forStatusId: PropTypes.oneOf( [
-		statusModel.STATUS_ID_REGISTRATION_APPROVED,
-		statusModel.STATUS_ID_REGISTRATION_CANCELLED,
-		statusModel.STATUS_ID_REGISTRATION_DECLINED,
-		statusModel.STATUS_ID_REGISTRATION_INCOMPLETE,
-		statusModel.STATUS_ID_REGISTRATION_NOT_APPROVED,
-		statusModel.STATUS_ID_REGISTRATION_PENDING_PAYMENT,
-		statusModel.STATUS_ID_REGISTRATION_WAIT_LIST,
-	] ),
+	forStatusId: PropTypes.oneOf( values( statusModel.registrationStatus ) ),
 	queryData: PropTypes.shape( {
 		limit: PropTypes.number,
 		orderBy: PropTypes.oneOf( [
