@@ -12,13 +12,13 @@ export const STATUS_TYPE_PAYMENT = 'payment';
 export const STATUS_TYPE_REGISTRATION = 'registration';
 export const STATUS_TYPE_TRANSACTION = 'transaction';
 // email
-export const emailStatus = {
+export const EMAIL_STATUS_ID = {
 	DRAFT: 'EDR',
 	SENT: 'ESN',
 	EXPIRED: 'EXP',
 };
 // event
-export const eventStatus = {
+export const EVENT_STATUS_ID = {
 	ACTIVE: 'ACT',
 	REGISTRATION_CLOSED: 'CLS',
 	DELETED: 'DEL',
@@ -32,7 +32,7 @@ export const eventStatus = {
 	SECONDARY: 'SEC',
 };
 // message
-export const messageStatus = {
+export const MESSAGE_STATUS_ID = {
 	DEBUG: 'MDO',
 	EXECUTING: 'MEX',
 	FAIL: 'MFL',
@@ -42,7 +42,7 @@ export const messageStatus = {
 	SENT: 'MSN',
 };
 // payment
-export const paymentStatus = {
+export const PAYMENT_STATUS_ID = {
 	APPROVED: 'PAP',
 	CANCELLED: 'PCN',
 	DECLINED: 'PDC',
@@ -50,7 +50,7 @@ export const paymentStatus = {
 	PENDING: 'PPN',
 };
 // registration
-export const registrationStatus = {
+export const REGISTRATION_STATUS_ID = {
 	APPROVED: 'RAP',
 	CANCELLED: 'RCN',
 	DECLINED: 'RDC',
@@ -60,7 +60,7 @@ export const registrationStatus = {
 	WAIT_LIST: 'RWL',
 };
 // transaction
-export const transactionStatus = {
+export const TRANSACTION_STATUS_ID = {
 	ABANDONED: 'TAB',
 	COMPLETE: 'TCM',
 	FAILED: 'TFL',
@@ -68,11 +68,11 @@ export const transactionStatus = {
 	OVERPAID: 'TOP',
 };
 
-export const ALL_STATUSES = [
-	...values( emailStatus ),
-	...values( eventStatus ),
-	...values( messageStatus ),
-	...values( paymentStatus ),
-	...values( registrationStatus ),
-	...values( transactionStatus ),
+export const ALL_STATUS_IDS = [
+	...values( EMAIL_STATUS_ID ),
+	...values( EVENT_STATUS_ID ),
+	...values( MESSAGE_STATUS_ID ),
+	...values( PAYMENT_STATUS_ID ),
+	...values( REGISTRATION_STATUS_ID ),
+	...values( TRANSACTION_STATUS_ID ),
 ];

@@ -23,7 +23,7 @@ export const queryDataTypes = {
 	forAttendeeId: PropTypes.number,
 	forTransactionId: PropTypes.number,
 	forTicketId: PropTypes.number,
-	forStatusId: PropTypes.oneOf( values( statusModel.registrationStatus ) ),
+	forStatusId: PropTypes.oneOf( values( statusModel.REGISTRATION_STATUS_ID ) ),
 	queryData: PropTypes.shape( {
 		limit: PropTypes.number,
 		orderBy: PropTypes.oneOf( [

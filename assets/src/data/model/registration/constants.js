@@ -10,4 +10,6 @@ import { values } from 'lodash';
 
 export const MODEL_NAME = 'registration';
 
-export const REGISTRATION_STATUS_IDS = values( statusModel.registrationStatus );
+export const REGISTRATION_STATUS_IDS = values(
+	statusModel.REGISTRATION_STATUS_ID
+);
