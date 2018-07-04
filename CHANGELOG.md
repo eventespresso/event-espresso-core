@@ -22,7 +22,7 @@ Headings should be (only add headings as needed):
 
 -  Fixed state and country question types shortcode output ([552](https://github.com/eventespresso/event-espresso-core/pull/552))
 -  Added CSS bulletproofing to protect registration form from worse-case scenarios ([542](https://github.com/eventespresso/event-espresso-core/pull/542))
-
+-  Fixed fatal error when using WordPress Privacy erasure or exporter while Event Espresso in full maintenance mode ([568](https://github.com/eventespresso/event-espresso-core/pull/568))
 ## [4.9.64.p]
 
 ### Added
