@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\privacy\export;
 
+use EE_Maintenance_Mode;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -23,8 +24,20 @@ use EventEspresso\core\services\collections\CollectionLoader;
 class PersonalDataExporterManager
 {
 
-    public function __construct()
+    /**
+     * @var EE_Maintenance_Mode
+     */
+    protected $maintenance_mode;
+
+
+    /**
+     * PersonalDataExporterManager constructor.
+     *
+     * @param EE_Maintenance_Mode $maintenance_mode
+     */
+    public function __construct(EE_Maintenance_Mode $maintenance_mode)
     {
+        $this->maintenance_mode = $maintenance_mode;
         add_filter(
             'wp_privacy_personal_data_exporters',
             array($this, 'hookInExporters')
@@ -42,11 +55,13 @@ class PersonalDataExporterManager
     {
         // load all the privacy policy stuff
         // add post policy text
-        foreach ($this->loadPrivateDataExporterCollection() as $exporter) {
-            $exporters[ get_class($exporter) ] = array(
-                'exporter_friendly_name' => $exporter->name(),
-                'callback'               => array($exporter, 'export'),
-            );
+        if ($this->maintenance_mode->models_can_query()) {
+            foreach ($this->loadPrivateDataExporterCollection() as $exporter) {
+                $exporters[ get_class($exporter) ] = array(
+                    'exporter_friendly_name' => $exporter->name(),
+                    'callback'               => array($exporter, 'export'),
+                );
+            }
         }
         return $exporters;
     }
@@ -65,7 +80,7 @@ class PersonalDataExporterManager
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
-                // collection name
+            // collection name
                 'personal_data_exporters',
                 // collection interface
                 'EventEspresso\core\services\privacy\export\PersonalDataExporterInterface',

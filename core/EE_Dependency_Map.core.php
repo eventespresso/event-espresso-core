@@ -774,6 +774,9 @@ class EE_Dependency_Map
             ),
             'EventEspresso\core\services\privacy\erasure\PersonalDataEraserManager' => array(
                 'EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\services\privacy\export\PersonalDataExporterManager' => array(
+                'EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache,
             )
         );
     }
