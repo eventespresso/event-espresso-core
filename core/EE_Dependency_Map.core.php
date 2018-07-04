@@ -772,6 +772,12 @@ class EE_Dependency_Map
                 'EE_Registry' => EE_Dependency_Map::load_from_cache,
                 'EE_Config' => EE_Dependency_Map::load_from_cache
             ),
+            'EventEspresso\core\services\privacy\erasure\PersonalDataEraserManager' => array(
+                'EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\services\privacy\export\PersonalDataExporterManager' => array(
+                'EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache,
+            )
         );
     }
 
@@ -886,7 +892,7 @@ class EE_Dependency_Map
             },
             'EE_Admin_Config'                              => function () {
                 return EE_Config::instance()->admin;
-            },
+            }
         );
     }
 
