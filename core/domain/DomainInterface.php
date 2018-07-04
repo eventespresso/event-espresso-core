@@ -2,8 +2,7 @@
 namespace EventEspresso\core\domain;
 
 use DomainException;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
+use EventEspresso\core\interfaces\InterminableInterface;
 
 /**
  * DomainInterface
@@ -12,7 +11,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Darren Ethier
  * @since   4.9.50
  */
-interface DomainInterface
+interface DomainInterface extends InterminableInterface
 {
 
     /**
@@ -47,4 +46,22 @@ interface DomainInterface
      * @throws DomainException
      */
     public function version();
+
+
+    /**
+     * @return string
+     */
+    public function distributionAssetsPath();
+
+
+    /**
+     * @return string
+     */
+    public function distributionAssetsUrl();
+
+
+    /**
+     * @return string
+     */
+    public function assetNamespace();
 }

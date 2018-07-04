@@ -1,16 +1,20 @@
 <?php
 
-use \EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;
+use EventEspresso\core\domain\Domain;
+use EventEspresso\core\domain\DomainFactory;
 use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
+use EventEspresso\core\domain\values\FilePath;
+use EventEspresso\core\domain\values\FullyQualifiedName;
+use EventEspresso\core\domain\values\Version;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidFilePathException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
-
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
 
 /**
  * EE_System
@@ -22,7 +26,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  */
 final class EE_System implements ResettableInterface
 {
-
 
     /**
      * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation.
@@ -69,7 +72,6 @@ final class EE_System implements ResettableInterface
      * option prefix for recording the activation history (like core's "espresso_db_update") of addons
      */
     const addon_activation_history_option_prefix = 'ee_addon_activation_history_';
-
 
     /**
      * @var EE_System $_instance
@@ -124,12 +126,11 @@ final class EE_System implements ResettableInterface
     private $request_type;
 
 
-
     /**
      * @singleton method used to instantiate class object
      * @param EE_Registry|null         $registry
      * @param LoaderInterface|null     $loader
-     * @param RequestInterface|null          $request
+     * @param RequestInterface|null    $request
      * @param EE_Maintenance_Mode|null $maintenance_mode
      * @return EE_System
      */
@@ -147,7 +148,6 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      * resets the instance and returns it
      *
@@ -156,15 +156,14 @@ final class EE_System implements ResettableInterface
     public static function reset()
     {
         self::$_instance->_req_type = null;
-        //make sure none of the old hooks are left hanging around
+        // make sure none of the old hooks are left hanging around
         remove_all_actions('AHEE__EE_System__perform_activations_upgrades_and_migrations');
-        //we need to reset the migration manager in order for it to detect DMSs properly
+        // we need to reset the migration manager in order for it to detect DMSs properly
         EE_Data_Migration_Manager::reset();
         self::instance()->detect_activations_or_upgrades();
         self::instance()->perform_activations_upgrades_and_migrations();
         return self::instance();
     }
-
 
 
     /**
@@ -174,7 +173,7 @@ final class EE_System implements ResettableInterface
      *
      * @param EE_Registry         $registry
      * @param LoaderInterface     $loader
-     * @param RequestInterface          $request
+     * @param RequestInterface    $request
      * @param EE_Maintenance_Mode $maintenance_mode
      */
     private function __construct(
@@ -183,9 +182,9 @@ final class EE_System implements ResettableInterface
         RequestInterface $request,
         EE_Maintenance_Mode $maintenance_mode
     ) {
-        $this->registry         = $registry;
-        $this->loader           = $loader;
-        $this->request          = $request;
+        $this->registry = $registry;
+        $this->loader = $loader;
+        $this->request = $request;
         $this->maintenance_mode = $maintenance_mode;
         do_action('AHEE__EE_System__construct__begin', $this);
         add_action(
@@ -235,8 +234,8 @@ final class EE_System implements ResettableInterface
             array($this, 'brew_espresso'),
             9
         );
-        //other housekeeping
-        //exclude EE critical pages from wp_list_pages
+        // other housekeeping
+        // exclude EE critical pages from wp_list_pages
         add_filter(
             'wp_list_pages_excludes',
             array($this, 'remove_pages_from_wp_list_pages'),
@@ -259,13 +258,11 @@ final class EE_System implements ResettableInterface
         $this->capabilities = $this->loader->getShared('EE_Capabilities');
         add_action(
             'AHEE__EE_Capabilities__init_caps__before_initialization',
-            function ()
-            {
+            function () {
                 LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
             }
         );
     }
-
 
 
     /**
@@ -292,7 +289,6 @@ final class EE_System implements ResettableInterface
             )
         );
     }
-
 
 
     /**
@@ -343,7 +339,9 @@ final class EE_System implements ResettableInterface
                     $addon_name,
                     $min_version_required
                 ),
-                __FILE__, __FUNCTION__ . "({$addon_name})", __LINE__
+                __FILE__,
+                __FUNCTION__ . "({$addon_name})",
+                __LINE__
             );
             EE_Error::get_notices(false, true);
         }
@@ -378,13 +376,12 @@ final class EE_System implements ResettableInterface
             'EE_AUTOMATED_UPCOMING_EVENT_NOTIFICATION_PLUGIN_FILE'
         );
         do_action('AHEE__EE_System__load_espresso_addons');
-        //if the WP API basic auth plugin isn't already loaded, load it now.
-        //We want it for mobile apps. Just include the entire plugin
-        //also, don't load the basic auth when a plugin is getting activated, because
-        //it could be the basic auth plugin, and it doesn't check if its methods are already defined
-        //and causes a fatal error
-        if (
-            $this->request->getRequestParam('activate') !== 'true'
+        // if the WP API basic auth plugin isn't already loaded, load it now.
+        // We want it for mobile apps. Just include the entire plugin
+        // also, don't load the basic auth when a plugin is getting activated, because
+        // it could be the basic auth plugin, and it doesn't check if its methods are already defined
+        // and causes a fatal error
+        if ($this->request->getRequestParam('activate') !== 'true'
             && ! function_exists('json_basic_auth_handler')
             && ! function_exists('json_basic_auth_error')
             && ! in_array(
@@ -399,7 +396,6 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      * detect_activations_or_upgrades
      * Checks for activation or upgrade of core first;
@@ -412,16 +408,15 @@ final class EE_System implements ResettableInterface
      */
     public function detect_activations_or_upgrades()
     {
-        //first off: let's make sure to handle core
+        // first off: let's make sure to handle core
         $this->detect_if_activation_or_upgrade();
         foreach ($this->registry->addons as $addon) {
             if ($addon instanceof EE_Addon) {
-                //detect teh request type for that addon
+                // detect teh request type for that addon
                 $addon->detect_activation_or_upgrade();
             }
         }
     }
-
 
 
     /**
@@ -437,8 +432,8 @@ final class EE_System implements ResettableInterface
         do_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin');
         // check if db has been updated, or if its a brand-new installation
         $espresso_db_update = $this->fix_espresso_db_upgrade_option();
-        $request_type       = $this->detect_req_type($espresso_db_update);
-        //EEH_Debug_Tools::printr( $request_type, '$request_type', __FILE__, __LINE__ );
+        $request_type = $this->detect_req_type($espresso_db_update);
+        // EEH_Debug_Tools::printr( $request_type, '$request_type', __FILE__, __LINE__ );
         switch ($request_type) {
             case EE_System::req_type_new_activation:
                 do_action('AHEE__EE_System__detect_if_activation_or_upgrade__new_activation');
@@ -450,14 +445,13 @@ final class EE_System implements ResettableInterface
                 break;
             case EE_System::req_type_upgrade:
                 do_action('AHEE__EE_System__detect_if_activation_or_upgrade__upgrade');
-                //migrations may be required now that we've upgraded
+                // migrations may be required now that we've upgraded
                 $this->maintenance_mode->set_maintenance_mode_if_db_old();
                 $this->_handle_core_version_change($espresso_db_update);
-                //				echo "done upgrade";die;
                 break;
             case EE_System::req_type_downgrade:
                 do_action('AHEE__EE_System__detect_if_activation_or_upgrade__downgrade');
-                //its possible migrations are no longer required
+                // its possible migrations are no longer required
                 $this->maintenance_mode->set_maintenance_mode_if_db_old();
                 $this->_handle_core_version_change($espresso_db_update);
                 break;
@@ -469,7 +463,6 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      * Updates the list of installed versions and sets hooks for
      * initializing the database later during the request
@@ -479,13 +472,12 @@ final class EE_System implements ResettableInterface
     private function _handle_core_version_change($espresso_db_update)
     {
         $this->update_list_of_installed_versions($espresso_db_update);
-        //get ready to verify the DB is ok (provided we aren't in maintenance mode, of course)
+        // get ready to verify the DB is ok (provided we aren't in maintenance mode, of course)
         add_action(
             'AHEE__EE_System__perform_activations_upgrades_and_migrations',
             array($this, 'initialize_db_if_no_migrations_required')
         );
     }
-
 
 
     /**
@@ -517,16 +509,16 @@ final class EE_System implements ResettableInterface
             }
         } else {
             $corrected_db_update = array();
-            //if IS an array, but is it an array where KEYS are version numbers, and values are arrays?
+            // if IS an array, but is it an array where KEYS are version numbers, and values are arrays?
             foreach ($espresso_db_update as $should_be_version_string => $should_be_array) {
                 if (is_int($should_be_version_string) && ! is_array($should_be_array)) {
-                    //the key is an int, and the value IS NOT an array
-                    //so it must be numerically-indexed, where values are versions installed...
-                    //fix it!
-                    $version_string                         = $should_be_array;
+                    // the key is an int, and the value IS NOT an array
+                    // so it must be numerically-indexed, where values are versions installed...
+                    // fix it!
+                    $version_string = $should_be_array;
                     $corrected_db_update[ $version_string ] = array('unknown-date');
                 } else {
-                    //ok it checks out
+                    // ok it checks out
                     $corrected_db_update[ $should_be_version_string ] = $should_be_array;
                 }
             }
@@ -536,7 +528,6 @@ final class EE_System implements ResettableInterface
         do_action('FHEE__EE_System__manage_fix_espresso_db_upgrade_option__complete', $espresso_db_update);
         return $espresso_db_update;
     }
-
 
 
     /**
@@ -556,9 +547,13 @@ final class EE_System implements ResettableInterface
     public function initialize_db_if_no_migrations_required($initialize_addons_too = false, $verify_schema = true)
     {
         $request_type = $this->detect_req_type();
-        //only initialize system if we're not in maintenance mode.
+        // only initialize system if we're not in maintenance mode.
         if ($this->maintenance_mode->level() !== EE_Maintenance_Mode::level_2_complete_maintenance) {
-            update_option('ee_flush_rewrite_rules', true);
+            /** @var EventEspresso\core\domain\services\custom_post_types\RewriteRules $rewrite_rules */
+            $rewrite_rules = $this->loader->getShared(
+                'EventEspresso\core\domain\services\custom_post_types\RewriteRules'
+            );
+            $rewrite_rules->flush();
             if ($verify_schema) {
                 EEH_Activation::initialize_db_and_folders();
             }
@@ -582,7 +577,6 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      * Initializes the db for all registered addons
      *
@@ -590,14 +584,13 @@ final class EE_System implements ResettableInterface
      */
     public function initialize_addons()
     {
-        //foreach registered addon, make sure its db is up-to-date too
+        // foreach registered addon, make sure its db is up-to-date too
         foreach ($this->registry->addons as $addon) {
             if ($addon instanceof EE_Addon) {
                 $addon->initialize_db_if_no_migrations_required();
             }
         }
     }
-
 
 
     /**
@@ -621,7 +614,6 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      * Detects if the current version indicated in the has existed in the list of
      * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side-effect)
@@ -636,19 +628,19 @@ final class EE_System implements ResettableInterface
     public function detect_req_type($espresso_db_update = null)
     {
         if ($this->_req_type === null) {
-            $espresso_db_update          = ! empty($espresso_db_update)
+            $espresso_db_update = ! empty($espresso_db_update)
                 ? $espresso_db_update
                 : $this->fix_espresso_db_upgrade_option();
-            $this->_req_type             = EE_System::detect_req_type_given_activation_history(
+            $this->_req_type = EE_System::detect_req_type_given_activation_history(
                 $espresso_db_update,
-                'ee_espresso_activation', espresso_version()
+                'ee_espresso_activation',
+                espresso_version()
             );
             $this->_major_version_change = $this->_detect_major_version_change($espresso_db_update);
             $this->request->setIsActivation($this->_req_type !== EE_System::req_type_normal);
         }
         return $this->_req_type;
     }
-
 
 
     /**
@@ -661,15 +653,14 @@ final class EE_System implements ResettableInterface
      */
     private function _detect_major_version_change($activation_history)
     {
-        $previous_version       = EE_System::_get_most_recently_active_version_from_activation_history($activation_history);
+        $previous_version = EE_System::_get_most_recently_active_version_from_activation_history($activation_history);
         $previous_version_parts = explode('.', $previous_version);
-        $current_version_parts  = explode('.', espresso_version());
+        $current_version_parts = explode('.', espresso_version());
         return isset($previous_version_parts[0], $previous_version_parts[1], $current_version_parts[0], $current_version_parts[1])
                && ($previous_version_parts[0] !== $current_version_parts[0]
                    || $previous_version_parts[1] !== $current_version_parts[1]
                );
     }
-
 
 
     /**
@@ -682,7 +673,6 @@ final class EE_System implements ResettableInterface
     {
         return $this->_major_version_change;
     }
-
 
 
     /**
@@ -706,10 +696,10 @@ final class EE_System implements ResettableInterface
     ) {
         $version_is_higher = self::_new_version_is_higher($activation_history_for_addon, $version_to_upgrade_to);
         if ($activation_history_for_addon) {
-            //it exists, so this isn't a completely new install
-            //check if this version already in that list of previously installed versions
+            // it exists, so this isn't a completely new install
+            // check if this version already in that list of previously installed versions
             if (! isset($activation_history_for_addon[ $version_to_upgrade_to ])) {
-                //it a version we haven't seen before
+                // it a version we haven't seen before
                 if ($version_is_higher === 1) {
                     $req_type = EE_System::req_type_upgrade;
                 } else {
@@ -722,32 +712,31 @@ final class EE_System implements ResettableInterface
                     if ($version_is_higher === -1) {
                         $req_type = EE_System::req_type_downgrade;
                     } elseif ($version_is_higher === 0) {
-                        //we've seen this version before, but it's an activation. must be a reactivation
+                        // we've seen this version before, but it's an activation. must be a reactivation
                         $req_type = EE_System::req_type_reactivation;
-                    } else {//$version_is_higher === 1
+                    } else {// $version_is_higher === 1
                         $req_type = EE_System::req_type_upgrade;
                     }
                     delete_option($activation_indicator_option_name);
                 } else {
-                    //we've seen this version before and the activation indicate doesn't show it was just activated
+                    // we've seen this version before and the activation indicate doesn't show it was just activated
                     if ($version_is_higher === -1) {
                         $req_type = EE_System::req_type_downgrade;
                     } elseif ($version_is_higher === 0) {
-                        //we've seen this version before and it's not an activation. its normal request
+                        // we've seen this version before and it's not an activation. its normal request
                         $req_type = EE_System::req_type_normal;
-                    } else {//$version_is_higher === 1
+                    } else {// $version_is_higher === 1
                         $req_type = EE_System::req_type_upgrade;
                     }
                 }
             }
         } else {
-            //brand new install
+            // brand new install
             $req_type = EE_System::req_type_new_activation;
             delete_option($activation_indicator_option_name);
         }
         return $req_type;
     }
-
 
 
     /**
@@ -764,12 +753,11 @@ final class EE_System implements ResettableInterface
      */
     private static function _new_version_is_higher($activation_history_for_addon, $version_to_upgrade_to)
     {
-        //find the most recently-activated version
+        // find the most recently-activated version
         $most_recently_active_version =
             EE_System::_get_most_recently_active_version_from_activation_history($activation_history_for_addon);
         return version_compare($version_to_upgrade_to, $most_recently_active_version);
     }
-
 
 
     /**
@@ -783,11 +771,11 @@ final class EE_System implements ResettableInterface
     private static function _get_most_recently_active_version_from_activation_history($activation_history)
     {
         $most_recently_active_version_activation = '1970-01-01 00:00:00';
-        $most_recently_active_version            = '0.0.0.dev.000';
+        $most_recently_active_version = '0.0.0.dev.000';
         if (is_array($activation_history)) {
             foreach ($activation_history as $version => $times_activated) {
-                //check there is a record of when this version was activated. Otherwise,
-                //mark it as unknown
+                // check there is a record of when this version was activated. Otherwise,
+                // mark it as unknown
                 if (! $times_activated) {
                     $times_activated = array('unknown-date');
                 }
@@ -798,7 +786,7 @@ final class EE_System implements ResettableInterface
                     if ($an_activation !== 'unknown-date'
                         && $an_activation
                            > $most_recently_active_version_activation) {
-                        $most_recently_active_version            = $version;
+                        $most_recently_active_version = $version;
                         $most_recently_active_version_activation = $an_activation === 'unknown-date'
                             ? '1970-01-01 00:00:00'
                             : $an_activation;
@@ -810,7 +798,6 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      * This redirects to the about EE page after activation
      *
@@ -819,9 +806,8 @@ final class EE_System implements ResettableInterface
     public function redirect_to_about_ee()
     {
         $notices = EE_Error::get_notices(false);
-        //if current user is an admin and it's not an ajax or rest request
-        if (
-            ! isset($notices['errors'])
+        // if current user is an admin and it's not an ajax or rest request
+        if (! isset($notices['errors'])
             && $this->request->isAdmin()
             && apply_filters(
                 'FHEE__EE_System__redirect_to_about_ee__do_redirect',
@@ -842,7 +828,6 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      * load_core_configuration
      * this is hooked into 'AHEE__EE_Bootstrap__load_core_configuration'
@@ -855,7 +840,7 @@ final class EE_System implements ResettableInterface
     {
         do_action('AHEE__EE_System__load_core_configuration__begin', $this);
         $this->loader->getShared('EE_Load_Textdomain');
-        //load textdomain
+        // load textdomain
         EE_Load_Textdomain::load_textdomain();
         // load and setup EE_Config and EE_Network_Config
         $config = $this->loader->getShared('EE_Config');
@@ -873,11 +858,13 @@ final class EE_System implements ResettableInterface
         }
         // get model names
         $this->_parse_model_names();
-        //load caf stuff a chance to play during the activation process too.
+        // load caf stuff a chance to play during the activation process too.
         $this->_maybe_brew_regular();
+        // configure custom post type definitions
+        $this->loader->getShared('EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions');
+        $this->loader->getShared('EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions');
         do_action('AHEE__EE_System__load_core_configuration__complete', $this);
     }
-
 
 
     /**
@@ -888,21 +875,21 @@ final class EE_System implements ResettableInterface
      */
     private function _parse_model_names()
     {
-        //get all the files in the EE_MODELS folder that end in .model.php
-        $models                 = glob(EE_MODELS . '*.model.php');
-        $model_names            = array();
+        // get all the files in the EE_MODELS folder that end in .model.php
+        $models = glob(EE_MODELS . '*.model.php');
+        $model_names = array();
         $non_abstract_db_models = array();
         foreach ($models as $model) {
             // get model classname
-            $classname       = EEH_File::get_classname_from_filepath_with_standard_filename($model);
-            $short_name      = str_replace('EEM_', '', $classname);
+            $classname = EEH_File::get_classname_from_filepath_with_standard_filename($model);
+            $short_name = str_replace('EEM_', '', $classname);
             $reflectionClass = new ReflectionClass($classname);
             if ($reflectionClass->isSubclassOf('EEM_Base') && ! $reflectionClass->isAbstract()) {
                 $non_abstract_db_models[ $short_name ] = $classname;
             }
             $model_names[ $short_name ] = $classname;
         }
-        $this->registry->models                 = apply_filters('FHEE__EE_System__parse_model_names', $model_names);
+        $this->registry->models = apply_filters('FHEE__EE_System__parse_model_names', $model_names);
         $this->registry->non_abstract_db_models = apply_filters(
             'FHEE__EE_System__parse_implemented_model_names',
             $non_abstract_db_models
@@ -910,20 +897,34 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks
      * that need to be setup before our EE_System launches.
      *
      * @return void
+     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidClassException
+     * @throws InvalidFilePathException
      */
     private function _maybe_brew_regular()
     {
-        if ((! defined('EE_DECAF') || EE_DECAF !== true) && is_readable(EE_CAFF_PATH . 'brewing_regular.php')) {
+        /** @var Domain $domain */
+        $domain = DomainFactory::getShared(
+            new FullyQualifiedName(
+                'EventEspresso\core\domain\Domain'
+            ),
+            array(
+                new FilePath(EVENT_ESPRESSO_MAIN_FILE),
+                Version::fromString(espresso_version()),
+            )
+        );
+        if ($domain->isCaffeinated()) {
             require_once EE_CAFF_PATH . 'brewing_regular.php';
         }
     }
-
 
 
     /**
@@ -938,7 +939,7 @@ final class EE_System implements ResettableInterface
      */
     public function register_shortcodes_modules_and_widgets()
     {
-        if ($this->request->isFrontend() || $this->request->isIframe()) {
+        if ($this->request->isFrontend() || $this->request->isIframe() || $this->request->isAjax()) {
             try {
                 // load, register, and add shortcodes the new way
                 $this->loader->getShared(
@@ -960,7 +961,6 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      * _incompatible_addon_error
      *
@@ -980,10 +980,12 @@ final class EE_System implements ResettableInterface
             );
             $msg .= '<ul>';
             foreach ($class_names as $class_name) {
-                $msg .= '<li><b>Event Espresso - ' . str_replace(
-                        array('EE_', 'EEM_', 'EED_', 'EES_', 'EEW_'), '',
-                        $class_name
-                    ) . '</b></li>';
+                $msg .= '<li><b>Event Espresso - '
+                        . str_replace(
+                            array('EE_', 'EEM_', 'EED_', 'EES_', 'EEW_'),
+                            '',
+                            $class_name
+                        ) . '</b></li>';
             }
             $msg .= '</ul>';
             $msg .= __(
@@ -997,7 +999,6 @@ final class EE_System implements ResettableInterface
             }
         }
     }
-
 
 
     /**
@@ -1021,12 +1022,11 @@ final class EE_System implements ResettableInterface
         add_action('init', array($this, 'initialize_last'), 100);
         if (is_admin() && apply_filters('FHEE__EE_System__brew_espresso__load_pue', true)) {
             // pew pew pew
-            $this->loader->getShared('EE_PUE');
+            $this->loader->getShared('EventEspresso\core\services\licensing\LicenseService');
             do_action('AHEE__EE_System__brew_espresso__after_pue_init');
         }
         do_action('AHEE__EE_System__brew_espresso__complete', $this);
     }
-
 
 
     /**
@@ -1040,11 +1040,11 @@ final class EE_System implements ResettableInterface
     {
         $this->_deactivate_incompatible_addons();
         do_action('AHEE__EE_System__set_hooks_for_core');
-        //caps need to be initialized on every request so that capability maps are set.
-        //@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
+        $this->loader->getShared('EventEspresso\core\domain\values\session\SessionLifespan');
+        // caps need to be initialized on every request so that capability maps are set.
+        // @see https://events.codebasehq.com/projects/event-espresso/tickets/8674
         $this->registry->CAP->init_caps();
     }
-
 
 
     /**
@@ -1068,7 +1068,6 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      *    perform_activations_upgrades_and_migrations
      *
@@ -1077,29 +1076,36 @@ final class EE_System implements ResettableInterface
      */
     public function perform_activations_upgrades_and_migrations()
     {
-        //first check if we had previously attempted to setup EE's directories but failed
-        if ($this->request->isActivation() && EEH_Activation::upload_directories_incomplete()) {
-            EEH_Activation::create_upload_directories();
-        }
         do_action('AHEE__EE_System__perform_activations_upgrades_and_migrations');
     }
 
 
-
     /**
-     *    load_CPTs_and_session
-     *
-     * @access public
-     * @return    void
+     * @return void
+     * @throws DomainException
      */
     public function load_CPTs_and_session()
     {
         do_action('AHEE__EE_System__load_CPTs_and_session__start');
-        // register Custom Post Types
+        /** @var EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies $register_custom_taxonomies */
+        $register_custom_taxonomies = $this->loader->getShared(
+            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies'
+        );
+        $register_custom_taxonomies->registerCustomTaxonomies();
+        /** @var EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes $register_custom_post_types */
+        $register_custom_post_types = $this->loader->getShared(
+            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes'
+        );
+        $register_custom_post_types->registerCustomPostTypes();
+        /** @var EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomyTerms $register_custom_taxonomy_terms */
+        $register_custom_taxonomy_terms = $this->loader->getShared(
+            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomyTerms'
+        );
+        $register_custom_taxonomy_terms->registerCustomTaxonomyTerms();
+        // load legacy Custom Post Types and Taxonomies
         $this->loader->getShared('EE_Register_CPTs');
         do_action('AHEE__EE_System__load_CPTs_and_session__complete');
     }
-
 
 
     /**
@@ -1115,8 +1121,7 @@ final class EE_System implements ResettableInterface
     {
         do_action('AHEE__EE_System__load_controllers__start');
         // let's get it started
-        if (
-            ! $this->maintenance_mode->level()
+        if (! $this->maintenance_mode->level()
             && ($this->request->isFrontend() || $this->request->isFrontAjax())
         ) {
             do_action('AHEE__EE_System__load_controllers__load_front_controllers');
@@ -1129,37 +1134,44 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      * core_loaded_and_ready
      * all of the basic EE core should be loaded at this point and available regardless of M-Mode
      *
      * @access public
      * @return void
+     * @throws Exception
      */
     public function core_loaded_and_ready()
     {
-        if (
-            $this->request->isAdmin()
+        if ($this->request->isAdmin() || $this->request->isFrontend() || $this->request->isIframe()) {
+            try {
+                $this->loader->getShared('EventEspresso\core\services\assets\Registry');
+                $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
+            } catch (Exception $exception) {
+                new ExceptionStackTraceDisplay($exception);
+            }
+        }
+        if ($this->request->isAdmin()
             || $this->request->isEeAjax()
             || $this->request->isFrontend()
         ) {
             $this->loader->getShared('EE_Session');
         }
+        // integrate WP_Query with the EE models
+        $this->loader->getShared('EE_CPT_Strategy');
         do_action('AHEE__EE_System__core_loaded_and_ready');
         // load_espresso_template_tags
-        if (
-            is_readable(EE_PUBLIC . 'template_tags.php')
-            && ($this->request->isFrontend() || $this->request->isIframe() || $this->request->isFeed())
+        if (($this->request->isFrontend()
+             || $this->request->isIframe()
+             || $this->request->isFeed()
+             ||  $this->request->isAjax()
+            ) && is_readable(EE_PUBLIC . 'template_tags.php')
         ) {
             require_once EE_PUBLIC . 'template_tags.php';
         }
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
-        if ($this->request->isAdmin() || $this->request->isFrontend() || $this->request->isIframe()) {
-            $this->loader->getShared('EventEspresso\core\services\assets\Registry');
-        }
     }
-
 
 
     /**
@@ -1175,7 +1187,6 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      * initialize_last
      * this is run really late during the WP init hook point, and ensures that mostly everything else that needs to
@@ -1187,9 +1198,18 @@ final class EE_System implements ResettableInterface
     public function initialize_last()
     {
         do_action('AHEE__EE_System__initialize_last');
+        /** @var EventEspresso\core\domain\services\custom_post_types\RewriteRules $rewrite_rules */
+        $rewrite_rules = $this->loader->getShared(
+            'EventEspresso\core\domain\services\custom_post_types\RewriteRules'
+        );
+        $rewrite_rules->flushRewriteRules();
         add_action('admin_bar_init', array($this, 'addEspressoToolbar'));
+        if (($this->request->isAjax() || $this->request->isAdmin())
+            && $this->maintenance_mode->models_can_query()) {
+            $this->loader->getShared('EventEspresso\core\services\privacy\export\PersonalDataExporterManager');
+            $this->loader->getShared('EventEspresso\core\services\privacy\erasure\PersonalDataEraserManager');
+        }
     }
-
 
 
     /**
@@ -1203,7 +1223,6 @@ final class EE_System implements ResettableInterface
             array($this->registry->CAP)
         );
     }
-
 
 
     /**
@@ -1234,7 +1253,6 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      *    extra_nocache_headers
      *
@@ -1252,7 +1270,6 @@ final class EE_System implements ResettableInterface
     }
 
 
-
     /**
      *    nocache_headers
      *
@@ -1263,7 +1280,6 @@ final class EE_System implements ResettableInterface
     {
         nocache_headers();
     }
-
 
 
     /**
@@ -1277,9 +1293,4 @@ final class EE_System implements ResettableInterface
     {
         return array_merge($exclude_array, $this->registry->CFG->core->get_critical_pages_array());
     }
-
-
-
 }
-// End of file EE_System.core.php
-// Location: /core/EE_System.core.php

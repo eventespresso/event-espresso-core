@@ -1,21 +1,21 @@
 <?php
 // define versions
 define('EVENT_ESPRESSO_VERSION', espresso_version());
-define('EE_MIN_WP_VER_REQUIRED', '4.2');
+define('EE_MIN_WP_VER_REQUIRED', '4.5');
 define('EE_MIN_WP_VER_RECOMMENDED', '4.9');
 define('EE_MIN_PHP_VER_RECOMMENDED', '5.6.32');
 define('EE_SUPPORT_EMAIL', 'support@eventespresso.com');
-//used to be DIRECTORY_SEPARATOR, but that caused issues on windows
-if ( ! defined('DS')) {
+// used to be DIRECTORY_SEPARATOR, but that caused issues on windows
+if (! defined('DS')) {
     define('DS', '/');
 }
-if ( ! defined('PS')) {
+if (! defined('PS')) {
     define('PS', PATH_SEPARATOR);
 }
-if ( ! defined('SP')) {
+if (! defined('SP')) {
     define('SP', ' ');
 }
-if ( ! defined('EENL')) {
+if (! defined('EENL')) {
     define('EENL', "\n");
 }
 // define the plugin directory and URL
@@ -68,11 +68,11 @@ define('EVENT_ESPRESSO_GATEWAY_URL', $uploads['baseurl'] . DS . 'espresso' . DS 
 // languages folder/path
 define('EE_LANGUAGES_SAFE_LOC', '..' . DS . 'uploads' . DS . 'espresso' . DS . 'languages' . DS);
 define('EE_LANGUAGES_SAFE_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'languages' . DS);
-//check for DOMPDF fonts in uploads
+// check for DOMPDF fonts in uploads
 if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'fonts' . DS)) {
     define('DOMPDF_FONT_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'fonts' . DS);
 }
-//ajax constants
+// ajax constants
 define(
     'EE_FRONT_AJAX',
     isset($_REQUEST['ee_front_ajax']) || isset($_REQUEST['data']['ee_front_ajax'])
@@ -81,16 +81,13 @@ define(
     'EE_ADMIN_AJAX',
     isset($_REQUEST['ee_admin_ajax']) || isset($_REQUEST['data']['ee_admin_ajax'])
 );
-//just a handy constant occasionally needed for finding values representing infinity in the DB
-//you're better to use this than its straight value (currently -1) in case you ever
-//want to change its default value! or find when -1 means infinity
+// just a handy constant occasionally needed for finding values representing infinity in the DB
+// you're better to use this than its straight value (currently -1) in case you ever
+// want to change its default value! or find when -1 means infinity
 define('EE_INF_IN_DB', -1);
-define('EE_INF', INF > (float)PHP_INT_MAX ? INF : PHP_INT_MAX);
+define('EE_INF', INF > (float) PHP_INT_MAX ? INF : PHP_INT_MAX);
 define('EE_DEBUG', false);
 // for older WP versions
-if ( ! defined('MONTH_IN_SECONDS')) {
+if (! defined('MONTH_IN_SECONDS')) {
     define('MONTH_IN_SECONDS', DAY_IN_SECONDS * 30);
 }
-
-// End of file espresso_definitions.php
-// Location: ${NAMESPACE}/espresso_definitions.php

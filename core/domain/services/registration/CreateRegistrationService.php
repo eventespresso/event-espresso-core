@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\services\registration;
 
 use EE_Error;
@@ -16,12 +17,6 @@ use EventEspresso\core\domain\services\DomainService;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use OutOfRangeException;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Class CreateRegistrationService
  * Description
@@ -34,19 +29,19 @@ class CreateRegistrationService extends DomainService
 {
 
 
-	/**
-	 * @param EE_Event       $event
-	 * @param EE_Transaction $transaction
-	 * @param EE_Ticket      $ticket
-	 * @param EE_Line_Item   $ticket_line_item
-	 * @param                 $reg_count
-	 * @param                 $reg_group_size
+    /**
+     * @param EE_Event        $event
+     * @param EE_Transaction  $transaction
+     * @param EE_Ticket       $ticket
+     * @param EE_Line_Item    $ticket_line_item
+     * @param                 $reg_count
+     * @param                 $reg_group_size
      * @param string          $reg_status
      * @return EE_Registration
-	 * @throws OutOfRangeException
-	 * @throws EE_Error
-	 * @throws UnexpectedEntityException
-	 */
+     * @throws OutOfRangeException
+     * @throws EE_Error
+     * @throws UnexpectedEntityException
+     */
     public function create(
         EE_Event $event,
         EE_Transaction $transaction,
@@ -75,14 +70,14 @@ class CreateRegistrationService extends DomainService
                 'REG_code'        => $reg_code,
             )
         );
-        if ( ! $registration instanceof EE_Registration) {
+        if (! $registration instanceof EE_Registration) {
             throw new UnexpectedEntityException($registration, 'EE_Registration');
         }
         // save registration so that we have an ID
         $registration->save();
         // track reservation on reg but don't adjust ticket and datetime reserved counts
         // because that is done as soon as the tickets are added/removed from the cart
-        $registration->reserve_ticket();
+        $registration->reserve_ticket(false, 'CreateRegistrationService:' . __LINE__);
         $registration->_add_relation_to($event, 'Event', array(), $event->ID());
         $registration->_add_relation_to($ticket, 'Ticket', array(), $ticket->ID());
         $transaction->_add_relation_to($registration, 'Registration', array(), $registration->ID());
@@ -91,15 +86,14 @@ class CreateRegistrationService extends DomainService
     }
 
 
-
-	/**
-	 * @param EE_Transaction $transaction
-	 * @param EE_Ticket      $ticket
-	 * @param EE_Line_Item   $ticket_line_item
-	 * @return float
-	 * @throws EE_Error
-	 * @throws OutOfRangeException
-	 */
+    /**
+     * @param EE_Transaction $transaction
+     * @param EE_Ticket      $ticket
+     * @param EE_Line_Item   $ticket_line_item
+     * @return float
+     * @throws EE_Error
+     * @throws OutOfRangeException
+     */
     protected function resolveFinalPrice(
         EE_Transaction $transaction,
         EE_Ticket $ticket,
@@ -110,14 +104,13 @@ class CreateRegistrationService extends DomainService
             $ticket_line_item
         );
         $final_price = $final_price !== null ? $final_price : $ticket->get_ticket_total_with_taxes();
-        return (float)$final_price;
+        return (float) $final_price;
     }
-
 
 
     /**
      * @param  EE_Registration[] $registrations
-     * @param  boolean            $update_existing_registrations
+     * @param  boolean           $update_existing_registrations
      * @return int
      * @throws EE_Error
      */
@@ -134,8 +127,4 @@ class CreateRegistrationService extends DomainService
         }
         return $new_reg_count;
     }
-
-
 }
-// End of file CreateRegistrationService.php
-// Location: /CreateRegistrationService.php

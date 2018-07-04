@@ -2,10 +2,6 @@
 
 use EventEspresso\core\services\request\middleware\RecommendedVersions;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
-
 /**
  * Class EE_Recommended_Versions
  * checks required and recommended versions for both WP and PHP
@@ -23,8 +19,8 @@ class EE_Recommended_Versions extends EE_Middleware
 
     /**
      * @deprecated
-     * @param EE_Request $request
-     * @param EE_Response   $response
+     * @param EE_Request  $request
+     * @param EE_Response $response
      * @return EE_Response
      */
     public function handle_request(EE_Request $request, EE_Response $response)
@@ -72,7 +68,6 @@ class EE_Recommended_Versions extends EE_Middleware
     }
 
 
-
     /**
      * @deprecated
      * @return void
@@ -93,10 +88,4 @@ class EE_Recommended_Versions extends EE_Middleware
             '4.9.52'
         );
     }
-
-
-
-
 }
-// End of file EE_Recommended_Versions.core.php
-// Location: /EE_Recommended_Versions.core.php

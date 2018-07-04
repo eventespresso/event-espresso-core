@@ -1,7 +1,6 @@
 <?php
-namespace EventEspresso\core\domain\services\contexts;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
+namespace EventEspresso\core\domain\services\contexts;
 
 /**
  * RequestTypeContextCheckerInterface
@@ -39,6 +38,7 @@ interface RequestTypeContextCheckerInterface
 
     /**
      * true if the current request is for the admin AND is being made via AJAX
+     * and the ajax request contains the request parameter "ee_admin_ajax"
      *
      * @return bool
      */

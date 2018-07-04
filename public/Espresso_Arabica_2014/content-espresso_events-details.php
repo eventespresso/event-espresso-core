@@ -18,8 +18,8 @@ global $post;
 <?php endif;
 	$event_phone = espresso_event_phone( $post->ID, FALSE );
 	if ( $event_phone != '' ) : ?>
-	<p>
-		<span class="small-text"><strong><?php _e( 'Event Phone:', 'event_espresso' ); ?> </strong></span> <?php echo $event_phone; ?>
+	<p class="event-phone">
+		<span class="small-text"><strong><?php esc_html_e( 'Event Phone:', 'event_espresso' ); ?> </strong></span> <?php echo $event_phone; ?>
 	</p>
 <?php endif;  ?>
 <?php

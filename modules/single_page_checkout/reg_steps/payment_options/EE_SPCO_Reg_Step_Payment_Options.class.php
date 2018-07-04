@@ -1,8 +1,5 @@
 <?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
-
-
 /**
  * Class EE_SPCO_Reg_Step_Payment_Options
  * Description
@@ -130,10 +127,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      */
     public function __construct(EE_Checkout $checkout)
     {
-        $this->_slug     = 'payment_options';
-        $this->_name     = esc_html__('Payment Options', 'event_espresso');
+        $this->_slug = 'payment_options';
+        $this->_name = esc_html__('Payment Options', 'event_espresso');
         $this->_template = SPCO_REG_STEPS_PATH . $this->_slug . DS . 'payment_options_main.template.php';
-        $this->checkout  = $checkout;
+        $this->checkout = $checkout;
         $this->_reset_success_message();
         $this->set_instructions(
             esc_html__(
@@ -187,7 +184,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      */
     public function translate_js_strings()
     {
-        EE_Registry::$i18n_js_strings['no_payment_method']      = esc_html__(
+        EE_Registry::$i18n_js_strings['no_payment_method'] = esc_html__(
             'Please select a method of payment in order to continue.',
             'event_espresso'
         );
@@ -195,7 +192,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             'A valid method of payment could not be determined. Please refresh the page and try again.',
             'event_espresso'
         );
-        EE_Registry::$i18n_js_strings['forwarding_to_offsite']  = esc_html__(
+        EE_Registry::$i18n_js_strings['forwarding_to_offsite'] = esc_html__(
             'Forwarding to Secure Payment Provider.',
             'event_espresso'
         );
@@ -214,11 +211,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     public function enqueue_styles_and_scripts()
     {
         $transaction = $this->checkout->transaction;
-        //if the transaction isn't set or nothing is owed on it, don't enqueue any JS
+        // if the transaction isn't set or nothing is owed on it, don't enqueue any JS
         if (! $transaction instanceof EE_Transaction || EEH_Money::compare_floats($transaction->remaining(), 0)) {
             return;
         }
-        foreach (EEM_Payment_Method::instance()->get_all_for_transaction($transaction, EEM_Payment_Method::scope_cart) as $payment_method) {
+        foreach (EEM_Payment_Method::instance()->get_all_for_transaction(
+            $transaction,
+            EEM_Payment_Method::scope_cart
+        ) as $payment_method) {
             $type_obj = $payment_method->type_obj();
             if ($type_obj instanceof EE_PMT_Base) {
                 $billing_form = $type_obj->generate_new_billing_form($transaction);
@@ -244,10 +244,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     {
         // TODO: if /when we implement donations, then this will need overriding
         if (// don't need payment options for:
-            // 	registrations made via the admin
-            // 	completed transactions
-            // 	overpaid transactions
-            // 	$ 0.00 transactions (no payment required)
+            // registrations made via the admin
+            // completed transactions
+            // overpaid transactions
+            // $ 0.00 transactions(no payment required)
             ! $this->checkout->payment_required()
             // but do NOT remove if current action being called belongs to this reg step
             && ! is_callable(array($this, $this->checkout->action))
@@ -259,7 +259,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             }
             $this->checkout->remove_reg_step($this->_slug);
             // DEBUG LOG
-            //$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
+            // $this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
             return false;
         }
         // load EEM_Payment_Method
@@ -289,14 +289,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         $this->_reset_selected_method_of_payment();
         // set some defaults
         $this->checkout->selected_method_of_payment = 'payments_closed';
-        $registrations_requiring_payment            = array();
-        $registrations_for_free_events              = array();
-        $registrations_requiring_pre_approval       = array();
-        $sold_out_events                            = array();
-        $insufficient_spaces_available              = array();
-        $no_payment_required                        = true;
+        $registrations_requiring_payment = array();
+        $registrations_for_free_events = array();
+        $registrations_requiring_pre_approval = array();
+        $sold_out_events = array();
+        $insufficient_spaces_available = array();
+        $no_payment_required = true;
         // loop thru registrations to gather info
-        $registrations         = $this->checkout->transaction->registrations($this->checkout->reg_cache_where_params);
+        $registrations = $this->checkout->transaction->registrations($this->checkout->reg_cache_where_params);
         $ejected_registrations = EE_SPCO_Reg_Step_Payment_Options::find_registrations_that_lost_their_space(
             $registrations,
             $this->checkout->revisit
@@ -315,7 +315,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             // event requires admin approval
             if ($registration->status_ID() === EEM_Registration::status_id_not_approved) {
                 // add event to list of events with pre-approval reg status
-                $registrations_requiring_pre_approval[$REG_ID] = $registration;
+                $registrations_requiring_pre_approval[ $REG_ID ] = $registration;
                 do_action(
                     'AHEE__EE_SPCO_Reg_Step_Payment_Options__generate_reg_form__event_requires_pre_approval',
                     $registration->event(),
@@ -331,7 +331,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 )
             ) {
                 // add event to list of events that are sold out
-                $sold_out_events[$registration->event()->ID()] = $registration->event();
+                $sold_out_events[ $registration->event()->ID() ] = $registration->event();
                 do_action(
                     'AHEE__EE_SPCO_Reg_Step_Payment_Options__generate_reg_form__sold_out_event',
                     $registration->event(),
@@ -341,17 +341,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             }
             // are they allowed to pay now and is there monies owing?
             if ($registration->owes_monies_and_can_pay()) {
-                $registrations_requiring_payment[$REG_ID] = $registration;
+                $registrations_requiring_payment[ $REG_ID ] = $registration;
                 do_action(
                     'AHEE__EE_SPCO_Reg_Step_Payment_Options__generate_reg_form__event_requires_payment',
                     $registration->event(),
                     $this
                 );
             } elseif (! $this->checkout->revisit
-                && $registration->status_ID() !== EEM_Registration::status_id_not_approved
-                && $registration->ticket()->is_free()
+                      && $registration->status_ID() !== EEM_Registration::status_id_not_approved
+                      && $registration->ticket()->is_free()
             ) {
-                $registrations_for_free_events[$registration->event()->ID()] = $registration;
+                $registrations_for_free_events[ $registration->event()->ID() ] = $registration;
             }
         }
         $subsections = array();
@@ -393,7 +393,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                         array('registrations' => $registrations)
                     )
                 );
-                $this->checkout->amount_owing   = $filtered_line_item_tree->total();
+                $this->checkout->amount_owing = $filtered_line_item_tree->total();
                 $this->_apply_registration_payments_to_amount_owing($registrations);
             }
             $no_payment_required = false;
@@ -403,7 +403,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         $this->_save_selected_method_of_payment();
 
         $subsections['default_hidden_inputs'] = $this->reg_step_hidden_inputs();
-        $subsections['extra_hidden_inputs']   = $this->_extra_hidden_inputs($no_payment_required);
+        $subsections['extra_hidden_inputs'] = $this->_extra_hidden_inputs($no_payment_required);
 
         return new EE_Form_Section_Proper(
             array(
@@ -483,8 +483,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         );
         foreach ($registrations as $REG_ID => $registration) {
             // has this registration lost it's space ?
-            if (isset($ejected_registrations[$REG_ID])) {
-                unset($registrations[$REG_ID]);
+            if (isset($ejected_registrations[ $REG_ID ])) {
+                unset($registrations[ $REG_ID ]);
                 continue;
             }
         }
@@ -534,24 +534,24 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             }
             $EVT_ID = $registration->event_ID();
             $ticket = $registration->ticket();
-            if (! isset($tickets_remaining[$ticket->ID()])) {
-                $tickets_remaining[$ticket->ID()] = $ticket->remaining();
+            if (! isset($tickets_remaining[ $ticket->ID() ])) {
+                $tickets_remaining[ $ticket->ID() ] = $ticket->remaining();
             }
-            if ($tickets_remaining[$ticket->ID()] > 0) {
-                if (! isset($event_reg_count[$EVT_ID])) {
-                    $event_reg_count[$EVT_ID] = 0;
+            if ($tickets_remaining[ $ticket->ID() ] > 0) {
+                if (! isset($event_reg_count[ $EVT_ID ])) {
+                    $event_reg_count[ $EVT_ID ] = 0;
                 }
-                $event_reg_count[$EVT_ID]++;
-                if (! isset($event_spaces_remaining[$EVT_ID])) {
-                    $event_spaces_remaining[$EVT_ID] = $registration->event()->spaces_remaining_for_sale();
+                $event_reg_count[ $EVT_ID ]++;
+                if (! isset($event_spaces_remaining[ $EVT_ID ])) {
+                    $event_spaces_remaining[ $EVT_ID ] = $registration->event()->spaces_remaining_for_sale();
                 }
             }
             if ($revisit
-                && ($tickets_remaining[$ticket->ID()] === 0
-                    || $event_reg_count[$EVT_ID] > $event_spaces_remaining[$EVT_ID]
+                && ($tickets_remaining[ $ticket->ID() ] === 0
+                    || $event_reg_count[ $EVT_ID ] > $event_spaces_remaining[ $EVT_ID ]
                 )
             ) {
-                $ejected_registrations[$REG_ID] = $registration->event();
+                $ejected_registrations[ $REG_ID ] = $registration->event();
                 if ($registration->status_ID() !== EEM_Registration::status_id_wait_list) {
                     /** @type EE_Registration_Processor $registration_processor */
                     $registration_processor = EE_Registry::instance()->load_class('Registration_Processor');
@@ -607,7 +607,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     {
         // set some defaults
         $this->checkout->selected_method_of_payment = 'events_sold_out';
-        $sold_out_events                            = '';
+        $sold_out_events = '';
         foreach ($sold_out_events_array as $sold_out_event) {
             $sold_out_events .= EEH_HTML::li(
                 EEH_HTML::span(
@@ -663,7 +663,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     {
         // set some defaults
         $this->checkout->selected_method_of_payment = 'invoice';
-        $insufficient_space_events                  = '';
+        $insufficient_space_events = '';
         foreach ($insufficient_spaces_events_array as $event) {
             if ($event instanceof EE_Event) {
                 $insufficient_space_events .= EEH_HTML::li(
@@ -716,7 +716,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         $events_requiring_pre_approval = '';
         foreach ($registrations_requiring_pre_approval as $registration) {
             if ($registration instanceof EE_Registration && $registration->event() instanceof EE_Event) {
-                $events_requiring_pre_approval[$registration->event()->ID()] = EEH_HTML::li(
+                $events_requiring_pre_approval[ $registration->event()->ID() ] = EEH_HTML::li(
                     EEH_HTML::span(
                         '',
                         '',
@@ -924,8 +924,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             : sanitize_text_field(EE_Registry::instance()->REQ->get('reset_payment_method', false));
         if ($reset_payment_method) {
             $this->checkout->selected_method_of_payment = null;
-            $this->checkout->payment_method             = null;
-            $this->checkout->billing_form               = null;
+            $this->checkout->payment_method = null;
+            $this->checkout->billing_form = null;
             $this->_save_selected_method_of_payment();
         }
     }
@@ -987,7 +987,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             );
         }
         // switch up header depending on number of available payment methods
-        $payment_method_header     = count($this->checkout->available_payment_methods) > 1
+        $payment_method_header = count($this->checkout->available_payment_methods) > 1
             ? apply_filters(
                 'FHEE__registration_page_payment_options__method_of_payment_hdr',
                 esc_html__('Please Select Your Method of Payment', 'event_espresso')
@@ -1004,7 +1004,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         );
         // the list of actual payment methods ( invoice, paypal, etc ) in a  ( slug => HTML )  format
         $available_payment_method_options = array();
-        $default_payment_method_option    = array();
+        $default_payment_method_option = array();
         // additional instructions to be displayed and hidden below payment methods (adding a clearing div to start)
         $payment_methods_billing_info = array(
             new EE_Form_Section_HTML(
@@ -1028,11 +1028,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 ) {
                     $this->checkout->selected_method_of_payment = $payment_method->slug();
                     $this->_save_selected_method_of_payment();
-                    $default_payment_method_option[$payment_method->slug()] = $payment_method_button;
+                    $default_payment_method_option[ $payment_method->slug() ] = $payment_method_button;
                 } else {
-                    $available_payment_method_options[$payment_method->slug()] = $payment_method_button;
+                    $available_payment_method_options[ $payment_method->slug() ] = $payment_method_button;
                 }
-                $payment_methods_billing_info[$payment_method->slug() . '-info'] = $this->_payment_method_billing_info(
+                $payment_methods_billing_info[ $payment_method->slug(
+                ) . '-info' ] = $this->_payment_method_billing_info(
                     $payment_method
                 );
             }
@@ -1044,7 +1045,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         $available_payment_methods['available_payment_methods'] = $this->_available_payment_method_inputs(
             $available_payment_method_options
         );
-        $available_payment_methods                              += $payment_methods_billing_info;
+        $available_payment_methods += $payment_methods_billing_info;
         // build the available payment methods form
         return new EE_Form_Section_Proper(
             array(
@@ -1083,7 +1084,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         );
         foreach ($payment_methods as $payment_method) {
             if ($payment_method instanceof EE_Payment_Method) {
-                $available_payment_methods[$payment_method->slug()] = $payment_method;
+                $available_payment_methods[ $payment_method->slug() ] = $payment_method;
             }
         }
         return $available_payment_methods;
@@ -1138,7 +1139,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             ? true
             : false;
         // generate the billing form for payment method
-        $billing_form                 = $currently_selected
+        $billing_form = $currently_selected
             ? $this->_get_billing_form_for_payment_method($payment_method)
             : new EE_Form_Section_HTML();
         $this->checkout->billing_form = $currently_selected
@@ -1207,7 +1208,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     {
         // how have they chosen to pay?
         $this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment(true);
-        $this->checkout->payment_method             = $this->_get_payment_method_for_selected_method_of_payment();
+        $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment();
         if (! $this->checkout->payment_method instanceof EE_Payment_Method) {
             return false;
         }
@@ -1441,7 +1442,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         } else {
             $this->checkout->json_response->set_return_data(array('payment_method_info' => ''));
         }
-        //prevents advancement to next step
+        // prevents advancement to next step
         $this->checkout->continue_reg = false;
         return true;
     }
@@ -1466,7 +1467,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         } else {
             // choose your own adventure based on method_of_payment
             switch ($this->checkout->selected_method_of_payment) {
-                case 'events_sold_out' :
+                case 'events_sold_out':
                     EE_Error::add_attention(
                         apply_filters(
                             'FHEE__EE_SPCO_Reg_Step_Payment_Options___verify_payment_method_is_set__sold_out_events_msg',
@@ -1475,11 +1476,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                                 'event_espresso'
                             )
                         ),
-                        __FILE__, __FUNCTION__, __LINE__
+                        __FILE__,
+                        __FUNCTION__,
+                        __LINE__
                     );
                     return false;
                     break;
-                case 'payments_closed' :
+                case 'payments_closed':
                     EE_Error::add_attention(
                         apply_filters(
                             'FHEE__EE_SPCO_Reg_Step_Payment_Options___verify_payment_method_is_set__payments_closed_msg',
@@ -1488,11 +1491,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                                 'event_espresso'
                             )
                         ),
-                        __FILE__, __FUNCTION__, __LINE__
+                        __FILE__,
+                        __FUNCTION__,
+                        __LINE__
                     );
                     return false;
                     break;
-                case 'no_payment_required' :
+                case 'no_payment_required':
                     EE_Error::add_attention(
                         apply_filters(
                             'FHEE__EE_SPCO_Reg_Step_Payment_Options___verify_payment_method_is_set__no_payment_required_msg',
@@ -1501,7 +1506,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                                 'event_espresso'
                             )
                         ),
-                        __FILE__, __FUNCTION__, __LINE__
+                        __FILE__,
+                        __FUNCTION__,
+                        __LINE__
                     );
                     return false;
                     break;
@@ -1578,7 +1585,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         if (! empty($STA_ID)) {
             // can we get state object from name ?
             EE_Registry::instance()->load_model('State');
-            $state  = EEM_State::instance()->get_col(array(array('STA_name' => $STA_ID), 'limit' => 1), 'STA_ID');
+            $state = EEM_State::instance()->get_col(array(array('STA_name' => $STA_ID), 'limit' => 1), 'STA_ID');
             $STA_ID = is_array($state) && ! empty($state) ? reset($state) : $STA_ID;
         }
         // get Country ISO
@@ -1668,9 +1675,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             : $this->_get_selected_method_of_payment(true);
         // choose your own adventure based on method_of_payment
         switch ($this->checkout->selected_method_of_payment) {
-
-            case 'events_sold_out' :
-                $this->checkout->redirect     = true;
+            case 'events_sold_out':
+                $this->checkout->redirect = true;
                 $this->checkout->redirect_url = $this->checkout->cancel_page_url;
                 $this->checkout->json_response->set_redirect_url($this->checkout->redirect_url);
                 // mark this reg step as completed
@@ -1678,7 +1684,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 return false;
                 break;
 
-            case 'payments_closed' :
+            case 'payments_closed':
                 if (apply_filters(
                     'FHEE__EE_SPCO_Reg_Step_Payment_Options__process_reg_step__payments_closed__display_success',
                     false
@@ -1695,7 +1701,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 return true;
                 break;
 
-            case 'no_payment_required' :
+            case 'no_payment_required':
                 if (apply_filters(
                     'FHEE__EE_SPCO_Reg_Step_Payment_Options__process_reg_step__no_payment_required__display_success',
                     false
@@ -1713,7 +1719,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 break;
 
             default:
-                $registrations         = EE_Registry::instance()->SSN->checkout()->transaction->registrations(
+                $registrations = EE_Registry::instance()->SSN->checkout()->transaction->registrations(
                     EE_Registry::instance()->SSN->checkout()->reg_cache_where_params
                 );
                 $ejected_registrations = EE_SPCO_Reg_Step_Payment_Options::find_registrations_that_lost_their_space(
@@ -1767,10 +1773,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     protected function _maybe_set_completed(EE_Payment_Method $payment_method)
     {
         switch ($payment_method->type_obj()->payment_occurs()) {
-            case EE_PMT_Base::offsite :
+            case EE_PMT_Base::offsite:
                 break;
-            case EE_PMT_Base::onsite :
-            case EE_PMT_Base::offline :
+            case EE_PMT_Base::onsite:
+            case EE_PMT_Base::offline:
                 // mark this reg step as completed
                 $this->set_completed();
                 break;
@@ -1866,7 +1872,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             EE_Registry::instance()->SSN->extend_expiration();
         }
         /** @type EE_Transaction_Processor $transaction_processor */
-        //$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+        // $transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
         // in case a registrant leaves to an Off-Site Gateway and never returns, we want to approve any registrations
         // for events with a default reg status of Approved
         // $transaction_processor->toggle_registration_statuses_for_default_approved_events(
@@ -1884,15 +1890,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             // we can also consider the TXN to not have been failed, so temporarily upgrade it's status to abandoned
             $this->checkout->transaction->toggle_failed_transaction_status();
             $payment_status = $payment->status();
-            if (
-                $payment_status === EEM_Payment::status_id_approved
+            if ($payment_status === EEM_Payment::status_id_approved
                 || $payment_status === EEM_Payment::status_id_pending
             ) {
                 return true;
             } else {
                 return false;
             }
-        } else if ($payment === true) {
+        } elseif ($payment === true) {
             // please note that offline payment methods will NOT make a payment,
             // but instead just mark themselves as the PMD_ID on the transaction, and return true
             $this->checkout->payment = $payment;
@@ -1921,7 +1926,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             return false;
         }
         foreach ($registrations as $registration) {
-            if ($registration instanceof EE_Registration) {
+            if ($registration instanceof EE_Registration && ! $registration->is_approved()) {
                 $event = $registration->event_obj();
                 if ($event instanceof EE_Event && $event->is_sold_out(true)) {
                     EE_Error::add_error(
@@ -1963,8 +1968,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         $payment_method_billing_info = $this->_payment_method_billing_info(
             $this->_get_payment_method_for_selected_method_of_payment()
         );
-        $html                        = $payment_method_billing_info->get_html();
-        $html                        .= $this->checkout->redirect_form;
+        $html = $payment_method_billing_info->get_html();
+        $html .= $this->checkout->redirect_form;
         EE_Registry::instance()->REQ->add_output($html);
         return true;
     }
@@ -1989,7 +1994,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     return true;
                 }
                 $validation_errors = $this->checkout->billing_form->get_validation_errors_accumulated();
-                $error_strings     = array();
+                $error_strings = array();
                 foreach ($validation_errors as $validation_error) {
                     if ($validation_error instanceof EE_Validation_Error) {
                         $form_section = $validation_error->get_form_section();
@@ -2029,7 +2034,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             }
         } else {
             EE_Error::add_error(
-                esc_html__('The submitted billing form is invalid possibly due to a technical reason.', 'event_espresso'),
+                esc_html__(
+                    'The submitted billing form is invalid possibly due to a technical reason.',
+                    'event_espresso'
+                ),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -2059,8 +2067,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     {
         // check if transaction has a primary registrant and that it has a related Attendee object
         // if not, then we need to at least gather some primary registrant data before attempting payment
-        if (
-            $this->checkout->billing_form instanceof EE_Billing_Attendee_Info_Form
+        if ($this->checkout->billing_form instanceof EE_Billing_Attendee_Info_Form
             && ! $this->checkout->transaction_has_primary_registrant()
             && ! $this->_capture_primary_registration_data_from_billing_form()
         ) {
@@ -2175,14 +2182,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             return null;
         }
         // get EE_Payment_Method object
-        if (isset($this->checkout->available_payment_methods[$this->checkout->selected_method_of_payment])) {
-            $payment_method = $this->checkout->available_payment_methods[$this->checkout->selected_method_of_payment];
+        if (isset($this->checkout->available_payment_methods[ $this->checkout->selected_method_of_payment ])) {
+            $payment_method = $this->checkout->available_payment_methods[ $this->checkout->selected_method_of_payment ];
         } else {
             // load EEM_Payment_Method
             EE_Registry::instance()->load_model('Payment_Method');
             /** @type EEM_Payment_Method $EEM_Payment_Method */
             $EEM_Payment_Method = EE_Registry::instance()->LIB->EEM_Payment_Method;
-            $payment_method     = $EEM_Payment_Method->get_one_by_slug($this->checkout->selected_method_of_payment);
+            $payment_method = $EEM_Payment_Method->get_one_by_slug($this->checkout->selected_method_of_payment);
         }
         // verify $payment_method
         if (! $payment_method instanceof EE_Payment_Method) {
@@ -2309,7 +2316,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     {
         $return_url = '';
         switch ($payment_method->type_obj()->payment_occurs()) {
-            case EE_PMT_Base::offsite :
+            case EE_PMT_Base::offsite:
                 $return_url = add_query_arg(
                     array(
                         'action'                     => 'process_gateway_response',
@@ -2319,8 +2326,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     $this->reg_step_url()
                 );
                 break;
-            case EE_PMT_Base::onsite :
-            case EE_PMT_Base::offline :
+            case EE_PMT_Base::onsite:
+            case EE_PMT_Base::offline:
                 $return_url = $this->checkout->next_step->reg_step_url();
                 break;
         }
@@ -2381,22 +2388,22 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     {
         // Off-Line payment?
         if ($payment === true) {
-            //$this->_setup_redirect_for_next_step();
+            // $this->_setup_redirect_for_next_step();
             return true;
             // On-Site payment?
-        } else if ($this->checkout->payment_method->is_on_site()) {
+        } elseif ($this->checkout->payment_method->is_on_site()) {
             if (! $this->_process_payment_status($payment, EE_PMT_Base::onsite)) {
-                //$this->_setup_redirect_for_next_step();
+                // $this->_setup_redirect_for_next_step();
                 $this->checkout->continue_reg = false;
             }
             // Off-Site payment?
-        } else if ($this->checkout->payment_method->is_off_site()) {
+        } elseif ($this->checkout->payment_method->is_off_site()) {
             // if a payment object was made and it specifies a redirect url, then we'll setup that redirect info
             if ($payment instanceof EE_Payment && $payment->redirect_url()) {
                 do_action('AHEE_log', __CLASS__, __FUNCTION__, $payment->redirect_url(), '$payment->redirect_url()');
-                $this->checkout->redirect      = true;
+                $this->checkout->redirect = true;
                 $this->checkout->redirect_form = $payment->redirect_form();
-                $this->checkout->redirect_url  = $this->reg_step_url('redirect_form');
+                $this->checkout->redirect_url = $this->reg_step_url('redirect_form');
                 // set JSON response
                 $this->checkout->json_response->set_redirect_form($this->checkout->redirect_form);
                 // and lastly, let's bump the payment status to pending
@@ -2453,7 +2460,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             // check results
             switch ($payment->status()) {
                 // good payment
-                case EEM_Payment::status_id_approved :
+                case EEM_Payment::status_id_approved:
                     EE_Error::add_success(
                         esc_html__('Your payment was processed successfully.', 'event_espresso'),
                         __FILE__,
@@ -2463,7 +2470,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     return true;
                     break;
                 // slow payment
-                case EEM_Payment::status_id_pending :
+                case EEM_Payment::status_id_pending:
                     if (empty($msg)) {
                         $msg = esc_html__(
                             'Your payment appears to have been processed successfully, but the Instant Payment Notification has not yet been received. It should arrive shortly.',
@@ -2474,7 +2481,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     return true;
                     break;
                 // don't wanna payment
-                case EEM_Payment::status_id_cancelled :
+                case EEM_Payment::status_id_cancelled:
                     if (empty($msg)) {
                         $msg = _n(
                             'Payment cancelled. Please try again.',
@@ -2487,7 +2494,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     return false;
                     break;
                 // not enough payment
-                case EEM_Payment::status_id_declined :
+                case EEM_Payment::status_id_declined:
                     if (empty($msg)) {
                         $msg = _n(
                             'We\'re sorry but your payment was declined. Please try again.',
@@ -2500,7 +2507,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     return false;
                     break;
                 // bad payment
-                case EEM_Payment::status_id_failed :
+                case EEM_Payment::status_id_failed:
                     if (! empty($msg)) {
                         EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
                         return false;
@@ -2571,14 +2578,16 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         }
         $this->_validate_offsite_return();
         // DEBUG LOG
-        //$this->checkout->log(
-        //	__CLASS__, __FUNCTION__, __LINE__,
-        //	array(
-        //		'selected_method_of_payment' => $this->checkout->selected_method_of_payment,
-        //		'payment_method' => $this->checkout->payment_method,
-        //	),
-        //	true
-        //);
+        // $this->checkout->log(
+        //     __CLASS__,
+        //     __FUNCTION__,
+        //     __LINE__,
+        //     array(
+        //         'selected_method_of_payment' => $this->checkout->selected_method_of_payment,
+        //         'payment_method'             => $this->checkout->payment_method,
+        //     ),
+        //     true
+        // );
         // verify TXN
         if ($this->checkout->transaction instanceof EE_Transaction) {
             $gateway = $this->checkout->payment_method->type_obj()->get_gateway();
@@ -2591,7 +2600,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             $payment = $this->_validate_payment($payment);
             // if payment was not declined by the payment gateway or cancelled by the registrant
             if ($this->_process_payment_status($payment, EE_PMT_Base::offsite)) {
-                //$this->_setup_redirect_for_next_step();
+                // $this->_setup_redirect_for_next_step();
                 // store that for later
                 $this->checkout->payment = $payment;
                 // mark this reg step as completed, as long as gateway doesn't use a separate IPN request,
@@ -2603,9 +2612,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             }
         }
         // DEBUG LOG
-        //$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__,
-        //	array( 'payment' => $payment )
-        //);
+        // $this->checkout->log(
+        //     __CLASS__,
+        //     __FUNCTION__,
+        //     __LINE__,
+        //     array('payment' => $payment)
+        // );
         $this->checkout->continue_reg = false;
         return false;
     }
@@ -2624,12 +2636,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      */
     private function _validate_offsite_return()
     {
-        $TXN_ID = (int)EE_Registry::instance()->REQ->get('spco_txn', 0);
+        $TXN_ID = (int) EE_Registry::instance()->REQ->get('spco_txn', 0);
         if ($TXN_ID !== $this->checkout->transaction->ID()) {
             // Houston... we might have a problem
             $invalid_TXN = false;
             // first gather some info
-            $valid_TXN          = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
+            $valid_TXN = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
             $primary_registrant = $valid_TXN instanceof EE_Transaction
                 ? $valid_TXN->primary_registration()
                 : null;
@@ -2648,8 +2660,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 ? $primary_registrant->session_ID()
                 : null;
             // validate current Session ID and compare against valid TXN session ID
-            if (
-                $invalid_TXN // if this is already true, then skip other checks
+            if ($invalid_TXN // if this is already true, then skip other checks
                 || EE_Session::instance()->id() === null
                 || (
                     // WARNING !!!
@@ -2756,22 +2767,22 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 // get payment details and process results
                 /** @type EE_Payment_Processor $payment_processor */
                 $payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-                $payment           = $payment_processor->process_ipn(
+                $payment = $payment_processor->process_ipn(
                     $request_data,
                     $this->checkout->transaction,
                     $this->checkout->payment_method,
                     true,
                     false
                 );
-                //$payment_source = 'process_ipn';
+                // $payment_source = 'process_ipn';
             } else {
                 $payment = $this->checkout->transaction->last_payment();
-                //$payment_source = 'last_payment';
+                // $payment_source = 'last_payment';
             }
         } catch (Exception $e) {
             // let's just eat the exception and try to move on using any previously set payment info
             $payment = $this->checkout->transaction->last_payment();
-            //$payment_source = 'last_payment after Exception';
+            // $payment_source = 'last_payment after Exception';
             // but if we STILL don't have a payment object
             if (! $payment instanceof EE_Payment) {
                 // then we'll object ! ( not object like a thing... but object like what a lawyer says ! )
@@ -2779,12 +2790,15 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             }
         }
         // DEBUG LOG
-        //$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__,
-        //	array(
-        //		'process_ipn_payment' => $payment,
-        //		'payment_source'      => $payment_source,
-        //	)
-        //);
+        // $this->checkout->log(
+        //     __CLASS__,
+        //     __FUNCTION__,
+        //     __LINE__,
+        //     array(
+        //         'process_ipn_payment' => $payment,
+        //         'payment_source'      => $payment_source,
+        //     )
+        // );
         return $payment;
     }
 
@@ -2801,8 +2815,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      */
     private function _process_cancelled_payments($payment = null)
     {
-        if (
-            $payment instanceof EE_Payment
+        if ($payment instanceof EE_Payment
             && isset($_REQUEST['ee_cancel_payment'])
             && $payment->status() === EEM_Payment::status_id_failed
         ) {
@@ -2833,8 +2846,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             );
         }
         // get EE_Payment_Method object
-        if (
-            empty($txn_details)
+        if (empty($txn_details)
             &&
             ! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment()
         ) {
@@ -2847,7 +2859,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             );
         }
         if (empty($txn_details) && $this->checkout->transaction instanceof EE_Transaction) {
-            $return_url  = $this->_get_return_url($this->checkout->payment_method);
+            $return_url = $this->_get_return_url($this->checkout->payment_method);
             $txn_details = array(
                 'TXN_ID'         => $this->checkout->transaction->ID(),
                 'TXN_timestamp'  => $this->checkout->transaction->datetime(),

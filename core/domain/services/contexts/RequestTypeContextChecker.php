@@ -5,17 +5,13 @@ namespace EventEspresso\core\domain\services\contexts;
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
 use EventEspresso\core\services\context\ContextChecker;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RequestTypeContextChecker
  * Service class that provides useful methods for evaluating the current request type
  *
  * @package EventEspresso\core\domain\services\contexts
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.59.p
  */
 class RequestTypeContextChecker extends ContextChecker implements RequestTypeContextCheckerInterface
 {
@@ -200,6 +196,4 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
     {
         return $this->request_type->slug();
     }
-
 }
-// Location: RequestTypeContextChecker.php

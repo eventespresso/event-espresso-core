@@ -1,9 +1,8 @@
 <?php
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-require_once(EE_MODELS . 'EEM_Base.model.php');
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  *
@@ -25,7 +24,7 @@ class EEM_Transaction extends EEM_Base
      * but payment is pending. This is the state for transactions where payment is promised
      * from an offline gateway.
      */
-    //	const open_status_code = 'TPN';
+    //  const open_status_code = 'TPN';
 
     /**
      * Status ID(STS_ID on esp_status table) to indicate the transaction failed,
@@ -88,23 +87,57 @@ class EEM_Transaction extends EEM_Base
         $this->_fields                 = array(
             'TransactionTable' => array(
                 'TXN_ID'           => new EE_Primary_Key_Int_Field('TXN_ID', __('Transaction ID', 'event_espresso')),
-                'TXN_timestamp'    => new EE_Datetime_Field('TXN_timestamp',
-                    __('date when transaction was created', 'event_espresso'), false, EE_Datetime_Field::now,
-                    $timezone),
-                'TXN_total'        => new EE_Money_Field('TXN_total',
-                    __('Total value of Transaction', 'event_espresso'), false, 0),
-                'TXN_paid'         => new EE_Money_Field('TXN_paid',
-                    __('Amount paid towards transaction to date', 'event_espresso'), false, 0),
-                'STS_ID'           => new EE_Foreign_Key_String_Field('STS_ID', __('Status ID', 'event_espresso'),
-                    false, EEM_Transaction::failed_status_code, 'Status'),
-                'TXN_session_data' => new EE_Serialized_Text_Field('TXN_session_data',
-                    __('Serialized session data', 'event_espresso'), true, ''),
-                'TXN_hash_salt'    => new EE_Plain_Text_Field('TXN_hash_salt',
-                    __('Transaction Hash Salt', 'event_espresso'), true, ''),
-                'PMD_ID'           => new EE_Foreign_Key_Int_Field('PMD_ID',
-                    __("Last Used Payment Method", 'event_espresso'), true, null, 'Payment_Method'),
-                'TXN_reg_steps'    => new EE_Serialized_Text_Field('TXN_reg_steps',
-                    __('Registration Steps', 'event_espresso'), false, array()),
+                'TXN_timestamp'    => new EE_Datetime_Field(
+                    'TXN_timestamp',
+                    __('date when transaction was created', 'event_espresso'),
+                    false,
+                    EE_Datetime_Field::now,
+                    $timezone
+                ),
+                'TXN_total'        => new EE_Money_Field(
+                    'TXN_total',
+                    __('Total value of Transaction', 'event_espresso'),
+                    false,
+                    0
+                ),
+                'TXN_paid'         => new EE_Money_Field(
+                    'TXN_paid',
+                    __('Amount paid towards transaction to date', 'event_espresso'),
+                    false,
+                    0
+                ),
+                'STS_ID'           => new EE_Foreign_Key_String_Field(
+                    'STS_ID',
+                    __('Status ID', 'event_espresso'),
+                    false,
+                    EEM_Transaction::failed_status_code,
+                    'Status'
+                ),
+                'TXN_session_data' => new EE_Serialized_Text_Field(
+                    'TXN_session_data',
+                    __('Serialized session data', 'event_espresso'),
+                    true,
+                    ''
+                ),
+                'TXN_hash_salt'    => new EE_Plain_Text_Field(
+                    'TXN_hash_salt',
+                    __('Transaction Hash Salt', 'event_espresso'),
+                    true,
+                    ''
+                ),
+                'PMD_ID'           => new EE_Foreign_Key_Int_Field(
+                    'PMD_ID',
+                    __("Last Used Payment Method", 'event_espresso'),
+                    true,
+                    null,
+                    'Payment_Method'
+                ),
+                'TXN_reg_steps'    => new EE_Serialized_Text_Field(
+                    'TXN_reg_steps',
+                    __('Registration Steps', 'event_espresso'),
+                    false,
+                    array()
+                ),
             )
         );
         $this->_model_relations        = array(
@@ -112,13 +145,12 @@ class EEM_Transaction extends EEM_Base
             'Payment'        => new EE_Has_Many_Relation(),
             'Status'         => new EE_Belongs_To_Relation(),
             'Line_Item'      => new EE_Has_Many_Relation(false),
-            //you can delete a transaction without needing to delete its line items
+            // you can delete a transaction without needing to delete its line items
             'Payment_Method' => new EE_Belongs_To_Relation(),
             'Message'        => new EE_Has_Many_Relation()
         );
         $this->_model_chain_to_wp_user = 'Registration.Event';
         parent::__construct($timezone);
-
     }
 
 
@@ -154,8 +186,12 @@ class EEM_Transaction extends EEM_Base
      */
     public function get_revenue_per_day_report($period = '-1 month')
     {
-        $sql_date = $this->convert_datetime_for_query('TXN_timestamp', date('Y-m-d H:i:s', strtotime($period)),
-            'Y-m-d H:i:s', 'UTC');
+        $sql_date = $this->convert_datetime_for_query(
+            'TXN_timestamp',
+            date('Y-m-d H:i:s', strtotime($period)),
+            'Y-m-d H:i:s',
+            'UTC'
+        );
 
         $query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset($this->get_timezone(), 'TXN_timestamp');
 
@@ -197,8 +233,8 @@ class EEM_Transaction extends EEM_Base
         $sql_date                   = date('Y-m-d H:i:s', strtotime($period));
         $approved_payment_status    = EEM_Payment::status_id_approved;
         $extra_event_on_join        = '';
-        //exclude events not authored by user if permissions in effect
-        if ( ! EE_Registry::instance()->CAP->current_user_can('ee_read_others_registrations', 'reg_per_event_report')) {
+        // exclude events not authored by user if permissions in effect
+        if (! EE_Registry::instance()->CAP->current_user_can('ee_read_others_registrations', 'reg_per_event_report')) {
             $extra_event_on_join = ' AND Event.post_author = ' . get_current_user_id();
         }
 
@@ -249,8 +285,10 @@ class EEM_Transaction extends EEM_Base
     {
         return $this->get_one(array(
             array(
-                'Registration.REG_url_link' => ! empty($reg_url_link) ? $reg_url_link : EE_Registry::instance()->REQ->get('e_reg_url_link',
-                    '')
+                'Registration.REG_url_link' => ! empty($reg_url_link) ? $reg_url_link : EE_Registry::instance()->REQ->get(
+                    'e_reg_url_link',
+                    ''
+                )
             )
         ));
     }
@@ -272,8 +310,10 @@ class EEM_Transaction extends EEM_Base
     {
         EE_Error::doing_it_wrong(
             __CLASS__ . '::' . __FUNCTION__,
-            sprintf(__('This method is deprecated. Please use "%s" instead', 'event_espresso'),
-                'EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()'),
+            sprintf(
+                __('This method is deprecated. Please use "%s" instead', 'event_espresso'),
+                'EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()'
+            ),
             '4.6.0'
         );
         /** @type EE_Transaction_Processor $transaction_processor */
@@ -304,8 +344,8 @@ class EEM_Transaction extends EEM_Base
         global $wpdb;
         $deleted             = false;
         $time_to_leave_alone = apply_filters(
-            'FHEE__EEM_Transaction__delete_junk_transactions__time_to_leave_alone'
-            , WEEK_IN_SECONDS
+            'FHEE__EEM_Transaction__delete_junk_transactions__time_to_leave_alone',
+            WEEK_IN_SECONDS
         );
 
 
@@ -336,7 +376,7 @@ class EEM_Transaction extends EEM_Base
             EEM_Transaction::instance()->get_col($ids_query, 'TXN_ID'),
             $time_to_leave_alone
         );
-        //now that we have the ids to delete
+        // now that we have the ids to delete
         if (! empty($txn_ids) && is_array($txn_ids)) {
             // first, make sure these TXN's are removed the "ee_locked_transactions" array
             EEM_Transaction::unset_locked_transactions($txn_ids);
@@ -372,8 +412,8 @@ class EEM_Transaction extends EEM_Base
         $locked_transactions = get_option('ee_locked_transactions', array());
         $update              = false;
         foreach ($transaction_IDs as $TXN_ID) {
-            if (isset($locked_transactions[$TXN_ID])) {
-                unset($locked_transactions[$TXN_ID]);
+            if (isset($locked_transactions[ $TXN_ID ])) {
+                unset($locked_transactions[ $TXN_ID ]);
                 $update = true;
             }
         }
@@ -387,20 +427,62 @@ class EEM_Transaction extends EEM_Base
 
 
     /**
+     * returns an array of EE_Transaction objects whose timestamp is greater than
+     * the current time minus the session lifespan, which defaults to 60 minutes
+     *
+     * @return EE_Base_Class[]|EE_Transaction[]
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function get_transactions_in_progress()
+    {
+        return $this->_get_transactions_in_progress();
+    }
+
+
+
+    /**
      * returns an array of EE_Transaction objects whose timestamp is less than
      * the current time minus the session lifespan, which defaults to 60 minutes
      *
      * @return EE_Base_Class[]|EE_Transaction[]
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
-    public function get_transactions_in_progress()
+    public function get_transactions_not_in_progress()
     {
+        return $this->_get_transactions_in_progress('<=');
+    }
+
+
+
+    /**
+     * @param string $comparison
+     * @return EE_Base_Class[]|EE_Transaction[]
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    private function _get_transactions_in_progress($comparison = '>=')
+    {
+        $comparison = $comparison === '>=' || $comparison === '<='
+            ? $comparison
+            : '>=';
+        /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+        $session_lifespan = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\domain\values\session\SessionLifespan'
+        );
         return $this->get_all(
             array(
                 array(
                     'TXN_timestamp' => array(
-                        '>',
-                        time() - EE_Registry::instance()->SSN->lifespan()
+                        $comparison,
+                        $session_lifespan->expiration()
                     ),
                     'STS_ID' => array(
                         '!=',
@@ -410,8 +492,4 @@ class EEM_Transaction extends EEM_Base
             )
         );
     }
-
-
 }
-// End of file EEM_Transaction.model.php
-// Location: /includes/models/EEM_Transaction.model.php

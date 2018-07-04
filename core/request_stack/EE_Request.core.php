@@ -7,14 +7,10 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\LegacyRequestInterface;
 use EventEspresso\core\services\request\RequestInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
-
 /**
  * class EE_Request
  *
- * @deprecated 4.9.53
+ * @deprecated  4.9.53
  * @package     Event Espresso
  * @subpackage  /core/
  * @author      Brent Christensen
@@ -56,8 +52,12 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
      * @param array $cookie
      * @param array $server
      */
-    public function __construct(array $get, array $post, array $cookie, array $server = array())
-    {
+    public function __construct(
+        array $get = array(),
+        array $post = array(),
+        array $cookie = array(),
+        array $server = array()
+    ) {
     }
 
 
@@ -69,7 +69,7 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
      */
     private function request()
     {
-        if($this->request instanceof RequestInterface){
+        if ($this->request instanceof RequestInterface) {
             return $this->request;
         }
         $loader = LoaderFactory::getLoader();
@@ -87,7 +87,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     }
 
 
-
     /**
      * @deprecated 4.9.53
      * @return array
@@ -101,7 +100,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     }
 
 
-
     /**
      * @deprecated 4.9.53
      * @return array
@@ -113,7 +111,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     {
         return $this->request()->postParams();
     }
-
 
 
     /**
@@ -142,7 +139,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     }
 
 
-
     /**
      * returns contents of $_REQUEST
      *
@@ -156,7 +152,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     {
         return $this->request()->requestParams();
     }
-
 
 
     /**
@@ -173,7 +168,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     {
         $this->request()->setRequestParam($key, $value, $override_ee);
     }
-
 
 
     /**
@@ -193,7 +187,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     }
 
 
-
     /**
      * check if param exists
      *
@@ -210,7 +203,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     }
 
 
-
     /**
      * remove param
      *
@@ -225,7 +217,6 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     {
         $this->request()->unSetRequestParam($key, $unset_from_global_too);
     }
-
 
 
     /**
@@ -345,7 +336,41 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     }
 
 
+    /**
+     * check if a request parameter exists whose key that matches the supplied wildcard pattern
+     * and return the value for the first match found
+     * wildcards can be either of the following:
+     *      ? to represent a single character of any type
+     *      * to represent one or more characters of any type
+     *
+     * @param string     $pattern
+     * @param null|mixed $default
+     * @return false|int
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     */
+    public function getMatch($pattern, $default = null)
+    {
+        return $this->request()->getMatch($pattern, $default);
+    }
 
+
+    /**
+     * check if a request parameter exists whose key matches the supplied wildcard pattern
+     * wildcards can be either of the following:
+     *      ? to represent a single character of any type
+     *      * to represent one or more characters of any type
+     * returns true if a match is found or false if not
+     *
+     * @param string $pattern
+     * @return false|int
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     */
+    public function matches($pattern)
+    {
+        return $this->request()->matches($pattern);
+    }
 }
-// End of file EE_Request.core.php
-// Location: /core/request/EE_Request.core.php

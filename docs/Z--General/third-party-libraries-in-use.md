@@ -23,14 +23,14 @@ This is just to document the third party libraries in use for EE4 and where to f
 ### moment.js
 
 * link: https://github.com/moment/moment
-* version in use: 2.5.0
-* last updated: EE4.1
+* version in use: 2.29
+* last updated: EE4.9.59
 
 ### qtip2
 
 * link: http://github.com/Craga89/qTip2
-* version in use: 2.2.0
-* last updated: EE4.1
+* version in use: 3.0.3
+* last updated: EE4.9.59
 
 
 ### jQuery UI Timepicker
@@ -49,11 +49,17 @@ This is just to document the third party libraries in use for EE4 and where to f
 ### jQuery validate
 
 * link: https://github.com/jzaefferer/jquery-validation
-* version in use: 1.11.1
-* last updated: EE4.1
+* version in use: 1.17.0
+* last updated: EE4.9.59
 
 ### parseuri
 
 * link: http://blog.stevenlevithan.com/archives/parseuri
 * version in use: 1.2.2
 * last updated: EE4.1
+
+## jQuery countdown timer
+
+* link: https://github.com/harshen/jQuery-countdownTimer
+* version in use: 2.1.0
+* last updated: EE4.9.59

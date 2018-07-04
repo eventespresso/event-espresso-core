@@ -174,7 +174,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 '4.8.36'
             );
             //verify the model data being inputted is in UTC
-            $this->assertEquals($now_utc_time, date('Y-m-d H:i:s', $model_data['EVT_created']));
+            $this->assertDateWithinOneMinute($now_utc_time, date('Y-m-d H:i:s', $model_data['EVT_created']), 'Y-m-d H:i:s');
             //NOT in local time
             $this->assertNotEquals(
                 $now_local_time,
@@ -442,10 +442,18 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      */
     public function testPrepareFieldValuesForJson($expected, $input, $field_obj)
     {
-        $this->assertEquals(
-            $expected,
-            ModelDataTranslator::prepareFieldValuesForJson($field_obj, $input, '4.8.36')
-        );
+        if ($field_obj instanceof EE_DateTime_Field && ! empty($expected)) {
+            $this->assertDateWithinOneMinute(
+                $expected,
+                ModelDataTranslator::prepareFieldValuesForJson($field_obj, $input, '4.8.36'),
+                'Y-m-d\TH:i:s'
+            );
+        } else {
+            $this->assertEquals(
+                $expected,
+                ModelDataTranslator::prepareFieldValuesForJson($field_obj, $input, '4.8.36')
+            );
+        }
     }
 
 

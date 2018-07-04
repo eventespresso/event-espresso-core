@@ -1,5 +1,4 @@
 <?php
-require_once(EE_MODELS . 'fields/EE_Enum_Text_Field.php');
 
 class EE_WP_Post_Status_Field extends EE_Enum_Text_Field
 {
@@ -36,7 +35,7 @@ class EE_WP_Post_Status_Field extends EE_Enum_Text_Field
      * @param boolean $store_in_db_as_int By default, enums are stored as STRINGS in the DB. However, if this var is
      *                                    set to true, it will be stored as an INT
      */
-    function __construct($table_column, $nicename, $nullable, $default_value, $new_stati = array())
+    public function __construct($table_column, $nicename, $nullable, $default_value, $new_stati = array())
     {
         $this->_register_new_stati($new_stati);
         $this->_set_allowed_enum_values();
@@ -54,7 +53,7 @@ class EE_WP_Post_Status_Field extends EE_Enum_Text_Field
     protected function _register_new_stati($new_stati)
     {
 
-        foreach ((array)$new_stati as $status_key => $status_args) {
+        foreach ((array) $new_stati as $status_key => $status_args) {
             $args = array(
                 'label'                     => isset($status_args['label']) ? $status_args['label'] : $status_key,
                 'public'                    => isset($status_args['public']) && is_bool($status_args['public']) ? $status_args['public'] : true,
@@ -65,7 +64,6 @@ class EE_WP_Post_Status_Field extends EE_Enum_Text_Field
             );
             register_post_status($status_key, $status_args);
         }
-
     }
 
 
@@ -77,14 +75,13 @@ class EE_WP_Post_Status_Field extends EE_Enum_Text_Field
      */
     protected function _set_allowed_enum_values()
     {
-        //first let's get the post_statuses
+        // first let's get the post_statuses
         global $wp_post_statuses;
         $this->_wp_post_stati = $wp_post_statuses;
 
         foreach ($this->_wp_post_stati as $post_status => $args_object) {
-            $this->_allowed_enum_values[$post_status] = $args_object->label;
+            $this->_allowed_enum_values[ $post_status ] = $args_object->label;
         }
-
     }
 
     /**
@@ -102,7 +99,7 @@ class EE_WP_Post_Status_Field extends EE_Enum_Text_Field
 
 
 
-    //helper methods for getting various $wp_post_statuses stuff.
+    // helper methods for getting various $wp_post_statuses stuff.
 
     /**
      * This just returns the status object for the given status
@@ -114,6 +111,6 @@ class EE_WP_Post_Status_Field extends EE_Enum_Text_Field
      */
     public function get_status_object($status)
     {
-        return isset($this->_wp_post_stati[$status]) ? $this->_wp_post_stati[$status] : false;
+        return isset($this->_wp_post_stati[ $status ]) ? $this->_wp_post_stati[ $status ] : false;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\modules\ticket_selector;
 
 use EE_Error;
@@ -6,17 +7,12 @@ use EE_Tax_Config;
 use EEH_HTML;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class TicketSelectorRowStandard
  * class for loading template and resolving template args for a single ticket row within a standard ticket selector
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class TicketSelectorRowStandard extends TicketSelectorRow
 {
@@ -62,19 +58,18 @@ class TicketSelectorRowStandard extends TicketSelectorRow
     protected $ticket_datetime_classes;
 
 
-
     /**
      * TicketDetails constructor.
      *
-     * @param TicketDetails  $ticket_details
+     * @param TicketDetails $ticket_details
      * @param EE_Tax_Config $tax_settings
-     * @param int            $total_tickets
-     * @param int            $max_attendees
-     * @param int            $row
-     * @param int            $cols
-     * @param boolean        $required_ticket_sold_out
-     * @param string         $event_status
-     * @param string         $ticket_datetime_classes
+     * @param int           $total_tickets
+     * @param int           $max_attendees
+     * @param int           $row
+     * @param int           $cols
+     * @param boolean       $required_ticket_sold_out
+     * @param string        $event_status
+     * @param string        $ticket_datetime_classes
      * @throws EE_Error
      * @throws UnexpectedEntityException
      */
@@ -106,7 +101,6 @@ class TicketSelectorRowStandard extends TicketSelectorRow
     }
 
 
-
     /**
      * other ticket rows will need to know if a required ticket is sold out,
      * so that they are not offered for sale
@@ -119,7 +113,6 @@ class TicketSelectorRowStandard extends TicketSelectorRow
     }
 
 
-
     /**
      * @return int
      */
@@ -127,7 +120,6 @@ class TicketSelectorRowStandard extends TicketSelectorRow
     {
         return $this->cols;
     }
-
 
 
     /**
@@ -142,7 +134,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $this->max = $this->ticket->max();
         $remaining = $this->ticket->remaining();
         if ($this->ticket->is_on_sale() && $this->ticket->is_remaining()) {
-             $this->setTicketMinAndMax($remaining);
+            $this->setTicketMinAndMax($remaining);
         } else {
             // set flag if ticket is required (flag is set to start date so that future tickets are not blocked)
             $this->required_ticket_sold_out = $this->ticket->required() && ! $remaining
@@ -156,7 +148,8 @@ class TicketSelectorRowStandard extends TicketSelectorRow
             return $filtered_row_html;
         }
         $ticket_selector_row_html = EEH_HTML::tr(
-            '', '',
+            '',
+            '',
             "tckt-slctr-tbl-tr {$this->status_class}{$this->ticket_datetime_classes} "
             . espresso_get_object_css_class($this->ticket)
         );
@@ -176,7 +169,13 @@ class TicketSelectorRowStandard extends TicketSelectorRow
 
         $ticket_selector_row_html .= $this->ticketNameTableCell();
         $ticket_selector_row_html .= $this->ticketPriceTableCell();
-        $ticket_selector_row_html .= EEH_HTML::td('', '', 'tckt-slctr-tbl-td-qty cntr');
+        $ticket_selector_row_html .= EEH_HTML::td(
+            '',
+            '',
+            'tckt-slctr-tbl-td-qty cntr',
+            '',
+            'headers="quantity-' . $this->EVT_ID . '"'
+        );
         $this->setTicketStatusDisplay($remaining);
         if (empty($this->ticket_status_display)) {
             if ($this->max_attendees === 1) {
@@ -200,8 +199,6 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $this->row++;
         return $ticket_selector_row_html;
     }
-
-
 
 
     /**
@@ -230,8 +227,6 @@ class TicketSelectorRowStandard extends TicketSelectorRow
     }
 
 
-
-
     /**
      * ticketNameTableCell
      *
@@ -240,22 +235,28 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      */
     protected function ticketNameTableCell()
     {
-        $html = EEH_HTML::td('', '', 'tckt-slctr-tbl-td-name');
+        $html = EEH_HTML::td(
+            '',
+            '',
+            'tckt-slctr-tbl-td-name',
+            '',
+            'headers="details-' . $this->EVT_ID . '"'
+        );
         $html .= EEH_HTML::strong($this->ticket->get_pretty('TKT_name'));
         $html .= $this->ticket_details->getShowHideLinks();
         if ($this->ticket->required()) {
             $html .= EEH_HTML::p(
                 apply_filters(
-                        'FHEE__ticket_selector_chart_template__ticket_required_message',
-                        esc_html__('This ticket is required and must be purchased.', 'event_espresso')
+                    'FHEE__ticket_selector_chart_template__ticket_required_message',
+                    esc_html__('This ticket is required and must be purchased.', 'event_espresso')
                 ),
-                '', 'ticket-required-pg'
+                '',
+                'ticket-required-pg'
             );
         }
         $html .= EEH_HTML::tdx();
         return $html;
     }
-
 
 
     /**
@@ -268,12 +269,19 @@ class TicketSelectorRowStandard extends TicketSelectorRow
     {
         $html = '';
         if (apply_filters('FHEE__ticket_selector_chart_template__display_ticket_price_details', true)) {
-            $html .= EEH_HTML::td('', '', 'tckt-slctr-tbl-td-price jst-rght');
+            $html .= EEH_HTML::td(
+                '',
+                '',
+                'tckt-slctr-tbl-td-price jst-rght',
+                '',
+                'headers="price-' . $this->EVT_ID . '"'
+            );
             $html .= \EEH_Template::format_currency($this->ticket_price);
             $html .= $this->ticket->taxable()
-                ? EEH_HTML::span( '*', '', 'taxable-tickets-asterisk grey-text' )
+                ? EEH_HTML::span('*', '', 'taxable-tickets-asterisk grey-text')
                 : '';
             $html .= '&nbsp;';
+            // phpcs:disable WordPress.WP.I18n.NoEmptyStrings
             $html .= EEH_HTML::span(
                 $this->ticket_bundle
                     ? apply_filters(
@@ -284,7 +292,8 @@ class TicketSelectorRowStandard extends TicketSelectorRow
                         'FHEE__ticket_selector_chart_template__per_ticket_text',
                         __('', 'event_espresso')
                     ),
-                '', 'smaller-text no-bold'
+                '',
+                'smaller-text no-bold'
             );
             $html .= '&nbsp;';
             $html .= EEH_HTML::tdx();
@@ -292,7 +301,6 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         }
         return $html;
     }
-
 
 
     /**
@@ -305,14 +313,16 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         // display submit button since we have tickets available
         add_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
         $this->hidden_input_qty = false;
-        $html = '<input type="radio" name="tkt-slctr-qty-' . $this->EVT_ID . '"';
-        $html .= ' id="ticket-selector-tbl-qty-slct-' . $this->EVT_ID . '-' . $this->row . '"';
+        $id = 'ticket-selector-tbl-qty-slct-' . $this->EVT_ID . '-' . $this->row;
+        $html = '<label class="ee-a11y-screen-reader-text" for="' . $id . '">';
+        $html .= esc_html__('Select this ticket', 'event_espresso') . '</label>';
+        $html .= '<input type="radio" name="tkt-slctr-qty-' . $this->EVT_ID . '"';
+        $html .= ' id="' . $id . '"';
         $html .= ' class="ticket-selector-tbl-qty-slct" value="' . $this->row . '-1"';
         $html .= $this->total_tickets === 1 ? ' checked="checked"' : '';
         $html .= ' title=""/>';
         return $html;
     }
-
 
 
     /**
@@ -326,8 +336,11 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         // display submit button since we have tickets available
         add_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
         $this->hidden_input_qty = false;
-        $html = '<select name="tkt-slctr-qty-' . $this->EVT_ID . '[]"';
-        $html .= ' id="ticket-selector-tbl-qty-slct-' . $this->EVT_ID . '-' . $this->row . '"';
+        $id = 'ticket-selector-tbl-qty-slct-' . $this->EVT_ID . '-' . $this->row;
+        $html = '<label class="ee-a11y-screen-reader-text" for="' . $id . '">';
+        $html .= esc_html__('Quantity', 'event_espresso') . '</label>';
+        $html .= '<select name="tkt-slctr-qty-' . $this->EVT_ID . '[]"';
+        $html .= ' id="' . $id . '"';
         $html .= ' class="ticket-selector-tbl-qty-slct">';
         // this ensures that non-required tickets with non-zero MIN QTYs don't HAVE to be purchased
         if ($this->min !== 0 && ! $this->ticket->required()) {
@@ -340,7 +353,6 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $html .= '</select>';
         return $html;
     }
-
 
 
     /**
@@ -360,7 +372,4 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $html .= ' value="' . $this->ticket->ID() . '"/>';
         return $html;
     }
-
 }
-// End of file TicketSelectorRowStandard.php
-// Location: EventEspresso\modules\ticket_selector/TicketSelectorRowStandard.php

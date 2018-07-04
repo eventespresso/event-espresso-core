@@ -9,10 +9,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
 EE_Registry::instance()->load_class('Processor_Base');
-
 
 
 /**
@@ -71,7 +68,6 @@ class EE_Registration_Processor extends EE_Processor_Base
     protected $request;
 
 
-
     /**
      * @singleton method used to instantiate class object
      * @param EE_Request|null $request
@@ -84,7 +80,7 @@ class EE_Registration_Processor extends EE_Processor_Base
     {
         // check if class object is instantiated
         if (! self::$_instance instanceof EE_Registration_Processor) {
-            if(! $request instanceof EE_Request) {
+            if (! $request instanceof EE_Request) {
                 $request = LoaderFactory::getLoader()->getShared('EE_Request');
             }
             self::$_instance = new self($request);
@@ -104,16 +100,14 @@ class EE_Registration_Processor extends EE_Processor_Base
     }
 
 
-
     /**
      * @param int $REG_ID
      * @return string
      */
     public function old_reg_status($REG_ID)
     {
-        return isset($this->_old_reg_status[$REG_ID]) ? $this->_old_reg_status[$REG_ID] : null;
+        return isset($this->_old_reg_status[ $REG_ID ]) ? $this->_old_reg_status[ $REG_ID ] : null;
     }
-
 
 
     /**
@@ -123,11 +117,10 @@ class EE_Registration_Processor extends EE_Processor_Base
     public function set_old_reg_status($REG_ID, $old_reg_status)
     {
         // only set the first time
-        if (! isset($this->_old_reg_status[$REG_ID])) {
-            $this->_old_reg_status[$REG_ID] = $old_reg_status;
+        if (! isset($this->_old_reg_status[ $REG_ID ])) {
+            $this->_old_reg_status[ $REG_ID ] = $old_reg_status;
         }
     }
-
 
 
     /**
@@ -136,9 +129,8 @@ class EE_Registration_Processor extends EE_Processor_Base
      */
     public function new_reg_status($REG_ID)
     {
-        return isset($this->_new_reg_status[$REG_ID]) ? $this->_new_reg_status[$REG_ID] : null;
+        return isset($this->_new_reg_status[ $REG_ID ]) ? $this->_new_reg_status[ $REG_ID ] : null;
     }
-
 
 
     /**
@@ -147,9 +139,8 @@ class EE_Registration_Processor extends EE_Processor_Base
      */
     public function set_new_reg_status($REG_ID, $new_reg_status)
     {
-        $this->_new_reg_status[$REG_ID] = $new_reg_status;
+        $this->_new_reg_status[ $REG_ID ] = $new_reg_status;
     }
-
 
 
     /**
@@ -162,7 +153,6 @@ class EE_Registration_Processor extends EE_Processor_Base
     {
         return $this->new_reg_status($REG_ID) !== $this->old_reg_status($REG_ID);
     }
-
 
 
     /**
@@ -184,7 +174,6 @@ class EE_Registration_Processor extends EE_Processor_Base
         // trigger notifications
         $this->trigger_registration_update_notifications($registration);
     }
-
 
 
     /**
@@ -214,8 +203,7 @@ class EE_Registration_Processor extends EE_Processor_Base
         // set incoming REG_Status
         $this->set_new_reg_status($registration->ID(), $new_reg_status);
         // toggle reg status but only if it has changed and the user can do so
-        if (
-            $this->reg_status_updated($registration->ID())
+        if ($this->reg_status_updated($registration->ID())
             && (
                 (! $this->request->isAdmin() || $this->request->isFrontAjax())
                 || EE_Registry::instance()->CAP->current_user_can(
@@ -236,16 +224,15 @@ class EE_Registration_Processor extends EE_Processor_Base
     }
 
 
-
     /**
      *    toggle_incomplete_registration_status_to_default
      *        changes any incomplete registrations to either the event or global default registration status
      *
      * @access public
-     * @param EE_Registration $registration
-     * @param bool            $save TRUE will save the registration if the status is updated, FALSE will leave that up
-     *                              to client code
-     * @param ContextInterface|null    $context
+     * @param EE_Registration       $registration
+     * @param bool                  $save TRUE will save the registration if the status is updated, FALSE will leave
+     *                                    that up to client code
+     * @param ContextInterface|null $context
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -286,17 +273,20 @@ class EE_Registration_Processor extends EE_Processor_Base
                 add_filter('FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10);
             }
             // DEBUG LOG
-            //$this->log(
-            //	__CLASS__, __FUNCTION__, __LINE__,
-            //	$registration->transaction(),
-            //	array(
-            //		'IPN'                   => EE_Processor_Base::$IPN,
-            //		'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
-            //	)
-            //);
+            // $this->log(
+            //     __CLASS__,
+            //     __FUNCTION__,
+            //     __LINE__,
+            //     $registration->transaction(),
+            //     array(
+            //         'IPN' => EE_Processor_Base::$IPN,
+            //         'deliver_notifications' => has_filter(
+            //             'FHEE__EED_Messages___maybe_registration__deliver_notifications'
+            //         ),
+            //     )
+            // );
         }
     }
-
 
 
     /**
@@ -322,8 +312,7 @@ class EE_Registration_Processor extends EE_Processor_Base
         $this->set_old_reg_status($registration->ID(), $reg_status);
         // if not already, toggle reg status to approved IF the event default reg status is approved
         // ( as long as the registration wasn't cancelled or declined at some point )
-        if (
-            $reg_status !== EEM_Registration::status_id_cancelled
+        if ($reg_status !== EEM_Registration::status_id_cancelled
             && $reg_status
                !== EEM_Registration::status_id_declined
             && $reg_status !== EEM_Registration::status_id_approved
@@ -342,19 +331,22 @@ class EE_Registration_Processor extends EE_Processor_Base
                 add_filter('FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10);
             }
             // DEBUG LOG
-            //$this->log(
-            //	__CLASS__, __FUNCTION__, __LINE__,
-            //	$registration->transaction(),
-            //	array(
-            //		'IPN'                   => EE_Processor_Base::$IPN,
-            //		'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
-            //	)
-            //);
+            // $this->log(
+            //     __CLASS__,
+            //     __FUNCTION__,
+            //     __LINE__,
+            //     $registration->transaction(),
+            //     array(
+            //         'IPN' => EE_Processor_Base::$IPN,
+            //         'deliver_notifications' => has_filter(
+            //             'FHEE__EED_Messages___maybe_registration__deliver_notifications'
+            //         ),
+            //     )
+            // );
             return true;
         }
         return false;
     }
-
 
 
     /**
@@ -382,15 +374,14 @@ class EE_Registration_Processor extends EE_Processor_Base
         // set initial REG_Status
         $this->set_old_reg_status($registration->ID(), $registration->status_ID());
         // was a payment just made ?
-        $payment    = isset($additional_details['payment_updates'], $additional_details['last_payment'])
-                      && $additional_details['payment_updates']
-                      && $additional_details['last_payment'] instanceof EE_Payment
+        $payment = isset($additional_details['payment_updates'], $additional_details['last_payment'])
+                   && $additional_details['payment_updates']
+                   && $additional_details['last_payment'] instanceof EE_Payment
             ? $additional_details['last_payment']
             : null;
         $total_paid = array_sum(self::$_amount_paid);
         // toggle reg status to approved IF
-        if (
-            // REG status is pending payment
+        if (// REG status is pending payment
             $registration->status_ID() === EEM_Registration::status_id_pending_payment
             // AND no monies are owing
             && (
@@ -407,14 +398,14 @@ class EE_Registration_Processor extends EE_Processor_Base
                 || (
                     $payment instanceof EE_Payment && $payment->is_approved()
                     && // this specific registration has not yet been paid for
-                    ! isset(self::$_amount_paid[$registration->ID()])
+                    ! isset(self::$_amount_paid[ $registration->ID() ])
                     && // payment amount, less what we have already attributed to other registrations, is greater than this reg's final price
                     $payment->amount() - $total_paid >= $registration->final_price()
                 )
             )
         ) {
             // mark as paid
-            self::$_amount_paid[$registration->ID()] = $registration->final_price();
+            self::$_amount_paid[ $registration->ID() ] = $registration->final_price();
             // track new REG_Status
             $this->set_new_reg_status($registration->ID(), EEM_Registration::status_id_approved);
             // toggle status to approved
@@ -428,19 +419,22 @@ class EE_Registration_Processor extends EE_Processor_Base
                 add_filter('FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10);
             }
             // DEBUG LOG
-            //$this->log(
-            //	__CLASS__, __FUNCTION__, __LINE__,
-            //	$registration->transaction(),
-            //	array(
-            //		'IPN'                   => EE_Processor_Base::$IPN,
-            //		'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
-            //	)
-            //);
+            // $this->log(
+            //     __CLASS__,
+            //     __FUNCTION__,
+            //     __LINE__,
+            //     $registration->transaction(),
+            //     array(
+            //         'IPN' => EE_Processor_Base::$IPN,
+            //         'deliver_notifications' => has_filter(
+            //             'FHEE__EED_Messages___maybe_registration__deliver_notifications'
+            //         ),
+            //     )
+            // );
             return true;
         }
         return false;
     }
-
 
 
     /**
@@ -459,14 +453,14 @@ class EE_Registration_Processor extends EE_Processor_Base
                     esc_html__('An invalid registration was received.', 'event_espresso')
                 );
             }
-            // EE_Registry::instance()->load_helper( 'Debug_Tools' );
+            // EE_Registry::instance()->load_helper('Debug_Tools');
             // EEH_Debug_Tools::log(
-            // 	__CLASS__,
-            // 	__FUNCTION__,
-            // 	__LINE__,
-            // 	array( $registration->transaction(), $additional_details ),
-            // 	false,
-            // 	'EE_Transaction: ' . $registration->transaction()->ID()
+            //     __CLASS__,
+            //     __FUNCTION__,
+            //     __LINE__,
+            //     array($registration->transaction(), $additional_details),
+            //     false,
+            //     'EE_Transaction: ' . $registration->transaction()->ID()
             // );
             if (! $registration->is_primary_registrant()) {
                 return;
@@ -480,7 +474,6 @@ class EE_Registration_Processor extends EE_Processor_Base
             EE_Error::add_error($e->getMessage(), $e->getFile(), 'unknown_function_from_exception', $e->getLine());
         }
     }
-
 
 
     /**
@@ -504,8 +497,7 @@ class EE_Registration_Processor extends EE_Processor_Base
         // set initial REG_Status
         $this->set_old_reg_status($registration->ID(), $registration->status_ID());
         // if the registration status gets updated, then save the registration
-        if (
-            $this->toggle_registration_status_for_default_approved_events($registration, false)
+        if ($this->toggle_registration_status_for_default_approved_events($registration, false)
             || $this->toggle_registration_status_if_no_monies_owing(
                 $registration,
                 false,
@@ -519,7 +511,6 @@ class EE_Registration_Processor extends EE_Processor_Base
         return $this->reg_status_updated($registration->ID())
                && $this->new_reg_status($registration->ID()) === EEM_Registration::status_id_approved;
     }
-
 
 
     /**
@@ -543,17 +534,16 @@ class EE_Registration_Processor extends EE_Processor_Base
         foreach ($transaction->registrations() as $registration) {
             /** @var EE_Line_Item $line_item */
             $line_item = EEM_Line_Item::instance()->get_line_item_for_registration($registration);
-            if (isset($reg_final_price_per_ticket_line_item[$line_item->ID()])) {
-                $registration->set_final_price($reg_final_price_per_ticket_line_item[$line_item->ID()]);
+            if (isset($reg_final_price_per_ticket_line_item[ $line_item->ID() ])) {
+                $registration->set_final_price($reg_final_price_per_ticket_line_item[ $line_item->ID() ]);
                 if ($save_regs) {
                     $registration->save();
                 }
             }
         }
-        //and make sure there's no rounding problem
+        // and make sure there's no rounding problem
         $this->fix_reg_final_price_rounding_issue($transaction);
     }
-
 
 
     /**
@@ -585,9 +575,9 @@ class EE_Registration_Processor extends EE_Processor_Base
             'REG_final_price'
         );
         $diff = $transaction->total() - $reg_final_price_sum;
-        //ok then, just grab one of the registrations
+        // ok then, just grab one of the registrations
         if ($diff !== 0) {
-            $a_reg   = EEM_Registration::instance()->get_one(
+            $a_reg = EEM_Registration::instance()->get_one(
                 array(
                     array(
                         'TXN_ID' => $transaction->ID(),
@@ -600,7 +590,6 @@ class EE_Registration_Processor extends EE_Processor_Base
         }
         return true;
     }
-
 
 
     /**
@@ -626,14 +615,13 @@ class EE_Registration_Processor extends EE_Processor_Base
             return false;
         }
         // release a reserved ticket by decrementing ticket and datetime reserved values
-        $registration->release_reserved_ticket(true);
+        $registration->release_reserved_ticket(true, 'RegProcessor:' . __LINE__);
         $registration->set_final_price(0);
         if ($update_reg) {
             $registration->save();
         }
         return true;
     }
-
 
 
     /**
@@ -675,7 +663,6 @@ class EE_Registration_Processor extends EE_Processor_Base
         }
         return true;
     }
-
 
 
     /**
@@ -743,7 +730,6 @@ class EE_Registration_Processor extends EE_Processor_Base
     }
 
 
-
     /**
      * generates reg_url_link
      *
@@ -767,7 +753,6 @@ class EE_Registration_Processor extends EE_Processor_Base
         );
         return new RegUrlLink($att_nmbr, $item);
     }
-
 
 
     /**
@@ -802,9 +787,4 @@ class EE_Registration_Processor extends EE_Processor_Base
             $registration
         );
     }
-
-
-
 }
-// End of file EE_Registration_Processor.class.php
-// Location: /core/business/EE_Registration_Processor.class.php

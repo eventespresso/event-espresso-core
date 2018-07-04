@@ -2,16 +2,12 @@
 
 namespace EventEspresso\core\services\request;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Interface RequestStackCoreApp
  *
  * @package EventEspresso\core\services\request
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.59.p
  */
 interface RequestStackCoreAppInterface
 {
@@ -23,6 +19,4 @@ interface RequestStackCoreAppInterface
      * @param ResponseInterface      $response
      */
     public function handleResponse(RequestInterface $request, ResponseInterface $response);
-
 }
-// Location: RequestStackCoreApp.php

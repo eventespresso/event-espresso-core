@@ -1,5 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
 
 class EE_DB_Only_Float_Field extends EE_DB_Only_Field_Base
 {
@@ -14,5 +13,4 @@ class EE_DB_Only_Float_Field extends EE_DB_Only_Field_Base
         parent::__construct($table_column, $nicename, $nullable, $default_value);
         $this->setSchemaType('number');
     }
-
 }

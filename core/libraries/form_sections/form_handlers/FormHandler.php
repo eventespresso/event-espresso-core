@@ -14,12 +14,6 @@ use EE_Form_Section_Proper;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Class FormHandler
  * abstract parent class for handling the last mile of boilerplate client code required
@@ -122,8 +116,7 @@ abstract class FormHandler implements FormHandlerInterface
      */
     protected $registry;
 
-
-
+    // phpcs:disable PEAR.Functions.ValidDefaultValue.NotAtEnd
     /**
      * Form constructor.
      *
@@ -155,7 +148,6 @@ abstract class FormHandler implements FormHandlerInterface
     }
 
 
-
     /**
      * @return array
      */
@@ -168,7 +160,6 @@ abstract class FormHandler implements FormHandlerInterface
             FormHandler::DO_NOT_SETUP_FORM,
         );
     }
-
 
 
     /**
@@ -184,8 +175,7 @@ abstract class FormHandler implements FormHandlerInterface
         }
         if ($for_display) {
             $form_config = $this->formConfig();
-            if (
-                $form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
+            if ($form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
                 || $form_config === FormHandler::ADD_FORM_SUBMIT_ONLY
             ) {
                 $this->appendSubmitButton();
@@ -194,7 +184,6 @@ abstract class FormHandler implements FormHandlerInterface
         }
         return $this->form;
     }
-
 
 
     /**
@@ -218,7 +207,6 @@ abstract class FormHandler implements FormHandlerInterface
     }
 
 
-
     /**
      * @param EE_Form_Section_Proper|null $form
      * @return bool
@@ -240,7 +228,6 @@ abstract class FormHandler implements FormHandlerInterface
     }
 
 
-
     /**
      * @param EE_Form_Section_Proper $form
      */
@@ -248,7 +235,6 @@ abstract class FormHandler implements FormHandlerInterface
     {
         $this->form = $form;
     }
-
 
 
     /**
@@ -260,7 +246,6 @@ abstract class FormHandler implements FormHandlerInterface
     }
 
 
-
     /**
      * @param boolean $displayable
      */
@@ -268,7 +253,6 @@ abstract class FormHandler implements FormHandlerInterface
     {
         $this->displayable = filter_var($displayable, FILTER_VALIDATE_BOOLEAN);
     }
-
 
 
     /**
@@ -280,7 +264,6 @@ abstract class FormHandler implements FormHandlerInterface
     {
         return $this->form_name;
     }
-
 
 
     /**
@@ -296,7 +279,6 @@ abstract class FormHandler implements FormHandlerInterface
     }
 
 
-
     /**
      * a public name for the form that can be displayed, but only in the admin
      *
@@ -306,7 +288,6 @@ abstract class FormHandler implements FormHandlerInterface
     {
         return $this->admin_name;
     }
-
 
 
     /**
@@ -322,7 +303,6 @@ abstract class FormHandler implements FormHandlerInterface
     }
 
 
-
     /**
      * a URL friendly string that can be used for identifying the form
      *
@@ -332,7 +312,6 @@ abstract class FormHandler implements FormHandlerInterface
     {
         return $this->slug;
     }
-
 
 
     /**
@@ -348,7 +327,6 @@ abstract class FormHandler implements FormHandlerInterface
     }
 
 
-
     /**
      * @return string
      */
@@ -356,7 +334,6 @@ abstract class FormHandler implements FormHandlerInterface
     {
         return $this->submit_btn_text;
     }
-
 
 
     /**
@@ -378,7 +355,6 @@ abstract class FormHandler implements FormHandlerInterface
     }
 
 
-
     /**
      * @return string
      */
@@ -388,7 +364,6 @@ abstract class FormHandler implements FormHandlerInterface
             ? add_query_arg($this->form_args, $this->form_action)
             : $this->form_action;
     }
-
 
 
     /**
@@ -402,7 +377,6 @@ abstract class FormHandler implements FormHandlerInterface
         }
         $this->form_action = $form_action;
     }
-
 
 
     /**
@@ -428,7 +402,6 @@ abstract class FormHandler implements FormHandlerInterface
     }
 
 
-
     /**
      * @return string
      */
@@ -438,15 +411,13 @@ abstract class FormHandler implements FormHandlerInterface
     }
 
 
-
     /**
      * @param string $form_config
      * @throws DomainException
      */
     public function setFormConfig($form_config)
     {
-        if (
-        ! in_array(
+        if (! in_array(
             $form_config,
             array(
                 FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
@@ -459,15 +430,16 @@ abstract class FormHandler implements FormHandlerInterface
         ) {
             throw new DomainException(
                 sprintf(
-                    esc_html__('"%1$s" is not a valid value for the form config. Please use one of the class constants on \EventEspresso\core\libraries\form_sections\form_handlers\Form',
-                        'event_espresso'),
+                    esc_html__(
+                        '"%1$s" is not a valid value for the form config. Please use one of the class constants on \EventEspresso\core\libraries\form_sections\form_handlers\Form',
+                        'event_espresso'
+                    ),
                     $form_config
                 )
             );
         }
         $this->form_config = $form_config;
     }
-
 
 
     /**
@@ -486,7 +458,6 @@ abstract class FormHandler implements FormHandlerInterface
     }
 
 
-
     /**
      * used for setting up css and js
      *
@@ -500,14 +471,12 @@ abstract class FormHandler implements FormHandlerInterface
     }
 
 
-
     /**
      * creates and returns the actual form
      *
      * @return EE_Form_Section_Proper
      */
     abstract public function generate();
-
 
 
     /**
@@ -532,7 +501,6 @@ abstract class FormHandler implements FormHandlerInterface
     }
 
 
-
     /**
      * calls generateSubmitButton() and appends it onto the form along with a float clearing div
      *
@@ -551,7 +519,6 @@ abstract class FormHandler implements FormHandlerInterface
             false
         );
     }
-
 
 
     /**
@@ -575,7 +542,6 @@ abstract class FormHandler implements FormHandlerInterface
         $cancel_button->set_button_css_attributes(false);
         return $cancel_button;
     }
-
 
 
     /**
@@ -616,15 +582,13 @@ abstract class FormHandler implements FormHandlerInterface
             ''
         );
         $form_config = $this->formConfig();
-        if (
-            $form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
+        if ($form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
             || $form_config === FormHandler::ADD_FORM_TAGS_ONLY
         ) {
             $form_html .= $this->form()->form_open($this->formAction());
         }
-        $form_html .= $this->form(true)->get_html($this->form_has_errors);
-        if (
-            $form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
+        $form_html .= $this->form(true)->get_html();
+        if ($form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
             || $form_config === FormHandler::ADD_FORM_TAGS_ONLY
         ) {
             $form_html .= $this->form()->form_close();
@@ -666,7 +630,7 @@ abstract class FormHandler implements FormHandlerInterface
                     ),
                     $this->form_name,
                     '<br />',
-                    implode('<br />', $this->form()->all_form_errors())
+                    implode('<br />', $this->form()->get_validation_errors_accumulated())
                 )
             );
         }
@@ -676,9 +640,4 @@ abstract class FormHandler implements FormHandlerInterface
             $this
         );
     }
-
-
-
 }
-// End of file FormHandler.php
-// Location: /FormHandler.php

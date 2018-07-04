@@ -7,10 +7,6 @@ use EventEspresso\core\services\request\ResponseInterface;
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RecommendedVersions
  * checks required and recommended versions for both WP and PHP
@@ -26,25 +22,29 @@ class RecommendedVersions extends Middleware
     /**
      * converts a Request to a Response
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface      $response
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
      * @return ResponseInterface
      * @throws InvalidDataTypeException
      */
     public function handleRequest(RequestInterface $request, ResponseInterface $response)
     {
-        $this->request  = $request;
+        $this->request = $request;
         $this->response = $response;
         // check required WP version
         if (! $this->minimumWordPressVersionRequired()) {
             $this->request->unSetRequestParam('activate', true);
-            add_action('admin_notices', array($this, 'minimum_wp_version_error'), 1);
+            add_action('admin_notices', array($this, 'minimumWpVersionError'), 1);
             $this->response->terminateRequest();
             $this->response->deactivatePlugin();
         }
         // check recommended PHP version
         if (! $this->minimumPhpVersionRecommended()) {
             $this->displayMinimumRecommendedPhpVersionNotice();
+        }
+        // upcoming required version
+        if (! $this->upcomingRequiredPhpVersion()) {
+            $this->displayUpcomingRequiredVersion();
         }
         $this->response = $this->processRequestStack($this->request, $this->response);
         return $this->response;
@@ -65,8 +65,8 @@ class RecommendedVersions extends Middleware
     {
         global $wp_version;
         return version_compare(
-        // first account for wp_version being pre-release
-        // (like RC, beta etc) which are usually in the format like 4.7-RC3-39519
+            // first account for wp_version being pre-release
+            // (like RC, beta etc) which are usually in the format like 4.7-RC3-39519
             strpos($wp_version, '-') > 0
                 ? substr($wp_version, 0, strpos($wp_version, '-'))
                 : $wp_version,
@@ -76,7 +76,6 @@ class RecommendedVersions extends Middleware
     }
 
 
-
     /**
      * @return boolean
      */
@@ -84,7 +83,6 @@ class RecommendedVersions extends Middleware
     {
         return RecommendedVersions::compareWordPressVersion();
     }
-
 
 
     /**
@@ -97,7 +95,6 @@ class RecommendedVersions extends Middleware
     }
 
 
-
     /**
      * @return boolean
      */
@@ -105,7 +102,6 @@ class RecommendedVersions extends Middleware
     {
         return $this->checkPhpVersion();
     }
-
 
 
     /**
@@ -119,8 +115,10 @@ class RecommendedVersions extends Middleware
             <p>
                 <?php
                 printf(
-                    __('We\'re sorry, but Event Espresso requires WordPress version %1$s or greater in order to operate. You are currently running version %2$s.%3$sFor information on how to update your version of WordPress, please go to %4$s.',
-                        'event_espresso'),
+                    __(
+                        'We\'re sorry, but Event Espresso requires WordPress version %1$s or greater in order to operate. You are currently running version %2$s.%3$sFor information on how to update your version of WordPress, please go to %4$s.',
+                        'event_espresso'
+                    ),
                     EE_MIN_WP_VER_REQUIRED,
                     $wp_version,
                     '<br/>',
@@ -131,7 +129,6 @@ class RecommendedVersions extends Middleware
         </div>
         <?php
     }
-
 
 
     /**
@@ -160,5 +157,44 @@ class RecommendedVersions extends Middleware
         }
     }
 
+
+    /**
+     * Returns whether the provided php version number is less than the current version of php installed on the server.
+     *
+     * @param string $version_required
+     * @return bool
+     */
+    private function upcomingRequiredPhpVersion($version_required = '5.5')
+    {
+        return true;
+        // return $this->checkPhpVersion($version_required);
+    }
+
+
+    /**
+     *  Sets a notice for an upcoming required version of PHP in the next update of EE core.
+     */
+    private function displayUpcomingRequiredVersion()
+    {
+        if ($this->request->isAdmin()
+            && apply_filters('FHEE__EE_Recommended_Versions__displayUpcomingRequiredVersion', true, $this->request)
+            && current_user_can('update_plugins')
+        ) {
+            add_action('admin_notices', function () {
+                echo '<div class="notice event-espresso-admin-notice notice-warning"><p>'
+                     . sprintf(
+                         esc_html__(
+                             'Please note: The next update of Event Espresso 4 will %1$srequire%2$s PHP 5.4.45 or greater.  Your web server\'s PHP version is %3$s.  You can contact your host and ask them to update your PHP version to at least PHP 5.6.  Please do not update to the new version of Event Espresso 4 until the PHP update is completed. Read about why keeping your server on the latest version of PHP is a good idea %4$shere%5$s',
+                             'event_espresso'
+                         ),
+                         '<strong>',
+                         '</strong>',
+                         PHP_VERSION,
+                         '<a href="https://wordpress.org/support/upgrade-php/">',
+                         '</a>'
+                     )
+                     . '</p></div>';
+            });
+        }
+    }
 }
-// Location: RecommendedVersions.php

@@ -2,10 +2,6 @@
 
 namespace EventEspresso\core\services\loaders;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class CachingLoaderDecorator
  * abstract parent class for classes that add additional logic to the loading process
@@ -13,7 +9,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9.59.p
  */
 abstract class CachingLoaderDecorator extends LoaderDecorator implements CachingLoaderDecoratorInterface
 {

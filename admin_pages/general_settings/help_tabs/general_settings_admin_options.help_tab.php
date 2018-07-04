@@ -11,10 +11,11 @@
 <strong><?php _e('Enable Full Logging', 'event_espresso'); ?></strong><br />
 <?php _e('This option will save all Event Espresso registration form data, and debugging information to a file in the /wp-content/uploads/espresso/logs directory on your server. This will occur each time a page is accessed on your site until this option is turned off.', 'event_espresso'); ?>
 <br/>
-<?php printf( 
-		__('Note that if you are accessing your filesystem over FTP or SSH, and logging writes to the filesystem on every request, you should put your credentials in your wp-config.php file, as described %1$shere.%2$s', 'event_espresso'),
-		'<a href="https://codex.wordpress.org/Editing_wp-config.php#WordPress_Upgrade_Constants" target="_blank">',
-		'</a>' ); ?>
+<?php printf(
+    __('Note that if you are accessing your filesystem over FTP or SSH, and logging writes to the filesystem on every request, you should put your credentials in your wp-config.php file, as described %1$shere.%2$s', 'event_espresso'),
+    '<a href="https://codex.wordpress.org/Editing_wp-config.php#WordPress_Upgrade_Constants" target="_blank">',
+    '</a>'
+); ?>
 </li>
 <li>
 <strong><?php _e('Enable Remote Logging', 'event_espresso'); ?></strong><br />

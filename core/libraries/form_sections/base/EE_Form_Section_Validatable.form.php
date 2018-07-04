@@ -1,20 +1,6 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package            Event Espresso
- * @ author            Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                    http://www.eventespresso.com
- * @ version            4.3
- * ------------------------------------------------------------------------
  * EE_Form_Section_Validatable
  * Class for cross-cutting job of handling forms.
  * In the presentation layer Form Sections handle the display of form inputs on the page.
@@ -60,8 +46,8 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base
 
 
     /**
-     * returns a ul html element with all the validation errors in it.
-     * If we want this to be customizable, we may decide to create a strategy for displaying it.
+     * returns a comma-separated list of all the validation errors in it.
+     * If we want this to be customizable, we may decide to create a strategy for displaying it
      *
      * @return string
      */

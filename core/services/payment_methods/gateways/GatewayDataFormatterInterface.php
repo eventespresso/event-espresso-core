@@ -1,10 +1,6 @@
 <?php
 namespace EventEspresso\core\services\payment_methods\gateways;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class GatewayDataFormatterInterface
  * Interface which helps prepare data for sending to gateways
@@ -76,5 +72,3 @@ interface GatewayDataFormatterInterface
      */
     public function formatCurrency($amount);
 }
-// End of file GatewayDataFormatterInterface.php
-// Location: core\services\payment_methods\gateways/GatewayDataFormatterInterface.php

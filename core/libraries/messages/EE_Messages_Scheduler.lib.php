@@ -1,5 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * This class is used for setting scheduled tasks related to the EE_messages system.
@@ -26,12 +25,12 @@ class EE_Messages_Scheduler extends EE_Base
      */
     public function __construct()
     {
-        //register tasks (and make sure only registered once).
+        // register tasks (and make sure only registered once).
         if (! has_action('FHEE__EEH_Activation__get_cron_tasks', array($this, 'register_scheduled_tasks'))) {
             add_action('FHEE__EEH_Activation__get_cron_tasks', array($this, 'register_scheduled_tasks'), 10);
         }
 
-        //register callbacks for scheduled events (but make sure they are set only once).
+        // register callbacks for scheduled events (but make sure they are set only once).
         if (! has_action(
             'AHEE__EE_Messages_Scheduler__generation',
             array('EE_Messages_Scheduler', 'batch_generation')
@@ -41,7 +40,7 @@ class EE_Messages_Scheduler extends EE_Base
             add_action('AHEE__EE_Messages_Scheduler__cleanup', array('EE_Messages_Scheduler', 'cleanup'));
         }
 
-        //add custom schedules
+        // add custom schedules
         add_filter('cron_schedules', array($this, 'custom_schedules'));
     }
 
@@ -125,7 +124,7 @@ class EE_Messages_Scheduler extends EE_Base
      */
     public static function get_request_params($task)
     {
-        //transient is used for flood control on msg_cron_trigger requests
+        // transient is used for flood control on msg_cron_trigger requests
         $transient_key = 'ee_trans_' . uniqid($task);
         set_transient($transient_key, 1, 5 * MINUTE_IN_SECONDS);
         return array(
@@ -143,7 +142,7 @@ class EE_Messages_Scheduler extends EE_Base
     public static function initiate_immediate_request_on_cron($task)
     {
         $request_args = EE_Messages_Scheduler::get_request_params($task);
-        //set those request args in the request so it gets picked up
+        // set those request args in the request so it gets picked up
         foreach ($request_args as $request_key => $request_value) {
             EE_Registry::instance()->REQ->set($request_key, $request_value);
         }
@@ -190,8 +189,8 @@ class EE_Messages_Scheduler extends EE_Base
      */
     public static function cleanup()
     {
-        //first check if user has cleanup turned on or if we're in maintenance mode.  If in maintenance mode we'll wait
-        //until the next scheduled event.
+        // first check if user has cleanup turned on or if we're in maintenance mode.  If in maintenance mode we'll wait
+        // until the next scheduled event.
         if (! EE_Registry::instance()->CFG->messages->delete_threshold
             || ! EE_Maintenance_Mode::instance()->models_can_query()
         ) {
@@ -206,5 +205,4 @@ class EE_Messages_Scheduler extends EE_Base
             EEM_Message::instance()->delete_old_messages(EE_Registry::instance()->CFG->messages->delete_threshold);
         }
     }
-
-} //end EE_Messages_Scheduler
+}
