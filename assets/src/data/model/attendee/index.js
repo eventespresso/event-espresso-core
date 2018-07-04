@@ -90,21 +90,24 @@ export const whereConditions = ( {
 	showGravatar = false,
 } ) => {
 	const where = [];
+
 	// ensure that entity IDs are integers
+	forRegistrationId = parseInt( forRegistrationId, 10 );
 	forTicketId = parseInt( forTicketId, 10 );
 	forDatetimeId = parseInt( forDatetimeId, 10 );
 	forEventId = parseInt( forEventId, 10 );
-	forRegistrationId = parseInt( forRegistrationId, 10 );
-	// add query param for entity we are filtering for
-	if ( forTicketId !== 0 && ! isNaN( forTicketId ) ) {
+
+	// order of priority for provided arguments.
+	if ( forRegistrationId !== 0 && ! isNaN( forRegistrationId ) ) {
+		where.push( `where[Registration.REG_ID]=${ forRegistrationId }` );
+	} else if ( forTicketId !== 0 && ! isNaN( forTicketId ) ) {
 		where.push( `where[Registration.Ticket.TKT_ID]=${ forTicketId }` );
 	} else if ( forDatetimeId !== 0 && ! isNaN( forDatetimeId ) ) {
 		where.push( `where[Registration.Ticket.Datetime.DTT_ID]=${ forDatetimeId }` );
 	} else if ( forEventId !== 0 && ! isNaN( forEventId ) ) {
 		where.push( `where[Registration.EVT_ID]=${ forEventId }` );
-	} else if ( forRegistrationId !== 0 && ! isNaN( forRegistrationId ) ) {
-		where.push( `where[Registration.REG_ID]=${ forRegistrationId }` );
 	}
+
 	if ( REGISTRATION_STATUS_IDS.includes( forStatusId ) ) {
 		where.push( `where[Registration.Status.STS_ID]=${ forStatusId }` );
 	}
