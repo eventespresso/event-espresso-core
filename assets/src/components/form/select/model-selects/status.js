@@ -52,7 +52,9 @@ export default class StatusSelect extends Component {
 			model.STATUS_TYPE_REGISTRATION,
 			model.STATUS_TYPE_TRANSACTION,
 		] ).isRequired,
-		selectedStatusId: PropTypes.string,
+		selectedStatusId: PropTypes.oneOf(
+			model.ALL_STATUS_IDS
+		),
 		onStatusSelect: PropTypes.func,
 		selectLabel: PropTypes.string,
 		optionsEntityMap: PropTypes.object,
