@@ -17,149 +17,152 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config
 
     protected function _set_tips_array()
     {
-        $this->_qtipsa = array(
-            0  => array(
-                'content_id' => 'about-taxable-toggle',
-                'target'     => '.TKT-taxable-checkbox',
-                'content'    => $this->_get_taxable_info_content(),
-                'options'    => array(
-                    'show_only_once' => true,
-                    'content'        => array(
-                        'title' => __('Taxable Ticket Toggle', 'event_espresso'),
-                        'button' => true,
-                    ),
-                    'show'           => array(
-                        'event' => 'click',
-                    ),
-                    'hide'           => array(
-                        'event' => false,
-                    ),
-                    'style'          => array(
-                        'classes' => '',
-                    ),
-                )// defaults
-            ),
-            1  => array(
-                'content_id' => 'ticket-icon-help',
-                'target'     => '.ticket-icon',
-                'content'    => __('Assigned Tickets', 'event_espresso'),
-            ),
-            2  => array(
-                'content_id' => 'clone-icon-help',
-                'target'     => '.clone-icon',
-                'content'    => __('Duplicate this Item', 'event_espresso'),
-            ),
-            3  => array(
-                'content_id' => 'trash-datetime-help',
-                'target'     => '.datetime-edit-table .trash-icon',
-                'content'    => __('Trash Datetime', 'event_espresso'),
-            ),
-            4  => array(
-                'content_id' => 'trash-ticket-help',
-                'target'     => '.ticket-row .trash-icon',
-                'content'    => __('Trash Ticket', 'event_espresso'),
-            ),
-            5  => array(
-                'content_id' => 'trash-price-modifier-help',
-                'target'     => '.ticket-price-rows .trash-icon',
-                'content'    => __('Trash Price Modifier', 'event_espresso'),
-            ),
-            6  => array(
-                'content_id' => 'gear-icon-help',
-                'target'     => '.gear-icon',
-                'content'    => __('Advanced Settings', 'event_espresso'),
-            ),
-            7  => array(
-                'content_id' => 'tkt-status-archived',
-                'target'     => '.ticket-row .tkt-status-' . EE_Ticket::archived,
-                'content'    => $this->_ticket_status_legend(EE_Ticket::archived),
-                'options'    => array(
-                    'position' => array(
-                        'target' => 'mouse',
-                        'adjust' => array(
-                            'mouse' => false,
+        $this->_qtipsa = apply_filters(
+            'FHEE__EE_Event_Editor_Tips___set_tips_array__qtipsa',
+            array(
+                0  => array(
+                    'content_id' => 'about-taxable-toggle',
+                    'target'     => '.TKT-taxable-checkbox',
+                    'content'    => $this->_get_taxable_info_content(),
+                    'options'    => array(
+                        'show_only_once' => true,
+                        'content'        => array(
+                            'title' => __('Taxable Ticket Toggle', 'event_espresso'),
+                            'button' => true,
+                        ),
+                        'show'           => array(
+                            'event' => 'click',
+                        ),
+                        'hide'           => array(
+                            'event' => false,
+                        ),
+                        'style'          => array(
+                            'classes' => '',
+                        ),
+                    )// defaults
+                ),
+                1  => array(
+                    'content_id' => 'ticket-icon-help',
+                    'target'     => '.ticket-icon',
+                    'content'    => __('Assigned Tickets', 'event_espresso'),
+                ),
+                2  => array(
+                    'content_id' => 'clone-icon-help',
+                    'target'     => '.clone-icon',
+                    'content'    => __('Duplicate this Item', 'event_espresso'),
+                ),
+                3  => array(
+                    'content_id' => 'trash-datetime-help',
+                    'target'     => '.datetime-edit-table .trash-icon',
+                    'content'    => __('Trash Datetime', 'event_espresso'),
+                ),
+                4  => array(
+                    'content_id' => 'trash-ticket-help',
+                    'target'     => '.ticket-row .trash-icon',
+                    'content'    => __('Trash Ticket', 'event_espresso'),
+                ),
+                5  => array(
+                    'content_id' => 'trash-price-modifier-help',
+                    'target'     => '.ticket-price-rows .trash-icon',
+                    'content'    => __('Trash Price Modifier', 'event_espresso'),
+                ),
+                6  => array(
+                    'content_id' => 'gear-icon-help',
+                    'target'     => '.gear-icon',
+                    'content'    => __('Advanced Settings', 'event_espresso'),
+                ),
+                7  => array(
+                    'content_id' => 'tkt-status-archived',
+                    'target'     => '.ticket-row .tkt-status-' . EE_Ticket::archived,
+                    'content'    => $this->_ticket_status_legend(EE_Ticket::archived),
+                    'options'    => array(
+                        'position' => array(
+                            'target' => 'mouse',
+                            'adjust' => array(
+                                'mouse' => false,
+                            ),
                         ),
                     ),
                 ),
-            ),
-            8  => array(
-                'content_id' => 'tkt-status-expired',
-                'target'     => '.ticket-row .tkt-status-' . EE_Ticket::expired,
-                'content'    => $this->_ticket_status_legend(EE_Ticket::expired),
-                'options'    => array(
-                    'position' => array(
-                        'target' => 'mouse',
-                        'adjust' => array(
-                            'mouse' => false,
+                8  => array(
+                    'content_id' => 'tkt-status-expired',
+                    'target'     => '.ticket-row .tkt-status-' . EE_Ticket::expired,
+                    'content'    => $this->_ticket_status_legend(EE_Ticket::expired),
+                    'options'    => array(
+                        'position' => array(
+                            'target' => 'mouse',
+                            'adjust' => array(
+                                'mouse' => false,
+                            ),
                         ),
                     ),
                 ),
-            ),
-            9  => array(
-                'content_id' => 'tkt-status-sold_out',
-                'target'     => '.ticket-row .tkt-status-' . EE_Ticket::sold_out,
-                'content'    => $this->_ticket_status_legend(EE_Ticket::sold_out),
-                'options'    => array(
-                    'position' => array(
-                        'target' => 'mouse',
-                        'adjust' => array(
-                            'mouse' => false,
+                9  => array(
+                    'content_id' => 'tkt-status-sold_out',
+                    'target'     => '.ticket-row .tkt-status-' . EE_Ticket::sold_out,
+                    'content'    => $this->_ticket_status_legend(EE_Ticket::sold_out),
+                    'options'    => array(
+                        'position' => array(
+                            'target' => 'mouse',
+                            'adjust' => array(
+                                'mouse' => false,
+                            ),
                         ),
                     ),
                 ),
-            ),
-            10 => array(
-                'content_id' => 'tkt-status-pending',
-                'target'     => '.ticket-row .tkt-status-' . EE_Ticket::pending,
-                'content'    => $this->_ticket_status_legend(EE_Ticket::pending),
-                'options'    => array(
-                    'position' => array(
-                        'target' => 'mouse',
-                        'adjust' => array(
-                            'mouse' => false,
+                10 => array(
+                    'content_id' => 'tkt-status-pending',
+                    'target'     => '.ticket-row .tkt-status-' . EE_Ticket::pending,
+                    'content'    => $this->_ticket_status_legend(EE_Ticket::pending),
+                    'options'    => array(
+                        'position' => array(
+                            'target' => 'mouse',
+                            'adjust' => array(
+                                'mouse' => false,
+                            ),
                         ),
                     ),
                 ),
-            ),
-            11 => array(
-                'content_id' => 'tkt-status-onsale',
-                'target'     => '.ticket-row .tkt-status-' . EE_Ticket::onsale,
-                'content'    => $this->_ticket_status_legend(EE_Ticket::onsale),
-                'options'    => array(
-                    'position' => array(
-                        'target' => 'mouse',
-                        'adjust' => array(
-                            'mouse' => false,
+                11 => array(
+                    'content_id' => 'tkt-status-onsale',
+                    'target'     => '.ticket-row .tkt-status-' . EE_Ticket::onsale,
+                    'content'    => $this->_ticket_status_legend(EE_Ticket::onsale),
+                    'options'    => array(
+                        'position' => array(
+                            'target' => 'mouse',
+                            'adjust' => array(
+                                'mouse' => false,
+                            ),
                         ),
                     ),
                 ),
-            ),
-            12 => array(
-                'content_id' => 'sortable-tkt-drag-handle-tip',
-                'target'     => '.ee-ticket-sortable .sortable-drag-handle',
-                'content'    => __('Click and drag-n-drop to reorder tickets.', 'event_espresso'),
-                'options'    => array(
-                    'position' => array(
-                        'adjust' => array(
-                            'mouse' => false,
-                            'y'     => 5,
+                12 => array(
+                    'content_id' => 'sortable-tkt-drag-handle-tip',
+                    'target'     => '.ee-ticket-sortable .sortable-drag-handle',
+                    'content'    => __('Click and drag-n-drop to reorder tickets.', 'event_espresso'),
+                    'options'    => array(
+                        'position' => array(
+                            'adjust' => array(
+                                'mouse' => false,
+                                'y'     => 5,
+                            ),
                         ),
                     ),
                 ),
-            ),
-            13 => array(
-                'content_id' => 'sortable-dtt-drag-handle-tip',
-                'target'     => '.ee-dtt-sortable .sortable-drag-handle',
-                'content'    => __('Click and drag-n-drop to reorder datetimes.', 'event_espresso'),
-                'options'    => array(
-                    'position' => array(
-                        'adjust' => array(
-                            'mouse' => false,
-                            'y'     => 5,
+                13 => array(
+                    'content_id' => 'sortable-dtt-drag-handle-tip',
+                    'target'     => '.ee-dtt-sortable .sortable-drag-handle',
+                    'content'    => __('Click and drag-n-drop to reorder datetimes.', 'event_espresso'),
+                    'options'    => array(
+                        'position' => array(
+                            'adjust' => array(
+                                'mouse' => false,
+                                'y'     => 5,
+                            ),
                         ),
                     ),
                 ),
-            ),
+            )
         );
     }
 
