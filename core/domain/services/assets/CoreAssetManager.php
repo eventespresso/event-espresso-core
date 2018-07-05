@@ -51,6 +51,10 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_EE_HELPERS = 'eventespresso-helpers';
 
+    const JS_HANDLE_EE_MODEL = 'eventespresso-model';
+
+    const JS_HANDLE_EE_HOC_COMPONENTS = 'eventespresso-hoc-components';
+
     const JS_HANDLE_EE_COMPONENTS = 'eventespresso-components';
 
     const JS_HANDLE_EE_JS_API = 'eejs-api';
@@ -189,9 +193,31 @@ class CoreAssetManager extends AssetManager
         )->setRequiresTranslation();
 
         $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_MODEL,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'model'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_HELPERS
+            )
+        )->setRequiresTranslation();
+
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_HOC_COMPONENTS,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'hocComponents'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
+                CoreAssetManager::JS_HANDLE_EE_HELPERS,
+                'wp-components',
+            )
+        )->setRequiresTranslation();
+
+        $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_COMPONENTS,
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'components'),
-            array(CoreAssetManager::JS_HANDLE_EE_DATA_STORES, CoreAssetManager::JS_HANDLE_EE_HELPERS)
+            array(
+                CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
+                CoreAssetManager::JS_HANDLE_EE_HELPERS,
+                'wp-components',
+            )
         )
         ->setRequiresTranslation();
 

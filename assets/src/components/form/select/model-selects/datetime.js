@@ -2,7 +2,8 @@
  * Internal imports
  */
 import ModelSelect from '../model-select';
-import { dateTimeModel } from '../../../../data/model';
+import { dateTimeModel as model } from '../../../../data/model';
+import { withBaseControl } from '../../../../higher-order-components';
 
 /**
  * External imports
@@ -12,12 +13,25 @@ import { Component } from '@wordpress/element';
 import { default as EditorSelect, getEditorSelectProps } from './editor-select';
 import { PropTypes } from 'prop-types';
 
+const optionsEntityMap = {
+	default: {
+		value: 'DTT_ID',
+		label: ( entity ) => {
+			return model.prettyDateFromDateTime( entity );
+		},
+	},
+	name: {
+		value: 'DTT_ID',
+		label: 'DTT_name',
+	},
+};
+
 /**
  * Select Component for the Datetime Model.
  */
 export default class DatetimeSelect extends Component {
 	state = {
-		modelName: dateTimeModel.MODEL_NAME,
+		modelName: model.MODEL_NAME,
 		queryData: {},
 	};
 
@@ -30,14 +44,14 @@ export default class DatetimeSelect extends Component {
 			),
 			placeholder: __( 'Select Datetime...', 'event_espresso' ),
 		},
-		...dateTimeModel.defaultQueryData,
-		getQueryString: dateTimeModel.getQueryString,
+		...model.defaultQueryData,
+		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Datetime', 'event_espresso' ),
-		addAllOptionLabel: __( 'All Datetimes', 'event_espresso' ),
+		optionsEntityMap,
 	};
 
 	static propTypes = {
-		...dateTimeModel.queryDataTypes,
+		...model.queryDataTypes,
 		forEventId: PropTypes.number,
 		selectedDatetimeId: PropTypes.oneOfType( [
 			PropTypes.number,
@@ -45,6 +59,7 @@ export default class DatetimeSelect extends Component {
 		] ),
 		onDatetimeSelect: PropTypes.func,
 		selectLabel: PropTypes.string,
+		optionsEntityMap: PropTypes.object,
 	};
 
 	addEventIdToQueryData( forEventId ) {
@@ -91,24 +106,8 @@ export default class DatetimeSelect extends Component {
 }
 
 /**
- * DatetimeSelect Component wrapped in a BaseControl component.
+ * Enhanced Datetime Select for the WordPress editor
  */
-export class EditorDatetimeSelect extends Component {
-	static defaultProps = {
-		selectLabel: __( 'Select Datetime', 'event_espresso' ),
-	};
-	static propTypes = {
-		selectLabel: PropTypes.string,
-	};
-
-	render() {
-		const props = { ...this.props };
-		props.modelName = dateTimeModel.MODEL_NAME;
-		const { editorProps, selectProps } = getEditorSelectProps( props );
-		return (
-			<EditorSelect { ...editorProps } >
-				<DatetimeSelect { ...selectProps } />
-			</EditorSelect>
-		);
-	}
-}
+export const EditorDatetimeSelect = withBaseControl(
+	'select-datetime'
+)( DatetimeSelect );

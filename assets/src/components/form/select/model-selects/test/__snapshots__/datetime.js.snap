@@ -1,14 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DatetimeSelect() matches snapshot with default props 1`] = `
-<WithSelect(ModelSelect)
-  addAllOptionLabel="All Datetimes"
+<Component
   getQueryString={[Function]}
   modelName="datetime"
   optionsEntityMap={
     Object {
-      "datetime": Object {
+      "default": Object {
         "label": [Function],
+        "value": "DTT_ID",
+      },
+      "name": Object {
+        "label": "DTT_name",
         "value": "DTT_ID",
       },
     }
@@ -32,4 +35,18 @@ exports[`DatetimeSelect() matches snapshot with default props 1`] = `
   }
   selectLabel="Select Datetime"
 />
+`;
+
+exports[`EditorDatetimeSelect() matches snapshot with default props 1`] = `
+<div
+  class="components-base-control"
+>
+  <div
+    class="components-base-control__field"
+  >
+    <span>
+      DatetimeSelect
+    </span>
+  </div>
+</div>
 `;

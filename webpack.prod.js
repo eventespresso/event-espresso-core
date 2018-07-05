@@ -29,7 +29,10 @@ common.forEach( ( config, index ) => {
 				aliases: {
 					'wp-plugins-page': 'ee-wp-plugins-page',
 					'data-stores': 'eventespresso-data-stores',
-					'eventespresso-core-blocks': 'eventespresso-core-blocks',
+					components: 'eventespresso-components',
+					helpers: 'eventespresso-helpers',
+					hocComponents: 'eventespresso-hoc-components',
+					model: 'eventespresso-model',
 				},
 				excludes: [ 'eejs', 'vendor' ],
 			} ),

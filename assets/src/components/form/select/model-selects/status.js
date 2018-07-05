@@ -2,7 +2,8 @@
  * Internal imports
  */
 import ModelSelect from '../model-select';
-import { statusModel } from '../../../../data/model';
+import { statusModel as model } from '../../../../data/model';
+import { withBaseControl } from '../../../../higher-order-components';
 
 /**
  * External imports
@@ -12,12 +13,19 @@ import { Component } from '@wordpress/element';
 import { default as EditorSelect, getEditorSelectProps } from './editor-select';
 import { PropTypes } from 'prop-types';
 
+const optionsEntityMap = {
+	default: {
+		value: 'STS_ID',
+		label: 'STS_code',
+	},
+};
+
 /**
  * Select Component for the Status Model.
  */
 export default class StatusSelect extends Component {
 	state = {
-		modelName: statusModel.MODEL_NAME,
+		modelName: model.MODEL_NAME,
 		queryData: {},
 	};
 
@@ -29,26 +37,28 @@ export default class StatusSelect extends Component {
 			noOptionsMessage: () => __( 'No Statuses.', 'event_espresso' ),
 			placeholder: __( 'Select Status...', 'event_espresso' ),
 		},
-		...statusModel.defaultQueryData,
-		getQueryString: statusModel.getQueryString,
+		...model.defaultQueryData,
+		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Status', 'event_espresso' ),
-		addAllOptionLabel: __( 'All Statuses', 'event_espresso' ),
+		optionsEntityMap,
 	};
 
 	static propTypes = {
-		...statusModel.queryDataTypes,
+		...model.queryDataTypes,
 		statusType: PropTypes.oneOf( [
-			statusModel.STATUS_TYPE_ANY,
-			statusModel.STATUS_TYPE_EMAIL,
-			statusModel.STATUS_TYPE_EVENT,
-			statusModel.STATUS_TYPE_MESSAGE,
-			statusModel.STATUS_TYPE_PAYMENT,
-			statusModel.STATUS_TYPE_REGISTRATION,
-			statusModel.STATUS_TYPE_TRANSACTION,
+			model.STATUS_TYPE_EMAIL,
+			model.STATUS_TYPE_EVENT,
+			model.STATUS_TYPE_MESSAGE,
+			model.STATUS_TYPE_PAYMENT,
+			model.STATUS_TYPE_REGISTRATION,
+			model.STATUS_TYPE_TRANSACTION,
 		] ).isRequired,
-		selectedStatusId: PropTypes.string,
+		selectedStatusId: PropTypes.oneOf(
+			model.ALL_STATUS_IDS
+		),
 		onStatusSelect: PropTypes.func,
 		selectLabel: PropTypes.string,
+		optionsEntityMap: PropTypes.object,
 	};
 
 	addStatusTypeToQueryData( statusType ) {
@@ -95,15 +105,11 @@ export default class StatusSelect extends Component {
 }
 
 /**
- * Select Component for the Status Model wrapped in a BaseControl component.
+ * Enhanced Status Select for the WordPress editor
  */
-export class EditorStatusSelect extends Component {
-	static defaultProps = {
-		selectLabel: __( 'Select Status', 'event_espresso' ),
-	};
-	static propTypes = {
-		selectLabel: PropTypes.string,
-	};
+export const EditorStatusSelect = withBaseControl(
+	'select-status'
+)( StatusSelect );
 
 	render() {
 		const props = { ...this.props };

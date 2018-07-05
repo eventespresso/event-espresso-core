@@ -2,7 +2,8 @@
  * Internal imports
  */
 import ModelSelect from '../model-select';
-import { eventModel } from '../../../../data/model';
+import { eventModel as model } from '../../../../data/model';
+import { withBaseControl } from '../../../../higher-order-components';
 
 /**
  * External imports
@@ -12,12 +13,19 @@ import { Component } from '@wordpress/element';
 import { default as EditorSelect, getEditorSelectProps } from './editor-select';
 import { PropTypes } from 'prop-types';
 
+const optionsEntityMap = {
+	default: {
+		value: 'EVT_ID',
+		label: 'EVT_name',
+	},
+};
+
 /**
  * Select Component for the Event Model.
  */
 export default class EventSelect extends Component {
 	state = {
-		modelName: eventModel.MODEL_NAME,
+		modelName: model.MODEL_NAME,
 	};
 
 	static defaultProps = {
@@ -29,13 +37,14 @@ export default class EventSelect extends Component {
 			),
 			placeholder: __( 'Select Event...', 'event_espresso' ),
 		},
-		...eventModel.defaultQueryData,
-		getQueryString: eventModel.getQueryString,
+		...model.defaultQueryData,
+		getQueryString: model.getQueryString,
 		selectLabel: __( 'Select Event', 'event_espresso' ),
+		optionsEntityMap,
 	};
 
 	static propTypes = {
-		...eventModel.queryDataTypes,
+		...model.queryDataTypes,
 		selectedEventId: PropTypes.oneOfType( [
 			PropTypes.number,
 			PropTypes.string,
@@ -64,24 +73,8 @@ export default class EventSelect extends Component {
 }
 
 /**
- * EventSelect Component wrapped in a BaseControl component.
+ * Enhanced EventSelect for the WordPress editor.
  */
-export class EditorEventSelect extends Component {
-	static defaultProps = {
-		selectLabel: __( 'Select Event', 'event_espresso' ),
-	};
-	static propTypes = {
-		selectLabel: PropTypes.string,
-	};
-	render() {
-		const props = { ...this.props };
-		props.modelName = eventModel.MODEL_NAME;
-		const { editorProps, selectProps } = getEditorSelectProps( props );
-		return (
-			<EditorSelect { ...editorProps } >
-				<EventSelect { ...selectProps } />
-			</EditorSelect>
-		);
-	}
-}
-
+export const EditorEventSelect = withBaseControl(
+	'select-event'
+)( EventSelect );

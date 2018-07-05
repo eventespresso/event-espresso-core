@@ -2,12 +2,11 @@ import { shallow } from 'enzyme';
 import { ModelSelect } from '../model-select';
 
 const optionsEntityMap = {
-	event: {
-		label: 'EVT_name',
+	default: {
 		value: 'EVT_ID',
+		label: 'EVT_name',
 	},
 };
-
 const simulatedResponse = [
 	{ EVT_ID: 1, EVT_name: 'Event A' },
 	{ EVT_ID: 2, EVT_name: 'Event B' },
@@ -33,6 +32,7 @@ describe( 'ModelSelect props check', () => {
 			<ModelSelect
 				modelName={ 'event' }
 				modelEntities={ simulatedResponse }
+				optionsEntityMap={ optionsEntityMap }
 				selectConfiguration={ {
 					isClearable: false,
 					isLoading: false,
@@ -56,6 +56,7 @@ describe( 'ModelSelect props check', () => {
 			<ModelSelect
 				modelName={ 'event' }
 				modelEntities={ simulatedResponse }
+				optionsEntityMap={ optionsEntityMap }
 				selectLabel={ 'Label for Select' }
 				optionsEntityMap={ optionsEntityMap }
 			/>,
