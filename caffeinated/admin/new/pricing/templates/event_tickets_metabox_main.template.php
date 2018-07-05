@@ -1,3 +1,28 @@
+<?php
+/**
+ * template vars in use
+ *
+ * @var int $EVT_ID
+ * @var string $event_datetime_help_link
+ * @var string $ticket_options_help_link
+ * @var string $add_new_dtt_help_link
+ * @var string $existing_datetime_ids
+ * @var string $datetime_rows
+ * @var EE_Datetime $time
+ * @var int $total_dtt_rows
+ * @var int $ticket_rows
+ * @var string $show_tickets_container
+ * @var string $existing_ticket_ids
+ * @var int $total_ticket_rows
+ * @var string $ticket_js_structure
+ * @var string $ee_collapsible_status
+ */
+
+do_action(
+    'AHEE__caffeinated_admin_new_pricing_templates__event_tickets_metabox_main__before_content',
+    $EVT_ID, $existing_datetime_ids, $existing_ticket_ids
+);
+?>
 <div id="event-and-ticket-form-content">
     <h3 class="event-tickets-datetimes-title"><span data-target=".event-datetimes-container"
                                                     class="clickable ee-collapsible<?php echo $ee_collapsible_status; ?>"><span
@@ -104,6 +129,13 @@
     </div> <!-- end #add-event-datetime -->
     <div style="clear:both"></div>
 
+    <?php
+    do_action(
+        'AHEE__caffeinated_admin_new_pricing_templates__event_tickets_metabox_main__after_datetime_fields',
+        $EVT_ID, $existing_datetime_ids, $existing_ticket_ids
+    );
+    ?>
+
     <div class="available-tickets-container">
         <h3 class="event-tickets-datetimes-title"><span data-target=".event-tickets-container"
                                                         class="clickable ee-collapsible<?php echo $ee_collapsible_status; ?>"><span
@@ -149,20 +181,10 @@
     </div>
 </div> <!-- end #event-and-ticket-form-content -->
 
-<?php echo $ticket_js_structure; ?>
 <?php
-/**
- * template vars in use
- *
- * $event_datetime_help_link
- * $existing_datetime_ids
- * $total_dtt_rows
- * $add_new_dtt_help_link
- * $datetime_rows
- * $show_tickets_container
- * $ticket_rows
- * $existing_ticket_ids
- * $total_ticket_rows
- * $ticket_js_structure
- * $ee_collapsible_status
- */
+echo $ticket_js_structure;
+
+do_action(
+    'AHEE__caffeinated_admin_new_pricing_templates__event_tickets_metabox_main__after_content',
+    $EVT_ID, $existing_datetime_ids, $existing_ticket_ids
+);
