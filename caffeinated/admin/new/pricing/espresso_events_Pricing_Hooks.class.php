@@ -993,6 +993,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         $this->_is_creating_event = empty($this->_req_data['post']);
         // default main template args
         $main_template_args = array(
+            'EVT_ID' => $EVT_ID,
             'event_datetime_help_link' => EEH_Template::get_help_tab_link(
                 'event_editor_event_datetimes_help_tab',
                 $this->_adminpage_obj->page_slug,
