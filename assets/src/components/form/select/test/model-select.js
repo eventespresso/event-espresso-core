@@ -37,7 +37,6 @@ describe( 'ModelSelect props check', () => {
 					isClearable: false,
 					isLoading: false,
 				} }
-				optionsEntityMap={ optionsEntityMap }
 			/>,
 		);
 		const selectWrapper = wrapper.childAt( 1 );
@@ -58,7 +57,6 @@ describe( 'ModelSelect props check', () => {
 				modelEntities={ simulatedResponse }
 				optionsEntityMap={ optionsEntityMap }
 				selectLabel={ 'Label for Select' }
-				optionsEntityMap={ optionsEntityMap }
 			/>,
 		);
 		expect( wrapper.childAt( 0 ).text() ).toEqual( 'Label for Select' );
