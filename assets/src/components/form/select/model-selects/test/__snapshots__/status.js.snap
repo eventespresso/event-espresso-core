@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditorStatusSelect() matches snapshot with default props 1`] = `
+<div
+  class="components-base-control"
+>
+  <div
+    class="components-base-control__field"
+  >
+    <span>
+      StatusSelect
+    </span>
+  </div>
+</div>
+`;
+
+exports[`StatusSelect() matches snapshot with default props plus provided statusType 1`] = `
+<Component
+  getQueryString={[Function]}
+  modelName="status"
+  optionsEntityMap={
+    Object {
+      "default": Object {
+        "label": "STS_code",
+        "value": "STS_ID",
+      },
+    }
+  }
+  queryData={
+    Object {
+      "limit": 25,
+      "order": "DESC",
+      "orderBy": "statusCode",
+      "statusType": "registration",
+    }
+  }
+  selectConfiguration={
+    Object {
+      "defaultValue": undefined,
+      "loadingMessage": [Function],
+      "noOptionsMessage": [Function],
+      "onChange": undefined,
+      "placeholder": "Select Status...",
+    }
+  }
+  selectLabel="Select Status"
+  statusType="registration"
+/>
+`;

@@ -1,7 +1,12 @@
 {
-  "eejs.js": "ee-eejs.893725f02d3ec59952e8.dist.js",
+  "components.js": "ee-components.193f8ebf16611fe78d75.dist.js",
+  "data-stores.js": "ee-data-stores.d56c419981ac0eb886bd.dist.js",
+  "eejs.js": "ee-eejs.add3918721f0837f0df1.dist.js",
+  "helpers.js": "ee-helpers.242dcad45e91c8f65693.dist.js",
+  "hocComponents.js": "ee-hocComponents.47a40292d57831a0f42b.dist.js",
   "manifest.js": "ee-manifest.db11f08f044e318032a1.dist.js",
+  "model.js": "ee-model.a3f18c4fad21e24ab2a1.dist.js",
   "vendor.js": "ee-vendor.1a4ecfa3d030b7cd1ee2.dist.js",
   "wp-plugins-page.css": "ee-wp-plugins-page.12612f6ab71570ab1af8.dist.css",
-  "wp-plugins-page.js": "ee-wp-plugins-page.2d53dd52679d995d5e4b.dist.js"
+  "wp-plugins-page.js": "ee-wp-plugins-page.901ce38ce3c9df680e03.dist.js"
 }

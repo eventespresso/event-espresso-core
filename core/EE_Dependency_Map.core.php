@@ -772,6 +772,19 @@ class EE_Dependency_Map
                 'EE_Registry' => EE_Dependency_Map::load_from_cache,
                 'EE_Config' => EE_Dependency_Map::load_from_cache
             ),
+            'EventEspresso\core\services\editor\BlockRegistrationManager'                                                 => array(
+                'EventEspresso\core\services\assets\BlockAssetManagerCollection' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\entities\editor\BlockCollection'      => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request'                    => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager' => array(
+                'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\entities\editor\blocks\widgets\EventAttendees' => array(
+                'EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager' => self::load_from_cache,
+            ),
         );
     }
 

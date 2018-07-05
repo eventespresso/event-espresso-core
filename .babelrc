@@ -1,5 +1,6 @@
 {
 	"presets": [
+		"@wordpress/default",
 		[
 			"env",
 			{
@@ -9,11 +10,19 @@
 	],
 	"plugins": [
 		"transform-object-rest-spread",
-		"transform-react-jsx"
+		"transform-react-jsx",
+		"transform-async-generator-functions",
+		"transform-class-properties",
+		"dev-expression"
 	],
 	"env": {
 		"test": {
-			"presets" : [["env"]]
+			"presets" : [
+				"@wordpress/default"
+			],
+			"plugins": [
+				"transform-class-properties"
+			]
 		},
 		"production": {
 			"plugins": [
@@ -24,7 +33,10 @@
 					}
 				],
 				"transform-object-rest-spread",
-				"transform-react-jsx"
+				"transform-react-jsx",
+				"transform-async-generator-functions",
+				"transform-class-properties",
+				"dev-expression"
 			]
 		}
 	}

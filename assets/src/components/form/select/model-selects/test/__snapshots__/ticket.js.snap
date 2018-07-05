@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditorTicketSelect() matches snapshot with default props 1`] = `
+<div
+  class="components-base-control"
+>
+  <div
+    class="components-base-control__field"
+  >
+    <span>
+      TicketSelect
+    </span>
+  </div>
+</div>
+`;
+
+exports[`TicketSelect() matches snapshot with default props 1`] = `
+<Component
+  getQueryString={[Function]}
+  modelName="ticket"
+  optionsEntityMap={
+    Object {
+      "default": Object {
+        "label": "TKT_name",
+        "value": "TKT_ID",
+      },
+    }
+  }
+  queryData={
+    Object {
+      "limit": 100,
+      "order": "DESC",
+      "orderBy": "start_date",
+      "showExpired": false,
+    }
+  }
+  selectConfiguration={
+    Object {
+      "defaultValue": undefined,
+      "loadingMessage": [Function],
+      "noOptionsMessage": [Function],
+      "onChange": undefined,
+      "placeholder": "Select Ticket...",
+    }
+  }
+  selectLabel="Select Ticket"
+/>
+`;

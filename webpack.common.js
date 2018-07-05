@@ -6,6 +6,12 @@ const externals = {
 	jquery: 'jQuery',
 	'@eventespresso/eejs': 'eejs',
 	'@eventespresso/i18n': 'eejs.i18n',
+	'@wordpress/api-request': 'wp.apiRequest',
+	'@wordpress/data': 'wp.data',
+	'@wordpress/element': 'wp.element',
+	'@wordpress/components': 'wp.components',
+	'@wordpress/blocks': 'wp.blocks',
+	'@wordpress/editor': 'wp.editor',
 	react: 'eejs.vendor.react',
 	'react-dom': 'eejs.vendor.reactDom',
 	'react-redux': 'eejs.vendor.reactRedux',
@@ -61,13 +67,117 @@ const config = [
 		},
 	},
 	{
+		configName: 'helpers',
+		entry: {
+			helpers: assets + 'data/helpers/index.js',
+		},
+		externals,
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', '[name]' ],
+			libraryTarget: 'var',
+		},
+	},
+	{
+		configName: 'model',
+		entry: {
+			model: assets + 'data/model/index.js',
+		},
+		externals: Object.assign( externals, {
+			'@eventespresso/helpers': 'eejs.helpers',
+		} ),
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', '[name]' ],
+			libraryTarget: 'var',
+		},
+	},
+	{
+		configName: 'hocComponents',
+		entry: {
+			hocComponents: assets + 'higher-order-components/index.js',
+		},
+		externals: Object.assign( externals, {
+			'@eventespresso/helpers': 'eejs.helpers',
+			'@eventespresso/model': 'eejs.model',
+		} ),
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', '[name]' ],
+			libraryTarget: 'var',
+		},
+	},
+	{
+		configName: 'components',
+		entry: {
+			components: assets + 'components/index.js',
+		},
+		externals: Object.assign( externals, {
+			'@eventespresso/helpers': 'eejs.helpers',
+			'@eventespresso/model': 'eejs.model',
+		} ),
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', '[name]' ],
+			libraryTarget: 'var',
+		},
+	},
+	{
 		configName: 'base',
 		entry: {
 			'wp-plugins-page': [
 				assets + 'wp-plugins-page/index.js',
 			],
+			'data-stores': [
+				assets + 'data/index.js',
+			],
 		},
-		externals,
+		externals: Object.assign( externals, {
+			'@eventespresso/higher-order-components': 'eejs.hocComponents',
+			'@eventespresso/components': 'eejs.components',
+			'@eventespresso/helpers': 'eejs.helpers',
+			'@eventespresso/model': 'eejs.model',
+		} ),
 		output: {
 			filename: 'ee-[name].[chunkhash].dist.js',
 			path: path.resolve( __dirname, 'assets/dist' ),
