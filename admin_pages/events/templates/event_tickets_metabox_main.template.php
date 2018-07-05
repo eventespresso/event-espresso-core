@@ -1,4 +1,22 @@
-<?php do_action('AHEE__event_tickets_metabox_main__before_content'); ?>
+<?php
+/**
+ * template vars in use
+ *
+ * @var int $EVT_ID
+ * @var string $event_datetime_help_link
+ * @var string $ticket_options_help_link
+ * @var string $existing_datetime_ids
+ * @var EE_Datetime $time
+ * @var int $ticket_rows
+ * @var string $existing_ticket_ids
+ * @var int $total_ticket_rows
+ * @var string $ticket_js_structure
+ */
+do_action(
+    'AHEE__event_tickets_metabox_main__before_content',
+    $EVT_ID, $existing_datetime_ids, $existing_ticket_ids
+);
+?>
     <div id="event-and-ticket-form-content">
         <h4 class="event-tickets-datetimes-title">
             <?php _e(
@@ -64,7 +82,12 @@
             </section>
 
         </div> <!-- end .event-datetimes-container -->
-        <?php do_action('AHEE__event_tickets_metabox_main__after_datetime_fields'); ?>
+        <?php
+        do_action(
+            'AHEE__event_tickets_metabox_main__after_datetime_fields',
+            $EVT_ID, $existing_datetime_ids, $existing_ticket_ids
+        );
+        ?>
 
         <div class="event-tickets-container">
             <h4 class="event-tickets-datetimes-title">
@@ -105,21 +128,13 @@
         <div style="clear:both"></div>
     </div> <!-- end #event-and-ticket-form-content -->
 
-<?php do_action('AHEE__event_tickets_metabox_main__after_content'); ?>
+<?php
+do_action(
+    'AHEE__event_tickets_metabox_main__after_content',
+    $EVT_ID, $existing_datetime_ids, $existing_ticket_ids);
+?>
 
     <table id="new-ticket-row-form" class="hidden">
         <tbody><?php echo $ticket_js_structure; ?></tbody>
     </table>
 <?php
-/**
- * template vars in use
- *
- * $event_datetime_help_link
- * $ticket_options_help_link
- * $existing_datetime_ids
- * $time
- * $ticket_rows
- * $existing_ticket_ids
- * $total_ticket_rows
- * $ticket_js_structure
- */
