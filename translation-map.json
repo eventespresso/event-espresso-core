@@ -1,5 +1,13 @@
 {
-  "helpers": [],
+  "eventespresso-helpers": [],
+  "eventespresso-hoc-components": [],
+  "eventespresso-model": [
+    "The provided array of entities must not be empty",
+    null,
+    "The provided entity (%s) does not have the given property (%s)",
+    "The provided value is not an array.",
+    "The provided items must not be empty"
+  ],
   "ee-wp-plugins-page": [
     "Do you have a moment to share why you are deactivating Event Espresso?",
     "Sure I'll help",
@@ -33,31 +41,24 @@
     "Display on Archives",
     "Event Attendees"
   ],
-  "components": [
+  "eventespresso-components": [
     "Limit",
     "user avatar",
     "Retrieving Events.",
     "No Events.",
     "Select Event...",
     "Select Event",
-    "Select Event",
     "Retrieving Datetimes.",
     "No Datetimes.",
     "Select Datetime...",
-    "Select Datetime",
-    "All Datetimes",
     "Select Datetime",
     "Retrieving Statuses.",
     "No Statuses.",
     "Select Status...",
     "Select Status",
-    "All Statuses",
-    "Select Status",
     "Retrieving Tickets.",
     "No Tickets.",
     "Select Ticket...",
-    "Select Ticket",
-    "All Tickets",
     "Select Ticket",
     "The provided array of entities must not be empty",
     null,
