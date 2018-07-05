@@ -10,7 +10,6 @@ import { withBaseControl } from '../../../../higher-order-components';
  */
 import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
-import { default as EditorSelect, getEditorSelectProps } from './editor-select';
 import { PropTypes } from 'prop-types';
 
 const optionsEntityMap = {
@@ -98,7 +97,7 @@ export default class StatusSelect extends Component {
 			...this.props,
 			...selectOpts,
 			...this.state,
-			optionsEntityMap: statusModel.optionsEntityMap,
+			optionsEntityMap,
 		};
 		return <ModelSelect { ...props } />;
 	}
@@ -110,15 +109,3 @@ export default class StatusSelect extends Component {
 export const EditorStatusSelect = withBaseControl(
 	'select-status'
 )( StatusSelect );
-
-	render() {
-		const props = { ...this.props };
-		props.modelName = statusModel.MODEL_NAME;
-		const { editorProps, selectProps } = getEditorSelectProps( props );
-		return (
-			<EditorSelect { ...editorProps } >
-				<StatusSelect { ...selectProps } />
-			</EditorSelect>
-		);
-	}
-}

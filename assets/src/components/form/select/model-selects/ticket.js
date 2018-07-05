@@ -10,7 +10,6 @@ import { withBaseControl } from '../../../../higher-order-components';
  */
 import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
-import { default as EditorSelect, getEditorSelectProps } from './editor-select';
 import { PropTypes } from 'prop-types';
 
 const optionsEntityMap = {
@@ -106,7 +105,7 @@ export default class TicketSelect extends Component {
 			...this.props,
 			...selectOpts,
 			...this.state,
-			optionsEntityMap: ticketModel.optionsEntityMap,
+			optionsEntityMap,
 		};
 		return <ModelSelect { ...props } />;
 	}

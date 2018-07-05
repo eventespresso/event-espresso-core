@@ -16,20 +16,8 @@ import {
 	GREATER_THAN_AND_EQUAL,
 	LESS_THAN_AND_EQUAL,
 } from '../base';
-import { prettyDateFromDateTime } from './formatter';
-
-export const MODEL_NAME = 'datetime';
 
 export const nowDateAndTime = moment();
-
-const map = {};
-map[ MODEL_NAME ] = {
-	label: ( entity ) => {
-		return prettyDateFromDateTime( entity );
-	},
-	value: 'DTT_ID',
-};
-export const optionsEntityMap = map;
 
 /**
  * Described attributes for this model
