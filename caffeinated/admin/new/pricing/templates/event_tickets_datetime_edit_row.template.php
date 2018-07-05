@@ -79,6 +79,13 @@
                       class="dashicons dashicons-groups clickable"></span>
             </a>
         <?php endif; ?>
+        <?php
+        do_action(
+            'AHEE__caffeinated_admin_new_pricing_templates__event_tickets_datetime_edit_row__actions_column_last',
+            $dtt_row,
+            $DTT_ID
+        );
+        ?>
         <span class="dashicons dashicons-image-flip-vertical sortable-drag-handle"></span>
     </td>
 </tr>
