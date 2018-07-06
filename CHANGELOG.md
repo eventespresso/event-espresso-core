@@ -23,7 +23,7 @@ Headings should be (only add headings as needed):
 -  Fixed state and country question types shortcode output ([552](https://github.com/eventespresso/event-espresso-core/pull/552))
 -  Added CSS bulletproofing to protect registration form from worse-case scenarios ([542](https://github.com/eventespresso/event-espresso-core/pull/542))
 -  Fixed REST API documentation links, and made REST API BETWEEN operator work as documented ([560](https://github.com/eventespresso/event-espresso-core/pull/560))
--  Fixed privacy erasure so contact emails are also erased ([567](https://github.com/eventespresso/event-espresso-core/pull/567))
+-  Fixed privacy erasure so contact phones are also erased ([567](https://github.com/eventespresso/event-espresso-core/pull/567))
 
 ## [4.9.64.p]
 
