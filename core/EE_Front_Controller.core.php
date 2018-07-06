@@ -69,8 +69,6 @@ final class EE_Front_Controller
         $this->Registry = $Registry;
         $this->Request_Handler = $Request_Handler;
         $this->Module_Request_Router = $Module_Request_Router;
-        // determine how to integrate WP_Query with the EE models
-        add_action('AHEE__EE_System__initialize', array($this, 'employ_CPT_Strategy'));
         // load other resources and begin to actually run shortcodes and modules
         add_action('wp_loaded', array($this, 'wp_loaded'), 5);
         // analyse the incoming WP request
@@ -154,20 +152,6 @@ final class EE_Front_Controller
             }
         }
         return $clauses;
-    }
-
-
-    /**
-     * @return void
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    public function employ_CPT_Strategy()
-    {
-        if (apply_filters('FHEE__EE_Front_Controller__employ_CPT_Strategy', true)) {
-            LoaderFactory::getLoader()->getShared('EE_CPT_Strategy');
-        }
     }
 
 
@@ -494,6 +478,15 @@ final class EE_Front_Controller
      * @deprecated 4.9.57.p
      */
     public function loadPersistentAdminNoticeManager()
+    {
+    }
+
+
+    /**
+     * @return void
+     * @deprecated 4.9.64.p
+     */
+    public function employ_CPT_Strategy()
     {
     }
 }

@@ -1,0 +1,13 @@
+# auto-generated/build-artifact files that should not be committed
+core/third_party_libs/dompdf/lib/fonts/log.htm
+coverage
+translation-map.json
+*-translations.php
+*.pot
+
+# local project files that should not be committed
+*.mo
+.idea
+node_modules/
+.DS_Store
+vendor/

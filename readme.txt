@@ -124,7 +124,6 @@ Check out the advanced [installation](https://eventespresso.com/wiki/installing-
 = Developer Resources =
 * [Event Espresso 4 on Github](http://evts.io/EE4_WP_Readme)
 * [Developer Targeted Documentation](http://evts.io/EE4_Dev_Docs)
-* [Code structure and PHPDOC parsed documentation](http://code.eventespresso.com)
 
 == Screenshots ==
 

@@ -180,7 +180,14 @@ class CoreAssetManager extends AssetManager
                 )
             );
             $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
-            $this->registry->addData('paths', array('rest_route' => rest_url('ee/v4.8.36/')));
+            $this->registry->addData(
+                'paths',
+                array(
+                    'rest_route' => rest_url('ee/v4.8.36/'),
+                    'site_url' => site_url('/'),
+                    'admin_url' => admin_url('/'),
+                )
+            );
         }
 
         $this->addJavascript(
