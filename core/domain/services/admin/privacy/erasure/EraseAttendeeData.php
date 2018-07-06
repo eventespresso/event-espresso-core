@@ -68,6 +68,7 @@ class EraseAttendeeData implements PersonalDataEraserInterface
                 'STA_ID'       => 0,
                 'CNT_ISO'      => '',
                 'ATT_zip'      => '',
+                'ATT_phone'    => '',
             ),
             array(
                 array(
