@@ -30,9 +30,9 @@ So here you see that when you're retrieving events via the EE4 REST API, you can
 
 ```php
 //get first 50 events, and calculate their spots_taken and image_thumbnails
-http://demoee.org/wp-json/ee/v4.8.36/events?calculate=spots_taken,image_full
+https://demoee.org/wp-json/ee/v4.8.36/events?calculate=spots_taken,image_full
 //this next request is the same as above
-http://demoee.org/wp-json/ee/v4.8.36/events?calculate[]=spots_taken&calculate[]=image_full
+https://demoee.org/wp-json/ee/v4.8.36/events?calculate[]=spots_taken&calculate[]=image_full
 ```
 
 Both will ensure the `_calculated_fields` element on each event is populated, eg:
@@ -56,11 +56,11 @@ For a full list of what fields can be calculated and their descriptions, please 
 When querying a resource, you can request to calculate fields on related resources too. For example, when querying events, you can include their datetimes and calculate each datetime's spaces available like so:
 
 ```
-http://demoee.org/wp-json/ee/v4.8.36/events?include=Datetime&calculate=Datetime.spaces_remaining_considering_tickets
+https://demoee.org/wp-json/ee/v4.8.36/events?include=Datetime&calculate=Datetime.spaces_remaining_considering_tickets
 ```
 
 You can even calculate fields on indirectly related resources. For example, when querying for datetimes, you could include registrations and their check-in status like so:
 
 ```
-http://demoee.org/wp-json/ee/v4.8.36/datetimes?include=Event.Registration&calculate=Registration.datetime_checkin_stati
+https://demoee.org/wp-json/ee/v4.8.36/datetimes?include=Event.Registration&calculate=Registration.datetime_checkin_stati
 ```
