@@ -231,10 +231,17 @@ class I18nRegistry
     {
         $translations = get_translations_for_domain($domain);
 
+        // check get_user_locale() exists before using it for compatibility with WP4.5
+        if(is_admin() && function_exists('get_user_locale')) {
+            $lang = get_user_locale();
+        } else {
+            $lang = get_locale();
+        }
+
         $locale = array(
             '' => array(
                 'domain' => $domain,
-                'lang'   => is_admin() ? get_user_locale() : get_locale(),
+                'lang'   => $lang,
             ),
         );
 
