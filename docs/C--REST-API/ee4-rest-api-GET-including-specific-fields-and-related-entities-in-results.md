@@ -4,7 +4,7 @@ By default, when you query for a resource **all** its fields are returned on eac
 
 ```php
 //only return event IDs, names, and slug
-http://demoee.org/wp-json/ee/v4.8.36/events?include=EVT_name,EVT_slug
+https://demoee.org/wp-json/ee/v4.8.36/events?include=EVT_name,EVT_slug
 ```
 
 > Note: entity IDs are always returned.
@@ -13,7 +13,7 @@ You can also include fields from related models (using * to return **all** field
 
 ```php
 //get all registrations and their associated answers, and each answer's question, and also the registration's contact
-http://demoee.org/wp-json/ee/v4.8.36/registrations?include=Answer.*,Answer.Question.*,Attendee.*
+https://demoee.org/wp-json/ee/v4.8.36/registrations?include=Answer.*,Answer.Question.*,Attendee.*
 ```
 
 Which will return events with an added "datetimes" property, which is a collection of the first 50 datetimes for that event.
@@ -22,12 +22,12 @@ Including related resources like this can save you a request or two; but there i
 
 ```php
 //gets all datetimes related to event 15 ordered by their start time
-http://demoee.org/wp-json/ee/v4.8.36/datetimes?where[Event.EVT_ID]=15&order_by[DTT_EVT_start]=ASC
+https://demoee.org/wp-json/ee/v4.8.36/datetimes?where[Event.EVT_ID]=15&order_by[DTT_EVT_start]=ASC
 ```
 
 For the EE4 JSON REST API Client, we can fetch all the datetimes for each event by using the following query:
 
 ```php
 //get all the datetimes for each event in a single query
-http://demoee.org/wp-json/ee/v4.8.36/events?include=Datetime.*
+https://demoee.org/wp-json/ee/v4.8.36/events?include=Datetime.*
 ```

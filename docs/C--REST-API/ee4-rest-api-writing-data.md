@@ -11,7 +11,7 @@ data (that is stored in the WordPress options table; if you want to write to tha
 There are lots of Event Espresso resources you can write to. To see exactly what routes and HTTP methods are available, 
 you can look through
  the [WP API index](https://developer.wordpress.org/rest-api/using-the-rest-api/discovery/) on your site, which also
- tells you what arguments you can provide. [Here's the WP API index page for one of our demo sites.](http://demoee.org/wp-json)
+ tells you what arguments you can provide. [Here's the WP API index page for one of our demo sites.](https://demoee.org/wp-json)
  
 
 
