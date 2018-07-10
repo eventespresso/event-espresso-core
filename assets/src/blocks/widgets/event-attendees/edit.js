@@ -170,7 +170,6 @@ class EventAttendeesEditor extends Component {
 						selectedDatetimeId={ attributes.datetimeId }
 						forEventId={ attributes.eventId }
 						onDatetimeSelect={ this.setDatetimeId }
-						selectLabel=''
 					/>
 					<EditorTicketSelect
 						key="attendees-ticket-select"
@@ -178,13 +177,12 @@ class EventAttendeesEditor extends Component {
 						forEventId={ attributes.eventId }
 						forDatetimeId={ attributes.datetimeId }
 						onTicketSelect={ this.setTicketId }
-						selectLabel=''
 					/>
 					<EditorStatusSelect
 						statusType={ statusModel.STATUS_TYPE_REGISTRATION }
 						selectedStatusId={ attributes.status }
 						onStatusSelect={ this.setStatus }
-						selectLabel={ __( 'Select Registration Status', 'event_espresso' ) }
+						label={ __( 'Select Registration Status', 'event_espresso' ) }
 					/>
 					<QueryLimit
 						label={ __( 'Number of Attendees to Display', 'event_espresso' ) }
