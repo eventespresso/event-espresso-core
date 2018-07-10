@@ -38,7 +38,7 @@ export default class StatusSelect extends Component {
 		},
 		...model.defaultQueryData,
 		getQueryString: model.getQueryString,
-		selectLabel: __( 'Select Status', 'event_espresso' ),
+		label: __( 'Select Status', 'event_espresso' ),
 		optionsEntityMap,
 	};
 
@@ -56,7 +56,7 @@ export default class StatusSelect extends Component {
 			model.ALL_STATUS_IDS
 		),
 		onStatusSelect: PropTypes.func,
-		selectLabel: PropTypes.string,
+		label: PropTypes.string,
 		optionsEntityMap: PropTypes.object,
 	};
 

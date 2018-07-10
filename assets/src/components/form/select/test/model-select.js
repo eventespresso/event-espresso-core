@@ -56,7 +56,7 @@ describe( 'ModelSelect props check', () => {
 				modelName={ 'event' }
 				modelEntities={ simulatedResponse }
 				optionsEntityMap={ optionsEntityMap }
-				selectLabel={ 'Label for Select' }
+				label={ 'Label for Select' }
 			/>,
 		);
 		expect( wrapper.childAt( 0 ).text() ).toEqual( 'Label for Select' );

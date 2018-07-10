@@ -32,7 +32,7 @@ describe( 'StatusSelect()', () => {
 			'Select Status...',
 		);
 		expect( wrapper.prop( 'modelName' ) ).toEqual( 'status' );
-		expect( wrapper.prop( 'selectLabel' ) ).toEqual( 'Select Status' );
+		expect( wrapper.prop( 'label' ) ).toEqual( 'Select Status' );
 	} );
 } );
 

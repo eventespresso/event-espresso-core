@@ -60,7 +60,7 @@ export class ModelSelect extends Component {
 			order: PropTypes.oneOf( [ 'asc', 'desc' ] ),
 		} ),
 		getQueryString: PropTypes.func,
-		selectLabel: PropTypes.string,
+		label: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -75,7 +75,7 @@ export class ModelSelect extends Component {
 			limit: 100,
 			order: 'desc',
 		},
-		selectLabel: '',
+		label: '',
 		getQueryString: () => '',
 	};
 
@@ -127,9 +127,9 @@ export class ModelSelect extends Component {
 	}
 
 	getSelectLabel() {
-		const { selectLabel, selectConfiguration } = this.props;
-		return selectLabel ?
-			<label htmlFor={ selectConfiguration.name }>{ selectLabel }</label> :
+		const { label, selectConfiguration } = this.props;
+		return label ?
+			<label htmlFor={ selectConfiguration.name }>{ label }</label> :
 			'';
 	}
 

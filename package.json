@@ -63,7 +63,7 @@
 		"eslint-plugin-jsx-a11y": "^6.0.3",
 		"eslint-plugin-react": "^7.9.1",
 		"eslint-plugin-wordpress": "git://github.com/WordPress-Coding-Standards/eslint-plugin-wordpress.git#1774343f6226052a46b081e01db3fca8793cc9f1",
-		"gutenberg": "wordpress/gutenberg#master",
+		"gutenberg": "wordpress/gutenberg#v3.2.0",
 		"license-checker": "^20.1.0",
 		"mini-css-extract-plugin": "^0.4.0",
 		"pegjs": "^0.10.0",
