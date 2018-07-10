@@ -2,9 +2,6 @@
 
 exports[`ModelSelect Snapshot with default options (with required modelName) should render and match snapshot 1`] = `
 <React.Fragment>
-  <label
-    htmlFor="model-select-1"
-  />
   <StateManager
     defaultInputValue=""
     defaultMenuIsOpen={false}

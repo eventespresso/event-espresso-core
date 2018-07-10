@@ -39,7 +39,7 @@ describe( 'ModelSelect props check', () => {
 				} }
 			/>,
 		);
-		const selectWrapper = wrapper.childAt( 1 );
+		const selectWrapper = wrapper.childAt( 0 );
 		expect( selectWrapper.prop( 'options' ) ).toEqual(
 			[
 				{ label: 'Event A', value: 1 },
