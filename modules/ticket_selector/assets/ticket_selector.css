@@ -483,6 +483,14 @@
 	.tkt-slctr-tbl {
    		display: block;
         overflow-x: auto;
-        white-space: nowrap;
+	}
+	.tkt-slctr-tbl th.ee-ticket-selector-ticket-details-th,
+	.tkt-slctr-tbl td.tckt-slctr-tbl-td-name {
+		white-space: normal;
+	}
+	.tkt-slctr-tbl thead th,
+	.tckt-slctr-tbl-tr > td {
+		padding-left: 3px;
+		padding-right: 3px;
 	}
 }
