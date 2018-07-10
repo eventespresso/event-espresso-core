@@ -21,8 +21,6 @@ import {
 	REACT_SELECT_TYPES,
 } from './default-select-configuration';
 
-export const MODEL_SELECT_LABEL_NONE = 'model-select-label-none';
-
 /**
  * ModelSelect component.
  * This is a component that will generate a react-select input for a given
@@ -130,7 +128,7 @@ export class ModelSelect extends Component {
 
 	getSelectLabel() {
 		const { selectLabel, selectConfiguration } = this.props;
-		return selectLabel !== MODEL_SELECT_LABEL_NONE ?
+		return selectLabel ?
 			<label htmlFor={ selectConfiguration.name }>{ selectLabel }</label> :
 			'';
 	}
