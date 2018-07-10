@@ -18,13 +18,6 @@ The **EditorStatusSelect** component accepts **all** of the properties that the 
 
 The component accepts the following props:
 
-### id
-
-The id of the element to which labels and help text are being generated. That element should be passed as a child.
-
-- Type: `String`
-- Required: Yes
-
 ### className
 
 The class that will be added with "components-base-control" to the classes of the wrapper div.
