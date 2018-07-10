@@ -111,25 +111,13 @@ registerBlockType(
 						showGravatar: {
 							type: 'boolean',
 							shortcode: ( { named: { show_gravatar } } ) => {
-								switch ( show_gravatar ) {
-									case 'true':
-									case '1':
-										return true;
-									default:
-										return false;
-								}
+								return show_gravatar === 'true' || show_gravatar === '1';
 							}
 						},
 						displayOnArchives: {
 							type: 'boolean',
 							shortcode: ( { named: { display_on_archives } } ) => {
-								switch ( display_on_archives ) {
-									case 'true':
-									case '1':
-										return true;
-									default:
-										return false;
-								}
+								return display_on_archives === 'true' || display_on_archives === '1';
 							}
 						},
 					}
