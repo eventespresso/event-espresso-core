@@ -22,8 +22,7 @@ The following is the shape of the component with its default props:
         }
     }
     getQueryString={ ticketModel.getQueryString }
-    selectLabel={ 'Select Ticket' }
-    addAllOptionLabel={ 'All Tickets' }
+    label={ 'Select Ticket' }
 />
 ```
 
@@ -64,21 +63,13 @@ This is a function that returns the queryString used to retrieve the Ticket mode
 - Required: No
 - Default: `ticketModel.getQueryString`
 
-### selectLabel
+### label
 
 If provided, a `<label>` will be prepended before the Select element using the text provided by the value on this property.  It will be linked (via the label `for` attribute) to the select input via the `selectConfiguration.name` property.
 
 - Type: `String`
 - Required: No
 - Default: `'Select Ticket'`
-
-### addAllOptionLabel
-
-This is used to indicate that the first option should select all tickets and provides the text of the label for that option.  If you don't want this option you can just set this to an empty string.
-
-- Type: `String`
-- Required: No
-- Default: `'All Tickets'`
 
 ### forEventId
 

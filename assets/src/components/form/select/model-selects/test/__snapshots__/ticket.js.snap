@@ -7,6 +7,12 @@ exports[`EditorTicketSelect() matches snapshot with default props 1`] = `
   <div
     class="components-base-control__field"
   >
+    <label
+      class="components-base-control__label"
+      for="inspector-select-ticket-control-0"
+    >
+      Select Ticket
+    </label>
     <span>
       TicketSelect
     </span>
@@ -17,6 +23,7 @@ exports[`EditorTicketSelect() matches snapshot with default props 1`] = `
 exports[`TicketSelect() matches snapshot with default props 1`] = `
 <Component
   getQueryString={[Function]}
+  label="Select Ticket"
   modelName="ticket"
   optionsEntityMap={
     Object {
@@ -43,6 +50,5 @@ exports[`TicketSelect() matches snapshot with default props 1`] = `
       "placeholder": "Select Ticket...",
     }
   }
-  selectLabel="Select Ticket"
 />
 `;
