@@ -36,7 +36,7 @@ export default class TicketSelect extends Component {
 		},
 		...model.defaultQueryData,
 		getQueryString: model.getQueryString,
-		selectLabel: __( 'Select Ticket', 'event_espresso' ),
+		label: __( 'Select Ticket', 'event_espresso' ),
 		optionsEntityMap,
 	};
 
@@ -49,7 +49,7 @@ export default class TicketSelect extends Component {
 			PropTypes.string,
 		] ),
 		onTicketSelect: PropTypes.func,
-		selectLabel: PropTypes.string,
+		label: PropTypes.string,
 		optionsEntityMap: PropTypes.object,
 	};
 

@@ -38,7 +38,7 @@ export default class EventSelect extends Component {
 		},
 		...model.defaultQueryData,
 		getQueryString: model.getQueryString,
-		selectLabel: __( 'Select Event', 'event_espresso' ),
+		label: __( 'Select Event', 'event_espresso' ),
 		optionsEntityMap,
 	};
 
@@ -49,7 +49,7 @@ export default class EventSelect extends Component {
 			PropTypes.string,
 		] ),
 		onEventSelect: PropTypes.func,
-		selectLabel: PropTypes.string,
+		label: PropTypes.string,
 	};
 
 	render() {

@@ -24,6 +24,13 @@ export default ( customId = '' ) => createHigherOrderComponent(
 					help: PropTypes.string,
 				};
 
+				static defaultProps = {
+					label: WrappedComponent.defaultProps &&
+						WrappedComponent.defaultProps.label ?
+						WrappedComponent.defaultProps.label :
+						'',
+				};
+
 				render() {
 					const {
 						label,
@@ -39,7 +46,7 @@ export default ( customId = '' ) => createHigherOrderComponent(
 							className={ className }
 							help={ help }
 						>
-							<WrappedComponent { ...this.props } id={ id } />
+							<WrappedComponent { ...this.props } label={ '' } id={ id } />
 						</BaseControl>
 					);
 				}
