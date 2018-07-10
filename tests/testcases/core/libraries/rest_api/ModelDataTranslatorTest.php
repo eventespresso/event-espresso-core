@@ -467,8 +467,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     public function dataProviderForTestPrepareConditionsQueryParamsForModelsBad()
     {
         return array(
-            //case 0: array isn't numerically indexed
-            array(
+            'array isn\'t numerically indexed' => array(
                 array(
                     'EVT_ID' => array(
                         'what_is_this_key_doing_here' => 'its_borked'
@@ -477,24 +476,21 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 'Event',
                 false
             ),
-            //case 1: invalid key while reading
-            array(
+            'invalid key while reading' => array(
                 array(
                     'invalid_key' => 'whatever'
                 ),
                 'Event',
                 false
             ),
-            //case 2: invalid key while writing
-            array(
+            'invalid key while writing' => array(
                 array(
                     'invalid_key' => 'whatever'
                 ),
                 'Registration',
                 true
             ),
-            //case 3: logic parameter while writing
-            array(
+            'logic parameter while writing' => array(
                 array(
                     'OR' => array(
                         'EVT_name' => 'party'
@@ -503,8 +499,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 'Event',
                 true
             ),
-            //case 4: nested invalid key while reading
-            array(
+            'nested invalid key while reading' => array(
                 array(
                     'or*allyourbase' => array(
                         'EVT_ID' => 123,
@@ -514,24 +509,21 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 'Event',
                 false
             ),
-            //case 5: too few arguments for in operator
-            array(
+            'too few arguments for in operator' => array(
                 array(
                     'EVT_ID' => array('IN')
                 ),
                 'Event',
                 false
             ),
-            //case 6: too many arguments for in operator
-            array(
+            'too many arguments for in operator' => array(
                 array(
                     'EVT_ID' => array('IN', array('thingy'),'what_is_this_doing_here')
                 ),
                 'Event',
                 false
             ),
-            //case 7: too few arguments for between operator
-            array(
+            'too few arguments for between operator' => array(
                 array(
                     'EVT_created' => array(
                         'BETWEEN',
@@ -541,21 +533,44 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 'Event',
                 false
             ),
-            //case 8: too many arguments for between operator
-            array(
+            'between with dates separate instead of in array' => array(
                 array(
                     'EVT_created' => array(
                         'between',
                         '2017-01-01T00:00:00',
                         '2018-01-01T00:00:00',
-                        'extra_junk'
                     )
                 ),
                 'Event',
                 false
             ),
-            //case 9: too few arguments for like operator
-            array(
+            'between with too few_dates' => array(
+                array(
+                    'EVT_created' => array(
+                        'between',
+                        array(
+                            '2017-01-01T00:00:00',
+                        )
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'between with too many dates' => array(
+                array(
+                    'EVT_created' => array(
+                        'between',
+                        array(
+                            '2017-01-01T00:00:00',
+                            '2018-01-01T00:00:00',
+                            '2019-01-01T00:00:00',
+                        )
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'too few arguments for like operator' => array(
                 array(
                     'EVT_name' => array(
                         'LIKE'
@@ -564,8 +579,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 'Event',
                 false
             ),
-            //case 10: too many arguments for like operator
-            array(
+            'too many arguments for like operator' => array(
                 array(
                     'EVT_name' => array(
                         'LIKE',
@@ -576,8 +590,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 'Event',
                 false
             ),
-            //case 11: too few arguments for normal operator
-            array(
+            'too few arguments for normal operator' => array(
                 array(
                     'EVT_ID' => array(
                         '>'
@@ -586,8 +599,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 'Event',
                 false
             ),
-            //case 12: too many arguments for normal operator
-            array(
+            'too many arguments for normal operator' => array(
                 array(
                     'EVT_ID' => array(
                         '<',
@@ -598,8 +610,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 'Event',
                 false
             ),
-            //case 13: too many arguments for null operator
-            array(
+            'too many arguments for null operator' => array(
                 array(
                     'EVT_ID' => array(
                         'IS_NULL',
@@ -649,23 +660,19 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
             return array();
         }
         return array(
-            //reading-style tests
-            //case 0: empty
-            array(
+            'empty'=> array(
                 array(),
                 array(),
                 'Event',
                 false
             ),
-            //case 1: simple
-            array(
+            'simple'=> array(
                 array('EVT_name' => 'foobar'),
                 array('EVT_name' => 'foobar'),
                 'Event',
                 false
             ),
-            //case 2: with nested logic
-            array(
+            'nested logic' => array(
                 array(
                     'or' => array(
                         'EVT_desc' => 'foobar',
@@ -687,27 +694,29 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 'Event',
                 false
             ),
-            //case 3: with a between operator
-            array(
+            'between operator' => array(
                 array(
                     'EVT_created' => array(
                         'between',
-                        rest_parse_date('2015-01-01 00:00:00'),
-                        rest_parse_date('2016-01-01 00:00:00')
-                    )
+                        array(
+                            rest_parse_date('2015-01-01 00:00:00'),
+                            rest_parse_date('2016-01-01 00:00:00'),
+                        ),
+                    ),
                 ),
                 array(
                     'EVT_created' => array(
                         'between',
-                        '2015-01-01T00:00:00',
-                        '2016-01-01T00:00:00'
-                    )
+                        array(
+                            '2015-01-01T00:00:00',
+                            '2016-01-01T00:00:00',
+                        ),
+                    ),
                 ),
                 'Event',
                 false
             ),
-            //case 4: with an "in" operator
-            array(
+            'in operator' => array(
                 array(
                     'TKT_uses' => array(
                         'IN',
@@ -731,8 +740,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 'Ticket',
                 false
             ),
-            //case 5: with a "like" operator
-            array(
+            'like operator' => array(
                 array(
                     'PAY_details' => array(
                         'LIKE',
@@ -748,8 +756,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 'Payment',
                 false
             ),
-            //case 6: with a "null" operator
-            array(
+            'null operator' => array(
                 array(
                     'EVT_name' => array('IS_NULL')
                 ),
@@ -759,8 +766,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 'Event',
                 false
             ),
-            //case 7: with various other operators
-            array(
+            'variety of operators' => array(
                 array(
                     'RPY_amount' => array(
                         '<',
@@ -784,8 +790,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 'Registration_Payment',
                 false
             ),
-            //case 8: using related fields
-            array(
+            'related fields' => array(
                 array(
                     'Ticket.Datetime.DTT_reg_limit' => 12
                 ),
@@ -795,9 +800,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 'Registration',
                 false
             ),
-            //writing-style tests
-            //case 8: with valid fields
-            array(
+            'writing-style test with valid fields' => array(
                 array(
                     'TKT_uses' => EE_INF
                 ),
