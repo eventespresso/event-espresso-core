@@ -4,7 +4,13 @@
 import { InspectorControls } from '@wordpress/editor';
 import { Component, Fragment } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
-import { PanelBody, Placeholder, Spinner, ToggleControl } from '@wordpress/components';
+import {
+	PanelBody,
+	Placeholder,
+	ServerSideRender,
+	Spinner,
+	ToggleControl,
+} from '@wordpress/components';
 
 /**
  * External dependencies
@@ -21,11 +27,6 @@ import * as statusModel from '../../../data/model/status';
 import * as attendeeModel from '../../../data/model/attendee';
 import PropTypes from 'prop-types';
 import { isEmpty, uniqBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { EventAttendeesList } from './list';
 
 class EventAttendeesEditor extends Component {
 	static propTypes = {
@@ -49,7 +50,7 @@ class EventAttendeesEditor extends Component {
 			eventId: 0,
 			datetimeId: 0,
 			ticketId: 0,
-			status: 'RAP',
+			status: statusModel.REGISTRATION_STATUS_ID.APPROVED,
 			showGravatar: true,
 			displayOnArchives: false,
 			limit: -1
@@ -142,7 +143,12 @@ class EventAttendeesEditor extends Component {
 	}
 
 	getAttendeesDisplay() {
-		return <EventAttendeesList attendees={ this.props.attendees }/>;
+		return (
+			<ServerSideRender
+				block="eventespresso/widgets-event-attendees"
+				attributes={ this.props.attributes }
+			/>
+		);
 	}
 
 	render() {
@@ -164,6 +170,7 @@ class EventAttendeesEditor extends Component {
 						selectedDatetimeId={ attributes.datetimeId }
 						forEventId={ attributes.eventId }
 						onDatetimeSelect={ this.setDatetimeId }
+						selectLabel=''
 					/>
 					<EditorTicketSelect
 						key="attendees-ticket-select"
@@ -171,6 +178,7 @@ class EventAttendeesEditor extends Component {
 						forEventId={ attributes.eventId }
 						forDatetimeId={ attributes.datetimeId }
 						onTicketSelect={ this.setTicketId }
+						selectLabel=''
 					/>
 					<EditorStatusSelect
 						statusType={ statusModel.STATUS_TYPE_REGISTRATION }
@@ -216,7 +224,6 @@ export default withSelect( ( select, ownProps ) => {
 			limit: attributes.limit,
 		}
 	);
-	// console.log( 'GET attendees ' + queryString );
 	return {
 		attendees: getItems( 'attendee', queryString ),
 		isLoading: isRequestingItems( 'attendee', queryString ),
