@@ -1,11 +1,24 @@
 {
+<<<<<<< HEAD
   "components.js": "ee-components.417d07506c89324a6694.dist.js",
   "data-stores.js": "ee-data-stores.86223b5dc50fc606b66e.dist.js",
+=======
+  "components.js": "ee-components.d88e116f979119b547ef.dist.js",
+  "data-stores.js": "ee-data-stores.aafc9669b4b5f36ca320.dist.js",
+>>>>>>> event-attendees-block
   "eejs.js": "ee-eejs.add3918721f0837f0df1.dist.js",
+  "eventespresso-core-blocks.css": "ee-eventespresso-core-blocks.033e69672d82f0b5a77e.dist.css",
+  "eventespresso-core-blocks.js": "ee-eventespresso-core-blocks.d81eaadce35c63c5342f.dist.js",
   "helpers.js": "ee-helpers.242dcad45e91c8f65693.dist.js",
+<<<<<<< HEAD
   "hocComponents.js": "ee-hocComponents.9a169c0d748eaa6347cf.dist.js",
   "manifest.js": "ee-manifest.db11f08f044e318032a1.dist.js",
   "model.js": "ee-model.03dbc4ec6d3638cb73ae.dist.js",
+=======
+  "hocComponents.js": "ee-hocComponents.c1e8806faf28e657a68d.dist.js",
+  "manifest.js": "ee-manifest.db11f08f044e318032a1.dist.js",
+  "model.js": "ee-model.3103003d075a92088e49.dist.js",
+>>>>>>> event-attendees-block
   "vendor.js": "ee-vendor.699f7636193b8c13e234.dist.js",
   "wp-plugins-page.css": "ee-wp-plugins-page.12612f6ab71570ab1af8.dist.css",
   "wp-plugins-page.js": "ee-wp-plugins-page.d7488cb92cbd65d72d24.dist.js"

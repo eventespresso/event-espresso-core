@@ -22,7 +22,7 @@ The following is the shape of the component with its default props:
         }
     }
     getQueryString={ eventModel.getQueryString }
-    selectLabel={ 'Select Event' }
+    label={ 'Select Event' }
 />
 ```
 
@@ -63,7 +63,7 @@ This is a function that returns the queryString used to retrieve the Event model
 - Required: No
 - Default: `eventModel.getQueryString`
 
-### selectLabel
+### label
 
 If provided, a `<label>` will be prepended before the Select element using the text provided by the value on this property.  It will be linked (via the label `for` attribute) to the select input via the `selectConfiguration.name` property.
 
@@ -132,3 +132,9 @@ wp_register_script(
     true
 );
 ```
+
+
+## See Also
+
+- [`<EditorEventSelect />`](editor-event-select.md) - a wrapper for EventSelect that applies WordPress admin formatting.
+- [`<ModelSelect />`](model-select.md) - a component for displaying provided EE model data for selection.

@@ -23,8 +23,7 @@ The following is the shape of the main component with its default props:
     mapOptionsCallback={ buildOptions } // see props section for details
     optionsEntityMap={ null }
     queryData={ { limit: 100, order: 'desc' } }
-    selectLabel={ '' }
-    addAllOptionLabel={ '' }
+    label={ '' }
     getQueryString={ () => '' }
 />
 ```
@@ -108,7 +107,7 @@ const map = {
 - Required: No
 - Default: `null`
 
-### selectLabel
+### label
 
 If provided, a `<label>` will be prepended before the Select element using the text provided by the value on this property.  It will be linked (via the label `for` attribute) to the select input via the `selectConfiguration.name` property.
 
@@ -116,13 +115,6 @@ If provided, a `<label>` will be prepended before the Select element using the t
 - Required: No
 - Default: `''`
 
-### addAllOptionLabel
-
-If provided, the value of this property will be used as the first option in the select input to represent selecting ALL the options.
-
-- Type: `String`
-- Required: No
-- Default: `''`
 
 ## `ModelEnhancedSelect` Props
 

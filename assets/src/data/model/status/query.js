@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
  */
 import {
 	getQueryString as baseGetQueryString,
-	QUERY_ORDER_DESC,
+	QUERY_ORDER_ASC,
 	ALLOWED_ORDER_VALUES,
 } from '../base';
 
@@ -41,7 +41,7 @@ export const defaultQueryData = {
 	queryData: {
 		limit: 25,
 		orderBy: 'statusCode',
-		order: QUERY_ORDER_DESC,
+		order: QUERY_ORDER_ASC,
 	},
 };
 

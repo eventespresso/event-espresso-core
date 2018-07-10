@@ -174,8 +174,8 @@ abstract class Block implements BlockInterface
             'script'        => $this->block_asset_manager->getScriptHandle(),
             'style'         => $this->block_asset_manager->getStyleHandle(),
         );
-        if (! $this->isDynamic()) {
-            $args['render_callback'] = $this->renderBlock();
+        if ($this->isDynamic()) {
+            $args['render_callback'] = array($this, 'renderBlock');
         }
         $wp_block_type = register_block_type(
             new WP_Block_Type(
@@ -219,17 +219,5 @@ abstract class Block implements BlockInterface
             $this->namespacedBlockType(),
             array(),
         );
-    }
-
-
-    /**
-     * returns the rendered HTML for the block
-     *
-     * @param array $attributes
-     * @return string
-     */
-    public function renderBlock(array $attributes = array())
-    {
-        return '';
     }
 }

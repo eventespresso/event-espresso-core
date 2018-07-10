@@ -7,6 +7,12 @@ exports[`EditorEventSelect() matches snapshot with default props 1`] = `
   <div
     class="components-base-control__field"
   >
+    <label
+      class="components-base-control__label"
+      for="inspector-select-event-control-0"
+    >
+      Select Event
+    </label>
     <span>
       EventSelect
     </span>
@@ -17,6 +23,7 @@ exports[`EditorEventSelect() matches snapshot with default props 1`] = `
 exports[`EventSelect() matches snapshot with default props 1`] = `
 <Component
   getQueryString={[Function]}
+  label="Select Event"
   modelName="event"
   optionsEntityMap={
     Object {
@@ -43,6 +50,5 @@ exports[`EventSelect() matches snapshot with default props 1`] = `
       "placeholder": "Select Event...",
     }
   }
-  selectLabel="Select Event"
 />
 `;

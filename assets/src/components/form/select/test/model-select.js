@@ -15,7 +15,12 @@ const simulatedResponse = [
 describe( 'ModelSelect Snapshot with default options (with required modelName)',
 	() => {
 		it( 'should render and match snapshot', () => {
-			const wrapper = shallow( <ModelSelect modelName={ 'event' } /> );
+			const wrapper = shallow(
+				<ModelSelect
+					modelName={ 'event' }
+					optionsEntityMap={ optionsEntityMap }
+				/>
+			);
 			expect( wrapper ).toMatchSnapshot();
 		} );
 	},
@@ -51,9 +56,11 @@ describe( 'ModelSelect props check', () => {
 				modelName={ 'event' }
 				modelEntities={ simulatedResponse }
 				optionsEntityMap={ optionsEntityMap }
-				selectLabel={ 'Label for Select' }
+				label={ 'Label for Select' }
 			/>,
 		);
 		expect( wrapper.childAt( 0 ).text() ).toEqual( 'Label for Select' );
 	} );
 } );
+
+// location: assets/src/components/form/select/test/model-select.js

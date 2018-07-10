@@ -16,7 +16,7 @@ describe( 'QueryLimit with no optional parameters passed', () => {
 		const limit = wrapper.find( 'input[type="range"]' );
 		expect( limit.props().value ).toBe( 10 );
 		expect( limit.props().min ).toBe( 1 );
-		expect( limit.props().max ).toBe( 100 );
+		expect( limit.props().max ).toBe( 1000 );
 		// and label
 		const label = wrapper.find( 'label' );
 		expect( label.text() ).toEqual( 'Limit' );

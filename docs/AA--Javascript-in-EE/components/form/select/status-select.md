@@ -24,8 +24,7 @@ The following is the shape of the component with its default props:
         }
     }
     getQueryString={ statusModel.getQueryString }
-    selectLabel={ 'Select Status' }
-    addAllOptionLabel={ 'All Statuses' }
+    label={ 'Select Status' }
 />
 ```
 
@@ -66,21 +65,13 @@ This is a function that returns the queryString used to retrieve the Status mode
 - Required: No
 - Default: `statusModel.getQueryString`
 
-### selectLabel
+### label
 
 If provided, a `<label>` will be prepended before the Select element using the text provided by the value on this property.  It will be linked (via the label `for` attribute) to the select input via the `selectConfiguration.name` property.
 
 - Type: `String`
 - Required: No
 - Default: `'Select Status'`
-
-### addAllOptionLabel
-
-This is used to indicate that the first option should select all statuses and provides the text of the label for that option.  If you don't want this option you can just set this to an empty string.
-
-- Type: `String`
-- Required: No
-- Default: `'All Statuses'`
 
 ### selectedStatusId
 
@@ -143,3 +134,9 @@ wp_register_script(
     true
 );
 ```
+
+
+## See Also
+
+- [`<EditorStatusSelect />`](editor-status-select.md) - a wrapper for StatusSelect that applies WordPress admin formatting.
+- [`<ModelSelect />`](model-select.md) - a component for displaying provided EE model data for selection.
