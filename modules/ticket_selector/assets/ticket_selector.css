@@ -481,8 +481,8 @@
 		padding: 0; 
 	} 
 	.tkt-slctr-tbl {
-   		display: block;
-        overflow-x: auto;
+		display: block;
+		overflow-x: auto;
 	}
 	.tkt-slctr-tbl th.ee-ticket-selector-ticket-details-th,
 	.tkt-slctr-tbl td.tckt-slctr-tbl-td-name {
