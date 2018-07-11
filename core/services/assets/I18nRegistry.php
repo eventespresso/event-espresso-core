@@ -234,7 +234,7 @@ class I18nRegistry
         $locale = array(
             '' => array(
                 'domain' => $domain,
-                'lang'   => is_admin() ? EEH_DTT_Helper::get_user_locale() : get_locale()
+                'lang'   => is_admin() ? \EEH_DTT_Helper::get_user_locale() : get_locale()
             ),
         );
 
