@@ -17,6 +17,7 @@ Headings should be (only add headings as needed):
 ### Added
 
 - Added classname to the markup that wraps the Event phone ([563](https://github.com/eventespresso/event-espresso-core/pull/563))
+- Added CSS to help improve the display of ticket selector on small screens ([572](https://github.com/eventespresso/event-espresso-core/pull/572))
 
 ### Fixed
 
