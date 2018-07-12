@@ -11,11 +11,9 @@
 		"@eventespresso\\/(eejs)": "assets/src/$1",
 		"@eventespresso\/helpers": "assets/src/data/helpers",
 		"@wordpress/dom-ready": "<rootDir>/node_modules/@wordpress/dom-ready",
-		"@wordpress\\/(blocks|components|editor|utils|edit-post|viewport|plugins|core-data)": "<rootDir>/node_modules/gutenberg/$1",
-		"@wordpress\\/(date|element|dom|deprecated|blob|data|keycodes)": "<rootDir>/node_modules/gutenberg/packages/$1/src",
+		"@wordpress\\/(blocks|components|editor|utils|edit-post|viewport)": "<rootDir>/node_modules/gutenberg/$1",
 		"tinymce": "<rootDir>/tests/javascript-config/unit/mocks/tinymce",
 		"@wordpress/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
-		"@wordpress\\/(blocks|components|editor|utils|edit-post|viewport|plugins|core-data)": "<rootDir>/node_modules/gutenberg/$1",
 		"@eventespresso/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n"
 	},
 	"setupFiles": [

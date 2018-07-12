@@ -28,10 +28,8 @@ global.wp = {
 	'utils',
 	'blocks',
 	'editor',
-	'core-data',
 	'edit-post',
 	'viewport',
-	'plugins',
 ].forEach( entryPointName => {
 	Object.defineProperty( global.wp, entryPointName, {
 		get: () => require( 'gutenberg/' + entryPointName ),
@@ -50,6 +48,9 @@ global.wp = {
 	'dom',
 	'hooks',
 	'i18n',
+	'core-data',
+	'plugins',
+	'keycodes',
 ].forEach( entryPointName => {
 	Object.defineProperty( global.wp, entryPointName, {
 		get: () => require( '@wordpress' + entryPointName + '/src' ),
