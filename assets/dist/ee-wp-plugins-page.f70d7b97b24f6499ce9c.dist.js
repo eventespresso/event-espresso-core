@@ -1,0 +1,27 @@
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["wp-plugins-page"],{
+
+/***/ "./assets/src/wp-plugins-page/index.js":
+/*!*********************************************!*\
+  !*** ./assets/src/wp-plugins-page/index.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nError: Cannot find module '@wordpress/babel-preset-default' from '/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core'\n    at Function.module.exports [as sync] (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/@babel/core/node_modules/resolve/lib/sync.js:43:15)\n    at resolveStandardizedName (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/@babel/core/lib/config/files/plugins.js:101:31)\n    at resolvePreset (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/@babel/core/lib/config/files/plugins.js:58:10)\n    at loadPreset (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/@babel/core/lib/config/files/plugins.js:77:20)\n    at createDescriptor (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/@babel/core/lib/config/config-descriptors.js:114:9)\n    at items.map (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/@babel/core/lib/config/config-descriptors.js:69:50)\n    at Array.map (<anonymous>)\n    at createDescriptors (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/@babel/core/lib/config/config-descriptors.js:69:29)\n    at createPresetDescriptors (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/@babel/core/lib/config/config-descriptors.js:61:10)\n    at presets (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/@babel/core/lib/config/config-descriptors.js:43:19)\n    at mergeChainOpts (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/@babel/core/lib/config/config-chain.js:304:26)\n    at /Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/@babel/core/lib/config/config-chain.js:267:7\n    at buildRootChain (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/@babel/core/lib/config/config-chain.js:85:20)\n    at loadPrivatePartialConfig (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/@babel/core/lib/config/partial.js:55:55)\n    at Object.loadPartialConfig (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/@babel/core/lib/config/partial.js:80:18)\n    at Object.<anonymous> (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/babel-loader/lib/index.js:82:26)\n    at Generator.next (<anonymous>)\n    at step (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/babel-loader/lib/index.js:3:221)\n    at _next (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/babel-loader/lib/index.js:3:409)\n    at /Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/babel-loader/lib/index.js:3:477\n    at new Promise (<anonymous>)\n    at Object.<anonymous> (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/babel-loader/lib/index.js:3:97)\n    at Object._loader (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/babel-loader/lib/index.js:148:18)\n    at Object.loader (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/babel-loader/lib/index.js:36:18)\n    at Object.<anonymous> (/Users/dethier/webprojects/vagrant/www/ee-alpha-testing/wp-content/plugins/event-espresso-core/node_modules/babel-loader/lib/index.js:31:12)");
+
+/***/ }),
+
+/***/ 0:
+/*!***************************************************!*\
+  !*** multi ./assets/src/wp-plugins-page/index.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! ./assets/src/wp-plugins-page/index.js */"./assets/src/wp-plugins-page/index.js");
+
+
+/***/ })
+
+},[[0,"manifest"]]]);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJlZS13cC1wbHVnaW5zLXBhZ2UuZjcwZDdiOTdiMjRmNjQ5OWNlOWMuZGlzdC5qcyIsInNvdXJjZVJvb3QiOiIifQ==
