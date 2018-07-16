@@ -19,6 +19,8 @@ export const i18n = wpI18n;
 import * as r from './routes';
 export const routes = r;
 
+export { money as MONEY_SETTINGS } from './money';
+
 /**
  * use this for eejs exceptions
  * Usage: throw new eejs.Exception('some message')
