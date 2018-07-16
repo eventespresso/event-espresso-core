@@ -99,6 +99,8 @@
 		"@wordpress/dom-ready": "^1.1.0",
 		"@wordpress/i18n": "^1.2.0",
 		"@wordpress/is-shallow-equal": "^1.0.2",
+		"@wordpress/jest-preset-default": "^1.0.6",
+		"accounting-js": "^1.1.1",
 		"classnames": "^2.2.6",
 		"js-green-licenses": "^0.5.0",
 		"lodash": "^4.17.10",
