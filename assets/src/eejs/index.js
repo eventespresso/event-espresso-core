@@ -2,6 +2,7 @@
  * WordPress imports
  */
 import * as wpI18n from '@wordpress/i18n';
+import { createHooks } from '@wordpress/hooks';
 
 /**
  * Exported to the `eejs` global.
@@ -13,6 +14,12 @@ export { default as data } from './data';
  * eejs.i18n;
  */
 export const i18n = wpI18n;
+
+/**
+ * object for adding actions and filters to
+ */
+export const hooks = createHooks();
+
 /**
  * exporting routes to a named var
  */
