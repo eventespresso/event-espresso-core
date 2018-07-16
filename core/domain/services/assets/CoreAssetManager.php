@@ -243,6 +243,7 @@ class CoreAssetManager extends AssetManager
                     'primary_keys' => EED_Core_Rest_Api::getPrimaryKeyNamesIndexedByModelName(),
 					'site_url' => site_url('/'),
                     'admin_url' => admin_url('/'),
+                    'money' => $this->getMoneySettings(),
                 )
             );
             /** site formatting values **/
@@ -267,6 +268,29 @@ class CoreAssetManager extends AssetManager
                     EE_Registry::$i18n_js_strings
                 );
             }
+        );
+    }
+
+
+    private function getMoneySettings()
+    {
+        return array(
+            'currency' => array(
+                'symbol'    => $this->currency_config->sign,
+                'format'    => array(
+                    'pos'  => $this->currency_config->sign_b4 ? '%s%v' : '%v%s',
+                    'neg'  => $this->currency_config->sign_b4 ? '- %s%v' : '- %v%s',
+                    'zero' => $this->currency_config->sign_b4 ? '%s--' : '--%s',
+                ),
+                'decimal'   => $this->currency_config->dec_mrk,
+                'thousand'  => $this->currency_config->thsnds,
+                'precision' => $this->currency_config->dec_plc,
+            ),
+            'number'   => array(
+                'precision' => $this->currency_config->dec_plc,
+                'thousand'  => $this->currency_config->thsnds,
+                'decimal'   => $this->currency_config->dec_mrk,
+            ),
         );
     }
 
@@ -351,7 +375,6 @@ class CoreAssetManager extends AssetManager
         )
         ->setVersion('0.3.2');
 
-        $currency_config = $this->currency_config;
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_ACCOUNTING,
             EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js',
@@ -362,24 +385,7 @@ class CoreAssetManager extends AssetManager
                  wp_localize_script(
                      CoreAssetManager::JS_HANDLE_EE_ACCOUNTING,
                      'EE_ACCOUNTING_CFG',
-                     array(
-                         'currency' => array(
-                             'symbol'    => $currency_config->sign,
-                             'format'    => array(
-                                 'pos'  => $currency_config->sign_b4 ? '%s%v' : '%v%s',
-                                 'neg'  => $currency_config->sign_b4 ? '- %s%v' : '- %v%s',
-                                 'zero' => $currency_config->sign_b4 ? '%s--' : '--%s',
-                             ),
-                             'decimal'   => $currency_config->dec_mrk,
-                             'thousand'  => $currency_config->thsnds,
-                             'precision' => $currency_config->dec_plc,
-                         ),
-                         'number'   => array(
-                             'precision' => $currency_config->dec_plc,
-                             'thousand'  => $currency_config->thsnds,
-                             'decimal'   => $currency_config->dec_mrk,
-                         ),
-                     )
+                     $this->getMoneySettings()
                  );
             }
         )
