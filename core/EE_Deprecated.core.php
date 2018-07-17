@@ -236,7 +236,7 @@ function ee_deprecated_finalize_registration(EE_Registration $registration)
                 ),
                 '<br />',
                 '/core/business/EE_Registration_Processor.class.php',
-                'AHEE__EE_Registration_Processor__trigger_registration_status_changed_hook'
+                'AHEE__EE_Registration_Processor__trigger_registration_update_notifications'
             ),
             '4.6.0'
         );
