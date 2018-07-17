@@ -17,6 +17,7 @@ Headings should be (only add headings as needed):
 ### Added
 
 - Added classname to the markup that wraps the Event phone ([563](https://github.com/eventespresso/event-espresso-core/pull/563))
+- Added CSS to help improve the display of ticket selector on small screens ([572](https://github.com/eventespresso/event-espresso-core/pull/572))
 
 ### Fixed
 
@@ -24,6 +25,8 @@ Headings should be (only add headings as needed):
 -  Added CSS bulletproofing to protect registration form from worse-case scenarios ([542](https://github.com/eventespresso/event-espresso-core/pull/542))
 -  Fixed REST API documentation links, and made REST API BETWEEN operator work as documented ([560](https://github.com/eventespresso/event-espresso-core/pull/560))
 -  Fixed privacy erasure so contact phones are also erased ([567](https://github.com/eventespresso/event-espresso-core/pull/567))
+-  Fixed fatal error thrown when using WP4.5 ([571](https://github.com/eventespresso/event-espresso-core/pull/571))
+-  Fixed issue with [ESPRESSO_EVENT_ATTENDEES] shortcode to allow displaying attendees when specifying an archived ticket ([583](https://github.com/eventespresso/event-espresso-core/pull/583))
 
 ## [4.9.64.p]
 
