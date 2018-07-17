@@ -853,7 +853,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
         if (strpos($url, 'https://') !== false && strpos($url, '.paypal.com') !== false) {
             // Use the value of the constant CURL_SSLVERSION_TLSv1 = 1
             // instead of the constant because it might not be defined
-            curl_setopt($handle, CURLOPT_SSLVERSION, 1);
+            curl_setopt($handle, CURLOPT_SSLVERSION, 6);
         }
     }
 }
