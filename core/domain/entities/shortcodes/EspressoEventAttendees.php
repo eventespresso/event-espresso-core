@@ -274,6 +274,7 @@ class EspressoEventAttendees extends EspressoShortcode
                     array(
                         'Datetime.Ticket.TKT_ID' => $attributes['ticket_id'],
                     ),
+                    'default_where_conditions' => 'none'
                 ));
                 break;
             case is_espresso_event():
