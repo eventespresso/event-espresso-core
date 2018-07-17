@@ -920,10 +920,12 @@ class Read_Test extends \EE_REST_TestCase
         //sold out events should be included, if they were previously published
         $sold_out_event = $this->new_model_obj_with_dependencies(
 
-            'Event', array(
-                'status' => EEM_Event::sold_out,
-                'EVT_wp_user' => $admin->ID()
-            ));
+            'Event',
+            array(
+                'status'      => EEM_Event::sold_out,
+                'EVT_wp_user' => $admin->ID(),
+            )
+        );
         $sold_out_event->add_post_meta(
             '_previous_event_status',
             'publish'
@@ -931,8 +933,8 @@ class Read_Test extends \EE_REST_TestCase
         $sold_out_private_event = $this->new_model_obj_with_dependencies(
             'Event',
             array(
-                'status' => EEM_Event::sold_out,
-                'EVT_wp_user' => $admin->ID()
+                'status'      => EEM_Event::sold_out,
+                'EVT_wp_user' => $admin->ID(),
             )
         );
         $sold_out_private_event->add_post_meta(
@@ -959,7 +961,6 @@ class Read_Test extends \EE_REST_TestCase
         $this->assertEquals(2, count($data));
         $this->assertEquals($sold_out_event->ID(), $data[0]['EVT_ID']);
         $this->assertEquals($sold_out_private_event->ID(), $data[1]['EVT_ID']);
-
     }
 
 

@@ -25,7 +25,7 @@ class EE_Restriction_Generator_Public extends EE_Restriction_Generator_Base
         if (EE_Restriction_Generator_Base::is_cap($this->model(), $this->action())) {
             if ($this->model() instanceof EEM_CPT_Base) {
                 $restrictions[ EE_Restriction_Generator_Base::get_cap_name($this->model(), $this->action()) ] = new EE_Default_Where_Conditions(
-                   $this->addPublishedPostConditions()
+                    $this->addPublishedPostConditions()
                 );
             } elseif ($this->model() instanceof EEM_Soft_Delete_Base) {
                 $restrictions[ EE_Restriction_Generator_Base::get_cap_name($this->model(), $this->action()) ] = new EE_Default_Where_Conditions(
@@ -93,7 +93,7 @@ class EE_Restriction_Generator_Public extends EE_Restriction_Generator_Base
      */
     protected function addPublishedPostConditions($where_conditions = array(), $check_if_published = true)
     {
-        if($check_if_published) {
+        if ($check_if_published) {
             $published_value = 'publish';
         } else {
             $published_value = array('!=','private');
