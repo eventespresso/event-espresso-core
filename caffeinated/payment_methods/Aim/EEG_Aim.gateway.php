@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 /**
  * Event Espresso
  * Event Registration and Management Plugin for WordPress
@@ -127,7 +129,8 @@ class EEG_Aim extends EE_Onsite_Gateway
         "type",
         "version",
         "zip",
-        "solution_id"
+        "solution_id",
+        "currency_code"
     );
 
 
@@ -245,6 +248,8 @@ class EEG_Aim extends EE_Onsite_Gateway
         $this->setField('fax', $billing_info['fax']);
         $this->setField('cust_id', $primary_registrant->ID());
         $this->setField('phone', $billing_info['phone']);
+        $currency_config = LoaderFactory::getLoader()->load('EE_Currency_Config');
+        $this->setField('currency_code',$currency_config->code);
         // invoice_num would be nice to have it be unique per SPCO page-load, that way if users
         // press back, they don't submit a duplicate. However, we may be keeping the user on teh same spco page
         // in which case, we need to generate teh invoice num per request right here...
