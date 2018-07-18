@@ -107,7 +107,7 @@ class EE_Restriction_Generator_Public extends EE_Restriction_Generator_Base
                 )
             );
         } else {
-            $where_conditions['status'] = 'publish';
+            $where_conditions['status'] = $published_value;
         }
         return $where_conditions;
     }
