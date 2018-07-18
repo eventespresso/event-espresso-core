@@ -1752,8 +1752,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _generate_reg_status_change_form()
     {
-        return new EE_Form_Section_Proper(
-            array(
+        $reg_status_change_form_array = array(
                 'name'            => 'reg_status_change_form',
                 'html_id'         => 'reg-status-change-form',
                 'layout_strategy' => new EE_Admin_Two_Column_Layout(),
