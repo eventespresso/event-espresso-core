@@ -987,14 +987,14 @@ class Read_Test extends \EE_REST_TestCase
             'Venue',
             array(
                 'status'      => EEM_CPT_Base::post_status_publish,
-                'VNU_wp_user' => $current_user + 1,
+                'VNU_wp_user' => $current_user->ID + 1,
             )
         );
         $others_private_venue = $this->new_model_obj_with_dependencies(
             'Venue',
             array(
                 'status'      => EEM_CPT_Base::post_status_draft,
-                'VNU_wp_user' => $current_user + 1,
+                'VNU_wp_user' => $current_user->ID + 1,
             )
         );
         //make a request to see all venues
