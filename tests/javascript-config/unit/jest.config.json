@@ -16,16 +16,19 @@
 		"@wordpress/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
 		"@eventespresso/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n"
 	},
+	"preset": "@wordpress/jest-preset-default",
 	"setupFiles": [
 		"core-js/fn/symbol/async-iterator",
 		"<rootDir>/tests/javascript-config/unit/setup-globals"
 	],
-	"preset": "@wordpress/jest-preset-default",
 	"testPathIgnorePatterns": [
 		"/node_modules/",
 		"/test/e2e"
 	],
 	"transformIgnorePatterns": [
 		"node_modules/(?!(gutenberg)/)"
-	]
+	],
+	"transform": {
+		"^.+\\.jsx?$": "<rootDir>/tests/javascript-config/unit/babel-transform"
+	}
 }
