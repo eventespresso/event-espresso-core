@@ -1,6 +1,7 @@
 {
-  "eejs.js": "ee-eejs.36e7995144188659cffb.dist.js",
+  "eejs.js": "ee-eejs.53fe02b179dc6fef33eb.dist.js",
   "manifest.js": "ee-manifest.db11f08f044e318032a1.dist.js",
-  "vendor.js": "ee-vendor.7745b0c7df6aea0bbf72.dist.js",
-  "wp-plugins-page.js": "ee-wp-plugins-page.f70d7b97b24f6499ce9c.dist.js"
+  "vendor.js": "ee-vendor.15789f823b29b3d75d9b.dist.js",
+  "wp-plugins-page.css": "ee-wp-plugins-page.12612f6ab71570ab1af8.dist.css",
+  "wp-plugins-page.js": "ee-wp-plugins-page.1cf5184e38695d406893.dist.js"
 }
