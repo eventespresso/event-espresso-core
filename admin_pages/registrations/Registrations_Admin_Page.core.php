@@ -1788,34 +1788,40 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                                 )
                             )
                         )
-                    ),
-                    'reg_status'         => new EE_Select_Input(
-                        $this->_get_reg_statuses(),
-                        array(
-                            'html_label_text' => esc_html__('Change Registration Status to', 'event_espresso'),
-                            'default'         => $this->_registration->status_ID(),
-                        )
-                    ),
-                    'send_notifications' => new EE_Yes_No_Input(
-                        array(
-                            'html_label_text' => esc_html__('Send Related Messages', 'event_espresso'),
-                            'default'         => false,
-                            'html_help_text'  => esc_html__(
-                                'If set to "Yes", then the related messages will be sent to the registrant.',
-                                'event_espresso'
-                            ),
-                        )
-                    ),
-                    'submit'             => new EE_Submit_Input(
-                        array(
-                            'html_class'      => 'button-primary',
-                            'html_label_text' => '&nbsp;',
-                            'default'         => esc_html__('Update Registration Status', 'event_espresso'),
-                        )
-                    ),
-                ),
-            )
+                    )
+                )
         );
+        if (EE_Registry::instance()->CAP->current_user_can(
+            'ee_edit_registration',
+            'toggle_registration_status',
+            $this->_registration->ID()
+        )) {
+            $reg_status_change_form_array['subsections']['reg_status'] = new EE_Select_Input(
+                $this->_get_reg_statuses(),
+                array(
+                    'html_label_text' => esc_html__('Change Registration Status to', 'event_espresso'),
+                    'default'         => $this->_registration->status_ID(),
+                )
+            );
+            $reg_status_change_form_array['subsections']['send_notifications'] = new EE_Yes_No_Input(
+                array(
+                    'html_label_text' => esc_html__('Send Related Messages', 'event_espresso'),
+                    'default'         => false,
+                    'html_help_text'  => esc_html__(
+                        'If set to "Yes", then the related messages will be sent to the registrant.',
+                        'event_espresso'
+                    )
+                )
+            );
+            $reg_status_change_form_array['subsections']['submit'] = new EE_Submit_Input(
+                array(
+                    'html_class'      => 'button-primary',
+                    'html_label_text' => '&nbsp;',
+                    'default'         => esc_html__('Update Registration Status', 'event_espresso'),
+                )
+            );
+        }
+        return new EE_Form_Section_Proper($reg_status_change_form_array);
     }
 
 
