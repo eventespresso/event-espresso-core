@@ -1753,42 +1753,42 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     protected function _generate_reg_status_change_form()
     {
         $reg_status_change_form_array = array(
-                'name'            => 'reg_status_change_form',
-                'html_id'         => 'reg-status-change-form',
-                'layout_strategy' => new EE_Admin_Two_Column_Layout(),
-                'subsections'     => array(
-                    'return'             => new EE_Hidden_Input(
-                        array(
-                            'name'    => 'return',
-                            'default' => 'view_registration',
-                        )
-                    ),
-                    'REG_ID'             => new EE_Hidden_Input(
-                        array(
-                            'name'    => 'REG_ID',
-                            'default' => $this->_registration->ID(),
-                        )
-                    ),
-                    'current_status'     => new EE_Form_Section_HTML(
-                        EEH_HTML::tr(
-                            EEH_HTML::th(
-                                EEH_HTML::label(
-                                    EEH_HTML::strong(
-                                        esc_html__('Current Registration Status', 'event_espresso')
-                                    )
+            'name'            => 'reg_status_change_form',
+            'html_id'         => 'reg-status-change-form',
+            'layout_strategy' => new EE_Admin_Two_Column_Layout(),
+            'subsections'     => array(
+                'return'             => new EE_Hidden_Input(
+                    array(
+                        'name'    => 'return',
+                        'default' => 'view_registration',
+                    )
+                ),
+                'REG_ID'             => new EE_Hidden_Input(
+                    array(
+                        'name'    => 'REG_ID',
+                        'default' => $this->_registration->ID(),
+                    )
+                ),
+                'current_status'     => new EE_Form_Section_HTML(
+                    EEH_HTML::tr(
+                        EEH_HTML::th(
+                            EEH_HTML::label(
+                                EEH_HTML::strong(
+                                    esc_html__('Current Registration Status', 'event_espresso')
                                 )
                             )
-                            . EEH_HTML::td(
-                                EEH_HTML::strong(
-                                    $this->_registration->pretty_status(),
-                                    '',
-                                    'status-' . $this->_registration->status_ID(),
-                                    'line-height: 1em; font-size: 1.5em; font-weight: bold;'
-                                )
+                        )
+                        . EEH_HTML::td(
+                            EEH_HTML::strong(
+                                $this->_registration->pretty_status(),
+                                '',
+                                'status-' . $this->_registration->status_ID(),
+                                'line-height: 1em; font-size: 1.5em; font-weight: bold;'
                             )
                         )
                     )
                 )
+            )
         );
         if (EE_Registry::instance()->CAP->current_user_can(
             'ee_edit_registration',
