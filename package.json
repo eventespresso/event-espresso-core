@@ -102,6 +102,7 @@
 		"@wordpress/jest-preset-default": "^1.0.6",
 		"accounting-js": "^1.1.1",
 		"classnames": "^2.2.6",
+		"decimal.js-light": "^2.4.1",
 		"js-green-licenses": "^0.5.0",
 		"lodash": "^4.17.10",
 		"memize": "^1.0.5",
