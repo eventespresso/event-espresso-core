@@ -12,6 +12,7 @@ const externals = {
 	'@wordpress/components': 'wp.components',
 	'@wordpress/blocks': 'wp.blocks',
 	'@wordpress/editor': 'wp.editor',
+	'@wordpress/compose': 'wp.compose',
 	react: 'eejs.vendor.react',
 	'react-dom': 'eejs.vendor.reactDom',
 	'react-redux': 'eejs.vendor.reactRedux',
