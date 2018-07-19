@@ -92,6 +92,7 @@ class BootstrapCore
      * @throws InvalidDataTypeException
      * @throws InvalidFilePathException
      * @throws InvalidInterfaceException
+     * @throws InvalidRequestStackMiddlewareException
      * @throws OutOfBoundsException
      * @throws ReflectionException
      */

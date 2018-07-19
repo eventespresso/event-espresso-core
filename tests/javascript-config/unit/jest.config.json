@@ -6,15 +6,25 @@
 		"!**/vendor/**",
 		"!**/test/**"
 	],
+	"moduleDirectories": ["node_modules"],
 	"moduleNameMapper": {
-		"@eventespresso\\/(eejs)": "$1"
+		"@eventespresso\\/(eejs)": "assets/src/$1",
+		"@eventespresso\/helpers": "assets/src/data/helpers",
+		"tinymce": "<rootDir>/tests/javascript-config/unit/mocks/tinymce",
+		"@wordpress/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
+		"@eventespresso/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
+		"@wordpress/is-shallow-equal/objects": "<rootDir>/node_modules/@wordpress/is-shallow-equal/build/objects"
 	},
-	"setupFiles": [
-		"<rootDir>/tests/javascript-config/unit/setup-globals.js"
-	],
 	"preset": "@wordpress/jest-preset-default",
+	"setupFiles": [
+		"core-js/fn/symbol/async-iterator",
+		"<rootDir>/tests/javascript-config/unit/setup-globals"
+	],
 	"testPathIgnorePatterns": [
 		"/node_modules/",
 		"/test/e2e"
-	]
+	],
+	"transform": {
+		"^.+\\.jsx?$": "<rootDir>/tests/javascript-config/unit/babel-transform"
+	}
 }

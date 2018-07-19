@@ -5,6 +5,8 @@ namespace EventEspresso\core\domain\services\assets;
 use EE_Currency_Config;
 use EE_Registry;
 use EE_Template_Config;
+use EED_Core_Rest_Api;
+use EEH_DTT_Helper;
 use EEH_Qtip_Loader;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
@@ -28,37 +30,47 @@ class CoreAssetManager extends AssetManager
 {
 
     // WordPress core / Third party JS asset handles
-    const JS_HANDLE_JQUERY                = 'jquery';
+    const JS_HANDLE_JQUERY = 'jquery';
 
-    const JS_HANDLE_JQUERY_VALIDATE       = 'jquery-validate';
+    const JS_HANDLE_JQUERY_VALIDATE = 'jquery-validate';
 
     const JS_HANDLE_JQUERY_VALIDATE_EXTRA = 'jquery-validate-extra-methods';
 
-    const JS_HANDLE_UNDERSCORE            = 'underscore';
+    const JS_HANDLE_UNDERSCORE = 'underscore';
 
-    const JS_HANDLE_ACCOUNTING_CORE       = 'ee-accounting-core';
+    const JS_HANDLE_ACCOUNTING_CORE = 'ee-accounting-core';
 
     // EE JS assets handles
-    const JS_HANDLE_EE_MANIFEST        = 'ee-manifest';
+    const JS_HANDLE_EE_MANIFEST = 'ee-manifest';
 
-    const JS_HANDLE_EE_JS_CORE         = 'eejs-core';
+    const JS_HANDLE_EE_JS_CORE = 'eejs-core';
 
-    const JS_HANDLE_EE_VENDOR           = 'eventespresso-vendor';
+    const JS_HANDLE_EE_VENDOR = 'eventespresso-vendor';
 
-    const JS_HANDLE_EE_JS_API          = 'eejs-api';
+    const JS_HANDLE_EE_DATA_STORES = 'eventespresso-data-stores';
 
-    const JS_HANDLE_EE_CORE            = 'espresso_core';
+    const JS_HANDLE_EE_HELPERS = 'eventespresso-helpers';
 
-    const JS_HANDLE_EE_I18N            = 'eei18n';
+    const JS_HANDLE_EE_MODEL = 'eventespresso-model';
 
-    const JS_HANDLE_EE_ACCOUNTING      = 'ee-accounting';
+    const JS_HANDLE_EE_HOC_COMPONENTS = 'eventespresso-hoc-components';
+
+    const JS_HANDLE_EE_COMPONENTS = 'eventespresso-components';
+
+    const JS_HANDLE_EE_JS_API = 'eejs-api';
+
+    const JS_HANDLE_EE_CORE = 'espresso_core';
+
+    const JS_HANDLE_EE_I18N = 'eei18n';
+
+    const JS_HANDLE_EE_ACCOUNTING = 'ee-accounting';
 
     const JS_HANDLE_EE_WP_PLUGINS_PAGE = 'ee-wp-plugins-page';
 
     // EE CSS assets handles
     const CSS_HANDLE_EE_DEFAULT = 'espresso_default';
 
-    const CSS_HANDLE_EE_CUSTOM  = 'espresso_custom_css';
+    const CSS_HANDLE_EE_CUSTOM = 'espresso_custom_css';
 
     /**
      * @var EE_Currency_Config $currency_config
@@ -168,6 +180,47 @@ class CoreAssetManager extends AssetManager
             array(CoreAssetManager::JS_HANDLE_EE_JS_CORE)
         );
 
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'data-stores'),
+            array(CoreAssetManager::JS_HANDLE_EE_VENDOR, 'wp-data', 'wp-api-request')
+        )
+        ->setRequiresTranslation();
+
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_HELPERS,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'helpers')
+        )->setRequiresTranslation();
+
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_MODEL,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'model'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_HELPERS
+            )
+        )->setRequiresTranslation();
+
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_HOC_COMPONENTS,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'hocComponents'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
+                CoreAssetManager::JS_HANDLE_EE_HELPERS,
+                'wp-components',
+            )
+        )->setRequiresTranslation();
+
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_COMPONENTS,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'components'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
+                CoreAssetManager::JS_HANDLE_EE_HELPERS,
+                'wp-components',
+            )
+        )
+        ->setRequiresTranslation();
+
         global $wp_version;
         if (version_compare($wp_version, '4.4.0', '>')) {
             //js.api
@@ -184,8 +237,17 @@ class CoreAssetManager extends AssetManager
                 'paths',
                 array(
                     'rest_route' => rest_url('ee/v4.8.36/'),
-                    'site_url' => site_url('/'),
+                    'collection_endpoints' => EED_Core_Rest_Api::getCollectionRoutesIndexedByModelName(),
+                    'primary_keys' => EED_Core_Rest_Api::getPrimaryKeyNamesIndexedByModelName(),
+					'site_url' => site_url('/'),
                     'admin_url' => admin_url('/'),
+                )
+            );
+            /** site formatting values **/
+            $this->registry->addData(
+                'site_formats',
+                array(
+                    'date_formats' => EEH_DTT_Helper::convert_php_to_js_and_moment_date_formats()
                 )
             );
         }
