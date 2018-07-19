@@ -1,10 +1,35 @@
 {
-  "components": [
+  "eventespresso-helpers": [],
+  "eventespresso-model": [
+    null,
+    "The provided entity (%s) does not have the given property (%s)",
+    "The provided value is not an array.",
+    "The provided items must not be empty",
+    "The provided array of entities must not be empty"
+  ],
+  "eventespresso-hoc-components": [],
+  "ee-wp-plugins-page": [
+    "Do you have a moment to share why you are deactivating Event Espresso?",
+    "Sure I'll help",
+    "Skip"
+  ],
+  "eventespresso-data-stores": [
+    null,
+    "The provided entity (%s) does not have the given property (%s)",
+    "The provided value is not an array.",
+    "The provided items must not be empty",
+    "The provided array of entities must not be empty",
+    null,
+    "The given modelName (%s) does not exist in the state."
+  ],
+  "eventespresso-components": [
     "Limit",
-    "Error loading Registration Statuses!",
-    "Select Registration Status",
-    "All Registration Statuses",
-    "user avatar",
+    null,
+    "The provided entity (%s) does not have the given property (%s)",
+    "The provided value is not an array.",
+    "The provided items must not be empty",
+    "The provided array of entities must not be empty",
+    "Select...",
     "Retrieving Events.",
     "No Events.",
     "Select Event...",
@@ -13,36 +38,14 @@
     "No Datetimes.",
     "Select Datetime...",
     "Select Datetime",
-    "All Datetimes",
     "Retrieving Statuses.",
     "No Statuses.",
     "Select Status...",
     "Select Status",
-    "All Statuses",
     "Retrieving Tickets.",
     "No Tickets.",
     "Select Ticket...",
     "Select Ticket",
-    "All Tickets",
-    "Select...",
-    "The provided array of entities must not be empty",
-    null,
-    "The provided entity (%s) does not have the given property (%s)",
-    "The provided value is not an array.",
-    "The provided items must not be empty"
-  ],
-  "ee-wp-plugins-page": [
-    "Do you have a moment to share why you are deactivating Event Espresso?",
-    "Sure I'll help",
-    "Skip"
-  ],
-  "eventespresso-data-stores": [
-    null,
-    "The given modelName (%s) does not exist in the state.",
-    "The provided array of entities must not be empty",
-    null,
-    "The provided entity (%s) does not have the given property (%s)",
-    "The provided value is not an array.",
-    "The provided items must not be empty"
+    "user avatar"
   ]
 }
