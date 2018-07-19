@@ -1148,6 +1148,11 @@ final class EE_System implements ResettableInterface
             try {
                 $this->loader->getShared('EventEspresso\core\services\assets\Registry');
                 $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
+                if (function_exists('register_block_type')) {
+                    $this->loader->getShared(
+                        'EventEspresso\core\services\editor\BlockRegistrationManager'
+                    );
+                }
             } catch (Exception $exception) {
                 new ExceptionStackTraceDisplay($exception);
             }

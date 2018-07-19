@@ -26,6 +26,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      */
     protected $collection_identifier;
 
+
     /**
      * an interface (or class) name to be used for restricting the type of objects added to the storage
      * this should be set from within the child class constructor
@@ -81,9 +82,8 @@ class Collection extends SplObjectStorage implements CollectionInterface
     /**
      * setCollectionInterface
      *
-     * @access protected
      * @param  string $collection_interface
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidInterfaceException
      */
     protected function setCollectionInterface($collection_interface)
     {
@@ -100,7 +100,6 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * and sets any supplied data associated with the current iterator entry
      * by calling EE_Object_Collection::set_identifier()
      *
-     * @access public
      * @param        $object
      * @param  mixed $identifier
      * @return bool
