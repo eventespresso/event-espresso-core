@@ -22,37 +22,14 @@ global.wp = {
 	},
 };
 
-//non packaged WP stuff
-[
-	'components',
-	'utils',
-	'blocks',
-	'editor',
-	'edit-post',
-	'viewport',
-].forEach( entryPointName => {
-	Object.defineProperty( global.wp, entryPointName, {
-		get: () => require( 'gutenberg/' + entryPointName ),
-	} );
+Object.defineProperty( global.wp, 'element', {
+	get: () => require( 'packages/element' ),
+} );
+Object.defineProperty( global.wp, 'blocks', {
+	get: () => require( 'blocks' ),
 } );
 
-//packaged WP stuff
-[
-	'element',
-	'date',
-	'data',
-	'a11y',
-	'autop',
-	'blob',
-	'deprecated',
-	'dom',
-	'hooks',
-	'i18n',
-	'core-data',
-	'plugins',
-	'keycodes',
-].forEach( entryPointName => {
-	Object.defineProperty( global.wp, entryPointName, {
-		get: () => require( '@wordpress' + entryPointName + '/src' ),
-	} );
-} );
+// this just saves having to import React in all our files (so JSX is
+// transformed)for tests to work.  For builds, webpack is configured to provide
+// the React module to any files needing it.
+global.React = require( 'react' );
