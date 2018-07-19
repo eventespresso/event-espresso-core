@@ -16,9 +16,6 @@ describe( 'HoverText', () => {
 		expect( hover.props().className ).toEqual(
 			'undefined-undefined-hover-text ee-hover-text-position-top-right ee-undefined ee-hover-text'
 		);
-		const text = wrapper.find( '.ee-hover-text-notice' );
-		expect( text ).toHaveLength( 1 );
-		expect( text.text() ).toEqual( 'click-this' );
 	} );
 	it( 'renders correctly when all props supplied', () => {
 		const wrapper = shallow(
@@ -28,7 +25,9 @@ describe( 'HoverText', () => {
 				htmlClass={ 'test-class' }
 				description={ 'what-to-do' }
 				dashicon={ 'yes' }
-			/>
+			>
+				<div>CLICK ME</div>
+			</HoverText>
 		);
 		expect( wrapper ).toHaveLength( 1 );
 		const hover = wrapper.find( '.ee-hover-text' );
@@ -37,6 +36,12 @@ describe( 'HoverText', () => {
 		expect( hover.props().className ).toEqual(
 			'test-class-what-to-do-hover-text ee-hover-text-position-top-right ee-what-to-do ee-hover-text'
 		);
+		const text = wrapper.find( '.ee-hover-text-text' );
+		expect( text ).toHaveLength( 1 );
+		expect( text.text() ).toEqual( 'click-this' );
+		const content = wrapper.find( '.ee-hover-text-content' );
+		expect( content ).toHaveLength( 1 );
+		expect( content.text() ).toEqual( 'CLICK ME' );
 	} );
 } );
 
