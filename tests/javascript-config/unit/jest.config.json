@@ -9,12 +9,15 @@
 	"moduleNameMapper": {
 		"@eventespresso\\/(eejs)": "$1"
 	},
+	"preset": "@wordpress/jest-preset-default",
 	"setupFiles": [
 		"<rootDir>/tests/javascript-config/unit/setup-globals.js"
 	],
-	"preset": "@wordpress/jest-preset-default",
 	"testPathIgnorePatterns": [
 		"/node_modules/",
 		"/test/e2e"
-	]
+	],
+	"transform": {
+		"^.+\\.jsx?$": "<rootDir>/tests/javascript-config/unit/babel-transform"
+	}
 }
