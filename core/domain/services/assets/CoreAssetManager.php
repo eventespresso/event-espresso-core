@@ -72,6 +72,8 @@ class CoreAssetManager extends AssetManager
 
     const CSS_HANDLE_EE_CUSTOM = 'espresso_custom_css';
 
+    const CSS_HANDLE_EE_COMPONENTS = 'eventespresso-components';
+
     /**
      * @var EE_Currency_Config $currency_config
      */
@@ -294,6 +296,13 @@ class CoreAssetManager extends AssetManager
                 );
             }
         }
+        $this->addStylesheet(
+            CoreAssetManager::CSS_HANDLE_EE_COMPONENTS,
+            $this->registry->getCssUrl(
+                $this->domain->assetNamespace(),
+                'components'
+            )
+        );
     }
 
 
