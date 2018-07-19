@@ -144,6 +144,7 @@ const config = [
 			components: assets + 'components/index.js',
 		},
 		externals: Object.assign( externals, {
+			'@eventespresso/higher-order-components': 'eejs.hocComponents',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
 		} ),
