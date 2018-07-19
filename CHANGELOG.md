@@ -13,6 +13,8 @@ Headings should be (only add headings as needed):
 - Fixed (bug fixes)
 - Security (vulnerability fixes)
 
+See [our documentation](https://github.com/eventespresso/event-espresso-core/blob/master/docs/A--Best-Practices/change-log.md) for more details.
+
 ## [$VID:$]
 
 ### Changed
