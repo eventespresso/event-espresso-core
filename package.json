@@ -61,7 +61,7 @@
 		"@wordpress/jest-preset-default": "^2.0.0",
 		"@wordpress/keycodes": "^1.0.0",
 		"@wordpress/plugins": "^1.0.0",
-		"@wordpress/scripts": "^1.2.0",
+		"@wordpress/scripts": "^2.0.1",
 		"@wordpress/viewport": "^1.0.0",
 		"autoprefixer": "^8.6.5",
 		"babel-core": "^7.0.0-bridge.0",
