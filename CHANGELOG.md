@@ -15,6 +15,10 @@ Headings should be (only add headings as needed):
 
 ## [$VID:$]
 
+### Changed
+
+- Updated js build process to use Babel 7 ([578](https://github.com/eventespresso/event-espresso-core/pull/578))
+
 ## [4.9.65.p]
 ### Added
 
