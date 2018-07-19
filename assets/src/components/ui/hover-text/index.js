@@ -13,16 +13,18 @@ export const HOVER_TEXT_POSITION_BOTTOM_RIGHT = 'bottom-right';
  * Adds a text element that is only displayed when the wrapped component (children) is hovered over
  *
  * @function
- * @param {string} htmlId       Used to generate an HTML "id" attribute. "-hover-text" is appended.
- * @param {string} htmlClass    Used to generate an HTML "class" attribute. "-hover-text" is appended.
  * @param {string} hoverText    The actual text to be displayed when the child entity is hovered over
+ * @param {string} htmlId       Used to generate an HTML "id" attribute.
+ * 								The description and "-hover-text" are appended.
+ * @param {string} htmlClass    Used to generate an HTML "class" attribute.
+ * 								The description and "-hover-text" are appended.
  * @param {string} description  Two or three words (hyphenated) that describe the component
  *                              that the hover text is being added to
  * @param {string} position     Where the hover text appears relative to the wrapped component
  * @param {string} children     The child entity that gets wrapped with the hover elements
  * @return {string}             The child entity wrapped with the hover elements
  */
-export const HoverText = ( { htmlId, htmlClass, hoverText, description, position, children } ) => {
+export const HoverText = ( { hoverText, htmlId, htmlClass, description, position, children } ) => {
 	position = position ?
 		position :
 		HOVER_TEXT_POSITION_TOP_RIGHT;
