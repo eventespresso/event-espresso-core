@@ -15,6 +15,10 @@ Headings should be (only add headings as needed):
 
 ## [$VID:$]
 
+### Added
+
+- Added support for Indian Rupees currency (INR) to PayPal Espresso and Pro ([593](https://github.com/eventespresso/event-espresso-core/pull/593)) 
+
 ## [4.9.65.p]
 ### Added
 
