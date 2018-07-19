@@ -15,6 +15,10 @@ Headings should be (only add headings as needed):
 
 ## [$VID:$]
 
+### Fixed
+-  Fixed a javascript error on admin pages showing both an EE error and persistent notice. ([592](https://github.com/eventespresso/event-espresso-core/pull/592))
+-  Fixed a bug which prevented sold out events from appearing in unauthenticated REST API results ([536](https://github.com/eventespresso/event-espresso-core/pull/536))
+
 ## [4.9.65.p]
 ### Added
 
@@ -29,9 +33,6 @@ Headings should be (only add headings as needed):
 -  Fixed privacy erasure so contact phones are also erased ([567](https://github.com/eventespresso/event-espresso-core/pull/567))
 -  Fixed fatal error thrown when using WP4.5 ([571](https://github.com/eventespresso/event-espresso-core/pull/571))
 -  Fixed issue with [ESPRESSO_EVENT_ATTENDEES] shortcode to allow displaying attendees when specifying an archived ticket ([583](https://github.com/eventespresso/event-espresso-core/pull/583))
--  Fixed a javascript error on admin pages showing both an EE error and persistent notice. ([592](https://github.com/eventespresso/event-espresso-core/pull/592))
--  Fixed a bug which prevented sold out events from appearing in unauthenticated REST API results ([536](https://github.com/eventespresso/event-espresso-core/pull/536))
-
 ## [4.9.64.p]
 
 ### Added
