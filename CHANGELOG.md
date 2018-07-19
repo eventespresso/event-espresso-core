@@ -19,6 +19,10 @@ Headings should be (only add headings as needed):
 
 - Added support for Indian Rupees currency (INR) to PayPal Espresso and Pro ([593](https://github.com/eventespresso/event-espresso-core/pull/593)) 
 
+### Changed
+
+- Updated js build process to use Babel 7 ([578](https://github.com/eventespresso/event-espresso-core/pull/578))
+
 ## [4.9.65.p]
 ### Added
 
