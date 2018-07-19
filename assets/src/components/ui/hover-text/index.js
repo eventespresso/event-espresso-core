@@ -41,7 +41,9 @@ export const HoverText = ( { htmlId, htmlClass, hoverText, description, position
 			</div>
 			<div className={ 'ee-hover-text-notice-wrapper' }>
 				<div className="ee-hover-text-notice ee-small-shadow">
-					{ hoverText }
+					<span className={ 'ee-hover-text-text' }>
+						{ hoverText }
+					</span>
 					<span className={ 'ee-hover-text-pointer ee-small-text-shadow' }>
 						{ String.fromCharCode( pointerCharCodes[ position ] ) }
 					</span>
