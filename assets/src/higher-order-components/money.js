@@ -1,16 +1,19 @@
 /**
  * External imports
  */
-import { MONEY_SETTINGS } from '@eventespresso/eejs';
-import { settings, formatMoney } from 'accounting-js';
 import { Component } from 'react';
 import { isFunction, isArray } from 'lodash';
 import isShallowEqualArrays from '@wordpress/is-shallow-equal';
 import warning from 'warning';
+import { Money, SiteCurrency } from '@eventespresso/vo';
 
-//initialize settings
-const options = { ...settings, ...MONEY_SETTINGS };
-
+/**
+ * This validates whether the nextStateResponse is in the expected shape.
+ * If any of the validation fails, then a console.error is triggered (via
+ * warning)
+ *
+ * @param {{}} nextStateResponse
+ */
 const validateNextState = ( nextStateResponse ) => {
 	warning(
 		nextStateResponse &&
@@ -24,7 +27,7 @@ const validateNextState = ( nextStateResponse ) => {
 			isArray( nextStateResponse.convertedValues ),
 			'The propNameMap callback for the withMoney HOC should return an ' +
 			'object with a "convertedValues" key that has an array' +
-			' of values as value.'
+			' of numbers as the value.'
 		);
 	}
 	warning(
@@ -34,6 +37,12 @@ const validateNextState = ( nextStateResponse ) => {
 	);
 };
 
+/**
+ * Validates whether the provided propNameMap is a correct shape.
+ * If not valid, then a console.error is triggered via warning.
+ *
+ * @param {function|Array} propNameMap
+ */
 const validatePropNameMap = ( propNameMap ) => {
 	warning(
 		isFunction( propNameMap ) || isArray( propNameMap ),
@@ -42,22 +51,32 @@ const validatePropNameMap = ( propNameMap ) => {
 	);
 };
 
+/**
+ * A higher order component that converts any props matching the map provided
+ * as an argument to Money value objects and passes them to the WrappedComponent
+ *
+ * @param {Array|function} propNameMap
+ * @return {function(*): EnhancedComponent}  Returns an enhanced component where
+ * props that represent money values have been converted to a Money value object
+ */
 const withMoney = ( propNameMap = [] ) => ( WrappedComponent ) => {
 	class EnhancedComponent extends Component {
 		state = {
 			convertedValues: [],
 		};
 
-		formatMoney = ( value ) => {
-			return formatMoney( value, options );
-		};
-
+		/**
+		 * This provides the next state on any prop change.
+		 *
+		 * @param {{}} props
+		 * @return {{}} An object representing the nextState for the component.
+		 */
 		getNextState = ( props ) => {
 			let nextStateResponse,
 				nextState = {};
 			const convertedValues = [];
 			if ( isFunction( propNameMap ) ) {
-				nextStateResponse = propNameMap( props, this.formatMoney );
+				nextStateResponse = propNameMap( props, Money );
 				validateNextState( nextStateResponse );
 				if ( nextStateResponse && nextStateResponse.props ) {
 					nextState = { ...nextStateResponse.props };
@@ -70,8 +89,13 @@ const withMoney = ( propNameMap = [] ) => ( WrappedComponent ) => {
 					propNameMap.forEach( ( propName ) => {
 						if ( props[ propName ] ) {
 							nextState[ propName ] =
-								formatMoney( props[ propName ] );
-							convertedValues.push( nextState[ propName ] );
+								Money.fromPrimitive(
+									props[ propName ],
+									SiteCurrency
+								);
+							convertedValues.push(
+								nextState[ propName ].toNumber()
+							);
 						}
 					} );
 				}
@@ -80,6 +104,17 @@ const withMoney = ( propNameMap = [] ) => ( WrappedComponent ) => {
 			return nextState;
 		};
 
+		/**
+		 * Calculates whether the state should be updated using the provided
+		 * arguments.
+		 *
+		 * @param {{}} prevProps
+		 * @param {{}} prevState
+		 * @param {{}} nextState
+		 * @return {boolean}  If a shallow compare of prevState.convertedValues
+		 * and nextState.convertedValues is false, then this returns true to
+		 * signal state should be updated.
+		 */
 		shouldUpdateStateWithConvertedValues = (
 			prevProps,
 			prevState,
