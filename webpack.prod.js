@@ -31,6 +31,7 @@ common.forEach( ( config, index ) => {
 					'data-stores': 'eventespresso-data-stores',
 					components: 'eventespresso-components',
 					helpers: 'eventespresso-helpers',
+					valueObjects: 'eventespresso-value-objects',
 					hocComponents: 'eventespresso-hoc-components',
 					model: 'eventespresso-model',
 				},

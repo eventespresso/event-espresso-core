@@ -53,6 +53,8 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_EE_MODEL = 'eventespresso-model';
 
+    const JS_HANDLE_EE_VALUE_OBJECTS = 'eventespresso-value-objects';
+
     const JS_HANDLE_EE_HOC_COMPONENTS = 'eventespresso-hoc-components';
 
     const JS_HANDLE_EE_COMPONENTS = 'eventespresso-components';
@@ -203,11 +205,19 @@ class CoreAssetManager extends AssetManager
         )->setRequiresTranslation();
 
         $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_VALUE_OBJECTS,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'valueObjects'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_MODEL
+            )
+        )->setRequiresTranslation();
+
+        $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_HOC_COMPONENTS,
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'hocComponents'),
             array(
                 CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
-                CoreAssetManager::JS_HANDLE_EE_HELPERS,
+                CoreAssetManager::JS_HANDLE_EE_VALUE_OBJECTS,
                 'wp-components',
             )
         )->setRequiresTranslation();
@@ -217,7 +227,7 @@ class CoreAssetManager extends AssetManager
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'components'),
             array(
                 CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
-                CoreAssetManager::JS_HANDLE_EE_HELPERS,
+                CoreAssetManager::JS_HANDLE_EE_VALUE_OBJECTS,
                 'wp-components',
             )
         )

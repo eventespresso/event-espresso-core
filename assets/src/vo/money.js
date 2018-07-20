@@ -7,6 +7,11 @@ import isShallowEqual from 'is-shallow-equal';
 import { Exception } from '@eventespresso/eejs';
 
 /**
+ * Internal imports
+ */
+import { Currency } from './currency';
+
+/**
  * Asserts if incoming value is an instance of Money
  * @param {Money} money
  * @throws {TypeError}
@@ -53,8 +58,9 @@ const assertEqualCurrency = ( currencyA, currencyB ) => {
 	}
 };
 
-// loosely following similar schema to https://github.com/davidkalosi/js-money/blob/master/lib/money.js
-
+/**
+ * A Value object representing money values.
+ */
 export default class Money {
 	/**
 	 * Original incoming amount for the Money Value object
@@ -73,6 +79,12 @@ export default class Money {
 	 * @type {Currency}
 	 */
 	currency = {};
+
+	/**
+	 * Formatter object for money values.
+	 * @type {{}}
+	 */
+	formatter = {};
 
 	/**
 	 * Rounds away from zero
@@ -139,6 +151,7 @@ export default class Money {
 	constructor( amount, currency ) {
 		this.setCurrency( currency );
 		this.setAmount( amount );
+		this.setFormatter();
 		Object.freeze( this );
 	}
 
@@ -167,7 +180,20 @@ export default class Money {
 	}
 
 	/**
-	 * Returns whether the provide money object equals this money object.
+	 * Set the formatter for money values
+	 * Note: this is "pseudo" private because the property cannot be set after
+	 * construction.
+	 */
+	setFormatter() {
+		Accounting.settings = {
+			...Accounting.settings,
+			...this.currency.toAccountingSettings(),
+		};
+		this.formatter = Accounting;
+	}
+
+	/**
+	 * Returns whether the provided money object equals this money object.
 	 * Compares both amount and currency.
 	 *
 	 * @param {Money} other
@@ -179,29 +205,58 @@ export default class Money {
 			this.hasEqualCurrency( other );
 	}
 
+	/**
+	 * Returns whether provided Money object's Currency equals this Money
+	 * object's Currency.
+	 *
+	 * This does a shallow comparison.
+	 *
+	 * @param {Money} other
+	 * @return {boolean} True means the currencies are equal.
+	 */
 	hasEqualCurrency( other ) {
 		Money.assertMoney( other );
 		return isShallowEqual( this.currency, other.currency );
 	}
 
+	/**
+	 * Add one Money object to this Money object
+	 * @param {Money} other
+	 * @return {Money} Returns a new instance of Money.
+	 */
 	add( other ) {
-		Money.assertMoney( other );
-		Money.assertEqualCurrency( this.currency, other.currency );
+		Money.assertEquivalentCurrency( this, other );
 		return new this( this.amount.plus( other.amount ), this.currency );
 	}
 
+	/**
+	 * Subtract one Money object from this Money object
+	 * @param {Money} other
+	 * @return {Money} Returns a new instance of Money
+	 */
 	subtract( other ) {
-		Money.assertMoney( other );
-		Money.assertEqualCurrency( this.currency, other.currency );
+		Money.assertEquivalentCurrency( this, other );
 		return new this( this.amount.minus( other.amount ) );
 	}
 
+	/**
+	 * Multiply this money object by the provided multiplier value.
+	 *
+	 * @param {number|string|Decimal} multiplier
+	 * @return {Money} Returns a new instance of Money
+	 */
 	multiply( multiplier ) {
 		Money.assertDecimal( multiplier );
 		const amount = this.amount.times( multiplier );
 		return new this( amount, this.currency );
 	}
 
+	/**
+	 * Divide this money object by the provided divisor value.
+	 *
+	 * @param {number|string|Decimal} divisor
+	 * @return {Money} Returns a new instance of Money
+	 */
 	divide( divisor ) {
 		Money.assertDecimal( divisor );
 		const amount = this.amount.dividedBy( divisor );
@@ -217,7 +272,7 @@ export default class Money {
 	 * let ten
 	 *
 	 * @param {Array} ratios
-	 * @return {Array.Money} An array of Money objects
+	 * @return {Money[]} An array of Money objects
 	 */
 	allocate( ratios ) {
 		const self = this;
@@ -250,6 +305,109 @@ export default class Money {
 	}
 
 	/**
+	 * Compares two instances of Money.
+	 *
+	 * @param {Money} other
+	 * @return {number} 0 if they are the same, 1 if this is greater than
+	 * other and -1 if other is greater than this.
+	 */
+	compare( other ) {
+		Money.assertEquivalentCurrency( this, other );
+		return this.amount.comparedTo( other.amount );
+	}
+
+	/**
+	 * Compares whether this Money object is greater than the other Money object.
+	 * @param {Money} other
+	 * @return {boolean} If true then this is greater than other.
+	 */
+	greaterThan( other ) {
+		Money.assertEquivalentCurrency( this, other );
+		return this.amount.greaterThan( other.amount );
+	}
+
+	/**
+	 * Compares whether this Money object is greater than or equal to the other
+	 * Money object.
+	 *
+	 * @param {Money} other
+	 * @return {boolean} If true then this is greater than or equal to the other.
+	 */
+	greaterThanOrEqualTo( other ) {
+		Money.assertEquivalentCurrency( this, other );
+		return this.amount.greaterThanOrEqualTo( other.amount );
+	}
+
+	/**
+	 * Compares whether this Money object is less than the other Money object.
+	 * @param {Money} other
+	 * @return {boolean} If true then this is less than other
+	 */
+	lessThan( other ) {
+		Money.assertEquivalentCurrency( this, other );
+		return this.amount.lessThan( other.amount );
+	}
+
+	/**
+	 * Compares whether this Money object is less than or equal to the other
+	 * Money object.
+	 *
+	 * @param {Money} other
+	 * @return {boolean} If true then this is less than or equal to other.
+	 */
+	lessThanOrEqualTo( other ) {
+		Money.assertEquivalentCurrency( this, other );
+		return this.amount.lessThanOrEqualTo( other.amount );
+	}
+
+	/**
+	 * Indicates if this object has the value of 0
+	 *
+	 * @return {boolean} If true then the value is 0.
+	 */
+	isZero() {
+		return this.amount.isZero();
+	}
+
+	/**
+	 * Indicates if the value in this Money object is negative.
+	 *
+	 * @return {boolean} If true then the value is negative.
+	 */
+	isNegative() {
+		return this.amount.isNegative();
+	}
+
+	/**
+	 * Indicates if the value in this Money object is positive.
+	 *
+	 * @return {boolean} If true then the value is positive.
+	 */
+	isPositive() {
+		return this.amount.isPositive();
+	}
+
+	/**
+	 * Returns the value of this Money object as a number primitive.
+	 * @return {number} Returns a number.
+	 */
+	toNumber() {
+		return this.amount.toNumber();
+	}
+
+	/**
+	 * Returns the value of this Money object as a formatted string according
+	 * to the currency configuration.
+	 * @return {string} Returns a formatted string according to Currency.
+	 */
+	toString() {
+		return this.formatter.format(
+			this.amount.toNumber(),
+			Accounting.settings
+		);
+	}
+
+	/**
 	 * Receives amount as a number|string and returns a Money instance.
 	 *
 	 * @param {string|number} amount
@@ -277,6 +435,20 @@ export default class Money {
 	 */
 	static assertCurrency = ( currency ) => {
 		assertCurrency( currency );
+	};
+
+	/**
+	 * Asserts if the provided values are both Money objects and have Equal
+	 * Currency objects.
+	 *
+	 * @param {Money} thisMoney
+	 * @param {Money} otherMoney
+	 * @throws {TypeError}
+	 */
+	static assertEquivalentCurrency = ( thisMoney, otherMoney ) => {
+		assertMoney( thisMoney );
+		assertMoney( otherMoney );
+		assertEqualCurrency( thisMoney.currency, otherMoney.currency );
 	};
 
 	/**
