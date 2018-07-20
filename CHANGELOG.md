@@ -13,11 +13,19 @@ Headings should be (only add headings as needed):
 - Fixed (bug fixes)
 - Security (vulnerability fixes)
 
+See [our documentation](https://github.com/eventespresso/event-espresso-core/blob/master/docs/A--Best-Practices/change-log.md) for more details.
+
 ## [$VID:$]
 
+### Changed
+
+- Updated js build process to use Babel 7 ([578](https://github.com/eventespresso/event-espresso-core/pull/578))
+
 ### Fixed
+
 -  Fixed a javascript error on admin pages showing both an EE error and persistent notice. ([592](https://github.com/eventespresso/event-espresso-core/pull/592))
 -  Fixed a bug which prevented sold out events from appearing in unauthenticated REST API results ([536](https://github.com/eventespresso/event-espresso-core/pull/536))
+
 
 ## [4.9.65.p]
 ### Added
