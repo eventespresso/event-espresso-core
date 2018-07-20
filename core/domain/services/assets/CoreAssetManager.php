@@ -243,7 +243,7 @@ class CoreAssetManager extends AssetManager
                     'primary_keys' => EED_Core_Rest_Api::getPrimaryKeyNamesIndexedByModelName(),
 					'site_url' => site_url('/'),
                     'admin_url' => admin_url('/'),
-                    'money' => $this->getMoneySettings(),
+                    'currency_config' => $this->getCurrencySettings(),
                 )
             );
             /** site formatting values **/
@@ -272,8 +272,12 @@ class CoreAssetManager extends AssetManager
     }
 
 
-    private function getMoneySettings()
-    {
+    /**
+     * Returns configuration data for the accounting-js library.
+     * @since $VID:$
+     * @return array
+     */
+    private function getAccountingSettings() {
         return array(
             'currency' => array(
                 'symbol'    => $this->currency_config->sign,
@@ -291,6 +295,26 @@ class CoreAssetManager extends AssetManager
                 'thousand'  => $this->currency_config->thsnds,
                 'decimal'   => $this->currency_config->dec_mrk,
             ),
+        );
+    }
+
+
+    /**
+     * Returns configuration data for the js Currency VO.
+     * @sinc $VID:$
+     * @return array
+     */
+    private function getCurrencySettings()
+    {
+        return array(
+            'code' => $this->currency_config->code,
+            'singularLabel' => $this->currency_config->name,
+            'pluralLabel' => $this->currency_config->plural,
+            'sign' => $this->currency_config->sign,
+            'signB4' => $this->currency_config->sign_b4,
+            'decimalPlaces' => $this->currency_config->dec_plc,
+            'decimalMark' => $this->currency_config->dec_mrk,
+            'thousandsSeparator' => $this->currency_config->thsnds,
         );
     }
 
@@ -381,11 +405,11 @@ class CoreAssetManager extends AssetManager
             array(CoreAssetManager::JS_HANDLE_ACCOUNTING_CORE)
         )
         ->setInlineDataCallback(
-            function () use ($currency_config) {
+            function () {
                  wp_localize_script(
                      CoreAssetManager::JS_HANDLE_EE_ACCOUNTING,
                      'EE_ACCOUNTING_CFG',
-                     $this->getMoneySettings()
+                     $this->getAccountingSettings()
                  );
             }
         )

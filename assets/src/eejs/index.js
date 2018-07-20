@@ -19,7 +19,10 @@ export const i18n = wpI18n;
 import * as r from './routes';
 export const routes = r;
 
-export { money as MONEY_SETTINGS } from './money';
+/**
+ * Currency Configuration for the default currency from the server
+ */
+export { currencyConfig as CURRENCY_CONFIG } from './currency_config';
 
 /**
  * use this for eejs exceptions
