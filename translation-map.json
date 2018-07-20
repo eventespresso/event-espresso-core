@@ -1,5 +1,6 @@
 {
   "eventespresso-helpers": [],
+  "eventespresso-hoc-components": [],
   "eventespresso-model": [
     null,
     "The provided entity (%s) does not have the given property (%s)",
@@ -7,7 +8,6 @@
     "The provided items must not be empty",
     "The provided array of entities must not be empty"
   ],
-  "eventespresso-hoc-components": [],
   "ee-wp-plugins-page": [
     "Do you have a moment to share why you are deactivating Event Espresso?",
     "Sure I'll help",
