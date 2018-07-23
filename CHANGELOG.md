@@ -24,6 +24,7 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 ### Changed
 
 - Updated js build process to use Babel 7 ([578](https://github.com/eventespresso/event-espresso-core/pull/578))
+- Tweaked capability checks to allow read-only for registration form answers ([590](https://github.com/eventespresso/event-espresso-core/pull/590))
 
 ## [4.9.65.p]
 ### Added
