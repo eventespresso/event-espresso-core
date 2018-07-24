@@ -252,8 +252,7 @@ class CoreAssetManager extends AssetManager
                     'collection_endpoints' => EED_Core_Rest_Api::getCollectionRoutesIndexedByModelName(),
                     'primary_keys' => EED_Core_Rest_Api::getPrimaryKeyNamesIndexedByModelName(),
 					'site_url' => site_url('/'),
-                    'admin_url' => admin_url('/'),
-                    'currency_config' => $this->getCurrencySettings(),
+                    'admin_url' => admin_url('/')
                 )
             );
             /** site formatting values **/
@@ -262,6 +261,11 @@ class CoreAssetManager extends AssetManager
                 array(
                     'date_formats' => EEH_DTT_Helper::convert_php_to_js_and_moment_date_formats()
                 )
+            );
+            /** currency data **/
+            $this->registry->addData(
+                'currency_config',
+                $this->getCurrencySettings()
             );
         }
 
