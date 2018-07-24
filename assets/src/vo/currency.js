@@ -114,6 +114,25 @@ export class Currency {
 	}
 
 	/**
+	 * Returns JSON representation of this object.
+	 * @return {Object} Function returning the object to be serialized by
+	 * JSON.stringify
+	 */
+	toJSON() {
+		return {
+			code: this.code,
+			singularLabel: this.singularLabel,
+			pluralLabel: this.pluralLabel,
+			sign: this.sign,
+			signB4: this.signB4,
+			decimalMark: this.decimalMark,
+			thousandsSeparator: this.thousandsSeparator,
+			subunits: this.subunits,
+			decimalPlaces: this.decimalPlaces,
+		};
+	}
+
+	/**
 	 * This validates whether the passed in config has the required properties
 	 * (and correct types) for constructing a Currency object.
 	 *

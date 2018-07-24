@@ -61,6 +61,16 @@ describe( 'Currency Value Object', () => {
 				);
 			} );
 		} );
+		describe( 'toJSON()', () => {
+			it( 'returns expected string when converted to JSON', () => {
+				expect( JSON.stringify( SiteCurrency( CURRENCY_CONFIG ) ) )
+					.toEqual(
+						JSON.stringify(
+							{ ...CURRENCY_CONFIG, decimalPlaces: 2 }
+						)
+					);
+			} );
+		} );
 	} );
 
 	describe( 'Currency.validateCurrencyConfig', () => {
