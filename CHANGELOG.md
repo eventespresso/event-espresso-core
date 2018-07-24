@@ -13,11 +13,17 @@ Headings should be (only add headings as needed):
 - Fixed (bug fixes)
 - Security (vulnerability fixes)
 
+See [our documentation](https://github.com/eventespresso/event-espresso-core/blob/master/docs/A--Best-Practices/change-log.md) for more details.
+
 ## [$VID:$]
+
+### Fixed
+- Fixes a fatal error while using many page builder plugins resulting from template tags only being loaded on the front-end([600](https://github.com/eventespresso/event-espresso-core/pull/600))
 
 ### Changed
 
 - Updated js build process to use Babel 7 ([578](https://github.com/eventespresso/event-espresso-core/pull/578))
+- Tweaked capability checks to allow read-only for registration form answers ([590](https://github.com/eventespresso/event-espresso-core/pull/590))
 
 ## [4.9.65.p]
 ### Added

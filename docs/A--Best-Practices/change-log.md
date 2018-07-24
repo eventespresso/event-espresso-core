@@ -23,6 +23,8 @@ The headings used for the changelog are:
 
 Before a pull request can be merged, it must have a changelog entry describing what has changed in the pull request.
 
+(Unless the code changed isn't part of a release. Eg code in /tests, /docs, /eslint, etc.)
+
 ## Tips on writing good changelog entries
 
 - Use declarative instead of imperative voice (i.e. 'Add project changelog' is imperative.  `Adds project changelog` is declarative.
