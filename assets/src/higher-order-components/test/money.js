@@ -2,13 +2,27 @@
  * Internal Imports
  */
 import withMoney from '../money';
-import renderer from 'react-test-renderer';
+import { Money, SiteCurrency } from '@eventespresso/vo';
 
 /**
  * External Imports
  */
 import { Component } from 'react';
-import { formatMoney } from 'accounting-js';
+import renderer from 'react-test-renderer';
+
+jest.mock( '@eventespresso/eejs', () => ( {
+	...require.requireActual( '@eventespresso/eejs' ),
+	CURRENCY_CONFIG: {
+		code: 'USD',
+		singularLabel: 'dollar',
+		pluralLabel: 'dollars',
+		sign: '$',
+		signB4: true,
+		decimalMark: '.',
+		thousandsSeparator: ',',
+		subunits: 100,
+	},
+} ) );
 
 describe( 'withMoney()', () => {
 	class TestComponent extends Component {
@@ -49,9 +63,8 @@ describe( 'withMoney()', () => {
 			'for the withMoney HOC should return an object with a ' +
 			'"convertedValues" key.';
 		const expectedValuesNotArrayWarning = 'Warning: The propNameMap' +
-			' callback for the withMoney HOC should return an ' +
-			'object with a "convertedValues" key that has an array' +
-			' of values as value.';
+			' callback for the withMoney HOC should return an object with a' +
+			' "convertedValues" key that has an array of numbers as the value.';
 		const expectedNoPropsWarning = 'Warning: The propNameMap callback for' +
 			' the withMoneyHOC should return an object with a "props" key.';
 		it( 'gives warnings for an empty object', () => {
@@ -74,10 +87,10 @@ describe( 'withMoney()', () => {
 	it( 'converts prop with custom map function as expected', () => {
 		const wrapper = renderer.create( getWrappedTestComponent(
 			{ propA: 1000.25, propB: 2.25, propC: 'unconverted' },
-			( props, moneyFormatter ) => {
+			( props, MoneyVo ) => {
 				const conversions = {
-					propA: moneyFormatter( 1000.25 ),
-					propB: moneyFormatter( 2.25 ),
+					propA: MoneyVo.fromPrimitive( 1000.25, SiteCurrency ),
+					propB: MoneyVo.fromPrimitive( 2.25, SiteCurrency ),
 				};
 				return {
 					props: {
@@ -86,16 +99,18 @@ describe( 'withMoney()', () => {
 						propC: props.propC,
 					},
 					convertedValues: [
-						conversions.propA,
-						conversions.propB,
+						conversions.propA.toString(),
+						conversions.propB.toString(),
 						props.propC,
 					],
 				};
 			}
 		) );
 		const testComponent = wrapper.root.findByType( TestComponent );
-		expect( testComponent.props.propA ).toBe( formatMoney( 1000.25 ) );
-		expect( testComponent.props.propB ).toBe( formatMoney( 2.25 ) );
+		expect( testComponent.props.propA ).toBeInstanceOf( Money );
+		expect( testComponent.props.propA.toNumber() ).toBe( 1000.25 );
+		expect( testComponent.props.propB ).toBeInstanceOf( Money );
+		expect( testComponent.props.propB.toNumber() ).toBe( 2.25 );
 		expect( testComponent.props.propC ).toBe( 'unconverted' );
 	} );
 
@@ -105,8 +120,10 @@ describe( 'withMoney()', () => {
 			[ 'propA', 'propB' ]
 		) );
 		const testComponent = wrapper.root.findByType( TestComponent );
-		expect( testComponent.props.propA ).toBe( formatMoney( 1000.25 ) );
-		expect( testComponent.props.propB ).toBe( formatMoney( 2.25 ) );
+		expect( testComponent.props.propA ).toBeInstanceOf( Money );
+		expect( testComponent.props.propA.toNumber() ).toBe( 1000.25 );
+		expect( testComponent.props.propB ).toBeInstanceOf( Money );
+		expect( testComponent.props.propB.toNumber() ).toBe( 2.25 );
 		expect( testComponent.props.propC ).toBe( 'unconverted' );
 	} );
 
