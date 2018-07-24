@@ -74,7 +74,7 @@ class EventAttendees extends Block
                 ),
                 'limit' => array(
                     'type'    => 'number',
-                    'default' => -1,
+                    'default' => 10,
                 ),
                 'showGravatar'       => array(
                     'type'    => 'boolean',

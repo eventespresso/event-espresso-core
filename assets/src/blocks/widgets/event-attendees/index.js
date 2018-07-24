@@ -54,7 +54,7 @@ registerBlockType(
 			},
 			limit: {
 				type: 'number',
-				default: -1,
+				default: 10,
 			},
 			showGravatar: {
 				type: 'boolean',
