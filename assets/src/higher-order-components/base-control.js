@@ -12,7 +12,7 @@ import { BaseControl } from '@wordpress/components';
 /**
  * External Imports
  */
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 
 export default ( customId = '' ) => createHigherOrderComponent(
 	compose( [
