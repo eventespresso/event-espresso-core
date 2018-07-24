@@ -173,4 +173,36 @@ abstract class EE_Restriction_Generator_Base
     {
         return apply_filters('FHEE__EE_Restriction_Generator_Base__default_restrictions_cap', 'manage_options');
     }
+
+
+    /**
+     * Gets WHERE conditions for the query that show the posty-y model is published,
+     * or that it's sold out and it was previously published
+     * @param array $where_conditions
+     * @param boolean $check_if_published if true, will add conditions like status=publish. If false, will add conditions
+     *                                    like status!=private
+     * @param string $path_to_event_model including the period at the end
+     * @return array
+     */
+    protected function addPublishedPostConditions($where_conditions = array(), $check_if_published = true, $path_to_event_model = '')
+    {
+        if ($check_if_published) {
+            $published_value = 'publish';
+        } else {
+            $published_value = array('!=','private');
+        }
+        //only add a check for the previous event status if the model is the event or it's related to the event model
+        if ($this->model() instanceof EEM_Event || strpos($path_to_event_model, 'Event') !== false) {
+            $where_conditions['OR*status'] = array(
+                $path_to_event_model . 'status' => $published_value,
+                'AND' => array(
+                    $path_to_event_model . 'Post_Meta.meta_key'   => '_previous_event_status',
+                    $path_to_event_model . 'Post_Meta.meta_value' => $published_value
+                )
+            );
+        } else {
+            $where_conditions[$path_to_event_model . 'status'] = $published_value;
+        }
+        return $where_conditions;
+    }
 }
