@@ -21,6 +21,10 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 
 - Added support for Indian Rupees currency (INR) to PayPal Espresso and Pro ([593](https://github.com/eventespresso/event-espresso-core/pull/593)) 
 
+### Fixed
+- Fixes a fatal error while using many page builder plugins resulting from template tags only being loaded on the front-end([600](https://github.com/eventespresso/event-espresso-core/pull/600))
+
+
 ### Changed
 
 - Updated js build process to use Babel 7 ([578](https://github.com/eventespresso/event-espresso-core/pull/578))
