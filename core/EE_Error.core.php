@@ -1002,14 +1002,14 @@ class EE_Error extends Exception
     private static function _print_scripts($force_print = false)
     {
         if (! $force_print && (did_action('admin_enqueue_scripts') || did_action('wp_enqueue_scripts'))) {
-            if (wp_script_is('ee_error_js', 'enqueued')) {
-                return '';
-            }
             if (wp_script_is('ee_error_js', 'registered')) {
                 wp_enqueue_style('espresso_default');
                 wp_enqueue_style('espresso_custom_css');
                 wp_enqueue_script('ee_error_js');
+            }
+            if (wp_script_is('ee_error_js', 'enqueued')) {
                 wp_localize_script('ee_error_js', 'ee_settings', array('wp_debug' => WP_DEBUG));
+                return '';
             }
         } else {
             return '

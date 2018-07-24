@@ -13,10 +13,23 @@ Headings should be (only add headings as needed):
 - Fixed (bug fixes)
 - Security (vulnerability fixes)
 
+See [our documentation](https://github.com/eventespresso/event-espresso-core/blob/master/docs/A--Best-Practices/change-log.md) for more details.
+
 ## [$VID:$]
+
+### Fixed
+- Fixes a fatal error while using many page builder plugins resulting from template tags only being loaded on the front-end([600](https://github.com/eventespresso/event-espresso-core/pull/600))
+
+### Changed
+
+- Updated js build process to use Babel 7 ([578](https://github.com/eventespresso/event-espresso-core/pull/578))
+- Tweaked capability checks to allow read-only for registration form answers ([590](https://github.com/eventespresso/event-espresso-core/pull/590))
+
+## [4.9.65.p]
 ### Added
 
 - Added classname to the markup that wraps the Event phone ([563](https://github.com/eventespresso/event-espresso-core/pull/563))
+- Added CSS to help improve the display of ticket selector on small screens ([572](https://github.com/eventespresso/event-espresso-core/pull/572))
 
 ### Fixed
 
@@ -24,7 +37,9 @@ Headings should be (only add headings as needed):
 -  Added CSS bulletproofing to protect registration form from worse-case scenarios ([542](https://github.com/eventespresso/event-espresso-core/pull/542))
 -  Fixed REST API documentation links, and made REST API BETWEEN operator work as documented ([560](https://github.com/eventespresso/event-espresso-core/pull/560))
 -  Fixed privacy erasure so contact phones are also erased ([567](https://github.com/eventespresso/event-espresso-core/pull/567))
-
+-  Fixed fatal error thrown when using WP4.5 ([571](https://github.com/eventespresso/event-espresso-core/pull/571))
+-  Fixed issue with [ESPRESSO_EVENT_ATTENDEES] shortcode to allow displaying attendees when specifying an archived ticket ([583](https://github.com/eventespresso/event-espresso-core/pull/583))
+-  Fixed a javascript error on admin pages showing both an EE error and persistent notice. ([592](https://github.com/eventespresso/event-espresso-core/pull/592))
 ## [4.9.64.p]
 
 ### Added

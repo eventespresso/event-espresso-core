@@ -1,13 +1,13 @@
 {
   "eventespresso-helpers": [],
-  "eventespresso-hoc-components": [],
   "eventespresso-model": [
-    "The provided array of entities must not be empty",
     null,
     "The provided entity (%s) does not have the given property (%s)",
     "The provided value is not an array.",
-    "The provided items must not be empty"
+    "The provided items must not be empty",
+    "The provided array of entities must not be empty"
   ],
+  "eventespresso-hoc-components": [],
   "ee-wp-plugins-page": [
     "Do you have a moment to share why you are deactivating Event Espresso?",
     "Sure I'll help",
@@ -15,12 +15,12 @@
   ],
   "eventespresso-data-stores": [
     null,
-    "The given modelName (%s) does not exist in the state.",
-    "The provided array of entities must not be empty",
-    null,
     "The provided entity (%s) does not have the given property (%s)",
     "The provided value is not an array.",
-    "The provided items must not be empty"
+    "The provided items must not be empty",
+    "The provided array of entities must not be empty",
+    null,
+    "The given modelName (%s) does not exist in the state."
   ],
   "eventespresso-core-blocks": [
     "Event Attendees",
@@ -32,18 +32,19 @@
     "Please select an event to display attendees for.",
     "Event Attendees Block",
     "Event Attendees Settings",
-    "Show Attendees for All Datetimes",
-    "Show Attendees for All Tickets",
     "Select Registration Status",
-    "Show Attendees for All Registration Statuses",
     "Number of Attendees to Display",
     "Display Gravatar",
-    "Display on Archives",
-    "Event Attendees"
+    "Display on Archives"
   ],
   "eventespresso-components": [
     "Limit",
-    "user avatar",
+    null,
+    "The provided entity (%s) does not have the given property (%s)",
+    "The provided value is not an array.",
+    "The provided items must not be empty",
+    "The provided array of entities must not be empty",
+    "Select...",
     "Retrieving Events.",
     "No Events.",
     "Select Event...",
@@ -60,11 +61,6 @@
     "No Tickets.",
     "Select Ticket...",
     "Select Ticket",
-    "The provided array of entities must not be empty",
-    null,
-    "The provided entity (%s) does not have the given property (%s)",
-    "The provided value is not an array.",
-    "The provided items must not be empty",
-    "Select..."
+    "user avatar"
   ]
 }

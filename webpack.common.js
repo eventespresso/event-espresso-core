@@ -12,6 +12,7 @@ const externals = {
 	'@wordpress/components': 'wp.components',
 	'@wordpress/blocks': 'wp.blocks',
 	'@wordpress/editor': 'wp.editor',
+	'@wordpress/compose': 'wp.compose',
 	react: 'eejs.vendor.react',
 	'react-dom': 'eejs.vendor.reactDom',
 	'react-redux': 'eejs.vendor.reactRedux',
@@ -143,6 +144,7 @@ const config = [
 			components: assets + 'components/index.js',
 		},
 		externals: Object.assign( externals, {
+			'@eventespresso/higher-order-components': 'eejs.hocComponents',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
 		} ),
@@ -152,6 +154,36 @@ const config = [
 					test: /\.js$/,
 					exclude: /node_modules/,
 					loader: 'babel-loader',
+				},
+				{
+					test: /\.css$/,
+					use: [
+						miniExtract.loader,
+						{
+							loader: 'css-loader',
+							query: {
+								modules: true,
+								localIdentName: '[local]',
+							},
+							//can't use minimize because cssnano (the
+							// dependency) doesn't parser the browserlist
+							// extension in package.json correctly, there's
+							// a pending update for it but css-loader
+							// doesn't have the latest yet.
+							// options: {
+							//     minimize: true
+							// }
+						},
+						{
+							loader: 'postcss-loader',
+							options: {
+								plugins: function() {
+									return [ autoprefixer ];
+								},
+								sourceMap: true,
+							},
+						},
+					],
 				},
 			],
 		},

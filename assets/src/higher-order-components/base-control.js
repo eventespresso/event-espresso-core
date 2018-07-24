@@ -1,8 +1,13 @@
 /**
  * WordPress Imports
  */
-import { Component, createHigherOrderComponent, compose } from '@wordpress/element';
-import { BaseControl, withInstanceId } from '@wordpress/components';
+import {
+	compose,
+	createHigherOrderComponent,
+	withInstanceId,
+} from '@wordpress/compose';
+import { Component } from '@wordpress/element';
+import { BaseControl } from '@wordpress/components';
 
 /**
  * External Imports
