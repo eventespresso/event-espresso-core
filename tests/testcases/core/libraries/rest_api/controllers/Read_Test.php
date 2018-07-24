@@ -965,6 +965,49 @@ class Read_Test extends \EE_REST_TestCase
         $this->assertEquals($sold_out_private_event->ID(), $data[1]['EVT_ID']);
     }
 
+
+    /**
+     * @group 536
+     */
+    public function testHandleRequestGetAllIncludeDatetimesToSoldOutEvents()
+    {
+        $admin = $this->wp_admin_with_ee_caps();
+        //datetimes for a sold out event should get included
+        $sold_out_event = $this->new_model_obj_with_dependencies(
+
+            'Event',
+            array(
+                'status'      => EEM_Event::sold_out,
+                'EVT_wp_user' => $admin->ID(),
+            )
+        );
+        $sold_out_event->add_post_meta(
+            '_previous_event_status',
+            'publish'
+        );
+        $datetime_for_sold_event = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $sold_out_event->ID()
+            )
+        );
+        $request = new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
+        $request->set_query_params(
+            array(
+                'include' => 'Datetime',
+            )
+        );
+        $response = rest_do_request($request);
+        $data = $response->get_data();
+        var_export($data);
+        $this->assertNotEmpty($data);
+        //only the previously published event should be available publicly, not the private one
+        $this->assertEquals(1, count($data));
+        $this->assertEquals($sold_out_event->ID(), $data[0]['EVT_ID']);
+        $this->assertNotEmpty($data[0]['datetimes']);
+        $this->assertEquals($datetime_for_sold_event->ID(), $data[0]['datetimes'][0]['DTT_ID']);
+    }
+
     /**
      * Double-checks a logged-in user who can read venues can read their draft venues.
      * This was temporarily broken while working on 536, but no test picked up on it, so here's one that does.
