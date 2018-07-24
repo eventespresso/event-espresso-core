@@ -6,8 +6,7 @@
 The **EditorTicketSelect** component accepts **all** of the properties that the the **TicketSelect** component does as well as the following:
 
 ```jsx
-<EditorTicketSelect
-    id="datetime-select-1" 
+<EditorTicketSelect 
     className="datetime-select"
     help={ 'This text will be displayed after the select input to aid the user in understanding its purpose or effect.' }
 />

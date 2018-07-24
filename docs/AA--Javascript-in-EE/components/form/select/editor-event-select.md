@@ -7,8 +7,7 @@
 The **EditorEventSelect** component accepts **all** of the properties that the the **EventSelect** component does as well as the following:
 
 ```jsx
-<EditorEventSelect
-    id="datetime-select-1" 
+<EditorEventSelect 
     className="datetime-select"
     help={ 'This text will be displayed after the select input to aid the user in understanding its purpose or effect.' }
 />
