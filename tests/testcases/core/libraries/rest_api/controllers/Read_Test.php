@@ -968,13 +968,13 @@ class Read_Test extends \EE_REST_TestCase
 
     /**
      * @group 536
+     * @throws \EE_Error
      */
     public function testHandleRequestGetAllIncludeDatetimesToSoldOutEvents()
     {
         $admin = $this->wp_admin_with_ee_caps();
         //datetimes for a sold out event should get included
         $sold_out_event = $this->new_model_obj_with_dependencies(
-
             'Event',
             array(
                 'status'      => EEM_Event::sold_out,
@@ -988,7 +988,7 @@ class Read_Test extends \EE_REST_TestCase
         $datetime_for_sold_event = $this->new_model_obj_with_dependencies(
             'Datetime',
             array(
-                'EVT_ID' => $sold_out_event->ID()
+                'EVT_ID' => $sold_out_event->ID(),
             )
         );
         $request = new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
@@ -999,7 +999,6 @@ class Read_Test extends \EE_REST_TestCase
         );
         $response = rest_do_request($request);
         $data = $response->get_data();
-        var_export($data);
         $this->assertNotEmpty($data);
         //only the previously published event should be available publicly, not the private one
         $this->assertEquals(1, count($data));
