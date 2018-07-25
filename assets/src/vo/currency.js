@@ -189,6 +189,13 @@ export class Currency {
 			);
 		}
 
+		if ( config.decimalMark && ! isString( config.decimalMark ) ) {
+			throw new TypeError(
+				'The decimalMark property on the configuration object ' +
+				'must be a string primitive.'
+			);
+		}
+
 		if ( config.thousandsSeparator &&
 			! isString( config.thousandsSeparator ) ) {
 			throw new TypeError(

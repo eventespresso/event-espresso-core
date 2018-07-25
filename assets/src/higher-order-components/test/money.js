@@ -89,8 +89,8 @@ describe( 'withMoney()', () => {
 			{ propA: 1000.25, propB: 2.25, propC: 'unconverted' },
 			( props, MoneyVo ) => {
 				const conversions = {
-					propA: MoneyVo.fromPrimitive( 1000.25, SiteCurrency ),
-					propB: MoneyVo.fromPrimitive( 2.25, SiteCurrency ),
+					propA: new MoneyVo( 1000.25, SiteCurrency ),
+					propB: new MoneyVo( 2.25, SiteCurrency ),
 				};
 				return {
 					props: {

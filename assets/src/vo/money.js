@@ -35,17 +35,6 @@ const assertCurrency = ( currency ) => {
 };
 
 /**
- * Asserts if incoming value is an instance of Decimal
- * @param {Decimal} amount
- * @throws {TypeError}
- */
-const assertDecimal = ( amount ) => {
-	if ( ! ( amount instanceof Decimal ) ) {
-		throw new TypeError( 'Instance of Decimal required' );
-	}
-};
-
-/**
  * Asserts if two currencies are shallow equal.
  * @param {Currency} currencyA
  * @param {Currency} currencyB
@@ -140,7 +129,7 @@ export default class Money {
 
 	/**
 	 * Class constructor
-	 * @param {Decimal} amount
+	 * @param {number|string|Decimal} amount
 	 * @param {Currency} currency
 	 */
 	constructor( amount, currency ) {
@@ -163,7 +152,6 @@ export default class Money {
 		if ( this.currency instanceof Currency ) {
 			return new Money( this.amount, currency );
 		}
-		// configure Decimal according to the currency
 		this.currency = currency;
 		return this;
 	}
@@ -171,17 +159,17 @@ export default class Money {
 	/**
 	 * Set the amount property
 	 *
-	 * @param {Decimal} amount
+	 * @param {Decimal|number|string} amount
 	 * @return {Money} Either this Money or new Money depending on state of the
 	 * property.
 	 */
 	setAmount( amount ) {
-		Money.assertDecimal( amount );
+		const value = amount instanceof Decimal ? amount.toNumber() : amount;
 		// if there's already an amount set, then return a new object.
 		if ( this.amount instanceof Decimal ) {
-			return new Money( amount, this.currency );
+			return new Money( new Decimal( value ), this.currency );
 		}
-		this.amount = amount;
+		this.amount = new Decimal( value );
 		return this;
 	}
 
@@ -430,7 +418,12 @@ export default class Money {
 	}
 
 	/**
-	 * A string representing this Money object
+	 * A string representing this Money object in normal (fixed-point) notation
+	 * rounded to `decimalPlaces` using `rounding` mode.
+	 *
+	 * If the value of this instance in normal notation has fewer than
+	 * decimalPlaces fraction digits, the return value will be appended with
+	 * zeros accordingly.
 	 *
 	 * @param {number} decimalPlaces The number of decimal places to round to.
 	 * If not provided uses the internal decimal place value.
@@ -483,18 +476,6 @@ export default class Money {
 	}
 
 	/**
-	 * Receives amount as a number|string and returns a Money instance.
-	 *
-	 * @param {string|number} amount
-	 * @param {Currency} currency
-	 * @return {Money}  An instance of Money.
-	 */
-	static fromPrimitive = ( amount, currency ) => {
-		amount = new Decimal( amount );
-		return new Money( amount, currency );
-	};
-
-	/**
 	 * Asserts if the provided value is an instance of Money.
 	 * @param {Money} money
 	 * @throws {TypeError}
@@ -524,15 +505,6 @@ export default class Money {
 		assertMoney( thisMoney );
 		assertMoney( otherMoney );
 		assertEqualCurrency( thisMoney.currency, otherMoney.currency );
-	};
-
-	/**
-	 * Asserts if the provided value is an instance of Decimal.
-	 * @param {Decimal} amount
-	 * @throws {TypeError}
-	 */
-	static assertDecimal = ( amount ) => {
-		assertDecimal( amount );
 	};
 
 	/**

@@ -42,12 +42,6 @@ describe( 'Money Value Object', () => {
 				} ).toThrow();
 			} );
 		};
-		it( 'throws TypeError with invalid amount', () => {
-			const testFailMoney = () => {
-				return new Money( 1.25, DefaultCurrency );
-			};
-			expect( testFailMoney ).toThrow( TypeError );
-		} );
 		it( 'throws TypeError with invalid DefaultCurrency', () => {
 			const testFailMoney = () => {
 				return new Money( testDecimal, {} );
@@ -70,13 +64,21 @@ describe( 'Money Value Object', () => {
 				expect( testMoney.formatter ).toHaveProperty( 'format' );
 			}
 		);
+		it( 'expects three Money objects constructed using various types' +
+			' of amounts that result in the same value are equal as ' +
+			'expected', () => {
+			const testMoneyB = new Money( 1.25, DefaultCurrency );
+			const testMoneyC = new Money( '1.25', DefaultCurrency );
+			expect( testMoney.equals( testMoneyB ) ).toBe( true );
+			expect( testMoney.equals( testMoneyC ) ).toBe( true );
+		} );
 		it( 'throws an Error when a property is reassigned after construction',
 			() => {
 				const reassignedProp = () => {
 					testMoney.amount = null;
 				};
 				expect( reassignedProp ).toThrow();
-				expect( testMoney.amount ).toBe( testDecimal );
+				expect( testMoney.amount ).toEqual( testDecimal );
 			}
 		);
 		describe( 'setCurrency()', () => {
@@ -85,8 +87,8 @@ describe( 'Money Value Object', () => {
 				// should not be the same instance even though the internal objects
 				// are the same.
 				expect( newMoney ).not.toBe( testMoney );
-				expect( testMoney.currency ).toBe( DefaultCurrency );
-				expect( newMoney.currency ).toBe( DefaultCurrency );
+				expect( testMoney.currency ).toEqual( DefaultCurrency );
+				expect( newMoney.currency ).toEqual( DefaultCurrency );
 			}, 'setCurrency()' );
 		} );
 		describe( 'setAmount()', () => {
@@ -95,8 +97,8 @@ describe( 'Money Value Object', () => {
 				// should not be the same instance even though the internal objects
 				// are the same.
 				expect( newMoney ).not.toBe( testMoney );
-				expect( testMoney.amount ).toBe( testDecimal );
-				expect( newMoney.amount ).toBe( testDecimal );
+				expect( testMoney.amount ).toEqual( testDecimal );
+				expect( newMoney.amount ).toEqual( testDecimal );
 			} );
 		} );
 		describe( 'setFormatter()', () => {
@@ -378,6 +380,17 @@ describe( 'Money Value Object', () => {
 				expect( testMoney.toIntegerMoney().amount.toNumber() )
 					.toBe( 1 );
 			} );
+			it( 'returns expected new Money object for changed rounding', () => {
+				const differentRoundingMoney = new Money(
+					2.45,
+					DefaultCurrency
+				);
+				Decimal.rounding = Money.ROUND_CEIL;
+				expect( differentRoundingMoney.toIntegerMoney().toNumber() )
+					.toBe( 3 );
+				// return to default
+				Decimal.rounding = Money.ROUND_HALF_UP;
+			} );
 		} );
 		describe( 'toString()', () => {
 			it( 'returns the expected formatted string for the currency value on ' +
@@ -392,19 +405,6 @@ describe( 'Money Value Object', () => {
 					'{"amount":"1.25","currency":' + JSON.stringify( testMoney.currency.toJSON() ) + '}'
 				);
 			} );
-		} );
-	} );
-	describe( 'Money.fromPrimitive()', () => {
-		it( 'throws a TypeError if an invalid currency argument is ' +
-			'provided', () => {
-			expect( () => Money.fromPrimitive( '2.25', {} ) )
-				.toThrow( TypeError );
-		} );
-		it( 'returns a Money object with the correct values for provided' +
-			' primitive and currency', () => {
-			const money = Money.fromPrimitive( '2.25', DefaultCurrency );
-			expect( money ).toBeInstanceOf( Money );
-			expect( money.toNumber() ).toBe( 2.25 );
 		} );
 	} );
 	describe( 'Money.assertMoney()', () => {
@@ -447,12 +447,6 @@ describe( 'Money Value Object', () => {
 					)
 				)
 			).toThrow();
-		} );
-	} );
-	describe( 'Money.assertDecimal()', () => {
-		it( 'throws a TypeError if provided argument is not an instance of ' +
-			'Decimal', () => {
-			expect( () => Money.assertDecimal( {} ) ).toThrow( TypeError );
 		} );
 	} );
 	describe( 'Money.assertEqualCurrency()', () => {

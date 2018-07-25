@@ -89,7 +89,7 @@ const withMoney = ( propNameMap = [] ) => ( WrappedComponent ) => {
 					propNameMap.forEach( ( propName ) => {
 						if ( props[ propName ] ) {
 							nextState[ propName ] =
-								Money.fromPrimitive(
+								new Money(
 									props[ propName ],
 									SiteCurrency
 								);
