@@ -91,9 +91,12 @@ class EE_Restriction_Generator_Event_Related_Protected extends EE_Restriction_Ge
             // if they have basic and others, but not private, they can't access others' private non-default items
             EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action_for_event() . '_private') => new EE_Default_Where_Conditions(
                 array(
-                    'OR*no_' . EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action_for_event() . '_private') => array(
-                        $this->_path_to_event_model . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
-                        $this->_path_to_event_model . 'status'      => array( '!=', 'private' )
+                    'OR*no_' . EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action_for_event() . '_private') => $this->addPublishedPostConditions(
+                        array(
+                            $this->_path_to_event_model . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
+                        ),
+                        false,
+                        $this->_path_to_event_model
                     )
                 )
             ),
