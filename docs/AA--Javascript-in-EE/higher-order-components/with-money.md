@@ -1,7 +1,7 @@
 # `withMoney`
 This Higher Order Component allows implementors to wrap a provided Component so that designated props are converted to [`Money` value objects](../value-objects/money.md).
 
-The usefulness of this applies to when you have a Component that works with `Money` value objects but you don't want client code to have to worry about generating those from primitives to use the component.  It also then becomes much more predictable to create leaf components that explicity require `Money` value objects for props related to money.
+The usefulness of this applies to when you have a Component that works with `Money` value objects but you don't want client code to have to worry about generating those from primitives to use the component.  It also then becomes much more predictable to create leaf components that explicitly require `Money` value objects for props related to money.
 
 ## Arguments
 ### `propNameMap`
