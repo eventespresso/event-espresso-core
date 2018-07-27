@@ -10,7 +10,7 @@ import warning from 'warning';
  */
 export class Currency {
 	/**
-	 * The code identifying the currency (eg. 'USD')
+	 * The ISO 4217 code identifying the currency (eg. 'USD')
 	 * @type {string}
 	 */
 	code = '';

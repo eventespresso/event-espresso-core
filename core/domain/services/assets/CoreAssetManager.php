@@ -252,7 +252,7 @@ class CoreAssetManager extends AssetManager
                     'collection_endpoints' => EED_Core_Rest_Api::getCollectionRoutesIndexedByModelName(),
                     'primary_keys' => EED_Core_Rest_Api::getPrimaryKeyNamesIndexedByModelName(),
 					'site_url' => site_url('/'),
-                    'admin_url' => admin_url('/')
+                    'admin_url' => admin_url('/'),
                 )
             );
             /** site formatting values **/

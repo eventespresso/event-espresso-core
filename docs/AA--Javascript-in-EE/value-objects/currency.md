@@ -68,7 +68,7 @@ console.log( accounting,format( 1.25, myCurrency.toAccountingSettings() ) );
 All of these properties are immutable, attempting to mutate them will result in an `Error`.
 
 #### `code`
-This is the code for the currency.
+This is the ISO 4217 code for the currency.
 ```js
 const myCurrency = new Currency( USDCurrencyConfiguration );
 // returns 'USD'

@@ -114,7 +114,9 @@ This method returns the amount on the Money converted to its equivalent subunits
 
 ```js
 const money = new Money( new Decimal( 1.40 ), new Currency( USDCurrencyConfig ) );
-console.log( money.toSubunits() ); //prints 140
+
+//prints 140
+console.log( money.toSubunits() );
 ```
 #### `equals()`
 This method provides a convenient way to compare the current instance of a money object with another one passed in as an argument.  A money object is considered "equal" when the values on the amount are the same, and a shallow equality check on the properties of the currencies are the same.  Equality does not consider "sameness" in terms of object instance.
@@ -123,8 +125,10 @@ This method provides a convenient way to compare the current instance of a money
 const moneyA = new Money( new Decimal( 1.25 ), new Currency( USDCurrencyConfig ) );
 const moneyB = new Money( new Decimal( 1.25 ), new Currency( USDCurrencyConfig ) );
 const moneyC = new Money( new Decimal( 3.40 ), new Currency( USDCurrencyConfig ) );
+
 // prints true
 console.log( moneyA.equals( moneyB ) );
+
 //prints false
 console.log( moneyA.equals( moneyC ) );
 ```
@@ -135,8 +139,10 @@ This method provides a convenient way to compare the currencies on the current M
 const moneyA = new Money( new Decimal( 1.25 ), new Currency( USDCurrencyConfig ) );
 const moneyB = new Money( new Decimal( 2.35 ), new Currency( USDCurrencyConfig ) );
 const moneyC = new Money( new Decimal( 400 ), new Currency( CDNCurrencyConfig ) );
+
 // prints true
 console.log( moneyA.hasEqualCurrency( moneyB ) );
+
 //prints false
 console.log( moneyA.hasEqualCurrency( moneyC ) );
 ```
@@ -148,6 +154,7 @@ This method provides a convenient way to add the amount of one Money instance to
 ```js
 const moneyA = new Money( new Decimal( 1.25 ), USDCurrency );
 const moneyB = new Money( new Decimal( 1.25, USDCurrency ) );
+
 // prints '$2.50'
 console.log( moneyA.add( moneyB ).toString() );
 ```
@@ -157,6 +164,7 @@ Same as `add()` except this subtracts the value of the other Money instance from
 ```js
 const moneyA = new Money( new Decimal( 1.25 ), USDCurrency );
 const moneyB = new Money( new Decimal( 1 ), USDCurrency );
+
 // prints $0.25
 console.log( moneyA.subtract( moneyB ).toString() );
 ```
@@ -166,6 +174,7 @@ The new `Money` instance will have the same internal currency value as the origi
 The multiplier can be a `number` or `string` (numeric) primitive or a `Decimal` value object.
 ```js
 const moneyA = new Money( new Decimal( 1.5 ), USDCurrency );
+
 // prints $4.50
 console.log( moneyA.multiply( 3 ).toString() );
 ```
@@ -174,17 +183,20 @@ This acts similarly to `multiply()` except it divides the Money instance by the 
 The divisor can be a `number` or `string` (numeric) primitive, or a `Decimal` value object.
 ```js
 const moneyA = new Money( new Decimal( 4.20 ), USDCurrency );
+
 // prints $2.10
 console.log( moneyA.divide( 2 ).toString() );
 ```
 #### `allocate()`
-The `allocate` method allows one to split the value of the current instance across new `Money` instances using the provided `ratios` array.  Ratios array simply describes how the value should be split where each element in the indicates a new `Money` instance.
+The `allocate` method allows one to split the value of the current instance across new `Money` instances using the provided `ratios` array.  Ratios array simply describes how the value should be split where each element in the array indicates a new `Money` instance.
 The new `Money` instances will all have the same currency as the original Money instance.
 ```js
 const myMoney = new Money( 6, USDCurrency );
 const newMonies = myMoney.allocate( [ 1, 1, 1 ] );
+
 // prints 3
 console.log( newMonies.length );
+
 // each of the following prints $2.00
 console.log( newMonies[ 0 ].toString() );
 console..log( newMonies[ 1 ].toString() );
@@ -199,28 +211,33 @@ const moneyA = new Money( 1.25, USDCurrency );
 const moneyB = new Money( '1.25', USDCurrency );
 const moneyC = new Money( 100, USDCurrency );
 const moneyD = new Money( .56, new Currency( USDCurrency.toJSON() ) );
+
 // returns  0
 console.log( moneyA.compare( moneyB ) );
+
 // returns 1
-console.log( moneyA.compare( moneyC ) );
-// returns -1
 console.log( moneyA.compare( moneyD ) );
+
+// returns -1
+console.log( moneyA.compare( moneyC ) );
 ```
 #### `greaterThan()`, `greaterThanOrEqualTo()`, `lessThan()`, `lessThanOrEqualTo()`
 These methods are various convenience comparison methods that return booleans to indicate how this instance compares to the provided instance.  Both instances of `Money` must have equivalent internal `Currency` instances.
 ```js
 const moneyA = new Money( 1.25, USDCurrency );
 const moneyB = new Money( 1, USDCurrency );
+
 // returns true
 console.log( moneyA.greaterThan( moneyB ) );
 ```
 #### `isZero()`, `isPositive()`, `isNegative()`
-These methods are various convenience value check methods that return booleans on how whether the value meets the `is*` check.
+These methods are various convenience value check methods that return booleans to indicate whether the value meets the `is*` check.
 
 ```js
 const zeroMoney = new Money( 0, USDCurrency );
 const postiveMoney = new Money( 100, USDCurrency );
 const negativeMoney = new Money( '- 2', USDCurrency );
+
 // returns true
 console.log( zeroMoney.isZero() );
 console.log( zeroMoney.isPositive() );
@@ -230,6 +247,7 @@ console.log( zeroMoney.isNegative() );
 This returns the value for the `Money` instance as a number primitive.
 ```js
 const myMoney = new Money( '45.6', USDCurrency );
+
 // returns 45.6
 console.log( myMoney.toNumber() );
 ```
@@ -238,10 +256,13 @@ This returns a string representing the value for the `Money` instance in normal 
 ```js
 const myMoney = new Money( 34.24568, USDCurrency );
 const myMoneyB = new Money( 44.6, USDCurrency );
+
 // returns '34.25'
 console.log( myMoney.toFixed() );
+
 // returns '34.3'
 console.log( myMoney.toFixed( 1 ) );
+
 //returns '44.60'
 console.log( myMoneyB.toFixed() );
 ```
@@ -249,11 +270,14 @@ console.log( myMoneyB.toFixed() );
 Returns a new instance of `Money` that has a value of the current instance rounded to a whole number using the rounding mode set on the original Decimal amount.  This means if you want a different rounding mode you need to instantiate the original `Money` instance with a configured `Decimal` object.  The default rounding mode is `Money.ROUND_HALF_UP`.
 ```js
 const myMoney = new Money( 2.45, USDCurrency );
+
 // returns 2
 console.log( myMoney.toIntegerMoney().toNumber() );
+
 // change rounding mode to `Money.ROUND_CEIL`
 const customMoney = new Money( new Decimal( 2.45 ), USDCurrency );
 Decimal.rounding = Money.ROUND_CEIL;
+
 // returns 3
 consolelog( myMoney.toIntegerMoney().toNumber() );
 ```
@@ -261,6 +285,7 @@ consolelog( myMoney.toIntegerMoney().toNumber() );
 Returns the value of this `Money` instance as a formatted string according to the internal `Currency` instance configuration.  This uses the `Accouting.format` method.
 ```js
 const myMoney = new Money( 1.2, USDCurrency );
+
 // returns 'Amount is: $1.20'
 console.log( 'Amount is: ' + myMoney  );
 ```
@@ -268,6 +293,7 @@ console.log( 'Amount is: ' + myMoney  );
 When called directly returns a simple object representing the `Money` instance. When `JSON.stringify` is used on this instance, it returns the serialized JSON string representation of the `Money` instance.
 ```js
 const myMoney = new Money( 1.2526, USDCurrency );
+
 // returns '{ "amount": "1.25", "currency": { ...json for currency instance } }'
 console.log( JSON.stringify( myMoney ) );
 ```
@@ -277,7 +303,8 @@ The following are immutable properties of the `Money` instance.
 This holds the `Decimal` instance created on construction of the `Money` instance. You can use all [decimal-js light methods](http://mikemcl.github.io/decimal.js-light) on this instance.  Internally, many of the `Money` instance methods use the `Decimal` api (such as `toNumber`, `toInteger` etc).
 ```js
 const myMoney = new Money( 1.25, USDCurrency );
-//  these will return the same value: 1.25
+
+// these will return the same value: 1.25
 console.log( myMoney.toNumber() );
 console.log( myMoney.amount.toNumber() );
 ```
@@ -285,6 +312,7 @@ console.log( myMoney.amount.toNumber() );
 This holds an instance of `Currency` provided on construction of the Money instance.  Since `Currency` is immutable, this is the identical instance as what was provided.
 ```js
 const myMoney = newMoney( 1.25, USDCurrency );
+
 // returns true because they are identical instances
 console.log( this.currency === USDCurrency );
 ```
@@ -293,10 +321,13 @@ This holds the `Accounting` object (which is an export of `accounting-js` ).  Th
 
 ```js
 const myMoney = new Money( 1.25, USDCurrency );
+
 // create a new money instance using a string value formatted as money.
 const newMoney = myMoney.setAmount( myMoney.formatter.unformat( '$100.25' ) );
+
 // returns 1.25
 console.log( myMoney.toNumber() );
+
 // returns 100.25
 console.log( newMoney.toNumber() );
 ```
