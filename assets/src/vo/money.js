@@ -114,20 +114,6 @@ export default class Money {
 	static ROUND_HALF_EVEN = Decimal.ROUND_HALF_EVEN;
 
 	/**
-	 * Rounds towards nearest neighbour. If equidistant, rounds towards
-	 * Infinity.
-	 * @type {number}
-	 */
-	static ROUND_HALF_CEIL = Decimal.ROUND_HALF_CEIL;
-
-	/**
-	 * Rounds towards nearest neighbour. If equidistant, rounds towards
-	 * -Infinity.
-	 * @type {number}
-	 */
-	static ROUND_HALF_FLOOR = Decimal.ROUND_HALF_FLOOR;
-
-	/**
 	 * Class constructor
 	 * @param {number|string|Decimal} amount
 	 * @param {Currency} currency
@@ -237,7 +223,7 @@ export default class Money {
 	 * @return {Money} Returns a new instance of Money.
 	 */
 	add( other ) {
-		Money.assertEquivalentWithCurrency( this, other );
+		Money.assertUsingEqualCurrency( this, other );
 		return new Money( this.amount.plus( other.amount ), this.currency );
 	}
 
@@ -247,7 +233,7 @@ export default class Money {
 	 * @return {Money} Returns a new instance of Money
 	 */
 	subtract( other ) {
-		Money.assertEquivalentWithCurrency( this, other );
+		Money.assertUsingEqualCurrency( this, other );
 		return new Money( this.amount.minus( other.amount ), this.currency );
 	}
 
@@ -258,8 +244,7 @@ export default class Money {
 	 * @return {Money} Returns a new instance of Money
 	 */
 	multiply( multiplier ) {
-		const amount = this.amount.times( multiplier );
-		return new Money( amount, this.currency );
+		return new Money( this.amount.times( multiplier ), this.currency );
 	}
 
 	/**
@@ -269,15 +254,31 @@ export default class Money {
 	 * @return {Money} Returns a new instance of Money
 	 */
 	divide( divisor ) {
-		const amount = this.amount.dividedBy( divisor );
-		return new Money( amount, this.currency );
+		return new Money( this.amount.dividedBy( divisor ), this.currency );
 	}
 
 	/**
 	 * Allocates fund bases on the ratios provided returning an array of Money
 	 * objects as a product of the allocation.
 	 *
-	 * @param {Array} ratios
+	 * Example: splitting a provided Money object three equal ways.
+	 *
+	 * ```
+	 * const splitMoney = moneyInstance.allocate( [ 1, 1, 1 ] );
+	 * ```
+	 *
+	 * Example: splitting a provided Money object two ways with one having 75%
+	 * of the allocation.
+	 *
+	 * ```
+	 * const splitMoney = moneyInstance.allocate( [ 75, 25 ] );
+	 * ```
+	 *
+	 * Note: Array values for ratios are simply totalled and then each element
+	 * is considered a fraction of the total value.  So how you submit ratio
+	 * values is up to you for whatever is most clear to you.
+	 *
+	 * @param {number[]} ratios
 	 * @return {Money[]} An array of Money objects
 	 */
 	allocate( ratios ) {
@@ -334,7 +335,7 @@ export default class Money {
 		if ( this === other ) {
 			return 0;
 		}
-		Money.assertEquivalentWithCurrency( this, other );
+		Money.assertUsingEqualCurrency( this, other );
 		return this.amount.comparedTo( other.amount );
 	}
 
@@ -344,7 +345,7 @@ export default class Money {
 	 * @return {boolean} If true then this is greater than other.
 	 */
 	greaterThan( other ) {
-		Money.assertEquivalentWithCurrency( this, other );
+		Money.assertUsingEqualCurrency( this, other );
 		return this.amount.greaterThan( other.amount );
 	}
 
@@ -356,7 +357,7 @@ export default class Money {
 	 * @return {boolean} If true then this is greater than or equal to the other.
 	 */
 	greaterThanOrEqualTo( other ) {
-		Money.assertEquivalentWithCurrency( this, other );
+		Money.assertUsingEqualCurrency( this, other );
 		return this.amount.greaterThanOrEqualTo( other.amount );
 	}
 
@@ -366,7 +367,7 @@ export default class Money {
 	 * @return {boolean} If true then this is less than other
 	 */
 	lessThan( other ) {
-		Money.assertEquivalentWithCurrency( this, other );
+		Money.assertUsingEqualCurrency( this, other );
 		return this.amount.lessThan( other.amount );
 	}
 
@@ -378,7 +379,7 @@ export default class Money {
 	 * @return {boolean} If true then this is less than or equal to other.
 	 */
 	lessThanOrEqualTo( other ) {
-		Money.assertEquivalentWithCurrency( this, other );
+		Money.assertUsingEqualCurrency( this, other );
 		return this.amount.lessThanOrEqualTo( other.amount );
 	}
 
@@ -501,7 +502,7 @@ export default class Money {
 	 * @param {Money} otherMoney
 	 * @throws {TypeError}
 	 */
-	static assertEquivalentWithCurrency = ( thisMoney, otherMoney ) => {
+	static assertUsingEqualCurrency = ( thisMoney, otherMoney ) => {
 		assertMoney( thisMoney );
 		assertMoney( otherMoney );
 		assertEqualCurrency( thisMoney.currency, otherMoney.currency );

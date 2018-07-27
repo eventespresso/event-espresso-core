@@ -39,7 +39,7 @@ Money.assertCurrency( maybeCurrency );
 ```
 This method throws a `TypeError` if the provided argument is not an instance of `Currency`
 
-### `Money.assertEquivalentWithCurrency`
+### `Money.assertUsingEqualCurrency`
 ```js
 Money.assertEquivalentWithCurrency( oneMoney, otherMoney );
 ```
@@ -78,12 +78,6 @@ This is used for indicating rounding towards nearest neighbour. If equidistant, 
 
 #### `Money.ROUND_HALF_EVEN`
 This is used for indicating rounding towards nearest neighbour.  If equidistant, rounds towards even neighbour.
-
-#### `Money.ROUND_HALF_CEIL`
-This is used for indicating rounding towards nearest neighbour. If equidistant, rounds towards Infinity.
-
-#### `Money.ROUND_HALF_FLOOR`
-This is used for indicating rounding towards nearest neighbour. If equidistant, rounds towards negative Infinity.
 
 
 ### Instance

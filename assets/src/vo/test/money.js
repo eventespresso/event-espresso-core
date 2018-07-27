@@ -417,17 +417,17 @@ describe( 'Money Value Object', () => {
 			expect( () => Money.assertCurrency( {} ) ).toThrow( TypeError );
 		} );
 	} );
-	describe( 'Money.assertEquivalentWithCurrency()', () => {
+	describe( 'Money.assertUsingEqualCurrency()', () => {
 		it( 'throws a TypeError if invalid Money object provided for this',
 			() => {
 				expect(
-					() => Money.assertEquivalentWithCurrency( {}, {} )
+					() => Money.assertUsingEqualCurrency( {}, {} )
 				).toThrow( TypeError );
 			} );
 		it( 'throws a TypeError if invalid Money object provided for other',
 			() => {
 				expect(
-					() => Money.assertEquivalentWithCurrency(
+					() => Money.assertUsingEqualCurrency(
 						new Money( new Decimal( 1 ), DefaultCurrency ),
 						{ }
 					)
@@ -436,7 +436,7 @@ describe( 'Money Value Object', () => {
 		it( 'throws an Error if two currencies on provided Money objects ' +
 			'are not equal', () => {
 			expect(
-				() => Money.assertEquivalentWithCurrency(
+				() => Money.assertUsingEqualCurrency(
 					new Money( new Decimal( 1 ), DefaultCurrency ),
 					new Money(
 						new Decimal( 1 ),

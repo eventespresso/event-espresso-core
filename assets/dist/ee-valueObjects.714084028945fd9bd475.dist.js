@@ -672,7 +672,7 @@ function () {
   }, {
     key: "add",
     value: function add(other) {
-      Money.assertEquivalentWithCurrency(this, other);
+      Money.assertUsingEqualCurrency(this, other);
       return new Money(this.amount.plus(other.amount), this.currency);
     }
     /**
@@ -684,7 +684,7 @@ function () {
   }, {
     key: "subtract",
     value: function subtract(other) {
-      Money.assertEquivalentWithCurrency(this, other);
+      Money.assertUsingEqualCurrency(this, other);
       return new Money(this.amount.minus(other.amount), this.currency);
     }
     /**
@@ -768,7 +768,7 @@ function () {
         return 0;
       }
 
-      Money.assertEquivalentWithCurrency(this, other);
+      Money.assertUsingEqualCurrency(this, other);
       return this.amount.comparedTo(other.amount);
     }
     /**
@@ -780,7 +780,7 @@ function () {
   }, {
     key: "greaterThan",
     value: function greaterThan(other) {
-      Money.assertEquivalentWithCurrency(this, other);
+      Money.assertUsingEqualCurrency(this, other);
       return this.amount.greaterThan(other.amount);
     }
     /**
@@ -794,7 +794,7 @@ function () {
   }, {
     key: "greaterThanOrEqualTo",
     value: function greaterThanOrEqualTo(other) {
-      Money.assertEquivalentWithCurrency(this, other);
+      Money.assertUsingEqualCurrency(this, other);
       return this.amount.greaterThanOrEqualTo(other.amount);
     }
     /**
@@ -806,7 +806,7 @@ function () {
   }, {
     key: "lessThan",
     value: function lessThan(other) {
-      Money.assertEquivalentWithCurrency(this, other);
+      Money.assertUsingEqualCurrency(this, other);
       return this.amount.lessThan(other.amount);
     }
     /**
@@ -820,7 +820,7 @@ function () {
   }, {
     key: "lessThanOrEqualTo",
     value: function lessThanOrEqualTo(other) {
-      Money.assertEquivalentWithCurrency(this, other);
+      Money.assertUsingEqualCurrency(this, other);
       return this.amount.lessThanOrEqualTo(other.amount);
     }
     /**
@@ -966,7 +966,7 @@ _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(Mon
   assertCurrency(currency);
 });
 
-_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(Money, "assertEquivalentWithCurrency", function (thisMoney, otherMoney) {
+_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(Money, "assertUsingEqualCurrency", function (thisMoney, otherMoney) {
   assertMoney(thisMoney);
   assertMoney(otherMoney);
   assertEqualCurrency(thisMoney.currency, otherMoney.currency);
