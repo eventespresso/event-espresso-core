@@ -38,20 +38,6 @@ const validateNextState = ( nextStateResponse ) => {
 };
 
 /**
- * Validates whether the provided propNameMap is a correct shape.
- * If not valid, then a console.error is triggered via warning.
- *
- * @param {function|Array} propNameMap
- */
-const validatePropNameMap = ( propNameMap ) => {
-	warning(
-		isFunction( propNameMap ) || isArray( propNameMap ),
-		'The propNameMap argument provided to withMoney must be either a' +
-		' function or an array'
-	);
-};
-
-/**
  * A higher order component that converts any props matching the map provided
  * as an argument to Money value objects and passes them to the WrappedComponent
  *
@@ -73,34 +59,37 @@ const withMoney = ( propNameMap = [] ) => ( WrappedComponent ) => {
 		 */
 		getNextState = ( props ) => {
 			let nextStateResponse,
-				nextState = {};
-			const convertedValues = [];
+				nextState = {},
+				convertedValues = [];
 			if ( isFunction( propNameMap ) ) {
 				nextStateResponse = propNameMap( props, Money );
 				validateNextState( nextStateResponse );
 				if ( nextStateResponse && nextStateResponse.props ) {
 					nextState = { ...nextStateResponse.props };
 				}
-				nextState.convertedValues = nextStateResponse.convertedValues ||
+				convertedValues = nextStateResponse.convertedValues ||
 					convertedValues;
-			} else {
-				validatePropNameMap( propNameMap );
-				if ( isArray( propNameMap ) ) {
-					propNameMap.forEach( ( propName ) => {
-						if ( props[ propName ] ) {
-							nextState[ propName ] =
-								new Money(
-									props[ propName ],
-									SiteCurrency
-								);
-							convertedValues.push(
-								nextState[ propName ].toNumber()
+			} else if ( isArray( propNameMap ) ) {
+				propNameMap.forEach( ( propName ) => {
+					if ( props[ propName ] ) {
+						nextState[ propName ] =
+							new Money(
+								props[ propName ],
+								SiteCurrency
 							);
-						}
-					} );
-				}
-				nextState.convertedValues = convertedValues;
+						convertedValues.push(
+							nextState[ propName ].toNumber()
+						);
+					}
+				} );
+			} else {
+				warning(
+					false,
+					'The propNameMap argument provided to withMoney must be either a' +
+					' function or an array'
+				);
 			}
+			nextState.convertedValues = convertedValues;
 			return nextState;
 		};
 
