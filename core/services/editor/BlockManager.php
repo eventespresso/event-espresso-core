@@ -28,33 +28,13 @@ abstract class BlockManager
      */
     protected $request;
 
-    /**
-     * the post type that the current request applies to
-     *
-     * @var string $request_post_type
-     */
-    protected $request_post_type;
-
-    /**
-     * value of the 'page' $_GET param
-     *
-     * @var string $page
-     */
-    protected $page;
-
-    /**
-     * value of the 'action' $_GET param
-     *
-     * @var string $action
-     */
-    protected $action;
 
 
     /**
      * BlockManager constructor.
      *
-     * @param BlockCollection $blocks
-     * @param RequestInterface      $request
+     * @param BlockCollection   $blocks
+     * @param RequestInterface  $request
      */
     public function __construct(
         BlockCollection $blocks,
@@ -62,9 +42,6 @@ abstract class BlockManager
     ) {
         $this->blocks            = $blocks;
         $this->request           = $request;
-        $this->request_post_type = $this->request->getRequestParam('post_type', '');
-        $this->page              = $this->request->getRequestParam('page', '');
-        $this->action            = $this->request->getRequestParam('action', '');
         add_action($this->initHook(), array($this, 'initialize'));
     }
 
@@ -83,13 +60,4 @@ abstract class BlockManager
      * @return void
      */
     abstract public function initialize();
-
-
-    /**
-     * @return string
-     */
-    public function currentRequestPostType()
-    {
-        return $this->request_post_type;
-    }
 }
