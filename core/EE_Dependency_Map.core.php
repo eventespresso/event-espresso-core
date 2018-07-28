@@ -775,6 +775,7 @@ class EE_Dependency_Map
             'EventEspresso\core\services\editor\BlockRegistrationManager'                                                 => array(
                 'EventEspresso\core\services\assets\BlockAssetManagerCollection' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\entities\editor\BlockCollection'      => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\route_match\RouteMatchSpecificationManager' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'                    => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager' => array(
@@ -784,6 +785,19 @@ class EE_Dependency_Map
             ),
             'EventEspresso\core\domain\entities\editor\blocks\widgets\EventAttendees' => array(
                 'EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager' => self::load_from_cache,
+            ),
+            'EventEspresso\core\services\route_match\RouteMatchSpecificationDependencyResolver' => array(
+                'EventEspresso\core\services\container\Mirror' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\ClassInterfaceCache' => EE_Dependency_Map::load_from_cache,
+                'EE_Dependency_Map' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\services\route_match\RouteMatchSpecificationFactory' => array(
+                'EventEspresso\core\services\route_match\RouteMatchSpecificationDependencyResolver' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\services\route_match\RouteMatchSpecificationManager' => array(
+                'EventEspresso\core\services\route_match\RouteMatchSpecificationCollection' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\route_match\RouteMatchSpecificationFactory' => EE_Dependency_Map::load_from_cache,
             ),
         );
     }
