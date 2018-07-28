@@ -53,7 +53,12 @@ class EventAttendees extends Block
     public function initialize()
     {
         $this->setBlockType(self::BLOCK_TYPE);
-        $this->setSupportedPostTypes(array('espresso_events', 'post', 'page'));
+        $this->setSupportedRoutes(
+            array(
+                'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditor',
+                'EventEspresso\core\domain\entities\route_match\specifications\admin\WordPressPostsEditor',
+            )
+        );
         $this->setAttributes(
             array(
                 'eventId'            => array(
