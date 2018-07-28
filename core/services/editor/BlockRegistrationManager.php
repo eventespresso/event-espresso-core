@@ -2,24 +2,20 @@
 
 namespace EventEspresso\core\services\editor;
 
-use EE_Error;
 use EventEspresso\core\domain\entities\editor\BlockCollection;
 use EventEspresso\core\domain\entities\editor\BlockInterface;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidClassException;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
-use EventEspresso\core\exceptions\InvalidFilePathException;
-use EventEspresso\core\exceptions\InvalidIdentifierException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\assets\BlockAssetManagerCollection;
 use EventEspresso\core\services\collections\CollectionDetails;
+use EventEspresso\core\services\collections\CollectionDetailsException;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
+use EventEspresso\core\services\collections\CollectionLoaderException;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\route_match\RouteMatchSpecificationManager;
 use Exception;
-use InvalidArgumentException;
-use ReflectionException;
 use WP_Block_Type;
 
 /**
@@ -41,20 +37,35 @@ class BlockRegistrationManager extends BlockManager
      */
     protected $block_asset_manager_collection;
 
+    /**
+     * @var RouteMatchSpecificationManager $route_manager
+     */
+    protected $route_manager;
+
+    /**
+     * array for tracking asset managers required by blocks for the current route
+     *
+     * @var array $block_asset_managers
+     */
+    protected $block_asset_managers = array();
+
 
     /**
      * BlockRegistrationManager constructor.
      *
-     * @param BlockAssetManagerCollection $block_asset_manager_collection
-     * @param BlockCollection             $blocks
-     * @param RequestInterface            $request
+     * @param BlockAssetManagerCollection    $block_asset_manager_collection
+     * @param BlockCollection                $blocks
+     * @param RouteMatchSpecificationManager $route_manager
+     * @param RequestInterface               $request
      */
     public function __construct(
         BlockAssetManagerCollection $block_asset_manager_collection,
         BlockCollection $blocks,
+        RouteMatchSpecificationManager $route_manager,
         RequestInterface $request
     ) {
         $this->block_asset_manager_collection = $block_asset_manager_collection;
+        $this->route_manager = $route_manager;
         parent::__construct($blocks, $request);
     }
 
@@ -66,7 +77,7 @@ class BlockRegistrationManager extends BlockManager
      */
     public function initHook()
     {
-        return 'AHEE__EE_System__core_loaded_and_ready';
+        return 'AHEE__EE_System__initialize';
     }
 
 
@@ -79,28 +90,22 @@ class BlockRegistrationManager extends BlockManager
     public function initialize()
     {
         $this->initializeBlocks();
-        add_action('AHEE__EE_System__initialize', array($this, 'registerBlocks'));
+        add_action('AHEE__EE_System__initialize_last', array($this, 'registerBlocks'));
+        add_action('wp_loaded', array($this, 'unloadAssets'));
     }
 
 
     /**
      * @return CollectionInterface|BlockInterface[]
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws EE_Error
-     * @throws InvalidClassException
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
-     * @throws InvalidFilePathException
-     * @throws InvalidIdentifierException
-     * @throws InvalidInterfaceException
+     * @throws CollectionLoaderException
+     * @throws CollectionDetailsException
      */
     protected function populateBlockCollection()
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
                 // collection name
-                'shortcodes',
+                'editor_blocks',
                 // collection interface
                 'EventEspresso\core\domain\entities\editor\BlockInterface',
                 // FQCNs for classes to add (all classes within each namespace will be loaded)
@@ -139,6 +144,7 @@ class BlockRegistrationManager extends BlockManager
             // cycle thru block loaders and initialize each loader
             foreach ($this->blocks as $block) {
                 $block->initialize();
+                $this->trackAssetManagersForBlocks($block);
                 if (! $this->block_asset_manager_collection->has($block->assetManager())) {
                     $this->block_asset_manager_collection->add($block->assetManager());
                     $block->assetManager()->setAssetHandles();
@@ -147,6 +153,41 @@ class BlockRegistrationManager extends BlockManager
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
         }
+    }
+
+
+    /**
+     * track blocks with routes that match the current request
+     *
+     * @param BlockInterface $block
+     * @throws InvalidClassException
+     */
+    private function trackAssetManagersForBlocks(BlockInterface $block)
+    {
+        $supported_routes = $block->supportedRoutes();
+        foreach ($supported_routes as $supported_route) {
+            if ($this->route_manager->currentRequestMatches($supported_route)) {
+                $this->block_asset_managers[ $block->blockType() ] = $block->assetManager()->assetNamespace();
+            }
+        }
+    }
+
+
+    /**
+     * returns true if the block should be registered for the current request
+     * else removes block from block_routes array and returns false
+     *
+     * @param BlockInterface $block
+     * @return boolean
+     * @throws InvalidClassException
+     */
+    public function matchesRoute(BlockInterface $block)
+    {
+        if(isset($this->block_asset_managers[ $block->blockType() ])) {
+            return true;
+        }
+        unset($this->block_asset_managers[ $block->blockType() ]);
+        return false;
     }
 
 
@@ -161,6 +202,9 @@ class BlockRegistrationManager extends BlockManager
         try {
             // cycle thru block loader folders
             foreach ($this->blocks as $block) {
+                if (! $this->matchesRoute($block)) {
+                    continue;
+                }
                 // perform any setup required for the block
                 $block_type = $block->registerBlock();
                 if (! $block_type instanceof WP_Block_Type) {
@@ -176,4 +220,22 @@ class BlockRegistrationManager extends BlockManager
             new ExceptionStackTraceDisplay($exception);
         }
     }
+
+    public function unloadAssets()
+    {
+        $assets = array_flip($this->block_asset_managers);
+        foreach ($this->block_asset_manager_collection as $asset_manager) {
+            // if there are no longer any blocks that require these assets,
+            if(! isset($assets[ $asset_manager->assetNamespace() ])) {
+                // then unset asset enqueueing and bail
+                remove_action('wp_enqueue_scripts', array($asset_manager, 'addManifestFile'), 0);
+                remove_action('admin_enqueue_scripts', array($asset_manager, 'addManifestFile'), 0);
+                remove_action('wp_enqueue_scripts', array($asset_manager, 'addAssets'), 2);
+                remove_action('admin_enqueue_scripts', array($asset_manager, 'addAssets'), 2);
+
+            }
+        }
+
+    }
 }
+
