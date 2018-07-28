@@ -48,7 +48,7 @@ class RouteMatchSpecificationManager
     ) {
         $this->specifications = $specifications;
         $this->specifications_factory = $specifications_factory;
-        add_action('AHEE__EE_System__initialize', array($this, 'initialize'), 5);
+        add_action('AHEE__EE_System__loadRouteMatchSpecifications', array($this, 'initialize'), 5);
     }
 
 
