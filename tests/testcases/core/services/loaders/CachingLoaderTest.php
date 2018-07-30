@@ -146,17 +146,20 @@ class CachingLoaderTest extends EE_UnitTestCase
         // turn caching on again
         add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false', 10);
         // create a context object
-        $context1 = new EventEspresso\core\domain\entities\contexts\Context('testShare', 'we are testing the share method');
+        $context1 = new EventEspresso\core\domain\entities\contexts\Context(
+            'testShare',
+            'we are testing the share method'
+        );
         // share it but don't pass any arguments
         $added = self::$loader->share('EventEspresso\core\domain\entities\contexts\Context', $context1);
         $this->assertTrue($added);
-        $object1 = self::$loader->load(
-            'EventEspresso\core\domain\entities\contexts\Context',
-            array('testShare', 'we are testing the share method')
-        );
+        $object1 = self::$loader->load('EventEspresso\core\domain\entities\contexts\Context');
         $this->assertEquals(spl_object_hash($object1), spl_object_hash($context1));
         // create another context object
-        $context2 = new EventEspresso\core\domain\entities\contexts\Context('testShare2', 'we are testing the share method again');
+        $context2 = new EventEspresso\core\domain\entities\contexts\Context(
+            'testShare2',
+            'we are testing the share method again'
+        );
         // share it but pass an array of its arguments
         $added2 = self::$loader->share(
             'EventEspresso\core\domain\entities\contexts\Context',
@@ -165,10 +168,7 @@ class CachingLoaderTest extends EE_UnitTestCase
         );
         $this->assertTrue($added2);
         // just load using FQCN... should match object 1
-        $not_object2 = self::$loader->load(
-            'EventEspresso\core\domain\entities\contexts\Context',
-            array('testShare', 'we are testing the share method')
-        );
+        $not_object2 = self::$loader->load('EventEspresso\core\domain\entities\contexts\Context');
         $this->assertNotEquals(spl_object_hash($not_object2), spl_object_hash($context2));
         // because it's context 1
         $this->assertEquals(spl_object_hash($not_object2), spl_object_hash($context1));
