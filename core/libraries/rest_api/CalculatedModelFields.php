@@ -84,7 +84,7 @@ class CalculatedModelFields
                     'datetime_checkin_stati' => $registration_class,
                 ),
                 'Attendee' => array(
-                    'userAvatar' => $attendee_class,
+                    'user_avatar' => $attendee_class,
                 ),
             )
         );
