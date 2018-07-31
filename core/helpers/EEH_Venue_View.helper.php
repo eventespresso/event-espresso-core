@@ -231,7 +231,7 @@ class EEH_Venue_View extends EEH_Base
     {
         $venue = EEH_Venue_View::get_venue($VNU_ID);
         if ($venue instanceof EE_Venue) {
-            return$venue->description();
+            return $venue->get_pretty('VNU_desc');
         }
         return '';
     }
