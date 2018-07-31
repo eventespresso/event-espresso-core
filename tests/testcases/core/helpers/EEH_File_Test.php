@@ -32,7 +32,6 @@ class EEH_File_Test extends EE_UnitTestCase
     {
         // restore to using the normal WP filesystem
         unset($GLOBALS['wp_filesystem']);
-
         remove_filter('filesystem_method_file', array($this, 'filter_abstraction_file'));
         remove_filter('filesystem_method', array($this, 'filter_fs_method'));
 
