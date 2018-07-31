@@ -31,9 +31,7 @@ class EEH_File_Test extends EE_UnitTestCase
     function tearDown()
     {
         // restore to using the normal WP filesystem
-        global $wp_filesystem;
-        $wp_filesystem = null;
-        unset($wp_filesystem);
+        unset($GLOBALS['wp_filesystem']);
 
         remove_filter('filesystem_method_file', array($this, 'filter_abstraction_file'));
         remove_filter('filesystem_method', array($this, 'filter_fs_method'));
