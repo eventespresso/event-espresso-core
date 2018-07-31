@@ -66,28 +66,37 @@ class EE_Restriction_Generator_Default_Public extends EE_Restriction_Generator_B
             // first: basically access to non-defaults is essentially controlled by which events are accessible
             // if they don't have the basic event cap, they can't access ANY non-default items
             EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action()) => new EE_Default_Where_Conditions(array(
-                'OR*no_' . EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action()) => array(
-                    $this->_default_field_name             => true,
-                    $this->_path_to_event_model . 'status' => 'publish'
+                'OR*no_' . EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action()) => $this->addPublishedPostConditions(
+                    array(
+                        $this->_default_field_name             => true,
+                    ),
+                    true,
+                    $this->_path_to_event_model
                 )
             )),
             // if they don't have the others event cap, they can only access their own, others' that are for published events, or defaults
             EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_others') => new EE_Default_Where_Conditions(
                 array(
-                    'OR*no_' . EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_others') => array(
-                        $this->_path_to_event_model . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
-                        $this->_default_field_name => true,
-                        $this->_path_to_event_model . 'status' => 'publish'
+                    'OR*no_' . EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_others') => $this->addPublishedPostConditions(
+                        array(
+                            $this->_path_to_event_model . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
+                            $this->_default_field_name => true,
+                        ),
+                        true,
+                        $this->_path_to_event_model
                     )
                 )
             ),
             // if they have basic and others, but not private, they can access default, their own, and others' that aren't private
             EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_private')   => new EE_Default_Where_Conditions(
                 array(
-                    'OR*no_' . EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_private') => array(
-                        $this->_path_to_event_model . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
-                        $this->_path_to_event_model . 'status' => array( '!=', 'private' ),
-                        $this->_default_field_name => true
+                    'OR*no_' . EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_private') => $this->addPublishedPostConditions(
+                        array(
+                            $this->_path_to_event_model . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
+                            $this->_default_field_name => true
+                        ),
+                        false,
+                        $this->_path_to_event_model
                     )
                 )
             ),
