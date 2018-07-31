@@ -55,11 +55,13 @@ class Attendee extends Calculations_Base
      */
     public static function userAvatar(array $wpdb_row, WP_REST_Request $request, Base $controller)
     {
-        $attendee = Attendee::getAttendeeObject($wpdb_row);
-        if (! $attendee instanceof EE_Attendee) {
+        if (is_array($wpdb_row) && isset($wpdb_row['Attendee_Meta.ATT_email'])) {
+            $email_address = $wpdb_row['Attendee_Meta.ATT_email'];
+        }
+        if (empty($email_address)) {
             return '';
         }
-        $avatar = get_avatar_url($attendee->email());
+        $avatar = get_avatar_url($email_address);
         return $avatar ? $avatar : '';
     }
 }
