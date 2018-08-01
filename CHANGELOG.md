@@ -18,8 +18,11 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 ## [$VID:$]
 
 ### Fixed
-- Fixes a fatal error while using many page builder plugins resulting from template tags only being loaded on the front-end([600](https://github.com/eventespresso/event-espresso-core/pull/600))
+
+- Fixed a fatal error while using many page builder plugins resulting from template tags only being loaded on the front-end([600](https://github.com/eventespresso/event-espresso-core/pull/600))
+- Fixed an error when migrating from EE3 from attendee email index being too big ([611](https://github.com/eventespresso/event-espresso-core/pull/611))
 - Fixed venue description on event page so line breaks are shown properly ([612](https://github.com/eventespresso/event-espresso-core/pull/612))
+
 ### Changed
 
 - Updated js build process to use Babel 7 ([578](https://github.com/eventespresso/event-espresso-core/pull/578))
