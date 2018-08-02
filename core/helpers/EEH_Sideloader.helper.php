@@ -71,9 +71,9 @@ class EEH_Sideloader extends EEH_Base
     {
         $this->_upload_to = $upload_to_folder;
     }
-    public function set_upload_from($upload_from_folder)
+    public function set_upload_from($upload_from)
     {
-        $this->_upload_from_folder = $upload_from_folder;
+        $this->_upload_from = $upload_from;
     }
     public function set_permissions($permissions)
     {
