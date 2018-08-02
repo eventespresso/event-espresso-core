@@ -4,7 +4,6 @@ namespace EventEspresso\core\services\notifications;
 
 use DomainException;
 use EE_Error;
-use EE_Request;
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\domain\services\capabilities\CapabilitiesChecker;
 use EventEspresso\core\exceptions\InsufficientPermissionsException;
@@ -15,6 +14,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
 use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 use Exception;
 use InvalidArgumentException;
 
@@ -52,7 +52,7 @@ class PersistentAdminNoticeManager
     private $capabilities_checker;
 
     /**
-     * @var EE_Request $request
+     * @var RequestInterface $request
      */
     private $request;
 
@@ -62,10 +62,10 @@ class PersistentAdminNoticeManager
      *
      * @param string              $return_url where to  redirect to after dismissing notices
      * @param CapabilitiesChecker $capabilities_checker
-     * @param EE_Request          $request
+     * @param RequestInterface          $request
      * @throws InvalidDataTypeException
      */
-    public function __construct($return_url = '', CapabilitiesChecker $capabilities_checker, EE_Request $request)
+    public function __construct($return_url = '', CapabilitiesChecker $capabilities_checker, RequestInterface $request)
     {
         $this->setReturnUrl($return_url);
         $this->capabilities_checker = $capabilities_checker;
@@ -306,7 +306,7 @@ class PersistentAdminNoticeManager
      */
     public function dismissNotice($pan_name = '', $purge = false, $return = false)
     {
-        $pan_name = $this->request->get('ee_nag_notice', $pan_name);
+        $pan_name = $this->request->getRequestParam('ee_nag_notice', $pan_name);
         $this->notice_collection = $this->getPersistentAdminNoticeCollection();
         if (! empty($pan_name) && $this->notice_collection->has($pan_name)) {
             /** @var PersistentAdminNotice $persistent_admin_notice */
@@ -318,7 +318,7 @@ class PersistentAdminNoticeManager
         if ($return) {
             return;
         }
-        if ($this->request->ajax) {
+        if ($this->request->isAjax()) {
             // grab any notices and concatenate into string
             echo wp_json_encode(
                 array(
@@ -331,7 +331,7 @@ class PersistentAdminNoticeManager
         EE_Error::get_notices(false, true);
         wp_safe_redirect(
             urldecode(
-                $this->request->get('return_url', '')
+                $this->request->getRequestParam('return_url', '')
             )
         );
     }
