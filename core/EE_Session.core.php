@@ -6,6 +6,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\InvalidSessionDataException;
 use EventEspresso\core\services\cache\CacheStorageInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
@@ -564,7 +565,11 @@ class EE_Session implements SessionIdentifierInterface
         // check that session has started
         if (session_id() === '') {
             // starts a new session if one doesn't already exist, or re-initiates an existing one
-            session_start();
+            if(ini_get('session.save_handler') === 'user') {
+                $this->checkCustomSessionSaveHandler();
+            } else {
+                session_start();
+            }
         }
         $this->status = EE_Session::STATUS_OPEN;
         // get our modified session ID
@@ -606,6 +611,68 @@ class EE_Session implements SessionIdentifierInterface
         // make event espresso session data available to plugin
         $this->_session_data = array_merge($this->_session_data, $session_data);
         return true;
+    }
+
+    /**
+     * Handles a fatal error that can occur while starting the session because of an invalid session handler.
+     * This fatal error happens regularly on Pantheon's servers, see https://github.com/eventespresso/event-espresso-core/issues/494.
+     * This function keeps track of whether we know the custom session handler works or not. If it does, uses the session
+     * normally.
+     * If we don't know if the custom session save handler works, sets an option before starting the session, and
+     * removes it afterwards. This way, if there is a fatal error starting the session, we'll know during the next
+     * request, and avoid calling the session. Instead, we'll give a helpful error message and suggest how to fix the problem.
+     * Lastly, we need to allow the admin to indicate when they've fixed the problem, so we can try using EE's session
+     * again. For that, we give them a link with "ee_retry_session" in it. When they visit a page with that querystring
+     * variable, we set ourselves up to retry using the session on the next request, and do a redirect.
+     * @since $VID:$
+     */
+    private function checkCustomSessionSaveHandler()
+    {
+        if (get_option('ee_custom_session_save_handler_proven_ok', false)) {
+            // we've already tried it on a previous request. The custom save handler works. Don't worry
+            session_start();
+        } else {
+            // we haven't successfully tried the session handler yet.
+            // Check if we had a fatal error last time while trying it
+            if (get_option('ee_custom_session_save_handler_died', false)) {
+                $request = LoaderFactory::getLoader()->load('EventEspresso\core\services\request\Request');
+                if ($request->requestParamIsSet('ee_retry_session')) {
+                    delete_option('ee_custom_session_save_handler_died');
+                    // remove "ee_retry_session", otherwise, if the problem still isn't fixed, we'll just keep getting
+                    // the fatal error over and over. Better to remove it and redirect, and try on the next request
+                    wp_redirect(
+                        remove_query_arg(array('ee_retry_session'), EEH_URL::current_url())
+                    );
+                    die;
+                } else {
+                    // apparently, last time we tried using the custom session save handler, there was a fatal
+                    // so don't try it
+                    // just show a message to users that can fix it. Otherwise, try to hobble along without the session
+                    if (current_user_can('install_plugins')) {
+                        EE_Error::add_error(
+                            sprintf(
+                                esc_html__('It appears there was a fatal error while starting the session, so Event Espresso is not able to process registrations normally. Some hosting companies, like Pantheon, require an extra plugin for Event Espresso to work. Please install the %1$sWordPress Native PHP Sessions plugin%2$s, then %3$sclick here to check if the problem is resolved.%2$s', 'event_espresso'),
+                                '<a href="https://wordpress.org/plugins/wp-native-php-sessions/">',
+                                '</a>',
+                                '<a href="' . add_query_arg(array('ee_retry_session' => true), EEH_URL::current_url()) . '">'
+                            ),
+                            __FILE__,
+                            __FUNCTION__,
+                            __LINE__
+                        );
+                    }
+                }
+            } else {
+                // there is no record of having a fatal error while trying the custom session save handler
+                // so let's try it
+                // there is a custom session save handler. Proceed with caution
+                update_option('ee_custom_session_save_handler_died', '1');
+                // hold your breath, if the custom session save handler might cause a fatal here...
+                session_start();
+                // phew! we made it! the custom session handler is a-ok
+                update_option('ee_custom_session_save_handler_proven_ok', '1');
+            }
+        }
     }
 
 
