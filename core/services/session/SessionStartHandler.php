@@ -59,12 +59,29 @@ class SessionStartHandler
         // check that session has started
         if (session_id() === '') {
             // starts a new session if one doesn't already exist, or re-initiates an existing one
-            if (ini_get('session.save_handler') === 'user') {
+            if ($this->hasKnownCustomSessionSaveHandler()) {
                 $this->checkCustomSessionSaveHandler();
             } else {
                 session_start();
             }
         }
+    }
+
+    /**
+     * Returns `true` if the 'session.save_handler' ini setting matches a known custom handler
+     *
+     * @since $VID:$
+     * @return bool
+     */
+    private function hasKnownCustomSessionSaveHandler()
+    {
+        return in_array(
+            ini_get('session.save_handler'),
+            array(
+                'user',
+            ),
+            true
+        );
     }
 
     /**
