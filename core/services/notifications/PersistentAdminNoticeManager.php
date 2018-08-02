@@ -152,7 +152,7 @@ class PersistentAdminNoticeManager
                             $details['cap_context'],
                             $details['dismissed']
                         ),
-                        $name
+                        sanitize_key($name)
                     );
                 } else {
                     try {
@@ -166,7 +166,7 @@ class PersistentAdminNoticeManager
                                 '',
                                 empty($details)
                             ),
-                            $name
+                            sanitize_key($name)
                         );
                     } catch (Exception $e) {
                         EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
