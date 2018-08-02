@@ -97,7 +97,7 @@ class EE_DMS_Core_4_2_0 extends EE_Data_Migration_Script_Base
 							PRIMARY KEY  (ATTM_ID),
 								KEY ATT_fname (ATT_fname),
 								KEY ATT_lname (ATT_lname),
-								KEY ATT_email (ATT_email)";
+								KEY ATT_email (ATT_email(191))";
         $this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_country';
         $sql = "CNT_ISO VARCHAR(2) COLLATE utf8_bin NOT NULL,
