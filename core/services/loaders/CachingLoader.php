@@ -95,13 +95,17 @@ class CachingLoader extends CachingLoaderDecorator
     /**
      * @param FullyQualifiedName|string $fqcn
      * @param mixed                     $object
+     * @param array                     $arguments
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function share($fqcn, $object)
+    public function share($fqcn, $object, array $arguments = array())
     {
         if ($object instanceof $fqcn) {
-            return $this->cache->add($object, md5($fqcn));
+            return $this->cache->add(
+                $object,
+                $this->object_identifier->getIdentifier($fqcn, $arguments)
+            );
         }
         throw new InvalidArgumentException(
             sprintf(
