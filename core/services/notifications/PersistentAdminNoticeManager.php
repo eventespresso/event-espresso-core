@@ -13,6 +13,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
+use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use Exception;
 use InvalidArgumentException;
@@ -97,6 +98,7 @@ class PersistentAdminNoticeManager
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws DomainException
+     * @throws DuplicateCollectionIdentifierException
      */
     protected function getPersistentAdminNoticeCollection()
     {
@@ -118,11 +120,11 @@ class PersistentAdminNoticeManager
      * @throws InvalidEntityException
      * @throws DomainException
      * @throws InvalidDataTypeException
+     * @throws DuplicateCollectionIdentifierException
      */
     protected function retrieveStoredNotices()
     {
         $persistent_admin_notices = get_option(PersistentAdminNoticeManager::WP_OPTION_KEY, array());
-        // \EEH_Debug_Tools::printr($persistent_admin_notices, '$persistent_admin_notices', __FILE__, __LINE__);
         if (! empty($persistent_admin_notices)) {
             foreach ($persistent_admin_notices as $name => $details) {
                 if (is_array($details)) {
@@ -198,6 +200,7 @@ class PersistentAdminNoticeManager
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidEntityException
+     * @throws DuplicateCollectionIdentifierException
      */
     public function displayNotices()
     {
@@ -295,6 +298,11 @@ class PersistentAdminNoticeManager
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws DuplicateCollectionIdentifierException
      */
     public function dismissNotice($pan_name = '', $purge = false, $return = false)
     {
@@ -336,6 +344,7 @@ class PersistentAdminNoticeManager
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidEntityException
+     * @throws DuplicateCollectionIdentifierException
      */
     public function saveNotices()
     {
@@ -370,6 +379,7 @@ class PersistentAdminNoticeManager
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
      * @throws InvalidInterfaceException
+     * @throws DuplicateCollectionIdentifierException
      */
     public function registerAndSaveNotices()
     {
@@ -389,6 +399,7 @@ class PersistentAdminNoticeManager
      * @throws InvalidEntityException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
+     * @throws DuplicateCollectionIdentifierException
      */
     public static function loadRegisterAndSaveNotices()
     {
