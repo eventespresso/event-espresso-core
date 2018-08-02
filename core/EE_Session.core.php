@@ -565,7 +565,7 @@ class EE_Session implements SessionIdentifierInterface
         // check that session has started
         if (session_id() === '') {
             // starts a new session if one doesn't already exist, or re-initiates an existing one
-            if(ini_get('session.save_handler') === 'user') {
+            if (ini_get('session.save_handler') === 'user') {
                 $this->checkCustomSessionSaveHandler();
             } else {
                 session_start();
