@@ -23,6 +23,7 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 - Fixed an error when migrating from EE3 from attendee email index being too big ([611](https://github.com/eventespresso/event-espresso-core/pull/611))
 - Fixed venue description on event page so line breaks are shown properly ([612](https://github.com/eventespresso/event-espresso-core/pull/612))
 - Fixed caching loader identifier ([610](https://github.com/eventespresso/event-espresso-core/pull/610))
+- Fixed error when trying to send messages in full maintenance mode ([622](https://github.com/eventespresso/event-espresso-core/pull/622))
 
 ### Changed
 
