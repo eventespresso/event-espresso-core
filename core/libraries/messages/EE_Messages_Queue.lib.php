@@ -207,7 +207,9 @@ class EE_Messages_Queue
     public function get_to_send_batch_and_send()
     {
         $rate_limit = $this->get_rate_limit();
-        if ($rate_limit < 1 || $this->is_locked(EE_Messages_Queue::action_sending)) {
+        if ($rate_limit < 1
+            || $this->is_locked(EE_Messages_Queue::action_sending)
+            || ! EE_Maintenance_Mode::instance()->models_can_query()) {
             return false;
         }
 
