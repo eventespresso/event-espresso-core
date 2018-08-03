@@ -1161,15 +1161,9 @@ final class EE_System implements ResettableInterface
         // integrate WP_Query with the EE models
         $this->loader->getShared('EE_CPT_Strategy');
         do_action('AHEE__EE_System__core_loaded_and_ready');
-        // load_espresso_template_tags
-        if (($this->request->isFrontend()
-             || $this->request->isIframe()
-             || $this->request->isFeed()
-             ||  $this->request->isAjax()
-            ) && is_readable(EE_PUBLIC . 'template_tags.php')
-        ) {
-            require_once EE_PUBLIC . 'template_tags.php';
-        }
+        // always load template tags, because it's faster than checking if it's a front-end request, and many page
+        // builders require these even on the front-end
+        require_once EE_PUBLIC . 'template_tags.php';
         do_action('AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons');
     }
 
