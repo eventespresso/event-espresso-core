@@ -102,6 +102,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             'TWD',
             'THB',
             'TRY',
+            'INR',
         );
         parent::__construct();
     }
