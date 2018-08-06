@@ -355,7 +355,7 @@ class EE_Messages_Queue
      */
     public function is_locked($type = EE_Messages_Queue::action_generating)
     {
-        if(! EE_Maintenance_Mode::instance()->models_can_query()){
+        if (! EE_Maintenance_Mode::instance()->models_can_query()) {
             return true;
         }
         $lock = (int) get_option($this->_get_lock_key($type), 0);
