@@ -53,6 +53,8 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_EE_MODEL = 'eventespresso-model';
 
+    const JS_HANDLE_EE_VALUE_OBJECTS = 'eventespresso-value-objects';
+
     const JS_HANDLE_EE_HOC_COMPONENTS = 'eventespresso-hoc-components';
 
     const JS_HANDLE_EE_COMPONENTS = 'eventespresso-components';
@@ -203,11 +205,19 @@ class CoreAssetManager extends AssetManager
         )->setRequiresTranslation();
 
         $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_VALUE_OBJECTS,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'valueObjects'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_MODEL
+            )
+        )->setRequiresTranslation();
+
+        $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_HOC_COMPONENTS,
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'hocComponents'),
             array(
                 CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
-                CoreAssetManager::JS_HANDLE_EE_HELPERS,
+                CoreAssetManager::JS_HANDLE_EE_VALUE_OBJECTS,
                 'wp-components',
             )
         )->setRequiresTranslation();
@@ -217,7 +227,7 @@ class CoreAssetManager extends AssetManager
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'components'),
             array(
                 CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
-                CoreAssetManager::JS_HANDLE_EE_HELPERS,
+                CoreAssetManager::JS_HANDLE_EE_VALUE_OBJECTS,
                 'wp-components',
             )
         )
@@ -252,6 +262,11 @@ class CoreAssetManager extends AssetManager
                     'date_formats' => EEH_DTT_Helper::convert_php_to_js_and_moment_date_formats()
                 )
             );
+            /** currency data **/
+            $this->registry->addData(
+                'currency_config',
+                $this->getCurrencySettings()
+            );
         }
 
         $this->addJavascript(
@@ -267,6 +282,53 @@ class CoreAssetManager extends AssetManager
                     EE_Registry::$i18n_js_strings
                 );
             }
+        );
+    }
+
+
+    /**
+     * Returns configuration data for the accounting-js library.
+     * @since $VID:$
+     * @return array
+     */
+    private function getAccountingSettings() {
+        return array(
+            'currency' => array(
+                'symbol'    => $this->currency_config->sign,
+                'format'    => array(
+                    'pos'  => $this->currency_config->sign_b4 ? '%s%v' : '%v%s',
+                    'neg'  => $this->currency_config->sign_b4 ? '- %s%v' : '- %v%s',
+                    'zero' => $this->currency_config->sign_b4 ? '%s--' : '--%s',
+                ),
+                'decimal'   => $this->currency_config->dec_mrk,
+                'thousand'  => $this->currency_config->thsnds,
+                'precision' => $this->currency_config->dec_plc,
+            ),
+            'number'   => array(
+                'precision' => $this->currency_config->dec_plc,
+                'thousand'  => $this->currency_config->thsnds,
+                'decimal'   => $this->currency_config->dec_mrk,
+            ),
+        );
+    }
+
+
+    /**
+     * Returns configuration data for the js Currency VO.
+     * @sinc $VID:$
+     * @return array
+     */
+    private function getCurrencySettings()
+    {
+        return array(
+            'code' => $this->currency_config->code,
+            'singularLabel' => $this->currency_config->name,
+            'pluralLabel' => $this->currency_config->plural,
+            'sign' => $this->currency_config->sign,
+            'signB4' => $this->currency_config->sign_b4,
+            'decimalPlaces' => $this->currency_config->dec_plc,
+            'decimalMark' => $this->currency_config->dec_mrk,
+            'thousandsSeparator' => $this->currency_config->thsnds,
         );
     }
 
@@ -351,35 +413,17 @@ class CoreAssetManager extends AssetManager
         )
         ->setVersion('0.3.2');
 
-        $currency_config = $this->currency_config;
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_ACCOUNTING,
             EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js',
             array(CoreAssetManager::JS_HANDLE_ACCOUNTING_CORE)
         )
         ->setInlineDataCallback(
-            function () use ($currency_config) {
+            function () {
                  wp_localize_script(
                      CoreAssetManager::JS_HANDLE_EE_ACCOUNTING,
                      'EE_ACCOUNTING_CFG',
-                     array(
-                         'currency' => array(
-                             'symbol'    => $currency_config->sign,
-                             'format'    => array(
-                                 'pos'  => $currency_config->sign_b4 ? '%s%v' : '%v%s',
-                                 'neg'  => $currency_config->sign_b4 ? '- %s%v' : '- %v%s',
-                                 'zero' => $currency_config->sign_b4 ? '%s--' : '--%s',
-                             ),
-                             'decimal'   => $currency_config->dec_mrk,
-                             'thousand'  => $currency_config->thsnds,
-                             'precision' => $currency_config->dec_plc,
-                         ),
-                         'number'   => array(
-                             'precision' => $currency_config->dec_plc,
-                             'thousand'  => $currency_config->thsnds,
-                             'decimal'   => $currency_config->dec_mrk,
-                         ),
-                     )
+                     $this->getAccountingSettings()
                  );
             }
         )

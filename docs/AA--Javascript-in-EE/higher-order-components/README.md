@@ -9,3 +9,4 @@ All the higher order components listed in this section of our documentation are 
 | HOC | Description |
 | --------- | ------------ |
 | [`withBaseControl`](base-control.md) | Implements a `<BaseControl />` wrapper around the provided Component |
+| [`withMoney`](with-money.md) | Used for converting props representing money values to [`Money` value objects](../value-objects/money.md)

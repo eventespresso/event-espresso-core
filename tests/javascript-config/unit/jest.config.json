@@ -10,6 +10,7 @@
 	"moduleNameMapper": {
 		"@eventespresso\\/(eejs)": "assets/src/$1",
 		"@eventespresso\/helpers": "assets/src/data/helpers",
+		"@eventespresso\/vo": "assets/src/vo",
 		"tinymce": "<rootDir>/tests/javascript-config/unit/mocks/tinymce",
 		"@wordpress/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
 		"@eventespresso/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",

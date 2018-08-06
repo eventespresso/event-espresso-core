@@ -77,7 +77,7 @@ Note: this package isn't published yet so you'll need to point to it via your bu
 ```js
 module.exports = {
     externals: {
-        '@eventespresso/higher-order-components': 'eejs.higher-order-components',
+        '@eventespresso/higher-order-components': 'eejs.hocComponents',
     }
 }
 ```

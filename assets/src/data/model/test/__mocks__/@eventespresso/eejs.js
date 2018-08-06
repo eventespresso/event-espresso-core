@@ -27,6 +27,16 @@ module.exports.data = {
 			},
 		},
 	},
+	currency_config: {
+		code: 'USD',
+		singularLabel: 'dollar',
+		pluralLabel: 'dollars',
+		sign: '$',
+		signB4: true,
+		decimalMark: '.',
+		thousandsSeparator: ',',
+		subunits: 100,
+	},
 };
 
 module.exports.Exception = Exception;
