@@ -85,6 +85,10 @@ function bootstrap_espresso()
             'EEH_Array',
             EE_CORE . 'helpers' . DS . 'EEH_Array.helper.php'
         );
+        espresso_load_required(
+            'EE_Base',
+            EE_CORE . 'EE_Base.core.php'
+        );
         // instantiate and configure PSR4 autoloader
         espresso_load_required(
             'Psr4Autoloader',
