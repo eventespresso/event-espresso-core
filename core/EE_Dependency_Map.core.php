@@ -659,7 +659,7 @@ class EE_Dependency_Map
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'                                      => array(
                 null,
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
-                'EE_Request'                                                          => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request'                         => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\licensing\LicenseService'                                                        => array(
                 'EventEspresso\core\domain\services\pue\Stats'  => EE_Dependency_Map::load_from_cache,

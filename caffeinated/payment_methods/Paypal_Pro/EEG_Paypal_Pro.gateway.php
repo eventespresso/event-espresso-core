@@ -57,6 +57,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
         'TRY',
         'TWD',
         'RUB',
+        'INR',
     );
 
 
