@@ -39,11 +39,11 @@ Money.assertCurrency( maybeCurrency );
 ```
 This method throws a `TypeError` if the provided argument is not an instance of `Currency`
 
-### `Money.assertUsingEqualCurrency`
+### `Money.assertUsingSameCurrency`
 ```js
 Money.assertEquivalentWithCurrency( oneMoney, otherMoney );
 ```
-This method throws a `TypeError` if either of the provided arguments are not instances of `Money` and throws an `eejs.Exception` if the currencies that are a part of each Money object are not equivalent (see `Money.assertEqualCurrency`)
+This method throws a `TypeError` if either of the provided arguments are not instances of `Money` and throws an `eejs.Exception` if the currencies that are a part of each Money object are not equivalent (see `Money.assertSameCurrency`)
 
 #### `Money.assertDecimal`
 ```js
@@ -51,7 +51,7 @@ Money.assertDecimal( maybeDecimal );
 ```
 This method throws a `TypeError` if the provided argument is not an instance of `Decimal`.
 
-#### `Money.assertEqualCurrency`
+#### `Money.assertSameCurrency`
 ```js
 Money.assertEqualCurrency( currencyA, currencyB );
 ```
@@ -126,7 +126,7 @@ console.log( moneyA.equals( moneyB ) );
 //prints false
 console.log( moneyA.equals( moneyC ) );
 ```
-#### `hasEqualCurrency()`
+#### `hasSameCurrency()`
 This method provides a convenient way to compare the currencies on the current Money instance with the currency on another Money instance provided as an argument.  Currencies are considered equal via a shallow equality check on the properties of the two Currency instances in each Money instance.
 
 ```js

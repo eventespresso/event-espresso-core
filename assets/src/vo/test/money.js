@@ -150,14 +150,14 @@ describe( 'Money Value Object', () => {
 				) ).toBe( false );
 			} );
 		} );
-		describe( 'hasEqualCurrency()', () => {
+		describe( 'hasSameCurrency()', () => {
 			it( 'throws an error if invalid type provided for argument', () => {
-				expect( () => testMoney.hasEqualCurrency( {} ) )
+				expect( () => testMoney.hasSameCurrency( {} ) )
 					.toThrow( TypeError );
 			} );
 			it( 'is equal with other when exact same currency objects exist on ' +
 				'the compared money objects', () => {
-				expect( testMoney.hasEqualCurrency(
+				expect( testMoney.hasSameCurrency(
 					new Money(
 						testDecimal,
 						DefaultCurrency
@@ -167,7 +167,7 @@ describe( 'Money Value Object', () => {
 			it( 'is equal with other when different currency objects exist' +
 				' on the compared money objects BUT the internal value of ' +
 				'the currencies is the same', () => {
-				expect( testMoney.hasEqualCurrency(
+				expect( testMoney.hasSameCurrency(
 					new Money(
 						testDecimal,
 						new Currency(
@@ -179,7 +179,7 @@ describe( 'Money Value Object', () => {
 			it( 'is not equal with other when different currency objects exist ' +
 				'on the compared money objects and the internal value for the ' +
 				'currencies is not the same', () => {
-				expect( testMoney.hasEqualCurrency(
+				expect( testMoney.hasSameCurrency(
 					new Money(
 						testDecimal,
 						new Currency( { ...CURRENCY_CONFIG, code: 'CAD' } )
@@ -417,17 +417,17 @@ describe( 'Money Value Object', () => {
 			expect( () => Money.assertCurrency( {} ) ).toThrow( TypeError );
 		} );
 	} );
-	describe( 'Money.assertUsingEqualCurrency()', () => {
+	describe( 'Money.assertUsingSameCurrency()', () => {
 		it( 'throws a TypeError if invalid Money object provided for this',
 			() => {
 				expect(
-					() => Money.assertUsingEqualCurrency( {}, {} )
+					() => Money.assertUsingSameCurrency( {}, {} )
 				).toThrow( TypeError );
 			} );
 		it( 'throws a TypeError if invalid Money object provided for other',
 			() => {
 				expect(
-					() => Money.assertUsingEqualCurrency(
+					() => Money.assertUsingSameCurrency(
 						new Money( new Decimal( 1 ), DefaultCurrency ),
 						{ }
 					)
@@ -436,7 +436,7 @@ describe( 'Money Value Object', () => {
 		it( 'throws an Error if two currencies on provided Money objects ' +
 			'are not equal', () => {
 			expect(
-				() => Money.assertUsingEqualCurrency(
+				() => Money.assertUsingSameCurrency(
 					new Money( new Decimal( 1 ), DefaultCurrency ),
 					new Money(
 						new Decimal( 1 ),
@@ -449,13 +449,13 @@ describe( 'Money Value Object', () => {
 			).toThrow();
 		} );
 	} );
-	describe( 'Money.assertEqualCurrency()', () => {
+	describe( 'Money.assertSameCurrency()', () => {
 		it( 'throws a TypeError if provided values are not currencies', () => {
-			expect( () => Money.assertEqualCurrency( {}, {} ) )
+			expect( () => Money.assertSameCurrency( {}, {} ) )
 				.toThrow( TypeError );
 		} );
 		it( 'throws an Error if provided values are not equal currencies', () => {
-			expect( () => Money.assertEqualCurrency(
+			expect( () => Money.assertSameCurrency(
 				DefaultCurrency,
 				new Currency(
 					{

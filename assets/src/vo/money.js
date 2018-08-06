@@ -40,7 +40,7 @@ const assertCurrency = ( currency ) => {
  * @param {Currency} currencyB
  * @throws {Exception}
  */
-const assertEqualCurrency = ( currencyA, currencyB ) => {
+const assertSameCurrency = ( currencyA, currencyB ) => {
 	assertCurrency( currencyA );
 	assertCurrency( currencyB );
 	if ( ! isShallowEqual( currencyA.toJSON(), currencyB.toJSON() ) ) {
@@ -195,7 +195,7 @@ export default class Money {
 	equals( other ) {
 		Money.assertMoney( other );
 		return this.amount.equals( other.amount ) &&
-			this.hasEqualCurrency( other );
+			this.hasSameCurrency( other );
 	}
 
 	/**
@@ -209,7 +209,7 @@ export default class Money {
 	 * @param {Money} other
 	 * @return {boolean} True means the currencies are equal.
 	 */
-	hasEqualCurrency( other ) {
+	hasSameCurrency( other ) {
 		Money.assertMoney( other );
 		return isShallowEqual(
 			this.currency.toJSON(),
@@ -223,7 +223,7 @@ export default class Money {
 	 * @return {Money} Returns a new instance of Money.
 	 */
 	add( other ) {
-		Money.assertUsingEqualCurrency( this, other );
+		Money.assertUsingSameCurrency( this, other );
 		return new Money( this.amount.plus( other.amount ), this.currency );
 	}
 
@@ -233,7 +233,7 @@ export default class Money {
 	 * @return {Money} Returns a new instance of Money
 	 */
 	subtract( other ) {
-		Money.assertUsingEqualCurrency( this, other );
+		Money.assertUsingSameCurrency( this, other );
 		return new Money( this.amount.minus( other.amount ), this.currency );
 	}
 
@@ -335,7 +335,7 @@ export default class Money {
 		if ( this === other ) {
 			return 0;
 		}
-		Money.assertUsingEqualCurrency( this, other );
+		Money.assertUsingSameCurrency( this, other );
 		return this.amount.comparedTo( other.amount );
 	}
 
@@ -345,7 +345,7 @@ export default class Money {
 	 * @return {boolean} If true then this is greater than other.
 	 */
 	greaterThan( other ) {
-		Money.assertUsingEqualCurrency( this, other );
+		Money.assertUsingSameCurrency( this, other );
 		return this.amount.greaterThan( other.amount );
 	}
 
@@ -357,7 +357,7 @@ export default class Money {
 	 * @return {boolean} If true then this is greater than or equal to the other.
 	 */
 	greaterThanOrEqualTo( other ) {
-		Money.assertUsingEqualCurrency( this, other );
+		Money.assertUsingSameCurrency( this, other );
 		return this.amount.greaterThanOrEqualTo( other.amount );
 	}
 
@@ -367,7 +367,7 @@ export default class Money {
 	 * @return {boolean} If true then this is less than other
 	 */
 	lessThan( other ) {
-		Money.assertUsingEqualCurrency( this, other );
+		Money.assertUsingSameCurrency( this, other );
 		return this.amount.lessThan( other.amount );
 	}
 
@@ -379,7 +379,7 @@ export default class Money {
 	 * @return {boolean} If true then this is less than or equal to other.
 	 */
 	lessThanOrEqualTo( other ) {
-		Money.assertUsingEqualCurrency( this, other );
+		Money.assertUsingSameCurrency( this, other );
 		return this.amount.lessThanOrEqualTo( other.amount );
 	}
 
@@ -502,10 +502,10 @@ export default class Money {
 	 * @param {Money} otherMoney
 	 * @throws {TypeError}
 	 */
-	static assertUsingEqualCurrency = ( thisMoney, otherMoney ) => {
+	static assertUsingSameCurrency = ( thisMoney, otherMoney ) => {
 		assertMoney( thisMoney );
 		assertMoney( otherMoney );
-		assertEqualCurrency( thisMoney.currency, otherMoney.currency );
+		assertSameCurrency( thisMoney.currency, otherMoney.currency );
 	};
 
 	/**
@@ -514,7 +514,7 @@ export default class Money {
 	 * @param {Currency} currencyB
 	 * @throws {Exception}
 	 */
-	static assertEqualCurrency = ( currencyA, currencyB ) => {
-		assertEqualCurrency( currencyA, currencyB );
+	static assertSameCurrency = ( currencyA, currencyB ) => {
+		assertSameCurrency( currencyA, currencyB );
 	}
 }
