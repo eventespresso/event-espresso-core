@@ -28,6 +28,7 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 - Fixed venue description on event page so line breaks are shown properly ([612](https://github.com/eventespresso/event-espresso-core/pull/612))
 - Fixed `espresso_event_tickets_available()` so it echoes out the tickets when default arguments are provided ([619](https://github.com/eventespresso/event-espresso-core/pull/619))
 - Fixed caching loader identifier ([610](https://github.com/eventespresso/event-espresso-core/pull/610))
+- Fixed Authorize.net AIM so payment currency is sent ([591](https://github.com/eventespresso/event-espresso-core/pull/591))
 - Fixed DuplicateCollectionIdentifierException errors when converting old PersistentAdminNotice Fixes ([505](https://github.com/eventespresso/event-espresso-core/pull/505))
 
 ### Changed
