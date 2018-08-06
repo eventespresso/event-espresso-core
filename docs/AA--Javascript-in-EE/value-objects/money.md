@@ -41,9 +41,9 @@ This method throws a `TypeError` if the provided argument is not an instance of 
 
 ### `Money.assertUsingSameCurrency`
 ```js
-Money.assertEquivalentWithCurrency( oneMoney, otherMoney );
+Money.assertUsingSameCurrency( oneMoney, otherMoney );
 ```
-This method throws a `TypeError` if either of the provided arguments are not instances of `Money` and throws an `eejs.Exception` if the currencies that are a part of each Money object are not equivalent (see `Money.assertSameCurrency`)
+This method throws a `TypeError` if either of the provided arguments are not instances of `Money` and throws an `eejs.Exception` if the currencies that are a part of each Money object are not equal (see `Money.assertSameCurrency`)
 
 #### `Money.assertDecimal`
 ```js
@@ -53,9 +53,9 @@ This method throws a `TypeError` if the provided argument is not an instance of 
 
 #### `Money.assertSameCurrency`
 ```js
-Money.assertEqualCurrency( currencyA, currencyB );
+Money.assertSameCurrency( currencyA, currencyB );
 ```
-This method throws a `TypeError` if either of the provided arguments is not an instance of `Currency` and throws an `eejs.Exception` if the provided currencies are not equivalent.  The equivalence test is done via a shallow comparison of the properties on each currency.
+This method throws a `TypeError` if either of the provided arguments is not an instance of `Currency` and throws an `eejs.Exception` if the provided currencies are not equal.  The equivalence test is done via a shallow comparison of the properties on each currency.
 
 ### _Properties_
 #### `Money.ROUND_UP`
@@ -135,10 +135,10 @@ const moneyB = new Money( new Decimal( 2.35 ), new Currency( USDCurrencyConfig )
 const moneyC = new Money( new Decimal( 400 ), new Currency( CDNCurrencyConfig ) );
 
 // prints true
-console.log( moneyA.hasEqualCurrency( moneyB ) );
+console.log( moneyA.hasSameCurrency( moneyB ) );
 
 //prints false
-console.log( moneyA.hasEqualCurrency( moneyC ) );
+console.log( moneyA.hasSameCurrency( moneyC ) );
 ```
 
 #### `add()`
