@@ -5,7 +5,7 @@ namespace EventEspresso\core\services\route_match;
 use EventEspresso\core\domain\entities\route_match\RouteMatchSpecification;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\interfaces\FactoryInterface;
+use EventEspresso\core\services\factory\FactoryWithDependencyResolver;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use InvalidArgumentException;
@@ -21,19 +21,8 @@ use ReflectionException;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class RouteMatchSpecificationFactory implements FactoryInterface
+class RouteMatchSpecificationFactory extends FactoryWithDependencyResolver
 {
-
-    /**
-     * @var RouteMatchSpecificationDependencyResolver $dependency_resolver
-     */
-    private $dependency_resolver;
-
-    /**
-     * @var LoaderInterface $loader
-     */
-    private $loader;
-
 
     /**
      * RouteMatchSpecificationFactory constructor
@@ -43,10 +32,8 @@ class RouteMatchSpecificationFactory implements FactoryInterface
      */
     public function __construct(RouteMatchSpecificationDependencyResolver $dependency_resolver, LoaderInterface $loader)
     {
-        $this->dependency_resolver = $dependency_resolver;
-        $this->loader = $loader;
+        parent::__construct($dependency_resolver, $loader);
     }
-
 
     /**
      * @param $fqcn
@@ -57,17 +44,17 @@ class RouteMatchSpecificationFactory implements FactoryInterface
      */
     public function createNewRouteMatchSpecification($fqcn)
     {
-        $this->dependency_resolver->resolveDependenciesForSpecification($fqcn);
-        return $this->loader->getShared($fqcn);
+        $this->dependencyResolver()->resolveDependenciesForClass($fqcn);
+        return $this->loader()->getShared($fqcn);
     }
 
 
     /**
      * @param $fqcn
      * @return RouteMatchSpecification
+     * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
      * @throws ReflectionException
      * @since $VID:$
      */
