@@ -18,5 +18,5 @@ interface RouteMatchSpecificationInterface
      * @since $VID:$
      * @return boolean
      */
-    public function routeMatches();
+    public function isMatchingRoute();
 }

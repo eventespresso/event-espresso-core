@@ -20,10 +20,10 @@ class MatchAllRouteSpecifications extends MultiRouteSpecification
      * @since $VID:$
      * @return boolean
      */
-    public function routeMatches()
+    public function isMatchingRoute()
     {
         foreach ($this->specifications as $specification) {
-            if (! $specification->routeMatches()) {
+            if (! $specification->isMatchingRoute()) {
                 return false;
             }
         }

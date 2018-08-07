@@ -20,8 +20,8 @@ class DoesNotMatchRouteSpecification extends RouteMatchSpecificationDecorator
      * @since $VID:$
      * @return boolean
      */
-    public function routeMatches()
+    public function isMatchingRoute()
     {
-        return ! $this->specification->routeMatches();
+        return ! $this->specification->isMatchingRoute();
     }
 }

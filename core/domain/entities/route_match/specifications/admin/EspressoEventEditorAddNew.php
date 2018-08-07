@@ -20,7 +20,7 @@ class EspressoEventEditorAddNew extends RouteMatchSpecification
      * @since $VID:$
      * @return boolean
      */
-    public function routeMatches()
+    public function isMatchingRoute()
     {
         return $this->request->getRequestParam('page') === 'espresso_events'
             && $this->request->getRequestParam('action') === 'create_new';
