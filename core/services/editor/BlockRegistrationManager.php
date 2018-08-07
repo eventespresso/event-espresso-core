@@ -166,7 +166,7 @@ class BlockRegistrationManager extends BlockManager
     {
         $supported_routes = $block->supportedRoutes();
         foreach ($supported_routes as $supported_route) {
-            if ($this->route_manager->currentRequestMatches($supported_route)) {
+            if ($this->route_manager->routeMatchesCurrentRequest($supported_route)) {
                 $this->block_asset_managers[ $block->blockType() ] = $block->assetManager()->assetNamespace();
             }
         }

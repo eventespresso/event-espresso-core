@@ -111,14 +111,14 @@ class RouteMatchSpecificationManager
      * @throws InvalidClassException
      * @since $VID:$
      */
-    public function currentRequestMatches($routeMatchSpecificationFqcn)
+    public function routeMatchesCurrentRequest($routeMatchSpecificationFqcn)
     {
         /** @var RouteMatchSpecificationInterface $specification */
         $specification = $this->specifications->get($routeMatchSpecificationFqcn);
         if ( ! $specification instanceof $routeMatchSpecificationFqcn) {
             throw new InvalidClassException($routeMatchSpecificationFqcn);
         }
-        return $specification->routeMatches();
+        return $specification->isMatchingRoute();
     }
 
 
@@ -132,12 +132,12 @@ class RouteMatchSpecificationManager
      * @return array
      * @since $VID:$
      */
-    public function findSpecificationsMatchingCurrentRequest()
+    public function findRouteMatchSpecificationsMatchingCurrentRequest()
     {
         $matches = array();
         foreach ($this->specifications as $specification) {
             /** @var RouteMatchSpecificationInterface $specification */
-            if ($specification->routeMatches()) {
+            if ($specification->isMatchingRoute()) {
                 $matches[] = get_class($specification );
             }
         }
