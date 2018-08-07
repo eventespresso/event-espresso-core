@@ -939,14 +939,12 @@ final class EE_System implements ResettableInterface
      */
     public function loadRouteMatchSpecifications()
     {
-        if ($this->request->isAdmin() || $this->request->isFrontend() || $this->request->isIframe()) {
-            try {
-                $this->loader->getShared(
-                    'EventEspresso\core\services\route_match\RouteMatchSpecificationManager'
-                );
-            } catch (Exception $exception) {
-                new ExceptionStackTraceDisplay($exception);
-            }
+        try {
+            $this->loader->getShared(
+                'EventEspresso\core\services\route_match\RouteMatchSpecificationManager'
+            );
+        } catch (Exception $exception) {
+            new ExceptionStackTraceDisplay($exception);
         }
         do_action('AHEE__EE_System__loadRouteMatchSpecifications');
     }
