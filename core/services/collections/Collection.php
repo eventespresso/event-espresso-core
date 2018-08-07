@@ -37,6 +37,8 @@ class Collection extends SplObjectStorage implements CollectionInterface
 
     /**
      * a short dash separated string describing the contents of this collection
+     * used as the base for the $collection_identifier
+     * defaults to the class short name if not set
      *
      * @type string $collection_identifier
      */
