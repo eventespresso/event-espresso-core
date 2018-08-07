@@ -193,7 +193,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
     public function _count_records_to_migrate()
     {
         global $wpdb;
-        $count = $wpdb->get_var("SELECT COUNT(*) FROM ".$this->_old_table);
+        $count = $wpdb->get_var("SELECT COUNT(*) FROM ".$this->_old_table . 'WHERE event_status !="D"');
         return intval($count);
     }
 
@@ -213,7 +213,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
         global $wpdb;
         // because the migration of each event can be a LOT more work, make each step smaller
         $num_items_to_migrate = max(1, $num_items_to_migrate/5);
-        $events = $wpdb->get_results($wpdb->prepare("SELECT * FROM $this->_old_table LIMIT %d,%d", $this->count_records_migrated(), $num_items_to_migrate), ARRAY_A);
+        $events = $wpdb->get_results($wpdb->prepare("SELECT * FROM $this->_old_table WHERE event_status!='D' LIMIT %d,%d", $this->count_records_migrated(), $num_items_to_migrate), ARRAY_A);
         $items_migrated_this_step = 0;
 
         foreach ($events as $event_row) {
@@ -310,7 +310,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
     private function _other_post_exists_with_that_slug($slug)
     {
         global $wpdb;
-        $query = $wpdb->prepare("SELECT COUNT(ID) FROM {$this->_new_table} WHERE post_name = %s", $slug);
+        $query = $wpdb->prepare("SELECT COUNT(ID) FROM {$this->_new_table} WHERE event_status != 'D' AND post_name = %s", $slug);
         $count = $wpdb->get_var($query);
         return (boolean) intval($count);
     }
