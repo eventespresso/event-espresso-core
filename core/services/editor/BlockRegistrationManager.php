@@ -183,7 +183,7 @@ class BlockRegistrationManager extends BlockManager
      */
     public function matchesRoute(BlockInterface $block)
     {
-        if(isset($this->block_asset_managers[ $block->blockType() ])) {
+        if (isset($this->block_asset_managers[ $block->blockType() ])) {
             return true;
         }
         unset($this->block_asset_managers[ $block->blockType() ]);
@@ -226,16 +226,13 @@ class BlockRegistrationManager extends BlockManager
         $assets = array_flip($this->block_asset_managers);
         foreach ($this->block_asset_manager_collection as $asset_manager) {
             // if there are no longer any blocks that require these assets,
-            if(! isset($assets[ $asset_manager->assetNamespace() ])) {
+            if (! isset($assets[ $asset_manager->assetNamespace() ])) {
                 // then unset asset enqueueing and bail
                 remove_action('wp_enqueue_scripts', array($asset_manager, 'addManifestFile'), 0);
                 remove_action('admin_enqueue_scripts', array($asset_manager, 'addManifestFile'), 0);
                 remove_action('wp_enqueue_scripts', array($asset_manager, 'addAssets'), 2);
                 remove_action('admin_enqueue_scripts', array($asset_manager, 'addAssets'), 2);
-
             }
         }
-
     }
 }
-

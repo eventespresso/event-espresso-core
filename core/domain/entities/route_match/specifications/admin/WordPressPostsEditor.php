@@ -29,8 +29,7 @@ class WordPressPostsEditor extends MatchAnyRouteSpecification
         WordPressPostsEditorEdit $edit_event_route_match,
         WordPressPostsEditorAddNew $create_event_route_match,
         RequestInterface $request
-    )
-    {
+    ) {
         parent::__construct(
             array($edit_event_route_match, $create_event_route_match),
             $request

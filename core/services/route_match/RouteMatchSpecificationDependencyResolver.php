@@ -6,7 +6,6 @@ use EventEspresso\core\exceptions\InvalidAliasException;
 use EventEspresso\core\services\dependencies\ClassAlias;
 use EventEspresso\core\services\dependencies\DependencyResolver;
 
-
 /**
  * Class RouteMatchSpecificationDependencyResolver
  * RouteMatchSpecification classes that only have dependencies for the RequestInterface

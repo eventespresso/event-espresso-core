@@ -75,7 +75,7 @@ class RouteMatchSpecificationManager
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
-            // collection name
+                // collection name
                 RouteMatchSpecificationCollection::COLLECTION_NAME,
                 // collection interface
                 'EventEspresso\core\domain\entities\route_match\RouteMatchSpecificationInterface',
@@ -115,7 +115,7 @@ class RouteMatchSpecificationManager
     {
         /** @var RouteMatchSpecificationInterface $specification */
         $specification = $this->specifications->get($routeMatchSpecificationFqcn);
-        if ( ! $specification instanceof $routeMatchSpecificationFqcn) {
+        if (! $specification instanceof $routeMatchSpecificationFqcn) {
             throw new InvalidClassException($routeMatchSpecificationFqcn);
         }
         return $specification->isMatchingRoute();
@@ -138,7 +138,7 @@ class RouteMatchSpecificationManager
         foreach ($this->specifications as $specification) {
             /** @var RouteMatchSpecificationInterface $specification */
             if ($specification->isMatchingRoute()) {
-                $matches[] = get_class($specification );
+                $matches[] = get_class($specification);
             }
         }
         return $matches;

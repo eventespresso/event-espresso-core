@@ -22,7 +22,7 @@ class WordPressPostsListTable extends RouteMatchSpecification
      */
     public function isMatchingRoute()
     {
-        return strpos($this->request->requestUri(),'wp-admin/edit.php' ) !== false
+        return strpos($this->request->requestUri(), 'wp-admin/edit.php') !== false
             && $this->request->getRequestParam('post_type', 'post') === 'post';
     }
 }

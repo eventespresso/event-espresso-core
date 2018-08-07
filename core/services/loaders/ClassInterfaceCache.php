@@ -87,7 +87,7 @@ class ClassInterfaceCache
     {
         $fqn   = $this->getFqn($fqn);
         $alias = $this->getFqn($alias);
-        if(strpos($alias, '\\') !== false && ! is_subclass_of($fqn, $alias)) {
+        if (strpos($alias, '\\') !== false && ! is_subclass_of($fqn, $alias)) {
             throw new InvalidAliasException($fqn, $alias);
         }
         // are we adding an alias for a specific class?

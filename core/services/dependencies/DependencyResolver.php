@@ -60,8 +60,7 @@ abstract class DependencyResolver implements DependencyResolverInterface
         Mirror $mirror,
         ClassInterfaceCache $class_cache,
         EE_Dependency_Map $dependency_map
-    )
-    {
+    ) {
         $this->mirror = $mirror;
         $this->class_cache = $class_cache;
         $this->dependency_map = $dependency_map;

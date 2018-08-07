@@ -22,7 +22,7 @@ class WordPressPostsEditorAddNew extends RouteMatchSpecification
      */
     public function isMatchingRoute()
     {
-        return strpos($this->request->requestUri(),'wp-admin/post-new.php' ) !== false
+        return strpos($this->request->requestUri(), 'wp-admin/post-new.php') !== false
             && $this->request->getRequestParam('post_type', 'post') === 'post';
     }
 }
