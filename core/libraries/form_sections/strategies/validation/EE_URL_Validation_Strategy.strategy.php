@@ -36,7 +36,7 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base
         if ($normalized_value) {
             if (filter_var($normalized_value, FILTER_VALIDATE_URL) === false) {
                 throw new EE_Validation_Error($this->get_validation_error_message(), 'invalid_url');
-            } else {
+            } elseif (apply_filters('FHEE__EE_URL_Validation_Strategy__validate__check_remote_file_exists', false, $this->_input)) {
                 if (! EEH_URL::remote_file_exists(
                     $normalized_value,
                     array(
