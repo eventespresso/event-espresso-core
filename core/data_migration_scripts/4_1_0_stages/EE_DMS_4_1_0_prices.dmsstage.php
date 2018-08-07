@@ -106,6 +106,9 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table
         global $wpdb;
         $this->_pretty_name = __("Prices", "event_espresso");
         $this->_old_table = $wpdb->prefix."events_prices";
+        $this->_extra_where_sql = ' AS p 
+            INNER JOIN ' . $wpdb->prefix . 'events_detail ON p.event_id=e.id
+            WHERE e.event_status!="D"';
         $this->_new_price_table = $wpdb->prefix."esp_price";
         $this->_new_ticket_table = $wpdb->prefix."esp_ticket";
         $this->_new_ticket_price_table = $wpdb->prefix."esp_ticket_price";
