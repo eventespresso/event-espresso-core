@@ -7,7 +7,7 @@ The label value object exposes the singular and plural forms of the labels as th
 
 ## Installation/Loading
 
-The label vo is available via the `eejs` global on its `valueObjects` property.  So you can access it directly via `eejs.valueObjects.Label` provided the bundled `@eventespresso/vo` javascript has been loaded before your script. For instructions on different ways to do this you can [go here](README.md#Usage).
+The label value object is available via the `eejs` global on its `valueObjects` property.  So you can access it directly via `eejs.valueObjects.Label` provided the bundled `@eventespresso/vo` javascript has been loaded before your script. For instructions on different ways to do this you can [go here](README.md#Usage).
 
 ## API
 
@@ -40,15 +40,15 @@ console.log( approvedLabel.plural );
 ### _Properties_
 #### `Label.FORMAT_LOWERCASE`
 
-This static property on `Label` can be used to reference the lowercase format string.
+This static property on `Label` can be used to reference the lower case format string (value is `'lower'`).
 
 #### `Label.FORMAT_UPPERCASE`
 
-This static property on `Label` can be used to reference the uppercase format string.
+This static property on `Label` can be used to reference the upper case format string (value is `'upper'`).
 
 #### `Label.FORMAT_SENTENCE_CASE`
 
-This static property on `Label` can be used to reference the sentence case format string.
+This static property on `Label` can be used to reference the sentence case format string (value is `'sentence'`.
 
 ### Instance
 
@@ -100,7 +100,7 @@ console.log( myNewLabel.plural );
 
 Returns the value for the indicated property formatted in sentence case.  By default returns the value for the singular property, however if you pass in anything but `true` as the argument, then the plural property value is used and returns as sentence case.
 
-> Note, this strips any `-` in dashed labels.  So for instance if your label value was `something-else`, the value returned would be `Something Else`.
+> Note, this strips any `-` and `_` in provided label strings.  So for instance if your label value was `something-else`, the value returned would be `Something Else`.
 
 **Example**:
 
@@ -121,7 +121,7 @@ Returns the value for the indicated property formatted in lower case.
 **Example**:
 
 ```js
-const myLabel = new Label( 'HAPPY', 'conFuSed` );
+const myLabel = new Label( 'HAPPY', 'conFuSed' );
 
 // 'happy'
 console.log( myLabel.asLowerCase() );
@@ -159,10 +159,10 @@ const myLabel = new Label( 'dog', 'DOGS' );
 // Dog
 console.log( myLabel.asFormatted() );
 
-//dogs
+// dogs
 console.log( myLabel.asFormatted( false, Label.FORMAT_LOWERCASE ) );
 
-//DOG
+// DOG
 console.log( myLabel.asFormatted( true, Label.FORMAT_UPPERCASE ) );
 ```
 

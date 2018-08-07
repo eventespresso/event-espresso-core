@@ -47,4 +47,4 @@ EE javascript currently implements the following value objects:
 | ------- | ------------------- |
 [Money](money.md) | Represents an amount of money.
 [Currency](currency.md) | Represents a description of currency.
-[Label](label.md) | Represents a label singular and plural strings.
+[Label](label.md) | Represents singular and plural versions for a string.
