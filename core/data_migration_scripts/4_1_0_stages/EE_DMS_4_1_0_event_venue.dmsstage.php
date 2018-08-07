@@ -42,7 +42,7 @@ class EE_DMS_4_1_0_event_venue extends EE_Data_Migration_Script_Stage
         $rows = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT * FROM $this->_old_table AS ev 
-                    INNER JOIN " . $wpdb->prefix . "event_details AS e ON ev.event_id=e.id
+                    INNER JOIN " . $wpdb->prefix . "events_detail AS e ON ev.event_id=e.id
                     WHERE e.event_status!='D' LIMIT %d,%d",
                 $start_at_record,
                 $num_items
@@ -63,8 +63,8 @@ class EE_DMS_4_1_0_event_venue extends EE_Data_Migration_Script_Stage
     {
         global $wpdb;
         $count = $wpdb->get_var(
-            "SELECT COUNT(id) FROM ".$this->_old_table . " AS ev 
-            INNER JOIN " . $wpdb->prefix . 'event_details AS e ON ev.event_id=e.id
+            "SELECT COUNT(ev.id) FROM ".$this->_old_table . " AS ev 
+            INNER JOIN " . $wpdb->prefix . 'events_detail AS e ON ev.event_id=e.id
             WHERE e.event_status!="D"'
         );
         return $count;

@@ -33,7 +33,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table
         $this->_pretty_name = __("Checkins", "event_espresso");
         $this->_old_table = $wpdb->prefix."events_attendee";
         $this->_extra_where_sql = 'AS att
-            INNER JOIN ' . $wpdb->prefix . 'event_details AS e ON att.event_id=e.id
+            INNER JOIN ' . $wpdb->prefix . 'events_detail AS e ON att.event_id=e.id
             WHERE e.event_status!="D"';
         $this->_new_table = $wpdb->prefix."esp_checkin";
         parent::__construct();
