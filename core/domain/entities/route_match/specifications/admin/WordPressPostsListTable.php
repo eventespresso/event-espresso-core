@@ -20,12 +20,9 @@ class WordPressPostsListTable extends RouteMatchSpecification
      * @since $VID:$
      * @return boolean
      */
-    public function routeMatches()
+    public function isMatchingRoute()
     {
         return strpos($this->request->requestUri(),'wp-admin/edit.php' ) !== false
-            && (
-                $this->request->getRequestParam('post_type') === 'post'
-                || $this->request->requestParamIsSet('post_type') === false
-            );
+            && $this->request->getRequestParam('post_type', 'post') === 'post';
     }
 }
