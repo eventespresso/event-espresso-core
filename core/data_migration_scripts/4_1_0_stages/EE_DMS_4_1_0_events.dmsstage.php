@@ -193,7 +193,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
     public function _count_records_to_migrate()
     {
         global $wpdb;
-        $count = $wpdb->get_var("SELECT COUNT(*) FROM ".$this->_old_table . 'WHERE event_status !="D"');
+        $count = $wpdb->get_var("SELECT COUNT(*) FROM ".$this->_old_table . ' WHERE event_status !="D"');
         return intval($count);
     }
 
