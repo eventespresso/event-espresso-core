@@ -110,7 +110,7 @@ const myLabel = new Label( 'pack of gum', 'packs of gum' );
 // 'Pack Of Gum'
 console.log( myLabel.asSentenceCase() );
 
-// 'Packs of Gum'
+// 'Packs Of Gum'
 console.log( myLabel.asSentenceCase( false ) );
 ```
 
