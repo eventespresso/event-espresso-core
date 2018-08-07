@@ -10,7 +10,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\interfaces\FactoryInterface;
+use EventEspresso\core\domain\services\factories\FactoryInterface;
 use EventEspresso\core\services\locators\LocatorInterface;
 use EventEspresso\core\services\locators\FileLocator;
 use Exception;
