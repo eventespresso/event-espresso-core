@@ -866,7 +866,16 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         $old_slug = EE_Registry::instance()->CFG->core->event_cpt_slug;
         EE_Registry::instance()->CFG->core->event_cpt_slug = empty($this->_req_data['event_cpt_slug'])
             ? EE_Registry::instance()->CFG->core->event_cpt_slug
-            : sanitize_title_with_dashes($this->_req_data['event_cpt_slug']);
+            : sanitize_title_with_dashes(
+                // first sanitize_title, like WP's get_sample_permalink() does
+                sanitize_title(
+                    $this->_req_data['event_cpt_slug'],
+                    esc_html__('events', 'event_espresso'),
+                    'save'
+                ),
+                '',
+                'save'
+            );
         $what = 'Template Settings';
         $success = $this->_update_espresso_configuration(
             $what,
