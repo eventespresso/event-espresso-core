@@ -12,13 +12,20 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base
 {
 
     /**
-     * @param null $validation_error_message
+     * @var @boolean whether we should check if the file exists or not
      */
-    public function __construct($validation_error_message = null)
+    protected $check_file_exists;
+
+    /**
+     * @param null $validation_error_message
+     * @param boolean $check_file_exists
+     */
+    public function __construct($validation_error_message = null, $check_file_exists = false)
     {
         if (! $validation_error_message) {
             $validation_error_message = __("Please enter a valid URL. Eg https://eventespresso.com", "event_espresso");
         }
+        $this->check_file_exists = $check_file_exists;
         parent::__construct($validation_error_message);
     }
 
@@ -36,7 +43,7 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base
         if ($normalized_value) {
             if (filter_var($normalized_value, FILTER_VALIDATE_URL) === false) {
                 throw new EE_Validation_Error($this->get_validation_error_message(), 'invalid_url');
-            } elseif (apply_filters('FHEE__EE_URL_Validation_Strategy__validate__check_remote_file_exists', false, $this->_input)) {
+            } elseif (apply_filters('FHEE__EE_URL_Validation_Strategy__validate__check_remote_file_exists', $this->check_file_exists, $this->_input)) {
                 if (! EEH_URL::remote_file_exists(
                     $normalized_value,
                     array(
