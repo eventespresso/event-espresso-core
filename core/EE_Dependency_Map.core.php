@@ -826,9 +826,13 @@ class EE_Dependency_Map
         $request = &$this->request;
         $response = &$this->response;
         $legacy_request = &$this->legacy_request;
+        $self = &$this;
         // $loader = &$this->loader;
         $this->_class_loaders = array(
             // load_core
+            'EE_Dependency_Map'                            => function () use (&$self) {
+                return $self;
+            },
             'EE_Capabilities'                              => 'load_core',
             'EE_Encryption'                                => 'load_core',
             'EE_Front_Controller'                          => 'load_core',
@@ -953,7 +957,6 @@ class EE_Dependency_Map
             'EventEspresso\core\services\loaders\LoaderInterface'                          => 'EventEspresso\core\services\loaders\Loader',
             'CommandFactoryInterface'                                                      => 'EventEspresso\core\services\commands\CommandFactoryInterface',
             'EventEspresso\core\services\commands\CommandFactoryInterface'                 => 'EventEspresso\core\services\commands\CommandFactory',
-            'EventEspresso\core\domain\services\session\SessionIdentifierInterface'        => 'EE_Session',
             'EmailValidatorInterface'                                                      => 'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface',
             'EventEspresso\core\domain\services\validation\email\EmailValidatorInterface'  => 'EventEspresso\core\domain\services\validation\email\EmailValidationService',
             'NoticeConverterInterface'                                                     => 'EventEspresso\core\services\notices\NoticeConverterInterface',
