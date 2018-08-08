@@ -20,7 +20,6 @@ class RouteMatchSpecificationTest extends RouteMatchSpecificationTestBase
             'EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock',
             $this->getRouteMatchSpecification()
         );
-
     }
 
     /**
