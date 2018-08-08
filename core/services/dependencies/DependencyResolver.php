@@ -41,12 +41,12 @@ abstract class DependencyResolver implements DependencyResolverInterface
     /**
      * @var ClassAlias[] $aliases
      */
-    private $aliases = array();
+    protected $aliases = array();
 
     /**
      * @var array $namespace_roots
      */
-    private $namespace_roots = array();
+    protected $namespace_roots = array();
 
 
     /**
@@ -97,7 +97,7 @@ abstract class DependencyResolver implements DependencyResolverInterface
      */
     public function addAlias(ClassAlias $alias)
     {
-        $this->aliases[ $alias->fqcn() ] = $alias;
+        $this->aliases[ $alias->alias() ] = $alias;
     }
 
     /**
@@ -107,7 +107,7 @@ abstract class DependencyResolver implements DependencyResolverInterface
     public function resolveAlias($param_fqcn)
     {
         return isset($this->aliases[ $param_fqcn ])
-            ? $this->aliases[ $param_fqcn ]->alias()
+            ? $this->aliases[ $param_fqcn ]->fqcn()
             : $this->classCache()->getFqnForAlias($param_fqcn);
     }
 
