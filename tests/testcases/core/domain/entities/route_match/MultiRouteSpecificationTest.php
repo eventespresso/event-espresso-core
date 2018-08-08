@@ -54,7 +54,12 @@ class MultiRouteSpecificationTest extends MultiRouteSpecificationTestBase
      */
     public function test__constructWithBadParameters()
     {
-        $this->expectException('EventEspresso\core\exceptions\InvalidEntityException');
+        $exception = 'EventEspresso\core\exceptions\InvalidEntityException';
+        if (method_exists($this, 'expectException')) {
+            $this->expectException($exception);
+        } elseif (method_exists($this, 'setExpectedException')) {
+            $this->setExpectedException($exception);
+        }
         $this->assertInstanceOf(
             'EventEspresso\tests\mocks\core\domain\entities\route_match\MultiRouteSpecificationMock',
             $this->getMultiRouteSpecification(

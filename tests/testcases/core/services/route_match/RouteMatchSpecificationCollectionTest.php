@@ -81,7 +81,12 @@ class RouteMatchSpecificationCollectionTest extends PHPUnit_Framework_TestCase
         $oof_ouch_owie_fqcn = 'EventEspresso\tests\mocks\core\services\dependencies\composites\Oof';
         $this->assertFalse($collection->has($oof_ouch_owie_fqcn));
         $oof_ouch_owie = new Oof($request);
-        $this->expectException('EventEspresso\core\exceptions\InvalidEntityException');
+        $exception = 'EventEspresso\core\exceptions\InvalidEntityException';
+        if (method_exists($this, 'expectException')) {
+            $this->expectException($exception);
+        } elseif (method_exists($this, 'setExpectedException')) {
+            $this->setExpectedException($exception);
+        }
         $collection->add($oof_ouch_owie);
         $this->assertFalse($collection->has($oof_ouch_owie_fqcn));
     }

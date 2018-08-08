@@ -58,7 +58,12 @@ class ClassAliasTest extends PHPUnit_Framework_TestCase
      */
     public function test__constructWithBadParameters()
     {
-        $this->expectException('EventEspresso\core\exceptions\InvalidAliasException');
+        $exception = 'EventEspresso\core\exceptions\InvalidAliasException';
+        if (method_exists($this, 'expectException')) {
+            $this->expectException($exception);
+        } elseif (method_exists($this, 'setExpectedException')) {
+            $this->setExpectedException($exception);
+        }
         $this->assertInstanceOf(
             'EventEspresso\core\services\dependencies\ClassAlias',
             $this->getClassAlias($this->fqcn, $this->alias)
