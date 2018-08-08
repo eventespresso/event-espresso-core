@@ -1091,13 +1091,14 @@ class EE_Register_Addon implements EEI_Plugin_API
     {
         // load PUE client
         require_once EE_THIRD_PARTY . 'pue' . DS . 'pue-client.php';
+        $license_server = defined('PUE_UPDATES_ENDPOINT') ? PUE_UPDATES_ENDPOINT : 'https://eventespresso.com';
         // cycle thru settings
         foreach (self::$_settings as $settings) {
             if (! empty($settings['pue_options'])) {
                 // initiate the class and start the plugin update engine!
                 new PluginUpdateEngineChecker(
                     // host file URL
-                    'https://eventespresso.com',
+                    $license_server,
                     // plugin slug(s)
                     array(
                         'premium'    => array('p' => $settings['pue_options']['pue_plugin_slug']),
