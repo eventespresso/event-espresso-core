@@ -31,6 +31,7 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 - Fixed Authorize.net AIM so payment currency is sent ([591](https://github.com/eventespresso/event-espresso-core/pull/591))
 - Fixed DuplicateCollectionIdentifierException errors when converting old PersistentAdminNotice Fixes ([505](https://github.com/eventespresso/event-espresso-core/pull/505))
 - Fixes a syntax issue inside `EE_Config::register_ee_widget()` ([608](https://github.com/eventespresso/event-espresso-core/pull/608))
+- Namespace `site-license-key` in requests (to `ee-site-license-key`) to hopefully fix issue some users see with multiple pue license key requests happening. ([633](https://github.com/eventespresso/event-espresso-core/pull/633))
 
 ### Changed
 
