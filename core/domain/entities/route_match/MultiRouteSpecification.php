@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\entities\route_match;
 
+use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
@@ -25,9 +26,18 @@ abstract class MultiRouteSpecification extends RouteMatchSpecification
      *
      * @param RouteMatchSpecificationInterface[] $specifications
      * @param RequestInterface                   $request
+     * @throws InvalidEntityException
      */
     public function __construct(array $specifications, RequestInterface $request)
     {
+        foreach ($specifications as $specification) {
+            if(! $specification instanceof RouteMatchSpecificationInterface) {
+                throw new InvalidEntityException(
+                    $specification,
+                    'EventEspresso\core\domain\entities\route_match\RouteMatchSpecificationInterface'
+                );
+            }
+        }
         $this->specifications = $specifications;
         parent::__construct($request);
     }
