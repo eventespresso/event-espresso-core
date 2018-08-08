@@ -10,17 +10,6 @@ namespace EventEspresso\tests\testcases\core\domain\entities\route_match;
  */
 class RouteMatchSpecificationTest extends RouteMatchSpecificationTestBase
 {
-    /**
-     * @since $VID:$
-     * @throws \PHPUnit\Framework\Exception
-     */
-    public function test__construct()
-    {
-        $this->assertInstanceOf(
-            'EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock',
-            $this->getRouteMatchSpecification()
-        );
-    }
 
     /**
      * @since $VID:$

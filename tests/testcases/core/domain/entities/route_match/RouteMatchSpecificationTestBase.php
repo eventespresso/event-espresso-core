@@ -41,5 +41,17 @@ class RouteMatchSpecificationTestBase extends PHPUnit_Framework_TestCase
     ) {
         return new Request($get, $post, $cookie, $server);
     }
+
+    /**
+     * @since $VID:$
+     * @throws \PHPUnit\Framework\Exception
+     */
+    public function test__construct()
+    {
+        $this->assertInstanceOf(
+            'EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock',
+            $this->getRouteMatchSpecification()
+        );
+    }
 }
 // location:  /testcases/core/domain/entities/route_match/RouteMatchSpecificationTest.php

@@ -52,4 +52,25 @@ class MultiRouteSpecificationTestBase extends RouteMatchSpecificationTestBase
         $route_match_specification->setValue('3');
         return $route_match_specification;
     }
+
+    /**
+     * @since $VID:$
+     * @throws \PHPUnit\Framework\Exception
+     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     */
+    public function testRouteConstructors()
+    {
+        $this->assertInstanceOf(
+            'EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock',
+            $this->getRouteMatchOne()
+        );
+        $this->assertInstanceOf(
+            'EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock',
+            $this->getRouteMatchTwo()
+        );
+        $this->assertInstanceOf(
+            'EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock',
+            $this->getRouteMatchThree()
+        );
+    }
 }
