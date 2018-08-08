@@ -23,7 +23,7 @@ class RouteMatchSpecificationDependencyResolver extends DependencyResolver
 {
 
     /**
-     * Used to configure and/or setup any aliases or recursions required by the DependencyResolver
+     * Used to configure and/or setup any aliases or namespace roots required by the DependencyResolver
      *
      * @since $VID:$
      * @throws InvalidAliasException
@@ -36,6 +36,6 @@ class RouteMatchSpecificationDependencyResolver extends DependencyResolver
                 'EventEspresso\core\services\request\Request'
             )
         );
-        $this->addRecursion('EventEspresso\core\domain\entities\route_match\specifications');
+        $this->addNamespaceRoot('EventEspresso\core\domain\entities\route_match\specifications');
     }
 }

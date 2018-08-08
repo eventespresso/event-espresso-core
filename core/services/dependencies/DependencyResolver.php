@@ -44,9 +44,9 @@ abstract class DependencyResolver implements DependencyResolverInterface
     private $aliases = array();
 
     /**
-     * @var array $recursions
+     * @var array $namespace_roots
      */
-    private $recursions = array();
+    private $namespace_roots = array();
 
 
     /**
@@ -112,7 +112,7 @@ abstract class DependencyResolver implements DependencyResolverInterface
     }
 
     /**
-     * Primarily used to indicate the base namespace for composite objects
+     * Primarily used to indicate the namespace root for composite objects
      * so that dependencies requiring the same DependencyResolver can be acquired
      * for example:
      * Vendor\path\to\class\A, Vendor\path\to\class\B, and Vendor\path\to\class\C
@@ -122,16 +122,16 @@ abstract class DependencyResolver implements DependencyResolverInterface
      * and needs both of those dependencies resolved, which would therefore require
      * the use of the same DependencyResolver.
      *
-     * By specifying a base namespace  of "Vendor\path\to\",
+     * By specifying a namespace root of "Vendor\path\to\",
      * then all classes that are descendants of that namespace
      * will use DependencyResolver to acquire the classes they need
      *
-     * @param string $base_namespace Partial namespace used for detecting other classes
+     * @param string $namespace_root Partial namespace used for detecting other classes
      *                               that should employ this same DependencyResolver
      */
-    public function addRecursion($base_namespace)
+    public function addNamespaceRoot($namespace_root)
     {
-        $this->recursions[] = $base_namespace;
+        $this->namespace_roots[] = $namespace_root;
     }
 
     /**
@@ -144,8 +144,8 @@ abstract class DependencyResolver implements DependencyResolverInterface
      */
     public function dependencyRecursionExists($param_fqcn)
     {
-        foreach ($this->recursions as $recursion) {
-            if (strpos($param_fqcn, $recursion) !== false) {
+        foreach ($this->namespace_roots as $namespace_root) {
+            if (strpos($param_fqcn, $namespace_root) !== false) {
                 return true;
             }
         }
