@@ -221,12 +221,12 @@ const STATUS_TRANSLATION_MAP_DATETIME = {
  */
 const STATUS_TRANSLATION_MAP_CHECKIN = {
 	[ CHECKIN_STATUS_ID.STATUS_CHECKED_IN ]: new Label(
-		__( 'check in', 'event_espresso' ),
-		__( 'checked in', 'event_espresso' )
+		__( 'check-in', 'event_espresso' ),
+		__( 'check-ins', 'event_espresso' )
 	),
 	[ CHECKIN_STATUS_ID.STATUS_CHECKED_OUT ]: new Label(
-		__( 'check out', 'event_espresso' ),
-		__( 'checked out', 'event_espresso' )
+		__( 'check-out', 'event_espresso' ),
+		__( 'check-outs', 'event_espresso' )
 	),
 	[ CHECKIN_STATUS_ID.STATUS_CHECKED_NEVER ]: Label.fromSameSingleAndPlural(
 		__( 'never checked in', 'event_espresso' )
