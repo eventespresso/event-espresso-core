@@ -24,6 +24,7 @@ class WordPressPostsEditor extends MatchAnyRouteSpecification
      * @param WordPressPostsEditorEdit   $edit_event_route_match
      * @param WordPressPostsEditorAddNew $create_event_route_match
      * @param RequestInterface           $request
+     * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */
     public function __construct(
         WordPressPostsEditorEdit $edit_event_route_match,

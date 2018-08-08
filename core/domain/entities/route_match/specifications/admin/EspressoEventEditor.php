@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\route_match\specifications\admin;
 
 use EventEspresso\core\domain\entities\route_match\MatchAnyRouteSpecification;
+use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
@@ -24,6 +25,7 @@ class EspressoEventEditor extends MatchAnyRouteSpecification
      * @param EspressoEventEditorEdit   $edit_event_route_match
      * @param EspressoEventEditorAddNew $create_event_route_match
      * @param RequestInterface          $request
+     * @throws InvalidEntityException
      */
     public function __construct(
         EspressoEventEditorEdit $edit_event_route_match,
