@@ -31,7 +31,7 @@ abstract class MultiRouteSpecification extends RouteMatchSpecification
     public function __construct(array $specifications, RequestInterface $request)
     {
         foreach ($specifications as $specification) {
-            if(! $specification instanceof RouteMatchSpecificationInterface) {
+            if (! $specification instanceof RouteMatchSpecificationInterface) {
                 throw new InvalidEntityException(
                     $specification,
                     'EventEspresso\core\domain\entities\route_match\RouteMatchSpecificationInterface'
