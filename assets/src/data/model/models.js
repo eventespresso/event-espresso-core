@@ -5,10 +5,10 @@ import * as statusModel from './status';
 import * as ticketModel from './ticket';
 import * as checkInModel from './checkin';
 export {
+	checkInModel,
 	dateTimeModel,
 	eventModel,
 	registrationModel,
 	statusModel,
 	ticketModel,
-	checkInModel,
 };
