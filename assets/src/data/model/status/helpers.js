@@ -6,6 +6,7 @@ import Label from '../../../vo/label';
 import { EVENT_STATUS_ID } from '../event';
 import { TICKET_STATUS_ID } from '../ticket';
 import { DATETIME_STATUS_ID } from '../datetime';
+import { CHECKIN_STATUS_ID } from '../checkin';
 
 /**
  * External imports
@@ -214,6 +215,25 @@ const STATUS_TRANSLATION_MAP_DATETIME = {
 };
 
 /**
+ * Translation map for checkin statuses
+ *
+ * @type {{}}
+ */
+const STATUS_TRANSLATION_MAP_CHECKIN = {
+	[ CHECKIN_STATUS_ID.STATUS_CHECKED_IN ]: new Label(
+		__( 'check-in', 'event_espresso' ),
+		__( 'check-ins', 'event_espresso' )
+	),
+	[ CHECKIN_STATUS_ID.STATUS_CHECKED_OUT ]: new Label(
+		__( 'check-out', 'event_espresso' ),
+		__( 'check-outs', 'event_espresso' )
+	),
+	[ CHECKIN_STATUS_ID.STATUS_CHECKED_NEVER ]: Label.fromSameSingleAndPlural(
+		__( 'never checked in', 'event_espresso' )
+	),
+};
+
+/**
  * Combined translation map for all statuses.
  * @type {{}}
  */
@@ -226,6 +246,7 @@ const STATUS_TRANSLATION_MAP_ALL = {
 	...STATUS_TRANSLATION_MAP_EVENT,
 	...STATUS_TRANSLATION_MAP_TICKET,
 	...STATUS_TRANSLATION_MAP_DATETIME,
+	...STATUS_TRANSLATION_MAP_CHECKIN,
 	[ status.UNKNOWN_STATUS_ID ]: Label.fromSameSingleAndPlural(
 		__( 'unknown', 'event_espresso' )
 	),
