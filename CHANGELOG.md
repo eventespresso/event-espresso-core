@@ -31,7 +31,7 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 - Fixed Authorize.net AIM so payment currency is sent ([591](https://github.com/eventespresso/event-espresso-core/pull/591))
 - Fixed DuplicateCollectionIdentifierException errors when converting old PersistentAdminNotice Fixes ([505](https://github.com/eventespresso/event-espresso-core/pull/505))
 - Fixes a syntax issue inside `EE_Config::register_ee_widget()` ([608](https://github.com/eventespresso/event-espresso-core/pull/608))
-
+- Fixed URL validation when URL was for a site denying access to our HTTP client ([628](https://github.com/eventespresso/event-espresso-core/pull/628))
 ### Changed
 
 - Updated js build process to use Babel 7 ([578](https://github.com/eventespresso/event-espresso-core/pull/578))
