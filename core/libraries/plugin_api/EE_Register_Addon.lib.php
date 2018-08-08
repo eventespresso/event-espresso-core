@@ -1108,7 +1108,7 @@ class EE_Register_Addon implements EEI_Plugin_API
                         'apikey'            => EE_Registry::instance()->NET_CFG->core->site_license_key,
                         'lang_domain'       => 'event_espresso',
                         'checkPeriod'       => $settings['pue_options']['checkPeriod'],
-                        'option_key'        => 'site_license_key',
+                        'option_key'        => 'ee_site_license_key',
                         'options_page_slug' => 'event_espresso',
                         'plugin_basename'   => $settings['pue_options']['plugin_basename'],
                         // if use_wp_update is TRUE it means you want FREE versions of the plugin to be updated from WP
