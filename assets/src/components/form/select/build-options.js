@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, isFunction, isUndefined, reduce } from 'lodash';
+import { isEmpty, isFunction, isUndefined, reduce, isArray } from 'lodash';
 import warning from 'warning';
 
 /**
@@ -46,7 +46,18 @@ const buildOptions = (
 		return [];
 	}
 	// if requested mapSelection exists then use that
-	const map = optionsEntityMap[ mapSelection ];
+	let map = optionsEntityMap[ mapSelection ];
+
+	// if map is function then simply pass through entities to that function
+	if ( isFunction( map ) ) {
+		const options = map( entities );
+		if ( isArray( options ) ) {
+			return options;
+		}
+		// set map to empty object because the function on it returned something
+		// other than an array
+		map = {};
+	}
 	return ! isEmpty( map ) ?
 		reduce(
 			entities,
