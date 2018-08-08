@@ -20,7 +20,7 @@ describe( 'mapOrderBy()', () => {
 
 describe( 'whereConditions()', () => {
 	it( 'returns expected default for empty object passed in', () => {
-		expect( whereConditions( {} ) ).toEqual('');
+		expect( whereConditions( {} ) ).toEqual( '' );
 	} );
 	it( 'returns expected string for values passed in', () => {
 		const testObject = {
