@@ -3,7 +3,7 @@
  */
 import { isUndefined } from 'lodash';
 import PropTypes from 'prop-types';
-import { prettyStatus } from '@eventespresso/model';
+import { prettyStatus } from '../status';
 
 /**
  * Internal imports
