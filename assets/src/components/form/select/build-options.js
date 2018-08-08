@@ -57,6 +57,12 @@ const buildOptions = (
 		// set map to empty object because the function on it returned something
 		// other than an array
 		map = {};
+		warning(
+			false,
+			'The optionsEntityMap for ' + mapSelection + 'was a function but' +
+			' it did not return an array of options.  Make sure the function' +
+			' returns an array of simple objects with label and value keys.'
+		);
 	}
 	return ! isEmpty( map ) ?
 		reduce(
