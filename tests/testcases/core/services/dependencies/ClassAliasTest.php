@@ -7,7 +7,6 @@ use PHPUnit_Framework_TestCase;
 
 /**
  * Class ClassAliasTest
- * Description
  *
  * @package EventEspresso\tests\testcases\core\services\dependencies
  * @author  Brent Christensen
@@ -17,14 +16,19 @@ class ClassAliasTest extends PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var string $alias
+     * @var string $interface
      */
-    private $alias = 'EventEspresso\core\domain\entities\route_match\RouteMatchSpecificationInterface';
+    private $interface = 'EventEspresso\core\domain\entities\route_match\RouteMatchSpecificationInterface';
 
     /**
-     * @var string $fqcn
+     * @var string $base_class
      */
-    private $fqcn = 'EventEspresso\core\domain\entities\route_match\RouteMatchSpecification';
+    private $base_class = 'EventEspresso\core\domain\entities\route_match\RouteMatchSpecification';
+
+    /**
+     * @var string $child_class_fqcn
+     */
+    private $child_class_fqcn = 'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditorAddNew';
 
     /**
      * @param $alias
@@ -47,7 +51,7 @@ class ClassAliasTest extends PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf(
             'EventEspresso\core\services\dependencies\ClassAlias',
-            $this->getClassAlias($this->alias, $this->fqcn)
+            $this->getClassAlias($this->interface, $this->base_class)
         );
     }
 
@@ -64,10 +68,7 @@ class ClassAliasTest extends PHPUnit_Framework_TestCase
         } elseif (method_exists($this, 'setExpectedException')) {
             $this->setExpectedException($exception);
         }
-        $this->assertInstanceOf(
-            'EventEspresso\core\services\dependencies\ClassAlias',
-            $this->getClassAlias($this->fqcn, $this->alias)
-        );
+        $this->getClassAlias($this->base_class, $this->interface);
     }
 
     /**
@@ -75,8 +76,8 @@ class ClassAliasTest extends PHPUnit_Framework_TestCase
      */
     public function testAlias()
     {
-        $class_alias = $this->getClassAlias($this->alias, $this->fqcn);
-        $this->assertEquals($this->alias, $class_alias->alias());
+        $class_alias = $this->getClassAlias($this->interface, $this->base_class);
+        $this->assertEquals($this->interface, $class_alias->alias());
     }
 
     /**
@@ -84,9 +85,36 @@ class ClassAliasTest extends PHPUnit_Framework_TestCase
      */
     public function testFqcn()
     {
-        $class_alias = $this->getClassAlias($this->alias, $this->fqcn);
-        $this->assertEquals($this->fqcn, $class_alias->fqcn());
+        $class_alias = $this->getClassAlias($this->interface, $this->base_class);
+        $this->assertEquals($this->base_class, $class_alias->fqcn());
+    }
+
+    /**
+     * @throws \EventEspresso\core\exceptions\InvalidAliasException
+     */
+    public function testChildFqcn()
+    {
+        $class_alias = $this->getClassAlias($this->base_class, $this->child_class_fqcn);
+        $this->assertEquals($this->child_class_fqcn, $class_alias->fqcn());
+    }
+
+    /**
+     * @since $VID:$
+     * @throws \EventEspresso\core\exceptions\InvalidAliasException
+     * @throws \PHPUnit\Framework\Exception
+     */
+    public function test__constructWithNonSubClass()
+    {
+        $exception = 'EventEspresso\core\exceptions\InvalidAliasException';
+        if (method_exists($this, 'expectException')) {
+            $this->expectException($exception);
+        } elseif (method_exists($this, 'setExpectedException')) {
+            $this->setExpectedException($exception);
+        }
+        $this->getClassAlias(
+            $this->child_class_fqcn,
+            'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditorEdit'
+        );
     }
 }
-
 // location: /testcases/core/services/dependencies/ClassAliasTest.php
