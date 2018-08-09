@@ -5,8 +5,10 @@ namespace EventEspresso\core\services\dependencies;
 use EventEspresso\core\exceptions\InvalidAliasException;
 
 /**
- * Class ClassAlias
- * Simple value object for representing a class alias such as an interface
+ * ClassAlias
+ * Simple value object for representing
+ * a class alias such as an interface or base class
+ * and the actual class that should be utilized instead
  *
  * @package EventEspresso\core\services\dependencies
  * @author  Brent Christensen
@@ -16,17 +18,18 @@ class ClassAlias
 {
 
     /**
-     * @var string $alias
+     * @var string $alias   an interface or base class representing what object
+     *                      can be utilized by another object and/or function
      */
     private $alias;
 
     /**
-     * @var string $fqcn
+     * @var string $fqcn the actual class that should be substituted for the alias above
      */
     private $fqcn;
 
     /**
-     * DependencyAlias constructor.
+     * ClassAlias constructor.
      *
      * @param string $alias Interface specified by implementing class
      * @param string $fqcn  Concrete class that satisfies interface
