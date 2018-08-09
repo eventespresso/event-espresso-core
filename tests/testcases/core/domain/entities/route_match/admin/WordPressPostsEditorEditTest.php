@@ -22,10 +22,10 @@ class WordPressPostsEditorEditTest extends RouteMatchSpecificationTestBase
      * @return WordPressPostsEditorEdit
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */
-    public function getMultiRouteSpecification(array $request_params, array $server)
+    public function getMultiRouteSpecification(array $request_params, array $post_params, array $server)
     {
         return new WordPressPostsEditorEdit(
-            $this->getRequest($request_params, array(), array(), $server)
+            $this->getRequest($request_params, $post_params, array(), $server)
         );
     }
 
@@ -36,21 +36,25 @@ class WordPressPostsEditorEditTest extends RouteMatchSpecificationTestBase
      */
     public function testIsMatchingRoute()
     {
+        // with $_GET params
         $route_match_specification = $this->getMultiRouteSpecification(
             array(
                 'post_type' => 'post',
                 'action' => 'edit',
             ),
+            array(),
             array('REQUEST_URI' => 'wp-admin/post.php')
         );
         $this->assertTrue($route_match_specification->isMatchingRoute());
         $route_match_specification = $this->getMultiRouteSpecification(
             array('post_type' => 'post'),
+            array(),
             array('REQUEST_URI' => 'wp-admin/post.php')
         );
         $this->assertFalse($route_match_specification->isMatchingRoute());
         $route_match_specification = $this->getMultiRouteSpecification(
             array('action' => 'edit'),
+            array(),
             array('REQUEST_URI' => 'wp-admin/post-new.php')
         );
         $this->assertFalse($route_match_specification->isMatchingRoute());
@@ -59,6 +63,7 @@ class WordPressPostsEditorEditTest extends RouteMatchSpecificationTestBase
                 'post_type' => 'custom-post-type',
                 'action' => 'edit',
             ),
+            array(),
             array('REQUEST_URI' => 'wp-admin/post.php')
         );
         $this->assertFalse($route_match_specification->isMatchingRoute());
@@ -67,8 +72,71 @@ class WordPressPostsEditorEditTest extends RouteMatchSpecificationTestBase
                 'post_type' => 'post',
                 'action' => 'edit',
             ),
+            array(),
+            array('REQUEST_URI' => 'wp-admin/telephone-post.php')
+        );
+        $this->assertFalse($route_match_specification->isMatchingRoute());
+
+        // with $_POST params
+        $route_match_specification = $this->getMultiRouteSpecification(
+            array(),
+            array(
+                'post_type' => 'post',
+                'action' => 'edit',
+            ),
+            array('REQUEST_URI' => 'wp-admin/post.php')
+        );
+        $this->assertTrue($route_match_specification->isMatchingRoute());
+        $route_match_specification = $this->getMultiRouteSpecification(
+            array(),
+            array('post_type' => 'post'),
+            array('REQUEST_URI' => 'wp-admin/post.php')
+        );
+        $this->assertFalse($route_match_specification->isMatchingRoute());
+        $route_match_specification = $this->getMultiRouteSpecification(
+            array(),
+            array('action' => 'edit'),
+            array('REQUEST_URI' => 'wp-admin/post-new.php')
+        );
+        $this->assertFalse($route_match_specification->isMatchingRoute());
+        $route_match_specification = $this->getMultiRouteSpecification(
+            array(),
+            array(
+                'post_type' => 'custom-post-type',
+                'action' => 'edit',
+            ),
+            array('REQUEST_URI' => 'wp-admin/post.php')
+        );
+        $this->assertFalse($route_match_specification->isMatchingRoute());
+        $route_match_specification = $this->getMultiRouteSpecification(
+            array(),
+            array(
+                'post_type' => 'post',
+                'action' => 'edit',
+            ),
+            array('REQUEST_URI' => 'wp-admin/telephone-post.php')
+        );
+        $this->assertFalse($route_match_specification->isMatchingRoute());
+
+        // with $_GET && $_POST params
+        $route_match_specification = $this->getMultiRouteSpecification(
+            array('action' => 'edit'),
+            array('post_type' => 'post'),
+            array('REQUEST_URI' => 'wp-admin/post.php')
+        );
+        $this->assertTrue($route_match_specification->isMatchingRoute());
+        $route_match_specification = $this->getMultiRouteSpecification(
+            array('action' => 'edit'),
+            array('post_type' => 'custom-post-type'),
+            array('REQUEST_URI' => 'wp-admin/post.php')
+        );
+        $this->assertFalse($route_match_specification->isMatchingRoute());
+        $route_match_specification = $this->getMultiRouteSpecification(
+            array('action' => 'edit'),
+            array('post_type' => 'post'),
             array('REQUEST_URI' => 'wp-admin/telephone-post.php')
         );
         $this->assertFalse($route_match_specification->isMatchingRoute());
     }
 }
+// location: testcases/core/domain/entities/route_match/admin/WordPressPostsEditorEditTest.php
