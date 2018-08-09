@@ -5,7 +5,7 @@ namespace EventEspresso\tests\mocks\core\services\dependencies\composites;
 /**
  * OofOuchOwieInterface
  *
- * @package EventEspresso\tests\mocks\core\services\dependencies\resolvers
+ * @package EventEspresso\tests\mocks\core\services\dependencies\composites;
  * @author  Brent Christensen
  * @since   $VID:$
  */

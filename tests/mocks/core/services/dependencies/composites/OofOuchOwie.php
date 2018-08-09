@@ -7,7 +7,7 @@ use EventEspresso\core\services\request\RequestInterface;
 /**
  * OofOuchOwieDecorator
  *
- * @package EventEspresso\tests\mocks\core\services\dependencies\resolvers
+ * @package EventEspresso\tests\mocks\core\services\dependencies\composites
  * @author  Brent Christensen
  * @since   $VID:$
  */
@@ -24,7 +24,7 @@ abstract class OofOuchOwie implements OofOuchOwieInterface
     protected $request;
 
     /**
-     * @param OofOuchOwieInterface $specification
+     * @param RequestInterface $specification
      */
     public function __construct(RequestInterface $request)
     {
