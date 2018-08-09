@@ -821,31 +821,24 @@ class EE_Dependency_Map
      */
     protected function _register_core_class_loaders()
     {
-        // for PHP5.3 compat, we need to register any properties called here in a variable because `$this` cannot
-        // be used in a closure.
-        $request = &$this->request;
-        $response = &$this->response;
-        $legacy_request = &$this->legacy_request;
-        $self = &$this;
-        // $loader = &$this->loader;
         $this->_class_loaders = array(
             // load_core
-            'EE_Dependency_Map'                            => function () use (&$self) {
-                return $self;
+            'EE_Dependency_Map'                            => function () {
+                return $this;
             },
             'EE_Capabilities'                              => 'load_core',
             'EE_Encryption'                                => 'load_core',
             'EE_Front_Controller'                          => 'load_core',
             'EE_Module_Request_Router'                     => 'load_core',
             'EE_Registry'                                  => 'load_core',
-            'EE_Request'                                   => function () use (&$legacy_request) {
-                return $legacy_request;
+            'EE_Request'                                   => function () {
+                return $this->legacy_request;
             },
-            'EventEspresso\core\services\request\Request'  => function () use (&$request) {
-                return $request;
+            'EventEspresso\core\services\request\Request'  => function () {
+                return $this->request;
             },
-            'EventEspresso\core\services\request\Response' => function () use (&$response) {
-                return $response;
+            'EventEspresso\core\services\request\Response' => function () {
+                return $this->response;
             },
             'EE_Base'                                      => 'load_core',
             'EE_Request_Handler'                           => 'load_core',
