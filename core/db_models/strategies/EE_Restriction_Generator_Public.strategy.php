@@ -25,7 +25,7 @@ class EE_Restriction_Generator_Public extends EE_Restriction_Generator_Base
         if (EE_Restriction_Generator_Base::is_cap($this->model(), $this->action())) {
             if ($this->model() instanceof EEM_CPT_Base) {
                 $restrictions[ EE_Restriction_Generator_Base::get_cap_name($this->model(), $this->action()) ] = new EE_Default_Where_Conditions(
-                    array( 'status' => 'publish' )
+                    $this->addPublishedPostConditions()
                 );
             } elseif ($this->model() instanceof EEM_Soft_Delete_Base) {
                 $restrictions[ EE_Restriction_Generator_Base::get_cap_name($this->model(), $this->action()) ] = new EE_Default_Where_Conditions(
@@ -40,9 +40,10 @@ class EE_Restriction_Generator_Public extends EE_Restriction_Generator_Base
                     // then if they don't have the others cap, AT MOST show them their own and other published ones
                     $restrictions[ EE_Restriction_Generator_Base::get_cap_name($this->model(), $this->action() . '_others') ] = new EE_Default_Where_Conditions(
                         array(
-                            'OR*' . EE_Restriction_Generator_Base::get_cap_name($this->model(), $this->action() . '_others') => array(
-                                EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
-                                'status' => 'publish'
+                            'OR*' . EE_Restriction_Generator_Base::get_cap_name($this->model(), $this->action() . '_others') => $this->addPublishedPostConditions(
+                                array(
+                                    EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
+                                )
                             )
                         )
                     );
@@ -64,9 +65,12 @@ class EE_Restriction_Generator_Public extends EE_Restriction_Generator_Base
                     // if they have basic and others, but not private, restrict them to see theirs and others' that aren't private
                     $restrictions[ EE_Restriction_Generator_Base::get_cap_name($this->model(), $this->action() . '_private') ] = new EE_Default_Where_Conditions(
                         array(
-                            'OR*' . EE_Restriction_Generator_Base::get_cap_name($this->model(), $this->action() . '_private') => array(
-                                EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
-                                'status' => array( '!=', 'private' )
+                            'OR*' . EE_Restriction_Generator_Base::get_cap_name($this->model(), $this->action() . '_private') => $this->addPublishedPostConditions(
+                                array(
+                                    EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
+                                ),
+                                false,
+                                ''
                             )
                         )
                     );

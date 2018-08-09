@@ -4,7 +4,6 @@ namespace EventEspresso\core\services\notifications;
 
 use DomainException;
 use EE_Error;
-use EE_Request;
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\domain\services\capabilities\CapabilitiesChecker;
 use EventEspresso\core\exceptions\InsufficientPermissionsException;
@@ -13,7 +12,9 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
+use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 use Exception;
 use InvalidArgumentException;
 
@@ -51,7 +52,7 @@ class PersistentAdminNoticeManager
     private $capabilities_checker;
 
     /**
-     * @var EE_Request $request
+     * @var RequestInterface $request
      */
     private $request;
 
@@ -61,10 +62,10 @@ class PersistentAdminNoticeManager
      *
      * @param string              $return_url where to  redirect to after dismissing notices
      * @param CapabilitiesChecker $capabilities_checker
-     * @param EE_Request          $request
+     * @param RequestInterface          $request
      * @throws InvalidDataTypeException
      */
-    public function __construct($return_url = '', CapabilitiesChecker $capabilities_checker, EE_Request $request)
+    public function __construct($return_url = '', CapabilitiesChecker $capabilities_checker, RequestInterface $request)
     {
         $this->setReturnUrl($return_url);
         $this->capabilities_checker = $capabilities_checker;
@@ -97,6 +98,7 @@ class PersistentAdminNoticeManager
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws DomainException
+     * @throws DuplicateCollectionIdentifierException
      */
     protected function getPersistentAdminNoticeCollection()
     {
@@ -118,11 +120,11 @@ class PersistentAdminNoticeManager
      * @throws InvalidEntityException
      * @throws DomainException
      * @throws InvalidDataTypeException
+     * @throws DuplicateCollectionIdentifierException
      */
     protected function retrieveStoredNotices()
     {
         $persistent_admin_notices = get_option(PersistentAdminNoticeManager::WP_OPTION_KEY, array());
-        // \EEH_Debug_Tools::printr($persistent_admin_notices, '$persistent_admin_notices', __FILE__, __LINE__);
         if (! empty($persistent_admin_notices)) {
             foreach ($persistent_admin_notices as $name => $details) {
                 if (is_array($details)) {
@@ -152,7 +154,7 @@ class PersistentAdminNoticeManager
                             $details['cap_context'],
                             $details['dismissed']
                         ),
-                        $name
+                        sanitize_key($name)
                     );
                 } else {
                     try {
@@ -166,7 +168,7 @@ class PersistentAdminNoticeManager
                                 '',
                                 empty($details)
                             ),
-                            $name
+                            sanitize_key($name)
                         );
                     } catch (Exception $e) {
                         EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
@@ -198,6 +200,7 @@ class PersistentAdminNoticeManager
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidEntityException
+     * @throws DuplicateCollectionIdentifierException
      */
     public function displayNotices()
     {
@@ -295,10 +298,15 @@ class PersistentAdminNoticeManager
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws DuplicateCollectionIdentifierException
      */
     public function dismissNotice($pan_name = '', $purge = false, $return = false)
     {
-        $pan_name = $this->request->get('ee_nag_notice', $pan_name);
+        $pan_name = $this->request->getRequestParam('ee_nag_notice', $pan_name);
         $this->notice_collection = $this->getPersistentAdminNoticeCollection();
         if (! empty($pan_name) && $this->notice_collection->has($pan_name)) {
             /** @var PersistentAdminNotice $persistent_admin_notice */
@@ -310,7 +318,7 @@ class PersistentAdminNoticeManager
         if ($return) {
             return;
         }
-        if ($this->request->ajax) {
+        if ($this->request->isAjax()) {
             // grab any notices and concatenate into string
             echo wp_json_encode(
                 array(
@@ -323,7 +331,7 @@ class PersistentAdminNoticeManager
         EE_Error::get_notices(false, true);
         wp_safe_redirect(
             urldecode(
-                $this->request->get('return_url', '')
+                $this->request->getRequestParam('return_url', '')
             )
         );
     }
@@ -336,6 +344,7 @@ class PersistentAdminNoticeManager
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidEntityException
+     * @throws DuplicateCollectionIdentifierException
      */
     public function saveNotices()
     {
@@ -370,6 +379,7 @@ class PersistentAdminNoticeManager
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
      * @throws InvalidInterfaceException
+     * @throws DuplicateCollectionIdentifierException
      */
     public function registerAndSaveNotices()
     {
@@ -389,6 +399,7 @@ class PersistentAdminNoticeManager
      * @throws InvalidEntityException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
+     * @throws DuplicateCollectionIdentifierException
      */
     public static function loadRegisterAndSaveNotices()
     {

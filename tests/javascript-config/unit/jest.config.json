@@ -10,23 +10,23 @@
 	"moduleNameMapper": {
 		"@eventespresso\\/(eejs)": "assets/src/$1",
 		"@eventespresso\/helpers": "assets/src/data/helpers",
-		"@wordpress/dom-ready": "<rootDir>/node_modules/@wordpress/dom-ready",
-		"@wordpress\\/(blocks|components|editor|utils|edit-post|viewport|plugins|core-data)": "<rootDir>/node_modules/gutenberg/$1",
-		"@wordpress\\/(date|element|dom|deprecated|blob|data|keycodes)": "<rootDir>/node_modules/gutenberg/packages/$1/src",
+		"@eventespresso\/model": "assets/src/data/model",
+		"@eventespresso\/vo": "assets/src/vo",
 		"tinymce": "<rootDir>/tests/javascript-config/unit/mocks/tinymce",
 		"@wordpress/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
-		"@eventespresso/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n"
+		"@eventespresso/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
+		"@wordpress/is-shallow-equal/objects": "<rootDir>/node_modules/@wordpress/is-shallow-equal/build/objects"
 	},
+	"preset": "@wordpress/jest-preset-default",
 	"setupFiles": [
 		"core-js/fn/symbol/async-iterator",
 		"<rootDir>/tests/javascript-config/unit/setup-globals"
 	],
-	"preset": "@wordpress/jest-preset-default",
 	"testPathIgnorePatterns": [
 		"/node_modules/",
 		"/test/e2e"
 	],
-	"transformIgnorePatterns": [
-		"node_modules/(?!(gutenberg)/)"
-	]
+	"transform": {
+		"^.+\\.jsx?$": "<rootDir>/tests/javascript-config/unit/babel-transform"
+	}
 }

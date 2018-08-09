@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { map, keys, difference, without } from 'lodash';
-import isShallowEqual from '@wordpress/is-shallow-equal/objects';
+import isShallowEqual from '@wordpress/is-shallow-equal';
 import { combineReducers } from '@wordpress/data';
 import { mergeAndDeDuplicateArrays } from '@eventespresso/eejs';
 

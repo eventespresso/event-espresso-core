@@ -117,12 +117,18 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
         foreach ($questions as $question) {
             $parts_of_subsection[ $question->ID() ] = $question->generate_form_input($registration);
         }
-        $parts_of_subsection['edit_link'] = new EE_Form_Section_HTML(
-            '<tr><th/><td class="reg-admin-edit-attendee-question-td"><a class="reg-admin-edit-attendee-question-lnk" href="#" title="' . esc_attr__('click to edit question', 'event_espresso') . '">
-					<span class="reg-admin-edit-question-group-spn lt-grey-txt">' . __('edit the above question group', 'event_espresso') . '</span>
-					<div class="dashicons dashicons-edit"></div>
-				</a></td></tr>'
-        );
+        if (EE_Registry::instance()->CAP->current_user_can(
+            'ee_edit_registration',
+            'edit-reg-questions-mbox',
+            $this->_registration->ID()
+        )) {
+            $parts_of_subsection['edit_link'] = new EE_Form_Section_HTML(
+                '<tr><th/><td class="reg-admin-edit-attendee-question-td"><a class="reg-admin-edit-attendee-question-lnk" href="#" title="' . esc_attr__('click to edit question', 'event_espresso') . '">
+		  			<span class="reg-admin-edit-question-group-spn lt-grey-txt">' . __('edit the above question group', 'event_espresso') . '</span>
+		  			<div class="dashicons dashicons-edit"></div>
+		  		</a></td></tr>'
+            );
+        }
         return new EE_Form_Section_Proper(
             array(
                 'subsections' => $parts_of_subsection,

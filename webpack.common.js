@@ -12,6 +12,7 @@ const externals = {
 	'@wordpress/components': 'wp.components',
 	'@wordpress/blocks': 'wp.blocks',
 	'@wordpress/editor': 'wp.editor',
+	'@wordpress/compose': 'wp.compose',
 	'@wordpress/hooks': 'wp.hooks',
 	react: 'eejs.vendor.react',
 	'react-dom': 'eejs.vendor.reactDom',
@@ -114,6 +115,31 @@ const config = [
 		},
 	},
 	{
+		configName: 'value-objects',
+		entry: {
+			valueObjects: assets + 'vo/index.js',
+		},
+		externals: Object.assign( externals, {
+			'@eventespresso/helpers': 'eejs.helpers',
+			'@eventespresso/model': 'eejs.model',
+		} ),
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', '[name]' ],
+			libraryTarget: 'var',
+		},
+	},
+	{
 		configName: 'hocComponents',
 		entry: {
 			hocComponents: assets + 'higher-order-components/index.js',
@@ -121,6 +147,7 @@ const config = [
 		externals: Object.assign( externals, {
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
+			'@eventespresso/value-objects': 'eejs.valueObjects',
 		} ),
 		module: {
 			rules: [
@@ -144,9 +171,10 @@ const config = [
 			components: assets + 'components/index.js',
 		},
 		externals: Object.assign( externals, {
+			'@eventespresso/higher-order-components': 'eejs.hocComponents',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
-			'@eventespresso/higher-order-components': 'eejs.hocComponents',
+			'@eventespresso/value-objects': 'eejs.valueObjects',
 		} ),
 		module: {
 			rules: [
@@ -272,6 +300,7 @@ const config = [
 			'@eventespresso/components': 'eejs.components',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
+			'@eventespresso/value-objects': 'eejs.valueObjects',
 		} ),
 		output: {
 			filename: 'ee-[name].[chunkhash].dist.js',
