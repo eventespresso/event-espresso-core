@@ -1,6 +1,7 @@
 <?php
 
 namespace EventEspresso\core\domain\entities\custom_post_types;
+use EEH_URL;
 
 /**
  * Class CustomTaxonomyDefinitions
@@ -46,10 +47,9 @@ class CustomTaxonomyDefinitions
                         'assign_terms' => 'ee_assign_event_category',
                     ),
                     'rewrite'           => array(
-                        'slug' => sanitize_title(
+                        'slug' => EEH_URL::slugify(
                             __('event-category', 'event_espresso'),
-                            'event-category',
-                            'save'
+                            'event-category'
                         )
                     ),
                 ),
@@ -68,10 +68,9 @@ class CustomTaxonomyDefinitions
                         'assign_terms' => 'ee_assign_venue_category',
                     ),
                     'rewrite'           => array(
-                        'slug' => sanitize_title(
+                        'slug' => EEH_URL::slugify(
                             __('venue-category', 'event_espresso'),
-                            'venue-category',
-                            'save'
+                            'venue-category'
                         )
                     ),
                 ),
@@ -90,10 +89,10 @@ class CustomTaxonomyDefinitions
                         'assign_terms' => 'ee_assign_event_type',
                     ),
                     'rewrite'      => array(
-                        'slug' => sanitize_title(
-                            __('event-type', 'event_espresso'),
-                            'event-type',
-                            'save'
+                        'slug' =>
+                            EEH_URL::slugify(
+                                __('event-type', 'event_espresso'),
+                                'event-type'
                         )
                     ),
                     'hierarchical' => true,
