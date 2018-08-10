@@ -136,7 +136,7 @@ will request a collection events, and will return a response something like this
 
 Some fields in Event Espresso can represent infinity, which isn't part of the JSON specification. So when fields have this value, they will instead return the special value: -1 for any requests to EE namespaces before 4.8.36, and NULL for requests to EE namespace 4.8.36 or later (this change was made because -1 can be ambiguous).
 
-###Serialized PHP Objects in Responses Are Removed
+### Serialized PHP Objects in Responses Are Removed
 
 There are some database columns where we store serialized PHP objects, but when reading that data over the EE4 REST 
 API, we replace these values with a JSON "error" object containing keys "error_code", and "error_message".
