@@ -102,6 +102,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             'TWD',
             'THB',
             'TRY',
+            'INR',
         );
         parent::__construct();
     }
@@ -180,8 +181,6 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             // Buyer does not need to create a PayPal account to check out.
             // This is referred to as PayPal Account Optional.
             'SOLUTIONTYPE'                   => 'Sole',
-            // EE will blow up if you change this
-            'BUTTONSOURCE'                   => 'EventEspresso_SP',
             // Locale of the pages displayed by PayPal during Express Checkout.
             'LOCALECODE'                     => $locale[1]
         );
@@ -302,8 +301,6 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                     'PAYMENTREQUEST_0_PAYMENTACTION' => 'Sale',
                     'PAYMENTREQUEST_0_AMT'           => $payment->amount(),
                     'PAYMENTREQUEST_0_CURRENCYCODE'  => $payment->currency_code(),
-                    // EE will blow up if you change this
-                    'BUTTONSOURCE'                   => 'EventEspresso_SP',
                 );
                  // Include itemized list.
                 $itemized_list = $this->itemize_list(
@@ -565,10 +562,12 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
     public function _ppExpress_request($request_params, $request_text, $payment)
     {
         $request_dtls = array(
-            'VERSION'   => '204.0',
-            'USER'      => urlencode($this->_api_username),
-            'PWD'       => urlencode($this->_api_password),
+            'VERSION' => '204.0',
+            'USER' => urlencode($this->_api_username),
+            'PWD' => urlencode($this->_api_password),
             'SIGNATURE' => urlencode($this->_api_signature),
+            // EE will blow up if you change this
+            'BUTTONSOURCE' => 'EventEspresso_SP',
         );
         $dtls = array_merge($request_dtls, $request_params);
         $this->_log_clean_request($dtls, $payment, $request_text . ' Request');

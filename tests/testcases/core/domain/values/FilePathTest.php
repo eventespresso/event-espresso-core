@@ -48,8 +48,8 @@ class FilePathTest extends EE_UnitTestCase
         $filepath = new FilePath(__FILE__);
         $this->assertEquals(__FILE__, (string) $filepath);
         $this->assertEquals(
-            'This is located at ' . EE_TESTS_DIR . 'testcases/core/domain/values/FilePathTest.php',
-            "This is located at {$filepath}"
+            str_replace('\\', '/', EE_TESTS_DIR . 'testcases/core/domain/values/FilePathTest.php'),
+            str_replace('\\', '/', $filepath)
         );
     }
 

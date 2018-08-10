@@ -15,3 +15,4 @@ This folder has various documentation surrounding javascript in Event Espresso
 | [Blocks](blocks/README.md) | Various available blocks available in EE core. |
 | [Components](components/README.md) | Various components available in EE core. |
 | [Higher Order Components](higher-order-components/README.md) | Various higher order components available in EE core. |
+| [Value Objects](value-objects/README.md) | Various value objects available in EE core. |
