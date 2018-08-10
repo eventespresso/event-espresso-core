@@ -1,7 +1,9 @@
 /**
  * InvalidSchema
- * Usage: throw new eejs.Exception('some message')
+ * Usage: throw new eejs.InvalidSchema('some message', [schema object])
  * @param {string} msg
+ * @param {mixed} schema Optional, the schema object which will be added to a
+ * schema property.
  */
 export default class InvalidSchema extends TypeError {
 	constructor( ...args ) {
