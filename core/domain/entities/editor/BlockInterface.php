@@ -66,13 +66,13 @@ interface BlockInterface
 
 
     /**
-     * returns true if the block type applies for the supplied post type
-     * and should be added to that post type's editor
+     * returns an array of fully qualified class names
+     * for RouteMatchSpecificationInterface objects
+     * that specify routes that the block should be loaded for.
      *
-     * @param string $post_type
-     * @return boolean
+     * @return array
      */
-    public function appliesToPostType($post_type);
+    public function supportedRoutes();
 
 
     /**

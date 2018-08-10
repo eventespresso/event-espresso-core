@@ -57,6 +57,16 @@ abstract class AssetManager implements AssetManagerInterface
 
 
     /**
+     * @since $VID:$
+     * @return string
+     */
+    public function assetNamespace()
+    {
+        return $this->domain->assetNamespace();
+    }
+
+
+    /**
      * @return void
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
@@ -65,7 +75,7 @@ abstract class AssetManager implements AssetManagerInterface
      */
     public function addManifestFile()
     {
-        // if a manifest file has already been added for this domain, then just return that one
+        // if a manifest file has already been added for this domain, then just return
         if ($this->assets->has($this->domain->assetNamespace())) {
             return;
         }
