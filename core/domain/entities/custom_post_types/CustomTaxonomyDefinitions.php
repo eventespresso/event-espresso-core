@@ -45,7 +45,13 @@ class CustomTaxonomyDefinitions
                         'delete_terms' => 'ee_delete_event_category',
                         'assign_terms' => 'ee_assign_event_category',
                     ),
-                    'rewrite'           => array('slug' => esc_html__('event-category', 'event_espresso')),
+                    'rewrite'           => array(
+                        'slug' => sanitize_title(
+                            __('event-category', 'event_espresso'),
+                            'event-category',
+                            'save'
+                        )
+                    ),
                 ),
             ),
             'espresso_venue_categories' => array(
@@ -61,7 +67,13 @@ class CustomTaxonomyDefinitions
                         'delete_terms' => 'ee_delete_venue_category',
                         'assign_terms' => 'ee_assign_venue_category',
                     ),
-                    'rewrite'           => array('slug' => esc_html__('venue-category', 'event_espresso')),
+                    'rewrite'           => array(
+                        'slug' => sanitize_title(
+                            __('venue-category', 'event_espresso'),
+                            'venue-category',
+                            'save'
+                        )
+                    ),
                 ),
             ),
             'espresso_event_type'       => array(
@@ -77,7 +89,13 @@ class CustomTaxonomyDefinitions
                         'delete_terms' => 'ee_delete_event_type',
                         'assign_terms' => 'ee_assign_event_type',
                     ),
-                    'rewrite'      => array('slug' => esc_html__('event-type', 'event_espresso')),
+                    'rewrite'      => array(
+                        'slug' => sanitize_title(
+                            __('event-type', 'event_espresso'),
+                            'event-type',
+                            'save'
+                        )
+                    ),
                     'hierarchical' => true,
                 ),
             ),
