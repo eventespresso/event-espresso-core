@@ -282,7 +282,8 @@ class EEH_URL
      * @param string $fallback
      * @return string which can be used in a URL
      */
-    public static function slugify($text, $fallback) {
+    public static function slugify($text, $fallback)
+    {
         // url decode after sanitizing title to restore unicode characters,
         // see https://github.com/eventespresso/event-espresso-core/issues/575
         return urldecode(

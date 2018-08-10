@@ -1,6 +1,7 @@
 <?php
 
 namespace EventEspresso\core\domain\entities\custom_post_types;
+
 use EEH_URL;
 
 /**
@@ -89,10 +90,9 @@ class CustomTaxonomyDefinitions
                         'assign_terms' => 'ee_assign_event_type',
                     ),
                     'rewrite'      => array(
-                        'slug' =>
-                            EEH_URL::slugify(
-                                __('event-type', 'event_espresso'),
-                                'event-type'
+                        'slug' => EEH_URL::slugify(
+                            __('event-type', 'event_espresso'),
+                            'event-type'
                         )
                     ),
                     'hierarchical' => true,
