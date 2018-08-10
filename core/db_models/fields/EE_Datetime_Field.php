@@ -763,8 +763,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base
         $default_raw = $this->get_default_value();
         if ($default_raw instanceof DateTime) {
             return $default_raw;
-        } elseif( is_null($default_raw)) {
-          return $default_raw;
+        } elseif (is_null($default_raw)) {
+            return $default_raw;
         } else {
             return new DbSafeDateTime(
                 $this->get_default_value(),

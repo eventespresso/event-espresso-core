@@ -689,7 +689,7 @@ class Read extends Base
             } elseif ($field_obj instanceof \EE_Datetime_Field) {
                 $field_value = $field_obj->prepare_for_set_from_db($field_value);
                 // if the value is null, but we're not supposed to permit null, then set to the field's default
-                if( is_null($field_value)) {
+                if (is_null($field_value)) {
                     $field_value = $field_obj->getDefaultDateTimeObj();
                 }
                 if (is_null($field_value)) {
