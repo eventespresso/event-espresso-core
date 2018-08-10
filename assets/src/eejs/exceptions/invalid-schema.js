@@ -1,6 +1,10 @@
 /**
  * InvalidSchema
  * Usage: throw new eejs.InvalidSchema('some message', [schema object])
+ *
+ * Typically this error is thrown when an object representing a model schema
+ * (at a minimum) does not have a "properties" property).
+ *
  * @param {string} msg
  * @param {mixed} schema Optional, the schema object which will be added to a
  * schema property.
