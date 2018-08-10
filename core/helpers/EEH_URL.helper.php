@@ -270,4 +270,24 @@ class EEH_URL
         wp_safe_redirect($location, $status);
         exit($exit_notice);
     }
+
+    /**
+     * Slugifies text for usage in a URL.
+     *
+     * Currently, this isn't just calling `sanitize_title()` on it, because that percent-encodes unicode characters,
+     * and WordPress chokes on them when used as CPT and custom taxonomy slugs.
+     *
+     * @since $VID:$
+     * @param string $text
+     * @param string $fallback
+     * @return string which can be used in a URL
+     */
+    public static function slugify($text, $fallback) {
+        return urldecode(
+            sanitize_title(
+                $text,
+                $fallback
+            )
+        );
+    }
 }
