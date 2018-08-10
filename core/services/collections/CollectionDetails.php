@@ -8,6 +8,7 @@ use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\locators\FqcnLocator;
 use EventEspresso\core\services\locators\LocatorInterface;
+use Exception;
 
 /**
  * Class CollectionDetails
@@ -148,30 +149,30 @@ class CollectionDetails implements CollectionDetailsInterface
      * @param string           $identifier_type
      * @param string           $identifier_callback
      * @param LocatorInterface $file_locator
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidFilePathException
-     * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\InvalidClassException
+     * @throws CollectionDetailsException
      */
     public function __construct(
         $collection_name,
         $collection_interface,
-        $collection_FQCNs = array(),
-        $collection_paths = array(),
+        array $collection_FQCNs = array(),
+        array $collection_paths = array(),
         $file_mask = '',
         $identifier_type = CollectionDetails::ID_OBJECT_HASH,
         $identifier_callback = '',
         LocatorInterface $file_locator = null
     ) {
-        $this->setCollectionName($collection_name);
-        $this->setCollectionInterface($collection_interface);
-        $this->setCollectionFQCNs($collection_FQCNs);
-        $this->setCollectionPaths($collection_paths);
-        $this->setFileMasks($file_mask);
-        $this->setIdentifierType($identifier_type);
-        $this->setIdentifierCallback($identifier_callback);
-        $this->file_locator = $file_locator;
+        try {
+            $this->setCollectionName($collection_name);
+            $this->setCollectionInterface($collection_interface);
+            $this->setCollectionFQCNs($collection_FQCNs);
+            $this->setCollectionPaths($collection_paths);
+            $this->setFileMasks($file_mask);
+            $this->setIdentifierType($identifier_type);
+            $this->setIdentifierCallback($identifier_callback);
+            $this->file_locator = $file_locator;
+        } catch (Exception $exception) {
+            throw new CollectionDetailsException($exception);
+        }
     }
 
 
@@ -244,7 +245,7 @@ class CollectionDetails implements CollectionDetailsInterface
     /**
      * @access protected
      * @param string $identifier_type
-     * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
+     * @throws InvalidIdentifierException
      */
     protected function setIdentifierType($identifier_type)
     {
@@ -316,7 +317,7 @@ class CollectionDetails implements CollectionDetailsInterface
 
     /**
      * @access public
-     * @return string
+     * @return array
      */
     public function getCollectionFQCNs()
     {
@@ -365,7 +366,7 @@ class CollectionDetails implements CollectionDetailsInterface
 
     /**
      * @access public
-     * @return string
+     * @return array
      */
     public function getCollectionPaths()
     {

@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import apiRequest from '@wordpress/api-request';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ import { applyQueryString } from '../../model';
  *   the REST request.
  */
 export async function* getItems( state, modelName, queryString ) {
-	const items = await apiRequest( {
+	const items = await apiFetch( {
 		path: applyQueryString( modelName,
 			queryString,
 		),

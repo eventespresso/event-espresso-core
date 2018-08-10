@@ -42,7 +42,6 @@
 		"@babel/polyfill": "^7.0.0-beta.54",
 		"@babel/preset-react": "^7.0.0-beta.54",
 		"@wordpress/a11y": "^1.1.0",
-		"@wordpress/api-fetch": "^1.0.0",
 		"@wordpress/autop": "^1.1.0",
 		"@wordpress/babel-plugin-import-jsx-pragma": "^1.0.0",
 		"@wordpress/babel-plugin-makepot": "^2.0.0",
@@ -96,6 +95,7 @@
 	},
 	"dependencies": {
 		"@eventespresso/react-exit-modal-typeform": "^1.0.4",
+		"@wordpress/api-fetch": "^1.1.1",
 		"@wordpress/dom-ready": "^1.1.0",
 		"@wordpress/hooks": "^1.1.8",
 		"@wordpress/i18n": "^1.2.0",

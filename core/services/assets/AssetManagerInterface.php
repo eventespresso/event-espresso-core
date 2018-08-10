@@ -19,6 +19,11 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 interface AssetManagerInterface
 {
+    /**
+     * @since $VID:$
+     * @return string
+     */
+    public function assetNamespace();
 
     /**
      * @since 4.9.62.p
