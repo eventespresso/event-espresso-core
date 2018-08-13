@@ -866,7 +866,15 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         $old_slug = EE_Registry::instance()->CFG->core->event_cpt_slug;
         EE_Registry::instance()->CFG->core->event_cpt_slug = empty($this->_req_data['event_cpt_slug'])
             ? EE_Registry::instance()->CFG->core->event_cpt_slug
-            : sanitize_title_with_dashes($this->_req_data['event_cpt_slug']);
+            :   // url decode after sanitizing title to restore unicode characters,
+                // see https://github.com/eventespresso/event-espresso-core/issues/575
+                urldecode(
+                    sanitize_title(
+                        $this->_req_data['event_cpt_slug'],
+                        esc_html__('events', 'event_espresso'),
+                        'save'
+                    )
+                );
         $what = 'Template Settings';
         $success = $this->_update_espresso_configuration(
             $what,
