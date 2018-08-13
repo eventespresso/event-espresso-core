@@ -21,6 +21,7 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 
 - Added support for Indian Rupees currency (INR) to PayPal Espresso and Pro ([593](https://github.com/eventespresso/event-espresso-core/pull/593)) 
 - Added BUTTONSOURCE on all PayPal Express API calls. ([627](https://github.com/eventespresso/event-espresso-core/pull/627))
+- Added foreign keys to REST API responses ([639](https://github.com/eventespresso/event-espresso-core/pull/639))
 ### Fixed
 
 - Fixed a fatal error while using many page builder plugins resulting from template tags only being loaded on the front-end([600](https://github.com/eventespresso/event-espresso-core/pull/600))
@@ -30,8 +31,14 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 - Fixed caching loader identifier ([610](https://github.com/eventespresso/event-espresso-core/pull/610))
 - Fixed Authorize.net AIM so payment currency is sent ([591](https://github.com/eventespresso/event-espresso-core/pull/591))
 - Fixed DuplicateCollectionIdentifierException errors when converting old PersistentAdminNotice Fixes ([505](https://github.com/eventespresso/event-espresso-core/pull/505))
+- Fixed error when trying to send messages in full maintenance mode ([622](https://github.com/eventespresso/event-espresso-core/pull/622))
 - Fixes a syntax issue inside `EE_Config::register_ee_widget()` ([608](https://github.com/eventespresso/event-espresso-core/pull/608))
+- Namespaced `site-license-key` in requests (to `ee-site-license-key`) to hopefully fix issue some users see with multiple pue license key requests happening. ([633](https://github.com/eventespresso/event-espresso-core/pull/633))
+- Fixed translated event taxonomy slugs so they stay valid ([641](https://github.com/eventespresso/event-espresso-core/pull/641))
+- Fixes very slow migration from EE3 when there are deleted events ([629](https://github.com/eventespresso/event-espresso-core/pull/629))
+- Fixed event slug sanitization for accents and unicode characters ([635](https://github.com/eventespresso/event-espresso-core/pull/635))
 - Fixed URL validation when URL was for a site denying access to our HTTP client ([628](https://github.com/eventespresso/event-espresso-core/pull/628))
+
 ### Changed
 
 - Updated js build process to use Babel 7 ([578](https://github.com/eventespresso/event-espresso-core/pull/578))

@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\domain\entities\custom_post_types;
 
+use EEH_URL;
+
 /**
  * Class CustomTaxonomyDefinitions
  * Information about Event Espresso's Taxonomies
@@ -45,7 +47,12 @@ class CustomTaxonomyDefinitions
                         'delete_terms' => 'ee_delete_event_category',
                         'assign_terms' => 'ee_assign_event_category',
                     ),
-                    'rewrite'           => array('slug' => esc_html__('event-category', 'event_espresso')),
+                    'rewrite'           => array(
+                        'slug' => EEH_URL::slugify(
+                            __('event-category', 'event_espresso'),
+                            'event-category'
+                        )
+                    ),
                 ),
             ),
             'espresso_venue_categories' => array(
@@ -61,7 +68,12 @@ class CustomTaxonomyDefinitions
                         'delete_terms' => 'ee_delete_venue_category',
                         'assign_terms' => 'ee_assign_venue_category',
                     ),
-                    'rewrite'           => array('slug' => esc_html__('venue-category', 'event_espresso')),
+                    'rewrite'           => array(
+                        'slug' => EEH_URL::slugify(
+                            __('venue-category', 'event_espresso'),
+                            'venue-category'
+                        )
+                    ),
                 ),
             ),
             'espresso_event_type'       => array(
@@ -77,7 +89,12 @@ class CustomTaxonomyDefinitions
                         'delete_terms' => 'ee_delete_event_type',
                         'assign_terms' => 'ee_assign_event_type',
                     ),
-                    'rewrite'      => array('slug' => esc_html__('event-type', 'event_espresso')),
+                    'rewrite'      => array(
+                        'slug' => EEH_URL::slugify(
+                            __('event-type', 'event_espresso'),
+                            'event-type'
+                        )
+                    ),
                     'hierarchical' => true,
                 ),
             ),
