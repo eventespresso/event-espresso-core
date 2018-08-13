@@ -30,6 +30,7 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 - Fixed caching loader identifier ([610](https://github.com/eventespresso/event-espresso-core/pull/610))
 - Fixed Authorize.net AIM so payment currency is sent ([591](https://github.com/eventespresso/event-espresso-core/pull/591))
 - Fixed DuplicateCollectionIdentifierException errors when converting old PersistentAdminNotice Fixes ([505](https://github.com/eventespresso/event-espresso-core/pull/505))
+- Fixed error when trying to send messages in full maintenance mode ([622](https://github.com/eventespresso/event-espresso-core/pull/622))
 - Fixes a syntax issue inside `EE_Config::register_ee_widget()` ([608](https://github.com/eventespresso/event-espresso-core/pull/608))
 - Fixed URL validation when URL was for a site denying access to our HTTP client ([628](https://github.com/eventespresso/event-espresso-core/pull/628))
 - Fixes very slow migration from EE3 when there are deleted events ([629](https://github.com/eventespresso/event-espresso-core/pull/629))
