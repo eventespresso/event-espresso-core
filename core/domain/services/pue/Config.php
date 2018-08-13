@@ -58,7 +58,7 @@ class Config
 
     public function optionKey()
     {
-        return 'site_license_key';
+        return 'ee_site_license_key';
     }
 
 
