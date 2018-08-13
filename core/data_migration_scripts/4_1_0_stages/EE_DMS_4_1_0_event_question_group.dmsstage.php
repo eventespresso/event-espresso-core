@@ -59,6 +59,7 @@ class EE_DMS_4_1_0_event_question_group extends EE_Data_Migration_Script_Stage_T
     {
         global $wpdb;
         $this->_old_table = $wpdb->prefix."events_detail";
+        $this->_extra_where_sql = 'WHERE event_status!="D"';
         $this->_new_table = $wpdb->prefix."esp_event_question_group";
         $this->_pretty_name = __("Question Groups in each Event", "event_espresso");
         parent::__construct();
