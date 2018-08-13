@@ -33,11 +33,9 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 - Fixed error when trying to send messages in full maintenance mode ([622](https://github.com/eventespresso/event-espresso-core/pull/622))
 - Fixes a syntax issue inside `EE_Config::register_ee_widget()` ([608](https://github.com/eventespresso/event-espresso-core/pull/608))
 - Fixed URL validation when URL was for a site denying access to our HTTP client ([628](https://github.com/eventespresso/event-espresso-core/pull/628))
-<<<<<<< BUG/message-queue-fatals-in-mm2
-
-=======
+- Fixes very slow migration from EE3 when there are deleted events ([629](https://github.com/eventespresso/event-espresso-core/pull/629))
 - Fixed event slug sanitization for accents and unicode characters ([635](https://github.com/eventespresso/event-espresso-core/pull/635))
->>>>>>> master
+
 ### Changed
 
 - Updated js build process to use Babel 7 ([578](https://github.com/eventespresso/event-espresso-core/pull/578))
