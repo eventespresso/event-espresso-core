@@ -22,6 +22,8 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 - Added support for Indian Rupees currency (INR) to PayPal Espresso and Pro ([593](https://github.com/eventespresso/event-espresso-core/pull/593)) 
 - Added BUTTONSOURCE on all PayPal Express API calls. ([627](https://github.com/eventespresso/event-espresso-core/pull/627))
 - Added foreign keys to REST API responses ([639](https://github.com/eventespresso/event-espresso-core/pull/639))
+- Added `format:money` to money field schemas in json-schema ([644](https://github.com/eventespresso/event-espresso-core/pull/644))
+
 ### Fixed
 
 - Fixed a fatal error while using many page builder plugins resulting from template tags only being loaded on the front-end([600](https://github.com/eventespresso/event-espresso-core/pull/600))
