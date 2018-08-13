@@ -207,7 +207,8 @@ class EE_Messages_Queue
     public function get_to_send_batch_and_send()
     {
         $rate_limit = $this->get_rate_limit();
-        if ($rate_limit < 1 || $this->is_locked(EE_Messages_Queue::action_sending)) {
+        if ($rate_limit < 1
+            || $this->is_locked(EE_Messages_Queue::action_sending)) {
             return false;
         }
 
@@ -346,13 +347,17 @@ class EE_Messages_Queue
 
 
     /**
-     * Returns whether batch methods are "locked" or not.
+     * Returns whether batch methods are "locked" or not, and if models an currently be used to query the database.
+     * Return true when batch methods should not be used; returns false when they can be.
      *
      * @param  string $type The type of lock being checked for.
      * @return bool
      */
     public function is_locked($type = EE_Messages_Queue::action_generating)
     {
+        if (! EE_Maintenance_Mode::instance()->models_can_query()) {
+            return true;
+        }
         $lock = (int) get_option($this->_get_lock_key($type), 0);
         /**
          * This filters the default is_locked behaviour.
