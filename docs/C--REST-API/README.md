@@ -16,7 +16,7 @@ The documents in this folder are all related to the REST API in EE core.
 
 ### Schema
 
-- [EE4 REST API: Schema](eer-rest-api-schema.md)
+- [EE4 REST API: Schema](ee4-rest-api-schema.md)
 
 ### RPC Style Endpoints
 
