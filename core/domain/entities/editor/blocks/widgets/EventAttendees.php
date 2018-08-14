@@ -57,6 +57,7 @@ class EventAttendees extends Block
             array(
                 'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditor',
                 'EventEspresso\core\domain\entities\route_match\specifications\admin\WordPressPostsEditor',
+                'EventEspresso\core\domain\entities\route_match\specifications\frontend\EspressoBlockRenderer',
             )
         );
         $this->setAttributes(
