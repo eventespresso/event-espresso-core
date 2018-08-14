@@ -83,14 +83,15 @@ class EE_Money_Field extends EE_Float_Field
                     __('%s - the raw value as it exists in the database as a simple float.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type' => 'number'
+                'type' => 'number',
             ),
             'pretty' => array(
                 'description' =>  sprintf(
                     __('%s - formatted for display in the set currency and decimal places.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type' => 'string'
+                'type' => 'string',
+                'format' => 'money'
             )
         );
     }
