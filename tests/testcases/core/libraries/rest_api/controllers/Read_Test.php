@@ -422,6 +422,7 @@ class Read_Test extends \EE_REST_TestCase
                 ),
                 'EVT_slug'                        => $event->get('EVT_slug'),
                 'EVT_short_desc'                  => $event->get('EVT_short_desc'),
+                'EVT_wp_user'                     => $event->get('EVT_wp_user'),
                 'parent'                          => $event->get('parent'),
                 'EVT_order'                       => $event->get('EVT_order'),
                 'status'                          => array(

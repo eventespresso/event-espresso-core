@@ -688,19 +688,33 @@ class Read extends Base
                 );
             } elseif ($field_obj instanceof \EE_Datetime_Field) {
                 $field_value = $field_obj->prepare_for_set_from_db($field_value);
-                $timezone = $field_value->getTimezone();
-                EEH_DTT_Helper::setTimezone($field_value, new DateTimeZone('UTC'));
-                $result[ $field_name . '_gmt' ] = ModelDataTranslator::prepareFieldValuesForJson(
-                    $field_obj,
-                    $field_value,
-                    $this->getModelVersionInfo()->requestedVersion()
-                );
-                EEH_DTT_Helper::setTimezone($field_value, $timezone);
-                $result[ $field_name ] = ModelDataTranslator::prepareFieldValuesForJson(
-                    $field_obj,
-                    $field_value,
-                    $this->getModelVersionInfo()->requestedVersion()
-                );
+                // if the value is null, but we're not supposed to permit null, then set to the field's default
+                if (is_null($field_value)) {
+                    $field_value = $field_obj->getDefaultDateTimeObj();
+                }
+                if (is_null($field_value)) {
+                    $gmt_date = $local_date = ModelDataTranslator::prepareFieldValuesForJson(
+                        $field_obj,
+                        $field_value,
+                        $this->getModelVersionInfo()->requestedVersion()
+                    );
+                } else {
+                    $timezone = $field_value->getTimezone();
+                    EEH_DTT_Helper::setTimezone($field_value, new DateTimeZone('UTC'));
+                    $gmt_date = ModelDataTranslator::prepareFieldValuesForJson(
+                        $field_obj,
+                        $field_value,
+                        $this->getModelVersionInfo()->requestedVersion()
+                    );
+                    EEH_DTT_Helper::setTimezone($field_value, $timezone);
+                    $local_date = ModelDataTranslator::prepareFieldValuesForJson(
+                        $field_obj,
+                        $field_value,
+                        $this->getModelVersionInfo()->requestedVersion()
+                    );
+                }
+                $result[ $field_name . '_gmt' ] = $gmt_date;
+                $result[ $field_name ] = $local_date;
             } else {
                 $result[ $field_name ] = $this->prepareFieldObjValueForJson($field_obj, $field_value);
             }
