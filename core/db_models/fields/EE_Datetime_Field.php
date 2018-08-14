@@ -750,6 +750,28 @@ class EE_Datetime_Field extends EE_Model_Field_Base
         }
     }
 
+    /**
+     * Gets the default datetime object from the field's default time
+     * @since $VID:$
+     * @return DbSafeDateTime|null
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function getDefaultDateTimeObj()
+    {
+        $default_raw = $this->get_default_value();
+        if ($default_raw instanceof DateTime) {
+            return $default_raw;
+        } elseif (is_null($default_raw)) {
+            return $default_raw;
+        } else {
+            return new DbSafeDateTime(
+                $this->get_default_value(),
+                EEH_DTT_Helper::get_valid_timezone_string($this->get_timezone())
+            );
+        }
+    }
 
     public function getSchemaDescription()
     {

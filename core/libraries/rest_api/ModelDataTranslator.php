@@ -332,7 +332,9 @@ class ModelDataTranslator
                     )
                 );
             }
-            $new_value = mysql_to_rfc3339($new_value);
+            if ($new_value !== null) {
+                $new_value = mysql_to_rfc3339($new_value);
+            }
         } else {
             $new_value = $original_value;
         }
