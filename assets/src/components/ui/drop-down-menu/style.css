@@ -1,0 +1,109 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso DropDownMenu Stylesheet
+ * © 2018 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+.ee-dropdown-menu-outer-wrapper-div {
+}
+
+.ee-dropdown-menu-inner-wrapper-div {
+}
+
+.ee-toggle-dropdown-menu {
+    color: #a9aba6;
+    margin: 0;
+    transition: color 125ms;
+}
+
+.ee-toggle-dropdown-menu:hover {
+    color: #706e73;
+    transition: color 125ms;
+}
+
+.ee-toggle-dropdown-menu .dashicons {
+    color: #a9aba6;
+    font-size: 20px;
+    line-height: 20px;
+    font-weight: normal;
+    margin: 0 !important;
+}
+
+.ee-toggle-dropdown-menu-open {
+    display: block !important;
+}
+
+.ee-toggle-dropdown-menu-close {
+    position: absolute;
+    right: 10px;
+    top: 9px;
+}
+
+.ee-dropdown-menu-div {
+    padding: 25px 15px 5px 25px;
+    background-color: #fff;
+    color: #706e73;
+    border-radius: 3px;
+    text-shadow: none;
+    text-align: left;
+    position: absolute;
+    right: -1px;
+    top: -1px;
+    width: 140px;
+    z-index: 999;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, .5), 0 0 20px 10px rgba(0, 0, 0, .1);
+    vertical-align: middle;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 125ms linear, color 125ms;
+}
+
+.ee-toggle-dropdown-menu-visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+.ee-dropdown-menu-div ul {
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 16px;
+    list-style: none !important;
+}
+
+.ee-dropdown-menu-item {
+    margin: 0 0 24px;
+}
+
+.ee-dropdown-menu-item-text {
+    vertical-align: middle;
+}
+
+.ee-dropdown-menu-item:hover,
+.ee-dropdown-menu-item:hover a {
+    color: #1d2c41;
+    transition: color 125ms;
+}
+
+.ee-dropdown-menu-item a {
+    color: #706e73;
+    text-decoration: none;
+    transition: color 125ms;
+    vertical-align: middle;
+}
+
+.ee-dropdown-menu-item .dashicons,
+.ee-dropdown-menu-item:hover .dashicons {
+    color: #706e73;
+    margin-bottom: -2px !important;
+    top: 0 !important;
+    vertical-align: middle !important;
+}
+
+.ee-dropdown-menu-item:hover .dashicons {
+    color: #1d2c41;
+}
+
+.ee-dropdown-menu-item a .dashicons-external {
+    color: #a9aba6;
+    margin-left: .5rem;
+}
+
