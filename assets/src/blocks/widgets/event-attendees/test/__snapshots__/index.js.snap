@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`eventespresso/widgets-event-attendees block edit matches snapshot 1`] = `
+<[object Object]
+  value={
+    Object {
+      "clientId": undefined,
+      "focusedElement": null,
+      "isSelected": false,
+      "name": "eventespresso/widgets-event-attendees",
+      "setFocusedElement": [Function],
+    }
+  }
+>
+  <WithFilters(Edit)
+    attributes={
+      Object {
+        "datetimeId": 0,
+        "displayOnArchives": false,
+        "eventId": 0,
+        "limit": 10,
+        "showGravatar": false,
+        "status": "RAP",
+        "ticketId": 0,
+      }
+    }
+    isSelected={false}
+    name="eventespresso/widgets-event-attendees"
+    setAttributes={[Function]}
+    user={Object {}}
+  />
+</[object Object]>
+`;
