@@ -84,7 +84,7 @@ class RouteMatchSpecificationManager
                     'FHEE__EventEspresso_core_services_route_match_RouteMatchSpecificationManager__populateSpecificationCollection__collection_FQCNs',
                     array(
                         'EventEspresso\core\domain\entities\route_match\specifications\admin',
-                        // 'EventEspresso\core\domain\entities\route_match\specifications\public',
+                        'EventEspresso\core\domain\entities\route_match\specifications\frontend',
                     )
                 ),
                 // filepaths to classes to add
