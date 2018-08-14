@@ -10,8 +10,10 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\domain\services\factories\FactoryInterface;
 use EventEspresso\core\services\locators\LocatorInterface;
 use EventEspresso\core\services\locators\FileLocator;
+use Exception;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -58,6 +60,11 @@ class CollectionLoader
     protected $collection;
 
     /**
+     * @var FactoryInterface $entity_factory
+     */
+    protected $entity_factory;
+
+    /**
      * @var FileLocator $file_locator
      */
     protected $file_locator;
@@ -69,28 +76,28 @@ class CollectionLoader
      * @param CollectionDetailsInterface $collection_details
      * @param CollectionInterface        $collection
      * @param LocatorInterface           $file_locator
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws EE_Error
-     * @throws InvalidInterfaceException
-     * @throws InvalidClassException
-     * @throws InvalidDataTypeException
-     * @throws InvalidFilePathException
-     * @throws InvalidEntityException
+     * @param FactoryInterface|null      $entity_factory
+     * @throws CollectionLoaderException
      */
     public function __construct(
         CollectionDetailsInterface $collection_details,
         CollectionInterface $collection = null,
-        LocatorInterface $file_locator = null
+        LocatorInterface $file_locator = null,
+        FactoryInterface $entity_factory = null
     ) {
-        $this->collection_details = $collection_details;
-        if (! $collection instanceof CollectionInterface) {
-            $collection = new Collection($this->collection_details->getCollectionInterface());
+        try {
+            $this->collection_details = $collection_details;
+            if (! $collection instanceof CollectionInterface) {
+                $collection = new Collection($this->collection_details->getCollectionInterface());
+            }
+            $this->collection = $collection;
+            $this->file_locator = $file_locator;
+            $this->entity_factory = $entity_factory;
+            $this->loadAllFromFilepaths();
+            $this->loadFromFQCNs();
+        } catch (Exception $exception) {
+            throw new CollectionLoaderException($exception);
         }
-        $this->collection = $collection;
-        $this->file_locator = $file_locator;
-        $this->loadAllFromFilepaths();
-        $this->loadFromFQCNs();
     }
 
 
@@ -108,6 +115,7 @@ class CollectionLoader
      * @throws InvalidFilePathException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws DuplicateCollectionIdentifierException
      */
     protected function loadAllFromFilepaths()
     {
@@ -140,6 +148,7 @@ class CollectionLoader
      * @throws InvalidDataTypeException
      * @throws InvalidFilePathException
      * @throws InvalidClassException
+     * @throws DuplicateCollectionIdentifierException
      */
     protected function loadClassFromFilepath($filepath)
     {
@@ -157,7 +166,10 @@ class CollectionLoader
         if (! class_exists($class_name)) {
             throw new InvalidClassException($class_name);
         }
-        return $this->addEntityToCollection(new $class_name(), $file_name);
+        $entity = $this->entity_factory instanceof FactoryInterface
+            ? call_user_func(array($this->entity_factory, 'create'), $class_name)
+            : new $class_name();
+        return $this->addEntityToCollection($entity, $file_name);
     }
 
 
@@ -166,6 +178,7 @@ class CollectionLoader
      * @param  mixed $identifier
      * @return string
      * @throws InvalidEntityException
+     * @throws DuplicateCollectionIdentifierException
      */
     protected function addEntityToCollection($entity, $identifier)
     {
@@ -259,6 +272,7 @@ class CollectionLoader
      * @throws InvalidClassException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws DuplicateCollectionIdentifierException
      */
     protected function loadFromFQCNs()
     {
@@ -285,6 +299,7 @@ class CollectionLoader
      * @throws InvalidEntityException
      * @throws InvalidDataTypeException
      * @throws InvalidClassException
+     * @throws DuplicateCollectionIdentifierException
      */
     protected function loadClassFromFQCN($FQCN)
     {
@@ -294,9 +309,15 @@ class CollectionLoader
         if (! class_exists($FQCN)) {
             throw new InvalidClassException($FQCN);
         }
-        return $this->addEntityToCollection(
-            EE_Registry::instance()->create($FQCN),
-            $FQCN
+        do_action(
+            'FHEE__CollectionLoader__loadClassFromFQCN__beforeLoading',
+            $FQCN,
+            $this->collection_details->collectionName(),
+            $this->collection_details
         );
+        $entity = $this->entity_factory instanceof FactoryInterface
+            ? call_user_func(array($this->entity_factory, 'create'), $FQCN)
+            : EE_Registry::instance()->create($FQCN);
+        return $this->addEntityToCollection($entity, $FQCN);
     }
 }

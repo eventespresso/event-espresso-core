@@ -123,5 +123,6 @@ This property exposes all the model javascript interfaces for EE models. This be
 | registrationModel | A module containing all model related interfaces for the Registration model.
 | statusModel | A module containing all model related interfaces for the Status model.
 | ticketModel | A module containing all model related interfaces for the Ticket model.
+| checkInModel | A module containing all model related interfaces for the Checkin model.
 
 Note: The list of exposed models will be added to over time so the above list may be out of date. You can find all the models and their exposed interfaces [here](../../../assets/src/data/model/)

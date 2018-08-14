@@ -46,9 +46,9 @@ abstract class Block implements BlockInterface
     private $block_type;
 
     /**
-     * @var array $supported_post_types
+     * @var array $supported_routes
      */
-    private $supported_post_types;
+    private $supported_routes;
 
     /**
      * @var WP_Block_Type $wp_block_type
@@ -113,13 +113,25 @@ abstract class Block implements BlockInterface
         $this->wp_block_type = $wp_block_type;
     }
 
+    /**
+     * returns an array of fully qualified class names
+     * for RouteMatchSpecificationInterface objects
+     * that specify routes that the block should be loaded for.
+     *
+     * @return array
+     */
+    public function supportedRoutes()
+    {
+        return $this->supported_routes;
+    }
+
 
     /**
-     * @param array $supported_post_types
+     * @param array $supported_routes
      */
-    protected function setSupportedPostTypes(array $supported_post_types)
+    protected function setSupportedRoutes(array $supported_routes)
     {
-        $this->supported_post_types = $supported_post_types;
+        $this->supported_routes = $supported_routes;
     }
 
 
@@ -196,18 +208,6 @@ abstract class Block implements BlockInterface
         return unregister_block_type($this->namespacedBlockType());
     }
 
-
-    /**
-     * returns true if the block type applies for the supplied post type
-     * and should be added to that post type's editor
-     *
-     * @param string $post_type
-     * @return boolean
-     */
-    public function appliesToPostType($post_type)
-    {
-        return in_array($post_type, $this->supported_post_types, true);
-    }
 
 
     /**

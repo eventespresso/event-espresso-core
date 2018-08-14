@@ -1052,7 +1052,7 @@ final class EE_Config implements ResettableInterface
         do_action('AHEE__EE_Config__register_widget__begin', $widget_path);
         $widget_ext = '.widget.php';
         // make all separators match
-        $widget_path = rtrim(str_replace('/\\', DS, $widget_path), DS);
+        $widget_path = rtrim(str_replace('\\', DS, $widget_path), DS);
         // does the file path INCLUDE the actual file name as part of the path ?
         if (strpos($widget_path, $widget_ext) !== false) {
             // grab and shortcode file name from directory name and break apart at dots

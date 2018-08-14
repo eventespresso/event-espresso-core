@@ -12,6 +12,11 @@ namespace EventEspresso\core\services\assets;
  */
 interface BlockAssetManagerInterface
 {
+    /**
+     * @since $VID:$
+     * @return string
+     */
+    public function assetNamespace();
 
     /**
      * @since $VID:$

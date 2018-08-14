@@ -20,6 +20,11 @@ import * as r from './routes';
 export const routes = r;
 
 /**
+ * Currency Configuration for the default currency from the server
+ */
+export { currencyConfig as CURRENCY_CONFIG } from './currency_config';
+
+/**
  * use this for eejs exceptions
  * Usage: throw new eejs.Exception('some message')
  * @param {string} msg

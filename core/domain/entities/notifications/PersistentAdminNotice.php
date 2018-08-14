@@ -9,6 +9,7 @@ use EventEspresso\core\domain\services\capabilities\RequiresCapCheckInterface;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\Collection;
+use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 use Exception;
 
@@ -289,6 +290,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
      * @param Collection $persistent_admin_notice_collection
      * @throws InvalidEntityException
      * @throws InvalidDataTypeException
+     * @throws DuplicateCollectionIdentifierException
      */
     public function registerPersistentAdminNotice(Collection $persistent_admin_notice_collection)
     {

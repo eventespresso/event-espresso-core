@@ -24,42 +24,21 @@ class Attendee extends Calculations_Base
 {
 
     /**
-     * @since $VID:$
-     * @param $wpdb_row
-     * @return EE_Attendee|\EE_Base_Class
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    private static function getAttendeeObject($wpdb_row)
-    {
-        $attendee = null;
-        if (is_array($wpdb_row) && isset($wpdb_row['Attendee_CPT.ID']) && absint($wpdb_row['Attendee_CPT.ID'])) {
-            $attendee = EEM_Attendee::instance()->get_one_by_ID($wpdb_row['Attendee_CPT.ID']);
-        }
-        return $attendee;
-    }
-
-
-    /**
      * @param array           $wpdb_row
      * @param WP_REST_Request $request
      * @param Base            $controller
      * @since $VID:$
      * @return string
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     public static function userAvatar(array $wpdb_row, WP_REST_Request $request, Base $controller)
     {
-        $attendee = Attendee::getAttendeeObject($wpdb_row);
-        if (! $attendee instanceof EE_Attendee) {
+        if (is_array($wpdb_row) && isset($wpdb_row['Attendee_Meta.ATT_email'])) {
+            $email_address = $wpdb_row['Attendee_Meta.ATT_email'];
+        }
+        if (empty($email_address)) {
             return '';
         }
-        $avatar = get_avatar_url($attendee->email());
+        $avatar = get_avatar_url($email_address);
         return $avatar ? $avatar : '';
     }
 }

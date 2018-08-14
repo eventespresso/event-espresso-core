@@ -3,7 +3,6 @@
 namespace EventEspresso\core\services\cache;
 
 use Closure;
-use EventEspresso\core\domain\services\session\SessionIdentifierInterface;
 
 /**
  * Class BasicCacheManager
