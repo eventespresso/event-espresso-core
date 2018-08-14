@@ -26,6 +26,6 @@ class EspressoBlockRenderer extends RouteMatchSpecification
         return strpos(
             $this->request->requestUri(),
             'wp-json/gutenberg/v1/block-renderer/eventespresso'
-            ) !== false;
+        ) !== false;
     }
 }
