@@ -59,8 +59,6 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_EE_COMPONENTS = 'eventespresso-components';
 
-    const JS_HANDLE_EE_EDITOR = 'eventespresso-editor';
-
     const JS_HANDLE_EE_JS_API = 'eejs-api';
 
     const JS_HANDLE_EE_CORE = 'espresso_core';
@@ -77,8 +75,6 @@ class CoreAssetManager extends AssetManager
     const CSS_HANDLE_EE_CUSTOM = 'espresso_custom_css';
 
     const CSS_HANDLE_EE_COMPONENTS = 'eventespresso-components';
-
-    const CSS_HANDLE_EE_EDITOR = 'eventespresso-editor';
 
     /**
      * @var EE_Currency_Config $currency_config
@@ -237,13 +233,6 @@ class CoreAssetManager extends AssetManager
         )
         ->setRequiresTranslation();
 
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_EE_EDITOR,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'editor'),
-            array( CoreAssetManager::JS_HANDLE_EE_COMPONENTS )
-        )
-        ->setRequiresTranslation();
-
         global $wp_version;
         if (version_compare($wp_version, '4.4.0', '>')) {
             //js.api
@@ -374,15 +363,8 @@ class CoreAssetManager extends AssetManager
             $this->registry->getCssUrl(
                 $this->domain->assetNamespace(),
                 'components'
-            )
-        );
-        $this->addStylesheet(
-            CoreAssetManager::CSS_HANDLE_EE_EDITOR,
-            $this->registry->getCssUrl(
-                $this->domain->assetNamespace(),
-                'editor'
             ),
-            array(CoreAssetManager::CSS_HANDLE_EE_COMPONENTS)
+            ['wp-components']
         );
     }
 
