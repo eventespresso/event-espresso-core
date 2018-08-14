@@ -1,5 +1,7 @@
 {
   "eventespresso-helpers": [],
+  "admin-refactor": [],
+  "eventespresso-value-objects": [],
   "eventespresso-model": [
     null,
     "The provided entity (%s) does not have the given property (%s)",
@@ -54,10 +56,31 @@
     "upcoming",
     "active",
     "postponed",
+    "check-in",
+    "check-ins",
+    "check-out",
+    "check-outs",
+    "never checked in",
     "unknown"
   ],
-  "eventespresso-value-objects": [],
   "eventespresso-hoc-components": [],
+  "editor": [
+    "sold",
+    "reserved",
+    "capacity",
+    "registrations",
+    "View registrations for this datetime.",
+    "edit event date",
+    "view available tickets for this event date",
+    "event date main menu",
+    "edit date",
+    "copy date",
+    "trash date",
+    "edit venue",
+    "edit venue",
+    "click here to open a new browser tab or window to edit the venue for this event date",
+    "event date main menu"
+  ],
   "ee-wp-plugins-page": [
     "Do you have a moment to share why you are deactivating Event Espresso?",
     "Sure I'll help",
@@ -117,9 +140,21 @@
     "upcoming",
     "active",
     "postponed",
+    "check-in",
+    "check-ins",
+    "check-out",
+    "check-outs",
+    "never checked in",
     "unknown",
     null,
     "The given modelName (%s) does not exist in the state."
+  ],
+  "eventespresso-core-blocks": [
+    "Event Attendees",
+    "Displays a list of people that have registered for the specified event",
+    "event",
+    "attendees",
+    "list"
   ],
   "eventespresso-components": [
     "Limit",
@@ -176,6 +211,11 @@
     "upcoming",
     "active",
     "postponed",
+    "check-in",
+    "check-ins",
+    "check-out",
+    "check-outs",
+    "never checked in",
     "unknown",
     "Select...",
     "Retrieving Events.",
@@ -194,6 +234,14 @@
     "No Tickets.",
     "Select Ticket...",
     "Select Ticket",
-    "user avatar"
+    "TO",
+    "close",
+    "user avatar",
+    "open settings",
+    "close settings",
+    "edit settings for ",
+    "edit settings for ",
+    "close settings for ",
+    "close settings for "
   ]
 }
