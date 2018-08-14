@@ -5,7 +5,6 @@ import { InspectorControls } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
 import {
 	PanelBody,
-	Placeholder,
 	ServerSideRender,
 	ToggleControl,
 } from '@wordpress/components';
