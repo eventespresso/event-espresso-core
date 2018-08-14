@@ -12,6 +12,7 @@
 		"@eventespresso\/helpers": "assets/src/data/helpers",
 		"@eventespresso\/model": "assets/src/data/model",
 		"@eventespresso\/vo": "assets/src/vo",
+		"@eventespresso\/components": "assets/src/components",
 		"tinymce": "<rootDir>/tests/javascript-config/unit/mocks/tinymce",
 		"@wordpress/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
 		"@eventespresso/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",

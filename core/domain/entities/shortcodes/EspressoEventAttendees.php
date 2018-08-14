@@ -159,7 +159,7 @@ class EspressoEventAttendees extends EspressoShortcode
                 'status'              => EEM_Registration::status_id_approved,
                 'show_gravatar'       => false,
                 'display_on_archives' => false,
-                'limit'               => -1,
+                'limit'               => 10,
             )
         );
     }
@@ -353,13 +353,10 @@ class EspressoEventAttendees extends EspressoShortcode
     private function setAdditionalQueryParams(array $attributes)
     {
         $reg_status_array = EEM_Registration::reg_status_array();
-        if ($attributes['status'] !== 'all'
-            && $attributes['status'] !== 'ANY'
-            && isset($reg_status_array[ $attributes['status'] ])
-        ) {
+        if (isset($reg_status_array[ $attributes['status'] ])) {
             $this->query_params[0]['Registration.STS_ID'] = $attributes['status'];
         }
-        if ($attributes['limit'] !== -1) {
+        if (absint($attributes['limit'])) {
             $this->query_params['limit'] = $attributes['limit'];
         }
         $this->query_params['group_by'] = array('ATT_ID');

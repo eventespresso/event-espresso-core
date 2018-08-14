@@ -16,10 +16,7 @@ describe( 'ModelSelect Snapshot with default options (with required modelName)',
 	() => {
 		it( 'should render and match snapshot', () => {
 			const wrapper = shallow(
-				<ModelSelect
-					modelName={ 'event' }
-					optionsEntityMap={ optionsEntityMap }
-				/>
+				<ModelSelect modelName={ 'event' } />
 			);
 			expect( wrapper ).toMatchSnapshot();
 		} );

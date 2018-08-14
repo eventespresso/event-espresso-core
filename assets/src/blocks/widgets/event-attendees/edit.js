@@ -2,13 +2,10 @@
  * WordPress dependencies
  */
 import { InspectorControls } from '@wordpress/editor';
-import { Component, Fragment } from '@wordpress/element';
-import { withSelect } from '@wordpress/data';
+import { Component } from '@wordpress/element';
 import {
 	PanelBody,
-	Placeholder,
 	ServerSideRender,
-	Spinner,
 	ToggleControl,
 } from '@wordpress/components';
 
@@ -24,11 +21,10 @@ import {
 	QueryLimit,
 } from '@eventespresso/components';
 import * as statusModel from '../../../data/model/status';
-import * as attendeeModel from '../../../data/model/attendee';
 import PropTypes from 'prop-types';
 import { isEmpty, uniqBy } from 'lodash';
 
-class EventAttendeesEditor extends Component {
+export default class EventAttendeesEditor extends Component {
 	static propTypes = {
 		attendees: PropTypes.array,
 		isLoading: PropTypes.bool,
@@ -53,7 +49,7 @@ class EventAttendeesEditor extends Component {
 			status: statusModel.REGISTRATION_STATUS_ID.APPROVED,
 			showGravatar: true,
 			displayOnArchives: false,
-			limit: -1
+			limit: 10
 		},
 	};
 
@@ -110,54 +106,17 @@ class EventAttendeesEditor extends Component {
 		this.props.setAttributes( { displayOnArchives: displayOnArchives } );
 	};
 
-	getPlaceHolderContent() {
-		if ( ! this.props.isLoading && this.props.attributes.eventId ) {
-			return (
-				<p> { __( 'No attendees... yet!', 'event_espresso' ) } </p>
-			);
-		}
-		if ( ! this.props.isLoading && ! this.props.attributes.eventId ) {
-			return (
-				<p>
-					{ __(
-						'Please select an event to display attendees for.',
-						'event_espresso'
-					) }
-				</p>
-			);
-		}
-		return <Spinner />;
-	}
-
-	getNoAttendeesContent() {
-		return (
-			<Fragment>
-				<Placeholder
-					icon="groups"
-					label={ __( 'Event Attendees Block', 'event_espresso' ) }
-				>
-					{ this.getPlaceHolderContent() }
-				</Placeholder>
-			</Fragment>
-		);
-	}
-
-	getAttendeesDisplay() {
+	getAttendeesDisplay = () => {
 		return (
 			<ServerSideRender
 				block="eventespresso/widgets-event-attendees"
 				attributes={ this.props.attributes }
 			/>
 		);
-	}
+	};
 
-	render() {
-		const { attributes } = this.props;
-		const { attendees } = this.props;
-		const attendeesBlock = isEmpty( attendees ) ?
-			this.getNoAttendeesContent() :
-			this.getAttendeesDisplay();
-		const inspectorControls = (
+	getInspectorControls = ( attributes ) => {
+		return (
 			<InspectorControls>
 				<PanelBody title={ __( 'Event Attendees Settings', 'event_espresso' ) }>
 					<EditorEventSelect
@@ -179,6 +138,7 @@ class EventAttendeesEditor extends Component {
 						onTicketSelect={ this.setTicketId }
 					/>
 					<EditorStatusSelect
+						key="attendees-status-select"
 						statusType={ statusModel.STATUS_TYPE_REGISTRATION }
 						selectedStatusId={ attributes.status }
 						onStatusSelect={ this.setStatus }
@@ -200,30 +160,13 @@ class EventAttendeesEditor extends Component {
 						onChange={ this.toggleDisplayOnArchives }
 					/>
 				</PanelBody>
-			</InspectorControls>
-		);
+			</InspectorControls> );
+	};
+
+	render() {
 		return [
-			attendeesBlock,
-			inspectorControls
+			this.getAttendeesDisplay(),
+			this.getInspectorControls( this.props.attributes )
 		];
 	}
 }
-
-export default withSelect( ( select, ownProps ) => {
-	const { attributes } = ownProps;
-	const { getItems, isRequestingItems } = select( 'eventespresso/lists' );
-	const queryString = attendeeModel.getQueryString(
-		{
-			forEventId: attributes.eventId,
-			forDatetimeId: attributes.datetimeId,
-			forTicketId: attributes.ticketId,
-			forStatusId: attributes.status,
-			showGravatar: attributes.showGravatar,
-			limit: attributes.limit,
-		}
-	);
-	return {
-		attendees: getItems( 'attendee', queryString ),
-		isLoading: isRequestingItems( 'attendee', queryString ),
-	};
-} )( EventAttendeesEditor );

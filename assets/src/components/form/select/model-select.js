@@ -20,6 +20,7 @@ import {
 	REACT_SELECT_DEFAULTS,
 	REACT_SELECT_TYPES,
 } from './default-select-configuration';
+import { ALLOWED_ORDER_VALUES, QUERY_ORDER_DESC } from '../../../data/model/base';
 
 /**
  * ModelSelect component.
@@ -57,7 +58,7 @@ export class ModelSelect extends Component {
 		queryData: PropTypes.shape( {
 			limit: PropTypes.number,
 			orderBy: PropTypes.string,
-			order: PropTypes.oneOf( [ 'asc', 'desc' ] ),
+			order: PropTypes.oneOf( ALLOWED_ORDER_VALUES ),
 		} ),
 		getQueryString: PropTypes.func,
 		label: PropTypes.string,
@@ -73,7 +74,7 @@ export class ModelSelect extends Component {
 		mapSelection: 'default',
 		queryData: {
 			limit: 100,
-			order: 'desc',
+			order: QUERY_ORDER_DESC,
 		},
 		label: '',
 		getQueryString: () => '',
