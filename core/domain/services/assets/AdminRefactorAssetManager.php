@@ -19,11 +19,11 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 class AdminRefactorAssetManager extends AssetManager
 {
-    const JS_HANDLE_EDITOR = 'ee-editor';
-    const CSS_HANDLE_EDITOR = 'ee-editor';
+    const JS_HANDLE_EDITOR = 'eventespresso-editor';
+    const CSS_HANDLE_EDITOR = 'eventespresso-editor';
     const ASSET_CHUNK_NAME_EDITOR = 'editor';
-    const JS_HANDLE_ADMIN_REFACTOR = 'ee-admin-refactor';
-    const CSS_HANDLE_ADMIN_REFACTOR = 'ee-admin-refactor';
+    const JS_HANDLE_ADMIN_REFACTOR = 'eventespresso-admin-refactor';
+    const CSS_HANDLE_ADMIN_REFACTOR = 'eventespresso-admin-refactor';
     const ASSET_CHUNK_NAME_ADMIN_REFACTOR = 'admin-refactor';
 
     /**
@@ -92,7 +92,7 @@ class AdminRefactorAssetManager extends AssetManager
                 $this->domain->assetNamespace(),
                 self::ASSET_CHUNK_NAME_EDITOR
             ),
-            [CoreAssetManager::CSS_HANDLE_EE_COMPONENTS ]
+            [ CoreAssetManager::CSS_HANDLE_EE_COMPONENTS ]
         );
         $this->addStylesheet(
             self::CSS_HANDLE_ADMIN_REFACTOR,
