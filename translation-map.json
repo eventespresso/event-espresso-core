@@ -1,5 +1,6 @@
 {
   "eventespresso-helpers": [],
+  "eventespresso-value-objects": [],
   "eventespresso-model": [
     null,
     "The provided entity (%s) does not have the given property (%s)",
@@ -54,9 +55,13 @@
     "upcoming",
     "active",
     "postponed",
+    "check-in",
+    "check-ins",
+    "check-out",
+    "check-outs",
+    "never checked in",
     "unknown"
   ],
-  "eventespresso-value-objects": [],
   "eventespresso-hoc-components": [],
   "ee-wp-plugins-page": [
     "Do you have a moment to share why you are deactivating Event Espresso?",
@@ -117,9 +122,18 @@
     "upcoming",
     "active",
     "postponed",
+    "check-in",
+    "check-ins",
+    "check-out",
+    "check-outs",
+    "never checked in",
     "unknown",
     null,
-    "The given modelName (%s) does not exist in the state."
+    "The given modelName (%s) does not exist in the state.",
+    "The response is not a valid JSON response.",
+    "An unknown error occurred.",
+    "[sprintf] property \"%s\" does not exist",
+    "[sprintf] expecting number but found %s"
   ],
   "eventespresso-components": [
     "Limit",
@@ -176,6 +190,11 @@
     "upcoming",
     "active",
     "postponed",
+    "check-in",
+    "check-ins",
+    "check-out",
+    "check-outs",
+    "never checked in",
     "unknown",
     "Select...",
     "Retrieving Events.",
