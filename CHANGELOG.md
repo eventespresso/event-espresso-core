@@ -17,6 +17,8 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 
 ## [$VID:$]
 
+## [4.9.66.p]
+
 ### Added
 
 - Added support for Indian Rupees currency (INR) to PayPal Espresso and Pro ([593](https://github.com/eventespresso/event-espresso-core/pull/593)) 
