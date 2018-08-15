@@ -136,7 +136,7 @@ class CachingLoaderTest extends EE_UnitTestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.66.p
      * @throws Exception
      * @throws InvalidArgumentException
      * @throws \PHPUnit\Framework\AssertionFailedError

@@ -17,11 +17,15 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 
 ## [$VID:$]
 
+## [4.9.66.p]
+
 ### Added
 
 - Added support for Indian Rupees currency (INR) to PayPal Espresso and Pro ([593](https://github.com/eventespresso/event-espresso-core/pull/593)) 
 - Added BUTTONSOURCE on all PayPal Express API calls. ([627](https://github.com/eventespresso/event-espresso-core/pull/627))
 - Added foreign keys to REST API responses ([639](https://github.com/eventespresso/event-espresso-core/pull/639))
+- Added `format:money` to money field schemas in json-schema ([644](https://github.com/eventespresso/event-espresso-core/pull/644))
+
 ### Fixed
 
 - Fixed a fatal error while using many page builder plugins resulting from template tags only being loaded on the front-end([600](https://github.com/eventespresso/event-espresso-core/pull/600))
@@ -38,6 +42,7 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 - Fixes very slow migration from EE3 when there are deleted events ([629](https://github.com/eventespresso/event-espresso-core/pull/629))
 - Fixed event slug sanitization for accents and unicode characters ([635](https://github.com/eventespresso/event-espresso-core/pull/635))
 - Fixed URL validation when URL was for a site denying access to our HTTP client ([628](https://github.com/eventespresso/event-espresso-core/pull/628))
+- Fixed the 1-click upgrade from Decaf so that a prompt to upgrade is displayed when a correct support key is entered ([647](https://github.com/eventespresso/event-espresso-core/pull/647))
 
 ### Changed
 
