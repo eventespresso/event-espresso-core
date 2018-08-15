@@ -331,7 +331,7 @@ class ModelVersionInfo
     {
         return apply_filters(
             'FHEE__Controller_Model_Read_fields_ignored',
-            array('EE_Foreign_Key_Field_Base', 'EE_Any_Foreign_Model_Name_Field')
+            array()
         );
     }
 

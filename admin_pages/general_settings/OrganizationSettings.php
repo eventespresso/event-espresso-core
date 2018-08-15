@@ -392,8 +392,8 @@ class OrganizationSettings extends FormHandler
         }
 
         if (is_main_site()) {
-            $this->network_core_config->site_license_key = isset($form_data['site_license_key'])
-                ? sanitize_text_field($form_data['site_license_key'])
+            $this->network_core_config->site_license_key = isset($form_data['ee_site_license_key'])
+                ? sanitize_text_field($form_data['ee_site_license_key'])
                 : $this->network_core_config->site_license_key;
         }
         $this->organization_config->name = isset($form_data['organization_name'])
@@ -495,7 +495,7 @@ class OrganizationSettings extends FormHandler
     {
         $text_input = new EE_Text_Input(
             array(
-                'html_name' => 'site_license_key',
+                'html_name' => 'ee_site_license_key',
                 'html_id' => 'site_license_key',
                 'html_label_text' => esc_html__('Support License Key', 'event_espresso'),
                 /** phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersText */
