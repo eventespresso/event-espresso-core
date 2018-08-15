@@ -53,7 +53,7 @@ class InvisibleRecaptcha
      * @param EE_Registration_Config $registration_config
      * @param EE_Session             $session
      */
-    public function __construct(EE_Registration_Config $registration_config, EE_Session $session)
+    public function __construct(EE_Registration_Config $registration_config, EE_Session $session = null)
     {
         $this->config = $registration_config;
         $this->session = $session;
