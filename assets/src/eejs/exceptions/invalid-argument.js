@@ -15,7 +15,9 @@ export default class InvalidArgument extends Error {
 		if ( Error.captureStackTrace ) {
 			Error.captureStackTrace( this, InvalidArgument );
 		}
-		this.message = 'Invalid argument provided.' + this.message;
+		this.message = this.message !== '' ?
+			'Invalid argument provided. ' + this.message :
+		'Invalid argument provided.';
 		this.argument = args[ 1 ] || null;
 	}
 }
