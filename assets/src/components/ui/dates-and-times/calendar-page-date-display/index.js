@@ -28,8 +28,8 @@ export class CalendarPageDateDisplay extends Component {
 	 * @param {Date} startDate    Date object
 	 * @return {string}        The start date formatted to look like a calendar page
 	 */
-	getStartDate = ( { startDate } ) => {
-		return (
+	getStartDate = startDate => {
+		return startDate instanceof Date && (
 			<div className={ 'ee-calendar-page-date-wrapper-start' }>
 				{ this.renderCalendarPage( startDate ) }
 			</div>
@@ -43,7 +43,7 @@ export class CalendarPageDateDisplay extends Component {
 	 * @param {Date|null} endDate    Date object
 	 * @return {string}            The end date formatted to look like a calendar page
 	 */
-	getEndDate = ( { endDate = null } ) => {
+	getEndDate = endDate => {
 		return endDate instanceof Date && (
 			<div className={ 'ee-calendar-page-date-wrapper-end' }>
 				{ this.getDivider() }{ this.renderCalendarPage( endDate, 'end' ) }
