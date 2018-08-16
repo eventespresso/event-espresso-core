@@ -150,6 +150,11 @@ class EED_Recaptcha_Invisible extends EED_Module
      */
     public static function localizeScriptVars()
     {
+        /** @var \EventEspresso\core\services\request\Request $request */
+        $request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\Request');
+        if (! ($request->isAdmin() || $request->isFrontend())) {
+            return;
+        }
         wp_localize_script(
             EE_Invisible_Recaptcha_Input::SCRIPT_HANDLE_ESPRESSO_INVISIBLE_RECAPTCHA,
             'eeRecaptcha',
