@@ -122,6 +122,14 @@ interface RequestTypeContextCheckerInterface
 
 
     /**
+     * true if the current request is a loopback sent from WP core to test for errors
+     *
+     * @return bool
+     */
+    public function isWordPressScrape();
+
+
+    /**
      * @return string
      */
     public function slug();
