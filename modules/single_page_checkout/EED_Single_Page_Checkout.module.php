@@ -1502,7 +1502,7 @@ class EED_Single_Page_Checkout extends EED_Module
         wp_register_script(
             'single_page_checkout',
             SPCO_JS_URL . 'single_page_checkout.js',
-            array('espresso_core', 'underscore', 'ee_form_section_validation', 'jquery_countdown'),
+            array('espresso_core', 'underscore', 'ee_form_section_validation'),
             EVENT_ESPRESSO_VERSION,
             true
         );
@@ -1513,6 +1513,9 @@ class EED_Single_Page_Checkout extends EED_Module
             $this->checkout->current_step->reg_form->enqueue_js();
         }
         wp_enqueue_script('single_page_checkout');
+        if (apply_filters('FHEE__registration_page_wrapper_template__display_time_limit', false)) {
+            wp_enqueue_script('jquery_countdown');
+        }
         /**
          * global action hook for enqueueing styles and scripts with
          * spco calls.
