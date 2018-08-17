@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\editor;
 
 use EventEspresso\core\services\assets\BlockAssetManagerInterface;
+use EventEspresso\core\services\request\RequestInterface;
 use WP_Block_Type;
 
 /**
@@ -26,6 +27,11 @@ abstract class Block implements BlockInterface
      * @var BlockAssetManagerInterface $block_asset_manager
      */
     protected $block_asset_manager;
+
+    /**
+     * @var RequestInterface $request
+     */
+    protected $request;
 
     /**
      * @var array $attributes
@@ -60,10 +66,12 @@ abstract class Block implements BlockInterface
      * BlockLoader constructor.
      *
      * @param BlockAssetManagerInterface $block_asset_manager
+     * @param RequestInterface           $request
      */
-    public function __construct(BlockAssetManagerInterface $block_asset_manager)
+    public function __construct(BlockAssetManagerInterface $block_asset_manager, RequestInterface $request)
     {
         $this->block_asset_manager = $block_asset_manager;
+        $this->request = $request;
     }
 
 
