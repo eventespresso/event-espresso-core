@@ -7,7 +7,7 @@ use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class WordPressPostsEditor
- * Composite MatchAnyRouteSpecification using WordPressPostsEdit and WordPressPostsAddNew
+ * Composite MatchAnyRouteSpecification using WordPressPostsEditorEdit and WordPressPostsEditorAddNew
  * that will return true if either of the supplied Route Match Specifications returns true
  *  ie: returns true when the current request is for the WordPress Posts editor
  *      regardless of whether the user is editing or creating a new post
@@ -21,18 +21,18 @@ class WordPressPostsEditor extends MatchAnyRouteSpecification
     /**
      * WordPressPostsEditor constructor.
      *
-     * @param WordPressPostsEditorEdit   $edit_event_route_match
-     * @param WordPressPostsEditorAddNew $create_event_route_match
+     * @param WordPressPostsEditorEdit $edit_post_route_match
+     * @param WordPressPostsEditorAddNew $create_post_route_match
      * @param RequestInterface           $request
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */
     public function __construct(
-        WordPressPostsEditorEdit $edit_event_route_match,
-        WordPressPostsEditorAddNew $create_event_route_match,
+        WordPressPostsEditorEdit $edit_post_route_match,
+        WordPressPostsEditorAddNew $create_post_route_match,
         RequestInterface $request
     ) {
         parent::__construct(
-            array($edit_event_route_match, $create_event_route_match),
+            array($edit_post_route_match, $create_post_route_match),
             $request
         );
     }
