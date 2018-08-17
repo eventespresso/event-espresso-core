@@ -92,6 +92,26 @@ class BlockRegistrationManager extends BlockManager
         $this->initializeBlocks();
         add_action('AHEE__EE_System__initialize_last', array($this, 'registerBlocks'));
         add_action('wp_loaded', array($this, 'unloadAssets'));
+        add_filter('block_categories', array($this, 'addEspressoBlockCategories'));
+    }
+
+
+    /**
+     * @param array $categories
+     * @since $VID:$
+     * @return array
+     */
+    public function addEspressoBlockCategories(array $categories)
+    {
+        return array_merge(
+            $categories,
+            array(
+                array(
+                    'slug' => 'event-espresso',
+                    'title' => 'Event Espresso',
+                ),
+            )
+        );
     }
 
 
@@ -111,11 +131,7 @@ class BlockRegistrationManager extends BlockManager
                 // FQCNs for classes to add (all classes within each namespace will be loaded)
                 apply_filters(
                     'FHEE__EventEspresso_core_services_editor_BlockManager__populateBlockCollection__collection_FQCNs',
-                    array(
-                        // 'EventEspresso\core\domain\entities\editor\blocks\common',
-                        // 'EventEspresso\core\domain\entities\editor\blocks\editor',
-                        'EventEspresso\core\domain\entities\editor\blocks\widgets',
-                    )
+                    array('EventEspresso\core\domain\entities\editor\blocks')
                 ),
                 // filepaths to classes to add
                 array(),
