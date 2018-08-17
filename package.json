@@ -100,7 +100,6 @@
 		"@wordpress/dom-ready": "^1.1.0",
 		"@wordpress/i18n": "^1.2.3",
 		"@wordpress/is-shallow-equal": "^1.0.2",
-		"@wordpress/jest-preset-default": "^1.0.6",
 		"accounting-js": "^1.1.1",
 		"classnames": "^2.2.6",
 		"decimal.js-light": "^2.4.1",
