@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { blockEditRender } from '../../../helpers';
+import { blockEditRender } from '../../../tests';
 
 /**
  * Internal dependencies

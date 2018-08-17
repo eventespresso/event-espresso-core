@@ -20,9 +20,8 @@ import {
 	EditorTicketSelect,
 	QueryLimit,
 } from '@eventespresso/components';
-import * as statusModel from '../../../data/model/status';
+import * as statusModel from '../../data/model/status';
 import PropTypes from 'prop-types';
-import { isEmpty, uniqBy } from 'lodash';
 
 export default class EventAttendeesEditor extends Component {
 	static propTypes = {
@@ -49,7 +48,7 @@ export default class EventAttendeesEditor extends Component {
 			status: statusModel.REGISTRATION_STATUS_ID.APPROVED,
 			showGravatar: true,
 			displayOnArchives: false,
-			limit: 10
+			limit: 10,
 		},
 	};
 
@@ -94,7 +93,7 @@ export default class EventAttendeesEditor extends Component {
 
 	setLimit = ( limit ) => {
 		this.props.setAttributes( {
-			limit: parseInt( limit, 10 )
+			limit: parseInt( limit, 10 ),
 		} );
 	};
 
@@ -166,7 +165,7 @@ export default class EventAttendeesEditor extends Component {
 	render() {
 		return [
 			this.getAttendeesDisplay(),
-			this.getInspectorControls( this.props.attributes )
+			this.getInspectorControls( this.props.attributes ),
 		];
 	}
 }
