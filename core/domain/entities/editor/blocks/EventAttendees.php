@@ -10,6 +10,7 @@ use EventEspresso\core\domain\entities\editor\CoreBlocksAssetManager;
 use EventEspresso\core\domain\entities\shortcodes\EspressoEventAttendees;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\RequestInterface;
 use InvalidArgumentException;
 
 /**
@@ -35,11 +36,15 @@ class EventAttendees extends Block
      * EventAttendees constructor.
      *
      * @param CoreBlocksAssetManager $block_asset_manager
+     * @param RequestInterface       $request
      * @param EspressoEventAttendees $shortcode
      */
-    public function __construct(CoreBlocksAssetManager $block_asset_manager, EspressoEventAttendees $shortcode)
-    {
-        parent::__construct($block_asset_manager);
+    public function __construct(
+        CoreBlocksAssetManager $block_asset_manager,
+        RequestInterface $request,
+        EspressoEventAttendees $shortcode
+    ) {
+        parent::__construct($block_asset_manager, $request);
         $this->shortcode = $shortcode;
     }
 
@@ -60,11 +65,14 @@ class EventAttendees extends Block
                 'EventEspresso\core\domain\entities\route_match\specifications\frontend\EspressoBlockRenderer',
             )
         );
+        $EVT_ID = $this->request->getRequestParam('page') === 'espresso_events'
+            ? $this->request->getRequestParam('post', 0)
+            : 0;
         $this->setAttributes(
             array(
                 'eventId'            => array(
                     'type'    => 'number',
-                    'default' => 0,
+                    'default' => $EVT_ID,
                 ),
                 'datetimeId'         => array(
                     'type'    => 'number',
