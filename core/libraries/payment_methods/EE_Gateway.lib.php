@@ -332,12 +332,12 @@ abstract class EE_Gateway
         if ($object_logged instanceof EEI_Payment) {
             $type = 'Payment';
             $id = $object_logged->ID();
-        } elseif ($object_logged instanceof EEI_Payment_Method) {
-            $type = 'Payment_Method';
-            $id = $this->_ID;
         } elseif ($object_logged instanceof EEI_Transaction) {
             $type = 'Transaction';
             $id = $object_logged->ID();
+        } else {
+            $type = 'Payment_Method';
+            $id = $this->_ID;
         }
         // only log if we're going to store it for longer than the minimum time
         $reg_config = LoaderFactory::getLoader()->load('EE_Registration_Config');
