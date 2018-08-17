@@ -778,13 +778,13 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\route_match\RouteMatchSpecificationManager' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'                    => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager' => array(
+            'EventEspresso\core\domain\entities\editor\CoreBlocksAssetManager' => array(
                 'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\entities\editor\blocks\widgets\EventAttendees' => array(
-                'EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager' => self::load_from_cache,
+            'EventEspresso\core\domain\entities\editor\blocks\EventAttendees' => array(
+                'EventEspresso\core\domain\entities\editor\CoreBlocksAssetManager' => self::load_from_cache,
                 'EventEspresso\core\domain\entities\shortcodes\EspressoEventAttendees' => self::load_from_cache,
             ),
             'EventEspresso\core\services\route_match\RouteMatchSpecificationDependencyResolver' => array(
