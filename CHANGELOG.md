@@ -17,6 +17,10 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 
 ## [$VID:$]
 
+### Fixed
+
+- Fixed a fatal error when creating payment logs without passing a payment, transaction or payment method object ([651](https://github.com/eventespresso/event-espresso-core/pull/651))
+
 ## [4.9.66.p]
 
 ### Added
