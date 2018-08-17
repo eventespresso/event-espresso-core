@@ -28,6 +28,8 @@ class DetectFileEditorRequest extends Middleware
     {
         $this->request  = $request;
         $this->response = $response;
+        // can't store user data during WP error scrapes if no user exists
+        // so don't load the session since it's not going to work anyways
         if ($this->request->isWordPressScrape()) {
             add_filter('FHEE_load_EE_Session', '__return_false', 999);
         }
