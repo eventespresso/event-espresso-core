@@ -1,12 +1,12 @@
 <?php
 
-namespace EventEspresso\core\domain\entities\editor\blocks\widgets;
+namespace EventEspresso\core\domain\entities\editor\blocks;
 
 use DomainException;
 use EE_Error;
 use EEM_Registration;
 use EventEspresso\core\domain\entities\editor\Block;
-use EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager;
+use EventEspresso\core\domain\entities\editor\CoreBlocksAssetManager;
 use EventEspresso\core\domain\entities\shortcodes\EspressoEventAttendees;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -23,7 +23,7 @@ use InvalidArgumentException;
 class EventAttendees extends Block
 {
 
-    const BLOCK_TYPE = 'widgets-event-attendees';
+    const BLOCK_TYPE = 'event-attendees';
 
     /**
      * @var EspressoEventAttendees $shortcode
@@ -55,8 +55,8 @@ class EventAttendees extends Block
         $this->setBlockType(self::BLOCK_TYPE);
         $this->setSupportedRoutes(
             array(
-                'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditor',
-                'EventEspresso\core\domain\entities\route_match\specifications\admin\WordPressPostsEditor',
+                'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoPostTypeEditor',
+                'EventEspresso\core\domain\entities\route_match\specifications\admin\WordPressPostTypeEditor',
                 'EventEspresso\core\domain\entities\route_match\specifications\frontend\EspressoBlockRenderer',
             )
         );
