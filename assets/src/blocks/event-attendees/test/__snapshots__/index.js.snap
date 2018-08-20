@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`eventespresso/widgets-event-attendees block edit matches snapshot 1`] = `
+exports[`eventespresso/event-attendees block edit matches snapshot 1`] = `
 <[object Object]
   value={
     Object {
       "clientId": undefined,
       "focusedElement": null,
       "isSelected": false,
-      "name": "eventespresso/widgets-event-attendees",
+      "name": "eventespresso/event-attendees",
       "setFocusedElement": [Function],
     }
   }
@@ -25,7 +25,7 @@ exports[`eventespresso/widgets-event-attendees block edit matches snapshot 1`] =
       }
     }
     isSelected={false}
-    name="eventespresso/widgets-event-attendees"
+    name="eventespresso/event-attendees"
     setAttributes={[Function]}
     user={Object {}}
   />
