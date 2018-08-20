@@ -108,7 +108,7 @@ class BlockRegistrationManager extends BlockManager
             array(
                 array(
                     'slug' => 'event-espresso',
-                    'title' => 'Event Espresso',
+                    'title' => esc_html__('Event Espresso', 'event_espresso'),
                 ),
             )
         );
