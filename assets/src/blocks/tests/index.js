@@ -2,7 +2,8 @@
  * External dependencies
  */
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
+import { noop, some } from 'lodash';
+import { __ } from '@eventespresso/i18n';
 
 /**
  * WordPress dependencies
@@ -11,6 +12,8 @@ import {
 	createBlock,
 	getBlockType,
 	registerBlockType,
+	getCategories,
+	setCategories
 } from '@wordpress/blocks';
 import { BlockEdit } from '@wordpress/editor';
 
@@ -23,6 +26,7 @@ import { BlockEdit } from '@wordpress/editor';
  * @return {string} the rendered edit block
  */
 export const blockEditRender = ( name, settings ) => {
+	addEspressoBlockCategories();
 	if ( ! getBlockType( name ) ) {
 		registerBlockType( name, settings );
 	}
@@ -38,3 +42,21 @@ export const blockEditRender = ( name, settings ) => {
 		/>,
 	);
 };
+
+/**
+ * adds EE custom categories to wp.blocks categories
+ */
+const addEspressoBlockCategories = () => {
+	const categories = getCategories();
+	if ( ! some( categories, { slug: 'event-espresso' } ) ) {
+		categories.push(
+			{
+				"slug": 'event-espresso',
+				"title": __( 'Event Espresso', 'event_espresso' )
+			}
+		);
+		setCategories( categories );
+	}
+};
+
+
