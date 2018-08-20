@@ -60,7 +60,7 @@ class EventAttendees extends Block
         $this->setBlockType(self::BLOCK_TYPE);
         $this->setSupportedRoutes(
             array(
-                'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoPostTypeEditor',
+                'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoStandardPostTypeEditor',
                 'EventEspresso\core\domain\entities\route_match\specifications\admin\WordPressPostTypeEditor',
                 'EventEspresso\core\domain\entities\route_match\specifications\frontend\EspressoBlockRenderer',
             )
