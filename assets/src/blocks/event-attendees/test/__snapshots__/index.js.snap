@@ -14,7 +14,7 @@ Array [
         "ticketId": 0,
       }
     }
-    block="eventespresso/widgets-event-attendees"
+    block="eventespresso/event-attendees"
   />,
   <IfBlockEditSelected(InspectorControlsFill) />,
 ]
