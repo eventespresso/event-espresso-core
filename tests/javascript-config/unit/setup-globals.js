@@ -23,10 +23,10 @@ global.wp = {
 };
 
 Object.defineProperty( global.wp, 'element', {
-	get: () => require( 'packages/element' ),
+	get: () => require( '@wordpress/element' ),
 } );
 Object.defineProperty( global.wp, 'blocks', {
-	get: () => require( 'blocks' ),
+	get: () => require( '@wordpress/blocks' ),
 } );
 
 // this just saves having to import React in all our files (so JSX is
