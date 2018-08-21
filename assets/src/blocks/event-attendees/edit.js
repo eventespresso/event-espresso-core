@@ -108,7 +108,7 @@ export default class EventAttendeesEditor extends Component {
 	getAttendeesDisplay = () => {
 		return (
 			<ServerSideRender
-				block="eventespresso/widgets-event-attendees"
+				block="eventespresso/event-attendees"
 				attributes={ this.props.attributes }
 			/>
 		);
