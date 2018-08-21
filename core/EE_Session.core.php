@@ -878,7 +878,7 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * Detects if there is anything worth saving in the session (eg the cart is a good one, notices are pretty good
      * too). This is used when determining if we want to save the session or not.
-     * @since $VID:$
+     * @since 4.9.67.p
      * @return bool
      */
     private function sessionHasStuffWorthSaving()
