@@ -15,7 +15,17 @@ import {
 	getCategories,
 	setCategories
 } from '@wordpress/blocks';
-import { BlockEdit } from '@wordpress/editor';
+import '@wordpress/editor';
+
+/**
+ * override of wp.editor.BlockEdit
+ *
+ * @param {Object} props
+ * @return {string} rendered block
+ */
+const BlockEdit = ( props ) => {
+	return <div { ...props } />
+};
 
 /**
  * copy of `/gutenberg/packages/block-library/src/test/helpers/index.js`
@@ -39,7 +49,7 @@ export const blockEditRender = ( name, settings ) => {
 			attributes={ block.attributes }
 			setAttributes={ noop }
 			user={ {} }
-		/>,
+		/>
 	);
 };
 
