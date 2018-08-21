@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import { blockEditRender } from '../../tests';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
-import { name, settings } from '../';
+import EventAttendeesEditor from '../edit';
 
-describe( name, () => {
+describe( 'EventAttendeesEditor Block', () => {
 	test( 'block edit matches snapshot', () => {
-		const wrapper = blockEditRender( name, settings );
+		const wrapper = shallow( <EventAttendeesEditor /> );
 		expect( wrapper ).toMatchSnapshot();
 	} );
 } );
