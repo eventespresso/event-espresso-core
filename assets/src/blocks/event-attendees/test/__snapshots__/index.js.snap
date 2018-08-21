@@ -1,33 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`eventespresso/event-attendees block edit matches snapshot 1`] = `
-<[object Object]
-  value={
-    Object {
-      "clientId": undefined,
-      "focusedElement": null,
-      "isSelected": false,
-      "name": "eventespresso/event-attendees",
-      "setFocusedElement": [Function],
-    }
-  }
->
-  <WithFilters(Edit)
+exports[`EventAttendeesEditor Block block edit matches snapshot 1`] = `
+Array [
+  <ServerSideRender
     attributes={
       Object {
         "datetimeId": 0,
         "displayOnArchives": false,
         "eventId": 0,
         "limit": 10,
-        "showGravatar": false,
+        "showGravatar": true,
         "status": "RAP",
         "ticketId": 0,
       }
     }
-    isSelected={false}
-    name="eventespresso/event-attendees"
-    setAttributes={[Function]}
-    user={Object {}}
-  />
-</[object Object]>
+    block="eventespresso/widgets-event-attendees"
+  />,
+  <IfBlockEditSelected(InspectorControlsFill) />,
+]
 `;
