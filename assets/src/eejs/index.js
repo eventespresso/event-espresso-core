@@ -25,6 +25,12 @@ export const routes = r;
 export { currencyConfig as CURRENCY_CONFIG } from './currency_config';
 
 /**
+ * Default timezone configuration for the default timezone settings from the
+ * server
+ */
+export { timezoneConfig as TIMEZONE_CONFIG } from './timezone-config';
+
+/**
  * use this for eejs exceptions
  * Usage: throw new eejs.Exception('some message')
  * @param {string} msg
