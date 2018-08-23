@@ -6,7 +6,7 @@ import Duration from '../date-time/duration';
 /**
  * External imports
  */
-import { InvalidLocale } from '@eventespresso/eejs';
+import { InvalidLocale, InvalidISO8601String } from '@eventespresso/eejs';
 import { forEach } from 'lodash';
 import moment from 'moment';
 
@@ -24,7 +24,7 @@ describe( 'Duration Value Object', () => {
 		it( 'Throws an InvalidLocale error with invalid locale on construction',
 			() => {
 				const testInvalidDuration = () => {
-					return new Duration( { years: 1}, 'invalid' );
+					return new Duration( { years: 1 }, 'invalid' );
 				};
 				expect( testInvalidDuration ).toThrow( InvalidLocale );
 			} );
@@ -241,15 +241,6 @@ describe( 'Duration Value Object', () => {
 		} );
 		describe( 'plus()', () => {
 			const testDuration = new Duration( { hours: 10 } );
-			const baseObjectValues = {
-				days: 0,
-				hours: 0,
-				minutes: 0,
-				months: 0,
-				seconds: 0,
-				years: 0,
-				milliseconds: 0,
-			};
 
 			// 0 -> test Description
 			// 1 -> passed in value
@@ -461,9 +452,137 @@ describe( 'Duration Value Object', () => {
 					'string ' + testCondition[ 0 ], () => {
 					expect(
 						new Duration( testHours )
-							.toFormat( testCondition[ 0 ]  )
+							.toFormat( testCondition[ 0 ] )
 					).toBe( testCondition[ 1 ] );
 				} );
+			} );
+		} );
+	} );
+	describe( 'static methods', () => {
+		describe( 'DateTime.fromMillis', () => {
+			describe( 'constructs an instance of Duration from milliseconds',
+				() => {
+					const testDuration = Duration.fromMillis( 86400000 );
+					it( 'is an instance of Duration', () => {
+						expect( testDuration ).toBeInstanceOf( Duration );
+					} );
+					it( 'has the expected locale', () => {
+						expect( testDuration.locale ).toBe( 'en' );
+					} );
+					it( 'has the expected milliseconds value', () => {
+						expect( testDuration.milliseconds ).toBe( 86400000 );
+					} );
+				} );
+		} );
+		describe( 'DateTime.fromObject', () => {
+			describe( 'constructs an instance of Duration from invalid object',
+				() => {
+					const testDuration = () => {
+						return Duration.fromObject(
+							{
+								hours: 24,
+								cheeseburgers: 1,
+							}
+						);
+					};
+					it( 'outputs a console error', () => {
+						testDuration();
+						expect( console ).toHaveErrored();
+					} );
+					it( 'is considered invalid', () => {
+						const duration = testDuration();
+						expect( console ).toHaveErrored();
+						expect( duration.isValid ).toBe( false );
+					} );
+					it( 'has expected values', () => {
+						const duration = testDuration();
+						expect( console ).toHaveErrored();
+						expect( duration.hours ).toBe( 24 );
+					} );
+					it( 'has expected locale', () => {
+						const duration = testDuration();
+						expect( console ).toHaveErrored();
+						expect( duration.locale ).toBe( 'en' );
+					} );
+				} );
+			describe( 'constructs an instance of Duration from a valid ' +
+				'object', () => {
+				const testDuration = Duration.fromObject(
+					{
+						hours: 24,
+						days: 1,
+					}
+				);
+				it( 'has expected values', () => {
+					expect( testDuration.toObject() ).toEqual(
+						{
+							...baseObjectValues,
+							hours: 24,
+							days: 1,
+						}
+					);
+				} );
+				it( 'has expected locale', () => {
+					expect( testDuration.locale ).toBe( 'en' );
+				} );
+			} );
+		} );
+		describe( 'DateTime.fromISO', () => {
+			const testDuration = Duration.fromISO( 'P1DT24H30M' );
+			it( 'returns an instance of Duration', () => {
+				expect( testDuration ).toBeInstanceOf( Duration );
+			} );
+			it( 'has expected values', () => {
+				expect( testDuration.toObject() ).toEqual(
+					{
+						...baseObjectValues,
+						days: 2,
+						minutes: 30,
+					}
+				);
+			} );
+			it( 'has expected locale', () => {
+				expect( testDuration.locale ).toBe( 'en' );
+			} );
+			it( 'throws a an InvalidISO8601String error for invalid duration ' +
+				'format', () => {
+				const getDuration = () => Duration.fromISO( 'invalid' );
+				expect( getDuration ).toThrow( InvalidISO8601String );
+			} );
+		} );
+		describe( 'DateTime.isValidDuration', () => {
+			it( 'returns true for a valid duration', () => {
+				const testDuration = new Duration( { hours: 24 } );
+				expect( Duration.isValidDuration( testDuration ) ).toBe( true );
+			} );
+			it( 'throws a console error and returns false for invalid ' +
+				'duration instance', () => {
+				const testDuration = new Duration(
+					{ hours: 24, cheeseburgers: 1 }
+				);
+				expect( console ).toHaveErrored();
+				expect( Duration.isValidDuration( testDuration ) ).toBe( false );
+			} );
+			it( 'returns false when value is not an instance of Duration',
+				() => {
+					expect( Duration.isValidDuration( 'invalid' ) ).toBe( false );
+				} );
+		} );
+		describe( 'DateTime.isDuration', () => {
+			it( 'returns true for a value that is an instance of ' +
+				'Duration', () => {
+				expect( Duration.isDuration( new Duration ) ).toBe( true );
+			} );
+			it( 'returns false for a value that is not an instance of ' +
+				'Duration', () => {
+				expect( Duration.isDuration( null ) ).toBe( false );
+			} );
+		} );
+		describe( 'DateTime.assertIsDuration', () => {
+			it( 'throws an error for a value that is not an instance of ' +
+				'Duration', () => {
+				const invalidDuration = () => Duration.assertIsDuration( null );
+				expect( invalidDuration ).toThrow( TypeError );
 			} );
 		} );
 	} );
