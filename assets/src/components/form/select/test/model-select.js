@@ -15,7 +15,9 @@ const simulatedResponse = [
 describe( 'ModelSelect Snapshot with default options (with required modelName)',
 	() => {
 		it( 'should render and match snapshot', () => {
-			const wrapper = shallow( <ModelSelect modelName={ 'event' } /> );
+			const wrapper = shallow(
+				<ModelSelect modelName={ 'event' } />
+			);
 			expect( wrapper ).toMatchSnapshot();
 		} );
 	},
@@ -57,3 +59,5 @@ describe( 'ModelSelect props check', () => {
 		expect( wrapper.childAt( 0 ).text() ).toEqual( 'Label for Select' );
 	} );
 } );
+
+// location: assets/src/components/form/select/test/model-select.js

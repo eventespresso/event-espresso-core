@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\route_match\specifications\admin;
 
 use EventEspresso\core\domain\entities\route_match\RouteMatchSpecification;
+use WP_Post;
 
 /**
  * Class WordPressPostsEdit
@@ -22,8 +23,15 @@ class WordPressPostsEditorEdit extends RouteMatchSpecification
      */
     public function isMatchingRoute()
     {
+        global $post;
         return strpos($this->request->requestUri(), 'wp-admin/post.php') !== false
-            && $this->request->getRequestParam('post_type', 'post') === 'post'
+            && (
+                $this->request->getRequestParam('post_type', 'post') === 'post'
+                || (
+                    $post instanceof WP_Post
+                    && $post->post_type === 'post'
+                )
+            )
             && $this->request->getRequestParam('action') === 'edit';
     }
 }

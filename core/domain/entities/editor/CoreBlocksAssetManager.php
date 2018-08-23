@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\entities\editor\blocks;
+namespace EventEspresso\core\domain\entities\editor;
 
 use EventEspresso\core\services\assets\BlockAssetManager;
 

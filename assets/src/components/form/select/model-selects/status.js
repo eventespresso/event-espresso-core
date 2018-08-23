@@ -10,7 +10,7 @@ import { withBaseControl } from '../../../../higher-order-components';
  */
 import { __ } from '@eventespresso/i18n';
 import { Component } from '@wordpress/element';
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 
 const optionsEntityMap = {
 	default: {
@@ -71,11 +71,11 @@ export default class StatusSelect extends Component {
 
 	componentDidMount() {
 		this.setState( {
-			queryData: {
-				...this.props.queryData,
-				statusType: this.props.statusType,
-			},
+			queryData: { ...this.props.queryData },
 		} );
+		if ( this.props.statusType ) {
+			this.addStatusTypeToQueryData( this.props.statusType );
+		}
 	}
 
 	componentDidUpdate( prevProps ) {

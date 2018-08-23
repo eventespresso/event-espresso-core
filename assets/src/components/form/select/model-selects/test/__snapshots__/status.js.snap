@@ -36,7 +36,7 @@ exports[`StatusSelect() matches snapshot with default props plus provided status
   queryData={
     Object {
       "limit": 25,
-      "order": "DESC",
+      "order": "ASC",
       "orderBy": "statusCode",
       "statusType": "registration",
     }

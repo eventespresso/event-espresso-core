@@ -11,7 +11,7 @@ import { RangeControl } from '@wordpress/components';
 const DEFAULT_LIMIT = 10;
 const DEFAULT_LABEL = __( 'Limit', 'event_espresso' );
 const DEFAULT_MIN = 1;
-const DEFAULT_MAX = 100;
+const DEFAULT_MAX = 1000;
 
 export const QueryLimit = ( {
 	onLimitChange,
@@ -20,9 +20,7 @@ export const QueryLimit = ( {
 	min = DEFAULT_MIN,
 	max = DEFAULT_MAX,
 } ) => {
-	return ! onLimitChange ? (
-		null
-	) : (
+	return (
 		<RangeControl
 			key={ 'query-limit' }
 			value={ limit }

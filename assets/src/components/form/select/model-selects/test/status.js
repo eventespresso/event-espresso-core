@@ -1,6 +1,6 @@
 import StatusSelect, { EditorStatusSelect } from '../status';
 import { shallow, render } from 'enzyme';
-import { QUERY_ORDER_DESC } from 'assets/src/data/model/base';
+import { QUERY_ORDER_ASC } from 'assets/src/data/model/base';
 import * as statusModel from 'assets/src/data/model/status';
 
 jest.mock( '../../model-select', () => () => <span>StatusSelect</span> );
@@ -9,7 +9,7 @@ describe( 'StatusSelect()', () => {
 	const expectedDefaultQueryData = {
 		limit: 25,
 		orderBy: 'statusCode',
-		order: QUERY_ORDER_DESC,
+		order: QUERY_ORDER_ASC,
 		statusType: statusModel.STATUS_TYPE_REGISTRATION,
 	};
 	it( 'matches snapshot with default props plus provided statusType', () => {
