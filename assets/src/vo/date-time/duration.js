@@ -208,7 +208,7 @@ export default class Duration {
 	 * (in non-production mode).
 	 *
 	 * @param {mixed} values
-	 * @return {*} Filtered values.
+	 * @return {Object} Filtered values.
 	 * @throws TypeError if incoming values argument is not an object.
 	 */
 	[ privateMethods.filterValues ]( values ) {
