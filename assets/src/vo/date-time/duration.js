@@ -92,19 +92,22 @@ export default class Duration {
 	/**
 	 * The constructor for the Duration class.
 	 *
-	 * @param {Object|moment.Duration} values  Receiving a moment.Duration
-	 * object is something for internal use and should not be used directly via
+	 * @param {Object|moment.Duration|string|number} values
+	 * Receiving a moment.Duration object is something for internal use and should not be used directly via
 	 * client code.
 	 * @param {string} locale  A valid locale string.
 	 * 							@link http://tools.ietf.org/html/rfc5646
 	 */
 	constructor( values, locale = 'en' ) {
 		this[ privateProperties.isValid ] = true;
+		assertions.assertLocaleIsValid( locale );
+		if ( typeof values !== 'object' ) {
+			values = moment.duration( values ).locale( locale );
+		}
 		if ( moment.isDuration( values ) ) {
 			this[ privateProperties.duration ] = values;
 			this[ privateMethods.populateValuesFromDuration ]( values );
 		} else {
-			assertions.assertLocaleIsValid( locale );
 			values = this[ privateMethods.filterValues ]( values );
 			this[ privateMethods.setValues ]( values );
 			this[ privateProperties.duration ] = moment.duration(
@@ -144,6 +147,7 @@ export default class Duration {
 	 * @return {Duration} An instance of Duration
 	 */
 	static fromISO( ISOString, locale = 'en' ) {
+		assertions.assertISO8601IsValid( ISOString, true );
 		return new Duration( ISOString, locale );
 	}
 
@@ -153,7 +157,7 @@ export default class Duration {
 	 * @return {boolean}  True means it is a valid Duration object.
 	 */
 	static isValidDuration( duration ) {
-		return duration.isValid;
+		return duration instanceof Duration && duration.isValid;
 	}
 
 	/**
@@ -163,7 +167,7 @@ export default class Duration {
 	 * @throws TypeError
 	 */
 	static assertIsValidDuration( duration ) {
-		if ( ! ( duration instanceof Duration ) || ! duration.isValid ) {
+		if ( ! Duration.isValidDuration( duration ) ) {
 			throw new TypeError(
 				'This Duration object is not valid.'
 			);
