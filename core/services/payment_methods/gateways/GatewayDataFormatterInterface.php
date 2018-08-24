@@ -71,4 +71,5 @@ interface GatewayDataFormatterInterface
      * @return string
      */
     public function formatCurrency($amount);
+
 }
