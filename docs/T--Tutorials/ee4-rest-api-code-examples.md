@@ -37,10 +37,12 @@ if ($count > 0){
  foreach ($events as $event){
  echo '<div class="event">';
  $featured_image_url = $event['_calculated_fields']['image_medium_large']['url'];
- echo $featured_image_url ? '<a href="' . esc_attr( $event['link'] ). '"><img src="' . esc_attr( $featured_image_url ) . '" /></a>' : '';
+ echo $featured_image_url ? '<a href="' . $event['link'] . '"><img src="' . $featured_image_url . '" /></a>' : '';
  echo '<a href="' . $event[ 'link' ] . '">' . $event[ 'EVT_name' ] . '</a><ul>';
+ $i = 0;
  foreach( $event[ 'datetimes' ] as $datetime ) {
- echo '<li>' . date( 'l jS of F Y @h:i A',strtotime( $event[ 'datetimes' ][ 0 ][ 'DTT_EVT_start' ] ) ).'</a>';
+ echo '<li>' . date( 'l jS of F Y @h:i A',strtotime( $event[ 'datetimes' ][ $i ][ 'DTT_EVT_start' ] ) ).'</a>';
+ $i++;
  }
  echo '</ul></div>';
  }
