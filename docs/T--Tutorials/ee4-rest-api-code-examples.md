@@ -52,7 +52,6 @@ if ($count > 0){
 </html>
 ```
 
-See this script [in action here](http://dev2.eventespresso.com/wp-content/plugins/eea-rest-api-client/standalone-scripts/ee-list-events.php).
 
 
 ## Display Events in a Calendar using Javascript
@@ -162,7 +161,6 @@ This next example can be run from any site as it only uses javascript.
 </html>
 ```
 
-To see this plugin in action, [click here](http://dev2.eventespresso.com/wp-content/plugins/eea-rest-api-client/standalone-scripts/ee-events-calendar.php).
 
 As you can see, this example using the [FullCalendar library](http://fullcalendar.io/) for displaying the calendar, which itself requires [jQuery](https://jquery.com/) and [moment.js](http://momentjs.com/). It simply initializes the calendar, and fetches event data from the EE4 JSON REST API in order to populate the calendar. Note this is just a sample usage of the EE4 JSON REST API, it is by no means a replacement for the [EE4 Calendar Addon](https://eventespresso.com/product/ee4-events-calendar/).
 
