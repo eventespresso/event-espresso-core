@@ -41,7 +41,7 @@ if ($count > 0){
  echo '<a href="' . $event[ 'link' ] . '">' . $event[ 'EVT_name' ] . '</a><ul>';
  $i = 0;
  foreach( $event[ 'datetimes' ] as $datetime ) {
- echo '<li>' . date( 'l jS of F Y @h:i A',strtotime( $event[ 'datetimes' ][ $i ][ 'DTT_EVT_start' ] ) ).'</li>';
+ echo '<li>' . date( 'l, jS \o\f F Y \a\t h:i a',strtotime( $event[ 'datetimes' ][ $i ][ 'DTT_EVT_start' ] ) ).'</li>';
  $i++;
  }
  echo '</ul></div>';
