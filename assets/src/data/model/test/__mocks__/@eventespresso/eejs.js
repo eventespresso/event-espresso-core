@@ -1,5 +1,11 @@
 const {
 	Exception,
+	InvalidSchema,
+	InvalidArgument,
+	InvalidTimezone,
+	InvalidISO8601String,
+	InvalidLocale,
+	InvalidDateTime,
 	mergeAndDeDuplicateArrays,
 	mergeAndDeDuplicateObjects,
 } = require( '../../../../../eejs/index' );
@@ -40,5 +46,11 @@ module.exports.data = {
 };
 
 module.exports.Exception = Exception;
+module.exports.InvalidSchema = InvalidSchema;
+module.exports.InvalidArgument = InvalidArgument;
+module.exports.InvalidTimezone = InvalidTimezone;
+module.exports.InvalidISO8601String = InvalidISO8601String;
+module.exports.InvalidLocale = InvalidLocale;
+module.exports.InvalidDateTime = InvalidDateTime;
 module.exports.mergeAndDeDuplicateArrays = mergeAndDeDuplicateArrays;
 module.exports.mergeAndDeDuplicateObjects = mergeAndDeDuplicateObjects;

@@ -31,16 +31,8 @@ export { currencyConfig as CURRENCY_CONFIG } from './currency_config';
 export { timezoneConfig as TIMEZONE_CONFIG } from './timezone-config';
 
 /**
- * use this for eejs exceptions
- * Usage: throw new eejs.Exception('some message')
- * @param {string} msg
+ * Custom exceptions
  */
-export const Exception = function( msg ) {
-	this.message = msg;
-	this.name = 'Exception';
-	this.stack = ( new Error() ).stack;
-};
-
-Exception.prototype = new Error;
+export * from './exceptions';
 
 export * from './utils/merge-and-de-duplicate';
