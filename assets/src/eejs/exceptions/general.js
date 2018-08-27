@@ -6,7 +6,7 @@
 export default class Exception extends Error {
 	constructor( ...args ) {
 		super( ...args );
-		if ( Error.captureStackTrace() ) {
+		if ( Error.captureStackTrace ) {
 			Error.captureStackTrace( this, Exception );
 		}
 	}
