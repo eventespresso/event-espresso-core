@@ -633,7 +633,7 @@ describe( 'DateTime Value Object', () => {
 			it( 'returns expected value', () => {
 				expect( ( Datetime.fromObject( {
 					...testDateValues,
-					timezone: 'UTC'
+					timezone: 'UTC',
 				} ) ).toMillis() ).toBe( testDateValueInMilliseconds );
 			} );
 		} );
@@ -680,7 +680,7 @@ describe( 'DateTime Value Object', () => {
 			it( 'returns expected value when coerced to a number', () => {
 				const testDate = Datetime.fromObject( {
 					...testDateValues,
-					timezone: 'UTC'
+					timezone: 'UTC',
 				} );
 				expect( 1 + testDate )
 					.toBe( testDateValueInMilliseconds + 1 );
