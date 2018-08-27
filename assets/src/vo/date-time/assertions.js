@@ -1,8 +1,8 @@
 /**
  * External imports
  */
-import { isString } from 'lodash';
 import moment from 'momenttz';
+import { isString, isNumber } from 'lodash';
 
 /**
  * Internal imports
@@ -23,7 +23,10 @@ export function validateLocale( locale ) {
 	if ( ! isString( locale ) ) {
 		return false;
 	}
+	const originalLocale = moment.locale();
 	const validationLocale = moment.locale( locale );
+	// reset back to original locale
+	moment.locale( originalLocale );
 	return ! ( locale !== 'en' && validationLocale === 'en' );
 }
 
@@ -126,6 +129,33 @@ export function assertIsDate( date ) {
 	if ( ! validateIsDate( date ) ) {
 		throw new TypeError(
 			'The provided value is not an instance of Date'
+		);
+	}
+}
+
+/**
+ * Validates whether the provided value is a valid offset
+ *
+ * Currently this just validates the provided value is a number. Eventually it
+ * might check upper and lower limits.
+ *
+ * @param {number} offset
+ * @return {boolean}  true means its valid.
+ */
+export function validateIsOffset( offset ) {
+	return isNumber( offset );
+}
+
+/**
+ * Asserts whether the provided value is a valid offset.
+ *
+ * @param {number} offset
+ * @throws TypeError
+ */
+export function assertIsOffset( offset ) {
+	if ( ! validateIsOffset( offset ) ) {
+		throw new TypeError(
+			'Offset is expected to be a number'
 		);
 	}
 }
