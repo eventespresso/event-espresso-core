@@ -1,9 +1,17 @@
 /**
  * External imports
  */
-import moment from 'moment';
-import { capitalize, omit, isNumber, isEmpty, reduce } from 'lodash';
 import moment from 'momenttz';
+import {
+	capitalize,
+	omit,
+	isNumber,
+	isEmpty,
+	reduce,
+	isObject,
+	isOffset,
+	isUndefined,
+} from 'lodash';
 
 /**
  * Internal imports
@@ -13,7 +21,7 @@ import {
 	InvalidArgument,
 } from '@eventespresso/eejs';
 import * as assertions from './assertions';
-import Duration from 'duration';
+import Duration from './duration';
 
 /**
  * A collection of symbols used for "private" properties in the DateTime object.
@@ -35,7 +43,10 @@ const privateProperties = {
  * {
  * 	getUnitNames: Symbol,
  * 	createGettersAndSetters: Symbol,
- * 	extractMomentsFromDateTimes: Symbol
+ * 	extractMomentsFromDateTimes: Symbol,
+ * 	normalizeUnitName: Symbol,
+ * 	normalizeUnitObject: Symbol,
+ * 	normalizeUnitValue: Symbol,
  * 	}
  * }
  */
@@ -43,6 +54,9 @@ const privateMethods = {
 	getUnitNames: Symbol( 'DateTimeMethodGetUnitNames' ),
 	createGettersAndSetters: Symbol( 'DateTimeMethodCreateGettersAndSetters' ),
 	extractMomentsFromDateTimes: Symbol( 'DateTimeMethodExtractMomentsFromDateTimes' ),
+	normalizeUnitName: Symbol( 'DateTimeMethodNormalizeUnitName' ),
+	normalizeUnitObject: Symbol( 'DateTimeMethodNormalizeUnitObject' ),
+	normalizeUnitValue: Symbol( 'DateTimeMethodNormalizeUnitValue' ),
 };
 
 const validDateTimeUnits = [
@@ -63,7 +77,7 @@ const validDateTimeUnits = [
  * can be depended on if in the future the internal library is switched to
  * something different (such as Luxon).
  */
-export class DateTime {
+export default class DateTime {
 	/**
 	 * The constructor for the DateTime class
 	 *
@@ -87,14 +101,20 @@ export class DateTime {
 			if ( iso8601DateString !== '' ) {
 				DateTime.assertISO8601IsValid( iso8601DateString );
 			}
-			DateTime.assertTimezoneIsValid( timezone );
 			DateTime.assertLocaleIsValid( locale );
-			this[ privateProperties.datetime ] = iso8601DateString === '' ?
-				moment().tz( timezone ).locale( locale ) :
-				moment.tz(
-					iso8601DateString,
-					timezone
-				).locale( locale );
+			if ( timezone === 'local' ) {
+				this[ privateProperties.datetime ] = iso8601DateString === '' ?
+					moment().locale( locale ) :
+					moment( iso8601DateString ).locale( locale );
+			} else {
+				DateTime.assertTimezoneIsValid( timezone );
+				this[ privateProperties.datetime ] = iso8601DateString === '' ?
+					moment().tz( timezone ).locale( locale ) :
+					moment.tz(
+						iso8601DateString,
+						timezone
+					).locale( locale );
+			}
 		}
 		this[ privateMethods.createGettersAndSetters ]();
 		Object.freeze( this );
@@ -152,6 +172,29 @@ export class DateTime {
 	 */
 	static assertTimezoneIsValid( timezone ) {
 		assertions.assertTimezoneIsValid( timezone );
+	}
+
+	/**
+	 * Validates whether the provided value is a valid offset
+	 *
+	 * Currently this just validates the provided value is a number. Eventually it
+	 * might check upper and lower limits.
+	 *
+	 * @param {number} offset
+	 * @return {boolean}  true means its valid.
+	 */
+	static validateIsOffset( offset ) {
+		return assertions.validateIsOffset( offset );
+	}
+
+	/**
+	 * Asserts whether the provided value is a valid offset.
+	 *
+	 * @param {number} offset
+	 * @throws TypeError
+	 */
+	static assertIsOffset( offset ) {
+		assertions.assertIsOffset( offset );
 	}
 
 	/**
@@ -223,7 +266,7 @@ export class DateTime {
 	/**
 	 * A private internal helper method that is used to extract all moment
 	 * instances from the provided DateTimes (passed in as arguments).
-	 * @param {DateTime[]} datetimes
+	 * @param {...DateTime} datetimes
 	 * @return {Moment[]} An array of moment instances extracted from the
 	 * DateTimes
 	 */
@@ -237,7 +280,7 @@ export class DateTime {
 	/**
 	 * Given an indefinite number of DateTimes as arguments, this will return a
 	 * new DateTime that represents the latest point in time.
-	 * @param {DateTime[]} datetimes
+	 * @param {...DateTime} datetimes
 	 * @return {DateTime} A new DateTime representing the latest point of time.
 	 */
 	static max( ...datetimes ) {
@@ -253,7 +296,7 @@ export class DateTime {
 	/**
 	 * Given an indefinite number of DateTimes as arguments, this will return a
 	 * new DAteTime that represents the earliest point in time.
-	 * @param {DateTime[]} datetimes
+	 * @param {...DateTime} datetimes
 	 * @return {DateTime} A new DateTime representing the earliest point in
 	 * time.
 	 */
@@ -275,7 +318,7 @@ export class DateTime {
 	 * @param {string} locale
 	 * @return {DateTime} An instance of DateTime
 	 */
-	static fromISO( ISOString, timezone = 'UTC', locale = 'en-us' ) {
+	static fromISO( ISOString, timezone = 'UTC', locale = 'en' ) {
 		return new DateTime( ISOString, timezone, locale );
 	}
 
@@ -287,7 +330,7 @@ export class DateTime {
 	 * @param {string} locale
 	 * @return {DateTime} Returns an instance of DateTime
 	 */
-	static fromJSDate( date, timezone = 'UTC', locale = 'en-us' ) {
+	static fromJSDate( date, timezone = 'UTC', locale = 'en' ) {
 		DateTime.assertIsDate( date );
 		DateTime.assertTimezoneIsValid( timezone );
 		DateTime.assertLocaleIsValid( locale );
@@ -297,38 +340,38 @@ export class DateTime {
 	}
 
 	/**
-	 * Constructs a DateTime with milliseconds from epoch.
+	 * Constructs a DateTime (in utc) with milliseconds from epoch.
 	 *
 	 * @param {number} milliseconds
 	 * @param {string} locale
 	 * @return {DateTime} Returns an instance of DateTime
 	 * @throws TypeError
 	 */
-	static fromMillis( milliseconds, locale = 'en-us' ) {
+	static fromMillis( milliseconds, locale = 'en' ) {
 		DateTime.assertLocaleIsValid( locale );
 		if ( ! isNumber( milliseconds ) ) {
 			throw new TypeError( 'Provided value must be a number' );
 		}
 		return new DateTime(
-			moment( milliseconds ).locale( locale )
+			moment.utc( milliseconds ).locale( locale )
 		);
 	}
 
 	/**
-	 * Constructs a DateTime with seconds from epoch.
+	 * Constructs a DateTime in utc() with seconds from epoch.
 	 *
 	 * @param {number} seconds
 	 * @param {string} locale
 	 * @return {DateTime} An instance of DateTime
 	 * @throws TypeError
 	 */
-	static fromUnix( seconds, locale = 'en-us' ) {
+	static fromUnix( seconds, locale = 'en' ) {
 		DateTime.assertLocaleIsValid( locale );
 		if ( ! isNumber( seconds ) ) {
 			throw new TypeError( 'Provided value must be a number' );
 		}
 		return new DateTime(
-			moment.unix( seconds ).locale( locale )
+			moment.unix( seconds ).utc().locale( locale )
 		);
 	}
 
@@ -348,12 +391,13 @@ export class DateTime {
 	 * @return {DateTime} An instance of DateTime
 	 * @throws InvalidArgument
 	 */
-	static local( values, locale = 'en-us' ) {
+	static fromLocal( values, locale = 'en' ) {
 		DateTime.assertLocaleIsValid( locale );
+		values = DateTime[ privateMethods.normalizeUnitObject ]( values );
 		const datetime = isEmpty( values ) ?
 			moment().locale( locale ) :
 			moment( values ).locale( locale );
-		if ( ! datetime.isValid() ) {
+		if ( datetime.isValid() !== true ) {
 			throw new InvalidArgument(
 				'Double-check the values you sent in.',
 				values
@@ -380,12 +424,13 @@ export class DateTime {
 	 * @return {DateTime} An instance of DateTime
 	 * @throws InvalidArgument
 	 */
-	static utc( values, locale = 'en-us' ) {
+	static utc( values, locale = 'en' ) {
 		DateTime.assertLocaleIsValid( locale );
+		values = DateTime[ privateMethods.normalizeUnitObject ]( values );
 		const datetime = isEmpty( values ) ?
 			moment.utc().locale( locale ) :
 			moment.utc( values ).locale( locale );
-		if ( ! datetime.isValid() ) {
+		if ( datetime.isValid() !== true ) {
 			throw new InvalidArgument(
 				'Double-check the values sent in.',
 				values
@@ -408,25 +453,32 @@ export class DateTime {
 	 * @return {DateTime} An instance of DateTime
 	 */
 	static fromObject( values ) {
-		if ( typeof values !== 'object' ) {
-			throw new TypeError(
-				'The incoming configuration argument must be an object'
-			);
-		}
-		const locale = values.locale || 'en-us';
+		const locale = values.locale || 'en';
 		const timezone = values.timezone || 'local';
-		const offset = values.offset || null;
-		const valuesForConstruct = omit(
+		const offset = isUndefined( values.offset ) ?
+			null :
+			values.offset;
+		let valuesForConstruct = omit(
 			values,
 			[ 'locale', 'timezone', 'offset' ]
 		);
+
+		if ( timezone !== 'local' ) {
+			DateTime.assertTimezoneIsValid( timezone );
+		}
+		DateTime.assertLocaleIsValid( locale );
+
 		if ( offset !== null ) {
+			DateTime.assertIsOffset( offset );
+			valuesForConstruct = DateTime[ privateMethods.normalizeUnitObject ](
+				valuesForConstruct
+			);
 			const datetime = isEmpty( valuesForConstruct ) ?
-				moment.utc().offset( offset ).locale( locale ) :
+				moment.utcOffset( offset ).locale( locale ) :
 				moment.utc( valuesForConstruct )
-					.offset( offset )
+					.utcOffset( offset, true )
 					.locale( locale );
-			if ( ! datetime.isValid() ) {
+			if ( datetime.isValid() !== true ) {
 				throw new InvalidArgument(
 					'Double-check the configuration object sent in.',
 					values
@@ -436,18 +488,92 @@ export class DateTime {
 		}
 
 		if ( timezone === 'local' ) {
-			return DateTime.local( valuesForConstruct, locale );
+			return DateTime.fromLocal( valuesForConstruct, locale );
 		}
 
+		valuesForConstruct = DateTime[ privateMethods.normalizeUnitObject ](
+			valuesForConstruct
+		);
 		const datetime = moment.tz( valuesForConstruct, timezone )
 			.locale( locale );
-		if ( ! datetime.isValid() ) {
+		if ( datetime.isValid() !== true ) {
 			throw new InvalidArgument(
 				'Double-check the configuration object sent in.',
 				values
 			);
 		}
-		return new DateTime( datetime );
+		return new DateTime( datetime, timezone, locale );
+	}
+
+	/**
+	 * Moment uses different names for some unit getters/setters/properties so
+	 * this is used to normalize a given unit name to what moment uses.
+	 *
+	 * @param {string} nameToNormalize
+	 * @return {string}  Normalized unit name.
+	 */
+	static [ privateMethods.normalizeUnitName ]( nameToNormalize ) {
+		const map = {
+			day: 'date',
+			days: 'day',
+			date: 'day',
+			years: 'year',
+			months: 'month',
+			milliseconds: 'millisecond',
+			minutes: 'minute',
+			seconds: 'second',
+			hours: 'hour',
+		};
+		return map[ nameToNormalize ] ?
+			map[ nameToNormalize ] :
+			nameToNormalize;
+	}
+
+	/**
+	 * Handles normalizing unit values for internal library use.
+	 *
+	 * For example, moment zero indexes months. DateTime does not, so this
+	 * method helps with normalizing month values for both setting (used by
+	 * moment) and getting (returned to client).  This allows client code
+	 * to expect months in DateTime to be handled with a non-zero index.
+	 *
+	 * @param {string} unit The unit to be normalized
+	 * @param {mixed}  value The value for that unit
+	 * @param {boolean} set  Whether this should normalize for setting or
+	 * getting.
+	 * @return {mixed}  The normalized value.
+	 */
+	static [ privateMethods.normalizeUnitValue ]( unit, value, set = true ) {
+		if ( unit === 'month' ) {
+			value = set ? value - 1 : value + 1;
+		}
+		return value;
+	}
+
+	/**
+	 * Given a simple object containing units, this normalizes the object to
+	 * what moment recognizes.
+	 *
+	 * @param {Object} setObject
+	 * @param {boolean} set  true if setting the object, false if getting the
+	 * object
+	 * @return {Object} The normalized object.
+	 */
+	static [ privateMethods.normalizeUnitObject ]( setObject, set = true ) {
+		if ( ! isObject( setObject ) ) {
+			throw new TypeError(
+				'The incoming value must be an object'
+			);
+		}
+		return reduce( setObject, ( result, value, key ) => {
+			key = DateTime[ privateMethods.normalizeUnitName ]( key );
+			result[ key ] = DateTime[ privateMethods.normalizeUnitValue ](
+				key,
+				value,
+				set
+			);
+			return result;
+		}, {} );
 	}
 
 	/**
@@ -469,8 +595,14 @@ export class DateTime {
 				// eg. instance.hour or instance.hour = 3
 				Object.defineProperty( this, unitName, {
 					get() {
-						return this[ privateProperties.datetime ]
-							[ unitName ]();
+						const methodName = DateTime[ privateMethods.normalizeUnitName ]( unitName );
+						const unitValue = this[ privateProperties.datetime ]
+							[ methodName ]();
+						return DateTime[ privateMethods.normalizeUnitValue ](
+							unitName,
+							unitValue,
+							false
+						);
 					},
 				} );
 				// creates a fluent setter for the value.
@@ -496,6 +628,7 @@ export class DateTime {
 	 * @return {DateTime} A new instance of DateTime.
 	 */
 	set( setObject = {} ) {
+		setObject = DateTime[ privateMethods.normalizeUnitObject ]( setObject );
 		return new DateTime(
 			this[ privateProperties.datetime ]
 				.clone()
@@ -508,7 +641,7 @@ export class DateTime {
 	/**
 	 * Accessor for the timezone string.
 	 *
-	 * @return {string}
+	 * @return {string} The timezone string
 	 */
 	get timezone() {
 		return this[ privateProperties.datetime ].tz();
@@ -524,9 +657,7 @@ export class DateTime {
 		DateTime.assertTimezoneIsValid( timezone );
 		return new DateTime(
 			this[ privateProperties.datetime ]
-				.clone(),
-			timezone,
-			this.locale
+				.clone().tz( timezone )
 		);
 	}
 
@@ -577,6 +708,7 @@ export class DateTime {
 	 * @return {DateTime} returns a new instance of DateTime
 	 */
 	setOffset( offset ) {
+		DateTime.assertIsOffset( offset );
 		return new DateTime(
 			this[ privateProperties.datetime ].clone().utcOffset( offset )
 		);
@@ -599,7 +731,7 @@ export class DateTime {
 	 * @return {number} A number between 1 and 4
 	 */
 	get quarter() {
-		return this[ privateProperties.datetime].quarter();
+		return this[ privateProperties.datetime ].quarter();
 	}
 
 	/**
@@ -671,10 +803,15 @@ export class DateTime {
 	 * invalid.  This can happen when the moment instance is created with
 	 * invalid parameters.
 	 *
+	 * Note: with moment.timezone (which is the internal library),
+	 * moment.isValid() could return true, false or a string for why it's
+	 * invalid.  This is why a strict equality check is done for whether it is
+	 * true or not.
+	 *
 	 * @return {boolean}  True means the instance is invalid.
 	 */
 	isValid() {
-		return this[ privateProperties.datetime ].isValid();
+		return this[ privateProperties.datetime ].isValid() === true;
 	}
 
 	/**
@@ -712,7 +849,7 @@ export class DateTime {
 	 * Set the value of this DateTime to the end (i.e. the last millisecond) of
 	 * a unit of time.
 	 * @param {string} unit
-	 * @return {DateTime} Returns a new DateTime instance.s
+	 * @return {DateTime} Returns a new DateTime instance.
 	 */
 	endOf( unit ) {
 		return new DateTime(
@@ -739,12 +876,19 @@ export class DateTime {
 	/**
 	 * Whether this DateTime is in the same unit of time as another DateTime
 	 *
-	 * eg. DateTime.local().hasSame( otherDT, 'day' ) //~> tru if both the same
-	 * calendar day.
+	 * eg. DateTime.fromLocal().hasSame( otherDT, 'day' ) //~> true if both the
+	 * same calendar day.
+	 *
+	 * Note: this will match all units equal or larger.  For example, passing in
+	 * `month` will check `month` and `year`.  So it's not only checking if the
+	 * two dates share the same month, but that they are the same month in the
+	 * same year.  If you passed in day, it would return whether the provided
+	 * DateTime is in the same day, month and year as this DateTime.
 	 *
 	 * @param {DateTime} otherDateTime
 	 * @param {string} unit
-	 * @return {boolean}  True means they are both in the same unit of time.
+	 * @return {boolean}  True means they are both in the same time for the
+	 * given unit.
 	 */
 	hasSame( otherDateTime, unit ) {
 		DateTime.assertIsDateTime( otherDateTime );
@@ -787,6 +931,11 @@ export class DateTime {
 	 * Set the value of this DateTime to the beginning of a specified unit of
 	 * time and return a new DateTime representing that.
 	 *
+	 * eg.
+	 * startOf( DateTime.UNIT_YEAR ) //sets to January 1st, 12:00am this
+	 * year.
+	 * startOf( DateTime.UNIT_MONTH ) //sets to the first of this month, 12:00am
+	 *
 	 * @param {string} unit
 	 * @return {DateTime} A new instance of DateTime
 	 */
@@ -827,20 +976,20 @@ export class DateTime {
 	/**
 	 * Returns the value for this DateTime as a javascript Date object.
 	 *
-	 * @return {Date}
+	 * @return {Date} A javascript Date instance
 	 */
 	toJSDate() {
-		return this[ privateProperties.datetime ].toJSDate();
+		return this[ privateProperties.datetime ].toDate();
 	}
 
 	/**
 	 * When serializing an object to JSON, if there is a DateTime instance, it
 	 * will be represented as an ISO8601 string.
 	 *
-	 * @return {string}
+	 * @return {string} An ISO 8601 string
 	 */
 	toJSON() {
-		return this[ privateProperties.datetime ].format();
+		return this[ privateProperties.datetime ].toISOString();
 	}
 
 	/**
@@ -872,10 +1021,12 @@ export class DateTime {
 	toObject() {
 		const datetime = this[ privateProperties.datetime ].toObject();
 		return reduce( datetime, ( result, value, key ) => {
-			key = key === 'date' ? 'day' : key;
-			key = key === 'seconds' ? 'second' : key;
-			key = key === 'milliseconds' ? 'millisecond' : key;
-			result[ key ] = value;
+			key = DateTime[ privateMethods.normalizeUnitName ]( key );
+			result[ key ] = DateTime[ privateMethods.normalizeUnitValue ](
+				key,
+				value,
+				false
+			);
 			return result;
 		}, {} );
 	}
@@ -894,6 +1045,9 @@ export class DateTime {
 	/**
 	 * Returns an english string representation of this DateTime when the instance is
 	 * coerced to a string (similar format to JS `Date.toString()`.
+	 *
+	 * eg `Tue Dec 25 2018 10:15:00 GMT+0000`
+	 *
 	 * @return {string} A string representation of this DateTime
 	 */
 	toString() {
@@ -910,3 +1064,15 @@ export class DateTime {
 		return this[ privateProperties.datetime ].valueOf();
 	}
 }
+
+/**
+ * These static properties need to be defined outside of the class definition
+ * because of compile issues.
+ */
+DateTime.UNIT_YEAR = 'year';
+DateTime.UNIT_MONTH = 'month';
+DateTime.UNIT_DAY = 'day';
+DateTime.UNIT_HOUR = 'hour';
+DateTime.UNIT_MINUTE = 'minute';
+DateTime.UNIT_SECOND = 'second';
+DateTime.UNIT_MILLISECOND = 'millisecond';
