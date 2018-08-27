@@ -1,15 +1,15 @@
 {
-  "components.js": "ee-components.93d643a718c32cc3c87c.dist.js",
-  "data-stores.js": "ee-data-stores.ec593f7ac22f5a1201ea.dist.js",
-  "eejs.js": "ee-eejs.bd4355081eaa63451cbc.dist.js",
-  "eventespresso-core-blocks.css": "ee-eventespresso-core-blocks.033e69672d82f0b5a77e.dist.css",
-  "eventespresso-core-blocks.js": "ee-eventespresso-core-blocks.7eef6222039c9cf4cedd.dist.js",
-  "helpers.js": "ee-helpers.dc0e5af71606d964984f.dist.js",
-  "hocComponents.js": "ee-hocComponents.6dbc5599f72a6220f973.dist.js",
-  "manifest.js": "ee-manifest.db11f08f044e318032a1.dist.js",
-  "model.js": "ee-model.f5d35d26984a5e58a276.dist.js",
-  "valueObjects.js": "ee-valueObjects.f279f9edeccba4a64a30.dist.js",
-  "vendor.js": "ee-vendor.5edd91cc1cb0fd2993ef.dist.js",
-  "wp-plugins-page.css": "ee-wp-plugins-page.12612f6ab71570ab1af8.dist.css",
-  "wp-plugins-page.js": "ee-wp-plugins-page.8fc33cac10dfd3a845d4.dist.js"
+  "components.js": "ee-components.b55b0819ee7da636f547.dist.js",
+  "data-stores.js": "ee-data-stores.e5e5e00cc992db190fa3.dist.js",
+  "eejs.js": "ee-eejs.269460f217f93d89915d.dist.js",
+  "eventespresso-core-blocks.css": "ee-eventespresso-core-blocks.8c8deca63d0841fd05ce.dist.css",
+  "eventespresso-core-blocks.js": "ee-eventespresso-core-blocks.14ed4e55081a9223c4df.dist.js",
+  "helpers.js": "ee-helpers.7e7b04680a70094965e0.dist.js",
+  "hocComponents.js": "ee-hocComponents.3e49f84002643a4548ec.dist.js",
+  "manifest.js": "ee-manifest.15189d95bc41aca79fbe.dist.js",
+  "model.js": "ee-model.c5c3cb2be592bbf62f77.dist.js",
+  "valueObjects.js": "ee-valueObjects.0c17b4c8f5f3138c83c7.dist.js",
+  "vendor.js": "ee-vendor.d431384535466f69c6d2.dist.js",
+  "wp-plugins-page.css": "ee-wp-plugins-page.7c5a5e9b7649f52e93e1.dist.css",
+  "wp-plugins-page.js": "ee-wp-plugins-page.2fc3c61a60523f701d96.dist.js"
 }
