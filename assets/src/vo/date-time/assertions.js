@@ -1,8 +1,8 @@
 /**
  * External imports
  */
-import moment from 'moment';
 import { isString } from 'lodash';
+import moment from 'momenttz';
 
 /**
  * Internal imports

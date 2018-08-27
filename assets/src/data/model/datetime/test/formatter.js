@@ -1,5 +1,5 @@
 import formatters, { prettyDateFromDateTime } from '../formatter';
-import moment from 'moment';
+import moment from 'momenttz';
 import {
 	DATE_TIME_FORMAT_MYSQL,
 	DATE_TIME_FORMAT_ISO8601,

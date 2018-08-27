@@ -3,6 +3,7 @@
  */
 import moment from 'moment';
 import { capitalize, omit, isNumber, isEmpty, reduce } from 'lodash';
+import moment from 'momenttz';
 
 /**
  * Internal imports

@@ -8,7 +8,7 @@ import Duration from '../date-time/duration';
  */
 import { InvalidLocale, InvalidISO8601String } from '@eventespresso/eejs';
 import { forEach } from 'lodash';
-import moment from 'moment';
+import moment from 'momenttz';
 
 describe( 'Duration Value Object', () => {
 	const baseObjectValues = {
