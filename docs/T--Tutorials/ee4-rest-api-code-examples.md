@@ -16,7 +16,7 @@ The first example is server-side PHP code that can be run from anywhere. The onl
 $curdate_utc = date("Y-m-d H:i:s");
 
 //Retrieve the upcoming events and their related datetimes
-$data_url = "https://demoee.org/use-cases/wp-json/ee/v4.8.29/events?include=Datetime&where[Datetime.DTT_EVT_end][]=>&where[Datetime.DTT_EVT_end][]=" . urlencode($curdate_utc);
+$data_url = "https://demoee.org/use-cases/wp-json/ee/v4.8.36/events?calculate=image_medium_large&include=Datetime&where[Datetime.DTT_EVT_end][]=>&where[Datetime.DTT_EVT_end][]=" . urlencode($curdate_utc);
 
 $json = file_get_contents($data_url, true); //getting the file content
 $events = json_decode($json, true); //getting the file content as array
@@ -36,7 +36,8 @@ $count = count( $events ); //counting the number of results
 if ($count > 0){
  foreach ($events as $event){
  echo '<div class="event">';
- echo $event['featured_image_url'] ? '<a href="' . esc_attr( $event['link'] ). '"><img src="' . esc_attr( $event['featured_image_url'] ) . '" /></a>' : '';
+ $featured_image_url = $event['_calculated_fields']['image_medium_large']['url'];
+ echo $featured_image_url ? '<a href="' . esc_attr( $event['link'] ). '"><img src="' . esc_attr( $featured_image_url ) . '" /></a>' : '';
  echo '<a href="' . $event[ 'link' ] . '">' . $event[ 'EVT_name' ] . '</a><ul>';
  foreach( $event[ 'datetimes' ] as $datetime ) {
  echo '<li>' . date( 'l jS of F Y @h:i A',strtotime( $event[ 'datetimes' ][ 0 ][ 'DTT_EVT_start' ] ) ).'</a>';
