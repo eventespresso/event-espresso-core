@@ -11,7 +11,6 @@ import warning from 'warning';
  * Internal imports
  */
 import * as assertions from './assertions';
-import DateTime from './date-time';
 
 momentDurationFormatSetup( moment );
 
