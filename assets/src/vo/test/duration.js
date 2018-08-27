@@ -177,15 +177,22 @@ describe( 'Duration Value Object', () => {
 				],
 			];
 			testConditions.forEach( ( testCondition ) => {
+				const [
+					description,
+					durationAarg,
+					durationBarg,
+					expectSame,
+					expectConsoleError,
+				] = testCondition;
 				it( 'expected response is as expected for ' +
-					testCondition[ 0 ], () => {
-					const durationA = new Duration( testCondition[ 1 ] );
-					const durationB = new Duration( testCondition[ 2 ] );
-					if ( testCondition[ 4 ] ) {
+					description, () => {
+					const durationA = new Duration( durationAarg );
+					const durationB = new Duration( durationBarg );
+					if ( expectConsoleError ) {
 						expect( console ).toHaveErrored();
 					}
 					expect( durationA.sameAs( durationB ) )
-						.toBe( testCondition[ 3 ] );
+						.toBe( expectSame );
 				} );
 			} );
 			it( 'throws an error when Duration instance is not provided',
@@ -221,15 +228,22 @@ describe( 'Duration Value Object', () => {
 				],
 			];
 			testConditions.forEach( ( testCondition ) => {
+				const [
+					description,
+					durationAarg,
+					durationBarg,
+					expectEquals,
+					expectConsoleError,
+				] = testCondition;
 				it( 'expected equality response is as expected for ' +
-					testCondition[ 0 ], () => {
-					const durationA = new Duration( testCondition[ 1 ] );
-					const durationB = new Duration( testCondition[ 2 ] );
-					if ( testCondition[ 4 ] ) {
+					description, () => {
+					const durationA = new Duration( durationAarg );
+					const durationB = new Duration( durationBarg );
+					if ( expectConsoleError ) {
 						expect( console ).toHaveErrored();
 					}
 					expect( durationA.equals( durationB ) )
-						.toBe( testCondition[ 3 ] );
+						.toBe( expectEquals );
 				} );
 			} );
 			it( 'throws an error when Duration instance is not provided',
@@ -267,10 +281,16 @@ describe( 'Duration Value Object', () => {
 				],
 			];
 			testConditions.forEach( ( testCondition ) => {
-				describe( 'returns expected value when ' + testCondition[ 0 ],
+				const [
+					description,
+					passedInArg,
+					expectedObject,
+					expectedAsHoursValue,
+				] = testCondition;
+				describe( 'returns expected value when ' + description,
 					() => {
 						const newDuration = testDuration
-							.plus( testCondition[ 1 ] );
+							.plus( passedInArg );
 						it( 'original Duration is not the same instance as ' +
 							'new Duration', () => {
 							expect( testDuration ).not.toBe( newDuration );
@@ -280,11 +300,11 @@ describe( 'Duration Value Object', () => {
 						} );
 						it( 'new Duration has expected toObject value', () => {
 							expect( newDuration.toObject() )
-								.toEqual( testCondition[ 2 ] );
+								.toEqual( expectedObject );
 						} );
 						it( 'new Duration has expected asHours value', () => {
 							expect( newDuration.asHours() )
-								.toBe( testCondition[ 3 ] );
+								.toBe( expectedAsHoursValue );
 						} );
 					} );
 			} );
@@ -317,10 +337,16 @@ describe( 'Duration Value Object', () => {
 				],
 			];
 			testConditions.forEach( ( testCondition ) => {
-				describe( 'returns expected value when ' + testCondition[ 0 ],
+				const [
+					description,
+					passedInArg,
+					expectedObject,
+					expectedAsHoursValue,
+				] = testCondition;
+				describe( 'returns expected value when ' + description,
 					() => {
 						const newDuration = testDuration
-							.minus( testCondition[ 1 ] );
+							.minus( passedInArg );
 						it( 'original Duration is not the same instance as ' +
 							'new Duration', () => {
 							expect( testDuration ).not.toBe( newDuration );
@@ -330,11 +356,11 @@ describe( 'Duration Value Object', () => {
 						} );
 						it( 'new Duration has expected toObject value', () => {
 							expect( newDuration.toObject() )
-								.toEqual( testCondition[ 2 ] );
+								.toEqual( expectedObject );
 						} );
 						it( 'new Duration has expected asHours value', () => {
 							expect( newDuration.asHours() )
-								.toBe( testCondition[ 3 ] );
+								.toBe( expectedAsHoursValue );
 						} );
 					} );
 			} );
@@ -447,13 +473,14 @@ describe( 'Duration Value Object', () => {
 				],
 			];
 			testConditions.forEach( ( testCondition ) => {
+				const [ format, expectedValue ] = testCondition;
 				it( 'returns expected result for ' +
 					JSON.stringify( testHours ) + ' and format ' +
-					'string ' + testCondition[ 0 ], () => {
+					'string ' + format, () => {
 					expect(
 						new Duration( testHours )
-							.toFormat( testCondition[ 0 ] )
-					).toBe( testCondition[ 1 ] );
+							.toFormat( format )
+					).toBe( expectedValue );
 				} );
 			} );
 		} );

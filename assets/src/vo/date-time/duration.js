@@ -11,6 +11,7 @@ import warning from 'warning';
  * Internal imports
  */
 import * as assertions from './assertions';
+import DateTime from './date-time';
 
 momentDurationFormatSetup( moment );
 
@@ -55,13 +56,13 @@ const privateMethods = {
  * @type {string[]}
  */
 const unitNames = [
+	'years',
+	'months',
 	'days',
 	'hours',
-	'milliseconds',
 	'minutes',
-	'months',
 	'seconds',
-	'years',
+	'milliseconds',
 ];
 
 /**
@@ -89,6 +90,15 @@ const derivativeUnitNames = [
  * to something different (such as Luxon).
  */
 export default class Duration {
+	static UNIT_YEARS = 'years';
+	static UNIT_MONTHS = 'months';
+	static UNIT_DAYS = 'days';
+	static UNIT_HOURS = 'hours';
+	static UNIT_MINUTES = 'minutes';
+	static UNIT_SECONDS = 'seconds';
+	static UNIT_MILLISECONDS = 'milliseconds';
+	static UNIT_WEEKS = 'weeks';
+
 	/**
 	 * The constructor for the Duration class.
 	 *
@@ -249,15 +259,11 @@ export default class Duration {
 	 * @access private
 	 */
 	[ privateMethods.populateValuesFromDuration ]( duration ) {
-		this[ privateMethods.setValues ]( {
-			days: duration.days(),
-			hours: duration.hours(),
-			milliseconds: duration.milliseconds(),
-			minutes: duration.minutes(),
-			months: duration.months(),
-			seconds: duration.seconds(),
-			years: duration.years(),
+		const setValues = {};
+		unitNames.forEach( ( unit ) => {
+			setValues[ unit ] = duration[ unit ]();
 		} );
+		this[ privateMethods.setValues ]( setValues );
 	}
 
 	/**
