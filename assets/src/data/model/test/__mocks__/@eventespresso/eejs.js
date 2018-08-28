@@ -1,4 +1,8 @@
 const {
+	routes,
+	CURRENCY_CONFIG,
+	TIMEZONE_CONFIG,
+	SERVER_LOCALE,
 	Exception,
 	InvalidSchema,
 	InvalidArgument,
@@ -43,8 +47,21 @@ module.exports.data = {
 		thousandsSeparator: ',',
 		subunits: 100,
 	},
+	default_timezone: {
+		pretty: 'UTC',
+		string: 'UTC',
+		offset: 0,
+	},
+	locale: {
+		user: 'en',
+		site: 'en',
+	},
 };
 
+module.exports.routes = routes;
+module.exports.CURRENCY_CONFIG = CURRENCY_CONFIG;
+module.exports.TIMEZONE_CONFIG = TIMEZONE_CONFIG;
+module.exports.SERVER_LOCALE = SERVER_LOCALE;
 module.exports.Exception = Exception;
 module.exports.InvalidSchema = InvalidSchema;
 module.exports.InvalidArgument = InvalidArgument;
@@ -54,3 +71,4 @@ module.exports.InvalidLocale = InvalidLocale;
 module.exports.InvalidDateTime = InvalidDateTime;
 module.exports.mergeAndDeDuplicateArrays = mergeAndDeDuplicateArrays;
 module.exports.mergeAndDeDuplicateObjects = mergeAndDeDuplicateObjects;
+
