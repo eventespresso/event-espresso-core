@@ -277,7 +277,7 @@ class EEH_URL
      * Currently, this isn't just calling `sanitize_title()` on it, because that percent-encodes unicode characters,
      * and WordPress chokes on them when used as CPT and custom taxonomy slugs.
      *
-     * @since $VID:$
+     * @since 4.9.66.p
      * @param string $text
      * @param string $fallback
      * @return string which can be used in a URL

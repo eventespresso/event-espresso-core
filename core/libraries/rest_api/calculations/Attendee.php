@@ -18,7 +18,7 @@ use WP_REST_Request;
  *
  * @package EventEspresso\core\libraries\rest_api\calculations
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.66.p
  */
 class Attendee extends Calculations_Base
 {
@@ -27,7 +27,7 @@ class Attendee extends Calculations_Base
      * @param array           $wpdb_row
      * @param WP_REST_Request $request
      * @param Base            $controller
-     * @since $VID:$
+     * @since 4.9.66.p
      * @return string
      */
     public static function userAvatar(array $wpdb_row, WP_REST_Request $request, Base $controller)
