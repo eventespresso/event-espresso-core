@@ -3,6 +3,7 @@
  */
 import moment from 'moment-timezone';
 import { isString, isNumber } from 'lodash';
+import { DEFAULT_LOCALE } from './defaults';
 
 /**
  * Internal imports
@@ -27,7 +28,7 @@ export function validateLocale( locale ) {
 	const validationLocale = moment.locale( locale );
 	// reset back to original locale
 	moment.locale( originalLocale );
-	return ! ( locale !== 'en' && validationLocale === 'en' );
+	return ! ( locale !== DEFAULT_LOCALE && validationLocale === DEFAULT_LOCALE );
 }
 
 /**
