@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import moment from 'momenttz';
+import moment from 'moment-timezone';
 import { isUndefined } from 'lodash';
 import PropTypes from 'prop-types';
 

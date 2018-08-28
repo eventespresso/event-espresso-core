@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import moment from 'momenttz';
+import moment from 'moment-timezone';
 import momentDurationFormatSetup from 'moment-duration-format';
 import { capitalize, pick, keys, omit, mapValues } from 'lodash';
 import isShallowEqual from '@wordpress/is-shallow-equal';

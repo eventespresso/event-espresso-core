@@ -16,8 +16,7 @@
 		"tinymce": "<rootDir>/tests/javascript-config/unit/mocks/tinymce",
 		"@wordpress/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
 		"@eventespresso/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
-		"@wordpress/is-shallow-equal/objects": "<rootDir>/node_modules/@wordpress/is-shallow-equal/build/objects",
-		"momenttz": "moment-timezone"
+		"@wordpress/is-shallow-equal/objects": "<rootDir>/node_modules/@wordpress/is-shallow-equal/build/objects"
 	},
 	"preset": "@wordpress/jest-preset-default",
 	"setupFiles": [

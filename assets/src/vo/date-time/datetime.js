@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import moment from 'momenttz';
+import moment from 'moment-timezone';
 import {
 	capitalize,
 	omit,
