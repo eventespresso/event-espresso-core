@@ -6,4 +6,8 @@ import data from './data';
  * the default timezone settings from the server.
  * @type {{}}
  */
-export const { default_timezone: timezoneConfig = {} } = data;
+export const { default_timezone: timezoneConfig = {
+	pretty: 'UTC',
+	string: 'UTC',
+	offset: 0,
+} } = data;
