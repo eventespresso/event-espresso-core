@@ -31,6 +31,11 @@ export { currencyConfig as CURRENCY_CONFIG } from './currency_config';
 export { timezoneConfig as TIMEZONE_CONFIG } from './timezone-config';
 
 /**
+ * Server locale configuration.
+ */
+export { locale as SERVER_LOCALE } from './locale';
+
+/**
  * Custom exceptions
  */
 export * from './exceptions';

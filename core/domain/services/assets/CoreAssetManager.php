@@ -276,6 +276,14 @@ class CoreAssetManager extends AssetManager
                     'offset' => EEH_DTT_Helper::get_site_timezone_gmt_offset(),
                 )
             );
+            /** site locale (user locale if user logged in) */
+            $this->registry->addData(
+                'locale',
+                array(
+                    'user' => get_user_locale(),
+                    'site' => get_locale()
+                )
+            );
         }
 
         $this->addJavascript(
