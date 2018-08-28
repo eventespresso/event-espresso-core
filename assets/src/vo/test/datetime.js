@@ -1,7 +1,7 @@
 /**
  * Internal imports
  */
-import Datetime from '../date-time/datetime';
+import DateTime from '../date-time/datetime';
 import Duration from '../date-time/duration';
 
 /**
@@ -44,26 +44,26 @@ describe( 'DateTime Value Object', () => {
 	// Unix Epoch (assuming testDateValues is in UTC).
 	const testDateValueInSeconds = 1545732900;
 
-	const baseTestDate = Datetime.fromObject( testDateValues );
+	const baseTestDate = DateTime.fromObject( testDateValues );
 
 	describe( 'with Instance', () => {
 		describe( 'constructors', () => {
 			describe( 'DateTime.constructor', () => {
 				it( 'throws an error when provided an invalid argument for ' +
 					'iso8601DateString parameter', () => {
-					const throwsError = () => new Datetime( 'invalid' );
+					const throwsError = () => new DateTime( 'invalid' );
 					expect( throwsError ).toThrow( InvalidISO8601String );
 				} );
 				it( 'throws an error when provided an invalid timezone string',
 					() => {
-						const throwsError = () => new Datetime(
+						const throwsError = () => new DateTime(
 							new Date().toISOString(), 'invalid'
 						);
 						expect( throwsError ).toThrow( InvalidTimezone );
 					}
 				);
 				it( 'throws an error when provided an invalid locale', () => {
-					const throwsError = () => new Datetime(
+					const throwsError = () => new DateTime(
 						new Date().toISOString(),
 						'UTC',
 						'invalid'
@@ -128,7 +128,24 @@ describe( 'DateTime Value Object', () => {
 						},
 						expectedMethodError: InvalidISO8601String,
 						timezoneTest: true,
+						offsetTest: false,
 						localeTest: true,
+						offsetValue: null,
+						expectedms: 200,
+					},
+					{
+						method: 'fromISOWithOffset',
+						mainParam: 'ISOString',
+						dateConstructedWith: () => {
+							return new Date(
+								testDateValueInMilliseconds - 18000000
+							).toISOString();
+						},
+						expectedMethodError: InvalidISO8601String,
+						timezoneTest: false,
+						offsetTest: true,
+						localeTest: true,
+						offsetValue: -5,
 						expectedms: 200,
 					},
 					{
@@ -139,7 +156,22 @@ describe( 'DateTime Value Object', () => {
 							return new Date( testDateValueInMilliseconds );
 						},
 						timezoneTest: true,
+						offsetTest: false,
 						localeTest: true,
+						offsetValue: null,
+						expectedms: 200,
+					},
+					{
+						method: 'fromJSDateWithOffset',
+						mainParam: 'date',
+						expectedMethodError: TypeError,
+						dateConstructedWith: () => {
+							return new Date( testDateValueInMilliseconds );
+						},
+						timezoneTest: false,
+						offsetTest: true,
+						localeTest: true,
+						offsetValue: -5,
 						expectedms: 200,
 					},
 					{
@@ -150,7 +182,9 @@ describe( 'DateTime Value Object', () => {
 							return testDateValueInMilliseconds;
 						},
 						timezoneTest: false,
+						offsetTest: false,
 						localeTest: true,
+						offsetValue: null,
 						expectedms: 200,
 					},
 					{
@@ -161,7 +195,9 @@ describe( 'DateTime Value Object', () => {
 							return testDateValueInSeconds;
 						},
 						timezoneTest: false,
+						offsetTest: false,
 						localeTest: true,
+						offsetValue: null,
 						expectedms: 0,
 					},
 					{
@@ -172,7 +208,9 @@ describe( 'DateTime Value Object', () => {
 							return testDateValues;
 						},
 						timezoneTest: false,
+						offsetTest: false,
 						localeTest: true,
+						offsetValue: null,
 						expectedms: 200,
 					},
 					{
@@ -183,61 +221,99 @@ describe( 'DateTime Value Object', () => {
 							return testDateValues;
 						},
 						timezoneTest: false,
+						offsetTest: false,
 						localeTest: true,
+						offsetValue: null,
 						expectedms: 200,
 					},
 				];
 				testConditions.forEach( ( testCondition ) => {
 					const METHOD = testCondition.method;
+					const {
+						mainParam,
+						expectedMethodError,
+						dateConstructedWith,
+						timezoneTest,
+						offsetTest,
+						localeTest,
+						offsetValue,
+						expectedms,
+					} = testCondition;
 					describe( 'DateTime.' + METHOD, () => {
 						it( 'throws an error when provided an invalid ' +
-							'argument for ' + testCondition.mainParam +
+							'argument for ' + mainParam +
 							' parameter', () => {
 							const throwsError =
-								() => Datetime[ METHOD ]( { month: 23 } );
+								() => DateTime[ METHOD ]( { month: 23 } );
 							expect( throwsError ).toThrow(
-								testCondition.expectedMethodError
+								expectedMethodError
 							);
 						} );
-						if ( testCondition.timezoneTest ) {
+						if ( timezoneTest ) {
 							it( 'throws an error when provided an invalid ' +
 								'timezone string', () => {
 								const throwsError =
-									() => Datetime[ METHOD ](
-										testCondition.dateConstructedWith(),
+									() => DateTime[ METHOD ](
+										dateConstructedWith(),
 										'invalid'
 									);
 								expect( throwsError )
 									.toThrow( InvalidTimezone );
 							} );
 						}
-						if ( testCondition.localeTest ) {
+						if ( localeTest ) {
 							it( 'throws an error when provided an invalid ' +
 								'locale', () => {
 								const throwsError =
-									() => Datetime[ METHOD ](
-										testCondition.dateConstructedWith(),
-										'UTC',
-										'invalid'
-									);
+									() => offsetTest ?
+										DateTime[ METHOD ](
+											dateConstructedWith(),
+											0,
+											'invalid'
+										) :
+										DateTime[ METHOD ](
+											dateConstructedWith(),
+											'UTC',
+											'invalid'
+										);
 								expect( throwsError )
 									.toThrow( InvalidLocale );
 							} );
 						}
+						if ( offsetTest ) {
+							it( 'throws an error when provided an invalid ' +
+								'offset', () => {
+								const throwsError =
+									() => DateTime[ METHOD ](
+										dateConstructedWith(),
+										'invalid',
+									);
+								expect( throwsError ).toThrow( TypeError );
+							} );
+						}
 						describe( 'Valid instantiation tests', () => {
-							const testDateTime = Datetime[ METHOD ](
-								testCondition.dateConstructedWith()
-							);
+							const testDateTime = offsetValue && offsetTest ?
+								DateTime[ METHOD ](
+									dateConstructedWith(),
+									offsetValue
+								) :
+								DateTime[ METHOD ](
+									dateConstructedWith()
+								);
 							it( 'instantiates an instance of DateTime', () => {
 								expect( testDateTime )
-									.toBeInstanceOf( Datetime );
+									.toBeInstanceOf( DateTime );
 							} );
 							baseUnits.forEach( ( unit ) => {
 								it( 'has the expected value for the unit ' +
 									unit, () => {
-									const expectedValue = unit === 'millisecond' ?
-										testCondition.expectedms :
+									let expectedValue = unit === 'millisecond' ?
+										expectedms :
 										testDateValues[ unit ];
+									expectedValue = offsetTest &&
+										unit === 'hour' ?
+										testDateValues[ unit ] + offsetValue :
+										expectedValue;
 									expect( testDateTime[ unit ] )
 										.toBe( expectedValue );
 								} );
@@ -248,19 +324,19 @@ describe( 'DateTime Value Object', () => {
 				describe( 'fromObject()', () => {
 					it( 'throws an Error when values value provided is ' +
 						'not an object', () => {
-						const throwsError = () => Datetime.fromObject( null );
+						const throwsError = () => DateTime.fromObject( null );
 						expect( throwsError ).toThrow( TypeError );
 					} );
 					it( 'throws an Error when invalid date values are ' +
 						'passed in', () => {
-						const throwsError = () => Datetime.fromObject( {
+						const throwsError = () => DateTime.fromObject( {
 							month: 23,
 						} );
 						expect( throwsError ).toThrow( InvalidArgument );
 					} );
 					it( 'throws an error with a invalid locale ' +
 						'provided', () => {
-						const throwsError = () => Datetime.fromObject( {
+						const throwsError = () => DateTime.fromObject( {
 							...testDateValues,
 							locale: 'invalid',
 						} );
@@ -268,7 +344,7 @@ describe( 'DateTime Value Object', () => {
 					} );
 					it( 'throws an error with an invalid timezone ' +
 						'provided', () => {
-						const throwsError = () => Datetime.fromObject( {
+						const throwsError = () => DateTime.fromObject( {
 							...testDateValues,
 							timezone: 'invalid',
 							offset: null,
@@ -276,7 +352,7 @@ describe( 'DateTime Value Object', () => {
 						expect( throwsError ).toThrow( InvalidTimezone );
 					} );
 					it( 'throws an error with an invalid offset', () => {
-						const throwsError = () => Datetime.fromObject( {
+						const throwsError = () => DateTime.fromObject( {
 							...testDateValues,
 							offset: 'invalid',
 						} );
@@ -284,11 +360,11 @@ describe( 'DateTime Value Object', () => {
 					} );
 					describe( 'Has expected unit values on instantiation',
 						() => {
-							const testDateTime = Datetime.fromObject(
+							const testDateTime = DateTime.fromObject(
 								testDateValues
 							);
 							it( 'returns an instance of DateTime', () => {
-								expect( testDateTime ).toBeInstanceOf( Datetime );
+								expect( testDateTime ).toBeInstanceOf( DateTime );
 							} );
 							baseUnits.forEach( ( unit ) => {
 								it( 'has the expected value for the unit: ' +
@@ -305,13 +381,13 @@ describe( 'DateTime Value Object', () => {
 			const testConditions = [
 				{
 					name: 'timezone',
-					testDate: new Datetime( '', 'America/New_York' ),
+					testDate: new DateTime( '', 'America/New_York' ),
 					expectedOriginalValue: 'America/New_York',
 					expectedNewValue: 'UTC',
 				},
 				{
 					name: 'offset',
-					testDate: Datetime.fromObject( {
+					testDate: DateTime.fromObject( {
 						...testDateValues,
 						offset: 5,
 					} ),
@@ -320,7 +396,7 @@ describe( 'DateTime Value Object', () => {
 				},
 				{
 					name: 'locale',
-					testDate: new Datetime(),
+					testDate: new DateTime(),
 					expectedOriginalValue: 'en',
 					expectedNewValue: 'en-ca',
 				},
@@ -343,7 +419,7 @@ describe( 'DateTime Value Object', () => {
 					describe( setter + '()', () => {
 						const newDate = testDate[ setter ]( expectedNewValue );
 						it( 'newDate is an instance of DateTime', () => {
-							expect( newDate ).toBeInstanceOf( Datetime );
+							expect( newDate ).toBeInstanceOf( DateTime );
 						} );
 						it( 'newDate.' + name + ' is the ' +
 							'expected value', () => {
@@ -358,7 +434,7 @@ describe( 'DateTime Value Object', () => {
 			} );
 		} );
 		describe( 'various other getters', () => {
-			const testDate = Datetime.fromObject( {
+			const testDate = DateTime.fromObject( {
 				...testDateValues,
 				timezone: 'America/New_York',
 			} );
@@ -384,7 +460,7 @@ describe( 'DateTime Value Object', () => {
 		} );
 		describe( 'diff()', () => {
 			const duration = baseTestDate.diff(
-				Datetime.fromObject( {
+				DateTime.fromObject( {
 					...testDateValues,
 					day: testDateValues.day - 1,
 				} )
@@ -412,7 +488,7 @@ describe( 'DateTime Value Object', () => {
 		} );
 		describe( 'diffNow()', () => {
 			// one day from now.
-			const testDate = Datetime.fromMillis( Date.now() + 86400000 );
+			const testDate = DateTime.fromMillis( Date.now() + 86400000 );
 			const duration = testDate.diffNow();
 			it( 'returns an instance of Duration', () => {
 				expect( duration ).toBeInstanceOf( Duration );
@@ -430,10 +506,10 @@ describe( 'DateTime Value Object', () => {
 			} );
 		} );
 		describe( 'endOf()', () => {
-			const endOfDay = baseTestDate.endOf( Datetime.UNIT_MONTH );
+			const endOfDay = baseTestDate.endOf( DateTime.UNIT_MONTH );
 
 			it( 'returns an instance of DateTime', () => {
-				expect( endOfDay ).toBeInstanceOf( Datetime );
+				expect( endOfDay ).toBeInstanceOf( DateTime );
 			} );
 			it( 'returns a NEW instance of DateTime', () => {
 				expect( endOfDay ).not.toBe( baseTestDate );
@@ -446,8 +522,8 @@ describe( 'DateTime Value Object', () => {
 			} );
 		} );
 		describe( 'equals()', () => {
-			const equalsDate = Datetime.fromObject( testDateValues );
-			const nonEqualsDate = Datetime.fromObject( {
+			const equalsDate = DateTime.fromObject( testDateValues );
+			const nonEqualsDate = DateTime.fromObject( {
 				...testDateValues,
 				hour: 15,
 			} );
@@ -464,7 +540,7 @@ describe( 'DateTime Value Object', () => {
 			} );
 		} );
 		describe( 'hasSame()', () => {
-			const hasSameHourDate = Datetime.fromObject( {
+			const hasSameHourDate = DateTime.fromObject( {
 				...testDateValues,
 				minute: 55,
 			} );
@@ -475,14 +551,14 @@ describe( 'DateTime Value Object', () => {
 			} );
 			it( 'returns true when dates have same unit', () => {
 				expect(
-					baseTestDate.hasSame( hasSameHourDate, Datetime.UNIT_HOUR )
+					baseTestDate.hasSame( hasSameHourDate, DateTime.UNIT_HOUR )
 				).toBe( true );
 			} );
 			it( 'returns false when dates do not have same unit', () => {
 				expect(
 					baseTestDate.hasSame(
 						hasSameHourDate,
-						Datetime.UNIT_MINUTE
+						DateTime.UNIT_MINUTE
 					)
 				).toBe( false );
 			} );
@@ -497,7 +573,7 @@ describe( 'DateTime Value Object', () => {
 					.toThrow( TypeError );
 			} );
 			it( 'returns a new instance of DateTime', () => {
-				expect( balanceDateTime ).toBeInstanceOf( Datetime );
+				expect( balanceDateTime ).toBeInstanceOf( DateTime );
 				expect( balanceDateTime ).not.toBe( baseTestDate );
 			} );
 			it( 'does not mutate original DateTime', () => {
@@ -520,7 +596,7 @@ describe( 'DateTime Value Object', () => {
 					.toThrow( TypeError );
 			} );
 			it( 'returns a new instance of DateTime', () => {
-				expect( balanceDateTime ).toBeInstanceOf( Datetime );
+				expect( balanceDateTime ).toBeInstanceOf( DateTime );
 				expect( balanceDateTime ).not.toBe( baseTestDate );
 			} );
 			it( 'does not mutate original DateTime', () => {
@@ -534,9 +610,9 @@ describe( 'DateTime Value Object', () => {
 			} );
 		} );
 		describe( 'startOf()', () => {
-			const startOfDay = baseTestDate.startOf( Datetime.UNIT_DAY );
+			const startOfDay = baseTestDate.startOf( DateTime.UNIT_DAY );
 			it( 'returns a new instance of DateTime', () => {
-				expect( startOfDay ).toBeInstanceOf( Datetime );
+				expect( startOfDay ).toBeInstanceOf( DateTime );
 				expect( startOfDay ).not.toBe( baseTestDate );
 			} );
 			it( 'does not mutate original DateTime', () => {
@@ -572,7 +648,7 @@ describe( 'DateTime Value Object', () => {
 			} );
 		} );
 		describe( 'toISO()', () => {
-			const testDate = Datetime.fromObject( {
+			const testDate = DateTime.fromObject( {
 				...testDateValues,
 				offset: 0,
 			} );
@@ -582,7 +658,7 @@ describe( 'DateTime Value Object', () => {
 			} );
 		} );
 		describe( 'toJSDate()', () => {
-			const testDate = Datetime.fromObject( {
+			const testDate = DateTime.fromObject( {
 				...testDateValues,
 				offset: 0,
 			} );
@@ -595,7 +671,7 @@ describe( 'DateTime Value Object', () => {
 			} );
 		} );
 		describe( 'toJSON()', () => {
-			const testDate = Datetime.fromObject( {
+			const testDate = DateTime.fromObject( {
 				...testDateValues,
 				timezone: 'UTC',
 			} );
@@ -608,9 +684,11 @@ describe( 'DateTime Value Object', () => {
 		} );
 		describe( 'toLocal()', () => {
 			// get current offset for local so we know what to expect for test.
-			const offset = ( Datetime.fromObject( testDateValues ) )
-				.offset / 60;
-			const testDate = Datetime.fromObject( {
+			const offset = ( DateTime.fromObject( {
+				...testDateValues,
+				timezone: 'local',
+			} ) ).offset / 60;
+			const testDate = DateTime.fromObject( {
 				...testDateValues,
 				timezone: 'UTC',
 			} );
@@ -618,7 +696,7 @@ describe( 'DateTime Value Object', () => {
 			//expected to have offset applied
 			const localDate = testDate.toLocal();
 			it( 'returns a new instance of DateTime', () => {
-				expect( localDate ).toBeInstanceOf( Datetime );
+				expect( localDate ).toBeInstanceOf( DateTime );
 				expect( localDate ).not.toBe( testDate );
 			} );
 			it( 'offset on local to be expected', () => {
@@ -631,23 +709,23 @@ describe( 'DateTime Value Object', () => {
 		} );
 		describe( 'toMillis()', () => {
 			it( 'returns expected value', () => {
-				expect( ( Datetime.fromObject( {
+				expect( ( DateTime.fromObject( {
 					...testDateValues,
 					timezone: 'UTC',
 				} ) ).toMillis() ).toBe( testDateValueInMilliseconds );
 			} );
 		} );
 		describe( 'toUTC()', () => {
-			const dateInOffset = Datetime.fromObject( {
+			const dateInOffset = DateTime.fromObject( {
 				...testDateValues,
 				offset: 2,
 			} );
 			const utcDate = dateInOffset.toUTC();
 
 			it( 'returns an instance of DateTime', () => {
-				expect( utcDate ).toBeInstanceOf( Datetime );
+				expect( utcDate ).toBeInstanceOf( DateTime );
 			} );
-			it( 'returns a new instance of Datetime', () => {
+			it( 'returns a new instance of DateTime', () => {
 				expect( utcDate ).not.toBe( dateInOffset );
 			} );
 			it( 'does not change original DateTime', () => {
@@ -667,7 +745,7 @@ describe( 'DateTime Value Object', () => {
 			} );
 		} );
 		describe( 'toString()', () => {
-			const testDate = Datetime.fromObject( {
+			const testDate = DateTime.fromObject( {
 				...testDateValues,
 				timezone: 'UTC',
 			} );
@@ -678,7 +756,7 @@ describe( 'DateTime Value Object', () => {
 		} );
 		describe( 'valueOf()', () => {
 			it( 'returns expected value when coerced to a number', () => {
-				const testDate = Datetime.fromObject( {
+				const testDate = DateTime.fromObject( {
 					...testDateValues,
 					timezone: 'UTC',
 				} );
@@ -688,23 +766,23 @@ describe( 'DateTime Value Object', () => {
 		} );
 	} );
 	describe( 'static methods', () => {
-		const laterDateTime = Datetime.fromObject( {
+		const laterDateTime = DateTime.fromObject( {
 			...testDateValues,
 			day: 31,
 		} );
 		describe( 'DateTime.max()', () => {
-			const maxDateTime = Datetime.max(
+			const maxDateTime = DateTime.max(
 				baseTestDate,
 				laterDateTime
 			);
 			it( 'throws an error if any of the provided DateTimes are not a ' +
 				'datetime object', () => {
 				expect(
-					() => Datetime.max( baseTestDate, null )
+					() => DateTime.max( baseTestDate, null )
 				).toThrow( TypeError );
 			} );
 			it( 'returns a new instance of DateTime', () => {
-				expect( maxDateTime ).toBeInstanceOf( Datetime );
+				expect( maxDateTime ).toBeInstanceOf( DateTime );
 				expect( maxDateTime ).not.toBe( baseTestDate );
 				expect( maxDateTime ).not.toBe( laterDateTime );
 			} );
@@ -716,18 +794,18 @@ describe( 'DateTime Value Object', () => {
 				} );
 		} );
 		describe( 'DateTime.min()', () => {
-			const minDateTime = Datetime.min(
+			const minDateTime = DateTime.min(
 				baseTestDate,
 				laterDateTime,
 			);
 			it( 'throws an error if any of the provided DateTimes are not a ' +
 				'datetime object', () => {
 				expect(
-					() => Datetime.max( baseTestDate, null )
+					() => DateTime.max( baseTestDate, null )
 				).toThrow( TypeError );
 			} );
 			it( 'returns a new instance of DateTime', () => {
-				expect( minDateTime ).toBeInstanceOf( Datetime );
+				expect( minDateTime ).toBeInstanceOf( DateTime );
 				expect( minDateTime ).not.toBe( baseTestDate );
 				expect( minDateTime ).not.toBe( laterDateTime );
 			} );
