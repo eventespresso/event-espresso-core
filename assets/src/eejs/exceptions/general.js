@@ -24,7 +24,7 @@ Exception.prototype = Object.create( Error.prototype, {
 } );
 
 if ( Object.setPrototypeOf ) {
-	Object.setPrototypeOf( Exception, Error )
+	Object.setPrototypeOf( Exception, Error );
 } else {
 	Exception.__proto__ = Error;
 }
