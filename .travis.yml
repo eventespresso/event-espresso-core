@@ -86,7 +86,6 @@ jobs:
       node_js:
         - node
       script:
-        - npm install || exit 1
         - npm run ci || exit 1
     - language: node_js
       node_js:
@@ -94,7 +93,6 @@ jobs:
       env:
         - LICENSE_CHECK=1
       script:
-        - npm install || exit 1
         - npm run lc || exit 1
     - php: 7.2
     - php: 7.1
