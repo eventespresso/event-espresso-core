@@ -3,7 +3,7 @@
  * Usage: throw new eejs.Exception('some message')
  * @param {string} message
  * @param {...mixed} args
- * @return Exception instance
+ * @return {Exception} instance
  */
 function Exception( message, ...args ) {
 	const instance = new Error( message, ...args );
