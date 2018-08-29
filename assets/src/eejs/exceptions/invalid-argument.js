@@ -10,8 +10,8 @@
  * @param {mixed} argument Optional, the argument that caused the error.
  */
 export default class InvalidArgument extends Error {
-	constructor( message, argumentValue ) {
-		super( message );
+	constructor( message, argumentValue, ...args ) {
+		super( message, ...args );
 		if ( Error.captureStackTrace ) {
 			Error.captureStackTrace( this, InvalidArgument );
 		}
