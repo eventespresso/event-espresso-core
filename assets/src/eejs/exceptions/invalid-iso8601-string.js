@@ -23,5 +23,6 @@ export default class InvalidISO8601String extends InvalidArgument {
 			'valid ISO 8601 formatted string.';
 
 		this.dateTimeString = dateTimeString || '';
+		this.name = 'InvalidISO8601String';
 	}
 }

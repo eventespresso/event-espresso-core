@@ -18,6 +18,7 @@ export default class InvalidArgument extends Error {
 		this.message = this.message !== '' ?
 			'Invalid argument provided. ' + this.message :
 			'Invalid argument provided.';
-		this.argumentName = args[ 1 ] || null;
+		this.argumentValue = args[ 1 ] || null;
+		this.name = 'InvalidArgument';
 	}
 }

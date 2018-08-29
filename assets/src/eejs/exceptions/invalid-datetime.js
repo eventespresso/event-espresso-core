@@ -17,5 +17,6 @@ export default class InvalidDateTime extends TypeError {
 		this.message = 'The value provided is not a valid DateTime. ' +
 			this.message;
 		this.datetime = datetime || '';
+		this.name = 'InvalidDateTime';
 	}
 }
