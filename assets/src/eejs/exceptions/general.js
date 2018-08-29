@@ -4,8 +4,8 @@
  * @param {string} msg
  */
 export default class Exception extends Error {
-	constructor( ...args ) {
-		super( ...args );
+	constructor( message ) {
+		super( message );
 		if ( Error.captureStackTrace ) {
 			Error.captureStackTrace( this, Exception );
 		}

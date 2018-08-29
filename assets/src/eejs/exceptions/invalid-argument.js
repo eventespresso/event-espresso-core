@@ -10,15 +10,15 @@
  * @param {mixed} argument Optional, the argument that caused the error.
  */
 export default class InvalidArgument extends Error {
-	constructor( ...args ) {
-		super( ...args );
+	constructor( message, argumentValue ) {
+		super( message );
 		if ( Error.captureStackTrace ) {
 			Error.captureStackTrace( this, InvalidArgument );
 		}
 		this.message = this.message !== '' ?
 			'Invalid argument provided. ' + this.message :
 			'Invalid argument provided.';
-		this.argumentValue = args[ 1 ] || null;
-		this.name = 'InvalidArgument';
+		this.argumentValue = argumentValue || null;
+		this.name = this.constructor.name;
 	}
 }
