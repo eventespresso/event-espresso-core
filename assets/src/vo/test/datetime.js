@@ -638,6 +638,18 @@ describe( 'DateTime Value Object', () => {
 					'dddd, ha',
 					'Tuesday, 10am',
 				],
+				[
+					undefined,
+					'2018-12-25 10:15:00',
+				],
+				[
+					null,
+					'2018-12-25T10:15:00Z',
+				],
+				[
+					'',
+					'2018-12-25T10:15:00Z',
+				],
 			];
 			testConditions.forEach( ( testCondition ) => {
 				const [ format, expectedResult ] = testCondition;

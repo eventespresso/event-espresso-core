@@ -25,6 +25,7 @@ import {
 	DEFAULT_TIMEZONE_STRING,
 	DEFAULT_OFFSET,
 	DEFAULT_LOCALE,
+	DEFAULT_FORMAT,
 } from './defaults';
 
 /**
@@ -1022,11 +1023,12 @@ export default class DateTime {
 	 * An empty format value will return the string formatted in ISO 8601 with
 	 * any offset included.
 	 *
+	 * Without any argument passed, the format will be in whatever the format is
 	 * @param {string} format
 	 * @return {string}  The date and time displayed according to the provided
 	 * format.
 	 */
-	toFormat( format ) {
+	toFormat( format = DEFAULT_FORMAT ) {
 		return this[ privateProperties.datetime ].format( format );
 	}
 
