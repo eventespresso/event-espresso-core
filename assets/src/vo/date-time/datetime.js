@@ -1034,12 +1034,19 @@ export default class DateTime {
 
 	/**
 	 * Returns a string representation of this DateTime formatted according to
-	 * the ISO 8601 standard (including any offset information that might
-	 * exist).
+	 * the ISO 8601 standard.
+	 *
+	 * If `inUTC` is true (default) then `toISO` will return the ISO string in
+	 * UTC. Otherwise it will include the offset information for the internal
+	 * timezone/offset on the moment in time.
+	 *
+	 * @param {boolean} inUTC
 	 * @return {string} An ISO8601 string
 	 */
-	toISO() {
-		return this[ privateProperties.datetime ].toISOString( true );
+	toISO( inUTC = true ) {
+		return inUTC ?
+			this[ privateProperties.datetime ].toISOString() :
+			this[ privateProperties.datetime ].toISOString( true );
 	}
 
 	/**
