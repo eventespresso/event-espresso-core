@@ -1013,7 +1013,6 @@ class Read_Test extends \EE_REST_TestCase
      * This was temporarily broken while working on 536, but no test picked up on it, so here's one that does.
      *
      * @group 536 see https://github.com/eventespresso/event-espresso-core/pull/536
-     * @group current
      * @throws \EE_Error
      */
     public function testHandleRequestGetAllVenues()
