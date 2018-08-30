@@ -19,9 +19,8 @@ class EEH_Export
      */
     public static function get_column_name_for_field(EE_Model_Field_Base $field)
     {
-        return wp_specialchars_decode($field->get_nicename(), ENT_QUOTES)
-               . "[" . wp_specialchars_decode($field->get_name(), ENT_QUOTES)
-               . "]";
+         $column_name = wp_specialchars_decode($field->get_nicename(), ENT_QUOTES);
+         return $column_name;
     }
 
     /**
