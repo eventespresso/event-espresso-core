@@ -1,5 +1,6 @@
 <?php
 namespace EventEspresso\core\services\validators;
+
 /**
  * Class URLValidator
  *
@@ -23,7 +24,6 @@ class URLValidator
     {
         return  esc_url_raw($url) === $url;
     }
-
 }
 // End of file URLValidator.php
 // Location: ${NAMESPACE}/URLValidator.php
