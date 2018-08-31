@@ -34,6 +34,7 @@ class URLValidatorTest extends EE_UnitTestCase
             'slashquerystring' => array('http://foob.bar/?foo=bar', true),
             'port' => array('http://foo.bar:80', true),
             'unicode' => array('http://스타벅스코리아.com', true),
+            'encoded_unicode' => array('http://%EC%8A%A4%ED%83%80%EB%B2%85%EC%8A%A4%EC%BD%94%EB%A6%AC%EC%95%84_foobar.com', true),
             'xss' => array('http://example.com/"><script>alert("xss")</script>', false),
             'bad_scheme' => array('php://filter/read=convert.base64-encode/resource=/etc/passw', false),
             'bad_scheme_2' => array('foo://bar', false),
