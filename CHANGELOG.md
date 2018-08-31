@@ -17,6 +17,10 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 
 ## [$VID:$]
 
+### Fixed
+
+- Fixed the organization settings form so that the license key section is not being displayed on subsites ([674](https://github.com/eventespresso/event-espresso-core/pull/674))
+
 ## [4.9.67.p]
 
 ### Fixed
