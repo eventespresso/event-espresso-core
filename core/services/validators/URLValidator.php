@@ -14,14 +14,14 @@ namespace EventEspresso\core\services\validators;
 class URLValidator
 {
     /**
-     * Returns whether or not
+     * Returns whether or not the URL is valid
      * @since $VID:$
      * @param $url
      * @return boolean
      */
     public function isValid($url)
     {
-        return filter_var($url, FILTER_VALIDATE_URL) !== false;
+        return  esc_url_raw($url) === $url;
     }
 
 }
