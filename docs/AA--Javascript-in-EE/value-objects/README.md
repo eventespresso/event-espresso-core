@@ -48,3 +48,5 @@ EE javascript currently implements the following value objects:
 [Money](money.md) | Represents an amount of money.
 [Currency](currency.md) | Represents a description of currency.
 [Label](label.md) | Represents singular and plural versions for a string.
+[DateTime](datetime.md) | Represents an instance in time.
+[Duration](duration.md) | Represents a duration of time.
