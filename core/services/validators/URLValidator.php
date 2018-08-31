@@ -5,7 +5,9 @@ namespace EventEspresso\core\services\validators;
  * Class URLValidator
  *
  * Replacement for `filter_var($url, FILTER_VALIDATE_URL)` because of all the problems mentioned on
- * https://d-mueller.de/blog/why-url-validation-with-filter_var-might-not-be-a-good-idea/
+ * https://d-mueller.de/blog/why-url-validation-with-filter_var-might-not-be-a-good-idea/.
+ * Why not just use `esc_url_raw()`? Yes, we could. But it's better to consolidate the validation logic in case it needs
+ * to be tweaked someday.
  *
  * @package     Event Espresso
  * @author         Mike Nelson

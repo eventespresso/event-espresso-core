@@ -6,7 +6,7 @@ use EventEspresso\core\services\validators\URLValidator;
 /**
  * Class URLValidatorTest
  *
- * Description
+ * Tests URLValidator, which is used by EE_URL_Validation_Strategy and potentially elsewhere
  *
  * @package     Event Espresso
  * @author         Mike Nelson
