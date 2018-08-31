@@ -1023,7 +1023,9 @@ export default class DateTime {
 	 * An empty format value will return the string formatted in ISO 8601 with
 	 * any offset included.
 	 *
-	 * Without any argument passed, the format will be in whatever the format is
+	 * Without any argument passed, the format will be whatever string the
+	 * format is server side.
+	 *
 	 * @param {string} format
 	 * @return {string}  The date and time displayed according to the provided
 	 * format.
