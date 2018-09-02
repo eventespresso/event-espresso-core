@@ -423,13 +423,13 @@ export default class Duration {
 	 * regardless what the locale was on any passed in duration.
 	 *
 	 * The new Duration returned will have normalized values (i.e. if addition
-	 * of one Duration with `{ years: 10 }` is done with the other Duration
-	 * having `{ years: 14 }` then the new Duration will have `{ days: 1 }`.
+	 * of one Duration with `{ hours: 10 }` is done with the other Duration
+	 * having `{ hours: 14 }` then the new Duration will have `{ days: 1 }`.
 	 * You can still get the total hours by calling `newDuration.asHours()`.
 	 *
 	 * @param {Duration|Object|number} value  Either a Duration instance, a
-	 * number of milliseconds or an object in the same shape as that provided by
-	 * Duration.toObject()
+	 * number of milliseconds or an object in the same shape received by
+	 * Duration.fromObject()
 	 *
 	 * @return {Duration} A new instance of Duration
 	 */
@@ -455,13 +455,13 @@ export default class Duration {
 	 * regardless what the locale was on any passed in duration.
 	 *
 	 * The new Duration returned will have normalized values (i.e. if subtraction
-	 * of one Duration with `{ years: 34 }` is done with the other Duration
-	 * having `{ years: 10 }` then the new Duration will have `{ days: 1 }`.
+	 * of one Duration with `{ hours: 34 }` is done with the other Duration
+	 * having `{ hours: 10 }` then the new Duration will have `{ days: 1 }`.
 	 * You can still get the total hours by calling `newDuration.asHours()`.
 	 *
 	 * @param {Duration|Object|number} value Either a duration instance, a
-	 * number of milliseconds or an object in the same shape as that provided by
-	 * Duration.toObject()
+	 * number of milliseconds or an object in the same shape as that received by
+	 * Duration.fromObject()
 	 *
 	 * @return {Duration} A new instance of Duration
 	 */
