@@ -6,7 +6,7 @@ import {
 	DEFAULT_TIMEZONE_STRING,
 	HAS_TIMEZONE_STRING,
 	DEFAULT_OFFSET,
-	DEFAULT_LOCALE,
+	DEFAULT_VALID_LOCALE,
 } from './defaults';
 
 /**
@@ -38,7 +38,7 @@ export default class ServerDateTime extends DateTime {
 	 */
 	constructor(
 		iso8601DateString = '',
-		locale = DEFAULT_LOCALE
+		locale = DEFAULT_VALID_LOCALE
 	) {
 		if ( HAS_TIMEZONE_STRING || moment.isMoment( iso8601DateString ) ) {
 			super( iso8601DateString, DEFAULT_TIMEZONE_STRING, locale );
@@ -52,13 +52,13 @@ export default class ServerDateTime extends DateTime {
 		}
 	}
 
-	static fromISO( ISOString, locale = DEFAULT_LOCALE ) {
+	static fromISO( ISOString, locale = DEFAULT_VALID_LOCALE ) {
 		return HAS_TIMEZONE_STRING ?
 			super.fromISO( ISOString, DEFAULT_TIMEZONE_STRING, locale ) :
 			super.fromISOWithOffset( ISOString, DEFAULT_OFFSET, locale );
 	}
 
-	static fromJSDate( date, locale = DEFAULT_LOCALE ) {
+	static fromJSDate( date, locale = DEFAULT_VALID_LOCALE ) {
 		return HAS_TIMEZONE_STRING ?
 			super.fromJSDate( date, DEFAULT_TIMEZONE_STRING, locale ) :
 			super.fromJSDateWithOffset( date, DEFAULT_OFFSET, locale );

@@ -12,7 +12,7 @@ import warning from 'warning';
  */
 import * as assertions from './assertions';
 import {
-	DEFAULT_LOCALE,
+	DEFAULT_VALID_LOCALE,
 } from './defaults';
 
 momentDurationFormatSetup( moment );
@@ -110,7 +110,7 @@ export default class Duration {
 	 * @param {string} locale  A valid locale string.
 	 * 							@link http://tools.ietf.org/html/rfc5646
 	 */
-	constructor( values, locale = DEFAULT_LOCALE ) {
+	constructor( values, locale = DEFAULT_VALID_LOCALE ) {
 		this[ privateProperties.isValid ] = true;
 		assertions.assertLocaleIsValid( locale );
 		if ( typeof values !== 'object' ) {
@@ -136,7 +136,7 @@ export default class Duration {
 	 * @param {string} locale
 	 * @return {Duration}  An instance of Duration.
 	 */
-	static fromMillis( milliseconds, locale = DEFAULT_LOCALE ) {
+	static fromMillis( milliseconds, locale = DEFAULT_VALID_LOCALE ) {
 		return new Duration( { milliseconds }, locale );
 	}
 
@@ -147,7 +147,7 @@ export default class Duration {
 	 * @param {string} locale
 	 * @return {Duration} An instance of Duration
 	 */
-	static fromObject( values, locale = DEFAULT_LOCALE ) {
+	static fromObject( values, locale = DEFAULT_VALID_LOCALE ) {
 		return new Duration( values, locale );
 	}
 
@@ -158,7 +158,7 @@ export default class Duration {
 	 * @param {string} locale
 	 * @return {Duration} An instance of Duration
 	 */
-	static fromISO( ISOString, locale = DEFAULT_LOCALE ) {
+	static fromISO( ISOString, locale = DEFAULT_VALID_LOCALE ) {
 		assertions.assertISO8601IsValid( ISOString, true );
 		return new Duration( ISOString, locale );
 	}

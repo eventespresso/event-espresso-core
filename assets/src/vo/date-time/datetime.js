@@ -24,7 +24,7 @@ import Duration from './duration';
 import {
 	DEFAULT_TIMEZONE_STRING,
 	DEFAULT_OFFSET,
-	DEFAULT_LOCALE,
+	DEFAULT_VALID_LOCALE,
 	DEFAULT_FORMAT,
 } from './defaults';
 
@@ -97,7 +97,7 @@ export default class DateTime {
 	constructor(
 		iso8601DateString = '',
 		timezone = DEFAULT_TIMEZONE_STRING,
-		locale = DEFAULT_LOCALE
+		locale = DEFAULT_VALID_LOCALE
 	) {
 		/**
 		 * If a moment object is provided just construct from that.  This will
@@ -330,7 +330,7 @@ export default class DateTime {
 	static fromISO(
 		ISOString,
 		timezone = DEFAULT_TIMEZONE_STRING,
-		locale = DEFAULT_LOCALE
+		locale = DEFAULT_VALID_LOCALE
 	) {
 		return new DateTime( ISOString, timezone, locale );
 	}
@@ -349,7 +349,7 @@ export default class DateTime {
 	static fromISOWithOffset(
 		ISOString,
 		offset = DEFAULT_OFFSET,
-		locale = DEFAULT_LOCALE
+		locale = DEFAULT_VALID_LOCALE
 	) {
 		DateTime.assertISO8601IsValid( ISOString );
 		DateTime.assertIsOffset( offset );
@@ -373,7 +373,7 @@ export default class DateTime {
 	static fromJSDate(
 		date,
 		timezone = DEFAULT_TIMEZONE_STRING,
-		locale = DEFAULT_LOCALE
+		locale = DEFAULT_VALID_LOCALE
 	) {
 		DateTime.assertIsDate( date );
 		DateTime.assertTimezoneIsValid( timezone );
@@ -397,7 +397,7 @@ export default class DateTime {
 	static fromJSDateWithOffset(
 		date,
 		offset = DEFAULT_OFFSET,
-		locale = DEFAULT_LOCALE
+		locale = DEFAULT_VALID_LOCALE
 	) {
 		DateTime.assertIsDate( date );
 		DateTime.assertIsOffset( offset );
@@ -415,7 +415,7 @@ export default class DateTime {
 	 * @return {DateTime} Returns an instance of DateTime
 	 * @throws TypeError
 	 */
-	static fromMillis( milliseconds, locale = DEFAULT_LOCALE ) {
+	static fromMillis( milliseconds, locale = DEFAULT_VALID_LOCALE ) {
 		DateTime.assertLocaleIsValid( locale );
 		if ( ! isNumber( milliseconds ) ) {
 			throw new TypeError( 'Provided value must be a number' );
@@ -433,7 +433,7 @@ export default class DateTime {
 	 * @return {DateTime} An instance of DateTime
 	 * @throws TypeError
 	 */
-	static fromUnix( seconds, locale = DEFAULT_LOCALE ) {
+	static fromUnix( seconds, locale = DEFAULT_VALID_LOCALE ) {
 		DateTime.assertLocaleIsValid( locale );
 		if ( ! isNumber( seconds ) ) {
 			throw new TypeError( 'Provided value must be a number' );
@@ -459,7 +459,7 @@ export default class DateTime {
 	 * @return {DateTime} An instance of DateTime
 	 * @throws InvalidArgument
 	 */
-	static fromLocal( values, locale = DEFAULT_LOCALE ) {
+	static fromLocal( values, locale = DEFAULT_VALID_LOCALE ) {
 		DateTime.assertLocaleIsValid( locale );
 		values = DateTime[ privateMethods.normalizeUnitObject ]( values );
 		const datetime = isEmpty( values ) ?
@@ -492,7 +492,7 @@ export default class DateTime {
 	 * @return {DateTime} An instance of DateTime
 	 * @throws InvalidArgument
 	 */
-	static utc( values, locale = DEFAULT_LOCALE ) {
+	static utc( values, locale = DEFAULT_VALID_LOCALE ) {
 		DateTime.assertLocaleIsValid( locale );
 		values = DateTime[ privateMethods.normalizeUnitObject ]( values );
 		const datetime = isEmpty( values ) ?
@@ -521,7 +521,7 @@ export default class DateTime {
 	 * @return {DateTime} An instance of DateTime
 	 */
 	static fromObject( values ) {
-		const locale = values.locale || DEFAULT_LOCALE;
+		const locale = values.locale || DEFAULT_VALID_LOCALE;
 		const timezone = values.timezone || DEFAULT_TIMEZONE_STRING;
 		const offset = isUndefined( values.offset ) ?
 			null :

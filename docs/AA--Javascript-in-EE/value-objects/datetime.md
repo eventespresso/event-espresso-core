@@ -15,7 +15,7 @@ Behaviourally, many of the methods and properties of the `DateTime` value object
 - Immutable: manipulating the instance of time in a `DateTime` value object will always return a new instance instead of mutating the existing.
 - Timezone aware:  `DateTime` instances by default are constructed in the timezone of the WordPress Site or UTC.  They can also be constructed using a designated timezone string (such as `America/New_York`).
 - Offset aware:  `DateTime` instances can also be constructed with a provided offset value. Any methods receiving an offset will default to any offset currently set for the site this script runs on.
-- Locale aware:  For `i81n`, the locale can be provided (eg. `en-ca`) and any displayed date and time strings (via methods like `toFormat`) will use that locale.  Be aware, however, that currently `DateTime` value objects only have the locales that are bundled with moment. For all methods receiving a `locale` argument, the locale defaults to the site's locale.  If the user is logged in to the WordPress site, the default locale will be the user's set locale (not the site's locale).
+- Locale aware:  For `i81n`, the locale can be provided (eg. `en-ca`) and any displayed date and time strings (via methods like `toFormat`) will use that locale.  Be aware, however, that currently `DateTime` value objects only have the locales that are bundled with moment. For all methods receiving a `locale` argument, the locale defaults to the site's locale.  If the user is logged in to the WordPress site, the default locale will be the user's set locale (not the site's locale). If the site locale is not valid (because the server has a set locale that moment doesn't have an equivalent for), then the fallback will be `en` and no error will get thrown.
 
 ## Installation/Loading:
 
@@ -27,15 +27,15 @@ The `DateTime` value object is available via the `eejs` global on its `valueObje
 
 If no arguments are provided to the constructor of the `DateTime` value object, then the instance will represent the moment in time at the time it was constructed, in the timezone for the WordPress site this script is loaded in, and the locale for the WordPress site this script is loaded in.  Otherwise, the constructor of the `DateTime` value object accepts three arguments:
 
-- `iso8601DateString`: As the name of the parameter suggests, this should be a ISO8601 formatted date/time string. If offset is in the string, this will set the offset property.
+- `iso8601DateString`: As the name of the parameter suggests, this should be an ISO8601 formatted date/time string. If offset is in the string, this will set the offset property.
 - `timezone`: This should be a zone identifier.  Can be any IANA zone or the string 'UTC'.
-- `locale`: this should be a BCP 47 language tag.  Not all locales are supported, if the provided language tag is not available, then the value object will attempt to set to the closest variant.  If that's not available then an `InvalidLocale` error is thrown.
+- `locale`: this should be a BCP 47 language tag.  Not all locales are supported, if the provided language tag is not available, then the value object will attempt to set to the closest variant.  If that's not available then an `InvalidLocale` error is thrown (an error gets thrown only if client code explicitly provides a locale, relying on the default will not throw an error because if the server locale is not available, it falls back to `en`).
 
 **Examples:**
 
 ```js
-// returns an instance of `now` in the current site's timezone and
-// locale (not browser, site).
+// returns an instance representing `now` in the current site's timezone and
+// locale (not browser).
 const dt = new DateTime();
 
 // returns an instance of `December 25, 2018 10:15:00 200 milliseconds`

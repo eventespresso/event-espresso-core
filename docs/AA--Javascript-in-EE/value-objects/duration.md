@@ -12,7 +12,7 @@ Behaviourally, many of the methods and properties of the `Duration` value object
 ## Features
 
 - Immutable: manipulating the period of time represented by a `Duration` value object will always return a new instance instead of mutating the existing.
-- Locale aware: For `i18n`, the locale can be provided (eg. `en-ca`) and formatted duration values will use that locale.  Be aware, however, that currently `Duration` value objects only have the locales that are bundled with moment.  Also, for all methods receiving a `locale` argument, the locale defaults to the site's locale if the user is not logged in.  If the user is logged in to the WordPress site, then the default locale will be the user's set locale (not the site's locale).
+- Locale aware: For `i18n`, the locale can be provided (eg. `en-ca`) and formatted duration values will use that locale.  Be aware, however, that currently `Duration` value objects only have the locales that are bundled with moment.  Also, for all methods receiving a `locale` argument, the locale defaults to the site's locale if the user is not logged in.  If the user is logged in to the WordPress site, then the default locale will be the user's set locale (not the site's locale).  If the site locale is not valid (because the server has a set locale that moment doesn't have an equivalent for), then the fallback will be `en` and no error will get thrown.
 
 ## Installation/Loading:
 
@@ -25,7 +25,7 @@ The `Duration` value object is available via the `eejs` global on its `valueObje
 A `Duration` is constructed with the following two arguments:
 
 - `values`: A simple object of units and their quantities for the period of time the Duration is to reference.  Only the units with values need to be passed.
-- `locale`: This optional argument provides the locale for the Duration.  By default, the locale will be whatever is the current locale for the site (or `en`).  This should be a `BCP47` language tag.  Not all locales are supported.  If the provided language tag is not available, then the value object will attempt to set it to the closest variant.  If that's not available then an `InvalidLocale` error is thrown.
+- `locale`: This optional argument provides the locale for the Duration.  By default, the locale will be whatever is the current locale for the site (or `en`).  This should be a `BCP47` language tag.  Not all locales are supported.  If the provided language tag is not available, then the value object will attempt to set it to the closest variant.  If that's not available then an `InvalidLocale` error is thrown (an error gets thrown only if client code explicitly provides a locale, relying on the default will not throw an error because if the server locale is not available, it falls back to `en`).
 
 **Example:**
 ```js

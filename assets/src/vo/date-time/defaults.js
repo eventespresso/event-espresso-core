@@ -9,6 +9,8 @@ import {
 	FORMAT_SITE_DATE,
 	FORMAT_SITE_TIME,
 } from '@eventespresso/helpers';
+import { validateLocale } from './assertions';
+
 import { snakeCase } from 'lodash';
 /**
  * Default timezone string to use.
@@ -45,3 +47,13 @@ export const DEFAULT_FORMAT = FORMAT_SITE_DATE + ' ' + FORMAT_SITE_TIME;
  * @type {string}
  */
 export const DEFAULT_LOCALE = snakeCase( SERVER_LOCALE.user );
+
+/**
+ * This ensures that the provided locale is valid.  So if `DEFAULT_LOCALE` is
+ * not valid for this environment, then a fallback of 'en' locale is used.
+ *
+ * @type {string}
+ */
+export const DEFAULT_VALID_LOCALE = validateLocale( DEFAULT_LOCALE ) ?
+	DEFAULT_LOCALE :
+	'en';
