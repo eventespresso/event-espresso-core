@@ -663,14 +663,14 @@ describe( 'DateTime Value Object', () => {
 			const testConditions = [
 				[ true, 0, '2018-12-25T10:15:00.200Z' ],
 				[ false, 0, '2018-12-25T10:15:00.200+00:00' ],
-				[ true, -1, '2018-12-25T11:15:00.200Z'],
-				[ false, -1, '2018-12-25T10:15:00.200-01:00']
+				[ true, -1, '2018-12-25T11:15:00.200Z' ],
+				[ false, -1, '2018-12-25T10:15:00.200-01:00' ],
 			];
 			testConditions.forEach( ( testCondition ) => {
 				const [ inUTC, offset, expectedValue ] = testCondition;
 				const testDate = DateTime.fromObject( {
 					...testDateValues,
-					offset
+					offset,
 				} );
 				it( 'returns the expected value when offset is ' +
 					offset + ' and inUTC argument is ' + inUTC, () => {
