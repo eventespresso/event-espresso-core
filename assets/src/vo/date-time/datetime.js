@@ -658,9 +658,8 @@ export default class DateTime {
 	[ privateMethods.createGettersAndSetters ]() {
 		this[ privateMethods.getUnitNames ]().forEach(
 			( unitName ) => {
-				// creates accessor for getting and setting the value via a
-				// property
-				// eg. instance.hour or instance.hour = 3
+				// creates accessor for getting the unit value via a
+				// property (eg. instance.hour)
 				Object.defineProperty( this, unitName, {
 					get() {
 						const methodName = DateTime[ privateMethods.normalizeUnitName ]( unitName );
