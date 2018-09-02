@@ -1,5 +1,4 @@
 import ServerDateTime from '../date-time/server-date-time';
-import DateTime from '../date-time/datetime';
 import * as defaults from '../date-time/defaults';
 
 describe( 'ServerDateTime', () => {
@@ -73,7 +72,7 @@ describe( 'ServerDateTime', () => {
 				resetDefaults();
 				const testDate = ServerDateTime[ METHOD ]( getDate() );
 				it( 'returns an instance of DateTime', () => {
-					expect( testDate ).toBeInstanceOf( DateTime );
+					expect( testDate ).toBeInstanceOf( ServerDateTime );
 				} );
 				it( 'has set timezone string to expected value', () => {
 					expect( testDate.timezone ).toBe( 'UTC' );
@@ -90,7 +89,7 @@ describe( 'ServerDateTime', () => {
 				setHasNoTimezoneString();
 				const testDate = ServerDateTime[ METHOD ]( getDate() );
 				it( 'returns an instance of ServerDateTime', () => {
-					expect( testDate ).toBeInstanceOf( DateTime );
+					expect( testDate ).toBeInstanceOf( ServerDateTime );
 				} );
 				it( 'has set timezone string to expected value', () => {
 					expect( testDate.timezone ).toBe( undefined );

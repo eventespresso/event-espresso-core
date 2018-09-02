@@ -54,13 +54,33 @@ export default class ServerDateTime extends DateTime {
 
 	static fromISO( ISOString, locale = DEFAULT_VALID_LOCALE ) {
 		return HAS_TIMEZONE_STRING ?
-			super.fromISO( ISOString, DEFAULT_TIMEZONE_STRING, locale ) :
-			super.fromISOWithOffset( ISOString, DEFAULT_OFFSET, locale );
+			new ServerDateTime(
+				super
+					.fromISO( ISOString, DEFAULT_TIMEZONE_STRING )
+					.toISO(),
+				locale
+			) :
+			new ServerDateTime(
+				super
+					.fromISOWithOffset( ISOString, DEFAULT_OFFSET )
+					.toISO(),
+				locale
+			);
 	}
 
 	static fromJSDate( date, locale = DEFAULT_VALID_LOCALE ) {
 		return HAS_TIMEZONE_STRING ?
-			super.fromJSDate( date, DEFAULT_TIMEZONE_STRING, locale ) :
-			super.fromJSDateWithOffset( date, DEFAULT_OFFSET, locale );
+			new ServerDateTime(
+				super
+					.fromJSDate( date, DEFAULT_TIMEZONE_STRING )
+					.toISO(),
+				locale
+			) :
+			new ServerDateTime(
+				super
+					.fromJSDateWithOffset( date, DEFAULT_OFFSET )
+					.toISO(),
+				locale
+			);
 	}
 }
