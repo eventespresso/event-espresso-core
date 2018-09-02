@@ -630,7 +630,7 @@ class EED_Messages extends EED_Module
         if (is_admin() && ! EE_FRONT_AJAX) {
             // make sure appropriate admin params are set for sending messages
             if (empty($_REQUEST['txn_reg_status_change']['send_notifications'])
-                | ! absint($_REQUEST['txn_reg_status_change']['send_notifications'])
+                || ! absint($_REQUEST['txn_reg_status_change']['send_notifications'])
             ) {
                 // no messages sent please.
                 return false;
