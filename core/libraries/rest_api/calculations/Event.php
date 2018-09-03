@@ -2,6 +2,10 @@
 
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
+use DomainException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\libraries\rest_api\calculations\Base as Calculations_Base;
 use EventEspresso\core\libraries\rest_api\controllers\model\Base;
 use EventEspresso\core\libraries\rest_api\RestException;
@@ -9,6 +13,8 @@ use EEM_Event;
 use EE_Event;
 use EE_Error;
 use EEM_Registration;
+use InvalidArgumentException;
+use WP_REST_Request;
 
 /**
  * Class Event_Calculations
@@ -27,10 +33,15 @@ class Event extends Calculations_Base
      * See EE_Event::total_available_spaces( true );
      *
      * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param Base             $controller
      * @return int
      * @throws EE_Error
+     * @throws DomainException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws UnexpectedEntityException
+     * @throws InvalidArgumentException
      */
     public static function optimumSalesAtStart($wpdb_row, $request, $controller)
     {
@@ -61,11 +72,16 @@ class Event extends Calculations_Base
      * sales that COULD have been achieved)
      * See EE_Event::total_available_spaces( true );
      *
-     * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
-     * @param Base             $controller
+     * @param array           $wpdb_row
+     * @param WP_REST_Request $request
+     * @param Base            $controller
      * @return int
+     * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws UnexpectedEntityException
      */
     public static function optimumSalesNow($wpdb_row, $request, $controller)
     {
@@ -95,11 +111,16 @@ class Event extends Calculations_Base
      * Like optimum_sales_now, but minus total sales so far.
      * See EE_Event::spaces_remaining_for_sale( true );
      *
-     * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
-     * @param Base             $controller
+     * @param array           $wpdb_row
+     * @param WP_REST_Request $request
+     * @param Base            $controller
      * @return int
+     * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws UnexpectedEntityException
      */
     public static function spacesRemaining($wpdb_row, $request, $controller)
     {
@@ -129,11 +150,14 @@ class Event extends Calculations_Base
      * Counts the number of approved registrations for this event (regardless
      * of how many datetimes each registrations' ticket purchase is for)
      *
-     * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
-     * @param Base             $controller
+     * @param array           $wpdb_row
+     * @param WP_REST_Request $request
+     * @param Base            $controller
      * @return int
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function spotsTaken($wpdb_row, $request, $controller)
     {
@@ -167,11 +191,14 @@ class Event extends Calculations_Base
      * Counts the number of pending-payment registrations for this event (regardless
      * of how many datetimes each registrations' ticket purchase is for)
      *
-     * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
-     * @param Base             $controller
+     * @param array           $wpdb_row
+     * @param WP_REST_Request $request
+     * @param Base            $controller
      * @return int
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws RestException
      */
     public static function spotsTakenPendingPayment($wpdb_row, $request, $controller)
@@ -207,11 +234,14 @@ class Event extends Calculations_Base
      * Counts all the registrations who have checked into one of this events' datetimes
      * See EE_Event::total_available_spaces( false );
      *
-     * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
-     * @param Base             $controller
+     * @param array           $wpdb_row
+     * @param WP_REST_Request $request
+     * @param Base            $controller
      * @return int|null if permission denied
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws RestException
      */
     public static function registrationsCheckedInCount($wpdb_row, $request, $controller)
@@ -238,11 +268,14 @@ class Event extends Calculations_Base
      * Counts all the registrations who have checked out of one of this events' datetimes
      * See EE_Event::total_available_spaces( false );
      *
-     * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
-     * @param Base             $controller
+     * @param array           $wpdb_row
+     * @param WP_REST_Request $request
+     * @param Base            $controller
      * @return int
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws RestException
      */
     public static function registrationsCheckedOutCount($wpdb_row, $request, $controller)
@@ -269,7 +302,7 @@ class Event extends Calculations_Base
      * Gets the thumbnail image
      *
      * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param Base             $controller
      * @return array
      * @throws EE_Error
@@ -284,7 +317,7 @@ class Event extends Calculations_Base
      * Gets the medium image
      *
      * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param Base             $controller
      * @return array
      * @throws EE_Error
@@ -299,7 +332,7 @@ class Event extends Calculations_Base
      * Gets the medium-large image
      *
      * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param Base             $controller
      * @return array
      * @throws EE_Error
@@ -314,7 +347,7 @@ class Event extends Calculations_Base
      * Gets the large image
      *
      * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param Base             $controller
      * @return array
      * @throws EE_Error
@@ -329,7 +362,7 @@ class Event extends Calculations_Base
      * Gets the post-thumbnail image
      *
      * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param Base             $controller
      * @return array
      * @throws EE_Error
@@ -344,7 +377,7 @@ class Event extends Calculations_Base
      * Gets the full size image
      *
      * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param Base             $controller
      * @return array
      * @throws EE_Error
