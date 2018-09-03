@@ -20,7 +20,7 @@ use WP_REST_Request;
  * @author  Brent Christensen
  * @since   4.9.66.p
  */
-class Attendee extends Calculations_Base
+class Attendee extends Calculations_Base implements HasCalculationSchemaInterface
 {
 
     /**
@@ -40,5 +40,40 @@ class Attendee extends Calculations_Base
         }
         $avatar = get_avatar_url($email_address);
         return $avatar ? $avatar : '';
+    }
+
+
+    /**
+     * Provides an array for all the calculations possible that outlines a json schema for those calculations.
+     * Array is indexed by calculation (snake case) and value is the schema for that calculation.
+     *
+     * @since $VID:$
+     * @return array
+     */
+    public static function schemaForCalculations()
+    {
+        return array(
+            'user_avatar' => array(
+                'description' => esc_html__(
+                    'The avatar url for the attendee (if available).',
+                    'event_espresso'
+                ),
+                'type' => 'string'
+            )
+        );
+    }
+
+
+    /**
+     * Returns the json schema for the given calculation index.
+     *
+     * @since $VID:$
+     * @param $calculation_index
+     * @return array
+     */
+    public static function schemaForCalculation($calculation_index)
+    {
+        $schema_map = self::schemaForCalculations();
+        return isset($schema_map[ $calculation_index ]) ? $schema_map[ $calculation_index ] : array();
     }
 }

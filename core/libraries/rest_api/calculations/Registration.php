@@ -21,7 +21,7 @@ use WP_REST_Request;
  * @subpackage
  * @author                Mike Nelson
  */
-class Registration extends Calculations_Base
+class Registration extends Calculations_Base implements HasCalculationSchemaInterface
 {
 
     /**
@@ -84,5 +84,48 @@ class Registration extends Calculations_Base
             $checkin_stati[ $datetime_id ] = $status_pretty;
         }
         return $checkin_stati;
+    }
+
+
+    /**
+     * Provides an array for all the calculations possible that outlines a json schema for those calculations.
+     * Array is indexed by calculation (snake case) and value is the schema for that calculation.
+     *
+     * @since $VID:$
+     * @return array
+     */
+    public static function schemaForCalculations()
+    {
+        return array(
+            'datetime_checkin_stati' => array(
+                'description' => esc_html__(
+                    'Returns the checkin status for each datetime this registration has access to.',
+                    'event_espresso'
+                ),
+                'type' => 'object',
+                'properties' => array(),
+                'additionalProperties' => array(
+                    'description' => esc_html(
+                        'Keys are date-time ids and values are the check-in status',
+                        'event_espresso'
+                    ),
+                    'type' => 'string'
+                ),
+            ),
+        );
+    }
+
+
+    /**
+     * Returns the json schema for the given calculation index.
+     *
+     * @param $calculation_index
+     * @since $VID:$
+     * @return array
+     */
+    public static function schemaForCalculation($calculation_index)
+    {
+        $schema_map = self::schemaForCalculations();
+        return isset($schema_map[ $calculation_index ]) ? $schema_map[ $calculation_index ] : array();
     }
 }

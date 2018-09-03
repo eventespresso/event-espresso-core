@@ -24,7 +24,7 @@ use WP_REST_Request;
  * @subpackage
  * @author                Mike Nelson
  */
-class Event extends Calculations_Base
+class Event extends Calculations_Base implements HasCalculationSchemaInterface
 {
 
     /**
@@ -440,5 +440,150 @@ class Event extends Calculations_Base
     protected static function wpdbRowHasEventId($wpdb_row)
     {
         return (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID']) && absint($wpdb_row['Event_CPT.ID']));
+    }
+
+
+    /**
+     * Provides an array for all the calculations possible that outlines a json schema for those calculations.
+     * Array is indexed by calculation (snake case) and value is the schema for that calculation.
+     *
+     * @since $VID:$
+     * @return array
+     */
+    public static function schemaForCalculations()
+    {
+        $image_object_properties = array(
+            'url' => array(
+                'type' => 'string'
+            ),
+            'width' => array(
+                'type' => 'number'
+            ),
+            'height' => array(
+                'type' => 'number'
+            ),
+            'generated' => array(
+                'type' => 'boolean'
+            )
+        );
+        return array(
+            'optimum_sales_at_start' => array(
+                'description' => esc_html__(
+                    'The total spaces on the event (not subtracting sales, but taking sales into account; so this is the optimum sales that CAN still be achieved.',
+                    'event_espresso'
+                ),
+                'type' => 'number',
+            ),
+            'optimum_sales_now' => array(
+                'description' => esc_html__(
+                    'The total spaces on the event (ignoring all sales; so this is the optimum sales that could have been achieved.',
+                    'event_espresso'
+                ),
+                'type' => 'number',
+            ),
+            'spaces_remaining' => array(
+                'description' => esc_html__(
+                    'The optimum_sales_number result, minus total sales so far.',
+                    'event_espresso'
+                ),
+                'type' => 'number',
+            ),
+            'spots_taken' => array(
+                'description' => esc_html__(
+                    'The number of approved registrations for this event (regardless of how many datetimes each registration\'s ticket purchase is for)',
+                    'event_espresso'
+                ),
+                'type' => 'number',
+            ),
+            'spots_taken_pending_payment' => array(
+                'description' => esc_html__(
+                    'The number of pending-payment registrations for this event (regardless of how many datetimes each registration\'s ticket purchase is for)',
+                    'event_espresso'
+                ),
+                'type' => 'number',
+            ),
+            'registrations_checked_in_count' => array(
+                'description' => esc_html__(
+                    'The count of all the registrations who have checked into one of this event\'s datetimes.',
+                    'event_espresso'
+                ),
+                'type' => 'number',
+            ),
+            'registrations_checked_out_count' => array(
+                'description' => esc_html__(
+                    'The count of all registrations who have checked out of one of this event\'s datetimes.',
+                    'event_espresso'
+                ),
+                'type' => 'number',
+            ),
+            'image_thumbnail' => array(
+                'description' => esc_html__(
+                    'The thumbnail image data.',
+                    'event_espresso'
+                ),
+                'type' => 'object',
+                'properties' => $image_object_properties,
+                'additionalProperties' => false,
+            ),
+            'image_medium' => array(
+                'description' => esc_html__(
+                    'The medium image data.',
+                    'event_espresso'
+                ),
+                'type' => 'object',
+                'properties' => $image_object_properties,
+                'additionalProperties' => false,
+            ),
+            'image_medium_large' => array(
+                'description' => esc_html__(
+                    'The medium-large image data.',
+                    'event_espresso'
+                ),
+                'type' => 'object',
+                'properties' => $image_object_properties,
+                'additionalProperties' => false,
+            ),
+            'image_large' => array(
+                'description' => esc_html__(
+                    'The large image data.',
+                    'event_espresso'
+                ),
+                'type' => 'object',
+                'properties' => $image_object_properties,
+                'additionalProperties' => false,
+            ),
+            'image_post_thumbnail' => array(
+                'description' => esc_html__(
+                    'The post-thumbnail image data.',
+                    'event_espresso'
+                ),
+                'type' => 'object',
+                'properties' => $image_object_properties,
+                'additionalProperties' => false,
+            ),
+            'image_full' => array(
+                'description' => esc_html__(
+                    'The full size image data',
+                    'event_espresso'
+                ),
+                'type' => 'object',
+                'properties' => $image_object_properties,
+                'additionalProperties' => false,
+            )
+        );
+    }
+
+
+    /**
+     * Returns the json schema for the given calculation index.
+     *
+     * @param $calculation_index
+     * @since $VID:$
+     * @return array
+     */
+    public static function schemaForCalculation($calculation_index)
+    {
+        $schema_map = self::schemaForCalculations();
+        return isset($schema_map[ $calculation_index ]) ? $schema_map[ $calculation_index ] : array();
     }
 }
