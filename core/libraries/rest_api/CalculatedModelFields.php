@@ -45,7 +45,6 @@ class CalculatedModelFields
     {
         if (! $this->mapping || $refresh) {
             $this->mapping = $this->generateNewMapping();
-            $this->mapping_schema = $this->generateNewMappingSchema();
         }
         return $this->mapping;
     }
@@ -87,7 +86,7 @@ class CalculatedModelFields
     protected function generateNewMappingSchema()
     {
         $schema_map = array();
-        foreach ($this->mapping as $map_model => $map_for_model) {
+        foreach ($this->mapping() as $map_model => $map_for_model) {
             /**
              * @var string $calculation_index
              * @var HasCalculationSchemaInterface $calculations_class
@@ -132,7 +131,9 @@ class CalculatedModelFields
      */
     public function getJsonSchemaForModel(EEM_Base $model)
     {
-        $this->mapping();
+        if( ! $this->mapping_schema) {
+            $this->generateNewMappingSchema();
+        }
         return array(
             'description' => esc_html__(
                 'Available calculated fields for this model.  Fields are only present in the response if explicitly requested',
