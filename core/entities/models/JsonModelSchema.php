@@ -190,30 +190,30 @@ class JsonModelSchema
                         ),
                         'readonly' => true
                     ),
-                    'additionalProperties' => array(
-                        'type' => 'array',
-                        'description' => esc_html(
-                            'Additional property keys are the link to relations resource collection.',
-                            'event_espresso'
-                        ),
-                        'items' => array(
-                            'type' => 'object',
-                            'properties' => array(
-                                'href' => array(
-                                    'description' => esc_html(
-                                        'Link to relations collection for this entity resource.',
-                                        'event_espresso'
-                                    ),
-                                    'type' => 'string',
-                                ),
-                                'single' => array(
-                                    'type' => 'boolean'
-                                )
-                            ),
-                            'additionalProperties' => false
-                        )
-                    )
                 ),
+                'additionalProperties' => array(
+                    'type' => 'array',
+                    'description' => esc_html(
+                        'Additional property keys are the link to relations resource collection.',
+                        'event_espresso'
+                    ),
+                    'items' => array(
+                        'type' => 'object',
+                        'properties' => array(
+                            'href' => array(
+                                'description' => esc_html(
+                                    'Link to relations collection for this entity resource.',
+                                    'event_espresso'
+                                ),
+                                'type' => 'string',
+                            ),
+                            'single' => array(
+                                'type' => 'boolean'
+                            )
+                        ),
+                        'additionalProperties' => false
+                    )
+                )
             ),
             '_calculated_fields' => $this->fields_calculator->getJsonSchemaForModel($this->model)
         );
