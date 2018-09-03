@@ -52,6 +52,16 @@ export default class ServerDateTime extends DateTime {
 		}
 	}
 
+	/**
+	 * Instantiate ServerDateTime from an ISO string.
+	 * This overrides `DateTime.fromISO` removing the need to worry about
+	 * whether to use `timezone` or `offset`.  This will simply use whatever is
+	 * provided by the server (preferring timezone if its available).
+	 *
+	 * @param {string} ISOString
+	 * @param {string} locale
+	 * @return {ServerDateTime} An instance of ServerDateTime
+	 */
 	static fromISO( ISOString, locale = DEFAULT_VALID_LOCALE ) {
 		return HAS_TIMEZONE_STRING ?
 			new ServerDateTime(
@@ -68,6 +78,16 @@ export default class ServerDateTime extends DateTime {
 			);
 	}
 
+	/**
+	 * Instantiate ServerDateTime from an ISO string.
+	 * This overrides `DateTime.fromJSDate` removing the need to worry about
+	 * whether to use `timezone` or `offset`.  This will simply use whatever is
+	 * provided by the server (preferring timezone if its available).
+	 *
+	 * @param {Date} date
+	 * @param {string} locale
+	 * @return {ServerDateTime} An instance of ServerDateTime
+	 */
 	static fromJSDate( date, locale = DEFAULT_VALID_LOCALE ) {
 		return HAS_TIMEZONE_STRING ?
 			new ServerDateTime(
