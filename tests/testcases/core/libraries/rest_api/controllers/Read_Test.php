@@ -1131,6 +1131,47 @@ class Read_Test extends \EE_REST_TestCase
         $this->assertEquals('EE_Has_Many_Relation', $datetimes_array['relation_type']);
         $this->assertArrayHasKey('readonly', $datetimes_array);
         $this->assertTrue($datetimes_array['readonly']);
+        // verify link item
+        $this->assertArrayHasKey('link', $data['schema']);
+        $link = $data['schema']['link'];
+        $this->assertArrayHasKey('type', $link);
+        $this->assertEquals('string', $link['type']);
+        // verify links item
+        $this->assertArrayHasKey('_links', $data['schema']);
+        $links = $data['schema']['_links'];
+        $this->assertEquals(
+            array('description', 'type', 'readonly', 'properties', 'additionalProperties'),
+            array_keys($links)
+        );
+        $this->assertEquals(
+            array('self', 'collection' ),
+            array_keys($links['properties'])
+        );
+        //verify _calculated_fields
+        $this->assertArrayHasKey('_calculated_fields', $data['schema']);
+        $calculated_fields = $data['schema']['_calculated_fields'];
+        $this->assertEquals(
+            array('description', 'type', 'properties', 'additionalProperties', 'readonly'),
+            array_keys($calculated_fields)
+        );
+        $this->assertEquals(
+            array(
+                'optimum_sales_at_start',
+                'optimum_sales_now',
+                'spots_taken',
+                'spots_taken_pending_payment',
+                'spaces_remaining',
+                'registrations_checked_in_count',
+                'registrations_checked_out_count',
+                'image_thumbnail',
+                'image_medium',
+                'image_medium_large',
+                'image_large',
+                'image_post_thumbnail',
+                'image_full',
+            ),
+            array_keys($calculated_fields['properties'])
+        );
     }
 
 
