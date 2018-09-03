@@ -32,6 +32,8 @@ class URLValidatorTest extends EE_UnitTestCase
             'subsite' => array('http://dev.eventespresso.com', true),
             'querystring' => array('http://foo.bar?foo=bar&other=thing', true),
             'slashquerystring' => array('http://foob.bar/?foo=bar', true),
+            'with_path' => array('http://foo.bar/some/path', true),
+            'with_file' => array('http://foo.bar/some/file.txt', true),
             'port' => array('http://foo.bar:80', true),
             'unicode' => array('http://스타벅스코리아.com', true),
             'encoded_unicode' => array('http://%EC%8A%A4%ED%83%80%EB%B2%85%EC%8A%A4%EC%BD%94%EB%A6%AC%EC%95%84_foobar.com', true),
@@ -39,6 +41,8 @@ class URLValidatorTest extends EE_UnitTestCase
             'bad_scheme' => array('php://filter/read=convert.base64-encode/resource=/etc/passw', false),
             'bad_scheme_2' => array('foo://bar', false),
             'javascript' => array('javascript://test%0Aalert(321)', false),
+            'www' => array('www', false),
+            'relative_url' => array('some/path', false),
         );
     }
 
