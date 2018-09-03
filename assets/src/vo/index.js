@@ -4,4 +4,4 @@ export {
 	Currency,
 } from './currency';
 export { default as Label } from './label';
-export { DateTime, Duration } from './date-time';
+export { DateTime, Duration, ServerDateTime } from './date-time';
