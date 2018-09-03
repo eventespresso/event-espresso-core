@@ -69,7 +69,7 @@ class CalculatedModelFields
         foreach ($models_with_calculated_fields as $model_name) {
             $calculated_fields_classname = $namespace . $model_name;
             foreach (array_keys(call_user_func(array($calculated_fields_classname, 'schemaForCalculations'))) as $field_name) {
-                $mapping[$model_name][$field_name] = $calculated_fields_classname;
+                $mapping[ $model_name ][ $field_name ] = $calculated_fields_classname;
             }
         }
         return apply_filters(
