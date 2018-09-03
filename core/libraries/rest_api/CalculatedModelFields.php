@@ -162,6 +162,7 @@ class CalculatedModelFields
                 ? $this->mapping_schema[ $model->get_this_model_name() ]
                 : array(),
             'additionalProperties' => false,
+            'readonly' => true,
         );
     }
 
