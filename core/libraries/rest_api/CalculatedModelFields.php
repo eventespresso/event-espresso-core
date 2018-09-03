@@ -132,7 +132,7 @@ class CalculatedModelFields
     public function getJsonSchemaForModel(EEM_Base $model)
     {
         if (! $this->mapping_schema) {
-            $this->generateNewMappingSchema();
+            $this->mapping_schema = $this->generateNewMappingSchema();
         }
         return array(
             'description' => esc_html__(
