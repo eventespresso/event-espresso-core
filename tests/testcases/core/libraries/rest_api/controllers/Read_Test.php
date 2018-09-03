@@ -1097,6 +1097,7 @@ class Read_Test extends \EE_REST_TestCase
      * This tests getting schema object returned for an options request on a valid collection endpoint.
      *
      * @group rest_schema_request
+     * @group current
      */
     public function test_handle_schema_request()
     {
@@ -1158,9 +1159,9 @@ class Read_Test extends \EE_REST_TestCase
             array(
                 'optimum_sales_at_start',
                 'optimum_sales_now',
+                'spaces_remaining',
                 'spots_taken',
                 'spots_taken_pending_payment',
-                'spaces_remaining',
                 'registrations_checked_in_count',
                 'registrations_checked_out_count',
                 'image_thumbnail',
