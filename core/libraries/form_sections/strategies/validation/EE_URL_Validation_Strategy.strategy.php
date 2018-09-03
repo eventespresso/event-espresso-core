@@ -40,7 +40,7 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base
         URLValidator $url_validator = null
     ) {
         if (! $url_validator instanceof URLValidator) {
-            $url_validator = LoaderFactory::getLoader()->load('EventEspresso\core\services\validators\URLValidator');
+            $url_validator = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\validators\URLValidator');
         }
         $this->url_validator = $url_validator;
         if (! $validation_error_message) {
