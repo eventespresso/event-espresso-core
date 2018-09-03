@@ -58,42 +58,23 @@ class CalculatedModelFields
      */
     protected function generateNewMapping()
     {
-        $rest_api_calculations_namespace = 'EventEspresso\core\libraries\rest_api\calculations\\';
-        $event_calculations_class = $rest_api_calculations_namespace . 'Event';
-        $datetime_calculations_class = $rest_api_calculations_namespace . 'Datetime';
-        $registration_class = $rest_api_calculations_namespace . 'Registration';
-        $attendee_class = $rest_api_calculations_namespace . 'Attendee';
+        $namespace = 'EventEspresso\core\libraries\rest_api\calculations\\';
+        $mapping = array();
+        $models_with_calculated_fields = array(
+            'Attendee',
+            'Datetime',
+            'Event',
+            'Registration'
+        );
+        foreach ($models_with_calculated_fields as $model_name) {
+            $calculated_fields_classname = $namespace . $model_name;
+            foreach (array_keys(call_user_func(array($calculated_fields_classname, 'schemaForCalculations'))) as $field_name) {
+                $mapping[$model_name][$field_name] = $calculated_fields_classname;
+            }
+        }
         return apply_filters(
             'FHEE__EventEspresso\core\libraries\rest_api\Calculated_Model_Fields__mapping',
-            array(
-                'Event'        => array(
-                    'optimum_sales_at_start'          => $event_calculations_class,
-                    'optimum_sales_now'               => $event_calculations_class,
-                    'spots_taken'                     => $event_calculations_class,
-                    'spots_taken_pending_payment'     => $event_calculations_class,
-                    'spaces_remaining'                => $event_calculations_class,
-                    'registrations_checked_in_count'  => $event_calculations_class,
-                    'registrations_checked_out_count' => $event_calculations_class,
-                    'image_thumbnail'                 => $event_calculations_class,
-                    'image_medium'                    => $event_calculations_class,
-                    'image_medium_large'              => $event_calculations_class,
-                    'image_large'                     => $event_calculations_class,
-                    'image_post_thumbnail'            => $event_calculations_class,
-                    'image_full'                      => $event_calculations_class,
-                ),
-                'Datetime'     => array(
-                    'spaces_remaining_considering_tickets' => $datetime_calculations_class,
-                    'registrations_checked_in_count'       => $datetime_calculations_class,
-                    'registrations_checked_out_count'      => $datetime_calculations_class,
-                    'spots_taken_pending_payment'          => $datetime_calculations_class,
-                ),
-                'Registration' => array(
-                    'datetime_checkin_stati' => $registration_class,
-                ),
-                'Attendee' => array(
-                    'user_avatar' => $attendee_class,
-                ),
-            )
+            $mapping
         );
     }
 
