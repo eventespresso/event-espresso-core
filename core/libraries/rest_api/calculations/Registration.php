@@ -3,11 +3,16 @@
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
 use EE_Checkin;
+use EE_Error;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\rest_api\calculations\Base as Calculations_Base;
 use EventEspresso\core\libraries\rest_api\controllers\model\Base;
 use EEM_Registration;
 use EE_Registration;
 use EEM_Datetime;
+use InvalidArgumentException;
+use WP_REST_Request;
 
 /**
  * Class Registration
@@ -23,10 +28,13 @@ class Registration extends Calculations_Base
      * Calculates the checkin status for each datetime this registration has access to
      *
      * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param Base             $controller
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public static function datetimeCheckinStati($wpdb_row, $request, $controller)
     {
@@ -37,7 +45,7 @@ class Registration extends Calculations_Base
         }
         if (! $reg instanceof EE_Registration
         ) {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     __(
                     // @codingStandardsIgnoreStart
