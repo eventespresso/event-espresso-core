@@ -319,7 +319,7 @@ Returns the difference between two DateTime instances as an instance of `Duratio
 **Example:**
 ```js
 const original = new DateTime( '2018-12-25T10:15:00.200+00:00' );
-const comparedWith = new DateTime( '2018-12-26T10:15:00.200+00:00 );
+const comparedWith = new DateTime( '2018-12-26T10:15:00.200+00:00' );
 
 // { days: 1 }
 console.log( original.diff( comparedWith ).toObject() )
@@ -337,7 +337,7 @@ Set the value of this DateTime to the end (eg. the last millisecond) of a unit o
 **Example:**
 
 ```js
-const original = new DateTime( '2018-12-25T10:15:00.200+00:00 );
+const original = new DateTime( '2018-12-25T10:15:00.200+00:00' );
 
 // '2018-12-31T23:59:59.999+00:00'
 console.log( original.endOf( DateTime.UNIT_MONTH ).toISO() );
