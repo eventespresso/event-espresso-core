@@ -152,9 +152,17 @@ class CalculatedModelFields
     public function getJsonSchemaForModel(EEM_Base $model)
     {
         $this->mapping();
-        return isset($this->mapping_schema[ $model->get_this_model_name() ])
-            ? $this->mapping_schema[ $model->get_this_model_name() ]
-            : array();
+        return array(
+            'description' => esc_html__(
+                'Available calculated fields for this model.  Fields are only present in the response if explicitly requested',
+                'event_espresso'
+            ),
+            'type' => 'object',
+            'properties' => isset($this->mapping_schema[ $model->get_this_model_name() ])
+                ? $this->mapping_schema[ $model->get_this_model_name() ]
+                : array(),
+            'additionalProperties' => false,
+        );
     }
 
 
