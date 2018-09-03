@@ -3,6 +3,7 @@
 namespace EventEspresso\core\libraries\rest_api;
 
 use EEM_Base;
+use EventEspresso\core\libraries\rest_api\calculations\HasCalculationSchemaInterface;
 use EventEspresso\core\libraries\rest_api\controllers\Base;
 use EEH_Inflector;
 
@@ -24,6 +25,11 @@ class CalculatedModelFields
      */
     protected $mapping;
 
+    /**
+     * @var array
+     */
+    protected $mapping_schema;
+
 
     /**
      * @param bool $refresh
@@ -39,13 +45,14 @@ class CalculatedModelFields
     {
         if (! $this->mapping || $refresh) {
             $this->mapping = $this->generateNewMapping();
+            $this->mapping_schema = $this->generateNewMappingSchema();
         }
         return $this->mapping;
     }
 
 
     /**
-     * Generates  anew mapping between model calculated fields and their callbacks
+     * Generates a new mapping between model calculated fields and their callbacks
      *
      * @return array
      */
@@ -92,6 +99,36 @@ class CalculatedModelFields
 
 
     /**
+     * Generates the schema for each calculation index in the calculation map.
+     *
+     * @return array
+     */
+    protected function generateNewMappingSchema()
+    {
+        $schema_map = array();
+        foreach ($this->mapping as $map_model => $map_for_model) {
+            /**
+             * @var string $calculation_index
+             * @var HasCalculationSchemaInterface $calculations_class
+             */
+            foreach ($map_for_model as $calculation_index => $calculations_class) {
+                if (in_array(
+                    'EventEspresso\core\libraries\rest_api\calculations\HasCalculationSchemaInterface',
+                    class_implements($calculations_class),
+                    true
+                )) {
+                    $schema = $calculations_class::schemaForCalculation($calculation_index);
+                    if (! empty($schema)) {
+                        $schema_map[ $map_model ][ $calculation_index ] = $schema;
+                    }
+                }
+            }
+        }
+        return $schema_map;
+    }
+
+
+    /**
      * Gets the known calculated fields for model
      *
      * @param EEM_Base $model
@@ -102,9 +139,22 @@ class CalculatedModelFields
         $mapping = $this->mapping();
         if (isset($mapping[ $model->get_this_model_name() ])) {
             return array_keys($mapping[ $model->get_this_model_name() ]);
-        } else {
-            return array();
         }
+        return array();
+    }
+
+
+    /**
+     * Returns the JsonSchema for the calculated fields on the given model.
+     * @param EEM_Base $model
+     * @return array
+     */
+    public function getJsonSchemaForModel(EEM_Base $model)
+    {
+        $this->mapping();
+        return isset($this->mapping_schema[ $model->get_this_model_name() ])
+            ? $this->mapping_schema[ $model->get_this_model_name() ]
+            : array();
     }
 
 
