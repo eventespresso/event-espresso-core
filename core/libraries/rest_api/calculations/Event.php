@@ -24,7 +24,7 @@ use WP_REST_Request;
  * @subpackage
  * @author                Mike Nelson
  */
-class Event extends EventCalculationBase implements HasCalculationSchemaInterface
+class Event extends EventCalculationBase
 {
 
     /**
@@ -450,7 +450,7 @@ class Event extends EventCalculationBase implements HasCalculationSchemaInterfac
      * @since $VID:$
      * @return array
      */
-    public static function schemaForCalculations()
+    public function schemaForCalculations()
     {
         $image_object_properties = array(
             'url'       => array(
@@ -571,19 +571,5 @@ class Event extends EventCalculationBase implements HasCalculationSchemaInterfac
                 'additionalProperties' => false,
             ),
         );
-    }
-
-
-    /**
-     * Returns the json schema for the given calculation index.
-     *
-     * @param $calculation_index
-     * @since $VID:$
-     * @return array
-     */
-    public static function schemaForCalculation($calculation_index)
-    {
-        $schema_map = Event::schemaForCalculations();
-        return isset($schema_map[ $calculation_index ]) ? $schema_map[ $calculation_index ] : array();
     }
 }

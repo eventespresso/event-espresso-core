@@ -14,7 +14,7 @@ use WP_REST_Request;
  * @author  Brent Christensen
  * @since   4.9.66.p
  */
-class Attendee extends AttendeeCalculationsBase implements HasCalculationSchemaInterface
+class Attendee extends AttendeeCalculationsBase
 {
 
     /**
@@ -44,7 +44,7 @@ class Attendee extends AttendeeCalculationsBase implements HasCalculationSchemaI
      * @since $VID:$
      * @return array
      */
-    public static function schemaForCalculations()
+    public function schemaForCalculations()
     {
         return array(
             'user_avatar' => array(
@@ -58,16 +58,5 @@ class Attendee extends AttendeeCalculationsBase implements HasCalculationSchemaI
     }
 
 
-    /**
-     * Returns the json schema for the given calculation index.
-     *
-     * @since $VID:$
-     * @param $calculation_index
-     * @return array
-     */
-    public static function schemaForCalculation($calculation_index)
-    {
-        $schema_map = Attendee::schemaForCalculations();
-        return isset($schema_map[ $calculation_index ]) ? $schema_map[ $calculation_index ] : array();
-    }
+
 }

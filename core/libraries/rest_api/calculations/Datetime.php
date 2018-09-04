@@ -15,7 +15,7 @@ use InvalidArgumentException;
 use ReflectionException;
 use WP_REST_Request;
 
-class Datetime extends DatetimeCalculationBase implements HasCalculationSchemaInterface
+class Datetime extends DatetimeCalculationBase
 {
 
     /**
@@ -176,7 +176,7 @@ class Datetime extends DatetimeCalculationBase implements HasCalculationSchemaIn
      * @since $VID:$
      * @return array
      */
-    public static function schemaForCalculations()
+    public function schemaForCalculations()
     {
         return array(
             'spaces_remaining_considering_tickets' => array(
@@ -208,19 +208,5 @@ class Datetime extends DatetimeCalculationBase implements HasCalculationSchemaIn
                 'type' => 'number'
             ),
         );
-    }
-
-
-    /**
-     * Returns the json schema for the given calculation index.
-     *
-     * @param string $calculation_index
-     * @since $VID:$
-     * @return array
-     */
-    public static function schemaForCalculation($calculation_index)
-    {
-        $schema_map = Datetime::schemaForCalculations();
-        return isset($schema_map[ $calculation_index ]) ? $schema_map[ $calculation_index ] : array();
     }
 }

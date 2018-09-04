@@ -3,7 +3,6 @@
 namespace EventEspresso\core\libraries\rest_api;
 
 use EEM_Base;
-use EventEspresso\core\libraries\rest_api\calculations\HasCalculationSchemaInterface;
 use EventEspresso\core\libraries\rest_api\controllers\Base;
 use EEH_Inflector;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -87,6 +86,9 @@ class CalculatedModelFields
      * Generates the schema for each calculation index in the calculation map.
      *
      * @return array
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
      */
     protected function generateNewMappingSchema()
     {
@@ -94,19 +96,13 @@ class CalculatedModelFields
         foreach ($this->mapping() as $map_model => $map_for_model) {
             /**
              * @var string $calculation_index
-             * @var HasCalculationSchemaInterface $calculations_class
+             * @var EventEspresso\core\libraries\rest_api\calculations\Base $calculations_class
              */
             foreach ($map_for_model as $calculation_index => $calculations_class) {
-                if (in_array(
-                    'EventEspresso\core\libraries\rest_api\calculations\HasCalculationSchemaInterface',
-                    class_implements($calculations_class),
-                    true
-                )) {
-                    $calculator = LoaderFactory::getLoader()->getShared($calculations_class);
-                    $schema = call_user_func(array($calculator, 'schemaForCalculation'), $calculation_index);
-                    if (! empty($schema)) {
-                        $schema_map[ $map_model ][ $calculation_index ] = $schema;
-                    }
+                $calculator = LoaderFactory::getLoader()->getShared($calculations_class);
+                $schema = call_user_func(array($calculator, 'schemaForCalculation'), $calculation_index);
+                if (! empty($schema)) {
+                    $schema_map[ $map_model ][ $calculation_index ] = $schema;
                 }
             }
         }

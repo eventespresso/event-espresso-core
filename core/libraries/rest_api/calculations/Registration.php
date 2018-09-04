@@ -21,7 +21,7 @@ use WP_REST_Request;
  * @subpackage
  * @author                Mike Nelson
  */
-class Registration extends RegistrationCalculationBase implements HasCalculationSchemaInterface
+class Registration extends RegistrationCalculationBase
 {
 
     /**
@@ -94,7 +94,7 @@ class Registration extends RegistrationCalculationBase implements HasCalculation
      * @since $VID:$
      * @return array
      */
-    public static function schemaForCalculations()
+    public function schemaForCalculations()
     {
         return array(
             'datetime_checkin_stati' => array(
@@ -113,19 +113,5 @@ class Registration extends RegistrationCalculationBase implements HasCalculation
                 ),
             ),
         );
-    }
-
-
-    /**
-     * Returns the json schema for the given calculation index.
-     *
-     * @param $calculation_index
-     * @since $VID:$
-     * @return array
-     */
-    public static function schemaForCalculation($calculation_index)
-    {
-        $schema_map = Registration::schemaForCalculations();
-        return isset($schema_map[ $calculation_index ]) ? $schema_map[ $calculation_index ] : array();
     }
 }
