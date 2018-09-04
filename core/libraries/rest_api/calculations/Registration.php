@@ -125,7 +125,7 @@ class Registration extends Calculations_Base implements HasCalculationSchemaInte
      */
     public static function schemaForCalculation($calculation_index)
     {
-        $schema_map = self::schemaForCalculations();
+        $schema_map = Registration::schemaForCalculations();
         return isset($schema_map[ $calculation_index ]) ? $schema_map[ $calculation_index ] : array();
     }
 }

@@ -583,7 +583,7 @@ class Event extends Calculations_Base implements HasCalculationSchemaInterface
      */
     public static function schemaForCalculation($calculation_index)
     {
-        $schema_map = self::schemaForCalculations();
+        $schema_map = Event::schemaForCalculations();
         return isset($schema_map[ $calculation_index ]) ? $schema_map[ $calculation_index ] : array();
     }
 }

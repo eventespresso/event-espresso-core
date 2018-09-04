@@ -220,7 +220,7 @@ class Datetime extends Calculations_Base implements HasCalculationSchemaInterfac
      */
     public static function schemaForCalculation($calculation_index)
     {
-        $schema_map = self::schemaForCalculations();
+        $schema_map = Datetime::schemaForCalculations();
         return isset($schema_map[ $calculation_index ]) ? $schema_map[ $calculation_index ] : array();
     }
 }
