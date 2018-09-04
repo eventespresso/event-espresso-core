@@ -6,7 +6,7 @@ use EE_Checkin;
 use EE_Error;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\libraries\rest_api\calculations\Base as Calculations_Base;
+use EventEspresso\core\libraries\rest_api\calculations\Base as RegistrationCalculationBase;
 use EventEspresso\core\libraries\rest_api\controllers\model\Base;
 use EEM_Registration;
 use EE_Registration;
@@ -21,7 +21,7 @@ use WP_REST_Request;
  * @subpackage
  * @author                Mike Nelson
  */
-class Registration extends Calculations_Base implements HasCalculationSchemaInterface
+class Registration extends RegistrationCalculationBase implements HasCalculationSchemaInterface
 {
 
     /**

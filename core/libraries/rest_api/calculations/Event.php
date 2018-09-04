@@ -6,7 +6,7 @@ use DomainException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
-use EventEspresso\core\libraries\rest_api\calculations\Base as Calculations_Base;
+use EventEspresso\core\libraries\rest_api\calculations\Base as EventCalculationBase;
 use EventEspresso\core\libraries\rest_api\controllers\model\Base;
 use EventEspresso\core\libraries\rest_api\RestException;
 use EEM_Event;
@@ -24,7 +24,7 @@ use WP_REST_Request;
  * @subpackage
  * @author                Mike Nelson
  */
-class Event extends Calculations_Base implements HasCalculationSchemaInterface
+class Event extends EventCalculationBase implements HasCalculationSchemaInterface
 {
 
     /**
