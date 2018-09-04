@@ -6,6 +6,7 @@ use EEM_Base;
 use EventEspresso\core\libraries\rest_api\calculations\HasCalculationSchemaInterface;
 use EventEspresso\core\libraries\rest_api\controllers\Base;
 use EEH_Inflector;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * Class CalculatedModelFields
@@ -172,8 +173,9 @@ class CalculatedModelFields
             && isset($mapping[ $model->get_this_model_name() ][ $field_name ])
         ) {
             $classname = $mapping[ $model->get_this_model_name() ][ $field_name ];
+            $calculator = LoaderFactory::getLoader()->getShared($classname);
             $class_method_name = EEH_Inflector::camelize_all_but_first($field_name);
-            return call_user_func(array($classname, $class_method_name), $wpdb_row, $rest_request, $controller);
+            return call_user_func(array($calculator, $class_method_name), $wpdb_row, $rest_request, $controller);
         }
         throw new RestException(
             'calculated_field_does_not_exist',
