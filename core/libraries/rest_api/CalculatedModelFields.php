@@ -55,6 +55,9 @@ class CalculatedModelFields
      * Generates a new mapping between model calculated fields and their callbacks
      *
      * @return array
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
      */
     protected function generateNewMapping()
     {
@@ -68,7 +71,8 @@ class CalculatedModelFields
         );
         foreach ($models_with_calculated_fields as $model_name) {
             $calculated_fields_classname = $namespace . $model_name;
-            foreach (array_keys(call_user_func(array($calculated_fields_classname, 'schemaForCalculations'))) as $field_name) {
+            $calculator = LoaderFactory::getLoader()->getShared($calculated_fields_classname);
+            foreach (array_keys(call_user_func(array($calculator, 'schemaForCalculations'))) as $field_name) {
                 $mapping[ $model_name ][ $field_name ] = $calculated_fields_classname;
             }
         }
@@ -153,13 +157,16 @@ class CalculatedModelFields
     /**
      * Retrieves the value for this calculation
      *
-     * @param EEM_Base                                                $model
-     * @param string                                                  $field_name
-     * @param array                                                   $wpdb_row
-     * @param \WP_REST_Request
+     * @param EEM_Base $model
+     * @param string $field_name
+     * @param array $wpdb_row
+     * @param $rest_request
      * @param \EventEspresso\core\libraries\rest_api\controllers\Base $controller
      * @return mixed|null
-     * @throws \EE_Error
+     * @throws RestException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
      */
     public function retrieveCalculatedFieldValue(
         EEM_Base $model,
