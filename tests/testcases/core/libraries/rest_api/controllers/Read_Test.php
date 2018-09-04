@@ -1132,24 +1132,39 @@ class Read_Test extends \EE_REST_TestCase
         $this->assertArrayHasKey('readonly', $datetimes_array);
         $this->assertTrue($datetimes_array['readonly']);
         // verify link item
-        $this->assertArrayHasKey('link', $data['schema']);
-        $link = $data['schema']['link'];
+        $this->assertArrayHasKey('link', $data['schema']['properties']);
+        $link = $data['schema']['properties']['link'];
         $this->assertArrayHasKey('type', $link);
         $this->assertEquals('string', $link['type']);
         // verify links item
-        $this->assertArrayHasKey('_links', $data['schema']);
-        $links = $data['schema']['_links'];
+        $this->assertArrayHasKey('_links', $data['schema']['properties']);
+        $links = $data['schema']['properties']['_links'];
         $this->assertEquals(
             array('description', 'type', 'readonly', 'properties', 'additionalProperties'),
             array_keys($links)
         );
         $this->assertEquals(
-            array('self', 'collection' ),
+            array(
+                'self',
+                'collection',
+                'https://api.eventespresso.com/registration',
+                'https://api.eventespresso.com/datetime',
+                'https://api.eventespresso.com/question_group',
+                'https://api.eventespresso.com/venue',
+                'https://api.eventespresso.com/term_relationship',
+                'https://api.eventespresso.com/term_taxonomy',
+                'https://api.eventespresso.com/message_template_group',
+                'https://api.eventespresso.com/attendee',
+                'https://api.eventespresso.com/wp_user',
+                'https://api.eventespresso.com/post_meta',
+                'https://api.eventespresso.com/extra_meta',
+                'https://api.eventespresso.com/change_log',
+            ),
             array_keys($links['properties'])
         );
         //verify _calculated_fields
-        $this->assertArrayHasKey('_calculated_fields', $data['schema']);
-        $calculated_fields = $data['schema']['_calculated_fields'];
+        $this->assertArrayHasKey('_calculated_fields', $data['schema']['properties']);
+        $calculated_fields = $data['schema']['properties']['_calculated_fields'];
         $this->assertEquals(
             array('description', 'type', 'properties', 'additionalProperties', 'readonly'),
             array_keys($calculated_fields)
