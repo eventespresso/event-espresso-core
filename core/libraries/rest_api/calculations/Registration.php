@@ -7,7 +7,7 @@ use EE_Error;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\rest_api\calculations\Base as RegistrationCalculationBase;
-use EventEspresso\core\libraries\rest_api\controllers\model\Base;
+use EventEspresso\core\libraries\rest_api\controllers\model\Base as RegistrationControllerBase;
 use EEM_Registration;
 use EE_Registration;
 use EEM_Datetime;
@@ -29,7 +29,7 @@ class Registration extends RegistrationCalculationBase implements HasCalculation
      *
      * @param array            $wpdb_row
      * @param WP_REST_Request $request
-     * @param Base             $controller
+     * @param RegistrationControllerBase $controller
      * @return array
      * @throws EE_Error
      * @throws InvalidDataTypeException

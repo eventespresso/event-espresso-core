@@ -7,7 +7,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\libraries\rest_api\calculations\Base as EventCalculationBase;
-use EventEspresso\core\libraries\rest_api\controllers\model\Base;
+use EventEspresso\core\libraries\rest_api\controllers\model\Base as EventControllerBase;
 use EventEspresso\core\libraries\rest_api\RestException;
 use EEM_Event;
 use EE_Event;
@@ -32,9 +32,9 @@ class Event extends EventCalculationBase implements HasCalculationSchemaInterfac
      * sales into account; so this is the optimum sales that CAN still be achieved)
      * See EE_Event::total_available_spaces( true );
      *
-     * @param array            $wpdb_row
-     * @param WP_REST_Request $request
-     * @param Base             $controller
+     * @param array               $wpdb_row
+     * @param WP_REST_Request     $request
+     * @param EventControllerBase $controller
      * @return int
      * @throws EE_Error
      * @throws DomainException
@@ -72,9 +72,9 @@ class Event extends EventCalculationBase implements HasCalculationSchemaInterfac
      * sales that COULD have been achieved)
      * See EE_Event::total_available_spaces( true );
      *
-     * @param array           $wpdb_row
-     * @param WP_REST_Request $request
-     * @param Base            $controller
+     * @param array               $wpdb_row
+     * @param WP_REST_Request     $request
+     * @param EventControllerBase $controller
      * @return int
      * @throws DomainException
      * @throws EE_Error
@@ -111,9 +111,9 @@ class Event extends EventCalculationBase implements HasCalculationSchemaInterfac
      * Like optimum_sales_now, but minus total sales so far.
      * See EE_Event::spaces_remaining_for_sale( true );
      *
-     * @param array           $wpdb_row
-     * @param WP_REST_Request $request
-     * @param Base            $controller
+     * @param array               $wpdb_row
+     * @param WP_REST_Request     $request
+     * @param EventControllerBase $controller
      * @return int
      * @throws DomainException
      * @throws EE_Error
@@ -150,9 +150,9 @@ class Event extends EventCalculationBase implements HasCalculationSchemaInterfac
      * Counts the number of approved registrations for this event (regardless
      * of how many datetimes each registrations' ticket purchase is for)
      *
-     * @param array           $wpdb_row
-     * @param WP_REST_Request $request
-     * @param Base            $controller
+     * @param array               $wpdb_row
+     * @param WP_REST_Request     $request
+     * @param EventControllerBase $controller
      * @return int
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -191,9 +191,9 @@ class Event extends EventCalculationBase implements HasCalculationSchemaInterfac
      * Counts the number of pending-payment registrations for this event (regardless
      * of how many datetimes each registrations' ticket purchase is for)
      *
-     * @param array           $wpdb_row
-     * @param WP_REST_Request $request
-     * @param Base            $controller
+     * @param array               $wpdb_row
+     * @param WP_REST_Request     $request
+     * @param EventControllerBase $controller
      * @return int
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -234,9 +234,9 @@ class Event extends EventCalculationBase implements HasCalculationSchemaInterfac
      * Counts all the registrations who have checked into one of this events' datetimes
      * See EE_Event::total_available_spaces( false );
      *
-     * @param array           $wpdb_row
-     * @param WP_REST_Request $request
-     * @param Base            $controller
+     * @param array               $wpdb_row
+     * @param WP_REST_Request     $request
+     * @param EventControllerBase $controller
      * @return int|null if permission denied
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -268,9 +268,9 @@ class Event extends EventCalculationBase implements HasCalculationSchemaInterfac
      * Counts all the registrations who have checked out of one of this events' datetimes
      * See EE_Event::total_available_spaces( false );
      *
-     * @param array           $wpdb_row
-     * @param WP_REST_Request $request
-     * @param Base            $controller
+     * @param array               $wpdb_row
+     * @param WP_REST_Request     $request
+     * @param EventControllerBase $controller
      * @return int
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -301,9 +301,9 @@ class Event extends EventCalculationBase implements HasCalculationSchemaInterfac
     /**
      * Gets the thumbnail image
      *
-     * @param array            $wpdb_row
-     * @param WP_REST_Request $request
-     * @param Base             $controller
+     * @param array               $wpdb_row
+     * @param WP_REST_Request     $request
+     * @param EventControllerBase $controller
      * @return array
      * @throws EE_Error
      */
@@ -316,9 +316,9 @@ class Event extends EventCalculationBase implements HasCalculationSchemaInterfac
     /**
      * Gets the medium image
      *
-     * @param array            $wpdb_row
-     * @param WP_REST_Request $request
-     * @param Base             $controller
+     * @param array               $wpdb_row
+     * @param WP_REST_Request     $request
+     * @param EventControllerBase $controller
      * @return array
      * @throws EE_Error
      */
@@ -331,9 +331,9 @@ class Event extends EventCalculationBase implements HasCalculationSchemaInterfac
     /**
      * Gets the medium-large image
      *
-     * @param array            $wpdb_row
-     * @param WP_REST_Request $request
-     * @param Base             $controller
+     * @param array               $wpdb_row
+     * @param WP_REST_Request     $request
+     * @param EventControllerBase $controller
      * @return array
      * @throws EE_Error
      */
@@ -346,9 +346,9 @@ class Event extends EventCalculationBase implements HasCalculationSchemaInterfac
     /**
      * Gets the large image
      *
-     * @param array            $wpdb_row
-     * @param WP_REST_Request $request
-     * @param Base             $controller
+     * @param array               $wpdb_row
+     * @param WP_REST_Request     $request
+     * @param EventControllerBase $controller
      * @return array
      * @throws EE_Error
      */
@@ -361,9 +361,9 @@ class Event extends EventCalculationBase implements HasCalculationSchemaInterfac
     /**
      * Gets the post-thumbnail image
      *
-     * @param array            $wpdb_row
-     * @param WP_REST_Request $request
-     * @param Base             $controller
+     * @param array               $wpdb_row
+     * @param WP_REST_Request     $request
+     * @param EventControllerBase $controller
      * @return array
      * @throws EE_Error
      */
@@ -376,9 +376,9 @@ class Event extends EventCalculationBase implements HasCalculationSchemaInterfac
     /**
      * Gets the full size image
      *
-     * @param array            $wpdb_row
-     * @param WP_REST_Request $request
-     * @param Base             $controller
+     * @param array               $wpdb_row
+     * @param WP_REST_Request     $request
+     * @param EventControllerBase $controller
      * @return array
      * @throws EE_Error
      */
@@ -453,123 +453,123 @@ class Event extends EventCalculationBase implements HasCalculationSchemaInterfac
     public static function schemaForCalculations()
     {
         $image_object_properties = array(
-            'url' => array(
-                'type' => 'string'
+            'url'       => array(
+                'type' => 'string',
             ),
-            'width' => array(
-                'type' => 'number'
+            'width'     => array(
+                'type' => 'number',
             ),
-            'height' => array(
-                'type' => 'number'
+            'height'    => array(
+                'type' => 'number',
             ),
             'generated' => array(
-                'type' => 'boolean'
-            )
+                'type' => 'boolean',
+            ),
         );
         return array(
-            'optimum_sales_at_start' => array(
+            'optimum_sales_at_start'          => array(
                 'description' => esc_html__(
                     'The total spaces on the event (not subtracting sales, but taking sales into account; so this is the optimum sales that CAN still be achieved.',
                     'event_espresso'
                 ),
-                'type' => 'number',
+                'type'        => 'number',
             ),
-            'optimum_sales_now' => array(
+            'optimum_sales_now'               => array(
                 'description' => esc_html__(
                     'The total spaces on the event (ignoring all sales; so this is the optimum sales that could have been achieved.',
                     'event_espresso'
                 ),
-                'type' => 'number',
+                'type'        => 'number',
             ),
-            'spaces_remaining' => array(
+            'spaces_remaining'                => array(
                 'description' => esc_html__(
                     'The optimum_sales_number result, minus total sales so far.',
                     'event_espresso'
                 ),
-                'type' => 'number',
+                'type'        => 'number',
             ),
-            'spots_taken' => array(
+            'spots_taken'                     => array(
                 'description' => esc_html__(
                     'The number of approved registrations for this event (regardless of how many datetimes each registration\'s ticket purchase is for)',
                     'event_espresso'
                 ),
-                'type' => 'number',
+                'type'        => 'number',
             ),
-            'spots_taken_pending_payment' => array(
+            'spots_taken_pending_payment'     => array(
                 'description' => esc_html__(
                     'The number of pending-payment registrations for this event (regardless of how many datetimes each registration\'s ticket purchase is for)',
                     'event_espresso'
                 ),
-                'type' => 'number',
+                'type'        => 'number',
             ),
-            'registrations_checked_in_count' => array(
+            'registrations_checked_in_count'  => array(
                 'description' => esc_html__(
                     'The count of all the registrations who have checked into one of this event\'s datetimes.',
                     'event_espresso'
                 ),
-                'type' => 'number',
+                'type'        => 'number',
             ),
             'registrations_checked_out_count' => array(
                 'description' => esc_html__(
                     'The count of all registrations who have checked out of one of this event\'s datetimes.',
                     'event_espresso'
                 ),
-                'type' => 'number',
+                'type'        => 'number',
             ),
-            'image_thumbnail' => array(
-                'description' => esc_html__(
+            'image_thumbnail'                 => array(
+                'description'          => esc_html__(
                     'The thumbnail image data.',
                     'event_espresso'
                 ),
-                'type' => 'object',
-                'properties' => $image_object_properties,
+                'type'                 => 'object',
+                'properties'           => $image_object_properties,
                 'additionalProperties' => false,
             ),
-            'image_medium' => array(
-                'description' => esc_html__(
+            'image_medium'                    => array(
+                'description'          => esc_html__(
                     'The medium image data.',
                     'event_espresso'
                 ),
-                'type' => 'object',
-                'properties' => $image_object_properties,
+                'type'                 => 'object',
+                'properties'           => $image_object_properties,
                 'additionalProperties' => false,
             ),
-            'image_medium_large' => array(
-                'description' => esc_html__(
+            'image_medium_large'              => array(
+                'description'          => esc_html__(
                     'The medium-large image data.',
                     'event_espresso'
                 ),
-                'type' => 'object',
-                'properties' => $image_object_properties,
+                'type'                 => 'object',
+                'properties'           => $image_object_properties,
                 'additionalProperties' => false,
             ),
-            'image_large' => array(
-                'description' => esc_html__(
+            'image_large'                     => array(
+                'description'          => esc_html__(
                     'The large image data.',
                     'event_espresso'
                 ),
-                'type' => 'object',
-                'properties' => $image_object_properties,
+                'type'                 => 'object',
+                'properties'           => $image_object_properties,
                 'additionalProperties' => false,
             ),
-            'image_post_thumbnail' => array(
-                'description' => esc_html__(
+            'image_post_thumbnail'            => array(
+                'description'          => esc_html__(
                     'The post-thumbnail image data.',
                     'event_espresso'
                 ),
-                'type' => 'object',
-                'properties' => $image_object_properties,
+                'type'                 => 'object',
+                'properties'           => $image_object_properties,
                 'additionalProperties' => false,
             ),
-            'image_full' => array(
-                'description' => esc_html__(
+            'image_full'                      => array(
+                'description'          => esc_html__(
                     'The full size image data',
                     'event_espresso'
                 ),
-                'type' => 'object',
-                'properties' => $image_object_properties,
+                'type'                 => 'object',
+                'properties'           => $image_object_properties,
                 'additionalProperties' => false,
-            )
+            ),
         );
     }
 

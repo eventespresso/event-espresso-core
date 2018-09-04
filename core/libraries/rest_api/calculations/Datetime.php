@@ -6,7 +6,7 @@ use EE_Error;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\rest_api\calculations\Base as DatetimeCalculationBase;
-use EventEspresso\core\libraries\rest_api\controllers\model\Base;
+use EventEspresso\core\libraries\rest_api\controllers\model\Base as DatetimeControllerBase;
 use EEM_Datetime;
 use EEM_Registration;
 use EE_Datetime;
@@ -25,7 +25,7 @@ class Datetime extends DatetimeCalculationBase implements HasCalculationSchemaIn
      * @see EE_Datetime::spaces_remaining( true )
      * @param array            $wpdb_row
      * @param WP_REST_Request $request
-     * @param Base  $controller
+     * @param DatetimeControllerBase  $controller
      * @return int
      * @throws EE_Error
      * @throws InvalidDataTypeException
@@ -63,7 +63,7 @@ class Datetime extends DatetimeCalculationBase implements HasCalculationSchemaIn
      *
      * @param array           $wpdb_row
      * @param WP_REST_Request $request
-     * @param Base $controller
+     * @param DatetimeControllerBase $controller
      * @return int
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -97,7 +97,7 @@ class Datetime extends DatetimeCalculationBase implements HasCalculationSchemaIn
      *
      * @param array           $wpdb_row
      * @param WP_REST_Request $request
-     * @param Base $controller
+     * @param DatetimeControllerBase $controller
      * @return int
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -132,7 +132,7 @@ class Datetime extends DatetimeCalculationBase implements HasCalculationSchemaIn
      *
      * @param array           $wpdb_row
      * @param WP_REST_Request $request
-     * @param Base $controller
+     * @param DatetimeControllerBase $controller
      * @return int
      * @throws EE_Error
      * @throws InvalidArgumentException

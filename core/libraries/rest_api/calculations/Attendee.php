@@ -3,7 +3,7 @@
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
 use EventEspresso\core\libraries\rest_api\calculations\Base as AttendeeCalculationsBase;
-use EventEspresso\core\libraries\rest_api\controllers\model\Base;
+use EventEspresso\core\libraries\rest_api\controllers\model\Base as AttendeeControllerBase;
 use WP_REST_Request;
 
 /**
@@ -18,13 +18,13 @@ class Attendee extends AttendeeCalculationsBase implements HasCalculationSchemaI
 {
 
     /**
-     * @param array           $wpdb_row
-     * @param WP_REST_Request $request
-     * @param Base            $controller
+     * @param array                  $wpdb_row
+     * @param WP_REST_Request        $request
+     * @param AttendeeControllerBase $controller
      * @since 4.9.66.p
      * @return string
      */
-    public static function userAvatar(array $wpdb_row, WP_REST_Request $request, Base $controller)
+    public static function userAvatar(array $wpdb_row, WP_REST_Request $request, AttendeeControllerBase $controller)
     {
         if (is_array($wpdb_row) && isset($wpdb_row['Attendee_Meta.ATT_email'])) {
             $email_address = $wpdb_row['Attendee_Meta.ATT_email'];
@@ -52,8 +52,8 @@ class Attendee extends AttendeeCalculationsBase implements HasCalculationSchemaI
                     'The avatar url for the attendee (if available).',
                     'event_espresso'
                 ),
-                'type' => 'string'
-            )
+                'type'        => 'string',
+            ),
         );
     }
 
