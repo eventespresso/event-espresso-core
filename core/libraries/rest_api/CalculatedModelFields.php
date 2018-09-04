@@ -102,7 +102,8 @@ class CalculatedModelFields
                     class_implements($calculations_class),
                     true
                 )) {
-                    $schema = $calculations_class::schemaForCalculation($calculation_index);
+                    $calculator = LoaderFactory::getLoader()->getShared($calculations_class);
+                    $schema = call_user_func(array($calculator, 'schemaForCalculation'), $calculation_index);
                     if (! empty($schema)) {
                         $schema_map[ $map_model ][ $calculation_index ] = $schema;
                     }
