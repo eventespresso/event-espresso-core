@@ -123,6 +123,45 @@ class JsonModelSchema
                 : EEH_Inflector::pluralize_and_lower($model_name);
             $schema['properties'][ $model_name_for_schema ] = $relation->getSchema();
             $schema['properties'][ $model_name_for_schema ]['relation_model'] = $model_name;
+
+            // links schema
+            $links_key = 'https://api.eventespresso.com/' . strtolower($model_name);
+            $schema['properties']['_links']['properties'][ $links_key ] = array(
+                'description' => esc_html__(
+                    'Array of objects describing the link(s) for this relation resource.',
+                    'event_espresso'
+                ),
+                'type' => 'array',
+                'readonly' => true,
+                'items' => array(
+                    'type' => 'object',
+                    'properties' => array(
+                        'href' => array(
+                            'type' => 'string',
+                            'description' => sprintf(
+                                // translators: placeholder is the model name for the relation.
+                                esc_html__(
+                                    'The link to the resource for the %s relation(s) to this entity',
+                                    'event_espresso'
+                                ),
+                                $model_name
+                            ),
+                        ),
+                        'single' => array(
+                            'type' => 'boolean',
+                            'description' => sprintf(
+                                // translators: placeholder is the model name for the relation.
+                                esc_html__(
+                                    'Whether or not there is only a single %s relation to this entity',
+                                    'event_espresso'
+                                ),
+                                $model_name
+                            ),
+                        ),
+                    ),
+                    'additionalProperties' => false
+                ),
+            );
         }
         return $schema;
     }
@@ -139,83 +178,63 @@ class JsonModelSchema
             '$schema'    => 'http://json-schema.org/draft-04/schema#',
             'title'      => $this->model->get_this_model_name(),
             'type'       => 'object',
-            'properties' => array(),
-            'link' => array(
-                'description' => esc_html__(
-                    'Link to event on WordPress site hosting events.',
-                    'event_espresso'
-                ),
-                'type' => 'string',
-                'readonly' => true,
-            ),
-            '_links' => array(
-                'description' => esc_html__(
-                    'Various links for resources related to the entity.',
-                    'event_espresso'
-                ),
-                'type' => 'object',
-                'readonly' => true,
-                'properties' => array(
-                    'self' => array(
-                        'description' => esc_html__(
-                            'Link to this entities resource.',
-                            'event_espresso'
-                        ),
-                        'type' => 'array',
-                        'items' => array(
-                            'type' => 'object',
-                            'properties' => array(
-                                'href' => array(
-                                    'type' => 'string',
-                                ),
-                            ),
-                            'additionalProperties' => false
-                        ),
-                        'readonly' => true
-                    ),
-                    'collection' => array(
-                        'description' => esc_html__(
-                            'Link to this entities collection resource.',
-                            'event_espresso'
-                        ),
-                        'type' => 'array',
-                        'items' => array(
-                            'type' => 'object',
-                            'properties' => array(
-                                'href' => array(
-                                  'type' => 'string'
-                                ),
-                            ),
-                            'additionalProperties' => false
-                        ),
-                        'readonly' => true
-                    ),
-                ),
-                'additionalProperties' => array(
-                    'type' => 'array',
-                    'description' => esc_html(
-                        'Additional property keys are the link to relations resource collection.',
+            'properties' => array(
+                'link' => array(
+                    'description' => esc_html__(
+                        'Link to event on WordPress site hosting events.',
                         'event_espresso'
                     ),
-                    'items' => array(
-                        'type' => 'object',
-                        'properties' => array(
-                            'href' => array(
-                                'description' => esc_html(
-                                    'Link to relations collection for this entity resource.',
-                                    'event_espresso'
-                                ),
-                                'type' => 'string',
+                    'type' => 'string',
+                    'readonly' => true,
+                ),
+                '_links' => array(
+                    'description' => esc_html__(
+                        'Various links for resources related to the entity.',
+                        'event_espresso'
+                    ),
+                    'type' => 'object',
+                    'readonly' => true,
+                    'properties' => array(
+                        'self' => array(
+                            'description' => esc_html__(
+                                'Link to this entities resource.',
+                                'event_espresso'
                             ),
-                            'single' => array(
-                                'type' => 'boolean'
-                            )
+                            'type' => 'array',
+                            'items' => array(
+                                'type' => 'object',
+                                'properties' => array(
+                                    'href' => array(
+                                        'type' => 'string',
+                                    ),
+                                ),
+                                'additionalProperties' => false
+                            ),
+                            'readonly' => true
                         ),
-                        'additionalProperties' => false
-                    )
-                )
+                        'collection' => array(
+                            'description' => esc_html__(
+                                'Link to this entities collection resource.',
+                                'event_espresso'
+                            ),
+                            'type' => 'array',
+                            'items' => array(
+                                'type' => 'object',
+                                'properties' => array(
+                                    'href' => array(
+                                        'type' => 'string'
+                                    ),
+                                ),
+                                'additionalProperties' => false
+                            ),
+                            'readonly' => true
+                        ),
+                    ),
+                    'additionalProperties' => false,
+                ),
+                '_calculated_fields' => $this->fields_calculator->getJsonSchemaForModel($this->model)
             ),
-            '_calculated_fields' => $this->fields_calculator->getJsonSchemaForModel($this->model)
+            'additionalProperties' => false,
         );
     }
 
