@@ -4,6 +4,8 @@ namespace EventEspresso\core\libraries\rest_api;
 
 use EEM_Base;
 use EEH_Inflector;
+use EEM_CPT_Base;
+use WP_REST_Request;
 
 /**
  * Capabilities
@@ -80,20 +82,23 @@ class Capabilities
     /**
      * Takes a entity that's ready to be returned and removes fields which the user shouldn't be able to access.
      *
-     * @param array            $entity
-     * @param EEM_Base         $model
-     * @param string           $request_type         one of the return values from EEM_Base::valid_cap_contexts()
+     * @param array $entity
+     * @param EEM_Base $model
+     * @param string $request_type one of the return values from EEM_Base::valid_cap_contexts()
      * @param ModelVersionInfo $model_version_info
-     * @param string           $primary_key_string   result of EEM_Base::get_index_primary_key_string(), so that we can
+     * @param string $primary_key_string result of EEM_Base::get_index_primary_key_string(), so that we can
      *                                               use this with models that have no primary key
+     * @param bool $remove_protected_fields
      * @return array ready for converting into json
+     * @throws \EE_Error
      */
     public static function filterOutInaccessibleEntityFields(
         $entity,
         $model,
         $request_type,
         $model_version_info,
-        $primary_key_string = null
+        $primary_key_string = null,
+        $remove_protected_fields = false
     ) {
         // if they didn't provide the primary key string, we'll just hope we can figure it out
         // from the entity (although it's preferred client code does it, because the entity might be missing
@@ -117,6 +122,7 @@ class Capabilities
         ) {
             return $entity;
         }
+        // only show public data
         foreach ($model->field_settings() as $field_name => $field_obj) {
             if ($model_version_info->fieldHasRenderedFormat($field_obj)
                 && isset($entity[ $field_name ])
@@ -124,6 +130,15 @@ class Capabilities
                 && isset($entity[ $field_name ]['raw'])
             ) {
                 unset($entity[ $field_name ]['raw']);
+            }
+            if (in_array(
+                get_class($field_obj),
+                $model_version_info->fieldsThatHaveRenderedFormat()
+            )) {
+                if ($remove_protected_fields) {
+                    $entity[ $field_name ]['rendered'] = '';
+                }
+                $entity[ $field_name ]['protected'] = true;
             }
         }
         // theoretically we may want to filter out specific fields for specific models

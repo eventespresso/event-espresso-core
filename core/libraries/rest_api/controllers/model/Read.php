@@ -597,6 +597,19 @@ class Read extends Base
             $rest_request,
             $this
         );
+        $remove_password_protected_props = false;
+        if ($model instanceof EEM_CPT_Base
+            && $db_row[ $model->field_settings_for('password')->get_qualified_column()]
+            && !(
+                $rest_request['password'] &&
+                hash_equals(
+                    $db_row[ $model->field_settings_for('password')->get_qualified_column()],
+                    $rest_request['password']
+                )
+            )
+        ) {
+            $remove_password_protected_props = true;
+        }
         $result_without_inaccessible_fields = Capabilities::filterOutInaccessibleEntityFields(
             $entity_array,
             $model,
@@ -604,7 +617,8 @@ class Read extends Base
             $this->getModelVersionInfo(),
             $model->get_index_primary_key_string(
                 $model->deduce_fields_n_values_from_cols_n_values($db_row)
-            )
+            ),
+            $remove_password_protected_props
         );
         $this->setDebugInfo(
             'inaccessible fields',
@@ -617,7 +631,6 @@ class Read extends Base
             $rest_request->get_param('caps')
         );
     }
-
 
     /**
      * Creates a REST entity array (JSON object we're going to return in the response, but
@@ -1318,10 +1331,11 @@ class Read extends Base
      * Gets the single item using the model according to the request in the context given, otherwise
      * returns that it's inaccessible to the current user
      *
-     * @param EEM_Base        $model
+     * @param EEM_Base $model
      * @param WP_REST_Request $request
-     * @param null            $context
+     * @param null $context
      * @return array|WP_Error
+     * @throws EE_Error
      */
     public function getOneOrReportPermissionError(EEM_Base $model, WP_REST_Request $request, $context = null)
     {
@@ -1334,9 +1348,23 @@ class Read extends Base
         $this->setDebugInfo('model query params', $restricted_query_params);
         $model_rows = $model->get_all_wpdb_results($restricted_query_params);
         if (! empty($model_rows)) {
+            $model_row = array_shift($model_rows);
+            // it's a custom post type that requires a password. The requestor needs to have provided it before
+            if ($model instanceof EEM_CPT_Base
+                && ! empty($request['password'])
+                && ! hash_equals(
+                    $model_row[$model->field_settings_for('password')->get_qualified_column()],
+                    $request['password']
+                )) {
+                return new WP_Error(
+                    'rest_post_incorrect_password',
+                    __('Incorrect password.', 'event_espresso'),
+                    array('status' => 403)
+                );
+            }
             return $this->createEntityFromWpdbResult(
                 $model,
-                array_shift($model_rows),
+                $model_row,
                 $request
             );
         } else {
