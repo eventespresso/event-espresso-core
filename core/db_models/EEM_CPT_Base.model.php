@@ -125,6 +125,14 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
                 'open'
             );
         }
+        if (! isset($this->_fields[ $primary_table_name ]['password'])) {
+            $this->_fields[ $primary_table_name ]['password'] = new EE_Plain_Text_Field(
+                'post_password',
+                __('Password', 'event_espresso'),
+                false,
+                ''
+            );
+        }
         if (! isset($this->_fields[ $primary_table_name ]['post_content_filtered'])) {
             $this->_fields[ $primary_table_name ]['post_content_filtered'] = new EE_DB_Only_Text_Field(
                 'post_content_filtered',
