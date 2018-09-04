@@ -480,7 +480,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     'callback_args'   => array($version, $model_name),
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
-                    'args'            => $this->_get_response_selection_query_params($model, $version),
+                    'args'            => $this->_get_response_selection_query_params($model, $version, true),
                 ),
             );
             if (apply_filters(
@@ -679,27 +679,35 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param string   $version
      * @return array
      */
-    protected function _get_response_selection_query_params(\EEM_Base $model, $version)
+    protected function _get_response_selection_query_params(\EEM_Base $model, $version, $single_only = false)
     {
+        $query_params = array(
+            'include'   => array(
+                'required' => false,
+                'default'  => '*',
+                'type'     => 'string',
+            ),
+            'calculate' => array(
+                'required'          => false,
+                'default'           => '',
+                'enum'              => self::$_field_calculator->retrieveCalculatedFieldsForModel($model),
+                'type'              => 'string',
+                // because we accept a CSV'd list of the enumerated strings, WP core validation and sanitization
+                // freaks out. We'll just validate this argument while handling the request
+                'validate_callback' => null,
+                'sanitize_callback' => null,
+            ),
+        );
+        if ($single_only && $model instanceof EEM_CPT_Base) {
+            $query_params['password'] = array(
+                'required' => false,
+                'default' => '',
+                'type' => 'string'
+            );
+        }
         return apply_filters(
             'FHEE__EED_Core_Rest_Api___get_response_selection_query_params',
-            array(
-                'include'   => array(
-                    'required' => false,
-                    'default'  => '*',
-                    'type'     => 'string',
-                ),
-                'calculate' => array(
-                    'required'          => false,
-                    'default'           => '',
-                    'enum'              => self::$_field_calculator->retrieveCalculatedFieldsForModel($model),
-                    'type'              => 'string',
-                    // because we accept a CSV'd list of the enumerated strings, WP core validation and sanitization
-                    // freaks out. We'll just validate this argument while handling the request
-                    'validate_callback' => null,
-                    'sanitize_callback' => null,
-                ),
-            ),
+            $query_params,
             $model,
             $version
         );
