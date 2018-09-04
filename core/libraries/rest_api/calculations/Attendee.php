@@ -2,14 +2,8 @@
 
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
-use EE_Attendee;
-use EE_Error;
-use EEM_Attendee;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\rest_api\calculations\Base as AttendeeCalculationsBase;
 use EventEspresso\core\libraries\rest_api\controllers\model\Base;
-use InvalidArgumentException;
 use WP_REST_Request;
 
 /**
