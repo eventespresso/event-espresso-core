@@ -140,6 +140,10 @@ const dtC = new DateTime( '2018-11-25T10:15:00.200+00:00' );
 const minDate = DateTime.min( dtA, dtB, dtC );
 ```
 
+#### `DateTime.fromMoment( momentInstance )`
+
+This returns an instance of `DateTime` from the given `moment` instance. Timezone/offset and locale will be populated from it.
+
 #### `DateTime.fromISO( isoString, timezone, locale )`
 
 This returns an instance of `DateTime` from the given `ISOString`, timezone and locale.  It functions identically to the `DateTime.constructor`.
