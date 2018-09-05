@@ -33,8 +33,10 @@ export const DEFAULT_OFFSET = TIMEZONE_CONFIG.offset;
  *
  * @type {boolean}
  */
-export const HAS_TIMEZONE_STRING = ( ! ( DEFAULT_TIMEZONE_STRING === 'UTC' &&
-	DEFAULT_OFFSET !== 0 ) || DEFAULT_TIMEZONE_STRING !== 'UTC' );
+export const HAS_TIMEZONE_STRING = (
+	DEFAULT_TIMEZONE_STRING !== 'UTC' ||
+	! ( DEFAULT_TIMEZONE_STRING === 'UTC' && DEFAULT_OFFSET !== 0 )
+);
 
 /**
  *
