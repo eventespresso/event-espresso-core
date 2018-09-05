@@ -46,9 +46,11 @@ const privateProperties = {
  * }
  */
 const privateMethods = {
-	createGetters: Symbol( 'DurationPrivateMethodsCreateGettersAndSetters' ),
+	createGetters: Symbol( 'DurationPrivateMethodsCreateGetters' ),
 	getAllUnitNames: Symbol( 'DurationPrivateMethodsGetAllUnitNames' ),
-	populateValuesFromDuration: Symbol( 'DurationPrivateMethodsPopulateValuesFromDuration' ),
+	populateValuesFromDuration: Symbol(
+		'DurationPrivateMethodsPopulateValuesFromDuration'
+	),
 	setValues: Symbol( 'DurationPrivateMethodsSetValues' ),
 	filterValues: Symbol( 'DurationPrivateMethodsFilterValues' ),
 };
