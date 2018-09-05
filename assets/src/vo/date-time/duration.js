@@ -483,6 +483,9 @@ export default class Duration {
 					.add( value[ privateProperties.duration ] )
 			);
 		}
+		if ( typeof value === 'object' ) {
+			value = this[ privateMethods.filterValues ]( value );
+		}
 		return new Duration(
 			this[ privateProperties.duration ]
 				.clone()
@@ -514,6 +517,9 @@ export default class Duration {
 					.clone()
 					.subtract( value[ privateProperties.duration ] )
 			);
+		}
+		if ( typeof value === 'object' ) {
+			value = this[ privateMethods.filterValues ]( value );
 		}
 		return new Duration(
 			this[ privateProperties.duration ]
