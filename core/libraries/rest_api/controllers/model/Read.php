@@ -119,7 +119,7 @@ class Read extends Base
             }
             // get the model for this version
             $model = $controller->getModelVersionInfo()->loadModel($model_name);
-            $model_schema = new JsonModelSchema($model, new CalculatedModelFields());
+            $model_schema = new JsonModelSchema($model, LoaderFactory::getLoader()->getShared('EventEspresso\core\libraries\rest_api\CalculatedModelFields'));
             return $model_schema->getModelSchemaForRelations(
                 $controller->getModelVersionInfo()->relationSettings($model),
                 $controller->customizeSchemaForRestResponse(
