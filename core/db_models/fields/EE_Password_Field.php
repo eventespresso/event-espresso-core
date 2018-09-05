@@ -3,14 +3,14 @@
 /**
  * Class EE_Password_Field
  *
- * Description
+ * Field to describe a password that grants access to certain other fields on this model.
  *
  * @package     Event Espresso
  * @author         Mike Nelson
  * @since         $VID:$
  *
  */
-class EE_Password_Field extends EE_Full_HTML_Field
+class EE_Password_Field extends EE_Text_Field_Base
 {
     /**
      * @var array
@@ -39,6 +39,17 @@ class EE_Password_Field extends EE_Full_HTML_Field
     public function protectedFields()
     {
         return $this->protected_fields;
+    }
+
+    /**
+     * Returns whether or not the specified field is protected by this model
+     * @since $VID:$
+     * @param $field_name
+     * @return bool
+     */
+    public function fieldIsProtected($field_name)
+    {
+        return in_array($field_name, $this->protectedFields());
     }
 }
 // End of file EE_Password_Field.php
