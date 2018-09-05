@@ -410,7 +410,7 @@ export default class DateTime {
 	}
 
 	/**
-	 * Constructs a DateTime (in utc) with milliseconds from epoch.
+	 * Constructs a DateTime (in UTC) with milliseconds from epoch.
 	 *
 	 * @param {number} milliseconds
 	 * @param {string} locale
@@ -428,7 +428,7 @@ export default class DateTime {
 	}
 
 	/**
-	 * Constructs a DateTime in utc() with seconds from epoch.
+	 * Constructs a DateTime in UTC with seconds from epoch.
 	 *
 	 * @param {number} seconds
 	 * @param {string} locale
@@ -478,7 +478,7 @@ export default class DateTime {
 
 	/**
 	 * Constructs a DateTime from an object of values and assumes its in
-	 * 'utc'.
+	 * 'UTC'.
 	 *
 	 * The object is expected to be a representation of this instance in time:
 	 * Eg.
