@@ -420,7 +420,8 @@ export default class DateTime {
 	static fromMillis( milliseconds, locale = DEFAULT_VALID_LOCALE ) {
 		DateTime.assertLocaleIsValid( locale );
 		if ( ! isNumber( milliseconds ) ) {
-			throw new TypeError( 'Provided value must be a number' );
+			throw new TypeError( 'Provided value must be a number ' +
+				'representing milliseconds from the Epoch' );
 		}
 		return new DateTime(
 			moment.utc( milliseconds ).locale( locale )
