@@ -429,7 +429,7 @@ export default class DateTime {
 	}
 
 	/**
-	 * Constructs a DateTime in UTC with seconds from epoch.
+	 * Constructs a DateTime in UTC with seconds from the epoch.
 	 *
 	 * @param {number} seconds
 	 * @param {string} locale
