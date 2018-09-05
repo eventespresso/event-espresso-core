@@ -304,7 +304,7 @@ export default class DateTime {
 
 	/**
 	 * Given an indefinite number of DateTimes as arguments, this will return a
-	 * new DAteTime that represents the earliest point in time.
+	 * new DateTime that represents the earliest point in time.
 	 * @param {...DateTime} datetimes
 	 * @return {DateTime} A new DateTime representing the earliest point in
 	 * time.
