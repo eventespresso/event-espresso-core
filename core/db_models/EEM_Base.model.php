@@ -6409,7 +6409,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public function getPasswordField()
     {
-        if($this->has_password_field === null && $this->password_field === null) {
+        if ($this->has_password_field === null && $this->password_field === null) {
             $this->password_field = $this->get_a_field_of_type('EE_Password_Field');
         }
         return $this->password_field;
@@ -6426,12 +6426,49 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         $password_field = $this->getPasswordField();
         $fields = array();
-        if( $password_field instanceof EE_Password_Field) {
+        if ($password_field instanceof EE_Password_Field) {
             $field_names = $password_field->protectedFields();
-            foreach($field_names as $field_name) {
-                $fields[$field_name] = $this->field_settings_for($field_name);
+            foreach ($field_names as $field_name) {
+                $fields[ $field_name ] = $this->field_settings_for($field_name);
             }
         }
         return $fields;
+    }
+
+
+    /**
+     * Checks if the current user can perform the requested action on this model
+     * @since $VID:$
+     * @param string $cap_to_check one of the array keys from _cap_contexts_to_cap_action_map
+     * @param EE_Base_Class|array $model_obj_or_fields_n_values
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function currentUserCan($cap_to_check, $model_obj_or_fields_n_values)
+    {
+        if( $model_obj_or_fields_n_values instanceof EE_Base_Class) {
+            $model_obj_or_fields_n_values = $model_obj_or_fields_n_values->model_field_array();
+        }
+        if( !is_array($model_obj_or_fields_n_values)) {
+            throw new EE_Error(
+                sprintf(
+                    esc_html__('%1$s must be passed an `EE_Base_Class or an array of fields names with their values. You passed in something different.', 'event_espresso'),
+                    __FUNCTION__
+                )
+            );
+        }
+        return $this->exists(
+            $this->alter_query_params_to_restrict_by_ID(
+                $this->get_index_primary_key_string($model_obj_or_fields_n_values),
+                array(
+                    'default_where_conditions' => 'none',
+                    'caps'                     => $cap_to_check,
+                )
+            )
+        );
     }
 }
