@@ -983,7 +983,7 @@ export default class DateTime {
 	}
 
 	/**
-	 * Add a period of time (represented by a Duration) from this DateTime and
+	 * Add a period of time (represented by a Duration) to this DateTime and
 	 * return the resulting DateTime
 	 * @param {Duration} duration
 	 * @return {DateTime} A new instance of DateTime for the new date and time.
