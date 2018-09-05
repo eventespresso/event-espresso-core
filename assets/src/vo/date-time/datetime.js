@@ -421,7 +421,7 @@ export default class DateTime {
 		DateTime.assertLocaleIsValid( locale );
 		if ( ! isNumber( milliseconds ) ) {
 			throw new TypeError( 'Provided value must be a number ' +
-				'representing milliseconds from the Epoch' );
+				'representing milliseconds from the epoch' );
 		}
 		return new DateTime(
 			moment.utc( milliseconds ).locale( locale )
@@ -439,7 +439,8 @@ export default class DateTime {
 	static fromUnix( seconds, locale = DEFAULT_VALID_LOCALE ) {
 		DateTime.assertLocaleIsValid( locale );
 		if ( ! isNumber( seconds ) ) {
-			throw new TypeError( 'Provided value must be a number' );
+			throw new TypeError( 'Provided value must be a number ' +
+				'representing seconds from the epoch' );
 		}
 		return new DateTime(
 			moment.unix( seconds ).utc().locale( locale )
