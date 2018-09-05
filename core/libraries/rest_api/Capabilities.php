@@ -78,6 +78,60 @@ class Capabilities
         return implode(',', array_keys(self::getMissingPermissions($model, $model_context)));
     }
 
+    /**
+     * "Removes" password-protected fields. Currently that means setting their values to their default.
+     * @since $VID:$
+     * @param $entity
+     * @param EEM_Base $model
+     * @param ModelVersionInfo $model_version_info
+     * @throws \EE_Error
+     */
+    public static function filterOutPasswordProtectedFields(
+        $entity,
+        EEM_Base $model,
+        ModelVersionInfo $model_version_info
+    ) {
+        $has_password = $model->hasPassword();
+        if ($has_password) {
+            $entity[ $model->getPasswordField()->get_name() ] = ModelDataTranslator::prepareFieldValueForJson(
+                $model->getPasswordField(),
+                $model->getPasswordField()->get_default_value(),
+                $model_version_info->requestedVersion()
+            );
+        }
+        foreach ($model->field_settings() as $field_name => $field_obj) {
+            if ($model->hasPassword()
+                && $model->getPasswordField()->fieldIsProtected($field_name)) {
+                if ($model_version_info->fieldHasRenderedFormat($field_obj)) {
+                    $entity[ $field_name ]['protected'] = true;
+                }
+                $replacement_value = ModelDataTranslator::prepareFieldValueForJson(
+                    $field_obj,
+                    $field_obj->get_default_value(),
+                    $model_version_info->requestedVersion()
+                );
+                if ($model_version_info->fieldHasRenderedFormat($field_obj)) {
+                    $entity[ $field_name ]['rendered'] = $replacement_value;
+                } elseif ($model_version_info->fieldHasPrettyFormat($field_obj)) {
+                    $entity[ $field_name ]['raw'] = $replacement_value;
+                    $entity[ $field_name ]['pretty'] = ModelDataTranslator::prepareFieldValueForJson(
+                        $field_obj,
+                        $field_obj->prepare_for_pretty_echoing($field_obj->get_default_value()),
+                        $model_version_info->requestedVersion()
+                    );
+                } else {
+                    // this is most likely an excerpt field. (These should have also had "rendered" and "raw"
+                    // versions, but we missed that, and can't change it without breaking backward compatibility)
+                    // so just remove it (or rather, set its default)
+                    // API clients will just need to look to fields with rendered formats to know if these have
+                    // been redacted. Sorry.
+                    $entity[ $field_name ] = $replacement_value;
+                }
+            }
+        }
+        return $entity;
+    }
+
 
     /**
      * Takes a entity that's ready to be returned and removes fields which the user shouldn't be able to access.
@@ -88,41 +142,15 @@ class Capabilities
      * @param ModelVersionInfo $model_version_info
      * @param string $primary_key_string result of EEM_Base::get_index_primary_key_string(), so that we can
      *                                               use this with models that have no primary key
-     * @param bool $remove_protected_fields
      * @return array ready for converting into json
-     * @throws \EE_Error
      */
     public static function filterOutInaccessibleEntityFields(
         $entity,
         $model,
         $request_type,
         $model_version_info,
-        $primary_key_string = null,
-        $remove_protected_fields = false
+        $primary_key_string = null
     ) {
-        // if they didn't provide the primary key string, we'll just hope we can figure it out
-        // from the entity (although it's preferred client code does it, because the entity might be missing
-        // necessary fields for creating the primary key string, or they could be named differently)
-        if ($primary_key_string === null) {
-            $primary_key_string = $model->get_index_primary_key_string(
-                $model->deduce_fields_n_values_from_cols_n_values($entity)
-            );
-        }
-        // we only care to do this for frontend reads and when the user can't edit the item
-        if ($request_type !== EEM_Base::caps_read
-            || $model->exists(
-                $model->alter_query_params_to_restrict_by_ID(
-                    $primary_key_string,
-                    array(
-                        'default_where_conditions' => 'none',
-                        'caps'                     => EEM_Base::caps_edit,
-                    )
-                )
-            )
-        ) {
-            return $entity;
-        }
-        // only show public data
         foreach ($model->field_settings() as $field_name => $field_obj) {
             if ($model_version_info->fieldHasRenderedFormat($field_obj)
                 && isset($entity[ $field_name ])
@@ -130,15 +158,6 @@ class Capabilities
                 && isset($entity[ $field_name ]['raw'])
             ) {
                 unset($entity[ $field_name ]['raw']);
-            }
-            if (in_array(
-                get_class($field_obj),
-                $model_version_info->fieldsThatHaveRenderedFormat()
-            )) {
-                if ($remove_protected_fields) {
-                    $entity[ $field_name ]['rendered'] = '';
-                }
-                $entity[ $field_name ]['protected'] = true;
             }
         }
         // theoretically we may want to filter out specific fields for specific models

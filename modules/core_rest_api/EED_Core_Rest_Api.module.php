@@ -698,7 +698,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 'sanitize_callback' => null,
             ),
         );
-        if ($single_only && $model instanceof EEM_CPT_Base) {
+        if ($single_only && $model->hasPassword()) {
             $query_params['password'] = array(
                 'required' => false,
                 'default' => '',

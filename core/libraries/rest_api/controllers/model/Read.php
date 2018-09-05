@@ -556,11 +556,17 @@ class Read extends Base
     /**
      * Changes database results into REST API entities
      *
-     * @param EEM_Base        $model
-     * @param array           $db_row     like results from $wpdb->get_results()
+     * @param EEM_Base $model
+     * @param array $db_row like results from $wpdb->get_results()
      * @param WP_REST_Request $rest_request
-     * @param string          $deprecated no longer used
+     * @param string $deprecated no longer used
      * @return array ready for being converted into json for sending to client
+     * @throws EE_Error
+     * @throws RestException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
     public function createEntityFromWpdbResult($model, $db_row, $rest_request, $deprecated = null)
     {
@@ -576,6 +582,10 @@ class Read extends Base
         if ($rest_request->get_param('caps') == null) {
             $rest_request->set_param('caps', EEM_Base::caps_read);
         }
+        $current_user_full_access_to_entity = $model->currentUserCan(
+            EEM_Base::caps_read_admin,
+            $model->deduce_fields_n_values_from_cols_n_values($db_row)
+        );
         $entity_array = $this->createBareEntityFromWpdbResults($model, $db_row);
         $entity_array = $this->addExtraFields($model, $db_row, $entity_array);
         $entity_array['_links'] = $this->getEntityLinks($model, $db_row, $entity_array);
@@ -588,7 +598,9 @@ class Read extends Base
             $rest_request,
             $this
         );
-        $entity_array = $this->includeRequestedModels($model, $rest_request, $entity_array, $db_row);
+        if( $current_user_full_access_to_entity) {
+            $entity_array = $this->includeRequestedModels($model, $rest_request, $entity_array, $db_row);
+        }
         $entity_array = apply_filters(
             'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
             $entity_array,
@@ -597,36 +609,46 @@ class Read extends Base
             $rest_request,
             $this
         );
-        $remove_password_protected_props = false;
-        if ($model instanceof EEM_CPT_Base
-            && $db_row[ $model->field_settings_for('password')->get_qualified_column()]
-            && !(
-                $rest_request['password'] &&
-                hash_equals(
-                    $db_row[ $model->field_settings_for('password')->get_qualified_column()],
-                    $rest_request['password']
-                )
-            )
-        ) {
-            $remove_password_protected_props = true;
+        if( ! $current_user_full_access_to_entity ) {
+            $result_without_inaccessible_fields = Capabilities::filterOutInaccessibleEntityFields(
+                $entity_array,
+                $model,
+                $rest_request->get_param('caps'),
+                $this->getModelVersionInfo()
+            );
+        } else {
+            $result_without_inaccessible_fields = $entity_array;
         }
-        $result_without_inaccessible_fields = Capabilities::filterOutInaccessibleEntityFields(
-            $entity_array,
-            $model,
-            $rest_request->get_param('caps'),
-            $this->getModelVersionInfo(),
-            $model->get_index_primary_key_string(
-                $model->deduce_fields_n_values_from_cols_n_values($db_row)
-            ),
-            $remove_password_protected_props
-        );
         $this->setDebugInfo(
             'inaccessible fields',
             array_keys(array_diff_key($entity_array, $result_without_inaccessible_fields))
         );
+        if (! $current_user_full_access_to_entity
+            && $model->hasPassword()
+            && $db_row[ $model->getPasswordField()->get_qualified_column() ]
+            && !(
+                $rest_request['password'] &&
+                hash_equals(
+                    $db_row[ $model->getPasswordField()->get_qualified_column() ],
+                    $rest_request['password']
+                )
+            )
+        ) {
+            $result_without_protected_fields = Capabilities::filterOutPasswordProtectedFields(
+                $result_without_inaccessible_fields,
+                $model,
+                $this->getModelVersionInfo()
+            );
+        } else {
+            $result_without_protected_fields = $result_without_inaccessible_fields;
+        }
+        $this->setDebugInfo(
+            'password_protected_fields',
+            array_keys(array_diff_key($result_without_inaccessible_fields, $result_without_protected_fields))
+        );
         return apply_filters(
             'FHEE__Read__create_entity_from_wpdb_results__entity_return',
-            $result_without_inaccessible_fields,
+            $result_without_protected_fields,
             $model,
             $rest_request->get_param('caps')
         );
@@ -1350,10 +1372,10 @@ class Read extends Base
         if (! empty($model_rows)) {
             $model_row = array_shift($model_rows);
             // it's a custom post type that requires a password. The requestor needs to have provided it before
-            if ($model instanceof EEM_CPT_Base
+            if ($model->hasPassword()
                 && ! empty($request['password'])
                 && ! hash_equals(
-                    $model_row[$model->field_settings_for('password')->get_qualified_column()],
+                    $model_row[$model->getPasswordField()->get_qualified_column()],
                     $request['password']
                 )) {
                 return new WP_Error(
