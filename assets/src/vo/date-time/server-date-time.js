@@ -29,26 +29,22 @@ export default class ServerDateTime extends DateTime {
 	/**
 	 * The constructor for the ServerDateTime class
 	 *
-	 * @param {Moment|string} iso8601DateString  The public api
-	 * expects an ISO 8601 date-time string.  However for internal use, a moment
-	 * object is handled as well (for performance reasons).  Client code should
-	 * not construct with a moment object because that will be fragile in the
-	 * case the internal library is changed in the future.
+	 * @param {string} iso8601DateString
 	 * @param {string} locale
 	 */
 	constructor(
 		iso8601DateString = '',
 		locale = DEFAULT_VALID_LOCALE
 	) {
-		if ( HAS_TIMEZONE_STRING || moment.isMoment( iso8601DateString ) ) {
+		if ( HAS_TIMEZONE_STRING ) {
 			super( iso8601DateString, DEFAULT_TIMEZONE_STRING, locale );
 		} else {
 			const datetime = isEmpty( iso8601DateString ) ?
 				moment().utcOffset( DEFAULT_OFFSET, true ).locale( locale ) :
-				moment.utc( iso8601DateString )
+				moment( iso8601DateString )
 					.utcOffset( DEFAULT_OFFSET, true )
 					.locale( locale );
-			super( datetime );
+			super( datetime.toISOString( true ), null, locale );
 		}
 	}
 

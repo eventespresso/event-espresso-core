@@ -138,7 +138,7 @@ describe( 'DateTime Value Object', () => {
 						mainParam: 'ISOString',
 						dateConstructedWith: () => {
 							return new Date(
-								testDateValueInMilliseconds - 18000000
+								testDateValueInMilliseconds
 							).toISOString();
 						},
 						expectedMethodError: InvalidISO8601String,
