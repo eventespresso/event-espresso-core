@@ -18,6 +18,7 @@ import {
 import {
 	InvalidDateTime,
 	InvalidArgument,
+	InvalidISO8601String,
 } from '@eventespresso/eejs';
 import * as assertions from './assertions';
 import Duration from './duration';
@@ -332,6 +333,9 @@ export default class DateTime {
 		timezone = DEFAULT_TIMEZONE_STRING,
 		locale = DEFAULT_VALID_LOCALE
 	) {
+		if ( isEmpty( ISOString ) ) {
+			throw new InvalidISO8601String( ISOString );
+		}
 		return new DateTime( ISOString, timezone, locale );
 	}
 
@@ -354,11 +358,9 @@ export default class DateTime {
 		DateTime.assertISO8601IsValid( ISOString );
 		DateTime.assertIsOffset( offset );
 		DateTime.assertLocaleIsValid( locale );
-		const datetime = isEmpty( ISOString ) ?
-			moment().utcOffset( offset, true ).locale( locale ) :
-			moment.utc( ISOString )
-				.utcOffset( offset, true )
-				.locale( locale );
+		const datetime = moment.utc( ISOString )
+			.utcOffset( offset, true )
+			.locale( locale );
 		return new DateTime( datetime );
 	}
 
