@@ -3,9 +3,11 @@
 namespace EventEspresso\core\libraries\rest_api;
 
 use EEM_Base;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
+use EventEspresso\core\libraries\rest_api\calculations\CalculatedModelFieldsFactory;
 use EventEspresso\core\libraries\rest_api\controllers\Base;
 use EEH_Inflector;
-use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\libraries\rest_api\controllers\Base as BaseController;
 
 /**
  * Class CalculatedModelFields
@@ -30,7 +32,19 @@ class CalculatedModelFields
      */
     protected $mapping_schema;
 
+    /**
+     * @var CalculatedModelFieldsFactory
+     */
+    private $factory;
 
+    /**
+     * CalculatedModelFields constructor.
+     * @param CalculatedModelFieldsFactory $factory
+     */
+    public function __construct(CalculatedModelFieldsFactory $factory)
+    {
+        $this->factory = $factory;
+    }
     /**
      * @param bool $refresh
      * @return array top-level-keys are model names (eg "Event")
@@ -60,7 +74,6 @@ class CalculatedModelFields
      */
     protected function generateNewMapping()
     {
-        $namespace = 'EventEspresso\core\libraries\rest_api\calculations\\';
         $mapping = array();
         $models_with_calculated_fields = array(
             'Attendee',
@@ -69,10 +82,9 @@ class CalculatedModelFields
             'Registration'
         );
         foreach ($models_with_calculated_fields as $model_name) {
-            $calculated_fields_classname = $namespace . $model_name;
-            $calculator = LoaderFactory::getLoader()->getShared($calculated_fields_classname);
+            $calculator = $this->factory->createFromModel($model_name);
             foreach (array_keys(call_user_func(array($calculator, 'schemaForCalculations'))) as $field_name) {
-                $mapping[ $model_name ][ $field_name ] = $calculated_fields_classname;
+                $mapping[ $model_name ][ $field_name ] = get_class($calculator);
             }
         }
         return apply_filters(
@@ -96,10 +108,10 @@ class CalculatedModelFields
         foreach ($this->mapping() as $map_model => $map_for_model) {
             /**
              * @var string $calculation_index
-             * @var EventEspresso\core\libraries\rest_api\calculations\Base $calculations_class
+             * @var string $calculations_class
              */
             foreach ($map_for_model as $calculation_index => $calculations_class) {
-                $calculator = LoaderFactory::getLoader()->getShared($calculations_class);
+                $calculator = $this->factory->createFromClassname($calculations_class);
                 $schema = call_user_func(array($calculator, 'schemaForCalculation'), $calculation_index);
                 if (! empty($schema)) {
                     $schema_map[ $map_model ][ $calculation_index ] = $schema;
@@ -158,12 +170,10 @@ class CalculatedModelFields
      * @param string $field_name
      * @param array $wpdb_row
      * @param $rest_request
-     * @param \EventEspresso\core\libraries\rest_api\controllers\Base $controller
+     * @param BaseController $controller
      * @return mixed|null
      * @throws RestException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws UnexpectedEntityException
      */
     public function retrieveCalculatedFieldValue(
         EEM_Base $model,
@@ -177,7 +187,7 @@ class CalculatedModelFields
             && isset($mapping[ $model->get_this_model_name() ][ $field_name ])
         ) {
             $classname = $mapping[ $model->get_this_model_name() ][ $field_name ];
-            $calculator = LoaderFactory::getLoader()->getShared($classname);
+            $calculator = $this->factory->createFromClassname($classname);
             $class_method_name = EEH_Inflector::camelize_all_but_first($field_name);
             return call_user_func(array($calculator, $class_method_name), $wpdb_row, $rest_request, $controller);
         }
