@@ -379,9 +379,13 @@ export default class DateTime {
 		DateTime.assertISO8601IsValid( ISOString );
 		DateTime.assertIsOffset( offset );
 		DateTime.assertLocaleIsValid( locale );
+		console.log( ISOString );
 		const datetime = moment( ISOString )
 			.utcOffset( offset, true )
 			.locale( locale );
+		console.log( datetime.tz() );
+		console.log( datetime.utcOffset() );
+		console.log( datetime.toISOString( true ) );
 		return new DateTime.fromMoment( datetime );
 	}
 
