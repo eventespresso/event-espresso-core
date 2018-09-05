@@ -198,6 +198,24 @@ class EEM_Attendee extends EEM_CPT_Base
                     false,
                     'publish'
                 ),
+                'password' => new EE_Password_Field(
+                    'post_password',
+                    __('Password', 'event_espresso'),
+                    false,
+                    '',
+                    array(
+                        'ATT_bio',
+                        'ATT_short_bio',
+                        'ATT_address',
+                        'ATT_address2',
+                        'ATT_city',
+                        'STA_ID',
+                        'CNT_ISO',
+                        'ATT_zip',
+                        'ATT_email',
+                        'ATT_phone'
+                    )
+                )
             ),
             'Attendee_Meta' => array(
                 'ATTM_ID'      => $model_field_factory->createDbOnlyIntField(

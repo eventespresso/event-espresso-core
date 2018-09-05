@@ -162,6 +162,27 @@ class EEM_Event extends EEM_CPT_Base
                     'draft',
                     $this->_custom_stati
                 ),
+                'password' => new EE_Password_Field(
+                    'post_password',
+                    __('Password', 'event_espresso'),
+                    false,
+                    '',
+                    array(
+                        'EVT_desc',
+                        'EVT_short_desc',
+                        'EVT_display_desc',
+                        'EVT_display_ticket_selector',
+                        'EVT_visible_on',
+                        'EVT_additional_limit',
+                        'EVT_default_registration_status',
+                        'EVT_member_only',
+                        'EVT_phone',
+                        'EVT_allow_overflow',
+                        'EVT_timezone_string',
+                        'EVT_external_URL',
+                        'EVT_donations'
+                    )
+                )
             ),
             'Event_Meta' => array(
                 'EVTM_ID'                         => new EE_DB_Only_Float_Field(
