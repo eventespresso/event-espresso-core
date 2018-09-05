@@ -267,6 +267,15 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     protected $_wp_core_model = false;
 
     /**
+     * @var bool stores whether this model has a password field or not
+     */
+    protected $has_password_field;
+    /**
+     * @var EE_Password_Field|null
+     */
+    protected $password_field;
+
+    /**
      *    List of valid operators that can be used for querying.
      * The keys are all operators we'll accept, the values are the real SQL
      * operators used
@@ -6377,5 +6386,52 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             }
         }
         return false;
+    }
+
+    /**
+     * Returns true if this model has a password field on it (regardless of whether that password field has any content)
+     * @since $VID:$
+     * @return boolean
+     */
+    public function hasPassword()
+    {
+        if ($this->has_password_field === null) {
+            $password_field = $this->getPasswordField();
+            $this->has_password_field = $password_field instanceof EE_Password_Field ? true : false;
+        }
+        return $this->has_password_field;
+    }
+
+    /**
+     * Returns the password field on this model, if there is one
+     * @since $VID:$
+     * @return EE_Password_Field|null
+     */
+    public function getPasswordField()
+    {
+        if($this->has_password_field === null && $this->password_field === null) {
+            $this->password_field = $this->get_a_field_of_type('EE_Password_Field');
+        }
+        return $this->password_field;
+    }
+
+
+    /**
+     * Returns the list of field (as EE_Model_Field_Bases) that are protected by the password
+     * @since $VID:$
+     * @return EE_Model_Field_Base[]
+     * @throws EE_Error
+     */
+    public function getPasswordProtectedFields()
+    {
+        $password_field = $this->getPasswordField();
+        $fields = array();
+        if( $password_field instanceof EE_Password_Field) {
+            $field_names = $password_field->protectedFields();
+            foreach($field_names as $field_name) {
+                $fields[$field_name] = $this->field_settings_for($field_name);
+            }
+        }
+        return $fields;
     }
 }
