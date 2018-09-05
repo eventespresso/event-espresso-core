@@ -164,6 +164,46 @@ export default class Duration {
 	}
 
 	/**
+	 * Indicate whether the provided locale argument is a valid locale.
+	 *
+	 * @param {string} locale
+	 * @return {boolean}  True means it is valid.
+	 */
+	static isValidLocale( locale ) {
+		return assertions.validateLocale( locale );
+	}
+
+	/**
+	 * Asserts whether the provided locale argument is a valid locale.
+	 *
+	 * @param {string} locale
+	 * @throws InvalidLocale
+	 */
+	static assertIsValidLocale( locale ) {
+		assertions.assertLocaleIsValid( locale );
+	}
+
+	/**
+	 * Indicate whether the provided string is a valid ISO 8601 Duration string.
+	 *
+	 * @param {string} isoString
+	 * @return {boolean} True means it is valid.
+	 */
+	static isValidISO8601Duration( isoString ) {
+		return assertions.validateISO8601( isoString, true );
+	}
+
+	/**
+	 * Assert whether the provided string is a valid ISO 8601 Duration string.
+	 *
+	 * @param {string} isoString
+	 * @throws InvalidISO8601String
+	 */
+	static assertIsValidISO8601Duration( isoString ) {
+		assertions.assertISO8601IsValid( isoString );
+	}
+
+	/**
 	 * Indicates whether the provided value is a valid instance of Duration.
 	 * @param {mixed|Duration}duration
 	 * @return {boolean}  True means it is a valid Duration object.
