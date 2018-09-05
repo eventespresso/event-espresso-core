@@ -10,7 +10,7 @@ For more details on all the methods and properties available, refer to the [`Dat
 
 The constructor simply receives the following two arguments:
 
-- `iso8601DateString`: This should be an `ISO8601` formatted date/time string.  If offset is included the string, this will be converted to whatever the timezone/offset is on the server.
+- `iso8601DateString`: This should be an ISO 8601 formatted date/time string.  If offset is included the string, this will be converted to whatever the timezone/offset is on the server.
 - `locale`:  this should be a BCP 47 language tag.  Not all locales are supported, if the provided language tag is not available, then the value object will attempt to set to the closest variant.  If that's not available then an `InvalidLocale` error is thrown (an error gets thrown only if client code explicitly provides a locale, relying on the default will not throw an error because if the server locale is not available, it falls back to `en`).
 
 **Note:** If the server has a timezone string, then the timezone property will be set for the incoming date/time.  If the server has an offset (and no timezone), then the value object will be instantiated with that offset.

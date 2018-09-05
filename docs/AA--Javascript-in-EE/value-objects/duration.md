@@ -44,7 +44,7 @@ Creates an instance of `Duration` from a simple object.  Functionally, this has 
 
 #### `Duration.fromISO( ISOString, locale = DEFAULT_LOCALE )`
 
-Creates an instance of Duration from an [`ISO8601` duration string](https://en.wikipedia.org/wiki/ISO_8601#Durations).
+Creates an instance of Duration from an [ISO 8601 duration string](https://en.wikipedia.org/wiki/ISO_8601#Durations).
 
 **Example:**
 ```js
@@ -141,7 +141,7 @@ const duration = Duration.fromObject( { minutes: 60 } );
 const comparedwith = Duration.fromObject( { hours: 1 } );
 
 //true
-console.log( duration.equals( comparedWith );
+console.log( duration.equals( comparedWith ) );
 ```
 
 #### `plus( value )`
@@ -169,7 +169,9 @@ const original = Duration.fromObject( { hours: 10 } );
 //    seconds: 0,
 //    milliseconds: 0
 // }
-console.log( original.plus( Duration.fromObject( { hours: 14 } ).toObject() );
+console.log( original.plus(
+    Duration.fromObject( { hours: 14 } ).toObject()
+) );
 console.log( original.plus( 50400000 ).toObject() );
 console.log( original.plus( { hours:14 } ).toObject() );
 
@@ -199,7 +201,9 @@ const original = Duration.fromObject( { hours: 34 } );
 //    seconds: 0,
 //    milliseconds: 0
 // }
-console.log( original.minus( Duration.fromObject( { hours: 10 } ).toObject();
+console.log( original.minus(
+    Duration.fromObject( { hours: 10 } ).toObject()
+) );
 console.log( original.minus( 36000000 ).toObject() );
 console.log( original.minus( { hours: 10 } ).toObject() );
 ```

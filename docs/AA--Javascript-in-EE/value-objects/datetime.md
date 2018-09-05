@@ -158,11 +158,11 @@ This is identical in behaviour to `DateTime.fromJSDate` with the exception it re
 
 #### `fromMillis( milliseconds )`
 
-Returns an instance of `DateTime` (in utc) from a provided value representing milliseconds from epoch.  A locale can be provided as well.
+Returns an instance of `DateTime` (in UTC) from a provided value representing milliseconds from the epoch.  A locale can be provided as well.
 
 #### `fromUnix( seconds )`
 
-Returns an instance of `DateTime` (in utc) from a provided value representing seconds from epoch.  A locale can be provided as well.
+Returns an instance of `DateTime` (in UTC) from a provided value representing seconds from the epoch.  A locale can be provided as well.
 
 #### `fromLocal( values )`
 
@@ -183,8 +183,9 @@ const values = {
 const dt = DateTime.fromLocal( values );
 
 // assuming the timezone for the browser this is being executed on is
-// America/New_York, this would result in `2018-12-25T05:15:00Z`
-const dt.toISO();
+// America/New_York.
+// '2018-12-25T05:15:00Z'
+console.log( dt.toISO() );
 ```
 
 #### `DateTime.utc( values )`
@@ -205,8 +206,8 @@ const values = {
 };
 const dt = DateTime.utc( values );
 
-// this would result in `2018-12-25T00:15:00Z`
-const dt.toISO();
+// '2018-12-25T00:15:00Z'
+console.log( dt.toISO() );
 ```
 
 #### `DateTime.fromObject( values )`
@@ -256,10 +257,10 @@ The `setObject` argument should be a simple object where the keys are valid date
 
 ```js
 const original = new DateTime( '2018-12-25T10:15:00.200+00:00' );
-const new = original.set( { year: 2019, minute: 12 } );
+const newDate = original.set( { year: 2019, minute: 12 } );
 
 // 2019-12-25T10:12:00.200Z
-console.log( new.toISO() );
+console.log( newDate.toISO() );
 ```
 
 #### Setters for units.
@@ -278,7 +279,7 @@ Fluent setter for the timezone property.
 const original = new DateTime( '2018-12-25T10:15:00.200+00:00', 'UTC' );
 
 // 2018-12-25T5:15:00.200-05:00
-console.log( original.setTimezone( 'America/New_York' ).toISO( false );
+console.log( original.setTimezone( 'America/New_York' ).toISO( false ) );
 
 // 2018-12-25T10:15:00.200+00:00
 console.log( original.toISO( false ) )
@@ -295,7 +296,7 @@ By default the offset value is as a number representing minutes.  However, if th
 const original = new DateTime( '2018-12-25T10:15:00.200+00:00', 'UTC' );
 
 // 2018-12-25T14:15:00.200+00:00
-console.log( original.setOffset( '5' ).toISO( false );
+console.log( original.setOffset( '5' ).toISO( false ) );
 
 // 2018-12-25T10:15:00.200+00:00
 console.log( original.toISO( false ) );
@@ -328,7 +329,7 @@ console.log( original.diff( comparedWith ).toObject() )
 
 #### `diffNow()`
 
-Returns the difference between this `DateTime` and "now" as a Duration. Works simmilarly to `diff`.
+Returns the difference between this `DateTime` and "now" as a Duration. Works similarly to `diff`.
 
 #### `endoOf( unit )`
 
@@ -415,10 +416,10 @@ Set the value of this `DateTime` to the beginning of a specified unit of time (t
 const original = new DateTime( '2018-12-25T10:15:00.200+00:00' );
 
 // '2018-12-25T00:00:00.00+00:00'
-console.log( original.startOf( DateTime.UNIT_DAY );
+console.log( original.startOf( DateTime.UNIT_DAY ) );
 
 // '2018-01-01T00:00:00.000+00:00'
-console.log( original.startOf( DateTime.UNIT_YEAR );
+console.log( original.startOf( DateTime.UNIT_YEAR ) );
 ```
 
 #### `toFormat( format = DEFAULT_FORMAT )`
@@ -595,7 +596,7 @@ Returns the number of days for the month set in this instance.
 ```js
 const original = new DateTime( '2018-12-25T10:15:00.200+00:00' );
 // 31
-console.log( original.daysInMonth
+console.log( original.daysInMonth );
 ```
 
 #### `isInDST`
@@ -700,7 +701,7 @@ Returns the number of weeks in this instances year.
 
 **Example:**
 ```js
-const original = new DateTime( '2018-12-25T10:15:00.200+00:00' ):
+const original = new DateTime( '2018-12-25T10:15:00.200+00:00' );
 
 // 52
 console.log( original.weeksInWeekYear );
