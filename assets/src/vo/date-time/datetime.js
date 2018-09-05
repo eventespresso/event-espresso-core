@@ -535,9 +535,6 @@ export default class DateTime {
 			[ 'locale', 'timezone', 'offset' ]
 		);
 
-		if ( timezone !== DateTime.TIMEZONE_LOCAL ) {
-			DateTime.assertTimezoneIsValid( timezone );
-		}
 		DateTime.assertLocaleIsValid( locale );
 
 		if ( offset !== null ) {
@@ -562,6 +559,8 @@ export default class DateTime {
 		if ( timezone === DateTime.TIMEZONE_LOCAL ) {
 			return DateTime.fromLocal( valuesForConstruct, locale );
 		}
+
+		DateTime.assertTimezoneIsValid( timezone );
 
 		valuesForConstruct = DateTime[ privateMethods.normalizeUnitObject ](
 			valuesForConstruct
