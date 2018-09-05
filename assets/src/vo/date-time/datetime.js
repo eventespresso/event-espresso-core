@@ -878,7 +878,7 @@ export default class DateTime {
 	 * invalid.  This is why a strict equality check is done for whether it is
 	 * true or not.
 	 *
-	 * @return {boolean}  True means the instance is invalid.
+	 * @return {boolean}  True means the instance is valid.
 	 */
 	isValid() {
 		return this[ privateProperties.datetime ].isValid() === true;
