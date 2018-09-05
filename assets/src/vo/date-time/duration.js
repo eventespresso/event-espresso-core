@@ -29,7 +29,7 @@ momentDurationFormatSetup( moment );
  */
 const privateProperties = {
 	duration: Symbol( 'DurationPrivatePropertiesDuration' ),
-	durationValues: Symbol( 'DurationPrivatePropertiesDuration' ),
+	durationValues: Symbol( 'DurationPrivatePropertiesDurationValues' ),
 	isValid: Symbol( 'DurationPrivatePropertiesIsValid' ),
 };
 
