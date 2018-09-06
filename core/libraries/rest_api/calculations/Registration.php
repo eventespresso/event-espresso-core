@@ -4,6 +4,7 @@ namespace EventEspresso\core\libraries\rest_api\calculations;
 
 use EE_Checkin;
 use EE_Error;
+use EEM_Base;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\rest_api\calculations\Base as RegistrationCalculationBase;
@@ -23,6 +24,19 @@ use WP_REST_Request;
  */
 class Registration extends RegistrationCalculationBase
 {
+    /**
+     * @var EEM_Registration
+     */
+    protected $registration_model;
+
+    /**
+     * Registration constructor.
+     * @param EEM_Registration $registration_model
+     */
+    public function __construct(EEM_Registration $registration_model)
+    {
+        $this->registration_model = $registration_model;
+    }
 
     /**
      * Calculates the checkin status for each datetime this registration has access to
@@ -36,10 +50,10 @@ class Registration extends RegistrationCalculationBase
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      */
-    public static function datetimeCheckinStati($wpdb_row, $request, $controller)
+    public function datetimeCheckinStati($wpdb_row, $request, $controller)
     {
         if (is_array($wpdb_row) && isset($wpdb_row['Registration.REG_ID'])) {
-            $reg = EEM_Registration::instance()->get_one_by_ID($wpdb_row['Registration.REG_ID']);
+            $reg = $this->registration_model->get_one_by_ID($wpdb_row['Registration.REG_ID']);
         } else {
             $reg = null;
         }
@@ -59,12 +73,12 @@ class Registration extends RegistrationCalculationBase
             );
         }
         $datetime_ids = EEM_Datetime::instance()->get_col(
-            array(
-                array(
+            [
+                [
                     'Ticket.TKT_ID' => $reg->ticket_ID(),
-                ),
-                'default_where_conditions' => \EEM_Base::default_where_conditions_minimum_all,
-            )
+                ],
+                'default_where_conditions' => EEM_Base::default_where_conditions_minimum_all,
+            ]
         );
         $checkin_stati = array();
         foreach ($datetime_ids as $datetime_id) {

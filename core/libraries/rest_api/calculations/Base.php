@@ -21,7 +21,7 @@ class Base
      * @param $attempted_calculation
      * @throws \EventEspresso\core\libraries\rest_api\RestException
      */
-    protected static function verifyCurrentUserCan($required_permission, $attempted_calculation)
+    protected function verifyCurrentUserCan($required_permission, $attempted_calculation)
     {
         if (! current_user_can($required_permission)) {
             throw new RestException(
@@ -34,7 +34,7 @@ class Base
                         'event_espresso'
                     ),
                     $attempted_calculation,
-                    EEH_Inflector::pluralize_and_lower(self::getResourceName()),
+                    EEH_Inflector::pluralize_and_lower($this->getResourceName()),
                     $required_permission
                 )
             );
@@ -47,10 +47,9 @@ class Base
      *
      * @return string
      */
-    public static function getResourceName()
+    public function getResourceName()
     {
-        $classname = get_called_class();
-        return substr($classname, strrpos($classname, '\\') + 1);
+        return substr(__CLASS__, strrpos(__CLASS__, '\\') + 1);
     }
 
     /**

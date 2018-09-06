@@ -26,6 +26,20 @@ use WP_REST_Request;
  */
 class Event extends EventCalculationBase
 {
+    /**
+     * @var EEM_Event
+     */
+    protected $event_model;
+
+    /**
+     * @var EEM_Registration
+     */
+    protected $registration_model;
+    public function __construct(EEM_Event $event_model, EEM_Registration $registration_model)
+    {
+        $this->event_model = $event_model;
+        $this->registration_model = $registration_model;
+    }
 
     /**
      * Calculates the total spaces on the event (not subtracting sales, but taking
@@ -43,11 +57,11 @@ class Event extends EventCalculationBase
      * @throws UnexpectedEntityException
      * @throws InvalidArgumentException
      */
-    public static function optimumSalesAtStart($wpdb_row, $request, $controller)
+    public function optimumSalesAtStart($wpdb_row, $request, $controller)
     {
         $event_obj = null;
         if (Event::wpdbRowHasEventId($wpdb_row)) {
-            $event_obj = EEM_Event::instance()->get_one_by_ID($wpdb_row['Event_CPT.ID']);
+            $event_obj = $this->event_model->get_one_by_ID($wpdb_row['Event_CPT.ID']);
         }
         if ($event_obj instanceof EE_Event) {
             return $event_obj->total_available_spaces();
@@ -83,11 +97,11 @@ class Event extends EventCalculationBase
      * @throws InvalidInterfaceException
      * @throws UnexpectedEntityException
      */
-    public static function optimumSalesNow($wpdb_row, $request, $controller)
+    public function optimumSalesNow($wpdb_row, $request, $controller)
     {
         $event_obj = null;
         if (Event::wpdbRowHasEventId($wpdb_row)) {
-            $event_obj = EEM_Event::instance()->get_one_by_ID($wpdb_row['Event_CPT.ID']);
+            $event_obj = $this->event_model->get_one_by_ID($wpdb_row['Event_CPT.ID']);
         }
         if ($event_obj instanceof EE_Event) {
             return $event_obj->total_available_spaces(true);
@@ -122,11 +136,11 @@ class Event extends EventCalculationBase
      * @throws InvalidInterfaceException
      * @throws UnexpectedEntityException
      */
-    public static function spacesRemaining($wpdb_row, $request, $controller)
+    public function spacesRemaining($wpdb_row, $request, $controller)
     {
         $event_obj = null;
         if (Event::wpdbRowHasEventId($wpdb_row)) {
-            $event_obj = EEM_Event::instance()->get_one_by_ID($wpdb_row['Event_CPT.ID']);
+            $event_obj = $this->event_model->get_one_by_ID($wpdb_row['Event_CPT.ID']);
         }
         if ($event_obj instanceof EE_Event) {
             return $event_obj->spaces_remaining_for_sale();
@@ -159,7 +173,7 @@ class Event extends EventCalculationBase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function spotsTaken($wpdb_row, $request, $controller)
+    public function spotsTaken($wpdb_row, $request, $controller)
     {
         if (! Event::wpdbRowHasEventId($wpdb_row)) {
             throw new EE_Error(
@@ -174,7 +188,7 @@ class Event extends EventCalculationBase
                 )
             );
         }
-        return EEM_Registration::instance()->count(
+        return $this->registration_model->count(
             array(
                 array(
                     'EVT_ID' => $wpdb_row['Event_CPT.ID'],
@@ -201,7 +215,7 @@ class Event extends EventCalculationBase
      * @throws InvalidInterfaceException
      * @throws RestException
      */
-    public static function spotsTakenPendingPayment($wpdb_row, $request, $controller)
+    public function spotsTakenPendingPayment($wpdb_row, $request, $controller)
     {
         if (! Event::wpdbRowHasEventId($wpdb_row)) {
             throw new EE_Error(
@@ -216,8 +230,8 @@ class Event extends EventCalculationBase
                 )
             );
         }
-        self::verifyCurrentUserCan('ee_read_registrations', 'spots_taken_pending_payment');
-        return EEM_Registration::instance()->count(
+        $this->verifyCurrentUserCan('ee_read_registrations', 'spots_taken_pending_payment');
+        return $this->registration_model->count(
             array(
                 array(
                     'EVT_ID' => $wpdb_row['Event_CPT.ID'],
@@ -244,7 +258,7 @@ class Event extends EventCalculationBase
      * @throws InvalidInterfaceException
      * @throws RestException
      */
-    public static function registrationsCheckedInCount($wpdb_row, $request, $controller)
+    public function registrationsCheckedInCount($wpdb_row, $request, $controller)
     {
         if (! Event::wpdbRowHasEventId($wpdb_row)) {
             throw new EE_Error(
@@ -259,8 +273,8 @@ class Event extends EventCalculationBase
                 )
             );
         }
-        self::verifyCurrentUserCan('ee_read_checkins', 'registrations_checked_in_count');
-        return EEM_Registration::instance()->count_registrations_checked_into_event($wpdb_row['Event_CPT.ID'], true);
+        $this->verifyCurrentUserCan('ee_read_checkins', 'registrations_checked_in_count');
+        return $this->registration_model->count_registrations_checked_into_event($wpdb_row['Event_CPT.ID'], true);
     }
 
 
@@ -278,7 +292,7 @@ class Event extends EventCalculationBase
      * @throws InvalidInterfaceException
      * @throws RestException
      */
-    public static function registrationsCheckedOutCount($wpdb_row, $request, $controller)
+    public function registrationsCheckedOutCount($wpdb_row, $request, $controller)
     {
         if (! Event::wpdbRowHasEventId($wpdb_row)) {
             throw new EE_Error(
@@ -293,8 +307,8 @@ class Event extends EventCalculationBase
                 )
             );
         }
-        self::verifyCurrentUserCan('ee_read_checkins', 'registrations_checked_out_count');
-        return EEM_Registration::instance()->count_registrations_checked_into_event($wpdb_row['Event_CPT.ID'], false);
+        $this->verifyCurrentUserCan('ee_read_checkins', 'registrations_checked_out_count');
+        return $this->registration_model->count_registrations_checked_into_event($wpdb_row['Event_CPT.ID'], false);
     }
 
 
@@ -307,7 +321,7 @@ class Event extends EventCalculationBase
      * @return array
      * @throws EE_Error
      */
-    public static function imageThumbnail($wpdb_row, $request, $controller)
+    public function imageThumbnail($wpdb_row, $request, $controller)
     {
         return self::calculateImageData($wpdb_row, 'thumbnail');
     }
@@ -322,7 +336,7 @@ class Event extends EventCalculationBase
      * @return array
      * @throws EE_Error
      */
-    public static function imageMedium($wpdb_row, $request, $controller)
+    public function imageMedium($wpdb_row, $request, $controller)
     {
         return self::calculateImageData($wpdb_row, 'medium');
     }
@@ -337,7 +351,7 @@ class Event extends EventCalculationBase
      * @return array
      * @throws EE_Error
      */
-    public static function imageMediumLarge($wpdb_row, $request, $controller)
+    public function imageMediumLarge($wpdb_row, $request, $controller)
     {
         return self::calculateImageData($wpdb_row, 'medium_large');
     }
@@ -352,7 +366,7 @@ class Event extends EventCalculationBase
      * @return array
      * @throws EE_Error
      */
-    public static function imageLarge($wpdb_row, $request, $controller)
+    public function imageLarge($wpdb_row, $request, $controller)
     {
         return self::calculateImageData($wpdb_row, 'large');
     }
@@ -367,7 +381,7 @@ class Event extends EventCalculationBase
      * @return array
      * @throws EE_Error
      */
-    public static function imagePostThumbnail($wpdb_row, $request, $controller)
+    public function imagePostThumbnail($wpdb_row, $request, $controller)
     {
         return self::calculateImageData($wpdb_row, 'post-thumbnail');
     }
@@ -382,7 +396,7 @@ class Event extends EventCalculationBase
      * @return array
      * @throws EE_Error
      */
-    public static function imageFull($wpdb_row, $request, $controller)
+    public function imageFull($wpdb_row, $request, $controller)
     {
         return self::calculateImageData($wpdb_row, 'full');
     }
@@ -397,7 +411,7 @@ class Event extends EventCalculationBase
      * @return array|false if no such image exists. If array it will have keys 'url', 'width', 'height' and 'original'
      * @throws EE_Error
      */
-    protected static function calculateImageData($wpdb_row, $image_size)
+    protected function calculateImageData($wpdb_row, $image_size)
     {
         if (! Event::wpdbRowHasEventId($wpdb_row)) {
             throw new EE_Error(
@@ -437,7 +451,7 @@ class Event extends EventCalculationBase
      * @param array $wpdb_row
      * @return bool
      */
-    protected static function wpdbRowHasEventId($wpdb_row)
+    protected function wpdbRowHasEventId($wpdb_row)
     {
         return (is_array($wpdb_row) && isset($wpdb_row['Event_CPT.ID']) && absint($wpdb_row['Event_CPT.ID']));
     }

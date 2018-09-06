@@ -17,6 +17,20 @@ use WP_REST_Request;
 
 class Datetime extends DatetimeCalculationBase
 {
+    /**
+     * @var EEM_Datetime
+     */
+    protected $datetime_model;
+
+    /**
+     * @var EEM_Registration
+     */
+    protected $registration_model;
+    public function __construct(EEM_Datetime $datetime_model, EEM_Registration $registration_model)
+    {
+        $this->datetime_model = $datetime_model;
+        $this->registration_model = $registration_model;
+    }
 
     /**
      * Calculates the total spaces available on the datetime, taking into account
@@ -33,10 +47,10 @@ class Datetime extends DatetimeCalculationBase
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
-    public static function spacesRemainingConsideringTickets($wpdb_row, $request, $controller)
+    public function spacesRemainingConsideringTickets($wpdb_row, $request, $controller)
     {
         if (is_array($wpdb_row) && isset($wpdb_row['Datetime.DTT_ID'])) {
-            $dtt_obj = EEM_Datetime::instance()->get_one_by_ID($wpdb_row['Datetime.DTT_ID']);
+            $dtt_obj = $this->datetime_model->get_one_by_ID($wpdb_row['Datetime.DTT_ID']);
         } else {
             $dtt_obj = null;
         }
@@ -71,7 +85,7 @@ class Datetime extends DatetimeCalculationBase
      * @throws InvalidInterfaceException
      * @throws RestException
      */
-    public static function registrationsCheckedInCount($wpdb_row, $request, $controller)
+    public function registrationsCheckedInCount($wpdb_row, $request, $controller)
     {
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Datetime.DTT_ID'])) {
             throw new EE_Error(
@@ -86,8 +100,8 @@ class Datetime extends DatetimeCalculationBase
                 )
             );
         }
-        self::verifyCurrentUserCan('ee_read_checkins', 'registrations_checked_in_count');
-        return EEM_Registration::instance()
+        $this->verifyCurrentUserCan('ee_read_checkins', 'registrations_checked_in_count');
+        return $this->registration_model
                                ->count_registrations_checked_into_datetime($wpdb_row['Datetime.DTT_ID'], true);
     }
 
@@ -105,7 +119,7 @@ class Datetime extends DatetimeCalculationBase
      * @throws InvalidInterfaceException
      * @throws RestException
      */
-    public static function registrationsCheckedOutCount($wpdb_row, $request, $controller)
+    public function registrationsCheckedOutCount($wpdb_row, $request, $controller)
     {
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Datetime.DTT_ID'])) {
             throw new EE_Error(
@@ -120,8 +134,8 @@ class Datetime extends DatetimeCalculationBase
                 )
             );
         }
-        self::verifyCurrentUserCan('ee_read_checkins', 'registrations_checked_out_count');
-        return EEM_Registration::instance()
+        $this->verifyCurrentUserCan('ee_read_checkins', 'registrations_checked_out_count');
+        return $this->registration_model
                                ->count_registrations_checked_into_datetime($wpdb_row['Datetime.DTT_ID'], false);
     }
 
@@ -140,7 +154,7 @@ class Datetime extends DatetimeCalculationBase
      * @throws InvalidInterfaceException
      * @throws RestException
      */
-    public static function spotsTakenPendingPayment($wpdb_row, $request, $controller)
+    public function spotsTakenPendingPayment($wpdb_row, $request, $controller)
     {
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Datetime.DTT_ID'])) {
             throw new EE_Error(
@@ -155,8 +169,8 @@ class Datetime extends DatetimeCalculationBase
                 )
             );
         }
-        self::verifyCurrentUserCan('ee_read_registrations', 'spots_taken_pending_payment');
-        return EEM_Registration::instance()->count(
+        $this->verifyCurrentUserCan('ee_read_registrations', 'spots_taken_pending_payment');
+        return $this->registration_model->count(
             array(
                 array(
                     'Ticket.Datetime.DTT_ID' => $wpdb_row['Datetime.DTT_ID'],

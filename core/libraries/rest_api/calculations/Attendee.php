@@ -24,7 +24,7 @@ class Attendee extends AttendeeCalculationsBase
      * @since 4.9.66.p
      * @return string
      */
-    public static function userAvatar(array $wpdb_row, WP_REST_Request $request, AttendeeControllerBase $controller)
+    public function userAvatar(array $wpdb_row, WP_REST_Request $request, AttendeeControllerBase $controller)
     {
         if (is_array($wpdb_row) && isset($wpdb_row['Attendee_Meta.ATT_email'])) {
             $email_address = $wpdb_row['Attendee_Meta.ATT_email'];
