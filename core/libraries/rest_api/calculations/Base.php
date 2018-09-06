@@ -19,7 +19,7 @@ class Base
     /**
      * @param $required_permission
      * @param $attempted_calculation
-     * @throws \EventEspresso\core\libraries\rest_api\RestException
+     * @throws RestException
      */
     protected function verifyCurrentUserCan($required_permission, $attempted_calculation)
     {

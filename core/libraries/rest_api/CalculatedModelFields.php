@@ -68,9 +68,6 @@ class CalculatedModelFields
      * Generates a new mapping between model calculated fields and their callbacks
      *
      * @return array
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
      */
     protected function generateNewMapping()
     {
@@ -98,9 +95,7 @@ class CalculatedModelFields
      * Generates the schema for each calculation index in the calculation map.
      *
      * @return array
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws UnexpectedEntityException
      */
     protected function generateNewMappingSchema()
     {
