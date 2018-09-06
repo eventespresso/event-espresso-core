@@ -70,7 +70,7 @@ class Read extends Base
      */
     public static function handleRequestGetAll(WP_REST_Request $request, $version, $model_name)
     {
-        $controller = LoaderFactory::getLoader()->getShared('EventEspresso\core\libraries\rest_api\controllers\model\Read');
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
             $controller->setRequestedVersion($version);
             if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
@@ -111,7 +111,7 @@ class Read extends Base
      */
     public static function handleSchemaRequest($version, $model_name)
     {
-        $controller = LoaderFactory::getLoader()->getShared('EventEspresso\core\libraries\rest_api\controllers\model\Read');
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
             $controller->setRequestedVersion($version);
             if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
@@ -250,7 +250,7 @@ class Read extends Base
      */
     public static function handleRequestGetOne(WP_REST_Request $request, $version, $model_name)
     {
-        $controller = LoaderFactory::getLoader()->getShared('EventEspresso\core\libraries\rest_api\controllers\model\Read');
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
             $controller->setRequestedVersion($version);
             if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
@@ -298,7 +298,7 @@ class Read extends Base
         $model_name,
         $related_model_name
     ) {
-        $controller = LoaderFactory::getLoader()->getShared('EventEspresso\core\libraries\rest_api\controllers\model\Read');
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
             $controller->setRequestedVersion($version);
             if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
