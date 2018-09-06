@@ -131,7 +131,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
             )
         );
         $this->_question_descriptions = apply_filters(
-            'FHEE__EEM_Question__construct__allowed_question_types',
+            'FHEE__EEM_Question__construct__question_descriptions',
             array(
                 EEM_Question::QST_type_text => __('A single line text input field', 'event_espresso'),
                 EEM_Question::QST_type_textarea => __('A multi line text input field', 'event_espresso'),
