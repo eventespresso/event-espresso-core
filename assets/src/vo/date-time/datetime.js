@@ -857,6 +857,7 @@ export default class DateTime {
 
 	/**
 	 * Exposes the number of weeks in this DateTime's year.
+	 * @link https://en.wikipedia.org/wiki/ISO_week_date
 	 *
 	 * @return {number} A number between 1 and 52ish
 	 */
