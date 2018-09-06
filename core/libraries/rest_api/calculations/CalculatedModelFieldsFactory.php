@@ -3,11 +3,8 @@
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
 use EventEspresso\core\domain\services\factories\FactoryInterface;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
-use InvalidArgumentException;
-use EventEspresso\core\services\loaders\Loader;
+use EventEspresso\core\services\loaders\LoaderInterface;
 
 /**
  * Class CalculatedModelFieldsFactory
@@ -25,18 +22,19 @@ class CalculatedModelFieldsFactory
 
     /**
      * CalculatedModelFieldsFactory constructor.
-     * @param Loader $loader
+     * @param LoaderInterface $loader
      */
-    public function __construct(Loader $loader)
+    public function __construct(LoaderInterface $loader)
     {
         $this->loader = $loader;
     }
 
     /**
      * Creates the calculator class that corresponds to that particular model
-     * @since $VID:$F
-     * @param $model_name
+     * @since $VID:$
+     * @param string $model_name
      * @return Base
+     * @throws UnexpectedEntityException
      */
     public function createFromModel($model_name)
     {
@@ -45,6 +43,7 @@ class CalculatedModelFieldsFactory
 
     /**
      * Creates the calculator class that corresponds to that classname and verifies it's of the correct type
+     * @param string $calculator_classname
      * @return Base
      * @throws UnexpectedEntityException
      */
