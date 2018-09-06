@@ -34,7 +34,7 @@ const duration = new Duration( { years: 1, months: 2 } );
 ```
 
 ### _Methods_
-#### `Duration.fromMillis( milliseconds, locale = DEFAULT_LOCALE )`
+#### `Duration.fromMilliseconds( milliseconds, locale = DEFAULT_LOCALE )`
 
 Creates an instance of `Duration` from a number of milliseconds.
 

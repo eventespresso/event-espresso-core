@@ -175,7 +175,7 @@ describe( 'DateTime Value Object', () => {
 						expectedms: 200,
 					},
 					{
-						method: 'fromMillis',
+						method: 'fromMilliseconds',
 						mainParam: 'milliseconds',
 						expectedMethodError: TypeError,
 						dateConstructedWith: () => {
@@ -488,7 +488,7 @@ describe( 'DateTime Value Object', () => {
 		} );
 		describe( 'diffNow()', () => {
 			// one day from now.
-			const testDate = DateTime.fromMillis( Date.now() + 86400000 );
+			const testDate = DateTime.fromMilliseconds( Date.now() + 86400000 );
 			const duration = testDate.diffNow();
 			it( 'returns an instance of Duration', () => {
 				expect( duration ).toBeInstanceOf( Duration );

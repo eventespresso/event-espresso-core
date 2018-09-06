@@ -138,7 +138,7 @@ export default class Duration {
 	 * @param {string} locale
 	 * @return {Duration}  An instance of Duration.
 	 */
-	static fromMillis( milliseconds, locale = DEFAULT_VALID_LOCALE ) {
+	static fromMilliseconds( milliseconds, locale = DEFAULT_VALID_LOCALE ) {
 		return new Duration( { milliseconds }, locale );
 	}
 

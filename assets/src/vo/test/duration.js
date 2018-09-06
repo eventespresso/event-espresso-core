@@ -486,10 +486,10 @@ describe( 'Duration Value Object', () => {
 		} );
 	} );
 	describe( 'static methods', () => {
-		describe( 'DateTime.fromMillis', () => {
+		describe( 'DateTime.fromMilliseconds', () => {
 			describe( 'constructs an instance of Duration from milliseconds',
 				() => {
-					const testDuration = Duration.fromMillis( 86400000 );
+					const testDuration = Duration.fromMilliseconds( 86400000 );
 					it( 'is an instance of Duration', () => {
 						expect( testDuration ).toBeInstanceOf( Duration );
 					} );

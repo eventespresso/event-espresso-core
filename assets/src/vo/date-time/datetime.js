@@ -438,7 +438,7 @@ export default class DateTime {
 	 * @return {DateTime} Returns an instance of DateTime
 	 * @throws TypeError
 	 */
-	static fromMillis( milliseconds, locale = DEFAULT_VALID_LOCALE ) {
+	static fromMilliseconds( milliseconds, locale = DEFAULT_VALID_LOCALE ) {
 		DateTime.assertLocaleIsValid( locale );
 		if ( ! isNumber( milliseconds ) ) {
 			throw new TypeError( 'Provided value must be a number ' +

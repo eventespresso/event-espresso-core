@@ -160,7 +160,7 @@ This receives a Javascript `Date` object along with timezone and locale strings 
 
 This is identical in behaviour to `DateTime.fromJSDate` with the exception it receives an offset value instead of timezone string.
 
-#### `fromMillis( milliseconds )`
+#### `fromMilliseconds( milliseconds )`
 
 Returns an instance of `DateTime` (in UTC) from a provided value representing milliseconds from the epoch.  A locale can be provided as well.
 
