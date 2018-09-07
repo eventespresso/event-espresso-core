@@ -6,6 +6,7 @@ use EEM_CPT_Base;
 use EEM_Event;
 use EventEspresso\core\domain\services\event\EventSpacesCalculator;
 use EventEspresso\core\libraries\rest_api\controllers\Base as Controller_Base;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use WP_REST_Request;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
@@ -27,7 +28,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_explode_and_get_items_prefixed_with__basic()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(array(
             'EVT_ID',
@@ -39,7 +40,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_explode_and_get_items_prefixed_with__extra_whitespace()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(array(
             'EVT_ID',
@@ -52,7 +53,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_explode_and_get_items_prefixed_with__related_model()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(array(), $controller->explodeAndGetItemsPrefixedWith('Registration.*', ''));
     }
@@ -61,7 +62,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_explode_and_get_items_prefixed_with__related_model_all()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(
             array(
@@ -75,7 +76,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_explode_and_get_items_prefixed_with__related_models_but_searching_for_this_one()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(
             array(),
@@ -87,7 +88,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_explode_and_get_items_prefixed_with__related_models_but_searching_for_other()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(
             array(
@@ -237,7 +238,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_explode_and_get_items_prefixed_with__null()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(array('*'), $controller->explodeAndGetItemsPrefixedWith('*', ''));
     }
@@ -811,7 +812,7 @@ class Read_Test extends \EE_REST_TestCase
      */
     public function test_prepare_rest_query_params_key_for_models()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $this->assertEquals(array(
             'EVT_desc' => 'foobar',
             'OR'       => array(
@@ -840,7 +841,7 @@ class Read_Test extends \EE_REST_TestCase
      */
     public function test_create_model_query_params__4_8_36()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $controller->setRequestedVersion('4.8.36');
         $this->assertEquals(array(
             0          => array(
