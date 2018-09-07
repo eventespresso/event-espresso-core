@@ -470,7 +470,7 @@ export default class DateTime {
 
 	/**
 	 * Constructs a DateTime from an object of values assuming its in "local"
-	 * time (browser or server if run server side).
+	 * time (if run via browser or server if run server side).
 	 *
 	 * The object is expected to be a representation of this instance in time:
 	 * Eg.
