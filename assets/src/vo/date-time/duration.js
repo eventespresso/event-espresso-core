@@ -381,7 +381,8 @@ export default class Duration {
 	 * @return {boolean} True means the Duration instance is valid.
 	 */
 	get isValid() {
-		return this[ privateProperties.isValid ];
+		return this[ privateProperties.isValid ] &&
+			this[ privateProperties.duration ].toISOString() !== 'P0D';
 	}
 
 	/**
