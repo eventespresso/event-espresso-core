@@ -444,10 +444,10 @@ describe( 'DateTime Value Object', () => {
 				[ 'isInLeapYear', false ],
 				[ 'dayOfYear', 359 ],
 				[ 'quarter', 4 ],
-				[ 'weekNumber', 52 ],
-				[ 'weekYear', 2018 ],
-				[ 'weekDay', 2 ],
-				[ 'weeksInWeekYear', 52 ],
+				[ 'isoWeekNumber', 52 ],
+				[ 'isoWeekYear', 2018 ],
+				[ 'isoWeekDay', 2 ],
+				[ 'isoWeeksInWeekYear', 52 ],
 			];
 			testConditions.forEach( ( testCondition ) => {
 				const [ name, expectedValue ] = testCondition;

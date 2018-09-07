@@ -663,7 +663,7 @@ const original = new DateTime( '2018-12-25T10:15:00.200+00:00' );
 console.log( original.quarter );
 ```
 
-#### `weekNumber`
+#### `isoWeekNumber`
 
 Returns the [ISO number of the week](https://en.wikipedia.org/wiki/ISO_week_date) for the moment of time represented by this instance.
 
@@ -672,10 +672,10 @@ Returns the [ISO number of the week](https://en.wikipedia.org/wiki/ISO_week_date
 const original = new DateTime( '2018-12-25T10:15:00.200+00:00' );
 
 // 52
-console.log( original.weekNumber );
+console.log( original.isoWeekNumber );
 ```
 
-#### `weekYear`
+#### `isoWeekYear`
 
 Returns the [ISO number for the week year](https://en.wikipedia.org/wiki/ISO_week_date) for the moment of time represented by this instance.
 
@@ -684,10 +684,10 @@ Returns the [ISO number for the week year](https://en.wikipedia.org/wiki/ISO_wee
 const original = new DateTime( '2018-12-25T10:15:00.200+00:00' );
 
 // 2018
-console.log( original.weekYear );
+console.log( original.isoWeekYear );
 ```
 
-#### `weekDay`
+#### `isoWeekDay`
 
 Returns the [ISO number for the day of the week](https://en.wikipedia.org/wiki/ISO_week_date) for the moment of time represented by this instance.
 
@@ -696,10 +696,10 @@ Returns the [ISO number for the day of the week](https://en.wikipedia.org/wiki/I
 const original = new DateTime( '2018-12-25T10:15:00.200+00:00' );
 
 // 2
-console.log( original.weekDay )
+console.log( original.isoWeekDay )
 ```
 
-#### `weeksInWeekYear`
+#### `isoWeeksInWeekYear`
 
 Returns the number of weeks in this instances year.
 
@@ -708,7 +708,7 @@ Returns the number of weeks in this instances year.
 const original = new DateTime( '2018-12-25T10:15:00.200+00:00' );
 
 // 52
-console.log( original.weeksInWeekYear );
+console.log( original.isoWeeksInWeekYear );
 ```
 
 #### `locale`

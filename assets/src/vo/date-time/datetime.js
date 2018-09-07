@@ -831,7 +831,7 @@ export default class DateTime {
 	 * @link https://en.wikipedia.org/wiki/ISO_week_date
 	 * @return {number} Will be a number between 1 and 52ish
 	 */
-	get weekNumber() {
+	get isoWeekNumber() {
 		return this[ privateProperties.datetime ].isoWeek();
 	}
 
@@ -841,7 +841,7 @@ export default class DateTime {
 	 * @link https://en.wikipedia.org/wiki/ISO_week_date
 	 * @return {number}  Will be a number representing a year.
 	 */
-	get weekYear() {
+	get isoWeekYear() {
 		return this[ privateProperties.datetime ].isoWeekYear();
 	}
 
@@ -851,7 +851,7 @@ export default class DateTime {
 	 * @link https://en.wikipedia.org/wiki/ISO_week_date
 	 * @return {number} A number between 1 and 7 (Monday is 1 and Sunday is 7)
 	 */
-	get weekDay() {
+	get isoWeekDay() {
 		return this[ privateProperties.datetime ].isoWeekday();
 	}
 
@@ -859,9 +859,9 @@ export default class DateTime {
 	 * Exposes the number of weeks in this DateTime's year.
 	 * @link https://en.wikipedia.org/wiki/ISO_week_date
 	 *
-	 * @return {number} A number between 1 and 52ish
+	 * @return {number} The number of weeks in the ISO year.
 	 */
-	get weeksInWeekYear() {
+	get isoWeeksInWeekYear() {
 		return this[ privateProperties.datetime ].isoWeeksInYear();
 	}
 
