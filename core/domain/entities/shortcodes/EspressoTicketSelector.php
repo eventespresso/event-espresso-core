@@ -71,21 +71,31 @@ class EspressoTicketSelector extends EspressoShortcode
         $event_id = isset($event_id) ? $event_id : 0;
         $event = EE_Registry::instance()->load_model('Event')->get_one_by_ID($event_id);
         if (! $event instanceof EE_Event) {
-            new ExceptionStackTraceDisplay(
-                new InvalidArgumentException(
-                    sprintf(
-                        esc_html__(
-                            'A valid Event ID is required to use the "%1$s" shortcode.%4$sAn Event with an ID of "%2$s" could not be found.%4$sPlease verify that the shortcode added to this post\'s content includes an "%3$s" argument and that it\'s value corresponds to a valid Event ID.',
-                            'event_espresso'
-                        ),
-                        $this->getTag(),
-                        $event_id,
-                        'event_id',
-                        '<br />'
+            if (current_user_can('edit_pages') && WP_DEBUG === true ) {
+                new ExceptionStackTraceDisplay(
+                    new InvalidArgumentException(
+                        sprintf(
+                            esc_html__(
+                                'A valid Event ID is required to use the "%1$s" shortcode.%4$sAn Event with an ID of "%2$s" could not be found.%4$sPlease verify that the shortcode added to this post\'s content includes an "%3$s" argument and that its value corresponds to a valid Event ID.',
+                                'event_espresso'
+                            ),
+                            $this->getTag(),
+                            $event_id,
+                            'event_id',
+                            '<br />'
+                        )
                     )
-                )
-            );
-            return '';
+                ); 
+                return;
+            } else {
+                return sprintf(
+                    esc_html__(
+                        'An Event with an ID of "%s" could not be found. Please contact the event administrator for assistance.',
+                        'event_espresso'
+                    ),
+                    $event_id
+                );
+            }  
         }
         ob_start();
         do_action('AHEE_event_details_before_post', $event_id);
