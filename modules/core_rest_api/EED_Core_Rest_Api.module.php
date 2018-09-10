@@ -11,6 +11,7 @@ use EventEspresso\core\libraries\rest_api\controllers\model\Read as ModelRead;
 use EventEspresso\core\libraries\rest_api\changes\ChangesInBase;
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 use EventEspresso\core\libraries\rest_api\ModelVersionInfo;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * Class  EED_Core_Rest_Api
@@ -46,7 +47,7 @@ class EED_Core_Rest_Api extends \EED_Module
      */
     public static function instance()
     {
-        self::$_field_calculator = new CalculatedModelFields();
+        self::$_field_calculator = LoaderFactory::getLoader()->load('EventEspresso\core\libraries\rest_api\CalculatedModelFields');
         return parent::get_instance(__CLASS__);
     }
 
