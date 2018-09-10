@@ -3,6 +3,7 @@
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
 use EE_DB_Only_Field_Base;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use \WP_REST_Request;
 use \WP_REST_Response;
 use EventEspresso\core\libraries\rest_api\Capabilities;
@@ -309,7 +310,7 @@ class Write extends Base
             }
             $simulated_db_row[ $field_obj->get_qualified_column() ] = $field_obj->prepare_for_use_in_db($raw_value);
         }
-        $read_controller = new Read();
+        $read_controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $read_controller->setRequestedVersion($this->getRequestedVersion());
         // the simulates request really doesn't need any info downstream
         $simulated_request = new WP_REST_Request('GET');

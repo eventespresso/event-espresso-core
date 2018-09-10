@@ -22,6 +22,10 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 - Fixed the organization settings form so that the license key section is not being displayed on subsites ([674](https://github.com/eventespresso/event-espresso-core/pull/674))
 - Fixed a fatal error when there is an invalid session save handler, like on Pantheon servers ([615](https://github.com/eventespresso/event-espresso-core/pull/615))
 
+### Changed
+
+- Improved REST Schema response to include missing fields (including `_calculated_fields`, `_links` and `link`)([680](https://github.com/eventespresso/event-espresso-core/pull/680))
+
 ## [4.9.67.p]
 
 ### Fixed
