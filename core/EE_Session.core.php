@@ -882,7 +882,24 @@ class EE_Session implements SessionIdentifierInterface
         return $this->update(true) ? true : false;
     }
 
-
+    /**
+     * Detects if there is anything worth saving in the session (eg the cart is a good one, notices are pretty good
+     * too). This is used when determining if we want to save the session or not.
+     * @since 4.9.67.p
+     * @return bool
+     */
+    private function sessionHasStuffWorthSaving()
+    {
+        return $this->cart() instanceof EE_Cart
+            || (
+                isset($this->_session_data['ee_notices'])
+                && (
+                    ! empty($this->_session_data['ee_notices']['attention'])
+                    || !empty($this->_session_data['ee_notices']['errors'])
+                    || !empty($this->_session_data['ee_notices']['success'])
+                )
+            );
+    }
     /**
      * _save_session_to_db
      *
@@ -900,7 +917,7 @@ class EE_Session implements SessionIdentifierInterface
         if ($this->request->isBot()
             || (
                 ! $clear_session
-                && ! $this->cart() instanceof EE_Cart
+                && ! $this->sessionHasStuffWorthSaving()
                 && apply_filters('FHEE__EE_Session___save_session_to_db__abort_session_save', true)
             )
         ) {

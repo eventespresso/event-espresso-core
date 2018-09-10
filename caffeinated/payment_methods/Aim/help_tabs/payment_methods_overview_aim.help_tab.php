@@ -74,4 +74,8 @@
         <strong><?php _e('Button Image URL', 'event_espresso'); ?></strong><br/>
         <?php _e('Change the image that is used for this payment gateway.', 'event_espresso'); ?>
     </li>
+    <li>
+        <strong><?php esc_html_e('Note About Special Characters', 'event_espresso');?></strong>
+        <?php esc_html_e('If your event name, ticket name or ticket description contain special characters (eg emojis, foreign language characters, or curly quotes) they will be removed when sent to Authorize.net. This is because Authorize.net doesn\'t support them.', 'event_espresso');?></li>
+    </li>
 </ul>

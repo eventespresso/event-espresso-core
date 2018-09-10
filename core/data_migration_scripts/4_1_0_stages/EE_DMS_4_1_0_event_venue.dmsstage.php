@@ -39,7 +39,16 @@ class EE_DMS_4_1_0_event_venue extends EE_Data_Migration_Script_Stage
         
         global $wpdb;
         $start_at_record = $this->count_records_migrated();
-        $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $this->_old_table LIMIT %d,%d", $start_at_record, $num_items), ARRAY_A);
+        $rows = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM $this->_old_table AS ev 
+                    INNER JOIN " . $wpdb->prefix . "events_detail AS e ON ev.event_id=e.id
+                    WHERE e.event_status!='D' LIMIT %d,%d",
+                $start_at_record,
+                $num_items
+            ),
+            ARRAY_A
+        );
         $items_actually_migrated = 0;
         foreach ($rows as $event_venue_rel) {
             $this->_insert_new_event_to_venue_rel($event_venue_rel);
@@ -53,7 +62,11 @@ class EE_DMS_4_1_0_event_venue extends EE_Data_Migration_Script_Stage
     public function _count_records_to_migrate()
     {
         global $wpdb;
-        $count = $wpdb->get_var("SELECT COUNT(id) FROM ".$this->_old_table);
+        $count = $wpdb->get_var(
+            "SELECT COUNT(ev.id) FROM ".$this->_old_table . " AS ev 
+            INNER JOIN " . $wpdb->prefix . 'events_detail AS e ON ev.event_id=e.id
+            WHERE e.event_status!="D"'
+        );
         return $count;
     }
     public function __construct()

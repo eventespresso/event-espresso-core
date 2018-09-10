@@ -603,7 +603,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base
         // CNT_ISO, CNT_ISO3, RGN_ID, CNT_name, CNT_cur_code, CNT_cur_single, CNT_cur_plural, CNT_cur_sign, CNT_cur_sign_b4, CNT_cur_dec_plc, CNT_tel_code, CNT_is_EU, CNT_active
         // ('AD', 'AND', 0, 'Andorra', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+376', 0, 0),
         $newer_countries = array(
-            array('AX', 'ALA', 0, '&#197;land Islands', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+358', 1, 0),
+            array('AX', 'ALA', 0, 'Åland Islands', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+358', 1, 0),
             array('BL', 'BLM', 0, 'Saint Barthelemy', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+590', 1, 0),
             array('CW', 'CUW', 0, 'Curacao', 'ANG', 'Guilder', 'Guilders', 'ƒ', 1, 2, '+599', 1, 0),
             array('GG', 'GGY', 0, 'Guernsey', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+44', 0, 0),
