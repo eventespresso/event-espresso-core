@@ -107,7 +107,7 @@ class Read extends Base
             }
             // get the model for this version
             $model = $controller->getModelVersionInfo()->loadModel($model_name);
-            $model_schema = new JsonModelSchema($model);
+            $model_schema = new JsonModelSchema($model, new CalculatedModelFields());
             return $model_schema->getModelSchemaForRelations(
                 $controller->getModelVersionInfo()->relationSettings($model),
                 $controller->customizeSchemaForRestResponse(

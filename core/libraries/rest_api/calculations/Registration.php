@@ -3,11 +3,16 @@
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
 use EE_Checkin;
-use EventEspresso\core\libraries\rest_api\calculations\Base as Calculations_Base;
-use EventEspresso\core\libraries\rest_api\controllers\model\Base;
+use EE_Error;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\libraries\rest_api\calculations\Base as RegistrationCalculationBase;
+use EventEspresso\core\libraries\rest_api\controllers\model\Base as RegistrationControllerBase;
 use EEM_Registration;
 use EE_Registration;
 use EEM_Datetime;
+use InvalidArgumentException;
+use WP_REST_Request;
 
 /**
  * Class Registration
@@ -16,17 +21,20 @@ use EEM_Datetime;
  * @subpackage
  * @author                Mike Nelson
  */
-class Registration extends Calculations_Base
+class Registration extends RegistrationCalculationBase implements HasCalculationSchemaInterface
 {
 
     /**
      * Calculates the checkin status for each datetime this registration has access to
      *
      * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
-     * @param Base             $controller
+     * @param WP_REST_Request $request
+     * @param RegistrationControllerBase $controller
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public static function datetimeCheckinStati($wpdb_row, $request, $controller)
     {
@@ -37,7 +45,7 @@ class Registration extends Calculations_Base
         }
         if (! $reg instanceof EE_Registration
         ) {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     __(
                     // @codingStandardsIgnoreStart
@@ -76,5 +84,48 @@ class Registration extends Calculations_Base
             $checkin_stati[ $datetime_id ] = $status_pretty;
         }
         return $checkin_stati;
+    }
+
+
+    /**
+     * Provides an array for all the calculations possible that outlines a json schema for those calculations.
+     * Array is indexed by calculation (snake case) and value is the schema for that calculation.
+     *
+     * @since $VID:$
+     * @return array
+     */
+    public static function schemaForCalculations()
+    {
+        return array(
+            'datetime_checkin_stati' => array(
+                'description' => esc_html__(
+                    'Returns the checkin status for each datetime this registration has access to.',
+                    'event_espresso'
+                ),
+                'type' => 'object',
+                'properties' => array(),
+                'additionalProperties' => array(
+                    'description' => esc_html(
+                        'Keys are date-time ids and values are the check-in status',
+                        'event_espresso'
+                    ),
+                    'type' => 'string'
+                ),
+            ),
+        );
+    }
+
+
+    /**
+     * Returns the json schema for the given calculation index.
+     *
+     * @param $calculation_index
+     * @since $VID:$
+     * @return array
+     */
+    public static function schemaForCalculation($calculation_index)
+    {
+        $schema_map = Registration::schemaForCalculations();
+        return isset($schema_map[ $calculation_index ]) ? $schema_map[ $calculation_index ] : array();
     }
 }

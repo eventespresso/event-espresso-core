@@ -2,13 +2,20 @@
 
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
-use EventEspresso\core\libraries\rest_api\calculations\Base as Calculations_Base;
-use EventEspresso\core\libraries\rest_api\controllers\model\Base as Controller_Base;
+use EE_Error;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\libraries\rest_api\calculations\Base as DatetimeCalculationBase;
+use EventEspresso\core\libraries\rest_api\controllers\model\Base as DatetimeControllerBase;
 use EEM_Datetime;
 use EEM_Registration;
 use EE_Datetime;
+use EventEspresso\core\libraries\rest_api\RestException;
+use InvalidArgumentException;
+use ReflectionException;
+use WP_REST_Request;
 
-class Datetime extends Calculations_Base
+class Datetime extends DatetimeCalculationBase implements HasCalculationSchemaInterface
 {
 
     /**
@@ -17,10 +24,14 @@ class Datetime extends Calculations_Base
      *
      * @see EE_Datetime::spaces_remaining( true )
      * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
-     * @param Controller_Base  $controller
+     * @param WP_REST_Request $request
+     * @param DatetimeControllerBase  $controller
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     public static function spacesRemainingConsideringTickets($wpdb_row, $request, $controller)
     {
@@ -31,37 +42,39 @@ class Datetime extends Calculations_Base
         }
         if ($dtt_obj instanceof EE_Datetime) {
             return $dtt_obj->spaces_remaining(true);
-        } else {
-            throw new \EE_Error(
-                sprintf(
-                    __(
-                    // @codingStandardsIgnoreStart
-                        'Cannot calculate spaces_remaining_considering_tickets because the datetime with ID %1$s (from database row %2$s) was not found',
-                        // @codingStandardsIgnoreEnd
-                        'event_espresso'
-                    ),
-                    $wpdb_row['Datetime.DTT_ID'],
-                    print_r($wpdb_row, true)
-                )
-            );
         }
+        throw new EE_Error(
+            sprintf(
+                __(
+                // @codingStandardsIgnoreStart
+                    'Cannot calculate spaces_remaining_considering_tickets because the datetime with ID %1$s (from database row %2$s) was not found',
+                    // @codingStandardsIgnoreEnd
+                    'event_espresso'
+                ),
+                $wpdb_row['Datetime.DTT_ID'],
+                print_r($wpdb_row, true)
+            )
+        );
     }
 
 
     /**
      * Counts registrations who have checked into this datetime
      *
-     * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
-     * @param Controller_Base  $controller
+     * @param array           $wpdb_row
+     * @param WP_REST_Request $request
+     * @param DatetimeControllerBase $controller
      * @return int
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\libraries\rest_api\RestException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws RestException
      */
     public static function registrationsCheckedInCount($wpdb_row, $request, $controller)
     {
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Datetime.DTT_ID'])) {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     __(
                     // @codingStandardsIgnoreStart
@@ -82,17 +95,20 @@ class Datetime extends Calculations_Base
     /**
      * Counts registrations who have checked out of this datetime
      *
-     * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
-     * @param Controller_Base  $controller
+     * @param array           $wpdb_row
+     * @param WP_REST_Request $request
+     * @param DatetimeControllerBase $controller
      * @return int
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\libraries\rest_api\RestException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws RestException
      */
     public static function registrationsCheckedOutCount($wpdb_row, $request, $controller)
     {
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Datetime.DTT_ID'])) {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     __(
                     // @codingStandardsIgnoreStart
@@ -114,17 +130,20 @@ class Datetime extends Calculations_Base
      * Counts the number of pending-payment registrations for this event (regardless
      * of how many datetimes each registrations' ticket purchase is for)
      *
-     * @param array            $wpdb_row
-     * @param \WP_REST_Request $request
-     * @param Controller_Base  $controller
+     * @param array           $wpdb_row
+     * @param WP_REST_Request $request
+     * @param DatetimeControllerBase $controller
      * @return int
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\libraries\rest_api\RestException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws RestException
      */
     public static function spotsTakenPendingPayment($wpdb_row, $request, $controller)
     {
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Datetime.DTT_ID'])) {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     __(
                     // @codingStandardsIgnoreStart
@@ -147,5 +166,61 @@ class Datetime extends Calculations_Base
             'REG_ID',
             true
         );
+    }
+
+
+    /**
+     * Provides an array for all the calculations possible that outlines a json schema for those calculations.
+     * Array is indexed by calculation (snake case) and value is the schema for that calculation.
+     *
+     * @since $VID:$
+     * @return array
+     */
+    public static function schemaForCalculations()
+    {
+        return array(
+            'spaces_remaining_considering_tickets' => array(
+                'description' => esc_html__(
+                    'Calculates the total spaces available on the datetime, taking into account ticket limits too.',
+                    'event_espresso'
+                ),
+                'type' => 'number'
+            ),
+            'registrations_checked_in_count' => array(
+                'description' => esc_html__(
+                    'Counts registrations who have checked into this datetime.',
+                    'event_espresso'
+                ),
+                'type' => 'number'
+            ),
+            'registrations_checked_out_count' => array(
+                'description' => esc_html__(
+                    'Counts registrations who have checked out of this datetime.',
+                    'event_espresso'
+                ),
+                'type' => 'number'
+            ),
+            'spots_taken_pending_payment' => array(
+                'description' => esc_html__(
+                    'The count of pending-payment registrations for this event (regardless of how many datetimes each registration\'s ticket purchase is for',
+                    'event_espresso'
+                ),
+                'type' => 'number'
+            ),
+        );
+    }
+
+
+    /**
+     * Returns the json schema for the given calculation index.
+     *
+     * @param string $calculation_index
+     * @since $VID:$
+     * @return array
+     */
+    public static function schemaForCalculation($calculation_index)
+    {
+        $schema_map = Datetime::schemaForCalculations();
+        return isset($schema_map[ $calculation_index ]) ? $schema_map[ $calculation_index ] : array();
     }
 }
