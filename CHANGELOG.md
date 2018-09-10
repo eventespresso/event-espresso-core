@@ -19,6 +19,12 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 
 ### Fixed
 
+- Fixed the organization settings form so that the license key section is not being displayed on subsites ([674](https://github.com/eventespresso/event-espresso-core/pull/674))
+
+## [4.9.67.p]
+
+### Fixed
+
 - Fixed a fatal error when creating payment logs without passing a payment, transaction or payment method object ([651](https://github.com/eventespresso/event-espresso-core/pull/651))
 
 ## [4.9.66.p]
