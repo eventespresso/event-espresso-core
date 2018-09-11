@@ -5,5 +5,5 @@ module.exports = {
 	redux: require( 'redux' ),
 	classnames: require( 'classnames' ),
 	lodash: require( 'lodash' ).noConflict(),
-	moment: require( 'moment' ),
+	moment: require( 'moment-timezone' ),
 };

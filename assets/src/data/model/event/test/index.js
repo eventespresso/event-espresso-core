@@ -10,7 +10,7 @@ import {
 	LESS_THAN_AND_EQUAL,
 } from '../../base';
 
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 const expectedNow = nowDateAndTime.local().format();
 

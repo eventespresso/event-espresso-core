@@ -267,6 +267,23 @@ class CoreAssetManager extends AssetManager
                 'currency_config',
                 $this->getCurrencySettings()
             );
+            /** site timezone */
+            $this->registry->addData(
+                'default_timezone',
+                array(
+                    'pretty' => EEH_DTT_Helper::get_timezone_string_for_display(),
+                    'string' => get_option('timezone_string'),
+                    'offset' => EEH_DTT_Helper::get_site_timezone_gmt_offset(),
+                )
+            );
+            /** site locale (user locale if user logged in) */
+            $this->registry->addData(
+                'locale',
+                array(
+                    'user' => get_user_locale(),
+                    'site' => get_locale()
+                )
+            );
         }
 
         $this->addJavascript(

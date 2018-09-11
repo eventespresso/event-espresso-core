@@ -25,16 +25,19 @@ export const routes = r;
 export { currencyConfig as CURRENCY_CONFIG } from './currency_config';
 
 /**
- * use this for eejs exceptions
- * Usage: throw new eejs.Exception('some message')
- * @param {string} msg
+ * Default timezone configuration for the default timezone settings from the
+ * server
  */
-export const Exception = function( msg ) {
-	this.message = msg;
-	this.name = 'Exception';
-	this.stack = ( new Error() ).stack;
-};
+export { timezoneConfig as TIMEZONE_CONFIG } from './timezone-config';
 
-Exception.prototype = new Error;
+/**
+ * Server locale configuration.
+ */
+export { locale as SERVER_LOCALE } from './locale';
+
+/**
+ * Custom exceptions
+ */
+export * from './exceptions';
 
 export * from './utils/merge-and-de-duplicate';

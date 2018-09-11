@@ -19,7 +19,7 @@ const externals = {
 	redux: 'eejs.vendor.redux',
 	classnames: 'eejs.vendor.classnames',
 	lodash: 'eejs.vendor.lodash',
-	moment: 'eejs.vendor.moment',
+	'moment-timezone': 'eejs.vendor.moment',
 };
 
 /** see below for multiple configurations.

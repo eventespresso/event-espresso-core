@@ -1,5 +1,5 @@
 import buildOptions from '../build-options';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import {
 	DATE_TIME_FORMAT_SITE,
 	TIME_FORMAT_SITE,

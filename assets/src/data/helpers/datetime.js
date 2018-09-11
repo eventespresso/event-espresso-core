@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { FORMAT_SITE_DATE, FORMAT_SITE_TIME } from './site-data';
 import { trimEnd } from 'lodash';
 
