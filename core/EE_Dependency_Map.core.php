@@ -801,6 +801,26 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\route_match\RouteMatchSpecificationCollection' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\route_match\RouteMatchSpecificationFactory' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\libraries\rest_api\CalculatedModelFields' => array(
+                'EventEspresso\core\libraries\rest_api\calculations\CalculatedModelFieldsFactory' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\libraries\rest_api\calculations\CalculatedModelFieldsFactory' => array(
+                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\libraries\rest_api\controllers\model\Read' => array(
+                'EventEspresso\core\libraries\rest_api\CalculatedModelFields' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\libraries\rest_api\calculations\Datetime' => array(
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+                'EEM_Registration' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\libraries\rest_api\calculations\Event' => array(
+                'EEM_Event' => EE_Dependency_Map::load_from_cache,
+                'EEM_Registration' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\libraries\rest_api\calculations\Registration' => array(
+                'EEM_Registration' => EE_Dependency_Map::load_from_cache
+            )
         );
     }
 
