@@ -6,6 +6,7 @@ use EEM_CPT_Base;
 use EEM_Event;
 use EventEspresso\core\domain\services\event\EventSpacesCalculator;
 use EventEspresso\core\libraries\rest_api\controllers\Base as Controller_Base;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use WP_REST_Request;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
@@ -27,7 +28,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_explode_and_get_items_prefixed_with__basic()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(array(
             'EVT_ID',
@@ -39,7 +40,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_explode_and_get_items_prefixed_with__extra_whitespace()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(array(
             'EVT_ID',
@@ -52,7 +53,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_explode_and_get_items_prefixed_with__related_model()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(array(), $controller->explodeAndGetItemsPrefixedWith('Registration.*', ''));
     }
@@ -61,7 +62,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_explode_and_get_items_prefixed_with__related_model_all()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(
             array(
@@ -75,7 +76,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_explode_and_get_items_prefixed_with__related_models_but_searching_for_this_one()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(
             array(),
@@ -87,7 +88,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_explode_and_get_items_prefixed_with__related_models_but_searching_for_other()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(
             array(
@@ -237,7 +238,7 @@ class Read_Test extends \EE_REST_TestCase
 
     public function test_explode_and_get_items_prefixed_with__null()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $controller->setRequestedVersion('4.8.29');
         $this->assertEquals(array('*'), $controller->explodeAndGetItemsPrefixedWith('*', ''));
     }
@@ -811,7 +812,7 @@ class Read_Test extends \EE_REST_TestCase
      */
     public function test_prepare_rest_query_params_key_for_models()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $this->assertEquals(array(
             'EVT_desc' => 'foobar',
             'OR'       => array(
@@ -840,7 +841,7 @@ class Read_Test extends \EE_REST_TestCase
      */
     public function test_create_model_query_params__4_8_36()
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $controller->setRequestedVersion('4.8.36');
         $this->assertEquals(array(
             0          => array(
@@ -1130,6 +1131,62 @@ class Read_Test extends \EE_REST_TestCase
         $this->assertEquals('EE_Has_Many_Relation', $datetimes_array['relation_type']);
         $this->assertArrayHasKey('readonly', $datetimes_array);
         $this->assertTrue($datetimes_array['readonly']);
+        // verify link item
+        $this->assertArrayHasKey('link', $data['schema']['properties']);
+        $link = $data['schema']['properties']['link'];
+        $this->assertArrayHasKey('type', $link);
+        $this->assertEquals('string', $link['type']);
+        // verify links item
+        $this->assertArrayHasKey('_links', $data['schema']['properties']);
+        $links = $data['schema']['properties']['_links'];
+        $this->assertEquals(
+            array('description', 'type', 'readonly', 'properties', 'additionalProperties'),
+            array_keys($links)
+        );
+        $this->assertEquals(
+            array(
+                'self',
+                'collection',
+                'https://api.eventespresso.com/registration',
+                'https://api.eventespresso.com/datetime',
+                'https://api.eventespresso.com/question_group',
+                'https://api.eventespresso.com/venue',
+                'https://api.eventespresso.com/term_relationship',
+                'https://api.eventespresso.com/term_taxonomy',
+                'https://api.eventespresso.com/message_template_group',
+                'https://api.eventespresso.com/attendee',
+                'https://api.eventespresso.com/wp_user',
+                'https://api.eventespresso.com/post_meta',
+                'https://api.eventespresso.com/extra_meta',
+                'https://api.eventespresso.com/change_log',
+            ),
+            array_keys($links['properties'])
+        );
+        //verify _calculated_fields
+        $this->assertArrayHasKey('_calculated_fields', $data['schema']['properties']);
+        $calculated_fields = $data['schema']['properties']['_calculated_fields'];
+        $this->assertEquals(
+            array('description', 'type', 'properties', 'additionalProperties', 'readonly'),
+            array_keys($calculated_fields)
+        );
+        $this->assertEquals(
+            array(
+                'optimum_sales_at_start',
+                'optimum_sales_now',
+                'spaces_remaining',
+                'spots_taken',
+                'spots_taken_pending_payment',
+                'registrations_checked_in_count',
+                'registrations_checked_out_count',
+                'image_thumbnail',
+                'image_medium',
+                'image_medium_large',
+                'image_large',
+                'image_post_thumbnail',
+                'image_full',
+            ),
+            array_keys($calculated_fields['properties'])
+        );
     }
 
 

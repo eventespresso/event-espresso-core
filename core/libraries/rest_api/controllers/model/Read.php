@@ -5,8 +5,12 @@ namespace EventEspresso\core\libraries\rest_api\controllers\model;
 use DateTimeZone;
 use EE_Model_Field_Base;
 use EEH_DTT_Helper;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\rest_api\ObjectDetectedException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use Exception;
+use InvalidArgumentException;
 use WP_Error;
 use WP_REST_Request;
 use EventEspresso\core\libraries\rest_api\Capabilities;
@@ -22,6 +26,7 @@ use EED_Core_Rest_Api;
 use EEH_Inflector;
 use EEM_Base;
 use EEM_CPT_Base;
+use WP_REST_Response;
 
 /**
  * Read controller for models
@@ -43,11 +48,12 @@ class Read extends Base
 
     /**
      * Read constructor.
+     * @param CalculatedModelFields $fields_calculator
      */
-    public function __construct()
+    public function __construct(CalculatedModelFields $fields_calculator)
     {
         parent::__construct();
-        $this->fields_calculator = new CalculatedModelFields();
+        $this->fields_calculator = $fields_calculator;
     }
 
 
@@ -55,13 +61,16 @@ class Read extends Base
      * Handles requests to get all (or a filtered subset) of entities for a particular model
      *
      * @param WP_REST_Request $request
-     * @param string          $version
-     * @param string          $model_name
-     * @return \WP_REST_Response|WP_Error
+     * @param string $version
+     * @param string $model_name
+     * @return WP_REST_Response|WP_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function handleRequestGetAll(WP_REST_Request $request, $version, $model_name)
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
             $controller->setRequestedVersion($version);
             if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
@@ -93,13 +102,16 @@ class Read extends Base
     /**
      * Prepares and returns schema for any OPTIONS request.
      *
-     * @param string $version    The API endpoint version being used.
+     * @param string $version The API endpoint version being used.
      * @param string $model_name Something like `Event` or `Registration`
      * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function handleSchemaRequest($version, $model_name)
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
             $controller->setRequestedVersion($version);
             if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
@@ -107,7 +119,7 @@ class Read extends Base
             }
             // get the model for this version
             $model = $controller->getModelVersionInfo()->loadModel($model_name);
-            $model_schema = new JsonModelSchema($model);
+            $model_schema = new JsonModelSchema($model, LoaderFactory::getLoader()->getShared('EventEspresso\core\libraries\rest_api\CalculatedModelFields'));
             return $model_schema->getModelSchemaForRelations(
                 $controller->getModelVersionInfo()->relationSettings($model),
                 $controller->customizeSchemaForRestResponse(
@@ -229,13 +241,16 @@ class Read extends Base
      * Gets a single entity related to the model indicated in the path and its id
      *
      * @param WP_REST_Request $request
-     * @param string          $version
-     * @param string          $model_name
-     * @return \WP_REST_Response|WP_Error
+     * @param string $version
+     * @param string $model_name
+     * @return WP_REST_Response|WP_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public static function handleRequestGetOne(WP_REST_Request $request, $version, $model_name)
     {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
             $controller->setRequestedVersion($version);
             if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
@@ -269,10 +284,13 @@ class Read extends Base
      * to the item with the given id
      *
      * @param WP_REST_Request $request
-     * @param string          $version
-     * @param string          $model_name
-     * @param string          $related_model_name
-     * @return \WP_REST_Response|WP_Error
+     * @param string $version
+     * @param string $model_name
+     * @param string $related_model_name
+     * @return WP_REST_Response|WP_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public static function handleRequestGetRelated(
         WP_REST_Request $request,
@@ -280,7 +298,7 @@ class Read extends Base
         $model_name,
         $related_model_name
     ) {
-        $controller = new Read();
+        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
             $controller->setRequestedVersion($version);
             if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
