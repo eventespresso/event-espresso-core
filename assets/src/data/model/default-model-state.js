@@ -62,3 +62,8 @@ export const DEFAULT_CORE_STATE = {
 	},
 };
 
+/**
+ * Provides the default state to be used by the schema store.
+ * @type {Object}
+ */
+export const DEFAULT_SCHEMA_STATE = mapToObjectValues( endpoints );
