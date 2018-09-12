@@ -614,7 +614,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
                 $result = new EE_Float_Input($input_constructor_args);
                 break;
             case EEM_Question::QST_type_url:
-                $input_constructor_args['validation_strategies'][] = LoaderFactory::getLoader()->getShared('EE_URL_Validation_Strategy');
+                $input_constructor_args['validation_strategies'][] = LoaderFactory::getLoader()->getNew('EE_URL_Validation_Strategy');
                 $result = new EE_Text_Input($input_constructor_args);
                 break;
             case EEM_Question::QST_type_year:
