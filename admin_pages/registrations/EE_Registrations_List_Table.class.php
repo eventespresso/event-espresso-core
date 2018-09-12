@@ -157,7 +157,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             )
         );
         if (!empty($filters)) {
-            $this->_bottom_buttons['report_filtered']['extra_request']['filers'] = $filters;
+            $this->_bottom_buttons['report_filtered']['extra_request']['filters'] = $filters;
         }
         $this->_primary_column = '_REG_ID';
         $this->_sortable_columns = array(
