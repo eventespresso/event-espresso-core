@@ -3436,10 +3436,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         ),
                         'use_filters' => EEH_Array::is_set($this->_req_data, 'use_filters', false),
                         'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\RegistrationsReport'),
-                        'return_url'  => urlencode($this->_req_data['return_url']),
+                        'ee_return_url'  => urlencode($this->_req_data['ee_return_url']),
                     )
                 )
             );
+            die;
         } else {
             $new_request_args = array(
                 'export' => 'report',
@@ -3486,10 +3487,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         'page'        => 'espresso_batch',
                         'batch'       => 'file',
                         'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\AttendeesReport'),
-                        'return_url'  => urlencode($this->_req_data['return_url']),
+                        'ee_return_url'  => urlencode($this->_req_data['ee_return_url']),
                     )
                 )
             );
+            die;
         } else {
             if (is_readable(EE_CLASSES . 'EE_Export.class.php')) {
                 require_once(EE_CLASSES . 'EE_Export.class.php');

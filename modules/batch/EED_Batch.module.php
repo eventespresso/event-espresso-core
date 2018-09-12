@@ -130,11 +130,13 @@ class EED_Batch extends EED_Module
             true
         );
         wp_localize_script('batch_runner_init', 'ee_job_response', $job_response->to_array());
+
+
         wp_localize_script(
             'batch_runner_init',
             'ee_job_i18n',
             array(
-                'return_url' => $_REQUEST['return_url'],
+                'return_url' => $this->getReturnUrl(),
             )
         );
     }
@@ -163,9 +165,26 @@ class EED_Batch extends EED_Module
                     '<a href="' . $_REQUEST['return_url'] . '">',
                     '</a>'
                 ),
-                'return_url'               => $_REQUEST['return_url'],
+                'return_url'               => $this->getReturnUrl(),
             )
         );
+    }
+
+    /**
+     * Get the return URL. Some code got reformatted to use ee_return_url, because something was interfering whenever
+     * it spotted "return_url" in querystrings
+     * @since $VID:$
+     * @return string|void
+     */
+    protected function getReturnUrl()
+    {
+        if(isset($_REQUEST['ee_return_url'])) {
+    return $_REQUEST['ee_return_url'];
+        } elseif(isset($_REQUEST['return_url'])) {
+            return $_REQUEST['return_url'];
+        }else{
+            return site_url();
+        }
     }
 
     /**

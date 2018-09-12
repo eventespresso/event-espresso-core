@@ -114,7 +114,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                     'route'         => 'registrations_report',
                     'extra_request' => array(
                         'EVT_ID'     => isset($this->_req_data['event_id']) ? $this->_req_data['event_id'] : null,
-                        'return_url' => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
+                        'ee_return_url' => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
                     ),
                 ),
             );
@@ -134,7 +134,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'report_all' => array(
                     'route'         => 'registrations_report',
                     'extra_request' => array(
-                        'return_url' => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
+                        'ee_return_url' => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
                     ),
                 ),
             );
@@ -143,7 +143,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             'route'         => 'registrations_report',
             'extra_request' => array(
                 'use_filters' => true,
-                'return_url'  => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
+                'ee_return_url'  => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
             ),
         );
         $filters = array_diff_key(
