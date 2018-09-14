@@ -42,10 +42,10 @@ class Page_Frame_Decorator extends Frame_Decorator {
    * @var Renderer
    */
   protected $_renderer;
-  
+
   /**
    * This page's floating frames
-   * 
+   *
    * @var array
    */
   protected $_floating_frames = array();
@@ -137,7 +137,7 @@ class Page_Frame_Decorator extends Frame_Decorator {
   function in_nested_table() {
     return $this->_in_table > 1;
   }
-  
+
   /**
    * Check if a forced page break is required before $frame.  This uses the
    * frame's page_break_before property as well as the preceeding frame's
@@ -149,7 +149,7 @@ class Page_Frame_Decorator extends Frame_Decorator {
    * @return bool true if a page break occured
    */
   function check_forced_page_break(Frame $frame) {
-      
+
     // Skip check if page is already split
     if ( $this->_page_full )
       return;
@@ -177,7 +177,7 @@ class Page_Frame_Decorator extends Frame_Decorator {
       // $frame->style to the frame's orignal style.
       $frame->get_style()->page_break_before = "auto";
       $this->_page_full = true;
-      
+
       return true;
     }
 
@@ -188,7 +188,7 @@ class Page_Frame_Decorator extends Frame_Decorator {
       $this->_page_full = true;
       return true;
     }
-    
+
     if( $prev && $prev->get_last_child() && $frame->get_node()->nodeName != "body" ) {
       $prev_last_child = $prev->get_last_child();
       if ( in_array($prev_last_child->get_style()->page_break_after, $page_breaks) ) {
@@ -206,16 +206,16 @@ class Page_Frame_Decorator extends Frame_Decorator {
   /**
    * Determine if a page break is allowed before $frame
    * http://www.w3.org/TR/CSS21/page.html#allowed-page-breaks
-   * 
+   *
    * In the normal flow, page breaks can occur at the following places:
-   * 
+   *
    *    1. In the vertical margin between block boxes. When a page
    *    break occurs here, the used values of the relevant
    *    'margin-top' and 'margin-bottom' properties are set to '0'.
    *    2. Between line boxes inside a block box.
    *
    * These breaks are subject to the following rules:
-   * 
+   *
    *   * Rule A: Breaking at (1) is allowed only if the
    *     'page-break-after' and 'page-break-before' properties of
    *     all the elements generating boxes that meet at this margin
@@ -247,7 +247,7 @@ class Page_Frame_Decorator extends Frame_Decorator {
    * We will also allow breaks between table rows.  However, when
    * splitting a table, the table headers should carry over to the
    * next page (but they don't yet).
-   * 
+   *
    * @param Frame $frame the frame to check
    * @return bool true if a break is allowed, false otherwise
    */
@@ -413,30 +413,30 @@ class Page_Frame_Decorator extends Frame_Decorator {
    * @return Frame the frame following the page break
    */
   function check_page_break(Frame $frame) {
-    // Do not split if we have already or if the frame was already 
+    // Do not split if we have already or if the frame was already
     // pushed to the next page (prevents infinite loops)
     if ( $this->_page_full || $frame->_already_pushed ) {
       return false;
     }
-    
+
     // If the frame is absolute of fixed it shouldn't break
     $p = $frame;
     do {
       if ( $p->is_absolute() )
         return false;
     } while ( $p = $p->get_parent() );
-    
+
     $margin_height = $frame->get_margin_height();
-    
-    // FIXME If the row is taller than the page and 
+
+    // FIXME If the row is taller than the page and
     // if it the first of the page, we don't break
     if ( $frame->get_style()->display === "table-row" &&
-         !$frame->get_prev_sibling() && 
+         !$frame->get_prev_sibling() &&
          $margin_height > $this->get_margin_height() )
       return false;
 
     // Determine the frame's maximum y value
-    $max_y = $frame->get_position("y") + $margin_height;
+    $max_y = (float)$frame->get_position("y") + $margin_height;
 
     // If a split is to occur here, then the bottom margins & paddings of all
     // parents of $frame must fit on the page as well:
@@ -544,7 +544,7 @@ class Page_Frame_Decorator extends Frame_Decorator {
     $this->_page_full = true;
     $frame->_already_pushed = true;
     return true;
-    
+
   }
 
   //........................................................................
@@ -552,21 +552,21 @@ class Page_Frame_Decorator extends Frame_Decorator {
   function split($frame = null, $force_pagebreak = false) {
     // Do nothing
   }
-  
+
   /**
    * Add a floating frame
-   * 
+   *
    * @param $child Frame
    */
   function add_floating_frame(Frame $frame) {
     array_unshift($this->_floating_frames, $frame);
   }
-  
+
   /**
    * @return array
    */
-  function get_floating_frames() { 
-    return $this->_floating_frames; 
+  function get_floating_frames() {
+    return $this->_floating_frames;
   }
 
   public function remove_floating_frame($key) {
@@ -577,19 +577,19 @@ class Page_Frame_Decorator extends Frame_Decorator {
     $style = $child->get_style();
     $side = $style->clear;
     $float = $style->float;
-    
+
     $y = 0;
-    
+
     foreach($this->_floating_frames as $key => $frame) {
       if ( $side === "both" || $frame->get_style()->float === $side ) {
         $y = max($y, $frame->get_position("y") + $frame->get_margin_height());
-        
+
         if ( $float !== "none" ) {
           $this->remove_floating_frame($key);
         }
       }
     }
-    
+
     return $y;
   }
 

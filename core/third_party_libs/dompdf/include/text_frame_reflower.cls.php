@@ -20,12 +20,12 @@ class Text_Frame_Reflower extends Frame_Reflower {
    * @var Block_Frame_Decorator
    */
   protected $_block_parent; // Nearest block-level ancestor
-  
+
   /**
    * @var Text_Frame_Decorator
    */
   protected $_frame;
-  
+
   public static $_whitespace_pattern = "/[ \t\r\n\f]+/u";
 
   function __construct(Text_Frame_Decorator $frame) { parent::__construct($frame); }
@@ -46,11 +46,11 @@ class Text_Frame_Reflower extends Frame_Reflower {
     $size = $style->font_size;
     $font = $style->font_family;
     $current_line = $this->_block_parent->get_current_line_box();
-    
+
     // Determine the available width
     $line_width = $this->_frame->get_containing_block("w");
     $current_line_width = $current_line->left + $current_line->w + $current_line->right;
-    
+
     $available_width = $line_width - $current_line_width;
 
     // split the text into words
@@ -58,19 +58,19 @@ class Text_Frame_Reflower extends Frame_Reflower {
     $wc = count($words);
 
     // Account for word-spacing
-    $word_spacing = $style->length_in_pt($style->word_spacing);
-    $char_spacing = $style->length_in_pt($style->letter_spacing);
+    $word_spacing = (float)$style->length_in_pt($style->word_spacing);
+    $char_spacing = (float)$style->length_in_pt($style->letter_spacing);
 
     // Determine the frame width including margin, padding & border
     $text_width = Font_Metrics::get_text_width($text, $font, $size, $word_spacing, $char_spacing);
     $mbp_width =
-      $style->length_in_pt( array( $style->margin_left,
+      (float)$style->length_in_pt( array( $style->margin_left,
                                    $style->border_left_width,
                                    $style->padding_left,
                                    $style->padding_right,
                                    $style->border_right_width,
                                    $style->margin_right), $line_width );
-                                   
+
     $frame_width = $text_width + $mbp_width;
 
 // Debugging:
@@ -104,13 +104,13 @@ class Text_Frame_Reflower extends Frame_Reflower {
     }
 
     $break_word = ($style->word_wrap === "break-word");
-    
+
     // The first word has overflowed.   Force it onto the line
     if ( $current_line_width == 0 && $width == 0 ) {
-      
+
       $s = "";
       $last_width = 0;
-        
+
       if ( $break_word ) {
         for ( $j = 0; $j < strlen($word); $j++ ) {
           $s .= $word[$j];
@@ -118,11 +118,11 @@ class Text_Frame_Reflower extends Frame_Reflower {
           if ($_width > $available_width) {
             break;
           }
-          
+
           $last_width = $_width;
         }
       }
-      
+
       if ( $break_word && $last_width > 0 ) {
         $width += $last_width;
         $str .= substr($s, 0, -1);
@@ -178,7 +178,7 @@ class Text_Frame_Reflower extends Frame_Reflower {
       case "uppercase":  $text = mb_convert_case($text, MB_CASE_UPPER); break;
       case "lowercase":  $text = mb_convert_case($text, MB_CASE_LOWER); break;
     }
-    
+
     // Handle white-space property:
     // http://www.w3.org/TR/CSS21/text.html#propdef-white-space
     switch ($style->white_space) {
@@ -254,21 +254,21 @@ class Text_Frame_Reflower extends Frame_Reflower {
         // Layout the new line
         $this->_layout_line();
 
-      } 
-      
+      }
+
       else if ( $split < mb_strlen($frame->get_text()) ) {
         // split the line if required
         $frame->split_text($split);
 
         $t = $frame->get_text();
-        
+
         // Remove any trailing newlines
         if ( $split > 1 && $t[$split-1] === "\n" && !$frame->is_pre() )
           $frame->set_text( mb_substr($t, 0, -1) );
 
-        // Do we need to trim spaces on wrapped lines? This might be desired, however, we 
-        // can't trim the lines here or the layout will be affected if trimming the line 
-        // leaves enough space to fit the next word in the text stream (because pdf layout  
+        // Do we need to trim spaces on wrapped lines? This might be desired, however, we
+        // can't trim the lines here or the layout will be affected if trimming the line
+        // leaves enough space to fit the next word in the text stream (because pdf layout
         // is performed elsewhere).
         /*if (!$this->_frame->get_prev_sibling() && !$this->_frame->get_next_sibling()) {
           $t = $this->_frame->get_text();
@@ -289,19 +289,19 @@ class Text_Frame_Reflower extends Frame_Reflower {
       $t = $frame->get_text();
       $parent = $frame->get_parent();
       $is_inline_frame = get_class($parent) === 'Inline_Frame_Decorator';
-      
-      if ((!$is_inline_frame && !$frame->get_next_sibling()) || 
+
+      if ((!$is_inline_frame && !$frame->get_next_sibling()) ||
           ( $is_inline_frame && !$parent->get_next_sibling())) {
         $t = rtrim($t);
       }
-      
-      if ((!$is_inline_frame && !$frame->get_prev_sibling())/* || 
+
+      if ((!$is_inline_frame && !$frame->get_prev_sibling())/* ||
           ( $is_inline_frame && !$parent->get_prev_sibling())*/) { //  <span><span>A<span>B</span> C</span></span> fails (the whitespace is removed)
         $t = ltrim($t);
       }
-      
+
       $frame->set_text( $t );
-      
+
     }
 
     // Set our new width
@@ -314,7 +314,7 @@ class Text_Frame_Reflower extends Frame_Reflower {
     $frame = $this->_frame;
     $page = $frame->get_root();
     $page->check_forced_page_break($this->_frame);
-    
+
     if ( $page->is_full() )
       return;
 
@@ -327,11 +327,11 @@ class Text_Frame_Reflower extends Frame_Reflower {
 //           $frame->get_style()->white_space !== "pre-wrap") ) {
 //       $frame->set_text( ltrim( $frame->get_text() ) );
 //     }
-    
+
     $frame->position();
 
     $this->_layout_line();
-    
+
     if ( $block ) {
       $block->add_frame_to_line($frame);
     }
@@ -353,8 +353,8 @@ class Text_Frame_Reflower extends Frame_Reflower {
     $size = $style->font_size;
     $font = $style->font_family;
 
-    $word_spacing = $style->length_in_pt($style->word_spacing);
-    $char_spacing = $style->length_in_pt($style->letter_spacing);
+    $word_spacing = (float)$style->length_in_pt($style->word_spacing);
+    $char_spacing = (float)$style->length_in_pt($style->letter_spacing);
 
     switch($style->white_space) {
 
@@ -416,8 +416,8 @@ class Text_Frame_Reflower extends Frame_Reflower {
     }
 
     $max = Font_Metrics::get_text_width($str, $font, $size, $word_spacing, $char_spacing);
-    
-    $delta = $style->length_in_pt(array($style->margin_left,
+
+    $delta = (float)$style->length_in_pt(array($style->margin_left,
                                         $style->border_left_width,
                                         $style->padding_left,
                                         $style->padding_right,
