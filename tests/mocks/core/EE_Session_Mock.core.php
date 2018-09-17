@@ -5,6 +5,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\cache\CacheStorageInterface;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\session\SessionStartHandler;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
@@ -38,6 +39,7 @@ class EE_Session_Mock extends EE_Session {
      * @param CacheStorageInterface $cache_storage
      * @param SessionLifespan|null  $lifespan
      * @param RequestInterface|null $request
+     * @param SessionStartHandler   $session_start_handler
      * @param EE_Encryption         $encryption
      * @return EE_Session_Mock
      * @throws InvalidArgumentException
@@ -48,6 +50,7 @@ class EE_Session_Mock extends EE_Session {
         CacheStorageInterface $cache_storage = null,
         SessionLifespan $lifespan = null,
         RequestInterface $request = null,
+        SessionStartHandler $session_start_handler = null,
         EE_Encryption $encryption = null
     ) {
 		// check if class object is instantiated
@@ -58,6 +61,7 @@ class EE_Session_Mock extends EE_Session {
 			    $cache_storage,
                 $lifespan,
                 $request,
+                $session_start_handler,
                 $encryption
             );
 		}
@@ -72,6 +76,7 @@ class EE_Session_Mock extends EE_Session {
      * @param CacheStorageInterface $cache_storage
      * @param SessionLifespan       $lifespan
      * @param RequestInterface      $request
+     * @param SessionStartHandler   $session_start_handler
      * @param EE_Encryption         $encryption
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -81,6 +86,7 @@ class EE_Session_Mock extends EE_Session {
 	    CacheStorageInterface $cache_storage,
         SessionLifespan $lifespan,
         RequestInterface $request,
+        SessionStartHandler $session_start_handler,
         EE_Encryption $encryption = null
     ) {
 		add_filter( 'FHEE_load_EE_Session', '__return_false' );
@@ -88,6 +94,7 @@ class EE_Session_Mock extends EE_Session {
             $cache_storage,
             $lifespan,
             $request,
+            $session_start_handler,
             $encryption
         );
         $this->cache_storage = $cache_storage;
