@@ -1,5 +1,9 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * EE_Select_Ajax_Model_Rest_Input
@@ -34,7 +38,6 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base
     protected $_extra_select_columns = array();
 
 
-
     /**
      * @param array $input_settings     {
      * @type string $model_name         the name of model to be used for searching, both via the REST API and server-side model queries
@@ -48,7 +51,11 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base
      * @type array  $select2_args       arguments to be passed directly into the select2's JS constructor
      *                                  }
      *                                  And the arguments accepted by EE_Form_Input_With_Options_Base
-     * @throws \EE_Error
+     * }
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function __construct($input_settings = array())
     {
@@ -94,7 +101,9 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base
             )
         );
         // get resource endpoint
-        $rest_controller = new EventEspresso\core\libraries\rest_api\controllers\model\Read();
+        $rest_controller = LoaderFactory::getLoader()->getNew(
+            'EventEspresso\core\libraries\rest_api\controllers\model\Read'
+        );
         $rest_controller->setRequestedVersion(EED_Core_Rest_Api::latest_rest_api_version());
         $default_select2_args = array(
             'ajax' => array(
