@@ -820,7 +820,12 @@ class EE_Dependency_Map
             ),
             'EventEspresso\core\libraries\rest_api\calculations\Registration' => array(
                 'EEM_Registration' => EE_Dependency_Map::load_from_cache
-            )
+            ),
+            'EE_URL_Validation_Strategy' => array(
+                null,
+                null,
+                'EventEspresso\core\services\validators\URLValidator' => EE_Dependency_Map::load_from_cache
+            ),
         );
     }
 
