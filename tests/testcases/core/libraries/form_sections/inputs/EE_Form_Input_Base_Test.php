@@ -189,7 +189,6 @@ class EE_Form_Input_Base_Test extends EE_UnitTestCase{
     /**
      * Tests that if `ignore_input` is provided, we get the null normalization and no validation strategies
      * @group 11380
-     * @group current
      */
 	public function testIgnoreInput() {
         $f = new EE_Form_Section_Proper(

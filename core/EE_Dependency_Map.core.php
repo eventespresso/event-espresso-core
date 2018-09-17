@@ -772,6 +772,31 @@ class EE_Dependency_Map
                 'EE_Registry' => EE_Dependency_Map::load_from_cache,
                 'EE_Config' => EE_Dependency_Map::load_from_cache
             ),
+            'EventEspresso\core\libraries\rest_api\CalculatedModelFields' => array(
+                'EventEspresso\core\libraries\rest_api\calculations\CalculatedModelFieldsFactory' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\libraries\rest_api\calculations\CalculatedModelFieldsFactory' => array(
+                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\libraries\rest_api\controllers\model\Read' => array(
+                'EventEspresso\core\libraries\rest_api\CalculatedModelFields' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\libraries\rest_api\calculations\Datetime' => array(
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+                'EEM_Registration' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\libraries\rest_api\calculations\Event' => array(
+                'EEM_Event' => EE_Dependency_Map::load_from_cache,
+                'EEM_Registration' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\libraries\rest_api\calculations\Registration' => array(
+                'EEM_Registration' => EE_Dependency_Map::load_from_cache
+            ),
+            'EE_URL_Validation_Strategy' => array(
+                null,
+                null,
+                'EventEspresso\core\services\validators\URLValidator' => EE_Dependency_Map::load_from_cache
+            ),
         );
     }
 
