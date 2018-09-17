@@ -21,6 +21,7 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 
 - Fixed the organization settings form so that the license key section is not being displayed on subsites ([674](https://github.com/eventespresso/event-espresso-core/pull/674))
 - Fixed a fatal error when there is an invalid session save handler, like on Pantheon servers ([615](https://github.com/eventespresso/event-espresso-core/pull/615))
+- Fixed Session Start Fatal Errors when known Custom Session Save Handler is in use ([650](https://github.com/eventespresso/event-espresso-core/pull/650))
 
 ### Changed
 

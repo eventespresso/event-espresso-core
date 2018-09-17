@@ -190,6 +190,17 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
+     * true if the current request is a loopback sent from WP core to test for errors
+     *
+     * @return bool
+     */
+    public function isWordPressScrape()
+    {
+        return $this->request_type->slug() === RequestTypeContext::WP_SCRAPE;
+    }
+
+
+    /**
      * @return string
      */
     public function slug()
