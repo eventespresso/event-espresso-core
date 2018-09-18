@@ -123,7 +123,11 @@ export const isShallowValidValueForField = (
 	}
 	const isEnum = isEnumField( fieldName, schema );
 	fieldValue = expectValueObjects ?
-		maybeConvertFromValueObjectWithAssertions( fieldValue ) :
+		maybeConvertFromValueObjectWithAssertions(
+			fieldName,
+			fieldValue,
+			schema
+		) :
 		fieldValue;
 	const isValid = isEnum ?
 		validateEnumType(

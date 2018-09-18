@@ -73,7 +73,7 @@ export const isDateTimeField = ( field, schema ) => schema[ field ] &&
 export const isUTCDateTimeField = ( dateTimeFieldName, schema = null ) => {
 	return schema !== null ?
 		isDateTimeField( dateTimeFieldName, schema ) &&
-		dateTimeFieldName.indexOf( '_gmt' ) > -1 :
+			dateTimeFieldName.indexOf( '_gmt' ) > -1 :
 		dateTimeFieldName.indexOf( '_gmt' ) > -1;
 };
 
@@ -97,7 +97,7 @@ export const isPrimaryKeyField = ( fieldName, schema ) => schema[ fieldName ] &&
  * @return {boolean}  True means it is a readonly field.
  */
 export const isReadOnly = ( fieldName, schema ) => schema[ fieldName ] &&
-	schema[fieldName].readonly;
+	schema[ fieldName ].readonly;
 
 /**
  * Indicates whether the provided field is a "entity" field using the provided
@@ -135,14 +135,18 @@ export const isEntityField = ( fieldName, schema ) => schema[ fieldName ] &&
  * @return {boolean} True if it is a money field.
  */
 export const isMoneyField = ( fieldName, schema ) => schema[ fieldName ] &&
-	hasPrettyProperty( schema[ fieldName ] ) &&
-	hasFormatProperty( schema[ fieldName ].pretty ) &&
-	schema[ fieldName ].pretty.format &&
-	schema[ fieldName ].pretty.format === 'money';
+	schema[ fieldName ].properties &&
+	hasPrettyProperty( schema[ fieldName ].properties ) &&
+	hasFormatProperty( schema[ fieldName ].properties.pretty ) &&
+	schema[ fieldName ].properties.pretty.format === 'money';
 
 /**
  * Indicates whether the field is an enum type field as defined in the provided
  * schema.
+ *
+ * Note: this only evaluates the top-level for the field schema.  If the field
+ * in the schema is of type 'object' and one of the object properties is of type
+ * 'enum' this will not consider it an "enum" field.
  *
  * @param {string} fieldName
  * @param {Object} schema

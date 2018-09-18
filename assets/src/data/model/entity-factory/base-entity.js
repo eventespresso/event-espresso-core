@@ -17,7 +17,6 @@ import { SAVE_STATE, PRIVATE_PROPERTIES } from './constants';
 
 /**
  * @todo
- * - make sure schema parser accounts for when `type` is an array.
  * - as a separate issue (likely not a part of this file) I need to work out a way
  *   of both caching and invalidating the cache.  One idea I have is server side
  *   to create a hash of the schema that is returned on schema requests.  This hash
