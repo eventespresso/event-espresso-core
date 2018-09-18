@@ -20,6 +20,7 @@ const externals = {
 	classnames: 'eejs.vendor.classnames',
 	lodash: 'eejs.vendor.lodash',
 	'moment-timezone': 'eejs.vendor.moment',
+	cuid: 'eejs.vendor.cuid',
 };
 
 /** see below for multiple configurations.
