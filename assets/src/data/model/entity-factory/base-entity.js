@@ -16,17 +16,6 @@ import {
 import { SAVE_STATE, PRIVATE_PROPERTIES } from './constants';
 
 /**
- * @todo
- * - as a separate issue (likely not a part of this file) I need to work out a way
- *   of both caching and invalidating the cache.  One idea I have is server side
- *   to create a hash of the schema that is returned on schema requests.  This hash
- *   is also returned as a part of the request object for a model so the internal
- *   schema can be validated.  However, really probably just tie the cache to the
- *   api version.  So if a new version is used in a request, that invalidates the
- *   schema.
- */
-
-/**
  * BaseEntity is the basic class for all entities.  createEntityFactory returns
  * an instance of this and all the getters/setters for fields etc are
  * dynamically created via the constructor.
