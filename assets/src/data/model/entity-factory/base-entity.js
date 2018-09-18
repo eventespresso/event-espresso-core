@@ -13,10 +13,6 @@ import {
  *   updates to the db.
  */
 
-const privateProperties = {
-	dirty: Symbol( 'baseEntityPrivatePropertiesIsDirty' ),
-};
-
 class BaseEntity {
 	[ privateProperties.dirty ] = false;
 
