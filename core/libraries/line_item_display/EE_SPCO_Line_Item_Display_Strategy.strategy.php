@@ -406,7 +406,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         // end of row
         $html .= EEH_HTML::trx();
         $html = apply_filters(
-            'FHEE__EE_SPCO_Line_Item_Display_Strategy___sub_item_row__filter_output',
+            'FHEE__EE_SPCO_Line_Item_Display_Strategy___sub_item_row__html',
             $html,
             $line_item,
             $options,
