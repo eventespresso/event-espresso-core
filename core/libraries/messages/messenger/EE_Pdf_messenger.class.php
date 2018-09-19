@@ -323,19 +323,17 @@ class EE_Pdf_messenger extends EE_messenger
         $invoice_name = $this->_subject;
 
         // only load dompdf if nobody else has yet...
-        if (!defined('DOMPDF_DIR')) {
-            define('DOMPDF_ENABLE_REMOTE', true);
-            define('DOMPDF_ENABLE_JAVASCRIPT', false);
-            define('DOMPDF_ENABLE_CSS_FLOAT', true);
-            require_once(EE_THIRD_PARTY . 'dompdf/dompdf_config.inc.php');
+        if (! class_exists('Dompdf\Dompdf')) {
+            require_once(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php');
+            Dompdf\Autoloader::register();
         }
-        $dompdf = new DOMPDF();
-        if (defined('DOMPDF_DEFAULT_PAPER_SIZE')) {
-            $dompdf->set_paper(DOMPDF_DEFAULT_PAPER_SIZE);
-        }
+        $options = new Dompdf\Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('isJavascriptEnabled', false);
+        $dompdf = new Dompdf\Dompdf($options);
         // Remove all spaces between HTML tags
         $content = preg_replace('/>\s+</', '><', $content);
-        $dompdf->load_html($content);
+        $dompdf->loadHtml($content);
         $dompdf->render();
         // forcing the browser to open a download dialog.
         $dompdf->stream($invoice_name . ".pdf", array('Attachment' => true));
