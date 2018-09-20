@@ -26,6 +26,7 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 ### Changed
 
 - Improved REST Schema response to include missing fields (including `_calculated_fields`, `_links` and `link`)([680](https://github.com/eventespresso/event-espresso-core/pull/680))
+- Updated the Dompdf library to version 0.8.2 ([699](https://github.com/eventespresso/event-espresso-core/pull/699))
 
 ## [4.9.67.p]
 
