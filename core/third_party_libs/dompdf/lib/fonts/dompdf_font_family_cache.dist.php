@@ -36,13 +36,6 @@ return array(
             'italic' => $distFontDir . 'Helvetica-Oblique',
             'bold_italic' => $distFontDir . 'Helvetica-BoldOblique'
         ),
-    'zapfdingbats' =>
-        array(
-            'normal' => $distFontDir . 'ZapfDingbats',
-            'bold' => $distFontDir . 'ZapfDingbats',
-            'italic' => $distFontDir . 'ZapfDingbats',
-            'bold_italic' => $distFontDir . 'ZapfDingbats'
-        ),
     'symbol' =>
         array(
             'normal' => $distFontDir . 'Symbol',
@@ -70,26 +63,5 @@ return array(
             'bold' => $distFontDir . 'Courier-Bold',
             'italic' => $distFontDir . 'Courier-Oblique',
             'bold_italic' => $distFontDir . 'Courier-BoldOblique'
-        ),
-    'dejavu sans' =>
-        array(
-            'bold' => $distFontDir . 'DejaVuSans-Bold',
-            'bold_italic' => $distFontDir . 'DejaVuSans-BoldOblique',
-            'italic' => $distFontDir . 'DejaVuSans-Oblique',
-            'normal' => $distFontDir . 'DejaVuSans'
-        ),
-    'dejavu sans mono' =>
-        array(
-            'bold' => $distFontDir . 'DejaVuSansMono-Bold',
-            'bold_italic' => $distFontDir . 'DejaVuSansMono-BoldOblique',
-            'italic' => $distFontDir . 'DejaVuSansMono-Oblique',
-            'normal' => $distFontDir . 'DejaVuSansMono'
-        ),
-    'dejavu serif' =>
-        array(
-            'bold' => $distFontDir . 'DejaVuSerif-Bold',
-            'bold_italic' => $distFontDir . 'DejaVuSerif-BoldItalic',
-            'italic' => $distFontDir . 'DejaVuSerif-Italic',
-            'normal' => $distFontDir . 'DejaVuSerif'
         )
 );

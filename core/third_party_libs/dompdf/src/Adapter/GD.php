@@ -892,8 +892,6 @@ class GD implements Canvas
                     $font = $font_metrics->getFont("DejaVu Sans") . ".ttf";
                 } elseif (strpos($font, "serif")) {
                     $font = $font_metrics->getFont("DejaVu Serif") . ".ttf";
-                } else {
-                    $font = $font_metrics->getFont("DejaVu Sans") . ".ttf";
                 }
             }
         }
