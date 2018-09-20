@@ -152,7 +152,7 @@ class PDFLib implements Canvas
     private $_page_text;
 
     /**
-     * Array of pages for accesing after rendering is initially complete
+     * Array of pages for accessing after rendering is initially complete
      *
      * @var array
      */

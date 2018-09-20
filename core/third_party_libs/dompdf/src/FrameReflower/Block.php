@@ -379,7 +379,7 @@ class Block extends AbstractFrameReflower
                 $height = $content_height;
             }
 
-            // FIXME: this should probably be moved to a seperate function as per
+            // FIXME: this should probably be moved to a separate function as per
             // _calculate_restricted_width
 
             // Only handle min/max height if the height is independent of the frame's content
