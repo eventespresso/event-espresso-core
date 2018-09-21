@@ -126,8 +126,8 @@ class FontMetrics
         $rootDir = $this->getOptions()->getRootDir();
 
         // FIXME: tempoarary define constants for cache files <= v0.6.2
-        if (!defined("DOMPDF_DIR")) { define("DOMPDF_DIR", $rootDir); }
-        if (!defined("DOMPDF_FONT_DIR")) { define("DOMPDF_FONT_DIR", $fontDir); }
+        if (!defined("DOMPDF_DIR")) { define("DOMPDF_DIR", $rootDir . DIRECTORY_SEPARATOR); }
+        if (!defined("DOMPDF_FONT_DIR")) { define("DOMPDF_FONT_DIR", $fontDir . DIRECTORY_SEPARATOR); }
 
         $file = $rootDir . "/lib/fonts/dompdf_font_family_cache.dist.php";
         $distFonts = require $file;
