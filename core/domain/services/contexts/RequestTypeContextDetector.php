@@ -49,6 +49,12 @@ class RequestTypeContextDetector
      */
     public function detectRequestTypeContext()
     {
+        // Detect error scrapes
+        if ($this->request->getRequestParam('wp_scrape_key') !== null
+            && $this->request->getRequestParam('wp_scrape_nonce') !== null
+        ) {
+            return $this->factory->create(RequestTypeContext::WP_SCRAPE);
+        }
         // Detect EE REST API
         if ($this->isEspressoRestApiRequest()) {
             return $this->factory->create(RequestTypeContext::API);
