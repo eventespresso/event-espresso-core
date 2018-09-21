@@ -1,5 +1,11 @@
 <?php
-$distFontDir = $rootDir . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'fonts' . DIRECTORY_SEPARATOR;
+// In case the DOMPDF fonts are in uploads
+if (defined('DOMPDF_FONT_DIR')) {
+    $distFontDir = DOMPDF_FONT_DIR;
+} else {
+    $distFontDir = $rootDir . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'fonts' . DIRECTORY_SEPARATOR;
+}
+
 return array(
     'sans-serif' =>
         array(
