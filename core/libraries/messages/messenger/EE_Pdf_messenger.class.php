@@ -330,6 +330,8 @@ class EE_Pdf_messenger extends EE_messenger
         $options = new Dompdf\Options();
         $options->set('isRemoteEnabled', true);
         $options->set('isJavascriptEnabled', false);
+        $options->setFontDir(DOMPDF_FONT_DIR);
+        $options->setFontCache(DOMPDF_FONT_DIR);
         $dompdf = new Dompdf\Dompdf($options);
         // Remove all spaces between HTML tags
         $content = preg_replace('/>\s+</', '><', $content);
