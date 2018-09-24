@@ -30,7 +30,7 @@
             <?php } ?>
             <br/>
             <input id="country_settings_save_2" class="button-primary save" type="submit" name="save"
-                        value="<?php _e('Save Country Details', 'event_espresso'); ?>">
+                        value="<?php esc_html_e('Save Country Details', 'event_espresso'); ?>">
         </td>
     </tr>
     </tbody>
