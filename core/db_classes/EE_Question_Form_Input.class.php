@@ -57,6 +57,11 @@ class EE_Question_Form_Input
      */
     private $QST_input_class = '';
 
+    /**
+     * @var bool $QST_disabled
+     */
+    private $QST_disabled = false;
+
 
     /**
      * constructor for questions
@@ -297,6 +302,10 @@ class EE_Question_Form_Input
                     $use_desc_4_label = isset($input_types[ $field_ID ]['use_desc_4_label'])
                         ? $input_types[ $field_ID ]['use_desc_4_label']
                         : false;
+                    // whether input is disabled
+                    $disabled = isset($input_types[ $field_ID ]['disabled'])
+                        ? $input_types[ $field_ID ]['disabled']
+                        : false;
 
                     // create EE_Question_Form_Input object
                     $QFI = new EE_Question_Form_Input(
@@ -346,7 +355,7 @@ class EE_Question_Form_Input
                         }
                     }
                     // we don't want ppl manually changing primary keys cuz that would just lead to total craziness man
-                    if ($field_ID == $object->get_model()->primary_key_name()) {
+                    if ($disabled || $field_ID == $object->get_model()->primary_key_name()) {
                         $QFI->set('QST_disabled', true);
                     }
                     // EEH_Debug_Tools::printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
