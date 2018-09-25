@@ -193,7 +193,13 @@ class EE_Session implements SessionIdentifierInterface
         // check if class object is instantiated
         // session loading is turned ON by default, but prior to the init hook, can be turned back OFF via:
         // add_filter( 'FHEE_load_EE_Session', '__return_false' );
-        if (! self::$_instance instanceof EE_Session && apply_filters('FHEE_load_EE_Session', true)) {
+        if (! self::$_instance instanceof EE_Session
+            && apply_filters('FHEE_load_EE_Session', true)
+            && $cache_storage instanceof CacheStorageInterface
+            && $lifespan instanceof SessionLifespan
+            && $request instanceof RequestInterface
+            && $session_start_handler instanceof SessionStartHandler
+        ) {
             self::$_instance = new self(
                 $cache_storage,
                 $lifespan,
