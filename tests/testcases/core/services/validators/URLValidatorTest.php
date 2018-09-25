@@ -10,13 +10,13 @@ use EventEspresso\core\services\validators\URLValidator;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.68.p
  *
  */
 class URLValidatorTest extends EE_UnitTestCase
 {
     /**
-     * @since $VID:$
+     * @since 4.9.68.p
      * @return array {
      * @type string $url
      * @type boolean $should_be_valid
@@ -48,7 +48,7 @@ class URLValidatorTest extends EE_UnitTestCase
 
     /**
      * @dataProvider urlsToTest
-     * @since $VID:$
+     * @since 4.9.68.p
      * @group current
      *
      */

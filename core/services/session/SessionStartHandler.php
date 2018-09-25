@@ -23,7 +23,7 @@ use EventEspresso\core\services\request\RequestInterface;
  *
  * @package EventEspresso\core\services\session
  * @author  Mike Nelson
- * @since   $VID:$
+ * @since   4.9.68.p
  */
 class SessionStartHandler
 {
@@ -52,7 +52,7 @@ class SessionStartHandler
      * Check if a custom session save handler is in play
      * and attempt to start the PHP session
      *
-     * @since $VID:$
+     * @since 4.9.68.p
      */
     public function startSession()
     {
@@ -70,7 +70,7 @@ class SessionStartHandler
     /**
      * Returns `true` if the 'session.save_handler' ini setting matches a known custom handler
      *
-     * @since $VID:$
+     * @since 4.9.68.p
      * @return bool
      */
     private function hasKnownCustomSessionSaveHandler()
@@ -87,7 +87,7 @@ class SessionStartHandler
     /**
      * Attempt to start the PHP session when a custom Session Save Handler is known to be set.
      *
-     * @since $VID:$
+     * @since 4.9.68.p
      */
     private function checkCustomSessionSaveHandler()
     {
@@ -116,7 +116,7 @@ class SessionStartHandler
      * retrieves the value for the 'ee_session_save_handler_status' WP option.
      * default value = 'session_save_handler_untested'
      *
-     * @since $VID:$
+     * @since 4.9.68.p
      * @return string
      */
     private function getSessionSaveHandlerStatus()
@@ -131,7 +131,7 @@ class SessionStartHandler
      * Sets the 'ee_session_save_handler_status' WP option value to 'session_save_handler_failed'
      * which can then be upgraded is everything works correctly
      *
-     * @since $VID:$
+     * @since 4.9.68.p
      * @return bool
      */
     private function initializeSessionSaveHandlerStatus()
@@ -145,7 +145,7 @@ class SessionStartHandler
     /**
      * Sets the 'ee_session_save_handler_status' WP option value to 'session_save_handler_success'
      *
-     * @since $VID:$
+     * @since 4.9.68.p
      * @return bool
      */
     private function setSessionSaveHandlerStatusToValid()
@@ -159,7 +159,7 @@ class SessionStartHandler
     /**
      * Sets the 'ee_session_save_handler_status' WP option value to 'session_save_handler_untested'
      *
-     * @since $VID:$
+     * @since 4.9.68.p
      * @return bool
      */
     private function resetSessionSaveHandlerStatus()
@@ -174,7 +174,7 @@ class SessionStartHandler
      * Returns `true` if the 'ee_session_save_handler_status' WP option value
      * is equal to 'session_save_handler_success'
      *
-     * @since $VID:$
+     * @since 4.9.68.p
      * @return bool
      */
     private function sessionSaveHandlerIsValid()
@@ -186,7 +186,7 @@ class SessionStartHandler
      * Returns `true` if the 'ee_session_save_handler_status' WP option value
      * is equal to 'session_save_handler_failed'
      *
-     * @since $VID:$
+     * @since 4.9.68.p
      * @return bool
      */
     private function sessionSaveHandlerFailed()
@@ -200,7 +200,7 @@ class SessionStartHandler
      * with a suggestion for how to fix the issue, and returns `false`.
      *
      *
-     * @since $VID:$
+     * @since 4.9.68.p
      * @return bool
      */
     private function handleSessionSaveHandlerErrors()
@@ -232,7 +232,7 @@ class SessionStartHandler
      * Generates an EE_Error notice regarding the current session woes
      * but only if the current user is an admin with permission to 'install_plugins'.
      *
-     * @since $VID:$
+     * @since 4.9.68.p
      */
     private function displaySessionSaveHandlerErrorNotice()
     {
