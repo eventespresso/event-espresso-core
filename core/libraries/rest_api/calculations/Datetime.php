@@ -187,7 +187,7 @@ class Datetime extends DatetimeCalculationBase
      * Provides an array for all the calculations possible that outlines a json schema for those calculations.
      * Array is indexed by calculation (snake case) and value is the schema for that calculation.
      *
-     * @since $VID:$
+     * @since 4.9.68.p
      * @return array
      */
     public function schemaForCalculations()
