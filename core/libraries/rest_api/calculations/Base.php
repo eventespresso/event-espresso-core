@@ -54,7 +54,7 @@ class Base
 
     /**
      * Returns an array to be used for the schema for the calculated fields.
-     * @since $VID:$
+     * @since 4.9.68.p
      * @return array keys are calculated field names (eg "optimum_sales_at_start") values are arrays {
      * @type string $description
      * @type string $type, eg "string", "int", "boolean", "object", "array", etc
@@ -68,7 +68,7 @@ class Base
     /**
      * Returns the json schema for the given calculation index.
      *
-     * @since $VID:$
+     * @since 4.9.68.p
      * @param $calculation_index
      * @return array
      */
