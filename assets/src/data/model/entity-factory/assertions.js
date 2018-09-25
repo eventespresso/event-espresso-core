@@ -17,6 +17,7 @@ import {
 	validateEnumType,
 	validateType,
 } from './validators';
+import { maybeConvertFromValueObjectWithAssertions } from './extractors';
 
 /**
  * Asserts whether the provided field value is a known value object.
@@ -82,26 +83,45 @@ export const assertValidSchemaFieldProperties = (
 			),
 		);
 	}
-	if ( schema[ fieldName ].type === 'object' &&
-		schema[ fieldName ].properties &&
-		isUndefined( schema[ fieldName ].properties.raw ) &&
-		isUndefined( schema[ fieldName ].properties.raw.type )
-	) {
-		throw new InvalidSchema(
-			sprintf(
-				'This schema has a properties object, however the fieldName ' +
-				'(%s) also has a properties object but no "raw" ' +
-				'property. Model Entities operate expecting `raw` fieldName ' +
-				'properties when a fieldName value is a plain object.',
-				fieldName,
-			),
-		);
+	if ( schema[ fieldName ].type === 'object' ) {
+		if ( isUndefined( schema[ fieldName ].properties ) ) {
+			throw new InvalidSchema(
+				sprintf(
+					'The schema for the field %s on the model %s is of type ' +
+					'"object" but does not have a properties property.',
+					fieldName,
+					modelName
+				)
+			);
+		}
+		if ( isUndefined( schema[ fieldName ].properties.raw ) ) {
+			throw new InvalidSchema(
+				sprintf(
+					'The schema for the field %s on the model %s is of type ' +
+					'"object" but does not have a raw property in it\'s ' +
+					'"properties" property.',
+					fieldName,
+					modelName
+				)
+			);
+		}
+		if ( isUndefined( schema[ fieldName ].properties.raw.type ) ) {
+			throw new InvalidSchema(
+				sprintf(
+					'The schema for the field %s on the model %s is of type ' +
+					'"object" and has a properties.raw property, however there' +
+					'is no "type" defined for the raw property.',
+					fieldName,
+					modelName
+				),
+			);
+		}
 	}
 };
 
 /**
- * Asserts that the value provided for the field is of valid according to the
- * schema.
+ * Asserts that the value provided for the prepared field is valid according to
+ * the schema.
  *
  * Prepared fields are:
  *
@@ -142,7 +162,14 @@ export const assertValidValueForPreparedField = (
 				schema[ fieldName ].properties.raw.enum,
 				fieldValue,
 			) :
-			validateType( schema[ fieldName ].properties.raw.type, fieldValue );
+			validateType(
+				schema[ fieldName ].properties.raw.type,
+				maybeConvertFromValueObjectWithAssertions(
+					fieldName,
+					fieldValue,
+					schema
+				)
+			);
 		if ( ! isValid ) {
 			throw new TypeError(
 				sprintf(
@@ -172,6 +199,11 @@ export const assertValidValueForPreparedField = (
 /**
  * Asserts whether the value for the given field is valid according to the
  * schema.
+ *
+ * This is used on entity construction and does not validate prepared field
+ * values (see assert assertValidValueForPreparedField).
+ *
+ * This method also asserts that the schema has valid schema field properties.
  *
  * @param {string} modelName
  * @param {string} fieldName
@@ -214,7 +246,10 @@ export const assertValidFieldAndValueAgainstSchema = (
 				schema[ fieldName ].properties.raw.enum,
 				fieldValue.raw,
 			) :
-			validateType( schema[ fieldName ].properties.raw.type, fieldValue );
+			validateType(
+				schema[ fieldName ].properties.raw.type,
+				fieldValue.raw
+			);
 		if ( ! isValid ) {
 			throw new TypeError(
 				sprintf(

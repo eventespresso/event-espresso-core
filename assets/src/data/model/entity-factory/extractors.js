@@ -276,6 +276,8 @@ export const deriveTypeForField = ( fieldName, schema ) => {
 					null;
 			}
 			return null;
+		} else {
+			return schema[ fieldName ].type;
 		}
 	}
 	return null;

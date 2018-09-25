@@ -3,7 +3,7 @@
  */
 import {
 	camelCase,
-	capitalize,
+	upperFirst,
 	forEach,
 	isUndefined,
 	isArray,
@@ -84,19 +84,19 @@ export const createGetterAndSetter = (
 	initialFieldValue,
 	opts = {}
 ) => {
-	let property = initialFieldValue;
+	let propertyValue = initialFieldValue;
 	Object.defineProperty( instance, fieldName, {
 		get() {
-			return property;
+			return propertyValue;
 		},
 		set( receivedValue ) {
 			assertValidValueForPreparedField(
-				property,
+				fieldName,
 				receivedValue,
 				instance.schema
 			);
 			setSaveState( instance, SAVE_STATE.DIRTY );
-			property = receivedValue;
+			propertyValue = receivedValue;
 		},
 		...opts,
 	} );
@@ -131,7 +131,7 @@ export const createAliasGetterAndSetter = (
  * @param {string} fieldName
  */
 export const createFluentSetter = ( instance, fieldName ) => {
-	Object.defineProperty( instance, 'set' + capitalize( fieldName ), {
+	Object.defineProperty( instance, 'set' + upperFirst( fieldName ), {
 		get() {
 			return ( receivedValue ) => {
 				instance[ fieldName ] = receivedValue;
@@ -312,7 +312,7 @@ export const createPersistingGettersAndSetters = ( instance ) => {
  * @param {string} fieldName
  * @param {*} fieldValue
  */
-export const setInitialEntityFieldsAndValues = (
+const setInitialEntityFieldsAndValues = (
 	instance,
 	fieldName,
 	fieldValue,
@@ -345,7 +345,8 @@ export const createRawEntityGettersSetters = (
 	const opts = isPrimaryKeyField( fieldName, instance.schema ) ?
 		{ configurable: true } :
 		{};
-	// this allows for private property holding the actual field value that can be changed via setter but NOT directly.
+	// this allows for private property holding the actual field value that can
+	// be changed via setter but NOT directly.
 	createGetterAndSetter(
 		instance,
 		fieldName,
@@ -397,7 +398,8 @@ export const createAliasGettersSetters = ( instance, fieldName ) => {
  * @param {Object} instance
  * @return {function(string): *}  A callback.
  */
-const getRenderedCallback = ( instance ) => ( requestedFieldName ) => instance[ requestedFieldName + 'Rendered' ];
+const getRenderedCallback = ( instance ) => ( requestedFieldName ) =>
+	instance[ requestedFieldName + 'Rendered' ];
 
 /**
  * This creates the getters for the rendered property of model fields.
@@ -408,7 +410,9 @@ const getRenderedCallback = ( instance ) => ( requestedFieldName ) => instance[ 
  */
 export const createRenderedGetters = ( instance, fieldName, fieldValue ) => {
 	createGetter( instance, fieldName + 'Rendered', fieldValue );
-	createGetter( instance, 'getRendered', getRenderedCallback( instance ) );
+	if ( isUndefined( instance.getRendered ) ) {
+		createCallbackGetter( instance, 'getRendered', getRenderedCallback );
+	}
 };
 
 /**
@@ -417,9 +421,8 @@ export const createRenderedGetters = ( instance, fieldName, fieldValue ) => {
  * @param {Object} instance
  * @return {function(): boolean} The callback for hasMultiplePrimaryKeys getter
  */
-export const hasMultiplePrimaryKeysCallback = ( instance ) => () => {
-	return instance.primaryKeys.length > 1;
-};
+const hasMultiplePrimaryKeysCallback = ( instance ) =>
+	instance.primaryKeys.length > 1;
 
 /**
  * Creates getters for primary key related data.
@@ -427,7 +430,7 @@ export const hasMultiplePrimaryKeysCallback = ( instance ) => () => {
  * @param {Object} instance
  * @param {Array} primaryKeys
  */
-export const createPrimaryKeyFieldGetters = ( instance, primaryKeys, ) => {
+export const createPrimaryKeyFieldGetters = ( instance, primaryKeys ) => {
 	if ( isArray( primaryKeys ) ) {
 		createGetter(
 			instance,
@@ -441,10 +444,10 @@ export const createPrimaryKeyFieldGetters = ( instance, primaryKeys, ) => {
 			primaryKeys,
 			{ configurable: true },
 		);
-		createGetter(
+		createCallbackGetter(
 			instance,
 			'hasMultiplePrimaryKeys',
-			hasMultiplePrimaryKeysCallback( instance ),
+			hasMultiplePrimaryKeysCallback,
 			{ configurable: true }
 		);
 	}
@@ -455,7 +458,7 @@ export const createPrimaryKeyFieldGetters = ( instance, primaryKeys, ) => {
  * @return {function(string): boolean} Returns a callback for the
  * hasCalculatedField getter
  */
-export const hasCalculatedFieldCallback = ( instance ) =>
+const hasCalculatedFieldCallback = ( instance ) =>
 	( fieldNameToCheck ) => ! isUndefined( instance[ fieldNameToCheck ] );
 
 /**
@@ -465,9 +468,17 @@ export const hasCalculatedFieldCallback = ( instance ) =>
  */
 export const setCalculatedFieldAndValues = ( instance, fieldsAndValues ) => {
 	forEach( fieldsAndValues, ( calculatedFieldValue, calculatedFieldName ) => {
-		createGetter( instance, camelCase( calculatedFieldName ), calculatedFieldValue );
-		createGetter( instance, 'hasCalculatedField', hasCalculatedFieldCallback( instance ) );
+		createGetter(
+			instance,
+			camelCase( calculatedFieldName ),
+			calculatedFieldValue
+		);
 	} );
+	createCallbackGetter(
+		instance,
+		'hasCalculatedField',
+		hasCalculatedFieldCallback
+	);
 };
 
 /**
@@ -483,7 +494,11 @@ export const setResources = ( instance, fieldsAndValues ) => {
 		if ( resourceName === 'self' ) {
 			createGetter( instance, 'resourceLink', resourceValue[ 0 ].href );
 		} else if ( resourceName === 'collection' ) {
-			createGetter( instance, 'collectionResourceLink', resourceValue[ 0 ].href );
+			createGetter(
+				instance,
+				'collectionResourceLink',
+				resourceValue[ 0 ].href
+			);
 		} else {
 			relationName = getRelationNameFromLink( resourceName );
 			relations.push( relationName );
@@ -499,7 +514,8 @@ export const setResources = ( instance, fieldsAndValues ) => {
  * @return {function(string): Object} Returns the callback for getting a
  * relation resource
  */
-export const getRelationResourceCallback = ( instance ) => ( relationName ) => instance[ relationName ];
+const getRelationResourceCallback = ( instance ) =>
+	( relationName ) => instance[ relationName ];
 
 /**
  * Creates getters for the relations resource object.
@@ -508,16 +524,25 @@ export const getRelationResourceCallback = ( instance ) => ( relationName ) => i
  * @param {string} relationName
  * @param {Object.<string, string>} resourceInfo
  */
-export const setRelationsResource = ( instance, relationName, resourceInfo ) => {
+export const setRelationsResource = (
+	instance,
+	relationName,
+	resourceInfo
+) => {
 	createGetter(
-		'instance',
+		instance,
 		relationName,
 		{
 			resourceLink: resourceInfo[ 0 ].href,
 			single: resourceInfo[ 0 ].single,
 		}
 	);
-	createGetter( instance, 'getRelationResource', getRelationResourceCallback( instance ) );
+	if ( isUndefined( instance.getRelationResource ) ) {
+		createCallbackGetter( instance,
+			'getRelationResource',
+			getRelationResourceCallback
+		);
+	}
 };
 
 /**

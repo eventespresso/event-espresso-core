@@ -129,6 +129,9 @@ export const isShallowValidValueForField = (
 			schema
 		) :
 		fieldValue;
+	fieldValue = expectValueObjects && schema[ fieldName ].type === 'object' ?
+		{ raw: fieldValue } :
+		fieldValue;
 	const isValid = isEnum ?
 		validateEnumType(
 			schema[ fieldName ].type,
