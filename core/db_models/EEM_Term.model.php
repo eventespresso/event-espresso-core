@@ -185,7 +185,7 @@ class EEM_Term extends EEM_Base
         }
         $post_tag_row = reset($post_tag_results);
         $post_tag = $this->instantiate_class_from_array_or_object($post_tag_row);
-        if(! $post_tag instanceof EE_Term) {
+        if (! $post_tag instanceof EE_Term) {
             return null;
         }
 
