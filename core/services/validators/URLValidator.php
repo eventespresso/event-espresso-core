@@ -11,14 +11,14 @@ namespace EventEspresso\core\services\validators;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.68.p
  *
  */
 class URLValidator
 {
     /**
      * Returns whether or not the URL is valid
-     * @since $VID:$
+     * @since 4.9.68.p
      * @param $url
      * @return boolean
      */
