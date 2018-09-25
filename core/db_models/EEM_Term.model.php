@@ -1,4 +1,8 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  * class EEM_Term
  *
@@ -132,6 +136,132 @@ class EEM_Term extends EEM_Base
                 $venue_tags = $this->get_all_venue_post_tags();
                 return array_merge($event_tags, $venue_tags);
         }
+    }
+
+
+    /**
+     * returns an EE_Term object for the given tag
+     * if it has been utilized by any EE_Events or EE_Venues
+     *
+     * @param string $tag
+     * @return EE_Term
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function get_post_tag_for_event_or_venue($tag)
+    {
+        global $wpdb;
+        $SQL = "
+SELECT Term.term_id                                               AS 'Term.term_id',
+       Term.name                                                  AS 'Term.name',
+       Term.slug                                                  AS 'Term.slug',
+       Term.term_group                                            AS 'Term.term_group',
+       Term_Taxonomy.term_taxonomy_id                             AS 'Term_Taxonomy.term_taxonomy_id',
+       Term_Taxonomy.term_id                                      AS 'Term_Taxonomy.term_id',
+       Term_Taxonomy.taxonomy                                     AS 'Term_Taxonomy.taxonomy',
+       Term_Taxonomy.description                                  AS 'Term_Taxonomy.description',
+       Term_Taxonomy.parent                                       AS 'Term_Taxonomy.parent',
+       Term_Taxonomy.count                                        AS 'Term_Taxonomy.count',
+       Term_Taxonomy___Term_Relationship.object_id                AS 'Term_Taxonomy___Term_Relationship.object_id',
+       Term_Taxonomy___Term_Relationship.term_taxonomy_id         AS 'Term_Taxonomy___Term_Relationship.term_taxonomy_id',
+       Term_Taxonomy___Term_Relationship.term_order               AS 'Term_Taxonomy___Term_Relationship.term_order',
+       Term_Taxonomy___Event_CPT.ID                               AS 'Term_Taxonomy___Event_CPT.ID',
+       Term_Taxonomy___Event_CPT.post_type                        AS 'Term_Taxonomy___Event_CPT.post_type',
+       Term_Taxonomy___Event_CPT.post_title                       AS 'Term_Taxonomy___Event_CPT.post_title',
+       Term_Taxonomy___Event_CPT.post_content                     AS 'Term_Taxonomy___Event_CPT.post_content',
+       Term_Taxonomy___Event_CPT.post_name                        AS 'Term_Taxonomy___Event_CPT.post_name',
+       Term_Taxonomy___Event_CPT.post_date                        AS 'Term_Taxonomy___Event_CPT.post_date',
+       Term_Taxonomy___Event_CPT.post_excerpt                     AS 'Term_Taxonomy___Event_CPT.post_excerpt',
+       Term_Taxonomy___Event_CPT.post_modified                    AS 'Term_Taxonomy___Event_CPT.post_modified',
+       Term_Taxonomy___Event_CPT.post_author                      AS 'Term_Taxonomy___Event_CPT.post_author',
+       Term_Taxonomy___Event_CPT.post_parent                      AS 'Term_Taxonomy___Event_CPT.post_parent',
+       Term_Taxonomy___Event_CPT.menu_order                       AS 'Term_Taxonomy___Event_CPT.menu_order',
+       Term_Taxonomy___Event_CPT.post_status                      AS 'Term_Taxonomy___Event_CPT.post_status',
+       Term_Taxonomy___Event_CPT.comment_status                   AS 'Term_Taxonomy___Event_CPT.comment_status',
+       Term_Taxonomy___Event_CPT.ping_status                      AS 'Term_Taxonomy___Event_CPT.ping_status',
+       Term_Taxonomy___Event_Meta.EVT_display_desc                AS 'Term_Taxonomy___Event_Meta.EVT_display_desc',
+       Term_Taxonomy___Event_Meta.EVT_display_ticket_selector     AS 'Term_Taxonomy___Event_Meta.EVT_display_ticket_selector',
+       Term_Taxonomy___Event_Meta.EVT_visible_on                  AS 'Term_Taxonomy___Event_Meta.EVT_visible_on',
+       Term_Taxonomy___Event_Meta.EVT_additional_limit            AS 'Term_Taxonomy___Event_Meta.EVT_additional_limit',
+       Term_Taxonomy___Event_Meta.EVT_default_registration_status AS 'Term_Taxonomy___Event_Meta.EVT_default_registration_status',
+       Term_Taxonomy___Event_Meta.EVT_member_only                 AS 'Term_Taxonomy___Event_Meta.EVT_member_only',
+       Term_Taxonomy___Event_Meta.EVT_phone                       AS 'Term_Taxonomy___Event_Meta.EVT_phone',
+       Term_Taxonomy___Event_Meta.EVT_allow_overflow              AS 'Term_Taxonomy___Event_Meta.EVT_allow_overflow',
+       Term_Taxonomy___Event_Meta.EVT_timezone_string             AS 'Term_Taxonomy___Event_Meta.EVT_timezone_string',
+       Term_Taxonomy___Event_Meta.EVT_external_URL                AS 'Term_Taxonomy___Event_Meta.EVT_external_URL',
+       Term_Taxonomy___Event_Meta.EVT_donations                   AS 'Term_Taxonomy___Event_Meta.EVT_donations',
+       Term_Taxonomy___Event_Meta.EVTM_ID                         AS 'Term_Taxonomy___Event_Meta.EVTM_ID',
+       Term_Taxonomy___Venue_CPT.ID                               AS 'Term_Taxonomy___Venue_CPT.ID',
+       Term_Taxonomy___Venue_CPT.post_type                        AS 'Term_Taxonomy___Venue_CPT.post_type',
+       Term_Taxonomy___Venue_CPT.post_title                       AS 'Term_Taxonomy___Venue_CPT.post_title',
+       Term_Taxonomy___Venue_CPT.post_content                     AS 'Term_Taxonomy___Venue_CPT.post_content',
+       Term_Taxonomy___Venue_CPT.post_name                        AS 'Term_Taxonomy___Venue_CPT.post_name',
+       Term_Taxonomy___Venue_CPT.post_date                        AS 'Term_Taxonomy___Venue_CPT.post_date',
+       Term_Taxonomy___Venue_CPT.post_excerpt                     AS 'Term_Taxonomy___Venue_CPT.post_excerpt',
+       Term_Taxonomy___Venue_CPT.post_modified                    AS 'Term_Taxonomy___Venue_CPT.post_modified',
+       Term_Taxonomy___Venue_CPT.post_author                      AS 'Term_Taxonomy___Venue_CPT.post_author',
+       Term_Taxonomy___Venue_CPT.post_parent                      AS 'Term_Taxonomy___Venue_CPT.post_parent',
+       Term_Taxonomy___Venue_CPT.menu_order                       AS 'Term_Taxonomy___Venue_CPT.menu_order',
+       Term_Taxonomy___Venue_CPT.post_status                      AS 'Term_Taxonomy___Venue_CPT.post_status',
+       Term_Taxonomy___Venue_CPT.comment_status                   AS 'Term_Taxonomy___Venue_CPT.comment_status',
+       Term_Taxonomy___Venue_CPT.ping_status                      AS 'Term_Taxonomy___Venue_CPT.ping_status',
+       Term_Taxonomy___Venue_Meta.VNU_address                     AS 'Term_Taxonomy___Venue_Meta.VNU_address',
+       Term_Taxonomy___Venue_Meta.VNU_address2                    AS 'Term_Taxonomy___Venue_Meta.VNU_address2',
+       Term_Taxonomy___Venue_Meta.VNU_city                        AS 'Term_Taxonomy___Venue_Meta.VNU_city',
+       Term_Taxonomy___Venue_Meta.STA_ID                          AS 'Term_Taxonomy___Venue_Meta.STA_ID',
+       Term_Taxonomy___Venue_Meta.CNT_ISO                         AS 'Term_Taxonomy___Venue_Meta.CNT_ISO',
+       Term_Taxonomy___Venue_Meta.VNU_zip                         AS 'Term_Taxonomy___Venue_Meta.VNU_zip',
+       Term_Taxonomy___Venue_Meta.VNU_phone                       AS 'Term_Taxonomy___Venue_Meta.VNU_phone',
+       Term_Taxonomy___Venue_Meta.VNU_capacity                    AS 'Term_Taxonomy___Venue_Meta.VNU_capacity',
+       Term_Taxonomy___Venue_Meta.VNU_url                         AS 'Term_Taxonomy___Venue_Meta.VNU_url',
+       Term_Taxonomy___Venue_Meta.VNU_virtual_phone               AS 'Term_Taxonomy___Venue_Meta.VNU_virtual_phone',
+       Term_Taxonomy___Venue_Meta.VNU_virtual_url                 AS 'Term_Taxonomy___Venue_Meta.VNU_virtual_url',
+       Term_Taxonomy___Venue_Meta.VNU_google_map_link             AS 'Term_Taxonomy___Venue_Meta.VNU_google_map_link',
+       Term_Taxonomy___Venue_Meta.VNU_enable_for_gmap             AS 'Term_Taxonomy___Venue_Meta.VNU_enable_for_gmap',
+       Term_Taxonomy___Venue_Meta.VNUM_ID                         AS 'Term_Taxonomy___Venue_Meta.VNUM_ID'
+FROM wp_terms AS Term
+       LEFT JOIN wp_term_taxonomy AS Term_Taxonomy ON Term_Taxonomy.term_id = Term.term_id
+       LEFT JOIN wp_term_relationships AS Term_Taxonomy___Term_Relationship
+         ON Term_Taxonomy___Term_Relationship.term_taxonomy_id = Term_Taxonomy.term_taxonomy_id
+       LEFT JOIN wp_posts AS Term_Taxonomy___Event_CPT
+         ON Term_Taxonomy___Event_CPT.ID = Term_Taxonomy___Term_Relationship.object_id
+       LEFT JOIN wp_esp_event_meta AS Term_Taxonomy___Event_Meta
+         ON Term_Taxonomy___Event_CPT.ID = Term_Taxonomy___Event_Meta.EVT_ID
+       LEFT JOIN wp_posts AS Term_Taxonomy___Venue_CPT
+         ON Term_Taxonomy___Venue_CPT.ID = Term_Taxonomy___Term_Relationship.object_id
+       LEFT JOIN wp_esp_venue_meta AS Term_Taxonomy___Venue_Meta
+         ON Term_Taxonomy___Venue_CPT.ID = Term_Taxonomy___Venue_Meta.VNU_ID
+WHERE Term.slug = '$tag'
+    AND Term_Taxonomy.taxonomy = 'post_tag'
+    AND (
+          (
+              Term_Taxonomy___Event_CPT.post_type = 'espresso_events'
+                AND Term_Taxonomy___Event_CPT.post_status NOT IN  ('auto-draft', 'trash')
+          ) OR (
+              Term_Taxonomy___Venue_CPT.post_type = 'espresso_venues'
+                AND Term_Taxonomy___Venue_CPT.post_status NOT IN ('auto-draft', 'trash')
+          )
+      )";
+        $results = $wpdb->get_results($SQL, ARRAY_A);
+
+        $results = is_array($results) ? $results : array($results);
+        $post_type = array();
+        foreach ($results as $key => $result) {
+            foreach ($result as $property => $value) {
+                if(strpos($property, '.post_type') === (strlen($property) - 10)) {
+                    $post_type[] = $value;
+                }
+            }
+        }
+        $post_tags = EEM_Term::instance()->_create_objects($results);
+        $post_tag = is_array($post_tags) ? reset($post_tags) : $post_tags;
+        if ($post_tag->post_type === null) {
+            $post_tag->post_type = array();
+        }
+        $post_tag->post_type = array_merge($post_tag->post_type, array_unique($post_type));
+        return $post_tag;
     }
 
 
