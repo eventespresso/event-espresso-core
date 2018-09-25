@@ -367,6 +367,10 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         if ($parent_line_item instanceof  EE_Line_Item
             && $line_item->children() === array()
             && $line_item->name() === $parent_line_item->name()
+            && apply_filters(
+                'FHEE__EE_SPCO_Line_Item_Display_Strategy___sub_item_row__hide_main_sub_line_item',
+                true
+            )
         ) {
             return '';
         }
@@ -401,6 +405,13 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::td();
         // end of row
         $html .= EEH_HTML::trx();
+        $html = apply_filters(
+            'FHEE__EE_SPCO_Line_Item_Display_Strategy___sub_item_row__html',
+            $html,
+            $line_item,
+            $options,
+            $parent_line_item
+        );
         return $html;
     }
 

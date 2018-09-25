@@ -456,6 +456,7 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\cache\TransientCacheStorage'  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'              => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\session\SessionStartHandler'  => EE_Dependency_Map::load_from_cache,
                 'EE_Encryption'                                            => EE_Dependency_Map::load_from_cache,
             ),
             'EE_Cart'                                                                                                     => array(
@@ -820,6 +821,9 @@ class EE_Dependency_Map
             ),
             'EventEspresso\core\libraries\rest_api\calculations\Registration' => array(
                 'EEM_Registration' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\services\session\SessionStartHandler' => array(
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ),
             'EE_URL_Validation_Strategy' => array(
                 null,
