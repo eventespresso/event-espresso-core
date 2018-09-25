@@ -36,13 +36,6 @@ return array(
             'italic' => $distFontDir . 'Helvetica-Oblique',
             'bold_italic' => $distFontDir . 'Helvetica-BoldOblique'
         ),
-    'zapfdingbats' =>
-        array(
-            'normal' => $distFontDir . 'ZapfDingbats',
-            'bold' => $distFontDir . 'ZapfDingbats',
-            'italic' => $distFontDir . 'ZapfDingbats',
-            'bold_italic' => $distFontDir . 'ZapfDingbats'
-        ),
     'symbol' =>
         array(
             'normal' => $distFontDir . 'Symbol',

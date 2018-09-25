@@ -327,8 +327,7 @@ class Cpdf
         'times-bold',
         'times-italic',
         'times-bolditalic',
-        'symbol',
-        'zapfdingbats'
+        'symbol'
     );
 
     /**
