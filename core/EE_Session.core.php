@@ -6,7 +6,9 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\InvalidSessionDataException;
 use EventEspresso\core\services\cache\CacheStorageInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\session\SessionStartHandler;
 
 /**
  * EE_Session class
@@ -46,11 +48,14 @@ class EE_Session implements SessionIdentifierInterface
     protected $cache_storage;
 
     /**
-     * EE_Encryption object
-     *
-     * @var EE_Encryption
+     * @var EE_Encryption $encryption
      */
     protected $encryption;
+
+    /**
+     * @var SessionStartHandler $session_start_handler
+     */
+    protected $session_start_handler;
 
     /**
      * the session id
@@ -171,6 +176,7 @@ class EE_Session implements SessionIdentifierInterface
      * @param CacheStorageInterface $cache_storage
      * @param SessionLifespan|null  $lifespan
      * @param RequestInterface      $request
+     * @param SessionStartHandler   $session_start_handler
      * @param EE_Encryption         $encryption
      * @return EE_Session
      * @throws InvalidArgumentException
@@ -181,16 +187,24 @@ class EE_Session implements SessionIdentifierInterface
         CacheStorageInterface $cache_storage = null,
         SessionLifespan $lifespan = null,
         RequestInterface $request = null,
+        SessionStartHandler $session_start_handler = null,
         EE_Encryption $encryption = null
     ) {
         // check if class object is instantiated
         // session loading is turned ON by default, but prior to the init hook, can be turned back OFF via:
         // add_filter( 'FHEE_load_EE_Session', '__return_false' );
-        if (! self::$_instance instanceof EE_Session && apply_filters('FHEE_load_EE_Session', true)) {
+        if (! self::$_instance instanceof EE_Session
+            && apply_filters('FHEE_load_EE_Session', true)
+            && $cache_storage instanceof CacheStorageInterface
+            && $lifespan instanceof SessionLifespan
+            && $request instanceof RequestInterface
+            && $session_start_handler instanceof SessionStartHandler
+        ) {
             self::$_instance = new self(
                 $cache_storage,
                 $lifespan,
                 $request,
+                $session_start_handler,
                 $encryption
             );
         }
@@ -204,6 +218,7 @@ class EE_Session implements SessionIdentifierInterface
      * @param CacheStorageInterface $cache_storage
      * @param SessionLifespan       $lifespan
      * @param RequestInterface      $request
+     * @param SessionStartHandler   $session_start_handler
      * @param EE_Encryption         $encryption
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -213,6 +228,7 @@ class EE_Session implements SessionIdentifierInterface
         CacheStorageInterface $cache_storage,
         SessionLifespan $lifespan,
         RequestInterface $request,
+        SessionStartHandler $session_start_handler,
         EE_Encryption $encryption = null
     ) {
         // session loading is turned ON by default,
@@ -222,6 +238,7 @@ class EE_Session implements SessionIdentifierInterface
         if (! apply_filters('FHEE_load_EE_Session', true)) {
             return;
         }
+        $this->session_start_handler = $session_start_handler;
         $this->session_lifespan = $lifespan;
         $this->request = $request;
         if (! defined('ESPRESSO_SESSION')) {
@@ -561,11 +578,7 @@ class EE_Session implements SessionIdentifierInterface
     private function _espresso_session()
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        // check that session has started
-        if (session_id() === '') {
-            // starts a new session if one doesn't already exist, or re-initiates an existing one
-            session_start();
-        }
+        $this->session_start_handler->startSession();
         $this->status = EE_Session::STATUS_OPEN;
         // get our modified session ID
         $this->_sid = $this->_generate_session_id();

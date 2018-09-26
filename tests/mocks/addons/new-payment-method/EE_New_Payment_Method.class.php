@@ -36,7 +36,7 @@ Class  EE_New_Payment_Method extends EE_Addon {
 				'admin_callback' => 'additional_admin_hooks',
 				// if plugin update engine is being used for auto-updates. not needed if PUE is not being used.
 				'pue_options'			=> array(
-					'pue_plugin_slug' => 'espresso_new_payment_method',
+					'pue_plugin_slug' => 'eea-new-payment-method',
 					'plugin_basename' => EE_NEW_PAYMENT_METHOD_BASENAME,
 					'checkPeriod' => '24',
 					'use_wp_update' => FALSE,
