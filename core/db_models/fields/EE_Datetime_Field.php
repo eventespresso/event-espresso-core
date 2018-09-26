@@ -752,7 +752,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
 
     /**
      * Gets the default datetime object from the field's default time
-     * @since $VID:$
+     * @since 4.9.66.p
      * @return DbSafeDateTime|null
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException

@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EventAttendeesEditor Block block edit matches snapshot 1`] = `
+Array [
+  <ServerSideRender
+    attributes={
+      Object {
+        "datetimeId": 0,
+        "displayOnArchives": false,
+        "eventId": 0,
+        "limit": 10,
+        "showGravatar": true,
+        "status": "RAP",
+        "ticketId": 0,
+      }
+    }
+    block="eventespresso/event-attendees"
+  />,
+  <IfBlockEditSelected(InspectorControlsFill) />,
+]
+`;

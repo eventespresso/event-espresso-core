@@ -8,7 +8,7 @@ import {
 	stringToMoment,
 	allDateTimesAsString,
 } from '../datetime';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 const testMoment = moment();
 const testLocalMoment = moment( testMoment ).local();

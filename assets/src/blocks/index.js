@@ -1,1 +1,1 @@
-import './widgets';
+import './event-attendees';

@@ -145,6 +145,7 @@ class CoreLoader
                 'EventEspresso\core\services\cache\TransientCacheStorage'  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'              => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\session\SessionStartHandler'  => EE_Dependency_Map::load_from_cache,
                 'EE_Encryption'                                            => EE_Dependency_Map::load_from_cache,
             )
         );

@@ -456,6 +456,7 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\cache\TransientCacheStorage'  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'              => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\session\SessionStartHandler'  => EE_Dependency_Map::load_from_cache,
                 'EE_Encryption'                                            => EE_Dependency_Map::load_from_cache,
             ),
             'EE_Cart'                                                                                                     => array(
@@ -778,13 +779,14 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\route_match\RouteMatchSpecificationManager' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'                    => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager' => array(
+            'EventEspresso\core\domain\entities\editor\CoreBlocksAssetManager' => array(
                 'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\entities\editor\blocks\widgets\EventAttendees' => array(
-                'EventEspresso\core\domain\entities\editor\blocks\CoreBlocksAssetManager' => self::load_from_cache,
+            'EventEspresso\core\domain\entities\editor\blocks\EventAttendees' => array(
+                'EventEspresso\core\domain\entities\editor\CoreBlocksAssetManager' => self::load_from_cache,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\entities\shortcodes\EspressoEventAttendees' => self::load_from_cache,
             ),
             'EventEspresso\core\services\route_match\RouteMatchSpecificationDependencyResolver' => array(
@@ -799,6 +801,34 @@ class EE_Dependency_Map
             'EventEspresso\core\services\route_match\RouteMatchSpecificationManager' => array(
                 'EventEspresso\core\services\route_match\RouteMatchSpecificationCollection' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\route_match\RouteMatchSpecificationFactory' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\libraries\rest_api\CalculatedModelFields' => array(
+                'EventEspresso\core\libraries\rest_api\calculations\CalculatedModelFieldsFactory' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\libraries\rest_api\calculations\CalculatedModelFieldsFactory' => array(
+                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\libraries\rest_api\controllers\model\Read' => array(
+                'EventEspresso\core\libraries\rest_api\CalculatedModelFields' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\libraries\rest_api\calculations\Datetime' => array(
+                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
+                'EEM_Registration' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\libraries\rest_api\calculations\Event' => array(
+                'EEM_Event' => EE_Dependency_Map::load_from_cache,
+                'EEM_Registration' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\libraries\rest_api\calculations\Registration' => array(
+                'EEM_Registration' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\core\services\session\SessionStartHandler' => array(
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EE_URL_Validation_Strategy' => array(
+                null,
+                null,
+                'EventEspresso\core\services\validators\URLValidator' => EE_Dependency_Map::load_from_cache
             ),
         );
     }

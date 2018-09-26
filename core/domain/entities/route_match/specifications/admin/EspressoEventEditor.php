@@ -20,7 +20,7 @@ use EventEspresso\core\services\request\RequestInterface;
 class EspressoEventEditor extends MatchAnyRouteSpecification
 {
     /**
-     * AddNewOrEditEventAdminPageRouteMatch constructor.
+     * EspressoEventEditor constructor.
      *
      * @param EspressoEventEditorEdit   $edit_event_route_match
      * @param EspressoEventEditorAddNew $create_event_route_match

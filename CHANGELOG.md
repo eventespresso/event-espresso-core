@@ -17,6 +17,27 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 
 ## [$VID:$]
 
+## [4.9.68.p]
+
+### Fixed
+
+- Fixed the organization settings form so that the license key section is not being displayed on subsites ([674](https://github.com/eventespresso/event-espresso-core/pull/674))
+- Fixed a fatal error when there is an invalid session save handler, like on Pantheon servers ([615](https://github.com/eventespresso/event-espresso-core/pull/615))
+- Fixed Session Start Fatal Errors when known Custom Session Save Handler is in use ([650](https://github.com/eventespresso/event-espresso-core/pull/650))
+- Fixed Session Exception Triggered by Error Notices ([705](https://github.com/eventespresso/event-espresso-core/pull/705))
+
+### Changed
+
+- Improved REST Schema response to include missing fields (including `_calculated_fields`, `_links` and `link`)([680](https://github.com/eventespresso/event-espresso-core/pull/680))
+
+## [4.9.67.p]
+
+### Fixed
+
+- Fixed a fatal error when creating payment logs without passing a payment, transaction or payment method object ([651](https://github.com/eventespresso/event-espresso-core/pull/651))
+
+## [4.9.66.p]
+
 ### Added
 
 - Added support for Indian Rupees currency (INR) to PayPal Espresso and Pro ([593](https://github.com/eventespresso/event-espresso-core/pull/593)) 
@@ -40,6 +61,7 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 - Fixes very slow migration from EE3 when there are deleted events ([629](https://github.com/eventespresso/event-espresso-core/pull/629))
 - Fixed event slug sanitization for accents and unicode characters ([635](https://github.com/eventespresso/event-espresso-core/pull/635))
 - Fixed URL validation when URL was for a site denying access to our HTTP client ([628](https://github.com/eventespresso/event-espresso-core/pull/628))
+- Fixed the 1-click upgrade from Decaf so that a prompt to upgrade is displayed when a correct support key is entered ([647](https://github.com/eventespresso/event-espresso-core/pull/647))
 
 ### Changed
 
