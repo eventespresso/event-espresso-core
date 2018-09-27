@@ -113,6 +113,10 @@ class EventSpacesCalculator
      */
     public function __construct(EE_Event $event, array $datetime_query_params = array())
     {
+        if ($this->debug) {
+            \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 1);
+            \EEH_Debug_Tools::printr((string) $event->ID(), 'For event', __FILE__, __LINE__);
+        }
         $this->event = $event;
         $this->datetime_query_params = $datetime_query_params + array('order_by' => array('DTT_reg_limit' => 'ASC'));
         $this->setHooks();
@@ -140,6 +144,9 @@ class EventSpacesCalculator
      */
     public function clearResults()
     {
+        if ($this->debug) {
+            \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 1);
+        }
         $this->spaces_remaining = null;
         $this->total_spaces_available = null;
     }
@@ -271,6 +278,9 @@ class EventSpacesCalculator
      */
     public function spacesRemaining()
     {
+        if ($this->debug) {
+            \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+        }
         if ($this->spaces_remaining === null) {
             $this->initialize();
             $this->spaces_remaining = $this->calculate();
@@ -292,6 +302,9 @@ class EventSpacesCalculator
      */
     public function totalSpacesAvailable()
     {
+        if ($this->debug) {
+            \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+        }
         if ($this->total_spaces_available === null) {
             $this->initialize();
             $this->total_spaces_available = $this->calculate(false);
