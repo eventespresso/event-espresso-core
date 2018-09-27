@@ -37,6 +37,17 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
             EVENT_ESPRESSO_VERSION,
             true
         );
+        wp_localize_script(
+            'ticket_selector',
+            'eeDTS',
+            array(
+                'checked' => EE_Registry::instance()
+                    ->CFG
+                    ->template_settings
+                    ->EED_Ticket_Selector
+                    ->getDatetimeSelectorChecked()
+            )
+        );
         wp_enqueue_script('checkbox_dropdown_selector');
     }
 
@@ -149,7 +160,7 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
             $html .= ' name="' . $input->html_name() . '[]"';
             $html .= ' id="' . $html_id . '"';
             $html .= ' class="' . $input->html_class() . '-option"';
-            $html .= ' style="' . $input->html_style() . '"';
+            $html .= $input->html_style() ? ' style="' . $input->html_style() . '"' : '';
             $html .= ' value="' . esc_attr($value) . '"';
             $html .= ! empty($input_raw_value) && in_array($value, $input_raw_value, true)
                 ? ' checked="checked"'
