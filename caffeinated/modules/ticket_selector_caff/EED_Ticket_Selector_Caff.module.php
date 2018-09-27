@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  *
  * EED_Ticket_Selector_Caff
@@ -15,7 +18,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
 
 
     /**
-     * @return EED_Ticket_Selector_Caff
+     * @return EED_Module|EED_Ticket_Selector_Caff
      */
     public static function instance()
     {
@@ -74,20 +77,13 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
     }
 
 
-    protected function set_config()
-    {
-        $this->set_config_section('template_settings');
-        $this->set_config_class('EE_Ticket_Selector_Config');
-        $this->set_config_name('EED_Ticket_Selector');
-    }
-
-
     /**
-     *    template_settings_form
-     *
-     * @access    public
      * @static
-     * @return    void
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function template_settings_form()
     {
@@ -128,10 +124,10 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
      */
     public static function _ticket_selector_appearance_settings()
     {
-        if (! \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
+        if (! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
         ) {
-            \EED_Ticket_Selector::instance()->set_config();
-            \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = \EED_Ticket_Selector::instance(
+            EED_Ticket_Selector::instance()->set_config();
+            EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = EED_Ticket_Selector::instance(
             )->config();
         }
         $EE_Ticket_Selector_Config = EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector;
@@ -139,8 +135,6 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
         $show_datetime_selector = $EE_Ticket_Selector_Config->getShowDatetimeSelector();
         // and option for how may datetimes must exist if display is conditional
         $datetime_selector_threshold = $EE_Ticket_Selector_Config->getDatetimeSelectorThreshold();
-        // and option for initial checked state
-        $datetime_selector_checked = $EE_Ticket_Selector_Config->getDatetimeSelectorChecked();
 
         return new EE_Form_Section_Proper(
             array(
@@ -205,7 +199,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                 ),
                                 'default'                 => ! empty($show_datetime_selector)
                                     ? $show_datetime_selector
-                                    : \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR,
+                                    : EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR,
                                 'display_html_label_text' => false,
                             )
                         ),
@@ -226,23 +220,22 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                 'display_html_label_text' => false,
                             )
                         ),
-                        'datetime_selector_checked' => new EE_Select_Input(
-                            $EE_Ticket_Selector_Config->getDatetimeSelectorCheckedOptions(false),
+                        'datetime_selector_max_checked' => new EE_Integer_Input(
                             array(
-                                'html_label_text'         => esc_html__('Date & Time Filter Checked', 'event_espresso'),
+                                'html_label_text'         => esc_html__(
+                                    'Date & Time Filter Max Checked',
+                                    'event_espresso'
+                                ),
                                 'html_help_text'          => sprintf(
                                     esc_html__(
-                                        'Indicates whether only the first datetime option or ALL datetime options for a Date & Time Filter should be checked upon initial display.%1$sOptions include:%1$s &bull; %2$sFirst date & time option checked only%3$s%1$s &nbsp; this option means only the first datetime for a Date & Time Filter should be checked upon initial display.%1$s &bull; %2$sAll date & time options checked%3$s%1$s &nbsp; this option means that ALL datetime options for a Date & Time Filter should be checked upon initial display.',
+                                        'Determines the maximum number of dates that will be checked upon initial loading for a Date and Time Filter.%1$sIf set to zero or left blank, then ALL dates will be checked upon initial loading.',
                                         'event_espresso'
                                     ),
-                                    '<br>',
-                                    '<strong>',
-                                    '</strong>'
+                                    '<br>'
                                 ),
-                                'default'                 => ! empty($datetime_selector_checked)
-                                    ? $datetime_selector_checked
-                                    : \EE_Ticket_Selector_Config::DATETIME_SELECTOR_CHECKED_ALL_DATES,
+                                'default'                 => $EE_Ticket_Selector_Config->getDatetimeSelectorMaxChecked(),
                                 'display_html_label_text' => false,
+                                'min_value'               => 0,
                             )
                         ),
                     )
@@ -259,12 +252,17 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
      * @param EE_Template_Config $CFG
      * @param array              $REQ incoming request
      * @return EE_Template_Config
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function update_template_settings(EE_Template_Config $CFG, $REQ)
     {
         if (! $CFG->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config) {
-            \EED_Ticket_Selector::instance()->set_config();
-            $CFG->EED_Ticket_Selector = \EED_Ticket_Selector::instance()->config();
+            EED_Ticket_Selector::instance()->set_config();
+            $CFG->EED_Ticket_Selector = EED_Ticket_Selector::instance()->config();
         }
         try {
             $ticket_selector_form = EED_Ticket_Selector_Caff::_ticket_selector_settings_form();
@@ -289,8 +287,8 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                     $CFG->EED_Ticket_Selector->setDatetimeSelectorThreshold(
                         $valid_data['appearance_settings']['datetime_selector_threshold']
                     );
-                    $CFG->EED_Ticket_Selector->setDatetimeSelectorChecked(
-                        $valid_data['appearance_settings']['datetime_selector_checked']
+                    $CFG->EED_Ticket_Selector->setDatetimeSelectorMaxChecked(
+                        $valid_data['appearance_settings']['datetime_selector_max_checked']
                     );
                 } else {
                     if ($ticket_selector_form->submission_error_message() !== '') {
@@ -318,9 +316,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
      */
     public static function ticket_price_details(EE_Ticket $ticket, $ticket_price = 0, $display_ticket_price = false)
     {
-        require(
-            str_replace('\\', DS, plugin_dir_path(__FILE__))
-            . 'templates' . DS . 'ticket_selector_price_details.template.php'
-        );
+        require str_replace('\\', DS, plugin_dir_path(__FILE__))
+                . 'templates' . DS . 'ticket_selector_price_details.template.php';
     }
 }

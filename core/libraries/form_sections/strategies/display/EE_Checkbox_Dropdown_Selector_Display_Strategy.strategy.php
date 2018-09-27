@@ -41,11 +41,11 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
             'ticket_selector',
             'eeDTS',
             array(
-                'checked' => EE_Registry::instance()
+                'maxChecked' => EE_Registry::instance()
                     ->CFG
                     ->template_settings
                     ->EED_Ticket_Selector
-                    ->getDatetimeSelectorChecked()
+                    ->getDatetimeSelectorMaxChecked()
             )
         );
         wp_enqueue_script('checkbox_dropdown_selector');
