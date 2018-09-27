@@ -134,18 +134,13 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
             \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = \EED_Ticket_Selector::instance(
             )->config();
         }
+        $EE_Ticket_Selector_Config = EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector;
         // get option for whether to show datetime selector in TS
-        $show_datetime_selector = \EE_Registry::instance()
-            ->CFG
-            ->template_settings
-            ->EED_Ticket_Selector
-            ->getShowDatetimeSelector();
+        $show_datetime_selector = $EE_Ticket_Selector_Config->getShowDatetimeSelector();
         // and option for how may datetimes must exist if display is conditional
-        $datetime_selector_threshold = \EE_Registry::instance()
-            ->CFG
-            ->template_settings
-            ->EED_Ticket_Selector
-            ->getDatetimeSelectorThreshold();
+        $datetime_selector_threshold = $EE_Ticket_Selector_Config->getDatetimeSelectorThreshold();
+        // and option for initial checked state
+        $datetime_selector_checked = $EE_Ticket_Selector_Config->getDatetimeSelectorChecked();
 
         return new EE_Form_Section_Proper(
             array(
@@ -163,12 +158,8 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                     'This lets you choose whether the extra ticket details section is displayed with the ticket selector.',
                                     'event_espresso'
                                 ),
-                                'default'                 => isset(
-                                    EE_Registry::instance(
-                                    )->CFG->template_settings->EED_Ticket_Selector->show_ticket_details
-                                )
-                                    ? EE_Registry::instance(
-                                    )->CFG->template_settings->EED_Ticket_Selector->show_ticket_details
+                                'default'                 => isset($EE_Ticket_Selector_Config->show_ticket_details)
+                                    ? $EE_Ticket_Selector_Config->show_ticket_details
                                     : true,
                                 'display_html_label_text' => false,
                             )
@@ -180,12 +171,8 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                     'This lets you indicate whether information about ticket sales is shown with ticket details in the ticket selector.',
                                     'event_espresso'
                                 ),
-                                'default'                 => isset(
-                                    EE_Registry::instance(
-                                    )->CFG->template_settings->EED_Ticket_Selector->show_ticket_sale_columns
-                                )
-                                    ? EE_Registry::instance(
-                                    )->CFG->template_settings->EED_Ticket_Selector->show_ticket_sale_columns
+                                'default'                 => isset($EE_Ticket_Selector_Config->show_ticket_sale_columns)
+                                    ? $EE_Ticket_Selector_Config->show_ticket_sale_columns
                                     : true,
                                 'display_html_label_text' => false,
                             )
@@ -197,19 +184,14 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                     'Indicate whether to show expired tickets in the ticket selector',
                                     'event_espresso'
                                 ),
-                                'default'                 => isset(
-                                    EE_Registry::instance(
-                                    )->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets
-                                )
-                                    ? EE_Registry::instance(
-                                    )->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets
+                                'default'                 => isset($EE_Ticket_Selector_Config->show_expired_tickets)
+                                    ? $EE_Ticket_Selector_Config->show_expired_tickets
                                     : true,
                                 'display_html_label_text' => false,
                             )
                         ),
                         'show_datetime_selector'      => new EE_Select_Input(
-                            \EE_Registry::instance(
-                            )->CFG->template_settings->EED_Ticket_Selector->getShowDatetimeSelectorOptions(false),
+                            $EE_Ticket_Selector_Config->getShowDatetimeSelectorOptions(false),
                             array(
                                 'html_label_text'         => esc_html__('Show Date & Time Filter?', 'event_espresso'),
                                 'html_help_text'          => sprintf(
@@ -241,6 +223,25 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                 'default'                 => ! empty($datetime_selector_threshold)
                                     ? $datetime_selector_threshold
                                     : 3,
+                                'display_html_label_text' => false,
+                            )
+                        ),
+                        'datetime_selector_checked' => new EE_Select_Input(
+                            $EE_Ticket_Selector_Config->getDatetimeSelectorCheckedOptions(false),
+                            array(
+                                'html_label_text'         => esc_html__('Date & Time Filter Checked', 'event_espresso'),
+                                'html_help_text'          => sprintf(
+                                    esc_html__(
+                                        'Indicates whether only the first datetime option or ALL datetime options for a Date & Time Filter should be checked upon initial display.%1$sOptions include:%1$s &bull; %2$sFirst date & time option checked only%3$s%1$s &nbsp; this option means only the first datetime for a Date & Time Filter should be checked upon initial display.%1$s &bull; %2$sAll date & time options checked%3$s%1$s &nbsp; this option means that ALL datetime options for a Date & Time Filter should be checked upon initial display.',
+                                        'event_espresso'
+                                    ),
+                                    '<br>',
+                                    '<strong>',
+                                    '</strong>'
+                                ),
+                                'default'                 => ! empty($datetime_selector_checked)
+                                    ? $datetime_selector_checked
+                                    : \EE_Ticket_Selector_Config::DATETIME_SELECTOR_CHECKED_ALL_DATES,
                                 'display_html_label_text' => false,
                             )
                         ),
@@ -287,6 +288,9 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                     );
                     $CFG->EED_Ticket_Selector->setDatetimeSelectorThreshold(
                         $valid_data['appearance_settings']['datetime_selector_threshold']
+                    );
+                    $CFG->EED_Ticket_Selector->setDatetimeSelectorChecked(
+                        $valid_data['appearance_settings']['datetime_selector_checked']
                     );
                 } else {
                     if ($ticket_selector_form->submission_error_message() !== '') {
