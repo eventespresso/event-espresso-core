@@ -2,10 +2,10 @@ jQuery(document).ready(function ($) {
     // collection of ALL datetime selectors for ALL Events on the page
     var $datetime_options = $('.datetime-selector-option'),
         $ticket_selector_submit_btn = $('.ticket-selector-submit-btn');
-    // reset by unchecking everything, and disabling the submit button
-    $.each($datetime_options, function () {
-        $(this).prop('checked', true);
-    });
+	// reset by unchecking everything
+	$.each( $datetime_options, function() {
+		$( this ).prop( 'checked', false );
+	} );
     // add error notices to the DOM
     $ticket_selector_submit_btn.before(
         '<span class="ticket-selector-disabled-submit-btn-msg important-notice">'+ eei18n.please_select_date_filter_notice+'</span>'
@@ -80,6 +80,28 @@ jQuery(document).ready(function ($) {
 			$(this).prev('.ticket-selector-disabled-submit-btn-msg').stop().fadeIn(100).delay(6000).fadeOut();
 		}
 	});
+	// console.log( 'eeDTS', eeDTS  );
+	var initialState = typeof eeDTS !== 'undefined' && eeDTS.checked ?
+		eeDTS.checked :
+		'all_datetimes';
+	var dtsName = '';
+	$.each( $datetime_options, function() {
+		$( this ).prop('checked', false);
+		if ( initialState === 'first_datetime_only' ) {
+			var thisName = $( this ).attr( 'name' );
+			// checkbox inputs in a group have the same name
+			// so when the name changes, click the option
+			// which will select the first date
+			if ( thisName !== dtsName ) {
+				$( this ).click();
+				// $( this ).prop( 'checked', true );
+				dtsName = thisName;
+			}
+		} else {
+			$( this ).click();
+			// $( this ).prop( 'checked', true );
 
+		}
+	} );
 
 });
