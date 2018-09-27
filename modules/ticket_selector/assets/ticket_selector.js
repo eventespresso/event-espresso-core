@@ -80,28 +80,23 @@ jQuery(document).ready(function ($) {
 			$(this).prev('.ticket-selector-disabled-submit-btn-msg').stop().fadeIn(100).delay(6000).fadeOut();
 		}
 	});
-	// console.log( 'eeDTS', eeDTS  );
-	var initialState = typeof eeDTS !== 'undefined' && eeDTS.checked ?
-		eeDTS.checked :
-		'all_datetimes';
+
+	var maxChecked = typeof eeDTS !== 'undefined' && eeDTS.maxChecked ?
+		eeDTS.maxChecked :
+		10;
+	var counter = 0;
 	var dtsName = '';
 	$.each( $datetime_options, function() {
-		$( this ).prop('checked', false);
-		if ( initialState === 'first_datetime_only' ) {
-			var thisName = $( this ).attr( 'name' );
-			// checkbox inputs in a group have the same name
-			// so when the name changes, click the option
-			// which will select the first date
-			if ( thisName !== dtsName ) {
-				$( this ).click();
-				// $( this ).prop( 'checked', true );
-				dtsName = thisName;
-			}
-		} else {
-			$( this ).click();
-			// $( this ).prop( 'checked', true );
-
+		var thisName = $( this ).attr( 'name' );
+		// reset counter when input changes, which is tracked by name
+		counter = thisName !== dtsName ? 1 : counter + 1;
+		if ( thisName !== dtsName ) {
+			dtsName = thisName;
 		}
+		if ( maxChecked > 0 && counter > maxChecked ) {
+			return;
+		}
+		$( this ).click();
 	} );
 
 });
