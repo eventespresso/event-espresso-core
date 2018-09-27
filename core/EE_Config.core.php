@@ -2980,6 +2980,18 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
     const MAYBE_SHOW_DATETIME_SELECTOR = 'maybe_datetime_selector';
 
     /**
+     * constant to indicate that only the first datetime option for
+     * a datetime selector should be checked upon initial display
+     */
+    const DATETIME_SELECTOR_CHECKED_FIRST_ONLY = 'first_datetime_only';
+
+    /**
+     * constant to indicate that ALL datetime options for
+     * a datetime selector should be checked upon initial display
+     */
+    const DATETIME_SELECTOR_CHECKED_ALL_DATES = 'all_datetimes';
+
+    /**
      * @var boolean $show_ticket_sale_columns
      */
     public $show_ticket_sale_columns;
@@ -3010,6 +3022,13 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
      */
     private $datetime_selector_threshold = 3;
 
+    /**
+     * determines initial "checked" state for datetime selector inputs
+     *
+     * @var string $datetime_selector_checked
+     */
+    private $datetime_selector_checked = 'all_datetimes';
+
 
     /**
      *    class constructor
@@ -3021,6 +3040,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
         $this->show_expired_tickets = true;
         $this->show_datetime_selector = \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
         $this->datetime_selector_threshold = 3;
+        $this->datetime_selector_checked = EE_Ticket_Selector_Config::DATETIME_SELECTOR_CHECKED_ALL_DATES;
     }
 
 
@@ -3108,6 +3128,55 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
         $datetime_selector_threshold = absint($datetime_selector_threshold);
         $this->datetime_selector_threshold = $datetime_selector_threshold ? $datetime_selector_threshold : 3;
     }
+
+
+    /**
+     * @return string
+     */
+    public function getDatetimeSelectorChecked()
+    {
+        return $this->datetime_selector_checked;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getDatetimeSelectorCheckedOptions($keys_only = true)
+    {
+        return $keys_only
+            ? array(
+                \EE_Ticket_Selector_Config::DATETIME_SELECTOR_CHECKED_FIRST_ONLY,
+                \EE_Ticket_Selector_Config::DATETIME_SELECTOR_CHECKED_ALL_DATES,
+            )
+            : array(
+                \EE_Ticket_Selector_Config::DATETIME_SELECTOR_CHECKED_FIRST_ONLY => esc_html__(
+                    'First date & time option checked only',
+                    'event_espresso'
+                ),
+                \EE_Ticket_Selector_Config::DATETIME_SELECTOR_CHECKED_ALL_DATES  => esc_html__(
+                    'All date & time options checked',
+                    'event_espresso'
+                ),
+            );
+    }
+
+
+    /**
+     * @param string $datetime_selector_checked
+     */
+    public function setDatetimeSelectorChecked($datetime_selector_checked)
+    {
+        $this->datetime_selector_checked = in_array(
+            $datetime_selector_checked,
+            $this->getDatetimeSelectorCheckedOptions(),
+            true
+        )
+            ? $datetime_selector_checked
+            : \EE_Ticket_Selector_Config::DATETIME_SELECTOR_CHECKED_ALL_DATES;
+    }
+
+
 }
 
 /**
