@@ -127,8 +127,8 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
         if (! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
         ) {
             EED_Ticket_Selector::instance()->set_config();
-            EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = EED_Ticket_Selector::instance(
-            )->config();
+            EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = EED_Ticket_Selector::instance()
+                                                                                                      ->config();
         }
         $EE_Ticket_Selector_Config = EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector;
         // get option for whether to show datetime selector in TS
@@ -147,7 +147,10 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                     array(
                         'show_ticket_details'         => new EE_Yes_No_Input(
                             array(
-                                'html_label_text'         => esc_html__('Show Ticket Details?', 'event_espresso'),
+                                'html_label_text'         => esc_html__(
+                                    'Show Ticket Details?',
+                                    'event_espresso'
+                                ),
                                 'html_help_text'          => esc_html__(
                                     'This lets you choose whether the extra ticket details section is displayed with the ticket selector.',
                                     'event_espresso'
@@ -160,7 +163,10 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                         ),
                         'show_ticket_sale_columns'    => new EE_Yes_No_Input(
                             array(
-                                'html_label_text'         => esc_html__('Show Ticket Sale Info?', 'event_espresso'),
+                                'html_label_text'         => esc_html__(
+                                    'Show Ticket Sale Info?',
+                                    'event_espresso'
+                                ),
                                 'html_help_text'          => esc_html__(
                                     'This lets you indicate whether information about ticket sales is shown with ticket details in the ticket selector.',
                                     'event_espresso'
@@ -173,7 +179,10 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                         ),
                         'show_expired_tickets'        => new EE_Yes_No_Input(
                             array(
-                                'html_label_text'         => esc_html__('Show Expired Tickets?', 'event_espresso'),
+                                'html_label_text'         => esc_html__(
+                                    'Show Expired Tickets?',
+                                    'event_espresso'
+                                ),
                                 'html_help_text'          => esc_html__(
                                     'Indicate whether to show expired tickets in the ticket selector',
                                     'event_espresso'
@@ -187,7 +196,10 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                         'show_datetime_selector'      => new EE_Select_Input(
                             $EE_Ticket_Selector_Config->getShowDatetimeSelectorOptions(false),
                             array(
-                                'html_label_text'         => esc_html__('Show Date & Time Filter?', 'event_espresso'),
+                                'html_label_text'         => esc_html__(
+                                    'Show Date & Time Filter?',
+                                    'event_espresso'
+                                ),
                                 'html_help_text'          => sprintf(
                                     esc_html__(
                                         'Indicates whether or not to display a dropdown select box above each ticket selector that displays dates and times for the available tickets. Ticket options can be unselected, which removes (hides) them from the list of tickets being displayed.%1$sOptions include:%1$s &bull; %2$sdo not show date & time filter%3$s%1$s &nbsp; this option will NEVER display a date filter, regardless of how many dates exist.%1$s &bull; %2$smaybe show date & time filter%3$s%1$s &nbsp; this option will conditionally display the date filter when the number of dates for the event matches the value set for "Date Filter Threshold".',
