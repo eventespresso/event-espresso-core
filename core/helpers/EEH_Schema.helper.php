@@ -60,7 +60,7 @@ class EEH_Schema
                 EE_Registry::instance()->CFG->currency->dec_mrk,
                 EE_Registry::instance()->CFG->currency->thsnds
             );
-            switch($ticket->ticket_status()) {
+            switch ($ticket->ticket_status()) {
                 case 'TKO':
                     $availability = 'InStock';
                     break;
