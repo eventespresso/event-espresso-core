@@ -204,7 +204,7 @@ class RegistrationsReport extends JobHandlerFile
 
         return new JobStepResponse(
             $job_parameters,
-            sprintf(__('Wrote %1$s rows to report CSV file...', 'event_espresso'), count($csv_data)),
+            sprintf(__('Wrote %1$s rows to report CSV file...', 'event_espresso'), count((array) $csv_data)),
             $extra_response_data
         );
     }

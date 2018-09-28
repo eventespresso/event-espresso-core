@@ -13,7 +13,7 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.68.p
  *
  */
 class CalculatedModelFieldsFactory
@@ -31,7 +31,7 @@ class CalculatedModelFieldsFactory
 
     /**
      * Creates the calculator class that corresponds to that particular model
-     * @since $VID:$
+     * @since 4.9.68.p
      * @param string $model_name
      * @return Base
      * @throws UnexpectedEntityException
