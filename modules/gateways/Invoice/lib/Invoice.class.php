@@ -278,8 +278,10 @@ class Invoice
             $options = new Dompdf\Options();
             $options->set('isRemoteEnabled', true);
             $options->set('isJavascriptEnabled', false);
-            $options->setFontDir(DOMPDF_FONT_DIR);
-            $options->setFontCache(DOMPDF_FONT_DIR);
+            if (defined('DOMPDF_FONT_DIR')) {
+                $options->setFontDir(DOMPDF_FONT_DIR);
+                $options->setFontCache(DOMPDF_FONT_DIR);
+            }
             $dompdf = new Dompdf\Dompdf($options);
             $dompdf->loadHtml($content);
             $dompdf->render();
