@@ -1,4 +1,8 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  * class EEM_Term
  *
@@ -132,6 +136,64 @@ class EEM_Term extends EEM_Base
                 $venue_tags = $this->get_all_venue_post_tags();
                 return array_merge($event_tags, $venue_tags);
         }
+    }
+
+
+    /**
+     * returns an EE_Term object for the given tag
+     * if it has been utilized by any EE_Events or EE_Venues
+     *
+     * @param string $tag
+     * @return EE_Term|null
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function get_post_tag_for_event_or_venue($tag)
+    {
+        $post_tag_results = $this->get_all_wpdb_results(
+            array(
+                array(
+                    'slug' => $tag,
+                    'Term_Taxonomy.taxonomy' => 'post_tag',
+                    'OR' => array(
+                        'Term_Taxonomy.Venue.post_type' => 'espresso_venues',
+                        'Term_Taxonomy.Event.post_type' => 'espresso_events',
+                    ),
+                ),
+                'default_where_conditions' => 'none',
+                'extra_selects' => array(
+                    'event_post_type' => array('Term_Taxonomy___Event_CPT.post_type', '%s'),
+                    'venue_post_type' => array('Term_Taxonomy___Venue_CPT.post_type', '%s')
+                ),
+                'group_by' => array(
+                    'event_post_type',
+                    'venue_post_type',
+                ),
+                'limit' => 2
+            )
+        );
+
+        $post_types = array();
+        foreach ((array) $post_tag_results as $row) {
+            if ($row['event_post_type'] === 'espresso_events') {
+                $post_types[] = EEM_Event::instance()->post_type();
+            } elseif ($row['venue_post_type'] === 'espresso_venues') {
+                $post_types[] = EEM_Venue::instance()->post_type();
+            }
+        }
+        $post_tag_row = reset($post_tag_results);
+        $post_tag = $this->instantiate_class_from_array_or_object($post_tag_row);
+        if (! $post_tag instanceof EE_Term) {
+            return null;
+        }
+
+        if ($post_tag->post_type === null) {
+            $post_tag->post_type = array();
+        }
+        $post_tag->post_type = array_merge($post_tag->post_type, array_unique($post_types));
+        return $post_tag;
     }
 
 
