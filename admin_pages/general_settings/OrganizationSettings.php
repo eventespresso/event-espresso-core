@@ -102,19 +102,6 @@ class OrganizationSettings extends FormHandler
                 'html_id'         => 'organization_settings',
                 'layout_strategy' => new EE_Admin_Two_Column_Layout(),
                 'subsections'     => array(
-                    'site_license_key_hdr' => new EE_Form_Section_HTML(
-                        EEH_HTML::h2(
-                            esc_html__('Your Event Espresso License Key', 'event_espresso')
-                            . ' '
-                            . EEH_HTML::span(
-                                EEH_Template::get_help_tab_link('site_license_key_info'),
-                                'help_tour_activation'
-                            ),
-                            '',
-                            'site-license-key-hdr'
-                        )
-                    ),
-                    'site_license_key'     => $this->getSiteLicenseKeyField(),
                     'contact_information_hdr'        => new EE_Form_Section_HTML(
                         EEH_HTML::h2(
                             esc_html__('Contact Information', 'event_espresso')
@@ -325,7 +312,24 @@ class OrganizationSettings extends FormHandler
         if (is_main_site()) {
             $form->add_subsections(
                 array(
-                    'uxip_optin_hdr'  => new EE_Form_Section_HTML(
+                    'site_license_key_hdr' => new EE_Form_Section_HTML(
+                        EEH_HTML::h2(
+                            esc_html__('Your Event Espresso License Key', 'event_espresso')
+                            . ' '
+                            . EEH_HTML::span(
+                                EEH_Template::get_help_tab_link('site_license_key_info'),
+                                'help_tour_activation'
+                            ),
+                            '',
+                            'site-license-key-hdr'
+                        )
+                    ),
+                    'site_license_key' => $this->getSiteLicenseKeyField()
+                )
+            );
+            $form->add_subsections(
+                array(
+                    'uxip_optin_hdr' => new EE_Form_Section_HTML(
                         $this->uxipOptinText()
                     ),
                     'ueip_optin' => new EE_Checkbox_Multi_Input(
@@ -392,8 +396,8 @@ class OrganizationSettings extends FormHandler
         }
 
         if (is_main_site()) {
-            $this->network_core_config->site_license_key = isset($form_data['site_license_key'])
-                ? sanitize_text_field($form_data['site_license_key'])
+            $this->network_core_config->site_license_key = isset($form_data['ee_site_license_key'])
+                ? sanitize_text_field($form_data['ee_site_license_key'])
                 : $this->network_core_config->site_license_key;
         }
         $this->organization_config->name = isset($form_data['organization_name'])
@@ -495,7 +499,7 @@ class OrganizationSettings extends FormHandler
     {
         $text_input = new EE_Text_Input(
             array(
-                'html_name' => 'site_license_key',
+                'html_name' => 'ee_site_license_key',
                 'html_id' => 'site_license_key',
                 'html_label_text' => esc_html__('Support License Key', 'event_espresso'),
                 /** phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersText */

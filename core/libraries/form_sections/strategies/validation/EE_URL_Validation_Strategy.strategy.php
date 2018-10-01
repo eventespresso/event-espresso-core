@@ -1,4 +1,9 @@
 <?php
+
+use EventEspresso\core\services\loaders\CoreLoader;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\validators\URLValidator;
+
 /**
  * Class EE_URL_Validation_Strategy
  *
@@ -12,13 +17,36 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base
 {
 
     /**
-     * @param null $validation_error_message
+     * @var @boolean whether we should check if the file exists or not
      */
-    public function __construct($validation_error_message = null)
-    {
+    protected $check_file_exists;
+
+    /**
+     * @var URLValidator
+     */
+    protected $url_validator;
+
+    /**
+     * @param null $validation_error_message
+     * @param boolean $check_file_exists
+     * @param URLValidator $url_validator
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
+    public function __construct(
+        $validation_error_message = null,
+        $check_file_exists = false,
+        URLValidator $url_validator = null
+    ) {
+        if (! $url_validator instanceof URLValidator) {
+            $url_validator = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\validators\URLValidator');
+        }
+        $this->url_validator = $url_validator;
         if (! $validation_error_message) {
             $validation_error_message = __("Please enter a valid URL. Eg https://eventespresso.com", "event_espresso");
         }
+        $this->check_file_exists = $check_file_exists;
         parent::__construct($validation_error_message);
     }
 
@@ -34,9 +62,9 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base
     public function validate($normalized_value)
     {
         if ($normalized_value) {
-            if (filter_var($normalized_value, FILTER_VALIDATE_URL) === false) {
+            if (! $this->url_validator->isValid($normalized_value)) {
                 throw new EE_Validation_Error($this->get_validation_error_message(), 'invalid_url');
-            } else {
+            } elseif (apply_filters('FHEE__EE_URL_Validation_Strategy__validate__check_remote_file_exists', $this->check_file_exists, $this->_input)) {
                 if (! EEH_URL::remote_file_exists(
                     $normalized_value,
                     array(

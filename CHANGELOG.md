@@ -17,11 +17,52 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 
 ## [$VID:$]
 
+## [4.9.68.p]
+
+### Fixed
+
+- Fixed the organization settings form so that the license key section is not being displayed on subsites ([674](https://github.com/eventespresso/event-espresso-core/pull/674))
+- Fixed a fatal error when there is an invalid session save handler, like on Pantheon servers ([615](https://github.com/eventespresso/event-espresso-core/pull/615))
+- Fixed Session Start Fatal Errors when known Custom Session Save Handler is in use ([650](https://github.com/eventespresso/event-espresso-core/pull/650))
+- Fixed Session Exception Triggered by Error Notices ([705](https://github.com/eventespresso/event-espresso-core/pull/705))
+- Fixed memory timeout for sites with a brazillion tags ([708](https://github.com/eventespresso/event-espresso-core/pull/708))
+
+### Changed
+
+- Improved REST Schema response to include missing fields (including `_calculated_fields`, `_links` and `link`)([680](https://github.com/eventespresso/event-espresso-core/pull/680))
+
+## [4.9.67.p]
+
+### Fixed
+
+- Fixed a fatal error when creating payment logs without passing a payment, transaction or payment method object ([651](https://github.com/eventespresso/event-espresso-core/pull/651))
+
+## [4.9.66.p]
+
+### Added
+
+- Added support for Indian Rupees currency (INR) to PayPal Espresso and Pro ([593](https://github.com/eventespresso/event-espresso-core/pull/593)) 
+- Added BUTTONSOURCE on all PayPal Express API calls. ([627](https://github.com/eventespresso/event-espresso-core/pull/627))
+- Added foreign keys to REST API responses ([639](https://github.com/eventespresso/event-espresso-core/pull/639))
+- Added `format:money` to money field schemas in json-schema ([644](https://github.com/eventespresso/event-espresso-core/pull/644))
+
 ### Fixed
 
 - Fixed a fatal error while using many page builder plugins resulting from template tags only being loaded on the front-end([600](https://github.com/eventespresso/event-espresso-core/pull/600))
 - Fixed an error when migrating from EE3 from attendee email index being too big ([611](https://github.com/eventespresso/event-espresso-core/pull/611))
 - Fixed venue description on event page so line breaks are shown properly ([612](https://github.com/eventespresso/event-espresso-core/pull/612))
+- Fixed `espresso_event_tickets_available()` so it echoes out the tickets when default arguments are provided ([619](https://github.com/eventespresso/event-espresso-core/pull/619))
+- Fixed caching loader identifier ([610](https://github.com/eventespresso/event-espresso-core/pull/610))
+- Fixed Authorize.net AIM so payment currency is sent ([591](https://github.com/eventespresso/event-espresso-core/pull/591))
+- Fixed DuplicateCollectionIdentifierException errors when converting old PersistentAdminNotice Fixes ([505](https://github.com/eventespresso/event-espresso-core/pull/505))
+- Fixed error when trying to send messages in full maintenance mode ([622](https://github.com/eventespresso/event-espresso-core/pull/622))
+- Fixes a syntax issue inside `EE_Config::register_ee_widget()` ([608](https://github.com/eventespresso/event-espresso-core/pull/608))
+- Namespaced `site-license-key` in requests (to `ee-site-license-key`) to hopefully fix issue some users see with multiple pue license key requests happening. ([633](https://github.com/eventespresso/event-espresso-core/pull/633))
+- Fixed translated event taxonomy slugs so they stay valid ([641](https://github.com/eventespresso/event-espresso-core/pull/641))
+- Fixes very slow migration from EE3 when there are deleted events ([629](https://github.com/eventespresso/event-espresso-core/pull/629))
+- Fixed event slug sanitization for accents and unicode characters ([635](https://github.com/eventespresso/event-espresso-core/pull/635))
+- Fixed URL validation when URL was for a site denying access to our HTTP client ([628](https://github.com/eventespresso/event-espresso-core/pull/628))
+- Fixed the 1-click upgrade from Decaf so that a prompt to upgrade is displayed when a correct support key is entered ([647](https://github.com/eventespresso/event-espresso-core/pull/647))
 
 ### Changed
 

@@ -5,85 +5,55 @@
  * 3.1 Attendee table definition:
  * delimiter $$
 
-CREATE TABLE `wp_events_detail` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `event_code` varchar(26) DEFAULT '0',
-  `event_name` varchar(100) DEFAULT NULL,
-  `event_desc` text,
-  `display_desc` varchar(1) DEFAULT 'Y',
-  `display_reg_form` varchar(1) DEFAULT 'Y',
-  `event_identifier` varchar(75) DEFAULT NULL,
-  `start_date` varchar(15) DEFAULT NULL,
-  `end_date` varchar(15) DEFAULT NULL,
-  `registration_start` varchar(15) DEFAULT NULL,
-  `registration_end` varchar(15) DEFAULT NULL,
-  `registration_startT` varchar(15) DEFAULT NULL,
-  `registration_endT` varchar(15) DEFAULT NULL,
-  `visible_on` varchar(15) DEFAULT NULL,
-  `address` text,
-  `address2` text,
-  `city` varchar(100) DEFAULT NULL,
-  `state` varchar(100) DEFAULT NULL,
-  `zip` varchar(11) DEFAULT NULL,
-  `phone` varchar(15) DEFAULT NULL,
-  `venue_title` varchar(250) DEFAULT NULL,
-  `venue_url` varchar(250) DEFAULT NULL,
-  `venue_image` text,
-  `venue_phone` varchar(15) DEFAULT NULL,
-  `virtual_url` varchar(250) DEFAULT NULL,
-  `virtual_phone` varchar(15) DEFAULT NULL,
-  `reg_limit` varchar(25) DEFAULT '999999',
-  `allow_multiple` varchar(15) DEFAULT 'N',
-  `additional_limit` int(10) DEFAULT '5',
-  `send_mail` varchar(2) DEFAULT 'Y',
-  `is_active` varchar(1) DEFAULT 'Y',
-  `event_status` varchar(2) DEFAULT 'A',
-  `conf_mail` text,
-  `use_coupon_code` varchar(1) DEFAULT 'N',
-  `use_groupon_code` varchar(1) DEFAULT 'N',
-  `category_id` text,
-  `coupon_id` text,
-  `tax_percentage` float DEFAULT NULL,
-  `tax_mode` int(11) DEFAULT NULL,
-  `member_only` varchar(1) DEFAULT NULL,
-  `post_id` int(11) DEFAULT NULL,
-  `post_type` varchar(50) DEFAULT NULL,
-  `country` varchar(200) DEFAULT NULL,
-  `externalURL` varchar(255) DEFAULT NULL,
-  `early_disc` varchar(10) DEFAULT NULL,
-  `early_disc_date` varchar(15) DEFAULT NULL,
-  `early_disc_percentage` varchar(1) DEFAULT 'N',
-  `question_groups` longtext,
-  `item_groups` longtext,
-  `event_type` varchar(250) DEFAULT NULL,
-  `allow_overflow` varchar(1) DEFAULT 'N',
-  `overflow_event_id` int(10) DEFAULT '0',
-  `recurrence_id` int(11) DEFAULT '0',
-  `email_id` int(11) DEFAULT '0',
-  `alt_email` text,
-  `event_meta` longtext,
-  `wp_user` int(22) DEFAULT '1',
-  `require_pre_approval` int(11) DEFAULT '0',
-  `timezone_string` varchar(250) DEFAULT NULL,
-  `likes` int(22) DEFAULT NULL,
-  `ticket_id` int(22) DEFAULT '0',
-  `submitted` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `event_code` (`event_code`),
-  KEY `wp_user` (`wp_user`),
-  KEY `event_name` (`event_name`),
-  KEY `city` (`city`),
-  KEY `state` (`state`),
-  KEY `start_date` (`start_date`),
-  KEY `end_date` (`end_date`),
-  KEY `registration_start` (`registration_start`),
-  KEY `registration_end` (`registration_end`),
-  KEY `reg_limit` (`reg_limit`),
-  KEY `event_status` (`event_status`),
-  KEY `recurrence_id` (`recurrence_id`),
-  KEY `submitted` (`submitted`),
-  KEY `likes` (`likes`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
+CREATE TABLE `wp_events_attendee` (
+`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+`registration_id` VARCHAR(23) NULL DEFAULT '0',
+`is_primary` TINYINT(1) NULL DEFAULT '0',
+`lname` VARCHAR(45) NULL DEFAULT NULL,
+`fname` VARCHAR(45) NULL DEFAULT NULL,
+`address` VARCHAR(255) NULL DEFAULT NULL,
+`address2` VARCHAR(255) NULL DEFAULT NULL,
+`city` VARCHAR(45) NULL DEFAULT NULL,
+`state` VARCHAR(45) NULL DEFAULT NULL,
+`zip` VARCHAR(45) NULL DEFAULT NULL,
+`country_id` VARCHAR(128) NULL DEFAULT NULL,
+`organization_name` VARCHAR(50) NULL DEFAULT NULL,
+`vat_number` VARCHAR(20) NULL DEFAULT NULL,
+`email` VARCHAR(255) NULL DEFAULT NULL,
+`phone` VARCHAR(45) NULL DEFAULT NULL,
+`date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+`price_option` VARCHAR(150) NULL DEFAULT NULL,
+`orig_price` DECIMAL(20,2) NULL DEFAULT '0.00',
+`final_price` DECIMAL(20,2) NULL DEFAULT '0.00',
+`quantity` INT(11) NULL DEFAULT '0',
+`total_cost` DECIMAL(20,2) NULL DEFAULT '0.00',
+`amount_pd` DECIMAL(20,2) NULL DEFAULT '0.00',
+`coupon_code` VARCHAR(45) NULL DEFAULT NULL,
+`payment` VARCHAR(45) NULL DEFAULT NULL,
+`payment_status` VARCHAR(45) NULL DEFAULT 'Incomplete',
+`txn_type` VARCHAR(45) NULL DEFAULT NULL,
+`txn_id` VARCHAR(250) NULL DEFAULT NULL,
+`payment_date` VARCHAR(45) NULL DEFAULT NULL,
+`event_id` VARCHAR(45) NULL DEFAULT NULL,
+`event_time` VARCHAR(15) NULL DEFAULT NULL,
+`end_time` VARCHAR(15) NULL DEFAULT NULL,
+`start_date` VARCHAR(45) NULL DEFAULT NULL,
+`end_date` VARCHAR(45) NULL DEFAULT NULL,
+`attendee_session` VARCHAR(250) NULL DEFAULT NULL,
+`transaction_details` TEXT NULL,
+`pre_approve` INT(11) NULL DEFAULT '1',
+`checked_in` INT(1) NULL DEFAULT '0',
+`checked_in_quantity` INT(11) NULL DEFAULT '0',
+`hashSalt` VARCHAR(250) NULL DEFAULT NULL,
+PRIMARY KEY (`id`),
+INDEX `registration_id` (`registration_id`),
+INDEX `event_id` (`event_id`)
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=3
+;
+
 
 
 
@@ -239,8 +209,10 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table
         global $wpdb;
         $this->_pretty_name = __("Attendees", "event_espresso");
         $this->_old_table = $wpdb->prefix."events_attendee";
+        $this->_extra_where_sql = 'AS att
+            INNER JOIN ' . $wpdb->prefix . 'events_detail AS e ON att.event_id=e.id
+            WHERE e.event_status!="D"';
         $this->_old_mer_table = $wpdb->prefix."events_multi_event_registration_id_group";
-        ;
         $this->_new_attendee_cpt_table = $wpdb->posts;
         $this->_new_attendee_meta_table = $wpdb->prefix."esp_attendee_meta";
         $this->_new_reg_table = $wpdb->prefix."esp_registration";

@@ -470,7 +470,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
         $this->_session = $this->_transaction instanceof EE_Transaction
             ? $this->_transaction->get('TXN_session_data')
             : null;
-        $this->_transaction->verify_abandoned_transaction_status();
+        if ($this->_transaction instanceof EE_Transaction) {
+            $this->_transaction->verify_abandoned_transaction_status();
+        }
 
         if (! $this->_transaction instanceof EE_Transaction) {
             $error_msg = sprintf(
@@ -685,6 +687,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
         $this->_set_transaction_object();
 
+        if (! $this->_transaction instanceof EE_Transaction) {
+            return;
+        }
         $primary_registration = $this->_transaction->primary_registration();
         $attendee = $primary_registration instanceof EE_Registration
             ? $primary_registration->attendee()
@@ -845,6 +850,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
         $this->_set_transaction_object();
 
+        if (! $this->_transaction instanceof EE_Transaction) {
+            return;
+        }
         add_meta_box(
             'edit-txn-details-mbox',
             esc_html__('Transaction Details', 'event_espresso'),
