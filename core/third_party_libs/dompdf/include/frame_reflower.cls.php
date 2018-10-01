@@ -31,7 +31,7 @@ abstract class Frame_Reflower {
    * @var array
    */
   protected $_min_max_cache;
-  
+
   function __construct(Frame $frame) {
     $this->_frame = $frame;
     $this->_min_max_cache = null;
@@ -49,7 +49,7 @@ abstract class Frame_Reflower {
     $frame = $this->_frame;
     $cb = $frame->get_containing_block();
     $style = $frame->get_style();
-    
+
     if ( !$frame->is_in_flow() ) {
       return;
     }
@@ -75,14 +75,14 @@ abstract class Frame_Reflower {
         if ( $n->is_block() ) {
           break;
         }
-        
+
         if ( !$n->get_first_child() ) {
           $n = null;
           break;
         }
       }
     }
-    
+
     if ( $n ) {
       $n_style = $n->get_style();
       $b = max($b, $n_style->length_in_pt($n_style->margin_top, $cb["h"]));
@@ -97,7 +97,7 @@ abstract class Frame_Reflower {
         if ( $f->is_block() ) {
           break;
         }
-        
+
         if ( !$f->get_first_child() ) {
           $f = null;
           break;
@@ -128,7 +128,7 @@ abstract class Frame_Reflower {
     if ( !is_null($this->_min_max_cache) ) {
       return $this->_min_max_cache;
     }
-    
+
     $style = $this->_frame->get_style();
 
     // Account for margins & padding
@@ -206,7 +206,7 @@ abstract class Frame_Reflower {
 
   /**
    * Parses a CSS string containing quotes and escaped hex characters
-   * 
+   *
    * @param $string string The CSS string to parse
    * @param $single_trim
    * @return string
@@ -219,49 +219,48 @@ abstract class Frame_Reflower {
     else {
       $string = trim($string, "'\"");
     }
-    
+
     $string = str_replace(array("\\\n",'\\"',"\\'"),
                           array("",'"',"'"), $string);
 
     // Convert escaped hex characters into ascii characters (e.g. \A => newline)
     $string = preg_replace_callback("/\\\\([0-9a-fA-F]{0,6})(\s)?(?(2)|(?=[^0-9a-fA-F]))/",
-                                    create_function('$matches',
-                                                    'return chr(hexdec($matches[1]));'),
+                                    function ($matches) { return chr(hexdec($matches[1])); },
                                     $string);
     return $string;
   }
-  
+
   /**
    * Parses a CSS "quotes" property
-   * 
+   *
    * @return array An array of pairs of quotes
    */
   protected function _parse_quotes() {
-    
+
     // Matches quote types
     $re = "/(\'[^\']*\')|(\"[^\"]*\")/";
-    
+
     $quotes = $this->_frame->get_style()->quotes;
-      
+
     // split on spaces, except within quotes
     if (!preg_match_all($re, "$quotes", $matches, PREG_SET_ORDER))
       return;
-      
+
     $quotes_array = array();
     foreach($matches as &$_quote){
       $quotes_array[] = $this->_parse_string($_quote[0], true);
     }
-    
+
     if ( empty($quotes_array) ) {
       $quotes_array = array('"', '"');
     }
-    
+
     return array_chunk($quotes_array, 2);
   }
 
   /**
    * Parses the CSS "content" property
-   * 
+   *
    * @return string The resulting string
    */
   protected function _parse_content() {
@@ -275,19 +274,19 @@ abstract class Frame_Reflower {
       "\s([^\s\"']+)|\n" .
       "\A([^\s\"']+)\n".
       "/xi";
-    
+
     $content = $this->_frame->get_style()->content;
 
     $quotes = $this->_parse_quotes();
-    
+
     // split on spaces, except within quotes
     if (!preg_match_all($re, $content, $matches, PREG_SET_ORDER))
       return;
-      
+
     $text = "";
 
     foreach ($matches as $match) {
-      
+
       if ( isset($match[2]) && $match[2] !== "" )
         $match[1] = $match[2];
 
@@ -298,7 +297,7 @@ abstract class Frame_Reflower {
         $match[7] = $match[8];
 
       if ( isset($match[1]) && $match[1] !== "" ) {
-        
+
         // counters?(...)
         $match[1] = mb_strtolower(trim($match[1]));
 
@@ -321,7 +320,7 @@ abstract class Frame_Reflower {
             $type = null;
 
           $p = $this->_frame->lookup_counter_frame($counter_id);
-          
+
           $text .= $p->counter_value($counter_id, $type);
 
         } else if ( $match[1][7] === "s" ) {
@@ -374,7 +373,7 @@ abstract class Frame_Reflower {
           $attr = mb_substr($match[7], 5, $i - 5);
           if ( $attr == "" )
             continue;
-            
+
           $text .= $this->_frame->get_parent()->get_node()->getAttribute($attr);
         } else
           continue;
@@ -383,32 +382,32 @@ abstract class Frame_Reflower {
 
     return $text;
   }
-  
+
   /**
    * Sets the generated content of a generated frame
    */
   protected function _set_content(){
     $frame = $this->_frame;
     $style = $frame->get_style();
-  
+
     if ( $style->content && !$frame->get_first_child() && $frame->get_node()->nodeName === "dompdf_generated" ) {
       $content = $this->_parse_content();
       $node = $frame->get_node()->ownerDocument->createTextNode($content);
-      
+
       $new_style = $style->get_stylesheet()->create_style();
       $new_style->inherit($style);
-      
+
       $new_frame = new Frame($node);
       $new_frame->set_style($new_style);
-      
+
       Frame_Factory::decorate_frame($new_frame, $frame->get_dompdf());
       $new_frame->get_decorator()->set_root($frame->get_root());
       $frame->append_child($new_frame);
     }
-    
+
     if ( $style->counter_reset && ($reset = $style->counter_reset) !== "none" )
       $frame->reset_counter($reset);
-    
+
     if ( $style->counter_increment && ($increment = $style->counter_increment) !== "none" )
       $frame->increment_counters($increment);
   }
