@@ -608,6 +608,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         add_filter('FHEE__EEH_Form_Fields__input_html', array($this, 'country_form_field_input__wrap'), 10, 2);
         $this->_template_args['country_details_settings'] = $this->display_country_settings();
         $this->_template_args['country_states_settings'] = $this->display_country_states();
+        $this->_template_args['CNT_name_for_site'] = EEM_Country::instance()->get_one_by_ID($CNT_ISO_for_site)
+                                                                            ->name();
 
         $this->_set_add_edit_form_tags('update_country_settings');
         $this->_set_publish_post_box_vars(null, false, false, null, false);
@@ -651,7 +653,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page
 
         $CNT_cur_disabled = $CNT_ISO !== $CNT_ISO_for_site;
         $this->_template_args['CNT_cur_disabled'] = $CNT_cur_disabled;
-        $this->_template_args['CNT_name_for_site'] = EEM_Country::instance()->get_one_by_ID($CNT_ISO_for_site)->name();
 
         $country_input_types = array(
             'CNT_active'      => array(
