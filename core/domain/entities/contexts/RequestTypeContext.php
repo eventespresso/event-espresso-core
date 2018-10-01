@@ -72,6 +72,11 @@ class RequestTypeContext extends Context
     const IFRAME = 'iframe-request';
 
     /**
+     * indicates that the current request is a loopback sent from WP core to test for errors
+     */
+    const WP_SCRAPE = 'wordpress-scrape';
+
+    /**
      * @var boolean $is_activation
      */
     private $is_activation = false;
@@ -126,6 +131,7 @@ class RequestTypeContext extends Context
                     RequestTypeContext::FEED,
                     RequestTypeContext::FRONTEND,
                     RequestTypeContext::IFRAME,
+                    RequestTypeContext::WP_SCRAPE,
                 )
             );
         }

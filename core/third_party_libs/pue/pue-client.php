@@ -943,7 +943,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                     && ! $this->_is_premium
                     && ! $this->_is_prerelease
                     && $this->_is_freerelease
-                    && false !== stripos(
+                    && false === stripos(
                         $this->api_secret_key,
                         'FREE'
                     )

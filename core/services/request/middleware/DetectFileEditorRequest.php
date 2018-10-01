@@ -28,34 +28,12 @@ class DetectFileEditorRequest extends Middleware
     {
         $this->request  = $request;
         $this->response = $response;
-        if ($this->isFileEditorRequest()) {
-            $this->setFiltersForRequest();
+        // can't store user data during WP error scrapes if no user exists
+        // so don't load the session since it's not going to work anyways
+        if ($this->request->isWordPressScrape()) {
+            add_filter('FHEE_load_EE_Session', '__return_false', 999);
         }
         $this->response = $this->processRequestStack($this->request, $this->response);
         return $this->response;
-    }
-
-
-    /**
-     * This sets any filters that need set on this request.
-     */
-    protected function setFiltersForRequest()
-    {
-        add_filter('FHEE_load_EE_Session', '__return_false', 999);
-    }
-
-
-    /**
-     * Conditions for a "file editor request"
-     *
-     * @see wp-admin/includes/file.php
-     *      The file editor does a loopback request to the admin AND to the frontend when checking active theme or
-     *      active plugin edits.  So these conditions consider that.
-     * @return bool
-     */
-    protected function isFileEditorRequest()
-    {
-        return $this->request->getRequestParam('wp_scrape_key')
-               && $this->request->getRequestParam('wp_scrape_nonce');
     }
 }
