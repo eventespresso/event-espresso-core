@@ -60,6 +60,18 @@ class EEH_Schema
                 EE_Registry::instance()->CFG->currency->dec_mrk,
                 EE_Registry::instance()->CFG->currency->thsnds
             );
+            switch ($ticket->ticket_status()) {
+                case 'TKO':
+                    $availability = 'InStock';
+                    break;
+                case 'TKS':
+                    $availability = 'SoldOut';
+                    break;
+                default:
+                    $availability = null;
+                    break;
+            }
+            $template_args['event_tickets'][ $ID ]['availability'] = $availability;
             unset($ticket);
         }
         $VNU_ID = espresso_venue_id();
