@@ -14,8 +14,9 @@ import { sprintf } from '@eventespresso/i18n';
 /**
  * Internal Imports
  */
-import { isEnumField, isPrimaryKeyField } from './booleans';
+import { isEnumField, isPrimaryKeyField, isValueObjectField } from './booleans';
 import { maybeConvertFromValueObjectWithAssertions } from './extractors';
+import { PRIVATE_PROPERTIES, VALIDATE_TYPE } from './constants';
 
 /**
  * Validates the incoming value for given type.  Types allowed are:
@@ -122,14 +123,17 @@ export const isShallowValidValueForField = (
 			validateType( 'number', fieldValue );
 	}
 	const isEnum = isEnumField( fieldName, schema );
-	fieldValue = expectValueObjects ?
+	const isValueObject = isValueObjectField( fieldName, schema );
+	fieldValue = expectValueObjects && isValueObject ?
 		maybeConvertFromValueObjectWithAssertions(
 			fieldName,
 			fieldValue,
 			schema
 		) :
 		fieldValue;
-	fieldValue = expectValueObjects && schema[ fieldName ].type === 'object' ?
+	fieldValue = expectValueObjects &&
+			schema[ fieldName ].type === 'object' &&
+			isValueObject ?
 		{ raw: fieldValue } :
 		fieldValue;
 	const isValid = isEnum ?
@@ -153,4 +157,17 @@ export const isShallowValidValueForField = (
 		);
 	}
 	return isValid;
+};
+
+/**
+ * Returns what is set as the validateType for the given field and instance.
+ *
+ * @param {string} fieldName
+ * @param {Object} instance
+ * @return {string} The validation type for the given field and instance.
+ */
+export const validateTypeForField = ( fieldName, instance ) => {
+	return instance[ PRIVATE_PROPERTIES.VALIDATE_TYPES ][ fieldName ] ?
+		instance[ PRIVATE_PROPERTIES.VALIDATE_TYPES ][ fieldName ] :
+		VALIDATE_TYPE.RAW;
 };

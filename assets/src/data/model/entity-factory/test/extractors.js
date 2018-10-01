@@ -17,11 +17,13 @@ import {
 	deriveDefaultValueForType,
 	deriveTypeForField,
 	getDefaultValueForField,
+	deriveValidateTypeForField,
 } from '../extractors';
 import {
 	EventSchemaProperties,
 	RegistrationSchemaProperties,
 } from './fixtures';
+import { PRIVATE_PROPERTIES, VALIDATE_TYPE } from '../constants';
 
 jest.mock( '@eventespresso/eejs', () => ( {
 	...require.requireActual( '@eventespresso/eejs' ),
@@ -38,6 +40,12 @@ jest.mock( '@eventespresso/eejs', () => ( {
 } ) );
 
 describe( 'Testing extractor functions for model-entity factory.', () => {
+	const getMockInstance = ( schema, validationTypes = {} ) => {
+		return {
+			schema,
+			[ PRIVATE_PROPERTIES.VALIDATE_TYPES ]: validationTypes,
+		};
+	};
 	describe( 'maybeConvertToValueObject()', () => {
 		it( 'Converts a given string to a DateTime value object for a ' +
 			'datetime field', () => {
@@ -148,21 +156,21 @@ describe( 'Testing extractor functions for model-entity factory.', () => {
 			expect( derivePreparedValueForField(
 				'EVT_visible_on',
 				( new Date() ).toISOString(),
-				EventSchemaProperties
+				getMockInstance( EventSchemaProperties )
 			) ).toBeInstanceOf( DateTime );
 		} );
 		it( 'returns a Money object for a money value', () => {
 			expect( derivePreparedValueForField(
 				'REG_final_price',
 				{ raw: 1.25 },
-				RegistrationSchemaProperties
+				getMockInstance( RegistrationSchemaProperties )
 			) ).toBeInstanceOf( Money );
 		} );
 		it( 'returns just the value for a non value object', () => {
 			expect( derivePreparedValueForField(
 				'EVT_desc',
 				{ raw: 'Some description' },
-				EventSchemaProperties
+				getMockInstance( EventSchemaProperties )
 			) ).toEqual( 'Some description' );
 		} );
 	} );
@@ -332,15 +340,74 @@ describe( 'Testing extractor functions for model-entity factory.', () => {
 			expect( getDefaultValueForField(
 				'EVT_desc',
 				EventSchemaProperties
-			) ).toBe( '' );
+			) ).toEqual( { raw: '', rendered: '' } );
 			expect( getDefaultValueForField(
 				'REG_final_price',
 				RegistrationSchemaProperties
-			) ).toBeInstanceOf( Money );
-			expect( getDefaultValueForField(
+			) ).toEqual( {
+				pretty: '$0.00 <span class="currency-code">(USD)</span>',
+				raw: 0,
+			} );
+			const dateValue = getDefaultValueForField(
 				'EVT_visible_on',
 				EventSchemaProperties
-			) ).toBeInstanceOf( DateTime );
+			);
+			expect( DateTime.validateISO8601( dateValue ) ).toBe( true );
+		} );
+	} );
+	describe( 'deriveValidateTypeForField', () => {
+		const testConditions = [
+			[
+				'returns raw when field value has a raw property',
+				'EVT_desc',
+				{ raw: 'Some description' },
+				EventSchemaProperties,
+				VALIDATE_TYPE.RAW,
+			],
+			[
+				'returns rendered when field value has a rendered property',
+				'EVT_desc',
+				{ rendered: 'Some description' },
+				EventSchemaProperties,
+				VALIDATE_TYPE.RENDERED,
+			],
+			[
+				'returns pretty when field value has pretty property',
+				'status',
+				{ pretty: 'some status' },
+				EventSchemaProperties,
+				VALIDATE_TYPE.PRETTY,
+			],
+			[
+				'returns raw when field value is not an object and schema ' +
+				'type is not an object',
+				'EVT_name',
+				'Some Event',
+				EventSchemaProperties,
+				VALIDATE_TYPE.RAW,
+			],
+			[
+				'returns raw when fieldname does not exist in schema',
+				'invalid',
+				'invalid',
+				EventSchemaProperties,
+				VALIDATE_TYPE.RAW,
+			],
+		];
+		testConditions.forEach( ( [
+			description,
+			fieldName,
+			fieldValue,
+			schema,
+			expectedType,
+		] ) => {
+			it( description, () => {
+				expect( deriveValidateTypeForField(
+					fieldName,
+					fieldValue,
+					schema
+				) ).toEqual( expectedType );
+			} );
 		} );
 	} );
 } );

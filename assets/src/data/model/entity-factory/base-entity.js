@@ -13,7 +13,10 @@ import {
 	createPersistingGettersAndSetters,
 	setSaveState,
 } from './create';
-import { SAVE_STATE, PRIVATE_PROPERTIES } from './constants';
+import {
+	SAVE_STATE,
+	PRIVATE_PROPERTIES,
+} from './constants';
 
 /**
  * BaseEntity is the basic class for all entities.  createEntityFactory returns
@@ -22,6 +25,7 @@ import { SAVE_STATE, PRIVATE_PROPERTIES } from './constants';
  */
 class BaseEntity {
 	[ PRIVATE_PROPERTIES.SAVE_STATE ] = SAVE_STATE.CLEAN;
+	[ PRIVATE_PROPERTIES.VALIDATE_TYPES ] = {};
 
 	/**
 	 * Constructor for Base Entity
@@ -67,6 +71,30 @@ class BaseEntity {
 	get saveState() {
 		return this[ PRIVATE_PROPERTIES.SAVE_STATE ];
 	}
+
+	/**
+	 * Whether the current save state is SAVE_STATE.NEW
+	 * @return {boolean}  True means SAVE_STATE.NEW is the save state.
+	 */
+	get isNew() {
+		return this.saveState === SAVE_STATE.NEW;
+	}
+
+	/**
+	 * Whether the current save state is SAVE_STATE.DIRTY
+	 * @return {boolean}  True means SAVE_STATE.DIRTY is the save state.
+	 */
+	get isDirty() {
+		return this.saveState === SAVE_STATE.DIRTY;
+	}
+
+	/**
+	 * Whether the current save state is SAVE_STATE.CLEAN
+	 * @return {boolean}  True means SAVE_STATE.CLEAN is the save state.
+	 */
+	get isClean() {
+		return this.saveState === SAVE_STATE.CLEAN;
+	}
 }
 
 /**
@@ -76,9 +104,13 @@ class BaseEntity {
  * @param {Object} extendedClass
  * @return {Function} A function
  */
-const nameClass = ( name, extendedClass = {} ) => (
-	{ [ name ]: class extends extendedClass {} }
-)[ name ];
+const nameClass = ( name, extendedClass ) => {
+	return class extends extendedClass {
+		static get name() {
+			return name;
+		}
+	};
+};
 
 /**
  * A factory for entity factories.
@@ -98,12 +130,17 @@ const nameClass = ( name, extendedClass = {} ) => (
  * has [ `DTT`, `DTT_EVT` ]
  * @return {function(*=)} A factory for instantiating an entity instance.
  */
-export const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => {
+const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => {
 	const Entity = nameClass(
 		upperFirst( camelCase( modelName ) ),
 		BaseEntity
 	);
 	return {
+		/**
+		 * This is the class definition for the Entity.  Typically this is
+		 * retrieved for the ability to do instanceof checks.
+		 */
+		classDef: Entity,
 		/**
 		 * This returns an instance of Entity for the given arguments with the
 		 * indication this is a new non-persisted entity.  This means:
@@ -116,6 +153,13 @@ export const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => 
 		 *   to discover which entities have never been persisted.
 		 * - Sets the `dirty` flag to true because the entity has never been
 		 *   persisted.
+		 * - This factory method expects fields and values to be "prepared".
+		 *   What that means is that for any fields that the schema described as
+		 *   having a `raw` property (i.e. { EVT_desc: { raw: 'something' } })
+		 *   the value should be of the correct type for that raw property and.
+		 *   This also means is that for any fields the schema describes as a
+		 *   date-time (format) or money (format) field, the value is expected
+		 *   to be the corresponding value object.
 		 *
 		 * @param {Object} fieldsAndValues
 		 * @return {Entity} an instance of Entity
@@ -136,6 +180,8 @@ export const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => 
 		 *   only partial entities are returned in REST responses.
 		 * - isNew flag is set to false (and never changes for this entity)
 		 * - dirty flag is set to false
+		 * - The incoming values are expected to be in the exact shape as
+		 *   described by the schema for the entity model.
 		 *
 		 * @param {Object} fieldsAndValues
 		 * @return {Entity} an instance of Entity

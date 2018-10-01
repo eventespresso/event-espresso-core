@@ -14,6 +14,7 @@ import {
 	isEntityField,
 	isMoneyField,
 	isEnumField,
+	isValueObjectField,
 } from '../booleans';
 
 import {
@@ -111,6 +112,13 @@ describe( 'Testing boolean functions for model-entity factory.', () => {
 			],
 		];
 		testRunner( tests, isDateTimeField );
+	} );
+	describe( 'isValueObjectField', () => {
+		const tests = [
+			[ 'Expect true for value object field', 'EVT_visible_on', true ],
+			[ 'Expect false for non value object field', 'EVT_desc', false ],
+		];
+		testRunner( tests, isValueObjectField );
 	} );
 	describe( 'isUTCDateTimeField()', () => {
 		const tests = [
@@ -248,16 +256,16 @@ describe( 'Testing boolean functions for model-entity factory.', () => {
 	describe( 'isEnumField()', () => {
 		const testSchema = {
 			non_enum_field: {
-				type: 'string'
+				type: 'string',
 			},
 			enum_field: {
 				type: 'string',
-				enum: [ 'value1', 'value2' ]
+				enum: [ 'value1', 'value2' ],
 			},
 			empty_enum: {
 				type: 'string',
-				enum: []
-			}
+				enum: [],
+			},
 		};
 		const tests = [
 			[

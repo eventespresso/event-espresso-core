@@ -33,8 +33,15 @@ import {
 	RegistrationSchemaProperties,
 	EventSchemaProperties,
 } from './fixtures';
+import { PRIVATE_PROPERTIES, VALIDATE_TYPE } from '../constants';
 
 describe( 'Testing assertions for model-entity factory.', () => {
+	const getMockInstance = ( schema, validationType ) => {
+		return {
+			schema,
+			[ PRIVATE_PROPERTIES.VALIDATE_TYPES ]: validationType,
+		};
+	};
 	describe( 'maybeAssertValueObject()', () => {
 		const assertTest = ( fieldName, fieldValue, schema ) => () =>
 			maybeAssertValueObject( fieldName, fieldValue, schema );
@@ -105,12 +112,12 @@ describe( 'Testing assertions for model-entity factory.', () => {
 		} );
 	} );
 	describe( 'assertValidSchema()', () => {
-		const test = ( schema ) => () => assertValidSchema( schema );
+		const testRunner = ( schema ) => () => assertValidSchema( schema );
 		it( 'Throws an error with invalid schema.', () => {
-			expect( test( {} ) ).toThrow( InvalidSchema );
+			expect( testRunner( {} ) ).toThrow( InvalidSchema );
 		} );
 		it( 'Does not throw an error with valid schema.', () => {
-			expect( test( EventSchema.schema ) ).not.toThrow();
+			expect( testRunner( EventSchema.schema ) ).not.toThrow();
 		} );
 	} );
 	describe( 'assertValidSchemaFieldProperties()', () => {
@@ -200,11 +207,12 @@ describe( 'Testing assertions for model-entity factory.', () => {
 		const assertTest = (
 			fieldName,
 			fieldValue,
-			schema
+			schema,
+			validationType = VALIDATE_TYPE.RAW,
 		) => () => assertValidValueForPreparedField(
 			fieldName,
 			fieldValue,
-			schema
+			getMockInstance( schema, { [ fieldName ]: validationType } )
 		);
 		const tests = [
 			[
@@ -298,13 +306,14 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			modelName,
 			fieldName,
 			fieldValue,
-			schema
+			schema,
+			validationType = VALIDATE_TYPE.RAW
 		) => () => {
 			assertValidFieldAndValueAgainstSchema(
 				modelName,
 				fieldName,
 				fieldValue,
-				schema,
+				getMockInstance( schema, { [ fieldName ]: validationType } ),
 			);
 		};
 		const tests = [

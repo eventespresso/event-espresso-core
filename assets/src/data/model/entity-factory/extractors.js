@@ -30,6 +30,8 @@ import {
 	isEntityField,
 } from './booleans';
 import { maybeAssertValueObject } from './assertions';
+import { validateTypeForField } from './validators';
+import { VALIDATE_TYPE } from './constants';
 
 /**
  * This receives a field name, it's value and the schema and converts it to the
@@ -43,10 +45,16 @@ import { maybeAssertValueObject } from './assertions';
  * value is returned.
  */
 export const maybeConvertToValueObject = ( fieldName, fieldValue, schema ) => {
-	if ( isDateTimeField( fieldName, schema ) ) {
+	if (
+		isDateTimeField( fieldName, schema ) &&
+		! DateTime.validateIsDateTime( fieldValue )
+	) {
 		return DateTime.fromISO( fieldValue );
 	}
-	if ( isMoneyField( fieldName, schema ) ) {
+	if (
+		isMoneyField( fieldName, schema ) &&
+		! ( fieldValue instanceof Money )
+	) {
 		return new Money( fieldValue, SiteCurrency );
 	}
 	return fieldValue;
@@ -110,17 +118,20 @@ export const maybeConvertFromValueObject = ( fieldValue ) => {
  *
  * @param {string} fieldName
  * @param {*}  fieldValue
- * @param {Object} schema
+ * @param {Object} instance
  * @return {DateTime|Money|*}  Returns the original incoming value if it does
  * not have a raw equivalent or is not a value object.
  */
 export const derivePreparedValueForField = (
 	fieldName,
 	fieldValue,
-	schema
+	instance
 ) => {
-	fieldValue = hasRawProperty( fieldValue ) ? fieldValue.raw : fieldValue;
-	return maybeConvertToValueObject( fieldName, fieldValue, schema );
+	const validationType = validateTypeForField( fieldName, instance );
+	fieldValue = isPlainObject( fieldValue ) ?
+		fieldValue[ validationType ] :
+		fieldValue;
+	return maybeConvertToValueObject( fieldName, fieldValue, instance.schema );
 };
 
 /**
@@ -276,11 +287,47 @@ export const deriveTypeForField = ( fieldName, schema ) => {
 					null;
 			}
 			return null;
-		} else {
-			return schema[ fieldName ].type;
 		}
+		return schema[ fieldName ].type;
 	}
 	return null;
+};
+
+/**
+ * This derives the validate type from the incoming field and value according
+ * to the schema and incoming value.
+ *
+ * This accounts for the fact that entities may be constructed from the
+ * following contexts:
+ *
+ * 1. Authed REST response (which could have both raw, rendered or pretty
+ *    values in the field value).
+ * 2. Non-authed REST response (which will not have a raw value, but could have
+ *    a pretty or rendered value).  This is potentially problematic if the
+ *    rendered or pretty value is of a different data type than the raw value.
+ * 3. New entities built client side, which will be assumed to be prepared
+ *    against the "raw" validate type.
+ *
+ * @param {string} fieldName
+ * @param {*} fieldValue
+ * @param {Object} schema
+ * @return {Symbol}  The validate type for the field.
+ */
+export const deriveValidateTypeForField = ( fieldName, fieldValue, schema ) => {
+	if ( hasRawProperty( fieldValue ) ) {
+		return VALIDATE_TYPE.RAW;
+	}
+	if ( schema[ fieldName ] && schema[ fieldName ].type ) {
+		if (
+			schema[ fieldName ].type === 'object' &&
+			isPlainObject( fieldValue )
+		) {
+			return hasRenderedProperty( fieldValue ) ?
+				VALIDATE_TYPE.RENDERED :
+				VALIDATE_TYPE.PRETTY;
+		}
+	}
+	return VALIDATE_TYPE.RAW;
 };
 
 /**
@@ -294,11 +341,7 @@ export const deriveTypeForField = ( fieldName, schema ) => {
 export const getDefaultValueForField = ( fieldName, schema ) => {
 	if ( schema[ fieldName ] ) {
 		return schema[ fieldName ].default ?
-			derivePreparedValueForField(
-				fieldName,
-				schema[ fieldName ].default,
-				schema
-			) :
+			schema[ fieldName ].default :
 			deriveDefaultValueForType( schema[ fieldName ].type );
 	}
 	return null;

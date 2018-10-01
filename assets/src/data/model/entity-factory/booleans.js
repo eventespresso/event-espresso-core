@@ -50,6 +50,17 @@ export const hasEnumProperty = ( value ) => isPlainObject( value ) &&
 	! isUndefined( value.enum );
 
 /**
+ * Indicates whether the provided value is a "value object" field.
+ *
+ * @param {string} field
+ * @param {Object} schema
+ * @return {boolean} True if the value is a value object field.
+ */
+export const isValueObjectField = ( field, schema ) => {
+	return isDateTimeField( field, schema ) || isMoneyField( field, schema );
+};
+
+/**
  * Indicates whether the provided field is a date-time field according to the
  * provided schema.
  *

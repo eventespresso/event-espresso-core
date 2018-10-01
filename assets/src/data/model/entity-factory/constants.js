@@ -10,9 +10,20 @@ export const SAVE_STATE = {
 };
 
 /**
+ * Validation types are for schema's that have value variations.
+ * @type {{RAW: string, RENDERED: string, PRETTY: string}}
+ */
+export const VALIDATE_TYPE = {
+	RAW: 'raw',
+	RENDERED: 'rendered',
+	PRETTY: 'pretty',
+};
+
+/**
  * Private properties used internally by the Base Entity Class
  * @type {{saveState: boolean}}
  */
 export const PRIVATE_PROPERTIES = {
 	SAVE_STATE: Symbol( 'baseEntityPrivatePropertiesSaveState' ),
+	VALIDATE_TYPES: Symbol( 'baseEntityPrivatePropertiesValidateTypes' ),
 };

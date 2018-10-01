@@ -3,6 +3,8 @@
  * code
  */
 export { EventSchema, EventSchemaProperties } from './event-schema';
+export { EventResponse } from './event-response-non-authed';
+export { AuthedEventResponse } from './event-response-authed';
 export {
 	RegistrationSchema,
 	RegistrationSchemaProperties,

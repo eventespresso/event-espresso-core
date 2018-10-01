@@ -27,6 +27,7 @@ import {
 	getPrimaryKeyFieldsFromSchema,
 	getEntityFieldsFromSchema,
 	getDefaultValueForField,
+	deriveValidateTypeForField,
 } from './extractors';
 import {
 	isEntityField,
@@ -60,12 +61,19 @@ export const createGetter = ( instance, fieldName, fieldValue, opts = {} ) => {
  * @param {Object} instance
  * @param {string} propertyName
  * @param {function(Object)} callBack
+ * @param {Object} opts
  */
-export const createCallbackGetter = ( instance, propertyName, callBack ) => {
+export const createCallbackGetter = (
+	instance,
+	propertyName,
+	callBack,
+	opts = {}
+) => {
 	Object.defineProperty( instance, propertyName, {
 		get() {
 			return callBack( instance );
 		},
+		...opts,
 	} );
 };
 
@@ -93,7 +101,7 @@ export const createGetterAndSetter = (
 			assertValidValueForPreparedField(
 				fieldName,
 				receivedValue,
-				instance.schema
+				instance
 			);
 			setSaveState( instance, SAVE_STATE.DIRTY );
 			propertyValue = receivedValue;
@@ -108,20 +116,49 @@ export const createGetterAndSetter = (
  * @param {Object} instance
  * @param {string} originalFieldName
  * @param {string} aliasFieldName
+ * @param {Object} opts
  */
 export const createAliasGetterAndSetter = (
 	instance,
 	originalFieldName,
-	aliasFieldName
+	aliasFieldName,
+	opts = {},
 ) => {
-	Object.defineProperty( instance, aliasFieldName, {
-		get() {
-			return instance[ originalFieldName ];
-		},
-		set( receivedValue ) {
-			return instance[ originalFieldName ] = receivedValue;
-		},
-	} );
+	if ( originalFieldName !== aliasFieldName ) {
+		Object.defineProperty( instance, aliasFieldName, {
+			get() {
+				return instance[ originalFieldName ];
+			},
+			set( receivedValue ) {
+				return instance[ originalFieldName ] = receivedValue;
+			},
+			...opts,
+		} );
+	}
+};
+
+/**
+ * A getter creator for a field alias.
+ *
+ * @param {Object} instance
+ * @param {string} originalFieldName
+ * @param {string} aliasFieldName
+ * @param {Object} opts
+ */
+export const createAliasGetter = (
+	instance,
+	originalFieldName,
+	aliasFieldName,
+	opts = {},
+) => {
+	if ( originalFieldName !== aliasFieldName ) {
+		Object.defineProperty( instance, aliasFieldName, {
+			get() {
+				return instance[ originalFieldName ];
+			},
+			...opts,
+		} );
+	}
 };
 
 /**
@@ -129,8 +166,9 @@ export const createAliasGetterAndSetter = (
  *
  * @param {Object} instance
  * @param {string} fieldName
+ * @param {Object} opts  Options for Object.defineProperty
  */
-export const createFluentSetter = ( instance, fieldName ) => {
+export const createFluentSetter = ( instance, fieldName, opts = {} ) => {
 	Object.defineProperty( instance, 'set' + upperFirst( fieldName ), {
 		get() {
 			return ( receivedValue ) => {
@@ -138,6 +176,7 @@ export const createFluentSetter = ( instance, fieldName ) => {
 				return instance;
 			};
 		},
+		...opts,
 	} );
 };
 
@@ -152,13 +191,22 @@ export const createEntityGettersAndSetters = ( instance ) => {
 	forEach(
 		instance.originalFieldsAndValues,
 		( fieldValue, fieldName ) => {
-			assertValidFieldAndValueAgainstSchema(
-				instance.modelName,
-				fieldName,
-				fieldValue,
-				instance.schema
-			);
+			setValidateTypeForField( instance, fieldName, fieldValue );
 			if ( isEntityField( fieldName, instance.schema ) ) {
+				if ( instance.isNew ) {
+					assertValidValueForPreparedField(
+						fieldName,
+						fieldValue,
+						instance
+					);
+				} else {
+					assertValidFieldAndValueAgainstSchema(
+						instance.modelName,
+						fieldName,
+						fieldValue,
+						instance
+					);
+				}
 				setInitialEntityFieldsAndValues(
 					instance,
 					fieldName,
@@ -214,13 +262,25 @@ const populatePrimaryKeys = ( instance ) => {
 			instance,
 			schemaField,
 			cuid(),
-			{ configurable: true }
+			{ configurable: true, enumerable: true }
 		);
+		createAliasGetterForField( instance, schemaField );
 	} );
 	createPrimaryKeyFieldGetters(
 		instance,
 		keys( primaryKeys )
 	);
+};
+
+/**
+ * Sets the validate type for a field property.
+ * @param {Object} instance
+ * @param {string} fieldName
+ * @param {*} fieldValue
+ */
+const setValidateTypeForField = ( instance, fieldName, fieldValue ) => {
+	instance[ PRIVATE_PROPERTIES.VALIDATE_TYPES ][ fieldName ] =
+		deriveValidateTypeForField( fieldName, fieldValue, instance.schema );
 };
 
 /**
@@ -244,7 +304,7 @@ const populateMissingFields = ( instance ) => {
 				setInitialEntityFieldsAndValues(
 					instance,
 					fieldName,
-					getDefaultValueForField( fieldName, instance.schema )
+					undefined,
 				);
 			}
 		}
@@ -317,16 +377,22 @@ const setInitialEntityFieldsAndValues = (
 	fieldName,
 	fieldValue,
 ) => {
+	if ( isUndefined( fieldValue ) ) {
+		fieldValue = getDefaultValueForField( fieldName, instance.schema );
+		setValidateTypeForField( instance, fieldName, fieldValue );
+	}
 	createRawEntityGettersSetters(
 		instance,
 		fieldName,
-		derivePreparedValueForField( fieldName, fieldValue, instance.schema )
+		derivePreparedValueForField( fieldName, fieldValue, instance )
 	);
-	createRenderedGetters(
-		instance,
-		fieldName,
-		deriveRenderedValue( fieldValue )
-	);
+	if ( ! isPrimaryKeyField( fieldName, instance.schema ) ) {
+		createRenderedGetters(
+			instance,
+			fieldName,
+			deriveRenderedValue( fieldValue )
+		);
+	}
 };
 
 /**
@@ -342,23 +408,39 @@ export const createRawEntityGettersSetters = (
 	fieldName,
 	fieldValue,
 ) => {
-	const opts = isPrimaryKeyField( fieldName, instance.schema ) ?
-		{ configurable: true } :
-		{};
-	// this allows for private property holding the actual field value that can
-	// be changed via setter but NOT directly.
-	createGetterAndSetter(
-		instance,
-		fieldName,
-		fieldValue,
-		opts
-	);
-	createFluentSetter( instance, fieldName );
-	createAliasGettersSetters( instance, fieldName );
+	const opts = { enumerable: true };
+	// primary key is immutable
+	if ( isPrimaryKeyField( fieldName, instance.schema ) ) {
+		createGetter(
+			instance,
+			fieldName,
+			fieldValue,
+			opts
+		);
+		createAliasGetterForField( instance, fieldName );
+	} else {
+		createGetterAndSetter(
+			instance,
+			fieldName,
+			fieldValue,
+			opts
+		);
+		createFluentSetter( instance, fieldName );
+		createAliasGetterAndSetterForField( instance, fieldName );
+	}
 };
 
 /**
- * Creates "alias" getters for fields on the entity instance.
+ * Creates "alias" getter for the given field name on the entity instance.
+ * @param {Object} instance
+ * @param {string} fieldName
+ */
+export const createAliasGetterForField = ( instance, fieldName ) => {
+	createAliasesForMethod( instance, fieldName, createAliasGetter );
+};
+
+/**
+ * Creates "alias" getters and setters for the given field on the entity instance.
  *
  * Example: Datetime entities have a `DTT_EVT_start` field.  On the entity
  * instance, you will be able to access the value of that field via:
@@ -370,20 +452,31 @@ export const createRawEntityGettersSetters = (
  * @param {Object} instance
  * @param {string} fieldName
  */
-export const createAliasGettersSetters = ( instance, fieldName ) => {
-	// camelCase getter for full field name (eg. EVT_desc => evtDesc)
-	createAliasGetterAndSetter( instance, fieldName, camelCase( fieldName ) );
+export const createAliasGetterAndSetterForField = ( instance, fieldName ) => {
+	createAliasesForMethod( instance, fieldName, createAliasGetterAndSetter );
+};
+
+/**
+ * Creates Aliases using the provided method.
+ * @param {Object} instance
+ * @param {string} fieldName
+ * @param {function} method
+ */
+const createAliasesForMethod = ( instance, fieldName, method ) => {
+	// camelCase getter (or setter) for full field name (eg. EVT_desc => evtDesc)
+	method( instance, fieldName, camelCase( fieldName ) );
 	// strip field prefixes and camelCase (if there are field prefixes for the
 	// entity. (eg. EVT_desc => desc);
 	if ( instance.fieldPrefixes ) {
 		let newFieldName = '';
 		// Yes, its intended that if there are multiple prefixes, this could
-		// end up creating multiple aliased getters (eg Datetime: DTT_EVT_start
-		// would end up with `evtStart` and `start` as getter accessors).
+		// end up creating multiple aliased getters (or setters)
+		// (eg Datetime: DTT_EVT_start would end up with `evtStart` and `start`
+		// as getter accessors).
 		instance.fieldPrefixes.forEach( ( fieldPrefix ) => {
 			newFieldName = fieldName.replace( fieldPrefix + '_', '' );
 			if ( newFieldName !== fieldName ) {
-				createAliasGetterAndSetter(
+				method(
 					instance,
 					fieldName,
 					camelCase( newFieldName )
@@ -402,6 +495,19 @@ const getRenderedCallback = ( instance ) => ( requestedFieldName ) =>
 	instance[ requestedFieldName + 'Rendered' ];
 
 /**
+ * Removes model field prefixes from the given fieldName and returns the
+ * resulting value.
+ *
+ * @param {Object} instance
+ * @param {string} fieldName
+ * @return {string} The prefix free fieldName.
+ */
+const removePrefixesFromField = ( instance, fieldName ) => {
+	const fullPrefixToRemove = instance.fieldPrefixes.join( '_' ) + '_';
+	return fieldName.replace( fullPrefixToRemove, '' );
+};
+
+/**
  * This creates the getters for the rendered property of model fields.
  *
  * @param {Object} instance
@@ -409,9 +515,18 @@ const getRenderedCallback = ( instance ) => ( requestedFieldName ) =>
  * @param {*}  fieldValue
  */
 export const createRenderedGetters = ( instance, fieldName, fieldValue ) => {
-	createGetter( instance, fieldName + 'Rendered', fieldValue );
+	createGetter(
+		instance,
+		camelCase( removePrefixesFromField( instance, fieldName ) ) +
+		'Rendered',
+		fieldValue
+	);
 	if ( isUndefined( instance.getRendered ) ) {
-		createCallbackGetter( instance, 'getRendered', getRenderedCallback );
+		createCallbackGetter(
+			instance,
+			'getRendered',
+			getRenderedCallback,
+		);
 	}
 };
 
@@ -431,24 +546,25 @@ const hasMultiplePrimaryKeysCallback = ( instance ) =>
  * @param {Array} primaryKeys
  */
 export const createPrimaryKeyFieldGetters = ( instance, primaryKeys ) => {
+	const opts = { configurable: true };
 	if ( isArray( primaryKeys ) ) {
 		createGetter(
 			instance,
 			'primaryKey',
 			primaryKeys[ 0 ],
-			{ configurable: true }
+			opts
 		);
 		createGetterAndSetter(
 			instance,
 			'primaryKeys',
 			primaryKeys,
-			{ configurable: true },
+			opts
 		);
 		createCallbackGetter(
 			instance,
 			'hasMultiplePrimaryKeys',
 			hasMultiplePrimaryKeysCallback,
-			{ configurable: true }
+			opts
 		);
 	}
 };
@@ -502,7 +618,11 @@ export const setResources = ( instance, fieldsAndValues ) => {
 		} else {
 			relationName = getRelationNameFromLink( resourceName );
 			relations.push( relationName );
-			setRelationsResource( instance, relationName, resourceValue );
+			setRelationsResource(
+				instance,
+				relationName + 'Resource',
+				resourceValue
+			);
 		}
 	} );
 	//set relations getter
@@ -515,7 +635,7 @@ export const setResources = ( instance, fieldsAndValues ) => {
  * relation resource
  */
 const getRelationResourceCallback = ( instance ) =>
-	( relationName ) => instance[ relationName ];
+	( relationName ) => instance[ relationName.replace( 'Resource', '' ) ];
 
 /**
  * Creates getters for the relations resource object.

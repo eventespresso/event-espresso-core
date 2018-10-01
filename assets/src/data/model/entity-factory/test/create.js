@@ -156,6 +156,7 @@ describe( 'testing create functions for model-entity factory', () => {
 	} );
 	describe( 'createRenderedGetters()', () => {
 		const testInstance = getMockInstance();
+		testInstance.fieldPrefixes = [];
 		createRenderedGetters( testInstance, 'someProp', 42 );
 		it( 'has field getter', () => {
 			expect( testInstance.somePropRendered ).toBeDefined();
@@ -167,7 +168,7 @@ describe( 'testing create functions for model-entity factory', () => {
 			expect( testInstance.getRendered ).toBeDefined();
 		} );
 		it( 'has expected value using general `getRendered` getter', () => {
-			expect( testInstance.getRendered('someProp') )
+			expect( testInstance.getRendered( 'someProp' ) )
 				.toEqual( 42 );
 		} );
 		it( 'does not error when attempting to create a new ' +
@@ -330,8 +331,8 @@ describe( 'testing create functions for model-entity factory', () => {
 		} );
 		describe( 'relation resource properties are as expected', () => {
 			it( 'has expected properties', () => {
-				expect( testInstance.event ).toBeDefined();
-				expect( testInstance.transaction ).toBeDefined();
+				expect( testInstance.eventResource ).toBeDefined();
+				expect( testInstance.transactionResource ).toBeDefined();
 			} );
 		} );
 		describe( 'getRelations getter is defined and has expected value',
@@ -349,7 +350,7 @@ describe( 'testing create functions for model-entity factory', () => {
 	describe( 'setRelationsResource()', () => {
 		const testInstance = getMockInstance();
 		const relationsResourceInfo = [
-			{ href: 'resource link', single: true }
+			{ href: 'resource link', single: true },
 		];
 		setRelationsResource( testInstance, 'relation', relationsResourceInfo );
 		describe( 'creates expected relation property getter', () => {
@@ -373,7 +374,7 @@ describe( 'testing create functions for model-entity factory', () => {
 					.toEqual(
 						{
 							resourceLink: 'resource link',
-							single: true
+							single: true,
 						}
 					);
 			} );
