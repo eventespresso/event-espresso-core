@@ -80,19 +80,6 @@ $values = EEH_Form_Fields::prep_answer_options(
                 'EED_Events_Single_use_sortable_display_order'
             );
             ?>
-            <p class="description ">
-                <?php
-                echo sprintf(
-                    __(
-                        '%1$sPlease Note:%2$s%3$sIf you are currently using filters to customize the display order for elements within the Event Single page display, then you do NOT activate this feature until those filters have been removed or disabled. If this feature is activated while still using such filters, duplicate event content such as the ticket selector, datetimes, or venue information could be displayed on the frontend of the site. Please verify that this is not the case after activating this feature.',
-                        'event_espresso'
-                    ),
-                    '<span class="important-notice">',
-                    '</span>',
-                    '<br />'
-                );
-                ?>
-            </p>
         </td>
     </tr>
 

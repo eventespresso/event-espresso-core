@@ -17,11 +17,15 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 
 ## [$VID:$]
 
+## [4.9.68.p]
+
 ### Fixed
 
 - Fixed the organization settings form so that the license key section is not being displayed on subsites ([674](https://github.com/eventespresso/event-espresso-core/pull/674))
 - Fixed a fatal error when there is an invalid session save handler, like on Pantheon servers ([615](https://github.com/eventespresso/event-espresso-core/pull/615))
 - Fixed Session Start Fatal Errors when known Custom Session Save Handler is in use ([650](https://github.com/eventespresso/event-espresso-core/pull/650))
+- Fixed Session Exception Triggered by Error Notices ([705](https://github.com/eventespresso/event-espresso-core/pull/705))
+- Fixed memory timeout for sites with a brazillion tags ([708](https://github.com/eventespresso/event-espresso-core/pull/708))
 
 ### Changed
 
