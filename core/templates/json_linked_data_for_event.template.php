@@ -32,6 +32,9 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
       "validThrough": "<?php echo $ticket['end_date']; ?>",
       "price": "<?php echo $ticket['price']; ?>",
       "priceCurrency": "<?php echo $currency; ?>"
+        <?php if (isset($ticket['availability'])) {
+            ?>,"availability": "http://schema.org/<?php echo $ticket['availability']; ?>"
+        <?php } ?>
     }<?php
     if (is_array($event_tickets) && end($event_tickets) !== $ticket) {
             echo ',';
