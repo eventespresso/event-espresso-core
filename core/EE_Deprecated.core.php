@@ -1,6 +1,8 @@
 <?php
 
 use EventEspresso\core\domain\services\pue\Stats;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\licensing\LicenseService;
 
@@ -1391,19 +1393,35 @@ add_filter(
 );
 /**
  * Filters the CSV row to make it appear like the old labels (which were "$pretty_name[$field_name]").
+ * @deprecated since $VID:$. This only exists for backward compatibility with code snippets.
+ *             See https://github.com/eventespresso/event-espresso-core/pull/675
  * @since $VID:$
  * @param $csv_row_data
  * @param $reg_row
  * @return array for CSV row
  * @throws EE_Error
  * @throws InvalidArgumentException
- * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
- * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+ * @throws InvalidDataTypeException
+ * @throws InvalidInterfaceException
  */
 function ee_deprecated_registrations_report_csv_legacy_fields($csv_row_data, $reg_row)
 {
     // no need for all this if nobody is using the deprecated filter
     if (has_filter('FHEE__EE_Export__report_registrations__reg_csv_array')) {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            sprintf(
+                esc_html_x(
+
+                    'The filter "%1$s" has been deprecated. Please use "%2$s" instead.',
+                    'The filter "FHEE__EE_Export__report_registrations__reg_csv_array" has been deprecated. Please use "FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport__reg_csv_array" instead.',
+                    'event_espresso'
+                ),
+                'FHEE__EE_Export__report_registrations__reg_csv_array',
+                'FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport__reg_csv_array'
+            ),
+            '$VID:$'
+        );
         // there's code that expected the old csv column headers/labels. Let's oblige. Put it back in the old format!
         // first: what model fields might be used as column headers? (whose format we need to change)
         $model_fields = array_merge(
