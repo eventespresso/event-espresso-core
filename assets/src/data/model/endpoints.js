@@ -6,7 +6,7 @@ import { data } from '@eventespresso/eejs';
 /**
  * Internal imports
  */
-import { validateEntityHasKey } from './validators';
+import { assertEntityHasKey } from './assertions';
 
 /**
  * All available endpoints exposed via the eejs.data global from the server.
@@ -23,7 +23,7 @@ export const { collection_endpoints: endpoints = {} } = data.paths;
  * @throws {Exception}
  */
 export const getEndpoint = ( modelName ) => {
-	validateEntityHasKey( modelName, endpoints );
+	assertEntityHasKey( modelName, endpoints );
 	return endpoints[ modelName ];
 };
 
