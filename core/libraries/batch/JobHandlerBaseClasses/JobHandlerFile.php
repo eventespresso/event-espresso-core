@@ -46,11 +46,16 @@ abstract class JobHandlerFile extends JobHandler
      * @param string $job_id
      * @param string $filename
      * @param string $filetype
+     * @param string $bom initial content to place in the file.
      * @return string
      * @throws \EventEspressoBatchRequest\Helpers\BatchRequestException
      */
-    public function create_file_from_job_with_name($job_id, $filename, $filetype = 'application/ms-excel', $bom = "\xEF\xBB\xBF")
-    {
+    public function create_file_from_job_with_name(
+        $job_id,
+        $filename,
+        $filetype = 'application/ms-excel',
+        $bom = "\xEF\xBB\xBF"
+    ) {
         $filepath = '';
         try {
             $base_folder = $this->get_base_folder();
@@ -100,6 +105,7 @@ abstract class JobHandlerFile extends JobHandler
         } catch (\EE_Error $e) {
             throw new BatchRequestException(
                 sprintf(
+                    // phpcs:disable WordPress.WP.I18n.MissingTranslatorsComment
                     __('Could not create temporary file for job %1$s, because: %2$s ', 'event_espresso'),
                     $job_id,
                     $e->getMessage()
