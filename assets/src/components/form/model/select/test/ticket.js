@@ -1,7 +1,7 @@
 import TicketSelect, { EditorTicketSelect } from '../ticket';
 import { shallow, render } from 'enzyme';
 
-jest.mock( '../../model-select', () => () => <span>TicketSelect</span> );
+jest.mock( '../../base/model-select', () => () => <span>TicketSelect</span> );
 
 describe( 'TicketSelect()', () => {
 	const expectedDefaultQueryData = {

@@ -15,12 +15,15 @@ import { withSelect } from '@wordpress/data';
  * Internal imports
  */
 import buildOptions from './build-options';
-import { MODEL_NAMES } from '../../../data/model';
+import { MODEL_NAMES } from '../../../../data/model/index';
 import {
 	REACT_SELECT_DEFAULTS,
 	REACT_SELECT_TYPES,
 } from './default-select-configuration';
-import { ALLOWED_ORDER_VALUES, QUERY_ORDER_DESC } from '../../../data/model/base';
+import {
+	ALLOWED_ORDER_VALUES,
+	QUERY_ORDER_DESC,
+} from '../../../../data/model/base';
 
 /**
  * ModelSelect component.

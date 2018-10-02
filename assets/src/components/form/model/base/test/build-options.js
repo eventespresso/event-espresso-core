@@ -4,7 +4,7 @@ import {
 	DATE_TIME_FORMAT_SITE,
 	TIME_FORMAT_SITE,
 } from '@eventespresso/helpers';
-import { prettyDateFromDateTime } from '../../../../data/model/datetime/formatter';
+import { prettyDateFromDateTime } from '../../../../../data/model/datetime/formatter';
 
 describe( 'buildOptions()', () => {
 	const testResponse = [

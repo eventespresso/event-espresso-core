@@ -3,7 +3,7 @@ import { shallow, render } from 'enzyme';
 import { QUERY_ORDER_ASC } from 'assets/src/data/model/base';
 import * as statusModel from 'assets/src/data/model/status';
 
-jest.mock( '../../model-select', () => () => <span>StatusSelect</span> );
+jest.mock( '../../base/model-select', () => () => <span>StatusSelect</span> );
 
 describe( 'StatusSelect()', () => {
 	const expectedDefaultQueryData = {

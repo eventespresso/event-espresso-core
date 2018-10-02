@@ -1,7 +1,7 @@
 /**
  * Internal imports
  */
-import ModelSelect from '../model-select';
+import ModelSelect from '../base/model-select';
 import { dateTimeModel as model } from '../../../../data/model';
 import { withBaseControl } from '../../../../higher-order-components';
 
