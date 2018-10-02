@@ -271,14 +271,19 @@ class Invoice
             echo $content;
         } else {
             // only load dompdf if nobody else has yet...
-            if (! defined('DOMPDF_DIR')) {
-                define('DOMPDF_ENABLE_REMOTE', true);
-                define('DOMPDF_ENABLE_JAVASCRIPT', false);
-                define('DOMPDF_ENABLE_CSS_FLOAT', true);
-                require_once(EE_THIRD_PARTY . 'dompdf/dompdf_config.inc.php');
+            if (! class_exists('Dompdf\Dompdf')) {
+                require_once(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php');
+                Dompdf\Autoloader::register();
             }
-            $dompdf = new DOMPDF();
-            $dompdf->load_html($content);
+            $options = new Dompdf\Options();
+            $options->set('isRemoteEnabled', true);
+            $options->set('isJavascriptEnabled', false);
+            if (defined('DOMPDF_FONT_DIR')) {
+                $options->setFontDir(DOMPDF_FONT_DIR);
+                $options->setFontCache(DOMPDF_FONT_DIR);
+            }
+            $dompdf = new Dompdf\Dompdf($options);
+            $dompdf->loadHtml($content);
             $dompdf->render();
             $dompdf->stream($invoice_name . ".pdf", array('Attachment' => $download));
         }
