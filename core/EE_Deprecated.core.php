@@ -1382,3 +1382,101 @@ class EE_PUE implements InterminableInterface
         return LicenseService::isUpdateAvailable($basename);
     }
 }
+
+add_filter(
+    'FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport__reg_csv_array',
+    'ee_deprecated_registrations_report_csv_legacy_fields',
+    10,
+    2
+);
+/**
+ * Filters the CSV row to make it appear like the old labels (which were "$pretty_name[$field_name]").
+ * @since $VID:$
+ * @param $csv_row_data
+ * @param $reg_row
+ * @return array for CSV row
+ * @throws EE_Error
+ * @throws InvalidArgumentException
+ * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+ * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+ */
+function ee_deprecated_registrations_report_csv_legacy_fields($csv_row_data, $reg_row)
+{
+    // no need for all this if nobody is using the deprecated filter
+    if (has_filter('FHEE__EE_Export__report_registrations__reg_csv_array')) {
+        // there's code that expected the old csv column headers/labels. Let's oblige. Put it back in the old format!
+        // first: what model fields might be used as column headers? (whose format we need to change)
+        $model_fields = array_merge(
+            EEM_Registration::instance()->field_settings(),
+            EEM_Attendee::instance()->field_settings()
+        );
+        // create an array that uses the legacy column headers/labels.
+        $new_csv_row = array();
+        foreach ($csv_row_data as $label => $value) {
+            $new_label = $label;
+            foreach ($model_fields as $field) {
+                if ($label === EEH_Export::get_column_name_for_field($field)) {
+                    // re-add the old field name
+                    $new_label = $label . '[' . $field->get_name() . ']';
+                    break;
+                }
+            }
+            $new_csv_row[$new_label] = $value;
+        }
+        // before we run it through the deprecated filter, set the method `EEH_Export::get_column_name_for_field()`
+        // to create the old column names, because that's what's in the row temporarily
+        add_filter(
+            'FHEE__EEH_Export__get_column_name_for_field__add_field_name',
+            '__return_true',
+            777
+        );
+        // now, those old filters can be run on this data. Have fun!
+        /**
+         * Deprecated. Use FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport__reg_csv_array instead.
+         *
+         * Filter to change the contents of each row of the registrations report CSV file.
+         * This can be used to add or remote columns from the CSV file, or change their values.                 *
+         * Note: it has this name because originally that's where this filter resided,
+         * and we've left its name as-is for backward compatibility.
+         * Note when using: all rows in the CSV should have the same columns.
+         *
+         * @param array $reg_csv_array keys are column-header names, and values are that columns' value
+         *                             in this row
+         * @param array $reg_row is the row from the database's wp_esp_registration table
+         */
+        $updated_row = apply_filters(
+            'FHEE__EE_Export__report_registrations__reg_csv_array',
+            $new_csv_row,
+            $reg_row
+        );
+
+        // ok now we can revert to normal for EEH_Export::get_column_name_for_field().
+        remove_filter(
+            'FHEE__EEH_Export__get_column_name_for_field__add_field_name',
+            '__return_true',
+            777
+        );
+
+        // great. Now that the old filters are done, we can remove the ugly square brackets from column headers/labels.
+        $updated_and_restored_row = array();
+        foreach ($updated_row as $label => $value) {
+            $matches = array();
+            if (preg_match(
+                    '~([^\[]*)\[(.*)\]~',
+                    $label,
+                    $matches
+                )
+                && isset(
+                    $matches[0],
+                    $matches[1],
+                    $matches[2]
+                )
+            ) {
+                $label = $matches[1];
+            }
+            $updated_and_restored_row[$label] = $value;
+        }
+        $csv_row_data = $updated_and_restored_row;
+    }
+    return $csv_row_data;
+}
