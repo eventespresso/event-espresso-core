@@ -24,7 +24,7 @@
                 value="<?php esc_html_e('Save Country Details', 'event_espresso'); ?>"
             />
             <input
-                tye="hidden"
+                type="hidden"
                 id="country-currency-setting-disabled-input"
                 value="<?php echo $CNT_cur_disabled ? 'true' : 'false'; ?>"
             />
