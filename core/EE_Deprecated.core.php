@@ -347,7 +347,7 @@ add_action(
 );
 
 /**
- * @deprecated since 4.8.32.rc.000 because it has issues on
+ * @deprecated 4.8.32.rc.000 because it has issues on
  *             https://events.codebasehq.com/projects/event-espresso/tickets/9165 it is preferred to instead use
  *             _update_attendee_registration_form_new() which also better handles form validation. Exits
  * @param EE_Admin_Page $admin_page
@@ -1393,7 +1393,7 @@ add_filter(
 );
 /**
  * Filters the CSV row to make it appear like the old labels (which were "$pretty_name[$field_name]").
- * @deprecated since $VID:$. This only exists for backward compatibility with code snippets.
+ * @deprecated $VID:$ This only exists for backward compatibility with code snippets.
  *             See https://github.com/eventespresso/event-espresso-core/pull/675
  * @since $VID:$
  * @param $csv_row_data
