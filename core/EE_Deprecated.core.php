@@ -1411,15 +1411,17 @@ function ee_deprecated_registrations_report_csv_legacy_fields($csv_row_data, $re
         EE_Error::doing_it_wrong(
             __FUNCTION__,
             sprintf(
-                esc_html_x(
-                    'The filter %1$s has been deprecated. Please use %2$s instead.',
-                    'The filter FHEE__EE_Export__report_registrations__reg_csv_array has been deprecated. Please use FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport__reg_csv_array instead.',
+                // EE_Error::doing_it_wrong with escape HTML, so don't escape it twice by doing it here too.
+                _x(
+                    'The filter "%1$s" has been deprecated. Please use "%2$s" instead.',
+                    'The filter "FHEE__EE_Export__report_registrations__reg_csv_array" has been deprecated. Please use "FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport__reg_csv_array" instead.',
                     'event_espresso'
                 ),
                 'FHEE__EE_Export__report_registrations__reg_csv_array',
                 'FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport__reg_csv_array'
             ),
-            '$VID:$'
+            '$VID:$',
+            '4.9.75.p'
         );
         // there's code that expected the old csv column headers/labels. Let's oblige. Put it back in the old format!
         // first: what model fields might be used as column headers? (whose format we need to change)
