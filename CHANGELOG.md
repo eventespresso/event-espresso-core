@@ -17,6 +17,10 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 
 ## [$VID:$]
 
+### Changed
+
+- Improved UI for Country Currency Settings ([707](https://github.com/eventespresso/event-espresso-core/pull/707))
+
 ## [4.9.68.p]
 
 ### Fixed
