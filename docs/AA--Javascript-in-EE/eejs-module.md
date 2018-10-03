@@ -106,9 +106,9 @@ This property exposes all the model javascript interfaces for EE models. This be
 | getPrimaryKey | A function that returns the primary key (or combined primary keys) from the available data for a given model name.
 | getEntityPrimaryKeyValues | A memoized function that returns the values for the primary keys from the provided entity.
 | keyEntitiesByPrimaryKeyValue | A function that receives an array of entities and returns a collection of those same entities indexed by the primary key value for each entity.
-| validateEntityHasKey | A function that validates (throws an exception when not valid) whether the given key exists in the provided entity object. This is used when calling code wants an exception to be thrown.
-| validateIsArray | A function that validates (throws an exception when not valid) whether the given value is an array
-| validateIsNotEmpty | A function that validates (throws an exception when not valid) whether the given value is empty or not.  Call this validator when you want to make sure the provided value is NOT empty.
+| assertEntityHasKey | A function that validates (throws an exception when not valid) whether the given key exists in the provided entity object. This is used when calling code wants an exception to be thrown.
+| assertIsArray | A function that validates (throws an exception when not valid) whether the given value is an array
+| assertIsNotEmpty | A function that validates (throws an exception when not valid) whether the given value is empty or not.  Call this validator when you want to make sure the provided value is NOT empty.
 | MODEL_NAMES | An array of model names currently exposed by the site for REST API requests.
 | QUERY_ORDER_ASC | A string, `ASC`
 | QUERY_ORDER_DESC | A string, `DESC`

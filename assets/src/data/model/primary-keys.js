@@ -10,10 +10,10 @@ import memoize from 'memize';
  * Internal imports
  */
 import {
-	validateEntityHasKey,
-	validateIsArray,
-	validateIsNotEmpty,
-} from './validators';
+	assertEntityHasKey,
+	assertIsArray,
+	assertIsNotEmpty,
+} from './assertions';
 
 /**
  * Exposes a map of modelname to primary key exposed by the eejs.data global
@@ -33,9 +33,9 @@ export const { primary_keys: primaryKeys = {} } = data.paths;
  * @throws { Exception }
  */
 export const valuesForCombinedPrimaryKeys = memoize( ( keys, entity ) => {
-	validateIsArray( keys );
+	assertIsArray( keys );
 	const primaryKey = reduce( keys, function( result, key ) {
-		validateEntityHasKey( key, entity );
+		assertEntityHasKey( key, entity );
 		return entity[ result ] + ':' + entity[ key ];
 	} );
 	return trimEnd( primaryKey, ':' );
@@ -50,7 +50,7 @@ export const valuesForCombinedPrimaryKeys = memoize( ( keys, entity ) => {
  * @throws { Exception }
  */
 export const valueForPrimaryKey = memoize( ( key, entity ) => {
-	validateEntityHasKey( key, entity );
+	assertEntityHasKey( key, entity );
 	return entity[ key ];
 } );
 
@@ -62,7 +62,7 @@ export const valueForPrimaryKey = memoize( ( key, entity ) => {
  * @throws { Exception }
  */
 export const getPrimaryKey = memoize( ( modelName ) => {
-	validateEntityHasKey( modelName, primaryKeys );
+	assertEntityHasKey( modelName, primaryKeys );
 	return primaryKeys[ modelName ];
 } );
 
@@ -92,14 +92,14 @@ export const getEntityPrimaryKeyValues = memoize( ( modelName, entity ) => {
  * @throws { Exception }
  */
 export const keyEntitiesByPrimaryKeyValue = ( modelName, entities = [] ) => {
-	validateIsNotEmpty(
+	assertIsNotEmpty(
 		entities,
 		__(
 			'The provided array of entities must not be empty',
 			'event_espresso',
 		)
 	);
-	validateIsArray( entities );
+	assertIsArray( entities );
 	return keyBy( entities, function( entity ) {
 		return String( getEntityPrimaryKeyValues( modelName, entity ) );
 	} );

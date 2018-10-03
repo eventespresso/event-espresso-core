@@ -7,7 +7,7 @@ import { select } from '@wordpress/data';
  * Internal dependencies
  */
 import { REDUCER_KEY } from './';
-import { validateEntityHasKey } from '../../model';
+import { assertEntityHasKey } from '../../model';
 
 /**
  * External dependencies
@@ -50,7 +50,7 @@ export function getItems( state, modelName, queryString ) {
  * @return {boolean} Whether items are being requested or not.
  */
 export function isRequestingItems( state, modelName, queryString ) {
-	validateEntityHasKey(
+	assertEntityHasKey(
 		modelName,
 		state,
 		sprintf(
