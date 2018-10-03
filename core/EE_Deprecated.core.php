@@ -1412,9 +1412,8 @@ function ee_deprecated_registrations_report_csv_legacy_fields($csv_row_data, $re
             __FUNCTION__,
             sprintf(
                 esc_html_x(
-
-                    'The filter "%1$s" has been deprecated. Please use "%2$s" instead.',
-                    'The filter "FHEE__EE_Export__report_registrations__reg_csv_array" has been deprecated. Please use "FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport__reg_csv_array" instead.',
+                    'The filter %1$s has been deprecated. Please use %2$s instead.',
+                    'The filter FHEE__EE_Export__report_registrations__reg_csv_array has been deprecated. Please use FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport__reg_csv_array instead.',
                     'event_espresso'
                 ),
                 'FHEE__EE_Export__report_registrations__reg_csv_array',
