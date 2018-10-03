@@ -2,6 +2,7 @@
 
 namespace EventEspressoBatchRequest\JobHandlerBaseClasses;
 
+use EEH_File;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 
 /**
@@ -34,7 +35,7 @@ abstract class JobHandlerFile extends JobHandler
     public function __construct(\EEHI_File $file_helper = null)
     {
         if (! $file_helper) {
-            $this->_file_helper = new \EEH_File();
+            $this->_file_helper = new EEH_File();
         }
     }
 
@@ -45,11 +46,16 @@ abstract class JobHandlerFile extends JobHandler
      * @param string $job_id
      * @param string $filename
      * @param string $filetype
+     * @param string $bom initial content to place in the file.
      * @return string
      * @throws \EventEspressoBatchRequest\Helpers\BatchRequestException
      */
-    public function create_file_from_job_with_name($job_id, $filename, $filetype = 'application/ms-excel')
-    {
+    public function create_file_from_job_with_name(
+        $job_id,
+        $filename,
+        $filetype = 'application/ms-excel',
+        $bom = "\xEF\xBB\xBF"
+    ) {
         $filepath = '';
         try {
             $base_folder = $this->get_base_folder();
@@ -67,13 +73,31 @@ abstract class JobHandlerFile extends JobHandler
             }
             // let's add the .htaccess file so safari will open the file properly
             if ($success) {
-                $extension = \EEH_File::get_file_extension($filepath);
-                \EEH_File::write_to_file(
+                $extension = EEH_File::get_file_extension($filepath);
+                EEH_File::write_to_file(
                     $base_folder . JobHandlerFile::temp_folder_name . DS . $job_id . DS . '.htaccess',
                     'AddType ' . $filetype . ' ' . $extension,
                     '.htaccess'
                 );
             }
+            /**
+             * Filters what initial content will be added to the file.
+             * @param string $return_value. By default it's whatever was pased into
+             *                              JobHandlerFile::create_file_from_job_with_name()
+             * @param string $filename
+             * @param string $filetype default 'application/ms-excel'
+             * @param string $filepath
+             */
+            EEH_File::write_to_file(
+                $filepath,
+                apply_filters(
+                    'FHEE__EE_CSV__begin_sending_csv__start_writing',
+                    $bom,
+                    $filename,
+                    $filetype,
+                    $filepath
+                )
+            );
             // those methods normally fail with an exception, but if not, let's do it
             if (! $success) {
                 throw new \EE_Error(__('Could not create temporary file, an unknown error occurred', 'event_espresso'));
@@ -81,6 +105,7 @@ abstract class JobHandlerFile extends JobHandler
         } catch (\EE_Error $e) {
             throw new BatchRequestException(
                 sprintf(
+                    // phpcs:disable WordPress.WP.I18n.MissingTranslatorsComment
                     __('Could not create temporary file for job %1$s, because: %2$s ', 'event_espresso'),
                     $job_id,
                     $e->getMessage()
