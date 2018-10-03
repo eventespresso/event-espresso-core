@@ -25,10 +25,12 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 - Fixed a fatal error when there is an invalid session save handler, like on Pantheon servers ([615](https://github.com/eventespresso/event-espresso-core/pull/615))
 - Fixed Session Start Fatal Errors when known Custom Session Save Handler is in use ([650](https://github.com/eventespresso/event-espresso-core/pull/650))
 - Fixed Session Exception Triggered by Error Notices ([705](https://github.com/eventespresso/event-espresso-core/pull/705))
+- Fixed memory timeout for sites with a brazillion tags ([708](https://github.com/eventespresso/event-espresso-core/pull/708))
 
 ### Changed
 
 - Improved REST Schema response to include missing fields (including `_calculated_fields`, `_links` and `link`)([680](https://github.com/eventespresso/event-espresso-core/pull/680))
+- Updated the Dompdf library to version 0.8.2 ([699](https://github.com/eventespresso/event-espresso-core/pull/699))
 
 ## [4.9.67.p]
 
