@@ -86,11 +86,6 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
 
     public function venue_metabox()
     {
-        $values = array(
-            array('id' => true, 'text' => __('Yes', 'event_espresso')),
-            array('id' => false, 'text' => __('No', 'event_espresso')),
-        );
-
         $evt_obj = $this->_adminpage_obj->get_event_object();
         $evt_id = $evt_obj->ID();
 
@@ -131,19 +126,24 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
 
         $template_args['venues'] = $venues;
         $template_args['evt_venue_id'] = $evt_venue_id;
-        $template_args['venue_selector'] = EEH_Form_Fields::select_input(
-            'venue_id',
+        $venue_selector = new EE_Select_Input(
             $ven_select,
-            $evt_venue_id,
-            'id="venue_id"'
+            array(
+                'html_name'  => 'venue_id',
+                'html_id'    => 'venue_id',
+                'html_class' => 'wide',
+                'default'    => $evt_venue_id ? $evt_venue_id : '0'
+            )
         );
-        $template_args['enable_for_gmap'] = EEH_Form_Fields::select_input(
-            'enable_for_gmap',
-            $values,
-            is_object($evt_venue)
-                ? $evt_venue->enable_for_gmap() : null,
-            'id="enable_for_gmap"'
+        $template_args['venue_selector'] = $venue_selector->get_html_for_input();
+        $enable_for_gmap = new EE_Yes_No_Input(
+            array(
+                'html_name'  => 'enable_for_gmap',
+                'html_id'    => 'enable_for_gmap',
+                'default'    => is_object($evt_venue) ? $evt_venue->enable_for_gmap() : false
+            )
         );
+        $template_args['enable_for_gmap'] = $enable_for_gmap->get_html_for_input();
         $template_path = empty($venues) ? EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content.template.php'
             : EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content_from_manager.template.php';
         EEH_Template::display_template($template_path, $template_args);
