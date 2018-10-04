@@ -144,8 +144,28 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
             )
         );
         $template_args['enable_for_gmap'] = $enable_for_gmap->get_html_for_input();
+        $template_args['new_venue_link'] = EEH_HTML::link(
+            EE_Admin_Page::add_query_args_and_nonce(
+                array('action' => 'create_new'),
+                EE_VENUES_ADMIN_URL
+            ),
+            esc_html_x('Add new Venue', 'a link to add a new venue', 'event_espresso'),
+            esc_html_x('Add new Venue', 'a link to add a new venue', 'event_espresso'),
+            'ev_new_venue_link',
+            'button',
+            'margin-left:10px;',
+            'target="_blank"'
+        );
         $template_path = empty($venues) ? EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content.template.php'
             : EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content_from_manager.template.php';
+
+        // Allow events venue metabox template args filtering.
+        $template_args = apply_filters(
+            'FHEE__espresso_events_Venues_Hooks___venue_metabox__template_args',
+            $template_args,
+            $template_path
+        );
+
         EEH_Template::display_template($template_path, $template_args);
     }
 
