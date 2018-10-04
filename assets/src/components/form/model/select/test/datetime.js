@@ -1,7 +1,7 @@
 import DatetimeSelect, { EditorDatetimeSelect } from '../datetime';
 import { shallow, render } from 'enzyme';
 
-jest.mock( '../../model-select', () => () => <span>DatetimeSelect</span> );
+jest.mock( '../../base/model-select', () => () => <span>DatetimeSelect</span> );
 
 describe( 'DatetimeSelect()', () => {
 	const expectedDefaultQueryData = {
