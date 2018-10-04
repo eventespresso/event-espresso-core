@@ -2,7 +2,6 @@
     <tr>
         <td valign="top" class="use-ven-manager">
             <fieldset id="venue-manager">
-                <legend><?php echo __('Venue Information', 'event_espresso') ?></legend>
                 <?php echo $no_venues_info; ?>
                 <p><a href="admin.php?page=espresso_venues">
                         <?php echo __(
