@@ -163,6 +163,14 @@ class OrganizationSettings extends FormHandler
                             'html_label_text' => esc_html__('Country', 'event_espresso'),
                             'default'         => $this->organization_config->CNT_ISO,
                             'required'        => false,
+                            'html_help_text' => sprintf(
+                                esc_html__(
+                                    '%1$sThe Country set here will have the effect of setting the currency used for all ticket prices.%2$s',
+                                    'event_espresso'
+                                ),
+                                '<span class="reminder-spn">',
+                                '</span>'
+                            ),
                         )
                     ),
                     'organization_zip'      => new EE_Text_Input(
