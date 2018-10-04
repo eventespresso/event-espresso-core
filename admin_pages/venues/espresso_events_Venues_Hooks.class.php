@@ -156,6 +156,33 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
             'margin-left:10px;',
             'target="_blank"'
         );
+
+        // Decide on an info text when there are no venues to display.
+        $no_venues_info_txt = esc_html_x(
+            'You have not created any venues yet.',
+            'Information text displayed in the venues metabox when there are no venues to display',
+            'event_espresso'
+        );
+        if (empty($venues)) {
+            $unpublished_where = $vnu_where;
+            $unpublished_where['status'] = 'draft';
+            $unpublished_venues = $vnumdl->get_all(array($unpublished_where, 'order_by' => array('VNU_name' => 'ASC')));
+            if (count($unpublished_venues) > 0) {
+                $no_venues_info_txt = esc_html_x(
+                // @codingStandardsIgnoreStart
+                    'Use the link below to publish your venue through the venue editor so it appears here for selection.',
+                    // @codingStandardsIgnoreEnd
+                    'Information text displayed in the venues metabox when there are no venues to display',
+                    'event_espresso'
+                );
+            }
+        }
+        $template_args['no_venues_info'] = EEH_HTML::p(
+            EEH_HTML::strong($no_venues_info_txt),
+            'no_venues_info',
+            'info'
+        );
+
         $template_path = empty($venues) ? EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content.template.php'
             : EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content_from_manager.template.php';
 
