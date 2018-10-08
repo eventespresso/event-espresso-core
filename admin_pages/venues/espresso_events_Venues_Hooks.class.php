@@ -140,7 +140,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
             array(
                 'html_name'  => 'enable_for_gmap',
                 'html_id'    => 'enable_for_gmap',
-                'default'    => is_object($evt_venue) ? $evt_venue->enable_for_gmap() : false
+                'default'    => $evt_venue instanceof EE_Venue ? $evt_venue->enable_for_gmap() : false
             )
         );
         $template_args['enable_for_gmap'] = $enable_for_gmap->get_html_for_input();
