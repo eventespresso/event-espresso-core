@@ -571,12 +571,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     protected function _country_settings()
     {
-        $CNT_ISO = isset(EE_Registry::instance()->CFG->organization->CNT_ISO)
+        $CNT_ISO_for_site = isset(EE_Registry::instance()->CFG->organization->CNT_ISO)
             ? EE_Registry::instance()->CFG->organization->CNT_ISO
             : 'US';
         $CNT_ISO = isset($this->_req_data['country'])
             ? strtoupper(sanitize_text_field($this->_req_data['country']))
-            : $CNT_ISO;
+            : $CNT_ISO_for_site;
 
         // load field generator helper
 
@@ -608,6 +608,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         add_filter('FHEE__EEH_Form_Fields__input_html', array($this, 'country_form_field_input__wrap'), 10, 2);
         $this->_template_args['country_details_settings'] = $this->display_country_settings();
         $this->_template_args['country_states_settings'] = $this->display_country_states();
+        $this->_template_args['CNT_name_for_site'] = EEM_Country::instance()->get_one_by_ID($CNT_ISO_for_site)
+                                                                            ->name();
 
         $this->_set_add_edit_form_tags('update_country_settings');
         $this->_set_publish_post_box_vars(null, false, false, null, false);
@@ -630,6 +632,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public function display_country_settings($CNT_ISO = '')
     {
+        $CNT_ISO_for_site = isset(EE_Registry::instance()->CFG->organization->CNT_ISO)
+            ? EE_Registry::instance()->CFG->organization->CNT_ISO
+            : 'US';
 
         $CNT_ISO = isset($this->_req_data['country'])
             ? strtoupper(sanitize_text_field($this->_req_data['country']))
@@ -643,7 +648,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         remove_all_filters('FHEE__EEH_Form_Fields__input_html');
         add_filter('FHEE__EEH_Form_Fields__label_html', array($this, 'country_form_field_label_wrap'), 10, 2);
         add_filter('FHEE__EEH_Form_Fields__input_html', array($this, 'country_form_field_input__wrap'), 10, 2);
+        /** @var EE_Country $country */
         $country = EEM_Country::instance()->get_one_by_ID($CNT_ISO);
+
+        $CNT_cur_disabled = $CNT_ISO !== $CNT_ISO_for_site;
+        $this->_template_args['CNT_cur_disabled'] = $CNT_cur_disabled;
 
         $country_input_types = array(
             'CNT_active'      => array(
@@ -677,22 +686,26 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'type'       => 'TEXT',
                 'input_name' => 'cntry[' . $CNT_ISO . ']',
                 'class'      => 'small-text',
+                'disabled'   => $CNT_cur_disabled
             ),
             'CNT_cur_single'  => array(
                 'type'       => 'TEXT',
                 'input_name' => 'cntry[' . $CNT_ISO . ']',
                 'class'      => 'medium-text',
+                'disabled' => $CNT_cur_disabled
             ),
             'CNT_cur_plural'  => array(
                 'type'       => 'TEXT',
                 'input_name' => 'cntry[' . $CNT_ISO . ']',
                 'class'      => 'medium-text',
+                'disabled' => $CNT_cur_disabled
             ),
             'CNT_cur_sign'    => array(
                 'type'         => 'TEXT',
                 'input_name'   => 'cntry[' . $CNT_ISO . ']',
                 'class'        => 'small-text',
                 'htmlentities' => false,
+                'disabled' => $CNT_cur_disabled
             ),
             'CNT_cur_sign_b4' => array(
                 'type'             => 'RADIO_BTN',
@@ -700,6 +713,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'class'            => '',
                 'options'          => $this->_yes_no_values,
                 'use_desc_4_label' => true,
+                'disabled' => $CNT_cur_disabled
             ),
             'CNT_cur_dec_plc' => array(
                 'type'       => 'RADIO_BTN',
@@ -711,6 +725,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                     array('id' => 2, 'text' => ''),
                     array('id' => 3, 'text' => ''),
                 ),
+                'disabled' => $CNT_cur_disabled
             ),
             'CNT_cur_dec_mrk' => array(
                 'type'             => 'RADIO_BTN',
@@ -724,6 +739,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                     array('id' => '.', 'text' => __('. (decimal)', 'event_espresso')),
                 ),
                 'use_desc_4_label' => true,
+                'disabled' => $CNT_cur_disabled
             ),
             'CNT_cur_thsnds'  => array(
                 'type'             => 'RADIO_BTN',
@@ -737,6 +753,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                     array('id' => '.', 'text' => __('. (decimal)', 'event_espresso')),
                 ),
                 'use_desc_4_label' => true,
+                'disabled' => $CNT_cur_disabled
             ),
             'CNT_tel_code'    => array(
                 'type'       => 'TEXT',

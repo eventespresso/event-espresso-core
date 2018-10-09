@@ -86,11 +86,6 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
 
     public function venue_metabox()
     {
-        $values = array(
-            array('id' => true, 'text' => __('Yes', 'event_espresso')),
-            array('id' => false, 'text' => __('No', 'event_espresso')),
-        );
-
         $evt_obj = $this->_adminpage_obj->get_event_object();
         $evt_id = $evt_obj->ID();
 
@@ -131,21 +126,73 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
 
         $template_args['venues'] = $venues;
         $template_args['evt_venue_id'] = $evt_venue_id;
-        $template_args['venue_selector'] = EEH_Form_Fields::select_input(
-            'venue_id',
+        $venue_selector = new EE_Select_Input(
             $ven_select,
-            $evt_venue_id,
-            'id="venue_id"'
+            array(
+                'html_name'  => 'venue_id',
+                'html_id'    => 'venue_id',
+                'html_class' => 'wide',
+                'default'    => $evt_venue_id ? $evt_venue_id : '0'
+            )
         );
-        $template_args['enable_for_gmap'] = EEH_Form_Fields::select_input(
-            'enable_for_gmap',
-            $values,
-            is_object($evt_venue)
-                ? $evt_venue->enable_for_gmap() : null,
-            'id="enable_for_gmap"'
+        $template_args['venue_selector'] = $venue_selector->get_html_for_input();
+        $enable_for_gmap = new EE_Yes_No_Input(
+            array(
+                'html_name'  => 'enable_for_gmap',
+                'html_id'    => 'enable_for_gmap',
+                'default'    => $evt_venue instanceof EE_Venue ? $evt_venue->enable_for_gmap() : false
+            )
         );
+        $template_args['enable_for_gmap'] = $enable_for_gmap->get_html_for_input();
+        $template_args['new_venue_link'] = EEH_HTML::link(
+            EE_Admin_Page::add_query_args_and_nonce(
+                array('action' => 'create_new'),
+                EE_VENUES_ADMIN_URL
+            ),
+            esc_html_x('Add new Venue', 'a link to add a new venue', 'event_espresso'),
+            esc_html_x('Add new Venue', 'a link to add a new venue', 'event_espresso'),
+            'ev_new_venue_link',
+            'button',
+            'margin-left:10px;',
+            'target="_blank"'
+        );
+
+        // Decide on an info text when there are no venues to display.
+        $no_venues_info_txt = esc_html_x(
+            'You have not created any venues yet.',
+            'Information text displayed in the venues metabox when there are no venues to display',
+            'event_espresso'
+        );
+        if (empty($venues)) {
+            $unpublished_where = $vnu_where;
+            $unpublished_where['status'] = 'draft';
+            $unpublished_venues = $vnumdl->get_all(array($unpublished_where, 'order_by' => array('VNU_name' => 'ASC')));
+            if (count($unpublished_venues) > 0) {
+                $no_venues_info_txt = esc_html_x(
+                // @codingStandardsIgnoreStart
+                    'Use the link below to publish your venue through the venue editor so it appears here for selection.',
+                    // @codingStandardsIgnoreEnd
+                    'Information text displayed in the venues metabox when there are no venues to display',
+                    'event_espresso'
+                );
+            }
+        }
+        $template_args['no_venues_info'] = EEH_HTML::p(
+            EEH_HTML::strong($no_venues_info_txt),
+            'no_venues_info',
+            'info'
+        );
+
         $template_path = empty($venues) ? EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content.template.php'
             : EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content_from_manager.template.php';
+
+        // Allow events venue metabox template args filtering.
+        $template_args = apply_filters(
+            'FHEE__espresso_events_Venues_Hooks___venue_metabox__template_args',
+            $template_args,
+            $template_path
+        );
+
         EEH_Template::display_template($template_path, $template_args);
     }
 

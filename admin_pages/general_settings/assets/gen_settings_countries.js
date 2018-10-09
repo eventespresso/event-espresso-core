@@ -131,6 +131,13 @@ jQuery(document).ready(function($) {
 							$('#espresso-ajax-loading').fadeOut('fast');
 						}
 						$('#country-details-dv').html( response.return_data );
+						var $curDisabled = $('#country-currency-setting-disabled-input');
+						var $curDisabledPg = $('#country-currency-setting-disabled-pg');
+						if( $curDisabled.val() === 'true' ) {
+							$curDisabledPg.fadeIn();
+						} else {
+							$curDisabledPg.fadeOut();
+						}
 						EE_CNT_STA.ajax_loading = false;
 					} else if ( response.errors ) {
 						show_admin_page_ajax_msg( response );

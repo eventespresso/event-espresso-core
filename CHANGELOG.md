@@ -17,6 +17,11 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 
 ## [$VID:$]
 
+### Changed
+
+- Improved UI for Country Currency Settings ([707](https://github.com/eventespresso/event-espresso-core/pull/707))
+- Improved UI for the Venue meta box in the Event Editor and added a new filter for the template arguments ([719](https://github.com/eventespresso/event-espresso-core/pull/719))
+
 ## [4.9.68.p]
 
 ### Fixed
