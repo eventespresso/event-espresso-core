@@ -47,7 +47,7 @@
                         <li>[VENUE_ADDRESS]</li>
                         <li>[VENUE_CITY]</li>
                         <li>[VENUE_STATE], [VENUE_ZIP]</li>
-                        <li>[GOOGLE_MAP_LINK]</li>
+                        <li><a href="[GOOGLE_MAP_URL]"><?php esc_html_e('Map and Directions', 'event_espresso'); ?></a></li>
                     </ul>
                     <!-- social &#038; contact -->
                     <table class="social" width="100%" bgcolor="">
