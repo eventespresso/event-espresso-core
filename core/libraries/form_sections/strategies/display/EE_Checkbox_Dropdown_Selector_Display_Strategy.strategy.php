@@ -176,7 +176,7 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
         $html .= EEH_HTML::divx();
         $html .= EEH_HTML::p(
             esc_html__(
-                'To view additional ticket options, click the "Filter by Date" button and edit the selected dates.',
+                'To view additional ticket options, click the "Filter by Date" button and select more dates.',
                 'event_espresso'
             ),
             $input->html_id() . '-date-time-filter-notice-pg',
