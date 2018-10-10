@@ -47,7 +47,7 @@
                         <li>[VENUE_ADDRESS]</li>
                         <li>[VENUE_CITY]</li>
                         <li>[VENUE_STATE], [VENUE_ZIP]</li>
-                        <li>[GOOGLE_MAP_IMAGE]</li>
+                        <li>[GOOGLE_MAP_LINK]</li>
                     </ul>
                     <!-- social &#038; contact -->
                     <table class="social" width="100%" bgcolor="">
