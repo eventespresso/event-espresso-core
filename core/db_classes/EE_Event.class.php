@@ -1161,6 +1161,23 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
     /**
+     * This returns the number of different ticket types currently on sale for this event.
+     *
+     * @return int
+     * @throws EE_Error
+     */
+    public function countTicketsOnSale()
+    {
+        $where = array(
+            'Datetime.EVT_ID' => $this->ID(),
+            'TKT_start_date'  => array('<', time()),
+            'TKT_end_date'    => array('>', time()),
+        );
+        return EEM_Ticket::instance()->count(array($where));
+    }
+
+
+    /**
      * This returns whether there are any tickets on sale for this event.
      *
      * @return bool true = YES tickets on sale.
