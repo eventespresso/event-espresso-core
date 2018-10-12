@@ -1185,16 +1185,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      */
     public function tickets_on_sale()
     {
-        $earliest_ticket = $this->get_ticket_with_earliest_start_time();
-        $latest_ticket = $this->get_ticket_with_latest_end_time();
-        if (! $latest_ticket instanceof EE_Ticket && ! $earliest_ticket instanceof EE_Ticket) {
-            return false;
-        }
-        // check on sale for these two tickets.
-        if ($latest_ticket->is_on_sale() || $earliest_ticket->is_on_sale()) {
-            return true;
-        }
-        return false;
+        return $this->countTicketsOnSale() > 0;
     }
 
 
