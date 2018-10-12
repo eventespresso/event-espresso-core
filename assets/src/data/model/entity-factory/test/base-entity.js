@@ -5,30 +5,19 @@ import { DateTime } from '@eventespresso/vo';
 import { PRIVATE_PROPERTIES, SAVE_STATE } from '../constants';
 import { isCuid } from 'cuid';
 import { isArray } from 'lodash';
+import {
+	EventSchema,
+	EventResponse,
+	DateTimeSchema,
+	AuthedDateTimeResponse,
+	AuthedEventResponse,
+} from '@test/fixtures';
 
 /**
  * Internal imports
  */
 import createEntityFactory from '../base-entity';
-import {
-	EventSchema,
-	EventResponse,
-	AuthedEventResponse,
-} from './fixtures';
 
-jest.mock( '@eventespresso/eejs', () => ( {
-	...require.requireActual( '@eventespresso/eejs' ),
-	CURRENCY_CONFIG: {
-		code: 'USD',
-		singularLabel: 'dollar',
-		pluralLabel: 'dollars',
-		sign: '$',
-		signB4: true,
-		decimalMark: '.',
-		thousandsSeparator: ',',
-		subunits: 100,
-	},
-} ) );
 
 describe( 'createEntityFactory()', () => {
 	const EventFactory = createEntityFactory(
@@ -558,5 +547,33 @@ describe( 'createEntityFactory()', () => {
 					} );
 				} );
 			} );
+	} );
+	describe( 'multiple key prefix handling', () => {
+		const DateTimeFactory = createEntityFactory(
+			'datetime',
+			DateTimeSchema.schema,
+			[ 'DTT_EVT', 'DTT' ],
+		);
+		const DateTimeEntity = DateTimeFactory.fromExisting(
+			AuthedDateTimeResponse
+		);
+		const testConditions = [
+			'DTT_ID',
+			'dttId',
+			'id',
+			'EVT_ID',
+			'evtId',
+			'DTT_EVT_start',
+			'dttEvtStart',
+			'evtStart',
+			'start',
+			'startRendered',
+			'soldRendered',
+		];
+		testConditions.forEach( ( fieldName ) => {
+			test( 'The ' + fieldName + ' field exists', () => {
+				expect( DateTimeEntity[ fieldName ] ).toBeDefined();
+			} );
+		} );
 	} );
 } );

@@ -1,39 +1,69 @@
 /**
- * WordPress dependencies
- */
-import apiFetch from '@wordpress/api-fetch';
-
-/**
  * Internal dependencies
  */
-import { getItems } from '../resolvers';
-import { receiveResponse } from '../actions';
+import { getItems, getEntities } from '../resolvers';
+import { receiveResponse, receiveEntityResponse } from '../actions';
+import {
+	EventResponses,
+	eventFactory,
+	EventEntities,
+} from '../../test/fixtures/base';
 
-jest.mock( '@wordpress/api-fetch' );
-jest.mock( '@eventespresso/eejs', () => ( {
-	data: {
-		paths: {
-			collection_endpoints: { event: '/ee/v4.8.36/events' },
-		},
-	},
-} ) );
-
-describe( 'getItems', () => {
-	const EVENTS = [ { id: 1 } ];
-
-	beforeAll( () => {
-		apiFetch.mockImplementation( ( options ) => {
-			if ( options.path === '/ee/v4.8.36/events?some_event=1' ) {
-				return Promise.resolve( EVENTS );
-			}
+describe( 'getItems()', () => {
+	describe( 'yields with expected response', () => {
+		const queryString = '?test_value=1';
+		const testResponse = [ { testValue: 1 } ];
+		const fulfillment = getItems( 'generic', queryString );
+		// trigger initial fetch
+		it( 'yields expected result for api fetch action object', () => {
+			const { value: apiFetchAction } = fulfillment.next();
+			expect( apiFetchAction.request ).toEqual( { path: '?test_value=1' } );
+		} );
+		it( 'yields expected result for received value action object', () => {
+			// Provide response and trigger action
+			const { value: received } = fulfillment.next( testResponse );
+			expect( received ).toEqual(
+				receiveResponse( 'generic', '?test_value=1', testResponse )
+			);
 		} );
 	} );
+} );
 
-	it( 'yields with requested events', async () => {
-		const fulfillment = getItems( {}, 'event', 'some_event=1' );
-		const recieved = ( await fulfillment.next() ).value;
-		expect( recieved ).toEqual(
-			receiveResponse( 'event', 'some_event=1', EVENTS ),
-		);
+describe( 'getEntities()', () => {
+	describe( 'yields with expected response', () => {
+		const queryString = 'test_value=1';
+		const fulfillment = getEntities( 'event', queryString );
+		it( 'yields expected result for api fetch action object', () => {
+			const { value: apiFetchAction } = fulfillment.next();
+			expect( apiFetchAction.request ).toEqual(
+				{ path: '/ee/v4.8.36/events?test_value=1' }
+			);
+		} );
+		it( 'yields expected factory action object', () => {
+			const { value: selectFactoryAction } = fulfillment.next(
+				[ EventResponses.a ]
+			);
+			expect( selectFactoryAction.args ).toEqual( [ 'event' ] );
+		} );
+		it( 'yields expected dispatch action object for core records', () => {
+			const { value: dispatchCoreRecordsAction } = fulfillment.next(
+				eventFactory
+			);
+			expect( dispatchCoreRecordsAction.args ).toEqual(
+				[ eventFactory, { 10: EventResponses.a } ]
+			);
+		} );
+		it( 'yields expected select action object for full entities', () => {
+			const { value: selectFullEntitiesAction } = fulfillment.next();
+			expect( selectFullEntitiesAction.args ).toEqual(
+				[ 'event', [ '10' ] ]
+			);
+		} );
+		it( 'yields expected result for received value action obejct', () => {
+			const { value: received } = fulfillment.next( EventEntities );
+			expect( received ).toEqual(
+				receiveEntityResponse( 'event', 'test_value=1', EventEntities )
+			);
+		} );
 	} );
 } );

@@ -3,20 +3,11 @@
  */
 import { InvalidDateTime, InvalidSchema } from '@eventespresso/eejs';
 import { DateTime, Money, SiteCurrency } from '@eventespresso/vo';
-
-jest.mock( '@eventespresso/eejs', () => ( {
-	...require.requireActual( '@eventespresso/eejs' ),
-	CURRENCY_CONFIG: {
-		code: 'USD',
-		singularLabel: 'dollar',
-		pluralLabel: 'dollars',
-		sign: '$',
-		signB4: true,
-		decimalMark: '.',
-		thousandsSeparator: ',',
-		subunits: 100,
-	},
-} ) );
+import {
+	EventSchema,
+	RegistrationSchemaProperties,
+	EventSchemaProperties,
+} from '@test/fixtures';
 
 /**
  * Internal imports
@@ -28,11 +19,6 @@ import {
 	assertValidValueForPreparedField,
 	assertValidFieldAndValueAgainstSchema,
 } from '../assertions';
-import {
-	EventSchema,
-	RegistrationSchemaProperties,
-	EventSchemaProperties,
-} from './fixtures';
 import { PRIVATE_PROPERTIES, VALIDATE_TYPE } from '../constants';
 
 describe( 'Testing assertions for model-entity factory.', () => {

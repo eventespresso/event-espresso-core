@@ -1,161 +1,94 @@
 /**
- * External dependencies
+ * External imports
  */
-import { map, keys, difference, without } from 'lodash';
-import isShallowEqual from '@wordpress/is-shallow-equal';
-import { combineReducers } from '@wordpress/data';
 import { mergeAndDeDuplicateArrays } from '@eventespresso/eejs';
+import { keys, reduce } from 'lodash';
 
 /**
- * Internal dependencies
+ * Internal imports
  */
 import {
 	DEFAULT_CORE_STATE,
-	getEntityPrimaryKeyValues,
-	keyEntitiesByPrimaryKeyValue,
+	createAndKeyEntitiesByPrimaryKeyValue,
 } from '../../model';
 
 /**
- * Returns an array of dirty entity ids from the provided entities.
+ * This replaces any entities in the incoming object with matching entities (by
+ * id) in the state (if they exist).
  *
- * @param { string } modelName
- * @param { Object } state
- * @param { Array } entities
- * @return { Array }  Returns an array.
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {Object} entities
+ * @return {Object} New entities object.
  */
-const getDirtyEntityIds = ( modelName, state, entities ) => {
-	const dirty = [];
-	let id;
-	entities.forEach( function( entity ) {
-		// dirty if not equal
-		id = getEntityPrimaryKeyValues( modelName, entity );
-		if ( state.entities.hasOwnProperty( modelName ) &&
-			state.entities[ modelName ].hasOwnProperty( id ) &&
-			! isShallowEqual( entity, state.entities[ modelName ][ id ] )
-		) {
-			dirty.push( String( id ) );
-		}
-	} );
-	return dirty;
+const replaceExistingEntitiesFromState = ( state, modelName, entities ) => {
+	return reduce( entities, ( result, entity, entityId ) => {
+		result[ entityId ] = state.entities[ modelName ][ entityId ] ?
+			state.entities[ modelName ][ entityId ] :
+			entity;
+		return result;
+	}, entities );
 };
 
 /**
- * This reducer sets the dirty property to false for all entity records matching
- * given entities in the state.  Entities themselves are NOT updated.
+ * A reducer returning the new state for action.
+ * Handles receiving entity records from a rest response and converting them to
+ * model entities using the provided factory.
  *
- * Typically this would be used to flush the dirty state after multiple entities
- * have been persisted to the server.
+ * It is expected that the incoming entity records are indexed by the primary key
+ * value for the entities.
  *
- * @param { Object } state
- * @param { Object } action
- * @return { Object }  The new state if dirty state is flushed and the original
- *                       state if not.
+ * @param {Object} state
+ * @param {Object} action
+ * @return {{entities: {}, entityIds: {}}} The new state (or the original if no
+ * change detected or action isn't handled by this method)
  */
-export function cleanEntities( state = DEFAULT_CORE_STATE, action ) {
-	const { type, modelName, entities: incomingEntities = [] } = action;
-	if ( type === 'CLEAN_ENTITIES' &&
-		state.dirty.hasOwnProperty( modelName ) ) {
-		const entityIds = map(
-			incomingEntities,
-			function( entity ) {
-				return String( getEntityPrimaryKeyValues( modelName, entity ) );
-			},
-		);
-		return {
-			...state,
-			dirty: {
-				...state.dirty,
-				[ modelName ]: [
-					...difference( state.dirty[ modelName ], entityIds ),
-				],
-			},
-		};
-	}
-	return state;
-}
-
-/**
- * This reducer sets the dirty property to false for the entity record in the
- * state matching the provided entityId in the action object.
- *
- * @param { Object } state
- * @param { Object } action
- * @return { Object }  The new state if the entity record is flushed and the
- *                       original state if not.
- */
-export function cleanEntityById( state = DEFAULT_CORE_STATE, action ) {
-	const { type, modelName, entityId } = action;
-	if ( type === 'CLEAN_ENTITY' &&
-		state.dirty.hasOwnProperty( modelName ) &&
-		state.entities.hasOwnProperty( modelName ) &&
-		state.entities[ modelName ].hasOwnProperty( entityId )
+export default function receiveEntityRecords( state = DEFAULT_CORE_STATE, action ) {
+	const { type, factory, entities: incomingEntities = {} } = action;
+	if (
+		factory.modelName &&
+		factory.classDef &&
+		state.entities[ factory.modelName ]
 	) {
-		return {
-			...state,
-			dirty: {
-				...state.dirty,
-				[ modelName ]: [
-					...without( state.dirty[ modelName ], String( entityId ) ),
-				],
-			}
-			,
-		};
-	}
-	return state;
-}
-
-/**
- * Receives entities and adds them to or updates them in the state.
- *
- * Any new entity entities are simply added.  Any entities matching existing
- * entities in the state are updated and if any properties of that entity differ
- * from what's already in the state the record is marked dirty.
- *
- * @param { Object } state
- * @param { Object } action
- * @return {*}  Returns original state if no additions or updates are done.
- *                Returns new state if additions or updates are done.
- */
-export function receiveEntityRecords( state = DEFAULT_CORE_STATE, action ) {
-	const { type, modelName, entities: incomingEntities = [] } = action;
-	if ( type === 'RECEIVE_ENTITY_RECORDS' &&
-		state.entities.hasOwnProperty( modelName ) ) {
-		const entities = keyEntitiesByPrimaryKeyValue( modelName,
-			incomingEntities,
-		);
-		const dirty = getDirtyEntityIds( modelName, state, incomingEntities );
-		return {
-			...state,
-			entities: {
-				...state.entities,
-				[ modelName ]: {
-					...state.entities[ modelName ],
-					...entities,
+		let entities = createAndKeyEntitiesByPrimaryKeyValue(
+				factory,
+				incomingEntities,
+			),
+			updateState = false;
+		switch ( type ) {
+			case 'RECEIVE_ENTITY_RECORDS':
+				// replace any incoming entities with existing entities already in the
+				// store so this registry acts as the "authority" for the latest entity.
+				entities = replaceExistingEntitiesFromState(
+					state,
+					factory.modelName,
+					entities
+				);
+				updateState = true;
+				break;
+			case 'RECEIVE_AND_REPLACE_ENTITY_RECORDS':
+				updateState = true;
+				break;
+		}
+		if ( updateState ) {
+			return {
+				...state,
+				entities: {
+					...state.entities,
+					[ factory.modelName ]: {
+						...state.entities[ factory.modelName ],
+						...entities,
+					},
 				},
-			},
-			entityIds: {
-				...state.entityIds,
-				[ modelName ]: mergeAndDeDuplicateArrays(
-					state.entityIds[ modelName ],
-					keys( entities ),
-				),
-			},
-			dirty: {
-				...state.dirty,
-				[ modelName ]: mergeAndDeDuplicateArrays(
-					state.dirty[ modelName ],
-					dirty,
-				),
-			},
-		};
+				entityIds: {
+					...state.entityIds,
+					[ factory.modelName ]: mergeAndDeDuplicateArrays(
+						state.entityIds[ factory.modelName ],
+						keys( entities ),
+					),
+				},
+			};
+		}
 	}
 	return state;
 }
-
-export default combineReducers(
-	{
-		cleanEntities,
-		cleanEntityById,
-		receiveEntityRecords,
-	},
-);

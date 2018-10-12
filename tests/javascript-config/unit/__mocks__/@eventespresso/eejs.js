@@ -1,6 +1,5 @@
 const {
 	routes,
-	CURRENCY_CONFIG,
 	TIMEZONE_CONFIG,
 	SERVER_LOCALE,
 	Exception,
@@ -12,18 +11,31 @@ const {
 	InvalidDateTime,
 	mergeAndDeDuplicateArrays,
 	mergeAndDeDuplicateObjects,
-} = require( '../../../../../eejs/index' );
+} = require( '../../../../../assets/src/eejs' );
+
+const newCurrencyConfig = {
+	code: 'USD',
+	singularLabel: 'dollar',
+	pluralLabel: 'dollars',
+	sign: '$',
+	signB4: true,
+	decimalMark: '.',
+	thousandsSeparator: ',',
+	subunits: 100,
+};
 
 module.exports.data = {
 	paths: {
 		collection_endpoints: {
 			event: '/ee/v4.8.36/events',
+			datetime: '/ee/v4.8.36/datetimes',
 			ticket: '/ee/v4.8.36/tickets',
 			venue: '/ee/v4.8.36/venues',
 			term: '/ee/v4.8.36/terms',
 		},
 		primary_keys: {
 			event: 'EVT_ID',
+			datetime: 'DTT_ID',
 			ticket: 'TKT_ID',
 			venue: 'VNU_ID',
 			term: [ 'TERM_ID', 'TAXONOMY_ID' ],
@@ -59,7 +71,7 @@ module.exports.data = {
 };
 
 module.exports.routes = routes;
-module.exports.CURRENCY_CONFIG = CURRENCY_CONFIG;
+module.exports.CURRENCY_CONFIG = newCurrencyConfig;
 module.exports.TIMEZONE_CONFIG = TIMEZONE_CONFIG;
 module.exports.SERVER_LOCALE = SERVER_LOCALE;
 module.exports.Exception = Exception;

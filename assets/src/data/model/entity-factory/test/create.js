@@ -22,20 +22,6 @@ import {
 
 import { PRIVATE_PROPERTIES, SAVE_STATE } from '../constants';
 
-jest.mock( '@eventespresso/eejs', () => ( {
-	...require.requireActual( '@eventespresso/eejs' ),
-	CURRENCY_CONFIG: {
-		code: 'USD',
-		singularLabel: 'dollar',
-		pluralLabel: 'dollars',
-		sign: '$',
-		signB4: true,
-		decimalMark: '.',
-		thousandsSeparator: ',',
-		subunits: 100,
-	},
-} ) );
-
 describe( 'testing create functions for model-entity factory', () => {
 	const mockInstance = class mockClass {};
 	const getMockInstance = () => new mockInstance();

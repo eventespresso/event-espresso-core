@@ -10,6 +10,7 @@ describe( 'endpoints', () => {
 	it( 'has the expected values from eejs.data', () => {
 		expect( endpoints ).toEqual(
 			{
+				datetime: '/ee/v4.8.36/datetimes',
 				event: '/ee/v4.8.36/events',
 				ticket: '/ee/v4.8.36/tickets',
 				venue: '/ee/v4.8.36/venues',

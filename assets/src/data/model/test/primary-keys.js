@@ -13,6 +13,7 @@ describe( 'primaryKeys', () => {
 	it( 'has the expected values from the mock data', () => {
 		expect( primaryKeys ).toEqual(
 			{
+				datetime: 'DTT_ID',
 				event: 'EVT_ID',
 				ticket: 'TKT_ID',
 				venue: 'VNU_ID',

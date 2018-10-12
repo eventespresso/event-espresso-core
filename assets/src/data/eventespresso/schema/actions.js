@@ -12,11 +12,21 @@ export function receiveSchemaForModel( modelName, schema = {} ) {
 		modelName,
 		schema,
 	};
-};
+}
 
-export function fetchFromAPI( path ) {
+/**
+ * Returns an action object used to update the store with the provided model
+ * entity factory for the provided modelName.
+ *
+ * @param {string} modelName
+ * @param {Object} factory
+ * @return {{type: string, modelName: string, factory: Object}} An action
+ * object.
+ */
+export function receiveFactoryForModel( modelName, factory = {} ) {
 	return {
-		type: 'FETCH_FROM_API',
-		path,
+		type: 'RECEIVE_FACTORY_FOR_MODEL',
+		modelName,
+		factory,
 	};
 }

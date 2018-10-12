@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { mapValues } from 'lodash';
+import memoize from 'memize';
 
 /**
  * Internal dependencies
@@ -38,12 +39,16 @@ const mapToObjectValues = modelNameEndpoints => {
 	);
 };
 
+const getDefaultModelEntitiesObject = memoize(
+	() => mapToObjectValues( endpoints )
+);
+
 /**
  * Provides the default state to be used by stores containing lists.
  *
  * @type { Object }
  */
-export const DEFAULT_LISTS_STATE = mapToArrayValues( endpoints );
+export const DEFAULT_LISTS_STATE = mapToObjectValues( endpoints );
 
 /**
  * Provides the default state to be used by the core store.
@@ -52,12 +57,9 @@ export const DEFAULT_LISTS_STATE = mapToArrayValues( endpoints );
  */
 export const DEFAULT_CORE_STATE = {
 	entities: {
-		...mapToObjectValues( endpoints ),
+		...getDefaultModelEntitiesObject(),
 	},
 	entityIds: {
-		...DEFAULT_LISTS_STATE,
-	},
-	dirty: {
 		...DEFAULT_LISTS_STATE,
 	},
 };
@@ -66,4 +68,11 @@ export const DEFAULT_CORE_STATE = {
  * Provides the default state to be used by the schema store.
  * @type {Object}
  */
-export const DEFAULT_SCHEMA_STATE = mapToObjectValues( endpoints );
+export const DEFAULT_SCHEMA_STATE = {
+	schema: {
+		...getDefaultModelEntitiesObject(),
+	},
+	factory: {
+		...getDefaultModelEntitiesObject(),
+	},
+};

@@ -1,73 +1,56 @@
 /**
- * WordPress dependencies
+ * External imports
  */
-import apiFetch from '@wordpress/api-fetch';
+import { keys } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { receiveResponse } from './actions';
-import { applyQueryString } from '../../model';
+import { receiveResponse, receiveEntityResponse } from './actions';
+import { applyQueryString, keyEntitiesByPrimaryKeyValue } from '../../model';
+import { fetch, select, dispatch } from '../base-controls';
 
 /**
  * Resolver for generic items returned from an endpoint.
  *
- * @param {Object} state  Data in state.
- * @param {string} modelName  The name of the model the items are for.
+ * @param {string} identifier  The identifier for the items.
  * @param {string} queryString  Additional query string parameters passed on to
  *   the REST request.
  */
-export async function* getItems( state, modelName, queryString ) {
-	const items = await apiFetch( {
-		path: applyQueryString( modelName,
-			queryString,
-		),
+export function* getItems( identifier, queryString ) {
+	const items = yield fetch( {
+		path: queryString,
 	} );
-	yield receiveResponse( modelName, queryString, items );
+	yield receiveResponse( identifier, queryString, items );
 }
 
 /**
- * Resolver for event entities.
- *
- * @param {Object} state Data in state.
- * @param {string} queryString Additional query string parameters passed on to
- *   the REST request.
- * @return {IterableIterator<*>} A async iterable.
+ * Resolver for model entities returned from an endpoint.
+ * @param {string} modelName
+ * @param {string} queryString
  */
-export function getEvents( state, queryString ) {
-	return getItems( state, 'event', queryString );
-}
-
-/**
- * Resolver for datetime entities.
- *
- * @param {Object} state Data in state.
- * @param {string} queryString Additional query string parameters passed on to
- *   the REST request.
- * @return {IterableIterator<*>} A async iterable.
- */
-export function getDatetimes( state, queryString ) {
-	return getItems( state, 'datetime', queryString );
-}
-
-/**
- * Resolver for ticket entities.
- *
- * @param {Object} state Data in state.
- * @param {string} queryString Additional query string parameters passed on to
- *   the REST request.
- * @return {IterableIterator<*>} A async iterable.
- */
-export function getTickets( state, queryString ) {
-	return getItems( state, 'ticket', queryString );
-}
-
-/**
- * Resolver for registration status entities.
- *
- * @param {Object} state Data in state.
- * @return {IterableIterator<*>} A async iterable.
- */
-export function getRegistrationStatuses( state ) {
-	return getItems( state, 'status', 'where[STS_type]=registration' );
+export function* getEntities( modelName, queryString ) {
+	let response = yield fetch( {
+		path: applyQueryString( modelName, queryString ),
+	} );
+	response = keyEntitiesByPrimaryKeyValue( modelName, response );
+	const factory = yield select(
+		'eventespresso/schema',
+		'getFactoryForModel',
+		modelName
+	);
+	yield dispatch(
+		'eventespresso/core',
+		'receiveEntityRecords',
+		factory,
+		response
+	);
+	response = keys( response );
+	const fullEntities = yield select(
+		'eventespresso/core',
+		'getEntitiesByIds',
+		modelName,
+		response
+	);
+	yield receiveEntityResponse( modelName, queryString, fullEntities );
 }

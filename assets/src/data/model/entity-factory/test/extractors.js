@@ -3,6 +3,10 @@
  */
 import { InvalidDateTime } from '@eventespresso/eejs';
 import { DateTime, Money, SiteCurrency } from '@eventespresso/vo';
+import {
+	EventSchemaProperties,
+	RegistrationSchemaProperties,
+} from '@test/fixtures';
 
 /**
  * Internal imports
@@ -19,25 +23,7 @@ import {
 	getDefaultValueForField,
 	deriveValidateTypeForField,
 } from '../extractors';
-import {
-	EventSchemaProperties,
-	RegistrationSchemaProperties,
-} from './fixtures';
 import { PRIVATE_PROPERTIES, VALIDATE_TYPE } from '../constants';
-
-jest.mock( '@eventespresso/eejs', () => ( {
-	...require.requireActual( '@eventespresso/eejs' ),
-	CURRENCY_CONFIG: {
-		code: 'USD',
-		singularLabel: 'dollar',
-		pluralLabel: 'dollars',
-		sign: '$',
-		signB4: true,
-		decimalMark: '.',
-		thousandsSeparator: ',',
-		subunits: 100,
-	},
-} ) );
 
 describe( 'Testing extractor functions for model-entity factory.', () => {
 	const getMockInstance = ( schema, validationTypes = {} ) => {

@@ -3,7 +3,7 @@
  */
 import { data } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
-import { isArray, reduce, trimEnd, keyBy } from 'lodash';
+import { isArray, reduce, trimEnd, keyBy, forEach } from 'lodash';
 import memoize from 'memize';
 
 /**
@@ -103,4 +103,31 @@ export const keyEntitiesByPrimaryKeyValue = ( modelName, entities = [] ) => {
 	return keyBy( entities, function( entity ) {
 		return String( getEntityPrimaryKeyValues( modelName, entity ) );
 	} );
+};
+
+/**
+ * Creates an array of entity instances using the given factory and array
+ * of entity values.
+ *
+ * @param {Object} factory
+ * @param {Object} entities
+ * @return {Object<number|Object>}  An array of entity instances indexed by
+ * their primary key value
+ */
+export const createAndKeyEntitiesByPrimaryKeyValue = (
+	factory,
+	entities = {}
+) => {
+	assertIsNotEmpty(
+		entities,
+		__(
+			'The provided object of entities must not be empty',
+			'event_espresso',
+		)
+	);
+	const entityInstances = {};
+	forEach( entities, ( entity, entityId ) => {
+		entityInstances[ entityId ] = factory.fromExisting( entity );
+	} );
+	return entityInstances;
 };

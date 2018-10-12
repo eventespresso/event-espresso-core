@@ -1,120 +1,92 @@
 /**
+ * External dependencies
+ */
+import { values } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import {
-	isEntityDirty,
 	getEntityRecordsForModel,
 	getEntitiesForModel,
 	getEntityById,
+	getEntitiesByIds,
 } from '../selectors';
-
-const mockStateForTests = {
-	entities: {
-		events: {
-			10: { EVT_ID: 10, name: 'Event 10' },
-			20: { EVT_ID: 20, name: 'Event 20' },
-			30: { EVT_ID: 30, name: 'Event 30' },
-		},
-		terms: {
-			'10:10': { TERM_ID: 10, TAXONOMY_ID: 10, name: 'Term 10' },
-			'20:20': { TERM_ID: 20, TAXONOMY_ID: 20, name: 'Term 20' },
-		},
-	},
-	entityIds: {
-		events: [ 10, 20, 30 ],
-		terms: [ '10:10', '20:20' ],
-	},
-	dirty: {
-		events: [ '20' ],
-		terms: [ '20:20' ],
-	},
-};
+import { mockStateForTests } from './fixtures';
+import { EventEntities } from '../../test/fixtures/base';
 
 describe( 'getEntitiesForModel()', () => {
 	it( 'returns null when modelName is not in state',
 		() => {
-			expect( getEntitiesForModel( mockStateForTests, 'tickets' ) )
+			expect( getEntitiesForModel( mockStateForTests, 'ticket' ) )
 				.toBeNull();
 		},
 	);
 
 	it( 'returns expected objects for the modelName in the state',
 		() => {
-			const expected = [
-				{ EVT_ID: 10, name: 'Event 10' },
-				{ EVT_ID: 20, name: 'Event 20' },
-				{ EVT_ID: 30, name: 'Event 30' },
-			];
-			expect( getEntitiesForModel( mockStateForTests, 'events' ) )
-				.toEqual( expected );
+			expect( getEntitiesForModel( mockStateForTests, 'event' ) )
+				.toEqual( values( mockStateForTests.entities.event ) );
 		},
 	);
 } );
 
 describe( 'getEntityRecordsForModel()', () => {
 	it( 'returns null when modelName is not in state', () => {
-		expect( getEntityRecordsForModel( mockStateForTests, 'tickets' ) )
+		expect( getEntityRecordsForModel( mockStateForTests, 'ticket' ) )
 			.toBeNull();
 	} );
 	it( 'returns expected objects for the modelName in the state', () => {
-		const expected = {
-			10: { EVT_ID: 10, name: 'Event 10' },
-			20: { EVT_ID: 20, name: 'Event 20' },
-			30: { EVT_ID: 30, name: 'Event 30' },
-		};
-		expect( getEntityRecordsForModel( mockStateForTests, 'events' ) )
-			.toEqual( expected );
+		expect( getEntityRecordsForModel( mockStateForTests, 'event' ) )
+			.toEqual( mockStateForTests.entities.event );
 	} );
 } );
 
 describe( 'getEntityById()', () => {
 	it( 'returns null when modelName is not in state', () => {
-		expect( getEntityById( mockStateForTests, 'tickets', 10 ) )
+		expect( getEntityById( mockStateForTests, 'ticket', 10 ) )
 			.toBeNull();
 	} );
 
 	it( 'returns null when modelName is in state but not id', () => {
-		expect( getEntityById( mockStateForTests, 'events', 50 ) )
+		expect( getEntityById( mockStateForTests, 'event', 50 ) )
 			.toBeNull();
 	} );
 
 	it( 'returns expected object for valid modelName and entity id' +
 		' (when id is given as number)', () => {
-		expect( getEntityById( mockStateForTests, 'events', 20 ) )
-			.toEqual(
-				{ EVT_ID: 20, name: 'Event 20' },
-			);
+		expect( getEntityById( mockStateForTests, 'event', 20 ) )
+			.toEqual( EventEntities.b );
 	} );
 
 	it( 'returns expected object for valid modelName and entity id' +
 		' (when id is given as string)', () => {
-		expect( getEntityById( mockStateForTests, 'events', '20' ) )
-			.toEqual(
-				{ EVT_ID: 20, name: 'Event 20' },
-			);
+		expect( getEntityById( mockStateForTests, 'event', '20' ) )
+			.toEqual( EventEntities.b );
 	} );
 } );
 
-describe( 'isEntityDirty()', () => {
-	it( 'returns false when modelName is not in state', () => {
-		expect( isEntityDirty( mockStateForTests, 'tickets', 10 ) )
-			.toBe( false );
+describe( 'getEntitiesById()', () => {
+	it( 'returns null when modelName is not in state', () => {
+		expect( getEntitiesByIds( mockStateForTests, 'ticket', [ 10 ] ) )
+			.toBe( null );
 	} );
 
-	it( 'returns false when modelName is in state but entity id is not', () => {
-		expect( isEntityDirty( mockStateForTests, 'events', 50 ) )
-			.toBe( false );
+	it( 'returns empty array when modelName is in state but entity ids are not',
+		() => {
+			expect( getEntitiesByIds( mockStateForTests, 'event', [ 50 ] ) )
+				.toEqual( [] );
+		} );
+
+	it( 'returns expected value for valid modelName and entity ids ' +
+		'(when ids are given as number)', () => {
+		expect( getEntitiesByIds( mockStateForTests, 'event', [ 20 ] ) )
+			.toEqual( [ EventEntities.b ] );
 	} );
 
-	it( 'returns expected value for valid modelName and entity id ' +
-		'(when id is given as number)', () => {
-		expect( isEntityDirty( mockStateForTests, 'events', 10 ) )
-			.toBe( false );
-	} );
-
-	it( 'returns expected value for valid modelName and entity id ' +
-		'(when id is given as string)', () => {
-		expect( isEntityDirty( mockStateForTests, 'events', '20' ) )
-			.toBe( true );
+	it( 'returns expected value for valid modelName and entity ids ' +
+		'(when ids are given as string)', () => {
+		expect( getEntitiesByIds( mockStateForTests, 'event', [ '20' ] ) )
+			.toEqual( [ EventEntities.b ] );
 	} );
 } );

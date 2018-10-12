@@ -17,10 +17,13 @@ import {
 	isValueObjectField,
 } from '../booleans';
 
+/**
+ * External Imports
+ */
 import {
 	EventSchemaProperties,
 	RegistrationSchemaProperties,
-} from './fixtures';
+} from '@test/fixtures';
 
 describe( 'Testing boolean functions for model-entity factory.', () => {
 	const testRunner = (

@@ -137,6 +137,12 @@ const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => {
 	);
 	return {
 		/**
+		 * Exposes modelName so client code can derive what model this factory
+		 * is for from any given factory.
+		 * @type string
+		 */
+		modelName: modelName,
+		/**
 		 * This is the class definition for the Entity.  Typically this is
 		 * retrieved for the ability to do instanceof checks.
 		 */
@@ -195,4 +201,3 @@ const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => {
 	};
 };
 export default createEntityFactory;
-export { SAVE_STATE };

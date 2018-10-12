@@ -8,6 +8,7 @@ import {
 	isUndefined,
 	isArray,
 	keys,
+	sortBy,
 } from 'lodash';
 import cuid from 'cuid';
 import { InvalidArgument } from '@eventespresso/eejs';
@@ -495,16 +496,25 @@ const getRenderedCallback = ( instance ) => ( requestedFieldName ) =>
 	instance[ requestedFieldName + 'Rendered' ];
 
 /**
- * Removes model field prefixes from the given fieldName and returns the
- * resulting value.
+ * Returns a fieldName stripped of all possible prefixes.
  *
  * @param {Object} instance
  * @param {string} fieldName
  * @return {string} The prefix free fieldName.
  */
 const removePrefixesFromField = ( instance, fieldName ) => {
-	const fullPrefixToRemove = instance.fieldPrefixes.join( '_' ) + '_';
-	return fieldName.replace( fullPrefixToRemove, '' );
+	const prefixesToRemove = sortBy(
+		instance.fieldPrefixes,
+		( prefix ) => prefix.length * -1
+	);
+	let newFieldName = fieldName;
+	forEach( prefixesToRemove, ( prefix ) => {
+		newFieldName = fieldName.replace( prefix, '' );
+		if ( newFieldName !== fieldName ) {
+			return false;
+		}
+	} );
+	return newFieldName;
 };
 
 /**

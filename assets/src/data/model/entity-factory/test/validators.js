@@ -3,6 +3,10 @@
  */
 import { DateTime, Money, SiteCurrency } from '@eventespresso/vo';
 import { InvalidDateTime } from '@eventespresso/eejs';
+import {
+	EventSchemaProperties,
+	RegistrationSchemaProperties,
+} from '@test/fixtures';
 
 /**
  * Internal Imports
@@ -12,24 +16,6 @@ import {
 	validateEnumType,
 	isShallowValidValueForField,
 } from '../validators';
-import {
-	EventSchemaProperties,
-	RegistrationSchemaProperties,
-} from './fixtures';
-
-jest.mock( '@eventespresso/eejs', () => ( {
-	...require.requireActual( '@eventespresso/eejs' ),
-	CURRENCY_CONFIG: {
-		code: 'USD',
-		singularLabel: 'dollar',
-		pluralLabel: 'dollars',
-		sign: '$',
-		signB4: true,
-		decimalMark: '.',
-		thousandsSeparator: ',',
-		subunits: 100,
-	},
-} ) );
 
 describe( 'Testing validator functions for model-entity factory', () => {
 	describe( 'validateType()', () => {
