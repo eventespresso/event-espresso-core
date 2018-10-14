@@ -18,7 +18,6 @@ import {
  */
 import createEntityFactory from '../base-entity';
 
-
 describe( 'createEntityFactory()', () => {
 	const EventFactory = createEntityFactory(
 		'event',

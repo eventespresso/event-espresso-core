@@ -13,7 +13,7 @@ import { REDUCER_KEY } from '../constants';
 
 const poorManSerializer = ( item ) => {
 	return JSON.parse( JSON.stringify( item ) );
-}
+};
 
 describe( 'getSchemaForModel()', () => {
 	describe( 'yields with expected response', () => {

@@ -8,7 +8,7 @@ import { isUndefined } from 'lodash';
 /**
  * Internal imports
  */
-import { eventFactory, dateTimeFactory, } from '../../test/fixtures/base';
+import { eventFactory, dateTimeFactory } from '../../test/fixtures/base';
 import { createEntitySelectors, createEntityResolvers } from '../entities';
 import { mockStateForTests } from './fixtures';
 import * as selectors from '../selectors';

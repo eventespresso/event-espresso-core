@@ -18,5 +18,5 @@ export const mockStateForTests = {
 	factory: {
 		event: eventFactory,
 		datetime: dateTimeFactory,
-	}
+	},
 };

@@ -11,21 +11,6 @@ import { endpoints } from './endpoints.js';
 
 /**
  * Receives an object map of modelName to endpoint and maps that to a default
- * map of modelName to empty array.
- *
- * @param { Object } modelNameEndpoints
- * @return { Object } An object of { { modelName } : [] }
- */
-const mapToArrayValues = modelNameEndpoints => {
-	return mapValues( modelNameEndpoints,
-		function() {
-			return [];
-		},
-	);
-};
-
-/**
- * Receives an object map of modelName to endpoint and maps that to a default
  * map of modelName to empty object.
  *
  * @param { Object } modelNameEndpoints
