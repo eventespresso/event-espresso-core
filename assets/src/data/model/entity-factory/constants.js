@@ -41,6 +41,7 @@ export const PRIVATE_PROPERTIES = {
  * example, if the field is "EVT_ID", then the prefix is "EVT"; if the field is
  * "DTT_EVT_start", then the prefixes are "DTT", and "DTT_EVT".
  *
+ * @param  {string} modelName
  * @return {Object} A filtered object indexed by model name and the values are
  * an array of model prefixes for that model.
  */
