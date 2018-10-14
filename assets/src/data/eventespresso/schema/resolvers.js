@@ -24,7 +24,7 @@ export function* getFactoryForModel( modelName ) {
 	const factory = createEntityFactory(
 		modelName,
 		schema.schema,
-		MODEL_PREFIXES[ modelName ]
+		MODEL_PREFIXES( modelName )
 	);
 	yield receiveFactoryForModel( modelName, factory );
 }
