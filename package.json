@@ -59,7 +59,7 @@
 		"@wordpress/dom": "^1.0.0",
 		"@wordpress/editor": "^2.0.1",
 		"@wordpress/element": "^1.0.0",
-		"@wordpress/hooks": "^1.3.0",
+		"@wordpress/hooks": "^1.3.3",
 		"@wordpress/jest-preset-default": "^2.0.0",
 		"@wordpress/keycodes": "^1.0.0",
 		"@wordpress/plugins": "^1.0.0",
