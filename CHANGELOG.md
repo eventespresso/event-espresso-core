@@ -17,6 +17,10 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 
 ## [$VID:$]
 
+### Added
+
+- Added Date and Time Filter Max Checked Admin Option and Use to Limit Checked Dates for Datetime Selector ([712](https://github.com/eventespresso/event-espresso-core/pull/712))
+
 ### Changed
 
 - Improved UI for Country Currency Settings ([707](https://github.com/eventespresso/event-espresso-core/pull/707))
