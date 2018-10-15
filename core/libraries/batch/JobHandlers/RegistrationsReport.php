@@ -465,19 +465,16 @@ class RegistrationsReport extends JobHandlerFile
                         );
                     }
                 }
+
                 /**
                  * Filter to change the contents of each row of the registrations report CSV file.
-                 * This can be used to add or remote columns from the CSV file, or change their values.                 *
-                 * Note: it has this name because originally that's where this filter resided,
-                 * and we've left its name as-is for backward compatibility.
+                 * This can be used to add or remote columns from the CSV file, or change their values.
                  * Note when using: all rows in the CSV should have the same columns.
-                 *
-                 * @param array $reg_csv_array keys are column-header names, and values are that columns' value
-                 *                             in this row
-                 * @param array $reg_row       is the row from the database's wp_esp_registration table
+                 * @param array $reg_csv_array keys are the column names, values are their cell values
+                 * @param array $reg_row one entry from EEM_Registration::get_all_wpdb_results()
                  */
                 $registrations_csv_ready_array[] = apply_filters(
-                    'FHEE__EE_Export__report_registrations__reg_csv_array',
+                    'FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport__reg_csv_array',
                     $reg_csv_array,
                     $reg_row
                 );
