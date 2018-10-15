@@ -1267,7 +1267,7 @@ final class EE_Config implements ResettableInterface
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
-        EE_Config::$_module_route_map[ (string)$key ][ (string)$route ] = array('EED_' . $module, $method_name);
+        EE_Config::$_module_route_map[ (string) $key ][ (string) $route ] = array('EED_' . $module, $method_name);
         return true;
     }
 
