@@ -126,7 +126,7 @@ class EE_CPT_Strategy extends EE_Base
         $_CPT_endpoints = array();
         if (is_array($this->_CPTs)) {
             foreach ($this->_CPTs as $CPT_type => $CPT) {
-                if ( isset( $CPT['plural_slug'] ) ) {
+                if (isset($CPT['plural_slug'])) {
                     $_CPT_endpoints [ (string) $CPT['plural_slug'] ] = $CPT_type;
                 }
             }
