@@ -191,6 +191,7 @@ class RegistrationsReport extends JobHandlerFile
             \EEH_Export::write_data_array_to_csv($job_parameters->extra_datum('filepath'), $csv_data, false);
             $units_processed = count($csv_data);
         } else {
+            $csv_data = array();
             $units_processed = 0;
         }
         $job_parameters->mark_processed($units_processed);
