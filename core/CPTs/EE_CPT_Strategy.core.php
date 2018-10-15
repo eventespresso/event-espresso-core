@@ -211,12 +211,8 @@ class EE_CPT_Strategy extends EE_Base
     {
         // is a tag set ?
         if (isset($WP_Query->query['tag'])) {
-            // set post_tags
-            $this->_set_CPT_terms();
-            // is this tag archive term in the list of terms used by our CPTs ?
-            $term = isset($this->_CPT_terms[ $WP_Query->query['tag'] ])
-                ? $this->_CPT_terms[ $WP_Query->query['tag'] ]
-                : null;
+            // get term for tag
+            $term = EEM_Term::instance()->get_post_tag_for_event_or_venue($WP_Query->query['tag']);
             // verify the term
             if ($term instanceof EE_Term) {
                 $term->post_type = array_merge(array('post', 'page'), (array) $term->post_type);
