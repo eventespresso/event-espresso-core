@@ -586,6 +586,16 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     /**
      * @return bool
      */
+    public function isWordPressApi()
+    {
+        return $this->request_type->isWordPressApi();
+    }
+
+
+
+    /**
+     * @return bool
+     */
     public function isWordPressScrape()
     {
         return $this->request_type->isWordPressScrape();
