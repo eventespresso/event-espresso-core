@@ -568,7 +568,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     protected function getCountryIsoForSite()
     {
-        return isset(EE_Registry::instance()->CFG->organization->CNT_ISO)
+span class="pl-s1">         return ! empty(EE_Registry::instance()->CFG->organization->CNT_ISO)
                && ! empty(EE_Registry::instance()->CFG->organization->CNT_ISO)
             ? EE_Registry::instance()->CFG->organization->CNT_ISO
             : 'US';
