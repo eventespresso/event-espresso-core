@@ -9,12 +9,12 @@ import { REDUCER_KEY } from './constants';
  * state.
  * @param {Object} state
  * @param {string} modelName
- * @return {Object|null} Returns the schema object or null if it doesn't exist.
+ * @return {Object} Returns the schema object or null if it doesn't exist.
  */
 export function getSchemaForModel( state, modelName ) {
 	return state.schema && state.schema[ modelName ] ?
 		state.schema[ modelName ] :
-		null;
+		{};
 }
 
 /**
@@ -34,13 +34,13 @@ export function isRequestingSchemaForModel( modelName ) {
  *
  * @param {Object} state
  * @param {string} modelName
- * @return {Object|null} Returns the model entity factory or null if it doesn't
+ * @return {Object} Returns the model entity factory or null if it doesn't
  * exist.
  */
 export function getFactoryForModel( state, modelName ) {
 	return state.factory && state.factory[ modelName ] ?
 		state.factory[ modelName ] :
-		null;
+		{};
 }
 
 /**

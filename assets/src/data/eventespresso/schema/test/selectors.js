@@ -43,7 +43,7 @@ describe( 'testing getters', () => {
 				expect( selectorToTest(
 					state,
 					'invalid'
-				) ).toBe( null );
+				) ).toEqual( {} );
 			} );
 			it( 'returns expected value for model in state', () => {
 				expect( selectorToTest(
