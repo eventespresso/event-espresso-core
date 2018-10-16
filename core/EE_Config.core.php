@@ -3010,6 +3010,13 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
      */
     private $datetime_selector_threshold = 3;
 
+    /**
+     * determines the maximum number of "checked" dates in the date and time filter
+     *
+     * @var int $datetime_selector_checked
+     */
+    private $datetime_selector_max_checked = 10;
+
 
     /**
      *    class constructor
@@ -3021,6 +3028,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
         $this->show_expired_tickets = true;
         $this->show_datetime_selector = \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
         $this->datetime_selector_threshold = 3;
+        $this->datetime_selector_max_checked = 10;
     }
 
 
@@ -3107,6 +3115,24 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
     {
         $datetime_selector_threshold = absint($datetime_selector_threshold);
         $this->datetime_selector_threshold = $datetime_selector_threshold ? $datetime_selector_threshold : 3;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function getDatetimeSelectorMaxChecked()
+    {
+        return $this->datetime_selector_max_checked;
+    }
+
+
+    /**
+     * @param int $datetime_selector_max_checked
+     */
+    public function setDatetimeSelectorMaxChecked($datetime_selector_max_checked)
+    {
+        $this->datetime_selector_max_checked = absint($datetime_selector_max_checked);
     }
 }
 
