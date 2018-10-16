@@ -20,7 +20,7 @@ class RequestTypeContextDetector
 {
 
     /**
-     * @var RequestTypeContextFactory $factory
+     * @var RequestTypeContextFactoryInterface $factory
      */
     private $factory;
 
@@ -29,17 +29,35 @@ class RequestTypeContextDetector
      */
     private $request;
 
+    /**
+     * @var array $constants
+     */
+    private $constants;
+
 
     /**
      * RequestTypeContextDetector constructor.
      *
-     * @param RequestInterface          $request
-     * @param RequestTypeContextFactory $factory
+     * @param RequestInterface                   $request
+     * @param RequestTypeContextFactoryInterface $factory
      */
-    public function __construct(RequestInterface $request, RequestTypeContextFactory $factory)
-    {
+    public function __construct(
+        RequestInterface $request,
+        RequestTypeContextFactoryInterface $factory,
+        array $constants = array()
+    ) {
         $this->request = $request;
         $this->factory = $factory;
+        $this->constants = $constants;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    private function getConstant($constant, $default)
+    {
+        return isset($this->constants[ $constant]) ? $this->constants[ $constant ] : $default;
     }
 
 
@@ -64,7 +82,7 @@ class RequestTypeContextDetector
             return $this->factory->create(RequestTypeContext::WP_API);
         }
         // Detect AJAX
-        if (defined('DOING_AJAX') && DOING_AJAX) {
+        if ($this->getConstant('DOING_AJAX', false)) {
             if (filter_var($this->request->getRequestParam('ee_front_ajax'), FILTER_VALIDATE_BOOLEAN)) {
                 return $this->factory->create(RequestTypeContext::AJAX_FRONT);
             }
@@ -78,11 +96,11 @@ class RequestTypeContextDetector
             return $this->factory->create(RequestTypeContext::CRON);
         }
         // Detect command line requests
-        if (defined('WP_CLI') && WP_CLI) {
+        if ($this->getConstant('WP_CLI', false)) {
             return $this->factory->create(RequestTypeContext::CLI);
         }
         // detect WordPress admin (ie: "Dashboard")
-        if (is_admin()) {
+        if ($this->getConstant('is_admin', false)) {
             return $this->factory->create(RequestTypeContext::ADMIN);
         }
         // Detect iFrames
