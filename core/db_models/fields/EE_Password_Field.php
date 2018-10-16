@@ -49,7 +49,7 @@ class EE_Password_Field extends EE_Text_Field_Base
      */
     public function fieldIsProtected($field_name)
     {
-        return in_array($field_name, $this->protectedFields());
+        return in_array($field_name, $this->protectedFields(), true);
     }
 }
 // End of file EE_Password_Field.php

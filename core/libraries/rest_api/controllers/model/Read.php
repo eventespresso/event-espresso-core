@@ -11,6 +11,7 @@ use EventEspresso\core\libraries\rest_api\ObjectDetectedException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use Exception;
 use InvalidArgumentException;
+use ReflectionException;
 use WP_Error;
 use WP_REST_Request;
 use EventEspresso\core\libraries\rest_api\Capabilities;
@@ -581,10 +582,10 @@ class Read extends Base
      * @return array ready for being converted into json for sending to client
      * @throws EE_Error
      * @throws RestException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     public function createEntityFromWpdbResult($model, $db_row, $rest_request, $deprecated = null)
     {
@@ -1388,7 +1389,7 @@ class Read extends Base
         $this->setDebugInfo('model query params', $restricted_query_params);
         $model_rows = $model->get_all_wpdb_results($restricted_query_params);
         if (! empty($model_rows)) {
-            $model_row = array_shift($model_rows);
+            $model_row = reset($model_rows);
             // it's a custom post type that requires a password. The requestor needs to have provided it before
             if ($model->hasPassword()
                 && ! empty($request['password'])
