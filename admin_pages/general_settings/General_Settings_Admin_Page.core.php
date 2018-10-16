@@ -564,6 +564,19 @@ class General_Settings_Admin_Page extends EE_Admin_Page
 
 
     /**
+     * @return string
+     */
+    protected function getCountryIsoForSite()
+    {
+        return isset(EE_Registry::instance()->CFG->organization->CNT_ISO)
+               && ! empty(EE_Registry::instance()->CFG->organization->CNT_ISO)
+            ? EE_Registry::instance()->CFG->organization->CNT_ISO
+            : 'US';
+    }
+
+
+
+    /**
      * Output Country Settings view.
      *
      * @throws DomainException
@@ -571,9 +584,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     protected function _country_settings()
     {
-        $CNT_ISO_for_site = isset(EE_Registry::instance()->CFG->organization->CNT_ISO)
-            ? EE_Registry::instance()->CFG->organization->CNT_ISO
-            : 'US';
+        $CNT_ISO_for_site = $this->getCountryIsoForSite();
         $CNT_ISO = isset($this->_req_data['country'])
             ? strtoupper(sanitize_text_field($this->_req_data['country']))
             : $CNT_ISO_for_site;
@@ -632,9 +643,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public function display_country_settings($CNT_ISO = '')
     {
-        $CNT_ISO_for_site = isset(EE_Registry::instance()->CFG->organization->CNT_ISO)
-            ? EE_Registry::instance()->CFG->organization->CNT_ISO
-            : 'US';
+        $CNT_ISO_for_site = $this->getCountryIsoForSite();
 
         $CNT_ISO = isset($this->_req_data['country'])
             ? strtoupper(sanitize_text_field($this->_req_data['country']))
