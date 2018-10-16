@@ -1055,30 +1055,45 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         $cols_n_values['CNT_name'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_name'])
             ? sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_name'])
             : null;
-        $cols_n_values['CNT_cur_code'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_code'])
-            ? strtoupper(sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_code']))
-            : 'USD';
-        $cols_n_values['CNT_cur_single'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_single'])
-            ? sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_single'])
-            : 'dollar';
-        $cols_n_values['CNT_cur_plural'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_plural'])
-            ? sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_plural'])
-            : 'dollars';
-        $cols_n_values['CNT_cur_sign'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign'])
-            ? sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign'])
-            : '$';
-        $cols_n_values['CNT_cur_sign_b4'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign_b4'])
-            ? absint($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign_b4'])
-            : true;
-        $cols_n_values['CNT_cur_dec_plc'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_dec_plc'])
-            ? absint($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_dec_plc'])
-            : 2;
-        $cols_n_values['CNT_cur_dec_mrk'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_dec_mrk'])
-            ? sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_dec_mrk'])
-            : '.';
-        $cols_n_values['CNT_cur_thsnds'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_thsnds'])
-            ? sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_thsnds'])
-            : ',';
+        if(isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_code'])) {
+            $cols_n_values['CNT_cur_code'] = strtoupper(
+                sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_code'])
+            );
+        }
+        if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_single'])) {
+            $cols_n_values['CNT_cur_single'] = sanitize_text_field(
+                $this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_single']
+            );
+        }
+        if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_plural'])) {
+            $cols_n_values['CNT_cur_plural'] = sanitize_text_field(
+                $this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_plural']
+            );
+        }
+        if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign'])) {
+            $cols_n_values['CNT_cur_sign'] = sanitize_text_field(
+                $this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign']);
+        }
+        if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign_b4'])) {
+            $cols_n_values['CNT_cur_sign_b4'] = absint(
+                $this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign_b4']
+            );
+        }
+        if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_dec_plc'])) {
+            $cols_n_values['CNT_cur_dec_plc'] = absint(
+                $this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_dec_plc']
+            );
+        }
+        if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_dec_mrk'])) {
+            $cols_n_values['CNT_cur_dec_mrk'] = sanitize_text_field(
+                $this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_dec_mrk']
+            );
+        }
+        if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_thsnds'])) {
+            $cols_n_values['CNT_cur_thsnds'] = sanitize_text_field(
+                $this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_thsnds']
+            );
+        }
         $cols_n_values['CNT_tel_code'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_tel_code'])
             ? sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_tel_code'])
             : null;
