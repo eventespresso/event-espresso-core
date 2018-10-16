@@ -59,6 +59,10 @@ class RequestTypeContextDetector
         if ($this->isEspressoRestApiRequest()) {
             return $this->factory->create(RequestTypeContext::API);
         }
+        // Detect WP REST API
+        if ($this->isWorPressRestApiRequest()) {
+            return $this->factory->create(RequestTypeContext::WP_API);
+        }
         // Detect AJAX
         if (defined('DOING_AJAX') && DOING_AJAX) {
             if (filter_var($this->request->getRequestParam('ee_front_ajax'), FILTER_VALIDATE_BOOLEAN)) {
@@ -104,6 +108,19 @@ class RequestTypeContextDetector
             : 'wp-json';
         $ee_rest_url_prefix .= '/' . Domain::API_NAMESPACE;
         return $this->uriPathMatches($ee_rest_url_prefix);
+    }
+
+
+
+    /**
+     * @return bool
+     */
+    private function isWorPressRestApiRequest()
+    {
+        $wp_rest_url_prefix = RecommendedVersions::compareWordPressVersion('4.4.0')
+            ? trim(rest_get_url_prefix(), '/')
+            : 'wp-json';
+        return $this->uriPathMatches($wp_rest_url_prefix);
     }
 
 
