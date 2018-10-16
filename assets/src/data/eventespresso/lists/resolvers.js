@@ -7,10 +7,13 @@ import { keys, isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { receiveResponse, receiveEntityResponse } from './actions';
-import { applyQueryString, keyEntitiesByPrimaryKeyValue } from '../../model';
+import {
+	applyQueryString,
+	keyEntitiesByPrimaryKeyValue,
+	createAndKeyEntitiesByPrimaryKeyValue,
+} from '../../model';
 import { fetch, select, dispatch } from '../base-controls';
 import { getFactoryForModel } from '../schema/resolvers.js';
-import { createAndKeyEntitiesByPrimaryKeyValue } from '../../model';
 import { keepExistingEntitiesInObject } from '../base-entities';
 
 /**
