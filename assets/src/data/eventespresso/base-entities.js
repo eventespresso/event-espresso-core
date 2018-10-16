@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { upperFirst, camelCase } from 'lodash';
+import { upperFirst, camelCase, reduce } from 'lodash';
 import pluralize from 'pluralize';
 
 /**
@@ -20,4 +20,25 @@ export const getMethodName = (
 ) => {
 	modelName = usePlural ? pluralize( modelName ) : modelName;
 	return prefix + upperFirst( camelCase( modelName + upperFirst( suffix ) ) );
+};
+
+/**
+ * Given a collection of existing entities and a collection of incoming
+ * entities, this returns a merged object with preference given to common
+ * entities from the existingEntities collection.
+ *
+ * @param {Object} existingEntities
+ * @param {Object} incomingEntities
+ * @return {Object} A new collection of entities.
+ */
+export const keepExistingEntitiesInObject = (
+	existingEntities,
+	incomingEntities,
+) => {
+	return reduce( incomingEntities, ( result, entity, entityId ) => {
+		result[ entityId ] = existingEntities[ entityId ] ?
+			existingEntities[ entityId ] :
+			entity;
+		return result;
+	}, {} );
 };
