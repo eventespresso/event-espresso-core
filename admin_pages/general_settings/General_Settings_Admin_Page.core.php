@@ -1055,7 +1055,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         $cols_n_values['CNT_name'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_name'])
             ? sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_name'])
             : null;
-        if(isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_code'])) {
+        if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_code'])) {
             $cols_n_values['CNT_cur_code'] = strtoupper(
                 sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_code'])
             );
@@ -1072,7 +1072,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         }
         if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign'])) {
             $cols_n_values['CNT_cur_sign'] = sanitize_text_field(
-                $this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign']);
+                $this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign']
+            );
         }
         if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign_b4'])) {
             $cols_n_values['CNT_cur_sign_b4'] = absint(
