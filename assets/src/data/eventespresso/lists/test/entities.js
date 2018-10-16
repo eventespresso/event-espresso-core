@@ -87,12 +87,12 @@ describe( 'createEntityResolvers()', () => {
 		[
 			'getEvents',
 			'testQueryA',
-			{ path: '/ee/v4.8.36/events?testQueryA' },
+			{ path: '/wp-json/ee/v4.8.36/events?testQueryA' },
 		],
 		[
 			'getDatetimes',
 			'testQueryB',
-			{ path: '/ee/v4.8.36/datetimes?testQueryB' },
+			{ path: '/wp-json/ee/v4.8.36/datetimes?testQueryB' },
 		],
 	];
 	describe( 'creates expected resolvers for given modelNames', () => {

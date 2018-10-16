@@ -3,6 +3,7 @@
  */
 import { getMethodName } from '../base-entities';
 import { MODEL_NAMES } from '../../model';
+import { select } from '../base-controls';
 
 /**
  * This method creates selectors for each registered model name wrapping the
