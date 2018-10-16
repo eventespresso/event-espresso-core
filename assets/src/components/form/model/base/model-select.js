@@ -155,15 +155,15 @@ export class ModelSelect extends Component {
 export default withSelect( ( select, ownProps ) => {
 	const { getQueryString, modelName, selectConfiguration } = ownProps;
 	const queryString = getQueryString( ownProps.queryData );
-	const { getItems, isRequestingItems } = select( 'eventespresso/lists' );
+	const { getEntities, isRequestingEntities } = select( 'eventespresso/lists' );
 	return {
 		...ModelSelect.defaultProps,
 		...ownProps,
-		modelEntities: getItems( modelName, queryString ),
+		modelEntities: getEntities( modelName, queryString ),
 		selectConfiguration: {
 			...ModelSelect.defaultProps.selectConfiguration,
 			...selectConfiguration,
-			isLoading: isRequestingItems( modelName, queryString ),
+			isLoading: isRequestingEntities( modelName, queryString ),
 		},
 	};
 } )( ModelSelect );
