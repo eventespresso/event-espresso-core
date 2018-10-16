@@ -1,5 +1,4 @@
 # auto-generated/build-artifact files that should not be committed
-core/third_party_libs/dompdf/lib/fonts/log.htm
 coverage
 translation-map.json
 *-translations.php

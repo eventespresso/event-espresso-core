@@ -1,3 +1,6 @@
+.datetime_selector-dv {
+    overflow: visible !important;
+}
 
 .checkbox-dropdown-selector-btn {
     cursor: pointer;
