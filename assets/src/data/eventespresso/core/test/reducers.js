@@ -2,7 +2,6 @@
  * External dependencies
  */
 import deepFreeze from 'deep-freeze';
-import { AuthedEventResponse } from '@test/fixtures';
 
 /**
  * Internal dependencies
@@ -14,7 +13,6 @@ import {
 	receiveEntityRecords as receiveRecordsAction,
 } from '../actions';
 import { mockStateForTests } from './fixtures';
-import { eventFactory } from '../../test/fixtures/base';
 
 describe( 'receiveEntityRecords()', () => {
 	const originalState = deepFreeze( mockStateForTests );
@@ -23,7 +21,7 @@ describe( 'receiveEntityRecords()', () => {
 			const state = receiveEntityRecords(
 				originalState,
 				receiveRecordsAction(
-					{ modelName: 'ticket' },
+					'ticket',
 					{ 10: { TKT_ID: 10, name: 'Ticket 10' } },
 				),
 			);
@@ -31,27 +29,12 @@ describe( 'receiveEntityRecords()', () => {
 		},
 	);
 
-	it( 'does not change original state for new records', () => {
-		const testEventResponse = { ...AuthedEventResponse, EVT_ID: 30 };
+	describe( 'testing adding new records', () => {
 		const state = receiveEntityRecords(
 			originalState,
 			receiveRecordsAction(
-				eventFactory,
-				{ 30: testEventResponse },
-			),
-		);
-
-		expect( originalState ).not.toBe( state );
-		expect( originalState ).toEqual( mockStateForTests );
-	} );
-
-	it( 'adds new record to state', () => {
-		const testEventResponse = { ...AuthedEventResponse, EVT_ID: 60 };
-		const state = receiveEntityRecords(
-			originalState,
-			receiveRecordsAction(
-				eventFactory,
-				{ 60: testEventResponse },
+				'event',
+				{ 60: mockStateForTests.entities.event[ 30 ] },
 			),
 		);
 		const expectedState = {
@@ -59,7 +42,7 @@ describe( 'receiveEntityRecords()', () => {
 				...originalState.entities,
 				event: {
 					...originalState.entities.event,
-					60: eventFactory.fromExisting( testEventResponse ),
+					60: mockStateForTests.entities.event[ 30 ],
 				},
 			},
 			entityIds: {
@@ -67,6 +50,14 @@ describe( 'receiveEntityRecords()', () => {
 				event: [ ...originalState.entityIds.event, '60' ],
 			},
 		};
-		expect( state ).toEqual( expectedState );
+
+		it( 'does not change original state for new records', () => {
+			expect( originalState ).not.toBe( state );
+			expect( originalState ).toEqual( mockStateForTests );
+		} );
+
+		it( 'adds new record to state', () => {
+			expect( state ).toEqual( expectedState );
+		} );
 	} );
 } );

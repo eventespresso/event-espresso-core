@@ -2,15 +2,13 @@
  * External imports
  */
 import { mergeAndDeDuplicateArrays } from '@eventespresso/eejs';
-import { keys, reduce } from 'lodash';
+import { keys } from 'lodash';
 
 /**
  * Internal imports
  */
-import {
-	DEFAULT_CORE_STATE,
-	createAndKeyEntitiesByPrimaryKeyValue,
-} from '../../model';
+import { DEFAULT_CORE_STATE } from '../../model';
+import { keepExistingEntitiesInObject } from '../base-entities';
 
 /**
  * This replaces any entities in the incoming object with matching entities (by
@@ -22,12 +20,13 @@ import {
  * @return {Object} New entities object.
  */
 const replaceExistingEntitiesFromState = ( state, modelName, entities ) => {
-	return reduce( entities, ( result, entity, entityId ) => {
-		result[ entityId ] = state.entities[ modelName ][ entityId ] ?
-			state.entities[ modelName ][ entityId ] :
-			entity;
-		return result;
-	}, entities );
+	const existingEntities = state.entities[ modelName ] ?
+		state.entities[ modelName ] :
+		null;
+	if ( existingEntities === null ) {
+		return entities;
+	}
+	return keepExistingEntitiesInObject( existingEntities, entities );
 };
 
 /**
@@ -44,30 +43,27 @@ const replaceExistingEntitiesFromState = ( state, modelName, entities ) => {
  * change detected or action isn't handled by this method)
  */
 export default function receiveEntityRecords( state = DEFAULT_CORE_STATE, action ) {
-	const { type, factory, entities: incomingEntities = {} } = action;
+	const { type, modelName, entities: incomingEntities = {} } = action;
 	if (
-		factory.modelName &&
-		factory.classDef &&
-		state.entities[ factory.modelName ]
+		modelName &&
+		state.entities[ modelName ]
 	) {
-		let entities = createAndKeyEntitiesByPrimaryKeyValue(
-				factory,
-				incomingEntities,
-			),
-			updateState = false;
+		let	updateState = false,
+			entities = {};
 		switch ( type ) {
 			case 'RECEIVE_ENTITY_RECORDS':
 				// replace any incoming entities with existing entities already in the
 				// store so this registry acts as the "authority" for the latest entity.
 				entities = replaceExistingEntitiesFromState(
 					state,
-					factory.modelName,
-					entities
+					modelName,
+					incomingEntities
 				);
 				updateState = true;
 				break;
 			case 'RECEIVE_AND_REPLACE_ENTITY_RECORDS':
 				updateState = true;
+				entities = incomingEntities;
 				break;
 		}
 		if ( updateState ) {
@@ -75,15 +71,15 @@ export default function receiveEntityRecords( state = DEFAULT_CORE_STATE, action
 				...state,
 				entities: {
 					...state.entities,
-					[ factory.modelName ]: {
-						...state.entities[ factory.modelName ],
+					[ modelName ]: {
+						...state.entities[ modelName ],
 						...entities,
 					},
 				},
 				entityIds: {
 					...state.entityIds,
-					[ factory.modelName ]: mergeAndDeDuplicateArrays(
-						state.entityIds[ factory.modelName ],
+					[ modelName ]: mergeAndDeDuplicateArrays(
+						state.entityIds[ modelName ],
 						keys( entities ),
 					),
 				},
