@@ -17,6 +17,8 @@ See [our documentation](https://github.com/eventespresso/event-espresso-core/blo
 
 ## [$VID:$]
 
+## [4.9.69.p]
+
 ## [4.9.70.p]
 
 ## [4.9.69.p]
