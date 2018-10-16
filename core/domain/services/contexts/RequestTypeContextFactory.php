@@ -14,7 +14,7 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  * @author  Brent Christensen
  * @since   4.9.51
  */
-class RequestTypeContextFactory
+class RequestTypeContextFactory implements RequestTypeContextFactoryInterface
 {
 
     /**
