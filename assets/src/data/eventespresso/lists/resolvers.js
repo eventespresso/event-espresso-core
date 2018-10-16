@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { keys } from 'lodash';
+import { keys, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -9,6 +9,9 @@ import { keys } from 'lodash';
 import { receiveResponse, receiveEntityResponse } from './actions';
 import { applyQueryString, keyEntitiesByPrimaryKeyValue } from '../../model';
 import { fetch, select, dispatch } from '../base-controls';
+import { getFactoryForModel } from '../schema/resolvers.js';
+import { createAndKeyEntitiesByPrimaryKeyValue } from '../../model';
+import { keepExistingEntitiesInObject } from '../base-entities';
 
 /**
  * Resolver for generic items returned from an endpoint.
@@ -28,29 +31,48 @@ export function* getItems( identifier, queryString ) {
  * Resolver for model entities returned from an endpoint.
  * @param {string} modelName
  * @param {string} queryString
+ * @return {Object} an empty object if there are not entities retrieved from the
+ * endpoint.
  */
 export function* getEntities( modelName, queryString ) {
 	let response = yield fetch( {
 		path: applyQueryString( modelName, queryString ),
 	} );
+	if ( isEmpty( response ) ) {
+		return {};
+	}
 	response = keyEntitiesByPrimaryKeyValue( modelName, response );
-	const factory = yield select(
+	let factory = yield select(
 		'eventespresso/schema',
 		'getFactoryForModel',
 		modelName
 	);
+	if ( isEmpty( factory ) ) {
+		factory = yield getFactoryForModel( modelName );
+	}
+	let fullEntities = createAndKeyEntitiesByPrimaryKeyValue(
+		factory,
+		response,
+	);
+
+	// are there already entities for the ids in the store?  If so, we use those
+	const existingEntities = yield select(
+		'eventespresso/core',
+		'getEntitiesByIds',
+		keys( fullEntities )
+	);
+
+	if ( ! isEmpty( existingEntities ) ) {
+		fullEntities = keepExistingEntitiesInObject(
+			existingEntities,
+			fullEntities,
+		);
+	}
 	yield dispatch(
 		'eventespresso/core',
 		'receiveEntityRecords',
-		factory,
-		response
-	);
-	response = keys( response );
-	const fullEntities = yield select(
-		'eventespresso/core',
-		'getEntitiesByIds',
 		modelName,
-		response
+		fullEntities
 	);
 	yield receiveEntityResponse( modelName, queryString, fullEntities );
 }

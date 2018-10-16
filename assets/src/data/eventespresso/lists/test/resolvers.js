@@ -36,7 +36,7 @@ describe( 'getEntities()', () => {
 		it( 'yields expected result for api fetch action object', () => {
 			const { value: apiFetchAction } = fulfillment.next();
 			expect( apiFetchAction.request ).toEqual(
-				{ path: '/ee/v4.8.36/events?test_value=1' }
+				{ path: '/wp-json/ee/v4.8.36/events?test_value=1' }
 			);
 		} );
 		it( 'yields expected factory action object', () => {
@@ -45,24 +45,31 @@ describe( 'getEntities()', () => {
 			);
 			expect( selectFactoryAction.args ).toEqual( [ 'event' ] );
 		} );
-		it( 'yields expected dispatch action object for core records', () => {
-			const { value: dispatchCoreRecordsAction } = fulfillment.next(
+		it( 'yields expected select action object for core ' +
+			'getEntitiesById', () => {
+			const { value: selectGetEntitiesByIdAction } = fulfillment.next(
 				eventFactory
 			);
-			expect( dispatchCoreRecordsAction.args ).toEqual(
-				[ eventFactory, { 10: EventResponses.a } ]
+			expect( selectGetEntitiesByIdAction.args ).toEqual(
+				[ [ '10' ] ]
 			);
 		} );
-		it( 'yields expected select action object for full entities', () => {
-			const { value: selectFullEntitiesAction } = fulfillment.next();
-			expect( selectFullEntitiesAction.args ).toEqual(
-				[ 'event', [ '10' ] ]
+		it( 'yields expected dispatch action object for core receiving ' +
+			'entity records', () => {
+			const { value: dispatchReceiveEntityRecords } = fulfillment
+				.next( {} );
+			expect( dispatchReceiveEntityRecords.args ).toEqual(
+				[ 'event', { 10: EventEntities.a } ]
 			);
 		} );
-		it( 'yields expected result for received value action obejct', () => {
-			const { value: received } = fulfillment.next( EventEntities );
+		it( 'yields expected result for received value action object', () => {
+			const { value: received } = fulfillment.next();
 			expect( received ).toEqual(
-				receiveEntityResponse( 'event', 'test_value=1', EventEntities )
+				receiveEntityResponse(
+					'event',
+					'test_value=1',
+					{ 10: EventEntities.a }
+				)
 			);
 		} );
 	} );
