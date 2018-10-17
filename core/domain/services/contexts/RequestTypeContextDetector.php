@@ -57,7 +57,7 @@ class RequestTypeContextDetector
      */
     private function getConstant($constant, $default)
     {
-        return isset($this->constants[ $constant]) ? $this->constants[ $constant ] : $default;
+        return isset($this->constants[ $constant ]) ? $this->constants[ $constant ] : $default;
     }
 
 
