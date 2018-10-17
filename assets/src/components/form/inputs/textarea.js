@@ -2,6 +2,7 @@
  * External imports
  */
 import PropTypes from 'prop-types';
+import { Field } from 'react-final-form';
 
 /**
  * generates an html <textarea> input
@@ -9,8 +10,6 @@ import PropTypes from 'prop-types';
  * @function
  * @param {string} htmlId
  * @param {string} htmlClass
- * @param {string} value
- * @param {Function} onChange
  * @param {string} helpTextID
  * @param {Object} dataSet
  * @param {Object} attributes
@@ -19,18 +18,15 @@ import PropTypes from 'prop-types';
 export const Textarea = ( {
 	htmlId,
 	htmlClass,
-	value,
-	onChange,
 	helpTextID,
 	dataSet,
 	...attributes
 } ) => {
 	return (
-		<textarea
+		<Field
+			component="textarea"
 			id={ htmlId }
 			className={ `${ htmlClass } form-control` }
-			defaultValue={ value }
-			onChange={ onChange }
 			aria-describedby={ helpTextID }
 			{ ...dataSet }
 			{ ...attributes }
@@ -45,7 +41,7 @@ Textarea.propTypes = {
 		PropTypes.number,
 		PropTypes.string,
 	] ),
-	onChange: PropTypes.func.isRequired,
+	onChange: PropTypes.func,
 	helpTextID: PropTypes.string,
 	dataSet: PropTypes.object,
 };
