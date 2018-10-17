@@ -3,7 +3,6 @@
 namespace EventEspresso\core\domain\services\contexts;
 
 use EventEspresso\core\domain\Domain;
-use EventEspresso\core\services\request\middleware\RecommendedVersions;
 use EventEspresso\core\services\request\RequestInterface;
 use InvalidArgumentException;
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
@@ -84,7 +83,7 @@ class RequestTypeContextDetector
             return $this->factory->create(RequestTypeContext::API);
         }
         // Detect WP REST API
-        if ($this->isWorPressRestApiRequest()) {
+        if ($this->isWordPressRestApiRequest()) {
             return $this->factory->create(RequestTypeContext::WP_API);
         }
         // Detect AJAX
@@ -127,11 +126,7 @@ class RequestTypeContextDetector
      */
     private function isEspressoRestApiRequest()
     {
-        $ee_rest_url_prefix = RecommendedVersions::compareWordPressVersion('4.4.0')
-            ? trim(rest_get_url_prefix(), '/')
-            : 'wp-json';
-        $ee_rest_url_prefix .= '/' . Domain::API_NAMESPACE;
-        return $this->uriPathMatches($ee_rest_url_prefix);
+        return $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
     }
 
 
@@ -139,12 +134,9 @@ class RequestTypeContextDetector
     /**
      * @return bool
      */
-    private function isWorPressRestApiRequest()
+    private function isWordPressRestApiRequest()
     {
-        $wp_rest_url_prefix = RecommendedVersions::compareWordPressVersion('4.4.0')
-            ? trim(rest_get_url_prefix(), '/')
-            : 'wp-json';
-        return $this->uriPathMatches($wp_rest_url_prefix);
+        return $this->uriPathMatches(trim(rest_get_url_prefix(), '/'));
     }
 
 
