@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
  * @param {Object} attributes
  * @return {string} rendered form label
  */
-export const FormLabel = ( {
+export const InputLabel = ( {
 	label,
 	htmlFor,
 	htmlClass = '',
@@ -30,6 +30,7 @@ export const FormLabel = ( {
 		( <span className="required">*</span> ) :
 		'';
 	label = strong ? ( <strong>{ label }</strong> ) : label;
+	htmlClass = htmlClass ? htmlClass : 'col-form-label';
 	htmlClass += required ? ' required' : '';
 	return (
 		<label htmlFor={ htmlFor } className={ htmlClass } { ...attributes }>
@@ -39,7 +40,7 @@ export const FormLabel = ( {
 	);
 };
 
-FormLabel.propTypes = {
+InputLabel.propTypes = {
 	label: PropTypes.oneOfType( [
 		PropTypes.number,
 		PropTypes.string,
