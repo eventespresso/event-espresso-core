@@ -1393,9 +1393,9 @@ add_filter(
 );
 /**
  * Filters the CSV row to make it appear like the old labels (which were "$pretty_name[$field_name]").
- * @deprecated $VID:$ This only exists for backward compatibility with code snippets.
+ * @deprecated 4.9.69.p This only exists for backward compatibility with code snippets.
  *             See https://github.com/eventespresso/event-espresso-core/pull/675
- * @since $VID:$
+ * @since 4.9.69.p
  * @param $csv_row_data
  * @param $reg_row
  * @return array for CSV row
@@ -1420,7 +1420,7 @@ function ee_deprecated_registrations_report_csv_legacy_fields($csv_row_data, $re
                 'FHEE__EE_Export__report_registrations__reg_csv_array',
                 'FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport__reg_csv_array'
             ),
-            '$VID:$',
+            '4.9.69.p',
             '4.9.75.p'
         );
         // there's code that expected the old csv column headers/labels. Let's oblige. Put it back in the old format!

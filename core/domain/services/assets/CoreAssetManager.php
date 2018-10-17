@@ -233,58 +233,46 @@ class CoreAssetManager extends AssetManager
         )
         ->setRequiresTranslation();
 
-        global $wp_version;
-        if (version_compare($wp_version, '4.4.0', '>')) {
-            //js.api
-            $this->addJavascript(
-                CoreAssetManager::JS_HANDLE_EE_JS_API,
-                EE_LIBRARIES_URL . 'rest_api/assets/js/eejs-api.min.js',
-                array(
-                    CoreAssetManager::JS_HANDLE_UNDERSCORE,
-                    CoreAssetManager::JS_HANDLE_EE_JS_CORE
-                )
-            );
-            $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
-            $this->registry->addData(
-                'paths',
-                array(
-                    'rest_route' => rest_url('ee/v4.8.36/'),
-                    'collection_endpoints' => EED_Core_Rest_Api::getCollectionRoutesIndexedByModelName(),
-                    'primary_keys' => EED_Core_Rest_Api::getPrimaryKeyNamesIndexedByModelName(),
-					'site_url' => site_url('/'),
-                    'admin_url' => admin_url('/'),
-                )
-            );
-            /** site formatting values **/
-            $this->registry->addData(
-                'site_formats',
-                array(
-                    'date_formats' => EEH_DTT_Helper::convert_php_to_js_and_moment_date_formats()
-                )
-            );
-            /** currency data **/
-            $this->registry->addData(
-                'currency_config',
-                $this->getCurrencySettings()
-            );
-            /** site timezone */
-            $this->registry->addData(
-                'default_timezone',
-                array(
-                    'pretty' => EEH_DTT_Helper::get_timezone_string_for_display(),
-                    'string' => get_option('timezone_string'),
-                    'offset' => EEH_DTT_Helper::get_site_timezone_gmt_offset(),
-                )
-            );
-            /** site locale (user locale if user logged in) */
-            $this->registry->addData(
-                'locale',
-                array(
-                    'user' => get_user_locale(),
-                    'site' => get_locale()
-                )
-            );
-        }
+        $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
+        $this->registry->addData(
+            'paths',
+            array(
+                'rest_route' => rest_url('ee/v4.8.36/'),
+                'collection_endpoints' => EED_Core_Rest_Api::getCollectionRoutesIndexedByModelName(),
+                'primary_keys' => EED_Core_Rest_Api::getPrimaryKeyNamesIndexedByModelName(),
+                'site_url' => site_url('/'),
+                'admin_url' => admin_url('/'),
+            )
+        );
+        /** site formatting values **/
+        $this->registry->addData(
+            'site_formats',
+            array(
+                'date_formats' => EEH_DTT_Helper::convert_php_to_js_and_moment_date_formats()
+            )
+        );
+        /** currency data **/
+        $this->registry->addData(
+            'currency_config',
+            $this->getCurrencySettings()
+        );
+        /** site timezone */
+        $this->registry->addData(
+            'default_timezone',
+            array(
+                'pretty' => EEH_DTT_Helper::get_timezone_string_for_display(),
+                'string' => get_option('timezone_string'),
+                'offset' => EEH_DTT_Helper::get_site_timezone_gmt_offset(),
+            )
+        );
+        /** site locale (user locale if user logged in) */
+        $this->registry->addData(
+            'locale',
+            array(
+                'user' => get_user_locale(),
+                'site' => get_locale()
+            )
+        );
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_CORE,
