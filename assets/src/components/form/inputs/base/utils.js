@@ -8,7 +8,6 @@ export const cleanUpInputAttributes = ( attributes = {} ) => {
 	delete attributes.colSize;
 	delete attributes.helpText;
 	delete attributes.helpTextID;
-	delete attributes.initialValue;
 	delete attributes.label;
 	delete attributes.render;
 	delete attributes.validations;
