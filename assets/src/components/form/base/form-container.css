@@ -1,0 +1,16 @@
+/* -------------------------------------------------------------------------
+ * Event Espresso FormContainer Stylesheet
+ * (c) 2018 Event Espresso
+ * -------------------------------------------------------------------------*/
+
+.ee-form-container-div {
+    clear: both;
+    height: 0;
+    opacity: 0;
+}
+
+.ee-form-fade-in {
+    height: auto !important;
+    opacity: 1 !important;
+    transition: height 250ms 0ms, opacity 250ms 250ms;
+}
