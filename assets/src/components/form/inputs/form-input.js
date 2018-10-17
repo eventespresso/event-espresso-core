@@ -111,6 +111,7 @@ export class FormInput extends Component {
 				);
 				break;
 			case 'select' :
+				delete attributes.initialValue;
 				formInput = (
 					<SelectInput
 						name={ name }
@@ -124,6 +125,7 @@ export class FormInput extends Component {
 				);
 				break;
 			case 'textarea' :
+				delete attributes.initialValue;
 				formInput = (
 					<Textarea
 						name={ name }
@@ -137,6 +139,7 @@ export class FormInput extends Component {
 				);
 				break;
 			default :
+				delete attributes.initialValue;
 				formInput = (
 					<TextInput
 						type={ type }
