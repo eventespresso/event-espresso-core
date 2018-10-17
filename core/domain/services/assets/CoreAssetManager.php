@@ -45,8 +45,6 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_EE_VENDOR           = 'eventespresso-vendor';
 
-    const JS_HANDLE_EE_JS_API          = 'eejs-api';
-
     const JS_HANDLE_EE_CORE            = 'espresso_core';
 
     const JS_HANDLE_EE_I18N            = 'eei18n';
@@ -168,27 +166,15 @@ class CoreAssetManager extends AssetManager
             array(CoreAssetManager::JS_HANDLE_EE_JS_CORE)
         );
 
-        global $wp_version;
-        if (version_compare($wp_version, '4.4.0', '>')) {
-            //js.api
-            $this->addJavascript(
-                CoreAssetManager::JS_HANDLE_EE_JS_API,
-                EE_LIBRARIES_URL . 'rest_api/assets/js/eejs-api.min.js',
-                array(
-                    CoreAssetManager::JS_HANDLE_UNDERSCORE,
-                    CoreAssetManager::JS_HANDLE_EE_JS_CORE
-                )
-            );
-            $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
-            $this->registry->addData(
-                'paths',
-                array(
-                    'rest_route' => rest_url('ee/v4.8.36/'),
-                    'site_url' => site_url('/'),
-                    'admin_url' => admin_url('/'),
-                )
-            );
-        }
+        $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
+        $this->registry->addData(
+            'paths',
+            array(
+                'rest_route' => rest_url('ee/v4.8.36/'),
+                'site_url' => site_url('/'),
+                'admin_url' => admin_url('/'),
+            )
+        );
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_CORE,
