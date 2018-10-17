@@ -2,11 +2,12 @@
  * External imports
  */
 import PropTypes from 'prop-types';
+import { Field } from 'react-final-form';
 
 /**
  * Internal imports
  */
-import { HTML5_INPUT_TYPES_TEXT } from './constants';
+import { HTML5_INPUT_TYPES_TEXT } from './base/constants';
 
 /**
  * generates an HTML5 text variant <input>
@@ -15,8 +16,6 @@ import { HTML5_INPUT_TYPES_TEXT } from './constants';
  * @param {string} type
  * @param {string} htmlId
  * @param {string} htmlClass
- * @param {string} value
- * @param {Function} onChange
  * @param {string} helpTextID
  * @param {Object} dataSet
  * @param {Object} attributes
@@ -26,19 +25,16 @@ export const TextInput = ( {
 	type = 'text',
 	htmlId,
 	htmlClass,
-	value,
-	onChange,
 	helpTextID,
 	dataSet,
 	...attributes
 } ) => {
 	return (
-		<input
+		<Field
+			component="input"
 			type={ type }
 			id={ htmlId }
 			className={ `${ htmlClass } form-control` }
-			defaultValue={ value }
-			onChange={ onChange }
 			aria-describedby={ helpTextID }
 			{ ...dataSet }
 			{ ...attributes }
@@ -50,11 +46,7 @@ TextInput.propTypes = {
 	type: PropTypes.oneOf( HTML5_INPUT_TYPES_TEXT ),
 	htmlId: PropTypes.string.isRequired,
 	htmlClass: PropTypes.string,
-	value: PropTypes.oneOfType( [
-		PropTypes.number,
-		PropTypes.string,
-	] ),
-	onChange: PropTypes.func.isRequired,
+	onChange: PropTypes.func,
 	helpTextID: PropTypes.string,
 	dataSet: PropTypes.object,
 };
