@@ -257,8 +257,8 @@ class RegistrationsReport extends JobHandlerFile
                 $reg_csv_array = array();
                 if (! $event_id) {
                     // get the event's name and Id
-                    $reg_csv_array[ __('Event', 'event_espresso') ] = sprintf(
-                        (string) __('%1$s (%2$s)', 'event_espresso'),
+                    $reg_csv_array[ (string) __('Event', 'event_espresso') ] = sprintf(
+                        __('%1$s (%2$s)', 'event_espresso'),
                         \EEH_Export::prepare_value_from_db_for_display(
                             \EEM_Event::instance(),
                             'EVT_name',
