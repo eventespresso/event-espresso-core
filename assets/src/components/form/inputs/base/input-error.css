@@ -1,0 +1,19 @@
+/* -------------------------------------------------------------------------
+ * Event Espresso InputError Stylesheet
+ * (c) 2018 Event Espresso
+ * -------------------------------------------------------------------------*/
+
+.espresso-input-error {
+    padding: .75em 0 0;
+}
+
+.espresso-input-error span {
+    background-color: #f06291;
+    border-radius: 3px;
+    color: #fff;
+    letter-spacing: 1px;
+    line-height: 1.2;
+    padding: .15em .5em .25em;
+    white-space: nowrap;
+    word-wrap: normal;
+}
