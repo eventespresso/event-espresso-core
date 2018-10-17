@@ -30,9 +30,9 @@ class RequestTypeContextDetector
     private $request;
 
     /**
-     * @var array $constants
+     * @var array $globalRouteConditions
      */
-    private $constants;
+    private $globalRouteConditions;
 
 
     /**
@@ -40,24 +40,30 @@ class RequestTypeContextDetector
      *
      * @param RequestInterface                   $request
      * @param RequestTypeContextFactoryInterface $factory
+     * @param array                              $globalRouteConditions an array for injecting values that would
+     *                                                                  otherwise be defined as global constants
+     *                                                                  or other global variables for the current
+     *                                                                  request route such as DOING_AJAX
      */
     public function __construct(
         RequestInterface $request,
         RequestTypeContextFactoryInterface $factory,
-        array $constants = array()
+        array $globalRouteConditions = array()
     ) {
         $this->request = $request;
         $this->factory = $factory;
-        $this->constants = $constants;
+        $this->globalRouteConditions = $globalRouteConditions;
     }
 
 
     /**
      * @return mixed
      */
-    private function getConstant($constant, $default)
+    private function getGlobalRouteCondition($globalRouteCondition, $default)
     {
-        return isset($this->constants[ $constant ]) ? $this->constants[ $constant ] : $default;
+        return isset($this->globalRouteConditions[ $globalRouteCondition ])
+            ? $this->globalRouteConditions[ $globalRouteCondition ]
+            : $default;
     }
 
 
@@ -82,7 +88,7 @@ class RequestTypeContextDetector
             return $this->factory->create(RequestTypeContext::WP_API);
         }
         // Detect AJAX
-        if ($this->getConstant('DOING_AJAX', false)) {
+        if ($this->getGlobalRouteCondition('DOING_AJAX', false)) {
             if (filter_var($this->request->getRequestParam('ee_front_ajax'), FILTER_VALIDATE_BOOLEAN)) {
                 return $this->factory->create(RequestTypeContext::AJAX_FRONT);
             }
@@ -96,11 +102,11 @@ class RequestTypeContextDetector
             return $this->factory->create(RequestTypeContext::CRON);
         }
         // Detect command line requests
-        if ($this->getConstant('WP_CLI', false)) {
+        if ($this->getGlobalRouteCondition('WP_CLI', false)) {
             return $this->factory->create(RequestTypeContext::CLI);
         }
         // detect WordPress admin (ie: "Dashboard")
-        if ($this->getConstant('is_admin', false)) {
+        if ($this->getGlobalRouteCondition('is_admin', false)) {
             return $this->factory->create(RequestTypeContext::ADMIN);
         }
         // Detect iFrames
