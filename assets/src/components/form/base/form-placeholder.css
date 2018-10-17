@@ -1,0 +1,34 @@
+/* -------------------------------------------------------------------------
+ * Event Espresso FormPlaceholder Stylesheet
+ * (c) 2018 Event Espresso
+ * -------------------------------------------------------------------------*/
+
+.ee-form-placeholder-div {
+    border: 1px dashed #ddd;
+    margin: 2em 1em;
+}
+
+.ee-form-placeholder-div::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.ee-form-fade-out {
+    height: 0;
+    margin: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: height 0ms 250ms, margin 0ms 250ms, opacity 250ms 0ms;
+}
+
+.ee-loading-div {
+    color: #7e8993;
+    line-height: 24px;
+    margin: 4em auto;
+    width: 100px;
+}
+
+.ee-form-placeholder-div .components-spinner {
+    float: left;
+}
