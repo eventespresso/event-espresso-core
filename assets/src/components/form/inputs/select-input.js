@@ -3,6 +3,7 @@
  */
 import { isArray } from 'lodash';
 import PropTypes from 'prop-types';
+import { Field } from 'react-final-form';
 
 /**
  * generates an html <select> input
@@ -10,9 +11,7 @@ import PropTypes from 'prop-types';
  * @function
  * @param {string} id
  * @param {string} htmlClass
- * @param {string} value
  * @param {Array} options
- * @param {Function} onChange
  * @param {string} helpTextID
  * @param {Object} dataSet
  * @param {Object} attributes
@@ -21,9 +20,7 @@ import PropTypes from 'prop-types';
 export const SelectInput = ( {
 	htmlId,
 	htmlClass,
-	value,
 	options,
-	onChange,
 	helpTextID,
 	dataSet,
 	...attributes
@@ -35,17 +32,16 @@ export const SelectInput = ( {
 		</option>
 	) );
 	return (
-		<select
+		<Field
+			component="select"
 			id={ htmlId }
 			className={ `${ htmlClass } form-control` }
-			defaultValue={ value }
-			onBlur={ onChange }
 			aria-describedby={ helpTextID }
 			{ ...dataSet }
 			{ ...attributes }
 		>
 			{ optionList }
-		</select>
+		</Field>
 	);
 };
 
@@ -57,7 +53,7 @@ SelectInput.propTypes = {
 		PropTypes.string,
 	] ),
 	options: PropTypes.array,
-	onChange: PropTypes.func.isRequired,
+	onChange: PropTypes.func,
 	helpTextID: PropTypes.string,
 	dataSet: PropTypes.object,
 };
