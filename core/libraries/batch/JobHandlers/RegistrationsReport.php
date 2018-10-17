@@ -258,7 +258,7 @@ class RegistrationsReport extends JobHandlerFile
                 if (! $event_id) {
                     // get the event's name and Id
                     $reg_csv_array[ __('Event', 'event_espresso') ] = sprintf(
-                        __('%1$s (%2$s)', 'event_espresso'),
+                        (string) __('%1$s (%2$s)', 'event_espresso'),
                         \EEH_Export::prepare_value_from_db_for_display(
                             \EEM_Event::instance(),
                             'EVT_name',
@@ -309,7 +309,7 @@ class RegistrationsReport extends JobHandlerFile
                     $reg_csv_array[ \EEH_Export::get_column_name_for_field($field) ] = $value;
                     if ($field_name == 'REG_final_price') {
                         // add a column named Currency after the final price
-                        $reg_csv_array[ __("Currency", "event_espresso") ] = \EE_Config::instance()->currency->code;
+                        $reg_csv_array[ (string) __("Currency", "event_espresso") ] = \EE_Config::instance()->currency->code;
                     }
                 }
                 // get pretty status
@@ -321,17 +321,17 @@ class RegistrationsReport extends JobHandlerFile
                     false,
                     'sentence'
                 );
-                $reg_csv_array[ __("Registration Status", 'event_espresso') ] = $stati[ $reg_row['Registration.STS_ID'] ];
+                $reg_csv_array[ (string) __("Registration Status", 'event_espresso') ] = $stati[ $reg_row['Registration.STS_ID'] ];
                 // get pretty transaction status
-                $reg_csv_array[ __("Transaction Status", 'event_espresso') ] = $stati[ $reg_row['TransactionTable.STS_ID'] ];
-                $reg_csv_array[ __('Transaction Amount Due', 'event_espresso') ] = $is_primary_reg
+                $reg_csv_array[ (string) __("Transaction Status", 'event_espresso') ] = $stati[ $reg_row['TransactionTable.STS_ID'] ];
+                $reg_csv_array[ (string) __('Transaction Amount Due', 'event_espresso') ] = $is_primary_reg
                     ? \EEH_Export::prepare_value_from_db_for_display(
                         \EEM_Transaction::instance(),
                         'TXN_total',
                         $reg_row['TransactionTable.TXN_total'],
                         'localized_float'
                     ) : '0.00';
-                $reg_csv_array[ __('Amount Paid', 'event_espresso') ] = $is_primary_reg
+                $reg_csv_array[ (string) __('Amount Paid', 'event_espresso') ] = $is_primary_reg
                     ? \EEH_Export::prepare_value_from_db_for_display(
                         \EEM_Transaction::instance(),
                         'TXN_paid',
@@ -362,14 +362,14 @@ class RegistrationsReport extends JobHandlerFile
                             ? $payment_method_and_gateway_txn_id['payment_time'] : '';
                     }
                 }
-                $reg_csv_array[ __('Payment Date(s)', 'event_espresso') ] = implode(',', $payment_times);
-                $reg_csv_array[ __('Payment Method(s)', 'event_espresso') ] = implode(",", $payment_methods);
-                $reg_csv_array[ __('Gateway Transaction ID(s)', 'event_espresso') ] = implode(
+                $reg_csv_array[ (string) __('Payment Date(s)', 'event_espresso') ] = implode(',', $payment_times);
+                $reg_csv_array[ (string) __('Payment Method(s)', 'event_espresso') ] = implode(",", $payment_methods);
+                $reg_csv_array[ (string) __('Gateway Transaction ID(s)', 'event_espresso') ] = implode(
                     ',',
                     $gateway_txn_ids_etc
                 );
                 // get whether or not the user has checked in
-                $reg_csv_array[ __("Check-Ins", "event_espresso") ] = $reg_model->count_related(
+                $reg_csv_array[ (string) __("Check-Ins", "event_espresso") ] = $reg_model->count_related(
                     $reg_row['Registration.REG_ID'],
                     'Checkin'
                 );
@@ -399,8 +399,8 @@ class RegistrationsReport extends JobHandlerFile
                     $ticket_name = __('Unknown', 'event_espresso');
                     $datetimes_strings = array(__('Unknown', 'event_espresso'));
                 }
-                $reg_csv_array[ $ticket_model->field_settings_for('TKT_name')->get_nicename() ] = $ticket_name;
-                $reg_csv_array[ __("Datetimes of Ticket", "event_espresso") ] = implode(", ", $datetimes_strings);
+                $reg_csv_array[ (string) $ticket_model->field_settings_for('TKT_name')->get_nicename() ] = $ticket_name;
+                $reg_csv_array[ (string) __("Datetimes of Ticket", "event_espresso") ] = implode(", ", $datetimes_strings);
                 // get datetime(s) of registration
                 // add attendee columns
                 foreach ($att_fields_to_include as $att_field_name) {
