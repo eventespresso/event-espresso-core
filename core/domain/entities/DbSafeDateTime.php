@@ -179,7 +179,10 @@ class DbSafeDateTime extends DateTime
     public static function createFromFormat($format, $time, $timezone = null)
     {
         $time = self::normalizeInvalidDate($time);
-        $DateTime = parent::createfromFormat($format, $time, $timezone);
+        // Various php versions handle the third argument differently.  This conditional accounts for that.
+        $DateTime = $timezone === null
+            ? parent::createFromFormat($format, $time)
+            : parent::createFromFormat($format, $time, $timezone);
         return $DateTime instanceof DateTime
             ? self::createFromDateTime($DateTime)
             : $DateTime;
