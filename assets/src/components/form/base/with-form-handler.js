@@ -66,7 +66,7 @@ export const withFormHandler = (
 					initialValues={ data }
 					render={ ( {
 						handleSubmit,
-						reset,
+						form,
 						submitting,
 						pristine,
 						values,
@@ -78,7 +78,7 @@ export const withFormHandler = (
 						);
 						const resetButton = (
 							<FormResetButton
-								onClick={ reset }
+								onClick={ form.reset }
 								pristine={ pristine }
 								submitting={ submitting }
 							/>
