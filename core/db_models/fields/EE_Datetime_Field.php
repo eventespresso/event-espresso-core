@@ -659,13 +659,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
         // create the DateTime object.
         $format = $this->_date_format . ' ' . $this->_time_format;
         try {
-            $DateTime = DateTime::createFromFormat($format, $date_string, $this->_DateTimeZone);
-            if ($DateTime instanceof DateTime) {
-                $DateTime = new DbSafeDateTime(
-                    $DateTime->format(\EE_Datetime_Field::mysql_timestamp_format),
-                    $this->_DateTimeZone
-                );
-            }
+            $DateTime = DbSafeDateTime::createFromFormat($format, $date_string, $this->_DateTimeZone);
             if (! $DateTime instanceof DbSafeDateTime) {
                 throw new EE_Error(
                     sprintf(
