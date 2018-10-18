@@ -573,17 +573,11 @@ class EE_Datetime_Field extends EE_Model_Field_Base
         if (empty($datetime_string)) {
             $DateTime = new DbSafeDateTime(\EE_Datetime_Field::now, $this->get_UTC_DateTimeZone());
         } else {
-            $DateTime = DateTime::createFromFormat(
+            $DateTime = DbSafeDateTime::createFromFormat(
                 EE_Datetime_Field::mysql_timestamp_format,
                 $datetime_string,
                 $this->get_UTC_DateTimeZone()
             );
-            if ($DateTime instanceof \DateTime) {
-                $DateTime = new DbSafeDateTime(
-                    $DateTime->format(\EE_Datetime_Field::mysql_timestamp_format),
-                    $this->get_UTC_DateTimeZone()
-                );
-            }
         }
 
         if (! $DateTime instanceof DbSafeDateTime) {
