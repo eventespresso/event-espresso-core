@@ -173,13 +173,16 @@ class DbSafeDateTime extends DateTime
      * @param string       $format   Format accepted by date().
      * @param string       $time     String representing the time.
      * @param DateTimeZone $timezone A DateTimeZone object representing the desired time zone.
-     * @return DateTime|boolean
+     * @return DbSafeDateTime|boolean
      * @link https://php.net/manual/en/datetime.createfromformat.php
      */
     public static function createFromFormat($format, $time, $timezone = null)
     {
         $time = self::normalizeInvalidDate($time);
-        return parent::createFromFormat($format, $time, $timezone);
+        $DateTime = parent::createfromFormat($format, $time, $timezone);
+        return $DateTime instanceof DateTime
+            ? self::createFromDateTime($DateTime)
+            : $DateTime;
     }
 
 
