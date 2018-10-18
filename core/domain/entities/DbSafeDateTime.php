@@ -176,7 +176,7 @@ class DbSafeDateTime extends DateTime
      * @return DateTime|boolean
      * @link https://php.net/manual/en/datetime.createfromformat.php
      */
-    public static function createFromFormat($format, $time, $timezone = null)
+    public static function createFromFormat($format, $time, DateTimeZone $timezone = null)
     {
         $time = self::normalizeInvalidDate($time);
         return parent::createFromFormat($format, $time, $timezone);
