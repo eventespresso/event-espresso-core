@@ -1,14 +1,14 @@
 {
   "components.js": "ee-components.87eb17bdf9002cf012f9.dist.js",
-  "data-stores.js": "ee-data-stores.92dccb91bd0f235e1bd7.dist.js",
-  "eejs.js": "ee-eejs.227618d8efd208c862b1.dist.js",
+  "data-stores.js": "ee-data-stores.28ea8ed949b8f5a04f42.dist.js",
+  "eejs.js": "ee-eejs.cb48282a0ffe4748b15d.dist.js",
   "eventespresso-core-blocks.css": "ee-eventespresso-core-blocks.033e69672d82f0b5a77e.dist.css",
   "eventespresso-core-blocks.js": "ee-eventespresso-core-blocks.6669224e8232954e949e.dist.js",
   "helpers.js": "ee-helpers.31d28ebd16d2af1f7271.dist.js",
   "hocComponents.js": "ee-hocComponents.6dbc5599f72a6220f973.dist.js",
   "manifest.js": "ee-manifest.db11f08f044e318032a1.dist.js",
   "model.js": "ee-model.f7156eca0df496135c06.dist.js",
-  "valueObjects.js": "ee-valueObjects.0fda3cafbdf9e02df0dd.dist.js",
+  "valueObjects.js": "ee-valueObjects.3920658f3f07b884ee8c.dist.js",
   "vendor.js": "ee-vendor.638f3a94ca9b3e95f0f4.dist.js",
   "wp-plugins-page.css": "ee-wp-plugins-page.12612f6ab71570ab1af8.dist.css",
   "wp-plugins-page.js": "ee-wp-plugins-page.8fc33cac10dfd3a845d4.dist.js"
