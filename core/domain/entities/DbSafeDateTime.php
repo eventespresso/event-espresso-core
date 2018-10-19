@@ -146,7 +146,7 @@ class DbSafeDateTime extends DateTime
     {
         return str_replace(
             array('-0001-11-29', '-0001-11-30', '0000-00-00'),
-            '0000-01-01',
+            '0000-01-03',
             $date_string
         );
     }
