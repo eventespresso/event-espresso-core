@@ -62,7 +62,7 @@ class DbSafeDateTimeTest extends EE_UnitTestCase
         $this->assertInstanceOf('DateTime', $db_safe_datetime);
         // ensures date has been coerced to something more valid.
         $this->assertEquals(
-            '0000-01-01 00:00:00.000000',
+            '0000-01-03 00:00:00.000000',
             $db_safe_datetime->format('Y-m-d H:i:s.u')
         );
     }
