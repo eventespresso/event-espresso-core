@@ -7,12 +7,12 @@ use EE_Admin_File_Uploader_Input;
 use EE_Admin_Two_Column_Layout;
 use EE_Checkbox_Multi_Input;
 use EE_Core_Config;
+use EE_Country;
 use EE_Country_Select_Input;
 use EE_Currency_Config;
 use EE_Error;
 use EE_Form_Section_HTML;
 use EE_Form_Section_Proper;
-use EE_License_Key_Display_Strategy;
 use EE_Network_Core_Config;
 use EE_Organization_Config;
 use EE_Registry;
@@ -20,6 +20,8 @@ use EE_State_Select_Input;
 use EE_Text_Input;
 use EEH_HTML;
 use EEH_Template;
+use EEM_Country;
+use EEM_State;
 use EventEspresso\core\domain\services\pue\Stats;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFormSubmissionException;
@@ -28,6 +30,7 @@ use EventEspresso\core\libraries\form_sections\form_handlers\FormHandler;
 use EventEspresso\core\libraries\form_sections\strategies\filter\VsprintfFilter;
 use InvalidArgumentException;
 use LogicException;
+use ReflectionException;
 
 /**
  * OrganizationSettings
@@ -87,15 +90,21 @@ class OrganizationSettings extends FormHandler
     }
 
 
-
     /**
      * creates and returns the actual form
      *
      * @return EE_Form_Section_Proper
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function generate()
     {
+        $has_sub_regions = EEM_State::instance()->count(
+            array(array('Country.CNT_ISO' => $this->organization_config->CNT_ISO))
+        );
         $form = new EE_Form_Section_Proper(
             array(
                 'name'            => 'organization_settings',
@@ -147,23 +156,15 @@ class OrganizationSettings extends FormHandler
                             'required'        => false,
                         )
                     ),
-                    'organization_state'      => new EE_State_Select_Input(
-                        null,
-                        array(
-                            'html_name' => 'organization_state',
-                            'html_label_text' => esc_html__('State/Province', 'event_espresso'),
-                            'default'         => $this->organization_config->STA_ID,
-                            'required'        => false,
-                        )
-                    ),
                     'organization_country'      => new EE_Country_Select_Input(
                         null,
                         array(
-                            'html_name' => 'organization_country',
+                            EE_Country_Select_Input::OPTION_GET_KEY => EE_Country_Select_Input::OPTION_GET_ALL,
+                            'html_name'       => 'organization_country',
                             'html_label_text' => esc_html__('Country', 'event_espresso'),
                             'default'         => $this->organization_config->CNT_ISO,
                             'required'        => false,
-                            'html_help_text' => sprintf(
+                            'html_help_text'  => sprintf(
                                 esc_html__(
                                     '%1$sThe Country set here will have the effect of setting the currency used for all ticket prices.%2$s',
                                     'event_espresso'
@@ -171,6 +172,26 @@ class OrganizationSettings extends FormHandler
                                 '<span class="reminder-spn">',
                                 '</span>'
                             ),
+                        )
+                    ),
+                    'organization_state' => new EE_State_Select_Input(
+                        null,
+                        array(
+                            'html_name'       => 'organization_state',
+                            'html_label_text' => esc_html__('State/Province', 'event_espresso'),
+                            'default'         => $this->organization_config->STA_ID,
+                            'required'        => false,
+                            'html_help_text' => empty($this->organization_config->STA_ID) || ! $has_sub_regions
+                                ? sprintf(
+                                    esc_html__(
+                                        'If the States/Provinces for the selected Country do not appear in this list, then click "Save".%3$sIf data exists, then the list will be populated when the page reloads and you will be able to make a selection at that time.%3$s%1$sMake sure you click "Save" again after selecting a State/Province that has just been loaded in order to keep that selection.%2$s',
+                                        'event_espresso'
+                                    ),
+                                    '<span class="reminder-spn">',
+                                    '</span>',
+                                    '<br />'
+                                )
+                                : '',
                         )
                     ),
                     'organization_zip'      => new EE_Text_Input(
@@ -394,6 +415,7 @@ class OrganizationSettings extends FormHandler
      * @throws LogicException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
+     * @throws ReflectionException
      */
     public function process($form_data = array())
     {
@@ -467,7 +489,87 @@ class OrganizationSettings extends FormHandler
         $this->registry->CFG->currency = new EE_Currency_Config(
             $this->organization_config->CNT_ISO
         );
+        /** @var EE_Country $country */
+        $country = EEM_Country::instance()->get_one_by_ID($this->organization_config->CNT_ISO);
+        if ($country instanceof EE_Country) {
+            $country->set('CNT_active', 1);
+            $country->save();
+            $this->getCountrySubRegions($country);
+        }
         return true;
+    }
+
+
+    /**
+     * @param EE_Country $country
+     * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    private function getCountrySubRegions(EE_Country $country)
+    {
+        $CNT_ISO = $country->ID();
+        $has_sub_regions = EEM_State::instance()->count(array(array('Country.CNT_ISO' => $CNT_ISO)));
+        if ($has_sub_regions) {
+            return;
+        }
+        $json = $this->getCountryJson(
+            'https://raw.githubusercontent.com/astockwell/countries-and-provinces-states-regions/master/countries.json'
+        );
+        if (is_array($json)) {
+            foreach ($json as $country) {
+                if ($country->code === $CNT_ISO) {
+                    if($country->filename !== null) {
+                        $sub_regions = $this->getCountryJson(
+                            'https://raw.githubusercontent.com/astockwell/countries-and-provinces-states-regions/master/countries/'
+                            . $country->filename . '.json'
+                        );
+                        if (is_array($sub_regions)) {
+                            foreach ($sub_regions as $sub_region) {
+                                $abbrev = str_replace(
+                                    $CNT_ISO . '-',
+                                    '',
+                                    sanitize_text_field($sub_region->code)
+                                );
+                                if(absint($abbrev) !== 0){
+                                    $abbrev = sanitize_text_field($sub_region->code);
+                                }
+                                EEM_State::instance()->insert(
+                                    array(
+                                        // STA_ID	CNT_ISO	STA_abbrev	STA_name	STA_active
+                                        'CNT_ISO'    => $CNT_ISO,
+                                        'STA_abbrev' => $abbrev,
+                                        'STA_name'   => sanitize_text_field($sub_region->name),
+                                        'STA_active' => 1,
+                                    )
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * @param string $url
+     * @return array
+     */
+    private function getCountryJson($url='')
+    {
+        if (empty($url)) {
+            return array();
+        }
+        $request = wp_safe_remote_get($url);
+        if (is_wp_error($request)) {
+            return array();
+        }
+        $body = wp_remote_retrieve_body($request);
+        return json_decode($body);
     }
 
 
