@@ -37,19 +37,21 @@ class EE_State_Select_Input extends EE_Select_Input
     public function get_state_answer_options($state_options = null)
     {
         // if passed something that is NOT an array
-        if (! is_array($state_options)) {
+        if (! is_array($state_options) || empty($state_options)) {
             // get possibly cached list of states
             $states = EEM_State::instance()->get_all_active_states();
-            if (! empty($states)) {
-                // set the default
-                $state_options[''][''] = '';
-                foreach ($states as $state) {
-                    if ($state instanceof EE_State) {
-                        $state_options[ $state->country()->name() ][ $state->ID() ] = $state->name();
-                    }
+        }
+        if(is_array($state_options) && reset($state_options) instanceof EE_State) {
+            $states = $state_options;
+            $state_options = array();
+        }
+        if (! empty($states)) {
+            // set the default
+            $state_options[''][''] = '';
+            foreach ($states as $state) {
+                if ($state instanceof EE_State) {
+                    $state_options[ $state->country()->name() ][ $state->ID() ] = $state->name();
                 }
-            } else {
-                $state_options = array();
             }
         }
         return $state_options;
