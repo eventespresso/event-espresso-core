@@ -3,7 +3,7 @@
  */
 import { data } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
-import { isArray, reduce, trimEnd, keyBy, forEach } from 'lodash';
+import { isArray, reduce, trimEnd } from 'lodash';
 import memoize from 'memize';
 
 /**
@@ -13,6 +13,7 @@ import {
 	assertEntityHasKey,
 	assertIsArray,
 	assertIsNotEmpty,
+	assertIsMap,
 } from './assertions';
 
 /**
@@ -86,10 +87,10 @@ export const getEntityPrimaryKeyValues = memoize( ( modelName, entity ) => {
  * This receives an array of entities and returns a collection of those same
  * entities indexed by the primary key value for each entity.
  *
- * @param { string } modelName
- * @param { Array } entities
- * @return {*}  A collection indexed by the primary key values for each entity.
- * @throws { Exception }
+ * @param {string} modelName
+ * @param {Array} entities
+ * @return {Map}  A collection indexed by the primary key values for each entity.
+ * @throws {Exception}
  */
 export const keyEntitiesByPrimaryKeyValue = ( modelName, entities = [] ) => {
 	assertIsNotEmpty(
@@ -100,9 +101,15 @@ export const keyEntitiesByPrimaryKeyValue = ( modelName, entities = [] ) => {
 		)
 	);
 	assertIsArray( entities );
-	return keyBy( entities, function( entity ) {
-		return String( getEntityPrimaryKeyValues( modelName, entity ) );
+
+	const mappedEntities = new Map();
+	entities.forEach( ( entity ) => {
+		mappedEntities.set(
+			getEntityPrimaryKeyValues( modelName, entity ),
+			entity
+		);
 	} );
+	return mappedEntities;
 };
 
 /**
@@ -110,24 +117,23 @@ export const keyEntitiesByPrimaryKeyValue = ( modelName, entities = [] ) => {
  * of entity values.
  *
  * @param {Object} factory
- * @param {Object} entities
+ * @param {Map} entities
  * @return {Object<number,Object>}  An array of entity instances indexed by
  * their primary key value
  */
 export const createAndKeyEntitiesByPrimaryKeyValue = (
 	factory,
-	entities = {}
+	entities,
 ) => {
-	assertIsNotEmpty(
+	assertIsMap(
 		entities,
 		__(
-			'The provided object of entities must not be empty',
+			'The provided object of entities must be a Map object',
 			'event_espresso',
 		)
 	);
-	const entityInstances = {};
-	forEach( entities, ( entity, entityId ) => {
-		entityInstances[ entityId ] = factory.fromExisting( entity );
+	entities.forEach( ( entity, entityId ) => {
+		entities.set( entityId, factory.fromExisting( entity ) );
 	} );
-	return entityInstances;
+	return entities;
 };
