@@ -6,7 +6,7 @@ import { DEFAULT_LISTS_STATE } from '../../model';
 /**
  * External dependencies
  */
-import { isEqual, keys } from 'lodash';
+import { isEqual } from 'lodash';
 
 /**
  * Returns whether the state matches the provided items.
@@ -30,7 +30,7 @@ const stateMatchesItems = ( state, identifier, queryString, items = [] ) => (
  * @param {Object} state
  * @param {string} modelName
  * @param {string} queryString
- * @param {Object<number|string,Object>} entities
+ * @param { Map<number|string,Object>} entities
  * @return {boolean} If the incoming entity keys match the entity keys currently
  * in the state for the given queryString and modelName then this returns true.
  */
@@ -42,7 +42,7 @@ const stateMatchesEntities = (
 ) => (
 	state[ modelName ] &&
 	state[ modelName ][ queryString ] &&
-	isEqual( keys( state[ modelName ][ queryString ] ), keys( entities ) )
+	isEqual( state[ modelName ][ queryString ].keys(), entities.keys() )
 );
 
 /**

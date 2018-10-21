@@ -1,14 +1,19 @@
 /**
  * External imports
  */
-import { mergeAndDeDuplicateArrays } from '@eventespresso/eejs';
-import { keys } from 'lodash';
+import {
+	mergeAndDeDuplicateArrays,
+	convertToObjectFromMap,
+} from '@eventespresso/eejs';
+import { keys, isEmpty, difference, isMap } from 'lodash';
 
 /**
  * Internal imports
  */
 import { DEFAULT_CORE_STATE } from '../../model';
-import { keepExistingEntitiesInObject } from '../base-entities';
+import {
+	keepExistingEntitiesInObject,
+} from '../base-entities';
 
 /**
  * This replaces any entities in the incoming object with matching entities (by
@@ -16,7 +21,7 @@ import { keepExistingEntitiesInObject } from '../base-entities';
  *
  * @param {Object} state
  * @param {string} modelName
- * @param {Object} entities
+ * @param {Map} entities
  * @return {Object} New entities object.
  */
 const replaceExistingEntitiesFromState = ( state, modelName, entities ) => {
@@ -39,19 +44,29 @@ const replaceExistingEntitiesFromState = ( state, modelName, entities ) => {
  *
  * @param {Object} state
  * @param {Object} action
- * @return {{entities: {}, entityIds: {}}} The new state (or the original if no
+ * @return {{entities: Map, entityIds: {}}} The new state (or the original if no
  * change detected or action isn't handled by this method)
  */
 export default function receiveEntityRecords( state = DEFAULT_CORE_STATE, action ) {
-	const { type, modelName, entities: incomingEntities = {} } = action;
+	const { type, modelName, entities: incomingEntities = new Map() } = action;
 	if (
 		modelName &&
-		state.entities[ modelName ]
+		state.entities[ modelName ] &&
+		isMap( incomingEntities ) &&
+		! isEmpty( incomingEntities )
 	) {
 		let	updateState = false,
-			entities = {};
+			entities;
 		switch ( type ) {
 			case 'RECEIVE_ENTITY_RECORDS':
+				// if all incoming keys exist in state already then we don't do
+				// anything
+				if ( isEmpty( difference(
+					Array.from( incomingEntities.keys() ),
+					keys( state[ modelName ] )
+				) ) ) {
+					break;
+				}
 				// replace any incoming entities with existing entities already in the
 				// store so this registry acts as the "authority" for the latest entity.
 				entities = replaceExistingEntitiesFromState(
@@ -59,11 +74,12 @@ export default function receiveEntityRecords( state = DEFAULT_CORE_STATE, action
 					modelName,
 					incomingEntities
 				);
+				entities = convertToObjectFromMap( entities );
 				updateState = true;
 				break;
 			case 'RECEIVE_AND_REPLACE_ENTITY_RECORDS':
 				updateState = true;
-				entities = incomingEntities;
+				entities = convertToObjectFromMap( incomingEntities );
 				break;
 		}
 		if ( updateState ) {

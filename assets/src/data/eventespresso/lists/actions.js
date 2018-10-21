@@ -32,14 +32,14 @@ export function receiveResponse( identifier, queryString, items = [] ) {
  *
  * @param {string} modelName
  * @param {string} queryString
- * @param {Object<number,Object>}entities
+ * @param {Map<number,Object>}entities
  * @return {{type: string, identifier: string, queryString: string, items:
- *   Object<number,Object>}} An action object.
+ *   Map<number,Object>}} An action object.
  */
 export function receiveEntityResponse(
 	modelName,
 	queryString,
-	entities = {},
+	entities = new Map(),
 ) {
 	return {
 		type: 'RECEIVE_ENTITY_LIST',

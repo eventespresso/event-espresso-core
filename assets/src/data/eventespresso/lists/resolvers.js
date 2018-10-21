@@ -62,7 +62,7 @@ export function* getEntities( modelName, queryString ) {
 	const existingEntities = yield select(
 		'eventespresso/core',
 		'getEntitiesByIds',
-		keys( fullEntities )
+		fullEntities.keys()
 	);
 
 	if ( ! isEmpty( existingEntities ) ) {

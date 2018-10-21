@@ -55,7 +55,7 @@ export function getItems( state, identifier, queryString ) {
  * @param {Object} state
  * @param {string} modelName
  * @param {string} queryString
- * @return {Object} Returns entities.
+ * @return {Map} Returns entities.
  */
 export function getEntities( state, modelName, queryString ) {
 	return retrieveItems( state, modelName, queryString, EMPTY_OBJECT );

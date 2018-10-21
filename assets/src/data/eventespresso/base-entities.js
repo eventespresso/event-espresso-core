@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { upperFirst, camelCase, reduce } from 'lodash';
+import { upperFirst, camelCase, reduce, isMap } from 'lodash';
 import pluralize from 'pluralize';
+import { mapReducer } from '@eventespresso/eejs';
 
 /**
  * A helper for getting a method name.
@@ -27,18 +28,27 @@ export const getMethodName = (
  * entities, this returns a merged object with preference given to common
  * entities from the existingEntities collection.
  *
- * @param {Object} existingEntities
- * @param {Object} incomingEntities
+ * Incoming collections can be Maps or plain objects.
+ *
+ * @param {Map|Object} existingEntities
+ * @param {Map|Object} incomingEntities
  * @return {Object} A new collection of entities.
  */
 export const keepExistingEntitiesInObject = (
 	existingEntities,
 	incomingEntities,
 ) => {
-	return reduce( incomingEntities, ( result, entity, entityId ) => {
-		result[ entityId ] = existingEntities[ entityId ] ?
-			existingEntities[ entityId ] :
-			entity;
-		return result;
-	}, {} );
+	const hasThenGetEntity = ( defaultEntity, entityId ) => {
+		if ( isMap( existingEntities ) && existingEntities.has( entityId ) ) {
+			return existingEntities.get( entityId );
+		}
+		return existingEntities[ entityId ] || defaultEntity;
+	};
+	const reduceCallback = ( mapped, entity, entityId ) => {
+		mapped.set( entityId, hasThenGetEntity( entity, entityId ) );
+		return mapped;
+	};
+	return isMap( incomingEntities ) ?
+		mapReducer( incomingEntities, reduceCallback, new Map() ) :
+		reduce( incomingEntities, reduceCallback, new Map() );
 };
