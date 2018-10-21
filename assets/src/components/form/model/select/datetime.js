@@ -72,11 +72,11 @@ export default class DatetimeSelect extends Component {
 
 	componentDidMount() {
 		this.setState( {
-			queryData: { ...this.props.queryData },
+			queryData: {
+				...this.props.queryData,
+				forEventId: this.props.forEventId,
+			},
 		} );
-		if ( this.props.forEventId > 0 ) {
-			this.addEventIdToQueryData( this.props.forEventId );
-		}
 	}
 
 	componentDidUpdate( prevProps ) {
