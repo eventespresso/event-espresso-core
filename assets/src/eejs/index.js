@@ -41,3 +41,5 @@ export { locale as SERVER_LOCALE } from './locale';
 export * from './exceptions';
 
 export * from './utils/merge-and-de-duplicate';
+export * from './utils/map-reducer';
+export * from './utils/convert-to-object-from-map';
