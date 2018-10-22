@@ -28,6 +28,7 @@ use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\form_sections\form_handlers\FormHandler;
 use EventEspresso\core\libraries\form_sections\strategies\filter\VsprintfFilter;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use InvalidArgumentException;
 use LogicException;
 use ReflectionException;
@@ -494,82 +495,13 @@ class OrganizationSettings extends FormHandler
         if ($country instanceof EE_Country) {
             $country->set('CNT_active', 1);
             $country->save();
-            $this->getCountrySubRegions($country);
+            /** @var \EventEspresso\core\services\address\CountrySubRegionDao $countryDao */
+            $countryDao = LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\services\address\CountrySubRegionDao'
+            );
+            $countryDao->saveCountrySubRegions($country);
         }
         return true;
-    }
-
-
-    /**
-     * @param EE_Country $country
-     * @return string
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     */
-    private function getCountrySubRegions(EE_Country $country)
-    {
-        $CNT_ISO = $country->ID();
-        $has_sub_regions = EEM_State::instance()->count(array(array('Country.CNT_ISO' => $CNT_ISO)));
-        if ($has_sub_regions) {
-            return;
-        }
-        $json = $this->getCountryJson(
-            'https://raw.githubusercontent.com/astockwell/countries-and-provinces-states-regions/master/countries.json'
-        );
-        if (is_array($json)) {
-            foreach ($json as $country) {
-                if ($country->code === $CNT_ISO) {
-                    if($country->filename !== null) {
-                        $sub_regions = $this->getCountryJson(
-                            'https://raw.githubusercontent.com/astockwell/countries-and-provinces-states-regions/master/countries/'
-                            . $country->filename . '.json'
-                        );
-                        if (is_array($sub_regions)) {
-                            foreach ($sub_regions as $sub_region) {
-                                $abbrev = str_replace(
-                                    $CNT_ISO . '-',
-                                    '',
-                                    sanitize_text_field($sub_region->code)
-                                );
-                                if(absint($abbrev) !== 0){
-                                    $abbrev = sanitize_text_field($sub_region->code);
-                                }
-                                EEM_State::instance()->insert(
-                                    array(
-                                        // STA_ID	CNT_ISO	STA_abbrev	STA_name	STA_active
-                                        'CNT_ISO'    => $CNT_ISO,
-                                        'STA_abbrev' => $abbrev,
-                                        'STA_name'   => sanitize_text_field($sub_region->name),
-                                        'STA_active' => 1,
-                                    )
-                                );
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-    /**
-     * @param string $url
-     * @return array
-     */
-    private function getCountryJson($url='')
-    {
-        if (empty($url)) {
-            return array();
-        }
-        $request = wp_safe_remote_get($url);
-        if (is_wp_error($request)) {
-            return array();
-        }
-        $body = wp_remote_retrieve_body($request);
-        return json_decode($body);
     }
 
 
