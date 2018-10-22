@@ -1376,7 +1376,6 @@ class Read_Test extends \EE_REST_TestCase
      * @throws \InvalidArgumentException
      * @throws \ReflectionException
      * @group private-1
-     * @group current
      */
     public function testHandleRequestGetOneEventWithPassword()
     {
