@@ -6,7 +6,7 @@ import { DEFAULT_LISTS_STATE } from '../../model';
 /**
  * External dependencies
  */
-import { isEqual } from 'lodash';
+import isShallowEqual from '@wordpress/is-shallow-equal';
 
 /**
  * Returns whether the state matches the provided items.
@@ -19,7 +19,7 @@ import { isEqual } from 'lodash';
 const stateMatchesItems = ( state, identifier, queryString, items = [] ) => (
 	state[ identifier ] &&
 	state[ identifier ][ queryString ] &&
-	isEqual( state[ identifier ][ queryString ], items )
+	isShallowEqual( state[ identifier ][ queryString ], items )
 );
 
 /**
@@ -38,11 +38,14 @@ const stateMatchesEntities = (
 	state,
 	modelName,
 	queryString,
-	entities = []
+	entities = new Map()
 ) => (
 	state[ modelName ] &&
 	state[ modelName ][ queryString ] &&
-	isEqual( state[ modelName ][ queryString ].keys(), entities.keys() )
+	isShallowEqual(
+		Array.from( state[ modelName ][ queryString ].keys() ),
+		Array.from( entities.keys() ),
+	)
 );
 
 /**
