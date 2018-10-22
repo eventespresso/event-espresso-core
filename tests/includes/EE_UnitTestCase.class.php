@@ -899,7 +899,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
                         //don't make system questions etc
                         'QST_system',
                         'QSG_system',
-                        'QSO_system'
+                        'QSO_system',
+                        'password'
                     ),
                     true
                 )

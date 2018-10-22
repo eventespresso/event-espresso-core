@@ -416,11 +416,17 @@ class Read extends Base
         }
         $restricted_query_params = $primary_model_query_params;
         $restricted_query_params['caps'] = $context;
+        $restricted_query_params['limit'] = 1;
         $this->setDebugInfo('main model query params', $restricted_query_params);
         $this->setDebugInfo('missing caps', Capabilities::getMissingPermissionsString($related_model, $context));
+        $primary_model_rows = $model->get_all_wpdb_results($restricted_query_params);
+        $primary_model_row = null;
+        if (is_array($primary_model_rows)) {
+            $primary_model_row = reset($primary_model_rows);
+        }
         if (! (
             Capabilities::currentUserHasPartialAccessTo($related_model, $context)
-            && $model->exists($restricted_query_params)
+            && $primary_model_row
         )
         ) {
             if ($relation instanceof EE_Belongs_To_Relation) {
@@ -448,6 +454,27 @@ class Read extends Base
                 ),
                 array('status' => 403)
             );
+        }
+
+        // if this entity requires a password, they better give it and it better be right!
+        if ($model->hasPassword()
+            && $primary_model_row[ $model->getPasswordField()->get_qualified_column() ] !== '') {
+            if (empty($request['password'])) {
+                return new WP_Error(
+                    'rest_post_password_required',
+                    __('A password is required to access this content.', 'event_espresso'),
+                    array('status' => 403)
+                );
+            } elseif (!hash_equals(
+                $primary_model_row[ $model->getPasswordField()->get_qualified_column() ],
+                $request['password']
+            )) {
+                return new WP_Error(
+                    'rest_post_incorrect_password',
+                    __('Incorrect password.', 'event_espresso'),
+                    array('status' => 403)
+                );
+            }
         }
         $query_params = $this->createModelQueryParams($relation->get_other_model(), $request->get_params());
         foreach ($primary_model_query_params[0] as $where_condition_key => $where_condition_value) {
@@ -617,9 +644,7 @@ class Read extends Base
             $rest_request,
             $this
         );
-        if( $current_user_full_access_to_entity) {
-            $entity_array = $this->includeRequestedModels($model, $rest_request, $entity_array, $db_row);
-        }
+        $entity_array = $this->includeRequestedModels($model, $rest_request, $entity_array, $db_row);
         $entity_array = apply_filters(
             'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
             $entity_array,
@@ -642,16 +667,12 @@ class Read extends Base
             'inaccessible fields',
             array_keys(array_diff_key($entity_array, $result_without_inaccessible_fields))
         );
-        if (! $current_user_full_access_to_entity
-            && $model->hasPassword()
+        // when it's a regular read request for a model with a password and the password wasn't provided
+        // remove the password protected fields
+        if ($model->hasPassword()
+            && $rest_request->get_param('caps') === EEM_Base::caps_read
             && $db_row[ $model->getPasswordField()->get_qualified_column() ]
-            && !(
-                $rest_request['password'] &&
-                hash_equals(
-                    $db_row[ $model->getPasswordField()->get_qualified_column() ],
-                    $rest_request['password']
-                )
-            )
+            && ! $rest_request->get_param('password')
         ) {
             $result_without_protected_fields = Capabilities::filterOutPasswordProtectedFields(
                 $result_without_inaccessible_fields,
@@ -1220,6 +1241,14 @@ class Read extends Base
         } else {
             $model_query_params['caps'] = EEM_Base::caps_read;
         }
+        // is this a request for a model related to one with a password?
+        // if so, we don't show data related to password protected posts
+        if ($model->restrictedbyRelatedModelPassword()
+                && ! $model->hasPassword()
+                && $model_query_params['caps'] === EEM_Base::caps_read
+        ) {
+            $model_query_params['exclude_protected'] = true;
+        }
         if (isset($query_parameters['default_where_conditions'])) {
             $model_query_params['default_where_conditions'] = $this->validateDefaultQueryParams(
                 $query_parameters['default_where_conditions']
@@ -1386,15 +1415,22 @@ class Read extends Base
         }
         $restricted_query_params = $query_params;
         $restricted_query_params['caps'] = $context;
+        // when requesting a model related to one with a password, and it's a normal read request (yes, even if the
+        // current user has caps to view everything), remove entities related to one where the password was set.
+        if ($model->restrictedbyRelatedModelPassword()
+            && ! $model->hasPassword()
+            && $context === EEM_Base::caps_read) {
+            $restricted_query_params['exclude_protected'] = true;
+        }
         $this->setDebugInfo('model query params', $restricted_query_params);
         $model_rows = $model->get_all_wpdb_results($restricted_query_params);
         if (! empty($model_rows)) {
             $model_row = reset($model_rows);
-            // it's a custom post type that requires a password. The requestor needs to have provided it before
+            // give error if user provided the wrong password.
             if ($model->hasPassword()
                 && ! empty($request['password'])
                 && ! hash_equals(
-                    $model_row[$model->getPasswordField()->get_qualified_column()],
+                    $model_row[ $model->getPasswordField()->get_qualified_column() ],
                     $request['password']
                 )) {
                 return new WP_Error(

@@ -355,6 +355,7 @@ class Read_Test extends \EE_REST_TestCase
      * DO change it, in which case this unit test will need to be updated to
      * include the known modifications).
      * This helps prevent accidental changes
+     * @group private-1
      */
     public function test_handle_request_get_one__event()
     {
@@ -446,6 +447,7 @@ class Read_Test extends \EE_REST_TestCase
                 'EVT_donations'                   => $event->get('EVT_donations'),
                 'featured_image_url'              => null,
                 'EVT_timezone_string'             => '',
+                'password'                        => '',
                 'link'                            => get_permalink($event->ID()),
                 '_links'                          => array(
                     'self'                                                  =>
@@ -1374,6 +1376,7 @@ class Read_Test extends \EE_REST_TestCase
      * @throws \InvalidArgumentException
      * @throws \ReflectionException
      * @group private-1
+     * @group current
      */
     public function testHandleRequestGetOneEventWithPassword()
     {
@@ -1389,7 +1392,6 @@ class Read_Test extends \EE_REST_TestCase
         );
 
         // send a request for it, without a password. Stuff gets hidden
-        //send a request for the two events
         $response = rest_do_request(
             new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $e_with_password->ID())
         );
@@ -1419,6 +1421,8 @@ class Read_Test extends \EE_REST_TestCase
         );
 
         // now don't provide the password, but authenticate
+        // WP core currently actually hides this content from admins too
+        // in the REST API, and web front-end. So we do too.
         $this->authenticate_as_admin();
         $response = rest_do_request(
             new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $e_with_password->ID())
@@ -1426,7 +1430,7 @@ class Read_Test extends \EE_REST_TestCase
         $this->assertInstanceOf('WP_REST_Response', $response);
         $data = $response->get_data();
         $this->assertEquals(
-            $e_with_password->get_pretty('EVT_desc'),
+            '',
             $data['EVT_desc']['rendered']
         );
     }
@@ -1553,7 +1557,6 @@ class Read_Test extends \EE_REST_TestCase
             $ticket_no_password->ID(),
             $data[0]['TKT_ID']
         );
-        $this->assertFalse(true);
     }
 }
 // End of file Read_Test.php
