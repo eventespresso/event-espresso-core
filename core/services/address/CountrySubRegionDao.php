@@ -109,7 +109,7 @@ class CountrySubRegionDao
                 }
                 EEM_State::instance()->insert(
                     array(
-                        // STA_ID	CNT_ISO	STA_abbrev	STA_name	STA_active
+                        // STA_ID CNT_ISO STA_abbrev STA_name STA_active
                         'CNT_ISO'    => $country->code,
                         'STA_abbrev' => $abbrev,
                         'STA_name'   => sanitize_text_field($sub_region->name),
