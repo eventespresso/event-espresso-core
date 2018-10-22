@@ -653,7 +653,7 @@ class Read extends Base
             $rest_request,
             $this
         );
-        if( ! $current_user_full_access_to_entity ) {
+        if (! $current_user_full_access_to_entity) {
             $result_without_inaccessible_fields = Capabilities::filterOutInaccessibleEntityFields(
                 $entity_array,
                 $model,
