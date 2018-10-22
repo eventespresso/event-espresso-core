@@ -61,7 +61,6 @@ class EEM_Payment_Method extends EEM_Base
                 'PMD_scope' => new EE_Serialized_Text_Field('PMD_scope', __("Usable From?", 'event_espresso'), false, array()), // possible values currently are 'CART','ADMIN','API'
         ) );
         $this->_model_relations = array(
- //         'Event'=>new EE_HABTM_Relation('Event_Payment_Method'),
             'Payment' => new EE_Has_Many_Relation(),
             'Currency' => new EE_HABTM_Relation('Currency_Payment_Method'),
             'Transaction' => new EE_Has_Many_Relation(),
