@@ -2,6 +2,7 @@
  * External imports
  */
 import { __ } from '@eventespresso/i18n';
+import { Button } from '@wordpress/components';
 
 /**
  * @function
@@ -19,13 +20,12 @@ export const FormResetButton = ( {
 } ) => {
 	buttonText = buttonText ? buttonText : __( 'Reset', 'event_espresso' );
 	return (
-		<button
-			type="button"
+		<Button
+			isDefault
 			onClick={ onClick }
-			className="button button-secondary"
 			disabled={ submitting || pristine }
 		>
 			{ buttonText }
-		</button>
+		</Button>
 	);
 };

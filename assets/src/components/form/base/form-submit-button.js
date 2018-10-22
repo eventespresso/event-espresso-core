@@ -3,6 +3,7 @@
  */
 import { Fragment } from 'react';
 import { __ } from '@eventespresso/i18n';
+import { Button } from '@wordpress/components';
 
 /**
  * Internal imports
@@ -32,13 +33,13 @@ export const FormSubmitButton = ( {
 		null;
 	return (
 		<Fragment>
-			<button
+			<Button
+				isDefault
 				type="submit"
-				className="button button-primary"
 				disabled={ submitting }
 			>
 				{ buttonText }
-			</button>
+			</Button>
 			{ submittingNotice }
 		</Fragment>
 	);
