@@ -1,4 +1,9 @@
 /**
+ * Internal imports
+ */
+import InvalidType from './invalid-type';
+
+/**
  * InvalidSchema
  * Usage: throw new eejs.InvalidSchema('some message', [schema object])
  *
@@ -9,7 +14,7 @@
  * @param {mixed} schema Optional, the schema object which will be added to a
  * schema property.
  */
-export default class InvalidSchema extends TypeError {
+export default class InvalidSchema extends InvalidType {
 	constructor( ...args ) {
 		super( ...args );
 		if ( Error.captureStackTrace ) {
