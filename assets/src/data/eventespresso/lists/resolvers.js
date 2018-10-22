@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { keys, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -62,7 +62,7 @@ export function* getEntities( modelName, queryString ) {
 	const existingEntities = yield select(
 		'eventespresso/core',
 		'getEntitiesByIds',
-		fullEntities.keys()
+		Array.from( fullEntities.keys() )
 	);
 
 	if ( ! isEmpty( existingEntities ) ) {
