@@ -9,7 +9,6 @@ import { Children } from 'react';
  */
 import { AutoFormRow } from '../../base/auto-form-row';
 import { default as AutoColumnRow } from './auto-column-row';
-import { InputLabel } from '../../inputs/base/input-label';
 
 /**
  * FormSection
@@ -33,7 +32,6 @@ const FormSection = ( { children, htmlId = '', htmlClass = '' } ) => {
 					Children.map( children, ( child ) => (
 						<AutoFormRow
 							FormElement={ child }
-							InputLabel={ InputLabel }
 							AutoColumnRow={ AutoColumnRow }
 						/>
 					) )

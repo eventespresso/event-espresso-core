@@ -7,6 +7,7 @@ import { isArray } from 'lodash';
  * Internal imports
  */
 import { mapValidatorsToAttributes } from '../inputs/base/utils';
+import { InputLabel } from '../inputs/base/input-label';
 
 /**
  * AutoFormRow
@@ -22,13 +23,11 @@ import { mapValidatorsToAttributes } from '../inputs/base/utils';
  *
  * @component
  * @param {Object} FormElement either an input, label, or form row component
- * @param {Object} InputLabel form layout strategy label display component
  * @param {Object} AutoColumnRow form layout strategy row component
  * @return {Object} rendered form row
  */
 export const AutoFormRow = ( {
 	FormElement,
-	InputLabel,
 	AutoColumnRow,
 } ) => {
 	let label = null;
@@ -45,11 +44,10 @@ export const AutoFormRow = ( {
 		if ( name === 'FormInput' || name === 'Field' ) {
 			input = FormElement;
 			const validations = isArray( FormElement.props.validations ) ?
-				FormElement.propsvalidations :
+				FormElement.props.validations :
 				[ FormElement.props.validations ];
-			let attributes = Object.assign( {}, FormElement.props );
-			attributes = mapValidatorsToAttributes(
-				attributes,
+			const attributes = mapValidatorsToAttributes(
+				{ ...FormElement.props },
 				validations
 			);
 			if ( attributes.label ) {
@@ -73,8 +71,6 @@ export const AutoFormRow = ( {
 				{ input }
 			</AutoColumnRow>
 		);
-		label = null;
-		input = null;
 		return row;
 	}
 	return null;
