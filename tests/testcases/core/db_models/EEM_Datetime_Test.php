@@ -438,4 +438,46 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		$this->assertEquals( 1, EEM_Datetime::instance()->get_datetime_count_for_status() );
 		$this->assertEquals( 2, EEM_Datetime::instance()->get_datetime_count_for_status( EE_Datetime::expired ) );
 	}
+
+    /**
+     * @since $VID:$
+     * @group private-1
+     */
+    public function testGetAllExcludeProtected()
+    {
+        // create two events, one is password-protected
+        $e_password = $this->new_model_obj_with_dependencies(
+            'Event',
+            array(
+                'status' => EEM_Event::post_status_publish,
+                'password' => 'foobar'
+            )
+        );
+        $e_no_password = $this->new_model_obj_with_dependencies(
+            'Event',
+            array(
+                'status' => EEM_Event::post_status_publish,
+                'password' => ''
+            )
+        );
+
+        // create related data
+        $d_password = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e_password->ID()
+            )
+        );
+        $d_no_password = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e_no_password->ID()
+            )
+        );
+
+        // fetch related data. Those for password-protected events should be excluded
+        $datetime_ids = EEM_Datetime::instance()->get_col(array('exclude_protected'=>true));
+        $this->assertArrayContains((string) $d_no_password->ID(),$datetime_ids);
+        $this->assertArrayDoesNotContain((string) $d_password, $datetime_ids);
+    }
 }

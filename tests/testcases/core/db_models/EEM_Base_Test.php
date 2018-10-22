@@ -1220,6 +1220,11 @@ class EEM_Base_Test extends EE_UnitTestCase
         $this->assertEquals(3, $attendee->getCustomSelect('registration_count'));
     }
 
+    public function testGetAllExcludeProtected()
+    {
+        // create two events,
+    }
+
 }
 
 // End of file EEM_Base_Test.php
