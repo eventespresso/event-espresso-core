@@ -274,11 +274,13 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     protected $_wp_core_model = false;
 
     /**
-     * @var bool stores whether this model has a password field or not
+     * @var bool stores whether this model has a password field or not.
+     * null until initialized by hasPasswordField()
      */
+
     protected $has_password_field;
     /**
-     * @var EE_Password_Field|null
+     * @var EE_Password_Field|null Automatically set when calling getPasswordField()
      */
     protected $password_field;
 
@@ -6452,6 +6454,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public function hasPassword()
     {
+        // if we don't yet know if there's a password field, find out and remember it for next time.
         if ($this->has_password_field === null) {
             $password_field = $this->getPasswordField();
             $this->has_password_field = $password_field instanceof EE_Password_Field ? true : false;
@@ -6466,9 +6469,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public function getPasswordField()
     {
+        // if we definetely already know there is a password field or not (because has_password_field is true or false)
+        // there's no need to search for it. If we don't know yet, then find out
         if ($this->has_password_field === null && $this->password_field === null) {
             $this->password_field = $this->get_a_field_of_type('EE_Password_Field');
         }
+        // don't bother setting has_password_field because that's hasPassword()'s job.
         return $this->password_field;
     }
 
