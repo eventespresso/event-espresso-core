@@ -679,8 +679,19 @@ class Read extends Base
                 $model,
                 $this->getModelVersionInfo()
             );
+            $password_field = $model->getPasswordField();
+            $all_protected = array_merge(
+                array($password_field->get_name()),
+                $password_field->protectedFields()
+            );
+            $fields_included = array_keys($result_without_protected_fields);
+            $result_without_protected_fields['_protected'] = array_intersect(
+                $all_protected,
+                $fields_included
+            );
         } else {
             $result_without_protected_fields = $result_without_inaccessible_fields;
+            $result_without_protected_fields['_protected'] = array();
         }
         $this->setDebugInfo(
             'password_protected_fields',
