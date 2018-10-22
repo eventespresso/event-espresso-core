@@ -1,14 +1,14 @@
 /**
  * Internal imports
  */
-import './form-data-dump.css';
+import './form-data-debug-dump.css';
 
 /**
  * @function
  * @param {Object} values
  * @return {Object} form data
  */
-export const FormDataDump = ( { values } ) => {
+export const FormDataDebugDump = ( { values } ) => {
 	return (
 		<div className="ee-form-data-dump-div">
 			<h3>Form Data</h3>

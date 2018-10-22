@@ -8,7 +8,7 @@ import { Form } from 'react-final-form';
  * Internal imports
  */
 import { FormContainer } from './form-container';
-import { FormDataDump } from './form-data-dump';
+import { FormDataDebugDump } from './form-data-debug-dump';
 import { FormPlaceholder } from './form-placeholder';
 import { FormSubmitButton } from './form-submit-button';
 import { FormResetButton } from './form-reset-button';
@@ -94,7 +94,7 @@ export const withFormHandler = (
 										currentValues={ values }
 									/>
 								</FormContainer>
-								<FormDataDump values={ values } />
+								<FormDataDebugDump values={ values } />
 							</form>
 						);
 					} }
