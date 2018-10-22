@@ -12,15 +12,19 @@ export const genericObjects = [
 	{ item: 3 },
 ];
 
-export const eventEntityItems = {
-	10: EventEntities.a,
-	20: EventEntities.b,
-};
+export const eventEntityItems = new Map(
+	[
+		[ 10, EventEntities.a ],
+		[ 20, EventEntities.b ],
+	]
+);
 
-export const dateTimeEntityItems = {
-	53: DateTimeEntities.b,
-	54: DateTimeEntities.c,
-};
+export const dateTimeEntityItems = new Map(
+	[
+		[ 53, DateTimeEntities.b ],
+		[ 54, DateTimeEntities.c ],
+	]
+);
 
 export const mockStateForTests = {
 	event: {

@@ -9,6 +9,7 @@ describe( 'DatetimeSelect()', () => {
 		order: 'DESC',
 		orderBy: 'start_date',
 		showExpired: false,
+		forEventId: 0,
 	};
 	it( 'matches snapshot with default props', () => {
 		const wrapper = shallow( <DatetimeSelect /> );

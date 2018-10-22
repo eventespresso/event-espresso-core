@@ -36,10 +36,10 @@ describe( 'createEntitySelectors()', () => {
 		[
 			'getEvents',
 			'testQueryA',
-			{
-				10: EventEntities.a,
-				20: EventEntities.b,
-			},
+			new Map( [
+				[ 10, EventEntities.a ],
+				[ 20, EventEntities.b ],
+			] ),
 		],
 		[
 			'isRequestingEvents',
@@ -49,10 +49,10 @@ describe( 'createEntitySelectors()', () => {
 		[
 			'getDatetimes',
 			'testQueryB',
-			{
-				53: DateTimeEntities.b,
-				54: DateTimeEntities.c,
-			},
+			new Map( [
+				[ 53, DateTimeEntities.b ],
+				[ 54, DateTimeEntities.c ],
+			] ),
 		],
 		[
 			'isRequestingDatetimes',

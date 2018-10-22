@@ -51,7 +51,7 @@ describe( 'getEntities()', () => {
 				eventFactory
 			);
 			expect( selectGetEntitiesByIdAction.args ).toEqual(
-				[ [ '10' ] ]
+				[ [ 10 ] ]
 			);
 		} );
 		it( 'yields expected dispatch action object for core receiving ' +
@@ -59,7 +59,7 @@ describe( 'getEntities()', () => {
 			const { value: dispatchReceiveEntityRecords } = fulfillment
 				.next( {} );
 			expect( dispatchReceiveEntityRecords.args ).toEqual(
-				[ 'event', { 10: EventEntities.a } ]
+				[ 'event', new Map( [ [ 10, EventEntities.a ] ] ) ]
 			);
 		} );
 		it( 'yields expected result for received value action object', () => {
@@ -68,7 +68,7 @@ describe( 'getEntities()', () => {
 				receiveEntityResponse(
 					'event',
 					'test_value=1',
-					{ 10: EventEntities.a }
+					new Map( [ [ 10, EventEntities.a ] ] )
 				)
 			);
 		} );

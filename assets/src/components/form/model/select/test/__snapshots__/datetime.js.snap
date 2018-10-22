@@ -19,6 +19,7 @@ exports[`DatetimeSelect() matches snapshot with default props 1`] = `
   }
   queryData={
     Object {
+      "forEventId": 0,
       "limit": 100,
       "order": "DESC",
       "orderBy": "start_date",

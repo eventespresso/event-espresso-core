@@ -11,6 +11,8 @@ const {
 	InvalidDateTime,
 	mergeAndDeDuplicateArrays,
 	mergeAndDeDuplicateObjects,
+	mapReducer,
+	convertToObjectFromMap,
 } = require( '../../../../../assets/src/eejs' );
 
 const newCurrencyConfig = {
@@ -83,4 +85,5 @@ module.exports.InvalidLocale = InvalidLocale;
 module.exports.InvalidDateTime = InvalidDateTime;
 module.exports.mergeAndDeDuplicateArrays = mergeAndDeDuplicateArrays;
 module.exports.mergeAndDeDuplicateObjects = mergeAndDeDuplicateObjects;
-
+module.exports.mapReducer = mapReducer;
+module.exports.convertToObjectFromMap = convertToObjectFromMap;

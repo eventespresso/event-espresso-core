@@ -34,7 +34,7 @@ describe( 'receiveEntityRecords()', () => {
 			originalState,
 			receiveRecordsAction(
 				'event',
-				{ 60: mockStateForTests.entities.event[ 30 ] },
+				new Map( [ [ 60, mockStateForTests.entities.event[ 30 ] ] ] ),
 			),
 		);
 		const expectedState = {
@@ -55,6 +55,18 @@ describe( 'receiveEntityRecords()', () => {
 			expect( originalState ).not.toBe( state );
 			expect( originalState ).toEqual( mockStateForTests );
 		} );
+
+		it( 'returns original state when incoming entities are not a Map',
+			() => {
+				const testState = receiveEntityRecords(
+					originalState,
+					receiveRecordsAction(
+						'event',
+						{ 60: {} }
+					)
+				);
+				expect( originalState ).toBe( testState );
+			} );
 
 		it( 'adds new record to state', () => {
 			expect( state ).toEqual( expectedState );
