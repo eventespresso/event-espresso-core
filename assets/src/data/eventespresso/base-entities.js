@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { upperFirst, camelCase, reduce, isMap } from 'lodash';
+import { upperFirst, camelCase, reduce, isMap, isNaN } from 'lodash';
 import pluralize from 'pluralize';
 import { mapReducer } from '@eventespresso/eejs';
 
@@ -30,25 +30,45 @@ export const getMethodName = (
  *
  * Incoming collections can be Maps or plain objects.
  *
+ * Note if incomingEntities is a Map, the ORDER of the map will be preserved
+ * even if the values of entities in the map are replaced by values from
+ * existing entities.
+ *
  * @param {Map|Object} existingEntities
  * @param {Map|Object} incomingEntities
- * @return {Object} A new collection of entities.
+ * @return {Map} A new collection of entities. Note if existing entities came in
+ * as a plain object, this returns a Map.
  */
 export const keepExistingEntitiesInObject = (
 	existingEntities,
 	incomingEntities,
 ) => {
 	const hasThenGetEntity = ( defaultEntity, entityId ) => {
+		entityId = normalizeEntityId( entityId );
 		if ( isMap( existingEntities ) && existingEntities.has( entityId ) ) {
 			return existingEntities.get( entityId );
 		}
 		return existingEntities[ entityId ] || defaultEntity;
 	};
 	const reduceCallback = ( mapped, entity, entityId ) => {
+		entityId = normalizeEntityId( entityId );
 		mapped.set( entityId, hasThenGetEntity( entity, entityId ) );
 		return mapped;
 	};
 	return isMap( incomingEntities ) ?
 		mapReducer( incomingEntities, reduceCallback, new Map() ) :
 		reduce( incomingEntities, reduceCallback, new Map() );
+};
+
+/**
+ * This normalizes numeric values to integer numbers and leaves non numeric
+ * values alone.
+ *
+ * @param {*} entityId
+ * @return {*} Normalized value
+ */
+const normalizeEntityId = ( entityId ) => {
+	const originalId = entityId;
+	entityId = parseInt( entityId, 10 );
+	return isNaN( entityId ) ? originalId : entityId;
 };
