@@ -74,7 +74,7 @@ export default class DatetimeSelect extends Component {
 		this.setState( {
 			queryData: {
 				...this.props.queryData,
-				forEventId: this.props.forEventId,
+				forEventId: this.props.forEventId || 0,
 			},
 		} );
 	}

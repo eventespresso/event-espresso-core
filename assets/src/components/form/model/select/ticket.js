@@ -75,8 +75,8 @@ export default class TicketSelect extends Component {
 		this.setState( {
 			queryData: {
 				...this.props.queryData,
-				forEventId: this.props.forEventId,
-				forDatetimeId: this.props.forDatetimeId,
+				forEventId: this.props.forEventId || 0,
+				forDatetimeId: this.props.forDatetimeId || 0,
 			},
 		} );
 	}
