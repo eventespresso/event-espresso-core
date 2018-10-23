@@ -69,7 +69,7 @@ export const getValuesForOptions = options => options.map(
  * @param {Object} dataSet
  * @return {Object} dataSet
  */
-export const validateDataSet = ( dataSet = {} ) => {
+export const prepareDataSet = ( dataSet = {} ) => {
 	for ( const key in dataSet ) {
 		if ( dataSet.hasOwnProperty( key ) ) {
 			if ( ! key.startsWith( 'data-' ) ) {

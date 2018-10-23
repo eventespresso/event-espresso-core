@@ -20,7 +20,7 @@ import {
 	cleanUpInputAttributes,
 	composeValidators,
 	mapValidatorsToAttributes,
-	validateDataSet,
+	prepareDataSet,
 } from './base/utils';
 
 /**
@@ -73,7 +73,7 @@ export class FormInput extends Component {
 		helpTextID = helpTextID ? helpTextID : `${ htmlId }-help-text`;
 		htmlClass = this.props.required ? `${ htmlClass } required` : htmlClass;
 		// ensure data attributes are properly named
-		dataSet = validateDataSet( dataSet );
+		dataSet = prepareDataSet( dataSet );
 		validations = isArray( validations ) ? validations : [ validations ];
 		// remove attributes that should not be passed to inputs
 		let attributes = cleanUpInputAttributes( rest );
