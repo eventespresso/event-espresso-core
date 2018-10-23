@@ -698,10 +698,10 @@ class Read extends Base
      * @since $VID:$
      * @param $model
      * @param $results_so_far
-     * @param $is_hidden
+     * @param $protected
      * @return array
      */
-    protected function addProtectedProperty($model, $results_so_far, $is_hidden)
+    protected function addProtectedProperty($model, $results_so_far, $protected)
     {
         $password_field = $model->getPasswordField();
         if (! $password_field instanceof \EE_Password_Field) {
@@ -719,7 +719,7 @@ class Read extends Base
         $protected_property = array();
         foreach ($fields_included as $field_name) {
             $protected_property[ $field_name ] = array(
-                'isHidden' => $is_hidden
+                'protected' => $protected
             );
         }
         return $protected_property;
