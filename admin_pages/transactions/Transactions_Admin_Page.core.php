@@ -433,12 +433,33 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'label' => esc_html__('Abandoned Transactions', 'event_espresso'),
                 'count' => 0,
             ),
-            'failed'    => array(
+        );
+        if (
+            /**
+             * Filters whether a link to the "Failed Transactions" list table
+             * appears on the Transactions Admin Page list table.
+             * List display can be turned back on via the following:
+             * add_filter(
+             *     'FHEE__Transactions_Admin_Page___set_list_table_views_default__display_failed',
+             *     '__return_true'
+             * );
+             *
+             * @since $VID:$
+             * @param boolean                 $display_failed_txns_list
+             * @param Transactions_Admin_Page $this
+             */
+        apply_filters(
+            'FHEE__Transactions_Admin_Page___set_list_table_views_default__display_failed_txns_list',
+            false,
+            $this
+        )
+        ) {
+            $this->_views['failed'] = array(
                 'slug'  => 'failed',
                 'label' => esc_html__('Failed Transactions', 'event_espresso'),
                 'count' => 0,
-            ),
-        );
+            );
+        }
     }
 
 
