@@ -138,6 +138,43 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
         $this->assertEquals(false, $rest_query['where']['REG_deleted']);
     }
 
+    /**
+     * @group private-1
+     */
+    public function testPrepareConditionsQueryParamsForModelsUnprivilegedUseOfPassword()
+    {
+        $this->expectException(RestException::class);
+        // you can't filter by password unless you're an admin
+            ModelDataTranslator::prepareConditionsQueryParamsForModels(
+                array(
+                    'password' => 'imahacker'
+                ),
+                EEM_Event::instance(),
+                '4.8.36'
+            );
+    }
+
+    /**
+     * @group private-1
+     */
+    public function testPrepareConditionsQueryParamsForModelsPrivilegedUseOfPassword()
+    {
+        // you can't filter by password unless you're an admin
+        $this->authenticate_as_admin();
+        $password = 'imanadmin';
+        $query_params = ModelDataTranslator::prepareConditionsQueryParamsForModels(
+            array(
+                'password' => $password
+            ),
+            EEM_Event::instance(),
+            '4.8.36'
+        );
+        $this->assertEquals(
+            $query_params['password'],
+            $password
+        );
+    }
+
 
 
     /**

@@ -660,7 +660,7 @@ class Read extends Base
         } else {
             $has_protected_fields = false;
         }
-        $entity_array['_protected'] = $this->addProtectedProperty($model,$entity_array, $has_protected_fields);
+        $entity_array['_protected'] = $this->addProtectedProperty($model, $entity_array, $has_protected_fields);
 
         $entity_array = $this->includeRequestedModels($model, $rest_request, $entity_array, $db_row);
         $entity_array = apply_filters(
@@ -704,7 +704,7 @@ class Read extends Base
     protected function addProtectedProperty($model, $results_so_far, $is_hidden)
     {
         $password_field = $model->getPasswordField();
-        if(! $password_field instanceof \EE_Password_Field) {
+        if (! $password_field instanceof \EE_Password_Field) {
             return array();
         }
         $all_protected = array_merge(
@@ -717,8 +717,8 @@ class Read extends Base
             $fields_included
         );
         $protected_property = array();
-        foreach($fields_included  as $field_name) {
-            $protected_property[$field_name] = array(
+        foreach ($fields_included as $field_name) {
+            $protected_property[ $field_name ] = array(
                 'isHidden' => $is_hidden
             );
         }

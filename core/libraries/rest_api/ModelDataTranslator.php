@@ -9,6 +9,8 @@ use EE_Error;
 use EE_Infinite_Integer_Field;
 use EE_Maybe_Serialized_Simple_HTML_Field;
 use EE_Model_Field_Base;
+use EE_Password_Field;
+use EE_Restriction_Generator_Base;
 use EE_Serialized_Text_Field;
 use EEM_Base;
 
@@ -412,6 +414,19 @@ class ModelDataTranslator
                 $timezone = $model->get_timezone();
             }
             if ($field instanceof EE_Model_Field_Base) {
+                if ($field instanceof EE_Password_Field
+                    && ! current_user_can(EE_Restriction_Generator_Base::get_default_restrictions_cap())) {
+                    // only full admins can query by password. sorry bub!
+                    throw new RestException(
+                        'only_admins_can_query_by_password',
+                        // @codingStandardsIgnoreStart
+                        esc_html__('You attempted to filter by a password field without the needed privileges. Only a full admin is allowed to do that.', 'event_espresso'),
+                        // @codingStandardsIgnoreEnd
+                        array(
+                            'status' => 403
+                        )
+                    );
+                }
                 if (! $writing && is_array($query_param_value)) {
                     if (! \EEH_Array::is_array_numerically_and_sequentially_indexed($query_param_value)) {
                         if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
