@@ -801,6 +801,10 @@ class EE_Dependency_Map
                 null,
                 'EventEspresso\core\services\validators\URLValidator' => EE_Dependency_Map::load_from_cache
             ),
+            'EventEspresso\core\services\address\CountrySubRegionDao' => array(
+                'EEM_State'                                            => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\validators\JsonValidator' => EE_Dependency_Map::load_from_cache
+            ),
         );
     }
 
