@@ -437,11 +437,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     {
         $this->_template_args['admin_page_content'] = '';
         try {
-            $organization_settings_form = new OrganizationSettings(
-                EE_Registry::instance(),
-                EE_Registry::instance()->CFG->organization,
-                EE_Registry::instance()->CFG->core,
-                EE_Registry::instance()->NET_CFG->core
+            /** @var EventEspresso\admin_pages\general_settings\OrganizationSettings $organization_settings_form */
+            $organization_settings_form = $this->loader->getShared(
+                'EventEspresso\admin_pages\general_settings\OrganizationSettings'
             );
             $this->_template_args['admin_page_content'] = $organization_settings_form->display();
         } catch (Exception $e) {
@@ -1306,7 +1304,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public function load_scripts_styles_privacy_settings()
     {
-        $form_handler = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler');
+        $form_handler = $this->loader->getShared('EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler');
         $form_handler->enqueueStylesAndScripts();
     }
 
@@ -1318,7 +1316,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     {
         $this->_set_add_edit_form_tags('update_privacy_settings');
         $this->_set_publish_post_box_vars(null, false, false, null, false);
-        $form_handler = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler');
+        $form_handler = $this->loader->getShared('EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler');
         $this->_template_args['admin_page_content'] = $form_handler->display();
         $this->display_admin_page_with_sidebar();
     }
@@ -1331,7 +1329,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public function updatePrivacySettings()
     {
-        $form_handler = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler');
+        $form_handler = $this->loader->getShared('EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler');
         $success = $form_handler->process($this->get_request_data());
         $this->_redirect_after_action(
             $success,
