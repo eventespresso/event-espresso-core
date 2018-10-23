@@ -248,9 +248,8 @@ class JsonModelSchema
     protected function getProtectedFieldsSchema()
     {
         $protected_fields_properties = array();
-        foreach($this->model->getPasswordProtectedFields() as $field)
-        {
-            $protected_fields_properties[$field->get_name()] = array(
+        foreach ($this->model->getPasswordProtectedFields() as $field) {
+            $protected_fields_properties[ $field->get_name() ] = array(
                 'type' => 'object',
                 'properties' => array(
                     'protected' => true
@@ -265,8 +264,10 @@ class JsonModelSchema
                 'type' => 'object',
                 'properties' =>$protected_fields_properties,
                 'additionalProperties' => false,
+                'readonly' => true,
             ),
             'additionalProperties' => false,
+            'readonly' => true
         );
     }
 
