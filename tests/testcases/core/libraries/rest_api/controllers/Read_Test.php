@@ -601,6 +601,22 @@ class Read_Test extends \EE_REST_TestCase
                                 ),
                         ),
                 ),
+                '_protected' => array(
+                    'password' => array('isHidden' => false),
+                    'EVT_desc' => array('isHidden' => false),
+                    'EVT_short_desc' => array('isHidden' => false),
+                    'EVT_display_desc' => array('isHidden' => false),
+                    'EVT_display_ticket_selector' => array('isHidden' => false),
+                    'EVT_visible_on' => array('isHidden' => false),
+                    'EVT_additional_limit' => array('isHidden' => false),
+                    'EVT_default_registration_status' => array('isHidden' => false),
+                    'EVT_member_only' => array('isHidden' => false),
+                    'EVT_phone' => array('isHidden' => false),
+                    'EVT_allow_overflow' => array('isHidden' => false),
+                    'EVT_timezone_string' => array('isHidden' => false),
+                    'EVT_external_URL' => array('isHidden' => false),
+                    'EVT_donations' => array('isHidden' => false),
+                )
             ),
             $result
         );

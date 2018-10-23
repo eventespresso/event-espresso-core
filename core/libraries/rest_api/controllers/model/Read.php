@@ -644,6 +644,24 @@ class Read extends Base
             $rest_request,
             $this
         );
+        // when it's a regular read request for a model with a password and the password wasn't provided
+        // remove the password protected fields
+        if ($model->hasPassword()
+            && $rest_request->get_param('caps') === EEM_Base::caps_read
+            && $db_row[ $model->getPasswordField()->get_qualified_column() ]
+            && ! $rest_request->get_param('password')
+        ) {
+            $entity_array = Capabilities::filterOutPasswordProtectedFields(
+                $entity_array,
+                $model,
+                $this->getModelVersionInfo()
+            );
+            $has_protected_fields = true;
+        } else {
+            $has_protected_fields = false;
+        }
+        $entity_array['_protected'] = $this->addProtectedProperty($model,$entity_array, $has_protected_fields);
+
         $entity_array = $this->includeRequestedModels($model, $rest_request, $entity_array, $db_row);
         $entity_array = apply_filters(
             'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
@@ -667,31 +685,9 @@ class Read extends Base
             'inaccessible fields',
             array_keys(array_diff_key($entity_array, $result_without_inaccessible_fields))
         );
-        // when it's a regular read request for a model with a password and the password wasn't provided
-        // remove the password protected fields
-        if ($model->hasPassword()
-            && $rest_request->get_param('caps') === EEM_Base::caps_read
-            && $db_row[ $model->getPasswordField()->get_qualified_column() ]
-            && ! $rest_request->get_param('password')
-        ) {
-            $result_without_protected_fields = Capabilities::filterOutPasswordProtectedFields(
-                $result_without_inaccessible_fields,
-                $model,
-                $this->getModelVersionInfo()
-            );
-            $has_protected_fields = true;
-        } else {
-            $result_without_protected_fields = $result_without_inaccessible_fields;
-            $has_protected_fields = false;
-        }
-        $result_without_protected_fields['_protected'] = $this->addProtectedProperty($model,$result_without_protected_fields, $has_protected_fields);
-        $this->setDebugInfo(
-            'password_protected_fields',
-            array_keys(array_diff_key($result_without_inaccessible_fields, $result_without_protected_fields))
-        );
         return apply_filters(
             'FHEE__Read__create_entity_from_wpdb_results__entity_return',
-            $result_without_protected_fields,
+            $result_without_inaccessible_fields,
             $model,
             $rest_request->get_param('caps')
         );
