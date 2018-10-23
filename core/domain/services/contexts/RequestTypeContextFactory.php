@@ -14,7 +14,7 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  * @author  Brent Christensen
  * @since   4.9.51
  */
-class RequestTypeContextFactory
+class RequestTypeContextFactory implements RequestTypeContextFactoryInterface
 {
 
     /**
@@ -49,7 +49,7 @@ class RequestTypeContextFactory
                 break;
             case RequestTypeContext::API:
                 $description = esc_html__(
-                    'The current request is for the REST API',
+                    'The current request is for the EE REST API',
                     'event_espresso'
                 );
                 break;
@@ -98,6 +98,18 @@ class RequestTypeContextFactory
             case RequestTypeContext::FEED:
                 $description = esc_html__(
                     'The current request is for a feed (ie: RSS)',
+                    'event_espresso'
+                );
+                break;
+            case RequestTypeContext::WP_API:
+                $description = esc_html__(
+                    'The current request is for the WordPress REST API',
+                    'event_espresso'
+                );
+                break;
+            case RequestTypeContext::WP_SCRAPE:
+                $description = esc_html__(
+                    'The current request is for a WordPress loopback scrape',
                     'event_espresso'
                 );
                 break;
