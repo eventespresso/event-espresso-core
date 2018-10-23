@@ -43,7 +43,7 @@ export const OptionInputs = ( {
 	...attributes
 } ) => {
 	delete attributes.initialValue;
-	options = isArray( options ) ? options : [];
+	options = isArray( options ) ? options : [ options ];
 	const count = options.length;
 	let checked = false;
 	return options.map( ( option, index ) => {
