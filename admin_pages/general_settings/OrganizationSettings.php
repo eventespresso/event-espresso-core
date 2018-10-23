@@ -28,7 +28,7 @@ use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\form_sections\form_handlers\FormHandler;
 use EventEspresso\core\libraries\form_sections\strategies\filter\VsprintfFilter;
-use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\address\CountrySubRegionDao;
 use InvalidArgumentException;
 use LogicException;
 use ReflectionException;
@@ -61,12 +61,18 @@ class OrganizationSettings extends FormHandler
     protected $network_core_config;
 
     /**
+     * @var CountrySubRegionDao $countrySubRegionDao
+     */
+    protected $countrySubRegionDao;
+
+    /**
      * Form constructor.
      *
      * @param EE_Registry             $registry
      * @param EE_Organization_Config  $organization_config
      * @param EE_Core_Config          $core_config
      * @param EE_Network_Core_Config $network_core_config
+     * @param CountrySubRegionDao $countrySubRegionDao
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws DomainException
@@ -75,11 +81,13 @@ class OrganizationSettings extends FormHandler
         EE_Registry $registry,
         EE_Organization_Config $organization_config,
         EE_Core_Config $core_config,
-        EE_Network_Core_Config $network_core_config
+        EE_Network_Core_Config $network_core_config,
+        CountrySubRegionDao $countrySubRegionDao
     ) {
         $this->organization_config = $organization_config;
         $this->core_config = $core_config;
         $this->network_core_config = $network_core_config;
+        $this->countrySubRegionDao = $countrySubRegionDao;
         parent::__construct(
             esc_html__('Your Organization Settings', 'event_espresso'),
             esc_html__('Your Organization Settings', 'event_espresso'),
@@ -495,11 +503,7 @@ class OrganizationSettings extends FormHandler
         if ($country instanceof EE_Country) {
             $country->set('CNT_active', 1);
             $country->save();
-            /** @var \EventEspresso\core\services\address\CountrySubRegionDao $countryDao */
-            $countryDao = LoaderFactory::getLoader()->getShared(
-                'EventEspresso\core\services\address\CountrySubRegionDao'
-            );
-            $countryDao->saveCountrySubRegions($country);
+            $this->countrySubRegionDao->saveCountrySubRegions($country);
         }
         return true;
     }
