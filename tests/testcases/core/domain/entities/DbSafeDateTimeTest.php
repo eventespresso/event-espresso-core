@@ -60,20 +60,10 @@ class DbSafeDateTimeTest extends EE_UnitTestCase
         unlink($log_file);
         $db_safe_datetime = unserialize($serialized_datetime);
         $this->assertInstanceOf('DateTime', $db_safe_datetime);
-        // still vot a valid date, but at least this won't cause additional errors
+        // ensures date has been coerced to something more valid.
         $this->assertEquals(
-            '-0001-11-30 00:00:00.000000',
-            $db_safe_datetime->format('Y-m-d H:i:s.u')
-        );
-        // and just verify that nothing changed
-        $this->assertEquals(
-            $empty_datetime->format('Y-m-d H:i:s.u'),
+            '0000-01-03 00:00:00.000000',
             $db_safe_datetime->format('Y-m-d H:i:s.u')
         );
     }
-
-
-
 }
-// end of file DbSafeDateTimeTest.php
-// Location: /tests/testcases/core/domain/entities/DbSafeDateTimeTest.php

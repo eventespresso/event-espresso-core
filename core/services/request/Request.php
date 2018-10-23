@@ -203,7 +203,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      *
      * @param string     $pattern
      * @param null|mixed $default
-     * @return false|int
+     * @return mixed
      */
     public function getMatch($pattern, $default = null)
     {
@@ -219,7 +219,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * returns true if a match is found or false if not
      *
      * @param string $pattern
-     * @return false|int
+     * @return bool
      */
     public function matches($pattern)
     {
@@ -581,6 +581,16 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     {
         return $this->request_type->isIframe();
     }
+
+
+    /**
+     * @return bool
+     */
+    public function isWordPressApi()
+    {
+        return $this->request_type->isWordPressApi();
+    }
+
 
 
     /**
