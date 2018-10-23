@@ -232,7 +232,39 @@ class JsonModelSchema
                     ),
                     'additionalProperties' => false,
                 ),
-                '_calculated_fields' => $this->fields_calculator->getJsonSchemaForModel($this->model)
+                '_calculated_fields' => $this->fields_calculator->getJsonSchemaForModel($this->model),
+                '_protected' => $this->getProtectedFieldsSchema()
+            ),
+            'additionalProperties' => false,
+        );
+    }
+
+    /**
+     * Returns an array of JSON schema to describe the _protected property on responses
+     * @since $VID:$
+     * @return array
+     * @throws \EE_Error
+     */
+    protected function getProtectedFieldsSchema()
+    {
+        $protected_fields_properties = array();
+        foreach($this->model->getPasswordProtectedFields() as $field)
+        {
+            $protected_fields_properties[$field->get_name()] = array(
+                'type' => 'object',
+                'properties' => array(
+                    'protected' => true
+                ),
+                'additionalProperties' => false,
+            );
+        }
+        return array(
+            'description' => esc_html__('Fields whose values may be replaced with their default if they are related to a password-protected entity.', 'event_espresso'),
+            'type' => 'object',
+            'items' => array(
+                'type' => 'object',
+                'properties' =>$protected_fields_properties,
+                'additionalProperties' => false,
             ),
             'additionalProperties' => false,
         );

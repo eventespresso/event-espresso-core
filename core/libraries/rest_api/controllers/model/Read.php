@@ -679,20 +679,12 @@ class Read extends Base
                 $model,
                 $this->getModelVersionInfo()
             );
-            $password_field = $model->getPasswordField();
-            $all_protected = array_merge(
-                array($password_field->get_name()),
-                $password_field->protectedFields()
-            );
-            $fields_included = array_keys($result_without_protected_fields);
-            $result_without_protected_fields['_protected'] = array_intersect(
-                $all_protected,
-                $fields_included
-            );
+            $has_protected_fields = true;
         } else {
             $result_without_protected_fields = $result_without_inaccessible_fields;
-            $result_without_protected_fields['_protected'] = array();
+            $has_protected_fields = false;
         }
+        $result_without_protected_fields['_protected'] = $this->addProtectedProperty($model,$result_without_protected_fields, $has_protected_fields);
         $this->setDebugInfo(
             'password_protected_fields',
             array_keys(array_diff_key($result_without_inaccessible_fields, $result_without_protected_fields))
@@ -703,6 +695,38 @@ class Read extends Base
             $model,
             $rest_request->get_param('caps')
         );
+    }
+
+    /**
+     * Returns an array describing which fields can be protected, and which actually were removed this request
+     * @since $VID:$
+     * @param $model
+     * @param $results_so_far
+     * @param $is_hidden
+     * @return array
+     */
+    protected function addProtectedProperty($model, $results_so_far, $is_hidden)
+    {
+        $password_field = $model->getPasswordField();
+        if(! $password_field instanceof \EE_Password_Field) {
+            return array();
+        }
+        $all_protected = array_merge(
+            array($password_field->get_name()),
+            $password_field->protectedFields()
+        );
+        $fields_included = array_keys($results_so_far);
+        $fields_included = array_intersect(
+            $all_protected,
+            $fields_included
+        );
+        $protected_property = array();
+        foreach($fields_included  as $field_name) {
+            $protected_property[$field_name] = array(
+                'isHidden' => $is_hidden
+            );
+        }
+        return $protected_property;
     }
 
     /**
