@@ -9,6 +9,7 @@ import { Form } from 'react-final-form';
  */
 import { FormContainer } from './form-container';
 import { FormDataDebugDump } from './form-data-debug-dump';
+import { FormErrorBoundary } from './form-error-boundary';
 import { FormPlaceholder } from './form-placeholder';
 import { FormSubmitButton } from './form-submit-button';
 import { FormResetButton } from './form-reset-button';
@@ -61,44 +62,46 @@ export const withFormHandler = (
 		render() {
 			const { data, loading } = this.state;
 			return (
-				<Form
-					onSubmit={ submitHandler }
-					initialValues={ data }
-					render={ ( {
-						handleSubmit,
-						form,
-						submitting,
-						pristine,
-						values,
-					} ) => {
-						const submitButton = (
-							<FormSubmitButton
-								submitting={ submitting }
-							/>
-						);
-						const resetButton = (
-							<FormResetButton
-								onClick={ form.reset }
-								pristine={ pristine }
-								submitting={ submitting }
-							/>
-						);
-						return (
-							<form onSubmit={ handleSubmit }>
-								<FormPlaceholder loading={ loading } />
-								<FormContainer loading={ loading } >
-									<FormComponent
-										submitButton={ submitButton }
-										resetButton={ resetButton }
-										initialValues={ data }
-										currentValues={ values }
-									/>
-								</FormContainer>
-								<FormDataDebugDump values={ values } />
-							</form>
-						);
-					} }
-				/>
+				<FormErrorBoundary>
+					<Form
+						onSubmit={ submitHandler }
+						initialValues={ data }
+						render={ ( {
+							handleSubmit,
+							form,
+							submitting,
+							pristine,
+							values,
+						} ) => {
+							const submitButton = (
+								<FormSubmitButton
+									submitting={ submitting }
+								/>
+							);
+							const resetButton = (
+								<FormResetButton
+									onClick={ form.reset }
+									pristine={ pristine }
+									submitting={ submitting }
+								/>
+							);
+							return (
+								<form onSubmit={ handleSubmit }>
+									<FormPlaceholder loading={ loading } />
+									<FormContainer loading={ loading } >
+										<FormComponent
+											submitButton={ submitButton }
+											resetButton={ resetButton }
+											initialValues={ data }
+											currentValues={ values }
+										/>
+									</FormContainer>
+									<FormDataDebugDump values={ values } />
+								</form>
+							);
+						} }
+					/>
+				</FormErrorBoundary>
 			);
 		}
 	}
