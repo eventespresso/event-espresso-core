@@ -1,6 +1,7 @@
 /**
  * Internal imports
  */
+import { __DEV__ } from '../../../data/utils/constants';
 import './form-data-debug-dump.css';
 
 /**
@@ -9,7 +10,7 @@ import './form-data-debug-dump.css';
  * @return {Object} form data
  */
 export const FormDataDebugDump = ( { values } ) => {
-	return (
+	return __DEV__ && (
 		<div className="ee-form-data-dump-div">
 			<h3>Form Data</h3>
 			<pre id="form-data">
