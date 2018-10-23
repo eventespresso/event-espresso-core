@@ -36,10 +36,14 @@ export class FormErrorBoundary extends Component {
 	}
 
 	render() {
+		let { errorMessage = '' } = this.props;
+		errorMessage = errorMessage !== '' ?
+			errorMessage :
+			__( 'An unexpected error has occurred.', 'event_espresso' );
 		if ( this.state.errorInfo ) {
 			return (
 				<div>
-					<h2>{ __( 'Something went wrong.', 'event_espresso' ) }</h2>
+					<h2>{ errorMessage }</h2>
 					<details style={ { whiteSpace: 'pre-wrap' } }>
 						{ this.state.error && this.state.error.toString() }
 						<br />

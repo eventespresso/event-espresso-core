@@ -36,6 +36,7 @@ export const withFormHandler = (
 	 * @param {Function} form component
 	 * @param {Function} loadHandler a function that supplies the form data
 	 * @param {Function} submitHandler a function that processes the submitted form
+	 * @param {string} errorMessage custom message displayed when things go bad
 	 */
 	class FormHandler extends Component {
 		/**
@@ -60,9 +61,9 @@ export const withFormHandler = (
 		}
 
 		render() {
-			const { data, loading } = this.state;
+			const { data, loading, errorMessage = '' } = this.state;
 			return (
-				<FormErrorBoundary>
+				<FormErrorBoundary errorMessage={ errorMessage } >
 					<Form
 						onSubmit={ submitHandler }
 						initialValues={ data }
@@ -101,7 +102,7 @@ export const withFormHandler = (
 							);
 						} }
 					/>
-				</FormErrorBoundary>
+				</FormErrorBoundaryerrorMessage>
 			);
 		}
 	}
