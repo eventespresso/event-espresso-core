@@ -25,9 +25,25 @@ class CountrySubRegionDao
     const REPO_URL = 'https://raw.githubusercontent.com/eventespresso/countries-and-provinces-states-regions/master/';
 
     /**
+     * @var EEM_State $state_model
+     */
+    private $state_model;
+
+    /**
      * @var array $countries
      */
     private $countries = array();
+
+
+    /**
+     * CountrySubRegionDao constructor.
+     *
+     * @param EEM_State $state_model
+     */
+    public function __construct(EEM_State $state_model)
+    {
+        $this->state_model = $state_model;
+    }
 
 
     /**
@@ -42,7 +58,7 @@ class CountrySubRegionDao
     public function saveCountrySubRegions(EE_Country $country_object)
     {
         $CNT_ISO = $country_object->ID();
-        $has_sub_regions = EEM_State::instance()->count(array(array('Country.CNT_ISO' => $CNT_ISO)));
+        $has_sub_regions = $this->state_model->count(array(array('Country.CNT_ISO' => $CNT_ISO)));
         if ($has_sub_regions) {
             return;
         }
@@ -107,7 +123,7 @@ class CountrySubRegionDao
                 if (absint($abbrev) !== 0) {
                     $abbrev = sanitize_text_field($sub_region->code);
                 }
-                EEM_State::instance()->insert(
+                $this->state_model->insert(
                     array(
                         // STA_ID CNT_ISO STA_abbrev STA_name STA_active
                         'CNT_ISO'    => $country->code,
