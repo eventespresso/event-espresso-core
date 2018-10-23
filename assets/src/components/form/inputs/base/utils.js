@@ -1,17 +1,23 @@
 /**
+ * External imports
+ */
+import { omit } from 'lodash';
+
+/**
  * @function
  * @param {Object} attributes
  * @return {Object} attributes
  */
 export const cleanUpInputAttributes = ( attributes = {} ) => {
-	delete attributes.children;
-	delete attributes.colSize;
-	delete attributes.helpText;
-	delete attributes.helpTextID;
-	delete attributes.label;
-	delete attributes.render;
-	delete attributes.validations;
-	return attributes;
+	return omit( attributes, [
+		'children',
+		'colSize',
+		'helpText',
+		'helpTextID',
+		'label',
+		'render',
+		'validations',
+	] );
 };
 
 /**
