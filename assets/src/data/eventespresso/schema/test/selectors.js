@@ -6,6 +6,8 @@ import {
 	isRequestingSchemaForModel,
 	getFactoryForModel,
 	isRequestingFactoryForModel,
+	hasResolvedFactoryForModel,
+	hasResolvedSchemaForModel,
 } from '../selectors';
 
 /**
@@ -23,20 +25,17 @@ describe( 'testing getters', () => {
 		[
 			getSchemaForModel,
 			'schema',
-			'getSchemaForModel()',
 		],
 		[
 			getFactoryForModel,
 			'factory',
-			'getFactoryForModel()',
 		],
 	];
 	testConditions.forEach( ( [
 		selectorToTest,
 		stateProperty,
-		description,
 	] ) => {
-		describe( description, () => {
+		describe( selectorToTest.name + '()', () => {
 			const state = { [ stateProperty ]: { event: {} } };
 			it( 'returns expected default value when model not found in ' +
 				'state', () => {
@@ -54,24 +53,32 @@ describe( 'testing getters', () => {
 		} );
 	} );
 } );
-describe( 'testing isRequesting methods', () => {
+describe( 'testing isRequesting and hasResolved methods', () => {
 	beforeAll( () => {
 		select( 'core/data' ).isResolving = jest.fn().mockReturnValue( false );
+		select( 'core/data' ).hasFinishedResolution = jest.fn().mockReturnValue(
+			false
+		);
 	} );
 	afterAll( () => {
 		select( 'core/data' ).isResolving.mockRestore();
+		select( 'core/data' ).hasFinishedResolution.mockRestore();
 	} );
 
 	function setIsResolving(
 		isResolving,
 		selectorKey = 'getSchemaForModel',
 	) {
+		const implementationFunction = ( reducerKey, selectorName ) => (
+			isResolving &&
+			reducerKey === 'eventespresso/schema' &&
+			selectorName === selectorKey
+		);
 		select( 'core/data' ).isResolving.mockImplementation(
-			( reducerKey, selectorName ) => (
-				isResolving &&
-				reducerKey === 'eventespresso/schema' &&
-				selectorName === selectorKey
-			),
+			implementationFunction
+		);
+		select( 'core/data' ).hasFinishedResolution.mockImplementation(
+			implementationFunction
 		);
 	}
 	const testConditions = [
@@ -83,12 +90,20 @@ describe( 'testing isRequesting methods', () => {
 			isRequestingFactoryForModel,
 			'getFactoryForModel',
 		],
+		[
+			hasResolvedSchemaForModel,
+			'getSchemaForModel',
+		],
+		[
+			hasResolvedFactoryForModel,
+			'getFactoryForModel',
+		],
 	];
 	testConditions.forEach( ( [
 		selectorMethod,
 		methodDescription,
 	] ) => {
-		describe( methodDescription + '()', () => {
+		describe( selectorMethod.name + '()', () => {
 			it( 'returns false if never requested or finished ' +
 				'requesting', () => {
 				expect( selectorMethod( 'event' ) ).toBe( false );

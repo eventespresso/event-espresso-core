@@ -21,5 +21,27 @@ export function select( selectorName, ...args ) {
 	};
 }
 
+/**
+ * Returns the action object for a specific dispatch control for the schema
+ * resolver.
+ *
+ * @param {string} dispatchName
+ * @param {...*} args
+ * @return {{
+ *   type: string,
+ *   reducerKey: string,
+ *   dispatchName: string,
+ *   args: *[]
+ * }} An action object
+ */
+export function dispatch( dispatchName, ...args ) {
+	return {
+		type: 'DISPATCH',
+		reducerKey: REDUCER_KEY,
+		dispatchName,
+		args,
+	};
+}
+
 export const fetchFromApi = fetch;
 export default baseControls;

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isResolving } from '../base-selectors';
+import { isResolving, hasFinishedResolving } from '../base-selectors';
 import { REDUCER_KEY } from './constants';
 
 /**
@@ -21,11 +21,25 @@ export function getSchemaForModel( state, modelName ) {
  * Selector for returning whether the schema is being requested or not for the
  * given model name.
  *
+ * @param {Object} state
  * @param {string} modelName
  * @return {boolean}  True means its being requested.
  */
-export function isRequestingSchemaForModel( modelName ) {
-	return isResolving( REDUCER_KEY, 'getSchemaForModel', modelName );
+export function isRequestingSchemaForModel( state, modelName ) {
+	const value = isResolving( REDUCER_KEY, 'getSchemaForModel', modelName );
+	return value;
+}
+
+/**
+ * Selector for returning whether the schema has been resolved or not for the
+ * given model name.
+ * @param {Object} state
+ * @param {string} modelName
+ * @return {boolean} True means that the schema has finished resolving for this
+ * model name.
+ */
+export function hasResolvedSchemaForModel( state, modelName ) {
+	return hasFinishedResolving( REDUCER_KEY, 'getSchemaForModel', modelName );
 }
 
 /**
@@ -47,9 +61,23 @@ export function getFactoryForModel( state, modelName ) {
  * Selector for returning whether the model entity factory is being requested
  * or not for the given model name from the state.
  *
+ * @param {Object} state
  * @param {string} modelName
  * @return {boolean}  True means it is being requested.
  */
-export function isRequestingFactoryForModel( modelName ) {
+export function isRequestingFactoryForModel( state, modelName ) {
 	return isResolving( REDUCER_KEY, 'getFactoryForModel', modelName );
+}
+
+/**
+ * Selector for returning whether the factory has been resolved or not for the
+ * given model name.
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @return {boolean} True means that the factory has finished resolving for this
+ * model name.
+ */
+export function hasResolvedFactoryForModel( state, modelName ) {
+	return hasFinishedResolving( REDUCER_KEY, 'getFactoryForModel', modelName );
 }

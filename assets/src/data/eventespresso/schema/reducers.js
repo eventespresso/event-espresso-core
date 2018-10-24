@@ -4,6 +4,10 @@
 import { combineReducers } from '@wordpress/data';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import { isUndefined } from 'lodash';
+import {
+	isSchemaResponseOfModel,
+	isModelEntityFactoryOfModel,
+} from '@eventespresso/eejs';
 
 /**
  * Internal dependencies
@@ -19,9 +23,9 @@ import { DEFAULT_SCHEMA_STATE } from '../../model';
  * @return {boolean}  true means it's already in the state.
  */
 const hasSameSchema = ( state, modelName, schema ) => {
-	return ! isUndefined( state.schema ) &&
-		! isUndefined( state.schema[ modelName ] ) &&
-		isShallowEqual( state.schema[ modelName ], schema );
+	return ! isUndefined( state ) &&
+		! isUndefined( state[ modelName ] ) &&
+		isShallowEqual( state[ modelName ], schema );
 };
 
 /**
@@ -34,9 +38,9 @@ const hasSameSchema = ( state, modelName, schema ) => {
  * @return {boolean} true means it's already in the state.
  */
 const hasSameFactory = ( state, modelName, factory ) => {
-	return ! isUndefined( state.factory ) &&
-		! isUndefined( state.factory[ modelName ] ) &&
-		isShallowEqual( state.factory[ modelName ], factory );
+	return ! isUndefined( state ) &&
+		! isUndefined( state[ modelName ] ) &&
+		isShallowEqual( state[ modelName ], factory );
 };
 
 /**
@@ -45,18 +49,16 @@ const hasSameFactory = ( state, modelName, factory ) => {
  * @param {Object} action
  * @return {Object} The reduced (or original) state.
  */
-export const receiveSchema = ( state = DEFAULT_SCHEMA_STATE, action ) => {
+export const receiveSchema = ( state = DEFAULT_SCHEMA_STATE.schema, action ) => {
 	const { type, modelName, schema } = action;
 	if (
+		isSchemaResponseOfModel( schema, modelName ) &&
 		type === 'RECEIVE_SCHEMA_RECORD' &&
 		! hasSameSchema( state, modelName, schema )
 	) {
 		return {
 			...state,
-			schema: {
-				...state.schema,
-				[ modelName ]: schema,
-			},
+			[ modelName ]: schema,
 		};
 	}
 	return state;
@@ -68,26 +70,19 @@ export const receiveSchema = ( state = DEFAULT_SCHEMA_STATE, action ) => {
  * @param {Object} action
  * @return {Object} the reduced (or original) state.
  */
-export const receiveFactory = ( state = DEFAULT_SCHEMA_STATE, action ) => {
+export const receiveFactory = ( state = DEFAULT_SCHEMA_STATE.factory, action ) => {
 	const { type, modelName, factory } = action;
 	if (
+		isModelEntityFactoryOfModel( factory, modelName ) &&
 		type === 'RECEIVE_FACTORY_FOR_MODEL' &&
 		! hasSameFactory( state, modelName, factory )
 	) {
 		return {
 			...state,
-			factory: {
-				...state.factory,
-				[ modelName ]: factory,
-			},
+			[ modelName ]: factory,
 		};
 	}
 	return state;
 };
 
-export default combineReducers(
-	{
-		receiveSchema,
-		receiveFactory,
-	}
-);
+export default combineReducers( { schema: receiveSchema, factory: receiveFactory } );

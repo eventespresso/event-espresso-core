@@ -22,11 +22,13 @@ import {
 } from '@eventespresso/components';
 import {
 	statusModel,
-	eventModel,
-	dateTimeModel,
-	ticketModel,
 } from '@eventespresso/model';
 import PropTypes from 'prop-types';
+
+const defaultQueryData = {
+	showExpired: true,
+	limit: 50,
+};
 
 /**
  * EventAttendeesEditor Component
@@ -64,6 +66,31 @@ export default class EventAttendeesEditor extends Component {
 	};
 
 	/**
+	 * @param {Object} props
+	 */
+	constructor( props ) {
+		super( props );
+		const { eventId, datetimeId } = this.props.attributes;
+		this.state = {
+			eventQueryData: {
+				...defaultQueryData,
+			},
+			datetimeQueryData: {
+				...defaultQueryData,
+				forEventId: eventId,
+			},
+			ticketQueryData: {
+				...defaultQueryData,
+				forDatetimeId: datetimeId,
+			},
+			statusQueryData: {
+				...defaultQueryData,
+				statusType: statusModel.STATUS_TYPE_REGISTRATION,
+			},
+		};
+	}
+
+	/**
 	 * Set eventId on attributes
 	 * @param {number} eventId
 	 */
@@ -78,6 +105,12 @@ export default class EventAttendeesEditor extends Component {
 				ticketId: 0,
 			}
 		);
+		this.setState( {
+			datetimeQueryData: {
+				...this.state.datetimeQueryData,
+				forEventId: value,
+			},
+		} );
 	};
 
 	/**
@@ -94,6 +127,12 @@ export default class EventAttendeesEditor extends Component {
 				ticketId: 0,
 			}
 		);
+		this.setState( {
+			ticketQueryData: {
+				...this.state.ticketQueryData,
+				forDatetimeId: value,
+			},
+		} );
 	};
 
 	/**
@@ -158,21 +197,6 @@ export default class EventAttendeesEditor extends Component {
 	};
 
 	/**
-	 * Returns new query data object with showExpired set to true and limit
-	 * adjusted to 50.
-	 *
-	 * @param {Object} originalQueryData
-	 * @return {{showExpired: boolean, limit: number}}  A new queryData object.
-	 */
-	setQueryDataShowExpired = ( originalQueryData ) => {
-		return {
-			...originalQueryData,
-			showExpired: true,
-			limit: 50,
-		};
-	};
-
-	/**
 	 * Returns inspector controls for the block.
 	 *
 	 * @param {Object} attributes
@@ -184,40 +208,31 @@ export default class EventAttendeesEditor extends Component {
 				<PanelBody title={ __( 'Event Attendees Settings', 'event_espresso' ) }>
 					<EditorEventSelect
 						key="attendees-event-select"
-						selectedEventId={ attributes.eventId }
+						selected={ attributes.eventId }
 						onEventSelect={ this.setEventId }
-						queryData={ this.setQueryDataShowExpired(
-							eventModel.defaultQueryData.queryData
-						) }
+						queryData={ this.state.eventQueryData }
 					/>
 					{ attributes.eventId !== 0 &&
 						<EditorDatetimeSelect
 							key="attendees-datetime-select"
-							selectedDatetimeId={ attributes.datetimeId }
-							forEventId={ attributes.eventId }
-							onDatetimeSelect={ this.setDatetimeId }
-							queryData={ this.setQueryDataShowExpired(
-								dateTimeModel.defaultQueryData.queryData
-							) }
+							selected={ attributes.datetimeId }
+							onSelect={ this.setDatetimeId }
+							queryData={ this.state.datetimeQueryData }
 						/>
 					}
 					{ attributes.datetimeId !== 0 &&
 						<EditorTicketSelect
 							key="attendees-ticket-select"
-							selectedTicketId={ attributes.ticketId }
-							forEventId={ attributes.eventId }
-							forDatetimeId={ attributes.datetimeId }
-							onTicketSelect={ this.setTicketId }
-							queryData={ this.setQueryDataShowExpired(
-								ticketModel.defaultQueryData.queryData
-							) }
+							selected={ attributes.ticketId }
+							onSelect={ this.setTicketId }
+							queryData={ this.state.ticketQueryData }
 						/>
 					}
 					<EditorStatusSelect
 						key="attendees-status-select"
-						statusType={ statusModel.STATUS_TYPE_REGISTRATION }
-						selectedStatusId={ attributes.status }
-						onStatusSelect={ this.setStatus }
+						selected={ attributes.status }
+						onSelect={ this.setStatus }
+						queryData={ this.state.statusQueryData }
 						label={ __( 'Select Registration Status', 'event_espresso' ) }
 					/>
 					<QueryLimit

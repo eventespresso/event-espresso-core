@@ -2,14 +2,17 @@
  * External dependencies
  */
 import { EventSchema } from '@test/fixtures';
+import { isGenerator } from '@eventespresso/eejs';
 
 /**
  * Internal imports
  */
-import { getSchemaForModel, getFactoryForModel } from '../resolvers';
+import {
+	getSchemaForModel,
+	getFactoryForModel,
+} from '../resolvers';
 import { receiveSchemaForModel, receiveFactoryForModel } from '../actions';
 import { eventFactory } from '../../test/fixtures/base';
-import { REDUCER_KEY } from '../constants';
 
 const poorManSerializer = ( item ) => {
 	return JSON.parse( JSON.stringify( item ) );
@@ -37,16 +40,9 @@ describe( 'getSchemaForModel()', () => {
 describe( 'getFactoryForModel()', () => {
 	describe( 'yields with expected response', () => {
 		const fulfillment = getFactoryForModel( 'event' );
-		it( 'yields expected action object for schema selector', () => {
-			const { value: schemaSelectorAction } = fulfillment.next();
-			expect( schemaSelectorAction ).toEqual(
-				{
-					type: 'SELECT',
-					reducerKey: REDUCER_KEY,
-					selectorName: 'getSchemaForModel',
-					args: [ 'event' ],
-				}
-			);
+		it( 'yields expected generator for schema selector', () => {
+			const { value: getSchemaByModelGenerator } = fulfillment.next();
+			expect( isGenerator( getSchemaByModelGenerator ) ).toBe( true );
 		} );
 		it( 'yields expected action object for received factory ' +
 			'action', () => {
@@ -54,7 +50,7 @@ describe( 'getFactoryForModel()', () => {
 			// we're using poorManSerializer to compare because
 			// the modelEntityFactory constructor uses Symbols for
 			// properties and thus no two built factories will EVER be
-			// equivalent. So for the purpose of this test, we just need to know
+			// the same. So for the purpose of this test, we just need to know
 			// that the action object is as expected on a shallow comparison.
 			expect( poorManSerializer( factoryAction ) )
 				.toEqual( poorManSerializer(

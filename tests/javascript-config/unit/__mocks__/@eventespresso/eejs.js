@@ -13,6 +13,15 @@ const {
 	mergeAndDeDuplicateObjects,
 	mapReducer,
 	convertToObjectFromMap,
+	isGenerator,
+	isModelEntity,
+	isModelEntityFactory,
+	isModelEntityFactoryOfModel,
+	isModelEntityOfModel,
+	isSchemaResponse,
+	isSchema,
+	isSchemaResponseOfModel,
+	isSchemaOfModel,
 } = require( '../../../../../assets/src/eejs' );
 
 const newCurrencyConfig = {
@@ -72,6 +81,7 @@ module.exports.data = {
 	},
 };
 
+
 module.exports.routes = routes;
 module.exports.CURRENCY_CONFIG = newCurrencyConfig;
 module.exports.TIMEZONE_CONFIG = TIMEZONE_CONFIG;
@@ -87,3 +97,12 @@ module.exports.mergeAndDeDuplicateArrays = mergeAndDeDuplicateArrays;
 module.exports.mergeAndDeDuplicateObjects = mergeAndDeDuplicateObjects;
 module.exports.mapReducer = mapReducer;
 module.exports.convertToObjectFromMap = convertToObjectFromMap;
+module.exports.isGenerator = isGenerator;
+module.exports.isModelEntity = isModelEntity;
+module.exports.isModelEntityFactory = isModelEntityFactory;
+module.exports.isModelEntityFactoryOfModel = isModelEntityFactoryOfModel;
+module.exports.isModelEntityOfModel = isModelEntityOfModel;
+module.exports.isSchemaResponse = isSchemaResponse;
+module.exports.isSchema = isSchema;
+module.exports.isSchemaResponseOfModel = isSchemaResponseOfModel;
+module.exports.isSchemaOfModel = isSchemaOfModel;

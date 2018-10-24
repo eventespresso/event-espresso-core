@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty } from 'lodash';
+import { isSchemaResponseOfModel } from '@eventespresso/eejs';
 
 /**
  * Internal dependencies
@@ -25,12 +25,15 @@ export function* getSchemaForModel( modelName ) {
 /**
  * A resolver for getting the model entity factory for a given model name.
  * @param {string} modelName
+ * @param {Object} schema
  * @return {Object} retrieved factory
  */
-export function* getFactoryForModel( modelName ) {
-	let schema = yield select( 'getSchemaForModel', modelName );
-	if ( isEmpty( schema ) ) {
-		schema = yield getSchemaForModel( modelName );
+export function* getFactoryForModel( modelName, schema = {} ) {
+	if ( ! isSchemaResponseOfModel( schema, modelName ) ) {
+		schema = yield getSchemaByModel( modelName );
+	}
+	if ( ! isSchemaResponseOfModel( schema, modelName ) ) {
+		return;
 	}
 	const factory = createEntityFactory(
 		modelName,
@@ -39,4 +42,22 @@ export function* getFactoryForModel( modelName ) {
 	);
 	yield receiveFactoryForModel( modelName, factory );
 	return factory;
+}
+
+/**
+ * A control for retrieving the schema for the given model
+ * @param {string} modelName
+ * @return {IterableIterator<*>|Object}  a generator or Object if schema is
+ * retrieved.
+ */
+function* getSchemaByModel( modelName ) {
+	let schema;
+	const resolved = yield select( 'hasResolvedSchemaForModel', modelName );
+	if ( resolved === true ) {
+		schema = yield select( 'getSchemaForModel', modelName );
+		return schema;
+	}
+	schema = yield getSchemaForModel( modelName );
+	yield receiveSchemaForModel( modelName, schema );
+	return schema;
 }

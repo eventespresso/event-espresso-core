@@ -49,28 +49,25 @@ describe( 'receiveSchema()', () => {
 	} );
 	it( 'returns the expected default object (from mock data)', () => {
 		const state = receiveSchema( undefined, {} );
-		expect( state ).toEqual( expectedDefaultState );
+		expect( state ).toEqual( expectedDefaultState.schema );
 	} );
 	describe( 'RECEIVE_SCHEMA_RECORD action handling', () => {
 		describe( 'returns correct state for multiple consecutive ' +
 			'queries', () => {
-			const originalState = deepFreeze( expectedDefaultState );
+			const originalState = deepFreeze( expectedDefaultState.schema );
 			const testConditions = [
 				[
 					'datetime',
-					{ schema: {} },
-					expectedDefaultState,
+					{},
+					expectedDefaultState.schema,
 					true,
 				],
 				[
 					'event',
 					{ schema: EventSchema },
 					{
-						...expectedDefaultState,
-						schema: {
-							...expectedDefaultState.schema,
-							event: EventSchema,
-						},
+						...expectedDefaultState.schema,
+						event: EventSchema,
 					},
 					false,
 				],
@@ -78,11 +75,8 @@ describe( 'receiveSchema()', () => {
 					'event',
 					{ schema: EventSchema },
 					{
-						...expectedDefaultState,
-						schema: {
-							...expectedDefaultState.schema,
-							event: EventSchema,
-						},
+						...expectedDefaultState.schema,
+						event: EventSchema,
 					},
 					true,
 				],
@@ -98,23 +92,20 @@ describe( 'receiveSchema()', () => {
 	describe( 'RECEIVE_FACTORY_FOR_MODEL action handling', () => {
 		describe( 'returns correct state for multiple consecutive ' +
 			'queries', () => {
-			const originalState = deepFreeze( expectedDefaultState );
+			const originalState = deepFreeze( expectedDefaultState.factory );
 			const testConditions = [
 				[
 					'datetime',
-					{ factory: {} },
-					expectedDefaultState,
+					{},
+					expectedDefaultState.factory,
 					true,
 				],
 				[
 					'event',
 					{ factory: eventFactory },
 					{
-						...expectedDefaultState,
-						factory: {
-							...expectedDefaultState.factory,
-							event: eventFactory,
-						},
+						...expectedDefaultState.factory,
+						event: eventFactory,
 					},
 					false,
 				],
@@ -122,11 +113,8 @@ describe( 'receiveSchema()', () => {
 					'event',
 					{ factory: eventFactory },
 					{
-						...expectedDefaultState,
-						factory: {
-							...expectedDefaultState.factory,
-							event: eventFactory,
-						},
+						...expectedDefaultState.factory,
+						event: eventFactory,
 					},
 					true,
 				],

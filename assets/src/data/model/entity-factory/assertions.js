@@ -3,7 +3,7 @@
  */
 import { isUndefined } from 'lodash';
 import { sprintf } from '@eventespresso/i18n';
-import { InvalidSchema } from '@eventespresso/eejs';
+import { InvalidSchema, isSchema } from '@eventespresso/eejs';
 /**
  * Internal imports
  */
@@ -51,7 +51,7 @@ export const maybeAssertValueObject = ( fieldName, fieldValue, schema ) => {
  * @throws InvalidSchema
  */
 export const assertValidSchema = ( schema ) => {
-	if ( isUndefined( schema.properties ) ) {
+	if ( ! isSchema( schema ) ) {
 		throw new InvalidSchema(
 			'This is an invalid schema for a model.',
 		);

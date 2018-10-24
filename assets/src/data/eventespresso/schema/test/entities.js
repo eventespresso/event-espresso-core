@@ -4,6 +4,7 @@
 import { EventSchema, DateTimeSchema } from '@test/fixtures';
 import { select } from '@wordpress/data';
 import { isUndefined } from 'lodash';
+import { isGenerator } from '@eventespresso/eejs';
 
 /**
  * Internal imports
@@ -13,7 +14,6 @@ import { createEntitySelectors, createEntityResolvers } from '../entities';
 import { mockStateForTests } from './fixtures';
 import * as selectors from '../selectors';
 import * as resolvers from '../resolvers';
-import { REDUCER_KEY } from '../constants';
 
 jest.mock( '../../../model', () => ( {
 	...require.requireActual( '../../../model' ),
@@ -95,12 +95,7 @@ describe( 'createEntityResolvers()', () => {
 		],
 		[
 			'getEventFactory',
-			{
-				type: 'SELECT',
-				reducerKey: REDUCER_KEY,
-				selectorName: 'getSchemaForModel',
-				args: [ 'event' ],
-			},
+			'generator',
 		],
 		[
 			'getDatetimeSchema',
@@ -108,12 +103,7 @@ describe( 'createEntityResolvers()', () => {
 		],
 		[
 			'getDatetimeFactory',
-			{
-				type: 'SELECT',
-				reducerKey: REDUCER_KEY,
-				selectorName: 'getSchemaForModel',
-				args: [ 'datetime' ],
-			},
+			'generator',
 		],
 	];
 	describe( 'creates expected resolvers for given modelNames', () => {
@@ -133,6 +123,8 @@ describe( 'createEntityResolvers()', () => {
 						expect( initialResponse.request ).toEqual(
 							expectedResponse
 						);
+					} else if ( expectedResponse === 'generator' ) {
+						expect( isGenerator( initialResponse ) ).toBe( true );
 					} else {
 						expect( initialResponse ).toEqual( expectedResponse );
 					}

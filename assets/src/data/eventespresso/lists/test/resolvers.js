@@ -1,4 +1,8 @@
 /**
+ * External dependencies
+ */
+import { isGenerator } from '@eventespresso/eejs';
+/**
  * Internal dependencies
  */
 import { getItems, getEntities } from '../resolvers';
@@ -30,8 +34,8 @@ describe( 'getItems()', () => {
 } );
 
 describe( 'getEntities()', () => {
-	describe( 'yields with expected response', () => {
-		const queryString = 'test_value=1';
+	const queryString = 'test_value=1';
+	describe( 'yields with expected response for main generator', () => {
 		const fulfillment = getEntities( 'event', queryString );
 		it( 'yields expected result for api fetch action object', () => {
 			const { value: apiFetchAction } = fulfillment.next();
@@ -39,11 +43,11 @@ describe( 'getEntities()', () => {
 				{ path: '/wp-json/ee/v4.8.36/events?test_value=1' }
 			);
 		} );
-		it( 'yields expected factory action object', () => {
-			const { value: selectFactoryAction } = fulfillment.next(
+		it( 'yields expected getFactoryByModel generator', () => {
+			const { value: getFactoryByModelGenerator } = fulfillment.next(
 				[ EventResponses.a ]
 			);
-			expect( selectFactoryAction.args ).toEqual( [ 'event' ] );
+			expect( isGenerator( getFactoryByModelGenerator ) ).toBe( true );
 		} );
 		it( 'yields expected select action object for core ' +
 			'getEntitiesById', () => {
@@ -71,6 +75,121 @@ describe( 'getEntities()', () => {
 					new Map( [ [ 10, EventEntities.a ] ] )
 				)
 			);
+		} );
+	} );
+	describe( 'yields with expected response for ' +
+		'getFactoryByModelGenerator', () => {
+		const fulfillment = getEntities( 'event', queryString );
+		fulfillment.next();
+		const { value: getFactoryByModelGenerator } = fulfillment.next(
+			[ EventResponses.a ]
+		);
+		it( 'yields expected hasResolvedFactoryForModel action', () => {
+			const {
+				value: hasResolvedFactoryForModelAction,
+			} = getFactoryByModelGenerator.next();
+			expect( hasResolvedFactoryForModelAction ).toEqual(
+				{
+					args: [ 'event' ],
+					reducerKey: 'eventespresso/schema',
+					selectorName: 'hasResolvedFactoryForModel',
+					type: 'SELECT',
+				}
+			);
+		} );
+		it( 'yields expected getSchemaByModel generator', () => {
+			const {
+				value: getSchemaByModelGenerator,
+			} = getFactoryByModelGenerator.next( false );
+			expect( isGenerator( getSchemaByModelGenerator ) ).toBe( true );
+		} );
+		it( 'yields expected generator for getting factory', () => {
+			const {
+				value: getFactoryForModelFunction,
+			} = getFactoryByModelGenerator.next( 'test' );
+			expect( isGenerator( getFactoryForModelFunction ) )
+				.toBe( true );
+		} );
+		it( 'yields expected dispatch action for receiving factory', () => {
+			const {
+				value: dispatchReceiveFactoryAction,
+			} = getFactoryByModelGenerator.next( 'eventFactory' );
+			expect( dispatchReceiveFactoryAction ).toEqual( {
+				type: 'DISPATCH',
+				reducerKey: 'eventespresso/schema',
+				dispatchName: 'receiveFactoryForModel',
+				args: [ 'event', 'eventFactory' ],
+			} );
+		} );
+		it( 'yields expected dispatch action for finishing factory ' +
+			'resolution', () => {
+			const {
+				value: finishResolutionAction,
+			} = getFactoryByModelGenerator.next();
+			expect( finishResolutionAction ).toEqual( {
+				type: 'DISPATCH',
+				reducerKey: 'core/data',
+				dispatchName: 'finishResolution',
+				args: [
+					'eventespresso/schema',
+					'getFactoryForModel',
+					[ 'event' ],
+				],
+			} );
+		} );
+	} );
+	describe( 'yields with expected response for getSchemaByModel ' +
+		'generator', () => {
+		const fulfillment = getEntities( 'event', queryString );
+		fulfillment.next();
+		const { value: FactoryGenerator } = fulfillment.next( [ EventResponses.a ] );
+		FactoryGenerator.next();
+		const {
+			value: getSchemaByModelGenerator,
+		} = FactoryGenerator.next( false );
+		it( 'yields expected hasResolvedSchema action', () => {
+			const {
+				value: hasResolvedSchemaAction,
+			} = getSchemaByModelGenerator.next();
+			expect( hasResolvedSchemaAction ).toEqual( {
+				args: [ 'event' ],
+				reducerKey: 'eventespresso/schema',
+				selectorName: 'hasResolvedSchemaForModel',
+				type: 'SELECT',
+			} );
+		} );
+		it( 'yields expected generator for getting schema', () => {
+			const {
+				value: getSchemaForModelFunction,
+			} = getSchemaByModelGenerator.next( false );
+			expect( isGenerator( getSchemaForModelFunction ) )
+				.toBe( true );
+		} );
+		it( 'yields dispatch action for receiveSchemaForModel', () => {
+			const {
+				value: dispatchReceiveSchemaAction,
+			} = getSchemaByModelGenerator.next( 'test' );
+			expect( dispatchReceiveSchemaAction ).toEqual( {
+				type: 'DISPATCH',
+				reducerKey: 'eventespresso/schema',
+				dispatchName: 'receiveSchemaForModel',
+				args: [ 'event', 'test' ],
+			} );
+		} );
+		it( 'yields dispatch action for finishing Resolution', () => {
+			const {
+				value: finishResolutionAction,
+			} = getSchemaByModelGenerator.next();
+			expect( finishResolutionAction ).toEqual( {
+				type: 'DISPATCH',
+				reducerKey: 'core/data',
+				dispatchName: 'finishResolution',
+				args: [
+					'eventespresso/schema',
+					'getSchemaForModel',
+					[ 'event' ],
+				],
+			} );
 		} );
 	} );
 } );
