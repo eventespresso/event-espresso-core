@@ -148,8 +148,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
      */
     protected function _add_view_counts()
     {
-        foreach( $this->_views as $view) {
-            $this->_views[$view['slug']]['count'] = $this->_admin_page->get_transactions($this->_per_page, true, $view['slug']);
+        foreach ($this->_views as $view) { 
+            $this->_views[$view[ 'slug' ]][ 'count' ] = $this->_admin_page->get_transactions($this->_per_page, true, $view[ 'slug' ]);
         }
     }
 
