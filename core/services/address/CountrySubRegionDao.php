@@ -83,15 +83,16 @@ class CountrySubRegionDao
         if (empty($data)) {
             EE_Error::add_error(
                 'Country Subregion Data could not be retrieved',
-                __FILE__, __METHOD__, __LINE__
+                __FILE__,
+                __METHOD__,
+                __LINE__
             );
         }
-        if (
-            ! $has_sub_regions
+        if (! $has_sub_regions
             || (isset($data->version) && version_compare($data->version, $this->data_version))
         ) {
-            if(isset($data->countries)
-               && $this->processCountryData($CNT_ISO, $data->countries) > 0
+            if (isset($data->countries)
+                && $this->processCountryData($CNT_ISO, $data->countries) > 0
             ) {
                 $this->countries = $data->countries;
                 $this->updateCountrySubRegionDataVersion($data->version);
@@ -163,7 +164,9 @@ class CountrySubRegionDao
         if (empty($url)) {
             EE_Error::add_error(
                 'No URL was provided!',
-                __FILE__, __METHOD__, __LINE__
+                __FILE__,
+                __METHOD__,
+                __LINE__
             );
             return array();
         }
@@ -171,7 +174,9 @@ class CountrySubRegionDao
         if ($request instanceof WP_Error) {
             EE_Error::add_error(
                 $request->get_error_message(),
-                __FILE__, __METHOD__, __LINE__
+                __FILE__,
+                __METHOD__,
+                __LINE__
             );
             return array();
         }
