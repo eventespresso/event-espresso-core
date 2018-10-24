@@ -12,6 +12,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 use Exception;
 use InvalidArgumentException;
 use ReflectionException;
+use stdClass;
 use WP_Error;
 use WP_REST_Request;
 use EventEspresso\core\libraries\rest_api\Capabilities;
@@ -635,15 +636,6 @@ class Read extends Base
         $entity_array = $this->createBareEntityFromWpdbResults($model, $db_row);
         $entity_array = $this->addExtraFields($model, $db_row, $entity_array);
         $entity_array['_links'] = $this->getEntityLinks($model, $db_row, $entity_array);
-        $entity_array['_calculated_fields'] = $this->getEntityCalculations($model, $db_row, $rest_request);
-        $entity_array = apply_filters(
-            'FHEE__Read__create_entity_from_wpdb_results__entity_before_including_requested_models',
-            $entity_array,
-            $model,
-            $rest_request->get_param('caps'),
-            $rest_request,
-            $this
-        );
         // when it's a regular read request for a model with a password and the password wasn't provided
         // remove the password protected fields
         if ($model->hasPassword()
@@ -660,7 +652,16 @@ class Read extends Base
         } else {
             $has_protected_fields = false;
         }
+        $entity_array['_calculated_fields'] = $this->getEntityCalculations($model, $db_row, $rest_request, $has_protected_fields);
         $entity_array['_protected'] = $this->addProtectedProperty($model, $entity_array, $has_protected_fields);
+        $entity_array = apply_filters(
+            'FHEE__Read__create_entity_from_wpdb_results__entity_before_including_requested_models',
+            $entity_array,
+            $model,
+            $rest_request->get_param('caps'),
+            $rest_request,
+            $this
+        );
 
         $entity_array = $this->includeRequestedModels($model, $rest_request, $entity_array, $db_row);
         $entity_array = apply_filters(
@@ -1031,11 +1032,12 @@ class Read extends Base
      * @param EEM_Base        $model
      * @param array           $wpdb_row
      * @param WP_REST_Request $rest_request
+     * @param boolean $row_is_protected whether this row is password protected or not
      * @return \stdClass the _calculations item in the entity
      * @throws ObjectDetectedException if a default value has a PHP object, which should never do (and if we
      * did, let's know about it ASAP, so let the exception bubble up)
      */
-    protected function getEntityCalculations($model, $wpdb_row, $rest_request)
+    protected function getEntityCalculations($model, $wpdb_row, $rest_request, $row_is_protected = false)
     {
         $calculated_fields = $this->explodeAndGetItemsPrefixedWith(
             $rest_request->get_param('calculate'),
@@ -1045,17 +1047,48 @@ class Read extends Base
         $calculated_fields_to_return = new \stdClass();
         foreach ($calculated_fields as $field_to_calculate) {
             try {
-                $calculated_fields_to_return->$field_to_calculate = ModelDataTranslator::prepareFieldValueForJson(
-                    null,
-                    $this->fields_calculator->retrieveCalculatedFieldValue(
-                        $model,
-                        $field_to_calculate,
-                        $wpdb_row,
-                        $rest_request,
-                        $this
-                    ),
-                    $this->getModelVersionInfo()->requestedVersion()
-                );
+                // it's password protected, so they shouldn't be able to read this. Remove the value
+                if ($row_is_protected) {
+                    $calculated_value = null;
+                    $schema = $this->fields_calculator->getJsonSchemaForModel($model);
+                    if (isset(
+                        $schema['properties'],
+                        $schema['properties'][ $field_to_calculate ],
+                        $schema['properties'][ $field_to_calculate ]['type']
+                    )
+                    ) {
+                        switch ($schema['properties'][ $field_to_calculate ]['type']) {
+                            case 'boolean':
+                                $calculated_value = false;
+                                break;
+                            case 'integer':
+                                $calculated_value = 0;
+                                break;
+                            case 'string':
+                                $calculated_value = '';
+                                break;
+                            case 'array':
+                                $calculated_value = array();
+                                break;
+                            case 'object':
+                                $calculated_value = new stdClass();
+                                break;
+                        }
+                    }
+                } else {
+                    $calculated_value = ModelDataTranslator::prepareFieldValueForJson(
+                        null,
+                        $this->fields_calculator->retrieveCalculatedFieldValue(
+                            $model,
+                            $field_to_calculate,
+                            $wpdb_row,
+                            $rest_request,
+                            $this
+                        ),
+                        $this->getModelVersionInfo()->requestedVersion()
+                    );
+                }
+                $calculated_fields_to_return->{$field_to_calculate} = $calculated_value;
             } catch (RestException $e) {
                 // if we don't have permission to read it, just leave it out. but let devs know about the problem
                 $this->setResponseHeader(

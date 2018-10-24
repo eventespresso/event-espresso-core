@@ -602,20 +602,20 @@ class Read_Test extends \EE_REST_TestCase
                         ),
                 ),
                 '_protected' => array(
-                    'password' => array('isHidden' => false),
-                    'EVT_desc' => array('isHidden' => false),
-                    'EVT_short_desc' => array('isHidden' => false),
-                    'EVT_display_desc' => array('isHidden' => false),
-                    'EVT_display_ticket_selector' => array('isHidden' => false),
-                    'EVT_visible_on' => array('isHidden' => false),
-                    'EVT_additional_limit' => array('isHidden' => false),
-                    'EVT_default_registration_status' => array('isHidden' => false),
-                    'EVT_member_only' => array('isHidden' => false),
-                    'EVT_phone' => array('isHidden' => false),
-                    'EVT_allow_overflow' => array('isHidden' => false),
-                    'EVT_timezone_string' => array('isHidden' => false),
-                    'EVT_external_URL' => array('isHidden' => false),
-                    'EVT_donations' => array('isHidden' => false),
+                    'password' => array('protected' => false),
+                    'EVT_desc' => array('protected' => false),
+                    'EVT_short_desc' => array('protected' => false),
+                    'EVT_display_desc' => array('protected' => false),
+                    'EVT_display_ticket_selector' => array('protected' => false),
+                    'EVT_visible_on' => array('protected' => false),
+                    'EVT_additional_limit' => array('protected' => false),
+                    'EVT_default_registration_status' => array('protected' => false),
+                    'EVT_member_only' => array('protected' => false),
+                    'EVT_phone' => array('protected' => false),
+                    'EVT_allow_overflow' => array('protected' => false),
+                    'EVT_timezone_string' => array('protected' => false),
+                    'EVT_external_URL' => array('protected' => false),
+                    'EVT_donations' => array('protected' => false),
                 )
             ),
             $result
@@ -1068,6 +1068,83 @@ class Read_Test extends \EE_REST_TestCase
         $this->assertEquals(2, count($data));
         $this->assertEquals($my_public_venue->ID(), $data[0]['VNU_ID']);
         $this->assertEquals($others_private_venue->ID(), $data[1]['VNU_ID']);
+    }
+
+    /**
+     * Tests that calculated fields for protected events get replaced with their default too.
+     * @throws \EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     * @throws \ReflectionException
+     * @group private-1
+     */
+    public function testHandleRequestGetAllPasswordProtectedCalculatedFields()
+    {
+        // create two events, one password-protected, the other not
+        // and datetimes and tickets for them
+        $e = $this->new_model_obj_with_dependencies(
+            'Event',
+            array(
+                'status' => EEM_Event::post_status_publish
+            )
+        );
+        $e_password = $this->new_model_obj_with_dependencies(
+            'Event',
+            array(
+                'status' => EEM_Event::post_status_publish,
+                'password' => 'passy'
+            )
+        );
+
+        $d = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e->ID(),
+                'DTT_reg_limit' => 100,
+            )
+        );
+        $d_password = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e_password->ID(),
+                'DTT_reg_limit' => 100,
+            )
+        );
+        $t_qty = 44;
+        $t = $this->new_model_obj_with_dependencies(
+            'Ticket',
+            array(
+                'TKT_qty' => $t_qty,
+            )
+        );
+        $t_password_qty = 22;
+        $t_password = $this->new_model_obj_with_dependencies(
+            'Ticket',
+            array(
+                'TKT_qty' => $t_password_qty
+            )
+        );
+        $t->_add_relation_to($d,'Datetime');
+        $t_password->_add_relation_to($d_password, 'Datetime');
+
+        // then request each, from the front-end, and a few calculated fields
+        $request = new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
+        $request->set_query_params(
+            array(
+                'calculate' => 'optimum_sales_at_start'
+            )
+        );
+        $response = rest_do_request($request);
+        $data = $response->get_data();
+        $this->assertNotEmpty($data);
+
+        // the calculated fields should be replaced with their defaults
+        $this->assertEquals(2, count($data));
+        $this->assertEquals($e->ID(),$data[0]['EVT_ID']);
+        $this->assertEquals($t_qty, $data[0]['_calculated_fields']->optimum_sales_at_start);
+        $this->assertEquals($e_password->ID(), $data[1]['EVT_ID']);
+        $this->assertEquals(0,$data[1]['_calculated_fields']->optimum_sales_at_start);
     }
 
 
