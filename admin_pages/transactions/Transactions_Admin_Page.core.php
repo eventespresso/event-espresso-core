@@ -2465,11 +2465,17 @@ class Transactions_Admin_Page extends EE_Admin_Page
             $_where['STS_ID*'] = array('!=', EEM_Transaction::abandoned_status_code);
         }
 
-        $query_params = array(
-            $_where,
-            'order_by'                 => array($orderby => $sort),
-            'limit'                    => $limit,
-            'default_where_conditions' => EEM_Base::default_where_conditions_this_only,
+        $query_params = apply_filters(
+            'FHEE__Transactions_Admin_Page___get_transactions_query_params',
+            array(
+                $_where,
+                'order_by'                 => array($orderby => $sort),
+                'limit'                    => $limit,
+                'default_where_conditions' => EEM_Base::default_where_conditions_this_only,
+            ),
+            $this->_req_data,
+            $view,
+            $count
         );
 
         $transactions = $count
