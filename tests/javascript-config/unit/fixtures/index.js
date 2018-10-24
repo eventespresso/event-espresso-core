@@ -11,3 +11,5 @@ export {
 	RegistrationSchema,
 	RegistrationSchemaProperties,
 } from './registration-schema';
+export * from './factories';
+export * from './entities';

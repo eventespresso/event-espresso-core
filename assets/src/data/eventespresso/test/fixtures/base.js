@@ -1,25 +1,16 @@
 /**
  * External dependencies
  */
-import { createEntityFactory, MODEL_PREFIXES } from '@eventespresso/model';
 import { forEach } from 'lodash';
 import {
-	EventSchema,
-	DateTimeSchema,
 	AuthedEventResponse,
 	AuthedDateTimeResponse,
+	EventFactory,
+	DateTimeFactory,
 } from '@test/fixtures';
 
-export const eventFactory = createEntityFactory(
-	'event',
-	EventSchema.schema,
-	MODEL_PREFIXES.event
-);
-export const dateTimeFactory = createEntityFactory(
-	'datetime',
-	DateTimeSchema.schema,
-	MODEL_PREFIXES.datetime
-);
+export const eventFactory = EventFactory;
+export const dateTimeFactory = DateTimeFactory;
 
 export const EventResponses = {
 	a: AuthedEventResponse,
