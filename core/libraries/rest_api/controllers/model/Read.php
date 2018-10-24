@@ -1048,15 +1048,17 @@ class Read extends Base
         foreach ($calculated_fields as $field_to_calculate) {
             try {
                 // it's password protected, so they shouldn't be able to read this. Remove the value
-                if ($row_is_protected) {
-                    $calculated_value = null;
-                    $schema = $this->fields_calculator->getJsonSchemaForModel($model);
-                    if (isset(
+                $schema = $this->fields_calculator->getJsonSchemaForModel($model);
+                if ($row_is_protected
+                    && isset(
                         $schema['properties'],
                         $schema['properties'][ $field_to_calculate ],
-                        $schema['properties'][ $field_to_calculate ]['type']
+                        $schema['properties'][ $field_to_calculate ]['protected']
                     )
-                    ) {
+                    && $schema['properties'][ $field_to_calculate ]['protected']) {
+                    $calculated_value = null;
+
+                    if ($schema['properties'][ $field_to_calculate ]['type']) {
                         switch ($schema['properties'][ $field_to_calculate ]['type']) {
                             case 'boolean':
                                 $calculated_value = false;

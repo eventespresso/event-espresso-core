@@ -1097,6 +1097,9 @@ class Read_Test extends \EE_REST_TestCase
             )
         );
 
+        // add a featured image too eh
+        $this->addFeaturedImage($e->ID());
+        $this->addFeaturedImage($e_password->ID());
         $d = $this->new_model_obj_with_dependencies(
             'Datetime',
             array(
@@ -1132,21 +1135,63 @@ class Read_Test extends \EE_REST_TestCase
         $request = new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
         $request->set_query_params(
             array(
-                'calculate' => 'optimum_sales_at_start'
+                'calculate' => 'optimum_sales_at_start, image_full'
             )
         );
         $response = rest_do_request($request);
         $data = $response->get_data();
         $this->assertNotEmpty($data);
 
-        // the calculated fields should be replaced with their defaults
+        // assert the data is in the expected structure, and the non-protected event worked as normal
         $this->assertEquals(2, count($data));
         $this->assertEquals($e->ID(),$data[0]['EVT_ID']);
         $this->assertEquals($t_qty, $data[0]['_calculated_fields']->optimum_sales_at_start);
+        $this->assertNotEquals(null, $data[1]['_calculated_fields']->image_full);
         $this->assertEquals($e_password->ID(), $data[1]['EVT_ID']);
+
+        // the protected calculated field should be replaced with their defaults
         $this->assertEquals(0,$data[1]['_calculated_fields']->optimum_sales_at_start);
+
+        // but featured image calculated fields aren't protected, so it should still be visible
+        $this->assertNotEquals(null, $data[1]['_calculated_fields']->image_full);
     }
 
+    /**
+     * Adds some featured image to that post ID
+     * @since $VID:$
+     * @param $post_id
+     * @return int|\WP_Error
+     */
+    protected function addFeaturedImage($post_id)
+    {
+        $file = EE_ADMIN_PAGES . 'events/assets/images/caffeinated_template_features.jpg';
+        $contents = file_get_contents($file);
+        $upload = wp_upload_bits(basename($file), null, $contents);
+
+        $type = '';
+        if ( ! empty($upload['type']) ) {
+            $type = $upload['type'];
+        } else {
+            $mime = wp_check_filetype( $upload['file'] );
+            if ($mime)
+                $type = $mime['type'];
+        }
+
+        $attachment = array(
+            'post_title' => basename( $upload['file'] ),
+            'post_content' => '',
+            'post_type' => 'attachment',
+            'post_parent' => $post_id,
+            'post_mime_type' => $type,
+            'guid' => $upload[ 'url' ],
+        );
+
+        // Save the data
+        $id = wp_insert_attachment( $attachment, $upload[ 'file' ], $post_id );
+        wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $upload['file'] ) );
+        add_post_meta($post_id, '_thumbnail_id', $id);
+        return $id;
+    }
 
 
     /**

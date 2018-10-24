@@ -487,6 +487,7 @@ class Event extends EventCalculationBase
                     'event_espresso'
                 ),
                 'type'        => 'number',
+                'protected' => true,
             ),
             'optimum_sales_now'               => array(
                 'description' => esc_html__(
@@ -494,6 +495,7 @@ class Event extends EventCalculationBase
                     'event_espresso'
                 ),
                 'type'        => 'number',
+                'protected' => true,
             ),
             'spaces_remaining'                => array(
                 'description' => esc_html__(
@@ -501,6 +503,7 @@ class Event extends EventCalculationBase
                     'event_espresso'
                 ),
                 'type'        => 'number',
+                'protected' => true,
             ),
             'spots_taken'                     => array(
                 'description' => esc_html__(
@@ -508,6 +511,7 @@ class Event extends EventCalculationBase
                     'event_espresso'
                 ),
                 'type'        => 'number',
+                'protected' => true,
             ),
             'spots_taken_pending_payment'     => array(
                 'description' => esc_html__(
@@ -515,6 +519,7 @@ class Event extends EventCalculationBase
                     'event_espresso'
                 ),
                 'type'        => 'number',
+                'protected' => true,
             ),
             'registrations_checked_in_count'  => array(
                 'description' => esc_html__(
@@ -522,6 +527,7 @@ class Event extends EventCalculationBase
                     'event_espresso'
                 ),
                 'type'        => 'number',
+                'protected' => true,
             ),
             'registrations_checked_out_count' => array(
                 'description' => esc_html__(
@@ -529,6 +535,7 @@ class Event extends EventCalculationBase
                     'event_espresso'
                 ),
                 'type'        => 'number',
+                'protected' => true,
             ),
             'image_thumbnail'                 => array(
                 'description'          => esc_html__(
