@@ -4,6 +4,9 @@ namespace EventEspresso\core\services\validators;
 
 use EE_Error;
 
+// phpcs:disable PHPCompatibility.PHP.NewConstants.json_error_invalid_property_nameFound
+// phpcs:disable PHPCompatibility.PHP.NewConstants.json_error_utf16Found
+
 /**
  * Class JsonValidator
  * Tools for validating JSON data and handling errors
