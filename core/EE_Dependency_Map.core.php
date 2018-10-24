@@ -930,6 +930,9 @@ class EE_Dependency_Map
             'EE_Organization_Config'                       => function () {
                 return EE_Config::instance()->organization;
             },
+            'EE_Network_Core_Config'                            => function () {
+                return EE_Network_Config::instance()->core;
+            },
         );
     }
 
