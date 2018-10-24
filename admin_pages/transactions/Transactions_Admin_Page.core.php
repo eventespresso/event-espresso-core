@@ -2479,7 +2479,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         );
 
         $transactions = $count
-            ? $TXN->count(array($_where), 'TXN_ID', true)
+            ? $TXN->count(array($query_params[0]), 'TXN_ID', true)
             : $TXN->get_all($query_params);
 
         return $transactions;
