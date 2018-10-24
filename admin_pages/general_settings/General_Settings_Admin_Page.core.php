@@ -460,11 +460,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     protected function _update_your_organization_settings()
     {
         try {
-            $organization_settings_form = new OrganizationSettings(
-                EE_Registry::instance(),
-                EE_Registry::instance()->CFG->organization,
-                EE_Registry::instance()->CFG->core,
-                EE_Registry::instance()->NET_CFG->core
+            /** @var EventEspresso\admin_pages\general_settings\OrganizationSettings $organization_settings_form */
+            $organization_settings_form = $this->loader->getShared(
+                'EventEspresso\admin_pages\general_settings\OrganizationSettings'
             );
             $success = $organization_settings_form->process($this->_req_data);
             EE_Registry::instance()->CFG = apply_filters(
