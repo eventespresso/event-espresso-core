@@ -33,12 +33,16 @@ export const composeValidators = ( ...validators ) => value => {
 };
 
 /**
+ * loops through the input's set validators and
+ * adds attributes for corresponding HTML attributes accordingly.
+ * Right now, this is only doing so for the "required" validator.
+ *
  * @function
  * @param {Object} attributes
  * @param {Array} validators
  * @return {Object} attributes
  */
-export const mapValidatorsToAttributes = (
+export const addValidatorsToAttributes = (
 	attributes = {},
 	validators = [],
 ) => {
