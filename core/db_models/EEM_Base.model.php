@@ -4,6 +4,7 @@ use EventEspresso\core\domain\values\model\CustomSelects;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\ModelConfigurationException;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\orm\ModelFieldFactory;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -6525,6 +6526,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @throws UnexpectedEntityException
      */
     public function currentUserCan($cap_to_check, $model_obj_or_fields_n_values)
     {
@@ -6532,7 +6534,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $model_obj_or_fields_n_values = $model_obj_or_fields_n_values->model_field_array();
         }
         if (!is_array($model_obj_or_fields_n_values)) {
-            throw new EE_Error(
+            throw new UnexpectedEntityException(
+                $model_obj_or_fields_n_values,
+                'EE_Base_Class',
                 sprintf(
                     esc_html__('%1$s must be passed an `EE_Base_Class or an array of fields names with their values. You passed in something different.', 'event_espresso'),
                     __FUNCTION__
