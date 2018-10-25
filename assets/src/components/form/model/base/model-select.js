@@ -84,6 +84,11 @@ export class ModelSelect extends Component {
 		getQueryString: () => '',
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = ModelSelect.setStateFromProps( props );
+	}
+
 	/**
 	 * Sets the state from provided props
 	 * @param {Object} props
@@ -166,6 +171,14 @@ export class ModelSelect extends Component {
 	static shouldUpdateState( prevProps, nextProps ) {
 		if ( prevProps === nextProps ) {
 			return false;
+		}
+
+		// if defaultValue has changed (selected value) then update state
+		if (
+			prevProps.selectConfiguration.defaultValue !== nextProps
+				.selectConfiguration.defaultValue
+		) {
+			return true;
 		}
 
 		// shallow compare of keys but only if we can
