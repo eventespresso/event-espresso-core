@@ -262,7 +262,7 @@ class JsonModelSchema
             'type' => 'object',
             'items' => array(
                 'type' => 'object',
-                'properties' =>$protected_fields_properties,
+                'properties' => $protected_fields_properties,
                 'additionalProperties' => false,
                 'readonly' => true,
             ),
