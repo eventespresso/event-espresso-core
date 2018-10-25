@@ -702,12 +702,12 @@ class Read extends Base
      * @param $protected
      * @return array
      */
-    protected function addProtectedProperty($model, $results_so_far, $protected)
+    protected function addProtectedProperty(EEM_Base $model, $results_so_far, $protected)
     {
-        $password_field = $model->getPasswordField();
-        if (! $password_field instanceof \EE_Password_Field) {
+        if (! $model->hasPassword()) {
             return array();
         }
+        $password_field = $model->getPasswordField();
         $all_protected = array_merge(
             array($password_field->get_name()),
             $password_field->protectedFields()
