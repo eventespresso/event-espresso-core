@@ -434,8 +434,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'count' => 0,
             ),
         );
-        if (
-            /**
+        if (/**
              * Filters whether a link to the "Failed Transactions" list table
              * appears on the Transactions Admin Page list table.
              * List display can be turned back on via the following:
@@ -448,11 +447,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
              * @param boolean                 $display_failed_txns_list
              * @param Transactions_Admin_Page $this
              */
-        apply_filters(
-            'FHEE__Transactions_Admin_Page___set_list_table_views_default__display_failed_txns_list',
-            false,
-            $this
-        )
+            apply_filters(
+                'FHEE__Transactions_Admin_Page___set_list_table_views_default__display_failed_txns_list',
+                false,
+                $this
+            )
         ) {
             $this->_views['failed'] = array(
                 'slug'  => 'failed',
