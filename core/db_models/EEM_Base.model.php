@@ -3,6 +3,7 @@
 use EventEspresso\core\domain\values\model\CustomSelects;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\ModelConfigurationException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\orm\ModelFieldFactory;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -3528,13 +3529,16 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             if ($password_field instanceof EE_Password_Field) {
                 $password_field_name = $password_field->get_name();
             } else {
-                throw new EE_Error(
+                throw new ModelConfigurationException(
+                    $this,
                     sprintf(
                         esc_html_x(
-                            'The model "%1$s" claims its related model "%2$s" should have a password field on it, but none was found. The model relation chain is "%3$s"',
-                            '1: model name, 2: model name, 3: special string',
+                            'This model claims related model "%1$s" should have a password field on it, but none was found. The model relation chain is "%2$s"',
+                            '1: model name, 2: special string',
                             'event_espresso'
-                        )
+                        ),
+                        $model_with_password->get_this_model_name(),
+                        $this->model_chain_to_password
                     )
                 );
             }
