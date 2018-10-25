@@ -288,8 +288,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @var bool stores whether this model has a password field or not.
      * null until initialized by hasPasswordField()
      */
-
     protected $has_password_field;
+    
     /**
      * @var EE_Password_Field|null Automatically set when calling getPasswordField()
      */
