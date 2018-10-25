@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\libraries\rest_api;
 
+use EE_Error;
 use EEM_Base;
 use EEH_Inflector;
 use EEM_CPT_Base;
@@ -81,10 +82,11 @@ class Capabilities
     /**
      * "Removes" password-protected fields. Currently that means setting their values to their default.
      * @since $VID:$
-     * @param $entity
+     * @param array $entity
      * @param EEM_Base $model
      * @param ModelVersionInfo $model_version_info
-     * @throws \EE_Error
+     * @return array
+     * @throws EE_Error
      */
     public static function filterOutPasswordProtectedFields(
         $entity,
