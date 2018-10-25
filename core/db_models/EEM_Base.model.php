@@ -3459,7 +3459,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     }
 
 
-
     /**
      * Extract all the query parts from $query_params (an array like whats passed to EEM_Base::get_all)
      * and put into a EEM_Related_Model_Info_Carrier for easy extraction into a query. We create this object
@@ -3471,6 +3470,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param array $query_params
      * @throws EE_Error
      * @return EE_Model_Query_Info_Carrier
+     * @throws ModelConfigurationException
      */
     public function _create_model_query_info_carrier($query_params)
     {
@@ -3504,14 +3504,14 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         // custom post types
         if (isset($query_params['exclude_protected']) && $query_params['exclude_protected'] === true) {
             if ($this->model_chain_to_password === null) {
-                throw new EE_Error(
-                    sprintf(
-                        esc_html_x(
-                            'Cannot remove "%1$s" data related to custom post types because the model is not related to any custom post type. Please contact the developer or Event Espresso support.',
-                            '1: model name',
-                            'event_espresso'
-                        ),
-                        $this->get_this_model_name()
+                throw new ModelConfigurationException(
+                    $this,
+                    esc_html_x(
+                        // @codingStandardsIgnoreStart
+                        'Cannot exclude protected data because the model has not specified which model has the password.',
+                        // @codingStandardsIgnoreEnd
+                        '1: model name',
+                        'event_espresso'
                     )
                 );
             }
