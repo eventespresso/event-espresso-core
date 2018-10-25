@@ -1050,11 +1050,7 @@ class Read extends Base
                 // it's password protected, so they shouldn't be able to read this. Remove the value
                 $schema = $this->fields_calculator->getJsonSchemaForModel($model);
                 if ($row_is_protected
-                    && isset(
-                        $schema['properties'],
-                        $schema['properties'][ $field_to_calculate ],
-                        $schema['properties'][ $field_to_calculate ]['protected']
-                    )
+                    && isset($schema['properties'][ $field_to_calculate ]['protected'])
                     && $schema['properties'][ $field_to_calculate ]['protected']) {
                     $calculated_value = null;
 
