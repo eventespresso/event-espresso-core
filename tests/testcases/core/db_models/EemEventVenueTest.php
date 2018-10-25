@@ -36,7 +36,7 @@ class EemEventVenueTest extends EE_UnitTestCase
      */
     public function testRestrictedbyRelatedModelPassword()
     {
-        $this->assertTrue($this->model->restrictedbyRelatedModelPassword());
+        $this->assertTrue($this->model->restrictedByRelatedModelPassword());
     }
 
 

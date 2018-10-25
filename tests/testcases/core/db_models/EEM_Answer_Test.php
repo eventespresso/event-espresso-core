@@ -106,7 +106,7 @@ class EEM_Answer_Test extends EE_UnitTestCase{
      */
     public function testRestrictedbyRelatedModelPassword()
     {
-        $this->assertFalse($this->model->restrictedbyRelatedModelPassword());
+        $this->assertFalse($this->model->restrictedByRelatedModelPassword());
     }
 }
 

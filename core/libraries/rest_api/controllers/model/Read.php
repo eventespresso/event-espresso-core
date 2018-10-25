@@ -1305,12 +1305,11 @@ class Read extends Base
         }
         // is this a request for a model related to one with a password?
         // if so, we don't show data related to password protected posts
-        if ($model->restrictedbyRelatedModelPassword()
-                && ! $model->hasPassword()
-                && $model_query_params['caps'] === EEM_Base::caps_read
-        ) {
-            $model_query_params['exclude_protected'] = true;
-        }
+        $model_query_params = $this->excludeProtectedEntities(
+            $model,
+            $model_query_params['caps'],
+            $model_query_params
+        );
         if (isset($query_parameters['default_where_conditions'])) {
             $model_query_params['default_where_conditions'] = $this->validateDefaultQueryParams(
                 $query_parameters['default_where_conditions']
@@ -1479,11 +1478,7 @@ class Read extends Base
         $restricted_query_params['caps'] = $context;
         // when requesting a model related to one with a password, and it's a normal read request (yes, even if the
         // current user has caps to view everything), remove entities related to one where the password was set.
-        if ($model->restrictedbyRelatedModelPassword()
-            && ! $model->hasPassword()
-            && $context === EEM_Base::caps_read) {
-            $restricted_query_params['exclude_protected'] = true;
-        }
+        $restricted_query_params = $this->excludeProtectedEntities($model, $context, $restricted_query_params);
         $this->setDebugInfo('model query params', $restricted_query_params);
         $model_rows = $model->get_all_wpdb_results($restricted_query_params);
         if (! empty($model_rows)) {
@@ -1534,5 +1529,24 @@ class Read extends Base
                 );
             }
         }
+    }
+
+    /**
+     * Sets the query parameters to exclude protected entities, depending on the model and request.
+     * @since $VID:$
+     * @param EEM_Base $model
+     * @param string $caps_context
+     * @param array $query_params
+     * @return array
+     */
+    protected function excludeProtectedEntities(EEM_Base $model, $caps_context, $query_params)
+    {
+        if ($model->restrictedByRelatedModelPassword()
+            && ! $model->hasPassword()
+            && $caps_context === EEM_Base::caps_read
+        ) {
+            $query_params['exclude_protected'] = true;
+        }
+        return $query_params;
     }
 }

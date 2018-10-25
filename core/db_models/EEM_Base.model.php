@@ -6571,7 +6571,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @since $VID:$
      * @return boolean
      */
-    public function restrictedbyRelatedModelPassword()
+    public function restrictedByRelatedModelPassword()
     {
         return $this->model_chain_to_password !== null;
     }

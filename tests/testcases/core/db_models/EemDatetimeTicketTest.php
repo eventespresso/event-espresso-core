@@ -36,7 +36,7 @@ class EemDatetimeTicketTest extends EE_UnitTestCase
      */
     public function testRestrictedbyRelatedModelPassword()
     {
-        $this->assertTrue($this->model->restrictedbyRelatedModelPassword());
+        $this->assertTrue($this->model->restrictedByRelatedModelPassword());
     }
 }
 // End of file EemDatetimeTicketTest.php
