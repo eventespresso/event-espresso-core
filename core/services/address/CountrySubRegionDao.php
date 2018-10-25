@@ -142,7 +142,7 @@ class CountrySubRegionDao
                 if ($country instanceof stdClass
                     && $country->code === $CNT_ISO
                     && empty($country->sub_regions)
-                    && $country->filename !== null
+                    && ! empty($country->filename)
                 ) {
                     $country->sub_regions = $this->retrieveJsonData(
                         self::REPO_URL . 'countries/' . $country->filename . '.json'
