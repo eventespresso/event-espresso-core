@@ -104,7 +104,7 @@ class Capabilities
         foreach ($model->field_settings() as $field_name => $field_obj) {
             if ($has_password
                 && $model->getPasswordField()->fieldIsProtected($field_name)
-            && $entity[ $field_name ]) {
+                && $entity[ $field_name ]) {
                 if ($model_version_info->fieldHasRenderedFormat($field_obj)) {
                     $entity[ $field_name ]['protected'] = true;
                 }
