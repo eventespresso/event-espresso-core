@@ -1151,7 +1151,7 @@ class Read_Test extends \EE_REST_TestCase
 
         // the protected calculated field should be replaced with their defaults
         $this->assertEquals(0,$data[1]['_calculated_fields']->optimum_sales_at_start);
-        
+
         // featured image calculated fields aren't protected, so it should still be visible
         $this->assertNotEquals(null, $data[1]['_calculated_fields']->image_full);
     }
