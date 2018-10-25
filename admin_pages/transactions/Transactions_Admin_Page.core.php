@@ -440,7 +440,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
              * appears on the Transactions Admin Page list table.
              * List display can be turned back on via the following:
              * add_filter(
-             *     'FHEE__Transactions_Admin_Page___set_list_table_views_default__display_failed',
+             *     'FHEE__Transactions_Admin_Page___set_list_table_views_default__display_failed_txns_list',
              *     '__return_true'
              * );
              *
