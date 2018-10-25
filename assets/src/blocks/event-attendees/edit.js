@@ -209,7 +209,7 @@ export default class EventAttendeesEditor extends Component {
 					<EditorEventSelect
 						key="attendees-event-select"
 						selected={ attributes.eventId }
-						onEventSelect={ this.setEventId }
+						onSelect={ this.setEventId }
 						queryData={ this.state.eventQueryData }
 					/>
 					{ attributes.eventId !== 0 &&
