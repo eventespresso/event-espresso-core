@@ -173,11 +173,17 @@ export class ModelSelect extends Component {
 			return false;
 		}
 
+		const { selectConfiguration: prevConfiguration } = prevProps;
+		const { selectConfiguration: nextConfiguration } = nextProps;
+
 		// if defaultValue has changed (selected value) then update state
 		if (
-			prevProps.selectConfiguration.defaultValue !== nextProps
-				.selectConfiguration.defaultValue
+			prevConfiguration.defaultValue !== nextConfiguration.defaultValue
 		) {
+			return true;
+		}
+
+		if ( prevConfiguration.isLoading !== nextConfiguration.isLoading ) {
 			return true;
 		}
 
@@ -190,7 +196,7 @@ export class ModelSelect extends Component {
 		}
 
 		if (
-			isShallowEqual(
+			! isShallowEqual(
 				Array.from( prevProps.modelEntities.keys() ),
 				Array.from( nextProps.modelEntities.keys() )
 			)
