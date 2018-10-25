@@ -433,6 +433,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'label' => esc_html__('Abandoned Transactions', 'event_espresso'),
                 'count' => 0,
             ),
+            'incomplete' => array(
+                'slug'  => 'incomplete',
+                'label' => esc_html__('Incomplete Transactions', 'event_espresso'),
+                'count' => 0,
+            )
         );
         if (/**
              * Filters whether a link to the "Failed Transactions" list table
