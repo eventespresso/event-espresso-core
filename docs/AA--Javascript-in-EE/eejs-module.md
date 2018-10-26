@@ -126,3 +126,97 @@ This property exposes all the model javascript interfaces for EE models. This be
 | checkInModel | A module containing all model related interfaces for the Checkin model.
 
 Note: The list of exposed models will be added to over time so the above list may be out of date. You can find all the models and their exposed interfaces [here](../../../assets/src/data/model/)
+## Utilities
+The following are various utility functions exposed directly on the `eejs` global.
+### `eejs.convertToObjectFromMap( mapObject )`
+Given a map object, this returns its contents as  plain object.
+
+**Example:**
+```js
+const map = new Map( [ [ 10, 'foo' ], [ 20, 'bar' ] ] );
+const object = eejs.convertToObjectFromMap( map );
+// { 10: foo, 20: bar } 
+console.log( object );
+```
+### `eejs.isModelEntityFactory( factory )`
+This is used for validating whether the given value represents a model entity factory object.
+### `eejs.isModelEntityFactoryOfModel( factory, modelName )`
+This is used for validating whether the given value represents a model entity factory for the given modelName.  **Note:** `modelName` is expected to be the lowercase, snakecase string for the model (eg. `'message_template'`).
+### `eejs.isGenerator( object )`
+This is used to validate whether the provided value is a generator or not.
+
+**Example:**
+```js
+const generator = function* () { yield 1; yield 2; return 3 };
+// returns false because this is the function not the 
+// invoked generator instance
+console.log( eejs.isGenerator( generator ) );
+// returns true because this is the invoked generator instance.
+console.log( eejs.isGenerator( generator() );
+```
+### `eejs.isModelEntity( value )`
+This is used to validate whether the given value is a model entity.
+### `eejs.isModelEntityOfModel( value, modelName )`
+This is used to validate whether the given value is a model entity for the given model name.
+### `eejs.isSchemaResponse( response )`
+Returns whether the given value represents a schema response object from a schema REST API request.
+### `eejs.isSchema( schema )`
+Returns whether the given value is a the schema object property value from the schema response (so `schemaResponse.schema`).
+### `eejs.isSchemaResponseOfModel( response, modelName )`
+Returns whether the given value is a schema response object for the given model name.
+### `eejs.isSchemaOfModel( schema , modelName )`
+Returns whether the given value represents a schema object property value from the schema response for a specific model name.
+### `eejs.mapReducer( map, reducerCallback, defaultValue )`
+This is a reducer for map objects.
+
+**Example:**
+```js
+const map = new Map( [ [ 10, 'foo' ], [ 20, 'bar' ] ] );
+const reducerCallback = ( accumulator, value, key ) => accumulator[ value ] = key;
+const object = eejs.mapReducer( map, reducerCallback, {} );
+// { foo: 10, bar: 20 }
+console.log( object );
+```
+### `eejs.mergeAndDeDuplicateArrays( ...arrays )`
+This utility function will merge and de-duplicate all incoming arrays so there is only one of each value in the returned array.
+
+**Example:**
+```js
+const merged = eejs.mergeAndDeDuplicateArrays(
+  [ 1, 2, 3 ],
+  [ 2, 3, 4 ],
+  [ 4, 5, 6, 7 ]
+);
+// [ 1, 2, 3, 4, 5, 6, 7 ]
+console.log( merged )
+```
+### `eejs.mergeAndDeDuplicateObjects( property, ...arrays )`
+This utility function will merge and de-duplicate arrays of objects into one array with no duplicate values for objects with the provided property.
+
+**Example:**
+```js
+const merged = eejs.mergeAndDeDuplicateObjects(
+  'id',
+  [
+    { id: 10, name: 'ten' },
+    { id: 30, name: 'thirty' },
+    { id: 25, name: 'twenty-five' },
+  ],
+  [
+    { id: 10, name: 'ten' },
+    { id: 50, name: 'fifty' },
+  ],
+  [
+    { id: 30, name: 'thirty' },
+    { id: 15, name: 'fifteen' },
+  ],
+);
+// [
+// 	  { id: 10, name: 'ten' },
+// 	  { id: 30, name: 'thirty' },
+// 	  { id: 25, name: 'twenty-five' },
+// 	  { id: 50, name: 'fifty' },
+// 	  { id: 15, name: 'fifteen' },
+// ],
+console.log( merged );
+```
