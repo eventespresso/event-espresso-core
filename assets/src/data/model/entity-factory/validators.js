@@ -34,7 +34,7 @@ import { PRIVATE_PROPERTIES, VALIDATE_TYPE } from './constants';
  * Note: if the passed in type does not exist, then the value is considered
  * invalid.
  *
- * @param {string} type  The type to check
+ * @param {string|array} type  The type or types to check
  * @param {*} value  The value being validated
  * @return {boolean}  True means the value is valid for the given type.
  */
