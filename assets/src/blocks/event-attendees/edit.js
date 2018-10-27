@@ -92,7 +92,7 @@ export default class EventAttendeesEditor extends Component {
 
 	/**
 	 * Set eventId on attributes
-	 * @param {number} eventId
+	 * @param {Object} eventId
 	 */
 	setEventId = ( eventId ) => {
 		const value = eventId !== null && eventId.value ?
@@ -115,7 +115,7 @@ export default class EventAttendeesEditor extends Component {
 
 	/**
 	 * Set datetimeId on attributes
-	 * @param {number} datetimeId
+	 * @param {Object} datetimeId
 	 */
 	setDatetimeId = ( datetimeId ) => {
 		const value = datetimeId !== null && datetimeId.value ?
@@ -137,7 +137,7 @@ export default class EventAttendeesEditor extends Component {
 
 	/**
 	 * Set ticketId on attributes
-	 * @param {number} ticketId
+	 * @param {Object} ticketId
 	 */
 	setTicketId = ( ticketId ) => {
 		const value = ticketId !== null && ticketId.value ?
@@ -148,7 +148,7 @@ export default class EventAttendeesEditor extends Component {
 
 	/**
 	 * Set status on attributes
-	 * @param {number} status
+	 * @param {Object} status
 	 */
 	setStatus = ( status ) => {
 		const value = status !== null && status.value ?
