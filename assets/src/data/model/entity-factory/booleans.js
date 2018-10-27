@@ -86,8 +86,8 @@ export const isDateTimeField = ( field, schema ) =>
 export const isUTCDateTimeField = ( dateTimeFieldName, schema = null ) => {
 	return schema !== null ?
 		isDateTimeField( dateTimeFieldName, schema ) &&
-			dateTimeFieldName.indexOf( '_gmt' ) > -1 :
-		dateTimeFieldName.indexOf( '_gmt' ) > -1;
+			dateTimeFieldName.indexOf( '_gmt' ) > 0 :
+		dateTimeFieldName.indexOf( '_gmt' ) > 0;
 };
 
 /**
