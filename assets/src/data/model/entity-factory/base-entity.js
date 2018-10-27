@@ -183,7 +183,6 @@ const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => {
 		 *   especially important for contexts like unauthorized views where
 		 *   only partial entities are returned in REST responses.
 		 * - isNew flag is set to false (and never changes for this entity)
-		 * - dirty flag is set to false
 		 * - The incoming values are expected to be in the exact shape as
 		 *   described by the schema for the entity model.
 		 *
