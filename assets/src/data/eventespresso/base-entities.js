@@ -44,7 +44,6 @@ export const keepExistingEntitiesInObject = (
 	incomingEntities,
 ) => {
 	const getExistingOrDefaultEntity = ( defaultEntity, entityId ) => {
-		entityId = normalizeEntityId( entityId );
 		if ( isMap( existingEntities ) && existingEntities.has( entityId ) ) {
 			return existingEntities.get( entityId );
 		}
