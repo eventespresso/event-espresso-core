@@ -676,7 +676,8 @@ export const setRelationsResource = (
 };
 
 /**
- * Sets the internal save state to the given value.
+ * Sets the internal save state to the given value when current state is
+ * SAVE_STATE.clean otherwise current save state is retained.
  *
  * @param {Object} instance
  * @param {string} saveState Expected to be one of SAVE_STATE constant values.
