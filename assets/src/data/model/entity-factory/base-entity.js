@@ -157,8 +157,6 @@ const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => {
 		 *   entity (using cuid).
 		 * - Sets the `isNew` flag to true for the entity so client code is able
 		 *   to discover which entities have never been persisted.
-		 * - Sets the `dirty` flag to true because the entity has never been
-		 *   persisted.
 		 * - This factory method expects fields and values to be "prepared".
 		 *   What that means is that for any fields that the schema described as
 		 *   having a `raw` property (i.e. { EVT_desc: { raw: 'something' } })
