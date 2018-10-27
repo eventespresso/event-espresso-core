@@ -43,7 +43,7 @@ export const keepExistingEntitiesInObject = (
 	existingEntities,
 	incomingEntities,
 ) => {
-	const hasThenGetEntity = ( defaultEntity, entityId ) => {
+	const getExistingOrDefaultEntity = ( defaultEntity, entityId ) => {
 		entityId = normalizeEntityId( entityId );
 		if ( isMap( existingEntities ) && existingEntities.has( entityId ) ) {
 			return existingEntities.get( entityId );
@@ -52,7 +52,7 @@ export const keepExistingEntitiesInObject = (
 	};
 	const reduceCallback = ( mapped, entity, entityId ) => {
 		entityId = normalizeEntityId( entityId );
-		mapped.set( entityId, hasThenGetEntity( entity, entityId ) );
+		mapped.set( entityId, getExistingOrDefaultEntity( entity, entityId ) );
 		return mapped;
 	};
 	return isMap( incomingEntities ) ?
