@@ -57,6 +57,13 @@ export const maybeConvertToValueObject = ( fieldName, fieldValue, schema ) => {
 	) {
 		return new Money( fieldValue, SiteCurrency );
 	}
+	// if more VOs get added, then instead of adding more if else blocks
+	// to this function and the ones below, all VO logic should be extracted
+	// into some kind of  ValueObjectExtractor object that would hold all of
+	// the necessary callbacks for managing the detection of VO fields and
+	// conversion of data to and from the various VOs
+	// plz see:
+	// https://github.com/eventespresso/event-espresso-core/pull/637/files#r228690789
 	return fieldValue;
 };
 
