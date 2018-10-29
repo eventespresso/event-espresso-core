@@ -233,6 +233,10 @@ const config = [
 			'eventespresso-core-blocks': [
 				assets + 'blocks/index.js',
 			],
+			/** implement once there's javascript to output
+			'eventespresso-core-blocks-frontend': [
+				assets + 'blocks/index-frontend.js',
+			],*/
 		},
 		externals: Object.assign( externals, {
 			'@eventespresso/higher-order-components': 'eejs.hocComponents',
