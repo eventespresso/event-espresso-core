@@ -9,8 +9,7 @@ import { select } from '@wordpress/data';
  * @param {string} reducerKey
  * @param {string} selectorName
  * @param {*[]} args
- * @return {boolean}  True means the selector is resolving. False means it
- * either hasn't started yet or is complete.
+ * @return {boolean}  Whether resolution is in progress.
  */
 export const isResolving = ( reducerKey, selectorName, ...args ) => {
 	return select( 'core/data' ).isResolving( reducerKey, selectorName, args );
@@ -23,8 +22,7 @@ export const isResolving = ( reducerKey, selectorName, ...args ) => {
  * @param {string} reducerKey
  * @param {string} selectorName
  * @param {*[]} args
- * @return {boolean} True means the selector has finished resolving.  False
- * means it either hasn't started yet or is in the midst of resolving.
+ * @return {boolean} Whether resolution has completed.
  */
 export const hasFinishedResolving = ( reducerKey, selectorName, ...args ) => {
 	return select( 'core/data' )
