@@ -192,6 +192,7 @@ export const createEntityGettersAndSetters = ( instance ) => {
 	forEach(
 		instance.originalFieldsAndValues,
 		( fieldValue, fieldName ) => {
+			const isPrimaryKey = isPrimaryKeyField( fieldName, instance.schema );
 			setValidateTypeForField( instance, fieldName, fieldValue );
 			if ( isEntityField( fieldName, instance.schema ) ) {
 				if ( instance.isNew ) {
@@ -211,7 +212,8 @@ export const createEntityGettersAndSetters = ( instance ) => {
 				setInitialEntityFieldsAndValues(
 					instance,
 					fieldName,
-					fieldValue
+					fieldValue,
+					isPrimaryKey
 				);
 			}
 			if ( fieldName === '_calculated_fields' ) {
@@ -223,10 +225,7 @@ export const createEntityGettersAndSetters = ( instance ) => {
 			if ( fieldName === '_links' ) {
 				setResources( instance, fieldValue );
 			}
-			if (
-				! instance.isNew &&
-				isPrimaryKeyField( fieldName, instance.schema )
-			) {
+			if ( ! instance.isNew && isPrimaryKey ) {
 				primaryKeys.push( fieldName );
 			}
 		}
@@ -372,11 +371,13 @@ export const createPersistingGettersAndSetters = ( instance ) => {
  * @param {Object} instance
  * @param {string} fieldName
  * @param {*} fieldValue
+ * @param {boolean} isPrimaryKey
  */
 const setInitialEntityFieldsAndValues = (
 	instance,
 	fieldName,
 	fieldValue,
+	isPrimaryKey = false,
 ) => {
 	if ( isUndefined( fieldValue ) ) {
 		fieldValue = getDefaultValueForField( fieldName, instance.schema );
@@ -385,9 +386,10 @@ const setInitialEntityFieldsAndValues = (
 	createRawEntityGettersSetters(
 		instance,
 		fieldName,
-		derivePreparedValueForField( fieldName, fieldValue, instance )
+		derivePreparedValueForField( fieldName, fieldValue, instance ),
+		isPrimaryKey
 	);
-	if ( ! isPrimaryKeyField( fieldName, instance.schema ) ) {
+	if ( ! isPrimaryKey ) {
 		createRenderedGetters(
 			instance,
 			fieldName,
@@ -403,15 +405,17 @@ const setInitialEntityFieldsAndValues = (
  * @param {Object} instance
  * @param {string} fieldName
  * @param {*} fieldValue
+ * @param {boolean} isPrimaryKey set to true if field is the model's primary key
  */
 export const createRawEntityGettersSetters = (
 	instance,
 	fieldName,
 	fieldValue,
+	isPrimaryKey = false,
 ) => {
 	const opts = { enumerable: true };
 	// primary key is immutable
-	if ( isPrimaryKeyField( fieldName, instance.schema ) ) {
+	if ( isPrimaryKey ) {
 		createGetter(
 			instance,
 			fieldName,
@@ -441,7 +445,8 @@ export const createAliasGetterForField = ( instance, fieldName ) => {
 };
 
 /**
- * Creates "alias" getters and setters for the given field on the entity instance.
+ * Creates "alias" getters and setters for the given field on the entity
+ * instance.
  *
  * Example: Datetime entities have a `DTT_EVT_start` field.  On the entity
  * instance, you will be able to access the value of that field via:
