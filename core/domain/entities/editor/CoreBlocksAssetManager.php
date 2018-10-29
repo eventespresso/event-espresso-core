@@ -14,16 +14,19 @@ use EventEspresso\core\services\assets\BlockAssetManager;
  */
 class CoreBlocksAssetManager extends BlockAssetManager
 {
-    const JS_HANDLE_CORE_BLOCKS = 'core-blocks';
-    const CSS_HANDLE_CORE_BLOCKS = 'core-blocks';
+    const JS_HANDLE_CORE_BLOCKS_EDITOR = 'core-blocks';
+    const CSS_HANDLE_CORE_BLOCKS_EDITOR = 'core-blocks';
+    const JS_HANDLE_CORE_BLOCKS = 'core-blocks-frontend';
+    const CSS_HANDLE_CORE_BLOCKS = 'core-blocks-frontend';
+
 
     /**
      * @since $VID:$
      */
     public function setAssetHandles()
     {
-        $this->setEditorScriptHandle(self::JS_HANDLE_CORE_BLOCKS);
-        $this->setEditorStyleHandle(self::CSS_HANDLE_CORE_BLOCKS);
+        $this->setEditorScriptHandle(self::JS_HANDLE_CORE_BLOCKS_EDITOR);
+        $this->setEditorStyleHandle(self::CSS_HANDLE_CORE_BLOCKS_EDITOR);
         $this->setScriptHandle(self::JS_HANDLE_CORE_BLOCKS);
         $this->setStyleHandle(self::CSS_HANDLE_CORE_BLOCKS);
     }
