@@ -211,10 +211,10 @@ class EventAttendees extends Block
             return $this->noContentRender($attributes);
         }
         if ($this->hasNoIds($attributes) && $this->request->isWordPressApi()) {
-            $rendered_content = '<p class="components-notice is-success">' . esc_html__(
+            $rendered_content = '<div class="components-notice is-success"><p>' . esc_html__(
                 'The content displayed is for the most recent active or upcoming event.  You can display attendees from a different event, ticket or datetime via the block settings.',
                 'event_espresso'
-            ) . '</p>' . $rendered_content;
+            ) . '</p></div>' . $rendered_content;
         }
         return $rendered_content;
     }
@@ -242,7 +242,7 @@ class EventAttendees extends Block
                     'event_espresso'
                 );
             }
-            $content = $content !== '' ? '<p class="components-notice is-error">' . $content . '</p>' : $content;
+            $content = $content !== '' ? '<div class="components-notice is-error"><p>' . $content . '</p></div>' : $content;
         }
         return $content;
     }
