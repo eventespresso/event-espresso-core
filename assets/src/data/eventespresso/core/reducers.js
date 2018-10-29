@@ -67,8 +67,9 @@ export default function receiveEntityRecords( state = DEFAULT_CORE_STATE, action
 				) ) ) {
 					break;
 				}
-				// replace any incoming entities with existing entities already in the
-				// store so this registry acts as the "authority" for the latest entity.
+				// replace any incoming entities with existing entities already
+				// in the store so this registry acts as the "authority"
+				// for entities.
 				entities = replaceExistingEntitiesFromState(
 					state,
 					modelName,
