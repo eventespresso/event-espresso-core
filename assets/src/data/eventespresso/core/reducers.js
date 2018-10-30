@@ -36,6 +36,7 @@ const replaceExistingEntitiesFromState = ( state, modelName, entities ) => {
 
 /**
  * A reducer returning the new state for action.
+ * 
  * Handles receiving entity records from a rest response and converting them to
  * model entities using the provided factory.
  *
