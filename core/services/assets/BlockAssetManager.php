@@ -212,7 +212,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 $this->domain->assetNamespace(),
                 $handle
             ),
-            $this->addDefaultBlockScriptDependencies($dependencies)
+            $dependencies
         )
         ->setRequiresTranslation();
     }
