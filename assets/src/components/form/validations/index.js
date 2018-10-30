@@ -47,13 +47,13 @@ export const isNumeric = value => ! isValidNumeric( value ) ?
  * @param {string} fieldName
  * @return {string|undefined} error string on fail
  */
-export const matches = ( fieldValue, fieldName ) => valueToMatch => {
-	return ! valueToMatch || fieldValue !== valueToMatch ?
+export const matches = ( fieldValue, fieldName ) => valueToMatch => (
+	! valueToMatch || fieldValue !== valueToMatch ?
 		sprintf(
 			__( 'Value should match %s', 'event_espresso' ),
 			fieldName
-		) : null;
-};
+		) : null
+);
 
 /**
  * @function
@@ -77,7 +77,7 @@ export const maxFloat = max => value => ! floatLessThanOrEqualTo( max, value ) ?
  * @return {string|null} error string on fail
  */
 export const maxLength = ( max = 1024 ) => value => (
-	stringLengthLessThanOrEqualTo( max, value.length ) ?
+	! stringLengthLessThanOrEqualTo( max, value.length ) ?
 		sprintf(
 			_n(
 				'Value should not exceed %d character in length',
@@ -95,7 +95,7 @@ export const maxLength = ( max = 1024 ) => value => (
  * @return {string|null} error string on fail
  */
 export const maxNumber = max => value => ! (
-	numberLessThanOrEqualTo( max, value ) ?
+	! numberLessThanOrEqualTo( max, value ) ?
 		sprintf(
 			_n(
 				'Number should not be greater than %d',
@@ -113,7 +113,7 @@ export const maxNumber = max => value => ! (
  * @return {string|null} error string on fail
  */
 export const minFloat = min => value => (
-	floatGreaterThanOrEqualTo( min, value ) ?
+	! floatGreaterThanOrEqualTo( min, value ) ?
 		sprintf(
 			_n(
 				'Number should not be less than %f',
@@ -131,7 +131,7 @@ export const minFloat = min => value => (
  * @return {string|null} error string on fail
  */
 export const minLength = ( min = 1 ) => value => (
-	stringLengthGreaterThanOrEqualTo( min, value ) ?
+	! stringLengthGreaterThanOrEqualTo( min, value ) ?
 		sprintf(
 			_n(
 				'Value should be at least %d character in length',
@@ -149,7 +149,7 @@ export const minLength = ( min = 1 ) => value => (
  * @return {string|null} error string on fail
  */
 export const minNumber = min => value => (
-	numberGreaterThanOrEqualTo( min, value ) ?
+	! numberGreaterThanOrEqualTo( min, value ) ?
 		sprintf(
 			_n(
 				'Number should not be less than %d',
