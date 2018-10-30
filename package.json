@@ -107,6 +107,7 @@
 		"accounting-js": "^1.1.1",
 		"babel-runtime": "^6.26.0",
 		"classnames": "^2.2.6",
+		"cuid": "^2.1.4",
 		"decimal.js-light": "^2.4.1",
 		"final-form": "^4.10.0",
 		"js-green-licenses": "^0.5.0",
@@ -114,13 +115,14 @@
 		"memize": "^1.0.5",
 		"moment-duration-format": "^2.2.2",
 		"moment-timezone": "^0.5.21",
+		"pluralize": "^7.0.0",
 		"prop-types": "^15.6.2",
 		"querystringify": "^1.0.0",
 		"react": "^16.4.1",
 		"react-dom": "^16.4.1",
 		"react-final-form": "^3.6.7",
 		"react-redux": "^5.0.6",
-		"react-select": "^2.0.0-beta.6",
+		"react-select": "^2.1.1",
 		"redux": "^3.7.2",
 		"warning": "^4.0.1"
 	}

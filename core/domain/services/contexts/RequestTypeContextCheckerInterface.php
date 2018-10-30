@@ -122,6 +122,14 @@ interface RequestTypeContextCheckerInterface
 
 
     /**
+     * true if the current request is for the WP REST API
+     *
+     * @return bool
+     */
+    public function isWordPressApi();
+
+
+    /**
      * true if the current request is a loopback sent from WP core to test for errors
      *
      * @return bool

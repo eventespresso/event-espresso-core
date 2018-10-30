@@ -1167,7 +1167,11 @@ final class EE_System implements ResettableInterface
      */
     public function core_loaded_and_ready()
     {
-        if ($this->request->isAdmin() || $this->request->isFrontend() || $this->request->isIframe()) {
+        if ($this->request->isAdmin()
+            || $this->request->isFrontend()
+            || $this->request->isIframe()
+            || $this->request->isWordPressApi()
+        ) {
             try {
                 $this->loader->getShared('EventEspresso\core\services\assets\Registry');
                 $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');

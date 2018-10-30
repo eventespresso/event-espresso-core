@@ -1,37 +1,45 @@
 /**
  * External dependencies
  */
-import { isEmpty, isFunction, isUndefined, reduce, isArray } from 'lodash';
+import {
+	isEmpty,
+	isFunction,
+	isUndefined,
+	reduce,
+	isArray,
+	isMap,
+} from 'lodash';
 import warning from 'warning';
 
 /**
- * Receives an array of event entities and returns an array of simple objects
- * that can be passed along to the options array used for the WordPress
- * SelectControl component.
+ * Receives an array|Object|Map of event entities and returns an array of simple
+ * objects that can be passed along to the options array used for a
+ * SelectControl component
  *
- * @param { Array }  entities
- * @param { Object } optionsEntityMap 	Object of key value pairs where values are the
- * 										'label:value' pairings used to populate the Select input
- * @param { string } mapSelection		Determines which optionEntityMap pairing to use
- * @return { Array }  					Returns an array of simple objects formatted for any
- * 										select control that receives its options
- * 										in the format of an array of objects
- *										with label and value keys.
+ * @param { Map|Object|Array }  entities
+ * @param { Object } optionsEntityMap Object of key value pairs where values
+ * are the 'label:value' pairings used to populate the Select input.
+ * @param { string } mapSelection Determines which optionEntityMap pairing to
+ * use.
+ * @return { Array } Returns an array of simple objects formatted for any
+ * select control that receives its options in the format of an array of objects
+ * with label and value keys.
  */
 const buildOptions = (
 	entities,
 	optionsEntityMap,
-	mapSelection = 'default'
+	mapSelection = 'default',
 ) => {
 	if ( isEmpty( entities ) ) {
 		return [];
 	}
+	entities = isMap( entities ) ? Array.from( entities.values() ) : entities;
 	if ( isEmpty( optionsEntityMap ) ) {
 		warning(
 			false,
 			'A valid optionsEntityMap must be supplied ' +
 			'in order to build options for a ModelSelect component',
-			optionsEntityMap
+			optionsEntityMap,
 		);
 		return [];
 	}
@@ -41,7 +49,7 @@ const buildOptions = (
 			'A valid optionsEntityMap[ mapSelection ] must be supplied ' +
 			'in order to build options for a ModelSelect component',
 			optionsEntityMap,
-			mapSelection
+			mapSelection,
 		);
 		return [];
 	}
@@ -61,27 +69,27 @@ const buildOptions = (
 			false,
 			'The optionsEntityMap for ' + mapSelection + 'was a function but' +
 			' it did not return an array of options.  Make sure the function' +
-			' returns an array of simple objects with label and value keys.'
+			' returns an array of simple objects with label and value keys.',
 		);
 	}
-	return ! isEmpty( map ) ?
-		reduce(
-			entities,
-			function( options, entity ) {
-				const label = isFunction( map.label ) ?
-					map.label( entity ) :
-					entity[ map.label ];
-				const value = isFunction( map.value ) ?
-					map.value( entity ) :
-					entity[ map.value ];
-				if ( label && value ) {
-					options.push( { label, value } );
-				}
-				return options;
-			},
-			[]
-		) :
-		[];
+	if ( isEmpty( map ) ) {
+		return [];
+	}
+	const reducerCallback = ( options, entity ) => {
+		const label = isFunction( map.label ) ?
+			map.label( entity ) :
+			entity[ map.label ];
+		const value = isFunction( map.value ) ?
+			map.value( entity ) :
+			entity[ map.value ];
+		if ( label && value ) {
+			options.push( { label, value } );
+		}
+		return options;
+	};
+	return ! isArray( entities ) ?
+		entities.reduce( reducerCallback, [] ) :
+		reduce( entities, reducerCallback, [] );
 };
 
 export default buildOptions;

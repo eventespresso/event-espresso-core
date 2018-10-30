@@ -1,3 +1,6 @@
+/**
+ * External imports
+ */
 import { isArray, isUndefined } from 'lodash';
 
 export const QUERY_ORDER_ASC = 'ASC';

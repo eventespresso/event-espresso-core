@@ -1,4 +1,9 @@
 /**
+ * Internal imports
+ */
+import InvalidType from './invalid-type';
+
+/**
  * InvalidDateTime
  * Usage: throw new eejs.InvalidDateTime('some message', [datetime])
  *
@@ -8,7 +13,7 @@
  * @param {string} msg
  * @param {mixed} datetime Optional, the datetime string that is invalid
  */
-export default class InvalidDateTime extends TypeError {
+export default class InvalidDateTime extends InvalidType {
 	constructor( datetime, message, ...args ) {
 		super( message, ...args );
 		if ( Error.captureStackTrace ) {

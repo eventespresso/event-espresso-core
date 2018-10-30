@@ -5,3 +5,4 @@ export * from './assertions';
 export * from './model-names';
 export * from './base';
 export * from './models';
+export * from './entity-factory';
