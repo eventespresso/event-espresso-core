@@ -6,4 +6,5 @@ module.exports = {
 	classnames: require( 'classnames' ),
 	lodash: require( 'lodash' ).noConflict(),
 	moment: require( 'moment-timezone' ),
+	cuid: require( 'cuid' ),
 };

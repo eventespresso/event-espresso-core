@@ -2,19 +2,49 @@
  * Returns an action object used in updating the store with the provided items
  * retrieved from a request using the given querystring.
  *
- * @param { string } modelName
- * @param { string } queryString  Results are stored indexed by the query
- *   string
- *                                generating them.
- * @param { Array } items         Items returned from the query.
- * @return {{type: string, modelName: string, queryString: string, items:
- *   Array}} Object for action.
+ * This is a generic response action.
+ *
+ * @param {string} identifier
+ * @param {string} queryString  Results are stored indexed by the query
+ * string generating them.
+ * @param {Array<*>} items     items attached with the list.
+ * @return {
+ * 	{
+ * 		type: string,
+ * 		identifier: string,
+ * 		queryString: string,
+ * 		items: Array<*>
+ *	}
+ * } Object for action.
  */
-export function receiveResponse( modelName, queryString, items = [] ) {
+export function receiveResponse( identifier, queryString, items = [] ) {
 	return {
 		type: 'RECEIVE_LIST',
-		modelName,
+		identifier,
 		queryString,
 		items,
+	};
+}
+
+/**
+ * Returns an action object used in updating the store with the provided entity
+ * items retrieved from a request using the given query string.
+ *
+ * @param {string} modelName
+ * @param {string} queryString
+ * @param {Map<number,Object>}entities
+ * @return {{type: string, identifier: string, queryString: string, items:
+ *   Map<number,Object>}} An action object.
+ */
+export function receiveEntityResponse(
+	modelName,
+	queryString,
+	entities = new Map(),
+) {
+	return {
+		type: 'RECEIVE_ENTITY_LIST',
+		identifier: modelName,
+		queryString,
+		items: entities,
 	};
 }

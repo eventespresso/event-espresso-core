@@ -3,8 +3,9 @@
  */
 import Select from 'react-select';
 import { Component, Fragment } from '@wordpress/element';
-import { isEmpty, uniqueId, find, isUndefined, isFunction } from 'lodash';
+import { isEmpty, uniqueId, find, isUndefined, isFunction, isMap } from 'lodash';
 import PropTypes from 'prop-types';
+import isShallowEqual from '@wordpress/is-shallow-equal';
 
 /**
  * WP dependencies
@@ -83,7 +84,24 @@ export class ModelSelect extends Component {
 		getQueryString: () => '',
 	};
 
-	static getDerivedStateFromProps( props ) {
+	constructor( props ) {
+		super( props );
+		this.state = ModelSelect.setStateFromProps( props );
+	}
+
+	/**
+	 * Sets the state from provided props
+	 * @param {Object} props
+	 * @return {{
+	 * isClearable,
+	 * isLoading,
+	 * placeholder,
+	 * options: (*|Array),
+	 * value: *
+	 * }}
+	 * Object to replace state.
+	 */
+	static setStateFromProps( props ) {
 		const { selectConfiguration } = props;
 		const options = ModelSelect.getOptions( props );
 		const selectedValue = ModelSelect.getOptionObjectForValue(
@@ -101,6 +119,11 @@ export class ModelSelect extends Component {
 		};
 	}
 
+	/**
+	 * Sets up options for the select control from the incoming props.
+	 * @param {Object} props
+	 * @return {Array<Object>} Array of options for select control
+	 */
 	static getOptions( props ) {
 		const {
 			mapOptionsCallback,
@@ -118,6 +141,12 @@ export class ModelSelect extends Component {
 		return [];
 	}
 
+	/**
+	 * Given a value, returns the corresponding option object.
+	 * @param {*} value
+	 * @param {Array<Object>} options
+	 * @return {Object|null} The option object for the given value or null.
+	 */
 	static getOptionObjectForValue( value, options ) {
 		if ( ! isEmpty( options ) ) {
 			const match = find( options, function( option ) {
@@ -130,6 +159,71 @@ export class ModelSelect extends Component {
 		return null;
 	}
 
+	/**
+	 * Helper method for determining whether state should be updated.
+	 * Criteria is whether the keys from the incoming entities are equivalent
+	 * (equivalency means in same order as well)
+	 *
+	 * @param {Object} prevProps
+	 * @param {Object} nextProps
+	 * @return {boolean} True means state should be updated.
+	 */
+	static shouldUpdateState( prevProps, nextProps ) {
+		if ( prevProps === nextProps ) {
+			return false;
+		}
+
+		const { selectConfiguration: prevConfiguration } = prevProps;
+		const { selectConfiguration: nextConfiguration } = nextProps;
+
+		// if defaultValue has changed (selected value) then update state
+		if (
+			prevConfiguration.defaultValue !== nextConfiguration.defaultValue
+		) {
+			return true;
+		}
+
+		if ( prevConfiguration.isLoading !== nextConfiguration.isLoading ) {
+			return true;
+		}
+
+		// shallow compare of keys but only if we can
+		if (
+			! isMap( prevProps.modelEntities ) ||
+			! isMap( nextProps.modelEntities )
+		) {
+			return true;
+		}
+
+		if (
+			! isShallowEqual(
+				Array.from( prevProps.modelEntities.keys() ),
+				Array.from( nextProps.modelEntities.keys() )
+			)
+		) {
+			return true;
+		}
+	}
+
+	componentDidMount() {
+		this.setState(
+			ModelSelect.setStateFromProps( this.props )
+		);
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( ModelSelect.shouldUpdateState( prevProps, this.props ) ) {
+			this.setState(
+				ModelSelect.setStateFromProps( this.props )
+			);
+		}
+	}
+
+	/**
+	 * Returns the label for the select control
+	 *
+	 * @return {string} The label to use.
+	 */
 	getSelectLabel() {
 		const { label, selectConfiguration } = this.props;
 		return label ?
@@ -155,15 +249,15 @@ export class ModelSelect extends Component {
 export default withSelect( ( select, ownProps ) => {
 	const { getQueryString, modelName, selectConfiguration } = ownProps;
 	const queryString = getQueryString( ownProps.queryData );
-	const { getItems, isRequestingItems } = select( 'eventespresso/lists' );
+	const { getEntities, isRequestingEntities } = select( 'eventespresso/lists' );
 	return {
 		...ModelSelect.defaultProps,
 		...ownProps,
-		modelEntities: getItems( modelName, queryString ),
+		modelEntities: getEntities( modelName, queryString ),
 		selectConfiguration: {
 			...ModelSelect.defaultProps.selectConfiguration,
 			...selectConfiguration,
-			isLoading: isRequestingItems( modelName, queryString ),
+			isLoading: isRequestingEntities( modelName, queryString ),
 		},
 	};
 } )( ModelSelect );

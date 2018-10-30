@@ -3,7 +3,7 @@
  */
 import { Exception } from '@eventespresso/eejs';
 import { sprintf, __ } from '@eventespresso/i18n';
-import { isArray, isEmpty } from 'lodash';
+import { isArray, isEmpty, isMap } from 'lodash';
 
 /**
  * Asserts whether the given key exists in the provided entity object.
@@ -65,6 +65,25 @@ export const assertIsNotEmpty = ( items, message = '' ) => {
 		);
 	}
 	if ( isEmpty( items ) ) {
+		throw new Exception( message );
+	}
+};
+
+/**
+ * Asserts whether the given value is a Map object.
+ *
+ * @param {*} item
+ * @param {string} message
+ * @throws { Exception }
+ */
+export const assertIsMap = ( item, message = '' ) => {
+	if ( message === '' ) {
+		message = __(
+			'The provided item must be a Map object',
+			'event_espresso'
+		);
+	}
+	if ( ! isMap( item ) ) {
 		throw new Exception( message );
 	}
 };

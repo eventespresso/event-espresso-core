@@ -1,73 +1,156 @@
 /**
- * WordPress dependencies
+ * External imports
  */
-import apiFetch from '@wordpress/api-fetch';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { receiveResponse } from './actions';
-import { applyQueryString } from '../../model';
+import { receiveResponse, receiveEntityResponse } from './actions';
+import {
+	applyQueryString,
+	keyEntitiesByPrimaryKeyValue,
+	createAndKeyEntitiesByPrimaryKeyValue,
+} from '../../model';
+import { fetch, select, dispatch } from '../base-controls';
+import { getFactoryForModel, getSchemaForModel } from '../schema/resolvers';
+import { keepExistingEntitiesInObject } from '../base-entities';
 
 /**
  * Resolver for generic items returned from an endpoint.
  *
- * @param {Object} state  Data in state.
- * @param {string} modelName  The name of the model the items are for.
+ * @param {string} identifier  The identifier for the items.
  * @param {string} queryString  Additional query string parameters passed on to
  *   the REST request.
  */
-export async function* getItems( state, modelName, queryString ) {
-	const items = await apiFetch( {
-		path: applyQueryString( modelName,
-			queryString,
-		),
+export function* getItems( identifier, queryString ) {
+	const items = yield fetch( {
+		path: queryString,
 	} );
-	yield receiveResponse( modelName, queryString, items );
+	yield receiveResponse( identifier, queryString, items );
 }
 
 /**
- * Resolver for event entities.
- *
- * @param {Object} state Data in state.
- * @param {string} queryString Additional query string parameters passed on to
- *   the REST request.
- * @return {IterableIterator<*>} A async iterable.
+ * Resolver for model entities returned from an endpoint.
+ * @param {string} modelName
+ * @param {string} queryString
+ * @return {void} if there are not entities retrieved from the endpoint.
  */
-export function getEvents( state, queryString ) {
-	return getItems( state, 'event', queryString );
+export function* getEntities( modelName, queryString ) {
+	let response = yield fetch( {
+		path: applyQueryString( modelName, queryString ),
+	} );
+	if ( isEmpty( response ) ) {
+		return;
+	}
+	response = keyEntitiesByPrimaryKeyValue( modelName, response );
+
+	const factory = yield getFactoryByModel( modelName );
+	if ( isEmpty( factory ) ) {
+		return;
+	}
+	let fullEntities = createAndKeyEntitiesByPrimaryKeyValue(
+		factory,
+		response,
+	);
+
+	// are there already entities for the ids in the store?  If so, we use those
+	const existingEntities = yield select(
+		'eventespresso/core',
+		'getEntitiesByIds',
+		Array.from( fullEntities.keys() )
+	);
+
+	if ( ! isEmpty( existingEntities ) ) {
+		fullEntities = keepExistingEntitiesInObject(
+			existingEntities,
+			fullEntities,
+		);
+	}
+	yield dispatch(
+		'eventespresso/core',
+		'receiveEntityRecords',
+		modelName,
+		fullEntities
+	);
+	yield receiveEntityResponse( modelName, queryString, fullEntities );
 }
 
 /**
- * Resolver for datetime entities.
+ * Returns the factory for the given model from the eventespresso/schema store.
  *
- * @param {Object} state Data in state.
- * @param {string} queryString Additional query string parameters passed on to
- *   the REST request.
- * @return {IterableIterator<*>} A async iterable.
+ * @param {string} modelName
+ * @return {IterableIterator<*>|Object} A generator or the object once the
+ * factory is retrieved.
  */
-export function getDatetimes( state, queryString ) {
-	return getItems( state, 'datetime', queryString );
+function* getFactoryByModel( modelName ) {
+	let factory;
+	const resolved = yield select(
+		'eventespresso/schema',
+		'hasResolvedFactoryForModel',
+		modelName
+	);
+	if ( resolved === true ) {
+		factory = yield select(
+			'eventespresso/schema',
+			'getFactoryForModel',
+			modelName
+		);
+		return factory;
+	}
+	const schema = yield getSchemaByModel( modelName );
+	factory = yield getFactoryForModel( modelName, schema );
+	yield dispatch(
+		'eventespresso/schema',
+		'receiveFactoryForModel',
+		modelName,
+		factory,
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		'eventespresso/schema',
+		'getFactoryForModel',
+		[ modelName ]
+	);
+	return factory;
 }
 
 /**
- * Resolver for ticket entities.
+ * Returns the schema for the given model from the eventespresso/schema store.
  *
- * @param {Object} state Data in state.
- * @param {string} queryString Additional query string parameters passed on to
- *   the REST request.
- * @return {IterableIterator<*>} A async iterable.
+ * @param {string} modelName
+ * @return {IterableIterator<*>|Object} A generator of the object once the
+ * schema is retrieved.
  */
-export function getTickets( state, queryString ) {
-	return getItems( state, 'ticket', queryString );
-}
-
-/**
- * Resolver for registration status entities.
- *
- * @param {Object} state Data in state.
- * @return {IterableIterator<*>} A async iterable.
- */
-export function getRegistrationStatuses( state ) {
-	return getItems( state, 'status', 'where[STS_type]=registration' );
+function* getSchemaByModel( modelName ) {
+	let schema;
+	const resolved = yield select(
+		'eventespresso/schema',
+		'hasResolvedSchemaForModel',
+		modelName
+	);
+	if ( resolved === true ) {
+		schema = yield select(
+			'eventespresso/schema',
+			'getSchemaForModel',
+			modelName
+		);
+		return schema;
+	}
+	schema = yield getSchemaForModel( modelName );
+	yield dispatch(
+		'eventespresso/schema',
+		'receiveSchemaForModel',
+		modelName,
+		schema,
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		'eventespresso/schema',
+		'getSchemaForModel',
+		[ modelName ]
+	);
+	return schema;
 }

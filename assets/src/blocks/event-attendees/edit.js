@@ -20,9 +20,22 @@ import {
 	EditorTicketSelect,
 	QueryLimit,
 } from '@eventespresso/components';
-import * as statusModel from '../../data/model/status';
+import {
+	statusModel,
+} from '@eventespresso/model';
 import PropTypes from 'prop-types';
 
+const defaultQueryData = {
+	showExpired: true,
+	limit: 50,
+};
+
+/**
+ * EventAttendeesEditor Component
+ *
+ * This returns the component for the `edit` argument on the `EventAttendees`
+ * Block.
+ */
 export default class EventAttendeesEditor extends Component {
 	static propTypes = {
 		attendees: PropTypes.array,
@@ -52,6 +65,35 @@ export default class EventAttendeesEditor extends Component {
 		},
 	};
 
+	/**
+	 * @param {Object} props
+	 */
+	constructor( props ) {
+		super( props );
+		const { eventId, datetimeId } = this.props.attributes;
+		this.state = {
+			eventQueryData: {
+				...defaultQueryData,
+			},
+			datetimeQueryData: {
+				...defaultQueryData,
+				forEventId: eventId,
+			},
+			ticketQueryData: {
+				...defaultQueryData,
+				forDatetimeId: datetimeId,
+			},
+			statusQueryData: {
+				...defaultQueryData,
+				statusType: statusModel.STATUS_TYPE_REGISTRATION,
+			},
+		};
+	}
+
+	/**
+	 * Set eventId on attributes
+	 * @param {Object} eventId
+	 */
 	setEventId = ( eventId ) => {
 		const value = eventId !== null && eventId.value ?
 			parseInt( eventId.value, 10 ) :
@@ -63,8 +105,18 @@ export default class EventAttendeesEditor extends Component {
 				ticketId: 0,
 			}
 		);
+		this.setState( {
+			datetimeQueryData: {
+				...this.state.datetimeQueryData,
+				forEventId: value,
+			},
+		} );
 	};
 
+	/**
+	 * Set datetimeId on attributes
+	 * @param {Object} datetimeId
+	 */
 	setDatetimeId = ( datetimeId ) => {
 		const value = datetimeId !== null && datetimeId.value ?
 			parseInt( datetimeId.value, 10 ) :
@@ -75,8 +127,18 @@ export default class EventAttendeesEditor extends Component {
 				ticketId: 0,
 			}
 		);
+		this.setState( {
+			ticketQueryData: {
+				...this.state.ticketQueryData,
+				forDatetimeId: value,
+			},
+		} );
 	};
 
+	/**
+	 * Set ticketId on attributes
+	 * @param {Object} ticketId
+	 */
 	setTicketId = ( ticketId ) => {
 		const value = ticketId !== null && ticketId.value ?
 			parseInt( ticketId.value, 10 ) :
@@ -84,6 +146,10 @@ export default class EventAttendeesEditor extends Component {
 		this.props.setAttributes( { ticketId: value } );
 	};
 
+	/**
+	 * Set status on attributes
+	 * @param {Object} status
+	 */
 	setStatus = ( status ) => {
 		const value = status !== null && status.value ?
 			status.value :
@@ -91,20 +157,36 @@ export default class EventAttendeesEditor extends Component {
 		this.props.setAttributes( { status: value } );
 	};
 
+	/**
+	 * Set limit for attendees to be shown in attributes.
+	 * @param {number} limit
+	 */
 	setLimit = ( limit ) => {
 		this.props.setAttributes( {
 			limit: parseInt( limit, 10 ),
 		} );
 	};
 
+	/**
+	 * Sets whether to show gravatar for attendees in attributes.
+	 * @param {boolean} showGravatar
+	 */
 	toggleShowGravatar = ( showGravatar ) => {
 		this.props.setAttributes( { showGravatar: showGravatar } );
 	};
 
+	/**
+	 * Sets whether to show block on archive pages in attributes.
+	 * @param {boolean} displayOnArchives
+	 */
 	toggleDisplayOnArchives = ( displayOnArchives ) => {
 		this.props.setAttributes( { displayOnArchives: displayOnArchives } );
 	};
 
+	/**
+	 * Retrieve the ssr component for displaying attendees for given attributes.
+	 * @return {Component} The ssr component
+	 */
 	getAttendeesDisplay = () => {
 		return (
 			<ServerSideRender
@@ -114,33 +196,43 @@ export default class EventAttendeesEditor extends Component {
 		);
 	};
 
+	/**
+	 * Returns inspector controls for the block.
+	 *
+	 * @param {Object} attributes
+	 * @return {Component} The inspector controls component
+	 */
 	getInspectorControls = ( attributes ) => {
 		return (
 			<InspectorControls>
 				<PanelBody title={ __( 'Event Attendees Settings', 'event_espresso' ) }>
 					<EditorEventSelect
 						key="attendees-event-select"
-						selectedEventId={ attributes.eventId }
-						onEventSelect={ this.setEventId }
+						selected={ attributes.eventId }
+						onSelect={ this.setEventId }
+						queryData={ this.state.eventQueryData }
 					/>
-					<EditorDatetimeSelect
-						key="attendees-datetime-select"
-						selectedDatetimeId={ attributes.datetimeId }
-						forEventId={ attributes.eventId }
-						onDatetimeSelect={ this.setDatetimeId }
-					/>
-					<EditorTicketSelect
-						key="attendees-ticket-select"
-						selectedTicketId={ attributes.ticketId }
-						forEventId={ attributes.eventId }
-						forDatetimeId={ attributes.datetimeId }
-						onTicketSelect={ this.setTicketId }
-					/>
+					{ attributes.eventId !== 0 &&
+						<EditorDatetimeSelect
+							key="attendees-datetime-select"
+							selected={ attributes.datetimeId }
+							onSelect={ this.setDatetimeId }
+							queryData={ this.state.datetimeQueryData }
+						/>
+					}
+					{ attributes.datetimeId !== 0 &&
+						<EditorTicketSelect
+							key="attendees-ticket-select"
+							selected={ attributes.ticketId }
+							onSelect={ this.setTicketId }
+							queryData={ this.state.ticketQueryData }
+						/>
+					}
 					<EditorStatusSelect
 						key="attendees-status-select"
-						statusType={ statusModel.STATUS_TYPE_REGISTRATION }
-						selectedStatusId={ attributes.status }
-						onStatusSelect={ this.setStatus }
+						selected={ attributes.status }
+						onSelect={ this.setStatus }
+						queryData={ this.state.statusQueryData }
 						label={ __( 'Select Registration Status', 'event_espresso' ) }
 					/>
 					<QueryLimit
