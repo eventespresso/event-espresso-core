@@ -18,6 +18,7 @@ const externals = {
 	'react-dom': 'eejs.vendor.reactDom',
 	'react-redux': 'eejs.vendor.reactRedux',
 	redux: 'eejs.vendor.redux',
+	/** classnames: 'eejs.vendor2.classnames **/
 	classnames: 'eejs.vendor.classnames',
 	lodash: 'eejs.vendor.lodash',
 	'moment-timezone': 'eejs.vendor.moment',
