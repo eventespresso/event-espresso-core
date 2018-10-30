@@ -83,7 +83,7 @@ describe( 'buildOptions()', () => {
 		);
 	} );
 	it( 'returns expected values for options using default optionsEntityMap for DatetimeSelect', () => {
-		const testLocalMoment = moment().local();
+		const testLocalMoment = moment( '2018-12-24 05:00:00' ).local();
 		const dateTimeResponse = [
 			{
 				DTT_ID: 30,

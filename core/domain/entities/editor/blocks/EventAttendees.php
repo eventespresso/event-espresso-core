@@ -63,6 +63,7 @@ class EventAttendees extends Block
                 'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoStandardPostTypeEditor',
                 'EventEspresso\core\domain\entities\route_match\specifications\admin\WordPressPostTypeEditor',
                 'EventEspresso\core\domain\entities\route_match\specifications\frontend\EspressoBlockRenderer',
+                'EventEspresso\core\domain\entities\route_match\specifications\frontend\AnyFrontendRequest'
             )
         );
         $EVT_ID = $this->request->getRequestParam('page') === 'espresso_events'
@@ -70,27 +71,27 @@ class EventAttendees extends Block
             : 0;
         $this->setAttributes(
             array(
-                'eventId'            => array(
+                'eventId'           => array(
                     'type'    => 'number',
                     'default' => $EVT_ID,
                 ),
-                'datetimeId'         => array(
+                'datetimeId'        => array(
                     'type'    => 'number',
                     'default' => 0,
                 ),
-                'ticketId'           => array(
+                'ticketId'          => array(
                     'type'    => 'number',
                     'default' => 0,
                 ),
-                'status'              => array(
+                'status'            => array(
                     'type'    => 'string',
                     'default' => EEM_Registration::status_id_approved,
                 ),
-                'limit' => array(
+                'limit'             => array(
                     'type'    => 'number',
                     'default' => 10,
                 ),
-                'showGravatar'       => array(
+                'showGravatar'      => array(
                     'type'    => 'boolean',
                     'default' => false,
                 ),
@@ -136,16 +137,21 @@ class EventAttendees extends Block
             $convert = $this->getAttributesMap();
             if (isset($convert[ $attribute ])) {
                 $sanitize = $convert[ $attribute ]['sanitize'];
+                $converted_attribute_key = $convert[ $attribute ]['attribute'];
                 if ($sanitize === 'bool') {
-                    $attributes[ $convert[ $attribute ]['attribute'] ] = filter_var(
+                    $attributes[ $converted_attribute_key ] = filter_var(
                         $value,
                         FILTER_VALIDATE_BOOLEAN
                     );
                 } else {
-                    $attributes[ $convert[ $attribute ]['attribute'] ] = $sanitize($value);
+                    $attributes[ $converted_attribute_key ] = $sanitize($value);
                 }
-                if ($attribute !== $convert[ $attribute ]['attribute']) {
+                if ($attribute !== $converted_attribute_key) {
                     unset($attributes[ $attribute ]);
+                }
+                // don't pass along attributes with a 0 value
+                if ($attributes[ $converted_attribute_key ] === 0) {
+                    unset($attributes[ $converted_attribute_key ]);
                 }
             }
         }
@@ -154,7 +160,40 @@ class EventAttendees extends Block
 
 
     /**
-     * returns the rendered HTML for the block
+     * This ensures we're only sending along the needed attribute for grabbing attendees.
+     * In order:
+     *
+     * - if ticket_id is present then datetime or event id are unneeded.
+     * - if datetime_id is present than event_id is not needed.
+     *
+     * @param array $attributes
+     * @return array
+     */
+    private function includeNecessaryOnly(array $attributes)
+    {
+        if ($attributes['ticket_id'] > 0) {
+            unset($attributes['event_id'], $attributes['datetime_id']);
+        }
+        if ($attributes['datetime_id'] > 0) {
+            unset($attributes['event_id']);
+        }
+        return $attributes;
+    }
+
+
+    /**
+     * Returns true when there are no id values in the attributes.
+     *
+     * @param array $attributes
+     * @return bool
+     */
+    private function hasNoIds(array $attributes)
+    {
+        return empty($attributes['event_id']) && empty($attributes['datetime_id']) && empty($attributes['ticket_id']);
+    }
+
+    /**
+     * Returns the rendered HTML for the block
      *
      * @param array $attributes
      * @return string
@@ -166,6 +205,45 @@ class EventAttendees extends Block
      */
     public function renderBlock(array $attributes = array())
     {
-        return $this->shortcode->processShortcode($this->parseAttributes($attributes));
+        $attributes = $this->includeNecessaryOnly($this->parseAttributes($attributes));
+        $rendered_content = $this->shortcode->processShortcode($attributes);
+        if (empty($rendered_content)) {
+            return $this->noContentRender($attributes);
+        }
+        if ($this->hasNoIds($attributes) && $this->request->isWordPressApi()) {
+            $rendered_content = '<div class="components-notice is-success"><p>' . esc_html__(
+                'The content displayed is for the most recent active or upcoming event.  You can display attendees from a different event, ticket or datetime via the block settings.',
+                'event_espresso'
+            ) . '</p></div>' . $rendered_content;
+        }
+        return $rendered_content;
+    }
+
+
+    /**
+     * Returns rendered content for block when there is no content for rendering due to various conditions.
+     * This content ONLY appears in the editor context.
+     *
+     * @param array $attributes
+     * @return string
+     */
+    private function noContentRender(array $attributes)
+    {
+        $content = '';
+        if ($this->request->isWordPressApi()) {
+            if (empty($attributes['event_id'])) {
+                $content .= esc_html__(
+                    'There are no active or selected events to pull attendees from at this moment. This message only appears in the editor.',
+                    'event_espresso'
+                );
+            } else {
+                $content .= esc_html__(
+                    'There was a problem displaying the content for the selected options. This message only appears in the editor.',
+                    'event_espresso'
+                );
+            }
+            $content = $content !== '' ? '<div class="components-notice is-error"><p>' . $content . '</p></div>' : $content;
+        }
+        return $content;
     }
 }

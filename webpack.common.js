@@ -13,6 +13,7 @@ const externals = {
 	'@wordpress/blocks': 'wp.blocks',
 	'@wordpress/editor': 'wp.editor',
 	'@wordpress/compose': 'wp.compose',
+	'@wordpress/hooks': 'wp.hooks',
 	react: 'eejs.vendor.react',
 	'react-dom': 'eejs.vendor.reactDom',
 	'react-redux': 'eejs.vendor.reactRedux',
@@ -20,6 +21,7 @@ const externals = {
 	classnames: 'eejs.vendor.classnames',
 	lodash: 'eejs.vendor.lodash',
 	'moment-timezone': 'eejs.vendor.moment',
+	cuid: 'eejs.vendor.cuid',
 };
 
 /** see below for multiple configurations.

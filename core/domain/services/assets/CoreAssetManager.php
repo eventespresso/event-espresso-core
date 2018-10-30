@@ -185,13 +185,6 @@ class CoreAssetManager extends AssetManager
         );
 
         $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'data-stores'),
-            array(CoreAssetManager::JS_HANDLE_EE_VENDOR, 'wp-data', 'wp-api-request')
-        )
-        ->setRequiresTranslation();
-
-        $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_HELPERS,
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'helpers')
         )->setRequiresTranslation();
@@ -211,6 +204,18 @@ class CoreAssetManager extends AssetManager
                 CoreAssetManager::JS_HANDLE_EE_MODEL
             )
         )->setRequiresTranslation();
+
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'data-stores'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_VENDOR,
+                'wp-data',
+                'wp-api-request',
+                CoreAssetManager::JS_HANDLE_EE_VALUE_OBJECTS
+            )
+        )
+             ->setRequiresTranslation();
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_HOC_COMPONENTS,

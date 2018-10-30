@@ -10,6 +10,7 @@ describe( 'endpoints', () => {
 	it( 'has the expected values from eejs.data', () => {
 		expect( endpoints ).toEqual(
 			{
+				datetime: '/ee/v4.8.36/datetimes',
 				event: '/ee/v4.8.36/events',
 				ticket: '/ee/v4.8.36/tickets',
 				venue: '/ee/v4.8.36/venues',
@@ -31,7 +32,7 @@ describe( 'getEndpoint()', () => {
 	it( 'returns the correct endpoint value for the requested model', () => {
 		expect(
 			getEndpoint( 'event' ),
-		).toEqual( '/ee/v4.8.36/events' );
+		).toEqual( '/wp-json/ee/v4.8.36/events' );
 	} );
 } );
 
@@ -41,6 +42,6 @@ describe( 'applyQueryString()', () => {
 		const queryString = 'something=1';
 		expect(
 			applyQueryString( 'event', queryString ),
-		).toEqual( '/ee/v4.8.36/events?' + queryString );
+		).toEqual( '/wp-json/ee/v4.8.36/events?' + queryString );
 	} );
 } );
