@@ -169,3 +169,18 @@ export const minNumber = min => value => (
 export const required = value => ! value ?
 	__( 'This is a required field', 'event_espresso' ) :
 	null;
+
+const validations = {
+	isFloat,
+	isInteger,
+	isNumeric,
+	matches,
+	maxFloat,
+	maxLength,
+	maxNumber,
+	minFloat,
+	minLength,
+	minNumber,
+	required,
+};
+export default validations;
