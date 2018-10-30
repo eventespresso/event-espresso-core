@@ -111,6 +111,8 @@ abstract class BrowserAsset extends Asset
 
 
     /**
+     * @todo investigate why this isn't working as expected.  We're seeing `?ver=` strings output for the url path with
+     *       core version even though for built hash assets this should not be the case.
      * @return string
      * @throws InvalidDataTypeException
      */
