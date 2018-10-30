@@ -43,12 +43,12 @@ export const isNumeric = value => ! isValidNumeric( value ) ?
 
 /**
  * @function
- * @param {mixed} field
+ * @param {mixed} fieldValue
  * @param {string} fieldName
  * @return {string|undefined} error string on fail
  */
-export const matches = ( field, fieldName ) => value => {
-	return ! value || field !== value ?
+export const matches = ( fieldValue, fieldName ) => valueToMatch => {
+	return ! valueToMatch || fieldValue !== valueToMatch ?
 		sprintf(
 			__( 'Value should match %s', 'event_espresso' ),
 			fieldName
