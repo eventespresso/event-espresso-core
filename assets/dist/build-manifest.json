@@ -1,6 +1,7 @@
 {
-  "components.js": "ee-components.87eb17bdf9002cf012f9.dist.js",
-  "data-stores.js": "ee-data-stores.28ea8ed949b8f5a04f42.dist.js",
+  "components.css": "ee-components.197880c74c1b842be788.dist.css",
+  "components.js": "ee-components.f8f9e0f3357fbfb33f12.dist.js",
+  "data-stores.js": "ee-data-stores.f1fab6b4bfd1289565f7.dist.js",
   "eejs.js": "ee-eejs.cb48282a0ffe4748b15d.dist.js",
   "eventespresso-core-blocks.css": "ee-eventespresso-core-blocks.033e69672d82f0b5a77e.dist.css",
   "eventespresso-core-blocks.js": "ee-eventespresso-core-blocks.6669224e8232954e949e.dist.js",
