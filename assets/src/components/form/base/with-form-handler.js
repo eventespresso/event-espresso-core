@@ -102,7 +102,7 @@ export const withFormHandler = (
 							);
 						} }
 					/>
-				</FormErrorBoundaryerrorMessage>
+				</FormErrorBoundary>
 			);
 		}
 	}
