@@ -7,7 +7,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal imports
  */
-import { FormColumn, FormRow } from './index';
+import { default as FormColumn } from './form-column';
+import { default as FormRow } from './form-row';
 
 /**
  * AutoColumnRow
