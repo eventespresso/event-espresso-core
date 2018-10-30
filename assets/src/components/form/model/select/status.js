@@ -18,6 +18,12 @@ const optionsEntityMap = {
 	},
 };
 
+/**
+ * @todo Ensure the status selector is doing localized labels for the options
+ * on the select input.  Likely is something that can be done via the passed in
+ * optionsEntityMap.
+ * @type {ModelSelectComponent}
+ */
 const StatusSelect = createModelSelect(
 	model.MODEL_NAME,
 	{
