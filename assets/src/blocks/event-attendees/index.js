@@ -16,6 +16,16 @@ import './style.css';
 
 export const name = 'eventespresso/event-attendees';
 
+/**
+ * @todo Converting this block so that:
+ * - it does not transform a shortcode to the block (we'll leave shortcodes as
+ * their own thing)
+ * - it does not use SSR for rendering the content, instead uses lazy loading
+ * to load the content and its own styled content. Will also need to make sure
+ * that the server rendering uses the same styles/template as the editor
+ * rendering (and possible allow for toggling server side or client side
+ * rendering via editor controls).
+ */
 export const settings = {
 
 	title: __( 'Event Attendees', 'event_espresso' ),
