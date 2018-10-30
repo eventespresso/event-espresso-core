@@ -6,7 +6,7 @@ import { isArray } from 'lodash';
 /**
  * Internal imports
  */
-import { mapValidatorsToAttributes } from '../inputs/base/utils';
+import { addValidatorsToAttributes } from '../inputs/base/utils';
 import { InputLabel } from '../inputs/base/input-label';
 
 /**
@@ -46,7 +46,7 @@ export const AutoFormRow = ( {
 			const validations = isArray( FormElement.props.validations ) ?
 				FormElement.props.validations :
 				[ FormElement.props.validations ];
-			const attributes = mapValidatorsToAttributes(
+			const attributes = addValidatorsToAttributes(
 				{ ...FormElement.props },
 				validations
 			);

@@ -19,7 +19,7 @@ import { InputHelpText } from './base/input-help-text';
 import {
 	cleanUpInputAttributes,
 	composeValidators,
-	mapValidatorsToAttributes,
+	addValidatorsToAttributes,
 	prepareDataSet,
 } from './base/utils';
 
@@ -78,7 +78,7 @@ export class FormInput extends Component {
 		// remove attributes that should not be passed to inputs
 		let attributes = cleanUpInputAttributes( rest );
 		// add attributes based on validations
-		attributes = mapValidatorsToAttributes( attributes, validations );
+		attributes = addValidatorsToAttributes( attributes, validations );
 		// reduce validations to a single callback
 		validations = composeValidators( ...validations );
 
