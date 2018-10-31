@@ -1474,25 +1474,33 @@ class Read extends Base
         }
         $restricted_query_params = $query_params;
         $restricted_query_params['caps'] = $context;
-        // when requesting a model related to one with a password, and it's a normal read request (yes, even if the
-        // current user has caps to view everything), remove entities related to one where the password was set.
-        $restricted_query_params = $this->excludeProtectedEntities($model, $context, $restricted_query_params);
         $this->setDebugInfo('model query params', $restricted_query_params);
         $model_rows = $model->get_all_wpdb_results($restricted_query_params);
         if (! empty($model_rows)) {
             $model_row = reset($model_rows);
-            // give error if user provided the wrong password.
-            if ($model->hasPassword()
-                && ! empty($request['password'])
-                && ! hash_equals(
-                    $model_row[ $model->getPasswordField()->get_qualified_column() ],
-                    $request['password']
-                )) {
-                return new WP_Error(
-                    'rest_post_incorrect_password',
-                    __('Incorrect password.', 'event_espresso'),
-                    array('status' => 403)
-                );
+            // wait! maybe this content is password protected
+            if ($model->restrictedByRelatedModelPassword()
+                && $context === EEM_Base::caps_read) {
+                $password_supplied = $request->get_param('password');
+                if (empty($password_supplied)) {
+                    $restricted_query_params['exclude_protected'] = true;
+                    if (!$model->exists($restricted_query_params)) {
+                        return new WP_Error(
+                            'rest_post_password_required',
+                            __('A password is required to access this content.', 'event_espresso'),
+                            array('status' => 403)
+                        );
+                    }
+                } else {
+                    $restricted_query_params[0][$model->modelChainAndPassword()] = $password_supplied;
+                    if (!$model->exists($restricted_query_params)) {
+                        return new WP_Error(
+                            'rest_post_incorrect_password',
+                            __('Incorrect password.', 'event_espresso'),
+                            array('status' => 403)
+                        );
+                    }
+                }
             }
             return $this->createEntityFromWpdbResult(
                 $model,
@@ -1502,15 +1510,14 @@ class Read extends Base
         } else {
             // ok let's test to see if we WOULD have found it, had we not had restrictions from missing capabilities
             $lowercase_model_name = strtolower($model->get_this_model_name());
-            $model_rows_found_sans_restrictions = $model->get_all_wpdb_results($query_params);
-            if (! empty($model_rows_found_sans_restrictions)) {
+            if (! $model->exists($query_params)) {
                 // you got shafted- it existed but we didn't want to tell you!
                 return new WP_Error(
                     'rest_user_cannot_' . $context,
                     sprintf(
                         __('Sorry, you cannot %1$s this %2$s. Missing permissions are: %3$s', 'event_espresso'),
                         $context,
-                        strtolower($model->get_this_model_name()),
+                        $lowercase_model_name,
                         Capabilities::getMissingPermissionsString(
                             $model,
                             $context
