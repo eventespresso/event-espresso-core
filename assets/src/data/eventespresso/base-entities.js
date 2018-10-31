@@ -3,7 +3,7 @@
  */
 import { upperFirst, camelCase, reduce, isMap, isNaN } from 'lodash';
 import pluralize from 'pluralize';
-import { mapReducer } from '@eventespresso/eejs';
+import { mapReducer } from '@eventespresso/helpers';
 
 /**
  * A helper for getting a method name.

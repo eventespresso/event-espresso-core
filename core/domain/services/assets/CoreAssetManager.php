@@ -59,6 +59,8 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_EE_COMPONENTS = 'eventespresso-components';
 
+    const JS_HANDLE_EE_VALIDATORS = 'eventespresso-validators';
+
     const JS_HANDLE_EE_JS_API = 'eejs-api';
 
     const JS_HANDLE_EE_CORE = 'espresso_core';
@@ -185,8 +187,16 @@ class CoreAssetManager extends AssetManager
         );
 
         $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_VALIDATORS,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'validators')
+        )->setRequiresTranslation();
+
+        $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_HELPERS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'helpers')
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'helpers'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_VALIDATORS
+            )
         )->setRequiresTranslation();
 
         $this->addJavascript(

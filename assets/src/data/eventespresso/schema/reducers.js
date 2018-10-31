@@ -7,7 +7,7 @@ import { isUndefined } from 'lodash';
 import {
 	isSchemaResponseOfModel,
 	isModelEntityFactoryOfModel,
-} from '@eventespresso/eejs';
+} from '@eventespresso/validators';
 
 /**
  * Internal dependencies

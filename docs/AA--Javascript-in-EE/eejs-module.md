@@ -89,45 +89,7 @@ This property is a set of various "helper" or utility functions with various pur
 | SEPARATOR_SPACE_DASH_SPACE | A constant used to represent this string: ` - ` |
 | SEPARATOR_COMMA_SPACE | A constant used to represent this string: `, ` |
 
-## `eejs.model`
-
-This property exposes all the model javascript interfaces for EE models. This becomes available on the `eejs` global when the `CoreAssetManager::JS_HANDLE_EE_MODEL` script handle is registered as a dependency for wp scripts.
-
-| Property | Description |
-| -------- | ----------- |
-| DEFAULT_LISTS_STATE | An object representing the default state to be used by stores containing lists.
-| DEFAULT_CORE_STATE | An object representing the default state to be used by the core store. |
-| endpoints | An object containing all the exposed endpoints for rest requests (indexed by model name) |
-| getEndpoint | A function for retrieving the endpoint for the given Model name. |
-| applyQueryString | A function for applying a provided query string to the endpoint for a given model name and returning the entire string for use in a request.
-| primaryKeys | An object containing a map of modelName to primary key for that model. |
-| valuesForCombinedPrimaryKeys | A function that returns a string representation for the given keys from the provided entity.  This function would be used for models that have combined primary keys (delivered as an array)
-| valueForPrimaryKey | A function that returns the value for the given key from the provided entity. This function would be used for models that have only one primary key.
-| getPrimaryKey | A function that returns the primary key (or combined primary keys) from the available data for a given model name.
-| getEntityPrimaryKeyValues | A memoized function that returns the values for the primary keys from the provided entity.
-| keyEntitiesByPrimaryKeyValue | A function that receives an array of entities and returns a collection of those same entities indexed by the primary key value for each entity.
-| assertEntityHasKey | A function that validates (throws an exception when not valid) whether the given key exists in the provided entity object. This is used when calling code wants an exception to be thrown.
-| assertIsArray | A function that validates (throws an exception when not valid) whether the given value is an array
-| assertIsNotEmpty | A function that validates (throws an exception when not valid) whether the given value is empty or not.  Call this validator when you want to make sure the provided value is NOT empty.
-| MODEL_NAMES | An array of model names currently exposed by the site for REST API requests.
-| QUERY_ORDER_ASC | A string, `ASC`
-| QUERY_ORDER_DESC | A string, `DESC`
-| ALLOWED_ORDER_VALUES | An array of allowed order values: `[ 'asc', 'desc', 'ASC', 'DESC' ]`
-| GREATER_THAN | A string that represents the URI encoded greater than symbol.
-| LESS_THAN | A string that represents the URI encoded less than symbol.
-| GREATER_THAN_AND_EQUAL | A string that represents the URI encoded greater than and equal to symbol.
-| LESS_THAN_AND_EQUAL | A string that represents the URI encoded less than and equal to symbol.
-| getQueryString | A function that returns a query string for use by a REST request given a set of queryData.
-| dateTimeModel | A module containing all model related interfaces for the DateTime model.
-| eventModel | A module containing all model related interfaces for the Event model.
-| registrationModel | A module containing all model related interfaces for the Registration model.
-| statusModel | A module containing all model related interfaces for the Status model.
-| ticketModel | A module containing all model related interfaces for the Ticket model.
-| checkInModel | A module containing all model related interfaces for the Checkin model.
-
-Note: The list of exposed models will be added to over time so the above list may be out of date. You can find all the models and their exposed interfaces [here](../../../assets/src/data/model/)
-## Utilities
-The following are various utility functions exposed directly on the `eejs` global.
+### Other helpers:
 ### `eejs.convertToObjectFromMap( mapObject )`
 Given a map object, this returns its contents as  plain object.
 
@@ -138,34 +100,6 @@ const object = eejs.convertToObjectFromMap( map );
 // { 10: foo, 20: bar } 
 console.log( object );
 ```
-### `eejs.isModelEntityFactory( factory )`
-This is used for validating whether the given value represents a model entity factory object.
-### `eejs.isModelEntityFactoryOfModel( factory, modelName )`
-This is used for validating whether the given value represents a model entity factory for the given modelName.  **Note:** `modelName` is expected to be the lowercase, snakecase string for the model (eg. `'message_template'`).
-### `eejs.isGenerator( object )`
-This is used to validate whether the provided value is a generator or not.
-
-**Example:**
-```js
-const generator = function* () { yield 1; yield 2; return 3 };
-// returns false because this is the function not the 
-// invoked generator instance
-console.log( eejs.isGenerator( generator ) );
-// returns true because this is the invoked generator instance.
-console.log( eejs.isGenerator( generator() );
-```
-### `eejs.isModelEntity( value )`
-This is used to validate whether the given value is a model entity.
-### `eejs.isModelEntityOfModel( value, modelName )`
-This is used to validate whether the given value is a model entity for the given model name.
-### `eejs.isSchemaResponse( response )`
-Returns whether the given value represents a schema response object from a schema REST API request.
-### `eejs.isSchema( schema )`
-Returns whether the given value is a the schema object property value from the schema response (so `schemaResponse.schema`).
-### `eejs.isSchemaResponseOfModel( response, modelName )`
-Returns whether the given value is a schema response object for the given model name.
-### `eejs.isSchemaOfModel( schema , modelName )`
-Returns whether the given value represents a schema object property value from the schema response for a specific model name.
 ### `eejs.mapReducer( map, reducerCallback, defaultValue )`
 This is a reducer for map objects.
 
@@ -220,3 +154,71 @@ const merged = eejs.mergeAndDeDuplicateObjects(
 // ],
 console.log( merged );
 ```
+## `eejs.model`
+
+This property exposes all the model javascript interfaces for EE models. This becomes available on the `eejs` global when the `CoreAssetManager::JS_HANDLE_EE_MODEL` script handle is registered as a dependency for wp scripts.
+
+| Property | Description |
+| -------- | ----------- |
+| DEFAULT_LISTS_STATE | An object representing the default state to be used by stores containing lists.
+| DEFAULT_CORE_STATE | An object representing the default state to be used by the core store. |
+| endpoints | An object containing all the exposed endpoints for rest requests (indexed by model name) |
+| getEndpoint | A function for retrieving the endpoint for the given Model name. |
+| applyQueryString | A function for applying a provided query string to the endpoint for a given model name and returning the entire string for use in a request.
+| primaryKeys | An object containing a map of modelName to primary key for that model. |
+| valuesForCombinedPrimaryKeys | A function that returns a string representation for the given keys from the provided entity.  This function would be used for models that have combined primary keys (delivered as an array)
+| valueForPrimaryKey | A function that returns the value for the given key from the provided entity. This function would be used for models that have only one primary key.
+| getPrimaryKey | A function that returns the primary key (or combined primary keys) from the available data for a given model name.
+| getEntityPrimaryKeyValues | A memoized function that returns the values for the primary keys from the provided entity.
+| keyEntitiesByPrimaryKeyValue | A function that receives an array of entities and returns a collection of those same entities indexed by the primary key value for each entity.
+| assertEntityHasKey | A function that validates (throws an exception when not valid) whether the given key exists in the provided entity object. This is used when calling code wants an exception to be thrown.
+| assertIsArray | A function that validates (throws an exception when not valid) whether the given value is an array
+| assertIsNotEmpty | A function that validates (throws an exception when not valid) whether the given value is empty or not.  Call this validator when you want to make sure the provided value is NOT empty.
+| MODEL_NAMES | An array of model names currently exposed by the site for REST API requests.
+| QUERY_ORDER_ASC | A string, `ASC`
+| QUERY_ORDER_DESC | A string, `DESC`
+| ALLOWED_ORDER_VALUES | An array of allowed order values: `[ 'asc', 'desc', 'ASC', 'DESC' ]`
+| GREATER_THAN | A string that represents the URI encoded greater than symbol.
+| LESS_THAN | A string that represents the URI encoded less than symbol.
+| GREATER_THAN_AND_EQUAL | A string that represents the URI encoded greater than and equal to symbol.
+| LESS_THAN_AND_EQUAL | A string that represents the URI encoded less than and equal to symbol.
+| getQueryString | A function that returns a query string for use by a REST request given a set of queryData.
+| dateTimeModel | A module containing all model related interfaces for the DateTime model.
+| eventModel | A module containing all model related interfaces for the Event model.
+| registrationModel | A module containing all model related interfaces for the Registration model.
+| statusModel | A module containing all model related interfaces for the Status model.
+| ticketModel | A module containing all model related interfaces for the Ticket model.
+| checkInModel | A module containing all model related interfaces for the Checkin model.
+
+Note: The list of exposed models will be added to over time so the above list may be out of date. You can find all the models and their exposed interfaces [here](../../../assets/src/data/model/)
+## `eejs.validators`
+The following are various utility functions exposed directly on the `eejs` global.
+
+### `eejs.isModelEntityFactory( factory )`
+This is used for validating whether the given value represents a model entity factory object.
+### `eejs.isModelEntityFactoryOfModel( factory, modelName )`
+This is used for validating whether the given value represents a model entity factory for the given modelName.  **Note:** `modelName` is expected to be the lowercase, snakecase string for the model (eg. `'message_template'`).
+### `eejs.isGenerator( object )`
+This is used to validate whether the provided value is a generator or not.
+
+**Example:**
+```js
+const generator = function* () { yield 1; yield 2; return 3 };
+// returns false because this is the function not the 
+// invoked generator instance
+console.log( eejs.isGenerator( generator ) );
+// returns true because this is the invoked generator instance.
+console.log( eejs.isGenerator( generator() );
+```
+### `eejs.isModelEntity( value )`
+This is used to validate whether the given value is a model entity.
+### `eejs.isModelEntityOfModel( value, modelName )`
+This is used to validate whether the given value is a model entity for the given model name.
+### `eejs.isSchemaResponse( response )`
+Returns whether the given value represents a schema response object from a schema REST API request.
+### `eejs.isSchema( schema )`
+Returns whether the given value is a the schema object property value from the schema response (so `schemaResponse.schema`).
+### `eejs.isSchemaResponseOfModel( response, modelName )`
+Returns whether the given value is a schema response object for the given model name.
+### `eejs.isSchemaOfModel( schema , modelName )`
+Returns whether the given value represents a schema object property value from the schema response for a specific model name.

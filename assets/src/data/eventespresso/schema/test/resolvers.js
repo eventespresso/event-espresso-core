@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { EventSchema } from '@test/fixtures';
-import { isGenerator } from '@eventespresso/eejs';
+import { isGenerator } from '@eventespresso/validators';
 
 /**
  * Internal imports
