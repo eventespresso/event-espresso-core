@@ -19,7 +19,7 @@ import {
  * @param {mixed} value
  * @return {string|null} error string on fail
  */
-export const isFloat = value => ! isValidFloat( value ) ?
+export const isFloat = value => ! isValidFloat( +value ) ?
 	__( 'Value must be a float', 'event_espresso' ) :
 	null;
 
@@ -28,7 +28,7 @@ export const isFloat = value => ! isValidFloat( value ) ?
  * @param {mixed} value
  * @return {string|null} error string on fail
  */
-export const isInteger = value => ! isValidInteger( value ) ?
+export const isInteger = value => ! isValidInteger( +value ) ?
 	__( 'Value must be an integer', 'event_espresso' ) :
 	null;
 
@@ -37,7 +37,7 @@ export const isInteger = value => ! isValidInteger( value ) ?
  * @param {mixed} value
  * @return {string|undefined} error string on fail
  */
-export const isNumeric = value => ! isValidNumeric( value ) ?
+export const isNumeric = value => ! isValidNumeric( +value ) ?
 	__( 'Value must be a number', 'event_espresso' ) :
 	null;
 
@@ -47,29 +47,29 @@ export const isNumeric = value => ! isValidNumeric( value ) ?
  * @param {string} fieldName
  * @return {string|undefined} error string on fail
  */
-export const matches = ( fieldValue, fieldName ) => valueToMatch => (
+export const matches = ( fieldValue, fieldName ) => valueToMatch =>
 	! valueToMatch || fieldValue !== valueToMatch ?
 		sprintf(
 			__( 'Value should match %s', 'event_espresso' ),
 			fieldName
-		) : null
-);
+		) : null;
 
 /**
  * @function
  * @param {number} max
  * @return {string|null} error string on fail
  */
-export const maxFloat = max => value => ! floatLessThanOrEqualTo( max, value ) ?
-	sprintf(
-		_n(
-			'Number should not be greater than %f',
-			'Number should not be greater than %f',
-			max,
-			'event_espresso'
-		),
-		max
-	) : null;
+export const maxFloat = max => value =>
+	! floatLessThanOrEqualTo( +max, +value ) ?
+		sprintf(
+			_n(
+				'Number should not be greater than %f',
+				'Number should not be greater than %f',
+				max,
+				'event_espresso'
+			),
+			max
+		) : null;
 
 /**
  * @function
@@ -77,7 +77,7 @@ export const maxFloat = max => value => ! floatLessThanOrEqualTo( max, value ) ?
  * @return {string|null} error string on fail
  */
 export const maxLength = ( max = 1024 ) => value => (
-	! stringLengthLessThanOrEqualTo( max, value.length ) ?
+	! stringLengthLessThanOrEqualTo( +max, value ) ?
 		sprintf(
 			_n(
 				'Value should not exceed %d character in length',
@@ -94,8 +94,8 @@ export const maxLength = ( max = 1024 ) => value => (
  * @param {number} max
  * @return {string|null} error string on fail
  */
-export const maxNumber = max => value => ! (
-	! numberLessThanOrEqualTo( max, value ) ?
+export const maxNumber = max => value => (
+	! numberLessThanOrEqualTo( +max, +value ) ?
 		sprintf(
 			_n(
 				'Number should not be greater than %d',
@@ -113,7 +113,7 @@ export const maxNumber = max => value => ! (
  * @return {string|null} error string on fail
  */
 export const minFloat = min => value => (
-	! floatGreaterThanOrEqualTo( min, value ) ?
+	! floatGreaterThanOrEqualTo( +min, +value ) ?
 		sprintf(
 			_n(
 				'Number should not be less than %f',
@@ -131,7 +131,7 @@ export const minFloat = min => value => (
  * @return {string|null} error string on fail
  */
 export const minLength = ( min = 1 ) => value => (
-	! stringLengthGreaterThanOrEqualTo( min, value ) ?
+	! stringLengthGreaterThanOrEqualTo( +min, value ) ?
 		sprintf(
 			_n(
 				'Value should be at least %d character in length',
@@ -149,7 +149,7 @@ export const minLength = ( min = 1 ) => value => (
  * @return {string|null} error string on fail
  */
 export const minNumber = min => value => (
-	! numberGreaterThanOrEqualTo( min, value ) ?
+	! numberGreaterThanOrEqualTo( +min, +value ) ?
 		sprintf(
 			_n(
 				'Number should not be less than %d',
@@ -167,7 +167,7 @@ export const minNumber = min => value => (
  * @return {string|null} error string on fail
  */
 export const required = value => ! value ?
-	__( 'This is a required field', 'event_espresso' ) :
+	__( 'Please enter a value', 'event_espresso' ) :
 	null;
 
 const validations = {
