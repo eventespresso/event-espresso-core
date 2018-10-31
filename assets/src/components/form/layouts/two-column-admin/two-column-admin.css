@@ -375,7 +375,9 @@
 }
 
 .espresso-input-help-text {
+    color: #706e73;
     display: inline-block;
+    font-style: italic;
     line-height: inherit;
     margin: .5em 0 !important;
 }
