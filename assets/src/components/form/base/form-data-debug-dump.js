@@ -1,7 +1,11 @@
 /**
+ * External imports
+ */
+import { __DEV__ } from '@eventespresso/eejs';
+
+/**
  * Internal imports
  */
-import { __DEV__ } from '../../../data/utils/constants';
 import './form-data-debug-dump.css';
 
 /**

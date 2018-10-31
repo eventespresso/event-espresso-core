@@ -22,6 +22,7 @@ const {
 	isSchema,
 	isSchemaResponseOfModel,
 	isSchemaOfModel,
+	__DEV__,
 } = require( '../../../../../assets/src/eejs' );
 
 const newCurrencyConfig = {
@@ -106,3 +107,4 @@ module.exports.isSchemaResponse = isSchemaResponse;
 module.exports.isSchema = isSchema;
 module.exports.isSchemaResponseOfModel = isSchemaResponseOfModel;
 module.exports.isSchemaOfModel = isSchemaOfModel;
+module.exports.__DEV__ = __DEV__;
