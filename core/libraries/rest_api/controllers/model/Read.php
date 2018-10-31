@@ -355,6 +355,11 @@ class Read extends Base
     public function getEntitiesFromModel($model, $request)
     {
         $query_params = $this->createModelQueryParams($model, $request->get_params());
+        // when fetching a collection that's should be protected by a related model's password
+        // exclude results related to an entity with a password.
+        if($model->restrictedByRelatedModelPassword()){
+            $query_params = $this->excludeProtectedEntities($model,$request->get_param('caps'), $query_params);
+        }
         if (! Capabilities::currentUserHasPartialAccessTo($model, $query_params['caps'])) {
             $model_name_plural = EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
             return new WP_Error(
@@ -1043,6 +1048,7 @@ class Read extends Base
         );
         // note: setting calculate=* doesn't do anything
         $calculated_fields_to_return = new \stdClass();
+        $protected_fields = array();
         foreach ($calculated_fields as $field_to_calculate) {
             try {
                 // it's password protected, so they shouldn't be able to read this. Remove the value
@@ -1051,7 +1057,7 @@ class Read extends Base
                     && isset($schema['properties'][ $field_to_calculate ]['protected'])
                     && $schema['properties'][ $field_to_calculate ]['protected']) {
                     $calculated_value = null;
-
+                    $protected_fields[] = $field_to_calculate;
                     if ($schema['properties'][ $field_to_calculate ]['type']) {
                         switch ($schema['properties'][ $field_to_calculate ]['type']) {
                             case 'boolean':
@@ -1100,6 +1106,7 @@ class Read extends Base
                 );
             }
         }
+        $calculated_fields_to_return->_protected = $protected_fields;
         return $calculated_fields_to_return;
     }
 
@@ -1301,13 +1308,6 @@ class Read extends Base
         } else {
             $model_query_params['caps'] = EEM_Base::caps_read;
         }
-        // is this a request for a model related to one with a password?
-        // if so, we don't show data related to password protected posts
-        $model_query_params = $this->excludeProtectedEntities(
-            $model,
-            $model_query_params['caps'],
-            $model_query_params
-        );
         if (isset($query_parameters['default_where_conditions'])) {
             $model_query_params['default_where_conditions'] = $this->validateDefaultQueryParams(
                 $query_parameters['default_where_conditions']

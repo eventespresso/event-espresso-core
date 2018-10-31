@@ -232,7 +232,12 @@ class JsonModelSchema
                     ),
                     'additionalProperties' => false,
                 ),
-                '_calculated_fields' => $this->fields_calculator->getJsonSchemaForModel($this->model),
+                '_calculated_fields' => array_merge(
+                    $this->fields_calculator->getJsonSchemaForModel($this->model),
+                    array(
+                        '_protected' => $this->getProtectedFieldsSchema()
+                    )
+                ),
                 '_protected' => $this->getProtectedFieldsSchema()
             ),
             'additionalProperties' => false,
