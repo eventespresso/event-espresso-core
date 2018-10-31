@@ -276,6 +276,7 @@ class EEM_Event extends EEM_CPT_Base
         );
         // this model is generally available for reading
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+        $this->model_chain_to_password = '';
         parent::__construct($timezone);
     }
 

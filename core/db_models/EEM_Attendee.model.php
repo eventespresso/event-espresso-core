@@ -288,6 +288,7 @@ class EEM_Attendee extends EEM_CPT_Base
             'Term_Taxonomy'     => new EE_HABTM_Relation('Term_Relationship'),
         );
         $this->_caps_slug = 'contacts';
+        $this->model_chain_to_password = '';
         parent::__construct($timezone);
     }
 
