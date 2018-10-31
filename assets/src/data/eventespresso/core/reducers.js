@@ -4,7 +4,7 @@
 import {
 	mergeAndDeDuplicateArrays,
 	convertToObjectFromMap,
-} from '@eventespresso/eejs';
+} from '@eventespresso/helpers';
 import { keys, isEmpty, difference, isMap } from 'lodash';
 
 /**

@@ -3,7 +3,8 @@
  */
 import { isUndefined } from 'lodash';
 import { sprintf } from '@eventespresso/i18n';
-import { InvalidSchema, isSchema } from '@eventespresso/eejs';
+import { InvalidSchema } from '@eventespresso/eejs';
+import { isSchema } from '@eventespresso/validators';
 /**
  * Internal imports
  */

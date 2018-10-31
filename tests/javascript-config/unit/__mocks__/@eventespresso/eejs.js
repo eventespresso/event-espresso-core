@@ -9,19 +9,6 @@ const {
 	InvalidISO8601String,
 	InvalidLocale,
 	InvalidDateTime,
-	mergeAndDeDuplicateArrays,
-	mergeAndDeDuplicateObjects,
-	mapReducer,
-	convertToObjectFromMap,
-	isGenerator,
-	isModelEntity,
-	isModelEntityFactory,
-	isModelEntityFactoryOfModel,
-	isModelEntityOfModel,
-	isSchemaResponse,
-	isSchema,
-	isSchemaResponseOfModel,
-	isSchemaOfModel,
 } = require( '../../../../../assets/src/eejs' );
 
 const newCurrencyConfig = {
@@ -93,16 +80,3 @@ module.exports.InvalidTimezone = InvalidTimezone;
 module.exports.InvalidISO8601String = InvalidISO8601String;
 module.exports.InvalidLocale = InvalidLocale;
 module.exports.InvalidDateTime = InvalidDateTime;
-module.exports.mergeAndDeDuplicateArrays = mergeAndDeDuplicateArrays;
-module.exports.mergeAndDeDuplicateObjects = mergeAndDeDuplicateObjects;
-module.exports.mapReducer = mapReducer;
-module.exports.convertToObjectFromMap = convertToObjectFromMap;
-module.exports.isGenerator = isGenerator;
-module.exports.isModelEntity = isModelEntity;
-module.exports.isModelEntityFactory = isModelEntityFactory;
-module.exports.isModelEntityFactoryOfModel = isModelEntityFactoryOfModel;
-module.exports.isModelEntityOfModel = isModelEntityOfModel;
-module.exports.isSchemaResponse = isSchemaResponse;
-module.exports.isSchema = isSchema;
-module.exports.isSchemaResponseOfModel = isSchemaResponseOfModel;
-module.exports.isSchemaOfModel = isSchemaOfModel;
