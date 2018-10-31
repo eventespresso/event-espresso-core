@@ -1,4 +1,10 @@
 /**
+ * @todo
+ * This and all other validators in this file should be moved to `eejs.validators`
+ * Also move `map-reducer` and `merge-and-de-duplicate.js` into `eejs.helpers`
+ */
+
+/**
  * External imports
  */
 import { isUndefined } from 'lodash';
