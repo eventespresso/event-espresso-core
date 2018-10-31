@@ -704,7 +704,7 @@ class Read extends Base
      */
     protected function addProtectedProperty(EEM_Base $model, $results_so_far, $protected)
     {
-        if (! $model->hasPassword()) {
+        if (! $model->hasPassword() || ! $protected) {
             return array();
         }
         $password_field = $model->getPasswordField();
@@ -719,9 +719,7 @@ class Read extends Base
         );
         $protected_property = array();
         foreach ($fields_included as $field_name) {
-            $protected_property[ $field_name ] = array(
-                'protected' => $protected
-            );
+            $protected_property[] = $field_name ;
         }
         return $protected_property;
     }

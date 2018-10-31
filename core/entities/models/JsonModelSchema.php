@@ -258,15 +258,13 @@ class JsonModelSchema
             );
         }
         return array(
-            'description' => esc_html__('Fields whose values may be replaced with their default if they are related to a password-protected entity.', 'event_espresso'),
-            'type' => 'object',
+            'description' => esc_html__('Array of property names whose values were replaced with their default (because they are related to a password-protected entity.)', 'event_espresso'),
+            'type' => 'array',
             'items' => array(
-                'type' => 'object',
-                'properties' => $protected_fields_properties,
-                'additionalProperties' => false,
+                'description' => esc_html__('Each name corresponds to a property that is protected by password for this entity and has its default value returned in the response.', 'event_espresso'),
+                'type' => 'string',
                 'readonly' => true,
             ),
-            'additionalProperties' => false,
             'readonly' => true
         );
     }
