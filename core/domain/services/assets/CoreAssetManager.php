@@ -373,7 +373,8 @@ class CoreAssetManager extends AssetManager
             $this->registry->getCssUrl(
                 $this->domain->assetNamespace(),
                 'components'
-            )
+            ),
+            ['wp-components']
         );
     }
 
