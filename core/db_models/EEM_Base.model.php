@@ -131,15 +131,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * String describing how to find the model with a password controlling access to this model. This property has the
      * same format as $_model_chain_to_wp_user. This is primarily used by the query param "exclude_protected".
-     * If this is `null` that indicates no passwords on any models affect which of this model's objects are fully
-     * visible. If this model has a password field, that field indicates which fields should be hidden for users without
-     * the password; if this model doesn't have a password field, then there is no password on any model that affects
-     * visibility of this model's entities.
-     * Eg this is null for the Event model (which has a password) because model queries should include events with
-     * passwords (just template or REST API code takes care of hiding the protected fields indicated by the password
-     * field).
-     * This is also null for the Registration model, because its event's password has no bearing on whether
-     * you can read the registration or not- it just depends on your capabilities.
+     * This value is the path of models to follow to arrive at the model with the password field.
+     * If it is an empty string, it means this model has the password field. If it is null, it means there is no
+     * model with a password that should affect reading this on the front-end.
+     * Eg this is an empty string for the Event model because it has a password.
+     * This is null for the Registration model, because its event's password has no bearing on whether
+     * you can read the registration or not on the front-end (it just depends on your capabilities.)
      * This is 'Datetime.Event' on the Ticket model, because model queries for tickets that set "exclude_protected"
      * should hide tickets for datetimes for events that have a password set.
      * @var string |null
@@ -3503,50 +3500,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         // check if we should alter the query to remove data related to protected
         // custom post types
         if (isset($query_params['exclude_protected']) && $query_params['exclude_protected'] === true) {
-            if ($this->model_chain_to_password === null) {
-                throw new ModelConfigurationException(
-                    $this,
-                    esc_html_x(
-                        // @codingStandardsIgnoreStart
-                        'Cannot exclude protected data because the model has not specified which model has the password.',
-                        // @codingStandardsIgnoreEnd
-                        '1: model name',
-                        'event_espresso'
-                    )
-                );
-            }
-            if ($this->model_chain_to_password === '') {
-                $model_with_password = $this;
-            } else {
-                if ($pos_of_period = strrpos($this->model_chain_to_password, '.')) {
-                    $last_model_in_chain = substr($this->model_chain_to_password, $pos_of_period + 1);
-                } else {
-                    $last_model_in_chain = $this->model_chain_to_password;
-                }
-                $model_with_password = EE_Registry::instance()->load_model($last_model_in_chain);
-            }
-
-            $password_field = $model_with_password->getPasswordField();
-            if ($password_field instanceof EE_Password_Field) {
-                $password_field_name = $password_field->get_name();
-            } else {
-                throw new ModelConfigurationException(
-                    $this,
-                    sprintf(
-                        esc_html_x(
-                            'This model claims related model "%1$s" should have a password field on it, but none was found. The model relation chain is "%2$s"',
-                            '1: model name, 2: special string',
-                            'event_espresso'
-                        ),
-                        $model_with_password->get_this_model_name(),
-                        $this->model_chain_to_password
-                    )
-                );
-            }
+            $where_param_key_for_password = $this->modelChainAndPassword();
             // only include if related to a cpt where no password has been set
             $query_params[0]['OR*nopassword'] = array(
-                $this->model_chain_to_password . '.' . $password_field_name  => '',
-                $this->model_chain_to_password . '.' . $password_field_name . '*' => array('IS_NULL')
+                $where_param_key_for_password => '',
+                $where_param_key_for_password . '*' => array('IS_NULL')
             );
         }
         $query_object = $this->_extract_related_models_from_query($query_params);
@@ -6555,19 +6513,65 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     }
 
     /**
-     * Returns the sequence of models between this model and the one with a password field that controls access.
-     * A blank string means this model has the password; null means no model related model's password
-     * controls access to this model.
+     * Returns the query param where conditions key to the password affecting this model.
+     * Eg on EEM_Event this would just be "password", on EEM_Datetime this would be "Event.password", etc.
      * @since $VID:$
      * @return null|string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ModelConfigurationException
+     * @throws ReflectionException
      */
-    public function modelChainToPassword()
+    public function modelChainAndPassword()
     {
-        return $this->model_chain_to_password;
+        if ($this->model_chain_to_password === null) {
+            throw new ModelConfigurationException(
+                $this,
+                esc_html_x(
+                // @codingStandardsIgnoreStart
+                    'Cannot exclude protected data because the model has not specified which model has the password.',
+                    // @codingStandardsIgnoreEnd
+                    '1: model name',
+                    'event_espresso'
+                )
+            );
+        }
+        if ($this->model_chain_to_password === '') {
+            $model_with_password = $this;
+        } else {
+            if ($pos_of_period = strrpos($this->model_chain_to_password, '.')) {
+                $last_model_in_chain = substr($this->model_chain_to_password, $pos_of_period + 1);
+            } else {
+                $last_model_in_chain = $this->model_chain_to_password;
+            }
+            $model_with_password = EE_Registry::instance()->load_model($last_model_in_chain);
+        }
+
+        $password_field = $model_with_password->getPasswordField();
+        if ($password_field instanceof EE_Password_Field) {
+            $password_field_name = $password_field->get_name();
+        } else {
+            throw new ModelConfigurationException(
+                $this,
+                sprintf(
+                    esc_html_x(
+                        'This model claims related model "%1$s" should have a password field on it, but none was found. The model relation chain is "%2$s"',
+                        '1: model name, 2: special string',
+                        'event_espresso'
+                    ),
+                    $model_with_password->get_this_model_name(),
+                    $this->model_chain_to_password
+                )
+            );
+        }
+        return ($this->model_chain_to_password ? $this->model_chain_to_password . '.' : '') . $password_field_name;
     }
 
     /**
-     * Returns true if there is a password on a related model which restricts access to some of this model's rows.
+     * Returns true if there is a password on a related model which restricts access to some of this model's rows,
+     * or if this model itself has a password affecting access to some of its other fields.
      * @since $VID:$
      * @return boolean
      */
