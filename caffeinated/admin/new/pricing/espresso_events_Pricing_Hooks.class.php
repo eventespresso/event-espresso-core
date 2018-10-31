@@ -1031,7 +1031,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             // $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? ' ee-collapsible-closed' : ' ee-collapsible-open'
         );
         $timezone = $event instanceof EE_Event ? $event->timezone_string() : null;
-        // do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         /**
          * 1. Start with retrieving Datetimes
          * 2. For each datetime get related tickets
