@@ -33,14 +33,16 @@ export const FormSubmitButton = ( {
 		null;
 	return (
 		<Fragment>
-			<Button
-				isDefault
-				type="submit"
-				disabled={ submitting }
-			>
-				{ buttonText }
-			</Button>
-			{ submittingNotice }
+			{
+				submittingNotice ||
+				<Button
+					isPrimary
+					type="submit"
+					disabled={ submitting }
+				>
+					{ buttonText }
+				</Button>
+			}
 		</Fragment>
 	);
 };
