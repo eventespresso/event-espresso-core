@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\values\assets;
 
+use DomainException;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 
@@ -113,18 +114,13 @@ abstract class BrowserAsset extends Asset
     /**
      * @return string
      * @throws InvalidDataTypeException
+     * @throws DomainException
      */
     public function version()
     {
         // if version is NOT set and this asset was NOT built for distribution,
         // then set the version equal to the EE core plugin version
-        if (
-            $this->version === null
-            && (
-                substr($this->source, -8) !== Asset::FILE_EXTENSION_DISTRIBUTION_JS
-                || substr($this->source, -9) !== Asset::FILE_EXTENSION_DISTRIBUTION_CSS
-            )
-        ) {
+        if ($this->version === null && ! $this->isBuiltDistributionSource()) {
             $this->setVersion();
         }
         return $this->version;
@@ -135,8 +131,9 @@ abstract class BrowserAsset extends Asset
      * @param string $version
      * @return BrowserAsset
      * @throws InvalidDataTypeException
+     * @throws DomainException
      */
-    public function setVersion($version = EVENT_ESPRESSO_VERSION)
+    public function setVersion($version = '')
     {
         if (! is_string($version)) {
             throw new InvalidDataTypeException(
@@ -145,7 +142,19 @@ abstract class BrowserAsset extends Asset
                 'string'
             );
         }
+        if ( $version === '' ) {
+            $version = $this->domain->version();
+        }
         $this->version = $version;
         return $this;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isBuiltDistributionSource() {
+        return substr($this->source, -8) === Asset::FILE_EXTENSION_DISTRIBUTION_JS
+               || substr($this->source, -9) === Asset::FILE_EXTENSION_DISTRIBUTION_CSS;
     }
 }
