@@ -10,7 +10,9 @@ describe( 'mergeAndDeDuplicateArrays()', () => {
 	it( 'merges arrays and removes duplicate values from the final' +
 		' array', () => {
 		expect(
-			mergeAndDeDuplicateArrays( [ 1, 2, 3 ],
+			mergeAndDeDuplicateArrays(
+				{},
+				[ 1, 2, 3 ],
 				[ 2, 3, 4 ],
 				[ 4, 5, 6, 7 ],
 			),
