@@ -433,6 +433,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'label' => esc_html__('Abandoned Transactions', 'event_espresso'),
                 'count' => 0,
             ),
+            'incomplete' => array(
+                'slug'  => 'incomplete',
+                'label' => esc_html__('Incomplete Transactions', 'event_espresso'),
+                'count' => 0,
+            )
         );
         if (/**
              * Filters whether a link to the "Failed Transactions" list table
@@ -2475,25 +2480,35 @@ class Transactions_Admin_Page extends EE_Admin_Page
                   || ($count && $view === 'failed');
         $abandoned = (! empty($this->_req_data['status']) && $this->_req_data['status'] === 'abandoned' && ! $count)
                      || ($count && $view === 'abandoned');
+        $incomplete = (! empty($this->_req_data['status']) && $this->_req_data['status'] === 'incomplete' && ! $count)
+                      || ($count && $view === 'incomplete');
 
         if ($failed) {
             $_where['STS_ID'] = EEM_Transaction::failed_status_code;
         } elseif ($abandoned) {
             $_where['STS_ID'] = EEM_Transaction::abandoned_status_code;
+        } elseif ($incomplete) {
+            $_where['STS_ID'] = EEM_Transaction::incomplete_status_code;
         } else {
             $_where['STS_ID'] = array('!=', EEM_Transaction::failed_status_code);
             $_where['STS_ID*'] = array('!=', EEM_Transaction::abandoned_status_code);
         }
 
-        $query_params = array(
-            $_where,
-            'order_by'                 => array($orderby => $sort),
-            'limit'                    => $limit,
-            'default_where_conditions' => EEM_Base::default_where_conditions_this_only,
+        $query_params = apply_filters(
+            'FHEE__Transactions_Admin_Page___get_transactions_query_params',
+            array(
+                $_where,
+                'order_by'                 => array($orderby => $sort),
+                'limit'                    => $limit,
+                'default_where_conditions' => EEM_Base::default_where_conditions_this_only,
+            ),
+            $this->_req_data,
+            $view,
+            $count
         );
 
         $transactions = $count
-            ? $TXN->count(array($_where), 'TXN_ID', true)
+            ? $TXN->count(array($query_params[0]), 'TXN_ID', true)
             : $TXN->get_all($query_params);
 
         return $transactions;
