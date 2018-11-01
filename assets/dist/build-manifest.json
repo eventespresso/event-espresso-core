@@ -1,10 +1,10 @@
 {
   "components.js": "ee-components.526b1cbe57fd2d5ed15c.dist.js",
-  "data-stores.js": "ee-data-stores.f27c3abe64cfa129d50a.dist.js",
+  "data-stores.js": "ee-data-stores.703688f3bac44d77f195.dist.js",
   "eejs.js": "ee-eejs.596e6dd1c666696a4bd4.dist.js",
   "eventespresso-core-blocks.css": "ee-eventespresso-core-blocks.033e69672d82f0b5a77e.dist.css",
   "eventespresso-core-blocks.js": "ee-eventespresso-core-blocks.53fe80d34357f3c169bd.dist.js",
-  "helpers.js": "ee-helpers.0cd924895b4d2dcfe871.dist.js",
+  "helpers.js": "ee-helpers.6af39bd267a2295212f4.dist.js",
   "hocComponents.js": "ee-hocComponents.6dbc5599f72a6220f973.dist.js",
   "manifest.js": "ee-manifest.db11f08f044e318032a1.dist.js",
   "model.js": "ee-model.2fd3a8d93a12369fa0d7.dist.js",

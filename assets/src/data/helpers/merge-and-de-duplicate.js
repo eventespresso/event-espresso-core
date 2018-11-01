@@ -1,4 +1,8 @@
 /**
+ * External imports
+ */
+import { isArray } from 'lodash';
+/**
  * This utility function will merge and de-duplicate arrays so that there is
  * only one of each value in the returned (new) array.
  *
@@ -7,7 +11,9 @@
  * 					 and with no duplicate values.
  */
 export const mergeAndDeDuplicateArrays = ( ...arrays ) => [
-	...new Set( [].concat( ...arrays ) ),
+	...new Set( [].concat(
+		...arrays.filter( item => isArray( item ) )
+	) ),
 ];
 
 /**
