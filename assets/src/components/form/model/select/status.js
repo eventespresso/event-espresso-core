@@ -10,18 +10,18 @@ import { withBaseControl } from '../../../../higher-order-components';
  */
 import { __ } from '@eventespresso/i18n';
 import PropTypes from 'prop-types';
+import { statusModel } from '@eventespresso/model';
 
 const optionsEntityMap = {
 	default: {
 		value: 'STS_ID',
-		label: 'STS_code',
+		label: ( statusEntity ) => statusModel.prettyStatus(
+			statusEntity.STS_ID
+		),
 	},
 };
 
 /**
- * @todo Ensure the status selector is doing localized labels for the options
- * on the select input.  Likely is something that can be done via the passed in
- * optionsEntityMap.
  * @type {ModelSelectComponent}
  */
 const StatusSelect = createModelSelect(
