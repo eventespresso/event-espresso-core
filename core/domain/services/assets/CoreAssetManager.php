@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\assets;
 
+use DomainException;
 use EE_Currency_Config;
 use EE_Registry;
 use EE_Template_Config;
@@ -12,6 +13,7 @@ use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\assets\AssetCollection;
 use EventEspresso\core\services\assets\AssetManager;
 use EventEspresso\core\services\assets\Registry;
@@ -39,6 +41,21 @@ class CoreAssetManager extends AssetManager
     const JS_HANDLE_UNDERSCORE = 'underscore';
 
     const JS_HANDLE_ACCOUNTING_CORE = 'ee-accounting-core';
+
+    /**
+     * @since $VID:$
+     */
+    const JS_HANDLE_REACT = 'react';
+
+    /**
+     * @since $VID:$
+     */
+    const JS_HANDLE_REACT_DOM = 'react-dom';
+
+    /**
+     * @since $VID:$
+     */
+    const JS_HANDLE_LODASH = 'lodash';
 
     // EE JS assets handles
     const JS_HANDLE_EE_MANIFEST = 'ee-manifest';
@@ -113,10 +130,12 @@ class CoreAssetManager extends AssetManager
 
     /**
      * @since 4.9.62.p
+     * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws InvalidInterfaceException
      */
     public function addAssets()
     {
@@ -127,10 +146,12 @@ class CoreAssetManager extends AssetManager
 
     /**
      * @since 4.9.62.p
+     * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws InvalidInterfaceException
      */
     public function addJavascriptFiles()
     {
@@ -161,13 +182,18 @@ class CoreAssetManager extends AssetManager
      * core default javascript
      *
      * @since 4.9.62.p
+     * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws InvalidInterfaceException
      */
     private function loadCoreJs()
     {
+        // conditionally load third-party libraries that WP core MIGHT have.
+        $this->registerWpAssets();
+
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_MANIFEST,
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'manifest')
@@ -183,7 +209,12 @@ class CoreAssetManager extends AssetManager
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_VENDOR,
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'vendor'),
-            array(CoreAssetManager::JS_HANDLE_EE_JS_CORE)
+            array(
+                CoreAssetManager::JS_HANDLE_EE_JS_CORE,
+                CoreAssetManager::JS_HANDLE_REACT,
+                CoreAssetManager::JS_HANDLE_REACT_DOM,
+                CoreAssetManager::JS_HANDLE_LODASH,
+            )
         );
 
         $this->addJavascript(
@@ -307,6 +338,41 @@ class CoreAssetManager extends AssetManager
 
 
     /**
+     * Registers vendor files that are bundled with a later version WP but might not be for the current version of
+     * WordPress in the running environment.
+     *
+     * @throws DuplicateCollectionIdentifierException
+     * @throws InvalidDataTypeException
+     * @throws InvalidEntityException
+     * @throws DomainException
+     * @since $VID:$
+     */
+    private function registerWpAssets()
+    {
+        global $wp_version;
+        if (version_compare($wp_version, '5.0.beta', '>=')) {
+            return;
+        }
+        $this->addVendorJavascript(CoreAssetManager::JS_HANDLE_REACT)
+            ->setVersion('16.6.0');
+        $this->addVendorJavascript(
+            CoreAssetManager::JS_HANDLE_REACT_DOM,
+            array(CoreAssetManager::JS_HANDLE_REACT)
+        )->setVersion('16.6.0');
+        $this->addVendorJavascript(CoreAssetManager::JS_HANDLE_LODASH)
+            ->setInlineDataCallback(
+                function() {
+                    wp_add_inline_script(
+                        CoreAssetManager::JS_HANDLE_LODASH,
+                        'window.lodash = _.noConflict();'
+                    );
+                }
+            )
+            ->setVersion('4.17.11');
+    }
+
+
+    /**
      * Returns configuration data for the accounting-js library.
      * @since $VID:$
      * @return array
@@ -335,7 +401,7 @@ class CoreAssetManager extends AssetManager
 
     /**
      * Returns configuration data for the js Currency VO.
-     * @sinc $VID:$
+     * @since $VID:$
      * @return array
      */
     private function getCurrencySettings()
@@ -392,6 +458,7 @@ class CoreAssetManager extends AssetManager
      * jQuery Validate for form validation
      *
      * @since 4.9.62.p
+     * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -418,6 +485,7 @@ class CoreAssetManager extends AssetManager
      * accounting.js for performing client-side calculations
      *
      * @since 4.9.62.p
+     * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException

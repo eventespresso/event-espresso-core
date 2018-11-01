@@ -2,10 +2,12 @@
 
 namespace EventEspresso\core\services\assets;
 
+use DomainException;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\domain\values\assets\ManifestFile;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
+use EventEspresso\core\domain\values\assets\VendorJavascriptAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
@@ -114,6 +116,33 @@ abstract class AssetManager implements AssetManagerInterface
         $asset = new JavascriptAsset(
             $handle,
             $source,
+            $dependencies,
+            $load_in_footer,
+            $this->domain
+        );
+        $this->assets->add($asset, $handle);
+        return $asset;
+    }
+
+
+    /**
+     * @param string $handle
+     * @param array  $dependencies
+     * @param bool   $load_in_footer
+     * @return VendorJavascriptAsset
+     * @throws DuplicateCollectionIdentifierException
+     * @throws InvalidDataTypeException
+     * @throws InvalidEntityException
+     * @throws DomainException
+     * @since $VID:$
+     */
+    public function addVendorJavascript(
+        $handle,
+        array $dependencies = array(),
+        $load_in_footer = true
+    ) {
+        $asset = new VendorJavascriptAsset(
+            $handle,
             $dependencies,
             $load_in_footer,
             $this->domain
