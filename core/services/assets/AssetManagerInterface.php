@@ -73,7 +73,7 @@ interface AssetManagerInterface
      * @param string $handle
      * @param array  $dependencies
      * @param bool   $load_in_footer
-     * @return VendorJavascriptAsset
+     * @return JavascriptAsset
      */
     public function addVendorJavascript(
         $handle,

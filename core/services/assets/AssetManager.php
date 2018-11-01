@@ -129,7 +129,7 @@ abstract class AssetManager implements AssetManagerInterface
      * @param string $handle
      * @param array  $dependencies
      * @param bool   $load_in_footer
-     * @return VendorJavascriptAsset
+     * @return JavascriptAsset
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -141,14 +141,14 @@ abstract class AssetManager implements AssetManagerInterface
         array $dependencies = array(),
         $load_in_footer = true
     ) {
-        $asset = new VendorJavascriptAsset(
+        $dev_suffix = wp_scripts_get_suffix('dev');
+        $vendor_path = $this->domain->pluginUrl() . 'assets/vendor/';
+        return $this->addJavascript(
             $handle,
+            "{$vendor_path}{$handle}{$dev_suffix}.js",
             $dependencies,
-            $load_in_footer,
-            $this->domain
+            $load_in_footer
         );
-        $this->assets->add($asset, $handle);
-        return $asset;
     }
 
 
