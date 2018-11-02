@@ -39,8 +39,8 @@
 			"\"vendor/bin/phpcs\" --config-set installed_paths ../../../vendor/wp-coding-standards/wpcs,../../../vendor/wimg/php-compatibility,../../../vendor/eventespresso/ee-coding-standards",
 			"\"vendor/bin/phpcs\" --config-set default_standard EventEspresso"
 		],
-		"lint": "vendor/bin/phpcs",
-		"lint:skip-warnings": "vendor/bin/phpcs -n",
-		"lint:fix": "vendor/bin/phpcbf"
+		"lint": "\"vendor/bin/phpcs\"",
+		"lint:skip-warnings": "\"vendor/bin/phpcs\" -n",
+		"lint:fix": "\"vendor/bin/phpcbf\""
 	}
 }
