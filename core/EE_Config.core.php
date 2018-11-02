@@ -1923,37 +1923,37 @@ class EE_Organization_Config extends EE_Config_Base
      * @var string $address_1
      * eg 123 Onna Road
      */
-    public $address_1;
+    public $address_1 = '';
 
     /**
      * @var string $address_2
      * eg PO Box 123
      */
-    public $address_2;
+    public $address_2 = '';
 
     /**
      * @var string $city
      * eg Inna City
      */
-    public $city;
+    public $city = '';
 
     /**
      * @var int $STA_ID
      * eg 4
      */
-    public $STA_ID;
+    public $STA_ID = 0;
 
     /**
      * @var string $CNT_ISO
      * eg US
      */
-    public $CNT_ISO;
+    public $CNT_ISO = '';
 
     /**
      * @var string $zip
      * eg 12345  or V1A 2B3
      */
-    public $zip;
+    public $zip = '';
 
     /**
      * @var string $email
@@ -1965,19 +1965,19 @@ class EE_Organization_Config extends EE_Config_Base
      * @var string $phone
      * eg. 111-111-1111
      */
-    public $phone;
+    public $phone = '';
 
     /**
      * @var string $vat
      * VAT/Tax Number
      */
-    public $vat;
+    public $vat = '';
 
     /**
      * @var string $logo_url
      * eg http://www.somedomain.com/wp-content/uploads/kittehs.jpg
      */
-    public $logo_url;
+    public $logo_url = '';
 
     /**
      * The below are all various properties for holding links to organization social network profiles
@@ -1989,42 +1989,42 @@ class EE_Organization_Config extends EE_Config_Base
      *
      * @var string
      */
-    public $facebook;
+    public $facebook = '';
 
     /**
      * twitter (twitter.com/twitter_handle)
      *
      * @var string
      */
-    public $twitter;
+    public $twitter = '';
 
     /**
      * linkedin (linkedin.com/in/profile_name)
      *
      * @var string
      */
-    public $linkedin;
+    public $linkedin = '';
 
     /**
      * pinterest (www.pinterest.com/profile_name)
      *
      * @var string
      */
-    public $pinterest;
+    public $pinterest = '';
 
     /**
      * google+ (google.com/+profileName)
      *
      * @var string
      */
-    public $google;
+    public $google = '';
 
     /**
      * instagram (instagram.com/handle)
      *
      * @var string
      */
-    public $instagram;
+    public $instagram = '';
 
 
     /**
@@ -2037,22 +2037,7 @@ class EE_Organization_Config extends EE_Config_Base
         // set default organization settings
         // decode HTML entities from the WP blogname, because it's stored in the DB with HTML entities encoded
         $this->name = wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES);
-        $this->address_1 = '123 Onna Road';
-        $this->address_2 = 'PO Box 123';
-        $this->city = 'Inna City';
-        $this->STA_ID = 4;
-        $this->CNT_ISO = 'US';
-        $this->zip = '12345';
         $this->email = get_bloginfo('admin_email');
-        $this->phone = '';
-        $this->vat = '123456789';
-        $this->logo_url = '';
-        $this->facebook = '';
-        $this->twitter = '';
-        $this->linkedin = '';
-        $this->pinterest = '';
-        $this->google = '';
-        $this->instagram = '';
     }
 }
 
