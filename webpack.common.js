@@ -5,6 +5,8 @@ const autoprefixer = require( 'autoprefixer' );
 const externals = {
 	jquery: 'jQuery',
 	'@eventespresso/eejs': 'eejs',
+	// @todo need to switch away from doing this and give it the same treatment
+	// as I did for other js libraries bundled with WP 5.0.
 	'@eventespresso/i18n': 'eejs.i18n',
 	'@wordpress/api-request': 'wp.apiRequest',
 	'@wordpress/data': 'wp.data',
