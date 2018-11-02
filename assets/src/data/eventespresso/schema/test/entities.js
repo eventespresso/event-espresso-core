@@ -4,7 +4,7 @@
 import { EventSchema, DateTimeSchema } from '@test/fixtures';
 import { select } from '@wordpress/data';
 import { isUndefined } from 'lodash';
-import { isGenerator } from '@eventespresso/eejs';
+import { isGenerator } from '@eventespresso/validators';
 
 /**
  * Internal imports

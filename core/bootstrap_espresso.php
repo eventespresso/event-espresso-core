@@ -69,6 +69,11 @@ function bootstrap_espresso()
     require_once __DIR__ . '/espresso_definitions.php';
     try {
         espresso_load_error_handling();
+        // include WordPress shims for functions introduced in later versions of WordPress
+        espresso_load_required(
+            '',
+            EE_CORE . 'wordpress-shims.php'
+        );
         espresso_load_required(
             'EEH_Base',
             EE_CORE . 'helpers' . DS . 'EEH_Base.helper.php'

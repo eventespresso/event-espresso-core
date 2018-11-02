@@ -1,0 +1,13 @@
+#editor .event-attendees-ul {
+    list-style-type: none;
+}
+
+.event-attendee-image-wrap-div {
+    display: inline-block;
+}
+
+.event-attendee-avatar-img {
+    margin: 0 1em -.5em 0;
+}
+
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi9hc3NldHMvc3JjL2Jsb2Nrcy9ldmVudC1hdHRlbmRlZXMvc3R5bGUuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBLEMiLCJmaWxlIjoiZWUtZXZlbnRlc3ByZXNzby1jb3JlLWJsb2Nrcy42YzNkN2NjMTgwMjBkNjk3OTY5NS5kaXN0LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIiNlZGl0b3IgLmV2ZW50LWF0dGVuZGVlcy11bCB7XG4gICAgbGlzdC1zdHlsZS10eXBlOiBub25lO1xufVxuXG4uZXZlbnQtYXR0ZW5kZWUtaW1hZ2Utd3JhcC1kaXYge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbn1cblxuLmV2ZW50LWF0dGVuZGVlLWF2YXRhci1pbWcge1xuICAgIG1hcmdpbjogMCAxZW0gLS41ZW0gMDtcbn0iXSwic291cmNlUm9vdCI6IiJ9*/

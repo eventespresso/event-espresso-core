@@ -28,7 +28,7 @@ exports[`StatusSelect() matches snapshot with default props plus provided status
   optionsEntityMap={
     Object {
       "default": Object {
-        "label": "STS_code",
+        "label": [Function],
         "value": "STS_ID",
       },
     }

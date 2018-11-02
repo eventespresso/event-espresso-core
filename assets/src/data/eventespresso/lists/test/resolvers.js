@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isGenerator } from '@eventespresso/eejs';
+import { isGenerator } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */

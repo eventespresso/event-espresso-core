@@ -44,14 +44,3 @@ export * from '../data/utils/constants';
  * Custom exceptions
  */
 export * from './exceptions';
-
-/**
- * Utils
- */
-export * from './utils/merge-and-de-duplicate';
-export * from './utils/map-reducer';
-export * from './utils/convert-to-object-from-map';
-export * from './utils/is-generator';
-export * from './utils/is-factory';
-export * from './utils/is-model-entity';
-export * from './utils/is-schema';

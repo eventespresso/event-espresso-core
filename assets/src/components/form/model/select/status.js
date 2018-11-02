@@ -10,14 +10,20 @@ import { withBaseControl } from '../../../../higher-order-components';
  */
 import { __ } from '@eventespresso/i18n';
 import PropTypes from 'prop-types';
+import { statusModel } from '@eventespresso/model';
 
 const optionsEntityMap = {
 	default: {
 		value: 'STS_ID',
-		label: 'STS_code',
+		label: ( statusEntity ) => statusModel.prettyStatus(
+			statusEntity.STS_ID
+		),
 	},
 };
 
+/**
+ * @type {ModelSelectComponent}
+ */
 const StatusSelect = createModelSelect(
 	model.MODEL_NAME,
 	{

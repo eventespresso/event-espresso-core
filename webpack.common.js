@@ -14,12 +14,12 @@ const externals = {
 	'@wordpress/editor': 'wp.editor',
 	'@wordpress/compose': 'wp.compose',
 	'@wordpress/hooks': 'wp.hooks',
-	react: 'eejs.vendor.react',
-	'react-dom': 'eejs.vendor.reactDom',
+	react: 'React',
+	'react-dom': 'ReactDOM',
 	'react-redux': 'eejs.vendor.reactRedux',
 	redux: 'eejs.vendor.redux',
 	classnames: 'eejs.vendor.classnames',
-	lodash: 'eejs.vendor.lodash',
+	lodash: 'lodash',
 	'moment-timezone': 'eejs.vendor.moment',
 	cuid: 'eejs.vendor.cuid',
 };
@@ -70,11 +70,35 @@ const config = [
 		},
 	},
 	{
+		configName: 'validators',
+		entry: {
+			validators: assets + 'eejs/validators/index.js',
+		},
+		externals,
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', '[name]' ],
+			libraryTarget: 'var',
+		},
+	},
+	{
 		configName: 'helpers',
 		entry: {
 			helpers: assets + 'data/helpers/index.js',
 		},
-		externals,
+		externals: Object.assign( externals, {
+			'@eventespresso/validators': 'eejs.validators',
+		} ),
 		module: {
 			rules: [
 				{
@@ -97,6 +121,7 @@ const config = [
 			model: assets + 'data/model/index.js',
 		},
 		externals: Object.assign( externals, {
+			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
 		} ),
 		module: {
@@ -121,6 +146,7 @@ const config = [
 			valueObjects: assets + 'vo/index.js',
 		},
 		externals: Object.assign( externals, {
+			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
 		} ),
@@ -146,6 +172,7 @@ const config = [
 			hocComponents: assets + 'higher-order-components/index.js',
 		},
 		externals: Object.assign( externals, {
+			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
 			'@eventespresso/value-objects': 'eejs.valueObjects',
@@ -173,6 +200,7 @@ const config = [
 		},
 		externals: Object.assign( externals, {
 			'@eventespresso/higher-order-components': 'eejs.hocComponents',
+			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
 			'@eventespresso/value-objects': 'eejs.valueObjects',
@@ -243,6 +271,7 @@ const config = [
 		externals: Object.assign( externals, {
 			'@eventespresso/higher-order-components': 'eejs.hocComponents',
 			'@eventespresso/components': 'eejs.components',
+			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
 			'@eventespresso/value-objects': 'eejs.valueObjects',

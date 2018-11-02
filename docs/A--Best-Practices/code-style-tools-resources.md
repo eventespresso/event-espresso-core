@@ -19,8 +19,8 @@ composer run-script config-eventespressocs
  npm run lint-php
  ```
  
- ## IDE Setup
+## PhpStorm Setup
  
- To set up PHPStorm, you can [refer to their documentation](https://www.jetbrains.com/phpstorm/help/using-php-code-sniffer-tool.html) for setting up the PHP Code Sniffer tool.  During the installation you will select the `EventEspresso` standard from the PHP Code Sniffer Validation inspection options.  
+ To set up PHPStorm, you can [refer to their documentation](https://www.jetbrains.com/phpstorm/help/using-php-code-sniffer-tool.html) for setting up the PHP Code Sniffer tool.  During the installation you will select the `EventEspresso` standard from the PHP Code Sniffer Validation inspection options.
  
  As well, for additional PHPStorm based linting and auto-code formatting, you can import the [EE Code Styles](https://github.com/eventespresso/project-configuration/tree/master/phpstorm/code-styles) package.  This helps you follow the standards as you are writing code rather than having things linted for you after the fact.

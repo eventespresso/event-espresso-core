@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isSchemaResponseOfModel } from '@eventespresso/eejs';
+import { isSchemaResponseOfModel } from '@eventespresso/validators';
 
 /**
  * Internal dependencies
