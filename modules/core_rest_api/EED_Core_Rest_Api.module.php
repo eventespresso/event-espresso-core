@@ -698,14 +698,12 @@ class EED_Core_Rest_Api extends \EED_Module
                 'validate_callback' => null,
                 'sanitize_callback' => null,
             ),
-        );
-        if ($single_only && $model->hasPassword()) {
-            $query_params['password'] = array(
+            'password' => array(
                 'required' => false,
                 'default' => '',
                 'type' => 'string'
-            );
-        }
+            )
+        );
         return apply_filters(
             'FHEE__EED_Core_Rest_Api___get_response_selection_query_params',
             $query_params,
