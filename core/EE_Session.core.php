@@ -384,6 +384,12 @@ class EE_Session implements SessionIdentifierInterface
 
 
     /**
+     * Marks whether the session data has been updated or not.
+     * Valid options are:
+     *      EE_Session::SAVE_STATE_CLEAN - session data remains unchanged and updating is not necessary
+     *      EE_Session::SAVE_STATE_DIRTY - session data has changed since last save and needs to be updated
+     * default value is EE_Session::SAVE_STATE_DIRTY
+     *
      * @param string $save_state
      */
     public function setSaveState($save_state = EE_Session::SAVE_STATE_DIRTY)
@@ -938,15 +944,18 @@ class EE_Session implements SessionIdentifierInterface
     private function sessionHasStuffWorthSaving()
     {
         return $this->save_state === EE_Session::SAVE_STATE_DIRTY
-            || $this->cart() instanceof EE_Cart
-            || (
-                isset($this->_session_data['ee_notices'])
-                && (
-                    ! empty($this->_session_data['ee_notices']['attention'])
-                    || !empty($this->_session_data['ee_notices']['errors'])
-                    || !empty($this->_session_data['ee_notices']['success'])
-                )
-            );
+               // we may want to eventually remove the following
+               // on the assumption that the above check is enough
+               || $this->cart() instanceof EE_Cart
+               || (
+                   isset($this->_session_data['ee_notices'])
+                   && (
+                       ! empty($this->_session_data['ee_notices']['attention'])
+                       || ! empty($this->_session_data['ee_notices']['errors'])
+                       || ! empty($this->_session_data['ee_notices']['success'])
+                   )
+               );
+
     }
 
 
