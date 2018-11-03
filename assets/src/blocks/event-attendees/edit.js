@@ -1,17 +1,16 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import { InspectorControls } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
 import {
 	PanelBody,
-	ServerSideRender,
+	Placeholder,
 	ToggleControl,
+	Spinner,
+	RangeControl,
 } from '@wordpress/components';
-
-/**
- * External dependencies
- */
+import { withSelect } from '@wordpress/data';
 import { __ } from '@eventespresso/i18n';
 import {
 	EditorDatetimeSelect,
@@ -19,16 +18,30 @@ import {
 	EditorStatusSelect,
 	EditorTicketSelect,
 	QueryLimit,
+	EventAttendees,
 } from '@eventespresso/components';
 import {
 	statusModel,
+	attendeeModel,
 } from '@eventespresso/model';
 import PropTypes from 'prop-types';
+import { isEmpty } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { CSS_CLASS_CORE_BLOCKS } from '../constants';
 
 const defaultQueryData = {
 	showExpired: true,
 	limit: 50,
 };
+
+const isNewBlock = ( { eventId, datetimeId, ticketId } ) => eventId === 0 &&
+	datetimeId === 0 &&
+	ticketId === 0;
+
+const DEFAULT_EMPTY_ARRAY = [];
 
 /**
  * EventAttendeesEditor Component
@@ -36,7 +49,7 @@ const defaultQueryData = {
  * This returns the component for the `edit` argument on the `EventAttendees`
  * Block.
  */
-export default class EventAttendeesEditor extends Component {
+export class EventAttendeesEditor extends Component {
 	static propTypes = {
 		attendees: PropTypes.array,
 		isLoading: PropTypes.bool,
@@ -48,6 +61,8 @@ export default class EventAttendeesEditor extends Component {
 			showGravatar: PropTypes.bool,
 			displayOnArchives: PropTypes.bool,
 			limit: PropTypes.number,
+			avatarSize: PropTypes.number,
+			avatarClass: PropTypes.string,
 		} ),
 	};
 
@@ -62,6 +77,8 @@ export default class EventAttendeesEditor extends Component {
 			showGravatar: true,
 			displayOnArchives: false,
 			limit: 10,
+			avatarSize: 24,
+			avatarClass: 'contact',
 		},
 	};
 
@@ -168,6 +185,16 @@ export default class EventAttendeesEditor extends Component {
 	};
 
 	/**
+	 * Set the size for the gravatar displayed.
+	 * @param {number} size
+	 */
+	setAvatarSize = size => {
+		this.props.setAttributes( {
+			avatarSize: size,
+		} );
+	};
+
+	/**
 	 * Sets whether to show gravatar for attendees in attributes.
 	 * @param {boolean} showGravatar
 	 */
@@ -184,17 +211,62 @@ export default class EventAttendeesEditor extends Component {
 	};
 
 	/**
-	 * Retrieve the ssr component for displaying attendees for given attributes.
-	 * @return {Component} The ssr component
+	 * Retreive the Attendees List component for the given attributes
+	 * @return {Component} The EventAttendees component
 	 */
-	getAttendeesDisplay = () => {
-		return (
-			<ServerSideRender
-				block="eventespresso/event-attendees"
-				attributes={ this.props.attributes }
-			/>
-		);
-	};
+	getAttendeesDisplay() {
+		const { isLoading, attendees } = this.props;
+		const {
+			showGravatar,
+			avatarSize,
+			avatarClass,
+		} = this.props.attributes;
+
+		const avatarOptions = {
+			avatarWidth: avatarSize,
+			avatarHeight: avatarSize,
+			avatarClass,
+		};
+
+		if ( isLoading ) {
+			return (
+				<Placeholder>
+					<Spinner />
+				</Placeholder>
+			);
+		}
+
+		if ( isNewBlock( this.props.attributes ) &&
+			attendees === DEFAULT_EMPTY_ARRAY
+		) {
+			return (
+				<Placeholder>
+					{ __(
+						'To get started, select what event you want to show attendees from in the block settings.',
+						'event_espresso'
+					) }
+				</Placeholder>
+			);
+		}
+
+		if ( ! isLoading && isEmpty( attendees ) ) {
+			return (
+				<Placeholder>
+					{ __(
+						'There are no attendees for selected options.',
+						'event_espresso'
+					) }
+				</Placeholder>
+			);
+		}
+		return <EventAttendees
+			attendees={ attendees }
+			showGravatar={ showGravatar }
+			avatarOptions={ avatarOptions }
+			isLoading={ isLoading }
+			containerCssClass={ CSS_CLASS_CORE_BLOCKS }
+		/>;
+	}
 
 	/**
 	 * Returns inspector controls for the block.
@@ -202,10 +274,10 @@ export default class EventAttendeesEditor extends Component {
 	 * @param {Object} attributes
 	 * @return {Component} The inspector controls component
 	 */
-	getInspectorControls = ( attributes ) => {
+	getInspectorControls( attributes ) {
 		return (
 			<InspectorControls>
-				<PanelBody title={ __( 'Event Attendees Settings', 'event_espresso' ) }>
+				<PanelBody title={ __( 'Filter By Settings', 'event_espresso' ) }>
 					<EditorEventSelect
 						key="attendees-event-select"
 						selected={ attributes.eventId }
@@ -240,11 +312,24 @@ export default class EventAttendeesEditor extends Component {
 						limit={ attributes.limit }
 						onLimitChange={ this.setLimit }
 					/>
+				</PanelBody>
+				<PanelBody title={ __( 'Gravatar Setttings', 'event_espresso' ) } >
 					<ToggleControl
 						label={ __( 'Display Gravatar', 'event_espresso' ) }
 						checked={ attributes.showGravatar }
 						onChange={ this.toggleShowGravatar }
 					/>
+					{ attributes.showGravatar &&
+					<RangeControl
+						label={ __( 'Size of Gravatar', 'event_espresso' ) }
+						value={ attributes.avatarSize || 24 }
+						min={ 10 }
+						max={ 128 }
+						onChange={ this.setAvatarSize }
+					/>
+					}
+				</PanelBody>
+				<PanelBody title={ __( 'Location Settings', 'event_espresso' ) } >
 					<ToggleControl
 						label={ __( 'Display on Archives', 'event_espresso' ) }
 						checked={ attributes.displayOnArchives }
@@ -252,7 +337,7 @@ export default class EventAttendeesEditor extends Component {
 					/>
 				</PanelBody>
 			</InspectorControls> );
-	};
+	}
 
 	render() {
 		return [
@@ -261,3 +346,37 @@ export default class EventAttendeesEditor extends Component {
 		];
 	}
 }
+
+export default withSelect( ( select, ownProps ) => {
+	const defaultProps = { ...EventAttendeesEditor.defaultProps.attributes };
+	const {
+		eventId = defaultProps.eventId,
+		datetimeId = defaultProps.datetimeId,
+		ticketId = defaultProps.ticketId,
+		status = defaultProps.status,
+		limit = defaultProps.limit,
+	} = ownProps.attributes;
+
+	const queryData = {
+		forEventId: eventId,
+		forDatetimeId: datetimeId,
+		forTicketId: ticketId,
+		forStatusId: status,
+		showGravatar: true,
+		limit,
+	};
+
+	const queryString = attendeeModel.getQueryString( queryData );
+	const {
+		getAttendees,
+		isRequestingAttendees,
+	} = select( 'eventespresso/lists' );
+	return {
+		...EventAttendeesEditor.defaultProps,
+		...ownProps,
+		attendees: isNewBlock( { eventId, datetimeId, ticketId } ) ?
+			DEFAULT_EMPTY_ARRAY :
+			getAttendees( queryString ),
+		isLoading: isRequestingAttendees( queryString ),
+	};
+} )( EventAttendeesEditor );
