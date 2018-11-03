@@ -187,7 +187,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 $this->domain->assetNamespace(),
                 $handle
             ),
-            $dependencies
+            $this->addDefaultBlockStyleDependencies($dependencies)
         );
     }
 
@@ -256,6 +256,19 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 'wp-components', // Provides many prebuilt components and controls
                 CoreAssetManager::JS_HANDLE_EE_COMPONENTS
             );
+        return $dependencies;
+    }
+
+
+    /**
+     * @param array $dependencies
+     * @return array
+     */
+    protected function addDefaultBlockStyleDependencies(array $dependencies)
+    {
+        $dependencies += array(
+            CoreAssetManager::CSS_HANDLE_EE_COMPONENTS,
+        );
         return $dependencies;
     }
 
