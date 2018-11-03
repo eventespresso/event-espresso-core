@@ -95,6 +95,14 @@ class EventAttendees extends Block
                     'type'    => 'boolean',
                     'default' => false,
                 ),
+                'avatarClass' => array(
+                    'type' => 'string',
+                    'default' => 'contact',
+                ),
+                'avatarSize' => array(
+                    'type' => 'number',
+                    'default' => 24,
+                ),
                 'displayOnArchives' => array(
                     'type'    => 'boolean',
                     'default' => false,
@@ -121,6 +129,8 @@ class EventAttendees extends Block
             'status'            => array('attribute' => 'status', 'sanitize' => 'sanitize_text_field'),
             'limit'             => array('attribute' => 'limit', 'sanitize' => 'intval'),
             'showGravatar'      => array('attribute' => 'show_gravatar', 'sanitize' => 'bool'),
+            'avatarClass' => array('attribute' => 'avatar_class', 'sanitize' => 'sanitize_text_field' ),
+            'avatarSize' => array('attribute' => 'avatar_size', 'sanitize' => 'absint' ),
             'displayOnArchives' => array('attribute' => 'display_on_archives', 'sanitize' => 'bool'),
         );
     }
