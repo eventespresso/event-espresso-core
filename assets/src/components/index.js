@@ -4,3 +4,6 @@ export { QueryLimit } from './query/limit';
 export * from './form/model';
 // general ui components
 export * from './ui';
+
+// other
+export { default as EventAttendees } from './event-attendees';
