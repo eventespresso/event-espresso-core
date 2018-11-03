@@ -23,9 +23,8 @@ describe( 'AvatarImage()', () => {
 		expect( avatarImage.props().className ).toEqual(
 			'contact-avatar-img avatar'
 		);
-		expect( avatarImage.props().height ).toEqual( 32 );
-		expect( avatarImage.props().width ).toEqual( 32 );
-		expect( avatarImage.props().alt ).toEqual( 'user avatar' );
+		expect( avatarImage.props().style ).toEqual( { height: 32, width: 32 } );
+		expect( avatarImage.props().alt ).toEqual( 'contact avatar' );
 	} );
 	it( 'with all props provided should not have default options', () => {
 		const avatarUrl = 'www.example.com';
@@ -47,8 +46,7 @@ describe( 'AvatarImage()', () => {
 		expect( avatarImage.props().className ).toEqual(
 			avatarClass + '-avatar-img avatar'
 		);
-		expect( avatarImage.props().height ).toEqual( avatarHeight );
-		expect( avatarImage.props().width ).toEqual( avatarWidth );
+		expect( avatarImage.props().style ).toEqual( { height: 64, width: 64 } );
 		expect( avatarImage.props().alt ).toEqual( avatarAltText );
 	} );
 } );

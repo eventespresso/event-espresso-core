@@ -211,7 +211,7 @@ export class EventAttendeesEditor extends Component {
 	};
 
 	/**
-	 * Retreive the Attendees List component for the given attributes
+	 * Retrieve the Attendees List component for the given attributes
 	 * @return {Component} The EventAttendees component
 	 */
 	getAttendeesDisplay() {

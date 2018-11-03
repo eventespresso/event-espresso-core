@@ -1,21 +1,41 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EventAttendeesEditor Block block edit matches snapshot 1`] = `
+exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`] = `
 Array [
-  <ServerSideRender
-    attributes={
+  <Placeholder />,
+  <IfBlockEditSelected(InspectorControlsFill) />,
+]
+`;
+
+exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading false and has attendees 1`] = `
+Array [
+  <EventAttendees
+    attendees={
+      Array [
+        Object {
+          "ATT_ID": 10,
+          "ATT_fname": "dude",
+        },
+      ]
+    }
+    avatarOptions={
       Object {
-        "datetimeId": 0,
-        "displayOnArchives": false,
-        "eventId": 0,
-        "limit": 10,
-        "showGravatar": true,
-        "status": "RAP",
-        "ticketId": 0,
+        "avatarClass": "contact",
+        "avatarHeight": 24,
+        "avatarWidth": 24,
       }
     }
-    block="eventespresso/event-attendees"
+    containerCssClass="ee-core-blocks event-espresso-blocks"
+    isLoading={false}
+    showGravatar={true}
   />,
+  <IfBlockEditSelected(InspectorControlsFill) />,
+]
+`;
+
+exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading false and no attendees 1`] = `
+Array [
+  <Placeholder />,
   <IfBlockEditSelected(InspectorControlsFill) />,
 ]
 `;

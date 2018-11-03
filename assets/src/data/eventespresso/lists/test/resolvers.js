@@ -40,7 +40,7 @@ describe( 'getEntities()', () => {
 		it( 'yields expected result for api fetch action object', () => {
 			const { value: apiFetchAction } = fulfillment.next();
 			expect( apiFetchAction.request ).toEqual(
-				{ path: '/wp-json/ee/v4.8.36/events?test_value=1' }
+				{ path: '/ee/v4.8.36/events?test_value=1' }
 			);
 		} );
 		it( 'yields expected getFactoryByModel generator', () => {

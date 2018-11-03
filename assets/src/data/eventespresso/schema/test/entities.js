@@ -91,7 +91,7 @@ describe( 'createEntityResolvers()', () => {
 	const expectedResolvers = [
 		[
 			'getEventSchema',
-			{ path: '/wp-json/ee/v4.8.36/events', method: 'OPTIONS' },
+			{ path: '/ee/v4.8.36/events', method: 'OPTIONS' },
 		],
 		[
 			'getEventFactory',
@@ -99,7 +99,7 @@ describe( 'createEntityResolvers()', () => {
 		],
 		[
 			'getDatetimeSchema',
-			{ path: '/wp-json/ee/v4.8.36/datetimes', method: 'OPTIONS' },
+			{ path: '/ee/v4.8.36/datetimes', method: 'OPTIONS' },
 		],
 		[
 			'getDatetimeFactory',
