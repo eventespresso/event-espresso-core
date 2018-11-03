@@ -398,7 +398,7 @@ class EE_Session implements SessionIdentifierInterface
             EE_Session::SAVE_STATE_CLEAN,
             EE_Session::SAVE_STATE_DIRTY,
         ];
-        if(! in_array($save_state, $valid_save_states, true)) {
+        if (! in_array($save_state, $valid_save_states, true)) {
             $save_state = EE_Session::SAVE_STATE_DIRTY;
         }
         $this->save_state = $save_state;
@@ -955,7 +955,6 @@ class EE_Session implements SessionIdentifierInterface
                        || ! empty($this->_session_data['ee_notices']['success'])
                    )
                );
-
     }
 
 
