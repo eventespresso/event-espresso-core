@@ -57,9 +57,25 @@ export const settings = {
 			type: 'number',
 			default: 10,
 		},
+		order: {
+			type: 'string',
+			default: 'ASC',
+		},
+		orderBy: {
+			type: 'string',
+			default: 'lastThenFirstName',
+		},
 		showGravatar: {
 			type: 'boolean',
 			default: false,
+		},
+		avatarClass: {
+			type: 'string',
+			default: 'contact',
+		},
+		avatarSize: {
+			type: 'number',
+			default: 24,
 		},
 		displayOnArchives: {
 			type: 'boolean',
