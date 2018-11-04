@@ -220,7 +220,7 @@ export class EventAttendeesEditor extends Component {
 	 */
 	setAvatarSize = size => {
 		this.props.setAttributes( {
-			avatarSize: size,
+			avatarSize: parseInt( size, 10 ),
 		} );
 	};
 
@@ -448,7 +448,7 @@ export class EventAttendeesEditor extends Component {
 					{ attributes.showGravatar &&
 					<RangeControl
 						label={ __( 'Size of Gravatar', 'event_espresso' ) }
-						value={ attributes.avatarSize || 24 }
+						value={ attributes.avatarSize }
 						min={ 10 }
 						max={ 128 }
 						onChange={ this.setAvatarSize }
