@@ -36,7 +36,6 @@ export const settings = {
 	],
 
 	attributes: {
-		// eventId, datetimeId, ticketId, status, showGravatar, displayOnArchives
 		eventId: {
 			type: 'number',
 			default: 0,
