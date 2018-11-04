@@ -136,8 +136,8 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     {
         $this->addEditorScript($this->getEditorScriptHandle());
         $this->addEditorStyle($this->getEditorStyleHandle());
-        $this->setScriptHandle($this->getScriptHandle());
-        $this->setStyleHandle($this->getStyleHandle());
+        $this->addScript($this->getScriptHandle());
+        $this->addStyle($this->getStyleHandle());
     }
 
 
@@ -212,7 +212,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 $this->domain->assetNamespace(),
                 $handle
             ),
-            $dependencies
+            $dependencies + array( CoreAssetManager::JS_HANDLE_EE_COMPONENTS )
         )
         ->setRequiresTranslation();
     }
@@ -238,7 +238,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 $this->domain->assetNamespace(),
                 $handle
             ),
-            $dependencies
+            $this->addDefaultBlockStyleDependencies($dependencies)
         );
     }
 
