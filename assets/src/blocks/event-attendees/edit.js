@@ -9,6 +9,7 @@ import {
 	ToggleControl,
 	Spinner,
 	RangeControl,
+	SelectControl,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { __ } from '@eventespresso/i18n';
@@ -23,6 +24,9 @@ import {
 import {
 	statusModel,
 	attendeeModel,
+	QUERY_ORDER_ASC,
+	QUERY_ORDER_DESC,
+	ALLOWED_ORDER_VALUES,
 } from '@eventespresso/model';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
@@ -61,6 +65,14 @@ export class EventAttendeesEditor extends Component {
 			showGravatar: PropTypes.bool,
 			displayOnArchives: PropTypes.bool,
 			limit: PropTypes.number,
+			orderBy: PropTypes.oneOf( [
+				'id',
+				'lastNameOnly',
+				'firstNameOnly',
+				'firstThenLastName',
+				'lastThenFirstName',
+			] ),
+			order: PropTypes.oneOf( ALLOWED_ORDER_VALUES ),
 			avatarSize: PropTypes.number,
 			avatarClass: PropTypes.string,
 		} ),
@@ -77,6 +89,8 @@ export class EventAttendeesEditor extends Component {
 			showGravatar: true,
 			displayOnArchives: false,
 			limit: 10,
+			orderBy: 'lastThenFirstName',
+			order: QUERY_ORDER_ASC,
 			avatarSize: 24,
 			avatarClass: 'contact',
 		},
@@ -185,6 +199,22 @@ export class EventAttendeesEditor extends Component {
 	};
 
 	/**
+	 * Set the orderBy attribute
+	 * @param {string} orderBy
+	 */
+	setOrderBy = ( orderBy ) => {
+		this.props.setAttributes( { orderBy } );
+	};
+
+	/**
+	 * Set the order attribute
+	 * @param {string} order
+	 */
+	setOrder = ( order ) => {
+		this.props.setAttributes( { order } );
+	};
+
+	/**
 	 * Set the size for the gravatar displayed.
 	 * @param {number} size
 	 */
@@ -277,7 +307,10 @@ export class EventAttendeesEditor extends Component {
 	getInspectorControls( attributes ) {
 		return (
 			<InspectorControls>
-				<PanelBody title={ __( 'Filter By Settings', 'event_espresso' ) }>
+				<PanelBody title={ __(
+					'Filter By Settings',
+					'event_espresso'
+				) }>
 					<EditorEventSelect
 						key="attendees-event-select"
 						selected={ attributes.eventId }
@@ -305,15 +338,75 @@ export class EventAttendeesEditor extends Component {
 						selected={ attributes.status }
 						onSelect={ this.setStatus }
 						queryData={ this.state.statusQueryData }
-						label={ __( 'Select Registration Status', 'event_espresso' ) }
+						label={ __(
+							'Select Registration Status',
+							'event_espresso'
+						) }
 					/>
 					<QueryLimit
-						label={ __( 'Number of Attendees to Display', 'event_espresso' ) }
+						label={ __(
+							'Number of Attendees to Display',
+							'event_espresso'
+						) }
 						limit={ attributes.limit }
 						onLimitChange={ this.setLimit }
 					/>
+					<SelectControl
+						label={ __( 'Order Attendees by:', 'event_espresso' ) }
+						value={ attributes.orderBy }
+						options={ [
+							{
+								label: __( 'Attendee id', 'event_espresso' ),
+								value: 'id',
+							},
+							{
+								label: __( 'Last name only', 'event_espresso' ),
+								value: 'lastNameOnly',
+							},
+							{
+								label: __(
+									'First name only',
+									'event_espresso'
+								),
+								value: 'firstNameOnly',
+							},
+							{
+								label: __(
+									'First, then Last name',
+									'event_espresso'
+								),
+								value: 'firstThenLastName',
+							},
+							{
+								label: __(
+									'Last, then First name',
+									'event_espresso'
+								),
+								value: 'lastThenFirstName',
+							},
+						] }
+						onChange={ this.setOrderBy }
+					/>
+					<SelectControl
+						label={ __( 'Sort order:', 'event_espresso' ) }
+						value={ attributes.order }
+						options={ [
+							{
+								label: __( 'Ascending', 'event_espresso' ),
+								value: QUERY_ORDER_ASC,
+							},
+							{
+								label: __( 'Descending', 'event_espresso' ),
+								value: QUERY_ORDER_DESC,
+							},
+						] }
+						onChange={ this.setOrder }
+					/>
 				</PanelBody>
-				<PanelBody title={ __( 'Gravatar Setttings', 'event_espresso' ) } >
+				<PanelBody title={ __(
+					'Gravatar Setttings',
+					'event_espresso'
+				) } >
 					<ToggleControl
 						label={ __( 'Display Gravatar', 'event_espresso' ) }
 						checked={ attributes.showGravatar }
@@ -329,7 +422,10 @@ export class EventAttendeesEditor extends Component {
 					/>
 					}
 				</PanelBody>
-				<PanelBody title={ __( 'Location Settings', 'event_espresso' ) } >
+				<PanelBody title={ __(
+					'Location Settings',
+					'event_espresso'
+				) } >
 					<ToggleControl
 						label={ __( 'Display on Archives', 'event_espresso' ) }
 						checked={ attributes.displayOnArchives }
@@ -355,6 +451,8 @@ export default withSelect( ( select, ownProps ) => {
 		ticketId = defaultProps.ticketId,
 		status = defaultProps.status,
 		limit = defaultProps.limit,
+		orderBy = defaultProps.orderBy,
+		order = defaultProps.order,
 	} = ownProps.attributes;
 
 	const queryData = {
@@ -363,6 +461,8 @@ export default withSelect( ( select, ownProps ) => {
 		forTicketId: ticketId,
 		forStatusId: status,
 		showGravatar: true,
+		order,
+		orderBy,
 		limit,
 	};
 
@@ -374,6 +474,10 @@ export default withSelect( ( select, ownProps ) => {
 	return {
 		...EventAttendeesEditor.defaultProps,
 		...ownProps,
+		attributes: {
+			...EventAttendeesEditor.defaultProps.attributes,
+			...ownProps.attributes,
+		},
 		attendees: isNewBlock( { eventId, datetimeId, ticketId } ) ?
 			DEFAULT_EMPTY_ARRAY :
 			getAttendees( queryString ),

@@ -91,6 +91,14 @@ class EventAttendees extends Block
                     'type'    => 'number',
                     'default' => 10,
                 ),
+                'order' => array(
+                    'type' => 'string',
+                    'default' => 'ASC'
+                ),
+                'orderBy' => array(
+                    'type' => 'string',
+                    'default' => 'lastThenFirstName',
+                ),
                 'showGravatar'      => array(
                     'type'    => 'boolean',
                     'default' => false,
@@ -123,15 +131,17 @@ class EventAttendees extends Block
     private function getAttributesMap()
     {
         return array(
-            'eventId'           => array('attribute' => 'event_id', 'sanitize' => 'absint'),
-            'datetimeId'        => array('attribute' => 'datetime_id', 'sanitize' => 'absint'),
-            'ticketId'          => array('attribute' => 'ticket_id', 'sanitize' => 'absint'),
-            'status'            => array('attribute' => 'status', 'sanitize' => 'sanitize_text_field'),
-            'limit'             => array('attribute' => 'limit', 'sanitize' => 'intval'),
-            'showGravatar'      => array('attribute' => 'show_gravatar', 'sanitize' => 'bool'),
-            'avatarClass' => array('attribute' => 'avatar_class', 'sanitize' => 'sanitize_text_field' ),
-            'avatarSize' => array('attribute' => 'avatar_size', 'sanitize' => 'absint' ),
-            'displayOnArchives' => array('attribute' => 'display_on_archives', 'sanitize' => 'bool'),
+            'eventId'           => 'absint',
+            'datetimeId'        => 'absint',
+            'ticketId'          => 'absint',
+            'status'            => 'sanitize_text_field',
+            'limit'             => 'intval',
+            'showGravatar'      => 'bool',
+            'avatarClass'       => 'sanitize_text_field',
+            'avatarSize'        => 'absint',
+            'displayOnArchives' => 'bool',
+            'order' => 'sanitize_text_field',
+            'orderBy' => 'sanitize_text_field',
         );
     }
 
@@ -141,27 +151,24 @@ class EventAttendees extends Block
      * @since $VID:$
      * @return array
      */
-    private function parseAttributes(array $attributes)
+    private function sanitizeAttributes(array $attributes)
     {
+        $sanitized_attributes = array();
         foreach ($attributes as $attribute => $value) {
             $convert = $this->getAttributesMap();
             if (isset($convert[ $attribute ])) {
-                $sanitize = $convert[ $attribute ]['sanitize'];
-                $converted_attribute_key = $convert[ $attribute ]['attribute'];
+                $sanitize = $convert[ $attribute ];
                 if ($sanitize === 'bool') {
-                    $attributes[ $converted_attribute_key ] = filter_var(
+                    $sanitized_attributes[ $attribute ] = filter_var(
                         $value,
                         FILTER_VALIDATE_BOOLEAN
                     );
                 } else {
-                    $attributes[ $converted_attribute_key ] = $sanitize($value);
-                }
-                if ($attribute !== $converted_attribute_key) {
-                    unset($attributes[ $attribute ]);
+                    $sanitized_attributes[ $attribute ] = $sanitize($value);
                 }
                 // don't pass along attributes with a 0 value
-                if ($attributes[ $converted_attribute_key ] === 0) {
-                    unset($attributes[ $converted_attribute_key ]);
+                if ($sanitized_attributes[ $attribute ] === 0) {
+                    unset($sanitized_attributes[ $attribute ]);
                 }
             }
         }
@@ -215,7 +222,7 @@ class EventAttendees extends Block
      */
     public function renderBlock(array $attributes = array())
     {
-        $attributes = $this->includeNecessaryOnly($this->parseAttributes($attributes));
+        $attributes = $this->includeNecessaryOnly($this->sanitizeAttributes($attributes));
         $rendered_content = $this->shortcode->processShortcode($attributes);
         if (empty($rendered_content)) {
             return $this->noContentRender($attributes);
