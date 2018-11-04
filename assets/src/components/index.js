@@ -6,4 +6,4 @@ export * from './form/model';
 export * from './ui';
 
 // other
-export { default as EventAttendees } from './event-attendees';
+export { default as EventAttendeeList } from './event-attendees';

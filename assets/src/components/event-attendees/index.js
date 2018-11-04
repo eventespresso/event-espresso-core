@@ -13,16 +13,16 @@ import { mapReducer } from '@eventespresso/helpers';
 import AttendeeListItem from './attendee-list-item';
 import './style.css';
 
-export default class EventAttendees extends Component {
+export default class EventAttendeeList extends Component {
 	static propTypes = {
 		isLoading: PropTypes.bool,
-		attendees: PropTypes.array,
+		attendees: PropTypes.instanceOf( Map ),
 		showGravatar: PropTypes.bool,
 		containerCssClass: PropTypes.string,
 	};
 
 	static defaultProps = {
-		attendees: [],
+		attendees: new Map(),
 		showGravatar: false,
 		containerCssClass: '',
 		isLoading: false,
