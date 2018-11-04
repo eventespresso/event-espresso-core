@@ -19,7 +19,7 @@ import {
 	EditorStatusSelect,
 	EditorTicketSelect,
 	QueryLimit,
-	EventAttendees,
+	EventAttendeeList,
 } from '@eventespresso/components';
 import {
 	statusModel,
@@ -29,7 +29,7 @@ import {
 	ALLOWED_ORDER_VALUES,
 } from '@eventespresso/model';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
+import { isEmpty, min } from 'lodash';
 
 /**
  * Internal dependencies
@@ -45,7 +45,7 @@ const isNewBlock = ( { eventId, datetimeId, ticketId } ) => eventId === 0 &&
 	datetimeId === 0 &&
 	ticketId === 0;
 
-const DEFAULT_EMPTY_ARRAY = [];
+const DEFAULT_MAP = new Map();
 
 /**
  * EventAttendeesEditor Component
@@ -55,7 +55,7 @@ const DEFAULT_EMPTY_ARRAY = [];
  */
 export class EventAttendeesEditor extends Component {
 	static propTypes = {
-		attendees: PropTypes.array,
+		attendees: PropTypes.instanceOf( Map ),
 		isLoading: PropTypes.bool,
 		attributes: PropTypes.shape( {
 			eventId: PropTypes.number,
@@ -79,7 +79,7 @@ export class EventAttendeesEditor extends Component {
 	};
 
 	static defaultProps = {
-		attendees: [],
+		attendees: new Map(),
 		isLoading: true,
 		attributes: {
 			eventId: 0,
@@ -242,7 +242,7 @@ export class EventAttendeesEditor extends Component {
 
 	/**
 	 * Retrieve the Attendees List component for the given attributes
-	 * @return {Component} The EventAttendees component
+	 * @return {Component} What to display for the attendee display.
 	 */
 	getAttendeesDisplay() {
 		const { isLoading, attendees } = this.props;
@@ -267,7 +267,7 @@ export class EventAttendeesEditor extends Component {
 		}
 
 		if ( isNewBlock( this.props.attributes ) &&
-			attendees === DEFAULT_EMPTY_ARRAY
+			attendees === DEFAULT_MAP
 		) {
 			return (
 				<Placeholder>
@@ -289,13 +289,33 @@ export class EventAttendeesEditor extends Component {
 				</Placeholder>
 			);
 		}
-		return <EventAttendees
-			attendees={ attendees }
+		// const newAttendees = this.applyLimit( attendees );
+		// console.log( newAttendees );
+		return <EventAttendeeList
+			attendees={ this.applyLimit( attendees ) }
 			showGravatar={ showGravatar }
 			avatarOptions={ avatarOptions }
 			isLoading={ isLoading }
 			containerCssClass={ CSS_CLASS_CORE_BLOCKS }
 		/>;
+	}
+
+	/**
+	 * This receives the map of attendees and applies the limit to it so that
+	 * only the set limit of attendees is returned from the beginning of the
+	 * map.
+	 * @param {Map} attendees
+	 * @return {Map} A new map of attendees with the applied limit
+	 */
+	applyLimit( attendees ) {
+		if ( attendees.size <= this.props.attributes.limit ) {
+			return attendees;
+		}
+		return new Map(
+			Array
+				.from( attendees.entries() )
+				.slice( 0, this.props.attributes.limit )
+		);
 	}
 
 	/**
@@ -343,14 +363,27 @@ export class EventAttendeesEditor extends Component {
 							'event_espresso'
 						) }
 					/>
-					<QueryLimit
-						label={ __(
-							'Number of Attendees to Display',
-							'event_espresso'
-						) }
-						limit={ attributes.limit }
-						onLimitChange={ this.setLimit }
-					/>
+					{ this.props.attendees.size > 1 &&
+						<QueryLimit
+							label={ __(
+								'Number of Attendees to Display:',
+								'event_espresso'
+							) }
+							limit={
+								min( [
+									attributes.limit,
+									this.props.attendees.size,
+								] )
+							}
+							onLimitChange={ this.setLimit }
+							min={ 1 }
+							max={ this.props.attendees.size || 100 }
+							help={ __(
+								'Used to adjust the number of attendees displayed from the current results.',
+								'event_espresso'
+							) }
+						/>
+					}
 					<SelectControl
 						label={ __( 'Order Attendees by:', 'event_espresso' ) }
 						value={ attributes.orderBy }
@@ -450,7 +483,6 @@ export default withSelect( ( select, ownProps ) => {
 		datetimeId = defaultProps.datetimeId,
 		ticketId = defaultProps.ticketId,
 		status = defaultProps.status,
-		limit = defaultProps.limit,
 		orderBy = defaultProps.orderBy,
 		order = defaultProps.order,
 	} = ownProps.attributes;
@@ -463,7 +495,7 @@ export default withSelect( ( select, ownProps ) => {
 		showGravatar: true,
 		order,
 		orderBy,
-		limit,
+		limit: 100,
 	};
 
 	const queryString = attendeeModel.getQueryString( queryData );
@@ -479,7 +511,7 @@ export default withSelect( ( select, ownProps ) => {
 			...ownProps.attributes,
 		},
 		attendees: isNewBlock( { eventId, datetimeId, ticketId } ) ?
-			DEFAULT_EMPTY_ARRAY :
+			DEFAULT_MAP :
 			getAttendees( queryString ),
 		isLoading: isRequestingAttendees( queryString ),
 	};

@@ -9,14 +9,14 @@ Array [
 
 exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading false and has attendees 1`] = `
 Array [
-  <EventAttendees
+  <EventAttendeeList
     attendees={
-      Array [
-        Object {
+      Map {
+        10 => Object {
           "ATT_ID": 10,
           "ATT_fname": "dude",
         },
-      ]
+      }
     }
     avatarOptions={
       Object {
