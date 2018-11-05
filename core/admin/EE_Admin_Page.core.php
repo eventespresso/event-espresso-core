@@ -4,6 +4,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
 
 /**
  * EE_Admin_Page class
@@ -16,6 +17,10 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 {
 
+    /**
+     * @var LoaderInterface $loader
+     */
+    protected $loader;
 
     // set in _init_page_props()
     public $page_slug;
@@ -180,6 +185,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     public function __construct($routing = true)
     {
+        $this->loader = LoaderFactory::getLoader();
         if (strpos($this->_get_dir(), 'caffeinated') !== false) {
             $this->_is_caf = true;
         }
@@ -2139,7 +2145,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     )
                 );
             }
-            $this->_list_table_object = LoaderFactory::getLoader()->getShared(
+            $this->_list_table_object = $this->loader->getShared(
                 $this->_route_config['list_table'],
                 array($this)
             );
