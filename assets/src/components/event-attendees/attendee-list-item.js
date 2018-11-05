@@ -46,7 +46,7 @@ const AttendeeListItem = ( {
 	if ( ! isModelEntityOfModel( attendee, 'attendee' ) ) {
 		warning(
 			false,
-			'The EventAttendee component expects a attendee model entity.'
+			'The EventAttendee component expects an attendee model entity.'
 		);
 		return '';
 	}
