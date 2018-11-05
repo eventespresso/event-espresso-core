@@ -3,6 +3,8 @@
  */
 import { getMethodName } from '../base-entities';
 import { MODEL_NAMES } from '../../model';
+import { isResolving } from '../base-selectors';
+import { REDUCER_KEY } from './constants';
 
 /**
  * This method creates selectors for each registered model name wrapping the
@@ -13,14 +15,19 @@ import { MODEL_NAMES } from '../../model';
  */
 export const createEntitySelectors = ( source ) => MODEL_NAMES.reduce(
 	( selectors, modelName ) => {
-		selectors[ getMethodName( modelName, '', 'get', true ) ] = (
+		const methodNameForGet = getMethodName( modelName, '', 'get', true );
+		selectors[ methodNameForGet ] = (
 			state,
 			queryString,
 		) => source.getEntities( state, modelName, queryString );
 		selectors[ getMethodName( modelName, '', 'isRequesting', true ) ] = (
 			state,
 			queryString,
-		) => source.isRequestingEntities( state, modelName, queryString );
+		) => isResolving(
+			REDUCER_KEY,
+			methodNameForGet,
+			queryString
+		);
 		return selectors;
 	},
 	{},

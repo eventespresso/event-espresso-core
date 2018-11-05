@@ -24,7 +24,7 @@ export const { collection_endpoints: endpoints = {} } = data.paths;
  */
 export const getEndpoint = ( modelName ) => {
 	assertEntityHasKey( modelName, endpoints );
-	return '/wp-json' + endpoints[ modelName ];
+	return endpoints[ modelName ];
 };
 
 /**

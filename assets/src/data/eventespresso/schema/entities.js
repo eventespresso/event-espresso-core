@@ -3,6 +3,8 @@
  */
 import { getMethodName } from '../base-entities';
 import { MODEL_NAMES } from '../../model';
+import { isResolving } from '../base-selectors';
+import { REDUCER_KEY } from './constants';
 
 /**
  * Creates selectors for each registered model name wrapping the generic source
@@ -13,18 +15,18 @@ import { MODEL_NAMES } from '../../model';
  */
 export const createEntitySelectors = ( source ) => MODEL_NAMES.reduce(
 	( selectors, modelName ) => {
-		selectors[ getMethodName( modelName, 'schema', 'get' ) ] = (
+		const schemaMethodName = getMethodName( modelName, 'schema', 'get' );
+		const factoryMethodName = getMethodName( modelName, 'factory', 'get' );
+		selectors[ schemaMethodName ] = (
 			state
 		) => source.getSchemaForModel( state, modelName );
-		selectors[ getMethodName( modelName, 'schema', 'isRequesting' ) ] = (
-			state
-		) => source.isRequestingSchemaForModel( state, modelName );
-		selectors[ getMethodName( modelName, 'factory', 'get' ) ] = (
+		selectors[ getMethodName( modelName, 'schema', 'isRequesting' ) ] =
+			() => isResolving( REDUCER_KEY, schemaMethodName );
+		selectors[ factoryMethodName ] = (
 			state
 		) => source.getFactoryForModel( state, modelName );
-		selectors[ getMethodName( modelName, 'factory', 'isRequesting' ) ] = (
-			state
-		) => source.isRequestingFactoryForModel( state, modelName );
+		selectors[ getMethodName( modelName, 'factory', 'isRequesting' ) ] =
+			() => isResolving( REDUCER_KEY, factoryMethodName );
 		return selectors;
 	},
 	{}

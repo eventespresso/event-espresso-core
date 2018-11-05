@@ -1,34 +1,51 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import { InspectorControls } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
 import {
 	PanelBody,
-	ServerSideRender,
+	Placeholder,
 	ToggleControl,
+	Spinner,
+	RangeControl,
+	SelectControl,
 } from '@wordpress/components';
-
-/**
- * External dependencies
- */
-import { __ } from '@eventespresso/i18n';
+import { withSelect } from '@wordpress/data';
+import { sprintf, _n, __ } from '@eventespresso/i18n';
 import {
 	EditorDatetimeSelect,
 	EditorEventSelect,
 	EditorStatusSelect,
 	EditorTicketSelect,
 	QueryLimit,
+	EventAttendeeList,
 } from '@eventespresso/components';
 import {
 	statusModel,
+	attendeeModel,
+	QUERY_ORDER_ASC,
+	QUERY_ORDER_DESC,
+	ALLOWED_ORDER_VALUES,
 } from '@eventespresso/model';
 import PropTypes from 'prop-types';
+import { isEmpty } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { CSS_CLASS_CORE_BLOCKS } from '../constants';
 
 const defaultQueryData = {
 	showExpired: true,
 	limit: 50,
 };
+
+const isNewBlock = ( { eventId, datetimeId, ticketId } ) => eventId === 0 &&
+	datetimeId === 0 &&
+	ticketId === 0;
+
+const DEFAULT_MAP = new Map();
 
 /**
  * EventAttendeesEditor Component
@@ -36,9 +53,9 @@ const defaultQueryData = {
  * This returns the component for the `edit` argument on the `EventAttendees`
  * Block.
  */
-export default class EventAttendeesEditor extends Component {
+export class EventAttendeesEditor extends Component {
 	static propTypes = {
-		attendees: PropTypes.array,
+		attendees: PropTypes.instanceOf( Map ),
 		isLoading: PropTypes.bool,
 		attributes: PropTypes.shape( {
 			eventId: PropTypes.number,
@@ -48,11 +65,21 @@ export default class EventAttendeesEditor extends Component {
 			showGravatar: PropTypes.bool,
 			displayOnArchives: PropTypes.bool,
 			limit: PropTypes.number,
+			orderBy: PropTypes.oneOf( [
+				'id',
+				'lastNameOnly',
+				'firstNameOnly',
+				'firstThenLastName',
+				'lastThenFirstName',
+			] ),
+			order: PropTypes.oneOf( ALLOWED_ORDER_VALUES ),
+			avatarSize: PropTypes.number,
+			avatarClass: PropTypes.string,
 		} ),
 	};
 
 	static defaultProps = {
-		attendees: [],
+		attendees: new Map(),
 		isLoading: true,
 		attributes: {
 			eventId: 0,
@@ -62,6 +89,10 @@ export default class EventAttendeesEditor extends Component {
 			showGravatar: true,
 			displayOnArchives: false,
 			limit: 10,
+			orderBy: 'lastThenFirstName',
+			order: QUERY_ORDER_ASC,
+			avatarSize: 24,
+			avatarClass: 'contact',
 		},
 	};
 
@@ -168,6 +199,32 @@ export default class EventAttendeesEditor extends Component {
 	};
 
 	/**
+	 * Set the orderBy attribute
+	 * @param {string} orderBy
+	 */
+	setOrderBy = ( orderBy ) => {
+		this.props.setAttributes( { orderBy } );
+	};
+
+	/**
+	 * Set the order attribute
+	 * @param {string} order
+	 */
+	setOrder = ( order ) => {
+		this.props.setAttributes( { order } );
+	};
+
+	/**
+	 * Set the size for the gravatar displayed.
+	 * @param {number} size
+	 */
+	setAvatarSize = size => {
+		this.props.setAttributes( {
+			avatarSize: parseInt( size, 10 ),
+		} );
+	};
+
+	/**
 	 * Sets whether to show gravatar for attendees in attributes.
 	 * @param {boolean} showGravatar
 	 */
@@ -184,17 +241,82 @@ export default class EventAttendeesEditor extends Component {
 	};
 
 	/**
-	 * Retrieve the ssr component for displaying attendees for given attributes.
-	 * @return {Component} The ssr component
+	 * Retrieve the Attendees List component for the given attributes
+	 * @return {Component} What to display for the attendee display.
 	 */
-	getAttendeesDisplay = () => {
-		return (
-			<ServerSideRender
-				block="eventespresso/event-attendees"
-				attributes={ this.props.attributes }
-			/>
+	getAttendeesDisplay() {
+		const { isLoading, attendees } = this.props;
+		const {
+			showGravatar,
+			avatarSize,
+			avatarClass,
+		} = this.props.attributes;
+
+		const avatarOptions = {
+			avatarWidth: avatarSize,
+			avatarHeight: avatarSize,
+			avatarClass,
+		};
+
+		if ( isLoading ) {
+			return (
+				<Placeholder>
+					<Spinner />
+				</Placeholder>
+			);
+		}
+
+		if ( isNewBlock( this.props.attributes ) &&
+			attendees === DEFAULT_MAP
+		) {
+			return (
+				<Placeholder>
+					{ __(
+						'To get started, select what event you want to show attendees from in the block settings.',
+						'event_espresso'
+					) }
+				</Placeholder>
+			);
+		}
+
+		if ( ! isLoading && isEmpty( attendees ) ) {
+			return (
+				<Placeholder>
+					{ __(
+						'There are no attendees for selected options.',
+						'event_espresso'
+					) }
+				</Placeholder>
+			);
+		}
+		// const newAttendees = this.applyLimit( attendees );
+		// console.log( newAttendees );
+		return <EventAttendeeList
+			attendees={ this.applyLimit( attendees ) }
+			showGravatar={ showGravatar }
+			avatarOptions={ avatarOptions }
+			isLoading={ isLoading }
+			containerCssClass={ CSS_CLASS_CORE_BLOCKS }
+		/>;
+	}
+
+	/**
+	 * This receives the map of attendees and applies the limit to it so that
+	 * only the set limit of attendees is returned from the beginning of the
+	 * map.
+	 * @param {Map} attendees
+	 * @return {Map} A new map of attendees with the applied limit
+	 */
+	applyLimit( attendees ) {
+		if ( attendees.size <= this.props.attributes.limit ) {
+			return attendees;
+		}
+		return new Map(
+			Array
+				.from( attendees.entries() )
+				.slice( 0, this.props.attributes.limit )
 		);
-	};
+	}
 
 	/**
 	 * Returns inspector controls for the block.
@@ -202,10 +324,14 @@ export default class EventAttendeesEditor extends Component {
 	 * @param {Object} attributes
 	 * @return {Component} The inspector controls component
 	 */
-	getInspectorControls = ( attributes ) => {
+	getInspectorControls( attributes ) {
+		const countAttendees = this.props.attendees.size || 0;
 		return (
 			<InspectorControls>
-				<PanelBody title={ __( 'Event Attendees Settings', 'event_espresso' ) }>
+				<PanelBody title={ __(
+					'Filter By Settings',
+					'event_espresso'
+				) }>
 					<EditorEventSelect
 						key="attendees-event-select"
 						selected={ attributes.eventId }
@@ -233,18 +359,105 @@ export default class EventAttendeesEditor extends Component {
 						selected={ attributes.status }
 						onSelect={ this.setStatus }
 						queryData={ this.state.statusQueryData }
-						label={ __( 'Select Registration Status', 'event_espresso' ) }
+						label={ __(
+							'Select Registration Status',
+							'event_espresso'
+						) }
 					/>
 					<QueryLimit
-						label={ __( 'Number of Attendees to Display', 'event_espresso' ) }
+						label={ __(
+							'Number of Attendees to Display:',
+							'event_espresso'
+						) }
 						limit={ attributes.limit }
 						onLimitChange={ this.setLimit }
+						min={ 1 }
+						max={ 100 }
+						help={ sprintf(
+							_n(
+								'Used to adjust the number of attendees displayed (There is %d total attendee for the current filter settings).',
+								'Used to adjust the number of attendees displayed (There are %d total attendees for the current filter settings).',
+								countAttendees,
+								'event_espresso'
+							),
+							countAttendees
+						) }
 					/>
+					<SelectControl
+						label={ __( 'Order Attendees by:', 'event_espresso' ) }
+						value={ attributes.orderBy }
+						options={ [
+							{
+								label: __( 'Attendee id', 'event_espresso' ),
+								value: 'id',
+							},
+							{
+								label: __( 'Last name only', 'event_espresso' ),
+								value: 'lastNameOnly',
+							},
+							{
+								label: __(
+									'First name only',
+									'event_espresso'
+								),
+								value: 'firstNameOnly',
+							},
+							{
+								label: __(
+									'First, then Last name',
+									'event_espresso'
+								),
+								value: 'firstThenLastName',
+							},
+							{
+								label: __(
+									'Last, then First name',
+									'event_espresso'
+								),
+								value: 'lastThenFirstName',
+							},
+						] }
+						onChange={ this.setOrderBy }
+					/>
+					<SelectControl
+						label={ __( 'Sort order:', 'event_espresso' ) }
+						value={ attributes.order }
+						options={ [
+							{
+								label: __( 'Ascending', 'event_espresso' ),
+								value: QUERY_ORDER_ASC,
+							},
+							{
+								label: __( 'Descending', 'event_espresso' ),
+								value: QUERY_ORDER_DESC,
+							},
+						] }
+						onChange={ this.setOrder }
+					/>
+				</PanelBody>
+				<PanelBody title={ __(
+					'Gravatar Setttings',
+					'event_espresso'
+				) } >
 					<ToggleControl
 						label={ __( 'Display Gravatar', 'event_espresso' ) }
 						checked={ attributes.showGravatar }
 						onChange={ this.toggleShowGravatar }
 					/>
+					{ attributes.showGravatar &&
+					<RangeControl
+						label={ __( 'Size of Gravatar', 'event_espresso' ) }
+						value={ attributes.avatarSize }
+						min={ 10 }
+						max={ 128 }
+						onChange={ this.setAvatarSize }
+					/>
+					}
+				</PanelBody>
+				<PanelBody title={ __(
+					'Location Settings',
+					'event_espresso'
+				) } >
 					<ToggleControl
 						label={ __( 'Display on Archives', 'event_espresso' ) }
 						checked={ attributes.displayOnArchives }
@@ -252,7 +465,7 @@ export default class EventAttendeesEditor extends Component {
 					/>
 				</PanelBody>
 			</InspectorControls> );
-	};
+	}
 
 	render() {
 		return [
@@ -261,3 +474,44 @@ export default class EventAttendeesEditor extends Component {
 		];
 	}
 }
+
+export default withSelect( ( select, ownProps ) => {
+	const defaultProps = { ...EventAttendeesEditor.defaultProps.attributes };
+	const {
+		eventId = defaultProps.eventId,
+		datetimeId = defaultProps.datetimeId,
+		ticketId = defaultProps.ticketId,
+		status = defaultProps.status,
+		orderBy = defaultProps.orderBy,
+		order = defaultProps.order,
+	} = ownProps.attributes;
+
+	const queryData = {
+		forEventId: eventId,
+		forDatetimeId: datetimeId,
+		forTicketId: ticketId,
+		forStatusId: status,
+		showGravatar: true,
+		order,
+		orderBy,
+		limit: 100,
+	};
+
+	const queryString = attendeeModel.getQueryString( queryData );
+	const {
+		getAttendees,
+		isRequestingAttendees,
+	} = select( 'eventespresso/lists' );
+	return {
+		...EventAttendeesEditor.defaultProps,
+		...ownProps,
+		attributes: {
+			...EventAttendeesEditor.defaultProps.attributes,
+			...ownProps.attributes,
+		},
+		attendees: isNewBlock( { eventId, datetimeId, ticketId } ) ?
+			DEFAULT_MAP :
+			getAttendees( queryString ),
+		isLoading: isRequestingAttendees( queryString ),
+	};
+} )( EventAttendeesEditor );

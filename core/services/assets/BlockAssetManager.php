@@ -136,8 +136,8 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     {
         $this->addEditorScript($this->getEditorScriptHandle());
         $this->addEditorStyle($this->getEditorStyleHandle());
-        $this->setScriptHandle($this->getScriptHandle());
-        $this->setStyleHandle($this->getStyleHandle());
+        $this->addScript($this->getScriptHandle());
+        $this->addStyle($this->getStyleHandle());
     }
 
 
@@ -187,7 +187,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 $this->domain->assetNamespace(),
                 $handle
             ),
-            $dependencies
+            $this->addDefaultBlockStyleDependencies($dependencies)
         );
     }
 
@@ -212,7 +212,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 $this->domain->assetNamespace(),
                 $handle
             ),
-            $dependencies
+            $dependencies + array( CoreAssetManager::JS_HANDLE_EE_COMPONENTS )
         )
         ->setRequiresTranslation();
     }
@@ -238,7 +238,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 $this->domain->assetNamespace(),
                 $handle
             ),
-            $dependencies
+            $dependencies + array( CoreAssetManager::CSS_HANDLE_EE_COMPONENTS )
         );
     }
 
@@ -254,8 +254,21 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 'wp-i18n',      // Provides localization functions
                 'wp-element',   // Provides React.Component
                 'wp-components', // Provides many prebuilt components and controls
-                CoreAssetManager::JS_HANDLE_EE_COMPONENTS
+                $this->getScriptHandle(),
             );
+        return $dependencies;
+    }
+
+
+    /**
+     * @param array $dependencies
+     * @return array
+     */
+    protected function addDefaultBlockStyleDependencies(array $dependencies)
+    {
+        $dependencies += array(
+            $this->getStyleHandle()
+        );
         return $dependencies;
     }
 

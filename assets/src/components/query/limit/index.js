@@ -19,6 +19,7 @@ export const QueryLimit = ( {
 	label = DEFAULT_LABEL,
 	min = DEFAULT_MIN,
 	max = DEFAULT_MAX,
+	...rest
 } ) => {
 	return (
 		<RangeControl
@@ -28,6 +29,7 @@ export const QueryLimit = ( {
 			min={ min }
 			max={ max }
 			onChange={ onLimitChange }
+			{ ...rest }
 		/>
 	);
 };

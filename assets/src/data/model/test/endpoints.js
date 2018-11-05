@@ -32,7 +32,7 @@ describe( 'getEndpoint()', () => {
 	it( 'returns the correct endpoint value for the requested model', () => {
 		expect(
 			getEndpoint( 'event' ),
-		).toEqual( '/wp-json/ee/v4.8.36/events' );
+		).toEqual( '/ee/v4.8.36/events' );
 	} );
 } );
 
@@ -42,6 +42,6 @@ describe( 'applyQueryString()', () => {
 		const queryString = 'something=1';
 		expect(
 			applyQueryString( 'event', queryString ),
-		).toEqual( '/wp-json/ee/v4.8.36/events?' + queryString );
+		).toEqual( '/ee/v4.8.36/events?' + queryString );
 	} );
 } );
