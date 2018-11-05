@@ -42,7 +42,7 @@ abstract class BlockRenderer implements BlockRendererInterface
      */
     private function setTemplateRootPath()
     {
-        $this->template_root_path = $this->domain->pluginPath() . 'core/domain/ui/blocks/';
+        $this->template_root_path = $this->domain->pluginPath() . 'ui/blocks/';
     }
 
 
