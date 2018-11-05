@@ -12,7 +12,7 @@ import {
 	SelectControl,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
-import { __ } from '@eventespresso/i18n';
+import { sprintf, _n, __ } from '@eventespresso/i18n';
 import {
 	EditorDatetimeSelect,
 	EditorEventSelect,
@@ -29,7 +29,7 @@ import {
 	ALLOWED_ORDER_VALUES,
 } from '@eventespresso/model';
 import PropTypes from 'prop-types';
-import { isEmpty, min } from 'lodash';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -363,27 +363,25 @@ export class EventAttendeesEditor extends Component {
 							'event_espresso'
 						) }
 					/>
-					{ this.props.attendees.size > 1 &&
-						<QueryLimit
-							label={ __(
-								'Number of Attendees to Display:',
+					<QueryLimit
+						label={ __(
+							'Number of Attendees to Display:',
+							'event_espresso'
+						) }
+						limit={ attributes.limit }
+						onLimitChange={ this.setLimit }
+						min={ 1 }
+						max={ 100 }
+						help={ sprintf(
+							_n(
+								'Used to adjust the number of attendees displayed (There is %d total attendee for the current filter settings).',
+								'Used to adjust the number of attendees displayed (There are %d total attendees for the current filter settings).',
+								this.props.attendees.size,
 								'event_espresso'
-							) }
-							limit={
-								min( [
-									attributes.limit,
-									this.props.attendees.size,
-								] )
-							}
-							onLimitChange={ this.setLimit }
-							min={ 1 }
-							max={ this.props.attendees.size || 100 }
-							help={ __(
-								'Used to adjust the number of attendees displayed from the current results.',
-								'event_espresso'
-							) }
-						/>
-					}
+							),
+							this.props.attendees.size
+						) }
+					/>
 					<SelectControl
 						label={ __( 'Order Attendees by:', 'event_espresso' ) }
 						value={ attributes.orderBy }
