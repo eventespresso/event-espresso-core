@@ -185,7 +185,7 @@ class EventAttendees extends Block
     public function renderBlock(array $attributes = array())
     {
         $attributes = $this->sanitizeAttributes($attributes);
-        return is_archive() && ! $attributes['displayOnArchives']
+        return (is_archive() || is_front_page() || is_home()) && ! $attributes['displayOnArchives']
             ? ''
             : $this->renderer->render($attributes);
     }
