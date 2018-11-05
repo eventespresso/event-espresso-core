@@ -325,6 +325,7 @@ export class EventAttendeesEditor extends Component {
 	 * @return {Component} The inspector controls component
 	 */
 	getInspectorControls( attributes ) {
+		const countAttendees = this.props.attendees.size || 0;
 		return (
 			<InspectorControls>
 				<PanelBody title={ __(
@@ -376,10 +377,10 @@ export class EventAttendeesEditor extends Component {
 							_n(
 								'Used to adjust the number of attendees displayed (There is %d total attendee for the current filter settings).',
 								'Used to adjust the number of attendees displayed (There are %d total attendees for the current filter settings).',
-								this.props.attendees.size,
+								countAttendees,
 								'event_espresso'
 							),
-							this.props.attendees.size
+							countAttendees
 						) }
 					/>
 					<SelectControl
