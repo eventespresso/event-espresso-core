@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+use EE_REST_TestCase;
 use EED_Core_Rest_Api;
 use EEM_CPT_Base;
 use EEM_Event;
@@ -23,7 +24,7 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  * @author                Mike Nelson
  * @group                 rest_api
  */
-class Read_Test extends \EE_REST_TestCase
+class Read_Test extends EE_REST_TestCase
 {
 
     public function test_explode_and_get_items_prefixed_with__basic()
@@ -601,22 +602,7 @@ class Read_Test extends \EE_REST_TestCase
                                 ),
                         ),
                 ),
-                '_protected' => array(
-                    'password' => array('protected' => false),
-                    'EVT_desc' => array('protected' => false),
-                    'EVT_short_desc' => array('protected' => false),
-                    'EVT_display_desc' => array('protected' => false),
-                    'EVT_display_ticket_selector' => array('protected' => false),
-                    'EVT_visible_on' => array('protected' => false),
-                    'EVT_additional_limit' => array('protected' => false),
-                    'EVT_default_registration_status' => array('protected' => false),
-                    'EVT_member_only' => array('protected' => false),
-                    'EVT_phone' => array('protected' => false),
-                    'EVT_allow_overflow' => array('protected' => false),
-                    'EVT_timezone_string' => array('protected' => false),
-                    'EVT_external_URL' => array('protected' => false),
-                    'EVT_donations' => array('protected' => false),
-                )
+                '_protected' => array()
             ),
             $result
         );
@@ -1458,241 +1444,6 @@ class Read_Test extends \EE_REST_TestCase
         $this->assertNotEquals(
             $data[0]['EVT_desc']['rendered'],
             $data[1]['EVT_desc']['rendered']
-        );
-    }
-
-    /**
-     * @since $VID:$
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
-     * @group private-1
-     */
-    public function testHandleRequestGetAllPasswordProtectedEvents()
-    {
-        // create two events, one being password protected
-        $e_no_password = $this->new_model_obj_with_dependencies(
-            'Event',
-            array(
-                'password' => '',
-                'status' => EEM_Event::post_status_publish,
-                'EVT_desc' => 'no password needed to view this'
-            ));
-        $e_with_password = $this->new_model_obj_with_dependencies(
-            'Event',
-            array(
-                'password' => 'koolaid',
-                'status' => EEM_Event::post_status_publish,
-                'EVT_desc' => 'no way are you seeing this without a password!'
-            )
-        );
-
-        //send a request for the two events
-        $response = rest_do_request(
-            new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events')
-        );
-        $this->assertInstanceOf('WP_REST_Response', $response);
-        $data = $response->get_data();
-        $this->assertEquals(2, count($data));
-        $this->assertEquals(
-            $e_no_password->ID(),
-            $data[0]['EVT_ID']
-        );
-        $this->assertEquals(
-            '',
-            $data[1]['EVT_desc']['rendered']
-        );
-    }
-
-    /**
-     * @since $VID:$
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
-     * @group private-1
-     */
-    public function testHandleRequestGetOneEventWithPassword()
-    {
-        // create a password protected event
-        $password = 'jumboshrimp';
-        $e_with_password = $this->new_model_obj_with_dependencies(
-            'Event',
-            array(
-                'password' => $password,
-                'status' => EEM_Event::post_status_publish,
-                'EVT_desc' => 'no way are you seeing this without a password!'
-            )
-        );
-
-        // send a request for it, without a password. Stuff gets hidden
-        $response = rest_do_request(
-            new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $e_with_password->ID())
-        );
-        $this->assertInstanceOf('WP_REST_Response', $response);
-        $data = $response->get_data();
-        $this->assertEquals(
-            $e_with_password->ID(),
-            $data['EVT_ID']
-        );
-        $this->assertEquals(
-            '',
-            $data['EVT_desc']['rendered']
-        );
-        // now provide the password, you should be able to see it all
-        $request = new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $e_with_password->ID());
-        $request->set_query_params(
-            array(
-                'password' => $password
-            )
-        );
-        $response = rest_do_request($request);
-        $this->assertInstanceOf('WP_REST_Response', $response);
-        $data = $response->get_data();
-        $this->assertEquals(
-            $e_with_password->get_pretty('EVT_desc'),
-            $data['EVT_desc']['rendered']
-        );
-
-        // now don't provide the password, but authenticate
-        // WP core currently actually hides this content from admins too
-        // in the REST API, and web front-end. So we do too.
-        $this->authenticate_as_admin();
-        $response = rest_do_request(
-            new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $e_with_password->ID())
-        );
-        $this->assertInstanceOf('WP_REST_Response', $response);
-        $data = $response->get_data();
-        $this->assertEquals(
-            '',
-            $data['EVT_desc']['rendered']
-        );
-    }
-
-    /**
-     * @since $VID:$
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
-     * @group private-1
-     */
-    public function testHandleRequestGetAllDatetimesForPasswordProtectedEvents()
-    {
-        // create two events, one being password protected
-        $e_no_password = $this->new_model_obj_with_dependencies(
-            'Event',
-            array(
-                'password' => '',
-                'status' => EEM_Event::post_status_publish,
-                'EVT_desc' => 'no password needed to view this'
-            ));
-        $e_with_password = $this->new_model_obj_with_dependencies(
-            'Event',
-            array(
-                'password' => 'koolaid',
-                'status' => EEM_Event::post_status_publish,
-                'EVT_desc' => 'no way are you seeing this without a password!'
-            )
-        );
-
-        // create datetimes for each
-        $datetime_no_password = $this->new_model_obj_with_dependencies(
-            'Datetime',
-            array(
-                'EVT_ID' => $e_no_password->ID()
-            )
-        );
-        $datetime_password = $this->new_model_obj_with_dependencies(
-            'Datetime',
-            array(
-                'EVT_ID' => $e_with_password->ID()
-            )
-        );
-
-        //send a request for the two datetimes
-        $response = rest_do_request(
-            new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes')
-        );
-        $this->assertInstanceOf('WP_REST_Response', $response);
-        $data = $response->get_data();
-
-        // only the datetime for non-password protected events are visible
-        $this->assertEquals(1, count($data));
-        $this->assertEquals(
-            $datetime_no_password->ID(),
-            $data[0]['DTT_ID']
-        );
-    }
-
-    /**
-     * @since $VID:$
-     * @group private-1
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
-     */
-    public function testHandleRequestGetAllTicketsForPasswordProtectedEvents()
-    {
-        // create two events, one being password protected
-        $e_no_password = $this->new_model_obj_with_dependencies(
-            'Event',
-            array(
-                'password' => '',
-                'status' => EEM_Event::post_status_publish,
-                'EVT_desc' => 'no password needed to view this'
-            ));
-        $e_with_password = $this->new_model_obj_with_dependencies(
-            'Event',
-            array(
-                'password' => 'koolaid',
-                'status' => EEM_Event::post_status_publish,
-                'EVT_desc' => 'no way are you seeing this without a password!'
-            )
-        );
-
-        // create datetimes for each
-        $datetime_no_password = $this->new_model_obj_with_dependencies(
-            'Datetime',
-            array(
-                'EVT_ID' => $e_no_password->ID()
-            )
-        );
-        $datetime_password = $this->new_model_obj_with_dependencies(
-            'Datetime',
-            array(
-                'EVT_ID' => $e_with_password->ID()
-            )
-        );
-        $datetime_no_password = $this->new_model_obj_with_dependencies(
-            'Datetime',
-            array(
-                'EVT_ID' => $e_no_password->ID()
-            )
-        );
-        $ticket_no_password = $this->new_model_obj_with_dependencies('Ticket');
-        $ticket_no_password->_add_relation_to($datetime_no_password->ID(), 'Datetime');
-        $ticket_password = $this->new_model_obj_with_dependencies('Ticket');
-        $ticket_password->_add_relation_to($datetime_password->ID(), 'Datetime');
-
-        //send a request for the two datetimes
-        $response = rest_do_request(
-            new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/tickets')
-        );
-        $this->assertInstanceOf('WP_REST_Response', $response);
-        $data = $response->get_data();
-
-        // only the datetime for non-password protected events are visible
-        $this->assertEquals(1, count($data));
-        $this->assertEquals(
-            $ticket_no_password->ID(),
-            $data[0]['TKT_ID']
         );
     }
 }

@@ -356,11 +356,6 @@ class Read extends Base
     public function getEntitiesFromModel($model, $request)
     {
         $query_params = $this->createModelQueryParams($model, $request->get_params());
-        // when fetching a collection that's should be protected by a related model's password
-        // exclude results related to an entity with a password.
-        if($model->restrictedByRelatedModelPassword()){
-            $query_params = $this->excludeProtectedEntities($model,$request->get_param('caps'), $query_params);
-        }
         if (! Capabilities::currentUserHasPartialAccessTo($model, $query_params['caps'])) {
             $model_name_plural = EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
             return new WP_Error(
@@ -380,11 +375,16 @@ class Read extends Base
         $results = $model->get_all_wpdb_results($query_params);
         $nice_results = array();
         foreach ($results as $result) {
-            $nice_results[] = $this->createEntityFromWpdbResult(
+            $nice_result = $this->createEntityFromWpdbResult(
                 $model,
                 $result,
                 $request
             );
+            // if there was an error, the whole thing should be an error
+            if( $nice_result instanceof WP_Error){
+                return $nice_result;
+            }
+            $nice_results[] = $nice_result;
         }
         return $nice_results;
     }
@@ -639,8 +639,13 @@ class Read extends Base
         if( $password_error = $this->checkPassword(
             $model,
             $db_row,
-            array($model->primary_key_name() => $db_row[$model->get_primary_key_field()->get_qualified_column()]),
-            $rest_request)){
+            array(
+                0 => array(
+                    $model->primary_key_name() => $db_row[$model->get_primary_key_field()->get_qualified_column()]
+                )
+            ),
+            $rest_request
+        )){
             if( $password_error->get_error_code() === 'rest_post_incorrect_password') {
                 return $password_error;
             } else {
@@ -1480,20 +1485,9 @@ class Read extends Base
         $this->setDebugInfo('model query params', $restricted_query_params);
         $model_rows = $model->get_all_wpdb_results($restricted_query_params);
         if (! empty($model_rows)) {
-            // check the password!
-            $model_row = reset($model_rows);
-            if( $password_error = $this->checkPassword(
-                $model,
-                $model_row,
-                $restricted_query_params,
-                $request
-            )){
-                return $password_error;
-            }
-
             return $this->createEntityFromWpdbResult(
                 $model,
-                $model_row,
+                reset($model_rows),
                 $request
             );
         } else {
@@ -1526,25 +1520,6 @@ class Read extends Base
     }
 
     /**
-     * Sets the query parameters to exclude protected entities, depending on the model and request.
-     * @since $VID:$
-     * @param EEM_Base $model
-     * @param string $caps_context
-     * @param array $query_params
-     * @return array
-     */
-    protected function excludeProtectedEntities(EEM_Base $model, $caps_context, $query_params)
-    {
-        if ($model->restrictedByRelatedModelPassword()
-            && ! $model->hasPassword()
-            && $caps_context === EEM_Base::caps_read
-        ) {
-            $query_params['exclude_protected'] = true;
-        }
-        return $query_params;
-    }
-
-    /**
      * Checks that if this content requires a password to be read, that it's been provided and is correct.
      * @since $VID:$
      * @param EEM_Base $model
@@ -1561,7 +1536,7 @@ class Read extends Base
      */
     protected function checkPassword(EEM_Base $model, $model_row, $query_params, WP_REST_Request $request)
     {
-        //        // if this entity requires a password, they better give it and it better be right!
+        // if this entity requires a password, they better give it and it better be right!
         if ($model->hasPassword()
             && $model_row[ $model->getPasswordField()->get_qualified_column() ] !== '') {
             if (empty($request['password'])) {
