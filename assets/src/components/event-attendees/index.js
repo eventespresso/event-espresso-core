@@ -19,7 +19,7 @@ export default class EventAttendeeList extends Component {
 		attendees: PropTypes.instanceOf( Map ),
 		showGravatar: PropTypes.bool,
 		containerCssClass: PropTypes.string,
-		containerId: PropTypes.string
+		containerId: PropTypes.string,
 	};
 
 	static defaultProps = {
