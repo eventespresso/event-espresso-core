@@ -3,6 +3,7 @@
  * template vars in use
  *
  * @var int $EVT_ID
+ * @var EE_Event $event
  * @var string $event_datetime_help_link
  * @var string $ticket_options_help_link
  * @var string $add_new_dtt_help_link
@@ -20,7 +21,7 @@
 
 do_action(
     'AHEE__caffeinated_admin_new_pricing_templates__event_tickets_metabox_main__before_content',
-    $EVT_ID, $existing_datetime_ids, $existing_ticket_ids
+    $event, $existing_datetime_ids, $existing_ticket_ids
 );
 ?>
 <div id="event-and-ticket-form-content">
@@ -132,7 +133,7 @@ do_action(
     <?php
     do_action(
         'AHEE__caffeinated_admin_new_pricing_templates__event_tickets_metabox_main__after_datetime_fields',
-        $EVT_ID, $existing_datetime_ids, $existing_ticket_ids
+        $event, $existing_datetime_ids, $existing_ticket_ids
     );
     ?>
 
@@ -186,5 +187,5 @@ echo $ticket_js_structure;
 
 do_action(
     'AHEE__caffeinated_admin_new_pricing_templates__event_tickets_metabox_main__after_content',
-    $EVT_ID, $existing_datetime_ids, $existing_ticket_ids
+    $event, $existing_datetime_ids, $existing_ticket_ids
 );
