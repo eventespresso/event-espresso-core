@@ -16,7 +16,7 @@ use PHPUnit_Framework_TestCase;
  *
  * @package EventEspresso\tests
  * @author  Darren Ethier
- * @since   $VID:$
+ * @since   4.9.70.p
  */
 class JavascriptAssetTest extends PHPUnit_Framework_TestCase
 {
