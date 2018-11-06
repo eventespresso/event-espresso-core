@@ -297,6 +297,7 @@ export class EventAttendeesEditor extends Component {
 			avatarOptions={ avatarOptions }
 			isLoading={ isLoading }
 			containerCssClass={ CSS_CLASS_CORE_BLOCKS }
+			containerId={ 'ee-block-event-attendees' }
 		/>;
 	}
 
