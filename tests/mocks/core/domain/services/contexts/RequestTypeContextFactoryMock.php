@@ -11,7 +11,7 @@ use InvalidArgumentException;
  *
  * @package EventEspresso\tests\mocks\core\domain\services\contexts
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.70.p
  */
 class RequestTypeContextFactoryMock implements RequestTypeContextFactoryInterface
 {

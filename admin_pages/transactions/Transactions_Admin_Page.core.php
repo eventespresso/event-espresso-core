@@ -448,7 +448,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
              *     '__return_true'
              * );
              *
-             * @since $VID:$
+             * @since 4.9.70.p
              * @param boolean                 $display_failed_txns_list
              * @param Transactions_Admin_Page $this
              */

@@ -11,7 +11,7 @@ use EventEspresso\core\services\request\Request;
  *
  * @package EventEspresso\tests\mocks\core\services\request
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.70.p
  */
 class RequestMock extends Request
 {
