@@ -1,6 +1,7 @@
 <?php
 
 namespace EventEspresso\core\exceptions;
+
 use EventEspresso\core\libraries\rest_api\RestException;
 
 /**
@@ -17,7 +18,7 @@ use EventEspresso\core\libraries\rest_api\RestException;
  */
 class RestPasswordRequiredException extends RestException
 {
-    public function __construct( $previous = null)
+    public function __construct($previous = null)
     {
         parent::__construct(
             'rest_post_password_required',
@@ -28,7 +29,6 @@ class RestPasswordRequiredException extends RestException
             $previous
         );
     }
-
 }
 // End of file RestPasswordRequired.php
 // Location: EventEspresso\core\exceptions/RestPasswordRequired.php

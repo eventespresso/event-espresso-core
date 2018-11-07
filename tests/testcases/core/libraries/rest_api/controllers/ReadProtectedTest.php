@@ -66,7 +66,78 @@ class ReadProtectedTest extends EE_REST_TestCase
         $this->assertEquals($event->ID(), $response_data[0]['EVT_ID']);
         // note that this event was password-protected
         $this->assertEquals('', $response_data[0]['EVT_desc']['rendered']);
+    }
 
+    /**
+     * Asserts that _protected can be excluded using "include" parameter (if using that, you probably wanted
+     * to cut down on the response size).
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testGetAllNoPasswordDontIncludeProtectedProperty()
+    {
+        $event = $this->setupPasswordProtectedEvent();
+
+        $req = new WP_REST_Request('GET',
+            '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
+        $req->set_query_params(
+            array(
+                'include' => 'EVT_desc'
+            )
+        );
+        $response = rest_do_request($req);
+        $response_data = $response->get_data();
+        $this->assertTrue(is_array($response_data));
+        $this->assertEquals($event->ID(), $response_data[0]['EVT_ID']);
+        // note that this event was password-protected
+        $this->assertEquals('', $response_data[0]['EVT_desc']['rendered']);
+        $this->assertArrayNotHasKey(
+            '_protected',
+            $response_data[0]
+        );
+    }
+
+    /**
+     * Asserts that _protected can be excluded using "include" parameter (if using that, you probably wanted
+     * to cut down on the response size).
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testGetAllNoPasswordIncludeSpecificFieldsAndProtectedProperty()
+    {
+        $event = $this->setupPasswordProtectedEvent();
+
+        $req = new WP_REST_Request('GET',
+            '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
+        $req->set_query_params(
+            array(
+                'include' => 'EVT_desc, _protected'
+            )
+        );
+        $response = rest_do_request($req);
+        $response_data = $response->get_data();
+        $this->assertTrue(is_array($response_data));
+        $this->assertEquals($event->ID(), $response_data[0]['EVT_ID']);
+        // note that this event was password-protected
+        $this->assertEquals('', $response_data[0]['EVT_desc']['rendered']);
+        $this->assertArrayHasKey(
+            '_protected',
+            $response_data[0]
+        );
+        $this->assertEquals(
+            array(
+                'EVT_desc'
+            ),
+            $response_data[0]['_protected']
+        );
     }
 
     /**

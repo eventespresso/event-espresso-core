@@ -1,6 +1,7 @@
 <?php
 
 namespace EventEspresso\core\exceptions;
+
 use EventEspresso\core\libraries\rest_api\RestException;
 
 /**
@@ -26,7 +27,6 @@ class RestPasswordIncorrectException extends RestException
             $previous
         );
     }
-
 }
 // End of file RestPasswordIncorrectException.php
 // Location: EventEspresso\core\exceptions/RestPasswordIncorrectException.php

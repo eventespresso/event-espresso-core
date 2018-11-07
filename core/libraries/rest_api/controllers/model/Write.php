@@ -315,7 +315,7 @@ class Write extends Base
         // the simulates request really doesn't need any info downstream
         $simulated_request = new WP_REST_Request('GET');
         // set the caps context on the simulated according to the original request.
-        switch($request->get_method()){
+        switch ($request->get_method()) {
             case 'POST':
             case 'PUT':
                 $caps_context = EEM_Base::caps_edit;

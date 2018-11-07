@@ -643,18 +643,18 @@ class Read extends Base
         // when it's a regular read request for a model with a password and the password wasn't provided
         // remove the password protected fields
         $has_protected_fields = false;
-        try{
+        try {
             $this->checkPassword(
                 $model,
                 $db_row,
                 array(
                     0 => array(
-                        $model->primary_key_name() => $db_row[$model->get_primary_key_field()->get_qualified_column()]
+                        $model->primary_key_name() => $db_row[ $model->get_primary_key_field()->get_qualified_column() ]
                     )
                 ),
                 $rest_request
             );
-        }catch(RestPasswordRequiredException $e) {
+        } catch (RestPasswordRequiredException $e) {
             if ($model->hasPassword()) {
                 // just remove protected fields
                 $has_protected_fields = true;
@@ -670,7 +670,6 @@ class Read extends Base
         }
 
         $entity_array['_calculated_fields'] = $this->getEntityCalculations($model, $db_row, $rest_request, $has_protected_fields);
-        $entity_array['_protected'] = $this->addProtectedProperty($model, $entity_array, $has_protected_fields);
         $entity_array = apply_filters(
             'FHEE__Read__create_entity_from_wpdb_results__entity_before_including_requested_models',
             $entity_array,
@@ -679,8 +678,16 @@ class Read extends Base
             $rest_request,
             $this
         );
-
+        // add an empty protected property for now. If it's still around after we remove everything the request didn't
+        // want, we'll populate it then. k?
+        $entity_array['_protected'] = array();
         $entity_array = $this->includeRequestedModels($model, $rest_request, $entity_array, $db_row, $has_protected_fields);
+        // remove any properties the request didn't want. This way _protected won't bother mentioning them
+        $entity_array = $this->includeOnlyRequestedProperties($model,$rest_request,$entity_array);
+        // if they still wanted the _protected property, add it.
+        if(isset($entity_array['_protected'])) {
+            $entity_array = $this->addProtectedProperty($model, $entity_array, $has_protected_fields);
+        }
         $entity_array = apply_filters(
             'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
             $entity_array,
@@ -717,12 +724,12 @@ class Read extends Base
      * @param $model
      * @param $results_so_far
      * @param $protected
-     * @return array
+     * @return array results
      */
     protected function addProtectedProperty(EEM_Base $model, $results_so_far, $protected)
     {
         if (! $model->hasPassword() || ! $protected) {
-            return array();
+            return $results_so_far;
         }
         $password_field = $model->getPasswordField();
         $all_protected = array_merge(
@@ -734,11 +741,10 @@ class Read extends Base
             $all_protected,
             $fields_included
         );
-        $protected_property = array();
         foreach ($fields_included as $field_name) {
-            $protected_property[] = $field_name ;
+            $results_so_far['_protected'][] = $field_name ;
         }
-        return $protected_property;
+        return $results_so_far;
     }
 
     /**
@@ -971,21 +977,6 @@ class Read extends Base
         if (! $db_row) {
             $db_row = $entity_array;
         }
-        $includes_for_this_model = $this->explodeAndGetItemsPrefixedWith($rest_request->get_param('include'), '');
-        $includes_for_this_model = $this->removeModelNamesFromArray($includes_for_this_model);
-        // if they passed in * or didn't specify any includes, return everything
-        if (! in_array('*', $includes_for_this_model)
-            && ! empty($includes_for_this_model)
-        ) {
-            if ($model->has_primary_key_field()) {
-                // always include the primary key. ya just gotta know that at least
-                $includes_for_this_model[] = $model->primary_key_name();
-            }
-            if ($this->explodeAndGetItemsPrefixedWith($rest_request->get_param('calculate'), '')) {
-                $includes_for_this_model[] = '_calculated_fields';
-            }
-            $entity_array = array_intersect_key($entity_array, array_flip($includes_for_this_model));
-        }
         $relation_settings = $this->getModelVersionInfo()->relationSettings($model);
         foreach ($relation_settings as $relation_name => $relation_obj) {
             $related_fields_to_include = $this->explodeAndGetItemsPrefixedWith(
@@ -1016,7 +1007,7 @@ class Read extends Base
                         $model->deduce_fields_n_values_from_cols_n_values($db_row)
                     )
                 );
-                if( ! $included_items_protected) {
+                if (! $included_items_protected) {
                     $related_results = $this->getEntitiesFromRelationUsingModelQueryParams(
                         $primary_model_query_params,
                         $relation_obj,
@@ -1027,11 +1018,45 @@ class Read extends Base
                     $related_results = null;
                     $entity_array['_protected'][] = Read::getRelatedEntityName($relation_name, $relation_obj);
                 }
-                if($related_results instanceof WP_Error){
+                if ($related_results instanceof WP_Error) {
                     $related_results = null;
                 }
                 $entity_array[ Read::getRelatedEntityName($relation_name, $relation_obj) ] = $related_results;
             }
+        }
+        return $entity_array;
+    }
+
+    /**
+     * If the user has requested only specific properties (including meta properties like _links or _protected)
+     * remove everything else.
+     * @since $VID:$
+     * @param EEM_Base $model
+     * @param WP_REST_Request $rest_request
+     * @param $entity_array
+     * @return array
+     * @throws EE_Error
+     */
+    protected function includeOnlyRequestedProperties(
+        EEM_Base $model,
+        WP_REST_Request $rest_request,
+        $entity_array
+    ){
+
+        $includes_for_this_model = $this->explodeAndGetItemsPrefixedWith($rest_request->get_param('include'), '');
+        $includes_for_this_model = $this->removeModelNamesFromArray($includes_for_this_model);
+        // if they passed in * or didn't specify any includes, return everything
+        if (! in_array('*', $includes_for_this_model)
+            && ! empty($includes_for_this_model)
+        ) {
+            if ($model->has_primary_key_field()) {
+                // always include the primary key. ya just gotta know that at least
+                $includes_for_this_model[] = $model->primary_key_name();
+            }
+            if ($this->explodeAndGetItemsPrefixedWith($rest_request->get_param('calculate'), '')) {
+                $includes_for_this_model[] = '_calculated_fields';
+            }
+            $entity_array = array_intersect_key($entity_array, array_flip($includes_for_this_model));
         }
         return $entity_array;
     }
@@ -1517,7 +1542,7 @@ class Read extends Base
         } else {
             // ok let's test to see if we WOULD have found it, had we not had restrictions from missing capabilities
             $lowercase_model_name = strtolower($model->get_this_model_name());
-            if ( $model->exists($query_params)) {
+            if ($model->exists($query_params)) {
                 // you got shafted- it existed but we didn't want to tell you!
                 throw new RestException(
                     'rest_user_cannot_' . $context,
@@ -1572,9 +1597,8 @@ class Read extends Base
             )) {
                 throw new RestPasswordIncorrectException();
             }
-        }
-        // wait! maybe this content is password protected
-        else if ($model->restrictedByRelatedModelPassword()
+        } // wait! maybe this content is password protected
+        elseif ($model->restrictedByRelatedModelPassword()
             && $request->get_param('caps') === EEM_Base::caps_read) {
             $password_supplied = $request->get_param('password');
             if (empty($password_supplied)) {
@@ -1583,7 +1607,7 @@ class Read extends Base
                     throw new RestPasswordRequiredException();
                 }
             } else {
-                $query_params[0][$model->modelChainAndPassword()] = $password_supplied;
+                $query_params[0][ $model->modelChainAndPassword() ] = $password_supplied;
                 if (!$model->exists($query_params)) {
                     throw new RestPasswordIncorrectException();
                 }
