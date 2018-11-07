@@ -1022,6 +1022,7 @@ class Read extends Base
                 } else {
                     // they're protected, hide them.
                     $related_results = null;
+                    $entity_array['_protected'][] = Read::getRelatedEntityName($relation_name, $relation_obj);
                 }
                 if($related_results instanceof WP_Error){
                     if($related_results->get_error_code() === 'rest_post_incorrect_password'){
