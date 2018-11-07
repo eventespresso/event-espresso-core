@@ -8,6 +8,8 @@ use EEH_DTT_Helper;
 use EEM_Soft_Delete_Base;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\RestPasswordIncorrectException;
+use EventEspresso\core\exceptions\RestPasswordRequiredException;
 use EventEspresso\core\libraries\rest_api\ObjectDetectedException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use Exception;
@@ -349,16 +351,22 @@ class Read extends Base
     /**
      * Gets a collection for the given model and filters
      *
-     * @param EEM_Base        $model
+     * @param EEM_Base $model
      * @param WP_REST_Request $request
-     * @return array|WP_Error
+     * @return array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RestException
      */
     public function getEntitiesFromModel($model, $request)
     {
         $query_params = $this->createModelQueryParams($model, $request->get_params());
         if (! Capabilities::currentUserHasPartialAccessTo($model, $query_params['caps'])) {
             $model_name_plural = EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
-            return new WP_Error(
+            throw new RestException(
                 sprintf('rest_%s_cannot_list', $model_name_plural),
                 sprintf(
                     __('Sorry, you are not allowed to list %1$s. Missing permissions: %2$s', 'event_espresso'),
@@ -375,16 +383,11 @@ class Read extends Base
         $results = $model->get_all_wpdb_results($query_params);
         $nice_results = array();
         foreach ($results as $result) {
-            $nice_result = $this->createEntityFromWpdbResult(
+            $nice_results[] =  $this->createEntityFromWpdbResult(
                 $model,
                 $result,
                 $request
             );
-            // if there was an error, the whole thing should be an error
-            if( $nice_result instanceof WP_Error){
-                return $nice_result;
-            }
-            $nice_results[] = $nice_result;
         }
         return $nice_results;
     }
@@ -396,12 +399,18 @@ class Read extends Base
      * is a HABTM relation, in which case it merges any non-foreign-key fields from
      * the join-model-object into the results
      *
-     * @param array                   $primary_model_query_params query params for finding the item from which
+     * @param array $primary_model_query_params query params for finding the item from which
      *                                                            relations will be based
      * @param \EE_Model_Relation_Base $relation
-     * @param WP_REST_Request         $request
-     * @return WP_Error|array
+     * @param WP_REST_Request $request
+     * @return array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RestException
+     * @throws \EventEspresso\core\exceptions\ModelConfigurationException
      */
     protected function getEntitiesFromRelationUsingModelQueryParams($primary_model_query_params, $relation, $request)
     {
@@ -443,7 +452,7 @@ class Read extends Base
                     $related_model->get_this_model_name()
                 );
             }
-            return new WP_Error(
+            throw new RestException(
                 sprintf('rest_%s_cannot_list', $related_model_name_maybe_plural),
                 sprintf(
                     __(
@@ -463,14 +472,12 @@ class Read extends Base
             );
         }
 
-        if( $password_error = $this->checkPassword(
+        $this->checkPassword(
             $model,
             $primary_model_row,
             $restricted_query_params,
             $request
-        )){
-            return $password_error;
-        }
+        );
         $query_params = $this->createModelQueryParams($relation->get_other_model(), $request->get_params());
         foreach ($primary_model_query_params[0] as $where_condition_key => $where_condition_value) {
             $query_params[0][ $relation->get_this_model()->get_this_model_name()
@@ -491,9 +498,6 @@ class Read extends Base
                 $result,
                 $request
             );
-            if( $nice_result instanceof WP_Error){
-                return $nice_result;
-            }
             if ($relation instanceof \EE_HABTM_Relation) {
                 // put the unusual stuff (properties from the HABTM relation) first, and make sure
                 // if there are conflicts we prefer the properties from the main model
@@ -528,7 +532,7 @@ class Read extends Base
      * @param string                  $id the ID of the thing we are fetching related stuff from
      * @param \EE_Model_Relation_Base $relation
      * @param WP_REST_Request         $request
-     * @return array|WP_Error
+     * @return array
      * @throws EE_Error
      */
     public function getEntitiesFromRelation($id, $relation, $request)
@@ -639,34 +643,32 @@ class Read extends Base
         // when it's a regular read request for a model with a password and the password wasn't provided
         // remove the password protected fields
         $has_protected_fields = false;
-        if( $password_error = $this->checkPassword(
-            $model,
-            $db_row,
-            array(
-                0 => array(
-                    $model->primary_key_name() => $db_row[$model->get_primary_key_field()->get_qualified_column()]
-                )
-            ),
-            $rest_request
-        )){
-            if( $password_error->get_error_code() === 'rest_post_incorrect_password') {
-                return $password_error;
+        try{
+            $this->checkPassword(
+                $model,
+                $db_row,
+                array(
+                    0 => array(
+                        $model->primary_key_name() => $db_row[$model->get_primary_key_field()->get_qualified_column()]
+                    )
+                ),
+                $rest_request
+            );
+        }catch(RestPasswordRequiredException $e) {
+            if ($model->hasPassword()) {
+                // just remove protected fields
+                $has_protected_fields = true;
+                $entity_array = Capabilities::filterOutPasswordProtectedFields(
+                    $entity_array,
+                    $model,
+                    $this->getModelVersionInfo()
+                );
             } else {
-                // they didn't provide the password
-                if($model->hasPassword()) {
-                    // just remove protected fields
-                    $has_protected_fields = true;
-                    $entity_array = Capabilities::filterOutPasswordProtectedFields(
-                        $entity_array,
-                        $model,
-                        $this->getModelVersionInfo()
-                    );
-                } else {
-                    // that's a problem. None of this should be accessible if no password was provided
-                    return $password_error;
-                }
+                // that's a problem. None of this should be accessible if no password was provided
+                throw $e;
             }
         }
+
         $entity_array['_calculated_fields'] = $this->getEntityCalculations($model, $db_row, $rest_request, $has_protected_fields);
         $entity_array['_protected'] = $this->addProtectedProperty($model, $entity_array, $has_protected_fields);
         $entity_array = apply_filters(
@@ -950,12 +952,13 @@ class Read extends Base
     /**
      * Adds the included models indicated in the request to the entity provided
      *
-     * @param EEM_Base        $model
+     * @param EEM_Base $model
      * @param WP_REST_Request $rest_request
-     * @param array           $entity_array
-     * @param array           $db_row
+     * @param array $entity_array
+     * @param array $db_row
      * @param boolean $included_items_protected if the original item is password protected, don't include any related models.
      * @return array the modified entity
+     * @throws RestException
      */
     protected function includeRequestedModels(
         EEM_Base $model,
@@ -1025,9 +1028,6 @@ class Read extends Base
                     $entity_array['_protected'][] = Read::getRelatedEntityName($relation_name, $relation_obj);
                 }
                 if($related_results instanceof WP_Error){
-                    if($related_results->get_error_code() === 'rest_post_incorrect_password'){
-                        return $related_results;
-                    }
                     $related_results = null;
                 }
                 $entity_array[ Read::getRelatedEntityName($relation_name, $relation_obj) ] = $related_results;
@@ -1172,7 +1172,7 @@ class Read extends Base
      *
      * @param EEM_Base        $model
      * @param WP_REST_Request $request
-     * @return array|WP_Error
+     * @return array
      */
     public function getEntityFromModel($model, $request)
     {
@@ -1495,7 +1495,7 @@ class Read extends Base
      * @param EEM_Base $model
      * @param WP_REST_Request $request
      * @param null $context
-     * @return array|WP_Error
+     * @return array
      * @throws EE_Error
      */
     public function getOneOrReportPermissionError(EEM_Base $model, WP_REST_Request $request, $context = null)
@@ -1519,7 +1519,7 @@ class Read extends Base
             $lowercase_model_name = strtolower($model->get_this_model_name());
             if ( $model->exists($query_params)) {
                 // you got shafted- it existed but we didn't want to tell you!
-                return new WP_Error(
+                throw new RestException(
                     'rest_user_cannot_' . $context,
                     sprintf(
                         __('Sorry, you cannot %1$s this %2$s. Missing permissions are: %3$s', 'event_espresso'),
@@ -1534,7 +1534,7 @@ class Read extends Base
                 );
             } else {
                 // it's not you. It just doesn't exist
-                return new WP_Error(
+                throw new RestException(
                     sprintf('rest_%s_invalid_id', $lowercase_model_name),
                     sprintf(__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
                     array('status' => 404)
@@ -1550,13 +1550,14 @@ class Read extends Base
      * @param $model_row
      * @param $query_params
      * @param WP_REST_Request $request
-     * @return null|WP_Error
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
+     * @throws RestPasswordRequiredException
+     * @throws RestPasswordIncorrectException
      * @throws \EventEspresso\core\exceptions\ModelConfigurationException
+     * @throws ReflectionException
      */
     protected function checkPassword(EEM_Base $model, $model_row, $query_params, WP_REST_Request $request)
     {
@@ -1564,20 +1565,12 @@ class Read extends Base
         if ($model->hasPassword()
             && $model_row[ $model->getPasswordField()->get_qualified_column() ] !== '') {
             if (empty($request['password'])) {
-                return new WP_Error(
-                    'rest_post_password_required',
-                    __('A password is required to access this content.', 'event_espresso'),
-                    array('status' => 403)
-                );
+                throw new RestPasswordRequiredException();
             } elseif (!hash_equals(
                 $model_row[ $model->getPasswordField()->get_qualified_column() ],
                 $request['password']
             )) {
-                return new WP_Error(
-                    'rest_post_incorrect_password',
-                    __('Incorrect password.', 'event_espresso'),
-                    array('status' => 403)
-                );
+                throw new RestPasswordIncorrectException();
             }
         }
         // wait! maybe this content is password protected
@@ -1587,23 +1580,14 @@ class Read extends Base
             if (empty($password_supplied)) {
                 $query_params['exclude_protected'] = true;
                 if (!$model->exists($query_params)) {
-                    return new WP_Error(
-                        'rest_post_password_required',
-                        __('A password is required to access this content.', 'event_espresso'),
-                        array('status' => 403)
-                    );
+                    throw new RestPasswordRequiredException();
                 }
             } else {
                 $query_params[0][$model->modelChainAndPassword()] = $password_supplied;
                 if (!$model->exists($query_params)) {
-                    return new WP_Error(
-                        'rest_post_incorrect_password',
-                        __('Incorrect password.', 'event_espresso'),
-                        array('status' => 403)
-                    );
+                    throw new RestPasswordIncorrectException();
                 }
             }
         }
-        return null;
     }
 }
