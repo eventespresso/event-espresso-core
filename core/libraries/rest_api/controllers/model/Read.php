@@ -491,6 +491,9 @@ class Read extends Base
                 $result,
                 $request
             );
+            if( $nice_result instanceof WP_Error){
+                return $nice_result;
+            }
             if ($relation instanceof \EE_HABTM_Relation) {
                 // put the unusual stuff (properties from the HABTM relation) first, and make sure
                 // if there are conflicts we prefer the properties from the main model
@@ -650,12 +653,18 @@ class Read extends Base
                 return $password_error;
             } else {
                 // they didn't provide the password
-                $has_protected_fields = true;
-                $entity_array = Capabilities::filterOutPasswordProtectedFields(
-                    $entity_array,
-                    $model,
-                    $this->getModelVersionInfo()
-                );
+                if($model->hasPassword()) {
+                    // just remove protected fields
+                    $has_protected_fields = true;
+                    $entity_array = Capabilities::filterOutPasswordProtectedFields(
+                        $entity_array,
+                        $model,
+                        $this->getModelVersionInfo()
+                    );
+                } else {
+                    // that's a problem. None of this should be accessible if no password was provided
+                    return $password_error;
+                }
             }
         }
         $entity_array['_calculated_fields'] = $this->getEntityCalculations($model, $db_row, $rest_request, $has_protected_fields);
@@ -690,7 +699,7 @@ class Read extends Base
         }
         $this->setDebugInfo(
             'inaccessible fields',
-            array_keys(array_diff_key($entity_array, $result_without_inaccessible_fields))
+            array_keys(array_diff_key((array) $entity_array, (array) $result_without_inaccessible_fields))
         );
         return apply_filters(
             'FHEE__Read__create_entity_from_wpdb_results__entity_return',
@@ -995,6 +1004,7 @@ class Read extends Base
                         'caps'      => $rest_request->get_param('caps'),
                         'include'   => $related_fields_to_include,
                         'calculate' => $related_fields_to_calculate,
+                        'password' => $rest_request->get_param('password')
                     )
                 );
                 $pretend_related_request->add_header('no_rest_headers', true);
@@ -1011,13 +1021,15 @@ class Read extends Base
                     );
                 } else {
                     // they're protected, hide them.
-                    $rest_request = null;
+                    $related_results = null;
                 }
-                $entity_array[ Read::getRelatedEntityName($relation_name, $relation_obj) ] = $related_results
-                                                                                             instanceof
-                                                                                             WP_Error
-                    ? null
-                    : $related_results;
+                if($related_results instanceof WP_Error){
+                    if($related_results->get_error_code() === 'rest_post_incorrect_password'){
+                        return $related_results;
+                    }
+                    $related_results = null;
+                }
+                $entity_array[ Read::getRelatedEntityName($relation_name, $relation_obj) ] = $related_results;
             }
         }
         return $entity_array;
@@ -1230,20 +1242,20 @@ class Read extends Base
      * @throws EE_Error
      * @throws RestException
      */
-    public function createModelQueryParams($model, $query_parameters)
+    public function createModelQueryParams($model, $query_params)
     {
         $model_query_params = array();
-        if (isset($query_parameters['where'])) {
+        if (isset($query_params['where'])) {
             $model_query_params[0] = ModelDataTranslator::prepareConditionsQueryParamsForModels(
-                $query_parameters['where'],
+                $query_params['where'],
                 $model,
                 $this->getModelVersionInfo()->requestedVersion()
             );
         }
-        if (isset($query_parameters['order_by'])) {
-            $order_by = $query_parameters['order_by'];
-        } elseif (isset($query_parameters['orderby'])) {
-            $order_by = $query_parameters['orderby'];
+        if (isset($query_params['order_by'])) {
+            $order_by = $query_params['order_by'];
+        } elseif (isset($query_params['orderby'])) {
+            $order_by = $query_params['orderby'];
         } else {
             $order_by = null;
         }
@@ -1256,10 +1268,10 @@ class Read extends Base
             }
             $model_query_params['order_by'] = $order_by;
         }
-        if (isset($query_parameters['group_by'])) {
-            $group_by = $query_parameters['group_by'];
-        } elseif (isset($query_parameters['groupby'])) {
-            $group_by = $query_parameters['groupby'];
+        if (isset($query_params['group_by'])) {
+            $group_by = $query_params['group_by'];
+        } elseif (isset($query_params['groupby'])) {
+            $group_by = $query_params['groupby'];
         } else {
             $group_by = array_keys($model->get_combined_primary_key_fields());
         }
@@ -1270,25 +1282,25 @@ class Read extends Base
         if ($group_by !== null) {
             $model_query_params['group_by'] = $group_by;
         }
-        if (isset($query_parameters['having'])) {
+        if (isset($query_params['having'])) {
             $model_query_params['having'] = ModelDataTranslator::prepareConditionsQueryParamsForModels(
-                $query_parameters['having'],
+                $query_params['having'],
                 $model,
                 $this->getModelVersionInfo()->requestedVersion()
             );
         }
-        if (isset($query_parameters['order'])) {
-            $model_query_params['order'] = $query_parameters['order'];
+        if (isset($query_params['order'])) {
+            $model_query_params['order'] = $query_params['order'];
         }
-        if (isset($query_parameters['mine'])) {
+        if (isset($query_params['mine'])) {
             $model_query_params = $model->alter_query_params_to_only_include_mine($model_query_params);
         }
-        if (isset($query_parameters['limit'])) {
+        if (isset($query_params['limit'])) {
             // limit should be either a string like '23' or '23,43', or an array with two items in it
-            if (! is_array($query_parameters['limit'])) {
-                $limit_array = explode(',', (string) $query_parameters['limit']);
+            if (! is_array($query_params['limit'])) {
+                $limit_array = explode(',', (string) $query_params['limit']);
             } else {
-                $limit_array = $query_parameters['limit'];
+                $limit_array = $query_params['limit'];
             }
             $sanitized_limit = array();
             foreach ($limit_array as $key => $limit_part) {
@@ -1301,7 +1313,7 @@ class Read extends Base
                                 // @codingStandardsIgnoreEnd
                                 'event_espresso'
                             ),
-                            wp_json_encode($query_parameters['limit'])
+                            wp_json_encode($query_params['limit'])
                         )
                     );
                 }
@@ -1311,17 +1323,28 @@ class Read extends Base
         } else {
             $model_query_params['limit'] = EED_Core_Rest_Api::get_default_query_limit();
         }
-        if (isset($query_parameters['caps'])) {
-            $model_query_params['caps'] = $this->validateContext($query_parameters['caps']);
+        if (isset($query_params['caps'])) {
+            $model_query_params['caps'] = $this->validateContext($query_params['caps']);
         } else {
             $model_query_params['caps'] = EEM_Base::caps_read;
         }
-        if (isset($query_parameters['default_where_conditions'])) {
+        if (isset($query_params['default_where_conditions'])) {
             $model_query_params['default_where_conditions'] = $this->validateDefaultQueryParams(
-                $query_parameters['default_where_conditions']
+                $query_params['default_where_conditions']
             );
         }
-        return apply_filters('FHEE__Read__create_model_query_params', $model_query_params, $query_parameters, $model);
+        // if this is a model protected by a password on another model, exclude the password protected
+        // entities by default. But if they passed in a password, try to show them all. If the password is wrong,
+        // though, they'll get an error (see Read::createEntityFromWpdbResult() which calls Read::checkPassword)
+        if (! $model->hasPassword()
+            && $model->restrictedByRelatedModelPassword()
+            && $model_query_params['caps'] === EEM_Base::caps_read) {
+            if (empty($query_params['password'])) {
+                $model_query_params['exclude_protected'] = true;
+            }
+        }
+
+        return apply_filters('FHEE__Read__create_model_query_params', $model_query_params, $query_params, $model);
     }
 
 
@@ -1493,7 +1516,7 @@ class Read extends Base
         } else {
             // ok let's test to see if we WOULD have found it, had we not had restrictions from missing capabilities
             $lowercase_model_name = strtolower($model->get_this_model_name());
-            if (! $model->exists($query_params)) {
+            if ( $model->exists($query_params)) {
                 // you got shafted- it existed but we didn't want to tell you!
                 return new WP_Error(
                     'rest_user_cannot_' . $context,

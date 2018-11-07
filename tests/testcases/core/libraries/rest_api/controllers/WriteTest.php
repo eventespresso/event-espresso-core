@@ -271,6 +271,7 @@ class WriteTest extends \EE_REST_TestCase
 
     /**
      * @group 9222
+     * @group current
      */
     public function testDeleteTrashed()
     {
@@ -290,6 +291,7 @@ class WriteTest extends \EE_REST_TestCase
         $response = rest_do_request($req);
         $response_data = $response->get_data();
         //verify there was no error code
+        var_dump($response_data);
         $this->assertTrue(empty($response_data['code']));
         $this->assertTrue($response_data['DTT_deleted']);
     }

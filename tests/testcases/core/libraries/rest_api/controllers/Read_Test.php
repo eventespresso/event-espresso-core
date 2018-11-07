@@ -335,6 +335,7 @@ class Read_Test extends EE_REST_TestCase
                 'optimum_sales_at_start' => $limit_on_ticket,
                 'spots_taken'            => 1,
                 'spaces_remaining'       => $limit_on_ticket - 1,
+                '_protected' => array(),
             ),
             $result['_calculated_fields']
         );
@@ -344,6 +345,7 @@ class Read_Test extends EE_REST_TestCase
         $this->assertEquals(
             (object)array(
                 'registrations_checked_in_count' => 0,
+                '_protected' => array()
             ),
             $result['datetimes'][0]['_calculated_fields']
         );
@@ -722,7 +724,14 @@ class Read_Test extends EE_REST_TestCase
     }
 
 
-
+    /**
+     * @since $VID:$
+     * @throws \EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     * @throws \ReflectionException
+     */
     public function test_handle_request_get_one__doesnt_exist()
     {
         $e = $this->new_model_obj_with_dependencies('Event');
@@ -1056,128 +1065,9 @@ class Read_Test extends EE_REST_TestCase
         $this->assertEquals($others_private_venue->ID(), $data[1]['VNU_ID']);
     }
 
-    /**
-     * Tests that calculated fields for protected events get replaced with their default too.
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
-     * @group private-1
-     */
-    public function testHandleRequestGetAllPasswordProtectedCalculatedFields()
-    {
-        // create two events, one password-protected, the other not
-        // and datetimes and tickets for them
-        $e = $this->new_model_obj_with_dependencies(
-            'Event',
-            array(
-                'status' => EEM_Event::post_status_publish
-            )
-        );
-        $e_password = $this->new_model_obj_with_dependencies(
-            'Event',
-            array(
-                'status' => EEM_Event::post_status_publish,
-                'password' => 'passy'
-            )
-        );
 
-        // add a featured image too eh
-        $this->addFeaturedImage($e->ID());
-        $this->addFeaturedImage($e_password->ID());
-        $d = $this->new_model_obj_with_dependencies(
-            'Datetime',
-            array(
-                'EVT_ID' => $e->ID(),
-                'DTT_reg_limit' => 100,
-            )
-        );
-        $d_password = $this->new_model_obj_with_dependencies(
-            'Datetime',
-            array(
-                'EVT_ID' => $e_password->ID(),
-                'DTT_reg_limit' => 100,
-            )
-        );
-        $t_qty = 44;
-        $t = $this->new_model_obj_with_dependencies(
-            'Ticket',
-            array(
-                'TKT_qty' => $t_qty,
-            )
-        );
-        $t_password_qty = 22;
-        $t_password = $this->new_model_obj_with_dependencies(
-            'Ticket',
-            array(
-                'TKT_qty' => $t_password_qty
-            )
-        );
-        $t->_add_relation_to($d,'Datetime');
-        $t_password->_add_relation_to($d_password, 'Datetime');
 
-        // then request each, from the front-end, and a few calculated fields
-        $request = new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
-        $request->set_query_params(
-            array(
-                'calculate' => 'optimum_sales_at_start, image_full'
-            )
-        );
-        $response = rest_do_request($request);
-        $data = $response->get_data();
-        $this->assertNotEmpty($data);
 
-        // assert the data is in the expected structure, and the non-protected event worked as normal
-        $this->assertEquals(2, count($data));
-        $this->assertEquals($e->ID(),$data[0]['EVT_ID']);
-        $this->assertEquals($t_qty, $data[0]['_calculated_fields']->optimum_sales_at_start);
-        $this->assertNotEquals(null, $data[1]['_calculated_fields']->image_full);
-        $this->assertEquals($e_password->ID(), $data[1]['EVT_ID']);
-
-        // the protected calculated field should be replaced with their defaults
-        $this->assertEquals(0,$data[1]['_calculated_fields']->optimum_sales_at_start);
-
-        // featured image calculated fields aren't protected, so it should still be visible
-        $this->assertNotEquals(null, $data[1]['_calculated_fields']->image_full);
-    }
-
-    /**
-     * Adds some featured image to that post ID
-     * @since $VID:$
-     * @param $post_id
-     * @return int|\WP_Error
-     */
-    protected function addFeaturedImage($post_id)
-    {
-        $file = EE_ADMIN_PAGES . 'events/assets/images/caffeinated_template_features.jpg';
-        $contents = file_get_contents($file);
-        $upload = wp_upload_bits(basename($file), null, $contents);
-
-        $type = '';
-        if ( ! empty($upload['type']) ) {
-            $type = $upload['type'];
-        } else {
-            $mime = wp_check_filetype( $upload['file'] );
-            if ($mime)
-                $type = $mime['type'];
-        }
-
-        $attachment = array(
-            'post_title' => basename( $upload['file'] ),
-            'post_content' => '',
-            'post_type' => 'attachment',
-            'post_parent' => $post_id,
-            'post_mime_type' => $type,
-            'guid' => $upload[ 'url' ],
-        );
-
-        // Save the data
-        $id = wp_insert_attachment( $attachment, $upload[ 'file' ], $post_id );
-        wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $upload['file'] ) );
-        add_post_meta($post_id, '_thumbnail_id', $id);
-        return $id;
-    }
 
 
     /**
@@ -1292,7 +1182,7 @@ class Read_Test extends EE_REST_TestCase
         $this->assertArrayHasKey('_calculated_fields', $data['schema']['properties']);
         $calculated_fields = $data['schema']['properties']['_calculated_fields'];
         $this->assertEquals(
-            array('description', 'type', 'properties', 'additionalProperties', 'readonly'),
+            array('description', 'type', 'properties', 'additionalProperties', 'readonly', '_protected'),
             array_keys($calculated_fields)
         );
         $this->assertEquals(
