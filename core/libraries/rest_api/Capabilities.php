@@ -105,9 +105,6 @@ class Capabilities
             if ($has_password
                 && $model->getPasswordField()->fieldIsProtected($field_name)
                 && $entity[ $field_name ]) {
-                if ($model_version_info->fieldHasRenderedFormat($field_obj)) {
-                    $entity[ $field_name ]['protected'] = true;
-                }
                 $replacement_value = ModelDataTranslator::prepareFieldValueForJson(
                     $field_obj,
                     $field_obj->get_default_value(),
