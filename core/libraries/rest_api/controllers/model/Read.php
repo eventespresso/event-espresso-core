@@ -683,9 +683,9 @@ class Read extends Base
         $entity_array['_protected'] = array();
         $entity_array = $this->includeRequestedModels($model, $rest_request, $entity_array, $db_row, $has_protected_fields);
         // remove any properties the request didn't want. This way _protected won't bother mentioning them
-        $entity_array = $this->includeOnlyRequestedProperties($model,$rest_request,$entity_array);
+        $entity_array = $this->includeOnlyRequestedProperties($model, $rest_request, $entity_array);
         // if they still wanted the _protected property, add it.
-        if(isset($entity_array['_protected'])) {
+        if (isset($entity_array['_protected'])) {
             $entity_array = $this->addProtectedProperty($model, $entity_array, $has_protected_fields);
         }
         $entity_array = apply_filters(
@@ -1041,7 +1041,7 @@ class Read extends Base
         EEM_Base $model,
         WP_REST_Request $rest_request,
         $entity_array
-    ){
+    ) {
 
         $includes_for_this_model = $this->explodeAndGetItemsPrefixedWith($rest_request->get_param('include'), '');
         $includes_for_this_model = $this->removeModelNamesFromArray($includes_for_this_model);
