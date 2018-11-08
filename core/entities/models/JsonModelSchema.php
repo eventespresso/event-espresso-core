@@ -248,20 +248,9 @@ class JsonModelSchema
      * Returns an array of JSON schema to describe the _protected property on responses
      * @since $VID:$
      * @return array
-     * @throws \EE_Error
      */
     protected function getProtectedFieldsSchema()
     {
-        $protected_fields_properties = array();
-        foreach ($this->model->getPasswordProtectedFields() as $field) {
-            $protected_fields_properties[ $field->get_name() ] = array(
-                'type' => 'object',
-                'properties' => array(
-                    'protected' => true
-                ),
-                'additionalProperties' => false,
-            );
-        }
         return array(
             'description' => esc_html__('Array of property names whose values were replaced with their default (because they are related to a password-protected entity.)', 'event_espresso'),
             'type' => 'array',
