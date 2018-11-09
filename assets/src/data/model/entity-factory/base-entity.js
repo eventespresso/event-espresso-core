@@ -95,6 +95,8 @@ class BaseEntity {
 	get isClean() {
 		return this.saveState === SAVE_STATE.CLEAN;
 	}
+
+	static name = 'BaseEntity'
 }
 
 /**
