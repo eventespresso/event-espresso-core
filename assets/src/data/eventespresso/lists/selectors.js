@@ -12,6 +12,7 @@ import { __, sprintf } from '@eventespresso/i18n';
 
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
+const EMPTY_MAP = new Map();
 
 /**
  * Generic helper for retrieving items from state for given identifier and
@@ -58,7 +59,7 @@ export function getItems( state, identifier, queryString ) {
  * @return {Map} Returns entities.
  */
 export function getEntities( state, modelName, queryString ) {
-	return retrieveItems( state, modelName, queryString, EMPTY_OBJECT );
+	return retrieveItems( state, modelName, queryString, EMPTY_MAP );
 }
 
 /**
