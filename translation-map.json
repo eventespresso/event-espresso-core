@@ -1,7 +1,8 @@
 {
-  "eventespresso-helpers": [],
   "eventespresso-value-objects": [],
+  "validators": [],
   "eventespresso-hoc-components": [],
+  "eventespresso-helpers": [],
   "eventespresso-model": [
     null,
     "The provided entity (%s) does not have the given property (%s)",
@@ -165,7 +166,7 @@
     "No Tickets.",
     "Select Ticket...",
     "Select Ticket",
-    "user avatar"
+    "contact avatar"
   ],
   "ee-wp-plugins-page": [
     "Do you have a moment to share why you are deactivating Event Espresso?",
@@ -244,10 +245,6 @@
     null,
     null,
     null,
-    "The response is not a valid JSON response.",
-    "An unknown error occurred.",
-    "[sprintf] property \"%s\" does not exist",
-    "[sprintf] expecting number but found %s",
     null,
     "The given identifier (%s) does not exist in the state."
   ],
@@ -257,10 +254,31 @@
     "event",
     "attendees",
     "list",
-    "Event Attendees Settings",
+    "To get started, select what event you want to show attendees from in the block settings.",
+    "There are no attendees for selected options.",
+    "Filter By Settings",
     "Select Registration Status",
-    "Number of Attendees to Display",
+    "Number of Attendees to Display:",
+    null,
+    "Used to adjust the number of attendees displayed (There is %d total attendee for the current filter settings).",
+    "Order Attendees by:",
+    "Attendee id",
+    "Last name only",
+    "First name only",
+    "First, then Last name",
+    "Last, then First name",
+    "Sort order:",
+    "Ascending",
+    "Descending",
+    "Gravatar Setttings",
     "Display Gravatar",
-    "Display on Archives"
-  ]
+    "Gravatar images are shown for each attendee.",
+    "No gravatar images are shown for each attendee.",
+    "Size of Gravatar",
+    "Archive Settings",
+    "Display on Archives",
+    "Attendees are shown whenever this post is listed in an archive view.",
+    "Attendees are hidden whenever this post is listed in an archive view."
+  ],
+  "eventespresso-core-blocks-frontend": []
 }

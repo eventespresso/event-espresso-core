@@ -2,7 +2,6 @@
  * External imports
  */
 import { isObject, camelCase, upperFirst } from 'lodash';
-
 /**
  * Returns whether the given value is a model entity.
  *
@@ -12,9 +11,7 @@ import { isObject, camelCase, upperFirst } from 'lodash';
 export const isModelEntity = ( entity ) => {
 	return (
 		isObject( entity ) &&
-		entity.constructor &&
-		entity.constructor.isModelEntity &&
-		entity.constructor.isModelEntity( entity )
+		Object.getPrototypeOf( entity.constructor ).name === 'BaseEntity'
 	);
 };
 
