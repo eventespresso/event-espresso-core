@@ -13,9 +13,9 @@ import { isUndefined } from 'lodash';
 export const isModelEntityFactory = ( factory ) => {
 	return (
 		!! factory &&
-		! isUndefined( factory.classDef ) &&
 		! isUndefined( factory.modelName ) &&
-		Object.getPrototypeOf( factory.classDef ).name === 'BaseEntity'
+		! isUndefined( factory.classDef ) &&
+		! isUndefined( factory.classDef.isModelEntity )
 	);
 };
 
