@@ -35,6 +35,7 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { CSS_CLASS_CORE_BLOCKS } from '../constants';
+import { Fragment } from 'react';
 
 const defaultQueryData = {
 	showExpired: true,
@@ -484,14 +485,17 @@ export class EventAttendeesEditor extends Component {
 						}
 					/>
 				</PanelBody>
-			</InspectorControls> );
+			</InspectorControls>
+		);
 	}
 
 	render() {
-		return [
-			this.getAttendeesDisplay(),
-			this.getInspectorControls( this.props.attributes ),
-		];
+		return (
+			<Fragment>
+				{ this.getAttendeesDisplay() }
+				{ this.getInspectorControls( this.props.attributes ) }
+			</Fragment>
+		);
 	}
 }
 
