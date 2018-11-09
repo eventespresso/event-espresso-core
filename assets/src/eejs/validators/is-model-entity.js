@@ -12,7 +12,9 @@ import { isObject, camelCase, upperFirst } from 'lodash';
 export const isModelEntity = ( entity ) => {
 	return (
 		isObject( entity ) &&
-		Object.getPrototypeOf( entity.constructor ).name === 'BaseEntity'
+		entity.constructor &&
+		entity.constructor.isModelEntity &&
+		entity.constructor.isModelEntity( entity )
 	);
 };
 

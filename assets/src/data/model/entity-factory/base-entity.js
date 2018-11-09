@@ -95,6 +95,11 @@ class BaseEntity {
 	get isClean() {
 		return this.saveState === SAVE_STATE.CLEAN;
 	}
+
+	static isModelEntity = ( entity ) => {
+		return Object.getPrototypeOf( entity.constructor ).name ===
+			BaseEntity.name;
+	}
 }
 
 /**
