@@ -28,6 +28,12 @@ common.forEach( ( config, index ) => {
 			new wpi18nExtractor( {
 				aliases: {
 					'wp-plugins-page': 'ee-wp-plugins-page',
+					'data-stores': 'eventespresso-data-stores',
+					components: 'eventespresso-components',
+					helpers: 'eventespresso-helpers',
+					valueObjects: 'eventespresso-value-objects',
+					hocComponents: 'eventespresso-hoc-components',
+					model: 'eventespresso-model',
 				},
 				excludes: [ 'eejs', 'vendor' ],
 			} ),
