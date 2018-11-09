@@ -165,10 +165,6 @@ class CoreLoader
             ),
             true
         );
-        EE_Dependency_Map::instance()->add_alias(
-            'EE_Session_Mock',
-            'EventEspresso\core\domain\services\session\SessionIdentifierInterface'
-        );
     }
 
 

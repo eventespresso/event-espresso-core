@@ -20,10 +20,22 @@ import * as r from './routes';
 export const routes = r;
 
 /**
- * use this for eejs exceptions
- * Usage: throw new eejs.exception('some message')
- * @param {string} msg
+ * Currency Configuration for the default currency from the server
  */
-export const exception = function( msg ) {
-	this.message = msg;
-};
+export { currencyConfig as CURRENCY_CONFIG } from './currency_config';
+
+/**
+ * Default timezone configuration for the default timezone settings from the
+ * server
+ */
+export { timezoneConfig as TIMEZONE_CONFIG } from './timezone-config';
+
+/**
+ * Server locale configuration.
+ */
+export { locale as SERVER_LOCALE } from './locale';
+
+/**
+ * Custom exceptions
+ */
+export * from './exceptions';
