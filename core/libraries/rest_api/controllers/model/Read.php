@@ -681,9 +681,9 @@ class Read extends Base
         // add an empty protected property for now. If it's still around after we remove everything the request didn't
         // want, we'll populate it then. k?
         $entity_array['_protected'] = array();
-        $entity_array = $this->includeRequestedModels($model, $rest_request, $entity_array, $db_row, $has_protected_fields);
         // remove any properties the request didn't want. This way _protected won't bother mentioning them
         $entity_array = $this->includeOnlyRequestedProperties($model, $rest_request, $entity_array);
+        $entity_array = $this->includeRequestedModels($model, $rest_request, $entity_array, $db_row, $has_protected_fields);
         // if they still wanted the _protected property, add it.
         if (isset($entity_array['_protected'])) {
             $entity_array = $this->addProtectedProperty($model, $entity_array, $has_protected_fields);

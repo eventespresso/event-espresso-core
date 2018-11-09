@@ -696,7 +696,15 @@ class Read_Test extends EE_REST_TestCase
     }
 
 
-
+    /**
+     * @since $VID:$
+     * @throws \EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     * @throws \ReflectionException
+     * @group current
+     */
     public function test_handle_request_get_one__registration_include_answers_and_question_bare_min_from_each()
     {
         $this->authenticate_as_admin();
