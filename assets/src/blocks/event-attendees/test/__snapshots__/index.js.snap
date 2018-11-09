@@ -26,6 +26,7 @@ Array [
       }
     }
     containerCssClass="ee-core-blocks event-espresso-blocks"
+    containerId="ee-block-event-attendees"
     isLoading={false}
     showGravatar={true}
   />,

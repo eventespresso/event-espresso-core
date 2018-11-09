@@ -297,6 +297,7 @@ export class EventAttendeesEditor extends Component {
 			avatarOptions={ avatarOptions }
 			isLoading={ isLoading }
 			containerCssClass={ CSS_CLASS_CORE_BLOCKS }
+			containerId={ 'ee-block-event-attendees' }
 		/>;
 	}
 
@@ -443,6 +444,15 @@ export class EventAttendeesEditor extends Component {
 						label={ __( 'Display Gravatar', 'event_espresso' ) }
 						checked={ attributes.showGravatar }
 						onChange={ this.toggleShowGravatar }
+						help={ attributes.showGravatar ?
+							__(
+								'Gravatar images are shown for each attendee.',
+								'event_espresso'
+							) :
+							__(
+								'No gravatar images are shown for each attendee.',
+								'event_espresso'
+							) }
 					/>
 					{ attributes.showGravatar &&
 					<RangeControl
@@ -455,13 +465,23 @@ export class EventAttendeesEditor extends Component {
 					}
 				</PanelBody>
 				<PanelBody title={ __(
-					'Location Settings',
+					'Archive Settings',
 					'event_espresso'
 				) } >
 					<ToggleControl
 						label={ __( 'Display on Archives', 'event_espresso' ) }
 						checked={ attributes.displayOnArchives }
 						onChange={ this.toggleDisplayOnArchives }
+						help={ attributes.displayOnArchives ?
+							__(
+								'Attendees are shown whenever this post is listed in an archive view.',
+								'event_espresso'
+							) :
+							__(
+								'Attendees are hidden whenever this post is listed in an archive view.',
+								'event_espresso'
+							)
+						}
 					/>
 				</PanelBody>
 			</InspectorControls> );
