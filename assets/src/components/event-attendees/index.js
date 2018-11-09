@@ -19,12 +19,14 @@ export default class EventAttendeeList extends Component {
 		attendees: PropTypes.instanceOf( Map ),
 		showGravatar: PropTypes.bool,
 		containerCssClass: PropTypes.string,
+		containerId: PropTypes.string,
 	};
 
 	static defaultProps = {
 		attendees: new Map(),
 		showGravatar: false,
 		containerCssClass: '',
+		containerId: 'event-attendees-list',
 		isLoading: false,
 	};
 
@@ -52,10 +54,10 @@ export default class EventAttendeeList extends Component {
 	}
 
 	render() {
-		const { containerCssClass } = this.props;
+		const { containerCssClass, containerId } = this.props;
 		return (
 			<div
-				id={ 'ee-block-event-attendees' }
+				id={ containerId }
 				className={
 					classNames(
 						containerCssClass,
