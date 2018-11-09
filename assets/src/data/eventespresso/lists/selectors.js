@@ -11,7 +11,6 @@ import { REDUCER_KEY } from './constants';
 import { __, sprintf } from '@eventespresso/i18n';
 
 const EMPTY_ARRAY = [];
-const EMPTY_OBJECT = {};
 const EMPTY_MAP = new Map();
 
 /**
