@@ -105,16 +105,20 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         value={24}
       />
     </PanelBody>
-    <PanelBody
-      title="Archive Settings"
+    <WithSelect(NotPostTypeCheck)
+      excludedPostTypeSlugs="page"
     >
-      <WithInstanceId(ToggleControl)
-        checked={false}
-        help="Attendees are hidden whenever this post is listed in an archive view."
-        label="Display on Archives"
-        onChange={[Function]}
-      />
-    </PanelBody>
+      <PanelBody
+        title="Archive Settings"
+      >
+        <WithInstanceId(ToggleControl)
+          checked={false}
+          help="Attendees are hidden whenever this post is listed in an archive view."
+          label="Display on Archives"
+          onChange={[Function]}
+        />
+      </PanelBody>
+    </WithSelect(NotPostTypeCheck)>
   </IfBlockEditSelected(InspectorControlsFill)>
 </React.Fragment>
 `;
@@ -242,16 +246,20 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         value={24}
       />
     </PanelBody>
-    <PanelBody
-      title="Archive Settings"
+    <WithSelect(NotPostTypeCheck)
+      excludedPostTypeSlugs="page"
     >
-      <WithInstanceId(ToggleControl)
-        checked={false}
-        help="Attendees are hidden whenever this post is listed in an archive view."
-        label="Display on Archives"
-        onChange={[Function]}
-      />
-    </PanelBody>
+      <PanelBody
+        title="Archive Settings"
+      >
+        <WithInstanceId(ToggleControl)
+          checked={false}
+          help="Attendees are hidden whenever this post is listed in an archive view."
+          label="Display on Archives"
+          onChange={[Function]}
+        />
+      </PanelBody>
+    </WithSelect(NotPostTypeCheck)>
   </IfBlockEditSelected(InspectorControlsFill)>
 </React.Fragment>
 `;
@@ -361,16 +369,20 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         value={24}
       />
     </PanelBody>
-    <PanelBody
-      title="Archive Settings"
+    <WithSelect(NotPostTypeCheck)
+      excludedPostTypeSlugs="page"
     >
-      <WithInstanceId(ToggleControl)
-        checked={false}
-        help="Attendees are hidden whenever this post is listed in an archive view."
-        label="Display on Archives"
-        onChange={[Function]}
-      />
-    </PanelBody>
+      <PanelBody
+        title="Archive Settings"
+      >
+        <WithInstanceId(ToggleControl)
+          checked={false}
+          help="Attendees are hidden whenever this post is listed in an archive view."
+          label="Display on Archives"
+          onChange={[Function]}
+        />
+      </PanelBody>
+    </WithSelect(NotPostTypeCheck)>
   </IfBlockEditSelected(InspectorControlsFill)>
 </React.Fragment>
 `;
