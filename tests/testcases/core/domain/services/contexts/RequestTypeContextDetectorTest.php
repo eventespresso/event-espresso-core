@@ -18,7 +18,7 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
      * @param RequestTypeContextDetector $detector
      * @param string                     $expected
      * @throws InvalidArgumentException
-     * @since        $VID:$
+     * @since        4.9.70.p
      */
     public function testDetectRequestTypeContext($detector, $expected)
     {
@@ -28,7 +28,7 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.70.p
      * @return array
      */
     public function requestProvider()

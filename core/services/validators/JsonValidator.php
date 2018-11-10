@@ -13,7 +13,7 @@ use EE_Error;
  *
  * @package EventEspresso\core\services\validators
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.70.p
  */
 class JsonValidator
 {
@@ -31,7 +31,7 @@ class JsonValidator
      * @param string $func
      * @param string $line
      * @return boolean
-     * @since $VID:$
+     * @since 4.9.70.p
      */
     public function isValid($file, $func, $line)
     {

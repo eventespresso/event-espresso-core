@@ -19,7 +19,7 @@ use WP_Error;
  *
  * @package EventEspresso\core\services\address
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.70.p
  */
 class CountrySubRegionDao
 {
@@ -102,7 +102,7 @@ class CountrySubRegionDao
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.70.p
      * @return string
      */
     private function getCountrySubRegionDataVersion()
@@ -128,7 +128,7 @@ class CountrySubRegionDao
     /**
      * @param string $CNT_ISO
      * @param array  $countries
-     * @since $VID:$
+     * @since 4.9.70.p
      * @return int
      * @throws EE_Error
      * @throws InvalidArgumentException
