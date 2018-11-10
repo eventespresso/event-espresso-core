@@ -2,7 +2,6 @@
  * External imports
  */
 import { isObject, camelCase, upperFirst } from 'lodash';
-
 /**
  * Returns whether the given value is a model entity.
  *

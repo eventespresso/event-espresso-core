@@ -40,7 +40,7 @@ describe( 'testing getters', () => {
 			'getEntities()',
 			'modelName',
 			'event',
-			{},
+			new Map(),
 			{ 1: {} },
 		],
 	];

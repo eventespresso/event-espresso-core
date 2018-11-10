@@ -36,11 +36,6 @@ export { timezoneConfig as TIMEZONE_CONFIG } from './timezone-config';
 export { locale as SERVER_LOCALE } from './locale';
 
 /**
- * constants
- */
-export * from '../data/utils/constants';
-
-/**
  * Custom exceptions
  */
 export * from './exceptions';

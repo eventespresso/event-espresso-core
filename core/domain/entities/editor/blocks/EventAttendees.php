@@ -7,11 +7,8 @@ use EE_Error;
 use EEM_Registration;
 use EventEspresso\core\domain\entities\editor\Block;
 use EventEspresso\core\domain\entities\editor\CoreBlocksAssetManager;
-use EventEspresso\core\domain\entities\shortcodes\EspressoEventAttendees;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\domain\services\blocks\EventAttendeesBlockRenderer;
 use EventEspresso\core\services\request\RequestInterface;
-use InvalidArgumentException;
 
 /**
  * Class EventAttendees
@@ -27,25 +24,25 @@ class EventAttendees extends Block
     const BLOCK_TYPE = 'event-attendees';
 
     /**
-     * @var EspressoEventAttendees $shortcode
+     * @var EventAttendeesBlockRenderer $renderer
      */
-    protected $shortcode;
+    protected $renderer;
 
 
     /**
      * EventAttendees constructor.
      *
-     * @param CoreBlocksAssetManager $block_asset_manager
-     * @param RequestInterface       $request
-     * @param EspressoEventAttendees $shortcode
+     * @param CoreBlocksAssetManager      $block_asset_manager
+     * @param RequestInterface            $request
+     * @param EventAttendeesBlockRenderer $renderer
      */
     public function __construct(
         CoreBlocksAssetManager $block_asset_manager,
         RequestInterface $request,
-        EspressoEventAttendees $shortcode
+        EventAttendeesBlockRenderer $renderer
     ) {
         parent::__construct($block_asset_manager, $request);
-        $this->shortcode = $shortcode;
+        $this->renderer= $renderer;
     }
 
 
@@ -91,9 +88,25 @@ class EventAttendees extends Block
                     'type'    => 'number',
                     'default' => 10,
                 ),
+                'order' => array(
+                    'type' => 'string',
+                    'default' => 'ASC'
+                ),
+                'orderBy' => array(
+                    'type' => 'string',
+                    'default' => 'lastThenFirstName',
+                ),
                 'showGravatar'      => array(
                     'type'    => 'boolean',
                     'default' => false,
+                ),
+                'avatarClass' => array(
+                    'type' => 'string',
+                    'default' => 'contact',
+                ),
+                'avatarSize' => array(
+                    'type' => 'number',
+                    'default' => 24,
                 ),
                 'displayOnArchives' => array(
                     'type'    => 'boolean',
@@ -106,7 +119,7 @@ class EventAttendees extends Block
 
 
     /**
-     * returns an array where the key corresponds to the incoming attribute name from the WP block
+     * Returns an array where the key corresponds to the incoming attribute name from the WP block
      * and the value corresponds to the attribute name for the existing EspressoEventAttendees shortcode
      *
      * @since $VID:$
@@ -115,135 +128,65 @@ class EventAttendees extends Block
     private function getAttributesMap()
     {
         return array(
-            'eventId'           => array('attribute' => 'event_id', 'sanitize' => 'absint'),
-            'datetimeId'        => array('attribute' => 'datetime_id', 'sanitize' => 'absint'),
-            'ticketId'          => array('attribute' => 'ticket_id', 'sanitize' => 'absint'),
-            'status'            => array('attribute' => 'status', 'sanitize' => 'sanitize_text_field'),
-            'limit'             => array('attribute' => 'limit', 'sanitize' => 'intval'),
-            'showGravatar'      => array('attribute' => 'show_gravatar', 'sanitize' => 'bool'),
-            'displayOnArchives' => array('attribute' => 'display_on_archives', 'sanitize' => 'bool'),
+            'eventId'           => 'absint',
+            'datetimeId'        => 'absint',
+            'ticketId'          => 'absint',
+            'status'            => 'sanitize_text_field',
+            'limit'             => 'intval',
+            'showGravatar'      => 'bool',
+            'avatarClass'       => 'sanitize_text_field',
+            'avatarSize'        => 'absint',
+            'displayOnArchives' => 'bool',
+            'order' => 'sanitize_text_field',
+            'orderBy' => 'sanitize_text_field',
         );
     }
 
 
     /**
+     * Sanitizes attributes.
+     *
      * @param array $attributes
-     * @since $VID:$
      * @return array
      */
-    private function parseAttributes(array $attributes)
+    private function sanitizeAttributes(array $attributes)
     {
+        $sanitized_attributes = array();
         foreach ($attributes as $attribute => $value) {
             $convert = $this->getAttributesMap();
             if (isset($convert[ $attribute ])) {
-                $sanitize = $convert[ $attribute ]['sanitize'];
-                $converted_attribute_key = $convert[ $attribute ]['attribute'];
+                $sanitize = $convert[ $attribute ];
                 if ($sanitize === 'bool') {
-                    $attributes[ $converted_attribute_key ] = filter_var(
+                    $sanitized_attributes[ $attribute ] = filter_var(
                         $value,
                         FILTER_VALIDATE_BOOLEAN
                     );
                 } else {
-                    $attributes[ $converted_attribute_key ] = $sanitize($value);
-                }
-                if ($attribute !== $converted_attribute_key) {
-                    unset($attributes[ $attribute ]);
+                    $sanitized_attributes[ $attribute ] = $sanitize($value);
                 }
                 // don't pass along attributes with a 0 value
-                if ($attributes[ $converted_attribute_key ] === 0) {
-                    unset($attributes[ $converted_attribute_key ]);
+                if ($sanitized_attributes[ $attribute ] === 0) {
+                    unset($sanitized_attributes[ $attribute ]);
                 }
             }
         }
         return $attributes;
     }
 
-
-    /**
-     * This ensures we're only sending along the needed attribute for grabbing attendees.
-     * In order:
-     *
-     * - if ticket_id is present then datetime or event id are unneeded.
-     * - if datetime_id is present than event_id is not needed.
-     *
-     * @param array $attributes
-     * @return array
-     */
-    private function includeNecessaryOnly(array $attributes)
-    {
-        if ($attributes['ticket_id'] > 0) {
-            unset($attributes['event_id'], $attributes['datetime_id']);
-        }
-        if ($attributes['datetime_id'] > 0) {
-            unset($attributes['event_id']);
-        }
-        return $attributes;
-    }
-
-
-    /**
-     * Returns true when there are no id values in the attributes.
-     *
-     * @param array $attributes
-     * @return bool
-     */
-    private function hasNoIds(array $attributes)
-    {
-        return empty($attributes['event_id']) && empty($attributes['datetime_id']) && empty($attributes['ticket_id']);
-    }
 
     /**
      * Returns the rendered HTML for the block
      *
      * @param array $attributes
      * @return string
-     * @throws EE_Error
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
      * @throws DomainException
+     * @throws EE_Error
      */
     public function renderBlock(array $attributes = array())
     {
-        $attributes = $this->includeNecessaryOnly($this->parseAttributes($attributes));
-        $rendered_content = $this->shortcode->processShortcode($attributes);
-        if (empty($rendered_content)) {
-            return $this->noContentRender($attributes);
-        }
-        if ($this->hasNoIds($attributes) && $this->request->isWordPressApi()) {
-            $rendered_content = '<div class="components-notice is-success"><p>' . esc_html__(
-                'The content displayed is for the most recent active or upcoming event.  You can display attendees from a different event, ticket or datetime via the block settings.',
-                'event_espresso'
-            ) . '</p></div>' . $rendered_content;
-        }
-        return $rendered_content;
-    }
-
-
-    /**
-     * Returns rendered content for block when there is no content for rendering due to various conditions.
-     * This content ONLY appears in the editor context.
-     *
-     * @param array $attributes
-     * @return string
-     */
-    private function noContentRender(array $attributes)
-    {
-        $content = '';
-        if ($this->request->isWordPressApi()) {
-            if (empty($attributes['event_id'])) {
-                $content .= esc_html__(
-                    'There are no active or selected events to pull attendees from at this moment. This message only appears in the editor.',
-                    'event_espresso'
-                );
-            } else {
-                $content .= esc_html__(
-                    'There was a problem displaying the content for the selected options. This message only appears in the editor.',
-                    'event_espresso'
-                );
-            }
-            $content = $content !== '' ? '<div class="components-notice is-error"><p>' . $content . '</p></div>' : $content;
-        }
-        return $content;
+        $attributes = $this->sanitizeAttributes($attributes);
+        return (is_archive() || is_front_page() || is_home()) && ! $attributes['displayOnArchives']
+            ? ''
+            : $this->renderer->render($attributes);
     }
 }

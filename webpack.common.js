@@ -6,7 +6,7 @@ const externals = {
 	jquery: 'jQuery',
 	'@eventespresso/eejs': 'eejs',
 	'@eventespresso/i18n': 'eejs.i18n',
-	'@wordpress/api-request': 'wp.apiRequest',
+	'@wordpress/api-fetch': 'wp.apiFetch',
 	'@wordpress/data': 'wp.data',
 	'@wordpress/element': 'wp.element',
 	'@wordpress/components': 'wp.components',
@@ -263,10 +263,9 @@ const config = [
 			'eventespresso-core-blocks': [
 				assets + 'blocks/index.js',
 			],
-			/** implement once there's javascript to output
 			'eventespresso-core-blocks-frontend': [
 				assets + 'blocks/index-frontend.js',
-			],*/
+			],
 		},
 		externals: Object.assign( externals, {
 			'@eventespresso/higher-order-components': 'eejs.hocComponents',

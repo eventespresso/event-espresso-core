@@ -36,7 +36,6 @@ export const settings = {
 	],
 
 	attributes: {
-		// eventId, datetimeId, ticketId, status, showGravatar, displayOnArchives
 		eventId: {
 			type: 'number',
 			default: 0,
@@ -57,89 +56,30 @@ export const settings = {
 			type: 'number',
 			default: 10,
 		},
+		order: {
+			type: 'string',
+			default: 'ASC',
+		},
+		orderBy: {
+			type: 'string',
+			default: 'lastThenFirstName',
+		},
 		showGravatar: {
 			type: 'boolean',
 			default: false,
+		},
+		avatarClass: {
+			type: 'string',
+			default: 'contact',
+		},
+		avatarSize: {
+			type: 'number',
+			default: 24,
 		},
 		displayOnArchives: {
 			type: 'boolean',
 			default: false,
 		},
-	},
-
-	transforms: {
-		from: [
-			{
-				type: 'shortcode',
-				tag: 'ESPRESSO_EVENT_ATTENDEES',
-				attributes: {
-					eventId: {
-						type: 'number',
-						// eslint-disable-next-line camelcase
-						shortcode: ( { named: { event_id } } ) => {
-							// eslint-disable-next-line camelcase
-							if ( ! event_id ) {
-								return;
-							}
-							// eslint-disable-next-line camelcase
-							return event_id;
-						},
-					},
-					datetimeId: {
-						type: 'number',
-						// eslint-disable-next-line camelcase
-						shortcode: ( { named: { datetime_id } } ) => {
-							// eslint-disable-next-line camelcase
-							if ( ! datetime_id ) {
-								return;
-							}
-							// eslint-disable-next-line camelcase
-							return datetime_id;
-						},
-					},
-					ticketId: {
-						type: 'number',
-						// eslint-disable-next-line camelcase
-						shortcode: ( { named: { ticket_id } } ) => {
-							// eslint-disable-next-line camelcase
-							if ( ! ticket_id ) {
-								return;
-							}
-							// eslint-disable-next-line camelcase
-							return ticket_id;
-						},
-					},
-					status: {
-						type: 'string',
-						shortcode: ( { named: { status } } ) => {
-							if ( ! status ) {
-								return;
-							}
-							return status;
-						},
-					},
-					showGravatar: {
-						type: 'boolean',
-						// eslint-disable-next-line camelcase
-						shortcode: ( { named: { show_gravatar } } ) => {
-							// eslint-disable-next-line camelcase
-							return show_gravatar === 'true' || show_gravatar ===
-								'1';
-						},
-					},
-					displayOnArchives: {
-						type: 'boolean',
-						// eslint-disable-next-line camelcase
-						shortcode: ( { named: { display_on_archives } } ) => {
-							// eslint-disable-next-line camelcase
-							return display_on_archives === 'true' ||
-								// eslint-disable-next-line camelcase
-								display_on_archives === '1';
-						},
-					},
-				},
-			},
-		],
 	},
 
 	edit: EventAttendeesEditor,

@@ -9,7 +9,6 @@ const {
 	InvalidISO8601String,
 	InvalidLocale,
 	InvalidDateTime,
-	__DEV__,
 } = require( '../../../../../assets/src/eejs' );
 
 const newCurrencyConfig = {
