@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { InspectorControls } from '@wordpress/editor';
-import { Component } from '@wordpress/element';
+import { Component, Fragment } from '@wordpress/element';
 import {
 	PanelBody,
 	Placeholder,
@@ -35,7 +35,7 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { CSS_CLASS_CORE_BLOCKS } from '../constants';
-import { Fragment } from 'react';
+import { NotPostTypeCheck } from '../components';
 
 const defaultQueryData = {
 	showExpired: true,
@@ -465,26 +465,28 @@ export class EventAttendeesEditor extends Component {
 					/>
 					}
 				</PanelBody>
-				<PanelBody title={ __(
-					'Archive Settings',
-					'event_espresso'
-				) } >
-					<ToggleControl
-						label={ __( 'Display on Archives', 'event_espresso' ) }
-						checked={ attributes.displayOnArchives }
-						onChange={ this.toggleDisplayOnArchives }
-						help={ attributes.displayOnArchives ?
-							__(
-								'Attendees are shown whenever this post is listed in an archive view.',
-								'event_espresso'
-							) :
-							__(
-								'Attendees are hidden whenever this post is listed in an archive view.',
-								'event_espresso'
-							)
-						}
-					/>
-				</PanelBody>
+				<NotPostTypeCheck excludedPostTypeSlugs={ 'page' }>
+					<PanelBody title={ __(
+						'Archive Settings',
+						'event_espresso'
+					) } >
+						<ToggleControl
+							label={ __( 'Display on Archives', 'event_espresso' ) }
+							checked={ attributes.displayOnArchives }
+							onChange={ this.toggleDisplayOnArchives }
+							help={ attributes.displayOnArchives ?
+								__(
+									'Attendees are shown whenever this post is listed in an archive view.',
+									'event_espresso'
+								) :
+								__(
+									'Attendees are hidden whenever this post is listed in an archive view.',
+									'event_espresso'
+								)
+							}
+						/>
+					</PanelBody>
+				</NotPostTypeCheck>
 			</InspectorControls>
 		);
 	}
