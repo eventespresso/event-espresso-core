@@ -14,6 +14,14 @@ The following is the shape of the Component:
 />
 ```
 
+This will output something like:
+
+```html
+<div class="contact-image-wrap-div">
+  <img src="" class="contact-avatar-img avatar" style="width: 32, height: 32" alt="contact avatar">
+</div>
+```
+
 ## Props
 
 ### avatarUrl

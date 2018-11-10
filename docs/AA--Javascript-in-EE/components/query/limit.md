@@ -1,6 +1,6 @@
 # QueryLimit
 
-A React component for adding a numeric Range Control input for setting the number of items returned by a query
+A React component for adding a numeric Range Control input for setting the number of items returned by a query.
 
 
 ## Usage Overview
@@ -18,6 +18,7 @@ A React component for adding a numeric Range Control input for setting the numbe
 ```
 
 ## Props
+This component also passes through any additional props provided to it onto the `<RangeControl />` component.
 
 ### limit
 

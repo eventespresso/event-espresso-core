@@ -1,6 +1,6 @@
 # `<ModelSelect />` and `<ModelEnhancedSelect />`
 
-ModelSelect is a component that exposed the [`react-select`](https://deploy-preview-2289--react-select.netlify.com/home) component for displaying provided EE model data for selection. While it can be used on its own, its intended to be utilized within more concrete "wrapper" components specific to a model (eg `EventSelect`) that are generated using [`createModelSelect`](create-model-select.md).  There are actually 2 components exposed for `ModelSelect`:  a standalone component, `<ModelSelect />` and a `withSelect` Higher Order Component wrapped default export which is exposed as `<ModelEnhancedSelect />`
+ModelSelect is a component that exposed the [`react-select`](https://deploy-preview-2289--react-select.netlify.com/home) component for displaying provided EE model data for selection. While it can be used on its own, its intended to be utilized within more concrete "wrapper" components specific to a model (eg `EventSelect`) that are generated using [`createModelSelect`](./create-model-select.md).  There are actually 2 components exposed for `ModelSelect`:  a standalone component, `<ModelSelect />` and a `withSelect` Higher Order Component wrapped default export which is exposed as `<ModelEnhancedSelect />`
 
 The HOC automatically takes care of populating the select options as directed from provided props and via subscription to the related `@eventespresso/lists` store.
 
@@ -98,7 +98,7 @@ Along with receiving any props noted for `ModelSelect`.  The enhanced component 
 
 ### modelName
 
-This informs what model the REST request should be done against.  This should correspond to the canonical modelName for models as respresented in the EE Rest schema (i.e. Events are `event`, Datetimes are `datetime`).
+This informs what model the REST request should be done against.  This should correspond to the canonical modelName for models as represented in the EE Rest schema (i.e. Events are `event`, Datetimes are `datetime`).
 
 - Type: `String`
 - Required: No
