@@ -8,7 +8,7 @@ import { withSelect } from '@wordpress/data';
  * A component with renders its own children oly if the current editor post type
  * is not one of the given `excludedPostTypeSlugs` prop.
  *
- * @param {?Object} postType
+ * @param {string} postType
  * @param {WPElement} children
  * @param {(string|string[])} excludedPostTypeSlugs
  * @return {?WPElement} Rendered element or null.
@@ -23,7 +23,7 @@ export function NotPostTypeCheck( {
 	if ( postType ) {
 		isExcluded = some(
 			castArray( excludedPostTypeSlugs ),
-			( type ) => postType.slug === type
+			type => postType === type
 		);
 	}
 	if ( isExcluded ) {
@@ -35,8 +35,7 @@ export function NotPostTypeCheck( {
 
 export default withSelect( ( select ) => {
 	const { getEditedPostAttribute } = select( 'core/editor' );
-	const { getPostType } = select( 'core' );
 	return {
-		postType: getPostType( getEditedPostAttribute( 'type' ) ),
+		postType: getEditedPostAttribute( 'type' ),
 	};
 } )( NotPostTypeCheck );
