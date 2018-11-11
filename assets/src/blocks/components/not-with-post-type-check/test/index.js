@@ -1,26 +1,26 @@
 /**
  * Internal imports
  */
-import { NotPostTypeCheck } from '../index';
+import { NotWithPostTypeCheck } from '../index';
 
 /**
  * External imports
  */
 import renderer from 'react-test-renderer';
 
-describe( 'NotPostTypeCheck Component Test', () => {
+describe( 'NotWithPostTypeCheck Component Test', () => {
 	const SubComponent = () => {
 		return <div>Hello</div>;
 	};
 	const getTestComponent = ( postTypes ) => {
 		const props = {
-			postType: { slug: 'page' },
+			postType: 'page',
 			excludedPostTypeSlugs: postTypes,
 		};
 		return (
-			<NotPostTypeCheck { ...props }>
+			<NotWithPostTypeCheck { ...props }>
 				<SubComponent />
-			</NotPostTypeCheck>
+			</NotWithPostTypeCheck>
 		);
 	};
 	const testConditions = [

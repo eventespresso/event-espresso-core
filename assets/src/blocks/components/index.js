@@ -1,1 +1,1 @@
-export { default as NotPostTypeCheck } from './not-post-type-check';
+export { default as NotWithPostTypeCheck } from './not-with-post-type-check';

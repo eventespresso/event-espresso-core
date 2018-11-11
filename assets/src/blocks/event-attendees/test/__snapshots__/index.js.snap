@@ -105,7 +105,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         value={24}
       />
     </PanelBody>
-    <WithSelect(NotPostTypeCheck)
+    <WithSelect(NotWithPostTypeCheck)
       excludedPostTypeSlugs="page"
     >
       <PanelBody
@@ -118,7 +118,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
           onChange={[Function]}
         />
       </PanelBody>
-    </WithSelect(NotPostTypeCheck)>
+    </WithSelect(NotWithPostTypeCheck)>
   </IfBlockEditSelected(InspectorControlsFill)>
 </React.Fragment>
 `;
@@ -246,7 +246,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         value={24}
       />
     </PanelBody>
-    <WithSelect(NotPostTypeCheck)
+    <WithSelect(NotWithPostTypeCheck)
       excludedPostTypeSlugs="page"
     >
       <PanelBody
@@ -259,7 +259,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
           onChange={[Function]}
         />
       </PanelBody>
-    </WithSelect(NotPostTypeCheck)>
+    </WithSelect(NotWithPostTypeCheck)>
   </IfBlockEditSelected(InspectorControlsFill)>
 </React.Fragment>
 `;
@@ -369,7 +369,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         value={24}
       />
     </PanelBody>
-    <WithSelect(NotPostTypeCheck)
+    <WithSelect(NotWithPostTypeCheck)
       excludedPostTypeSlugs="page"
     >
       <PanelBody
@@ -382,7 +382,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
           onChange={[Function]}
         />
       </PanelBody>
-    </WithSelect(NotPostTypeCheck)>
+    </WithSelect(NotWithPostTypeCheck)>
   </IfBlockEditSelected(InspectorControlsFill)>
 </React.Fragment>
 `;

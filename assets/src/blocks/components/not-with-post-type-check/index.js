@@ -14,7 +14,7 @@ import { withSelect } from '@wordpress/data';
  * @return {?WPElement} Rendered element or null.
  * @constructor
  */
-export function NotPostTypeCheck( {
+export function NotWithPostTypeCheck( {
 	postType,
 	children,
 	excludedPostTypeSlugs,
@@ -38,4 +38,4 @@ export default withSelect( ( select ) => {
 	return {
 		postType: getEditedPostAttribute( 'type' ),
 	};
-} )( NotPostTypeCheck );
+} )( NotWithPostTypeCheck );

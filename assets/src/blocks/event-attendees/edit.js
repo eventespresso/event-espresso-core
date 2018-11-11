@@ -35,7 +35,7 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { CSS_CLASS_CORE_BLOCKS } from '../constants';
-import { NotPostTypeCheck } from '../components';
+import { NotWithPostTypeCheck } from '../components';
 
 const defaultQueryData = {
 	showExpired: true,
@@ -465,7 +465,7 @@ export class EventAttendeesEditor extends Component {
 					/>
 					}
 				</PanelBody>
-				<NotPostTypeCheck excludedPostTypeSlugs={ 'page' }>
+				<NotWithPostTypeCheck excludedPostTypeSlugs={ 'page' }>
 					<PanelBody title={ __(
 						'Archive Settings',
 						'event_espresso'
@@ -486,7 +486,7 @@ export class EventAttendeesEditor extends Component {
 							}
 						/>
 					</PanelBody>
-				</NotPostTypeCheck>
+				</NotWithPostTypeCheck>
 			</InspectorControls>
 		);
 	}
