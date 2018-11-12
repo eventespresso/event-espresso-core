@@ -212,7 +212,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 $this->domain->assetNamespace(),
                 $handle
             ),
-            $dependencies + array( CoreAssetManager::JS_HANDLE_EE_COMPONENTS )
+            $dependencies + array( CoreAssetManager::JS_HANDLE_COMPONENTS )
         )
         ->setRequiresTranslation();
     }
@@ -238,7 +238,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 $this->domain->assetNamespace(),
                 $handle
             ),
-            $dependencies + array( CoreAssetManager::CSS_HANDLE_EE_COMPONENTS )
+            $dependencies + array( CoreAssetManager::CSS_HANDLE_COMPONENTS )
         );
     }
 
@@ -254,7 +254,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 'wp-i18n',      // Provides localization functions
                 'wp-element',   // Provides React.Component
                 'wp-components', // Provides many prebuilt components and controls
-                CoreAssetManager::JS_HANDLE_EE_EDITOR_HOC_COMPONENTS,
+                CoreAssetManager::JS_HANDLE_EDITOR_HOCS,
                 $this->getScriptHandle(),
             );
         return $dependencies;
