@@ -1,0 +1,20 @@
+#ee-block-event-attendees.event-attendees ul {
+    list-style-type: none;
+}
+
+#ee-block-event-attendees .contact-image-wrap-div {
+    display: inline-block;
+}
+
+/** account for this current problem in WP 5.0 beta: https://core.trac.wordpress.org/ticket/45290 **/
+#ee-block-event-attendees p {
+    display: inline-block;
+}
+
+#ee-block-event-attendees .contact-avatar-img {
+    margin: .25em 1em .25em 0;
+    vertical-align: middle;
+}
+
+
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9lZWpzLltuYW1lXS8uL2Fzc2V0cy9zcmMvY29tcG9uZW50cy9ldmVudC1hdHRlbmRlZXMvc3R5bGUuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBO0FBQ0EiLCJmaWxlIjoiZWUtY29tcG9uZW50cy45OTcxNzc5NDViMTdlZTk4YTYzOS5kaXN0LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIiNlZS1ibG9jay1ldmVudC1hdHRlbmRlZXMuZXZlbnQtYXR0ZW5kZWVzIHVsIHtcbiAgICBsaXN0LXN0eWxlLXR5cGU6IG5vbmU7XG59XG5cbiNlZS1ibG9jay1ldmVudC1hdHRlbmRlZXMgLmNvbnRhY3QtaW1hZ2Utd3JhcC1kaXYge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbn1cblxuLyoqIGFjY291bnQgZm9yIHRoaXMgY3VycmVudCBwcm9ibGVtIGluIFdQIDUuMCBiZXRhOiBodHRwczovL2NvcmUudHJhYy53b3JkcHJlc3Mub3JnL3RpY2tldC80NTI5MCAqKi9cbiNlZS1ibG9jay1ldmVudC1hdHRlbmRlZXMgcCB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xufVxuXG4jZWUtYmxvY2stZXZlbnQtYXR0ZW5kZWVzIC5jb250YWN0LWF2YXRhci1pbWcge1xuICAgIG1hcmdpbjogLjI1ZW0gMWVtIC4yNWVtIDA7XG4gICAgdmVydGljYWwtYWxpZ246IG1pZGRsZTtcbn1cbiJdLCJzb3VyY2VSb290IjoiIn0=*/

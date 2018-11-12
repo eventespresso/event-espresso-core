@@ -26,6 +26,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      */
     protected $collection_identifier;
 
+
     /**
      * an interface (or class) name to be used for restricting the type of objects added to the storage
      * this should be set from within the child class constructor
@@ -34,17 +35,63 @@ class Collection extends SplObjectStorage implements CollectionInterface
      */
     protected $collection_interface;
 
+    /**
+     * a short dash separated string describing the contents of this collection
+     * used as the base for the $collection_identifier
+     * defaults to the class short name if not set
+     *
+     * @type string $collection_identifier
+     */
+    protected $collection_name;
+
 
     /**
      * Collection constructor
      *
      * @param string $collection_interface
+     * @param string $collection_name
      * @throws InvalidInterfaceException
      */
-    public function __construct($collection_interface)
+    public function __construct($collection_interface, $collection_name = '')
     {
         $this->setCollectionInterface($collection_interface);
+        $this->setCollectionName($collection_name);
         $this->setCollectionIdentifier();
+    }
+
+
+    /**
+     * setCollectionInterface
+     *
+     * @param  string $collection_interface
+     * @throws InvalidInterfaceException
+     */
+    protected function setCollectionInterface($collection_interface)
+    {
+        if (! (interface_exists($collection_interface) || class_exists($collection_interface))) {
+            throw new InvalidInterfaceException($collection_interface);
+        }
+        $this->collection_interface = $collection_interface;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function collectionName()
+    {
+        return $this->collection_name;
+    }
+
+
+    /**
+     * @param string $collection_name
+     */
+    protected function setCollectionName($collection_name)
+    {
+        $this->collection_name = ! empty($collection_name)
+            ? sanitize_key($collection_name)
+            : basename(str_replace('\\', '/', get_class($this)));
     }
 
 
@@ -72,25 +119,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
         for ($x = 0; $x < 19; $x += 9) {
             $id[] = substr($identifier, $x, 3);
         }
-        $identifier = basename(str_replace('\\', '/', get_class($this)));
-        $identifier .= '-' . strtoupper(implode('-', $id));
-        $this->collection_identifier = $identifier;
-    }
-
-
-    /**
-     * setCollectionInterface
-     *
-     * @access protected
-     * @param  string $collection_interface
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     */
-    protected function setCollectionInterface($collection_interface)
-    {
-        if (! (interface_exists($collection_interface) || class_exists($collection_interface))) {
-            throw new InvalidInterfaceException($collection_interface);
-        }
-        $this->collection_interface = $collection_interface;
+        $this->collection_identifier = $this->collection_name . '-' . strtoupper(implode('-', $id));
     }
 
 
@@ -100,7 +129,6 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * and sets any supplied data associated with the current iterator entry
      * by calling EE_Object_Collection::set_identifier()
      *
-     * @access public
      * @param        $object
      * @param  mixed $identifier
      * @return bool
@@ -122,20 +150,33 @@ class Collection extends SplObjectStorage implements CollectionInterface
 
 
     /**
+     * getIdentifier
+     * if no $identifier is supplied, then the spl_object_hash() is used
+     *
+     * @param        $object
+     * @param  mixed $identifier
+     * @return bool
+     */
+    public function getIdentifier($object, $identifier = null)
+    {
+        return ! empty($identifier)
+            ? $identifier
+            : spl_object_hash($object);
+    }
+
+
+    /**
      * setIdentifier
      * Sets the data associated with an object in the Collection
      * if no $identifier is supplied, then the spl_object_hash() is used
      *
-     * @access public
      * @param        $object
      * @param  mixed $identifier
      * @return bool
      */
     public function setIdentifier($object, $identifier = null)
     {
-        $identifier = ! empty($identifier)
-            ? $identifier
-            : spl_object_hash($object);
+        $identifier = $this->getIdentifier($object, $identifier);
         $this->rewind();
         while ($this->valid()) {
             if ($object === $this->current()) {
@@ -154,7 +195,6 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * finds and returns an object in the Collection based on the identifier that was set using addObject()
      * PLZ NOTE: the pointer is reset to the beginning of the collection before returning
      *
-     * @access public
      * @param mixed $identifier
      * @return mixed
      */
@@ -179,7 +219,6 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * depending on whether the object is within the Collection
      * based on the supplied $identifier
      *
-     * @access public
      * @param  mixed $identifier
      * @return bool
      */
@@ -201,7 +240,6 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * hasObject
      * returns TRUE or FALSE depending on whether the supplied object is within the Collection
      *
-     * @access public
      * @param $object
      * @return bool
      */
@@ -215,7 +253,6 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * hasObjects
      * returns true if there are objects within the Collection, and false if it is empty
      *
-     * @access public
      * @return bool
      */
     public function hasObjects()
@@ -228,7 +265,6 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * isEmpty
      * returns true if there are no objects within the Collection, and false if there are
      *
-     * @access public
      * @return bool
      */
     public function isEmpty()
@@ -241,7 +277,6 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * remove
      * detaches an object from the Collection
      *
-     * @access public
      * @param $object
      * @return bool
      */
@@ -256,7 +291,6 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * setCurrent
      * advances pointer to the object whose identifier matches that which was provided
      *
-     * @access public
      * @param mixed $identifier
      * @return boolean
      */
@@ -277,7 +311,6 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * setCurrentUsingObject
      * advances pointer to the provided object
      *
-     * @access public
      * @param $object
      * @return boolean
      */

@@ -2,14 +2,18 @@
 
 namespace EventEspresso\core\domain\services\assets;
 
+use DomainException;
 use EE_Currency_Config;
 use EE_Registry;
 use EE_Template_Config;
+use EED_Core_Rest_Api;
+use EEH_DTT_Helper;
 use EEH_Qtip_Loader;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\assets\AssetCollection;
 use EventEspresso\core\services\assets\AssetManager;
 use EventEspresso\core\services\assets\Registry;
@@ -28,37 +32,68 @@ class CoreAssetManager extends AssetManager
 {
 
     // WordPress core / Third party JS asset handles
-    const JS_HANDLE_JQUERY                = 'jquery';
+    const JS_HANDLE_JQUERY = 'jquery';
 
-    const JS_HANDLE_JQUERY_VALIDATE       = 'jquery-validate';
+    const JS_HANDLE_JQUERY_VALIDATE = 'jquery-validate';
 
     const JS_HANDLE_JQUERY_VALIDATE_EXTRA = 'jquery-validate-extra-methods';
 
-    const JS_HANDLE_UNDERSCORE            = 'underscore';
+    const JS_HANDLE_UNDERSCORE = 'underscore';
 
-    const JS_HANDLE_ACCOUNTING_CORE       = 'ee-accounting-core';
+    const JS_HANDLE_ACCOUNTING_CORE = 'ee-accounting-core';
+
+    /**
+     * @since $VID:$
+     */
+    const JS_HANDLE_REACT = 'react';
+
+    /**
+     * @since $VID:$
+     */
+    const JS_HANDLE_REACT_DOM = 'react-dom';
+
+    /**
+     * @since $VID:$
+     */
+    const JS_HANDLE_LODASH = 'lodash';
 
     // EE JS assets handles
-    const JS_HANDLE_EE_MANIFEST        = 'ee-manifest';
+    const JS_HANDLE_EE_MANIFEST = 'ee-manifest';
 
-    const JS_HANDLE_EE_JS_CORE         = 'eejs-core';
+    const JS_HANDLE_EE_JS_CORE = 'eejs-core';
 
-    const JS_HANDLE_EE_VENDOR           = 'eventespresso-vendor';
+    const JS_HANDLE_EE_VENDOR = 'eventespresso-vendor';
 
-    const JS_HANDLE_EE_JS_API          = 'eejs-api';
+    const JS_HANDLE_EE_DATA_STORES = 'eventespresso-data-stores';
 
-    const JS_HANDLE_EE_CORE            = 'espresso_core';
+    const JS_HANDLE_EE_HELPERS = 'eventespresso-helpers';
 
-    const JS_HANDLE_EE_I18N            = 'eei18n';
+    const JS_HANDLE_EE_MODEL = 'eventespresso-model';
 
-    const JS_HANDLE_EE_ACCOUNTING      = 'ee-accounting';
+    const JS_HANDLE_EE_VALUE_OBJECTS = 'eventespresso-value-objects';
+
+    const JS_HANDLE_EE_HOC_COMPONENTS = 'eventespresso-hoc-components';
+
+    const JS_HANDLE_EE_COMPONENTS = 'eventespresso-components';
+
+    const JS_HANDLE_EE_VALIDATORS = 'eventespresso-validators';
+
+    const JS_HANDLE_EE_JS_API = 'eejs-api';
+
+    const JS_HANDLE_EE_CORE = 'espresso_core';
+
+    const JS_HANDLE_EE_I18N = 'eei18n';
+
+    const JS_HANDLE_EE_ACCOUNTING = 'ee-accounting';
 
     const JS_HANDLE_EE_WP_PLUGINS_PAGE = 'ee-wp-plugins-page';
 
     // EE CSS assets handles
     const CSS_HANDLE_EE_DEFAULT = 'espresso_default';
 
-    const CSS_HANDLE_EE_CUSTOM  = 'espresso_custom_css';
+    const CSS_HANDLE_EE_CUSTOM = 'espresso_custom_css';
+
+    const CSS_HANDLE_EE_COMPONENTS = 'eventespresso-components';
 
     /**
      * @var EE_Currency_Config $currency_config
@@ -95,10 +130,12 @@ class CoreAssetManager extends AssetManager
 
     /**
      * @since 4.9.62.p
+     * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws InvalidInterfaceException
      */
     public function addAssets()
     {
@@ -109,10 +146,12 @@ class CoreAssetManager extends AssetManager
 
     /**
      * @since 4.9.62.p
+     * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws InvalidInterfaceException
      */
     public function addJavascriptFiles()
     {
@@ -143,13 +182,18 @@ class CoreAssetManager extends AssetManager
      * core default javascript
      *
      * @since 4.9.62.p
+     * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
+     * @throws InvalidInterfaceException
      */
     private function loadCoreJs()
     {
+        // conditionally load third-party libraries that WP core MIGHT have.
+        $this->registerWpAssets();
+
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_MANIFEST,
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'manifest')
@@ -165,30 +209,116 @@ class CoreAssetManager extends AssetManager
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_VENDOR,
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'vendor'),
-            array(CoreAssetManager::JS_HANDLE_EE_JS_CORE)
+            array(
+                CoreAssetManager::JS_HANDLE_EE_JS_CORE,
+                CoreAssetManager::JS_HANDLE_REACT,
+                CoreAssetManager::JS_HANDLE_REACT_DOM,
+                CoreAssetManager::JS_HANDLE_LODASH,
+            )
         );
 
-        global $wp_version;
-        if (version_compare($wp_version, '4.4.0', '>')) {
-            //js.api
-            $this->addJavascript(
-                CoreAssetManager::JS_HANDLE_EE_JS_API,
-                EE_LIBRARIES_URL . 'rest_api/assets/js/eejs-api.min.js',
-                array(
-                    CoreAssetManager::JS_HANDLE_UNDERSCORE,
-                    CoreAssetManager::JS_HANDLE_EE_JS_CORE
-                )
-            );
-            $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
-            $this->registry->addData(
-                'paths',
-                array(
-                    'rest_route' => rest_url('ee/v4.8.36/'),
-                    'site_url' => site_url('/'),
-                    'admin_url' => admin_url('/'),
-                )
-            );
-        }
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_VALIDATORS,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'validators')
+        )->setRequiresTranslation();
+
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_HELPERS,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'helpers'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_VALIDATORS
+            )
+        )->setRequiresTranslation();
+
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_MODEL,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'model'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_HELPERS
+            )
+        )->setRequiresTranslation();
+
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_VALUE_OBJECTS,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'valueObjects'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_MODEL
+            )
+        )->setRequiresTranslation();
+
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'data-stores'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_VENDOR,
+                'wp-data',
+                'wp-api-request',
+                CoreAssetManager::JS_HANDLE_EE_VALUE_OBJECTS
+            )
+        )
+             ->setRequiresTranslation();
+
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_HOC_COMPONENTS,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'hocComponents'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
+                CoreAssetManager::JS_HANDLE_EE_VALUE_OBJECTS,
+                'wp-components',
+            )
+        )->setRequiresTranslation();
+
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_COMPONENTS,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'components'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_DATA_STORES,
+                CoreAssetManager::JS_HANDLE_EE_VALUE_OBJECTS,
+                'wp-components',
+            )
+        )
+        ->setRequiresTranslation();
+
+        $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
+        $this->registry->addData(
+            'paths',
+            array(
+                'rest_route' => rest_url('ee/v4.8.36/'),
+                'collection_endpoints' => EED_Core_Rest_Api::getCollectionRoutesIndexedByModelName(),
+                'primary_keys' => EED_Core_Rest_Api::getPrimaryKeyNamesIndexedByModelName(),
+                'site_url' => site_url('/'),
+                'admin_url' => admin_url('/'),
+            )
+        );
+        /** site formatting values **/
+        $this->registry->addData(
+            'site_formats',
+            array(
+                'date_formats' => EEH_DTT_Helper::convert_php_to_js_and_moment_date_formats()
+            )
+        );
+        /** currency data **/
+        $this->registry->addData(
+            'currency_config',
+            $this->getCurrencySettings()
+        );
+        /** site timezone */
+        $this->registry->addData(
+            'default_timezone',
+            array(
+                'pretty' => EEH_DTT_Helper::get_timezone_string_for_display(),
+                'string' => get_option('timezone_string'),
+                'offset' => EEH_DTT_Helper::get_site_timezone_gmt_offset(),
+            )
+        );
+        /** site locale (user locale if user logged in) */
+        $this->registry->addData(
+            'locale',
+            array(
+                'user' => get_user_locale(),
+                'site' => get_locale()
+            )
+        );
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_CORE,
@@ -203,6 +333,88 @@ class CoreAssetManager extends AssetManager
                     EE_Registry::$i18n_js_strings
                 );
             }
+        );
+    }
+
+
+    /**
+     * Registers vendor files that are bundled with a later version WP but might not be for the current version of
+     * WordPress in the running environment.
+     *
+     * @throws DuplicateCollectionIdentifierException
+     * @throws InvalidDataTypeException
+     * @throws InvalidEntityException
+     * @throws DomainException
+     * @since $VID:$
+     */
+    private function registerWpAssets()
+    {
+        global $wp_version;
+        if (version_compare($wp_version, '5.0.beta', '>=')) {
+            return;
+        }
+        $this->addVendorJavascript(CoreAssetManager::JS_HANDLE_REACT)
+            ->setVersion('16.6.0');
+        $this->addVendorJavascript(
+            CoreAssetManager::JS_HANDLE_REACT_DOM,
+            array(CoreAssetManager::JS_HANDLE_REACT)
+        )->setVersion('16.6.0');
+        $this->addVendorJavascript(CoreAssetManager::JS_HANDLE_LODASH)
+            ->setInlineDataCallback(
+                function() {
+                    wp_add_inline_script(
+                        CoreAssetManager::JS_HANDLE_LODASH,
+                        'window.lodash = _.noConflict();'
+                    );
+                }
+            )
+            ->setVersion('4.17.11');
+    }
+
+
+    /**
+     * Returns configuration data for the accounting-js library.
+     * @since $VID:$
+     * @return array
+     */
+    private function getAccountingSettings() {
+        return array(
+            'currency' => array(
+                'symbol'    => $this->currency_config->sign,
+                'format'    => array(
+                    'pos'  => $this->currency_config->sign_b4 ? '%s%v' : '%v%s',
+                    'neg'  => $this->currency_config->sign_b4 ? '- %s%v' : '- %v%s',
+                    'zero' => $this->currency_config->sign_b4 ? '%s--' : '--%s',
+                ),
+                'decimal'   => $this->currency_config->dec_mrk,
+                'thousand'  => $this->currency_config->thsnds,
+                'precision' => $this->currency_config->dec_plc,
+            ),
+            'number'   => array(
+                'precision' => $this->currency_config->dec_plc,
+                'thousand'  => $this->currency_config->thsnds,
+                'decimal'   => $this->currency_config->dec_mrk,
+            ),
+        );
+    }
+
+
+    /**
+     * Returns configuration data for the js Currency VO.
+     * @since $VID:$
+     * @return array
+     */
+    private function getCurrencySettings()
+    {
+        return array(
+            'code' => $this->currency_config->code,
+            'singularLabel' => $this->currency_config->name,
+            'pluralLabel' => $this->currency_config->plural,
+            'sign' => $this->currency_config->sign,
+            'signB4' => $this->currency_config->sign_b4,
+            'decimalPlaces' => $this->currency_config->dec_plc,
+            'decimalMark' => $this->currency_config->dec_mrk,
+            'thousandsSeparator' => $this->currency_config->thsnds,
         );
     }
 
@@ -232,6 +444,13 @@ class CoreAssetManager extends AssetManager
                 );
             }
         }
+        $this->addStylesheet(
+            CoreAssetManager::CSS_HANDLE_EE_COMPONENTS,
+            $this->registry->getCssUrl(
+                $this->domain->assetNamespace(),
+                'components'
+            )
+        );
     }
 
 
@@ -239,6 +458,7 @@ class CoreAssetManager extends AssetManager
      * jQuery Validate for form validation
      *
      * @since 4.9.62.p
+     * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -265,6 +485,7 @@ class CoreAssetManager extends AssetManager
      * accounting.js for performing client-side calculations
      *
      * @since 4.9.62.p
+     * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -280,35 +501,17 @@ class CoreAssetManager extends AssetManager
         )
         ->setVersion('0.3.2');
 
-        $currency_config = $this->currency_config;
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_EE_ACCOUNTING,
             EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js',
             array(CoreAssetManager::JS_HANDLE_ACCOUNTING_CORE)
         )
         ->setInlineDataCallback(
-            function () use ($currency_config) {
+            function () {
                  wp_localize_script(
                      CoreAssetManager::JS_HANDLE_EE_ACCOUNTING,
                      'EE_ACCOUNTING_CFG',
-                     array(
-                         'currency' => array(
-                             'symbol'    => $currency_config->sign,
-                             'format'    => array(
-                                 'pos'  => $currency_config->sign_b4 ? '%s%v' : '%v%s',
-                                 'neg'  => $currency_config->sign_b4 ? '- %s%v' : '- %v%s',
-                                 'zero' => $currency_config->sign_b4 ? '%s--' : '--%s',
-                             ),
-                             'decimal'   => $currency_config->dec_mrk,
-                             'thousand'  => $currency_config->thsnds,
-                             'precision' => $currency_config->dec_plc,
-                         ),
-                         'number'   => array(
-                             'precision' => $currency_config->dec_plc,
-                             'thousand'  => $currency_config->thsnds,
-                             'decimal'   => $currency_config->dec_mrk,
-                         ),
-                     )
+                     $this->getAccountingSettings()
                  );
             }
         )
