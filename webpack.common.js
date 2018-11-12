@@ -252,6 +252,65 @@ const config = [
 		},
 	},
 	{
+		configName: 'editor-hocs',
+		entry: {
+			'editor-hocs': assets + 'editor/hocs/index.js',
+		},
+		externals: Object.assign( externals, {
+			'@eventespresso/higher-order-components': 'eejs.hocComponents',
+			'@eventespresso/components': 'eejs.components',
+			'@eventespresso/validators': 'eejs.validators',
+			'@eventespresso/helpers': 'eejs.helpers',
+			'@eventespresso/model': 'eejs.model',
+			'@eventespresso/value-objects': 'eejs.valueObjects',
+		} ),
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+				},
+				{
+					test: /\.css$/,
+					use: [
+						miniExtract.loader,
+						{
+							loader: 'css-loader',
+							query: {
+								modules: true,
+								localIdentName: '[local]',
+							},
+							//can't use minimize because cssnano (the
+							// dependency) doesn't parser the browserlist
+							// extension in package.json correctly, there's
+							// a pending update for it but css-loader
+							// doesn't have the latest yet.
+							// options: {
+							//     minimize: true
+							// }
+						},
+						{
+							loader: 'postcss-loader',
+							options: {
+								plugins: function() {
+									return [ autoprefixer ];
+								},
+								sourceMap: true,
+							},
+						},
+					],
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', 'editorHocs' ],
+			libraryTarget: 'var',
+		},
+	},
+	{
 		configName: 'base',
 		entry: {
 			'wp-plugins-page': [
@@ -274,6 +333,7 @@ const config = [
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
 			'@eventespresso/value-objects': 'eejs.valueObjects',
+			'@eventespresso/editor-hocs': 'eejs.editorHocs',
 		} ),
 		output: {
 			filename: 'ee-[name].[chunkhash].dist.js',

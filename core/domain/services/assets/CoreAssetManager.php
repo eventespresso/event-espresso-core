@@ -76,6 +76,8 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_EE_COMPONENTS = 'eventespresso-components';
 
+    const JS_HANDLE_EE_EDITOR_HOC_COMPONENTS = 'eventespresso-editor-hoc-components';
+
     const JS_HANDLE_EE_VALIDATORS = 'eventespresso-validators';
 
     const JS_HANDLE_EE_JS_API = 'eejs-api';
@@ -278,6 +280,14 @@ class CoreAssetManager extends AssetManager
             )
         )
         ->setRequiresTranslation();
+
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_EE_EDITOR_HOC_COMPONENTS,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'editor-hocs'),
+            array(
+                CoreAssetManager::JS_HANDLE_EE_COMPONENTS
+            )
+        )->setRequiresTranslation();
 
         $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
         $this->registry->addData(

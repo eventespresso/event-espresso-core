@@ -21,6 +21,7 @@ import {
 	QueryLimit,
 	EventAttendeeList,
 } from '@eventespresso/components';
+import { NotWithPostTypeCheck } from '@eventespresso/editor-hocs';
 import {
 	statusModel,
 	attendeeModel,
@@ -35,7 +36,6 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { CSS_CLASS_CORE_BLOCKS } from '../constants';
-import { NotWithPostTypeCheck } from '../components';
 
 const defaultQueryData = {
 	showExpired: true,
