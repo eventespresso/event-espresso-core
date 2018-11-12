@@ -167,9 +167,9 @@ const config = [
 		},
 	},
 	{
-		configName: 'hocComponents',
+		configName: 'hocs',
 		entry: {
-			hocComponents: assets + 'higher-order-components/index.js',
+			hocs: assets + 'higher-order-components/index.js',
 		},
 		externals: Object.assign( externals, {
 			'@eventespresso/validators': 'eejs.validators',
@@ -199,7 +199,7 @@ const config = [
 			components: assets + 'components/index.js',
 		},
 		externals: Object.assign( externals, {
-			'@eventespresso/higher-order-components': 'eejs.hocComponents',
+			'@eventespresso/higher-order-components': 'eejs.hocs',
 			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
@@ -257,7 +257,7 @@ const config = [
 			'editor-hocs': assets + 'editor/hocs/index.js',
 		},
 		externals: Object.assign( externals, {
-			'@eventespresso/higher-order-components': 'eejs.hocComponents',
+			'@eventespresso/higher-order-components': 'eejs.hocs',
 			'@eventespresso/components': 'eejs.components',
 			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
@@ -327,7 +327,7 @@ const config = [
 			],
 		},
 		externals: Object.assign( externals, {
-			'@eventespresso/higher-order-components': 'eejs.hocComponents',
+			'@eventespresso/higher-order-components': 'eejs.hocs',
 			'@eventespresso/components': 'eejs.components',
 			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',

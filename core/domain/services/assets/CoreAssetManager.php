@@ -260,7 +260,7 @@ class CoreAssetManager extends AssetManager
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_HOCS,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), 'hocComponents'),
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'hocs'),
             array(
                 CoreAssetManager::JS_HANDLE_DATA_STORES,
                 CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,

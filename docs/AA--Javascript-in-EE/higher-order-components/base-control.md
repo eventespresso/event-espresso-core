@@ -60,10 +60,10 @@ Note: If this HOC is being used in an ee core component then please import it di
 
 This component is exposed two ways:
 
-**`eejs.hocComponents` global**
+**`eejs.hocs` global**
 
 ```js
-const { withBaseControl } = eejs.hocComponents;
+const { withBaseControl } = eejs.hocs;
 ```
 
 **`@eventespresso/higher-order-components` package**
@@ -77,7 +77,7 @@ Note: this package isn't published yet so you'll need to point to it via your bu
 ```js
 module.exports = {
     externals: {
-        '@eventespresso/higher-order-components': 'eejs.hocComponents',
+        '@eventespresso/higher-order-components': 'eejs.hocs',
     }
 }
 ```
