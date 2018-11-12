@@ -4,7 +4,7 @@
 ## Example
 Below is an example of a component which grabs a list of event entities and displays them.
 
-```js
+```jsx
 const { withSelect } = wp.data;
 const { mapReducer } = eejs.helpers;
 const EventsListBase = ( { events } ) => {
@@ -20,7 +20,7 @@ const EventsListBase = ( { events } ) => {
   )
 }
 const EventList = withSelect( ( select ) => {
-  events: seelct( 'eventespresso/lists' ).getEvents();
+  events: select( 'eventespresso/lists' ).getEvents();
 } )
 ```
 ## Actions
@@ -42,7 +42,7 @@ wp.data.dispatch( 'eventespresso/lists' ).receiveEntityResponse( 'event', '?wher
 ```
 
 ## Selectors
-The following selectors are available on the object returns by `wp.data.select('eventespresso/lists')`.
+The following selectors are available on the object returned by `wp.data.select('eventespresso/lists')`.
 ### `getItems( identifier, queryString )`
 Selector for retrieving an arbitrary array of items that have been added to the store for a given identifier and query string.
 #### Example:
