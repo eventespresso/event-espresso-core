@@ -65,3 +65,7 @@ export function getEntitiesByIds( state, modelName, entityIds ) {
 		values( pick( state.entities[ modelName ], entityIds ) ) :
 		null;
 }
+
+/**
+ * @todo add more crud functionality to our stores
+ */
