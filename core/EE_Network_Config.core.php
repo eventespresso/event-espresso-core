@@ -15,19 +15,19 @@ final class EE_Network_Config
 {
 
     /**
-     * @param EE_Network_Config $_instance
+     * @var EE_Network_Config $_instance
      */
     private static $_instance;
 
     /**
      * addons can add their specific network_config objects to this property
      *
-     * @param EE_Config_Base[] $addons
+     * @var EE_Config_Base[] $addons
      */
     public $addons;
 
     /**
-     * @param EE_Network_Core_Config $core
+     * @var EE_Network_Core_Config $core
      */
     public $core;
 
@@ -207,14 +207,14 @@ class EE_Network_Core_Config extends EE_Config_Base
     /**
      * PUE site license key
      *
-     * @var string
+     * @var $site_license_key string
      */
     public $site_license_key;
 
     /**
      * This indicates whether messages system processing should be done on the same request or not.
      *
-     * @var
+     * @var boolean $do_messages_on_same_request
      */
     public $do_messages_on_same_request;
 
