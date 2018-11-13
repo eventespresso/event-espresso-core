@@ -11,6 +11,7 @@ const aliases = {
 	'@eventespresso/value-objects': path.resolve( __dirname, assets + 'vo' ),
 	'@eventespresso/higher-order-components': path.resolve( __dirname, assets + 'higher-order-components' ),
 	'@eventespresso/components': path.resolve( __dirname, assets + 'components' ),
+	'@eventespresso/editor-hocs': path.resolve( __dirname, assets + 'editor/hocs' ),
 };
 module.exports = {
 	resolve: {
