@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain;
 
 use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\Version;
+use EventEspresso\core\services\assets\Registry;
 
 /**
  * DomainBase Class

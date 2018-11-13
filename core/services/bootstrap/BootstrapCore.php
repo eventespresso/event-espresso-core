@@ -11,6 +11,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\InvalidRequestStackMiddlewareException;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\RequestStack;
 use EventEspresso\core\services\request\RequestStackBuilder;
@@ -92,6 +93,7 @@ class BootstrapCore
      * @throws InvalidDataTypeException
      * @throws InvalidFilePathException
      * @throws InvalidInterfaceException
+     * @throws InvalidRequestStackMiddlewareException
      * @throws OutOfBoundsException
      * @throws ReflectionException
      */

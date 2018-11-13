@@ -38,8 +38,8 @@ class CommandBusTest extends EE_UnitTestCase
         // need to override the existing alias for the CommandHandlerManagerInterface
         // or else the REAL class will still get used
         EE_Dependency_Map::instance()->add_alias(
-            'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
-            'EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock'
+            'EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock',
+            'EventEspresso\core\services\commands\CommandHandlerManagerInterface'
         );
         parent::setUp();
     }
