@@ -92,7 +92,7 @@ You may also provide n-ary operators, that is operators with as many values as y
 
 ```php
 //Gets all the events in states with ID 23 and 87
-https://demoee.org/wp-sjon/ee/v4.8.36/events?where[Venue.STA_ID][]=IN&where[Venue.STA_ID][]=23&where[Venue.STA_ID][]=87
+https://demoee.org/wp-sjon/ee/v4.8.36/events?where[Venue.STA_ID][0]=IN&where[Venue.STA_ID][1][]=23&where[Venue.STA_ID][1][]=87
 ```
 
 ### Logic Query Params: AND, OR, NOT
