@@ -34,7 +34,6 @@ final class EE_Network_Config
 
     /**
      * @singleton method used to instantiate class object
-     * @access    public
      * @return EE_Network_Config instance
      */
     public static function instance()
@@ -48,9 +47,7 @@ final class EE_Network_Config
 
 
     /**
-     *    class constructor
-     *
-     * @access    private
+     * class constructor
      */
     private function __construct()
     {
@@ -67,9 +64,8 @@ final class EE_Network_Config
 
 
     /**
-     *        load EE Network Config options
+     * load EE Network Config options
      *
-     * @access private
      * @return void
      */
     private function _load_config()
@@ -113,10 +109,9 @@ final class EE_Network_Config
 
 
     /**
-     *    get_config
+     * get_config
      *
-     * @access    public
-     * @return    array of network config stuff
+     * @return array of network config stuff
      */
     public function get_config()
     {
@@ -128,9 +123,8 @@ final class EE_Network_Config
 
 
     /**
-     *    update_config'
+     * update_config
      *
-     * @access    public
      * @param bool $add_success
      * @param bool $add_error
      * @return bool success
@@ -181,10 +175,9 @@ final class EE_Network_Config
 
 
     /**
-     *    __sleep
+     * __sleep
      *
-     * @access    public
-     * @return    array
+     * @return array
      */
     public function __sleep()
     {
@@ -207,7 +200,7 @@ class EE_Network_Core_Config extends EE_Config_Base
     /**
      * PUE site license key
      *
-     * @var $site_license_key string
+     * @var string $site_license_key
      */
     public $site_license_key;
 
