@@ -981,9 +981,13 @@ class EEH_MSG_Template
          */
         $additional_template_packs = apply_filters('FHEE__EED_Messages__get_template_packs__template_packs', array());
         foreach ((array) $additional_template_packs as $template_pack) {
-            if (! self::$_template_pack_collection->contains($template_pack)) {
-                self::$_template_pack_collection->add($template_pack);
+            if (self::$_template_pack_collection->get_by_name(
+                $template_pack->dbref
+            ) instanceof EE_Messages_Template_Pack
+            ) {
+                continue;
             }
+            self::$_template_pack_collection->add($template_pack);
         }
         return self::$_template_pack_collection;
     }
