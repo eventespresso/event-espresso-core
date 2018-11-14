@@ -581,7 +581,49 @@ class ModelDataTranslator
     ) {
         if (! $writing && is_array($query_param_value)) {
             if (! \EEH_Array::is_array_numerically_and_sequentially_indexed($query_param_value)) {
-                if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
+                if (is_array($query_param_value)
+                    && count($query_param_value) === 1
+                    && array_key_exists(
+                        key($query_param_value),
+                        $model->valid_operators()
+                    )
+                ) {
+                    $sub_array_value =  reset($query_param_value);
+                    $sub_array_key = key($query_param_value);
+                    // they're doing something like "&where[EVT_ID][IN]=1,2,3" or "&where[EVT_ID][>]=5"
+                    if (array_key_exists(
+                        $sub_array_key,
+                        array_merge(
+                            $model->valid_in_style_operators(),
+                            $model->valid_between_style_operators()
+                        )
+                    )) {
+                        // the value should be JSON or CSV
+                        $values = json_decode($sub_array_value);
+                        if (! is_array($values)) {
+                            $values = array_filter(
+                                array_map(
+                                    'trim',
+                                    explode(
+                                        ',',
+                                        $sub_array_value
+                                    )
+                                )
+                            );
+                        }
+                        $query_param_value = array(
+                            $sub_array_key,
+                            $values
+                        );
+                    } elseif (array_key_exists(
+                        $sub_array_key,
+                        $model->valid_null_style_operators()
+                    )) {
+                        $query_param_value = array($sub_array_key);
+                    } else {
+                        $query_param_value = array($sub_array_key, $sub_array_value);
+                    }
+                } elseif (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
                     throw new RestException(
                         'numerically_indexed_array_of_values_only',
                         sprintf(
@@ -603,9 +645,9 @@ class ModelDataTranslator
             if (isset($query_param_value[0])
                 && isset($valid_operators[ $query_param_value[0] ])
             ) {
-                $op = $query_param_value[0];
-                $translated_value = array($op);
-                if (array_key_exists($op, $model->valid_in_style_operators())
+                $sub_array_key = $query_param_value[0];
+                $translated_value = array($sub_array_key);
+                if (array_key_exists($sub_array_key, $model->valid_in_style_operators())
                     && isset($query_param_value[1])
                     && ! isset($query_param_value[2])
                 ) {
@@ -615,7 +657,7 @@ class ModelDataTranslator
                         $requested_version,
                         $timezone
                     );
-                } elseif (array_key_exists($op, $model->valid_between_style_operators())
+                } elseif (array_key_exists($sub_array_key, $model->valid_between_style_operators())
                     && isset($query_param_value[1])
                     && is_array($query_param_value[1])
                     && isset($query_param_key[1][0], $query_param_value[1][1])
@@ -636,7 +678,7 @@ class ModelDataTranslator
                             $timezone
                         )
                     );
-                } elseif (array_key_exists($op, $model->valid_like_style_operators())
+                } elseif (array_key_exists($sub_array_key, $model->valid_like_style_operators())
                     && isset($query_param_value[1])
                     && ! isset($query_param_value[2])
                 ) {
@@ -645,13 +687,13 @@ class ModelDataTranslator
                     // but do verify it at least doesn't have any serialized data
                     ModelDataTranslator::throwExceptionIfContainsSerializedData($query_param_value[1]);
                     $translated_value[] = $query_param_value[1];
-                } elseif (array_key_exists($op, $model->valid_null_style_operators())
+                } elseif (array_key_exists($sub_array_key, $model->valid_null_style_operators())
                     && ! isset($query_param_value[1])) {
                     // no arguments should have been provided, so don't look for any
                 } elseif (isset($query_param_value[1])
                     && ! isset($query_param_value[2])
                     && ! array_key_exists(
-                        $op,
+                        $sub_array_key,
                         array_merge(
                             $model->valid_in_style_operators(),
                             $model->valid_null_style_operators(),
@@ -677,7 +719,7 @@ class ModelDataTranslator
                                     'The operator you provided, "%1$s" had the wrong number of arguments',
                                     'event_espresso'
                                 ),
-                                $op
+                                $sub_array_key
                             ),
                             array(
                                 'status' => 400,

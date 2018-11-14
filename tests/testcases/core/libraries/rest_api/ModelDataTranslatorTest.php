@@ -809,6 +809,98 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 ),
                 'Ticket',
                 true
+            ),
+            'quick syntax with in csv' => array(
+                array(
+                    'EVT_ID' => array('IN', array('1','2','3'))
+                ),
+                array(
+                    'EVT_ID' => array(
+                        'IN' => '1,2,3'
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'quick syntax with in json' => array(
+                array(
+                    'EVT_ID' => array('IN', array(1,2,3))
+                ),
+                array(
+                    'EVT_ID' => array(
+                        'IN' => wp_json_encode(array(1,2,3))
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'quick syntax with between csv' => array(
+                array(
+                    'DTT_EVT_start' => array(
+                        'BETWEEN',
+                        array(
+                            rest_parse_date('2015-01-01 00:02:00'),
+                            rest_parse_date('2015-01-01 00:05:00')
+                        )
+                    )
+                ),
+                array(
+                    'DTT_EVT_start' => array(
+                        'BETWEEN' => '2015-01-01T00:02:00, 2015-01-01T00:05:00'
+                    )
+                ),
+                'Datetime',
+                false
+            ),
+            'quick syntax with between json' => array(
+                array(
+                    'DTT_EVT_start' => array(
+                        'BETWEEN',
+                        array(
+                            rest_parse_date('2015-01-01 00:02:00'),
+                            rest_parse_date('2015-01-01 00:05:00')
+                        )
+                    )
+                ),
+                array(
+                    'DTT_EVT_start' => array(
+                        'BETWEEN' => wp_json_encode(
+                            array(
+                                '2015-01-01T00:02:00',
+                                '2015-01-01T00:05:00'
+                            )
+                        )
+                    )
+                ),
+                'Datetime',
+                false
+            ),
+            'quick syntax with normal' => array(
+                array(
+                    'EVT_name' => array(
+                        'LIKE',
+                        '%foobar%'
+                    )
+                ),
+                array(
+                    'EVT_name' => array(
+                        'LIKE' => '%foobar%'
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'quick syntax with null' => array(
+                array(
+                    'EVT_ID' => array('IS_NULL')
+                ),
+                array(
+                    'EVT_ID' => array(
+                        'IS_NULL' => true
+                    )
+                ),
+                'Event',
+                false
             )
         );
     }
@@ -819,6 +911,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      * @param string $model_name eg 'Event'
      * @param boolean $writing
      * @group        9222
+     * @group current
      * @dataProvider dataProviderForTestPrepareConditionsQueryParamsForModelsGood
      */
     public function testPrepareConditionsQueryParamsForModelsGood(
