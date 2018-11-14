@@ -54,11 +54,13 @@ export function* getEntities( modelName, queryString ) {
 		response,
 	);
 
+	const entityIds = Array.from( fullEntities.keys() );
+
 	// are there already entities for the ids in the store?  If so, we use those
 	const existingEntities = yield select(
 		'eventespresso/core',
 		'getEntitiesByIds',
-		Array.from( fullEntities.keys() )
+		entityIds
 	);
 
 	if ( ! isEmpty( existingEntities ) ) {
@@ -73,7 +75,20 @@ export function* getEntities( modelName, queryString ) {
 		modelName,
 		fullEntities
 	);
+	yield resolveGetEntityByIdForIds( modelName, entityIds );
 	yield receiveEntityResponse( modelName, queryString, fullEntities );
+}
+
+function* resolveGetEntityByIdForIds( modelName, entityIds ) {
+	while ( entityIds.length > 0 ) {
+		yield dispatch(
+			'core/data',
+			'finishResolution',
+			'eventespresso/core',
+			'getEntityById',
+			[ modelName, entityIds.shift() ]
+		);
+	}
 }
 
 /**
