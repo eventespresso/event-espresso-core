@@ -298,7 +298,7 @@ class EEH_MSG_Template
                     $_field = $field;
                 }
                 if (isset($_field)) {
-                    $localized[ $_field ] = $shortcodes;
+                    $localized[ (string) $_field ] = $shortcodes;
                 }
             }
             $valid_shortcodes = $localized;

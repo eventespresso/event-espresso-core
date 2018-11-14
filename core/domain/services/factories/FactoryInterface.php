@@ -12,7 +12,8 @@ interface FactoryInterface
 {
 
     /**
-     * @param mixed $arguments
+     * @param mixed $arguments Either a Fully Qualified Class Name
+     *                         or array of data required for construction
      * @return mixed
      */
     public static function create($arguments);

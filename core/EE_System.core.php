@@ -222,6 +222,11 @@ final class EE_System implements ResettableInterface
             array($this, 'load_core_configuration'),
             5
         );
+        // load specifications for matching routes to current request
+        add_action(
+            'AHEE__EE_Bootstrap__load_core_configuration',
+            array($this, 'loadRouteMatchSpecifications')
+        );
         // load EE_Config, EE_Textdomain, etc
         add_action(
             'AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets',
@@ -835,6 +840,7 @@ final class EE_System implements ResettableInterface
      *
      * @return void
      * @throws ReflectionException
+     * @throws Exception
      */
     public function load_core_configuration()
     {
@@ -924,6 +930,23 @@ final class EE_System implements ResettableInterface
         if ($domain->isCaffeinated()) {
             require_once EE_CAFF_PATH . 'brewing_regular.php';
         }
+    }
+
+
+    /**
+     * @since $VID:$
+     * @throws Exception
+     */
+    public function loadRouteMatchSpecifications()
+    {
+        try {
+            $this->loader->getShared(
+                'EventEspresso\core\services\route_match\RouteMatchSpecificationManager'
+            );
+        } catch (Exception $exception) {
+            new ExceptionStackTraceDisplay($exception);
+        }
+        do_action('AHEE__EE_System__loadRouteMatchSpecifications');
     }
 
 
@@ -1144,10 +1167,19 @@ final class EE_System implements ResettableInterface
      */
     public function core_loaded_and_ready()
     {
-        if ($this->request->isAdmin() || $this->request->isFrontend() || $this->request->isIframe()) {
+        if ($this->request->isAdmin()
+            || $this->request->isFrontend()
+            || $this->request->isIframe()
+            || $this->request->isWordPressApi()
+        ) {
             try {
                 $this->loader->getShared('EventEspresso\core\services\assets\Registry');
                 $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
+                if (function_exists('register_block_type')) {
+                    $this->loader->getShared(
+                        'EventEspresso\core\services\editor\BlockRegistrationManager'
+                    );
+                }
             } catch (Exception $exception) {
                 new ExceptionStackTraceDisplay($exception);
             }

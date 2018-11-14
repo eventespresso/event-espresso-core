@@ -437,11 +437,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     {
         $this->_template_args['admin_page_content'] = '';
         try {
-            $organization_settings_form = new OrganizationSettings(
-                EE_Registry::instance(),
-                EE_Registry::instance()->CFG->organization,
-                EE_Registry::instance()->CFG->core,
-                EE_Registry::instance()->NET_CFG->core
+            /** @var EventEspresso\admin_pages\general_settings\OrganizationSettings $organization_settings_form */
+            $organization_settings_form = $this->loader->getShared(
+                'EventEspresso\admin_pages\general_settings\OrganizationSettings'
             );
             $this->_template_args['admin_page_content'] = $organization_settings_form->display();
         } catch (Exception $e) {
@@ -462,11 +460,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     protected function _update_your_organization_settings()
     {
         try {
-            $organization_settings_form = new OrganizationSettings(
-                EE_Registry::instance(),
-                EE_Registry::instance()->CFG->organization,
-                EE_Registry::instance()->CFG->core,
-                EE_Registry::instance()->NET_CFG->core
+            /** @var EventEspresso\admin_pages\general_settings\OrganizationSettings $organization_settings_form */
+            $organization_settings_form = $this->loader->getShared(
+                'EventEspresso\admin_pages\general_settings\OrganizationSettings'
             );
             $success = $organization_settings_form->process($this->_req_data);
             EE_Registry::instance()->CFG = apply_filters(
@@ -564,6 +560,18 @@ class General_Settings_Admin_Page extends EE_Admin_Page
 
 
     /**
+     * @return string
+     */
+    protected function getCountryIsoForSite()
+    {
+        return ! empty(EE_Registry::instance()->CFG->organization->CNT_ISO)
+            ? EE_Registry::instance()->CFG->organization->CNT_ISO
+            : 'US';
+    }
+
+
+
+    /**
      * Output Country Settings view.
      *
      * @throws DomainException
@@ -571,9 +579,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     protected function _country_settings()
     {
-        $CNT_ISO_for_site = isset(EE_Registry::instance()->CFG->organization->CNT_ISO)
-            ? EE_Registry::instance()->CFG->organization->CNT_ISO
-            : 'US';
+        $CNT_ISO_for_site = $this->getCountryIsoForSite();
         $CNT_ISO = isset($this->_req_data['country'])
             ? strtoupper(sanitize_text_field($this->_req_data['country']))
             : $CNT_ISO_for_site;
@@ -632,9 +638,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public function display_country_settings($CNT_ISO = '')
     {
-        $CNT_ISO_for_site = isset(EE_Registry::instance()->CFG->organization->CNT_ISO)
-            ? EE_Registry::instance()->CFG->organization->CNT_ISO
-            : 'US';
+        $CNT_ISO_for_site = $this->getCountryIsoForSite();
 
         $CNT_ISO = isset($this->_req_data['country'])
             ? strtoupper(sanitize_text_field($this->_req_data['country']))
@@ -1046,30 +1050,46 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         $cols_n_values['CNT_name'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_name'])
             ? sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_name'])
             : null;
-        $cols_n_values['CNT_cur_code'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_code'])
-            ? strtoupper(sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_code']))
-            : 'USD';
-        $cols_n_values['CNT_cur_single'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_single'])
-            ? sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_single'])
-            : 'dollar';
-        $cols_n_values['CNT_cur_plural'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_plural'])
-            ? sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_plural'])
-            : 'dollars';
-        $cols_n_values['CNT_cur_sign'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign'])
-            ? sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign'])
-            : '$';
-        $cols_n_values['CNT_cur_sign_b4'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign_b4'])
-            ? absint($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign_b4'])
-            : true;
-        $cols_n_values['CNT_cur_dec_plc'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_dec_plc'])
-            ? absint($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_dec_plc'])
-            : 2;
-        $cols_n_values['CNT_cur_dec_mrk'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_dec_mrk'])
-            ? sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_dec_mrk'])
-            : '.';
-        $cols_n_values['CNT_cur_thsnds'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_thsnds'])
-            ? sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_thsnds'])
-            : ',';
+        if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_code'])) {
+            $cols_n_values['CNT_cur_code'] = strtoupper(
+                sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_code'])
+            );
+        }
+        if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_single'])) {
+            $cols_n_values['CNT_cur_single'] = sanitize_text_field(
+                $this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_single']
+            );
+        }
+        if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_plural'])) {
+            $cols_n_values['CNT_cur_plural'] = sanitize_text_field(
+                $this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_plural']
+            );
+        }
+        if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign'])) {
+            $cols_n_values['CNT_cur_sign'] = sanitize_text_field(
+                $this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign']
+            );
+        }
+        if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign_b4'])) {
+            $cols_n_values['CNT_cur_sign_b4'] = absint(
+                $this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_sign_b4']
+            );
+        }
+        if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_dec_plc'])) {
+            $cols_n_values['CNT_cur_dec_plc'] = absint(
+                $this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_dec_plc']
+            );
+        }
+        if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_dec_mrk'])) {
+            $cols_n_values['CNT_cur_dec_mrk'] = sanitize_text_field(
+                $this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_dec_mrk']
+            );
+        }
+        if (isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_thsnds'])) {
+            $cols_n_values['CNT_cur_thsnds'] = sanitize_text_field(
+                $this->_req_data['cntry'][ $CNT_ISO ]['CNT_cur_thsnds']
+            );
+        }
         $cols_n_values['CNT_tel_code'] = isset($this->_req_data['cntry'][ $CNT_ISO ]['CNT_tel_code'])
             ? sanitize_text_field($this->_req_data['cntry'][ $CNT_ISO ]['CNT_tel_code'])
             : null;
@@ -1306,7 +1326,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public function load_scripts_styles_privacy_settings()
     {
-        $form_handler = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler');
+        $form_handler = $this->loader->getShared('EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler');
         $form_handler->enqueueStylesAndScripts();
     }
 
@@ -1318,7 +1338,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     {
         $this->_set_add_edit_form_tags('update_privacy_settings');
         $this->_set_publish_post_box_vars(null, false, false, null, false);
-        $form_handler = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler');
+        $form_handler = $this->loader->getShared('EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler');
         $this->_template_args['admin_page_content'] = $form_handler->display();
         $this->display_admin_page_with_sidebar();
     }
@@ -1331,7 +1351,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public function updatePrivacySettings()
     {
-        $form_handler = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler');
+        $form_handler = $this->loader->getShared('EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler');
         $success = $form_handler->process($this->get_request_data());
         $this->_redirect_after_action(
             $success,

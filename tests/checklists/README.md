@@ -9,3 +9,8 @@
 | [Verifying CC field for Email messages work](verifying-cc-in-email-messages.md) | |
 | [Verifying Disabling Message Context works](verifying-disabling-message-context-works.md) | |
 | [Datepicker related tests](datepicker.md) | |
+
+## Blocks
+| Checklists                                 | Has Acceptance test |
+| -------------------------------------------| ------------------- |
+| [EventAttendees](blocks/event-attendees.md)|                     |
