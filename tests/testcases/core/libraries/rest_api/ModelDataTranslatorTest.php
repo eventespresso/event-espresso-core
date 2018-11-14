@@ -619,6 +619,74 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 ),
                 'Event',
                 false
+            ),
+            'quick syntax two operators' => array(
+                array(
+                    'EVT_ID' => array(
+                        'IN' => '1,2',
+                        '<' => 'huh there shouldnt be two operators!'
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'quick syntax too few arguments for between operator with csv' => array(
+                array(
+                    'EVT_created' => array(
+                        'BETWEEN' => '2017-01-01T00:00:00'
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'quick syntax too few arguments for between operator with json' => array(
+                array(
+                    'EVT_created' => array(
+                        'BETWEEN' => array(
+                            '2017-01-01T00:00:00'
+                        )
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'quick syntax between with too many dates' => array(
+                array(
+                    'EVT_created' => array(
+                        'between' =>
+                        array(
+                            '2017-01-01T00:00:00',
+                            '2018-01-01T00:00:00',
+                            '2019-01-01T00:00:00',
+                        )
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'quick syntax too many arguments for like operator' => array(
+                array(
+                    'EVT_name' => array(
+                        'LIKE' => array(
+                            'foobar',
+                            'something_extra'
+                        )
+                    )
+                ),
+                'Event',
+                false
+            ),
+            'quick syntax too many arguments for normal operator' => array(
+                array(
+                    'EVT_ID' => array(
+                        '<' => array(
+                            123,
+                            23452343
+                        )
+                    )
+                ),
+                'Event',
+                false
             )
         );
     }
@@ -630,6 +698,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      * @param string $model_name eg 'Event'
      * @param boolean $writing
      * @group        9222
+     * @group current
      * @dataProvider dataProviderForTestPrepareConditionsQueryParamsForModelsBad
      * @expectedException EventEspresso\core\libraries\rest_api\RestException
      */

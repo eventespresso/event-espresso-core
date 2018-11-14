@@ -590,6 +590,22 @@ class ModelDataTranslator
                 ) {
                     $sub_array_value =  reset($query_param_value);
                     $sub_array_key = key($query_param_value);
+                    if (is_array($sub_array_value) && defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
+                        throw new RestException(
+                            'csv_or_json_string_only',
+                            sprintf(
+                            /* translators: 1: variable name*/
+                                esc_html__(
+                                    'The value provided for the operator "%1$s" should be comma-separated value string or a JSON array.',
+                                    'event_espresso'
+                                ),
+                                $sub_array_key
+                            ),
+                            array(
+                                'status' => 400,
+                            )
+                        );
+                    }
                     // they're doing something like "&where[EVT_ID][IN]=1,2,3" or "&where[EVT_ID][>]=5"
                     if (array_key_exists(
                         $sub_array_key,
