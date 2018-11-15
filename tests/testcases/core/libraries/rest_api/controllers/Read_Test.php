@@ -703,7 +703,6 @@ class Read_Test extends EE_REST_TestCase
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \InvalidArgumentException
      * @throws \ReflectionException
-     * @group current
      */
     public function test_handle_request_get_one__registration_include_answers_and_question_bare_min_from_each()
     {

@@ -53,6 +53,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     /**
      * test get_all on a model with a password field, with no password provided.
      * @since $VID:$
+     * @group current
      */
     public function testGetAllNoPassword()
     {
@@ -66,6 +67,7 @@ class ReadProtectedTest extends EE_REST_TestCase
         $this->assertEquals($event->ID(), $response_data[0]['EVT_ID']);
         // note that this event was password-protected
         $this->assertEquals('', $response_data[0]['EVT_desc']['rendered']);
+        $this->assertFalse(isset($response_data[0]['EVT_desc']['raw']));
     }
 
     /**
@@ -277,7 +279,7 @@ class ReadProtectedTest extends EE_REST_TestCase
         $this->assertEquals($event->ID(), $response_data['EVT_ID']);
         // note that this event was password-protected
         $this->assertEquals('', $response_data['EVT_desc']['rendered']);
-
+        $this->assertFalse(isset($response_data['EVT_desc']['raw']));
     }
 
     // Get one event with the wrong password.
