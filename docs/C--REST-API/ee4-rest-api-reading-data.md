@@ -48,6 +48,7 @@ will request a collection events, and will return a response something like this
         "EVT_external_URL": "",
         "EVT_donations": false,
         "link": "http://src.wordpress-develop.dev/events/fegeg/",
+        "_protected": [],
         "_links": {
             "self": [
                 {
