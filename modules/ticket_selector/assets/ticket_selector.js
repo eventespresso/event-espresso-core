@@ -57,7 +57,7 @@ jQuery(document).ready(function ($) {
                         active_rows++;
                     } else {
 						$ticket_selector_row.addClass( 'ee-hidden-ticket-tr' );
-						$qty_input = $ticket_selector_row.find(
+						var $qty_input = $ticket_selector_row.find(
 							'.ticket-selector-tbl-qty-slct'
 						);
 						// set qty to zero for non-radio inputs
