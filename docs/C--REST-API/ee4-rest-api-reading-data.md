@@ -184,6 +184,171 @@ However, if you want more control of how times are displayed (eg you want to dis
 
 Requests to `mysite.com/wp-json/ee/v4.8.34/events`, and also the equivalent endpoint in EE namespaces 4.8.33 and 4.8.29, and also `venues` and `attendees`, included the "featured_image_url" element on each event, venue, and attendee. However, in 4.8.36 the "featured_image_url" element has been removed. Please see the newly added image_* calculated fields on events.
 
+### Password-protected Data
+New in Event Espresso $VID:$.
+If you set a password on an event or venue (and other custom post types used by Event Espresso) some of their data will be replaced with default values. 
+For example, if you set a password on an event, its description, excerpt, external URL, among others, will be replaced with their default values (usually blank strings).
+The exact list of properties that were protected is listed in the `_protected` property.
+For example, here is the JSON for a password-protected event. 
+
+```json
+{
+    "EVT_ID": 271,
+    "EVT_name": "protecty",
+    "EVT_desc": {
+        "rendered": ""
+    },
+    "EVT_slug": "protecty",
+    "EVT_created": "2018-09-03T13:30:49",
+    "EVT_short_desc": "",
+    "EVT_modified": "2018-09-03T14:32:18",
+    "EVT_wp_user": 1,
+    "parent": 0,
+    "EVT_order": 0,
+    "status": {
+        "raw": "publish",
+        "pretty": "Published"
+    },
+    "password": "",
+    "comment_status": "open",
+    "ping_status": "closed",
+    "EVT_display_desc": false,
+    "EVT_display_ticket_selector": 1,
+    "EVT_visible_on": "2018-11-15T18:31:48",
+    "EVT_additional_limit": 10,
+    "EVT_default_registration_status": {
+        "raw": "RPP",
+        "pretty": "PENDING_PAYMENT"
+    },
+    "EVT_member_only": false,
+    "EVT_phone": "",
+    "EVT_allow_overflow": false,
+    "EVT_timezone_string": "",
+    "EVT_external_URL": "",
+    "EVT_donations": false,
+    "EVT_created_gmt": "2018-09-03T20:30:49",
+    "EVT_modified_gmt": "2018-09-03T21:32:18",
+    "EVT_visible_on_gmt": "2018-09-04T03:30:49",
+    "link": "http://laragonee.test/events/protecty/",
+    "_links": {
+        "self": [
+            {
+                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271"
+            }
+        ],
+        "collection": [
+            {
+                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events"
+            }
+        ],
+        "https://api.eventespresso.com/registrations": [
+            {
+                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/registrations",
+                "single": false
+            }
+        ],
+        "https://api.eventespresso.com/datetimes": [
+            {
+                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/datetimes",
+                "single": false
+            }
+        ],
+        "https://api.eventespresso.com/question_groups": [
+            {
+                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/question_groups",
+                "single": false
+            }
+        ],
+        "https://api.eventespresso.com/venues": [
+            {
+                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/venues",
+                "single": false
+            }
+        ],
+        "https://api.eventespresso.com/term_relationships": [
+            {
+                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/term_relationships",
+                "single": false
+            }
+        ],
+        "https://api.eventespresso.com/term_taxonomies": [
+            {
+                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/term_taxonomies",
+                "single": false
+            }
+        ],
+        "https://api.eventespresso.com/message_template_groups": [
+            {
+                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/message_template_groups",
+                "single": false
+            }
+        ],
+        "https://api.eventespresso.com/attendees": [
+            {
+                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/attendees",
+                "single": false
+            }
+        ],
+        "https://api.eventespresso.com/wp_user": [
+            {
+                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/wp_user",
+                "single": true
+            }
+        ],
+        "https://api.eventespresso.com/post_metas": [
+            {
+                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/post_metas",
+                "single": false
+            }
+        ],
+        "https://api.eventespresso.com/extra_metas": [
+            {
+                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/extra_metas",
+                "single": false
+            }
+        ],
+        "https://api.eventespresso.com/change_logs": [
+            {
+                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/change_logs",
+                "single": false
+            }
+        ],
+        "https://api.eventespresso.com/promotion_objects": [
+            {
+                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/promotion_objects",
+                "single": false
+            }
+        ]
+    },
+    "_calculated_fields": {
+        "_protected": []
+    },
+    "_protected": [
+        "password",
+        "EVT_desc",
+        "EVT_short_desc",
+        "EVT_display_desc",
+        "EVT_display_ticket_selector",
+        "EVT_visible_on",
+        "EVT_additional_limit",
+        "EVT_default_registration_status",
+        "EVT_member_only",
+        "EVT_phone",
+        "EVT_allow_overflow",
+        "EVT_timezone_string",
+        "EVT_external_URL",
+        "EVT_donations"
+    ]
+}
+```
+Notice the last property `_protected`. Each of the properties it lists have been replaced with their default values. Eg `EVT_desc.rendered` was replaced with "", 
+`EVT_visible_on` was replaced with today, and `EVT_allow_overflow` was replaced with false.
+
+Also notice `_calculated_fields._protected`, which indicates all the calculated fields which were protected. Each [included entity](ee4-rest-api-GET-including-specific-fields-and-related-entities-in-results.md) will also have a `_protected` property.
+
+For how to view password-protected data, please see [how a password into the EE4 REST API](ee4-rest-api-GET-filtering-results.md#password).
+
+
 ### Backwards-Compatibility and Data Checking
 
 The EE4 JSON REST API is very extendible by addons, so client code should expect entities to have new items added at whim. For example, it's quite possible a EE4 addon may add a field named "whachemecallit" onto the Event model/resource, in which case you the event entities returned would instead look like
