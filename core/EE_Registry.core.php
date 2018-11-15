@@ -1354,7 +1354,8 @@ class EE_Registry implements ResettableInterface
                     $arguments,
                     $index
                 );
-            } else {
+            }
+            if (empty($arguments[ $index ])) {
                 $arguments[ $index ] = $this->mirror->getParameterDefaultValue(
                     $param,
                     $class_name,

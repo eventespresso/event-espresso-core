@@ -2088,9 +2088,9 @@ class Messages_Admin_Page extends EE_Admin_Page
 
 
         $query_args = array(
-            'id'      => isset($templates['GRP_ID']) ? $templates['GRP_ID'] : null,
-            'context' => isset($templates['MTP_context']) ? $templates['MTP_context'] : null,
-            'action'  => isset($templates['GRP_ID']) ? 'edit_message_template' : 'global_mtps',
+            'id'      => isset($templates[0]['GRP_ID']) ? $templates[0]['GRP_ID'] : null,
+            'context' => isset($templates[0]['MTP_context']) ? $templates[0]['MTP_context'] : null,
+            'action'  => isset($templates[0]['GRP_ID']) ? 'edit_message_template' : 'global_mtps',
         );
 
         // if called via ajax then we return query args otherwise redirect

@@ -3,14 +3,14 @@ Value objects are a way to represent a _value_ that is not based on identity.  T
 
 ## Usage
 
-All value objects in EE javascript are available via the `@eventespresso/vo` package (for ee core).  EE core builds these into the `eejs` global on the `valueObjects` property.  So there's a couple ways to implement in your code.  In both the below cases, you still need to register the built value object bundle as a dependency.  In WordPress contexts, the value object bundle has a script handle of `EventEspresso\core\domain\services\assets\CoreAssetManager::JS_HANDLE_EE_VALUE_OBJECTS`, so you could register it as a dependency for your script using something like:
+All value objects in EE javascript are available via the `@eventespresso/vo` package (for ee core).  EE core builds these into the `eejs` global on the `valueObjects` property.  So there's a couple ways to implement in your code.  In both the below cases, you still need to register the built value object bundle as a dependency.  In WordPress contexts, the value object bundle has a script handle of `EventEspresso\core\domain\services\assets\CoreAssetManager::JS_HANDLE_VALUE_OBJECTS`, so you could register it as a dependency for your script using something like:
 
 ```php
 use EventEspresso\core\domain\services\assets\CoreAssetManager;
 wp_register_script(
   'my-script-handle',
   $url_to_my_js_file,
-  array(CoreAssetManager::JS_HANDLE_EE_VALUE_OBJECTS),
+  array(CoreAssetManager::JS_HANDLE_VALUE_OBJECTS),
   true
 );
 ```
