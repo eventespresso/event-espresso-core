@@ -3,6 +3,11 @@
 
 This is a log of client-facing changes made to the EE4 REST API (ie, changes to internal implementations aren't listed here, just changes that affect consumers of the API). For a complete list of changes to EE4, please see [the EE4 changelog](https://eventespresso.com/wiki/ee4-changelog/)
 
+## $VID:$
+- Fixed password-protected events, venues, and attendees so their sensitive data is replaced with default data.
+- Added `password` query parameter for reading password-protected data.
+- Added read-only property `_protected` to REST entities, which is a list of all the properties which were replaced with default data. 
+
 ## 4.9.66
 - Added foreign keys to REST API responses
 
