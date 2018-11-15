@@ -26,7 +26,7 @@ Live sites, on the other hand, should set this to `false`, to improve speed, and
 
 ## Authentication
 
-Some of the EE4 REST API data is public and requires no authentication, but much of it is protected and requires authentication. Because the EE4 REST API is built on the WP REST API, the authentication process is identical: once you authenticate with the WP JSON REST API, you are also authenticated with the EE4 JSON REST API. So we suggest you [read their documentation on authentication](https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/).
+Some of the EE4 REST API data is public and requires no authentication, but much of it is protected and requires authentication. Because the EE4 REST API is built on the WP REST API, the authentication process is identical: once you authenticate with the WP REST API, you are also authenticated with the EE4 REST API. So we suggest you [read their documentation on authentication](https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/).
 
 Currently, Event Espresso also comes bundled with a [customized version of WP API Basic Auth](https://github.com/eventespresso/Basic-Auth/), primarily used in our mobile apps. However, we do not guarantee we will continue to bundle it with Event Espresso, and so recommend 3rd party applications instead use other authentication methods.
 
@@ -40,7 +40,7 @@ Again, because the EE4 REST API is built on the WP REST API, discovering what UR
 
 Want to see what the current EE4 REST API looks like? Go ahead and send a request to https://demoee.org/wp-json and see for yourself.
 
-Note: throughout the rest of this article you will see URIs to a particular server that's setup to use the EE4 REST API: demoee.org, where the WP JSON API works at demoee.org/wp-json. This is just for ease of learning about the EE4 REST API, obviously your application will want to use data from your server. So for example, if your site's url is mygreatthing.com, the WP JSON API would work at mygreatthing.com/wp-json.
+Note: throughout the rest of this article you will see URIs to a particular server that's setup to use the EE4 REST API: demoee.org, where the WP REST API works at demoee.org/wp-json. This is just for ease of learning about the EE4 REST API, obviously your application will want to use data from your server. So for example, if your site's url is mygreatthing.com, the WP REST API would work at mygreatthing.com/wp-json.
 
 ## Event Espresso Data in the WP API Index
 
@@ -239,7 +239,7 @@ For example, if you need to always see the `ee/v4.8.36` endpoints in the WP inde
 Note if you building an API client that might be used with installations of Event Espresso that you won't control: some users might try to use your application on older installations of Event Espresso, which might not have the versioned namespace your API client uses. Eg, they might only have Event Espresso 4.8.34.p installed, and so the v4.8.36 versioned namespace isn't available. 
 Also, because the EE4 REST API is modifyable by server-side code. So be aware that the particular installation of Event Espresso you are interacting with could have removed, added, or changed nearly any endpoint, resource, or behaviour. Your API client will need to be ready to handle unexpected behaviour like this.
 
-Please keep up to date on our developer.eventespresso.com blog for updates to the EE4 JSON REST API. You can subscribe to its [RSS feed](http://developer.eventespresso.com/feed/), or [follow us on twitter](https://twitter.com/eventespresso).
+Please keep up to date on our developer.eventespresso.com blog for updates to the EE4 REST API. You can subscribe to its [RSS feed](http://developer.eventespresso.com/feed/), or [follow us on twitter](https://twitter.com/eventespresso).
 
 Related Articles
 
