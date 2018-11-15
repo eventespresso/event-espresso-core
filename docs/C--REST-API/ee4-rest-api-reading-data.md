@@ -47,82 +47,82 @@ will request a collection events, and will return a response something like this
         "EVT_timezone_string": "",
         "EVT_external_URL": "",
         "EVT_donations": false,
-        "link": "http://src.wordpress-develop.dev/events/fegeg/",
+        "link": "https://demoee.org.org/events/fegeg/",
         "_protected": [],
         "_links": {
             "self": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49"
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49"
                 }
             ],
             "collection": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events"
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events"
                 }
             ],
             "https://api.eventespresso.com/registrations": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/registrations",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/registrations",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/datetimes": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/datetimes",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/datetimes",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/question_groups": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/question_groups",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/question_groups",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/venues": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/venues",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/venues",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/term_taxonomies": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/term_taxonomies",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/term_taxonomies",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/message_template_groups": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/message_template_groups",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/message_template_groups",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/attendees": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/attendees",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/attendees",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/wp_user": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/wp_user",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/wp_user",
                     "single": true
                 }
             ],
             "https://api.eventespresso.com/post_metas": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/post_metas",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/post_metas",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/extra_metas": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/extra_metas",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/extra_metas",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/change_logs": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/change_logs",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/change_logs",
                     "single": false
                 }
             ]
@@ -229,93 +229,93 @@ For example, here is the JSON for a password-protected event.
     "EVT_created_gmt": "2018-09-03T20:30:49",
     "EVT_modified_gmt": "2018-09-03T21:32:18",
     "EVT_visible_on_gmt": "2018-09-04T03:30:49",
-    "link": "http://laragonee.test/events/protecty/",
+    "link": "https://demoee.org.org/events/protecty/",
     "_links": {
         "self": [
             {
-                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271"
+                "href": "https://demoee.org.org/wp-json/ee/v4.8.36/events/271"
             }
         ],
         "collection": [
             {
-                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events"
+                "href": "https://demoee.org.org/wp-json/ee/v4.8.36/events"
             }
         ],
         "https://api.eventespresso.com/registrations": [
             {
-                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/registrations",
+                "href": "https://demoee.org.org/wp-json/ee/v4.8.36/events/271/registrations",
                 "single": false
             }
         ],
         "https://api.eventespresso.com/datetimes": [
             {
-                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/datetimes",
+                "href": "https://demoee.org.org/wp-json/ee/v4.8.36/events/271/datetimes",
                 "single": false
             }
         ],
         "https://api.eventespresso.com/question_groups": [
             {
-                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/question_groups",
+                "href": "https://demoee.org.org/wp-json/ee/v4.8.36/events/271/question_groups",
                 "single": false
             }
         ],
         "https://api.eventespresso.com/venues": [
             {
-                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/venues",
+                "href": "https://demoee.org.org/wp-json/ee/v4.8.36/events/271/venues",
                 "single": false
             }
         ],
         "https://api.eventespresso.com/term_relationships": [
             {
-                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/term_relationships",
+                "href": "https://demoee.org.org/wp-json/ee/v4.8.36/events/271/term_relationships",
                 "single": false
             }
         ],
         "https://api.eventespresso.com/term_taxonomies": [
             {
-                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/term_taxonomies",
+                "href": "https://demoee.org.org/wp-json/ee/v4.8.36/events/271/term_taxonomies",
                 "single": false
             }
         ],
         "https://api.eventespresso.com/message_template_groups": [
             {
-                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/message_template_groups",
+                "href": "https://demoee.org.org/wp-json/ee/v4.8.36/events/271/message_template_groups",
                 "single": false
             }
         ],
         "https://api.eventespresso.com/attendees": [
             {
-                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/attendees",
+                "href": "https://demoee.org.org/wp-json/ee/v4.8.36/events/271/attendees",
                 "single": false
             }
         ],
         "https://api.eventespresso.com/wp_user": [
             {
-                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/wp_user",
+                "href": "https://demoee.org.org/wp-json/ee/v4.8.36/events/271/wp_user",
                 "single": true
             }
         ],
         "https://api.eventespresso.com/post_metas": [
             {
-                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/post_metas",
+                "href": "https://demoee.org.org/wp-json/ee/v4.8.36/events/271/post_metas",
                 "single": false
             }
         ],
         "https://api.eventespresso.com/extra_metas": [
             {
-                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/extra_metas",
+                "href": "https://demoee.org.org/wp-json/ee/v4.8.36/events/271/extra_metas",
                 "single": false
             }
         ],
         "https://api.eventespresso.com/change_logs": [
             {
-                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/change_logs",
+                "href": "https://demoee.org.org/wp-json/ee/v4.8.36/events/271/change_logs",
                 "single": false
             }
         ],
         "https://api.eventespresso.com/promotion_objects": [
             {
-                "href": "http://laragonee.test/wp-json/ee/v4.8.36/events/271/promotion_objects",
+                "href": "https://demoee.org.org/wp-json/ee/v4.8.36/events/271/promotion_objects",
                 "single": false
             }
         ]
@@ -389,83 +389,83 @@ The EE4 JSON REST API is very extendible by addons, so client code should expect
         "EVT_external_URL": "",
         "EVT_donations": false,
         "featured_image_url": null,
-        "link": "http://src.wordpress-develop.dev/events/fegeg/",
+        "link": "https://demoee.org.org/events/fegeg/",
         /* NEW FIELD CALLED "WHATCHEMECALLIT" ADDED BY AN ADDON*/
         "whatchemecallit" : "dont freak out if you see a field added by an addon! be prepared",
         "_links": {
             "self": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49"
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49"
                 }
             ],
             "collection": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events"
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events"
                 }
             ],
             "https://api.eventespresso.com/registrations": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/registrations",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/registrations",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/datetimes": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/datetimes",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/datetimes",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/question_groups": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/question_groups",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/question_groups",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/venues": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/venues",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/venues",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/term_taxonomies": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/term_taxonomies",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/term_taxonomies",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/message_template_groups": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/message_template_groups",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/message_template_groups",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/attendees": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/attendees",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/attendees",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/wp_user": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/wp_user",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/wp_user",
                     "single": true
                 }
             ],
             "https://api.eventespresso.com/post_metas": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/post_metas",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/post_metas",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/extra_metas": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/extra_metas",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/extra_metas",
                     "single": false
                 }
             ],
             "https://api.eventespresso.com/change_logs": [
                 {
-                    "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.29/events/49/change_logs",
+                    "href": "https://demoee.org.org/wp-json/ee/v4.8.29/events/49/change_logs",
                     "single": false
                 }
             ]

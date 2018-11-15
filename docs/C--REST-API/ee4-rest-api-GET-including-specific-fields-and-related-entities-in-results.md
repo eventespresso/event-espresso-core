@@ -1,6 +1,6 @@
 # EE4 REST API: Including Specific Fields and Related Entities in results for GET request
 
-By default, when you query for a resource **all** its properties are returned on each entity. However, you can provide the query parameter `include` and specify exactly which properties you want
+By default, when you query for a resource **all** of its properties are returned on each entity. However, you can provide the query parameter `include` and specify exactly which properties you want
 
 ```php
 //only return event IDs, names, and slug
@@ -30,7 +30,7 @@ This will give a response like this:
 ```
 > Note: entity IDs are always returned.
 
-You can also include properties from related models (using * to return **all** fields on the related models)
+You can also include properties from related models (using * to return **all** properties on the related models).
 
 ```php
 //get all registrations and their associated answers, and each answer's question's display text, and also the registration's contact (a.k.a. attendee)
