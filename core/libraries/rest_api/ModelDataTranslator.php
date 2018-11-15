@@ -425,7 +425,7 @@ class ModelDataTranslator
                     $writing
                 );
                 if ($nested_query_params) {
-                    $query_param_for_models[$query_param_key] = $nested_query_params;
+                    $query_param_for_models[ $query_param_key ] = $nested_query_params;
                 }
             }
         }
@@ -594,7 +594,7 @@ class ModelDataTranslator
                         throw new RestException(
                             'csv_or_json_string_only',
                             sprintf(
-                            /* translators: 1: variable name*/
+                                /* translators: 1: variable name*/
                                 esc_html__(
                                     'The value provided for the operator "%1$s" should be comma-separated value string or a JSON array.',
                                     'event_espresso'
