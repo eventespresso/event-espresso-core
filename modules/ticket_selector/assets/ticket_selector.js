@@ -56,7 +56,14 @@ jQuery(document).ready(function ($) {
                         $ticket_selector_row.removeClass('ee-hidden-ticket-tr');
                         active_rows++;
                     } else {
-                        $ticket_selector_row.addClass('ee-hidden-ticket-tr').find('.ticket-selector-tbl-qty-slct').val(0);
+						$ticket_selector_row.addClass( 'ee-hidden-ticket-tr' );
+						var $qty_input = $ticket_selector_row.find(
+							'.ticket-selector-tbl-qty-slct'
+						);
+						// set qty to zero for non-radio inputs
+						if ( $qty_input.attr( 'type' ) !== 'radio' ) {
+							$qty_input.val( 0 );
+						}
                     }
                 });
             }
