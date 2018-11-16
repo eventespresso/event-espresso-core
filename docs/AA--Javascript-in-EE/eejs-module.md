@@ -69,7 +69,7 @@ This is a very basic custom Error exception class that our javascript uses whene
 
 ## `eejs.helpers`
 
-This property is a set of various "helper" or utility functions with various purposes.  Currently the following helpers are exposed on this property. This is made available on the `eejs` global when the `CoreAssetManager::JS_HANDLE_EE_HELPERS` script handle is registered as a dependency for wp scripts.
+This property is a set of various "helper" or utility functions with various purposes.  Currently the following helpers are exposed on this property. This is made available on the `eejs` global when the `CoreAssetManager::JS_HANDLE_HELPERS` script handle is registered as a dependency for wp scripts.
 
 | Helper | Description |
 | ------- | ----------- |
@@ -156,7 +156,7 @@ console.log( merged );
 ```
 ## `eejs.model`
 
-This property exposes all the model javascript interfaces for EE models. This becomes available on the `eejs` global when the `CoreAssetManager::JS_HANDLE_EE_MODEL` script handle is registered as a dependency for wp scripts.
+This property exposes all the model javascript interfaces for EE models. This becomes available on the `eejs` global when the `CoreAssetManager::JS_HANDLE_MODEL` script handle is registered as a dependency for wp scripts.
 
 | Property | Description |
 | -------- | ----------- |
