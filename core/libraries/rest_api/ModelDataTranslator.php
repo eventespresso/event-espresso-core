@@ -11,6 +11,9 @@ use EE_Maybe_Serialized_Simple_HTML_Field;
 use EE_Model_Field_Base;
 use EE_Serialized_Text_Field;
 use EEM_Base;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use InvalidArgumentException;
 
 /**
  * Class Model_Data_Translator
@@ -374,9 +377,9 @@ class ModelDataTranslator
      * @throws DomainException
      * @throws EE_Error
      * @throws RestException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public static function prepareConditionsQueryParamsForModels(
         $inputted_query_params_of_this_type,
@@ -445,6 +448,9 @@ class ModelDataTranslator
      * @throws DomainException
      * @throws EE_Error
      * @throws RestException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     private static function determineNestedConditionQueryParameters(
         EEM_Base $model,
@@ -469,10 +475,7 @@ class ModelDataTranslator
             );
         }
         // so it's not for a field, is it a logic query param key?
-        if (in_array(
-            $query_param_sans_stars,
-            $model->logic_query_param_keys()
-        )) {
+        if (in_array($query_param_sans_stars, $model->logic_query_param_keys(), true)) {
             return ModelDataTranslator::prepareConditionsQueryParamsForModels(
                 $query_param_value,
                 $model,
@@ -513,9 +516,9 @@ class ModelDataTranslator
      * @type boolean $is_gmt_datetime_field
      * }
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     private static function determineFieldAndTimezone(EEM_Base $model, $query_param_key)
     {
