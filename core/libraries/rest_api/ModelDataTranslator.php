@@ -584,8 +584,7 @@ class ModelDataTranslator
     ) {
         if (! $writing && is_array($query_param_value)) {
             if (! \EEH_Array::is_array_numerically_and_sequentially_indexed($query_param_value)) {
-                if (is_array($query_param_value)
-                    && count($query_param_value) === 1
+                if (count($query_param_value) === 1
                     && array_key_exists(
                         key($query_param_value),
                         $model->valid_operators()
