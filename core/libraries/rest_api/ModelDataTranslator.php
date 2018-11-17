@@ -467,35 +467,35 @@ class ModelDataTranslator
                     $query_param_key
                 )
             );
-        } else {
-            // so it's not for a field, is it a logic query param key?
-            if (in_array(
-                $query_param_sans_stars,
-                $model->logic_query_param_keys()
-            )) {
-                return ModelDataTranslator::prepareConditionsQueryParamsForModels(
-                    $query_param_value,
-                    $model,
-                    $requested_version
-                );
-            } elseif (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
-                // only tell API clients they got it wrong if we're in debug mode
-                // otherwise try our best ot fulfill their request by ignoring this invalid data
-                throw new RestException(
-                    'invalid_parameter',
-                    sprintf(
-                        /* translators: 1: variable name */
-                        esc_html__(
-                            'You provided an invalid parameter, with key "%1$s"',
-                            'event_espresso'
-                        ),
-                        $query_param_key
+        }
+        // so it's not for a field, is it a logic query param key?
+        if (in_array(
+            $query_param_sans_stars,
+            $model->logic_query_param_keys()
+        )) {
+            return ModelDataTranslator::prepareConditionsQueryParamsForModels(
+                $query_param_value,
+                $model,
+                $requested_version
+            );
+        }
+        if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
+            // only tell API clients they got it wrong if we're in debug mode
+            // otherwise try our best ot fulfill their request by ignoring this invalid data
+            throw new RestException(
+                'invalid_parameter',
+                sprintf(
+                    /* translators: 1: variable name */
+                    esc_html__(
+                        'You provided an invalid parameter, with key "%1$s"',
+                        'event_espresso'
                     ),
-                    array(
-                        'status' => 400,
-                    )
-                );
-            }
+                    $query_param_key
+                ),
+                array(
+                    'status' => 400,
+                )
+            );
         }
         return null;
     }
