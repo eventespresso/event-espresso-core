@@ -73,7 +73,7 @@ https://demoee.org/wp-json/ee/v4.8.36/answers?where[ANS_ID][>]=56&where[ANS_valu
 
 ### Specifying Unary operators: IS_NULL, IS_NOT_NULL
 
-You may also provide the unary operator IS_NULL and its opposite IS_NOT_NULL in a simlar fashion. The value provided will be ignored.
+You may also provide the unary operator IS_NULL and its opposite IS_NOT_NULL in a similar fashion. The value provided will be ignored.
 
 ```php
 //Gets all events for which there have been absolutely NO registrations (even incomplete ones)
