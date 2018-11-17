@@ -588,7 +588,8 @@ class ModelDataTranslator
                 if (count($query_param_value) === 1
                     && array_key_exists(
                         key($query_param_value),
-                        $model->valid_operators()
+                        $model->valid_operators(),
+                        true
                     )
                 ) {
                     $sub_array_value =  reset($query_param_value);
@@ -615,7 +616,8 @@ class ModelDataTranslator
                         array_merge(
                             $model->valid_in_style_operators(),
                             $model->valid_between_style_operators()
-                        )
+                        ),
+                        true
                     )) {
                         // the value should be JSON or CSV
                         $values = json_decode($sub_array_value);
@@ -636,7 +638,8 @@ class ModelDataTranslator
                         );
                     } elseif (array_key_exists(
                         $sub_array_key,
-                        $model->valid_null_style_operators()
+                        $model->valid_null_style_operators(),
+                        true
                     )) {
                         $query_param_value = array($sub_array_key);
                     } else {
@@ -666,9 +669,13 @@ class ModelDataTranslator
             ) {
                 $sub_array_key = $query_param_value[0];
                 $translated_value = array($sub_array_key);
-                if (array_key_exists($sub_array_key, $model->valid_in_style_operators())
-                    && isset($query_param_value[1])
-                    && ! isset($query_param_value[2])
+                if (array_key_exists(
+                    $sub_array_key,
+                    $model->valid_in_style_operators(),
+                    true
+                )
+                && isset($query_param_value[1])
+                && ! isset($query_param_value[2])
                 ) {
                     $translated_value[] = ModelDataTranslator::prepareFieldValuesFromJson(
                         $field,
@@ -676,7 +683,7 @@ class ModelDataTranslator
                         $requested_version,
                         $timezone
                     );
-                } elseif (array_key_exists($sub_array_key, $model->valid_between_style_operators())
+                } elseif (array_key_exists($sub_array_key, $model->valid_between_style_operators(), true)
                     && isset($query_param_value[1])
                     && is_array($query_param_value[1])
                     && isset($query_param_key[1][0], $query_param_value[1][1])
@@ -697,7 +704,7 @@ class ModelDataTranslator
                             $timezone
                         )
                     );
-                } elseif (array_key_exists($sub_array_key, $model->valid_like_style_operators())
+                } elseif (array_key_exists($sub_array_key, $model->valid_like_style_operators(), true)
                     && isset($query_param_value[1])
                     && ! isset($query_param_value[2])
                 ) {
@@ -706,7 +713,7 @@ class ModelDataTranslator
                     // but do verify it at least doesn't have any serialized data
                     ModelDataTranslator::throwExceptionIfContainsSerializedData($query_param_value[1]);
                     $translated_value[] = $query_param_value[1];
-                } elseif (array_key_exists($sub_array_key, $model->valid_null_style_operators())
+                } elseif (array_key_exists($sub_array_key, $model->valid_null_style_operators(), true)
                     && ! isset($query_param_value[1])) {
                     // no arguments should have been provided, so don't look for any
                 } elseif (isset($query_param_value[1])
@@ -718,7 +725,8 @@ class ModelDataTranslator
                             $model->valid_null_style_operators(),
                             $model->valid_like_style_operators(),
                             $model->valid_between_style_operators()
-                        )
+                        ),
+                        true
                     )
                 ) {
                     // it's a valid operator, but none of the exceptions. Treat it normally.
