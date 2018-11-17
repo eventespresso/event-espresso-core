@@ -10,6 +10,7 @@ use EE_Infinite_Integer_Field;
 use EE_Maybe_Serialized_Simple_HTML_Field;
 use EE_Model_Field_Base;
 use EE_Serialized_Text_Field;
+use EED_Core_Rest_Api;
 use EEM_Base;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -482,7 +483,7 @@ class ModelDataTranslator
                 $requested_version
             );
         }
-        if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
+        if (EED_Core_Rest_Api::debugMode()) {
             // only tell API clients they got it wrong if we're in debug mode
             // otherwise try our best ot fulfill their request by ignoring this invalid data
             throw new RestException(
@@ -592,7 +593,7 @@ class ModelDataTranslator
                 ) {
                     $sub_array_value =  reset($query_param_value);
                     $sub_array_key = key($query_param_value);
-                    if (is_array($sub_array_value) && defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
+                    if (is_array($sub_array_value) && EED_Core_Rest_Api::debugMode()) {
                         throw new RestException(
                             'csv_or_json_string_only',
                             sprintf(
@@ -641,7 +642,7 @@ class ModelDataTranslator
                     } else {
                         $query_param_value = array($sub_array_key, $sub_array_value);
                     }
-                } elseif (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
+                } elseif (EED_Core_Rest_Api::debugMode()) {
                     throw new RestException(
                         'numerically_indexed_array_of_values_only',
                         sprintf(
@@ -729,7 +730,7 @@ class ModelDataTranslator
                     );
                 } else {
                     // so they provided a valid operator, but wrong number of arguments
-                    if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
+                    if (EED_Core_Rest_Api::debugMode()) {
                         throw new RestException(
                             'wrong_number_of_arguments',
                             sprintf(
@@ -748,7 +749,7 @@ class ModelDataTranslator
                 }
             } else {
                 // so they didn't provide a valid operator
-                if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
+                if (EED_Core_Rest_Api::debugMode()) {
                     throw new RestException(
                         'invalid_operator',
                         sprintf(
@@ -886,7 +887,7 @@ class ModelDataTranslator
         $requested_version = null
     ) {
         if ($requested_version === null) {
-            $requested_version = \EED_Core_Rest_Api::latest_rest_api_version();
+            $requested_version = EED_Core_Rest_Api::latest_rest_api_version();
         }
         $rest_query_params = $model_query_params;
         if (isset($model_query_params[0])) {
