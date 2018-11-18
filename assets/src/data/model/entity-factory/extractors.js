@@ -182,16 +182,17 @@ export const getRelationNameFromLink = ( resourceLink ) => {
 export const getBaseFieldsAndValuesForPersisting = ( entityInstance ) => {
 	return reduce( entityInstance.originalFieldsAndValues, (
 		fieldsAndValues,
-		fieldValue,
+		originalFieldValue,
 		fieldName
 	) => {
 		if (
 			isEntityField( fieldName, entityInstance.schema ) &&
 			! isPrimaryKeyField( fieldName, entityInstance.schema )
 		) {
-			return fieldsAndValues[ fieldName ] = maybeConvertFromValueObject(
-				fieldValue,
+			fieldsAndValues[ fieldName ] = maybeConvertFromValueObject(
+				entityInstance[ fieldName ],
 			);
+			return fieldsAndValues;
 		}
 	}, {} );
 };

@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { values, map, pick } from 'lodash';
+import { values, map, pick, keys } from 'lodash';
 
 /**
  * Returns all entity records for the given modelName in the current state.
@@ -66,6 +66,22 @@ export function getEntitiesByIds( state, modelName, entityIds ) {
 		null;
 }
 
-/**
- * @todo add more crud functionality to our stores
- */
+export function getEntitiesQueuedForTrash( state, modelName ) {
+	return state.dirty.delete[ modelName ] ?
+		state.dirty.delete[ modelName ] :
+		[];
+}
+
+export function getEntitiesQueuedForDelete( state, modelName ) {
+	return state.dirty.trash[ modelName ] ?
+		state.dirty.trash[ modelName ] :
+		[];
+}
+
+export function getModelsQueuedForTrash( state ) {
+	return keys( state.dirty.trash );
+}
+
+export function getModelsQueuedForDelete( state ) {
+	return keys( state.dirty.delete );
+}

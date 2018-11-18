@@ -1,7 +1,7 @@
 {
   "components.css": "ee-components.997177945b17ee98a639.dist.css",
-  "components.js": "ee-components.622f86c8649619cbcbcb.dist.js",
-  "data-stores.js": "ee-data-stores.dc634000795c4ba9a507.dist.js",
+  "components.js": "ee-components.64ebfa3908da504231c6.dist.js",
+  "data-stores.js": "ee-data-stores.e4600481ccdcef2aee30.dist.js",
   "editor-hocs.js": "ee-editor-hocs.15a813aac7a51b5473cb.dist.js",
   "eejs.js": "ee-eejs.42c92b6e2c9ea03b7fcb.dist.js",
   "eventespresso-core-blocks-frontend.css": "ee-eventespresso-core-blocks-frontend.f0ea9ad96d720bc8dc9b.dist.css",
@@ -11,7 +11,7 @@
   "helpers.js": "ee-helpers.aa14a7d4abec4efb1036.dist.js",
   "hocs.js": "ee-hocs.97a8ee6842846da19735.dist.js",
   "manifest.js": "ee-manifest.45b8faa573682047153a.dist.js",
-  "model.js": "ee-model.7f810d358d08f82e088b.dist.js",
+  "model.js": "ee-model.2d61d04231b2ecf9a22c.dist.js",
   "validators.js": "ee-validators.400994f2dc2c8922b864.dist.js",
   "valueObjects.js": "ee-valueObjects.33103ace62bfb5a26030.dist.js",
   "vendor.js": "ee-vendor.bd38b3513999b11ec414.dist.js",

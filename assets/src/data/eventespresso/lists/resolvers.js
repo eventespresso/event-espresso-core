@@ -2,18 +2,18 @@
  * External imports
  */
 import { isEmpty } from 'lodash';
+import {
+	applyQueryString,
+	keyEntitiesByPrimaryKeyValue,
+	createAndKeyEntitiesByPrimaryKeyValue,
+} from '@eventespresso/model';
 
 /**
  * Internal dependencies
  */
 import { receiveResponse, receiveEntityResponse } from './actions';
-import {
-	applyQueryString,
-	keyEntitiesByPrimaryKeyValue,
-	createAndKeyEntitiesByPrimaryKeyValue,
-} from '../../model';
 import { fetch, select, dispatch } from '../base-controls';
-import { getFactoryForModel, getSchemaForModel } from '../schema/resolvers';
+import { getFactoryByModel } from '../base-resolvers.js';
 import { keepExistingEntitiesInObject } from '../base-entities';
 
 /**
@@ -79,6 +79,13 @@ export function* getEntities( modelName, queryString ) {
 	yield receiveEntityResponse( modelName, queryString, fullEntities );
 }
 
+/**
+ * Handles ensuring that the resolution state for the `getEntityById` for all
+ * provided entityIds is recorded as finished.
+ *
+ * @param {string} modelName
+ * @param {Array} entityIds
+ */
 function* resolveGetEntityByIdForIds( modelName, entityIds ) {
 	while ( entityIds.length > 0 ) {
 		yield dispatch(
@@ -89,83 +96,4 @@ function* resolveGetEntityByIdForIds( modelName, entityIds ) {
 			[ modelName, entityIds.shift() ]
 		);
 	}
-}
-
-/**
- * Returns the factory for the given model from the eventespresso/schema store.
- *
- * @param {string} modelName
- * @return {IterableIterator<*>|Object} A generator or the object once the
- * factory is retrieved.
- */
-function* getFactoryByModel( modelName ) {
-	let factory;
-	const resolved = yield select(
-		'eventespresso/schema',
-		'hasResolvedFactoryForModel',
-		modelName
-	);
-	if ( resolved === true ) {
-		factory = yield select(
-			'eventespresso/schema',
-			'getFactoryForModel',
-			modelName
-		);
-		return factory;
-	}
-	const schema = yield getSchemaByModel( modelName );
-	factory = yield getFactoryForModel( modelName, schema );
-	yield dispatch(
-		'eventespresso/schema',
-		'receiveFactoryForModel',
-		modelName,
-		factory,
-	);
-	yield dispatch(
-		'core/data',
-		'finishResolution',
-		'eventespresso/schema',
-		'getFactoryForModel',
-		[ modelName ]
-	);
-	return factory;
-}
-
-/**
- * Returns the schema for the given model from the eventespresso/schema store.
- *
- * @param {string} modelName
- * @return {IterableIterator<*>|Object} A generator of the object once the
- * schema is retrieved.
- */
-function* getSchemaByModel( modelName ) {
-	let schema;
-	const resolved = yield select(
-		'eventespresso/schema',
-		'hasResolvedSchemaForModel',
-		modelName
-	);
-	if ( resolved === true ) {
-		schema = yield select(
-			'eventespresso/schema',
-			'getSchemaForModel',
-			modelName
-		);
-		return schema;
-	}
-	schema = yield getSchemaForModel( modelName );
-	yield dispatch(
-		'eventespresso/schema',
-		'receiveSchemaForModel',
-		modelName,
-		schema,
-	);
-	yield dispatch(
-		'core/data',
-		'finishResolution',
-		'eventespresso/schema',
-		'getSchemaForModel',
-		[ modelName ]
-	);
-	return schema;
 }

@@ -44,9 +44,15 @@ export const DEFAULT_CORE_STATE = {
 	entities: {
 		...getDefaultModelEntitiesObject(),
 	},
-	entityIds: {
-		...DEFAULT_LISTS_STATE,
-	},
+	dirty: {
+		relations: {
+			index: {},
+			delete: {},
+			add: {},
+		},
+		trash: {},
+		delete: {},
+	}
 };
 
 /**

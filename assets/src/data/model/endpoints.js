@@ -33,6 +33,8 @@ export const getEndpoint = ( modelName ) => {
  * @param {string} queryString  The query being appended to the endpoint.
  * @return {string} The final assembled query string.
  */
-export const applyQueryString = ( modelName, queryString ) => {
-	return getEndpoint( modelName ) + '?' + queryString;
+export const applyQueryString = ( modelName, queryString = '' ) => {
+	return queryString !== '' ?
+		getEndpoint( modelName ) + '?' + queryString :
+		getEndpoint( modelName );
 };

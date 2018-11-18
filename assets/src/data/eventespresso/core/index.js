@@ -9,8 +9,10 @@ import { registerStore } from '@wordpress/data';
 import reducer from './reducers';
 import * as selectors from './selectors';
 import * as actions from './actions';
+import * as resolvers from './resolvers';
 import { createEntitySelectors } from './entities';
 import { REDUCER_KEY } from './constants';
+import controls from '../base-controls';
 
 /**
  * creates specific model entity selectors (getEvents, getDatetimes etc)
@@ -26,4 +28,6 @@ export default registerStore( REDUCER_KEY, {
 	reducer,
 	actions,
 	selectors: { ...selectors, ...entitySelectors },
+	resolvers: { ...resolvers },
+	controls,
 } );

@@ -42,3 +42,36 @@ export function receiveAndReplaceEntityRecords( modelName, entities = {} ) {
 		entities,
 	};
 }
+
+export function receiveEntity( modelName, entity ) {
+	return {
+		type: 'RECEIVE_ENTITY',
+		modelName,
+		entity,
+	};
+}
+
+export function receiveRelatedEntities( modelName, entityId, relatedEntityIds ) {
+	return {
+		type: 'RECEIVE_RELATED_ENTITY_IDS',
+		modelName,
+		entityId,
+		relatedEntityIds,
+	};
+}
+
+export function receiveTrashEntityId( modelName, entityId ) {
+	return {
+		type: 'RECEIVE_TRASH_ENTITY_ID',
+		modelName,
+		entityId,
+	};
+}
+
+export function receiveDeleteEntityId( modelName, entityId ) {
+	return {
+		type: 'RECEIVE_DELETE_ENTITY_ID',
+		modelName,
+		entityId,
+	};
+}

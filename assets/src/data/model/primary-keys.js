@@ -47,7 +47,7 @@ export const valuesForCombinedPrimaryKeys = memoize( ( keys, entity ) => {
  * This function would be used for models that have only one primary key.
  *
  * @type {memoized}
- * @return { number } The value for the key in the provided entity.
+ * @return { function } The value for the key in the provided entity.
  * @throws { Exception }
  */
 export const valueForPrimaryKey = memoize( ( key, entity ) => {
@@ -59,7 +59,7 @@ export const valueForPrimaryKey = memoize( ( key, entity ) => {
  * Returns the primary key (or combined primary keys) from the available data.
  *
  * @type {memoized}
- * @return { string|Array }
+ * @return { function(string) }
  * @throws { Exception }
  */
 export const getPrimaryKey = memoize( ( modelName ) => {
@@ -71,7 +71,7 @@ export const getPrimaryKey = memoize( ( modelName ) => {
  * Returns the values for the primary keys from the provided entity.
  *
  * @type {memoized}
- * @return { string }  If the model has only one primary key then the value will
+ * @return { function }  If the model has only one primary key then the value will
  * be a simple string.  If the model has combined primary keys, then the value
  * will be as string in the format `%s.%s` for the primary key values.
  * @throws { Exception }

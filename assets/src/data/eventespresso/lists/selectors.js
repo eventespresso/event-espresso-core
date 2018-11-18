@@ -61,6 +61,14 @@ export function getEntities( state, modelName, queryString ) {
 	return retrieveItems( state, modelName, queryString, EMPTY_MAP );
 }
 
+export function getEntitiesByIds( state, modelName, ids = [] ) {
+	/**
+	 * @todo once https://github.com/eventespresso/event-espresso-core/issues/781
+	 * is done, then we'll have an easier way to build the necessary query for
+	 * this type of request.
+	 */
+}
+
 /**
  * Helper indicating whether the given identifier, selectorName, and queryString
  * is being resolved or not.
