@@ -698,7 +698,6 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      * @param string $model_name eg 'Event'
      * @param boolean $writing
      * @group        9222
-     * @group current
      * @dataProvider dataProviderForTestPrepareConditionsQueryParamsForModelsBad
      * @expectedException EventEspresso\core\libraries\rest_api\RestException
      */
@@ -980,7 +979,6 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      * @param string $model_name eg 'Event'
      * @param boolean $writing
      * @group        9222
-     * @group current
      * @dataProvider dataProviderForTestPrepareConditionsQueryParamsForModelsGood
      */
     public function testPrepareConditionsQueryParamsForModelsGood(
