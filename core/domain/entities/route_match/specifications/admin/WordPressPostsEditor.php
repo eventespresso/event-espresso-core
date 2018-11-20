@@ -14,7 +14,7 @@ use EventEspresso\core\services\request\RequestInterface;
  *
  * @package EventEspresso\core\domain\entities\route_match\specifications
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class WordPressPostsEditor extends MatchAnyRouteSpecification
 {

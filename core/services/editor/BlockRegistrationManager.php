@@ -27,7 +27,7 @@ use WP_Block_Type;
  *
  * @package EventEspresso\core\domain\services\editor
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class BlockRegistrationManager extends BlockManager
 {
@@ -98,7 +98,7 @@ class BlockRegistrationManager extends BlockManager
 
     /**
      * @param array $categories
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return array
      */
     public function addEspressoBlockCategories(array $categories)

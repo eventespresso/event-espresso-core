@@ -9,7 +9,7 @@ namespace EventEspresso\core\services\blocks;
  * @package EventEspresso\core\services\blocks
  * @subpackage
  * @author  Darren Ethier
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 interface BlockRendererInterface
 {

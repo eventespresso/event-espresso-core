@@ -7,7 +7,7 @@ namespace EventEspresso\tests\testcases\core\domain\entities\route_match;
  *
  * @package EventEspresso\tests\testcases\core\domain\entities\route_match
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class MultiRouteSpecificationTestBase extends RouteMatchSpecificationTestBase
 {
@@ -18,7 +18,7 @@ class MultiRouteSpecificationTestBase extends RouteMatchSpecificationTestBase
     );
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return \EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock
      */
     public function getRouteMatchOne()
@@ -30,7 +30,7 @@ class MultiRouteSpecificationTestBase extends RouteMatchSpecificationTestBase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return \EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock
      */
     public function getRouteMatchTwo()
@@ -42,7 +42,7 @@ class MultiRouteSpecificationTestBase extends RouteMatchSpecificationTestBase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return \EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock
      */
     public function getRouteMatchThree()
@@ -54,7 +54,7 @@ class MultiRouteSpecificationTestBase extends RouteMatchSpecificationTestBase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\Exception
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */
