@@ -238,16 +238,14 @@ class RestIncomingQueryParamMetadata
     public function determineConditionsQueryParameterValue()
     {
         if ($this->valueIsArrayDuringRead()) {
-            $translated_value = $this->determineModelValueGivenRestInputArray();
-        } else {
-            $translated_value = ModelDataTranslator::prepareFieldValueFromJson(
-                $this->getField(),
-                $this->getQueryParamValue(),
-                $this->getContext()->getRequestedVersion(),
-                $this->getTimezone()
-            );
+            return $this->determineModelValueGivenRestInputArray();
         }
-        return $translated_value;
+        return ModelDataTranslator::prepareFieldValueFromJson(
+            $this->getField(),
+            $this->getQueryParamValue(),
+            $this->getContext()->getRequestedVersion(),
+            $this->getTimezone()
+        );
     }
 
     /**
