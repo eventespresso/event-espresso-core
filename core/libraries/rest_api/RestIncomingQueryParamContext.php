@@ -7,7 +7,7 @@ use EEM_Base;
 /**
  * Class RestIncomingQueryParamContext
  *
- * DAO describing the context in which query parameters coming from the REST API (ie, querystring) are to be
+ * DTO describing the context in which query parameters coming from the REST API (ie, querystring) are to be
  * interpreted. This is info that can be determined before even looking at what the query parameters are.
  * This is convenient when interpreted REST API query params and generating model query params.
  *
