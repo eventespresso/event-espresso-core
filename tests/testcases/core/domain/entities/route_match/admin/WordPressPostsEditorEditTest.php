@@ -10,7 +10,7 @@ use EventEspresso\tests\testcases\core\domain\entities\route_match\RouteMatchSpe
  *
  * @package EventEspresso\core\domain\entities\route_match\specifications
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class WordPressPostsEditorEditTest extends RouteMatchSpecificationTestBase
 {
@@ -18,7 +18,7 @@ class WordPressPostsEditorEditTest extends RouteMatchSpecificationTestBase
     /**
      * @param array $request_params
      * @param array $server
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return WordPressPostsEditorEdit
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */
@@ -30,7 +30,7 @@ class WordPressPostsEditorEditTest extends RouteMatchSpecificationTestBase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\AssertionFailedError
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */

@@ -19,7 +19,7 @@ use ReflectionException;
  *
  * @package EventEspresso\core\services\route_match
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class RouteMatchSpecificationFactory extends FactoryWithDependencyResolver
 {
@@ -40,7 +40,7 @@ class RouteMatchSpecificationFactory extends FactoryWithDependencyResolver
      * @return RouteMatchSpecification
      * @throws InvalidDataTypeException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     public function createNewRouteMatchSpecification($fqcn)
     {
@@ -56,7 +56,7 @@ class RouteMatchSpecificationFactory extends FactoryWithDependencyResolver
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     public static function create($fqcn)
     {

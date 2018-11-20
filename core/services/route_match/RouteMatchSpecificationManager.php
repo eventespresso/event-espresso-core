@@ -21,7 +21,7 @@ use EventEspresso\core\services\collections\CollectionLoaderException;
  *
  * @package EventEspresso\core\services\route_match
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class RouteMatchSpecificationManager
 {
@@ -69,7 +69,7 @@ class RouteMatchSpecificationManager
      * @return CollectionInterface|RouteMatchSpecificationInterface[]
      * @throws CollectionLoaderException
      * @throws CollectionDetailsException
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     private function populateSpecificationCollection()
     {
@@ -109,7 +109,7 @@ class RouteMatchSpecificationManager
      * @param string $routeMatchSpecificationFqcn fully qualified class name
      * @return bool
      * @throws InvalidClassException
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     public function routeMatchesCurrentRequest($routeMatchSpecificationFqcn)
     {
@@ -130,7 +130,7 @@ class RouteMatchSpecificationManager
      * then create a new one that better matches your requirements.
      *
      * @return array
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     public function findRouteMatchSpecificationsMatchingCurrentRequest()
     {

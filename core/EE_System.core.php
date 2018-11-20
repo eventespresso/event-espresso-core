@@ -934,7 +934,7 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws Exception
      */
     public function loadRouteMatchSpecifications()

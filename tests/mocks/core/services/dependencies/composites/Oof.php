@@ -7,7 +7,7 @@ namespace EventEspresso\tests\mocks\core\services\dependencies\composites;
  *
  * @package EventEspresso\tests\mocks\core\services\dependencies\composites;
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class Oof extends OofOuchOwie
 {

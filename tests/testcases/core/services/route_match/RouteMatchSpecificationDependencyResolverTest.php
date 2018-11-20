@@ -15,7 +15,7 @@ use ReflectionClass;
  *
  * @package EventEspresso\tests\testcases\core\services\route_match
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class RouteMatchSpecificationDependencyResolverTest extends PHPUnit_Framework_TestCase
 {
@@ -31,7 +31,7 @@ class RouteMatchSpecificationDependencyResolverTest extends PHPUnit_Framework_Te
     protected $loader;
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \InvalidArgumentException
@@ -53,7 +53,7 @@ class RouteMatchSpecificationDependencyResolverTest extends PHPUnit_Framework_Te
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return RouteMatchSpecificationDependencyResolver
      */
     public function getDependencyResolver()
@@ -66,7 +66,7 @@ class RouteMatchSpecificationDependencyResolverTest extends PHPUnit_Framework_Te
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \PHPUnit\Framework\AssertionFailedError
      * @throws \ReflectionException

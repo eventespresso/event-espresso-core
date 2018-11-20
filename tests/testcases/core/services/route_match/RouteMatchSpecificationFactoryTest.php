@@ -13,7 +13,7 @@ use PHPUnit_Framework_TestCase;
  *
  * @package EventEspresso\tests\testcases\core\services\route_match
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class RouteMatchSpecificationFactoryTest extends PHPUnit_Framework_TestCase
 {
@@ -24,7 +24,7 @@ class RouteMatchSpecificationFactoryTest extends PHPUnit_Framework_TestCase
     protected $loader;
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \InvalidArgumentException
@@ -35,7 +35,7 @@ class RouteMatchSpecificationFactoryTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return RouteMatchSpecificationFactory
      */
     public function getFactory()
@@ -49,7 +49,7 @@ class RouteMatchSpecificationFactoryTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\Exception
      */
     public function test__construct()
@@ -61,7 +61,7 @@ class RouteMatchSpecificationFactoryTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \PHPUnit\Framework\Exception
      * @throws \ReflectionException
@@ -76,7 +76,7 @@ class RouteMatchSpecificationFactoryTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \InvalidArgumentException
