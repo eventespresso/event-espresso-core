@@ -9,7 +9,7 @@ use EEM_Base;
  *
  * DTO describing the context in which query parameters coming from the REST API (ie, querystring) are to be
  * interpreted. This is info that can be determined before even looking at what the query parameters are.
- * This is convenient when interpreted REST API query params and generating model query params.
+ * This is convenient when interpreting REST API query params and generating model query params.
  *
  * @package     Event Espresso
  * @author         Mike Nelson

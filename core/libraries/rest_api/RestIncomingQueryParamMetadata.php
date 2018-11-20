@@ -17,7 +17,7 @@ use EED_Core_Rest_Api;
  * Class RestQueryParamMetadata
  *
  * Object for passing around metadata derived from the query parameters passed in via the REST API.
- * This is convenient when interpreted REST API query params and generating model query params.
+ * This is convenient when interpreting REST API query params and generating model query params.
  *
  * @package     Event Espresso
  * @author         Mike Nelson
