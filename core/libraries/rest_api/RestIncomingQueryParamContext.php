@@ -31,11 +31,17 @@ class RestIncomingQueryParamContext
      */
     private $writing;
 
+    /**
+     * RestIncomingQueryParamContext constructor.
+     * @param EEM_Base $model
+     * @param string $requested_version
+     * @param boolean $writing
+     */
     public function __construct(EEM_Base $model, $requested_version, $writing)
     {
         $this->model = $model;
-        $this->requested_version = $requested_version;
-        $this->writing = $writing;
+        $this->requested_version = (string) $requested_version;
+        $this->writing = filter_var($writing, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
