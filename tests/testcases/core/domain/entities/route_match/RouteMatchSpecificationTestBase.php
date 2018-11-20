@@ -10,12 +10,12 @@ use PHPUnit_Framework_TestCase;
  *
  * @package EventEspresso\tests\testcases\core\domain\entities\route_match
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class RouteMatchSpecificationTestBase extends PHPUnit_Framework_TestCase
 {
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return RouteMatchSpecificationMock
      */
     protected function getRouteMatchSpecification(
@@ -30,7 +30,7 @@ class RouteMatchSpecificationTestBase extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return Request
      */
     protected function getRequest(
@@ -43,7 +43,7 @@ class RouteMatchSpecificationTestBase extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\Exception
      */
     public function test__construct()

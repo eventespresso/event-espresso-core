@@ -9,7 +9,7 @@ use EventEspresso\core\services\request\RequestInterface;
  *
  * @package EventEspresso\tests\mocks\core\services\dependencies\composites;
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 abstract class OofOuchOwieDecorator extends OofOuchOwie
 {
@@ -29,7 +29,7 @@ abstract class OofOuchOwieDecorator extends OofOuchOwie
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return string
      */
     public function oofOuchOwie()

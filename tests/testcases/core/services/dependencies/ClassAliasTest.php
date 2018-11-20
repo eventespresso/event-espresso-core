@@ -10,7 +10,7 @@ use PHPUnit_Framework_TestCase;
  *
  * @package EventEspresso\tests\testcases\core\services\dependencies
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class ClassAliasTest extends PHPUnit_Framework_TestCase
 {
@@ -33,7 +33,7 @@ class ClassAliasTest extends PHPUnit_Framework_TestCase
     /**
      * @param $alias
      * @param $fqcn
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return ClassAlias
      * @throws \EventEspresso\core\exceptions\InvalidAliasException
      */
@@ -43,7 +43,7 @@ class ClassAliasTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \EventEspresso\core\exceptions\InvalidAliasException
      * @throws \PHPUnit\Framework\Exception
      */
@@ -56,7 +56,7 @@ class ClassAliasTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \EventEspresso\core\exceptions\InvalidAliasException
      * @throws \PHPUnit\Framework\Exception
      */
@@ -99,7 +99,7 @@ class ClassAliasTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \EventEspresso\core\exceptions\InvalidAliasException
      * @throws \PHPUnit\Framework\Exception
      */

@@ -18,7 +18,7 @@ use ReflectionException;
  *
  * @package EventEspresso\core\services\container
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 abstract class DependencyResolver implements DependencyResolverInterface
 {
@@ -140,7 +140,7 @@ abstract class DependencyResolver implements DependencyResolverInterface
      *
      * @param string $param_fqcn Fully Qualified Class Name for dependency parameter
      * @return boolean
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     public function dependencyRecursionExists($param_fqcn)
     {
@@ -157,7 +157,7 @@ abstract class DependencyResolver implements DependencyResolverInterface
      * @param string $fqcn Fully Qualified Class Name
      * @throws InvalidDataTypeException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     public function resolveDependenciesForClass($fqcn)
     {

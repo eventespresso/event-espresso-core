@@ -20,7 +20,7 @@ use PHPUnit_Framework_TestCase;
  *
  * @package EventEspresso\tests\mocks\core\services\dependencies
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class DependencyResolverTest extends PHPUnit_Framework_TestCase
 {
@@ -36,7 +36,7 @@ class DependencyResolverTest extends PHPUnit_Framework_TestCase
     private $request_params = array();
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \InvalidArgumentException
@@ -52,7 +52,7 @@ class DependencyResolverTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return DependencyResolverMock
      */
     public function getDependencyResolver()
@@ -65,7 +65,7 @@ class DependencyResolverTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\Exception
      */
     public function testMirror()
@@ -77,7 +77,7 @@ class DependencyResolverTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\Exception
      */
     public function testClassInterfaceCache()
@@ -89,7 +89,7 @@ class DependencyResolverTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\Exception
      */
     public function testDependencyMap()
@@ -121,7 +121,7 @@ class DependencyResolverTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws InvalidAliasException
      * @throws \PHPUnit\Framework\AssertionFailedError
      */
@@ -148,7 +148,7 @@ class DependencyResolverTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\Exception
      */
     public function testAddNamespaceRoot()
@@ -163,7 +163,7 @@ class DependencyResolverTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function testDependencyRecursionExists()
@@ -179,7 +179,7 @@ class DependencyResolverTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return Owie
      */
     public function getBoneHurtingJuice()
@@ -195,7 +195,7 @@ class DependencyResolverTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     public function testOofOuchOwie()
     {
@@ -205,7 +205,7 @@ class DependencyResolverTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws InvalidAliasException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \PHPUnit\Framework\AssertionFailedError

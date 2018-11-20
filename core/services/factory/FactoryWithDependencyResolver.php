@@ -14,7 +14,7 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  *
  * @package EventEspresso\core\services\factory
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 abstract class FactoryWithDependencyResolver implements FactoryInterface
 {

@@ -11,14 +11,14 @@ use EventEspresso\core\domain\entities\route_match\RouteMatchSpecification;
  *
  * @package EventEspresso\core\domain\entities\route_match\specifications\admin
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class WordPressPostTypeEditor extends RouteMatchSpecification
 {
     /**
      * returns true if current request matches specification
      *
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return boolean
      */
     public function isMatchingRoute()

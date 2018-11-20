@@ -15,7 +15,7 @@ use EventEspresso\core\services\blocks\BlockRenderer;
  *
  * @package EventEspresso\core\domain\services\blocks
  * @author  Darren Ethier
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class EventAttendeesBlockRenderer extends BlockRenderer
 {

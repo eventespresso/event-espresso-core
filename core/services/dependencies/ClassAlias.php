@@ -12,7 +12,7 @@ use EventEspresso\core\exceptions\InvalidAliasException;
  *
  * @package EventEspresso\core\services\dependencies
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class ClassAlias
 {
