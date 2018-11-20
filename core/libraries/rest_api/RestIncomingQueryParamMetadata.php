@@ -49,7 +49,7 @@ class RestIncomingQueryParamMetadata
     private $timezone;
 
     /**
-     * @var bool if the field in $query_param_key is for a GMT field (eg `EVT_modified_gmt`)
+     * @var boolean if the field in $query_param_key is for a GMT field (eg `EVT_modified_gmt`)
      */
     private $is_gmt_field = false;
 
@@ -298,7 +298,7 @@ class RestIncomingQueryParamMetadata
      * Returns if this request is a "read" request and the value provided was an array.
      * This will indicate is such things as `array('<', 123)` and `array('IN', array(1,2,3))` are acceptable or not.
      * @since $VID:$
-     * @return bool
+     * @return boolean
      */
     private function valueIsArrayDuringRead()
     {
@@ -309,7 +309,7 @@ class RestIncomingQueryParamMetadata
      * Returns if the value provided was an associative array (we should have already verified it's an array of some
      * sort). If the value is an associative array, it had better be in the simplified specified operator structure.
      * @since $VID:$
-     * @return bool
+     * @return boolean
      */
     private function valueIsAssociativeArray()
     {
@@ -320,7 +320,7 @@ class RestIncomingQueryParamMetadata
      * Checks if the array value is itself an array that fits into the simplified specified operator structure
      * (eg `array('!=' => 123)`).
      * @since $VID:$
-     * @return bool
+     * @return boolean
      */
     private function valueIsSimplifiedSpecifiedOperator()
     {
@@ -363,7 +363,7 @@ class RestIncomingQueryParamMetadata
      * Determines if the sub-array key is an operator taking 3 or more operators.
      * @since $VID:$
      * @param $sub_array_key
-     * @return bool
+     * @return boolean
      */
     private function subArrayKeyIsNonBinaryOperator($sub_array_key)
     {
@@ -380,7 +380,7 @@ class RestIncomingQueryParamMetadata
      * Given that the $sub_array_key is a string, checks if it's an operator taking only 1 argument.
      * @since $VID:$
      * @param string $sub_array_key
-     * @return bool
+     * @return boolean
      */
     private function subArrayKeyIsUnaryOperator($sub_array_key)
     {
@@ -470,7 +470,7 @@ class RestIncomingQueryParamMetadata
     /**
      * Returns true is the value is an array using the legacy structure to specify the operator. Eg `array('!=',123)`.
      * @since $VID:$
-     * @return bool
+     * @return boolean
      */
     private function valueIsLegacySpecifiedOperator()
     {
@@ -484,7 +484,7 @@ class RestIncomingQueryParamMetadata
      * Returns true if the value specified operator accepts arbitrary number of arguments, like "IN".
      * @since $VID:$
      * @param $operator
-     * @return bool
+     * @return boolean
      */
     private function operatorIsNAry($operator)
     {
@@ -500,8 +500,11 @@ class RestIncomingQueryParamMetadata
 
     /**
      * Returns true if the operator accepts 3 arguments (eg "BETWEEN").
+     * So we're looking for a value that looks like
+     * `array('BETWEEN', array('2015-01-01T00:00:00', '2016-01-01T00:00:00'))`.
      * @since $VID:$
      * @param $operator
+     * @return boolean
      */
     private function operatorIsTernary($operator)
     {
@@ -518,7 +521,7 @@ class RestIncomingQueryParamMetadata
      * Returns true if the operator is a similar to LIKE, indicating the value may have wildcards we should leave alone.
      * @since $VID:$
      * @param $operator
-     * @return bool
+     * @return boolean
      */
     private function operatorIsLike($operator)
     {
@@ -532,7 +535,7 @@ class RestIncomingQueryParamMetadata
      * Returns true if the operator only takes one argument (eg it's like `IS NULL`).
      * @since $VID:$
      * @param $operator
-     * @return bool
+     * @return boolean
      */
     private function operatorIsUnary($operator)
     {
@@ -545,7 +548,7 @@ class RestIncomingQueryParamMetadata
      * Returns true if the operator specified is a binary opeator (eg `=`, `!=`)
      * @since $VID:$
      * @param $operator
-     * @return bool
+     * @return boolean
      */
     private function operatorisBinary($operator)
     {
@@ -635,7 +638,7 @@ class RestIncomingQueryParamMetadata
     /**
      * Returns true if the query_param_key was a logic query parameter, eg `OR`, `AND`, `NOT`, `OR*`, etc.
      * @since $VID:$
-     * @return bool
+     * @return boolean
      */
     private function isLogicQueryParam()
     {
