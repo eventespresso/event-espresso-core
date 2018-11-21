@@ -1083,6 +1083,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 );
             }
 
+            $existing_notices = is_array( $existing_notices ) ? $existing_notices : array();
 
             //k make sure there are no existing notices matching the incoming notices and only append new notices
             //(unless overwrite is set to true).
