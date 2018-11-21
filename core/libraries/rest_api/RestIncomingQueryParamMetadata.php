@@ -21,7 +21,7 @@ use EED_Core_Rest_Api;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.72.p
  *
  */
 class RestIncomingQueryParamMetadata
@@ -188,7 +188,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * Determines what field, query param name, and query param name without stars, and timezone to use.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @type EE_Model_Field_Base $field
      * @return void {
      * @throws EE_Error
@@ -228,7 +228,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * Given a ton of input, determines the value to use for the models.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @return array|null
      * @throws DomainException
      * @throws EE_Error
@@ -250,7 +250,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * Given that the array value provided was itself an array, handles finding the correct value to pass to the model.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @return array|null
      * @throws RestException
      */
@@ -297,7 +297,7 @@ class RestIncomingQueryParamMetadata
     /**
      * Returns if this request is a "read" request and the value provided was an array.
      * This will indicate is such things as `array('<', 123)` and `array('IN', array(1,2,3))` are acceptable or not.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @return boolean
      */
     private function valueIsArrayDuringRead()
@@ -308,7 +308,7 @@ class RestIncomingQueryParamMetadata
     /**
      * Returns if the value provided was an associative array (we should have already verified it's an array of some
      * sort). If the value is an associative array, it had better be in the simplified specified operator structure.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @return boolean
      */
     private function valueIsAssociativeArray()
@@ -319,7 +319,7 @@ class RestIncomingQueryParamMetadata
     /**
      * Checks if the array value is itself an array that fits into the simplified specified operator structure
      * (eg `array('!=' => 123)`).
-     * @since $VID:$
+     * @since 4.9.72.p
      * @return boolean
      */
     private function valueIsSimplifiedSpecifiedOperator()
@@ -334,7 +334,7 @@ class RestIncomingQueryParamMetadata
     /**
      * Throws an exception if the sub-value is an array (eg `array('!=' => array())`). It needs to just be a string,
      * of either comma-separated-values, or a JSON array.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @param $sub_array_key
      * @param $sub_array_value
      * @throws RestException
@@ -361,7 +361,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * Determines if the sub-array key is an operator taking 3 or more operators.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @param $sub_array_key
      * @return boolean
      */
@@ -378,7 +378,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * Given that the $sub_array_key is a string, checks if it's an operator taking only 1 argument.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @param string $sub_array_key
      * @return boolean
      */
@@ -393,7 +393,7 @@ class RestIncomingQueryParamMetadata
     /**
      * Parses the $sub_array_value string into an array (given it could either be a comma-separated-list or a JSON
      * array). eg `"1,2,3"` or `"[1,2,3]"` into `array(1,2,3)`.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @param $sub_array_value
      * @return array|mixed|object
      */
@@ -417,7 +417,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * Throws an exception if the value isn't a simplified specified operator (only called when we expect that).
-     * @since $VID:$
+     * @since 4.9.72.p
      * @throws RestException
      */
     private function assertSimplifiedSpecifiedOperator()
@@ -442,7 +442,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * If query_param_value were in the simplified specific operator structure, change it into the legacy structure.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @throws RestException
      */
     private function transformSimplifiedSpecifiedOperatorSyntaxIntoStandardSyntax()
@@ -469,7 +469,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * Returns true is the value is an array using the legacy structure to specify the operator. Eg `array('!=',123)`.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @return boolean
      */
     private function valueIsLegacySpecifiedOperator()
@@ -482,7 +482,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * Returns true if the value specified operator accepts arbitrary number of arguments, like "IN".
-     * @since $VID:$
+     * @since 4.9.72.p
      * @param $operator
      * @return boolean
      */
@@ -502,7 +502,7 @@ class RestIncomingQueryParamMetadata
      * Returns true if the operator accepts 3 arguments (eg "BETWEEN").
      * So we're looking for a value that looks like
      * `array('BETWEEN', array('2015-01-01T00:00:00', '2016-01-01T00:00:00'))`.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @param $operator
      * @return boolean
      */
@@ -519,7 +519,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * Returns true if the operator is a similar to LIKE, indicating the value may have wildcards we should leave alone.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @param $operator
      * @return boolean
      */
@@ -533,7 +533,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * Returns true if the operator only takes one argument (eg it's like `IS NULL`).
-     * @since $VID:$
+     * @since 4.9.72.p
      * @param $operator
      * @return boolean
      */
@@ -546,7 +546,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * Returns true if the operator specified is a binary opeator (eg `=`, `!=`)
-     * @since $VID:$
+     * @since 4.9.72.p
      * @param $operator
      * @return boolean
      */
@@ -569,7 +569,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * If we're debugging, throws an exception saying that the wrong number of arguments was provided.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @param $operator
      * @throws RestException
      */
@@ -594,7 +594,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * Wrapper for ModelDataTranslator::prepareFieldValuesFromJson(), just a tad more DRY.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @param $value
      * @return mixed
      * @throws RestException
@@ -611,7 +611,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * Throws an exception if an invalid operator was specified and we're debugging.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @throws RestException
      */
     private function throwInvalidOperatorExceptionIfDebugging()
@@ -637,7 +637,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * Returns true if the query_param_key was a logic query parameter, eg `OR`, `AND`, `NOT`, `OR*`, etc.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @return boolean
      */
     private function isLogicQueryParam()
@@ -648,7 +648,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * If the query param isn't for a field, it must be a nested query parameter which requires different logic.
-     * @since $VID:$
+     * @since 4.9.72.p
      * @return array
      * @throws DomainException
      * @throws EE_Error
