@@ -252,7 +252,7 @@ class CoreAssetManager extends AssetManager
             array(
                 CoreAssetManager::JS_HANDLE_VENDOR,
                 'wp-data',
-                'wp-api-request',
+                'wp-api-fetch',
                 CoreAssetManager::JS_HANDLE_VALUE_OBJECTS
             )
         )
