@@ -1,7 +1,8 @@
 {
+  "eventespresso-editor-hocs": [],
   "eventespresso-value-objects": [],
-  "validators": [],
-  "eventespresso-hoc-components": [],
+  "eventespresso-validators": [],
+  "eventespresso-hocs": [],
   "eventespresso-helpers": [],
   "eventespresso-model": [
     null,
