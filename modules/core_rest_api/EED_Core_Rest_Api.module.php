@@ -481,7 +481,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     'callback_args'   => array($version, $model_name),
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
-                    'args'            => $this->_get_response_selection_query_params($model, $version),
+                    'args'            => $this->_get_response_selection_query_params($model, $version, true),
                 ),
             );
             if (apply_filters(
@@ -531,7 +531,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     '(?P<id>[^\/]+)',
                     $relation_obj
                 );
-                $endpoints = array(
+                $model_routes[ $related_route ] = array(
                     array(
                         'callback'        => array(
                             'EventEspresso\core\libraries\rest_api\controllers\model\Read',
@@ -543,7 +543,30 @@ class EED_Core_Rest_Api extends \EED_Module
                         'args'            => $this->_get_read_query_params($relation_obj->get_other_model(), $version),
                     ),
                 );
-                $model_routes[ $related_route ] = $endpoints;
+
+                $related_write_route = $related_route . '/' . '(?P<related_id>[^\/]+)';
+                $model_routes[$related_write_route] = array(
+                    array(
+                        'callback'        => array(
+                            'EventEspresso\core\libraries\rest_api\controllers\model\Write',
+                            'handleRequestAddRelation',
+                        ),
+                        'callback_args'   => array($version, $model_name, $relation_name),
+                        'methods'         => WP_REST_Server::EDITABLE,
+                        'hidden_endpoint' => $hidden_endpoint,
+                        'args'            => $this->_get_add_relation_query_params($model,$relation_obj->get_other_model(), $version)
+                    ),
+                    array(
+                        'callback'        => array(
+                            'EventEspresso\core\libraries\rest_api\controllers\model\Write',
+                            'handleRequestRemoveRelation',
+                        ),
+                        'callback_args'   => array($version, $model_name, $relation_name),
+                        'methods'         => WP_REST_Server::DELETABLE,
+                        'hidden_endpoint' => $hidden_endpoint,
+                        'args'            => array()
+                    ),
+                );
             }
         }
         return $model_routes;
@@ -680,27 +703,33 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param string   $version
      * @return array
      */
-    protected function _get_response_selection_query_params(\EEM_Base $model, $version)
+    protected function _get_response_selection_query_params(\EEM_Base $model, $version, $single_only = false)
     {
+        $query_params = array(
+            'include'   => array(
+                'required' => false,
+                'default'  => '*',
+                'type'     => 'string',
+            ),
+            'calculate' => array(
+                'required'          => false,
+                'default'           => '',
+                'enum'              => self::$_field_calculator->retrieveCalculatedFieldsForModel($model),
+                'type'              => 'string',
+                // because we accept a CSV'd list of the enumerated strings, WP core validation and sanitization
+                // freaks out. We'll just validate this argument while handling the request
+                'validate_callback' => null,
+                'sanitize_callback' => null,
+            ),
+            'password' => array(
+                'required' => false,
+                'default' => '',
+                'type' => 'string'
+            )
+        );
         return apply_filters(
             'FHEE__EED_Core_Rest_Api___get_response_selection_query_params',
-            array(
-                'include'   => array(
-                    'required' => false,
-                    'default'  => '*',
-                    'type'     => 'string',
-                ),
-                'calculate' => array(
-                    'required'          => false,
-                    'default'           => '',
-                    'enum'              => self::$_field_calculator->retrieveCalculatedFieldsForModel($model),
-                    'type'              => 'string',
-                    // because we accept a CSV'd list of the enumerated strings, WP core validation and sanitization
-                    // freaks out. We'll just validate this argument while handling the request
-                    'validate_callback' => null,
-                    'sanitize_callback' => null,
-                ),
-            ),
+            $query_params,
             $model,
             $version
         );
@@ -734,6 +763,43 @@ class EED_Core_Rest_Api extends \EED_Module
             $model,
             $version
         );
+    }
+
+    protected function _get_add_relation_query_params(\EEM_Base $source_model, \EEM_Base $related_model, $version)
+    {
+        // if they're related through a HABTM relation, check for any non-FKs
+        $all_relation_settings = $source_model->relation_settings();
+        $relation_settings = $all_relation_settings[$related_model->get_this_model_name()];
+        $params = array();
+        if($relation_settings instanceof EE_HABTM_Relation && $relation_settings->get_join_model()->field_settings() > 3 ){
+            // all fields besides the primary key and two foreign keys should be parameters
+            $join_model = $relation_settings->get_join_model();
+            $standard_fields =array();
+            if($join_model->has_primary_key_field()){
+                $standard_fields[] = $join_model->primary_key_name();
+            }
+            if($source_model->has_primary_key_field()){
+                $standard_fields[] = $source_model->primary_key_name();
+            }
+            if($related_model->has_primary_key_field()){
+                $standard_fields[] = $related_model->primary_key_name();
+            }
+            $non_key_fields = array_diff_key(
+                $join_model->field_settings(),
+                array_flip($standard_fields)
+            );
+            foreach($non_key_fields as $field){
+                /* @var $field EE_Model_Field_Base */
+                $params[$field->get_name()] = array(
+                    'required' => ! $field->is_nullable(),
+                    'default' => ModelDataTranslator::prepareFieldValueForJson($field, $field->get_default_value(),$version, $join_model->get_timezone()),
+                    'type' => $field->getSchemaType(),
+                    'validate_callbaack' => null,
+                    'sanitize_callback' => null
+                );
+            }
+        }
+        return $params;
     }
 
 
@@ -1277,7 +1343,7 @@ class EED_Core_Rest_Api extends \EED_Module
 
     /**
      * Determines the EE REST API debug mode is activated, or not.
-     * @since 4.9.72.p
+     * @since $VID:$
      * @return bool
      */
     public static function debugMode()
