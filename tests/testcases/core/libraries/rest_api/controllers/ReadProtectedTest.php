@@ -8,6 +8,7 @@ use EE_REST_TestCase;
 use EE_Ticket;
 use EE_Venue;
 use EED_Core_Rest_Api;
+use EEM_Base;
 use EEM_Event;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -973,7 +974,7 @@ class ReadProtectedTest extends EE_REST_TestCase
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function testIncludeProtectedToUnprotectedWithNoPassword()
+    public function testIncludeProtectedToUnprotectedBelongsToWithNoPassword()
     {
         $venue = $this->setupPasswordProtectedVenue();
         $request = new WP_REST_Request(
@@ -999,6 +1000,46 @@ class ReadProtectedTest extends EE_REST_TestCase
         );
         $this->assertArrayContains(
             'country',
+            $data['_protected']
+        );
+    }
+
+    /**
+     * Test fetching an protected model, and including an  UNprotected model (venue to country), and no password is provided.
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testIncludeProtectedToUnprotectedHasManyWithNoPassword()
+    {
+        $event = $this->setupPasswordProtectedEvent();
+        $request = new WP_REST_Request(
+            'GET',
+            '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID()
+        );
+        $request->set_url_params(
+            array(
+                'id' => $event->ID()
+            )
+        );
+        $request->set_query_params(
+            array(
+                'include' => 'Datetime'
+            )
+        );
+        $response = rest_do_request($request);
+        $this->assertInstanceOf('WP_REST_Response', $response);
+        $data = $response->get_data();
+        // country data should not have been included, because which country the venue is in is protected
+        $this->assertEquals(
+            array(),
+            $data['datetimes']
+        );
+        $this->assertArrayContains(
+            'datetimes',
             $data['_protected']
         );
     }
@@ -1322,6 +1363,154 @@ class ReadProtectedTest extends EE_REST_TestCase
         wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $upload['file'] ) );
         add_post_meta($post_id, '_thumbnail_id', $id);
         return $id;
+    }
+
+    /**
+     * Verify requests when caps=read_admin we don't protect any fields etc, even on password-protected events
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testGetAllAdminRequest()
+    {
+        $event = $this->setupPasswordProtectedEvent();
+        $this->authenticate_as_admin();
+
+        $req = new WP_REST_Request('GET',
+            '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
+        $req->set_query_params(
+            array(
+                'caps' => EEM_Base::caps_read_admin
+            )
+        );
+        $response = rest_do_request($req);
+        $response_data = $response->get_data();
+        $this->assertTrue(is_array($response_data));
+        $this->assertEquals($event->ID(), $response_data[0]['EVT_ID']);
+        // note that this event was password-protected
+        $this->assertNotEmpty($response_data[0]['EVT_desc']['rendered']);
+        $this->assertEmpty($response_data[0]['_protected']);
+    }
+
+    /**
+     * Verify requests when caps=read_admin all datetimes get returned (even those for password-protected events)
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @group current
+     */
+    public function testGetAllAdminRequestIndirectlyProtected()
+    {
+        list($datetime_no_password, $datetime) = $this->setupPasswordProtectedDatetimes();
+        $this->authenticate_as_admin();
+
+        $req = new WP_REST_Request('GET',
+            '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes');
+        $req->set_query_params(
+            array(
+                'caps' => EEM_Base::caps_read_admin
+            )
+        );
+        $response = rest_do_request($req);
+        $response_data = $response->get_data();
+        // both datetimes should have been returned
+        $this->assertEquals(2, count($response_data));
+    }
+
+
+    /**
+     * Verify requests when caps=read_admin we don't protect any fields etc, even on password-protected events
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testGetOneAdminRequest()
+    {
+        $event = $this->setupPasswordProtectedEvent();
+        $this->authenticate_as_admin();
+
+        $req = new WP_REST_Request('GET',
+            '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID());
+        $req->set_query_params(
+            array(
+                'caps' => EEM_Base::caps_read_admin
+            )
+        );
+        $response = rest_do_request($req);
+        $response_data = $response->get_data();
+        $this->assertTrue(is_array($response_data));
+        $this->assertEquals($event->ID(), $response_data['EVT_ID']);
+        // note that this event was password-protected
+        $this->assertNotEmpty($response_data['EVT_desc']['rendered']);
+        $this->assertEmpty($response_data['_protected']);
+    }
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testGetRelatedAdminRequest()
+    {
+        list($datetime_no_password, $datetime) = $this->setupPasswordProtectedDatetimes();
+        $this->authenticate_as_admin();
+
+        //send a request for the two datetimes
+        $req = new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $datetime->event()->ID(). '/datetimes');
+        $req->set_query_params(
+            array(
+                'caps' => EEM_Base::caps_read_admin
+            )
+        );
+        $response = rest_do_request($req);
+        $this->assertInstanceOf('WP_REST_Response', $response);
+        $data = $response->get_data();
+
+        // the datetime should have been returned
+        $this->assertEquals(1, count($data));
+        $this->assertEquals(
+            $datetime->ID(),
+            $data[0]['DTT_ID']
+        );
+    }
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testIncludeProtectedHasManyAdminRequest()
+    {
+        list($datetime_no_password, $datetime_password) = $this->setupPasswordProtectedDatetimes();
+        $this->authenticate_as_admin();
+        //send a request for the two datetimes
+        $req = new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $datetime_password->event()->ID());
+        $req->set_query_params(
+            array(
+                'caps' => EEM_Base::caps_read_admin,
+                'include' => 'Datetime',
+            )
+        );
+        $response = rest_do_request($req);
+        $this->assertInstanceOf('WP_REST_Response', $response);
+        $data = $response->get_data();
+        // the event should include the datetime a-ok
+        $this->assertEquals($datetime_password->ID(),$data['datetimes'][0]['DTT_ID']);
     }
 }
 // End of file ReadProtectedTest.php

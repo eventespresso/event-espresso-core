@@ -1586,6 +1586,12 @@ class Read extends Base
      */
     protected function checkPassword(EEM_Base $model, $model_row, $query_params, WP_REST_Request $request)
     {
+        // stuff is only "protected" for front-end requests. Elsewhere, you either get full permission to access the object
+        // or you don't.
+        $request_caps = $request->get_param('caps');
+        if (isset($request_caps) && $request_caps !== EEM_Base::caps_read) {
+            return;
+        }
         // if this entity requires a password, they better give it and it better be right!
         if ($model->hasPassword()
             && $model_row[ $model->getPasswordField()->get_qualified_column() ] !== '') {
