@@ -81,4 +81,4 @@ if the datetime were for a password-protected event, the result would look like 
 
 Notice that because the venue is protected, the list of related events was replaced with an empty array, and the 
 related country was replaced with `null`. Also, both `events` and `country` were listed as protected on `_protected`.
-For more info about protected properties and how to provide a password, please read [the section on password-protected data.](ee4-rest-api-reading-data.md#Password-protected Data)
+For more info about protected properties and how to provide a password, please read [the section on password-protected data](ee4-rest-api-reading-data.md#password-protected-data).
