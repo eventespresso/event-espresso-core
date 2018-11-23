@@ -1015,7 +1015,7 @@ class Read extends Base
                     );
                 } else {
                     // they're protected, hide them.
-                    $related_results = null;
+                    $related_results = $relation_obj instanceof EE_Belongs_To_Relation ? null : array();
                     $entity_array['_protected'][] = Read::getRelatedEntityName($relation_name, $relation_obj);
                 }
                 if ($related_results instanceof WP_Error) {
