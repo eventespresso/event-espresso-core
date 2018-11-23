@@ -100,7 +100,7 @@ if (! function_exists('get_user_locale')) {
      *
      * @param int $user_id
      * @return string
-     * @since $VID:$
+     * @since 4.9.73.p
      */
     function get_user_locale($user_id = 0)
     {
