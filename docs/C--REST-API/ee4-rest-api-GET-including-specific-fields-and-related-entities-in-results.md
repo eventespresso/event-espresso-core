@@ -53,3 +53,32 @@ Including related resources like this can save you a request or two; but there i
 https://demoee.org/wp-json/ee/v4.8.36/events/15/datetimes?order_by[DTT_EVT_start]=ASC
 ```
 
+## Gotcha: including related entities on password protected entities
+
+If you request a protected item, you are not permitted to include its related entities and so they will be replaced with
+the default value. 
+
+Eg 
+
+```php
+//get all the datetimes for each event in a single query
+https://demoee.org/wp-json/ee/v4.8.36/venues/1?include=Venue.VNU_ID, Country.CNT_ISO, Event.EVT_ID
+```
+
+if the datetime were for a password-protected event, the result would look like this:
+
+```json
+{
+    "VNU_ID": 272,
+    "_protected": [
+        "events",
+        "country"
+    ],
+    "events": [],
+    "country": null
+}
+```
+
+Notice that because the venue is protected, the list of related events was replaced with an empty array, and the 
+related country was replaced with `null`. Also, both `events` and `country` were listed as protected on `_protected`.
+For more info about protected properties and how to provide a password, please read [the section on password-protected data.](ee4-rest-api-reading-data.md#Password-protected Data)
