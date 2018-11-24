@@ -82,3 +82,22 @@ export function* getSchemaByModel( modelName ) {
 	);
 	return schema;
 }
+
+/**
+ * Handles ensuring that the resolution state for the `getEntityById` for all
+ * provided entityIds is recorded as finished.
+ *
+ * @param {string} modelName
+ * @param {Array} entityIds
+ */
+export function* resolveGetEntityByIdForIds( modelName, entityIds ) {
+	while ( entityIds.length > 0 ) {
+		yield dispatch(
+			'core/data',
+			'finishResolution',
+			'eventespresso/core',
+			'getEntityById',
+			[ modelName, entityIds.shift() ]
+		);
+	}
+}

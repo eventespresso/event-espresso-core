@@ -30,3 +30,18 @@ export function receiveFactoryForModel( modelName, factory = {} ) {
 		factory,
 	};
 }
+
+export function receiveRelationEndpointForModelEntity(
+	modelName,
+	entityId,
+	relationName,
+	endpoint
+) {
+	return {
+		type: 'RECEIVE_RELATION_ENDPOINT_FOR_MODEL_ENTITY',
+		modelName,
+		entityId,
+		relationName,
+		endpoint,
+	};
+}

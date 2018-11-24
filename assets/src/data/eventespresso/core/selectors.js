@@ -2,6 +2,12 @@
  * External imports
  */
 import { values, map, pick, keys } from 'lodash';
+import { isModelEntityOfModel } from '@eventespresso/validators';
+import { InvalidModelEntity } from '@eventespresso/eejs';
+import {
+	pluralModelName,
+	singularModelName,
+} from '@eventespresso/model';
 
 /**
  * Returns all entity records for the given modelName in the current state.
@@ -84,4 +90,39 @@ export function getModelsQueuedForTrash( state ) {
 
 export function getModelsQueuedForDelete( state ) {
 	return keys( state.dirty.delete );
+}
+
+export function getRelationEntitiesForEntity(
+	state,
+	modelName,
+	entity,
+	relationModelName
+) {
+	if ( ! isModelEntityOfModel( entity, modelName ) ) {
+		throw new InvalidModelEntity( '', entity );
+	}
+	const relations = state.relations;
+	const pluralRelationName = pluralModelName( relationModelName );
+	const singularRelationName = singularModelName( relationModelName );
+	const relationIds = relations[ modelName ] &&
+		relations[ modelName ][ entity.id ] &&
+		relations[ modelName ][ entity.id ][ pluralRelationName ] ?
+		relations[ modelName ][ entity.id ][ pluralRelationName ] :
+		[];
+	return getEntitiesByIds( state, singularRelationName, relationIds );
+}
+
+export function getRelationAdditionsQueuedForModel( state, modelName ) {
+	if ( ! state.dirty.relations.add[ modelName ] ) {
+		return {};
+	}
+	return state.dirty.relations.add[ modelName ];
+}
+
+
+export function getRelationDeletionsQueuedForModel( state, modelName ) {
+	if ( ! state.dirty.relations.delete[ modelName ] ) {
+		return {};
+	}
+	return state.dirty.relations.delete[ modelName ];
 }

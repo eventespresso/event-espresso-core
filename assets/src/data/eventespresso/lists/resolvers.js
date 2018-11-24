@@ -13,7 +13,10 @@ import {
  */
 import { receiveResponse, receiveEntityResponse } from './actions';
 import { fetch, select, dispatch } from '../base-controls';
-import { getFactoryByModel } from '../base-resolvers.js';
+import {
+	getFactoryByModel,
+	resolveGetEntityByIdForIds,
+} from '../base-resolvers.js';
 import { keepExistingEntitiesInObject } from '../base-entities';
 
 /**
@@ -77,23 +80,4 @@ export function* getEntities( modelName, queryString ) {
 	);
 	yield resolveGetEntityByIdForIds( modelName, entityIds );
 	yield receiveEntityResponse( modelName, queryString, fullEntities );
-}
-
-/**
- * Handles ensuring that the resolution state for the `getEntityById` for all
- * provided entityIds is recorded as finished.
- *
- * @param {string} modelName
- * @param {Array} entityIds
- */
-function* resolveGetEntityByIdForIds( modelName, entityIds ) {
-	while ( entityIds.length > 0 ) {
-		yield dispatch(
-			'core/data',
-			'finishResolution',
-			'eventespresso/core',
-			'getEntityById',
-			[ modelName, entityIds.shift() ]
-		);
-	}
 }

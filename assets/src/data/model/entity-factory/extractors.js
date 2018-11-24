@@ -21,6 +21,10 @@ import {
 } from '../../../vo';
 
 import {
+	pluralModelName
+} from '../model-names';
+
+import {
 	hasRawProperty,
 	hasPrettyProperty,
 	hasRenderedProperty,
@@ -170,7 +174,7 @@ export const deriveRenderedValue = ( value ) => {
  * link.
  */
 export const getRelationNameFromLink = ( resourceLink ) => {
-	return camelCase( last( resourceLink.split( '/' ) ) );
+	return pluralModelName( camelCase( last( resourceLink.split( '/' ) ) ) );
 };
 
 /**

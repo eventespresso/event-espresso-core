@@ -4,6 +4,7 @@
 import { combineReducers } from '@wordpress/data';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import { isUndefined } from 'lodash';
+import { pluralModelName } from '@eventespresso/model';
 import {
 	isSchemaResponseOfModel,
 	isModelEntityFactoryOfModel,
@@ -70,7 +71,10 @@ export const receiveSchema = ( state = DEFAULT_SCHEMA_STATE.schema, action ) => 
  * @param {Object} action
  * @return {Object} the reduced (or original) state.
  */
-export const receiveFactory = ( state = DEFAULT_SCHEMA_STATE.factory, action ) => {
+export const receiveFactory = (
+	state = DEFAULT_SCHEMA_STATE.factory,
+	action
+) => {
 	const { type, modelName, factory } = action;
 	if (
 		isModelEntityFactoryOfModel( factory, modelName ) &&
@@ -85,4 +89,31 @@ export const receiveFactory = ( state = DEFAULT_SCHEMA_STATE.factory, action ) =
 	return state;
 };
 
-export default combineReducers( { schema: receiveSchema, factory: receiveFactory } );
+export const receiveRelationEndpointForEntity = (
+	state = DEFAULT_SCHEMA_STATE.relationEndpoints,
+	action
+) => {
+	const { type, modelName, entityId, endpoint } = action;
+	const relationName = pluralModelName( action.relationName );
+	const relationEndpointData = state[ modelName ][ entityId ] ?
+		{ ...state[ modelName ][ entityId ] } :
+		{};
+	if ( type === 'RECEIVE_RELATION_ENDPOINT_FOR_MODEL_ENTITY' ) {
+		return {
+			...state,
+			[ modelName ]: {
+				...state[ modelName ],
+				[ entityId ]: {
+					...relationEndpointData,
+					[ relationName ]: endpoint,
+				},
+			},
+		};
+	}
+};
+
+export default combineReducers( {
+	schema: receiveSchema,
+	factory: receiveFactory,
+	relationEndpoints: receiveRelationEndpointForEntity,
+} );

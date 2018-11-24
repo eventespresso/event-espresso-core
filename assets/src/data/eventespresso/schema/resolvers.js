@@ -2,12 +2,21 @@
  * External dependencies
  */
 import { isSchemaResponseOfModel } from '@eventespresso/validators';
+import {
+	getEndpoint,
+	createEntityFactory,
+	MODEL_PREFIXES,
+	pluralModelName,
+} from '@eventespresso/model';
 
 /**
  * Internal dependencies
  */
-import { receiveSchemaForModel, receiveFactoryForModel } from './actions';
-import { getEndpoint, createEntityFactory, MODEL_PREFIXES } from '../../model';
+import {
+	receiveSchemaForModel,
+	receiveFactoryForModel,
+	receiveRelationEndpointForModelEntity,
+} from './actions';
 import { fetchFromApi, select } from './controls';
 
 /**
@@ -42,6 +51,22 @@ export function* getFactoryForModel( modelName, schema = {} ) {
 	);
 	yield receiveFactoryForModel( modelName, factory );
 	return factory;
+}
+
+export function* getRelationEndpointForEntityId(
+	modelName,
+	entityId,
+	relationModelName
+) {
+	const endpoint = getEndpoint( modelName ) + '/' + entityId + '/' +
+		pluralModelName( relationModelName );
+	yield receiveRelationEndpointForModelEntity(
+		modelName,
+		entityId,
+		relationModelName,
+		endpoint
+	);
+	return endpoint;
 }
 
 /**

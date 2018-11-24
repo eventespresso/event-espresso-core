@@ -44,6 +44,9 @@ export const DEFAULT_CORE_STATE = {
 	entities: {
 		...getDefaultModelEntitiesObject(),
 	},
+	relations: {
+		...getDefaultModelEntitiesObject(),
+	},
 	dirty: {
 		relations: {
 			index: {},
@@ -66,4 +69,7 @@ export const DEFAULT_SCHEMA_STATE = {
 	factory: {
 		...getDefaultModelEntitiesObject(),
 	},
+	relationEndpoints: {
+		...getDefaultModelEntitiesObject(),
+	}
 };

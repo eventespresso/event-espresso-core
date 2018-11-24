@@ -1,8 +1,13 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
 import { isResolving, hasFinishedResolving } from '../base-selectors';
 import { REDUCER_KEY } from './constants';
+
+/**
+ * External imports
+ */
+import { pluralModelName } from '@eventespresso/model';
 
 /**
  * Selector for returning the schema object for a given model name from the
@@ -26,8 +31,7 @@ export function getSchemaForModel( state, modelName ) {
  * @return {boolean}  True means its being requested.
  */
 export function isRequestingSchemaForModel( state, modelName ) {
-	const value = isResolving( REDUCER_KEY, 'getSchemaForModel', modelName );
-	return value;
+	return isResolving( REDUCER_KEY, 'getSchemaForModel', modelName );
 }
 
 /**
@@ -80,4 +84,33 @@ export function isRequestingFactoryForModel( state, modelName ) {
  */
 export function hasResolvedFactoryForModel( state, modelName ) {
 	return hasFinishedResolving( REDUCER_KEY, 'getFactoryForModel', modelName );
+}
+
+
+export function getRelationEndpointForEntityId(
+	state,
+	modelName,
+	entityId,
+	relationModelName
+) {
+	relationModelName = pluralModelName( relationModelName );
+	return state.relationEndpoints[ modelName ] &&
+		state.relationEndpoints[ modelName ][ entityId ] ?
+		state.relationEndpoints[ modelName ][ entityId ][ relationModelName ] :
+		'';
+}
+
+export function isRequestingRelationEndpointForEntityId(
+	state,
+	modelName,
+	entityId,
+	relationModelName
+) {
+	return isResolving(
+		REDUCER_KEY,
+		'isRequestingRelationEndpointForEntityId',
+		modelName,
+		entityId,
+		relationModelName,
+	);
 }

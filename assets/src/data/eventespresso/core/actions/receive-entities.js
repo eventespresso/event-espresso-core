@@ -1,4 +1,10 @@
 /**
+ * Internal imports
+ */
+import { ACTION_TYPES } from './action-types';
+const { types } = ACTION_TYPES.entities;
+
+/**
  * Action for receiving entity records.
  * Entity records received will NOT replace any existing entities in the state
  * (matching ids).
@@ -16,7 +22,7 @@
  */
 export function receiveEntityRecords( modelName, entities = {} ) {
 	return {
-		type: 'RECEIVE_ENTITY_RECORDS',
+		type: types.RECEIVE_ENTITY_RECORDS,
 		modelName,
 		entities,
 	};
@@ -37,40 +43,56 @@ export function receiveEntityRecords( modelName, entities = {} ) {
  */
 export function receiveAndReplaceEntityRecords( modelName, entities = {} ) {
 	return {
-		type: 'RECEIVE_AND_REPLACE_ENTITY_RECORDS',
+		type: types.RECEIVE_AND_REPLACE_ENTITY_RECORDS,
 		modelName,
 		entities,
 	};
 }
 
+/**
+ * Action creator for adding an entity to the state (as opposed to an entity
+ * record)
+ *
+ * @param {string} modelName
+ * @param {BaseEntity} entity
+ * @return {{type: string, modelName: string, entity: BaseEntity}} An action
+ * object.
+ */
 export function receiveEntity( modelName, entity ) {
 	return {
-		type: 'RECEIVE_ENTITY',
+		type: types.RECEIVE_ENTITY,
 		modelName,
 		entity,
 	};
 }
 
-export function receiveRelatedEntities( modelName, entityId, relatedEntityIds ) {
-	return {
-		type: 'RECEIVE_RELATED_ENTITY_IDS',
-		modelName,
-		entityId,
-		relatedEntityIds,
-	};
-}
-
+/**
+ * Action creator for queuing an entity id for trash.
+ *
+ * @param {string} modelName
+ * @param {number} entityId
+ * @return {{type: string, modelName: string, entityId: number}} An action
+ * object.
+ */
 export function receiveTrashEntityId( modelName, entityId ) {
 	return {
-		type: 'RECEIVE_TRASH_ENTITY_ID',
+		type: types.RECEIVE_TRASH_ENTITY_ID,
 		modelName,
 		entityId,
 	};
 }
 
+/**
+ * Action creator for queueing an entity id for hard delete.
+ *
+ * @param {string} modelName
+ * @param {number} entityId
+ * @return {{type: string, modelName: string, entityId: number}} An action
+ * object.
+ */
 export function receiveDeleteEntityId( modelName, entityId ) {
 	return {
-		type: 'RECEIVE_DELETE_ENTITY_ID',
+		type: types.RECEIVE_DELETE_ENTITY_ID,
 		modelName,
 		entityId,
 	};

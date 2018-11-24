@@ -1,3 +1,2 @@
-export * from './receive';
-export * from './remove';
-export * from './persist';
+export * from './action-creators';
+export * from './action-generators';

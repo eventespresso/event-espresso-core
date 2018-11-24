@@ -13,6 +13,8 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * Internal imports
  */
 import { keepExistingEntitiesInObject } from '../../base-entities';
+import { ACTION_TYPES } from '../actions/action-types';
+const { types } = ACTION_TYPES.entities;
 
 /**
  * This replaces any entities in the incoming object with matching entities (by
@@ -33,14 +35,26 @@ const replaceExistingEntitiesFromState = ( state, modelName, entityRecords ) => 
 	return keepExistingEntitiesInObject( existingEntities, entityRecords );
 };
 
+/**
+ * Reducer for receiving an entity into the state.
+ *
+ * This does not replace any entity that already exists in the state.
+ *
+ * @param {Object} state
+ * @param {Object} action
+ * @return {Object} New state if there is a change otherwise existing state.
+ */
 export function receiveEntity( state, action ) {
+	/**
+	 * @type {string} modelName
+	 * @type {BaseEntity|null} entity
+	 */
 	const { modelName, entity = null } = action;
-	const entityId = getEntityPrimaryKeyValues( modelName, entity );
 
 	if (
 		! modelName ||
 		! isModelEntityOfModel( entity, modelName ) ||
-		( state[ modelName ] && state[ modelName ][ entityId ] )
+		( state[ modelName ] && state[ modelName ][ entity.id ] )
 	) {
 		return state;
 	}
@@ -48,7 +62,7 @@ export function receiveEntity( state, action ) {
 		...state,
 		[ modelName ]: {
 			...state[ modelName ],
-			[ entityId ]: entity,
+			[ entity.id ]: entity,
 		},
 	};
 }
@@ -78,7 +92,7 @@ export function receiveEntityRecords( state, action ) {
 		let	updateState = false,
 			entityRecords;
 		switch ( type ) {
-			case 'RECEIVE_ENTITY_RECORDS':
+			case types.RECEIVE_ENTITY_RECORDS:
 				// if all incoming keys exist in state already then we don't do
 				// anything
 				if ( isEmpty( difference(
@@ -98,7 +112,7 @@ export function receiveEntityRecords( state, action ) {
 				entityRecords = convertToObjectFromMap( entityRecords );
 				updateState = true;
 				break;
-			case 'RECEIVE_AND_REPLACE_ENTITY_RECORDS':
+			case types.RECEIVE_AND_REPLACE_ENTITY_RECORDS:
 				updateState = true;
 				entityRecords = convertToObjectFromMap( incomingEntities );
 				break;
@@ -116,10 +130,18 @@ export function receiveEntityRecords( state, action ) {
 	return state;
 }
 
+/**
+ * A reducer handling the removal of an entity from state matching the given
+ * id.
+ *
+ * @param {Object} state
+ * @param {Object} action
+ * @return {Object} New or existing state.
+ */
 export function removeEntityById( state, action ) {
 	const { type, modelName, entityId = 0 } = action;
 	if (
-		type !== 'REMOVE_ENTITY_BY_ID' ||
+		type !== types.REMOVE_ENTITY_BY_ID ||
 		entityId === 0 ||
 		isUndefined( state[ modelName ] ) ||
 		isUndefined( state[ modelName ][ entityId ] )
@@ -131,15 +153,22 @@ export function removeEntityById( state, action ) {
 	return newState;
 }
 
+/**
+ * Default reducer for handling entities in state.
+ *
+ * @param {Object} state
+ * @param {Object} action
+ * @return {Object} New or existing state
+ */
 export default function entities( state = DEFAULT_CORE_STATE.entities, action ) {
 	if ( action.type ) {
 		switch ( action.type ) {
-			case 'RECEIVE_ENTITY_RECORDS':
-			case 'RECEIVE_AND_REPLACE_ENTITY_RECORDS':
+			case types.RECEIVE_ENTITY_RECORDS:
+			case types.RECEIVE_AND_REPLACE_ENTITY_RECORDS:
 				return receiveEntityRecords( state, action );
-			case 'RECEIVE_ENTITY':
+			case types.RECEIVE_ENTITY:
 				return receiveEntity( state, action );
-			case 'REMOVE_ENTITY_BY_ID' :
+			case types.REMOVE_ENTITY_BY_ID :
 				return removeEntityById( state, action );
 			default:
 				return state;
