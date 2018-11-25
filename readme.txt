@@ -2,7 +2,7 @@
 Contributors: eventespresso, sethshoultes, garthkoyle, pebblo, nerrad, mnelson4, lorenzocaum, charliespider, builtbynorthby
 Donate link: https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_donate_link&utm_content=Donate+link
 Tags: event registration, ticketing, online registration, ticket sales, event booking, event management, event manager, class booking, booking, class registration, conference registration, events calendar, events planner, event ticketing, registration, registration form, training, event, events, online event registration
-Requires at least: 4.1
+Requires at least: 4.5
 Requires PHP Version: 5.4
 Tested up to: 5.0
 Stable tag: 4.9.72.decaf
