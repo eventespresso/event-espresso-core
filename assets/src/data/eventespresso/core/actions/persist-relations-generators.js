@@ -10,7 +10,7 @@ import { fetch, select } from '../../base-controls';
 import {
 	removeDirtyRelationForType,
 	removeDirtyRelationIndex,
-} from './remove';
+} from './remove-relations';
 
 /**
  * Action generator for persisting any queued add relations to the server

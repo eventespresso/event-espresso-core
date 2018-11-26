@@ -6,7 +6,7 @@ import {
 	pluralModelName,
 	singularModelName,
 } from '@eventespresso/model';
-import { isArray, pull, isEmpty, get } from 'lodash';
+import { isArray, pull, isEmpty, get, set, forEach } from 'lodash';
 
 /**
  * Internal imports.
@@ -15,6 +15,7 @@ import { ACTION_TYPES } from '../actions/action-types';
 const { types } = ACTION_TYPES.relations;
 
 const DEFAULT_EMPTY_ARRAY = [];
+const DEFAULT_EMPTY_OBJECT = {};
 
 /**
  * Used to determine whether the relation exists in the provided map.
@@ -242,6 +243,116 @@ function updateRelationState( state, action, relationMap ) {
 	return state;
 }
 
+function replaceOldRelationIdWithNewRelationId( state, action ) {
+	const {
+		modelName,
+		oldEntityId,
+		newEntityId,
+	} = action;
+	const newState = { ...state };
+	// replacements in index
+	let stateUpdated = replaceIds(
+		'index',
+		newState,
+		modelName,
+		oldEntityId,
+		newEntityId
+	);
+	let wasUpdated = replaceIds(
+		'delete',
+		newState,
+		modelName,
+		oldEntityId,
+		newEntityId,
+	);
+	stateUpdated = stateUpdated || wasUpdated;
+	wasUpdated = replaceIds(
+		'add',
+		newState,
+		modelName,
+		oldEntityId,
+		newEntityId,
+	);
+	stateUpdated = stateUpdated || wasUpdated;
+	if ( stateUpdated ) {
+		return newState;
+	}
+	return state;
+}
+
+/**
+ * Handles going through the provided state object and updating any occurences
+ * of the provided oldId for the provided model name with the new id.  This
+ * mutates the incoming state so do not provide the original state from the
+ * store.
+ *
+ * @param {string} stateProperty (what property for the state should be reviewed)
+ * @param {Object} newState
+ * @param {string} modelName
+ * @param {number} oldId
+ * @param {number} newId
+ * @return {boolean} Returns whether the provided state was updated or not.
+ */
+const replaceIds = ( stateProperty, newState, modelName, oldId, newId ) => {
+	let updated = false;
+	const pluralName = pluralModelName( modelName );
+	const singularName = singularModelName( modelName );
+	// first do top-level checks
+	const mainRecordToReplace = get(
+		newState,
+		[ stateProperty, pluralName, oldId ],
+		DEFAULT_EMPTY_OBJECT
+	);
+	if ( mainRecordToReplace !== DEFAULT_EMPTY_OBJECT ) {
+		updated = true;
+		delete newState[ stateProperty ][ modelName ][ oldId ];
+		set( newState, [ stateProperty, modelName, newId ], mainRecordToReplace );
+	}
+
+	// now we have to loop through all records to see if there's anything
+	// matching the old id in nested records.
+	forEach( newState[ stateProperty ], ( entityIds, mainModelName ) => {
+		forEach( entityIds, ( modelRelations, entityId ) => {
+			forEach( modelRelations, ( relationIds, relationName ) => {
+				let updatedIds = false;
+				if ( relationName === singularName ) {
+					// index property handling
+					if ( relationIds instanceof Map ) {
+						const deleteIds = relationIds.get( 'delete' );
+						const addIds = relationIds.get( 'add' );
+						if ( deleteIds.indexOf( oldId ) > -1 ) {
+							pull( deleteIds, oldId );
+							deleteIds.push( newId );
+							relationIds.set( 'delete', deleteIds );
+							updatedIds = true;
+						}
+						if ( addIds.indexOf( oldId ) > -1 ) {
+							pull( addIds, oldId );
+							addIds.push( newId );
+							relationIds.set( 'add', addIds );
+							updatedIds = true;
+						}
+					// delete and add property handling
+					} else if ( relationIds.indexOf( oldId ) > -1 ) {
+						pull( relationIds, oldId );
+						relationIds.push( newId );
+						updatedIds = true;
+					}
+					if ( updatedIds ) {
+						newState
+							[ stateProperty ]
+							[ mainModelName ]
+							[ entityId ]
+							[ relationName ] = relationIds;
+						updated = true;
+					}
+				}
+			} );
+		} );
+	} );
+	return updated;
+};
+
 /**
  * Default reducer for handling dirty relation state.
  *
@@ -288,6 +399,8 @@ export default ( state = DEFAULT_CORE_STATE.dirty.relations, action ) => {
 					relationMap
 				),
 			};
+		case types.RECEIVE_UPDATED_ENTITY_ID_FOR_RELATIONS:
+			return replaceOldRelationIdWithNewRelationId( state, action );
 	}
 	return state;
 };

@@ -103,7 +103,7 @@ export function* createRelations(
 	}
 
 	try {
-		validateMapHasEntitiesOfModel( relationEntities, singularRelationName );
+		assertMapHasEntitiesForModel( relationEntities, singularRelationName );
 	} catch ( exception ) {
 		warning(
 			false,
@@ -138,7 +138,16 @@ export function* createRelations(
 	}
 }
 
-const validateMapHasEntitiesOfModel = ( relationMap, relationModelName ) => {
+/**
+ * Asserts that the provided map has BaseEntity instances for the expected
+ * model name.
+ *
+ * @param {Map} relationMap
+ * @param {string} relationModelName Expected to be the singular form for the
+ * modelName.
+ * @throws InvalidModelEntity
+ */
+const assertMapHasEntitiesForModel = ( relationMap, relationModelName ) => {
 	for ( const entity of relationMap.values() ) {
 		if ( ! isModelEntityOfModel( entity, relationModelName ) ) {
 			throw new InvalidModelEntity( '', entity );

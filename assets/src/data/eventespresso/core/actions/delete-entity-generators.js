@@ -1,11 +1,11 @@
 /**
  * Internal Imports
  */
-import { removeEntityById } from './remove';
+import { removeEntityById } from './remove-entities';
 import {
 	receiveTrashEntityId,
 	receiveDeleteEntityId,
-} from './receive';
+} from './receive-entities';
 
 /**
  * Action generator yielding actions for queuing an entity delete record

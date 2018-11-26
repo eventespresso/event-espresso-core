@@ -145,3 +145,35 @@ export function receiveDirtyRelationDeletion(
 		queueType: TYPE_QUEUE_RELATION_DELETE,
 	};
 }
+
+/**
+ * Action creator for triggering the replacement of any instance of the old
+ * entity id in the state for the given model with the new entity id.
+ *
+ * Typically this is triggered after persisting a new entity to the server and
+ * receiving its new entity id on response.
+ *
+ * @param {string} modelName
+ * @param {number} oldEntityId
+ * @param {number} newEntityId
+ * @return {
+ * 	{
+ * 		type: string,
+ * 		modelName: *,
+ * 		oldEntityId: *,
+ * 		newEntityId: *
+ * 	}
+ * } An action object
+ */
+export function receiveUpdatedEntityIdForRelations(
+	modelName,
+	oldEntityId,
+	newEntityId
+) {
+	return {
+		type: types.RECEIVE_UPDATED_ENTITY_ID_FOR_RELATIONS,
+		modelName,
+		oldEntityId,
+		newEntityId,
+	};
+}

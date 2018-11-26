@@ -7,7 +7,7 @@ import { isModelEntityFactoryOfModel } from '@eventespresso/validators';
  * Internal imports
  */
 import { getFactoryByModel } from '../../base-resolvers';
-import { receiveEntity } from './receive';
+import { receiveEntity } from './receive-entities';
 
 /**
  * Returns an action generator for creating a model entity instance and

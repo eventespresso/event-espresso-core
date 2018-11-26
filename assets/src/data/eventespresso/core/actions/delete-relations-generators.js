@@ -19,7 +19,15 @@ import {
 	pluralModelName,
 } from '@eventespresso/model';
 
-
+/**
+ * Action generator yielding actions for handling removing the queued relations
+ * for deletion in the state
+ *
+ * @param {string} modelName
+ * @param {number} entityId
+ * @param {string} relationName
+ * @param {number} relationEntityId
+ */
 export function* removeDirtyRelationForAddition(
 	modelName,
 	entityId,

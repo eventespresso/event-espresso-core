@@ -3,10 +3,7 @@
  */
 import { convertToObjectFromMap } from '@eventespresso/helpers';
 import { keys, isEmpty, difference, isMap, isUndefined } from 'lodash';
-import {
-	DEFAULT_CORE_STATE,
-	getEntityPrimaryKeyValues,
-} from '@eventespresso/model';
+import { DEFAULT_CORE_STATE } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**

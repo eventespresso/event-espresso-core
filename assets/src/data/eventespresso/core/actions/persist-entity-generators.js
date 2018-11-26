@@ -21,8 +21,9 @@ import {
 	removeEntityById,
 	removeDeleteEntityId,
 	removeTrashEntityId,
-} from './remove';
-import { receiveAndReplaceEntityRecords } from './receive';
+} from './remove-entities';
+import { receiveAndReplaceEntityRecords } from './receive-entities';
+import { receiveUpdatedEntityIdForRelations } from './receive-relations';
 
 /**
  * Action generator for persisting an entity record (insert/update)
@@ -36,7 +37,7 @@ import { receiveAndReplaceEntityRecords } from './receive';
 export function* persistEntityRecord( modelName, entity ) {
 	// if this is not a model entity or its not dirty then bail.
 	if ( ! isModelEntityOfModel( entity, modelName ) || entity.isClean ) {
-		return entity;
+		return null;
 	}
 	const factory = yield getFactoryByModel( modelName );
 	if ( ! isModelEntityFactoryOfModel( factory, modelName ) ) {
@@ -57,6 +58,7 @@ export function* persistEntityRecord( modelName, entity ) {
 	);
 	if ( entity.isNew ) {
 		yield removeEntityById( modelName, entity.id );
+		yield receiveUpdatedEntityIdForRelations( modelName, entity.id, newId );
 	}
 	yield receiveAndReplaceEntityRecords( modelName, updatedEntityRecord );
 	return updatedEntityRecord.get( newId );
