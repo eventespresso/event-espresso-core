@@ -1,12 +1,7 @@
 <?php
 namespace tests\testcases\core\libraries\rest_api\controllers;
 
-use EE_Error;
-use EEM_CPT_Base;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
-use InvalidArgumentException;
-use ReflectionException;
+use WP_REST_Request;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -26,7 +21,7 @@ class WriteTest extends \EE_REST_TestCase
 
     public function testNoInsertIfNoCaps()
     {
-        $request = new \WP_REST_Request('POST', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
+        $request = new WP_REST_Request('POST', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
         $request->set_body_params(
             array(
                 'EVT_name' => 'Haha I didnt log in and I inserted an event',
@@ -50,7 +45,7 @@ class WriteTest extends \EE_REST_TestCase
         $user->add_cap('ee_read_events');
         wp_set_current_user($user->ID);
         //ok now try to insert an event
-        $request = new \WP_REST_Request('POST', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
+        $request = new WP_REST_Request('POST', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
         $request->set_body_params(
             array(
                 'EVT_name' => 'Haha I didnt log in and I inserted an event',
@@ -71,7 +66,7 @@ class WriteTest extends \EE_REST_TestCase
         //let's set a different WP timezone.
         update_option('gmt_offset', '-1');
         $this->authenticate_as_admin();
-        $req = new \WP_REST_Request(
+        $req = new WP_REST_Request(
             'POST',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes'
         );
@@ -110,7 +105,7 @@ class WriteTest extends \EE_REST_TestCase
         //let's set a different WP timezone.
         update_option('gmt_offset', '-1');
         $this->authenticate_as_admin();
-        $req = new \WP_REST_Request(
+        $req = new WP_REST_Request(
             'POST',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes'
         );
@@ -144,7 +139,7 @@ class WriteTest extends \EE_REST_TestCase
     {
         $this->authenticate_as_admin();
         $event = $this->new_model_obj_with_dependencies('Event');
-        $req = new \WP_REST_Request(
+        $req = new WP_REST_Request(
             'POST',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes'
         );
@@ -187,7 +182,7 @@ class WriteTest extends \EE_REST_TestCase
                 'DTT_sold'      => $original_sold,
             )
         );
-        $req = new \WP_REST_Request(
+        $req = new WP_REST_Request(
             'PUT',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/' . $datetime->ID()
         );
@@ -217,7 +212,7 @@ class WriteTest extends \EE_REST_TestCase
     public function testUpdateInvalidID()
     {
         $this->authenticate_as_admin();
-        $req = new \WP_REST_Request(
+        $req = new WP_REST_Request(
             'PUT',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/9999999'
         );
@@ -243,7 +238,7 @@ class WriteTest extends \EE_REST_TestCase
     public function testDeleteInvalidID()
     {
         $this->authenticate_as_admin();
-        $req = new \WP_REST_Request(
+        $req = new WP_REST_Request(
             'DELETE',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/9999999'
         );
@@ -268,7 +263,7 @@ class WriteTest extends \EE_REST_TestCase
         );
         //double-check the datetime isn't trashed
         $this->assertFalse($datetime->get('DTT_deleted'));
-        $request = new \WP_REST_Request('DELETE', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/' . $datetime->ID());
+        $request = new WP_REST_Request('DELETE', '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/' . $datetime->ID());
         $response = rest_do_request($request);
         $data = $response->get_data();
         $this->assertEquals('rest_cannot_delete_datetimes', $data['code']);
@@ -290,7 +285,7 @@ class WriteTest extends \EE_REST_TestCase
         );
         //double-check the datetime isn't trashed
         $this->assertFalse($datetime->get('DTT_deleted'));
-        $req = new \WP_REST_Request(
+        $req = new WP_REST_Request(
             'DELETE',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/' . $datetime->ID()
         );
@@ -311,7 +306,7 @@ class WriteTest extends \EE_REST_TestCase
         $this->authenticate_as_admin();
         $datetime_count_before_insertion = \EEM_Datetime::instance()->count_deleted_and_undeleted();
         $datetime = $this->new_model_obj_with_dependencies('Datetime');
-        $req = new \WP_REST_Request(
+        $req = new WP_REST_Request(
             'DELETE',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/' . $datetime->ID()
         );
@@ -337,7 +332,7 @@ class WriteTest extends \EE_REST_TestCase
         $this->authenticate_as_admin();
         $event_count_before_insertion = \EEM_Event::instance()->count_deleted_and_undeleted();
         $event = $this->new_model_obj_with_dependencies('Event');
-        $req = new \WP_REST_Request(
+        $req = new WP_REST_Request(
             'DELETE',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID()
         );
@@ -367,7 +362,7 @@ class WriteTest extends \EE_REST_TestCase
         $this->authenticate_as_admin();
         $payment = $this->new_model_obj_with_dependencies('Payment');
         $payment_count_before_deletion = \EEM_Payment::instance()->count();
-        $req = new \WP_REST_Request(
+        $req = new WP_REST_Request(
             'DELETE',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/payments/' . $payment->ID()
         );
@@ -388,7 +383,7 @@ class WriteTest extends \EE_REST_TestCase
         $this->authenticate_as_admin();
         $payment = $this->new_model_obj_with_dependencies('Payment');
         $payment_count_before_deletion = \EEM_Payment::instance()->count();
-        $req = new \WP_REST_Request(
+        $req = new WP_REST_Request(
             'DELETE',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/payments/' . $payment->ID()
         );
@@ -415,7 +410,7 @@ class WriteTest extends \EE_REST_TestCase
     public function testInsertInvalidParamProvided()
     {
         $this->authenticate_as_admin();
-        $req = new \WP_REST_Request(
+        $req = new WP_REST_Request(
             'POST',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/questions'
         );
@@ -438,7 +433,7 @@ class WriteTest extends \EE_REST_TestCase
     public function testInsertPostType()
     {
         $this->authenticate_as_admin();
-        $req = new \WP_REST_Request(
+        $req = new WP_REST_Request(
             'POST',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events'
         );
@@ -454,13 +449,6 @@ class WriteTest extends \EE_REST_TestCase
         $this->assertTrue(isset($response_data['code']));
         $this->assertEquals('invalid_field', $response_data['code']);
     }
-
-
-
-    // verify doesn't work for low permissions
-    // correct errors given when primary item doesn't exist.
-    // no endpoint for adding relations to models with no PK
-
 }
 // End of file Write_Test.php
 // Location: tests\testcases\core\libraries\rest_api\controllers/Write_Test.php

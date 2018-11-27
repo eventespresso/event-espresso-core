@@ -173,7 +173,6 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @group current
      */
     public function testAddRelationWithJoinTableWrongValues()
     {
@@ -227,7 +226,6 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @group current
      */
     public function testRemoveRelationNoRelatedItem()
     {
