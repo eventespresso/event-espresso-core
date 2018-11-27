@@ -133,24 +133,10 @@ class WriteAddRelationTest extends EE_REST_TestCase
         );
         $response = rest_do_request($req);
         $response_data = $response->get_data();
-        $this->assertArrayHasKey(
-            'question',
-            $response_data
-        );
-        $this->assertArrayHasKey(
-            'question_group',
-            $response_data
-        );
-        $this->assertArrayHasKey(
-            'join',
-            $response_data
-        );
-        $qgq_join = $question->get_first_related('Question_Group_Question');
-        // The datetime should be updated now
-        $this->assertEquals($question->ID(),$response_data['question']['QST_ID']);
-        $this->assertEquals($question_group->ID(), $response_data['question_group']['QSG_ID']);
-        $this->assertEquals($qgq_join->ID(),$response_data['join']['question_group_question']['QGQ_ID']);
-        $this->assertEquals($qgq_join->get('QGQ_order'), $response_data['join']['question_group_question']['QGQ_order']);
+        $this->assertEquals('invalid_field', $response_data['code']);
+        // The data should be unchanged.
+        $question->clear_cache('Question_Group_Question');
+        $this->assertNull($question->get_first_related('Question_Group_Question'));
     }
 
     /**

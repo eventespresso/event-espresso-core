@@ -130,7 +130,7 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
         $question = $this->new_model_obj_with_dependencies('Question');
         $question_group = $this->new_model_obj_with_dependencies('Question_Group');
         $question->_add_relation_to($question_group, 'Question_Group', array('QGQ_order' => 123));
-        $qgq_join = $question->get_first_related('Question_Group_Question');
+        $qgq_join_original = $question->get_first_related('Question_Group_Question');
         $req = new WP_REST_Request(
             'DELETE',
             '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/questions/' . $question->ID() . '/question_groups/' . $question_group->ID()
@@ -143,26 +143,11 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
         );
         $response = rest_do_request($req);
         $response_data = $response->get_data();
-        $this->assertArrayHasKey(
-            'question',
-            $response_data
-        );
-        $this->assertArrayHasKey(
-            'question_group',
-            $response_data
-        );
-        $this->assertArrayHasKey(
-            'join',
-            $response_data
-        );
-        // The row should have still been removed.
-        $this->assertEquals($question->ID(),$response_data['question']['QST_ID']);
-        $this->assertEquals($question_group->ID(), $response_data['question_group']['QSG_ID']);
-        $this->assertEquals($qgq_join->ID(),$response_data['join']['question_group_question']['QGQ_ID']);
-        // Oh and we should double-check the relation was actually removed in the DB.
+        $this->assertEquals('invalid_field', $response_data['code']);
+        // Oh and we should double-check the relation was not actually removed in the DB.
         $question->clear_cache('Question_Group_Question');
         $qgq_join = $question->get_first_related('Question_Group_Question');
-        $this->assertNull($qgq_join);
+        $this->assertEquals($qgq_join_original, $qgq_join);
     }
 
     /**

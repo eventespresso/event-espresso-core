@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+use DomainException;
 use EE_DB_Only_Field_Base;
 use EE_HABTM_Relation;
 use EE_Model_Relation_Base;
@@ -393,7 +394,11 @@ class Write extends Base
      * @param WP_REST_Request $request
      * @return array
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws RestException
+     * @throws DomainException
      */
     public function addRelation(EEM_Base $model, EE_Model_Relation_Base $relation, WP_REST_Request $request)
     {
@@ -401,7 +406,12 @@ class Write extends Base
         $extra_params = array();
         if ($relation instanceof EE_HABTM_Relation) {
             $extra_params = array_intersect_key(
-                $request->get_body_params(),
+                ModelDataTranslator::prepareConditionsQueryParamsForModels(
+                    $request->get_body_params(),
+                    $relation->get_join_model(),
+                    $this->getModelVersionInfo()->requestedVersion(),
+                    true
+                ),
                 $relation->getNonKeyFields()
             );
         }
@@ -462,7 +472,11 @@ class Write extends Base
      * @param EE_Model_Relation_Base $relation
      * @param WP_REST_Request $request
      * @return array
+     * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws RestException
      */
     public function removeRelation(EEM_Base $model, EE_Model_Relation_Base $relation, WP_REST_Request $request)
@@ -473,7 +487,12 @@ class Write extends Base
         $extra_params = array();
         if ($relation instanceof EE_HABTM_Relation) {
             $extra_params = array_intersect_key(
-                $request->get_body_params(),
+                ModelDataTranslator::prepareConditionsQueryParamsForModels(
+                    $request->get_body_params(),
+                $relation->get_join_model(),
+                $this->getModelVersionInfo()->requestedVersion(),
+                    true
+                ),
                 $relation->getNonKeyFields()
             );
             $join_model_obj = $relation->get_join_model()->get_one(
