@@ -199,13 +199,13 @@ class EEM_Event extends EEM_CPT_Base
                     'EVT_display_desc',
                     esc_html__('Display Description Flag', 'event_espresso'),
                     false,
-                    1
+                    true
                 ),
                 'EVT_display_ticket_selector'     => new EE_Boolean_Field(
                     'EVT_display_ticket_selector',
                     esc_html__('Display Ticket Selector Flag', 'event_espresso'),
                     false,
-                    1
+                    true
                 ),
                 'EVT_visible_on'                  => new EE_Datetime_Field(
                     'EVT_visible_on',
