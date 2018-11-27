@@ -72,8 +72,6 @@ export function* removeRelationForEntity(
 		relationName,
 		[ relationEntityId ],
 	);
-	// this might have been a new relation queued for adding that hasn't
-	// yet, if so, let's dequeue that!
 	yield removeDirtyRelationForAddition(
 		modelName,
 		entityId,

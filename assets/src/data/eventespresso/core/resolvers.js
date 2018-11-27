@@ -29,6 +29,8 @@ import {
 } from './actions';
 import { isEmpty } from 'lodash';
 import { keepExistingEntitiesInObject } from '../base-entities';
+import { REDUCER_KEY as CORE_REDUCER_KEY } from './constants';
+import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from './constants';
 
 export function* getEntityById( modelName, entityId ) {
 	const primaryKeyForModel = getPrimaryKey( modelName );
@@ -72,7 +74,7 @@ export function* getRelationEntitiesForEntity(
 		return;
 	}
 	yield dispatch(
-		'eventespresso/schema',
+		SCHEMA_REDUCER_KEY,
 		'receiveRelationEndpointForModelEntity',
 		modelName,
 		entity.id,
@@ -82,7 +84,7 @@ export function* getRelationEntitiesForEntity(
 	yield dispatch(
 		'core/data',
 		'finishResolution',
-		'eventespresso/schema',
+		SCHEMA_REDUCER_KEY,
 		'receiveRelationEndpointForModelEntity',
 		[ modelName, entity.id, pluralRelationName, relationEndpoint ]
 	);
@@ -111,7 +113,7 @@ export function* getRelationEntitiesForEntity(
 	// are there already entities for the ids in the store? If so...we use
 	// those.
 	const existingEntities = yield select(
-		'eventespresso/core',
+		CORE_REDUCER_KEY,
 		'getEntitiesByIds',
 		entityIds
 	);

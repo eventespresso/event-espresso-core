@@ -18,6 +18,7 @@ import {
 	resolveGetEntityByIdForIds,
 } from '../base-resolvers.js';
 import { keepExistingEntitiesInObject } from '../base-entities';
+import { REDUCER_KEY as CORE_REDUCER_KEY } from '../core/constants';
 
 /**
  * Resolver for generic items returned from an endpoint.
@@ -61,7 +62,7 @@ export function* getEntities( modelName, queryString ) {
 
 	// are there already entities for the ids in the store?  If so, we use those
 	const existingEntities = yield select(
-		'eventespresso/core',
+		CORE_REDUCER_KEY,
 		'getEntitiesByIds',
 		entityIds
 	);
@@ -73,7 +74,7 @@ export function* getEntities( modelName, queryString ) {
 		);
 	}
 	yield dispatch(
-		'eventespresso/core',
+		CORE_REDUCER_KEY,
 		'receiveEntityRecords',
 		modelName,
 		fullEntities

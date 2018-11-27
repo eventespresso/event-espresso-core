@@ -12,6 +12,7 @@ import {
 	getEntityPrimaryKeyValues,
 } from '@eventespresso/model';
 import { isEmpty, keys } from 'lodash';
+
 /**
  * Internal imports.
  */
@@ -24,6 +25,7 @@ import {
 } from './remove-entities';
 import { receiveAndReplaceEntityRecords } from './receive-entities';
 import { receiveUpdatedEntityIdForRelations } from './receive-relations';
+import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
 
 /**
  * Action generator for persisting an entity record (insert/update)
@@ -65,6 +67,34 @@ export function* persistEntityRecord( modelName, entity ) {
 }
 
 /**
+ * Action generator for persisting entities with the given id to the server.
+ *
+ * @param {string} modelName
+ * @param {number} entityId
+ * @return {BaseEntity|Object} If the entity is successfully persisted it is
+ * returned (may have a new id!), otherwise an empty object is returned.
+ */
+export function* persistForEntityId( modelName, entityId ) {
+	const entity = yield select(
+		CORE_REDUCER_KEY,
+		'getEntityById',
+		modelName,
+		entityId,
+	);
+	if ( isModelEntityOfModel( entity, modelName ) ) {
+		const persistedEntity = yield dispatch(
+			CORE_REDUCER_KEY,
+			'persistEntityRecord',
+			[ modelName, entity ]
+		);
+		return isModelEntityOfModel( persistedEntity, modelName ) ?
+			persistedEntity :
+			{};
+	}
+	return {};
+}
+
+/**
  * Action generator for persisting entities with the given ids to the server.
  *
  * @param {string} modelName
@@ -76,25 +106,23 @@ export function* persistEntityRecord( modelName, entity ) {
  */
 export function* persistForEntityIds( modelName, entityIds = [] ) {
 	const entities = yield select(
-		'eventespresso/core',
+		CORE_REDUCER_KEY,
 		'getEntitiesByIds',
 		modelName,
 		entityIds,
 	);
 	const retrievedIds = keys( entities );
-	let persistedEntities = {};
+	const persistedEntities = {};
 	while ( retrievedIds.length > 0 ) {
 		const id = retrievedIds.shift();
 		const persistedEntity = yield dispatch(
-			'eventespresso/core',
+			CORE_REDUCER_KEY,
 			'persistEntityRecord',
-			[ modelName, id, entities[ id ] ]
+			[ modelName, entities[ id ] ]
 		);
-		persistedEntities = {
-			...persistedEntities,
-			[ getEntityPrimaryKeyValues( modelName, persistedEntity ) ]:
-			persistedEntity,
-		};
+		if ( isModelEntityOfModel( persistedEntity, modelName ) ) {
+			persistedEntities[ persistedEntity.id ] = persistedEntity;
+		}
 	}
 	return persistedEntities;
 }
@@ -107,7 +135,7 @@ export function* persistForEntityIds( modelName, entityIds = [] ) {
  */
 export function* persistDeletesForModel( modelName ) {
 	const entityIds = yield select(
-		'eventespresso/core',
+		CORE_REDUCER_KEY,
 		'getEntitiesQueuedForDelete',
 		modelName
 	);
@@ -135,7 +163,7 @@ export function* persistDeletesForModel( modelName ) {
  */
 export function* persistTrashesForModel( modelName ) {
 	const entityIds = yield select(
-		'eventespresso/core',
+		CORE_REDUCER_KEY,
 		'getEntitiesQueuedForTrash',
 		modelName
 	);
@@ -163,7 +191,7 @@ export function* persistTrashesForModel( modelName ) {
  */
 export function* persistAllDeletes() {
 	const modelsForDelete = yield select(
-		'eventespresso/core',
+		CORE_REDUCER_KEY,
 		'getModelsQueuedForDelete'
 	);
 	let deletedIds = [],
@@ -172,7 +200,7 @@ export function* persistAllDeletes() {
 		deletedIds = yield persistDeletesForModel( modelsForDelete.shift() );
 	}
 	const modelsForTrash = yield select(
-		'eventespresso/core',
+		CORE_REDUCER_KEY,
 		'getModelsQueuedForTrash'
 	);
 	while ( modelsForTrash.length > 0 ) {

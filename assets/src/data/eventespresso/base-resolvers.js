@@ -3,6 +3,8 @@
  */
 import { getFactoryForModel, getSchemaForModel } from './schema/resolvers';
 import { select, dispatch } from './base-controls';
+import { REDUCER_KEY as CORE_REDUCER_KEY } from './core/constants';
+import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from './schema/constants';
 
 /**
  * Returns the factory for the given model from the eventespresso/schema store.
@@ -14,13 +16,13 @@ import { select, dispatch } from './base-controls';
 export function* getFactoryByModel( modelName ) {
 	let factory;
 	const resolved = yield select(
-		'eventespresso/schema',
+		SCHEMA_REDUCER_KEY,
 		'hasResolvedFactoryForModel',
 		modelName
 	);
 	if ( resolved === true ) {
 		factory = yield select(
-			'eventespresso/schema',
+			SCHEMA_REDUCER_KEY,
 			'getFactoryForModel',
 			modelName
 		);
@@ -29,7 +31,7 @@ export function* getFactoryByModel( modelName ) {
 	const schema = yield getSchemaByModel( modelName );
 	factory = yield getFactoryForModel( modelName, schema );
 	yield dispatch(
-		'eventespresso/schema',
+		SCHEMA_REDUCER_KEY,
 		'receiveFactoryForModel',
 		modelName,
 		factory,
@@ -37,7 +39,7 @@ export function* getFactoryByModel( modelName ) {
 	yield dispatch(
 		'core/data',
 		'finishResolution',
-		'eventespresso/schema',
+		SCHEMA_REDUCER_KEY,
 		'getFactoryForModel',
 		[ modelName ]
 	);
@@ -54,13 +56,13 @@ export function* getFactoryByModel( modelName ) {
 export function* getSchemaByModel( modelName ) {
 	let schema;
 	const resolved = yield select(
-		'eventespresso/schema',
+		SCHEMA_REDUCER_KEY,
 		'hasResolvedSchemaForModel',
 		modelName
 	);
 	if ( resolved === true ) {
 		schema = yield select(
-			'eventespresso/schema',
+			SCHEMA_REDUCER_KEY,
 			'getSchemaForModel',
 			modelName
 		);
@@ -68,7 +70,7 @@ export function* getSchemaByModel( modelName ) {
 	}
 	schema = yield getSchemaForModel( modelName );
 	yield dispatch(
-		'eventespresso/schema',
+		SCHEMA_REDUCER_KEY,
 		'receiveSchemaForModel',
 		modelName,
 		schema,
@@ -76,7 +78,7 @@ export function* getSchemaByModel( modelName ) {
 	yield dispatch(
 		'core/data',
 		'finishResolution',
-		'eventespresso/schema',
+		SCHEMA_REDUCER_KEY,
 		'getSchemaForModel',
 		[ modelName ]
 	);
@@ -95,7 +97,7 @@ export function* resolveGetEntityByIdForIds( modelName, entityIds ) {
 		yield dispatch(
 			'core/data',
 			'finishResolution',
-			'eventespresso/core',
+			CORE_REDUCER_KEY,
 			'getEntityById',
 			[ modelName, entityIds.shift() ]
 		);

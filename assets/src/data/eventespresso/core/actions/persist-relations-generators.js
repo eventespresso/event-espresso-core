@@ -2,15 +2,19 @@
  * External imports.
  */
 import { isEmpty, keys } from 'lodash';
+import cuid from 'cuid';
+import { isModelEntityOfModel } from '@eventespresso/validators';
+import { singularModelName } from '@eventespresso/model';
 
 /**
  * Internal imports.
  */
-import { fetch, select } from '../../base-controls';
+import { fetch, select, dispatch } from '../../base-controls';
 import {
 	removeDirtyRelationForType,
 	removeDirtyRelationIndex,
 } from './remove-relations';
+import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
 
 /**
  * Action generator for persisting any queued add relations to the server
@@ -208,9 +212,50 @@ export function* persistRelationsForEntityIdAndRelationId(
 		addRelation,
 		relationState
 	);
+	let entityIdChanged = false;
 	if ( isEmpty( relationState ) ) {
 		return 0;
 	}
+	// is the entityId a cuid?  If so, then let's persist.
+	if ( cuid.isCuid( entityId ) ) {
+		entityId = yield persistNewEntityAndRemoveDirtyRelations(
+			relationName,
+			relationId,
+			modelName,
+			entityId,
+			addRelation,
+			[ modelName, entityId ],
+		);
+		// if entityId is 0 bail because it didn't get persisted so relations
+		// can't be persisted either.
+		// @todo need to work out how we communicate this problem further to the
+		// client so appropriate measures can be handled in the ui?
+		if ( entityId === 0 ) {
+			return entityId;
+		}
+		entityIdChanged = true;
+	}
+
+	// is the relationId a cuid? If so, then let's persist
+	if ( cuid.isCuid( relationId ) ) {
+		relationId = yield persistNewEntityAndRemoveDirtyRelations(
+			relationName,
+			relationId,
+			modelName,
+			entityId,
+			addRelation,
+			[ relationId, singularModelName( relationName ) ],
+			! entityIdChanged,
+		);
+		// if relationId is 0, bail because it didn't get persisted so relations
+		// can't be persisted either.
+		// @todo need to work out how we communicate this problem further to the
+		// client so appropriate measures can be handled in the ui?
+		if ( relationId === 0 ) {
+			return relationId;
+		}
+	}
+
 	const endpoint = ''; // @todo need to generate endpoints for adding relations
 	const success = yield fetch(
 		{
@@ -219,23 +264,99 @@ export function* persistRelationsForEntityIdAndRelationId(
 		}
 	);
 	if ( success ) {
-		yield removeDirtyRelationForType(
+		// Even when ids have changed, this should catch any potential queued
+		// relation items for those things that got updated in state in a prior
+		// dispatch
+		removeDirtyRelations(
 			relationName,
 			relationId,
 			modelName,
 			entityId,
 			addRelation
 		);
-		yield removeDirtyRelationIndex(
+		return relationId;
+	}
+	return 0;
+}
+
+/**
+ * Action generator for handling persisting a new entity existing in the
+ * relation.
+ *
+ * @param {string} relationName
+ * @param {number} relationId
+ * @param {string} modelName
+ * @param {number} entityId
+ * @param {boolean} addRelation
+ * @param {Array} persistingArguments
+ * @param {boolean} doRelationRemoval
+ * @return {number} Either the new id or 0 if the entity was not successfully
+ * persisted.
+ */
+function* persistNewEntityAndRemoveDirtyRelations(
+	relationName,
+	relationId,
+	modelName,
+	entityId,
+	addRelation,
+	persistingArguments,
+	doRelationRemoval = true,
+) {
+	const persistedEntity = yield dispatch(
+		CORE_REDUCER_KEY,
+		'persistForEntityId',
+		persistingArguments,
+	);
+	// if not dispatched successfully then let's bail because relation can't
+	// be persisted
+	if ( ! isModelEntityOfModel( persistedEntity, modelName ) ) {
+		return 0;
+	}
+	if ( doRelationRemoval ) {
+		// ensure oldId is removed from items (this is a failsafe in case the
+		// id swap in relation state isn't complete yet).
+		yield removeDirtyRelations(
 			relationName,
 			relationId,
 			modelName,
 			entityId,
 			addRelation,
 		);
-		return relationId;
 	}
-	return 0;
+	return persistedEntity.id;
+}
+
+/**
+ * Action generator handling removing the dirty relation records in the state
+ * for the given data (internal only for calling during a persist action)
+ *
+ * @param {string} relationName
+ * @param {number} relationId
+ * @param {string} modelName
+ * @param {number} entityId
+ * @param {boolean} addRelation
+ */
+function* removeDirtyRelations(
+	relationName,
+	relationId,
+	modelName,
+	entityId,
+	addRelation
+) {
+	yield removeDirtyRelationForType(
+		relationName,
+		relationId,
+		modelName,
+		entityId,
+		addRelation
+	);
+	yield removeDirtyRelationIndex(
+		relationName,
+		relationId,
+		modelName,
+		entityId,
+		addRelation,
+	);
 }
 
 /**
@@ -260,7 +381,7 @@ function* getRelationState(
 		'getRelationDeletionsQueuedForModel';
 	relationState = isEmpty( relationState ) ?
 		yield select(
-			'eventespresso/core',
+			CORE_REDUCER_KEY,
 			selector,
 			modelName,
 		) :
