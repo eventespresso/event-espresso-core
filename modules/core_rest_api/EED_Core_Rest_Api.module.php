@@ -776,7 +776,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 /* @var $field EE_Model_Field_Base */
                 $params[ $field->get_name() ] = array(
                     'required' => ! $field->is_nullable(),
-                    'default' => ModelDataTranslator::prepareFieldValueForJson($field, $field->get_default_value(), $version, $relation_settings->get_join_model()->get_timezone()),
+                    'default' => ModelDataTranslator::prepareFieldValueForJson($field, $field->get_default_value(), $version),
                     'type' => $field->getSchemaType(),
                     'validate_callbaack' => null,
                     'sanitize_callback' => null
