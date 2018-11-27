@@ -399,7 +399,7 @@ class Write extends Base
     {
         list($model_obj, $other_obj) = $this->getBothModelObjects($model, $relation, $request);
         $extra_params = array();
-        if ($relation instanceof EE_HABTM_Relation){
+        if ($relation instanceof EE_HABTM_Relation) {
             $extra_params = array_intersect_key(
                 $request->get_body_params(),
                 $relation->getNonKeyFields()
@@ -416,7 +416,7 @@ class Write extends Base
             strtolower($model->get_this_model_name()) => $this->returnModelObjAsJsonResponse($model_obj, $request),
             strtolower($relation->get_other_model()->get_this_model_name()) => $this->returnModelObjAsJsonResponse($related_obj, $request),
         );
-        if($relation instanceof EE_HABTM_Relation){
+        if ($relation instanceof EE_HABTM_Relation) {
             $join_model_obj = $relation->get_join_model()->get_one(
                 array(
                     array(
@@ -425,7 +425,7 @@ class Write extends Base
                     )
                 )
             );
-            $response['join'][strtolower($relation->get_join_model()->get_this_model_name())] = $this->returnModelObjAsJsonResponse($join_model_obj, $request);
+            $response['join'][ strtolower($relation->get_join_model()->get_this_model_name()) ] = $this->returnModelObjAsJsonResponse($join_model_obj, $request);
         }
         return $response;
     }
@@ -471,7 +471,7 @@ class Write extends Base
         // Remember the old relation, if it used a join entry.
         $join_model_obj = null;
         $extra_params = array();
-        if($relation instanceof EE_HABTM_Relation){
+        if ($relation instanceof EE_HABTM_Relation) {
             $extra_params = array_intersect_key(
                 $request->get_body_params(),
                 $relation->getNonKeyFields()
@@ -487,7 +487,6 @@ class Write extends Base
                     )
                 )
             );
-
         }
         // Remove the relation.
         $related_obj = $model_obj->_remove_relation_to(
@@ -500,7 +499,7 @@ class Write extends Base
             strtolower($model->get_this_model_name()) => $this->returnModelObjAsJsonResponse($model_obj, $request),
             strtolower($relation->get_other_model()->get_this_model_name()) => $this->returnModelObjAsJsonResponse($related_obj, $request),
         );
-        if( $relation instanceof EE_HABTM_Relation) {
+        if ($relation instanceof EE_HABTM_Relation) {
             $join_model_obj_after_removal = $relation->get_join_model()->get_one(
                 array(
                     array_merge(
@@ -515,9 +514,9 @@ class Write extends Base
             // If there's a join table, the measure of success is actually if the join row was removed.
             $response['success'] = $join_model_obj_after_removal ? true : false;
             if ($join_model_obj instanceof EE_Base_Class) {
-                $response['join'][strtolower($relation->get_join_model()->get_this_model_name())] = $this->returnModelObjAsJsonResponse($join_model_obj, $request);
+                $response['join'][ strtolower($relation->get_join_model()->get_this_model_name()) ] = $this->returnModelObjAsJsonResponse($join_model_obj, $request);
             } else {
-                $response['join'][strtolower($relation->get_join_model()->get_this_model_name())] = null;
+                $response['join'][ strtolower($relation->get_join_model()->get_this_model_name()) ] = null;
             }
         }
         return $response;
@@ -576,7 +575,7 @@ class Write extends Base
     {
         $model_obj = $model->get_one_by_ID($id);
         // @todo: check they can permission for it. For now unnecessary because only full admins can use this endpoint.
-        if( $model_obj instanceof EE_Base_Class) {
+        if ($model_obj instanceof EE_Base_Class) {
             return $model_obj;
         }
         $lowercase_model_name = strtolower($model->get_this_model_name());
@@ -586,5 +585,4 @@ class Write extends Base
             array('status' => 404)
         );
     }
-
 }

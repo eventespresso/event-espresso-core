@@ -244,13 +244,13 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
         // all fields besides the primary key and two foreign keys should be parameters
         $join_model = $this->get_join_model();
         $standard_fields = array();
-        if($join_model->has_primary_key_field()){
+        if ($join_model->has_primary_key_field()) {
             $standard_fields[] = $join_model->primary_key_name();
         }
-        if($this->get_this_model()->has_primary_key_field()){
+        if ($this->get_this_model()->has_primary_key_field()) {
             $standard_fields[] = $this->get_this_model()->primary_key_name();
         }
-        if($this->get_other_model()->has_primary_key_field()){
+        if ($this->get_other_model()->has_primary_key_field()) {
             $standard_fields[] = $this->get_other_model()->primary_key_name();
         }
         return array_diff_key(
