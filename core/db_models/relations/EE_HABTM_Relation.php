@@ -232,4 +232,40 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
         $this->get_join_model()->delete(array($cols_n_values));
         return $other_model_obj;
     }
+
+    /**
+     * Gets all the non-key fields (ie, not the primary key and not foreign keys) on the join model.
+     * @since $VID:$
+     * @return EE_Model_Field_Base[]
+     * @throws EE_Error
+     */
+    public function getNonKeyFields()
+    {
+        // all fields besides the primary key and two foreign keys should be parameters
+        $join_model = $this->get_join_model();
+        $standard_fields = array();
+        if($join_model->has_primary_key_field()){
+            $standard_fields[] = $join_model->primary_key_name();
+        }
+        if($this->get_this_model()->has_primary_key_field()){
+            $standard_fields[] = $this->get_this_model()->primary_key_name();
+        }
+        if($this->get_other_model()->has_primary_key_field()){
+            $standard_fields[] = $this->get_other_model()->primary_key_name();
+        }
+        return array_diff_key(
+            $join_model->field_settings(),
+            array_flip($standard_fields)
+        );
+    }
+
+    /**
+     * Returns true if the join model has non-key fields (ie, fields that aren't the primary key or foreign keys.)
+     * @since $VID:$
+     * @return boolean
+     */
+    public function hasNonKeyFields()
+    {
+        return count($this->get_join_model()->field_settings()) > 3;
+    }
 }

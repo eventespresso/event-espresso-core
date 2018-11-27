@@ -3,6 +3,7 @@
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
 use EE_DB_Only_Field_Base;
+use EE_HABTM_Relation;
 use EE_Model_Relation_Base;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -375,6 +376,7 @@ class Write extends Base
             return $controller->sendResponse(
                 $controller->addRelation(
                     $main_model,
+                    $main_model->related_settings_for($related_model_name),
                     $request
                 )
             );
@@ -396,12 +398,36 @@ class Write extends Base
     public function addRelation(EEM_Base $model, EE_Model_Relation_Base $relation, WP_REST_Request $request)
     {
         list($model_obj, $other_obj) = $this->getBothModelObjects($model, $relation, $request);
+        $extra_params = array();
+        if ($relation instanceof EE_HABTM_Relation){
+            $extra_params = array_intersect_key(
+                $request->get_body_params(),
+                $relation->getNonKeyFields()
+            );
+        }
         // Add a relation.
-        $related_obj = $model_obj->_add_relation_to($other_obj,$relation->get_other_model()->get_this_model_name());
-        return array(
-            'success' => $related_obj === $other_obj,
-            'related_obj' => $this->returnModelObjAsJsonResponse($related_obj)
+        $related_obj = $model_obj->_add_relation_to(
+            $other_obj,
+            $relation->get_other_model()->get_this_model_name(),
+            $extra_params
         );
+        $response = array(
+            'success' => $related_obj === $other_obj,
+            strtolower($model->get_this_model_name()) => $this->returnModelObjAsJsonResponse($model_obj, $request),
+            strtolower($relation->get_other_model()->get_this_model_name()) => $this->returnModelObjAsJsonResponse($related_obj, $request),
+        );
+        if($relation instanceof EE_HABTM_Relation){
+            $join_model_obj = $relation->get_join_model()->get_one(
+                array(
+                    array(
+                        $model->primary_key_name() => $model_obj->ID(),
+                        $relation->get_other_model()->primary_key_name() => $related_obj->ID()
+                    )
+                )
+            );
+            $response['join'][strtolower($relation->get_join_model()->get_this_model_name())] = $this->returnModelObjAsJsonResponse($join_model_obj, $request);
+        }
+        return $response;
     }
 
 
@@ -417,8 +443,9 @@ class Write extends Base
         try {
             $controller->setRequestedVersion($version);
             return $controller->sendResponse(
-                $controller->insert(
+                $controller->removeRelation(
                     $controller->getModelVersionInfo()->loadModel($model_name),
+                    $controller->getModelVersionInfo()->loadModel($related_model_name),
                     $request
                 )
             );
@@ -440,12 +467,38 @@ class Write extends Base
     public function removeRelation(EEM_Base $model, EE_Model_Relation_Base $relation, WP_REST_Request $request)
     {
         list($model_obj, $other_obj) = $this->getBothModelObjects($model, $relation, $request);
+        // Remember the old relation, if it used a join entry.
+        $join_model_obj = null;
+        $extra_params = array();
+        if($relation instanceof EE_HABTM_Relation){
+            $join_model_obj = $relation->get_join_model()->get_one(
+                array(
+                    array(
+                        $model->primary_key_name() => $model_obj->ID(),
+                        $relation->get_other_model()->primary_key_name() => $other_obj->ID()
+                    )
+                )
+            );
+            $extra_params = array_intersect_key(
+                $request->get_body_params(),
+                $relation->getNonKeyFields()
+            );
+        }
         // Remove the relation.
-        $related_obj = $model_obj->_remove_relation($other_obj, $relation->get_other_model()->get_this_model_name());
-        return array(
-            'success' => $related_obj === $other_obj,
-            'related_obj' => $this->returnModelObjAsJsonResponse($related_obj)
+        $related_obj = $model_obj->_remove_relation(
+            $other_obj,
+            $relation->get_other_model()->get_this_model_name(),
+            $extra_params
         );
+        $response = array(
+            'success' => $related_obj === $other_obj,
+            strtolower($model->get_this_model_name()) => $this->returnModelObjAsJsonResponse($model_obj, $request),
+            strtolower($relation->get_other_model()->get_this_model_name()) => $this->returnModelObjAsJsonResponse($related_obj, $request),
+        );
+        if($join_model_obj instanceof EE_Base_Class) {
+            $response['join'][$relation->get_join_model()->get_this_model_name()] = $this->returnModelObjAsJsonResponse($join_model_obj, $request);
+        }
+        return $response;
     }
 
     /**
@@ -485,7 +538,7 @@ class Write extends Base
         // Get the main model object.
         $model_obj = $this->getOneOrThrowException($model, $request->get_param('id'));
         // For now, we require the other model object to exist too. This might be relaxed later.
-        $other_obj = $this->getOneOrThrowException($relation->get_other_model(), $relation->get_param('request_id'));
+        $other_obj = $this->getOneOrThrowException($relation->get_other_model(), $request->get_param('related_id'));
         return array($model_obj,$other_obj);
     }
 
@@ -504,11 +557,12 @@ class Write extends Base
         if( $model_obj instanceof EE_Base_Class) {
             return $model_obj;
         }
-            $lowercase_model_name = strtolower($model->get_this_model_name());
-            throw new RestException(
-                sprintf('rest_%s_invalid_id', $lowercase_model_name),
-                sprintf(__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
-                array('status' => 404)
-            );
-        }
+        $lowercase_model_name = strtolower($model->get_this_model_name());
+        throw new RestException(
+            sprintf('rest_%s_invalid_id', $lowercase_model_name),
+            sprintf(__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
+            array('status' => 404)
+        );
+    }
+
 }

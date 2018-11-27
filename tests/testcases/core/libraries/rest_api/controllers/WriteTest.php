@@ -1,6 +1,12 @@
 <?php
 namespace tests\testcases\core\libraries\rest_api\controllers;
 
+use EE_Error;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use InvalidArgumentException;
+use ReflectionException;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -464,8 +470,64 @@ class WriteTest extends \EE_REST_TestCase
         $current_user->add_role('administrator');
         return $current_user;
     }
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     */
+    public function testAddRelationGood()
+    {
+        $this->authenticateAnAdmin();
+        $event = $this->new_model_obj_with_dependencies(
+            'Event',
+            array(
+                'status' => \EEM_CPT_Base::post_status_publish
+            )
+        );
+        $datetime = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => 0
+            )
+        );
+        $this->assertNotEquals($event->ID(),$datetime->get('EVT_ID'));
+        $req = new \WP_REST_Request(
+            'POST',
+            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() . '/datetimes/' . $datetime->ID()
+        );
+        $response = rest_do_request($req);
+        $response_data = $response->get_data();
+        $this->assertArrayHasKey(
+            'event',
+            $response_data
+        );
+        $this->assertArrayHasKey(
+            'datetime',
+            $response_data
+        );
+        $this->assertArrayNotHasKey(
+            'join',
+            $response_data
+        );
+        // The datetime should be updated now
+        $datetime->refresh_from_db();
+        $this->assertEquals($event->ID(),$response_data['event']['EVT_ID']);
+        $this->assertEquals($datetime->ID(), $response_data['datetime']['DTT_ID']);
+        $this->assertEquals($event->ID(),$response_data['datetime']['EVT_ID']);
+    }
+    // test HABTM add
+    // test HABTM with wrong params
+    // no related item
+    // no primary item
+    // already related
+    // valid request but not authenticated
 
+    // test proper relation deletion
 
+    // no endpoint for adding relations to models with no PK
 
 }
 // End of file Write_Test.php
