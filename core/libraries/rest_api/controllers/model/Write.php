@@ -442,10 +442,11 @@ class Write extends Base
         $controller = new Write();
         try {
             $controller->setRequestedVersion($version);
+            $main_model = $controller->getModelVersionInfo()->loadModel($model_name);
             return $controller->sendResponse(
                 $controller->removeRelation(
-                    $controller->getModelVersionInfo()->loadModel($model_name),
-                    $controller->getModelVersionInfo()->loadModel($related_model_name),
+                    $main_model,
+                    $main_model->related_settings_for($related_model_name),
                     $request
                 )
             );
@@ -471,21 +472,25 @@ class Write extends Base
         $join_model_obj = null;
         $extra_params = array();
         if($relation instanceof EE_HABTM_Relation){
-            $join_model_obj = $relation->get_join_model()->get_one(
-                array(
-                    array(
-                        $model->primary_key_name() => $model_obj->ID(),
-                        $relation->get_other_model()->primary_key_name() => $other_obj->ID()
-                    )
-                )
-            );
             $extra_params = array_intersect_key(
                 $request->get_body_params(),
                 $relation->getNonKeyFields()
             );
+            $join_model_obj = $relation->get_join_model()->get_one(
+                array(
+                    array_merge(
+                        $extra_params,
+                        array(
+                            $model->primary_key_name() => $model_obj->ID(),
+                            $relation->get_other_model()->primary_key_name() => $other_obj->ID()
+                        )
+                    )
+                )
+            );
+
         }
         // Remove the relation.
-        $related_obj = $model_obj->_remove_relation(
+        $related_obj = $model_obj->_remove_relation_to(
             $other_obj,
             $relation->get_other_model()->get_this_model_name(),
             $extra_params
@@ -495,8 +500,25 @@ class Write extends Base
             strtolower($model->get_this_model_name()) => $this->returnModelObjAsJsonResponse($model_obj, $request),
             strtolower($relation->get_other_model()->get_this_model_name()) => $this->returnModelObjAsJsonResponse($related_obj, $request),
         );
-        if($join_model_obj instanceof EE_Base_Class) {
-            $response['join'][$relation->get_join_model()->get_this_model_name()] = $this->returnModelObjAsJsonResponse($join_model_obj, $request);
+        if( $relation instanceof EE_HABTM_Relation) {
+            $join_model_obj_after_removal = $relation->get_join_model()->get_one(
+                array(
+                    array_merge(
+                        $extra_params,
+                        array(
+                            $model->primary_key_name() => $model_obj->ID(),
+                            $relation->get_other_model()->primary_key_name() => $other_obj->ID()
+                        )
+                    )
+                )
+            );
+            // If there's a join table, the measure of success is actually if the join row was removed.
+            $response['success'] = $join_model_obj_after_removal ? true : false;
+            if ($join_model_obj instanceof EE_Base_Class) {
+                $response['join'][strtolower($relation->get_join_model()->get_this_model_name())] = $this->returnModelObjAsJsonResponse($join_model_obj, $request);
+            } else {
+                $response['join'][strtolower($relation->get_join_model()->get_this_model_name())] = null;
+            }
         }
         return $response;
     }
@@ -518,11 +540,11 @@ class Write extends Base
     protected function getBothModelObjects(EEM_Base $model, EE_Model_Relation_Base $relation, WP_REST_Request $request)
     {
         // Check generic caps. For now, we're only allowing access to this endpoint to full admins.
-        Capabilities::verifyAtLeastPartialAccessTo($model, EEM_Base::caps_edit, 'create');
+        Capabilities::verifyAtLeastPartialAccessTo($model, EEM_Base::caps_edit, 'edit');
         $default_cap_to_check_for = EE_Restriction_Generator_Base::get_default_restrictions_cap();
         if (! current_user_can($default_cap_to_check_for)) {
             throw new RestException(
-                'rest_cannot_add_relation_from_' . EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
+                'rest_cannot_edit_' . EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
                 sprintf(
                     esc_html__(
                         // @codingStandardsIgnoreStart

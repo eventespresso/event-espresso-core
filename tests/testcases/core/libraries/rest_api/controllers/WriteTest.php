@@ -2,6 +2,7 @@
 namespace tests\testcases\core\libraries\rest_api\controllers;
 
 use EE_Error;
+use EEM_CPT_Base;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
@@ -69,7 +70,7 @@ class WriteTest extends \EE_REST_TestCase
     {
         //let's set a different WP timezone.
         update_option('gmt_offset', '-1');
-        $this->authenticateAnAdmin();
+        $this->authenticate_as_admin();
         $req = new \WP_REST_Request(
             'POST',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes'
@@ -108,7 +109,7 @@ class WriteTest extends \EE_REST_TestCase
     {
         //let's set a different WP timezone.
         update_option('gmt_offset', '-1');
-        $this->authenticateAnAdmin();
+        $this->authenticate_as_admin();
         $req = new \WP_REST_Request(
             'POST',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes'
@@ -141,7 +142,7 @@ class WriteTest extends \EE_REST_TestCase
      */
     public function testInsertThenUseQuerystring()
     {
-        $this->authenticateAnAdmin();
+        $this->authenticate_as_admin();
         $event = $this->new_model_obj_with_dependencies('Event');
         $req = new \WP_REST_Request(
             'POST',
@@ -176,7 +177,7 @@ class WriteTest extends \EE_REST_TestCase
      */
     public function testUpdateOnlySomeFields()
     {
-        $this->authenticateAnAdmin();
+        $this->authenticate_as_admin();
         $original_reg_limit = 25;
         $original_sold = 100;
         $datetime = $this->new_model_obj_with_dependencies(
@@ -215,7 +216,7 @@ class WriteTest extends \EE_REST_TestCase
      */
     public function testUpdateInvalidID()
     {
-        $this->authenticateAnAdmin();
+        $this->authenticate_as_admin();
         $req = new \WP_REST_Request(
             'PUT',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/9999999'
@@ -241,7 +242,7 @@ class WriteTest extends \EE_REST_TestCase
      */
     public function testDeleteInvalidID()
     {
-        $this->authenticateAnAdmin();
+        $this->authenticate_as_admin();
         $req = new \WP_REST_Request(
             'DELETE',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/9999999'
@@ -280,7 +281,7 @@ class WriteTest extends \EE_REST_TestCase
      */
     public function testDeleteTrashed()
     {
-        $this->authenticateAnAdmin();
+        $this->authenticate_as_admin();
         $datetime = $this->new_model_obj_with_dependencies(
             'Datetime',
             array(
@@ -307,7 +308,7 @@ class WriteTest extends \EE_REST_TestCase
      */
     public function testDeletePermanent()
     {
-        $this->authenticateAnAdmin();
+        $this->authenticate_as_admin();
         $datetime_count_before_insertion = \EEM_Datetime::instance()->count_deleted_and_undeleted();
         $datetime = $this->new_model_obj_with_dependencies('Datetime');
         $req = new \WP_REST_Request(
@@ -333,7 +334,7 @@ class WriteTest extends \EE_REST_TestCase
      */
     public function testDeleteCPTPermanent()
     {
-        $this->authenticateAnAdmin();
+        $this->authenticate_as_admin();
         $event_count_before_insertion = \EEM_Event::instance()->count_deleted_and_undeleted();
         $event = $this->new_model_obj_with_dependencies('Event');
         $req = new \WP_REST_Request(
@@ -363,7 +364,7 @@ class WriteTest extends \EE_REST_TestCase
      */
     public function testDeleteNotAllowedOnNonSoftDeleteModel()
     {
-        $this->authenticateAnAdmin();
+        $this->authenticate_as_admin();
         $payment = $this->new_model_obj_with_dependencies('Payment');
         $payment_count_before_deletion = \EEM_Payment::instance()->count();
         $req = new \WP_REST_Request(
@@ -384,7 +385,7 @@ class WriteTest extends \EE_REST_TestCase
      */
     public function testDeleteNonSoftDeleteModel()
     {
-        $this->authenticateAnAdmin();
+        $this->authenticate_as_admin();
         $payment = $this->new_model_obj_with_dependencies('Payment');
         $payment_count_before_deletion = \EEM_Payment::instance()->count();
         $req = new \WP_REST_Request(
@@ -413,7 +414,7 @@ class WriteTest extends \EE_REST_TestCase
      */
     public function testInsertInvalidParamProvided()
     {
-        $this->authenticateAnAdmin();
+        $this->authenticate_as_admin();
         $req = new \WP_REST_Request(
             'POST',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/questions'
@@ -436,7 +437,7 @@ class WriteTest extends \EE_REST_TestCase
      */
     public function testInsertPostType()
     {
-        $this->authenticateAnAdmin();
+        $this->authenticate_as_admin();
         $req = new \WP_REST_Request(
             'POST',
             '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events'
@@ -455,78 +456,9 @@ class WriteTest extends \EE_REST_TestCase
     }
 
 
-    /**
-     * Authenticates an admin with capabilities to use the API
-     *
-     * @param array $caps
-     * @return \WP_User
-     */
-    protected function authenticateAnAdmin()
-    {
-        global $current_user;
-        //setup our user and set as current user.
-        $current_user = $this->factory->user->create_and_get();
-        $this->assertInstanceOf('WP_User', $current_user);
-        $current_user->add_role('administrator');
-        return $current_user;
-    }
-    /**
-     * @since $VID:$
-     * @throws EE_Error
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     */
-    public function testAddRelationGood()
-    {
-        $this->authenticateAnAdmin();
-        $event = $this->new_model_obj_with_dependencies(
-            'Event',
-            array(
-                'status' => \EEM_CPT_Base::post_status_publish
-            )
-        );
-        $datetime = $this->new_model_obj_with_dependencies(
-            'Datetime',
-            array(
-                'EVT_ID' => 0
-            )
-        );
-        $this->assertNotEquals($event->ID(),$datetime->get('EVT_ID'));
-        $req = new \WP_REST_Request(
-            'POST',
-            '/' . \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() . '/datetimes/' . $datetime->ID()
-        );
-        $response = rest_do_request($req);
-        $response_data = $response->get_data();
-        $this->assertArrayHasKey(
-            'event',
-            $response_data
-        );
-        $this->assertArrayHasKey(
-            'datetime',
-            $response_data
-        );
-        $this->assertArrayNotHasKey(
-            'join',
-            $response_data
-        );
-        // The datetime should be updated now
-        $datetime->refresh_from_db();
-        $this->assertEquals($event->ID(),$response_data['event']['EVT_ID']);
-        $this->assertEquals($datetime->ID(), $response_data['datetime']['DTT_ID']);
-        $this->assertEquals($event->ID(),$response_data['datetime']['EVT_ID']);
-    }
-    // test HABTM add
-    // test HABTM with wrong params
-    // no related item
-    // no primary item
-    // already related
-    // valid request but not authenticated
 
-    // test proper relation deletion
-
+    // verify doesn't work for low permissions
+    // correct errors given when primary item doesn't exist.
     // no endpoint for adding relations to models with no PK
 
 }
