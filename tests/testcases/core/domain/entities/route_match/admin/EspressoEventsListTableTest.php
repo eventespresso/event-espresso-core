@@ -10,14 +10,14 @@ use EventEspresso\tests\testcases\core\domain\entities\route_match\RouteMatchSpe
  *
  * @package EventEspresso\core\domain\entities\route_match\specifications
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class EspressoEventsListTableTest extends RouteMatchSpecificationTestBase
 {
 
     /**
      * @param array $request_params
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return EspressoEventsListTable
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */
@@ -27,7 +27,7 @@ class EspressoEventsListTableTest extends RouteMatchSpecificationTestBase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\AssertionFailedError
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */

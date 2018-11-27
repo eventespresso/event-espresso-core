@@ -10,7 +10,7 @@ use EventEspresso\core\services\request\RequestInterface;
  *
  * @package EventEspresso\tests\mocks\core\domain\entities\route_match
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class RouteMatchSpecificationMock extends RouteMatchSpecification
 {
@@ -60,7 +60,7 @@ class RouteMatchSpecificationMock extends RouteMatchSpecification
     /**
      * returns true if current request matches specification
      *
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return boolean
      */
     public function isMatchingRoute()

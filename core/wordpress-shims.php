@@ -93,3 +93,17 @@ if (! function_exists('wp_scripts_get_suffix')) {
         return $suffixes['suffix'];
     }
 }
+
+if (! function_exists('get_user_locale')) {
+    /**
+     * Shim for get_user_locale that was added in WP 4.7.0
+     *
+     * @param int $user_id
+     * @return string
+     * @since 4.9.73.p
+     */
+    function get_user_locale($user_id = 0)
+    {
+        return get_locale();
+    }
+}

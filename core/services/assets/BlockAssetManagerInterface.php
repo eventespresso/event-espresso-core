@@ -8,45 +8,45 @@ namespace EventEspresso\core\services\assets;
  *
  * @package EventEspresso\core\services\assets
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 interface BlockAssetManagerInterface
 {
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return string
      */
     public function assetNamespace();
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return void
      */
     public function setAssetHandles();
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return string
      */
     public function getEditorScriptHandle();
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return string
      */
     public function getEditorStyleHandle();
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return string
      */
     public function getScriptHandle();
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return string
      */
     public function getStyleHandle();

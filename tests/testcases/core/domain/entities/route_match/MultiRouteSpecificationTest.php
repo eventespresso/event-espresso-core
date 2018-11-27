@@ -10,14 +10,14 @@ use stdClass;
  *
  * @package EventEspresso\tests\testcases\core\domain\entities\route_match
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class MultiRouteSpecificationTest extends MultiRouteSpecificationTestBase
 {
 
     /**
      * @param array $specifications
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return MultiRouteSpecificationMock
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */
@@ -30,7 +30,7 @@ class MultiRouteSpecificationTest extends MultiRouteSpecificationTestBase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\Exception
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */
@@ -48,7 +48,7 @@ class MultiRouteSpecificationTest extends MultiRouteSpecificationTestBase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\Exception
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */
@@ -72,7 +72,7 @@ class MultiRouteSpecificationTest extends MultiRouteSpecificationTestBase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\AssertionFailedError
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */

@@ -11,7 +11,7 @@ use EventEspresso\core\services\collections\Collection;
  *
  * @package EventEspresso\core\services\assets
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class BlockAssetManagerCollection extends Collection
 {

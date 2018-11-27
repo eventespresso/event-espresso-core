@@ -16,7 +16,7 @@ use EventEspresso\core\services\request\RequestInterface;
  *
  * @package EventEspresso\core\domain\entities\editor\blocks\common
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class EventAttendees extends Block
 {
@@ -122,7 +122,7 @@ class EventAttendees extends Block
      * Returns an array where the key corresponds to the incoming attribute name from the WP block
      * and the value corresponds to the attribute name for the existing EspressoEventAttendees shortcode
      *
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return array
      */
     private function getAttributesMap()

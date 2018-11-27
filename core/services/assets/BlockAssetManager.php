@@ -17,7 +17,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  *
  * @package EventEspresso\core\services\editor
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 abstract class BlockAssetManager extends AssetManager implements BlockAssetManagerInterface
 {
@@ -127,7 +127,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
@@ -144,7 +144,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @param       $handle
      * @param array $dependencies
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return JavascriptAsset
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -170,7 +170,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @param        $handle
      * @param array  $dependencies
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return StylesheetAsset
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -195,7 +195,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @param       $handle
      * @param array $dependencies
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return JavascriptAsset
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -221,7 +221,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @param        $handle
      * @param array  $dependencies
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return StylesheetAsset
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException

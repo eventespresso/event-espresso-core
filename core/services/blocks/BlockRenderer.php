@@ -9,7 +9,7 @@ use EventEspresso\core\domain\DomainInterface;
  *
  * @package EventEspresso\core\services\blocks
  * @author  Darren Ethier
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 abstract class BlockRenderer implements BlockRendererInterface
 {

@@ -59,7 +59,7 @@ abstract class AssetManager implements AssetManagerInterface
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return string
      */
     public function assetNamespace()
@@ -134,7 +134,7 @@ abstract class AssetManager implements AssetManagerInterface
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
      * @throws DomainException
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     public function addVendorJavascript(
         $handle,

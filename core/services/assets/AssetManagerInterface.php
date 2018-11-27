@@ -21,7 +21,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
 interface AssetManagerInterface
 {
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return string
      */
     public function assetNamespace();
@@ -69,7 +69,7 @@ interface AssetManagerInterface
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @param string $handle
      * @param array  $dependencies
      * @param bool   $load_in_footer

@@ -16,7 +16,7 @@ use WP_Block_Type;
  *
  * @package EventEspresso\core\services\editor
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 abstract class Block implements BlockInterface
 {

@@ -43,17 +43,17 @@ class CoreAssetManager extends AssetManager
     const JS_HANDLE_ACCOUNTING_CORE = 'ee-accounting-core';
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     const JS_HANDLE_REACT = 'react';
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     const JS_HANDLE_REACT_DOM = 'react-dom';
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     const JS_HANDLE_LODASH = 'lodash';
 
@@ -252,7 +252,7 @@ class CoreAssetManager extends AssetManager
             array(
                 CoreAssetManager::JS_HANDLE_VENDOR,
                 'wp-data',
-                'wp-api-request',
+                'wp-api-fetch',
                 CoreAssetManager::JS_HANDLE_VALUE_OBJECTS
             )
         )
@@ -353,7 +353,7 @@ class CoreAssetManager extends AssetManager
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
      * @throws DomainException
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     private function registerWpAssets()
     {
@@ -382,7 +382,7 @@ class CoreAssetManager extends AssetManager
 
     /**
      * Returns configuration data for the accounting-js library.
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return array
      */
     private function getAccountingSettings() {
@@ -409,7 +409,7 @@ class CoreAssetManager extends AssetManager
 
     /**
      * Returns configuration data for the js Currency VO.
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return array
      */
     private function getCurrencySettings()

@@ -10,7 +10,7 @@ use EventEspresso\core\domain\entities\route_match\RouteMatchSpecification;
  *
  * @package EventEspresso\core\domain\entities\route_match\specifications\frontend
  * @author  Darren Ethier
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class AnyFrontendRequest extends RouteMatchSpecification
 {

@@ -10,7 +10,7 @@ use EventEspresso\tests\testcases\core\domain\entities\route_match\RouteMatchSpe
  *
  * @package EventEspresso\core\domain\entities\route_match\specifications
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class WordPressPostsListTableTest extends RouteMatchSpecificationTestBase
 {
@@ -19,7 +19,7 @@ class WordPressPostsListTableTest extends RouteMatchSpecificationTestBase
      * @param array $request_params
      * @param array $server
      * @return WordPressPostsListTable
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     public function getMultiRouteSpecification(array $request_params, array $server)
     {
@@ -29,7 +29,7 @@ class WordPressPostsListTableTest extends RouteMatchSpecificationTestBase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\AssertionFailedError
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */

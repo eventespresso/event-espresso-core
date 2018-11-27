@@ -11,7 +11,7 @@ use EventEspresso\core\domain\entities\route_match\RouteMatchSpecificationInterf
  *
  * @package EventEspresso\tests\mocks\core\domain\entities\route_match
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class RouteMatchSpecificationDecoratorMock extends RouteMatchSpecificationDecorator
 {
@@ -26,7 +26,7 @@ class RouteMatchSpecificationDecoratorMock extends RouteMatchSpecificationDecora
     /**
      * returns true if current request matches specification
      *
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return boolean
      */
     public function isMatchingRoute()

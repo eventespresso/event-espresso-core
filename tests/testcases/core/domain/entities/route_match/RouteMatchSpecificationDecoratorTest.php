@@ -11,12 +11,12 @@ use EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecifi
  *
  * @package EventEspresso\tests\testcases\core\domain\entities\route_match
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class RouteMatchSpecificationDecoratorTest extends RouteMatchSpecificationTestBase
 {
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @param RouteMatchSpecificationInterface|null $route_match_specification
      * @return RouteMatchSpecificationDecoratorMock
      */
@@ -29,7 +29,7 @@ class RouteMatchSpecificationDecoratorTest extends RouteMatchSpecificationTestBa
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\Exception
      */
     public function test__construct()
@@ -42,7 +42,7 @@ class RouteMatchSpecificationDecoratorTest extends RouteMatchSpecificationTestBa
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function testIsMatchingRoute()

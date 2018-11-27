@@ -8,14 +8,14 @@ namespace EventEspresso\core\domain\entities\route_match;
  *
  * @package EventEspresso\core\domain\entities\route_match\specifications
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 interface RouteMatchSpecificationInterface
 {
     /**
      * returns true if current request matches specification
      *
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return boolean
      */
     public function isMatchingRoute();

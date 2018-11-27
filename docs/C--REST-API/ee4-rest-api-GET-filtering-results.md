@@ -58,41 +58,48 @@ https://demoee.org/wp-json/ee/v4.8.36/events
 
 ### Specifying Binary Operators: =, !=, <, <=, >, >=, LIKE,
 
+> In $VID:$ a new simpler syntax was introduced. If your API client needs to work with older versions of Event Espresso, please [refer to the old
+syntax](https://github.com/eventespresso/event-espresso-core/blob/4.9.70.p/docs/C--REST-API/ee4-rest-api-GET-filtering-results.md#specifying-binary-operators-------like) (which is still maintained, but not documented because it was so painful!)
+
 The default operator used in where conditions is always = (equals). Just like when querying models, you can specify other operators.
-To specify a binary operator, instead of providing a simple value for the query parameter, you need to provide an array with 2 items: the first being the operator, the 2nd being the value to compare against.
+To specify a binary operator, instead of providing a simple value for the query parameter, provide an array whose key is the operator you want to use, and the value is the operand.
 When using the LIKE operator, use "%" sign for wildcards like with MySQL.
 Note: that you may need to url-encode operators like "=" and "!=".
 
 ```php
 //Gets all answers where the ID is above 56 where the value starts with darth
-https://demoee.org/wp-json/ee/v4.8.36/answers?where[ANS_ID][]=<&where[ANS_ID][]=56&where[ANS_value][]=LIKE&where[ANS_value][]=darth%
+https://demoee.org/wp-json/ee/v4.8.36/answers?where[ANS_ID][>]=56&where[ANS_value][LIKE]=darth%
 ```
 
 ### Specifying Unary operators: IS_NULL, IS_NOT_NULL
 
-You may also provide the unary operator IS_NULL and its opposite IS_NOT_NULL. Similarly, instead of providing a simple value for the query parameter, provide an array containing only IS_NULL or IS_NOT_NULL
+You may also provide the unary operator IS_NULL and its opposite IS_NOT_NULL in a similar fashion. The value provided will be ignored.
 
 ```php
 //Gets all events for which there have been absolutely NO registrations (even incomplete ones)
-https://demoee.org/wp-json/ee/v4.8.36/events?where[Registration.REG_ID][]=IS_NULL
+https://demoee.org/wp-json/ee/v4.8.36/events?where[Registration.REG_ID][IS_NULL]=1
 ```
+
 
 ### Specifying Ternary Operator: BETWEEN
 
-You may also provide a ternary operator: BETWEEN, which is used with dates. You need to provide an array with the first item being "BETWEEN", and the second item is itself an array with two sub-items: the lower limit (older) date, and lastly the upper limit (newer) date.
-(So, because you're passing an array with two items, the string "BETWEEN", then an array with two dates in it, this is technically another binary operator.)
+You may also provide a ternary operator, BETWEEN, which is used with dates in a similar fashion. The value can either be a comma-separated list of two dates, or a JSON array of two dates. 
 ```php
 //Gets all events created between february 7 2015 and march 7 2015
-https://demoee.org/wp-json/ee/v4.8.36/events?where[EVT_created][0]=BETWEEN&where[EVT_created][1][]=2015-02-07T23:19:57&where[EVT_created][1][]=2015-03-07T23:19:57
+https://demoee.org/wp-json/ee/v4.8.36/events?where[EVT_created][BETWEEN]=2015-02-07T23:19:57,2015-03-07T23:19:57
+https://demoee.org/wp-json/ee/v4.8.36/events?where[EVT_created][BETWEEN]=["2015-02-07T23:19:57","2015-03-07T23:19:57"]
+
 ```
 
 ### Specifying N-Ary Operators: IN, NOT_IN
 
-You may also provide n-ary operators, that is operators with as many values as you like. Just provide an array where the first value is the operator "IN" or "NOT_IN", and then the 2nd value is itself an array of all the values to compare against.
+You may also provide n-ary operators, IN or NOT_IN. The value may either be a comma-separated list of a JSON array.
 
 ```php
 //Gets all the events in states with ID 23 and 87
-https://demoee.org/wp-sjon/ee/v4.8.36/events?where[Venue.STA_ID][0]=IN&where[Venue.STA_ID][1][]=23&where[Venue.STA_ID][1][]=87
+https://demoee.org/wp-sjon/ee/v4.8.36/events?where[Venue.STA_ID][IN]=23,87
+//Gets all events with name "Party", "Party, Again", or "Party Forever"
+https://demoee.org/wp-sjon/ee/v4.8.36/events?where[Venue.STA_ID][IN]=["Party", "Party, Again", "Party Forever"]
 ```
 
 ### Logic Query Params: AND, OR, NOT

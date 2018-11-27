@@ -10,7 +10,7 @@ use EventEspresso\core\services\assets\BlockAssetManager;
  *
  * @package EventEspresso\core\domain\entities\editor\blocks
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class CoreBlocksAssetManager extends BlockAssetManager
 {
@@ -21,7 +21,7 @@ class CoreBlocksAssetManager extends BlockAssetManager
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     public function setAssetHandles()
     {
