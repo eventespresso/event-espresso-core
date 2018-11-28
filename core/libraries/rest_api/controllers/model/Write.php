@@ -481,28 +481,27 @@ class Write extends Base
      */
     public function removeRelation(EEM_Base $model, EE_Model_Relation_Base $relation, WP_REST_Request $request)
     {
+        // This endpoint doesn't accept body parameters (it's understandable to think it might, so let developers know
+        // up-front that it doesn't.)
+        if(!empty($request->get_body_params())){
+            $body_params = $request->get_body_params();
+            throw new RestException(
+                'invalid_field',
+                sprintf(
+                    esc_html__('This endpoint doesn\'t accept post body arguments, you sent in %1$s', 'event_espresso'),
+                    implode(array_keys($body_params))
+                )
+            );
+        }
         list($model_obj, $other_obj) = $this->getBothModelObjects($model, $relation, $request);
         // Remember the old relation, if it used a join entry.
         $join_model_obj = null;
-        $extra_params = array();
         if ($relation instanceof EE_HABTM_Relation) {
-            $extra_params = array_intersect_key(
-                ModelDataTranslator::prepareConditionsQueryParamsForModels(
-                    $request->get_body_params(),
-                $relation->get_join_model(),
-                $this->getModelVersionInfo()->requestedVersion(),
-                    true
-                ),
-                $relation->getNonKeyFields()
-            );
             $join_model_obj = $relation->get_join_model()->get_one(
                 array(
-                    array_merge(
-                        $extra_params,
-                        array(
-                            $model->primary_key_name() => $model_obj->ID(),
-                            $relation->get_other_model()->primary_key_name() => $other_obj->ID()
-                        )
+                    array(
+                        $model->primary_key_name() => $model_obj->ID(),
+                        $relation->get_other_model()->primary_key_name() => $other_obj->ID()
                     )
                 )
             );
@@ -510,8 +509,7 @@ class Write extends Base
         // Remove the relation.
         $related_obj = $model_obj->_remove_relation_to(
             $other_obj,
-            $relation->get_other_model()->get_this_model_name(),
-            $extra_params
+            $relation->get_other_model()->get_this_model_name()
         );
         $response = array(
             'success' => $related_obj === $other_obj,
@@ -521,12 +519,9 @@ class Write extends Base
         if ($relation instanceof EE_HABTM_Relation) {
             $join_model_obj_after_removal = $relation->get_join_model()->get_one(
                 array(
-                    array_merge(
-                        $extra_params,
-                        array(
-                            $model->primary_key_name() => $model_obj->ID(),
-                            $relation->get_other_model()->primary_key_name() => $other_obj->ID()
-                        )
+                    array(
+                        $model->primary_key_name() => $model_obj->ID(),
+                        $relation->get_other_model()->primary_key_name() => $other_obj->ID()
                     )
                 )
             );

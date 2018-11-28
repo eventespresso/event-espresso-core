@@ -1,9 +1,14 @@
 <?php
 
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
+use EE_Error;
 use EE_REST_TestCase;
 use EED_Core_Rest_Api;
 use EEM_CPT_Base;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use InvalidArgumentException;
+use ReflectionException;
 use WP_REST_Request;
 
 /**
@@ -141,7 +146,8 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
         );
         $req->set_body_params(
             array(
-                'non-existent-field' => 123,
+                // You would think `QGQ_order` is correct, but this endpoint obliterates all relations, regardless
+                // of whether you provide this extra parameter. So we actually want this to be an error.
                 'QGQ_order' => 123
             )
         );
@@ -152,59 +158,6 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
         $question->clear_cache('Question_Group_Question');
         $qgq_join = $question->get_first_related('Question_Group_Question');
         $this->assertEquals($qgq_join_original, $qgq_join);
-    }
-
-    /**
-     * Test HABTM with wrong params
-     * @since $VID:$
-     * @throws EE_Error
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     */
-    public function testRemoveRelationWithJoinTableWrongValues()
-    {
-        $this->authenticate_as_admin();
-        $question = $this->new_model_obj_with_dependencies('Question');
-        $question_group = $this->new_model_obj_with_dependencies('Question_Group');
-        $qgq_order = 123;
-        $question->_add_relation_to($question_group, 'Question_Group', array('QGQ_order' => $qgq_order));
-        $old_qgq_join = $question->get_first_related('Question_Group_Question');
-        $req = new WP_REST_Request(
-            'DELETE',
-            '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/questions/' . $question->ID() . '/question_groups/' . $question_group->ID()
-        );
-        $req->set_body_params(
-            array(
-                'QGQ_order' => $qgq_order + 1
-            )
-        );
-        $response = rest_do_request($req);
-        $response_data = $response->get_data();
-        $this->assertFalse($response_data['success']);
-
-        $this->assertArrayHasKey(
-            'question',
-            $response_data
-        );
-        $this->assertArrayHasKey(
-            'question_group',
-            $response_data
-        );
-        $this->assertArrayHasKey(
-            'join',
-            $response_data
-        );
-        $qgq_join = $question->get_first_related('Question_Group_Question');
-        // The row should have NOT been removed.
-        $this->assertEquals($question->ID(),$response_data['question']['QST_ID']);
-        $this->assertEquals($question_group->ID(), $response_data['question_group']['QSG_ID']);
-        $this->assertEmpty($response_data['join']['question_group_question']);
-        // Oh and we should double-check the relation was actually removed in the DB.
-        $question->clear_cache('Question_Group_Question');
-        $qgq_join = $question->get_first_related('Question_Group_Question');
-        $this->assertEquals($old_qgq_join->ID(), $qgq_join->ID());
     }
 
     /**
