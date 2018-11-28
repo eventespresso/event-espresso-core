@@ -483,7 +483,7 @@ class Write extends Base
     {
         // This endpoint doesn't accept body parameters (it's understandable to think it might, so let developers know
         // up-front that it doesn't.)
-        if(!empty($request->get_body_params())){
+        if (!empty($request->get_body_params())) {
             $body_params = $request->get_body_params();
             throw new RestException(
                 'invalid_field',
