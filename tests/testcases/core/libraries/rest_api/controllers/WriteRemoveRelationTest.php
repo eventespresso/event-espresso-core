@@ -7,7 +7,7 @@ use EEM_CPT_Base;
 use WP_REST_Request;
 
 /**
- * Class WriteAddRelationTest
+ * Class WriteRemoveRelationTest
  *
  * Write tests that relate to adding relations.
  *
@@ -128,7 +128,7 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
-    public function testAddRelationWithJoinTableWrongParams()
+    public function testRemoveRelationWithJoinTableWrongParams()
     {
         $this->authenticate_as_admin();
         $question = $this->new_model_obj_with_dependencies('Question');
@@ -163,7 +163,7 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
-    public function testAddRelationWithJoinTableWrongValues()
+    public function testRemoveRelationWithJoinTableWrongValues()
     {
         $this->authenticate_as_admin();
         $question = $this->new_model_obj_with_dependencies('Question');
@@ -270,7 +270,7 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
-    public function testAddRelationNotAlreadyRelated()
+    public function testRemoveRelationNotAlreadyRelated()
     {
         $this->authenticate_as_admin();
         $event = $this->new_model_obj_with_dependencies(
@@ -314,7 +314,7 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
-    public function testAddRelationUnauthenticated()
+    public function testRemoveRelationUnauthenticated()
     {
         $event = $this->new_model_obj_with_dependencies(
             'Event',
@@ -348,7 +348,7 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
-    public function testAddRelationInsufficientPrivileges()
+    public function testRemoveRelationInsufficientPrivileges()
     {
         global $current_user;
         //setup our user and set as current user.
@@ -368,7 +368,7 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
             )
         );
         $req = new WP_REST_Request(
-            'POST',
+            'DELETE',
             '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() . '/datetimes/' . $datetime->ID()
         );
         $response = rest_do_request($req);
@@ -378,5 +378,5 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
         $this->assertEquals($event->ID(), $datetime->get('EVT_ID'));
     }
 }
-// End of file WriteAddRelationTest.php
-// Location: EventEspresso\core\libraries\rest_api\controllers\model/WriteAddRelationTest.php
+// End of file WriteRemoveRelationTest.php
+// Location: EventEspresso\core\libraries\rest_api\controllers\model/WriteRemoveRelationTest.php
