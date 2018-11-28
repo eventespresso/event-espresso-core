@@ -13,7 +13,7 @@ use EEM_Base;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.72.p
  *
  */
 class RestIncomingQueryParamContext
@@ -46,7 +46,7 @@ class RestIncomingQueryParamContext
 
     /**
      * Gets the model currently being requested, eg class EEM_Event
-     * @since $VID:$
+     * @since 4.9.72.p
      * @return EEM_Base
      */
     public function getModel()
@@ -56,7 +56,7 @@ class RestIncomingQueryParamContext
 
     /**
      * Gets the version being requested, eg 4.8.36
-     * @since $VID:$
+     * @since 4.9.72.p
      * @return string
      */
     public function getRequestedVersion()
@@ -66,7 +66,7 @@ class RestIncomingQueryParamContext
 
     /**
      * Gets if the current request is for a writing request or just simple read
-     * @since $VID:$
+     * @since 4.9.72.p
      * @return bool
      */
     public function isWriting()
