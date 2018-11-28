@@ -155,7 +155,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
         $join_model_fk_to_this_model  = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
         $join_model_fk_to_other_model = $this->get_join_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
 
-        $cols_n_values = array(
+        $foreign_keys = $all_fields = array(
             $join_model_fk_to_this_model->get_name()  => $this_model_obj->ID(),
             $join_model_fk_to_other_model->get_name() => $other_model_obj->ID(),
         );
@@ -173,18 +173,21 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
                 );
                 $parsed_query[ $query_param ] = $val;
             }
-            $cols_n_values = array_merge($cols_n_values, $parsed_query);
+            $all_fields = array_merge($foreign_keys, $parsed_query);
         }
 
-        $query_params = array($cols_n_values);
-
-
-        $existing_entry_in_join_table = $this->get_join_model()->get_one($query_params);
-        // if there is already an entry in the join table, indicating a relationship, we're done
-        // again, if you want more sophisticated logic or insertions (handling more columns than just 2 foreign keys to
-        // the other tables, use the joining model directly!
+        $existing_entry_in_join_table = $this->get_join_model()->get_one(array($foreign_keys));
+        // If there is already an entry in the join table, indicating a relationship, update it instead of adding a
+        // new row.
+        // Again, if you want more sophisticated logic or insertions (handling more columns than just 2 foreign keys to
+        // the other tables) use the joining model directly!
         if (! $existing_entry_in_join_table) {
-            $this->get_join_model()->insert($cols_n_values);
+            $this->get_join_model()->insert($all_fields);
+        } else {
+            $this->get_join_model()->update(
+                $all_fields,
+                $foreign_keys
+            );
         }
         return $other_model_obj;
     }
