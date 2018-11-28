@@ -93,6 +93,8 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
         $question = $this->new_model_obj_with_dependencies('Question');
         $question_group = $this->new_model_obj_with_dependencies('Question_Group');
         $question->_add_relation_to($question_group, 'Question_Group', array('QGQ_order' => 123));
+        // add another row, just for good measure. It should get deleted too.
+        $question->_add_relation_to($question_group, 'Question_Group', array('QGQ_order' => 456));
         $qgq_join = $question->get_first_related('Question_Group_Question');
         $req = new WP_REST_Request(
             'DELETE',
