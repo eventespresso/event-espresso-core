@@ -170,6 +170,8 @@ will make them related (ie, make question 12 part of question group 4, by adding
 ```
 This means `join.questino_group_question` is a entity that joins the other two items together.
 
+If there were a previous entry in the joining resource, it would instead be updated.
+
 ## Removing Relations
 
 You use the same routes to remove relations, just using a different HTTP method, `DELETE`.
