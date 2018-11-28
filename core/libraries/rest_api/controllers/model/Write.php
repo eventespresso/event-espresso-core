@@ -531,7 +531,7 @@ class Write extends Base
                 )
             );
             // If there's a join table, the measure of success is actually if the join row was removed.
-            $response['success'] = $join_model_obj_after_removal ? true : false;
+            $response['success'] = $join_model_obj_after_removal ? false : true;
             if ($join_model_obj instanceof EE_Base_Class) {
                 $response['join'][ strtolower($relation->get_join_model()->get_this_model_name()) ] = $this->returnModelObjAsJsonResponse($join_model_obj, $request);
             } else {
