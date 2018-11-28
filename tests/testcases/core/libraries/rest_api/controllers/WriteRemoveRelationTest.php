@@ -32,7 +32,6 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @group current
      */
     public function testRemoveRelationGood()
     {
@@ -85,7 +84,6 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @group current
      */
     public function testRemoveRelationWithJoinTableGood()
     {
