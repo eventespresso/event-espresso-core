@@ -16,7 +16,6 @@
                 ? get_avatar_url(
                     $attendee->email(),
                     array(
-                        'default' => 'mm',
                         'width'   => $attributes['avatarSize'],
                         'height'  => $attributes['avatarSize']
                     )

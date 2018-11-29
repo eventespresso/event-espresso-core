@@ -30,7 +30,7 @@ class Attendee extends AttendeeCalculationsBase
             $email_address = $wpdb_row['Attendee_Meta.ATT_email'];
         }
         if (empty($email_address)) {
-            return get_avatar_url('', array('default' => 'mm', 'force_default' => true));
+            return get_avatar_url('', array('force_default' => true));
         }
         $avatar = get_avatar_url($email_address);
         return $avatar ? $avatar : '';
