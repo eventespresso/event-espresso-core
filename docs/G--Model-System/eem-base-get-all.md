@@ -5,10 +5,10 @@ This method in the base model is a fairly significant entry point into the model
 The signature is:
 
 ```
-EEM_Base::get_all($where_params = array())
+EEM_Base::get_all($query_params = array())
 ```
 
-`$where_params` is a configuration like object that you can use to inform the nature of the query to make. The array can have the following indexes:
+`$query_params` is a configuration like object that you can use to inform the nature of the query to make. The array can have the following indexes:
 
 ## `0` (where conditions)
 This provides  the `where` conditions for the query.
