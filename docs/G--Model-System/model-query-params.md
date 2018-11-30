@@ -1,14 +1,8 @@
-# `EEM_Base::get_all`
+# Model Query Params
 
-This method in the base model is a fairly significant entry point into the model system and so we've created this documentation here for it.
-
-The signature is:
-
-```
-EEM_Base::get_all($query_params = array())
-```
-
-`$query_params` is a configuration like object that you can use to inform the nature of the query to make. The array can have the following indexes:
+This documents the structure for the `$query_params` argument passed into [several model methods](model-querying.md).
+ 
+`$query_params` is a configuration array that you can use to inform the nature of the query to make. The array can have the following indexes:
 
 ## `0` (where conditions)
 This provides  the `where` conditions for the query.

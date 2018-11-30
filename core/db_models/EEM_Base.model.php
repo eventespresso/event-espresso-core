@@ -2745,7 +2745,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                              $values_already_prepared_by_model_object is false, in the model object's domain if
      *                              $values_already_prepared_by_model_object is true. See comment about this at the top
      *                              of EEM_Base)
-     * @return int new primary key on main table that got inserted
+     * @return int|string new primary key on main table that got inserted
      * @throws EE_Error
      */
     public function insert($field_n_values)
