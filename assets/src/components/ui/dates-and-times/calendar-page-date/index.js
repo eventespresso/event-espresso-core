@@ -11,7 +11,7 @@ import { __ } from '@eventespresso/i18n';
 import './style.css';
 
 /**
- * CalendarPageDateDisplay
+ * CalendarPageDate
  * Displays a date as if it were a page from
  * one of those mini calendars were each page is a day
  *
@@ -20,7 +20,7 @@ import './style.css';
  * @param {Date} endDate    Date object for defining the end of an Event Date
  * @return {string}         The date rendered to look like a calendar page
  */
-export class CalendarPageDateDisplay extends Component {
+export class CalendarPageDate extends Component {
 	/**
 	 * StartDate
 	 *
