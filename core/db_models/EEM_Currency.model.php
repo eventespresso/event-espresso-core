@@ -42,7 +42,7 @@ class EEM_Currency extends EEM_Base
     /**
      * Gets all thea ctive currencies, and orders them by their singular name, and then their code
      * (may be overridden)
-     * @param array $query_params see EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Currency[]
      */
     public function get_all_active($query_params = array())

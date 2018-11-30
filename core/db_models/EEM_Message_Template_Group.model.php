@@ -191,7 +191,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base
     /**
      * This gets all the custom templates attached to a specific event
      * @param  int      $EVT_ID         event id
-     * @param  array  $query_params same as EEM_Base::get_all()
+     * @param  array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return  EE_Message_Template_Group[]
      */
     public function get_all_custom_templates_by_event($EVT_ID, $query_params = array())

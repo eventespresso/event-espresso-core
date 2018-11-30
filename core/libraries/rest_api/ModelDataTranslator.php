@@ -552,7 +552,7 @@ class ModelDataTranslator
      * Prepares all the sub-conditions query parameters (eg having or where conditions) for use in the rest api
      *
      * @param array    $inputted_query_params_of_this_type  eg like the "where" or "having" conditions query params
-     *                                                      passed into EEM_Base::get_all()
+     *                                                      @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @param EEM_Base $model
      * @param string   $requested_version                   eg "4.8.36"
      * @return array ready for use in the rest api query params
