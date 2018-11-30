@@ -347,7 +347,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address
      * Gets all events happening at this venue. Query parameters can be added to
      * fetch a subset of those events.
      *
-     * @param array $query_params like EEM_Base::get_all's $query_params
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param bool  $upcoming
      * @return EE_Event[]
      */

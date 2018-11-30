@@ -1059,15 +1059,15 @@ class Read extends Base
 
 
     /**
-     * Translates API filter get parameter into $query_params array used by EEM_Base::get_all().
+     * Translates API filter get parameter into model query params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions.
      * Note: right now the query parameter keys for fields (and related fields)
      * can be left as-is, but it's quite possible this will change someday.
      * Also, this method's contents might be candidate for moving to Model_Data_Translator
      *
      * @param EEM_Base $model
      * @param array    $query_parameters  from $_GET parameter @see Read:handle_request_get_all
-     * @return array like what EEM_Base::get_all() expects or FALSE to indicate
-     *                                    that absolutely no results should be returned
+     * @return array model query params (@see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions)
+     *                                    or FALSE to indicate that absolutely no results should be returned
      * @throws EE_Error
      * @throws RestException
      */
