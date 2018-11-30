@@ -55,7 +55,6 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
         );
         $response = rest_do_request($req);
         $response_data = $response->get_data();
-        $this->assertTrue($response_data['success']);
         $this->assertArrayHasKey(
             'event',
             $response_data
@@ -100,7 +99,6 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
         );
         $response = rest_do_request($req);
         $response_data = $response->get_data();
-        $this->assertTrue($response_data['success']);
         $this->assertArrayHasKey(
             'question',
             $response_data

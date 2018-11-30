@@ -19,11 +19,10 @@ Eg, if there was an event with ID 124, and a datetime with ID 1 which weren't pr
 POST https://demoee.org/wp-json/ee/v4.8.36/events/124/datetimes/1
 ``` 
 will set datetime's `EVT_ID` to be 123, thus relating the data.
-The JSON response will look like this
+On success, the JSON response will look like this
 
 ```json
 {
-    "success": true,
     "datetime": {
         "DTT_ID": 1,
         "EVT_ID": 124,
@@ -96,6 +95,20 @@ The JSON response will look like this
 
 Notice that it returns an object with both `event` and `datetime` properties, which are the two complete up-to-date entities.
 
+An error response would look something like this:
+
+```json
+{
+    "code": "rest_datetime_invalid_id",
+    "message": "Invalid datetime ID.",
+    "data": {
+        "status": 404
+    }
+}
+```
+specifically, there will be a key called `code`, showing the error's code, and `message`, which is meant to be more 
+human-readable.
+
 ### Editing Relations Across Join Resources
 
 When editing a relation that uses a join resource (ie, is listed as a `HABTM_Relation` relation on the 
@@ -110,7 +123,6 @@ will make them related (ie, make question 12 part of question group 4, by adding
 
 ```json
 {
-    "success": true,
     "question": {
         "QST_ID": 12,
         "QST_display_text": {

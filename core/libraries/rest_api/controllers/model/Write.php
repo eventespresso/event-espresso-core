@@ -422,7 +422,6 @@ class Write extends Base
             $extra_params
         );
         $response = array(
-            'success' => $related_obj === $other_obj,
             strtolower($model->get_this_model_name()) => $this->returnModelObjAsJsonResponse($model_obj, $request),
             strtolower($relation->get_other_model()->get_this_model_name()) => $this->returnModelObjAsJsonResponse($related_obj, $request),
         );
@@ -512,7 +511,6 @@ class Write extends Base
             $relation->get_other_model()->get_this_model_name()
         );
         $response = array(
-            'success' => $related_obj === $other_obj,
             strtolower($model->get_this_model_name()) => $this->returnModelObjAsJsonResponse($model_obj, $request),
             strtolower($relation->get_other_model()->get_this_model_name()) => $this->returnModelObjAsJsonResponse($related_obj, $request),
         );
@@ -525,8 +523,6 @@ class Write extends Base
                     )
                 )
             );
-            // If there's a join table, the measure of success is actually if the join row was removed.
-            $response['success'] = $join_model_obj_after_removal ? false : true;
             if ($join_model_obj instanceof EE_Base_Class) {
                 $response['join'][ strtolower($relation->get_join_model()->get_this_model_name()) ] = $this->returnModelObjAsJsonResponse($join_model_obj, $request);
             } else {
