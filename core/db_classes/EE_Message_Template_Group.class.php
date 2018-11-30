@@ -164,7 +164,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
     /**
      * returns all related EE_Message_Template objects
      *
-     * @param  array $query_params like EEM_Base::get_all()
+     * @param  array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Message_Template[]
      * @throws EE_Error
      */

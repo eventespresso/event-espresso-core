@@ -1259,7 +1259,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
          * Override the default groupby added by EEM_Base so that sorts with multiple order bys work as expected
          *
          * @link https://events.codebasehq.com/projects/event-espresso/tickets/10093
-         * @see  EEM_Base::get_all()
+         * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+         *                             or if you have the development copy of EE you can view this at the path:
+         *                             /docs/G--Model-System/model-query-params.md
          */
         $query_params['group_by'] = '';
 

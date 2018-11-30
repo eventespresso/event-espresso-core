@@ -144,7 +144,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets all the datetimes for this event
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Datetime[]
      * @throws EE_Error
      */
@@ -226,7 +226,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets all the tickets available for purchase of this event
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Ticket[]
      * @throws EE_Error
      */
@@ -694,7 +694,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets all the venues related ot the event. May provide additional $query_params if desired
      *
-     * @param array $query_params like EEM_Base::get_all's $query_params
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Venue[]
      * @throws EE_Error
      */
@@ -1208,7 +1208,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets the first term for 'espresso_event_categories' we can find
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class|EE_Term|null
      * @throws EE_Error
      */
@@ -1274,7 +1274,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets all the question groups, ordering them by QSG_order ascending
      *
-     * @param array $query_params @see EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Question_Group[]
      * @throws EE_Error
      */

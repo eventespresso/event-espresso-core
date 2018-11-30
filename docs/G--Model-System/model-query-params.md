@@ -67,7 +67,7 @@ Values can be a `string`, `int`, or `float`.  They can also be arrays if the ope
 
 ### Operator conditions using field names
 To indicate if the value is a field, simply provide a third array item (true) to the operator-value array like so:
-
+ 
 ```php
 $where_params = array( 
     'DTT_reg_limit' => array('>', 'DTT_sold', true)

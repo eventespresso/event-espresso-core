@@ -802,12 +802,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * Gets all the EE_Base_Class objects which match the $query_params, by querying the DB.
      *
-     * @param array $query_params  @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/eem-base-get-all.md
+     * @param array $query_params  @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      *                             or if you have the development copy of EE you can view this at the path:
-     *                             /docs/G--Model-System/eem-base-get-all.md
+     *                             /docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different
-     *                                        from EE_Base_Class[], use _get_all_wpdb_results()and make it public
-     *                                        again. Array keys are object IDs (if there is a primary key on the model.
+     *                                        from EE_Base_Class[], use get_all_wpdb_results(). Array keys are object IDs (if there is a primary key on the model.
      *                                        if not, numerically indexed) Some full examples: get 10 transactions
      *                                        which have Scottish attendees: EEM_Transaction::instance()->get_all(
      *                                        array( array(
@@ -844,8 +843,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Modifies the query parameters so we only get back model objects
      * that "belong" to the current user
      *
-     * @param array $query_params @see EEM_Base::get_all()
-     * @return array like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     public function alter_query_params_to_only_include_mine($query_params = array())
     {
@@ -931,7 +930,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * may want to preserve the WPDB results (eg, update, which first queries to make sure we have all the tables on
      * the model)
      *
-     * @param array  $query_params      like EEM_Base::get_all's $query_params
+     * @param array  $query_params      @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param string $output            ARRAY_A, OBJECT_K, etc. Just like
      * @param mixed  $columns_to_select , What columns to select. By default, we select all columns specified by the
      *                                  fields on the model, and the models we joined to in the query. However, you can
@@ -989,10 +988,10 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
     /**
      * Gets an array of rows from the database just like $wpdb->get_results would,
-     * but you can use the $query_params like on EEM_Base::get_all() to more easily
+     * but you can use the model query params to more easily
      * take care of joins, field preparation etc.
      *
-     * @param array  $query_params      like EEM_Base::get_all's $query_params
+     * @param array  $query_params      @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param string $output            ARRAY_A, OBJECT_K, etc. Just like
      * @param mixed  $columns_to_select , What columns to select. By default, we select all columns specified by the
      *                                  fields on the model, and the models we joined to in the query. However, you can
@@ -1105,7 +1104,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @param int   $id
      * @param array $query_params
-     * @return array of normal query params, @see EEM_Base::get_all
+     * @return array of normal query params, @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @throws EE_Error
      */
     public function alter_query_params_to_restrict_by_ID($id, $query_params = array())
@@ -1547,9 +1546,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                         EEM_Transaction::instance()->update(
      *                                         array('TXN_details'=>array('detail1'=>'monkey','detail2'=>'banana'),
      *                                         array(array('TXN_ID'=>34)));
-     * @param array   $query_params            very much like EEM_Base::get_all's $query_params
-     *                                         in client code into what's expected to be stored on each field. Eg,
-     *                                         consider updating Question's QST_admin_label field is of type
+     * @param array   $query_params            @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     *                                         Eg, consider updating Question's QST_admin_label field is of type
      *                                         Simple_HTML. If you use this function to update that field to $new_value
      *                                         = (note replace 8's with appropriate opening and closing tags in the
      *                                         following example)"8script8alert('I hack all');8/script88b8boom
@@ -1592,7 +1590,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          *
          * @param EEM_Base $model
          * @param array    $fields_n_values the updated fields and their new values
-         * @param array    $query_params    @see EEM_Base::get_all()
+         * @param array    $query_params    @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
          */
         do_action('AHEE__EEM_Base__update__begin', $this, $fields_n_values, $query_params);
         /**
@@ -1601,7 +1599,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          *
          * @param array    $fields_n_values fields and their new values
          * @param EEM_Base $model           the model being queried
-         * @param array    $query_params    see EEM_Base::get_all()
+         * @param array    $query_params    @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
          */
         $fields_n_values = (array) apply_filters(
             'FHEE__EEM_Base__update__fields_n_values',
@@ -1712,7 +1710,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          *
          * @param EEM_Base $model
          * @param array    $fields_n_values the updated fields and their new values
-         * @param array    $query_params    @see EEM_Base::get_all()
+         * @param array    $query_params    @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
          * @param int      $rows_affected
          */
         do_action('AHEE__EEM_Base__update__end', $this, $fields_n_values, $query_params, $rows_affected);
@@ -1727,7 +1725,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * that matched the query params. Note that you should pass the name of the
      * model FIELD, not the database table's column name.
      *
-     * @param array  $query_params @see EEM_Base::get_all()
+     * @param array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param string $field_to_select
      * @return array just like $wpdb->get_col()
      * @throws EE_Error
@@ -1753,7 +1751,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * Returns a single column value for a single row from the database
      *
-     * @param array  $query_params    @see EEM_Base::get_all()
+     * @param array  $query_params    @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param string $field_to_select @see EEM_Base::get_col()
      * @return string
      * @throws EE_Error
@@ -1869,7 +1867,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * in EEM_Soft_Delete_Base so that soft-deleted model objects are instead only flagged
      * as archived, not actually deleted
      *
-     * @param array   $query_params   very much like EEM_Base::get_all's $query_params
+     * @param array   $query_params   @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
      *                                that blocks it (ie, there' sno other data that depends on this data); if false,
      *                                deletes regardless of other objects which may depend on it. Its generally
@@ -1885,7 +1883,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          * model and its $query_params to find exactly which items will be deleted
          *
          * @param EEM_Base $model
-         * @param array    $query_params   @see EEM_Base::get_all()
+         * @param array    $query_params   @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
          * @param boolean  $allow_blocking whether or not to allow related model objects
          *                                 to block (prevent) this deletion
          */
@@ -1972,7 +1970,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          * items should have been deleted
          *
          * @param EEM_Base $model
-         * @param array    $query_params @see EEM_Base::get_all()
+         * @param array    $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
          * @param int      $rows_deleted
          */
         do_action('AHEE__EEM_Base__delete__end', $this, $query_params, $rows_deleted, $columns_and_ids_for_deleting);
@@ -2172,11 +2170,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
 
     /**
-     * Count all the rows that match criteria expressed in $query_params (an array just like arg to EEM_Base::get_all).
+     * Count all the rows that match criteria the model query params.
      * If $field_to_count isn't provided, the model's primary key is used. Otherwise, we count by field_to_count's
      * column
      *
-     * @param array  $query_params   like EEM_Base::get_all's
+     * @param array  $query_params   @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param string $field_to_count field on model to count by (not column name)
      * @param bool   $distinct       if we want to only count the distinct values for the column then you can trigger
      *                               that by the setting $distinct to TRUE;
@@ -2217,7 +2215,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * Sums up the value of the $field_to_sum (defaults to the primary key, which isn't terribly useful)
      *
-     * @param array  $query_params like EEM_Base::get_all
+     * @param array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param string $field_to_sum name of field (array key in $_fields array)
      * @return float
      * @throws EE_Error
@@ -2547,7 +2545,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @param mixed  $id_or_obj    EE_Base_Class child or its ID
      * @param string $model_name   like 'Event', 'Registration', etc. always singular
-     * @param array  $query_params like EEM_Base::get_all
+     * @param array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]
      * @throws EE_Error
      */
@@ -2608,7 +2606,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @param        int             /EE_Base_Class $id_or_obj
      * @param string $model_name     like 'Event', or 'Registration'
-     * @param array  $query_params   like EEM_Base::get_all's
+     * @param array  $query_params   @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param string $field_to_count name of field to count by. By default, uses primary key
      * @param bool   $distinct       if we want to only count the distinct values for the column then you can trigger
      *                               that by the setting $distinct to TRUE;
@@ -2642,7 +2640,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @param        int           /EE_Base_Class $id_or_obj
      * @param string $model_name   like 'Event', or 'Registration'
-     * @param array  $query_params like EEM_Base::get_all's
+     * @param array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param string $field_to_sum name of field to count by. By default, uses primary key
      * @return float
      * @throws EE_Error
@@ -2680,7 +2678,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @param int | EE_Base_Class $id_or_obj        EE_Base_Class child or its ID
      * @param string              $other_model_name , key in $this->_relatedModels, eg 'Registration', or 'Events'
-     * @param array               $query_params     like EEM_Base::get_all's
+     * @param array               $query_params     @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class
      * @throws EE_Error
      */
@@ -3141,7 +3139,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Registration model. If it were array('Registrations.Transactions.Payments.PAY_ID'=>3), then we'd need the
      * related Registration, Transaction, and Payment models.
      *
-     * @param array $query_params like EEM_Base::get_all's $query_parameters['where']
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Model_Query_Info_Carrier
      * @throws EE_Error
      */
@@ -3204,8 +3202,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * For extracting related models from WHERE (0), HAVING (having), ORDER BY (order_by) or forced joins (force_join)
      *
-     * @param array                       $sub_query_params like EEM_Base::get_all's $query_params[0] or
-     *                                                      $query_params['having']
+     * @param array                       $sub_query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#-0-where-conditions
      * @param EE_Model_Query_Info_Carrier $model_query_info_carrier
      * @param string                      $query_param_type one of $this->_allowed_query_params
      * @throws EE_Error
@@ -3277,8 +3274,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * For extracting related models from forced_joins, where the array values contain the info about what
      * models to join with. Eg an array like array('Attendee','Price.Price_Type');
      *
-     * @param array                       $sub_query_params like EEM_Base::get_all's $query_params[0] or
-     *                                                      $query_params['having']
+     * @param array                       $sub_query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @param EE_Model_Query_Info_Carrier $model_query_info_carrier
      * @param string                      $query_param_type one of $this->_allowed_query_params
      * @throws EE_Error
@@ -3311,14 +3307,14 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
 
     /**
-     * Extract all the query parts from $query_params (an array like whats passed to EEM_Base::get_all)
+     * Extract all the query parts from  model query params
      * and put into a EEM_Related_Model_Info_Carrier for easy extraction into a query. We create this object
      * instead of directly constructing the SQL because often we need to extract info from the $query_params
      * but use them in a different order. Eg, we need to know what models we are querying
      * before we know what joins to perform. However, we need to know what data types correspond to which fields on
      * other models before we can finalize the where clause SQL.
      *
-     * @param array $query_params
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @throws EE_Error
      * @return EE_Model_Query_Info_Carrier
      */
@@ -3521,7 +3517,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * context (eg reading frontend, backend, edit or delete).
      *
      * @param string $context one of EEM_Base::valid_cap_contexts()
-     * @return array like EEM_Base::get_all() 's $query_params[0]
+     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @throws EE_Error
      */
     public function caps_where_conditions($context = self::caps_read)
@@ -3590,9 +3586,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                                                  not for this primary model. 'all', the default,
      *                                                                  means default where conditions will apply as
      *                                                                  normal
-     * @param array                       $where_query_params           like EEM_Base::get_all's $query_params[0]
+     * @param array                       $where_query_params           @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @throws EE_Error
-     * @return array like $query_params[0], see EEM_Base::get_all for documentation
+     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      */
     private function _get_default_where_conditions_for_models_in_query(
         EE_Model_Query_Info_Carrier $query_info_carrier,
@@ -3721,7 +3717,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param array    $provided_where_conditions
      * @param EEM_Base $model
      * @param string   $model_relation_path like 'Transaction.Payment.'
-     * @return array like EEM_Base::get_all's $query_params[0]
+     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @throws EE_Error
      */
     private function _override_defaults_or_make_null_friendly(
@@ -3761,7 +3757,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * NOT array('Event_CPT.post_type'=>'esp_event').
      *
      * @param string $model_relation_path eg, path from Event to Payment is "Registration.Transaction.Payment."
-     * @return array like EEM_Base::get_all's $query_params[0] (where conditions)
+     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      */
     private function _get_default_where_conditions($model_relation_path = null)
     {
@@ -3781,7 +3777,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Similar to _get_default_where_conditions
      *
      * @param string $model_relation_path eg, path from Event to Payment is "Registration.Transaction.Payment."
-     * @return array like EEM_Base::get_all's $query_params[0] (where conditions)
+     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      */
     protected function _get_minimum_where_conditions($model_relation_path = null)
     {
@@ -4123,7 +4119,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * Constructs SQL for where clause, like "WHERE Event.ID = 23 AND Transaction.amount > 100" etc.
      *
-     * @param array $where_params like EEM_Base::get_all
+     * @param array $where_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @return string of SQL
      * @throws EE_Error
      */
@@ -4160,7 +4156,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Used for creating nested WHERE conditions. Eg "WHERE ! (Event.ID = 3 OR ( Event_Meta.meta_key = 'bob' AND
      * Event_Meta.meta_value = 'foo'))"
      *
-     * @param array  $where_params see EEM_Base::get_all for documentation
+     * @param array  $where_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @param string $glue         joins each subclause together. Should really only be " AND " or " OR "...
      * @throws EE_Error
      * @return string of SQL
@@ -5787,7 +5783,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * We consider something to be a copy if all the attributes match (except the ID, of course).
      *
      * @param array|EE_Base_Class $model_object_or_attributes_array If its an array, it's field-value pairs
-     * @param array               $query_params                     like EEM_Base::get_all's query_params.
+     * @param array               $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @throws EE_Error
      * @return \EE_Base_Class[] Array keys are object IDs (if there is a primary key on the model. if not, numerically
      *                                                              indexed)

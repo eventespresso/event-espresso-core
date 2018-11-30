@@ -181,7 +181,7 @@ class EEM_Term_Relationship extends EEM_Base
      * all ok
      *
      * @param array   $fields_n_values         see EEM_Base::update
-     * @param array   $query_params            @see EEM_Base::get_all
+     * @param array   $query_params            @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param boolean $keep_model_objs_in_sync if TRUE, makes sure we ALSO update model objects
      *                                         in this model's entity map according to $fields_n_values that match
      *                                         $query_params. This obviously has some overhead, so you can disable it
@@ -204,7 +204,7 @@ class EEM_Term_Relationship extends EEM_Base
      * Overrides parent so that after running this, we also double-check
      * the term taxonomy counts are up-to-date
      *
-     * @param array   $query_params @see EEM_Base::get_all
+     * @param array   $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param boolean $allow_blocking
      * @return int @see EEM_Base::delete
      */
