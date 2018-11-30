@@ -1,0 +1,71 @@
+/* -------------------------------------------------------------------------
+ * Event Espresso BiggieCalendarDate Stylesheet
+ * (c) 2018 Event Espresso
+ * -------------------------------------------------------------------------*/
+
+.medium-calendar-date-wrapper {
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, .25) 50%, rgba(255, 255, 255, 0) 0%);
+    background-size: 1px 5px;
+    background-repeat: repeat-y;
+    color: #fff;
+    height: 100%;
+    padding: 0 10px 10px 10px;
+    position: absolute;
+    text-align: center;
+    width: 120px;
+}
+
+.medium-calendar-date-wrapper.mcd-pos-left {
+    background-position: right;
+    float: left;
+    left: 0;
+}
+
+.medium-calendar-date-wrapper.mcd-pos-right {
+    background-position: left;
+    float: right;
+    right: 0;
+}
+
+.medium-calendar-date-header {
+    color: rgba(255, 255, 255, .9);
+    font-size: 9px;
+    letter-spacing: 2px;
+    line-height: 9px;
+    margin: .65rem 0 0;
+}
+
+.medium-calendar-date .weekday {
+    font-size: 10px;
+    line-height: 16px;
+    letter-spacing: 4px;
+    margin: .6rem 0 0;
+}
+
+.medium-calendar-date .month-day-year {
+    color: rgba(255, 255, 255, .95);
+    font-size: 21px;
+    font-weight: bold;
+    line-height: 22px;
+    text-shadow: -1px -1px rgba(0, 0, 0, .15);
+}
+
+.medium-calendar-date .month-day-year span {
+    color: rgba(255, 255, 255, .6);
+    font-size: 12px;
+    font-weight: normal !important;
+    line-height: 12px;
+    margin: 0 2px 0 3px;
+    position: relative;
+    text-shadow: none !important;
+    top: -3px;
+}
+
+.medium-calendar-date-footer {
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    line-height: 24px;
+    margin: 0;
+    text-shadow: none;
+}
