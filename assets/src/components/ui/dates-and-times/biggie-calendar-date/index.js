@@ -26,16 +26,20 @@ export const BiggieCalendarDate = ( {
 		date = moment( date );
 	}
 	htmlClass = htmlClass ?
-		`${ htmlClass } biggie-calendar-date-wrapper` :
-		'biggie-calendar-date-wrapper';
+		`${ htmlClass } biggie-calendar-date-bg` :
+		'biggie-calendar-date-bg';
 	htmlClass = position === 'left' ?
 		`${ htmlClass } bcd-pos-left` :
 		`${ htmlClass } bcd-pos-right`;
 	return (
 		<div className={ htmlClass }>
-			<div className="biggie-calendar-date-header">
-				{ headerText }
-			</div>
+			{
+				headerText &&(
+					<div className="biggie-calendar-date-header">
+						{ headerText }
+					</div>
+				)
+			}
 			<div className="biggie-calendar-date">
 				<div className="weekday">
 					{ date.format( 'dddd' ) }
@@ -51,9 +55,13 @@ export const BiggieCalendarDate = ( {
 					{ date.format( 'YYYY' ) }
 				</div>
 			</div>
-			<div className="biggie-calendar-date-footer">
-				{ footerText }
-			</div>
+			{
+				footerText && (
+					<div className="biggie-calendar-date-footer">
+						{ footerText }
+					</div>
+				)
+			}
 		</div>
 	);
 };

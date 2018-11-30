@@ -3,7 +3,7 @@
  * (c) 2018 Event Espresso
  * -------------------------------------------------------------------------*/
 
-.biggie-calendar-date-wrapper {
+.biggie-calendar-date-bg {
     background-image: linear-gradient(to bottom, rgba(0, 0, 0, .25) 50%, rgba(255, 255, 255, 0) 0%);
     background-size: 1px 5px;
     background-repeat: repeat-y;
@@ -15,12 +15,12 @@
     width: 120px;
 }
 
-.biggie-calendar-date-wrapper.bcd-pos-left {
+.biggie-calendar-date-bg.bcd-pos-left {
     background-position: right;
     float: left;
     left: 0;
 }
-.biggie-calendar-date-wrapper.bcd-pos-right {
+.biggie-calendar-date-bg.bcd-pos-right {
     background-position: left;
     float: right;
     right: 0;
@@ -30,17 +30,19 @@
     color: rgba(255, 255, 255, .9);
     font-size: 9px;
     letter-spacing: 2px;
-    line-height: 24px;
+    line-height: 27px;
 }
 
 .biggie-calendar-date .weekday {
-    font-size: 14px;
-    line-height: 18px;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 20px;
     letter-spacing: 1px;
 }
 
 .biggie-calendar-date .month {
     font-size: 21px;
+    font-weight: bold;
     line-height: 20px;
 }
 
@@ -49,7 +51,7 @@
 }
 
 .biggie-calendar-date .day {
-    color: rgba(255, 255, 255, .63);
+    color: rgba(255, 255, 255, .8);
     font-size: 48px;
     font-weight: bold;
     line-height: 40px;
@@ -59,12 +61,139 @@
 .biggie-calendar-date .year {
     font-size: 12px;
     letter-spacing: 8px;
-    left: 4px;
+    line-height: 21px;
+    left: 3px;
     position: relative;
 }
 
 .biggie-calendar-date-footer {
     font-weight: bold;
+    letter-spacing: 2px;
     margin: 5px 0 0;
     text-shadow: -1px -1px rgba(0, 0, 0, .15);
 }
+
+/* Media Queries for smaller screens
+ * -------------------------------------------------------------------------*/
+
+@media only screen and (max-width: 1280px) {
+}
+
+@media only screen and (max-width: 1024px) {
+}
+
+@media only screen and (max-width: 768px) {
+}
+
+@media only screen and (max-width: 600px) and (min-width: 481px) {
+}
+
+@media only screen and (max-width: 540px) and (min-width: 481px) {
+}
+
+@media only screen and (max-width: 540px) {
+    .biggie-calendar-date-bg.bcd-pos-left {
+        background-position: bottom;
+        float: none;
+        /*left: unset;*/
+    }
+
+    .biggie-calendar-date-bg.bcd-pos-right {
+        background-position: top;
+        float: none;
+        /*right: unset;*/
+    }
+    .biggie-calendar-date-bg {
+        background-image: linear-gradient(to right, rgba(0, 0, 0, .25) 50%, rgba(255, 255, 255, 0) 0%);
+        background-position: top;
+        background-size: 5px 1px;
+        background-repeat: repeat-x;
+        clear: both;
+        float: none;
+        height: auto;
+        position: relative;
+        right: unset;
+        width: 100% !important;
+    }
+
+    .biggie-calendar-date .weekday,
+    .biggie-calendar-date .month,
+    .biggie-calendar-date .day,
+    .biggie-calendar-date .year {
+        color: #fff;
+        display: inline-block;
+        font-size: 18px;
+        font-weight: normal;
+        line-height: 21px;
+        letter-spacing: 0;
+        margin: 0 .25rem;
+        text-shadow: none;
+    }
+
+    .month-day-sep {
+        display: block;
+    }
+
+    .biggie-calendar-date .year {
+        left: unset;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+}
+
+@media only screen and (max-width: 360px) {
+}
+
+@media only screen and (max-width: 320px) {
+}
+
+
+/* WordPress Media Query breakpoints
+ * -------------------------------------------------------------------------*/
+
+/* Auto-folding of the admin menu */
+@media only screen and (max-width: 960px) {
+}
+
+/* one column on the post write/edit screen */
+@media only screen and (max-width: 850px) and (min-width: 541px) {
+
+    .biggie-calendar-date-bg {
+        padding: 0 5px 5px 5px;
+        width: 100px;
+    }
+
+    .biggie-calendar-date .weekday {
+        font-size: 12px;
+    }
+
+    .biggie-calendar-date .month {
+        font-size: 18px;
+    }
+
+    .biggie-calendar-date .day {
+        font-size: 42px;
+        line-height: 36px;
+    }
+
+    .biggie-calendar-date .year {
+        font-size: 12px;
+        letter-spacing: 6px;
+        line-height: 21px;
+        left: 1px;
+    }
+
+    .biggie-calendar-date-footer {
+        letter-spacing: 1px;
+    }
+}
+
+/* Tablet */
+@media screen and ( max-width: 782px ) {
+}
+
+/* Smartphone */
+@media screen and (max-width: 600px) {
+}
+
