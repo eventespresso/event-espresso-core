@@ -168,7 +168,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      * EE_Belongs_To_Relation doesn't need to be saved before querying.
      *
      * @param EE_Base_Class|int $model_object_or_id                      or the primary key of this model
-     * @param array             $query_params                            like EEM_Base::get_all's $query_params
+     * @param array             $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param boolean           $values_already_prepared_by_model_object @deprecated since 4.8.1
      * @return EE_Base_Class[]
      * @throws \EE_Error
@@ -360,7 +360,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      * Removes ALL relation instances for this relation obj
      *
      * @param EE_Base_Class|int $this_obj_or_id
-     * @param array             $where_query_param like EEM_Base::get_all's $query_params[0] (where conditions)
+     * @param array             $where_query_param @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @return EE_Base_Class[]
      * @throws \EE_Error
      */

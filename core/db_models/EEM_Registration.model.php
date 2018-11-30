@@ -407,7 +407,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
      * This returns a wpdb->results array of all registration date month and years matching the incoming query params
      * and grouped by month and year.
      *
-     * @param  array $where_params Array of query_params as described in the comments for EEM_Base::get_all()
+     * @param  array $where_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @return array
      * @throws EE_Error
      */
