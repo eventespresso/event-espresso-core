@@ -625,7 +625,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
      * @param EEM_Base $model either EEM_Question or EEM_Question_Group
      * @param int      $per_page
      * @param int      $current_page
-     * @return array lik EEM_Base::get_all's $query_params parameter
+     * @return array model query params, @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     protected function get_query_params($model, $per_page = 10, $current_page = 10)
     {

@@ -17,7 +17,7 @@ class EE_CPT_Where_Conditions extends EE_CPT_Minimum_Where_Conditions
     /**
      * Gets the where default where conditions for a custom post type model
      * @param string $model_relation_path. Eg, from Event to Payment, this should be "Registration.Transaction.Payment"
-     * @return array like EEM_Base::get_all's $query_params's index [0] (where conditions)
+     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      */
     protected function _get_default_where_conditions()
     {
