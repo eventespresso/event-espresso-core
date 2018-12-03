@@ -19,6 +19,10 @@ import {
 } from './constants';
 
 /**
+ * @todo need to account for password protected content in rest api response
+ */
+
+/**
  * BaseEntity is the basic class for all entities.  createEntityFactory returns
  * an instance of this and all the getters/setters for fields etc are
  * dynamically created via the constructor.
