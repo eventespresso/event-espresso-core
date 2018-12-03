@@ -22,7 +22,7 @@ class EE_Boolean_Field extends EE_Integer_Field
      */
     public function prepare_for_get($value_of_field_on_model_object)
     {
-        return (boolean)parent::prepare_for_get($value_of_field_on_model_object);
+        return (boolean) parent::prepare_for_get($value_of_field_on_model_object);
     }
 
     /**
