@@ -720,7 +720,7 @@ class Read extends Base
 
     /**
      * Returns an array describing which fields can be protected, and which actually were removed this request
-     * @since $VID:$
+     * @since 4.9.74.p
      * @param $model
      * @param $results_so_far
      * @param $protected
@@ -1030,7 +1030,7 @@ class Read extends Base
     /**
      * If the user has requested only specific properties (including meta properties like _links or _protected)
      * remove everything else.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @param EEM_Base $model
      * @param WP_REST_Request $rest_request
      * @param $entity_array
@@ -1570,7 +1570,7 @@ class Read extends Base
 
     /**
      * Checks that if this content requires a password to be read, that it's been provided and is correct.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @param EEM_Base $model
      * @param $model_row
      * @param $query_params

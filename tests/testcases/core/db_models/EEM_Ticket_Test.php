@@ -35,7 +35,7 @@ class EEM_Ticket_Test extends EE_UnitTestCase {
 	}
 
     /**
-     * @since $VID:$
+     * @since 4.9.74.p
      * @group private-1
      */
     public function testGetAllExcludeProtected()

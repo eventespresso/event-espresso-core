@@ -23,7 +23,7 @@ use WP_REST_Request;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.74.p
  * @group private-1
  *
  */
@@ -32,7 +32,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Helper method for setting up password-protected event
-     * @since $VID:$
+     * @since 4.9.74.p
      * @return \EE_Event
      * @throws EE_Error
      */
@@ -53,7 +53,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * test get_all on a model with a password field, with no password provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @group current
      */
     public function testGetAllNoPassword()
@@ -74,7 +74,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     /**
      * Asserts that _protected can be excluded using "include" parameter (if using that, you probably wanted
      * to cut down on the response size).
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -107,7 +107,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     /**
      * Asserts that _protected can be excluded using "include" parameter (if using that, you probably wanted
      * to cut down on the response size).
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -146,7 +146,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     /**
      * Slight variation on the previous test, just verifying password protected content is even protected from
      * admins because that's what the WP API does... although no guanratee this won't change.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -173,7 +173,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Get all events but provide the wrong password.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -198,7 +198,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Get all events, but with the correct password. There is only one password so it's fine.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -226,7 +226,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     /**
      * Get all events, using the correct password BUT multiple events are returned, some with a different password.
      * Seeing how we want to avoid brute force attack trying to guess a post password, this is denied.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -261,7 +261,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Get one password-protected event, without providing the password.
-     * @since $VID:$
+     * @since 4.9.74.p
      */
     public function testGetOneNoPassword()
     {
@@ -307,7 +307,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Get one event with the correct password.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -339,7 +339,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Creates two datetimes, the first for a public event, the second for a password-protected event.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @return EE_Datetime[] first one is for a public event, the second is for a password-protected event.
      * @throws EE_Error
      * @throws InvalidDataTypeException
@@ -377,7 +377,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Test get_all on a model protected by another model's password field, with no password provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -407,7 +407,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     /**
      * Helper method for setting up two tickets, the first for a datetime on a public event, the second for a datetime
      * on a password-protected event.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @return EE_Ticket[]. The first is for a event with no password, the second is for an event that has a password
      * @throws EE_Error
      * @throws InvalidDataTypeException
@@ -428,7 +428,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     /**
      * Test get_all on a model protected by another model's password field (that's not directly related),
      * with no password provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @group private-1
      * @throws EE_Error
      * @throws InvalidDataTypeException
@@ -457,7 +457,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Test get_all on a model protected by another model's password field, with the wrong password provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -484,7 +484,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Test get_all on a model protected by another model's password field, with the correct password provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -520,7 +520,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Test get_all on a model protected by another model's password field, with the correct password provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -547,7 +547,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Test get_one on a model protected by another model's password field, with no password provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -574,7 +574,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Test get_one on a model protected by another model's password field, with the wrong password provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -606,7 +606,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Test get_one on a model protected by another model's password field, with the correct password provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -642,7 +642,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Test get_related with a model with a password field, with no password provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -672,7 +672,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Test get_related on a model protected by another model's password field, with the wrong password provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -707,7 +707,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Test get_related on a model protected by another model's password field, with the correct password provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -746,7 +746,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Creates a venue with a password whose country is Canada. Eh.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @return EE_Venue
      * @throws EE_Error
      */
@@ -765,7 +765,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * test get_related with an UNPROTECTED model, but the related model is protected, and no password is provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -800,7 +800,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * test get_related with an UNPROTECTED model, but the related model is protected, and WRONG password is provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -832,7 +832,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * test get_related with an UNPROTECTED model, but the related model is protected, and the CORRECT password provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -873,7 +873,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     /**
      * Test including on a model with a password, and the related model is password protected (eg country to venue),
      * and no password is provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -900,7 +900,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * test get_related with an UNPROTECTED model, but the related model is protected, and WRONG password is provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -932,7 +932,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * test get_related with an UNPROTECTED model, but the related model is protected, and the CORRECT password provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -967,7 +967,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Test fetching an protected model, and including an  UNprotected model (venue to country), and no password is provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1006,7 +1006,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Test fetching an protected model, and including an  UNprotected model (venue to country), and no password is provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1047,7 +1047,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     /**
      * Test fetching an protected model, and including an  UNprotected model (venue to country), and the wrong
      * password is provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1081,7 +1081,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     /**
      * Test fetching an protected model, and including an  UNprotected model (venue to country), and the correct
      * password is provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1118,7 +1118,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     /**
      * test fetching an unprotected model, and including a protected model (eg country to venue), and no password is
      * provided
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1164,7 +1164,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     /**
      * Test fetching an protected model, and including an  UNprotected model (venue to country), and the wrong
      * password is provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1198,7 +1198,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     /**
      * Test fetching an protected model, and including an  UNprotected model (venue to country), and the correct
      * password is provided.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1330,7 +1330,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Adds some featured image to that post ID
-     * @since $VID:$
+     * @since 4.9.74.p
      * @param $post_id
      * @return int|\WP_Error
      */
@@ -1367,7 +1367,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Verify requests when caps=read_admin we don't protect any fields etc, even on password-protected events
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1397,7 +1397,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Verify requests when caps=read_admin all datetimes get returned (even those for password-protected events)
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1426,7 +1426,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Verify requests when caps=read_admin we don't protect any fields etc, even on password-protected events
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1455,7 +1455,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1487,7 +1487,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException

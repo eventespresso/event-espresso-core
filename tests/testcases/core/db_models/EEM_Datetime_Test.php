@@ -440,7 +440,7 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 	}
 
     /**
-     * @since $VID:$
+     * @since 4.9.74.p
      * @group private-1
      */
     public function testGetAllExcludeProtected()

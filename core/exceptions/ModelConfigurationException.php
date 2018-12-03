@@ -13,7 +13,7 @@ use Exception;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.74.p
  *
  */
 class ModelConfigurationException extends DomainException

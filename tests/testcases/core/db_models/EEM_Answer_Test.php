@@ -24,7 +24,7 @@ class EEM_Answer_Test extends EE_UnitTestCase{
     protected $model;
 
     /**
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
@@ -101,7 +101,7 @@ class EEM_Answer_Test extends EE_UnitTestCase{
 	}
 
     /**
-     * @since $VID:$
+     * @since 4.9.74.p
      * @group private-1
      */
     public function testRestrictedbyRelatedModelPassword()

@@ -7,7 +7,7 @@
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.74.p
  *
  */
 class EE_Password_Field extends EE_Text_Field_Base
@@ -33,7 +33,7 @@ class EE_Password_Field extends EE_Text_Field_Base
 
     /**
      * Returns the names of the fields on this model that this password field should protect
-     * @since $VID:$
+     * @since 4.9.74.p
      * @return array
      */
     public function protectedFields()
@@ -43,7 +43,7 @@ class EE_Password_Field extends EE_Text_Field_Base
 
     /**
      * Returns whether or not the specified field is protected by this model
-     * @since $VID:$
+     * @since 4.9.74.p
      * @param $field_name
      * @return bool
      */

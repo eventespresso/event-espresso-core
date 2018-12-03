@@ -16,7 +16,7 @@ class EE_Boolean_Field extends EE_Integer_Field
 
     /**
      * Double-checks the value being returned is an boolean.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @param mixed $value_of_field_on_model_object
      * @return boolean
      */
@@ -26,7 +26,7 @@ class EE_Boolean_Field extends EE_Integer_Field
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.74.p
      * @param $value_inputted_for_field_on_model_object
      * @return boolean
      */
