@@ -184,6 +184,12 @@ class TableManager extends \EE_Base
      */
     public function createTable($table_name, $create_sql, $engine = 'MyISAM')
     {
+        $engine = apply_filters(
+            'FHEE__EventEspresso__core__services__database__TableManager__createTable__engine',
+            $engine,
+            $table_name,
+            $create_sql
+        );
         // does $sql contain valid column information? ( LPT: https://regex101.com/ is great for working out regex patterns )
         if (preg_match('((((.*?))(,\s))+)', $create_sql, $valid_column_data)) {
             $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
