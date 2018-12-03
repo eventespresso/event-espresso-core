@@ -3,6 +3,8 @@
 use EventEspresso\core\domain\values\model\CustomSelects;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\ModelConfigurationException;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\orm\ModelFieldFactory;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -125,6 +127,21 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @var string
      */
     protected $_model_chain_to_wp_user = '';
+
+    /**
+     * String describing how to find the model with a password controlling access to this model. This property has the
+     * same format as $_model_chain_to_wp_user. This is primarily used by the query param "exclude_protected".
+     * This value is the path of models to follow to arrive at the model with the password field.
+     * If it is an empty string, it means this model has the password field. If it is null, it means there is no
+     * model with a password that should affect reading this on the front-end.
+     * Eg this is an empty string for the Event model because it has a password.
+     * This is null for the Registration model, because its event's password has no bearing on whether
+     * you can read the registration or not on the front-end (it just depends on your capabilities.)
+     * This is 'Datetime.Event' on the Ticket model, because model queries for tickets that set "exclude_protected"
+     * should hide tickets for datetimes for events that have a password set.
+     * @var string |null
+     */
+    protected $model_chain_to_password = null;
 
     /**
      * This is a flag typically set by updates so that we don't load the where strategy on updates because updates
@@ -267,6 +284,17 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     protected $_wp_core_model = false;
 
     /**
+     * @var bool stores whether this model has a password field or not.
+     * null until initialized by hasPasswordField()
+     */
+    protected $has_password_field;
+    
+    /**
+     * @var EE_Password_Field|null Automatically set when calling getPasswordField()
+     */
+    protected $password_field;
+
+    /**
      *    List of valid operators that can be used for querying.
      * The keys are all operators we'll accept, the values are the real SQL
      * operators used
@@ -370,7 +398,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         'on_join_limit',
         'default_where_conditions',
         'caps',
-        'extra_selects'
+        'extra_selects',
+        'exclude_protected',
     );
 
     /**
@@ -3305,7 +3334,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     }
 
 
-
     /**
      * Extract all the query parts from  model query params
      * and put into a EEM_Related_Model_Info_Carrier for easy extraction into a query. We create this object
@@ -3317,6 +3345,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @throws EE_Error
      * @return EE_Model_Query_Info_Carrier
+     * @throws ModelConfigurationException
      */
     public function _create_model_query_info_carrier($query_params)
     {
@@ -3334,20 +3363,31 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             );
             $query_params = array();
         }
-        $where_query_params = isset($query_params[0]) ? $query_params[0] : array();
+        $query_params[0] = isset($query_params[0]) ? $query_params[0] : array();
         // first check if we should alter the query to account for caps or not
         // because the caps might require us to do extra joins
         if (isset($query_params['caps']) && $query_params['caps'] !== 'none') {
-            $query_params[0] = $where_query_params = array_replace_recursive(
-                $where_query_params,
+            $query_params[0] = array_replace_recursive(
+                $query_params[0],
                 $this->caps_where_conditions(
                     $query_params['caps']
                 )
             );
         }
+
+        // check if we should alter the query to remove data related to protected
+        // custom post types
+        if (isset($query_params['exclude_protected']) && $query_params['exclude_protected'] === true) {
+            $where_param_key_for_password = $this->modelChainAndPassword();
+            // only include if related to a cpt where no password has been set
+            $query_params[0]['OR*nopassword'] = array(
+                $where_param_key_for_password => '',
+                $where_param_key_for_password . '*' => array('IS_NULL')
+            );
+        }
         $query_object = $this->_extract_related_models_from_query($query_params);
         // verify where_query_params has NO numeric indexes.... that's simply not how you use it!
-        foreach ($where_query_params as $key => $value) {
+        foreach ($query_params[0] as $key => $value) {
             if (is_int($key)) {
                 throw new EE_Error(
                     sprintf(
@@ -3370,15 +3410,15 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         } else {
             $use_default_where_conditions = EEM_Base::default_where_conditions_all;
         }
-        $where_query_params = array_merge(
+        $query_params[0] = array_merge(
             $this->_get_default_where_conditions_for_models_in_query(
                 $query_object,
                 $use_default_where_conditions,
-                $where_query_params
+                $query_params[0]
             ),
-            $where_query_params
+            $query_params[0]
         );
-        $query_object->set_where_sql($this->_construct_where_clause($where_query_params));
+        $query_object->set_where_sql($this->_construct_where_clause($query_params[0]));
         // if this is a "on_join_limit" then we are limiting on on a specific table in a multi_table join.
         // So we need to setup a subquery and use that for the main join.
         // Note for now this only works on the primary table for the model.
@@ -6257,5 +6297,164 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             }
         }
         return false;
+    }
+
+    /**
+     * Returns true if this model has a password field on it (regardless of whether that password field has any content)
+     * @since $VID:$
+     * @return boolean
+     */
+    public function hasPassword()
+    {
+        // if we don't yet know if there's a password field, find out and remember it for next time.
+        if ($this->has_password_field === null) {
+            $password_field = $this->getPasswordField();
+            $this->has_password_field = $password_field instanceof EE_Password_Field ? true : false;
+        }
+        return $this->has_password_field;
+    }
+
+    /**
+     * Returns the password field on this model, if there is one
+     * @since $VID:$
+     * @return EE_Password_Field|null
+     */
+    public function getPasswordField()
+    {
+        // if we definetely already know there is a password field or not (because has_password_field is true or false)
+        // there's no need to search for it. If we don't know yet, then find out
+        if ($this->has_password_field === null && $this->password_field === null) {
+            $this->password_field = $this->get_a_field_of_type('EE_Password_Field');
+        }
+        // don't bother setting has_password_field because that's hasPassword()'s job.
+        return $this->password_field;
+    }
+
+
+    /**
+     * Returns the list of field (as EE_Model_Field_Bases) that are protected by the password
+     * @since $VID:$
+     * @return EE_Model_Field_Base[]
+     * @throws EE_Error
+     */
+    public function getPasswordProtectedFields()
+    {
+        $password_field = $this->getPasswordField();
+        $fields = array();
+        if ($password_field instanceof EE_Password_Field) {
+            $field_names = $password_field->protectedFields();
+            foreach ($field_names as $field_name) {
+                $fields[ $field_name ] = $this->field_settings_for($field_name);
+            }
+        }
+        return $fields;
+    }
+
+
+    /**
+     * Checks if the current user can perform the requested action on this model
+     * @since $VID:$
+     * @param string $cap_to_check one of the array keys from _cap_contexts_to_cap_action_map
+     * @param EE_Base_Class|array $model_obj_or_fields_n_values
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws UnexpectedEntityException
+     */
+    public function currentUserCan($cap_to_check, $model_obj_or_fields_n_values)
+    {
+        if ($model_obj_or_fields_n_values instanceof EE_Base_Class) {
+            $model_obj_or_fields_n_values = $model_obj_or_fields_n_values->model_field_array();
+        }
+        if (!is_array($model_obj_or_fields_n_values)) {
+            throw new UnexpectedEntityException(
+                $model_obj_or_fields_n_values,
+                'EE_Base_Class',
+                sprintf(
+                    esc_html__('%1$s must be passed an `EE_Base_Class or an array of fields names with their values. You passed in something different.', 'event_espresso'),
+                    __FUNCTION__
+                )
+            );
+        }
+        return $this->exists(
+            $this->alter_query_params_to_restrict_by_ID(
+                $this->get_index_primary_key_string($model_obj_or_fields_n_values),
+                array(
+                    'default_where_conditions' => 'none',
+                    'caps'                     => $cap_to_check,
+                )
+            )
+        );
+    }
+
+    /**
+     * Returns the query param where conditions key to the password affecting this model.
+     * Eg on EEM_Event this would just be "password", on EEM_Datetime this would be "Event.password", etc.
+     * @since $VID:$
+     * @return null|string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ModelConfigurationException
+     * @throws ReflectionException
+     */
+    public function modelChainAndPassword()
+    {
+        if ($this->model_chain_to_password === null) {
+            throw new ModelConfigurationException(
+                $this,
+                esc_html_x(
+                // @codingStandardsIgnoreStart
+                    'Cannot exclude protected data because the model has not specified which model has the password.',
+                    // @codingStandardsIgnoreEnd
+                    '1: model name',
+                    'event_espresso'
+                )
+            );
+        }
+        if ($this->model_chain_to_password === '') {
+            $model_with_password = $this;
+        } else {
+            if ($pos_of_period = strrpos($this->model_chain_to_password, '.')) {
+                $last_model_in_chain = substr($this->model_chain_to_password, $pos_of_period + 1);
+            } else {
+                $last_model_in_chain = $this->model_chain_to_password;
+            }
+            $model_with_password = EE_Registry::instance()->load_model($last_model_in_chain);
+        }
+
+        $password_field = $model_with_password->getPasswordField();
+        if ($password_field instanceof EE_Password_Field) {
+            $password_field_name = $password_field->get_name();
+        } else {
+            throw new ModelConfigurationException(
+                $this,
+                sprintf(
+                    esc_html_x(
+                        'This model claims related model "%1$s" should have a password field on it, but none was found. The model relation chain is "%2$s"',
+                        '1: model name, 2: special string',
+                        'event_espresso'
+                    ),
+                    $model_with_password->get_this_model_name(),
+                    $this->model_chain_to_password
+                )
+            );
+        }
+        return ($this->model_chain_to_password ? $this->model_chain_to_password . '.' : '') . $password_field_name;
+    }
+
+    /**
+     * Returns true if there is a password on a related model which restricts access to some of this model's rows,
+     * or if this model itself has a password affecting access to some of its other fields.
+     * @since $VID:$
+     * @return boolean
+     */
+    public function restrictedByRelatedModelPassword()
+    {
+        return $this->model_chain_to_password !== null;
     }
 }

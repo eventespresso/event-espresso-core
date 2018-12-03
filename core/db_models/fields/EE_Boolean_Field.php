@@ -14,6 +14,22 @@ class EE_Boolean_Field extends EE_Integer_Field
         $this->setSchemaType('boolean');
     }
 
+    /**
+     * Double-checks the value being returned is an boolean.
+     * @since $VID:$
+     * @param mixed $value_of_field_on_model_object
+     * @return boolean
+     */
+    public function prepare_for_get($value_of_field_on_model_object)
+    {
+        return (boolean)parent::prepare_for_get($value_of_field_on_model_object);
+    }
+
+    /**
+     * @since $VID:$
+     * @param $value_inputted_for_field_on_model_object
+     * @return boolean
+     */
     public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
         if ($value_inputted_for_field_on_model_object) {

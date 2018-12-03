@@ -9,6 +9,8 @@ use EE_Error;
 use EE_Infinite_Integer_Field;
 use EE_Maybe_Serialized_Simple_HTML_Field;
 use EE_Model_Field_Base;
+use EE_Password_Field;
+use EE_Restriction_Generator_Base;
 use EE_Serialized_Text_Field;
 use EED_Core_Rest_Api;
 use EEM_Base;

@@ -185,3 +185,62 @@ Filters results based on your user's capabilities with regards to different acti
 //return only events I'm allowed to edit
 https://demoee.org/wp-json/ee/v4.8.36/events?caps=edit
 ```
+
+## password
+
+New in Event Espresso $VID:$.
+
+Some data, like event descriptions, can be password-protected (see the section in [reading data](ee4-rest-api-reading-data.md#Password-protected Data)).
+If you know the password, just add the password query parameter to any request, eg
+
+```php
+//see the password-protected event 123
+https://demoee.org/wp-json/ee/v4.8.36/events/123?password=jedimaster
+//see the password-protected events (assuming all star wars posts use the same password)
+https://demoee.org/wp-json/ee/v4.8.36/events/?where[Term_Taxonomy.Term.name]=StarWars&password=jedimaster
+```
+
+Note that, unlike the WP REST API, you can provide the password when querying a resource (ie, getting all events, not just one) and when querying data related to a password-protected entity (eg you can provide a password when querying for datetimes or tickets).
+The only gotcha is this: if that password is incorrect for any entity, then you'll receive an error and nothing will be received. This is done to prevent someone from attempting to use a password on all events in a single request.
+This means that when you're querying a resource, only provide the password if you're confident that's the password for ALL entities.
+
+When querying data related to a custom post type, like datetimes which are related to events, protected data is removed entirely.
+Eg
+```php
+//get all datetimes which aren't for password-protected events
+https://demoee.org/wp-json/ee/v4.8.36/datetimes/
+```
+To view those entities which are password-protected, you can again provide the password query parameter, like so:
+
+```php
+//get all datetimes which are for events that we hope use the password "jedimaster". If any datetime is related
+//to an event that doesn't use this password, an error message will be returned
+https://demoee.org/wp-json/ee/v4.8.36/datetimes/?password=jedimaster
+//get all datetimes for a password-protected event
+https://demoee.org/wp-json/ee/v4.8.36/events/123/datetimes/?password=jedimaster
+//get all tickets for a password-protected event
+https://demoee.org/wp-json/ee/v4.8.36/tickets?where[Datetime.EVT_ID]=123&password=jedimaster
+```
+
+Administrators can filter results based on passwords, but no one else can. Eg
+```php
+//show all events with password "jedimaster", and provide the password.
+//If you're not a site admin, you'll always get an error
+https://demoee.org/wp-json/ee/v4.8.36/events?where[password]=jedimaster&password=jedimaster
+```
+
+Password-protected data is always removed if no password is provided when querying with the `caps=read` context, even if you're a privileged user.
+If you want to see password-protected content without providing the password, use the `caps=read_admin` context instead. Eg
+
+```php
+//Show events and don't require providing a password
+https://demoee.org/wp-json/ee/v4.8.36/events?caps=read_admin
+```
+
+See [the documentation on what capability contexts are valid](#caps).
+
+password in queries
+
+Querying 
+
+

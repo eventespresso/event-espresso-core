@@ -64,7 +64,7 @@ class EEM_Term_Relationship extends EEM_Base
         $this->_indexes = array(
             'PRIMARY' => new EE_Primary_Key_Index(array('object_id', 'term_taxonomy_id')),
         );
-        $path_to_event_model = 'Event.';
+        $path_to_event_model = 'Event';
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Event_Related_Public(
             $path_to_event_model
         );

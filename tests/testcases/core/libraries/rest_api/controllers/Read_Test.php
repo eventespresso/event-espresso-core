@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+use EE_REST_TestCase;
 use EED_Core_Rest_Api;
 use EEM_CPT_Base;
 use EEM_Event;
@@ -23,7 +24,7 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  * @author                Mike Nelson
  * @group                 rest_api
  */
-class Read_Test extends \EE_REST_TestCase
+class Read_Test extends EE_REST_TestCase
 {
 
     public function test_explode_and_get_items_prefixed_with__basic()
@@ -334,6 +335,7 @@ class Read_Test extends \EE_REST_TestCase
                 'optimum_sales_at_start' => $limit_on_ticket,
                 'spots_taken'            => 1,
                 'spaces_remaining'       => $limit_on_ticket - 1,
+                '_protected' => array(),
             ),
             $result['_calculated_fields']
         );
@@ -343,6 +345,7 @@ class Read_Test extends \EE_REST_TestCase
         $this->assertEquals(
             (object)array(
                 'registrations_checked_in_count' => 0,
+                '_protected' => array()
             ),
             $result['datetimes'][0]['_calculated_fields']
         );
@@ -355,6 +358,7 @@ class Read_Test extends \EE_REST_TestCase
      * DO change it, in which case this unit test will need to be updated to
      * include the known modifications).
      * This helps prevent accidental changes
+     * @group private-1
      */
     public function test_handle_request_get_one__event()
     {
@@ -446,6 +450,7 @@ class Read_Test extends \EE_REST_TestCase
                 'EVT_donations'                   => $event->get('EVT_donations'),
                 'featured_image_url'              => null,
                 'EVT_timezone_string'             => '',
+                'password'                        => '',
                 'link'                            => get_permalink($event->ID()),
                 '_links'                          => array(
                     'self'                                                  =>
@@ -599,6 +604,7 @@ class Read_Test extends \EE_REST_TestCase
                                 ),
                         ),
                 ),
+                '_protected' => array()
             ),
             $result
         );
@@ -690,7 +696,14 @@ class Read_Test extends \EE_REST_TestCase
     }
 
 
-
+    /**
+     * @since $VID:$
+     * @throws \EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     * @throws \ReflectionException
+     */
     public function test_handle_request_get_one__registration_include_answers_and_question_bare_min_from_each()
     {
         $this->authenticate_as_admin();
@@ -718,7 +731,14 @@ class Read_Test extends \EE_REST_TestCase
     }
 
 
-
+    /**
+     * @since $VID:$
+     * @throws \EE_Error
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \InvalidArgumentException
+     * @throws \ReflectionException
+     */
     public function test_handle_request_get_one__doesnt_exist()
     {
         $e = $this->new_model_obj_with_dependencies('Event');
@@ -1054,6 +1074,9 @@ class Read_Test extends \EE_REST_TestCase
 
 
 
+
+
+
     /**
      * Test that when we set the minimum_others where conditions, we don't find trashed cpt items
      * for the current model (because we use normal default where conditions for main model), but not for related
@@ -1166,7 +1189,7 @@ class Read_Test extends \EE_REST_TestCase
         $this->assertArrayHasKey('_calculated_fields', $data['schema']['properties']);
         $calculated_fields = $data['schema']['properties']['_calculated_fields'];
         $this->assertEquals(
-            array('description', 'type', 'properties', 'additionalProperties', 'readonly'),
+            array('description', 'type', 'properties', 'additionalProperties', 'readonly', '_protected'),
             array_keys($calculated_fields)
         );
         $this->assertEquals(

@@ -6,6 +6,8 @@ use DomainException;
 use EE_Datetime_Field;
 use EE_Error;
 use EE_Model_Field_Base;
+use EE_Password_Field;
+use EE_Restriction_Generator_Base;
 use EEH_Array;
 use EEH_DTT_Helper;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -223,6 +225,29 @@ class RestIncomingQueryParamMetadata
         } else {
             // just keep using what's already set for the timezone
             $this->setTimezone($this->context->getModel()->get_timezone());
+        }
+        $this->assertOnlyAdminCanReadPasswordFields();
+    }
+
+    /**
+     * Throws an exception if a non-admin is trying to query by password.
+     * @since $VID:$
+     * @throws RestException
+     */
+    private function assertOnlyAdminCanReadPasswordFields()
+    {
+        if ($this->getField() instanceof EE_Password_Field
+            && ! current_user_can(EE_Restriction_Generator_Base::get_default_restrictions_cap())) {
+            // only full admins can query by password. sorry bub!
+            throw new RestException(
+                'only_admins_can_query_by_password',
+                // @codingStandardsIgnoreStart
+                esc_html__('You attempted to filter by a password field without the needed privileges. Only a full admin is allowed to do that.', 'event_espresso'),
+                // @codingStandardsIgnoreEnd
+                array(
+                    'status' => 403
+                )
+            );
         }
     }
 

@@ -41,10 +41,12 @@ class EEM_Datetime_Ticket extends EEM_Base
             'Datetime'=>new EE_Belongs_To_Relation()
         );
         // this model is generally available for reading
-        $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Event_Related_Public('Datetime.Event');
-        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Event_Related_Protected('Datetime.Event');
-        $this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Event_Related_Protected('Datetime.Event');
-        $this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Event_Related_Protected('Datetime.Event', EEM_Base::caps_edit);
+        $path_to_event = 'Datetime.Event';
+        $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Event_Related_Public($path_to_event);
+        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Event_Related_Protected($path_to_event);
+        $this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Event_Related_Protected($path_to_event);
+        $this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Event_Related_Protected($path_to_event, EEM_Base::caps_edit);
+        $this->model_chain_to_password = $path_to_event;
         parent::__construct($timezone);
     }
 }
