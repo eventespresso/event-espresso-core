@@ -17,25 +17,25 @@ import PropTypes from 'prop-types';
  */
 class DatesListFilterBar extends Component {
 	static propTypes = {
-		display: PropTypes.string.isRequired,
-		show: PropTypes.string.isRequired,
-		sort: PropTypes.string.isRequired,
-		setDisplay: PropTypes.func.isRequired,
-		setShow: PropTypes.func.isRequired,
-		setSort: PropTypes.func.isRequired,
+		showDates: PropTypes.string.isRequired,
+		sortDates: PropTypes.string.isRequired,
+		displayDates: PropTypes.string.isRequired,
+		setShowDates: PropTypes.func.isRequired,
+		setSortDates: PropTypes.func.isRequired,
+		setDisplayDates: PropTypes.func.isRequired,
 	};
 
 	/**
-	 * @param {string} show
-	 * @param {Function} setShow
-	 * @return {Object} rendered show filter
+	 * @param {string} showDates
+	 * @param {Function} setShowDates
+	 * @return {Object} rendered showDates filter
 	 */
-	show = ( show, setShow ) => {
+	showDates = ( showDates, setShowDates ) => {
 		return (
 			<SelectControl
 				label={ __( 'show', 'event_espresso' ) }
 				className="espresso-date-list-filter-bar-show-select"
-				value={ show }
+				value={ showDates }
 				options={ [
 					{
 						value: 'all',
@@ -104,22 +104,22 @@ class DatesListFilterBar extends Component {
 						),
 					},
 				] }
-				onChange={ setShow }
+				onChange={ setShowDates }
 			/>
 		);
 	};
 
 	/**
-	 * @param {string} sort
-	 * @param {Function} setSort
-	 * @return {Object} rendered sort filter
+	 * @param {string} sortDates
+	 * @param {Function} setSortDates
+	 * @return {Object} rendered sortDates filter
 	 */
-	sort = ( sort, setSort ) => {
+	sortDates = ( sortDates, setSortDates ) => {
 		return (
 			<SelectControl
 				label={ __( 'sort', 'event_espresso' ) }
 				className="espresso-date-list-filter-bar-order-select"
-				value={ sort }
+				value={ sortDates }
 				options={ [
 					{
 						value: 'chronologically',
@@ -142,22 +142,22 @@ class DatesListFilterBar extends Component {
 						),
 					},
 				] }
-				onChange={ setSort }
+				onChange={ setSortDates }
 			/>
 		);
 	};
 
 	/**
-	 * @param {string} display
-	 * @param {Function} setDisplay
-	 * @return {Object} rendered display filter
+	 * @param {string} displayDates
+	 * @param {Function} setDisplayDates
+	 * @return {Object} rendered displayDates filter
 	 */
-	display = ( display, setDisplay ) => {
+	displayDates = ( displayDates, setDisplayDates ) => {
 		return (
 			<SelectControl
 				label={ __( 'display', 'event_espresso' ) }
 				className="espresso-date-list-filter-bar-display-select"
-				value={ display }
+				value={ displayDates }
 				options={ [
 					{
 						value: 'start',
@@ -176,33 +176,33 @@ class DatesListFilterBar extends Component {
 						),
 					},
 				] }
-				onChange={ setDisplay }
+				onChange={ setDisplayDates }
 			/>
 		);
 	};
 
 	render() {
 		const {
-			display,
-			show,
-			sort,
-			setDisplay,
-			setShow,
-			setSort,
+			showDates,
+			sortDates,
+			displayDates,
+			setShowDates,
+			setSortDates,
+			setDisplayDates,
 		} = this.props;
 		const showFilter = (
 			<div className="ee-show-dates-filter ee-filter-bar-filter">
-				{ this.show( show, setShow ) }
+				{ this.showDates( showDates, setShowDates ) }
 			</div>
 		);
 		const sortFilter = (
 			<div className="ee-sort-dates-filter ee-filter-bar-filter">
-				{ this.sort( sort, setSort ) }
+				{ this.sortDates( sortDates, setSortDates ) }
 			</div>
 		);
 		const displayFilter = (
 			<div className="ee-display-dates-dates-filter ee-filter-bar-filter">
-				{ this.display( display, setDisplay ) }
+				{ this.displayDates( displayDates, setDisplayDates ) }
 			</div>
 		);
 		return (

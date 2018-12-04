@@ -6,14 +6,14 @@ import moment from 'moment';
 
 /**
  * filterDates
- * reduces dates array based on value of the "show" filter
+ * reduces dates array based on value of the "showDates" filter
  *
  * @param {Array} dates    original dates array
- * @param {string} show    value for the "show" filter
+ * @param {string} showDates    value for the "showDates" filter
  * @return {Array}         filtered dates array
  */
-export const filterDates = ( dates, show = 'active-upcoming' ) => {
-	switch ( show ) {
+export const filterDates = ( dates, showDates = 'active-upcoming' ) => {
+	switch ( showDates ) {
 		case 'all' :
 			return dates;
 		case 'active-upcoming' :
@@ -30,7 +30,7 @@ export const filterDates = ( dates, show = 'active-upcoming' ) => {
 			return filter( dates, { status: 'DTU' } );
 		case 'next-active-upcoming-only' :
 			dates = filterDates( dates );
-			dates = sortDates( dates );
+			dates = sortDatesList( dates );
 			return [ first( dates ) ];
 		case 'sold-out-only' :
 			return filter(
@@ -77,15 +77,15 @@ export const filterDates = ( dates, show = 'active-upcoming' ) => {
 
 /**
  * filterDates
- * reduces dates array based on value of the "order" filter
+ * reduces dates array based on value of the "sortDates" filter
  *
  * @param {Array} dates    original dates array
- * @param {string} order   value for the "order" filter
+ * @param {string} sort   value for the "sortDates" filter
  * @return {Array}         filtered dates array
  */
-export const sortDates = ( dates, order = 'chronologically' ) => {
+export const sortDatesList = ( dates, sort = 'chronologically' ) => {
 	const now = new moment();
-	switch ( order ) {
+	switch ( sort ) {
 		case 'chronologically' :
 			dates = sortBy(
 				dates,

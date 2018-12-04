@@ -8,7 +8,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
  * Internal dependencies
  */
 import './style.css';
-import { filterDates, sortDates } from './dates-list-filter-utils';
+import { filterDates, sortDatesList } from './dates-list-filter-utils';
 import { default as DateListFilterBar } from './dates-list-filter-bar';
 import {
 	EntityListFilterBar,
@@ -30,61 +30,61 @@ export default createHigherOrderComponent(
 			 * filters the dates list based on the current filter state
 			 *
 			 * @param {Array} entities
-			 * @param {string} show
-			 * @param {string} sort
+			 * @param {string} showDates
+			 * @param {string} sortDates
 			 * @return {Array} filtered list of dates
 			 */
-			getDates = ( entities, show, sort ) => {
-				return show && sort && entities ?
-					sortDates(
-						filterDates( entities, show ),
-						sort
+			getDates = ( entities, showDates, sortDates ) => {
+				return showDates && sortDates && entities ?
+					sortDatesList(
+						filterDates( entities, showDates ),
+						sortDates
 					) :
 					[];
 			};
 
 			render() {
 				const {
-					display,
-					show,
-					sort,
-					setDisplay,
-					setShow,
-					setSort,
-					perPage,
-					view,
-					setPerPage,
-					setListView,
-					setGridView,
+					displayDates,
+					showDates,
+					sortDates,
+					setDisplayDates,
+					setShowDates,
+					setSortDates,
+					datesPerPage,
+					datesView,
+					setDatesPerPage,
+					setDatesListView,
+					setDatesGridView,
 					...otherProps
 				} = this.props;
 				let { entities } = this.props;
-				entities = this.getDates( entities, show, sort );
+				entities = this.getDates( entities, showDates, sortDates );
 				delete otherProps.entities;
 				return (
 					<Fragment>
 						<EntityListFilterBar
-							perPage={ perPage }
-							view={ view }
-							setPerPage={ setPerPage }
-							setListView={ setListView }
-							setGridView={ setGridView }
+							perPage={ datesPerPage }
+							view={ datesView }
+							setPerPage={ setDatesPerPage }
+							setListView={ setDatesListView }
+							setGridView={ setDatesGridView }
 							entityFilters={
 								<DateListFilterBar
-									display={ display }
-									show={ show }
-									sort={ sort }
-									setDisplay={ setDisplay }
-									setShow={ setShow }
-									setSort={ setSort }
+									displayDates={ displayDates }
+									showDates={ showDates }
+									sortDates={ sortDates }
+									setDisplayDates={ setDisplayDates }
+									setShowDates={ setShowDates }
+									setSortDates={ setSortDates }
 								/>
 							}
 						/>
 						<EntityList
 							entities={ entities }
-							entitiesPerPage={ perPage }
-							view={ view }
-							showDate={ display }
+							entitiesPerPage={ datesPerPage }
+							view={ datesView }
+							showDate={ displayDates }
 							{ ...otherProps }
 						/>
 					</Fragment>

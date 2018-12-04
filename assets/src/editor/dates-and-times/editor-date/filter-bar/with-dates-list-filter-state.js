@@ -9,10 +9,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
  * Internal dependencies
  */
 import { default as datesListFilterState } from './dates-list-filter-state';
-import {
-	filterStateHandler,
-	viewFilterState,
-} from '../../../../higher-order-components/filter-bar';
+import { filterStateHandler } from '../../../../higher-order-components/filter-bar';
 
 /**
  * withDatesListFilterState
@@ -56,21 +53,14 @@ export default createHigherOrderComponent(
 			 * @return {Object} filter state object
 			 */
 			getFilterState = entities => {
-				// merge initial state objects for filter bars with entities
-				let state = {
-					...viewFilterState.initialState,
-					...datesListFilterState.initialState,
-					...{ entities: entities },
-				};
-				// state with added actions for view filters
-				state = filterStateHandler.register(
-					viewFilterState.handler,
-					state
-				);
 				// state with added actions for dates list filters
 				return filterStateHandler.register(
 					datesListFilterState.handler,
-					state
+					// merge initial filter bar state object with entities
+					{
+						...datesListFilterState.initialState,
+						...{ entities: entities },
+					}
 				);
 			};
 
