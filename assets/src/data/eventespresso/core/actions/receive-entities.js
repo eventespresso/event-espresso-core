@@ -53,15 +53,13 @@ function receiveAndReplaceEntityRecords( modelName, entities = {} ) {
  * Action creator for adding an entity to the state (as opposed to an entity
  * record)
  *
- * @param {string} modelName
  * @param {BaseEntity} entity
- * @return {{type: string, modelName: string, entity: BaseEntity}} An action
+ * @return {{type: string, entity: BaseEntity}} An action
  * object.
  */
-function receiveEntity( modelName, entity ) {
+function receiveEntity( entity ) {
 	return {
 		type: types.RECEIVE_ENTITY,
-		modelName,
 		entity,
 	};
 }

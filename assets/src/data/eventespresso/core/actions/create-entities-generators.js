@@ -25,6 +25,6 @@ export function* createEntity( modelName, entity ) {
 		return null;
 	}
 	const entityInstance = factory.createNew( entity );
-	yield receiveEntity( modelName, entityInstance );
+	yield receiveEntity( entityInstance );
 	return entityInstance;
 }

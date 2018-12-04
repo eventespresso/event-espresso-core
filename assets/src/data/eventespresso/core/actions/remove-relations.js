@@ -15,7 +15,7 @@ const { types } = ACTION_TYPES.relations;
  * Action creator for removing all indexed relations for a specific entity from
  * the state.
  *
- * Note: The following things are accomplished by this action:
+ * Note: The following things are accomplished by this action (via the reducer):
  * - The relation index for the relation on this entity is removed from state.
  * - If the relation entities themselves have no other relation index, they
  *   are also removed from state.

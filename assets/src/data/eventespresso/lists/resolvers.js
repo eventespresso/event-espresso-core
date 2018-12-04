@@ -17,7 +17,7 @@ import {
 	getFactoryByModel,
 	resolveGetEntityByIdForIds,
 } from '../base-resolvers.js';
-import { keepExistingEntitiesInObject } from '../base-entities';
+import { keepExistingEntitiesInObject } from '../base-model';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../core/constants';
 
 /**

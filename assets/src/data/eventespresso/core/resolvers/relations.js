@@ -32,7 +32,7 @@ import {
 	receiveEntityRecords,
 	receiveRelatedEntities,
 } from './../actions';
-import { keepExistingEntitiesInObject } from '../../base-entities';
+import { keepExistingEntitiesInObject } from '../../base-model';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from './../constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
 

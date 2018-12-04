@@ -4,12 +4,12 @@
 import { convertToObjectFromMap } from '@eventespresso/helpers';
 import { keys, isEmpty, difference, isMap, isUndefined } from 'lodash';
 import { DEFAULT_CORE_STATE } from '@eventespresso/model';
-import { isModelEntityOfModel } from '@eventespresso/validators';
+import { isModelEntity } from '@eventespresso/validators';
 
 /**
  * Internal imports
  */
-import { keepExistingEntitiesInObject } from '../../base-entities';
+import { keepExistingEntitiesInObject } from '../../base-model';
 import { ACTION_TYPES } from '../actions/action-types';
 const { types } = ACTION_TYPES.entities;
 
@@ -46,20 +46,20 @@ function receiveEntity( state, action ) {
 	 * @type {string} modelName
 	 * @type {BaseEntity|null} entity
 	 */
-	const { modelName, entity = null } = action;
+	const { entity } = action;
 
 	if (
-		! modelName ||
-		! isModelEntityOfModel( entity, modelName ) ||
-		( state[ modelName ] && state[ modelName ][ entity.id ] )
+		! isModelEntity( entity ) ||
+		( state[ entity.modelName ] && state[ entity.modelName ][ entity.id ] )
 	) {
 		return state;
 	}
+	const { modelName, id } = entity;
 	return {
 		...state,
 		[ modelName ]: {
 			...state[ modelName ],
-			[ entity.id ]: entity,
+			[ id ]: entity,
 		},
 	};
 }

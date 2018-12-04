@@ -1,7 +1,7 @@
 /**
  * Internal imports
  */
-import { getMethodName, keepExistingEntitiesInObject } from '../base-entities';
+import { getMethodName, keepExistingEntitiesInObject } from '../base-model';
 
 describe( 'getMethodName()', () => {
 	[
