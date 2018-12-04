@@ -24,7 +24,7 @@ const { types } = ACTION_TYPES.relations;
  * 	}
  * } An action object.
  */
-export function receiveRelatedEntities(
+function receiveRelatedEntities(
 	modelName,
 	entityId,
 	relationName,
@@ -58,7 +58,7 @@ export function receiveRelatedEntities(
  * 	}
  * } An action object.
  */
-export function receiveDirtyRelationIndex(
+function receiveDirtyRelationIndex(
 	relationName,
 	relationEntityId,
 	modelName,
@@ -96,7 +96,7 @@ export function receiveDirtyRelationIndex(
  * }
  * An action object.
  */
-export function receiveDirtyRelationAddition(
+function receiveDirtyRelationAddition(
 	relationName,
 	relationEntityId,
 	modelName,
@@ -130,7 +130,7 @@ export function receiveDirtyRelationAddition(
  * 	}
  * } An action object.
  */
-export function receiveDirtyRelationDeletion(
+function receiveDirtyRelationDeletion(
 	relationName,
 	relationEntityId,
 	modelName,
@@ -165,7 +165,7 @@ export function receiveDirtyRelationDeletion(
  * 	}
  * } An action object
  */
-export function receiveUpdatedEntityIdForRelations(
+function receiveUpdatedEntityIdForRelations(
 	modelName,
 	oldEntityId,
 	newEntityId
@@ -177,3 +177,11 @@ export function receiveUpdatedEntityIdForRelations(
 		newEntityId,
 	};
 }
+
+export {
+	receiveRelatedEntities,
+	receiveDirtyRelationIndex,
+	receiveDirtyRelationAddition,
+	receiveDirtyRelationDeletion,
+	receiveUpdatedEntityIdForRelations,
+};

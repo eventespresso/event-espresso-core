@@ -20,7 +20,7 @@ const { types } = ACTION_TYPES.entities;
  * 	}
  * }  An action object.
  */
-export function receiveEntityRecords( modelName, entities = {} ) {
+function receiveEntityRecords( modelName, entities = {} ) {
 	return {
 		type: types.RECEIVE_ENTITY_RECORDS,
 		modelName,
@@ -41,7 +41,7 @@ export function receiveEntityRecords( modelName, entities = {} ) {
  * 	}
  * }  An action object.
  */
-export function receiveAndReplaceEntityRecords( modelName, entities = {} ) {
+function receiveAndReplaceEntityRecords( modelName, entities = {} ) {
 	return {
 		type: types.RECEIVE_AND_REPLACE_ENTITY_RECORDS,
 		modelName,
@@ -58,7 +58,7 @@ export function receiveAndReplaceEntityRecords( modelName, entities = {} ) {
  * @return {{type: string, modelName: string, entity: BaseEntity}} An action
  * object.
  */
-export function receiveEntity( modelName, entity ) {
+function receiveEntity( modelName, entity ) {
 	return {
 		type: types.RECEIVE_ENTITY,
 		modelName,
@@ -74,7 +74,7 @@ export function receiveEntity( modelName, entity ) {
  * @return {{type: string, modelName: string, entityId: number}} An action
  * object.
  */
-export function receiveTrashEntityId( modelName, entityId ) {
+function receiveTrashEntityId( modelName, entityId ) {
 	return {
 		type: types.RECEIVE_TRASH_ENTITY_ID,
 		modelName,
@@ -90,10 +90,18 @@ export function receiveTrashEntityId( modelName, entityId ) {
  * @return {{type: string, modelName: string, entityId: number}} An action
  * object.
  */
-export function receiveDeleteEntityId( modelName, entityId ) {
+function receiveDeleteEntityId( modelName, entityId ) {
 	return {
 		type: types.RECEIVE_DELETE_ENTITY_ID,
 		modelName,
 		entityId,
 	};
 }
+
+export {
+	receiveEntityRecords,
+	receiveAndReplaceEntityRecords,
+	receiveEntity,
+	receiveDeleteEntityId,
+	receiveTrashEntityId,
+};

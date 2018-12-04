@@ -21,14 +21,14 @@ import {
 
 /**
  * Action generator yielding actions for handling removing the queued relations
- * for deletion in the state
+ * for addition in the state
  *
  * @param {string} modelName
  * @param {number} entityId
  * @param {string} relationName
  * @param {number} relationEntityId
  */
-export function* removeDirtyRelationForAddition(
+function* removeDirtyRelationForAddition(
 	modelName,
 	entityId,
 	relationName,
@@ -57,7 +57,7 @@ export function* removeDirtyRelationForAddition(
  * @param {string} relationName
  * @param {number} relationEntityId
  */
-export function* removeRelationForEntity(
+function* removeRelationForEntity(
 	modelName,
 	entityId,
 	relationName,
@@ -92,3 +92,5 @@ export function* removeRelationForEntity(
 		entityId
 	);
 }
+
+export { removeDirtyRelationForAddition, removeRelationForEntity };

@@ -1,4 +1,9 @@
 /**
+ * External Imports
+ */
+import { pluralModelName } from '@eventespresso/model';
+
+/**
  * Internal imports
  */
 import { getFactoryForModel, getSchemaForModel } from './schema/resolvers';
@@ -101,5 +106,32 @@ export function* resolveGetEntityByIdForIds( modelName, entityIds ) {
 			'getEntityById',
 			[ modelName, entityIds.shift() ]
 		);
+	}
+}
+
+/**
+ * This ensures that resolution state for the opposite query on retrieving
+ * relations is set to finished to prevent unnecessary server queries.
+ *
+ * @param {BaseEntity} entity
+ * @param {Map} relationEntities
+ * @param {Array<number>} relationIds
+ */
+export function* resolveGetRelatedEntities(
+	entity,
+	relationEntities,
+	relationIds
+) {
+	while ( relationIds.length > 0 ) {
+		const relationEntity = relationEntities.get( relationIds.shift() );
+		if ( relationEntity ) {
+			yield dispatch(
+				'core/data',
+				'finishResolution',
+				CORE_REDUCER_KEY,
+				'getRelatedEntities',
+				[ relationEntity, pluralModelName( entity.modelName ) ]
+			);
+		}
 	}
 }

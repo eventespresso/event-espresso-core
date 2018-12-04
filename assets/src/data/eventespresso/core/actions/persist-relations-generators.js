@@ -25,7 +25,7 @@ import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
  * the requested model and with values that are an Object indexed by relation
  * names with values of relation Ids persisted.
  */
-export function* persistAddRelationsForModel( modelName ) {
+function* persistAddRelationsForModel( modelName ) {
 	return yield persistRelationsForModel( modelName );
 }
 
@@ -38,7 +38,7 @@ export function* persistAddRelationsForModel( modelName ) {
  * the requested model and with values that are an Object indexed by relation
  * names with values of relation Ids persisted.
  */
-export function* persistDeleteRelationsForModel( modelName ) {
+function* persistDeleteRelationsForModel( modelName ) {
 	return yield persistRelationsForModel(
 		modelName,
 		false
@@ -56,7 +56,7 @@ export function* persistDeleteRelationsForModel( modelName ) {
  * the requested model and with values that are an Object indexed by relation
  * names with values of relation Ids persisted.
  */
-export function* persistRelationsForModel( modelName, addRelation = true ) {
+function* persistRelationsForModel( modelName, addRelation = true ) {
 	const relationState = yield getRelationState( modelName, addRelation );
 	if ( isEmpty( relationState ) ) {
 		return;
@@ -92,7 +92,7 @@ export function* persistRelationsForModel( modelName, addRelation = true ) {
  * @return {Object} An object indexed by relation names with the values an array
  * of relation ids for each relation that were persisted.
  */
-export function* persistRelationsForEntityId(
+function* persistRelationsForEntityId(
 	modelName,
 	entityId,
 	addRelation = true,
@@ -145,7 +145,7 @@ export function* persistRelationsForEntityId(
  * passed in.
  * @return {Array} An array of relation ids persisted for that relation.
  */
-export function* persistRelationsForEntityIdAndRelation(
+function* persistRelationsForEntityIdAndRelation(
 	modelName,
 	entityId,
 	relationName,
@@ -199,7 +199,7 @@ export function* persistRelationsForEntityIdAndRelation(
  * @return {number} If 0 is returned then the entity was not persisted,
  * otherwise the value returned will be the id persisted.
  */
-export function* persistRelationsForEntityIdAndRelationId(
+function* persistRelationsForEntityIdAndRelationId(
 	modelName,
 	entityId,
 	relationName,
@@ -388,3 +388,13 @@ function* getRelationState(
 		relationState;
 	return relationState;
 }
+
+export {
+	persistAddRelationsForModel,
+	persistDeleteRelationsForModel,
+	persistRelationsForModel,
+	persistRelationsForEntityId,
+	persistRelationsForEntityIdAndRelation,
+	persistRelationsForEntityIdAndRelationId,
+	persistNewEntityAndRemoveDirtyRelations,
+};

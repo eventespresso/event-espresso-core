@@ -6,6 +6,7 @@ import {
 	receiveTrashEntityId,
 	receiveDeleteEntityId,
 } from './receive-entities';
+import { removeAllRelatedEntitiesForModelEntity } from './remove-relations';
 
 /**
  * Action generator yielding actions for queuing an entity delete record
@@ -16,6 +17,8 @@ import {
  */
 export function* deleteEntityById( modelName, entityId ) {
 	yield removeEntityById( modelName, entityId );
+	// remove any relation records for this entity
+	yield removeAllRelatedEntitiesForModelEntity( modelName, entityId );
 	yield receiveDeleteEntityId( modelName, entityId );
 }
 

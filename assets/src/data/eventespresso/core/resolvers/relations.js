@@ -2,63 +2,54 @@
  * External imports
  */
 import {
-	getPrimaryKey,
-	applyQueryString,
 	createAndKeyEntitiesByPrimaryKeyValue,
+	keyEntitiesByPrimaryKeyValue,
 	pluralModelName,
 	singularModelName,
 } from '@eventespresso/model';
 import {
 	isModelEntityFactoryOfModel,
-	isModelEntityOfModel,
+	isModelEntity,
 } from '@eventespresso/validators';
+import {
+	convertToObjectFromMap,
+	convertToMapFromObject,
+} from '@eventespresso/helpers';
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import warning from 'warning';
+import { values, isEmpty } from 'lodash';
 
 /**
  * Internal Imports
  */
-import { fetch, dispatch, select } from '../base-controls';
+import { fetch, dispatch, select } from '../../base-controls';
 import {
 	getFactoryByModel,
 	resolveGetEntityByIdForIds,
-} from '../base-resolvers';
+	resolveGetRelatedEntities,
+} from '../../base-resolvers';
 import {
 	receiveEntityRecords,
 	receiveRelatedEntities,
-} from './actions';
-import { isEmpty } from 'lodash';
-import { keepExistingEntitiesInObject } from '../base-entities';
-import { REDUCER_KEY as CORE_REDUCER_KEY } from './constants';
-import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from './constants';
+} from './../actions';
+import { keepExistingEntitiesInObject } from '../../base-entities';
+import { REDUCER_KEY as CORE_REDUCER_KEY } from './../constants';
+import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
 
-export function* getEntityById( modelName, entityId ) {
-	const primaryKeyForModel = getPrimaryKey( modelName );
-	let entity = yield fetch( {
-		path: applyQueryString(
-			modelName,
-			primaryKeyForModel + '=' + entityId
-		),
-	} );
-	entity = {
-		[ entityId ]: entity,
-	};
-	const factory = yield getFactoryByModel( modelName );
-	if ( ! isModelEntityFactoryOfModel( factory, modelName ) ) {
-		return;
-	}
-	const fullEntity = createAndKeyEntitiesByPrimaryKeyValue( factory, entity );
-	yield receiveEntityRecords( modelName, fullEntity );
-}
-
-export function* getRelationEntitiesForEntity(
-	modelName,
-	entity,
-	relationModelName
-) {
-	if ( ! isModelEntityOfModel( entity, modelName ) ) {
+/**
+ * A resolver for getting relation entities for the given model name and entity
+ * for that model.
+ *
+ * @param {BaseEntity} entity
+ * @param {string} relationModelName
+ * @return {[]|Array<BaseEntity>} If there are relations, returns an array of
+ * BaseEntity instances for the relations, otherwise an empty array.
+ */
+export function* getRelatedEntities( entity, relationModelName ) {
+	if ( ! isModelEntity( entity ) ) {
 		throw new InvalidModelEntity( '', entity );
 	}
+	const modelName = entity.modelName;
 	const pluralRelationName = pluralModelName( relationModelName );
 	const relationResourceProperty = pluralRelationName + 'Resource';
 	const relationEndpoint = entity[ relationResourceProperty ] ?
@@ -71,7 +62,7 @@ export function* getRelationEntitiesForEntity(
 			modelName,
 			pluralRelationName
 		);
-		return;
+		return [];
 	}
 	yield dispatch(
 		SCHEMA_REDUCER_KEY,
@@ -92,7 +83,7 @@ export function* getRelationEntitiesForEntity(
 		path: relationEndpoint,
 	} );
 	if ( ! relationEntities.length ) {
-		return;
+		return [];
 	}
 
 	const factory = getFactoryByModel(
@@ -102,11 +93,12 @@ export function* getRelationEntitiesForEntity(
 		factory,
 		singularModelName( relationModelName )
 	) ) {
-		return;
+		return [];
 	}
-	let fullEntities = createAndKeyEntitiesByPrimaryKeyValue(
+	let fullEntities = keyEntitiesByPrimaryKeyValue( relationEntities );
+	fullEntities = createAndKeyEntitiesByPrimaryKeyValue(
 		factory,
-		relationEntities,
+		fullEntities,
 	);
 	const entityIds = Array.from( fullEntities.keys() );
 
@@ -124,6 +116,12 @@ export function* getRelationEntitiesForEntity(
 			fullEntities,
 		);
 	}
+
+	// if fullEntities is not a map, then we need to make it a map
+	fullEntities = ! ( fullEntities instanceof Map ) ?
+		convertToMapFromObject( fullEntities ) :
+		fullEntities;
+
 	yield receiveEntityRecords(
 		singularModelName( relationModelName ),
 		fullEntities
@@ -134,9 +132,14 @@ export function* getRelationEntitiesForEntity(
 		pluralRelationName,
 		entityIds,
 	);
+	yield resolveGetRelatedEntities(
+		entity,
+		relationEntities,
+		entityIds,
+	);
 	yield resolveGetEntityByIdForIds(
 		singularModelName( relationModelName ),
 		entityIds
 	);
-	return fullEntities;
+	return values( convertToObjectFromMap( fullEntities ) );
 }

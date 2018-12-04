@@ -118,7 +118,7 @@ export const keyEntitiesByPrimaryKeyValue = ( modelName, entities = [] ) => {
  *
  * @param {Object} factory
  * @param {Map} entities
- * @return {Object<number,Object>}  An array of entity instances indexed by
+ * @return {Map}  An array of entity instances indexed by
  * their primary key value
  */
 export const createAndKeyEntitiesByPrimaryKeyValue = (

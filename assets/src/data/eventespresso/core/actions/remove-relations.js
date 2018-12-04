@@ -12,6 +12,29 @@ import { ACTION_TYPES } from './action-types';
 const { types } = ACTION_TYPES.relations;
 
 /**
+ * Action creator for removing all indexed relations for a specific entity from
+ * the state.
+ *
+ * Note: The following things are accomplished by this action:
+ * - The relation index for the relation on this entity is removed from state.
+ * - If the relation entities themselves have no other relation index, they
+ *   are also removed from state.
+ * - Any dirty relations for this entity are removed from state.
+ *
+ * @param {string} modelName
+ * @param {number} entityId
+ * @return {{type: string, modelName: string, entityId: number}}
+ * An action object
+ */
+function removeAllRelatedEntitiesForModelEntity( modelName, entityId ) {
+	return {
+		type: types.REMOVE_RELATED_ENTITIES_FOR_ENTITY,
+		modelName,
+		entityId,
+	};
+}
+
+/**
  * Action creator for removing relations from the given model from the relations
  * state.
  *
@@ -29,7 +52,7 @@ const { types } = ACTION_TYPES.relations;
  * 	}
  * } An action object.
  */
-export function removeRelatedEntities(
+function removeRelatedEntities(
 	modelName,
 	entityId,
 	relationName,
@@ -64,7 +87,7 @@ export function removeRelatedEntities(
  * 	}
  * } An action object.
  */
-export function removeDirtyRelationIndex(
+function removeDirtyRelationIndex(
 	relationName,
 	relationEntityId,
 	modelName,
@@ -103,7 +126,7 @@ export function removeDirtyRelationIndex(
  * 	}
  * } An action object
  */
-export function removeDirtyRelationForType(
+function removeDirtyRelationForType(
 	relationName,
 	relationEntityId,
 	modelName,
@@ -143,7 +166,7 @@ export function removeDirtyRelationForType(
  * 	}
  * } An action object.
  */
-export function removeDirtyRelationAddition(
+function removeDirtyRelationAddition(
 	relationName,
 	relationEntityId,
 	modelName,
@@ -176,7 +199,7 @@ export function removeDirtyRelationAddition(
  * 	}
  * } An action object
  */
-export function removeDirtyRelationDeletion(
+function removeDirtyRelationDeletion(
 	relationName,
 	relationEntityId,
 	modelName,
@@ -189,3 +212,12 @@ export function removeDirtyRelationDeletion(
 		entityId,
 	);
 }
+
+export {
+	removeAllRelatedEntitiesForModelEntity,
+	removeRelatedEntities,
+	removeDirtyRelationAddition,
+	removeDirtyRelationDeletion,
+	removeDirtyRelationIndex,
+	removeDirtyRelationForType,
+};

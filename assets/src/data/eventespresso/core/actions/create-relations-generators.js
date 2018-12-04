@@ -29,7 +29,7 @@ import { resolveGetEntityByIdForIds } from '../../base-resolvers';
  * @param {string} relationName
  * @param {BaseEntity} relationEntity
  */
-export function* createRelation(
+function* createRelation(
 	modelName,
 	entityId,
 	relationName,
@@ -84,7 +84,7 @@ export function* createRelation(
  * @param {string} relationName
  * @param {Map} relationEntities
  */
-export function* createRelations(
+function* createRelations(
 	modelName,
 	entityId,
 	relationName,
@@ -154,3 +154,5 @@ const assertMapHasEntitiesForModel = ( relationMap, relationModelName ) => {
 		}
 	}
 };
+
+export { createRelation, createRelations };

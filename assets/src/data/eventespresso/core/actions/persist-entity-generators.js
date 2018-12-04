@@ -17,7 +17,10 @@ import { isEmpty, keys } from 'lodash';
  * Internal imports.
  */
 import { fetch, select, dispatch } from '../../base-controls';
-import { getFactoryByModel } from '../../base-resolvers';
+import {
+	getFactoryByModel,
+	resolveGetEntityByIdForIds
+} from '../../base-resolvers';
 import {
 	removeEntityById,
 	removeDeleteEntityId,
@@ -36,7 +39,7 @@ import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
  * @return {null|Object} If successfully persisted the persisted entity is
  * returned.  Otherwise null.
  */
-export function* persistEntityRecord( modelName, entity ) {
+function* persistEntityRecord( modelName, entity ) {
 	// if this is not a model entity or its not dirty then bail.
 	if ( ! isModelEntityOfModel( entity, modelName ) || entity.isClean ) {
 		return null;
@@ -60,6 +63,7 @@ export function* persistEntityRecord( modelName, entity ) {
 	);
 	if ( entity.isNew ) {
 		yield removeEntityById( modelName, entity.id );
+		yield resolveGetEntityByIdForIds( modelName, [ newId ] );
 		yield receiveUpdatedEntityIdForRelations( modelName, entity.id, newId );
 	}
 	yield receiveAndReplaceEntityRecords( modelName, updatedEntityRecord );
@@ -74,7 +78,7 @@ export function* persistEntityRecord( modelName, entity ) {
  * @return {BaseEntity|Object} If the entity is successfully persisted it is
  * returned (may have a new id!), otherwise an empty object is returned.
  */
-export function* persistForEntityId( modelName, entityId ) {
+function* persistForEntityId( modelName, entityId ) {
 	const entity = yield select(
 		CORE_REDUCER_KEY,
 		'getEntityById',
@@ -104,7 +108,7 @@ export function* persistForEntityId( modelName, entityId ) {
  * is able to know which entities were updated and have both new and former id
  * exposed.
  */
-export function* persistForEntityIds( modelName, entityIds = [] ) {
+function* persistForEntityIds( modelName, entityIds = [] ) {
 	const entities = yield select(
 		CORE_REDUCER_KEY,
 		'getEntitiesByIds',
@@ -133,10 +137,10 @@ export function* persistForEntityIds( modelName, entityIds = [] ) {
  * @param {string} modelName
  * @return {Array} An array of entity ids for entities successfully deleted.
  */
-export function* persistDeletesForModel( modelName ) {
+function* persistDeletesForModel( modelName ) {
 	const entityIds = yield select(
 		CORE_REDUCER_KEY,
-		'getEntitiesQueuedForDelete',
+		'getEntityIdsQueuedForDelete',
 		modelName
 	);
 	const deletedIds = [];
@@ -161,10 +165,10 @@ export function* persistDeletesForModel( modelName ) {
  * @param {string} modelName
  * @return {Array} An array of entity ids for entities successfully trashed.
  */
-export function* persistTrashesForModel( modelName ) {
+function* persistTrashesForModel( modelName ) {
 	const entityIds = yield select(
 		CORE_REDUCER_KEY,
-		'getEntitiesQueuedForTrash',
+		'getEntityIdsQueuedForTrash',
 		modelName
 	);
 	const trashedIds = [];
@@ -189,7 +193,7 @@ export function* persistTrashesForModel( modelName ) {
  * @return {Object} An object indexed by delete/trash containing an array of
  * entity ids that were persisted.
  */
-export function* persistAllDeletes() {
+function* persistAllDeletes() {
 	const modelsForDelete = yield select(
 		CORE_REDUCER_KEY,
 		'getModelsQueuedForDelete'
@@ -208,3 +212,12 @@ export function* persistAllDeletes() {
 	}
 	return { deleted: deletedIds, trashed: trashedIds };
 }
+
+export {
+	persistEntityRecord,
+	persistForEntityId,
+	persistForEntityIds,
+	persistDeletesForModel,
+	persistTrashesForModel,
+	persistAllDeletes,
+};

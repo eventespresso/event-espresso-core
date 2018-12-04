@@ -41,7 +41,7 @@ const replaceExistingEntitiesFromState = ( state, modelName, entityRecords ) => 
  * @param {Object} action
  * @return {Object} New state if there is a change otherwise existing state.
  */
-export function receiveEntity( state, action ) {
+function receiveEntity( state, action ) {
 	/**
 	 * @type {string} modelName
 	 * @type {BaseEntity|null} entity
@@ -75,10 +75,10 @@ export function receiveEntity( state, action ) {
  *
  * @param {Object} state
  * @param {Object} action
- * @return {{entities: Map, entityIds: {}}} The new state (or the original if no
+ * @return {{entities: Map}} The new state (or the original if no
  * change detected or action isn't handled by this method)
  */
-export function receiveEntityRecords( state, action ) {
+function receiveEntityRecords( state, action ) {
 	const { type, modelName, entities: incomingEntities = new Map() } = action;
 	if (
 		modelName &&
@@ -135,7 +135,7 @@ export function receiveEntityRecords( state, action ) {
  * @param {Object} action
  * @return {Object} New or existing state.
  */
-export function removeEntityById( state, action ) {
+function removeEntityById( state, action ) {
 	const { type, modelName, entityId = 0 } = action;
 	if (
 		type !== types.REMOVE_ENTITY_BY_ID ||
@@ -149,6 +149,12 @@ export function removeEntityById( state, action ) {
 	delete newState[ modelName ][ entityId ];
 	return newState;
 }
+
+export {
+	receiveEntity,
+	receiveEntityRecords,
+	removeEntityById,
+};
 
 /**
  * Default reducer for handling entities in state.
