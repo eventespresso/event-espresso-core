@@ -260,3 +260,6 @@ This is used to ensure _all_ default where conditions for the query are used.
 
 ## `caps`
 This query parameter controls what capability requirements apply to the query. For example, should we _not_ apply any capabilities/permissions/restrictions and return everything? Or should we only show the current user items they should be able to view on the frontend/backend/edit/delete?  This can be set to `none` (default), `read_frontend`, `read_backend`, `edit`, or `delete`
+
+## `exclude_protected`
+This query parameter indicates whether to remove model objects related to password-protected models. Uses the model property `$model_chain_to_password` to determine which related model (if any) has a password which may restrict who can view model objects for this model.. 

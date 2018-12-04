@@ -322,6 +322,19 @@ class Write extends Base
         $read_controller->setRequestedVersion($this->getRequestedVersion());
         // the simulates request really doesn't need any info downstream
         $simulated_request = new WP_REST_Request('GET');
+        // set the caps context on the simulated according to the original request.
+        switch ($request->get_method()) {
+            case 'POST':
+            case 'PUT':
+                $caps_context = EEM_Base::caps_edit;
+                break;
+            case 'DELETE':
+                $caps_context = EEM_Base::caps_delete;
+                break;
+            default:
+                $caps_context = EEM_Base::caps_read_admin;
+        }
+        $simulated_request->set_param('caps', $caps_context);
         return $read_controller->createEntityFromWpdbResult(
             $model_obj->get_model(),
             $simulated_db_row,

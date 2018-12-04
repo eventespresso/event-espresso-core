@@ -162,6 +162,27 @@ class EEM_Event extends EEM_CPT_Base
                     'draft',
                     $this->_custom_stati
                 ),
+                'password' => new EE_Password_Field(
+                    'post_password',
+                    __('Password', 'event_espresso'),
+                    false,
+                    '',
+                    array(
+                        'EVT_desc',
+                        'EVT_short_desc',
+                        'EVT_display_desc',
+                        'EVT_display_ticket_selector',
+                        'EVT_visible_on',
+                        'EVT_additional_limit',
+                        'EVT_default_registration_status',
+                        'EVT_member_only',
+                        'EVT_phone',
+                        'EVT_allow_overflow',
+                        'EVT_timezone_string',
+                        'EVT_external_URL',
+                        'EVT_donations'
+                    )
+                )
             ),
             'Event_Meta' => array(
                 'EVTM_ID'                         => new EE_DB_Only_Float_Field(
@@ -178,13 +199,13 @@ class EEM_Event extends EEM_CPT_Base
                     'EVT_display_desc',
                     esc_html__('Display Description Flag', 'event_espresso'),
                     false,
-                    1
+                    true
                 ),
                 'EVT_display_ticket_selector'     => new EE_Boolean_Field(
                     'EVT_display_ticket_selector',
                     esc_html__('Display Ticket Selector Flag', 'event_espresso'),
                     false,
-                    1
+                    true
                 ),
                 'EVT_visible_on'                  => new EE_Datetime_Field(
                     'EVT_visible_on',
@@ -255,6 +276,7 @@ class EEM_Event extends EEM_CPT_Base
         );
         // this model is generally available for reading
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+        $this->model_chain_to_password = '';
         parent::__construct($timezone);
     }
 
