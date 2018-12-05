@@ -650,7 +650,8 @@ class Read extends Base
                 array(
                     0 => array(
                         $model->primary_key_name() => $db_row[ $model->get_primary_key_field()->get_qualified_column() ]
-                    )
+                    ),
+                    'default_where_conditions' => 'minimum'
                 ),
                 $rest_request
             );
