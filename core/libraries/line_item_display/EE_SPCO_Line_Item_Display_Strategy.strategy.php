@@ -337,9 +337,12 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::td($line_item->quantity(), '', 'item_l jst-rght');
         // $total = $line_item->total() * $line_item->quantity();
         $total = $line_item->total();
-        if (
-            isset($options['event_id'], $this->_events[ $options['event_id'] ])
-            && ! ($line_item->OBJ_type() === 'Promotion' && $line_item->parent()->OBJ_ID() !== $options['event_id'])
+        if (isset($options['event_id'], $this->_events[ $options['event_id'] ])
+            && ! ($line_item->OBJ_type() === 'Promotion'
+                && ! ($line_item->parent()->OBJ_type() === 'Event'
+                    && $line_item->parent()->OBJ_ID() === $options['event_id']
+                )
+            )
         ) {
             $this->_events[ $options['event_id'] ] += $total;
         }
