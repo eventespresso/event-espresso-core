@@ -185,7 +185,7 @@ class TableManager extends \EE_Base
     public function createTable($table_name, $create_sql, $engine = 'MyISAM')
     {
         $engine = apply_filters(
-            'FHEE__EventEspresso__core__services__database__TableManager__createTable__engine',
+            'FHEE__EventEspresso_core_services_database_TableManager__createTable__engine',
             $engine,
             $table_name,
             $create_sql
