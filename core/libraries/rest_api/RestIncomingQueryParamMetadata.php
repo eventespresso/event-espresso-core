@@ -231,7 +231,7 @@ class RestIncomingQueryParamMetadata
 
     /**
      * Throws an exception if a non-admin is trying to query by password.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws RestException
      */
     private function assertOnlyAdminCanReadPasswordFields()

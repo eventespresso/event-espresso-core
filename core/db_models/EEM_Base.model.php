@@ -6301,7 +6301,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
     /**
      * Returns true if this model has a password field on it (regardless of whether that password field has any content)
-     * @since $VID:$
+     * @since 4.9.74.p
      * @return boolean
      */
     public function hasPassword()
@@ -6316,7 +6316,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
     /**
      * Returns the password field on this model, if there is one
-     * @since $VID:$
+     * @since 4.9.74.p
      * @return EE_Password_Field|null
      */
     public function getPasswordField()
@@ -6333,7 +6333,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
     /**
      * Returns the list of field (as EE_Model_Field_Bases) that are protected by the password
-     * @since $VID:$
+     * @since 4.9.74.p
      * @return EE_Model_Field_Base[]
      * @throws EE_Error
      */
@@ -6353,7 +6353,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
     /**
      * Checks if the current user can perform the requested action on this model
-     * @since $VID:$
+     * @since 4.9.74.p
      * @param string $cap_to_check one of the array keys from _cap_contexts_to_cap_action_map
      * @param EE_Base_Class|array $model_obj_or_fields_n_values
      * @return bool
@@ -6393,7 +6393,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * Returns the query param where conditions key to the password affecting this model.
      * Eg on EEM_Event this would just be "password", on EEM_Datetime this would be "Event.password", etc.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @return null|string
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -6450,7 +6450,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * Returns true if there is a password on a related model which restricts access to some of this model's rows,
      * or if this model itself has a password affecting access to some of its other fields.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @return boolean
      */
     public function restrictedByRelatedModelPassword()

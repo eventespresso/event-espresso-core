@@ -697,7 +697,7 @@ class Read_Test extends EE_REST_TestCase
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws \EE_Error
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
@@ -732,7 +732,7 @@ class Read_Test extends EE_REST_TestCase
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws \EE_Error
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException

@@ -81,7 +81,7 @@ class Capabilities
 
     /**
      * "Removes" password-protected fields. Currently that means setting their values to their default.
-     * @since $VID:$
+     * @since 4.9.74.p
      * @param array $entity
      * @param EEM_Base $model
      * @param ModelVersionInfo $model_version_info

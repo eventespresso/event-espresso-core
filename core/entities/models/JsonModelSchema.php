@@ -246,7 +246,7 @@ class JsonModelSchema
 
     /**
      * Returns an array of JSON schema to describe the _protected property on responses
-     * @since $VID:$
+     * @since 4.9.74.p
      * @return array
      */
     protected function getProtectedFieldsSchema()

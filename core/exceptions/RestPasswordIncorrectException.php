@@ -11,7 +11,7 @@ use EventEspresso\core\libraries\rest_api\RestException;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.74.p
  *
  */
 class RestPasswordIncorrectException extends RestException

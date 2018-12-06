@@ -7,7 +7,7 @@
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.74.p
  *
  */
 class EemEventVenueTest extends EE_UnitTestCase
@@ -18,7 +18,7 @@ class EemEventVenueTest extends EE_UnitTestCase
     protected $model;
 
     /**
-     * @since $VID:$
+     * @since 4.9.74.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
@@ -31,7 +31,7 @@ class EemEventVenueTest extends EE_UnitTestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.74.p
      * @group private-1
      */
     public function testRestrictedbyRelatedModelPassword()
