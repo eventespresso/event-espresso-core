@@ -965,6 +965,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     }
 
     /**
+     * Tests that we still get the correct error when trying to get tickets from a datetime for a draft event.
      * @since $VID:$
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -972,7 +973,43 @@ class ReadProtectedTest extends EE_REST_TestCase
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function testGetRelatedDatetimesToTicketsNoPassword()
+    public function testGetRelatedDatetimesToTicketsEventDraft()
+    {
+        // Create a datetime, and event, that's not password protected.
+        $event = $this->new_model_obj_with_dependencies(
+            'Event',
+            array(
+                'status' => EEM_Event::post_status_draft
+            )
+        );
+        $dtt = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $event->ID()
+            )
+        );
+        // And create a ticket for it.
+        $tkt = $this->new_model_obj_with_dependencies('Ticket');
+        $dtt->_add_relation_to($tkt, 'Ticket');
+        $request = new WP_REST_Request(
+            'GET',
+            '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/' . $dtt->ID() . '/tickets'
+        );
+        $response = rest_do_request($request);
+        $this->assertInstanceOf('WP_REST_Response', $response);
+        $data = $response->get_data();
+        $this->assertEquals('rest_tickets_cannot_list',$data['code']);
+    }
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testGetRelatedDatetimesToTickets()
     {
         // Create a datetime, and event, that's not password protected.
         $event = $this->new_model_obj_with_dependencies(
@@ -1011,7 +1048,7 @@ class ReadProtectedTest extends EE_REST_TestCase
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function testGetRelatedDatetimesToTicketsDeletedNoPassword()
+    public function testGetRelatedDatetimesToTicketsDeleted()
     {
         // Create a datetime, and event, that's not password protected.
         $event = $this->new_model_obj_with_dependencies(
@@ -1055,7 +1092,7 @@ class ReadProtectedTest extends EE_REST_TestCase
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function testGetRelatedDatetimesDeletedToTicketsNoPassword()
+    public function testGetRelatedDatetimesDeletedTo()
     {
         // Create a datetime, and event, that's not password protected.
         $event = $this->new_model_obj_with_dependencies(

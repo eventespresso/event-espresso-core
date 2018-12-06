@@ -650,8 +650,7 @@ class Read extends Base
                 array(
                     0 => array(
                         $model->primary_key_name() => $db_row[ $model->get_primary_key_field()->get_qualified_column() ]
-                    ),
-                    'default_where_conditions' => 'minimum'
+                    )
                 ),
                 $rest_request
             );
@@ -1574,7 +1573,8 @@ class Read extends Base
      * @since 4.9.74.p
      * @param EEM_Base $model
      * @param $model_row
-     * @param $query_params
+     * @param $query_params Adds 'default_where_conditions' => 'minimum' to ensure we don't confuse trashed with
+     *                      password protected.
      * @param WP_REST_Request $request
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -1587,6 +1587,7 @@ class Read extends Base
      */
     protected function checkPassword(EEM_Base $model, $model_row, $query_params, WP_REST_Request $request)
     {
+        $query_params['default_where_conditions'] = 'minimum';
         // stuff is only "protected" for front-end requests. Elsewhere, you either get full permission to access the object
         // or you don't.
         $request_caps = $request->get_param('caps');
