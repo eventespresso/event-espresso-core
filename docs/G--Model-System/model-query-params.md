@@ -249,8 +249,10 @@ This forces a join in the query with the named models. It should be a numericall
 
 ## `default_where_conditions`
 This can be set to `none`, `this_model_only`, `other_models_only`, or `all`.  
+### `minimum`
+Set this value to disable all but essential default where conditions. For example, when querying custom post types (eg events, venues, attendees) draft and trashed ones are excluded, but this setting will make them returned as well. However, this will setting will ensure only posts of the correct type are returned (as opposed to `none`).
 ### `none`
-Set this value to disable all default where conditions.  For example, usually soft-deleted objects are filtered-out of results.  If you want to include them, set this query parameter to `none`.
+Only for advanced usage. A step beyond `minimum`, this means that when querying events you may get other post types returned. Usually `minimum` is a better option.
 ### `other_models_only`
 Set this value to disable _only_ **this** model's default where conditions.
 ### `this_model_only`
