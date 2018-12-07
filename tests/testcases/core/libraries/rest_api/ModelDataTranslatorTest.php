@@ -143,7 +143,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      */
     public function testPrepareConditionsQueryParamsForModelsUnprivilegedUseOfPassword()
     {
-        $this->expectException(RestException::class);
+        $this->setExceptionExpected(RestException::class);
         // you can't filter by password unless you're an admin
             ModelDataTranslator::prepareConditionsQueryParamsForModels(
                 array(
