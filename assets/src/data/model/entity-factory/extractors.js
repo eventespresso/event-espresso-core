@@ -20,9 +20,7 @@ import {
 	ServerDateTime as DateTime,
 } from '../../../vo';
 
-import {
-	pluralModelName
-} from '../model-names';
+import { pluralModelName } from '../model-names';
 
 import {
 	hasRawProperty,
@@ -198,6 +196,7 @@ export const getBaseFieldsAndValuesForPersisting = ( entityInstance ) => {
 			);
 			return fieldsAndValues;
 		}
+		return fieldsAndValues;
 	}, {} );
 };
 

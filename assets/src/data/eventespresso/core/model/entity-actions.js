@@ -89,15 +89,10 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			modelName,
 			'records',
 			'receiveAndReplace',
-		) ] = ( entities ) => action.recieveAndReplaceEntityRecords(
+		) ] = ( entities ) => action.receiveAndReplaceEntityRecords(
 			modelName,
 			entities
 		);
-		actions[ getMethodName(
-			modelName,
-			'byId',
-			'remove',
-		) ] = ( entityId ) => action.removeEntityById( modelName, entityId );
 		actions[ getMethodName(
 			modelName,
 			'id',

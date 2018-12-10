@@ -28,13 +28,13 @@ export const createSelectors = ( selector ) => MODEL_NAMES.reduce(
 			modelName,
 			'deleteRelations',
 			'getQueued'
-		) ] = ( state ) => selector.getRelationAdditionsQueuedForModel(
+		) ] = ( state ) => selector.getRelationDeletionsQueuedForModel(
 			state,
 			modelName
 		);
 		selectors[ getMethodName(
 			modelName,
-			'',
+			'id',
 			'countRelationModelsIndexedFor'
 		) ] = ( state, entityId ) => selector
 			.countRelationModelsIndexedForEntity(

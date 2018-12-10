@@ -11,7 +11,8 @@ import {
 	keyEntitiesByPrimaryKeyValue,
 	getEntityPrimaryKeyValues,
 } from '@eventespresso/model';
-import { isEmpty, keys } from 'lodash';
+import { isEmpty, keys, isArray } from 'lodash';
+import warning from 'warning';
 
 /**
  * Internal imports.
@@ -19,7 +20,7 @@ import { isEmpty, keys } from 'lodash';
 import { fetch, select, dispatch } from '../../base-controls';
 import {
 	getFactoryByModel,
-	resolveGetEntityByIdForIds
+	resolveGetEntityByIdForIds,
 } from '../../base-resolvers';
 import {
 	removeEntityById,
@@ -42,6 +43,13 @@ import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
 function* persistEntityRecord( modelName, entity ) {
 	// if this is not a model entity or its not dirty then bail.
 	if ( ! isModelEntityOfModel( entity, modelName ) || entity.isClean ) {
+		warning(
+			false,
+			isModelEntityOfModel( entity, modelName ) ?
+				'The entity provided has no changes to persist.' :
+				'The provided entity is not a BaseEntity child for the ' +
+				'provided model'
+		);
 		return null;
 	}
 	const factory = yield getFactoryByModel( modelName );
@@ -115,14 +123,17 @@ function* persistForEntityIds( modelName, entityIds = [] ) {
 		modelName,
 		entityIds,
 	);
-	const retrievedIds = keys( entities );
+	const retrievedEntities = isArray( entities ) ?
+		keyEntitiesByPrimaryKeyValue( 'event', entities ) :
+		new Map();
+	const retrievedIds = Array.from( retrievedEntities.keys() );
 	const persistedEntities = {};
 	while ( retrievedIds.length > 0 ) {
 		const id = retrievedIds.shift();
 		const persistedEntity = yield dispatch(
 			CORE_REDUCER_KEY,
 			'persistEntityRecord',
-			[ modelName, entities[ id ] ]
+			[ modelName, retrievedEntities.get( id ) ]
 		);
 		if ( isModelEntityOfModel( persistedEntity, modelName ) ) {
 			persistedEntities[ persistedEntity.id ] = persistedEntity;
@@ -147,7 +158,7 @@ function* persistDeletesForModel( modelName ) {
 	while ( entityIds.length > 0 ) {
 		const entityId = entityIds.shift();
 		const success = yield fetch( {
-			path: applyQueryString( modelName ) + entityId,
+			path: applyQueryString( modelName ) + '/' + entityId,
 			data: { force: true },
 			method: 'DELETE',
 		} );
@@ -175,7 +186,7 @@ function* persistTrashesForModel( modelName ) {
 	while ( entityIds.length > 0 ) {
 		const entityId = entityIds.shift();
 		const success = yield fetch( {
-			path: applyQueryString( modelName ) + entityId,
+			path: applyQueryString( modelName ) + '/' + entityId,
 			method: 'DELETE',
 		} );
 		if ( success ) {
@@ -198,17 +209,25 @@ function* persistAllDeletes() {
 		CORE_REDUCER_KEY,
 		'getModelsQueuedForDelete'
 	);
-	let deletedIds = [],
-		trashedIds = [];
+	const deletedIds = {},
+		trashedIds = {};
 	while ( modelsForDelete.length > 0 ) {
-		deletedIds = yield persistDeletesForModel( modelsForDelete.shift() );
+		const modelForDelete = modelsForDelete.shift();
+		const idsDeleted = yield persistDeletesForModel( modelForDelete );
+		if ( ! isEmpty( idsDeleted ) ) {
+			deletedIds[ modelForDelete ] = idsDeleted;
+		}
 	}
 	const modelsForTrash = yield select(
 		CORE_REDUCER_KEY,
 		'getModelsQueuedForTrash'
 	);
 	while ( modelsForTrash.length > 0 ) {
-		trashedIds = yield persistTrashesForModel( modelsForTrash.shift() );
+		const modelForTrash = modelsForTrash.shift();
+		const idsTrashed = yield persistTrashesForModel( modelForTrash );
+		if ( ! isEmpty( idsTrashed ) ) {
+			trashedIds[ modelForTrash ] = idsTrashed;
+		}
 	}
 	return { deleted: deletedIds, trashed: trashedIds };
 }

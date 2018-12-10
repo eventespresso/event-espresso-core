@@ -19,8 +19,35 @@ export const mockStateForTests = {
 			54: DateTimeEntities.c,
 		},
 	},
-	entityIds: {
-		event: [ '10', '20', '30' ],
-		datetime: [ '52', '53', '54' ],
+	relations: {
+		index: {
+			datetimes: {
+				52: { event: [ 10 ] },
+				53: { event: [ 20 ] },
+				54: { event: [ 30 ] },
+			},
+		},
+		entityMap: {
+			event: {
+				10: {
+					datetimes: [ 52 ],
+				},
+				20: {
+					datetimes: [ 53 ],
+				},
+				30: {
+					datetimes: [ 54 ],
+				},
+			},
+		},
+	},
+	dirty: {
+		relations: {
+			index: {},
+			delete: {},
+			add: {},
+		},
+		trash: {},
+		delete: {},
 	},
 };

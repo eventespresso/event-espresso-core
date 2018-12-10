@@ -16,17 +16,26 @@ import { getMethodName } from '../../base-model';
  */
 export const createSelectors = ( selector ) => MODEL_NAMES.reduce(
 	( selectors, modelName ) => {
-		selectors[ getMethodName( modelName, 'records' ) ] = (
+		selectors[ getMethodName(
+			modelName,
+			'records',
+			'get'
+		) ] = (
 			state
 		) => selector.getEntityRecordsForModel( state, modelName );
 		selectors[ getMethodName( modelName, '', 'get', true ) ] = (
 			state
 		) => selector.getEntitiesForModel( state, modelName );
-		selectors[ getMethodName( modelName, 'byId' ) ] = (
+		selectors[ getMethodName( modelName, 'byId', 'get' ) ] = (
 			state,
 			entityId
 		) => selector.getEntityById( state, modelName, entityId );
-		selectors[ getMethodName( modelName, 'byIds', 'get', true ) ] = (
+		selectors[ getMethodName(
+			modelName,
+			'byIds',
+			'get',
+			true
+		) ] = (
 			state,
 			entityIds,
 		) => selector.getEntitiesByIds( state, modelName, entityIds );
@@ -42,7 +51,7 @@ export const createSelectors = ( selector ) => MODEL_NAMES.reduce(
 			modelName,
 			'idsQueuedForDelete',
 			'get'
-		) ] = ( state ) => selector.getEntityIdsQueuedforDelete(
+		) ] = ( state ) => selector.getEntityIdsQueuedForDelete(
 			state,
 			modelName
 		);

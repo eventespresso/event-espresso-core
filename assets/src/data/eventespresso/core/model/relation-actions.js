@@ -43,7 +43,7 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			modelName,
 			'relationForAddition',
 			'removeDirty'
-		) ] = ( entityId, relationName, relationEntityId ) => actions
+		) ] = ( entityId, relationName, relationEntityId ) => action
 			.removeDirtyRelationForAddition(
 				modelName,
 				entityId,
@@ -54,7 +54,7 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			modelName,
 			'',
 			'removeRelationFor'
-		) ] = ( entityId, relationName, relationEntityId ) => actions
+		) ] = ( entityId, relationName, relationEntityId ) => action
 			.removeRelationForEntity(
 				modelName,
 				entityId,
@@ -65,23 +65,23 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			modelName,
 			'',
 			'persistAddRelationsFor'
-		) ] = () => actions.persistAddRelationsForModel( modelName );
+		) ] = () => action.persistAddRelationsForModel( modelName );
 		actions[ getMethodName(
 			modelName,
 			'',
 			'persistDeleteRelationsFor'
-		) ] = () => actions.persistDeleteRelationsForModel( modelName );
+		) ] = () => action.persistDeleteRelationsForModel( modelName );
 		actions[ getMethodName(
 			modelName,
 			'',
 			'persistRelationsFor'
-		) ] = ( addRelation ) =>
-			actions.persistAddRelationsForModel( modelName, addRelation );
+		) ] = ( addRelation = true ) =>
+			action.persistRelationsForModel( modelName, addRelation );
 		actions[ getMethodName(
 			modelName,
 			'relationsForId',
 			'persist'
-		) ] = ( entityId, addRelation ) => actions
+		) ] = ( entityId, addRelation = true ) => action
 			.persistRelationsForEntityId(
 				modelName,
 				entityId,
@@ -91,7 +91,7 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			modelName,
 			'relationsForIdAndRelation',
 			'persist'
-		) ] = ( entityId, relationName, addRelation ) => actions
+		) ] = ( entityId, relationName, addRelation = true ) => action
 			.persistRelationsForEntityIdAndRelation(
 				modelName,
 				entityId,
@@ -102,7 +102,12 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			modelName,
 			'relationsForIdAndRelationId',
 			'persist'
-		) ] = ( entityId, relationName, relationId, addRelation ) => actions
+		) ] = (
+			entityId,
+			relationName,
+			relationId,
+			addRelation = true
+		) => action
 			.persistRelationsForEntityIdAndRelationId(
 				modelName,
 				entityId,
@@ -114,7 +119,12 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			modelName,
 			'id',
 			'removeDirtyRelationsFor'
-		) ] = ( entityId, relationName, relationId, addRelation ) => actions
+		) ] = (
+			entityId,
+			relationName,
+			relationId,
+			addRelation = true
+		) => action
 			.removeDirtyRelations(
 				relationName,
 				relationId,
@@ -126,7 +136,7 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			modelName,
 			'id',
 			'receiveRelatedEntitiesFor'
-		) ] = ( entityId, relationName, relationEntityIds ) => actions
+		) ] = ( entityId, relationName, relationEntityIds ) => action
 			.receiveRelatedEntities(
 				modelName,
 				entityId,
@@ -137,7 +147,12 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			modelName,
 			'id',
 			'receiveDirtyRelationIndexFor'
-		) ] = ( relationName, relationId, entityId, addRelation ) => actions
+		) ] = (
+			relationName,
+			relationId,
+			entityId,
+			addRelation = true
+		) => action
 			.receiveDirtyRelationIndex(
 				relationName,
 				relationId,
@@ -149,7 +164,7 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			modelName,
 			'id',
 			'receiveDirtyRelationAdditionFor'
-		) ] = ( relationName, relationId, entityId ) => actions
+		) ] = ( relationName, relationId, entityId ) => action
 			.receiveDirtyRelationAddition(
 				relationName,
 				relationId,
@@ -160,7 +175,7 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			modelName,
 			'id',
 			'receiveDirtyRelationDeletionFor'
-		) ] = ( relationName, relationId, entityId ) => actions
+		) ] = ( relationName, relationId, entityId ) => action
 			.receiveDirtyRelationDeletion(
 				relationName,
 				relationId,
@@ -171,7 +186,7 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			modelName,
 			'relations',
 			'receiveUpdatedEntityIdFor'
-		) ] = ( oldId, newId ) => actions
+		) ] = ( oldId, newId ) => action
 			.receiveUpdatedEntityIdForRelations(
 				modelName,
 				oldId,
@@ -181,7 +196,7 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			modelName,
 			'id',
 			'removeAllRelatedEntitiesFor'
-		) ] = ( entityId ) => actions.removeAllRelatedEntitiesForModelEntity(
+		) ] = ( entityId ) => action.removeAllRelatedEntitiesForModelEntity(
 			modelName,
 			entityId
 		);
@@ -189,7 +204,7 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			modelName,
 			'idAndRelation',
 			'removeRelatedEntitiesFor'
-		) ] = ( entityId, relationName, relationIds ) => actions
+		) ] = ( entityId, relationName, relationIds ) => action
 			.removeRelatedEntities(
 				modelName,
 				entityId,
@@ -204,8 +219,8 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			relationName,
 			relationEntityId,
 			entityId,
-			addRelation,
-		) => actions.removeDirtyRelationIndex(
+			addRelation = true,
+		) => action.removeDirtyRelationIndex(
 			relationName,
 			relationEntityId,
 			modelName,
@@ -220,7 +235,7 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			relationName,
 			relationEntityId,
 			entityId,
-		) => actions.removeDirtyRelationAddition(
+		) => action.removeDirtyRelationAddition(
 			relationName,
 			relationEntityId,
 			modelName,
@@ -234,7 +249,7 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 			relationName,
 			relationEntityId,
 			entityId,
-		) => actions.removeDirtyRelationDeletion(
+		) => action.removeDirtyRelationDeletion(
 			relationName,
 			relationEntityId,
 			modelName,

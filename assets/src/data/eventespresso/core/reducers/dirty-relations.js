@@ -57,11 +57,13 @@ const relationExistsAlready = ( state, action, relationMap ) => {
 	// be stored with the relation as the originating entity.
 	relationName = singularModelName( relationName );
 	modelName = pluralModelName( modelName );
-	const entityIds = get(
-		state,
-		[ queueType, relationName, relationEntityId, modelName ],
-		DEFAULT_EMPTY_ARRAY
-	);
+	const entityIds = [
+		...get(
+			state,
+			[ queueType, relationName, relationEntityId, modelName ],
+			DEFAULT_EMPTY_ARRAY
+		),
+	];
 	return entityIds.indexOf( entityId ) > -1;
 };
 

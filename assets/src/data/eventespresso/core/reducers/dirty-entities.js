@@ -2,13 +2,55 @@
  * External imports
  */
 import { DEFAULT_CORE_STATE } from '@eventespresso/model';
-import { without } from 'lodash';
+import { without, get, set } from 'lodash';
 
 /**
  * Internal imports.
  */
 import { ACTION_TYPES } from '../actions/action-types';
-const { types } = ACTION_TYPES.entities;
+const { entities: types } = ACTION_TYPES;
+
+const DEFAULT_EMPTY_ARRAY = [];
+
+const addToState = ( state, modelName, entityId, existingEntities ) => {
+	state = { ...state };
+	existingEntities.push( entityId );
+	set( state, [ modelName ], existingEntities );
+	return state;
+};
+
+const removeFromState = ( state, modelName, entityId ) => {
+	state = { ...state };
+	state[ modelName ] = without( state[ modelName ], entityId );
+	if ( state[ modelName ].length === 0 ) {
+		delete state[ modelName ];
+	}
+	return state;
+};
+
+const processAction = ( state, action ) => {
+	const { type, modelName, entityId } = action;
+	const existingEntities = [
+		...get( state, [ modelName ], DEFAULT_EMPTY_ARRAY ),
+	];
+
+	switch ( type ) {
+		case types.RECEIVE_DELETE_ENTITY_ID:
+		case types.RECEIVE_TRASH_ENTITY_ID:
+			if ( existingEntities.indexOf( entityId ) > -1 ) {
+				return state;
+			}
+			state = addToState( state, modelName, entityId, existingEntities );
+			break;
+		case types.REMOVE_DELETE_ENTITY_ID:
+		case types.REMOVE_TRASH_ENTITY_ID:
+			if ( existingEntities.indexOf( entityId ) > -1 ) {
+				state = removeFromState( state, modelName, entityId );
+			}
+			break;
+	}
+	return state;
+}
 
 /**
  * Reducer for queuing an entity for deletion in the state.
@@ -18,31 +60,7 @@ const { types } = ACTION_TYPES.entities;
  * @return {DEFAULT_CORE_STATE.dirty.delete|{}} Existing or new state.
  */
 export function deleteEntity( state = DEFAULT_CORE_STATE.dirty.delete, action ) {
-	const { type, modelName, entityId } = action;
-
-	switch ( type ) {
-		case types.RECEIVE_DELETE_ENTITY_ID:
-			state = {
-				...state,
-				[ modelName ]: [
-					...state[ modelName ],
-					entityId,
-				],
-			};
-			break;
-		case types.REMOVE_DELETE_ENTITY_ID:
-			if (
-				state[ modelName ] &&
-				state[ modelName ].indexOf( entityId ) > -1
-			) {
-				state[ modelName ] = without( state[ modelName ], entityId );
-				if ( state[ modelName ].length === 0 ) {
-					delete state[ modelName ];
-				}
-			}
-			break;
-	}
-	return state;
+	return processAction( state, action );
 }
 
 /**
@@ -53,29 +71,5 @@ export function deleteEntity( state = DEFAULT_CORE_STATE.dirty.delete, action ) 
  * @return {DEFAULT_CORE_STATE.dirty.trash|{}} Existing or new state.
  */
 export function trashEntity( state = DEFAULT_CORE_STATE.dirty.trash, action ) {
-	const { type, modelName, entityId } = action;
-
-	switch ( type ) {
-		case types.RECEIVE_TRASH_ENTITY_ID:
-			state = {
-				...state,
-				[ modelName ]: [
-					...state[ modelName ],
-					entityId,
-				],
-			};
-			break;
-		case types.REMOVE_TRASH_ENTITY_ID:
-			if (
-				state[ modelName ] &&
-				state[ modelName ].indexOf( entityId ) > -1
-			) {
-				state[ modelName ] = without( state[ modelName ], entityId );
-				if ( state[ modelName ].length === 0 ) {
-					delete state[ modelName ];
-				}
-			}
-			break;
-	}
-	return state;
+	return processAction( state, action );
 }

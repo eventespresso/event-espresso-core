@@ -21,7 +21,6 @@ export const createResolvers = ( resolver ) => MODEL_NAMES.reduce(
 			'byId',
 			'get'
 		) ] = ( entityId ) => resolver.getEntityById( modelName, entityId );
-
 		return resolvers;
 	},
 	{}

@@ -59,7 +59,7 @@ function* persistDeleteRelationsForModel( modelName ) {
 function* persistRelationsForModel( modelName, addRelation = true ) {
 	const relationState = yield getRelationState( modelName, addRelation );
 	if ( isEmpty( relationState ) ) {
-		return;
+		return {};
 	}
 	const relationsPersisted = {};
 	const entityIds = keys( relationState );
@@ -267,7 +267,7 @@ function* persistRelationsForEntityIdAndRelationId(
 		// Even when ids have changed, this should catch any potential queued
 		// relation items for those things that got updated in state in a prior
 		// dispatch
-		removeDirtyRelations(
+		yield removeDirtyRelations(
 			relationName,
 			relationId,
 			modelName,
@@ -397,4 +397,6 @@ export {
 	persistRelationsForEntityIdAndRelation,
 	persistRelationsForEntityIdAndRelationId,
 	persistNewEntityAndRemoveDirtyRelations,
+	removeDirtyRelations,
+	getRelationState,
 };

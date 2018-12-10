@@ -70,8 +70,8 @@ function receiveEntity( state, action ) {
  * Handles receiving entity records from a rest response and converting them to
  * model entities using the provided factory.
  *
- * It is expected that the incoming entity records are indexed by the primary key
- * value for the entities.
+ * It is expected that the incoming entity records are a Map indexed by the
+ * primary key value for the entities.
  *
  * @param {Object} state
  * @param {Object} action

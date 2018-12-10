@@ -92,12 +92,13 @@ function* createRelations(
 ) {
 	relationName = pluralModelName( relationName );
 	const singularRelationName = singularModelName( relationName );
+	// warning currently has a bug whereby the first argument is skipped for
+	// string replacement.
 	if ( ! ( relationEntities instanceof Map ) ) {
 		warning(
 			false,
-			'Incoming relationEntities argument (%s) is expected to be an ' +
-			'instance of Map.',
-			relationEntities,
+			'Incoming relationEntities argument is expected to be an ' +
+			'instance of Map. It is not.',
 		);
 		return;
 	}
@@ -109,7 +110,8 @@ function* createRelations(
 			false,
 			'Incoming relation Entities do not contain BaseEntity instances ' +
 			'for the given relation model (%s)',
-			singularRelationName
+			'',
+			singularRelationName,
 		);
 		return;
 	}

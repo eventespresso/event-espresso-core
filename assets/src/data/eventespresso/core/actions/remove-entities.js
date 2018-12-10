@@ -2,7 +2,7 @@
  * Internal imports
  */
 import { ACTION_TYPES } from './action-types';
-const { types } = ACTION_TYPES.entities;
+const { entities: types } = ACTION_TYPES;
 
 /**
  * Action creator for removing the entity from the state.

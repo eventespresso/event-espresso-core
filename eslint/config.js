@@ -1,3 +1,5 @@
+const { map } = require( 'lodash' );
+
 module.exports = {
 	parser: 'babel-eslint',
 	extends: [
@@ -86,6 +88,35 @@ module.exports = {
 			{
 				selector: 'CallExpression[callee.name=_nx]:not([arguments.2.type=/^Literal|BinaryExpression$/])',
 				message: 'Translate function arguments must be string literals.',
+			},
+			{
+				// Builds a selector which handles CallExpression with path
+				// argument at varied position by function.
+				//
+				// See: https://github.com/WordPress/gutenberg/pull/9615
+				selector: map( {
+					1: [
+						'property',
+						'matchesProperty',
+						'path',
+					],
+					2: [
+						'invokeMap',
+						'get',
+						'has',
+						'hasIn',
+						'invoke',
+						'result',
+						'set',
+						'setWith',
+						'unset',
+						'update',
+						'updateWith',
+					],
+				}, ( functionNames, argPosition ) => (
+					`CallExpression[callee.name=/^(${ functionNames.join( '|' ) })$/] > Literal:nth-child(${ argPosition })`
+				) ).join( ',' ),
+				message: 'Always pass an array as the path argument',
 			},
 		],
 		'no-shadow': 'error',

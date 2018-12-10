@@ -7,7 +7,7 @@ import { primaryKeys } from './primary-keys.js';
  * External imports
  */
 import { keys } from 'lodash';
-import { pluralize } from 'pluralize';
+import pluralize from 'pluralize';
 import memoize from 'memize';
 
 /**

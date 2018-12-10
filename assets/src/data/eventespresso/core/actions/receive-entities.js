@@ -2,7 +2,7 @@
  * Internal imports
  */
 import { ACTION_TYPES } from './action-types';
-const { types } = ACTION_TYPES.entities;
+const { entities: types } = ACTION_TYPES;
 
 /**
  * Action for receiving entity records.
@@ -16,11 +16,11 @@ const { types } = ACTION_TYPES.entities;
  * {
  * 	type: string,
  * 	modelName: string,
- * 	entities: Object<number|string,Object>
+ * 	entities: Map
  * 	}
  * }  An action object.
  */
-function receiveEntityRecords( modelName, entities = {} ) {
+function receiveEntityRecords( modelName, entities = new Map() ) {
 	return {
 		type: types.RECEIVE_ENTITY_RECORDS,
 		modelName,
@@ -32,7 +32,7 @@ function receiveEntityRecords( modelName, entities = {} ) {
  * Same as receiveEntityRecords except incoming entities will replace any
  * matching records (by ID)  in the state.
  * @param {string} modelName
- * @param {Object<number|string,Object>} entities
+ * @param {Map} entities
  * @return {
  * {
  * 	type: string,
@@ -41,7 +41,7 @@ function receiveEntityRecords( modelName, entities = {} ) {
  * 	}
  * }  An action object.
  */
-function receiveAndReplaceEntityRecords( modelName, entities = {} ) {
+function receiveAndReplaceEntityRecords( modelName, entities = new Map() ) {
 	return {
 		type: types.RECEIVE_AND_REPLACE_ENTITY_RECORDS,
 		modelName,

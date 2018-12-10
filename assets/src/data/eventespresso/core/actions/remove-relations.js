@@ -9,7 +9,7 @@ import {
 	TYPE_QUEUE_RELATION_DELETE,
 } from '../constants';
 import { ACTION_TYPES } from './action-types';
-const { types } = ACTION_TYPES.relations;
+const { relations: types } = ACTION_TYPES;
 
 /**
  * Action creator for removing all indexed relations for a specific entity from
