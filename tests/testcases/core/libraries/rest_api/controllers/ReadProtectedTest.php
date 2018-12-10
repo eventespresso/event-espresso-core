@@ -54,7 +54,6 @@ class ReadProtectedTest extends EE_REST_TestCase
     /**
      * test get_all on a model with a password field, with no password provided.
      * @since 4.9.74.p
-     * @group current
      */
     public function testGetAllNoPassword()
     {
@@ -966,6 +965,164 @@ class ReadProtectedTest extends EE_REST_TestCase
     }
 
     /**
+     * Tests that we still get the correct error when trying to get tickets from a datetime for a draft event.
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testGetRelatedDatetimesToTicketsEventDraft()
+    {
+        // Create a datetime, and event, that's not password protected.
+        $event = $this->new_model_obj_with_dependencies(
+            'Event',
+            array(
+                'status' => EEM_Event::post_status_draft
+            )
+        );
+        $dtt = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $event->ID()
+            )
+        );
+        // And create a ticket for it.
+        $tkt = $this->new_model_obj_with_dependencies('Ticket');
+        $dtt->_add_relation_to($tkt, 'Ticket');
+        $request = new WP_REST_Request(
+            'GET',
+            '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/' . $dtt->ID() . '/tickets'
+        );
+        $response = rest_do_request($request);
+        $this->assertInstanceOf('WP_REST_Response', $response);
+        $data = $response->get_data();
+        $this->assertEquals('rest_tickets_cannot_list',$data['code']);
+    }
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testGetRelatedDatetimesToTickets()
+    {
+        // Create a datetime, and event, that's not password protected.
+        $event = $this->new_model_obj_with_dependencies(
+            'Event',
+            array(
+                'status' => EEM_Event::post_status_publish
+            )
+        );
+        $dtt = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $event->ID()
+            )
+        );
+        // And create a ticket for it.
+        $tkt = $this->new_model_obj_with_dependencies('Ticket');
+        $dtt->_add_relation_to($tkt, 'Ticket');
+        $request = new WP_REST_Request(
+            'GET',
+            '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/' . $dtt->ID() . '/tickets'
+        );
+        $response = rest_do_request($request);
+        $this->assertInstanceOf('WP_REST_Response', $response);
+        $data = $response->get_data();
+        $this->assertEquals(1, count($data));
+        $this->assertEquals($tkt->ID(),$data[0]['TKT_ID']);
+    }
+
+    /**
+     * * Verifies that if a ticket is archived, there is no erroneous requirement for a password (this was a problem
+     * at one point).
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testGetRelatedDatetimesToTicketsDeleted()
+    {
+        // Create a datetime, and event, that's not password protected.
+        $event = $this->new_model_obj_with_dependencies(
+            'Event',
+            array(
+                'status' => EEM_Event::post_status_publish
+            )
+        );
+        $dtt = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $event->ID()
+            )
+        );
+        // And create a ticket for it.
+        $tkt = $this->new_model_obj_with_dependencies(
+            'Ticket',
+            array(
+                'TKT_deleted' => true
+            )
+        );
+        $dtt->_add_relation_to($tkt, 'Ticket');
+        $request = new WP_REST_Request(
+            'GET',
+            '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/' . $dtt->ID() . '/tickets'
+        );
+        $response = rest_do_request($request);
+        $this->assertInstanceOf('WP_REST_Response', $response);
+        $data = $response->get_data();
+        $this->assertEquals(1, count($data));
+        $this->assertEquals($tkt->ID(),$data[0]['TKT_ID']);
+    }
+
+    /**
+     * Verifies that if a datetime is trashed, there is no erroneous requirement for a password (this was a problem
+     * at one point).
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testGetRelatedDatetimesDeletedTo()
+    {
+        // Create a datetime, and event, that's not password protected.
+        $event = $this->new_model_obj_with_dependencies(
+            'Event',
+            array(
+                'status' => EEM_Event::post_status_publish
+            )
+        );
+        $dtt = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $event->ID(),
+                'DTT_deleted' => true
+            )
+        );
+        // And create a ticket for it.
+        $tkt = $this->new_model_obj_with_dependencies('Ticket');
+        $dtt->_add_relation_to($tkt, 'Ticket');
+        $request = new WP_REST_Request(
+            'GET',
+            '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/datetimes/' . $dtt->ID() . '/tickets'
+        );
+        $response = rest_do_request($request);
+        $this->assertInstanceOf('WP_REST_Response', $response);
+        $data = $response->get_data();
+        $this->assertEquals(1, count($data));
+        $this->assertEquals($tkt->ID(),$data[0]['TKT_ID']);
+    }
+
+    /**
      * Test fetching an protected model, and including an  UNprotected model (venue to country), and no password is provided.
      * @since 4.9.74.p
      * @throws EE_Error
@@ -1403,7 +1560,6 @@ class ReadProtectedTest extends EE_REST_TestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @group current
      */
     public function testGetAllAdminRequestIndirectlyProtected()
     {
