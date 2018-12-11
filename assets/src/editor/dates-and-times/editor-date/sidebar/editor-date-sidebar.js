@@ -3,15 +3,15 @@
  */
 import { Component } from 'react';
 import { hooks } from '@eventespresso/eejs';
+import { IconMenuItem } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
  */
 import { EditorDateMenu } from './editor-date-menu';
-import { SidebarMenuItem } from './sidebar-menu-item';
-import { editEventDate } from './edit-event-date';
-import { viewEventDateTickets } from './view-event-date-tickets';
+import { editEventDate } from '../edit-event-date';
+import './style.css';
 
 /**
  * EditorDateSidebar
@@ -24,12 +24,12 @@ export class EditorDateSidebar extends Component {
 	/**
 	 * @function
 	 * @param {Object} eventDate    JSON object defining the Event Date
-	 * @return {SidebarMenuItem}    Edit Event Date SidebarMenuItem
+	 * @return {IconMenuItem}    Edit Event Date IconMenuItem
 	 */
 	editDateMenuItem = ( eventDate ) => {
 		const data = { eventDate };
 		return (
-			<SidebarMenuItem
+			<IconMenuItem
 				index={ 1 }
 				title={ __( 'edit event date', 'event_espresso' ) }
 				id={ 'edit-date-' + eventDate.id }
@@ -42,19 +42,20 @@ export class EditorDateSidebar extends Component {
 
 	/**
 	 * @function
-	 * @param {Object} eventDate    JSON object defining the Event Date
-	 * @return {SidebarMenuItem}    View Tickets for Event Date SidebarMenuItem
+	 * @param {Object} eventDate    		JSON object defining the Event Date
+	 * @param {Function} viewTicketsHandler callback for displaying ticket list
+	 * @return {IconMenuItem}    View Tickets for Event Date IconMenuItem
 	 */
-	viewTicketsMenuItem = ( eventDate ) => {
+	viewTicketsMenuItem = ( eventDate, viewTicketsHandler ) => {
 		const data = { eventDate };
 		return (
-			<SidebarMenuItem
-				index={ 1 }
-				title={ __( 'view available tickets for this event date', 'event_espresso' ) }
+			<IconMenuItem
+				index={ 2 }
+				title={ __( 'view available tickets', 'event_espresso' ) }
 				id={ 'view-tickets-date-' + eventDate.id }
 				htmlClass={ 'view-tickets-date' }
 				dashicon={ 'tickets-alt' }
-				onClick={ ( event ) => viewEventDateTickets( event, data ) }
+				onClick={ () => viewTicketsHandler( data ) }
 			/>
 		);
 	};
@@ -62,48 +63,52 @@ export class EditorDateSidebar extends Component {
 	/**
 	 * @function
 	 * @param {Object} eventDate    	JSON object defining the Event Date
-	 * @param {Array} sidebarMenuItems  Array of SidebarMenuItem objects
-	 * @return {Array}    				Array of rendered SidebarMenuItem list items
+	 * @param {Array} sidebarMenuItems  Array of IconMenuItem objects
+	 * @return {Array}    				Array of rendered IconMenuItem list items
 	 */
 	renderSidebarMenuItems = ( eventDate, sidebarMenuItems ) => {
 		return sidebarMenuItems.map(
 			function( sidebarMenuItem, index ) {
-				return sidebarMenuItem && (
-					<li
-						key={ index }
-						id={ `ee-editor-date-sidebar-menu-item-${ eventDate.id }-${ index }` }
-						className={ `ee-editor-date-sidebar-menu-item-${ index } ee-editor-date-sidebar-menu-item` }
+				return sidebarMenuItem && sidebarMenuItem.type && (
+					sidebarMenuItem.type === EditorDateMenu ||
+					sidebarMenuItem.type === IconMenuItem
+				) && (
+					<div key={ index }
+						id={
+							`ee-editor-date-sidebar-menu-item-
+							${ eventDate.id }-${ index }`
+						}
+						className={
+							`ee-editor-date-sidebar-menu-item-${ index }
+							 ee-editor-date-sidebar-menu-item`
+						}
 					>
 						{ sidebarMenuItem }
-					</li>
+					</div>
 				);
 			}
 		);
 	};
 
 	render() {
-		const { eventDate } = this.props;
-		// console.log( '' );
-		// console.log( 'EditorDateSidebar' );
+		const { eventDate, viewTicketsHandler } = this.props;
 		let sidebarMenuItems = [];
 		sidebarMenuItems.push( <EditorDateMenu eventDate={ eventDate } /> );
 		sidebarMenuItems.push( this.editDateMenuItem( eventDate ) );
-		sidebarMenuItems.push( this.viewTicketsMenuItem( eventDate ) );
-		// console.log( '>>> >>> EditorDateSidebar applyFilters' );
+		sidebarMenuItems.push(
+			this.viewTicketsMenuItem( eventDate, viewTicketsHandler )
+		);
 		sidebarMenuItems = hooks.applyFilters(
 			'FHEE__EditorDates__EditorDateSidebar__SidebarMenuItems',
 			sidebarMenuItems,
 			eventDate
 		);
-		const sidebarMenu = this.renderSidebarMenuItems( eventDate, sidebarMenuItems );
 		return (
 			<div
 				id={ `ee-editor-date-sidebar-menu-${ eventDate.id }` }
 				className={ 'ee-editor-date-sidebar-menu' }
 			>
-				<ul className={ 'ee-editor-date-sidebar-menu-list' }>
-					{ sidebarMenu }
-				</ul>
+				{ this.renderSidebarMenuItems( eventDate, sidebarMenuItems ) }
 			</div>
 		);
 	}

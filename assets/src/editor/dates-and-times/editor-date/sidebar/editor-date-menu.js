@@ -3,13 +3,12 @@
  */
 import { Component } from 'react';
 import { __ } from '@eventespresso/i18n';
-import { DropDownMenu } from '@eventespresso/components';
+import { DropDownMenu, IconMenuItem } from '@eventespresso/components';
 
 /**
  * Internal dependencies
  */
-import { SidebarMenuItem } from './sidebar-menu-item';
-import { editEventDate } from './edit-event-date';
+import { editEventDate } from '../edit-event-date';
 
 /**
  * EditorDateMenu
@@ -42,11 +41,11 @@ export class EditorDateMenu extends Component {
 	/**
 	 * @function
 	 * @param {Object} eventDate    JSON object defining the Event Date
-	 * @return {SidebarMenuItem}    Main Event Date SidebarMenuItem
+	 * @return {IconMenuItem}    Main Event Date IconMenuItem
 	 */
 	getSidebarMenuItem = ( eventDate ) => {
 		return (
-			<SidebarMenuItem
+			<IconMenuItem
 				index={ 1 }
 				title={ __( 'event date main menu', 'event_espresso' ) }
 				id={ 'date-menu-' + eventDate.id }
@@ -60,7 +59,7 @@ export class EditorDateMenu extends Component {
 	/**
 	 * @function
 	 * @param {Object} eventDate    JSON object defining the Event Date
-	 * @return {SidebarMenuItem}    Main Event Date SidebarMenuItem
+	 * @return {IconMenuItem}    Main Event Date IconMenuItem
 	 */
 	getDropDownMenu = ( eventDate ) => {
 		const menuID = 'editor-date-' + eventDate.id;
@@ -88,10 +87,7 @@ export class EditorDateMenu extends Component {
 				text: __( 'edit venue', 'event_espresso' ),
 				link: eventDate.edit_venue_link,
 				title: __( 'edit venue', 'event_espresso' ),
-				tooltip: __(
-					'click here to open a new browser tab or window to edit the venue for this event date',
-					'event_espresso'
-				),
+				tooltip: __( 'venue editor opens in new window', 'event_espresso' ),
 			},
 		];
 		return <DropDownMenu
