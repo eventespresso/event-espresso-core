@@ -16,6 +16,13 @@ import {
 export const PaginatedEntityListWithFilterBar = (
 	EntityList,
 	paginationConfig = {},
+) => withEntityListFilterBar(
+	withEntityPagination( paginationConfig )( EntityList )
+);
+
+export const PaginatedEntityListWithFilterBarAndState = (
+	EntityList,
+	paginationConfig = {},
 ) => withEntityListFilterState( withEntityListFilterBar(
 	withEntityPagination( paginationConfig )( EntityList )
 ) );
