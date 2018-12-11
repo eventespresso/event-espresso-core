@@ -1327,7 +1327,8 @@ final class EE_System implements ResettableInterface
      */
     private function canLoadBlocks()
     {
-        return function_exists('register_block_type')
+        return apply_filters('FHEE__EE_System__canLoadBlocks', true)
+               && function_exists('register_block_type')
                // don't load blocks if in the Divi page builder editor context
                // @see https://github.com/eventespresso/event-espresso-core/issues/814
                && ! $this->request->getRequestParam('et_fb', false);
