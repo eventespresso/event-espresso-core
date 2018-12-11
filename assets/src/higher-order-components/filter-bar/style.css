@@ -4,20 +4,17 @@
  * ------------------------------------------------------------------------- */
 
 .ee-entity-list-filter-bar-wrapper {
-    background: #eee;
+    background: #ffffff;;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
     display: flex;
     flex-flow: row wrap;
     justify-content: space-between;
-    padding: 1rem 1.5rem 0 1.75rem;
-    margin: 1rem 0;
+    padding: .5rem .5rem 0;
+    border-bottom: 1px solid #f4f4f4;
+    margin: 0 0 1rem;
 }
-
 .ee-entity-list-filter-bar,
 .ee-entity-list-view-bar {
     display: flex;
@@ -32,7 +29,7 @@
 .ee-entity-list-view-bar {
     max-height: 36px;
     justify-content: flex-end;
-    margin: -1px -4px 1rem 0;
+    margin: -1px -4px .75rem 0;
     text-align: right;
     width: 30%;
 }
@@ -43,7 +40,7 @@
 }
 
 .ee-entity-list-filter-bar .ee-filter-bar-filter {
-    margin: 0 1rem 1rem 0;
+    margin: 0 1rem .75rem 0;
     max-width: 100%;
 }
 
@@ -84,6 +81,7 @@
 .ee-entity-list-filter-bar-wrapper .components-base-control__label {
     color: #706e73;
     font-weight: bold;
+    margin: 0 .5rem .25rem 0;
     white-space: nowrap;
 }
 
@@ -96,10 +94,16 @@
 
 
 
-/* Media Queries for smaller screens
+/* Media Queries for specific screen sizes
  * -------------------------------------------------------------------------*/
 
+@media only screen and (max-width: 1920px) {
+}
+
 @media only screen and (max-width: 1600px) {
+}
+
+@media only screen and (max-width: 1366px) {
 }
 
 @media only screen and (max-width: 1280px) {
@@ -107,18 +111,17 @@
     .ee-entity-list-filter-bar-wrapper .components-select-control__input {
         display: block;
     }
+
     .ee-entity-list-view-bar {
         max-height: 118px;
     }
+
     .ee-entity-list-view-bar .ee-view-filter {
         top: 9px;
     }
 }
 
 @media only screen and (max-width: 1024px) {
-    .ee-entity-list-filter-bar-wrapper .components-base-control__label {
-        margin: 0 0 4px;
-    }
 }
 
 /* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
@@ -133,25 +136,18 @@
 @media screen and ( max-width: 782px ) {
 }
 
-@media only screen and (max-width: 768px) {
-}
-
 /* WordPress Admin Media Query Breakpoint: Smartphone */
 @media screen and (max-width: 600px) {
-}
-
-@media only screen and (max-width: 600px) and (min-width: 481px) {
-}
-
-@media only screen and (max-width: 540px) and (min-width: 481px) {
     .ee-entity-list-filter-bar-wrapper {
         flex-flow: column nowrap;
         padding-bottom: 1rem;
     }
+
     .ee-entity-list-filter-bar,
     .ee-entity-list-view-bar {
         width: 100%;
     }
+
     .ee-entity-list-view-bar {
         flex-flow: row nowrap;
         justify-content: flex-start;
@@ -159,42 +155,19 @@
         margin: 0;
         text-align: left;
     }
+
     .ee-entity-list-view-bar .ee-filter-bar-filter {
         margin: 0 1rem 0 0;
     }
+
     .ee-entity-list-view-bar .ee-view-filter {
         top: 9px;
     }
 }
 
 @media only screen and (max-width: 480px) {
-    .ee-entity-list-filter-bar-wrapper {
-        flex-flow: column nowrap;
-        padding-bottom: 1rem;
-    }
-    .ee-entity-list-filter-bar,
-    .ee-entity-list-view-bar {
-        width: 100%;
-    }
-    .ee-entity-list-view-bar {
-        flex-flow: row nowrap;
-        justify-content: flex-start;
-        height: 54px;
-        margin: 0;
-        text-align: left;
-    }
-    .ee-entity-list-view-bar .ee-filter-bar-filter {
-        margin: 0 1rem 0 0;
-    }
-    .ee-entity-list-view-bar .ee-view-filter {
-        top: 9px;
-    }
 }
 
 @media only screen and (max-width: 360px) {
 }
-
-@media only screen and (max-width: 320px) {
-}
-
 
