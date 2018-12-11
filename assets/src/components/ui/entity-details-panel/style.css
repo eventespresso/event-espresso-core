@@ -64,10 +64,17 @@
 }
 
 
-/* Media Queries for smaller screens
+
+/* Media Queries for specific screen sizes
  * -------------------------------------------------------------------------*/
 
+@media only screen and (max-width: 1920px) {
+}
+
 @media only screen and (max-width: 1600px) {
+}
+
+@media only screen and (max-width: 1366px) {
 }
 
 @media only screen and (max-width: 1280px) {
@@ -76,14 +83,23 @@
 @media only screen and (max-width: 1024px) {
 }
 
-@media only screen and (max-width: 768px) {
+/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+@media only screen and (max-width: 960px) {
 }
 
-@media only screen and (max-width: 600px) and (min-width: 481px) {
+/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+@media only screen and (max-width: 850px) {
 }
 
-@media only screen and (max-width: 540px) {
+/* WordPress Admin Media Query Breakpoint: Tablet */
+@media screen and ( max-width: 782px ) {
+}
 
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+}
+
+@media only screen and (max-width: 480px) {
     .ee-entity-details-panel-div {
         flex-direction: column;
         font-size: 21px;
@@ -119,35 +135,5 @@
     }
 }
 
-@media only screen and (max-width: 540px) and (min-width: 480px) {
-}
-
-@media only screen and (max-width: 480px) {
-}
-
 @media only screen and (max-width: 360px) {
 }
-
-@media only screen and (max-width: 320px) {
-}
-
-
-/* WordPress Media Query breakpoints
- * -------------------------------------------------------------------------*/
-
-/* Auto-folding of the admin menu */
-@media only screen and (max-width: 960px) {
-}
-
-/* one column on the post write/edit screen */
-@media only screen and (max-width: 850px) {
-}
-
-/* Tablet */
-@media screen and ( max-width: 782px ) {
-}
-
-/* Smartphone */
-@media screen and (max-width: 600px) {
-}
-
