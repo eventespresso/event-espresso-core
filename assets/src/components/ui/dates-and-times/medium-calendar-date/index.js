@@ -21,7 +21,7 @@ import './style.css';
  * @param {boolean} addWrapper
  * @return {string} rendered date
  */
-export const MediumCalendarDate = ( {
+const MediumCalendarDate = ( {
 	date,
 	headerText,
 	footerText,
@@ -72,3 +72,5 @@ export const MediumCalendarDate = ( {
 		<div className={ htmlClass }>{ mediumDate }</div>
 	) : mediumDate;
 };
+
+export default MediumCalendarDate;

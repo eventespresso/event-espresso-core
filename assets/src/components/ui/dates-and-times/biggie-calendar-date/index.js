@@ -14,7 +14,7 @@ import './style.css';
  * @param {string} footerText
  * @return {string} rendered date
  */
-export const BiggieCalendarDate = ( {
+const BiggieCalendarDate = ( {
 	date,
 	htmlClass,
 	headerText,
@@ -65,3 +65,5 @@ export const BiggieCalendarDate = ( {
 		</div>
 	);
 };
+
+export default BiggieCalendarDate;

@@ -20,7 +20,7 @@ import './style.css';
  * @param {Date} endDate    Date object for defining the end of an Event Date
  * @return {string}         The date rendered to look like a calendar page
  */
-export class CalendarPageDate extends Component {
+class CalendarPageDate extends Component {
 	/**
 	 * StartDate
 	 *
@@ -144,3 +144,4 @@ export class CalendarPageDate extends Component {
 	};
 }
 
+export default CalendarPageDate;
