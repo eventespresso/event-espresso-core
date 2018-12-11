@@ -18,6 +18,13 @@ import {
 const PaginatedDatesListWithFilterBar = (
 	EditorDates,
 	paginationConfig = {},
+) => withDatesListFilterBar(
+	withEntityPagination( paginationConfig )( EditorDates )
+);
+
+export const PaginatedDatesListWithFilterBarAndState = (
+	EditorDates,
+	paginationConfig = {},
 ) => withDatesListFilterState( withDatesListFilterBar(
 	withEntityPagination( paginationConfig )( EditorDates )
 ) );
