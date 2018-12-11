@@ -1,0 +1,13 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso IconMenuItem Stylesheet
+ * © 2018 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+.ee-entity-menu-item {
+    color: #706e73;
+    margin: 0 0 5px;
+}
+
+.ee-entity-menu-item:hover {
+    color: #3297c3 !important;
+}
