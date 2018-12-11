@@ -1,9 +1,10 @@
 // filter bar defaults
 const initialState = {
-	showTickets: 'on-sale-and-pending',
+	showTickets: 'all',
 	sortTickets: 'chronologically',
 	displayTicketDate: 'start',
 	ticketDescription: 'excerpt',
+	isChained: true,
 	ticketsPerPage: 6,
 	ticketsView: 'grid',
 };
@@ -14,6 +15,7 @@ const SET_TICKETS_VIEW = Symbol( 'SET_TICKETS_VIEW' );
 const SET_DISPLAY_TICKET_DATE = Symbol( 'SET_DISPLAY_TICKET_DATE' );
 const SET_SHOW_TICKETS = Symbol( 'SET_SHOW_TICKETS' );
 const SET_SORT_TICKETS = Symbol( 'SET_SORT_TICKETS' );
+const SET_IS_CHAINED = Symbol( 'SET_IS_CHAINED' );
 
 /**
  * Returns an action for setting the value
@@ -25,7 +27,7 @@ const SET_SORT_TICKETS = Symbol( 'SET_SORT_TICKETS' );
 const setDisplayTicketDate = ( displayTicketDate ) => {
 	return {
 		type: SET_DISPLAY_TICKET_DATE,
-		payload: { displayTickets: displayTicketDate },
+		payload: { displayTicketDate: displayTicketDate },
 	};
 };
 
@@ -39,6 +41,20 @@ const setShowTickets = ( showTickets ) => {
 	return {
 		type: SET_SHOW_TICKETS,
 		payload: { showTickets: showTickets },
+	};
+};
+
+/**
+ * Returns an action for setting the value for the "showTickets" state property
+ *
+ * @param {string} isChained
+ * @return {Object} SET_SHOW action
+ */
+const setIsChained = ( isChained ) => {
+	isChained = typeof isChained === 'string' && isChained === 'true';
+	return {
+		type: SET_IS_CHAINED,
+		payload: { isChained: isChained },
 	};
 };
 
@@ -108,11 +124,12 @@ const setTicketsGridView = () => {
  */
 const filterStateReducer = ( action, state = {} ) => {
 	switch ( action.type ) {
-		case SET_TICKETS_PER_PAGE :
-		case SET_TICKETS_VIEW :
-		case SET_DISPLAY_TICKET_DATE :
 		case SET_SHOW_TICKETS :
 		case SET_SORT_TICKETS :
+		case SET_DISPLAY_TICKET_DATE :
+		case SET_IS_CHAINED :
+		case SET_TICKETS_PER_PAGE :
+		case SET_TICKETS_VIEW :
 			return { ...state, ...action.payload };
 	}
 	return state;
@@ -123,6 +140,7 @@ const handler = {
 		setShowTickets,
 		setSortTickets,
 		setDisplayTicketDate,
+		setIsChained,
 		setTicketsPerPage,
 		setTicketsListView,
 		setTicketsGridView,

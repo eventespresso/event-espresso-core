@@ -13,7 +13,6 @@ import moment from 'moment';
  * @return {Array}         filtered tickets array
  */
 export const filterTickets = ( tickets, show = 'on-sale-and-pending' ) => {
-	console.log( 'filterTickets() show:', show );
 	switch ( show ) {
 		case 'all' :
 			return tickets;
@@ -118,12 +117,6 @@ export const sortTicketsList = ( tickets, order = 'chronologically' ) => {
  * @return {boolean} true if sold/qty >= maxQuantity
  */
 const percentSoldAtOrAbove = ( ticket, maxQuantity ) => {
-	console.log( 'validSold( ticket )', validSold( ticket ) );
-	console.log( 'validFiniteQuantity( ticket )', validFiniteQuantity( ticket ) );
-	console.log( 'parseInt( ticket.sold )', parseInt( ticket.sold ) );
-	console.log( 'parseInt( ticket.qty )', parseInt( ticket.qty ) );
-	console.log( 'maxQuantity/100', maxQuantity / 100 );
-	console.log( 'sold/qty', parseInt( ticket.sold ) / parseInt( ticket.qty ) );
 	return validSold( ticket ) &&
 		validFiniteQuantity( ticket ) &&
 		(

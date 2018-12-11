@@ -18,6 +18,13 @@ import {
 const PaginatedTicketsListWithFilterBar = (
 	EditorTickets,
 	paginationConfig = {},
+) => withTicketsListFilterBar(
+	withEntityPagination( paginationConfig )( EditorTickets )
+);
+
+export const PaginatedTicketsListWithFilterBarAndState = (
+	EditorTickets,
+	paginationConfig = {},
 ) => withTicketsListFilterState( withTicketsListFilterBar(
 	withEntityPagination( paginationConfig )( EditorTickets )
 ) );

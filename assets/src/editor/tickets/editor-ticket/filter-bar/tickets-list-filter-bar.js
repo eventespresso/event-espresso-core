@@ -2,9 +2,14 @@
  * External imports
  */
 import { Component, Fragment } from 'react';
-import { SelectControl } from '@wordpress/components';
+import { IconButton, SelectControl } from '@wordpress/components';
 import { __ } from '@eventespresso/i18n';
 import PropTypes from 'prop-types';
+
+/**
+ * Internal dependencies
+ */
+import './style.css';
 
 /**
  * TicketsListFilterBar
@@ -20,9 +25,11 @@ class TicketsListFilterBar extends Component {
 		showTickets: PropTypes.string.isRequired,
 		sortTickets: PropTypes.string.isRequired,
 		displayTicketDate: PropTypes.string.isRequired,
+		isChained: PropTypes.bool.isRequired,
 		setShowTickets: PropTypes.func.isRequired,
 		setSortTickets: PropTypes.func.isRequired,
 		setDisplayTicketDate: PropTypes.func.isRequired,
+		setIsChained: PropTypes.func.isRequired,
 	};
 
 	/**
@@ -161,17 +168,21 @@ class TicketsListFilterBar extends Component {
 				options={ [
 					{
 						value: 'start',
-						label: __( 'start tickets only',
+						label: __( 'ticket sales start date only',
 							'event_espresso'
 						),
 					},
 					{
 						value: 'end',
-						label: __( 'end tickets only', 'event_espresso' ),
+						label: __(
+							'ticket sales end date only',
+							'event_espresso'
+						),
 					},
 					{
 						value: 'both',
-						label: __( 'start and end tickets',
+						label: __(
+							'ticket sales start and end dates',
 							'event_espresso'
 						),
 					},
@@ -181,15 +192,70 @@ class TicketsListFilterBar extends Component {
 		);
 	};
 
+	/**
+	 * @param {boolean} isChained
+	 * @param {Function} setIsChained
+	 * @return {Object} rendered displayTickets filter
+	 */
+	ticketsChained = ( isChained, setIsChained ) => {
+		// return (
+		// 	<SelectControl
+		// 		label={ __( 'showing', 'event_espresso' ) }
+		// 		className="espresso-ticket-list-filter-bar-display-is-chained"
+		// 		value={ isChained }
+		// 		options={ [
+		// 			{
+		// 				value: true,
+		// 				label: __(
+		// 					'tickets for above dates only',
+		// 					'event_espresso'
+		// 				),
+		// 			},
+		// 			{
+		// 				value: false,
+		// 				label: __(
+		// 					'tickets for all event dates',
+		// 					'event_espresso'
+		// 				),
+		// 			},
+		// 		] }
+		// 		onChange={ setIsChained }
+		// 	/>
+		// );
+		return (
+			<IconButton
+				label={ isChained ?
+					__( 'only showing tickets for above dates', 'event_espresso' ) :
+					__( 'showing tickets for all event dates', 'event_espresso' )
+				}
+				icon={ isChained ? 'admin-links' : 'editor-unlink' }
+				onClick={ event => setIsChained( event.target.value ) }
+				value={ ! isChained }
+			/>
+		);
+	};
+
 	render() {
 		const {
 			showTickets,
-			sortTickets,
-			displayTicketDate,
 			setShowTickets,
+			sortTickets,
 			setSortTickets,
+			displayTicketDate,
 			setDisplayTicketDate,
+			isChained,
+			setIsChained,
 		} = this.props;
+		const isChainedFilter = (
+			<div className="ee-ticket-dates-chained-filter ee-filter-bar-filter">
+				{
+					this.ticketsChained(
+						isChained,
+						setIsChained
+					)
+				}
+			</div>
+		);
 		const showFilter = (
 			<div className="ee-show-tickets-filter ee-filter-bar-filter">
 				{ this.showTickets( showTickets, setShowTickets ) }
@@ -212,6 +278,7 @@ class TicketsListFilterBar extends Component {
 		);
 		return (
 			<Fragment>
+				{ isChainedFilter }
 				{ showFilter }
 				{ sortFilter }
 				{ displayFilter }

@@ -59,7 +59,7 @@ export default createHigherOrderComponent(
 					// merge initial filter bar state object with entities
 					{
 						...ticketsListFilterState.initialState,
-						...{ entities: entities },
+						...{ entities: entities, tickets: entities },
 					}
 				);
 			};

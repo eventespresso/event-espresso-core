@@ -7,13 +7,28 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import './style.css';
 import { filterTickets, sortTicketsList } from './tickets-list-filter-utils';
 import { default as TicketListFilterBar } from './tickets-list-filter-bar';
 import {
 	EntityListFilterBar,
 } from '../../../../higher-order-components/filter-bar';
 
+/**
+ * filters the tickets list based on the current filter state
+ *
+ * @param {Array} entities
+ * @param {string} showTickets
+ * @param {string} sortTickets
+ * @return {Array} filtered list of tickets
+ */
+export const getFilteredTicketsList = ( entities, showTickets, sortTickets ) => {
+	return showTickets && sortTickets && entities ?
+		sortTicketsList(
+			filterTickets( entities, showTickets ),
+			sortTickets
+		) :
+		[];
+};
 /**
  * withTicketsListFilterBar
  * Higher-Order-Component that wraps an "EntityList" component
@@ -26,40 +41,33 @@ import {
 export default createHigherOrderComponent(
 	( EntityList ) => {
 		return class extends Component {
-			/**
-			 * filters the tickets list based on the current filter state
-			 *
-			 * @param {Array} entities
-			 * @param {string} showTickets
-			 * @param {string} sortTickets
-			 * @return {Array} filtered list of tickets
-			 */
-			getTickets = ( entities, showTickets, sortTickets ) => {
-				return showTickets && sortTickets && entities ?
-					sortTicketsList(
-						filterTickets( entities, showTickets ),
-						sortTickets
-					) :
-					[];
-			};
-
 			render() {
 				const {
 					showTickets,
-					sortTickets,
-					displayTicketDate,
 					setShowTickets,
+					sortTickets,
 					setSortTickets,
+					displayTicketDate,
 					setDisplayTicketDate,
+					isChained,
+					setIsChained,
 					ticketsPerPage,
-					ticketsView,
 					setTicketsPerPage,
+					ticketsView,
 					setTicketsListView,
 					setTicketsGridView,
 					...otherProps
 				} = this.props;
+				// console.log(
+				// 	'withTicketsListFilterBar.render() otherProps',
+				// 	otherProps
+				// );
 				let { entities } = this.props;
-				entities = this.getTickets( entities, showTickets, sortTickets );
+				entities = getFilteredTicketsList(
+					entities,
+					showTickets,
+					sortTickets
+				);
 				delete otherProps.entities;
 				return (
 					<Fragment>
@@ -72,11 +80,13 @@ export default createHigherOrderComponent(
 							entityFilters={
 								<TicketListFilterBar
 									showTickets={ showTickets }
-									sortTickets={ sortTickets }
-									displayTicketDate={ displayTicketDate }
 									setShowTickets={ setShowTickets }
+									sortTickets={ sortTickets }
 									setSortTickets={ setSortTickets }
+									displayTicketDate={ displayTicketDate }
 									setDisplayTicketDate={ setDisplayTicketDate }
+									isChained={ isChained }
+									setIsChained={ setIsChained }
 								/>
 							}
 						/>
@@ -85,6 +95,7 @@ export default createHigherOrderComponent(
 							entitiesPerPage={ ticketsPerPage }
 							view={ ticketsView }
 							displayTicketDate={ displayTicketDate }
+							isChained={ isChained }
 							{ ...otherProps }
 						/>
 					</Fragment>
