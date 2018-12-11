@@ -95,9 +95,8 @@ const handler = {
 	reducer: filterStateReducer,
 };
 
-const viewFilterState = {
-	initialState,
-	handler,
-};
+export { initialState, handler };
+
+const viewFilterState = { initialState, handler };
 
 export default viewFilterState;
