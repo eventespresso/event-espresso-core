@@ -3,6 +3,8 @@
  */
 import { Component } from 'react';
 import { __ } from '@eventespresso/i18n';
+import { Dashicon } from '@wordpress/components';
+import { EntityDetailsPanel } from '@eventespresso/components';
 
 /**
  * EditorDateDetails
@@ -20,28 +22,61 @@ export class EditorDateDetails extends Component {
 	 * @return {string}    date name
 	 */
 	dateName = ( eventDate ) => {
+		const htmlClass = eventDate.name && eventDate.name.length > 40 ?
+			'ee-editor-date-name-heading ee-long-title' :
+			'ee-editor-date-name-heading';
 		return eventDate.name ?
-			(
-				<h4 className={ 'ee-editor-date-name-heading' }>
-					{ eventDate.name }
-				</h4>
-			) :
-			'';
+			<h1 className={ htmlClass }>{ eventDate.name }</h1> : '';
+	};
+
+	/**
+	 * description
+	 *
+	 * @function
+	 * @param {Object} eventDate JSON object defining the Event Date
+	 * @param {string} showDesc
+	 * @return {string} date description
+	 */
+	description = ( eventDate, showDesc ) => {
+		const htmlClass = showDesc === 'excerpt' ?
+			'ee-editor-date-desc-div ee-date-desc-excerpt' :
+			'ee-editor-date-desc-div';
+		return (
+			<div className={ htmlClass }>
+				{ eventDate.description }
+			</div>
+		);
 	};
 
 	/**
 	 * venueName
 	 *
 	 * @function
-	 * @param {Object} eventDate    JSON object defining the Event Date
+	 * @param {Object} eventDate JSON object defining the Event Date
+	 * @param {boolean} showVenue
 	 * @return {string}    venue name
 	 */
-	venueName = ( eventDate ) => {
-		return eventDate.venue ?
+	venueName = ( eventDate, showVenue ) => {
+		return showVenue && eventDate.venue ?
 			(
-				<div className="ee-editor-date-location-div">
-					<span className="dashicons dashicons-location"></span>{ eventDate.venue }
-				</div>
+				<h3 className="ee-editor-date-location-div">
+					<a
+						href={ eventDate.edit_venue_link }
+						title={ __(
+							'venue editor opens in a new window',
+							'event_espresso',
+						) }
+						className="ee-editor-date-edit-venue-link"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						<Dashicon icon="location" size={ 16 } />
+						<span className="ee-editor-date-venue-name-span">
+							{ eventDate.venue }
+						</span>
+						<Dashicon icon="external" size={ 12 } />
+					</a>
+				</h3>
 			) :
 			'';
 	};
@@ -54,21 +89,32 @@ export class EditorDateDetails extends Component {
 	 * @return {string}    date details
 	 */
 	dateSoldReservedCapacity = ( eventDate ) => {
-		const regLimit = eventDate.reg_limit === 'INF' ?
-			( <span className={ 'ee-infinity-sign' }>&infin;</span> ) :
-			eventDate.reg_limit;
-		const regLink = this.getDatetimeRegistrationsLink( eventDate );
-		return (
-			<div className="ee-editor-date-details-sold-rsrvd-cap-div">
-				{ this.dateDetailsValue( 'sold', eventDate.sold, __( 'sold', 'event_espresso' ) ) }
-				{ this.dateDetailsDataSeparator() }
-				{ this.dateDetailsValue( 'reserved', eventDate.reserved, __( 'reserved', 'event_espresso' ) ) }
-				{ this.dateDetailsDataSeparator() }
-				{ this.dateDetailsValue( 'capacity', regLimit, __( 'capacity', 'event_espresso' ) ) }
-				{ this.dateDetailsDataSeparator() }
-				{ this.dateDetailsValue( 'registrations', regLink, __( 'registrations', 'event_espresso' ) ) }
-			</div>
-		);
+		const details = [
+			{
+				id: 'event-date-sold',
+				label: __( 'sold', 'event_espresso' ),
+				value: eventDate.sold,
+			},
+			{
+				id: 'event-date-reserved',
+				label: __( 'reserved', 'event_espresso' ),
+				value: eventDate.reserved,
+			},
+			{
+				id: 'event-date-capacity',
+				label: __( 'capacity', 'event_espresso' ),
+				value: eventDate.regLimit,
+			},
+			{
+				id: 'event-date-registrants',
+				label: __( 'registrants', 'event_espresso' ),
+				value: this.getDatetimeRegistrationsLink( eventDate ),
+			},
+		];
+		return <EntityDetailsPanel
+			details={ details }
+			htmlClass="ee-editor-date-details-sold-rsrvd-cap-div"
+		/>;
 	};
 
 	/**
@@ -87,50 +133,18 @@ export class EditorDateDetails extends Component {
 				target={ '_blank' }
 				rel={ 'noopener norefferer' }
 			>
-				<span className="dashicons dashicons-groups clickable ee-grow"></span>
+				<span className="dashicons dashicons-groups clickable"></span>
 			</a>
 		);
 	};
 
-	/**
-	 * dateSoldReservedCapacity
-	 *
-	 * @function
-	 * @param {string} detail   the data item being displayed
-	 * @param {string} value    the data item being displayed
-	 * @param {string} label   the data item being displayed
-	 * @return {string}    date details
-	 */
-	dateDetailsValue = ( detail, value, label ) => {
-		return (
-			<div className={ `ee-editor-date-details-div date-details-${ detail }-div` }>
-				<div className={ `ee-editor-date-details-value-div date-details-${ detail }-value` }>
-					{ value }
-				</div>
-				<div className={ `ee-editor-date-details-label-div date-details-${ detail }-label` }>
-					{ label }
-				</div>
-			</div>
-		);
-	};
-
-	/**
-	 * dateDetailsDataSeparator
-	 *
-	 * @function
-	 * @return {string} vertical line for separating date details
-	 */
-	dateDetailsDataSeparator = () => {
-		return <div className="ee-editor-date-details-sep"></div>;
-	};
-
 	render() {
-		const { eventDate } = this.props;
-
+		const { eventDate, showDesc = 'excerpt', showVenue } = this.props;
 		return (
 			<div className={ 'ee-editor-date-details-wrapper-div' }>
 				{ this.dateName( eventDate ) }
-				{ this.venueName( eventDate ) }
+				{ this.venueName( eventDate, showVenue ) }
+				{ this.description( eventDate, showDesc ) }
 				{ this.dateSoldReservedCapacity( eventDate ) }
 			</div>
 		);
