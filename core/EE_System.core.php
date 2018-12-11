@@ -1320,11 +1320,16 @@ final class EE_System implements ResettableInterface
         return array_merge($exclude_array, $this->registry->CFG->core->get_critical_pages_array());
     }
 
+
+    /**
+     * Return whether blocks can be registered/loaded or not.
+     * @return bool
+     */
     private function canLoadBlocks()
     {
         return function_exists('register_block_type')
                // don't load blocks if in the Divi page builder editor context
                // @see https://github.com/eventespresso/event-espresso-core/issues/814
-               && ! $this->request->getRequestParam('et_fb');
+               && ! $this->request->getRequestParam('et_fb', false);
     }
 }
