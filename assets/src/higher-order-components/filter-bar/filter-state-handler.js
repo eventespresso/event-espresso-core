@@ -113,6 +113,12 @@ const removeListener = onUpdate => {
 	}
 };
 
+export {
+	register,
+	addListener,
+	removeListener,
+};
+
 const filterStateHandler = {
 	register,
 	addListener,
