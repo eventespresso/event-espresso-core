@@ -18,7 +18,7 @@ import './style.css';
  * @param {string} htmlClass
  * @return {string}    rendered details
  */
-export class EntityDetailsPanel extends Component {
+class EntityDetailsPanel extends Component {
 	static propTypes = {
 		details: PropTypes.arrayOf(
 			PropTypes.shape( {
@@ -99,3 +99,5 @@ export class EntityDetailsPanel extends Component {
 		);
 	}
 }
+
+export default EntityDetailsPanel;
