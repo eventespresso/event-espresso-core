@@ -966,7 +966,7 @@ class ReadProtectedTest extends EE_REST_TestCase
 
     /**
      * Tests that we still get the correct error when trying to get tickets from a datetime for a draft event.
-     * @since $VID:$
+     * @since 4.9.75.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1002,7 +1002,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.75.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1041,7 +1041,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     /**
      * * Verifies that if a ticket is archived, there is no erroneous requirement for a password (this was a problem
      * at one point).
-     * @since $VID:$
+     * @since 4.9.75.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1085,7 +1085,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     /**
      * Verifies that if a datetime is trashed, there is no erroneous requirement for a password (this was a problem
      * at one point).
-     * @since $VID:$
+     * @since 4.9.75.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
