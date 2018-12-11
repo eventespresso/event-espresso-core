@@ -7,12 +7,28 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import './style.css';
-import { filterDates, sortDatesList } from './dates-list-filter-utils';
 import { default as DateListFilterBar } from './dates-list-filter-bar';
+import { filterDates, sortDatesList } from './dates-list-filter-utils';
 import {
 	EntityListFilterBar,
 } from '../../../../higher-order-components/filter-bar';
+
+/**
+ * filters the dates list based on the current filter state
+ *
+ * @param {Array} entities
+ * @param {string} showDates
+ * @param {string} sortDates
+ * @return {Array} filtered list of dates
+ */
+export const getFilterDatesList = ( entities, showDates, sortDates ) => {
+	return showDates && sortDates && entities ?
+		sortDatesList(
+			filterDates( entities, showDates ),
+			sortDates
+		) :
+		[];
+};
 
 /**
  * withDatesListFilterBar
@@ -26,25 +42,13 @@ import {
 export default createHigherOrderComponent(
 	( EntityList ) => {
 		return class extends Component {
-			/**
-			 * filters the dates list based on the current filter state
-			 *
-			 * @param {Array} entities
-			 * @param {string} showDates
-			 * @param {string} sortDates
-			 * @return {Array} filtered list of dates
-			 */
-			getDates = ( entities, showDates, sortDates ) => {
-				return showDates && sortDates && entities ?
-					sortDatesList(
-						filterDates( entities, showDates ),
-						sortDates
-					) :
-					[];
-			};
-
 			render() {
+				// console.log(
+				// 	'withDatesListFilterBar this.props:',
+				// 	this.props
+				// );
 				const {
+					entities,
 					displayDates,
 					showDates,
 					sortDates,
@@ -58,8 +62,6 @@ export default createHigherOrderComponent(
 					setDatesGridView,
 					...otherProps
 				} = this.props;
-				let { entities } = this.props;
-				entities = this.getDates( entities, showDates, sortDates );
 				delete otherProps.entities;
 				return (
 					<Fragment>
