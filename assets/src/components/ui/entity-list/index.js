@@ -20,6 +20,7 @@ import './style.css';
  * @param {Component} EntityGridView
  * @param {Component} EntityListView
  * @param {string} view
+ * @param {string} htmlClass
  * @return {Component} list of rendered entities
  */
 const EntityList = ( {
@@ -27,6 +28,7 @@ const EntityList = ( {
 	EntityGridView,
 	EntityListView,
 	view = 'grid',
+	htmlClass,
 	...otherProps
 } ) => {
 	if ( ! isArray( entities ) ) {
@@ -39,14 +41,19 @@ const EntityList = ( {
 			</div>
 		);
 	}
+	htmlClass = htmlClass ?
+		`${ htmlClass } ee-editor-entity-list` :
+		'ee-editor-entity-list';
 	return view === 'grid' ? (
 		<EntityGridView
 			entities={ entities }
+			htmlClass={ htmlClass }
 			{ ...otherProps }
 		/>
 	) : (
 		<EntityListView
 			entities={ entities }
+			htmlClass={ htmlClass }
 			{ ...otherProps }
 		/>
 	);
