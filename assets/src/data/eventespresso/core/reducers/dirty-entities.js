@@ -2,7 +2,7 @@
  * External imports
  */
 import { DEFAULT_CORE_STATE } from '@eventespresso/model';
-import { without, get, set } from 'lodash';
+import { without, get, set, unset } from 'lodash';
 
 /**
  * Internal imports.
@@ -10,8 +10,15 @@ import { without, get, set } from 'lodash';
 import { ACTION_TYPES } from '../actions/action-types';
 const { entities: types } = ACTION_TYPES;
 
-const DEFAULT_EMPTY_ARRAY = [];
-
+/**
+ * Handle adding incoming data to state.
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {number} entityId
+ * @param {Array} existingEntities
+ * @return {Object} New state.
+ */
 const addToState = ( state, modelName, entityId, existingEntities ) => {
 	state = { ...state };
 	existingEntities.push( entityId );
@@ -19,20 +26,27 @@ const addToState = ( state, modelName, entityId, existingEntities ) => {
 	return state;
 };
 
+/**
+ * Handle removing incoming data from state
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {number} entityId
+ * @return {Object} New state
+ */
 const removeFromState = ( state, modelName, entityId ) => {
 	state = { ...state };
 	state[ modelName ] = without( state[ modelName ], entityId );
 	if ( state[ modelName ].length === 0 ) {
-		delete state[ modelName ];
+		unset( state, [ modelName ] );
 	}
 	return state;
 };
 
 const processAction = ( state, action ) => {
 	const { type, modelName, entityId } = action;
-	const existingEntities = [
-		...get( state, [ modelName ], DEFAULT_EMPTY_ARRAY ),
-	];
+	const DEFAULT_EMPTY_ARRAY = [];
+	const existingEntities = get( state, [ modelName ], DEFAULT_EMPTY_ARRAY );
 
 	switch ( type ) {
 		case types.RECEIVE_DELETE_ENTITY_ID:

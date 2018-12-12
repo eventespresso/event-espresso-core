@@ -6,16 +6,13 @@ import {
 	pluralModelName,
 	singularModelName,
 } from '@eventespresso/model';
-import { isArray, pull, isEmpty, get, set, forEach } from 'lodash';
+import { isArray, pull, isEmpty, get, set, forEach, unset } from 'lodash';
 
 /**
  * Internal imports.
  */
 import { ACTION_TYPES } from '../actions/action-types';
-const { types } = ACTION_TYPES.relations;
-
-const DEFAULT_EMPTY_ARRAY = [];
-const DEFAULT_EMPTY_OBJECT = {};
+const { relations: types } = ACTION_TYPES;
 
 /**
  * Used to determine whether the relation exists in the provided map.
@@ -28,7 +25,7 @@ const DEFAULT_EMPTY_OBJECT = {};
  */
 const relationExistsInMap = ( relationMap, queueType, entityId ) => {
 	const entityIds = relationMap.get( queueType );
-	return idExistsInArray( entityId, queueType, entityIds );
+	return idExistsInArray( entityId, entityIds );
 };
 
 /**
@@ -46,9 +43,9 @@ const relationExistsAlready = ( state, action, relationMap ) => {
 		entityId,
 		queueType,
 	} = action;
+	const DEFAULT_EMPTY_ARRAY = [];
 	let relationName = action.relationName;
 	let modelName = action.modelName;
-
 	if ( relationExistsInMap( relationMap, queueType, entityId ) ) {
 		return true;
 	}
@@ -57,13 +54,11 @@ const relationExistsAlready = ( state, action, relationMap ) => {
 	// be stored with the relation as the originating entity.
 	relationName = singularModelName( relationName );
 	modelName = pluralModelName( modelName );
-	const entityIds = [
-		...get(
-			state,
-			[ queueType, relationName, relationEntityId, modelName ],
-			DEFAULT_EMPTY_ARRAY
-		),
-	];
+	const entityIds = get(
+		state,
+		[ queueType, relationName, relationEntityId, modelName ],
+		DEFAULT_EMPTY_ARRAY
+	);
 	return entityIds.indexOf( entityId ) > -1;
 };
 
@@ -79,7 +74,7 @@ const getRelationMap = ( state, action ) => {
 	// get the map from the index
 	const relationMap = get(
 		state,
-		[ 'index', relationName, relationId, modelName ].join( '.' )
+		[ 'index', relationName, relationId, modelName ]
 	);
 	return relationMap instanceof Map ?
 		relationMap :
@@ -117,6 +112,7 @@ function indexRelations( state, action, relationMap ) {
 		entityId,
 		queueType,
 	} = action;
+	const DEFAULT_EMPTY_ARRAY = [];
 	const entityIds = relationMap.get( queueType ) || DEFAULT_EMPTY_ARRAY;
 	const newState = { ...state };
 	switch ( type ) {
@@ -169,7 +165,7 @@ function getRelationIdsFromState( state, action ) {
 	return get(
 		state,
 		[ modelName, entityId, relationName ],
-		DEFAULT_EMPTY_ARRAY
+		[]
 	);
 }
 
@@ -187,11 +183,11 @@ function requiresUpdate( state, action, relationMap ) {
 		case types.RECEIVE_DIRTY_RELATION_INDEX:
 		case types.RECEIVE_DIRTY_RELATION_ADDITION:
 		case types.RECEIVE_DIRTY_RELATION_DELETION:
-			return relationExistsAlready( state, action, relationMap );
+			return ! relationExistsAlready( state, action, relationMap );
 		case types.REMOVE_DIRTY_RELATION_INDEX:
 		case types.REMOVE_DIRTY_RELATION_ADDITION:
 		case types.REMOVE_DIRTY_RELATION_DELETION:
-			return ! relationExistsAlready( state, action, relationMap );
+			return relationExistsAlready( state, action, relationMap );
 	}
 	return false;
 }
@@ -213,6 +209,7 @@ function updateRelationState( state, action, relationMap ) {
 		entityId,
 		queueType,
 	} = action;
+	const DEFAULT_EMPTY_ARRAY = [];
 	const ids = relationMap.get( queueType ) || DEFAULT_EMPTY_ARRAY;
 	const newState = { ...state };
 	let relationIds = DEFAULT_EMPTY_ARRAY;
@@ -256,7 +253,6 @@ function updateRelationState( state, action, relationMap ) {
 					[ modelName, entityId, relationName ],
 					relationIds,
 				);
-				newState[ modelName ][ entityId ][ relationName ] = relationIds;
 			}
 			return newState;
 	}
@@ -314,7 +310,8 @@ function replaceOldRelationIdWithNewRelationId( state, action ) {
  * mutates the incoming state so do not provide the original state from the
  * store.
  *
- * @param {string} stateProperty (what property for the state should be reviewed)
+ * @param {string} stateProperty (what property for the state should be
+ *   reviewed)
  * @param {Object} newState
  * @param {string} modelName
  * @param {number} oldId
@@ -326,16 +323,18 @@ const replaceIds = ( stateProperty, newState, modelName, oldId, newId ) => {
 	const pluralName = pluralModelName( modelName );
 	const singularName = singularModelName( modelName );
 	const topLevelName = stateProperty === 'index' ? pluralName : singularName;
+	const DEFAULT_EMPTY_OBJECT = {};
+	const DEFAULT_EMPTY_ARRAY = [];
 	// first do top-level checks
 	const mainRecordToReplace = get(
 		newState,
 		[ stateProperty, topLevelName, oldId ],
-		DEFAULT_EMPTY_OBJECT
+		DEFAULT_EMPTY_OBJECT,
 	);
 	if ( mainRecordToReplace !== DEFAULT_EMPTY_OBJECT ) {
 		updated = true;
-		delete newState[ stateProperty ][ modelName ][ oldId ];
-		set( newState, [ stateProperty, modelName, newId ], mainRecordToReplace );
+		unset( newState, [ stateProperty, topLevelName, oldId ] );
+		set( newState, [ stateProperty, topLevelName, newId ], mainRecordToReplace );
 	}
 
 	// now we have to loop through all records to see if there's anything
@@ -346,42 +345,42 @@ const replaceIds = ( stateProperty, newState, modelName, oldId, newId ) => {
 				let updatedIds = false;
 				if ( relationName === singularName ) {
 					// index property handling
-					if ( relationIds instanceof Map ) {
-						const deleteIds = relationIds.get( 'delete' ) ||
-							DEFAULT_EMPTY_ARRAY;
-						const addIds = relationIds.get( 'add' ) ||
-							DEFAULT_EMPTY_ARRAY;
-						if ( deleteIds.indexOf( oldId ) > -1 ) {
-							pull( deleteIds, oldId );
-							deleteIds.push( newId );
-							relationIds.set( 'delete', deleteIds );
-							updatedIds = true;
-						}
-						if ( addIds.indexOf( oldId ) > -1 ) {
-							pull( addIds, oldId );
-							addIds.push( newId );
-							relationIds.set( 'add', addIds );
-							updatedIds = true;
-						}
+					const deleteIds = relationIds.get( 'delete' ) ||
+						DEFAULT_EMPTY_ARRAY;
+					const addIds = relationIds.get( 'add' ) ||
+						DEFAULT_EMPTY_ARRAY;
+					if ( deleteIds.indexOf( oldId ) > -1 ) {
+						pull( deleteIds, oldId );
+						deleteIds.push( newId );
+						relationIds.set( 'delete', deleteIds );
+						updatedIds = true;
+					}
+					if ( addIds.indexOf( oldId ) > -1 ) {
+						pull( addIds, oldId );
+						addIds.push( newId );
+						relationIds.set( 'add', addIds );
+						updatedIds = true;
+					}
+				} else if ( relationName === pluralName ) {
 					// delete and add property handling
-					} else if ( relationIds.indexOf( oldId ) > -1 ) {
+					if ( relationIds.indexOf( oldId ) > -1 ) {
 						pull( relationIds, oldId );
 						relationIds.push( newId );
 						updatedIds = true;
 					}
-					if ( updatedIds ) {
-						set(
-							newState,
-							[
-								stateProperty,
-								mainModelName,
-								entityId,
-								relationName,
-							],
-							relationIds
-						);
-						updated = true;
-					}
+				}
+				if ( updatedIds ) {
+					set(
+						newState,
+						[
+							stateProperty,
+							mainModelName,
+							entityId,
+							relationName,
+						],
+						relationIds
+					);
+					updated = true;
 				}
 			} );
 		} );
@@ -494,6 +493,7 @@ const clearRelatedEntitiesForEntity = (
 		entityIdRemoved,
 		queueType = null,
 	} = modelData;
+	const DEFAULT_EMPTY_ARRAY = [];
 	while ( relationIds.length > 0 ) {
 		const relationId = relationIds.shift();
 		const relationRecordIds = get(
@@ -501,9 +501,9 @@ const clearRelatedEntitiesForEntity = (
 			[ relationName, relationId, modelRemoved ],
 			DEFAULT_EMPTY_ARRAY
 		);
-		let ids = DEFAULT_EMPTY_ARRAY;
+		let ids;
 		if ( queueType && ( relationRecordIds instanceof Map ) ) {
-			ids = relationRecordIds.get( queueType ) || ids;
+			ids = relationRecordIds.get( queueType ) || DEFAULT_EMPTY_ARRAY;
 		} else {
 			ids = relationRecordIds;
 		}
@@ -520,20 +520,15 @@ const clearRelatedEntitiesForEntity = (
 			if (
 				queueType &&
 				relationRecordIds instanceof Map &&
-				! isEmpty( relationRecordIds )
+				! isEmpty( ids )
 			) {
 				return;
 			}
-			delete state
-				[ relationName ]
-				[ relationId ]
-				[ modelRemoved ];
-			if ( isEmpty(
-				state[ relationName ][ relationId ]
-			) ) {
-				delete state[ relationName ][ relationId ];
+			unset( state, [ relationName, relationId, modelRemoved ] );
+			if ( isEmpty( state[ relationName ][ relationId ] ) ) {
+				unset( state, [ relationName, relationId ] );
 				if ( isEmpty( state[ relationName ] ) ) {
-					delete state[ relationName ];
+					unset( state, [ relationName ] );
 				}
 			}
 		}
@@ -550,20 +545,24 @@ const clearRelatedEntitiesForEntity = (
  */
 function removeRelatedEntitiesForEntity( state, action ) {
 	const { modelName, entityId } = action;
+	const DEFAULT_EMPTY_OBJECT = {};
+	const DEFAULT_EMPTY_ARRAY = [];
+	const pluralName = pluralModelName( modelName );
+	const singleName = singularModelName( modelName );
 	// first check index
 	const indexRecord = get(
 		state.index,
-		[ pluralModelName( modelName ), entityId ],
+		[ pluralName, entityId ],
 		DEFAULT_EMPTY_OBJECT
 	);
 	const addRecord = get(
 		state.add,
-		[ modelName, entityId ],
+		[ singleName, entityId ],
 		DEFAULT_EMPTY_OBJECT
 	);
 	const deleteRecord = get(
 		state.delete,
-		[ modelName, entityId ],
+		[ singleName, entityId ],
 		DEFAULT_EMPTY_OBJECT
 	);
 	const newState = { ...state };
@@ -577,7 +576,7 @@ function removeRelatedEntitiesForEntity( state, action ) {
 				{
 					relationIds: relationAddIds,
 					relationName,
-					modelRemoved: modelName,
+					modelRemoved: pluralName,
 					entityIdRemoved: entityId,
 				}
 			);
@@ -587,12 +586,15 @@ function removeRelatedEntitiesForEntity( state, action ) {
 				{
 					relationIds: deleteIds,
 					relationName,
-					modelRemoved: modelName,
+					modelRemoved: pluralName,
 					entityIdRemoved: entityId,
 				}
 			);
 		} );
-		delete newState.index[ pluralModelName( modelName ) ][ entityId ];
+		unset( newState, [ 'index', pluralName, entityId ] );
+		if ( isEmpty( newState.index[ pluralName ] ) ) {
+			unset( newState, [ 'index', pluralName ] );
+		}
 		hasUpdated = true;
 	}
 
@@ -603,13 +605,16 @@ function removeRelatedEntitiesForEntity( state, action ) {
 				{
 					relationIds,
 					relationName,
-					modelRemoved: modelName,
+					modelRemoved: singleName,
 					entityIdRemoved: entityId,
 					queueType: 'add',
 				}
 			);
 		} );
-		delete newState.add[ modelName ][ entityId ];
+		unset( newState, [ 'add', singleName, entityId ] );
+		if ( isEmpty( newState.add[ singleName ] ) ) {
+			unset( newState, [ 'add', singleName ] );
+		}
 		hasUpdated = true;
 	}
 
@@ -620,13 +625,16 @@ function removeRelatedEntitiesForEntity( state, action ) {
 				{
 					relationIds,
 					relationName,
-					modelRemoved: modelName,
+					modelRemoved: singleName,
 					entityIdRemoved: entityId,
 					queueType: 'delete',
 				}
 			);
 		} );
-		delete newState.delete[ modelName ][ entityId ];
+		unset( newState, [ 'delete', singleName, entityId ] );
+		if ( isEmpty( newState.delete[ singleName ] ) ) {
+			unset( newState, [ 'delete', singleName ] );
+		}
 		hasUpdated = true;
 	}
 	return hasUpdated ? newState : state;
