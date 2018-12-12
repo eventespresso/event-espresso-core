@@ -104,7 +104,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
         $gateway_formatter = $this->_get_gateway_formatter();
         $order_description = substr($gateway_formatter->formatOrderDescription($payment), 0, 127);
         // charge for the full amount. Show itemized list
-        if ($this->_can_easily_itemize_transaction_for($payment)) {
+        if ($this->_money->compare_floats($payment->amount(), $transaction->total(), '==')) {
             $item_num = 1;
             $total_line_item = $transaction->total_line_item();
             $order_items = array();
@@ -112,6 +112,14 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
                 // ignore line items with a quantity of 0
                 if ($line_item->quantity() == 0) {
                     continue;
+                }
+                // For percent items, whose unit_price is 0, use the total instead.
+                if ($line_item->is_percent()) {
+                    $unit_price = $line_item->total();
+                    $line_item_quantity = 1;
+                } else {
+                    $unit_price = $line_item->unit_price();
+                    $line_item_quantity = $line_item->quantity();
                 }
                 $item = array(
                     // Item Name.  127 char max.
@@ -127,11 +135,11 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
                         127
                     ),
                     // Cost of individual item.
-                    'l_amt'                  => $line_item->unit_price(),
+                    'l_amt'                  => $unit_price,
                     // Item Number.  127 char max.
                     'l_number'               => $item_num++,
                     // Item quantity.  Must be any positive integer.
-                    'l_qty'                  => $line_item->quantity(),
+                    'l_qty'                  => $line_item_quantity,
                     // Item's sales tax amount.
                     'l_taxamt'               => '',
                     // eBay auction number of item.
