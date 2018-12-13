@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\caffeinated\payment_methods\PayPal_Pro\forms\SettingsForm;
+
 /**
  * EEPMT_Paypal_Pro
  *
@@ -34,29 +36,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
      */
     public function generate_new_settings_form()
     {
-        return new EE_Payment_Method_Form(array(
-            'extra_meta_inputs'=>array(
-//              'paypal_email'=>new EE_Email_Input(), not actually used
-                'username'=>new EE_Text_Input(array(
-                    'html_label_text'=>  sprintf(__("Paypal API Username %s", "event_espresso"), $this->get_help_tab_link()),
-                    'required' => true
-                )),
-                'password'=>new EE_Text_Input(array(
-                    'html_label_text'=>  sprintf(__("Paypal API Password %s", "event_espresso"), $this->get_help_tab_link()),
-                    'required' => true
-                )),
-                'signature'=>new EE_Text_Input(array(
-                    'html_label_text'=>  sprintf(__("Paypal API Signature %s", "event_espresso"), $this->get_help_tab_link()),
-                    'required' => true
-                )),
-                'credit_card_types'=>new EE_Checkbox_Multi_Input(
-                    $this->card_types_supported(),
-                    array(
-                            'html_label_text' => __('Card Types Supported', 'event_espresso'),
-                            'required' => true )
-                ),
-                )
-            ));
+        return new SettingsForm(array(), $this->get_help_tab_link());
     }
 
 
