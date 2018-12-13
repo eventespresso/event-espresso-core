@@ -1,5 +1,6 @@
 <?php
 namespace EventEspresso\core\services\payment_methods\forms;
+
 use EE_Payment_Method_Form;
 use EE_Text_Input;
 
@@ -26,7 +27,7 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
     {
         $this->helpTabLink = $help_tab_link;
         $options_array = array_replace_recursive(
-        array(
+            array(
             'extra_meta_inputs' => array(
                 'api_username' => new EE_Text_Input(
                     array(
@@ -56,7 +57,8 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
                     )
                 ),
             )
-        ));
+            )
+        );
         parent::__construct($options_array);
     }
 
@@ -175,7 +177,6 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
             );
         }
     }
-
 }
 // End of file PayPalSettingsForm.php
 // Location: ${NAMESPACE}/PayPalSettingsForm.php

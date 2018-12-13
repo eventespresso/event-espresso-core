@@ -1,11 +1,13 @@
 <?php
 
 namespace EventEspresso\caffeinated\payment_methods\PayPal_Pro\forms;
+
 use EE_Admin_File_Uploader_Input;
 use EE_Checkbox_Multi_Input;
 use EE_PMT_Paypal_Pro;
 use EE_Yes_No_Input;
 use EventEspresso\core\services\payment_methods\forms\PayPalSettingsForm;
+
 /**
  * Class SettingsForm
  *
