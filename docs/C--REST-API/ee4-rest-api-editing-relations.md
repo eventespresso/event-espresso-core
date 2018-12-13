@@ -343,9 +343,9 @@ will remove the entry in `question_group_questions` which related that question 
 }
 ```
 
-to indicate the relation was successful removed. In this case, the entry in `join.question_group_question` is actually the
+to indicate the relation was successfully removed. In this case, the entry in `join.question_group_question` is actually the
 **previous** question-group-question entry that was removed during this request.
-If no question-group-question were removed during the request, `join.question_group_question` will be null.
+If no question-group-questions were removed during the request, `join.question_group_question` will be null.
 If the property `success` is `true`, it means there is no relation between the two items at the end of the request;
 `false` indicates there is still a relation between them (although, currently if this were the case, an error message should
 have been returned).
