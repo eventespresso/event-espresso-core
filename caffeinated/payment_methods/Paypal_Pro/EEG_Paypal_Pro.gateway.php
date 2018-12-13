@@ -305,7 +305,13 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
             $PayPalResult = $this->prep_and_curl_request($PayPalRequestData);
             // remove PCI-sensitive data so it doesn't get stored
             $PayPalResult = $this->_log_clean_response($PayPalResult, $payment);
-            $message = isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'];
+            if(isset($PayPalResult['L_ERRORCODE0']) && $PayPalResult['L_ERRORCODE0'] === '10002') {
+                $message = esc_html__('PayPal did not accept your API username, password, or signature. Please double-check these credentials and if debug mode is on.', 'event_espresso');
+            } elseif(isset($PayPalResult['L_LONGMESSAGE0'])) {
+                $message = $PayPalResult['L_LONGMESSAGE0'];
+            } else {
+                $message = $PayPalResult['ACK'];
+            }
             if (empty($PayPalResult['RAWRESPONSE'])) {
                 $payment->set_status($this->_pay_model->failed_status());
                 $payment->set_gateway_response(__('No response received from Paypal Pro', 'event_espresso'));
