@@ -1,0 +1,305 @@
+/* -------------------------------------------------------------------------
+ * Event Espresso Admin Editor Stylesheet
+ * (c) 2018 Event Espresso
+ * -------------------------------------------------------------------------*/
+
+/* General Styles
+ * -------------------------------------------------------------------------*/
+
+
+
+.espresso-editor-legend-div {
+    padding-top: .5em;
+}
+
+.espresso-editor-legend-ul li {
+    clear: both;
+    margin-bottom: .5em;
+}
+
+.espresso-editor-legend-ul li p {
+    color: #58575c;
+    font-style: italic;
+}
+
+.espresso-editor-legend-div .generated-date-div {
+    float: left;
+    font-size: 12px;
+    line-height: 12px !important;
+    height: 24px;
+    margin: 0 1em 0 0 !important;
+    padding: 6px;
+    position: relative;
+    top: -2px;
+}
+
+.espresso-editor-legend-div .generated-date-div .dashicon {
+    margin: 0 !important;
+}
+
+.rem-icon-button {
+    position: relative;
+    top: .3em;
+    vertical-align: middle !important;
+}
+
+.rem-icon-button .dashicon {
+    color: rgba(0, 0, 0, .5);
+    margin-right: .5em;
+    vertical-align: middle !important;
+}
+
+.rem-icon-button:hover .dashicon {
+    color: rgba(0, 0, 0, .75);
+}
+
+.rem-editor-buttons-div {
+    background-color: #fff;
+    border-top: 1px solid #e2e4e7;
+    box-sizing: border-box;
+    bottom: 0;
+    padding: 2em;
+    position: absolute;
+    text-align: right;
+    width: 100%;
+    z-index: 999;
+}
+
+.espresso-editor .button-primary + .button-primary,
+.espresso-editor .button-primary + .button-secondary,
+.espresso-editor .button-secondary + .button-primary,
+.espresso-editor .button-secondary + .button-secondary {
+    margin-left: 2em;
+    margin-right: 0;
+}
+
+.ee-small-shadow {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .5), 0 5px 10px 5px rgba(0, 0, 0, .1);
+}
+
+.ee-small-text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, .5);
+}
+
+.ee-big-shadow {
+    box-shadow: 0 5px 5px rgba(0, 0, 0, .5), 0 0 25px 15px rgba(0, 0, 0, .05);
+}
+
+.ee-big-text-shadow {
+    text-shadow: 0 5px 5px rgba(0, 0, 0, .5);
+}
+
+.espresso-editor .ee-form-row > div {
+    width: 100%;
+}
+
+.espresso-editor.components-panel__body {
+    border-top: none;
+}
+
+/* Modal Styles
+* -------------------------------------------------------------------------*/
+
+.espresso-editor.components-modal__frame {
+    height: 80%;
+    max-width: 100%;
+    transform: translate(-50%, -10%);
+    top: 15%;
+    width: 60%;
+}
+
+.espresso-editor.components-modal__content {
+    padding: 0;
+}
+
+.espresso-editor.components-modal__header-heading {
+    font-size: 1.5rem;
+}
+
+.espresso-editor.components-panel__body > .components-panel__body-title {
+    font-size: 1rem;
+}
+
+
+
+/* Calendar Styles
+* -------------------------------------------------------------------------*/
+
+.espresso-editor .rdtOpen .rdtPicker {
+    display: block;
+}
+
+.espresso-editor .rdtPicker {
+    display: none;
+    position: absolute;
+    width: 250px;
+    padding: 4px;
+    margin-top: 1px;
+    z-index: 99999 !important;
+    background: #fff;
+    border: 1px solid #e7e6e4;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, .5), 0 0 25px 15px rgba(0, 0, 0, .05);
+}
+
+.espresso-editor table {
+    border-collapse: collapse;
+}
+
+.espresso-editor th {
+    text-align: inherit;
+}
+
+.espresso-editor .rdtPicker table {
+    width: 100%;
+    margin: 0;
+}
+
+.espresso-editor .rdtPicker td,
+.espresso-editor .rdtPicker th {
+    text-align: center;
+    height: 28px;
+}
+
+.espresso-editor .rdtPicker th {
+    border-bottom: 1px solid #e7e6e4;
+}
+
+.espresso-editor .rdtPicker td {
+    cursor: pointer;
+}
+
+.espresso-editor .rdtPicker thead tr:first-child th {
+    cursor: pointer;
+}
+
+.espresso-editor .rdtPicker th.rdtNext,
+.espresso-editor .rdtPicker th.rdtPrev {
+    font-size: 21px;
+    vertical-align: top;
+}
+
+.espresso-editor .rdtPrev span,
+.espresso-editor .rdtNext span {
+    display: block;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.espresso-editor .rdtPicker thead tr:first-child th {
+    cursor: pointer;
+}
+
+.espresso-editor .rdtPicker th.rdtSwitch {
+    width: 100px;
+}
+
+.espresso-editor .rdtPicker .dow {
+    width: 14.2857%;
+    border-bottom: none;
+}
+
+.espresso-editor .rdtPicker td.rdtOld,
+.espresso-editor .rdtPicker td.rdtNew {
+    color: #a9aba6;
+}
+
+.espresso-editor .rdtPicker td.rdtActive.rdtToday::before {
+    border-bottom-color: #fff;
+}
+
+.espresso-editor .rdtPicker td.rdtToday::before {
+    content: '';
+    display: inline-block;
+    border-left: 7px solid transparent;
+    border-bottom: 7px solid #3297c3;
+    border-top-color: #b3b3b3;
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+}
+
+.espresso-editor .rdtPicker td.rdtActive, .rdtPicker td.rdtActive:hover {
+    background-color: #3297c3;
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+
+.espresso-editor .rdtPicker td.rdtToday {
+    position: relative;
+}
+
+/* TIME PICKER
+ * -------------------------------------------------------------------------*/
+
+.espresso-editor .time_picker_container .modal_container {
+    top: -38px;
+    min-width: 300px;
+}
+
+
+/* Media Queries for smaller screens
+ * -------------------------------------------------------------------------*/
+
+@media only screen and (max-width: 1280px) {
+    .espresso-editor.components-modal__frame {
+        height: 90%;
+        max-width: 100%;
+        transform: translate(-50%, -5%);
+        top: 10%;
+        width: 80%;
+    }
+
+    .espresso-editor .pl-3,
+    .espresso-editor .px-3 {
+        padding-left: 0 !important;
+    }
+
+    .espresso-editor .pr-3,
+    .espresso-editor .px-3 {
+        padding-right: 0 !important;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .espresso-editor.components-modal__frame {
+        height: 90%;
+        max-width: 100%;
+        transform: translate(-50%, -5%);
+        top: 10%;
+        width: 90%;
+    }
+}
+
+@media only screen and (max-width: 600px) and (min-width: 481px) {
+    .espresso-editor.components-modal__frame {
+        height: 95%;
+        max-width: 95%;
+        transform: translate(-50%, -2.5%);
+        top: 2.5%;
+        width: 95%;
+    }
+}
+
+@media only screen and (max-width: 540px) and (min-width: 480px) {
+    .espresso-editor.components-modal__frame {
+        height: 100%;
+        max-width: 100%;
+        transform: none;
+        top: 0;
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .espresso-editor.components-modal__frame {
+        height: 100%;
+        max-width: 100%;
+        transform: none;
+        top: 0;
+        width: 100%;
+    }
+}
+

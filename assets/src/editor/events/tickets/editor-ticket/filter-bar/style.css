@@ -1,0 +1,11 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso TicketsListFilterBar Stylesheet
+ * © 2018 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+.ee-entity-list-filter-bar .ee-ticket-dates-chained-filter {
+    margin-right: .75rem;
+}
+.ee-ticket-dates-chained-filter .components-icon-button {
+    top: -3px;
+}

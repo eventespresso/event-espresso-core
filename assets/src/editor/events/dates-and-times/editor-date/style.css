@@ -1,0 +1,38 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso editorDate Stylesheet
+ * © 2018 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+
+.ee-grow,
+.ee-grow-big {
+    -webkit-transition: all 100ms ease-in;
+    -webkit-transform: scale(1);
+    -ms-transition: all 100ms ease-in;
+    -ms-transform: scale(1);
+    -moz-transition: all 100ms ease-in;
+    -moz-transform: scale(1);
+    transition: all 100ms ease-in;
+    transform: scale(1);
+}
+.ee-grow:hover {
+    -webkit-transition: all 100ms ease-in;
+    -webkit-transform: scale(1.15);
+    -ms-transition: all 100ms ease-in;
+    -ms-transform: scale(1.15);
+    -moz-transition: all 100ms ease-in;
+    -moz-transform: scale(1.15);
+    transition: all 100ms ease-in;
+    transform: scale(1.15);
+}
+.ee-grow-big:hover {
+    -webkit-transition: all 100ms ease-in;
+    -webkit-transform: scale(1.25);
+    -ms-transition: all 100ms ease-in;
+    -ms-transform: scale(1.25);
+    -moz-transition: all 100ms ease-in;
+    -moz-transform: scale(1.25);
+    transition: all 100ms ease-in;
+    transform: scale(1.25);
+}
+

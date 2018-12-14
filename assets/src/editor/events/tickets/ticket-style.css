@@ -1,0 +1,455 @@
+/* -------------------------------------------------------------------------
+ * Event Espresso Event Admin Stylesheet
+ * (c) 2018 Event Espresso
+ * -------------------------------------------------------------------------*/
+
+/* General Styles
+ * -------------------------------------------------------------------------*/
+
+.ee-editor-modal .ee-editor-event-tickets-list {
+    min-width: 560px;
+}
+.ee-editor-modal .ee-editor-event-tickets-list > li {
+    width: 100%;
+}
+.ee-editor-modal .ee-ticket-wrapper {
+    max-width: 520px;
+}
+
+.ee-editor-event-tickets-list > li {
+    display: inline-block;
+    padding: 0 2.5% 25px;
+    vertical-align: top;
+    width: 45%;
+}
+
+.ee-event-date-ticket-details-form {
+    position: relative;
+}
+
+.ee-ticket-wrapper {
+    background: #fff;
+    box-sizing: border-box;
+    /*-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);*/
+    /*-moz-box-shadow: 0 0 2px rgba(0, 0, 0, .2);*/
+    /*box-shadow: 0 0 2px rgba(0, 0, 0, .2);*/
+    color: #58575c;
+    margin: 0 auto 30px;
+    min-height: 170px;
+    padding: 0;
+    position: relative;
+    /*max-width: 520px;*/
+    width: 100%;
+    /*z-index: 5;*/
+}
+
+
+    /*.ee-ticket-wrapper:before,*/
+/*.ee-ticket-wrapper:after {*/
+    /*position: absolute;*/
+    /*content: "";*/
+    /*bottom: 15px;*/
+    /*left: 10px;*/
+    /*width: 50%;*/
+    /*top: 70%;*/
+    /*max-width: 300px;*/
+    /*background: #000;*/
+    /*-webkit-box-shadow: 0 15px 10px rgba(0, 0, 0, .75);*/
+    /*-moz-box-shadow: 0 15px 10px rgba(0, 0, 0, .75);*/
+    /*box-shadow: 0 15px 10px rgba(0, 0, 0, .75);*/
+    /*-webkit-transform: rotate(-3deg);*/
+    /*-moz-transform: rotate(-3deg);*/
+    /*-o-transform: rotate(-3deg);*/
+    /*-ms-transform: rotate(-3deg);*/
+    /*transform: rotate(-3deg);*/
+    /*z-index: -1;*/
+/*}*/
+
+/*.ee-ticket-wrapper:after {*/
+    /*-webkit-transform: rotate(3deg);*/
+    /*-moz-transform: rotate(3deg);*/
+    /*-o-transform: rotate(3deg);*/
+    /*-ms-transform: rotate(3deg);*/
+    /*transform: rotate(3deg);*/
+    /*right: 10px;*/
+    /*left: auto;*/
+/*}*/
+
+.ee-ticket {
+    background: #fff;
+    min-height: 170px;
+    position: relative;
+    overflow: hidden;
+    /*width: 520px;*/
+    z-index: 10;
+}
+
+.ee-ticket-details {
+    box-sizing: border-box;
+    float: left;
+    padding: 10px 150px 10px 35px;
+    width: 100%;
+}
+
+.ee-ticket-id {
+    bottom: -30px;
+    box-sizing: border-box;
+    color: #a9aba6;
+    float: left;
+    /*font-weight: bold;*/
+    height: 30px;
+    left: 0;
+    padding: 5px;
+    position: absolute;
+    text-align: center;
+    width: 180px;
+    transform-origin: top left 0;
+    /* Safari */
+    -webkit-transform: rotate(-90deg);
+    /* Firefox */
+    -moz-transform: rotate(-90deg);
+    /* IE */
+    -ms-transform: rotate(-90deg);
+    /* Opera */
+    -o-transform: rotate(-90deg);
+    /* Internet Explorer */
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
+.ee-ticket-status-sold-out .ee-ticket-sidebar {
+    background-color: #f8ae00;
+}
+.ee-ticket-status-expired .ee-ticket-sidebar {
+    background-color: #a9aba6;
+}
+.ee-ticket-status-pending .ee-ticket-sidebar {
+    background-color: #3297c3;
+}
+.ee-ticket-status-on-sale .ee-ticket-sidebar {
+    background-color: #759427;
+}
+.ee-ticket-status-archived .ee-ticket-sidebar {
+    background-color: #a16ec6;
+}
+
+.ee-ticket-id-label {
+    color: #d0d6e0;
+    text-transform: uppercase;
+}
+
+.ee-ticket-details .ee-ticket-name  {
+    color: #58575c !important;
+    font-size: 27px !important;
+    font-weight: bold !important;
+    line-height: 21px !important;
+    margin: 0 0 10px !important;
+    text-align: center;
+}
+
+.ee-ticket-details .ee-ticket-price  {
+    color: #706e73 !important;
+    font-size: 24px !important;
+    font-weight: bold !important;
+    line-height: 24px !important;
+    margin: 0 0 10px !important;
+    text-align: center;
+}
+
+.ee-ticket-desc {
+    color: #706e73;
+    font-size: 12px;
+    line-height: 12px;
+    padding: 0 0 60px;
+    text-align: center;
+}
+
+.ee-ticket-details-footer {
+    bottom: 0;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    left: 0;
+    padding: 0 120px 10px 35px;
+    position: absolute;
+    width: 100%;
+}
+
+.ee-ticket-details-sold-rsrvd-qty-div {
+    font-size: 21px;
+    line-height: 21px;
+    height: 42px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.ee-ticket-details-sep,
+.ee-ticket-details-sold-div,
+.ee-ticket-details-reserved-div,
+.ee-ticket-details-qty-div,
+.ee-ticket-details-reg-div {
+    display: inline-block;
+}
+
+.ee-ticket-details-sold-value,
+.ee-ticket-details-reserved-value,
+.ee-ticket-details-qty-value,
+.ee-ticket-details-reg-value {
+    font-weight: bold;
+    position: relative;
+    top: -20px;
+}
+
+.ee-ticket-details-sold-label,
+.ee-ticket-details-reserved-label,
+.ee-ticket-details-qty-label,
+.ee-ticket-details-reg-label {
+    color: rgba(0, 0, 0, .5);
+    font-size: 10px;
+    letter-spacing: 1px;
+    position: relative;
+    top: 20px;
+}
+
+.ee-ticket-details-sep {
+    border: 0 solid rgba(0, 0, 0, 0);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-left-style: solid;
+    border-left-width: 0px;
+    border-left: 1px solid rgba(0, 0, 0, .25);
+    display: inline-block;
+    height: 40px;
+    margin: 0 12.5px;
+}
+
+.ee-ticket-edit {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+.ee-ticket-edit-btn {
+    color: rgba(0, 0, 0, .25) !important;
+}
+
+.ee-ticket-edit-btn:hover {
+    color: rgba(0, 0, 0, .75) !important;
+}
+
+.ee-ticket-sidebar {
+}
+
+/* background: #f06291; */
+
+.ee-ticket-editor {
+    clear: both;
+    margin: 50px auto 75px;
+    min-width: 480px;
+    width: 80%;
+}
+
+
+/* Media Queries for smaller screens
+ * -------------------------------------------------------------------------*/
+
+
+@media only screen and (max-width: 1400px) and (min-width: 1201px) {
+    .ee-editor-event-tickets-list li {
+        display: block;
+        margin: 0 10% 20px;
+        width: 80%;
+    }
+}
+
+@media only screen and (max-width: 1200px) and (min-width: 1025px) {
+    .ee-editor-event-tickets-list li {
+        display: block;
+        margin: 0 5% 20px;
+        width: 90%;
+    }
+}
+
+@media only screen and (max-width: 1024px) and (min-width: 851px) {
+    .ee-editor-event-tickets-list li {
+        display: block;
+        margin: 0 0 20px;
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 850px) and (min-width: 783px) {
+    .ee-editor-event-tickets-list li {
+        display: block;
+        margin: 0 10% 20px;
+        width: 80%;
+    }
+}
+
+@media only screen and (max-width: 782px) and (min-width: 601px) {
+    .ee-editor-event-tickets-list li {
+        display: block;
+        margin: 0 5% 20px;
+        width: 90%;
+    }
+}
+
+@media only screen and (max-width: 600px) and (min-width: 541px) {
+    .ee-editor-event-tickets-list li {
+        display: block;
+        margin: 0 0 20px;
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 540px) and (min-width: 481px) {
+    .ee-ticket-wrapper {
+        width: 240px;
+    }
+    .ee-editor-event-tickets-list li {
+        display: block;
+        margin: 0 15% 20px;
+        width: 70%;
+    }
+}
+
+@media only screen and (max-width: 540px) {
+    .ee-ticket-details {
+        float: none;
+        height: auto;
+        padding: 10px 10px 0;
+        width: 100%;
+    }
+
+    .ee-ticket-id {
+        bottom: unset;
+        float: none;
+        left: unset;
+        position: relative;
+        width: 100%;
+        transform-origin: unset;
+        /* Safari */
+        -webkit-transform: unset;
+        /* Firefox */
+        -moz-transform: unset;
+        /* IE */
+        -ms-transform: unset;
+        /* Opera */
+        -o-transform: unset;
+        /* Internet Explorer */
+        filter: none;
+    }
+
+    .ee-ticket-name h1 {
+        margin: 0 0 20px;
+    }
+
+    .ee-ticket-price h2 {
+        margin: 0 0 20px;
+    }
+
+    .ee-ticket-desc {
+        padding: 0 10px 20px
+    }
+
+    .ee-ticket-details-sold-rsrvd-qty-div {
+        height: auto;
+        position: relative;
+        left: unset;
+        bottom: unset;
+        width: 100%;
+    }
+
+    .ee-ticket-details-sep,
+    .ee-ticket-details-sold-div,
+    .ee-ticket-details-reserved-div,
+    .ee-ticket-details-qty-div,
+    .ee-ticket-details-reg-div {
+        display: block;
+        width: 100%;
+    }
+
+    .ee-ticket-details-sold-value,
+    .ee-ticket-details-reserved-value,
+    .ee-ticket-details-qty-value,
+    .ee-ticket-details-reg-value {
+        display: block;
+        font-size: 16px;
+        position: relative;
+        text-align: left;
+        top: unset;
+    }
+
+    .ee-ticket-details-sold-label,
+    .ee-ticket-details-reserved-label,
+    .ee-ticket-details-qty-label,
+    .ee-ticket-details-reg-label {
+        display: block;
+        float: left;
+        font-size: 16px;
+        letter-spacing: 0;
+        margin: 0 5% 0 0;
+        position: relative;
+        text-align: right;
+        top: unset;
+        width: 50%;
+    }
+
+    .ee-ticket-details-sold-label::after,
+    .ee-ticket-details-reserved-label::after,
+    .ee-ticket-details-qty-label::after,
+    .ee-ticket-details-reg-label::after {
+        content: ": ";
+    }
+
+    .ee-ticket-details-sep {
+        display: block;
+        border: none;
+        height: 0;
+    }
+
+    .ee-ticket-edit {
+        display: block;
+        position: relative;
+        right: -10px;
+        bottom: unset;
+        width: 100%;
+    }
+
+    .ee-ticket-edit button {
+        float: right;
+    }
+
+    .ee-ticket-status {
+        margin: .25em 0 0;
+    }
+
+    .ee-ticket-details-footer {
+        bottom: unset;
+        left: unset;
+        padding: 10px;
+        position: relative;
+        /*width: 100%;*/
+
+    }
+}
+
+@media only screen and (max-width: 480px) and (min-width: 361px) {
+    .ee-ticket-wrapper {
+        width: 240px;
+    }
+    .ee-editor-event-tickets-list li {
+        display: block;
+        margin: 0 7.5% 20px;
+        width: 85%;
+    }
+}
+
+@media only screen and (max-width: 360px) {
+    .ee-ticket-wrapper {
+        width: 100%;
+    }
+    .ee-editor-event-tickets-list li {
+        display: block;
+        margin: 0 0 20px;
+        width: 100%;
+    }
+}

@@ -1,0 +1,10 @@
+.espresso-input-help-text {
+    color: #a9aba6;
+    font-size: 13px;
+    font-style: italic;
+    line-height: 15px;
+    margin: .5em 0 0;
+}
+.ee-admin-form-toggle {
+    top: 8px;
+}
