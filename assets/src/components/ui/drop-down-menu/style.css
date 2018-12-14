@@ -39,15 +39,15 @@
 }
 
 .ee-dropdown-menu-div {
-    padding: 25px 25px 10px 25px;
+    padding: 15px 25px 10px 25px;
     background-color: #fff;
     color: #706e73;
     border-radius: 3px;
     text-shadow: none;
     text-align: left;
     position: absolute;
-    right: -6px;
-    top: -6px;
+    right: -10px;
+    top: -15px;
     width: auto;
     z-index: 999;
     box-shadow: 0 3px 5px rgba(0, 0, 0, .5), 0 0 20px 10px rgba(0, 0, 0, .1);
