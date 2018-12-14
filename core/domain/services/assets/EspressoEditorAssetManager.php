@@ -17,7 +17,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class AdminRefactorAssetManager extends AssetManager
+class EspressoEditorAssetManager extends AssetManager
 {
     const JS_HANDLE_EDITOR = 'eventespresso-editor';
     const CSS_HANDLE_EDITOR = 'eventespresso-editor';
@@ -59,6 +59,7 @@ class AdminRefactorAssetManager extends AssetManager
             [
                 CoreAssetManager::JS_HANDLE_JQUERY,
                 CoreAssetManager::JS_HANDLE_EE_COMPONENTS,
+                CoreAssetManager::JS_HANDLE_EE_HOC_COMPONENTS,
                 'ee-datepicker'
             ]
         )
