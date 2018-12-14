@@ -2,6 +2,7 @@
  * External imports
  */
 import { Component } from 'react';
+import PropTypes from 'prop-types'
 import { IconButton } from '@wordpress/components';
 
 /**
@@ -14,22 +15,41 @@ import './style.css';
  * @return {string} rendered IconMenuItem
  */
 class IconMenuItem extends Component {
+	static propTypes = {
+		index: PropTypes.number.isRequired,
+		id: PropTypes.string.isRequired,
+		htmlClass: PropTypes.string.isRequired,
+		dashicon: PropTypes.string.isRequired,
+		tooltip: PropTypes.string.isRequired,
+		tooltipPosition: PropTypes.string,
+		onClick: PropTypes.func.isRequired,
+	};
+
 	render() {
-		const { index, id, title, dashicon, onClick } = this.props;
-		let { htmlClass, titlePosition } = this.props;
-		htmlClass = `ee-entity-menu-item-${ htmlClass }`;
-		htmlClass += ` ee-entity-menu-item-${ index }`;
-		htmlClass += ' ee-entity-menu-item clickable';
-		titlePosition = titlePosition ? titlePosition : 'top left';
+		const {
+			index,
+			id,
+			tooltip,
+			dashicon,
+			onClick,
+			...otherProps
+		} = this.props;
+		let { htmlClass, tooltipPosition } = this.props;
+		delete otherProps.htmlClass;
+		delete otherProps.tooltipPosition;
+		htmlClass = `ee-icon-menu-item-${ htmlClass }`;
+		htmlClass += ` ee-icon-menu-item-${ index }`;
+		htmlClass += ' ee-icon-menu-item clickable';
+		tooltipPosition = tooltipPosition ? tooltipPosition : 'top left';
 		return <IconButton
-			id={ `ee-entity-menu-item-${ id }` }
+			id={ `ee-icon-menu-item-${ id }` }
 			className={ htmlClass }
 			onClick={ ( event ) => onClick( event ) }
 			onKeyPress={ ( event ) => onClick( event ) }
-			tabIndex={ index }
-			tooltip={ title }
-			labelPosition={ titlePosition }
+			tooltip={ tooltip }
+			labelPosition={ tooltipPosition }
 			icon={ dashicon }
+			{ ...otherProps }
 		/>;
 	}
 }
