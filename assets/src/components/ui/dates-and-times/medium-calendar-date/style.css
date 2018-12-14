@@ -7,12 +7,13 @@
     background-image: linear-gradient(to bottom, rgba(0, 0, 0, .25) 50%, rgba(255, 255, 255, 0) 0%);
     background-size: 1px 5px;
     background-repeat: repeat-y;
+    box-sizing: border-box;
     color: #fff;
     height: 100%;
     padding: 0 10px 10px 10px;
     position: absolute;
     text-align: center;
-    width: 120px;
+    width: 140px;
 }
 
 .medium-calendar-date-wrapper.mcd-pos-left {

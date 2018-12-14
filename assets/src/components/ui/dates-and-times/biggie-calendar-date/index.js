@@ -1,4 +1,9 @@
 /**
+ * External imports
+ */
+import moment from 'moment';
+
+/**
  * Internal dependencies
  */
 import './style.css';
@@ -8,7 +13,7 @@ import './style.css';
  *
  * @function
  * @param {string} position
- * @param {Moment} date
+ * @param {string} date
  * @param {string} htmlClass
  * @param {string} headerText
  * @param {string} footerText
