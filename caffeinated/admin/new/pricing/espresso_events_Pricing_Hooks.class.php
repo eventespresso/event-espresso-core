@@ -986,6 +986,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      */
     public function pricing_metabox()
     {
+        do_action(
+            'AHEE__espresso_events_Pricing_Hooks___pricing_metabox__start',
+            $this
+        );
         $existing_datetime_ids = $existing_ticket_ids = $datetime_tickets = $ticket_datetimes = array();
         $event = $this->_adminpage_obj->get_cpt_model_obj();
         // set is_creating_event property.
