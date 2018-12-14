@@ -38,7 +38,8 @@ class SettingsForm extends PayPalSettingsForm
                         EE_PMT_Paypal_Pro::card_types_supported(),
                         array(
                             'html_label_text' => __('Card Types Supported', 'event_espresso'),
-                            'required' => true )
+                            'required' => true
+                        )
                     ),
                 )
             ),

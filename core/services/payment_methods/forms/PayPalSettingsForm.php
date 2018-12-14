@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\services\payment_methods\forms;
 
+use EE_Error;
 use EE_Payment_Method_Form;
 use EE_Text_Input;
 
@@ -28,36 +29,40 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
         $this->helpTabLink = $help_tab_link;
         $options_array = array_replace_recursive(
             array(
-            'extra_meta_inputs' => array(
-                'api_username' => new EE_Text_Input(
-                    array(
-                        'html_label_text' => sprintf(
-                            esc_html__('API Username %s', 'event_espresso'),
-                            $help_tab_link
-                        ),
-                        'required'        => true,
-                    )
-                ),
-                'api_password' => new EE_Text_Input(
-                    array(
-                        'html_label_text' => sprintf(
-                            esc_html__('API Password %s', 'event_espresso'),
-                            $help_tab_link
-                        ),
-                        'required'        => true,
-                    )
-                ),
-                'api_signature' => new EE_Text_Input(
-                    array(
-                        'html_label_text' => sprintf(
-                            esc_html__('API Signature %s', 'event_espresso'),
-                            $help_tab_link
-                        ),
-                        'required'        => true,
-                    )
-                ),
-            )
-            )
+                'extra_meta_inputs' => array(
+                    'api_username' => new EE_Text_Input(
+                        array(
+                            'html_label_text' => sprintf(
+                                // translators: %s link to help doc
+                                esc_html__('API Username %s', 'event_espresso'),
+                                $help_tab_link
+                            ),
+                            'required'        => true,
+                        )
+                    ),
+                    'api_password' => new EE_Text_Input(
+                        array(
+                            'html_label_text' => sprintf(
+                                // translators: %s link to help doc
+                                esc_html__('API Password %s', 'event_espresso'),
+                                $help_tab_link
+                            ),
+                            'required'        => true,
+                        )
+                    ),
+                    'api_signature' => new EE_Text_Input(
+                        array(
+                            'html_label_text' => sprintf(
+                                // translators: %s link to help doc
+                                esc_html__('API Signature %s', 'event_espresso'),
+                                $help_tab_link
+                            ),
+                            'required'        => true,
+                        )
+                    ),
+                )
+            ),
+            $options_array
         );
         parent::__construct($options_array);
     }
@@ -65,6 +70,7 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
     /**
      * Tests the the PayPal API credentials work ok
      * @return string of an error using the credentials, otherwise, if the credentials work, returns a blank string
+     * @throws EE_Error
      */
     protected function checkForCredentialsErrors()
     {
@@ -95,6 +101,7 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
             // maybe is turned off. We don't know the credentials are invalid
             EE_Error::add_error(
                 sprintf(
+                    // translators: %1$s Error message received from PayPal
                     esc_html__('Your PayPal credentials could not be verified. There was an error communicating with PayPal, it was %1$s', 'event_espresso'),
                     $response->get_error_message()
                 ),
@@ -108,7 +115,10 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
 
         if (empty($response_args['ACK'])) {
             EE_Error::add_error(
-                esc_html__('Your PayPal credentials could not be verified. Part of their response was missing.', 'event_espresso'),
+                esc_html__(
+                    'Your PayPal credentials could not be verified. Part of their response was missing.',
+                    'event_espresso'
+                ),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
