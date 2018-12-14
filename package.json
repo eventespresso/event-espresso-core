@@ -104,6 +104,7 @@
 		"classnames": "^2.2.6",
 		"cuid": "^2.1.4",
 		"decimal.js-light": "^2.5.0",
+		"immutable": "^4.0.0-rc.12",
 		"js-green-licenses": "^0.5.0",
 		"memize": "^1.0.5",
 		"moment-duration-format": "^2.2.2",
