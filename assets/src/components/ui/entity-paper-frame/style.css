@@ -4,18 +4,27 @@
  * ------------------------------------------------------------------------- */
 
 .ee-entity-paper-frame-wrapper {
-    margin-right: 1%;
+    margin: 0 1% 25px 0;
+    position: relative;
     width: 49%;
 }
 
-.ee-entity-paper-frame {
+.ee-entity-wrapper {
     box-shadow: 0 0 2px rgba(0, 0, 0, .2);
     -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
     -moz-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
     box-sizing: border-box;
-    margin: 0 0 25px;
     max-width: 525px;
     position: relative;
+}
+
+.ee-entity-paper-frame {
+    bottom: 0;
+    box-sizing: border-box;
+    height: 150px;
+    max-width: 525px;
+    width: 100%;
+    position: absolute;
     z-index: 0;
 }
 
@@ -72,7 +81,7 @@
 
 @media only screen and (max-width: 1366px) {
     .ee-entity-paper-frame-wrapper {
-        margin: 0;
+        margin-right: 0;
         width: 100%;
     }
 }

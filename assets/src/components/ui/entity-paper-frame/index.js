@@ -27,12 +27,19 @@ export default createHigherOrderComponent(
 		( Entity ) => {
 			return class EntityPaperFrame extends Component {
 				render() {
-					const { instanceId, ...otherProps } = this.props;
+					// console.log( '' );
+					// console.log( 'withEntityPaperFrame.render() props: ', this.props );
+					const {
+						instanceId,
+						...otherProps
+					} = this.props;
 					return (
 						<div id={ `ee-entity-paper-frame-${ instanceId }` }
 							 className="ee-entity-paper-frame-wrapper"
 						>
 							<div className="ee-entity-paper-frame">
+							</div>
+							<div className="ee-entity-wrapper">
 								<Entity { ...otherProps } />
 							</div>
 						</div>
