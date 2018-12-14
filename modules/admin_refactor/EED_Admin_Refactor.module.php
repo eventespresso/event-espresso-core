@@ -1,11 +1,7 @@
 <?php
 
-use EventEspresso\core\domain\services\assets\AdminRefactorAssetManager;
-use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * @package        Event Espresso
@@ -53,8 +49,11 @@ class EED_Admin_Refactor extends EED_Module
      */
     public static function set_hooks_admin()
     {
-        add_action('AHEE__EE_System__initialize', array('EED_Admin_Refactor', 'loadAdminRefactorComponents'));
         add_action('add_meta_boxes_espresso_events', array('EED_Admin_Refactor', 'add_meta_boxes'));
+        add_action(
+            'AHEE__caffeinated_admin_new_pricing_templates__event_tickets_metabox_main__before_content',
+            array(EED_Admin_Refactor::instance(), 'eventDatesAndTicketsMetabox'), 12
+        );
     }
 
     /**
@@ -70,68 +69,7 @@ class EED_Admin_Refactor extends EED_Module
     }
 
 
-    /**
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
-     * @throws Exception
-     */
-    public static function loadAdminRefactorComponents()
-    {
-        try {
-            $request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
-            if ($request instanceof RequestInterface) {
-                $page = $request->getRequestParam('page');
-                $action = $request->getRequestParam('action');
-                if ($page === 'espresso_events') {
-                    if ($action === 'edit' || $action === 'create_new') {
-                        add_action(
-                            'AHEE__caffeinated_admin_new_pricing_templates__event_tickets_metabox_main__before_content',
-                            array(EED_Admin_Refactor::instance(), 'adminRefactor'), 10
-                        );
-                        EED_Admin_Refactor::loadAdminRefactorAssetManager();
-                    }
-                }
-            }
-        } catch (Exception $exception) {
-            new ExceptionStackTraceDisplay($exception);
-        }
-    }
 
-
-    /**
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    private static function loadAdminRefactorAssetManager()
-    {
-        EE_Dependency_Map::register_dependencies(
-            'EventEspresso\core\domain\services\assets\AdminRefactorAssetManager',
-            array(
-                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache,
-            )
-        );
-        LoaderFactory::getLoader()->getShared(
-            'EventEspresso\core\domain\services\assets\AdminRefactorAssetManager'
-        );
-        add_action('admin_enqueue_scripts', array('EED_Admin_Refactor', 'enqueueScripts'), 100 );
-    }
-
-
-    /**
-     * enqueue_scripts - Load the scripts and css
-     *
-     * @return void
-     * @throws DomainException
-     */
-    public static function enqueueScripts()
-    {
-        wp_enqueue_style(AdminRefactorAssetManager::CSS_HANDLE_ADMIN_REFACTOR);
-        wp_enqueue_script(AdminRefactorAssetManager::JS_HANDLE_ADMIN_REFACTOR);
-    }
 
     /**
      * @return void
@@ -150,40 +88,51 @@ class EED_Admin_Refactor extends EED_Module
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function adminRefactor()
+    public function eventDatesAndTicketsMetabox()
     {
+        $arr = [];
         $this->event = EEM_Event::instance()->get_one_by_ID($this->post->ID);
         $datetimes = $this->event->datetimes_in_chronological_order();
         $venue = $this->getVenue();
-        $venue_name = $venue->name();
+        $venue_name = $venue instanceof EE_Venue ? $venue->name() : '';
         $edit_venue_link = $this->getEditVenueLink($venue);
         foreach ($datetimes as $datetime) {
-            $arr[] = array(
-                'id' => $datetime->ID(),
+            if (! $datetime instanceof EE_Datetime) {
+                continue;
+            }
+            $DTD_ID = $datetime->ID();
+            $datetime_data = array(
+                'id' => $DTD_ID,
                 'name' => $datetime->name(),
-                'start' => $datetime->start_date('D M d Y H:i:s O'),
-                'end' => $datetime->end_date('D M d Y H:i:s O'),
+                'description' => $datetime->description(),
+                'start' => $datetime->start_date(DATE_ATOM), // 'D M d Y H:i:s O'
+                'end' => $datetime->end_date(DATE_ATOM),
                 'status' => $datetime->get_active_status(),
                 'reg_list_url' => EE_Admin_Page::add_query_args_and_nonce(
-                    array('event_id' => $datetime->event()->ID(), 'datetime_id' => $datetime->ID()),
+                    array('event_id' => $datetime->event()->ID(), 'datetime_id' => $DTD_ID),
                     REG_ADMIN_URL
                 ),
                 'sold' => $datetime->sold(),
                 'reserved' => $datetime->reserved(),
-                'reg_limit' => $datetime->reg_limit() === INF ? 'INF' : $datetime->reg_limit(),
+                'regLimit' => $datetime->reg_limit() === INF ? 'INF' : $datetime->reg_limit(),
+                'order' => $datetime->order(),
                 'venue' => $venue_name,
                 'edit_venue_link' => $edit_venue_link,
-                'recurrencePattern' => $datetime->ID() > 24 ? 'FREQ=DAILY;INTERVAL=1;COUNT=10' : '',
-                'exclusionPattern' => '',
+                'tickets' => $this->getTicketData($datetime)
             );
+            $datetime_data += $this->getRecurrenceData($datetime);
+            $arr[] = $datetime_data;
         }
         echo '
         <script type="text/javascript">
             /* <![CDATA[ */
-                var remEventDatesList = ' . json_encode($arr) . '
+                var eeEditorEventDatesList = ' . json_encode($arr) . '
+                var eeEditorEventId = ' . $this->event->ID() . '
             /* ]]> */
         </script>
-        <div id="ee-editor-admin-refactor"></div>';
+        <div id="ee-editor-event-dates-and-tickets-metabox">
+        <h1>Events Dates and Tickets Admin Refactor</h1>
+        </div>';
     }
 
     /**
@@ -208,7 +157,7 @@ class EED_Admin_Refactor extends EED_Module
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function getEditVenueLink(EE_Venue $venue)
+    public function getEditVenueLink($venue)
     {
         if ($venue instanceof EE_Venue) {
             return EE_Admin_Page::add_query_args_and_nonce(
@@ -220,5 +169,91 @@ class EED_Admin_Refactor extends EED_Module
             array('action' => 'create_new', 'page' => 'espresso_venues'),
             EE_VENUES_ADMIN_URL
         );
+    }
+
+
+    /**
+     * @param EE_Datetime $datetime
+     * @return array|mixed
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    private function getTicketData(EE_Datetime $datetime )
+    {
+        $ticketData = array();
+        $tickets = $datetime->tickets(array(
+            array('OR' => array('TKT_deleted' => 1, 'TKT_deleted*' => 0)),
+            'default_where_conditions' => 'none',
+            'order_by' => array('TKT_start_date' => 'ASC')
+        ));
+        foreach ($tickets as $ticket) {
+            if ( ! $ticket instanceof EE_Ticket ) {
+                continue;
+            }
+            $TKT_ID = $ticket->ID();
+            $ticketData[] = array(
+                'id'          => $TKT_ID,
+                'templateId'  => null,
+                'name'        => $ticket->name(),
+                'description' => $ticket->description(),
+                'qty'         => $ticket->qty() !== INF ? $ticket->qty() : 'INF',
+                'sold'        => $ticket->sold(),
+                'reserved'    => $ticket->reserved(),
+                'uses'        => $ticket->uses() !== INF ? $ticket->uses() : 'INF',
+                'required'    => $ticket->required(),
+                'min'         => $ticket->min(),
+                'max'         => $ticket->max() !== INF ? $ticket->max() : 'INF',
+                'price'       => $ticket->price(),
+                'startDate'   => $ticket->start_date(DATE_ATOM ), // 'D M d Y H:i:s O'
+                'endDate'     => $ticket->end_date(DATE_ATOM),
+                'taxable'     => $ticket->taxable(),
+                'order'       => $ticket->order(),
+                'row'         => $ticket->row(),
+                'isDefault'   => $ticket->is_default(),
+                'wpUser'      => $ticket->wp_user(),
+                'parent'      => $ticket->parent(),
+                'deleted'     => $ticket->deleted(),
+                'status'      => $ticket->ticket_status(),
+                'regCount'    => $ticket->count_registrations(),
+            );
+        }
+        return $ticketData;
+    }
+
+
+    /**
+     * @param EE_Datetime $datetime
+     * @return array|mixed
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    private function getRecurrenceData(EE_Datetime $datetime )
+    {
+        $DTD_ID = $datetime->ID();
+        $recurrenceData = array(
+            24 => array(
+                'rRule'   => 'FREQ=DAILY;INTERVAL=1;COUNT=10',
+                'exRule'  => '',
+                'rDates'  => [],
+                'exDates' => [],
+            ),
+            26 => array(
+                'rRule'   => 'FREQ=WEEKLY;INTERVAL=1;COUNT=20',
+                'exRule'  => '',
+                'rDates'  => [],
+                'exDates' => [],
+            ),
+        );
+        return isset($recurrenceData[ $DTD_ID ])
+            ? $recurrenceData[ $DTD_ID ]
+            : array();
     }
 }
