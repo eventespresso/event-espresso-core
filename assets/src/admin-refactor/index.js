@@ -2,38 +2,21 @@
  * External imports
  */
 import ReactDOM from 'react-dom';
-import { Component } from 'react';
-import { EditorDates } from '@eventespresso/editor';
 
-/**
- * Internal imports
- */
+import { EventDatesAndTicketsMetabox } from '@eventespresso/editor';
 
-/**
- * AdminRefactor
- *
- * @constructor
- */
-class AdminRefactor extends Component {
-	// addDatetime = ( datetime ) => {
-	// };
-
-	// deleteDatetime = ( datetime ) => {
-	// };
-
-	render() {
-		return (
-			<div>
-				<div id="ee-editor-dates-metabox-div" className="ee-editor-metabox">
-					<EditorDates eventDates={ this.props.eventDates } />
-					<div className="clear-float"></div>
-				</div>
-			</div>
-		);
-	}
-}
+const container = document.getElementById( 'normal-sortables' );
+const editor = document.createElement( 'div' );
+container.prepend( editor );
 
 ReactDOM.render(
-	<AdminRefactor eventDates={ window.remEventDatesList } />,
-	document.getElementById( 'ee-editor-admin-refactor' )
+	<EventDatesAndTicketsMetabox
+		eventId={ window.eeEditorEventId }
+		eventDates={ window.eeEditorEventDatesList }
+	/>,
+	editor
+	// document.getElementById( 'normal-sortables' )
+	// document.getElementById( 'espresso_events_Pricing_Hooks_pricing_metabox_metabox' )
+	// document.getElementById( 'event-and-ticket-form-content' )
+	// document.getElementById( 'ee-editor-event-dates-and-tickets-metabox' )
 );
