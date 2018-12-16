@@ -130,7 +130,7 @@ describe( 'persistEntityRecord()', () => {
 		expect( value ).toEqual(
 			receiveAndReplaceEntityRecords(
 				'event',
-				new Map( [ [ 20, TestEvent ] ] )
+				[ TestEvent ],
 			)
 		);
 	} );
@@ -163,7 +163,7 @@ describe( 'persistForEntityId()', () => {
 	it( 'yields empty object when there is no BaseEntity in the ' +
 		'response', () => {
 		const { value, done } = fulfillment.next( {} );
-		expect( value ).toEqual( {} );
+		expect( value ).toBe( null );
 		expect( done ).toBe( true );
 	} );
 	it( 'yields dispatch action for adding entity record to the store', () => {

@@ -8,6 +8,7 @@ import {
 } from '@eventespresso/model';
 import warning from 'warning';
 import { InvalidModelEntity } from '@eventespresso/eejs';
+import { getIdsFromBaseEntityArray } from '@eventespresso/helpers';
 
 /**
  * Internal imports
@@ -49,7 +50,7 @@ function* createRelation(
 	}
 	yield receiveEntityRecords(
 		singularRelationName,
-		new Map( [ [ relationEntity.id, relationEntity ] ] )
+		[ relationEntity ]
 	);
 	yield receiveRelatedEntities(
 		modelName,
@@ -82,7 +83,7 @@ function* createRelation(
  * @param {string} modelName
  * @param {number} entityId
  * @param {string} relationName
- * @param {Map} relationEntities
+ * @param {Array<BaseEntity>} relationEntities
  */
 function* createRelations(
 	modelName,
@@ -92,19 +93,9 @@ function* createRelations(
 ) {
 	relationName = pluralModelName( relationName );
 	const singularRelationName = singularModelName( relationName );
-	// warning currently has a bug whereby the first argument is skipped for
-	// string replacement.
-	if ( ! ( relationEntities instanceof Map ) ) {
-		warning(
-			false,
-			'Incoming relationEntities argument is expected to be an ' +
-			'instance of Map. It is not.',
-		);
-		return;
-	}
 
 	try {
-		assertMapHasEntitiesForModel( relationEntities, singularRelationName );
+		assertArrayHasEntitiesForModel( relationEntities, singularRelationName );
 	} catch ( exception ) {
 		warning(
 			false,
@@ -115,7 +106,7 @@ function* createRelations(
 		);
 		return;
 	}
-	const relationIds = Array.from( relationEntities.keys() );
+	let relationIds = getIdsFromBaseEntityArray( relationEntities );
 	yield receiveEntityRecords( singularRelationName, relationEntities );
 	yield receiveRelatedEntities(
 		modelName,
@@ -123,6 +114,7 @@ function* createRelations(
 		relationName,
 		relationIds,
 	);
+	relationIds = [ ...relationIds ];
 	while ( relationIds.length > 0 ) {
 		const relationId = relationIds.shift();
 		yield receiveDirtyRelationIndex(
@@ -144,13 +136,13 @@ function* createRelations(
  * Asserts that the provided map has BaseEntity instances for the expected
  * model name.
  *
- * @param {Map} relationMap
+ * @param {Array<BaseEntity>} entities
  * @param {string} relationModelName Expected to be the singular form for the
  * modelName.
  * @throws InvalidModelEntity
  */
-const assertMapHasEntitiesForModel = ( relationMap, relationModelName ) => {
-	for ( const entity of relationMap.values() ) {
+const assertArrayHasEntitiesForModel = ( entities, relationModelName ) => {
+	for ( const entity of entities ) {
 		if ( ! isModelEntityOfModel( entity, relationModelName ) ) {
 			throw new InvalidModelEntity( '', entity );
 		}

@@ -44,7 +44,7 @@ describe( 'createRelation()', () => {
 			expect( value ).toEqual(
 				receiveEntityRecords(
 					'event',
-					new Map( [ [ 20, TestEvent ] ] )
+					[ TestEvent ]
 				)
 			);
 		} );
@@ -79,10 +79,10 @@ describe( 'createRelation()', () => {
 } );
 
 describe( 'createRelations()', () => {
-	const TestEvents = new Map( [
-		[ 20, EventEntities.b ],
-		[ 30, EventEntities.c ],
-	] );
+	const TestEvents = [
+		EventEntities.b,
+		EventEntities.c,
+	];
 	let fulfillment;
 	const reset = ( entities, relationName ) => fulfillment = createRelations(
 		'datetime',
@@ -90,16 +90,6 @@ describe( 'createRelations()', () => {
 		relationName,
 		entities
 	);
-	it( 'throws a console error if entities argument is not a map', () => {
-		reset( { EVT_ID: 10 }, 'event' );
-		const { value, done } = fulfillment.next();
-		expect( console ).toHaveErroredWith(
-			'Warning: Incoming relationEntities argument is expected to be an ' +
-			'instance of Map. It is not.'
-		);
-		expect( value ).toBeUndefined();
-		expect( done ).toBe( true );
-	} );
 	it( 'throws a console error if the entities are not for the given ' +
 		'model', () => {
 		reset( TestEvents, 'datetime' );

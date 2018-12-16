@@ -7,11 +7,9 @@ import {
 } from '@eventespresso/validators';
 import {
 	applyQueryString,
-	createAndKeyEntitiesByPrimaryKeyValue,
 	keyEntitiesByPrimaryKeyValue,
-	getEntityPrimaryKeyValues,
 } from '@eventespresso/model';
-import { isEmpty, keys, isArray } from 'lodash';
+import { isEmpty, isArray } from 'lodash';
 import warning from 'warning';
 
 /**
@@ -37,7 +35,7 @@ import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
  *
  * @param {string} modelName
  * @param {BaseEntity} entity
- * @return {null|Object} If successfully persisted the persisted entity is
+ * @return {null|BaseEntity} If successfully persisted the persisted entity is
  * returned.  Otherwise null.
  */
 function* persistEntityRecord( modelName, entity ) {
@@ -64,18 +62,18 @@ function* persistEntityRecord( modelName, entity ) {
 	if ( isEmpty( updatedEntity ) ) {
 		return null;
 	}
-	const newId = getEntityPrimaryKeyValues( modelName, updatedEntity );
-	const updatedEntityRecord = createAndKeyEntitiesByPrimaryKeyValue(
-		factory,
-		keyEntitiesByPrimaryKeyValue( modelName, [ updatedEntity ] )
-	);
+	const updatedEntityRecord = factory.fromExisting( updatedEntity );
+	const newId = updatedEntityRecord.id;
 	if ( entity.isNew ) {
 		yield removeEntityById( modelName, entity.id );
 		yield resolveGetEntityByIdForIds( modelName, [ newId ] );
 		yield receiveUpdatedEntityIdForRelations( modelName, entity.id, newId );
 	}
-	yield receiveAndReplaceEntityRecords( modelName, updatedEntityRecord );
-	return updatedEntityRecord.get( newId );
+	yield receiveAndReplaceEntityRecords(
+		modelName,
+		[ updatedEntityRecord ]
+	);
+	return updatedEntityRecord;
 }
 
 /**
@@ -83,8 +81,8 @@ function* persistEntityRecord( modelName, entity ) {
  *
  * @param {string} modelName
  * @param {number} entityId
- * @return {BaseEntity|Object} If the entity is successfully persisted it is
- * returned (may have a new id!), otherwise an empty object is returned.
+ * @return {BaseEntity|null} If the entity is successfully persisted it is
+ * returned (may have a new id!), otherwise null is returned.
  */
 function* persistForEntityId( modelName, entityId ) {
 	const entity = yield select(
@@ -101,9 +99,9 @@ function* persistForEntityId( modelName, entityId ) {
 		);
 		return isModelEntityOfModel( persistedEntity, modelName ) ?
 			persistedEntity :
-			{};
+			null;
 	}
-	return {};
+	return null;
 }
 
 /**

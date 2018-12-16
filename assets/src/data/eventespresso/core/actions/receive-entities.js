@@ -10,17 +10,17 @@ const { entities: types } = ACTION_TYPES;
  * (matching ids).
  *
  * @param {string} modelName expected to be an model name.
- * @param {Object<number|string,Object>} entities Array of model entity
+ * @param {Array<BaseEntity>} entities Array of model entity
  * instances indexed by the primary key.
  * @return {
  * {
  * 	type: string,
  * 	modelName: string,
- * 	entities: Map
+ * 	entities: Array<BaseEntity>
  * 	}
  * }  An action object.
  */
-function receiveEntityRecords( modelName, entities = new Map() ) {
+function receiveEntityRecords( modelName, entities = [] ) {
 	return {
 		type: types.RECEIVE_ENTITY_RECORDS,
 		modelName,
@@ -32,16 +32,16 @@ function receiveEntityRecords( modelName, entities = new Map() ) {
  * Same as receiveEntityRecords except incoming entities will replace any
  * matching records (by ID)  in the state.
  * @param {string} modelName
- * @param {Map} entities
+ * @param {Array} entities
  * @return {
  * {
  * 	type: string,
  * 	modelName: string,
- * 	entities: Object<number|string,Object>
+ * 	entities: Array<BaseEntity>
  * 	}
  * }  An action object.
  */
-function receiveAndReplaceEntityRecords( modelName, entities = new Map() ) {
+function receiveAndReplaceEntityRecords( modelName, entities = [] ) {
 	return {
 		type: types.RECEIVE_AND_REPLACE_ENTITY_RECORDS,
 		modelName,
