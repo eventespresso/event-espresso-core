@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\caffeinated\payment_methods\PayPal_Pro\forms\SettingsForm;
+use EventEspresso\caffeinated\payment_methods\PayPal_Pro\forms\PayPalProSettingsForm;
 
 /**
  * EEPMT_Paypal_Pro
@@ -29,14 +29,16 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
     }
 
 
-
     /**
      * Gets the form for all the settings related to this payment method type
      * @return EE_Payment_Method_Form
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     public function generate_new_settings_form()
     {
-        return new SettingsForm(array(), $this->get_help_tab_link());
+        return new PayPalProSettingsForm(array(), $this->get_help_tab_link());
     }
 
 

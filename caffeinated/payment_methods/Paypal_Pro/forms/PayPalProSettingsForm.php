@@ -18,7 +18,7 @@ use EventEspresso\core\services\payment_methods\forms\PayPalSettingsForm;
  * @since         $VID:$
  *
  */
-class SettingsForm extends PayPalSettingsForm
+class PayPalProSettingsForm extends PayPalSettingsForm
 {
     /**
      * SettingsForm constructor.
