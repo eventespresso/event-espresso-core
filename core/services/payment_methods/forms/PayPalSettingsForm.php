@@ -102,7 +102,12 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
             EE_Error::add_error(
                 sprintf(
                     // translators: %1$s Error message received from PayPal
-                    esc_html__('Your PayPal credentials could not be verified. There was an error communicating with PayPal, it was %1$s', 'event_espresso'),
+                    esc_html__(
+                        // @codingStandardsIgnoreStart
+                        'Your PayPal credentials could not be verified. There was an error communicating with PayPal, it was %1$s',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
                     $response->get_error_message()
                 ),
                 __FILE__,
@@ -136,8 +141,16 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
             return '';
         } else {
             return sprintf(
-                esc_html__('Your PayPal API credentials appear to be invalid. PayPal said "%1$s (%2$s)". Please see tips below.', 'event_espresso'),
-                isset($response_args['L_LONGMESSAGE0']) ? $response_args['L_LONGMESSAGE0'] : esc_html__('No error message received from PayPal', 'event_espresso'),
+                // translators: %1$s: PayPal response message, %2$s: PayPal response code
+                esc_html__(
+                    // @codingStandardsIgnoreStart
+                    'Your PayPal API credentials appear to be invalid. PayPal said "%1$s (%2$s)". Please see tips below.',
+                    // @codingStandardsIgnoreEnd
+                    'event_espresso'
+                ),
+                isset($response_args['L_LONGMESSAGE0'])
+                    ? $response_args['L_LONGMESSAGE0']
+                    : esc_html__('No error message received from PayPal', 'event_espresso'),
                 isset($response_args['L_ERRORCODE0']) ? $response_args['L_ERRORCODE0'] : 0
             );
         }
@@ -154,9 +167,9 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
 
     /**
      * Does the normal validation, but also verifies the PayPal API credentials work.
-     * If they don't, sets a validation error on the entire form, and adds validation errors (which are really more tips)
-     * on each of the inputs that could be the cause of the problem.
-     * @throws EntityNotFoundException
+     * If they don't, sets a validation error on the entire form, and adds validation errors (which are really more
+     * tips) on each of the inputs that could be the cause of the problem.
+     * @throws EE_Error
      */
     public function _validate()
     {
@@ -165,22 +178,36 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
         if ($credentials_message !== '') {
             $this->add_validation_error($credentials_message);
             $this->get_input('PMD_debug_mode')->add_validation_error(
-                esc_html__('If you are using PayPal Sandbox (test) credentials, Debug mode should be set to "Yes". Otherwise, if you are using live PayPal credentials, set this to "No".', 'event_espresso')
+                esc_html__(
+                    // @codingStandardsIgnoreStart
+                    'If you are using PayPal Sandbox (test) credentials, Debug mode should be set to "Yes". Otherwise, if you are using live PayPal credentials, set this to "No".',
+                    // @codingStandardsIgnoreEnd
+                    'event_espresso'
+                )
             );
             $this->get_input('api_username')->add_validation_error(
                 sprintf(
-                    esc_html__('Are you sure this is your API username, not your login username?%1$s', 'event_espresso'),
+                    // translators: $1$s HTML for a link to the help tab
+                    esc_html__(
+                        'Are you sure this is your API username, not your login username?%1$s',
+                        'event_espresso'
+                    ),
                     $this->helpTabLink()
                 )
             );
             $this->get_input('api_password')->add_validation_error(
                 sprintf(
-                    esc_html__('Are you sure this is your API password, not your login password.%1$s', 'event_espresso'),
+                    // translators: $1$s HTML for a link to the help tab
+                    esc_html__(
+                        'Are you sure this is your API password, not your login password.%1$s',
+                        'event_espresso'
+                    ),
                     $this->helpTabLink()
                 )
             );
             $this->get_input('api_signature')->add_validation_error(
                 sprintf(
+                    // translators: $1$s HTML for a link to the help tab
                     esc_html__('Please verify your API signature is correct.%1$s', 'event_espresso'),
                     $this->helpTabLink()
                 )
