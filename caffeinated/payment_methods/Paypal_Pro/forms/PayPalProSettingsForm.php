@@ -1,17 +1,14 @@
 <?php
-
 namespace EventEspresso\caffeinated\payment_methods\PayPal_Pro\forms;
 
-use EE_Admin_File_Uploader_Input;
 use EE_Checkbox_Multi_Input;
 use EE_PMT_Paypal_Pro;
-use EE_Yes_No_Input;
 use EventEspresso\core\services\payment_methods\forms\PayPalSettingsForm;
 
 /**
- * Class SettingsForm
+ * Class PayPalProSettingsForm
  *
- * Description
+ * Settings form for PayPal Pro. It extends PayPalSettingsForm in order to validate API credentials upon save.
  *
  * @package     Event Espresso
  * @author         Mike Nelson
@@ -25,9 +22,6 @@ class PayPalProSettingsForm extends PayPalSettingsForm
      *
      * @param array $options_array
      * @param string $help_tab_link
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
      */
     public function __construct(array $options_array = array(), $help_tab_link)
     {
@@ -49,4 +43,4 @@ class PayPalProSettingsForm extends PayPalSettingsForm
     }
 }
 // End of file SettingsForm.php
-// Location: EventEspresso\caffeinated\payment_methods\PayPal_Pro\forms/SettingsForm.php
+// Location: EventEspresso/caffeinated/payment_methods/PayPal_Pro/forms/PayPalProSettingsForm.php
