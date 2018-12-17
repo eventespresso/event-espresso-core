@@ -1,8 +1,7 @@
 /**
  * External imports
  */
-import deepFreeze from 'deep-freeze';
-import { set } from 'lodash';
+import { List } from 'immutable';
 
 /**
  * Internal dependencies
@@ -22,8 +21,8 @@ const testAction = ( type ) => ( {
 } );
 
 const testRun = ( actionType, methodTested, originalStateProperty ) => {
-	const originalState = deepFreeze(
-		mockStateForTests.dirty[ originalStateProperty ]
+	const originalState = mockStateForTests.getIn(
+		[ 'dirty', originalStateProperty ]
 	);
 	describe( methodTested.name + '()', () => {
 		switch ( actionType ) {
@@ -33,24 +32,20 @@ const testRun = ( actionType, methodTested, originalStateProperty ) => {
 					const receiveAction = testAction( actionType );
 					it( 'returns expected default data when there the entity ' +
 						'id already exists', () => {
-						let testState = { ...originalState };
-						set(
-							testState,
-							[ 'event' ],
-							[ 10, 20 ]
-						);
-						testState = deepFreeze( testState );
+						const testState = originalState
+							.set( 'event', List.of( 10, 20 ) );
 						expect( methodTested( testState, receiveAction ) )
 							.toBe( testState );
 					} );
-					it( 'sets the id on the default data does not already ' +
-						'exist in state', () => {
+					it( 'setting the id on the default data when it ' +
+						'already exists in state', () => {
 						const result = methodTested(
 							originalState,
 							receiveAction
 						);
 						expect( result ).not.toBe( originalState );
-						expect( result.event ).toEqual( [ 10 ] );
+						expect( result.get( 'event' ) )
+							.toEqual( List.of( 10 ) );
 					} );
 				} );
 				break;
@@ -65,29 +60,22 @@ const testRun = ( actionType, methodTested, originalStateProperty ) => {
 					} );
 					it( 'returns a new state with the entity id removed when ' +
 						'it exists in the state', () => {
-						let testState = { ...originalState };
-						set(
-							testState,
-							[ 'event' ],
-							[ 10, 20 ]
+						const testState = originalState.set(
+							'event',
+							List.of( 10, 20 )
 						);
-						testState = deepFreeze( testState );
 						const result = methodTested( testState, deleteAction );
 						expect( result ).not.toBe( testState );
-						expect( result.event ).toEqual( [ 20 ] );
+						expect( result.get( 'event' ) )
+							.toEqual( List.of( 20 ) );
 					} );
 					it( 'also deletes the model property in the state if ' +
 						'removing the id results in an empty array', () => {
-						let testState = { ...originalState };
-						set(
-							testState,
-							[ 'event' ],
-							[ 10 ]
-						);
-						testState = deepFreeze( testState );
+						const testState = originalState
+							.set( 'event', List.of( 10 ) );
 						const result = methodTested( testState, deleteAction );
 						expect( result ).not.toBe( testState );
-						expect( result.event ).toBeUndefined();
+						expect( result.get( 'event' ) ).toBeUndefined();
 					} );
 				} );
 				break;

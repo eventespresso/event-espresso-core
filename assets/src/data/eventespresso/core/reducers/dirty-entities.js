@@ -2,7 +2,9 @@
  * External imports
  */
 import { DEFAULT_CORE_STATE } from '@eventespresso/model';
-import { without, get, set, unset } from 'lodash';
+import { toInteger } from 'lodash';
+import { fromJS, List } from 'immutable';
+import cuid from 'cuid';
 
 /**
  * Internal imports.
@@ -13,40 +15,51 @@ const { entities: types } = ACTION_TYPES;
 /**
  * Handle adding incoming data to state.
  *
- * @param {Object} state
+ * @param {Map} state
  * @param {string} modelName
  * @param {number} entityId
- * @param {Array} existingEntities
- * @return {Object} New state.
+ * @param {List} existingEntities
+ * @return {Map} New state.
  */
 const addToState = ( state, modelName, entityId, existingEntities ) => {
-	state = { ...state };
-	existingEntities.push( entityId );
-	set( state, [ modelName ], existingEntities );
-	return state;
+	existingEntities = existingEntities.push( entityId );
+	return state.set( modelName, existingEntities );
 };
 
 /**
  * Handle removing incoming data from state
  *
- * @param {Object} state
+ * @param {Map} state
  * @param {string} modelName
- * @param {number} entityId
- * @return {Object} New state
+ * @param {number|string} entityId
+ * @return {Map} new state or existing state if no change.
  */
 const removeFromState = ( state, modelName, entityId ) => {
-	state = { ...state };
-	state[ modelName ] = without( state[ modelName ], entityId );
-	if ( state[ modelName ].length === 0 ) {
-		unset( state, [ modelName ] );
+	let entityIds = state.get( modelName ) || List();
+	if ( ! entityIds.contains( entityId ) ) {
+		return state;
 	}
-	return state;
+	entityIds = entityIds.delete(
+		entityIds.indexOf( entityId )
+	);
+	return entityIds.isEmpty() ?
+		state.delete( modelName ) :
+		state.set( modelName, entityIds );
 };
 
+/**
+ * Processes the incoming action
+ *
+ * @param {Map} state
+ * @param {Object} action
+ * @return {Map} Either the existing state if no change or new state.
+ */
 const processAction = ( state, action ) => {
-	const { type, modelName, entityId } = action;
-	const DEFAULT_EMPTY_ARRAY = [];
-	const existingEntities = get( state, [ modelName ], DEFAULT_EMPTY_ARRAY );
+	const { type, modelName } = action;
+	const entityId = cuid.isCuid( action.entityId ) ?
+		action.entityId :
+		toInteger( action.entityId );
+	const existingEntities = state.get( modelName ) || List();
 
 	switch ( type ) {
 		case types.RECEIVE_DELETE_ENTITY_ID:
@@ -64,26 +77,32 @@ const processAction = ( state, action ) => {
 			break;
 	}
 	return state;
-}
+};
 
 /**
  * Reducer for queuing an entity for deletion in the state.
  *
- * @param {Object} state
+ * @param {Map} state
  * @param {Object} action
- * @return {DEFAULT_CORE_STATE.dirty.delete|{}} Existing or new state.
+ * @return {Map} Existing or new state.
  */
-export function deleteEntity( state = DEFAULT_CORE_STATE.dirty.delete, action ) {
+export function deleteEntity(
+	state = fromJS( DEFAULT_CORE_STATE.dirty.delete ),
+	action
+) {
 	return processAction( state, action );
 }
 
 /**
  * Reducer for queueing the entity for trashing in the state.
  *
- * @param {Object} state
+ * @param {Map} state
  * @param {Object} action
- * @return {DEFAULT_CORE_STATE.dirty.trash|{}} Existing or new state.
+ * @return {Map} Existing or new state.
  */
-export function trashEntity( state = DEFAULT_CORE_STATE.dirty.trash, action ) {
+export function trashEntity(
+	state = fromJS( DEFAULT_CORE_STATE.dirty.trash ),
+	action
+) {
 	return processAction( state, action );
 }
