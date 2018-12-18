@@ -784,10 +784,14 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\domain\services\blocks\EventAttendeesBlockRenderer' => array(
+                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
+                'EEM_Attendee' => EE_Dependency_Map::load_from_cache,
+            ),
             'EventEspresso\core\domain\entities\editor\blocks\EventAttendees' => array(
                 'EventEspresso\core\domain\entities\editor\CoreBlocksAssetManager' => self::load_from_cache,
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\entities\shortcodes\EspressoEventAttendees' => self::load_from_cache,
+                'EventEspresso\core\domain\services\blocks\EventAttendeesBlockRenderer' => self::load_from_cache,
             ),
             'EventEspresso\core\services\route_match\RouteMatchSpecificationDependencyResolver' => array(
                 'EventEspresso\core\services\container\Mirror' => EE_Dependency_Map::load_from_cache,
@@ -829,6 +833,17 @@ class EE_Dependency_Map
                 null,
                 null,
                 'EventEspresso\core\services\validators\URLValidator' => EE_Dependency_Map::load_from_cache
+            ),
+            'EventEspresso\admin_pages\general_settings\OrganizationSettings' => array(
+                'EE_Registry'                                             => EE_Dependency_Map::load_from_cache,
+                'EE_Organization_Config'                                  => EE_Dependency_Map::load_from_cache,
+                'EE_Core_Config'                                          => EE_Dependency_Map::load_from_cache,
+                'EE_Network_Core_Config'                                  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\address\CountrySubRegionDao' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\services\address\CountrySubRegionDao' => array(
+                'EEM_State'                                            => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\validators\JsonValidator' => EE_Dependency_Map::load_from_cache
             ),
         );
     }
@@ -941,6 +956,12 @@ class EE_Dependency_Map
             },
             'EE_Admin_Config'                              => function () {
                 return EE_Config::instance()->admin;
+            },
+            'EE_Organization_Config'                       => function () {
+                return EE_Config::instance()->organization;
+            },
+            'EE_Network_Core_Config'                            => function () {
+                return EE_Network_Config::instance()->core;
             },
         );
     }

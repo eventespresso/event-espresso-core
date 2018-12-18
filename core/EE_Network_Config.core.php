@@ -1,69 +1,45 @@
 <?php
+
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package        Event Espresso
- * @ author            Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license        http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link            http://www.eventespresso.com
- * @ version        4.1
- *
- * ------------------------------------------------------------------------
- *
  * EE_Network_Config
  * This sets up the configuration object for items saved to the db using update_site_option (and retrieved using
  * get_site_option).  On multi-site WP installs these options function as network wide options.  On single-site WP
  * installs these options work the same as update_option and get_option.
- *
  * EE_Network_Config is assigned to the NET_CFG property on EE_Registry.
  *
  * @package        Event Espresso
  * @subpackage     core/
  * @author         Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 final class EE_Network_Config
 {
 
-
     /**
-     * instance of the EE_Network_Config object
-     *
-     * @var EE_Network_Config
-     * @access  private
+     * @var EE_Network_Config $_instance
      */
-    private static $_instance = null;
-
+    private static $_instance;
 
     /**
      * addons can add their specific network_config objects to this property
      *
-     * @var EE_Config_Base[]
+     * @var EE_Config_Base[] $addons
      */
     public $addons;
 
-
     /**
-     * @var EE_Network_Core_Config
+     * @var EE_Network_Core_Config $core
      */
     public $core;
 
 
     /**
      * @singleton method used to instantiate class object
-     * @access    public
      * @return EE_Network_Config instance
      */
     public static function instance()
     {
         // check if class object is instantiated, and instantiated properly
-        if (self::$_instance === null
-            || ! is_object(self::$_instance)
-            || ! (self::$_instance instanceof EE_Network_Config)) {
+        if (! self::$_instance instanceof EE_Network_Config) {
             self::$_instance = new self();
         }
         return self::$_instance;
@@ -71,9 +47,7 @@ final class EE_Network_Config
 
 
     /**
-     *    class constructor
-     *
-     * @access    private
+     * class constructor
      */
     private function __construct()
     {
@@ -90,9 +64,8 @@ final class EE_Network_Config
 
 
     /**
-     *        load EE Network Config options
+     * load EE Network Config options
      *
-     * @access private
      * @return void
      */
     private function _load_config()
@@ -101,6 +74,16 @@ final class EE_Network_Config
         do_action('AHEE__EE_Network_Config___load_config__start', $this);
         $config = $this->get_config();
         foreach ($config as $config_prop => $settings) {
+            if ($config_prop === 'core' && ! $settings instanceof EE_Network_Core_Config) {
+                $core = new EE_Network_Core_Config();
+                foreach ($settings as $prop => $setting) {
+                    if (property_exists($core, $prop)) {
+                        $core->{$prop} = $setting;
+                    }
+                }
+                $settings = $core;
+                add_filter('FHEE__EE_Network_Config___load_config__update_network_config', '__return_true');
+            }
             if (is_object($settings) && property_exists($this, $config_prop)) {
                 $this->{$config_prop} = apply_filters(
                     'FHEE__EE_Network_Config___load_config__config_settings',
@@ -126,10 +109,9 @@ final class EE_Network_Config
 
 
     /**
-     *    get_config
+     * get_config
      *
-     * @access    public
-     * @return    array of network config stuff
+     * @return array of network config stuff
      */
     public function get_config()
     {
@@ -141,9 +123,8 @@ final class EE_Network_Config
 
 
     /**
-     *    update_config'
+     * update_config
      *
-     * @access    public
      * @param bool $add_success
      * @param bool $add_error
      * @return bool success
@@ -181,24 +162,22 @@ final class EE_Network_Config
                 EE_Error::add_success($msg);
             }
             return true;
-        } else {
-            if ($add_error) {
-                $msg = is_multisite() ? __(
-                    'The Event Espresso Network Configuration Settings were not updated.',
-                    'event_espresso'
-                ) : __('Extra Event Espresso Network Configuration settings were not updated.', 'event_espresso');
-                EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-            }
-            return false;
         }
+        if ($add_error) {
+            $msg = is_multisite() ? __(
+                'The Event Espresso Network Configuration Settings were not updated.',
+                'event_espresso'
+            ) : __('Extra Event Espresso Network Configuration settings were not updated.', 'event_espresso');
+            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
+        }
+        return false;
     }
 
 
     /**
-     *    __sleep
+     * __sleep
      *
-     * @access    public
-     * @return    array
+     * @return array
      */
     public function __sleep()
     {
@@ -221,15 +200,14 @@ class EE_Network_Core_Config extends EE_Config_Base
     /**
      * PUE site license key
      *
-     * @var string
+     * @var string $site_license_key
      */
     public $site_license_key;
-
 
     /**
      * This indicates whether messages system processing should be done on the same request or not.
      *
-     * @var
+     * @var boolean $do_messages_on_same_request
      */
     public $do_messages_on_same_request;
 

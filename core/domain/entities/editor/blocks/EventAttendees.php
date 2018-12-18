@@ -7,11 +7,8 @@ use EE_Error;
 use EEM_Registration;
 use EventEspresso\core\domain\entities\editor\Block;
 use EventEspresso\core\domain\entities\editor\CoreBlocksAssetManager;
-use EventEspresso\core\domain\entities\shortcodes\EspressoEventAttendees;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\domain\services\blocks\EventAttendeesBlockRenderer;
 use EventEspresso\core\services\request\RequestInterface;
-use InvalidArgumentException;
 
 /**
  * Class EventAttendees
@@ -19,7 +16,7 @@ use InvalidArgumentException;
  *
  * @package EventEspresso\core\domain\entities\editor\blocks\common
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class EventAttendees extends Block
 {
@@ -27,25 +24,25 @@ class EventAttendees extends Block
     const BLOCK_TYPE = 'event-attendees';
 
     /**
-     * @var EspressoEventAttendees $shortcode
+     * @var EventAttendeesBlockRenderer $renderer
      */
-    protected $shortcode;
+    protected $renderer;
 
 
     /**
      * EventAttendees constructor.
      *
-     * @param CoreBlocksAssetManager $block_asset_manager
-     * @param RequestInterface       $request
-     * @param EspressoEventAttendees $shortcode
+     * @param CoreBlocksAssetManager      $block_asset_manager
+     * @param RequestInterface            $request
+     * @param EventAttendeesBlockRenderer $renderer
      */
     public function __construct(
         CoreBlocksAssetManager $block_asset_manager,
         RequestInterface $request,
-        EspressoEventAttendees $shortcode
+        EventAttendeesBlockRenderer $renderer
     ) {
         parent::__construct($block_asset_manager, $request);
-        $this->shortcode = $shortcode;
+        $this->renderer= $renderer;
     }
 
 
@@ -63,6 +60,7 @@ class EventAttendees extends Block
                 'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoStandardPostTypeEditor',
                 'EventEspresso\core\domain\entities\route_match\specifications\admin\WordPressPostTypeEditor',
                 'EventEspresso\core\domain\entities\route_match\specifications\frontend\EspressoBlockRenderer',
+                'EventEspresso\core\domain\entities\route_match\specifications\frontend\AnyFrontendRequest'
             )
         );
         $EVT_ID = $this->request->getRequestParam('page') === 'espresso_events'
@@ -70,29 +68,45 @@ class EventAttendees extends Block
             : 0;
         $this->setAttributes(
             array(
-                'eventId'            => array(
+                'eventId'           => array(
                     'type'    => 'number',
                     'default' => $EVT_ID,
                 ),
-                'datetimeId'         => array(
+                'datetimeId'        => array(
                     'type'    => 'number',
                     'default' => 0,
                 ),
-                'ticketId'           => array(
+                'ticketId'          => array(
                     'type'    => 'number',
                     'default' => 0,
                 ),
-                'status'              => array(
+                'status'            => array(
                     'type'    => 'string',
                     'default' => EEM_Registration::status_id_approved,
                 ),
-                'limit' => array(
+                'limit'             => array(
                     'type'    => 'number',
                     'default' => 10,
                 ),
-                'showGravatar'       => array(
+                'order' => array(
+                    'type' => 'string',
+                    'default' => 'ASC'
+                ),
+                'orderBy' => array(
+                    'type' => 'string',
+                    'default' => 'lastThenFirstName',
+                ),
+                'showGravatar'      => array(
                     'type'    => 'boolean',
                     'default' => false,
+                ),
+                'avatarClass' => array(
+                    'type' => 'string',
+                    'default' => 'contact',
+                ),
+                'avatarSize' => array(
+                    'type' => 'number',
+                    'default' => 24,
                 ),
                 'displayOnArchives' => array(
                     'type'    => 'boolean',
@@ -105,47 +119,54 @@ class EventAttendees extends Block
 
 
     /**
-     * returns an array where the key corresponds to the incoming attribute name from the WP block
+     * Returns an array where the key corresponds to the incoming attribute name from the WP block
      * and the value corresponds to the attribute name for the existing EspressoEventAttendees shortcode
      *
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return array
      */
     private function getAttributesMap()
     {
         return array(
-            'eventId'           => array('attribute' => 'event_id', 'sanitize' => 'absint'),
-            'datetimeId'        => array('attribute' => 'datetime_id', 'sanitize' => 'absint'),
-            'ticketId'          => array('attribute' => 'ticket_id', 'sanitize' => 'absint'),
-            'status'            => array('attribute' => 'status', 'sanitize' => 'sanitize_text_field'),
-            'limit'             => array('attribute' => 'limit', 'sanitize' => 'intval'),
-            'showGravatar'      => array('attribute' => 'show_gravatar', 'sanitize' => 'bool'),
-            'displayOnArchives' => array('attribute' => 'display_on_archives', 'sanitize' => 'bool'),
+            'eventId'           => 'absint',
+            'datetimeId'        => 'absint',
+            'ticketId'          => 'absint',
+            'status'            => 'sanitize_text_field',
+            'limit'             => 'intval',
+            'showGravatar'      => 'bool',
+            'avatarClass'       => 'sanitize_text_field',
+            'avatarSize'        => 'absint',
+            'displayOnArchives' => 'bool',
+            'order' => 'sanitize_text_field',
+            'orderBy' => 'sanitize_text_field',
         );
     }
 
 
     /**
+     * Sanitizes attributes.
+     *
      * @param array $attributes
-     * @since $VID:$
      * @return array
      */
-    private function parseAttributes(array $attributes)
+    private function sanitizeAttributes(array $attributes)
     {
+        $sanitized_attributes = array();
         foreach ($attributes as $attribute => $value) {
             $convert = $this->getAttributesMap();
             if (isset($convert[ $attribute ])) {
-                $sanitize = $convert[ $attribute ]['sanitize'];
+                $sanitize = $convert[ $attribute ];
                 if ($sanitize === 'bool') {
-                    $attributes[ $convert[ $attribute ]['attribute'] ] = filter_var(
+                    $sanitized_attributes[ $attribute ] = filter_var(
                         $value,
                         FILTER_VALIDATE_BOOLEAN
                     );
                 } else {
-                    $attributes[ $convert[ $attribute ]['attribute'] ] = $sanitize($value);
+                    $sanitized_attributes[ $attribute ] = $sanitize($value);
                 }
-                if ($attribute !== $convert[ $attribute ]['attribute']) {
-                    unset($attributes[ $attribute ]);
+                // don't pass along attributes with a 0 value
+                if ($sanitized_attributes[ $attribute ] === 0) {
+                    unset($sanitized_attributes[ $attribute ]);
                 }
             }
         }
@@ -154,18 +175,18 @@ class EventAttendees extends Block
 
 
     /**
-     * returns the rendered HTML for the block
+     * Returns the rendered HTML for the block
      *
      * @param array $attributes
      * @return string
-     * @throws EE_Error
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
      * @throws DomainException
+     * @throws EE_Error
      */
     public function renderBlock(array $attributes = array())
     {
-        return $this->shortcode->processShortcode($this->parseAttributes($attributes));
+        $attributes = $this->sanitizeAttributes($attributes);
+        return (is_archive() || is_front_page() || is_home()) && ! $attributes['displayOnArchives']
+            ? ''
+            : $this->renderer->render($attributes);
     }
 }

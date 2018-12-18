@@ -821,7 +821,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
                 if ($gateway instanceof EE_Gateway) {
                     $gateway->log(
                         array(
-                            'message'               => __('Post Payment Transaction Details', 'event_espresso'),
+                            'message'               => (string) __('Post Payment Transaction Details', 'event_espresso'),
                             'transaction'           => $transaction->model_field_array(),
                             'finalized'             => $finalized,
                             'IPN'                   => $IPN,

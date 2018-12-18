@@ -32,7 +32,7 @@ export class AvatarImage extends Component {
 		avatarClass: 'contact',
 		avatarHeight: 32,
 		avatarWidth: 32,
-		avatarAltText: __( 'user avatar', 'event_espresso' ),
+		avatarAltText: __( 'contact avatar', 'event_espresso' ),
 	};
 	render() {
 		const {
@@ -42,13 +42,17 @@ export class AvatarImage extends Component {
 			avatarWidth,
 			avatarAltText,
 		} = this.props;
+
+		const style = {
+			height: avatarHeight,
+			width: avatarWidth,
+		};
 		return avatarUrl ? (
 			<div className={ avatarClass + '-image-wrap-div' }>
 				<img
 					className={ avatarClass + '-avatar-img avatar' }
 					src={ avatarUrl }
-					height={ avatarHeight }
-					width={ avatarWidth }
+					style={ style }
 					alt={ avatarAltText }
 				/>
 			</div>

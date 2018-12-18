@@ -4,7 +4,7 @@ From the [react documentation](https://reactjs.org/docs/higher-order-components.
 
 Within EE, we use higher order components to extract common patterns we see in use for various components to keep our architecture DRY (Don't Repeat Yourself principle).
 
-All the higher order components listed in this section of our documentation are exposed within WordPress via the `EventEspresso\core\domain\services\assets\CoreAssetManager::JS_HANDLE_EE_HOC_COMPONENTS` script handle that can be used when registering your own script implementing a HOC.  Individual HOC documentation will further elaborate on how to implement it.
+All the higher order components listed in this section of our documentation are exposed within WordPress via the `EventEspresso\core\domain\services\assets\CoreAssetManager::JS_HANDLE_HOCS` script handle that can be used when registering your own script implementing a HOC.  Individual HOC documentation will further elaborate on how to implement it.
 
 | HOC | Description |
 | --------- | ------------ |

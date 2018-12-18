@@ -51,7 +51,7 @@ describe( 'whereConditions()', () => {
 	it( 'returns expected string when showGravatar is true', () => {
 		const testObject = { showGravatar: true };
 		expect( whereConditions( testObject ) ).toEqual(
-			'where[Registration.Status.STS_ID]=RAP&calculate=userAvatar'
+			'where[Registration.Status.STS_ID]=RAP&calculate=user_avatar'
 		);
 	} );
 	it( 'returns expected string when ALL parameters provided not' +
@@ -66,7 +66,7 @@ describe( 'whereConditions()', () => {
 		expect( whereConditions( testObject ) ).toEqual(
 			'where[Registration.Ticket.TKT_ID]=3' +
 			'&where[Registration.Status.STS_ID]=RNA' +
-			'&calculate=userAvatar'
+			'&calculate=user_avatar'
 		);
 	} );
 	it( 'returns expected string for supplied Registration ID', () => {
@@ -88,7 +88,7 @@ describe( 'whereConditions()', () => {
 		expect( whereConditions( testObject ) ).toEqual(
 			'where[Registration.REG_ID]=123' +
 			'&where[Registration.Status.STS_ID]=RNA' +
-			'&calculate=userAvatar'
+			'&calculate=user_avatar'
 		);
 	} );
 } );

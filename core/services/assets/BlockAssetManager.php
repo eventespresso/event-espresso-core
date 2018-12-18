@@ -17,7 +17,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  *
  * @package EventEspresso\core\services\editor
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 abstract class BlockAssetManager extends AssetManager implements BlockAssetManagerInterface
 {
@@ -127,7 +127,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
@@ -136,15 +136,15 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     {
         $this->addEditorScript($this->getEditorScriptHandle());
         $this->addEditorStyle($this->getEditorStyleHandle());
-        $this->setScriptHandle($this->getScriptHandle());
-        $this->setStyleHandle($this->getStyleHandle());
+        $this->addScript($this->getScriptHandle());
+        $this->addStyle($this->getStyleHandle());
     }
 
 
     /**
      * @param       $handle
      * @param array $dependencies
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return JavascriptAsset
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -170,7 +170,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @param        $handle
      * @param array  $dependencies
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return StylesheetAsset
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -187,7 +187,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 $this->domain->assetNamespace(),
                 $handle
             ),
-            $dependencies
+            $this->addDefaultBlockStyleDependencies($dependencies)
         );
     }
 
@@ -195,7 +195,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @param       $handle
      * @param array $dependencies
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return JavascriptAsset
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -212,7 +212,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 $this->domain->assetNamespace(),
                 $handle
             ),
-            $this->addDefaultBlockScriptDependencies($dependencies)
+            $dependencies + array( CoreAssetManager::JS_HANDLE_COMPONENTS )
         )
         ->setRequiresTranslation();
     }
@@ -221,7 +221,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @param        $handle
      * @param array  $dependencies
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return StylesheetAsset
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -238,7 +238,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 $this->domain->assetNamespace(),
                 $handle
             ),
-            $dependencies
+            $dependencies + array( CoreAssetManager::CSS_HANDLE_COMPONENTS )
         );
     }
 
@@ -254,8 +254,22 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
                 'wp-i18n',      // Provides localization functions
                 'wp-element',   // Provides React.Component
                 'wp-components', // Provides many prebuilt components and controls
-                CoreAssetManager::JS_HANDLE_EE_COMPONENTS
+                CoreAssetManager::JS_HANDLE_EDITOR_HOCS,
+                $this->getScriptHandle(),
             );
+        return $dependencies;
+    }
+
+
+    /**
+     * @param array $dependencies
+     * @return array
+     */
+    protected function addDefaultBlockStyleDependencies(array $dependencies)
+    {
+        $dependencies += array(
+            $this->getStyleHandle()
+        );
         return $dependencies;
     }
 

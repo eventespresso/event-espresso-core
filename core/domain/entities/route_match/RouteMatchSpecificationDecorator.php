@@ -8,7 +8,7 @@ namespace EventEspresso\core\domain\entities\route_match;
  *
  * @package EventEspresso\core\domain\entities\route_match
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 abstract class RouteMatchSpecificationDecorator implements RouteMatchSpecificationInterface
 {

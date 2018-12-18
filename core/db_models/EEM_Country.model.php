@@ -33,8 +33,8 @@ class EEM_Country extends EEM_Base
 
     protected function __construct($timezone = null)
     {
-        $this->singular_item = __('Country', 'event_espresso');
-        $this->plural_item = __('Countries', 'event_espresso');
+        $this->singular_item = esc_html__('Country', 'event_espresso');
+        $this->plural_item = esc_html__('Countries', 'event_espresso');
 
 
         $this->_tables = array(
@@ -42,21 +42,21 @@ class EEM_Country extends EEM_Base
         );
         $this->_fields = array(
             'Country'=>array(
-                'CNT_active' => new EE_Boolean_Field('CNT_active', __('Country Appears in Dropdown Select Lists', 'event_espresso'), false, true),
-                'CNT_ISO'=> new EE_Primary_Key_String_Field('CNT_ISO', __('Country ISO Code', 'event_espresso')),
-                'CNT_ISO3'=>new EE_All_Caps_Text_Field('CNT_ISO3', __('Country ISO3 Code', 'event_espresso'), false, ''),
-                'RGN_ID'=>new EE_Integer_Field('RGN_ID', __('Region ID', 'event_espresso'), false, 0),// should be a foreign key, but no region table exists yet
-                'CNT_name'=>new EE_Plain_Text_Field('CNT_name', __('Country Name', 'event_espresso'), false, ''),
-                'CNT_cur_code'=>new EE_All_Caps_Text_Field('CNT_cur_code', __('Country Currency Code', 'event_espresso'), false),
-                'CNT_cur_single' => new EE_Plain_Text_Field('CNT_cur_single', __('Currency Name Singular', 'event_espresso'), false),
-                'CNT_cur_plural' => new EE_Plain_Text_Field('CNT_cur_plural', __('Currency Name Plural', 'event_espresso'), false),
-                'CNT_cur_sign' => new EE_Plain_Text_Field('CNT_cur_sign', __('Currency Sign', 'event_espresso'), false),
-                'CNT_cur_sign_b4' => new EE_Boolean_Field('CNT_cur_sign_b4', __('Currency Sign Before Number', 'event_espresso'), false, true),
-                'CNT_cur_dec_plc' => new EE_Integer_Field('CNT_cur_dec_plc', __('Currency Decimal Places', 'event_espresso'), false, 2),
-                'CNT_cur_dec_mrk' => new EE_Plain_Text_Field('CNT_cur_dec_mrk', __('Currency Decimal Mark', 'event_espresso'), false, '.'),
-                'CNT_cur_thsnds' => new EE_Plain_Text_Field('CNT_cur_thsnds', __('Currency Thousands Seperator', 'event_espresso'), false, ','),
-                'CNT_tel_code' => new EE_Plain_Text_Field('CNT_tel_code', __('Country Telephone Code', 'event_espresso'), false, ''),
-                'CNT_is_EU' => new EE_Boolean_Field('CNT_is_EU', __('Country is Member of EU', 'event_espresso'), false, false)
+                'CNT_active' => new EE_Boolean_Field('CNT_active', esc_html__('Country Appears in Dropdown Select Lists', 'event_espresso'), false, true),
+                'CNT_ISO'=> new EE_Primary_Key_String_Field('CNT_ISO', esc_html__('Country ISO Code', 'event_espresso')),
+                'CNT_ISO3'=>new EE_All_Caps_Text_Field('CNT_ISO3', esc_html__('Country ISO3 Code', 'event_espresso'), false, ''),
+                'RGN_ID'=>new EE_Integer_Field('RGN_ID', esc_html__('Region ID', 'event_espresso'), false, 0),// should be a foreign key, but no region table exists yet
+                'CNT_name'=>new EE_Plain_Text_Field('CNT_name', esc_html__('Country Name', 'event_espresso'), false, ''),
+                'CNT_cur_code'=>new EE_All_Caps_Text_Field('CNT_cur_code', esc_html__('Country Currency Code', 'event_espresso'), false),
+                'CNT_cur_single' => new EE_Plain_Text_Field('CNT_cur_single', esc_html__('Currency Name Singular', 'event_espresso'), false),
+                'CNT_cur_plural' => new EE_Plain_Text_Field('CNT_cur_plural', esc_html__('Currency Name Plural', 'event_espresso'), false),
+                'CNT_cur_sign' => new EE_Plain_Text_Field('CNT_cur_sign', esc_html__('Currency Sign', 'event_espresso'), false),
+                'CNT_cur_sign_b4' => new EE_Boolean_Field('CNT_cur_sign_b4', esc_html__('Currency Sign Before Number', 'event_espresso'), false, true),
+                'CNT_cur_dec_plc' => new EE_Integer_Field('CNT_cur_dec_plc', esc_html__('Currency Decimal Places', 'event_espresso'), false, 2),
+                'CNT_cur_dec_mrk' => new EE_Plain_Text_Field('CNT_cur_dec_mrk', esc_html__('Currency Decimal Mark', 'event_espresso'), false, '.'),
+                'CNT_cur_thsnds' => new EE_Plain_Text_Field('CNT_cur_thsnds', esc_html__('Currency Thousands Separator', 'event_espresso'), false, ','),
+                'CNT_tel_code' => new EE_Plain_Text_Field('CNT_tel_code', esc_html__('Country Telephone Code', 'event_espresso'), false, ''),
+                'CNT_is_EU' => new EE_Boolean_Field('CNT_is_EU', esc_html__('Country is Member of EU', 'event_espresso'), false, false)
             ));
         $this->_model_relations = array(
             'Attendee'=>new EE_Has_Many_Relation(),

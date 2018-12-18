@@ -24,7 +24,7 @@ Resources on Event Espresso 4 for a beginner to advanced users.
 
 [View Event Espresso 4 Documentation →](https://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+documentation)
 
-Notable changes for each released version of the project can be found in our [changelog](CHANGELOG.md)
+Notable changes for each released version of the project can be found in our [changelog](https://eventespresso.com/wiki/ee4-changelog/)
 
 ## Mobile Event Apps
 The Event Espresso 4 check-in & ticket scanning event app is available for [Android](http://evts.io/EE4_Android_App?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=mobile+event+apps+android) and [Apple](http://evts.io/EE4_Apple_App?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=mobile+event+apps+apple) devices.

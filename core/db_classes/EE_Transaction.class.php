@@ -421,7 +421,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     /**
      * Gets payments for this transaction. Unlike other such functions, order by 'DESC' by default
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Payment[]
      * @throws EE_Error
      */
@@ -720,7 +720,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     /**
      * Gets all the extra meta info on this payment
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Extra_Meta
      * @throws EE_Error
      */

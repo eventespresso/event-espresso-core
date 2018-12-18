@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { __ } from '@eventespresso/i18n';
-import { isFunction } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -20,8 +19,9 @@ export const QueryLimit = ( {
 	label = DEFAULT_LABEL,
 	min = DEFAULT_MIN,
 	max = DEFAULT_MAX,
+	...rest
 } ) => {
-	return isFunction( onLimitChange ) ? (
+	return (
 		<RangeControl
 			key={ 'query-limit' }
 			value={ limit }
@@ -29,8 +29,7 @@ export const QueryLimit = ( {
 			min={ min }
 			max={ max }
 			onChange={ onLimitChange }
+			{ ...rest }
 		/>
-	) : (
-		null
 	);
 };

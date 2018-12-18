@@ -520,8 +520,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     {
         $post = get_post($id);
         if ('publish' !== get_post_status($post)) {
-            // include shims for the `get_preview_post_link` function
-            require_once(EE_CORE . 'wordpress-shims.php');
             $return .= '<span_id="view-post-btn"><a target="_blank" href="'
                        . get_preview_post_link($id)
                        . '" class="button button-small">'

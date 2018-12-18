@@ -46,5 +46,3 @@ export { locale as SERVER_LOCALE } from './locale';
  * Custom exceptions
  */
 export * from './exceptions';
-
-export * from './utils/merge-and-de-duplicate';

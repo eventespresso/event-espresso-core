@@ -190,6 +190,17 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
 
     /**
+     * true if the current request is for the WP REST API
+     *
+     * @return bool
+     */
+    public function isWordPressApi()
+    {
+        return $this->request_type->slug() === RequestTypeContext::WP_API;
+    }
+
+
+    /**
      * true if the current request is a loopback sent from WP core to test for errors
      *
      * @return bool

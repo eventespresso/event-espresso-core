@@ -1,30 +1,16 @@
 /**
  * External imports
  */
-import { values } from 'lodash';
+import { values, map, pick } from 'lodash';
 
 /**
- * Returns whether the entity in the state for the given id is dirty.
- * If there is no entity in the state for the provided id then the value
- * returned will be false.
- * @param { Object } state
- * @param { string } modelName
- * @param { number } entityId
- * @return {boolean} True means the entity is dirty, false it is not.
- */
-export function isEntityDirty( state, modelName, entityId ) {
-	return state.dirty.hasOwnProperty( modelName ) &&
-		state.dirty[ modelName ].indexOf( String( entityId ) ) > -1;
-}
-
-/**
- * Return all entity records currently found in the state for the given model.
- *
- * @param { Object } state
- * @param { string } modelName
- * @return {null|{}} If there are no records then null is returned.  Otherwise
- * a collection object indexed by primary key values for the entity records is
- * returned.
+ * Returns all entity records for the given modelName in the current state.
+ * An entity record is the complete object indexed by the primary key id.
+ * @param {Object} state
+ * @param {string} modelName
+ * @return {Object<Object>}|null} A collection of entity records for the given
+ * model indexed by primary key value or null if none have been set in the
+ * state.
  */
 export function getEntityRecordsForModel( state, modelName ) {
 	return state.entities[ modelName ] ?
@@ -33,16 +19,14 @@ export function getEntityRecordsForModel( state, modelName ) {
 }
 
 /**
- * Returns all entities for the given model in state.
+ * Returns all entities for the given model.
+ * This differs from entityRecords, in that the entities are NOT indexed by
+ * primary key value and an Array of entities is returned instead of an object.
  *
- * This differs from getEntityRecordsForModel in that this returns the entity
- * objects in an array as opposed to a collection indexed by entity primary key.
- *
- * @param { Object } state
- * @param { string } modelName
- * @return {null|{}} This differs from getEntityRecordsForModel in that it
- *   will return an array of entities only. If there are no entities available
- *   in the state then null is returned.
+ * @param {Object} state
+ * @param {string} modelName
+ * @return {Array<Object>|null} An array of entities for the given model or null
+ * if none have been set in the state.
  */
 export function getEntitiesForModel( state, modelName ) {
 	return state.entities[ modelName ] ?
@@ -51,14 +35,33 @@ export function getEntitiesForModel( state, modelName ) {
 }
 
 /**
- * Returns just the entity (if it exists in the state) for the given entityId.
- * @param { Object } state
- * @param { string } modelName
- * @param { number } entityId
- * @return {null|{}} Returns the entity object.
+ * Returns the model entity for the given model and id.
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {string} entityId
+ * @return {Object|null} Returns the model entity or null.
  */
 export function getEntityById( state, modelName, entityId ) {
-	return state.entities[ modelName ] && state.entities[ modelName ][ entityId ] ?
-		state.entities[ modelName ][ entityId ] :
+	return state.entities[ modelName ] &&
+		state.entities[ modelName ][ String( entityId ) ] ?
+		state.entities[ modelName ][ String( entityId ) ] :
+		null;
+}
+
+/**
+ * Retrieves an array of model entities for the provided array of ids and model.
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {Array<string>} entityIds
+ * @return {Array<Object>|null} Returns an array of model entities for the
+ * provided ids or null if never been set.
+ */
+export function getEntitiesByIds( state, modelName, entityIds ) {
+	// ensure entityIds are strings for our key pick
+	entityIds = map( entityIds, ( id ) => String( id ) );
+	return state.entities[ modelName ] ?
+		values( pick( state.entities[ modelName ], entityIds ) ) :
 		null;
 }

@@ -11,20 +11,20 @@ namespace EventEspresso\core\services\dependencies;
  *
  * @package EventEspresso\core\services\factory
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 interface DependencyResolverInterface
 {
     /**
      * Used to configure and/or setup any aliases or recursions required by the DependencyResolver
      *
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     public function initialize();
 
     /**
      * @param string $fqcn Fully Qualified Class Name
-     * @since $VID:$
+     * @since 4.9.71.p
      */
     public function resolveDependenciesForClass($fqcn);
 }

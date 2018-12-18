@@ -10,7 +10,7 @@
 	padding: 0!important;
 	margin: .25em 0 !important;
 	line-height:1em;
-	color:#ccc;
+	color:#919191;
 	border: none!important;
 }
 .spco-steps-big-hdr {
@@ -456,7 +456,7 @@
 	clear: none;
 	margin:0;
 	/*text-align:right;*/
-	color:#ccc;
+	color:#919191;
 }
 .spco-payment-method-img {
 	float:left;

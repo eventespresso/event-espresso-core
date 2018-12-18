@@ -143,19 +143,22 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             'route'         => 'registrations_report',
             'extra_request' => array(
                 'use_filters' => true,
-                'filters'     => array_diff_key(
-                    $this->_req_data,
-                    array_flip(
-                        array(
-                            'page',
-                            'action',
-                            'default_nonce',
-                        )
-                    )
-                ),
                 'return_url'  => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
             ),
         );
+        $filters = array_diff_key(
+            $this->_req_data,
+            array_flip(
+                array(
+                    'page',
+                    'action',
+                    'default_nonce',
+                )
+            )
+        );
+        if (!empty($filters)) {
+            $this->_bottom_buttons['report_filtered']['extra_request']['filters'] = $filters;
+        }
         $this->_primary_column = '_REG_ID';
         $this->_sortable_columns = array(
             '_REG_date'     => array('_REG_date' => true),   // true means its already sorted

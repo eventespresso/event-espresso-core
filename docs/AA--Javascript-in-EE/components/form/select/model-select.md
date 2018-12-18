@@ -1,38 +1,14 @@
 # `<ModelSelect />` and `<ModelEnhancedSelect />`
 
-ModelSelect is a component that exposed the [`react-select`](https://deploy-preview-2289--react-select.netlify.com/home) component for displaying provided EE model data for selection. While it can be used on its own, its intended to be utilized within more concrete "wrapper" components specific to a model (eg `EventSelect`).  There are actually 2 components exposed for `ModelSelect`:  a standalone component, `<ModelSelect />` and a `withSelect` Higher Order Component wrapped default export which is exposed as `<ModelEnhancedSelect />`
+ModelSelect is a component that exposed the [`react-select`](https://deploy-preview-2289--react-select.netlify.com/home) component for displaying provided EE model data for selection. While it can be used on its own, its intended to be utilized within more concrete "wrapper" components specific to a model (eg `EventSelect`) that are generated using [`createModelSelect`](create-model-select.md).  There are actually 2 components exposed for `ModelSelect`:  a standalone component, `<ModelSelect />` and a `withSelect` Higher Order Component wrapped default export which is exposed as `<ModelEnhancedSelect />`
 
-The HOC automatically takes care of populating the select options as directed from provided props (see below).
-
-The following is the shape of the main component with its default props:
-
-```jsx
-<ModelSelect
-    selectConfiguration={
-        {
-            // an object allowing for pass through of all props accepted
-            // by th react select component (see props section)
-            name: uniqueId( 'model-select-' ),
-            isClearable: true,
-            isLoading: true,
-            placeholder: 'Select...'
-        }
-    }
-    modelEntities={ [] }
-    modelName={ '' }
-    mapOptionsCallback={ buildOptions } // see props section for details
-    optionsEntityMap={ null }
-    queryData={ { limit: 100, order: 'desc' } }
-    label={ '' }
-    getQueryString={ () => '' }
-/>
-```
+The HOC automatically takes care of populating the select options as directed from provided props and via subscription to the related `@eventespresso/lists` store.
 
 ## `ModelSelect` Props
 
 ### selectConfiguration
 
-This is an object that can contain any values components higher in the tree that you want to pass down to the `react-select` component.  You can read about all the possible values that can be passed down via [this document](https://deploy-preview-2289--react-select.netlify.com/props).
+This is an object that can contain any values set by components higher in the tree that you want to pass down to the `react-select` component.  You can read about all the possible values that can be passed down via [this document](https://deploy-preview-2289--react-select.netlify.com/props).
 
 The following options in this object are generated and set in the ModelSelect component:
 
@@ -40,7 +16,7 @@ The following options in this object are generated and set in the ModelSelect co
 |------|---------|
 `name` | This is automatically set to be a unique name for the select component. It can be overridden.
 `options` | This is derived from the incoming array of EE model entity objects.
-`value` | This is derived from the incoming `defaultValue` value on `selectConfiguration`.
+`value` | This is derived from the incoming `defaultValue` value on the incoming `selectConfiguration` prop.
 
 
 - Type: `Object`
@@ -57,9 +33,9 @@ The following options in this object are generated and set in the ModelSelect co
 
 ### modelEntities
 
-This is expected to be an array of entities for the model corresponding to the value in the `modelName` prop.  Typically this is simply the response from the REST request for that model.
+This is expected to be a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) of model entity objects for the model corresponding to the value in the `modelName` prop.  
 
-- Type: `Array`
+- Type: `Map`
 - Required: No
 - Default: `[]`
 
@@ -181,7 +157,7 @@ use EventEspresso\core\domain\services\assets\CoreAssetManager;
 wp_register_script(
     'my-script',
     'https://url-to-my-script.com'
-    array( CoreAssetManager::JS_HANDLE_EE_COMPONENTS ),
+    array( CoreAssetManager::JS_HANDLE_COMPONENTS ),
     $version_string,
     true
 );

@@ -7,5 +7,8 @@ module.exports = {
 	},
 	sprintf : (string) => {
 	 	return string;
-	}
+	},
+	_n : (string) => {
+	 	return string;
+	},
 };

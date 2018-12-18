@@ -334,6 +334,10 @@ class EE_Pdf_messenger extends EE_messenger
             $options->setFontDir(DOMPDF_FONT_DIR);
             $options->setFontCache(DOMPDF_FONT_DIR);
         }
+        // Allow changing the paper size.
+        if (defined('DOMPDF_DEFAULT_PAPER_SIZE')) {
+            $options->set('defaultPaperSize', DOMPDF_DEFAULT_PAPER_SIZE);
+        }
         $dompdf = new Dompdf\Dompdf($options);
         // Remove all spaces between HTML tags
         $content = preg_replace('/>\s+</', '><', $content);

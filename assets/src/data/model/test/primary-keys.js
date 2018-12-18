@@ -13,6 +13,7 @@ describe( 'primaryKeys', () => {
 	it( 'has the expected values from the mock data', () => {
 		expect( primaryKeys ).toEqual(
 			{
+				datetime: 'DTT_ID',
 				event: 'EVT_ID',
 				ticket: 'TKT_ID',
 				venue: 'VNU_ID',
@@ -124,11 +125,13 @@ describe( 'keyEntitiesByPrimaryKeyValue()', () => {
 	it( 'returns the expected format for the entity records which is a ' +
 		'collection indexed by the primary keys for the entities' +
 		' (singular primary key)', () => {
-		const expectedObject = {
-			10: { EVT_ID: 10 },
-			20: { EVT_ID: 20 },
-			50: { EVT_ID: 50 },
-		};
+		const expectedResponse = new Map(
+			[
+				[ 10, { EVT_ID: 10 } ],
+				[ 20, { EVT_ID: 20 } ],
+				[ 50, { EVT_ID: 50 } ],
+			]
+		);
 		expect( keyEntitiesByPrimaryKeyValue(
 			'event',
 			[
@@ -136,16 +139,18 @@ describe( 'keyEntitiesByPrimaryKeyValue()', () => {
 				{ EVT_ID: 20 },
 				{ EVT_ID: 50 },
 			],
-		) ).toEqual( expectedObject );
+		) ).toEqual( expectedResponse );
 	} );
 	it( 'returns the expected format for the entity records which is a ' +
 		'collection indexed by the primary keys for the entities' +
 		' (combined primary keys)', () => {
-		const expectedObject = {
-			'10:20': { TERM_ID: 10, TAXONOMY_ID: 20 },
-			'20:10': { TERM_ID: 20, TAXONOMY_ID: 10 },
-			'50:6': { TERM_ID: 50, TAXONOMY_ID: 6 },
-		};
+		const expectedResponse = new Map(
+			[
+				[ '10:20', { TERM_ID: 10, TAXONOMY_ID: 20 } ],
+				[ '20:10', { TERM_ID: 20, TAXONOMY_ID: 10 } ],
+				[ '50:6', { TERM_ID: 50, TAXONOMY_ID: 6 } ],
+			]
+		);
 		expect( keyEntitiesByPrimaryKeyValue(
 			'term',
 			[
@@ -153,6 +158,6 @@ describe( 'keyEntitiesByPrimaryKeyValue()', () => {
 				{ TERM_ID: 20, TAXONOMY_ID: 10 },
 				{ TERM_ID: 50, TAXONOMY_ID: 6 },
 			],
-		) ).toEqual( expectedObject );
+		) ).toEqual( expectedResponse );
 	} );
 } );

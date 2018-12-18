@@ -14,12 +14,12 @@ use PHPUnit_Framework_TestCase;
  *
  * @package EventEspresso\tests\testcases\core\services\route_match
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class RouteMatchSpecificationCollectionTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return RouteMatchSpecificationCollection
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
@@ -29,7 +29,7 @@ class RouteMatchSpecificationCollectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return Request
      */
     protected function getRequest()
@@ -39,7 +39,7 @@ class RouteMatchSpecificationCollectionTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param RequestInterface $request
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return EspressoEventEditorEdit
      */
     protected function getRoute(RequestInterface $request)
@@ -48,7 +48,7 @@ class RouteMatchSpecificationCollectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \PHPUnit\Framework\Exception
      */
@@ -61,7 +61,7 @@ class RouteMatchSpecificationCollectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \EventEspresso\core\services\collections\DuplicateCollectionIdentifierException
@@ -92,7 +92,7 @@ class RouteMatchSpecificationCollectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \EventEspresso\core\services\collections\DuplicateCollectionIdentifierException

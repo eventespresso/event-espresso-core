@@ -302,7 +302,7 @@ class EED_Core_Rest_Api extends \EED_Module
     protected static function _get_ee_route_data_for_version($version, $hidden_endpoints = false)
     {
         $ee_routes = get_option(self::saved_routes_option_names . $version, null);
-        if (! $ee_routes || (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE)) {
+        if (! $ee_routes || EED_Core_Rest_Api::debugMode()) {
             $ee_routes = self::_save_ee_route_data_for_version($version, $hidden_endpoints);
         }
         return $ee_routes;
@@ -481,7 +481,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     'callback_args'   => array($version, $model_name),
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
-                    'args'            => $this->_get_response_selection_query_params($model, $version),
+                    'args'            => $this->_get_response_selection_query_params($model, $version, true),
                 ),
             );
             if (apply_filters(
@@ -680,27 +680,33 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param string   $version
      * @return array
      */
-    protected function _get_response_selection_query_params(\EEM_Base $model, $version)
+    protected function _get_response_selection_query_params(\EEM_Base $model, $version, $single_only = false)
     {
+        $query_params = array(
+            'include'   => array(
+                'required' => false,
+                'default'  => '*',
+                'type'     => 'string',
+            ),
+            'calculate' => array(
+                'required'          => false,
+                'default'           => '',
+                'enum'              => self::$_field_calculator->retrieveCalculatedFieldsForModel($model),
+                'type'              => 'string',
+                // because we accept a CSV'd list of the enumerated strings, WP core validation and sanitization
+                // freaks out. We'll just validate this argument while handling the request
+                'validate_callback' => null,
+                'sanitize_callback' => null,
+            ),
+            'password' => array(
+                'required' => false,
+                'default' => '',
+                'type' => 'string'
+            )
+        );
         return apply_filters(
             'FHEE__EED_Core_Rest_Api___get_response_selection_query_params',
-            array(
-                'include'   => array(
-                    'required' => false,
-                    'default'  => '*',
-                    'type'     => 'string',
-                ),
-                'calculate' => array(
-                    'required'          => false,
-                    'default'           => '',
-                    'enum'              => self::$_field_calculator->retrieveCalculatedFieldsForModel($model),
-                    'type'              => 'string',
-                    // because we accept a CSV'd list of the enumerated strings, WP core validation and sanitization
-                    // freaks out. We'll just validate this argument while handling the request
-                    'validate_callback' => null,
-                    'sanitize_callback' => null,
-                ),
-            ),
+            $query_params,
             $model,
             $version
         );
@@ -1273,6 +1279,20 @@ class EED_Core_Rest_Api extends \EED_Module
             }
         }
         return $primary_key_items;
+    }
+
+    /**
+     * Determines the EE REST API debug mode is activated, or not.
+     * @since 4.9.72.p
+     * @return bool
+     */
+    public static function debugMode()
+    {
+        static $debug_mode = null; // could be class prop
+        if ($debug_mode === null) {
+            $debug_mode = defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE;
+        }
+        return $debug_mode;
     }
 
 

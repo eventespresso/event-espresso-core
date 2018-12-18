@@ -194,7 +194,7 @@ class EEM_Change_Log extends EEM_Base
     /**
      * Just gets the bare-bones wpdb results as an array in cases where efficiency is essential
      *
-     * @param array $query_params @see EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return array of arrays
      * @throws EE_Error
      */

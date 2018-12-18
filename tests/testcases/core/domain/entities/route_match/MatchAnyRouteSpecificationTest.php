@@ -10,13 +10,13 @@ use \EventEspresso\core\domain\entities\route_match\MatchAnyRouteSpecification;
  *
  * @package EventEspresso\tests\testcases\core\domain\entities\route_match
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class MatchAnyRouteSpecificationTest extends MultiRouteSpecificationTestBase
 {
     /**
      * @param array $specifications
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return MatchAnyRouteSpecification
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */
@@ -29,7 +29,7 @@ class MatchAnyRouteSpecificationTest extends MultiRouteSpecificationTestBase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\AssertionFailedError
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */

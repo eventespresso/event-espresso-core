@@ -13,7 +13,7 @@ use EventEspresso\core\services\request\RequestInterface;
  *
  * @package EventEspresso\core\services\editor
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 abstract class BlockManager
 {

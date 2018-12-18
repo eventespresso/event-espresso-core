@@ -213,7 +213,7 @@ export default class DateTime {
 	/**
 	 * Asserts whether the provided value is an instance of DateTime
 	 * @param {DateTime} datetime
-	 * @throws InvalidDateTime
+	 * @throws TypeError
 	 */
 	static assertIsDateTime( datetime ) {
 		if ( ! DateTime.validateIsDateTime( datetime ) ) {

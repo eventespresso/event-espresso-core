@@ -6,7 +6,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\InvalidSessionDataException;
 use EventEspresso\core\services\cache\CacheStorageInterface;
-use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\session\SessionStartHandler;
 
@@ -34,6 +33,10 @@ class EE_Session implements SessionIdentifierInterface
     const STATUS_CLOSED = 0;
 
     const STATUS_OPEN = 1;
+
+    const SAVE_STATE_CLEAN = 'clean';
+    const SAVE_STATE_DIRTY = 'dirty';
+
 
     /**
      * instance of the EE_Session object
@@ -170,6 +173,13 @@ class EE_Session implements SessionIdentifierInterface
      */
     private $status = EE_Session::STATUS_CLOSED;
 
+    /**
+     * whether session data has changed therefore requiring a session save
+     *
+     * @var string $save_state
+     */
+    private $save_state = EE_Session::SAVE_STATE_CLEAN;
+
 
     /**
      * @singleton method used to instantiate class object
@@ -194,11 +204,11 @@ class EE_Session implements SessionIdentifierInterface
         // session loading is turned ON by default, but prior to the init hook, can be turned back OFF via:
         // add_filter( 'FHEE_load_EE_Session', '__return_false' );
         if (! self::$_instance instanceof EE_Session
-            && apply_filters('FHEE_load_EE_Session', true)
             && $cache_storage instanceof CacheStorageInterface
             && $lifespan instanceof SessionLifespan
             && $request instanceof RequestInterface
             && $session_start_handler instanceof SessionStartHandler
+            && apply_filters('FHEE_load_EE_Session', true)
         ) {
             self::$_instance = new self(
                 $cache_storage,
@@ -305,6 +315,8 @@ class EE_Session implements SessionIdentifierInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidSessionDataException
+     * @throws RuntimeException
+     * @throws ReflectionException
      */
     public function open_session()
     {
@@ -372,6 +384,29 @@ class EE_Session implements SessionIdentifierInterface
 
 
     /**
+     * Marks whether the session data has been updated or not.
+     * Valid options are:
+     *      EE_Session::SAVE_STATE_CLEAN - session data remains unchanged and updating is not necessary
+     *      EE_Session::SAVE_STATE_DIRTY - session data has changed since last save and needs to be updated
+     * default value is EE_Session::SAVE_STATE_DIRTY
+     *
+     * @param string $save_state
+     */
+    public function setSaveState($save_state = EE_Session::SAVE_STATE_DIRTY)
+    {
+        $valid_save_states = [
+            EE_Session::SAVE_STATE_CLEAN,
+            EE_Session::SAVE_STATE_DIRTY,
+        ];
+        if (! in_array($save_state, $valid_save_states, true)) {
+            $save_state = EE_Session::SAVE_STATE_DIRTY;
+        }
+        $this->save_state = $save_state;
+    }
+
+
+
+    /**
      * This just sets some defaults for the _session data property
      *
      * @access private
@@ -408,6 +443,7 @@ class EE_Session implements SessionIdentifierInterface
     public function set_cart(EE_Cart $cart)
     {
         $this->_session_data['cart'] = $cart;
+        $this->setSaveState();
         return true;
     }
 
@@ -419,6 +455,7 @@ class EE_Session implements SessionIdentifierInterface
     {
         do_action('AHEE__EE_Session__reset_cart__before_reset', $this);
         $this->_session_data['cart'] = null;
+        $this->setSaveState();
     }
 
 
@@ -440,6 +477,7 @@ class EE_Session implements SessionIdentifierInterface
     public function set_checkout(EE_Checkout $checkout)
     {
         $this->_session_data['checkout'] = $checkout;
+        $this->setSaveState();
         return true;
     }
 
@@ -451,6 +489,7 @@ class EE_Session implements SessionIdentifierInterface
     {
         do_action('AHEE__EE_Session__reset_checkout__before_reset', $this);
         $this->_session_data['checkout'] = null;
+        $this->setSaveState();
     }
 
 
@@ -475,6 +514,7 @@ class EE_Session implements SessionIdentifierInterface
         // first remove the session from the transaction before we save the transaction in the session
         $transaction->set_txn_session_data(null);
         $this->_session_data['transaction'] = $transaction;
+        $this->setSaveState();
         return true;
     }
 
@@ -486,6 +526,7 @@ class EE_Session implements SessionIdentifierInterface
     {
         do_action('AHEE__EE_Session__reset_transaction__before_reset', $this);
         $this->_session_data['transaction'] = null;
+        $this->setSaveState();
     }
 
 
@@ -560,6 +601,7 @@ class EE_Session implements SessionIdentifierInterface
                 return false;
             }
             $this->_session_data[ $key ] = $value;
+            $this->setSaveState();
         }
         return true;
     }
@@ -574,6 +616,8 @@ class EE_Session implements SessionIdentifierInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidSessionDataException
+     * @throws RuntimeException
+     * @throws ReflectionException
      */
     private function _espresso_session()
     {
@@ -633,6 +677,7 @@ class EE_Session implements SessionIdentifierInterface
      * @throws InvalidSessionDataException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws RuntimeException
      */
     protected function _retrieve_session_data()
     {
@@ -801,6 +846,7 @@ class EE_Session implements SessionIdentifierInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function update($new_session = false)
     {
@@ -880,6 +926,7 @@ class EE_Session implements SessionIdentifierInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     private function _create_espresso_session()
     {
@@ -896,16 +943,21 @@ class EE_Session implements SessionIdentifierInterface
      */
     private function sessionHasStuffWorthSaving()
     {
-        return $this->cart() instanceof EE_Cart
-            || (
-                isset($this->_session_data['ee_notices'])
-                && (
-                    ! empty($this->_session_data['ee_notices']['attention'])
-                    || !empty($this->_session_data['ee_notices']['errors'])
-                    || !empty($this->_session_data['ee_notices']['success'])
-                )
-            );
+        return $this->save_state === EE_Session::SAVE_STATE_DIRTY
+               // we may want to eventually remove the following
+               // on the assumption that the above check is enough
+               || $this->cart() instanceof EE_Cart
+               || (
+                   isset($this->_session_data['ee_notices'])
+                   && (
+                       ! empty($this->_session_data['ee_notices']['attention'])
+                       || ! empty($this->_session_data['ee_notices']['errors'])
+                       || ! empty($this->_session_data['ee_notices']['success'])
+                   )
+               );
     }
+
+
     /**
      * _save_session_to_db
      *
@@ -915,6 +967,7 @@ class EE_Session implements SessionIdentifierInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     private function _save_session_to_db($clear_session = false)
     {
@@ -951,11 +1004,13 @@ class EE_Session implements SessionIdentifierInterface
             );
         }
         // we're using the Transient API for storing session data,
-        return $this->cache_storage->add(
+        $saved = $this->cache_storage->add(
             EE_Session::session_id_prefix . $this->_sid,
             $session_data,
             $this->session_lifespan->inSeconds()
         );
+        $this->setSaveState(EE_Session::SAVE_STATE_CLEAN);
+        return $saved;
     }
 
 
@@ -1019,6 +1074,7 @@ class EE_Session implements SessionIdentifierInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function clear_session($class = '', $function = '')
     {
@@ -1035,6 +1091,7 @@ class EE_Session implements SessionIdentifierInterface
         $this->reset_data(array_keys($this->_session_data));
         // reset initial site access time and the session expiration
         $this->_set_init_access_and_expiration();
+        $this->setSaveState();
         $this->_save_session_to_db(true);
     }
 
@@ -1074,6 +1131,7 @@ class EE_Session implements SessionIdentifierInterface
                 if (! array_key_exists($reset, $this->_default_session_vars)) {
                     // remove session var
                     unset($this->_session_data[ $reset ]);
+                    $this->setSaveState();
                     if ($show_all_notices) {
                         EE_Error::add_success(
                             sprintf(
@@ -1132,6 +1190,7 @@ class EE_Session implements SessionIdentifierInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     public function wp_loaded()
     {
@@ -1149,6 +1208,7 @@ class EE_Session implements SessionIdentifierInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     public function reset_instance()
     {

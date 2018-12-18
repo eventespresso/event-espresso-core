@@ -6,13 +6,13 @@ namespace EventEspresso\tests\testcases\core\domain\entities\route_match;
  *
  * @package EventEspresso\tests\testcases\core\domain\entities\route_match
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class RouteMatchSpecificationTest extends RouteMatchSpecificationTestBase
 {
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function testIsMatchingRoute()

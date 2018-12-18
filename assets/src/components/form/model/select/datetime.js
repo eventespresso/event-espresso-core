@@ -1,7 +1,7 @@
 /**
  * Internal imports
  */
-import ModelSelect from '../base/model-select';
+import createModelSelect from '../base/create-model-select';
 import { dateTimeModel as model } from '../../../../data/model';
 import { withBaseControl } from '../../../../higher-order-components';
 
@@ -9,7 +9,6 @@ import { withBaseControl } from '../../../../higher-order-components';
  * External imports
  */
 import { __ } from '@eventespresso/i18n';
-import { Component } from '@wordpress/element';
 import PropTypes from 'prop-types';
 
 const optionsEntityMap = {
@@ -25,16 +24,9 @@ const optionsEntityMap = {
 	},
 };
 
-/**
- * Select Component for the Datetime Model.
- */
-export default class DatetimeSelect extends Component {
-	state = {
-		modelName: model.MODEL_NAME,
-		queryData: {},
-	};
-
-	static defaultProps = {
+const DatetimeSelect = createModelSelect(
+	model.MODEL_NAME,
+	{
 		selectConfiguration: {
 			loadingMessage: () => __( 'Retrieving Datetimes.', 'event_espresso' ),
 			noOptionsMessage: () => __(
@@ -47,61 +39,14 @@ export default class DatetimeSelect extends Component {
 		getQueryString: model.getQueryString,
 		label: __( 'Select Datetime', 'event_espresso' ),
 		optionsEntityMap,
-	};
-
-	static propTypes = {
+	},
+	{
 		...model.queryDataTypes,
-		forEventId: PropTypes.number,
-		selectedDatetimeId: PropTypes.oneOfType( [
-			PropTypes.number,
-			PropTypes.string,
-		] ),
-		onDatetimeSelect: PropTypes.func,
-		label: PropTypes.string,
 		optionsEntityMap: PropTypes.object,
-	};
-
-	addEventIdToQueryData( forEventId ) {
-		this.setState( {
-			queryData: {
-				...this.state.queryData,
-				forEventId,
-			},
-		} );
 	}
+);
 
-	componentDidMount() {
-		this.setState( {
-			queryData: { ...this.props.queryData },
-		} );
-		if ( this.props.forEventId > 0 ) {
-			this.addEventIdToQueryData( this.props.forEventId );
-		}
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.forEventId !== this.props.forEventId ) {
-			this.addEventIdToQueryData( this.props.forEventId );
-		}
-	}
-
-	render() {
-		const { selectedDatetimeId, onDatetimeSelect } = this.props;
-		const selectOpts = {
-			selectConfiguration: {
-				defaultValue: selectedDatetimeId,
-				onChange: onDatetimeSelect,
-				...this.props.selectConfiguration,
-			},
-		};
-		const props = {
-			...this.props,
-			...selectOpts,
-			...this.state,
-		};
-		return <ModelSelect { ...props } />;
-	}
-}
+export default DatetimeSelect;
 
 /**
  * Enhanced Datetime Select for the WordPress editor

@@ -1,21 +1,388 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EventAttendeesEditor Block block edit matches snapshot 1`] = `
-Array [
-  <ServerSideRender
-    attributes={
-      Object {
-        "datetimeId": 0,
-        "displayOnArchives": false,
-        "eventId": 0,
-        "limit": 10,
-        "showGravatar": true,
-        "status": "RAP",
-        "ticketId": 0,
+exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`] = `
+<React.Fragment>
+  <Placeholder>
+    <_default />
+  </Placeholder>
+  <IfBlockEditSelected(InspectorControlsFill)>
+    <PanelBody
+      title="Filter By Settings"
+    >
+      <WithBaseControl(EventSelect)
+        key="attendees-event-select"
+        onSelect={[Function]}
+        queryData={
+          Object {
+            "limit": 50,
+            "showExpired": true,
+          }
+        }
+        selected={0}
+      />
+      <WithBaseControl(StatusSelect)
+        key="attendees-status-select"
+        label="Select Registration Status"
+        onSelect={[Function]}
+        queryData={
+          Object {
+            "limit": 50,
+            "showExpired": true,
+            "statusType": "registration",
+          }
+        }
+        selected="RAP"
+      />
+      <QueryLimit
+        help="Used to adjust the number of attendees displayed (There is %d total attendee for the current filter settings)."
+        label="Number of Attendees to Display:"
+        limit={10}
+        max={100}
+        min={1}
+        onLimitChange={[Function]}
+      />
+      <WithInstanceId(SelectControl)
+        label="Order Attendees by:"
+        onChange={[Function]}
+        options={
+          Array [
+            Object {
+              "label": "Attendee id",
+              "value": "id",
+            },
+            Object {
+              "label": "Last name only",
+              "value": "lastNameOnly",
+            },
+            Object {
+              "label": "First name only",
+              "value": "firstNameOnly",
+            },
+            Object {
+              "label": "First, then Last name",
+              "value": "firstThenLastName",
+            },
+            Object {
+              "label": "Last, then First name",
+              "value": "lastThenFirstName",
+            },
+          ]
+        }
+        value="lastThenFirstName"
+      />
+      <WithInstanceId(SelectControl)
+        label="Sort order:"
+        onChange={[Function]}
+        options={
+          Array [
+            Object {
+              "label": "Ascending",
+              "value": "ASC",
+            },
+            Object {
+              "label": "Descending",
+              "value": "DESC",
+            },
+          ]
+        }
+        value="ASC"
+      />
+    </PanelBody>
+    <PanelBody
+      title="Gravatar Setttings"
+    >
+      <WithInstanceId(ToggleControl)
+        checked={true}
+        help="Gravatar images are shown for each attendee."
+        label="Display Gravatar"
+        onChange={[Function]}
+      />
+      <WithInstanceId(RangeControl)
+        label="Size of Gravatar"
+        max={128}
+        min={10}
+        onChange={[Function]}
+        value={24}
+      />
+    </PanelBody>
+    <WithSelect(NotWithPostTypeCheck)
+      excludedPostTypeSlugs="page"
+    >
+      <PanelBody
+        title="Archive Settings"
+      >
+        <WithInstanceId(ToggleControl)
+          checked={false}
+          help="Attendees are hidden whenever this post is listed in an archive view."
+          label="Display on Archives"
+          onChange={[Function]}
+        />
+      </PanelBody>
+    </WithSelect(NotWithPostTypeCheck)>
+  </IfBlockEditSelected(InspectorControlsFill)>
+</React.Fragment>
+`;
+
+exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading false and has attendees 1`] = `
+<React.Fragment>
+  <EventAttendeeList
+    attendees={
+      Map {
+        10 => Object {
+          "ATT_ID": 10,
+          "ATT_fname": "dude",
+        },
       }
     }
-    block="eventespresso/event-attendees"
-  />,
-  <IfBlockEditSelected(InspectorControlsFill) />,
-]
+    avatarOptions={
+      Object {
+        "avatarClass": "contact",
+        "avatarHeight": 24,
+        "avatarWidth": 24,
+      }
+    }
+    containerCssClass="ee-core-blocks event-espresso-blocks"
+    containerId="ee-block-event-attendees"
+    isLoading={false}
+    showGravatar={true}
+  />
+  <IfBlockEditSelected(InspectorControlsFill)>
+    <PanelBody
+      title="Filter By Settings"
+    >
+      <WithBaseControl(EventSelect)
+        key="attendees-event-select"
+        onSelect={[Function]}
+        queryData={
+          Object {
+            "limit": 50,
+            "showExpired": true,
+          }
+        }
+        selected={0}
+      />
+      <WithBaseControl(StatusSelect)
+        key="attendees-status-select"
+        label="Select Registration Status"
+        onSelect={[Function]}
+        queryData={
+          Object {
+            "limit": 50,
+            "showExpired": true,
+            "statusType": "registration",
+          }
+        }
+        selected="RAP"
+      />
+      <QueryLimit
+        help="Used to adjust the number of attendees displayed (There is %d total attendee for the current filter settings)."
+        label="Number of Attendees to Display:"
+        limit={10}
+        max={100}
+        min={1}
+        onLimitChange={[Function]}
+      />
+      <WithInstanceId(SelectControl)
+        label="Order Attendees by:"
+        onChange={[Function]}
+        options={
+          Array [
+            Object {
+              "label": "Attendee id",
+              "value": "id",
+            },
+            Object {
+              "label": "Last name only",
+              "value": "lastNameOnly",
+            },
+            Object {
+              "label": "First name only",
+              "value": "firstNameOnly",
+            },
+            Object {
+              "label": "First, then Last name",
+              "value": "firstThenLastName",
+            },
+            Object {
+              "label": "Last, then First name",
+              "value": "lastThenFirstName",
+            },
+          ]
+        }
+        value="lastThenFirstName"
+      />
+      <WithInstanceId(SelectControl)
+        label="Sort order:"
+        onChange={[Function]}
+        options={
+          Array [
+            Object {
+              "label": "Ascending",
+              "value": "ASC",
+            },
+            Object {
+              "label": "Descending",
+              "value": "DESC",
+            },
+          ]
+        }
+        value="ASC"
+      />
+    </PanelBody>
+    <PanelBody
+      title="Gravatar Setttings"
+    >
+      <WithInstanceId(ToggleControl)
+        checked={true}
+        help="Gravatar images are shown for each attendee."
+        label="Display Gravatar"
+        onChange={[Function]}
+      />
+      <WithInstanceId(RangeControl)
+        label="Size of Gravatar"
+        max={128}
+        min={10}
+        onChange={[Function]}
+        value={24}
+      />
+    </PanelBody>
+    <WithSelect(NotWithPostTypeCheck)
+      excludedPostTypeSlugs="page"
+    >
+      <PanelBody
+        title="Archive Settings"
+      >
+        <WithInstanceId(ToggleControl)
+          checked={false}
+          help="Attendees are hidden whenever this post is listed in an archive view."
+          label="Display on Archives"
+          onChange={[Function]}
+        />
+      </PanelBody>
+    </WithSelect(NotWithPostTypeCheck)>
+  </IfBlockEditSelected(InspectorControlsFill)>
+</React.Fragment>
+`;
+
+exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading false and no attendees 1`] = `
+<React.Fragment>
+  <Placeholder>
+    There are no attendees for selected options.
+  </Placeholder>
+  <IfBlockEditSelected(InspectorControlsFill)>
+    <PanelBody
+      title="Filter By Settings"
+    >
+      <WithBaseControl(EventSelect)
+        key="attendees-event-select"
+        onSelect={[Function]}
+        queryData={
+          Object {
+            "limit": 50,
+            "showExpired": true,
+          }
+        }
+        selected={0}
+      />
+      <WithBaseControl(StatusSelect)
+        key="attendees-status-select"
+        label="Select Registration Status"
+        onSelect={[Function]}
+        queryData={
+          Object {
+            "limit": 50,
+            "showExpired": true,
+            "statusType": "registration",
+          }
+        }
+        selected="RAP"
+      />
+      <QueryLimit
+        help="Used to adjust the number of attendees displayed (There is %d total attendee for the current filter settings)."
+        label="Number of Attendees to Display:"
+        limit={10}
+        max={100}
+        min={1}
+        onLimitChange={[Function]}
+      />
+      <WithInstanceId(SelectControl)
+        label="Order Attendees by:"
+        onChange={[Function]}
+        options={
+          Array [
+            Object {
+              "label": "Attendee id",
+              "value": "id",
+            },
+            Object {
+              "label": "Last name only",
+              "value": "lastNameOnly",
+            },
+            Object {
+              "label": "First name only",
+              "value": "firstNameOnly",
+            },
+            Object {
+              "label": "First, then Last name",
+              "value": "firstThenLastName",
+            },
+            Object {
+              "label": "Last, then First name",
+              "value": "lastThenFirstName",
+            },
+          ]
+        }
+        value="lastThenFirstName"
+      />
+      <WithInstanceId(SelectControl)
+        label="Sort order:"
+        onChange={[Function]}
+        options={
+          Array [
+            Object {
+              "label": "Ascending",
+              "value": "ASC",
+            },
+            Object {
+              "label": "Descending",
+              "value": "DESC",
+            },
+          ]
+        }
+        value="ASC"
+      />
+    </PanelBody>
+    <PanelBody
+      title="Gravatar Setttings"
+    >
+      <WithInstanceId(ToggleControl)
+        checked={true}
+        help="Gravatar images are shown for each attendee."
+        label="Display Gravatar"
+        onChange={[Function]}
+      />
+      <WithInstanceId(RangeControl)
+        label="Size of Gravatar"
+        max={128}
+        min={10}
+        onChange={[Function]}
+        value={24}
+      />
+    </PanelBody>
+    <WithSelect(NotWithPostTypeCheck)
+      excludedPostTypeSlugs="page"
+    >
+      <PanelBody
+        title="Archive Settings"
+      >
+        <WithInstanceId(ToggleControl)
+          checked={false}
+          help="Attendees are hidden whenever this post is listed in an archive view."
+          label="Display on Archives"
+          onChange={[Function]}
+        />
+      </PanelBody>
+    </WithSelect(NotWithPostTypeCheck)>
+  </IfBlockEditSelected(InspectorControlsFill)>
+</React.Fragment>
 `;

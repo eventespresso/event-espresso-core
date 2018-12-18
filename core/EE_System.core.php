@@ -934,7 +934,7 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws Exception
      */
     public function loadRouteMatchSpecifications()
@@ -1167,11 +1167,15 @@ final class EE_System implements ResettableInterface
      */
     public function core_loaded_and_ready()
     {
-        if ($this->request->isAdmin() || $this->request->isFrontend() || $this->request->isIframe()) {
+        if ($this->request->isAdmin()
+            || $this->request->isFrontend()
+            || $this->request->isIframe()
+            || $this->request->isWordPressApi()
+        ) {
             try {
                 $this->loader->getShared('EventEspresso\core\services\assets\Registry');
                 $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
-                if (function_exists('register_block_type')) {
+                if ($this->canLoadBlocks()) {
                     $this->loader->getShared(
                         'EventEspresso\core\services\editor\BlockRegistrationManager'
                     );
@@ -1314,5 +1318,19 @@ final class EE_System implements ResettableInterface
     public function remove_pages_from_wp_list_pages($exclude_array)
     {
         return array_merge($exclude_array, $this->registry->CFG->core->get_critical_pages_array());
+    }
+
+
+    /**
+     * Return whether blocks can be registered/loaded or not.
+     * @return bool
+     */
+    private function canLoadBlocks()
+    {
+        return apply_filters('FHEE__EE_System__canLoadBlocks', true)
+               && function_exists('register_block_type')
+               // don't load blocks if in the Divi page builder editor context
+               // @see https://github.com/eventespresso/event-espresso-core/issues/814
+               && ! $this->request->getRequestParam('et_fb', false);
     }
 }

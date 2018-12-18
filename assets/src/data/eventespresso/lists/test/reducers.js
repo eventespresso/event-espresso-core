@@ -6,63 +6,160 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { listItems } from '../reducers';
+import { receiveListItems } from '../reducers';
+import {
+	genericObjects,
+	eventEntityItems,
+} from './fixtures';
 
-describe( 'listItems()', () => {
+describe( 'receiveListItems()', () => {
+	const testRunner = (
+		testConditions,
+		formerState,
+		actionType,
+		identifier,
+	) => testConditions.forEach( ( [
+		queryString,
+		items,
+		expectedState,
+		isEqualIncomingState,
+	] ) => {
+		const oldState = formerState;
+		const newState = receiveListItems(
+			formerState, {
+				type: actionType,
+				identifier,
+				queryString,
+				items,
+			}
+		);
+		it( 'has expected match to former state', () => {
+			if ( isEqualIncomingState ) {
+				expect( newState ).toBe( oldState );
+			} else {
+				expect( newState ).not.toEqual( oldState );
+			}
+		} );
+		it( 'returns expected value', () => {
+			expect( newState ).toEqual( expectedState );
+		} );
+		formerState = newState;
+	} );
 	it( 'returns the expected default object (from mock data)', () => {
-		const state = listItems( undefined, {} );
+		const state = receiveListItems( undefined, {} );
 		expect( state ).toEqual(
-			{ event: [], term: [], ticket: [], venue: [] },
+			{ datetime: {}, event: {}, term: {}, ticket: {}, venue: {} },
 		);
 	} );
-	it( 'returns with received events for known model and does not affect' +
-		' original state', () => {
-		const originalState = deepFreeze( { event: {} } );
-		const state = listItems( originalState, {
-			type: 'RECEIVE_LIST',
-			modelName: 'event',
-			queryString: '?some_value=1',
-			items: [ { id: 1 } ],
-		} );
-		expect( state ).not.toEqual( originalState );
-		expect( state ).toEqual( {
-			event: {
-				'?some_value=1': [ { id: 1 } ],
-			},
+	describe( 'RECEIVE_LIST action handling', () => {
+		describe( 'returns correct state for multiple consecutive ' +
+			'queries', () => {
+			const originalState = deepFreeze( { event: {} } );
+			const testConditions = [
+				[
+					'?some_value=1',
+					genericObjects,
+					{
+						event: {},
+						generic: {
+							'?some_value=1': genericObjects,
+						},
+					},
+					false,
+				],
+				[
+					'?some_other_value=1',
+					genericObjects,
+					{
+						event: {},
+						generic: {
+							'?some_value=1': genericObjects,
+							'?some_other_value=1': genericObjects,
+						},
+					},
+					false,
+				],
+				[
+					'?some_value=1',
+					genericObjects,
+					{
+						event: {},
+						generic: {
+							'?some_value=1': genericObjects,
+							'?some_other_value=1': genericObjects,
+						},
+					},
+					true,
+				],
+			];
+			testRunner(
+				testConditions,
+				originalState,
+				'RECEIVE_LIST',
+				'generic'
+			);
 		} );
 	} );
-	it( 'returns correct state for multiple consecutive queries', () => {
-		const originalState = deepFreeze( { event: {} } );
-		const state1 = listItems( originalState, {
-			type: 'RECEIVE_LIST',
-			modelName: 'event',
-			queryString: '?some_value=1',
-			items: [ { id: 1 } ],
+	describe( 'RECEIVE_ENTITY_LIST action handling', () => {
+		it( 'returns with received events for known model and does not affect' +
+			' original state', () => {
+			const originalState = deepFreeze( { event: {} } );
+			const state = receiveListItems( originalState, {
+				type: 'RECEIVE_ENTITY_LIST',
+				identifier: 'event',
+				queryString: '?some_value=1',
+				items: eventEntityItems,
+			} );
+			expect( state ).not.toEqual( originalState );
+			expect( state ).toEqual( {
+				event: {
+					'?some_value=1': eventEntityItems,
+				},
+			} );
 		} );
-		const state2 = listItems( state1, {
-			type: 'RECEIVE_LIST',
-			modelName: 'event',
-			queryString: '?some_other_value=1',
-			items: [ { id: 1 } ],
-		} );
-		const state3 = listItems( state2, {
-			type: 'RECEIVE_LIST',
-			modelName: 'event',
-			queryString: '?some_value=1',
-			items: [ { id: 1 } ],
-		} );
-		expect( state1 ).not.toEqual( originalState );
-		expect( state1 ).toEqual( {
-			event: {
-				'?some_value=1': [ { id: 1 } ],
-			},
-		} );
-		expect( state2 ).toEqual( {
-			event: {
-				'?some_value=1': [ { id: 1 } ],
-				'?some_other_value=1': [ { id: 1 } ],
-			},
-		} );
-		expect( state3 ).toBe( state2 );
+		describe( 'returns correct state for multiple consecutive queries',
+			() => {
+				const originalState = deepFreeze( { event: {} } );
+				const testConditions = [
+					[
+						'?some_value=1',
+						eventEntityItems,
+						{
+							event: {
+								'?some_value=1': eventEntityItems,
+							},
+						},
+						false,
+					],
+					[
+						'?some_other_value=1',
+						eventEntityItems,
+						{
+							event: {
+								'?some_value=1': eventEntityItems,
+								'?some_other_value=1': eventEntityItems,
+							},
+						},
+						false,
+					],
+					[
+						'?some_value=1',
+						eventEntityItems,
+						{
+							event: {
+								'?some_value=1': eventEntityItems,
+								'?some_other_value=1': eventEntityItems,
+							},
+						},
+						true,
+					],
+				];
+				testRunner(
+					testConditions,
+					originalState,
+					'RECEIVE_ENTITY_LIST',
+					'event',
+				);
+			} );
 	} );
 } );

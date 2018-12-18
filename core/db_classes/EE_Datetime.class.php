@@ -1003,7 +1003,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * Counts the total tickets available
      * (from all the different types of tickets which are available for this datetime).
      *
-     * @param array $query_params like EEM_Base::get_all's
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return int
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -1038,7 +1038,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * Gets the count of all the tickets available at this datetime (not ticket types)
      * before any were sold
      *
-     * @param array $query_params like EEM_Base::get_all's
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return int
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -1195,7 +1195,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * Gets all the tickets for this datetime
      *
-     * @param array $query_params see EEM_Base::get_all()
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Ticket[]
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -1212,7 +1212,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * Gets all the ticket types currently available for purchase
      *
-     * @param array $query_params like EEM_Base::get_all's
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Ticket[]
      * @throws ReflectionException
      * @throws InvalidArgumentException

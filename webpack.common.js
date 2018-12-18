@@ -6,7 +6,7 @@ const externals = {
 	jquery: 'jQuery',
 	'@eventespresso/eejs': 'eejs',
 	'@eventespresso/i18n': 'eejs.i18n',
-	'@wordpress/api-request': 'wp.apiRequest',
+	'@wordpress/api-fetch': 'wp.apiFetch',
 	'@wordpress/data': 'wp.data',
 	'@wordpress/element': 'wp.element',
 	'@wordpress/components': 'wp.components',
@@ -14,13 +14,14 @@ const externals = {
 	'@wordpress/editor': 'wp.editor',
 	'@wordpress/compose': 'wp.compose',
 	'@wordpress/hooks': 'wp.hooks',
-	react: 'eejs.vendor.react',
-	'react-dom': 'eejs.vendor.reactDom',
+	react: 'React',
+	'react-dom': 'ReactDOM',
 	'react-redux': 'eejs.vendor.reactRedux',
 	redux: 'eejs.vendor.redux',
 	classnames: 'eejs.vendor.classnames',
-	lodash: 'eejs.vendor.lodash',
+	lodash: 'lodash',
 	'moment-timezone': 'eejs.vendor.moment',
+	cuid: 'eejs.vendor.cuid',
 };
 
 /** see below for multiple configurations.
@@ -69,11 +70,35 @@ const config = [
 		},
 	},
 	{
+		configName: 'validators',
+		entry: {
+			validators: assets + 'eejs/validators/index.js',
+		},
+		externals,
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', '[name]' ],
+			libraryTarget: 'var',
+		},
+	},
+	{
 		configName: 'helpers',
 		entry: {
 			helpers: assets + 'data/helpers/index.js',
 		},
-		externals,
+		externals: Object.assign( externals, {
+			'@eventespresso/validators': 'eejs.validators',
+		} ),
 		module: {
 			rules: [
 				{
@@ -96,6 +121,7 @@ const config = [
 			model: assets + 'data/model/index.js',
 		},
 		externals: Object.assign( externals, {
+			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
 		} ),
 		module: {
@@ -120,6 +146,7 @@ const config = [
 			valueObjects: assets + 'vo/index.js',
 		},
 		externals: Object.assign( externals, {
+			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
 		} ),
@@ -140,11 +167,12 @@ const config = [
 		},
 	},
 	{
-		configName: 'hocComponents',
+		configName: 'hocs',
 		entry: {
-			hocComponents: assets + 'higher-order-components/index.js',
+			hocs: assets + 'higher-order-components/index.js',
 		},
 		externals: Object.assign( externals, {
+			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
 			'@eventespresso/value-objects': 'eejs.valueObjects',
@@ -201,10 +229,11 @@ const config = [
 			components: assets + 'components/index.js',
 		},
 		externals: Object.assign( externals, {
-			'@eventespresso/higher-order-components': 'eejs.hocComponents',
+			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
 			'@eventespresso/value-objects': 'eejs.valueObjects',
+			'@eventespresso/higher-order-components': 'eejs.hocs',
 		} ),
 		module: {
 			rules: [
@@ -253,30 +282,24 @@ const config = [
 		},
 	},
 	{
-		configName: 'editor',
+		configName: 'editor-hocs',
 		entry: {
-			editor: [
-				assets + 'editor/index.js',
-			],
+			'editor-hocs': assets + 'editor/hocs/index.js',
 		},
 		externals: Object.assign( externals, {
-			'@eventespresso/higher-order-components': 'eejs.hocComponents',
-			'@eventespresso/components': 'eejs.components',
+			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
+			'@eventespresso/value-objects': 'eejs.valueObjects',
+			'@eventespresso/higher-order-components': 'eejs.hocs',
+			'@eventespresso/components': 'eejs.components',
 		} ),
-		output: {
-			filename: 'ee-[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
-			library: [ 'eejs', '[name]' ],
-			libraryTarget: 'var',
-		},
 		module: {
 			rules: [
 				{
 					test: /\.js$/,
 					exclude: /node_modules/,
-					use: 'babel-loader',
+					loader: 'babel-loader',
 				},
 				{
 					test: /\.css$/,
@@ -310,6 +333,75 @@ const config = [
 				},
 			],
 		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', 'editorHocs' ],
+			libraryTarget: 'var',
+		},
+	},
+	{
+		configName: 'editor',
+		entry: {
+			editor: [
+				assets + 'editor/index.js',
+			],
+		},
+		externals: Object.assign( externals, {
+			'@eventespresso/validators': 'eejs.validators',
+			'@eventespresso/helpers': 'eejs.helpers',
+			'@eventespresso/model': 'eejs.model',
+			'@eventespresso/value-objects': 'eejs.valueObjects',
+			'@eventespresso/higher-order-components': 'eejs.hocs',
+			'@eventespresso/components': 'eejs.components',
+			'@eventespresso/editor-hocs': 'eejs.editorHocs',
+		} ),
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+
+				},
+				{
+					test: /\.css$/,
+					use: [
+						miniExtract.loader,
+						{
+							loader: 'css-loader',
+							query: {
+								modules: true,
+								localIdentName: '[local]',
+							},
+							//can't use minimize because cssnano (the
+							// dependency) doesn't parser the browserlist
+							// extension in package.json correctly, there's
+							// a pending update for it but css-loader
+							// doesn't have the latest yet.
+							// options: {
+							//     minimize: true
+							// }
+						},
+						{
+							loader: 'postcss-loader',
+							options: {
+								plugins: function() {
+									return [ autoprefixer ];
+								},
+								sourceMap: true,
+							},
+						},
+					],
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', '[name]' ],
+			libraryTarget: 'var',
+		},
 	},
 	{
 		configName: 'base',
@@ -323,14 +415,18 @@ const config = [
 			'eventespresso-core-blocks': [
 				assets + 'blocks/index.js',
 			],
+			'eventespresso-core-blocks-frontend': [
+				assets + 'blocks/index-frontend.js',
+			],
 		},
 		externals: Object.assign( externals, {
-			'@eventespresso/editor': 'eejs.editor',
-			'@eventespresso/higher-order-components': 'eejs.hocComponents',
-			'@eventespresso/components': 'eejs.components',
+			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
 			'@eventespresso/value-objects': 'eejs.valueObjects',
+			'@eventespresso/higher-order-components': 'eejs.hocs',
+			'@eventespresso/components': 'eejs.components',
+			'@eventespresso/editor-hocs': 'eejs.editorHocs',
 		} ),
 		output: {
 			filename: 'ee-[name].[chunkhash].dist.js',
@@ -384,11 +480,14 @@ const config = [
 			],
 		},
 		externals: Object.assign( externals, {
-			'@eventespresso/editor': 'eejs.editor',
-			'@eventespresso/higher-order-components': 'eejs.hocComponents',
-			'@eventespresso/components': 'eejs.components',
+			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
+			'@eventespresso/value-objects': 'eejs.valueObjects',
+			'@eventespresso/higher-order-components': 'eejs.hocs',
+			'@eventespresso/components': 'eejs.components',
+			'@eventespresso/editor-hocs': 'eejs.editorHocs',
+			'@eventespresso/editor': 'eejs.editor',
 		} ),
 		output: {
 			filename: 'ee-[name].[chunkhash].dist.js',

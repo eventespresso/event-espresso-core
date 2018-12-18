@@ -12,7 +12,7 @@ use EventEspresso\tests\testcases\core\domain\entities\route_match\MultiRouteSpe
  *
  * @package EventEspresso\core\domain\entities\route_match\specifications
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.71.p
  */
 class WordPressPostsEditorTest extends MultiRouteSpecificationTestBase
 {
@@ -20,7 +20,7 @@ class WordPressPostsEditorTest extends MultiRouteSpecificationTestBase
     /**
      * @param array $request_params
      * @param array $server
-     * @since $VID:$
+     * @since 4.9.71.p
      * @return WordPressPostsEditor
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */
@@ -35,7 +35,7 @@ class WordPressPostsEditorTest extends MultiRouteSpecificationTestBase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.71.p
      * @throws \PHPUnit\Framework\AssertionFailedError
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
      */

@@ -276,7 +276,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets all the datetimes this ticket can be used for attending.
      * Unless otherwise specified, orders datetimes by start date.
      *
-     * @param array $query_params see EEM_Base::get_all()
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Datetime[]|EE_Base_Class[]
      * @throws \EE_Error
      */
@@ -408,7 +408,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Gets all the prices that combine to form the final price of this ticket
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Price[]|EE_Base_Class[]
      * @throws \EE_Error
      */
@@ -421,7 +421,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Gets all the ticket applicabilities (ie, relations between datetimes and tickets)
      *
-     * @param array $query_params see EEM_Base::get_all()
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Datetime_Ticket|EE_Base_Class[]
      * @throws \EE_Error
      */
@@ -1341,7 +1341,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Gets all the registrations for this ticket
      *
-     * @param array $query_params like EEM_Base::get_all's
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Registration[]|EE_Base_Class[]
      * @throws \EE_Error
      */
@@ -1383,7 +1383,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Counts the registrations for this ticket
      *
-     * @param array $query_params like EEM_Base::get_all's
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return int
      */
     public function count_registrations($query_params = array())

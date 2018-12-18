@@ -1,5 +1,6 @@
 module.exports = {
-	'extends': [
+	root: true,
+	extends: [
 		'./eslint/config.js',
 		'plugin:jest/recommended',
 	],
@@ -22,5 +23,11 @@ module.exports = {
 				browser: true,
 			},
 		},
+		{
+			files: [ '*.js' ],
+			rules: {
+				"react/react-in-jsx-scope": "off",
+			}
+		}
 	],
 };

@@ -4,6 +4,7 @@ import * as registrationModel from './registration';
 import * as statusModel from './status';
 import * as ticketModel from './ticket';
 import * as checkInModel from './checkin';
+import * as attendeeModel from './attendee';
 export {
 	checkInModel,
 	dateTimeModel,
@@ -11,4 +12,5 @@ export {
 	registrationModel,
 	statusModel,
 	ticketModel,
+	attendeeModel,
 };

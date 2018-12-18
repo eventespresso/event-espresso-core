@@ -27,11 +27,6 @@ module.exports = {
 		'react',
 		'jsx-a11y',
 	],
-	settings: {
-		react: {
-			pragma: 'wp',
-		},
-	},
 	rules: {
 		'array-bracket-spacing': [ 'error', 'always' ],
 		'brace-style': [ 'error', '1tbs' ],

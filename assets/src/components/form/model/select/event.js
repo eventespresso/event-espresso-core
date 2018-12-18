@@ -1,7 +1,7 @@
 /**
  * Internal imports
  */
-import ModelSelect from '../base/model-select';
+import createModelSelect from '../base/create-model-select';
 import { eventModel as model } from '../../../../data/model';
 import { withBaseControl } from '../../../../higher-order-components';
 
@@ -9,8 +9,6 @@ import { withBaseControl } from '../../../../higher-order-components';
  * External imports
  */
 import { __ } from '@eventespresso/i18n';
-import { Component } from '@wordpress/element';
-import PropTypes from 'prop-types';
 
 const optionsEntityMap = {
 	default: {
@@ -19,15 +17,9 @@ const optionsEntityMap = {
 	},
 };
 
-/**
- * Select Component for the Event Model.
- */
-export default class EventSelect extends Component {
-	state = {
-		modelName: model.MODEL_NAME,
-	};
-
-	static defaultProps = {
+const EventSelect = createModelSelect(
+	model.MODEL_NAME,
+	{
 		selectConfiguration: {
 			loadingMessage: () => __( 'Retrieving Events.', 'event_espresso' ),
 			noOptionsMessage: () => __(
@@ -40,35 +32,13 @@ export default class EventSelect extends Component {
 		getQueryString: model.getQueryString,
 		label: __( 'Select Event', 'event_espresso' ),
 		optionsEntityMap,
-	};
-
-	static propTypes = {
+	},
+	{
 		...model.queryDataTypes,
-		selectedEventId: PropTypes.oneOfType( [
-			PropTypes.number,
-			PropTypes.string,
-		] ),
-		onEventSelect: PropTypes.func,
-		label: PropTypes.string,
-	};
-
-	render() {
-		const { selectedEventId, onEventSelect } = this.props;
-		const selectOpts = {
-			selectConfiguration: {
-				defaultValue: selectedEventId,
-				onChange: onEventSelect,
-				...this.props.selectConfiguration,
-			},
-		};
-		const props = {
-			...this.props,
-			...selectOpts,
-			...this.state,
-		};
-		return <ModelSelect { ...props } />;
 	}
-}
+);
+
+export default EventSelect;
 
 /**
  * Enhanced EventSelect for the WordPress editor.

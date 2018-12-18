@@ -9,7 +9,7 @@ exports[`EditorStatusSelect() matches snapshot with default props 1`] = `
   >
     <label
       class="components-base-control__label"
-      for="inspector-select-status-control-1"
+      for="inspector-select-status-control-0"
     >
       Select Status
     </label>
@@ -28,7 +28,7 @@ exports[`StatusSelect() matches snapshot with default props plus provided status
   optionsEntityMap={
     Object {
       "default": Object {
-        "label": "STS_code",
+        "label": [Function],
         "value": "STS_ID",
       },
     }
@@ -38,7 +38,6 @@ exports[`StatusSelect() matches snapshot with default props plus provided status
       "limit": 25,
       "order": "ASC",
       "orderBy": "statusCode",
-      "statusType": "registration",
     }
   }
   selectConfiguration={
@@ -50,6 +49,5 @@ exports[`StatusSelect() matches snapshot with default props plus provided status
       "placeholder": "Select Status...",
     }
   }
-  statusType="registration"
 />
 `;

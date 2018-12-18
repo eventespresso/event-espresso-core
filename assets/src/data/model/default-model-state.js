@@ -2,26 +2,12 @@
  * External dependencies
  */
 import { mapValues } from 'lodash';
+import memoize from 'memize';
 
 /**
  * Internal dependencies
  */
 import { endpoints } from './endpoints.js';
-
-/**
- * Receives an object map of modelName to endpoint and maps that to a default
- * map of modelName to empty array.
- *
- * @param { Object } modelNameEndpoints
- * @return { Object } An object of { { modelName } : [] }
- */
-const mapToArrayValues = modelNameEndpoints => {
-	return mapValues( modelNameEndpoints,
-		function() {
-			return [];
-		},
-	);
-};
 
 /**
  * Receives an object map of modelName to endpoint and maps that to a default
@@ -38,12 +24,16 @@ const mapToObjectValues = modelNameEndpoints => {
 	);
 };
 
+const getDefaultModelEntitiesObject = memoize(
+	() => mapToObjectValues( endpoints )
+);
+
 /**
  * Provides the default state to be used by stores containing lists.
  *
  * @type { Object }
  */
-export const DEFAULT_LISTS_STATE = mapToArrayValues( endpoints );
+export const DEFAULT_LISTS_STATE = mapToObjectValues( endpoints );
 
 /**
  * Provides the default state to be used by the core store.
@@ -52,13 +42,22 @@ export const DEFAULT_LISTS_STATE = mapToArrayValues( endpoints );
  */
 export const DEFAULT_CORE_STATE = {
 	entities: {
-		...mapToObjectValues( endpoints ),
+		...getDefaultModelEntitiesObject(),
 	},
 	entityIds: {
 		...DEFAULT_LISTS_STATE,
 	},
-	dirty: {
-		...DEFAULT_LISTS_STATE,
-	},
 };
 
+/**
+ * Provides the default state to be used by the schema store.
+ * @type {Object}
+ */
+export const DEFAULT_SCHEMA_STATE = {
+	schema: {
+		...getDefaultModelEntitiesObject(),
+	},
+	factory: {
+		...getDefaultModelEntitiesObject(),
+	},
+};

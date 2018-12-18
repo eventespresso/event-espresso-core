@@ -3,6 +3,7 @@
         <td valign="top" class="use-ven-manager">
             <label><?php _e('Select from Venue Manager List', 'event_espresso'); ?></label>
             <?php echo $venue_selector; ?>
+            <?php echo $new_venue_link; ?>
             <?php foreach ($venues as $venue) :
                 $selected = $evt_venue_id == $venue->ID() ? '' : ' style="display:none;"';
                 $edit_url = EE_Admin_Page::add_query_args_and_nonce(

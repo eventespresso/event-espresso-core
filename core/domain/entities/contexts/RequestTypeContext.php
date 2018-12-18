@@ -72,6 +72,11 @@ class RequestTypeContext extends Context
     const IFRAME = 'iframe-request';
 
     /**
+     * indicates that the current request is for the WP REST API
+     */
+    const WP_API = 'wp-rest-api';
+
+    /**
      * indicates that the current request is a loopback sent from WP core to test for errors
      */
     const WP_SCRAPE = 'wordpress-scrape';
@@ -131,6 +136,7 @@ class RequestTypeContext extends Context
                     RequestTypeContext::FEED,
                     RequestTypeContext::FRONTEND,
                     RequestTypeContext::IFRAME,
+                    RequestTypeContext::WP_API,
                     RequestTypeContext::WP_SCRAPE,
                 )
             );

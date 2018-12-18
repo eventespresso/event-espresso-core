@@ -1,7 +1,12 @@
 /**
  * Internal dependencies
  */
-import { getItems, isRequestingItems } from '../selectors';
+import {
+	getItems,
+	getEntities,
+	isRequestingItems,
+	isRequestingEntities,
+} from '../selectors';
 
 /**
  * WordPress dependencies
@@ -18,30 +23,63 @@ jest.mock( '@wordpress/data', () => ( {
 	select: jest.fn().mockReturnValue( {} ),
 } ) );
 
-describe( 'getItems()', () => {
-	const state = {
-		event: {
-			'some_query_string=1': [ { id: 1 } ],
-		},
-	};
-	it( 'returns empty array when modelName or queryString not found in state',
-		() => {
-			expect( getItems( state, 'event', 'notPresent=0' ) ).toEqual( [] );
-			expect( getItems( state, 'invalid', 'some_query_string=1' ) )
-				.toEqual( [] );
-		},
-	);
-
-	it( 'returns value of model and queryString', () => {
-		expect( getItems( state, 'event', 'some_query_string=1' ) )
-			.toEqual( [ { id: 1 } ] );
+describe( 'testing getters', () => {
+	const testConditions = [
+		[
+			{ generic: { 'some_query_string=1': [ { id: 1 } ] } },
+			getItems,
+			'getItems()',
+			'identifier',
+			'generic',
+			[],
+			[ { id: 1 } ],
+		],
+		[
+			{ event: { 'some_query_string=1': { 1: {} } } },
+			getEntities,
+			'getEntities()',
+			'modelName',
+			'event',
+			new Map(),
+			{ 1: {} },
+		],
+	];
+	testConditions.forEach( ( [
+		state,
+		methodTested,
+		describeDescription,
+		testDescriptionPart,
+		mainStateIdentifier,
+		defaultEmptyValue,
+		expectedResponse,
+	] ) => {
+		describe( describeDescription, () => {
+			it( 'returns expected default value when ' + testDescriptionPart +
+				' or queryString not found in state', () => {
+				expect( methodTested(
+					state,
+					mainStateIdentifier,
+					'notPresent=1'
+				) ).toEqual( defaultEmptyValue );
+				expect( methodTested(
+					state,
+					'invalid',
+					'some_query_string=1'
+				) ).toEqual( defaultEmptyValue );
+			} );
+			it( 'returns value for ' + testDescriptionPart + ' and ' +
+				'queryString', () => {
+				expect( methodTested(
+					state,
+					mainStateIdentifier,
+					'some_query_string=1',
+				) ).toEqual( expectedResponse );
+			} );
+		} );
 	} );
 } );
 
-describe( 'isRequestingItems', () => {
-	const state = {
-		event: {},
-	};
+describe( 'isRequesting()', () => {
 	beforeAll( () => {
 		select( 'core/data' ).isResolving = jest.fn().mockReturnValue( false );
 	} );
@@ -49,44 +87,79 @@ describe( 'isRequestingItems', () => {
 		select( 'core/data' ).isResolving.mockRestore();
 	} );
 
-	function setIsResolving( isResolving ) {
+	function setIsResolving(
+		isResolving,
+		selectorKey = 'getItems',
+	) {
 		select( 'core/data' ).isResolving.mockImplementation(
 			( reducerKey, selectorName ) => (
 				isResolving &&
 				reducerKey === 'eventespresso/lists' &&
-				selectorName === 'getItems'
+				selectorName === selectorKey
 			),
 		);
 	}
+	const testConditions = [
+		[
+			'returns false if never requested or finished requesting',
+			false,
+			false,
+		],
+		[
+			'returns true if items resolution is started and not finished',
+			true,
+			true,
+		],
+	];
 
-	it( 'throws an exception when modelName is invalid', () => {
-		const t = () => {
-			isRequestingItems( state, 'invalid', 'some_query_string=1' );
+	describe( 'isRequestingItems()', () => {
+		const state = {
+			generic: {},
 		};
-		expect( t ).toThrowError( Exception );
+		it( 'throws an exception when identifier is invalid', () => {
+			const testCondition = () => {
+				isRequestingItems( state, 'invalid', 'some_query_string=1' );
+			};
+			expect( testCondition ).toThrowError( Exception );
+		} );
+		testConditions.forEach( ( [
+			description,
+			setResolving,
+			expectedResponse,
+		] ) => {
+			it( description, () => {
+				setIsResolving( setResolving );
+				expect( isRequestingItems(
+					state,
+					'generic',
+					'some_query_string=1'
+				) ).toBe( expectedResponse );
+			} );
+		} );
 	} );
-
-	it( 'returns false if never requested',
-		() => {
-			expect( isRequestingItems( state, 'event', 'some_query_string=1' ) )
-				.toBe( false );
-		},
-	);
-	it( 'returns false if items resolution for model is finished',
-		() => {
-			expect( isRequestingItems( state,
-				'event',
-				'some_query_string=1',
-			) )
-				.toBe( false );
-		},
-	);
-	it( 'returns true if items resolution for model is started', () => {
-		setIsResolving( true );
-		expect( isRequestingItems( state,
-			'event',
-			'some_query_string=1',
-		) )
-			.toBe( true );
+	describe( 'isRequestingEntities()', () => {
+		const state = {
+			event: {},
+		};
+		it( 'throws an exception when identifier is invalid', () => {
+			const testCondition = () => {
+				isRequestingItems( state, 'invalid', 'some_query_string=1' );
+			};
+			expect( testCondition ).toThrowError( Exception );
+		} );
+		testConditions.forEach( ( [
+			description,
+			setResolving,
+			expectedResponse,
+		] ) => {
+			it( description, () => {
+				setIsResolving( setResolving, 'getEntities' );
+				expect( isRequestingEntities(
+					state,
+					'event',
+					'some_query_string=1'
+				) ).toBe( expectedResponse );
+			} );
+		} );
 	} );
 } );
