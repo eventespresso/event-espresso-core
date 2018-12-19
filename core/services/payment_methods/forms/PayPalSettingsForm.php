@@ -104,7 +104,7 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
                     // translators: %1$s Error message received from PayPal
                     esc_html__(
                         // @codingStandardsIgnoreStart
-                        'Your PayPal credentials could not be verified. There was an error communicating with PayPal, it was %1$s',
+                        'Your PayPal credentials could not be verified. The following error occurred while communicating with PayPal: %1$s',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
                     ),
@@ -189,7 +189,7 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
                 sprintf(
                     // translators: $1$s HTML for a link to the help tab
                     esc_html__(
-                        'Are you sure this is your API username, not your login username?%1$s',
+                        'Are you sure this is your API username, not your login username? %1$s',
                         'event_espresso'
                     ),
                     $this->helpTabLink()
@@ -199,7 +199,7 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
                 sprintf(
                     // translators: $1$s HTML for a link to the help tab
                     esc_html__(
-                        'Are you sure this is your API password, not your login password.%1$s',
+                        'Are you sure this is your API password, not your login password? %1$s',
                         'event_espresso'
                     ),
                     $this->helpTabLink()
@@ -208,7 +208,7 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
             $this->get_input('api_signature')->add_validation_error(
                 sprintf(
                     // translators: $1$s HTML for a link to the help tab
-                    esc_html__('Please verify your API signature is correct.%1$s', 'event_espresso'),
+                    esc_html__('Please verify your API signature is correct. %1$s', 'event_espresso'),
                     $this->helpTabLink()
                 )
             );
