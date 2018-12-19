@@ -1169,7 +1169,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 $this->submit_button_text()
             );
         }
-        $info_html .= EEH_HTML::p(
+        $info_html .= EEH_HTML::div(
             apply_filters(
                 'FHEE__EE_SPCO_Reg_Step_Payment_Options___payment_method_billing_info__payment_method_info',
                 $payment_method_info
