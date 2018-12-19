@@ -31,7 +31,7 @@ class WordpressHeartbeat
     /**
      * WordpressHeartbeat constructor.
      *
-     * @param LoaderInterface $loader
+     * @param LoaderInterface  $loader
      * @param RequestInterface $request
      */
     public function __construct(
@@ -52,16 +52,15 @@ class WordpressHeartbeat
     public function resolveRoutes()
     {
         $screenID = $this->request->getRequestParam('screen_id');
-        $heartbeat_data = $this->request->getRequestParam('data', array());
+        $heartbeat_data = $this->request->getRequestParam('data', []);
         if ($screenID === 'espresso_events') {
             $this->loader->getShared(
                 'EventEspresso\core\domain\services\admin\ajax\EventEditorHeartbeat'
             );
-        } else if ($screenID === 'front'&& ! empty($heartbeat_data['espresso_thank_you_page'])) {
+        } elseif ($screenID === 'front' && ! empty($heartbeat_data['espresso_thank_you_page'])) {
             $this->loader->getShared(
                 'EventEspresso\core\domain\services\admin\ajax\ThankYouPageIpnMonitor'
             );
         }
     }
-
 }

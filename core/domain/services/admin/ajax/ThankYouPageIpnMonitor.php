@@ -31,9 +31,9 @@ class ThankYouPageIpnMonitor
      */
     private $transaction;
 
+
     /**
      * EventEditorHeartbeat constructor.
-     *
      */
     public function __construct()
     {
@@ -86,7 +86,7 @@ class ThankYouPageIpnMonitor
             : null;
         $response = $this->getTransactionDetails($txn_status, $response, $data);
         // no payment data yet?
-        if(isset($response['espresso_thank_you_page']['still_waiting'])) {
+        if (isset($response['espresso_thank_you_page']['still_waiting'])) {
             return $response;
         }
         // TXN is happening so let's get the payments now
@@ -99,8 +99,8 @@ class ThankYouPageIpnMonitor
 
 
     /**
-     * @param array  $response
-     * @param array  $data
+     * @param array $response
+     * @param array $data
      * @return array
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -141,8 +141,8 @@ class ThankYouPageIpnMonitor
 
     /**
      * @param string $txn_status
-     * @param array $response
-     * @param array $data
+     * @param array  $response
+     * @param array  $data
      * @return array
      * @throws EE_Error
      */

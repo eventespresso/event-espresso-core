@@ -37,7 +37,7 @@ class EventEditorHeartbeat
     {
         $this->domain = $domain;
         $this->environment = $environment;
-        if($this->domain->isCaffeinated()) {
+        if ($this->domain->isCaffeinated()) {
             add_filter('heartbeat_received', array($this, 'heartbeatResponse'), 10, 2);
         }
     }
