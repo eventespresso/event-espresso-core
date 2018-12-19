@@ -25,7 +25,7 @@ class SettingsForm extends PayPalSettingsForm
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \InvalidArgumentException
      */
-    public function __construct(array $options_array = array(), $help_tab_link)
+    public function __construct(array $options_array, $help_tab_link)
     {
         $options_array = array_replace_recursive(
             array(
