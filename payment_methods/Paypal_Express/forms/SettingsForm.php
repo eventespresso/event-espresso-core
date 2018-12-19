@@ -4,7 +4,10 @@ namespace EventEspresso\payment_methods\Paypal_Express\forms;
 
 use EE_Admin_File_Uploader_Input;
 use EE_Yes_No_Input;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\payment_methods\forms\PayPalSettingsForm;
+use InvalidArgumentException;
 
 /**
  * Class PayPal Express SettingsForm
@@ -21,9 +24,9 @@ class SettingsForm extends PayPalSettingsForm
      *
      * @param array $options_array
      * @param string $help_tab_link
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function __construct(array $options_array, $help_tab_link)
     {
