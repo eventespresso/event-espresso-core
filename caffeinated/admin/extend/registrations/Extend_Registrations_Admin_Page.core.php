@@ -150,6 +150,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                     'label'      => esc_html__('Check-In Records', 'event_espresso'),
                     'order'      => 15,
                     'persistent' => false,
+                    'url'        => '',  
                 ),
                 'list_table'    => 'EE_Registration_CheckIn_List_Table',
                 // 'help_tour' => array( 'Checkin_Toggle_View_Help_Tour' ),
