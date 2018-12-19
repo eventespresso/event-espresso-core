@@ -1,11 +1,11 @@
 === Event Espresso 4 Decaf - Event Registration Event Ticketing ===
 Contributors: eventespresso, sethshoultes, garthkoyle, pebblo, nerrad, mnelson4, lorenzocaum, charliespider, builtbynorthby
 Donate link: https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_donate_link&utm_content=Donate+link
-Tags: event registration, ticketing, online registration, ticket sales, event booking, event management, event manager, class booking, booking, class registration, conference registration, events calendar, events planner, event ticketing, registration, registration form, training, event, events, online event registration
+Tags: event registration, ticketing, online registration, ticket sales, event booking, class registration, conference registration, event ticketing, registration, event, events, online event registration
 Requires at least: 4.5
 Requires PHP Version: 5.4
 Tested up to: 5.0
-Stable tag: 4.9.72.decaf
+Stable tag: 4.9.76.decaf
 License: GPL2
 
 Manage online event registration and ticketing. Create event registration forms, sell tickets, collect money, send email, and SEO for events.
@@ -209,7 +209,7 @@ Yes, you can get access to the core files via the [Event Espresso 4 Github page]
 
 = Important Note =
 
-Backup your WordPress before installing any updates. Please see our article on [Backing Up your WordPress Site](https://eventespresso.com/wiki/how-to-back-up-your-site/?utm_source=wordpress_org&utm_medium=link&utm_content=changelog&utm_campaign=ee4_decaf_plugin_changelog_tab).
+Backup your database before installing any updates. Please see our article on [Backing Up your WordPress Site](https://eventespresso.com/wiki/how-to-back-up-your-site/?utm_source=wordpress_org&utm_medium=link&utm_content=changelog&utm_campaign=ee4_decaf_plugin_changelog_tab).
 
 **Please Note:** Due to the fact that the Event Espresso 4 Decaf and Caffeinated (paid) versions share the same codebase, the changelog presented here is based on the Caffeinated (paid) version of Event Espresso 4. Up to date changelog for the current premium version [can be found here](https://eventespresso.com/wiki/ee4-changelog/?utm_source=wordpress_org&utm_medium=link&utm_content=changelog&utm_campaign=ee4_decaf_plugin_changelog_tab).
 
@@ -222,6 +222,8 @@ Backup your WordPress website before installing any updates.
 == Other Notes ==
 
 **Developers, [find us on Github](http://evts.io/EE4_WP_Readme)**
+
+**Translators, find out how [you can translate Event Espresso](https://eventespresso.com/wiki/how-to-translate-event-espresso/?utm_source=wordpress_org)**
 
 **Use Cases**
 
