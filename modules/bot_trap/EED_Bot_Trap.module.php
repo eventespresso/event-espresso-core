@@ -302,7 +302,7 @@ class EED_Bot_Trap extends EED_Module
                             __LINE__
                         );
                     }
-                } else if ($bot_trap_settings_form->submission_error_message() !== '') {
+                } elseif ($bot_trap_settings_form->submission_error_message() !== '') {
                     EE_Error::add_error(
                         $bot_trap_settings_form->submission_error_message(),
                         __FILE__,
