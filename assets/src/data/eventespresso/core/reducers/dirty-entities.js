@@ -3,7 +3,7 @@
  */
 import { DEFAULT_CORE_STATE } from '@eventespresso/model';
 import { toInteger } from 'lodash';
-import { fromJS, List } from 'immutable';
+import { fromJS, Set } from 'immutable';
 import cuid from 'cuid';
 
 /**
@@ -22,7 +22,7 @@ const { entities: types } = ACTION_TYPES;
  * @return {Map} New state.
  */
 const addToState = ( state, modelName, entityId, existingEntities ) => {
-	existingEntities = existingEntities.push( entityId );
+	existingEntities = existingEntities.add( entityId );
 	return state.set( modelName, existingEntities );
 };
 
@@ -35,12 +35,12 @@ const addToState = ( state, modelName, entityId, existingEntities ) => {
  * @return {Map} new state or existing state if no change.
  */
 const removeFromState = ( state, modelName, entityId ) => {
-	let entityIds = state.get( modelName ) || List();
-	if ( ! entityIds.contains( entityId ) ) {
+	let entityIds = state.get( modelName ) || Set();
+	if ( ! entityIds.includes( entityId ) ) {
 		return state;
 	}
 	entityIds = entityIds.delete(
-		entityIds.indexOf( entityId )
+		entityIds.keyOf( entityId )
 	);
 	return entityIds.isEmpty() ?
 		state.delete( modelName ) :
@@ -59,21 +59,16 @@ const processAction = ( state, action ) => {
 	const entityId = cuid.isCuid( action.entityId ) ?
 		action.entityId :
 		toInteger( action.entityId );
-	const existingEntities = state.get( modelName ) || List();
+	const existingEntities = state.get( modelName ) || Set();
 
 	switch ( type ) {
 		case types.RECEIVE_DELETE_ENTITY_ID:
 		case types.RECEIVE_TRASH_ENTITY_ID:
-			if ( existingEntities.indexOf( entityId ) > -1 ) {
-				return state;
-			}
 			state = addToState( state, modelName, entityId, existingEntities );
 			break;
 		case types.REMOVE_DELETE_ENTITY_ID:
 		case types.REMOVE_TRASH_ENTITY_ID:
-			if ( existingEntities.indexOf( entityId ) > -1 ) {
-				state = removeFromState( state, modelName, entityId );
-			}
+			state = removeFromState( state, modelName, entityId );
 			break;
 	}
 	return state;

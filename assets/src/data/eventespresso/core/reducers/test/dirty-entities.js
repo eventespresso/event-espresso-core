@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { List } from 'immutable';
+import { Set } from 'immutable';
 
 /**
  * Internal dependencies
@@ -33,7 +33,7 @@ const testRun = ( actionType, methodTested, originalStateProperty ) => {
 					it( 'returns expected default data when there the entity ' +
 						'id already exists', () => {
 						const testState = originalState
-							.set( 'event', List.of( 10, 20 ) );
+							.set( 'event', Set.of( 10, 20 ) );
 						expect( methodTested( testState, receiveAction ) )
 							.toBe( testState );
 					} );
@@ -45,7 +45,7 @@ const testRun = ( actionType, methodTested, originalStateProperty ) => {
 						);
 						expect( result ).not.toBe( originalState );
 						expect( result.get( 'event' ) )
-							.toEqual( List.of( 10 ) );
+							.toEqual( Set.of( 10 ) );
 					} );
 				} );
 				break;
@@ -62,17 +62,17 @@ const testRun = ( actionType, methodTested, originalStateProperty ) => {
 						'it exists in the state', () => {
 						const testState = originalState.set(
 							'event',
-							List.of( 10, 20 )
+							Set.of( 10, 20 )
 						);
 						const result = methodTested( testState, deleteAction );
 						expect( result ).not.toBe( testState );
 						expect( result.get( 'event' ) )
-							.toEqual( List.of( 20 ) );
+							.toEqual( Set.of( 20 ) );
 					} );
 					it( 'also deletes the model property in the state if ' +
 						'removing the id results in an empty array', () => {
 						const testState = originalState
-							.set( 'event', List.of( 10 ) );
+							.set( 'event', Set.of( 10 ) );
 						const result = methodTested( testState, deleteAction );
 						expect( result ).not.toBe( testState );
 						expect( result.get( 'event' ) ).toBeUndefined();

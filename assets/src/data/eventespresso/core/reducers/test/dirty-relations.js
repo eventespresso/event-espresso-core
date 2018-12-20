@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Map, fromJS, withMutations } from 'immutable';
+import { Map, fromJS, Set } from 'immutable';
 
 /**
  * Internal dependencies
@@ -27,10 +27,10 @@ describe( 'dirty relations tests', () => {
 					Map().setIn(
 						[ 'datetimes', 20 ],
 						fromJS( {
-							event: { delete: [ 10 ] },
+							event: { delete: Set( [ 10 ] ) },
 							ticket: {
-								delete: [ 50 ],
-								add: [ 60 ],
+								delete: Set( [ 50 ] ),
+								add: Set( [ 60 ] ),
 							},
 						} ),
 					)
@@ -41,7 +41,7 @@ describe( 'dirty relations tests', () => {
 						'event',
 						Map().set(
 							10,
-							fromJS( { datetimes: [ 20 ] } ),
+							fromJS( { datetimes: Set( [ 20 ] ) } ),
 						)
 					)
 				);
@@ -49,7 +49,7 @@ describe( 'dirty relations tests', () => {
 					[ 'delete', 'ticket' ],
 					Map().set(
 						50,
-						fromJS( { datetimes: [ 20 ] } )
+						fromJS( { datetimes: Set( [ 20 ] ) } )
 					)
 				);
 				subState.set(
@@ -58,14 +58,14 @@ describe( 'dirty relations tests', () => {
 						'ticket',
 						Map().set(
 							60,
-							fromJS( { datetimes: [ 20 ] } )
+							fromJS( { datetimes: Set( [ 20 ] ) } )
 						)
 					)
 				);
 			} );
 		};
 		originalState = getState(
-			Map( mockStateForTests.dirty.relations )
+			mockStateForTests.getIn( [ 'dirty', 'relations' ] )
 		);
 	} );
 	describe( 'replaceOldRelationIdWithNewRelationId()', () => {
