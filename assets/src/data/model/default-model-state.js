@@ -56,7 +56,7 @@ export const DEFAULT_CORE_STATE = {
 		},
 		trash: {},
 		delete: {},
-	}
+	},
 };
 
 /**
