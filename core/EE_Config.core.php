@@ -3179,7 +3179,6 @@ class EE_Environment_Config extends EE_Config_Base
     {
         if (! empty($this->php->max_input_vars)
             && ($input_count >= $this->php->max_input_vars)
-            && (PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3 && PHP_RELEASE_VERSION >= 9)
         ) {
             return sprintf(
                 __(

@@ -37,6 +37,11 @@ class RequestTypeContext extends Context
     const AJAX_FRONT = 'frontend-ajax-request';
 
     /**
+     * indicates that the current request is for the WP Heartbeat
+     */
+    const AJAX_HEARTBEAT = 'admin-ajax-heartbeat';
+
+    /**
      * indicates that the current request is being made via AJAX, but is NOT for EE
      */
     const AJAX_OTHER = 'other-ajax-request';
@@ -129,6 +134,7 @@ class RequestTypeContext extends Context
                     RequestTypeContext::ADMIN,
                     RequestTypeContext::AJAX_ADMIN,
                     RequestTypeContext::AJAX_FRONT,
+                    RequestTypeContext::AJAX_HEARTBEAT,
                     RequestTypeContext::AJAX_OTHER,
                     RequestTypeContext::API,
                     RequestTypeContext::CLI,
