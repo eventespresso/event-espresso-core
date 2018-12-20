@@ -222,14 +222,15 @@ class CountrySubRegionDao
                 }
                 if (! in_array($abbrev, $existing_sub_regions, true)
                     && $this->state_model->insert(
-                    array(
-                        // STA_ID CNT_ISO STA_abbrev STA_name STA_active
-                        'CNT_ISO'    => $country->code,
-                        'STA_abbrev' => $abbrev,
-                        'STA_name'   => sanitize_text_field($sub_region->name),
-                        'STA_active' => 1,
+                        [
+                            // STA_ID CNT_ISO STA_abbrev STA_name STA_active
+                            'CNT_ISO'    => $country->code,
+                            'STA_abbrev' => $abbrev,
+                            'STA_name'   => sanitize_text_field($sub_region->name),
+                            'STA_active' => 1,
+                        ]
                     )
-                )) {
+                ) {
                     $results++;
                 }
             }
