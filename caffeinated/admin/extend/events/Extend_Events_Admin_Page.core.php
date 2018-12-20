@@ -202,8 +202,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         // legend item
         add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array($this, 'additional_legend_items'));
         add_action('admin_init', array($this, 'admin_init'));
-        // heartbeat stuff
-        add_filter('heartbeat_received', array($this, 'heartbeat_response'), 10, 2);
     }
 
 
@@ -226,29 +224,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 'remove_event_dt_msg'    => esc_html__('Remove this Event Time', 'event_espresso'),
             )
         );
-    }
-
-
-    /**
-     * This will be used to listen for any heartbeat data packages coming via the WordPress heartbeat API and handle
-     * accordingly.
-     *
-     * @param array $response The existing heartbeat response array.
-     * @param array $data     The incoming data package.
-     * @return array  possibly appended response.
-     */
-    public function heartbeat_response($response, $data)
-    {
-        /**
-         * check whether count of tickets is approaching the potential
-         * limits for the server.
-         */
-        if (! empty($data['input_count'])) {
-            $response['max_input_vars_check'] = EE_Registry::instance()->CFG->environment->max_input_vars_limit_check(
-                $data['input_count']
-            );
-        }
-        return $response;
     }
 
 
