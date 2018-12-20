@@ -94,6 +94,9 @@ class RequestTypeContextDetector
             if (filter_var($this->request->getRequestParam('ee_admin_ajax'), FILTER_VALIDATE_BOOLEAN)) {
                 return $this->factory->create(RequestTypeContext::AJAX_ADMIN);
             }
+            if ($this->request->getRequestParam('action') === 'heartbeat') {
+                return $this->factory->create(RequestTypeContext::AJAX_HEARTBEAT);
+            }
             return $this->factory->create(RequestTypeContext::AJAX_OTHER);
         }
         // Detect WP_Cron
