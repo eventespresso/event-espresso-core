@@ -9,7 +9,7 @@ import {
 /**
  * External Imports
  */
-import { Map, fromJS, List } from 'immutable';
+import { Map, fromJS, Set } from 'immutable';
 
 export const mockStateForTests = Map()
 	.set(
@@ -20,12 +20,14 @@ export const mockStateForTests = Map()
 				.set( 10, EventEntities.a )
 				.set( 20, EventEntities.b )
 				.set( 30, EventEntities.c )
+				.set( EventEntities.d.id, EventEntities.d )
 		).set(
 			'datetime',
 			Map()
 				.set( 52, DateTimeEntities.a )
 				.set( 53, DateTimeEntities.b )
 				.set( 54, DateTimeEntities.c )
+				.set( DateTimeEntities.d.id, DateTimeEntities.d )
 		)
 	)
 	.set(
@@ -36,9 +38,16 @@ export const mockStateForTests = Map()
 				Map().set(
 					'datetimes',
 					Map()
-						.set( 52, Map().set( 'event', List.of( 10 ) ) )
-						.set( 53, Map().set( 'event', List.of( 20 ) ) )
-						.set( 54, Map().set( 'event', List.of( 30 ) ) )
+						.set( 52, Map().set( 'event', Set.of( 10 ) ) )
+						.set( 53, Map().set( 'event', Set.of( 20 ) ) )
+						.set( 54, Map().set( 'event', Set.of( 30 ) ) )
+						.set(
+							DateTimeEntities.d.id,
+							Map().set(
+								'event',
+								Set.of( EventEntities.d.id )
+							)
+						)
 				)
 			)
 			.set(
@@ -46,9 +55,16 @@ export const mockStateForTests = Map()
 				Map().set(
 					'event',
 					Map()
-						.set( 10, Map().set( 'datetimes', List.of( 52 ) ) )
-						.set( 20, Map().set( 'datetimes', List.of( 53 ) ) )
-						.set( 30, Map().set( 'datetimes', List.of( 54 ) ) )
+						.set( 10, Map().set( 'datetimes', Set.of( 52 ) ) )
+						.set( 20, Map().set( 'datetimes', Set.of( 53 ) ) )
+						.set( 30, Map().set( 'datetimes', Set.of( 54 ) ) )
+						.set(
+							EventEntities.d.id,
+							Map().set(
+								'datetimes',
+								Set.of( DateTimeEntities.d.id )
+							)
+						)
 				)
 			)
 	).set(
