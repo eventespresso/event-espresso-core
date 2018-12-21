@@ -11,13 +11,10 @@ import {
 	isModelEntityFactoryOfModel,
 	isModelEntity,
 } from '@eventespresso/validators';
-import {
-	convertToObjectFromMap,
-	convertToMapFromObject,
-} from '@eventespresso/helpers';
+import { convertToMapFromObject } from '@eventespresso/helpers';
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import warning from 'warning';
-import { values, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal Imports
@@ -33,7 +30,7 @@ import {
 	receiveRelatedEntities,
 } from './../actions';
 import { keepExistingEntitiesInObject } from '../../base-model';
-import { REDUCER_KEY as CORE_REDUCER_KEY } from './../constants';
+import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
 
 /**
@@ -49,7 +46,7 @@ export function* getRelatedEntities( entity, relationModelName ) {
 	if ( ! isModelEntity( entity ) ) {
 		throw new InvalidModelEntity( '', entity );
 	}
-	const modelName = entity.modelName;
+	const modelName = entity.modelName.toLowerCase();
 	const pluralRelationName = pluralModelName( relationModelName );
 	const relationResourceProperty = pluralRelationName + 'Resource';
 	const relationEndpoint = entity[ relationResourceProperty ] ?
@@ -86,7 +83,7 @@ export function* getRelatedEntities( entity, relationModelName ) {
 		return [];
 	}
 
-	const factory = getFactoryByModel(
+	const factory = yield getFactoryByModel(
 		singularModelName( relationModelName )
 	);
 	if ( ! isModelEntityFactoryOfModel(
@@ -95,7 +92,11 @@ export function* getRelatedEntities( entity, relationModelName ) {
 	) ) {
 		return [];
 	}
-	let fullEntities = keyEntitiesByPrimaryKeyValue( relationEntities );
+
+	let fullEntities = keyEntitiesByPrimaryKeyValue(
+		singularModelName( relationModelName ),
+		relationEntities
+	);
 	fullEntities = createAndKeyEntitiesByPrimaryKeyValue(
 		factory,
 		fullEntities,
@@ -112,7 +113,11 @@ export function* getRelatedEntities( entity, relationModelName ) {
 
 	if ( ! isEmpty( existingEntities ) ) {
 		fullEntities = keepExistingEntitiesInObject(
-			existingEntities,
+			existingEntities.reduce(
+				( entitiesObject, entityObj ) =>
+					entitiesObject[ entityObj.id ] = entity,
+				{}
+			),
 			fullEntities,
 		);
 	}
@@ -124,7 +129,7 @@ export function* getRelatedEntities( entity, relationModelName ) {
 
 	yield receiveEntityRecords(
 		singularModelName( relationModelName ),
-		fullEntities
+		Array.from( fullEntities.values() )
 	);
 	yield receiveRelatedEntities(
 		modelName,
@@ -134,12 +139,12 @@ export function* getRelatedEntities( entity, relationModelName ) {
 	);
 	yield resolveGetRelatedEntities(
 		entity,
-		relationEntities,
+		fullEntities,
 		entityIds,
 	);
 	yield resolveGetEntityByIdForIds(
 		singularModelName( relationModelName ),
 		entityIds
 	);
-	return values( convertToObjectFromMap( fullEntities ) );
+	return Array.from( fullEntities.values() );
 }
