@@ -1076,7 +1076,6 @@ class Read_Test extends EE_REST_TestCase
      * Reproduces https://github.com/eventespresso/event-espresso-core/issues/845, which has been an often-recurring
      * regression.
      * @since $VID:$
-     * @group current
      */
     public function testHandleRequestGeAllTermRelationships()
     {
