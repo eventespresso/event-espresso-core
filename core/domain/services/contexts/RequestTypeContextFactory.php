@@ -65,6 +65,12 @@ class RequestTypeContextFactory implements RequestTypeContextFactoryInterface
                     'event_espresso'
                 );
                 break;
+            case RequestTypeContext::AJAX_HEARTBEAT:
+                $description = esc_html__(
+                    'The current request is for the WP Heartbeat',
+                    'event_espresso'
+                );
+                break;
             case RequestTypeContext::AJAX_OTHER:
                 $description = esc_html__(
                     'The current request is for non-EE related code via AJAX',
