@@ -845,6 +845,14 @@ class EE_Dependency_Map
                 'EEM_State'                                            => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\validators\JsonValidator' => EE_Dependency_Map::load_from_cache
             ),
+            'EventEspresso\core\domain\services\admin\ajax\WordpressHeartbeat' => array(
+                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+            ),
+            'EventEspresso\core\domain\services\admin\ajax\EventEditorHeartbeat' => array(
+                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
+                'EE_Environment_Config'            => EE_Dependency_Map::load_from_cache,
+            ),
         );
     }
 
@@ -960,8 +968,11 @@ class EE_Dependency_Map
             'EE_Organization_Config'                       => function () {
                 return EE_Config::instance()->organization;
             },
-            'EE_Network_Core_Config'                            => function () {
+            'EE_Network_Core_Config'                       => function () {
                 return EE_Network_Config::instance()->core;
+            },
+            'EE_Environment_Config'                        => function () {
+                return EE_Config::instance()->environment;
             },
         );
     }
