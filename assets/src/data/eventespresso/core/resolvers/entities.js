@@ -4,8 +4,6 @@
 import {
 	getPrimaryKey,
 	applyQueryString,
-	createAndKeyEntitiesByPrimaryKeyValue,
-	keyEntitiesByPrimaryKeyValue,
 } from '@eventespresso/model';
 import { isModelEntityFactoryOfModel } from '@eventespresso/validators';
 
@@ -26,18 +24,17 @@ import { receiveEntityRecords } from './../actions';
  */
 export function* getEntityById( modelName, entityId ) {
 	const primaryKeyForModel = getPrimaryKey( modelName );
-	let entity = yield fetch( {
+	const entity = yield fetch( {
 		path: applyQueryString(
 			modelName,
 			primaryKeyForModel + '=' + entityId
 		),
 	} );
-	entity = keyEntitiesByPrimaryKeyValue( modelName, [ entity ] );
 	const factory = yield getFactoryByModel( modelName );
 	if ( ! isModelEntityFactoryOfModel( factory, modelName ) ) {
 		return null;
 	}
-	const fullEntity = createAndKeyEntitiesByPrimaryKeyValue( factory, entity );
-	yield receiveEntityRecords( modelName, fullEntity );
-	return entity[ entityId ];
+	const fullEntity = factory.fromExisting( entity );
+	yield receiveEntityRecords( modelName, [ fullEntity ] );
+	return fullEntity;
 }
