@@ -289,7 +289,7 @@ class EED_Bot_Trap extends EED_Module
                 if ($bot_trap_settings_form->is_valid()) {
                     // grab validated data from form
                     $valid_data = $bot_trap_settings_form->valid_data();
-                    if (isset($valid_data['use_bot_trap'], $valid_data['use_encryption'])) {
+                    if (isset($valid_data['use_bot_trap'])) {
                         $EE_Registration_Config->use_bot_trap = $valid_data['use_bot_trap'];
                     } else {
                         EE_Error::add_error(
