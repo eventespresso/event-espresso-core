@@ -1,116 +1,145 @@
 /**
  * External imports
  */
-import { values, map, pick, keys } from 'lodash';
+import createSelector from 'rememo';
+import { normalizeEntityId } from '@eventespresso/helpers';
 
 /**
  * Returns all entity records for the given modelName in the current state.
- * An entity record is the complete object indexed by the primary key id.
- * @param {Object} state
+ * An entity record is the Map of entities (entityId => entity).
+ * @param {Immutable.Map} state
  * @param {string} modelName
- * @return {Object<Object>}|null} A collection of entity records for the given
- * model indexed by primary key value or null if none have been set in the
- * state.
+ * @return {Object<number|string, BaseEntity>}|null} A collection of entity
+ * records for the given model indexed by primary key value or null if none
+ * have been set in the state.
  */
-function getEntityRecordsForModel( state, modelName ) {
-	return state.entities[ modelName ] ?
-		state.entities[ modelName ] :
-		null;
-}
+const getEntityRecordsForModel = createSelector(
+	( state, modelName ) => {
+		return state.hasIn( [ 'entities', modelName ] ) ?
+			state.getIn( [ 'entities', modelName ] ).toJS() :
+			null;
+	},
+	( state, modelName ) => [ state.getIn( [ 'entities', modelName ] ) ]
+);
 
 /**
  * Returns all entities for the given model.
  * This differs from entityRecords, in that the entities are NOT indexed by
  * primary key value and an Array of entities is returned instead of an object.
  *
- * @param {Object} state
+ * @param {Immutable.Map} state
  * @param {string} modelName
  * @return {Array<BaseEntity>|null} An array of entities for the given model or
  * null if none have been set in the state.
  */
-function getEntitiesForModel( state, modelName ) {
-	return state.entities[ modelName ] ?
-		values( state.entities[ modelName ] ) :
-		null;
-}
+const getEntitiesForModel = createSelector(
+	( state, modelName ) => {
+		return state.hasIn( [ 'entities', modelName ] ) ?
+			state.getIn( [ 'entities', modelName ] ).valueSeq().toArray() :
+			[];
+	},
+	( state, modelName ) => [ state.getIn( [ 'entities', modelName ] ) ],
+);
 
 /**
  * Returns the model entity for the given model and id.
  *
- * @param {Object} state
+ * @param {Immutable.Map} state
  * @param {string} modelName
- * @param {string} entityId
- * @return {Object|null} Returns the model entity or null.
+ * @param {number|string} entityId
+ * @return {BaseEntity|null} Returns the model entity or null.
  */
 function getEntityById( state, modelName, entityId ) {
-	return state.entities[ modelName ] &&
-	state.entities[ modelName ][ String( entityId ) ] ?
-		state.entities[ modelName ][ String( entityId ) ] :
-		null;
+	return state.getIn( [
+		'entities',
+		modelName,
+		normalizeEntityId( entityId ),
+	] ) || null;
 }
 
 /**
  * Retrieves an array of model entities for the provided array of ids and model.
  *
- * @param {Object} state
+ * @param {Immutable.Map} state
  * @param {string} modelName
- * @param {Array<string>} entityIds
+ * @param {Array<string|number>} entityIds
  * @return {Array<BaseEntity>|null} Returns an array of model entities for the
  * provided ids or null if never been set.
  */
-function getEntitiesByIds( state, modelName, entityIds ) {
-	// ensure entityIds are strings for our key pick
-	entityIds = map( entityIds, ( id ) => String( id ) );
-	return state.entities[ modelName ] ?
-		values( pick( state.entities[ modelName ], entityIds ) ) :
-		null;
-}
+const getEntitiesByIds = createSelector(
+	( state, modelName, entityIds ) => {
+		const entities = [];
+		// ensure entityIds are strings for our key pick
+		if ( state.hasIn( [ 'entities', modelName ] ) ) {
+			entityIds.forEach( ( entityId ) => {
+				const entity = getEntityById( state, modelName, entityId );
+				if ( entity !== null ) {
+					entities.push( entity );
+				}
+			} );
+		}
+		return entities;
+	},
+	( state, modelName ) => [ state.getIn( [ 'entities', modelName ] ) ]
+);
 
 /**
  * Retrieves an array of entity ids queued for trash for the given model.
  *
- * @param {Object} state
+ * @param {Immutable.Map} state
  * @param {string} modelName
  * @return {Array<number>} An array of entity ids.
  */
-function getEntityIdsQueuedForTrash( state, modelName ) {
-	return state.dirty.delete[ modelName ] ?
-		state.dirty.delete[ modelName ] :
-		[];
-}
+const getEntityIdsQueuedForTrash = createSelector(
+	( state, modelName ) => {
+		return state.hasIn( [ 'dirty', 'trash', modelName ] ) ?
+			state.getIn( [ 'dirty', 'trash', modelName ] ).toArray() :
+			[];
+	},
+	( state, modelName ) => [ state.getIn( [ 'dirty', 'trash', modelName ] ) ]
+);
 
 /**
  * Retrieves an array of entity ids queued for delete for the given model.
  *
- * @param {Object} state
+ * @param {Immutable.Map} state
  * @param {string} modelName
- * @return {Array<number>} An array of entity ids.
+ * @return {Array<number|string>} An array of entity ids.
  */
-function getEntityIdsQueuedForDelete( state, modelName ) {
-	return state.dirty.trash[ modelName ] ?
-		state.dirty.trash[ modelName ] :
-		[];
-}
+const getEntityIdsQueuedForDelete = createSelector(
+	( state, modelName ) => {
+		return state.hasIn( [ 'dirty', 'delete', modelName ] ) ?
+			state.getIn( [ 'dirty', 'delete', modelName ] ).toArray() :
+			[];
+	},
+	( state, modelName ) => [ state.getIn( [ 'dirty', 'delete', modelName ] ) ]
+);
 
 /**
  * Retrieves all the models currently having ids queued for trash
  *
- * @param {Object} state
+ * @param {Immutable.Map} state
  * @return {Array<string>} An array of model names.
  */
-function getModelsQueuedForTrash( state ) {
-	return keys( state.dirty.trash );
-}
+const getModelsQueuedForTrash = createSelector(
+	( state ) => {
+		return state.getIn( [ 'dirty', 'trash' ] ).keySeq().toArray();
+	},
+	( state ) => [ state.getIn( [ 'dirty', 'trash' ] ) ]
+);
 
 /**
  * Retrieves all the models currently having ids queued for delete.
  *
- * @param {Object} state
+ * @param {Immutable.Map} state
  * @return {Array<string>} An array of model names.
  */
-function getModelsQueuedForDelete( state ) {
-	return keys( state.dirty.delete );
-}
+const getModelsQueuedForDelete = createSelector(
+	( state ) => {
+		return state.getIn( [ 'dirty', 'delete' ] ).keySeq().toArray();
+	},
+	( state ) => [ state.getIn( [ 'dirty', 'delete' ] ) ]
+);
 
 export {
 	getEntityRecordsForModel,
