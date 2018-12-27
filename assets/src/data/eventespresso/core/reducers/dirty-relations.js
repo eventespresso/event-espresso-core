@@ -54,7 +54,7 @@ const relationExistsAlready = ( state, action, relationMap ) => {
 	// be stored with the relation as the originating entity.
 	relationName = singularModelName( relationName );
 	modelName = pluralModelName( modelName );
-	const entityIds = state.get(
+	const entityIds = state.getIn(
 		[ queueType, relationName, relationEntityId, modelName ],
 	);
 	return entityIds ? entityIds.includes( entityId ) : false;
