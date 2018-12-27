@@ -123,7 +123,7 @@ class EEH_Sideloader extends EEH_Base
         if (is_wp_error($response) || 200 != wp_remote_retrieve_response_code($response)) {
             unlink($temp_file);
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                EE_Error::add_error(sprintf(esc_html__('Unable to upload the file.  Either the path given to upload from is incorrect, or something else happened.  Here is the response returned:<br />%s<br />Here is the path given: %s', 'event_espresso'), var_export($response, true), $this->_upload_from), __FILE__, __FUNCTION__, __LINE__);
+                EE_Error::add_error(sprintf(esc_html__('Unable to upload the file.  Either the path given to upload from is incorrect, or something else happened. Here is the path given: %s', 'event_espresso'), $this->_upload_from), __FILE__, __FUNCTION__, __LINE__);
             }
             return false;
         }
