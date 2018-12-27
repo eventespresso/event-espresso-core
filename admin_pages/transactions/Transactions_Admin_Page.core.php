@@ -158,6 +158,12 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'capability' => 'ee_delete_payments',
             ),
 
+            'espresso_recalculate_line_items' => array(
+                'func'       => 'recalculateLineItems',
+                'noheader'   => true,
+                'capability' => 'ee_edit_payments',
+            ),
+
         );
     }
 
@@ -963,6 +969,26 @@ class Transactions_Admin_Page extends EE_Admin_Page
                         'dashicons dashicons-email-alt'
                     )
                     : '';
+        }
+
+        if (EE_Registry::instance()->CAP->current_user_can(
+            'ee_edit_payments',
+            'espresso_transactions_recalculate_line_items'
+        )
+        ) {
+            $actions['recalculate_line_items'] = EEH_Template::get_button_or_link(
+                EE_Admin_Page::add_query_args_and_nonce(
+                    array(
+                        'action'      => 'espresso_recalculate_line_items',
+                        'TXN_ID'      => $this->_transaction->ID(),
+                        'redirect_to' => 'view_transaction',
+                    ),
+                    TXN_ADMIN_URL
+                ),
+                esc_html__(' Recalculate Taxes and Total', 'event_espresso'),
+                'button secondary-button',
+                'dashicons dashicons-update'
+            );
         }
 
         if ($primary_registration instanceof EE_Registration
@@ -2512,5 +2538,36 @@ class Transactions_Admin_Page extends EE_Admin_Page
             : $TXN->get_all($query_params);
 
         return $transactions;
+    }
+
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function recalculateLineItems()
+    {
+        $TXN_ID = ! empty($this->_req_data['TXN_ID']) ? absint($this->_req_data['TXN_ID']) : false;
+        /** @var EE_Transaction $transaction */
+        $transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
+        $total_line_item = $transaction->total_line_item(false);
+        if ($total_line_item instanceof EE_Line_Item) {
+            EEH_Line_Item::apply_taxes($total_line_item);
+        }
+        $this->_redirect_after_action(
+            false,
+            esc_html__('Transaction taxes and totals', 'event_espresso'),
+            esc_html__('recalculated', 'event_espresso'),
+            isset($this->_req_data['redirect_to'])
+                ? array(
+                'action' => $this->_req_data['redirect_to'],
+                'TXN_ID' => $this->_req_data['TXN_ID'],
+            )
+                : array(),
+            true
+        );
     }
 }
