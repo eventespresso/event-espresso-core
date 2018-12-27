@@ -1,11 +1,8 @@
 <?php
+
 namespace EventEspresso\modules\ticket_selector;
 
 use EventEspresso\core\libraries\iframe_display\IframeEmbedButton;
-
-defined( 'ABSPATH' ) || exit;
-
-
 
 /**
  * Class TicketSelectorIframeEmbedButton
@@ -23,11 +20,10 @@ class TicketSelectorIframeEmbedButton extends IframeEmbedButton
     public function __construct()
     {
         parent::__construct(
-            esc_html__( 'Ticket Selector', 'event_espresso' ),
+            esc_html__('Ticket Selector', 'event_espresso'),
             'ticket_selector'
         );
     }
-
 
 
     /**
@@ -38,9 +34,4 @@ class TicketSelectorIframeEmbedButton extends IframeEmbedButton
         // add button for iframe code to event editor.
         $this->addEventEditorIframeEmbedButtonFilter();
     }
-
-
-
 }
-// End of file TicketSelectorIframeEmbedButton.php
-// Location: EventEspresso\modules\ticket_selector/TicketSelectorIframeEmbedButton.php

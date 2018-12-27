@@ -1,6 +1,8 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  * Event Espresso
  * Event Registration and Management Plugin for WordPress
@@ -30,16 +32,17 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * @param bool   $bydb
      * @param string $timezone
      * @param array  $date_formats
+     * @throws EE_Error
      */
     protected function __construct($fieldValues = null, $bydb = false, $timezone = null, $date_formats = array())
     {
         if (! isset($fieldValues['ATT_full_name'])) {
-            $fname                        = isset($fieldValues['ATT_fname']) ? $fieldValues['ATT_fname'] . ' ' : '';
-            $lname                        = isset($fieldValues['ATT_lname']) ? $fieldValues['ATT_lname'] : '';
+            $fname = isset($fieldValues['ATT_fname']) ? $fieldValues['ATT_fname'] . ' ' : '';
+            $lname = isset($fieldValues['ATT_lname']) ? $fieldValues['ATT_lname'] : '';
             $fieldValues['ATT_full_name'] = $fname . $lname;
         }
         if (! isset($fieldValues['ATT_slug'])) {
-            //			$fieldValues['ATT_slug'] = sanitize_key(wp_generate_password(20));
+            // $fieldValues['ATT_slug'] = sanitize_key(wp_generate_password(20));
             $fieldValues['ATT_slug'] = sanitize_title($fieldValues['ATT_full_name']);
         }
         if (! isset($fieldValues['ATT_short_bio']) && isset($fieldValues['ATT_bio'])) {
@@ -56,6 +59,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * @param array  $date_formats            incoming date_formats in an array where the first value is the
      *                                        date_format and the second value is the time format
      * @return EE_Attendee
+     * @throws EE_Error
      */
     public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
     {
@@ -81,6 +85,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @access        public
      * @param string $fname
+     * @throws EE_Error
      */
     public function set_fname($fname = '')
     {
@@ -93,6 +98,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @access        public
      * @param string $lname
+     * @throws EE_Error
      */
     public function set_lname($lname = '')
     {
@@ -105,6 +111,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @access        public
      * @param string $address
+     * @throws EE_Error
      */
     public function set_address($address = '')
     {
@@ -117,6 +124,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @access        public
      * @param        string $address2
+     * @throws EE_Error
      */
     public function set_address2($address2 = '')
     {
@@ -129,6 +137,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @access        public
      * @param        string $city
+     * @throws EE_Error
      */
     public function set_city($city = '')
     {
@@ -141,6 +150,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @access        public
      * @param        int $STA_ID
+     * @throws EE_Error
      */
     public function set_state($STA_ID = 0)
     {
@@ -153,6 +163,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @access        public
      * @param        string $CNT_ISO
+     * @throws EE_Error
      */
     public function set_country($CNT_ISO = '')
     {
@@ -165,6 +176,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @access        public
      * @param        string $zip
+     * @throws EE_Error
      */
     public function set_zip($zip = '')
     {
@@ -177,6 +189,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @access        public
      * @param        string $email
+     * @throws EE_Error
      */
     public function set_email($email = '')
     {
@@ -189,6 +202,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @access        public
      * @param        string $phone
+     * @throws EE_Error
      */
     public function set_phone($phone = '')
     {
@@ -201,6 +215,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @access        public
      * @param        bool $ATT_deleted
+     * @throws EE_Error
      */
     public function set_deleted($ATT_deleted = false)
     {
@@ -213,6 +228,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @since 4.5.0
      * @return int
+     * @throws EE_Error
      */
     public function wp_user()
     {
@@ -225,6 +241,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @access        public
      * @return string
+     * @throws EE_Error
      */
     public function fname()
     {
@@ -236,6 +253,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * echoes out the attendee's first name
      *
      * @return void
+     * @throws EE_Error
      */
     public function e_full_name()
     {
@@ -248,6 +266,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @param bool $apply_html_entities
      * @return string
+     * @throws EE_Error
      */
     public function full_name($apply_html_entities = false)
     {
@@ -268,6 +287,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @param bool $apply_html_entities
      * @return string
+     * @throws EE_Error
      */
     public function ATT_full_name($apply_html_entities = false)
     {
@@ -282,6 +302,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @access        public
      * @return string
+     * @throws EE_Error
      */
     public function lname()
     {
@@ -296,10 +317,11 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * Eg, if the user only responded to state and country,
      * it would be array(0=>'Alabama',1=>'USA')
      * @return array
+     * @throws EE_Error
      */
     public function full_address_as_array()
     {
-        $full_address_array     = array();
+        $full_address_array = array();
         $initial_address_fields = array('ATT_address', 'ATT_address2', 'ATT_city',);
         foreach ($initial_address_fields as $address_field_name) {
             $address_fields_value = $this->get($address_field_name);
@@ -307,16 +329,16 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
                 $full_address_array[] = $address_fields_value;
             }
         }
-        //now handle state and country
+        // now handle state and country
         $state_obj = $this->state_obj();
-        if (! empty($state_obj)) {
+        if ($state_obj instanceof EE_State) {
             $full_address_array[] = $state_obj->name();
         }
         $country_obj = $this->country_obj();
-        if (! empty($country_obj)) {
+        if ($country_obj instanceof EE_Country) {
             $full_address_array[] = $country_obj->name();
         }
-        //lastly get the xip
+        // lastly get the xip
         $zip_value = $this->zip();
         if (! empty($zip_value)) {
             $full_address_array[] = $zip_value;
@@ -329,6 +351,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *        get Attendee Address
      *
      * @return string
+     * @throws EE_Error
      */
     public function address()
     {
@@ -340,6 +363,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *        get Attendee Address2
      *
      * @return string
+     * @throws EE_Error
      */
     public function address2()
     {
@@ -351,6 +375,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *        get Attendee City
      *
      * @return string
+     * @throws EE_Error
      */
     public function city()
     {
@@ -362,6 +387,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *        get Attendee State ID
      *
      * @return string
+     * @throws EE_Error
      */
     public function state_ID()
     {
@@ -371,6 +397,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
 
     /**
      * @return string
+     * @throws EE_Error
      */
     public function state_abbrev()
     {
@@ -382,6 +409,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * Gets the state set to this attendee
      *
      * @return EE_State
+     * @throws EE_Error
      */
     public function state_obj()
     {
@@ -393,6 +421,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * Returns the state's name, otherwise 'Unknown'
      *
      * @return string
+     * @throws EE_Error
      */
     public function state_name()
     {
@@ -410,14 +439,14 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * defaults to abbreviation
      *
      * @return string
+     * @throws EE_Error
      */
     public function state()
     {
         if (apply_filters('FHEE__EEI_Address__state__use_abbreviation', true, $this->state_obj())) {
             return $this->state_abbrev();
-        } else {
-            return $this->state_name();
         }
+        return $this->state_name();
     }
 
 
@@ -425,6 +454,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *    get Attendee Country ISO Code
      *
      * @return string
+     * @throws EE_Error
      */
     public function country_ID()
     {
@@ -436,6 +466,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * Gets country set for this attendee
      *
      * @return EE_Country
+     * @throws EE_Error
      */
     public function country_obj()
     {
@@ -447,14 +478,14 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * Returns the country's name if known, otherwise 'Unknown'
      *
      * @return string
+     * @throws EE_Error
      */
     public function country_name()
     {
         if ($this->country_obj()) {
             return $this->country_obj()->name();
-        } else {
-            return '';
         }
+        return '';
     }
 
 
@@ -464,14 +495,14 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * defaults to abbreviation
      *
      * @return string
+     * @throws EE_Error
      */
     public function country()
     {
         if (apply_filters('FHEE__EEI_Address__country__use_abbreviation', true, $this->country_obj())) {
             return $this->country_ID();
-        } else {
-            return $this->country_name();
         }
+        return $this->country_name();
     }
 
 
@@ -479,6 +510,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *        get Attendee Zip/Postal Code
      *
      * @return string
+     * @throws EE_Error
      */
     public function zip()
     {
@@ -490,6 +522,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *        get Attendee Email Address
      *
      * @return string
+     * @throws EE_Error
      */
     public function email()
     {
@@ -501,6 +534,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *        get Attendee Phone #
      *
      * @return string
+     * @throws EE_Error
      */
     public function phone()
     {
@@ -512,6 +546,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *    get deleted
      *
      * @return        bool
+     * @throws EE_Error
      */
     public function deleted()
     {
@@ -524,6 +559,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @param array $query_params
      * @return EE_Registration[]
+     * @throws EE_Error
      */
     public function get_registrations($query_params = array())
     {
@@ -535,11 +571,14 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * Gets the most recent registration of this attendee
      *
      * @return EE_Registration
+     * @throws EE_Error
      */
     public function get_most_recent_registration()
     {
-        return $this->get_first_related('Registration',
-            array('order_by' => array('REG_date' => 'DESC'))); //null, 'REG_date', 'DESC', '=', 'OBJECT_K');
+        return $this->get_first_related(
+            'Registration',
+            array('order_by' => array('REG_date' => 'DESC'))
+        ); // null, 'REG_date', 'DESC', '=', 'OBJECT_K');
     }
 
 
@@ -548,11 +587,14 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @param int $event_id
      * @return EE_Registration
+     * @throws EE_Error
      */
     public function get_most_recent_registration_for_event($event_id)
     {
-        return $this->get_first_related('Registration',
-            array(array('EVT_ID' => $event_id), 'order_by' => array('REG_date' => 'DESC')));//, '=', 'OBJECT_K' );
+        return $this->get_first_related(
+            'Registration',
+            array(array('EVT_ID' => $event_id), 'order_by' => array('REG_date' => 'DESC'))
+        );
     }
 
 
@@ -560,6 +602,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * returns any events attached to this attendee ($_Event property);
      *
      * @return array
+     * @throws EE_Error
      */
     public function events()
     {
@@ -574,6 +617,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @param EE_Payment_Method $payment_method the _gateway_name property on the gateway class
      * @return EE_Form_Section_Proper|null
+     * @throws EE_Error
      */
     public function billing_info_for_payment_method($payment_method)
     {
@@ -586,9 +630,21 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
             return null;
         }
         $billing_form = $pm_type->billing_form();
+        // double-check the form isn't totally hidden, in which case pretend there is no form
+        $form_totally_hidden = true;
+        foreach ($billing_form->inputs_in_subsections() as $input) {
+            if (! $input->get_display_strategy() instanceof EE_Hidden_Display_Strategy) {
+                $form_totally_hidden = false;
+                break;
+            }
+        }
+        if ($form_totally_hidden) {
+            return null;
+        }
         if ($billing_form instanceof EE_Form_Section_Proper) {
             $billing_form->receive_form_submission(array($billing_form->name() => $billing_info), false);
         }
+
         return $billing_form;
     }
 
@@ -599,14 +655,14 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      *
      * @param EE_Payment_Method $payment_method
      * @return string
+     * @throws EE_Error
      */
     public function get_billing_info_postmeta_name($payment_method)
     {
         if ($payment_method->type_obj() instanceof EE_PMT_Base) {
             return 'billing_info_' . $payment_method->type_obj()->system_name();
-        } else {
-            return null;
         }
+        return null;
     }
 
 
@@ -617,6 +673,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * @param EE_Billing_Attendee_Info_Form $billing_form
      * @param EE_Payment_Method             $payment_method
      * @return boolean
+     * @throws EE_Error
      */
     public function save_and_clean_billing_info_for_payment_method($billing_form, $payment_method)
     {
@@ -625,8 +682,11 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
             return false;
         }
         $billing_form->clean_sensitive_data();
-        return update_post_meta($this->ID(), $this->get_billing_info_postmeta_name($payment_method),
-            $billing_form->input_values(true));
+        return update_post_meta(
+            $this->ID(),
+            $this->get_billing_info_postmeta_name($payment_method),
+            $billing_form->input_values(true)
+        );
     }
 
 
@@ -634,6 +694,11 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * Return the link to the admin details for the object.
      *
      * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_admin_details_link()
     {
@@ -645,6 +710,11 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * Returns the link to the editor for the object.  Sometimes this is the same as the details.
      *
      * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_admin_edit_link()
     {
@@ -664,6 +734,11 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * Returns the link to a settings page for the object.
      *
      * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_admin_settings_link()
     {
@@ -675,6 +750,11 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * Returns the link to the "overview" for the object (typically the "list table" view).
      *
      * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_admin_overview_link()
     {
@@ -687,9 +767,4 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
             admin_url('admin.php')
         );
     }
-
-
 }
-
-/* End of file EE_Attendee.class.php */
-/* Location: /includes/classes/EE_Attendee.class.php */

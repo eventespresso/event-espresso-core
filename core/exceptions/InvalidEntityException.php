@@ -2,10 +2,8 @@
 
 namespace EventEspresso\core\exceptions;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
+use Exception;
+use InvalidArgumentException;
 
 /**
  * Class InvalidEntityException
@@ -15,19 +13,19 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class InvalidEntityException extends \InvalidArgumentException
+class InvalidEntityException extends InvalidArgumentException
 {
 
     /**
-     * InvalidInterfaceException constructor.
+     * InvalidEntityException constructor.
      *
-     * @param string     $actual   classname of what we got
-     * @param string     $expected classname of the entity we wanted
-     * @param string     $message
-     * @param int        $code
-     * @param \Exception $previous
+     * @param mixed     $actual   the actual object (or thing) we got
+     * @param string    $expected classname of the entity we wanted
+     * @param string    $message
+     * @param int       $code
+     * @param Exception $previous
      */
-    public function __construct($actual, $expected, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct($actual, $expected, $message = '', $code = 0, Exception $previous = null)
     {
         if (empty($message)) {
             $message = sprintf(
@@ -44,7 +42,4 @@ class InvalidEntityException extends \InvalidArgumentException
         }
         parent::__construct($message, $code, $previous);
     }
-
 }
-// End of file InvalidEntityException.php
-// Location: /InvalidEntityException.php

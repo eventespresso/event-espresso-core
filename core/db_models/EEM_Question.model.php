@@ -1,10 +1,4 @@
-<?php if (!defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-require_once(EE_MODELS . 'EEM_Soft_Delete_Base.model.php');
-require_once(EE_CLASSES . 'EE_Question.class.php');
-
-
+<?php
 /**
  *
  * Question Model
@@ -103,7 +97,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
 
 
     // private instance of the Attendee object
-    protected static $_instance = NULL;
+    protected static $_instance = null;
 
 
     /**
@@ -111,7 +105,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
      *
      * @param null $timezone
      */
-    protected function __construct($timezone = NULL)
+    protected function __construct($timezone = null)
     {
         $this->singular_item = __('Question', 'event_espresso');
         $this->plural_item = __('Questions', 'event_espresso');
@@ -137,7 +131,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
             )
         );
         $this->_question_descriptions = apply_filters(
-            'FHEE__EEM_Question__construct__allowed_question_types',
+            'FHEE__EEM_Question__construct__question_descriptions',
             array(
                 EEM_Question::QST_type_text => __('A single line text input field', 'event_espresso'),
                 EEM_Question::QST_type_textarea => __('A multi line text input field', 'event_espresso'),
@@ -157,7 +151,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
                 EEM_Question::QST_type_multi_select => __('A dropdown that allows multiple selections', 'event_espresso')
             )
         );
-        $this->_question_type_categories = (array)apply_filters(
+        $this->_question_type_categories = (array) apply_filters(
             'FHEE__EEM_Question__construct__question_type_categories',
             array(
                 'text' => array(
@@ -215,14 +209,14 @@ class EEM_Question extends EEM_Soft_Delete_Base
             'Question_Option' => new EE_Has_Many_Relation(),
             'Answer' => new EE_Has_Many_Relation(),
             'WP_User' => new EE_Belongs_To_Relation(),
-            //for QST_order column
+            // for QST_order column
             'Question_Group_Question' => new EE_Has_Many_Relation()
         );
-        //this model is generally available for reading
-        $this->_cap_restriction_generators[EEM_Base::caps_read] = new EE_Restriction_Generator_Public();
-        $this->_cap_restriction_generators[EEM_Base::caps_read_admin] = new EE_Restriction_Generator_Reg_Form('QST_system');
-        $this->_cap_restriction_generators[EEM_Base::caps_edit] = new EE_Restriction_Generator_Reg_Form('QST_system');
-        $this->_cap_restriction_generators[EEM_Base::caps_delete] = new EE_Restriction_Generator_Reg_Form('QST_system');
+        // this model is generally available for reading
+        $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Reg_Form('QST_system');
+        $this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Reg_Form('QST_system');
+        $this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Reg_Form('QST_system');
         parent::__construct($timezone);
     }
 
@@ -262,10 +256,10 @@ class EEM_Question extends EEM_Soft_Delete_Base
      */
     public function question_type_is_in_category($question_type, $category)
     {
-        if (!isset($this->_question_type_categories[$category])) {
+        if (!isset($this->_question_type_categories[ $category ])) {
             return false;
         }
-        return in_array($question_type, $this->_question_type_categories[$category]);
+        return in_array($question_type, $this->_question_type_categories[ $category ]);
     }
 
 
@@ -276,8 +270,8 @@ class EEM_Question extends EEM_Soft_Delete_Base
      */
     public function question_types_in_category($category)
     {
-        if (isset($this->_question_type_categories[$category])) {
-            return $this->_question_type_categories[$category];
+        if (isset($this->_question_type_categories[ $category ])) {
+            return $this->_question_type_categories[ $category ];
         }
         return array();
     }
@@ -416,8 +410,8 @@ class EEM_Question extends EEM_Soft_Delete_Base
     public function absolute_max_for_system_question($system_question_value)
     {
         $maxes = $this->system_question_maxes();
-        if (isset($maxes[$system_question_value])) {
-            return $maxes[$system_question_value];
+        if (isset($maxes[ $system_question_value ])) {
+            return $maxes[ $system_question_value ];
         } else {
             return EE_INF;
         }
@@ -439,10 +433,6 @@ class EEM_Question extends EEM_Soft_Delete_Base
      */
     public function questionTypesWithMaxLength()
     {
-        return (array)$this->question_types_with_max_lengh;
+        return (array) $this->question_types_with_max_lengh;
     }
-
-
 }
-// End of file EEM_Question.model.php
-// Location: /includes/models/EEM_Question.model.php

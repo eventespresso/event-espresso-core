@@ -1,11 +1,8 @@
 <?php
+
 namespace EventEspresso\modules\ticket_selector;
 
 use EE_Error;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class TicketSelectorRowSimple
@@ -13,7 +10,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- *
  */
 class TicketSelectorRowSimple extends TicketSelectorRow
 {
@@ -30,18 +26,14 @@ class TicketSelectorRowSimple extends TicketSelectorRow
     }
 
 
-
     public function getTicketDescription()
     {
         $filtered_row_content = $this->getFilteredRowContents();
-        if($filtered_row_content !== false) {
+        if ($filtered_row_content !== false) {
             remove_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
             add_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_false');
             return $filtered_row_content;
         }
         return $this->ticket->description();
     }
-
 }
-// End of file TicketSelectorRowSimple.php
-// Location: EventEspresso\modules\ticket_selector/TicketSelectorRowSimple.php

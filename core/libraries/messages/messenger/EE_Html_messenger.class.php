@@ -1,8 +1,4 @@
 <?php
-if (!defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
-
 
 /**
  * EE_Html_messenger class
@@ -41,7 +37,7 @@ class EE_Html_messenger extends EE_messenger
      */
     public function __construct()
     {
-        //set properties
+        // set properties
         $this->name = 'html';
         $this->description = __('This messenger outputs a message to a browser for display.', 'event_espresso');
         $this->label = array(
@@ -223,8 +219,7 @@ class EE_Html_messenger extends EE_messenger
         $type,
         $variation,
         $skip_filters
-    )
-    {
+    ) {
         $variation = $template_pack->get_variation(
             $this->name,
             $message_type_name,
@@ -283,7 +278,7 @@ class EE_Html_messenger extends EE_messenger
                 'format' => '%s',
             ),
             'content' => '',
-            //left empty b/c it is in the "extra array" but messenger still needs needs to know this is a field.
+            // left empty b/c it is in the "extra array" but messenger still needs needs to know this is a field.
             'extra' => array(
                 'content' => array(
                     'main' => array(
@@ -319,9 +314,9 @@ class EE_Html_messenger extends EE_messenger
                     'ticket_line_item_no_pms' => array(
                         'input' => 'textarea',
                         'label' => '[TICKET_LINE_ITEM_LIST] <br>' . __(
-                                'Ticket Line Item List with no Price Modifiers',
-                                'event_espresso'
-                            ),
+                            'Ticket Line Item List with no Price Modifiers',
+                            'event_espresso'
+                        ),
                         'type' => 'string',
                         'required' => false,
                         'validation' => true,
@@ -333,9 +328,9 @@ class EE_Html_messenger extends EE_messenger
                     'ticket_line_item_pms' => array(
                         'input' => 'textarea',
                         'label' => '[TICKET_LINE_ITEM_LIST] <br>' . __(
-                                'Ticket Line Item List with Price Modifiers',
-                                'event_espresso'
-                            ),
+                            'Ticket Line Item List with Price Modifiers',
+                            'event_espresso'
+                        ),
                         'type' => 'string',
                         'required' => false,
                         'validation' => true,
@@ -499,7 +494,7 @@ class EE_Html_messenger extends EE_messenger
         remove_all_actions('wp_enqueue_scripts');
         global $wp_scripts, $wp_styles;
         $wp_scripts = $wp_styles = array();
-        //just add back in wp_enqueue_scripts and wp_print_footer_scripts cause that's all we want to load.
+        // just add back in wp_enqueue_scripts and wp_print_footer_scripts cause that's all we want to load.
         add_action('wp_footer', 'wp_print_footer_scripts');
         add_action('wp_print_footer_scripts', '_wp_footer_scripts');
         add_action('wp_head', 'wp_enqueue_scripts');
@@ -516,7 +511,7 @@ class EE_Html_messenger extends EE_messenger
     protected function _get_main_template($preview = false)
     {
         $wrapper_template = $this->_tmp_pack->get_wrapper($this->name, 'main');
-        //include message type as a template arg
+        // include message type as a template arg
         $this->_template_args['message_type'] = $this->_incoming_message_type;
         return EEH_Template::display_template($wrapper_template, $this->_template_args, true);
     }
@@ -548,20 +543,17 @@ class EE_Html_messenger extends EE_messenger
         $content = '',
         $content_again = '',
         EE_message_type $incoming_message_type
-    )
-    {
-        if (
-            ($incoming_message_type->name === 'invoice' || $incoming_message_type->name === 'receipt')
+    ) {
+        if (($incoming_message_type->name === 'invoice' || $incoming_message_type->name === 'receipt')
             && apply_filters('FHEE_EE_Html_messenger__add_powered_by_credit_link_to_receipt_and_invoice', true)
         ) {
             $content .= \EEH_Template::powered_by_event_espresso(
-                    'aln-cntr',
-                    '',
-                    array('utm_content' => 'messages_system')
-                )
+                'aln-cntr',
+                '',
+                array('utm_content' => 'messages_system')
+            )
                 . EEH_HTML::div(EEH_HTML::p('&nbsp;'));
         }
         return $content;
     }
-
 }

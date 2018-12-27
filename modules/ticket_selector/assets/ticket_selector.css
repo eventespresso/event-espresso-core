@@ -12,6 +12,11 @@
     width: 99%;
 }
 
+.tkt-slctr-tbl th,
+.tkt-slctr-tbl td { 
+	word-break: normal;
+}
+
 /* span.ui-icon { float:none !important; }*/
 .icon-right span.ui-icon {
 	margin: 0.7em 0.3em 0 0;
@@ -318,6 +323,43 @@
 	margin: 0 0 1em;
 }
 
+/* accessibility styles */
+/* Text meant only for screen readers. */
+.ee-a11y-screen-reader-text {
+	border: 0;
+	clip: rect(1px, 1px, 1px, 1px);
+	clip-path: inset(50%);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute !important;
+	width: 1px;
+	word-wrap: normal !important; /* Many screen reader and browser combinations announce broken words as they would appear visually. */
+}
+
+.ee-a11y-screen-reader-text:focus {
+	background-color: #f1f1f1;
+	border-radius: 3px;
+	box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
+	clip: auto !important;
+	clip-path: none;
+	color: #21759b;
+	display: block;
+	font-size: 14px;
+	font-size: 0.875rem;
+	font-weight: bold;
+	height: auto;
+	left: 5px;
+	line-height: normal;
+	padding: 15px 23px 14px;
+	text-decoration: none;
+	top: 5px;
+	width: auto;
+	z-index: 100000;
+	/* Above WP toolbar. */
+}
+
 /* responsive styles */
 
 .tckt-slctr-tkt-details-tbl td:before {
@@ -434,5 +476,26 @@
 		table-layout: fixed;
 		display: table;
 		font-size: 1em;
+	}
+}
+
+@media (max-width: 400px) {
+ 
+	.ticket-selector-tbl-qty-slct { 
+		width: auto; 
+		padding: 0; 
+	} 
+	.tkt-slctr-tbl {
+		display: block;
+		overflow-x: auto;
+	}
+	.tkt-slctr-tbl th.ee-ticket-selector-ticket-details-th,
+	.tkt-slctr-tbl td.tckt-slctr-tbl-td-name {
+		white-space: normal;
+	}
+	.tkt-slctr-tbl thead th,
+	.tckt-slctr-tbl-tr > td {
+		padding-left: 3px;
+		padding-right: 3px;
 	}
 }

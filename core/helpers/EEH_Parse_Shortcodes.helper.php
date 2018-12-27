@@ -1,19 +1,6 @@
 <?php
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
-
 /**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package            Event Espresso
- * @ author                Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                http://www.eventespresso.com
- * @ version            4.0
- * ------------------------------------------------------------------------
  * EEH_Parse_Shortcodes
  * Utility class for parsing EE shortcodes in given data.
  *
@@ -184,9 +171,9 @@ class EEH_Parse_Shortcodes
      */
     private function _parse_message_template()
     {
-        //now let's get a list of shortcodes that are found in the given template
+        // now let's get a list of shortcodes that are found in the given template
         preg_match_all('/(\[.+?\])/', $this->_template, $matches);
-        $shortcodes = (array)$matches[0]; //this should be an array of shortcodes in the template string.
+        $shortcodes = (array) $matches[0]; // this should be an array of shortcodes in the template string.
 
         $matched_code = array();
         $sc_values    = array();
@@ -210,33 +197,34 @@ class EEH_Parse_Shortcodes
             '[PAYMENT_LIST_*]',
         );
 
-        $list_type_shortcodes = apply_filters('FHEE__EEH_Parse_Shortcodes___parse_message_template__list_type_shortcodes',
-            $list_type_shortcodes);
+        $list_type_shortcodes = apply_filters(
+            'FHEE__EEH_Parse_Shortcodes___parse_message_template__list_type_shortcodes',
+            $list_type_shortcodes
+        );
 
-        //now lets go ahead and loop through our parsers for each shortcode and setup the values
+        // now lets go ahead and loop through our parsers for each shortcode and setup the values
         foreach ($shortcodes as $shortcode) {
-
             foreach ($this->_shortcode_objs as $sc_obj) {
                 if ($sc_obj instanceof EE_Shortcodes) {
-                    //we need to setup any dynamic shortcodes so that they work with the array_key_exists
+                    // we need to setup any dynamic shortcodes so that they work with the array_key_exists
                     preg_match_all('/(\[[A-Za-z0-9\_]+_\*)/', $shortcode, $matches);
                     $sc_to_verify = ! empty($matches[0]) ? $matches[0][0] . ']' : $shortcode;
 
                     if (! array_key_exists($sc_to_verify, $sc_obj->get_shortcodes())) {
-                        continue; //the given shortcode isn't in this object
+                        continue; // the given shortcode isn't in this object
                     }
 
-                    //if this isn't  a "list" type shortcode then we'll send along the data vanilla instead of in an array.
+                    // if this isn't  a "list" type shortcode then we'll send along the data vanilla instead of in an array.
                     if (! in_array($sc_to_verify, $list_type_shortcodes)) {
                         $data_send = ! is_object($this->_data) && isset($this->_data['data']) ? $this->_data['data'] : $this->_data;
                     } else {
                         $data_send = $this->_data;
                     }
 
-                    //is this a conditional type shortcode?  If it is then we actually parse the template here.
+                    // is this a conditional type shortcode?  If it is then we actually parse the template here.
                     if ($this->_is_conditional_shortcode($shortcode)) {
-                        //most shortcode parsers are not going to have a match for this shortcode and will return an
-                        //empty string so we need to make sure that we're only replacing the template when there is a non empty string.
+                        // most shortcode parsers are not going to have a match for this shortcode and will return an
+                        // empty string so we need to make sure that we're only replacing the template when there is a non empty string.
                         $parsed = $sc_obj->parser($shortcode, $data_send, $this->_data['extra_data']);
                         if ($parsed) {
                             $this->_template = $parsed;
@@ -251,7 +239,7 @@ class EEH_Parse_Shortcodes
             }
         }
 
-        //now we've got parsed values for all the shortcodes in the template so we can go ahead and swap the shortcodes out.
+        // now we've got parsed values for all the shortcodes in the template so we can go ahead and swap the shortcodes out.
         $parsed = str_replace(array_values($matched_code), array_values($sc_values), $this->_template);
         return $parsed;
     }
@@ -289,8 +277,4 @@ class EEH_Parse_Shortcodes
             }
         }
     }
-
-
-} //end EEH_Parse_Shortcodes
-
-// end of file:	includes/classes/EEH_Parse_Shortcodes.class.php
+}

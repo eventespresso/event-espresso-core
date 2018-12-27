@@ -1,7 +1,4 @@
-<?php if (!defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
+<?php
 /**
  *
  * EEH_Line_Item
@@ -23,20 +20,17 @@
 class EEH_Line_Item
 {
 
-    //other functions: cancel ticket purchase
-    //delete ticket purchase
-    //add promotion
+    // other functions: cancel ticket purchase
+    // delete ticket purchase
+    // add promotion
 
 
     /**
-     * Adds a simple item ( unrelated to any other model object) to the total line item
-     * in the correct spot in the line item tree (also verifying it doesn't add a duplicate based on the LIN_code)
-     * beneath the pre-tax-total (alongside event subtotals).
-     * Automatically re-calculates the line item totals and updates the related transaction. But
-     * DOES NOT automatically upgrade the transaction's registrations' final prices (which
-     * should probably change because of this).
-     * You should call EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
-     * after using this, to keep the registration final prices in-sync with the transaction's total.
+     * Adds a simple item (unrelated to any other model object) to the provided PARENT line item.
+     * Does NOT automatically re-calculate the line item totals or update the related transaction.
+     * You should call recalculate_total_including_taxes() on the grant total line item after this
+     * to update the subtotals, and EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
+     * to keep the registration final prices in-sync with the transaction's total.
      *
      * @param EE_Line_Item $parent_line_item
      * @param string $name
@@ -48,7 +42,7 @@ class EEH_Line_Item
      * @return boolean success
      * @throws \EE_Error
      */
-    public static function add_unrelated_item(EE_Line_Item $parent_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE, $code = NULL)
+    public static function add_unrelated_item(EE_Line_Item $parent_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = false, $code = null)
     {
         $items_subtotal = self::get_pre_tax_subtotal($parent_line_item);
         $line_item = EE_Line_Item::new_instance(array(
@@ -59,7 +53,7 @@ class EEH_Line_Item
             'LIN_percent' => null,
             'LIN_is_taxable' => $taxable,
             'LIN_order' => $items_subtotal instanceof EE_Line_Item ? count($items_subtotal->children()) : 0,
-            'LIN_total' => (float)$unit_price * (int)$quantity,
+            'LIN_total' => (float) $unit_price * (int) $quantity,
             'LIN_type' => EEM_Line_Item::type_line_item,
             'LIN_code' => $code,
         ));
@@ -89,16 +83,16 @@ class EEH_Line_Item
      * @return boolean success
      * @throws \EE_Error
      */
-    public static function add_percentage_based_item(EE_Line_Item $parent_line_item, $name, $percentage_amount, $description = '', $taxable = FALSE)
+    public static function add_percentage_based_item(EE_Line_Item $parent_line_item, $name, $percentage_amount, $description = '', $taxable = false)
     {
         $line_item = EE_Line_Item::new_instance(array(
             'LIN_name' => $name,
             'LIN_desc' => $description,
             'LIN_unit_price' => 0,
             'LIN_percent' => $percentage_amount,
-            'LIN_quantity' => NULL,
+            'LIN_quantity' => 1,
             'LIN_is_taxable' => $taxable,
-            'LIN_total' => (float)($percentage_amount * ($parent_line_item->total() / 100)),
+            'LIN_total' => (float) ($percentage_amount * ($parent_line_item->total() / 100)),
             'LIN_type' => EEM_Line_Item::type_line_item,
             'LIN_parent' => $parent_line_item->ID()
         ));
@@ -155,10 +149,9 @@ class EEH_Line_Item
         $line_item = null;
         if ($total_line_item instanceof EE_Line_Item && $total_line_item->is_total()) {
             $ticket_line_items = EEH_Line_Item::get_ticket_line_items($total_line_item);
-            foreach ((array)$ticket_line_items as $ticket_line_item) {
-                if (
-                    $ticket_line_item instanceof EE_Line_Item
-                    && (int)$ticket_line_item->OBJ_ID() === (int)$ticket->ID()
+            foreach ((array) $ticket_line_items as $ticket_line_item) {
+                if ($ticket_line_item instanceof EE_Line_Item
+                    && (int) $ticket_line_item->OBJ_ID() === (int) $ticket->ID()
                 ) {
                     $line_item = $ticket_line_item;
                     break;
@@ -285,7 +278,7 @@ class EEH_Line_Item
             $line_item
         );
         $events_sub_total->add_child_line_item($line_item);
-        //now add the sub-line items
+        // now add the sub-line items
         $running_total_for_ticket = 0;
         foreach ($ticket->prices(array('order_by' => array('PRC_order' => 'ASC'))) as $price) {
             $sign = $price->is_discount() ? -1 : 1;
@@ -338,7 +331,7 @@ class EEH_Line_Item
         if ($pre_tax_subtotal instanceof EE_Line_Item) {
             $success = $pre_tax_subtotal->add_child_line_item($item);
         } else {
-            return FALSE;
+            return false;
         }
         $total_line_item->recalculate_total_including_taxes();
         return $success;
@@ -378,8 +371,7 @@ class EEH_Line_Item
         // decrement ticket quantity; don't rely on auto-fixing when recalculating totals to do this
         $ticket_line_item->set_quantity($ticket_line_item->quantity() - $qty);
         foreach ($ticket_line_item->children() as $child_line_item) {
-            if (
-                $child_line_item->is_sub_line_item()
+            if ($child_line_item->is_sub_line_item()
                 && !$child_line_item->is_percent()
                 && !$child_line_item->is_cancellation()
             ) {
@@ -462,7 +454,7 @@ class EEH_Line_Item
         if ($cancellation_line_item->quantity() > $qty) {
             // decrement cancelled quantity
             $cancellation_line_item->set_quantity($cancellation_line_item->quantity() - $qty);
-        } else if ($cancellation_line_item->quantity() == $qty) {
+        } elseif ($cancellation_line_item->quantity() == $qty) {
             // decrement cancelled quantity in case anyone still has the object kicking around
             $cancellation_line_item->set_quantity($cancellation_line_item->quantity() - $qty);
             // delete because quantity will end up as 0
@@ -474,8 +466,10 @@ class EEH_Line_Item
             // what ?!?! negative quantity ?!?!
             throw new EE_Error(
                 sprintf(
-                    __('Can not reinstate %1$d cancelled ticket(s) because the cancelled ticket quantity is only %2$d.',
-                        'event_espresso'),
+                    __(
+                        'Can not reinstate %1$d cancelled ticket(s) because the cancelled ticket quantity is only %2$d.',
+                        'event_espresso'
+                    ),
                     $qty,
                     $cancellation_line_item->quantity()
                 )
@@ -548,7 +542,7 @@ class EEH_Line_Item
      * @return void
      * @throws \EE_Error
      */
-    public static function set_TXN_ID(EE_Line_Item $line_item, $transaction = NULL)
+    public static function set_TXN_ID(EE_Line_Item $line_item, $transaction = null)
     {
         if ($transaction) {
             /** @type EEM_Transaction $EEM_Transaction */
@@ -568,7 +562,7 @@ class EEH_Line_Item
      * @return \EE_Line_Item of type total
      * @throws \EE_Error
      */
-    public static function create_total_line_item($transaction = NULL)
+    public static function create_total_line_item($transaction = null)
     {
         $total_line_item = EE_Line_Item::new_instance(array(
             'LIN_code' => 'total',
@@ -595,7 +589,7 @@ class EEH_Line_Item
      * @return EE_Line_Item
      * @throws \EE_Error
      */
-    protected static function create_pre_tax_subtotal(EE_Line_Item $total_line_item, $transaction = NULL)
+    protected static function create_pre_tax_subtotal(EE_Line_Item $total_line_item, $transaction = null)
     {
         $pre_tax_line_item = EE_Line_Item::new_instance(array(
             'LIN_code' => 'pre-tax-subtotal',
@@ -622,13 +616,13 @@ class EEH_Line_Item
      * @return EE_Line_Item
      * @throws \EE_Error
      */
-    protected static function create_taxes_subtotal(EE_Line_Item $total_line_item, $transaction = NULL)
+    protected static function create_taxes_subtotal(EE_Line_Item $total_line_item, $transaction = null)
     {
         $tax_line_item = EE_Line_Item::new_instance(array(
             'LIN_code' => 'taxes',
             'LIN_name' => __('Taxes', 'event_espresso'),
             'LIN_type' => EEM_Line_Item::type_tax_sub_total,
-            'LIN_order' => 1000,//this should always come last
+            'LIN_order' => 1000,// this should always come last
         ));
         $tax_line_item = apply_filters(
             'FHEE__EEH_Line_Item__create_taxes_subtotal__tax_line_item',
@@ -636,7 +630,7 @@ class EEH_Line_Item
         );
         self::set_TXN_ID($tax_line_item, $transaction);
         $total_line_item->add_child_line_item($tax_line_item);
-        //and lastly, add the actual taxes
+        // and lastly, add the actual taxes
         self::apply_taxes($total_line_item);
         return $tax_line_item;
     }
@@ -651,7 +645,7 @@ class EEH_Line_Item
      * @return EE_Line_Item
      * @throws \EE_Error
      */
-    public static function create_event_subtotal(EE_Line_Item $pre_tax_line_item, $transaction = NULL, $event = NULL)
+    public static function create_event_subtotal(EE_Line_Item $pre_tax_line_item, $transaction = null, $event = null)
     {
         $event_line_item = EE_Line_Item::new_instance(array(
             'LIN_code' => self::get_event_code($event),
@@ -756,7 +750,7 @@ class EEH_Line_Item
     {
         /** @type EE_Event $event */
         $event = EEM_Event::instance()->ensure_is_obj($event, true);
-        $event_line_item = NULL;
+        $event_line_item = null;
         $found = false;
         foreach (EEH_Line_Item::get_event_subtotals($grand_total) as $event_line_item) {
             // default event subtotal, we should only ever find this the first time this method is called
@@ -765,14 +759,14 @@ class EEH_Line_Item
                 EEH_Line_Item::set_event_subtotal_details($event_line_item, $event);
                 $found = true;
                 break;
-            } else if ($event_line_item->OBJ_ID() === $event->ID()) {
+            } elseif ($event_line_item->OBJ_ID() === $event->ID()) {
                 // found existing line item for this event in the cart, so break out of loop and use this one
                 $found = true;
                 break;
             }
         }
         if (!$found) {
-            //there is no event sub-total yet, so add it
+            // there is no event sub-total yet, so add it
             $pre_tax_subtotal = EEH_Line_Item::get_pre_tax_subtotal($grand_total);
             // create a new "event" subtotal below that
             $event_line_item = EEH_Line_Item::create_event_subtotal($pre_tax_subtotal, null, $event);
@@ -796,8 +790,7 @@ class EEH_Line_Item
         EE_Line_Item $event_line_item,
         EE_Event $event,
         $transaction = null
-    )
-    {
+    ) {
         if ($event instanceof EE_Event) {
             $event_line_item->set_code(self::get_event_code($event));
             $event_line_item->set_name(self::get_event_name($event));
@@ -824,9 +817,9 @@ class EEH_Line_Item
         $ordered_taxes = $EEM_Price->get_all_prices_that_are_taxes();
         ksort($ordered_taxes);
         $taxes_line_item = self::get_taxes_subtotal($total_line_item);
-        //just to be safe, remove its old tax line items
+        // just to be safe, remove its old tax line items
         $taxes_line_item->delete_children_line_items();
-        //loop thru taxes
+        // loop thru taxes
         foreach ($ordered_taxes as $order => $taxes) {
             foreach ($taxes as $tax) {
                 if ($tax instanceof EE_Price) {
@@ -911,7 +904,7 @@ class EEH_Line_Item
      * @param array|bool|string $line_item_codes
      * @return int number of items successfully removed
      */
-    public static function delete_items(EE_Line_Item $total_line_item, $line_item_codes = FALSE)
+    public static function delete_items(EE_Line_Item $total_line_item, $line_item_codes = false)
     {
 
         if ($total_line_item->type() !== EEM_Line_Item::type_total) {
@@ -941,7 +934,7 @@ class EEH_Line_Item
             $total_line_item->recalculate_taxes_and_tax_total();
             return $removals;
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -968,8 +961,7 @@ class EEH_Line_Item
         $description = null,
         $code = null,
         $add_to_existing_line_item = false
-    )
-    {
+    ) {
         $tax_subtotal = self::get_taxes_subtotal($total_line_item);
         $taxable_total = $total_line_item->taxable_total();
 
@@ -986,7 +978,7 @@ class EEH_Line_Item
             $new_tax->set_total($new_tax->total() + $amount);
             $new_tax->set_percent($taxable_total ? $new_tax->total() / $taxable_total * 100 : 0);
         } else {
-            //no existing tax item. Create it
+            // no existing tax item. Create it
             $new_tax = EE_Line_Item::new_instance(array(
                 'TXN_ID' => $total_line_item->TXN_ID(),
                 'LIN_name' => $name ? $name : __('Tax', 'event_espresso'),
@@ -1024,8 +1016,7 @@ class EEH_Line_Item
         EE_Line_Item $line_item,
         $taxable = true,
         $code_substring_for_whitelist = null
-    )
-    {
+    ) {
         $whitelisted = false;
         if ($code_substring_for_whitelist !== null) {
             $whitelisted = strpos($line_item->code(), $code_substring_for_whitelist) !== false ? true : false;
@@ -1131,7 +1122,7 @@ class EEH_Line_Item
      */
     public static function get_descendants_of_type(EE_Line_Item $parent_line_item, $line_item_type)
     {
-        return self::_get_descendants_by_type_and_object_type($parent_line_item, $line_item_type, NULL);
+        return self::_get_descendants_by_type_and_object_type($parent_line_item, $line_item_type, null);
     }
 
 
@@ -1147,20 +1138,18 @@ class EEH_Line_Item
         EE_Line_Item $parent_line_item,
         $line_item_type,
         $obj_type = null
-    )
-    {
+    ) {
         $objects = array();
         foreach ($parent_line_item->children() as $child_line_item) {
             if ($child_line_item instanceof EE_Line_Item) {
-                if (
-                    $child_line_item->type() === $line_item_type
+                if ($child_line_item->type() === $line_item_type
                     && (
                         $child_line_item->OBJ_type() === $obj_type || $obj_type === null
                     )
                 ) {
                     $objects[] = $child_line_item;
                 } else {
-                    //go-through-all-its children looking for more matches
+                    // go-through-all-its children looking for more matches
                     $objects = array_merge(
                         $objects,
                         self::_get_descendants_by_type_and_object_type(
@@ -1189,8 +1178,7 @@ class EEH_Line_Item
         EE_Line_Item $parent_line_item,
         $OBJ_type = '',
         $OBJ_IDs = array()
-    )
-    {
+    ) {
         return self::_get_descendants_by_object_type_and_object_ID($parent_line_item, $OBJ_type, $OBJ_IDs);
     }
 
@@ -1207,19 +1195,17 @@ class EEH_Line_Item
         EE_Line_Item $parent_line_item,
         $OBJ_type,
         $OBJ_IDs
-    )
-    {
+    ) {
         $objects = array();
         foreach ($parent_line_item->children() as $child_line_item) {
             if ($child_line_item instanceof EE_Line_Item) {
-                if (
-                    $child_line_item->OBJ_type() === $OBJ_type
+                if ($child_line_item->OBJ_type() === $OBJ_type
                     && is_array($OBJ_IDs)
                     && in_array($child_line_item->OBJ_ID(), $OBJ_IDs)
                 ) {
                     $objects[] = $child_line_item;
                 } else {
-                    //go-through-all-its children looking for more matches
+                    // go-through-all-its children looking for more matches
                     $objects = array_merge(
                         $objects,
                         self::_get_descendants_by_object_type_and_object_ID(
@@ -1287,7 +1273,7 @@ class EEH_Line_Item
                 return $descendant_found;
             }
         }
-        return NULL;
+        return null;
     }
 
 
@@ -1399,7 +1385,7 @@ class EEH_Line_Item
      */
     public static function calculate_reg_final_prices_per_line_item(EE_Line_Item $line_item, $billable_ticket_quantities = array())
     {
-        //init running grand total if not already
+        // init running grand total if not already
         if (!isset($running_totals['total'])) {
             $running_totals['total'] = 0;
         }
@@ -1408,62 +1394,59 @@ class EEH_Line_Item
         }
         foreach ($line_item->children() as $child_line_item) {
             switch ($child_line_item->type()) {
-
-                case EEM_Line_Item::type_sub_total :
+                case EEM_Line_Item::type_sub_total:
                     $running_totals_from_subtotal = EEH_Line_Item::calculate_reg_final_prices_per_line_item($child_line_item, $billable_ticket_quantities);
-                    //combine arrays but preserve numeric keys
+                    // combine arrays but preserve numeric keys
                     $running_totals = array_replace_recursive($running_totals_from_subtotal, $running_totals);
                     $running_totals['total'] += $running_totals_from_subtotal['total'];
                     $running_totals['taxable']['total'] += $running_totals_from_subtotal['taxable']['total'];
                     break;
 
-                case EEM_Line_Item::type_tax_sub_total :
-
-                    //find how much the taxes percentage is
+                case EEM_Line_Item::type_tax_sub_total:
+                    // find how much the taxes percentage is
                     if ($child_line_item->percent() !== 0) {
                         $tax_percent_decimal = $child_line_item->percent() / 100;
                     } else {
                         $tax_percent_decimal = EE_Taxes::get_total_taxes_percentage() / 100;
                     }
-                    //and apply to all the taxable totals, and add to the pretax totals
+                    // and apply to all the taxable totals, and add to the pretax totals
                     foreach ($running_totals as $line_item_id => $this_running_total) {
-                        //"total" and "taxable" array key is an exception
+                        // "total" and "taxable" array key is an exception
                         if ($line_item_id === 'taxable') {
                             continue;
                         }
-                        $taxable_total = $running_totals['taxable'][$line_item_id];
-                        $running_totals[$line_item_id] += ($taxable_total * $tax_percent_decimal);
+                        $taxable_total = $running_totals['taxable'][ $line_item_id ];
+                        $running_totals[ $line_item_id ] += ($taxable_total * $tax_percent_decimal);
                     }
                     break;
 
-                case EEM_Line_Item::type_line_item :
-
+                case EEM_Line_Item::type_line_item:
                     // ticket line items or ????
                     if ($child_line_item->OBJ_type() === 'Ticket') {
                         // kk it's a ticket
-                        if (isset($running_totals[$child_line_item->ID()])) {
-                            //huh? that shouldn't happen.
+                        if (isset($running_totals[ $child_line_item->ID() ])) {
+                            // huh? that shouldn't happen.
                             $running_totals['total'] += $child_line_item->total();
                         } else {
-                            //its not in our running totals yet. great.
+                            // its not in our running totals yet. great.
                             if ($child_line_item->is_taxable()) {
                                 $taxable_amount = $child_line_item->unit_price();
                             } else {
                                 $taxable_amount = 0;
                             }
                             // are we only calculating totals for some tickets?
-                            if (isset($billable_ticket_quantities[$child_line_item->OBJ_ID()])) {
-                                $quantity = $billable_ticket_quantities[$child_line_item->OBJ_ID()];
-                                $running_totals[$child_line_item->ID()] = $quantity
+                            if (isset($billable_ticket_quantities[ $child_line_item->OBJ_ID() ])) {
+                                $quantity = $billable_ticket_quantities[ $child_line_item->OBJ_ID() ];
+                                $running_totals[ $child_line_item->ID() ] = $quantity
                                     ? $child_line_item->unit_price()
                                     : 0;
-                                $running_totals['taxable'][$child_line_item->ID()] = $quantity
+                                $running_totals['taxable'][ $child_line_item->ID() ] = $quantity
                                     ? $taxable_amount
                                     : 0;
                             } else {
                                 $quantity = $child_line_item->quantity();
-                                $running_totals[$child_line_item->ID()] = $child_line_item->unit_price();
-                                $running_totals['taxable'][$child_line_item->ID()] = $taxable_amount;
+                                $running_totals[ $child_line_item->ID() ] = $child_line_item->unit_price();
+                                $running_totals['taxable'][ $child_line_item->ID() ] = $taxable_amount;
                             }
                             $running_totals['taxable']['total'] += $taxable_amount * $quantity;
                             $running_totals['total'] += $child_line_item->unit_price() * $quantity;
@@ -1477,18 +1460,18 @@ class EEH_Line_Item
                             ? ($child_line_item->total() / $running_totals['total']) + 1
                             : 1;
                         foreach ($running_totals as $line_item_id => $this_running_total) {
-                            //the "taxable" array key is an exception
+                            // the "taxable" array key is an exception
                             if ($line_item_id === 'taxable') {
                                 continue;
                             }
                             // update the running totals
                             // yes this actually even works for the running grand total!
-                            $running_totals[$line_item_id] =
+                            $running_totals[ $line_item_id ] =
                                 $line_items_percent_of_running_total * $this_running_total;
 
                             if ($child_line_item->is_taxable()) {
-                                $running_totals['taxable'][$line_item_id] =
-                                    $line_items_percent_of_running_total * $running_totals['taxable'][$line_item_id];
+                                $running_totals['taxable'][ $line_item_id ] =
+                                    $line_items_percent_of_running_total * $running_totals['taxable'][ $line_item_id ];
                             }
                         }
                     }
@@ -1513,9 +1496,9 @@ class EEH_Line_Item
                 $total_line_item
             );
         }
-        //ok now find this new registration's final price
-        if (isset($final_prices_per_ticket_line_item[$ticket_line_item->ID()])) {
-            return $final_prices_per_ticket_line_item[$ticket_line_item->ID()];
+        // ok now find this new registration's final price
+        if (isset($final_prices_per_ticket_line_item[ $ticket_line_item->ID() ])) {
+            return $final_prices_per_ticket_line_item[ $ticket_line_item->ID() ];
         }
         $message = sprintf(
             __(
@@ -1549,9 +1532,9 @@ class EEH_Line_Item
         foreach ($line_item->children() as $child_li) {
             $copy_li->add_child_line_item(EEH_Line_Item::billable_line_item_tree($child_li, $registrations));
         }
-        //if this is the grand total line item, make sure the totals all add up
-        //(we could have duplicated this logic AS we copied the line items, but
-        //it seems DRYer this way)
+        // if this is the grand total line item, make sure the totals all add up
+        // (we could have duplicated this logic AS we copied the line items, but
+        // it seems DRYer this way)
         if ($copy_li->type() === EEM_Line_Item::type_total) {
             $copy_li->recalculate_total_including_taxes();
         }
@@ -1584,7 +1567,7 @@ class EEH_Line_Item
             }
             $new_li_fields['LIN_quantity'] = $count;
         }
-        //don't set the total. We'll leave that up to the code that calculates it
+        // don't set the total. We'll leave that up to the code that calculates it
         unset($new_li_fields['LIN_ID'], $new_li_fields['LIN_parent'], $new_li_fields['LIN_total']);
         return EE_Line_Item::new_instance($new_li_fields);
     }
@@ -1604,8 +1587,8 @@ class EEH_Line_Item
         if ($copied_li === null) {
             return null;
         }
-        //if this is an event subtotal, we want to only include it if it
-        //has a non-zero total and at least one ticket line item child
+        // if this is an event subtotal, we want to only include it if it
+        // has a non-zero total and at least one ticket line item child
         $ticket_children = 0;
         foreach ($line_item->children() as $child_li) {
             $child_li_copy = EEH_Line_Item::non_empty_line_items($child_li);
@@ -1618,10 +1601,9 @@ class EEH_Line_Item
                 }
             }
         }
-        //if this is an event subtotal with NO ticket children
-        //we basically want to ignore it
-        if (
-            $ticket_children === 0
+        // if this is an event subtotal with NO ticket children
+        // we basically want to ignore it
+        if ($ticket_children === 0
             && $line_item->type() === EEM_Line_Item::type_sub_total
             && $line_item->OBJ_type() === 'Event'
             && $line_item->total() === 0
@@ -1649,7 +1631,7 @@ class EEH_Line_Item
             return null;
         }
         $new_li_fields = $line_item->model_field_array();
-        //don't set the total. We'll leave that up to the code that calculates it
+        // don't set the total. We'll leave that up to the code that calculates it
         unset($new_li_fields['LIN_ID'], $new_li_fields['LIN_parent']);
         return EE_Line_Item::new_instance($new_li_fields);
     }
@@ -1676,7 +1658,7 @@ class EEH_Line_Item
      * @return \EE_Line_Item
      * @throws \EE_Error
      */
-    public static function create_default_total_line_item($transaction = NULL)
+    public static function create_default_total_line_item($transaction = null)
     {
         EE_Error::doing_it_wrong('EEH_Line_Item::create_default_total_line_item()', __('Method replaced with EEH_Line_Item::create_total_line_item()', 'event_espresso'), '4.6.0');
         return self::create_total_line_item($transaction);
@@ -1690,7 +1672,7 @@ class EEH_Line_Item
      * @return \EE_Line_Item
      * @throws \EE_Error
      */
-    public static function create_default_tickets_subtotal(EE_Line_Item $total_line_item, $transaction = NULL)
+    public static function create_default_tickets_subtotal(EE_Line_Item $total_line_item, $transaction = null)
     {
         EE_Error::doing_it_wrong('EEH_Line_Item::create_default_tickets_subtotal()', __('Method replaced with EEH_Line_Item::create_pre_tax_subtotal()', 'event_espresso'), '4.6.0');
         return self::create_pre_tax_subtotal($total_line_item, $transaction);
@@ -1704,7 +1686,7 @@ class EEH_Line_Item
      * @return \EE_Line_Item
      * @throws \EE_Error
      */
-    public static function create_default_taxes_subtotal(EE_Line_Item $total_line_item, $transaction = NULL)
+    public static function create_default_taxes_subtotal(EE_Line_Item $total_line_item, $transaction = null)
     {
         EE_Error::doing_it_wrong('EEH_Line_Item::create_default_taxes_subtotal()', __('Method replaced with EEH_Line_Item::create_taxes_subtotal()', 'event_espresso'), '4.6.0');
         return self::create_taxes_subtotal($total_line_item, $transaction);
@@ -1718,12 +1700,9 @@ class EEH_Line_Item
      * @return \EE_Line_Item
      * @throws \EE_Error
      */
-    public static function create_default_event_subtotal(EE_Line_Item $total_line_item, $transaction = NULL)
+    public static function create_default_event_subtotal(EE_Line_Item $total_line_item, $transaction = null)
     {
         EE_Error::doing_it_wrong('EEH_Line_Item::create_default_event_subtotal()', __('Method replaced with EEH_Line_Item::create_event_subtotal()', 'event_espresso'), '4.6.0');
         return self::create_event_subtotal($total_line_item, $transaction);
     }
-
-
 }
-// End of file EEH_Line_Item.helper.php

@@ -1,9 +1,4 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
+<?php
 /**
  * EE_Form_Input_With_Options_Base
  * For form inputs which are meant to only have a limit set of options that can be used
@@ -97,16 +92,15 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
     public function set_select_options($answer_options = array())
     {
         $answer_options = is_array($answer_options) ? $answer_options : array($answer_options);
-        //get the first item in the select options and check it's type
+        // get the first item in the select options and check it's type
         $this->_options = reset($answer_options) instanceof EE_Question_Option
             ? $this->_process_question_options($answer_options)
             : $answer_options;
-        //d( $this->_options );
+        // d( $this->_options );
         $select_option_keys = array_keys($this->_options);
         // attempt to determine data type for values in order to set normalization type
-        //purposefully only
-        if (
-            count($this->_options) === 2
+        // purposefully only
+        if (count($this->_options) === 2
             && (
                 (in_array(true, $select_option_keys, true) && in_array(false, $select_option_keys, true))
                 || (in_array(1, $select_option_keys, true) && in_array(0, $select_option_keys, true))
@@ -115,16 +109,16 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
             // values appear to be boolean, like TRUE, FALSE, 1, 0
             $normalization = new EE_Boolean_Normalization();
         } else {
-            //are ALL the options ints (even if we're using a multi-dimensional array)? If so use int validation
+            // are ALL the options ints (even if we're using a multi-dimensional array)? If so use int validation
             $all_ints = true;
             array_walk_recursive(
                 $this->_options,
-                function($value,$key) use (&$all_ints){
-                    //is this a top-level key? ignore it
-                    if(! is_array($value)
+                function ($value, $key) use (&$all_ints) {
+                    // is this a top-level key? ignore it
+                    if (! is_array($value)
                         && ! is_int($key)
                        && $key !== ''
-                       && $key !== null){
+                       && $key !== null) {
                         $all_ints = false;
                     }
                 }
@@ -178,14 +172,14 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
         $flat_array = array();
         if (EEH_Array::is_multi_dimensional_array($arr)) {
             foreach ($arr as $sub_array) {
-                foreach ((array)$sub_array as $key => $value) {
-                    $flat_array[$key] = $value;
+                foreach ((array) $sub_array as $key => $value) {
+                    $flat_array[ $key ] = $value;
                     $this->_set_label_size($value);
                 }
             }
         } else {
             foreach ($arr as $key => $value) {
-                $flat_array[$key] = $value;
+                $flat_array[ $key ] = $value;
                 $this->_set_label_size($value);
             }
         }
@@ -210,13 +204,13 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
                 }
                 $value = $question_option->value();
                 // add value even if it's empty
-                $flat_array[$value] = $value;
+                $flat_array[ $value ] = $value;
                 // if both value and desc are not empty, then separate with a dash
-                if ( ! empty($value) && ! empty($desc)) {
-                    $flat_array[$value] .= ' - ' . $desc;
+                if (! empty($value) && ! empty($desc)) {
+                    $flat_array[ $value ] .= ' - ' . $desc;
                 } else {
                     // otherwise, just add desc, since either or both of the vars is empty, and no dash is necessary
-                    $flat_array[$value] .= $desc;
+                    $flat_array[ $value ] .= $desc;
                 }
             } elseif (is_array($question_option)) {
                 $flat_array += $this->_flatten_select_options($question_option);
@@ -235,7 +229,7 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
     public function set_label_sizes()
     {
         // did the input settings specifically say to NOT set the label size dynamically ?
-        if ( ! $this->_enforce_label_size) {
+        if (! $this->_enforce_label_size) {
             foreach ($this->_options as $option) {
                 // calculate the strlen of the label
                 $this->_set_label_size($option);
@@ -254,7 +248,7 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
     private function _set_label_size($value = '')
     {
         // don't change label size if it has already been set and is being enforced
-        if($this->_enforce_label_size && $this->_label_size >  0) {
+        if ($this->_enforce_label_size && $this->_label_size >  0) {
             return;
         }
         // determine length of option value
@@ -276,15 +270,15 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
         // use maximum option value length to determine label size
         if ($this->_label_size < 3) {
             $size = ' nano-lbl';
-        } else if ($this->_label_size < 6) {
+        } elseif ($this->_label_size < 6) {
             $size = ' micro-lbl';
-        } else if ($this->_label_size < 12) {
+        } elseif ($this->_label_size < 12) {
             $size = ' tiny-lbl';
-        } else if ($this->_label_size < 25) {
+        } elseif ($this->_label_size < 25) {
             $size = ' small-lbl';
-        } else if ($this->_label_size < 50) {
+        } elseif ($this->_label_size < 50) {
             $size = ' medium-lbl';
-        } else if ($this->_label_size >= 100) {
+        } elseif ($this->_label_size >= 100) {
             $size = ' big-lbl';
         }
         return $size;
@@ -301,13 +295,13 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
     {
         $options = $this->flat_options();
         $unnormalized_value_choices = $this->get_normalization_strategy()->unnormalize($this->_normalized_value);
-        if ( ! $this->_multiple_selections) {
+        if (! $this->_multiple_selections) {
             $unnormalized_value_choices = array($unnormalized_value_choices);
         }
         $pretty_strings = array();
-        foreach ((array)$unnormalized_value_choices as $unnormalized_value_choice) {
-            if (isset($options[$unnormalized_value_choice])) {
-                $pretty_strings[] = $options[$unnormalized_value_choice];
+        foreach ((array) $unnormalized_value_choices as $unnormalized_value_choice) {
+            if (isset($options[ $unnormalized_value_choice ])) {
+                $pretty_strings[] = $options[ $unnormalized_value_choice ];
             } else {
                 $pretty_strings[] = $this->normalized_value();
             }
@@ -334,8 +328,4 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
     {
         $this->_display_html_label_text = filter_var($display_html_label_text, FILTER_VALIDATE_BOOLEAN);
     }
-
-
-
 }
-// End of file EE_Form_Input_With_Options_Base.input.php

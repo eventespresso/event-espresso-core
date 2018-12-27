@@ -1,12 +1,6 @@
 <?php
 namespace EventEspresso\core\services\progress_steps;
 
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
-}
-
-
-
 /**
  * Interface ProgressStepInterface
  * interface for building classes that work with \EventEspresso\core\services\progress_steps\ProgressStepManager
@@ -14,38 +8,36 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
 *@package EventEspresso\core\services\progress_steps
  */
-interface ProgressStepInterface {
+interface ProgressStepInterface
+{
 
-	/**
-	 * @return boolean
-	 */
-	public function isCurrent();
+    /**
+     * @return boolean
+     */
+    public function isCurrent();
 
-	/**
-	 * @param boolean $is_current
-	 */
-	public function setIsCurrent( $is_current = true );
+    /**
+     * @param boolean $is_current
+     */
+    public function setIsCurrent($is_current = true);
 
-	/**
-	 * @return string
-	 */
-	public function id();
+    /**
+     * @return string
+     */
+    public function id();
 
-	/**
-	 * @return int
-	 */
-	public function order();
+    /**
+     * @return int
+     */
+    public function order();
 
-	/**
-	 * @return string
-	 */
-	public function htmlClass();
+    /**
+     * @return string
+     */
+    public function htmlClass();
 
-	/**
-	 * @return string
-	 */
-	public function text();
-
+    /**
+     * @return string
+     */
+    public function text();
 }
-// End of file ProgressStepInterface.php
-// Location: /ProgressStepInterface.php

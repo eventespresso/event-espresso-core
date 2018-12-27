@@ -6,12 +6,12 @@ This article is about how EE4 Add-ons (specialized WordPress plugins) can extend
 
 The EE4 REST API is built primarily around EE4 Core components: `EE_Config`, EE4 models, EE4 capabilities (tentatively: EE4 messages and Single Page Checkout). If you register your addon like shown in our [Example Skeleton Addon](registering-addons.md), much of your data is already available via the EE4 REST API. Specifically,
 
-* your `EE_Config` class(es) will be available on the config endpoint (eg, http://demoee.org/wp-json/ee/v4.6/config; of course, however, config data is sensitive so you need to be have the necessary capabilities)
+* your `EE_Config` class(es) will be available on the config endpoint (eg, https://demoee.org/wp-json/ee/v4.6/config; of course, however, config data is sensitive so you need to be have the necessary capabilities)
 * your EE4 models registered will:
-    * be added to the EE4 REST API resources page (eg http://demoee.org/wp-json/ee/v4.6/resources),
+    * be added to the EE4 REST API resources page (eg https://demoee.org/wp-json/ee/v4.6/resources),
     * be added as relations onto any models they are related to (eg if you add a model named "Bouncer" which is related to Event, it will be appear as part of any event entities like other related data is),
-    * have 2 main routes added to the WP REST API index: an "all" endpoint (eg http://demoee.org/wp-json/ee/v4.6/bouncers), and a "single" endpoint (eg http://demoee.org/wp-json/ee/v4.6/bouncers/23)
-    * have endpoints added for each model listed in their relations (eg http://demoee.org/wp-json/ee/v4.6/bouncers/23/events), and for each model that lists them as relations (eg http://demoee.org/wp-json/ee/v4.6/events/42/bouncers)
+    * have 2 main routes added to the WP REST API index: an "all" endpoint (eg https://demoee.org/wp-json/ee/v4.6/bouncers), and a "single" endpoint (eg https://demoee.org/wp-json/ee/v4.6/bouncers/23)
+    * have endpoints added for each model listed in their relations (eg https://demoee.org/wp-json/ee/v4.6/bouncers/23/events), and for each model that lists them as relations (eg https://demoee.org/wp-json/ee/v4.6/events/42/bouncers)
     * your EE4 capabilities registered will apply to the EE4 models if they follow the standard naming conventions (ie, "ee_{read/edit/delete}_{plural_model_slug}", eg "ee_edit_bouncers")
 
 ## Adding Extra Endpoints

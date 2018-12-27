@@ -1,7 +1,5 @@
 <?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
-
 /**
  * EEM_Change_Log
  *
@@ -118,14 +116,14 @@ class EEM_Change_Log extends EEM_Base
         $this->_model_relations    = array();
         foreach ($models_this_can_attach_to as $model) {
             if ($model != 'Change_Log') {
-                $this->_model_relations[$model] = new EE_Belongs_To_Any_Relation();
+                $this->_model_relations[ $model ] = new EE_Belongs_To_Any_Relation();
             }
         }
-        //use completely custom caps for this
+        // use completely custom caps for this
         $this->_cap_restriction_generators = false;
-        //caps-wise this is all-or-nothing: if you have the default role you can access anything, otherwise nothing
+        // caps-wise this is all-or-nothing: if you have the default role you can access anything, otherwise nothing
         foreach ($this->_cap_contexts_to_cap_action_map as $cap_context => $action) {
-            $this->_cap_restrictions[$cap_context][EE_Restriction_Generator_Base::get_default_restrictions_cap()]
+            $this->_cap_restrictions[ $cap_context ][ EE_Restriction_Generator_Base::get_default_restrictions_cap() ]
                 = new EE_Return_None_Where_Conditions();
         }
         parent::__construct($timezone);
@@ -196,7 +194,7 @@ class EEM_Change_Log extends EEM_Base
     /**
      * Just gets the bare-bones wpdb results as an array in cases where efficiency is essential
      *
-     * @param array $query_params @see EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return array of arrays
      * @throws EE_Error
      */
@@ -257,9 +255,9 @@ class EEM_Change_Log extends EEM_Base
     public static function get_pretty_label_for_type($type_identifier)
     {
         $type_identifier_map = self::get_pretty_label_map_for_registered_types();
-        //we fallback to the incoming type identifier if there is no localized label for it.
-        return isset($type_identifier_map[$type_identifier])
-            ? $type_identifier_map[$type_identifier]
+        // we fallback to the incoming type identifier if there is no localized label for it.
+        return isset($type_identifier_map[ $type_identifier ])
+            ? $type_identifier_map[ $type_identifier ]
             : $type_identifier;
     }
 }

@@ -1,6 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
-
 
 /**
  * Serves as a repository for EE_Message_Template_Group objects
@@ -124,5 +122,4 @@ class EE_Message_Template_Group_Collection extends EE_Object_Collection
         }
         return null;
     }
-
 }

@@ -1,48 +1,27 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
-
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\LegacyRequestInterface;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * class EE_Request
  *
+ * @deprecated  4.9.53
  * @package     Event Espresso
  * @subpackage  /core/
  * @author      Brent Christensen
  */
-class EE_Request implements InterminableInterface
+class EE_Request implements LegacyRequestInterface, InterminableInterface
 {
 
     /**
-     * $_GET parameters
-     *
-     * @var array $_get
+     * @var RequestInterface $request
      */
-    private $_get;
-
-    /**
-     * $_POST parameters
-     *
-     * @var    array $_post
-     */
-    private $_post;
-
-    /**
-     * $_COOKIE parameters
-     *
-     * @var array $_cookie
-     */
-    private $_cookie;
-
-    /**
-     * $_REQUEST parameters
-     *
-     * @var array $_params
-     */
-    private $_params;
+    private $request;
 
     /**
      * whether current request is for the admin but NOT via AJAX
@@ -65,282 +44,333 @@ class EE_Request implements InterminableInterface
      */
     public $front_ajax = false;
 
-    /**
-     * IP address for request
-     *
-     * @var string $_ip_address
-     */
-    private $_ip_address;
-
-
 
     /**
-     * class constructor
-     *
-     * @access    public
+     * @deprecated 4.9.53
      * @param array $get
      * @param array $post
      * @param array $cookie
+     * @param array $server
      */
-    public function __construct(array $get, array $post, array $cookie)
-    {
-        // grab request vars
-        $this->_get    = $get;
-        $this->_post   = $post;
-        $this->_cookie = $cookie;
-        $this->_params = array_merge($this->_get, $this->_post);
-        // AJAX ???
-        $this->ajax       = defined('DOING_AJAX') && DOING_AJAX;
-        $this->front_ajax = $this->ajax
-                            && $this->is_set('ee_front_ajax')
-                            && filter_var($this->get('ee_front_ajax'), FILTER_VALIDATE_BOOLEAN);
-        $this->admin      = is_admin() && ! $this->ajax;
-        // grab user IP
-        $this->_ip_address = $this->_visitor_ip();
+    public function __construct(
+        array $get = array(),
+        array $post = array(),
+        array $cookie = array(),
+        array $server = array()
+    ) {
     }
 
 
+    /**
+     * @return RequestInterface
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     */
+    private function request()
+    {
+        if ($this->request instanceof RequestInterface) {
+            return $this->request;
+        }
+        $loader = LoaderFactory::getLoader();
+        $this->request = $loader->getShared('EventEspresso\core\services\request\RequestInterface');
+        return $this->request;
+    }
+
 
     /**
+     * @param RequestInterface $request
+     */
+    public function setRequest(RequestInterface $request)
+    {
+        $this->request = $request;
+    }
+
+
+    /**
+     * @deprecated 4.9.53
      * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_params()
     {
-        return $this->_get;
+        return $this->request()->getParams();
     }
 
 
-
     /**
+     * @deprecated 4.9.53
      * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function post_params()
     {
-        return $this->_post;
+        return $this->request()->postParams();
     }
-
 
 
     /**
+     * @deprecated 4.9.53
      * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function cookie_params()
     {
-        return $this->_cookie;
+        return $this->request()->cookieParams();
     }
 
+
+    /**
+     * @deprecated 4.9.53
+     * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function server_params()
+    {
+        return $this->request()->serverParams();
+    }
 
 
     /**
      * returns contents of $_REQUEST
      *
+     * @deprecated 4.9.53
      * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function params()
     {
-        return $this->_params;
+        return $this->request()->requestParams();
     }
-
 
 
     /**
+     * @deprecated 4.9.53
      * @param      $key
      * @param      $value
      * @param bool $override_ee
-     * @return    void
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function set($key, $value, $override_ee = false)
     {
-        // don't allow "ee" to be overwritten unless explicitly instructed to do so
-        if (
-            $key !== 'ee'
-            || ($key === 'ee' && empty($this->_params['ee']))
-            || ($key === 'ee' && ! empty($this->_params['ee']) && $override_ee)
-        ) {
-            $this->_params[$key] = $value;
-        }
+        $this->request()->setRequestParam($key, $value, $override_ee);
     }
-
 
 
     /**
      * returns   the value for a request param if the given key exists
      *
-     * @param       $key
-     * @param null  $default
+     * @deprecated 4.9.53
+     * @param      $key
+     * @param null $default
      * @return mixed
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get($key, $default = null)
     {
-        return $this->request_parameter_drill_down($key, $default, 'get');
+        return $this->request()->getRequestParam($key, $default);
     }
-
 
 
     /**
      * check if param exists
      *
-     * @param       $key
+     * @deprecated 4.9.53
+     * @param $key
      * @return bool
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function is_set($key)
     {
-        return $this->request_parameter_drill_down($key);
+        return $this->request()->requestParamIsSet($key);
     }
-
-
-
-    /**
-     * the supplied key can be a simple string to represent a "top-level" request parameter
-     * or represent a key for a request parameter that is nested deeper within the request parameter array,
-     * by using square brackets to surround keys for deeper array elements.
-     * For example :
-     * if the supplied $key was: "first[second][third]"
-     * then this will attempt to drill down into the request parameter array to find a value.
-     * Given the following request parameters:
-     *  array(
-     *      'first' => array(
-     *          'second' => array(
-     *              'third' => 'has a value'
-     *          )
-     *      )
-     *  )
-     * would return true
-     *
-     * @param string $is_set_or_get
-     * @param        $key
-     * @param null   $default
-     * @param array  $request_params
-     * @return bool|mixed|null
-     */
-    private function request_parameter_drill_down(
-        $key,
-        $default = null,
-        $is_set_or_get = 'is_set',
-        array $request_params = array()
-    ) {
-        $request_params = ! empty($request_params)
-            ? $request_params
-            : $this->_params;
-        // does incoming key represent an array like 'first[second][third]'  ?
-        if (strpos($key, '[') !== false) {
-            // turn it into an actual array
-            $key  = str_replace(']', '', $key);
-            $keys = explode('[', $key);
-            $key  = array_shift($keys);
-            // check if top level key exists
-            if (isset($request_params[$key])) {
-                // build a new key to pass along like: 'second[third]'
-                // or just 'second' depending on depth of keys
-                $key_string = array_shift($keys);
-                if (! empty($keys)) {
-                    $key_string .= '[' . implode('][', $keys) . ']';
-                }
-                return $this->request_parameter_drill_down(
-                    $key_string,
-                    $default,
-                    $is_set_or_get,
-                    $request_params[$key]
-                );
-            }
-        }
-        if ($is_set_or_get === 'is_set') {
-            return isset($request_params[$key]);
-        }
-        return isset($request_params[$key])
-            ? $request_params[$key]
-            : $default;
-    }
-
 
 
     /**
      * remove param
      *
+     * @deprecated 4.9.53
      * @param      $key
      * @param bool $unset_from_global_too
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function un_set($key, $unset_from_global_too = false)
     {
-        unset($this->_params[$key]);
-        if ($unset_from_global_too) {
-            unset($_REQUEST[$key]);
-        }
+        $this->request()->unSetRequestParam($key, $unset_from_global_too);
     }
 
 
-
     /**
+     * @deprecated 4.9.53
      * @return string
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function ip_address()
     {
-        return $this->_ip_address;
+        return $this->request()->ipAddress();
     }
 
 
     /**
+     * @deprecated 4.9.53
      * @return bool
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function isAdmin()
     {
-        return $this->admin;
+        return $this->request()->isAdmin();
     }
 
 
     /**
+     * @deprecated 4.9.53
      * @return mixed
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function isAjax()
     {
-        return $this->ajax;
+        return $this->request()->isAjax();
     }
 
 
     /**
+     * @deprecated 4.9.53
      * @return mixed
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function isFrontAjax()
     {
-        return $this->front_ajax;
+        return $this->request()->isFrontAjax();
     }
-
 
 
     /**
-     * _visitor_ip
-     *    attempt to get IP address of current visitor from server
-     * plz see: http://stackoverflow.com/a/2031935/1475279
-     *
-     * @access public
-     * @return string
+     * @deprecated 4.9.53
+     * @return mixed|string
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
-    private function _visitor_ip()
+    public function requestUri()
     {
-        $visitor_ip  = '0.0.0.0';
-        $server_keys = array(
-            'HTTP_CLIENT_IP',
-            'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_FORWARDED',
-            'HTTP_X_CLUSTER_CLIENT_IP',
-            'HTTP_FORWARDED_FOR',
-            'HTTP_FORWARDED',
-            'REMOTE_ADDR',
-        );
-        foreach ($server_keys as $key) {
-            if (isset($_SERVER[$key])) {
-                foreach (array_map('trim', explode(',', $_SERVER[$key])) as $ip) {
-                    if ($ip === '127.0.0.1' || filter_var($ip, FILTER_VALIDATE_IP) !== false) {
-                        $visitor_ip = $ip;
-                    }
-                }
-            }
-        }
-        return $visitor_ip;
+        return $this->request()->requestUri();
     }
 
 
+    /**
+     * @deprecated 4.9.53
+     * @return string
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function userAgent()
+    {
+        return $this->request()->userAgent();
+    }
 
+
+    /**
+     * @deprecated 4.9.53
+     * @param string $user_agent
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function setUserAgent($user_agent = '')
+    {
+        $this->request()->setUserAgent($user_agent);
+    }
+
+
+    /**
+     * @deprecated 4.9.53
+     * @return bool
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function isBot()
+    {
+        return $this->request()->isBot();
+    }
+
+
+    /**
+     * @deprecated 4.9.53
+     * @param bool $is_bot
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function setIsBot($is_bot)
+    {
+        $this->request()->setIsBot($is_bot);
+    }
+
+
+    /**
+     * check if a request parameter exists whose key that matches the supplied wildcard pattern
+     * and return the value for the first match found
+     * wildcards can be either of the following:
+     *      ? to represent a single character of any type
+     *      * to represent one or more characters of any type
+     *
+     * @param string     $pattern
+     * @param null|mixed $default
+     * @return false|int
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     */
+    public function getMatch($pattern, $default = null)
+    {
+        return $this->request()->getMatch($pattern, $default);
+    }
+
+
+    /**
+     * check if a request parameter exists whose key matches the supplied wildcard pattern
+     * wildcards can be either of the following:
+     *      ? to represent a single character of any type
+     *      * to represent one or more characters of any type
+     * returns true if a match is found or false if not
+     *
+     * @param string $pattern
+     * @return false|int
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     */
+    public function matches($pattern)
+    {
+        return $this->request()->matches($pattern);
+    }
 }
-// End of file EE_Request.core.php
-// Location: /core/request_stack/EE_Request.core.php

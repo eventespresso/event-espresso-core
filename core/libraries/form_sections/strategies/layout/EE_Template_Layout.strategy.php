@@ -1,8 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
+<?php
 
 /**
  * EE_Template_Layout
@@ -186,12 +182,12 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout
             $subsection_name = self::prep_form_subsection_key_name($subsection_name);
             if (strpos($subsection_name, '[') !== false) {
                 $sub_name = explode('[', $subsection_name);
-                $this->_template_args[$sub_name[0]][rtrim($sub_name[1], ']')] = $this->layout_subsection($subsection);
+                $this->_template_args[ $sub_name[0] ][ rtrim($sub_name[1], ']') ] = $this->layout_subsection($subsection);
             } else {
-                $this->_template_args[$subsection_name] = $this->layout_subsection($subsection);
+                $this->_template_args[ $subsection_name ] = $this->layout_subsection($subsection);
             }
         }
-        //		d( $this->_template_args );
+        //      d( $this->_template_args );
         return $this->_template_args;
     }
 
@@ -224,4 +220,3 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout
         return EE_Template_Layout::prep_form_subsection_key_name($subsection_name);
     }
 }
-// End of file EE_Template_Layout.strategy.php

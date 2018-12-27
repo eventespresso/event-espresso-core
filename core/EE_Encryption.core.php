@@ -1,8 +1,17 @@
-<?php use EventEspresso\core\interfaces\InterminableInterface;
+<?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
+use EventEspresso\core\interfaces\InterminableInterface;
 
+// phpcs:disable PHPCompatibility.PHP.RemovedExtensions.mcryptDeprecatedRemoved
+// phpcs:disable PHPCompatibility.PHP.DeprecatedFunctions.mcrypt_get_iv_sizeDeprecatedRemoved
+// phpcs:disable PHPCompatibility.PHP.RemovedConstants.mcrypt_rijndael_256DeprecatedRemoved
+// phpcs:disable PHPCompatibility.PHP.RemovedConstants.mcrypt_mode_ecbDeprecatedRemoved
+// phpcs:disable PHPCompatibility.PHP.DeprecatedFunctions.mcrypt_create_ivDeprecatedRemoved
+// phpcs:disable PHPCompatibility.PHP.RemovedConstants.mcrypt_randDeprecatedRemoved
+// phpcs:disable PHPCompatibility.PHP.DeprecatedFunctions.mcrypt_encryptDeprecatedRemoved
+// phpcs:disable PHPCompatibility.PHP.DeprecatedFunctions.mcrypt_decryptDeprecatedRemoved
 
+// mcrypt methods are removed in php7.2 but we have a condition in this class that only uses them if they are available.
 
 /**
  * EE_Encryption class
@@ -14,7 +23,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
  * @subpackage includes/functions
  * @author     Brent Christensen
  */
-class EE_Encryption
+class EE_Encryption implements InterminableInterface
 {
 
     /**
@@ -46,7 +55,6 @@ class EE_Encryption
      * appended to text encrypted using the acme encryption
      */
     const ACME_ENCRYPTION_FLAG = '::ae';
-
 
 
     /**
@@ -90,7 +98,6 @@ class EE_Encryption
     protected $_use_base64_encode = false;
 
 
-
     /**
      * protected constructor to prevent direct creation
      */
@@ -101,14 +108,13 @@ class EE_Encryption
         }
         if (extension_loaded('openssl')) {
             $this->_use_openssl_encrypt = true;
-        } else if (extension_loaded('mcrypt')) {
+        } elseif (extension_loaded('mcrypt')) {
             $this->_use_mcrypt = true;
         }
         if (function_exists('base64_encode')) {
             $this->_use_base64_encode = true;
         }
     }
-
 
 
     /**
@@ -119,12 +125,11 @@ class EE_Encryption
     public static function instance()
     {
         // check if class object is instantiated
-        if (! self::$_instance instanceof EE_Encryption) {
-            self::$_instance = new self();
+        if (! EE_Encryption::$_instance instanceof EE_Encryption) {
+            EE_Encryption::$_instance = new self();
         }
-        return self::$_instance;
+        return EE_Encryption::$_instance;
     }
-
 
 
     /**
@@ -152,7 +157,6 @@ class EE_Encryption
     }
 
 
-
     /**
      * encrypts data
      *
@@ -173,7 +177,6 @@ class EE_Encryption
         }
         return $encrypted_text;
     }
-
 
 
     /**
@@ -199,7 +202,6 @@ class EE_Encryption
     }
 
 
-
     /**
      * encodes string with PHP's base64 encoding
      *
@@ -218,13 +220,13 @@ class EE_Encryption
     }
 
 
-
     /**
      * decodes string that has been encoded with PHP's base64 encoding
      *
      * @see http://php.net/manual/en/function.base64-encode.php
      * @param string $encoded_string the text to be decoded
      * @return string
+     * @throws RuntimeException
      */
     public function base64_string_decode($encoded_string = '')
     {
@@ -233,9 +235,14 @@ class EE_Encryption
             return $encoded_string;
         }
         // decode
-        return base64_decode($encoded_string);
+        $decoded_string = base64_decode($encoded_string);
+        if ($decoded_string === false) {
+            throw new RuntimeException(
+                esc_html__('Base 64 decoding failed.', 'event_espresso')
+            );
+        }
+        return $decoded_string;
     }
-
 
 
     /**
@@ -258,13 +265,13 @@ class EE_Encryption
     }
 
 
-
     /**
      * decodes  url string that has been encoded with PHP's base64 encoding
      *
      * @see http://php.net/manual/en/function.base64-encode.php
      * @param string $encoded_string the text to be decoded
      * @return string
+     * @throws RuntimeException
      */
     public function base64_url_decode($encoded_string = '')
     {
@@ -275,25 +282,35 @@ class EE_Encryption
         // replace previously removed characters
         $encoded_string = strtr($encoded_string, '-_,', '+/=');
         // decode
-        return base64_decode($encoded_string);
+        $decoded_string = base64_decode($encoded_string);
+        if ($decoded_string === false) {
+            throw new RuntimeException(
+                esc_html__('Base 64 decoding failed.', 'event_espresso')
+            );
+        }
+        return $decoded_string;
     }
-
 
 
     /**
      * encrypts data using PHP's openssl functions
      *
      * @param string $text_string the text to be encrypted
+     * @param string $cipher_method
+     * @param string $encryption_key
      * @return string
      * @throws RuntimeException
      */
-    protected function openssl_encrypt($text_string = '')
-    {
+    protected function openssl_encrypt(
+        $text_string = '',
+        $cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD,
+        $encryption_key = ''
+    ) {
         // you give me nothing??? GET OUT !
         if (empty($text_string)) {
             return $text_string;
         }
-        $this->cipher_method = $this->getCipherMethod();
+        $this->cipher_method = $this->getCipherMethod($cipher_method);
         // get initialization vector size
         $iv_size = openssl_cipher_iv_length($this->cipher_method);
         // generate initialization vector.
@@ -310,7 +327,7 @@ class EE_Encryption
         $encrypted_text = openssl_encrypt(
             $text_string,
             $this->cipher_method,
-            $this->getDigestHashValue(),
+            $this->getDigestHashValue(EE_Encryption::OPENSSL_DIGEST_METHOD, $encryption_key),
             0,
             $iv
         );
@@ -321,7 +338,6 @@ class EE_Encryption
             ? trim(base64_encode($encrypted_text))
             : trim($encrypted_text);
     }
-
 
 
     /**
@@ -338,7 +354,7 @@ class EE_Encryption
      */
     protected function getCipherMethod($cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD)
     {
-        if($this->cipher_method !== ''){
+        if ($this->cipher_method !== '') {
             return $this->cipher_method;
         }
         // verify that the default cipher method can produce an initialization vector
@@ -346,13 +362,12 @@ class EE_Encryption
             // nope? okay let's get what we found in the past to work
             $cipher_method = get_option(EE_Encryption::OPENSSL_CIPHER_METHOD_OPTION_NAME, '');
             // oops... haven't tested available cipher methods yet
-            if($cipher_method === '' || openssl_cipher_iv_length($cipher_method) === false) {
+            if ($cipher_method === '' || openssl_cipher_iv_length($cipher_method) === false) {
                 $cipher_method = $this->getAvailableCipherMethod($cipher_method);
             }
         }
         return $cipher_method;
     }
-
 
 
     /**
@@ -372,7 +387,7 @@ class EE_Encryption
                 // then grab the first item from the list
                 $cipher_method = reset($this->cipher_methods);
             }
-            if($cipher_method === false){
+            if ($cipher_method === false) {
                 throw new RuntimeException(
                     esc_html__(
                         'OpenSSL support appears to be enabled on the server, but no cipher methods are available. Please contact the server administrator.',
@@ -393,23 +408,27 @@ class EE_Encryption
     }
 
 
-
     /**
      * decrypts data that has been encrypted with PHP's openssl functions
      *
      * @param string $encrypted_text the text to be decrypted
+     * @param string $cipher_method
+     * @param string $encryption_key
      * @return string
      * @throws RuntimeException
      */
-    protected function openssl_decrypt($encrypted_text = '')
-    {
+    protected function openssl_decrypt(
+        $encrypted_text = '',
+        $cipher_method = EE_Encryption::OPENSSL_CIPHER_METHOD,
+        $encryption_key = ''
+    ) {
         // you give me nothing??? GET OUT !
         if (empty($encrypted_text)) {
             return $encrypted_text;
         }
         // decode
         $encrypted_text = $this->valid_base_64($encrypted_text)
-            ? base64_decode($encrypted_text)
+            ? $this->base64_url_decode($encrypted_text)
             : $encrypted_text;
         $encrypted_components = explode(
             EE_Encryption::OPENSSL_IV_DELIMITER,
@@ -423,8 +442,8 @@ class EE_Encryption
         // decrypt it
         $decrypted_text = openssl_decrypt(
             $encrypted_components[0],
-            $this->getCipherMethod(),
-            $this->getDigestHashValue(),
+            $this->getCipherMethod($cipher_method),
+            $this->getDigestHashValue(EE_Encryption::OPENSSL_DIGEST_METHOD, $encryption_key),
             0,
             $encrypted_components[1]
         );
@@ -433,24 +452,27 @@ class EE_Encryption
     }
 
 
-
     /**
      * Computes the digest hash value using the specified digest method.
      * If that digest method fails to produce a valid hash value,
      * then we'll grab the next digest method and recursively try again until something works.
      *
      * @param string $digest_method
+     * @param string $encryption_key
      * @return string
      * @throws RuntimeException
      */
-    protected function getDigestHashValue($digest_method = EE_Encryption::OPENSSL_DIGEST_METHOD){
-        $digest_hash_value = openssl_digest($this->get_encryption_key(), $digest_method);
+    protected function getDigestHashValue($digest_method = EE_Encryption::OPENSSL_DIGEST_METHOD, $encryption_key = '')
+    {
+        $encryption_key = $encryption_key !== ''
+            ? $encryption_key
+            : $this->get_encryption_key();
+        $digest_hash_value = openssl_digest($encryption_key, $digest_method);
         if ($digest_hash_value === false) {
             return $this->getDigestHashValue($this->getDigestMethod());
         }
         return $digest_hash_value;
     }
-
 
 
     /**
@@ -461,7 +483,8 @@ class EE_Encryption
      * @return string
      * @throws \RuntimeException
      */
-    protected function getDigestMethod(){
+    protected function getDigestMethod()
+    {
         $digest_method = prev($this->digest_methods);
         if (empty($this->digest_methods)) {
             $this->digest_methods = openssl_get_md_methods();
@@ -502,8 +525,8 @@ class EE_Encryption
         );
         $string_bits = str_split($text_string);
         foreach ($string_bits as $k => $v) {
-            $temp = ord($v) + ord($key_bits[$k]);
-            $string_bits[$k] = chr($temp > 255 ? ($temp - 256) : $temp);
+            $temp = ord($v) + ord($key_bits[ $k ]);
+            $string_bits[ $k ] = chr($temp > 255 ? ($temp - 256) : $temp);
         }
         $encrypted_text = implode('', $string_bits);
         $encrypted_text .= EE_Encryption::ACME_ENCRYPTION_FLAG;
@@ -511,7 +534,6 @@ class EE_Encryption
             ? base64_encode($encrypted_text)
             : $encrypted_text;
     }
-
 
 
     /**
@@ -530,12 +552,11 @@ class EE_Encryption
         }
         // decode the data ?
         $encrypted_text = $this->valid_base_64($encrypted_text)
-            ? base64_decode($encrypted_text)
+            ? $this->base64_url_decode($encrypted_text)
             : $encrypted_text;
-        if (
-            $this->_use_mcrypt
+        if ($this->_use_mcrypt
             && strpos($encrypted_text, EE_Encryption::ACME_ENCRYPTION_FLAG) === false
-        ){
+        ) {
             return $this->m_decrypt($encrypted_text);
         }
         $encrypted_text = substr($encrypted_text, 0, -4);
@@ -549,12 +570,11 @@ class EE_Encryption
         );
         $string_bits = str_split($encrypted_text);
         foreach ($string_bits as $k => $v) {
-            $temp = ord($v) - ord($key_bits[$k]);
-            $string_bits[$k] = chr($temp < 0 ? ($temp + 256) : $temp);
+            $temp = ord($v) - ord($key_bits[ $k ]);
+            $string_bits[ $k ] = chr($temp < 0 ? ($temp + 256) : $temp);
         }
         return implode('', $string_bits);
     }
-
 
 
     /**
@@ -582,7 +602,6 @@ class EE_Encryption
     }
 
 
-
     /**
      * generate random string
      *
@@ -600,7 +619,6 @@ class EE_Encryption
         $random_string = substr($random_string, 0, $length);
         return $random_string;
     }
-
 
 
     /**
@@ -642,7 +660,6 @@ class EE_Encryption
     }
 
 
-
     /**
      * decrypts data that has been encrypted with PHP's mcrypt functions
      *
@@ -659,7 +676,7 @@ class EE_Encryption
         }
         // decode
         $encrypted_text = $this->valid_base_64($encrypted_text)
-            ? base64_decode($encrypted_text)
+            ? $this->base64_url_decode($encrypted_text)
             : $encrypted_text;
         // get the initialization vector size
         $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
@@ -680,7 +697,4 @@ class EE_Encryption
         $decrypted_text = trim($decrypted_text);
         return $decrypted_text;
     }
-
 }
-/* End of file EE_Encryption.class.php */
-/* Location: /includes/core/EE_Encryption.core.php */

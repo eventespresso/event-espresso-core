@@ -2,13 +2,8 @@
 
 namespace EventEspresso\core\services\loaders;
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\domain\values\FullyQualifiedName;
 use InvalidArgumentException;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class Loader
@@ -16,40 +11,41 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class Loader implements LoaderInterface
 {
-
 
     /**
      * @var LoaderDecoratorInterface $new_loader
      */
     private $new_loader;
 
-
     /**
      * @var LoaderDecoratorInterface $shared_loader
      */
     private $shared_loader;
 
-
+    /**
+     * @var ClassInterfaceCache $class_cache
+     */
+    private $class_cache;
 
     /**
      * Loader constructor.
      *
-     * @param LoaderDecoratorInterface|null $new_loader
-     * @param LoaderDecoratorInterface|null $shared_loader
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
+     * @param LoaderDecoratorInterface        $new_loader
+     * @param CachingLoaderDecoratorInterface $shared_loader
+     * @param ClassInterfaceCache             $class_cache
      */
-    public function __construct(LoaderDecoratorInterface $new_loader, LoaderDecoratorInterface $shared_loader)
-    {
-        $this->new_loader = $new_loader;
+    public function __construct(
+        LoaderDecoratorInterface $new_loader,
+        CachingLoaderDecoratorInterface $shared_loader,
+        ClassInterfaceCache $class_cache
+    ) {
+        $this->new_loader    = $new_loader;
         $this->shared_loader = $shared_loader;
+        $this->class_cache   = $class_cache;
     }
-
 
 
     /**
@@ -61,9 +57,8 @@ class Loader implements LoaderInterface
     }
 
 
-
     /**
-     * @return LoaderDecoratorInterface
+     * @return CachingLoaderDecoratorInterface
      */
     public function getSharedLoader()
     {
@@ -71,44 +66,57 @@ class Loader implements LoaderInterface
     }
 
 
-
     /**
-     * @param string $fqcn
-     * @param array  $arguments
-     * @param bool   $shared
+     * @param FullyQualifiedName|string $fqcn
+     * @param array                     $arguments
+     * @param bool                      $shared
      * @return mixed
      */
-    public function load($fqcn, $arguments = array(), $shared = true)
+    public function load($fqcn, array $arguments = array(), $shared = true)
     {
+        $fqcn = $this->class_cache->getFqn($fqcn);
+        if ($this->class_cache->hasInterface($fqcn, 'EventEspresso\core\interfaces\ReservedInstanceInterface')) {
+            $shared = true;
+        }
         return $shared
             ? $this->getSharedLoader()->load($fqcn, $arguments, $shared)
             : $this->getNewLoader()->load($fqcn, $arguments, $shared);
     }
 
 
-
     /**
-     * @param string $fqcn
-     * @param array  $arguments
+     * @param FullyQualifiedName|string $fqcn
+     * @param array                     $arguments
      * @return mixed
      */
-    public function getNew($fqcn, $arguments = array())
+    public function getNew($fqcn, array $arguments = array())
     {
-        return $this->getNewLoader()->load($fqcn, $arguments, false);
+        return $this->load($fqcn, $arguments, false);
     }
 
 
-
     /**
-     * @param string $fqcn
-     * @param array  $arguments
+     * @param FullyQualifiedName|string $fqcn
+     * @param array                     $arguments
      * @return mixed
      */
-    public function getShared($fqcn, $arguments = array())
+    public function getShared($fqcn, array $arguments = array())
     {
-        return $this->getSharedLoader()->load($fqcn, $arguments, true);
+        return $this->load($fqcn, $arguments);
     }
 
+
+    /**
+     * @param FullyQualifiedName|string $fqcn
+     * @param mixed                     $object
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function share($fqcn, $object)
+    {
+        $fqcn = $this->class_cache->getFqn($fqcn);
+        return $this->getSharedLoader()->share($fqcn, $object);
+    }
 
 
     /**
@@ -118,7 +126,4 @@ class Loader implements LoaderInterface
     {
         $this->shared_loader->reset();
     }
-
 }
-// End of file Loader.php
-// Location: EventEspresso\core\services\loaders/Loader.php

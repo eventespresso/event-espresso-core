@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Interface EEHI_File

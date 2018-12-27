@@ -1,12 +1,6 @@
 <?php
+
 use EventEspresso\core\interfaces\ResettableInterface;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-
-
 
 /**
  * EE_Cart class
@@ -57,7 +51,6 @@ class EE_Cart implements ResettableInterface
     private $_grand_total;
 
 
-
     /**
      * @singleton method used to instantiate class object
      * @access    public
@@ -68,18 +61,18 @@ class EE_Cart implements ResettableInterface
      */
     public static function instance(EE_Line_Item $grand_total = null, EE_Session $session = null)
     {
-        if ( ! empty($grand_total)) {
+        if ($grand_total instanceof EE_Line_Item && $grand_total->is_total()) {
             self::$_instance = new self($grand_total, $session);
         }
         // or maybe retrieve an existing one ?
-        if ( ! self::$_instance instanceof EE_Cart) {
+        if (! self::$_instance instanceof EE_Cart) {
             // try getting the cart out of the session
             $saved_cart = $session instanceof EE_Session ? $session->cart() : null;
             self::$_instance = $saved_cart instanceof EE_Cart ? $saved_cart : new self($grand_total, $session);
             unset($saved_cart);
         }
         // verify that cart is ok and grand total line item exists
-        if ( ! self::$_instance instanceof EE_Cart || ! self::$_instance->_grand_total instanceof EE_Line_Item) {
+        if (! self::$_instance instanceof EE_Cart || ! self::$_instance->_grand_total instanceof EE_Line_Item) {
             self::$_instance = new self($grand_total, $session);
         }
         self::$_instance->get_grand_total();
@@ -87,7 +80,6 @@ class EE_Cart implements ResettableInterface
         add_action('shutdown', array(self::$_instance, 'save_cart'), 90);
         return self::$_instance;
     }
-
 
 
     /**
@@ -106,7 +98,6 @@ class EE_Cart implements ResettableInterface
             $this->set_grand_total_line_item($grand_total);
         }
     }
-
 
 
     /**
@@ -128,18 +119,16 @@ class EE_Cart implements ResettableInterface
     }
 
 
-
     /**
      * @return \EE_Session
      */
     public function session()
     {
-        if ( ! $this->_session instanceof EE_Session) {
+        if (! $this->_session instanceof EE_Session) {
             $this->set_session();
         }
         return $this->_session;
     }
-
 
 
     /**
@@ -149,7 +138,6 @@ class EE_Cart implements ResettableInterface
     {
         $this->_session = $session instanceof EE_Session ? $session : EE_Registry::instance()->load_core('Session');
     }
-
 
 
     /**
@@ -162,7 +150,6 @@ class EE_Cart implements ResettableInterface
     {
         $this->_grand_total = $line_item;
     }
-
 
 
     /**
@@ -183,7 +170,6 @@ class EE_Cart implements ResettableInterface
     }
 
 
-
     /**
      * Creates the total line item, and ensures it has its 'tickets' and 'taxes' sub-items
      *
@@ -197,7 +183,6 @@ class EE_Cart implements ResettableInterface
     }
 
 
-
     /**
      * Gets all the line items of object type Ticket
      *
@@ -206,12 +191,11 @@ class EE_Cart implements ResettableInterface
      */
     public function get_tickets()
     {
-        if ($this->_grand_total === null ) {
+        if ($this->_grand_total === null) {
             return array();
         }
         return EEH_Line_Item::get_ticket_line_items($this->_grand_total);
     }
-
 
 
     /**
@@ -235,7 +219,6 @@ class EE_Cart implements ResettableInterface
     }
 
 
-
     /**
      * Gets all the tax line items
      *
@@ -248,7 +231,6 @@ class EE_Cart implements ResettableInterface
     }
 
 
-
     /**
      * Gets the total line item (which is a parent of all other line items) on this cart
      *
@@ -259,7 +241,6 @@ class EE_Cart implements ResettableInterface
     {
         return $this->_grand_total instanceof EE_Line_Item ? $this->_grand_total : $this->_create_grand_total();
     }
-
 
 
     /**
@@ -277,7 +258,6 @@ class EE_Cart implements ResettableInterface
     }
 
 
-
     /**
      * get_cart_total_before_tax
      *
@@ -289,7 +269,6 @@ class EE_Cart implements ResettableInterface
     {
         return $this->get_grand_total()->recalculate_pre_tax_total();
     }
-
 
 
     /**
@@ -305,7 +284,6 @@ class EE_Cart implements ResettableInterface
     }
 
 
-
     /**
      * Gets the total amount to be paid for the items in the cart, including taxes and other modifiers
      *
@@ -318,7 +296,6 @@ class EE_Cart implements ResettableInterface
         EEH_Line_Item::ensure_taxes_applied($this->_grand_total);
         return $this->get_grand_total()->total();
     }
-
 
 
     /**
@@ -338,7 +315,6 @@ class EE_Cart implements ResettableInterface
     }
 
 
-
     /**
      * deletes an item from the cart
      *
@@ -354,7 +330,6 @@ class EE_Cart implements ResettableInterface
     }
 
 
-
     /**
      * @remove ALL items from cart and zero ALL totals
      * @access public
@@ -367,7 +342,6 @@ class EE_Cart implements ResettableInterface
         $this->_grand_total = $this->_create_grand_total();
         return $this->save_cart(true);
     }
-
 
 
     /**
@@ -390,7 +364,6 @@ class EE_Cart implements ResettableInterface
     }
 
 
-
     /**
      * @save   cart to session
      * @access public
@@ -402,7 +375,7 @@ class EE_Cart implements ResettableInterface
     {
         if ($apply_taxes && $this->_grand_total instanceof EE_Line_Item) {
             EEH_Line_Item::ensure_taxes_applied($this->_grand_total);
-            //make sure we don't cache the transaction because it can get stale
+            // make sure we don't cache the transaction because it can get stale
             if ($this->_grand_total->get_one_from_cache('Transaction') instanceof EE_Transaction
                 && $this->_grand_total->get_one_from_cache('Transaction')->ID()
             ) {
@@ -417,15 +390,13 @@ class EE_Cart implements ResettableInterface
     }
 
 
-
     public function __wakeup()
     {
-        if ( ! $this->_grand_total instanceof EE_Line_Item && absint($this->_grand_total) !== 0) {
+        if (! $this->_grand_total instanceof EE_Line_Item && absint($this->_grand_total) !== 0) {
             // $this->_grand_total is actually just an ID, so use it to get the object from the db
             $this->_grand_total = EEM_Line_Item::instance()->get_one_by_ID($this->_grand_total);
         }
     }
-
 
 
     /**
@@ -438,8 +409,4 @@ class EE_Cart implements ResettableInterface
         }
         return array('_grand_total');
     }
-
-
 }
-/* End of file EE_Cart.core.php */
-/* Location: /includes/core/EE_Cart.core.php */

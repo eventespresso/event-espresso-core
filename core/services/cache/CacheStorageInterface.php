@@ -1,10 +1,6 @@
 <?php
 namespace EventEspresso\core\services\cache;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Manages the creation and deletion of cached data
  *
@@ -61,7 +57,4 @@ interface CacheStorageInterface
      * @return
      */
     public function deleteMany(array $keys, $force_delete = false);
-
 }
-// End of file CacheStorageInterface.php
-// Location: core/services/database/CacheStorageInterface.php

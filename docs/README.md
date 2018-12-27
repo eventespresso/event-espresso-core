@@ -4,6 +4,8 @@ In this docs folder is all the developer documentation specific to EE core.  Loc
 
 > We generally add new documentation, or edit existing documentation specific to the code in the branch this folder lives.  So depending on the branch you are viewing this in, the documentation could be different than other branches.
 
+Please note that notable changes for each released version of the project can be found in our [changelog](https://eventespresso.com/wiki/ee4-changelog/)
+
 ## Table of Contents
 
 All the links to the table of contents for each folder in this documentation:
@@ -11,6 +13,7 @@ All the links to the table of contents for each folder in this documentation:
 | Topic | Purpose |
 | ----- | ------- |
 [Best Practices](A--Best-Practices) | Documents outlining best-practices and standards being used in developing for Event Espresso.
+[Javascript and CSS in EE](AA--Javascript-in-EE) | Various documentation related to javascript and CSS within Event Espresso.
 [Automated Testing](B--Automated-Testing) | Documents outlining how automated testing is done in Event Espresso development.
 [REST API](C--REST-API) | All documentation related to the EE REST API
 [Addon API](D--Addon-API) | All documentation pertaining to the system provided for extending Event Espresso via add-ons.

@@ -2,10 +2,6 @@
 
 namespace EventEspresso\core\services\notices;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class AdminNotice
  * generates WordPress admin notices from EventEspresso\core\services\notices\Notice objects
@@ -17,11 +13,11 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class AdminNotice
 {
 
-    const ERROR       = 'notice-error';
+    const ERROR = 'notice-error';
 
-    const WARNING     = 'notice-warning';
+    const WARNING = 'notice-warning';
 
-    const SUCCESS     = 'notice-success';
+    const SUCCESS = 'notice-success';
 
     const INFORMATION = 'notice-info';
 
@@ -88,16 +84,16 @@ class AdminNotice
     private function getType()
     {
         switch ($this->notice->type()) {
-            case Notice::ERROR :
+            case Notice::ERROR:
                 return AdminNotice::ERROR;
                 break;
-            case Notice::ATTENTION :
+            case Notice::ATTENTION:
                 return AdminNotice::WARNING;
                 break;
-            case Notice::SUCCESS :
+            case Notice::SUCCESS:
                 return AdminNotice::SUCCESS;
                 break;
-            case Notice::INFORMATION :
+            case Notice::INFORMATION:
             default:
                 return AdminNotice::INFORMATION;
                 break;
@@ -126,12 +122,10 @@ class AdminNotice
      */
     protected function generateErrorCode()
     {
-        $file       = explode('.', basename($this->notice->file()));
+        $file = explode('.', basename($this->notice->file()));
         $error_code = ! empty($file[0]) ? $file[0] : '';
         $error_code .= ! empty($error_code) ? ' - ' . $this->notice->func() : $this->notice->func();
         $error_code .= ' - ' . $this->notice->line();
         return $error_code;
     }
-
-
 }

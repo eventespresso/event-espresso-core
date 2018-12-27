@@ -1,12 +1,6 @@
 <?php
 namespace EventEspresso\core\services\container;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Interface CoffeePotInterface
  * for Event Espresso compatible Dependency Injection containers
@@ -82,9 +76,4 @@ interface CoffeePotInterface extends ContainerInterface
      * @return string
      */
     public function addAliases($identifier, $aliases);
-
-
-
 }
-// End of file CoffeePotInterface.php
-// Location: /CoffeePotInterface.php

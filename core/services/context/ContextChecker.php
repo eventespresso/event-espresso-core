@@ -5,10 +5,6 @@ namespace EventEspresso\core\services\context;
 use Closure;
 use EventEspresso\core\domain\entities\contexts\ContextInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class ContextChecker
  * Variation of the Specification pattern that compares an incoming Context class slug
@@ -17,7 +13,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\core\services
  * @author  Brent Christensen
- * 
  */
 class ContextChecker
 {
@@ -123,7 +118,6 @@ class ContextChecker
     }
 
 
-
     /**
      * Returns true if the incoming Context class slug matches one of the preset acceptable values.
      * The result is filterable using the identifier for this ContextChecker.
@@ -140,8 +134,7 @@ class ContextChecker
      *  example:
      *      add_filter(
      *          'FHEE__EventEspresso_core_domain_entities_context_ContextChecker__registration-checkout-type__isAllowed',
-     *          function ($is_allowed, ContextInterface $context) {
-     *              return $context->slug() === 'wait-list-checkout'
+     *          function ($is_allowed, ContextInterface $context) { return $context->slug() === 'wait-list-checkout'
      *                  ? true
      *                  : $is_allowed;
      *          },
@@ -165,5 +158,4 @@ class ContextChecker
             FILTER_VALIDATE_BOOLEAN
         );
     }
-
 }

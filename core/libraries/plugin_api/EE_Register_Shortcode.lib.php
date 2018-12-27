@@ -4,8 +4,6 @@ use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
-
 /**
  * Class EE_Register_Shortcode
  * EEI_Plugin_API class for registering shortcodes for use with EE core.
@@ -33,11 +31,12 @@ class EE_Register_Shortcode implements EEI_Plugin_API
      *
      * @since    4.3.0
      * @since    4.9.46.rc.025  for the new `shortcode_fqcns` array argument.
-     * @param string $shortcode_id a unique identifier for this set of modules Required.
-     * @param  array $setup_args   an array of arguments provided for registering shortcodes Required.
-     *               @type array shortcode_paths        an array of full server paths to folders containing any
+     * @param string $shortcode_id                      a unique identifier for this set of modules Required.
+     * @param  array $setup_args                        an array of arguments provided for registering shortcodes
+     *                                                  Required.
+     * @type array shortcode_paths        an array of full server paths to folders containing any
      *                                                  EES_Shortcodes
-     *               @type array shortcode_fqcns        an array of fully qualified class names for any new shortcode
+     * @type array shortcode_fqcns        an array of fully qualified class names for any new shortcode
      *                                                  classes to register.  Shortcode classes should extend
      *                                                  EspressoShortcode and be properly namespaced so they are
      *                                                  autoloaded.
@@ -46,13 +45,13 @@ class EE_Register_Shortcode implements EEI_Plugin_API
      */
     public static function register($shortcode_id = null, $setup_args = array())
     {
-        //required fields MUST be present, so let's make sure they are.
+        // required fields MUST be present, so let's make sure they are.
         if (empty($shortcode_id)
             || ! is_array($setup_args)
             || (
-                empty($setup_args['shortcode_paths']))
-                && empty($setup_args['shortcode_fqcns'])
-            ) {
+               empty($setup_args['shortcode_paths']))
+               && empty($setup_args['shortcode_fqcns'])
+        ) {
             throw new EE_Error(
                 esc_html__(
                     'In order to register Modules with EE_Register_Shortcode::register(), you must include a "shortcode_id" (a unique identifier for this set of shortcodes), and an array containing the following keys: "shortcode_paths" (an array of full server paths to folders that contain shortcodes, or to the shortcode files themselves)',
@@ -61,12 +60,12 @@ class EE_Register_Shortcode implements EEI_Plugin_API
             );
         }
 
-        //make sure we don't register twice
-        if (isset(self::$_settings[$shortcode_id])) {
+        // make sure we don't register twice
+        if (isset(self::$_settings[ $shortcode_id ])) {
             return;
         }
 
-        //make sure this was called in the right place!
+        // make sure this was called in the right place!
         if (! did_action('AHEE__EE_System__load_espresso_addons')
             || did_action('AHEE__EE_System__register_shortcodes_modules_and_widgets')
         ) {
@@ -79,15 +78,15 @@ class EE_Register_Shortcode implements EEI_Plugin_API
                 '4.3.0'
             );
         }
-        //setup $_settings array from incoming values.
-        self::$_settings[$shortcode_id] = array(
+        // setup $_settings array from incoming values.
+        self::$_settings[ $shortcode_id ] = array(
             // array of full server paths to any EES_Shortcodes used by the shortcode
             'shortcode_paths' => isset($setup_args['shortcode_paths'])
                 ? (array) $setup_args['shortcode_paths']
                 : array(),
             'shortcode_fqcns' => isset($setup_args['shortcode_fqcns'])
                 ? (array) $setup_args['shortcode_fqcns']
-                : array()
+                : array(),
         );
         // add to list of shortcodes to be registered
         add_filter(
@@ -120,8 +119,10 @@ class EE_Register_Shortcode implements EEI_Plugin_API
 
 
     /**
-     * Hooks into FHEE__EventEspresso_core_services_shortcodes_ShortcodesManager__registerShortcodes__shortcode_collection
-     * and registers any provided shortcode fully qualified class names.
+     * Hooks into
+     * FHEE__EventEspresso_core_services_shortcodes_ShortcodesManager__registerShortcodes__shortcode_collection and
+     * registers any provided shortcode fully qualified class names.
+     *
      * @param CollectionInterface $shortcodes_collection
      * @return CollectionInterface
      * @throws InvalidArgumentException
@@ -146,7 +147,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API
                         );
                     }
                     if (! EE_Dependency_Map::instance()->has_dependency_for_class($shortcode_fqcn)) {
-                        //register dependencies
+                        // register dependencies
                         EE_Dependency_Map::register_dependencies(
                             $shortcode_fqcn,
                             array(
@@ -171,8 +172,8 @@ class EE_Register_Shortcode implements EEI_Plugin_API
      */
     public static function deregister($shortcode_id = null)
     {
-        if (isset(self::$_settings[$shortcode_id])) {
-            unset(self::$_settings[$shortcode_id]);
+        if (isset(self::$_settings[ $shortcode_id ])) {
+            unset(self::$_settings[ $shortcode_id ]);
         }
     }
 }

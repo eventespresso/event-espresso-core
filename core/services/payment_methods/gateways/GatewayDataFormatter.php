@@ -1,9 +1,6 @@
 <?php
+
 namespace EventEspresso\core\services\payment_methods\gateways;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class GatewayDataFormatter
@@ -34,7 +31,6 @@ class GatewayDataFormatter implements GatewayDataFormatterInterface
     }
 
 
-
     /**
      * Gets the text to use for a gateway's line item description when this is a partial payment
      *
@@ -46,7 +42,7 @@ class GatewayDataFormatter implements GatewayDataFormatterInterface
         return apply_filters(
             'FHEE__EE_Gateway___partial_payment_desc',
             sprintf(
-                __("Payment of %s for %s", "event_espresso"),
+                __('Payment of %1$s for %2$s', "event_espresso"),
                 $payment->get_pretty('PAY_amount', 'no_currency_code'),
                 $payment->get_first_event_name()
             ),
@@ -54,7 +50,6 @@ class GatewayDataFormatter implements GatewayDataFormatterInterface
             $payment
         );
     }
-
 
 
     /**
@@ -80,7 +75,6 @@ class GatewayDataFormatter implements GatewayDataFormatterInterface
     }
 
 
-
     /**
      * Gets the description to use for a line item when sending line items to the gateway
      *
@@ -100,7 +94,6 @@ class GatewayDataFormatter implements GatewayDataFormatterInterface
     }
 
 
-
     /**
      * Gets the order description that should generally be sent to gateways
      *
@@ -113,14 +106,13 @@ class GatewayDataFormatter implements GatewayDataFormatterInterface
             'FHEE__EE_Gateway___order_description',
             sprintf(
                 __('Event Registrations from %1$s for %2$s', "event_espresso"),
-                get_bloginfo('name'),
+                wp_specialchars_decode(get_bloginfo(), ENT_QUOTES),
                 $payment->get_first_event_name()
             ),
             $this,
             $payment
         );
     }
-
 
 
     /**
@@ -134,5 +126,3 @@ class GatewayDataFormatter implements GatewayDataFormatterInterface
         return number_format($amount, 2, '.', '');
     }
 }
-// End of file GatewayDataFormatter.php
-// Location: core\services\gateways/GatewayDataFormatter.php

@@ -39,9 +39,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use InvalidArgumentException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
+// phpcs:disable PEAR.Functions.ValidDefaultValue.NotAtEnd
 /**
  * Class ModelFieldFactory
  * Factory class for generating Model Field objects
@@ -59,7 +57,6 @@ class ModelFieldFactory
     private $loader;
 
 
-
     /**
      * ModelFieldFactory constructor.
      *
@@ -69,7 +66,6 @@ class ModelFieldFactory
     {
         $this->loader = $loader;
     }
-
 
 
     /**
@@ -86,7 +82,6 @@ class ModelFieldFactory
             array($table_column, $nice_name, $nullable, $default_value)
         );
     }
-
 
 
     /**
@@ -111,7 +106,6 @@ class ModelFieldFactory
     }
 
 
-
     /**
      * @param string $table_column
      * @param string $nice_name
@@ -126,7 +120,6 @@ class ModelFieldFactory
             array($table_column, $nice_name, $nullable, $default_value)
         );
     }
-
 
 
     /**
@@ -151,11 +144,10 @@ class ModelFieldFactory
                 $table_column,
                 $nice_name,
                 $nullable,
-                $default_value
+                $default_value,
             )
         );
     }
-
 
 
     /**
@@ -174,7 +166,6 @@ class ModelFieldFactory
     }
 
 
-
     /**
      * @param string $table_column
      * @param string $nice_name
@@ -189,7 +180,6 @@ class ModelFieldFactory
             array($table_column, $nice_name, $nullable, $default_value)
         );
     }
-
 
 
     /**
@@ -208,7 +198,6 @@ class ModelFieldFactory
     }
 
 
-
     /**
      * @param string $table_column
      * @param string $nice_name
@@ -223,7 +212,6 @@ class ModelFieldFactory
             array($table_column, $nice_name, $nullable, $default_value)
         );
     }
-
 
 
     /**
@@ -249,7 +237,6 @@ class ModelFieldFactory
     }
 
 
-
     /**
      * @param string $table_column
      * @param string $nice_name
@@ -273,7 +260,6 @@ class ModelFieldFactory
     }
 
 
-
     /**
      * @param string $table_column
      * @param string $nice_name
@@ -288,7 +274,6 @@ class ModelFieldFactory
             array($table_column, $nice_name, $nullable, $default_value)
         );
     }
-
 
 
     /**
@@ -306,7 +291,6 @@ class ModelFieldFactory
             array($table_column, $nice_name, $nullable, $default_value, $model_name)
         );
     }
-
 
 
     /**
@@ -331,7 +315,6 @@ class ModelFieldFactory
     }
 
 
-
     /**
      * @param string $table_column
      * @param string $nice_name
@@ -346,7 +329,6 @@ class ModelFieldFactory
             array($table_column, $nice_name, $nullable, $default_value)
         );
     }
-
 
 
     /**
@@ -365,7 +347,6 @@ class ModelFieldFactory
     }
 
 
-
     /**
      * @param string  $table_column
      * @param string  $nice_name
@@ -380,7 +361,6 @@ class ModelFieldFactory
             array($table_column, $nice_name, $nullable, $default_value)
         );
     }
-
 
 
     /**
@@ -399,7 +379,6 @@ class ModelFieldFactory
     }
 
 
-
     /**
      * @param string $table_column
      * @param string $nice_name
@@ -414,7 +393,6 @@ class ModelFieldFactory
             array($table_column, $nice_name, $nullable, $default_value)
         );
     }
-
 
 
     /**
@@ -433,7 +411,6 @@ class ModelFieldFactory
     }
 
 
-
     /**
      * @param string $table_column
      * @param string $nice_name
@@ -448,7 +425,6 @@ class ModelFieldFactory
             array($table_column, $nice_name, $nullable, $default_value)
         );
     }
-
 
 
     /**
@@ -467,7 +443,6 @@ class ModelFieldFactory
     }
 
 
-
     /**
      * @param string $table_column
      * @param string $nice_name
@@ -479,7 +454,6 @@ class ModelFieldFactory
     }
 
 
-
     /**
      * @param string $table_column
      * @param string $nice_name
@@ -489,7 +463,6 @@ class ModelFieldFactory
     {
         return $this->loader->getNew('EE_Primary_Key_String_Field', array($table_column, $nice_name));
     }
-
 
 
     /**
@@ -508,7 +481,6 @@ class ModelFieldFactory
     }
 
 
-
     /**
      * @param string $table_column
      * @param string $nice_name
@@ -523,7 +495,6 @@ class ModelFieldFactory
             array($table_column, $nice_name, $nullable, $default_value)
         );
     }
-
 
 
     /**
@@ -542,7 +513,6 @@ class ModelFieldFactory
     }
 
 
-
     /**
      * @param string $table_column
      * @param string $nice_name
@@ -559,31 +529,34 @@ class ModelFieldFactory
     }
 
 
-
     /**
      * @param string $table_column
      * @param string $nice_name
      * @param bool   $nullable
      * @param mixed  $default_value
-     * @param array  $values        If additional stati are to be used other than the default WP statuses,
-     *                              then they can be registered via this property.
-     *                              The format of the array should be as follows:
-     *  array(
-     *      'status_reference' => array(
-     *          'label' => __('Status Reference Label', 'event_espresso'),
-     *          'public' => true,                 // whether this status should be shown on the frontend of the site
-     *          'exclude_from_search' => false,   // whether this status should be excluded from wp searches
-     *          'show_in_admin_all_list' => true, // whether this status is included in queries
-     *                                               for the admin "all" view in list table views.
-     *          'show_in_admin_status_list' => true, // show in the list of statuses with post counts at the top
-     *                                                  of the admin list tables (i.e. Status Reference(2) )
-     *          'label_count' => _n_noop(
-     *              'Status Reference <span class="count">(%s)</span>',
-     *              'Status References <span class="count">(%s)</span>'
-     *          ),                                   // the text to display on the admin screen
+     * @param array  $values                            If additional stati are to be used other than the default WP
+     *                                                  statuses, then they can be registered via this property. The
+     *                                                  format of the array should be as follows: array(
+     *                                                  'status_reference' => array(
+     *                                                  'label' => __('Status Reference Label', 'event_espresso'),
+     *                                                  'public' => true,                 // whether this status should
+     *                                                  be shown on the frontend of the site
+     *                                                  'exclude_from_search' => false,   // whether this status should
+     *                                                  be excluded from wp searches
+     *                                                  'show_in_admin_all_list' => true, // whether this status is
+     *                                                  included in queries for the admin "all" view in list table
+     *                                                  views.
+     *                                                  'show_in_admin_status_list' => true, // show in the list of
+     *                                                  statuses with post counts at the top of the admin list tables
+     *                                                  (i.e. Status Reference(2) )
+     *                                                  'label_count' => _n_noop(
+     *                                                  'Status Reference <span class="count">(%s)</span>',
+     *                                                  'Status References <span class="count">(%s)</span>'
+     *                                                  ),                                   // the text to display on
+     *                                                  the admin screen
      *                                                  ( or you won't see your status count ).
-     *      )
-     *  )
+     *                                                  )
+     *                                                  )
      * @link http://codex.wordpress.org/Function_Reference/register_post_status for more info
      * @return EE_WP_Post_Status_Field
      */
@@ -601,7 +574,6 @@ class ModelFieldFactory
     }
 
 
-
     /**
      * @param string $post_type
      * @return EE_WP_Post_Type_Field
@@ -610,7 +582,6 @@ class ModelFieldFactory
     {
         return $this->loader->getNew('EE_WP_Post_Type_Field', array($post_type));
     }
-
 
 
     /**
@@ -623,8 +594,4 @@ class ModelFieldFactory
     {
         return $this->loader->getNew('EE_WP_User_Field', array($table_column, $nice_name, $nullable));
     }
-
-
-
 }
-// Location: core/services/database/ModelFieldFactory.php

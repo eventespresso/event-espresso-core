@@ -4,8 +4,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
-
 /**
  * Messages module.  Takes care of registering all the triggers for messages.
  *
@@ -76,16 +74,28 @@ class EED_Messages extends EED_Module
      */
     public static function set_hooks()
     {
-        //actions
+        // actions
         add_action('AHEE__EE_Payment_Processor__update_txn_based_on_payment', array('EED_Messages', 'payment'), 10, 2);
-        add_action('AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
-            array('EED_Messages', 'maybe_registration'), 10, 2);
-        //filters
-        add_filter('FHEE__EE_Registration__receipt_url__receipt_url',
-            array('EED_Messages', 'registration_message_trigger_url'), 10, 4);
-        add_filter('FHEE__EE_Registration__invoice_url__invoice_url',
-            array('EED_Messages', 'registration_message_trigger_url'), 10, 4);
-        //register routes
+        add_action(
+            'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
+            array('EED_Messages', 'maybe_registration'),
+            10,
+            2
+        );
+        // filters
+        add_filter(
+            'FHEE__EE_Registration__receipt_url__receipt_url',
+            array('EED_Messages', 'registration_message_trigger_url'),
+            10,
+            4
+        );
+        add_filter(
+            'FHEE__EE_Registration__invoice_url__invoice_url',
+            array('EED_Messages', 'registration_message_trigger_url'),
+            10,
+            4
+        );
+        // register routes
         self::_register_routes();
     }
 
@@ -97,25 +107,55 @@ class EED_Messages extends EED_Module
      */
     public static function set_hooks_admin()
     {
-        //actions
+        // actions
         add_action('AHEE__EE_Payment_Processor__update_txn_based_on_payment', array('EED_Messages', 'payment'), 10, 2);
-        add_action('AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder',
-            array('EED_Messages', 'payment_reminder'), 10);
-        add_action('AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
-            array('EED_Messages', 'maybe_registration'), 10, 3);
-        add_action('AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send__with_registrations',
-            array('EED_Messages', 'send_newsletter_message'), 10, 2);
-        add_action('AHEE__EES_Espresso_Cancelled__process_shortcode__transaction',
-            array('EED_Messages', 'cancelled_registration'), 10);
-        add_action('AHEE__EE_Admin_Page___process_admin_payment_notification',
-            array('EED_Messages', 'process_admin_payment'), 10, 1);
-        //filters
-        add_filter('FHEE__EE_Admin_Page___process_resend_registration__success',
-            array('EED_Messages', 'process_resend'), 10, 2);
-        add_filter('FHEE__EE_Registration__receipt_url__receipt_url',
-            array('EED_Messages', 'registration_message_trigger_url'), 10, 4);
-        add_filter('FHEE__EE_Registration__invoice_url__invoice_url',
-            array('EED_Messages', 'registration_message_trigger_url'), 10, 4);
+        add_action(
+            'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder',
+            array('EED_Messages', 'payment_reminder'),
+            10
+        );
+        add_action(
+            'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
+            array('EED_Messages', 'maybe_registration'),
+            10,
+            3
+        );
+        add_action(
+            'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send__with_registrations',
+            array('EED_Messages', 'send_newsletter_message'),
+            10,
+            2
+        );
+        add_action(
+            'AHEE__EES_Espresso_Cancelled__process_shortcode__transaction',
+            array('EED_Messages', 'cancelled_registration'),
+            10
+        );
+        add_action(
+            'AHEE__EE_Admin_Page___process_admin_payment_notification',
+            array('EED_Messages', 'process_admin_payment'),
+            10,
+            1
+        );
+        // filters
+        add_filter(
+            'FHEE__EE_Admin_Page___process_resend_registration__success',
+            array('EED_Messages', 'process_resend'),
+            10,
+            2
+        );
+        add_filter(
+            'FHEE__EE_Registration__receipt_url__receipt_url',
+            array('EED_Messages', 'registration_message_trigger_url'),
+            10,
+            4
+        );
+        add_filter(
+            'FHEE__EE_Registration__invoice_url__invoice_url',
+            array('EED_Messages', 'registration_message_trigger_url'),
+            10,
+            4
+        );
     }
 
 
@@ -150,15 +190,17 @@ class EED_Messages extends EED_Module
      */
     public function browser_trigger($WP)
     {
-        //ensure controller is loaded
+        // ensure controller is loaded
         self::_load_controller();
         $token = EE_Registry::instance()->REQ->get('token');
         try {
             $mtg = new EE_Message_Generated_From_Token($token, 'html', self::$_message_resource_manager);
             self::$_MSG_PROCESSOR->generate_and_send_now($mtg);
         } catch (EE_Error $e) {
-            $error_msg = __('Please note that a system message failed to send due to a technical issue.',
-                'event_espresso');
+            $error_msg = __(
+                'Please note that a system message failed to send due to a technical issue.',
+                'event_espresso'
+            );
             // add specific message for developers if WP_DEBUG in on
             $error_msg .= '||' . $e->getMessage();
             EE_Error::add_error($error_msg, __FILE__, __FUNCTION__, __LINE__);
@@ -192,8 +234,10 @@ class EED_Messages extends EED_Module
                 <head></head>
                 <body>
                 <?php echo empty($error_msg)
-                    ? esc_html__('Unfortunately, we were unable to capture the error message for this message.',
-                        'event_espresso')
+                    ? esc_html__(
+                        'Unfortunately, we were unable to capture the error message for this message.',
+                        'event_espresso'
+                    )
                     : wp_kses(
                         $error_msg,
                         array(
@@ -232,7 +276,7 @@ class EED_Messages extends EED_Module
      */
     public function run($WP)
     {
-        //ensure controller is loaded
+        // ensure controller is loaded
         self::_load_controller();
         // attempt to process message
         try {
@@ -240,8 +284,10 @@ class EED_Messages extends EED_Module
             $message_to_generate = EE_Registry::instance()->load_lib('Message_To_Generate_From_Request');
             self::$_MSG_PROCESSOR->generate_and_send_now($message_to_generate);
         } catch (EE_Error $e) {
-            $error_msg = __('Please note that a system message failed to send due to a technical issue.',
-                'event_espresso');
+            $error_msg = __(
+                'Please note that a system message failed to send due to a technical issue.',
+                'event_espresso'
+            );
             // add specific message for developers if WP_DEBUG in on
             $error_msg .= '||' . $e->getMessage();
             EE_Error::add_error($error_msg, __FILE__, __FUNCTION__, __LINE__);
@@ -269,11 +315,11 @@ class EED_Messages extends EED_Module
     public function run_cron()
     {
         self::_load_controller();
-        //get required vars
-        $cron_type     = EE_Registry::instance()->REQ->get('type');
+        // get required vars
+        $cron_type = EE_Registry::instance()->REQ->get('type');
         $transient_key = EE_Registry::instance()->REQ->get('key');
 
-        //now let's verify transient, if not valid exit immediately
+        // now let's verify transient, if not valid exit immediately
         if (! get_transient($transient_key)) {
             /**
              * trigger error so this gets in the error logs.  This is important because it happens on a non-user
@@ -282,22 +328,27 @@ class EED_Messages extends EED_Module
             trigger_error(esc_attr__('Invalid Request (Transient does not exist)', 'event_espresso'));
         }
 
-        //if made it here, lets' delete the transient to keep the db clean
+        // if made it here, lets' delete the transient to keep the db clean
         delete_transient($transient_key);
 
         if (apply_filters('FHEE__EED_Messages__run_cron__use_wp_cron', true)) {
-
             $method = 'batch_' . $cron_type . '_from_queue';
             if (method_exists(self::$_MSG_PROCESSOR, $method)) {
                 self::$_MSG_PROCESSOR->$method();
             } else {
-                //no matching task
+                // no matching task
                 /**
                  * trigger error so this gets in the error logs.  This is important because it happens on a non user
                  * request.
                  */
-                trigger_error(esc_attr(sprintf(__('There is no task corresponding to this route %s', 'event_espresso'),
-                    $cron_type)));
+                trigger_error(
+                    esc_attr(
+                        sprintf(
+                            __('There is no task corresponding to this route %s', 'event_espresso'),
+                            $cron_type
+                        )
+                    )
+                );
             }
         }
 
@@ -343,12 +394,12 @@ class EED_Messages extends EED_Module
     {
         EE_Registry::instance()->load_helper('MSG_Template');
 
-        //for backward compat, let's make sure this returns in the same format as originally.
+        // for backward compat, let's make sure this returns in the same format as originally.
         $template_pack_collection = EEH_MSG_Template::get_template_pack_collection();
         $template_pack_collection->rewind();
         $template_packs = array();
         while ($template_pack_collection->valid()) {
-            $template_packs[$template_pack_collection->current()->dbref] = $template_pack_collection->current();
+            $template_packs[ $template_pack_collection->current()->dbref ] = $template_pack_collection->current();
             $template_pack_collection->next();
         }
         return $template_packs;
@@ -396,9 +447,9 @@ class EED_Messages extends EED_Module
             'messages/validators/html',
             'shortcodes',
         );
-        $paths   = array();
+        $paths = array();
         foreach ($dir_ref as $index => $dir) {
-            $paths[$index] = EE_LIBRARIES . $dir;
+            $paths[ $index ] = EE_LIBRARIES . $dir;
         }
         self::$_MSG_PATHS = apply_filters('FHEE__EED_Messages___set_messages_paths___MSG_PATHS', $paths);
     }
@@ -420,8 +471,8 @@ class EED_Messages extends EED_Module
         if (! self::$_MSG_PROCESSOR instanceof EE_Messages_Processor) {
             EE_Registry::instance()->load_core('Request_Handler');
             self::set_autoloaders();
-            self::$_EEMSG                    = EE_Registry::instance()->load_lib('messages');
-            self::$_MSG_PROCESSOR            = EE_Registry::instance()->load_lib('Messages_Processor');
+            self::$_EEMSG = EE_Registry::instance()->load_lib('messages');
+            self::$_MSG_PROCESSOR = EE_Registry::instance()->load_lib('Messages_Processor');
             self::$_message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
         }
     }
@@ -446,8 +497,8 @@ class EED_Messages extends EED_Module
     /**
      * Any messages triggers for after successful gateway payments should go in here.
      *
-     * @param EE_Transaction $transaction object
-     * @param EE_Payment|null     $payment     object
+     * @param EE_Transaction  $transaction object
+     * @param EE_Payment|null $payment     object
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -457,7 +508,7 @@ class EED_Messages extends EED_Module
      */
     public static function payment(EE_Transaction $transaction, EE_Payment $payment = null)
     {
-        //if there's no payment object, then we cannot do a payment type message!
+        // if there's no payment object, then we cannot do a payment type message!
         if (! $payment instanceof EE_Payment) {
             return;
         }
@@ -465,7 +516,7 @@ class EED_Messages extends EED_Module
         $data = array($transaction, $payment);
         EE_Registry::instance()->load_helper('MSG_Template');
         $message_type = EEH_MSG_Template::convert_payment_status_to_message_type($payment->STS_ID());
-        //if payment amount is less than 0 then switch to payment_refund message type.
+        // if payment amount is less than 0 then switch to payment_refund message type.
         $message_type = $payment->amount() < 0 ? 'payment_refund' : $message_type;
         self::$_MSG_PROCESSOR->generate_for_all_active_messengers($message_type, $data);
     }
@@ -487,7 +538,6 @@ class EED_Messages extends EED_Module
     }
 
 
-
     /**
      * Trigger for Registration messages
      * Note that what registration message type is sent depends on what the reg status is for the registrations on the
@@ -507,7 +557,7 @@ class EED_Messages extends EED_Module
     {
 
         if (! self::_verify_registration_notification_send($registration, $extra_details)) {
-            //no messages please
+            // no messages please
             return;
         }
 
@@ -518,30 +568,29 @@ class EED_Messages extends EED_Module
                 'order_by' => array(
                     'Event.EVT_name'     => 'ASC',
                     'Attendee.ATT_lname' => 'ASC',
-                    'Attendee.ATT_fname' => 'ASC'
-                )
+                    'Attendee.ATT_fname' => 'ASC',
+                ),
             )
         );
-        //cached array of statuses so we only trigger messages once per status.
+        // cached array of statuses so we only trigger messages once per status.
         $statuses_sent = array();
         self::_load_controller();
         $mtgs = array();
 
-        //loop through registrations and trigger messages once per status.
+        // loop through registrations and trigger messages once per status.
         foreach ($all_registrations as $reg) {
-
-            //already triggered?
+            // already triggered?
             if (in_array($reg->status_ID(), $statuses_sent)) {
                 continue;
             }
 
-            $message_type    = EEH_MSG_Template::convert_reg_status_to_message_type($reg->status_ID());
-            $mtgs            = array_merge(
-                    $mtgs,
-                    self::$_MSG_PROCESSOR->setup_mtgs_for_all_active_messengers(
-                            $message_type,
-                            array($registration->transaction(), null, $reg->status_ID())
-                    )
+            $message_type = EEH_MSG_Template::convert_reg_status_to_message_type($reg->status_ID());
+            $mtgs = array_merge(
+                $mtgs,
+                self::$_MSG_PROCESSOR->setup_mtgs_for_all_active_messengers(
+                    $message_type,
+                    array($registration->transaction(), null, $reg->status_ID())
+                )
             );
             $statuses_sent[] = $reg->status_ID();
         }
@@ -556,7 +605,7 @@ class EED_Messages extends EED_Module
             );
         }
 
-        //batch queue and initiate request
+        // batch queue and initiate request
         self::$_MSG_PROCESSOR->batch_queue_for_generation_and_persist($mtgs);
         self::$_MSG_PROCESSOR->get_queue()->initiate_request_by_priority();
     }
@@ -574,20 +623,16 @@ class EED_Messages extends EED_Module
         EE_Registration $registration,
         $extra_details = array()
     ) {
-        //self::log(
-        //	__CLASS__, __FUNCTION__, __LINE__,
-        //	$registration->transaction(),
-        //	array( '$extra_details' => $extra_details )
-        //);
-        // currently only using this to send messages for the primary registrant
         if (! $registration->is_primary_registrant()) {
             return false;
         }
         // first we check if we're in admin and not doing front ajax
         if (is_admin() && ! EE_FRONT_AJAX) {
-            //make sure appropriate admin params are set for sending messages
-            if (empty($_REQUEST['txn_reg_status_change']['send_notifications']) || ! absint($_REQUEST['txn_reg_status_change']['send_notifications'])) {
-                //no messages sent please.
+            // make sure appropriate admin params are set for sending messages
+            if (empty($_REQUEST['txn_reg_status_change']['send_notifications'])
+                || ! absint($_REQUEST['txn_reg_status_change']['send_notifications'])
+            ) {
+                // no messages sent please.
                 return false;
             }
         } else {
@@ -597,15 +642,13 @@ class EED_Messages extends EED_Module
                 return false;
             }
             // return visit but nothing changed ???
-            if (
-                isset($extra_details['revisit'], $extra_details['status_updates']) &&
+            if (isset($extra_details['revisit'], $extra_details['status_updates']) &&
                 $extra_details['revisit'] && ! $extra_details['status_updates']
             ) {
                 return false;
             }
             // NOT sending messages && reg status is something other than "Not-Approved"
-            if (
-                ! apply_filters('FHEE__EED_Messages___maybe_registration__deliver_notifications', false) &&
+            if (! apply_filters('FHEE__EED_Messages___maybe_registration__deliver_notifications', false) &&
                 $registration->status_ID() !== EEM_Registration::status_id_not_approved
             ) {
                 return false;
@@ -677,18 +720,19 @@ class EED_Messages extends EED_Module
     {
         self::_load_controller();
 
-        //if $msgID in this request then skip to the new resend_message
+        // if $msgID in this request then skip to the new resend_message
         if (EE_Registry::instance()->REQ->get('MSG_ID')) {
             return self::resend_message();
         }
 
-        //make sure any incoming request data is set on the REQ so that it gets picked up later.
-        $req_data = (array)$req_data;
+        // make sure any incoming request data is set on the REQ so that it gets picked up later.
+        $req_data = (array) $req_data;
         foreach ($req_data as $request_key => $request_value) {
             EE_Registry::instance()->REQ->set($request_key, $request_value);
         }
 
-        if (! $messages_to_send = self::$_MSG_PROCESSOR->setup_messages_to_generate_from_registration_ids_in_request()) {
+        if (! $messages_to_send = self::$_MSG_PROCESSOR->setup_messages_to_generate_from_registration_ids_in_request(
+        )) {
             return false;
         }
 
@@ -702,7 +746,7 @@ class EED_Messages extends EED_Module
         EE_Error::add_success(
             __('Messages have been successfully queued for generation and sending.', 'event_espresso')
         );
-        return true; //everything got queued.
+        return true; // everything got queued.
     }
 
 
@@ -722,24 +766,33 @@ class EED_Messages extends EED_Module
 
         $msgID = EE_Registry::instance()->REQ->get('MSG_ID');
         if (! $msgID) {
-            EE_Error::add_error(__('Something went wrong because there is no "MSG_ID" value in the request',
-                'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
+            EE_Error::add_error(
+                __(
+                    'Something went wrong because there is no "MSG_ID" value in the request',
+                    'event_espresso'
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
             return false;
         }
 
-        self::$_MSG_PROCESSOR->setup_messages_from_ids_and_send((array)$msgID);
+        self::$_MSG_PROCESSOR->setup_messages_from_ids_and_send((array) $msgID);
 
-        //setup success message.
+        // setup success message.
         $count_ready_for_resend = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue(EEM_Message::status_resend);
-        EE_Error::add_success(sprintf(
-            _n(
-                'There was %d message queued for resending.',
-                'There were %d messages queued for resending.',
-                $count_ready_for_resend,
-                'event_espresso'
-            ),
-            $count_ready_for_resend
-        ));
+        EE_Error::add_success(
+            sprintf(
+                _n(
+                    'There was %d message queued for resending.',
+                    'There were %d messages queued for resending.',
+                    $count_ready_for_resend,
+                    'event_espresso'
+                ),
+                $count_ready_for_resend
+            )
+        );
         return true;
     }
 
@@ -758,47 +811,57 @@ class EED_Messages extends EED_Module
     public static function process_admin_payment(EE_Payment $payment)
     {
         EE_Registry::instance()->load_helper('MSG_Template');
-        //we need to get the transaction object
+        // we need to get the transaction object
         $transaction = $payment->transaction();
         if ($transaction instanceof EE_Transaction) {
-            $data         = array($transaction, $payment);
+            $data = array($transaction, $payment);
             $message_type = EEH_MSG_Template::convert_payment_status_to_message_type($payment->STS_ID());
 
-            //if payment amount is less than 0 then switch to payment_refund message type.
+            // if payment amount is less than 0 then switch to payment_refund message type.
             $message_type = $payment->amount() < 0 ? 'payment_refund' : $message_type;
 
-            //if payment_refund is selected, but the status is NOT accepted.  Then change message type to false so NO message notification goes out.
-            $message_type = $message_type == 'payment_refund' && $payment->STS_ID() != EEM_Payment::status_id_approved ? false : $message_type;
+            // if payment_refund is selected, but the status is NOT accepted.  Then change message type to false so NO message notification goes out.
+            $message_type = $message_type == 'payment_refund' && $payment->STS_ID() != EEM_Payment::status_id_approved
+                ? false : $message_type;
 
             self::_load_controller();
 
             self::$_MSG_PROCESSOR->generate_for_all_active_messengers($message_type, $data);
 
-            //get count of queued for generation
-            $count_to_generate = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue(array(
-                EEM_Message::status_incomplete,
-                EEM_Message::status_idle,
-            ));
+            // get count of queued for generation
+            $count_to_generate = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue(
+                array(
+                    EEM_Message::status_incomplete,
+                    EEM_Message::status_idle,
+                )
+            );
 
             if ($count_to_generate > 0 && self::$_MSG_PROCESSOR->get_queue()->get_message_repository()->count() !== 0) {
                 add_filter('FHEE__EE_Admin_Page___process_admin_payment_notification__success', '__return_true');
                 return true;
             } else {
-                $count_failed = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue(EEM_Message::instance()->stati_indicating_failed_sending());
+                $count_failed = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue(
+                    EEM_Message::instance()->stati_indicating_failed_sending()
+                );
                 /**
                  * Verify that there are actually errors.  If not then we return a success message because the queue might have been emptied due to successful
                  * IMMEDIATE generation.
                  */
                 if ($count_failed > 0) {
-                    EE_Error::add_error(sprintf(
-                        _n(
-                            'The payment notification generation failed.',
-                            '%d payment notifications failed being sent.',
-                            $count_failed,
-                            'event_espresso'
+                    EE_Error::add_error(
+                        sprintf(
+                            _n(
+                                'The payment notification generation failed.',
+                                '%d payment notifications failed being sent.',
+                                $count_failed,
+                                'event_espresso'
+                            ),
+                            $count_failed
                         ),
-                        $count_failed
-                    ), __FILE__, __FUNCTION__, __LINE__);
+                        __FILE__,
+                        __FUNCTION__,
+                        __LINE__
+                    );
 
                     return false;
                 } else {
@@ -831,8 +894,8 @@ class EED_Messages extends EED_Module
      */
     public static function send_newsletter_message($registrations, $grp_id)
     {
-        //make sure mtp is id and set it in the EE_Request Handler later messages setup.
-        EE_Registry::instance()->REQ->set('GRP_ID', (int)$grp_id);
+        // make sure mtp is id and set it in the EE_Request Handler later messages setup.
+        EE_Registry::instance()->REQ->set('GRP_ID', (int) $grp_id);
         self::_load_controller();
         self::$_MSG_PROCESSOR->generate_for_all_active_messengers('newsletter', $registrations);
     }
@@ -860,45 +923,47 @@ class EED_Messages extends EED_Module
     ) {
         // whitelist $messenger
         switch ($messenger) {
-            case 'pdf' :
-                $sending_messenger    = 'pdf';
+            case 'pdf':
+                $sending_messenger = 'pdf';
                 $generating_messenger = 'html';
                 break;
-            case 'html' :
-            default :
-                $sending_messenger    = 'html';
+            case 'html':
+            default:
+                $sending_messenger = 'html';
                 $generating_messenger = 'html';
                 break;
         }
         // whitelist $message_type
         switch ($message_type) {
-            case 'receipt' :
+            case 'receipt':
                 $message_type = 'receipt';
                 break;
-            case 'invoice' :
-            default :
+            case 'invoice':
+            default:
                 $message_type = 'invoice';
                 break;
         }
         // verify that both the messenger AND the message type are active
-        if (EEH_MSG_Template::is_messenger_active($sending_messenger) && EEH_MSG_Template::is_mt_active($message_type)) {
-            //need to get the correct message template group for this (i.e. is there a custom invoice for the event this registration is registered for?)
+        if (EEH_MSG_Template::is_messenger_active($sending_messenger)
+            && EEH_MSG_Template::is_mt_active($message_type)
+        ) {
+            // need to get the correct message template group for this (i.e. is there a custom invoice for the event this registration is registered for?)
             $template_query_params = array(
                 'MTP_is_active'    => true,
                 'MTP_messenger'    => $generating_messenger,
                 'MTP_message_type' => $message_type,
                 'Event.EVT_ID'     => $registration->event_ID(),
             );
-            //get the message template group.
+            // get the message template group.
             $msg_template_group = EEM_Message_Template_Group::instance()->get_one(array($template_query_params));
-            //if we don't have an EE_Message_Template_Group then return
+            // if we don't have an EE_Message_Template_Group then return
             if (! $msg_template_group instanceof EE_Message_Template_Group) {
                 // remove EVT_ID from query params so that global templates get picked up
                 unset($template_query_params['Event.EVT_ID']);
-                //get global template as the fallback
+                // get global template as the fallback
                 $msg_template_group = EEM_Message_Template_Group::instance()->get_one(array($template_query_params));
             }
-            //if we don't have an EE_Message_Template_Group then return
+            // if we don't have an EE_Message_Template_Group then return
             if (! $msg_template_group instanceof EE_Message_Template_Group) {
                 return '';
             }
@@ -912,7 +977,6 @@ class EED_Messages extends EED_Module
                 $msg_template_group->ID(),
                 $registration->transaction_ID()
             );
-
         }
         return $registration_message_trigger_url;
     }
@@ -936,7 +1000,7 @@ class EED_Messages extends EED_Module
     public static function preview_message($type, $context, $messenger, $send = false)
     {
         self::_load_controller();
-        $mtg                     = new EE_Message_To_Generate(
+        $mtg = new EE_Message_To_Generate(
             $messenger,
             $type,
             array(),
@@ -945,7 +1009,7 @@ class EED_Messages extends EED_Module
         );
         $generated_preview_queue = self::$_MSG_PROCESSOR->generate_for_preview($mtg, $send);
         if ($generated_preview_queue instanceof EE_Messages_Queue) {
-            //loop through all content for the preview and remove any persisted records.
+            // loop through all content for the preview and remove any persisted records.
             $content = '';
             foreach ($generated_preview_queue->get_message_repository() as $message) {
                 $content = $message->content();
@@ -1018,7 +1082,7 @@ class EED_Messages extends EED_Module
     public static function generate_now($message_ids)
     {
         self::_load_controller();
-        $messages        = EEM_Message::instance()->get_all(
+        $messages = EEM_Message::instance()->get_all(
             array(
                 0 => array(
                     'MSG_ID' => array('IN', $message_ids),
@@ -1033,9 +1097,13 @@ class EED_Messages extends EED_Module
 
         if (! $generated_queue instanceof EE_Messages_Queue) {
             EE_Error::add_error(
-                __('The messages were not generated. This could mean there is already a batch being generated on a separate request, or because the selected messages are not ready for generation. Please wait a minute or two and try again.',
-                    'event_espresso'),
-                __FILE__, __FUNCTION__, __LINE__
+                __(
+                    'The messages were not generated. This could mean there is already a batch being generated on a separate request, or because the selected messages are not ready for generation. Please wait a minute or two and try again.',
+                    'event_espresso'
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
         }
         return $generated_queue;
@@ -1058,7 +1126,7 @@ class EED_Messages extends EED_Module
     public static function send_now($message_ids)
     {
         self::_load_controller();
-        $messages   = EEM_Message::instance()->get_all(
+        $messages = EEM_Message::instance()->get_all(
             array(
                 0 => array(
                     'MSG_ID' => array('IN', $message_ids),
@@ -1076,12 +1144,16 @@ class EED_Messages extends EED_Module
 
         if (! $sent_queue instanceof EE_Messages_Queue) {
             EE_Error::add_error(
-                __('The messages were not sent. This could mean there is already a batch being sent on a separate request, or because the selected messages are not sendable. Please wait a minute or two and try again.',
-                    'event_espresso'),
-                __FILE__, __FUNCTION__, __LINE__
+                __(
+                    'The messages were not sent. This could mean there is already a batch being sent on a separate request, or because the selected messages are not sendable. Please wait a minute or two and try again.',
+                    'event_espresso'
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
         } else {
-            //can count how many sent by using the messages in the queue
+            // can count how many sent by using the messages in the queue
             $sent_count = $sent_queue->count_STS_in_queue(EEM_Message::instance()->stati_indicating_sent());
             if ($sent_count > 0) {
                 EE_Error::add_success(
@@ -1098,10 +1170,14 @@ class EED_Messages extends EED_Module
             } else {
                 EE_Error::overwrite_errors();
                 EE_Error::add_error(
-                    __('No message was sent because of problems with sending. Either all the messages you selected were not a sendable message, they were ALREADY sent on a different scheduled task, or there was an error.
+                    __(
+                        'No message was sent because of problems with sending. Either all the messages you selected were not a sendable message, they were ALREADY sent on a different scheduled task, or there was an error.
 					If there was an error, you can look at the messages in the message activity list table for any error messages.',
-                        'event_espresso'),
-                    __FILE__, __FUNCTION__, __LINE__
+                        'event_espresso'
+                    ),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
                 );
             }
         }
@@ -1122,7 +1198,7 @@ class EED_Messages extends EED_Module
     public static function generate_and_send_now(array $message_ids)
     {
         $generated_queue = self::generate_now($message_ids);
-        //now let's just trigger sending immediately from this queue.
+        // now let's just trigger sending immediately from this queue.
         $messages_sent = $generated_queue instanceof EE_Messages_Queue
             ? $generated_queue->execute()
             : 0;
@@ -1140,7 +1216,7 @@ class EED_Messages extends EED_Module
                     )
                 )
             );
-            //errors would be added via the generate_now method.
+            // errors would be added via the generate_now method.
         }
     }
 
@@ -1164,11 +1240,10 @@ class EED_Messages extends EED_Module
         self::_load_controller();
         self::$_MSG_PROCESSOR->setup_messages_from_ids_and_send($message_ids);
 
-        //get queue and count
+        // get queue and count
         $queue_count = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue(EEM_Message::status_resend);
 
-        if (
-            $queue_count > 0
+        if ($queue_count > 0
         ) {
             EE_Error::add_success(
                 sprintf(
@@ -1184,8 +1259,7 @@ class EED_Messages extends EED_Module
             /**
              * @see filter usage in EE_Messages_Queue::initiate_request_by_priority
              */
-        } elseif (
-            apply_filters('FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', true)
+        } elseif (apply_filters('FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', true)
             || EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
         ) {
             $queue_count = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue(EEM_Message::status_sent);
@@ -1203,19 +1277,27 @@ class EED_Messages extends EED_Module
                 );
             } else {
                 EE_Error::add_error(
-                    __('No messages were queued for resending. This usually only happens when all the messages flagged for resending are not a status that can be resent.',
-                        'event_espresso'),
-                    __FILE__, __FUNCTION__, __LINE__
+                    __(
+                        'No messages were queued for resending. This usually only happens when all the messages flagged for resending are not a status that can be resent.',
+                        'event_espresso'
+                    ),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
                 );
             }
         } else {
             EE_Error::add_error(
-                __('No messages were queued for resending. This usually only happens when all the messages flagged for resending are not a status that can be resent.',
-                    'event_espresso'),
-                __FILE__, __FUNCTION__, __LINE__
+                __(
+                    'No messages were queued for resending. This usually only happens when all the messages flagged for resending are not a status that can be resent.',
+                    'event_espresso'
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
         }
-        return (bool)$queue_count;
+        return (bool) $queue_count;
     }
 
 
@@ -1242,8 +1324,8 @@ class EED_Messages extends EED_Module
         if (defined('EE_DEBUG') && EE_DEBUG) {
             if ($transaction instanceof EE_Transaction) {
                 // don't serialize objects
-                $info                  = EEH_Debug_Tools::strip_objects($info);
-                $info['TXN_status']    = $transaction->status_ID();
+                $info = EEH_Debug_Tools::strip_objects($info);
+                $info['TXN_status'] = $transaction->status_ID();
                 $info['TXN_reg_steps'] = $transaction->reg_steps();
                 if ($transaction->ID()) {
                     $index = 'EE_Transaction: ' . $transaction->ID();
@@ -1251,7 +1333,6 @@ class EED_Messages extends EED_Module
                 }
             }
         }
-
     }
 
 
@@ -1260,13 +1341,10 @@ class EED_Messages extends EED_Module
      */
     public static function reset()
     {
-        self::$_EEMSG                    = null;
+        self::$_EEMSG = null;
         self::$_message_resource_manager = null;
-        self::$_MSG_PROCESSOR            = null;
-        self::$_MSG_PATHS                = null;
-        self::$_TMP_PACKS                = array();
+        self::$_MSG_PROCESSOR = null;
+        self::$_MSG_PATHS = null;
+        self::$_TMP_PACKS = array();
     }
-
 }
-// End of file EED_Messages.module.php
-// Location: /modules/messages/EED_Messages.module.php

@@ -42,20 +42,20 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
     {
         $html = '';
         // set something unique for the id
-        $html_id = (string)$input->html_id() !== ''
-            ? (string)$input->html_id()
+        $html_id = (string) $input->html_id() !== ''
+            ? (string) $input->html_id()
             : spl_object_hash($input);
         // and add a generic input type class
         $html_class = sanitize_key(str_replace('_', '-', get_class($input))) . '-dv';
         if ($input instanceof EE_Hidden_Input) {
             $html .= EEH_HTML::nl() . $input->get_html_for_input();
-        } else if ($input instanceof EE_Submit_Input) {
+        } elseif ($input instanceof EE_Submit_Input) {
             $html .= EEH_HTML::div(
                 $input->get_html_for_input(),
                 $html_id . '-submit-dv',
                 "{$input->html_class()}-submit-dv {$html_class}"
             );
-        } else if ($input instanceof EE_Select_Input) {
+        } elseif ($input instanceof EE_Select_Input) {
             $html .= EEH_HTML::div(
                 EEH_HTML::nl(1) . $input->get_html_for_label() .
                 EEH_HTML::nl() . $input->get_html_for_errors() .
@@ -64,7 +64,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
                 $html_id . '-input-dv',
                 "{$input->html_class()}-input-dv {$html_class}"
             );
-        } else if ($input instanceof EE_Form_Input_With_Options_Base) {
+        } elseif ($input instanceof EE_Form_Input_With_Options_Base) {
             $html .= EEH_HTML::div(
                 EEH_HTML::nl() . $this->_display_label_for_option_type_question($input) .
                 EEH_HTML::nl() . $input->get_html_for_errors() .
@@ -114,7 +114,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
             );
             // if no content was provided to EEH_HTML::div() above (ie: an empty label),
             // then we need to close the div manually
-            if(empty($html_label_text)){
+            if (empty($html_label_text)) {
                 $label_html .= EEH_HTML::divx($input->html_label_id(), $input->html_label_class());
             }
             return $label_html;
@@ -132,7 +132,6 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
      */
     public function layout_subsection($form_section)
     {
-        //		d( $form_section );
         return EEH_HTML::nl(1) . $form_section->get_html() . EEH_HTML::nl(-1);
     }
 
@@ -147,7 +146,4 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
     {
         return EEH_HTML::divx($this->_form_section->html_id(), $this->_form_section->html_class());
     }
-
-
-
 }

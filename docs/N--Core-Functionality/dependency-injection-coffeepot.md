@@ -42,7 +42,7 @@ $my_class = new MyClass( new Thing() );
 
 Now that you've injected your dependency into your class, you can freely manipulate the incoming dependency at run time. Ideally you should type hint for interfaces instead of concrete classes, because then you can substitute the incoming dependency for any other class that implements that interface, giving you tons of flexibility, especially when unit testing.
 
-###CoffeeShop Dependency Injection (DI) Container
+### CoffeeShop Dependency Injection (DI) Container
 
 Now the only "shortcoming" with injecting your dependencies like this, is that any code that wants to use ` MyClass ` is responsible for providing an instance of ` Thing ` when creating ` MyClass `. And this can be tedious. Thankfully, Dependency Injection (DI) containers can manage this responsibility for you. A DI container is an object (or group of objects working together) that knows how to instantiate classes and provide them with the dependencies they require. And because we love coffee so much at Event Espresso, our DI container is called **CoffeeShop**.
 
@@ -79,7 +79,7 @@ and... uhh... **THAT'S IT!!!**
 
 Because you were using PSR-4 compatible namespaces, and because we had already instructed the **CoffeeShop** DI container on how to inject our models into other classes, ` MyClass ` automatically received an instance of the ` EEM_Attendee ` model as a constructor param.
 
-###Passing Additional Arguments to your Constructors
+### Passing Additional Arguments to your Constructors
 
 > That's cool, but what if ` MyClass ` required some other constructor parameters, like an integer and a string ?
 
@@ -125,7 +125,7 @@ $my_class = $this->CoffeeShop()->brew(
 // where null will get replaced by the EEM_Attendee model
 ```
 
-###CoffeeShop Recipes - Configuring New Dependencies
+### CoffeeShop Recipes - Configuring New Dependencies
 
 > what if I want to inject some other class of my own that CoffeeShop doesn't already know about ?
 
@@ -189,7 +189,7 @@ and... uhh... **THAT'S IT!!!**
 
 **CoffeeShop** will now inject your ` OtherClass ` anywhere that you type hint for it.
 
-###Type Hinting for Interfaces and Filters (Aliases)
+### Type Hinting for Interfaces and Filters (Aliases)
 
 > To do Dependency Inversion properly, you shouldn't type hint for concrete classes in your constructor, but instead type hint for interfaces. How does CoffeeShop know what concrete class to use if I'm not specifying that in my type hinting ?
 
@@ -255,7 +255,7 @@ $this->CoffeeShop->addRecipe(
 Now anytime **CoffeeShop** encounters a class that type hints for ` OtherInterface ` it will inject an instance of ` OtherClass `.
 
 
-###Recipe Ingredients
+### Recipe Ingredients
 
 > Ok, so now because there is a Recipe for 'OtherClass' that uses 'OtherInterface' as a filter (alias), anytime I type hint for  'OtherInterface' in a class constructor, I will receive an instance of 'OtherClass'.  
 > That's great, but what if I have a different class (ADifferentClass) that also type hints for 'OtherInterface', but I actually want to pass it an instance of 'SomeOtherClass' instead of 'OtherClass'?
@@ -322,7 +322,7 @@ So the ingredients array means this Recipe says:
  - use 'Vendor\Namespace\OtherFolder\SomeOtherClass'
 
 
-###CoffeeMakers and Recipe Types
+### CoffeeMakers and Recipe Types
 
 **By default, anytime you call ` CoffeeShop::brew() ` you will receive a NEW unique instantiation of the requested class. So calling ` CoffeeShop::brew() ` multiple times in a row with the same parameters, will result in multiple instantiations of the same class. These are separate unique objects.**
 
@@ -366,7 +366,7 @@ $this->CoffeeShop->addRecipe(
 This would result in the exact same instance of ` OtherClass` being returned every time it was requested. This effectively produces the same result that is achieved by utilizing the Singleton design pattern. A single class instance that is shared amongst all classes.
 
 
-###Paths
+### Paths
 
 Since the CoffeeSop primarily depends on PSR-4 compatible namespacing to find and load classes, if you have a class that does not follow this best practice, then you will need to manually specify the path to your class file.
 
@@ -406,7 +406,7 @@ $this->CoffeeShop->addRecipe(
 
 Now any class that type hints for 'MY_Old_School_Legacy_Class_Name', will receive the proper instance, because the CoffeeShop now knows what file to find that class in.
 
-###WILDCARD * Recipes
+### WILDCARD * Recipes
 
 If you have a LOT of classes that do not follow PSR-4 compatible namespacing, then building Recipes for EVERY single class could be really tedious. So CoffeeShop supports Wildcards in both the class names and filepaths.
 Here's a Recipe that handles ALL of the standard core EE db model classes:
@@ -435,7 +435,7 @@ $transaction_model = $this->CoffeeShop()->brew( 'EEM_Transaction' );
 all of the returned objects are correct and are all handled by one Recipe
 
 
-###Dependency Injection vs Service Location
+### Dependency Injection vs Service Location
 
 > Oh hey, this is great, but injecting all of those dependencies looks like a lot of work, so I'm going to be really clever and just inject the CoffeeShop DI container into all of my classes, and then get my classes directly from the DI container when I need them.
 

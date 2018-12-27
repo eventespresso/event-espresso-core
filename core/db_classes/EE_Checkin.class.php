@@ -1,6 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
 
 /**
  * EE_Checkin class
@@ -35,7 +33,6 @@ class EE_Checkin extends EE_Base_Class
     const status_checked_never = 2;
 
 
-
     /**
      *
      * @param array  $props_n_values    incoming values
@@ -53,7 +50,6 @@ class EE_Checkin extends EE_Base_Class
             ? $has_object
             : new self($props_n_values, false, $timezone, $date_formats);
     }
-
 
 
     /**

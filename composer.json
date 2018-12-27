@@ -1,0 +1,46 @@
+{
+	"name": "eventespresso/event-espresso-core",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"description": "Event Espresso 4 Core for WordPress: Build an Event Ticketing Website Today!",
+	"authors" : [
+		{
+			"name": "Event Espresso Teem",
+			"email": "developers@eventspresso.com",
+			"homepage": "http://developer.eventespresso.com"
+		}
+	],
+	"homepage": "https://eventespresso.com",
+	"keywords": [
+		"event-espresso", "wordpress", "events", "event-management", "event-tickets", "event-registration", "ticketing-system"
+	],
+	"support": {
+		"issues": "https://github.com/eventespresso/event-espresso-core/issues",
+		"forum": "https://eventespresso/support/forums",
+		"source": "https://github.com/eventespresso/event-espresso-core",
+		"docs": "https://github.com/eventespresso/event-espresso-core/tree/master/docs"
+	},
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/eventespresso/ee-coding-standards"
+		}
+	],
+	"require-dev": {
+		"eventespresso/ee-coding-standards": "dev-master",
+		"roave/security-advisories": "dev-master"
+	},
+	"require": {
+		"composer/installers": "~1.0",
+		"php": ">=5.5"
+	},
+	"scripts": {
+		"config-eventespressocs": [
+			"\"vendor/bin/phpcs\" --config-set installed_paths ../../../vendor/wp-coding-standards/wpcs,../../../vendor/wimg/php-compatibility,../../../vendor/eventespresso/ee-coding-standards",
+			"\"vendor/bin/phpcs\" --config-set default_standard EventEspresso"
+		],
+		"lint": "vendor/bin/phpcs",
+		"lint:skip-warnings": "vendor/bin/phpcs -n",
+		"lint:fix": "vendor/bin/phpcbf"
+	}
+}

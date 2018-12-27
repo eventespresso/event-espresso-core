@@ -1,15 +1,17 @@
 <?php
+
 namespace EventEspresso\core\domain\entities\shortcodes;
 
+use EE_Error;
 use EE_Event;
 use EE_Registry;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
+use Exception;
 use InvalidArgumentException;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
+use ReflectionException;
 
 /**
  * Class EspressoTicketSelector
@@ -17,11 +19,9 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class EspressoTicketSelector extends EspressoShortcode
 {
-
 
 
     /**
@@ -33,7 +33,6 @@ class EspressoTicketSelector extends EspressoShortcode
     {
         return 'ESPRESSO_TICKET_SELECTOR';
     }
-
 
 
     /**
@@ -62,7 +61,6 @@ class EspressoTicketSelector extends EspressoShortcode
     }
 
 
-
     /**
      * callback that runs when the shortcode is encountered in post content.
      * IMPORTANT !!!
@@ -71,6 +69,11 @@ class EspressoTicketSelector extends EspressoShortcode
      * @param array $attributes
      * @return string
      * @throws InvalidArgumentException
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws Exception
      */
     public function processShortcode($attributes = array())
     {
@@ -78,21 +81,30 @@ class EspressoTicketSelector extends EspressoShortcode
         $event_id = isset($event_id) ? $event_id : 0;
         $event = EE_Registry::instance()->load_model('Event')->get_one_by_ID($event_id);
         if (! $event instanceof EE_Event) {
-            new ExceptionStackTraceDisplay(
-                new InvalidArgumentException(
-                    sprintf(
-                        esc_html__(
-                            'A valid Event ID is required to use the "%1$s" shortcode.%4$sAn Event with an ID of "%2$s" could not be found.%4$sPlease verify that the shortcode added to this post\'s content includes an "%3$s" argument and that it\'s value corresponds to a valid Event ID.',
-                            'event_espresso'
-                        ),
-                        $this->getTag(),
-                        $event_id,
-                        'event_id',
-                        '<br />'
+            if (WP_DEBUG === true && current_user_can('edit_pages')) {
+                new ExceptionStackTraceDisplay(
+                    new InvalidArgumentException(
+                        sprintf(
+                            esc_html__(
+                                'A valid Event ID is required to use the "%1$s" shortcode.%4$sAn Event with an ID of "%2$s" could not be found.%4$sPlease verify that the shortcode added to this post\'s content includes an "%3$s" argument and that its value corresponds to a valid Event ID.',
+                                'event_espresso'
+                            ),
+                            $this->getTag(),
+                            $event_id,
+                            'event_id',
+                            '<br />'
+                        )
                     )
-                )
+                );
+                return '';
+            }
+            return sprintf(
+                esc_html__(
+                    'An Event with an ID of "%s" could not be found. Please contact the event administrator for assistance.',
+                    'event_espresso'
+                ),
+                $event_id
             );
-            return '';
         }
         ob_start();
         do_action('AHEE_event_details_before_post', $event_id);
@@ -100,8 +112,4 @@ class EspressoTicketSelector extends EspressoShortcode
         do_action('AHEE_event_details_after_post');
         return ob_get_clean();
     }
-
-
 }
-// End of file EspressoTicketSelector.php
-// Location: EventEspresso\core\domain\entities\shortcodes/EspressoTicketSelector.php

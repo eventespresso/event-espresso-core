@@ -1,9 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
+<?php
 /**
  * EE_All_Caps_Normalization
  * Just makes sure the string is all upper case. If the user didn't provide an all
@@ -38,5 +33,4 @@ class EE_All_Caps_Normalization extends EE_Normalization_Strategy_Base
     {
         return $normalized_value;
     }
-
 }

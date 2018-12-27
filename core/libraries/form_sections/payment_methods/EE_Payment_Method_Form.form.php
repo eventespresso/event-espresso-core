@@ -67,7 +67,7 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section
                                      . EEH_Template::get_help_tab_link('payment_methods_overview'),
             )
         );
-        //setup the currency options
+        // setup the currency options
         $this->_subsections['Currency'] = new EE_Select_Multi_Model_Input(
             EEM_Currency::instance()->get_all_currencies_usable_by($this->_payment_method_type),
             array(
@@ -88,8 +88,10 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section
         parent::__construct($options_array);
         $debug_mode = isset($this->_subsections['PMD_debug_mode']) ? $this->_subsections['PMD_debug_mode'] : null;
         if ($debug_mode instanceof EE_Form_Input_Base) {
-            $debug_mode->set_html_help_text(__('This payment method has a Sandbox Server (also known as Testing Server, Development Server, Quality Assurance Server, etc). While in debug mode and using this sandbox server, real payments will not be processed.',
-                'event_espresso'));
+            $debug_mode->set_html_help_text(__(
+                'This payment method has a Sandbox Server (also known as Testing Server, Development Server, Quality Assurance Server, etc). While in debug mode and using this sandbox server, real payments will not be processed.',
+                'event_espresso'
+            ));
         }
     }
 
@@ -105,10 +107,12 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section
     public function _construct_finalize($parent_form_section, $name)
     {
         if (! $this->_payment_method_type instanceof EE_PMT_Base) {
-            throw new EE_Error(sprintf(__('Payment Method forms must have set their payment method type BEFORE calling _construct_finalize',
-                'event_espresso')));
+            throw new EE_Error(sprintf(__(
+                'Payment Method forms must have set their payment method type BEFORE calling _construct_finalize',
+                'event_espresso'
+            )));
         }
-        //set the name of this form based on the payment method type
+        // set the name of this form based on the payment method type
         if (! $this->_name && ! $name) {
             $name = str_replace(" ", "_", ucwords(str_replace("_", " ", ($this->_payment_method_type->system_name()))))
                     . "_Settings_Form";
@@ -125,8 +129,10 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section
     public function set_payment_method_type($payment_method_type)
     {
         if (! $payment_method_type instanceof EE_PMT_Base) {
-            throw new EE_Error(sprintf(__("Payment Method forms MUST set a payment method type by using _set_payment_method_type",
-                "event_espresso")));
+            throw new EE_Error(sprintf(__(
+                "Payment Method forms MUST set a payment method type by using _set_payment_method_type",
+                "event_espresso"
+            )));
         }
         $this->_payment_method_type = $payment_method_type;
     }
@@ -162,8 +168,8 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section
         parent::populate_model_obj($model_obj);
         $extra_meta = $model_obj->all_extra_meta_array();
         foreach ($this->_extra_meta_inputs as $input_name => $extra_meta_input) {
-            if (isset($extra_meta[$input_name])) {
-                $extra_meta_input->set_default($extra_meta[$input_name]);
+            if (isset($extra_meta[ $input_name ])) {
+                $extra_meta_input->set_default($extra_meta[ $input_name ]);
             }
         }
     }

@@ -1,12 +1,6 @@
 <?php
 namespace EventEspresso\core\services\container;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Interface RecipeInterface
  * for Recipe DTOs (Data Transfer Object) used in CoffeeShop
@@ -95,7 +89,4 @@ interface RecipeInterface
      * @param string|array $paths
      */
     public function setPaths($paths = array());
-
 }
-// End of file RecipeInterface.php
-// Location: /RecipeInterface.php

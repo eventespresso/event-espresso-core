@@ -14,7 +14,7 @@ abstract class EE_Table_Base
      *
      * @var string
      */
-    var $_table_name;
+    public $_table_name;
 
 
     /**
@@ -22,7 +22,7 @@ abstract class EE_Table_Base
      *
      * @var string
      */
-    var $_table_alias;
+    public $_table_alias;
 
 
     /**
@@ -49,11 +49,11 @@ abstract class EE_Table_Base
      * @param boolean $global     whether the table is "global" as in there is only 1 table on an entire multisite
      *                            install, or whether each site on a multisite install has a copy of this table
      */
-    function __construct($table_name, $pk_column, $global = false)
+    public function __construct($table_name, $pk_column, $global = false)
     {
         $this->_global = $global;
         $prefix = $this->get_table_prefix();
-        //if they added the prefix, let's remove it because we delay adding the prefix until right when its needed.
+        // if they added the prefix, let's remove it because we delay adding the prefix until right when its needed.
         if (strpos($table_name, $prefix) === 0) {
             $table_name = ltrim($table_name, $prefix);
         }
@@ -87,7 +87,7 @@ abstract class EE_Table_Base
      *
      * @param string $table_alias
      */
-    function _construct_finalize_with_alias($table_alias)
+    public function _construct_finalize_with_alias($table_alias)
     {
         $this->_table_alias = $table_alias;
     }
@@ -99,7 +99,7 @@ abstract class EE_Table_Base
      *
      * @return string
      */
-    function get_table_name()
+    public function get_table_name()
     {
         return $this->get_table_prefix() . $this->_table_name;
     }
@@ -112,9 +112,9 @@ abstract class EE_Table_Base
      * @return string
      * @throws EE_Error
      */
-    function get_table_alias()
+    public function get_table_alias()
     {
-        if ( ! $this->_table_alias) {
+        if (! $this->_table_alias) {
             throw new EE_Error("You must call _construct_finalize_with_alias before using the EE_Table_Base. Did you forget to call parent::__construct at the end of your EEMerimental_Base child's __construct?");
         }
         return $this->_table_alias;
@@ -125,7 +125,7 @@ abstract class EE_Table_Base
     /**
      * @return string name of column of PK
      */
-    function get_pk_column()
+    public function get_pk_column()
     {
         return $this->_pk_column;
     }
@@ -137,7 +137,7 @@ abstract class EE_Table_Base
      *
      * @return string
      */
-    function get_fully_qualified_pk_column()
+    public function get_fully_qualified_pk_column()
     {
         $sql = $this->get_table_alias() . "." . $this->get_pk_column();
         return $sql;
@@ -152,7 +152,7 @@ abstract class EE_Table_Base
      */
     public function get_select_join_limit($limit)
     {
-        $limit = is_array($limit) ? 'LIMIT ' . implode(',', array_map('intval', $limit)) : 'LIMIT ' . (int)$limit;
+        $limit = is_array($limit) ? 'LIMIT ' . implode(',', array_map('intval', $limit)) : 'LIMIT ' . (int) $limit;
         $SQL = SP . '(SELECT * FROM ' . $this->_table_name . SP . $limit . ') AS ' . $this->_table_alias;
         return $SQL;
     }

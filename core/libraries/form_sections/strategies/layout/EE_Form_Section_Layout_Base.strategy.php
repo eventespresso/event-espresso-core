@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Abstract parent class for all form layouts. Mostly just contains a reference to the form
@@ -176,6 +173,9 @@ abstract class EE_Form_Section_Layout_Base
      */
     public function display_label($input)
     {
+        if ($input->get_display_strategy() instanceof EE_Hidden_Display_Strategy) {
+            return '';
+        }
         $class = $input->required()
             ? 'ee-required-label ' . $input->html_label_class()
             : $input->html_label_class();
@@ -207,8 +207,8 @@ abstract class EE_Form_Section_Layout_Base
         $html = '';
         if ($this->_form_section->get_validation_errors()) {
             $html .= "<div class='ee-form-wide-errors'>";
-            //get all the errors on THIS form section (errors which aren't
-            //for specific inputs, but instead for the entire form section)
+            // get all the errors on THIS form section (errors which aren't
+            // for specific inputs, but instead for the entire form section)
             foreach ($this->_form_section->get_validation_errors() as $error) {
                 $html .= $error->getMessage() . '<br>';
             }

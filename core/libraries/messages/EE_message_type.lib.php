@@ -3,9 +3,6 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
-
-
 /**
  * EE_message_type class
  * Abstract class for message types.
@@ -409,9 +406,9 @@ abstract class EE_message_type extends EE_Messages_Base
      */
     public function get_url_trigger($context, $sending_messenger, EE_Registration $registration)
     {
-        //validate context
-        //valid context?
-        if (! isset($this->_contexts[$context])) {
+        // validate context
+        // valid context?
+        if (! isset($this->_contexts[ $context ])) {
             throw new EE_Error(
                 sprintf(
                     __('The context %s is not a valid context for %s.', 'event_espresso'),
@@ -420,7 +417,7 @@ abstract class EE_message_type extends EE_Messages_Base
                 )
             );
         }
-        //valid sending_messenger?
+        // valid sending_messenger?
         $not_valid_msgr = false;
         foreach ($this->_with_messengers as $generating => $sendings) {
             if (empty($sendings) || array_search($sending_messenger, $sendings) === false) {
@@ -466,8 +463,8 @@ abstract class EE_message_type extends EE_Messages_Base
      */
     public function get_data_for_context($context, EE_Registration $registration, $id = 0)
     {
-        //valid context?
-        if (! isset($this->_contexts[$context])) {
+        // valid context?
+        if (! isset($this->_contexts[ $context ])) {
             throw new EE_Error(
                 sprintf(
                     __('The context %s is not a valid context for %s.', 'event_espresso'),
@@ -476,14 +473,14 @@ abstract class EE_message_type extends EE_Messages_Base
                 )
             );
         }
-        //get data and apply global and class specific filters on it.
+        // get data and apply global and class specific filters on it.
         $data = apply_filters(
             'FHEE__EE_message_type__get_data_for_context__data',
             $this->_get_data_for_context($context, $registration, $id),
             $this
         );
         $data = apply_filters('FHEE__' . get_class($this) . '__get_data_for_context__data', $data, $this);
-        //if empty then something went wrong!
+        // if empty then something went wrong!
         if (empty($data)) {
             throw new EE_Error(
                 sprintf(
@@ -567,7 +564,7 @@ abstract class EE_message_type extends EE_Messages_Base
         $extra = array(),
         $messengers = array()
     ) {
-        //we can also further refine the context by action (if present).
+        // we can also further refine the context by action (if present).
         return $this->_get_admin_page_content($page, $action, $extra, $messengers);
     }
 
@@ -601,7 +598,7 @@ abstract class EE_message_type extends EE_Messages_Base
      */
     public function get_master_templates()
     {
-        //first class specific filter then filter that by the global filter.
+        // first class specific filter then filter that by the global filter.
         $master_templates = apply_filters(
             'FHEE__' . get_class($this) . '__get_master_templates',
             $this->_master_templates
@@ -622,16 +619,16 @@ abstract class EE_message_type extends EE_Messages_Base
      */
     public function get_addressees(EE_Messages_incoming_data $data, $context = '')
     {
-        //override _data
+        // override _data
         $this->_data       = $data;
         $addressees        = array();
         $original_contexts = $this->_contexts;
-        //if incoming context then limit to that context
+        // if incoming context then limit to that context
         if (! empty($context)) {
-            $cntxt = ! empty($this->_contexts[$context]) ? $this->_contexts[$context] : '';
+            $cntxt = ! empty($this->_contexts[ $context ]) ? $this->_contexts[ $context ] : '';
             if (! empty($cntxt)) {
                 $this->_contexts           = array();
-                $this->_contexts[$context] = $cntxt;
+                $this->_contexts[ $context ] = $cntxt;
             }
         }
         $this->_set_default_addressee_data();
@@ -639,7 +636,7 @@ abstract class EE_message_type extends EE_Messages_Base
             $addressees = $this->_addressees;
         }
 
-        //reset contexts and addressees
+        // reset contexts and addressees
         $this->_contexts   = $original_contexts;
         $this->_addressees = array();
         return $addressees;
@@ -654,9 +651,9 @@ abstract class EE_message_type extends EE_Messages_Base
      */
     protected function _process_data()
     {
-        //at a minimum, we NEED EE_Attendee objects.
+        // at a minimum, we NEED EE_Attendee objects.
         if (empty($this->_data->attendees)) {
-            return false;  //there's no data to process!
+            return false;  // there's no data to process!
         }
         // process addressees for each context.  Child classes will have to have methods for
         // each context defined to handle the processing of the data object within them
@@ -674,9 +671,9 @@ abstract class EE_message_type extends EE_Messages_Base
                     )
                 );
             }
-            $this->_addressees[$context] = call_user_func(array($this, $xpctd_method));
+            $this->_addressees[ $context ] = call_user_func(array($this, $xpctd_method));
         }
-        return true; //data was processed successfully.
+        return true; // data was processed successfully.
     }
 
 
@@ -755,11 +752,11 @@ abstract class EE_message_type extends EE_Messages_Base
         );
         $contexts       = $this->get_contexts();
         foreach ($contexts as $context => $details) {
-            $this->_valid_shortcodes[$context] = $all_shortcodes;
-            //make sure non admin context does not include the event_author shortcodes
+            $this->_valid_shortcodes[ $context ] = $all_shortcodes;
+            // make sure non admin context does not include the event_author shortcodes
             if ($context != 'admin') {
-                if (($key = array_search('event_author', $this->_valid_shortcodes[$context])) !== false) {
-                    unset($this->_valid_shortcodes[$context][$key]);
+                if (($key = array_search('event_author', $this->_valid_shortcodes[ $context ])) !== false) {
+                    unset($this->_valid_shortcodes[ $context ][ $key ]);
                 }
             }
         }
@@ -767,11 +764,11 @@ abstract class EE_message_type extends EE_Messages_Base
         // IF we have admin context hooked in message types might not have that context.
         if (! empty($this->_valid_shortcodes['admin'])) {
             if (($key = array_search('recipient_details', $this->_valid_shortcodes['admin'])) !== false) {
-                unset($this->_valid_shortcodes['admin'][$key]);
+                unset($this->_valid_shortcodes['admin'][ $key ]);
             }
-            //make sure admin context does not include the recipient_details shortcodes
+            // make sure admin context does not include the recipient_details shortcodes
             if (($key = array_search('recipient_list', $this->_valid_shortcodes['admin'])) !== false) {
-                unset($this->_valid_shortcodes['admin'][$key]);
+                unset($this->_valid_shortcodes['admin'][ $key ]);
             }
         }
     }
@@ -786,7 +783,7 @@ abstract class EE_message_type extends EE_Messages_Base
     public function reset_valid_shortcodes_config($new_config)
     {
         foreach ($new_config as $context => $shortcodes) {
-            $this->_valid_shortcodes[$context] = $shortcodes;
+            $this->_valid_shortcodes[ $context ] = $shortcodes;
         }
     }
 
@@ -809,10 +806,10 @@ abstract class EE_message_type extends EE_Messages_Base
         // and setup an addressee object for each unique admin user.
         foreach ($this->_data->events as $line_ref => $event) {
             $admin_id = $this->_get_event_admin_id($event['ID']);
-            //make sure we are just including the events that belong to this admin!
-            $admin_events[$admin_id][$line_ref] = $event;
+            // make sure we are just including the events that belong to this admin!
+            $admin_events[ $admin_id ][ $line_ref ] = $event;
         }
-        //k now we can loop through the event_admins and setup the addressee data.
+        // k now we can loop through the event_admins and setup the addressee data.
         foreach ($admin_events as $admin_id => $event_details) {
             $aee          = array(
                 'user_id'        => $admin_id,
@@ -842,7 +839,7 @@ abstract class EE_message_type extends EE_Messages_Base
         $aee['attendees']      = $this->_data->attendees;
         $aee['recipient_id']   = $aee['primary_att_obj'] instanceof EE_Attendee ? $aee['primary_att_obj']->ID() : 0;
         $aee['recipient_type'] = 'Attendee';
-        //great now we can instantiate the $addressee object and return (as an array);
+        // great now we can instantiate the $addressee object and return (as an array);
         $add[] = new EE_Messages_Addressee($aee);
         return $add;
     }
@@ -857,11 +854,11 @@ abstract class EE_message_type extends EE_Messages_Base
     protected function _attendee_addressees()
     {
         $add = array();
-        //we just have to loop through the attendees.  We'll also set the attached events for each attendee.
-        //use to verify unique attendee emails... we don't want to sent multiple copies to the same attendee do we?
+        // we just have to loop through the attendees.  We'll also set the attached events for each attendee.
+        // use to verify unique attendee emails... we don't want to sent multiple copies to the same attendee do we?
         $already_processed = array();
         foreach ($this->_data->attendees as $att_id => $details) {
-            //set the attendee array to blank on each loop;
+            // set the attendee array to blank on each loop;
             $aee = array();
             if (isset($this->_data->reg_obj)
                 && ($this->_data->reg_obj->attendee_ID() != $att_id)
@@ -889,10 +886,10 @@ abstract class EE_message_type extends EE_Messages_Base
             }
             $already_processed[] = $att_id;
             foreach ($details as $item => $value) {
-                $aee[$item] = $value;
+                $aee[ $item ] = $value;
                 if ($item === 'line_ref') {
                     foreach ($value as $event_id) {
-                        $aee['events'][$event_id] = $this->_data->events[$event_id];
+                        $aee['events'][ $event_id ] = $this->_data->events[ $event_id ];
                     }
                 }
                 if ($item === 'attendee_email') {
@@ -904,11 +901,11 @@ abstract class EE_message_type extends EE_Messages_Base
             }
             // note the FIRST reg object in this array is the one
             // we'll use for this attendee as the primary registration for this attendee.
-            $aee['reg_obj']        = reset($this->_data->attendees[$att_id]['reg_objs']);
+            $aee['reg_obj']        = reset($this->_data->attendees[ $att_id ]['reg_objs']);
             $aee['attendees']      = $this->_data->attendees;
             $aee['recipient_id']   = $att_id;
             $aee['recipient_type'] = 'Attendee';
-            //merge in the primary attendee data
+            // merge in the primary attendee data
             $aee   = array_merge($this->_default_addressee_data, $aee);
             $add[] = new EE_Messages_Addressee($aee);
         }
@@ -930,4 +927,3 @@ abstract class EE_message_type extends EE_Messages_Base
         return $event instanceof EE_Event ? $event->wp_user() : 0;
     }
 }
-//end EE_message_type class

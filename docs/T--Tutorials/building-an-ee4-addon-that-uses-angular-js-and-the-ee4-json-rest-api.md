@@ -280,7 +280,7 @@ Once the page is loaded, this javascript queries the EE4 REST API for 5 events a
 
 ## Using the Shortcode
 
-We are done coding. Now just create a page or post and use the shortcode `[REST_API_CLIENT]` on it to see the fruit of your labours. [Here is a page where we are using the plugin](http://dev2.eventespresso.com/rest-api-client-page/).
+We are done coding. Now just create a page or post and use the shortcode `[REST_API_CLIENT]` on it to see the fruit of your labours. 
 
 ## Conclusion
 

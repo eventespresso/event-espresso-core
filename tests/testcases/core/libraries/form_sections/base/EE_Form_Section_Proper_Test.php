@@ -425,6 +425,48 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 			$form->submitted_values( true )
 		);
 	}
+
+
+
+    /**
+     * validate the form (which caches the result) then re-submit it and verify the cache got cleared
+     * @group 11381
+     */
+	public function testIsValidCached()
+    {
+        $f = new EE_Form_Section_Proper(
+            array(
+                'name' => 'form',
+                'subsections'=> array(
+                    'int' => new EE_Integer_Input(
+                        array(
+                            'required' => true
+                        )
+                    )
+                )
+            )
+        );
+        $f->receive_form_submission(
+            array(
+                'form' => array(
+                    'int' => '4'
+                )
+            )
+        );
+        $this->assertTrue($f->is_valid());
+        //and double-check calling it again works fine too
+        $this->assertTrue($f->is_valid());
+        //now change the form's input
+        $f->receive_form_submission(
+            array(
+                'form' => array(
+                    'int' => 'saskquatch'
+                )
+            )
+        );
+        $this->assertFalse($f->is_valid());
+
+    }
 }
 
 // End of file EE_Form_Section_Proper_Test.php

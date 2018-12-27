@@ -1,10 +1,6 @@
 <?php
 namespace EventEspresso\core\services\shortcodes;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 interface ShortcodeInterface
 {
 
@@ -54,7 +50,4 @@ interface ShortcodeInterface
      * @return boolean
      */
     public function initialized();
-
 }
-// End of file ShortcodeInterface.php
-// Location: EventEspresso\core\services\shortcodes/ShortcodeInterface.php

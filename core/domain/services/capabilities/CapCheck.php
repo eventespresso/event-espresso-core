@@ -1,13 +1,8 @@
 <?php
+
 namespace EventEspresso\core\domain\services\capabilities;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class CapCheck
@@ -36,7 +31,6 @@ class CapCheck implements CapCheckInterface
     private $ID;
 
 
-
     /**
      * @param string|array $capability   - the capability to be checked, like: 'ee_edit_registrations',
      *                                   or an array of capability strings
@@ -46,17 +40,16 @@ class CapCheck implements CapCheckInterface
      */
     public function __construct($capability, $context, $ID = 0)
     {
-        if ( ! (is_string($capability) || is_array($capability))) {
+        if (! (is_string($capability) || is_array($capability))) {
             throw new InvalidDataTypeException('$capability', $capability, 'string or array');
         }
-        if ( ! is_string($context)) {
+        if (! is_string($context)) {
             throw new InvalidDataTypeException('$context', $context, 'string');
         }
         $this->capability = $capability;
         $this->context = strtolower(str_replace(' ', '_', $context));
         $this->ID = $ID;
     }
-
 
 
     /**
@@ -68,7 +61,6 @@ class CapCheck implements CapCheckInterface
     }
 
 
-
     /**
      * @return string
      */
@@ -78,7 +70,6 @@ class CapCheck implements CapCheckInterface
     }
 
 
-
     /**
      * @return int|string
      */
@@ -86,8 +77,4 @@ class CapCheck implements CapCheckInterface
     {
         return $this->ID;
     }
-
-
 }
-// End of file CapCheck.php
-// Location: /core/domain/services/capabilities/CapCheck.php

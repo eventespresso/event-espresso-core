@@ -1,13 +1,4 @@
 <?php
-/**
- * This contains the class for the EE PDF messenger.
- *
- * @since 4.5.0
- * @package Event Espresso
- * @subpackage messages
- */
-if (!defined('EVENT_ESPRESSO_VERSION'))
-    exit('NO direct script access allowed');
 
 /**
  *
@@ -49,14 +40,14 @@ class EE_Pdf_messenger extends EE_messenger
      */
     public function __construct()
     {
-        //set properties
+        // set properties
         $this->name = 'pdf';
         $this->description = __('This messenger is used for generating a pdf version of the message.', 'event_espresso');
         $this->label = array(
             'singular' => __('PDF', 'event_espresso'),
             'plural' => __('PDFs', 'event_espresso')
         );
-        $this->activate_on_install = TRUE;
+        $this->activate_on_install = true;
 
         parent::__construct();
     }
@@ -163,20 +154,20 @@ class EE_Pdf_messenger extends EE_messenger
                 'input' => 'text',
                 'label' => __('Page Title', 'event_espresso'),
                 'type' => 'string',
-                'required' => TRUE,
-                'validation' => TRUE,
+                'required' => true,
+                'validation' => true,
                 'css_class' => 'large-text',
                 'format' => '%s'
             ),
-            'content' => '', //left empty b/c it is in the "extra array" but messenger still needs needs to know this is a field.
+            'content' => '', // left empty b/c it is in the "extra array" but messenger still needs needs to know this is a field.
             'extra' => array(
                 'content' => array(
                     'main' => array(
                         'input' => 'wp_editor',
                         'label' => __('Main Content', 'event_espresso'),
                         'type' => 'string',
-                        'required' => TRUE,
-                        'validation' => TRUE,
+                        'required' => true,
+                        'validation' => true,
                         'format' => '%s',
                         'rows' => '15'
                     ),
@@ -184,8 +175,8 @@ class EE_Pdf_messenger extends EE_messenger
                         'input' => 'wp_editor',
                         'label' => '[EVENT_LIST]',
                         'type' => 'string',
-                        'required' => TRUE,
-                        'validation' => TRUE,
+                        'required' => true,
+                        'validation' => true,
                         'format' => '%s',
                         'rows' => '15',
                         'shortcodes_required' => array('[EVENT_LIST]')
@@ -194,8 +185,8 @@ class EE_Pdf_messenger extends EE_messenger
                         'input' => 'textarea',
                         'label' => '[ATTENDEE_LIST]',
                         'type' => 'string',
-                        'required' => TRUE,
-                        'validation' => TRUE,
+                        'required' => true,
+                        'validation' => true,
                         'format' => '%s',
                         'css_class' => 'large-text',
                         'rows' => '5',
@@ -205,8 +196,8 @@ class EE_Pdf_messenger extends EE_messenger
                         'input' => 'textarea',
                         'label' => '[TICKET_LIST]',
                         'type' => 'string',
-                        'required' => TRUE,
-                        'validation' => TRUE,
+                        'required' => true,
+                        'validation' => true,
                         'format' => '%s',
                         'css_class' => 'large-text',
                         'rows' => '10',
@@ -216,8 +207,8 @@ class EE_Pdf_messenger extends EE_messenger
                         'input' => 'textarea',
                         'label' => '[DATETIME_LIST]',
                         'type' => 'string',
-                        'required' => TRUE,
-                        'validation' => TRUE,
+                        'required' => true,
+                        'validation' => true,
                         'format' => '%s',
                         'css_class' => 'large-text',
                         'rows' => '10',
@@ -237,7 +228,7 @@ class EE_Pdf_messenger extends EE_messenger
      */
     protected function _set_default_message_types()
     {
-        //note currently PDF is only a secondary messenger so it never has any associated message types.
+        // note currently PDF is only a secondary messenger so it never has any associated message types.
         $this->_default_message_types = array();
     }
 
@@ -265,16 +256,16 @@ class EE_Pdf_messenger extends EE_messenger
     {
         $this->_template_args = array(
             'page_title' => $this->_subject,
-            'base_css' => $this->get_variation($this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'base', $this->_variation),
-            'print_css' => $this->get_variation($this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'print', $this->_variation),
-            'main_css' => $this->get_variation($this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'main', $this->_variation),
+            'base_css' => $this->get_variation($this->_tmp_pack, $this->_incoming_message_type->name, true, 'base', $this->_variation),
+            'print_css' => $this->get_variation($this->_tmp_pack, $this->_incoming_message_type->name, true, 'print', $this->_variation),
+            'main_css' => $this->get_variation($this->_tmp_pack, $this->_incoming_message_type->name, true, 'main', $this->_variation),
             'extra_css' => EE_LIBRARIES_URL . 'messages/defaults/default/variations/pdf_base_default.css',
             'main_body' => apply_filters('FHEE__EE_Pdf_messenger___send_message__main_body', wpautop($this->_content), $this->_content)
         );
         $this->_deregister_wp_hooks();
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts_styles'));
         $content = $this->_get_main_template();
-//		die( $content );
+//      die( $content );
         $this->_do_pdf($content);
         exit(0);
     }
@@ -296,7 +287,7 @@ class EE_Pdf_messenger extends EE_messenger
         global $wp_scripts, $wp_styles;
         $wp_scripts = $wp_styles = array();
 
-        //just add back in wp_enqueue_scripts and wp_print_footer_scripts cause that's all we want to load.
+        // just add back in wp_enqueue_scripts and wp_print_footer_scripts cause that's all we want to load.
         add_action('wp_head', 'wp_enqueue_scripts');
         add_action('wp_footer', 'wp_print_footer_scripts');
         add_action('wp_print_footer_scripts', '_wp_footer_scripts');
@@ -311,12 +302,12 @@ class EE_Pdf_messenger extends EE_messenger
      * @param bool $preview
      * @return string
      */
-    protected function _get_main_template($preview = FALSE)
+    protected function _get_main_template($preview = false)
     {
         $wrapper_template = $this->_tmp_pack->get_wrapper('html', 'main');
-        //add message type to template_args
+        // add message type to template_args
         $this->_template_args['message_type'] = $this->_incoming_message_type;
-        return EEH_Template::display_template($wrapper_template, $this->_template_args, TRUE);
+        return EEH_Template::display_template($wrapper_template, $this->_template_args, true);
     }
 
 
@@ -331,23 +322,29 @@ class EE_Pdf_messenger extends EE_messenger
     {
         $invoice_name = $this->_subject;
 
-        //only load dompdf if nobody else has yet...
-        if (!defined('DOMPDF_DIR')) {
-            define('DOMPDF_ENABLE_REMOTE', TRUE);
-            define('DOMPDF_ENABLE_JAVASCRIPT', FALSE);
-            define('DOMPDF_ENABLE_CSS_FLOAT', TRUE);
-            require_once(EE_THIRD_PARTY . 'dompdf/dompdf_config.inc.php');
+        // only load dompdf if nobody else has yet...
+        if (! class_exists('Dompdf\Dompdf')) {
+            require_once(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php');
+            Dompdf\Autoloader::register();
         }
-        $dompdf = new DOMPDF();
+        $options = new Dompdf\Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('isJavascriptEnabled', false);
+        if (defined('DOMPDF_FONT_DIR')) {
+            $options->setFontDir(DOMPDF_FONT_DIR);
+            $options->setFontCache(DOMPDF_FONT_DIR);
+        }
+        // Allow changing the paper size.
         if (defined('DOMPDF_DEFAULT_PAPER_SIZE')) {
-            $dompdf->set_paper(DOMPDF_DEFAULT_PAPER_SIZE);
+            $options->set('defaultPaperSize', DOMPDF_DEFAULT_PAPER_SIZE);
         }
-        //Remove all spaces between HTML tags
+        $dompdf = new Dompdf\Dompdf($options);
+        // Remove all spaces between HTML tags
         $content = preg_replace('/>\s+</', '><', $content);
-        $dompdf->load_html($content);
+        $dompdf->loadHtml($content);
         $dompdf->render();
-        //forcing the browser to open a download dialog.
-        $dompdf->stream($invoice_name . ".pdf", array('Attachment' => TRUE));
+        // forcing the browser to open a download dialog.
+        $dompdf->stream($invoice_name . ".pdf", array('Attachment' => true));
     }
 
 

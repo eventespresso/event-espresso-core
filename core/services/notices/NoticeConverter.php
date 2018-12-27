@@ -2,17 +2,12 @@
 
 namespace EventEspresso\core\services\notices;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class NoticeConverter
  * Converts notifications in a NoticesContainerInterface container into another format such as EE_Error notifications
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 abstract class NoticeConverter implements NoticeConverterInterface
 {
@@ -30,7 +25,6 @@ abstract class NoticeConverter implements NoticeConverterInterface
     private $throw_exceptions;
 
 
-
     /**
      * NoticeConverter constructor.
      *
@@ -42,7 +36,6 @@ abstract class NoticeConverter implements NoticeConverterInterface
     }
 
 
-
     /**
      * @return NoticesContainerInterface
      */
@@ -50,7 +43,6 @@ abstract class NoticeConverter implements NoticeConverterInterface
     {
         return $this->notices;
     }
-
 
 
     /**
@@ -62,7 +54,6 @@ abstract class NoticeConverter implements NoticeConverterInterface
     }
 
 
-
     /**
      * @return bool
      */
@@ -70,7 +61,6 @@ abstract class NoticeConverter implements NoticeConverterInterface
     {
         return $this->throw_exceptions;
     }
-
 
 
     /**
@@ -82,7 +72,6 @@ abstract class NoticeConverter implements NoticeConverterInterface
     }
 
 
-
     /**
      * @return void;
      */
@@ -90,6 +79,4 @@ abstract class NoticeConverter implements NoticeConverterInterface
     {
         $this->notices = null;
     }
-
-
 }

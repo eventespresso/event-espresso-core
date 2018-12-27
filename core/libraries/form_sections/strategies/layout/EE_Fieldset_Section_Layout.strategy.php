@@ -1,8 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
+<?php
 
 /**
  * Class EE_Fieldset_Section_Layout
@@ -11,7 +7,7 @@
  * @package               Event Espresso
  * @subpackage            core
  * @author                Brent Christensen
- * 
+ *
  */
 class EE_Fieldset_Section_Layout extends EE_Div_Per_Section_Layout
 {
@@ -119,9 +115,4 @@ class EE_Fieldset_Section_Layout extends EE_Div_Per_Section_Layout
     {
         return $this->_legend_text;
     }
-
-
-
 }
-// End of file EE_Fieldset_Section_Layout.strategy.php
-// Location: /EE_Fieldset_Section_Layout.strategy.php

@@ -190,7 +190,7 @@ function shortCodePicker( el ) {
 	shortcodeContainer.removeClass('hidden' ).addClass('ee-shortcode-chooser-open');
 
 	//set click event but unbind any existing first. Also namespace.
-	jQuery( '.js-shortcode-selection', shortcodeContainer ).unbind('click.shortcodeClick').bind( 'click.shortcodeClick', function(e) {
+	jQuery( '.js-shortcode-selection', shortcodeContainer ).off('click.shortcodeClick').on('click.shortcodeClick', function(e) {
 		e.stopPropagation();
 		shortCodePickerClickEvent( this, shortcodeContainer );
 	});

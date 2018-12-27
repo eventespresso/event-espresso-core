@@ -3,11 +3,6 @@ use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidStatusException;
 use EventEspresso\core\services\database\TableAnalysis;
 
-if (!defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 /**
  * Registration Model
  *
@@ -145,13 +140,16 @@ class EEM_Registration extends EEM_Soft_Delete_Base
                 'TXN_ID' => new EE_Foreign_Key_Int_Field(
                     'TXN_ID',
                     esc_html__('Transaction ID', 'event_espresso'),
-                    false, 0, 'Transaction'
+                    false,
+                    0,
+                    'Transaction'
                 ),
                 'TKT_ID' => new EE_Foreign_Key_Int_Field(
                     'TKT_ID',
                     esc_html__('Ticket ID', 'event_espresso'),
                     false,
-                    0, 'Ticket'
+                    0,
+                    'Ticket'
                 ),
                 'STS_ID' => new EE_Foreign_Key_String_Field(
                     'STS_ID',
@@ -234,7 +232,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             'Registration_Payment' => new EE_Has_Many_Relation(),
             'Payment' => new EE_HABTM_Relation('Registration_Payment'),
             'Message' => new EE_Has_Many_Any_Relation(false)
-            //allow deletes even if there are messages in the queue related
+            // allow deletes even if there are messages in the queue related
         );
         $this->_model_chain_to_wp_user = 'Event';
         parent::__construct($timezone);
@@ -367,8 +365,8 @@ class EEM_Registration extends EEM_Soft_Delete_Base
      */
     private function _get_registration_status_array($exclude = array())
     {
-        //in the very rare circumstance that we are deleting a model's table's data
-        //and the table hasn't actually been created, this could have an error
+        // in the very rare circumstance that we are deleting a model's table's data
+        // and the table hasn't actually been created, this could have an error
         /** @type WPDB $wpdb */
         global $wpdb;
         if ($this->_get_table_analysis()->tableExists($wpdb->prefix . 'esp_status')) {
@@ -378,7 +376,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             self::$_reg_status = array();
             foreach ($results as $status) {
                 if (!in_array($status->STS_ID, $exclude, true)) {
-                    self::$_reg_status[$status->STS_ID] = $status->STS_code;
+                    self::$_reg_status[ $status->STS_ID ] = $status->STS_code;
                 }
             }
         }
@@ -409,7 +407,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
      * This returns a wpdb->results array of all registration date month and years matching the incoming query params
      * and grouped by month and year.
      *
-     * @param  array $where_params Array of query_params as described in the comments for EEM_Base::get_all()
+     * @param  array $where_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @return array
      * @throws EE_Error
      */
@@ -493,8 +491,12 @@ class EEM_Registration extends EEM_Soft_Delete_Base
      */
     public function get_registrations_per_day_report($period = '-1 month')
     {
-        $sql_date = $this->convert_datetime_for_query('REG_date', date('Y-m-d H:i:s', strtotime($period)),
-            'Y-m-d H:i:s', 'UTC');
+        $sql_date = $this->convert_datetime_for_query(
+            'REG_date',
+            date('Y-m-d H:i:s', strtotime($period)),
+            'Y-m-d H:i:s',
+            'UTC'
+        );
         $where = array(
             'REG_date' => array('>=', $sql_date),
             'STS_ID' => array('!=', EEM_Registration::status_id_incomplete),
@@ -513,7 +515,8 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             array(
                 'regDate' => array('DATE(' . $query_interval . ')', '%s'),
                 'total' => array('count(REG_ID)', '%d'),
-            ));
+            )
+        );
         return $results;
     }
 
@@ -533,24 +536,24 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         $registration_table = $wpdb->prefix . 'esp_registration';
         $event_table = $wpdb->posts;
         $sql_date = date('Y-m-d H:i:s', strtotime($period));
-        //prepare the query interval for displaying offset
+        // prepare the query interval for displaying offset
         $query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset($this->get_timezone(), 'dates.REG_date');
-        //inner date query
+        // inner date query
         $inner_date_query = "SELECT DISTINCT REG_date from {$registration_table} ";
         $inner_where = ' WHERE';
-        //exclude events not authored by user if permissions in effect
+        // exclude events not authored by user if permissions in effect
         if (!EE_Registry::instance()->CAP->current_user_can('ee_read_others_registrations', 'reg_per_event_report')) {
             $inner_date_query .= "LEFT JOIN {$event_table} ON ID = EVT_ID";
             $inner_where .= ' post_author = ' . get_current_user_id() . ' AND';
         }
         $inner_where .= " REG_date >= '{$sql_date}'";
         $inner_date_query .= $inner_where;
-        //start main query
+        // start main query
         $select = "SELECT DATE({$query_interval}) as Registration_REG_date, ";
         $join = '';
         $join_parts = array();
         $select_parts = array();
-        //loop through registration stati to do parts for each status.
+        // loop through registration stati to do parts for each status.
         foreach (EEM_Registration::reg_status_array() as $STS_ID => $STS_code) {
             if ($STS_ID === EEM_Registration::status_id_incomplete) {
                 continue;
@@ -558,14 +561,14 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             $select_parts[] = "COUNT({$STS_code}.REG_ID) as {$STS_ID}";
             $join_parts[] = "{$registration_table} AS {$STS_code} ON {$STS_code}.REG_date = dates.REG_date AND {$STS_code}.STS_ID = '{$STS_ID}'";
         }
-        //setup the selects
+        // setup the selects
         $select .= implode(', ', $select_parts);
         $select .= " FROM ($inner_date_query) AS dates LEFT JOIN ";
-        //setup the joins
+        // setup the joins
         $join .= implode(' LEFT JOIN ', $join_parts);
-        //now let's put it all together
+        // now let's put it all together
         $query = $select . $join . ' GROUP BY Registration_REG_date';
-        //and execute it
+        // and execute it
         return $wpdb->get_results($query, ARRAY_A);
     }
 
@@ -580,26 +583,30 @@ class EEM_Registration extends EEM_Soft_Delete_Base
      */
     public function get_registrations_per_event_report($period = '-1 month')
     {
-        $date_sql = $this->convert_datetime_for_query('REG_date', date('Y-m-d H:i:s', strtotime($period)),
-            'Y-m-d H:i:s', 'UTC');
+        $date_sql = $this->convert_datetime_for_query(
+            'REG_date',
+            date('Y-m-d H:i:s', strtotime($period)),
+            'Y-m-d H:i:s',
+            'UTC'
+        );
         $where = array(
             'REG_date' => array('>=', $date_sql),
             'STS_ID' => array('!=', EEM_Registration::status_id_incomplete),
         );
-        if (
-        !EE_Registry::instance()->CAP->current_user_can(
+        if (!EE_Registry::instance()->CAP->current_user_can(
             'ee_read_others_registrations',
             'reg_per_event_report'
         )
         ) {
             $where['Event.EVT_wp_user'] = get_current_user_id();
         }
-        $results = $this->_get_all_wpdb_results(array(
+        $results = $this->_get_all_wpdb_results(
+            array(
             $where,
             'group_by' => 'Event.EVT_name',
             'order_by' => 'Event.EVT_name',
             'limit' => array(0, 24),
-        ),
+            ),
             OBJECT,
             array(
                 'event_name' => array('Event_CPT.post_title', '%s'),
@@ -625,22 +632,22 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         $registration_table = $wpdb->prefix . 'esp_registration';
         $event_table = $wpdb->posts;
         $sql_date = date('Y-m-d H:i:s', strtotime($period));
-        //inner date query
+        // inner date query
         $inner_date_query = "SELECT DISTINCT EVT_ID, REG_date from $registration_table ";
         $inner_where = ' WHERE';
-        //exclude events not authored by user if permissions in effect
+        // exclude events not authored by user if permissions in effect
         if (!EE_Registry::instance()->CAP->current_user_can('ee_read_others_registrations', 'reg_per_event_report')) {
             $inner_date_query .= "LEFT JOIN {$event_table} ON ID = EVT_ID";
             $inner_where .= ' post_author = ' . get_current_user_id() . ' AND';
         }
         $inner_where .= " REG_date >= '{$sql_date}'";
         $inner_date_query .= $inner_where;
-        //build main query
+        // build main query
         $select = 'SELECT Event.post_title as Registration_Event, ';
         $join = '';
         $join_parts = array();
         $select_parts = array();
-        //loop through registration stati to do parts for each status.
+        // loop through registration stati to do parts for each status.
         foreach (EEM_Registration::reg_status_array() as $STS_ID => $STS_code) {
             if ($STS_ID === EEM_Registration::status_id_incomplete) {
                 continue;
@@ -648,14 +655,14 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             $select_parts[] = "COUNT({$STS_code}.REG_ID) as {$STS_ID}";
             $join_parts[] = "{$registration_table} AS {$STS_code} ON {$STS_code}.EVT_ID = dates.EVT_ID AND {$STS_code}.STS_ID = '{$STS_ID}' AND {$STS_code}.REG_date = dates.REG_date";
         }
-        //setup the selects
+        // setup the selects
         $select .= implode(', ', $select_parts);
         $select .= " FROM ($inner_date_query) AS dates LEFT JOIN $event_table as Event ON Event.ID = dates.EVT_ID LEFT JOIN ";
-        //setup remaining joins
+        // setup remaining joins
         $join .= implode(' LEFT JOIN ', $join_parts);
-        //now put it all together
+        // now put it all together
         $query = $select . $join . ' GROUP BY Registration_Event';
-        //and execute
+        // and execute
         return $wpdb->get_results($query, ARRAY_A);
     }
 
@@ -718,7 +725,8 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             . $this->table()
             . ' r LEFT JOIN '
             . EEM_Transaction::instance()->table()
-            . ' t ON r.TXN_ID = t.TXN_ID WHERE t.TXN_ID IS NULL');
+            . ' t ON r.TXN_ID = t.TXN_ID WHERE t.TXN_ID IS NULL'
+        );
     }
 
 
@@ -733,7 +741,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
     public function count_registrations_checked_into_datetime($DTT_ID, $checked_in = true)
     {
         global $wpdb;
-        //subquery to get latest checkin
+        // subquery to get latest checkin
         $query = $wpdb->prepare(
             'SELECT '
             . 'COUNT( DISTINCT checkins.REG_ID ) '
@@ -752,7 +760,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             $DTT_ID,
             $checked_in
         );
-        return (int)$wpdb->get_var($query);
+        return (int) $wpdb->get_var($query);
     }
 
 
@@ -767,7 +775,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
     public function count_registrations_checked_into_event($EVT_ID, $checked_in = true)
     {
         global $wpdb;
-        //subquery to get latest checkin
+        // subquery to get latest checkin
         $query = $wpdb->prepare(
             'SELECT '
             . 'COUNT( DISTINCT checkins.REG_ID ) '
@@ -788,7 +796,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             $EVT_ID,
             $checked_in
         );
-        return (int)$wpdb->get_var($query);
+        return (int) $wpdb->get_var($query);
     }
 
 
@@ -803,13 +811,13 @@ class EEM_Registration extends EEM_Soft_Delete_Base
      */
     public function get_latest_registration_for_each_of_given_contacts($attendee_ids = array())
     {
-        //first do a native wp_query to get the latest REG_ID's matching these attendees.
+        // first do a native wp_query to get the latest REG_ID's matching these attendees.
         global $wpdb;
         $registration_table = $wpdb->prefix . 'esp_registration';
         $attendee_table = $wpdb->posts;
         $attendee_ids = is_array($attendee_ids)
             ? array_map('absint', $attendee_ids)
-            : array((int)$attendee_ids);
+            : array((int) $attendee_ids);
         $ATT_IDs = implode(',', $attendee_ids);
         // first we do a query to get the registration ids
         // (because a group by before order by causes the order by to be ignored.)
@@ -832,13 +840,13 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             return array();
         }
         $ids_for_model_query = array();
-        //let's flatten the ids so they can be used in the model query.
+        // let's flatten the ids so they can be used in the model query.
         foreach ($registration_ids as $registration_id) {
             if (isset($registration_id['registration_id'])) {
                 $ids_for_model_query[] = $registration_id['registration_id'];
             }
         }
-        //construct query
+        // construct query
         $_where = array(
             'REG_ID' => array('IN', $ids_for_model_query),
         );
@@ -857,7 +865,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
      * @throws InvalidStatusException
      * @throws EE_Error
      */
-    public function event_reg_count_for_statuses($EVT_ID, $statuses = array() )
+    public function event_reg_count_for_statuses($EVT_ID, $statuses = array())
     {
         $EVT_ID = absint($EVT_ID);
         if (! $EVT_ID) {
@@ -869,7 +877,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         $statuses = ! empty($statuses) ? $statuses : array(EEM_Registration::status_id_approved);
         $valid_reg_statuses = EEM_Registration::reg_statuses();
         foreach ($statuses as $status) {
-            if(! in_array($status, $valid_reg_statuses, true)) {
+            if (! in_array($status, $valid_reg_statuses, true)) {
                 throw new InvalidStatusException($status, esc_html__('Registration', 'event_espresso'));
             }
         }
@@ -884,7 +892,4 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             true
         );
     }
-
 }
-// End of file EEM_Registration.model.php
-// Location: /includes/models/EEM_Registration.model.php

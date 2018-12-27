@@ -1,10 +1,6 @@
 <?php
 namespace EventEspresso\core\domain;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 interface SetHooksInterface
 {
 
@@ -35,7 +31,4 @@ interface SetHooksInterface
      * @return void
      */
     public function setApiHooks();
-
 }
-// End of file SetHooksInterface.php
-// Location: EventEspresso\core\domain/SetHooksInterface.php

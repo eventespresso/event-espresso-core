@@ -1,10 +1,6 @@
 <?php
 namespace EventEspresso\core\services\formatters;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class FormatterInterface
  * Interface for all formatter services which take care of formatting text or arrays of text.
@@ -34,5 +30,3 @@ interface FormatterInterface
      */
     public function format($input);
 }
-// End of file FormatterInterface.php
-// Location: core\services\formatters/FormatterInterface.php

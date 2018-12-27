@@ -1,10 +1,5 @@
 <?php
-
 namespace EventEspresso\core\domain;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Interface RequiresDomainInterface
@@ -28,6 +23,4 @@ interface RequiresDomainInterface
      * @return DomainInterface
      */
     public function domain();
-
 }
-// Location: RequiresDomainInterface.php

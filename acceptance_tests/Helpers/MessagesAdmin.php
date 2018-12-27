@@ -155,6 +155,7 @@ trait MessagesAdmin
      */
     public function toggleContextState($context_string, $expected_state_is_active = true)
     {
+        $this->actor()->scrollTo(MessagesPage::MESSAGES_CONTEXT_SWITCHER_SELECTOR);
         $this->actor()->click(MessagesPage::MESSAGES_CONTEXT_ACTIVE_STATE_TOGGLE);
         if ($expected_state_is_active) {
             $this->actor()->waitForText("The template for $context_string is currently active.");
@@ -298,8 +299,5 @@ trait MessagesAdmin
     public function dismissMessageModal()
     {
         $this->actor()->executeJs('window.dialogHelper.closeModal()');
-        //this is needed otherwise phantom js gets stuck in the wrong context and any future element events will fail.
-        $this->actor()->scrollTo('form#EE_Message_List_Table-table-frm');
-        $this->actor()->click('form#EE_Message_List_Table-table-frm');
     }
 }

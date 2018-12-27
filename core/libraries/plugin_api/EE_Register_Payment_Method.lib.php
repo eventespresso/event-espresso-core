@@ -4,9 +4,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
 /**
  * Class EE_Register_Payment_Method
  *
@@ -28,7 +25,6 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      * @var array
      */
     protected static $_settings = array();
-
 
 
     /**
@@ -53,7 +49,7 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      */
     public static function register($payment_method_id = null, $setup_args = array())
     {
-        //required fields MUST be present, so let's make sure they are.
+        // required fields MUST be present, so let's make sure they are.
         if (empty($payment_method_id) || ! is_array($setup_args) || empty($setup_args['payment_method_paths'])) {
             throw new EE_Error(
                 esc_html__(
@@ -62,13 +58,12 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
                 )
             );
         }
-        //make sure we don't register twice
-        if (isset(self::$_settings[$payment_method_id])) {
+        // make sure we don't register twice
+        if (isset(self::$_settings[ $payment_method_id ])) {
             return;
         }
-        //make sure this was called in the right place!
-        if (
-            ! did_action('AHEE__EE_System__load_espresso_addons')
+        // make sure this was called in the right place!
+        if (! did_action('AHEE__EE_System__load_espresso_addons')
             || did_action('AHEE__EE_System__register_shortcodes_modules_and_widgets')
         ) {
             EE_Error::doing_it_wrong(
@@ -80,11 +75,11 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
                 '4.3.0'
             );
         }
-        //setup $_settings array from incoming values.
-        self::$_settings[$payment_method_id] = array(
+        // setup $_settings array from incoming values.
+        self::$_settings[ $payment_method_id ] = array(
             // array of full server paths to any EE_PMT_Base children used
             'payment_method_paths' => isset($setup_args['payment_method_paths'])
-                ? (array)$setup_args['payment_method_paths']
+                ? (array) $setup_args['payment_method_paths']
                 : array(),
         );
         // add to list of modules to be registered
@@ -97,16 +92,15 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
         if (did_action('FHEE__EE_Payment_Method_Manager__register_payment_methods__registered_payment_methods')) {
             $payment_method_manager = LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
             // register payment methods directly
-            foreach (self::$_settings[$payment_method_id]['payment_method_paths'] as $payment_method_path) {
+            foreach (self::$_settings[ $payment_method_id ]['payment_method_paths'] as $payment_method_path) {
                 $payment_method_manager->register_payment_method($payment_method_path);
             }
             $capabilities = LoaderFactory::getLoader()->getShared('EE_Capabilities');
             $capabilities->addCaps(
-                self::getPaymentMethodCapabilities(self::$_settings[$payment_method_id])
+                self::getPaymentMethodCapabilities(self::$_settings[ $payment_method_id ])
             );
         }
     }
-
 
 
     /**
@@ -127,7 +121,6 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
     }
 
 
-
     /**
      * This deregisters a module that was previously registered with a specific $module_id.
      *
@@ -143,11 +136,10 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      */
     public static function deregister($module_id = null)
     {
-        if (isset(self::$_settings[$module_id])) {
-
-            //set action for just this module id to delay deregistration until core is loaded and ready.
-            $module_settings = self::$_settings[$module_id];
-            unset(self::$_settings[$module_id]);
+        if (isset(self::$_settings[ $module_id ])) {
+            // set action for just this module id to delay deregistration until core is loaded and ready.
+            $module_settings = self::$_settings[ $module_id ];
+            unset(self::$_settings[ $module_id ]);
             add_action(
                 'AHEE__EE_System__core_loaded_and_ready',
                 function () use ($module_settings) {
@@ -159,7 +151,6 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
             );
         }
     }
-
 
 
     /**
@@ -190,7 +181,4 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
         }
         return $payment_method_caps;
     }
-
 }
-// End of file EE_Register_Payment_Method.lib.php
-// Location: /core/libraries/plugin_api/EE_Register_Payment_Method.lib.php

@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\services\shortcodes;
 
 use DomainException;
@@ -14,10 +15,6 @@ use EventEspresso\core\services\collections\CollectionDetails;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
 use Exception;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class ShortcodesManager
@@ -43,13 +40,13 @@ class ShortcodesManager
     private $shortcodes;
 
 
-
     /**
      * ShortcodesManager constructor
      *
      * @param LegacyShortcodesManager $legacy_shortcodes_manager
      */
-    public function __construct(LegacyShortcodesManager $legacy_shortcodes_manager) {
+    public function __construct(LegacyShortcodesManager $legacy_shortcodes_manager)
+    {
         $this->legacy_shortcodes_manager = $legacy_shortcodes_manager;
         // assemble a list of installed and active shortcodes
         add_action(
@@ -66,7 +63,6 @@ class ShortcodesManager
     }
 
 
-
     /**
      * @return CollectionInterface|ShortcodeInterface[]
      * @throws InvalidIdentifierException
@@ -78,12 +74,11 @@ class ShortcodesManager
      */
     public function getShortcodes()
     {
-        if ( ! $this->shortcodes instanceof CollectionInterface) {
+        if (! $this->shortcodes instanceof CollectionInterface) {
             $this->shortcodes = $this->loadShortcodesCollection();
         }
         return $this->shortcodes;
     }
-
 
 
     /**
@@ -99,7 +94,7 @@ class ShortcodesManager
     {
         $loader = new CollectionLoader(
             new CollectionDetails(
-            // collection name
+                // collection name
                 'shortcodes',
                 // collection interface
                 'EventEspresso\core\services\shortcodes\ShortcodeInterface',
@@ -116,7 +111,6 @@ class ShortcodesManager
         );
         return $loader->getCollection();
     }
-
 
 
     /**
@@ -156,7 +150,6 @@ class ShortcodesManager
     }
 
 
-
     /**
      * @return void
      */
@@ -166,12 +159,12 @@ class ShortcodesManager
             // cycle thru shortcode folders
             foreach ($this->shortcodes as $shortcode) {
                 /** @var ShortcodeInterface $shortcode */
-                if ( $shortcode instanceof EnqueueAssetsInterface) {
+                if ($shortcode instanceof EnqueueAssetsInterface) {
                     add_action('wp_enqueue_scripts', array($shortcode, 'registerScriptsAndStylesheets'), 10);
                     add_action('wp_enqueue_scripts', array($shortcode, 'enqueueStylesheets'), 11);
                 }
                 // add_shortcode() if it has not already been added
-                if ( ! shortcode_exists($shortcode->getTag())) {
+                if (! shortcode_exists($shortcode->getTag())) {
                     add_shortcode($shortcode->getTag(), array($shortcode, 'processShortcodeCallback'));
                 }
             }
@@ -180,7 +173,6 @@ class ShortcodesManager
             new ExceptionStackTraceDisplay($exception);
         }
     }
-
 
 
     /**
@@ -213,7 +205,6 @@ class ShortcodesManager
     }
 
 
-
     /**
      * checks supplied content against list of shortcodes,
      * then initializes any found shortcodes, and returns true.
@@ -225,7 +216,7 @@ class ShortcodesManager
     public function parseContentForShortcodes($content)
     {
         $has_shortcode = false;
-        if(empty($this->shortcodes)){
+        if (empty($this->shortcodes)) {
             return $has_shortcode;
         }
         foreach ($this->shortcodes as $shortcode) {
@@ -237,7 +228,4 @@ class ShortcodesManager
         }
         return $has_shortcode;
     }
-
 }
-// End of file ShortcodesManager.php
-// Location: EventEspresso\core\services\shortcodes/ShortcodesManager.php

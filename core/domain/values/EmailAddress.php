@@ -5,16 +5,12 @@ namespace EventEspresso\core\domain\values;
 use EventEspresso\core\domain\services\validation\email\EmailValidationException;
 use EventEspresso\core\domain\services\validation\email\EmailValidatorInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 /**
  * Class EmailAddress
  * Value Object for representing a valid email address
  *
  * @package       EventEspresso\core\domain\values
  * @author        Brent Christensen
- * 
  */
 class EmailAddress
 {
@@ -23,7 +19,6 @@ class EmailAddress
      * @var string $email_address
      */
     private $email_address;
-
 
 
     /**
@@ -40,7 +35,6 @@ class EmailAddress
     }
 
 
-
     /**
      * returns the string value for this EmailAddress
      *
@@ -52,7 +46,6 @@ class EmailAddress
     }
 
 
-
     /**
      * compare another EmailAddress to this one to determine if they are the same
      *
@@ -61,7 +54,7 @@ class EmailAddress
      */
     public function equals(EmailAddress $address)
     {
-        return strtolower((string)$this) === strtolower((string)$address);
+        return strtolower((string) $this) === strtolower((string) $address);
     }
 
 
@@ -74,8 +67,4 @@ class EmailAddress
     {
         return $this->email_address;
     }
-
-
-
 }
-// Location: EmailAddress.php

@@ -2,8 +2,6 @@
 
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
-
 /**
  * EE_Message_Template_Group class
  *
@@ -166,7 +164,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
     /**
      * returns all related EE_Message_Template objects
      *
-     * @param  array $query_params like EEM_Base::get_all()
+     * @param  array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Message_Template[]
      * @throws EE_Error
      */
@@ -204,7 +202,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
         try {
             $messenger = EEH_MSG_Template::messenger_obj($messenger);
         } catch (EE_Error $e) {
-            //if an exception was thrown then let's deactivate this message template group because it means there is no
+            // if an exception was thrown then let's deactivate this message template group because it means there is no
             // class for this messenger in this group.
             $this->set('MTP_is_active', false);
             $this->save();
@@ -242,7 +240,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
         try {
             $message_type = EEH_MSG_Template::message_type_obj($message_type);
         } catch (EE_Error $e) {
-            //if an exception was thrown then let's deactivate this message template group because it means there is no
+            // if an exception was thrown then let's deactivate this message template group because it means there is no
             // class for the message type in this group.
             $this->set('MTP_is_active', false);
             $this->save();
@@ -286,13 +284,13 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
     public function context_templates()
     {
         $mtps_arr = array();
-        $mtps     = $this->get_many_related('Message_Template');
+        $mtps = $this->get_many_related('Message_Template');
         if (empty($mtps)) {
             return array();
         }
-        //note contexts could have CHECKBOX fields per context. So we return the objects indexed by context AND field.
+        // note contexts could have CHECKBOX fields per context. So we return the objects indexed by context AND field.
         foreach ($mtps as $mtp) {
-            $mtps_arr[$mtp->get('MTP_context')][$mtp->get('MTP_template_field')] = $mtp;
+            $mtps_arr[ $mtp->get('MTP_context') ][ $mtp->get('MTP_template_field') ] = $mtp;
         }
         return $mtps_arr;
     }
@@ -339,7 +337,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
      */
     public function get_shortcodes($context, $fields = array(), $merged = false)
     {
-        $messenger    = $this->messenger();
+        $messenger = $this->messenger();
         $message_type = $this->message_type();
         return EEH_MSG_Template::get_shortcodes($message_type, $messenger, $fields, $context, $merged);
     }
@@ -475,6 +473,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
 
     /**
      * Validates the incoming context to verify it matches a registered context for the related message type.
+     *
      * @param string $context
      * @throws EE_Error
      * @throws InvalidIdentifierException
@@ -482,7 +481,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
     public function validate_context($context)
     {
         $contexts = $this->contexts_config();
-        if (! isset($contexts[$context])) {
+        if (! isset($contexts[ $context ])) {
             throw new InvalidIdentifierException(
                 '',
                 '',

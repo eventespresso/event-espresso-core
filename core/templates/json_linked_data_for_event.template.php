@@ -23,7 +23,8 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
   "description": <?php echo wp_json_encode($event_description); ?>,
   "url": "<?php echo $event_permalink; ?>",
   "offers": [
-  <?php foreach ($event_tickets as $ticket) { ?>
+    <?php
+    foreach ($event_tickets as $ticket) {?>
     {
       "@type": "Offer",
       "url": "<?php echo $event_permalink; ?>",
@@ -31,10 +32,18 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
       "validThrough": "<?php echo $ticket['end_date']; ?>",
       "price": "<?php echo $ticket['price']; ?>",
       "priceCurrency": "<?php echo $currency; ?>"
-    }<?php if (is_array($event_tickets) && end($event_tickets) !== $ticket) { echo ','; }
+        <?php if (isset($ticket['availability'])) {
+            ?>,"availability": "http://schema.org/<?php echo $ticket['availability']; ?>"
+        <?php } ?>
+    }<?php
+    if (is_array($event_tickets) && end($event_tickets) !== $ticket) {
+            echo ',';
+    }
     }
     ?>
-    ]<?php if ($venue_name) { ?>,
+    ]<?php
+    if ($venue_name) {
+        ?>,
   "location": {
     "@type": "Place",
     "name": <?php echo wp_json_encode($venue_name); ?>,
@@ -45,10 +54,15 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
       "addressRegion": <?php echo wp_json_encode($venue_region); ?>
     }
   }
-  <?php } ?>
-  <?php if ($event_image) { ?>,
+    <?php
+    } ?>
+    <?php
+    if ($event_image) {
+        ?>,
   "image": "<?php echo $event_image; ?>"
-  <?php } ?>
-  <?php do_action('AHEE__json_linked_data_for_event__template'); ?>
+    <?php
+    } ?>
+    <?php do_action('AHEE__json_linked_data_for_event__template'); ?>
 }
+
 </script>

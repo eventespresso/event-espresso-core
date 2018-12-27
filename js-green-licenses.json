@@ -1,0 +1,30 @@
+{
+	"greenLicenses": [
+		"GPL-2.0",
+		"GPL-2.0-or-later",
+		"GPL-2.0+",
+		"LGPL-2.1",
+		"(GPL-2.0 OR MIT)",
+		"MIT",
+		"ISC",
+		"BSD",
+		"BSD-2-Clause",
+		"BSD-3-Clause",
+		"CC0-1.0",
+		"CC-BY-3.0"
+	],
+	"packageWhitelist": [
+		"@eventespresso/react-exit-modal-typeform",
+		"js-green-licenses",
+		"@typeform/embed",
+		"scrollbar-width",
+		"webfontloader",
+		"validate-npm-package-license",
+		"spdx-correct",
+		"domutils",
+		"domelementtype",
+		"nomnom",
+		"colors",
+		"underscore"
+	]
+}

@@ -8,9 +8,6 @@ use EEH_URL;
 use EEM_Registration;
 use WP_Admin_Bar;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
 /**
  * AdminToolBar
  * Adds Event Espresso items to the WordPress Admin Bar
@@ -48,7 +45,6 @@ class AdminToolBar
     private $reg_admin_url;
 
 
-
     /**
      * AdminToolBar constructor.
      *
@@ -62,7 +58,6 @@ class AdminToolBar
     }
 
 
-
     /**
      *    espresso_toolbar_items
      *
@@ -73,8 +68,7 @@ class AdminToolBar
     public function espressoToolbarItems(WP_Admin_Bar $admin_bar)
     {
         // if its an AJAX request, or user is NOT an admin, or in full M-Mode
-        if (
-            defined('DOING_AJAX')
+        if (defined('DOING_AJAX')
             || ! $this->capabilities->current_user_can('ee_read_ee', 'ee_admin_bar_menu_top_level')
             || EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance
         ) {
@@ -82,9 +76,9 @@ class AdminToolBar
         }
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $this->admin_bar = $admin_bar;
-        //we don't use the constants EVENTS_ADMIN_URL or REG_ADMIN_URL
-        //because they're only defined in each of their respective constructors
-        //and this might be a frontend request, in which case they aren't available
+        // we don't use the constants EVENTS_ADMIN_URL or REG_ADMIN_URL
+        // because they're only defined in each of their respective constructors
+        // and this might be a frontend request, in which case they aren't available
         $this->events_admin_url = admin_url('admin.php?page=espresso_events');
         $this->reg_admin_url = admin_url('admin.php?page=espresso_registrations');
         // now let's add all of the menu items
@@ -112,7 +106,6 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
@@ -128,7 +121,6 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
@@ -138,8 +130,8 @@ class AdminToolBar
             array(
                 'id'    => 'espresso-toolbar',
                 'title' => '<span class="ee-icon ee-icon-ee-cup-thick ee-icon-size-20"></span><span class="ab-label">'
-                    . esc_html_x('Event Espresso', 'admin bar menu group label', 'event_espresso')
-                    . '</span>',
+                           . esc_html_x('Event Espresso', 'admin bar menu group label', 'event_espresso')
+                           . '</span>',
                 'href'  => $this->events_admin_url,
                 'meta'  => array(
                     'title' => esc_html__('Event Espresso', 'event_espresso'),
@@ -150,17 +142,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addEventsSubMenu()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_events',
-                'ee_admin_bar_menu_espresso-toolbar-events'
-            )
+        if ($this->capabilities->current_user_can(
+            'ee_read_events',
+            'ee_admin_bar_menu_espresso-toolbar-events'
+        )
         ) {
             $this->admin_bar->add_menu(
                 array(
@@ -180,14 +170,12 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addEventsAddEditHeader()
     {
-        if (
-        $this->capabilities->current_user_can(
+        if ($this->capabilities->current_user_can(
             'ee_read_events',
             'ee_admin_bar_menu_espresso-toolbar-events-view'
         )
@@ -204,18 +192,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addEventsAddNew()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_edit_events',
-                'ee_admin_bar_menu_espresso-toolbar-events-new'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_edit_events',
+            'ee_admin_bar_menu_espresso-toolbar-events-new'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-events-new',
@@ -237,21 +222,19 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addEventsEditCurrentEvent()
     {
         if (is_single() && (get_post_type() === 'espresso_events')) {
-            //Current post
+            // Current post
             global $post;
-            if (
-                $this->capabilities->current_user_can(
-                    'ee_edit_event',
-                    'ee_admin_bar_menu_espresso-toolbar-events-edit', $post->ID
-                )
-            ) {
+            if ($this->capabilities->current_user_can(
+                'ee_edit_event',
+                'ee_admin_bar_menu_espresso-toolbar-events-edit',
+                $post->ID
+            )) {
                 $this->admin_bar->add_menu(
                     array(
                         'id'     => 'espresso-toolbar-events-edit',
@@ -261,7 +244,7 @@ class AdminToolBar
                         'href'   => EEH_URL::add_query_args_and_nonce(
                             array(
                                 'action' => 'edit',
-                                'post' => $post->ID
+                                'post'   => $post->ID,
                             ),
                             $this->events_admin_url
                         ),
@@ -277,18 +260,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addEventsViewHeader()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_events',
-                'ee_admin_bar_menu_espresso-toolbar-events-view'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_read_events',
+            'ee_admin_bar_menu_espresso-toolbar-events-view'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-events-view',
@@ -301,18 +281,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addEventsViewAll()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_events',
-                'ee_admin_bar_menu_espresso-toolbar-events-all'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_read_events',
+            'ee_admin_bar_menu_espresso-toolbar-events-all'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-events-all',
@@ -331,18 +308,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addEventsViewToday()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_events',
-                'ee_admin_bar_menu_espresso-toolbar-events-today'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_read_events',
+            'ee_admin_bar_menu_espresso-toolbar-events-today'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-events-today',
@@ -352,7 +326,7 @@ class AdminToolBar
                     'href'   => EEH_URL::add_query_args_and_nonce(
                         array(
                             'action' => 'default',
-                            'status' => 'today'
+                            'status' => 'today',
                         ),
                         $this->events_admin_url
                     ),
@@ -367,18 +341,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addEventsViewThisMonth()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_events',
-                'ee_admin_bar_menu_espresso-toolbar-events-month'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_read_events',
+            'ee_admin_bar_menu_espresso-toolbar-events-month'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-events-month',
@@ -388,7 +359,7 @@ class AdminToolBar
                     'href'   => EEH_URL::add_query_args_and_nonce(
                         array(
                             'action' => 'default',
-                            'status' => 'month'
+                            'status' => 'month',
                         ),
                         $this->events_admin_url
                     ),
@@ -403,18 +374,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addRegistrationSubMenu()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_registrations',
-                'ee_admin_bar_menu_espresso-toolbar-registrations'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-registrations',
@@ -433,18 +401,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addRegistrationOverviewToday()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_registrations',
-                'ee_admin_bar_menu_espresso-toolbar-registrations-today'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-today'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-registrations-today',
@@ -462,18 +427,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addRegistrationOverviewTodayApproved()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_registrations',
-                'ee_admin_bar_menu_espresso-toolbar-registrations-today-approved'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-today-approved'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-registrations-today-approved',
@@ -499,18 +461,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addRegistrationOverviewTodayPendingPayment()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_registrations',
-                'ee_admin_bar_menu_espresso-toolbar-registrations-today-pending'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-today-pending'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-registrations-today-pending',
@@ -519,8 +478,8 @@ class AdminToolBar
                                 . esc_html__('Pending', 'event_espresso'),
                     'href'   => EEH_URL::add_query_args_and_nonce(
                         array(
-                            'action'     => 'default',
-                            'status'     => 'today',
+                            'action'      => 'default',
+                            'status'      => 'today',
                             '_reg_status' => EEM_Registration::status_id_pending_payment,
                         ),
                         $this->reg_admin_url
@@ -536,18 +495,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addRegistrationOverviewTodayNotApproved()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_registrations',
-                'ee_admin_bar_menu_espresso-toolbar-registrations-today-not-approved'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-today-not-approved'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-registrations-today-not-approved',
@@ -573,18 +529,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addRegistrationOverviewTodayCancelled()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_registrations',
-                'ee_admin_bar_menu_espresso-toolbar-registrations-today-cancelled'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-today-cancelled'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-registrations-today-cancelled',
@@ -610,24 +563,21 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addRegistrationOverviewThisMonth()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_registrations',
-                'ee_admin_bar_menu_espresso-toolbar-registrations-month'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-month'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-registrations-month',
                     'parent' => 'espresso-toolbar-registrations',
                     'title'  => esc_html__('This Month', 'event_espresso'),
-                    'href'   => '', //EEH_URL::add_query_args_and_nonce(
+                    'href'   => '', // EEH_URL::add_query_args_and_nonce(
                     //     array(
                     //         'action' => 'default',
                     //         'status' => 'month'
@@ -645,18 +595,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addRegistrationOverviewThisMonthApproved()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_registrations',
-                'ee_admin_bar_menu_espresso-toolbar-registrations-month-approved'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-month-approved'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-registrations-month-approved',
@@ -682,18 +629,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addRegistrationOverviewThisMonthPending()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_registrations',
-                'ee_admin_bar_menu_espresso-toolbar-registrations-month-pending'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-month-pending'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-registrations-month-pending',
@@ -719,18 +663,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addRegistrationOverviewThisMonthNotApproved()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_registrations',
-                'ee_admin_bar_menu_espresso-toolbar-registrations-month-not-approved'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-month-not-approved'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-registrations-month-not-approved',
@@ -756,18 +697,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addRegistrationOverviewThisMonthCancelled()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_registrations',
-                'ee_admin_bar_menu_espresso-toolbar-registrations-month-cancelled'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_read_registrations',
+            'ee_admin_bar_menu_espresso-toolbar-registrations-month-cancelled'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-registrations-month-cancelled',
@@ -793,18 +731,15 @@ class AdminToolBar
     }
 
 
-
     /**
      * @return void
      */
     private function addExtensionsAndServices()
     {
-        if (
-            $this->capabilities->current_user_can(
-                'ee_read_ee',
-                'ee_admin_bar_menu_espresso-toolbar-extensions-and-services'
-            )
-        ) {
+        if ($this->capabilities->current_user_can(
+            'ee_read_ee',
+            'ee_admin_bar_menu_espresso-toolbar-extensions-and-services'
+        )) {
             $this->admin_bar->add_menu(
                 array(
                     'id'     => 'espresso-toolbar-extensions-and-services',
@@ -821,5 +756,4 @@ class AdminToolBar
             );
         }
     }
-
 }

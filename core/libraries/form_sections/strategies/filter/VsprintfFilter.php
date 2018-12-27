@@ -5,10 +5,6 @@ namespace EventEspresso\core\libraries\form_sections\strategies\filter;
 use EE_Form_Section_Proper;
 use EE_Form_Section_Validatable;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Parses a form section's rendered HTML using vsprintf()
  * PLZ NOTE:
@@ -19,7 +15,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class VsprintfFilter extends FormHtmlFilter
 {
@@ -36,7 +31,6 @@ class VsprintfFilter extends FormHtmlFilter
     protected $args = array();
 
 
-
     /**
      * VsprintfFilter constructor.
      *
@@ -46,9 +40,8 @@ class VsprintfFilter extends FormHtmlFilter
     public function __construct($format, array $args)
     {
         $this->format = $format;
-        $this->args   = $args;
+        $this->args = $args;
     }
-
 
 
     /**
@@ -61,15 +54,10 @@ class VsprintfFilter extends FormHtmlFilter
         $this->args[] = $html;
         if ($form_section instanceof EE_Form_Section_Proper) {
             $subsections = $form_section->subsections();
-            foreach ((array)$subsections as $subsection) {
+            foreach ((array) $subsections as $subsection) {
                 $this->args[] = $subsection->get_html();
             }
         }
         return vsprintf($this->format, $this->args);
     }
-
-
-
 }
-// End of file VsprintfFormHtmlParser.php
-// Location: EventEspresso\core\libraries\form_sections\strategies\filter\VsprintfFilter.php

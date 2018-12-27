@@ -41,23 +41,25 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
             $this->_model = $options_array['model'];
         }
         if (! $this->_model || ! $this->_model instanceof EEM_Base) {
-            throw new EE_Error(sprintf(__("Model Form Sections must first specify the _model property to be a subclass of EEM_Base",
-                "event_espresso")));
+            throw new EE_Error(sprintf(__(
+                "Model Form Sections must first specify the _model property to be a subclass of EEM_Base",
+                "event_espresso"
+            )));
         }
         if (isset($options_array['subsection_args'])) {
             $subsection_args = $options_array['subsection_args'];
         } else {
             $subsection_args = array();
         }
-        //gather fields and relations to convert to inputs
-        //but if they're just going to exclude a field anyways, don't bother converting it to an input
+        // gather fields and relations to convert to inputs
+        // but if they're just going to exclude a field anyways, don't bother converting it to an input
         $exclude = $this->_subsections;
         if (isset($options_array['exclude'])) {
             $exclude = array_merge($exclude, array_flip($options_array['exclude']));
         }
         $model_fields = array_diff_key($this->_model->field_settings(), $exclude);
         $model_relations = array_diff_key($this->_model->relation_settings(), $exclude);
-        //convert fields and relations to inputs
+        // convert fields and relations to inputs
         $this->_subsections = array_merge(
             $this->_convert_model_fields_to_inputs($model_fields),
             $this->_convert_model_relations_to_inputs($model_relations, $subsection_args),
@@ -102,10 +104,10 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
             $input = null;
             switch (get_class($relation_obj)) {
                 case 'EE_HABTM_Relation':
-                    if (isset($subsection_args[$relation_name])
-                        && isset($subsection_args[$relation_name]['model_objects'])
+                    if (isset($subsection_args[ $relation_name ])
+                        && isset($subsection_args[ $relation_name ]['model_objects'])
                     ) {
-                        $model_objects = $subsection_args[$relation_name]['model_objects'];
+                        $model_objects = $subsection_args[ $relation_name ]['model_objects'];
                     } else {
                         $model_objects = $relation_obj->get_other_model()->get_all();
                     }
@@ -114,7 +116,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
                 default:
             }
             if ($input) {
-                $inputs[$relation_name] = $input;
+                $inputs[ $relation_name ] = $input;
             }
         }
         return $inputs;
@@ -152,19 +154,25 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
                         $input_class = 'EE_Yes_No_Input';
                         break;
                     case 'EE_Datetime_Field':
-                        throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input",
-                            "event_espresso"), get_class($model_field)));
+                        throw new EE_Error(sprintf(__(
+                            "Model field '%s' does not yet have a known conversion to form input",
+                            "event_espresso"
+                        ), get_class($model_field)));
                         break;
                     case 'EE_Email_Field':
                         $input_class = 'EE_Email_Input';
                         break;
                     case 'EE_Enum_Integer_Field':
-                        throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input",
-                            "event_espresso"), get_class($model_field)));
+                        throw new EE_Error(sprintf(__(
+                            "Model field '%s' does not yet have a known conversion to form input",
+                            "event_espresso"
+                        ), get_class($model_field)));
                         break;
                     case 'EE_Enum_Text_Field':
-                        throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input",
-                            "event_espresso"), get_class($model_field)));
+                        throw new EE_Error(sprintf(__(
+                            "Model field '%s' does not yet have a known conversion to form input",
+                            "event_espresso"
+                        ), get_class($model_field)));
                         break;
                     case 'EE_Float_Field':
                         $input_class = 'EE_Float_Input';
@@ -177,7 +185,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
                         if (true || is_array($models_pointed_to) && count($models_pointed_to) > 1) {
                             $input_class = 'EE_Text_Input';
                         } else {
-                            //so its just one model
+                            // so its just one model
                             $model_name = is_array($models_pointed_to) ? reset($models_pointed_to) : $models_pointed_to;
                             $model = EE_Registry::instance()->load_model($model_name);
                             $model_names = $model->get_all_names(array('limit' => 10));
@@ -194,8 +202,10 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
                         $input_constructor_args[0]['validation_strategies'] = array(new EE_Full_HTML_Validation_Strategy());
                         break;
                     case 'EE_Infinite_Integer':
-                        throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input",
-                            "event_espresso"), get_class($model_field)));
+                        throw new EE_Error(sprintf(__(
+                            "Model field '%s' does not yet have a known conversion to form input",
+                            "event_espresso"
+                        ), get_class($model_field)));
                         break;
                     case 'EE_Integer_Field':
                         $input_class = 'EE_Text_Input';
@@ -204,8 +214,10 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
                         $input_class = 'EE_Text_Area_Input';
                         break;
                     case 'EE_Money_Field':
-                        throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input",
-                            "event_espresso"), get_class($model_field)));
+                        throw new EE_Error(sprintf(__(
+                            "Model field '%s' does not yet have a known conversion to form input",
+                            "event_espresso"
+                        ), get_class($model_field)));
                         break;
                     case 'EE_Post_Content_Field':
                         $input_class = 'EE_Text_Area_Input';
@@ -235,20 +247,26 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
                         $input_class = 'EE_Yes_No_Input';
                         break;
                     case 'EE_WP_Post_Status_Field':
-                        throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input",
-                            "event_espresso"), get_class($model_field)));
+                        throw new EE_Error(sprintf(__(
+                            "Model field '%s' does not yet have a known conversion to form input",
+                            "event_espresso"
+                        ), get_class($model_field)));
                         break;
                     case 'EE_WP_Post_Type_Field':
-                        throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input",
-                            "event_espresso"), get_class($model_field)));
+                        throw new EE_Error(sprintf(__(
+                            "Model field '%s' does not yet have a known conversion to form input",
+                            "event_espresso"
+                        ), get_class($model_field)));
                         break;
                     default:
-                        throw new EE_Error(sprintf(__("Model field of type '%s' does not convert to any known Form Input. Please add a case to EE_Model_Form_section's _convert_model_fields_to_inputs switch statement",
-                            "event_espresso"), get_class($model_field)));
+                        throw new EE_Error(sprintf(__(
+                            "Model field of type '%s' does not convert to any known Form Input. Please add a case to EE_Model_Form_section's _convert_model_fields_to_inputs switch statement",
+                            "event_espresso"
+                        ), get_class($model_field)));
                 }
                 $reflection = new ReflectionClass($input_class);
                 $input = $reflection->newInstanceArgs($input_constructor_args);
-                $inputs[$field_name] = $input;
+                $inputs[ $field_name ] = $input;
             }
         }
         return $inputs;
@@ -272,16 +290,16 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
             $subsection = $this->get_subsection($relation_name, false);
             if ($subsection instanceof EE_Form_Input_Base) {
                 if ($relation_obj instanceof EE_Belongs_To_Relation) {
-                    //then we only expect there to be one
+                    // then we only expect there to be one
                     $related_item = $this->_model_object->get_first_related($relation_name);
-                    $defaults[$relation_name] = $related_item->ID();
+                    $defaults[ $relation_name ] = $related_item->ID();
                 } else {
                     $related_items = $this->_model_object->get_many_related($relation_name);
                     $ids = array();
                     foreach ($related_items as $related_item) {
                         $ids[] = $related_item->ID();
                     }
-                    $defaults[$relation_name] = $ids;
+                    $defaults[ $relation_name ] = $ids;
                 }
             }
         }
@@ -318,9 +336,9 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
     public function _normalize($req_data)
     {
         parent::_normalize($req_data);
-        //create or set the model object, if it isn't already
+        // create or set the model object, if it isn't already
         if (! $this->_model_object) {
-            //check to see if the form indicates a PK, in which case we want to only retrieve it and update it
+            // check to see if the form indicates a PK, in which case we want to only retrieve it and update it
             $pk_name = $this->_model->primary_key_name();
             $model_obj = $this->_model->get_one_by_ID($this->get_input_value($pk_name));
             if ($model_obj) {
@@ -345,19 +363,21 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
     public function save()
     {
         if (! $this->_model_object) {
-            throw new EE_Error(sprintf(__("Cannot save the model form's model object (model is '%s') because there is no model object set. You must either set it, or call receive_form_submission where it is set automatically",
-                "event_espresso"), get_class($this->_model)));
+            throw new EE_Error(sprintf(__(
+                "Cannot save the model form's model object (model is '%s') because there is no model object set. You must either set it, or call receive_form_submission where it is set automatically",
+                "event_espresso"
+            ), get_class($this->_model)));
         }
-        //ok so the model object is set. Just set it with the submitted form data
+        // ok so the model object is set. Just set it with the submitted form data
         foreach ($this->inputs_values_corresponding_to_model_fields() as $field_name => $field_value) {
-            //only set the non-primary key
+            // only set the non-primary key
             if ($field_name != $this->_model->primary_key_name()) {
                 $this->_model_object->set($field_name, $field_value);
             }
         }
         $success = $this->_model_object->save();
         foreach ($this->_model->relation_settings() as $relation_name => $relation_obj) {
-            if (isset($this->_subsections[$relation_name])) {
+            if (isset($this->_subsections[ $relation_name ])) {
                 $success = $this->_save_related_info($relation_name);
             }
         }
@@ -379,17 +399,19 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
     {
         $relation_obj = $this->_model->related_settings_for($relation_name);
         if ($relation_obj instanceof EE_Belongs_To_Relation) {
-            //there is just a foreign key on this model pointing to that one
+            // there is just a foreign key on this model pointing to that one
             $this->_model_object->_add_relation_to($this->get_input_value($relation_name), $relation_name);
         } elseif ($relation_obj instanceof EE_Has_Many_Relation) {
-            //then we want to consider all of its currently-related things.
-            //if they're in this list, keep them
-            //if they're not in this list, remove them
-            //and lastly add all the new items
-            throw new EE_Error(sprintf(__('Automatic saving of related info across a "has many" relation is not yet supported',
-                "event_espresso")));
+            // then we want to consider all of its currently-related things.
+            // if they're in this list, keep them
+            // if they're not in this list, remove them
+            // and lastly add all the new items
+            throw new EE_Error(sprintf(__(
+                'Automatic saving of related info across a "has many" relation is not yet supported',
+                "event_espresso"
+            )));
         } elseif ($relation_obj instanceof EE_HABTM_Relation) {
-            //delete everything NOT in this list
+            // delete everything NOT in this list
             $normalized_input_value = $this->get_input_value($relation_name);
             if ($normalized_input_value && is_array($normalized_input_value)) {
                 $where_query_params = array(
@@ -447,7 +469,4 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
             $this->_name = $default_name;
         }
     }
-
-
-
 }

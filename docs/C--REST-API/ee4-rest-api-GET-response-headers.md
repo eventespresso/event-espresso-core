@@ -8,7 +8,7 @@ Added in 4.8.36, present on all requests for collections (not specific entities)
 
 ```php
 //only fetch one event, but the response header "X-WP-Total" holds the count of all events
-http://demoee.org/wp-json/ee/v4.8.36/events?limit=1
+https://demoee.org/wp-json/ee/v4.8.36/events?limit=1
 ```
 
 ## X-WP-PageSize

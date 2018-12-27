@@ -55,6 +55,22 @@ jQuery(document).ready(function($) {
 	});
 
 
+	$('.DTT_EVT_start').on('click', '.ee-more-datetimes-toggle', function(e){
+	    e.preventDefault();
+	    var show = $(this).hasClass('dashicons-plus'),
+            addIcon = show ? 'dashicons-minus' : 'dashicons-plus',
+            removeIcon = show ? 'dashicons-plus' : 'dashicons-minus',
+            $moreItems = $('.more-items', $(this).parent());
+
+	    $(this).removeClass(removeIcon).addClass(addIcon);
+	    if (show) {
+	        $moreItems.removeClass('hidden');
+        } else {
+	        $moreItems.addClass('hidden');
+        }
+    });
+
+
 
 	/**
 	 * catch the Check-in status triggers

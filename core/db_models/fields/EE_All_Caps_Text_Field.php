@@ -12,7 +12,7 @@ class EE_All_Caps_Text_Field extends EE_Text_Field_Base
      * @param string $value_inputted_for_field_on_model_object
      * @return string
      */
-    function prepare_for_set($value_inputted_for_field_on_model_object)
+    public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
         return strtoupper(sanitize_key($value_inputted_for_field_on_model_object));
     }

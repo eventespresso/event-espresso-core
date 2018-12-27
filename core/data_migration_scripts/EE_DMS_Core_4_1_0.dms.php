@@ -5,20 +5,20 @@ use EventEspresso\core\services\database\TableManager;
 /**
  * meant to convert DBs between 3.1.26 and 4.0.0 to 4.1.0
  */
-//make sure we have all the stages loaded too
-//unfortunately, this needs to be done upon INCLUSION of this file,
-//instead of construction, because it only gets constructed on first page load
-//(all other times it gets resurrected from a wordpress option)
+// make sure we have all the stages loaded too
+// unfortunately, this needs to be done upon INCLUSION of this file,
+// instead of construction, because it only gets constructed on first page load
+// (all other times it gets resurrected from a wordpress option)
 $stages = glob(EE_CORE . 'data_migration_scripts/4_1_0_stages/*');
 $class_to_filepath = array();
-if ( ! empty($stages)) {
+if (! empty($stages)) {
     foreach ($stages as $filepath) {
         $matches = array();
         preg_match('~4_1_0_stages/(.*).dmsstage.php~', $filepath, $matches);
-        $class_to_filepath[$matches[1]] = $filepath;
+        $class_to_filepath[ $matches[1] ] = $filepath;
     }
 }
-//give addons a chance to autoload their stages too
+// give addons a chance to autoload their stages too
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_1_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
@@ -101,15 +101,15 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
     {
         $version_string = $version_array['Core'];
         if (version_compare($version_string, '4.0.0', '<=') && version_compare($version_string, '3.1.26', '>=')) {
-//			echo "$version_string can be migrated fro";
+//          echo "$version_string can be migrated fro";
             return true;
-        } elseif ( ! $version_string) {
-//			echo "no version string provided: $version_string";
-            //no version string provided... this must be pre 4.1
-            //because since 4.1 we're
-            return false;//changed mind. dont want people thinking they should migrate yet because they cant
+        } elseif (! $version_string) {
+//          echo "no version string provided: $version_string";
+            // no version string provided... this must be pre 4.1
+            // because since 4.1 we're
+            return false;// changed mind. dont want people thinking they should migrate yet because they cant
         } else {
-//			echo "$version_string doesnt apply";
+//          echo "$version_string doesnt apply";
             return false;
         }
     }
@@ -118,7 +118,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 
     public function schema_changes_before_migration()
     {
-        //relies on 4.1's EEH_Activation::create_table
+        // relies on 4.1's EEH_Activation::create_table
         require_once(EE_HELPERS . 'EEH_Activation.helper.php');
         $table_name = 'esp_answer';
         $sql = " ANS_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -143,7 +143,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 							PRIMARY KEY  (ATTM_ID),
 								KEY ATT_fname (ATT_fname),
 								KEY ATT_lname (ATT_lname),
-								KEY ATT_email (ATT_email)";
+								KEY ATT_email (ATT_email(191))";
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_country';
         $sql = "CNT_ISO VARCHAR(2) COLLATE utf8_bin NOT NULL,
@@ -464,15 +464,15 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 			KEY STA_ID (STA_ID),
 			KEY CNT_ISO (CNT_ISO)";
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
-        //setting up the DEFAULT stats and countries is also essential for the data migrations to run
-        //(because many need to convert old string states to foreign keys into the states table)
+        // setting up the DEFAULT stats and countries is also essential for the data migrations to run
+        // (because many need to convert old string states to foreign keys into the states table)
         $this->insert_default_states();
         $this->insert_default_countries();
-        //setting up DEFAULT prices, price types, and tickets is also essential for the price migrations
+        // setting up DEFAULT prices, price types, and tickets is also essential for the price migrations
         $this->insert_default_price_types();
         $this->insert_default_prices();
         $this->insert_default_tickets();
-        //setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
+        // setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
         EE_Config::instance()->update_espresso_config(false, true);
         return true;
     }
@@ -507,7 +507,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
         if ($this->_get_table_analysis()->tableExists($state_table)) {
             $SQL = "SELECT COUNT('STA_ID') FROM " . $state_table;
             $states = $wpdb->get_var($SQL);
-            if ( ! $states) {
+            if (! $states) {
                 $SQL = "INSERT INTO " . $state_table . "
 				(STA_ID, CNT_ISO, STA_abbrev, STA_name, STA_active) VALUES
 				(1, 'US', 'AK', 'Alaska', 1),
@@ -600,7 +600,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
         if ($this->_get_table_analysis()->tableExists($country_table)) {
             $SQL = "SELECT COUNT('CNT_ISO') FROM " . $country_table;
             $countries = $wpdb->get_var($SQL);
-            if ( ! $countries) {
+            if (! $countries) {
                 $SQL = "INSERT INTO " . $country_table . "
 				(CNT_ISO, CNT_ISO3, RGN_ID, CNT_name, CNT_cur_code, CNT_cur_single, CNT_cur_plural, CNT_cur_sign, CNT_cur_sign_b4, CNT_cur_dec_plc, CNT_tel_code, CNT_is_EU, CNT_active) VALUES
 				('AD', 'AND', 0, 'Andorra', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+376', 0, 0),
@@ -850,7 +850,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
         if ($this->_get_table_analysis()->tableExists($price_type_table)) {
             $SQL = 'SELECT COUNT(PRT_ID) FROM ' . $price_type_table;
             $price_types_exist = $wpdb->get_var($SQL);
-            if ( ! $price_types_exist) {
+            if (! $price_types_exist) {
                 $SQL = "INSERT INTO $price_type_table ( PRT_ID, PRT_name, PBT_ID, PRT_is_percent, PRT_order, PRT_deleted ) VALUES
 							(1, '" . esc_html__('Base Price', 'event_espresso') . "', 1,  0, 0, 0),
 							(2, '" . esc_html__('Percent Discount', 'event_espresso') . "', 2,  1, 20, 0),
@@ -882,7 +882,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
         if ($this->_get_table_analysis()->tableExists($price_table)) {
             $SQL = 'SELECT COUNT(PRC_ID) FROM ' . $price_table;
             $prices_exist = $wpdb->get_var($SQL);
-            if ( ! $prices_exist) {
+            if (! $prices_exist) {
                 $SQL = "INSERT INTO $price_table
 							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES
 							(1, 1, '0.00', 'Free Admission', '', 1, NULL, 0, 0, 0);";
@@ -908,7 +908,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
         if ($this->_get_table_analysis()->tableExists($ticket_table)) {
             $SQL = 'SELECT COUNT(TKT_ID) FROM ' . $ticket_table;
             $tickets_exist = $wpdb->get_var($SQL);
-            if ( ! $tickets_exist) {
+            if (! $tickets_exist) {
                 $SQL = "INSERT INTO $ticket_table
 					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
 					( 1, 0, '"
@@ -922,7 +922,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
         if ($this->_get_table_analysis()->tableExists($ticket_price_table)) {
             $SQL = 'SELECT COUNT(TKP_ID) FROM ' . $ticket_price_table;
             $ticket_prc_exist = $wpdb->get_var($SQL);
-            if ( ! $ticket_prc_exist) {
+            if (! $ticket_prc_exist) {
                 $SQL = "INSERT INTO $ticket_price_table
 				( TKP_ID, TKT_ID, PRC_ID ) VALUES
 				( 1, 1, 1 )
@@ -946,7 +946,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
      */
     public function get_or_create_country($country_name)
     {
-        if ( ! $country_name) {
+        if (! $country_name) {
             throw new EE_Error(esc_html__("Could not get a country because country name is blank", "event_espresso"));
         }
         global $wpdb;
@@ -958,8 +958,8 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 			CNT_ISO LIKE %s OR
 			CNT_ISO3 LIKE %s OR
 			CNT_name LIKE %s LIMIT 1", $country_name, $country_name, $country_name), ARRAY_A);
-        if ( ! $country) {
-            //insert a new one then
+        if (! $country) {
+            // insert a new one then
             $cols_n_values = array(
                     'CNT_ISO'         => $this->_find_available_country_iso(2),
                     'CNT_ISO3'        => $this->_find_available_country_iso(3),
@@ -978,28 +978,35 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
                     'CNT_active'      => true,
             );
             $data_types = array(
-                    '%s',//CNT_ISO
-                    '%s',//CNT_ISO3
-                    '%d',//RGN_ID
-                    '%s',//CNT_name
-                    '%s',//CNT_cur_code
-                    '%s',//CNT_cur_single
-                    '%s',//CNT_cur_plural
-                    '%s',//CNT_cur_sign
-                    '%d',//CNT_cur_sign_b4
-                    '%d',//CNT_cur_dec_plc
-                    '%s',//CNT_cur_dec_mrk
-                    '%s',//CNT_cur_thsnds
-                    '%s',//CNT_tel_code
-                    '%d',//CNT_is_EU
-                    '%d',//CNT_active
+                    '%s',// CNT_ISO
+                    '%s',// CNT_ISO3
+                    '%d',// RGN_ID
+                    '%s',// CNT_name
+                    '%s',// CNT_cur_code
+                    '%s',// CNT_cur_single
+                    '%s',// CNT_cur_plural
+                    '%s',// CNT_cur_sign
+                    '%d',// CNT_cur_sign_b4
+                    '%d',// CNT_cur_dec_plc
+                    '%s',// CNT_cur_dec_mrk
+                    '%s',// CNT_cur_thsnds
+                    '%s',// CNT_tel_code
+                    '%d',// CNT_is_EU
+                    '%d',// CNT_active
             );
-            $success = $wpdb->insert($country_table,
+            $success = $wpdb->insert(
+                $country_table,
+                $cols_n_values,
+                $data_types
+            );
+            if (! $success) {
+                throw new EE_Error($this->_create_error_message_for_db_insertion(
+                    'N/A',
+                    array('country_id' => $country_name),
+                    $country_table,
                     $cols_n_values,
-                    $data_types);
-            if ( ! $success) {
-                throw new EE_Error($this->_create_error_message_for_db_insertion('N/A',
-                        array('country_id' => $country_name), $country_table, $cols_n_values, $data_types));
+                    $data_types
+                ));
             }
             $country = $cols_n_values;
         }
@@ -1025,9 +1032,9 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
                                                                    . $country_table
                                                                    . " WHERE CNT_ISO=%s", $current_iso));
             $attempts++;
-            //keep going until we find an available country code, or we arbitrarily
-            //decide we've tried this enough. Somehow they have way too many countries
-            //(probably because they're mis-using the EE3 country_id like a custom question)
+            // keep going until we find an available country code, or we arbitrarily
+            // decide we've tried this enough. Somehow they have way too many countries
+            // (probably because they're mis-using the EE3 country_id like a custom question)
         } while (intval($country_with_that_iso) && $attempts < 200);
         return $current_iso;
     }
@@ -1044,9 +1051,11 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
      */
     public function get_or_create_state($state_name, $country_name = '')
     {
-        if ( ! $state_name) {
-            throw new EE_Error(esc_html__("Could not get-or-create state because no state name was provided",
-                    "event_espresso"));
+        if (! $state_name) {
+            throw new EE_Error(esc_html__(
+                "Could not get-or-create state because no state name was provided",
+                "event_espresso"
+            ));
         }
         try {
             $country = $this->get_or_create_country($country_name);
@@ -1060,8 +1069,8 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 			(STA_abbrev LIKE %s OR
 			STA_name LIKE %s) AND
 			CNT_ISO LIKE %s LIMIT 1", $state_name, $state_name, $country_iso), ARRAY_A);
-        if ( ! $state) {
-            //insert a new one then
+        if (! $state) {
+            // insert a new one then
             $cols_n_values = array(
                     'CNT_ISO'    => $country_iso,
                     'STA_abbrev' => substr($state_name, 0, 6),
@@ -1069,16 +1078,20 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
                     'STA_active' => true,
             );
             $data_types = array(
-                    '%s',//CNT_ISO
-                    '%s',//STA_abbrev
-                    '%s',//STA_name
-                    '%d',//STA_active
+                    '%s',// CNT_ISO
+                    '%s',// STA_abbrev
+                    '%s',// STA_name
+                    '%d',// STA_active
             );
             $success = $wpdb->insert($state_table, $cols_n_values, $data_types);
-            if ( ! $success) {
-                throw new EE_Error($this->_create_error_message_for_db_insertion('N/A',
-                        array('state' => $state_name, 'country_id' => $country_name), $state_table, $cols_n_values,
-                        $data_types));
+            if (! $success) {
+                throw new EE_Error($this->_create_error_message_for_db_insertion(
+                    'N/A',
+                    array('state' => $state_name, 'country_id' => $country_name),
+                    $state_table,
+                    $cols_n_values,
+                    $data_types
+                ));
             }
             $state = $cols_n_values;
             $state['STA_ID'] = $wpdb->insert_id;
@@ -1100,7 +1113,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
     {
         $matches = array();
         preg_match("~(\\d*):(\\d*)~", $timeString, $matches);
-        if ( ! $matches || count($matches) < 3) {
+        if (! $matches || count($matches) < 3) {
             $hour = '00';
             $minutes = '00';
         } else {
@@ -1352,9 +1365,9 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
         );
         $country_iso = 'US';
         foreach ($old_countries as $country_array) {
-            //note: index 0 is the 3.1 country ID
+            // note: index 0 is the 3.1 country ID
             if ($country_array[0] == $country_id) {
-                //note: index 2 is the ISO
+                // note: index 2 is the ISO
                 $country_iso = $country_array[2];
                 break;
             }
@@ -1389,7 +1402,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
      */
     public function convert_3_1_payment_status_to_4_1_STS_ID($payment_status, $this_thing_required_pre_approval = false)
     {
-        //EE team can read the related discussion: https://app.asana.com/0/2400967562914/9418495544455
+        // EE team can read the related discussion: https://app.asana.com/0/2400967562914/9418495544455
         if ($this_thing_required_pre_approval) {
             return 'RNA';
         } else {
@@ -1398,14 +1411,14 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
                     ''                 => 'RPP',
                     'Incomplete'       => 'RPP',
                     'Pending'          => 'RAP',
-                    //stati that only occurred on 3.1 attendees:
+                    // stati that only occurred on 3.1 attendees:
                     'Payment Declined' => 'RPP',
                     'Not Completed'    => 'RPP',
                     'Cancelled'        => 'RPP',
                     'Declined'         => 'RPP',
             );
         }
-        return isset($mapping[$payment_status]) ? $mapping[$payment_status] : 'RNA';
+        return isset($mapping[ $payment_status ]) ? $mapping[ $payment_status ] : 'RNA';
     }
 
 
@@ -1420,26 +1433,28 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
      * @return boolean whether or not we had to do the big job of creating an image attachment
      */
     public function convert_image_url_to_attachment_and_attach_to_post(
-            $guid,
-            $new_cpt_id,
-            EE_Data_Migration_Script_Stage $migration_stage
+        $guid,
+        $new_cpt_id,
+        EE_Data_Migration_Script_Stage $migration_stage
     ) {
         $created_attachment_post = false;
         $guid = $this->_get_original_guid($guid);
         if ($guid) {
-            //check for an existing attachment post with this guid
+            // check for an existing attachment post with this guid
             $attachment_post_id = $this->_get_image_attachment_id_by_GUID($guid);
-            if ( ! $attachment_post_id) {
-                //post thumbnail with that GUID doesn't exist, we should create one
+            if (! $attachment_post_id) {
+                // post thumbnail with that GUID doesn't exist, we should create one
                 $attachment_post_id = $this->_create_image_attachment_from_GUID($guid, $migration_stage);
                 $created_attachment_post = true;
             }
-            //double-check we actually have an attachment post
+            // double-check we actually have an attachment post
             if ($attachment_post_id) {
                 update_post_meta($new_cpt_id, '_thumbnail_id', $attachment_post_id);
             } else {
-                $migration_stage->add_error(sprintf(esc_html__("Could not update event image %s for CPT with ID %d, but attachments post ID is %d",
-                        "event_espresso"), $guid, $new_cpt_id, $attachment_post_id));
+                $migration_stage->add_error(sprintf(esc_html__(
+                    "Could not update event image %s for CPT with ID %d, but attachments post ID is %d",
+                    "event_espresso"
+                ), $guid, $new_cpt_id, $attachment_post_id));
             }
         }
         return $created_attachment_post;
@@ -1460,9 +1475,9 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
     private function _get_original_guid($guid_in_old_event)
     {
         $original_guid = preg_replace('~-\d*x\d*\.~', '.', $guid_in_old_event, 1);
-        //do a head request to verify the file exists
+        // do a head request to verify the file exists
         $head_response = wp_remote_head($original_guid);
-        if ( ! $head_response instanceof WP_Error && $head_response['response']['message'] == 'OK') {
+        if (! $head_response instanceof WP_Error && $head_response['response']['message'] == 'OK') {
             return $original_guid;
         } else {
             return $guid_in_old_event;
@@ -1482,25 +1497,31 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
      */
     private function _create_image_attachment_from_GUID($guid, EE_Data_Migration_Script_Stage $migration_stage)
     {
-        if ( ! $guid) {
-            $migration_stage->add_error(sprintf(esc_html__("Cannot create image attachment for a blank GUID!",
-                    "event_espresso")));
+        if (! $guid) {
+            $migration_stage->add_error(sprintf(esc_html__(
+                "Cannot create image attachment for a blank GUID!",
+                "event_espresso"
+            )));
             return 0;
         }
         $wp_filetype = wp_check_filetype(basename($guid), null);
         $wp_upload_dir = wp_upload_dir();
-        //if the file is located remotely, download it to our uploads DIR, because wp_genereate_attachmnet_metadata needs the file to be local
+        // if the file is located remotely, download it to our uploads DIR, because wp_genereate_attachmnet_metadata needs the file to be local
         if (strpos($guid, $wp_upload_dir['url']) === false) {
-            //image is located remotely. download it and place it in the uploads directory
-            if ( ! is_readable($guid)) {
-                $migration_stage->add_error(sprintf(esc_html__("Could not create image attachment from non-existent file: %s",
-                        "event_espresso"), $guid));
+            // image is located remotely. download it and place it in the uploads directory
+            if (! is_readable($guid)) {
+                $migration_stage->add_error(sprintf(esc_html__(
+                    "Could not create image attachment from non-existent file: %s",
+                    "event_espresso"
+                ), $guid));
                 return 0;
             }
             $contents = file_get_contents($guid);
             if ($contents === false) {
-                $migration_stage->add_error(sprintf(esc_html__("Could not read image at %s, and therefore couldnt create an attachment post for it.",
-                        "event_espresso"), $guid));
+                $migration_stage->add_error(sprintf(esc_html__(
+                    "Could not read image at %s, and therefore couldnt create an attachment post for it.",
+                    "event_espresso"
+                ), $guid));
                 return false;
             }
             $local_filepath = $wp_upload_dir['path'] . DS . basename($guid);
@@ -1519,24 +1540,30 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
                 'post_status'    => 'inherit',
         );
         $attach_id = wp_insert_attachment($attachment, $guid);
-        if ( ! $attach_id) {
-            $migration_stage->add_error(sprintf(esc_html__("Could not create image attachment post from image '%s'. Attachment data was %s.",
-                    "event_espresso"), $guid, $this->_json_encode($attachment)));
+        if (! $attach_id) {
+            $migration_stage->add_error(sprintf(esc_html__(
+                "Could not create image attachment post from image '%s'. Attachment data was %s.",
+                "event_espresso"
+            ), $guid, $this->_json_encode($attachment)));
             return $attach_id;
         }
         // you must first include the image.php file
         // for the function wp_generate_attachment_metadata() to work
         require_once(ABSPATH . 'wp-admin/includes/image.php');
         $attach_data = wp_generate_attachment_metadata($attach_id, $local_filepath);
-        if ( ! $attach_data) {
-            $migration_stage->add_error(sprintf(esc_html__("Coudl not genereate attachment metadata for attachment post %d with filepath %s and GUID %s. Please check the file was downloaded properly.",
-                    "event_espresso"), $attach_id, $local_filepath, $guid));
+        if (! $attach_data) {
+            $migration_stage->add_error(sprintf(esc_html__(
+                "Coudl not genereate attachment metadata for attachment post %d with filepath %s and GUID %s. Please check the file was downloaded properly.",
+                "event_espresso"
+            ), $attach_id, $local_filepath, $guid));
             return $attach_id;
         }
         $metadata_save_result = wp_update_attachment_metadata($attach_id, $attach_data);
-        if ( ! $metadata_save_result) {
-            $migration_stage->add_error(sprintf(esc_html__("Could not update attachment metadata for attachment %d with data %s",
-                    "event_espresso"), $attach_id, $this->_json_encode($attach_data)));
+        if (! $metadata_save_result) {
+            $migration_stage->add_error(sprintf(esc_html__(
+                "Could not update attachment metadata for attachment %d with data %s",
+                "event_espresso"
+            ), $attach_id, $this->_json_encode($attach_data)));
         }
         return $attach_id;
     }
@@ -1572,26 +1599,31 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
      * @return string
      */
     public function convert_date_string_to_utc(
-            EE_Data_Migration_Script_Stage $stage,
-            $row_of_data,
-            $DATETIME_string,
-            $timezone = null
+        EE_Data_Migration_Script_Stage $stage,
+        $row_of_data,
+        $DATETIME_string,
+        $timezone = null
     ) {
         $original_tz = $timezone;
-        if ( ! $timezone) {
+        if (! $timezone) {
             $timezone = $this->_get_wp_timezone();
         }
-        if ( ! $timezone) {
-            $stage->add_error(sprintf(esc_html__("Could not find timezone given %s for %s", "event_espresso"), $original_tz,
-                    $row_of_data));
+        if (! $timezone) {
+            $stage->add_error(sprintf(
+                esc_html__("Could not find timezone given %s for %s", "event_espresso"),
+                $original_tz,
+                $row_of_data
+            ));
             $timezone = 'UTC';
         }
         try {
             $date_obj = new DateTime($DATETIME_string, new DateTimeZone($timezone));
-            $date_obj->setTimezone(new DateTimeZone('UTC'));
+            EEH_DTT_Helper::setTimezone($date_obj, new DateTimeZone('UTC'));
         } catch (Exception $e) {
-            $stage->add_error(sprintf(esc_html__("Could not convert time string '%s' using timezone '%s' into a proper DATETIME. Using current time instead.",
-                    "event_espresso"), $DATETIME_string, $timezone));
+            $stage->add_error(sprintf(esc_html__(
+                "Could not convert time string '%s' using timezone '%s' into a proper DATETIME. Using current time instead.",
+                "event_espresso"
+            ), $DATETIME_string, $timezone));
             $date_obj = new DateTime();
         }
         return $date_obj->format('Y-m-d H:i:s');
@@ -1607,9 +1639,9 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
     private function _get_wp_timezone()
     {
         $timezone = empty($timezone) ? get_option('timezone_string') : $timezone;
-        //if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter
+        // if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter
         if (empty($timezone)) {
-            //let's get a the WordPress UTC offset
+            // let's get a the WordPress UTC offset
             $offset = get_option('gmt_offset');
             $timezone = $this->timezone_convert_to_string_from_offset($offset);
         }
@@ -1626,7 +1658,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
      */
     private function timezone_convert_to_string_from_offset($offset)
     {
-        //shamelessly taken from bottom comment at http://ca1.php.net/manual/en/function.timezone-name-from-abbr.php because timezone_name_from_abbr() did NOT work as expected - its not reliable
+        // shamelessly taken from bottom comment at http://ca1.php.net/manual/en/function.timezone-name-from-abbr.php because timezone_name_from_abbr() did NOT work as expected - its not reliable
         $offset *= 3600; // convert hour offset to seconds
         $abbrarray = timezone_abbreviations_list();
         foreach ($abbrarray as $abbr) {
@@ -1644,86 +1676,88 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
     public function migration_page_hooks()
     {
         add_filter(
-                'FHEE__ee_migration_page__header',
-                array($this, '_migrate_page_hook_simplify_version_strings'),
-                10,
-                3
+            'FHEE__ee_migration_page__header',
+            array($this, '_migrate_page_hook_simplify_version_strings'),
+            10,
+            3
         );
         add_filter(
-                'FHEE__ee_migration_page__p_after_header',
-                array($this, '_migration_page_hook_simplify_next_db_state'),
-                10,
-                2
+            'FHEE__ee_migration_page__p_after_header',
+            array($this, '_migration_page_hook_simplify_next_db_state'),
+            10,
+            2
         );
         add_filter(
-                'FHEE__ee_migration_page__option_1_main',
-                array($this, '_migrate_page_hook_simplify_version_strings'),
-                10,
-                3
+            'FHEE__ee_migration_page__option_1_main',
+            array($this, '_migrate_page_hook_simplify_version_strings'),
+            10,
+            3
         );
         add_filter(
-                'FHEE__ee_migration_page__option_1_button_text',
-                array($this, '_migrate_page_hook_simplify_version_strings'),
-                10,
-                3
+            'FHEE__ee_migration_page__option_1_button_text',
+            array($this, '_migrate_page_hook_simplify_version_strings'),
+            10,
+            3
         );
         add_action(
-                'AHEE__ee_migration_page__option_1_extra_details',
-                array($this, '_migration_page_hook_option_1_extra_details'),
-                10,
-                3
+            'AHEE__ee_migration_page__option_1_extra_details',
+            array($this, '_migration_page_hook_option_1_extra_details'),
+            10,
+            3
         );
         add_filter(
-                'FHEE__ee_migration_page__option_2_main',
-                array($this, '_migrate_page_hook_simplify_version_strings'),
-                10,
-                4
+            'FHEE__ee_migration_page__option_2_main',
+            array($this, '_migrate_page_hook_simplify_version_strings'),
+            10,
+            4
         );
         add_filter(
-                'FHEE__ee_migration_page__option_2_button_text',
-                array($this, '_migration_page_hook_simplify_next_db_state'),
-                10,
-                2
+            'FHEE__ee_migration_page__option_2_button_text',
+            array($this, '_migration_page_hook_simplify_next_db_state'),
+            10,
+            2
         );
         add_filter(
-                'FHEE__ee_migration_page__option_2_details',
-                array($this, '_migration_page_hook_simplify_next_db_state'),
-                10,
-                2
+            'FHEE__ee_migration_page__option_2_details',
+            array($this, '_migration_page_hook_simplify_next_db_state'),
+            10,
+            2
         );
         add_action(
-                'AHEE__ee_migration_page__after_migration_options_table',
-                array($this, '_migration_page_hook_after_migration_options_table')
+            'AHEE__ee_migration_page__after_migration_options_table',
+            array($this, '_migration_page_hook_after_migration_options_table')
         );
         add_filter(
-                'FHEE__ee_migration_page__done_migration_header',
-                array($this, '_migration_page_hook_simplify_next_db_state'),
-                10,
-                2
+            'FHEE__ee_migration_page__done_migration_header',
+            array($this, '_migration_page_hook_simplify_next_db_state'),
+            10,
+            2
         );
         add_filter(
-                'FHEE__ee_migration_page__p_after_done_migration_header',
-                array($this, '_migration_page_hook_simplify_next_db_state'),
-                10,
-                2
+            'FHEE__ee_migration_page__p_after_done_migration_header',
+            array($this, '_migration_page_hook_simplify_next_db_state'),
+            10,
+            2
         );
         add_filter(
-                'FHEE__ee_migration_page__migration_options_template',
-                array($this,'use_migration_options_from_ee3_template')
+            'FHEE__ee_migration_page__migration_options_template',
+            array($this,'use_migration_options_from_ee3_template')
         );
     }
 
 
 
     public function _migrate_page_hook_simplify_version_strings(
-            $old_content,
-            $current_db_state,
-            $next_db_state,
-            $ultimate_db_state = null
+        $old_content,
+        $current_db_state,
+        $next_db_state,
+        $ultimate_db_state = null
     ) {
-        return str_replace(array($current_db_state, $next_db_state, $ultimate_db_state),
-                array(esc_html__('EE3', 'event_espresso'), esc_html__('EE4', 'event_espresso'), esc_html__("EE4", 'event_espresso')),
-                $old_content);
+        return str_replace(
+            array($current_db_state, $next_db_state, $ultimate_db_state),
+            array(esc_html__('EE3', 'event_espresso'), esc_html__('EE4', 'event_espresso'), esc_html__("EE4", 'event_espresso')),
+            $old_content
+        );
     }
 
 
@@ -1738,8 +1772,10 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
     public function _migration_page_hook_option_1_extra_details()
     {
         ?>
-        <p><?php printf(esc_html__("Note: many of your EE3 shortcodes will be changed to EE4 shortcodes during this migration (among many other things). Should you revert to EE3, then you should restore to your backup or manually change the EE4 shortcodes back to their EE3 equivalents",
-            "event_espresso")); ?></p><?php
+        <p><?php printf(esc_html__(
+            "Note: many of your EE3 shortcodes will be changed to EE4 shortcodes during this migration (among many other things). Should you revert to EE3, then you should restore to your backup or manually change the EE4 shortcodes back to their EE3 equivalents",
+            "event_espresso"
+        )); ?></p><?php
     }
 
 
@@ -1747,10 +1783,16 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
     public function _migration_page_hook_after_migration_options_table()
     {
         ?><p class="ee-attention">
-        <strong><span class="reminder-spn"><?php _e("Important note to those using Event Espresso 3 addons: ",
-                        "event_espresso"); ?></span></strong>
-        <br/><?php _e("Unless an addon's description on our website explicitly states that it is compatible with EE4, you should consider it incompatible and know that it WILL NOT WORK correctly with this new version of Event Espresso 4 (EE4). As well, any data for incompatible addons will NOT BE MIGRATED until an updated EE4 compatible version of the addon is available. If you want, or need to keep using your EE3 addons, you should simply continue using EE3 until EE4 compatible versions of your addons become available. To continue using EE3 for now, just deactivate EE4 and reactivate EE3.",
-            "event_espresso"); ?>
+        <strong><span class="reminder-spn">
+                <?php _e(
+                    "Important note to those using Event Espresso 3 addons: ",
+                    "event_espresso"
+                ); ?></span></strong>
+        <br/>
+        <?php _e(
+            "Unless an addon's description on our website explicitly states that it is compatible with EE4, you should consider it incompatible and know that it WILL NOT WORK correctly with this new version of Event Espresso 4 (EE4). As well, any data for incompatible addons will NOT BE MIGRATED until an updated EE4 compatible version of the addon is available. If you want, or need to keep using your EE3 addons, you should simply continue using EE3 until EE4 compatible versions of your addons become available. To continue using EE3 for now, just deactivate EE4 and reactivate EE3.",
+            "event_espresso"
+        ); ?>
         </p><?php
     }
 
@@ -1763,7 +1805,8 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
      * @param $template_filepath
      * @return string
      */
-    public function use_migration_options_from_ee3_template( $template_filepath ) {
+    public function use_migration_options_from_ee3_template($template_filepath)
+    {
         return EE_MAINTENANCE_TEMPLATE_PATH . 'migration_options_from_ee3.template.php';
     }
 }

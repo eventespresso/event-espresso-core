@@ -1,13 +1,8 @@
 <?php
+
 namespace EventEspresso\core\domain\services\registration;
 
 use EventEspresso\core\domain\services\DomainService;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class UpdateRegistrationService
@@ -39,7 +34,4 @@ class UpdateRegistrationService extends DomainService
         $registration_processor->update_registration_status_and_trigger_notifications($registration);
         return true;
     }
-
 }
-// End of file UpdateRegistrationService.php
-// Location: /UpdateRegistrationService.php

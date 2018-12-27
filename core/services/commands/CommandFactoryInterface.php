@@ -6,10 +6,6 @@ use InvalidArgumentException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 interface CommandFactoryInterface
 {
 
@@ -22,7 +18,4 @@ interface CommandFactoryInterface
      * @throws InvalidInterfaceException
      */
     public function getNew($command_fqcn, $arguments = array());
-
 }
-// End of file CommandFactoryInterface.php
-// Location: EventEspresso\core\services\commands/CommandFactoryInterface.php

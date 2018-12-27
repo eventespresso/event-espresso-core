@@ -7,20 +7,20 @@ use EventEspresso\core\services\database\TableManager;
  * mostly just
  * -adds QSO_order to the Question_Option table;
  */
-//make sure we have all the stages loaded too
-//unfortunately, this needs to be done upon INCLUSION of this file,
-//instead of construction, because it only gets constructed on first page load
-//(all other times it gets resurrected from a wordpress option)
+// make sure we have all the stages loaded too
+// unfortunately, this needs to be done upon INCLUSION of this file,
+// instead of construction, because it only gets constructed on first page load
+// (all other times it gets resurrected from a wordpress option)
 $stages = glob(EE_CORE . 'data_migration_scripts/4_3_0_stages/*');
 $class_to_filepath = array();
-if ( ! empty($stages)) {
+if (! empty($stages)) {
     foreach ($stages as $filepath) {
         $matches = array();
         preg_match('~4_3_0_stages/(.*).dmsstage.php~', $filepath, $matches);
-        $class_to_filepath[$matches[1]] = $filepath;
+        $class_to_filepath[ $matches[1] ] = $filepath;
     }
 }
-//give addons a chance to autoload their stages too
+// give addons a chance to autoload their stages too
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_3_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
@@ -54,14 +54,14 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base
     {
         $version_string = $version_array['Core'];
         if (version_compare($version_string, '4.3.0', '<=') && version_compare($version_string, '4.2.0', '>=')) {
-//			echo "$version_string can be migrated fro";
+//          echo "$version_string can be migrated fro";
             return true;
-        } elseif ( ! $version_string) {
-//			echo "no version string provided: $version_string";
-            //no version string provided... this must be pre 4.2
-            return false;//changed mind. dont want people thinking they should migrate yet because they cant
+        } elseif (! $version_string) {
+//          echo "no version string provided: $version_string";
+            // no version string provided... this must be pre 4.2
+            return false;// changed mind. dont want people thinking they should migrate yet because they cant
         } else {
-//			echo "$version_string doesnt apply";
+//          echo "$version_string doesnt apply";
             return false;
         }
     }
@@ -70,7 +70,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base
 
     public function schema_changes_before_migration()
     {
-        //relies on 4.1's EEH_Activation::create_table
+        // relies on 4.1's EEH_Activation::create_table
         require_once(EE_HELPERS . 'EEH_Activation.helper.php');
         $table_name = 'esp_answer';
         $sql = " ANS_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -95,7 +95,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base
 							PRIMARY KEY  (ATTM_ID),
 								KEY ATT_fname (ATT_fname),
 								KEY ATT_lname (ATT_lname),
-								KEY ATT_email (ATT_email)";
+								KEY ATT_email (ATT_email(191))";
         $this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_country';
         $sql = "CNT_ISO VARCHAR(2) COLLATE utf8_bin NOT NULL,
@@ -431,16 +431,16 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base
 			KEY CNT_ISO (CNT_ISO)";
         $this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
         $script_with_defaults = EE_Registry::instance()->load_dms('Core_4_1_0');
-        //setting up the DEFAULT stats and countries is also essential for the data migrations to run
-        //(because many need to convert old string states to foreign keys into the states table)
+        // setting up the DEFAULT stats and countries is also essential for the data migrations to run
+        // (because many need to convert old string states to foreign keys into the states table)
         $script_with_defaults->insert_default_states();
         $script_with_defaults->insert_default_countries();
-        //setting up DEFAULT prices, price types, and tickets is also essential for the price migrations
+        // setting up DEFAULT prices, price types, and tickets is also essential for the price migrations
         $script_with_defaults->insert_default_price_types();
         $script_with_defaults->insert_default_prices();
-        //but the schema on the tickets table has changed since 4.1, so use our DEFAULT ticket method instead of 4.1's
+        // but the schema on the tickets table has changed since 4.1, so use our DEFAULT ticket method instead of 4.1's
         $this->insert_default_tickets();
-        //setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
+        // setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
         EE_Config::instance()->update_espresso_config(false, true);
         return true;
     }
@@ -478,7 +478,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base
         if ($this->_get_table_analysis()->tableExists($ticket_table)) {
             $SQL = 'SELECT COUNT(TKT_ID) FROM ' . $ticket_table;
             $tickets_exist = $wpdb->get_var($SQL);
-            if ( ! $tickets_exist) {
+            if (! $tickets_exist) {
                 $SQL = "INSERT INTO $ticket_table
 					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_required, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
 					( 1, 0, '"
@@ -492,7 +492,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base
         if ($this->_get_table_analysis()->tableExists($ticket_price_table)) {
             $SQL = 'SELECT COUNT(TKP_ID) FROM ' . $ticket_price_table;
             $ticket_prc_exist = $wpdb->get_var($SQL);
-            if ( ! $ticket_prc_exist) {
+            if (! $ticket_prc_exist) {
                 $SQL = "INSERT INTO $ticket_price_table
 				( TKP_ID, TKT_ID, PRC_ID ) VALUES
 				( 1, 1, 1 )
@@ -502,15 +502,4 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base
             }
         }
     }
-
 }
-
-
-
-
-
-
-
-
-
-

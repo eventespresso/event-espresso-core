@@ -1,1 +1,1 @@
-<?php _e('Event Payment Details', 'event_espresso'); ?>
+<?php _e('Event Payment Details', 'event_espresso');

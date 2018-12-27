@@ -1,8 +1,6 @@
 <?php
 namespace EventEspresso\core\domain\services\capabilities;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
 /**
  * Class PublicCapabilities
  *
@@ -13,8 +11,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
- *
  */
 class PublicCapabilities extends CapCheck
 {
@@ -27,8 +23,4 @@ class PublicCapabilities extends CapCheck
     {
         return '';
     }
-
-
 }
-// End of file PublicCapabilities.php
-// Location: EventEspresso\core\domain\services\capabilities/PublicCapabilities.php

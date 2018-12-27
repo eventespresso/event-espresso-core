@@ -385,6 +385,12 @@ input.ee-register-button {
 	float: right;
 }
 
+.ee-button-disabled,
+.ee-button-disabled:hover {
+    border     : 1px solid #CCCCCC !important;
+    background : #CCCCCC !important;
+    box-shadow : none !important;
+}
 
 /* BUTTON SIZES */
 
@@ -781,7 +787,7 @@ input.ee-register-button {
 .float-left {
 	float: left;
 }
-.clear, 
+.clear,
 .clear-float,
 .ee-clear-float {
 	clear: both;
@@ -874,7 +880,7 @@ input.ee-register-button {
 	 color: #F8D755;
 }
 .lt-grey-text {
-	color: #A39D9C;
+	color: #767676;
 }
 .grey-text {
 	color: #888;
@@ -938,7 +944,7 @@ input.ee-register-button {
 }
 .currency-code {
 	font-size: .7em;
-	color: #a8a8a8;
+	color: #767676;
 	vertical-align: text-top;
 }
 

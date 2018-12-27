@@ -1,13 +1,10 @@
 <?php
+
 namespace EventEspresso\core\domain\entities\shortcodes;
 
 use EE_Registry;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
 use WP_Post;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class EspressoThankYou
@@ -15,7 +12,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- *
  */
 class EspressoThankYou extends EspressoShortcode
 {
@@ -34,7 +30,6 @@ class EspressoThankYou extends EspressoShortcode
     {
         return 'ESPRESSO_THANK_YOU';
     }
-
 
 
     /**
@@ -64,14 +59,13 @@ class EspressoThankYou extends EspressoShortcode
             return;
         }
         $post = reset($wp_query->posts);
-        if ( ! $post instanceof WP_Post || $post->ID !== EE_Registry::instance()->CFG->core->thank_you_page_id ) {
+        if (! $post instanceof WP_Post || $post->ID !== EE_Registry::instance()->CFG->core->thank_you_page_id) {
             return;
         }
         $this->is_thank_you_page = true;
         \EED_Thank_You_Page::instance()->load_resources();
         $this->shortcodeHasBeenInitialized();
     }
-
 
 
     /**
@@ -89,9 +83,4 @@ class EspressoThankYou extends EspressoShortcode
             ? \EED_Thank_You_Page::instance()->thank_you_page_results()
             : '';
     }
-
-
-
 }
-// End of file EspressoThankYou.php
-// Location: EventEspresso\core\domain\entities\shortcodes/EspressoThankYou.php

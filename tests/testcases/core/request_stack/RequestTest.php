@@ -3,6 +3,7 @@
 namespace EventEspresso\tests\testcases\core\request_stack;
 
 use EE_Request;
+use EventEspresso\core\services\request\Request;
 use PHPUnit_Framework_TestCase;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -14,20 +15,21 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package EventEspresso\tests\testcases\core\request_stack
  * @author  Brent Christensen
- * 
+ *
  */
 class RequestTest extends PHPUnit_Framework_TestCase
 {
 
-    public function getParams($params = array())
+    public function getParams(array $params = array())
     {
         return $params + array(
-            'action' => 'edit',
-            'id'     => 123,
+            'action'         => 'edit',
+            'id'             => 123,
+            'event-name-123' => 'Event 123',
         );
     }
 
-    public function postParams($params = array())
+    public function postParams(array $params = array())
     {
         return $params + array(
             'input-a' => 'A',
@@ -43,7 +45,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function cookieParams($params = array())
+    public function cookieParams(array $params = array())
     {
         return $params + array(
             'PHPSESSID'   => 'abcdefghijklmnopqrstuvwxyz',
@@ -51,10 +53,28 @@ class RequestTest extends PHPUnit_Framework_TestCase
         );
     }
 
+
+    /**
+     * @param array $get
+     * @param array $post
+     * @param array $cookie
+     * @param array $server
+     * @return EE_Request
+     */
+    private function getLegacyRequest(array $get, array $post, array $cookie, array $server)
+    {
+        $request = new Request($get, $post, $cookie, $server);
+        $legacy_request = new EE_Request(array(), array(), array());
+        $legacy_request->setRequest($request);
+        return $legacy_request;
+    }
+
+
     public function testGetParams()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(),
+            array(),
             array(),
             array()
         );
@@ -66,9 +86,10 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testPostParams()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             array(),
             $this->postParams(),
+            array(),
             array()
         );
         $this->assertEquals(
@@ -79,10 +100,11 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testCookieParams()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             array(),
             array(),
-            $this->cookieParams()
+            $this->cookieParams(),
+            array()
         );
         $this->assertEquals(
             $this->cookieParams(),
@@ -92,9 +114,10 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testParams()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(),
             $this->postParams(),
+            array(),
             array()
         );
         $this->assertEquals(
@@ -105,8 +128,9 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testSet()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(),
+            array(),
             array(),
             array()
         );
@@ -120,8 +144,9 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testSetEE()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(),
+            array(),
             array(),
             array()
         );
@@ -133,8 +158,9 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testAlreadySetEE()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(array('ee' => 'existing-route')),
+            array(),
             array(),
             array()
         );
@@ -147,8 +173,9 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testOverrideAlreadySetEE()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(array('ee' => 'existing-route')),
+            array(),
             array(),
             array()
         );
@@ -162,8 +189,9 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testGet()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(),
+            array(),
             array(),
             array()
         );
@@ -187,9 +215,10 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testGetWithDrillDown()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             array(),
             $this->postParams(),
+            array(),
             array()
         );
         // our post data looks like this:
@@ -224,8 +253,9 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testIsSet()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $this->getParams(),
+            array(),
             array(),
             array()
         );
@@ -237,9 +267,10 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testIsSetWithDrillDown()
     {
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             array(),
             $this->postParams(),
+            array(),
             array()
         );
         // our post data looks like this:
@@ -278,8 +309,9 @@ class RequestTest extends PHPUnit_Framework_TestCase
         // in case it's needed by other tests
         $EXISTING_REQUEST = $_REQUEST;
         $_REQUEST = $this->getParams();
-        $request = new EE_Request(
+        $request = $this->getLegacyRequest(
             $_REQUEST,
+            array(),
             array(),
             array()
         );
@@ -323,7 +355,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
             $ip_address = long2ip(mt_rand() + mt_rand() + mt_rand(0, 1));
             // then randomly populate one of the $_SERVER keys used to determine the IP
             $_SERVER[$server_keys[mt_rand(0, 6)]] = $ip_address;
-            $request = new EE_Request(array(), array(), array());
+            $request = $this->getLegacyRequest(array(), array(), array(), $_SERVER);
             $this->assertEquals($ip_address, $request->ip_address());
             unset($request);
             $x++;
@@ -332,5 +364,121 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $_SERVER = $EXISTING_SERVER;
     }
 
+
+    public function testMatches()
+    {
+        $request = $this->getLegacyRequest(
+            $this->getParams(),
+            array(),
+            array(),
+            array()
+        );
+        $this->assertTrue($request->matches('event-*'));
+        $this->assertTrue($request->matches('*-name-*'));
+        $this->assertTrue($request->matches('event-name-*'));
+        $this->assertTrue($request->matches('event*name*'));
+        $this->assertTrue($request->matches('event?name*'));
+        $this->assertTrue($request->matches('event-name-123'));
+        $this->assertFalse($request->matches('event-name-?'));
+    }
+
+
+    public function testMatchesWithDrillDown()
+    {
+        $request = $this->getLegacyRequest(
+        array(),
+            $this->postParams(),
+            array(),
+            array()
+        );
+        // our post data looks like this:
+        //  array(
+        //    'input-a' => 'A',
+        //    'input-b' => 'B',
+        //    'sub' => array(
+        //        'sub-a'   => 'AA',
+        //        'sub-b'   => 'BB',
+        //        'sub-sub' => array(
+        //            'sub-sub-a'   => 'AAA',
+        //            'sub-sub-b'   => 'BBB',
+        //          )
+        //      )
+        //  );
+        // top-level value
+        $this->assertTrue($request->matches('input-?'));
+        $this->assertTrue($request->matches('input-*'));
+        // second level
+        $this->assertTrue($request->matches('sub[sub-?]'));
+        $this->assertTrue($request->matches('sub[sub-*]'));
+        // third level
+        $this->assertTrue($request->matches('sub[sub-sub][sub-sub-?]'));
+        $this->assertTrue($request->matches('sub[sub-sub][sub-sub-*]'));
+        // not set
+        $this->assertFalse($request->matches('input-c-*'));
+        $this->assertFalse($request->matches('sub[sub-c-*]'));
+        $this->assertFalse($request->matches('sub[sub-sub-*][sub-sub-c]'));
+    }
+
+    public function testGetMatch()
+    {
+        $request = $this->getLegacyRequest(
+        $this->getParams(),
+            array(),
+            array(),
+            array()
+        );
+        $this->assertEquals('Event 123', $request->getMatch('event-*'));
+        $this->assertEquals('Event 123', $request->getMatch('*-name-*'));
+        $this->assertEquals('Event 123', $request->getMatch('event-name-*'));
+        $this->assertEquals('Event 123', $request->getMatch('event*name*'));
+        $this->assertEquals('Event 123', $request->getMatch('event?name*'));
+        $this->assertEquals('Event 123', $request->getMatch('event-name-123'));
+        $this->assertNull($request->getMatch('event-name-?'));
+        // with default
+        $this->assertEquals('default', $request->getMatch('event-name-?', 'default'));
+    }
+
+
+    public function testGetMatchWithDrillDown()
+    {
+        $request = $this->getLegacyRequest(
+        array(),
+            $this->postParams(),
+            array(),
+            array()
+        );
+        // our post data looks like this:
+        //  array(
+        //    'input-a' => 'A',
+        //    'input-b' => 'B',
+        //    'sub' => array(
+        //        'sub-a'   => 'AA',
+        //        'sub-b'   => 'BB',
+        //        'sub-sub' => array(
+        //            'sub-sub-a'   => 'AAA',
+        //            'sub-sub-b'   => 'BBB',
+        //          )
+        //      )
+        //  );
+        // top-level value
+        $this->assertEquals('A', $request->getMatch('input-?'));
+        $this->assertEquals('A', $request->getMatch('input-*'));
+        // with default
+        $this->assertEquals('default', $request->getMatch('not-an-input-?', 'default'));
+        // second level
+        $this->assertEquals('AA', $request->getMatch('sub[sub-?]'));
+        $this->assertEquals('AA', $request->getMatch('sub[sub-*]'));
+        // with default
+        $this->assertEquals('default', $request->getMatch('sub[not-an-input-?]', 'default'));
+        // third level
+        $this->assertEquals('AAA', $request->getMatch('sub[sub-sub][sub-sub-?]'));
+        $this->assertEquals('AAA', $request->getMatch('sub[sub-sub][sub-sub-*]'));
+        // with default
+        $this->assertEquals('default', $request->getMatch('sub[sub-sub][not-an-input-?]', 'default'));
+        // not set
+        $this->assertNull($request->getMatch('input-c-*'));
+        $this->assertNull($request->getMatch('sub[sub-c-*]'));
+        $this->assertNull($request->getMatch('sub[sub-sub-*][sub-sub-c]'));
+    }
 }
 // Location: tests/testcases/core/request_stack/RequestTest.php

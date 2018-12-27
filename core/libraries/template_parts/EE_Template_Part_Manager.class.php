@@ -1,9 +1,4 @@
 <?php
-//namespace EventEspresso\core\libraries\templates;
-if (!defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
 
 /**
  * Class EE_Template_Part_Manager
@@ -13,7 +8,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * @package               Event Espresso
  * @subpackage            core
  * @author                Brent Christensen
- * 
+ *
  *
  */
 class EE_Template_Part_Manager
@@ -64,23 +59,23 @@ class EE_Template_Part_Manager
      *
      *    used for setting the details about a particular template part
      *
-     * @param string $name - just a simple string identifier - do NOT use 'event'
-     * @param string $label - template part label displayed in admin
+     * @param string $name     - just a simple string identifier - do NOT use 'event'
+     * @param string $label    - template part label displayed in admin
      * @param string $template - name or path of template to be used by EEH_Template::locate_template()
-     * @param int $priority - order in which template parts should be applied
+     * @param int    $priority - order in which template parts should be applied
      */
     public function add_template_part($name, $label, $template, $priority)
     {
         // SplPriorityQueue doesn't play nice with multiple items having the same priority
         // so if the incoming priority is already occupied, then let's increment it by one,
         // and then pass everything back into this method and try again with the new priority
-        if (isset($this->priorities[$priority])) {
+        if (isset($this->priorities[ $priority ])) {
             $priority++;
             $this->add_template_part($name, $label, $template, $priority);
             return;
         }
         // kk now we can mark this priority as being occupied
-        $this->priorities[$priority] = true;
+        $this->priorities[ $priority ] = true;
         // create the template part and add to the queue
         $this->template_parts->insert(
             new EE_Template_Part($name, $label, $template, $priority),
@@ -132,7 +127,7 @@ class EE_Template_Part_Manager
      * @access protected
      * @param string $content
      * @param string $template
-     * @param int $priority
+     * @param int    $priority
      * @return void
      */
     protected function _position_template_part($content, $template, $priority)
@@ -140,10 +135,10 @@ class EE_Template_Part_Manager
         // Event Description content is the actual incoming content itself
         if ($priority === $this->event_desc_priority) {
             $this->event_content = $content;
-        } else if ($priority < $this->event_desc_priority) {
+        } elseif ($priority < $this->event_desc_priority) {
             // everything BEFORE the Event Description
             $this->before_event_content .= EEH_Template::locate_template($template);
-        } else if ($priority > $this->event_desc_priority) {
+        } elseif ($priority > $this->event_desc_priority) {
             // everything AFTER the Event Description
             $this->after_event_content .= EEH_Template::locate_template($template);
         }
@@ -168,8 +163,7 @@ class EE_Template_Part_Manager
         $list_css_class = '',
         $list_item_css_class = '',
         $list_item_css_id_prefix = ''
-    )
-    {
+    ) {
         $event_archive_display_order = EEH_HTML::ul($list_css_id, $list_css_class);
         $this->template_parts->rewind();
         // loop through template parts and add template content
@@ -212,5 +206,3 @@ class EE_Template_Part_Manager
         }
     }
 }
-// End of file EE_Template_Part_Manager.class.php
-// Location: /EE_Template_Part_Manager.class.php

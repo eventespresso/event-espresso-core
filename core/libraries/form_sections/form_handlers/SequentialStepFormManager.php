@@ -17,12 +17,6 @@ use EventEspresso\core\services\progress_steps\ProgressStepManager;
 use Exception;
 use InvalidArgumentException;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Class SequentialStepFormManager
  * abstract parent class for managing a series of SequentialStepForm classes
@@ -89,14 +83,12 @@ abstract class SequentialStepFormManager
     protected $progress_step_manager;
 
 
-
     /**
      * @return Collection|null
      */
     abstract protected function getFormStepsCollection();
 
-
-
+    // phpcs:disable PEAR.Functions.ValidDefaultValue.NotAtEnd
     /**
      * StepsManager constructor
      *
@@ -126,7 +118,6 @@ abstract class SequentialStepFormManager
     }
 
 
-
     /**
      * @return string
      * @throws InvalidFormHandlerException
@@ -141,7 +132,6 @@ abstract class SequentialStepFormManager
         }
         return $this->base_url;
     }
-
 
 
     /**
@@ -163,7 +153,6 @@ abstract class SequentialStepFormManager
     }
 
 
-
     /**
      * @return string
      * @throws InvalidDataTypeException
@@ -175,7 +164,6 @@ abstract class SequentialStepFormManager
         }
         return $this->form_step_url_key;
     }
-
 
 
     /**
@@ -191,7 +179,6 @@ abstract class SequentialStepFormManager
     }
 
 
-
     /**
      * @return string
      */
@@ -199,7 +186,6 @@ abstract class SequentialStepFormManager
     {
         return $this->default_form_step;
     }
-
 
 
     /**
@@ -213,7 +199,6 @@ abstract class SequentialStepFormManager
         }
         $this->default_form_step = $default_form_step;
     }
-
 
 
     /**
@@ -240,7 +225,6 @@ abstract class SequentialStepFormManager
     }
 
 
-
     /**
      * @return object|SequentialStepFormInterface
      * @throws InvalidFormHandlerException
@@ -252,7 +236,6 @@ abstract class SequentialStepFormManager
         }
         return $this->form_steps->current();
     }
-
 
 
     /**
@@ -268,7 +251,6 @@ abstract class SequentialStepFormManager
     }
 
 
-
     /**
      * @param string $form_action
      * @throws InvalidDataTypeException
@@ -280,7 +262,6 @@ abstract class SequentialStepFormManager
         }
         $this->form_action = $form_action;
     }
-
 
 
     /**
@@ -303,7 +284,6 @@ abstract class SequentialStepFormManager
     }
 
 
-
     /**
      * @return string
      */
@@ -311,7 +291,6 @@ abstract class SequentialStepFormManager
     {
         return $this->form_config;
     }
-
 
 
     /**
@@ -323,7 +302,6 @@ abstract class SequentialStepFormManager
     }
 
 
-
     /**
      * @return string
      */
@@ -331,7 +309,6 @@ abstract class SequentialStepFormManager
     {
         return $this->progress_step_style;
     }
-
 
 
     /**
@@ -343,7 +320,6 @@ abstract class SequentialStepFormManager
     }
 
 
-
     /**
      * @return EE_Request
      */
@@ -351,7 +327,6 @@ abstract class SequentialStepFormManager
     {
         return $this->request;
     }
-
 
 
     /**
@@ -366,7 +341,6 @@ abstract class SequentialStepFormManager
         }
         return $collection;
     }
-
 
 
     /**
@@ -408,7 +382,6 @@ abstract class SequentialStepFormManager
     }
 
 
-
     /**
      * @throws InvalidClassException
      * @throws InvalidDataTypeException
@@ -422,7 +395,6 @@ abstract class SequentialStepFormManager
     {
         $this->buildCurrentStepFormForDisplay();
     }
-
 
 
     /**
@@ -440,7 +412,6 @@ abstract class SequentialStepFormManager
         $this->buildCurrentStepFormForProcessing();
         $this->processCurrentStepForm($form_data);
     }
-
 
 
     /**
@@ -464,7 +435,6 @@ abstract class SequentialStepFormManager
     }
 
 
-
     /**
      * @throws InvalidClassException
      * @throws InvalidDataTypeException
@@ -478,7 +448,6 @@ abstract class SequentialStepFormManager
     {
         $this->buildCurrentStepForm(false);
     }
-
 
 
     /**
@@ -526,7 +495,6 @@ abstract class SequentialStepFormManager
     }
 
 
-
     /**
      * @param bool $return_as_string
      * @return string
@@ -555,7 +523,6 @@ abstract class SequentialStepFormManager
     }
 
 
-
     /**
      * @param bool $return_as_string
      * @return string
@@ -569,7 +536,6 @@ abstract class SequentialStepFormManager
         echo $this->getCurrentStep()->display();
         return '';
     }
-
 
 
     /**
@@ -594,8 +560,7 @@ abstract class SequentialStepFormManager
             // else convert the Exception to an EE_Error
             EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
             // prevent redirect to next step or other if exception was thrown
-            if (
-                $current_step->redirectTo() === SequentialStepForm::REDIRECT_TO_NEXT_STEP
+            if ($current_step->redirectTo() === SequentialStepForm::REDIRECT_TO_NEXT_STEP
                 || $current_step->redirectTo() === SequentialStepForm::REDIRECT_TO_OTHER
             ) {
                 $current_step->setRedirectTo(SequentialStepForm::REDIRECT_TO_CURRENT_STEP);
@@ -607,7 +572,6 @@ abstract class SequentialStepFormManager
         EE_Error::get_notices(false, true);
         $this->redirectForm($current_step);
     }
-
 
 
     /**
@@ -637,19 +601,15 @@ abstract class SequentialStepFormManager
                 }
                 break;
             case SequentialStepForm::REDIRECT_TO_CURRENT_STEP:
-            default :
+            default:
                 // $redirect_step is already set
         }
         $current_step->setRedirectUrl($this->baseUrl());
         $current_step->addRedirectArgs(
-        // use the slug for whatever step we are redirecting too
+            // use the slug for whatever step we are redirecting too
             array($this->formStepUrlKey() => $redirect_step->slug())
         );
         wp_safe_redirect($current_step->redirectUrl());
         exit();
     }
-
-
 }
-// End of file SequentialStepFormManager.php
-// Location: /SequentialStepFormManager.php

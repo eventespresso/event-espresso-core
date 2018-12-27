@@ -1,5 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
  * Field for DB columns which don't correspond to model fields. Eg, on the Event model, which
@@ -31,7 +30,7 @@ abstract class EE_DB_Only_Field_Base extends EE_Model_Field_Base
      *
      * @return boolean
      */
-    function is_db_only_field()
+    public function is_db_only_field()
     {
         return true;
     }

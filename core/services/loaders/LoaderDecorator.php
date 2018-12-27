@@ -2,10 +2,6 @@
 
 namespace EventEspresso\core\services\loaders;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class LoaderDecorator
  * abstract parent class for classes that add additional logic to the loading process
@@ -13,7 +9,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- *
  */
 abstract class LoaderDecorator implements LoaderDecoratorInterface
 {
@@ -25,7 +20,6 @@ abstract class LoaderDecorator implements LoaderDecoratorInterface
     protected $loader;
 
 
-
     /**
      * LoaderDecorator constructor.
      *
@@ -35,9 +29,4 @@ abstract class LoaderDecorator implements LoaderDecoratorInterface
     {
         $this->loader = $loader;
     }
-
-
-
 }
-// End of file LoaderDecorator.php
-// Location: core/services/loaders/LoaderDecorator.php

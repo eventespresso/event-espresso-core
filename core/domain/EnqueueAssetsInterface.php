@@ -1,7 +1,7 @@
 <?php
 namespace EventEspresso\core\domain;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
+
 
 
 

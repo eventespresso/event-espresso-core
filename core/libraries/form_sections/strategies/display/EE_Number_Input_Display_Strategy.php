@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class EE_Number_Input_Display_Strategy
@@ -119,7 +116,4 @@ class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
         }
         return $attributes;
     }
-
 }
-// End of file EE_Number_Input_Display_Strategy.php
-// Location: core/libraries/form_sections/strategies/display/EE_Number_Input_Display_Strategy.php

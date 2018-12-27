@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class EE_Checkbox_Display_Strategy
@@ -22,16 +19,16 @@ class EE_Checkbox_Display_Strategy extends EE_Compound_Input_Display_Strategy
     public function display()
     {
         $input = $this->get_input();
-        $multi = count($input->options()) > 1;
         $input->set_label_sizes();
         $label_size_class = $input->get_label_size_class();
-        $html             = '';
+        $html = '';
         if (! is_array($input->raw_value()) && $input->raw_value() !== null) {
             EE_Error::doing_it_wrong(
                 'EE_Checkbox_Display_Strategy::display()',
                 sprintf(
-                    esc_html__(
+                    esc_html_x(
                         'Input values for checkboxes should be an array of values, but the value for input "%1$s" is "%2$s". Please verify that the input name is exactly "%3$s"',
+                        'Input values for checkboxes should be an array of values, but the value for input "form-input-id" is "form-input-value". Please verify that the input name is exactly "form_input_name[]"',
                         'event_espresso'
                     ),
                     $input->html_id(),
@@ -41,7 +38,7 @@ class EE_Checkbox_Display_Strategy extends EE_Compound_Input_Display_Strategy
                 '4.8.1'
             );
         }
-        $input_raw_value = (array)$input->raw_value();
+        $input_raw_value = (array) $input->raw_value();
         foreach ($input->options() as $value => $display_text) {
             $value = $input->get_normalization_strategy()->unnormalize_one($value);
             $html_id = $this->get_sub_input_id($value);
@@ -64,13 +61,11 @@ class EE_Checkbox_Display_Strategy extends EE_Compound_Input_Display_Strategy
                 ? ' checked="checked"'
                 : '';
             $html .= ' ' . $this->_input->other_html_attributes();
+            $html .= ' data-question_label="' . $input->html_label_id() . '"';
             $html .= '>&nbsp;';
             $html .= $display_text;
             $html .= EEH_HTML::nl(-1, 'checkbox') . '</label>';
         }
         return $html;
     }
-
-
-
 }

@@ -3,10 +3,6 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
-
 /**
  * EE_Transaction class
  *
@@ -31,7 +27,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     protected $_old_txn_status;
 
 
-
     /**
      * @param array  $props_n_values          incoming values
      * @param string $timezone                incoming timezone
@@ -44,7 +39,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        $txn        = $has_object
+        $txn = $has_object
             ? $has_object
             : new self($props_n_values, false, $timezone, $date_formats);
         if (! $has_object) {
@@ -52,7 +47,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         }
         return $txn;
     }
-
 
 
     /**
@@ -68,7 +62,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         $txn->set_old_txn_status($txn->status_ID());
         return $txn;
     }
-
 
 
     /**
@@ -102,7 +95,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * removes transaction lock applied in EE_Transaction::lock()
      *
@@ -113,7 +105,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->delete_extra_meta('lock');
     }
-
 
 
     /**
@@ -142,7 +133,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Gets the meta field indicating that this TXN is locked
      *
@@ -151,9 +141,8 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     protected function _get_lock()
     {
-        return (int)$this->get_extra_meta('lock', true, 0);
+        return (int) $this->get_extra_meta('lock', true, 0);
     }
-
 
 
     /**
@@ -172,7 +161,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Set transaction total
      *
@@ -181,9 +169,8 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function set_total($total = 0.00)
     {
-        $this->set('TXN_total', (float)$total);
+        $this->set('TXN_total', (float) $total);
     }
-
 
 
     /**
@@ -194,9 +181,8 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function set_paid($total_paid = 0.00)
     {
-        $this->set('TXN_paid', (float)$total_paid);
+        $this->set('TXN_paid', (float) $total_paid);
     }
-
 
 
     /**
@@ -212,7 +198,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Set hash salt
      *
@@ -223,7 +208,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         $this->set('TXN_hash_salt', $hash_salt);
     }
-
 
 
     /**
@@ -238,7 +222,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Gets TXN_reg_steps
      *
@@ -248,9 +231,8 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     public function reg_steps()
     {
         $TXN_reg_steps = $this->get('TXN_reg_steps');
-        return is_array($TXN_reg_steps) ? (array)$TXN_reg_steps : array();
+        return is_array($TXN_reg_steps) ? (array) $TXN_reg_steps : array();
     }
-
 
 
     /**
@@ -261,7 +243,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->get_pretty('TXN_total');
     }
-
 
 
     /**
@@ -276,7 +257,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * calculate the amount remaining for this transaction and return;
      *
@@ -289,7 +269,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * get Transaction Total
      *
@@ -298,9 +277,8 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function total()
     {
-        return (float)$this->get('TXN_total');
+        return (float) $this->get('TXN_total');
     }
-
 
 
     /**
@@ -311,9 +289,8 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function paid()
     {
-        return (float)$this->get('TXN_paid');
+        return (float) $this->get('TXN_paid');
     }
-
 
 
     /**
@@ -321,12 +298,11 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function get_cart_session()
     {
-        $session_data = (array)$this->get('TXN_session_data');
+        $session_data = (array) $this->get('TXN_session_data');
         return isset($session_data['cart']) && $session_data['cart'] instanceof EE_Cart
             ? $session_data['cart']
             : null;
     }
-
 
 
     /**
@@ -352,7 +328,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Set session data within the TXN object
      *
@@ -369,7 +344,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * get Transaction hash salt
      *
@@ -381,7 +355,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Returns the transaction datetime as either:
      *            - unix timestamp format ($format = false, $gmt = true)
@@ -390,8 +363,8 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      *              set timezone in this class differs from what the timezone is on the blog.
      *            - formatted date string including the UTC (timezone) offset (default).
      *
-     * @param boolean $format - whether to return a unix timestamp (default) or formatted date string
-     * @param boolean $gmt    - whether to return a unix timestamp with UTC offset applied (default)
+     * @param boolean $format   - whether to return a unix timestamp (default) or formatted date string
+     * @param boolean $gmt      - whether to return a unix timestamp with UTC offset applied (default)
      *                          or no UTC offset applied
      * @return string | int
      * @throws EE_Error
@@ -406,7 +379,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         }
         return $this->get('TXN_timestamp');
     }
-
 
 
     /**
@@ -433,7 +405,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Gets all the attendees for this transaction (handy for use with EE_Attendee's get_registrations_for_event
      * function for getting attendees and how many registrations they each have for an event)
@@ -447,11 +418,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Gets payments for this transaction. Unlike other such functions, order by 'DESC' by default
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Payment[]
      * @throws EE_Error
      */
@@ -459,7 +429,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->get_many_related('Payment', $query_params);
     }
-
 
 
     /**
@@ -485,7 +454,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Gets all payments which have not been approved
      *
@@ -508,7 +476,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * echoes $this->pretty_status()
      *
@@ -522,7 +489,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         echo $this->pretty_status($show_icons);
     }
-
 
 
     /**
@@ -542,7 +508,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
             false,
             'sentence'
         );
-        $icon   = '';
+        $icon = '';
         switch ($this->status_ID()) {
             case EEM_Transaction::complete_status_code:
                 $icon = $show_icons ? '<span class="dashicons dashicons-yes ee-icon-size-24 green-text"></span>' : '';
@@ -561,9 +527,8 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
                 $icon = $show_icons ? '<span class="dashicons dashicons-plus ee-icon-size-16 orange-text"></span>' : '';
                 break;
         }
-        return $icon . $status[$this->status_ID()];
+        return $icon . $status[ $this->status_ID() ];
     }
-
 
 
     /**
@@ -577,7 +542,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Returns TRUE or FALSE for whether or not this transaction cost any money
      *
@@ -588,7 +552,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return EEH_Money::compare_floats($this->get('TXN_total'), 0, '==');
     }
-
 
 
     /**
@@ -604,7 +567,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Returns whether this transaction is incomplete
      * Useful in templates and other logic for deciding if we should ask for another payment...
@@ -618,7 +580,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Returns whether this transaction is overpaid
      * Useful in templates and other logic for deciding if monies need to be refunded
@@ -630,7 +591,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->status_ID() === EEM_Transaction::overpaid_status_code;
     }
-
 
 
     /**
@@ -647,7 +607,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Returns whether this transaction failed
      * meaning that the transaction/registration process was somehow interrupted and never completed
@@ -660,7 +619,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->status_ID() === EEM_Transaction::failed_status_code;
     }
-
 
 
     /**
@@ -680,7 +638,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Gets the primary registration only
      *
@@ -689,14 +646,13 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function primary_registration()
     {
-        $registrations = (array)$this->get_many_related(
+        $registrations = (array) $this->get_many_related(
             'Registration',
             array(array('REG_count' => EEM_Registration::PRIMARY_REGISTRANT_COUNT))
         );
         foreach ($registrations as $registration) {
             // valid registration that is NOT cancelled or declined ?
-            if (
-                $registration instanceof EE_Registration
+            if ($registration instanceof EE_Registration
                 && ! in_array($registration->status_ID(), EEM_Registration::closed_reg_statuses(), true)
             ) {
                 return $registration;
@@ -705,7 +661,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         // nothing valid found, so just return first thing from array of results
         return reset($registrations);
     }
-
 
 
     /**
@@ -725,7 +680,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Gets the URL of the thank you page with this registration REG_url_link added as
      * a query parameter
@@ -740,7 +694,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * @return string
      * @throws EE_Error
@@ -750,7 +703,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         $payment = $this->get_first_related('Payment');
         return $payment instanceof EE_Payment ? $payment->gateway_response() : '';
     }
-
 
 
     /**
@@ -765,11 +717,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Gets all the extra meta info on this payment
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Extra_Meta
      * @throws EE_Error
      */
@@ -777,7 +728,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->get_many_related('Extra_Meta', $query_params);
     }
-
 
 
     /**
@@ -791,7 +741,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->_add_relation_to($registration, 'Registration');
     }
-
 
 
     /**
@@ -808,7 +757,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Gets all the line items which are for ACTUAL items
      *
@@ -819,7 +767,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->line_items(array(array('LIN_type' => EEM_Line_Item::type_line_item)));
     }
-
 
 
     /**
@@ -835,7 +782,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Gets ALL the line items related to this transaction (unstructured)
      *
@@ -849,7 +795,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Gets all the line items which are taxes on the total
      *
@@ -860,7 +805,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->line_items(array(array('LIN_type' => EEM_Line_Item::type_tax)));
     }
-
 
 
     /**
@@ -881,7 +825,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Returns the total amount of tax on this transaction
      * (assumes there's only one tax subtotal line item)
@@ -893,11 +836,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         $tax_line_item = $this->tax_total_line_item();
         if ($tax_line_item) {
-            return (float)$tax_line_item->total();
+            return (float) $tax_line_item->total();
         }
-        return (float)0;
+        return (float) 0;
     }
-
 
 
     /**
@@ -910,7 +852,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return EEH_Line_Item::get_taxes_subtotal($this->total_line_item());
     }
-
 
 
     /**
@@ -964,7 +905,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Gets PMD_ID
      *
@@ -977,7 +917,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Sets PMD_ID
      *
@@ -988,7 +927,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         $this->set('PMD_ID', $PMD_ID);
     }
-
 
 
     /**
@@ -1013,7 +951,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Gets the last payment made
      *
@@ -1024,7 +961,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->get_first_related('Payment', array('order_by' => array('PAY_ID' => 'desc')));
     }
-
 
 
     /**
@@ -1040,7 +976,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return EEM_Line_Item::instance()->get_all_non_ticket_line_items_for_transaction($this->ID());
     }
-
 
 
     /**
@@ -1075,7 +1010,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * Updates the transaction's status and total_paid based on all the payments
      * that apply to it
@@ -1104,7 +1038,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * @return string
      */
@@ -1112,7 +1045,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->_old_txn_status;
     }
-
 
 
     /**
@@ -1127,7 +1059,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * reg_status_updated
      *
@@ -1138,7 +1069,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->status_ID() !== $this->_old_txn_status && $this->_old_txn_status !== null;
     }
-
 
 
     /**
@@ -1189,7 +1119,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * all_reg_steps_completed
      * returns:
@@ -1203,7 +1132,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->_reg_steps_completed();
     }
-
 
 
     /**
@@ -1223,7 +1151,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * all_reg_steps_completed_except
      * returns:
@@ -1238,7 +1165,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->_reg_steps_completed('finalize_registration');
     }
-
 
 
     /**
@@ -1258,7 +1184,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * completed_final_reg_step
      * returns:
@@ -1275,7 +1200,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * set_reg_step_initiated
      * given a valid TXN_reg_step, this sets it's value to a unix timestamp
@@ -1288,7 +1212,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->_set_reg_step_completed_status($reg_step_slug, time());
     }
-
 
 
     /**
@@ -1305,7 +1228,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * set_reg_step_completed
      * given a valid TXN_reg_step slug, this sets the step as NOT completed
@@ -1318,7 +1240,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->_set_reg_step_completed_status($reg_step_slug, false);
     }
-
 
 
     /**
@@ -1337,35 +1258,34 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         // get reg steps array
         $txn_reg_steps = $this->reg_steps();
         // if reg step does NOT exist
-        if (! isset($txn_reg_steps[$reg_step_slug])) {
+        if (! isset($txn_reg_steps[ $reg_step_slug ])) {
             return false;
         }
         // if  we're trying to complete a step that is already completed
-        if ($txn_reg_steps[$reg_step_slug] === true) {
+        if ($txn_reg_steps[ $reg_step_slug ] === true) {
             return true;
         }
         // if  we're trying to complete a step that hasn't even started
-        if ($status === true && $txn_reg_steps[$reg_step_slug] === false) {
+        if ($status === true && $txn_reg_steps[ $reg_step_slug ] === false) {
             return false;
         }
         // if current status value matches the incoming value (no change)
         // type casting as int means values should collapse to either 0, 1, or a timestamp like 1234567890
-        if ((int)$txn_reg_steps[$reg_step_slug] === (int)$status) {
+        if ((int) $txn_reg_steps[ $reg_step_slug ] === (int) $status) {
             // this will happen in cases where multiple AJAX requests occur during the same step
             return true;
         }
         // if we're trying to set a start time, but it has already been set...
-        if (is_numeric($status) && is_numeric($txn_reg_steps[$reg_step_slug])) {
+        if (is_numeric($status) && is_numeric($txn_reg_steps[ $reg_step_slug ])) {
             // skip the update below, but don't return FALSE so that errors won't be displayed
             return true;
         }
         // update completed status
-        $txn_reg_steps[$reg_step_slug] = $status;
+        $txn_reg_steps[ $reg_step_slug ] = $status;
         $this->set_reg_steps($txn_reg_steps);
         $this->save();
         return true;
     }
-
 
 
     /**
@@ -1381,10 +1301,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         // get reg steps array
         $txn_reg_steps = $this->reg_steps();
-        unset($txn_reg_steps[$reg_step_slug]);
+        unset($txn_reg_steps[ $reg_step_slug ]);
         $this->set_reg_steps($txn_reg_steps);
     }
-
 
 
     /**
@@ -1410,7 +1329,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     }
 
 
-
     /**
      * toggle_abandoned_transaction_status
      * upgrades a TXNs status from failed or abandoned to incomplete
@@ -1422,13 +1340,11 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         // if TXN status has not been updated already due to a payment, and is still set as "failed" or "abandoned"...
         $txn_status = $this->status_ID();
-        if (
-            $txn_status === EEM_Transaction::failed_status_code
+        if ($txn_status === EEM_Transaction::failed_status_code
             || $txn_status === EEM_Transaction::abandoned_status_code
         ) {
             // if a contact record for the primary registrant has been created
-            if (
-                $this->primary_registration() instanceof EE_Registration
+            if ($this->primary_registration() instanceof EE_Registration
                 && $this->primary_registration()->attendee() instanceof EE_Attendee
             ) {
                 $this->set_status(EEM_Transaction::incomplete_status_code);
@@ -1440,7 +1356,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         }
         return false;
     }
-
 
 
     /**
@@ -1488,6 +1403,4 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
             }
         }
     }
-
-}/* End of file EE_Transaction.class.php */
-/* Location: includes/classes/EE_Transaction.class.php */
+}

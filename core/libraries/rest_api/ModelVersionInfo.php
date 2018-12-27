@@ -1,14 +1,9 @@
 <?php
+
 namespace EventEspresso\core\libraries\rest_api;
 
 use EE_Registry;
 use EED_Core_Rest_Api;
-
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Model_Version_Info
@@ -89,7 +84,6 @@ class ModelVersionInfo
     protected $cached_fields_on_models = array();
 
 
-
     /**
      * Model_Version_Info constructor.
      *
@@ -97,14 +91,14 @@ class ModelVersionInfo
      */
     public function __construct($requested_version)
     {
-        $this->requested_version = (string)$requested_version;
+        $this->requested_version = (string) $requested_version;
         $this->model_changes = array(
             '4.8.29' => array(
-                //first version where the REST API is in EE core, so no need
-                //to specify how its different from the previous
+                // first version where the REST API is in EE core, so no need
+                // to specify how its different from the previous
             ),
         );
-        //setup data for "extra" fields added onto resources which don't actually exist on models
+        // setup data for "extra" fields added onto resources which don't actually exist on models
         $this->resource_changes = apply_filters(
             'FHEE__Model_Version_Info___construct__extra_resource_properties_for_models',
             array()
@@ -120,17 +114,16 @@ class ModelVersionInfo
         foreach ($this->resource_changes as $version => $model_classnames) {
             foreach ($model_classnames as $model_classname => $extra_fields) {
                 foreach ($extra_fields as $fieldname => $field_data) {
-                    $this->resource_changes[$model_classname][$fieldname]['name'] = $fieldname;
+                    $this->resource_changes[ $model_classname ][ $fieldname ]['name'] = $fieldname;
                     foreach ($defaults as $attribute => $default_value) {
-                        if (! isset($this->resource_changes[$model_classname][$fieldname][$attribute])) {
-                            $this->resource_changes[$model_classname][$fieldname][$attribute] = $default_value;
+                        if (! isset($this->resource_changes[ $model_classname ][ $fieldname ][ $attribute ])) {
+                            $this->resource_changes[ $model_classname ][ $fieldname ][ $attribute ] = $default_value;
                         }
                     }
                 }
             }
         }
     }
-
 
 
     /**
@@ -146,14 +139,13 @@ class ModelVersionInfo
             $model_changes = array();
             foreach ($this->modelChanges() as $version => $models_changed_in_version) {
                 if ($version <= EED_Core_Rest_Api::core_version() && $version > $this->requestedVersion()) {
-                    $model_changes[$version] = $models_changed_in_version;
+                    $model_changes[ $version ] = $models_changed_in_version;
                 }
             }
             $this->cached_model_changes_between_requested_version_and_current = $model_changes;
         }
         return $this->cached_model_changes_between_requested_version_and_current;
     }
-
 
 
     /**
@@ -169,14 +161,13 @@ class ModelVersionInfo
             $resource_changes = array();
             foreach ($this->resourceChanges() as $version => $model_classnames) {
                 if ($version <= EED_Core_Rest_Api::core_version() && $version > $this->requestedVersion()) {
-                    $resource_changes[$version] = $model_classnames;
+                    $resource_changes[ $version ] = $model_classnames;
                 }
             }
             $this->cached_resource_changes_between_requested_version_and_current = $resource_changes;
         }
         return $this->cached_resource_changes_between_requested_version_and_current;
     }
-
 
 
     /**
@@ -188,7 +179,6 @@ class ModelVersionInfo
     {
         return $this->requested_version;
     }
-
 
 
     /**
@@ -208,7 +198,6 @@ class ModelVersionInfo
     }
 
 
-
     /**
      * Takes into account the requested version, and the current version, and
      * what changed between the two, and tries to return.
@@ -223,7 +212,7 @@ class ModelVersionInfo
             foreach ($this->modelChangesBetweenRequestedVersionAndCurrent() as $version => $models_changed) {
                 foreach ($models_changed as $model_name => $new_indicator_or_fields_added) {
                     if ($new_indicator_or_fields_added === ModelVersionInfo::MODEL_ADDED) {
-                        unset($all_models_in_current_version[$model_name]);
+                        unset($all_models_in_current_version[ $model_name ]);
                     }
                 }
             }
@@ -237,7 +226,6 @@ class ModelVersionInfo
     }
 
 
-
     /**
      * Determines if this is a valid model name in the requested version.
      * Similar to EE_Registry::instance()->is_model_name(), but takes the requested
@@ -249,13 +237,12 @@ class ModelVersionInfo
     public function isModelNameInThisVersion($model_name)
     {
         $model_names = $this->modelsForRequestedVersion();
-        if (isset($model_names[$model_name])) {
+        if (isset($model_names[ $model_name ])) {
             return true;
         } else {
             return false;
         }
     }
-
 
 
     /**
@@ -285,7 +272,6 @@ class ModelVersionInfo
     }
 
 
-
     /**
      * Gets all the fields that should exist on this model right now
      *
@@ -294,19 +280,19 @@ class ModelVersionInfo
      */
     public function fieldsOnModelInThisVersion($model)
     {
-        if (! isset($this->cached_fields_on_models[$model->get_this_model_name()])) {
-            //get all model changes between the requested version and current core version
+        if (! isset($this->cached_fields_on_models[ $model->get_this_model_name() ])) {
+            // get all model changes between the requested version and current core version
             $changes = $this->modelChangesBetweenRequestedVersionAndCurrent();
-            //fetch all fields currently on this model
+            // fetch all fields currently on this model
             $current_fields = $model->field_settings();
-            //remove all fields that have been added since
+            // remove all fields that have been added since
             foreach ($changes as $version => $changes_in_version) {
-                if (isset($changes_in_version[$model->get_this_model_name()])
-                    && $changes_in_version[$model->get_this_model_name()] !== ModelVersionInfo::MODEL_ADDED
+                if (isset($changes_in_version[ $model->get_this_model_name() ])
+                    && $changes_in_version[ $model->get_this_model_name() ] !== ModelVersionInfo::MODEL_ADDED
                 ) {
                     $current_fields = array_diff_key(
                         $current_fields,
-                        array_flip($changes_in_version[$model->get_this_model_name()])
+                        array_flip($changes_in_version[ $model->get_this_model_name() ])
                     );
                 }
             }
@@ -314,7 +300,6 @@ class ModelVersionInfo
         }
         return $this->cached_fields_on_models;
     }
-
 
 
     /**
@@ -337,7 +322,6 @@ class ModelVersionInfo
     }
 
 
-
     /**
      * Returns the list of model field classes that that the API basically ignores
      *
@@ -347,10 +331,9 @@ class ModelVersionInfo
     {
         return apply_filters(
             'FHEE__Controller_Model_Read_fields_ignored',
-            array('EE_Foreign_Key_Field_Base', 'EE_Any_Foreign_Model_Name_Field')
+            array()
         );
     }
-
 
 
     /**
@@ -363,7 +346,6 @@ class ModelVersionInfo
     {
         return $this->isSubclassOfOne($field_obj, $this->fieldsIgnored());
     }
-
 
 
     /**
@@ -381,7 +363,6 @@ class ModelVersionInfo
     }
 
 
-
     /**
      * If this field one that has a raw format
      *
@@ -392,7 +373,6 @@ class ModelVersionInfo
     {
         return $this->isSubclassOfOne($field_obj, $this->fieldsThatHaveRenderedFormat());
     }
-
 
 
     /**
@@ -411,7 +391,6 @@ class ModelVersionInfo
     }
 
 
-
     /**
      * If this field one that has a pretty equivalent
      *
@@ -424,7 +403,6 @@ class ModelVersionInfo
     }
 
 
-
     /**
      * Returns an array describing what extra API resource properties have been added through the versions
      *
@@ -434,7 +412,6 @@ class ModelVersionInfo
     {
         return $this->resource_changes;
     }
-
 
 
     /**
@@ -458,7 +435,6 @@ class ModelVersionInfo
     }
 
 
-
     /**
      * Gets all the related models for the specified model. It's good to use this
      * in case this model didn't exist for this version or something
@@ -471,10 +447,10 @@ class ModelVersionInfo
         $relations = array();
         foreach ($model->relation_settings() as $relation_name => $relation_obj) {
             if ($this->isModelNameInThisVersion($relation_name)) {
-                $relations[$relation_name] = $relation_obj;
+                $relations[ $relation_name ] = $relation_obj;
             }
         }
-        //filter the results, but use the old filter name
+        // filter the results, but use the old filter name
         return apply_filters(
             'FHEE__Read__create_entity_from_wpdb_result__related_models_to_include',
             $relations,
@@ -482,5 +458,3 @@ class ModelVersionInfo
         );
     }
 }
-
-// End of file Model_Version_Info.php

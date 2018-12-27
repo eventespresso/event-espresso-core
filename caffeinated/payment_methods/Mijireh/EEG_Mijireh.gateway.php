@@ -1,11 +1,5 @@
 <?php
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
-
-
-
 /**
  * EEG_Mijireh
  *
@@ -50,20 +44,20 @@ class EEG_Mijireh extends EE_Offsite_Gateway
     public function set_redirection_info(
         $payment,
         $billing_info = array(),
-        $return_url = NULL,
-        $notify_url = NULL,
-        $cancel_url = NULL
+        $return_url = null,
+        $notify_url = null,
+        $cancel_url = null
     ) {
         /* @var $transaction EE_Transaction */
         $transaction = $payment->transaction();
         $gateway_formatter = $this->_get_gateway_formatter();
 
-        //get any of the current registrations,
+        // get any of the current registrations,
         $primary_registrant = $transaction->primary_registration();
 
         $primary_attendee = $primary_registrant->attendee();
         $items = array();
-        //if we're are charging for the full amount, show the normal line items
+        // if we're are charging for the full amount, show the normal line items
         if ($this->_can_easily_itemize_transaction_for($payment)) {
             $total_line_item = $transaction->total_line_item();
             $tax_total = $total_line_item->get_total_tax();
@@ -81,9 +75,9 @@ class EEG_Mijireh extends EE_Offsite_Gateway
                     'quantity' => $line_item->quantity()
                 );
             }
-        } else {//its a partial payment
+        } else {// its a partial payment
             $tax_total = 0;
-            //partial payment, so just add 1 item
+            // partial payment, so just add 1 item
             $items[] = array(
                 'name'     => apply_filters(
                     'FHEE__EEG_Mijireh__set_redirection_info__partial_amount_line_item_name',
@@ -106,7 +100,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway
             'tax'        => $gateway_formatter->formatCurrency($tax_total),
             'partner_id' => 'ee'
         );
-        //setup address?
+        // setup address?
         if ($primary_attendee->address()
             && $primary_attendee->city()
             && $primary_attendee->state_ID()
@@ -157,7 +151,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway
                 $payment->set_details($response['body']);
             } else {
                 if (is_array($response_body) || is_object($response_body)) {
-                    $response_body_as_array = (array)$response_body;
+                    $response_body_as_array = (array) $response_body;
                     foreach ($response_body_as_array as $problem_parameter => $problems) {
                         $problems_string .= sprintf(
                             __('\nProblems with %s: %s', 'event_espresso'),
@@ -169,7 +163,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway
                     $problems_string = $response['body'];
                 }
                 if (! $problems_string) {
-                    //no message to show? wack
+                    // no message to show? wack
                     if (isset($response['headers']['status'])) {
                         $problems_string = $response['headers']['status'];
                     } else {
@@ -189,9 +183,9 @@ class EEG_Mijireh extends EE_Offsite_Gateway
             );
             $payment->set_details($response);
             $payment->set_redirect_url(null);
-            //even though the payment's status is failed at this point anyways,
-            //let's be explicit about it. The fact that the redirect url is null
-            //should be enough to client code that they can't redirect the user
+            // even though the payment's status is failed at this point anyways,
+            // let's be explicit about it. The fact that the redirect url is null
+            // should be enough to client code that they can't redirect the user
             $payment->set_status($this->_pay_model->failed_status());
         }
         return $payment;
@@ -209,8 +203,8 @@ class EEG_Mijireh extends EE_Offsite_Gateway
     {
         if (is_array($data)) {
             $prepared_data = array();
-            foreach($data as $key => $datum) {
-                $prepared_data[$key] = $this->_prepare_for_mijireh($datum);
+            foreach ($data as $key => $datum) {
+                $prepared_data[ $key ] = $this->_prepare_for_mijireh($datum);
             }
             return $prepared_data;
         } elseif (is_string($data)) {
@@ -234,13 +228,13 @@ class EEG_Mijireh extends EE_Offsite_Gateway
      */
     public function handle_payment_update($update_info, $transaction)
     {
-        foreach($transaction->pending_payments() as $payment) {
+        foreach ($transaction->pending_payments() as $payment) {
             $payment = $this->check_payment_in_mijireh($payment);
             if ($payment->status() === $this->_pay_model->approved_status()) {
                 return $payment;
             }
         }
-        $payment = $transaction instanceof EEI_Transaction ? $transaction->last_payment() : NULL;
+        $payment = $transaction instanceof EEI_Transaction ? $transaction->last_payment() : null;
 
         if (! $payment instanceof EEI_Payment) {
             throw new EE_Error(
@@ -281,7 +275,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway
         // validate response
         $response_body = isset($response['body']) ? json_decode($response['body']) : '';
         if ($response && $response_body) {
-            switch($response_body->status) {
+            switch ($response_body->status) {
                 case 'paid':
                     $payment->set_status($this->_pay_model->approved_status());
                     break;
@@ -300,6 +294,4 @@ class EEG_Mijireh extends EE_Offsite_Gateway
 //      $payment->set_status( $this->_pay_model->pending_status() );
         return $payment;
     }
-
 }
-// End of file EEG_Mijireh.gateway.php

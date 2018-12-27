@@ -1,9 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
+<?php
 /**
  * EE_Slug_Normalization
  * Simply converts the string into a slug. DOes not add any errors if its bad.
@@ -37,4 +32,3 @@ class EE_Slug_Normalization extends EE_Normalization_Strategy_Base
         return str_replace("-", " ", $normalized_value);
     }
 }
-// End of file EE_Slug_Normalization.strategy.php

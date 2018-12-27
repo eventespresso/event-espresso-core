@@ -2,8 +2,7 @@
 
 namespace EventEspresso\core\services\loaders;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
+use InvalidArgumentException;
 
 /**
  * Same as LoaderDecoratorInterface
@@ -12,7 +11,11 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 interface CachingLoaderDecoratorInterface extends LoaderDecoratorInterface
 {
 
-
+    /**
+     * @param string $fqcn
+     * @param mixed  $object
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function share($fqcn, $object);
 }
-// End of file LoaderInterface.php
-// Location: core/services/loaders/LoaderInterface.php

@@ -1,7 +1,4 @@
 <?php
-if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
-}
 
 // +----------------------------------------------------------------------+
 // | Akelos PHP Application Framework                                     |
@@ -34,19 +31,21 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @since 0.1
  * @version $Revision 0.1 $
  */
-class EEH_Inflector{
+class EEH_Inflector
+{
     // ------ CLASS METHODS ------ //
     // ---- Public methods ---- //
     // {{{ pluralize()
 
-	/**
-	 * Just calls self::pluralize and strtolower on $word and returns it
-	 * @param string $word
-	 * @return string
-	 */
-    public static function pluralize_and_lower( $word ){
-		return strtolower( self::pluralize( $word ) );
-	}
+    /**
+     * Just calls self::pluralize and strtolower on $word and returns it
+     * @param string $word
+     * @return string
+     */
+    public static function pluralize_and_lower($word)
+    {
+        return strtolower(self::pluralize($word));
+    }
 
 
 
@@ -54,9 +53,10 @@ class EEH_Inflector{
      * @param string $word
      * @return mixed
      */
-    public static function singularize_and_upper( $word ) {
-		return str_replace( ' ', '_', self::humanize( self::singularize( $word ), 'all' ) );
-	}
+    public static function singularize_and_upper($word)
+    {
+        return str_replace(' ', '_', self::humanize(self::singularize($word), 'all'));
+    }
 
 
 
@@ -68,7 +68,8 @@ class EEH_Inflector{
      * @param    string    $word    English noun to pluralize
      * @return string Plural noun
      */
-    public static function pluralize($word){
+    public static function pluralize($word)
+    {
         $plural = array(
             '/(quiz)$/i'               => '\1zes',
             '/^(ox)$/i'                => '\1en',
@@ -100,21 +101,21 @@ class EEH_Inflector{
 
         $lowercased_word = strtolower($word);
 
-        foreach($uncountable as $_uncountable){
-            if(substr($lowercased_word, (-1 * strlen($_uncountable))) == $_uncountable && //even though the word "price" ends in "rice", it can be pluralized, so check the previous character isnt a letter
-					! ctype_alpha( $lowercased_word[ strlen( $lowercased_word ) - strlen($_uncountable) ] ) ){
+        foreach ($uncountable as $_uncountable) {
+            if (substr($lowercased_word, (-1 * strlen($_uncountable))) == $_uncountable && // even though the word "price" ends in "rice", it can be pluralized, so check the previous character isnt a letter
+                    ! ctype_alpha($lowercased_word[ strlen($lowercased_word) - strlen($_uncountable) ]) ) {
                 return $word;
             }
         }
 
-        foreach($irregular as $_plural => $_singular){
-            if(preg_match('/(' . $_plural . ')$/i', $word, $arr)){
+        foreach ($irregular as $_plural => $_singular) {
+            if (preg_match('/(' . $_plural . ')$/i', $word, $arr)) {
                 return preg_replace('/(' . $_plural . ')$/i', substr($arr[0], 0, 1) . substr($_singular, 1), $word);
             }
         }
 
-        foreach($plural as $rule => $replacement){
-            if(preg_match($rule, $word)){
+        foreach ($plural as $rule => $replacement) {
+            if (preg_match($rule, $word)) {
                 return preg_replace($rule, $replacement, $word);
             }
         }
@@ -132,7 +133,8 @@ class EEH_Inflector{
      * @param    string    $word    English noun to singularize
      * @return string Singular noun.
      */
-    public static function singularize($word){
+    public static function singularize($word)
+    {
         $singular = array(
             '/(quiz)zes$/i'                                                    => '\1',
             '/(matr)ices$/i'                                                   => '\1ix',
@@ -170,20 +172,20 @@ class EEH_Inflector{
             'move'   => 'moves');
 
         $lowercased_word = strtolower($word);
-        foreach($uncountable as $_uncountable){
-            if(substr($lowercased_word, (-1 * strlen($_uncountable))) == $_uncountable){
+        foreach ($uncountable as $_uncountable) {
+            if (substr($lowercased_word, (-1 * strlen($_uncountable))) == $_uncountable) {
                 return $word;
             }
         }
 
-        foreach($irregular as $_plural => $_singular){
-            if(preg_match('/(' . $_singular . ')$/i', $word, $arr)){
+        foreach ($irregular as $_plural => $_singular) {
+            if (preg_match('/(' . $_singular . ')$/i', $word, $arr)) {
                 return preg_replace('/(' . $_singular . ')$/i', substr($arr[0], 0, 1) . substr($_plural, 1), $word);
             }
         }
 
-        foreach($singular as $rule => $replacement){
-            if(preg_match($rule, $word)){
+        foreach ($singular as $rule => $replacement) {
+            if (preg_match($rule, $word)) {
                 return preg_replace($rule, $replacement, $word);
             }
         }
@@ -212,7 +214,8 @@ class EEH_Inflector{
      * the words in the title.
      * @return string Text formatted as title
      */
-    public static function titleize($word, $uppercase = ''){
+    public static function titleize($word, $uppercase = '')
+    {
         $uppercase = $uppercase === 'first' ? 'ucfirst' : 'ucwords';
         return $uppercase(EEH_Inflector::humanize(EEH_Inflector::underscore($word)));
     }
@@ -233,7 +236,8 @@ class EEH_Inflector{
      * @param    string    $word    Word to convert to camel case
      * @return string UpperCamelCasedWord
      */
-    public static function camelize($word){
+    public static function camelize($word)
+    {
         return str_replace(' ', '', ucwords(preg_replace('/[^A-Z^a-z^0-9]+/', ' ', $word)));
     }
 
@@ -245,7 +249,8 @@ class EEH_Inflector{
      * @param $word
      * @return string
      */
-    public static function camelize_all_but_first($word){
+    public static function camelize_all_but_first($word)
+    {
         return lcfirst(EEH_Inflector::camelize($word));
     }
     // }}}
@@ -264,7 +269,8 @@ class EEH_Inflector{
      * @param    string    $word    Word to underscore
      * @return string Underscored word
      */
-    public static function underscore($word){
+    public static function underscore($word)
+    {
         return strtolower(preg_replace('/[^A-Z^a-z^0-9]+/', '_', preg_replace('/([a-zd])([A-Z])/', '1_2', preg_replace('/([A-Z]+)([A-Z][a-z])/', '1_2', $word))));
     }
 
@@ -288,9 +294,10 @@ class EEH_Inflector{
      * instead of just the first one.
      * @return string Human-readable word
      */
-    public static function humanize($word, $uppercase = ''){
-		//make special exceptions for acronyms
-		$word = str_replace('wp_', 'WP_', $word );
+    public static function humanize($word, $uppercase = '')
+    {
+        // make special exceptions for acronyms
+        $word = str_replace('wp_', 'WP_', $word);
         $uppercase = $uppercase === 'all' ? 'ucwords' : 'ucfirst';
         return $uppercase(str_replace('_', ' ', preg_replace('/_id$/', '', $word)));
     }
@@ -311,7 +318,8 @@ class EEH_Inflector{
      * @param    string    $word    Word to lowerCamelCase
      * @return string Returns a lowerCamelCasedWord
      */
-    public static function variablize($word){
+    public static function variablize($word)
+    {
         $word = EEH_Inflector::camelize($word);
         return strtolower($word[0]) . substr($word, 1);
     }
@@ -331,7 +339,8 @@ class EEH_Inflector{
      * @param    string    $class_name    Class name for getting related table_name.
      * @return string plural_table_name
      */
-    public static function tableize($class_name){
+    public static function tableize($class_name)
+    {
         return EEH_Inflector::pluralize(EEH_Inflector::underscore($class_name));
     }
 
@@ -350,7 +359,8 @@ class EEH_Inflector{
      * @param    string    $table_name    Table name for getting related ClassName.
      * @return string SingularClassName
      */
-    public static function classify($table_name){
+    public static function classify($table_name)
+    {
         return EEH_Inflector::camelize(EEH_Inflector::singularize($table_name));
     }
 
@@ -367,11 +377,12 @@ class EEH_Inflector{
      * @param    integer    $number    Number to get its ordinal value
      * @return string Ordinal representation of given string.
      */
-    public static function ordinalize($number){
-        if(in_array(($number % 100), range(11, 13))){
+    public static function ordinalize($number)
+    {
+        if (in_array(($number % 100), range(11, 13))) {
             return $number . 'th';
-        }else{
-            switch(($number % 10)){
+        } else {
+            switch (($number % 10)) {
                 case 1:
                     return $number . 'st';
                     break;
@@ -393,7 +404,8 @@ class EEH_Inflector{
      * @param $string
      * @return string
      */
-    public static function add_indefinite_article($string) {
+    public static function add_indefinite_article($string)
+    {
         if (strtolower($string) === 'null') {
             return $string;
         }

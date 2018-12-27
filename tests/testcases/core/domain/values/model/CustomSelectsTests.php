@@ -12,7 +12,7 @@ use PHPUnit\Framework\Exception;
  *
  * @package EventEspresso\tests\testcases\core\domain\values\model
  * @author  Darren Ethier
- * @since   $VID:$
+ * @since   4.9.57.p
  * @group customselects
  */
 class CustomSelectsTests extends EE_UnitTestCase

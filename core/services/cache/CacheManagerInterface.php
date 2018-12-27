@@ -3,10 +3,6 @@ namespace EventEspresso\core\services\cache;
 
 use Closure;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * CacheManagerInterface
  * Controls the creation and deletion of cached content
@@ -55,7 +51,4 @@ interface CacheManagerInterface
      * @return void
      */
     public function clear($cache_id);
-
 }
-// End of file CacheManagerInterface.php
-// Location: core/services/cache/CacheManagerInterface.php

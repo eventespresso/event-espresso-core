@@ -7,16 +7,12 @@ use EE_Datetime;
 use EE_Error;
 use EE_Registration;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 /**
  * Class CheckinStatusDashicon
  * Description
  *
  * @package EventEspresso\ui\browser\checkins\entities
  * @author  Brent Christensen
- * 
  */
 class CheckinStatusDashicon
 {
@@ -115,7 +111,4 @@ class CheckinStatusDashicon
         }
         return esc_html__('No Check-in Record has been Created for this Registrant', 'event_espresso');
     }
-
-
 }
-// Location: ui/browser/checkins/entities/CheckinStatusDashicon.php

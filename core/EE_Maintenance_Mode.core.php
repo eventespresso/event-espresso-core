@@ -2,9 +2,6 @@
 
 use EventEspresso\core\interfaces\ResettableInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
 /**
  * EE_Maintenance_Mode Class
  *
@@ -53,7 +50,6 @@ class EE_Maintenance_Mode implements ResettableInterface
     protected $EE;
 
 
-
     /**
      * @singleton method used to instantiate class object
      * @return EE_Maintenance_Mode
@@ -68,7 +64,6 @@ class EE_Maintenance_Mode implements ResettableInterface
     }
 
 
-
     /**
      * Resets maintenance mode (mostly just re-checks whether or not we should be in maintenance mode)
      *
@@ -79,7 +74,6 @@ class EE_Maintenance_Mode implements ResettableInterface
         self::instance()->set_maintenance_mode_if_db_old();
         return self::instance();
     }
-
 
 
     /**
@@ -96,7 +90,6 @@ class EE_Maintenance_Mode implements ResettableInterface
     }
 
 
-
     /**
      * retrieves the maintenance mode option value from the db
      *
@@ -106,7 +99,6 @@ class EE_Maintenance_Mode implements ResettableInterface
     {
         return (int) get_option(self::option_name_maintenance_mode, EE_Maintenance_Mode::level_0_not_in_maintenance);
     }
-
 
 
     /**
@@ -119,7 +111,6 @@ class EE_Maintenance_Mode implements ResettableInterface
     {
         return $this->real_level() !== EE_Maintenance_Mode::level_2_complete_maintenance;
     }
-
 
 
     /**
@@ -136,8 +127,7 @@ class EE_Maintenance_Mode implements ResettableInterface
     {
         $maintenance_mode_level = $this->real_level();
         // if this is an admin request, we'll be honest... except if it's ajax, because that might be from the frontend
-        if (
-            $maintenance_mode_level === EE_Maintenance_Mode::level_1_frontend_only_maintenance// we're in level 1
+        if ($maintenance_mode_level === EE_Maintenance_Mode::level_1_frontend_only_maintenance// we're in level 1
             && ((defined('DOING_AJAX') && DOING_AJAX) || ! is_admin()) // on non-ajax frontend requests
             && current_user_can('administrator') // when the user is an admin
         ) {
@@ -145,7 +135,6 @@ class EE_Maintenance_Mode implements ResettableInterface
         }
         return $maintenance_mode_level;
     }
-
 
 
     /**
@@ -161,14 +150,13 @@ class EE_Maintenance_Mode implements ResettableInterface
             return true;
         }
         if ($this->level() === self::level_2_complete_maintenance) {
-            //we also want to handle the opposite: if the site is mm2, but there aren't any migrations to run
-            //then we shouldn't be in mm2. (Maybe an addon got deactivated?)
+            // we also want to handle the opposite: if the site is mm2, but there aren't any migrations to run
+            // then we shouldn't be in mm2. (Maybe an addon got deactivated?)
             update_option(self::option_name_maintenance_mode, self::level_0_not_in_maintenance);
             return false;
         }
         return false;
     }
-
 
 
     /**
@@ -180,9 +168,8 @@ class EE_Maintenance_Mode implements ResettableInterface
     public function set_maintenance_level($level)
     {
         do_action('AHEE__EE_Maintenance_Mode__set_maintenance_level', $level);
-        update_option(self::option_name_maintenance_mode, (int)$level);
+        update_option(self::option_name_maintenance_mode, (int) $level);
     }
-
 
 
     /**
@@ -196,14 +183,12 @@ class EE_Maintenance_Mode implements ResettableInterface
     }
 
 
-
     /**
      * @return void
      */
     public function load_assets_required_for_m_mode()
     {
-        if (
-            $this->real_level() === EE_Maintenance_Mode::level_2_complete_maintenance
+        if ($this->real_level() === EE_Maintenance_Mode::level_2_complete_maintenance
             && ! wp_script_is('espresso_core')
         ) {
             wp_register_style(
@@ -225,7 +210,6 @@ class EE_Maintenance_Mode implements ResettableInterface
     }
 
 
-
     /**
      * replacement EE CPT template that displays message notifying site visitors
      * that EE has been temporarily placed into maintenance mode
@@ -238,7 +222,6 @@ class EE_Maintenance_Mode implements ResettableInterface
         // shut 'er down down for maintenance ? then don't use any of our templates for our endpoints
         return get_template_directory() . '/index.php';
     }
-
 
 
     /**
@@ -267,15 +250,13 @@ class EE_Maintenance_Mode implements ResettableInterface
     }
 
 
-
     /**
      * displays message on frontend of site notifying admin that EE has been temporarily placed into maintenance mode
      */
     public function display_maintenance_mode_notice()
     {
         // check if M-mode is engaged and for EE shortcode
-        if (
-            ! (defined('DOING_AJAX') && DOING_AJAX)
+        if (! (defined('DOING_AJAX') && DOING_AJAX)
             && $this->real_level()
             && ! is_admin()
             && current_user_can('administrator')
@@ -289,14 +270,14 @@ class EE_Maintenance_Mode implements ResettableInterface
                 '<div id="ee-m-mode-admin-notice-dv" class="ee-really-important-notice-dv"><a class="close-espresso-notice" title="',
                 '"><span class="dashicons dashicons-no"></span></a><p>',
                 ' &raquo; <a href="' . add_query_arg(
-                    array('page' => 'espresso_maintenance_settings'), admin_url('admin.php')
+                    array('page' => 'espresso_maintenance_settings'),
+                    admin_url('admin.php')
                 ) . '">',
                 '</a></p></div>'
             );
         }
     }
     // espresso-notices important-notice ee-attention
-
 
 
     /**
@@ -307,11 +288,9 @@ class EE_Maintenance_Mode implements ResettableInterface
     }
 
 
-
     final public function __call($a, $b)
     {
     }
-
 
 
     final public function __get($a)
@@ -319,11 +298,9 @@ class EE_Maintenance_Mode implements ResettableInterface
     }
 
 
-
     final public function __set($a, $b)
     {
     }
-
 
 
     final public function __isset($a)
@@ -331,11 +308,9 @@ class EE_Maintenance_Mode implements ResettableInterface
     }
 
 
-
     final public function __unset($a)
     {
     }
-
 
 
     final public function __sleep()
@@ -344,17 +319,14 @@ class EE_Maintenance_Mode implements ResettableInterface
     }
 
 
-
     final public function __wakeup()
     {
     }
 
 
-
     final public function __invoke()
     {
     }
-
 
 
     final public static function __set_state($a = null)
@@ -363,17 +335,12 @@ class EE_Maintenance_Mode implements ResettableInterface
     }
 
 
-
     final public function __clone()
     {
     }
 
 
-
     final public static function __callStatic($a, $b)
     {
     }
-
 }
-// End of file EE_Maintenance_Mode.core.php
-// Location: ./core/EE_Maintenance_Mode.core.php

@@ -183,6 +183,64 @@ class EE_Form_Input_Base_Test extends EE_UnitTestCase{
 		$this->assertEquals( 'topform[subform][input1]', $input1->html_name() );
 		$this->assertEquals( 'topform[subform][input2]', $input2->html_name() );
 	}
+
+
+
+    /**
+     * Tests that if `ignore_input` is provided, we get the null normalization and no validation strategies
+     * @group 11380
+     */
+	public function testIgnoreInput() {
+        $f = new EE_Form_Section_Proper(
+            array(
+                'name' => 'form',
+                'subsections' => array(
+                    'text' => new EE_Text_Input(
+                        array(
+                            'ignore_input' => true
+                        )
+                    ),
+                    'email' => new EE_Email_Input(
+                        array(
+                            'ignore_input' => true
+                        )
+                    ),
+                    'checkbox' => new EE_Checkbox_Multi_Input(
+                        array('a','b'),
+                        array(
+                            'ignore_input' => true
+                        )
+                    ),
+                    'radio' => new EE_Radio_Button_Input(
+                        array('a','b'),
+                        array(
+                            'ignore_input' => true
+                        )
+                    ),
+                    'ok' => new EE_Text_Input()
+                )
+            )
+        );
+        $f->receive_form_submission(
+            array(
+                'form' => array(
+                    'text' => 'hackerz',
+                    'email' => 'virus!',
+                    'checkbox' => array( 2, 3),
+                    'radio' => 3,
+                    'ok' => 'yep'
+                )
+            )
+        );
+        $this->assertNull($f->get_input_value('text'));
+        $this->assertNull($f->get_input_value('email'));
+        $this->assertNull($f->get_input_value('checkbox'));
+        $this->assertNull($f->get_input_value('radio'));
+        //verify we still get normal inputs
+        $this->assertEquals('yep', $f->get_input_value('ok'));
+        //verify the form is still valid, even though the inputs had null normalization
+        $this->assertTrue($f->is_valid());
+    }
 }
 
 // End of file EE_Form_Input_Base_Test.php

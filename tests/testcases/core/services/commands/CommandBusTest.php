@@ -16,7 +16,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
+ *
  * @group         CommandBus
  */
 class CommandBusTest extends EE_UnitTestCase
@@ -38,29 +38,23 @@ class CommandBusTest extends EE_UnitTestCase
         // need to override the existing alias for the CommandHandlerManagerInterface
         // or else the REAL class will still get used
         EE_Dependency_Map::instance()->add_alias(
-            'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
-            'EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock'
+            'EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock',
+            'EventEspresso\core\services\commands\CommandHandlerManagerInterface'
         );
         parent::setUp();
     }
 
 
-
-    protected function setupCommandBus($middleware = array())
+    /**
+     * @param array $middleware
+     * @throws \PHPUnit\Framework\Exception
+     */
+    protected function setupCommandBus(array $middleware = array())
     {
-        // cleared cached version of CommandBus, else there is no way we are setting up a new one
-        EE_Registry::instance()->clear_cached_class('EventEspresso\core\services\commands\CommandBus');
-        // confirm that it is gone
-        $this->assertNull(EE_Registry::instance()->BUS);
-        // NOW setup a Bus that uses our Mocked CommandHandlerManager
-        $this->command_bus = EE_Registry::instance()->create(
-            'EventEspresso\core\services\commands\CommandBus',
-            array(
-                EE_Registry::instance()->create(
-                    'EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock'
-                ),
-                $middleware
-            )
+        // setup a Bus that uses our Mocked CommandHandlerManager
+        $this->command_bus = new EventEspresso\core\services\commands\CommandBus(
+            new EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock(),
+            $middleware
         );
         $this->assertInstanceOf(
             'EventEspresso\core\services\commands\CommandBus',
@@ -69,7 +63,9 @@ class CommandBusTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws \PHPUnit\Framework\Exception
+     */
     public function testGetCommandHandlerManager()
     {
         $this->setupCommandBus();
@@ -80,7 +76,13 @@ class CommandBusTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\services\commands\InvalidCommandHandlerException
+     * @throws \EventEspresso\core\services\commands\middleware\InvalidCommandBusMiddlewareException
+     * @throws \PHPUnit\Framework\Exception
+     */
     public function testExecute()
     {
         $this->setupCommandBus();
@@ -103,7 +105,13 @@ class CommandBusTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\services\commands\InvalidCommandHandlerException
+     * @throws \EventEspresso\core\services\commands\middleware\InvalidCommandBusMiddlewareException
+     * @throws \PHPUnit\Framework\Exception
+     */
     public function testExecuteWithPassingCapCheck()
     {
         // add CapChecker middleware that uses Mock that always returns true
@@ -128,7 +136,14 @@ class CommandBusTest extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\services\commands\InvalidCommandHandlerException
+     * @throws \EventEspresso\core\services\commands\middleware\InvalidCommandBusMiddlewareException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \PHPUnit\Framework\Exception
+     */
     public function testExecuteWithFailingCapCheck()
     {
         $capabilities_checker = new CapabilitiesCheckerMock();

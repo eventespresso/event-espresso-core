@@ -53,67 +53,67 @@
 .wp-list-table .column-TXN_paid { width : 7.5%; text-align : left; }
 
 .wp-list-table .column-_REG_final_price {
-	width: 10%;
+    width: 10%;
 }
 
 .ee-event-filter {
-	display: inline-block;
+    display: inline-block;
 }
 
 .ee-event-filter .ee-event-filter-toggle {
-	display: block;
-	float: right;
-	margin-right: 20px;
-	margin-top: 5px;
+    display: block;
+    float: right;
+    margin-right: 20px;
+    margin-top: 5px;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #cb {
-	width : 3%;
+    width : 3%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_att_checked_in {
-	width  : 3%;
-	margin : 0;
+    width  : 3%;
+    margin : 0;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_att_checked_in .dashicons {
-	margin-left : 10px;
+    margin-left : 10px;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_count {
-	width : 4%;
+    width : 4%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #ATT_name {
-	width : 11%;
+    width : 11%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #ATT_email {
-	width : 14%;
+    width : 14%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #Event {
-	width : 14%;
+    width : 14%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_code {
-	width : 8%;
+    width : 8%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_final_price {
-	width : 6%;
+    width : 6%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #TXN_paid {
-	width : 6%;
+    width : 6%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #TXN_total {
-	width : 6%;
+    width : 6%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #PRC_name {
-	width : 8%;
+    width : 8%;
 }
 
 .reg-pad-rght { display : block; padding-right : .5em; }
@@ -153,19 +153,19 @@
 .admin-primary-mbox-h4 { margin : 2em 0 .25em; }
 
 .admin-primary-mbox-tbl-wrap {
-	padding       : 3px; margin : 0 0 2em;
-	background    : #FFF; border : 1px solid #DFDFDF;
-	border-radius : 3px;
+    padding       : 3px; margin : 0 0 2em;
+    background    : #FFF; border : 1px solid #DFDFDF;
+    border-radius : 3px;
 }
 
 .admin-primary-mbox-tbl {
-	width : 100%; border-spacing : 0; border-collapse : collapse;
+    width : 100%; border-spacing : 0; border-collapse : collapse;
 }
 
 .admin-primary-mbox-tbl th, .admin-primary-mbox-tbl td {
-	padding     : 6px 12px; margin : 0;
-	border      : 1px solid #DFDFDF; background : #FCFCFC;
-	font-family : sans-serif; font-size : 1em; vertical-align : middle;
+    padding     : 6px 12px; margin : 0;
+    border      : 1px solid #DFDFDF; background : #FCFCFC;
+    font-family : sans-serif; font-size : 1em; vertical-align : middle;
 }
 
 .admin-primary-mbox-tbl tr + tr { border-top : none; }
@@ -182,15 +182,15 @@
 .admin-primary-mbox-total-tr { font-size : 1.1em; }
 
 .jqplot-title {
-	font-size : 24px; text-align : left !important; margin : 1em 0 0 1em;
+    font-size : 24px; text-align : left !important; margin : 1em 0 0 1em;
 }
 
 .jqplot-point-label {
-	padding       : 0 .5em;
-	background    : #FFF; border : 1px solid #DDD;
-	border-radius : 3px;
-	font-size     : 12px; color : #333;
-	box-shadow    : 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);
+    padding       : 0 .5em;
+    background    : #FFF; border : 1px solid #DDD;
+    border-radius : 3px;
+    font-size     : 12px; color : #333;
+    box-shadow    : 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);
 }
 
 .reg-admin-edit-question-group-spn { position : relative; top : -4px; padding : 4px; vertical-align : middle; }
@@ -212,11 +212,17 @@
 
 .tkt-slctr-tbl .tckt-slctr-tbl-td-qty { padding-right : 0; }
 
+@media only screen and (max-width: 600px) {
+    .tkt-slctr-tbl {
+        min-width: auto;
+    } 
+}
+
 /** Check-in status manipulation **/
 
 /**never checked in**/
 .wp-list-table ._REG_att_checked_in {
-	padding-left : 20px;
+    padding-left : 20px;
 }
 
 
@@ -227,49 +233,49 @@
  */
 
 #titlediv .title-prompt-text {
-	color     : #BBB;
-	position  : absolute;
-	font-size : 1.7em;
-	padding   : 11px 10px;
+    color     : #BBB;
+    position  : absolute;
+    font-size : 1.7em;
+    padding   : 11px 10px;
 }
 
 #title-wrap .title-prompt-text {
-	font-size : 1.3em;
-	padding   : 5px 8px;
+    font-size : 1.3em;
+    padding   : 5px 8px;
 }
 
 #titlediv .smaller-text-field, #titlediv .main-text-field {
-	padding     : 3px 8px;
-	font-size   : 1.7em;
-	line-height : 100%;
-	height      : 1.7em;
-	width       : 49.3%;
-	outline     : none;
-	margin      : 1px 6px 1px 0;
-	float       : left;
+    padding     : 3px 8px;
+    font-size   : 1.7em;
+    line-height : 100%;
+    height      : 1.7em;
+    width       : 49.3%;
+    outline     : none;
+    margin      : 1px 6px 1px 0;
+    float       : left;
 }
 
 #titlediv .main-text-field {
-	width : 100%;
-	float : none;
+    width : 100%;
+    float : none;
 }
 
 .espresso-question-group-wrap table th {
-	width     : inherit;
-	min-width : 200px;
+    width     : inherit;
+    min-width : 200px;
 }
 
 #attendee_details_address label.espresso-form-input-lbl {
-	display : block;
+    display : block;
 }
 
 #attendee_details_address input.all-options {
-	width : 100%;
+    width : 100%;
 }
 
 #attendee_details_address #ATT_zip {
-	width     : 10%;
-	min-width : 150px;
+    width     : 10%;
+    min-width : 150px;
 }
 
 /**
@@ -277,30 +283,30 @@
  */
 
 .wp-list-table .ee-status-strip ._REG_att_checked_in {
-	border-left-style: solid;
-	border-left-width: 4px;
+    border-left-style: solid;
+    border-left-width: 4px;
 }
 
 .wp-list-table .ee-status-strip.has-checkbox-column ._REG_att_checked_in {
-	border-left: none;
+    border-left: none;
 }
 
 /** fix for mobile view in new WP > 4.3 list tables **/
 @media screen and ( max-width: 782px ) {
-	.wp-list-table tr:not(.inline-edit-row):not(.no-items) td:not(.check-column)._REG_att_checked_in {
-		text-align: left;
-	}
+    .wp-list-table tr:not(.inline-edit-row):not(.no-items) td:not(.check-column)._REG_att_checked_in {
+        text-align: left;
+    }
 
-	.wp-list-table tr.has-checkbox-column ._REG_att_checked_in {
-		margin-left: 20px;
-		margin-top: 5px;
-	}
+    .wp-list-table tr.has-checkbox-column ._REG_att_checked_in {
+        margin-left: 20px;
+        margin-top: 5px;
+    }
 
-	p.search-box {
-		position: relative;
-		top: 0;
-		display: inline-block;
-	}
+    p.search-box {
+        position: relative;
+        top: 0;
+        display: inline-block;
+    }
 }
 
 /*pending payment*/
@@ -309,7 +315,7 @@
 .button-primary.reg-status-RPP,
 .reg-status-RPP ._REG_att_checked_in,
 .reg-status-RPP .check-column{
-	border-left-color : #00B1CA;
+    border-left-color : #00B1CA;
 }
 
 /*cancelled*/
@@ -319,7 +325,7 @@
 .button-primary.reg-status-RCN,
 .reg-status-RCN ._REG_att_checked_in,
 .reg-status-RCN .check-column{
-	border-left-color : #AC9D9C;
+    border-left-color : #AC9D9C;
 }
 
 /*declined*/
@@ -328,7 +334,7 @@
 .button-primary.reg-status-RDC,
 .reg-status-RDC ._REG_att_checked_in,
 .reg-status-RDC .check-column{
-	border-left-color : #E44064;
+    border-left-color : #E44064;
 }
 
 /*approved*/
@@ -337,7 +343,7 @@
 .button-primary.reg-status-RAP,
 .reg-status-RAP ._REG_att_checked_in,
 .reg-status-RAP .check-column{
-	border-left-color : #70CC50;
+    border-left-color : #70CC50;
 }
 
 /*not-approved*/
@@ -346,7 +352,7 @@
 .button-primary.reg-status-RNA,
 .reg-status-RNA ._REG_att_checked_in,
 .reg-status-RNA .check-column{
-	border-left-color : #E76700;
+    border-left-color : #E76700;
 }
 
 /*not-approved*/
@@ -355,7 +361,7 @@
 .button-primary.reg-status-RIC,
 .reg-status-RIC ._REG_att_checked_in,
 .reg-status-RIC .check-column{
-	border-left-color : #FCB93C;
+    border-left-color : #FCB93C;
 }
 
 /*wait-list*/
@@ -364,44 +370,44 @@
 .button-primary.reg-status-RWL,
 .reg-status-RWL ._REG_att_checked_in,
 .reg-status-RWL .check-column{
-	border-left-color : #8A549A;
+    border-left-color : #8A549A;
 }
 
 .widefat td.column-_Reg_Status,
 .widefat th.column-_Reg_Status {
-	width : 10px;
-	padding : 0;
-	margin  : 0;
-	height: 100%;
+    width : 10px;
+    padding : 0;
+    margin  : 0;
+    height: 100%;
 }
 
 /** reg status legend **/
 .ee-status-legend-RPP {
-	background-color : #00B1CA;
+    background-color : #00B1CA;
 }
 
 .ee-status-legend-RCN {
-	background-color : #AC9D9C;
+    background-color : #AC9D9C;
 }
 
 .ee-status-legend-RDC {
-	background-color : #E44064;
+    background-color : #E44064;
 }
 
 .ee-status-legend-RAP {
-	background-color : #70CC50;
+    background-color : #70CC50;
 }
 
 .ee-status-legend-RNA {
-	background-color : #E76700;
+    background-color : #E76700;
 }
 
 .ee-status-legend-RIC {
-	background-color : #FCB93C;
+    background-color : #FCB93C;
 }
 
 .ee-status-legend-RWL {
-	background-color : #8A549A;
+    background-color : #8A549A;
 }
 
 .status-RPP { color : #00B1CA; }
@@ -419,69 +425,69 @@
 .status-RWL { color : #8A549A; }
 
 #admin-primary-mbox-reg-details-dv .secondary-button {
-	margin:0 0 10px 10px;
+    margin:0 0 10px 10px;
 }
 
 #reg_status_change_form {
-	margin-top : 1em;
+    margin-top : 1em;
 }
 
 #reg_status_change_form .button-secondary {
-	margin-right : 0;
+    margin-right : 0;
 }
 
 #reg_status_change_form .ee-attention {
-	position : absolute;
-	width    : 50%;
-	top      : -100px;
-	right    : 0;
-	padding  : 15px 10px 0 10px;
+    position : absolute;
+    width    : 50%;
+    top      : -100px;
+    right    : 0;
+    padding  : 15px 10px 0 10px;
 }
 
 .espresso-admin .wp-list-table .ee-icon-size-22:before {
-	font-size : 22px;
+    font-size : 22px;
 }
 
 /**newsletter send css**/
 .ee-batch-message-send-form h3 {
-	font-size : 2em;
+    font-size : 2em;
 }
 
 .ee-batch-message-send-form .batch-message-edit-fields {
-	background-color : #E3E3E3;
-	padding          : 10px;
-	margin-top       : 20px;
-	border-radius    : 4px;
+    background-color : #E3E3E3;
+    padding          : 10px;
+    margin-top       : 20px;
+    border-radius    : 4px;
 }
 
 .ee-batch-message-send-form .batch-message-input, .ee-batch-message-send-form .batch-message-textarea {
-	width : 100%;
+    width : 100%;
 }
 
 .ee-batch-message-send-form .batch-message-textarea {
-	height : 200px;
+    height : 200px;
 }
 
 .ee-batch-message-send-form .shortcodes-info-container {
-	padding          : 5px 20px 5px 20px;;
-	margin-bottom    : 10px;
-	background-color : #F5F5F5;
-	border-radius    : 4px;
+    padding          : 5px 20px 5px 20px;;
+    margin-bottom    : 10px;
+    background-color : #F5F5F5;
+    border-radius    : 4px;
 }
 
 .contact-details-buttons a.button-small {
-	float: right;
-	margin-left: 8px;
+    float: right;
+    margin-left: 8px;
 }
 
 /**
  * Fixes for admin side spco (because wp-admin adds some of its own styles to elements)
  */
 .reg-page-form-field-wrap-pg select {
-	display: block;
-	padding: 7px 10px;
-	margin: 0px 0px 1em;
-	height: auto;
+    display: block;
+    padding: 7px 10px;
+    margin: 0px 0px 1em;
+    height: auto;
 }
 
 
@@ -493,38 +499,51 @@
 /*}*/
 
 #send-related-messages-dv label {
-	position: relative;
-	top: 3px;
-	left:1em;
+    position: relative;
+    top: 3px;
+    left:1em;
 }
 #send-related-messages-dv input[type=checkbox] {
-	margin: 0 1em;
+    margin: 0 1em;
 }
 
 /** line item table styles **/
 .ee-line-item-id {
-	font-size: .9em;
-	color: #bbb;
-	font-style: italic;
+    font-size: .9em;
+    color: #bbb;
+    font-style: italic;
 }
 
 .ee-line-item-name {
-	font-size: 1.1em;
-	font-weight: 600;
+    font-size: 1.1em;
+    font-weight: 600;
 }
 
 #ee-add-reg-back-button-dv {
-	background: #fff;
-	color: #666;
-	font-size: 1.2em;
-	line-height:1.75em;
-	padding: 1.5em 1.5em 2em;
-	text-align: center;
+    background: #fff;
+    color: #666;
+    font-size: 1.2em;
+    line-height:1.75em;
+    padding: 1.5em 1.5em 2em;
+    text-align: center;
 }
 #ee-add-reg-back-button-dv h3{
-	margin: .5em 0 0;
+    margin: .5em 0 0;
 }
 
 #reg-admin-transaction-attendees-table .reg-status-RCN {
-	color: #999;
+    color: #999;
+}
+
+/** REGISTRATION LIST TABLE EVENT-DATE COLUMNS **/
+.ee-more-datetimes-toggle {
+    float: left;
+    display: inline-block;
+    margin-top: 2px;
+    cursor: pointer;
+}
+
+.ee-registration-event-datetimes-container .left {
+    float:left;
+    max-width: 81%;
 }

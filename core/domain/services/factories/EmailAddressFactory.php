@@ -9,16 +9,12 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use InvalidArgumentException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 /**
  * Class EmailAddressFactory
  * creates an EmailAddress value object
  *
  * @package EventEspresso\core\domain\services\factories
  * @author  Brent Christensen
- * 
  */
 class EmailAddressFactory implements FactoryInterface
 {
@@ -38,6 +34,4 @@ class EmailAddressFactory implements FactoryInterface
             array($email_address)
         );
     }
-
 }
-// Location: core/domain/services/factories/EmailAddressFactory.php

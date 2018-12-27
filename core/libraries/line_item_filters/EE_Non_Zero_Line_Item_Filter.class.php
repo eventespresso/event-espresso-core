@@ -1,9 +1,4 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class EE_Non_Zero_Line_Item_Filter
@@ -14,7 +9,7 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  * @package               Event Espresso
  * @subpackage            core
  * @author                Brent Christensen
- * 
+ *
  */
 class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base
 {
@@ -25,7 +20,6 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base
     public function __construct()
     {
     }
-
 
 
     /**
@@ -41,8 +35,8 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base
         if (! $non_zero_line_item instanceof EEI_Line_Item) {
             return null;
         }
-        //if this is an event subtotal, we want to only include it if it
-        //has a non-zero total and at least one ticket line item child
+        // if this is an event subtotal, we want to only include it if it
+        // has a non-zero total and at least one ticket line item child
         if ($line_item->children()) {
             $ticket_or_subtotals_with_tkt_children_count = 0;
             foreach ($line_item->children() as $child_line_item) {
@@ -52,8 +46,7 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base
                     $line_item->delete_child_line_item($code);
                     continue;
                 }
-                if (
-                    (
+                if ((
                         $child_line_item instanceof EEI_Line_Item
                         && $child_line_item->type() === EEM_Line_Item::type_sub_total
                     )
@@ -68,12 +61,13 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base
             }
             // if this is an event subtotal with NO ticket children
             // we basically want to ignore it
-            return $this->_filter_zero_subtotal_line_item($non_zero_line_item,
-                $ticket_or_subtotals_with_tkt_children_count);
+            return $this->_filter_zero_subtotal_line_item(
+                $non_zero_line_item,
+                $ticket_or_subtotals_with_tkt_children_count
+            );
         }
         return $non_zero_line_item;
     }
-
 
 
     /**
@@ -85,16 +79,14 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base
      */
     protected function _filter_zero_line_item(EEI_Line_Item $line_item)
     {
-        if (
-            $line_item->type() === EEM_Line_Item::type_line_item
+        if ($line_item->type() === EEM_Line_Item::type_line_item
             && $line_item->OBJ_type() === 'Ticket'
-            && (int)$line_item->quantity() === 0
+            && (int) $line_item->quantity() === 0
         ) {
             return null;
         }
         return $line_item;
     }
-
 
 
     /**
@@ -107,15 +99,11 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base
      */
     protected function _filter_zero_subtotal_line_item(EEI_Line_Item $line_item, $ticket_children = 0)
     {
-        if (
-            (int)$ticket_children === 0
+        if ((int) $ticket_children === 0
             && $line_item->type() === EEM_Line_Item::type_sub_total
         ) {
             return null;
         }
         return $line_item;
     }
-
-
-
 }

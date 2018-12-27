@@ -1,7 +1,5 @@
 <?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
 /**
  * Ticket Model
  *
@@ -18,7 +16,6 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      * @var EEM_Ticket $_instance
      */
     protected static $_instance;
-
 
 
     /**
@@ -196,27 +193,28 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
             'Registration'    => new EE_Has_Many_Relation(),
             'WP_User'         => new EE_Belongs_To_Relation(),
         );
-        //this model is generally available for reading
-        $this->_cap_restriction_generators[EEM_Base::caps_read] = new EE_Restriction_Generator_Default_Public(
+        // this model is generally available for reading
+        $path_to_event = 'Datetime.Event';
+        $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Default_Public(
             'TKT_is_default',
-            'Datetime.Event'
+            $path_to_event
         );
-        //account for default tickets in the caps
-        $this->_cap_restriction_generators[EEM_Base::caps_read_admin] = new EE_Restriction_Generator_Default_Protected(
+        // account for default tickets in the caps
+        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Default_Protected(
             'TKT_is_default',
-            'Datetime.Event'
+            $path_to_event
         );
-        $this->_cap_restriction_generators[EEM_Base::caps_edit] = new EE_Restriction_Generator_Default_Protected(
+        $this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Default_Protected(
             'TKT_is_default',
-            'Datetime.Event'
+            $path_to_event
         );
-        $this->_cap_restriction_generators[EEM_Base::caps_delete] = new EE_Restriction_Generator_Default_Protected(
+        $this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Default_Protected(
             'TKT_is_default',
-            'Datetime.Event'
+            $path_to_event
         );
+        $this->model_chain_to_password = $path_to_event;
         parent::__construct($timezone);
     }
-
 
 
     /**
@@ -229,10 +227,9 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
     {
         /** @type EE_Ticket[] $tickets */
         $tickets = $this->get_all(array(array('TKT_is_default' => 1), 'order_by' => array('TKT_ID' => 'ASC')));
-        //we need to set the start date and end date to today's date and the start of the default dtt
+        // we need to set the start date and end date to today's date and the start of the default dtt
         return $this->_set_default_dates($tickets);
     }
-
 
 
     /**
@@ -247,23 +244,23 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
         foreach ($tickets as $ticket) {
             $ticket->set(
                 'TKT_start_date',
-                (int)$this->current_time_for_query('TKT_start_date', true)
+                (int) $this->current_time_for_query('TKT_start_date', true)
             );
             $ticket->set(
                 'TKT_end_date',
-                (int)$this->current_time_for_query('TKT_end_date', true) + MONTH_IN_SECONDS
+                (int) $this->current_time_for_query('TKT_end_date', true) + MONTH_IN_SECONDS
             );
             $ticket->set_end_time(
                 $this->convert_datetime_for_query(
                     'TKT_end_date',
                     '11:59 pm',
-                    'g:i a', $this->_timezone
+                    'g:i a',
+                    $this->_timezone
                 )
             );
         }
         return $tickets;
     }
-
 
 
     /**
@@ -280,7 +277,6 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
     }
 
 
-
     /**
      * Updates the TKT_sold quantity on all the tickets matching $query_params
      *
@@ -295,7 +291,6 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
             $ticket->update_tickets_sold();
         }
     }
-
 
 
     /**
@@ -316,7 +311,6 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
     }
 
 
-
     /**
      * returns an array of EE_Ticket objects matching the supplied list of IDs
      *
@@ -329,12 +323,9 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
         return $this->get_all(
             array(
                 array(
-                    'TKT_ID' => array('IN', $ticket_IDs)
-                )
+                    'TKT_ID' => array('IN', $ticket_IDs),
+                ),
             )
         );
     }
-
-
-
 }

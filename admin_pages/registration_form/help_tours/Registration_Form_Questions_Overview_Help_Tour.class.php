@@ -1,7 +1,4 @@
 <?php
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
 
 /**
  * Registration_Form_Questions_Overview_Help_Tour
@@ -17,13 +14,13 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  */
 class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour
 {
-    
+
     protected function _set_tour_properties()
     {
         $this->_label = __('Questions Overview Tour', 'event_espresso');
-        $this->_slug  = $this->_is_caf ? 'questions-overview-caf-joyride' : 'questions-overview-joyride';
+        $this->_slug = $this->_is_caf ? 'questions-overview-caf-joyride' : 'questions-overview-joyride';
     }
-    
+
     protected function _set_tour_stops()
     {
         $this->_stops = array(
@@ -36,8 +33,8 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour
                 'options' => array(
                     'tipLocation'    => 'top',
                     'tipAdjustmentX' => -5,
-                    'tipAdjustmentY' => -25
-                )
+                    'tipAdjustmentY' => -25,
+                ),
             ),
             40  => array(
                 'id'      => 'admin_label',
@@ -45,8 +42,8 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour
                 'options' => array(
                     'tipLocation'    => 'top',
                     'tipAdjustmentX' => 20,
-                    'tipAdjustmentY' => -25
-                )
+                    'tipAdjustmentY' => -25,
+                ),
             ),
             50  => array(
                 'id'      => 'type',
@@ -54,8 +51,8 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour
                 'options' => array(
                     'tipLocation'    => 'top',
                     'tipAdjustmentX' => -5,
-                    'tipAdjustmentY' => -25
-                )
+                    'tipAdjustmentY' => -25,
+                ),
             ),
             60  => array(
                 'id'      => 'values',
@@ -63,8 +60,8 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour
                 'options' => array(
                     'tipLocation'    => 'top',
                     'tipAdjustmentX' => -5,
-                    'tipAdjustmentY' => -25
-                )
+                    'tipAdjustmentY' => -25,
+                ),
             ),
             70  => array(
                 'id'      => 'required',
@@ -72,8 +69,8 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour
                 'options' => array(
                     'tipLocation'    => 'top',
                     'tipAdjustmentY' => -20,
-                    'tipAdjustmentX' => -15
-                )
+                    'tipAdjustmentX' => -15,
+                ),
             ),
             /*80 => array(
                 'class' => 'bulkactions',
@@ -90,8 +87,8 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour
                 'options' => array(
                     'tipLocation'    => 'left',
                     'tipAdjustmentY' => -50,
-                    'tipAdjustmentX' => -15
-                )
+                    'tipAdjustmentX' => -15,
+                ),
             ),
             100 => array(
                 'id'      => 'add-new-question',
@@ -99,62 +96,69 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour
                 'options' => array(
                     'tipLocation'    => 'right',
                     'tipAdjustmentY' => -50,
-                    'tipAdjustmentX' => 15
-                )
+                    'tipAdjustmentX' => 15,
+                ),
             ),
         );
     }
-    
-    
+
+
     protected function _start()
     {
         $content = '<h3>' . __('Questions Overview', 'event_espresso') . '</h3>';
-        $content .= '<p>' . __('This tour of the Questions Overview page will go over different areas of the screen to help you understand what they are used for.',
-                'event_espresso') . '</p>';
-        
+        $content .= '<p>' . __(
+            'This tour of the Questions Overview page will go over different areas of the screen to help you understand what they are used for.',
+            'event_espresso'
+        ) . '</p>';
+
         return $content;
     }
-    
+
     protected function _display_text_stop()
     {
         return '<p>' . __('View available questions.', 'event_espresso') . '</p>';
     }
-    
+
     protected function _admin_label_stop()
     {
         return '<p>' . __('View the admin label for your questions.', 'event_espresso') . '</p>';
     }
-    
+
     protected function _type_stop()
     {
-        return '<p>' . __('View the type of question. Available options are Text, Textarea, Checkboxes, Radio Buttons, Dropdown, State/Province Dropdown, Country Dropdown, and Date Picker.',
-            'event_espresso') . '</p>';
+        return '<p>' . __(
+            'View the type of question. Available options are Text, Textarea, Checkboxes, Radio Buttons, Dropdown, State/Province Dropdown, Country Dropdown, and Date Picker.',
+            'event_espresso'
+        ) . '</p>';
     }
-    
+
     protected function _values_stop()
     {
-        return '<p>' . __('View stored values for checkboxes, radio buttons, and select boxes.',
-            'event_espresso') . '</p>';
+        return '<p>' . __(
+            'View stored values for checkboxes, radio buttons, and select boxes.',
+            'event_espresso'
+        ) . '</p>';
     }
-    
+
     protected function _required_stop()
     {
         return '<p>' . __('View if a question is required.', 'event_espresso') . '</p>';
     }
-    
+
     /* protected function _bulk_actions_stop() {
         return '<p>' . __('Perform bulk actions to multiple questions.', 'event_espresso') . '</p>';
     } */
-    
+
     protected function _search_stop()
     {
-        return '<p>' . __('Search through questions. The following sources will be searched: Name of Question (display text).',
-            'event_espresso') . '</p>';
+        return '<p>' . __(
+            'Search through questions. The following sources will be searched: Name of Question (display text).',
+            'event_espresso'
+        ) . '</p>';
     }
-    
+
     protected function _add_new_question_stop()
     {
         return '<p>' . __('Click here to add a new question.', 'event_espresso') . '</p>';
     }
-    
 }

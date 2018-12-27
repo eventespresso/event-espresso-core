@@ -5,17 +5,12 @@ namespace EventEspresso\core\domain\services\validation\email\strategies;
 use EventEspresso\core\domain\services\validation\email\EmailValidationException;
 use EventEspresso\core\domain\services\validation\email\EmailValidatorInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
-
 /**
  * Class Basic
  * Performs super basic email validation
  *
  * @package        Event Espresso
  * @author         Mike Nelson
- * 
  */
 class Basic implements EmailValidatorInterface
 {
@@ -37,7 +32,7 @@ class Basic implements EmailValidatorInterface
         $local = $this->getLocalPartOfEmail($email_address, $atIndex);
         $localLen = strlen($local);
         if ($localLen < 1) {
-            //no local part
+            // no local part
             throw new EmailValidationException(
                 esc_html__('Email local-part (before the @) is required.', 'event_espresso')
             );
@@ -54,7 +49,7 @@ class Basic implements EmailValidatorInterface
                 esc_html__('Email local-part (before the @) must not begin with a period.', 'event_espresso')
             );
         }
-        if ($local[$localLen - 1] === '.') {
+        if ($local[ $localLen - 1 ] === '.') {
             // local part starts or ends with '.'
             throw new EmailValidationException(
                 esc_html__('Email local-part (before the @) must not end with a period.', 'event_espresso')
@@ -92,7 +87,6 @@ class Basic implements EmailValidatorInterface
     }
 
 
-
     /**
      * returns the location of the @ symbol
      *
@@ -105,11 +99,10 @@ class Basic implements EmailValidatorInterface
     }
 
 
-
     /**
      * Gets the local part of the email
      *
-     * @param string $email_address
+     * @param string   $email_address
      * @param bool|int $atIndex
      * @return bool|string
      */
@@ -117,7 +110,6 @@ class Basic implements EmailValidatorInterface
     {
         return substr($email_address, 0, $atIndex);
     }
-
 
 
     /**
@@ -132,5 +124,3 @@ class Basic implements EmailValidatorInterface
         return substr($email_address, $atIndex + 1);
     }
 }
-// End of file Basic.php
-// Location: core\services\validation/Basic.php

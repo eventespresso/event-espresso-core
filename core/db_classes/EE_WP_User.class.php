@@ -1,6 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
 
 /**
  * EE_WP_User class
@@ -100,9 +98,4 @@ class EE_WP_User extends EE_Base_Class implements EEI_Admin_Links
     {
         return admin_url('users.php');
     }
-
-
 }
-
-/* End of file EE_WP_User.class.php */
-/* Location: /core/db_classes/EE_WP_User.class.php */

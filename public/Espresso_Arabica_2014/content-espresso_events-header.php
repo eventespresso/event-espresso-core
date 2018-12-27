@@ -8,6 +8,6 @@ $tag = is_single() ? 'h1' : 'h2';
 		<a class="ee-event-header-lnk" href="<?php the_permalink(); ?>"<?php echo \EED_Events_Archive::link_target();?>>
             <?php the_title(); ?>
         </a>
-	<?php echo "</{$tag}"; ?>
+	<?php echo "</{$tag}>"; ?>
 	<?php if ( ! is_archive() && has_excerpt( $post->ID )): the_excerpt(); endif;?>
 </header>

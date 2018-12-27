@@ -1,54 +1,28 @@
-sudo: false
-dist: trusty
+sudo: required
+
 language: php
+
 services:
   - mysql
+
 cache:
   apt: true
   directories:
-    - node_modules
-    - vendor
     - $HOME/.composer/cache
+    - $HOME/.npm
+
 env:
   global:
     - WP_VERSION=latest WP_MULTISITE=0
-matrix:
-  include:
-  - php: 7.2
-  - php: 7.1
-  - php: 7.0
-  - php: 5.6
-  - php: 5.5
-  - php: 5.4
-  - php: 5.3
-    dist: precise
-  # multisite builds
-  - php: 7.2
-    env: WP_MULTISITE=1
-  - php: 7.1
-    env: WP_MULTISITE=1
-  - php: 7.0
-    env: WP_MULTISITE=1
-  - php: 5.6
-    env: WP_MULTISITE=1
-  # WP 4.2 builds
-  - php: 5.6
-    env: WP_VERSION=4.2
-  - php: 5.6
-    env: WP_VERSION=4.2 WP_MULTISITE=1
-  # nightly builds
-  - php: nightly
-  - php: nightly
-    env: WP_MULTISITE=1
-  allow_failures:
-  - php: nightly
-  fast_finish: true
+
 before_install:
    - |
       if [[ "$SKIP_XDEBUG_REMOVE" != "true" ]]; then
+        cp $HOME/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini /tmp
         phpenv config-rm xdebug.ini
         echo "xdebug removed";
       fi
+
 before_script:
   - bash tests/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
@@ -77,7 +51,62 @@ before_script:
   - mysql --version
   - phpunit --version
   - phpenv versions
-script: cd tests; phpunit;
+
+script: npm run test-php
+
+jobs:
+  fast_finish: true
+  allow_failures:
+    - php: nightly
+    - php: 7.2
+      env:
+        - PHP_LINT=1
+        - PHP_LINT_WITH_WARNINGS=yes
+  include:
+    - stage: test
+      php: 7.2
+      env:
+        - PHP_LINT=1
+        - PHP_LINT_WITH_WARNINGS=no
+      script:
+        - composer install || exit 1
+        - composer config-eventespressocs || exit 1
+        - npm run lint-php:skip-warnings || exit 1
+    - php: 7.2
+      env:
+        - PHP_LINT=1
+        - PHP_LINT_WITH_WARNINGS=yes
+      script:
+        - composer install || exit 1
+        - composer config-eventespressocs || exit 1
+        - npm run lint-php || exit 1
+    - env:
+        - JAVASCRIPT_TESTS=1
+      language: node_js
+      node_js:
+        - node
+      script:
+        - npm run ci || exit 1
+    - language: node_js
+      node_js:
+        - node
+      env:
+        - LICENSE_CHECK=1
+      script:
+        - npm run lc || exit 1
+    - php: 7.2
+    - php: 7.1
+    - php: 7.0
+    - php: 5.6
+    - php: 5.5
+    # multisite
+    - php: 7.2
+      env: WP_MULTISITE=1
+    # wp 4.5 builds
+    - php: 5.6
+      env: WP_VERSION=4.5
+    - php: nightly
+
 notifications:
   slack:
     rooms:

@@ -1,13 +1,8 @@
 <?php
+
 namespace EventEspresso\core\services\container;
 
 use EventEspresso\core\exceptions\InvalidClassException;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class LoadOnlyCoffeeMaker
@@ -35,7 +30,6 @@ class LoadOnlyCoffeeMaker extends CoffeeMaker
     }
 
 
-
     /**
      * @param RecipeInterface $recipe
      * @param array           $arguments
@@ -46,9 +40,4 @@ class LoadOnlyCoffeeMaker extends CoffeeMaker
     {
         return $this->resolveClassAndFilepath($recipe);
     }
-
-
-
 }
-// End of file LoadOnlyCoffeeMaker.php
-// Location: /LoadOnlyCoffeeMaker.php

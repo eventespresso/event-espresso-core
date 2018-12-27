@@ -1,10 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-require_once(EE_MODELS . 'EEM_Base.model.php');
-
-
-
+<?php
 /**
  * Attendee Model
  *
@@ -64,34 +58,34 @@ class EEM_Term_Relationship extends EEM_Base
             'Term_Taxonomy' => new EE_Belongs_To_Relation(),
         );
         foreach ($models_this_can_attach_to as $model_name) {
-            $this->_model_relations[$model_name] = new EE_Belongs_To_Relation();
+            $this->_model_relations[ $model_name ] = new EE_Belongs_To_Relation();
         }
         $this->_wp_core_model = true;
         $this->_indexes = array(
             'PRIMARY' => new EE_Primary_Key_Index(array('object_id', 'term_taxonomy_id')),
         );
-        $path_to_event_model = 'Event.';
-        $this->_cap_restriction_generators[EEM_Base::caps_read] = new EE_Restriction_Generator_Event_Related_Public(
+        $path_to_event_model = 'Event';
+        $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Event_Related_Public(
             $path_to_event_model
         );
-        $this->_cap_restriction_generators[EEM_Base::caps_read_admin] =
+        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] =
             new EE_Restriction_Generator_Event_Related_Protected(
                 $path_to_event_model
             );
-        $this->_cap_restriction_generators[EEM_Base::caps_edit] = new EE_Restriction_Generator_Event_Related_Protected(
+        $this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Event_Related_Protected(
             $path_to_event_model
         );
-        $this->_cap_restriction_generators[EEM_Base::caps_delete] =
+        $this->_cap_restriction_generators[ EEM_Base::caps_delete ] =
             new EE_Restriction_Generator_Event_Related_Protected(
                 $path_to_event_model,
                 EEM_Base::caps_edit
             );
         $path_to_tax_model = 'Term_Taxonomy.';
-        //add cap restrictions for editing term relations to the "ee_assign_*"
-        //and for deleting term relations too
+        // add cap restrictions for editing term relations to the "ee_assign_*"
+        // and for deleting term relations too
         $cap_contexts_affected = array(EEM_Base::caps_edit, EEM_Base::caps_delete);
         foreach ($cap_contexts_affected as $cap_context_affected) {
-            $this->_cap_restrictions[$cap_context_affected]['ee_assign_event_category'] =
+            $this->_cap_restrictions[ $cap_context_affected ]['ee_assign_event_category'] =
                 new EE_Default_Where_Conditions(
                     array(
                         $path_to_tax_model . 'taxonomy*ee_assign_event_category' => array(
@@ -100,7 +94,7 @@ class EEM_Term_Relationship extends EEM_Base
                         ),
                     )
                 );
-            $this->_cap_restrictions[$cap_context_affected]['ee_assign_venue_category'] =
+            $this->_cap_restrictions[ $cap_context_affected ]['ee_assign_venue_category'] =
                 new EE_Default_Where_Conditions(
                     array(
                         $path_to_tax_model . 'taxonomy*ee_assign_venue_category' => array(
@@ -109,7 +103,7 @@ class EEM_Term_Relationship extends EEM_Base
                         ),
                     )
                 );
-            $this->_cap_restrictions[$cap_context_affected]['ee_assign_event_type'] = new EE_Default_Where_Conditions(
+            $this->_cap_restrictions[ $cap_context_affected ]['ee_assign_event_type'] = new EE_Default_Where_Conditions(
                 array(
                     $path_to_tax_model . 'taxonomy*ee_assign_event_type' => array('!=', 'espresso_event_type'),
                 )
@@ -125,33 +119,38 @@ class EEM_Term_Relationship extends EEM_Base
     }
 
 
-
     /**
      * Makes sure all term-taxonomy counts are correct
      *
      * @param int   $term_taxonomy_id the id of the term taxonomy to update. If NULL, updates ALL
      * @global wpdb $wpdb
      * @return int the number of rows affected
+     * @throws EE_Error
      */
     public function update_term_taxonomy_counts($term_taxonomy_id = null)
     {
-        //because this uses a subquery and sometimes assigning to column to be another column's
-        //value, we just write the SQL directly.
+        // because this uses a subquery and sometimes assigning to column to be another column's
+        // value, we just write the SQL directly.
         global $wpdb;
+
+        $query = "
+                UPDATE {$wpdb->term_taxonomy} AS tt 
+                SET count = (
+                    select count(*) as proper_count from {$wpdb->term_relationships} AS tr 
+                    WHERE tt.term_taxonomy_id = tr.term_taxonomy_id
+                )";
+
         if ($term_taxonomy_id) {
-            $second_operand = $wpdb->prepare('%d', $term_taxonomy_id);
-        } else {
-            $second_operand = 'tr.term_taxonomy_id';
+            $query .= ' WHERE tt.term_taxonomy_id = %d';
+            $query = $wpdb->prepare(
+                $query,
+                $term_taxonomy_id
+            );
         }
         $rows_affected = $this->_do_wpdb_query(
             'query',
             array(
-                "
-                UPDATE {$wpdb->term_taxonomy} AS tt 
-                SET count = (
-                    select count(*) as proper_count from {$wpdb->term_relationships} AS tr 
-                    WHERE tt.term_taxonomy_id = $second_operand
-                )",
+                $query,
             )
         );
         return $rows_affected;
@@ -182,7 +181,7 @@ class EEM_Term_Relationship extends EEM_Base
      * all ok
      *
      * @param array   $fields_n_values         see EEM_Base::update
-     * @param array   $query_params            @see EEM_Base::get_all
+     * @param array   $query_params            @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param boolean $keep_model_objs_in_sync if TRUE, makes sure we ALSO update model objects
      *                                         in this model's entity map according to $fields_n_values that match
      *                                         $query_params. This obviously has some overhead, so you can disable it
@@ -205,7 +204,7 @@ class EEM_Term_Relationship extends EEM_Base
      * Overrides parent so that after running this, we also double-check
      * the term taxonomy counts are up-to-date
      *
-     * @param array   $query_params @see EEM_Base::get_all
+     * @param array   $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param boolean $allow_blocking
      * @return int @see EEM_Base::delete
      */
@@ -239,8 +238,4 @@ class EEM_Term_Relationship extends EEM_Base
         }
         return $model_query_params;
     }
-
-
 }
-// End of file EEM_Term_Relationship.model.php
-// Location: /includes/models/EEM_Term_Relationship.model.php

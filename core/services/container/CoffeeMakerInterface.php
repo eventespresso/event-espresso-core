@@ -1,12 +1,6 @@
 <?php
 namespace EventEspresso\core\services\container;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Interface CoffeeMakerInterface
  * for CoffeeMaker classes which are responsible
@@ -44,7 +38,4 @@ interface CoffeeMakerInterface
      * @return string
      */
     public function type();
-
 }
-// End of file CoffeeMakerInterface.php
-// Location: /CoffeeMakerInterface.php

@@ -10,7 +10,7 @@
 	padding: 0!important;
 	margin: .25em 0 !important;
 	line-height:1em;
-	color:#ccc;
+	color:#919191;
 	border: none!important;
 }
 .spco-steps-big-hdr {
@@ -272,6 +272,13 @@
 
 }
 
+.ee-select-input-dv {
+	display: table;
+}
+.ee-select-input-dv select {
+	width: 100%;
+	text-overflow: ellipsis;
+}
 #ee-single-page-checkout-dv input[type=radio],
 #ee-single-page-checkout-dv input[type=checkbox] {
 	position: relative;
@@ -281,7 +288,7 @@
 	padding: 0;
 	margin:0 .5em;
 	vertical-align: middle;
-	*overflow: hidden;
+	overflow: hidden;
 }
 .ee-radio-label-before,
 .ee-checkbox-label-before {
@@ -449,7 +456,7 @@
 	clear: none;
 	margin:0;
 	/*text-align:right;*/
-	color:#ccc;
+	color:#919191;
 }
 .spco-payment-method-img {
 	float:left;
@@ -484,4 +491,12 @@
 	#ee-single-page-checkout-dv .big-lbl {
 		min-width: 100%;
 	}
+}
+
+.ee-privacy-consent-assertion{
+    text-align:center;
+    max-width:600px;
+    min-width:200px;
+    margin-left:auto;
+    margin-right:auto;
 }

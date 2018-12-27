@@ -1,11 +1,6 @@
 <?php
+
 namespace EventEspresso\core\services\container\exceptions;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class ServiceNotFoundException
@@ -13,7 +8,6 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class ServiceNotFoundException extends \RuntimeException
 {
@@ -41,5 +35,3 @@ class ServiceNotFoundException extends \RuntimeException
         parent::__construct($message, $code, $previous);
     }
 }
-// End of file ServiceNotFoundException.php
-// Location: /ServiceNotFoundException.php

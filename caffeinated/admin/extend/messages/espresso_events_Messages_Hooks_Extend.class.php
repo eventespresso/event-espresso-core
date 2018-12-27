@@ -1,7 +1,5 @@
 <?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
-
 /**
  * espresso_events_Messages_Hooks_Extend
  * Hooks various messages logic so that it runs on indicated Events Admin Pages.
@@ -66,7 +64,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
             ),
         );
 
-        //see explanation for layout in EE_Admin_Hooks
+        // see explanation for layout in EE_Admin_Hooks
         $this->_scripts_styles = array(
             'registers' => array(
                 'events_msg_admin'     => array(
@@ -103,15 +101,15 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      */
     public function attach_evt_message_templates($event, $data)
     {
-        //first we remove all existing relations on the Event for message types.
+        // first we remove all existing relations on the Event for message types.
         $event->_remove_relations('Message_Template_Group');
-        //now let's just loop through the selected templates and add relations!
+        // now let's just loop through the selected templates and add relations!
         if (isset($data['event_message_templates_relation'])) {
             foreach ($data['event_message_templates_relation'] as $grp_ID) {
                 $event->_add_relation_to($grp_ID, 'Message_Template_Group');
             }
         }
-        //now save
+        // now save
         return $event->save();
     }
 
@@ -124,8 +122,8 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      */
     public function messages_metabox($event, $callback_args)
     {
-        //let's get the active messengers (b/c messenger objects have the active message templates)
-        //convert 'evt_id' to 'EVT_ID'
+        // let's get the active messengers (b/c messenger objects have the active message templates)
+        // convert 'evt_id' to 'EVT_ID'
         $this->_req_data['EVT_ID'] = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : null;
         $this->_req_data['EVT_ID'] = isset($this->_req_data['post']) && empty($this->_req_data['EVT_ID'])
             ? $this->_req_data['post']
@@ -136,18 +134,18 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
             : $this->_req_data['EVT_ID'];
         /** @type EE_Message_Resource_Manager $message_resource_manager */
         $message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
-        $active_messengers        = $message_resource_manager->active_messengers();
-        $tabs                     = array();
+        $active_messengers = $message_resource_manager->active_messengers();
+        $tabs = array();
 
-        //empty messengers?
-        //Note message types will always have at least one available because every messenger has a default message type
+        // empty messengers?
+        // Note message types will always have at least one available because every messenger has a default message type
         // associated with it (payment) if no other message types are selected.
         if (empty($active_messengers)) {
             $msg_activate_url = EE_Admin_Page::add_query_args_and_nonce(
                 array('action' => 'settings'),
                 EE_MSG_ADMIN_URL
             );
-            $error_msg        = sprintf(
+            $error_msg = sprintf(
                 esc_html__(
                     'There are no active messengers. So no notifications will go out for %1$sany%2$s events.  You will want to %3$sActivate a Messenger%4$s.',
                     'event_espresso'
@@ -157,7 +155,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
                 '<a href="' . $msg_activate_url . '">',
                 '</a>'
             );
-            $error_content    = '<div class="error"><p>' . $error_msg . '</p></div>';
+            $error_content = '<div class="error"><p>' . $error_msg . '</p></div>';
             $internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>';
 
             echo $error_content;
@@ -166,9 +164,9 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         }
 
         $event_id = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : null;
-        //get content for active messengers
+        // get content for active messengers
         foreach ($active_messengers as $name => $messenger) {
-            //first check if there are any active message types for this messenger.
+            // first check if there are any active message types for this messenger.
             $active_mts = $message_resource_manager->get_active_message_types_for_messenger($name);
             if (empty($active_mts)) {
                 continue;
@@ -181,12 +179,12 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
             );
 
             if (! empty($tab_content)) {
-                $tabs[$name] = $tab_content;
+                $tabs[ $name ] = $tab_content;
             }
         }
 
 
-        //we want this to be tabbed content so let's use the EEH_Tabbed_Content::display helper.
+        // we want this to be tabbed content so let's use the EEH_Tabbed_Content::display helper.
         $tabbed_content = EEH_Tabbed_Content::display($tabs);
         if ($tabbed_content instanceof WP_Error) {
             $tabbed_content = $tabbed_content->get_error_message();
@@ -195,8 +193,8 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         $notices = '
 	<div id="espresso-ajax-loading" class="ajax-loader-grey">
 		<span class="ee-spinner ee-spin"></span><span class="hidden">'
-        . esc_html__('loading...', 'event_espresso')
-        . '</span>
+                   . esc_html__('loading...', 'event_espresso')
+                   . '</span>
 	</div>
 	<div class="ee-notices"></div>';
 
@@ -225,8 +223,8 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
             wp_die(__('You don\'t have privileges to do this action', 'event_espresso'));
         }
 
-        //let's clean up the _POST global a bit for downstream usage of name and description.
-        $_POST['templateName']        = ! empty($this->_req_data['custom_template_args']['MTP_name'])
+        // let's clean up the _POST global a bit for downstream usage of name and description.
+        $_POST['templateName'] = ! empty($this->_req_data['custom_template_args']['MTP_name'])
             ? $this->_req_data['custom_template_args']['MTP_name']
             : '';
         $_POST['templateDescription'] = ! empty($this->_req_data['custom_template_args']['MTP_description'])
@@ -283,7 +281,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         foreach ($message_template_groups as $message_template_group) {
             $new_event->_add_relation_to($message_template_group, 'Message_Template_Group');
         }
-        //save new event
+        // save new event
         $new_event->save();
     }
 }

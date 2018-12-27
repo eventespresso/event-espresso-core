@@ -7,11 +7,10 @@ use EventEspresso\core\domain\values\Version;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
-
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
+use EventEspresso\core\services\request\RequestDecoratorInterface;
+use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\RequestStackCoreAppInterface;
+use EventEspresso\core\services\request\ResponseInterface;
 
 /**
  * EE_Load_Espresso_Core
@@ -25,16 +24,16 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author         Brent Christensen, Michael Nelson
  * ------------------------------------------------------------------------
  */
-class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_Core_App
+class EE_Load_Espresso_Core implements RequestDecoratorInterface, RequestStackCoreAppInterface
 {
 
     /**
-     * @var EE_Request $request
+     * @var RequestInterface $request
      */
     protected $request;
 
     /**
-     * @var EE_Response $response
+     * @var ResponseInterface $response
      */
     protected $response;
 
@@ -49,16 +48,29 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
     protected $registry;
 
 
-
     /**
      * EE_Load_Espresso_Core constructor
+     *
+     * @param EE_Registry       $registry
+     * @param EE_Dependency_Map $dependency_map
+     * @throws EE_Error
      */
-	public function __construct() {
-        // deprecated functions
-        espresso_load_required('EE_Base', EE_CORE . 'EE_Base.core.php');
-        espresso_load_required('EE_Deprecated', EE_CORE . 'EE_Deprecated.core.php');
+    public function __construct(EE_Registry $registry, EE_Dependency_Map $dependency_map)
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                esc_html__(
+                    'This class is deprecated. Please use %1$s instead. All Event Espresso request stack classes have been moved to %2$s and are now under the %3$s namespace',
+                    'event_espresso'
+                ),
+                'EventEspresso\core\services\request\RequestStackCoreApp',
+                '\core\services\request',
+                'EventEspresso\core\services\request'
+            ),
+            '4.9.53'
+        );
     }
-
 
 
     /**
@@ -67,72 +79,34 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
      * provides "AHEE__EE_System__construct__complete" hook for EE Addons to use as their starting point
      * starting EE Addons from any other point may lead to problems
      *
-     * @param EE_Request  $request
-     * @param EE_Response $response
-     * @return EE_Response
-     * @throws \EventEspresso\core\exceptions\InvalidFilePathException
-     * @throws \EventEspresso\core\exceptions\InvalidClassException
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
+     * @throws DomainException
      */
-    public function handle_request(EE_Request $request, EE_Response $response)
+    public function handleRequest(RequestInterface $request, ResponseInterface $response)
     {
-        $this->request = $request;
-        $this->response = $response;
-        // info about how to load classes required by other classes
-        $this->dependency_map = $this->_load_dependency_map();
-        // central repository for classes
-        $this->registry = $this->_load_registry();
-        do_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading');
-        $loader = LoaderFactory::getLoader($this->registry);
-        $this->dependency_map->setLoader($loader);
-        // instantiate core Domain class
-        DomainFactory::getShared(
-            new FullyQualifiedName(
-                'EventEspresso\core\domain\Domain'
-            ),
-            array(
-                new FilePath(EVENT_ESPRESSO_MAIN_FILE),
-                Version::fromString(espresso_version())
-            )
-        );
-        // build DI container
-        // $OpenCoffeeShop = new EventEspresso\core\services\container\OpenCoffeeShop();
-        // $OpenCoffeeShop->addRecipes();
-        // $CoffeeShop = $OpenCoffeeShop->CoffeeShop();
-        // workarounds for PHP < 5.3
-        $this->_load_class_tools();
-        // deprecated functions
-        espresso_load_required('EE_Deprecated', EE_CORE . 'EE_Deprecated.core.php');
-        // WP cron jobs
-        $loader->getShared('EE_Cron_Tasks');
-        $loader->getShared('EE_Request_Handler');
-        $loader->getShared('EE_System');
-        return $this->response;
     }
 
 
-
     /**
-     * @return EE_Request
+     * @return RequestInterface
      */
     public function request()
     {
-        return $this->request;
     }
-
 
 
     /**
-     * @return EE_Response
+     * @return ResponseInterface
      */
     public function response()
     {
-        return $this->response;
     }
-
 
 
     /**
@@ -141,17 +115,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
      */
     public function dependency_map()
     {
-        if (! $this->dependency_map instanceof EE_Dependency_Map) {
-            throw new EE_Error(
-                sprintf(
-                    __('Invalid EE_Dependency_Map: "%1$s"', 'event_espresso'),
-                    print_r($this->dependency_map, true)
-                )
-            );
-        }
-        return $this->dependency_map;
     }
-
 
 
     /**
@@ -160,90 +124,17 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
      */
     public function registry()
     {
-        if (! $this->registry instanceof EE_Registry) {
-            throw new EE_Error(
-                sprintf(
-                    __('Invalid EE_Registry: "%1$s"', 'event_espresso'),
-                    print_r($this->registry, true)
-                )
-            );
-        }
-        return $this->registry;
     }
-
-
-
-    /**
-     * @return EE_Dependency_Map
-     */
-    private function _load_dependency_map()
-    {
-        if (! is_readable(EE_CORE . 'EE_Dependency_Map.core.php')) {
-            EE_Error::add_error(
-                __('The EE_Dependency_Map core class could not be loaded.', 'event_espresso'),
-                __FILE__, __FUNCTION__, __LINE__
-            );
-            wp_die(EE_Error::get_notices());
-        }
-        require_once(EE_CORE . 'EE_Dependency_Map.core.php');
-        return EE_Dependency_Map::instance($this->request, $this->response);
-    }
-
-
-
-    /**
-     * @return EE_Registry
-     * @throws \InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     */
-    private function _load_registry()
-    {
-        if (! is_readable(EE_CORE . 'EE_Registry.core.php')) {
-            EE_Error::add_error(
-                __('The EE_Registry core class could not be loaded.', 'event_espresso'),
-                __FILE__, __FUNCTION__, __LINE__
-            );
-            wp_die(EE_Error::get_notices());
-        }
-        require_once(EE_CORE . 'EE_Registry.core.php');
-        return EE_Registry::instance($this->dependency_map);
-    }
-
-
-
-    /**
-     * @return void
-     */
-    private function _load_class_tools()
-    {
-        if (! is_readable(EE_HELPERS . 'EEH_Class_Tools.helper.php')) {
-            EE_Error::add_error(
-                __('The EEH_Class_Tools helper could not be loaded.', 'event_espresso'),
-                __FILE__, __FUNCTION__, __LINE__
-            );
-        }
-        require_once(EE_HELPERS . 'EEH_Class_Tools.helper.php');
-    }
-
 
 
     /**
      * called after the request stack has been fully processed
      * if any of the middleware apps has requested the plugin be deactivated, then we do that now
      *
-     * @param EE_Request  $request
-     * @param EE_Response $response
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
      */
-    public function handle_response(EE_Request $request, EE_Response $response)
+    public function handleResponse(RequestInterface $request, ResponseInterface $response)
     {
-        if ($response->plugin_deactivated()) {
-            espresso_deactivate_plugin(EE_PLUGIN_BASENAME);
-        }
     }
-
-
-
 }
-// End of file EE_Load_Espresso_Core.core.php
-// Location: /core/EE_Load_Espresso_Core.core.php

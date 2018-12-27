@@ -114,11 +114,22 @@ EEM_Registration::instance()->get_all( array( 'default_where_conditions' => 'oth
 
 ## Retrieving Data
 
-### [get_all()](https://github.com/eventespresso/event-espresso-core/blob/master/core/db_models/EEM_Base.model.php#L741)
+### get_all()
 
-To get your data from the database, use `EEM_Base::get_all()`, which all of its children (like `EEM_Event` or `EEM_Registration`) inherit. This method will return an array of [model objects](using-ee4-model-objects.md) of the corresponding type. Eg `EEM_Event::get_all()` will return an array of `EE_Event` objects `EEM_Venue::get_all()` will return an array of `EE_Venue` objects, `EEM_Question::get_all()` will return an array of `EE_Question` objects, etc. See the [documentation on EEM_Base::get_all](https://github.com/eventespresso/event-espresso-core/blob/master/core/db_models/EEM_Base.model.php#L741).
+```
+EEM_Base::get_all($query_params = array())
+```
 
-Eg, To get all events and print their names, use the `EEM_Event::get_all()` like so (notice, however, that the method is not static: it must be called on the `EEM_Event::instance()`):
+Basic method for retrieving model objects from a model.
+#### Parameters
+##### $query_params
+`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+
+##### Returns
+`EE_Base_Class[]` Array of [model objects](using-ee4-model-objects.md) of the corresponding type. Eg `EEM_Event::get_all()` will return an array of `EE_Event` objects `EEM_Venue::get_all()` will return an array of `EE_Venue` objects, `EEM_Question::get_all()` will return an array of `EE_Question` objects, etc.
+
+#### Examples
+To get all events and print their names, use the `EEM_Event::get_all()` like so:
 
 ```php
 $events = EEM_Event::instance()->get_all();
@@ -126,6 +137,8 @@ foreach( $events as $event ) {
     echo $event->name()."<br>";
 }
 ```
+
+Notice that the method is not static: it must be called on the event model singleton, obtained from `EEM_Event::instance()`. Calling it statically, ie `EEM_Event::get_all()` will *not* work.
 
 Here are a few other examples to give you a taste for what the `EEM_Base::get_all()` method can do for you:
 
@@ -164,96 +177,141 @@ EEM_Venue::instance()->get_all(
 
 This gets all venues created by user with ID 1 or have a term containing the string 'user_1'.
 
-So what structure does this array (the "query params") provided to `EEM_Base::get_all()` have? Please read the documentation on EEM_Base::get_all, But here is a quick overview:
-
-#### Top-level query parameters:
-
-**0 (where)**
-
-Use the array key 0 (or simply provide NO array-key) to specify your query's WHERE conditions. This query parameter should, itself, be an array, where array keys are:
-
-* field names on the current model (eg, if using `EEM_Event`, this would be any of the 2nd-level array keys in `EEM_Event::_fields`, which is defined in `EEM_Event::__construct()`; so 'EVT_ID', 'EVT_name', 'EVT_display_desc', etc.),
-* field names on related models, prepended by the name of the model. eg, if using `EEM_Event`, look at EEM_Event::_model_relations, also defined in `EEM_Event::__construct()`,he array keys are related models, and the value defines what kind of relation exists. So you could provide 'Registration.REG_ID' (see `EEM_Registration::_fields`), or 'Datetime.DTT_EVT_start' (see `EEM_Datetime::_fields`). You can also chain the model relations to as far as you like, eg 'Registration.Transaction.Payment.PAY_amount' is valid (because `EEM_Event` is related to `EEM_Registration`, which is related to `EEM_Transaction`, which is related to `EEM_Payment`) etc
-* logic query params, like 'OR', 'AND', & 'NOT'. The values accompanied by these can be just like top-level where parameters
-The values (except for logic query parameters), can be:
-
-* a simple value, like 234, 'foobar', 100.23, or FALSE
-* an array containing both an operator (`=` (default), `<`, `<=`, `>`, `>=`, `LIKE`, `NOT_LIKE`, `IN`, `NOT_IN`, `IS_NULL`, `IS_NOT_NULL`, or `BETWEEN`) and a simple value (except `IN` and `NOT_IN`, which take an array, and `BETWEEN` which takes an array with 2 entries only)
-* the name of another field on this model, or on a related model (accompanied by the relation chain). Eg on `EEM_Event` it could be 'EVT_slug', 'Datetime.DTT_EVT_start', or 'Datetime.Ticket.TKT_start_date', etc
-You can create a WHERE query sub-clause by using the LOGIC query parameters as array keys ('AND', 'OR', & 'NOT). Using 'AND' will join all the sub-query where statements with 'and' (eg `array('TKT_ID'=>23,'TKT_name'=>'party')` becomes `Ticket.TKT_ID=23 AND Ticket.TKT_name='party'`). 'OR' is the same but will instead join all the where statements with 'or'. And lastly, 'NOT', will continue to use 'or' or 'and' as before, but will negate the entire sub-clause (eg, `array( 'OR' => array( 'NOT' => array( 'TKT_ID' => 23, 'TKT_name' => 'party' ) ) )` will become `! ( Ticket.TKT_ID = 23 OR Ticket.TKT_name = 'party')`)
-
-Normally all the WHERE conditions are AND'd together.
-
-> **GOTCHA:** because the field names are the array-key values, what do you do if you want two different conditions using the same field? Eg, `array( 'DTT_EVT_start' => array( '<', '0214-07-11 10:00:00' ), 'DTT_EVT_start' => array( '>=', '2014-07-10 10:00:00' ) )`? Because PHP array keys must be unique, the where condition will be overwritten. To overcome this, the field names can contain a '*' (star) character, which will be ignored, as will anything after the '*'. Eg you could modify the query to instead be `array( 'DTT_EVT_start*before' => array( '<', '0214-07-11 10:00:00' ), 'DTT_EVT_start*after' => array( '>=', '2014-07-10 10:00:00' ) )` and so both WHERE conditions will be used.
-
-**limit**
-
-can either be a simple integer (eg `'limit' => 23`), or an array with two values: the first being the offset, and the second being the limit (eg `'limit' => array( 50, 10)` will become `LIMIT 50, 10`)
-
-**order_by**
-
-name of a field to order by (exactly how the WHERE conditions specify a field, eg 'DTT_EVT_start' or 'Question.QST_order') or an array, where keys are the field to order by and values are either the word 'ASC' or 'DESC' to specify in which direction to order (eg `array( 'Question.Question_Group.QSG_order' => 'ASC', 'Question.QST_order' => 'ASC')`)
-
-**order**
-
-if 'order_by' was used and its value was a string (not an array), then 'order' specifies the direction, and can have the value 'ASC' or 'DESC' only.
-
-**group_by**
-
-the name of a field to group by  (eg 'REG_final_price' or 'Event.EVT_ID'), or an array of fields to group by
-
-**having**
-
-has the exact same form as the WHERE conditions, except applies these to the HAVING clause
-
-**force_join**
-
-in order to avoid unnecessary database queries, the models system tries to cache information already acquired. Eg, while querying for registrations, if the events table is joined to, then each registration model object created will automatically cache a reference to its event (so when you want to retrieve the event for that registration, no database query will be necessary). Use this to force a join to a related model when it otherwise wouldn't. The value must be an array of related model names, Eg `array( 'Registration.Transaction', 'Question_Group.Question' )` etc.
-
-**default_where_conditions**
-
-If you would like to control the default where conditions on your query, and the wrapper methods on `EEM_CPT_Base` and `EEM_Soft_Delete_Base` don't do the trick, you can specify this query parameter. The following values are valid:
-
-* 'all' - the default. Default where conditions are added by the model queried and each model joined to.
-* 'other_models_only' - the model queried won't use default where conditions, but all others will
-* 'this_model_only' - the model queried will use default where conditions, but no others will
-* 'none' - absolutely non default where conditions will be used. (Use with caution when querying models which are children of `EEM_CPT_Base`, as normal Wordpress posts will probably be in the results returned!)
-
-And that's it. For even more advanced queries, you can make use of `EEM_Base::_get_all_wpdb_results()` but it's protected (so you can really only use it if making your own model in an addon or extending core)
-
 There are many variations of `EEM_Base::get_all()`, which simplify certain common tasks...
 
-### [get_one()](https://github.com/eventespresso/event-espresso-core/blob/master/core/db_models/EEM_Base.model.php#L972)
+### get_all_wpdb_results()
 
-This is exactly like get_all, but only returns the first model object found instead of an array of them. Eg.
+```
+get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null)
+```
+
+Similar to `get_all()`, except it returns an array exactly like `$wpdb->get_results()` would return (see [WordPress' documentation on $wpdb](https://codex.wordpress.org/Class_Reference/wpdb#SELECT_Generic_Results)).
+This is useful in cases where speed is a top priority, as this skips a processing step.
+#### Parameters
+##### $query_params
+`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+
+##### $output
+One of four pre-defined constants. Please [read the WPDB documentation on $output_type](https://codex.wordpress.org/Class_Reference/wpdb#SELECT_Generic_Results).
+
+##### $columns_to_select
+(mixed)What columns to select. By default, we select all columns specified by the fields on the model, and the models we joined to in the query. 
+However, you can override this and set the select to "*", or a specific column name, like "ATT_ID", etc. 
+If you would like to use these custom selections in WHERE, GROUP_BY, or HAVING clauses, you must instead provide an array. 
+Array keys are the aliases used to refer to this selection, and values are to be numerically-indexed arrays, where 0 is the selection and 1 is the data type. 
+Eg, array('count'=>array('COUNT(REG_ID)','%d')) 
+
+#### Returns
+`array | stdClass[]` like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
+
+#### Examples
+Gets all events, but as an array of arrays (whereas `EEM_Base::get_all()` would have gotten model objects).
+
+```php
+$event_arrays = EEM_Event::instance()->get_all_wpdb_results();
+```
+
+Gets a count of registrations per day, for an event in 
+
+```php
+$dates_and_totals = EEM_Registration::instance()->get_all_wpdb_results(
+        array(
+            $where,
+            'group_by' => 'regDate',
+            'order_by' => array('REG_date' => 'ASC'),
+        ),
+        OBJECT,
+        array(
+            'regDate' => array('DATE(REG_date)', '%s'),
+            'total' => array('count(REG_ID)', '%d'),
+        )
+   );
+```
+
+### get_one()
+
+```php
+EEM_Base::get_one($query_params = array())
+```
+
+This is exactly like get_all, but only returns the first model object found instead of an array of them.
+
+#### Parameters
+##### $query_params
+`array` Documented in [Model Query Params Documentation](model-query-params.md]). Only slight modification: the key "limit" is overridden to always return exactly one item.
+
+#### Returns
+`EE_Base_Class | null` [Model objects](using-ee4-model-objects.md) of the corresponding type
+
+#### Examples
 
 ```php
 //gets the first attendee found who's name is john
 $an_attendee = EEM_Attendee::instance()->get_one( array( array( 'ATT_fname' => 'John' ) );
 ```
 
-### [get_one_by_ID()](https://github.com/eventespresso/event-espresso-core/blob/master/core/db_models/EEM_Base.model.php#L933)
+### get_one_by_ID()
 
+```php
+EEM_Base::get_one_by_ID($id)
+```
 This is exactly like using EEM_Event::instance()->get_one( array( array( 'EVT_ID' => 234 ), 'default_where_conditions' => 'other_models_only' ) );  Eg.
+Because you have the ID of the item you're looking for, default where conditions are not used on the model being queried. This means the item could be trashed and it will be returned just fine.
 
+##### $id
+int|string The ID of the model object you want to retrieve.
+
+#### Returns
+`EE_Base_Class | null` [Model objects](using-ee4-model-objects.md) of the corresponding type
+
+#### Examples
 ```php
 $registration_234 = EEM_Registration::instance()->get_one_by_ID( 234 );
 ```
 
-Because you have the ID of the item you're looking for, default where conditions are not used on the model being queried. This means the item could be trashed and it will be returned just fine
+### get_all_copies()
 
-### [get_all_copies()](https://github.com/eventespresso/event-espresso-core/blob/master/core/db_models/EEM_Base.model.php#L4284)
+```php
+EEM_Base::get_all_copies($model_object_or_attributes_array, $query_params = array())
+```
+When this is passed a model object it gets all model objects which appear to be copies of it (exact same data except their primary key).
 
-When this is passed a model object it gets all model objects which appear to be copies of it (exact same data except their primary key). Eg.
+#### Parameters
+##### $model_object_or_attributes_array
+array|EE_Base_Class $model_object_or_attributes_array If its an array, it's field-value pairs
+
+##### $query_params
+`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+
+#### Returns
+`EE_Base_Class[]` Array of [model objects](using-ee4-model-objects.md) of the corresponding type. Eg `EEM_Event::get_all()` will return an array of `EE_Event` objects `EEM_Venue::get_all()` will return an array of `EE_Venue` objects, `EEM_Question::get_all()` will return an array of `EE_Question` objects, etc.
+
+#### Examples
 
 ```php
 $att1 = EEM_Attendee::instance()->get_one();
 $duplicate_attendees = EEM_Attendee::instance()->get_all_copies( $att1 );
 ```
  
-### [get_one_conflicting()](https://github.com/eventespresso/event-espresso-core/blob/master/core/db_models/EEM_Base.model.php#L2269)
+### get_one_conflicting()
 
-When this is passed a model object itreturns the first model object in the database that would somehow conflict with it (based on uniqueness conditions like keys and indexes). Eg.
+```php
+EEM_Base::get_one_conflicting($obj_or_fields_array, $include_primary_key = true)
+```
+
+When this is passed a model object it returns the first model object in the database that would somehow conflict with it (based on uniqueness conditions like keys and indexes). Eg.
+
+#### Parameters
+##### $obj_or_fields_array
+`EE_Base_Class | array` if an array, then its keys are the model's fields names and array values are their values.
+
+##### $include_primary_key
+`boolean` whether to use the model object's primary key when looking for conflicts (ie, if false, we ignore the model object's primary key when finding "conflicts". If true, it's also considered). Only works for INT primary key, STRING primary keys cannot be ignore.
+
+#### Returns
+`EE_Base_Class | null` A model object if one was found, otherwise null.
+
+#### Examples
 
 ```php
 $proposed_event = EE_Event::new_instance( array( 'EVT_slug' => 'hockey-game' ) );
@@ -267,9 +325,27 @@ if( ! $conflicting_events ){
 
 (see the [model objects docs](using-ee4-model-objects.md) for info on EE_Event::new_instance(...) and the save() method)
 
-### [count()](https://github.com/eventespresso/event-espresso-core/blob/master/core/db_models/EEM_Base.model.php#L1767)
+### count()
 
-This is passed the exact same query_params array as get_all, but only returns a count of all the rows get_all would have found. Eg.
+```php
+EEM_Base::count($query_params = array(), $field_to_count = null, $distinct = false)
+```
+This is passed the exact same query_params array as get_all, but only returns a count of all the rows get_all would have found.
+
+#### Parameters
+##### $query_params
+`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+
+##### $field_to_count
+`string` field on model to count by (not column name)
+
+##### $distinct
+`boolean` if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE.
+
+#### Returns
+`int` The MySQL count (note that this is affected by the value of `$field_to_count` and `$distinct`.)
+
+#### Examples
 
 ```php
 //counts all the unique attendees for event 123
@@ -280,9 +356,21 @@ $count_unique_attendee_for_event = EEM_Attendee::instance()->count(
 );
 ```
 
-### [exists()](https://github.com/eventespresso/event-espresso-core/blob/master/core/db_models/EEM_Base.model.php#L2300)
+### exists()
 
-This method is like count, but simply returns a boolean indicating whether anything was found or not. Eg,
+```php
+EEM_Base::exists($query_params)
+```
+This method is like count, but simply returns a boolean indicating whether anything was found or not.
+
+#### Parameters
+##### $query_params
+`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+
+#### Returns
+`boolean` Whether or not any model object exists matching the query parameters.
+
+#### Examples
 
 ```php
 //checks if ticket 345 was purchased at all
@@ -293,9 +381,24 @@ $ticket_345_purchased = EEM_Registration::instance()->exists(
 );
 ```
 
-### [sum()](https://github.com/eventespresso/event-espresso-core/blob/master/core/db_models/EEM_Base.model.php#L1791)
+### sum()
 
-When this is passed a field name and query_params array it returns the sum of all the model objects' specified field. Eg,
+```php
+EEM_Base::sum($query_params, $field_to_sum = null)
+```
+When this is passed a field name and query_params array it returns the sum of all the model objects' specified field.
+
+#### Parameters
+##### $query_params
+`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+
+##### $field_to_sum
+`string` Name of the field to sum.
+
+#### Returns
+`float` The summed total.
+
+#### Examples
 
 ```php
 //finds the revenue generated for an event
@@ -310,9 +413,23 @@ $money_made_on_event_123 = EEM_Transaction::instance()->sum(
    'TXN_total' ) );
 ```
 
-### Inserting
+## Inserting Data
 
-You can also use EEM_Base::[insert()](https://github.com/eventespresso/event-espresso-core/blob/master/core/db_models/EEM_Base.model.php#L2207), providing an array of field names as keys, and values as their values. Eg,
+### Insert()
+
+```php
+EEM_Base::insert($field_n_values)
+```
+Used to insert data directly into the database. Usually it would be better to [create a model object and save it](using-ee4-model-objects.md), but this can be slightly more performant.
+
+#### Parameters
+##### $fields_n_values
+`array` keys are field names, values are the desired values. Note: these values should already be in the format model objects return.
+
+#### Returns
+`int | string` New primary key of the inserted item.
+
+#### Examples
 
 ```php
 //inserts a new attendee in the wp_esp_attendee table. 
@@ -337,9 +454,26 @@ $new_attendee = EE_Attendee::new_instance(
 $new_attendee->save();
 ```
 
-### Updating
+## Updating
 
-You can use EEM_Base::[update()](https://github.com/eventespresso/event-espresso-core/blob/master/core/db_models/EEM_Base.model.php#L1337), providing first an array of field names as keys and values as the new values, and a second array exactly like EEM_Base::get_all's query_params to define whcih items should be updated. Another way is to use retrieve a model object (using EEM_Base::get_all or get_one, etc), then modify it and then save. Eg,
+### update()
+
+```php
+EEM_Base::update($fields_n_values, $query_params, $keep_model_objs_in_sync = true)
+```
+Updates existing data, Usually it would be better to [retrieve a model object and save it](using-ee4-model-objects.md), but this can be slightly more performant.
+
+#### Parameters
+##### $fields_n_values
+`array` Keys are field names, values are their desired values (put in the format returned by model objects).
+
+##### $query_params
+`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+
+#### Returns
+`int` How many database rows were affected.
+
+#### Examples
 
 ```php
 //changes all registrations for event 111 to instead be for event 222
@@ -350,13 +484,79 @@ EEM_Registration::instance()->update(
         array( 'EVT_ID' => 111 ) );
 ```
 
-### Deleting
+## Deleting
 
-You can use EEM_Base::[delete()](https://github.com/eventespresso/event-espresso-core/blob/master/core/db_models/EEM_Base.model.php#L1573) to delete model objects. Pass in an array exactly like EEM_Base::get_all, and all the items EEM_Base::get_all would have found will instead be deleted. Eg,
+### delete()
 
 ```php
-//deletes all answers for question 123
-$count_items_deleted = EEM_Answer::instance()->delete( array( array( 'QST_ID' => 123 ) );
+EEM_Base::delete($query_params, $allow_blocking = true)
+```
+
+"Deletes" the matched model objects. For models that allow "soft deletion" or "trashing" will instead only trash them.
+
+#### Parameters
+##### $query_params
+`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+
+##### $allow_blocking
+`boolean` Only applies to soft-deletion/trashing. If set to true, model objects will not be deleted if there is another model object with a foreign key to the
+item that would have been deleted. 
+
+#### Returns
+`int` The number of rows affected.
+
+#### Examples
+
+Permanently deletes all answers for question 123
+```php
+$count_items_deleted = EEM_Answer::instance()->delete( array( array( 'QST_ID' => 123 )));
+```
+
+Trashes all events with name "Foobar"
+```php
+$count_events_trashed = EEM_Event::instance()->delete(array(array('EVT_name'=>'Foobar')));
+```
+
+Permanently deletes transactions with a total lower than 10, provided there are no registrations or payments for them.
+```php
+$count_transactions_deleted = EEM_Transaction::instance()->delete(array(array('TXN_total' => array('>', 10)));
+```
+
+### delete_permanently()
+
+```php
+EEM_Base::delete_permanently($query_params, $allow_blocking = true)
+```
+
+Permanently deletes the matched model objects, even for models that allow "soft deletion" or "trashing".
+For non-soft-deletable model objects, this is the same as `delete()`.
+
+#### Parameters
+##### $query_params
+`array` Documented in [Model Query Params Documentation](model-query-params.md]).
+
+##### $allow_blocking
+`boolean` If set to true, model objects will not be deleted if there is another model object with a foreign key to the
+item that would have been deleted. 
+
+#### Returns
+`int` The number of rows affected.
+
+#### Examples
+
+Permanently deletes all answers for question 123 (just like `delete()` would)
+```php 
+$count_items_deleted = EEM_Answer::instance()->delete_permanently( array( array( 'QST_ID' => 123 )));
+```
+
+Permannetly deletes all events with name "Foobar" (doesn't just trash them).
+```php
+$count_events_trashed = EEM_Event::instance()->delete_permanently(array(array('EVT_name'=>'Foobar')));
+```
+
+Permanently deletes transactions with a total lower than 10, provided there are no registrations or payments for them.
+```php
+$count_transactions_deleted = EEM_Transaction::instance()->delete_permanently(array(array('TXN_total' => array('>', 10)));
 ```
 
 ## Inspecting Generated Queries

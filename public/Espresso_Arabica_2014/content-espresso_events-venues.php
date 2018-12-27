@@ -14,9 +14,6 @@ if (
 ?>
 
 <div class="espresso-venue-dv<?php echo espresso_is_venue_private() ? ' espresso-private-venue-dv' : ''; ?>">
-	<h3 class="event-venues-h3 ee-event-h3">
-		<?php _e( 'Location', 'event_espresso' ); ?>
-	</h3>
 	<h4><strong><?php _e( 'Venue:', 'event_espresso' ); ?></strong>&nbsp;&nbsp; <strong> <?php echo $venue_name; ?></strong></h4>
 	<p><span class="smaller-text tags-links"><?php echo espresso_venue_categories(); ?></span></p>
 <?php  if ( $venue_phone = espresso_venue_phone( $post->ID, FALSE )) : ?>

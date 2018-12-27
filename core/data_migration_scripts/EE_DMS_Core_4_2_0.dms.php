@@ -8,20 +8,20 @@ use EventEspresso\core\services\database\TableManager;
  * -adds QGQ_order to the question-group_question table;
  * -adds DTT_name and DTT_description to the datetime table;
  */
-//make sure we have all the stages loaded too
-//unfortunately, this needs to be done upon INCLUSION of this file,
-//instead of construction, because it only gets constructed on first page load
-//(all other times it gets resurrected from a wordpress option)
+// make sure we have all the stages loaded too
+// unfortunately, this needs to be done upon INCLUSION of this file,
+// instead of construction, because it only gets constructed on first page load
+// (all other times it gets resurrected from a wordpress option)
 $stages = glob(EE_CORE . 'data_migration_scripts/4_2_0_stages/*');
 $class_to_filepath = array();
-if ( ! empty($stages)) {
+if (! empty($stages)) {
     foreach ($stages as $filepath) {
         $matches = array();
         preg_match('~4_2_0_stages/(.*).dmsstage.php~', $filepath, $matches);
-        $class_to_filepath[$matches[1]] = $filepath;
+        $class_to_filepath[ $matches[1] ] = $filepath;
     }
 }
-//give addons a chance to autoload their stages too
+// give addons a chance to autoload their stages too
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_2_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
@@ -55,15 +55,15 @@ class EE_DMS_Core_4_2_0 extends EE_Data_Migration_Script_Base
     {
         $version_string = $version_array['Core'];
         if (version_compare($version_string, '4.2.0', '<=') && version_compare($version_string, '4.1.0', '>=')) {
-//			echo "$version_string can be migrated fro";
+//          echo "$version_string can be migrated fro";
             return true;
-        } elseif ( ! $version_string) {
-//			echo "no version string provided: $version_string";
-            //no version string provided... this must be pre 4.1
-            //because since 4.1 we're
-            return false;//changed mind. dont want people thinking they should migrate yet because they cant
+        } elseif (! $version_string) {
+//          echo "no version string provided: $version_string";
+            // no version string provided... this must be pre 4.1
+            // because since 4.1 we're
+            return false;// changed mind. dont want people thinking they should migrate yet because they cant
         } else {
-//			echo "$version_string doesnt apply";
+//          echo "$version_string doesnt apply";
             return false;
         }
     }
@@ -72,7 +72,7 @@ class EE_DMS_Core_4_2_0 extends EE_Data_Migration_Script_Base
 
     public function schema_changes_before_migration()
     {
-        //relies on 4.1's EEH_Activation::create_table
+        // relies on 4.1's EEH_Activation::create_table
         require_once(EE_HELPERS . 'EEH_Activation.helper.php');
         $table_name = 'esp_answer';
         $sql = " ANS_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -97,7 +97,7 @@ class EE_DMS_Core_4_2_0 extends EE_Data_Migration_Script_Base
 							PRIMARY KEY  (ATTM_ID),
 								KEY ATT_fname (ATT_fname),
 								KEY ATT_lname (ATT_lname),
-								KEY ATT_email (ATT_email)";
+								KEY ATT_email (ATT_email(191))";
         $this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_country';
         $sql = "CNT_ISO VARCHAR(2) COLLATE utf8_bin NOT NULL,
@@ -422,15 +422,15 @@ class EE_DMS_Core_4_2_0 extends EE_Data_Migration_Script_Base
 			KEY CNT_ISO (CNT_ISO)";
         $this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
         $script_with_defaults = EE_Registry::instance()->load_dms('Core_4_1_0');
-        //setting up the DEFAULT stats and countries is also essential for the data migrations to run
-        //(because many need to convert old string states to foreign keys into the states table)
+        // setting up the DEFAULT stats and countries is also essential for the data migrations to run
+        // (because many need to convert old string states to foreign keys into the states table)
         $script_with_defaults->insert_default_states();
         $script_with_defaults->insert_default_countries();
-        //setting up DEFAULT prices, price types, and tickets is also essential for the price migrations
+        // setting up DEFAULT prices, price types, and tickets is also essential for the price migrations
         $script_with_defaults->insert_default_price_types();
         $script_with_defaults->insert_default_prices();
         $script_with_defaults->insert_default_tickets();
-        //setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
+        // setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
         EE_Config::instance()->update_espresso_config(false, true);
         return true;
     }
@@ -453,13 +453,3 @@ class EE_DMS_Core_4_2_0 extends EE_Data_Migration_Script_Base
     {
     }
 }
-
-
-
-
-
-
-
-
-
-

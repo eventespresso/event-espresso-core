@@ -3,13 +3,8 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 use EventEspresso\widgets\EspressoWidget;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
 
 /**
  * Event Espresso
@@ -56,11 +51,6 @@ final class EE_Front_Controller
      */
     protected $Module_Request_Router;
 
-    /**
-     * @var PersistentAdminNoticeManager $persistent_admin_notice_manager
-     */
-    private $persistent_admin_notice_manager;
-
 
     /**
      *    class constructor
@@ -76,13 +66,9 @@ final class EE_Front_Controller
         EE_Request_Handler $Request_Handler,
         EE_Module_Request_Router $Module_Request_Router
     ) {
-        $this->Registry              = $Registry;
-        $this->Request_Handler       = $Request_Handler;
+        $this->Registry = $Registry;
+        $this->Request_Handler = $Request_Handler;
         $this->Module_Request_Router = $Module_Request_Router;
-        // determine how to integrate WP_Query with the EE models
-        add_action('AHEE__EE_System__initialize', array($this, 'employ_CPT_Strategy'));
-        // just in case any nag notices are created during the request
-        add_action('AHEE__EE_System__initialize_last', array($this, 'loadPersistentAdminNoticeManager'));
         // load other resources and begin to actually run shortcodes and modules
         add_action('wp_loaded', array($this, 'wp_loaded'), 5);
         // analyse the incoming WP request
@@ -101,9 +87,9 @@ final class EE_Front_Controller
         add_action('loop_start', array($this, 'display_errors'), 2);
         // the content
         // add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
-        //exclude our private cpt comments
+        // exclude our private cpt comments
         add_filter('comments_clauses', array($this, 'filter_wp_comments'), 10, 1);
-        //make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
+        // make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
         add_filter('admin_url', array($this, 'maybe_force_admin_ajax_ssl'), 200, 1);
         // action hook EE
         do_action('AHEE__EE_Front_Controller__construct__done', $this);
@@ -128,7 +114,6 @@ final class EE_Front_Controller
     }
 
 
-
     /**
      * @return LegacyShortcodesManager
      */
@@ -142,9 +127,6 @@ final class EE_Front_Controller
 
 
     /***********************************************        INIT ACTION HOOK         ***********************************************/
-
-
-
     /**
      * filter_wp_comments
      * This simply makes sure that any "private" EE CPTs do not have their comments show up in any wp comment
@@ -152,44 +134,24 @@ final class EE_Front_Controller
      *
      * @param  array $clauses array of comment clauses setup by WP_Comment_Query
      * @return array array of comment clauses with modifications.
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function filter_wp_comments($clauses)
     {
         global $wpdb;
         if (strpos($clauses['join'], $wpdb->posts) !== false) {
-            $cpts = EE_Register_CPTs::get_private_CPTs();
+            /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
+            $custom_post_types = LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
+            );
+            $cpts = $custom_post_types->getPrivateCustomPostTypes();
             foreach ($cpts as $cpt => $details) {
                 $clauses['where'] .= $wpdb->prepare(" AND $wpdb->posts.post_type != %s", $cpt);
             }
         }
         return $clauses;
-    }
-
-
-    /**
-     * @return void
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function employ_CPT_Strategy()
-    {
-        if (apply_filters('FHEE__EE_Front_Controller__employ_CPT_Strategy', true)) {
-            $this->Registry->load_core('CPT_Strategy');
-        }
-    }
-
-
-    /**
-     * @return void
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    public function loadPersistentAdminNoticeManager()
-    {
-        $this->persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(
-            'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
-        );
     }
 
 
@@ -246,7 +208,6 @@ final class EE_Front_Controller
     }
 
 
-
     /**
      *    pre_get_posts - basically a module factory for instantiating modules and selecting the final view template
      *
@@ -257,8 +218,7 @@ final class EE_Front_Controller
     public function pre_get_posts($WP_Query)
     {
         // only load Module_Request_Router if this is the main query
-        if (
-            $this->Module_Request_Router instanceof EE_Module_Request_Router
+        if ($this->Module_Request_Router instanceof EE_Module_Request_Router
             && $WP_Query->is_main_query()
         ) {
             // cycle thru module routes
@@ -299,7 +259,6 @@ final class EE_Front_Controller
     /***********************     GET_HEADER && WP_HEAD HOOK     ***********************/
 
 
-
     /**
      * callback for the "template_redirect" hook point
      * checks sidebars for EE widgets
@@ -310,19 +269,18 @@ final class EE_Front_Controller
     public function templateRedirect()
     {
         global $wp_query;
-        if (empty($wp_query->posts)){
+        if (empty($wp_query->posts)) {
             return;
         }
         // if we already know this is an espresso page, then load assets
         $load_assets = $this->Request_Handler->is_espresso_page();
         // if we are already loading assets then just move along, otherwise check for widgets
         $load_assets = $load_assets ? $load_assets : $this->espresso_widgets_in_active_sidebars();
-        if ( $load_assets){
+        if ($load_assets) {
             add_action('wp_enqueue_scripts', array($this, 'enqueueStyle'), 10);
             add_action('wp_print_footer_scripts', array($this, 'enqueueScripts'), 10);
         }
     }
-
 
 
     /**
@@ -359,8 +317,6 @@ final class EE_Front_Controller
     }
 
 
-
-
     /**
      *    header_meta_tag
      *
@@ -370,30 +326,29 @@ final class EE_Front_Controller
     public function header_meta_tag()
     {
         print(
-            apply_filters(
-                'FHEE__EE_Front_Controller__header_meta_tag',
-                '<meta name="generator" content="Event Espresso Version ' . EVENT_ESPRESSO_VERSION . "\" />\n")
+        apply_filters(
+            'FHEE__EE_Front_Controller__header_meta_tag',
+            '<meta name="generator" content="Event Espresso Version ' . EVENT_ESPRESSO_VERSION . "\" />\n"
+        )
         );
 
-        //let's exclude all event type taxonomy term archive pages from search engine indexing
-        //@see https://events.codebasehq.com/projects/event-espresso/tickets/10249
-        //also exclude all critical pages from indexing
-        if (
-            (
+        // let's exclude all event type taxonomy term archive pages from search engine indexing
+        // @see https://events.codebasehq.com/projects/event-espresso/tickets/10249
+        // also exclude all critical pages from indexing
+        if ((
                 is_tax('espresso_event_type')
-                && get_option( 'blog_public' ) !== '0'
+                && get_option('blog_public') !== '0'
             )
             || is_page(EE_Registry::instance()->CFG->core->get_critical_pages_array())
         ) {
             print(
-                apply_filters(
-                    'FHEE__EE_Front_Controller__header_meta_tag__noindex_for_event_type',
-                    '<meta name="robots" content="noindex,follow" />' . "\n"
-                )
+            apply_filters(
+                'FHEE__EE_Front_Controller__header_meta_tag__noindex_for_event_type',
+                '<meta name="robots" content="noindex,follow" />' . "\n"
+            )
             );
         }
     }
-
 
 
     /**
@@ -404,8 +359,7 @@ final class EE_Front_Controller
     public function wp_print_scripts()
     {
         global $post;
-        if (
-            isset($post->EE_Event)
+        if (isset($post->EE_Event)
             && $post->EE_Event instanceof EE_Event
             && get_post_type() === 'espresso_events'
             && is_singular()
@@ -413,7 +367,6 @@ final class EE_Front_Controller
             \EEH_Schema::add_json_linked_data_for_event($post->EE_Event);
         }
     }
-
 
 
     public function enqueueStyle()
@@ -424,36 +377,13 @@ final class EE_Front_Controller
 
 
 
-
-    /***********************************************        THE_CONTENT FILTER HOOK         **********************************************
-
-
-
-    // /**
-    //  *    the_content
-    //  *
-    //  * @access    public
-    //  * @param   $the_content
-    //  * @return    string
-    //  */
-    // public function the_content( $the_content ) {
-    // 	// nothing gets loaded at this point unless other systems turn this hookpoint on by using:  add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-    // 	if ( apply_filters( 'FHEE_run_EE_the_content', FALSE ) ) {
-    // 	}
-    // 	return $the_content;
-    // }
-
-
-
     /***********************************************        WP_FOOTER         ***********************************************/
-
 
 
     public function enqueueScripts()
     {
         wp_enqueue_script('espresso_core');
     }
-
 
 
     /**
@@ -467,12 +397,12 @@ final class EE_Front_Controller
     {
         static $shown_already = false;
         do_action('AHEE__EE_Front_Controller__display_errors__begin');
-        if (
-            ! $shown_already
+        if (! $shown_already
             && apply_filters('FHEE__EE_Front_Controller__display_errors', true)
             && is_main_query()
             && ! is_feed()
             && in_the_loop()
+            && did_action('wp_head')
             && $this->Request_Handler->is_espresso_page()
         ) {
             echo EE_Error::get_notices();
@@ -497,10 +427,14 @@ final class EE_Front_Controller
     public function template_include($template_include_path = null)
     {
         if ($this->Request_Handler->is_espresso_page()) {
-            $this->_template_path = ! empty($this->_template_path) ? basename($this->_template_path) : basename($template_include_path);
-            $template_path        = EEH_Template::locate_template($this->_template_path, array(), false);
+            $this->_template_path = ! empty($this->_template_path)
+                ? basename($this->_template_path)
+                : basename(
+                    $template_include_path
+                );
+            $template_path = EEH_Template::locate_template($this->_template_path, array(), false);
             $this->_template_path = ! empty($template_path) ? $template_path : $template_include_path;
-            $this->_template      = basename($this->_template_path);
+            $this->_template = basename($this->_template_path);
             return $this->_template_path;
         }
         return $template_include_path;
@@ -518,7 +452,6 @@ final class EE_Front_Controller
     {
         return $with_path ? $this->_template_path : $this->_template;
     }
-
 
 
     /**
@@ -539,6 +472,21 @@ final class EE_Front_Controller
         $this->getLegacyShortcodesManager()->initializeShortcode($shortcode_class, $wp);
     }
 
+
+    /**
+     * @return void
+     * @deprecated 4.9.57.p
+     */
+    public function loadPersistentAdminNoticeManager()
+    {
+    }
+
+
+    /**
+     * @return void
+     * @deprecated 4.9.64.p
+     */
+    public function employ_CPT_Strategy()
+    {
+    }
 }
-// End of file EE_Front_Controller.core.php
-// Location: /core/EE_Front_Controller.core.php

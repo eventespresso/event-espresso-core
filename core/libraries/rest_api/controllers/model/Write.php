@@ -1,7 +1,9 @@
 <?php
+
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
 use EE_DB_Only_Field_Base;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use \WP_REST_Request;
 use \WP_REST_Response;
 use EventEspresso\core\libraries\rest_api\Capabilities;
@@ -17,12 +19,6 @@ use EED_Core_Rest_Api;
 use EEH_Inflector;
 use EE_Error;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Write controller for models
  * Handles requests relating to GET-ting model information
@@ -35,13 +31,11 @@ class Write extends Base
 {
 
 
-
     public function __construct()
     {
         parent::__construct();
         EE_Registry::instance()->load_helper('Inflector');
     }
-
 
 
     /**
@@ -69,7 +63,6 @@ class Write extends Base
     }
 
 
-
     /**
      * Handles a request from \WP_REST_Server to update an EE model
      *
@@ -93,7 +86,6 @@ class Write extends Base
             return $controller->sendResponse($e);
         }
     }
-
 
 
     /**
@@ -121,7 +113,6 @@ class Write extends Base
     }
 
 
-
     /**
      * Inserts a new model object according to the $request
      *
@@ -140,7 +131,7 @@ class Write extends Base
                 'rest_cannot_create_' . EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
                 sprintf(
                     esc_html__(
-                        // @codingStandardsIgnoreStart
+                    // @codingStandardsIgnoreStart
                         'For now, only those with the admin capability to "%1$s" are allowed to use the REST API to insert data into Event Espresso.',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
@@ -150,7 +141,7 @@ class Write extends Base
                 array('status' => 403)
             );
         }
-        $submitted_json_data = array_merge((array)$request->get_body_params(), (array)$request->get_json_params());
+        $submitted_json_data = array_merge((array) $request->get_body_params(), (array) $request->get_json_params());
         $model_data = ModelDataTranslator::prepareConditionsQueryParamsForModels(
             $submitted_json_data,
             $model,
@@ -175,7 +166,6 @@ class Write extends Base
     }
 
 
-
     /**
      * Updates an existing model object according to the $request
      *
@@ -193,7 +183,7 @@ class Write extends Base
                 'rest_cannot_edit_' . EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
                 sprintf(
                     esc_html__(
-                        // @codingStandardsIgnoreStart
+                    // @codingStandardsIgnoreStart
                         'For now, only those with the admin capability to "%1$s" are allowed to use the REST API to update data into Event Espresso.',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
@@ -230,7 +220,6 @@ class Write extends Base
     }
 
 
-
     /**
      * Updates an existing model object according to the $request
      *
@@ -248,7 +237,7 @@ class Write extends Base
                 'rest_cannot_delete_' . EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
                 sprintf(
                     esc_html__(
-                        // @codingStandardsIgnoreStart
+                    // @codingStandardsIgnoreStart
                         'For now, only those with the admin capability to "%1$s" are allowed to use the REST API to delete data into Event Espresso.',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
@@ -259,7 +248,7 @@ class Write extends Base
             );
         }
         $obj_id = $request->get_param('id');
-        //this is where we would apply more fine-grained caps
+        // this is where we would apply more fine-grained caps
         $model_obj = $model->get_one_by_ID($obj_id);
         if (! $model_obj instanceof EE_Base_Class) {
             $lowercase_model_name = strtolower($model->get_this_model_name());
@@ -273,7 +262,7 @@ class Write extends Base
         $requested_allow_blocking = filter_var($request->get_param('allow_blocking'), FILTER_VALIDATE_BOOLEAN);
         if ($requested_permanent_delete) {
             $previous = $this->returnModelObjAsJsonResponse($model_obj, $request);
-            $deleted = (bool)$model->delete_permanently_by_ID($obj_id, $requested_allow_blocking);
+            $deleted = (bool) $model->delete_permanently_by_ID($obj_id, $requested_allow_blocking);
             return array(
                 'deleted'  => $deleted,
                 'previous' => $previous,
@@ -296,43 +285,54 @@ class Write extends Base
     }
 
 
-
     /**
      * Returns an array ready to be converted into a JSON response, based solely on the model object
      *
-     * @param EE_Base_Class $model_obj
+     * @param EE_Base_Class   $model_obj
      * @param WP_REST_Request $request
      * @return array ready for a response
      */
     protected function returnModelObjAsJsonResponse(EE_Base_Class $model_obj, WP_REST_Request $request)
     {
         $model = $model_obj->get_model();
-        //create an array exactly like the wpdb results row,
+        // create an array exactly like the wpdb results row,
         // so we can pass it to controllers/model/Read::create_entity_from_wpdb_result()
         $simulated_db_row = array();
         foreach ($model->field_settings(true) as $field_name => $field_obj) {
-            //we need to reconstruct the normal wpdb results, including the db-only fields
-            //like a secondary table's primary key. The models expect those (but don't care what value they have)
-            if( $field_obj instanceof EE_DB_Only_Field_Base){
+            // we need to reconstruct the normal wpdb results, including the db-only fields
+            // like a secondary table's primary key. The models expect those (but don't care what value they have)
+            if ($field_obj instanceof EE_DB_Only_Field_Base) {
                 $raw_value = true;
             } elseif ($field_obj instanceof EE_Datetime_Field) {
                 $raw_value = $model_obj->get_DateTime_object($field_name);
             } else {
                 $raw_value = $model_obj->get_raw($field_name);
             }
-            $simulated_db_row[$field_obj->get_qualified_column()] = $field_obj->prepare_for_use_in_db($raw_value);
+            $simulated_db_row[ $field_obj->get_qualified_column() ] = $field_obj->prepare_for_use_in_db($raw_value);
         }
-        $read_controller = new Read();
+        $read_controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $read_controller->setRequestedVersion($this->getRequestedVersion());
-        //the simulates request really doesn't need any info downstream
+        // the simulates request really doesn't need any info downstream
         $simulated_request = new WP_REST_Request('GET');
+        // set the caps context on the simulated according to the original request.
+        switch ($request->get_method()) {
+            case 'POST':
+            case 'PUT':
+                $caps_context = EEM_Base::caps_edit;
+                break;
+            case 'DELETE':
+                $caps_context = EEM_Base::caps_delete;
+                break;
+            default:
+                $caps_context = EEM_Base::caps_read_admin;
+        }
+        $simulated_request->set_param('caps', $caps_context);
         return $read_controller->createEntityFromWpdbResult(
             $model_obj->get_model(),
             $simulated_db_row,
             $simulated_request
         );
     }
-
 
 
     /**
@@ -366,4 +366,3 @@ class Write extends Base
         return $read_controller->getEntityFromModel($model, $get_request);
     }
 }
-// End of file Read.php

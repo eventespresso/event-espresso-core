@@ -6,10 +6,8 @@ use EE_Registry;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\LooseCollection;
+use EventEspresso\core\services\container\CoffeeShop;
 use InvalidArgumentException;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
 
 /**
  * Class LoaderFactory
@@ -37,18 +35,14 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * so that it can ultimately be provided via the dependency tree,
  * but it should not YET be required, and a class property should be created for holding the Loader.
  * ie:
- *
  *      private $loader;
- *
  *      public function __construct(LoaderInterface $loader = null)
  *      {
  *          $this->loader = $loader;
  *      }
- *
  * The getter for the Loader should check the instance to see if injection was successful,
  * and if not, use THIS class to obtain the ONE single instance of the Loader.
  * ie:
- *
  *      private function getLoader()
  *      {
  *          if (! $this->loader instanceof LoaderInterface) {
@@ -56,16 +50,13 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *          }
  *          return $this->loader;
  *      }
- *
  * Then the methods in your factory class that generate their target classes,
  * can use this getter to obtain the Loader to use for generating objects.
  * ie:
- *
  *      public function createSomeObject(array $arguments = array())
  *      {
  *          return $this->loader->getNew('fully/qualified/ClassName', $arguments);
  *      }
- *
  * Eventually, when our dependency tree is complete
  * and ALL class construction can be traced back to the DI container,
  * then any injected factories can obtain their instance of the Loader via their constructor,
@@ -85,31 +76,38 @@ class LoaderFactory
     private static $loader;
 
 
-
     /**
-     * @param mixed $generator      provided during  very first instantiation in
-     *                              EE_Load_Espresso_Core::handle_request()
-     *                              otherwise can be left null
+     * @param EE_Registry|CoffeeShop   $generator   provided during very first instantiation in
+     *                                              BootstrapDependencyInjectionContainer::buildLoader()
+     *                                              otherwise can be left null
+     * @param ClassInterfaceCache|null $class_cache also provided during first instantiation
+     * @param ObjectIdentifier|null    $object_identifier
      * @return LoaderInterface
      * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
-    public static function getLoader($generator = null)
-    {
-        if (! LoaderFactory::$loader instanceof LoaderInterface) {
-            $generator = $generator !== null ? $generator : EE_Registry::instance();
+    public static function getLoader(
+        $generator = null,
+        ClassInterfaceCache $class_cache = null,
+        ObjectIdentifier $object_identifier = null
+    ) {
+        if (! LoaderFactory::$loader instanceof LoaderInterface
+            && ($generator instanceof EE_Registry || $generator instanceof CoffeeShop)
+            && $class_cache instanceof ClassInterfaceCache
+            && $object_identifier instanceof ObjectIdentifier
+        ) {
             $core_loader = new CoreLoader($generator);
             LoaderFactory::$loader = new Loader(
                 $core_loader,
                 new CachingLoader(
                     $core_loader,
-                    new LooseCollection('')
-                )
+                    new LooseCollection(''),
+                    $object_identifier
+                ),
+                $class_cache
             );
         }
         return LoaderFactory::$loader;
     }
-
-
 }

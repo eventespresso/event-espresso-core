@@ -1,9 +1,4 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
+<?php
 /**
  * Class EE_Checkbox_Dropdown_Selector_Display_Strategy
  * displays a set of checkbox inputs in a hidden modal box that appears when you click the button/selector
@@ -11,7 +6,7 @@
  * @package       Event Espresso
  * @subpackage    core
  * @author        Brent Christensen
- * 
+ *
  */
 class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_Display_Strategy
 {
@@ -42,6 +37,17 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
             EVENT_ESPRESSO_VERSION,
             true
         );
+        wp_localize_script(
+            'ticket_selector',
+            'eeDTS',
+            array(
+                'maxChecked' => EE_Registry::instance()
+                    ->CFG
+                    ->template_settings
+                    ->EED_Ticket_Selector
+                    ->getDatetimeSelectorMaxChecked()
+            )
+        );
         wp_enqueue_script('checkbox_dropdown_selector');
     }
 
@@ -50,7 +56,8 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
     /**
      * Informs the rest of the forms system what CSS and JS is needed to display the input
      */
-    public function enqueue_js(){
+    public function enqueue_js()
+    {
         EE_Checkbox_Dropdown_Selector_Display_Strategy::enqueue_styles_and_scripts();
     }
 
@@ -62,7 +69,8 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
      * @param array $iframe_css
      * @return array
      */
-    public function iframe_css(array $iframe_css){
+    public function iframe_css(array $iframe_css)
+    {
         $iframe_css['checkbox_dropdown_selector'] = EE_GLOBAL_ASSETS_URL . 'css/checkbox_dropdown_selector.css';
         return $iframe_css;
     }
@@ -75,7 +83,8 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
      * @param array $iframe_js
      * @return array
      */
-    public function iframe_js(array $iframe_js){
+    public function iframe_js(array $iframe_js)
+    {
         $iframe_js['checkbox_dropdown_selector'] = EE_GLOBAL_ASSETS_URL . 'scripts/checkbox_dropdown_selector.js';
         return $iframe_js;
     }
@@ -92,7 +101,7 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
         // $multi = count( $input->options() ) > 1 ? TRUE : FALSE;
         $input->set_label_sizes();
         $label_size_class = $input->get_label_size_class();
-        if ( ! is_array($input->raw_value()) && $input->raw_value() !== null) {
+        if (! is_array($input->raw_value()) && $input->raw_value() !== null) {
             EE_Error::doing_it_wrong(
                 'EE_Checkbox_Display_Strategy::display()',
                 sprintf(
@@ -133,7 +142,7 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
             'close-espresso-notice'
         );
         $html .= EEH_HTML::ul();
-        $input_raw_value = (array)$input->raw_value();
+        $input_raw_value = (array) $input->raw_value();
         foreach ($input->options() as $value => $display_text) {
             $html .= EEH_HTML::li();
             $value = $input->get_normalization_strategy()->unnormalize_one($value);
@@ -151,7 +160,7 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
             $html .= ' name="' . $input->html_name() . '[]"';
             $html .= ' id="' . $html_id . '"';
             $html .= ' class="' . $input->html_class() . '-option"';
-            $html .= ' style="' . $input->html_style() . '"';
+            $html .= $input->html_style() ? ' style="' . $input->html_style() . '"' : '';
             $html .= ' value="' . esc_attr($value) . '"';
             $html .= ! empty($input_raw_value) && in_array($value, $input_raw_value, true)
                 ? ' checked="checked"'
@@ -165,10 +174,18 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
         $html .= EEH_HTML::ulx();
         $html .= EEH_HTML::divx();
         $html .= EEH_HTML::divx();
+        $html .= EEH_HTML::p(
+            apply_filters(
+                'FHEE__EE_Checkbox_Dropdown_Selector_Display_Strategy__display__html',
+                esc_html__(
+                    'To view additional ticket options, click the "Filter by Date" button and select more dates.',
+                    'event_espresso'
+                )
+            ),
+            $input->html_id() . '-date-time-filter-notice-pg',
+            'date-time-filter-notice-pg small-text lt-grey-text'
+        );
         $html .= \EEH_HTML::br();
         return $html;
     }
-
-
-
 }

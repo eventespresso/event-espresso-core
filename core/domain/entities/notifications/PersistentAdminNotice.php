@@ -6,15 +6,12 @@ use DomainException;
 use EventEspresso\core\domain\services\capabilities\CapCheck;
 use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
 use EventEspresso\core\domain\services\capabilities\RequiresCapCheckInterface;
-use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\Collection;
+use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
+use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 use Exception;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class PersistentAdminNotice
@@ -79,7 +76,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     private $registered = false;
 
 
-
     /**
      * PersistentAdminNotice constructor
      *
@@ -113,7 +109,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     }
 
 
-
     /**
      * @return string
      */
@@ -121,7 +116,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     {
         return $this->name;
     }
-
 
 
     /**
@@ -137,7 +131,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     }
 
 
-
     /**
      * @return string
      */
@@ -145,7 +138,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     {
         return $this->message;
     }
-
 
 
     /**
@@ -159,9 +151,8 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
         }
         global $allowedtags;
         $allowedtags['br'] = array();
-        $this->message     = wp_kses($message, $allowedtags);
+        $this->message = wp_kses($message, $allowedtags);
     }
-
 
 
     /**
@@ -173,7 +164,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     }
 
 
-
     /**
      * @param bool $force_update
      */
@@ -183,7 +173,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     }
 
 
-
     /**
      * @return string
      */
@@ -191,7 +180,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     {
         return $this->capability;
     }
-
 
 
     /**
@@ -207,7 +195,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     }
 
 
-
     /**
      * @return string
      */
@@ -215,7 +202,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     {
         return $this->cap_context;
     }
-
 
 
     /**
@@ -231,7 +217,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     }
 
 
-
     /**
      * @return bool
      */
@@ -241,7 +226,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     }
 
 
-
     /**
      * @param bool $dismissed
      */
@@ -249,7 +233,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     {
         $this->dismissed = filter_var($dismissed, FILTER_VALIDATE_BOOLEAN);
     }
-
 
 
     /**
@@ -270,7 +253,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     }
 
 
-
     /**
      * @param CapCheckInterface $cap_check
      */
@@ -278,7 +260,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     {
         $this->cap_check = $cap_check;
     }
-
 
 
     /**
@@ -290,7 +271,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     }
 
 
-
     /**
      * @param bool $purge
      */
@@ -298,7 +278,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     {
         $this->purge = filter_var($purge, FILTER_VALIDATE_BOOLEAN);
     }
-
 
 
     /**
@@ -310,6 +289,8 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
      *
      * @param Collection $persistent_admin_notice_collection
      * @throws InvalidEntityException
+     * @throws InvalidDataTypeException
+     * @throws DuplicateCollectionIdentifierException
      */
     public function registerPersistentAdminNotice(Collection $persistent_admin_notice_collection)
     {
@@ -336,12 +317,14 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     }
 
 
-
     /**
      * @throws Exception
      */
     public function confirmRegistered()
     {
+        if (! apply_filters('PersistentAdminNoticeManager__registerAndSaveNotices__complete', false)) {
+            PersistentAdminNoticeManager::loadRegisterAndSaveNotices();
+        }
         if (! $this->registered && WP_DEBUG) {
             throw new DomainException(
                 sprintf(
@@ -354,8 +337,4 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
             );
         }
     }
-
-
 }
-// End of file PersistentAdminNotice.php
-// Location: core/domain/entities/notifications/PersistentAdminNotice.php

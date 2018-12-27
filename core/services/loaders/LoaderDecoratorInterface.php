@@ -2,10 +2,6 @@
 
 namespace EventEspresso\core\services\loaders;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 interface LoaderDecoratorInterface
 {
 
@@ -23,7 +19,4 @@ interface LoaderDecoratorInterface
      * calls reset() on loader if method exists
      */
     public function reset();
-
 }
-// End of file LoaderInterface.php
-// Location: core/services/loaders/LoaderInterface.php

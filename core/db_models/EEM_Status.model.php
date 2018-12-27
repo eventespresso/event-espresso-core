@@ -1,18 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-/**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package            Event Espresso
- * @ author                Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                    http://www.eventespresso.com
- * @ version            4.0
- * ------------------------------------------------------------------------
- */
-require_once(EE_MODELS . 'EEM_Base.model.php');
+<?php
 
 /**
  * Class EEM_Status
@@ -49,13 +35,14 @@ class EEM_Status extends EEM_Base
                     false,
                     'event',
                     array(
-                        'event'        => __("Event", "event_espresso"),//deprecated
+                        'event'        => __("Event", "event_espresso"),// deprecated
                         'registration' => __("Registration", "event_espresso"),
                         'transaction'  => __("Transaction", "event_espresso"),
                         'payment'      => __("Payment", "event_espresso"),
                         'email'        => __("Email", "event_espresso"),
                         'message'      => __("Message", "event_espresso"),
-                    )),
+                    )
+                ),
                 'STS_can_edit' => new EE_Boolean_Field('STS_can_edit', __('Editable?', 'event_espresso'), false, false),
                 'STS_desc'     => new EE_Simple_HTML_Field('STS_desc', __("Description", "event_espresso"), false, ''),
                 'STS_open'     => new EE_Boolean_Field('STS_open', __("Open?", "event_espresso"), false, false),
@@ -66,8 +53,8 @@ class EEM_Status extends EEM_Base
             'Transaction'  => new EE_Has_Many_Relation(),
             'Payment'      => new EE_Has_Many_Relation(),
         );
-        //this model is generally available for reading
-        $this->_cap_restriction_generators[EEM_Base::caps_read] = new EE_Restriction_Generator_Public();
+        // this model is generally available for reading
+        $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
 
         parent::__construct($timezone);
     }
@@ -88,15 +75,15 @@ class EEM_Status extends EEM_Base
      */
     public function localized_status($statuses, $plural = false, $schema = 'upper')
     {
-        //note these are all in lower case because ucwords() on upper case will NOT convert.
+        // note these are all in lower case because ucwords() on upper case will NOT convert.
         $translation_array = array(
             EEM_Registration::status_id_pending_payment => array(
-                __('pending payment', 'event_espresso'), //singular
-                __('pending payments', 'event_espresso') //plural
+                __('pending payment', 'event_espresso'), // singular
+                __('pending payments', 'event_espresso') // plural
             ),
             EEM_Registration::status_id_approved        => array(
-                __('approved', 'event_espresso'), //singular
-                __('approved', 'event_espresso') //plural
+                __('approved', 'event_espresso'), // singular
+                __('approved', 'event_espresso') // plural
             ),
             EEM_Registration::status_id_not_approved    => array(
                 __('not approved', 'event_espresso'),
@@ -158,7 +145,7 @@ class EEM_Status extends EEM_Base
                 __('failed', 'event_espresso'),
                 __('failed', 'event_espresso'),
             ),
-            //following statuses are NOT part of the EEM_Status but to keep things centralized we include in here.
+            // following statuses are NOT part of the EEM_Status but to keep things centralized we include in here.
             EEM_Event::sold_out                         => array(
                 __('sold out', 'event_espresso'),
                 __('sold out', 'event_espresso'),
@@ -219,7 +206,7 @@ class EEM_Status extends EEM_Base
                 __('postponed', 'event_espresso'),
                 __('postponed', 'event_espresso'),
             ),
-            //messages related
+            // messages related
             EEM_Message::status_sent                    => array(
                 __('sent', 'event_espresso'),
                 __('sent', 'event_espresso'),
@@ -280,38 +267,36 @@ class EEM_Status extends EEM_Base
 
         $translation_array = apply_filters('FHEE__EEM_Status__localized_status__translation_array', $translation_array);
 
-        if ( ! is_array($statuses)) {
-            throw new EE_Error(__('The incoming statuses argument must be an array with keys as the $status_id and values as the $status_code',
-                'event_espresso'));
+        if (! is_array($statuses)) {
+            throw new EE_Error(__(
+                'The incoming statuses argument must be an array with keys as the $status_id and values as the $status_code',
+                'event_espresso'
+            ));
         }
 
         $translation = array();
 
         foreach ($statuses as $id => $code) {
-            if (isset($translation_array[$id])) {
-                $translation[$id] = $plural ? $translation_array[$id][1] : $translation_array[$id][0];
+            if (isset($translation_array[ $id ])) {
+                $translation[ $id ] = $plural ? $translation_array[ $id ][1] : $translation_array[ $id ][0];
             } else {
-                $translation[$id] = $code;
+                $translation[ $id ] = $code;
             }
 
-            //schema
+            // schema
             switch ($schema) {
-                case 'lower' :
-                    $translation[$id] = strtolower($translation[$id]); //even though these start in lower case, this will catch any statuses added via filter.
+                case 'lower':
+                    $translation[ $id ] = strtolower($translation[ $id ]); // even though these start in lower case, this will catch any statuses added via filter.
                     break;
-                case 'sentence' :
-                    $translation[$id] = ucwords($translation[$id]);
+                case 'sentence':
+                    $translation[ $id ] = ucwords($translation[ $id ]);
                     break;
-                case 'upper' :
-                    $translation[$id] = strtoupper($translation[$id]);
+                case 'upper':
+                    $translation[ $id ] = strtoupper($translation[ $id ]);
                     break;
             }
         }
 
         return $translation;
     }
-
-
 }
-// End of file EEM_Status.model.php
-// Location: /includes/models/EEM_Status.model.php

@@ -52,13 +52,13 @@ class PhpCompatLessFiveSixHelper extends AbstractHelper
         if (is_string($gmt_offset_or_timezone_string)) {
             return $gmt_offset_or_timezone_string;
         }
-        //well we know its a float, so let's roll with it.
+        // well we know its a float, so let's roll with it.
         $gmt_offset = $gmt_offset_or_timezone_string;
         // convert GMT offset to seconds
         $gmt_offset *= HOUR_IN_SECONDS;
         // although we don't know the TZ abbreviation, we know the UTC offset
         $timezone_string = timezone_name_from_abbr(null, $gmt_offset);
-        //only use this timezone_string IF it's current offset matches the given offset
+        // only use this timezone_string IF it's current offset matches the given offset
         if (! empty($timezone_string)) {
             $offset = null;
             try {
@@ -71,7 +71,7 @@ class PhpCompatLessFiveSixHelper extends AbstractHelper
             }
         }
         // better have a valid timezone string by now, but if not, sigh... loop thru  the timezone_abbreviations_list()
-        //...
+        // ...
         $timezone_string = $timezone_string !== false
             ? $timezone_string
             : $this->getTimezoneStringFromAbbreviationsList($gmt_offset);
@@ -88,12 +88,12 @@ class PhpCompatLessFiveSixHelper extends AbstractHelper
      */
     protected function getTimezoneStringFromAbbreviationsList($gmt_offset = 0, $coerce = true)
     {
-        $gmt_offset = (int)$gmt_offset;
+        $gmt_offset = (int) $gmt_offset;
         /** @var array[] $abbreviations */
         $abbreviations = DateTimeZone::listAbbreviations();
         foreach ($abbreviations as $abbreviation) {
             foreach ($abbreviation as $timezone) {
-                if ((int)$timezone['offset'] === $gmt_offset && (bool)$timezone['dst'] === false) {
+                if ((int) $timezone['offset'] === $gmt_offset && (bool) $timezone['dst'] === false) {
                     try {
                         $offset = $this->getTimezoneOffset(new DateTimeZone($timezone['timezone_id']));
                         if ($offset !== $gmt_offset) {
@@ -106,7 +106,7 @@ class PhpCompatLessFiveSixHelper extends AbstractHelper
                 }
             }
         }
-        //if $coerce is true, let's see if we can get a timezone string after the offset is adjusted
+        // if $coerce is true, let's see if we can get a timezone string after the offset is adjusted
         if ($coerce === true) {
             $timezone_string = $this->getTimezoneStringFromAbbreviationsList(
                 $this->adjustInvalidGmtOffsets($gmt_offset),
@@ -141,94 +141,94 @@ class PhpCompatLessFiveSixHelper extends AbstractHelper
      */
     public function adjustInvalidGmtOffsets($gmt_offset = 0)
     {
-        //make sure $gmt_offset is int
+        // make sure $gmt_offset is int
         $gmt_offset = (int) $gmt_offset;
         switch ($gmt_offset) {
-            //-12
+            // -12
             case -43200:
                 $gmt_offset = -39600;
                 break;
-            //-11.5
+            // -11.5
             case -41400:
                 $gmt_offset = -39600;
                 break;
-            //-10.5
+            // -10.5
             case -37800:
                 $gmt_offset = -39600;
                 break;
-            //-8.5
+            // -8.5
             case -30600:
                 $gmt_offset = -28800;
                 break;
-            //-7.5
+            // -7.5
             case -27000:
                 $gmt_offset = -25200;
                 break;
-            //-6.5
+            // -6.5
             case -23400:
                 $gmt_offset = -21600;
                 break;
-            //-5.5
+            // -5.5
             case -19800:
                 $gmt_offset = -18000;
                 break;
-            //-4.5
+            // -4.5
             case -16200:
                 $gmt_offset = -14400;
                 break;
-            //-3.5
+            // -3.5
             case -12600:
                 $gmt_offset = -10800;
                 break;
-            //-2.5
+            // -2.5
             case -9000:
                 $gmt_offset = -7200;
                 break;
-            //-1.5
+            // -1.5
             case -5400:
                 $gmt_offset = -3600;
                 break;
-            //-0.5
+            // -0.5
             case -1800:
                 $gmt_offset = 0;
                 break;
-            //.5
+            // .5
             case 1800:
                 $gmt_offset = 3600;
                 break;
-            //1.5
+            // 1.5
             case 5400:
                 $gmt_offset = 7200;
                 break;
-            //2.5
+            // 2.5
             case 9000:
                 $gmt_offset = 10800;
                 break;
-            //3.5
+            // 3.5
             case 12600:
                 $gmt_offset = 14400;
                 break;
-            //7.5
+            // 7.5
             case 27000:
                 $gmt_offset = 28800;
                 break;
-            //8.5
+            // 8.5
             case 30600:
                 $gmt_offset = 31500;
                 break;
-            //10.5
+            // 10.5
             case 37800:
                 $gmt_offset = 39600;
                 break;
-            //11.5
+            // 11.5
             case 41400:
                 $gmt_offset = 43200;
                 break;
-            //12.75
+            // 12.75
             case 45900:
                 $gmt_offset = 46800;
                 break;
-            //13.75
+            // 13.75
             case 49500:
                 $gmt_offset = 50400;
                 break;

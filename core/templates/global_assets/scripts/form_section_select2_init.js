@@ -7,7 +7,7 @@
  * @param {Object} passed_in_args.form_data.other_data
  * @param {Object} passed_in_args.form_data.other_data.select2s
  */
-jQuery(document).bind( 'EEFV:initialize_specific_form', function(event, passed_in_args){
+jQuery(document).on( 'EEFV:initialize_specific_form', function(event, passed_in_args){
 	if ( typeof passed_in_args.form_data !== 'undefined'
 		&& typeof passed_in_args.form_data.other_data !== 'undefined'
 		&& typeof passed_in_args.form_data.other_data.select2s !== 'undefined'

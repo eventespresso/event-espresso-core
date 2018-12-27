@@ -17,6 +17,25 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * @group core/db_models
  */
 class EEM_Answer_Test extends EE_UnitTestCase{
+
+    /**
+     * @var EEM_Answer
+     */
+    protected $model;
+
+    /**
+     * @since 4.9.74.p
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->model = EEM_Answer::instance();
+    }
+
 	function test_get_registration_question_answer_object(){
 		$r = $this->new_model_obj_with_dependencies('Registration');
 		$a = $this->new_model_obj_with_dependencies('Answer',array('REG_ID'=>$r->ID()));
@@ -80,6 +99,15 @@ class EEM_Answer_Test extends EE_UnitTestCase{
 		$a->refresh_from_db();
 		$this->assertEquals( '', $a->get_raw( 'ANS_value' ) );
 	}
+
+    /**
+     * @since 4.9.74.p
+     * @group private-1
+     */
+    public function testRestrictedbyRelatedModelPassword()
+    {
+        $this->assertFalse($this->model->restrictedByRelatedModelPassword());
+    }
 }
 
 // End of file EEM_Answer_Test.php

@@ -1,9 +1,5 @@
 <?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
-
 /**
  * Class EE_SPCO_Line_Item_Display_Strategy
  * recursively displays line item information for display in SPCO
@@ -88,10 +84,10 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html = '';
         // set some default options and merge with incoming
         $default_options = array(
-            'show_desc' => true,  // 	true 		false
+            'show_desc' => true,  //    true        false
             'odd'       => false,
         );
-        $options = array_merge($default_options, (array)$options);
+        $options = array_merge($default_options, (array) $options);
         switch ($line_item->type()) {
             case EEM_Line_Item::type_line_item:
                 $this->_show_taxes = $line_item->is_taxable() ? true : $this->_show_taxes;
@@ -102,8 +98,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     // item row
                     $html .= $this->_item_row($line_item, $options);
                 }
-                if (
-                apply_filters(
+                if (apply_filters(
                     'FHEE__EE_SPCO_Line_Item_Display_Strategy__display_line_item__display_sub_line_items',
                     true
                 )
@@ -123,11 +118,10 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                 $text = esc_html__('Sub-Total', 'event_espresso');
                 if ($line_item->OBJ_type() === 'Event') {
                     $options['event_id'] = $event_id = $line_item->OBJ_ID();
-                    if (! isset($this->_events[$options['event_id']])) {
+                    if (! isset($this->_events[ $options['event_id'] ])) {
                         $event = EEM_Event::instance()->get_one_by_ID($options['event_id']);
                         // if event has default reg status of Not Approved, then don't display info on it
-                        if (
-                            $event instanceof EE_Event
+                        if ($event instanceof EE_Event
                             && $event->default_registration_status() === EEM_Registration::status_id_not_approved
                         ) {
                             $display_event = false;
@@ -147,7 +141,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                                 return '';
                             }
                         }
-                        $this->_events[$options['event_id']] = 0;
+                        $this->_events[ $options['event_id'] ] = 0;
                         $html .= $this->_event_row($line_item);
                         $text = esc_html__('Event Sub-Total', 'event_espresso');
                     }
@@ -158,10 +152,9 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     // recursively feed children back into this method
                     $html .= $this->display_line_item($child_line_item, $options, $line_item);
                 }
-                $event_sub_total += isset($options['event_id']) ? $this->_events[$options['event_id']] : 0;
+                $event_sub_total += isset($options['event_id']) ? $this->_events[ $options['event_id'] ] : 0;
                 $sub_total += $event_sub_total;
-                if (
-                    (
+                if ((
                         // event subtotals
                         $line_item->code() !== 'pre-tax-subtotal' && count($child_line_items) > 1
                     )
@@ -276,7 +269,10 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $name_and_desc .= $line_item->is_taxable() ? ' * ' : '';
         // name td
         $html .= EEH_HTML::td( /*__FUNCTION__ .*/
-            $name_and_desc, '', 'item_l');
+            $name_and_desc,
+            '',
+            'item_l'
+        );
         // price td
         $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'item_c jst-rght');
         // quantity td
@@ -284,7 +280,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $this->_total_items += $line_item->quantity();
         // determine total for line item
         $total = $line_item->total();
-        $this->_events[$options['event_id']] += $total;
+        $this->_events[ $options['event_id'] ] += $total;
         // total td
         $html .= EEH_HTML::td(
             EEH_Template::format_currency($total, false, false),
@@ -339,10 +335,10 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         }
         // quantity td
         $html .= EEH_HTML::td($line_item->quantity(), '', 'item_l jst-rght');
-        //$total = $line_item->total() * $line_item->quantity();
+        // $total = $line_item->total() * $line_item->quantity();
         $total = $line_item->total();
-        if (isset($options['event_id'], $this->_events[$options['event_id']])) {
-            $this->_events[$options['event_id']] += $total;
+        if (isset($options['event_id'], $this->_events[ $options['event_id'] ])) {
+            $this->_events[ $options['event_id'] ] += $total;
         }
         // total td
         $html .= EEH_HTML::td(
@@ -368,10 +364,13 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      */
     private function _sub_item_row(EE_Line_Item $line_item, $options = array(), EE_Line_Item $parent_line_item = null)
     {
-        if(
-            $parent_line_item instanceof  EE_Line_Item
+        if ($parent_line_item instanceof  EE_Line_Item
             && $line_item->children() === array()
             && $line_item->name() === $parent_line_item->name()
+            && apply_filters(
+                'FHEE__EE_SPCO_Line_Item_Display_Strategy___sub_item_row__hide_main_sub_line_item',
+                true
+            )
         ) {
             return '';
         }
@@ -384,16 +383,18 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                                                   . $line_item->desc()
                                                   . '</span>' : '';
         // name td
-        $html .= EEH_HTML::td( $name_and_desc, '', 'item_l sub-item');
+        $html .= EEH_HTML::td($name_and_desc, '', 'item_l sub-item');
         $qty = $parent_line_item instanceof EE_Line_Item ? $parent_line_item->quantity() : 1;
         // discount/surcharge td
         if ($line_item->is_percent()) {
             $html .= EEH_HTML::td(
                 EEH_Template::format_currency(
                     $line_item->total() / $qty,
-                    false, false
+                    false,
+                    false
                 ),
-                '', 'item_c jst-rght'
+                '',
+                'item_c jst-rght'
             );
         } else {
             $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'item_c jst-rght');
@@ -404,6 +405,13 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::td();
         // end of row
         $html .= EEH_HTML::trx();
+        $html = apply_filters(
+            'FHEE__EE_SPCO_Line_Item_Display_Strategy___sub_item_row__html',
+            $html,
+            $line_item,
+            $options,
+            $parent_line_item
+        );
         return $html;
     }
 
@@ -428,14 +436,21 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $name_and_desc .= $options['show_desc'] ? '<br/>' . $line_item->desc() : '';
         // name td
         $html .= EEH_HTML::td( /*__FUNCTION__ .*/
-            $name_and_desc, '', 'item_l sub-item');
+            $name_and_desc,
+            '',
+            'item_l sub-item'
+        );
         // percent td
         $html .= EEH_HTML::td($line_item->percent() . '%', '', ' jst-rght', '');
         // empty td (price)
         $html .= EEH_HTML::td(EEH_HTML::nbsp());
         // total td
-        $html .= EEH_HTML::td(EEH_Template::format_currency(
-            $line_item->total(), false, false),
+        $html .= EEH_HTML::td(
+            EEH_Template::format_currency(
+                $line_item->total(),
+                false,
+                false
+            ),
             '',
             'item_r jst-rght'
         );
@@ -610,7 +625,10 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     // total td
                     $html .= EEH_HTML::td(
                         esc_html__('Amount Owing', 'event_espresso'),
-                        '', 'total_currency total jst-rght', '', ' colspan="3"'
+                        '',
+                        'total_currency total jst-rght',
+                        '',
+                        ' colspan="3"'
                     );
                     // total td
                     $html .= EEH_HTML::td(
@@ -626,6 +644,4 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $this->_grand_total = $owing;
         return $html;
     }
-
-
 }

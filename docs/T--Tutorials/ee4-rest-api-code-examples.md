@@ -16,7 +16,7 @@ The first example is server-side PHP code that can be run from anywhere. The onl
 $curdate_utc = date("Y-m-d H:i:s");
 
 //Retrieve the upcoming events and their related datetimes
-$data_url = "http://demoee.org/use-cases/wp-json/ee/v4.8.29/events?include=Datetime&where[Datetime.DTT_EVT_end][]=>&where[Datetime.DTT_EVT_end][]=" . urlencode($curdate_utc);
+$data_url = "https://demoee.org/use-cases/wp-json/ee/v4.8.36/events?calculate=image_medium_large&include=Datetime&where[Datetime.DTT_EVT_end][]=>&where[Datetime.DTT_EVT_end][]=" . urlencode($curdate_utc);
 
 $json = file_get_contents($data_url, true); //getting the file content
 $events = json_decode($json, true); //getting the file content as array
@@ -36,23 +36,25 @@ $count = count( $events ); //counting the number of results
 if ($count > 0){
  foreach ($events as $event){
  echo '<div class="event">';
- echo $event['featured_image_url'] ? '<a href="' . esc_attr( $event['link'] ). '"><img src="' . esc_attr( $event['featured_image_url'] ) . '" /></a>' : '';
+ $featured_image_url = $event['_calculated_fields']['image_medium_large']['url'];
+ echo $featured_image_url ? '<a href="' . $event['link'] . '"><img src="' . $featured_image_url . '" /></a>' : '';
  echo '<a href="' . $event[ 'link' ] . '">' . $event[ 'EVT_name' ] . '</a><ul>';
+ $i = 0;
  foreach( $event[ 'datetimes' ] as $datetime ) {
- echo '<li>' . date( 'l jS of F Y @h:i A',strtotime( $event[ 'datetimes' ][ 0 ][ 'DTT_EVT_start' ] ) ).'</a>';
+ echo '<li>' . date( 'l, jS \o\f F Y \a\t h:i a',strtotime( $event[ 'datetimes' ][ $i ][ 'DTT_EVT_start' ] ) ).'</li>';
+ $i++;
  }
  echo '</ul></div>';
  }
 }
 ?>
 </div>
-<div id="footer"><p>Showing <strong><?php echo $count ?></strong> events, that start after <strong><?php echo date('l jS of F Y h:i:s A', strtotime($curdate_utc)) ?> UTC</strong>, using this url:<br />
+<div id="footer"><p>Showing <strong><?php echo $count ?></strong> events, that start after <strong><?php echo date('l jS \o\f F Y h:i:s A', strtotime($curdate_utc)) ?> UTC</strong>, using this url:<br />
 <a href="<?php echo $data_url ?>" target="_blank"><?php echo $data_url ?></a></p>
 </body>
 </html>
 ```
 
-See this script [in action here](http://dev2.eventespresso.com/wp-content/plugins/eea-rest-api-client/standalone-scripts/ee-list-events.php).
 
 
 ## Display Events in a Calendar using Javascript
@@ -88,7 +90,7 @@ This next example can be run from any site as it only uses javascript.
 						"include": 'Datetime.*'
 					};
 				$.ajax({
-					url: 'http://demoee.org/use-cases/wp-json/ee/v4.8.29/events',
+					url: 'https://demoee.org/use-cases/wp-json/ee/v4.8.29/events',
 					dataType: 'json',
 //					crossDomain:true,
 //					mimeType:'json',
@@ -162,7 +164,6 @@ This next example can be run from any site as it only uses javascript.
 </html>
 ```
 
-To see this plugin in action, [click here](http://dev2.eventespresso.com/wp-content/plugins/eea-rest-api-client/standalone-scripts/ee-events-calendar.php).
 
 As you can see, this example using the [FullCalendar library](http://fullcalendar.io/) for displaying the calendar, which itself requires [jQuery](https://jquery.com/) and [moment.js](http://momentjs.com/). It simply initializes the calendar, and fetches event data from the EE4 JSON REST API in order to populate the calendar. Note this is just a sample usage of the EE4 JSON REST API, it is by no means a replacement for the [EE4 Calendar Addon](https://eventespresso.com/product/ee4-events-calendar/).
 

@@ -1,13 +1,8 @@
 <?php
+
 namespace EventEspresso\core\services\collections;
 
 use EventEspresso\core\exceptions\InvalidEntityException;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class LooseCollection
@@ -21,18 +16,16 @@ class LooseCollection extends Collection
 {
 
 
-
     /**
      * setCollectionInterface
      *
      * @access protected
      * @param  string $collection_interface
      */
-    protected function setCollectionInterface($collection_interface )
+    protected function setCollectionInterface($collection_interface)
     {
         $this->collection_interface = '';
     }
-
 
 
     /**
@@ -56,9 +49,4 @@ class LooseCollection extends Collection
         $this->setIdentifier($object, $identifier);
         return $this->contains($object);
     }
-
-
-
 }
-// End of file LooseCollection.php
-// Location: /LooseCollection.php

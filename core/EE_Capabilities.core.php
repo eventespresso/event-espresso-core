@@ -1,9 +1,5 @@
 <?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
-
 /**
  * This class contains all the code related to Event Espresso capabilities.
  * Assigned to the EE_Registry::instance()->CAP property.
@@ -74,7 +70,6 @@ final class EE_Capabilities extends EE_Base
     private $reset = false;
 
 
-
     /**
      * singleton method used to instantiate class object
      *
@@ -84,13 +79,12 @@ final class EE_Capabilities extends EE_Base
      */
     public static function instance()
     {
-        //check if instantiated, and if not do so.
+        // check if instantiated, and if not do so.
         if (! self::$_instance instanceof EE_Capabilities) {
             self::$_instance = new self();
         }
         return self::$_instance;
     }
-
 
 
     /**
@@ -101,7 +95,6 @@ final class EE_Capabilities extends EE_Base
     private function __construct()
     {
     }
-
 
 
     /**
@@ -117,7 +110,7 @@ final class EE_Capabilities extends EE_Base
      */
     public function init_caps($reset = false)
     {
-        if(! EE_Maintenance_Mode::instance()->models_can_query()){
+        if (! EE_Maintenance_Mode::instance()->models_can_query()) {
             return false;
         }
         $this->reset = filter_var($reset, FILTER_VALIDATE_BOOLEAN);
@@ -147,8 +140,6 @@ final class EE_Capabilities extends EE_Base
     }
 
 
-
-
     /**
      * This sets the meta caps property.
      *
@@ -163,12 +154,11 @@ final class EE_Capabilities extends EE_Base
             'FHEE__EE_Capabilities___set_meta_caps__meta_caps',
             $this->_get_default_meta_caps_array()
         );
-        //add filter for map_meta_caps but only if models can query.
+        // add filter for map_meta_caps but only if models can query.
         if (! has_filter('map_meta_cap', array($this, 'map_meta_caps'))) {
             add_filter('map_meta_cap', array($this, 'map_meta_caps'), 10, 4);
         }
     }
-
 
 
     /**
@@ -184,7 +174,7 @@ final class EE_Capabilities extends EE_Base
         // make sure we're only ever initializing the default _meta_caps array once if it's empty.
         if (empty($default_meta_caps)) {
             $default_meta_caps = array(
-                //edits
+                // edits
                 new EE_Meta_Capability_Map_Edit(
                     'ee_edit_event',
                     array('Event', 'ee_edit_published_events', 'ee_edit_others_events', 'ee_edit_private_events')
@@ -221,7 +211,7 @@ final class EE_Capabilities extends EE_Base
                     'ee_edit_payment_method',
                     array('Payment_Method', '', 'ee_edit_others_payment_methods', '')
                 ),
-                //reads
+                // reads
                 new EE_Meta_Capability_Map_Read(
                     'ee_read_event',
                     array('Event', '', 'ee_read_others_events', 'ee_read_private_events')
@@ -250,7 +240,7 @@ final class EE_Capabilities extends EE_Base
                     'ee_read_payment_method',
                     array('Payment_Method', '', 'ee_read_others_payment_methods', '')
                 ),
-                //deletes
+                // deletes
                 new EE_Meta_Capability_Map_Delete(
                     'ee_delete_event',
                     array(
@@ -303,7 +293,6 @@ final class EE_Capabilities extends EE_Base
     }
 
 
-
     /**
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
@@ -323,7 +312,7 @@ final class EE_Capabilities extends EE_Base
     public function map_meta_caps($caps, $cap, $user_id, $args)
     {
         if (did_action('AHEE__EE_System__load_espresso_addons__complete')) {
-            //loop through our _meta_caps array
+            // loop through our _meta_caps array
             foreach ($this->_meta_caps as $meta_map) {
                 if (! $meta_map instanceof EE_Meta_Capability_Map) {
                     continue;
@@ -337,7 +326,6 @@ final class EE_Capabilities extends EE_Base
         }
         return $caps;
     }
-
 
 
     /**
@@ -355,9 +343,9 @@ final class EE_Capabilities extends EE_Base
             'FHEE__EE_Capabilities__init_caps_map__caps',
             array(
                 'administrator'           => array(
-                    //basic access
+                    // basic access
                     'ee_read_ee',
-                    //gateways
+                    // gateways
                     /**
                      * note that with payment method capabilities, although we've implemented
                      * capability mapping which will be used for accessing payment methods owned by
@@ -371,7 +359,7 @@ final class EE_Capabilities extends EE_Base
                     'ee_edit_payment_methods',
                     'ee_edit_others_payment_methods',
                     'ee_delete_payment_methods',
-                    //events
+                    // events
                     'ee_publish_events',
                     'ee_read_private_events',
                     'ee_read_others_events',
@@ -384,12 +372,12 @@ final class EE_Capabilities extends EE_Base
                     'ee_delete_private_events',
                     'ee_delete_events',
                     'ee_delete_others_events',
-                    //event categories
+                    // event categories
                     'ee_manage_event_categories',
                     'ee_edit_event_category',
                     'ee_delete_event_category',
                     'ee_assign_event_category',
-                    //venues
+                    // venues
                     'ee_publish_venues',
                     'ee_read_venues',
                     'ee_read_others_venues',
@@ -402,34 +390,34 @@ final class EE_Capabilities extends EE_Base
                     'ee_delete_others_venues',
                     'ee_delete_private_venues',
                     'ee_delete_published_venues',
-                    //venue categories
+                    // venue categories
                     'ee_manage_venue_categories',
                     'ee_edit_venue_category',
                     'ee_delete_venue_category',
                     'ee_assign_venue_category',
-                    //contacts
+                    // contacts
                     'ee_read_contacts',
                     'ee_edit_contacts',
                     'ee_delete_contacts',
-                    //registrations
+                    // registrations
                     'ee_read_registrations',
                     'ee_read_others_registrations',
                     'ee_edit_registrations',
                     'ee_edit_others_registrations',
                     'ee_delete_registrations',
-                    //checkins
+                    // checkins
                     'ee_read_others_checkins',
                     'ee_read_checkins',
                     'ee_edit_checkins',
                     'ee_edit_others_checkins',
                     'ee_delete_checkins',
                     'ee_delete_others_checkins',
-                    //transactions && payments
+                    // transactions && payments
                     'ee_read_transaction',
                     'ee_read_transactions',
                     'ee_edit_payments',
                     'ee_delete_payments',
-                    //messages
+                    // messages
                     'ee_read_messages',
                     'ee_read_others_messages',
                     'ee_read_global_messages',
@@ -440,14 +428,14 @@ final class EE_Capabilities extends EE_Base
                     'ee_delete_others_messages',
                     'ee_delete_global_messages',
                     'ee_send_message',
-                    //tickets
+                    // tickets
                     'ee_read_default_tickets',
                     'ee_read_others_default_tickets',
                     'ee_edit_default_tickets',
                     'ee_edit_others_default_tickets',
                     'ee_delete_default_tickets',
                     'ee_delete_others_default_tickets',
-                    //prices
+                    // prices
                     'ee_edit_default_price',
                     'ee_edit_default_prices',
                     'ee_delete_default_price',
@@ -458,7 +446,7 @@ final class EE_Capabilities extends EE_Base
                     'ee_delete_default_price_types',
                     'ee_read_default_prices',
                     'ee_read_default_price_types',
-                    //registration form
+                    // registration form
                     'ee_edit_questions',
                     'ee_edit_system_questions',
                     'ee_read_questions',
@@ -467,14 +455,14 @@ final class EE_Capabilities extends EE_Base
                     'ee_read_question_groups',
                     'ee_edit_system_question_groups',
                     'ee_delete_question_groups',
-                    //event_type taxonomy
+                    // event_type taxonomy
                     'ee_assign_event_type',
                     'ee_manage_event_types',
                     'ee_edit_event_type',
                     'ee_delete_event_type',
                 ),
                 'ee_events_administrator' => array(
-                    //core wp caps
+                    // core wp caps
                     'read',
                     'read_private_pages',
                     'read_private_posts',
@@ -505,10 +493,10 @@ final class EE_Capabilities extends EE_Base
                     'export',
                     'import',
                     'list_users',
-                    'level_1', //required if user with this role shows up in author dropdowns
-                    //basic ee access
+                    'level_1', // required if user with this role shows up in author dropdowns
+                    // basic ee access
                     'ee_read_ee',
-                    //events
+                    // events
                     'ee_publish_events',
                     'ee_read_private_events',
                     'ee_read_others_events',
@@ -524,12 +512,12 @@ final class EE_Capabilities extends EE_Base
                     'ee_delete_event',
                     'ee_delete_events',
                     'ee_delete_others_events',
-                    //event categories
+                    // event categories
                     'ee_manage_event_categories',
                     'ee_edit_event_category',
                     'ee_delete_event_category',
                     'ee_assign_event_category',
-                    //venues
+                    // venues
                     'ee_publish_venues',
                     'ee_read_venue',
                     'ee_read_venues',
@@ -545,16 +533,16 @@ final class EE_Capabilities extends EE_Base
                     'ee_delete_others_venues',
                     'ee_delete_private_venues',
                     'ee_delete_published_venues',
-                    //venue categories
+                    // venue categories
                     'ee_manage_venue_categories',
                     'ee_edit_venue_category',
                     'ee_delete_venue_category',
                     'ee_assign_venue_category',
-                    //contacts
+                    // contacts
                     'ee_read_contacts',
                     'ee_edit_contacts',
                     'ee_delete_contacts',
-                    //registrations
+                    // registrations
                     'ee_read_registrations',
                     'ee_read_others_registrations',
                     'ee_edit_registration',
@@ -562,19 +550,19 @@ final class EE_Capabilities extends EE_Base
                     'ee_edit_others_registrations',
                     'ee_delete_registration',
                     'ee_delete_registrations',
-                    //checkins
+                    // checkins
                     'ee_read_others_checkins',
                     'ee_read_checkins',
                     'ee_edit_checkins',
                     'ee_edit_others_checkins',
                     'ee_delete_checkins',
                     'ee_delete_others_checkins',
-                    //transactions && payments
+                    // transactions && payments
                     'ee_read_transaction',
                     'ee_read_transactions',
                     'ee_edit_payments',
                     'ee_delete_payments',
-                    //messages
+                    // messages
                     'ee_read_messages',
                     'ee_read_others_messages',
                     'ee_read_global_messages',
@@ -585,14 +573,14 @@ final class EE_Capabilities extends EE_Base
                     'ee_delete_others_messages',
                     'ee_delete_global_messages',
                     'ee_send_message',
-                    //tickets
+                    // tickets
                     'ee_read_default_tickets',
                     'ee_read_others_default_tickets',
                     'ee_edit_default_tickets',
                     'ee_edit_others_default_tickets',
                     'ee_delete_default_tickets',
                     'ee_delete_others_default_tickets',
-                    //prices
+                    // prices
                     'ee_edit_default_price',
                     'ee_edit_default_prices',
                     'ee_delete_default_price',
@@ -603,7 +591,7 @@ final class EE_Capabilities extends EE_Base
                     'ee_delete_default_price_types',
                     'ee_read_default_prices',
                     'ee_read_default_price_types',
-                    //registration form
+                    // registration form
                     'ee_edit_questions',
                     'ee_edit_system_questions',
                     'ee_read_questions',
@@ -612,16 +600,15 @@ final class EE_Capabilities extends EE_Base
                     'ee_read_question_groups',
                     'ee_edit_system_question_groups',
                     'ee_delete_question_groups',
-                    //event_type taxonomy
+                    // event_type taxonomy
                     'ee_assign_event_type',
                     'ee_manage_event_types',
                     'ee_edit_event_type',
                     'ee_delete_event_type',
-                )
+                ),
             )
         );
     }
-
 
 
     /**
@@ -631,7 +618,7 @@ final class EE_Capabilities extends EE_Base
     private function setupCapabilitiesMap()
     {
         // if the initialization process hasn't even started, then we need to call init_caps()
-        if($this->initialized === null) {
+        if ($this->initialized === null) {
             return $this->init_caps();
         }
         // unless resetting, get caps from db if we haven't already
@@ -642,7 +629,6 @@ final class EE_Capabilities extends EE_Base
     }
 
 
-
     /**
      * @param bool $update
      * @return bool
@@ -651,7 +637,6 @@ final class EE_Capabilities extends EE_Base
     {
         return $update ? update_option(self::option_name, $this->capabilities_map) : false;
     }
-
 
 
     /**
@@ -682,8 +667,7 @@ final class EE_Capabilities extends EE_Base
         foreach ($capabilities_to_add as $role => $caps_for_role) {
             if (is_array($caps_for_role)) {
                 foreach ($caps_for_role as $cap) {
-                    if (
-                        ! $this->capHasBeenAddedToRole($role, $cap)
+                    if (! $this->capHasBeenAddedToRole($role, $cap)
                         && $this->add_cap_to_role($role, $cap, true, false)
                     ) {
                         $update_capabilities_map = true;
@@ -697,7 +681,6 @@ final class EE_Capabilities extends EE_Base
         do_action('AHEE__EE_Capabilities__addCaps__complete', $this->capabilities_map, $updated);
         return $updated;
     }
-
 
 
     /**
@@ -736,7 +719,7 @@ final class EE_Capabilities extends EE_Base
      * This ensures that the WP User object cached on the $current_user global in WP has the latest capabilities from
      * the roles on that user.
      *
-     * @param bool $flush  Default is to flush the WP_User object.  If false, then this method effectively does nothing.
+     * @param bool $flush Default is to flush the WP_User object.  If false, then this method effectively does nothing.
      */
     private function flushWpUser($flush = true)
     {
@@ -747,7 +730,6 @@ final class EE_Capabilities extends EE_Base
             }
         }
     }
-
 
 
     /**
@@ -769,7 +751,7 @@ final class EE_Capabilities extends EE_Base
         // capture incoming value for $role because we may need it to create a new WP_Role
         $orig_role = $role;
         $role = $role instanceof WP_Role ? $role : get_role($role);
-        //if the role isn't available then we create it.
+        // if the role isn't available then we create it.
         if (! $role instanceof WP_Role) {
             // if a plugin wants to create a specific role name then they should create the role before
             // EE_Capabilities does.  Otherwise this function will create the role name from the slug:
@@ -793,7 +775,6 @@ final class EE_Capabilities extends EE_Base
         }
         return false;
     }
-
 
 
     /**
@@ -826,24 +807,21 @@ final class EE_Capabilities extends EE_Base
     }
 
 
-
     /**
      * @param string $role_name
      * @param string $cap
      * @param bool   $get_index
      * @return bool|mixed
      */
-    private function capHasBeenAddedToRole($role_name='', $cap='', $get_index = false)
+    private function capHasBeenAddedToRole($role_name = '', $cap = '', $get_index = false)
     {
-        if (
-            isset($this->capabilities_map[$role_name])
-            && ($index = array_search($cap, $this->capabilities_map[$role_name], true)) !== false
+        if (isset($this->capabilities_map[ $role_name ])
+            && ($index = array_search($cap, $this->capabilities_map[ $role_name ], true)) !== false
         ) {
             return $get_index ? $index : true;
         }
         return false;
     }
-
 
 
     /**
@@ -864,7 +842,7 @@ final class EE_Capabilities extends EE_Base
      */
     public function current_user_can($cap, $context, $id = 0)
     {
-        //apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
+        // apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
         $filtered_cap = apply_filters('FHEE__EE_Capabilities__current_user_can__cap__' . $context, $cap, $id);
         $filtered_cap = apply_filters(
             'FHEE__EE_Capabilities__current_user_can__cap',
@@ -877,7 +855,6 @@ final class EE_Capabilities extends EE_Base
             ? current_user_can($filtered_cap, $id)
             : current_user_can($filtered_cap);
     }
-
 
 
     /**
@@ -893,7 +870,7 @@ final class EE_Capabilities extends EE_Base
      */
     public function user_can($user, $cap, $context, $id = 0)
     {
-        //apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
+        // apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
         $filtered_cap = apply_filters('FHEE__EE_Capabilities__user_can__cap__' . $context, $cap, $user, $id);
         $filtered_cap = apply_filters(
             'FHEE__EE_Capabilities__user_can__cap',
@@ -907,7 +884,6 @@ final class EE_Capabilities extends EE_Base
             ? user_can($user, $filtered_cap, $id)
             : user_can($user, $filtered_cap);
     }
-
 
 
     /**
@@ -932,7 +908,7 @@ final class EE_Capabilities extends EE_Base
         $user_can = ! empty($id)
             ? current_user_can_for_blog($blog_id, $cap, $id)
             : current_user_can($blog_id, $cap);
-        //apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
+        // apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
         $user_can = apply_filters(
             'FHEE__EE_Capabilities__current_user_can_for_blog__user_can__' . $context,
             $user_can,
@@ -950,7 +926,6 @@ final class EE_Capabilities extends EE_Base
         );
         return $user_can;
     }
-
 
 
     /**
@@ -974,7 +949,6 @@ final class EE_Capabilities extends EE_Base
             ? $this->capabilities_map[ $role ]
             : array();
     }
-
 
 
     /**
@@ -1013,11 +987,7 @@ final class EE_Capabilities extends EE_Base
         }
         $this->addCaps($caps_map);
     }
-
-
-
 }
-
 
 
 /**
@@ -1073,7 +1043,7 @@ abstract class EE_Meta_Capability_Map
     public function __construct($meta_cap, $map_values)
     {
         $this->meta_cap = $meta_cap;
-        //verify there are four args in the $map_values array;
+        // verify there are four args in the $map_values array;
         if (count($map_values) !== 4) {
             throw new EE_Error(
                 sprintf(
@@ -1085,12 +1055,12 @@ abstract class EE_Meta_Capability_Map
                 )
             );
         }
-        //set properties
+        // set properties
         $this->_model = null;
         $this->_model_name = $map_values[0];
-        $this->published_cap = (string)$map_values[1];
-        $this->others_cap = (string)$map_values[2];
-        $this->private_cap = (string)$map_values[3];
+        $this->published_cap = (string) $map_values[1];
+        $this->others_cap = (string) $map_values[2];
+        $this->private_cap = (string) $map_values[3];
     }
 
     /**
@@ -1112,13 +1082,13 @@ abstract class EE_Meta_Capability_Map
      */
     public function ensure_is_model()
     {
-        //is it already instantiated?
+        // is it already instantiated?
         if ($this->_model instanceof EEM_Base) {
             return;
         }
-        //ensure model name is string
-        $this->_model_name = (string)$this->_model_name;
-        //error proof if the name has EEM in it
+        // ensure model name is string
+        $this->_model_name = (string) $this->_model_name;
+        // error proof if the name has EEM in it
         $this->_model_name = str_replace('EEM', '', $this->_model_name);
         $this->_model = EE_Registry::instance()->load_model($this->_model_name);
         if (! $this->_model instanceof EEM_Base) {
@@ -1200,36 +1170,36 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map
      */
     protected function _map_meta_caps($caps, $cap, $user_id, $args)
     {
-        //only process if we're checking our mapped_cap
+        // only process if we're checking our mapped_cap
         if ($cap !== $this->meta_cap) {
             return $caps;
         }
 
-        //okay it is a meta cap so let's first remove that cap from the $caps array.
+        // okay it is a meta cap so let's first remove that cap from the $caps array.
         if (($key = array_search($cap, $caps)) !== false) {
-            unset($caps[$key]);
+            unset($caps[ $key ]);
         }
 
-        //cast $user_id to int for later explicit comparisons
+        // cast $user_id to int for later explicit comparisons
         $user_id = (int) $user_id;
 
         /** @var EE_Base_Class $obj */
         $obj = ! empty($args[0]) ? $this->_model->get_one_by_ID($args[0]) : null;
-        //if no obj then let's just do cap
+        // if no obj then let's just do cap
         if (! $obj instanceof EE_Base_Class) {
             $caps[] = 'do_not_allow';
             return $caps;
         }
         $caps[] = $cap . 's';
         if ($obj instanceof EE_CPT_Base) {
-            //if the item author is set and the user is the author...
+            // if the item author is set and the user is the author...
             if ($obj->wp_user() && $user_id === $obj->wp_user()) {
-                //if obj is published...
+                // if obj is published...
                 if ($obj->status() === 'publish') {
                     $caps[] = $this->published_cap;
                 }
             } else {
-                //the user is trying to edit someone else's obj
+                // the user is trying to edit someone else's obj
                 if (! empty($this->others_cap)) {
                     $caps[] = $this->others_cap;
                 }
@@ -1240,7 +1210,7 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map
                 }
             }
         } else {
-            //not a cpt object so handled differently
+            // not a cpt object so handled differently
             $has_cap = false;
             try {
                 $has_cap = method_exists($obj, 'wp_user')
@@ -1324,21 +1294,21 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map
      */
     protected function _map_meta_caps($caps, $cap, $user_id, $args)
     {
-        //only process if we're checking our mapped cap;
+        // only process if we're checking our mapped cap;
         if ($cap !== $this->meta_cap) {
             return $caps;
         }
 
-        //okay it is a meta cap so let's first remove that cap from the $caps array.
+        // okay it is a meta cap so let's first remove that cap from the $caps array.
         if (($key = array_search($cap, $caps)) !== false) {
-            unset($caps[$key]);
+            unset($caps[ $key ]);
         }
 
-        //cast $user_id to int for later explicit comparisons
+        // cast $user_id to int for later explicit comparisons
         $user_id = (int) $user_id;
 
         $obj = ! empty($args[0]) ? $this->_model->get_one_by_ID($args[0]) : null;
-        //if no obj then let's just do cap
+        // if no obj then let's just do cap
         if (! $obj instanceof EE_Base_Class) {
             $caps[] = 'do_not_allow';
             return $caps;
@@ -1350,22 +1320,22 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map
             if ($status_obj->public) {
                 return $caps;
             }
-            //if the item author is set and the user is not the author...
+            // if the item author is set and the user is not the author...
             if ($obj->wp_user() && $obj->wp_user() !== $user_id) {
                 if (! empty($this->others_cap)) {
                     $caps[] = $this->others_cap;
                 }
             }
-            //yes this means that if users created the private post, they are able to see it regardless of private cap.
+            // yes this means that if users created the private post, they are able to see it regardless of private cap.
             if ($status_obj->private
                 && ! empty($this->private_cap)
                 && $obj->wp_user() !== $user_id
             ) {
-                //the user is trying to view a private object for an object they don't own.
+                // the user is trying to view a private object for an object they don't own.
                 $caps[] = $this->private_cap;
             }
         } else {
-            //not a cpt object so handled differently
+            // not a cpt object so handled differently
             $has_cap = false;
             try {
                 $has_cap = method_exists($obj, 'wp_user')
@@ -1419,21 +1389,21 @@ class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map
      */
     protected function _map_meta_caps($caps, $cap, $user_id, $args)
     {
-        //only process if we're checking our mapped_cap
+        // only process if we're checking our mapped_cap
         if ($cap !== $this->meta_cap) {
             return $caps;
         }
 
-        //okay it is a meta cap so let's first remove that cap from the $caps array.
+        // okay it is a meta cap so let's first remove that cap from the $caps array.
         if (($key = array_search($cap, $caps)) !== false) {
-            unset($caps[$key]);
+            unset($caps[ $key ]);
         }
 
-        //cast $user_id to int for later explicit comparisons
+        // cast $user_id to int for later explicit comparisons
         $user_id = (int) $user_id;
 
         $obj = ! empty($args[0]) ? $this->_model->get_one_by_ID($args[0]) : null;
-        //if no obj then let's just do cap
+        // if no obj then let's just do cap
         if (! $obj instanceof EE_Message_Template_Group) {
             $caps[] = 'do_not_allow';
             return $caps;
@@ -1483,21 +1453,21 @@ class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Ma
      */
     protected function _map_meta_caps($caps, $cap, $user_id, $args)
     {
-        //only process if we're checking our mapped_cap
+        // only process if we're checking our mapped_cap
         if ($cap !== $this->meta_cap) {
             return $caps;
         }
-        //okay it is a meta cap so let's first remove that cap from the $caps array.
+        // okay it is a meta cap so let's first remove that cap from the $caps array.
         if (($key = array_search($cap, $caps)) !== false) {
-            unset($caps[$key]);
+            unset($caps[ $key ]);
         }
         $obj = ! empty($args[0]) ? $this->_model->get_one_by_ID($args[0]) : null;
-        //if no obj then let's just do cap
+        // if no obj then let's just do cap
         if (! $obj instanceof EE_Base_Class) {
             $caps[] = 'do_not_allow';
             return $caps;
         }
-        $caps[]    = $cap . 's';
+        $caps[] = $cap . 's';
         $is_system = $obj instanceof EE_Question_Group ? $obj->system_group() : false;
         $is_system = $obj instanceof EE_Question ? $obj->is_system_question() : $is_system;
         if ($is_system) {

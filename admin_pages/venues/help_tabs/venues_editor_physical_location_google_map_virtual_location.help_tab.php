@@ -1,7 +1,7 @@
 <p><strong><?php _e('Physical Location', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Enter the physical address for this venue. This field is optional.', 'event_espresso'); ?><br />
-<?php echo sprintf(__('The countries that are shown in the dropdown are controlled through the "Country Appears in Dropdown Select Lists" setting which is in the %sCountries tab%s on the General Settings page. Once on this page, you can specify whether to show a country in this dropdown by selecting yes or no and saving changes.', 'event_espresso'),'<a href="admin.php?page=espresso_general_settings&action=country_settings">','</a>'); ?>
+<?php echo sprintf(__('The countries that are shown in the dropdown are controlled through the "Country Appears in Dropdown Select Lists" setting which is in the %sCountries tab%s on the General Settings page. Once on this page, you can specify whether to show a country in this dropdown by selecting yes or no and saving changes.', 'event_espresso'), '<a href="admin.php?page=espresso_general_settings&action=country_settings">', '</a>'); ?>
 </p>
 </p>
 <p><strong><?php _e('Google Map', 'event_espresso'); ?></strong></p>

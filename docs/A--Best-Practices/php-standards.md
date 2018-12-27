@@ -10,7 +10,7 @@ All new classes and files will follow modern day best practices, including names
 
 ## General Code Guidelines
 
- * Event Espresso supports PHP 5.3+ and WordPress 4.1+ so all functions and code used should be available in those libraries.
+ * Event Espresso supports PHP 5.5+ and WordPress 4.5+ so all functions and code used should be available in those libraries.
  * Class, Interface, Method, and Function names should be clear and concise
  * Methods and Functions should use suitable type hinting where applicable
  * Data types should be used consistently and avoid type switching as much as possible<br>

@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Interface EEI_Transaction
@@ -68,9 +65,4 @@ interface EEI_Transaction extends EEI_Base
      * @return EEI_Payment[]
      */
     public function pending_payments();
-
-
-
 }
-// End of file EEI_Transaction.interface.php
-// Location: core/interfaces/EEI_Transaction.interface.php

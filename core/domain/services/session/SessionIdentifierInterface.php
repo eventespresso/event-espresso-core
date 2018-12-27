@@ -9,5 +9,4 @@ interface SessionIdentifierInterface
      * @return    string
      */
     public function id();
-
 }

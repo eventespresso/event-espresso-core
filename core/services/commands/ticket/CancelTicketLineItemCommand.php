@@ -1,13 +1,8 @@
 <?php
+
 namespace EventEspresso\core\services\commands\ticket;
 
 use EventEspresso\core\services\commands\Command;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class CancelTicketLineItemCommand
@@ -42,7 +37,6 @@ class CancelTicketLineItemCommand extends Command
     protected $quantity;
 
 
-
     /**
      * @param \EE_Registration $registration
      * @param int              $quantity
@@ -56,7 +50,6 @@ class CancelTicketLineItemCommand extends Command
             $registration->ticket_line_item()
         );
     }
-
 
 
     /**
@@ -74,7 +67,6 @@ class CancelTicketLineItemCommand extends Command
             $ticket_line_item
         );
     }
-
 
 
     /**
@@ -98,7 +90,6 @@ class CancelTicketLineItemCommand extends Command
     }
 
 
-
     /**
      * @return \EE_Transaction
      */
@@ -106,7 +97,6 @@ class CancelTicketLineItemCommand extends Command
     {
         return $this->transaction;
     }
-
 
 
     /**
@@ -118,7 +108,6 @@ class CancelTicketLineItemCommand extends Command
     }
 
 
-
     /**
      * @return \EE_Line_Item
      */
@@ -128,7 +117,6 @@ class CancelTicketLineItemCommand extends Command
     }
 
 
-
     /**
      * @return int
      */
@@ -136,8 +124,4 @@ class CancelTicketLineItemCommand extends Command
     {
         return $this->quantity;
     }
-
-
 }
-// End of file CancelTicketLineItemCommand.php
-// Location: /CancelTicketLineItemCommand.php

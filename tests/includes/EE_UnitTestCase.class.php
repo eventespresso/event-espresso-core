@@ -7,6 +7,7 @@
  * @subpackage    tests
  */
 
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * This is used to override any existing WP_UnitTestCase methods that need specific handling in EE.  We
@@ -898,7 +899,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
                         //don't make system questions etc
                         'QST_system',
                         'QSG_system',
-                        'QSO_system'
+                        'QSO_system',
+                        'password'
                     ),
                     true
                 )
@@ -1374,5 +1376,21 @@ class EE_UnitTestCase extends WP_UnitTestCase
     }
 
 
+    protected function loadShortcodesManagerAndShortcodes()
+    {
+        // load, register, and add shortcodes the new way
+        LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\services\shortcodes\ShortcodesManager',
+            array(
+                // and the old way, but we'll put it under control of the new system
+                EE_Config::getLegacyShortcodesManager()
+            )
+        );
+        do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
+        do_action('AHEE__EE_System__core_loaded_and_ready');
+        global $wp_query;
+        do_action('parse_query', $wp_query);
+        require_once EE_PUBLIC . 'template_tags.php';
+    }
 
 }

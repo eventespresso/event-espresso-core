@@ -1,5 +1,4 @@
 <?php
-require_once(EE_MODELS . 'relations/EE_Model_Relation_Base.php');
 
 /**
  * Class EE_Belongs_To_Relation
@@ -40,17 +39,25 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base
      */
     public function get_join_statement($model_relation_chain)
     {
-        //create the sql string like
+        // create the sql string like
         $this_table_fk_field  = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
         $other_table_pk_field = $this->get_other_model()->get_primary_key_field();
-        $this_table_alias     = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain,
-                $this->get_this_model()->get_this_model_name()) . $this_table_fk_field->get_table_alias();
-        $other_table_alias    = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain,
-                $this->get_other_model()->get_this_model_name()) . $other_table_pk_field->get_table_alias();
+        $this_table_alias     = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix(
+            $model_relation_chain,
+            $this->get_this_model()->get_this_model_name()
+        ) . $this_table_fk_field->get_table_alias();
+        $other_table_alias    = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix(
+            $model_relation_chain,
+            $this->get_other_model()->get_this_model_name()
+        ) . $other_table_pk_field->get_table_alias();
         $other_table          = $this->get_other_model()->get_table_for_alias($other_table_alias);
-        return $this->_left_join($other_table, $other_table_alias, $other_table_pk_field->get_table_column(),
-                $this_table_alias,
-                $this_table_fk_field->get_table_column()) . $this->get_other_model()->_construct_internal_join_to_table_with_alias($other_table_alias);
+        return $this->_left_join(
+            $other_table,
+            $other_table_alias,
+            $other_table_pk_field->get_table_column(),
+            $this_table_alias,
+            $this_table_fk_field->get_table_column()
+        ) . $this->get_other_model()->_construct_internal_join_to_table_with_alias($other_table_alias);
     }
 
 
@@ -68,10 +75,10 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base
     {
         $this_model_obj  = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
         $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
-        //find the field on the other model which is a foreign key to this model
+        // find the field on the other model which is a foreign key to this model
         $fk_on_this_model = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
         if ($this_model_obj->get($fk_on_this_model->get_name()) != $other_model_obj->ID()) {
-            //set that field on the other model to this model's ID
+            // set that field on the other model to this model's ID
             $this_model_obj->set($fk_on_this_model->get_name(), $other_model_obj->ID());
             $this_model_obj->save();
         }
@@ -92,9 +99,9 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base
     {
         $this_model_obj  = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
         $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id);
-        //find the field on the other model which is a foreign key to this model
+        // find the field on the other model which is a foreign key to this model
         $fk_on_this_model = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
-        //set that field on the other model to this model's ID
+        // set that field on the other model to this model's ID
         $this_model_obj->set($fk_on_this_model->get_name(), null, true);
         $this_model_obj->save();
         return $other_model_obj;
@@ -105,7 +112,7 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base
      * Overrides parent so that we don't NEED to save the $model_object before getting the related objects.
      *
      * @param EE_Base_Class $model_obj_or_id
-     * @param array         $query_params                            like EEM_Base::get_all's $query_params
+     * @param array         $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param boolean       $values_already_prepared_by_model_object @deprecated since 4.8.1
      * @return EE_Base_Class[]
      * @throws \EE_Error
@@ -116,25 +123,26 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base
         $values_already_prepared_by_model_object = false
     ) {
         if ($values_already_prepared_by_model_object !== false) {
-            EE_Error::doing_it_wrong('EE_Model_Relation_Base::get_all_related',
+            EE_Error::doing_it_wrong(
+                'EE_Model_Relation_Base::get_all_related',
                 __('The argument $values_already_prepared_by_model_object is no longer used.', 'event_espresso'),
-                '4.8.1');
+                '4.8.1'
+            );
         }
-        //get column on this model object which is a foreign key to the other model
+        // get column on this model object which is a foreign key to the other model
         $fk_field_obj = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
-        //get its value
+        // get its value
         if ($model_obj_or_id instanceof EE_Base_Class) {
             $model_obj = $model_obj_or_id;
         } else {
             $model_obj = $this->get_this_model()->ensure_is_obj($model_obj_or_id);
         }
         $ID_value_on_other_model = $model_obj->get($fk_field_obj->get_name());
-        //get all where their PK matches that value
-        $query_params[0][$this->get_other_model()->get_primary_key_field()->get_name()] = $ID_value_on_other_model;
+        // get all where their PK matches that value
+        $query_params[0][ $this->get_other_model()->get_primary_key_field()->get_name() ] = $ID_value_on_other_model;
         $query_params                                                                   = $this->_disable_default_where_conditions_on_query_param($query_params);
-//		echo '$query_params';
-//		var_dump($query_params);
+//      echo '$query_params';
+//      var_dump($query_params);
         return $this->get_other_model()->get_all($query_params);
     }
-
 }

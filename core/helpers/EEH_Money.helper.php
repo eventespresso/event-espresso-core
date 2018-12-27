@@ -1,8 +1,5 @@
 <?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
-
-
 /**
  * Money helper class.
  * This class has helper methods that help with money related conversions and calculations.
@@ -62,7 +59,7 @@ class EEH_Money extends EEH_Base
      */
     public static function convert_to_float_from_localized_money($money_value)
     {
-        //float it! and round to three decimal places
+        // float it! and round to three decimal places
         return round((float) EEH_Money::strip_localized_money_formatting($money_value), 3);
     }
 
@@ -140,8 +137,15 @@ class EEH_Money extends EEH_Base
                 }
                 break;
             default:
-                throw new EE_Error(__("Unknown operator '" . $operator . "' in EEH_Money::compare_floats()",
-                    'event_espresso'));
+                throw new EE_Error(
+                    sprintf(
+                        __(
+                            "Unknown operator %s in EEH_Money::compare_floats()",
+                            'event_espresso'
+                        ),
+                        $operator
+                    )
+                );
         }
         return false;
     }
@@ -157,12 +161,12 @@ class EEH_Money extends EEH_Base
      */
     public static function get_format_for_jqplot($CNT_ISO = '')
     {
-        //default format
+        // default format
         $format          = 'f';
         $currency_config = $currency_config = EEH_Money::get_currency_config($CNT_ISO);
-        //first get the decimal place and number of places
+        // first get the decimal place and number of places
         $format = "%'." . $currency_config->dec_plc . $format;
-        //currency symbol on right side.
+        // currency symbol on right side.
         $format = $currency_config->sign_b4 ? $currency_config->sign . $format : $format . $currency_config->sign;
         return $format;
     }
@@ -182,9 +186,9 @@ class EEH_Money extends EEH_Base
     {
         $currency_config            = EEH_Money::get_currency_config($CNT_ISO);
         $decimal_places_placeholder = str_pad('', $currency_config->dec_plc, '0');
-        //first get the decimal place and number of places
+        // first get the decimal place and number of places
         $format = '#,##0.' . $decimal_places_placeholder;
-        //currency symbol on right side.
+        // currency symbol on right side.
         $format          = $currency_config->sign_b4
             ? $currency_config->sign . $format
             : $format
@@ -213,11 +217,11 @@ class EEH_Money extends EEH_Base
      */
     public static function get_currency_config($CNT_ISO = '')
     {
-        //if CNT_ISO passed lets try to get currency settings for it.
+        // if CNT_ISO passed lets try to get currency settings for it.
         $currency_config = $CNT_ISO !== ''
             ? new EE_Currency_Config($CNT_ISO)
             : null;
-        //default currency settings for site if not set
+        // default currency settings for site if not set
         if (! $currency_config instanceof EE_Currency_Config) {
             $currency_config = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
                 ? EE_Registry::instance()->CFG->currency
@@ -225,4 +229,4 @@ class EEH_Money extends EEH_Base
         }
         return $currency_config;
     }
-} //end class EEH_Money
+}

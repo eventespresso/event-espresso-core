@@ -1,9 +1,4 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
+<?php
 /**
  * Class EE_Checkbox_Dropdown_Selector_Input
  * configures a set of checkbox inputs that are initially hidden
@@ -12,7 +7,7 @@
  * @package       Event Espresso
  * @subpackage    core
  * @author        Brent Christensen, Mike Nelson
- * 
+ *
  */
 class EE_Checkbox_Dropdown_Selector_Input extends EE_Form_Input_With_Options_Base
 {
@@ -28,8 +23,11 @@ class EE_Checkbox_Dropdown_Selector_Input extends EE_Form_Input_With_Options_Bas
      */
     public function __construct($answer_options, $input_settings = array())
     {
-        $this->_select_button_text = EEH_Array::is_set( $input_settings, 'select_button_text',
-            esc_html__('Select', 'event_espresso'));
+        $this->_select_button_text = EEH_Array::is_set(
+            $input_settings,
+            'select_button_text',
+            esc_html__('Select', 'event_espresso')
+        );
         $display_strategy = new EE_Checkbox_Dropdown_Selector_Display_Strategy();
         $this->_set_display_strategy($display_strategy);
         $this->load_iframe_assets($display_strategy);
@@ -51,14 +49,16 @@ class EE_Checkbox_Dropdown_Selector_Input extends EE_Form_Input_With_Options_Bas
     /*
      * Returns the text to display in the select button
      */
-    public function select_button_text(){
+    public function select_button_text()
+    {
         return $this->_select_button_text;
     }
 
     /*
      * add css and js for iframes
      */
-    protected function load_iframe_assets(EE_Checkbox_Dropdown_Selector_Display_Strategy $display_strategy){
+    protected function load_iframe_assets(EE_Checkbox_Dropdown_Selector_Display_Strategy $display_strategy)
+    {
         add_filter(
             'FHEE__EED_Ticket_Selector__ticket_selector_iframe__css',
             array($display_strategy, 'iframe_css')
@@ -76,6 +76,4 @@ class EE_Checkbox_Dropdown_Selector_Input extends EE_Form_Input_With_Options_Bas
             array($display_strategy, 'iframe_js')
         );
     }
-
-
 }

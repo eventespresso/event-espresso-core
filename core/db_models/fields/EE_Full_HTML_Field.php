@@ -1,6 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
 
 /**
  * EE_Full_HTML_Field
@@ -36,7 +34,7 @@ class EE_Full_HTML_Field extends EE_Text_Field_Base
      * @param type $schema
      * @return string
      */
-    function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
+    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
     {
         if ($schema == 'form_input') {
             return parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema);

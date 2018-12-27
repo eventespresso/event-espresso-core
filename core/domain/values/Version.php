@@ -5,10 +5,6 @@ namespace EventEspresso\core\domain\values;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use InvalidArgumentException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class Version
  * Value Object representing a valid PHP version string for an Event Espresso product
@@ -306,13 +302,9 @@ class Version
     public function __toString()
     {
         $version_string = "{$this->major}.{$this->minor}.{$this->patch}.{$this->release}";
-        if($this->release !== Version::RELEASE_TYPE_PROD && $this->release !== Version::RELEASE_TYPE_DECAF) {
+        if ($this->release !== Version::RELEASE_TYPE_PROD && $this->release !== Version::RELEASE_TYPE_DECAF) {
             $version_string .= '.' . str_pad($this->build, 3, '0', STR_PAD_LEFT);
         }
         return $version_string;
     }
-
-
-
 }
-// Location: Version.php

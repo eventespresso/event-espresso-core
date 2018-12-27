@@ -1,8 +1,6 @@
 <?php
+
 use EventEspresso\core\interfaces\ResettableInterface;
-
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
 
 /**
  * * EED_Module
@@ -29,7 +27,6 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
     protected $theme = '';
 
 
-
     /**
      * @return void
      */
@@ -38,7 +35,6 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
         $module_name = get_called_class();
         new $module_name();
     }
-
 
 
     /**
@@ -52,7 +48,6 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
     }
 
 
-
     /**
      *    set_hooks_admin - for hooking into EE Admin Core, other modules, etc
      *
@@ -62,7 +57,6 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
     public static function set_hooks_admin()
     {
     }
-
 
 
     /**
@@ -76,7 +70,6 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
     abstract public function run($WP);
 
 
-
     /**
      * EED_Module constructor.
      */
@@ -88,7 +81,6 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
     }
 
 
-
     /**
      * @param $module_name
      * @return EED_Module
@@ -98,15 +90,13 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
         $module_name = ! empty($module_name)
             ? $module_name
             : get_called_class();
-        if (
-            ! isset(EE_Registry::instance()->modules->{$module_name})
+        if (! isset(EE_Registry::instance()->modules->{$module_name})
             || ! EE_Registry::instance()->modules->{$module_name} instanceof EED_Module
         ) {
             EE_Registry::instance()->add_module($module_name);
         }
         return EE_Registry::instance()->get_module($module_name);
     }
-
 
 
     /**
@@ -121,7 +111,6 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
     }
 
 
-
     /**
      * @return string
      */
@@ -129,8 +118,4 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
     {
         return $this->theme;
     }
-
-
-
 }
-// End of file EED_Module.module.php

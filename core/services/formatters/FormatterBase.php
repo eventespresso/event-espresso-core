@@ -1,11 +1,8 @@
 <?php
+
 namespace EventEspresso\core\services\formatters;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class FormatterBase
@@ -30,7 +27,7 @@ abstract class FormatterBase implements FormatterInterface
         if (! is_array($input)) {
             throw new InvalidDataTypeException('input', $input, 'array');
         }
-        //we can use $this inside the closure in PHP 5.3, so pass in a variable pointing to this instead
+        // we can use $this inside the closure in PHP 5.3, so pass in a variable pointing to this instead
         $formatter = $this;
         array_walk_recursive(
             $input,
@@ -39,6 +36,5 @@ abstract class FormatterBase implements FormatterInterface
             }
         );
         return $input;
-    }}
-// End of file FormatterBase.php
-// Location: core\services\formatters/FormatterBase.php
+    }
+}

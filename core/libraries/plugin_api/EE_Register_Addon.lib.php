@@ -1,12 +1,11 @@
 <?php
 
+use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\RequiresDependencyMapInterface;
 use EventEspresso\core\domain\RequiresDomainInterface;
+use EventEspresso\core\exceptions\ExceptionLogger;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-
-defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
-
 
 /**
  * Class EE_Register_Addon
@@ -22,7 +21,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
  */
 class EE_Register_Addon implements EEI_Plugin_API
 {
-
 
     /**
      * possibly truncated version of the EE core version string
@@ -70,12 +68,12 @@ class EE_Register_Addon implements EEI_Plugin_API
         // versions: 4 . 3 . 1 . p . 123
         // offsets:    0 . 1 . 2 . 3 . 4
         $version_parts = explode('.', $min_core_version);
-        //check they specified the micro version (after 2nd period)
+        // check they specified the micro version (after 2nd period)
         if (! isset($version_parts[2])) {
             $version_parts[2] = '0';
         }
-        //if they didn't specify the 'p', or 'rc' part. Just assume the lowest possible
-        //soon we can assume that's 'rc', but this current version is 'alpha'
+        // if they didn't specify the 'p', or 'rc' part. Just assume the lowest possible
+        // soon we can assume that's 'rc', but this current version is 'alpha'
         if (! isset($version_parts[3])) {
             $version_parts[3] = 'dev';
         }
@@ -117,13 +115,14 @@ class EE_Register_Addon implements EEI_Plugin_API
      * (so that we can detect that the addon has activated on the subsequent request)
      *
      * @since    4.3.0
-     * @param string                  $addon_name                       the EE_Addon's name. Required.
+     * @param string                  $addon_name                       [Required] the EE_Addon's name.
      * @param  array                  $setup_args                       {
-     *                                                                  An array of arguments provided for registering the
-     *                                                                  message type.
+     *                                                                  An array of arguments provided for registering
+     *                                                                  the message type.
      * @type  string                  $class_name                       the addon's main file name.
      *                                                                  If left blank, generated from the addon name,
-     *                                                                  changes something like "calendar" to "EE_Calendar"
+     *                                                                  changes something like "calendar" to
+     *                                                                  "EE_Calendar"
      * @type string                   $min_core_version                 the minimum version of EE Core that the
      *                                                                  addon will work with. eg "4.8.1.rc.084"
      * @type string                   $version                          the "software" version for the addon. eg
@@ -131,6 +130,8 @@ class EE_Register_Addon implements EEI_Plugin_API
      *                                                                  "1.0.0.rc.043" for a version in progress
      * @type string                   $main_file_path                   the full server path to the main file
      *                                                                  loaded directly by WP
+     * @type DomainInterface $domain                                    child class of
+     *                                                                  EventEspresso\core\domain\DomainBase
      * @type string                   $domain_fqcn                      Fully Qualified Class Name
      *                                                                  for the addon's Domain class
      *                                                                  (see EventEspresso\core\domain\Domain)
@@ -146,13 +147,17 @@ class EE_Register_Addon implements EEI_Plugin_API
      *                                                                  configuration settings object
      * @type string                   $config_name                      the class name for this addon's
      *                                                                  configuration settings object
-     * @type string                   $autoloader_paths                 an array of class names and the full server
-     *                                                                  paths to those files. Required.
+     * @type string                   $autoloader_paths                 [Required] an array of class names and the full
+     *                                                                  server paths to those files.
      * @type string                   $autoloader_folders               an array of  "full server paths" for any
      *                                                                  folders containing classes that might be
      *                                                                  invoked by the addon
-     * @type string                   $dms_paths                        an array of full server paths to folders that
-     *                                                                  contain data migration scripts. Required.
+     * @type string                   $dms_paths                        [Required] an array of full server paths to
+     *                                                                  folders that contain data migration scripts.
+     *                                                                  The key should be the EE_Addon class name that
+     *                                                                  this set of data migration scripts belongs to.
+     *                                                                  If the EE_Addon class is namespaced, then this
+     *                                                                  needs to be the Fully Qualified Class Name
      * @type string                   $module_paths                     an array of full server paths to any
      *                                                                  EED_Modules used by the addon
      * @type string                   $shortcode_paths                  an array of full server paths to folders
@@ -188,14 +193,13 @@ class EE_Register_Addon implements EEI_Plugin_API
      *                                                                  An array of message types with the key as
      *                                                                  the message type name and the values as
      *                                                                  below:
-     * @type string                   $mtfilename                       The filename of the message type being
-     *                                                                  registered. This will be the main
+     * @type string                   $mtfilename                       [Required] The filename of the message type
+     *                                                                  being registered. This will be the main
      *                                                                  EE_{Message Type Name}_message_type class.
-     *                                                                  (eg. EE_Declined_Registration_message_type.class.php)
-     *                                                                  Required.
-     * @type array                    $autoloadpaths                    An array of paths to add to the messages
-     *                                                                  autoloader for the new message type.
-     *                                                                  Required.
+     *                                                                  for example:
+     *                                                                  EE_Declined_Registration_message_type.class.php
+     * @type array                    $autoloadpaths                    [Required] An array of paths to add to the
+     *                                                                  messages autoloader for the new message type.
      * @type array                    $messengers_to_activate_with      An array of messengers that this message
      *                                                                  type should activate with. Each value in
      *                                                                  the
@@ -223,7 +227,8 @@ class EE_Register_Addon implements EEI_Plugin_API
      *                                                                  An array with two items for registering the
      *                                                                  addon's namespace. (If, for some reason, you
      *                                                                  require additional namespaces,
-     *                                                                  use EventEspresso\core\Psr4Autoloader::addNamespace()
+     *                                                                  use
+     *                                                                  EventEspresso\core\Psr4Autoloader::addNamespace()
      *                                                                  directly)
      * @see      EventEspresso\core\Psr4Autoloader::addNamespace()
      * @type string                   $FQNS                             the namespace prefix
@@ -231,6 +236,15 @@ class EE_Register_Addon implements EEI_Plugin_API
      *                                                                  namespace.
      *                                                                  }
      *                                                                  }
+     * @type string                   $privacy_policies                 FQNSs (namespaces, each of which contains only
+     *                                                                  privacy policy classes) or FQCNs (specific
+     *                                                                  classnames of privacy policy classes)
+     * @type string                   $personal_data_exporters          FQNSs (namespaces, each of which contains only
+     *                                                                  privacy policy classes) or FQCNs (specific
+     *                                                                  classnames of privacy policy classes)
+     * @type string                   $personal_data_erasers            FQNSs (namespaces, each of which contains only
+     *                                                                  privacy policy classes) or FQCNs (specific
+     *                                                                  classnames of privacy policy classes)
      * @return void
      * @throws DomainException
      * @throws EE_Error
@@ -245,7 +259,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         EE_Register_Addon::_verify_parameters($addon_name, $setup_args);
         // get class name for addon
         $class_name = EE_Register_Addon::_parse_class_name($addon_name, $setup_args);
-        //setup $_settings array from incoming values.
+        // setup $_settings array from incoming values.
         $addon_settings = EE_Register_Addon::_get_addon_settings($class_name, $setup_args);
         // setup PUE
         EE_Register_Addon::_parse_pue_options($addon_name, $class_name, $setup_args);
@@ -284,9 +298,15 @@ class EE_Register_Addon implements EEI_Plugin_API
         EE_Register_Addon::_register_custom_post_types($addon_name);
         // and any payment methods
         EE_Register_Addon::_register_payment_methods($addon_name);
+        // and privacy policy generators
+        EE_Register_Addon::registerPrivacyPolicies($addon_name);
+        // and privacy policy generators
+        EE_Register_Addon::registerPersonalDataExporters($addon_name);
+        // and privacy policy generators
+        EE_Register_Addon::registerPersonalDataErasers($addon_name);
         // load and instantiate main addon class
         $addon = EE_Register_Addon::_load_and_init_addon_class($addon_name);
-        //delay calling after_registration hook on each addon until after all add-ons have been registered.
+        // delay calling after_registration hook on each addon until after all add-ons have been registered.
         add_action('AHEE__EE_System__load_espresso_addons__complete', array($addon, 'after_registration'), 999);
     }
 
@@ -344,7 +364,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         if (empty($setup_args['class_name'])) {
             // generate one by first separating name with spaces
             $class_name = str_replace(array('-', '_'), ' ', trim($addon_name));
-            //capitalize, then replace spaces with underscores
+            // capitalize, then replace spaces with underscores
             $class_name = str_replace(' ', '_', ucwords($class_name));
         } else {
             $class_name = $setup_args['class_name'];
@@ -363,7 +383,7 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _get_addon_settings($class_name, array $setup_args)
     {
-        //setup $_settings array from incoming values.
+        // setup $_settings array from incoming values.
         $addon_settings = array(
             // generated from the addon name, changes something like "calendar" to "EE_Calendar"
             'class_name'            => $class_name,
@@ -391,6 +411,10 @@ class EE_Register_Addon implements EEI_Plugin_API
             'main_file_path'        => isset($setup_args['main_file_path'])
                 ? (string) $setup_args['main_file_path']
                 : '',
+            // instance of \EventEspresso\core\domain\DomainInterface
+            'domain'                => isset($setup_args['domain']) && $setup_args['domain'] instanceof DomainInterface
+                ? $setup_args['domain']
+                : null,
             // Fully Qualified Class Name for the addon's Domain class
             'domain_fqcn'           => isset($setup_args['domain_fqcn'])
                 ? (string) $setup_args['domain_fqcn']
@@ -409,7 +433,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             // the class name for this addon's configuration settings object
             'config_class'          => isset($setup_args['config_class'])
                 ? (string) $setup_args['config_class'] : '',
-            //the name given to the config for this addons' configuration settings object (optional)
+            // the name given to the config for this addons' configuration settings object (optional)
             'config_name'           => isset($setup_args['config_name'])
                 ? (string) $setup_args['config_name'] : '',
             // an array of "class names" => "full server paths" for any classes that might be invoked by the addon
@@ -420,7 +444,9 @@ class EE_Register_Addon implements EEI_Plugin_API
             'autoloader_folders'    => isset($setup_args['autoloader_folders'])
                 ? (array) $setup_args['autoloader_folders']
                 : array(),
-            // array of full server paths to any EE_DMS data migration scripts used by the addon
+            // array of full server paths to any EE_DMS data migration scripts used by the addon.
+            // The key should be the EE_Addon class name that this set of data migration scripts belongs to.
+            // If the EE_Addon class is namespaced, then this needs to be the Fully Qualified Class Name
             'dms_paths'             => isset($setup_args['dms_paths'])
                 ? (array) $setup_args['dms_paths']
                 : array(),
@@ -487,6 +513,9 @@ class EE_Register_Addon implements EEI_Plugin_API
             )
                 ? (array) $setup_args['namespace']
                 : array(),
+            'privacy_policies'      => isset($setup_args['privacy_policies'])
+                ? (array) $setup_args['privacy_policies']
+                : '',
         );
         // if plugin_action_slug is NOT set, but an admin page path IS set,
         // then let's just use the plugin_slug since that will be used for linking to the admin page
@@ -509,9 +538,8 @@ class EE_Register_Addon implements EEI_Plugin_API
     {
         global $wp_version;
         $incompatibility_message = '';
-        //check whether this addon version is compatible with EE core
-        if (
-            isset(EE_Register_Addon::$_incompatible_addons[ $addon_name ])
+        // check whether this addon version is compatible with EE core
+        if (isset(EE_Register_Addon::$_incompatible_addons[ $addon_name ])
             && ! self::_meets_min_core_version_requirement(
                 EE_Register_Addon::$_incompatible_addons[ $addon_name ],
                 $addon_settings['version']
@@ -519,7 +547,8 @@ class EE_Register_Addon implements EEI_Plugin_API
         ) {
             $incompatibility_message = sprintf(
                 __(
-                    '%4$sIMPORTANT!%5$sThe Event Espresso "%1$s" addon is not compatible with this version of Event Espresso.%2$sPlease upgrade your "%1$s" addon to version %3$s or newer to resolve this issue.'
+                    '%4$sIMPORTANT!%5$sThe Event Espresso "%1$s" addon is not compatible with this version of Event Espresso.%2$sPlease upgrade your "%1$s" addon to version %3$s or newer to resolve this issue.',
+                    'event_espresso'
                 ),
                 $addon_name,
                 '<br />',
@@ -527,8 +556,7 @@ class EE_Register_Addon implements EEI_Plugin_API
                 '<span style="font-weight: bold; color: #D54E21;">',
                 '</span><br />'
             );
-        } elseif (
-        ! self::_meets_min_core_version_requirement($addon_settings['min_core_version'], espresso_version())
+        } elseif (! self::_meets_min_core_version_requirement($addon_settings['min_core_version'], espresso_version())
         ) {
             $incompatibility_message = sprintf(
                 __(
@@ -615,12 +643,10 @@ class EE_Register_Addon implements EEI_Plugin_API
     private static function _setup_namespaces(array $addon_settings)
     {
         //
-        if (
-        isset(
+        if (isset(
             $addon_settings['namespace']['FQNS'],
             $addon_settings['namespace']['DIR']
-        )
-        ) {
+        )) {
             EE_Psr4AutoloaderInit::psr4_loader()->addNamespace(
                 $addon_settings['namespace']['FQNS'],
                 $addon_settings['namespace']['DIR']
@@ -642,18 +668,19 @@ class EE_Register_Addon implements EEI_Plugin_API
     private static function _addon_activation($addon_name, array $addon_settings)
     {
         // this is an activation request
-        if (did_action('activate_plugin')) {
-            //to find if THIS is the addon that was activated, just check if we have already registered it or not
-            //(as the newly-activated addon wasn't around the first time addons were registered).
-            //Note: the presence of pue_options in the addon registration options will initialize the $_settings
-            //property for the add-on, but the add-on is only partially initialized.  Hence, the additional check.
+        if (did_action(
+            'activate_plugin'
+        )) {// to find if THIS is the addon that was activated, just check if we have already registered it or not
+            // (as the newly-activated addon wasn't around the first time addons were registered).
+            // Note: the presence of pue_options in the addon registration options will initialize the $_settings
+            // property for the add-on, but the add-on is only partially initialized.  Hence, the additional check.
             if (! isset(self::$_settings[ $addon_name ])
                 || (isset(self::$_settings[ $addon_name ])
                     && ! isset(self::$_settings[ $addon_name ]['class_name'])
                 )
             ) {
                 self::$_settings[ $addon_name ] = $addon_settings;
-                $addon                          = self::_load_and_init_addon_class($addon_name);
+                $addon = self::_load_and_init_addon_class($addon_name);
                 $addon->set_activation_indicator_option();
                 // dont bother setting up the rest of the addon.
                 // we know it was just activated and the request will end soon
@@ -661,8 +688,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             return true;
         }
         // make sure this was called in the right place!
-        if (
-            ! did_action('AHEE__EE_System__load_espresso_addons')
+        if (! did_action('AHEE__EE_System__load_espresso_addons')
             || did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin')
         ) {
             EE_Error::doing_it_wrong(
@@ -717,8 +743,7 @@ class EE_Register_Addon implements EEI_Plugin_API
     private static function _register_models_and_extensions($addon_name)
     {
         // register new models
-        if (
-            ! empty(self::$_settings[ $addon_name ]['model_paths'])
+        if (! empty(self::$_settings[ $addon_name ]['model_paths'])
             || ! empty(self::$_settings[ $addon_name ]['class_paths'])
         ) {
             EE_Register_Model::register(
@@ -730,8 +755,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             );
         }
         // register model extensions
-        if (
-            ! empty(self::$_settings[ $addon_name ]['model_extension_paths'])
+        if (! empty(self::$_settings[ $addon_name ]['model_extension_paths'])
             || ! empty(self::$_settings[ $addon_name ]['class_extension_paths'])
         ) {
             EE_Register_Model_Extensions::register(
@@ -897,8 +921,7 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _register_custom_post_types($addon_name)
     {
-        if (
-            ! empty(self::$_settings[ $addon_name ]['custom_post_types'])
+        if (! empty(self::$_settings[ $addon_name ]['custom_post_types'])
             || ! empty(self::$_settings[ $addon_name ]['custom_taxonomies'])
         ) {
             EE_Register_CPT::register(
@@ -934,6 +957,56 @@ class EE_Register_Addon implements EEI_Plugin_API
 
 
     /**
+     * @param string $addon_name
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws DomainException
+     * @throws EE_Error
+     */
+    private static function registerPrivacyPolicies($addon_name)
+    {
+        if (! empty(self::$_settings[ $addon_name ]['privacy_policies'])) {
+            EE_Register_Privacy_Policy::register(
+                $addon_name,
+                self::$_settings[ $addon_name ]['privacy_policies']
+            );
+        }
+    }
+
+
+    /**
+     * @param string $addon_name
+     * @return void
+     */
+    private static function registerPersonalDataExporters($addon_name)
+    {
+        if (! empty(self::$_settings[ $addon_name ]['personal_data_exporters'])) {
+            EE_Register_Personal_Data_Eraser::register(
+                $addon_name,
+                self::$_settings[ $addon_name ]['personal_data_exporters']
+            );
+        }
+    }
+
+
+    /**
+     * @param string $addon_name
+     * @return void
+     */
+    private static function registerPersonalDataErasers($addon_name)
+    {
+        if (! empty(self::$_settings[ $addon_name ]['personal_data_erasers'])) {
+            EE_Register_Personal_Data_Eraser::register(
+                $addon_name,
+                self::$_settings[ $addon_name ]['personal_data_erasers']
+            );
+        }
+    }
+
+
+    /**
      * Loads and instantiates the EE_Addon class and adds it onto the registry
      *
      * @param string $addon_name
@@ -952,26 +1025,35 @@ class EE_Register_Addon implements EEI_Plugin_API
             array('EE_Registry::create(addon)' => true)
         );
         // setter inject dep map if required
-        if($addon instanceof RequiresDependencyMapInterface && $addon->dependencyMap() === null){
+        if ($addon instanceof RequiresDependencyMapInterface && $addon->dependencyMap() === null) {
             $addon->setDependencyMap($loader->getShared('EE_Dependency_Map'));
         }
         // setter inject domain if required
-        if(
-            $addon instanceof RequiresDomainInterface
-            && self::$_settings[ $addon_name ]['domain_fqcn'] !== ''
+        if ($addon instanceof RequiresDomainInterface
             && $addon->domain() === null
-        ){
-            $addon->setDomain(
-                $loader->getShared(
+        ) {
+            // using supplied Domain object
+            $domain = self::$_settings[ $addon_name ]['domain'] instanceof DomainInterface
+                ? self::$_settings[ $addon_name ]['domain']
+                : null;
+            // or construct one using Domain FQCN
+            if ($domain === null && self::$_settings[ $addon_name ]['domain_fqcn'] !== '') {
+                $domain = $loader->getShared(
                     self::$_settings[ $addon_name ]['domain_fqcn'],
                     array(
-                        self::$_settings[ $addon_name ]['main_file_path'],
-                        self::$_settings[ $addon_name ]['version']
+                        new EventEspresso\core\domain\values\FilePath(
+                            self::$_settings[ $addon_name ]['main_file_path']
+                        ),
+                        EventEspresso\core\domain\values\Version::fromString(
+                            self::$_settings[ $addon_name ]['version']
+                        ),
                     )
-                )
-            );
+                );
+            }
+            if ($domain instanceof DomainInterface) {
+                $addon->setDomain($domain);
+            }
         }
-
         $addon->set_name($addon_name);
         $addon->set_plugin_slug(self::$_settings[ $addon_name ]['plugin_slug']);
         $addon->set_plugin_basename(self::$_settings[ $addon_name ]['plugin_basename']);
@@ -983,8 +1065,8 @@ class EE_Register_Addon implements EEI_Plugin_API
         $addon->set_config_section(self::$_settings[ $addon_name ]['config_section']);
         $addon->set_config_class(self::$_settings[ $addon_name ]['config_class']);
         $addon->set_config_name(self::$_settings[ $addon_name ]['config_name']);
-        //unfortunately this can't be hooked in upon construction, because we don't have
-        //the plugin mainfile's path upon construction.
+        // unfortunately this can't be hooked in upon construction, because we don't have
+        // the plugin mainfile's path upon construction.
         register_deactivation_hook($addon->get_main_plugin_file(), array($addon, 'deactivation'));
         // call any additional admin_callback functions during load_admin_controller hook
         if (! empty(self::$_settings[ $addon_name ]['admin_callback'])) {
@@ -1009,13 +1091,14 @@ class EE_Register_Addon implements EEI_Plugin_API
     {
         // load PUE client
         require_once EE_THIRD_PARTY . 'pue' . DS . 'pue-client.php';
+        $license_server = defined('PUE_UPDATES_ENDPOINT') ? PUE_UPDATES_ENDPOINT : 'https://eventespresso.com';
         // cycle thru settings
         foreach (self::$_settings as $settings) {
             if (! empty($settings['pue_options'])) {
                 // initiate the class and start the plugin update engine!
                 new PluginUpdateEngineChecker(
-                // host file URL
-                    'https://eventespresso.com',
+                    // host file URL
+                    $license_server,
                     // plugin slug(s)
                     array(
                         'premium'    => array('p' => $settings['pue_options']['pue_plugin_slug']),
@@ -1026,7 +1109,7 @@ class EE_Register_Addon implements EEI_Plugin_API
                         'apikey'            => EE_Registry::instance()->NET_CFG->core->site_license_key,
                         'lang_domain'       => 'event_espresso',
                         'checkPeriod'       => $settings['pue_options']['checkPeriod'],
-                        'option_key'        => 'site_license_key',
+                        'option_key'        => 'ee_site_license_key',
                         'options_page_slug' => 'event_espresso',
                         'plugin_basename'   => $settings['pue_options']['plugin_basename'],
                         // if use_wp_update is TRUE it means you want FREE versions of the plugin to be updated from WP
@@ -1071,92 +1154,93 @@ class EE_Register_Addon implements EEI_Plugin_API
     public static function deregister($addon_name = null)
     {
         if (isset(self::$_settings[ $addon_name ]['class_name'])) {
-            do_action('AHEE__EE_Register_Addon__deregister__before', $addon_name);
-            $class_name = self::$_settings[ $addon_name ]['class_name'];
-            if (! empty(self::$_settings[ $addon_name ]['dms_paths'])) {
-                // setup DMS
-                EE_Register_Data_Migration_Scripts::deregister($addon_name);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['admin_path'])) {
-                // register admin page
-                EE_Register_Admin_Page::deregister($addon_name);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['module_paths'])) {
-                // add to list of modules to be registered
-                EE_Register_Module::deregister($addon_name);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['shortcode_paths'])
-                || ! empty(self::$_settings[ $addon_name ]['shortcode_fqcns'])
-            ) {
-                // add to list of shortcodes to be registered
-                EE_Register_Shortcode::deregister($addon_name);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['config_class'])) {
-                // if config_class present let's register config.
-                EE_Register_Config::deregister(self::$_settings[ $addon_name ]['config_class']);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['widget_paths'])) {
-                // add to list of widgets to be registered
-                EE_Register_Widget::deregister($addon_name);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['model_paths'])
-                || ! empty(self::$_settings[ $addon_name ]['class_paths'])
-            ) {
-                // add to list of shortcodes to be registered
-                EE_Register_Model::deregister($addon_name);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['model_extension_paths'])
-                || ! empty(self::$_settings[ $addon_name ]['class_extension_paths'])
-            ) {
-                // add to list of shortcodes to be registered
-                EE_Register_Model_Extensions::deregister($addon_name);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['message_types'])) {
-                foreach (
-                    (array) self::$_settings[ $addon_name ]['message_types'] as $message_type =>
-                    $message_type_settings
-                ) {
-                    EE_Register_Message_Type::deregister($message_type);
+            try {
+                do_action('AHEE__EE_Register_Addon__deregister__before', $addon_name);
+                $class_name = self::$_settings[ $addon_name ]['class_name'];
+                if (! empty(self::$_settings[ $addon_name ]['dms_paths'])) {
+                    // setup DMS
+                    EE_Register_Data_Migration_Scripts::deregister($addon_name);
                 }
+                if (! empty(self::$_settings[ $addon_name ]['admin_path'])) {
+                    // register admin page
+                    EE_Register_Admin_Page::deregister($addon_name);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['module_paths'])) {
+                    // add to list of modules to be registered
+                    EE_Register_Module::deregister($addon_name);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['shortcode_paths'])
+                    || ! empty(self::$_settings[ $addon_name ]['shortcode_fqcns'])
+                ) {
+                    // add to list of shortcodes to be registered
+                    EE_Register_Shortcode::deregister($addon_name);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['config_class'])) {
+                    // if config_class present let's register config.
+                    EE_Register_Config::deregister(self::$_settings[ $addon_name ]['config_class']);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['widget_paths'])) {
+                    // add to list of widgets to be registered
+                    EE_Register_Widget::deregister($addon_name);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['model_paths'])
+                    || ! empty(self::$_settings[ $addon_name ]['class_paths'])
+                ) {
+                    // add to list of shortcodes to be registered
+                    EE_Register_Model::deregister($addon_name);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['model_extension_paths'])
+                    || ! empty(self::$_settings[ $addon_name ]['class_extension_paths'])
+                ) {
+                    // add to list of shortcodes to be registered
+                    EE_Register_Model_Extensions::deregister($addon_name);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['message_types'])) {
+                    foreach ((array) self::$_settings[ $addon_name ]['message_types'] as $message_type => $message_type_settings) {
+                        EE_Register_Message_Type::deregister($message_type);
+                    }
+                }
+                // deregister capabilities for addon
+                if (! empty(self::$_settings[ $addon_name ]['capabilities'])
+                    || ! empty(self::$_settings[ $addon_name ]['capability_maps'])
+                ) {
+                    EE_Register_Capabilities::deregister($addon_name);
+                }
+                // deregister custom_post_types for addon
+                if (! empty(self::$_settings[ $addon_name ]['custom_post_types'])) {
+                    EE_Register_CPT::deregister($addon_name);
+                }
+                if (! empty(self::$_settings[ $addon_name ]['payment_method_paths'])) {
+                    EE_Register_Payment_Method::deregister($addon_name);
+                }
+                $addon = EE_Registry::instance()->getAddon($class_name);
+                if ($addon instanceof EE_Addon) {
+                    remove_action(
+                        'deactivate_' . $addon->get_main_plugin_file_basename(),
+                        array($addon, 'deactivation')
+                    );
+                    remove_action(
+                        'AHEE__EE_System__perform_activations_upgrades_and_migrations',
+                        array($addon, 'initialize_db_if_no_migrations_required')
+                    );
+                    // remove `after_registration` call
+                    remove_action(
+                        'AHEE__EE_System__load_espresso_addons__complete',
+                        array($addon, 'after_registration'),
+                        999
+                    );
+                }
+                EE_Registry::instance()->removeAddon($class_name);
+            } catch (OutOfBoundsException $addon_not_yet_registered_exception) {
+                // the add-on was not yet registered in the registry,
+                // so RegistryContainer::__get() throws this exception.
+                // also no need to worry about this or log it,
+                // it's ok to deregister an add-on before its registered in the registry
+            } catch (Exception $e) {
+                new ExceptionLogger($e);
             }
-            //deregister capabilities for addon
-            if (
-                ! empty(self::$_settings[ $addon_name ]['capabilities'])
-                || ! empty(self::$_settings[ $addon_name ]['capability_maps'])
-            ) {
-                EE_Register_Capabilities::deregister($addon_name);
-            }
-            //deregister custom_post_types for addon
-            if (! empty(self::$_settings[ $addon_name ]['custom_post_types'])) {
-                EE_Register_CPT::deregister($addon_name);
-            }
-            if (! empty(self::$_settings[ $addon_name ]['payment_method_paths'])) {
-                EE_Register_Payment_Method::deregister($addon_name);
-            }
-            $addon = EE_Registry::instance()->getAddon($class_name);
-            if ($addon instanceof EE_Addon) {
-                remove_action(
-                    'deactivate_' . $addon->get_main_plugin_file_basename(),
-                    array($addon, 'deactivation')
-                );
-                remove_action(
-                    'AHEE__EE_System__perform_activations_upgrades_and_migrations',
-                    array($addon, 'initialize_db_if_no_migrations_required')
-                );
-                //remove `after_registration` call
-                remove_action(
-                    'AHEE__EE_System__load_espresso_addons__complete',
-                    array($addon, 'after_registration'),
-                    999
-                );
-            }
-            EE_Registry::instance()->removeAddon($class_name);
             unset(self::$_settings[ $addon_name ]);
             do_action('AHEE__EE_Register_Addon__deregister__after', $addon_name);
         }
     }
-
-
 }
-// End of file EE_Register_Addon.lib.php
-// Location: /core/libraries/plugin_api/EE_Register_Addon.lib.php

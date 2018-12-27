@@ -1,11 +1,6 @@
-<?php use EventEspresso\core\services\orm\ModelFieldFactory;
+<?php
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-require_once(EE_MODELS . 'EEM_CPT_Base.model.php');
-
-
+use EventEspresso\core\services\orm\ModelFieldFactory;
 
 /**
  * EEM_Event Model
@@ -75,7 +70,7 @@ class EEM_Event extends EEM_CPT_Base
         // to remove Postponed events from the frontend, copy the following filter to your functions.php file
         // add_filter( 'AFEE__EEM_Event__construct___custom_stati__postponed__Public', '__return_false' );
         // to remove Sold Out events from the frontend, copy the following filter to your functions.php file
-        //	add_filter( 'AFEE__EEM_Event__construct___custom_stati__sold_out__Public', '__return_false' );
+        //  add_filter( 'AFEE__EEM_Event__construct___custom_stati__sold_out__Public', '__return_false' );
         $this->_custom_stati = apply_filters(
             'AFEE__EEM_Event__construct___custom_stati',
             array(
@@ -101,49 +96,123 @@ class EEM_Event extends EEM_CPT_Base
         );
         $this->_fields = array(
             'Event_CPT'  => array(
-                'EVT_ID'         => new EE_Primary_Key_Int_Field('ID',
-                    esc_html__('Post ID for Event', 'event_espresso')),
-                'EVT_name'       => new EE_Plain_Text_Field('post_title', esc_html__('Event Name', 'event_espresso'),
+                'EVT_ID'         => new EE_Primary_Key_Int_Field(
+                    'ID',
+                    esc_html__('Post ID for Event', 'event_espresso')
+                ),
+                'EVT_name'       => new EE_Plain_Text_Field(
+                    'post_title',
+                    esc_html__('Event Name', 'event_espresso'),
                     false,
-                    ''),
-                'EVT_desc'       => new EE_Post_Content_Field('post_content',
+                    ''
+                ),
+                'EVT_desc'       => new EE_Post_Content_Field(
+                    'post_content',
                     esc_html__('Event Description', 'event_espresso'),
-                    false, ''),
-                'EVT_slug'       => new EE_Slug_Field('post_name', esc_html__('Event Slug', 'event_espresso'), false,
-                    ''),
-                'EVT_created'    => new EE_Datetime_Field('post_date',
+                    false,
+                    ''
+                ),
+                'EVT_slug'       => new EE_Slug_Field(
+                    'post_name',
+                    esc_html__('Event Slug', 'event_espresso'),
+                    false,
+                    ''
+                ),
+                'EVT_created'    => new EE_Datetime_Field(
+                    'post_date',
                     esc_html__('Date/Time Event Created', 'event_espresso'),
-                    false, EE_Datetime_Field::now),
-                'EVT_short_desc' => new EE_Simple_HTML_Field('post_excerpt',
-                    esc_html__('Event Short Description', 'event_espresso'), false, ''),
-                'EVT_modified'   => new EE_Datetime_Field('post_modified',
-                    esc_html__('Date/Time Event Modified', 'event_espresso'), false, EE_Datetime_Field::now),
-                'EVT_wp_user'    => new EE_WP_User_Field('post_author',
+                    false,
+                    EE_Datetime_Field::now
+                ),
+                'EVT_short_desc' => new EE_Simple_HTML_Field(
+                    'post_excerpt',
+                    esc_html__('Event Short Description', 'event_espresso'),
+                    false,
+                    ''
+                ),
+                'EVT_modified'   => new EE_Datetime_Field(
+                    'post_modified',
+                    esc_html__('Date/Time Event Modified', 'event_espresso'),
+                    false,
+                    EE_Datetime_Field::now
+                ),
+                'EVT_wp_user'    => new EE_WP_User_Field(
+                    'post_author',
                     esc_html__('Event Creator ID', 'event_espresso'),
-                    false),
-                'parent'         => new EE_Integer_Field('post_parent', esc_html__('Event Parent ID', 'event_espresso'),
+                    false
+                ),
+                'parent'         => new EE_Integer_Field(
+                    'post_parent',
+                    esc_html__('Event Parent ID', 'event_espresso'),
                     false,
-                    0),
-                'EVT_order'      => new EE_Integer_Field('menu_order', esc_html__('Event Menu Order', 'event_espresso'),
+                    0
+                ),
+                'EVT_order'      => new EE_Integer_Field(
+                    'menu_order',
+                    esc_html__('Event Menu Order', 'event_espresso'),
                     false,
-                    1),
+                    1
+                ),
                 'post_type'      => new EE_WP_Post_Type_Field('espresso_events'),
                 // EE_Plain_Text_Field( 'post_type', esc_html__( 'Event Post Type', 'event_espresso' ), FALSE, 'espresso_events' ),
-                'status'         => new EE_WP_Post_Status_Field('post_status',
+                'status'         => new EE_WP_Post_Status_Field(
+                    'post_status',
                     esc_html__('Event Status', 'event_espresso'),
-                    false, 'draft', $this->_custom_stati),
+                    false,
+                    'draft',
+                    $this->_custom_stati
+                ),
+                'password' => new EE_Password_Field(
+                    'post_password',
+                    __('Password', 'event_espresso'),
+                    false,
+                    '',
+                    array(
+                        'EVT_desc',
+                        'EVT_short_desc',
+                        'EVT_display_desc',
+                        'EVT_display_ticket_selector',
+                        'EVT_visible_on',
+                        'EVT_additional_limit',
+                        'EVT_default_registration_status',
+                        'EVT_member_only',
+                        'EVT_phone',
+                        'EVT_allow_overflow',
+                        'EVT_timezone_string',
+                        'EVT_external_URL',
+                        'EVT_donations'
+                    )
+                )
             ),
             'Event_Meta' => array(
-                'EVTM_ID'                         => new EE_DB_Only_Float_Field('EVTM_ID',
-                    esc_html__('Event Meta Row ID', 'event_espresso'), false),
-                'EVT_ID_fk'                       => new EE_DB_Only_Int_Field('EVT_ID',
-                    esc_html__('Foreign key to Event ID from Event Meta table', 'event_espresso'), false),
-                'EVT_display_desc'                => new EE_Boolean_Field('EVT_display_desc',
-                    esc_html__('Display Description Flag', 'event_espresso'), false, 1),
-                'EVT_display_ticket_selector'     => new EE_Boolean_Field('EVT_display_ticket_selector',
-                    esc_html__('Display Ticket Selector Flag', 'event_espresso'), false, 1),
-                'EVT_visible_on'                  => new EE_Datetime_Field('EVT_visible_on',
-                    esc_html__('Event Visible Date', 'event_espresso'), true, EE_Datetime_Field::now),
+                'EVTM_ID'                         => new EE_DB_Only_Float_Field(
+                    'EVTM_ID',
+                    esc_html__('Event Meta Row ID', 'event_espresso'),
+                    false
+                ),
+                'EVT_ID_fk'                       => new EE_DB_Only_Int_Field(
+                    'EVT_ID',
+                    esc_html__('Foreign key to Event ID from Event Meta table', 'event_espresso'),
+                    false
+                ),
+                'EVT_display_desc'                => new EE_Boolean_Field(
+                    'EVT_display_desc',
+                    esc_html__('Display Description Flag', 'event_espresso'),
+                    false,
+                    true
+                ),
+                'EVT_display_ticket_selector'     => new EE_Boolean_Field(
+                    'EVT_display_ticket_selector',
+                    esc_html__('Display Ticket Selector Flag', 'event_espresso'),
+                    false,
+                    true
+                ),
+                'EVT_visible_on'                  => new EE_Datetime_Field(
+                    'EVT_visible_on',
+                    esc_html__('Event Visible Date', 'event_espresso'),
+                    true,
+                    EE_Datetime_Field::now
+                ),
                 'EVT_additional_limit'            => new EE_Integer_Field(
                     'EVT_additional_limit',
                     esc_html__('Limit of Additional Registrations on Same Transaction', 'event_espresso'),
@@ -152,21 +221,46 @@ class EEM_Event extends EEM_CPT_Base
                 ),
                 'EVT_default_registration_status' => new EE_Enum_Text_Field(
                     'EVT_default_registration_status',
-                    esc_html__('Default Registration Status on this Event', 'event_espresso'), false,
-                    EEM_Event::$_default_reg_status, EEM_Registration::reg_status_array()
+                    esc_html__('Default Registration Status on this Event', 'event_espresso'),
+                    false,
+                    EEM_Event::$_default_reg_status,
+                    EEM_Registration::reg_status_array()
                 ),
-                'EVT_member_only'                 => new EE_Boolean_Field('EVT_member_only',
-                    esc_html__('Member-Only Event Flag', 'event_espresso'), false, false),
-                'EVT_phone'                       => new EE_Plain_Text_Field('EVT_phone',
-                    esc_html__('Event Phone Number', 'event_espresso'), false,''),
-                'EVT_allow_overflow'              => new EE_Boolean_Field('EVT_allow_overflow',
-                    esc_html__('Allow Overflow on Event', 'event_espresso'), false, false),
-                'EVT_timezone_string'             => new EE_Plain_Text_Field('EVT_timezone_string',
-                    esc_html__('Timezone (name) for Event times', 'event_espresso'), false,''),
-                'EVT_external_URL'                => new EE_Plain_Text_Field('EVT_external_URL',
-                    esc_html__('URL of Event Page if hosted elsewhere', 'event_espresso'), true),
-                'EVT_donations'                   => new EE_Boolean_Field('EVT_donations',
-                    esc_html__('Accept Donations?', 'event_espresso'), false, false),
+                'EVT_member_only'                 => new EE_Boolean_Field(
+                    'EVT_member_only',
+                    esc_html__('Member-Only Event Flag', 'event_espresso'),
+                    false,
+                    false
+                ),
+                'EVT_phone'                       => new EE_Plain_Text_Field(
+                    'EVT_phone',
+                    esc_html__('Event Phone Number', 'event_espresso'),
+                    false,
+                    ''
+                ),
+                'EVT_allow_overflow'              => new EE_Boolean_Field(
+                    'EVT_allow_overflow',
+                    esc_html__('Allow Overflow on Event', 'event_espresso'),
+                    false,
+                    false
+                ),
+                'EVT_timezone_string'             => new EE_Plain_Text_Field(
+                    'EVT_timezone_string',
+                    esc_html__('Timezone (name) for Event times', 'event_espresso'),
+                    false,
+                    ''
+                ),
+                'EVT_external_URL'                => new EE_Plain_Text_Field(
+                    'EVT_external_URL',
+                    esc_html__('URL of Event Page if hosted elsewhere', 'event_espresso'),
+                    true
+                ),
+                'EVT_donations'                   => new EE_Boolean_Field(
+                    'EVT_donations',
+                    esc_html__('Accept Donations?', 'event_espresso'),
+                    false,
+                    false
+                ),
             ),
         );
         $this->_model_relations = array(
@@ -180,8 +274,9 @@ class EEM_Event extends EEM_CPT_Base
             'Attendee'               => new EE_HABTM_Relation('Registration'),
             'WP_User'                => new EE_Belongs_To_Relation(),
         );
-        //this model is generally available for reading
-        $this->_cap_restriction_generators[EEM_Base::caps_read] = new EE_Restriction_Generator_Public();
+        // this model is generally available for reading
+        $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+        $this->model_chain_to_password = '';
         parent::__construct($timezone);
     }
 
@@ -279,7 +374,9 @@ class EEM_Event extends EEM_CPT_Base
                     'An error occurred. No Event Question Groups could be retrieved because an Event ID was not received.',
                     'event_espresso'
                 ),
-                __FILE__, __FUNCTION__, __LINE__
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
             return false;
         }
@@ -308,7 +405,9 @@ class EEM_Event extends EEM_CPT_Base
                     'An error occurred. No Event Question Groups could be retrieved because an Event ID was not received.',
                     'event_espresso'
                 ),
-                __FILE__, __FUNCTION__, __LINE__
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
             return false;
         }
@@ -340,7 +439,9 @@ class EEM_Event extends EEM_CPT_Base
                     'An error occurred. No Question Groups could be retrieved because an Event ID was not received.',
                     'event_espresso'
                 ),
-                __FILE__, __FUNCTION__, __LINE__
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
             return false;
         }
@@ -371,7 +472,9 @@ class EEM_Event extends EEM_CPT_Base
         if (empty($QSG_IDs)) {
             EE_Error::add_error(
                 esc_html__('An error occurred. No Question Group IDs were received.', 'event_espresso'),
-                __FILE__, __FUNCTION__, __LINE__
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
             return false;
         }
@@ -401,7 +504,9 @@ class EEM_Event extends EEM_CPT_Base
         if (empty($QST_IDs)) {
             EE_Error::add_error(
                 esc_html__('An error occurred. No Question IDs were received.', 'event_espresso'),
-                __FILE__, __FUNCTION__, __LINE__
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
             return false;
         }
@@ -447,7 +552,7 @@ class EEM_Event extends EEM_CPT_Base
         // let's add specific query_params for active_events
         // keep in mind this will override any sent status in the query AND any date queries.
         $where_params['status'] = array('IN', array('publish', EEM_Event::sold_out));
-        //if already have where params for DTT_EVT_start or DTT_EVT_end then append these conditions
+        // if already have where params for DTT_EVT_start or DTT_EVT_end then append these conditions
         if (isset($where_params['Datetime.DTT_EVT_start'])) {
             $where_params['Datetime.DTT_EVT_start******'] = array(
                 '<',
@@ -696,17 +801,17 @@ class EEM_Event extends EEM_CPT_Base
     public function add_relationship_to($id_or_obj, $other_model_id_or_obj, $relationName, $where_query = array())
     {
         if ($relationName === 'Price') {
-            //let's get the PRC object for the given ID to make sure that we aren't dealing with a default
+            // let's get the PRC object for the given ID to make sure that we aren't dealing with a default
             $prc_chk = $this->get_related_model_obj($relationName)->ensure_is_obj($other_model_id_or_obj);
-            //if EVT_ID = 0, then this is a default
+            // if EVT_ID = 0, then this is a default
             if ((int) $prc_chk->get('EVT_ID') === 0) {
-                //let's set the prc_id as 0 so we force an insert on the add_relation_to carried out by relation
+                // let's set the prc_id as 0 so we force an insert on the add_relation_to carried out by relation
                 $prc_chk->set('PRC_ID', 0);
             }
-            //run parent
+            // run parent
             return parent::add_relationship_to($id_or_obj, $prc_chk, $relationName, $where_query);
         }
-        //otherwise carry on as normal
+        // otherwise carry on as normal
         return parent::add_relationship_to($id_or_obj, $other_model_id_or_obj, $relationName, $where_query);
     }
 
@@ -732,8 +837,10 @@ class EEM_Event extends EEM_CPT_Base
     public function assemble_array_of_groups_questions_and_options(EE_Registration $registration, $EVT_ID = 0)
     {
         if (empty($EVT_ID)) {
-            throw new EE_Error(__('An error occurred. No EVT_ID is included.  Needed to know which question groups to retrieve.',
-                'event_espresso'));
+            throw new EE_Error(__(
+                'An error occurred. No EVT_ID is included.  Needed to know which question groups to retrieve.',
+                'event_espresso'
+            ));
         }
         $questions = array();
         // get all question groups for event
@@ -741,8 +848,8 @@ class EEM_Event extends EEM_CPT_Base
         if (! empty($qgs)) {
             foreach ($qgs as $qg) {
                 $qsts = $qg->questions();
-                $questions[$qg->ID()] = $qg->model_field_array();
-                $questions[$qg->ID()]['QSG_questions'] = array();
+                $questions[ $qg->ID() ] = $qg->model_field_array();
+                $questions[ $qg->ID() ]['QSG_questions'] = array();
                 foreach ($qsts as $qst) {
                     if ($qst->is_system_question()) {
                         continue;
@@ -760,22 +867,22 @@ class EEM_Event extends EEM_CPT_Base
                     $input_name = '';
                     $input_id = sanitize_key($qst->display_text());
                     $input_class = '';
-                    $questions[$qg->ID()]['QSG_questions'][$qst->ID()] = $qst->model_field_array();
-                    $questions[$qg->ID()]['QSG_questions'][$qst->ID()]['QST_input_name'] = 'qstn'
+                    $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ] = $qst->model_field_array();
+                    $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_input_name'] = 'qstn'
                                                                                            . $input_name
                                                                                            . $qst_name;
-                    $questions[$qg->ID()]['QSG_questions'][$qst->ID()]['QST_input_id'] = $input_id . '-' . $qstn_id;
-                    $questions[$qg->ID()]['QSG_questions'][$qst->ID()]['QST_input_class'] = $input_class;
-                    $questions[$qg->ID()]['QSG_questions'][$qst->ID()]['QST_options'] = array();
-                    $questions[$qg->ID()]['QSG_questions'][$qst->ID()]['qst_obj'] = $qst;
-                    $questions[$qg->ID()]['QSG_questions'][$qst->ID()]['ans_obj'] = $answer;
-                    //leave responses as-is, don't convert stuff into html entities please!
-                    $questions[$qg->ID()]['QSG_questions'][$qst->ID()]['htmlentities'] = false;
+                    $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_input_id'] = $input_id . '-' . $qstn_id;
+                    $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_input_class'] = $input_class;
+                    $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_options'] = array();
+                    $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['qst_obj'] = $qst;
+                    $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['ans_obj'] = $answer;
+                    // leave responses as-is, don't convert stuff into html entities please!
+                    $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['htmlentities'] = false;
                     if ($qst->type() == 'RADIO_BTN' || $qst->type() == 'CHECKBOX' || $qst->type() == 'DROPDOWN') {
                         $QSOs = $qst->options(true, $answer->value());
                         if (is_array($QSOs)) {
                             foreach ($QSOs as $QSO_ID => $QSO) {
-                                $questions[$qg->ID()]['QSG_questions'][$qst->ID()]['QST_options'][$QSO_ID] = $QSO->model_field_array();
+                                $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_options'][ $QSO_ID ] = $QSO->model_field_array();
                             }
                         }
                     }
@@ -795,12 +902,10 @@ class EEM_Event extends EEM_CPT_Base
     public function instantiate_class_from_array_or_object($cols_n_values)
     {
         $classInstance = parent::instantiate_class_from_array_or_object($cols_n_values);
-        if($classInstance instanceof EE_Event) {
-            //events have their timezone defined in the DB, so use it immediately
+        if ($classInstance instanceof EE_Event) {
+            // events have their timezone defined in the DB, so use it immediately
             $this->set_timezone($classInstance->get_timezone());
         }
         return $classInstance;
     }
 }
-// End of file EEM_Event.model.php
-// Location: /includes/models/EEM_Event.model.php

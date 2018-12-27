@@ -1,16 +1,11 @@
 <?php
+
 namespace EventEspresso\core\services\commands\registration;
 
 use EventEspresso\core\domain\services\ticket\CancelTicketLineItemService;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class CancelRegistrationAndTicketLineItemCommandHandler
@@ -30,7 +25,6 @@ class CancelRegistrationAndTicketLineItemCommandHandler extends CommandHandler
     private $cancel_ticket_line_item_service;
 
 
-
     /**
      * Command constructor
      *
@@ -42,7 +36,6 @@ class CancelRegistrationAndTicketLineItemCommandHandler extends CommandHandler
     }
 
 
-
     /**
      * @param \EventEspresso\core\services\commands\CommandInterface $command
      * @return boolean
@@ -50,7 +43,7 @@ class CancelRegistrationAndTicketLineItemCommandHandler extends CommandHandler
     public function handle(CommandInterface $command)
     {
         /** @var CancelRegistrationAndTicketLineItemCommand $command */
-        if ( ! $command instanceof CancelRegistrationAndTicketLineItemCommand) {
+        if (! $command instanceof CancelRegistrationAndTicketLineItemCommand) {
             throw new InvalidEntityException(get_class($command), 'CancelRegistrationAndTicketLineItemCommand');
         }
         $registration = $command->registration();
@@ -60,9 +53,4 @@ class CancelRegistrationAndTicketLineItemCommandHandler extends CommandHandler
         $registration->save();
         return true;
     }
-
-
-
 }
-// End of file CancelRegistrationAndTicketLineItemCommandHandler.php
-// Location: /CancelRegistrationAndTicketLineItemCommandHandler.php

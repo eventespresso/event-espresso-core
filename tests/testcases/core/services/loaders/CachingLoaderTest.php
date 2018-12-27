@@ -1,10 +1,14 @@
 <?php
-use EventEspresso\core\exceptions\InvalidEntityException;
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\LooseCollection;
-use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
+use EventEspresso\core\services\loaders\ClassInterfaceCache;
 use EventEspresso\core\services\loaders\CoreLoader;
 use EventEspresso\core\services\loaders\LoaderDecorator;
+use EventEspresso\core\services\loaders\ObjectIdentifier;
 use EventEspresso\tests\mocks\core\services\loaders\CachingLoaderMock;
+use PHPUnit\Framework\Exception;
 
 /**
  * CachingLoaderTest
@@ -27,7 +31,12 @@ class CachingLoaderTest extends EE_UnitTestCase
     private static $loader;
 
 
-
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
     public function setUp()
     {
         //caching is turned off by default in the parent test case.  For tests in here where we're doing a number of
@@ -35,7 +44,8 @@ class CachingLoaderTest extends EE_UnitTestCase
         if (! self::$loader instanceof LoaderDecorator) {
             self::$loader = new CachingLoaderMock(
                 new CoreLoader(EE_Registry::instance()),
-                new LooseCollection('')
+                new LooseCollection(''),
+                new ObjectIdentifier(new ClassInterfaceCache())
             );
         }
         parent::setUp();
@@ -48,9 +58,10 @@ class CachingLoaderTest extends EE_UnitTestCase
     }
 
 
-
     /**
      * This ensures there is no persistence with caching off (caching is off by default in unit tests).
+     *
+     * @throws Exception
      */
     public function testLoadCachingOff()
     {
@@ -80,9 +91,6 @@ class CachingLoaderTest extends EE_UnitTestCase
 
     /**
      * This tests persistence with caching on.
-     *
-     * @throws InvalidEntityException
-     * @throws ServiceNotFoundException
      */
     public function testLoadCachingOn()
     {
@@ -95,9 +103,10 @@ class CachingLoaderTest extends EE_UnitTestCase
     }
 
 
-
     /**
      * This tests the resetting of cache
+     *
+     * @throws Exception
      */
     public function testResetCache()
     {
@@ -126,7 +135,49 @@ class CachingLoaderTest extends EE_UnitTestCase
         $this->assertNotEquals(spl_object_hash($object9), spl_object_hash(self::$loader->load($fqcn9)));
     }
 
-
-
+    /**
+     * @since 4.9.66.p
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws \PHPUnit\Framework\AssertionFailedError
+     */
+    public function testShare()
+    {
+        // turn caching on again
+        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false', 10);
+        // create a context object
+        $context1 = new EventEspresso\core\domain\entities\contexts\Context(
+            'testShare',
+            'we are testing the share method'
+        );
+        // share it but don't pass any arguments
+        $added = self::$loader->share('EventEspresso\core\domain\entities\contexts\Context', $context1);
+        $this->assertTrue($added);
+        $object1 = self::$loader->load('EventEspresso\core\domain\entities\contexts\Context');
+        $this->assertEquals(spl_object_hash($object1), spl_object_hash($context1));
+        // create another context object
+        $context2 = new EventEspresso\core\domain\entities\contexts\Context(
+            'testShare2',
+            'we are testing the share method again'
+        );
+        // share it but pass an array of its arguments
+        $added2 = self::$loader->share(
+            'EventEspresso\core\domain\entities\contexts\Context',
+            $context2,
+            array('testShare2', 'we are testing the share method again')
+        );
+        $this->assertTrue($added2);
+        // just load using FQCN... should match object 1
+        $not_object2 = self::$loader->load('EventEspresso\core\domain\entities\contexts\Context');
+        $this->assertNotEquals(spl_object_hash($not_object2), spl_object_hash($context2));
+        // because it's context 1
+        $this->assertEquals(spl_object_hash($not_object2), spl_object_hash($context1));
+        // now load using arguments
+        $object2 = self::$loader->load(
+            'EventEspresso\core\domain\entities\contexts\Context',
+            array('testShare2', 'we are testing the share method again')
+        );
+        $this->assertEquals(spl_object_hash($object2), spl_object_hash($context2));
+    }
 }
 // Location: testcases/core/services/loaders/CachingLoaderTest.php

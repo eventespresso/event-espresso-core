@@ -9,18 +9,18 @@ use EventEspresso\core\services\database\TableManager;
  * -adds DTT_name and DTT_description to the datetime table;
  * -adds users onto prices, price types, question groups, and tickets
  */
-//make sure we have all the stages loaded too
-//unfortunately, this needs to be done upon INCLUSION of this file,
-//instead of construction, because it only gets constructed on first page load
-//(all other times it gets resurrected from a wordpress option)
+// make sure we have all the stages loaded too
+// unfortunately, this needs to be done upon INCLUSION of this file,
+// instead of construction, because it only gets constructed on first page load
+// (all other times it gets resurrected from a wordpress option)
 $stages = glob(EE_CORE . 'data_migration_scripts/4_5_0_stages/*');
 $class_to_filepath = array();
 foreach ($stages as $filepath) {
     $matches = array();
     preg_match('~4_5_0_stages/(.*).dmsstage.php~', $filepath, $matches);
-    $class_to_filepath[$matches[1]] = $filepath;
+    $class_to_filepath[ $matches[1] ] = $filepath;
 }
-//give addons a chance to autoload their stages too
+// give addons a chance to autoload their stages too
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_5_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
@@ -57,14 +57,14 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
     {
         $version_string = $version_array['Core'];
         if (version_compare($version_string, '4.5.0', '<=') && version_compare($version_string, '4.3.0', '>=')) {
-//			echo "$version_string can be migrated from";
+//          echo "$version_string can be migrated from";
             return true;
-        } elseif ( ! $version_string) {
-//			echo "no version string provided: $version_string";
-            //no version string provided... this must be pre 4.3
-            return false;//changed mind. dont want people thinking they should migrate yet because they cant
+        } elseif (! $version_string) {
+//          echo "no version string provided: $version_string";
+            // no version string provided... this must be pre 4.3
+            return false;// changed mind. dont want people thinking they should migrate yet because they cant
         } else {
-//			echo "$version_string doesnt apply";
+//          echo "$version_string doesnt apply";
             return false;
         }
     }
@@ -73,7 +73,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
 
     public function schema_changes_before_migration()
     {
-        //relies on 4.1's EEH_Activation::create_table
+        // relies on 4.1's EEH_Activation::create_table
         require_once(EE_HELPERS . 'EEH_Activation.helper.php');
         $table_name = 'esp_answer';
         $sql = " ANS_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -98,7 +98,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
 							PRIMARY KEY  (ATTM_ID),
 								KEY ATT_fname (ATT_fname),
 								KEY ATT_lname (ATT_lname),
-								KEY ATT_email (ATT_email)";
+								KEY ATT_email (ATT_email(191))";
         $this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_country';
         $sql = "CNT_ISO VARCHAR(2) COLLATE utf8_bin NOT NULL,
@@ -375,7 +375,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
 			KEY STA_ID (STA_ID),
 			KEY CNT_ISO (CNT_ISO)";
         $this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
-        //modified tables
+        // modified tables
         $table_name = "esp_price";
         $sql = "PRC_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 					  PRT_ID TINYINT(3) UNSIGNED NOT NULL,
@@ -440,14 +440,14 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
 					UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier ASC)';
         $this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
         $script_4_1_defaults = EE_Registry::instance()->load_dms('Core_4_1_0');
-        //(because many need to convert old string states to foreign keys into the states table)
+        // (because many need to convert old string states to foreign keys into the states table)
         $script_4_1_defaults->insert_default_states();
         $script_4_1_defaults->insert_default_countries();
-        //schema on price, price_types and tickets has changed so use the DEFAULT method in here instead of 4.1's and later.
+        // schema on price, price_types and tickets has changed so use the DEFAULT method in here instead of 4.1's and later.
         $this->insert_default_price_types();
         $this->insert_default_prices();
         $this->insert_default_tickets();
-        //setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
+        // setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
         EE_Config::instance()->update_espresso_config(false, true);
         return true;
     }
@@ -483,7 +483,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
         if ($this->_get_table_analysis()->tableExists($price_type_table)) {
             $SQL = 'SELECT COUNT(PRT_ID) FROM ' . $price_type_table;
             $price_types_exist = $wpdb->get_var($SQL);
-            if ( ! $price_types_exist) {
+            if (! $price_types_exist) {
                 $user_id = EEH_Activation::get_default_creator_id();
                 $SQL = "INSERT INTO $price_type_table ( PRT_ID, PRT_name, PBT_ID, PRT_is_percent, PRT_order, PRT_wp_user, PRT_deleted ) VALUES
 							(1, '" . __('Base Price', 'event_espresso') . "', 1,  0, 0, $user_id, 0),
@@ -515,7 +515,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
         if ($this->_get_table_analysis()->tableExists($price_table)) {
             $SQL = 'SELECT COUNT(PRC_ID) FROM ' . $price_table;
             $prices_exist = $wpdb->get_var($SQL);
-            if ( ! $prices_exist) {
+            if (! $prices_exist) {
                 $user_id = EEH_Activation::get_default_creator_id();
                 $SQL = "INSERT INTO $price_table
 							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_wp_user, PRC_order, PRC_deleted, PRC_parent ) VALUES
@@ -542,7 +542,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
         if ($this->_get_table_analysis()->tableExists($ticket_table)) {
             $SQL = 'SELECT COUNT(TKT_ID) FROM ' . $ticket_table;
             $tickets_exist = $wpdb->get_var($SQL);
-            if ( ! $tickets_exist) {
+            if (! $tickets_exist) {
                 $user_id = EEH_Activation::get_default_creator_id();
                 $SQL = "INSERT INTO $ticket_table
 					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_required, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_wp_user, TKT_deleted ) VALUES
@@ -557,7 +557,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
         if ($this->_get_table_analysis()->tableExists($ticket_price_table)) {
             $SQL = 'SELECT COUNT(TKP_ID) FROM ' . $ticket_price_table;
             $ticket_prc_exist = $wpdb->get_var($SQL);
-            if ( ! $ticket_prc_exist) {
+            if (! $ticket_prc_exist) {
                 $SQL = "INSERT INTO $ticket_price_table
 				( TKP_ID, TKT_ID, PRC_ID ) VALUES
 				( 1, 1, 1 )
@@ -567,15 +567,4 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
             }
         }
     }
-
 }
-
-
-
-
-
-
-
-
-
-

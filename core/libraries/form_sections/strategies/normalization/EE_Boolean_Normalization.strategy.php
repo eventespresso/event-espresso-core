@@ -1,9 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
+<?php
 /**
  * EE_Boolean_Normalization
  * Just casts it to a boolean (so we're assuming that we're only receiving 0 and 1s as
@@ -42,4 +37,3 @@ class EE_Boolean_Normalization extends EE_Normalization_Strategy_Base
         }
     }
 }
-// End of file EE_Boolean_Normalization.strategy.php

@@ -1,22 +1,8 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-/**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package        Event Espresso
- * @ author        Event Espresso
- * @ copyright    (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license        {@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @ link                {@link http://www.eventespresso.com}
- * @ since            4.0
- */
-
-
-
+<?php
 /**
  * EE_Soft_Delete_Base_Class
- * Class for handling soft-delete logic (ie, use a column in the DB to indicate deletion of the model, instead of actually deleting it) EE_{classes}.
+ * Class for handling soft-delete logic (ie, use a column in the DB to indicate deletion of the model, instead of
+ * actually deleting it) EE_{classes}.
  *
  * @package               Event Espresso
  * @subpackage            includes/classes/EE_Answer.class.php
@@ -35,7 +21,6 @@ abstract class EE_Soft_Delete_Base_Class extends EE_Base_Class
     {
         return $this->delete_or_restore();
     }
-
 
 
     /**
@@ -65,7 +50,6 @@ abstract class EE_Soft_Delete_Base_Class extends EE_Base_Class
         do_action('AHEE__EE_Soft_Delete_Base_Class__delete_or_restore__after', $this, $delete, $result);
         return $result;
     }
-
 
 
     /**

@@ -1,8 +1,6 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
+<?php
 
-
+use EventEspresso\payment_methods\Paypal_Express\forms\SettingsForm;
 
 /**
  * ----------------------------------------------
@@ -63,69 +61,7 @@ class EE_PMT_Paypal_Express extends EE_PMT_Base
      */
     public function generate_new_settings_form()
     {
-        EE_Registry::instance()->load_helper('Template');
-        $form = new EE_Payment_Method_Form(
-            array(
-                'extra_meta_inputs' => array(
-                    'api_username' => new EE_Text_Input(
-                        array(
-                            'html_label_text' => sprintf(
-                                esc_html__('API Username %s', 'event_espresso'),
-                                $this->get_help_tab_link()
-                            ),
-                            'required'        => true,
-                        )
-                    ),
-                    'api_password' => new EE_Text_Input(
-                        array(
-                            'html_label_text' => sprintf(
-                                esc_html__('API Password %s', 'event_espresso'),
-                                $this->get_help_tab_link()
-                            ),
-                            'required'        => true,
-                        )
-                    ),
-                    'api_signature' => new EE_Text_Input(
-                        array(
-                            'html_label_text' => sprintf(
-                                esc_html__('API Signature %s', 'event_espresso'),
-                                $this->get_help_tab_link()
-                            ),
-                            'required'        => true,
-                        )
-                    ),
-                    'request_shipping_addr' => new EE_Yes_No_Input(
-                        array(
-                            'html_label_text' => sprintf(
-                                esc_html__('Request Shipping Address %s', 'event_espresso'),
-                                $this->get_help_tab_link()
-                            ),
-                            'html_help_text'  => esc_html__(
-                                // @codingStandardsIgnoreStart
-                                'If set to "Yes", then a shipping address will be requested on the PayPal checkout page.',
-                                // @codingStandardsIgnoreEnd
-                                'event_espresso'
-                            ),
-                            'required'        => true,
-                            'default'         => false,
-                        )
-                    ),
-                    'image_url' => new EE_Admin_File_Uploader_Input(
-                        array(
-                            'html_label_text' => sprintf(
-                                esc_html__('Image URL %s', 'event_espresso'),
-                                $this->get_help_tab_link()
-                            ),
-                            'html_help_text'  => esc_html__(
-                                'Used for your business/personal logo on the PayPal page',
-                                'event_espresso'
-                            ),
-                            'required'        => false,
-                        )
-                    ),
-                )
-            )
-        );
+        $form = new SettingsForm(array(), $this->get_help_tab_link());
         return $form;
     }
 
@@ -166,4 +102,3 @@ class EE_PMT_Paypal_Express extends EE_PMT_Base
         return false;
     }
 }
-// End of file EE_PMT_Paypal_Express.pm.php

@@ -1,20 +1,6 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package            Event Espresso
- * @ author            Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                    http://www.eventespresso.com
- * @ version            4.3
- * ------------------------------------------------------------------------
  * EEG_Paypal_Pro
  *
  * @package               Event Espresso
@@ -71,6 +57,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
         'TRY',
         'TWD',
         'RUB',
+        'INR',
     );
 
 
@@ -116,13 +103,13 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
         }
         $gateway_formatter = $this->_get_gateway_formatter();
         $order_description = substr($gateway_formatter->formatOrderDescription($payment), 0, 127);
-        //charge for the full amount. Show itemized list
+        // charge for the full amount. Show itemized list
         if ($this->_can_easily_itemize_transaction_for($payment)) {
             $item_num = 1;
             $total_line_item = $transaction->total_line_item();
             $order_items = array();
             foreach ($total_line_item->get_items() as $line_item) {
-                //ignore line items with a quantity of 0
+                // ignore line items with a quantity of 0
                 if ($line_item->quantity() == 0) {
                     continue;
                 }
@@ -243,14 +230,14 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
             // Required.  Postal code of payer.
             'zip'         => $billing_info['zip'],
         );
-        //check if the registration info contains the needed fields for paypal pro
-        //(see https://developer.paypal.com/docs/classic/api/merchant/DoDirectPayment_API_Operation_NVP/)
+        // check if the registration info contains the needed fields for paypal pro
+        // (see https://developer.paypal.com/docs/classic/api/merchant/DoDirectPayment_API_Operation_NVP/)
         if ($attendee->address() && $attendee->city() && $attendee->country_ID()) {
             $use_registration_address_info = true;
         } else {
             $use_registration_address_info = false;
         }
-        //so if the attendee has enough data to fill out PayPal Pro's shipping info, use it.
+        // so if the attendee has enough data to fill out PayPal Pro's shipping info, use it.
         // If not, use the billing info again
         $ShippingAddress = array(
             'shiptoname'     => substr($use_registration_address_info
@@ -283,7 +270,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
             // Required.  Three-letter currency code.  Default is USD.
             'currencycode' => $payment->currency_code(),
             // Required if you include itemized cart details. (L_AMTn, etc.)
-            //Subtotal of items not including S&H, or tax.
+            // Subtotal of items not including S&H, or tax.
             'itemamt'      => $gateway_formatter->formatCurrency($item_amount),//
             // Total shipping costs for the order.  If you specify shippingamt, you must also specify itemamt.
             'shippingamt'  => '',
@@ -297,10 +284,10 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
             // Free-form field for your own use.  256 char max.
             'custom'       => $primary_registrant ? $primary_registrant->ID() : '',
             // Your own invoice or tracking number
-            'invnum'       => wp_generate_password(12, false),//$transaction->ID(),
+            'invnum'       => wp_generate_password(12, false),// $transaction->ID(),
             // URL for receiving Instant Payment Notifications.  This overrides what your profile is set to use.
             'notifyurl'    => '',
-            'buttonsource' => 'EventEspresso_SP',//EE will blow up if you change this
+            'buttonsource' => 'EventEspresso_SP',// EE will blow up if you change this
         );
         // Wrap all data arrays into a single, "master" array which will be passed into the class function.
         $PayPalRequestData = array(
@@ -316,7 +303,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
         $this->_log_clean_request($PayPalRequestData, $payment);
         try {
             $PayPalResult = $this->prep_and_curl_request($PayPalRequestData);
-            //remove PCI-sensitive data so it doesn't get stored
+            // remove PCI-sensitive data so it doesn't get stored
             $PayPalResult = $this->_log_clean_response($PayPalResult, $payment);
             $message = isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'];
             if (empty($PayPalResult['RAWRESPONSE'])) {
@@ -329,7 +316,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
                 } else {
                     $payment->set_status($this->_pay_model->declined_status());
                 }
-                //make sure we interpret the AMT as a float, not an international string
+                // make sure we interpret the AMT as a float, not an international string
                 // (where periods are thousand separators)
                 $payment->set_amount(isset($PayPalResult['AMT']) ? floatval($PayPalResult['AMT']) : 0);
                 $payment->set_gateway_response($message);
@@ -346,8 +333,8 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
             $payment->set_status($this->_pay_model->failed_status());
             $payment->set_gateway_response($e->getMessage());
         }
-        //$payment->set_status( $this->_pay_model->declined_status() );
-        //$payment->set_gateway_response( '' );
+        // $payment->set_status( $this->_pay_model->declined_status() );
+        // $payment->set_gateway_response( '' );
         return $payment;
     }
 
@@ -441,7 +428,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
         $OrderItems = isset($DataArray['OrderItems']) ? $DataArray['OrderItems'] : array();
         $n = 0;
         foreach ($OrderItems as $OrderItemsVar => $OrderItemsVal) {
-            $CurrentItem = $OrderItems[$OrderItemsVar];
+            $CurrentItem = $OrderItems[ $OrderItemsVar ];
             foreach ($CurrentItem as $CurrentItemVar => $CurrentItemVal) {
                 $OrderItemsNVP .= '&' . strtoupper($CurrentItemVar) . $n . '=' . urlencode($CurrentItemVal);
             }
@@ -502,7 +489,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $Request);
         curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-        //execute the curl POST
+        // execute the curl POST
         $Response = curl_exec($curl);
         curl_close($curl);
         return $Response;
@@ -526,7 +513,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
             $valuepos = strpos($NVPString, '&') ? strpos($NVPString, '&') : strlen($NVPString);
             $valval = substr($NVPString, $keypos + 1, $valuepos - $keypos - 1);
             // decoding the response
-            $proArray[$keyval] = urldecode($valval);
+            $proArray[ $keyval ] = urldecode($valval);
             $NVPString = substr($NVPString, $valuepos + 1, strlen($NVPString));
         }
         return $proArray;
@@ -559,16 +546,16 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
     {
         $Errors = array();
         $n = 0;
-        while (isset($DataArray['L_ERRORCODE' . $n . ''])) {
-            $LErrorCode = isset($DataArray['L_ERRORCODE' . $n . '']) ? $DataArray['L_ERRORCODE' . $n . ''] : '';
-            $LShortMessage = isset($DataArray['L_SHORTMESSAGE' . $n . ''])
-                ? $DataArray['L_SHORTMESSAGE' . $n . '']
+        while (isset($DataArray[ 'L_ERRORCODE' . $n . '' ])) {
+            $LErrorCode = isset($DataArray[ 'L_ERRORCODE' . $n . '' ]) ? $DataArray[ 'L_ERRORCODE' . $n . '' ] : '';
+            $LShortMessage = isset($DataArray[ 'L_SHORTMESSAGE' . $n . '' ])
+                ? $DataArray[ 'L_SHORTMESSAGE' . $n . '' ]
                 : '';
-            $LLongMessage = isset($DataArray['L_LONGMESSAGE' . $n . ''])
-                ? $DataArray['L_LONGMESSAGE' . $n . '']
+            $LLongMessage = isset($DataArray[ 'L_LONGMESSAGE' . $n . '' ])
+                ? $DataArray[ 'L_LONGMESSAGE' . $n . '' ]
                 : '';
-            $LSeverityCode = isset($DataArray['L_SEVERITYCODE' . $n . ''])
-                ? $DataArray['L_SEVERITYCODE' . $n . '']
+            $LSeverityCode = isset($DataArray[ 'L_SEVERITYCODE' . $n . '' ])
+                ? $DataArray[ 'L_SEVERITYCODE' . $n . '' ]
                 : '';
             $CurrentItem = array(
                 'L_ERRORCODE'    => $LErrorCode,
@@ -595,7 +582,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
     {
         $error = '';
         foreach ($Errors as $ErrorVar => $ErrorVal) {
-            $CurrentError = $Errors[$ErrorVar];
+            $CurrentError = $Errors[ $ErrorVar ];
             foreach ($CurrentError as $CurrentErrorVar => $CurrentErrorVal) {
                 $CurrentVarName = '';
                 if ($CurrentErrorVar == 'L_ERRORCODE') {
@@ -613,4 +600,3 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
         return $error;
     }
 }
-// End of file EEG_Paypal_Pro.gateway.php

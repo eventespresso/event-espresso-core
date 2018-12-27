@@ -1,7 +1,5 @@
 <?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
-
 /**
  * EE_Change_Log
  *
@@ -98,6 +96,7 @@ class EE_Change_Log extends EE_Base_Class
 
     /**
      * Return the localized log type label.
+     *
      * @return string
      * @throws EE_Error
      */
@@ -192,7 +191,7 @@ class EE_Change_Log extends EE_Base_Class
     public function object()
     {
         $model_name_of_related_obj = $this->OBJ_type();
-        $is_model_name             = EE_Registry::instance()->is_model_name($model_name_of_related_obj);
+        $is_model_name = EE_Registry::instance()->is_model_name($model_name_of_related_obj);
         if (! $is_model_name) {
             return null;
         } else {

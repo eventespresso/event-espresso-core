@@ -1,13 +1,8 @@
 <?php
+
 namespace EventEspresso\core\domain\services\registration;
 
 use EventEspresso\core\domain\services\ticket\CancelTicketLineItemService;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class CancelRegistrationService
@@ -27,7 +22,6 @@ class CancelRegistrationService
     private $cancel_ticket_line_item_service;
 
 
-
     /**
      * Command constructor
      *
@@ -39,20 +33,18 @@ class CancelRegistrationService
     }
 
 
-
-	/**
-	 * @param \EE_Registration $registration
-	 * @param bool             $cancel_ticket_line_item
-	 */
+    /**
+     * @param \EE_Registration $registration
+     * @param bool             $cancel_ticket_line_item
+     */
     public function cancelRegistrationAndTicketLineItem(\EE_Registration $registration, $cancel_ticket_line_item = true)
     {
         // first cancel the original line item for the registration's ticket
-	    if ( $cancel_ticket_line_item ) {
-		    $this->cancel_ticket_line_item_service->forRegistration( $registration );
-	    }
+        if ($cancel_ticket_line_item) {
+            $this->cancel_ticket_line_item_service->forRegistration($registration);
+        }
         $this->cancelRegistrationOnly($registration);
     }
-
 
 
     /**
@@ -65,9 +57,4 @@ class CancelRegistrationService
         $registration->set_status(\EEM_Registration::status_id_cancelled);
         $registration->save();
     }
-
-
-
 }
-// End of file CancelRegistrationService.php
-// Location: /CancelRegistrationService.php

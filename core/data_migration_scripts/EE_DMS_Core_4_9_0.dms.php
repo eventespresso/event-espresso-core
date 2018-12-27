@@ -5,18 +5,18 @@ use EventEspresso\core\services\database\TableManager;
 /**
  * Meant to add the new ee_message table to the database.
  */
-//make sure we have all the stages loaded too
-//unfortunately, this needs to be done upon INCLUSION of this file,
-//instead of construction, because it only gets constructed on first page load
-//(all other times it gets resurrected from a wordpress option)
+// make sure we have all the stages loaded too
+// unfortunately, this needs to be done upon INCLUSION of this file,
+// instead of construction, because it only gets constructed on first page load
+// (all other times it gets resurrected from a wordpress option)
 $stages = glob(EE_CORE . 'data_migration_scripts/4_9_0_stages/*');
 $class_to_filepath = array();
 foreach ($stages as $filepath) {
     $matches = array();
     preg_match('~4_9_0_stages/(.*).dmsstage.php~', $filepath, $matches);
-    $class_to_filepath[$matches[1]] = $filepath;
+    $class_to_filepath[ $matches[1] ] = $filepath;
 }
-//give addons a chance to autoload their stages too
+// give addons a chance to autoload their stages too
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_9_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
@@ -62,14 +62,14 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
     {
         $version_string = $version_array['Core'];
         if (version_compare($version_string, '4.9.0', '<=') && version_compare($version_string, '4.8.0', '>=')) {
-            //			echo "$version_string can be migrated from";
+            //          echo "$version_string can be migrated from";
             return true;
-        } elseif ( ! $version_string) {
-            //			echo "no version string provided: $version_string";
-            //no version string provided... this must be pre 4.3
-            return false;//changed mind. dont want people thinking they should migrate yet because they cant
+        } elseif (! $version_string) {
+            //          echo "no version string provided: $version_string";
+            // no version string provided... this must be pre 4.3
+            return false;// changed mind. dont want people thinking they should migrate yet because they cant
         } else {
-            //			echo "$version_string doesnt apply";
+            //          echo "$version_string doesnt apply";
             return false;
         }
     }
@@ -149,10 +149,10 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				CUR_active tinyint(1) DEFAULT '0',
 				PRIMARY KEY  (CUR_code)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
-        //note: although this table is no longer in use,
-        //it hasn't been removed because then queries to the model will have errors.
-        //but you should expect this table and its corresponding model to be removed in
-        //the next few months
+        // note: although this table is no longer in use,
+        // it hasn't been removed because then queries to the model will have errors.
+        // but you should expect this table and its corresponding model to be removed in
+        // the next few months
         $table_name = 'esp_currency_payment_method';
         $sql = "CPM_ID int(11) NOT NULL AUTO_INCREMENT,
 				CUR_code varchar(6) NOT NULL,
@@ -268,7 +268,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				KEY parent_order (LIN_parent,LIN_order),
 				KEY txn_type_timestamp (TXN_ID,LIN_type,LIN_timestamp),
 				KEY txn_obj_id_obj_type (TXN_ID,OBJ_ID,OBJ_type),
-				KEY obj_id_obj_type (OBJ_ID, OBJ_type)";
+				KEY obj_id_obj_type (OBJ_ID,OBJ_type)";
         $this->_get_table_manager()->dropIndex('esp_line_item', 'TXN_ID');
         $this->_get_table_manager()->dropIndex('esp_line_item', 'LIN_code');
         $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
@@ -524,7 +524,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 			KEY STA_ID (STA_ID),
 			KEY CNT_ISO (CNT_ISO)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
-        //modified tables
+        // modified tables
         $table_name = "esp_price";
         $sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				PRT_ID tinyint(3) unsigned NOT NULL,
@@ -593,7 +593,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
         /** @var EE_DMS_Core_4_1_0 $script_4_1_defaults */
         $script_4_1_defaults = EE_Registry::instance()->load_dms('Core_4_1_0');
-        //(because many need to convert old string states to foreign keys into the states table)
+        // (because many need to convert old string states to foreign keys into the states table)
         $script_4_1_defaults->insert_default_states();
         $script_4_1_defaults->insert_default_countries();
         /** @var EE_DMS_Core_4_5_0 $script_4_5_defaults */
@@ -640,7 +640,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
     public function verify_db_collations()
     {
         global $wpdb;
-        //double-check we haven't already done it or that that the DB doesn't support utf8mb4
+        // double-check we haven't already done it or that that the DB doesn't support utf8mb4
         if ('utf8mb4' !== $wpdb->charset
             || get_option('ee_verified_db_collations', false)) {
             return;
@@ -652,10 +652,9 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
                 $model_obj = call_user_func(array($model_name, 'instance'));
                 if ($model_obj instanceof EEM_Base) {
                     foreach ($model_obj->get_tables() as $table) {
-                        if (
-                            strpos($table->get_table_name(), 'esp_')
-                            && (is_main_site()//for main tables, verify global tables
-                                || ! $table->is_global()//if not the main site, then only verify non-global tables (avoid doubling up)
+                        if (strpos($table->get_table_name(), 'esp_')
+                            && (is_main_site()// for main tables, verify global tables
+                                || ! $table->is_global()// if not the main site, then only verify non-global tables (avoid doubling up)
                             )
                             && function_exists('maybe_convert_table_to_utf8mb4')
                         ) {
@@ -665,18 +664,18 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
                 }
             }
         }
-        //and let's just be sure these addons' tables get migrated too. They already get handled if their addons are active
-        //when this code is run, but not otherwise. Once we record what tables EE added, we'll be able to use that instead
-        //of hard-coding this
+        // and let's just be sure these addons' tables get migrated too. They already get handled if their addons are active
+        // when this code is run, but not otherwise. Once we record what tables EE added, we'll be able to use that instead
+        // of hard-coding this
         $addon_tables = array(
-            //mailchimp
+            // mailchimp
             'esp_event_mailchimp_list_group',
             'esp_event_question_mailchimp_field',
-            //multisite
+            // multisite
             'esp_blog_meta',
-            //people
+            // people
             'esp_people_to_post',
-            //promotions
+            // promotions
             'esp_promotion',
             'esp_promotion_object',
         );
@@ -684,10 +683,10 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
                 $tables_to_check[] = $table_name;
         }
         $this->_verify_db_collations_for_tables(array_unique($tables_to_check));
-        //ok and now let's remember this was done (without needing to check the db schemas all over again)
+        // ok and now let's remember this was done (without needing to check the db schemas all over again)
         add_option('ee_verified_db_collations', true, null, 'no');
-        //seeing how this ran with the fix from 10435, no need to check again
-        add_option('ee_verified_db_collations_again',true,null,'no');
+        // seeing how this ran with the fix from 10435, no need to check again
+        add_option('ee_verified_db_collations_again', true, null, 'no');
     }
 
 
@@ -697,10 +696,11 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
      * which meant some DB collations might not have been updated
      * @return void
      */
-    public function verify_db_collations_again(){
+    public function verify_db_collations_again()
+    {
         global $wpdb;
-        //double-check we haven't already done this or that the DB doesn't support it
-        //compare to how WordPress' upgrade_430() function does this check
+        // double-check we haven't already done this or that the DB doesn't support it
+        // compare to how WordPress' upgrade_430() function does this check
         if ('utf8mb4' !== $wpdb->charset
             || get_option('ee_verified_db_collations_again', false)) {
             return;
@@ -710,7 +710,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
             'esp_message'
         );
         $this->_verify_db_collations_for_tables(array_unique($tables_to_check));
-        add_option('ee_verified_db_collations_again',true,null,'no');
+        add_option('ee_verified_db_collations_again', true, null, 'no');
     }
 
 
@@ -724,7 +724,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
     {
         foreach ($tables_to_check as $table_name) {
             $table_name = $this->_table_analysis->ensureTableNameHasPrefix($table_name);
-            if ( ! apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__check_overridden', false, $table_name )
+            if (! apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__check_overridden', false, $table_name)
                 && $this->_get_table_analysis()->tableExists($table_name)
             ) {
                 maybe_convert_table_to_utf8mb4($table_name);

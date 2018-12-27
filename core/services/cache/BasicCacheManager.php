@@ -1,12 +1,8 @@
 <?php
+
 namespace EventEspresso\core\services\cache;
 
 use Closure;
-use EventEspresso\core\domain\services\session\SessionIdentifierInterface;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class BasicCacheManager
@@ -31,17 +27,15 @@ class BasicCacheManager implements CacheManagerInterface
     private $cache_storage;
 
 
-
     /**
      * BasicCacheManager constructor.
      *
-     * @param CacheStorageInterface      $cache_storage [required]
+     * @param CacheStorageInterface $cache_storage [required]
      */
     public function __construct(CacheStorageInterface $cache_storage)
     {
         $this->cache_storage = $cache_storage;
     }
-
 
 
     /**
@@ -53,7 +47,6 @@ class BasicCacheManager implements CacheManagerInterface
     {
         return BasicCacheManager::CACHE_PREFIX;
     }
-
 
 
     /**
@@ -110,12 +103,11 @@ class BasicCacheManager implements CacheManagerInterface
     }
 
 
-
     /**
      * Generates a unique identifier string for the cache
      *
-     * @param string $id_prefix  [required] see BasicCacheManager::get()
-     * @param string $cache_id   [required] see BasicCacheManager::get()
+     * @param string $id_prefix [required] see BasicCacheManager::get()
+     * @param string $cache_id  [required] see BasicCacheManager::get()
      * @return string
      */
     private function generateCacheIdentifier($id_prefix, $cache_id)
@@ -127,7 +119,6 @@ class BasicCacheManager implements CacheManagerInterface
         // then md5 the above to control it's length, add all of our prefixes, and truncate
         return substr($this->cachePrefix() . $id_prefix . '-' . md5($cache_id), 0, 182);
     }
-
 
 
     /**
@@ -144,14 +135,14 @@ class BasicCacheManager implements CacheManagerInterface
     }
 
 
-
     /**
      * @param array|string $cache_id [required] Could be an ID prefix affecting many caches
      *                               or a specific ID targeting a single cache item
      * @param string       $type
      * @return string
      */
-    private function displayCacheNotice($cache_id, $type) {
+    private function displayCacheNotice($cache_id, $type)
+    {
         return '
 <div class="ee-cached-content-notice" style="position:fixed; bottom:0; left: 0;">
     <p style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;margin:0 0 3px 5px">
@@ -161,7 +152,4 @@ class BasicCacheManager implements CacheManagerInterface
     </p>
 </div>';
     }
-
 }
-// End of file BasicCacheManager.php
-// Location: core/services/cache/BasicCacheManager.php

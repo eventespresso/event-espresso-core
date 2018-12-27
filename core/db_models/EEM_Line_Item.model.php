@@ -1,19 +1,10 @@
-<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package            Event Espresso
- * @ author                Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                    http://www.eventespresso.com
- * @ version            4.0
- *
- * ------------------------------------------------------------------------
- *
  * Line Item Model. Mostly used for storing a snapshot of all the items in a transaction
  * as they were recorded at the time of being added to the cart.
  * There are different 'types' of line items: item, sub-item, tax, sub-total, and total.
@@ -44,13 +35,14 @@ class EEM_Line_Item extends EEM_Base
     /**
      * Tax sub-total is just the total of all the taxes, which should be children
      * of this line item. There should only ever be one tax sub-total, and it should
-     * be a direct child of
+     * be a direct child of. Its quantity and LIN_unit_price = 1.
      */
     const type_tax_sub_total = 'tax-sub-total';
 
     /**
      * Tax line items indicate a tax applied to all the taxable line items.
-     * Should not have any children line items.
+     * Should not have any children line items. Its LIN_unit_price = 0. Its LIN_percent is a percent, not a decimal
+     * (eg 10% tax = 10, not 0.1). Its LIN_total = LIN_unit_price * pre-tax-total. Quantity = 1.
      */
     const type_tax = 'tax';
 
@@ -58,27 +50,38 @@ class EEM_Line_Item extends EEM_Base
      * Indicating individual items purchased, or discounts or surcharges.
      * The sum of all the regular line items  plus the tax items should equal
      * the grand total.
-     * Possible children fo sub-line-items and cancellations.
+     * Possible children are sub-line-items and cancellations.
+     * For flat items, LIN_unit_price * LIN_quantity = LIN_total. Its LIN_total is the sum of all the children
+     * LIN_totals. Its LIN_percent = 0.
+     * For percent items, its LIN_unit_price = 0. Its LIN_percent is a percent, not a decimal (eg 10% = 10, not 0.1).
+     * Its LIN_total is LIN_percent / 100 * sum of lower-priority sibling line items. Quantity = 1.
      */
     const type_line_item = 'line-item';
 
     /**
-     * line item indicating all the factors that make a single line item.
+     * Line item indicating all the factors that make a single line item.
      * Sub-line items should have NO children line items.
+     * For flat sub-items, their quantity should match their parent item, their LIN_unit_price should be this sub-item's
+     * contribution towards the price of ONE of their parent items, and its LIN_total should be
+     *  = LIN_quantity * LIN_unit_price. Its LIN_percent = 0.
+     * For percent sub-items, the quantity should be 1, LIN_unit_price should be 0, and its LIN_total should
+     * = LIN_percent / 100 * sum of lower-priority sibling line items..
      */
     const type_sub_line_item = 'sub-item';
 
     /**
-     * line item indicating a sub-total (eg total for an event, or before taxes).
-     * Direct children can be line items and other sub-totals
+     * Line item indicating a sub-total (eg total for an event, or pre-tax subtotal).
+     * Direct children should be event subtotals.
+     * Should have quantity of 1, and a LIN_total and LIN_unit_price of the sum of all its sub-items' LIN_totals.
      *
      */
     const type_sub_total = 'sub-total';
 
     /**
-     * line item for teh grand total of an order. Its direct children
-     * should be tax subtotals and subtotals, and possibly a regular line item
-     * indicating a transaction-wide discount/surcharge
+     * Line item for the grand total of an order. Its direct children
+     * should be tax subtotals and (pre-tax) subtotals, and possibly a regular line item
+     * indicating a transaction-wide discount/surcharge. Should have a quantity of 1, a LIN_total and LIN_unit_price of
+     * the entire order's mount.
      */
     const type_total = 'total';
 
@@ -92,11 +95,12 @@ class EEM_Line_Item extends EEM_Base
      * to teh payment model object which actually refunded the payment.
      * Cancellations should NOT have any children line items; the should NOT affect
      * any calculations, and are only meant as a record that cancellations have occurred.
+     * Their LIN_percent should be 0.
      */
     const type_cancellation = 'cancellation';
 
     // private instance of the EEM_Line_Item object
-    protected static $_instance = NULL;
+    protected static $_instance = null;
 
 
     /**
@@ -118,18 +122,18 @@ class EEM_Line_Item extends EEM_Base
         $this->_fields = array(
             'Line_Item' => array(
                 'LIN_ID' => new EE_Primary_Key_Int_Field('LIN_ID', __("ID", "event_espresso")),
-                'LIN_code' => new EE_Slug_Field('LIN_code', __("Code for index into Cart", "event_espresso"), TRUE),
-                'TXN_ID' => new EE_Foreign_Key_Int_Field('TXN_ID', __("Transaction ID", "event_espresso"), TRUE, NULL, 'Transaction'),
-                'LIN_name' => new EE_Full_HTML_Field('LIN_name', __("Line Item Name", "event_espresso"), FALSE, ''),
-                'LIN_desc' => new EE_Full_HTML_Field('LIN_desc', __("Line Item Description", "event_espresso"), TRUE),
-                'LIN_unit_price' => new EE_Money_Field('LIN_unit_price', __("Unit Price", "event_espresso"), FALSE, 0),
-                'LIN_percent' => new EE_Float_Field('LIN_percent', __("Percent", "event_espresso"), FALSE, 0),
-                'LIN_is_taxable' => new EE_Boolean_Field('LIN_is_taxable', __("Taxable", "event_espresso"), FALSE, FALSE),
-                'LIN_order' => new EE_Integer_Field('LIN_order', __("Order of Application towards total of parent", "event_espresso"), FALSE, 1),
-                'LIN_total' => new EE_Money_Field('LIN_total', __("Total (unit price x quantity)", "event_espresso"), FALSE, 0),
-                'LIN_quantity' => new EE_Integer_Field('LIN_quantity', __("Quantity", "event_espresso"), TRUE, 1),
-                'LIN_parent' => new EE_Integer_Field('LIN_parent', __("Parent ID (this item goes towards that Line Item's total)", "event_espresso"), TRUE, NULL),
-                'LIN_type' => new EE_Enum_Text_Field('LIN_type', __("Type", "event_espresso"), FALSE, 'line-item', array(
+                'LIN_code' => new EE_Slug_Field('LIN_code', __("Code for index into Cart", "event_espresso"), true),
+                'TXN_ID' => new EE_Foreign_Key_Int_Field('TXN_ID', __("Transaction ID", "event_espresso"), true, null, 'Transaction'),
+                'LIN_name' => new EE_Full_HTML_Field('LIN_name', __("Line Item Name", "event_espresso"), false, ''),
+                'LIN_desc' => new EE_Full_HTML_Field('LIN_desc', __("Line Item Description", "event_espresso"), true),
+                'LIN_unit_price' => new EE_Money_Field('LIN_unit_price', __("Unit Price", "event_espresso"), false, 0),
+                'LIN_percent' => new EE_Float_Field('LIN_percent', __("Percent", "event_espresso"), false, 0),
+                'LIN_is_taxable' => new EE_Boolean_Field('LIN_is_taxable', __("Taxable", "event_espresso"), false, false),
+                'LIN_order' => new EE_Integer_Field('LIN_order', __("Order of Application towards total of parent", "event_espresso"), false, 1),
+                'LIN_total' => new EE_Money_Field('LIN_total', __("Total (unit price x quantity)", "event_espresso"), false, 0),
+                'LIN_quantity' => new EE_Integer_Field('LIN_quantity', __("Quantity", "event_espresso"), true, 1),
+                'LIN_parent' => new EE_Integer_Field('LIN_parent', __("Parent ID (this item goes towards that Line Item's total)", "event_espresso"), true, null),
+                'LIN_type' => new EE_Enum_Text_Field('LIN_type', __("Type", "event_espresso"), false, 'line-item', array(
                         self::type_line_item => __("Line Item", "event_espresso"),
                         self::type_sub_line_item => __("Sub-Item", "event_espresso"),
                         self::type_sub_total => __("Subtotal", "event_espresso"),
@@ -137,10 +141,9 @@ class EEM_Line_Item extends EEM_Base
                         self::type_tax => __("Tax", "event_espresso"),
                         self::type_total => __("Total", "event_espresso"),
                         self::type_cancellation => __('Cancellation', 'event_espresso')
-                    )
-                ),
-                'OBJ_ID' => new EE_Foreign_Key_Int_Field('OBJ_ID', __('ID of Item purchased.', 'event_espresso'), TRUE, NULL, $line_items_can_be_for),
-                'OBJ_type' => new EE_Any_Foreign_Model_Name_Field('OBJ_type', __("Model Name this Line Item is for", "event_espresso"), TRUE, NULL, $line_items_can_be_for),
+                    )),
+                'OBJ_ID' => new EE_Foreign_Key_Int_Field('OBJ_ID', __('ID of Item purchased.', 'event_espresso'), true, null, $line_items_can_be_for),
+                'OBJ_type' => new EE_Any_Foreign_Model_Name_Field('OBJ_type', __("Model Name this Line Item is for", "event_espresso"), true, null, $line_items_can_be_for),
                 'LIN_timestamp' => new EE_Datetime_Field('LIN_timestamp', __('When the line item was created', 'event_espresso'), false, EE_Datetime_Field::now, $timezone),
             )
         );
@@ -201,7 +204,8 @@ class EEM_Line_Item extends EEM_Base
         /** @type WPDB $wpdb */
         global $wpdb;
         $time_to_leave_alone = apply_filters(
-            'FHEE__EEM_Line_Item__delete_line_items_with_no_transaction__time_to_leave_alone', WEEK_IN_SECONDS
+            'FHEE__EEM_Line_Item__delete_line_items_with_no_transaction__time_to_leave_alone',
+            WEEK_IN_SECONDS
         );
         $query = $wpdb->prepare(
             'DELETE li
@@ -352,7 +356,7 @@ class EEM_Line_Item extends EEM_Base
      * Gets the query params used to retrieve a specific line item for the given registration
      * @param EE_Registration $registration
      * @param array $original_query_params any extra query params you'd like to be merged with
-     * @return array like EEM_Base::get_all()'s $query_params
+     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     public function line_item_for_registration_query_params(EE_Registration $registration, $original_query_params = array())
     {
@@ -368,7 +372,10 @@ class EEM_Line_Item extends EEM_Base
 
     /**
      * @return EE_Base_Class[]|EE_Line_Item[]
-     * @throws \EE_Error
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     public function get_total_line_items_with_no_transaction()
     {
@@ -378,7 +385,10 @@ class EEM_Line_Item extends EEM_Base
 
     /**
      * @return EE_Base_Class[]|EE_Line_Item[]
-     * @throws \EE_Error
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     public function get_total_line_items_for_active_carts()
     {
@@ -388,7 +398,10 @@ class EEM_Line_Item extends EEM_Base
 
     /**
      * @return EE_Base_Class[]|EE_Line_Item[]
-     * @throws \EE_Error
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     public function get_total_line_items_for_expired_carts()
     {
@@ -401,9 +414,12 @@ class EEM_Line_Item extends EEM_Base
      * If $expired is set to true, then only line items for expired sessions will be returned.
      * If $expired is set to false, then only line items for active sessions will be returned.
      *
-     * @param bool|null $expired
+     * @param null $expired
      * @return EE_Base_Class[]|EE_Line_Item[]
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     private function get_total_line_items_for_carts($expired = null)
     {
@@ -412,13 +428,47 @@ class EEM_Line_Item extends EEM_Base
             'LIN_type' => 'total',
         );
         if ($expired !== null) {
+            /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+            $session_lifespan = LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\domain\values\session\SessionLifespan'
+            );
             $where_params['LIN_timestamp'] = array(
                 $expired ? '<=' : '>',
-                time() - EE_Registry::instance()->SSN->lifespan(),
+                $session_lifespan->expiration(),
             );
         }
         return $this->get_all(array($where_params));
     }
 
 
+    /**
+     * Returns an array of ticket total line items where the TXN_ID is 0
+     * AND the timestamp is older than the session lifespan.
+     *
+     * @param int $timestamp
+     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function getTicketLineItemsForExpiredCarts($timestamp = 0)
+    {
+        if (! absint($timestamp)) {
+            /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+            $session_lifespan = LoaderFactory::getLoader()->getShared(
+                'EventEspresso\core\domain\values\session\SessionLifespan'
+            );
+            $timestamp = $session_lifespan->expiration();
+        }
+        return $this->get_all(
+            array(
+                array(
+                    'TXN_ID'        => 0,
+                    'OBJ_type'      => 'Ticket',
+                    'LIN_timestamp' => array('<=', $timestamp),
+                )
+            )
+        );
+    }
 }

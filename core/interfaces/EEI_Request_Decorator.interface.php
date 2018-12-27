@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * EEI_Request_Decorator Interface
@@ -21,13 +18,10 @@ interface EEI_Request_Decorator
      *      return $response;
      *    }
      *
-     * @param    EE_Request  $request
-     * @param    EE_Response $response
+     * @deprecated 4.9.53
+     * @param    EE_Request $request
+     * @param    EE_Response   $response
      * @return    EE_Response
      */
     public function handle_request(EE_Request $request, EE_Response $response);
-
-
 }
-// End of file EEI_Request_Decorator.interface.php
-// Location: ${NAMESPACE}/EEI_Request_Decorator.interface.php

@@ -1,7 +1,5 @@
 <?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
 /**
  * EE_Configurable
  *
@@ -42,7 +40,7 @@ abstract class EE_Configurable extends EE_Base
      */
     public function set_config_section($config_section = '')
     {
-        $this->_config_section = !empty($config_section) ? $config_section : 'modules';
+        $this->_config_section = ! empty($config_section) ? $config_section : 'modules';
     }
 
 
@@ -78,7 +76,7 @@ abstract class EE_Configurable extends EE_Base
      */
     public function set_config_name($config_name)
     {
-        $this->_config_name = !empty($config_name) ? $config_name : get_called_class();
+        $this->_config_name = ! empty($config_name) ? $config_name : get_called_class();
     }
 
 
@@ -122,7 +120,7 @@ abstract class EE_Configurable extends EE_Base
     public function _update_config(EE_Config_Base $config_obj = null)
     {
         $config_class = $this->config_class();
-        if (!$config_obj instanceof $config_class) {
+        if (! $config_obj instanceof $config_class) {
             throw new EE_Error(
                 sprintf(
                     __('The "%1$s" class is not an instance of %2$s.', 'event_espresso'),
@@ -151,8 +149,4 @@ abstract class EE_Configurable extends EE_Base
         }
         return $this->_config;
     }
-
-
 }
-// End of file EE_Configurable.core.php
-// Location: /core/EE_Configurable.core.php

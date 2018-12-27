@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\values\model;
 
 use InvalidArgumentException;
@@ -7,13 +8,12 @@ use InvalidArgumentException;
  * CustomSelects
  * VO for model system that receives a formatted array for custom select part of a a query and can be used by the model
  * to build the various query parts.
- *
  * This includes accomplishing things like `COUNT(Registration.REG_ID) as registration_cound` or
  * `SUM(Transaction.TXN_total) as TXN_sum`
  *
  * @package EventEspresso\core\domain\values\model
  * @author  Darren Ethier
- * @since   $VID:$
+ * @since   4.9.57.p
  */
 class CustomSelects
 {
@@ -26,12 +26,14 @@ class CustomSelects
 
     /**
      * Original incoming select array
+     *
      * @var array
      */
     private $original_selects;
 
     /**
      * Select string that can be added to the query
+     *
      * @var string
      */
     private $columns_to_select_expression;
@@ -39,6 +41,7 @@ class CustomSelects
 
     /**
      * An array of aliases for the columns included in the incoming select array.
+     *
      * @var array
      */
     private $column_aliases_in_select;
@@ -46,8 +49,8 @@ class CustomSelects
 
     /**
      * Enum representation of the "type" of array coming into this value object.
-     * @var string
      *
+     * @var string
      */
     private $type = '';
 
@@ -77,7 +80,6 @@ class CustomSelects
      * the second value.
      * Note: for now SUM is only for simple single column expressions (i.e. SUM(Transaction.TXN_total))
      * eg. array( 'registration_count' => array('Registration.REG_ID', 'count', '%d') );
-     *
      * NOTE: mixing array types in the incoming $select will cause errors.
      *
      * @param array $selects
@@ -93,15 +95,16 @@ class CustomSelects
 
     /**
      * Derives what type of custom select has been sent in.
+     *
      * @param array $selects
      * @throws InvalidArgumentException
      */
     private function deriveType(array $selects)
     {
-        //first if the first key for this array is an integer then its coming in as a simple format, so we'll also
+        // first if the first key for this array is an integer then its coming in as a simple format, so we'll also
         // ensure all elements of the array are simple.
         if (is_int(key($selects))) {
-            //let's ensure all keys are ints
+            // let's ensure all keys are ints
             $invalid_keys = array_filter(
                 array_keys($selects),
                 function ($value) {
@@ -122,15 +125,15 @@ class CustomSelects
             $this->type = self::TYPE_SIMPLE;
             return;
         }
-        //made it here so that means we've got either complex or structured selects.  Let's find out which by popping
-        //the first array element off.
+        // made it here so that means we've got either complex or structured selects.  Let's find out which by popping
+        // the first array element off.
         $first_element = reset($selects);
 
         if (! is_array($first_element)) {
             throw new InvalidArgumentException(
                 sprintf(
                     esc_html__(
-                        'Incoming array looks like its formatted as a "%1$s" or "%2$%s" type.  However, the values in the array must be arrays themselves and they are not.',
+                        'Incoming array looks like its formatted as a "%1$s" or "%2$s" type.  However, the values in the array must be arrays themselves and they are not.',
                         'event_espresso'
                     ),
                     self::TYPE_COMPLEX,
@@ -146,6 +149,7 @@ class CustomSelects
 
     /**
      * Sets up the various properties for the vo depending on type.
+     *
      * @param array $selects
      * @throws InvalidArgumentException
      */
@@ -180,8 +184,9 @@ class CustomSelects
 
     /**
      * Validates self::TYPE_COMPLEX and self::TYPE_STRUCTURED select statement parts.
-     * @param array $select_parts
-     * @param string      $alias
+     *
+     * @param array  $select_parts
+     * @param string $alias
      * @throws InvalidArgumentException
      */
     private function validateSelectValueForType(array $select_parts, $alias)
@@ -201,7 +206,7 @@ class CustomSelects
                 )
             );
         }
-        //validate data type.
+        // validate data type.
         $data_type = $this->type === self::TYPE_COMPLEX ? $select_parts[1] : '';
         $data_type = $this->type === self::TYPE_STRUCTURED ? $select_parts[2] : $data_type;
 
@@ -224,21 +229,24 @@ class CustomSelects
 
     /**
      * Each type will have an expected count of array elements, this returns what that expected count is.
+     *
      * @param string $type
      * @return int
      */
-    private function expectedSelectPartCountForType($type = '') {
+    private function expectedSelectPartCountForType($type = '')
+    {
         $type = $type === '' ? $this->type : $type;
         $types_count_map = array(
-            self::TYPE_COMPLEX => 2,
-            self::TYPE_STRUCTURED => 3
+            self::TYPE_COMPLEX    => 2,
+            self::TYPE_STRUCTURED => 3,
         );
-        return isset($types_count_map[$type]) ? $types_count_map[$type] : 0;
+        return isset($types_count_map[ $type ]) ? $types_count_map[ $type ] : 0;
     }
 
 
     /**
      * Prepares the select statement part for for structured type selects.
+     *
      * @param array  $select_parts
      * @param string $alias
      * @return string
@@ -247,7 +255,7 @@ class CustomSelects
     private function assembleSelectStringWithOperator(array $select_parts, $alias)
     {
         $operator = strtoupper($select_parts[1]);
-        //validate operator
+        // validate operator
         if (! in_array($operator, $this->valid_operators, true)) {
             throw new InvalidArgumentException(
                 sprintf(
@@ -268,6 +276,7 @@ class CustomSelects
     /**
      * Return the datatype from the given select part.
      * Remember the select_part has already been validated on object instantiation.
+     *
      * @param array $select_part
      * @return string
      */
@@ -286,6 +295,7 @@ class CustomSelects
 
     /**
      * Returns the original select array sent into the VO.
+     *
      * @return array
      */
     public function originalSelects()
@@ -296,6 +306,7 @@ class CustomSelects
 
     /**
      * Returns the final assembled select expression derived from the incoming select array.
+     *
      * @return string
      */
     public function columnsToSelectExpression()
@@ -306,6 +317,7 @@ class CustomSelects
 
     /**
      * Returns all the column aliases derived from the incoming select array.
+     *
      * @return array
      */
     public function columnAliases()
@@ -316,6 +328,7 @@ class CustomSelects
 
     /**
      * Returns the enum type for the incoming select array.
+     *
      * @return string
      */
     public function type()
@@ -324,18 +337,18 @@ class CustomSelects
     }
 
 
-
     /**
      * Return the datatype for the given column_alias
+     *
      * @param string $column_alias
      * @return string  (if there's no data type we return string as the default).
      */
     public function getDataTypeForAlias($column_alias)
     {
-        if (isset($this->original_selects[$column_alias])
+        if (isset($this->original_selects[ $column_alias ])
             && in_array($column_alias, $this->columnAliases(), true)
         ) {
-            return $this->getDataTypeForSelectType($this->original_selects[$column_alias]);
+            return $this->getDataTypeForSelectType($this->original_selects[ $column_alias ]);
         }
         return '%s';
     }

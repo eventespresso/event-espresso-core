@@ -23,7 +23,8 @@ use LogicException;
  * @author  Darren Ethier
  * @since   1.0.0
  */
-class AttendeeContactDetailsMetaboxFormHandler extends FormHandler{
+class AttendeeContactDetailsMetaboxFormHandler extends FormHandler
+{
 
 
     protected $attendee;
@@ -62,25 +63,25 @@ class AttendeeContactDetailsMetaboxFormHandler extends FormHandler{
     {
         return new EE_Form_Section_Proper(
             array(
-                'name' => 'attendee_contact_details',
-                'html_id' => 'attendee-contact-details',
-                'html_class' => 'form-table',
+                'name'            => 'attendee_contact_details',
+                'html_id'         => 'attendee-contact-details',
+                'html_class'      => 'form-table',
                 'layout_strategy' => new EE_Admin_One_Column_Layout(),
-                'subsections' => array(
+                'subsections'     => array(
                     'ATT_email' => new EE_Email_Input(
                         array(
-                            'default' => $this->attendee->email(),
+                            'default'         => $this->attendee->email(),
                             'html_label_text' => esc_html__('Email Address', 'event_espresso'),
-                            'required' => true
+                            'required'        => true,
                         )
                     ),
                     'ATT_phone' => new EE_Text_Input(
                         array(
-                            'default' => $this->attendee->phone(),
-                            'html_label_text' => esc_html__('Phone Number', 'event_espresso')
+                            'default'         => $this->attendee->phone(),
+                            'html_label_text' => esc_html__('Phone Number', 'event_espresso'),
                         )
-                    )
-                )
+                    ),
+                ),
             )
         );
     }
@@ -88,6 +89,7 @@ class AttendeeContactDetailsMetaboxFormHandler extends FormHandler{
 
     /**
      * Process form data.
+     *
      * @param array $form_data
      * @return bool
      * @throws EE_Error

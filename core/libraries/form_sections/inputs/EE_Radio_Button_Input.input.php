@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class EE_Radio_Button_Input
@@ -32,5 +29,4 @@ class EE_Radio_Button_Input extends EE_Form_Input_With_Options_Base
         $this->_multiple_selections = false;
         parent::__construct($answer_options, $input_settings);
     }
-
 }

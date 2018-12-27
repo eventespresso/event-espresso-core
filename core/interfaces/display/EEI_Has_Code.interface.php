@@ -1,5 +1,4 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
-
+<?php
 /**
  * Has Code Interface
  * This interface is implemented on classes that have a "code" representation.
@@ -11,13 +10,12 @@
  * @since   4.8.0
  * @author  Darren Ethier
  */
-interface EEI_Has_Code {
+interface EEI_Has_Code
+{
 
-	/**
-	 * Return a code.
-	 * @return string
-	 */
-	public function code();
-
-
-} //end EEI_Has_Code interface
+    /**
+     * Return a code.
+     * @return string
+     */
+    public function code();
+}

@@ -4,17 +4,12 @@ namespace EventEspresso\core\services\notices;
 
 use DomainException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class ConvertNoticesToAdminNotices
  * Converts notifications in a NoticesContainer into AdminNotice notifications
  *
  * @package EventEspresso\core\services\notices
  * @author  Brent Christensen
- * 
  */
 class ConvertNoticesToAdminNotices extends NoticeConverter
 {
@@ -57,6 +52,4 @@ class ConvertNoticesToAdminNotices extends NoticeConverter
         }
         $this->clearNotices();
     }
-
 }
-// Location: ConvertNoticesToAdminNotices.php

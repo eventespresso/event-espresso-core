@@ -10,18 +10,18 @@ use EventEspresso\core\services\database\TableManager;
  * which is especially convenient for applying event-wide promotions
  * -does NOT actually make any database schema changes
  */
-//make sure we have all the stages loaded too
-//unfortunately, this needs to be done upon INCLUSION of this file,
-//instead of construction, because it only gets constructed on first page load
-//(all other times it gets resurrected from a wordpress option)
+// make sure we have all the stages loaded too
+// unfortunately, this needs to be done upon INCLUSION of this file,
+// instead of construction, because it only gets constructed on first page load
+// (all other times it gets resurrected from a wordpress option)
 $stages = glob(EE_CORE . 'data_migration_scripts/4_8_0_stages/*');
 $class_to_filepath = array();
 foreach ($stages as $filepath) {
     $matches = array();
     preg_match('~4_8_0_stages/(.*).dmsstage.php~', $filepath, $matches);
-    $class_to_filepath[$matches[1]] = $filepath;
+    $class_to_filepath[ $matches[1] ] = $filepath;
 }
-//give addons a chance to autoload their stages too
+// give addons a chance to autoload their stages too
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_8_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
@@ -70,14 +70,14 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base
     {
         $version_string = $version_array['Core'];
         if (version_compare($version_string, '4.8.0', '<=') && version_compare($version_string, '4.7.0', '>=')) {
-//			echo "$version_string can be migrated from";
+//          echo "$version_string can be migrated from";
             return true;
-        } elseif ( ! $version_string) {
-//			echo "no version string provided: $version_string";
-            //no version string provided... this must be pre 4.3
-            return false;//changed mind. dont want people thinking they should migrate yet because they cant
+        } elseif (! $version_string) {
+//          echo "no version string provided: $version_string";
+            // no version string provided... this must be pre 4.3
+            return false;// changed mind. dont want people thinking they should migrate yet because they cant
         } else {
-//			echo "$version_string doesnt apply";
+//          echo "$version_string doesnt apply";
             return false;
         }
     }
@@ -116,9 +116,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base
 						ATT_phone varchar(45) DEFAULT NULL,
 							PRIMARY KEY  (ATTM_ID),
 								KEY ATT_ID (ATT_ID),
-								KEY ATT_email (ATT_email),
-								KEY ATT_lname (ATT_lname),
-								KEY ATT_fname (ATT_fname)";
+								KEY ATT_email (ATT_email(191))";
         $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_country';
         $sql = "CNT_ISO varchar(2) collate utf8_bin NOT NULL,
@@ -487,7 +485,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base
 			KEY STA_ID (STA_ID),
 			KEY CNT_ISO (CNT_ISO)";
         $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
-        //modified tables
+        // modified tables
         $table_name = "esp_price";
         $sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  PRT_ID tinyint(3) unsigned NOT NULL,
@@ -555,7 +553,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base
         $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         /** @var EE_DMS_Core_4_1_0 $script_4_1_defaults */
         $script_4_1_defaults = EE_Registry::instance()->load_dms('Core_4_1_0');
-        //(because many need to convert old string states to foreign keys into the states table)
+        // (because many need to convert old string states to foreign keys into the states table)
         $script_4_1_defaults->insert_default_states();
         $script_4_1_defaults->insert_default_countries();
         /** @var EE_DMS_Core_4_5_0 $script_4_5_defaults */
@@ -580,7 +578,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base
     public function schema_changes_after_migration()
     {
         $this->fix_non_default_taxes();
-        //this is actually the same as the last DMS
+        // this is actually the same as the last DMS
         /** @var EE_DMS_Core_4_7_0 $script_4_7_defaults */
         $script_4_7_defaults = EE_Registry::instance()->load_dms('Core_4_7_0');
         return $script_4_7_defaults->schema_changes_after_migration();
@@ -599,13 +597,13 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base
      */
     public function verify_new_countries()
     {
-        //a list of countries (and specifically some which were missed in another list):https://gist.github.com/adhipg/1600028
-        //how many decimal places? https://en.wikipedia.org/wiki/ISO_4217
-        //currency symbols: http://www.xe.com/symbols.php
-        //CNT_ISO, CNT_ISO3, RGN_ID, CNT_name, CNT_cur_code, CNT_cur_single, CNT_cur_plural, CNT_cur_sign, CNT_cur_sign_b4, CNT_cur_dec_plc, CNT_tel_code, CNT_is_EU, CNT_active
-        //('AD', 'AND', 0, 'Andorra', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+376', 0, 0),
+        // a list of countries (and specifically some which were missed in another list):https://gist.github.com/adhipg/1600028
+        // how many decimal places? https://en.wikipedia.org/wiki/ISO_4217
+        // currency symbols: http://www.xe.com/symbols.php
+        // CNT_ISO, CNT_ISO3, RGN_ID, CNT_name, CNT_cur_code, CNT_cur_single, CNT_cur_plural, CNT_cur_sign, CNT_cur_sign_b4, CNT_cur_dec_plc, CNT_tel_code, CNT_is_EU, CNT_active
+        // ('AD', 'AND', 0, 'Andorra', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+376', 0, 0),
         $newer_countries = array(
-            array('AX', 'ALA', 0, '&#197;land Islands', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+358', 1, 0),
+            array('AX', 'ALA', 0, 'Åland Islands', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+358', 1, 0),
             array('BL', 'BLM', 0, 'Saint Barthelemy', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+590', 1, 0),
             array('CW', 'CUW', 0, 'Curacao', 'ANG', 'Guilder', 'Guilders', 'ƒ', 1, 2, '+599', 1, 0),
             array('GG', 'GGY', 0, 'Guernsey', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+44', 0, 0),
@@ -707,8 +705,9 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base
             foreach ($newer_countries as $country) {
                 $SQL = "SELECT COUNT('CNT_ISO') FROM {$country_table} WHERE CNT_ISO='{$country[0]}' LIMIT 1";
                 $countries = $wpdb->get_var($SQL);
-                if ( ! $countries) {
-                    $wpdb->insert($country_table,
+                if (! $countries) {
+                    $wpdb->insert(
+                        $country_table,
                         array_combine(array_keys($country_format), $country),
                         $country_format
                     );
@@ -724,11 +723,11 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base
      */
     public function verify_new_currencies()
     {
-        //a list of countries (and specifically some which were missed in another list):https://gist.github.com/adhipg/1600028
-        //how many decimal places? https://en.wikipedia.org/wiki/ISO_4217
-        //currency symbols: http://www.xe.com/symbols.php
+        // a list of countries (and specifically some which were missed in another list):https://gist.github.com/adhipg/1600028
+        // how many decimal places? https://en.wikipedia.org/wiki/ISO_4217
+        // currency symbols: http://www.xe.com/symbols.php
         // CUR_code, CUR_single, CUR_plural, CUR_sign, CUR_dec_plc, CUR_active
-        //( 'EUR',  'Euro',  'Euros',  '€',  2,1),
+        // ( 'EUR',  'Euro',  'Euros',  '€',  2,1),
         $newer_currencies = array(
             array('RSD', 'Dinar', 'Dinars', '', 3, 1),
         );
@@ -746,8 +745,9 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base
             foreach ($newer_currencies as $currency) {
                 $SQL = "SELECT COUNT('CUR_code') FROM {$currency_table} WHERE CUR_code='{$currency[0]}' LIMIT 1";
                 $countries = $wpdb->get_var($SQL);
-                if ( ! $countries) {
-                    $wpdb->insert($currency_table,
+                if (! $countries) {
+                    $wpdb->insert(
+                        $currency_table,
                         array_combine(array_keys($currency_format), $currency),
                         $currency_format
                     );

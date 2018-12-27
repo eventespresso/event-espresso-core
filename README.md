@@ -24,6 +24,8 @@ Resources on Event Espresso 4 for a beginner to advanced users.
 
 [View Event Espresso 4 Documentation →](https://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+documentation)
 
+Notable changes for each released version of the project can be found in our [changelog](https://eventespresso.com/wiki/ee4-changelog/)
+
 ## Mobile Event Apps
 The Event Espresso 4 check-in & ticket scanning event app is available for [Android](http://evts.io/EE4_Android_App?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=mobile+event+apps+android) and [Apple](http://evts.io/EE4_Apple_App?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=mobile+event+apps+apple) devices.
 
@@ -83,7 +85,7 @@ For all testers on GitHub, please take note of the following when reporting issu
 4. Don't "bump" bug reports if we don't respond right away.  We see every report coming in, but we'll only reply if we need clarification or if we think its invalid.  Otherwise, we're likely working on a fix and the issue will be updated when the fix is complete.
 
 ## Pull Requests
-One of the reasons we created this private repo on GitHub is because we wanted to open up EE development to 3rd party developers who might want to contribute to the codebase. GitHub makes this really easy to do so via pull requests.  If you don't know what pull requests are, please read up on them via the GitHub help/documentation.
+One of the reasons we published this repository on GitHub is because we wanted to open up EE development to 3rd party developers who might want to contribute to the codebase. GitHub makes this really easy to do so via pull requests.  If you don't know what pull requests are, please read up on them via the GitHub help/documentation.
 
 Here's how we deal with pull requests for our repo:
 

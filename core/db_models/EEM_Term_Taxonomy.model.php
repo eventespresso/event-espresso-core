@@ -1,27 +1,12 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+<?php
 /**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package            Event Espresso
- * @ author                Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                    http://www.eventespresso.com
- * @ version            4.0
- * ------------------------------------------------------------------------
- * Attendee Model
+ * EEM_Term_Taxonomy model
  *
  * @package               Event Espresso
  * @subpackage            includes/models/
  * @author                Michael Nelson
  * ------------------------------------------------------------------------
  */
-require_once(EE_MODELS . 'EEM_Base.model.php');
-
-
-
 class EEM_Term_Taxonomy extends EEM_Base
 {
 
@@ -77,47 +62,47 @@ class EEM_Term_Taxonomy extends EEM_Base
         );
         $cpt_models = array_keys(EE_Registry::instance()->cpt_models());
         foreach ($cpt_models as $model_name) {
-            $this->_model_relations[$model_name] = new EE_HABTM_Relation('Term_Relationship');
+            $this->_model_relations[ $model_name ] = new EE_HABTM_Relation('Term_Relationship');
         }
         $this->_wp_core_model = true;
         $this->_indexes = array(
             'term_id_taxonomy' => new EE_Unique_Index(array('term_id', 'taxonomy')),
         );
         $path_to_tax_model = '';
-        $this->_cap_restriction_generators[EEM_Base::caps_read] = new EE_Restriction_Generator_Public();
-        $this->_cap_restriction_generators[EEM_Base::caps_read_admin] = new EE_Restriction_Generator_Taxonomy_Protected(
+        $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Taxonomy_Protected(
             $path_to_tax_model
         );
-        $this->_cap_restriction_generators[EEM_Base::caps_edit] = false;
-        $this->_cap_restriction_generators[EEM_Base::caps_delete] = false;
-        //add cap restrictions for editing relating to the "ee_edit_*"
-        $this->_cap_restrictions[EEM_Base::caps_edit]['ee_edit_event_category'] = new EE_Default_Where_Conditions(
+        $this->_cap_restriction_generators[ EEM_Base::caps_edit ] = false;
+        $this->_cap_restriction_generators[ EEM_Base::caps_delete ] = false;
+        // add cap restrictions for editing relating to the "ee_edit_*"
+        $this->_cap_restrictions[ EEM_Base::caps_edit ]['ee_edit_event_category'] = new EE_Default_Where_Conditions(
             array(
                 $path_to_tax_model . 'taxonomy*ee_edit_event_category' => array('!=', 'espresso_event_categories'),
             )
         );
-        $this->_cap_restrictions[EEM_Base::caps_edit]['ee_edit_venue_category'] = new EE_Default_Where_Conditions(
+        $this->_cap_restrictions[ EEM_Base::caps_edit ]['ee_edit_venue_category'] = new EE_Default_Where_Conditions(
             array(
                 $path_to_tax_model . 'taxonomy*ee_edit_venue_category' => array('!=', 'espresso_venue_categories'),
             )
         );
-        $this->_cap_restrictions[EEM_Base::caps_edit]['ee_edit_event_type'] = new EE_Default_Where_Conditions(
+        $this->_cap_restrictions[ EEM_Base::caps_edit ]['ee_edit_event_type'] = new EE_Default_Where_Conditions(
             array(
                 $path_to_tax_model . 'taxonomy*ee_edit_event_type' => array('!=', 'espresso_event_type'),
             )
         );
-        //add cap restrictions for deleting relating to the "ee_deleting_*"
-        $this->_cap_restrictions[EEM_Base::caps_delete]['ee_delete_event_category'] = new EE_Default_Where_Conditions(
+        // add cap restrictions for deleting relating to the "ee_deleting_*"
+        $this->_cap_restrictions[ EEM_Base::caps_delete ]['ee_delete_event_category'] = new EE_Default_Where_Conditions(
             array(
                 $path_to_tax_model . 'taxonomy*ee_delete_event_category' => array('!=', 'espresso_event_categories'),
             )
         );
-        $this->_cap_restrictions[EEM_Base::caps_delete]['ee_delete_venue_category'] = new EE_Default_Where_Conditions(
+        $this->_cap_restrictions[ EEM_Base::caps_delete ]['ee_delete_venue_category'] = new EE_Default_Where_Conditions(
             array(
                 $path_to_tax_model . 'taxonomy*ee_delete_venue_category' => array('!=', 'espresso_venue_categories'),
             )
         );
-        $this->_cap_restrictions[EEM_Base::caps_delete]['ee_delete_event_type'] = new EE_Default_Where_Conditions(
+        $this->_cap_restrictions[ EEM_Base::caps_delete ]['ee_delete_event_type'] = new EE_Default_Where_Conditions(
             array(
                 $path_to_tax_model . 'taxonomy*ee_delete_event_type' => array('!=', 'espresso_event_type'),
             )

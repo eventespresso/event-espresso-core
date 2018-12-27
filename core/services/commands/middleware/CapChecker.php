@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\services\commands\middleware;
 
 use Closure;
@@ -7,12 +8,6 @@ use EventEspresso\core\exceptions\InsufficientPermissionsException;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\services\commands\CommandInterface;
 use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
-
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class CapChecker
@@ -35,7 +30,6 @@ class CapChecker implements CommandBusMiddlewareInterface
     private $capabilities_checker;
 
 
-
     /**
      * CapChecker constructor
      *
@@ -47,10 +41,9 @@ class CapChecker implements CommandBusMiddlewareInterface
     }
 
 
-
     /**
      * @param CommandInterface $command
-     * @param Closure         $next
+     * @param Closure          $next
      * @return mixed
      * @throws InvalidClassException
      * @throws InsufficientPermissionsException
@@ -64,8 +57,4 @@ class CapChecker implements CommandBusMiddlewareInterface
         }
         return $next($command);
     }
-
-
 }
-// End of file CapChecker.php
-// Location: core/services/commands/middleware/CapChecker.php

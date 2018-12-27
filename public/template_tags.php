@@ -390,7 +390,7 @@ if ( ! function_exists( 'espresso_event_tickets_available' )) {
 			if ( $format ) {
 				$html .= '</ul>';
 			}
-			if ( $echo && ! $format ) {
+			if ( $echo && $format ) {
 				echo $html;
 				return '';
 			}

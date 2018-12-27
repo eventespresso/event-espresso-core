@@ -4,17 +4,12 @@ namespace EventEspresso\core\services\notices;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class NoticesContainer
  * Container for holding multiple Notice objects until they can be processed
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class NoticesContainer implements NoticesContainerInterface
 {
@@ -65,7 +60,6 @@ class NoticesContainer implements NoticesContainerInterface
     }
 
 
-
     /**
      * @param string $notice
      * @param bool   $dismissible
@@ -86,8 +80,7 @@ class NoticesContainer implements NoticesContainerInterface
         );
     }
 
-
-
+    // phpcs:disable PEAR.Functions.ValidDefaultValue.NotAtEnd
     /**
      * @param string $notice
      * @param bool   $dismissible
@@ -107,7 +100,6 @@ class NoticesContainer implements NoticesContainerInterface
             $line
         );
     }
-
 
 
     /**
@@ -140,7 +132,6 @@ class NoticesContainer implements NoticesContainerInterface
     }
 
 
-
     /**
      * @return boolean
      */
@@ -150,7 +141,6 @@ class NoticesContainer implements NoticesContainerInterface
     }
 
 
-
     /**
      * @return boolean
      */
@@ -158,7 +148,6 @@ class NoticesContainer implements NoticesContainerInterface
     {
         return ! empty($this->error);
     }
-
 
 
     /**
@@ -179,7 +168,6 @@ class NoticesContainer implements NoticesContainerInterface
     }
 
 
-
     /**
      * @return int
      */
@@ -189,7 +177,6 @@ class NoticesContainer implements NoticesContainerInterface
     }
 
 
-
     /**
      * @return int
      */
@@ -197,7 +184,6 @@ class NoticesContainer implements NoticesContainerInterface
     {
         return count($this->error);
     }
-
 
 
     /**
@@ -218,7 +204,6 @@ class NoticesContainer implements NoticesContainerInterface
     }
 
 
-
     /**
      * @return NoticeInterface[]
      */
@@ -226,7 +211,6 @@ class NoticesContainer implements NoticesContainerInterface
     {
         return $this->attention;
     }
-
 
 
     /**
@@ -238,7 +222,6 @@ class NoticesContainer implements NoticesContainerInterface
     }
 
 
-
     /**
      * @return NoticeInterface[]
      */
@@ -246,6 +229,4 @@ class NoticesContainer implements NoticesContainerInterface
     {
         return $this->success;
     }
-
-
 }

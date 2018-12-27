@@ -1,9 +1,13 @@
 <?php
+
 namespace EventEspresso\core\libraries\rest_api;
 
 use EEM_Base;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
+use EventEspresso\core\libraries\rest_api\calculations\CalculatedModelFieldsFactory;
 use EventEspresso\core\libraries\rest_api\controllers\Base;
 use EEH_Inflector;
+use EventEspresso\core\libraries\rest_api\controllers\Base as BaseController;
 
 /**
  * Class CalculatedModelFields
@@ -15,12 +19,6 @@ use EEH_Inflector;
  * @author                Mike Nelson
  * @since                 4.8.35.rc.001
  */
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 class CalculatedModelFields
 {
 
@@ -29,8 +27,24 @@ class CalculatedModelFields
      */
     protected $mapping;
 
+    /**
+     * @var array
+     */
+    protected $mapping_schema;
 
+    /**
+     * @var CalculatedModelFieldsFactory
+     */
+    private $factory;
 
+    /**
+     * CalculatedModelFields constructor.
+     * @param CalculatedModelFieldsFactory $factory
+     */
+    public function __construct(CalculatedModelFieldsFactory $factory)
+    {
+        $this->factory = $factory;
+    }
     /**
      * @param bool $refresh
      * @return array top-level-keys are model names (eg "Event")
@@ -50,49 +64,57 @@ class CalculatedModelFields
     }
 
 
-
     /**
-     * Generates  anew mapping between model calculated fields and their callbacks
+     * Generates a new mapping between model calculated fields and their callbacks
      *
      * @return array
      */
     protected function generateNewMapping()
     {
-        $rest_api_calculations_namespace = 'EventEspresso\core\libraries\rest_api\calculations\\';
-        $event_calculations_class = $rest_api_calculations_namespace . 'Event';
-        $datetime_calculations_class = $rest_api_calculations_namespace . 'Datetime';
-        $registration_class = $rest_api_calculations_namespace . 'Registration';
+        $mapping = array();
+        $models_with_calculated_fields = array(
+            'Attendee',
+            'Datetime',
+            'Event',
+            'Registration'
+        );
+        foreach ($models_with_calculated_fields as $model_name) {
+            $calculator = $this->factory->createFromModel($model_name);
+            foreach (array_keys(call_user_func(array($calculator, 'schemaForCalculations'))) as $field_name) {
+                $mapping[ $model_name ][ $field_name ] = get_class($calculator);
+            }
+        }
         return apply_filters(
             'FHEE__EventEspresso\core\libraries\rest_api\Calculated_Model_Fields__mapping',
-            array(
-                'Event'        => array(
-                    'optimum_sales_at_start'          => $event_calculations_class,
-                    'optimum_sales_now'               => $event_calculations_class,
-                    'spots_taken'                     => $event_calculations_class,
-                    'spots_taken_pending_payment'     => $event_calculations_class,
-                    'spaces_remaining'                => $event_calculations_class,
-                    'registrations_checked_in_count'  => $event_calculations_class,
-                    'registrations_checked_out_count' => $event_calculations_class,
-                    'image_thumbnail'                 => $event_calculations_class,
-                    'image_medium'                    => $event_calculations_class,
-                    'image_medium_large'              => $event_calculations_class,
-                    'image_large'                     => $event_calculations_class,
-                    'image_post_thumbnail'            => $event_calculations_class,
-                    'image_full'                      => $event_calculations_class,
-                ),
-                'Datetime'     => array(
-                    'spaces_remaining_considering_tickets' => $datetime_calculations_class,
-                    'registrations_checked_in_count'       => $datetime_calculations_class,
-                    'registrations_checked_out_count'      => $datetime_calculations_class,
-                    'spots_taken_pending_payment'          => $datetime_calculations_class,
-                ),
-                'Registration' => array(
-                    'datetime_checkin_stati' => $registration_class,
-                ),
-            )
+            $mapping
         );
     }
 
+
+    /**
+     * Generates the schema for each calculation index in the calculation map.
+     *
+     * @return array
+     * @throws UnexpectedEntityException
+     */
+    protected function generateNewMappingSchema()
+    {
+        $schema_map = array();
+        foreach ($this->mapping() as $map_model => $map_for_model) {
+            /**
+             * @var string $calculation_index
+             * @var string $calculations_class
+             */
+            foreach ($map_for_model as $calculation_index => $calculations_class) {
+                $calculator = $this->factory->createFromClassname($calculations_class);
+                $schema = call_user_func(array($calculator, 'schemaForCalculation'), $calculation_index);
+                if (! empty($schema)) {
+                    $schema_map[ $map_model ][ $calculation_index ] = $schema;
+                }
+            }
+        }
+        return $schema_map;
+    }
 
 
     /**
@@ -104,25 +126,49 @@ class CalculatedModelFields
     public function retrieveCalculatedFieldsForModel(EEM_Base $model)
     {
         $mapping = $this->mapping();
-        if (isset($mapping[$model->get_this_model_name()])) {
-            return array_keys($mapping[$model->get_this_model_name()]);
-        } else {
-            return array();
+        if (isset($mapping[ $model->get_this_model_name() ])) {
+            return array_keys($mapping[ $model->get_this_model_name() ]);
         }
+        return array();
     }
 
+
+    /**
+     * Returns the JsonSchema for the calculated fields on the given model.
+     * @param EEM_Base $model
+     * @return array
+     */
+    public function getJsonSchemaForModel(EEM_Base $model)
+    {
+        if (! $this->mapping_schema) {
+            $this->mapping_schema = $this->generateNewMappingSchema();
+        }
+        return array(
+            'description' => esc_html__(
+                'Available calculated fields for this model.  Fields are only present in the response if explicitly requested',
+                'event_espresso'
+            ),
+            'type' => 'object',
+            'properties' => isset($this->mapping_schema[ $model->get_this_model_name() ])
+                ? $this->mapping_schema[ $model->get_this_model_name() ]
+                : array(),
+            'additionalProperties' => false,
+            'readonly' => true,
+        );
+    }
 
 
     /**
      * Retrieves the value for this calculation
      *
-     * @param EEM_Base                                                $model
-     * @param string                                                  $field_name
-     * @param array                                                   $wpdb_row
-     * @param \WP_REST_Request
-     * @param \EventEspresso\core\libraries\rest_api\controllers\Base $controller
+     * @param EEM_Base $model
+     * @param string $field_name
+     * @param array $wpdb_row
+     * @param $rest_request
+     * @param BaseController $controller
      * @return mixed|null
-     * @throws \EE_Error
+     * @throws RestException
+     * @throws UnexpectedEntityException
      */
     public function retrieveCalculatedFieldValue(
         EEM_Base $model,
@@ -132,12 +178,13 @@ class CalculatedModelFields
         Base $controller
     ) {
         $mapping = $this->mapping();
-        if (isset($mapping[$model->get_this_model_name()])
-            && isset($mapping[$model->get_this_model_name()][$field_name])
+        if (isset($mapping[ $model->get_this_model_name() ])
+            && isset($mapping[ $model->get_this_model_name() ][ $field_name ])
         ) {
-            $classname = $mapping[$model->get_this_model_name()][$field_name];
+            $classname = $mapping[ $model->get_this_model_name() ][ $field_name ];
+            $calculator = $this->factory->createFromClassname($classname);
             $class_method_name = EEH_Inflector::camelize_all_but_first($field_name);
-            return call_user_func(array($classname, $class_method_name), $wpdb_row, $rest_request, $controller);
+            return call_user_func(array($calculator, $class_method_name), $wpdb_row, $rest_request, $controller);
         }
         throw new RestException(
             'calculated_field_does_not_exist',

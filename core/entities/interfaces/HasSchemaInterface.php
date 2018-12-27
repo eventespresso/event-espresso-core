@@ -1,7 +1,6 @@
 <?php
-namespace EventEspresso\core\entities\interfaces;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
+namespace EventEspresso\core\entities\interfaces;
 
 interface HasSchemaInterface
 {

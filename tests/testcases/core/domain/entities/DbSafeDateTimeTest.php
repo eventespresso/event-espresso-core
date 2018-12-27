@@ -48,6 +48,7 @@ class DbSafeDateTimeTest extends EE_UnitTestCase
         // serializing the above will write to the PHP error log,
         // so we are going to set that path to something else, so that we can grab that error
         $log_file = EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_unit_tests_errors.log';
+        EEH_File::ensure_file_exists_and_is_writable($log_file);
         $db_safe_datetime->setErrorLogDir($log_file);
         // now perform the serialization
         $serialized_datetime = serialize($db_safe_datetime);
@@ -59,20 +60,10 @@ class DbSafeDateTimeTest extends EE_UnitTestCase
         unlink($log_file);
         $db_safe_datetime = unserialize($serialized_datetime);
         $this->assertInstanceOf('DateTime', $db_safe_datetime);
-        // still vot a valid date, but at least this won't cause additional errors
+        // ensures date has been coerced to something more valid.
         $this->assertEquals(
-            '-0001-11-30 00:00:00.000000',
-            $db_safe_datetime->format('Y-m-d H:i:s.u')
-        );
-        // and just verify that nothing changed
-        $this->assertEquals(
-            $empty_datetime->format('Y-m-d H:i:s.u'),
+            '0000-01-03 00:00:00.000000',
             $db_safe_datetime->format('Y-m-d H:i:s.u')
         );
     }
-
-
-
 }
-// end of file DbSafeDateTimeTest.php
-// Location: /tests/testcases/core/domain/entities/DbSafeDateTimeTest.php

@@ -1,12 +1,6 @@
 <?php
 namespace EventEspresso\core\domain\services;
 
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
-}
-
-
-
 /**
  * Interface DomainServiceInterface
  * A Domain Service is defined as follows:
@@ -19,8 +13,6 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  * @package EventEspresso\core\domain\services
  */
-interface DomainServiceInterface {
-
+interface DomainServiceInterface
+{
 }
-// End of file DomainServiceInterface.php
-// Location: /DomainServiceInterface.php

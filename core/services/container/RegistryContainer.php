@@ -6,10 +6,6 @@ use ArrayAccess;
 use ArrayIterator;
 use OutOfBoundsException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class RegistryContainer
  * Object for storing data that behaves as an array
@@ -46,7 +42,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      */
     public function offsetSet($offset, $value)
     {
-        $this->container[$offset] = $value;
+        $this->container[ $offset ] = $value;
     }
 
 
@@ -56,7 +52,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      */
     public function offsetExists($offset)
     {
-        return isset($this->container[$offset]);
+        return isset($this->container[ $offset ]);
     }
 
 
@@ -65,7 +61,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      */
     public function offsetUnset($offset)
     {
-        unset($this->container[$offset]);
+        unset($this->container[ $offset ]);
     }
 
 
@@ -75,7 +71,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return isset($this->container[ $offset ]) ? $this->container[ $offset ] : null;
     }
 
 
@@ -103,7 +99,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      */
     public function __set($offset, $value)
     {
-        $this->container[$offset] = $value;
+        $this->container[ $offset ] = $value;
     }
 
 
@@ -115,7 +111,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
     public function __get($offset)
     {
         if (array_key_exists($offset, $this->container)) {
-            return $this->container[$offset];
+            return $this->container[ $offset ];
         }
         $trace = debug_backtrace();
         throw new OutOfBoundsException(
@@ -136,7 +132,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      */
     public function __isset($offset)
     {
-        return isset($this->container[$offset]);
+        return isset($this->container[ $offset ]);
     }
 
 
@@ -145,8 +141,6 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      */
     public function __unset($offset)
     {
-        unset($this->container[$offset]);
+        unset($this->container[ $offset ]);
     }
-
 }
-// Location: RegistryContainer.php

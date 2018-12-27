@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class EED_Thank_You_Page
@@ -9,7 +6,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class EED_Thank_You_Page extends EED_Module
 {
@@ -81,7 +77,6 @@ class EED_Thank_You_Page extends EED_Module
     private $_is_offline_payment_method = true;
 
 
-
     /**
      * @return EED_Module|EED_Thank_You_Page
      */
@@ -102,7 +97,6 @@ class EED_Thank_You_Page extends EED_Module
     }
 
 
-
     /**
      * set_hooks_admin - for hooking into EE Admin Core, modules, etc
      *
@@ -110,14 +104,6 @@ class EED_Thank_You_Page extends EED_Module
      */
     public static function set_hooks_admin()
     {
-        // AJAX for IPN monitoring
-        add_filter('heartbeat_received', array('EED_Thank_You_Page', 'thank_you_page_IPN_monitor'), 10, 3);
-        add_filter(
-            'heartbeat_nopriv_received',
-            array('EED_Thank_You_Page', 'thank_you_page_IPN_monitor'),
-            10,
-            3
-        );
         add_action(
             'wp_ajax_espresso_resend_reg_confirmation_email',
             array('EED_Thank_You_Page', 'resend_reg_confirmation_email'),
@@ -133,7 +119,6 @@ class EED_Thank_You_Page extends EED_Module
     }
 
 
-
     /**
      * set_definitions
      *
@@ -144,7 +129,6 @@ class EED_Thank_You_Page extends EED_Module
         define('THANK_YOU_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets' . DS);
         define('THANK_YOU_TEMPLATES_PATH', str_replace('\\', DS, plugin_dir_path(__FILE__)) . 'templates' . DS);
     }
-
 
 
     /**
@@ -158,7 +142,7 @@ class EED_Thank_You_Page extends EED_Module
             return $this->_current_txn;
         }
         $TXN_model = EE_Registry::instance()->load_model('Transaction');
-        if ( ! $TXN_model instanceof EEM_Transaction) {
+        if (! $TXN_model instanceof EEM_Transaction) {
             EE_Error::add_error(
                 __('The transaction model could not be established.', 'event_espresso'),
                 __FILE__,
@@ -167,7 +151,7 @@ class EED_Thank_You_Page extends EED_Module
             );
             return null;
         }
-        //get the transaction. yes, we may have just loaded it, but it may have been updated, or this may be via an ajax request
+        // get the transaction. yes, we may have just loaded it, but it may have been updated, or this may be via an ajax request
         $this->_current_txn = $TXN_model->get_transaction_from_reg_url_link($this->_reg_url_link);
         // verify TXN
         if (WP_DEBUG && ! $this->_current_txn instanceof EE_Transaction) {
@@ -186,7 +170,6 @@ class EED_Thank_You_Page extends EED_Module
     }
 
 
-
     /**
      * get_txn_payments
      *
@@ -196,7 +179,7 @@ class EED_Thank_You_Page extends EED_Module
      */
     public function get_txn_payments($since = 0)
     {
-        if ( ! $this->get_txn()) {
+        if (! $this->get_txn()) {
             return false;
         }
         $args = array('order_by' => array('PAY_timestamp' => 'ASC'));
@@ -208,6 +191,16 @@ class EED_Thank_You_Page extends EED_Module
     }
 
 
+    /**
+     * @return bool
+     */
+    public function isOfflinePaymentMethod()
+    {
+        return $this->_is_offline_payment_method;
+    }
+
+
+
 
     /**
      * get_reg_url_link
@@ -216,7 +209,7 @@ class EED_Thank_You_Page extends EED_Module
      */
     private function _get_reg_url_link()
     {
-        if ( ! empty($this->_reg_url_link)) {
+        if (! empty($this->_reg_url_link)) {
             return;
         }
         // only do thank you page stuff if we have a REG_url_link in the url
@@ -237,7 +230,6 @@ class EED_Thank_You_Page extends EED_Module
     }
 
 
-
     /**
      * set_reg_url_link
      *
@@ -247,7 +239,6 @@ class EED_Thank_You_Page extends EED_Module
     {
         $this->_reg_url_link = ! empty($reg_url_link) ? $reg_url_link : $this->_reg_url_link;
     }
-
 
 
     /**
@@ -260,9 +251,7 @@ class EED_Thank_You_Page extends EED_Module
      */
     public function run($WP)
     {
-
     }
-
 
 
     /**
@@ -271,7 +260,8 @@ class EED_Thank_You_Page extends EED_Module
      * @return void
      * @throws \EE_Error
      */
-    public function load_resources() {
+    public function load_resources()
+    {
         $this->_get_reg_url_link();
         // resend_reg_confirmation_email ?
         if (EE_Registry::instance()->REQ->is_set('resend')) {
@@ -282,7 +272,6 @@ class EED_Thank_You_Page extends EED_Module
         // load assets
         add_action('wp_enqueue_scripts', array($this, 'load_js'), 10);
     }
-
 
 
     /**
@@ -323,7 +312,6 @@ class EED_Thank_You_Page extends EED_Module
     }
 
 
-
     /**
      * load_js
      *
@@ -343,7 +331,6 @@ class EED_Thank_You_Page extends EED_Module
     }
 
 
-
     /**
      * init
      *
@@ -353,7 +340,7 @@ class EED_Thank_You_Page extends EED_Module
     public function init()
     {
         $this->_get_reg_url_link();
-        if ( ! $this->get_txn()) {
+        if (! $this->get_txn()) {
             echo EEH_HTML::div(
                 EEH_HTML::h4(__('We\'re sorry...', 'event_espresso'), '', '') .
                 sprintf(
@@ -385,18 +372,18 @@ class EED_Thank_You_Page extends EED_Module
         // txn status ?
         if ($this->_current_txn->is_completed()) {
             $this->_show_try_pay_again_link = $show_try_pay_again_link_default;
-        } else if (
-            $this->_current_txn->is_incomplete()
+        } elseif ($this->_current_txn->is_incomplete()
             && ($this->_primary_registrant->is_approved()
                 || $this->_primary_registrant->is_pending_payment())
         ) {
             $this->_show_try_pay_again_link = true;
-        } else if ($this->_primary_registrant->is_approved() || $this->_primary_registrant->is_pending_payment()) {
+        } elseif ($this->_primary_registrant->is_approved() || $this->_primary_registrant->is_pending_payment()) {
             // its pending
             $this->_show_try_pay_again_link = isset(
-                                                  EE_Registry::instance()->CFG->registration->show_pending_payment_options
-                                              )
-                                              && EE_Registry::instance()->CFG->registration->show_pending_payment_options
+                EE_Registry::instance()->CFG->registration->show_pending_payment_options
+            )
+                                              && EE_Registry::instance()->CFG
+                                                  ->registration->show_pending_payment_options
                 ? true
                 : $show_try_pay_again_link_default;
         }
@@ -404,8 +391,7 @@ class EED_Thank_You_Page extends EED_Module
             ? true
             : false;
         $this->_is_offline_payment_method = false;
-        if (
-            // if payment method is unknown
+        if (// if payment method is unknown
             ! $this->_current_txn->payment_method() instanceof EE_Payment_Method
             || (
                 // or is an offline payment method
@@ -437,7 +423,6 @@ class EED_Thank_You_Page extends EED_Module
     }
 
 
-
     /**
      * display_thank_you_page_results
      *
@@ -447,12 +432,12 @@ class EED_Thank_You_Page extends EED_Module
     public function thank_you_page_results()
     {
         $this->init();
-        if ( ! $this->_current_txn instanceof EE_Transaction) {
+        if (! $this->_current_txn instanceof EE_Transaction) {
             return EE_Error::get_notices();
         }
         // link to receipt
         $template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url('html');
-        if ( ! empty($template_args['TXN_receipt_url'])) {
+        if (! empty($template_args['TXN_receipt_url'])) {
             $template_args['order_conf_desc'] = __(
                 '%1$sCongratulations%2$sYour registration has been successfully processed.%3$sCheck your email for your registration confirmation or click the button below to view / download / print a full description of your purchases and registration information.',
                 'event_espresso'
@@ -480,120 +465,6 @@ class EED_Thank_You_Page extends EED_Module
 
 
     /**
-     * thank_you_page_IPN_monitor
-     * this basically just pulls the TXN based on the reg_url_link sent from the server,
-     * then checks that the TXN status is not failed, and that no other errors have been generated.
-     * it also calculates the IPN wait time since the Thank You page was first loaded
-     *
-     * @param array $response
-     * @param array $data
-     * @return array
-     * @throws \EE_Error
-     */
-    public static function thank_you_page_IPN_monitor($response = array(), $data = array())
-    {
-        // does this heartbeat contain our data ?
-        if ( ! isset($data['espresso_thank_you_page'])) {
-            return $response;
-        }
-        // check for reg_url_link in the incoming heartbeat data
-        if ( ! isset($data['espresso_thank_you_page']['e_reg_url_link'])) {
-            $response['espresso_thank_you_page'] = array(
-                'errors' => ! empty($notices['errors'])
-                    ? $notices['errors']
-                    : __(
-                        'No transaction information could be retrieved because the registration URL link is missing or invalid.',
-                        'event_espresso'
-                    )
-            );
-            return $response;
-        }
-        // kk heartbeat has our data
-        $response['espresso_thank_you_page'] = array();
-        // set_definitions, instantiate the thank you page class, and get the ball rolling
-        EED_Thank_You_Page::set_definitions();
-        /** @var $espresso_thank_you_page EED_Thank_You_Page */
-        $espresso_thank_you_page = EED_Thank_You_Page::instance();
-        $espresso_thank_you_page->set_reg_url_link($data['espresso_thank_you_page']['e_reg_url_link']);
-        $espresso_thank_you_page->init();
-        //get TXN
-        $TXN = $espresso_thank_you_page->get_txn();
-        // no TXN? then get out
-        if ( ! $TXN instanceof EE_Transaction) {
-            $notices = EE_Error::get_notices();
-            $response['espresso_thank_you_page'] = array(
-                'errors' => ! empty($notices['errors'])
-                    ? $notices['errors']
-                    : sprintf(
-                        __(
-                            'The information for your transaction could not be retrieved from the server or the transaction data received was invalid because of a technical reason. (%s)',
-                            'event_espresso'
-                        ),
-                        __LINE__
-                    )
-            );
-            return $response;
-        }
-        // grab transient of TXN's status
-        $txn_status = isset($data['espresso_thank_you_page']['txn_status'])
-            ? $data['espresso_thank_you_page']['txn_status']
-            : null;
-        // has the TXN status changed since we last checked (or empty because this is the first time running through this code)?
-        if ($txn_status !== $TXN->status_ID()) {
-            // switch between two possible basic outcomes
-            switch ($TXN->status_ID()) {
-                // TXN has been updated in some way
-                case EEM_Transaction::overpaid_status_code:
-                case EEM_Transaction::complete_status_code:
-                case EEM_Transaction::incomplete_status_code:
-                    // send updated TXN results back to client,
-                    $response['espresso_thank_you_page'] = array(
-                        'transaction_details' => $espresso_thank_you_page->get_transaction_details(),
-                        'txn_status'          => $TXN->status_ID()
-                    );
-                    break;
-                // or we have a bad TXN, or really slow IPN, so calculate the wait time and send that back...
-                case EEM_Transaction::failed_status_code:
-                default:
-                    // keep on waiting...
-                    return $espresso_thank_you_page->_update_server_wait_time($data['espresso_thank_you_page']);
-            }
-            // or is the TXN still failed (never been updated) ???
-        } else if ($TXN->failed()) {
-            // keep on waiting...
-            return $espresso_thank_you_page->_update_server_wait_time($data['espresso_thank_you_page']);
-        }
-        // TXN is happening so let's get the payments now
-        // if we've already gotten payments then the heartbeat data will contain the timestamp of the last time we checked
-        $since = isset($data['espresso_thank_you_page']['get_payments_since'])
-            ? $data['espresso_thank_you_page']['get_payments_since']
-            : 0;
-        // then check for payments
-        $payments = $espresso_thank_you_page->get_txn_payments($since);
-        // has a payment been processed ?
-        if ( ! empty($payments) || $espresso_thank_you_page->_is_offline_payment_method) {
-            if ($since) {
-                $response['espresso_thank_you_page'] = array(
-                    'new_payments'        => $espresso_thank_you_page->get_new_payments($payments),
-                    'transaction_details' => $espresso_thank_you_page->get_transaction_details(),
-                    'txn_status'          => $TXN->status_ID()
-                );
-            } else {
-                $response['espresso_thank_you_page']['payment_details'] = $espresso_thank_you_page->get_payment_details(
-                    $payments
-                );
-            }
-            // reset time to check for payments
-            $response['espresso_thank_you_page']['get_payments_since'] = time();
-        } else {
-            $response['espresso_thank_you_page']['get_payments_since'] = $since;
-        }
-        return $response;
-    }
-
-
-
-    /**
      * _update_server_wait_time
      *
      * @param array $thank_you_page_data thank you page portion of the incoming JSON array from the WP heartbeat data
@@ -606,11 +477,10 @@ class EED_Thank_You_Page extends EED_Module
             'still_waiting' => isset($thank_you_page_data['initial_access'])
                 ? time() - $thank_you_page_data['initial_access']
                 : 0,
-            'txn_status'    => $this->_current_txn->status_ID()
+            'txn_status'    => $this->_current_txn->status_ID(),
         );
         return $response;
     }
-
 
 
     /**
@@ -620,7 +490,7 @@ class EED_Thank_You_Page extends EED_Module
      */
     public function get_registration_details()
     {
-        //prepare variables for displaying
+        // prepare variables for displaying
         $template_args = array();
         $template_args['transaction'] = $this->_current_txn;
         $template_args['reg_url_link'] = $this->_reg_url_link;
@@ -643,7 +513,6 @@ class EED_Thank_You_Page extends EED_Module
             true
         );
     }
-
 
 
     /**
@@ -703,7 +572,6 @@ class EED_Thank_You_Page extends EED_Module
     }
 
 
-
     /**
      * get_ajax_content
      *
@@ -712,7 +580,7 @@ class EED_Thank_You_Page extends EED_Module
      */
     public function get_ajax_content()
     {
-        if ( ! $this->get_txn()) {
+        if (! $this->get_txn()) {
             return;
         }
         // first determine which event(s) require pre-approval or not
@@ -723,9 +591,9 @@ class EED_Thank_You_Page extends EED_Module
                 $event = $registration->event();
                 if ($event instanceof EE_Event) {
                     if ($registration->is_not_approved() && $registration->event() instanceof EE_Event) {
-                        $events_requiring_pre_approval[$event->ID()] = $event;
+                        $events_requiring_pre_approval[ $event->ID() ] = $event;
                     } else {
-                        $events[$event->ID()] = $event;
+                        $events[ $event->ID() ] = $event;
                     }
                 }
             }
@@ -733,7 +601,6 @@ class EED_Thank_You_Page extends EED_Module
         $this->display_details_for_events_requiring_pre_approval($events_requiring_pre_approval);
         $this->display_details_for_events($events);
     }
-
 
 
     /**
@@ -744,19 +611,20 @@ class EED_Thank_You_Page extends EED_Module
      */
     public function display_details_for_events($events = array())
     {
-        if ( ! empty($events)) {
+        if (! empty($events)) {
             ?>
             <div id="espresso-thank-you-page-ajax-content-dv">
                 <div id="espresso-thank-you-page-ajax-transaction-dv"></div>
                 <div id="espresso-thank-you-page-ajax-payment-dv"></div>
                 <div id="espresso-thank-you-page-ajax-loading-dv">
                     <div id="ee-ajax-loading-dv" class="float-left lt-blue-text">
-                        <span class="dashicons dashicons-upload"></span><span id="ee-ajax-loading-msg-spn"><?php _e(
+                        <span class="dashicons dashicons-upload"></span><span id="ee-ajax-loading-msg-spn">
+                            <?php _e(
                                 'loading transaction and payment information...',
                                 'event_espresso'
                             ); ?></span>
                     </div>
-                    <?php if ( ! $this->_is_offline_payment_method && ! $this->_payments_closed) : ?>
+                    <?php if (! $this->_is_offline_payment_method && ! $this->_payments_closed) : ?>
                         <p id="ee-ajax-loading-pg" class="highlight-bg small-text clear">
                             <?php echo apply_filters(
                                 'EED_Thank_You_Page__get_ajax_content__waiting_for_IPN_msg',
@@ -767,7 +635,7 @@ class EED_Thank_You_Page extends EED_Module
                             ); ?>
                             <br/>
                             <span class="jst-rght ee-block small-text lt-grey-text">
-								<?php _e('current wait time ', 'event_espresso'); ?>
+                                <?php _e('current wait time ', 'event_espresso'); ?>
                                 <span id="espresso-thank-you-page-ajax-time-dv">00:00:00</span></span>
                         </p>
                     <?php endif; ?>
@@ -779,7 +647,6 @@ class EED_Thank_You_Page extends EED_Module
     }
 
 
-
     /**
      * display_details_for_events_requiring_pre_approval
      *
@@ -788,7 +655,7 @@ class EED_Thank_You_Page extends EED_Module
      */
     public function display_details_for_events_requiring_pre_approval($events = array())
     {
-        if ( ! empty($events)) {
+        if (! empty($events)) {
             ?>
             <div id="espresso-thank-you-page-not-approved-message-dv">
                 <h4 class="orange-text"><?php _e('Important Notice:', 'event_espresso'); ?></h4>
@@ -802,7 +669,8 @@ class EED_Thank_You_Page extends EED_Module
                     ); ?>
                 </p>
                 <ul class="events-requiring-pre-approval-ul">
-                    <?php foreach ($events as $event) {
+                    <?php
+                    foreach ($events as $event) {
                         if ($event instanceof EE_Event) {
                             echo '<li><span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>',
                             $event->name(),
@@ -817,7 +685,6 @@ class EED_Thank_You_Page extends EED_Module
     }
 
 
-
     /**
      * get_transaction_details
      *
@@ -826,7 +693,7 @@ class EED_Thank_You_Page extends EED_Module
      */
     public function get_transaction_details()
     {
-        //prepare variables for displaying
+        // prepare variables for displaying
         $template_args = array();
         $template_args['transaction'] = $this->_current_txn;
         $template_args['reg_url_link'] = $this->_reg_url_link;
@@ -853,7 +720,6 @@ class EED_Thank_You_Page extends EED_Module
     }
 
 
-
     /**
      * get_payment_row_html
      *
@@ -865,8 +731,7 @@ class EED_Thank_You_Page extends EED_Module
     {
         $html = '';
         if ($payment instanceof EE_Payment) {
-            if (
-                $payment->payment_method() instanceof EE_Payment_Method
+            if ($payment->payment_method() instanceof EE_Payment_Method
                 && $payment->status() === EEM_Payment::status_id_failed
                 && $payment->payment_method()->is_off_site()
             ) {
@@ -903,7 +768,6 @@ class EED_Thank_You_Page extends EED_Module
     }
 
 
-
     /**
      * get_payment_details
      *
@@ -913,7 +777,7 @@ class EED_Thank_You_Page extends EED_Module
      */
     public function get_payment_details($payments = array())
     {
-        //prepare variables for displaying
+        // prepare variables for displaying
         $template_args = array();
         $template_args['transaction'] = $this->_current_txn;
         $template_args['reg_url_link'] = $this->_reg_url_link;
@@ -921,14 +785,14 @@ class EED_Thank_You_Page extends EED_Module
         foreach ($payments as $payment) {
             $template_args['payments'][] = $this->get_payment_row_html($payment);
         }
-        //create a hacky payment object, but dont save it
+        // create a hacky payment object, but dont save it
         $payment = EE_Payment::new_instance(
             array(
                 'TXN_ID'        => $this->_current_txn->ID(),
                 'STS_ID'        => EEM_Payment::status_id_pending,
                 'PAY_timestamp' => time(),
                 'PAY_amount'    => $this->_current_txn->total(),
-                'PMD_ID'        => $this->_current_txn->payment_method_ID()
+                'PMD_ID'        => $this->_current_txn->payment_method_ID(),
             )
         );
         $payment_method = $this->_current_txn->payment_method();
@@ -961,7 +825,6 @@ class EED_Thank_You_Page extends EED_Module
     }
 
 
-
     /**
      * get_payment_details
      *
@@ -972,14 +835,10 @@ class EED_Thank_You_Page extends EED_Module
     public function get_new_payments($payments = array())
     {
         $payments_html = '';
-        //prepare variables for displaying
+        // prepare variables for displaying
         foreach ($payments as $payment) {
             $payments_html .= $this->get_payment_row_html($payment);
         }
         return $payments_html;
     }
-
-
 }
-// End of file EED_Thank_You_Page.php
-// Location: ${NAMESPACE}/EED_Thank_You_Page.php

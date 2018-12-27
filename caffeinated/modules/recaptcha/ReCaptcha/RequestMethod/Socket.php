@@ -4,17 +4,14 @@
  *
  * @copyright Copyright (c) 2015, Google Inc.
  * @link      http://www.google.com/recaptcha
- *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -36,18 +33,24 @@ class Socket
 
     /**
      * fsockopen
-     * 
+     *
      * @see http://php.net/fsockopen
      * @param string $hostname
-     * @param int $port
-     * @param int $errno
+     * @param int    $port
+     * @param int    $errno
      * @param string $errstr
-     * @param float $timeout
+     * @param float  $timeout
      * @return resource
      */
     public function fsockopen($hostname, $port = -1, &$errno = 0, &$errstr = '', $timeout = null)
     {
-        $this->handle = fsockopen($hostname, $port, $errno, $errstr, (is_null($timeout) ? ini_get("default_socket_timeout") : $timeout));
+        $this->handle = fsockopen(
+            $hostname,
+            $port,
+            $errno,
+            $errstr,
+            (is_null($timeout) ? ini_get("default_socket_timeout") : $timeout)
+        );
 
         if ($this->handle != false && $errno === 0 && $errstr === '') {
             return $this->handle;
@@ -58,10 +61,10 @@ class Socket
 
     /**
      * fwrite
-     * 
+     *
      * @see http://php.net/fwrite
      * @param string $string
-     * @param int $length
+     * @param int    $length
      * @return int | bool
      */
     public function fwrite($string, $length = null)
@@ -71,7 +74,7 @@ class Socket
 
     /**
      * fgets
-     * 
+     *
      * @see http://php.net/fgets
      * @param int $length
      */
@@ -82,7 +85,7 @@ class Socket
 
     /**
      * feof
-     * 
+     *
      * @see http://php.net/feof
      * @return bool
      */
@@ -93,7 +96,7 @@ class Socket
 
     /**
      * fclose
-     * 
+     *
      * @see http://php.net/fclose
      * @return bool
      */

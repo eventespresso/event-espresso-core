@@ -2,13 +2,9 @@
 
 namespace EventEspresso\core\domain;
 
-use DomainException;
 use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\Version;
-use InvalidArgumentException;
-
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed');
-
+use EventEspresso\core\services\assets\Registry;
 
 /**
  * DomainBase Class
@@ -50,6 +46,11 @@ abstract class DomainBase implements DomainInterface
      */
     private $plugin_url;
 
+    /**
+     * @var string $asset_namespace
+     */
+    private $asset_namespace;
+
 
 
     /**
@@ -57,8 +58,6 @@ abstract class DomainBase implements DomainInterface
      *
      * @param FilePath $plugin_file
      * @param Version  $version
-     * @throws InvalidArgumentException
-     * @throws DomainException
      */
     public function __construct(FilePath $plugin_file, Version $version)
     {
@@ -67,6 +66,7 @@ abstract class DomainBase implements DomainInterface
         $this->plugin_basename = plugin_basename($this->pluginFile());
         $this->plugin_path = plugin_dir_path($this->pluginFile());
         $this->plugin_url = plugin_dir_url($this->pluginFile());
+        $this->setAssetNamespace();
     }
 
 
@@ -129,4 +129,41 @@ abstract class DomainBase implements DomainInterface
     }
 
 
+    /**
+     * @return string
+     */
+    public function distributionAssetsPath()
+    {
+        return $this->pluginPath() . 'assets/dist/';
+    }
+
+
+    /**
+     * @return string
+     */
+    public function distributionAssetsUrl()
+    {
+        return $this->pluginUrl() . 'assets/dist/';
+    }
+
+
+    /**
+     * @return string
+     */
+    public function assetNamespace()
+    {
+        return $this->asset_namespace;
+    }
+
+
+    /**
+     * @return void
+     */
+    private function setAssetNamespace()
+    {
+        $this->asset_namespace = sanitize_key(
+            // convert directory separators to dashes and remove file extension
+            str_replace(array('/', '.php'), array('-', ''), $this->plugin_basename)
+        );
+    }
 }

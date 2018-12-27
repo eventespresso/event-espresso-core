@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\entities\shortcodes;
 
 use EE_Offsite_Gateway;
@@ -10,21 +11,15 @@ use EEM_Payment_Method;
 use EEM_Transaction;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class EspressoTxnPage
  * ESPRESSO_TXN_PAGE shortcode
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class EspressoTxnPage extends EspressoShortcode
 {
-
 
 
     /**
@@ -36,7 +31,6 @@ class EspressoTxnPage extends EspressoShortcode
     {
         return 'ESPRESSO_TXN_PAGE';
     }
-
 
 
     /**
@@ -76,8 +70,7 @@ class EspressoTxnPage extends EspressoShortcode
             }
             if ($payment_method instanceof EE_Payment_Method && $payment_method->is_off_site()) {
                 $gateway = $payment_method->type_obj()->get_gateway();
-                if (
-                    $gateway instanceof EE_Offsite_Gateway
+                if ($gateway instanceof EE_Offsite_Gateway
                     && $gateway->handle_IPN_in_this_request(
                         \EE_Registry::instance()->REQ->params(),
                         true
@@ -88,14 +81,13 @@ class EspressoTxnPage extends EspressoShortcode
                     $payment_processor->process_ipn($_REQUEST, $transaction, $payment_method);
                 }
             }
-            //allow gateways to add a filter to stop rendering the page
+            // allow gateways to add a filter to stop rendering the page
             if (apply_filters('FHEE__EES_Espresso_Txn_Page__run__exit', false)) {
                 exit;
             }
         }
         $this->shortcodeHasBeenInitialized();
     }
-
 
 
     /**
@@ -114,5 +106,3 @@ class EspressoTxnPage extends EspressoShortcode
         );
     }
 }
-// End of file EspressoTxnPage.php
-// Location: EventEspresso\core\domain\entities\shortcodes/EspressoTxnPage.php

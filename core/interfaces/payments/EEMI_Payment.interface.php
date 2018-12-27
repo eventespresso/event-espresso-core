@@ -1,7 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Interface EEMI_Payment
@@ -64,6 +61,3 @@ interface EEMI_Payment
      */
     public function get_payment_by_txn_id_chq_nmbr($txn_id);
 }
-
-// End of file EEMI_Payment.interface.php
-// Location: EventEspresso\core\libraries\payment_methods/EEMI_Payment.interface.php

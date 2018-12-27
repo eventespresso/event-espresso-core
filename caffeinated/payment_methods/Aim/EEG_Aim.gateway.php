@@ -1,10 +1,6 @@
 <?php
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
-
-
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * Event Espresso
@@ -29,7 +25,7 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 class EEG_Aim extends EE_Onsite_Gateway
 {
 
-    const LIVE_URL    = 'https://secure2.authorize.net/gateway/transact.dll'; //Authnet URL
+    const LIVE_URL    = 'https://secure2.authorize.net/gateway/transact.dll'; // Authnet URL
 
     const SANDBOX_URL = 'https://test.authorize.net/gateway/transact.dll';
 
@@ -133,7 +129,8 @@ class EEG_Aim extends EE_Onsite_Gateway
         "type",
         "version",
         "zip",
-        "solution_id"
+        "solution_id",
+        "currency_code"
     );
 
 
@@ -194,16 +191,16 @@ class EEG_Aim extends EE_Onsite_Gateway
     {
         add_filter('FHEE__EEG_Aim___get_server_url', array($this, 'possibly_use_deprecated_aim_server'), 10, 2);
         // Enable test mode if needed
-        //4007000000027  <-- test successful visa
-        //4222222222222  <-- test failure card number
+        // 4007000000027  <-- test successful visa
+        // 4222222222222  <-- test failure card number
 
         $item_num = 1;
         $transaction = $payment->transaction();
         $gateway_formatter = $this->_get_gateway_formatter();
         $order_description = $gateway_formatter->formatOrderDescription($payment);
         $primary_registrant = $transaction->primary_registration();
-        //if we're are charging for the full amount, show the normal line items
-        //and the itemized total adds up properly
+        // if we're are charging for the full amount, show the normal line items
+        // and the itemized total adds up properly
         if ($this->_can_easily_itemize_transaction_for($payment)) {
             $total_line_item = $transaction->total_line_item();
             foreach ($total_line_item->get_items() as $line_item) {
@@ -220,7 +217,7 @@ class EEG_Aim extends EE_Onsite_Gateway
                 );
                 $order_description .= $line_item->desc().', ';
             }
-            foreach($total_line_item->tax_descendants() as $tax_line_item) {
+            foreach ($total_line_item->tax_descendants() as $tax_line_item) {
                 $this->addLineItem(
                     $item_num++,
                     $tax_line_item->name(),
@@ -232,8 +229,8 @@ class EEG_Aim extends EE_Onsite_Gateway
             }
         }
 
-        //start transaction
-        //if in debug mode, use authorize.net's sandbox id; otherwise use the Event Espresso partner id
+        // start transaction
+        // if in debug mode, use authorize.net's sandbox id; otherwise use the Event Espresso partner id
         $partner_id = $this->_debug_mode ? 'AAA100302' : 'AAA105363';
         $this->setField('solution_id', $partner_id);
         $this->setField('amount', $gateway_formatter->formatCurrency($payment->amount()));
@@ -251,18 +248,20 @@ class EEG_Aim extends EE_Onsite_Gateway
         $this->setField('fax', $billing_info['fax']);
         $this->setField('cust_id', $primary_registrant->ID());
         $this->setField('phone', $billing_info['phone']);
-        //invoice_num would be nice to have it be unique per SPCO page-load, that way if users
-        //press back, they don't submit a duplicate. However, we may be keeping the user on teh same spco page
-        //in which case, we need to generate teh invoice num per request right here...
-        $this->setField('invoice_num', wp_generate_password(12, false));//$billing_info['_reg-page-billing-invoice-'.$this->_gateway_name]['value']);
-        //tell AIM that any duplicates sent in the next 5 minutes are to be ignored
+        $currency_config = LoaderFactory::getLoader()->load('EE_Currency_Config');
+        $this->setField('currency_code', $currency_config->code);
+        // invoice_num would be nice to have it be unique per SPCO page-load, that way if users
+        // press back, they don't submit a duplicate. However, we may be keeping the user on teh same spco page
+        // in which case, we need to generate teh invoice num per request right here...
+        $this->setField('invoice_num', wp_generate_password(12, false));// $billing_info['_reg-page-billing-invoice-'.$this->_gateway_name]['value']);
+        // tell AIM that any duplicates sent in the next 5 minutes are to be ignored
         $this->setField('duplicate_window', 5 * MINUTE_IN_SECONDS);
 
         if ($this->_test_transactions) {
             $this->test_request = "true";
         }
 
-        //Capture response
+        // Capture response
         $this->type = "AUTH_CAPTURE";
         $response = $this->_sendRequest($payment);
         if (! empty($response)) {
@@ -274,7 +273,7 @@ class EEG_Aim extends EE_Onsite_Gateway
                     ? $this->_pay_model->approved_status()
                     : $this->_pay_model->declined_status();
                 $payment->set_status($payment_status);
-                //make sure we interpret the AMT as a float, not an international string (where periods are thousand separators)
+                // make sure we interpret the AMT as a float, not an international string (where periods are thousand separators)
                 $payment->set_amount((float) $response->amount);
                 $payment->set_gateway_response(
                     sprintf(
@@ -351,7 +350,7 @@ class EEG_Aim extends EE_Onsite_Gateway
     protected function setField($name, $value)
     {
         if (in_array($name, $this->_all_aim_fields)) {
-            $this->_x_post_fields[$name] = $value;
+            $this->_x_post_fields[ $name ] = $value;
         } else {
             throw new AuthorizeNetException("Error: no field $name exists in the AIM API.
             To set a custom field use setCustomField('field','value') instead.");
@@ -393,7 +392,7 @@ class EEG_Aim extends EE_Onsite_Gateway
         }
 
         if (preg_match('/xml/', $post_url)) {
-            curl_setopt($curl_request, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
+            curl_setopt($curl_request, CURLOPT_HTTPHEADER, array("Content-Type: text/xml"));
         }
 
         $response = curl_exec($curl_request);
@@ -417,9 +416,9 @@ class EEG_Aim extends EE_Onsite_Gateway
         foreach ($request_array as $index => $keyvaltogether) {
             foreach ($keys_to_filter_out as $key) {
                 if (strpos($keyvaltogether, $key) === 0) {
-                    //found it at the first character
-                    //so its one of them
-                    unset($request_array[$index]);
+                    // found it at the first character
+                    // so its one of them
+                    unset($request_array[ $index ]);
                 }
             }
         }
@@ -444,7 +443,7 @@ class EEG_Aim extends EE_Onsite_Gateway
     private function _log_and_clean_response($response_obj, $payment)
     {
         $response_obj->account_number = '';
-        $this->log(array('AIM Response received:' => (array)$response_obj), $payment);
+        $this->log(array('AIM Response received:' => (array) $response_obj), $payment);
         return $response_obj;
     }
 }
@@ -651,4 +650,3 @@ if (! class_exists('AuthorizeNetException')) {
         }
     }
 }
-// End of file EEG_Aim.gateway.php

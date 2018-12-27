@@ -57,12 +57,12 @@ class PhpCompatGreaterFiveSixHelper extends AbstractHelper
         $is_negative = $gmt_offset < 0;
         $gmt_offset *= 100;
         $gmt_offset = absint($gmt_offset);
-        //negative and need zero padding?
+        // negative and need zero padding?
         if (strlen($gmt_offset) < 4) {
             $gmt_offset = str_pad($gmt_offset, 4, '0', STR_PAD_LEFT);
         }
         $gmt_offset = $this->convertToTimeFraction($gmt_offset);
-        //return something like -1300, -0200 or +1300, +0200
+        // return something like -1300, -0200 or +1300, +0200
         return $is_negative ? '-' . $gmt_offset : '+' . $gmt_offset;
     }
 
@@ -89,7 +89,7 @@ class PhpCompatGreaterFiveSixHelper extends AbstractHelper
      * @param null|int     $time
      * @return int
      */
-    public function getTimezoneOffset(DateTimezone $date_time_zone, $time = NULL)
+    public function getTimezoneOffset(DateTimezone $date_time_zone, $time = null)
     {
         $time = is_int($time) || $time === null ? $time : (int) strtotime($time);
         $time = preg_match(EE_Datetime_Field::unix_timestamp_regex, $time) ? $time : time();

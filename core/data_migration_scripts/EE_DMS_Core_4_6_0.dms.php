@@ -7,18 +7,18 @@ use EventEspresso\core\services\database\TableManager;
  * mostly just
  * -move payment methods from EE_Config into a separate table just for them
  */
-//make sure we have all the stages loaded too
-//unfortunately, this needs to be done upon INCLUSION of this file,
-//instead of construction, because it only gets constructed on first page load
-//(all other times it gets resurrected from a wordpress option)
+// make sure we have all the stages loaded too
+// unfortunately, this needs to be done upon INCLUSION of this file,
+// instead of construction, because it only gets constructed on first page load
+// (all other times it gets resurrected from a wordpress option)
 $stages = glob(EE_CORE . 'data_migration_scripts/4_6_0_stages/*');
 $class_to_filepath = array();
 foreach ($stages as $filepath) {
     $matches = array();
     preg_match('~4_6_0_stages/(.*).dmsstage.php~', $filepath, $matches);
-    $class_to_filepath[$matches[1]] = $filepath;
+    $class_to_filepath[ $matches[1] ] = $filepath;
 }
-//give addons a chance to autoload their stages too
+// give addons a chance to autoload their stages too
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_6_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
@@ -68,14 +68,14 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
     {
         $version_string = $version_array['Core'];
         if (version_compare($version_string, '4.6.0', '<=') && version_compare($version_string, '4.5.0', '>=')) {
-//			echo "$version_string can be migrated from";
+//          echo "$version_string can be migrated from";
             return true;
-        } elseif ( ! $version_string) {
-//			echo "no version string provided: $version_string";
-            //no version string provided... this must be pre 4.3
-            return false;//changed mind. dont want people thinking they should migrate yet because they cant
+        } elseif (! $version_string) {
+//          echo "no version string provided: $version_string";
+            // no version string provided... this must be pre 4.3
+            return false;// changed mind. dont want people thinking they should migrate yet because they cant
         } else {
-//			echo "$version_string doesnt apply";
+//          echo "$version_string doesnt apply";
             return false;
         }
     }
@@ -87,7 +87,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
      */
     public function schema_changes_before_migration()
     {
-        //relies on 4.1's EEH_Activation::create_table
+        // relies on 4.1's EEH_Activation::create_table
         require_once(EE_HELPERS . 'EEH_Activation.helper.php');
         $table_name = 'esp_answer';
         $sql = " ANS_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -112,7 +112,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
 							PRIMARY KEY  (ATTM_ID),
 								KEY ATT_fname (ATT_fname),
 								KEY ATT_lname (ATT_lname),
-								KEY ATT_email (ATT_email)";
+								KEY ATT_email (ATT_email(191))";
         $this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_country';
         $sql = "CNT_ISO VARCHAR(2) COLLATE utf8_bin NOT NULL,
@@ -433,7 +433,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
 			KEY STA_ID (STA_ID),
 			KEY CNT_ISO (CNT_ISO)";
         $this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
-        //modified tables
+        // modified tables
         $table_name = "esp_price";
         $sql = "PRC_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 					  PRT_ID TINYINT(3) UNSIGNED NOT NULL,
@@ -499,7 +499,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
         $this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
         /** @var EE_DMS_Core_4_1_0 $script_4_1_defaults */
         $script_4_1_defaults = EE_Registry::instance()->load_dms('Core_4_1_0');
-        //(because many need to convert old string states to foreign keys into the states table)
+        // (because many need to convert old string states to foreign keys into the states table)
         $script_4_1_defaults->insert_default_states();
         $script_4_1_defaults->insert_default_countries();
         /** @var EE_DMS_Core_4_5_0 $script_4_5_defaults */
@@ -507,7 +507,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
         $script_4_5_defaults->insert_default_price_types();
         $script_4_5_defaults->insert_default_prices();
         $script_4_5_defaults->insert_default_tickets();
-        //setting up the config wp option pretty well counts as a 'schema change', or at least should happen here
+        // setting up the config wp option pretty well counts as a 'schema change', or at least should happen here
         EE_Config::instance()->update_espresso_config(false, true);
         $this->add_default_admin_only_payments();
         $this->insert_default_currencies();
@@ -543,24 +543,27 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
             $default_admin_only_payment_methods = apply_filters(
                 'FHEE__EEH_Activation__add_default_admin_only_payments__default_admin_only_payment_methods',
                 array(
-                    __("Bank", 'event_espresso')        => __("Bank Draft", 'event_espresso'),
-                    __("Cash", 'event_espresso')        => __("Cash Delivered Physically", 'event_espresso'),
-                    __("Check", 'event_espresso')       => __("Paper Check", 'event_espresso'),
-                    __("Credit Card", 'event_espresso') => __("Offline Credit Card Payment", 'event_espresso'),
-                    __("Debit Card", 'event_espresso')  => __("Offline Debit Payment", 'event_espresso'),
-                    __("Invoice", 'event_espresso')     => __("Invoice received with monies included",
-                        'event_espresso'),
-                    __("Money Order", 'event_espresso') => '',
-                    __("Paypal", 'event_espresso')      => __("Paypal eCheck, Invoice, etc", 'event_espresso'),
-                    __('Other', 'event_espresso')       => __('Other method of payment', 'event_espresso'),
-                ));
-            //make sure we hae payment method records for the following
-            //so admins can record payments for them from the admin page
+                    (string) __("Bank", 'event_espresso')        => __("Bank Draft", 'event_espresso'),
+                    (string) __("Cash", 'event_espresso')        => __("Cash Delivered Physically", 'event_espresso'),
+                    (string) __("Check", 'event_espresso')       => __("Paper Check", 'event_espresso'),
+                    (string) __("Credit Card", 'event_espresso') => __("Offline Credit Card Payment", 'event_espresso'),
+                    (string) __("Debit Card", 'event_espresso')  => __("Offline Debit Payment", 'event_espresso'),
+                    (string) __("Invoice", 'event_espresso')     => __(
+                        "Invoice received with monies included",
+                        'event_espresso'
+                    ),
+                    (string) __("Money Order", 'event_espresso') => '',
+                    (string) __("Paypal", 'event_espresso')      => __("Paypal eCheck, Invoice, etc", 'event_espresso'),
+                    (string) __('Other', 'event_espresso')       => __('Other method of payment', 'event_espresso'),
+                )
+            );
+            // make sure we hae payment method records for the following
+            // so admins can record payments for them from the admin page
             foreach ($default_admin_only_payment_methods as $nicename => $description) {
                 $slug = sanitize_key($nicename);
-                //check that such a payment method exists
+                // check that such a payment method exists
                 $exists = $wpdb->get_var($wpdb->prepare("SELECT count(*) FROM $table_name WHERE PMD_slug = %s", $slug));
-                if ( ! $exists) {
+                if (! $exists) {
                     $values = array(
                         'PMD_type'       => 'Admin_Only',
                         'PMD_name'       => $nicename,
@@ -574,18 +577,20 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
                         $table_name,
                         $values,
                         array(
-                            '%s',//PMD_type
-                            '%s',//PMD_name
-                            '%s',//PMD_admin_name
-                            '%s',//PMD_admin_desc
-                            '%s',//PMD_slug
-                            '%d',//PMD_wp_user
-                            '%s',//PMD_scope
+                            '%s',// PMD_type
+                            '%s',// PMD_name
+                            '%s',// PMD_admin_name
+                            '%s',// PMD_admin_desc
+                            '%s',// PMD_slug
+                            '%d',// PMD_wp_user
+                            '%s',// PMD_scope
                         )
                     );
-                    if ( ! $success) {
-                        $this->add_error(sprintf(__("Could not insert new admin-only payment method with values %s during migration",
-                            "event_espresso"), $this->_json_encode($values)));
+                    if (! $success) {
+                        $this->add_error(sprintf(__(
+                            "Could not insert new admin-only payment method with values %s during migration",
+                            "event_espresso"
+                        ), $this->_json_encode($values)));
                     }
                 }
             }
@@ -607,7 +612,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
         if ($this->_get_table_analysis()->tableExists($currency_table)) {
             $SQL = "SELECT COUNT('CUR_code') FROM $currency_table";
             $countries = $wpdb->get_var($SQL);
-            if ( ! $countries) {
+            if (! $countries) {
                 $SQL = "INSERT INTO $currency_table
 				( CUR_code, CUR_single, CUR_plural, CUR_sign, CUR_dec_plc, CUR_active) VALUES
 				( 'EUR',  'Euro',  'Euros',  '€',  2,1),
@@ -766,15 +771,4 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
             }
         }
     }
-
 }
-
-
-
-
-
-
-
-
-
-

@@ -1,13 +1,10 @@
 <?php
+
 namespace EventEspresso\core\domain\entities\shortcodes;
 
 use EE_Registry;
 use EED_Single_Page_Checkout;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class EspressoCheckout
@@ -30,7 +27,6 @@ class EspressoCheckout extends EspressoShortcode
     {
         return 'ESPRESSO_CHECKOUT';
     }
-
 
 
     /**
@@ -61,7 +57,6 @@ class EspressoCheckout extends EspressoShortcode
     }
 
 
-
     /**
      * callback that runs when the shortcode is encountered in post content.
      * IMPORTANT !!!
@@ -74,9 +69,4 @@ class EspressoCheckout extends EspressoShortcode
     {
         return EE_Registry::instance()->REQ->get_output();
     }
-
-
-
 }
-// End of file EspressoCheckout.php
-// Location: EventEspresso\core\domain\entities\shortcodes/EspressoCheckout.php

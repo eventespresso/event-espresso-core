@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\libraries\rest_api\controllers\rpc;
 
 use WP_Error;
@@ -12,12 +13,6 @@ use EEM_Checkin;
 use EED_Core_Rest_Api;
 use EventEspresso\core\libraries\rest_api\controllers\Base as Base;
 use EventEspresso\core\libraries\rest_api\controllers\model\Read;
-
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Controller for handling checkin/checkout requests
@@ -33,7 +28,7 @@ class Checkin extends Base
 
     /**
      * @param WP_REST_Request $request
-     * @param string           $version
+     * @param string          $version
      * @return WP_Error|WP_REST_Response
      */
     public static function handleRequestToggleCheckin(WP_REST_Request $request, $version)
@@ -43,13 +38,11 @@ class Checkin extends Base
     }
 
 
-
     /**
      * Toggles whether the user is checked in or not.
-
      *
      * @param WP_REST_Request $request
-     * @param string           $version
+     * @param string          $version
      * @return WP_Error|WP_REST_Response
      */
     protected function createCheckinCheckoutObject(WP_REST_Request $request, $version)
@@ -92,14 +85,14 @@ class Checkin extends Base
         }
         $success = $reg->toggle_checkin_status($dtt_id, ! $force);
         if ($success === false) {
-            //check if we know they can't check in because they're not approved and we aren't forcing
+            // check if we know they can't check in because they're not approved and we aren't forcing
             if (! $reg->is_approved() && ! $force) {
-                //rely on EE_Error::add_error messages to have been added to give more data about why it failed
+                // rely on EE_Error::add_error messages to have been added to give more data about why it failed
                 return $this->sendResponse(
                     new WP_Error(
                         'rest_toggle_checkin_failed',
                         __(
-                            // @codingStandardsIgnoreStart
+                        // @codingStandardsIgnoreStart
                             'Registration check-in failed because the registration is not approved. You may attempt to force checking in though.',
                             // @codingStandardsIgnoreEnd
                             'event_espresso'
@@ -131,7 +124,7 @@ class Checkin extends Base
                     'rest_toggle_checkin_error',
                     sprintf(
                         __(
-                            // @codingStandardsIgnoreStart
+                        // @codingStandardsIgnoreStart
                             'Supposedly we created a new checkin object for registration %1$s at datetime %2$s, but we can\'t find it.',
                             // @codingStandardsIgnoreEnd
                             'event_espresso'

@@ -1,9 +1,4 @@
-<?php if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('NO direct script access allowed');
-}
-
-
-
+<?php
 /**
  * ----------------------------------------------
  * Class  EEG_Paypal_Express
@@ -11,10 +6,10 @@
  * @package            Event Espresso
  * @subpackage         eea-paypal-express
  * @author             Event Espresso
- * 
+ *
  * ----------------------------------------------
  */
-//Quickfix to address https://events.codebasehq.com/projects/event-espresso/tickets/11089 ASAP
+// Quickfix to address https://events.codebasehq.com/projects/event-espresso/tickets/11089 ASAP
 if (! function_exists('mb_strcut')) {
     /**
      * Very simple mimic of mb_substr (which WP ensures exists in wp-includes/compat.php). Still has all the problems of mb_substr
@@ -107,6 +102,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             'TWD',
             'THB',
             'TRY',
+            'INR',
         );
         parent::__construct();
     }
@@ -185,8 +181,6 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             // Buyer does not need to create a PayPal account to check out.
             // This is referred to as PayPal Account Optional.
             'SOLUTIONTYPE'                   => 'Sole',
-            //EE will blow up if you change this
-            'BUTTONSOURCE'                   => 'EventEspresso_SP',
             // Locale of the pages displayed by PayPal during Express Checkout.
             'LOCALECODE'                     => $locale[1]
         );
@@ -307,8 +301,6 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                     'PAYMENTREQUEST_0_PAYMENTACTION' => 'Sale',
                     'PAYMENTREQUEST_0_AMT'           => $payment->amount(),
                     'PAYMENTREQUEST_0_CURRENCYCODE'  => $payment->currency_code(),
-                    //EE will blow up if you change this
-                    'BUTTONSOURCE'                   => 'EventEspresso_SP',
                 );
                  // Include itemized list.
                 $itemized_list = $this->itemize_list(
@@ -334,7 +326,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                         : '';
                     $payment->set_extra_accntng($primary_registration_code);
                     $payment->set_amount(isset($docheckout_response_args['PAYMENTINFO_0_AMT'])
-                        ? (float)$docheckout_response_args['PAYMENTINFO_0_AMT']
+                        ? (float) $docheckout_response_args['PAYMENTINFO_0_AMT']
                         : 0);
                     $payment->set_txn_id_chq_nmbr(isset($docheckout_response_args['PAYMENTINFO_0_TRANSACTIONID'])
                         ? $docheckout_response_args['PAYMENTINFO_0_TRANSACTIONID']
@@ -407,17 +399,15 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
         $itemized_list = array();
         $gateway_formatter = $this->_get_gateway_formatter();
         // If we have data from a previous communication with PP (on this transaction) we may use that for our list...
-        if (
-            ! empty($request_response_args)
+        if (! empty($request_response_args)
             && array_key_exists('L_PAYMENTREQUEST_0_AMT0', $request_response_args)
             && array_key_exists('PAYMENTREQUEST_0_ITEMAMT', $request_response_args)
         ) {
             foreach ($request_response_args as $arg_key => $arg_val) {
-                if (
-                    strpos($arg_key, 'PAYMENTREQUEST_') !== false
+                if (strpos($arg_key, 'PAYMENTREQUEST_') !== false
                     && strpos($arg_key, 'NOTIFYURL') === false
                 ) {
-                    $itemized_list[$arg_key] = $arg_val;
+                    $itemized_list[ $arg_key ] = $arg_val;
                 }
             }
             // If we got only a few Items then something is not right.
@@ -441,7 +431,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                 $itemized_list = array();
                 $this->log(
                     array(
-                        esc_html__(
+                        (string) esc_html__(
                             'Could not generate a proper item list with:',
                             'event_espresso'
                         ) => $request_response_args
@@ -470,25 +460,25 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                         $line_item_quantity = 1;
                     }
                     // Item Name.
-                    $itemized_list['L_PAYMENTREQUEST_0_NAME' . $item_num] = mb_strcut(
+                    $itemized_list[ 'L_PAYMENTREQUEST_0_NAME' . $item_num ] = mb_strcut(
                         $gateway_formatter->formatLineItemName($line_item, $payment),
                         0,
                         127
                     );
                     // Item description.
-                    $itemized_list['L_PAYMENTREQUEST_0_DESC' . $item_num] = mb_strcut(
+                    $itemized_list[ 'L_PAYMENTREQUEST_0_DESC' . $item_num ] = mb_strcut(
                         $gateway_formatter->formatLineItemDesc($line_item, $payment),
                         0,
                         127
                     );
                     // Cost of individual item.
-                    $itemized_list['L_PAYMENTREQUEST_0_AMT' . $item_num] = $gateway_formatter->formatCurrency($unit_price);
+                    $itemized_list[ 'L_PAYMENTREQUEST_0_AMT' . $item_num ] = $gateway_formatter->formatCurrency($unit_price);
                     // Item Number.
-                    $itemized_list['L_PAYMENTREQUEST_0_NUMBER' . $item_num] = $item_num + 1;
+                    $itemized_list[ 'L_PAYMENTREQUEST_0_NUMBER' . $item_num ] = $item_num + 1;
                     // Item quantity.
-                    $itemized_list['L_PAYMENTREQUEST_0_QTY' . $item_num] = $line_item_quantity;
+                    $itemized_list[ 'L_PAYMENTREQUEST_0_QTY' . $item_num ] = $line_item_quantity;
                     // Digital item is sold.
-                    $itemized_list['L_PAYMENTREQUEST_0_ITEMCATEGORY' . $item_num] = 'Physical';
+                    $itemized_list[ 'L_PAYMENTREQUEST_0_ITEMCATEGORY' . $item_num ] = 'Physical';
                     $itemized_sum += $line_item->total();
                     ++$item_num;
                 }
@@ -506,7 +496,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             // add the difference as an extra line item.
             if ($this->_money->compare_floats($itemized_sum_diff_from_txn_total, 0, '!=')) {
                 // Item Name.
-                $itemized_list['L_PAYMENTREQUEST_0_NAME' . $item_num] = mb_strcut(
+                $itemized_list[ 'L_PAYMENTREQUEST_0_NAME' . $item_num ] = mb_strcut(
                     esc_html__(
                         'Other (promotion/surcharge/cancellation)',
                         'event_espresso'
@@ -515,17 +505,17 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                     127
                 );
                 // Item description.
-                $itemized_list['L_PAYMENTREQUEST_0_DESC' . $item_num] = '';
+                $itemized_list[ 'L_PAYMENTREQUEST_0_DESC' . $item_num ] = '';
                 // Cost of individual item.
-                $itemized_list['L_PAYMENTREQUEST_0_AMT' . $item_num] = $gateway_formatter->formatCurrency(
+                $itemized_list[ 'L_PAYMENTREQUEST_0_AMT' . $item_num ] = $gateway_formatter->formatCurrency(
                     $itemized_sum_diff_from_txn_total
                 );
                 // Item Number.
-                $itemized_list['L_PAYMENTREQUEST_0_NUMBER' . $item_num] = $item_num + 1;
+                $itemized_list[ 'L_PAYMENTREQUEST_0_NUMBER' . $item_num ] = $item_num + 1;
                 // Item quantity.
-                $itemized_list['L_PAYMENTREQUEST_0_QTY' . $item_num] = 1;
+                $itemized_list[ 'L_PAYMENTREQUEST_0_QTY' . $item_num ] = 1;
                 // Digital item is sold.
-                $itemized_list['L_PAYMENTREQUEST_0_ITEMCATEGORY' . $item_num] = 'Physical';
+                $itemized_list[ 'L_PAYMENTREQUEST_0_ITEMCATEGORY' . $item_num ] = 'Physical';
                 $item_num++;
             }
         } else {
@@ -572,10 +562,12 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
     public function _ppExpress_request($request_params, $request_text, $payment)
     {
         $request_dtls = array(
-            'VERSION'   => '204.0',
-            'USER'      => urlencode($this->_api_username),
-            'PWD'       => urlencode($this->_api_password),
+            'VERSION' => '204.0',
+            'USER' => urlencode($this->_api_username),
+            'PWD' => urlencode($this->_api_password),
             'SIGNATURE' => urlencode($this->_api_signature),
+            // EE will blow up if you change this
+            'BUTTONSOURCE' => 'EventEspresso_SP',
         );
         $dtls = array_merge($request_dtls, $request_params);
         $this->_log_clean_request($dtls, $payment, $request_text . ' Request');
@@ -588,7 +580,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                 'httpversion' => '1.1',
                 'cookies'     => array(),
                 'headers'     => array(),
-                'body'        => http_build_query($dtls),
+                'body'        => http_build_query($dtls, '', '&'),
             )
         );
         // Log the response.
@@ -615,8 +607,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
         if (! isset($response_args['ACK'])) {
             return array('status' => false, 'args' => $request_response);
         }
-        if (
-            (
+        if ((
                 isset($response_args['PAYERID'])
                 || isset($response_args['TOKEN'])
                 || isset($response_args['PAYMENTINFO_0_TRANSACTIONID'])
@@ -660,18 +651,18 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
     {
         $errors = array();
         $n = 0;
-        while (isset($data_array["L_ERRORCODE{$n}"])) {
-            $l_error_code = isset($data_array["L_ERRORCODE{$n}"])
-                ? $data_array["L_ERRORCODE{$n}"]
+        while (isset($data_array[ "L_ERRORCODE{$n}" ])) {
+            $l_error_code = isset($data_array[ "L_ERRORCODE{$n}" ])
+                ? $data_array[ "L_ERRORCODE{$n}" ]
                 : '';
-            $l_severity_code = isset($data_array["L_SEVERITYCODE{$n}"])
-                ? $data_array["L_SEVERITYCODE{$n}"]
+            $l_severity_code = isset($data_array[ "L_SEVERITYCODE{$n}" ])
+                ? $data_array[ "L_SEVERITYCODE{$n}" ]
                 : '';
-            $l_short_message = isset($data_array["L_SHORTMESSAGE{$n}"])
-                ? $data_array["L_SHORTMESSAGE{$n}"]
+            $l_short_message = isset($data_array[ "L_SHORTMESSAGE{$n}" ])
+                ? $data_array[ "L_SHORTMESSAGE{$n}" ]
                 : '';
-            $l_long_message = isset($data_array["L_LONGMESSAGE{$n}"])
-                ? $data_array["L_LONGMESSAGE{$n}"]
+            $l_long_message = isset($data_array[ "L_LONGMESSAGE{$n}" ])
+                ? $data_array[ "L_LONGMESSAGE{$n}" ]
                 : '';
             if ($n === 0) {
                 $errors = array(
@@ -690,6 +681,4 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
         }
         return $errors;
     }
-
 }
-// End of file EEG_Paypal_Express.gateway.php

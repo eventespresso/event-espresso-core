@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 if (!defined('EVENT_ESPRESSO_VERSION')) {
 	exit('No direct script access allowed');
 }
@@ -13,9 +16,15 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EE_Registry_Test extends EE_UnitTestCase{
 
-
-
-	public function setUp() {
+    /**
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
+    public function setUp() {
 		add_filter(
 			'FHEE__EE_Registry____construct___class_abbreviations',
 			array( $this, 'unit_test_registry_class_abbreviations' )
@@ -38,7 +47,13 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		EE_Dependency_Map::register_class_loader( 'EE_Session_Mock' );
 		EE_Dependency_Map::register_class_loader( 'EE_Injector_Tester_With_Array_Session_Int_Constructor_Params' );
 		require_once EE_TESTS_DIR . 'mocks' . DS . 'core' . DS . 'EE_Registry_Mock.core.php';
-		EE_Registry_Mock::instance( EE_Dependency_Map::instance() );
+		$loader = LoaderFactory::getLoader();
+		EE_Registry_Mock::instance(
+		    EE_Dependency_Map::instance(),
+            $loader->getShared('EventEspresso\core\services\container\Mirror'),
+            $loader->getShared('EventEspresso\core\services\loaders\ClassInterfaceCache'),
+            $loader->getShared('EventEspresso\core\services\loaders\ObjectIdentifier')
+        );
 		EE_Registry_Mock::instance()->initialize();
 		parent::setUp();
 	}
@@ -737,6 +752,26 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	}
 
 
+    /**
+     * Corresponds to https://github.com/eventespresso/eventsmart.com-website/issues/36
+     * where fetching an add-on that isn't yet registered causes an error
+     */
+	public function testGetAddonThatDoesntExist()
+    {
+        EE_Registry_Mock::instance()->getAddon('foobar');
+        $this->assertTrue(true);
+    }
+
+
+    /**
+     * Corresponds to https://github.com/eventespresso/eventsmart.com-website/issues/36
+     * where fetching an add-on that isn't yet registered causes an error
+     */
+    public function testremoveAddonThatDoesntExist()
+    {
+        EE_Registry_Mock::instance()->removeAddon('foobar');
+        $this->assertTrue(true);
+    }
 
 }
 // End of file EE_Registry_Test.php

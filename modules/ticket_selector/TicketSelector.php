@@ -1,9 +1,6 @@
 <?php
+
 namespace EventEspresso\modules\ticket_selector;
-
-defined('ABSPATH') || exit;
-
-
 
 /**
  * Class TicketSelector
@@ -11,7 +8,6 @@ defined('ABSPATH') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 abstract class TicketSelector
 {
@@ -37,7 +33,6 @@ abstract class TicketSelector
     protected $template_args;
 
 
-
     /**
      * TicketSelectorSimple constructor.
      *
@@ -49,14 +44,13 @@ abstract class TicketSelector
      */
     public function __construct(\EE_Event $event, array $tickets, $max_attendees, array $template_args)
     {
-        $this->event         = $event;
-        $this->tickets       = $tickets;
+        $this->event = $event;
+        $this->tickets = $tickets;
         $this->max_attendees = $max_attendees;
         $this->template_args = $template_args;
         $this->template_args['hidden_inputs'] = $this->getHiddenInputs();
         $this->addTemplateArgs();
     }
-
 
 
     /**
@@ -65,7 +59,6 @@ abstract class TicketSelector
      * @return void
      */
     abstract protected function addTemplateArgs();
-
 
 
     /**
@@ -91,7 +84,6 @@ abstract class TicketSelector
     }
 
 
-
     /**
      * The __toString method allows a class to decide how it will react when it is converted to a string.
      *
@@ -102,8 +94,6 @@ abstract class TicketSelector
     {
         return $this->loadTicketSelectorTemplate();
     }
-
-
 
 
     /**
@@ -125,7 +115,4 @@ abstract class TicketSelector
         $html .= '<input type="hidden" name="tkt-slctr-event-id" value="' . $this->event->ID() . '"/>';
         return $html;
     }
-
 }
-// End of file TicketSelector.php
-// Location: EventEspresso\modules\ticket_selector/TicketSelector.php

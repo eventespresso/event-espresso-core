@@ -1,16 +1,11 @@
 <?php
+
 namespace EventEspresso\core\domain\entities;
 
 use EE_Error;
 use EE_Registration;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use InvalidArgumentException;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class RegUrlLink
@@ -27,7 +22,6 @@ class RegUrlLink
      * @var string $reg_url_link
      */
     private $reg_url_link;
-
 
 
     /**
@@ -49,7 +43,6 @@ class RegUrlLink
     }
 
 
-
     /**
      * @param EE_Registration $registration
      * @return RegUrlLink
@@ -66,7 +59,6 @@ class RegUrlLink
     }
 
 
-
     /**
      * CreateRegUrlLinkCommand constructor.
      *
@@ -80,7 +72,7 @@ class RegUrlLink
         $base_code = '',
         $reg_url_link = ''
     ) {
-        if ( ! empty($reg_url_link) && is_string($reg_url_link)) {
+        if (! empty($reg_url_link) && is_string($reg_url_link)) {
             $this->reg_url_link = apply_filters(
                 'FHEE__\EventEspresso\core\domain\entities\RegUrlLink__construct__reg_url_link',
                 $reg_url_link,
@@ -110,7 +102,6 @@ class RegUrlLink
     }
 
 
-
     /**
      * Return the object as a string
      *
@@ -121,5 +112,3 @@ class RegUrlLink
         return $this->reg_url_link;
     }
 }
-// End of file RegUrlLink.php
-// Location: /RegUrlLink.php

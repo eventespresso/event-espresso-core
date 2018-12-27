@@ -1,7 +1,5 @@
 <?php
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
-
 /**
  * EEH_Maps
  * This is a helper utility class that provides different helpers related to mapping and displaying location related
@@ -70,9 +68,8 @@ class EEH_Maps
             $html .= '<a href="' . $static_url . '">View Large map</a>';
             $html .= '</div>';
             return $html;
-
         } else {
-            EEH_Maps::$gmap_vars[$ee_gmaps_opts['map_ID']] = array(
+            EEH_Maps::$gmap_vars[ $ee_gmaps_opts['map_ID'] ] = array(
                 'map_ID'              => $ee_gmaps_opts['map_ID'],
                 'ee_map_zoom'         => $ee_map_zoom,
                 'ee_map_nav_display'  => $ee_map_nav_display,
@@ -185,5 +182,3 @@ class EEH_Maps
             : '<a href="' . $google_map . '" target="_blank">' . $text . '</a>';
     }
 }
-// End of file EEH_Maps.helper.php
-// Location: /helpers/EEH_Maps.helper.php

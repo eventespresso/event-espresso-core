@@ -1,11 +1,6 @@
 <?php
+
 namespace EventEspresso\core\services\container\exceptions;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class InvalidServiceException
@@ -41,7 +36,4 @@ class InvalidServiceException extends \UnexpectedValueException
         }
         parent::__construct($message, $code, $previous);
     }
-
 }
-// End of file InvalidServiceException.php
-// Location: /InvalidServiceException.php

@@ -4,17 +4,12 @@ namespace EventEspresso\core\services\notices;
 
 use EE_Error;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class ConvertNoticesToEeErrors
  * Converts notifications in a NoticesContainer into EE_Error notifications
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class ConvertNoticesToEeErrors extends NoticeConverter
 {
@@ -69,6 +64,4 @@ class ConvertNoticesToEeErrors extends NoticeConverter
         }
         $this->clearNotices();
     }
-
-
 }

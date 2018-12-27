@@ -5,10 +5,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('NO direct script access allowed');
-
-
-
 /**
  * EEH_DTT_Helper
  * This is a helper utility class containing a variety for date time formatting helpers for Event Espresso.
@@ -69,7 +65,8 @@ class EEH_DTT_Helper
 
 
     /**
-     * _create_timezone_object_from_timezone_name
+     * This returns a string that can represent the provided gmt offset in format that can be passed into
+     * DateTimeZone.  This is NOT a string that can be passed as a value on the WordPress timezone_string option.
      *
      * @param float|string $gmt_offset
      * @return string
@@ -152,7 +149,7 @@ class EEH_DTT_Helper
                 }
             }
         }
-        //if $coerce is true, let's see if we can get a timezone string after the offset is adjusted
+        // if $coerce is true, let's see if we can get a timezone string after the offset is adjusted
         if ($coerce === true) {
             $timezone_string = self::get_timezone_string_from_abbreviations_list(
                 self::adjust_invalid_gmt_offsets($gmt_offset),
@@ -287,7 +284,7 @@ class EEH_DTT_Helper
      */
     public static function date_time_add(EE_Base_Class $obj, $datetime_field_name, $period = 'years', $value = 1)
     {
-        //get the raw UTC date.
+        // get the raw UTC date.
         $DateTime = $obj->get_DateTime_object($datetime_field_name);
         $DateTime = EEH_DTT_Helper::calc_date($DateTime, $period, $value);
         return EEH_DTT_Helper::_set_date_time_field($obj, $DateTime, $datetime_field_name);
@@ -308,7 +305,7 @@ class EEH_DTT_Helper
      */
     public static function date_time_subtract(EE_Base_Class $obj, $datetime_field_name, $period = 'years', $value = 1)
     {
-        //get the raw UTC date
+        // get the raw UTC date
         $DateTime = $obj->get_DateTime_object($datetime_field_name);
         $DateTime = EEH_DTT_Helper::calc_date($DateTime, $period, $value, '-');
         return EEH_DTT_Helper::_set_date_time_field($obj, $DateTime, $datetime_field_name);
@@ -338,25 +335,25 @@ class EEH_DTT_Helper
             );
         }
         switch ($period) {
-            case 'years' :
+            case 'years':
                 $value = 'P' . $value . 'Y';
                 break;
-            case 'months' :
+            case 'months':
                 $value = 'P' . $value . 'M';
                 break;
-            case 'weeks' :
+            case 'weeks':
                 $value = 'P' . $value . 'W';
                 break;
-            case 'days' :
+            case 'days':
                 $value = 'P' . $value . 'D';
                 break;
-            case 'hours' :
+            case 'hours':
                 $value = 'PT' . $value . 'H';
                 break;
-            case 'minutes' :
+            case 'minutes':
                 $value = 'PT' . $value . 'M';
                 break;
-            case 'seconds' :
+            case 'seconds':
                 $value = 'PT' . $value . 'S';
                 break;
         }
@@ -394,22 +391,22 @@ class EEH_DTT_Helper
             );
         }
         switch ($period) {
-            case 'years' :
+            case 'years':
                 $value = YEAR_IN_SECONDS * $value;
                 break;
-            case 'months' :
+            case 'months':
                 $value = YEAR_IN_SECONDS / 12 * $value;
                 break;
-            case 'weeks' :
+            case 'weeks':
                 $value = WEEK_IN_SECONDS * $value;
                 break;
-            case 'days' :
+            case 'days':
                 $value = DAY_IN_SECONDS * $value;
                 break;
-            case 'hours' :
+            case 'hours':
                 $value = HOUR_IN_SECONDS * $value;
                 break;
-            case 'minutes' :
+            case 'minutes':
                 $value = MINUTE_IN_SECONDS * $value;
                 break;
         }
@@ -457,7 +454,7 @@ class EEH_DTT_Helper
                 $operand
             );
         }
-        //error
+        // error
         return $DateTime_or_timestamp;
     }
 
@@ -499,6 +496,10 @@ class EEH_DTT_Helper
                 'time' => $time_format['js'],
             ),
             'moment' => $date_format['moment'] . ' ' . $time_format['moment'],
+            'moment_split' => array(
+                'date' => $date_format['moment'],
+                'time' => $time_format['moment']
+            )
         );
     }
 
@@ -519,48 +520,48 @@ class EEH_DTT_Helper
          */
         $symbols_map          = array(
             // Day
-            //01
+            // 01
             'd' => array(
                 'js'     => 'dd',
                 'moment' => 'DD',
             ),
-            //Mon
+            // Mon
             'D' => array(
                 'js'     => 'D',
                 'moment' => 'ddd',
             ),
-            //1,2,...31
+            // 1,2,...31
             'j' => array(
                 'js'     => 'd',
                 'moment' => 'D',
             ),
-            //Monday
+            // Monday
             'l' => array(
                 'js'     => 'DD',
                 'moment' => 'dddd',
             ),
-            //ISO numeric representation of the day of the week (1-6)
+            // ISO numeric representation of the day of the week (1-6)
             'N' => array(
                 'js'     => '',
                 'moment' => 'E',
             ),
-            //st,nd.rd
+            // st,nd.rd
             'S' => array(
                 'js'     => '',
                 'moment' => 'o',
             ),
-            //numeric representation of day of week (0-6)
+            // numeric representation of day of week (0-6)
             'w' => array(
                 'js'     => '',
                 'moment' => 'd',
             ),
-            //day of year starting from 0 (0-365)
+            // day of year starting from 0 (0-365)
             'z' => array(
                 'js'     => 'o',
-                'moment' => 'DDD' //note moment does not start with 0 so will need to modify by subtracting 1
+                'moment' => 'DDD' // note moment does not start with 0 so will need to modify by subtracting 1
             ),
             // Week
-            //ISO-8601 week number of year (weeks starting on monday)
+            // ISO-8601 week number of year (weeks starting on monday)
             'W' => array(
                 'js'     => '',
                 'moment' => 'w',
@@ -571,43 +572,43 @@ class EEH_DTT_Helper
                 'js'     => 'MM',
                 'moment' => 'MMMM',
             ),
-            //01...12
+            // 01...12
             'm' => array(
                 'js'     => 'mm',
                 'moment' => 'MM',
             ),
-            //Jan...Dec
+            // Jan...Dec
             'M' => array(
                 'js'     => 'M',
                 'moment' => 'MMM',
             ),
-            //1-12
+            // 1-12
             'n' => array(
                 'js'     => 'm',
                 'moment' => 'M',
             ),
-            //number of days in given month
+            // number of days in given month
             't' => array(
                 'js'     => '',
                 'moment' => '',
             ),
             // Year
-            //whether leap year or not 1/0
+            // whether leap year or not 1/0
             'L' => array(
                 'js'     => '',
                 'moment' => '',
             ),
-            //ISO-8601 year number
+            // ISO-8601 year number
             'o' => array(
                 'js'     => '',
                 'moment' => 'GGGG',
             ),
-            //1999...2003
+            // 1999...2003
             'Y' => array(
                 'js'     => 'yy',
                 'moment' => 'YYYY',
             ),
-            //99...03
+            // 99...03
             'y' => array(
                 'js'     => 'y',
                 'moment' => 'YY',
@@ -628,37 +629,37 @@ class EEH_DTT_Helper
                 'js'     => '',
                 'moment' => '',
             ),
-            //1...12
+            // 1...12
             'g' => array(
                 'js'     => 'h',
                 'moment' => 'h',
             ),
-            //0...23
+            // 0...23
             'G' => array(
                 'js'     => 'H',
                 'moment' => 'H',
             ),
-            //01...12
+            // 01...12
             'h' => array(
                 'js'     => 'hh',
                 'moment' => 'hh',
             ),
-            //00...23
+            // 00...23
             'H' => array(
                 'js'     => 'HH',
                 'moment' => 'HH',
             ),
-            //00..59
+            // 00..59
             'i' => array(
                 'js'     => 'mm',
                 'moment' => 'mm',
             ),
-            //seconds... 00...59
+            // seconds... 00...59
             's' => array(
                 'js'     => 'ss',
                 'moment' => 'ss',
             ),
-            //microseconds
+            // microseconds
             'u' => array(
                 'js'     => '',
                 'moment' => '',
@@ -710,10 +711,10 @@ class EEH_DTT_Helper
     public static function validate_format_string($format_string)
     {
         $error_msg = array();
-        //time format checks
+        // time format checks
         switch (true) {
-            case   strpos($format_string, 'h') !== false  :
-            case   strpos($format_string, 'g') !== false :
+            case strpos($format_string, 'h') !== false:
+            case strpos($format_string, 'g') !== false:
                 /**
                  * if the time string has a lowercase 'h' which == 12 hour time format and there
                  * is not any ante meridiem format ('a' or 'A').  Then throw an error because its
@@ -745,8 +746,7 @@ class EEH_DTT_Helper
     public static function dates_represent_one_24_hour_date($date_1, $date_2)
     {
 
-        if (
-            (! $date_1 instanceof DateTime || ! $date_2 instanceof DateTime)
+        if ((! $date_1 instanceof DateTime || ! $date_2 instanceof DateTime)
             || ($date_1->format(EE_Datetime_Field::mysql_time_format) !== '00:00:00'
                 || $date_2->format(
                     EE_Datetime_Field::mysql_time_format
@@ -813,25 +813,29 @@ class EEH_DTT_Helper
                 load_textdomain('continents-cities', $mofile);
                 $mo_loaded = true;
             }
-            //well that was easy.
+            // well that was easy.
             $parts = explode('/', $timezone_string);
-            //remove the continent
+            // remove the continent
             unset($parts[0]);
             $t_parts = array();
+            // phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralText
+            // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
+            // disabled because this code is copied from WordPress and is a WordPress domain
             foreach ($parts as $part) {
                 $t_parts[] = translate(str_replace('_', ' ', $part), 'continents-cities');
             }
             return implode(' - ', $t_parts);
+            // phpcs:enable
         }
-        //they haven't set the timezone string, so let's return a string like "UTC+1"
+        // they haven't set the timezone string, so let's return a string like "UTC+1"
         $gmt_offset = get_option('gmt_offset');
         $prefix     = (int) $gmt_offset >= 0 ? '+' : '';
         $parts      = explode('.', (string) $gmt_offset);
         if (count($parts) === 1) {
             $parts[1] = '00';
         } else {
-            //convert the part after the decimal, eg "5" (from x.5) or "25" (from x.25)
-            //to minutes, eg 30 or 15, respectively
+            // convert the part after the decimal, eg "5" (from x.5) or "25" (from x.25)
+            // to minutes, eg 30 or 15, respectively
             $hour_fraction = (float) ('0.' . $parts[1]);
             $parts[1]      = (string) $hour_fraction * 60;
         }
@@ -882,10 +886,10 @@ class EEH_DTT_Helper
      */
     public static function tomorrow()
     {
-        //The multiplication of -1 ensures that we switch positive offsets to negative and negative offsets to positive
-        //before adding to the timestamp.  Why? Because we want tomorrow to be for midnight the next day in THIS timezone
-        //not an offset from midnight in UTC.  So if we're starting with UTC 00:00:00, then we want to make sure the
-        //final timestamp is equivalent to midnight in this timezone as represented in GMT.
+        // The multiplication of -1 ensures that we switch positive offsets to negative and negative offsets to positive
+        // before adding to the timestamp.  Why? Because we want tomorrow to be for midnight the next day in THIS timezone
+        // not an offset from midnight in UTC.  So if we're starting with UTC 00:00:00, then we want to make sure the
+        // final timestamp is equivalent to midnight in this timezone as represented in GMT.
         return strtotime('tomorrow') + (self::get_site_timezone_gmt_offset() * -1);
     }
 
@@ -940,6 +944,9 @@ class EEH_DTT_Helper
             $exists[3]   = $exists[0] && $zone[0] !== 'Etc';
             $exists[4]   = $exists[1] && $exists[3];
             $exists[5]   = $exists[2] && $exists[3];
+            // phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralText
+            // phpcs:disable WordPress.WP.I18n.TextDomainMismatch
+            // disabled because this code is copied from WordPress and is a WordPress domain
             $zone_data[] = array(
                 'continent'   => $exists[0] ? $zone[0] : '',
                 'city'        => $exists[1] ? $zone[1] : '',
@@ -954,11 +961,12 @@ class EEH_DTT_Helper
                     ? translate(str_replace('_', ' ', $zone[2]), 'continents-cities')
                     : '',
             );
+            // phpcs:enable
         }
         usort($zone_data, '_wp_timezone_choice_usort_callback');
         $structure = array();
         if (empty($selected_zone)) {
-            $structure[] = '<option selected="selected" value="">' . __('Select a city') . '</option>';
+            $structure[] = '<option selected="selected" value="">' . __('Select a city', 'event_espresso') . '</option>';
         }
         foreach ($zone_data as $key => $zone) {
             // Build value in an array to join later
@@ -1025,10 +1033,27 @@ class EEH_DTT_Helper
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    private static function getHelperAdapter() {
+    private static function getHelperAdapter()
+    {
         $dtt_helper_fqcn = PHP_VERSION_ID < 50600
             ? 'EventEspresso\core\services\helpers\datetime\PhpCompatLessFiveSixHelper'
             : 'EventEspresso\core\services\helpers\datetime\PhpCompatGreaterFiveSixHelper';
         return LoaderFactory::getLoader()->getShared($dtt_helper_fqcn);
+    }
+
+
+    /**
+     * Helper function for setting the timezone on a DateTime object.
+     * This is implemented to standardize a workaround for a PHP bug outlined in
+     * https://events.codebasehq.com/projects/event-espresso/tickets/11407 and
+     * https://events.codebasehq.com/projects/event-espresso/tickets/11233
+     *
+     * @param DateTime     $datetime
+     * @param DateTimeZone $timezone
+     */
+    public static function setTimezone(DateTime $datetime, DateTimeZone $timezone)
+    {
+        $datetime->setTimezone($timezone);
+        $datetime->getTimestamp();
     }
 }

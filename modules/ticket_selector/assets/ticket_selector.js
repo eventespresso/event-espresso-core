@@ -2,10 +2,10 @@ jQuery(document).ready(function ($) {
     // collection of ALL datetime selectors for ALL Events on the page
     var $datetime_options = $('.datetime-selector-option'),
         $ticket_selector_submit_btn = $('.ticket-selector-submit-btn');
-    // reset by unchecking everything, and disabling the submit button
-    $.each($datetime_options, function () {
-        $(this).prop('checked', true);
-    });
+	// reset by unchecking everything
+	$.each( $datetime_options, function() {
+		$( this ).prop( 'checked', false );
+	} );
     // add error notices to the DOM
     $ticket_selector_submit_btn.before(
         '<span class="ticket-selector-disabled-submit-btn-msg important-notice">'+ eei18n.please_select_date_filter_notice+'</span>'
@@ -56,7 +56,14 @@ jQuery(document).ready(function ($) {
                         $ticket_selector_row.removeClass('ee-hidden-ticket-tr');
                         active_rows++;
                     } else {
-                        $ticket_selector_row.addClass('ee-hidden-ticket-tr').find('.ticket-selector-tbl-qty-slct').val(0);
+						$ticket_selector_row.addClass( 'ee-hidden-ticket-tr' );
+						var $qty_input = $ticket_selector_row.find(
+							'.ticket-selector-tbl-qty-slct'
+						);
+						// set qty to zero for non-radio inputs
+						if ( $qty_input.attr( 'type' ) !== 'radio' ) {
+							$qty_input.val( 0 );
+						}
                     }
                 });
             }
@@ -81,5 +88,41 @@ jQuery(document).ready(function ($) {
 		}
 	});
 
+	var maxChecked = typeof eeDTS !== 'undefined' && eeDTS.maxChecked ?
+		eeDTS.maxChecked :
+		10;
+	var counter = 0;
+	var prevCounter = 0;
+	var dtsEvent = 0;
+	var thisEvent = 0;
+	var prevEvent = 0;
+	var noticeID = '';
+	var $notice;
+	$.each( $datetime_options, function() {
+		// need to track previous state
+		prevEvent = thisEvent;
+		prevCounter = counter;
+		thisEvent = $( this ).data( 'tkt_slctr_evt' );
+		// reset counter when input changes, which is tracked by Event ID
+		counter = thisEvent !== dtsEvent ? 1 : counter + 1;
+		// new DTS for next Event?
+		if ( thisEvent !== dtsEvent ) {
+			// if the previous Event counter was less than the max checked
+			if ( prevCounter > 1 && prevCounter <= maxChecked ) {
+				// then hide the notice re: extra dates cuz there are none
+				noticeID = '#datetime-selector-' + prevEvent;
+				noticeID += '-date-time-filter-notice-pg';
+				$notice = $( noticeID );
+				if ( $notice.length ) {
+					$notice.hide();
+				}
+			}
+			dtsEvent = thisEvent;
+		}
+		if ( maxChecked > 0 && counter > maxChecked ) {
+			return;
+		}
+		$( this ).click();
+	} );
 
 });

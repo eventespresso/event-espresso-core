@@ -5,24 +5,19 @@ namespace EventEspresso\core\services\commands\middleware;
 use Closure;
 use EventEspresso\core\services\commands\CommandInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class AddActionHook
  * Triggers a WordPress do_action() hook before each Command is executed
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class AddActionHook implements CommandBusMiddlewareInterface
 {
 
     /**
      * @param CommandInterface $command
-     * @param Closure         $next
+     * @param Closure          $next
      * @return mixed
      */
     public function handle(CommandInterface $command, Closure $next)
@@ -39,5 +34,3 @@ class AddActionHook implements CommandBusMiddlewareInterface
         return $results;
     }
 }
-// End of file AddActionHook.php
-// Location: EventEspresso\core\services\commands\middleware/AddActionHook.php

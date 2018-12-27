@@ -1,12 +1,6 @@
 <?php
 namespace EventEspresso\core\services\container;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * copy of Interop\Container\ContainerInterface
  * Describes the interface of a container that exposes methods to read its entries.
@@ -38,9 +32,4 @@ interface ContainerInterface
      * @return boolean
      */
     public function has($id);
-
-
 }
-
-// End of file ContainerInterface.php
-// Location: /ContainerInterface.php

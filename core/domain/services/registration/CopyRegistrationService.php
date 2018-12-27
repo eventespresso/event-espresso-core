@@ -13,12 +13,6 @@ use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use RuntimeException;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Class CopyRegistrationService
  * Given two EE_Registrations,
@@ -52,7 +46,7 @@ class CopyRegistrationService extends DomainService
         // get answers to previous reg questions
         $answers = $this->reindexAnswersByQuestionId($registration_to_copy->answers());
         // get questions to new event reg form
-        $new_event       = $target_registration->event();
+        $new_event = $target_registration->event();
         $question_groups = $new_event->question_groups(
             array(
                 array(
@@ -79,7 +73,6 @@ class CopyRegistrationService extends DomainService
     }
 
 
-
     /**
      * @param EE_Answer[] $answers
      * @return array
@@ -95,7 +88,6 @@ class CopyRegistrationService extends DomainService
         }
         return $reindexed_answers;
     }
-
 
 
     /**
@@ -114,20 +106,19 @@ class CopyRegistrationService extends DomainService
         $old_answer_value = isset($previous_answers[ $question->ID() ])
             ? $previous_answers[ $question->ID() ]
             : '';
-        $new_answer       = EE_Answer::new_instance(
+        $new_answer = EE_Answer::new_instance(
             array(
                 'QST_ID'    => $question->ID(),
                 'REG_ID'    => $registration->ID(),
                 'ANS_value' => $old_answer_value,
             )
         );
-        if ( ! $new_answer instanceof EE_Answer) {
+        if (! $new_answer instanceof EE_Answer) {
             throw new UnexpectedEntityException($new_answer, 'EE_Answer');
         }
         $new_answer->save();
         return $new_answer;
     }
-
 
 
     /**
@@ -147,8 +138,7 @@ class CopyRegistrationService extends DomainService
         $new_registration_payment_total = 0;
         $registration_to_copy_total = $registration_to_copy->paid();
         foreach ($previous_registration_payments as $previous_registration_payment) {
-            if (
-                $previous_registration_payment instanceof EE_Registration_Payment
+            if ($previous_registration_payment instanceof EE_Registration_Payment
                 && $previous_registration_payment->payment() instanceof EE_Payment
                 && $previous_registration_payment->payment()->is_approved()
             ) {
@@ -160,7 +150,7 @@ class CopyRegistrationService extends DomainService
                         'RPY_amount' => $payment_amount,
                     )
                 );
-                if ( ! $new_registration_payment instanceof EE_Registration_Payment) {
+                if (! $new_registration_payment instanceof EE_Registration_Payment) {
                     throw new UnexpectedEntityException($new_registration_payment, 'EE_Registration_Payment');
                 }
                 $new_registration_payment->save();
@@ -173,7 +163,7 @@ class CopyRegistrationService extends DomainService
                 $save = true;
             }
         }
-        if($save){
+        if ($save) {
             $target_registration->set_paid($new_registration_payment_total);
             $target_registration->save();
             $registration_to_copy->set_paid($registration_to_copy_total);
@@ -181,8 +171,4 @@ class CopyRegistrationService extends DomainService
         }
         return true;
     }
-
-
 }
-// End of file CopyRegistrationService.php
-// Location: /CopyRegistrationService.php

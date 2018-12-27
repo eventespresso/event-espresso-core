@@ -1,11 +1,10 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\iframe_display\EventListIframeEmbedButton;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\modules\events_archive\EventsArchiveIframe;
-
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
-
 
 /**
  * Event List
@@ -17,16 +16,16 @@ defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 class EED_Events_Archive extends EED_Module
 {
 
-    const EVENT_DETAILS_PRIORITY   = 100;
+    const EVENT_DETAILS_PRIORITY = 100;
 
     const EVENT_DATETIMES_PRIORITY = 110;
 
-    const EVENT_TICKETS_PRIORITY   = 120;
+    const EVENT_TICKETS_PRIORITY = 120;
 
-    const EVENT_VENUES_PRIORITY    = 130;
+    const EVENT_VENUES_PRIORITY = 130;
 
 
-    public static $espresso_event_list_ID    = 0;
+    public static $espresso_event_list_ID = 0;
 
     public static $espresso_grid_event_lists = array();
 
@@ -53,7 +52,6 @@ class EED_Events_Archive extends EED_Module
     protected $template_parts;
 
 
-
     /**
      * @return EED_Events_Archive
      */
@@ -63,16 +61,21 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
-     *    set_hooks - for hooking into EE Core, other modules, etc
+     * set_hooks - for hooking into EE Core, other modules, etc
      *
-     * @access    public
-     * @return    void
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function set_hooks()
     {
-        $custom_post_types = EE_Register_CPTs::get_CPTs();
+        /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_type_definitions */
+        $custom_post_type_definitions = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
+        );
+        $custom_post_types = $custom_post_type_definitions->getDefinitions();
         EE_Config::register_route(
             $custom_post_types['espresso_events']['plural_slug'],
             'Events_Archive',
@@ -91,7 +94,6 @@ class EED_Events_Archive extends EED_Module
         );
         add_action('wp_loaded', array('EED_Events_Archive', 'set_definitions'), 2);
     }
-
 
 
     /**
@@ -113,7 +115,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      *    set_definitions
      *
@@ -127,7 +128,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      * set up EE_Events_Archive_Config
      */
@@ -137,7 +137,6 @@ class EED_Events_Archive extends EED_Module
         $this->set_config_class('EE_Events_Archive_Config');
         $this->set_config_name('EED_Events_Archive');
     }
-
 
 
     /**
@@ -152,7 +151,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      * event_list_iframe_embed_button
      *
@@ -164,7 +162,6 @@ class EED_Events_Archive extends EED_Module
         $iframe_embed_button = \EED_Events_Archive::get_iframe_embed_button();
         $iframe_embed_button->addEmbedButton();
     }
-
 
 
     /**
@@ -208,9 +205,9 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
-     *    run - initial module setup - this gets called by the EE_Front_Controller if the module route is found in the incoming request
+     *    run - initial module setup - this gets called by the EE_Front_Controller if the module route is found in the
+     *    incoming request
      *
      * @access    public
      * @param WP $WP
@@ -226,7 +223,7 @@ class EED_Events_Archive extends EED_Module
         // load other required components
         $this->load_event_list_assets();
         // filter the WP posts_join, posts_where, and posts_orderby SQL clauses
-        //add query filters
+        // add query filters
         EEH_Event_Query::add_query_filters();
         // set params that will get used by the filters
         EEH_Event_Query::set_query_params(
@@ -239,7 +236,6 @@ class EED_Events_Archive extends EED_Module
         // check what template is loaded
         add_filter('template_include', array($this, 'template_include'), 999, 1);
     }
-
 
 
     /**
@@ -256,7 +252,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      * @access    public
      * @return    void
@@ -271,7 +266,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      * @access public
      * @return string
@@ -282,7 +276,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      * @access public
      * @return string
@@ -291,7 +284,6 @@ class EED_Events_Archive extends EED_Module
     {
         return \EED_Events_Archive::$iframe ? ' target="_blank"' : '';
     }
-
 
 
     /**
@@ -312,8 +304,7 @@ class EED_Events_Archive extends EED_Module
                 add_filter('the_title', array('EED_Events_Archive', 'the_title'), 100, 2);
             }
             // if NOT a custom template
-            if (
-                apply_filters('FHEE__EED_Event_Archive__template_include__allow_custom_selected_template', false)
+            if (apply_filters('FHEE__EED_Event_Archive__template_include__allow_custom_selected_template', false)
                 || EE_Registry::instance()
                               ->load_core('Front_Controller')
                               ->get_selected_template() !== 'archive-espresso_events.php'
@@ -344,9 +335,9 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
-     *    get_the_excerpt - kinda hacky, but if a theme is using get_the_excerpt(), then we need to remove our filters on the_content()
+     *    get_the_excerpt - kinda hacky, but if a theme is using get_the_excerpt(), then we need to remove our filters
+     *    on the_content()
      *
      * @access    public
      * @param        string $excerpt
@@ -377,7 +368,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      * end_get_the_excerpt
      *
@@ -390,7 +380,6 @@ class EED_Events_Archive extends EED_Module
         EED_Events_Archive::$using_get_the_excerpt = false;
         return $text;
     }
-
 
 
     /**
@@ -411,7 +400,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      *    event_details
      *
@@ -423,8 +411,7 @@ class EED_Events_Archive extends EED_Module
     {
         global $post;
         static $current_post_ID = 0;
-        if (
-            $current_post_ID !== $post->ID
+        if ($current_post_ID !== $post->ID
             && $post->post_type === 'espresso_events'
             && ! EED_Events_Archive::$using_get_the_excerpt
             && ! post_password_required()
@@ -448,7 +435,6 @@ class EED_Events_Archive extends EED_Module
         }
         return $content;
     }
-
 
 
     /**
@@ -498,7 +484,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      *    use_filterable_display_order
      *
@@ -520,7 +505,7 @@ class EED_Events_Archive extends EED_Module
             EED_Events_Archive::EVENT_DETAILS_PRIORITY
         );
         remove_filter('get_the_excerpt', array('EED_Events_Archive', 'get_the_excerpt'), 1);
-        //now add additional content depending on whether event is using the_excerpt() or the_content()
+        // now add additional content depending on whether event is using the_excerpt() or the_content()
         EED_Events_Archive::_add_additional_excerpt_filters();
         EED_Events_Archive::_add_additional_content_filters();
         do_action('AHEE__EED_Events_Archive__use_filterable_display_order__after_add_filters');
@@ -542,10 +527,9 @@ class EED_Events_Archive extends EED_Module
         EED_Events_Archive::_remove_additional_events_archive_filters();
         do_action('AHEE__EED_Events_Archive__use_filterable_display_order__after_remove_filters');
         // we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
-        //return ! empty( $template ) ? $template : $content;
+        // return ! empty( $template ) ? $template : $content;
         return $content;
     }
-
 
 
     /**
@@ -564,7 +548,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      *    event_tickets - adds tickets ABOVE content (which includes datetimes)
      *
@@ -581,7 +564,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      *    event_venues - adds venues BELOW content
      *
@@ -593,7 +575,6 @@ class EED_Events_Archive extends EED_Module
     {
         return EED_Events_Archive::event_venues($content);
     }
-
 
 
     /**
@@ -610,7 +591,6 @@ class EED_Events_Archive extends EED_Module
         }
         return $content . EEH_Template::locate_template('content-espresso_events-venues.php');
     }
-
 
 
     /**
@@ -639,7 +619,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      *    _add_additional_content_filters
      *
@@ -664,7 +643,6 @@ class EED_Events_Archive extends EED_Module
             EED_Events_Archive::EVENT_VENUES_PRIORITY
         );
     }
-
 
 
     /**
@@ -708,7 +686,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      *    remove_all_events_archive_filters
      *
@@ -717,7 +694,7 @@ class EED_Events_Archive extends EED_Module
      */
     public static function remove_all_events_archive_filters()
     {
-        //remove_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1 );
+        // remove_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1 );
         remove_filter('the_title', array('EED_Events_Archive', 'the_title'), 1);
         remove_filter(
             'the_excerpt',
@@ -767,7 +744,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      *    load_event_list_assets
      *
@@ -786,7 +762,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      *    wp_enqueue_scripts
      *
@@ -799,13 +774,16 @@ class EED_Events_Archive extends EED_Module
         if (apply_filters('FHEE_enable_default_espresso_css', false)) {
             // first check uploads folder
             if (EEH_File::is_readable(get_stylesheet_directory() . $this->theme . DS . 'style.css')) {
-                wp_register_style($this->theme, get_stylesheet_directory_uri() . $this->theme . DS . 'style.css', array('dashicons', 'espresso_default'));
+                wp_register_style(
+                    $this->theme,
+                    get_stylesheet_directory_uri() . $this->theme . DS . 'style.css',
+                    array('dashicons', 'espresso_default')
+                );
             } else {
             }
             wp_enqueue_style($this->theme);
         }
     }
-
 
 
     /**
@@ -818,20 +796,29 @@ class EED_Events_Archive extends EED_Module
     public static function template_settings_form()
     {
         $template_settings = EE_Registry::instance()->CFG->template_settings;
-        $template_settings->EED_Events_Archive = isset($template_settings->EED_Events_Archive) ? $template_settings->EED_Events_Archive : new EE_Events_Archive_Config();
-        $template_settings->EED_Events_Archive = apply_filters('FHEE__EED_Events_Archive__template_settings_form__event_list_config', $template_settings->EED_Events_Archive);
-        $events_archive_settings = array(
-            'display_status_banner'   => 0,
-            'display_description'     => 1,
-            'display_ticket_selector' => 0,
-            'display_datetimes'       => 1,
-            'display_venue'           => 0,
-            'display_expired_events'  => 0,
+        $template_settings->EED_Events_Archive = isset($template_settings->EED_Events_Archive)
+            ? $template_settings->EED_Events_Archive : new EE_Events_Archive_Config();
+        $template_settings->EED_Events_Archive = apply_filters(
+            'FHEE__EED_Events_Archive__template_settings_form__event_list_config',
+            $template_settings->EED_Events_Archive
         );
-        $events_archive_settings = array_merge($events_archive_settings, (array)$template_settings->EED_Events_Archive);
-        EEH_Template::display_template(EVENTS_ARCHIVE_TEMPLATES_PATH . 'admin-event-list-settings.template.php', $events_archive_settings);
+        $events_archive_settings = array(
+            'display_status_banner' => 0,
+            'display_description' => 1,
+            'display_ticket_selector' => 0,
+            'display_datetimes' => 1,
+            'display_venue' => 0,
+            'display_expired_events' => 0,
+        );
+        $events_archive_settings = array_merge(
+            $events_archive_settings,
+            (array) $template_settings->EED_Events_Archive
+        );
+        EEH_Template::display_template(
+            EVENTS_ARCHIVE_TEMPLATES_PATH . 'admin-event-list-settings.template.php',
+            $events_archive_settings
+        );
     }
-
 
 
     /**
@@ -846,17 +833,26 @@ class EED_Events_Archive extends EED_Module
     {
         $CFG->EED_Events_Archive = new EE_Events_Archive_Config();
         // unless we are resetting the config...
-        if (! isset($REQ['EED_Events_Archive_reset_event_list_settings']) || absint($REQ['EED_Events_Archive_reset_event_list_settings']) !== 1) {
-            $CFG->EED_Events_Archive->display_status_banner = isset($REQ['EED_Events_Archive_display_status_banner']) ? absint($REQ['EED_Events_Archive_display_status_banner']) : 0;
-            $CFG->EED_Events_Archive->display_description = isset($REQ['EED_Events_Archive_display_description']) ? absint($REQ['EED_Events_Archive_display_description']) : 1;
-            $CFG->EED_Events_Archive->display_ticket_selector = isset($REQ['EED_Events_Archive_display_ticket_selector']) ? absint($REQ['EED_Events_Archive_display_ticket_selector']) : 0;
-            $CFG->EED_Events_Archive->display_datetimes = isset($REQ['EED_Events_Archive_display_datetimes']) ? absint($REQ['EED_Events_Archive_display_datetimes']) : 1;
-            $CFG->EED_Events_Archive->display_venue = isset($REQ['EED_Events_Archive_display_venue']) ? absint($REQ['EED_Events_Archive_display_venue']) : 0;
-            $CFG->EED_Events_Archive->display_expired_events = isset($REQ['EED_Events_Archive_display_expired_events']) ? absint($REQ['EED_Events_Archive_display_expired_events']) : 0;
+        if (! isset($REQ['EED_Events_Archive_reset_event_list_settings'])
+            || absint($REQ['EED_Events_Archive_reset_event_list_settings']) !== 1
+        ) {
+            $CFG->EED_Events_Archive->display_status_banner = isset($REQ['EED_Events_Archive_display_status_banner'])
+                ? absint($REQ['EED_Events_Archive_display_status_banner']) : 0;
+            $CFG->EED_Events_Archive->display_description = isset($REQ['EED_Events_Archive_display_description'])
+                ? absint($REQ['EED_Events_Archive_display_description']) : 1;
+            $CFG->EED_Events_Archive->display_ticket_selector = isset($REQ['EED_Events_Archive_display_ticket_selector'])
+                ? absint($REQ['EED_Events_Archive_display_ticket_selector']) : 0;
+            $CFG->EED_Events_Archive->display_datetimes = isset($REQ['EED_Events_Archive_display_datetimes']) ? absint(
+                $REQ['EED_Events_Archive_display_datetimes']
+            ) : 1;
+            $CFG->EED_Events_Archive->display_venue = isset($REQ['EED_Events_Archive_display_venue']) ? absint(
+                $REQ['EED_Events_Archive_display_venue']
+            ) : 0;
+            $CFG->EED_Events_Archive->display_expired_events = isset($REQ['EED_Events_Archive_display_expired_events'])
+                ? absint($REQ['EED_Events_Archive_display_expired_events']) : 0;
         }
         return $CFG;
     }
-
 
 
     /**
@@ -874,7 +870,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      *    event_categories
      *
@@ -885,7 +880,6 @@ class EED_Events_Archive extends EED_Module
     {
         return EE_Registry::instance()->load_model('Term')->get_all_ee_categories();
     }
-
 
 
     /**
@@ -903,7 +897,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      *    display_ticket_selector
      *
@@ -915,7 +908,6 @@ class EED_Events_Archive extends EED_Module
         $config = EE_Registry::instance()->CFG->template_settings->EED_Events_Archive;
         return isset($config->display_ticket_selector) && $config->display_ticket_selector ? true : false;
     }
-
 
 
     /**
@@ -931,7 +923,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      *    display_datetimes
      *
@@ -945,7 +936,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      *    event_list_title
      *
@@ -954,12 +944,14 @@ class EED_Events_Archive extends EED_Module
      */
     public static function event_list_title()
     {
-        return apply_filters('FHEE__archive_espresso_events_template__upcoming_events_h1', __('Upcoming Events', 'event_espresso'));
+        return apply_filters(
+            'FHEE__archive_espresso_events_template__upcoming_events_h1',
+            __('Upcoming Events', 'event_espresso')
+        );
     }
 
 
     // GRAVEYARD
-
 
 
     /**
@@ -970,7 +962,10 @@ class EED_Events_Archive extends EED_Module
         EE_Error::doing_it_wrong(
             __FUNCTION__,
             sprintf(
-                __('EED_Events_Archive::%1$s was moved to EEH_Event_Query::%1$s:%2$sPlease update your existing code because the method it calls will be removed in version %3$s', 'event_espresso'),
+                __(
+                    'EED_Events_Archive::%1$s was moved to EEH_Event_Query::%1$s:%2$sPlease update your existing code because the method it calls will be removed in version %3$s',
+                    'event_espresso'
+                ),
                 $function,
                 '<br />',
                 '4.6.0'
@@ -978,7 +973,6 @@ class EED_Events_Archive extends EED_Module
             '4.4.0'
         );
     }
-
 
 
     /**
@@ -989,7 +983,6 @@ class EED_Events_Archive extends EED_Module
     {
         EEH_Event_Query::set_query_params();
     }
-
 
 
     /**
@@ -1003,7 +996,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      * @deprecated
      * @since 4.4.0
@@ -1013,7 +1005,6 @@ class EED_Events_Archive extends EED_Module
         EED_Events_Archive::_doing_it_wrong_notice(__FUNCTION__);
         return EEH_Event_Query::posts_fields_sql_for_orderby($orderby_params);
     }
-
 
 
     /**
@@ -1027,7 +1018,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      * @deprecated
      * @since 4.4.0
@@ -1037,7 +1027,6 @@ class EED_Events_Archive extends EED_Module
         EED_Events_Archive::_doing_it_wrong_notice(__FUNCTION__);
         return EEH_Event_Query::posts_join_sql_for_terms($join_terms);
     }
-
 
 
     /**
@@ -1051,7 +1040,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      * @deprecated
      * @since 4.4.0
@@ -1061,7 +1049,6 @@ class EED_Events_Archive extends EED_Module
         EED_Events_Archive::_doing_it_wrong_notice(__FUNCTION__);
         return EEH_Event_Query::posts_where($SQL, $wp_query);
     }
-
 
 
     /**
@@ -1075,7 +1062,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      * @deprecated
      * @since 4.4.0
@@ -1085,7 +1071,6 @@ class EED_Events_Archive extends EED_Module
         EED_Events_Archive::_doing_it_wrong_notice(__FUNCTION__);
         return EEH_Event_Query::posts_where_sql_for_event_category_slug($event_category_slug);
     }
-
 
 
     /**
@@ -1099,7 +1084,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      * @deprecated
      * @since 4.4.0
@@ -1111,7 +1095,6 @@ class EED_Events_Archive extends EED_Module
     }
 
 
-
     /**
      * @deprecated
      * @since 4.4.0
@@ -1121,11 +1104,7 @@ class EED_Events_Archive extends EED_Module
         EED_Events_Archive::_doing_it_wrong_notice(__FUNCTION__);
         return EEH_Event_Query::posts_orderby_sql($orderby_params, $sort);
     }
-
-
-
 }
-
 
 
 /**
@@ -1202,12 +1181,3 @@ function espresso_display_datetimes_in_event_list()
 {
     return EED_Events_Archive::display_datetimes();
 }
-
-
-
-
-
-
-
-// End of file EED_Events_Archive.module.php
-// Location: /modules/events_archive/EED_Events_Archive.module.php

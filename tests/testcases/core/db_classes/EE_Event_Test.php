@@ -490,6 +490,7 @@ class EE_Event_Test extends EE_UnitTestCase
      */
     public function test_perform_sold_out_status_check()
     {
+        $this->markTestSkipped('Temporarily skipped because of sporadic, unexplained fails. See https://events.codebasehq.com/projects/event-espresso/tickets/11394');
         $event = EE_Event::new_instance(
             array(
                 'status' => 'publish'

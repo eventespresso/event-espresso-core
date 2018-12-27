@@ -4,7 +4,7 @@
 </p>
 <p><strong><?php _e('Allow Payment-retry for Pending and Deferred Payments', 'event_espresso'); ?></strong></p>
 <p>
-<?php _e('Specify if registrants should be allowed to attempt additional payments if the original payment is delayed.'); ?>
+<?php _e('Specify if registrants should be allowed to attempt additional payments if the original payment is delayed.', 'event_espresso'); ?>
 </p>
 <p>
 <strong><?php _e('Recommendations', 'event_espresso'); ?></strong><br />

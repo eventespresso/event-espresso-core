@@ -33,7 +33,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <h2><?php printf( __('Hello, %s:', 'event_espresso'), '[RECIPIENT_FNAME]' ); ?></h2>
+                                    <h2><?php printf(__('Hello, %s:', 'event_espresso'), '[RECIPIENT_FNAME]'); ?></h2>
                                     <p class="lead"><?php _e("We've got a few things we want to share with you!", 'event_espresso'); ?></p>
                                     <div>
                                         [NEWSLETTER_CONTENT]

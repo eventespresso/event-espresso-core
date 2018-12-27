@@ -1,8 +1,6 @@
 <?php
 use EventEspresso\core\entities\interfaces\HasSchemaInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
 /**
  * Class EE_Model_Relation_Base
  * Model Relation classes are for defining relationships between models, and facilitating JOINs
@@ -76,9 +74,16 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
         $this->_this_model_name  = $this_model_name;
         $this->_other_model_name = $other_model_name;
         if (is_string($this->_blocking_delete)) {
-            throw new EE_Error(sprintf(__("When instantiating the relation of type %s from %s to %s, the \$block_deletes argument should be a boolean, not a string (%s)",
-                "event_espresso"),
-                get_class($this), $this_model_name, $other_model_name, $this->_blocking_delete));
+            throw new EE_Error(sprintf(
+                __(
+                    "When instantiating the relation of type %s from %s to %s, the \$block_deletes argument should be a boolean, not a string (%s)",
+                    "event_espresso"
+                ),
+                get_class($this),
+                $this_model_name,
+                $other_model_name,
+                $this->_blocking_delete
+            ));
         }
     }
 
@@ -163,7 +168,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      * EE_Belongs_To_Relation doesn't need to be saved before querying.
      *
      * @param EE_Base_Class|int $model_object_or_id                      or the primary key of this model
-     * @param array             $query_params                            like EEM_Base::get_all's $query_params
+     * @param array             $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param boolean           $values_already_prepared_by_model_object @deprecated since 4.8.1
      * @return EE_Base_Class[]
      * @throws \EE_Error
@@ -174,16 +179,18 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
         $values_already_prepared_by_model_object = false
     ) {
         if ($values_already_prepared_by_model_object !== false) {
-            EE_Error::doing_it_wrong('EE_Model_Relation_Base::get_all_related',
+            EE_Error::doing_it_wrong(
+                'EE_Model_Relation_Base::get_all_related',
                 __('The argument $values_already_prepared_by_model_object is no longer used.', 'event_espresso'),
-                '4.8.1');
+                '4.8.1'
+            );
         }
         $query_params                                      = $this->_disable_default_where_conditions_on_query_param($query_params);
         $query_param_where_this_model_pk                   = $this->get_this_model()->get_this_model_name()
                                                              . "."
                                                              . $this->get_this_model()->get_primary_key_field()->get_name();
         $model_object_id                                   = $this->_get_model_object_id($model_object_or_id);
-        $query_params[0][$query_param_where_this_model_pk] = $model_object_id;
+        $query_params[0][ $query_param_where_this_model_pk ] = $model_object_id;
         return $this->get_other_model()->get_all($query_params);
     }
 
@@ -216,13 +223,15 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      */
     public function delete_all_related($model_object_or_id, $query_params = array())
     {
-        //for each thing we would delete,
+        // for each thing we would delete,
         $related_model_objects = $this->get_all_related($model_object_or_id, $query_params);
-        //determine if it's blocked by anything else before it can be deleted
+        // determine if it's blocked by anything else before it can be deleted
         $deleted_count = 0;
         foreach ($related_model_objects as $related_model_object) {
-            $delete_is_blocked = $this->get_other_model()->delete_is_blocked_by_related_models($related_model_object,
-                $model_object_or_id);
+            $delete_is_blocked = $this->get_other_model()->delete_is_blocked_by_related_models(
+                $related_model_object,
+                $model_object_or_id
+            );
             /* @var $model_object_or_id EE_Base_Class */
             if (! $delete_is_blocked) {
                 $this->remove_relation_to($model_object_or_id, $related_model_object);
@@ -247,13 +256,15 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      */
     public function delete_related_permanently($model_object_or_id, $query_params = array())
     {
-        //for each thing we would delete,
+        // for each thing we would delete,
         $related_model_objects = $this->get_all_related($model_object_or_id, $query_params);
-        //determine if it's blocked by anything else before it can be deleted
+        // determine if it's blocked by anything else before it can be deleted
         $deleted_count = 0;
         foreach ($related_model_objects as $related_model_object) {
-            $delete_is_blocked = $this->get_other_model()->delete_is_blocked_by_related_models($related_model_object,
-                $model_object_or_id);
+            $delete_is_blocked = $this->get_other_model()->delete_is_blocked_by_related_models(
+                $related_model_object,
+                $model_object_or_id
+            );
             /* @var $model_object_or_id EE_Base_Class */
             if ($related_model_object instanceof EE_Soft_Delete_Base_Class) {
                 $this->remove_relation_to($model_object_or_id, $related_model_object);
@@ -261,12 +272,12 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
                 if (! $delete_is_blocked) {
                     $related_model_object->delete_permanently();
                 } else {
-                    //delete is blocked
-                    //brent and darren, in this case, wanted to just soft delete it then
+                    // delete is blocked
+                    // brent and darren, in this case, wanted to just soft delete it then
                     $related_model_object->delete();
                 }
             } else {
-                //its not a soft-deletable thing anyways. do the normal logic.
+                // its not a soft-deletable thing anyways. do the normal logic.
                 if (! $delete_is_blocked) {
                     $this->remove_relation_to($model_object_or_id, $related_model_object);
                     $related_model_object->delete();
@@ -292,9 +303,14 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
             $model_object_id = $model_object_or_id->ID();
         }
         if (! $model_object_id) {
-            throw new EE_Error(sprintf(__("Sorry, we cant get the related %s model objects to %s model object before it has an ID. You can solve that by just saving it before trying to get its related model objects",
-                "event_espresso"), $this->get_other_model()->get_this_model_name(),
-                $this->get_this_model()->get_this_model_name()));
+            throw new EE_Error(sprintf(
+                __(
+                    "Sorry, we cant get the related %s model objects to %s model object before it has an ID. You can solve that by just saving it before trying to get its related model objects",
+                    "event_espresso"
+                ),
+                $this->get_other_model()->get_this_model_name(),
+                $this->get_this_model()->get_this_model_name()
+            ));
         }
         return $model_object_id;
     }
@@ -344,7 +360,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      * Removes ALL relation instances for this relation obj
      *
      * @param EE_Base_Class|int $this_obj_or_id
-     * @param array             $where_query_param like EEM_Base::get_all's $query_params[0] (where conditions)
+     * @param array             $where_query_param @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @return EE_Base_Class[]
      * @throws \EE_Error
      */
@@ -382,10 +398,12 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
         if ($this->_blocking_delete_error_message) {
             return $this->_blocking_delete_error_message;
         } else {
-//			return sprintf(__('Cannot delete %1$s when there are related %2$s', "event_espresso"),$this->get_this_model()->item_name(2),$this->get_other_model()->item_name(2));
+//          return sprintf(__('Cannot delete %1$s when there are related %2$s', "event_espresso"),$this->get_this_model()->item_name(2),$this->get_other_model()->item_name(2));
             return sprintf(
-                __('This %1$s is currently linked to one or more %2$s records. If this %1$s is incorrect, then please remove it from all %3$s before attempting to delete it.',
-                    "event_espresso"),
+                __(
+                    'This %1$s is currently linked to one or more %2$s records. If this %1$s is incorrect, then please remove it from all %3$s before attempting to delete it.',
+                    "event_espresso"
+                ),
                 $this->get_this_model()->item_name(1),
                 $this->get_other_model()->item_name(1),
                 $this->get_other_model()->item_name(2)

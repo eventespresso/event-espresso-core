@@ -1,5 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit;
 
 class EE_Admin_One_Column_Layout extends EE_Form_Section_Layout_Base
 {
@@ -56,7 +55,7 @@ class EE_Admin_One_Column_Layout extends EE_Form_Section_Layout_Base
         $input_html .= $input->get_html_for_help() !== ''
             ? EEH_HTML::nl() . $input->get_html_for_help()
             : '';
-        //overriding parent to add wp admin specific things.
+        // overriding parent to add wp admin specific things.
         $html = '';
         if ($input instanceof EE_Hidden_Input) {
             $html .= EEH_HTML::no_row($input->get_html_for_input());

@@ -8,11 +8,10 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
+ *
  */
 class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
 {
-
 
     /**
      * creates line items that would be generated when a cart is created and tickets are added
@@ -20,6 +19,12 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @param int  $ticket_count
      * @param bool $expired
      * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \PHPUnit\Framework\Exception
      */
     protected function setup_cart_and_get_ticket_line_item($ticket_count = 1, $expired = false)
     {
@@ -27,19 +32,24 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
         $total_line_item->set('TXN_ID', 0);
         $this->assertEquals(0, $total_line_item->total());
         $ticket = $this->new_ticket();
-        $ticket->save();
         $ticket_line_item = EEH_Line_Item::add_ticket_purchase($total_line_item, $ticket, $ticket_count);
         $this->assertInstanceOf('EE_Line_Item', $ticket_line_item);
         $this->assertEquals($ticket_count, $ticket_line_item->quantity());
+        $timestamp = time();
         if ($expired) {
-            $this->fake_expired_cart($total_line_item, current_time('timestamp') - DAY_IN_SECONDS);
+            $timestamp -= DAY_IN_SECONDS;
+            $this->fake_expired_cart($total_line_item, $timestamp);
         }
-        $saved = $total_line_item->save_this_and_descendants();
+        $saved = $total_line_item->save_this_and_descendants_to_txn();
         // total, pretax, tax total, tax, event, ticket, price
         $this->assertEquals(7, $saved);
+        $this->assertDateWithinOneMinute(
+            date('Y-m-d h:i a', $timestamp),
+            date('Y-m-d h:i a', $total_line_item->timestamp(true)),
+            'Y-m-d h:i a'
+        );
         return $ticket_line_item;
     }
-
 
 
     /**
@@ -48,6 +58,11 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @param EE_Line_Item $line_item
      * @param int          $timestamp
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function fake_expired_cart(EE_Line_Item $line_item, $timestamp = 0)
     {
@@ -65,6 +80,11 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @param int $ticket_count
      * @param int $line_item_count
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \PHPUnit\Framework\Exception
      */
     protected function confirm_ticket_line_item_counts($ticket_count = 1, $line_item_count = 1)
     {
@@ -85,8 +105,8 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
             $qty += $ticket_line_item->quantity();
         }
         $this->assertEquals(
-            $qty,
             $ticket_count,
+            $qty,
             sprintf(
                 'Ticket count was %1$d when it should have been %2$d',
                 $qty,
@@ -96,12 +116,18 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * generates all objects for each test and verifies all initial counts are correct
      *
      * @param array $cart_details
      * @return array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
+     * @throws \PHPUnit\Framework\Exception
      */
     protected function setup_and_validate_tickets_for_carts(array $cart_details)
     {
@@ -140,11 +166,11 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * Confirms that each ticket's reserved count matches what is expected
      *
      * @param array $cart_details
+     * @throws EE_Error
      */
     protected function process_cart_results(array $cart_details)
     {
@@ -165,7 +191,16 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
+     * @throws \PHPUnit\Framework\Exception
+     */
     public function test_release_tickets_with_expired_carts()
     {
         $cart_results = $this->setup_and_validate_tickets_for_carts(
@@ -185,7 +220,16 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
+     * @throws \PHPUnit\Framework\Exception
+     */
     public function test_release_tickets_for_multiple_valid_carts()
     {
         $cart_results = $this->setup_and_validate_tickets_for_carts(

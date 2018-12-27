@@ -7,7 +7,7 @@
 <?php _e('Enter your support license key in this field to benefit from one-click updates. To manage your support license key, please <a href="http://eventespresso.com/wp-login.php">login to your Event Espresso account</a>. Then click on Edit Account Details which appears in the left sidebar menu.', 'event_espresso'); ?>
 </p>
 <p class="ee-attention">
-<?php printf( __('Site license keys are now called support license keys. Your support license key should only be entered on live/production sites. If this is a development or test site,  %sdo not%s enter your support license key.', 'event_espresso'), '<strong>', '</strong>' ); ?>
+<?php printf(__('Site license keys are now called support license keys. Your support license key should only be entered on live/production sites. If this is a development or test site,  %sdo not%s enter your support license key.', 'event_espresso'), '<strong>', '</strong>'); ?>
 </p>
 <p><strong><?php _e('Contact Information', 'event_espresso'); ?></strong></p>
 <p>

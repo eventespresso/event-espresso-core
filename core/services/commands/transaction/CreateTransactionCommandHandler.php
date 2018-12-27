@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\services\commands\transaction;
 
 use EE_Checkout;
@@ -10,17 +11,12 @@ use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class CreateTransactionCommandHandler
  * generates and validates a Transaction and it's associated top-level Line Items
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
  */
 class CreateTransactionCommandHandler extends CommandHandler
 {
@@ -64,8 +60,4 @@ class CreateTransactionCommandHandler extends CommandHandler
         $cart_total->save_this_and_descendants_to_txn($transaction->ID());
         return $transaction;
     }
-
-
 }
-// End of file CreateTransactionCommandHandler.php
-// Location: EventEspresso\core\services\commands\transaction/CreateTransactionCommandHandler.php

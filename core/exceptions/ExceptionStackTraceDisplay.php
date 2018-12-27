@@ -7,12 +7,6 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
-
 /**
  * Class ExceptionStackTraceDisplay
  * displays exceptions with a stack trace and class description for where the exception was thrown
@@ -23,7 +17,6 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  */
 class ExceptionStackTraceDisplay
 {
-
 
 
     /**
@@ -38,7 +31,6 @@ class ExceptionStackTraceDisplay
             throw $exception;
         }
     }
-
 
 
     /**
@@ -79,8 +71,11 @@ class ExceptionStackTraceDisplay
 					<th scope="col" align="right" style="width:2.5%;">#</th>
 					<th scope="col" align="right" style="width:3.5%;">Line</th>
 					<th scope="col" align="left" style="width:40%;">File</th>
-					<th scope="col" align="left">' . __('Class', 'event_espresso') . '->' . __('Method( arguments )',
-                    'event_espresso') . '</th>
+					<th scope="col" align="left">' . __('Class', 'event_espresso') . '->'
+                              . __(
+                                  'Method( arguments )',
+                                  'event_espresso'
+                              ) . '</th>
 				</tr>';
             $last_on_stack = count($trace) - 1;
             // reverse array so that stack is in proper chronological order
@@ -99,7 +94,7 @@ class ExceptionStackTraceDisplay
                     $file = $a->getFileName();
                     if (empty($line) && ! empty($function)) {
                         try {
-                            //if $function is a closure, this throws an exception
+                            // if $function is a closure, this throws an exception
                             $b = new ReflectionMethod($class, $function);
                             $line = $b->getStartLine();
                         } catch (Exception $closure_exception) {
@@ -233,6 +228,8 @@ class ExceptionStackTraceDisplay
     }
 
 
+    // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+    // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
 
     /**
      * generate string from exception trace args
@@ -272,7 +269,7 @@ class ExceptionStackTraceDisplay
                     $indent++;
                     $args[] = ' array(' . $this->_convert_args_to_string($arg, $indent, true) . ')';
                     $indent--;
-                } else if ($arg_count === 0) {
+                } elseif ($arg_count === 0) {
                     $args[] = ' array()';
                 } else {
                     $args[] = ' array( ' . $this->_convert_args_to_string($arg) . ' )';
@@ -304,7 +301,6 @@ class ExceptionStackTraceDisplay
     }
 
 
-
     /**
      * create error code from filepath, function name,
      * and line number where exception or error was thrown
@@ -323,7 +319,6 @@ class ExceptionStackTraceDisplay
         $error_code .= ! empty($line) ? ' - ' . $line : '';
         return $error_code;
     }
-
 
 
     /**
@@ -393,7 +388,6 @@ class ExceptionStackTraceDisplay
     }
 
 
-
     /**
      * _print_scripts
      *
@@ -409,8 +403,8 @@ class ExceptionStackTraceDisplay
             if (wp_script_is('ee_error_js', 'registered')) {
                 wp_enqueue_style('espresso_default');
                 wp_enqueue_style('espresso_custom_css');
-                wp_enqueue_script( 'ee_error_js' );
-				wp_localize_script( 'ee_error_js', 'ee_settings', array( 'wp_debug' => WP_DEBUG ) );
+                wp_enqueue_script('ee_error_js');
+                wp_localize_script('ee_error_js', 'ee_settings', array('wp_debug' => WP_DEBUG));
             }
         } else {
             return '
@@ -426,9 +420,4 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
         }
         return '';
     }
-
-
-
 }
-// End of file ExceptionStackTraceDisplay.php
-// Location: /core/exceptions/ExceptionStackTraceDisplay.php

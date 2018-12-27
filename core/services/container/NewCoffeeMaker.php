@@ -1,11 +1,6 @@
 <?php
+
 namespace EventEspresso\core\services\container;
-
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
-
-
 
 /**
  * Class NewCoffeeMaker
@@ -34,7 +29,6 @@ class NewCoffeeMaker extends CoffeeMaker
     }
 
 
-
     /**
      * @param RecipeInterface $recipe
      * @param array           $arguments
@@ -46,9 +40,9 @@ class NewCoffeeMaker extends CoffeeMaker
         $reflector = $this->injector()->getReflectionClass($recipe->fqcn());
         $method = $this->resolveInstantiationMethod($reflector);
         switch ($method) {
-            case 'instance' :
-            case 'new_instance' :
-            case 'new_instance_from_db';
+            case 'instance':
+            case 'new_instance':
+            case 'new_instance_from_db':
                 $injector = $this->injector();
                 $closure = function ($arguments) use ($recipe, $reflector, $method, $injector) {
                     return call_user_func_array(
@@ -57,13 +51,13 @@ class NewCoffeeMaker extends CoffeeMaker
                     );
                 };
                 break;
-            case 'newInstance' :
+            case 'newInstance':
                 $closure = function () use ($reflector) {
                     return $reflector->newInstance();
                 };
                 break;
-            case 'newInstanceArgs' :
-            default :
+            case 'newInstanceArgs':
+            default:
                 $injector = $this->injector();
                 $closure = function ($arguments) use ($recipe, $reflector, $injector) {
                     return $reflector->newInstanceArgs(
@@ -73,8 +67,4 @@ class NewCoffeeMaker extends CoffeeMaker
         }
         return $this->coffeePot()->addClosure($recipe->identifier(), $closure);
     }
-
-
 }
-// End of file NewCoffeeMaker.php
-// Location: /NewCoffeeMaker.php
