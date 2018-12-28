@@ -1,0 +1,20 @@
+/* -------------------------------------------------------------------------
+ * Event Espresso InlineEditInput Stylesheet
+ * (c) 2018 Event Espresso
+ * -------------------------------------------------------------------------*/
+
+.ee-inline-edit-text:hover {
+    color: #759427 !important;
+}
+
+.ee-inline-edit-input {
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+    display: inline-block;
+    font-weight: normal;
+    width: 95%;
+}
+
+.ee-inline-edit-input-number {
+    text-align: right;
+}
