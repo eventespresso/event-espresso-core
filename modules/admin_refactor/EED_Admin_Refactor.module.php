@@ -105,8 +105,8 @@ class EED_Admin_Refactor extends EED_Module
                 'id' => $DTD_ID,
                 'name' => $datetime->name(),
                 'description' => $datetime->description(),
-                'start' => $datetime->start_date(DATE_ATOM), // 'D M d Y H:i:s O'
-                'end' => $datetime->end_date(DATE_ATOM),
+                'start' => $datetime->start_date(DATE_RFC822), // 'D M d Y H:i:s O'
+                'end' => $datetime->end_date(DATE_RFC822),
                 'status' => $datetime->get_active_status(),
                 'reg_list_url' => EE_Admin_Page::add_query_args_and_nonce(
                     array('event_id' => $datetime->event()->ID(), 'datetime_id' => $DTD_ID),
@@ -208,8 +208,8 @@ class EED_Admin_Refactor extends EED_Module
                 'min'         => $ticket->min(),
                 'max'         => $ticket->max() !== INF ? $ticket->max() : 'INF',
                 'price'       => $ticket->price(),
-                'startDate'   => $ticket->start_date(DATE_ATOM ), // 'D M d Y H:i:s O'
-                'endDate'     => $ticket->end_date(DATE_ATOM),
+                'startDate'   => $ticket->start_date(DATE_RFC822 ), // 'D M d Y H:i:s O'
+                'endDate'     => $ticket->end_date(DATE_RFC822),
                 'taxable'     => $ticket->taxable(),
                 'order'       => $ticket->order(),
                 'row'         => $ticket->row(),
