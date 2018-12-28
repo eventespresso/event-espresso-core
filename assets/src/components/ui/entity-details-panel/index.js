@@ -1,13 +1,15 @@
 /**
  * External imports
  */
-import { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { isEmpty, isFunction } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import './style.css';
+import { InlineEditInput } from '../../form/inputs/inline-edit-input';
 
 /**
  * EntityDetailsPanel
@@ -22,14 +24,18 @@ class EntityDetailsPanel extends Component {
 	static propTypes = {
 		details: PropTypes.arrayOf(
 			PropTypes.shape( {
-				id: PropTypes.string,
-				label: PropTypes.string,
+				id: PropTypes.string.isRequired,
+				label: PropTypes.string.isRequired,
 				value: PropTypes.oneOfType( [
 					PropTypes.bool,
 					PropTypes.number,
 					PropTypes.object,
 					PropTypes.string,
-				] ),
+				] ).isRequired,
+				editable: PropTypes.shape( {
+					onChange: PropTypes.func.isRequired,
+					placeholder: PropTypes.string,
+				} ),
 			} ),
 		).isRequired,
 		htmlClass: PropTypes.string,
@@ -42,11 +48,18 @@ class EntityDetailsPanel extends Component {
 	 * @param {string} id   	identifier for data item being displayed
 	 * @param {string} label   	label for the data item being displayed
 	 * @param {string} value    value for the data item being displayed
+	 * @param {Object} editable InlineEditInput parameters
 	 * @return {string}    		rendered details
 	 */
-	entityDetail = ( { id, label, value } ) => {
+	entityDetail = ( { id, label, value, editable = {} } ) => {
 		value = value === 'INF' ?
 			<span className={ 'ee-infinity-sign' }>&infin;</span> :
+			value;
+		value = ! isEmpty( editable ) ?
+			<InlineEditInput
+				value={ value }
+				{ ...editable }
+			/> :
 			value;
 		return (
 			<div className={ `ee-entity-details-div ${ id }-div` }>
@@ -67,7 +80,11 @@ class EntityDetailsPanel extends Component {
 	 * @return {string} vertical line for separating date details
 	 */
 	detailsSeparator = () => {
-		return <div className="ee-entity-details-separator"></div>;
+		return (
+			<div role="separator"
+				className="ee-entity-details-separator"
+			></div>
+		);
 	};
 
 	render() {
