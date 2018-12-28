@@ -7,8 +7,9 @@
     background-color: #759427;
     border-radius: 3px;
     color: #fff;
-    line-height: 1.2;
-    padding: .15em .25em .25em .5em;
+    line-height: 1.25;
+    margin: 0;
+    padding: .25em .3em .35em .6em;
     white-space: nowrap;
     word-wrap: normal;
 }

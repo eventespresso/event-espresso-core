@@ -5,4 +5,12 @@ import { default as FormSection } from './form-section';
 import { default as FormWrapper } from './form-wrapper';
 import './two-column-admin.css';
 
-export { FormColumn, FormRow, FormSection, FormWrapper, AutoColumnRow };
+const twoColumnAdminFormLayout = {
+	FormColumn,
+	FormRow,
+	FormSection,
+	FormWrapper,
+	AutoColumnRow,
+};
+
+export default twoColumnAdminFormLayout;

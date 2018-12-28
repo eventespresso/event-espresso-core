@@ -25,8 +25,8 @@ export const OptionCheckedState = ( inputId, options, values, reset ) => {
 	values = isArray( values ) ? values : [ values ];
 	options.forEach( function( option, index ) {
 		const key = inputId + '-' + index;
-		const isValue = indexOf( values, option.value ) !== -1;
-		checked[ key ] = reset === undefined ? isValue : reset;
+		const isSelected = indexOf( values, option.value ) !== -1;
+		checked[ key ] = reset === undefined ? isSelected : reset;
 	} );
 	return checked;
 };

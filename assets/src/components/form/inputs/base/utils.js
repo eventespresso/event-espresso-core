@@ -1,17 +1,23 @@
 /**
+ * External imports
+ */
+import { omit } from 'lodash';
+
+/**
  * @function
  * @param {Object} attributes
  * @return {Object} attributes
  */
 export const cleanUpInputAttributes = ( attributes = {} ) => {
-	delete attributes.children;
-	delete attributes.colSize;
-	delete attributes.helpText;
-	delete attributes.helpTextID;
-	delete attributes.label;
-	delete attributes.render;
-	delete attributes.validations;
-	return attributes;
+	return omit( attributes, [
+		'children',
+		'colSize',
+		'helpText',
+		'helpTextID',
+		'label',
+		'render',
+		'validations',
+	] );
 };
 
 /**
@@ -27,12 +33,16 @@ export const composeValidators = ( ...validators ) => value => {
 };
 
 /**
+ * loops through the input's set validators and
+ * adds attributes for corresponding HTML attributes accordingly.
+ * Right now, this is only doing so for the "required" validator.
+ *
  * @function
  * @param {Object} attributes
  * @param {Array} validators
  * @return {Object} attributes
  */
-export const mapValidatorsToAttributes = (
+export const addValidatorsToAttributes = (
 	attributes = {},
 	validators = [],
 ) => {
@@ -63,7 +73,7 @@ export const getValuesForOptions = options => options.map(
  * @param {Object} dataSet
  * @return {Object} dataSet
  */
-export const validateDataSet = ( dataSet = {} ) => {
+export const prepareDataSet = ( dataSet = {} ) => {
 	for ( const key in dataSet ) {
 		if ( dataSet.hasOwnProperty( key ) ) {
 			if ( ! key.startsWith( 'data-' ) ) {

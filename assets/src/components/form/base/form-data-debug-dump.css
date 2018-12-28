@@ -1,0 +1,25 @@
+/* -------------------------------------------------------------------------
+ * Event Espresso FormDataDebugDump Stylesheet
+ * (c) 2018 Event Espresso
+ * -------------------------------------------------------------------------*/
+
+.ee-form-data-dump-div {
+    margin: 0;
+    padding: 2em 1em;
+}
+
+.ee-form-data-dump-div h3 {
+    margin: 0;
+}
+
+.ee-form-data-dump-div pre {
+    border-radius: 3px;
+    color: #adc42d;
+    background-color: #1d2c41;
+    line-height: 1.5;
+    padding: 1.5em 2em;
+    position: relative;
+    top: -1px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}

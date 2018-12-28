@@ -986,10 +986,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      */
     public function pricing_metabox()
     {
-        do_action(
-            'AHEE__espresso_events_Pricing_Hooks___pricing_metabox__start',
-            $this
-        );
+        /**
+         * Fires before any logic runs for the "Event Tickets and Datetimes" metabox in the Event Espresso Event Editor
+         *
+         * @since $VID:$
+         * @param espresso_events_Pricing_Hooks $this
+         */
+        do_action('AHEE__espresso_events_Pricing_Hooks___pricing_metabox__start', $this);
+
         $existing_datetime_ids = $existing_ticket_ids = $datetime_tickets = $ticket_datetimes = array();
         $event = $this->_adminpage_obj->get_cpt_model_obj();
         // set is_creating_event property.
@@ -1029,7 +1033,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             // $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? ' ee-collapsible-closed' : ' ee-collapsible-open'
         );
         $timezone = $event instanceof EE_Event ? $event->timezone_string() : null;
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         /**
          * 1. Start with retrieving Datetimes
          * 2. For each datetime get related tickets

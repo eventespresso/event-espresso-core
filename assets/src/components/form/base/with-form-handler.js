@@ -8,7 +8,8 @@ import { Form } from 'react-final-form';
  * Internal imports
  */
 import { FormContainer } from './form-container';
-import { FormDataDump } from './form-data-dump';
+import { FormDataDebugDump } from './form-data-debug-dump';
+import { FormErrorBoundary } from './form-error-boundary';
 import { FormPlaceholder } from './form-placeholder';
 import { FormSubmitButton } from './form-submit-button';
 import { FormResetButton } from './form-reset-button';
@@ -35,6 +36,7 @@ export const withFormHandler = (
 	 * @param {Function} form component
 	 * @param {Function} loadHandler a function that supplies the form data
 	 * @param {Function} submitHandler a function that processes the submitted form
+	 * @param {string} errorMessage custom message displayed when things go bad
 	 */
 	class FormHandler extends Component {
 		/**
@@ -59,46 +61,48 @@ export const withFormHandler = (
 		}
 
 		render() {
-			const { data, loading } = this.state;
+			const { data, loading, errorMessage = '' } = this.state;
 			return (
-				<Form
-					onSubmit={ submitHandler }
-					initialValues={ data }
-					render={ ( {
-						handleSubmit,
-						form,
-						submitting,
-						pristine,
-						values,
-					} ) => {
-						const submitButton = (
-							<FormSubmitButton
-								submitting={ submitting }
-							/>
-						);
-						const resetButton = (
-							<FormResetButton
-								onClick={ form.reset }
-								pristine={ pristine }
-								submitting={ submitting }
-							/>
-						);
-						return (
-							<form onSubmit={ handleSubmit }>
-								<FormPlaceholder loading={ loading } />
-								<FormContainer loading={ loading } >
-									<FormComponent
-										submitButton={ submitButton }
-										resetButton={ resetButton }
-										initialValues={ data }
-										currentValues={ values }
-									/>
-								</FormContainer>
-								<FormDataDump values={ values } />
-							</form>
-						);
-					} }
-				/>
+				<FormErrorBoundary errorMessage={ errorMessage } >
+					<Form
+						onSubmit={ submitHandler }
+						initialValues={ data }
+						render={ ( {
+							handleSubmit,
+							form,
+							submitting,
+							pristine,
+							values,
+						} ) => {
+							const submitButton = (
+								<FormSubmitButton
+									submitting={ submitting }
+								/>
+							);
+							const resetButton = (
+								<FormResetButton
+									onClick={ form.reset }
+									pristine={ pristine }
+									submitting={ submitting }
+								/>
+							);
+							return (
+								<form onSubmit={ handleSubmit }>
+									<FormPlaceholder loading={ loading } />
+									<FormContainer loading={ loading } >
+										<FormComponent
+											submitButton={ submitButton }
+											resetButton={ resetButton }
+											initialValues={ data }
+											currentValues={ values }
+										/>
+									</FormContainer>
+									<FormDataDebugDump values={ values } />
+								</form>
+							);
+						} }
+					/>
+				</FormErrorBoundary>
 			);
 		}
 	}

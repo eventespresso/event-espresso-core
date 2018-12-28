@@ -19,8 +19,8 @@ import { InputHelpText } from './base/input-help-text';
 import {
 	cleanUpInputAttributes,
 	composeValidators,
-	mapValidatorsToAttributes,
-	validateDataSet,
+	addValidatorsToAttributes,
+	prepareDataSet,
 } from './base/utils';
 
 /**
@@ -73,12 +73,12 @@ export class FormInput extends Component {
 		helpTextID = helpTextID ? helpTextID : `${ htmlId }-help-text`;
 		htmlClass = this.props.required ? `${ htmlClass } required` : htmlClass;
 		// ensure data attributes are properly named
-		dataSet = validateDataSet( dataSet );
+		dataSet = prepareDataSet( dataSet );
 		validations = isArray( validations ) ? validations : [ validations ];
 		// remove attributes that should not be passed to inputs
 		let attributes = cleanUpInputAttributes( rest );
 		// add attributes based on validations
-		attributes = mapValidatorsToAttributes( attributes, validations );
+		attributes = addValidatorsToAttributes( attributes, validations );
 		// reduce validations to a single callback
 		validations = composeValidators( ...validations );
 
