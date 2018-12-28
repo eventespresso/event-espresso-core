@@ -16,6 +16,12 @@
 .ee-entity-details-div {
     display: flex;
     flex-direction: column-reverse;
+    max-width: 50px;
+}
+
+.ee-entity-details-div .ee-inline-edit-input {
+    max-width: 50px;
+    margin: 0 0 -3px;
 }
 
 .ee-entity-details-label-div {

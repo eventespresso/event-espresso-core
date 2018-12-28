@@ -7,6 +7,13 @@ import { Dashicon } from '@wordpress/components';
 import { EntityDetailsPanel } from '@eventespresso/components';
 
 /**
+ * Internal dependencies
+ */
+import {
+	InlineEditInput,
+} from '../../../../components/form/inputs/inline-edit-input';
+
+/**
  * EditorDateDetails
  *
  * @function
@@ -25,8 +32,15 @@ class EditorDateDetails extends Component {
 		const htmlClass = eventDate.name && eventDate.name.length > 40 ?
 			'ee-editor-date-name-heading ee-long-title' :
 			'ee-editor-date-name-heading';
-		return eventDate.name ?
-			<h1 className={ htmlClass }>{ eventDate.name }</h1> : '';
+		return (
+			<h1 className={ htmlClass }>
+				<InlineEditInput
+					type="text"
+					value={ eventDate.name }
+					onChange={ event => this.updateName( event.target.value ) }
+				/>
+			</h1>
+		);
 	};
 
 	/**
@@ -43,14 +57,20 @@ class EditorDateDetails extends Component {
 			'ee-editor-date-desc-div';
 		return (
 			<div className={ htmlClass }>
-				{ eventDate.description }
+				<InlineEditInput
+					type="textarea"
+					value={ eventDate.description }
+					onChange={
+						event => this.updateDescription( event.target.value )
+					}
+				/>
 			</div>
 		);
 	};
 
 	/**
 	 * venueName
-	 *
+	 *spco-display-event-questions-lnk
 	 * @function
 	 * @param {Object} eventDate JSON object defining the Event Date
 	 * @param {boolean} showVenue
@@ -104,6 +124,12 @@ class EditorDateDetails extends Component {
 				id: 'event-date-capacity',
 				label: __( 'capacity', 'event_espresso' ),
 				value: eventDate.regLimit,
+				editable: {
+					type: 'text',
+					valueType: 'number',
+					onChange:
+						event => this.updateCapacity( event.target.value ),
+				},
 			},
 			{
 				id: 'event-date-registrants',
@@ -136,6 +162,30 @@ class EditorDateDetails extends Component {
 				<span className="dashicons dashicons-groups clickable"></span>
 			</a>
 		);
+	};
+
+	/**
+	 * @function
+	 * @param {string} name new name for event date
+	 */
+	updateName = ( name ) => {
+		this.props.eventDate.name = name;
+	};
+
+	/**
+	 * @function
+	 * @param {string} description new description for event date
+	 */
+	updateDescription = ( description ) => {
+		this.props.eventDate.description = description;
+	};
+
+	/**
+	 * @function
+	 * @param {number} capacity new reg limit for event date
+	 */
+	updateCapacity = ( capacity ) => {
+		this.props.eventDate.regLimit = capacity;
 	};
 
 	render() {
