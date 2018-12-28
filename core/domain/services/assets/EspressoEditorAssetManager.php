@@ -58,8 +58,8 @@ class EspressoEditorAssetManager extends AssetManager
             ),
             [
                 CoreAssetManager::JS_HANDLE_JQUERY,
-                CoreAssetManager::JS_HANDLE_EE_COMPONENTS,
-                CoreAssetManager::JS_HANDLE_EE_HOC_COMPONENTS,
+                CoreAssetManager::JS_HANDLE_COMPONENTS,
+                CoreAssetManager::JS_HANDLE_HOCS,
                 'ee-datepicker'
             ]
         )
@@ -93,7 +93,7 @@ class EspressoEditorAssetManager extends AssetManager
                 $this->domain->assetNamespace(),
                 self::ASSET_CHUNK_NAME_EDITOR
             ),
-            [ CoreAssetManager::CSS_HANDLE_EE_COMPONENTS ]
+            [ CoreAssetManager::CSS_HANDLE_COMPONENTS ]
         );
         $this->addStylesheet(
             self::CSS_HANDLE_ADMIN_REFACTOR,

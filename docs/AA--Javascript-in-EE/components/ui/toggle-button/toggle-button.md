@@ -106,7 +106,7 @@ use EventEspresso\core\domain\services\assets\CoreAssetManager;
 wp_register_script(
     'my-script',
     'https://url-to-my-script.com'
-    array( CoreAssetManager::JS_HANDLE_EE_COMPONENTS ),
+    array( CoreAssetManager::JS_HANDLE_COMPONENTS ),
     $version_string,
     true
 );
