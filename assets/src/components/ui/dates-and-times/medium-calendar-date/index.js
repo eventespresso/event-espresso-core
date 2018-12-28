@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { Fragment } from 'react';
 
 /**
@@ -13,7 +13,7 @@ import './style.css';
  * Displays a full calendar date... just not so bigly
  *
  * @function
- * @param {Moment} date
+ * @param {Moment|Date|string} date
  * @param {string} headerText
  * @param {string} footerText
  * @param {string} htmlClass
@@ -31,8 +31,11 @@ const MediumCalendarDate = ( {
 } ) => {
 	console.log( 'MediumCalendarDate', date );
 	if ( ! moment.isMoment( date ) ) {
-		date = date instanceof Date ? date : new Date( date );
+		const originalDate = date;
 		date = moment( date );
+		if ( ! date.isValid() ) {
+			date = moment( new Date( originalDate ) );
+		}
 	}
 	htmlClass = htmlClass ?
 		`${ htmlClass } medium-calendar-date-wrapper` :

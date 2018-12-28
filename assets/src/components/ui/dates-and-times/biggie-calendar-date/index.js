@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 /**
  * Internal dependencies
@@ -26,9 +26,13 @@ const BiggieCalendarDate = ( {
 	footerText,
 	position = 'left',
 } ) => {
+	// console.log( 'BiggieCalendarDate date: ', date );
 	if ( ! moment.isMoment( date ) ) {
-		date = date instanceof Date ? date : new Date( date );
+		const originalDate = date;
 		date = moment( date );
+		if ( ! date.isValid() ) {
+			date = moment( new Date( originalDate ) );
+		}
 	}
 	htmlClass = htmlClass ?
 		`${ htmlClass } biggie-calendar-date-bg` :

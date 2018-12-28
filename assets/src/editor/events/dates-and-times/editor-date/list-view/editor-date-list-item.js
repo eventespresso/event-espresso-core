@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { Component } from 'react';
 import { __ } from '@eventespresso/i18n';
 

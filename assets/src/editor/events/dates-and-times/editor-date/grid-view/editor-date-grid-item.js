@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { Component, Fragment } from 'react';
 import { __, sprintf, _x } from '@eventespresso/i18n';
 import {
@@ -110,10 +110,11 @@ class EditorDateGridItem extends Component {
 	 * @return {Object} rendered date
 	 */
 	displayDate = ( eventDate, showDate ) => {
+		// console.log( 'EditorDateGridItem.displayDate() eventDate: ', eventDate );
 		let sidebarColorClass = 'ee-editor-date-calendar-sidebar ';
 		sidebarColorClass += this.getBgColorClass( eventDate );
-		const startDate = moment( new Date( eventDate.start ) );
-		const endDate = moment( new Date( eventDate.end ) );
+		const startDate = moment( eventDate.start );
+		const endDate = moment( eventDate.end );
 
 		switch ( showDate ) {
 			case 'end' :

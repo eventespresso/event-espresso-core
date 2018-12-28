@@ -2,7 +2,7 @@
  * External imports
  */
 import { Component, Fragment } from 'react';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { find } from 'lodash';
 import { __ } from '@eventespresso/i18n';
 import { withEditorModal } from '../../../higher-order-components';

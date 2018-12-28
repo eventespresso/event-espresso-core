@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { Component } from 'react';
 import { __ } from '@eventespresso/i18n';
 
@@ -135,6 +135,20 @@ class CalendarPageDate extends Component {
 
 	render() {
 		const { startDate, endDate } = this.props;
+		if ( ! moment.isMoment( startDate ) ) {
+			const originalStartDate = startDate;
+			 let startDate = moment( startDate );
+			if ( ! startDate.isValid() ) {
+				startDate = moment( new Date( originalStartDate ) );
+			}
+		}
+		if ( ! moment.isMoment( endDate ) ) {
+			const originalEndDate = endDate;
+			 let endDate = moment( endDate );
+			if ( ! endDate.isValid() ) {
+				endDate = moment( new Date( originalEndDate ) );
+			}
+		}
 		return (
 			<div className={ 'ee-calendar-page-date-wrapper' }>
 				{ this.getStartDate( startDate ) }

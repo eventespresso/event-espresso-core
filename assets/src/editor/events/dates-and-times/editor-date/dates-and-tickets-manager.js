@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { find, findIndex } from 'lodash';

@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { Component, Fragment } from 'react';
 import { __ } from '@eventespresso/i18n';
 import {
@@ -142,11 +142,12 @@ class EditorTicketGridItem extends Component {
 	 * @return {Object} rendered ticket
 	 */
 	displayTicket = ( ticket, showDate ) => {
+		// console.log( 'EditorTicketGridItem.displayTicket() ticket: ', ticket );
 		let sidebarColorClass = 'ee-editor-ticket-calendar-sidebar ';
 		sidebarColorClass += this.getBgColorClass( ticket );
-		const startDate = moment( new Date( ticket.startDate ) );
+		const startDate = moment( ticket.startDate );
 		const start = startDate.format( 'h:mm a' );
-		const endDate = moment( new Date( ticket.endDate ) );
+		const endDate = moment( ticket.endDate );
 		const end = endDate.format( 'h:mm a' );
 
 		let label = '';
