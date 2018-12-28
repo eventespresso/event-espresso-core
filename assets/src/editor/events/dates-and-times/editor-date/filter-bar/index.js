@@ -1,9 +1,7 @@
 /**
  * External imports
  */
-import {
-	default as withEntityPagination,
-} from '@eventespresso/higher-order-components';
+import { withEntityPagination } from '@eventespresso/higher-order-components';
 
 /**
  * Internal dependencies
