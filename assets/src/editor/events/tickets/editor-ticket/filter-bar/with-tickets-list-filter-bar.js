@@ -3,6 +3,7 @@
  */
 import { Component, Fragment } from 'react';
 import { createHigherOrderComponent } from '@wordpress/compose';
+import { __ } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
@@ -97,6 +98,12 @@ export default createHigherOrderComponent(
 							entities={ entities }
 							entitiesPerPage={ ticketsPerPage }
 							view={ ticketsView }
+							noResultsText={
+								__(
+									'no results found (try changing filters)',
+									'event_espresso'
+								)
+							}
 							displayTicketDate={ displayTicketDate }
 							isChained={ isChained }
 							{ ...otherProps }

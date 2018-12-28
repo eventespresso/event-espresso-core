@@ -4,6 +4,7 @@
 import { Component, Fragment } from 'react';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { EntityListFilterBar } from '@eventespresso/higher-order-components';
+import { __ } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
@@ -95,6 +96,12 @@ export default createHigherOrderComponent(
 							entities={ entities }
 							entitiesPerPage={ datesPerPage }
 							view={ datesView }
+							noResultsText={
+								__(
+									'no results found (try changing filters)',
+									'event_espresso'
+								)
+							}
 							showDate={ displayDates }
 							{ ...otherProps }
 						/>

@@ -1,7 +1,6 @@
 /**
  * External imports
  */
-import { isArray } from 'lodash';
 import { __ } from '@eventespresso/i18n';
 
 /**
@@ -19,25 +18,30 @@ import './style.css';
  * @param {mixed} otherProps
  * @param {Component} EntityGridView
  * @param {Component} EntityListView
- * @param {string} view
  * @param {string} htmlClass
+ * @param {string} view
+ * @param {string} noResultsText
  * @return {Component} list of rendered entities
  */
 const EntityList = ( {
 	entities,
 	EntityGridView,
 	EntityListView,
-	view = 'grid',
 	htmlClass,
+	view = 'grid',
+	noResultsText = '',
 	...otherProps
 } ) => {
-	if ( ! isArray( entities ) ) {
+	if ( ! Array.isArray( entities ) ) {
 		return null;
 	}
 	if ( entities.length === 0 ) {
+		noResultsText = noResultsText !== '' ?
+			noResultsText :
+			__( 'no results found', 'event_espresso' );
 		return (
 			<div className="ee-entity-list-no-results">
-				{ __( 'no results were found', 'event_espresso' ) }
+				{ noResultsText }
 			</div>
 		);
 	}

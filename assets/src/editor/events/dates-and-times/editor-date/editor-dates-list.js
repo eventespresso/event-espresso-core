@@ -3,6 +3,7 @@
  */
 import { Component } from 'react';
 import { EntityList } from '@eventespresso/components';
+import { __ } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
@@ -30,6 +31,12 @@ class EditorDatesList extends Component {
 				EntityGridView={ EditorDatesGridView }
 				EntityListView={ EditorDatesListView }
 				view={ view }
+				noResultsText={
+					__(
+						'no results found (try changing filters)',
+						'event_espresso'
+					)
+				}
 				{ ...otherProps }
 			/>
 		);
