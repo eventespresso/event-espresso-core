@@ -22,7 +22,6 @@ before_install:
         phpenv config-rm xdebug.ini
         echo "xdebug removed";
       fi
-
 before_script:
   - bash tests/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
@@ -51,6 +50,8 @@ before_script:
   - mysql --version
   - phpunit --version
   - phpenv versions
+  - npm --version
+  - node --version
 
 script: npm run test-php
 
@@ -85,11 +86,12 @@ jobs:
       language: node_js
       node_js:
         - node
+      before_install:
+        - nvm install && nvm use
+        - npm install npm -g
       script:
         - npm run ci || exit 1
     - language: node_js
-      node_js:
-        - node
       env:
         - LICENSE_CHECK=1
       script:
