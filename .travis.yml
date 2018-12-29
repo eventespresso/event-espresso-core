@@ -50,6 +50,8 @@ before_script:
   - mysql --version
   - phpunit --version
   - phpenv versions
+  - npm --version
+  - node --version
 
 script: npm run test-php
 
