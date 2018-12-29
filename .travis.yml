@@ -29,17 +29,13 @@ before_script:
     # Install the specified version of PHPUnit depending on the PHP version:
     if [[ -n "$TRAVIS_PHP_VERSION" ]]; then
       case "$TRAVIS_PHP_VERSION" in
-        7.2|7.1|7.0|nightly)
+        7.3|7.2|7.1|7.0|nightly)
           echo "Using PHPUnit 6.1"
           composer global require "phpunit/phpunit=6.1.*"
           ;;
-        5.6|5.5|5.4|5.3)
+        5.6|5.5)
           echo "Using PHPUnit 4.8"
           composer global require "phpunit/phpunit=4.8.*"
-          ;;
-        5.2)
-          # Do nothing, use default PHPUnit 3.6.x
-          echo "Using default PHPUnit, hopefully 3.6"
           ;;
         *)
           echo "No PHPUnit version handling for PHP version $TRAVIS_PHP_VERSION"
@@ -59,13 +55,13 @@ jobs:
   fast_finish: true
   allow_failures:
     - php: nightly
-    - php: 7.2
+    - php: 7.3
       env:
         - PHP_LINT=1
         - PHP_LINT_WITH_WARNINGS=yes
   include:
     - stage: test
-      php: 7.2
+      php: 7.3
       env:
         - PHP_LINT=1
         - PHP_LINT_WITH_WARNINGS=no
@@ -73,7 +69,7 @@ jobs:
         - composer install || exit 1
         - composer config-eventespressocs || exit 1
         - npm run lint-php:skip-warnings || exit 1
-    - php: 7.2
+    - php: 7.3
       env:
         - PHP_LINT=1
         - PHP_LINT_WITH_WARNINGS=yes
@@ -96,6 +92,7 @@ jobs:
         - LICENSE_CHECK=1
       script:
         - npm run lc || exit 1
+    - php: 7.3
     - php: 7.2
     - php: 7.1
     - php: 7.0
