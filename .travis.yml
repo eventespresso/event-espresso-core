@@ -83,6 +83,8 @@ jobs:
     - env:
         - JAVASCRIPT_TESTS=1
       language: node_js
+      before_install:
+        - npm i -g npm@>=6.4.0
       node_js:
         - node
       script:
