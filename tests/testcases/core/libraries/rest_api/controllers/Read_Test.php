@@ -1076,20 +1076,17 @@ class Read_Test extends EE_REST_TestCase
      * Reproduces https://github.com/eventespresso/event-espresso-core/issues/845, which has been an often-recurring
      * regression.
      * @since $VID:$
+     * @throws \EE_Error
      */
     public function testHandleRequestGeAllTermRelationships()
     {
         $e = $this->new_model_obj_with_dependencies(
             'Event',
-            array(
-                'status' => EEM_Event::post_status_publish
-            )
+            ['status' => EEM_Event::post_status_publish]
         );
         $term_taxonomy = $this->new_model_obj_with_dependencies(
             'Term_Taxonomy',
-            array(
-                'taxonomy' => 'espresso_event_categories'
-            )
+            ['taxonomy' => 'espresso_event_categories']
         );
         $e->_add_relation_to($term_taxonomy, 'Term_Taxonomy');
         $request = new WP_REST_Request('GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/term_relationships');
