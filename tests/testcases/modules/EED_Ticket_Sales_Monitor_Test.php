@@ -250,6 +250,7 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
 
 
     /**
+     * Validates EED_Ticket_Sales_Monitor::validate_ticket_sale properly detects when a sale is ok.
      * @since $VID:$
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -259,7 +260,7 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
      * @group current
      */
-    public function testValidateTicketSale()
+    public function testValidateTicketSaleTruePositive()
     {
         $e = $this->new_model_obj_with_dependencies(
             'Event',
@@ -287,6 +288,49 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
         $d->_add_relation_to($t, 'Ticket');
         $ticket_reserved = EED_Ticket_Sales_Monitor::validate_ticket_sale(1, $t);
         $this->assertEquals(1, $ticket_reserved);
+    }
+
+
+    /**
+     * Validates EED_Ticket_Sales_Monitor::validate_ticket_sale properly detects when a sale shouldn't occur.
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
+     * @group current
+     */
+    public function testValidateTicketSaleTrueNegative()
+    {
+        $e = $this->new_model_obj_with_dependencies(
+            'Event',
+            [
+                'status' => EEM_Event::post_status_publish
+            ]
+        );
+        $d = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e->ID(),
+                'DTT_reserved' => 0,
+                'DTT_sold' => 0
+            ));
+        $t = $this->new_model_obj_with_dependencies(
+            'Ticket',
+            [
+                'TKT_qty' => 1,
+                // this next line is important: that one ticket is reserved!
+                'TKT_reserved' => 1,
+                'TKT_sold' => 0,
+                'TKT_max' => 1,
+                'TKT_min' => 0
+            ]
+        );
+        $d->_add_relation_to($t, 'Ticket');
+        $ticket_reserved = EED_Ticket_Sales_Monitor::validate_ticket_sale(1, $t);
+        $this->assertEquals(0, $ticket_reserved);
     }
 
     /**
