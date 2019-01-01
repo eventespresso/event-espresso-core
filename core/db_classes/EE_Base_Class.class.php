@@ -3173,11 +3173,12 @@ abstract class EE_Base_Class
             $wpdb->prepare(
                 "`{$column_name}` =
             CASE
-               WHEN (`{$column_name}` + `{$column_affecting_total}` + %d) <= `{$limiting_column}`
+               WHEN ((`{$column_name}` + `{$column_affecting_total}` + %d) <= `{$limiting_column}`) OR `{$limiting_column}` = %d
                THEN `{$column_name}` + %d
                ELSE `{$column_name}`
             END",
                 $quantity,
+                EE_INF_IN_DB,
                 $quantity
             )
         );
