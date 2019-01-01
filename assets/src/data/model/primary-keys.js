@@ -68,6 +68,19 @@ export const getPrimaryKey = memoize( ( modelName ) => {
 } );
 
 /**
+ * Returns a query string for getting the entities belonging to a model for the
+ * given primary key values
+ *
+ * @type {memoized}
+ */
+export const getPrimaryKeyQueryString = memoize(
+	( modelName, keyValues = [] )=> {
+		const primaryKey = getPrimaryKey( modelName );
+		return `[${primaryKey}][IN]=` + keyValues.join();
+	}
+);
+
+/**
  * Returns the values for the primary keys from the provided entity.
  *
  * @type {memoized}

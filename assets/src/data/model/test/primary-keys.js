@@ -5,6 +5,7 @@ import {
 	valuesForCombinedPrimaryKeys,
 	valueForPrimaryKey,
 	getPrimaryKey,
+	getPrimaryKeyQueryString,
 	getEntityPrimaryKeyValues,
 	keyEntitiesByPrimaryKeyValue,
 } from '../primary-keys';
@@ -87,6 +88,20 @@ describe( 'getPrimaryKey()', () => {
 		expect( getPrimaryKey( 'event' ) ).toEqual( 'EVT_ID' );
 		expect( getPrimaryKey( 'term' ) )
 			.toEqual( [ 'TERM_ID', 'TAXONOMY_ID' ] );
+	} );
+} );
+
+describe( 'getPrimaryKeyQueryString()', () => {
+	it( 'throws an Exception if the provided model does not exist in the ' +
+		'data', () => {
+		const t = () => getPrimaryKeyQueryString( 'cheese', [ 2 ] );
+		expect( t ).toThrow( Exception );
+		expect( t ).toThrowError( /does not have the given property/ );
+	} );
+	it( 'returns the expected query string for the given model', () => {
+		expect( getPrimaryKeyQueryString( 'event', [ 10, 11 ] ) ).toEqual(
+			'[EVT_ID][IN]=10,11'
+		);
 	} );
 } );
 
