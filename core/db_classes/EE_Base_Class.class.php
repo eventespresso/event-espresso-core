@@ -3054,6 +3054,76 @@ abstract class EE_Base_Class
         }
     }
 
+    /**
+     * Increases the value of the field $field_name_to_bump by $quantity, but only if the values of
+     * $field_name_to_bump plus $field_name_affecting_total and $quantity won't exceed $limit_field_name's value.
+     * For example, this is useful when bumping the value of TKT_reserved, TKT_sold, DTT_reserved or DTT_sold.
+     * Returns true if the value was successfully bumped, and updates the value on this model object.
+     * Otherwise returns false.
+     * @since $VID:$
+     * @param string $field_name_to_bump
+     * @param string $field_name_affecting_total
+     * @param string $limit_field_name
+     * @param int $quantity
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function bump($field_name_to_bump, $field_name_affecting_total, $limit_field_name, $quantity)
+    {
+        global $wpdb;
+        $field = $this->get_model()->field_settings_for($field_name_to_bump, true);
+        $column_name = $field->get_table_column();
+
+        $table_pk_value = $this->ID();
+        $table_obj = $this->get_model()->get_table_obj_by_alias($field->get_table_alias());
+        $table_name = $table_obj->get_table_name();
+        if ($table_obj instanceof EE_Secondary_Table ) {
+            $table_pk_field_name = $table_obj->get_fk_on_table();
+        } else {
+            $table_pk_field_name = $table_obj->get_pk_column();
+        }
+
+        $field_affecting_total = $this->get_model()->field_settings_for($field_name_affecting_total, true);
+        $column_affecting_total = $field_affecting_total->get_table_column();
+
+        $limiting_field = $this->get_model()->field_settings_for($limit_field_name, true);
+        $limiting_column = $limiting_field->get_table_column();
+        $query = $wpdb->prepare(
+            "UPDATE `{$table_name}`
+            SET `{$column_name}` =
+            CASE
+               WHEN (`{$column_name}` + `{$column_affecting_total}` + %d) <= `{$limiting_column}`
+               THEN `{$column_name}` + %d
+               ELSE `{$column_name}`
+            END
+            WHERE `{$table_pk_field_name}` = %d;",
+            $quantity,
+            $quantity,
+            $table_pk_value
+        );
+        $result = $wpdb->query($query);
+        // If it was successful, we'd like to know the new value.
+        // If it failed, we'd also like to know the new value.
+        $new_value = $this->get_model()->get_var(
+            $this->get_model()->alter_query_params_to_restrict_by_ID(
+                $this->get_model()->get_index_primary_key_string(
+                    $this->model_field_array()
+                )
+            )
+            ,
+            $field_name_to_bump
+        );
+        $this->set_from_db(
+            $field_name_to_bump,
+            $new_value
+        );
+        return (bool) $result;
+    }
+
 
     /**
      * Because some other plugins, like Advanced Cron Manager, expect all objects to have this method
