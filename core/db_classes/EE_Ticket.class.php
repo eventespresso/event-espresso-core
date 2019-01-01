@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 
 /**
@@ -867,8 +869,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function increase_reserved($qty = 1, $source = 'unknown')
     {
@@ -885,16 +887,21 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         ) {
             return false;
         }
-        $this->_increase_reserved_for_datetimes($qty);
-        // @todo: check we successfully reserved the datetimes
-        $successful_bump = $this->bumpConditionally(
-            'TKT_reserved',
-            'TKT_sold',
-            'TKT_qty',
-            absint($qty)
-        );
-        if(! $successful_bump) {
-            // @todo: undo reserving the datetimes
+        $datetimes_adjusted_successfully = $this->_increase_reserved_for_datetimes($qty);
+        if( $datetimes_adjusted_successfully ) {
+            $successful_bump = $this->bumpConditionally(
+                'TKT_reserved',
+                'TKT_sold',
+                'TKT_qty',
+                absint($qty)
+            );
+            if (! $successful_bump) {
+                // The datetimes were successfully bumped, but not the
+                // ticket. So we need to manually rollback the datetimes.
+                $this->_decrease_reserved_for_datetimes($qty);
+            }
+        } else {
+            $successful_bump = false;
         }
         do_action(
             'AHEE__EE_Ticket__increase_reserved',
@@ -911,18 +918,50 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Increases sold on related datetimes
      *
      * @param int $qty
-     * @return void
+     * @return boolean indicating success
      * @throws \EE_Error
      */
     protected function _increase_reserved_for_datetimes($qty = 1)
     {
         $datetimes = $this->datetimes();
+        $datetimes_updated = [];
+        $limit_exceeded = false;
         if (is_array($datetimes)) {
             foreach ($datetimes as $datetime) {
                 if ($datetime instanceof EE_Datetime) {
-                    $datetime->increase_reserved($qty);
-                    $datetime->save();
+                    if ($datetime->increase_reserved($qty)) {
+                        $datetimes_updated[] = $datetime;
+                    } else {
+                        $limit_exceeded = true;
+                        break;
+                    }
                 }
+            }
+            // If somewhere along the way we detected a datetime whose
+            // limit was exceeded, do a manual rollback.
+            if( $limit_exceeded ) {
+                $this->decreaseReservedForDatetimes($datetimes_updated, $qty);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Decreases the reserved count on the specified datetimes.
+     * @since $VID:$
+     * @param EE_Datetime[] $datetimes
+     * @param int $qty
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    protected function decreaseReservedForDatetimes($datetimes, $qty = 1) {
+        foreach($datetimes as $datetime) {
+            if ($datetime instanceof EE_Datetime) {
+                $datetime->decrease_reserved($qty);
             }
         }
     }
@@ -938,48 +977,48 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function decrease_reserved($qty = 1, $adjust_datetimes = true, $source = 'unknown')
     {
         $reserved = $this->reserved() - absint($qty);
-        if ($this->add_extra_meta(
+        if (! $this->add_extra_meta(
             EE_Ticket::META_KEY_TICKET_RESERVATIONS,
             "-{$qty} from {$source}"
         )) {
-            if ($adjust_datetimes) {
-                $this->_decrease_reserved_for_datetimes($qty);
-            }
-            $this->set_reserved($reserved);
-            do_action(
-                'AHEE__EE_Ticket__decrease_reserved',
-                $this,
-                $qty,
-                $reserved
-            );
+            return false;
         }
+        if ($adjust_datetimes) {
+            $this->_decrease_reserved_for_datetimes($qty);
+        }
+        $this->bump(
+            'TKT_reserved',
+            $qty * -1
+        );
+        do_action(
+            'AHEE__EE_Ticket__decrease_reserved',
+            $this,
+            $qty,
+            $reserved
+        );
     }
 
 
     /**
-     * Increases sold on related datetimes
+     * Decreases reserved on related datetimes
      *
      * @param int $qty
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _decrease_reserved_for_datetimes($qty = 1)
     {
-        $datetimes = $this->datetimes();
-        if (is_array($datetimes)) {
-            foreach ($datetimes as $datetime) {
-                if ($datetime instanceof EE_Datetime) {
-                    $datetime->decrease_reserved($qty);
-                    $datetime->save();
-                }
-            }
-        }
+        $this->decreaseReservedForDatetimes($this->datetimes(), $qty);
     }
 
 
