@@ -305,8 +305,11 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             }
             $this->_ticket_quantity_decremented($ticket);
         }
-        $this->_reserve_ticket($ticket, $qty);
-        return $qty;
+        if( $this->_reserve_ticket($ticket, $qty) ){
+            return $qty;
+        } else {
+            return 0;
+        }
     }
 
 
@@ -315,7 +318,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      *
      * @param    EE_Ticket $ticket
      * @param int          $quantity
-     * @return bool
+     * @return bool indicating success or failure
      * @throws EE_Error
      */
     protected function _reserve_ticket(EE_Ticket $ticket, $quantity = 1)
@@ -323,8 +326,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         if (self::debug) {
             echo self::$nl . self::$nl . ' . . . INCREASE RESERVED: ' . $quantity;
         }
-        $ticket->increase_reserved($quantity, 'TicketSalesMonitor:' . __LINE__);
-        return $ticket->save();
+        return $ticket->increase_reserved($quantity, 'TicketSalesMonitor:' . __LINE__);
     }
 
 
