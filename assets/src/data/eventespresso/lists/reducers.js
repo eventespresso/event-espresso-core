@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { DEFAULT_LISTS_STATE } from '../../model';
+import { ACTION_TYPES as types } from './action-types';
 
 /**
  * External dependencies
@@ -25,11 +26,11 @@ export function receiveListItems(
 	let doUpdate = true,
 		existingValues;
 	switch ( type ) {
-		case 'RECEIVE_LIST':
+		case types.RECEIVE_LIST:
 			existingValues = state.getIn( path ) || Set();
 			items = existingValues.merge( items );
 			break;
-		case 'RECEIVE_ENTITY_LIST':
+		case types.RECEIVE_ENTITY_LIST:
 			existingValues = state.getIn( path ) || OrderedMap();
 			items = existingValues.merge(
 				items.map( entity => [ entity.id, entity ] )

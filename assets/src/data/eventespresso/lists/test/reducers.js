@@ -7,6 +7,7 @@ import { fromJS, OrderedMap, Map, Set } from 'immutable';
  * Internal dependencies
  */
 import { receiveListItems } from '../reducers';
+import { ACTION_TYPES as types } from '../action-types';
 import {
 	genericObjects,
 	eventEntityItems,
@@ -102,7 +103,7 @@ describe( 'receiveListItems()', () => {
 			testRunner(
 				testConditions,
 				originalState,
-				'RECEIVE_LIST',
+				types.RECEIVE_LIST,
 				'generic'
 			);
 		} );
@@ -112,7 +113,7 @@ describe( 'receiveListItems()', () => {
 			' original state', () => {
 			const originalState = fromJS( { event: {} } );
 			const state = receiveListItems( originalState, {
-				type: 'RECEIVE_ENTITY_LIST',
+				type: types.RECEIVE_ENTITY_LIST,
 				identifier: 'event',
 				queryString: '?some_value=1',
 				items: eventEntityItems,
@@ -202,7 +203,7 @@ describe( 'receiveListItems()', () => {
 				testRunner(
 					testConditions,
 					originalState,
-					'RECEIVE_ENTITY_LIST',
+					types.RECEIVE_ENTITY_LIST,
 					'event',
 				);
 			} );
