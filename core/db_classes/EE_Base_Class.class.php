@@ -3055,6 +3055,90 @@ abstract class EE_Base_Class
     }
 
     /**
+     * Change $field's value to $new_value_sql (which is a string of raw SQL)
+     * @since $VID:$
+     * @param EE_Model_Field_Base $field
+     * @param string $new_value_sql eg 'column_name=123', or 'column_name=column_name+1', or
+     *                              'column_name= CASE
+                                        WHEN (`column_name` + `other_column` + 5) <= `yet_another_column`
+                                        THEN `column_name` + 5
+                                        ELSE `column_name`
+                                        END'
+     * Also updates $field on this model object with the latest value from the database.
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    protected function updateFieldInDB(EE_Model_Field_Base $field, $new_value_sql)
+    {
+        global $wpdb;
+        $field_name = $field->get_name();
+
+        $table_pk_value = $this->ID();
+        $table_obj = $this->get_model()->get_table_obj_by_alias($field->get_table_alias());
+        $table_name = $table_obj->get_table_name();
+        if ($table_obj instanceof EE_Secondary_Table ) {
+            $table_pk_field_name = $table_obj->get_fk_on_table();
+        } else {
+            $table_pk_field_name = $table_obj->get_pk_column();
+        }
+        $query =
+            "UPDATE `{$table_name}`
+            SET "
+            . $new_value_sql
+            . $wpdb->prepare(
+                "
+            WHERE `{$table_pk_field_name}` = %d;",
+                $table_pk_value
+            );
+        $result = $wpdb->query($query);
+        // If it was successful, we'd like to know the new value.
+        // If it failed, we'd also like to know the new value.
+        $new_value = $this->get_model()->get_var(
+            $this->get_model()->alter_query_params_to_restrict_by_ID(
+                $this->get_model()->get_index_primary_key_string(
+                    $this->model_field_array()
+                )
+            ),
+            $field_name
+        );
+        $this->set_from_db(
+            $field_name,
+            $new_value
+        );
+        return (bool) $result;
+    }
+
+    /**
+     * Nudges $field_name's value by $quantity, without any conditionals (in comparison to bumpConditionally())
+     * @since $VID:$
+     * @param $field_name
+     * @param $quantity
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function bump($field_name, $quantity)
+    {
+        global $wpdb;
+        $field = $this->get_model()->field_settings_for($field_name, true);
+        $column_name = $field->get_table_column();
+        return $this->updateFieldInDB(
+            $field,
+            $wpdb->prepare(
+                "`{$column_name}` =`{$column_name}` + %d",
+                $quantity
+            )
+        );
+    }
+
+    /**
      * Increases the value of the field $field_name_to_bump by $quantity, but only if the values of
      * $field_name_to_bump plus $field_name_affecting_total and $quantity won't exceed $limit_field_name's value.
      * For example, this is useful when bumping the value of TKT_reserved, TKT_sold, DTT_reserved or DTT_sold.
@@ -3072,56 +3156,31 @@ abstract class EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function bump($field_name_to_bump, $field_name_affecting_total, $limit_field_name, $quantity)
+    public function bumpConditionally($field_name_to_bump, $field_name_affecting_total, $limit_field_name, $quantity)
     {
         global $wpdb;
         $field = $this->get_model()->field_settings_for($field_name_to_bump, true);
         $column_name = $field->get_table_column();
 
-        $table_pk_value = $this->ID();
-        $table_obj = $this->get_model()->get_table_obj_by_alias($field->get_table_alias());
-        $table_name = $table_obj->get_table_name();
-        if ($table_obj instanceof EE_Secondary_Table ) {
-            $table_pk_field_name = $table_obj->get_fk_on_table();
-        } else {
-            $table_pk_field_name = $table_obj->get_pk_column();
-        }
 
         $field_affecting_total = $this->get_model()->field_settings_for($field_name_affecting_total, true);
         $column_affecting_total = $field_affecting_total->get_table_column();
 
         $limiting_field = $this->get_model()->field_settings_for($limit_field_name, true);
         $limiting_column = $limiting_field->get_table_column();
-        $query = $wpdb->prepare(
-            "UPDATE `{$table_name}`
-            SET `{$column_name}` =
+        return $this->updateFieldInDB(
+            $field,
+            $wpdb->prepare(
+                "`{$column_name}` =
             CASE
                WHEN (`{$column_name}` + `{$column_affecting_total}` + %d) <= `{$limiting_column}`
                THEN `{$column_name}` + %d
                ELSE `{$column_name}`
-            END
-            WHERE `{$table_pk_field_name}` = %d;",
-            $quantity,
-            $quantity,
-            $table_pk_value
-        );
-        $result = $wpdb->query($query);
-        // If it was successful, we'd like to know the new value.
-        // If it failed, we'd also like to know the new value.
-        $new_value = $this->get_model()->get_var(
-            $this->get_model()->alter_query_params_to_restrict_by_ID(
-                $this->get_model()->get_index_primary_key_string(
-                    $this->model_field_array()
-                )
+            END",
+                $quantity,
+                $quantity
             )
-            ,
-            $field_name_to_bump
         );
-        $this->set_from_db(
-            $field_name_to_bump,
-            $new_value
-        );
-        return (bool) $result;
     }
 
 

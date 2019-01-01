@@ -887,7 +887,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         }
         $this->_increase_reserved_for_datetimes($qty);
         // @todo: check we successfully reserved the datetimes
-        $successful_bump = $this->bump(
+        $successful_bump = $this->bumpConditionally(
             'TKT_reserved',
             'TKT_sold',
             'TKT_qty',
