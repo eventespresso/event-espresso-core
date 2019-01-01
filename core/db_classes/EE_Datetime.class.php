@@ -324,7 +324,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * increments reserved by amount passed by $qty
      *
      * @param int $qty
-     * @return void
+     * @return boolean indicating success
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -340,7 +340,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
             $qty,
             $reserved
         );
-        $this->set_reserved($reserved);
+        return $this->bumpConditionally(
+            'DTT_reserved',
+            'DTT_sold',
+            'DTT_reg_limit',
+            absint($qty)
+        );
     }
 
 
@@ -364,7 +369,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
             $qty,
             $reserved
         );
-        $this->set_reserved($reserved);
+        $this->bump('DTT_reserved', $qty * -1);
     }
 
 
