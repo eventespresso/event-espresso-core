@@ -20,6 +20,12 @@ export const createEntitySelectors = ( source ) => MODEL_NAMES.reduce(
 			state,
 			queryString,
 		) => source.getEntities( state, modelName, queryString );
+		selectors[
+			getMethodName( modelName, 'byIds', 'get', true )
+		] = (
+			state,
+			ids = [],
+		) => source.getEntitiesByIds( state, modelName, ids );
 		selectors[ getMethodName( modelName, '', 'isRequesting', true ) ] = (
 			state,
 			queryString,
@@ -45,6 +51,9 @@ export const createEntityResolvers = ( source ) => MODEL_NAMES.reduce(
 		resolvers[ getMethodName( modelName, '', 'get', true ) ] = (
 			queryString
 		) => source.getEntities( modelName, queryString );
+		resolvers[ getMethodName( modelName, 'byIds', 'get', true ) ] = (
+			ids
+		) => source.getEntitiesByIds( modelName, ids );
 		return resolvers;
 	},
 	{},

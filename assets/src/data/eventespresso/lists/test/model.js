@@ -9,7 +9,7 @@ import {
 import {
 	createEntitySelectors,
 	createEntityResolvers,
-} from '../entities';
+} from '../model';
 import * as selectors from '../selectors';
 import * as resolvers from '../resolvers';
 import { select } from '@wordpress/data';
@@ -36,10 +36,23 @@ describe( 'createEntitySelectors()', () => {
 		[
 			'getEvents',
 			'testQueryA',
-			new Map( [
-				[ 10, EventEntities.a ],
-				[ 20, EventEntities.b ],
-			] ),
+			[
+				EventEntities.b,
+				EventEntities.a,
+			],
+		],
+		[
+			'getEventsByIds',
+			[ 20, 10 ],
+			[
+				EventEntities.b,
+				EventEntities.a,
+			],
+		],
+		[
+			'getEventsByIds',
+			[ 10, 50 ],
+			[],
 		],
 		[
 			'isRequestingEvents',
@@ -49,10 +62,10 @@ describe( 'createEntitySelectors()', () => {
 		[
 			'getDatetimes',
 			'testQueryB',
-			new Map( [
-				[ 53, DateTimeEntities.b ],
-				[ 54, DateTimeEntities.c ],
-			] ),
+			[
+				DateTimeEntities.c,
+				DateTimeEntities.b,
+			],
 		],
 		[
 			'isRequestingDatetimes',
@@ -63,7 +76,7 @@ describe( 'createEntitySelectors()', () => {
 	describe( 'creates expected selectors for given modelNames', () => {
 		expectedSelectors.forEach( ( [
 			expectedSelector,
-			queryString,
+			arg,
 			expectedResponse,
 		] ) => {
 			describe( expectedSelector + '()', () => {
@@ -73,7 +86,7 @@ describe( 'createEntitySelectors()', () => {
 				it( 'returns expected value', () => {
 					expect( newSelectors[ expectedSelector ](
 						mockStateForTests,
-						queryString,
+						arg,
 					) ).toEqual( expectedResponse );
 				} );
 			} );
@@ -90,9 +103,19 @@ describe( 'createEntityResolvers()', () => {
 			{ path: '/ee/v4.8.36/events?testQueryA' },
 		],
 		[
+			'getEventsByIds',
+			[ 10, 20 ],
+			{ path: '/ee/v4.8.36/events?[EVT_ID][IN]=10,20' },
+		],
+		[
 			'getDatetimes',
 			'testQueryB',
 			{ path: '/ee/v4.8.36/datetimes?testQueryB' },
+		],
+		[
+			'getDatetimesByIds',
+			[ 30 ],
+			{ path: '/ee/v4.8.36/datetimes?[DTT_ID][IN]=30' },
 		],
 	];
 	describe( 'creates expected resolvers for given modelNames', () => {

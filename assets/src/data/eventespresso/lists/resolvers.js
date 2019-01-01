@@ -1,11 +1,10 @@
 /**
  * External imports
  */
-import { isEmpty } from 'lodash';
+import { isEmpty, find } from 'lodash';
 import {
 	applyQueryString,
-	keyEntitiesByPrimaryKeyValue,
-	createAndKeyEntitiesByPrimaryKeyValue,
+	getPrimaryKeyQueryString,
 } from '@eventespresso/model';
 
 /**
@@ -17,7 +16,6 @@ import {
 	getFactoryByModel,
 	resolveGetEntityByIdForIds,
 } from '../base-resolvers.js';
-import { keepExistingEntitiesInObject } from '../base-model';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../core/constants';
 
 /**
@@ -35,43 +33,39 @@ export function* getItems( identifier, queryString ) {
 }
 
 /**
- * Resolver for model entities returned from an endpoint.
+ * Utility for handling an entity response and constructing BaseEntity
+ * children from them.
+ *
+ * Note, this uses the entities stored in the eventespresso/core store as the
+ * authority so if an entity already exists there, it replaces what was
+ * retrieved from the server.
+ *
  * @param {string} modelName
- * @param {string} queryString
- * @return {void} if there are not entities retrieved from the endpoint.
+ * @param {Array} response
+ * @return {IterableIterator<*>|Array<BaseEntity>}  An empty array if the
+ * factory cannot be retrieved for the model.  Otherwise the constructed
+ * entities.
  */
-export function* getEntities( modelName, queryString ) {
-	let response = yield fetch( {
-		path: applyQueryString( modelName, queryString ),
-	} );
-	if ( isEmpty( response ) ) {
-		return;
-	}
-	response = keyEntitiesByPrimaryKeyValue( modelName, response );
-
+export function* buildAndDispatchEntitiesFromResponse( modelName, response ) {
 	const factory = yield getFactoryByModel( modelName );
 	if ( isEmpty( factory ) ) {
-		return;
+		return [];
 	}
-	let fullEntities = createAndKeyEntitiesByPrimaryKeyValue(
-		factory,
-		response,
-	);
-
-	const entityIds = Array.from( fullEntities.keys() );
-
+	let fullEntities = response.map( entity => factory.fromExisting( entity ) );
+	const entityIds = fullEntities.map( entity => entity.id );
 	// are there already entities for the ids in the store?  If so, we use those
 	const existingEntities = yield select(
 		CORE_REDUCER_KEY,
 		'getEntitiesByIds',
+		modelName,
 		entityIds
 	);
-
 	if ( ! isEmpty( existingEntities ) ) {
-		fullEntities = keepExistingEntitiesInObject(
-			existingEntities,
-			fullEntities,
-		);
+		fullEntities = fullEntities.map( ( entity ) => {
+			return find( existingEntities, existingEntity => {
+				return existingEntity.id === entity.id;
+			} ) || entity;
+		} );
 	}
 	yield dispatch(
 		CORE_REDUCER_KEY,
@@ -80,5 +74,44 @@ export function* getEntities( modelName, queryString ) {
 		fullEntities
 	);
 	yield resolveGetEntityByIdForIds( modelName, entityIds );
+	return fullEntities;
+}
+
+/**
+ * Resolver for model entities returned from an endpoint.
+ * @param {string} modelName
+ * @param {string} queryString
+ * @return {IterableIterator<*>|Array<BaseEntity>} An empty array if no
+ * entities retrieved.
+ */
+export function* getEntities( modelName, queryString ) {
+	const response = yield fetch( {
+		path: applyQueryString( modelName, queryString ),
+	} );
+	if ( isEmpty( response ) ) {
+		return [];
+	}
+	const fullEntities = yield buildAndDispatchEntitiesFromResponse( modelName, response );
+	yield receiveEntityResponse( modelName, queryString, fullEntities );
+}
+
+/**
+ * Resolver for getting model entities for a given set of ids
+ * @param {string} modelName
+ * @param {Array<number>}ids
+ * @return {IterableIterator<*>|Array} An empty array if no entities retrieved.
+ */
+export function* getEntitiesByIds( modelName, ids = [] ) {
+	const queryString = getPrimaryKeyQueryString( modelName, ids );
+	const response = yield fetch( {
+		path: applyQueryString(
+			modelName,
+			queryString
+		),
+	} );
+	if ( isEmpty( response ) ) {
+		return [];
+	}
+	const fullEntities = yield buildAndDispatchEntitiesFromResponse( modelName, response );
 	yield receiveEntityResponse( modelName, queryString, fullEntities );
 }

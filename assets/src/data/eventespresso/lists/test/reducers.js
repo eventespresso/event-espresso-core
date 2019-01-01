@@ -1,7 +1,7 @@
 /**
- * External dependencies
+ * External imports
  */
-import deepFreeze from 'deep-freeze';
+import { fromJS, OrderedMap, Map, Set } from 'immutable';
 
 /**
  * Internal dependencies
@@ -48,47 +48,54 @@ describe( 'receiveListItems()', () => {
 	it( 'returns the expected default object (from mock data)', () => {
 		const state = receiveListItems( undefined, {} );
 		expect( state ).toEqual(
-			{ datetime: {}, event: {}, term: {}, ticket: {}, venue: {} },
+			fromJS( { datetime: {}, event: {}, term: {}, ticket: {}, venue: {} } ),
 		);
 	} );
 	describe( 'RECEIVE_LIST action handling', () => {
 		describe( 'returns correct state for multiple consecutive ' +
 			'queries', () => {
-			const originalState = deepFreeze( { event: {} } );
+			const originalState = fromJS( { event: {} } );
 			const testConditions = [
 				[
 					'?some_value=1',
 					genericObjects,
-					{
-						event: {},
-						generic: {
-							'?some_value=1': genericObjects,
-						},
-					},
+					originalState.set(
+						'generic',
+						Map().set(
+							'?some_value=1',
+							Set( genericObjects )
+						)
+					),
 					false,
 				],
 				[
 					'?some_other_value=1',
 					genericObjects,
-					{
-						event: {},
-						generic: {
-							'?some_value=1': genericObjects,
-							'?some_other_value=1': genericObjects,
-						},
-					},
+					originalState.set(
+						'generic',
+						Map().set(
+							'?some_value=1',
+							Set( genericObjects )
+						).set(
+							'?some_other_value=1',
+							Set( genericObjects )
+						)
+					),
 					false,
 				],
 				[
 					'?some_value=1',
 					genericObjects,
-					{
-						event: {},
-						generic: {
-							'?some_value=1': genericObjects,
-							'?some_other_value=1': genericObjects,
-						},
-					},
+					originalState.set(
+						'generic',
+						Map().set(
+							'?some_value=1',
+							Set( genericObjects )
+						).set(
+							'?some_other_value=1',
+							Set( genericObjects )
+						)
+					),
 					true,
 				],
 			];
@@ -103,7 +110,7 @@ describe( 'receiveListItems()', () => {
 	describe( 'RECEIVE_ENTITY_LIST action handling', () => {
 		it( 'returns with received events for known model and does not affect' +
 			' original state', () => {
-			const originalState = deepFreeze( { event: {} } );
+			const originalState = fromJS( { event: {} } );
 			const state = receiveListItems( originalState, {
 				type: 'RECEIVE_ENTITY_LIST',
 				identifier: 'event',
@@ -111,46 +118,84 @@ describe( 'receiveListItems()', () => {
 				items: eventEntityItems,
 			} );
 			expect( state ).not.toEqual( originalState );
-			expect( state ).toEqual( {
-				event: {
-					'?some_value=1': eventEntityItems,
-				},
-			} );
+			expect( state ).toEqual(
+				originalState.set(
+					'event',
+					Map().set(
+						'?some_value=1',
+						OrderedMap(
+							eventEntityItems.map(
+								( entity ) => [ entity.id, entity ]
+							)
+						)
+					)
+				)
+			);
 		} );
 		describe( 'returns correct state for multiple consecutive queries',
 			() => {
-				const originalState = deepFreeze( { event: {} } );
+				const originalState = fromJS( { event: {} } );
 				const testConditions = [
 					[
 						'?some_value=1',
 						eventEntityItems,
-						{
-							event: {
-								'?some_value=1': eventEntityItems,
-							},
-						},
+						originalState.set(
+							'event',
+							Map().set(
+								'?some_value=1',
+								OrderedMap(
+									eventEntityItems.map(
+										( entity ) => [ entity.id, entity ]
+									)
+								)
+							)
+						),
 						false,
 					],
 					[
 						'?some_other_value=1',
 						eventEntityItems,
-						{
-							event: {
-								'?some_value=1': eventEntityItems,
-								'?some_other_value=1': eventEntityItems,
-							},
-						},
+						originalState.set(
+							'event',
+							Map().set(
+								'?some_value=1',
+								OrderedMap(
+									eventEntityItems.map(
+										( entity ) => [ entity.id, entity ]
+									)
+								),
+							).set(
+								'?some_other_value=1',
+								OrderedMap(
+									eventEntityItems.map(
+										( entity ) => [ entity.id, entity ]
+									)
+								),
+							)
+						),
 						false,
 					],
 					[
 						'?some_value=1',
 						eventEntityItems,
-						{
-							event: {
-								'?some_value=1': eventEntityItems,
-								'?some_other_value=1': eventEntityItems,
-							},
-						},
+						originalState.set(
+							'event',
+							Map().set(
+								'?some_value=1',
+								OrderedMap(
+									eventEntityItems.map(
+										( entity ) => [ entity.id, entity ]
+									)
+								),
+							).set(
+								'?some_other_value=1',
+								OrderedMap(
+									eventEntityItems.map(
+										( entity ) => [ entity.id, entity ]
+									)
+								),
+							)
+						),
 						true,
 					],
 				];

@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { assertEntityHasKey } from '../../model';
 import { isResolving } from '../base-selectors';
 import { REDUCER_KEY } from './constants';
 
@@ -9,15 +8,18 @@ import { REDUCER_KEY } from './constants';
  * External dependencies
  */
 import { __, sprintf } from '@eventespresso/i18n';
-
-const EMPTY_ARRAY = [];
-const EMPTY_MAP = new Map();
+import createSelector from 'rememo';
+import {
+	assertImmutableObjectHasPath,
+	getPrimaryKeyQueryString,
+} from '@eventespresso/model';
+import { OrderedMap, Set } from 'immutable';
 
 /**
  * Generic helper for retrieving items from state for given identifier and
  * queryString.
  *
- * @param {Object} state
+ * @param {Immutable.Map} state
  * @param {string} identifier
  * @param {string} queryString
  * @param {*} defaultEmpty  Caller can supply what the default is when state is
@@ -26,62 +28,83 @@ const EMPTY_MAP = new Map();
  * querystring does not exist in the state or the given items as an array or
  * object (depending on how they are stored in the state).
  */
-function retrieveItems(
-	state,
-	identifier,
-	queryString,
-	defaultEmpty = EMPTY_ARRAY
-) {
-	return state[ identifier ] && state[ identifier ][ queryString ] ?
-		state[ identifier ][ queryString ] :
-		defaultEmpty;
-}
+const retrieveItems =
+	(
+		state,
+		identifier,
+		queryString,
+		defaultEmpty = Set()
+	) => state.getIn( [ identifier, queryString ] ) || defaultEmpty;
 
 /**
  * Returns all the items for the given identifier and queryString
  *
- * @param {Object} state Data state.
+ * @param {Immutable.Map} state Data state.
  * @param {string} identifier The identifier the items are being retrieved for.
  * @param {string} queryString The query string for retrieving the items.
  * @return {Array} Returns an array of items for the given model and query.
  */
-export function getItems( state, identifier, queryString ) {
-	return retrieveItems( state, identifier, queryString );
-}
+export const getItems = createSelector(
+	( state, identifier, queryString ) => retrieveItems(
+		state,
+		identifier,
+		queryString
+	).toArray(),
+	( state, identifier, queryString ) => [
+		state.getIn( [ identifier, queryString ] ),
+	]
+);
 
 /**
  * Returns all the model entities for the given modelName and query string.
  *
- * @param {Object} state
+ * @param {Immutable.Map} state
  * @param {string} modelName
  * @param {string} queryString
- * @return {Map} Returns entities.
+ * @return {Array<BaseEntity>} Returns array of entities.
  */
-export function getEntities( state, modelName, queryString ) {
-	return retrieveItems( state, modelName, queryString, EMPTY_MAP );
-}
+export const getEntities = createSelector(
+	( state, modelName, queryString ) => retrieveItems(
+		state,
+		modelName,
+		queryString,
+		OrderedMap()
+	).valueSeq().toArray(),
+	( state, modelName, queryString ) => [
+		state.getIn( [ modelName, queryString ] ),
+	]
+);
 
-export function getEntitiesByIds( state, modelName, ids = [] ) {
-	/**
-	 * @todo once https://github.com/eventespresso/event-espresso-core/issues/781
-	 * is done, then we'll have an easier way to build the necessary query for
-	 * this type of request.
-	 */
-}
+/**
+ * Returns all the model entities for the given modelName and query string.
+ *
+ * @param {Immutable.Map} state
+ * @param {string} modelName
+ * @param {Array} ids
+ * @return {Array<BaseEntity>} An array of entities.
+ */
+export const getEntitiesByIds = ( state, modelName, ids = [] ) => {
+	try {
+		const queryString = getPrimaryKeyQueryString( modelName, ids );
+		return getEntities( state, modelName, queryString );
+	} catch ( e ) {
+		return [];
+	}
+};
 
 /**
  * Helper indicating whether the given identifier, selectorName, and queryString
  * is being resolved or not.
  *
- * @param {Object} state
+ * @param {Immutable.Map} state
  * @param {string} identifier
  * @param {string} selectorName
  * @param {string} queryString
  * @return {boolean} Returns true if the selector is currently requesting items.
  */
 function isRequesting( state, identifier, selectorName, queryString ) {
-	assertEntityHasKey(
-		identifier,
+	assertImmutableObjectHasPath(
+		[ identifier ],
 		state,
 		sprintf(
 			__(
@@ -98,7 +121,7 @@ function isRequesting( state, identifier, selectorName, queryString ) {
  * Returns whether the items for the given model name and query string are being
  * requested.
  *
- * @param {Object} state Data state.
+ * @param {Immutable.Map} state Data state.
  * @param {string} identifier  The identifier for the items being requested
  * @param {string} queryString The query string for the request
  * @return {boolean} Whether items are being requested or not.
@@ -110,7 +133,7 @@ export function isRequestingItems( state, identifier, queryString ) {
 /**
  * Returns whether the get entities request is in the process of being resolved
  * or not.
- * @param {Object} state
+ * @param {Immutable.Map} state
  * @param {string} modelName
  * @param {string} queryString
  * @return {boolean} True means entities (for the given model) are being

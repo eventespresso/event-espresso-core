@@ -5,13 +5,24 @@ import { isGenerator } from '@eventespresso/validators';
 /**
  * Internal dependencies
  */
-import { getItems, getEntities } from '../resolvers';
+import {
+	getItems,
+	getEntities,
+	getEntitiesByIds,
+	buildAndDispatchEntitiesFromResponse,
+} from '../resolvers';
 import { receiveResponse, receiveEntityResponse } from '../actions';
 import {
 	EventResponses,
 	eventFactory,
 	EventEntities,
 } from '../../test/fixtures/base';
+import {
+	select,
+	dispatch,
+	fetch,
+} from '../../base-controls';
+import { REDUCER_KEY as CORE_REDUCER_KEY } from '../../core/constants';
 
 describe( 'getItems()', () => {
 	describe( 'yields with expected response', () => {
@@ -20,8 +31,10 @@ describe( 'getItems()', () => {
 		const fulfillment = getItems( 'generic', queryString );
 		// trigger initial fetch
 		it( 'yields expected result for api fetch action object', () => {
-			const { value: apiFetchAction } = fulfillment.next();
-			expect( apiFetchAction.request ).toEqual( { path: '?test_value=1' } );
+			const { value } = fulfillment.next();
+			expect( value ).toEqual(
+				fetch( { path: '?test_value=1' } )
+			);
 		} );
 		it( 'yields expected result for received value action object', () => {
 			// Provide response and trigger action
@@ -33,163 +46,151 @@ describe( 'getItems()', () => {
 	} );
 } );
 
+describe( 'buildAndDispatchEntitiesFromResponse()', () => {
+	const response = [ EventResponses.a ];
+	let fulfillment;
+	const reset = () => fulfillment = buildAndDispatchEntitiesFromResponse(
+		'event',
+		response
+	);
+	it( 'yields expected getFactoryByModel generator', () => {
+		reset();
+		const { value } = fulfillment.next();
+		expect( isGenerator( value ) ).toBe( true );
+	} );
+	it( 'returns an empty array when factory could not be retrieved', () => {
+		const { value, done } = fulfillment.next( {} );
+		expect( value ).toEqual( [] );
+		expect( done ).toBe( true );
+	} );
+	it( 'yields expected select action object for core ' +
+		'getEntitiesById', () => {
+		reset();
+		fulfillment.next();
+		const { value } = fulfillment.next(
+			eventFactory
+		);
+		expect( value ).toEqual(
+			select(
+				CORE_REDUCER_KEY,
+				'getEntitiesByIds',
+				'event',
+				[ 10 ]
+			)
+		);
+	} );
+	it( 'yields entities from core state as fullEntities instead of from' +
+		'when entities matching that id are in the core state', () => {
+		const replacedEntities = [ eventFactory.fromExisting( EventResponses.a ) ];
+		fulfillment.next( replacedEntities );
+		fulfillment.next();
+		const { value, done } = fulfillment.next();
+		expect( value[ 0 ] ).toBe( replacedEntities[ 0 ] );
+		expect( done ).toBe( true );
+	} );
+	it( 'yields expected dispatch action object for core receiving ' +
+		'entity records', () => {
+		reset();
+		fulfillment.next();
+		fulfillment.next( eventFactory );
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			dispatch(
+				CORE_REDUCER_KEY,
+				'receiveEntityRecords',
+				'event',
+				[ EventEntities.a ]
+			)
+		);
+	} );
+	it( 'yields generator for resolveGetEntityByIdForIds', () => {
+		const { value } = fulfillment.next();
+		expect( isGenerator( value ) ).toBe( true );
+	} );
+	it( 'returns expected entities on completion', () => {
+		const { value, done } = fulfillment.next();
+		expect( value ).toEqual( [ EventEntities.a ] );
+		expect( done ).toBe( true );
+	} );
+} );
+
 describe( 'getEntities()', () => {
 	const queryString = 'test_value=1';
+	let fulfillment;
 	describe( 'yields with expected response for main generator', () => {
-		const fulfillment = getEntities( 'event', queryString );
+		const reset = () => fulfillment = getEntities(
+			'event',
+			queryString
+		);
 		it( 'yields expected result for api fetch action object', () => {
+			reset();
 			const { value: apiFetchAction } = fulfillment.next();
 			expect( apiFetchAction.request ).toEqual(
 				{ path: '/ee/v4.8.36/events?test_value=1' }
 			);
 		} );
-		it( 'yields expected getFactoryByModel generator', () => {
-			const { value: getFactoryByModelGenerator } = fulfillment.next(
-				[ EventResponses.a ]
-			);
-			expect( isGenerator( getFactoryByModelGenerator ) ).toBe( true );
+		it( 'returns empty array if response is empty', () => {
+			const { value, done } = fulfillment.next( [] );
+			expect( value ).toEqual( [] );
+			expect( done ).toBe( true );
 		} );
-		it( 'yields expected select action object for core ' +
-			'getEntitiesById', () => {
-			const { value: selectGetEntitiesByIdAction } = fulfillment.next(
-				eventFactory
-			);
-			expect( selectGetEntitiesByIdAction.args ).toEqual(
-				[ [ 10 ] ]
-			);
-		} );
-		it( 'yields expected dispatch action object for core receiving ' +
-			'entity records', () => {
-			const { value: dispatchReceiveEntityRecords } = fulfillment
-				.next( {} );
-			expect( dispatchReceiveEntityRecords.args ).toEqual(
-				[ 'event', new Map( [ [ 10, EventEntities.a ] ] ) ]
-			);
+		it( 'yields generator for buildAndDispatchEntitiesFromResponse', () => {
+			reset();
+			fulfillment.next();
+			const { value } = fulfillment.next( [ EventResponses.a ] );
+			expect( isGenerator( value ) ).toBe( true );
 		} );
 		it( 'yields expected result for received value action object', () => {
-			const { value: received } = fulfillment.next();
+			const { value: received } = fulfillment.next(
+				[ EventEntities.a ]
+			);
 			expect( received ).toEqual(
 				receiveEntityResponse(
 					'event',
 					'test_value=1',
-					new Map( [ [ 10, EventEntities.a ] ] )
+					[ EventEntities.a ]
 				)
 			);
 		} );
 	} );
-	describe( 'yields with expected response for ' +
-		'getFactoryByModelGenerator', () => {
-		const fulfillment = getEntities( 'event', queryString );
-		fulfillment.next();
-		const { value: getFactoryByModelGenerator } = fulfillment.next(
-			[ EventResponses.a ]
+} );
+
+describe( 'getEntitiesByIds()', () => {
+	let fulfillment;
+	const reset = () => fulfillment = getEntitiesByIds(
+		'event',
+		[ 10, 20 ]
+	);
+	it( 'yields expected result for api fetch action object', () => {
+		reset();
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			fetch( {
+				path: '/ee/v4.8.36/events?[EVT_ID][IN]=10,20'
+			} )
 		);
-		it( 'yields expected hasResolvedFactoryForModel action', () => {
-			const {
-				value: hasResolvedFactoryForModelAction,
-			} = getFactoryByModelGenerator.next();
-			expect( hasResolvedFactoryForModelAction ).toEqual(
-				{
-					args: [ 'event' ],
-					reducerKey: 'eventespresso/schema',
-					selectorName: 'hasResolvedFactoryForModel',
-					type: 'SELECT',
-				}
-			);
-		} );
-		it( 'yields expected getSchemaByModel generator', () => {
-			const {
-				value: getSchemaByModelGenerator,
-			} = getFactoryByModelGenerator.next( false );
-			expect( isGenerator( getSchemaByModelGenerator ) ).toBe( true );
-		} );
-		it( 'yields expected generator for getting factory', () => {
-			const {
-				value: getFactoryForModelFunction,
-			} = getFactoryByModelGenerator.next( 'test' );
-			expect( isGenerator( getFactoryForModelFunction ) )
-				.toBe( true );
-		} );
-		it( 'yields expected dispatch action for receiving factory', () => {
-			const {
-				value: dispatchReceiveFactoryAction,
-			} = getFactoryByModelGenerator.next( 'eventFactory' );
-			expect( dispatchReceiveFactoryAction ).toEqual( {
-				type: 'DISPATCH',
-				reducerKey: 'eventespresso/schema',
-				dispatchName: 'receiveFactoryForModel',
-				args: [ 'event', 'eventFactory' ],
-			} );
-		} );
-		it( 'yields expected dispatch action for finishing factory ' +
-			'resolution', () => {
-			const {
-				value: finishResolutionAction,
-			} = getFactoryByModelGenerator.next();
-			expect( finishResolutionAction ).toEqual( {
-				type: 'DISPATCH',
-				reducerKey: 'core/data',
-				dispatchName: 'finishResolution',
-				args: [
-					'eventespresso/schema',
-					'getFactoryForModel',
-					[ 'event' ],
-				],
-			} );
-		} );
 	} );
-	describe( 'yields with expected response for getSchemaByModel ' +
-		'generator', () => {
-		const fulfillment = getEntities( 'event', queryString );
+	it( 'returns an empty array when there is nothing in the response', () => {
+		const { value, done } = fulfillment.next( [] );
+		expect( value ).toEqual( [] );
+		expect( done ).toBe( true );
+	} );
+	it( 'yields generator for buildAndDispatchEntitiesFromResponse', () => {
+		reset();
 		fulfillment.next();
-		const { value: FactoryGenerator } = fulfillment.next( [ EventResponses.a ] );
-		FactoryGenerator.next();
-		const {
-			value: getSchemaByModelGenerator,
-		} = FactoryGenerator.next( false );
-		it( 'yields expected hasResolvedSchema action', () => {
-			const {
-				value: hasResolvedSchemaAction,
-			} = getSchemaByModelGenerator.next();
-			expect( hasResolvedSchemaAction ).toEqual( {
-				args: [ 'event' ],
-				reducerKey: 'eventespresso/schema',
-				selectorName: 'hasResolvedSchemaForModel',
-				type: 'SELECT',
-			} );
-		} );
-		it( 'yields expected generator for getting schema', () => {
-			const {
-				value: getSchemaForModelFunction,
-			} = getSchemaByModelGenerator.next( false );
-			expect( isGenerator( getSchemaForModelFunction ) )
-				.toBe( true );
-		} );
-		it( 'yields dispatch action for receiveSchemaForModel', () => {
-			const {
-				value: dispatchReceiveSchemaAction,
-			} = getSchemaByModelGenerator.next( 'test' );
-			expect( dispatchReceiveSchemaAction ).toEqual( {
-				type: 'DISPATCH',
-				reducerKey: 'eventespresso/schema',
-				dispatchName: 'receiveSchemaForModel',
-				args: [ 'event', 'test' ],
-			} );
-		} );
-		it( 'yields dispatch action for finishing Resolution', () => {
-			const {
-				value: finishResolutionAction,
-			} = getSchemaByModelGenerator.next();
-			expect( finishResolutionAction ).toEqual( {
-				type: 'DISPATCH',
-				reducerKey: 'core/data',
-				dispatchName: 'finishResolution',
-				args: [
-					'eventespresso/schema',
-					'getSchemaForModel',
-					[ 'event' ],
-				],
-			} );
-		} );
+		const { value } = fulfillment.next(
+			[ EventResponses.a, EventResponses.b ]
+		);
+		expect( isGenerator( value ) ).toBe( true );
+	} );
+	it( 'yields expected object for received value action creator', () => {
+		const { value } = fulfillment.next( [ EventEntities.a ] );
+		expect( value ).toEqual(
+			receiveEntityResponse(
+				'event',
+				'[EVT_ID][IN]=10,20',
+				[ EventEntities.a ]
+			)
+		);
 	} );
 } );
