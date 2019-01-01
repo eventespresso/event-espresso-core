@@ -32,6 +32,43 @@ export const assertEntityHasKey = ( key, entity, message = '' ) => {
 };
 
 /**
+ * Asserts whether the given path in the provided immutable object exists.
+ * This is used when calling code wants an exception to be thrown if the given
+ * search path array does not exist in the immutable object.
+ *
+ * If the immutable object is setup like this:
+ *
+ * immutable = Immutable.Map().set( 'event', Immutable.Map().set( 10, Event ) );
+ *
+ * Then a valid searchable path could be `[ 'event', 10 ]`.  An invalid path
+ * would be `[ 'datetime', 10 ]`
+ *
+ * @param {Array} path  Searchable path for the immutable ojbect to verify.
+ * @param {Immutable} immutable  An immutable object (Map, Set, List etc)
+ * @param {string} message A custom message to use.
+ * @throws Exception
+ */
+export const assertImmutableObjectHasPath = (
+	path,
+	immutable,
+	message = ''
+) => {
+	if ( message === '' ) {
+		message = sprintf(
+			__(
+				'The provided immutable object (%s) does not have the given path (%s)',
+				'event_espresso',
+			),
+			immutable,
+			path,
+		);
+	}
+	if ( ! immutable.hasIn( path ) ) {
+		throw new Exception( message );
+	}
+}
+
+/**
  * Asserts whether the given value is an array.
  *
  * @param {*} items

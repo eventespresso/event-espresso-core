@@ -3,6 +3,7 @@
  */
 import {
 	assertEntityHasKey,
+	assertImmutableObjectHasPath,
 	assertIsArray,
 	assertIsNotEmpty,
 	assertIsMap,
@@ -12,6 +13,7 @@ import {
  * External imports
  */
 import { Exception } from '@eventespresso/eejs';
+import { Map as IMap } from 'immutable';
 
 describe( 'Testing assertion utilities', () => {
 	const tester = ( method, args ) => () => method( ...args );
@@ -21,6 +23,16 @@ describe( 'Testing assertion utilities', () => {
 			[ 'foo', { bar: 'foo' }, '' ],
 			[ 'foo', { bar: 'foo' }, 'fail' ],
 			[ 'foo', { foo: 'bar' }, '' ],
+		],
+		[
+			assertImmutableObjectHasPath,
+			[ [ 'datetime', 10 ], IMap().set( 'event', IMap().set( 10, {} ) ) ],
+			[
+				[ 'datetime', 10 ],
+				IMap().set( 'event', IMap().set( 10, {} ) ),
+				'fail',
+			],
+			[ [ 'event', 10 ], IMap().set( 'event', IMap().set( 10, {} ) ) ],
 		],
 		[
 			assertIsArray,
