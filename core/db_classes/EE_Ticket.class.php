@@ -863,7 +863,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param int    $qty
      * @param string $source
-     * @return void
+     * @return bool whether we successfully reserved the ticket or not.
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
@@ -878,23 +878,32 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
             $qty,
             $source
         );
-        $qty = absint($qty);
-        $reserved = $this->reserved() + $qty;
-        if ($reserved
-            && $this->add_extra_meta(
+        if (! $this->add_extra_meta(
                 EE_Ticket::META_KEY_TICKET_RESERVATIONS,
                 "{$qty} from {$source}"
             )
         ) {
-            $this->_increase_reserved_for_datetimes($qty);
-            $this->set_reserved($reserved);
-            do_action(
-                'AHEE__EE_Ticket__increase_reserved',
-                $this,
-                $qty,
-                $reserved
-            );
+            return false;
         }
+        $this->_increase_reserved_for_datetimes($qty);
+        // @todo: check we successfully reserved the datetimes
+        $successful_bump = $this->bump(
+            'TKT_reserved',
+            'TKT_sold',
+            'TKT_qty',
+            absint($qty)
+        );
+        if(! $successful_bump) {
+            // @todo: undo reserving the datetimes
+        }
+        do_action(
+            'AHEE__EE_Ticket__increase_reserved',
+            $this,
+            $qty,
+            $this->reserved(),
+            $successful_bump
+        );
+        return $successful_bump;
     }
 
 
