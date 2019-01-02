@@ -44,7 +44,7 @@ export const assertEntityHasKey = ( key, entity, message = '' ) => {
  * would be `[ 'datetime', 10 ]`
  *
  * @param {Array} path  Searchable path for the immutable ojbect to verify.
- * @param {Immutable} immutable  An immutable object (Map, Set, List etc)
+ * @param {Immutable.Map|Immutable.Set} immutable  An immutable object (Map, Set, List etc)
  * @param {string} message A custom message to use.
  * @throws Exception
  */
