@@ -747,89 +747,92 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
 
     /**
-     * increments sold by amount passed by $qty
+     * Increments sold by amount passed by $qty AND decrements the reserved count on both this ticket and its
+     * associated datetimes.
      *
      * @param int $qty
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function increase_sold($qty = 1)
     {
-        $sold = $this->sold() + $qty;
-        // remove ticket reservation, but don't adjust datetime reservations,  because that will happen
-        // via \EE_Datetime::increase_sold() when \EE_Ticket::_increase_sold_for_datetimes() is called
-        $this->decrease_reserved($qty, false, "TKT: {$this->ID()} (ln:" . __LINE__ . ')');
-        $this->_increase_sold_for_datetimes($qty);
-        $this->set_sold($sold);
+        $qty = absint($qty);
+        // increment sold and decrement reserved datetime quantities simultaneously
+        // don't worry about failures, because they must have already had a spot reserved
+        $this->sellDatetimes($qty);
+        // Increment and decrement ticket quantities simultaneously
+        $this->bump(
+            [
+                'TKT_reserved' => $qty * -1,
+                'TKT_sold' => $qty
+            ]
+        );
         do_action(
             'AHEE__EE_Ticket__increase_sold',
             $this,
             $qty,
-            $sold
+            $this->sold()
         );
     }
 
-
     /**
-     * Increases sold on related datetimes
-     *
-     * @param int $qty
-     * @return void
-     * @throws \EE_Error
+     * On each datetiem related to this ticket, increases its sold count and decreases its reserved count by $qty.
+     * @since $VID:$
+     * @param int $qty positive or negative. Positive means to increase sold counts (and decrease reserved counts),
+     *             Negative means to decreases old counts (and increase reserved counts).
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    protected function _increase_sold_for_datetimes($qty = 1)
+    protected function sellDatetimes($qty)
     {
-        $datetimes = $this->datetimes();
-        if (is_array($datetimes)) {
-            foreach ($datetimes as $datetime) {
-                if ($datetime instanceof EE_Datetime) {
-                    $datetime->increase_sold($qty);
-                    $datetime->save();
-                }
-            }
+        $qty = $qty;
+        foreach ($this->datetimes() as $datetime) {
+            $datetime->bump(
+                [
+                    'DTT_reserved' => $qty * -1,
+                    'DTT_sold' => $qty
+                ]
+            );
         }
     }
 
 
     /**
-     * decrements (subtracts) sold by amount passed by $qty
+     * Decrements (subtracts) sold by amount passed by $qty on both the ticket and its related datetimes.
+     * But does not affect the reserved counts.
      *
      * @param int $qty
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function decrease_sold($qty = 1)
     {
-        $sold = $this->sold() - $qty;
-        $this->_decrease_sold_for_datetimes($qty);
-        $this->set_sold($sold);
+        $qty = absint($qty);
+        foreach ($this->datetimes() as $datetime) {
+            $datetime->decrease_sold($qty);
+        }
+        $this->bump(
+            [
+                'TKT_sold' => $qty * -1
+            ]
+        );
         do_action(
             'AHEE__EE_Ticket__decrease_sold',
             $this,
             $qty,
-            $sold
+            $this->sold()
         );
-    }
-
-
-    /**
-     * Decreases sold on related datetimes
-     *
-     * @param int $qty
-     * @return void
-     * @throws \EE_Error
-     */
-    protected function _decrease_sold_for_datetimes($qty = 1)
-    {
-        $datetimes = $this->datetimes();
-        if (is_array($datetimes)) {
-            foreach ($datetimes as $datetime) {
-                if ($datetime instanceof EE_Datetime) {
-                    $datetime->decrease_sold($qty);
-                    $datetime->save();
-                }
-            }
-        }
     }
 
 
@@ -861,7 +864,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
 
     /**
-     * increments reserved by amount passed by $qty
+     * Increments reserved by amount passed by $qty, and persists it immediately to the database.
      *
      * @param int    $qty
      * @param string $source
@@ -968,7 +971,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
 
     /**
-     * decrements (subtracts) reserved by amount passed by $qty
+     * Decrements (subtracts) reserved by amount passed by $qty, and persists it immediately to the database.
      *
      * @param int    $qty
      * @param bool   $adjust_datetimes
@@ -993,8 +996,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
             $this->_decrease_reserved_for_datetimes($qty);
         }
         $this->bump(
-            'TKT_reserved',
-            $qty * -1
+            [
+                'TKT_reserved' =>  absint($qty) * -1
+            ]
         );
         do_action(
             'AHEE__EE_Ticket__decrease_reserved',
@@ -1415,10 +1419,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         $sold = $this->sold();
         if ($count_regs_for_this_ticket > $sold) {
             $this->increase_sold($count_regs_for_this_ticket - $sold);
-            $this->save();
         } elseif ($count_regs_for_this_ticket < $sold) {
             $this->decrease_sold($count_regs_for_this_ticket - $sold);
-            $this->save();
         }
         return $count_regs_for_this_ticket;
     }

@@ -239,7 +239,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     * increments sold by amount passed by $qty
+     * Increments sold by amount passed by $qty, and persists it immediately to the database.
      *
      * @param int $qty
      * @throws ReflectionException
@@ -250,15 +250,17 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      */
     public function increase_sold($qty = 1)
     {
-        $sold = $this->sold() + $qty;
-        // remove ticket reservation
-        $this->decrease_reserved($qty);
-        $this->set_sold($sold);
+        $this->bump(
+            [
+                'DTT_reserved' => $qty * -1,
+                'DTT_sold' => $qty
+            ]
+        );
         do_action(
             'AHEE__EE_Datetime__increase_sold',
             $this,
             $qty,
-            $sold
+            $this->sold()
         );
     }
 
@@ -275,13 +277,16 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      */
     public function decrease_sold($qty = 1)
     {
-        $sold = $this->sold() - $qty;
-        $this->set_sold($sold);
+        $this->bump(
+            [
+                'DTT_sold' => $qty * -1
+            ]
+        );
         do_action(
             'AHEE__EE_Datetime__decrease_sold',
             $this,
             $qty,
-            $sold
+            $this->sold()
         );
     }
 
@@ -321,7 +326,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     * increments reserved by amount passed by $qty
+     * Increments reserved by amount passed by $qty, and persists it immediately to the database.
      *
      * @param int $qty
      * @return boolean indicating success
@@ -350,7 +355,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     * decrements (subtracts) reserved by amount passed by $qty
+     * Decrements (subtracts) reserved by amount passed by $qty, and persists it immediately to the database.
      *
      * @param int $qty
      * @return void
@@ -369,7 +374,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
             $qty,
             $reserved
         );
-        $this->bump('DTT_reserved', $qty * -1);
+        $this->bump(
+            [
+                'DTT_reserved' => $qty * -1
+            ]
+        );
     }
 
 
@@ -1283,10 +1292,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
         $sold = $this->sold();
         if ($count_regs_for_this_datetime > $sold) {
             $this->increase_sold($count_regs_for_this_datetime - $sold);
-            $this->save();
         } elseif ($count_regs_for_this_datetime < $sold) {
             $this->decrease_sold($count_regs_for_this_datetime - $sold);
-            $this->save();
         }
         return $count_regs_for_this_datetime;
     }

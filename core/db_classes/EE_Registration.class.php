@@ -163,7 +163,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             // TO approved
             if ($new_STS_ID === EEM_Registration::status_id_approved) {
                 // reserve a space by incrementing ticket and datetime sold values
-                $this->_reserve_registration_space();
+                $this->_sell_registration_space();
                 do_action('AHEE__EE_Registration__set_status__to_approved', $this, $old_STS_ID, $new_STS_ID, $context);
                 // OR FROM  approved
             } elseif ($old_STS_ID === EEM_Registration::status_id_approved) {
@@ -435,14 +435,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws ReflectionException
      * @throws UnexpectedEntityException
      */
-    private function _reserve_registration_space()
+    private function _sell_registration_space()
     {
         // reserved ticket and datetime counts will be decremented as sold counts are incremented
         // so stop tracking that this reg has a ticket reserved
         $this->release_reserved_ticket(false, "REG: {$this->ID()} (ln:" . __LINE__ . ')');
         $ticket = $this->ticket();
         $ticket->increase_sold();
-        $ticket->save();
         // possibly set event status to sold out
         $this->event()->perform_sold_out_status_check();
     }
@@ -465,7 +464,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     {
         $ticket = $this->ticket();
         $ticket->decrease_sold();
-        $ticket->save();
         // possibly change event status from sold out back to previous status
         $this->event()->perform_sold_out_status_check();
     }
@@ -527,7 +525,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             ) {
                 $ticket = $this->ticket();
                 $ticket->decrease_reserved(1, true, "REG: {$this->ID()} (ln:" . __LINE__ . ')');
-                $ticket->save();
             }
         }
     }
