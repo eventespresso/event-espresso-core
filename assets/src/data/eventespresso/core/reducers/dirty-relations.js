@@ -18,24 +18,23 @@ const { relations: types } = ACTION_TYPES;
 /**
  * Used to determine whether the relation exists in the provided map.
  *
- * @param {Map} relationMap
+ * @param {Immutable.Map} relationMap
  * @param {string} queueType
  * @param {number} entityId
  * @return {boolean} True means the relation exists for the given entity Id
  * false means it does not exist.
  */
 const relationExistsInMap = ( relationMap, queueType, entityId ) => {
-	return relationMap.has( queueType ) &&
-		relationMap.get( queueType ).includes( entityId );
+	return relationMap.get( queueType, Set() ).includes( entityId );
 };
 
 /**
  * Used to indicate whether the relation exists already in the state for the
  * given data.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @param {Map} relationMap
+ * @param {Immutable.Map} relationMap
  * @return {boolean} True means the relation exists in the state.
  */
 const relationExistsAlready = ( state, action, relationMap ) => {
@@ -63,9 +62,9 @@ const relationExistsAlready = ( state, action, relationMap ) => {
 /**
  * Retrieve the relation map from the index for the given data.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Map} A new map is returned if there isn't an existing map present.
+ * @return {Immutable.Map} A new map is returned if there isn't an existing map present.
  */
 const getRelationMap = ( state, action ) => {
 	const { relationName, relationEntityId: relationId, modelName } = action;
@@ -79,7 +78,7 @@ const getRelationMap = ( state, action ) => {
  * Given a set of ids, this returns whether the given id exists in it.
  *
  * @param {number} entityId
- * @param {Set} idSet
+ * @param {Immutable.Set} idSet
  * @return {boolean} True means it exists in the array.
  */
 const idExistsInSet = ( entityId, idSet ) => {
@@ -92,10 +91,10 @@ const idExistsInSet = ( entityId, idSet ) => {
 /**
  * Reducer for adding to the relations index state.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @param {Map} relationMap
- * @return {Map}  Either existing state if no change or new state if change.
+ * @param {Immutable.Map} relationMap
+ * @return {Immutable.Map}  Either existing state if no change or new state if change.
  */
 function indexRelations( state, action, relationMap ) {
 	const {
@@ -135,9 +134,9 @@ function indexRelations( state, action, relationMap ) {
 /**
  * Retrieves relation ids from state for given data.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Set} A List of ids if present or empty List if not.
+ * @return {Immutable.Set} A List of ids if present or empty List if not.
  */
 function getRelationIdsFromState( state, action ) {
 	const {
@@ -153,9 +152,9 @@ function getRelationIdsFromState( state, action ) {
  * Used to determine whether the state requires an update or not for the given
  * data.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @param {Map} relationMap
+ * @param {Immutable.Map} relationMap
  * @return {boolean} True indicates update is needed.
  */
 function requiresUpdate( state, action, relationMap ) {
@@ -175,10 +174,10 @@ function requiresUpdate( state, action, relationMap ) {
 /**
  * Reducer for updating dirty relation state for given data.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @param {Map} relationMap
- * @return {Map} If no change original state is returned otherwise new state.
+ * @param {Immutable.Map} relationMap
+ * @return {Immutable.Map} If no change original state is returned otherwise new state.
  */
 function updateRelationState( state, action, relationMap ) {
 	const {
@@ -230,9 +229,9 @@ function updateRelationState( state, action, relationMap ) {
  * Utility method assisting with replacing an old relation id for a new relation
  * id.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Map} Either original or new state.
+ * @return {Immutable.Map} Either original or new state.
  */
 function replaceOldRelationIdWithNewRelationId( state, action ) {
 	const {
@@ -277,11 +276,11 @@ function replaceOldRelationIdWithNewRelationId( state, action ) {
  *
  * @param {string} stateProperty (what property for the state should be
  *   reviewed)
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {string} modelName
  * @param {number} oldId
  * @param {number} newId
- * @return {Map} Returns either new state or existing state.
+ * @return {Immutable.Map} Returns either new state or existing state.
  */
 const replaceIds = ( stateProperty, state, modelName, oldId, newId ) => {
 	const pluralName = pluralModelName( modelName );
@@ -349,7 +348,7 @@ const replaceIds = ( stateProperty, state, modelName, oldId, newId ) => {
  * sometime later `datetime` to `event` for the same entities should result in
  * just a single record, not two.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
  * @return {Object} The action object to work with after normalization.
  */
@@ -380,9 +379,9 @@ const normalizeActionForState = ( state, action ) => {
 /**
  * Reducer for dirty relation state actions.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Map} Returns original state if no changes, otherwise new state.
+ * @return {Immutable.Map} Returns original state if no changes, otherwise new state.
  */
 function dirtyRelations( state, action ) {
 	action = normalizeActionForState( state, action );
@@ -431,9 +430,9 @@ function dirtyRelations( state, action ) {
  * Utility function for removing entity id in the state for a given modelName
  * which may exist as a relation in the state.
  *
- * @param {Map} state Immutable collection
+ * @param {Immutable.Map} state Immutable collection
  * @param {Object} modelData An object containing data for use in the function.
- * @return {Map} Immutable collection  either the original state or a new state.
+ * @return {Immutable.Map} Immutable collection  either the original state or a new state.
  */
 const clearRelatedEntitiesForEntity = (
 	state,
@@ -535,9 +534,9 @@ const clearRelatedEntitiesForEntity = (
  * Handles removing all relationships in the dirty relations state for the given
  * action object (containing modelName and entityId)
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Map} Either the original state or new state if it was updated.
+ * @return {Immutable.Map} Either the original state or new state if it was updated.
  */
 function removeRelatedEntitiesForEntity( state, action ) {
 	const { modelName, entityId } = action;
@@ -573,9 +572,9 @@ export {
 /**
  * Default reducer for handling dirty relation state.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Map} Returns original state if no changes, otherwise new state.
+ * @return {Immutable.Map} Returns original state if no changes, otherwise new state.
  */
 export default (
 	state = fromJS( DEFAULT_CORE_STATE.dirty.relations ),

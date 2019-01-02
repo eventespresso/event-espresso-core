@@ -16,7 +16,7 @@ import { EventEntities, DateTimeEntities } from '../../../test/fixtures/base';
 import { ACTION_TYPES } from '../../actions/action-types';
 
 const { relations: types } = ACTION_TYPES;
-const originalState = mockStateForTests.get( 'relations' );
+const originalState = mockStateForTests.relations;
 
 describe( normalizedReceiveAndRemoveRelations.name + '()', () => {
 	const testAction = (

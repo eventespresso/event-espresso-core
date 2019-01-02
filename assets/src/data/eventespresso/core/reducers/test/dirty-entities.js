@@ -21,9 +21,7 @@ const testAction = ( type ) => ( {
 } );
 
 const testRun = ( actionType, methodTested, originalStateProperty ) => {
-	const originalState = mockStateForTests.getIn(
-		[ 'dirty', originalStateProperty ]
-	);
+	const originalState = mockStateForTests.dirty[ originalStateProperty ];
 	describe( methodTested.name + '()', () => {
 		switch ( actionType ) {
 			case types.RECEIVE_DELETE_ENTITY_ID:

@@ -65,7 +65,7 @@ describe( 'dirty relations tests', () => {
 			} );
 		};
 		originalState = getState(
-			mockStateForTests.getIn( [ 'dirty', 'relations' ] )
+			mockStateForTests.dirty.relations
 		);
 	} );
 	describe( 'replaceOldRelationIdWithNewRelationId()', () => {

@@ -23,7 +23,7 @@ const DEFAULT_EMPTY_SET = Set();
  * state and considers how the relation might be saved in the state (either as
  * relation mapped to model (index) or model mapped to relation (entityMap)
  *
- * @param {Map} state
+ * @param {Object} state
  * @param {BaseEntity} entity
  * @param {string} relationName
  * @return {Array} An empty array if there are no ids for the given relation.
@@ -35,10 +35,9 @@ const getRelationIdsForEntityRelation = createSelector(
 		}
 		let modelName = singularModelName( entity.modelName );
 		relationName = pluralModelName( relationName );
-		if ( state.hasIn( [ 'relations', 'entityMap', modelName ] ) ) {
-			return ( state.getIn(
+		if ( state.relations.hasIn( [ 'entityMap', modelName ] ) ) {
+			return ( state.relations.getIn(
 				[
-					'relations',
 					'entityMap',
 					modelName,
 					entity.id,
@@ -48,10 +47,9 @@ const getRelationIdsForEntityRelation = createSelector(
 		}
 		modelName = pluralModelName( modelName );
 		relationName = singularModelName( relationName );
-		if ( state.hasIn( [ 'relations', 'index', modelName ] ) ) {
-			return ( state.getIn(
+		if ( state.relations.hasIn( [ 'index', modelName ] ) ) {
+			return ( state.relations.getIn(
 				[
-					'relations',
 					'index',
 					modelName,
 					entity.id,
@@ -71,15 +69,13 @@ const getRelationIdsForEntityRelation = createSelector(
 			singularRelationName = singularModelName( relationName ),
 			pluralRelationName = pluralModelName( singularRelationName );
 		return [
-			state.getIn( [
-				'relations',
+			state.relations.getIn( [
 				'entityMap',
 				singularModel,
 				id,
 				pluralRelationName,
 			] ),
-			state.getIn( [
-				'relations',
+			state.relations.getIn( [
 				'index',
 				pluralModel,
 				id,
@@ -92,7 +88,7 @@ const getRelationIdsForEntityRelation = createSelector(
 /**
  * Returns all the relation entities for the relation on model entity.
  *
- * @param {Map} state
+ * @param {Object} state
  * @param {BaseEntity} entity
  * @param {string} relationModelName
  * @return {Array<BaseEntity>} An array of entities for the relation.
@@ -128,7 +124,7 @@ const getRelatedEntities = createSelector(
 /**
  * Retrieves all the queued relation additions for the given model
  *
- * @param {Map} state
+ * @param {Object} state
  * @param {string} modelName
  * @return {Object} Returns an object keyed by entity ids for the given model.
  * The values on for each entity id is an object keyed by relation names and
@@ -145,10 +141,10 @@ const getRelatedEntities = createSelector(
  *
  */
 const getRelationAdditionsQueuedForModel = createSelector(
-	( state, modelName ) => ( state.getIn(
-		[ 'dirty', 'relations', 'add', modelName ] ) || Map() ).toJS(),
+	( state, modelName ) => ( state.dirty.relations.getIn(
+		[ 'add', modelName ] ) || Map() ).toJS(),
 	( state, modelName ) => [
-		state.getIn( [ 'dirty', 'relations', 'add', modelName ] ),
+		state.dirty.relations.getIn( [ 'add', modelName ] ),
 	]
 );
 
@@ -157,18 +153,18 @@ const getRelationAdditionsQueuedForModel = createSelector(
  * Similar to `getRelationAdditionsQueuedForModel` except this is relations
  * queued for deletion.
  *
- * @param {Map} state
+ * @param {Object} state
  * @param {string} modelName
  * @return {Object} Returns an object keyed by entity ids for the given model.
  * The values on for each entity id is an object keyed by relation names and
  * with values being an array of ids for relation.
  */
 const getRelationDeletionsQueuedForModel = createSelector(
-	( state, modelName ) => ( state.getIn(
-		[ 'dirty', 'relations', 'delete', modelName ]
+	( state, modelName ) => ( state.dirty.relations.getIn(
+		[ 'delete', modelName ]
 	) || Map() ).toJS(),
 	( state, modelName ) => [
-		state.getIn( [ 'dirty', 'relations', 'delete', modelName ] ),
+		state.dirty.relations.getIn( [ 'delete', modelName ] ),
 	]
 );
 
@@ -179,7 +175,7 @@ const getRelationDeletionsQueuedForModel = createSelector(
  * Note: This only queries the state, not any relations that might exist in the
  * db.
  *
- * @param {Map} state
+ * @param {Object} state
  * @param {string} modelName
  * @param {number|string} entityId
  * @return {number} The count of relations.
@@ -195,13 +191,13 @@ const countRelationModelsIndexedForEntity = createSelector(
 		entityId = normalizeEntityId( entityId );
 		// first from the entityMap
 		let countRelations = (
-			state.getIn( [ 'relations', 'entityMap', singleName, entityId ] ) ||
+			state.relations.getIn( [ 'entityMap', singleName, entityId ] ) ||
 				Map()
 		).count();
 
 		// consider maybe in the index (exists as a relation for another model)
 		countRelations += (
-			state.getIn( [ 'relations', 'index', pluralName, entityId ] ) ||
+			state.relations.getIn( [ 'index', pluralName, entityId ] ) ||
 				Map()
 		).count();
 		return countRelations;
@@ -211,8 +207,8 @@ const countRelationModelsIndexedForEntity = createSelector(
 		const pluralName = pluralModelName( modelName );
 		entityId = normalizeEntityId( entityId );
 		return [
-			state.getIn( [ 'relations', 'entityMap', singleName, entityId ] ),
-			state.getIn( [ 'relations', 'index', pluralName, entityId ] ),
+			state.relations.getIn( [ 'entityMap', singleName, entityId ] ),
+			state.relations.getIn( [ 'index', pluralName, entityId ] ),
 		];
 	}
 );

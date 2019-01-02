@@ -8,7 +8,7 @@ import {
 } from '@eventespresso/model';
 import {
 	removeEmptyFromState,
-	normalizeEntityId
+	normalizeEntityId,
 } from '@eventespresso/helpers';
 import { fromJS, Set, Map } from 'immutable';
 
@@ -22,9 +22,9 @@ const { relations: types } = ACTION_TYPES;
  * Handles normalizing the incoming action so that we're always only receiving
  * relation data in the state oriented from one direction.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Map} Existing or new state.
+ * @return {Immutable.Map} Existing or new state.
  */
 const normalizedReceiveAndRemoveRelations = ( state, action ) => {
 	const {
@@ -63,11 +63,11 @@ const normalizedReceiveAndRemoveRelations = ( state, action ) => {
 /**
  * Used to set the relation index for the given data.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} relationData
  * @param {boolean} removal  if true then removes the incoming relation ids from
  * the state, otherwise adds.
- * @return {Map} Existing or changed state.
+ * @return {Immutable.Map} Existing or changed state.
  */
 const setRelationIndex = ( state, relationData, removal = false ) => {
 	const {
@@ -99,9 +99,9 @@ const setRelationIndex = ( state, relationData, removal = false ) => {
 /**
  * Reducer for the relations state in the store.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Map} Either a new state or the existing state.
+ * @return {Immutable.Map} Either a new state or the existing state.
  */
 function receiveAndRemoveRelations( state, action ) {
 	const {
@@ -145,9 +145,9 @@ function receiveAndRemoveRelations( state, action ) {
  * Reducer for handling entity ids in the relation that have a cuid that has
  * been updated with a new entity id from the server.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Map} Either new or original state
+ * @return {Immutable.Map} Either new or original state
  */
 function updateEntityIdForRelations( state, action ) {
 	let {
@@ -196,12 +196,12 @@ function updateEntityIdForRelations( state, action ) {
  * with the provided new id data (or just removing it if removeOnly is true)
  * This handles both the index and entityMap objects in the relations state.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {string} statePropertyName (either `index` or `entityMap`)
  * @param {Object} modelData
  * @param {boolean} removeOnly If true, then the value for oldEntityId will be
  * removed from state and newEntity will not be added to state.
- * @return {Map} Returns either new or existing state.
+ * @return {Immutable.Map} Returns either new or existing state.
  */
 const replaceRelationRecords = (
 	state,
@@ -270,9 +270,9 @@ const replaceRelationRecords = (
 /**
  * Removes any relation requests for related entities in the state.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Map} either existing (if no changes) or new state.
+ * @return {Immutable.Map} either existing (if no changes) or new state.
  */
 const removeRelatedEntitiesForEntity = ( state, action ) => {
 	let {
@@ -329,9 +329,9 @@ export {
 
 /**
  * Reducer for relation related state changes.
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Map} Original state if no change, new state if change.
+ * @return {Immutable.Map} Original state if no change, new state if change.
  */
 export default function relations(
 	state = fromJS( DEFAULT_CORE_STATE.relations ),

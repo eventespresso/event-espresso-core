@@ -16,7 +16,7 @@ import { mockStateForTests } from '../../test/fixtures';
 import { ACTION_TYPES } from '../../actions/action-types';
 
 const { entities: types } = ACTION_TYPES;
-const originalState = mockStateForTests.get( 'entities' );
+const originalState = mockStateForTests.entities;
 
 describe( 'receiveEntity()', () => {
 	const testAction = ( entity ) => ( {

@@ -2,10 +2,10 @@
  * External imports
  */
 import { fromJS, Map } from 'immutable';
-import { isEmpty, difference, toInteger } from 'lodash';
+import { isEmpty, difference } from 'lodash';
 import { DEFAULT_CORE_STATE } from '@eventespresso/model';
 import { isModelEntity, isModelEntityOfModel } from '@eventespresso/validators';
-import cuid from 'cuid';
+import { normalizeEntityId } from '@eventespresso/helpers';
 
 /**
  * Internal imports
@@ -17,13 +17,13 @@ const { entities: types } = ACTION_TYPES;
  * This replaces any entities in the incoming object with matching entities (by
  * id) in the state (if they exist).
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {string} modelName
- * @param {Map} entityRecords
- * @return {Map} New entityRecords object.
+ * @param {Immutable.Map} entityRecords
+ * @return {Immutable.Map} New entityRecords object.
  */
 const replaceExistingEntitiesFromState = ( state, modelName, entityRecords ) => {
-	const existingEntities = state.get( modelName ) || null;
+	const existingEntities = state.get( modelName, null );
 	if ( existingEntities === null ) {
 		return entityRecords;
 	}
@@ -35,9 +35,9 @@ const replaceExistingEntitiesFromState = ( state, modelName, entityRecords ) => 
  *
  * This does not replace any entity that already exists in the state.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Map} New state if there is a change otherwise existing state.
+ * @return {Immutable.Map} New state if there is a change otherwise existing state.
  */
 function receiveEntity( state, action ) {
 	/**
@@ -64,9 +64,9 @@ function receiveEntity( state, action ) {
  * It is expected that the incoming entity records are an array of BaseEntity
  * children instances.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Map} The new state (or the original if no
+ * @return {Immutable.Map} The new state (or the original if no
  * change detected or action isn't handled by this method)
  */
 function receiveEntityRecords( state, action ) {
@@ -92,7 +92,7 @@ function receiveEntityRecords( state, action ) {
 			// anything
 			if ( isEmpty( difference(
 				Array.from( incomingEntities.keys() ),
-				Array.from( state.get( modelName ).keys() )
+				Array.from( state.get( modelName, Map() ).keys() )
 			) ) ) {
 				break;
 			}
@@ -108,7 +108,7 @@ function receiveEntityRecords( state, action ) {
 			break;
 		case types.RECEIVE_AND_REPLACE_ENTITY_RECORDS:
 			updateState = true;
-			entityRecords = state.get( modelName ).merge( incomingEntities );
+			entityRecords = state.get( modelName, Map() ).merge( incomingEntities );
 			break;
 	}
 	if ( updateState ) {
@@ -121,13 +121,13 @@ function receiveEntityRecords( state, action ) {
  * A reducer handling the removal of an entity from state matching the given
  * id.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Map} New or existing state.
+ * @return {Immutable.Map} New or existing state.
  */
 function removeEntityById( state, action ) {
 	const { modelName, entityId = 0 } = action;
-	const id = cuid.isCuid( entityId ) ? entityId : toInteger( entityId );
+	const id = normalizeEntityId( entityId );
 	return state.deleteIn( [ modelName, id ] );
 }
 
@@ -143,9 +143,9 @@ export {
 /**
  * Default reducer for handling entities in state.
  *
- * @param {Map} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Map} New or existing state
+ * @return {Immutable.Map} New or existing state
  */
 export default function entities(
 	state = fromJS( DEFAULT_CORE_STATE.entities ),

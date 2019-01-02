@@ -1,10 +1,9 @@
 /**
  * External imports
  */
-import { EventFactory, DateTimeFactory } from '@test/fixtures';
+import { EventFactory } from '@test/fixtures';
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import { fromJS, Map, Set } from 'immutable';
-
 /**
  * Internal imports
  */
@@ -76,9 +75,9 @@ describe( 'getRelationIdsForEntityRelation()', () => {
 			EventEntities.a,
 			'datetime',
 		);
-		const modifiedState = mockStateForTests.setIn(
+		const modifiedState = { ...mockStateForTests };
+		modifiedState.relations = modifiedState.relations.setIn(
 			[
-				'relations',
 				'entityMap',
 				'event',
 				10,
@@ -153,9 +152,9 @@ describe( 'getRelatedEntities()', () => {
 			EventEntities.a,
 			'datetime',
 		);
-		const modifiedStateA = mockStateForTests.setIn(
+		const modifiedStateA = { ...mockStateForTests };
+		modifiedStateA.relations = modifiedStateA.relations.setIn(
 			[
-				'relations',
 				'entityMap',
 				'event',
 				10,
@@ -163,15 +162,14 @@ describe( 'getRelatedEntities()', () => {
 			],
 			Set.of( 52, 88 )
 		);
-		const modifiedStateB = mockStateForTests.deleteIn(
+		const modifiedStateB = { ...mockStateForTests };
+		modifiedStateB.entities = modifiedStateB.entities.deleteIn(
 			[
-				'entities',
 				'datetime',
 				52,
 			]
 		).setIn(
 			[
-				'entities',
 				'datetime',
 				52,
 			],
@@ -194,7 +192,7 @@ describe( 'getRelatedEntities()', () => {
 	} );
 } );
 describe( 'Dirty relations tests', () => {
-	let originalState;
+	const originalState = { ...mockStateForTests };
 	beforeEach( () => {
 		const getState = ( incomingState = Map() ) => {
 			return incomingState.withMutations( subState => {
@@ -240,15 +238,7 @@ describe( 'Dirty relations tests', () => {
 				);
 			} );
 		};
-		originalState = mockStateForTests.setIn(
-			[
-				'dirty',
-				'relations',
-			],
-			getState(
-				mockStateForTests.getIn( [ 'dirty', 'relations' ] )
-			)
-		);
+		originalState.dirty.relations = getState( originalState.dirty.relations );
 	} );
 	describe( 'getRelationAdditionsQueuedForModel()', () => {
 		beforeEach( () => getRelationAdditionsQueuedForModel.clear() );
@@ -285,25 +275,18 @@ describe( 'Dirty relations tests', () => {
 			);
 			// This mimics how the dirty-relations reducer updates the map
 			// because it updates the entire "add" branch in the state.
-			const modifiedState = originalState.setIn( [
-				'dirty',
-				'relations',
+			const modifiedState = { ...originalState };
+			modifiedState.dirty.relations = modifiedState.dirty.relations.set(
 				'add',
-			],
-			originalState.getIn(
-				[
-					'dirty',
-					'relations',
-					'add',
-				],
-			).setIn(
-				[
-					'ticket',
-					60,
-					'datetimes',
-				],
-				Set.of( 20, 80 )
-			) );
+				modifiedState.dirty.relations.get( 'add' ).setIn(
+					[
+						'ticket',
+						60,
+						'datetimes',
+					],
+					Set.of( 20, 80 )
+				)
+			);
 			const modifiedResult = getRelationAdditionsQueuedForModel(
 				modifiedState,
 				'ticket'
@@ -349,25 +332,18 @@ describe( 'Dirty relations tests', () => {
 			);
 			// This mimics how the dirty-relations reducer updates the map
 			// because it updates the entire "add" branch in the state.
-			const modifiedState = originalState.setIn( [
-				'dirty',
-				'relations',
+			const modifiedState = { ...originalState };
+			modifiedState.dirty.relations = modifiedState.dirty.relations.set(
 				'delete',
-			],
-			originalState.getIn(
-				[
-					'dirty',
-					'relations',
-					'delete',
-				],
-			).setIn(
-				[
-					'event',
-					10,
-					'datetimes',
-				],
-				Set.of( 20, 80 )
-			) );
+				modifiedState.dirty.relations.get( 'delete' ).setIn(
+					[
+						'event',
+						10,
+						'datetimes',
+					],
+					Set.of( 20, 80 )
+				)
+			);
 			const modifiedResult = getRelationDeletionsQueuedForModel(
 				modifiedState,
 				'event'
@@ -437,9 +413,9 @@ describe( 'countRelationModelsIndexedForEntity()', () => {
 			'event',
 			10,
 		);
-		const modifiedState = mockStateForTests.setIn(
+		const modifiedState = { ...mockStateForTests };
+		modifiedState.relations = modifiedState.relations.setIn(
 			[
-				'relations',
 				'index',
 				'datetimes',
 				52,
@@ -448,7 +424,6 @@ describe( 'countRelationModelsIndexedForEntity()', () => {
 			fromJS( { 44: { ticket: [ 30, 20 ] } } )
 		).setIn(
 			[
-				'relations',
 				'entityMap',
 				'ticket',
 				fromJS(

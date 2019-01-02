@@ -3,11 +3,12 @@
  */
 import createSelector from 'rememo';
 import { normalizeEntityId } from '@eventespresso/helpers';
+import { singularModelName } from '@eventespresso/model';
 
 /**
  * Returns all entity records for the given modelName in the current state.
  * An entity record is the Map of entities (entityId => entity).
- * @param {Immutable.Map} state
+ * @param {Object} state
  * @param {string} modelName
  * @return {Object<number|string, BaseEntity>}|null} A collection of entity
  * records for the given model indexed by primary key value or null if none
@@ -15,11 +16,12 @@ import { normalizeEntityId } from '@eventespresso/helpers';
  */
 const getEntityRecordsForModel = createSelector(
 	( state, modelName ) => {
-		return state.hasIn( [ 'entities', modelName ] ) ?
-			state.getIn( [ 'entities', modelName ] ).toJS() :
+		modelName = singularModelName( modelName );
+		return state.entities.has( modelName ) ?
+			state.entities.get( modelName ).toJS() :
 			null;
 	},
-	( state, modelName ) => [ state.getIn( [ 'entities', modelName ] ) ]
+	( state, modelName ) => [ state.entities.get( modelName ) ]
 );
 
 /**
@@ -27,31 +29,32 @@ const getEntityRecordsForModel = createSelector(
  * This differs from entityRecords, in that the entities are NOT indexed by
  * primary key value and an Array of entities is returned instead of an object.
  *
- * @param {Immutable.Map} state
+ * @param {Object} state
  * @param {string} modelName
  * @return {Array<BaseEntity>|null} An array of entities for the given model or
  * null if none have been set in the state.
  */
 const getEntitiesForModel = createSelector(
 	( state, modelName ) => {
-		return state.hasIn( [ 'entities', modelName ] ) ?
-			state.getIn( [ 'entities', modelName ] ).valueSeq().toArray() :
+		modelName = singularModelName( modelName );
+		return state.entities.has( modelName ) ?
+			state.entities.get( modelName ).valueSeq().toArray() :
 			[];
 	},
-	( state, modelName ) => [ state.getIn( [ 'entities', modelName ] ) ],
+	( state, modelName ) => [ state.entities.get( modelName ) ],
 );
 
 /**
  * Returns the model entity for the given model and id.
  *
- * @param {Immutable.Map} state
+ * @param {Object} state
  * @param {string} modelName
  * @param {number|string} entityId
  * @return {BaseEntity|null} Returns the model entity or null.
  */
 function getEntityById( state, modelName, entityId ) {
-	return state.getIn( [
-		'entities',
+	modelName = singularModelName( modelName );
+	return state.entities.getIn( [
 		modelName,
 		normalizeEntityId( entityId ),
 	] ) || null;
@@ -60,17 +63,36 @@ function getEntityById( state, modelName, entityId ) {
 /**
  * Retrieves an array of model entities for the provided array of ids and model.
  *
- * @param {Immutable.Map} state
+ * @param {Object} state
  * @param {string} modelName
  * @param {Array<string|number>} entityIds
  * @return {Array<BaseEntity>|null} Returns an array of model entities for the
  * provided ids or null if never been set.
  */
-const getEntitiesByIds = createSelector(
+const getEntitiesByIds = ( state, modelName, entityIds ) => {
+	return retrieveEntitiesByIds( state, modelName, entityIds.join() );
+};
+
+getEntitiesByIds.clear = () => retrieveEntitiesByIds.clear();
+getEntitiesByIds.getDependants = ( state, modelName ) => retrieveEntitiesByIds
+	.getDependants( state, modelName );
+
+/**
+ * Retrieves an array of model entities for the provided array of ids and model.
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {string} entityIds  A comma delimited string of ids.  This is so
+ * we are passing a primitive arg to rememo for better cache validation.
+ * @return {Array<BaseEntity>|null} Returns an array of model entities for the
+ * provided ids or null if never been set.
+ */
+const retrieveEntitiesByIds = createSelector(
 	( state, modelName, entityIds ) => {
+		modelName = singularModelName( modelName );
+		entityIds = entityIds.split( ',' );
 		const entities = [];
-		// ensure entityIds are strings for our key pick
-		if ( state.hasIn( [ 'entities', modelName ] ) ) {
+		if ( state.entities.has( modelName ) ) {
 			entityIds.forEach( ( entityId ) => {
 				const entity = getEntityById( state, modelName, entityId );
 				if ( entity !== null ) {
@@ -80,65 +102,67 @@ const getEntitiesByIds = createSelector(
 		}
 		return entities;
 	},
-	( state, modelName ) => [ state.getIn( [ 'entities', modelName ] ) ]
+	( state, modelName ) => [ state.entities.get( modelName ) ]
 );
 
 /**
  * Retrieves an array of entity ids queued for trash for the given model.
  *
- * @param {Immutable.Map} state
+ * @param {Object} state
  * @param {string} modelName
  * @return {Array<number>} An array of entity ids.
  */
 const getEntityIdsQueuedForTrash = createSelector(
 	( state, modelName ) => {
-		return state.hasIn( [ 'dirty', 'trash', modelName ] ) ?
-			state.getIn( [ 'dirty', 'trash', modelName ] ).toArray() :
+		modelName = singularModelName( modelName );
+		return state.dirty.trash.has( modelName ) ?
+			state.dirty.trash.get( modelName ).toArray() :
 			[];
 	},
-	( state, modelName ) => [ state.getIn( [ 'dirty', 'trash', modelName ] ) ]
+	( state, modelName ) => [ state.dirty.trash.get( modelName ) ]
 );
 
 /**
  * Retrieves an array of entity ids queued for delete for the given model.
  *
- * @param {Immutable.Map} state
+ * @param {Object} state
  * @param {string} modelName
  * @return {Array<number|string>} An array of entity ids.
  */
 const getEntityIdsQueuedForDelete = createSelector(
 	( state, modelName ) => {
-		return state.hasIn( [ 'dirty', 'delete', modelName ] ) ?
-			state.getIn( [ 'dirty', 'delete', modelName ] ).toArray() :
+		modelName = singularModelName( modelName );
+		return state.dirty.delete.has( modelName ) ?
+			state.dirty.delete.get( modelName ).toArray() :
 			[];
 	},
-	( state, modelName ) => [ state.getIn( [ 'dirty', 'delete', modelName ] ) ]
+	( state, modelName ) => [ state.dirty.delete.get( modelName ) ]
 );
 
 /**
  * Retrieves all the models currently having ids queued for trash
  *
- * @param {Immutable.Map} state
+ * @param {Object} state
  * @return {Array<string>} An array of model names.
  */
 const getModelsQueuedForTrash = createSelector(
 	( state ) => {
-		return state.getIn( [ 'dirty', 'trash' ] ).keySeq().toArray();
+		return state.dirty.trash.keySeq().toArray();
 	},
-	( state ) => [ state.getIn( [ 'dirty', 'trash' ] ) ]
+	( state ) => [ state.dirty.trash ]
 );
 
 /**
  * Retrieves all the models currently having ids queued for delete.
  *
- * @param {Immutable.Map} state
+ * @param {Object} state
  * @return {Array<string>} An array of model names.
  */
 const getModelsQueuedForDelete = createSelector(
 	( state ) => {
-		return state.getIn( [ 'dirty', 'delete' ] ).keySeq().toArray();
+		return state.dirty.delete.keySeq().toArray();
 	},
-	( state ) => [ state.getIn( [ 'dirty', 'delete' ] ) ]
+	( state ) => [ state.dirty.delete ]
 );
 
 export {
