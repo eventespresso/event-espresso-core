@@ -3055,9 +3055,9 @@ abstract class EE_Base_Class
     }
 
     /**
-     * Change $field's value to $new_value_sql (which is a string of raw SQL)
+     * Change $fields' values to $new_value_sql (which is a string of raw SQL)
      * @since $VID:$
-     * @param EE_Model_Field_Base $field
+     * @param EE_Model_Field_Base[] $fields
      * @param string $new_value_sql eg 'column_name=123', or 'column_name=column_name+1', or
      *                              'column_name= CASE
                                         WHEN (`column_name` + `other_column` + 5) <= `yet_another_column`
@@ -3072,19 +3072,40 @@ abstract class EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function updateFieldInDB(EE_Model_Field_Base $field, $new_value_sql)
+    protected function updateFieldsInDB($fields, $new_value_sql)
     {
+        // First make sure this model object actually exists in the DB. It would be silly to try to update it in the DB
+        // if it wasn't even there to start off.
+        if( ! $this->ID()) {
+            $this->save();
+        }
         global $wpdb;
-        $field_name = $field->get_name();
-
+        if(empty($fields)){
+            throw new InvalidArgumentException(esc_html__('EE_Base_Class::updateFieldsInDB was passed an empty array of fields.', 'event_espresso'));
+        }
+        $first_field = reset($fields);
+        $table_alias = $first_field->get_table_alias();
+        foreach($fields as $field) {
+            if( $table_alias !== $field->get_table_alias()) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        esc_html__('EE_Base_Class::updateFieldsInDB was passed fields for different tables ("%1$s" and "%2$s"), which is not supported. Instead, please call the method multiple times.', 'event_espresso'),
+                        $table_alias,
+                        $field->get_table_alias()
+                    )
+                );
+            }
+        }
+        // Ok the fields are now known to all be for the same table. Proceed with creating the SQL to update it.
+        $table_obj = $this->get_model()->get_table_obj_by_alias($table_alias);
         $table_pk_value = $this->ID();
-        $table_obj = $this->get_model()->get_table_obj_by_alias($field->get_table_alias());
         $table_name = $table_obj->get_table_name();
         if ($table_obj instanceof EE_Secondary_Table ) {
             $table_pk_field_name = $table_obj->get_fk_on_table();
         } else {
             $table_pk_field_name = $table_obj->get_pk_column();
         }
+
         $query =
             "UPDATE `{$table_name}`
             SET "
@@ -3095,28 +3116,36 @@ abstract class EE_Base_Class
                 $table_pk_value
             );
         $result = $wpdb->query($query);
-        // If it was successful, we'd like to know the new value.
-        // If it failed, we'd also like to know the new value.
-        $new_value = $this->get_model()->get_var(
-            $this->get_model()->alter_query_params_to_restrict_by_ID(
-                $this->get_model()->get_index_primary_key_string(
-                    $this->model_field_array()
-                )
-            ),
-            $field_name
-        );
-        $this->set_from_db(
-            $field_name,
-            $new_value
-        );
+        foreach($fields as $field) {
+            // If it was successful, we'd like to know the new value.
+            // If it failed, we'd also like to know the new value.
+            $new_value = $this->get_model()->get_var(
+                $this->get_model()->alter_query_params_to_restrict_by_ID(
+                    $this->get_model()->get_index_primary_key_string(
+                        $this->model_field_array()
+                    ),
+                    array(
+                        'default_where_conditions' => 'minimum'
+                    )
+                ),
+                $field->get_name()
+            );
+            $this->set_from_db(
+                $field->get_name(),
+                $new_value
+            );
+        }
         return (bool) $result;
     }
 
     /**
-     * Nudges $field_name's value by $quantity, without any conditionals (in comparison to bumpConditionally())
+     * Nudges $field_name's value by $quantity, without any conditionals (in comparison to bumpConditionally()).
+     * Does not allow negative values, however.
      * @since $VID:$
-     * @param $field_name
-     * @param $quantity
+     * @param array $fields_n_quantities keys are the field names, and values are the amount by which to bump them
+     *                                   (positive or negative). One important gotcha: all these values must be
+     *                                   on the same table (eg don't pass in one field for the posts table and
+     *                                   another for the event meta table.)
      * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -3124,17 +3153,44 @@ abstract class EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function bump($field_name, $quantity)
+    public function bump(array $fields_n_quantities)
     {
         global $wpdb;
-        $field = $this->get_model()->field_settings_for($field_name, true);
-        $column_name = $field->get_table_column();
-        return $this->updateFieldInDB(
-            $field,
-            $wpdb->prepare(
-                "`{$column_name}` =`{$column_name}` + %d",
-                $quantity
-            )
+        if (empty($fields_n_quantities)) {
+            // No fields to update? Well sure, we updated them to that value just fine.
+            return true;
+        }
+        $fields = [];
+        $set_sql_statements = [];
+        foreach ($fields_n_quantities as $field_name => $quantity) {
+            $field = $this->get_model()->field_settings_for($field_name, true);
+            $fields[] = $field;
+            $column_name = $field->get_table_column();
+
+            $abs_qty = absint($quantity);
+            if( $quantity > 0 ) {
+                // don't let the value be negative as often these fields are unsigned
+                $set_sql_statements[] = $wpdb->prepare(
+                    "`{$column_name}` = `{$column_name}` + %d",
+                    $abs_qty
+                );
+            } else {
+                $set_sql_statements[] = $wpdb->prepare(
+                    "`{$column_name}` = CASE
+                       WHEN (`{$column_name}` >= %d)
+                       THEN `{$column_name}` - %d
+                       ELSE 0
+                    END",
+                    $abs_qty,
+                    $abs_qty
+                );
+            }
+
+
+        }
+        return $this->updateFieldsInDB(
+            $fields,
+            implode(', ', $set_sql_statements)
         );
     }
 
@@ -3168,8 +3224,8 @@ abstract class EE_Base_Class
 
         $limiting_field = $this->get_model()->field_settings_for($limit_field_name, true);
         $limiting_column = $limiting_field->get_table_column();
-        return $this->updateFieldInDB(
-            $field,
+        return $this->updateFieldsInDB(
+            [$field],
             $wpdb->prepare(
                 "`{$column_name}` =
             CASE
