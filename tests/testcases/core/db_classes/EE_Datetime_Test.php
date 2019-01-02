@@ -208,6 +208,7 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 
 	/**
 	 * @group 8861
+     * @doesNotPerformAssertions
 	 */
 	public function test_tickets_remaining() {
         $this->loadTestScenarios();
