@@ -176,7 +176,20 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
             $all_fields = array_merge($foreign_keys, $parsed_query);
         }
 
-        $existing_entry_in_join_table = $this->get_join_model()->get_one(array($all_fields));
+        $indexes = $this->get_join_model()->unique_indexes();
+        if ($indexes) {
+            $unique_index = reset($indexes);
+            $uniqueness_fields = array_intersect_key(
+                $all_fields,
+                $unique_index->fields()
+            );
+        } else {
+            // If no unique index was defined on the model, in order to be backward compatible, use all its fields
+            // for evaluating uniqueness.
+            $uniqueness_fields = $all_fields;
+        }
+
+        $existing_entry_in_join_table = $this->get_join_model()->get_one(array($uniqueness_fields));
         // If there is already an entry in the join table, indicating a relationship, update it instead of adding a
         // new row.
         // Again, if you want more sophisticated logic or insertions (handling more columns than just 2 foreign keys to

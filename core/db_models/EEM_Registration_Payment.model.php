@@ -39,6 +39,14 @@ class EEM_Registration_Payment extends EEM_Base
             'Registration'  => new EE_Belongs_To_Relation(),
             'Payment'       => new EE_Belongs_To_Relation(),
         );
+        $this->_indexes = [
+            'fks' => new EE_Unique_Index(
+                [
+                    'REG_ID',
+                    'PAY_ID'
+                ]
+            )
+        ];
 
         parent::__construct($timezone);
     }
