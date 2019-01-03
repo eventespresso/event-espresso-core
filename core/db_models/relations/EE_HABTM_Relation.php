@@ -183,11 +183,6 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
         // the other tables) use the joining model directly!
         if (! $existing_entry_in_join_table) {
             $this->get_join_model()->insert($all_fields);
-        } else {
-            $this->get_join_model()->update(
-                $all_fields,
-                array($foreign_keys)
-            );
         }
         return $other_model_obj;
     }
