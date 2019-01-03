@@ -177,7 +177,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
         }
 
         $indexes = $this->get_join_model()->unique_indexes();
-        if ($indexes) {
+        if (! empty($indexes)) {
             $unique_index = reset($indexes);
             $uniqueness_fields = array_intersect_key(
                 $all_fields,

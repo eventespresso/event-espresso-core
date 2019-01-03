@@ -35,7 +35,8 @@ class EEM_Event_Question_Group extends EEM_Base
             'fks' => new EE_Unique_Index(
                 [
                     'EVT_ID',
-                    'QSG_ID'
+                    'QSG_ID',
+                    'EQG_primary'
                 ]
             )
         ];
