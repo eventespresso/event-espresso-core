@@ -1320,16 +1320,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
     public function reverse_x_number_ticket_sales(EE_ticket $ticket, $qty = 1)
     {
         $ticket->decrease_sold($qty);
-        $ticket->save();
-        $datetimes = $ticket->datetimes();
-        if (is_array($datetimes)) {
-            foreach ($datetimes as $datetime) {
-                if ($datetime instanceof EE_Datetime) {
-                    $datetime->decrease_sold($qty);
-                    $datetime->save();
-                }
-            }
-        }
     }
 
 

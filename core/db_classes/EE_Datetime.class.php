@@ -266,7 +266,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     * decrements (subtracts) sold amount passed by $qty
+     * Decrements (subtracts) sold amount passed by $qty directly in the DB and on the model object. (Ie, no need
+     * to save afterwards.)
      *
      * @param int $qty
      * @throws ReflectionException

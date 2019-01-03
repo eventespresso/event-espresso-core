@@ -805,8 +805,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
 
     /**
-     * Decrements (subtracts) sold by amount passed by $qty on both the ticket and its related datetimes.
-     * But does not affect the reserved counts.
+     * Decrements (subtracts) sold by amount passed by $qty on both the ticket and its related datetimes directly in the
+     * DB and then updates the model objects.
+     * Does not affect the reserved counts.
      *
      * @param int $qty
      * @return void
