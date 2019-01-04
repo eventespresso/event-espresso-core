@@ -12,9 +12,9 @@ import { fromJS, Set, OrderedMap } from 'immutable';
 /**
  * Reducer managing item list state.
  *
- * @param {Map} state  Current state.
+ * @param {Immutable.Map} state  Current state.
  * @param {Object} action	Dispatched action.
- * @return {Map}	Updated state.
+ * @return {Immutable.Map}	Updated state.
  */
 export function receiveListItems(
 	state = fromJS( DEFAULT_LISTS_STATE ),
