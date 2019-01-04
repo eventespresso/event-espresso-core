@@ -241,9 +241,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
             'Question_Group',
             array('QGQ_order' => $second_join_entry_order)
         );
-        $this->markTestIncomplete(
-            'This was reverted in order to fix https://github.com/eventespresso/event-espresso-core/issues/873'
-        );
         $this->assertEquals(
             1,
             EEM_Question_Group_Question::instance()->count(

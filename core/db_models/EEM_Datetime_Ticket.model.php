@@ -42,11 +42,20 @@ class EEM_Datetime_Ticket extends EEM_Base
         );
         // this model is generally available for reading
         $path_to_event = 'Datetime.Event';
+        $this->_indexes = [
+            'fks' => new EE_Unique_Index(
+                [
+                    'DTT_ID',
+                    'TKT_ID'
+                ]
+            )
+        ];
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Event_Related_Public($path_to_event);
         $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Event_Related_Protected($path_to_event);
         $this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Event_Related_Protected($path_to_event);
         $this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Event_Related_Protected($path_to_event, EEM_Base::caps_edit);
         $this->model_chain_to_password = $path_to_event;
+
         parent::__construct($timezone);
     }
 }

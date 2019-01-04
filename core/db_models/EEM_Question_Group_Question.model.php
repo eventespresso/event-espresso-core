@@ -48,6 +48,14 @@ class EEM_Question_Group_Question extends EEM_Base
         $this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Reg_Form('Question_Group.QSG_system');
         // use the caps for question groups
         $this->_caps_slug = 'question_groups';
+        $this->_indexes = [
+            'fks' => new EE_Unique_Index(
+                [
+                    'QSG_ID',
+                    'QST_ID'
+                ]
+            )
+        ];
         parent::__construct($timezone);
     }
 }

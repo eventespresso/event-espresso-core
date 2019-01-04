@@ -41,6 +41,14 @@ class EEM_Ticket_Price extends EEM_Base
             'Price'=>new EE_Belongs_To_Relation()
         );
         $this->_model_chain_to_wp_user = 'Ticket';
+        $this->_indexes = [
+            'fks' => new EE_Unique_Index(
+                [
+                    'TKT_ID',
+                    'PRC_ID'
+                ]
+            )
+        ];
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Default_Public('Ticket.TKT_is_default', 'Ticket.Datetime.Event');
         // account for default tickets in the caps
         $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Default_Protected('Ticket.TKT_is_default', 'Ticket.Datetime.Event');
