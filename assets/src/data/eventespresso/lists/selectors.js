@@ -92,6 +92,8 @@ export const getEntitiesByIds = ( state, modelName, ids = [] ) => {
 	}
 };
 
+getEntitiesByIds.clear = () => getEntities.clear();
+
 /**
  * Helper indicating whether the given identifier, selectorName, and queryString
  * is being resolved or not.
