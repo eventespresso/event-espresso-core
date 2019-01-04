@@ -199,7 +199,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
         } else {
             $this->get_join_model()->update(
                 $all_fields,
-                array($foreign_keys)
+                array($uniqueness_fields)
             );
         }
         return $other_model_obj;
