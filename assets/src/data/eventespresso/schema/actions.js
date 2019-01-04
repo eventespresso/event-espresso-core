@@ -1,4 +1,9 @@
 /**
+ * Internal imports
+ */
+import { ACTION_TYPES as types } from './action-types';
+
+/**
  * Returns an action object used to update the store with the provided schema
  * for the provided modelName.
  *
@@ -8,7 +13,7 @@
  */
 export function receiveSchemaForModel( modelName, schema = {} ) {
 	return {
-		type: 'RECEIVE_SCHEMA_RECORD',
+		type: types.RECEIVE_SCHEMA_RECORD,
 		modelName,
 		schema,
 	};
@@ -25,12 +30,30 @@ export function receiveSchemaForModel( modelName, schema = {} ) {
  */
 export function receiveFactoryForModel( modelName, factory = {} ) {
 	return {
-		type: 'RECEIVE_FACTORY_FOR_MODEL',
+		type: types.RECEIVE_FACTORY_FOR_MODEL,
 		modelName,
 		factory,
 	};
 }
 
+/**
+ * Returns an action object used to update the store with the provided relation
+ * endpoint for the model and id, and its relations.
+ *
+ * @param {string} modelName
+ * @param {number} entityId
+ * @param {string} relationName
+ * @param {string} endpoint
+ * @return {
+ * 	{
+ * 		modelName: *,
+ * 		endpoint: *,
+ * 		relationName: *,
+ * 		entityId: *,
+ * 		type: string
+ * 	}
+ * } An action object.
+ */
 export function receiveRelationEndpointForModelEntity(
 	modelName,
 	entityId,
@@ -38,7 +61,7 @@ export function receiveRelationEndpointForModelEntity(
 	endpoint
 ) {
 	return {
-		type: 'RECEIVE_RELATION_ENDPOINT_FOR_MODEL_ENTITY',
+		type: types.RECEIVE_RELATION_ENDPOINT_FOR_MODEL_ENTITY,
 		modelName,
 		entityId,
 		relationName,

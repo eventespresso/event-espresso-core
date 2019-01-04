@@ -3,6 +3,7 @@
  */
 import { EventSchema } from '@test/fixtures';
 import { isGenerator } from '@eventespresso/validators';
+import { getEndpoint } from '@eventespresso/model';
 
 /**
  * Internal imports
@@ -10,10 +11,16 @@ import { isGenerator } from '@eventespresso/validators';
 import {
 	getSchemaForModel,
 	getFactoryForModel,
+	getRelationEndpointForEntityId,
+	getSchemaByModel,
 } from '../resolvers';
-import { receiveSchemaForModel, receiveFactoryForModel } from '../actions';
-import { eventFactory, EventResponses } from '../../test/fixtures/base';
-import { getEntities } from '../../lists/resolvers';
+import {
+	receiveSchemaForModel,
+	receiveFactoryForModel,
+	receiveRelationEndpointForModelEntity,
+} from '../actions';
+import { eventFactory } from '../../test/fixtures/base';
+import { fetchFromApi, select } from '../controls';
 
 const poorManSerializer = ( item ) => {
 	return JSON.parse( JSON.stringify( item ) );
@@ -35,148 +42,172 @@ describe( 'getSchemaForModel()', () => {
 				receiveSchemaForModel( 'event', EventSchema )
 			);
 		} );
+		it( 'returns schema', () => {
+			const { value, done } = fulfillment.next();
+			expect( value ).toBe( EventSchema );
+			expect( done ).toBe( true );
+		} );
 	} );
 } );
 
 describe( 'getFactoryForModel()', () => {
 	describe( 'yields with expected response', () => {
-		const fulfillment = getFactoryForModel( 'event' );
-		it( 'yields expected generator for schema selector', () => {
-			const { value: getSchemaByModelGenerator } = fulfillment.next();
-			expect( isGenerator( getSchemaByModelGenerator ) ).toBe( true );
-		} );
-		it( 'yields expected action object for received factory ' +
-			'action', () => {
-			const { value: factoryAction } = fulfillment.next( EventSchema );
+		let fulfillment;
+		const reset = ( schema = {} ) => fulfillment = getFactoryForModel(
+			'event',
+			schema
+		);
+		const assertFactoryActionsAreEqual = ( actualAction ) => {
 			// we're using poorManSerializer to compare because
 			// the modelEntityFactory constructor uses Symbols for
 			// properties and thus no two built factories will EVER be
 			// the same. So for the purpose of this test, we just need to know
 			// that the action object is as expected on a shallow comparison.
-			expect( poorManSerializer( factoryAction ) )
+			expect( poorManSerializer( actualAction ) )
 				.toEqual( poorManSerializer(
 					receiveFactoryForModel( 'event', eventFactory )
 				) );
+		};
+		it( 'yields expected action object for received factory when schema ' +
+			'is provided', () => {
+			reset( EventSchema );
+			const { value } = fulfillment.next();
+			assertFactoryActionsAreEqual( value );
+		} );
+		it( 'yields expected generator for schema selector when no ' +
+			'schema provided', () => {
+			reset();
+			const { value: getSchemaByModelGenerator } = fulfillment.next();
+			expect( isGenerator( getSchemaByModelGenerator ) ).toBe( true );
+		} );
+		it( 'returns null when there is no schema for the given model', () => {
+			const { value, done } = fulfillment.next( {} );
+			expect( value ).toBe( null );
+			expect( done ).toBe( true );
+		} );
+		it( 'yields expected action object for received factory ' +
+			'action', () => {
+			reset();
+			fulfillment.next();
+			const { value } = fulfillment.next( EventSchema );
+			assertFactoryActionsAreEqual( value );
+		} );
+		it( 'returns factory on successful generation', () => {
+			const { value, done  } = fulfillment.next();
+			expect( poorManSerializer( value ) )
+				.toEqual( poorManSerializer( eventFactory ) );
+			expect( done ).toBe( true );
 		} );
 	} );
 } );
 
-/**
- * @todo refactor above to be somthing like this:
- */
-
-describe( 'yields with expected response for ' +
-	'getFactoryByModelGenerator', () => {
-	const fulfillment = getEntities( 'event', queryString );
-	fulfillment.next();
-	const { value: getFactoryByModelGenerator } = fulfillment.next(
-		[ EventResponses.a ]
+describe( 'getRelationEndpointForEntityId()', () => {
+	let fulfillment;
+	const reset = () => fulfillment = getRelationEndpointForEntityId(
+		'event',
+		10,
+		'datetimes'
 	);
-	it( 'yields expected hasResolvedFactoryForModel action', () => {
-		const {
-			value: hasResolvedFactoryForModelAction,
-		} = getFactoryByModelGenerator.next();
-		expect( hasResolvedFactoryForModelAction ).toEqual(
+	it( 'yields fetch action for retrieving the entity', () => {
+		reset();
+		const { value } = fulfillment.next();
+		expect( value ).toEqual( fetchFromApi(
 			{
-				args: [ 'event' ],
-				reducerKey: 'eventespresso/schema',
-				selectorName: 'hasResolvedFactoryForModel',
-				type: 'SELECT',
+				path: getEndpoint( 'event' ) + '/' + 10,
 			}
+		) );
+	} );
+	it( 'returns empty string when there is no response for that ' +
+		'endpoint', () => {
+		const { value, done } = fulfillment.next( {} );
+		expect( value ).toEqual( '' );
+		expect( done ).toBe( true );
+	} );
+	it( 'returns empty string when there is no endpoint for the given ' +
+		'relation', () => {
+		reset();
+		fulfillment.next();
+		const { value, done } = fulfillment.next( {
+			_links: {
+				'https://api.eventespresso.com/tickets': 'https://some_endpoint',
+			},
+		} );
+		expect( value ).toEqual( '' );
+		expect( done ).toBe( true );
+	} );
+	it( 'yields receive relation endpoint action object for relation existing ' +
+		'in the response', () => {
+		reset();
+		fulfillment.next();
+		const { value } = fulfillment.next( {
+			_links: {
+				'https://api.eventespresso.com/datetimes':
+					'https://some_endpoint',
+			},
+		} );
+		expect( value ).toEqual(
+			receiveRelationEndpointForModelEntity(
+				'event',
+				10,
+				'datetimes',
+				'https://some_endpoint'
+			)
 		);
 	} );
-	it( 'yields expected getSchemaByModel generator', () => {
-		const {
-			value: getSchemaByModelGenerator,
-		} = getFactoryByModelGenerator.next( false );
-		expect( isGenerator( getSchemaByModelGenerator ) ).toBe( true );
-	} );
-	it( 'yields expected generator for getting factory', () => {
-		const {
-			value: getFactoryForModelFunction,
-		} = getFactoryByModelGenerator.next( 'test' );
-		expect( isGenerator( getFactoryForModelFunction ) )
-			.toBe( true );
-	} );
-	it( 'yields expected dispatch action for receiving factory', () => {
-		const {
-			value: dispatchReceiveFactoryAction,
-		} = getFactoryByModelGenerator.next( 'eventFactory' );
-		expect( dispatchReceiveFactoryAction ).toEqual( {
-			type: 'DISPATCH',
-			reducerKey: 'eventespresso/schema',
-			dispatchName: 'receiveFactoryForModel',
-			args: [ 'event', 'eventFactory' ],
-		} );
-	} );
-	it( 'yields expected dispatch action for finishing factory ' +
-		'resolution', () => {
-		const {
-			value: finishResolutionAction,
-		} = getFactoryByModelGenerator.next();
-		expect( finishResolutionAction ).toEqual( {
-			type: 'DISPATCH',
-			reducerKey: 'core/data',
-			dispatchName: 'finishResolution',
-			args: [
-				'eventespresso/schema',
-				'getFactoryForModel',
-				[ 'event' ],
-			],
-		} );
+	it( 'returns endpoint for valid data', () => {
+		const { value, done } = fulfillment.next();
+		expect( value ).toEqual( 'https://some_endpoint' );
+		expect( done ).toBe( true );
 	} );
 } );
-describe( 'yields with expected response for getSchemaByModel ' +
-	'generator', () => {
-	const fulfillment = getEntities( 'event', queryString );
-	fulfillment.next();
-	const { value: FactoryGenerator } = fulfillment.next( [ EventResponses.a ] );
-	FactoryGenerator.next();
-	const {
-		value: getSchemaByModelGenerator,
-	} = FactoryGenerator.next( false );
-	it( 'yields expected hasResolvedSchema action', () => {
-		const {
-			value: hasResolvedSchemaAction,
-		} = getSchemaByModelGenerator.next();
-		expect( hasResolvedSchemaAction ).toEqual( {
-			args: [ 'event' ],
-			reducerKey: 'eventespresso/schema',
-			selectorName: 'hasResolvedSchemaForModel',
-			type: 'SELECT',
-		} );
+describe( 'getSchemaByModel()', () => {
+	let fulfillment;
+	const reset = () => fulfillment = getSchemaByModel( 'event' );
+	it( 'yields select action for whether schema has been resolved for ' +
+		'the given model', () => {
+		reset();
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			select(
+				'hasResolvedSchemaForModel',
+				'event'
+			)
+		);
 	} );
-	it( 'yields expected generator for getting schema', () => {
-		const {
-			value: getSchemaForModelFunction,
-		} = getSchemaByModelGenerator.next( false );
-		expect( isGenerator( getSchemaForModelFunction ) )
-			.toBe( true );
-	} );
-	it( 'yields dispatch action for receiveSchemaForModel', () => {
-		const {
-			value: dispatchReceiveSchemaAction,
-		} = getSchemaByModelGenerator.next( 'test' );
-		expect( dispatchReceiveSchemaAction ).toEqual( {
-			type: 'DISPATCH',
-			reducerKey: 'eventespresso/schema',
-			dispatchName: 'receiveSchemaForModel',
-			args: [ 'event', 'test' ],
-		} );
-	} );
-	it( 'yields dispatch action for finishing Resolution', () => {
-		const {
-			value: finishResolutionAction,
-		} = getSchemaByModelGenerator.next();
-		expect( finishResolutionAction ).toEqual( {
-			type: 'DISPATCH',
-			reducerKey: 'core/data',
-			dispatchName: 'finishResolution',
-			args: [
-				'eventespresso/schema',
+	it( 'yields select action for getting the schema for the ' +
+		'model when resolution for that selector is complete', () => {
+		const { value } = fulfillment.next( true );
+		expect( value ).toEqual(
+			select(
 				'getSchemaForModel',
-				[ 'event' ],
-			],
-		} );
+				'event'
+			)
+		);
+	} );
+	it( 'returns the schema when resolution for the selector is ' +
+		'complete', () => {
+		const { value, done } = fulfillment.next( EventSchema );
+		expect( value ).toBe( EventSchema );
+		expect( done ).toBe( true );
+	} );
+	it( 'yields the getSchemaForModel generator when resolution has not been' +
+		'completed', () => {
+		reset();
+		fulfillment.next();
+		const { value } = fulfillment.next( false );
+		expect( isGenerator( value ) ).toBe( true );
+	} );
+	it( 'yields receiveSchemaForModel action object for the retrieved ' +
+		'schema', () => {
+		const { value } = fulfillment.next( EventSchema );
+		expect( value ).toEqual( receiveSchemaForModel(
+			'event',
+			EventSchema
+		) );
+	} );
+	it( 'returns retrieved schema', () => {
+		const { value, done } = fulfillment.next();
+		expect( value ).toBe( EventSchema );
+		expect( done ).toBe( true );
 	} );
 } );

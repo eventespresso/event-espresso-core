@@ -8,12 +8,16 @@ import {
 	isRequestingFactoryForModel,
 	hasResolvedFactoryForModel,
 	hasResolvedSchemaForModel,
+	getRelationEndpointForEntityId,
+	isRequestingRelationEndpointForEntityId,
 } from '../selectors';
+import { mockStateForTests } from './fixtures';
 
 /**
  * External dependencies
  */
 import { select } from '@wordpress/data';
+import { EventSchema, EventFactory } from '@test/fixtures';
 
 jest.mock( '@wordpress/data', () => ( {
 	...require.requireActual( '@wordpress/data' ),
@@ -21,34 +25,32 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 describe( 'testing getters', () => {
-	const testConditions = [
+	[
 		[
 			getSchemaForModel,
-			'schema',
+			EventSchema,
 		],
 		[
 			getFactoryForModel,
-			'factory',
+			EventFactory,
 		],
-	];
-	testConditions.forEach( ( [
+	].forEach( ( [
 		selectorToTest,
-		stateProperty,
+		expectedValue,
 	] ) => {
 		describe( selectorToTest.name + '()', () => {
-			const state = { [ stateProperty ]: { event: {} } };
 			it( 'returns expected default value when model not found in ' +
 				'state', () => {
 				expect( selectorToTest(
-					state,
+					mockStateForTests,
 					'invalid'
-				) ).toEqual( {} );
+				) ).toEqual( null );
 			} );
 			it( 'returns expected value for model in state', () => {
 				expect( selectorToTest(
-					state,
+					mockStateForTests,
 					'event',
-				) ).toEqual( {} );
+				) ).toBe( expectedValue );
 			} );
 		} );
 	} );
@@ -85,34 +87,89 @@ describe( 'testing isRequesting and hasResolved methods', () => {
 		[
 			isRequestingSchemaForModel,
 			'getSchemaForModel',
+			[],
 		],
 		[
 			isRequestingFactoryForModel,
 			'getFactoryForModel',
+			[],
 		],
 		[
 			hasResolvedSchemaForModel,
 			'getSchemaForModel',
+			[],
 		],
 		[
 			hasResolvedFactoryForModel,
 			'getFactoryForModel',
+			[],
+		],
+		[
+			isRequestingRelationEndpointForEntityId,
+			'getRelationEndpointForEntityId',
+			[ 10, 'datetimes' ],
 		],
 	];
 	testConditions.forEach( ( [
 		selectorMethod,
 		methodDescription,
+		extraArgs
 	] ) => {
 		describe( selectorMethod.name + '()', () => {
 			it( 'returns false if never requested or finished ' +
 				'requesting', () => {
-				expect( selectorMethod( 'event' ) ).toBe( false );
+				expect( selectorMethod(
+					mockStateForTests,
+					'event',
+					...extraArgs
+				) ).toBe( false );
 			} );
 			it( 'returns true if resolution is started and not ' +
 				'finished', () => {
 				setIsResolving( true, methodDescription );
-				expect( selectorMethod( 'event' ) ).toBe( true );
+				expect( selectorMethod(
+					mockStateForTests,
+					'event',
+					...extraArgs
+				) ).toBe( true );
 			} );
 		} );
+	} );
+} );
+describe( 'getRelationEndpointForEntityId', () => {
+	[
+		[
+			'for the model',
+			[ 'invalid', 10, 'datetime' ],
+		],
+		[
+			'for the entity id',
+			[ 'event', 20, 'datetime' ],
+		],
+		[
+			'for the relation',
+			[ 'event', 10, 'message_template_group' ],
+		],
+	].forEach( ( [
+		descriptionPart,
+		args,
+	] ) => {
+		it( 'returns an empty string when there is no state record ' +
+			descriptionPart, () => {
+			expect(
+				getRelationEndpointForEntityId( mockStateForTests, ...args )
+			).toBe( '' );
+		} );
+	} );
+	it( 'returns expected value for given data that exists in ' +
+		'state', () => {
+		expect(
+			getRelationEndpointForEntityId(
+				mockStateForTests,
+				'event',
+				'10',
+				'datetime'
+			)
+		).toEqual( '/ee/v4.8.36/events/10/datetimes' );
 	} );
 } );

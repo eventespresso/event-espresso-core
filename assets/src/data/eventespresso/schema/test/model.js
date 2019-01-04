@@ -10,7 +10,7 @@ import { isGenerator } from '@eventespresso/validators';
  * Internal imports
  */
 import { eventFactory, dateTimeFactory } from '../../test/fixtures/base';
-import { createEntitySelectors, createEntityResolvers } from '../entities';
+import { createEntitySelectors, createEntityResolvers } from '../model';
 import { mockStateForTests } from './fixtures';
 import * as selectors from '../selectors';
 import * as resolvers from '../resolvers';

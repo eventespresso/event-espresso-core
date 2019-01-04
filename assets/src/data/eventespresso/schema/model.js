@@ -1,8 +1,12 @@
 /**
+ * External dependencies
+ */
+import { MODEL_NAMES } from '@eventespresso/model';
+
+/**
  * Internal dependencies
  */
 import { getMethodName } from '../base-model';
-import { MODEL_NAMES } from '../../model';
 import { isResolving } from '../base-selectors';
 import { REDUCER_KEY } from './constants';
 

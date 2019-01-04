@@ -2,116 +2,103 @@
  * External dependencies
  */
 import { combineReducers } from '@wordpress/data';
-import isShallowEqual from '@wordpress/is-shallow-equal';
-import { isUndefined } from 'lodash';
-import { pluralModelName } from '@eventespresso/model';
+import { normalizeEntityId } from '@eventespresso/helpers';
+import {
+	pluralModelName,
+	DEFAULT_SCHEMA_STATE,
+	singularModelName,
+} from '@eventespresso/model';
 import {
 	isSchemaResponseOfModel,
 	isModelEntityFactoryOfModel,
 } from '@eventespresso/validators';
+import { fromJS } from 'immutable';
 
 /**
- * Internal dependencies
+ * Internal imports
  */
-import { DEFAULT_SCHEMA_STATE } from '../../model';
-
-/**
- * Returns whether the provided schema already exists in the state.
- *
- * @param {Object} state
- * @param {string} modelName
- * @param {Object} schema
- * @return {boolean}  true means it's already in the state.
- */
-const hasSameSchema = ( state, modelName, schema ) => {
-	return ! isUndefined( state ) &&
-		! isUndefined( state[ modelName ] ) &&
-		isShallowEqual( state[ modelName ], schema );
-};
-
-/**
- * Returns whether the provided model entity factory already exists in the
- * state.
- *
- * @param {Object} state
- * @param {string} modelName
- * @param {Object} factory
- * @return {boolean} true means it's already in the state.
- */
-const hasSameFactory = ( state, modelName, factory ) => {
-	return ! isUndefined( state ) &&
-		! isUndefined( state[ modelName ] ) &&
-		isShallowEqual( state[ modelName ], factory );
-};
-
+import { ACTION_TYPES as types } from './action-types';
 /**
  * Reducer for a model schema.
- * @param {Object} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Object} The reduced (or original) state.
+ * @return {Immutable.Map} The new (or original) state.
  */
-export const receiveSchema = ( state = DEFAULT_SCHEMA_STATE.schema, action ) => {
-	const { type, modelName, schema } = action;
-	if (
-		isSchemaResponseOfModel( schema, modelName ) &&
-		type === 'RECEIVE_SCHEMA_RECORD' &&
-		! hasSameSchema( state, modelName, schema )
-	) {
-		return {
-			...state,
-			[ modelName ]: schema,
-		};
+export const receiveSchema = (
+	state = fromJS( DEFAULT_SCHEMA_STATE.schema ),
+	action
+) => {
+	const { type, schema } = action;
+	try {
+		const modelName = singularModelName( action.modelName );
+		if (
+			isSchemaResponseOfModel( schema, modelName ) &&
+			type === types.RECEIVE_SCHEMA_RECORD
+		) {
+			return state.set( modelName, schema );
+		}
+	} catch ( e ) {
+		return state;
 	}
 	return state;
 };
 
 /**
  * Reducer for a model factory
- * @param {Object} state
+ * @param {Immutable.Map} state
  * @param {Object} action
- * @return {Object} the reduced (or original) state.
+ * @return {Immutable.Map} the new (or original) state.
  */
 export const receiveFactory = (
-	state = DEFAULT_SCHEMA_STATE.factory,
+	state = fromJS( DEFAULT_SCHEMA_STATE.factory ),
 	action
 ) => {
-	const { type, modelName, factory } = action;
-	if (
-		isModelEntityFactoryOfModel( factory, modelName ) &&
-		type === 'RECEIVE_FACTORY_FOR_MODEL' &&
-		! hasSameFactory( state, modelName, factory )
-	) {
-		return {
-			...state,
-			[ modelName ]: factory,
-		};
+	const { type, factory } = action;
+	try {
+		const modelName = singularModelName( action.modelName );
+		if (
+			isModelEntityFactoryOfModel( factory, modelName ) &&
+			type === types.RECEIVE_FACTORY_FOR_MODEL
+		) {
+			return state.set( modelName, factory );
+		}
+	} catch ( e ) {
+		return state;
 	}
 	return state;
 };
 
+/**
+ * Reducer for relation endpoints.
+ *
+ * @param {Immutable.Map}state
+ * @param {Object} action
+ * @return {Immutable.Map} New or original state.
+ */
 export const receiveRelationEndpointForEntity = (
-	state = DEFAULT_SCHEMA_STATE.relationEndpoints,
+	state = fromJS( DEFAULT_SCHEMA_STATE.relationEndpoints ),
 	action
 ) => {
-	const { type, modelName, entityId, endpoint } = action;
-	const relationName = pluralModelName( action.relationName );
-	const relationEndpointData = state[ modelName ][ entityId ] ?
-		{ ...state[ modelName ][ entityId ] } :
-		{};
-	if ( type === 'RECEIVE_RELATION_ENDPOINT_FOR_MODEL_ENTITY' ) {
-		return {
-			...state,
-			[ modelName ]: {
-				...state[ modelName ],
-				[ entityId ]: {
-					...relationEndpointData,
-					[ relationName ]: endpoint,
-				},
-			},
-		};
+	try {
+		const { type, entityId, endpoint } = action;
+		const modelName = singularModelName( action.modelName );
+		const relationName = pluralModelName( action.relationName );
+		if ( type === types.RECEIVE_RELATION_ENDPOINT_FOR_MODEL_ENTITY ) {
+			return state.setIn(
+				[ modelName, normalizeEntityId( entityId ), relationName ],
+				endpoint
+			);
+		}
+	} catch ( e ) {
+		return state;
 	}
+	return state;
 };
 
+/**
+ * Be aware that the root state is a plain object but each slice ('schema',
+ * 'factory', 'relationEndpoints') is an immutable Map.
+ */
 export default combineReducers( {
 	schema: receiveSchema,
 	factory: receiveFactory,
