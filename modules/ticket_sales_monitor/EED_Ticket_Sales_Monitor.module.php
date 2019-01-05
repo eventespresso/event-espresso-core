@@ -326,7 +326,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         if (self::debug) {
             echo self::$nl . self::$nl . ' . . . INCREASE RESERVED: ' . $quantity;
         }
-        return $ticket->increase_reserved($quantity, 'TicketSalesMonitor:' . __LINE__);
+        return $ticket->increaseReserved($quantity, 'TicketSalesMonitor:' . __LINE__);
     }
 
 
@@ -342,7 +342,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             echo self::$nl . ' . . . ticket->ID: ' . $ticket->ID();
             echo self::$nl . ' . . . ticket->reserved before: ' . $ticket->reserved();
         }
-        $ticket->decrease_reserved($quantity, true, 'TicketSalesMonitor:' . __LINE__);
+        $ticket->decreaseReserved($quantity, true, 'TicketSalesMonitor:' . __LINE__);
         if (self::debug) {
             echo self::$nl . ' . . . ticket->reserved after: ' . $ticket->reserved();
         }
@@ -1010,7 +1010,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                     EE_Ticket::META_KEY_TICKET_RESERVATIONS,
                     __LINE__ . ') ' . $source . '()'
                 );
-                $ticket_with_reservations->decrease_reserved($reserved_qty, true, 'TicketSalesMonitor:' . __LINE__);
+                $ticket_with_reservations->decreaseReserved($reserved_qty, true, 'TicketSalesMonitor:' . __LINE__);
                 $ticket_with_reservations->save();
                 $total_tickets_released += $reserved_qty;
                 $event = $ticket_with_reservations->get_related_event();
