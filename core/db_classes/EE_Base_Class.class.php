@@ -3054,17 +3054,21 @@ abstract class EE_Base_Class
         }
     }
 
+
     /**
      * Change $fields' values to $new_value_sql (which is a string of raw SQL)
+     *
      * @since $VID:$
      * @param EE_Model_Field_Base[] $fields
-     * @param string $new_value_sql eg 'column_name=123', or 'column_name=column_name+1', or
-     *                              'column_name= CASE
-                                        WHEN (`column_name` + `other_column` + 5) <= `yet_another_column`
-                                        THEN `column_name` + 5
-                                        ELSE `column_name`
-                                        END'
-     * Also updates $field on this model object with the latest value from the database.
+     * @param string $new_value_sql
+     *      example: 'column_name=123',
+     *      or 'column_name=column_name+1',
+     *      or 'column_name= CASE
+     *          WHEN (`column_name` + `other_column` + 5) <= `yet_another_column`
+     *          THEN `column_name` + 5
+     *          ELSE `column_name`
+     *      END'
+     *      Also updates $field on this model object with the latest value from the database.
      * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -3076,20 +3080,28 @@ abstract class EE_Base_Class
     {
         // First make sure this model object actually exists in the DB. It would be silly to try to update it in the DB
         // if it wasn't even there to start off.
-        if( ! $this->ID()) {
+        if (! $this->ID()) {
             $this->save();
         }
         global $wpdb;
-        if(empty($fields)){
-            throw new InvalidArgumentException(esc_html__('EE_Base_Class::updateFieldsInDB was passed an empty array of fields.', 'event_espresso'));
+        if (empty($fields)) {
+            throw new InvalidArgumentException(
+                esc_html__(
+                    'EE_Base_Class::updateFieldsInDB was passed an empty array of fields.',
+                'event_espresso'
+                )
+            );
         }
         $first_field = reset($fields);
         $table_alias = $first_field->get_table_alias();
-        foreach($fields as $field) {
-            if( $table_alias !== $field->get_table_alias()) {
+        foreach ($fields as $field) {
+            if ($table_alias !== $field->get_table_alias()) {
                 throw new InvalidArgumentException(
                     sprintf(
-                        esc_html__('EE_Base_Class::updateFieldsInDB was passed fields for different tables ("%1$s" and "%2$s"), which is not supported. Instead, please call the method multiple times.', 'event_espresso'),
+                        esc_html__(
+                            'EE_Base_Class::updateFieldsInDB was passed fields for different tables ("%1$s" and "%2$s"), which is not supported. Instead, please call the method multiple times.',
+                            'event_espresso'
+                        ),
                         $table_alias,
                         $field->get_table_alias()
                     )
@@ -3100,7 +3112,7 @@ abstract class EE_Base_Class
         $table_obj = $this->get_model()->get_table_obj_by_alias($table_alias);
         $table_pk_value = $this->ID();
         $table_name = $table_obj->get_table_name();
-        if ($table_obj instanceof EE_Secondary_Table ) {
+        if ($table_obj instanceof EE_Secondary_Table) {
             $table_pk_field_name = $table_obj->get_fk_on_table();
         } else {
             $table_pk_field_name = $table_obj->get_pk_column();
@@ -3116,7 +3128,7 @@ abstract class EE_Base_Class
                 $table_pk_value
             );
         $result = $wpdb->query($query);
-        foreach($fields as $field) {
+        foreach ($fields as $field) {
             // If it was successful, we'd like to know the new value.
             // If it failed, we'd also like to know the new value.
             $new_value = $this->get_model()->get_var(
@@ -3125,7 +3137,7 @@ abstract class EE_Base_Class
                         $this->model_field_array()
                     ),
                     array(
-                        'default_where_conditions' => 'minimum'
+                        'default_where_conditions' => 'minimum',
                     )
                 ),
                 $field->get_name()
@@ -3138,9 +3150,11 @@ abstract class EE_Base_Class
         return (bool) $result;
     }
 
+
     /**
      * Nudges $field_name's value by $quantity, without any conditionals (in comparison to bumpConditionally()).
      * Does not allow negative values, however.
+     *
      * @since $VID:$
      * @param array $fields_n_quantities keys are the field names, and values are the amount by which to bump them
      *                                   (positive or negative). One important gotcha: all these values must be
@@ -3168,7 +3182,7 @@ abstract class EE_Base_Class
             $column_name = $field->get_table_column();
 
             $abs_qty = absint($quantity);
-            if( $quantity > 0 ) {
+            if ($quantity > 0) {
                 // don't let the value be negative as often these fields are unsigned
                 $set_sql_statements[] = $wpdb->prepare(
                     "`{$column_name}` = `{$column_name}` + %d",
@@ -3185,8 +3199,6 @@ abstract class EE_Base_Class
                     $abs_qty
                 );
             }
-
-
         }
         return $this->updateFieldsInDB(
             $fields,
@@ -3194,17 +3206,19 @@ abstract class EE_Base_Class
         );
     }
 
+
     /**
      * Increases the value of the field $field_name_to_bump by $quantity, but only if the values of
      * $field_name_to_bump plus $field_name_affecting_total and $quantity won't exceed $limit_field_name's value.
      * For example, this is useful when bumping the value of TKT_reserved, TKT_sold, DTT_reserved or DTT_sold.
      * Returns true if the value was successfully bumped, and updates the value on this model object.
      * Otherwise returns false.
+     *
      * @since $VID:$
      * @param string $field_name_to_bump
      * @param string $field_name_affecting_total
      * @param string $limit_field_name
-     * @param int $quantity
+     * @param int    $quantity
      * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -3217,7 +3231,6 @@ abstract class EE_Base_Class
         global $wpdb;
         $field = $this->get_model()->field_settings_for($field_name_to_bump, true);
         $column_name = $field->get_table_column();
-
 
         $field_affecting_total = $this->get_model()->field_settings_for($field_name_affecting_total, true);
         $column_affecting_total = $field_affecting_total->get_table_column();
