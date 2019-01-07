@@ -18,7 +18,8 @@ import {
 	receiveFactoryForModel,
 	receiveRelationEndpointForModelEntity,
 } from './actions';
-import { fetchFromApi, select } from './controls';
+import { fetchFromApi } from './controls';
+import { getSchemaByModel } from '../base-resolvers';
 
 /**
  * A resolver for getting the schema for a given model name.
@@ -101,22 +102,4 @@ export function* getRelationEndpointForEntityId(
 		);
 	}
 	return endpoint;
-}
-
-/**
- * A control for retrieving the schema for the given model
- * @param {string} modelName
- * @return {IterableIterator<*>|Object}  a generator or Object if schema is
- * retrieved.
- */
-export function* getSchemaByModel( modelName ) {
-	let schema;
-	const resolved = yield select( 'hasResolvedSchemaForModel', modelName );
-	if ( resolved === true ) {
-		schema = yield select( 'getSchemaForModel', modelName );
-		return schema;
-	}
-	schema = yield getSchemaForModel( modelName );
-	yield receiveSchemaForModel( modelName, schema );
-	return schema;
 }

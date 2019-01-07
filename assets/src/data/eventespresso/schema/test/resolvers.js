@@ -12,7 +12,6 @@ import {
 	getSchemaForModel,
 	getFactoryForModel,
 	getRelationEndpointForEntityId,
-	getSchemaByModel,
 } from '../resolvers';
 import {
 	receiveSchemaForModel,
@@ -20,7 +19,7 @@ import {
 	receiveRelationEndpointForModelEntity,
 } from '../actions';
 import { eventFactory } from '../../test/fixtures/base';
-import { fetchFromApi, select } from '../controls';
+import { fetchFromApi } from '../controls';
 
 const poorManSerializer = ( item ) => {
 	return JSON.parse( JSON.stringify( item ) );
@@ -157,57 +156,6 @@ describe( 'getRelationEndpointForEntityId()', () => {
 	it( 'returns endpoint for valid data', () => {
 		const { value, done } = fulfillment.next();
 		expect( value ).toEqual( 'https://some_endpoint' );
-		expect( done ).toBe( true );
-	} );
-} );
-describe( 'getSchemaByModel()', () => {
-	let fulfillment;
-	const reset = () => fulfillment = getSchemaByModel( 'event' );
-	it( 'yields select action for whether schema has been resolved for ' +
-		'the given model', () => {
-		reset();
-		const { value } = fulfillment.next();
-		expect( value ).toEqual(
-			select(
-				'hasResolvedSchemaForModel',
-				'event'
-			)
-		);
-	} );
-	it( 'yields select action for getting the schema for the ' +
-		'model when resolution for that selector is complete', () => {
-		const { value } = fulfillment.next( true );
-		expect( value ).toEqual(
-			select(
-				'getSchemaForModel',
-				'event'
-			)
-		);
-	} );
-	it( 'returns the schema when resolution for the selector is ' +
-		'complete', () => {
-		const { value, done } = fulfillment.next( EventSchema );
-		expect( value ).toBe( EventSchema );
-		expect( done ).toBe( true );
-	} );
-	it( 'yields the getSchemaForModel generator when resolution has not been' +
-		'completed', () => {
-		reset();
-		fulfillment.next();
-		const { value } = fulfillment.next( false );
-		expect( isGenerator( value ) ).toBe( true );
-	} );
-	it( 'yields receiveSchemaForModel action object for the retrieved ' +
-		'schema', () => {
-		const { value } = fulfillment.next( EventSchema );
-		expect( value ).toEqual( receiveSchemaForModel(
-			'event',
-			EventSchema
-		) );
-	} );
-	it( 'returns retrieved schema', () => {
-		const { value, done } = fulfillment.next();
-		expect( value ).toBe( EventSchema );
 		expect( done ).toBe( true );
 	} );
 } );

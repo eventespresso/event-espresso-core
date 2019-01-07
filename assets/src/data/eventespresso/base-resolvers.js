@@ -1,12 +1,16 @@
 /**
  * External Imports
  */
-import { pluralModelName } from '@eventespresso/model';
+import {
+	pluralModelName,
+	createEntityFactory,
+	MODEL_PREFIXES,
+} from '@eventespresso/model';
 
 /**
  * Internal imports
  */
-import { getFactoryForModel, getSchemaForModel } from './schema/resolvers';
+import { getSchemaForModel } from './schema/resolvers';
 import { select, dispatch } from './base-controls';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from './core/constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from './schema/constants';
@@ -15,7 +19,7 @@ import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from './schema/constants';
  * Returns the factory for the given model from the eventespresso/schema store.
  *
  * @param {string} modelName
- * @return {IterableIterator<*>|Object} A generator or the object once the
+ * @return {IterableIterator<*>|Object|null} A generator or the object once the
  * factory is retrieved.
  */
 export function* getFactoryByModel( modelName ) {
@@ -34,7 +38,14 @@ export function* getFactoryByModel( modelName ) {
 		return factory;
 	}
 	const schema = yield getSchemaByModel( modelName );
-	factory = yield getFactoryForModel( modelName, schema );
+	if ( ! schema ) {
+		return null;
+	}
+	factory = createEntityFactory(
+		modelName,
+		schema.schema,
+		MODEL_PREFIXES( modelName )
+	);
 	yield dispatch(
 		SCHEMA_REDUCER_KEY,
 		'receiveFactoryForModel',
