@@ -240,8 +240,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
     /**
      * Increments sold by amount passed by $qty, and persists it immediately to the database.
+     * Simultaneously decreases the reserved count, unless $also_decrease_reserved is false.
      *
      * @param int $qty
+     * @param boolean $also_decrease_reserved
      * @return boolean indicating success
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -249,15 +251,24 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function increaseSold($qty = 1)
+    public function increaseSold($qty = 1, $also_decrease_reserved = true)
     {
         $qty = absint($qty);
-        $success = $this->bump(
-            [
-                'DTT_reserved' => $qty * -1,
-                'DTT_sold' => $qty
-            ]
-        );
+        if( $also_decrease_reserved) {
+            $success = $this->bump(
+                [
+                    'DTT_sold' => $qty
+                ]
+            );
+        } else {
+            $success = $this->bump(
+                [
+                    'DTT_reserved' => $qty * -1,
+                    'DTT_sold' => $qty
+                ]
+            );
+        }
+
         do_action(
             'AHEE__EE_Datetime__increase_sold',
             $this,
