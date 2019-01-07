@@ -61,7 +61,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @param array  $date_formats            incoming date_formats in an array where the first value is the
      *                                        date_format and the second value is the time format
      * @return EE_Ticket
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
     {
@@ -75,7 +75,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
      *                                the website will be used.
      * @return EE_Ticket
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function new_instance_from_db($props_n_values = array(), $timezone = null)
     {
@@ -85,7 +85,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
     /**
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function parent()
     {
@@ -98,7 +98,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param  int $DTT_ID the primary key for a particular datetime
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function available($DTT_ID = 0)
     {
@@ -124,7 +124,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @param bool | null $remaining if it is already known that tickets are available, then simply pass a bool to save
      *               further processing
      * @return mixed status int if the display string isn't requested
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function ticket_status($display = false, $remaining = null)
     {
@@ -155,7 +155,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @access public
      * @param  int $DTT_ID if an int above 0 is included here then we get a specific dtt.
      * @return boolean         true = tickets remaining, false not.
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function is_remaining($DTT_ID = 0)
     {
@@ -176,7 +176,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @param  int $DTT_ID the primary key for a particular datetime.
      *                     set to 0 for all related datetimes
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function remaining($DTT_ID = 0)
     {
@@ -188,7 +188,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets min
      *
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function min()
     {
@@ -200,7 +200,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * return if a ticket is no longer available cause its available dates have expired.
      *
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function is_expired()
     {
@@ -212,7 +212,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Return if a ticket is yet to go on sale or not
      *
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function is_pending()
     {
@@ -224,7 +224,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Return if a ticket is on sale or not
      *
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function is_on_sale()
     {
@@ -239,7 +239,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @param string $conjunction - conjunction junction what's your function ? this string joins the start date with
      *                            the end date ie: Jan 01 "to" Dec 31
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function date_range($dt_frmt = '', $conjunction = ' - ')
     {
@@ -255,7 +255,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * This returns the chronologically first datetime that this ticket is associated with
      *
      * @return EE_Datetime
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function first_datetime()
     {
@@ -270,7 +270,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Datetime[]|EE_Base_Class[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function datetimes($query_params = array())
     {
@@ -285,7 +285,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * This returns the chronologically last datetime that this ticket is associated with
      *
      * @return EE_Datetime
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function last_datetime()
     {
@@ -305,7 +305,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *                        If $dtt_id IS given then we return the tickets sold for that given datetime.
      * @param  int    $dtt_id [optional] include the dtt_id with $what = 'datetime'.
      * @return mixed (array|int)          how many tickets have sold
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function tickets_sold($what = 'ticket', $dtt_id = null)
     {
@@ -343,7 +343,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * This returns an array indexed by datetime_id for tickets sold with this ticket.
      *
      * @return EE_Ticket[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _all_tickets_sold()
     {
@@ -365,7 +365,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param  bool $return_array whether to return as an array indexed by price id or just the object.
      * @return EE_Price|EE_Base_Class|EE_Price[]|EE_Base_Class[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function base_price($return_array = false)
     {
@@ -381,7 +381,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @access public
      * @return EE_Price[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function price_modifiers()
     {
@@ -402,7 +402,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Price[]|EE_Base_Class[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function prices($query_params = array())
     {
@@ -415,7 +415,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Datetime_Ticket|EE_Base_Class[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function datetime_tickets($query_params = array())
     {
@@ -429,7 +429,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @param boolean $show_expired
      * @param boolean $show_deleted
      * @return EE_Datetime[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function datetimes_ordered($show_expired = true, $show_deleted = false)
     {
@@ -445,7 +445,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets ID
      *
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function ID()
     {
@@ -458,7 +458,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @since 4.5.0
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function wp_user()
     {
@@ -470,7 +470,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets the template for the ticket
      *
      * @return EE_Ticket_Template|EE_Base_Class
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function template()
     {
@@ -482,7 +482,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Simply returns an array of EE_Price objects that are taxes.
      *
      * @return EE_Price[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_ticket_taxes_for_admin()
     {
@@ -492,7 +492,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
     /**
      * @return float
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function ticket_price()
     {
@@ -502,7 +502,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
     /**
      * @return mixed
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function pretty_price()
     {
@@ -512,7 +512,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
     /**
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function is_free()
     {
@@ -525,7 +525,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param bool $no_cache
      * @return float
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_ticket_total_with_taxes($no_cache = false)
     {
@@ -545,7 +545,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
     /**
      * @return float
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_ticket_subtotal()
     {
@@ -557,7 +557,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Returns the total taxes applied to this ticket
      *
      * @return float
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_ticket_taxes_total_for_admin()
     {
@@ -569,7 +569,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Sets name
      *
      * @param string $name
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_name($name)
     {
@@ -581,7 +581,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets description
      *
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function description()
     {
@@ -593,7 +593,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Sets description
      *
      * @param string $description
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_description($description)
     {
@@ -607,7 +607,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @param string $dt_frmt
      * @param string $tm_frmt
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function start_date($dt_frmt = '', $tm_frmt = '')
     {
@@ -620,7 +620,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param string $start_date
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_start_date($start_date)
     {
@@ -634,7 +634,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @param string $dt_frmt
      * @param string $tm_frmt
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function end_date($dt_frmt = '', $tm_frmt = '')
     {
@@ -647,7 +647,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param string $end_date
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_end_date($end_date)
     {
@@ -660,7 +660,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @since 4.5.0
      * @param string $time a string representation of the sell until time (ex 9am or 7:30pm)
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_end_time($time)
     {
@@ -673,7 +673,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param int $min
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_min($min)
     {
@@ -685,7 +685,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets max
      *
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function max()
     {
@@ -698,7 +698,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param int $max
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_max($max)
     {
@@ -711,7 +711,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param float $price
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_price($price)
     {
@@ -723,7 +723,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets sold
      *
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function sold()
     {
@@ -736,7 +736,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param int $sold
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_sold($sold)
     {
@@ -750,22 +750,23 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Increments sold by amount passed by $qty AND decrements the reserved count on both this ticket and its
      * associated datetimes.
      *
+     * @since $VID:$
      * @param int $qty
-     * @return void
+     * @return boolean
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function increase_sold($qty = 1)
+    public function increaseSold($qty = 1)
     {
         $qty = absint($qty);
         // increment sold and decrement reserved datetime quantities simultaneously
         // don't worry about failures, because they must have already had a spot reserved
-        $this->sellDatetimes($qty);
+        $this->increaseSoldForDatetimes($qty);
         // Increment and decrement ticket quantities simultaneously
-        $this->bump(
+        $success = $this->bump(
             [
                 'TKT_reserved' => $qty * -1,
                 'TKT_sold' => $qty
@@ -775,33 +776,33 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
             'AHEE__EE_Ticket__increase_sold',
             $this,
             $qty,
-            $this->sold()
+            $this->sold(),
+            $success
         );
+        return $success;
     }
 
     /**
-     * On each datetiem related to this ticket, increases its sold count and decreases its reserved count by $qty.
+     * On each datetime related to this ticket, increases its sold count and decreases its reserved count by $qty.
+     *
      * @since $VID:$
      * @param int $qty positive or negative. Positive means to increase sold counts (and decrease reserved counts),
      *             Negative means to decreases old counts (and increase reserved counts).
+     * @param EE_Datetime[] $datetimes
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function sellDatetimes($qty)
+    protected function increaseSoldForDatetimes($qty, array $datetimes = [])
     {
-        $qty = $qty;
-        foreach ($this->datetimes() as $datetime) {
-            $datetime->bump(
-                [
-                    'DTT_reserved' => $qty * -1,
-                    'DTT_sold' => $qty
-                ]
-            );
+        $datetimes = ! empty($datetimes) ? $datetimes : $this->datetimes();
+        foreach ($datetimes as $datetime) {
+            $datetime->increaseSold($qty);
         }
     }
+
 
 
     /**
@@ -809,21 +810,20 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * DB and then updates the model objects.
      * Does not affect the reserved counts.
      *
+     * @since $VID:$
      * @param int $qty
-     * @return void
+     * @return boolean
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function decrease_sold($qty = 1)
+    public function decreaseSold($qty = 1)
     {
         $qty = absint($qty);
-        foreach ($this->datetimes() as $datetime) {
-            $datetime->decrease_sold($qty);
-        }
-        $this->bump(
+        $this->decreaseSoldForDatetimes($qty);
+        $success = $this->bump(
             [
                 'TKT_sold' => $qty * -1
             ]
@@ -832,8 +832,36 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
             'AHEE__EE_Ticket__decrease_sold',
             $this,
             $qty,
-            $this->sold()
+            $this->sold(),
+            $success
         );
+        return $success;
+    }
+
+
+    /**
+     * Decreases sold on related datetimes
+     *
+     * @since $VID:$
+     * @param int $qty
+     * @param EE_Datetime[] $datetimes
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    protected function decreaseSoldForDatetimes($qty = 1, array $datetimes = [])
+    {
+        $datetimes = ! empty($datetimes) ? $datetimes : $this->datetimes();
+        if (is_array($datetimes)) {
+            foreach ($datetimes as $datetime) {
+                if ($datetime instanceof EE_Datetime) {
+                    $datetime->decreaseSold($qty);
+                }
+            }
+        }
     }
 
 
@@ -841,7 +869,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets qty of reserved tickets
      *
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function reserved()
     {
@@ -854,7 +882,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param int $reserved
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_reserved($reserved)
     {
@@ -867,6 +895,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Increments reserved by amount passed by $qty, and persists it immediately to the database.
      *
+     * @since $VID:$
      * @param int    $qty
      * @param string $source
      * @return bool whether we successfully reserved the ticket or not.
@@ -876,64 +905,64 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function increase_reserved($qty = 1, $source = 'unknown')
+    public function increaseReserved($qty = 1, $source = 'unknown')
     {
+        $qty = absint($qty);
         do_action(
             'AHEE__EE_Ticket__increase_reserved__begin',
             $this,
             $qty,
             $source
         );
-        if (! $this->add_extra_meta(
-                EE_Ticket::META_KEY_TICKET_RESERVATIONS,
-                "{$qty} from {$source}"
-            )
-        ) {
-            return false;
-        }
-        $datetimes_adjusted_successfully = $this->_increase_reserved_for_datetimes($qty);
+        $this->add_extra_meta(EE_Ticket::META_KEY_TICKET_RESERVATIONS, "{$qty} from {$source}");
+        $success = false;
+        $datetimes_adjusted_successfully = $this->increaseReservedForDatetimes($qty);
         if( $datetimes_adjusted_successfully ) {
-            $successful_bump = $this->bumpConditionally(
+            $success = $this->bumpConditionally(
                 'TKT_reserved',
                 'TKT_sold',
                 'TKT_qty',
-                absint($qty)
+                $qty
             );
-            if (! $successful_bump) {
+            if (! $success) {
                 // The datetimes were successfully bumped, but not the
                 // ticket. So we need to manually rollback the datetimes.
-                $this->_decrease_reserved_for_datetimes($qty);
+                $this->decreaseReservedForDatetimes($qty);
             }
-        } else {
-            $successful_bump = false;
         }
         do_action(
             'AHEE__EE_Ticket__increase_reserved',
             $this,
             $qty,
             $this->reserved(),
-            $successful_bump
+            $success
         );
-        return $successful_bump;
+        return $success;
     }
 
 
     /**
-     * Increases sold on related datetimes
+     * Increases reserved counts on related datetimes
      *
+     * @since $VID:$
      * @param int $qty
+     * @param EE_Datetime[] $datetimes
      * @return boolean indicating success
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    protected function _increase_reserved_for_datetimes($qty = 1)
+    protected function increaseReservedForDatetimes($qty = 1, array $datetimes = [])
     {
-        $datetimes = $this->datetimes();
+        $datetimes = ! empty($datetimes) ? $datetimes : $this->datetimes();
         $datetimes_updated = [];
         $limit_exceeded = false;
         if (is_array($datetimes)) {
             foreach ($datetimes as $datetime) {
                 if ($datetime instanceof EE_Datetime) {
-                    if ($datetime->increase_reserved($qty)) {
+                    if ($datetime->increaseReserved($qty)) {
                         $datetimes_updated[] = $datetime;
                     } else {
                         $limit_exceeded = true;
@@ -944,86 +973,71 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
             // If somewhere along the way we detected a datetime whose
             // limit was exceeded, do a manual rollback.
             if( $limit_exceeded ) {
-                $this->decreaseReservedForDatetimes($datetimes_updated, $qty);
+                $this->decreaseReservedForDatetimes($qty, $datetimes_updated);
                 return false;
             }
         }
         return true;
     }
 
-    /**
-     * Decreases the reserved count on the specified datetimes.
-     * @since $VID:$
-     * @param EE_Datetime[] $datetimes
-     * @param int $qty
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    protected function decreaseReservedForDatetimes($datetimes, $qty = 1) {
-        foreach($datetimes as $datetime) {
-            if ($datetime instanceof EE_Datetime) {
-                $datetime->decrease_reserved($qty);
-            }
-        }
-    }
-
 
     /**
      * Decrements (subtracts) reserved by amount passed by $qty, and persists it immediately to the database.
      *
+     * @since $VID:$
      * @param int    $qty
      * @param bool   $adjust_datetimes
      * @param string $source
-     * @return void
+     * @return boolean
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function decrease_reserved($qty = 1, $adjust_datetimes = true, $source = 'unknown')
+    public function decreaseReserved($qty = 1, $adjust_datetimes = true, $source = 'unknown')
     {
-        $reserved = $this->reserved() - absint($qty);
-        if (! $this->add_extra_meta(
-            EE_Ticket::META_KEY_TICKET_RESERVATIONS,
-            "-{$qty} from {$source}"
-        )) {
-            return false;
-        }
+        $qty = absint($qty);
+        $this->add_extra_meta(EE_Ticket::META_KEY_TICKET_RESERVATIONS, "-{$qty} from {$source}");
         if ($adjust_datetimes) {
-            $this->_decrease_reserved_for_datetimes($qty);
+            $this->decreaseReservedForDatetimes($qty);
         }
-        $this->bump(
+        $success = $this->bump(
             [
-                'TKT_reserved' =>  absint($qty) * -1
+                'TKT_reserved' => $qty * -1
             ]
         );
         do_action(
             'AHEE__EE_Ticket__decrease_reserved',
             $this,
             $qty,
-            $reserved
+            $this->reserved(),
+            $success
         );
+        return $success;
     }
 
 
     /**
-     * Decreases reserved on related datetimes
+     * Decreases the reserved count on the specified datetimes.
      *
-     * @param int $qty
-     * @return void
+     * @since $VID:$
+     * @param int           $qty
+     * @param EE_Datetime[] $datetimes
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function _decrease_reserved_for_datetimes($qty = 1)
+    protected function decreaseReservedForDatetimes($qty = 1, array $datetimes = [])
     {
-        $this->decreaseReservedForDatetimes($this->datetimes(), $qty);
+        $datetimes = ! empty($datetimes) ? $datetimes : $this->datetimes();
+        foreach ($datetimes as $datetime) {
+            if ($datetime instanceof EE_Datetime) {
+                $datetime->decreaseReserved($qty);
+            }
+        }
     }
 
 
@@ -1037,7 +1051,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *                            SALEABLE: also considers datetime sold and returns zero if ANY DTT is sold out, and
      *                            is therefore the truest measure of tickets that can be purchased at the moment
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function qty($context = '')
     {
@@ -1063,7 +1077,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @param  int   $DTT_ID      the primary key for a particular datetime.
      *                            set to 0 for all related datetimes
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function real_quantity_on_ticket($context = 'reg_limit', $DTT_ID = 0)
     {
@@ -1133,7 +1147,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param int $qty
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_qty($qty)
     {
@@ -1151,7 +1165,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets uses
      *
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function uses()
     {
@@ -1164,7 +1178,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param int $uses
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_uses($uses)
     {
@@ -1176,7 +1190,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * returns whether ticket is required or not.
      *
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function required()
     {
@@ -1189,7 +1203,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param boolean $required
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_required($required)
     {
@@ -1201,7 +1215,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets taxable
      *
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function taxable()
     {
@@ -1214,7 +1228,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param boolean $taxable
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_taxable($taxable)
     {
@@ -1226,7 +1240,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets is_default
      *
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function is_default()
     {
@@ -1239,7 +1253,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param boolean $is_default
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_is_default($is_default)
     {
@@ -1251,7 +1265,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets order
      *
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function order()
     {
@@ -1264,7 +1278,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param int $order
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_order($order)
     {
@@ -1276,7 +1290,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets row
      *
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function row()
     {
@@ -1289,7 +1303,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param int $row
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_row($row)
     {
@@ -1301,7 +1315,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets deleted
      *
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function deleted()
     {
@@ -1314,7 +1328,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param boolean $deleted
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_deleted($deleted)
     {
@@ -1326,7 +1340,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets parent
      *
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function parent_ID()
     {
@@ -1339,7 +1353,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param int $parent
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_parent_ID($parent)
     {
@@ -1351,7 +1365,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets a string which is handy for showing in gateways etc that describes the ticket.
      *
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function name_and_info()
     {
@@ -1367,7 +1381,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets name
      *
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function name()
     {
@@ -1379,7 +1393,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets price
      *
      * @return float
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function price()
     {
@@ -1392,7 +1406,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Registration[]|EE_Base_Class[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function registrations($query_params = array())
     {
@@ -1405,7 +1419,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * into account
      *
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function update_tickets_sold()
     {
@@ -1419,9 +1433,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         );
         $sold = $this->sold();
         if ($count_regs_for_this_ticket > $sold) {
-            $this->increase_sold($count_regs_for_this_ticket - $sold);
+            $this->increaseSold($count_regs_for_this_ticket - $sold);
         } elseif ($count_regs_for_this_ticket < $sold) {
-            $this->decrease_sold($count_regs_for_this_ticket - $sold);
+            $this->decreaseSold($count_regs_for_this_ticket - $sold);
         }
         return $count_regs_for_this_ticket;
     }
@@ -1456,7 +1470,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @see EEI_Event_Relation for comments
      * @return EE_Event
-     * @throws \EE_Error
+     * @throws EE_Error
      * @throws UnexpectedEntityException
      */
     public function get_related_event()
@@ -1494,7 +1508,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @see EEI_Event_Relation for comments
      * @return string
      * @throws UnexpectedEntityException
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_event_name()
     {
@@ -1509,7 +1523,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @see EEI_Event_Relation for comments
      * @return int
      * @throws UnexpectedEntityException
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_event_ID()
     {
@@ -1528,5 +1542,208 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     public function is_permanently_deleteable()
     {
         return $this->count_registrations() === 0;
+    }
+
+
+    /*******************************************************************
+     ***********************  DEPRECATED METHODS  **********************
+     *******************************************************************/
+
+
+    /**
+     * Increments sold by amount passed by $qty AND decrements the reserved count on both this ticket and its
+     * associated datetimes.
+     *
+     * @deprecated $VID:$
+     * @param int $qty
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function increase_sold($qty = 1)
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            esc_html__('Please use EE_Ticket::increaseSold() instead', 'event_espresso'),
+            '$VID:$',
+            '5.0.0.p'
+        );
+        $this->increaseSold($qty);
+    }
+
+
+    /**
+     * On each datetime related to this ticket, increases its sold count and decreases its reserved count by $qty.
+     *
+     * @deprecated $VID:$
+     * @param int $qty positive or negative. Positive means to increase sold counts (and decrease reserved counts),
+     *                 Negative means to decreases old counts (and increase reserved counts).
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    protected function _increase_sold_for_datetimes($qty)
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            esc_html__('Please use EE_Ticket::increaseSoldForDatetimes() instead', 'event_espresso'),
+            '$VID:$',
+            '5.0.0.p'
+        );
+        $this->increaseSoldForDatetimes($qty);
+    }
+
+
+    /**
+     * Decrements (subtracts) sold by amount passed by $qty on both the ticket and its related datetimes directly in the
+     * DB and then updates the model objects.
+     * Does not affect the reserved counts.
+     *
+     * @deprecated $VID:$
+     * @param int $qty
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function decrease_sold($qty = 1)
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            esc_html__('Please use EE_Ticket::decreaseSold() instead', 'event_espresso'),
+            '$VID:$',
+            '5.0.0.p'
+        );
+        $this->decreaseSold($qty);
+    }
+
+
+    /**
+     * Decreases sold on related datetimes
+     *
+     * @deprecated $VID:$
+     * @param int $qty
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    protected function _decrease_sold_for_datetimes($qty = 1)
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            esc_html__('Please use EE_Ticket::decreaseSoldForDatetimes() instead', 'event_espresso'),
+            '$VID:$',
+            '5.0.0.p'
+        );
+        $this->decreaseSoldForDatetimes($qty);
+    }
+
+
+    /**
+     * Increments reserved by amount passed by $qty, and persists it immediately to the database.
+     *
+     * @deprecated $VID:$
+     * @param int    $qty
+     * @param string $source
+     * @return bool whether we successfully reserved the ticket or not.
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function increase_reserved($qty = 1, $source = 'unknown')
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            esc_html__('Please use EE_Ticket::increaseReserved() instead', 'event_espresso'),
+            '$VID:$',
+            '5.0.0.p'
+        );
+        return $this->increaseReserved($qty);
+    }
+
+
+    /**
+     * Increases sold on related datetimes
+     *
+     * @deprecated $VID:$
+     * @param int $qty
+     * @return boolean indicating success
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    protected function _increase_reserved_for_datetimes($qty = 1)
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            esc_html__('Please use EE_Ticket::increaseReservedForDatetimes() instead', 'event_espresso'),
+            '$VID:$',
+            '5.0.0.p'
+        );
+        return $this->increaseReservedForDatetimes($qty);
+    }
+
+
+    /**
+     * Decrements (subtracts) reserved by amount passed by $qty, and persists it immediately to the database.
+     *
+     * @deprecated $VID:$
+     * @param int    $qty
+     * @param bool   $adjust_datetimes
+     * @param string $source
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function decrease_reserved($qty = 1, $adjust_datetimes = true, $source = 'unknown')
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            esc_html__('Please use EE_Ticket::decreaseReserved() instead', 'event_espresso'),
+            '$VID:$',
+            '5.0.0.p'
+        );
+        $this->decreaseReserved($qty);
+    }
+
+
+    /**
+     * Decreases reserved on related datetimes
+     *
+     * @deprecated $VID:$
+     * @param int $qty
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    protected function _decrease_reserved_for_datetimes($qty = 1)
+    {
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            esc_html__('Please use EE_Ticket::decreaseReservedForDatetimes() instead', 'event_espresso'),
+            '$VID:$',
+            '5.0.0.p'
+        );
+        $this->decreaseReservedForDatetimes($qty);
     }
 }

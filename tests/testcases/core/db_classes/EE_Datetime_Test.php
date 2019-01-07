@@ -20,16 +20,16 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 	function test_increase_sold(){
 		$d = EE_Datetime::new_instance();
 		$this->assertEquals($d->get('DTT_sold'),0);
-		$d->increase_sold();
+		$d->increaseSold();
 		$this->assertEquals($d->get('DTT_sold'),1);
-		$d->increase_sold(2);
+		$d->increaseSold(2);
 		$this->assertEquals($d->get('DTT_sold'),3);
 	}
 	function test_decrease_sold(){
 		$d = EE_Datetime::new_instance(array('DTT_sold'=>5));
-		$d->decrease_sold();
+		$d->decreaseSold();
 		$this->assertEquals(4,$d->get('DTT_sold'));
-		$d->decrease_sold(2);
+		$d->decreaseSold(2);
 		$this->assertEquals(2,$d->get('DTT_sold'));
 	}
 	/**

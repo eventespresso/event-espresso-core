@@ -142,13 +142,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param boolean               $use_default
      * @param ContextInterface|null $context
      * @return bool
+     * @throws DomainException
      * @throws EE_Error
      * @throws EntityNotFoundException
      * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws RuntimeException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function set_status($new_STS_ID = null, $use_default = false, ContextInterface $context = null)
     {
@@ -163,12 +165,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             // TO approved
             if ($new_STS_ID === EEM_Registration::status_id_approved) {
                 // reserve a space by incrementing ticket and datetime sold values
-                $this->_sell_registration_space();
+                $this->reserveRegistrationSpace();
                 do_action('AHEE__EE_Registration__set_status__to_approved', $this, $old_STS_ID, $new_STS_ID, $context);
                 // OR FROM  approved
             } elseif ($old_STS_ID === EEM_Registration::status_id_approved) {
                 // release a space by decrementing ticket and datetime sold values
-                $this->_release_registration_space();
+                $this->releaseRegistrationSpace();
                 do_action(
                     'AHEE__EE_Registration__set_status__from_approved',
                     $this,
@@ -179,7 +181,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             }
             // update status
             parent::set('STS_ID', $new_STS_ID, $use_default);
-            $this->_update_if_canceled_or_declined($new_STS_ID, $old_STS_ID, $context);
+            $this->updateIfCanceledOrReinstated($new_STS_ID, $old_STS_ID, $context);
             if ($this->statusChangeUpdatesTransaction($context)) {
                 $this->updateTransactionAfterStatusChange();
             }
@@ -204,8 +206,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @throws RuntimeException
      */
-    private function _update_if_canceled_or_declined($new_STS_ID, $old_STS_ID, ContextInterface $context = null)
+    private function updateIfCanceledOrReinstated($new_STS_ID, $old_STS_ID, ContextInterface $context = null)
     {
         // these reg statuses should not be considered in any calculations involving monies owing
         $closed_reg_statuses = EEM_Registration::closed_reg_statuses();
@@ -216,7 +219,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             $old_STS_ID,
             $context
         );
-        $this->updateIfDeclined(
+        $this->updateIfReinstated(
             $closed_reg_statuses,
             $new_STS_ID,
             $old_STS_ID,
@@ -237,6 +240,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @throws RuntimeException
      */
     private function updateIfCanceled(
         array $closed_reg_statuses,
@@ -287,7 +291,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    private function updateIfDeclined(
+    private function updateIfReinstated(
         array $closed_reg_statuses,
         $new_STS_ID,
         $old_STS_ID,
@@ -435,13 +439,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws ReflectionException
      * @throws UnexpectedEntityException
      */
-    private function _sell_registration_space()
+    private function reserveRegistrationSpace()
     {
         // reserved ticket and datetime counts will be decremented as sold counts are incremented
         // so stop tracking that this reg has a ticket reserved
         $this->release_reserved_ticket(false, "REG: {$this->ID()} (ln:" . __LINE__ . ')');
         $ticket = $this->ticket();
-        $ticket->increase_sold();
+        $ticket->increaseSold();
         // possibly set event status to sold out
         $this->event()->perform_sold_out_status_check();
     }
@@ -460,10 +464,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws ReflectionException
      * @throws UnexpectedEntityException
      */
-    private function _release_registration_space()
+    private function releaseRegistrationSpace()
     {
         $ticket = $this->ticket();
-        $ticket->decrease_sold();
+        $ticket->decreaseSold();
         // possibly change event status from sold out back to previous status
         $this->event()->perform_sold_out_status_check();
     }
@@ -493,7 +497,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                 && $update_ticket
             ) {
                 $ticket = $this->ticket();
-                $ticket->increase_reserved(1, "REG: {$this->ID()} (ln:" . __LINE__ . ')');
+                $ticket->increaseReserved(1, "REG: {$this->ID()} (ln:" . __LINE__ . ')');
                 $ticket->save();
             }
         }
@@ -524,7 +528,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                 && $update_ticket
             ) {
                 $ticket = $this->ticket();
-                $ticket->decrease_reserved(1, true, "REG: {$this->ID()} (ln:" . __LINE__ . ')');
+                $ticket->decreaseReserved(1, true, "REG: {$this->ID()} (ln:" . __LINE__ . ')');
             }
         }
     }
