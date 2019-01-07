@@ -4,6 +4,8 @@ namespace EventEspresso\core\services\address;
 
 use EE_Country;
 use EE_Error;
+use EE_State;
+use EEM_Country;
 use EEM_State;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -64,7 +66,7 @@ class CountrySubRegionDao
 
     /**
      * @param EE_Country $country_object
-     * @return void
+     * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -96,8 +98,10 @@ class CountrySubRegionDao
             ) {
                 $this->countries = $data->countries;
                 $this->updateCountrySubRegionDataVersion($data->version);
+                return true;
             }
         }
+        return false;
     }
 
 
@@ -128,12 +132,13 @@ class CountrySubRegionDao
     /**
      * @param string $CNT_ISO
      * @param array  $countries
-     * @since 4.9.70.p
      * @return int
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @since 4.9.70.p
      */
     private function processCountryData($CNT_ISO, $countries = array())
     {
@@ -197,11 +202,13 @@ class CountrySubRegionDao
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     private function saveSubRegionData(stdClass $country, $sub_regions = array())
     {
         $results = 0;
         if (is_array($sub_regions)) {
+            $existing_sub_regions = $this->getExistingStateAbbreviations($country->code);
             foreach ($sub_regions as $sub_region) {
                 // remove country code from sub region code
                 $abbrev = str_replace(
@@ -213,19 +220,54 @@ class CountrySubRegionDao
                 if (absint($abbrev) !== 0) {
                     $abbrev = sanitize_text_field($sub_region->code);
                 }
-                if ($this->state_model->insert(
-                    array(
-                        // STA_ID CNT_ISO STA_abbrev STA_name STA_active
-                        'CNT_ISO'    => $country->code,
-                        'STA_abbrev' => $abbrev,
-                        'STA_name'   => sanitize_text_field($sub_region->name),
-                        'STA_active' => 1,
+                if (! in_array($abbrev, $existing_sub_regions, true)
+                    && $this->state_model->insert(
+                        [
+                            // STA_ID CNT_ISO STA_abbrev STA_name STA_active
+                            'CNT_ISO'    => $country->code,
+                            'STA_abbrev' => $abbrev,
+                            'STA_name'   => sanitize_text_field($sub_region->name),
+                            'STA_active' => 1,
+                        ]
                     )
-                )) {
+                ) {
                     $results++;
                 }
             }
         }
         return $results;
+    }
+
+
+    /**
+     * @param string $CNT_ISO
+     * @since $VID:$
+     * @return array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    private function getExistingStateAbbreviations($CNT_ISO)
+    {
+        $existing_sub_region_IDs = [];
+        $existing_sub_regions = $this->state_model->get_all(array(
+            array(
+                'Country.CNT_ISO' => array(
+                    'IN',
+                    [$CNT_ISO]
+                )
+            ),
+            'order_by' => array('Country.CNT_name' => 'ASC', 'STA_name' => 'ASC')
+        ));
+        if (is_array($existing_sub_regions)) {
+            foreach ($existing_sub_regions as $existing_sub_region) {
+                if ($existing_sub_region instanceof EE_State) {
+                    $existing_sub_region_IDs[] = $existing_sub_region->abbrev();
+                }
+            }
+        }
+        return $existing_sub_region_IDs;
     }
 }
