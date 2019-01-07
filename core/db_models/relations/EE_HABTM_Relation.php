@@ -176,18 +176,13 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
             $all_fields = array_merge($foreign_keys, $parsed_query);
         }
 
-        $existing_entry_in_join_table = $this->get_join_model()->get_one(array($foreign_keys));
+        $existing_entry_in_join_table = $this->get_join_model()->get_one(array($all_fields));
         // If there is already an entry in the join table, indicating a relationship, update it instead of adding a
         // new row.
         // Again, if you want more sophisticated logic or insertions (handling more columns than just 2 foreign keys to
         // the other tables) use the joining model directly!
         if (! $existing_entry_in_join_table) {
             $this->get_join_model()->insert($all_fields);
-        } else {
-            $this->get_join_model()->update(
-                $all_fields,
-                array($foreign_keys)
-            );
         }
         return $other_model_obj;
     }
