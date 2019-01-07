@@ -3089,7 +3089,9 @@ abstract class EE_Base_Class
             if( $table_alias !== $field->get_table_alias()) {
                 throw new InvalidArgumentException(
                     sprintf(
+                        // @codingStandardsIgnoreStart
                         esc_html__('EE_Base_Class::updateFieldsInDB was passed fields for different tables ("%1$s" and "%2$s"), which is not supported. Instead, please call the method multiple times.', 'event_espresso'),
+                        // @codingStandardsIgnoreEnd
                         $table_alias,
                         $field->get_table_alias()
                     )
