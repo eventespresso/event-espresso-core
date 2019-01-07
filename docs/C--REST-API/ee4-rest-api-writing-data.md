@@ -151,6 +151,7 @@ HTTP request to a route you want to know more about, and inspect it's schema. [L
 schemas here](ee4-rest-api-schema.md#relations). The properties which are marked as `foreign_key` indicate entities of this type depend on that related entity.
 E.g., registrations have an `ATT_ID`, which is a foreign key to `Attendee`s, meaning registrations should point to related attendee records. So before you create
 a registration, either create a new attendee, or find the ID of an attendee ID you want to attribute this registration to.
+In $VID:$, endpoints were added that simplify adding and removing relations between entities, please read [EE4 REST API: Editing Relations](ee4-rest-api-editing-relations.md).
 
 
 ## Dates and Times; provide GMT or non-GMT?

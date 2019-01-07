@@ -531,7 +531,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     '(?P<id>[^\/]+)',
                     $relation_obj
                 );
-                $endpoints = array(
+                $model_routes[ $related_route ] = array(
                     array(
                         'callback'        => array(
                             'EventEspresso\core\libraries\rest_api\controllers\model\Read',
@@ -543,7 +543,30 @@ class EED_Core_Rest_Api extends \EED_Module
                         'args'            => $this->_get_read_query_params($relation_obj->get_other_model(), $version),
                     ),
                 );
-                $model_routes[ $related_route ] = $endpoints;
+
+                $related_write_route = $related_route . '/' . '(?P<related_id>[^\/]+)';
+                $model_routes[ $related_write_route ] = array(
+                    array(
+                        'callback'        => array(
+                            'EventEspresso\core\libraries\rest_api\controllers\model\Write',
+                            'handleRequestAddRelation',
+                        ),
+                        'callback_args'   => array($version, $model_name, $relation_name),
+                        'methods'         => WP_REST_Server::EDITABLE,
+                        'hidden_endpoint' => $hidden_endpoint,
+                        'args'            => $this->_get_add_relation_query_params($model, $relation_obj->get_other_model(), $version)
+                    ),
+                    array(
+                        'callback'        => array(
+                            'EventEspresso\core\libraries\rest_api\controllers\model\Write',
+                            'handleRequestRemoveRelation',
+                        ),
+                        'callback_args'   => array($version, $model_name, $relation_name),
+                        'methods'         => WP_REST_Server::DELETABLE,
+                        'hidden_endpoint' => $hidden_endpoint,
+                        'args'            => array()
+                    ),
+                );
             }
         }
         return $model_routes;
@@ -740,6 +763,27 @@ class EED_Core_Rest_Api extends \EED_Module
             $model,
             $version
         );
+    }
+
+    protected function _get_add_relation_query_params(\EEM_Base $source_model, \EEM_Base $related_model, $version)
+    {
+        // if they're related through a HABTM relation, check for any non-FKs
+        $all_relation_settings = $source_model->relation_settings();
+        $relation_settings = $all_relation_settings[ $related_model->get_this_model_name() ];
+        $params = array();
+        if ($relation_settings instanceof EE_HABTM_Relation && $relation_settings->hasNonKeyFields()) {
+            foreach ($relation_settings->getNonKeyFields() as $field) {
+                /* @var $field EE_Model_Field_Base */
+                $params[ $field->get_name() ] = array(
+                    'required' => ! $field->is_nullable(),
+                    'default' => ModelDataTranslator::prepareFieldValueForJson($field, $field->get_default_value(), $version),
+                    'type' => $field->getSchemaType(),
+                    'validate_callbaack' => null,
+                    'sanitize_callback' => null
+                );
+            }
+        }
+        return $params;
     }
 
 
@@ -1283,7 +1327,7 @@ class EED_Core_Rest_Api extends \EED_Module
 
     /**
      * Determines the EE REST API debug mode is activated, or not.
-     * @since 4.9.72.p
+     * @since $VID:$
      * @return bool
      */
     public static function debugMode()

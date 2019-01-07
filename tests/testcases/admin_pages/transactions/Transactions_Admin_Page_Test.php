@@ -11,6 +11,7 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  * @subpackage            core
  * @author                Brent Christensen
  * @since                 4.8
+ * @group transactions_admin
  */
 class Transactions_Admin_Page_Test extends EE_UnitTestCase
 {
