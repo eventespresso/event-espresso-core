@@ -306,35 +306,8 @@ class Read extends Base
         $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
             $controller->setRequestedVersion($version);
-            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
-                return $controller->sendResponse(
-                    new WP_Error(
-                        'endpoint_parsing_error',
-                        sprintf(
-                            __(
-                                'There is no model for endpoint %s. Please contact event espresso support',
-                                'event_espresso'
-                            ),
-                            $model_name
-                        )
-                    )
-                );
-            }
-            $main_model = $controller->getModelVersionInfo()->loadModel($model_name);
-            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($related_model_name)) {
-                return $controller->sendResponse(
-                    new WP_Error(
-                        'endpoint_parsing_error',
-                        sprintf(
-                            __(
-                                'There is no model for endpoint %s. Please contact event espresso support',
-                                'event_espresso'
-                            ),
-                            $related_model_name
-                        )
-                    )
-                );
-            }
+            $main_model = $controller->validateModel($model_name);
+            $controller->validateModel($related_model_name);
             return $controller->sendResponse(
                 $controller->getEntitiesFromRelation(
                     $request->get_param('id'),
@@ -1573,7 +1546,8 @@ class Read extends Base
      * @since 4.9.74.p
      * @param EEM_Base $model
      * @param $model_row
-     * @param $query_params
+     * @param $query_params Adds 'default_where_conditions' => 'minimum' to ensure we don't confuse trashed with
+     *                      password protected.
      * @param WP_REST_Request $request
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -1586,6 +1560,7 @@ class Read extends Base
      */
     protected function checkPassword(EEM_Base $model, $model_row, $query_params, WP_REST_Request $request)
     {
+        $query_params['default_where_conditions'] = 'minimum';
         // stuff is only "protected" for front-end requests. Elsewhere, you either get full permission to access the object
         // or you don't.
         $request_caps = $request->get_param('caps');

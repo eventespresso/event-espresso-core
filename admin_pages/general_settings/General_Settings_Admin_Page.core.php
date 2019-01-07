@@ -20,7 +20,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 class General_Settings_Admin_Page extends EE_Admin_Page
 {
 
-
     /**
      * _question_group
      * holds the specific question group object for the question group details screen
@@ -127,21 +126,21 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'noheader'   => true,
             ),
 
-            'delete_state' => array(
+            'delete_state'            => array(
                 'func'       => 'delete_state',
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ),
-            'privacy_settings' => array(
-                'func' => 'privacySettings',
+            'privacy_settings'        => array(
+                'func'       => 'privacySettings',
                 'capability' => 'manage_options',
             ),
             'update_privacy_settings' => array(
-                'func' => 'updatePrivacySettings',
-                'capability' => 'manage_options',
-                'noheader' => true,
-                'headers_sent_route' => 'privacy_settings'
-            )
+                'func'               => 'updatePrivacySettings',
+                'capability'         => 'manage_options',
+                'noheader'           => true,
+                'headers_sent_route' => 'privacy_settings',
+            ),
         );
     }
 
@@ -211,14 +210,14 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'help_tour'     => array('Countries_Help_Tour'),
                 'require_nonce' => false,
             ),
-            'privacy_settings' => array(
-                'nav' => array(
+            'privacy_settings'      => array(
+                'nav'           => array(
                     'label' => esc_html__('Privacy', 'event_espresso'),
-                    'order' => 80
+                    'order' => 80,
                 ),
                 'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_publish_post_box')),
-                'require_nonce' => false
-            )
+                'require_nonce' => false,
+            ),
         );
     }
 
@@ -226,6 +225,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     protected function _add_screen_options()
     {
     }
+
 
     protected function _add_feature_pointers()
     {
@@ -268,9 +268,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         );
     }
 
+
     public function admin_notices()
     {
     }
+
 
     public function admin_footer_scripts()
     {
@@ -451,7 +453,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     }
 
 
-
     /**
      * Handler for updating organization settings.
      *
@@ -570,12 +571,34 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     }
 
 
+    /**
+     * @param string          $CNT_ISO
+     * @param EE_Country|null $country
+     * @return EE_Base_Class|EE_Country
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    protected function verifyOrGetCountryFromIso($CNT_ISO, EE_Country $country = null)
+    {
+        /** @var EE_Country $country */
+        return $country instanceof EE_Country && $country->ID() === $CNT_ISO
+            ? $country
+            : EEM_Country::instance()->get_one_by_ID($CNT_ISO);
+    }
+
 
     /**
      * Output Country Settings view.
      *
      * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _country_settings()
     {
@@ -609,13 +632,18 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'append_qstn_id' => false,
             )
         );
-
+        $country = $this->verifyOrGetCountryFromIso($CNT_ISO_for_site);
         add_filter('FHEE__EEH_Form_Fields__label_html', array($this, 'country_form_field_label_wrap'), 10, 2);
         add_filter('FHEE__EEH_Form_Fields__input_html', array($this, 'country_form_field_input__wrap'), 10, 2);
-        $this->_template_args['country_details_settings'] = $this->display_country_settings();
-        $this->_template_args['country_states_settings'] = $this->display_country_states();
-        $this->_template_args['CNT_name_for_site'] = EEM_Country::instance()->get_one_by_ID($CNT_ISO_for_site)
-                                                                            ->name();
+        $this->_template_args['country_details_settings'] = $this->display_country_settings(
+            $country->ID(),
+            $country
+        );
+        $this->_template_args['country_states_settings'] = $this->display_country_states(
+            $country->ID(),
+            $country
+        );
+        $this->_template_args['CNT_name_for_site'] = $country->name();
 
         $this->_set_add_edit_form_tags('update_country_settings');
         $this->_set_publish_post_box_vars(null, false, false, null, false);
@@ -631,12 +659,17 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     /**
      *        display_country_settings
      *
-     * @access    public
-     * @param    string $CNT_ISO
-     * @return mixed string | array
+     * @param string          $CNT_ISO
+     * @param EE_Country|null $country
+     * @return mixed string | array$country
      * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public function display_country_settings($CNT_ISO = '')
+    public function display_country_settings($CNT_ISO = '', EE_Country $country = null)
     {
         $CNT_ISO_for_site = $this->getCountryIsoForSite();
 
@@ -652,9 +685,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         remove_all_filters('FHEE__EEH_Form_Fields__input_html');
         add_filter('FHEE__EEH_Form_Fields__label_html', array($this, 'country_form_field_label_wrap'), 10, 2);
         add_filter('FHEE__EEH_Form_Fields__input_html', array($this, 'country_form_field_input__wrap'), 10, 2);
-        /** @var EE_Country $country */
-        $country = EEM_Country::instance()->get_one_by_ID($CNT_ISO);
-
+        $country = $this->verifyOrGetCountryFromIso($CNT_ISO, $country);
         $CNT_cur_disabled = $CNT_ISO !== $CNT_ISO_for_site;
         $this->_template_args['CNT_cur_disabled'] = $CNT_cur_disabled;
 
@@ -690,26 +721,26 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'type'       => 'TEXT',
                 'input_name' => 'cntry[' . $CNT_ISO . ']',
                 'class'      => 'small-text',
-                'disabled'   => $CNT_cur_disabled
+                'disabled'   => $CNT_cur_disabled,
             ),
             'CNT_cur_single'  => array(
                 'type'       => 'TEXT',
                 'input_name' => 'cntry[' . $CNT_ISO . ']',
                 'class'      => 'medium-text',
-                'disabled' => $CNT_cur_disabled
+                'disabled'   => $CNT_cur_disabled,
             ),
             'CNT_cur_plural'  => array(
                 'type'       => 'TEXT',
                 'input_name' => 'cntry[' . $CNT_ISO . ']',
                 'class'      => 'medium-text',
-                'disabled' => $CNT_cur_disabled
+                'disabled'   => $CNT_cur_disabled,
             ),
             'CNT_cur_sign'    => array(
                 'type'         => 'TEXT',
                 'input_name'   => 'cntry[' . $CNT_ISO . ']',
                 'class'        => 'small-text',
                 'htmlentities' => false,
-                'disabled' => $CNT_cur_disabled
+                'disabled'     => $CNT_cur_disabled,
             ),
             'CNT_cur_sign_b4' => array(
                 'type'             => 'RADIO_BTN',
@@ -717,7 +748,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'class'            => '',
                 'options'          => $this->_yes_no_values,
                 'use_desc_4_label' => true,
-                'disabled' => $CNT_cur_disabled
+                'disabled'         => $CNT_cur_disabled,
             ),
             'CNT_cur_dec_plc' => array(
                 'type'       => 'RADIO_BTN',
@@ -729,7 +760,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                     array('id' => 2, 'text' => ''),
                     array('id' => 3, 'text' => ''),
                 ),
-                'disabled' => $CNT_cur_disabled
+                'disabled'   => $CNT_cur_disabled,
             ),
             'CNT_cur_dec_mrk' => array(
                 'type'             => 'RADIO_BTN',
@@ -743,7 +774,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                     array('id' => '.', 'text' => __('. (decimal)', 'event_espresso')),
                 ),
                 'use_desc_4_label' => true,
-                'disabled' => $CNT_cur_disabled
+                'disabled'         => $CNT_cur_disabled,
             ),
             'CNT_cur_thsnds'  => array(
                 'type'             => 'RADIO_BTN',
@@ -757,7 +788,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                     array('id' => '.', 'text' => __('. (decimal)', 'event_espresso')),
                 ),
                 'use_desc_4_label' => true,
-                'disabled' => $CNT_cur_disabled
+                'disabled'         => $CNT_cur_disabled,
             ),
             'CNT_tel_code'    => array(
                 'type'       => 'TEXT',
@@ -799,18 +830,22 @@ class General_Settings_Admin_Page extends EE_Admin_Page
 
 
     /**
-     *        display_country_states
-     *
-     * @access    public
-     * @param    string $CNT_ISO
+     * @param string          $CNT_ISO
+     * @param EE_Country|null $country
      * @return string
      * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public function display_country_states($CNT_ISO = '')
+    public function display_country_states($CNT_ISO = '', EE_Country $country = null)
     {
 
-        $CNT_ISO = isset($this->_req_data['country']) ? sanitize_text_field($this->_req_data['country']) : $CNT_ISO;
-
+        $CNT_ISO = isset($this->_req_data['country'])
+            ? sanitize_text_field($this->_req_data['country'])
+            : $CNT_ISO;
         if (! $CNT_ISO) {
             return '';
         }
@@ -820,8 +855,21 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         add_filter('FHEE__EEH_Form_Fields__label_html', array($this, 'state_form_field_label_wrap'), 10, 2);
         add_filter('FHEE__EEH_Form_Fields__input_html', array($this, 'state_form_field_input__wrap'), 10, 2);
         $states = EEM_State::instance()->get_all_states_for_these_countries(array($CNT_ISO => $CNT_ISO));
-
-        if ($states) {
+        if (empty($states)) {
+            /** @var EventEspresso\core\services\address\CountrySubRegionDao $countrySubRegionDao */
+            $countrySubRegionDao = $this->loader->getShared(
+                'EventEspresso\core\services\address\CountrySubRegionDao'
+            );
+            if ($countrySubRegionDao instanceof EventEspresso\core\services\address\CountrySubRegionDao) {
+                $country = $this->verifyOrGetCountryFromIso($CNT_ISO, $country);
+                if ($countrySubRegionDao->saveCountrySubRegions($country)) {
+                    $states = EEM_State::instance()->get_all_states_for_these_countries(
+                        array($CNT_ISO => $CNT_ISO)
+                    );
+                }
+            }
+        }
+        if (is_array($states)) {
             foreach ($states as $STA_ID => $state) {
                 if ($state instanceof EE_State) {
                     // STA_abbrev    STA_name    STA_active
@@ -898,6 +946,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      * @access    public
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function add_new_state()
     {
@@ -968,7 +1019,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      * @access    public
      * @return        boolean
      * @throws EE_Error
-     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function delete_state()
     {
@@ -1023,6 +1076,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      * @access    protected
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _update_country_settings()
     {

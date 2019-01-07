@@ -1152,6 +1152,8 @@ final class EE_System implements ResettableInterface
         } elseif ($this->request->isAdmin() || $this->request->isAdminAjax()) {
             do_action('AHEE__EE_System__load_controllers__load_admin_controllers');
             $this->loader->getShared('EE_Admin');
+        } elseif ($this->request->isWordPressHeartbeat()) {
+            $this->loader->getShared('EventEspresso\core\domain\services\admin\ajax\WordpressHeartbeat');
         }
         do_action('AHEE__EE_System__load_controllers__complete');
     }
@@ -1175,7 +1177,7 @@ final class EE_System implements ResettableInterface
             try {
                 $this->loader->getShared('EventEspresso\core\services\assets\Registry');
                 $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
-                if (function_exists('register_block_type')) {
+                if ($this->canLoadBlocks()) {
                     $this->loader->getShared(
                         'EventEspresso\core\services\editor\BlockRegistrationManager'
                     );
@@ -1318,5 +1320,19 @@ final class EE_System implements ResettableInterface
     public function remove_pages_from_wp_list_pages($exclude_array)
     {
         return array_merge($exclude_array, $this->registry->CFG->core->get_critical_pages_array());
+    }
+
+
+    /**
+     * Return whether blocks can be registered/loaded or not.
+     * @return bool
+     */
+    private function canLoadBlocks()
+    {
+        return apply_filters('FHEE__EE_System__canLoadBlocks', true)
+               && function_exists('register_block_type')
+               // don't load blocks if in the Divi page builder editor context
+               // @see https://github.com/eventespresso/event-espresso-core/issues/814
+               && ! $this->request->getRequestParam('et_fb', false);
     }
 }
