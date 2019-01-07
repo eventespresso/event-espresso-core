@@ -1426,7 +1426,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                             // right now we're only handling tickets here.
                             // Cause its expected that only tickets will have attendees right?
                             if (! $ticket instanceof EE_Ticket) {
-                                continue;
+                                break;
                             }
                             try {
                                 $event_name = $ticket->get_event_name();
@@ -1443,7 +1443,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                             );
                             foreach ($registrations as $registration) {
                                 if (! $registration instanceof EE_Registration) {
-                                    continue;
+                                    break;
                                 }
                                 $this->_template_args['event_attendees'][ $registration->ID() ]['STS_ID']
                                     = $registration->status_ID();
