@@ -1293,7 +1293,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
     /**
      * Updates the DTT_sold attribute (and saves) based on the number of registrations for this datetime
-     * (via the tickets). into account
+     * (via the tickets).
      *
      * @return int
      * @throws ReflectionException
@@ -1313,12 +1313,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
                 ),
             )
         );
-        $sold = $this->sold();
-        if ($count_regs_for_this_datetime > $sold) {
-            $this->increaseSold($count_regs_for_this_datetime - $sold);
-        } elseif ($count_regs_for_this_datetime < $sold) {
-            $this->decreaseSold($count_regs_for_this_datetime - $sold);
-        }
+        $this->set_sold($count_regs_for_this_datetime);
+        $this->save();
         return $count_regs_for_this_datetime;
     }
 

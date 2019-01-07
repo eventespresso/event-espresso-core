@@ -1416,7 +1416,6 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
     /**
      * Updates the TKT_sold attribute (and saves) based on the number of APPROVED registrations for this ticket.
-     * into account
      *
      * @return int
      * @throws EE_Error
@@ -1431,12 +1430,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
                 ),
             )
         );
-        $sold = $this->sold();
-        if ($count_regs_for_this_ticket > $sold) {
-            $this->increaseSold($count_regs_for_this_ticket - $sold);
-        } elseif ($count_regs_for_this_ticket < $sold) {
-            $this->decreaseSold($count_regs_for_this_ticket - $sold);
-        }
+        $this->set_sold($count_regs_for_this_ticket);
+        $this->save();
         return $count_regs_for_this_ticket;
     }
 
