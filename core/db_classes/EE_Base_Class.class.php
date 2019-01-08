@@ -3169,7 +3169,7 @@ abstract class EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function bump(array $fields_n_quantities)
+    public function adjustNumericFieldsInDb(array $fields_n_quantities)
     {
         global $wpdb;
         if (empty($fields_n_quantities)) {
@@ -3228,7 +3228,7 @@ abstract class EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function bumpConditionally($field_name_to_bump, $field_name_affecting_total, $limit_field_name, $quantity)
+    public function incrementFieldConditionallyInDb($field_name_to_bump, $field_name_affecting_total, $limit_field_name, $quantity)
     {
         global $wpdb;
         $field = $this->get_model()->field_settings_for($field_name_to_bump, true);

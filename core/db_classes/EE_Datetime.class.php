@@ -255,13 +255,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     {
         $qty = absint($qty);
         if( $also_decrease_reserved) {
-            $success = $this->bump(
+            $success = $this->adjustNumericFieldsInDb(
                 [
                     'DTT_sold' => $qty
                 ]
             );
         } else {
-            $success = $this->bump(
+            $success = $this->adjustNumericFieldsInDb(
                 [
                     'DTT_reserved' => $qty * -1,
                     'DTT_sold' => $qty
@@ -295,7 +295,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     public function decreaseSold($qty = 1)
     {
         $qty = absint($qty);
-        $success = $this->bump(
+        $success = $this->adjustNumericFieldsInDb(
             [
                 'DTT_sold' => $qty * -1
             ]
@@ -359,7 +359,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     public function increaseReserved($qty = 1)
     {
         $qty = absint($qty);
-        $success = $this->bumpConditionally(
+        $success = $this->incrementFieldConditionallyInDb(
             'DTT_reserved',
             'DTT_sold',
             'DTT_reg_limit',
@@ -390,7 +390,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     public function decreaseReserved($qty = 1)
     {
         $qty = absint($qty);
-        $success = $this->bump(
+        $success = $this->adjustNumericFieldsInDb(
             [
                 'DTT_reserved' => $qty * -1
             ]

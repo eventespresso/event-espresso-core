@@ -766,7 +766,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         // don't worry about failures, because they must have already had a spot reserved
         $this->increaseSoldForDatetimes($qty);
         // Increment and decrement ticket quantities simultaneously
-        $success = $this->bump(
+        $success = $this->adjustNumericFieldsInDb(
             [
                 'TKT_reserved' => $qty * -1,
                 'TKT_sold' => $qty
@@ -823,7 +823,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     {
         $qty = absint($qty);
         $this->decreaseSoldForDatetimes($qty);
-        $success = $this->bump(
+        $success = $this->adjustNumericFieldsInDb(
             [
                 'TKT_sold' => $qty * -1
             ]
@@ -918,7 +918,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         $success = false;
         $datetimes_adjusted_successfully = $this->increaseReservedForDatetimes($qty);
         if( $datetimes_adjusted_successfully ) {
-            $success = $this->bumpConditionally(
+            $success = $this->incrementFieldConditionallyInDb(
                 'TKT_reserved',
                 'TKT_sold',
                 'TKT_qty',
@@ -1002,7 +1002,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         if ($adjust_datetimes) {
             $this->decreaseReservedForDatetimes($qty);
         }
-        $success = $this->bump(
+        $success = $this->adjustNumericFieldsInDb(
             [
                 'TKT_reserved' => $qty * -1
             ]
