@@ -18,8 +18,10 @@ import {
 	receiveFactoryForModel,
 	receiveRelationEndpointForModelEntity,
 } from '../actions';
-import { eventFactory } from '../../test/fixtures/base';
+import { eventFactory, EventEntities } from '../../test/fixtures/base';
 import { fetchFromApi } from '../controls';
+import { select } from '../../base-controls';
+import { REDUCER_KEY as CORE_REDUCER_KEY } from '../../core/constants';
 
 const poorManSerializer = ( item ) => {
 	return JSON.parse( JSON.stringify( item ) );
@@ -107,9 +109,32 @@ describe( 'getRelationEndpointForEntityId()', () => {
 		10,
 		'datetimes'
 	);
-	it( 'yields fetch action for retrieving the entity', () => {
+	it( 'yields select action for getting entity by Id', () => {
 		reset();
 		const { value } = fulfillment.next();
+		expect( value ).toEqual( select(
+			CORE_REDUCER_KEY,
+			'getEntityById',
+			'event',
+			10
+		) );
+	} );
+	it( 'when entity endpoint is available for retrieved entity yields receive' +
+		' relation endpoint active', () => {
+		const { value } = fulfillment.next( EventEntities.a );
+		expect( value ).toEqual(
+			receiveRelationEndpointForModelEntity(
+				'event',
+				10,
+				'datetimes',
+				'ee/v4.8.36/events/10/datetimes'
+			)
+		);
+	} );
+	it( 'yields fetch action for retrieving the entity', () => {
+		reset();
+		fulfillment.next();
+		const { value } = fulfillment.next( {} );
 		expect( value ).toEqual( fetchFromApi(
 			{
 				path: getEndpoint( 'event' ) + '/' + 10,
@@ -126,6 +151,7 @@ describe( 'getRelationEndpointForEntityId()', () => {
 		'relation', () => {
 		reset();
 		fulfillment.next();
+		fulfillment.next( {} );
 		const { value, done } = fulfillment.next( {
 			_links: {
 				'https://api.eventespresso.com/tickets': 'https://some_endpoint',
@@ -138,6 +164,7 @@ describe( 'getRelationEndpointForEntityId()', () => {
 		'in the response', () => {
 		reset();
 		fulfillment.next();
+		fulfillment.next( {} );
 		const { value } = fulfillment.next( {
 			_links: {
 				'https://api.eventespresso.com/datetimes':

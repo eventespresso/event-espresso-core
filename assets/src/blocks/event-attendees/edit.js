@@ -46,7 +46,7 @@ const isNewBlock = ( { eventId, datetimeId, ticketId } ) => eventId === 0 &&
 	datetimeId === 0 &&
 	ticketId === 0;
 
-const DEFAULT_MAP = new Map();
+const DEFAULT_ARRAY = [];
 
 /**
  * EventAttendeesEditor Component
@@ -56,7 +56,7 @@ const DEFAULT_MAP = new Map();
  */
 export class EventAttendeesEditor extends Component {
 	static propTypes = {
-		attendees: PropTypes.instanceOf( Map ),
+		attendees: PropTypes.array,
 		isLoading: PropTypes.bool,
 		attributes: PropTypes.shape( {
 			eventId: PropTypes.number,
@@ -80,7 +80,7 @@ export class EventAttendeesEditor extends Component {
 	};
 
 	static defaultProps = {
-		attendees: new Map(),
+			attendees: [],
 		isLoading: true,
 		attributes: {
 			eventId: 0,
@@ -268,7 +268,7 @@ export class EventAttendeesEditor extends Component {
 		}
 
 		if ( isNewBlock( this.props.attributes ) &&
-			attendees === DEFAULT_MAP
+			attendees === DEFAULT_ARRAY
 		) {
 			return (
 				<Placeholder>
@@ -290,8 +290,6 @@ export class EventAttendeesEditor extends Component {
 				</Placeholder>
 			);
 		}
-		// const newAttendees = this.applyLimit( attendees );
-		// console.log( newAttendees );
 		return <EventAttendeeList
 			attendees={ this.applyLimit( attendees ) }
 			showGravatar={ showGravatar }
@@ -303,21 +301,17 @@ export class EventAttendeesEditor extends Component {
 	}
 
 	/**
-	 * This receives the map of attendees and applies the limit to it so that
+	 * This receives the array of attendees and applies the limit to it so that
 	 * only the set limit of attendees is returned from the beginning of the
-	 * map.
-	 * @param {Map} attendees
-	 * @return {Map} A new map of attendees with the applied limit
+	 * array.
+	 * @param {Array} attendees
+	 * @return {Array} A new array of attendees with the applied limit
 	 */
 	applyLimit( attendees ) {
-		if ( attendees.size <= this.props.attributes.limit ) {
+		if ( attendees.length <= this.props.attributes.limit ) {
 			return attendees;
 		}
-		return new Map(
-			Array
-				.from( attendees.entries() )
-				.slice( 0, this.props.attributes.limit )
-		);
+		return attendees.slice( 0, this.props.attributes.limit );
 	}
 
 	/**
@@ -327,7 +321,7 @@ export class EventAttendeesEditor extends Component {
 	 * @return {Component} The inspector controls component
 	 */
 	getInspectorControls( attributes ) {
-		const countAttendees = this.props.attendees.size || 0;
+		const countAttendees = this.props.attendees.length || 0;
 		return (
 			<InspectorControls>
 				<PanelBody title={ __(
@@ -536,7 +530,7 @@ export default withSelect( ( select, ownProps ) => {
 			...ownProps.attributes,
 		},
 		attendees: isNewBlock( { eventId, datetimeId, ticketId } ) ?
-			DEFAULT_MAP :
+			DEFAULT_ARRAY :
 			getAttendees( queryString ),
 		isLoading: isRequestingAttendees( queryString ),
 	};

@@ -5,7 +5,6 @@ import { Component } from '@wordpress/element';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import classNames from 'classnames';
-import { mapReducer } from '@eventespresso/helpers';
 
 /**
  * Internal Imports
@@ -16,14 +15,14 @@ import './style.css';
 export default class EventAttendeeList extends Component {
 	static propTypes = {
 		isLoading: PropTypes.bool,
-		attendees: PropTypes.instanceOf( Map ),
+		attendees: PropTypes.array,
 		showGravatar: PropTypes.bool,
 		containerCssClass: PropTypes.string,
 		containerId: PropTypes.string,
 	};
 
 	static defaultProps = {
-		attendees: new Map(),
+		attendees: [],
 		showGravatar: false,
 		containerCssClass: '',
 		containerId: 'event-attendees-list',
@@ -35,17 +34,16 @@ export default class EventAttendeeList extends Component {
 		if ( isEmpty( attendees ) ) {
 			return '';
 		}
-
-		const reducerCallback = ( items, attendee ) => {
-			items.push( <AttendeeListItem
-				attendee={ attendee }
-				showGravatar={ showGravatar }
-				isLoading={ isLoading }
-				{ ...this.props }
-			/> );
-			return items;
-		};
-		const listItems = mapReducer( attendees, reducerCallback, [] );
+		const listItems = attendees.map(
+			( attendee ) => {
+				return <AttendeeListItem
+					attendee={ attendee }
+					showGravatar={ showGravatar }
+					isLoading={ isLoading }
+					{ ...this.props }
+				/>
+			}
+		);
 		return (
 			<ul>
 				{ listItems }

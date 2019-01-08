@@ -11,10 +11,7 @@ import { AuthedDateTimeResponse } from '@test/fixtures';
 import { fetch, dispatch, select } from '../../../base-controls';
 import { getRelatedEntities } from '../relations';
 import { dateTimeFactory, EventEntities } from '../../../test/fixtures/base';
-import {
-	receiveEntityRecords,
-	receiveRelatedEntities,
-} from '../../actions';
+import { receiveRelatedEntities } from '../../actions';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../../constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../../schema/constants';
 
@@ -50,7 +47,7 @@ describe( getRelatedEntities.name + '()', () => {
 			'event',
 			EventEntities.a.id,
 			'datetimes',
-			'http://ee.test/wp-json/ee/v4.8.36/events/10/datetimes'
+			'ee/v4.8.36/events/10/datetimes'
 		) );
 	} );
 	it( 'yields a dispatch action for finishing resolution for ' +
@@ -65,7 +62,7 @@ describe( getRelatedEntities.name + '()', () => {
 				'event',
 				EventEntities.a.id,
 				'datetimes',
-				'http://ee.test/wp-json/ee/v4.8.36/events/10/datetimes'
+				'ee/v4.8.36/events/10/datetimes',
 			]
 		) );
 	} );
@@ -73,7 +70,7 @@ describe( getRelatedEntities.name + '()', () => {
 		const { value } = fulfillment.next();
 		expect( value ).toEqual( fetch(
 			{
-				path: 'http://ee.test/wp-json/ee/v4.8.36/events/10/datetimes',
+				path: 'ee/v4.8.36/events/10/datetimes',
 			}
 		) );
 	} );
@@ -107,6 +104,7 @@ describe( getRelatedEntities.name + '()', () => {
 		expect( value ).toEqual( select(
 			CORE_REDUCER_KEY,
 			'getEntitiesByIds',
+			'datetime',
 			[ AuthedDateTimeResponse.DTT_ID ]
 		) );
 	} );

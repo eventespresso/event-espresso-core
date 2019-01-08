@@ -5,7 +5,7 @@ import { Component } from 'react';
 import { isFunction, isArray } from 'lodash';
 import isShallowEqualArrays from '@wordpress/is-shallow-equal';
 import warning from 'warning';
-import { Money, SiteCurrency } from '@eventespresso/vo';
+import { Money, SiteCurrency } from '@eventespresso/value-objects';
 
 /**
  * This validates whether the nextStateResponse is in the expected shape.

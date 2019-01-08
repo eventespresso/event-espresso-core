@@ -15,6 +15,7 @@ import {
 	removeDirtyRelationIndex,
 } from './remove-relations';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
+import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
 
 /**
  * Action generator for persisting any queued add relations to the server
@@ -228,8 +229,6 @@ function* persistRelationsForEntityIdAndRelationId(
 		);
 		// if entityId is 0 bail because it didn't get persisted so relations
 		// can't be persisted either.
-		// @todo need to work out how we communicate this problem further to the
-		// client so appropriate measures can be handled in the ui?
 		if ( entityId === 0 ) {
 			return entityId;
 		}
@@ -249,20 +248,25 @@ function* persistRelationsForEntityIdAndRelationId(
 		);
 		// if relationId is 0, bail because it didn't get persisted so relations
 		// can't be persisted either.
-		// @todo need to work out how we communicate this problem further to the
-		// client so appropriate measures can be handled in the ui?
 		if ( relationId === 0 ) {
 			return relationId;
 		}
 	}
-
-	const endpoint = ''; // @todo need to generate endpoints for adding relations
-	const success = yield fetch(
-		{
-			path: endpoint,
-			method: addRelation ? 'PUT' : 'DELETE',
-		}
+	const endpoint = yield select(
+		SCHEMA_REDUCER_KEY,
+		'getRelationEndpointForEntityId',
+		modelName,
+		entityId,
+		relationName,
 	);
+	const success = ! endpoint ?
+		yield fetch(
+			{
+				path: endpoint,
+				method: addRelation ? 'PUT' : 'DELETE',
+			}
+		) :
+		false;
 	if ( success ) {
 		// Even when ids have changed, this should catch any potential queued
 		// relation items for those things that got updated in state in a prior

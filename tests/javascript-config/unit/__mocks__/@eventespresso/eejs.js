@@ -25,6 +25,7 @@ const newCurrencyConfig = {
 
 module.exports.data = {
 	paths: {
+		base_rest_route: 'http://ee.test/wp-json/',
 		collection_endpoints: {
 			event: '/ee/v4.8.36/events',
 			datetime: '/ee/v4.8.36/datetimes',

@@ -27,7 +27,7 @@ describe( getEntityById.name + '()', () => {
 			const { value } = fulfillment.next();
 			expect( value ).toEqual( fetch(
 				{
-					path: '/ee/v4.8.36/events?EVT_ID=10',
+					path: '/ee/v4.8.36/events/10',
 				}
 			) );
 		} );

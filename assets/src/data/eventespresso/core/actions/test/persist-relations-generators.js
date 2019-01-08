@@ -4,6 +4,9 @@
 import { isGenerator } from '@eventespresso/validators';
 import cuid from 'cuid';
 
+/**
+ * Internal imports
+ */
 import {
 	persistAddRelationsForModel,
 	persistDeleteRelationsForModel,
@@ -18,10 +21,11 @@ import {
 import { fetch, select, dispatch } from '../../../base-controls';
 import {
 	removeDirtyRelationForType,
-	removeDirtyRelationIndex
+	removeDirtyRelationIndex,
 } from '../remove-relations';
 import { EventEntities } from '../../../test/fixtures/base';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../../constants';
+import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../../schema/constants';
 
 describe( 'persistAddRelationsForModel()', () => {
 	const fulfillment = persistAddRelationsForModel( 'event' );
@@ -219,11 +223,27 @@ describe( 'persistRelationsForEntityIdAndRelationId()', () => {
 		expect( value ).toBe( 0 );
 		expect( done ).toBe( true );
 	} );
-	it( 'yields expected action for the relation endpoint when adding ' +
-		'a relation', () => {
+	it( 'yeilds expected select action for getting the relation endpoint ' +
+		'when adding a relation', () => {
 		reset( 10, 20 );
 		fulfillment.next();
 		const { value } = fulfillment.next( testRelationState );
+		expect( value ).toEqual(
+			select(
+				SCHEMA_REDUCER_KEY,
+				'getRelationEndpointForEntityId',
+				'event',
+				10,
+				'datetime'
+			)
+		);
+	} );
+	it( 'yields expected fetch action for the relation endpoint when adding ' +
+		'relation and schema store does not have it.', () => {
+		reset( 10, 20 );
+		fulfillment.next();
+		fulfillment.next( testRelationState );
+		const { value } = fulfillment.next( '' );
 		expect( value ).toEqual(
 			fetch( {
 				path: '',
@@ -231,11 +251,12 @@ describe( 'persistRelationsForEntityIdAndRelationId()', () => {
 			} )
 		);
 	} );
-	it( 'yields expected action for the relation endpoint when removing ' +
+	it( 'yields expected fetch action for the relation endpoint when removing ' +
 		'a relation', () => {
 		reset( 10, 20, false );
 		fulfillment.next();
-		const { value } = fulfillment.next( testRelationState );
+		fulfillment.next( testRelationState );
+		const { value } = fulfillment.next( '' );
 		expect( value ).toEqual(
 			fetch( {
 				path: '',
@@ -257,6 +278,7 @@ describe( 'persistRelationsForEntityIdAndRelationId()', () => {
 		reset( 10, 20 );
 		fulfillment.next();
 		fulfillment.next( testRelationState );
+		fulfillment.next( '' );
 		const { value, done } = fulfillment.next( false );
 		expect( value ).toBe( 0 );
 		expect( done ).toBe( true );

@@ -23,14 +23,14 @@ describe( normalizedReceiveAndRemoveRelations.name + '()', () => {
 		modelName,
 		relationName,
 		entityId,
-		relationEntityIds,
+		relatedEntityIds,
 		type
 	) => (
 		{
 			modelName,
 			relationName,
 			entityId,
-			relationEntityIds,
+			relatedEntityIds,
 			type,
 		}
 	);

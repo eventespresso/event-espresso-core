@@ -361,7 +361,7 @@ const normalizeActionForState = ( state, action ) => {
 		entityId,
 		relationEntityId,
 	} = action;
-	if ( index.has( pluralModelName( modelName ) ) ) {
+	if ( modelName && index.has( pluralModelName( modelName ) ) ) {
 		// okay this model has already been used as a relation on another model
 		// so let's normalize and make it the relation instead.
 		return {

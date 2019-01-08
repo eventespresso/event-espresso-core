@@ -13,7 +13,10 @@ import { assertEntityHasKey } from './assertions';
  *
  * @type {{}}
  */
-export const { collection_endpoints: endpoints = {} } = data.paths;
+export const {
+	collection_endpoints: endpoints = {},
+	base_rest_route: baseRestRoute,
+} = data.paths;
 
 /**
  * Retrieves the endpoint for the provided model.
@@ -38,3 +41,14 @@ export const applyQueryString = ( modelName, queryString = '' ) => {
 		getEndpoint( modelName ) + '?' + queryString :
 		getEndpoint( modelName );
 };
+
+/**
+ * Strips the base_rest_route (i.e. https://myurl.com/wp-json/) from the provided
+ * url string.
+ *
+ * @param {string} url
+ * @return {string} the url with the base rest route removed.
+ */
+export const stripBaseRouteFromUrl = ( url ) => {
+	return url.replace( baseRestRoute, '' );
+}

@@ -110,9 +110,6 @@ function* persistForEntityId( modelName, entityId ) {
  * @param {string} modelName
  * @param {Array} entityIds
  * @return {Object} Entities persisted indexed by ID.
- * @todo I wonder if there is value indexing by FORMER id.  That way client code
- * is able to know which entities were updated and have both new and former id
- * exposed.
  */
 function* persistForEntityIds( modelName, entityIds = [] ) {
 	const entities = yield select(

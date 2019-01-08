@@ -31,7 +31,7 @@ const normalizedReceiveAndRemoveRelations = ( state, action ) => {
 		modelName,
 		relationName,
 		entityId,
-		relationEntityIds,
+		relatedEntityIds,
 	} = action;
 	// if modelName exists, then we just process as is.
 	if ( state.hasIn( [ 'entityMap', modelName ] ) ) {
@@ -47,11 +47,11 @@ const normalizedReceiveAndRemoveRelations = ( state, action ) => {
 			...action,
 			modelName: singularModelName( relationName ),
 			relationName: pluralModelName( modelName ),
-			relationEntityIds: [ entityId ],
+			relatedEntityIds: [ entityId ],
 		};
 		// loop through each existing relation id and get the state for each
-		while ( relationEntityIds.length > 0 ) {
-			newAction.entityId = relationEntityIds.shift();
+		while ( relatedEntityIds.length > 0 ) {
+			newAction.entityId = relatedEntityIds.shift();
 			state = receiveAndRemoveRelations( state, newAction );
 		}
 		return state;
@@ -72,12 +72,13 @@ const normalizedReceiveAndRemoveRelations = ( state, action ) => {
 const setRelationIndex = ( state, relationData, removal = false ) => {
 	const {
 		entityId,
-		relationEntityIds,
+		relatedEntityIds,
 	} = relationData;
 	const modelName = singularModelName( relationData.modelName );
 	const relationName = pluralModelName( relationData.relationName );
-	while ( relationEntityIds.length > 0 ) {
-		const relationId = relationEntityIds.shift();
+	const relationIds = [ ...relatedEntityIds ];
+	while ( relationIds.length > 0 ) {
+		const relationId = relationIds.shift();
 		const path = [ 'index', relationName, relationId, modelName ];
 		let existingIds = state.getIn( path ) || Set();
 		if ( removal ) {
@@ -110,7 +111,7 @@ function receiveAndRemoveRelations( state, action ) {
 		type,
 	} = action;
 	const relationName = pluralModelName( action.relationName );
-	const relationEntityIds = Set( action.relationEntityIds );
+	const relationEntityIds = Set( action.relatedEntityIds );
 	const path = [ 'entityMap', modelName, entityId, relationName ];
 
 	const existingIds = state.getIn( path ) || Set();

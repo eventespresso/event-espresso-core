@@ -6,6 +6,7 @@ import {
 	keyEntitiesByPrimaryKeyValue,
 	pluralModelName,
 	singularModelName,
+	stripBaseRouteFromUrl,
 } from '@eventespresso/model';
 import {
 	isModelEntityFactoryOfModel,
@@ -48,9 +49,12 @@ export function* getRelatedEntities( entity, relationModelName ) {
 	}
 	const modelName = entity.modelName.toLowerCase();
 	const pluralRelationName = pluralModelName( relationModelName );
+	const singularRelationName = singularModelName( relationModelName );
 	const relationResourceProperty = pluralRelationName + 'Resource';
 	const relationEndpoint = entity[ relationResourceProperty ] ?
-		entity[ relationResourceProperty ].resourceLink :
+		stripBaseRouteFromUrl(
+			entity[ relationResourceProperty ].resourceLink
+		) :
 		'';
 	if ( relationEndpoint === '' ) {
 		warning(
@@ -83,18 +87,16 @@ export function* getRelatedEntities( entity, relationModelName ) {
 		return [];
 	}
 
-	const factory = yield getFactoryByModel(
-		singularModelName( relationModelName )
-	);
+	const factory = yield getFactoryByModel( singularRelationName );
 	if ( ! isModelEntityFactoryOfModel(
 		factory,
-		singularModelName( relationModelName )
+		singularRelationName
 	) ) {
 		return [];
 	}
 
 	let fullEntities = keyEntitiesByPrimaryKeyValue(
-		singularModelName( relationModelName ),
+		singularRelationName,
 		relationEntities
 	);
 	fullEntities = createAndKeyEntitiesByPrimaryKeyValue(
@@ -108,12 +110,13 @@ export function* getRelatedEntities( entity, relationModelName ) {
 	const existingEntities = yield select(
 		CORE_REDUCER_KEY,
 		'getEntitiesByIds',
+		singularRelationName,
 		entityIds
 	);
 
 	if ( ! isEmpty( existingEntities ) ) {
 		fullEntities = keepExistingEntitiesInObject(
-			existingEntities.reduce(
+			existingEntities.map(
 				( entitiesObject, entityObj ) =>
 					entitiesObject[ entityObj.id ] = entity,
 				{}
@@ -123,13 +126,13 @@ export function* getRelatedEntities( entity, relationModelName ) {
 	}
 
 	// if fullEntities is not a map, then we need to make it a map
-	fullEntities = ! ( fullEntities instanceof Map ) ?
-		convertToMapFromObject( fullEntities ) :
+	const entityArray = fullEntities instanceof Map ?
+		Array.from( fullEntities.values() ) :
 		fullEntities;
 
 	yield receiveEntityRecords(
-		singularModelName( relationModelName ),
-		Array.from( fullEntities.values() )
+		singularRelationName,
+		entityArray
 	);
 	yield receiveRelatedEntities(
 		modelName,
@@ -143,8 +146,8 @@ export function* getRelatedEntities( entity, relationModelName ) {
 		entityIds,
 	);
 	yield resolveGetEntityByIdForIds(
-		singularModelName( relationModelName ),
+		singularRelationName,
 		entityIds
 	);
-	return Array.from( fullEntities.values() );
+	return entityArray;
 }

@@ -1,9 +1,13 @@
 /**
  * External dependencies
  */
-import { isSchemaResponseOfModel } from '@eventespresso/validators';
+import {
+	isSchemaResponseOfModel,
+	isModelEntity,
+} from '@eventespresso/validators';
 import {
 	getEndpoint,
+	stripBaseRouteFromUrl,
 	createEntityFactory,
 	MODEL_PREFIXES,
 	pluralModelName,
@@ -20,6 +24,8 @@ import {
 } from './actions';
 import { fetchFromApi } from './controls';
 import { getSchemaByModel } from '../base-resolvers';
+import { select } from '../base-controls';
+import { REDUCER_KEY as CORE_REDUCER_KEY } from '../core/constants';
 
 /**
  * A resolver for getting the schema for a given model name.
@@ -77,22 +83,38 @@ export function* getRelationEndpointForEntityId(
 	entityId,
 	relationModelName
 ) {
-	const response = yield fetchFromApi(
-		{
-			path: getEndpoint( modelName ) + '/' + entityId,
-		}
+	// first attempt to get the relation endpoint from the entity that might
+	// already be in core state.
+	const entity = yield select(
+		CORE_REDUCER_KEY,
+		'getEntityById',
+		modelName,
+		entityId
 	);
-	const links = response._links || {};
-	if ( ! links ) {
-		return '';
+	const pluralRelationName = pluralModelName( relationModelName );
+	let endpoint = '';
+	if ( isModelEntity( entity ) && entity[ pluralRelationName + 'Resource' ] ) {
+		endpoint = stripBaseRouteFromUrl(
+			entity[ pluralRelationName + 'Resource' ].resourceLink
+		);
+	} else {
+		const response = yield fetchFromApi(
+			{
+				path: getEndpoint( modelName ) + '/' + entityId,
+			}
+		);
+		const links = response._links || {};
+		if ( ! links ) {
+			return '';
+		}
+		const baseRelationPath = 'https://api.eventespresso.com/';
+		endpoint = links[
+			baseRelationPath + singularModelName( relationModelName )
+		] || '';
+		endpoint = ( endpoint === '' && links[
+			baseRelationPath + pluralRelationName
+		] ) || endpoint;
 	}
-	const baseRelationPath = 'https://api.eventespresso.com/';
-	let endpoint = links[
-		baseRelationPath + singularModelName( relationModelName )
-	] || '';
-	endpoint = ( endpoint === '' && links[
-		baseRelationPath + pluralModelName( relationModelName )
-	] ) || endpoint;
 	if ( endpoint ) {
 		yield receiveRelationEndpointForModelEntity(
 			modelName,

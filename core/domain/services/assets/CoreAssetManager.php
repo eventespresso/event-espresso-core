@@ -291,6 +291,7 @@ class CoreAssetManager extends AssetManager
         $this->registry->addData(
             'paths',
             array(
+                'base_rest_route' => rest_url(),
                 'rest_route' => rest_url('ee/v4.8.36/'),
                 'collection_endpoints' => EED_Core_Rest_Api::getCollectionRoutesIndexedByModelName(),
                 'primary_keys' => EED_Core_Rest_Api::getPrimaryKeyNamesIndexedByModelName(),

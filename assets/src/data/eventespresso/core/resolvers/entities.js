@@ -1,10 +1,7 @@
 /**
  * External imports
  */
-import {
-	getPrimaryKey,
-	applyQueryString,
-} from '@eventespresso/model';
+import { getEndpoint } from '@eventespresso/model';
 import { isModelEntityFactoryOfModel } from '@eventespresso/validators';
 
 /**
@@ -23,12 +20,8 @@ import { receiveEntityRecords } from './../actions';
  * otherwise null.
  */
 export function* getEntityById( modelName, entityId ) {
-	const primaryKeyForModel = getPrimaryKey( modelName );
 	const entity = yield fetch( {
-		path: applyQueryString(
-			modelName,
-			primaryKeyForModel + '=' + entityId
-		),
+		path: getEndpoint( modelName ) + '/' + entityId,
 	} );
 	const factory = yield getFactoryByModel( modelName );
 	if ( ! isModelEntityFactoryOfModel( factory, modelName ) ) {
