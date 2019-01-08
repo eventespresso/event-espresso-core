@@ -44,7 +44,7 @@ export function receiveResponse( identifier, queryString, items = [] ) {
 export function receiveEntityResponse(
 	modelName,
 	queryString,
-	entities = new Map(),
+	entities = [],
 ) {
 	return {
 		type: types.RECEIVE_ENTITY_LIST,
