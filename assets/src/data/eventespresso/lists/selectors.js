@@ -120,7 +120,7 @@ function isRequesting( state, identifier, selectorName, queryString ) {
 }
 
 /**
- * Returns whether the items for the given model name and query string are being
+ * Returns whether the items for the given identifier and query string are being
  * requested.
  *
  * @param {Immutable.Map} state Data state.
