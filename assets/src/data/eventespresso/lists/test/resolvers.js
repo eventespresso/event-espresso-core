@@ -166,7 +166,7 @@ describe( 'getEntitiesByIds()', () => {
 		const { value } = fulfillment.next();
 		expect( value ).toEqual(
 			fetch( {
-				path: '/ee/v4.8.36/events?[EVT_ID][IN]=10,20'
+				path: '/ee/v4.8.36/events?[EVT_ID][IN]=10,20',
 			} )
 		);
 	} );

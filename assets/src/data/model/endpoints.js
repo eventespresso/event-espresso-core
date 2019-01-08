@@ -51,4 +51,4 @@ export const applyQueryString = ( modelName, queryString = '' ) => {
  */
 export const stripBaseRouteFromUrl = ( url ) => {
 	return url.replace( baseRestRoute, '' );
-}
+};

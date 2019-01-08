@@ -21,7 +21,7 @@ export const MODEL_NAMES = keys( primaryKeys );
  * @return {string}  Ensures the given modelName is its plural form.
  */
 export const pluralModelName = memoize(
-	modelName => pluralize( modelName )
+	( modelName ) => pluralize( modelName )
 );
 
 /**
@@ -30,5 +30,5 @@ export const pluralModelName = memoize(
  * @return {string} Ensures the given modelName is in its singular form.
  */
 export const singularModelName = memoize(
-	modelName => pluralize.singular( modelName )
+	( modelName ) => pluralize.singular( modelName )
 );

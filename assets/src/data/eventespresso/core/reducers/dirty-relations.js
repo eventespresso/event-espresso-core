@@ -452,7 +452,7 @@ const clearRelatedEntitiesForEntity = (
 	];
 
 	if ( state.hasIn( recordPath ) ) {
-		state = state.withMutations( subState => {
+		state = state.withMutations( ( subState ) => {
 			const mainRecord = subState.getIn( recordPath );
 			removeEmptyFromState(
 				subState,
@@ -462,7 +462,7 @@ const clearRelatedEntitiesForEntity = (
 			);
 			mainRecord.forEach( ( relationRecord, relationModelName ) => {
 				if ( relationRecord instanceof Set ) {
-					relationRecord.forEach( relationId => {
+					relationRecord.forEach( ( relationId ) => {
 						const path = [
 							'index',
 							relationModelName,
@@ -496,7 +496,7 @@ const clearRelatedEntitiesForEntity = (
 							const relationIds = relationRecord.get(
 								relationType
 							) || Set();
-							relationIds.forEach( relationId => {
+							relationIds.forEach( ( relationId ) => {
 								const path = [
 									relationType,
 									relationModelName,

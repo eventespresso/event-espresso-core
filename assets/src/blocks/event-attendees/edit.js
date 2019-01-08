@@ -80,7 +80,7 @@ export class EventAttendeesEditor extends Component {
 	};
 
 	static defaultProps = {
-			attendees: [],
+		attendees: [],
 		isLoading: true,
 		attributes: {
 			eventId: 0,
@@ -219,7 +219,7 @@ export class EventAttendeesEditor extends Component {
 	 * Set the size for the gravatar displayed.
 	 * @param {number} size
 	 */
-	setAvatarSize = size => {
+	setAvatarSize = ( size ) => {
 		this.props.setAttributes( {
 			avatarSize: parseInt( size, 10 ),
 		} );

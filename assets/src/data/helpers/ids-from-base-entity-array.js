@@ -12,7 +12,7 @@ import { isArray } from 'lodash';
 export function getIdsFromBaseEntityArray( entities ) {
 	return isArray( entities ) ?
 		entities
-			.map( entity => !! entity.id ? entity.id : false )
-			.filter( x => x ) :
+			.map( ( entity ) => !! entity.id ? entity.id : false )
+			.filter( ( x ) => x ) :
 		entities;
 }

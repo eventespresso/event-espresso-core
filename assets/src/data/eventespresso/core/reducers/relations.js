@@ -126,7 +126,7 @@ function receiveAndRemoveRelations( state, action ) {
 			break;
 		case types.REMOVE_RELATED_ENTITY_IDS:
 			const idsAfterRemoval = existingIds.filter(
-				id => relationEntityIds.keyOf( id ) === -1
+				( id ) => relationEntityIds.keyOf( id ) === -1
 			);
 			if ( idsAfterRemoval === existingIds ) {
 				return state;
@@ -218,7 +218,7 @@ const replaceRelationRecords = (
 	} = modelData;
 	const loopProperty = statePropertyName === 'index' ? 'entityMap' : 'index';
 	const oldEntityPath = [ statePropertyName, modelName, oldEntityId ];
-	state = state.withMutations( subState => {
+	state = state.withMutations( ( subState ) => {
 		subState.deleteIn( oldEntityPath );
 		oldEntityPath.pop();
 		if ( removeOnly ) {
@@ -238,7 +238,7 @@ const replaceRelationRecords = (
 	//replace related entries
 	mainRecordToReplace.forEach( ( relationIds, relationName ) => {
 		relationIds = relationIds.toArray();
-		state = state.withMutations( subState => {
+		state = state.withMutations( ( subState ) => {
 			while ( relationIds.length > 0 ) {
 				const relationId = relationIds.shift();
 				const relationPath = [

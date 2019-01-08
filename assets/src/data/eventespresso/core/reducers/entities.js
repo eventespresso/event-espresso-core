@@ -72,9 +72,9 @@ function receiveEntity( state, action ) {
 function receiveEntityRecords( state, action ) {
 	const { type, modelName } = action;
 	// convert from array of entities to a Map indexed by entity id.
-	const incomingEntities = Map().withMutations( subState => {
+	const incomingEntities = Map().withMutations( ( subState ) => {
 		action.entities.forEach(
-			entity => {
+			( entity ) => {
 				if ( isModelEntityOfModel( entity, modelName ) ) {
 					subState.set( entity.id, entity );
 				}

@@ -5,10 +5,8 @@ import {
 	getFactoryByModel,
 	getSchemaByModel,
 	resolveGetEntityByIdForIds,
-	resolveGetRelatedEntities,
 } from '../base-resolvers';
 import { select, dispatch } from '../base-controls';
-import { receiveSchemaForModel } from '../schema/actions';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../core/constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../schema/constants';
 

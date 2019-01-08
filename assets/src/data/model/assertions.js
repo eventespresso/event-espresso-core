@@ -66,7 +66,7 @@ export const assertImmutableObjectHasPath = (
 	if ( ! immutable.hasIn( path ) ) {
 		throw new Exception( message );
 	}
-}
+};
 
 /**
  * Asserts whether the given value is an array.

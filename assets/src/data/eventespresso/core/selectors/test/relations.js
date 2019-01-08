@@ -195,7 +195,7 @@ describe( 'Dirty relations tests', () => {
 	const originalState = { ...mockStateForTests };
 	beforeEach( () => {
 		const getState = ( incomingState = Map() ) => {
-			return incomingState.withMutations( subState => {
+			return incomingState.withMutations( ( subState ) => {
 				subState.set(
 					'index',
 					Map().setIn(

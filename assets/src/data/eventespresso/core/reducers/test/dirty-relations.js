@@ -21,7 +21,7 @@ let originalState;
 describe( 'dirty relations tests', () => {
 	beforeEach( () => {
 		const getState = ( incomingState = Map() ) => {
-			return incomingState.withMutations( subState => {
+			return incomingState.withMutations( ( subState ) => {
 				subState.set(
 					'index',
 					Map().setIn(

@@ -26,7 +26,7 @@ export const removeEmptyFromState = (
 	lengthRemaining = 1,
 	withMutations = true
 ) => {
-	const clearPaths = subState => {
+	const clearPaths = ( subState ) => {
 		if ( subState.hasIn( path ) ) {
 			subState.deleteIn( path );
 			path.pop();
@@ -41,6 +41,6 @@ export const removeEmptyFromState = (
 	};
 
 	return withMutations ?
-		state.withMutations( subState => clearPaths( subState ) ) :
+		state.withMutations( ( subState ) => clearPaths( subState ) ) :
 		clearPaths( state );
 };

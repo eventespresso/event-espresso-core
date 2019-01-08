@@ -94,7 +94,7 @@ describe( 'getFactoryForModel()', () => {
 			assertFactoryActionsAreEqual( value );
 		} );
 		it( 'returns factory on successful generation', () => {
-			const { value, done  } = fulfillment.next();
+			const { value, done } = fulfillment.next();
 			expect( poorManSerializer( value ) )
 				.toEqual( poorManSerializer( eventFactory ) );
 			expect( done ).toBe( true );

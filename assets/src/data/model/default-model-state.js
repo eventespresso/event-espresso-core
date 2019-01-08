@@ -16,7 +16,7 @@ import { endpoints } from './endpoints.js';
  * @param { Object } modelNameEndpoints
  * @return { Object } An object of { { modelName } : {} }
  */
-const mapToObjectValues = modelNameEndpoints => {
+const mapToObjectValues = ( modelNameEndpoints ) => {
 	return mapValues( modelNameEndpoints,
 		function() {
 			return {};

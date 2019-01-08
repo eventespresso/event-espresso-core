@@ -51,8 +51,10 @@ export function* buildAndDispatchEntitiesFromResponse( modelName, response ) {
 	if ( isEmpty( factory ) ) {
 		return [];
 	}
-	let fullEntities = response.map( entity => factory.fromExisting( entity ) );
-	const entityIds = fullEntities.map( entity => entity.id );
+	let fullEntities = response.map(
+		( entity ) => factory.fromExisting( entity )
+	);
+	const entityIds = fullEntities.map( ( entity ) => entity.id );
 	// are there already entities for the ids in the store?  If so, we use those
 	const existingEntities = yield select(
 		CORE_REDUCER_KEY,
@@ -62,7 +64,7 @@ export function* buildAndDispatchEntitiesFromResponse( modelName, response ) {
 	);
 	if ( ! isEmpty( existingEntities ) ) {
 		fullEntities = fullEntities.map( ( entity ) => {
-			return find( existingEntities, existingEntity => {
+			return find( existingEntities, ( existingEntity ) => {
 				return existingEntity.id === entity.id;
 			} ) || entity;
 		} );

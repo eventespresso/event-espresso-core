@@ -113,7 +113,7 @@ describe( 'testing isRequesting and hasResolved methods', () => {
 	testConditions.forEach( ( [
 		selectorMethod,
 		methodDescription,
-		extraArgs
+		extraArgs,
 	] ) => {
 		describe( selectorMethod.name + '()', () => {
 			it( 'returns false if never requested or finished ' +

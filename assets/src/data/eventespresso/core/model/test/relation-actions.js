@@ -2,7 +2,6 @@
  * External imports
  */
 import { isGenerator } from '@eventespresso/validators';
-import { keys } from 'lodash';
 
 /**
  * Internal dependencies

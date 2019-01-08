@@ -34,14 +34,17 @@ export default class EventAttendeeList extends Component {
 		if ( isEmpty( attendees ) ) {
 			return '';
 		}
+		let i = -1;
 		const listItems = attendees.map(
 			( attendee ) => {
+				i++;
 				return <AttendeeListItem
+					key={ attendee.id || i }
 					attendee={ attendee }
 					showGravatar={ showGravatar }
 					isLoading={ isLoading }
 					{ ...this.props }
-				/>
+				/>;
 			}
 		);
 		return (

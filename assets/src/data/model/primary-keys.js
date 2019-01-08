@@ -74,9 +74,9 @@ export const getPrimaryKey = memoize( ( modelName ) => {
  * @type {memoized}
  */
 export const getPrimaryKeyQueryString = memoize(
-	( modelName, keyValues = [] )=> {
+	( modelName, keyValues = [] ) => {
 		const primaryKey = getPrimaryKey( modelName );
-		return `[${primaryKey}][IN]=` + keyValues.join();
+		return `[${ primaryKey }][IN]=` + keyValues.join();
 	}
 );
 

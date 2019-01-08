@@ -33,7 +33,7 @@ export function receiveListItems(
 		case types.RECEIVE_ENTITY_LIST:
 			existingValues = state.getIn( path ) || OrderedMap();
 			items = existingValues.merge(
-				items.map( entity => [ entity.id, entity ] )
+				items.map( ( entity ) => [ entity.id, entity ] )
 			);
 			break;
 		default :

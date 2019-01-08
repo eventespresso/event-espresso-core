@@ -12,7 +12,6 @@ import {
 	isModelEntityFactoryOfModel,
 	isModelEntity,
 } from '@eventespresso/validators';
-import { convertToMapFromObject } from '@eventespresso/helpers';
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import warning from 'warning';
 import { isEmpty } from 'lodash';
