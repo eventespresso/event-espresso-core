@@ -32,17 +32,17 @@ class EE_DMS_4_9_0_Email_System_Question extends EE_Data_Migration_Script_Stage_
 
     /**
      * updates the question with the new question type
-     * @param array $question an associative array where keys are column names and values are their values.
+     * @param array $event_question_group an associative array where keys are column names and values are their values.
      * @return null
      */
-    protected function _migrate_old_row($question)
+    protected function _migrate_old_row($event_question_group)
     {
-        if ($question['QST_ID'] && $question['QST_system'] == 'email') {
+        if ($event_question_group['QST_ID'] && $event_question_group['QST_system'] == 'email') {
             global $wpdb;
             $success = $wpdb->update(
                 $this->_old_table,
                 array( 'QST_type' => 'EMAIL' ),  // data
-                array( 'QST_ID' => $question['QST_ID'] ),  // where
+                array( 'QST_ID' => $event_question_group['QST_ID'] ),  // where
                 array( '%s' ),   // data format
                 array( '%d' )  // where format
             );
@@ -50,8 +50,8 @@ class EE_DMS_4_9_0_Email_System_Question extends EE_Data_Migration_Script_Stage_
                 $this->add_error(
                     sprintf(
                         __('Could not update question system name "%1$s" for question ID=%2$d because "%3$s"', 'event_espresso'),
-                        wp_json_encode($question['QST_system']),
-                        $question['QST_ID'],
+                        wp_json_encode($event_question_group['QST_system']),
+                        $event_question_group['QST_ID'],
                         $wpdb->last_error
                     )
                 );

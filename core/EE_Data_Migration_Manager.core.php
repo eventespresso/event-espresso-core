@@ -6,6 +6,7 @@ use EventEspresso\core\interfaces\ResettableInterface;
 
 use EventEspresso\core\services\database\TableManager;
 use EventEspresso\core\services\database\TableAnalysis;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  *
@@ -502,7 +503,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
                     ! isset($scripts_ran[ $script_converts_plugin_slug ][ $script_converts_to_version ])) {
                     // we haven't ran this conversion script before
                     // now check if it applies... note that we've added an autoloader for it on get_all_data_migration_scripts_available
-                    $script = new $classname($this->_get_table_manager(), $this->_get_table_analysis());
+                    $script = LoaderFactory::getLoader()->load($classname);
                     /* @var $script EE_Data_Migration_Script_Base */
                     $can_migrate = $script->can_migrate_from_version($theoretical_database_state);
                     if ($can_migrate) {

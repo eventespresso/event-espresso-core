@@ -39,17 +39,17 @@ class EE_DMS_4_6_0_question_types extends EE_Data_Migration_Script_Stage_Table
     }
 
     /**
-     * @param array $question an associative array where keys are column names and values are their values.
+     * @param array $event_question_group an associative array where keys are column names and values are their values.
      * @return null
      */
-    protected function _migrate_old_row($question)
+    protected function _migrate_old_row($event_question_group)
     {
         global $wpdb;
-        if ($question['QST_ID'] && isset($this->_question_type_conversions[ $question['QST_type'] ])) {
+        if ($event_question_group['QST_ID'] && isset($this->_question_type_conversions[ $event_question_group['QST_type'] ])) {
             $success = $wpdb->update(
                 $this->_old_table,
-                array( 'QST_type' => $this->_question_type_conversions[ $question['QST_type'] ] ),  // data
-                array( 'QST_ID' => $question['QST_ID'] ),  // where
+                array( 'QST_type' => $this->_question_type_conversions[ $event_question_group['QST_type'] ] ),  // data
+                array( 'QST_ID' => $event_question_group['QST_ID'] ),  // where
                 array( '%s' ),   // data format
                 array( '%d' )  // where format
             );
@@ -57,8 +57,8 @@ class EE_DMS_4_6_0_question_types extends EE_Data_Migration_Script_Stage_Table
                 $this->add_error(
                     sprintf(
                         __('Could not update question type %1$s for question ID=%2$d because "%3$s"', 'event_espresso'),
-                        wp_json_encode($question['QST_type']),
-                        $question['QST_ID'],
+                        wp_json_encode($event_question_group['QST_type']),
+                        $event_question_group['QST_ID'],
                         $wpdb->last_error
                     )
                 );
