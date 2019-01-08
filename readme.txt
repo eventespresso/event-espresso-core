@@ -276,12 +276,8 @@ Backup your WordPress website before installing any updates.
 * [Backyard Barbecues](https://eventespresso.com/use-cases/backyard-bbq-ticketing/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * [BBQ Festivals](https://eventespresso.com/use-cases/bbq-festival-ticketing/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * [Car Shows](https://eventespresso.com/use-cases/car-show-registration-ticket-sales/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
-* Geek/IT Conferences/Camps
 * Group Meetings
-* Political Conferences
-* Social Media Conferences
-* Tradeshow Booth Reservations/Sales
-* WordCamps
+* Neighborhood Association Gatherings
 * Youth Conferences/Camps
 
 = Conferences =
@@ -301,16 +297,16 @@ Backup your WordPress website before installing any updates.
 * Course Registrations
 * School Lunch Reservations
 * Parent Teacher Conferences
-* Parent Teacher Association Conferences and Meetings
+* Parent Teacher Association Meetings
 * Wildlife Education and Tours 
 
 = Fundraisers & Non-Profit Organizations =
 
-* Boy Scout Troop Events
+* Boy Scout Jamborees
 * [Car Show Registration](https://eventespresso.com/use-cases/car-show-registration-ticket-sales/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Donation Drives
-* Indusry Association Events
-* Religous Events
+* Industry Association Events
+* Religious Events
 * Volunteer Management
 
 = Government =
