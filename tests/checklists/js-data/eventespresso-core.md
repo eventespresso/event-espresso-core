@@ -1,6 +1,6 @@
 ## Selectors
 
-A `*` next to the selector means that this has a corresponding resolver.
+A `*` next to the selector means that this has a corresponding resolver
 
 * [ ] getEntityRecordsForModel( modelName ) - returns entities indexed by primary key
 * [ ] getEntitiesForModel( modelName ) - returns array of entities
