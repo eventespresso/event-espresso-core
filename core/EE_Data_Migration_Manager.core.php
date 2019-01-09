@@ -257,7 +257,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
     {
         $data_migration_data = maybe_unserialize($dms_option_value);
         if (isset($data_migration_data['class']) && class_exists($data_migration_data['class'])) {
-            $class = new $data_migration_data['class'];
+            $class = LoaderFactory::getLoader()->getShared($data_migration_data['class']);
             if ($class instanceof EE_Data_Migration_Script_Base) {
                 $class->instantiate_from_array_of_properties($data_migration_data);
                 return $class;
