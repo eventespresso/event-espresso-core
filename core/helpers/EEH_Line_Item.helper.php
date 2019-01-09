@@ -684,7 +684,7 @@ class EEH_Line_Item
      */
     public static function get_event_name($event)
     {
-        return $event instanceof EE_Event ? $event->name() : __('Event', 'event_espresso');
+        return $event instanceof EE_Event ? mb_substr($event->name(), 0, 245) : __('Event', 'event_espresso');
     }
 
     /**
