@@ -65,7 +65,6 @@ class Checkin_Test extends \EE_UnitTestCase
 
 
 
-
     public function test_handle_checkin__success()
     {
         $checkins_before = \EEM_Checkin::instance()->count();

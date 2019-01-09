@@ -1223,11 +1223,12 @@ class EED_Core_Rest_Api extends \EED_Module
         // for each version of core we have ever served:
         foreach ($versions_served_historically as $key_versioned_endpoint) {
             // if it's not above the current core version, and it's compatible with the current version of core
+
             if ($key_versioned_endpoint === $latest_version) {
                 // don't hide the latest version in the index
                 $versions_served[ $key_versioned_endpoint ] = false;
-            } elseif ($key_versioned_endpoint >= $lowest_compatible_version
-                && $key_versioned_endpoint < EED_Core_Rest_Api::core_version()
+            } elseif (version_compare($key_versioned_endpoint, $lowest_compatible_version, '>=')
+                && version_compare($key_versioned_endpoint, EED_Core_Rest_Api::core_version(), '<')
             ) {
                 // include, but hide, previous versions which are still supported
                 $versions_served[ $key_versioned_endpoint ] = true;
