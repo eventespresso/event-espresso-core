@@ -594,7 +594,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier),
 				KEY QSG_order (QSG_order)';
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
-       $this->insert_default_data();
+        $this->insert_default_data();
         return true;
     }
 

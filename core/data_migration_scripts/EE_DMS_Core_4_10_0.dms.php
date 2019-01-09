@@ -51,7 +51,7 @@ class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
         TableAnalysis $table_analysis = null,
         EE_DMS_Core_4_9_0 $dms_4_9
     ) {
-        if( ! $dms_4_9 instanceof EE_DMS_Core_4_9_0) {
+        if (! $dms_4_9 instanceof EE_DMS_Core_4_9_0) {
             $dms_4_9 = LoaderFactory::getLoader()->getShared('EE_DMS_Core_4_9_0');
         }
         $this->dms_4_9 = $dms_4_9;

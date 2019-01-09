@@ -987,7 +987,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function is_primary_registrant()
     {
-        return $this->get('REG_count') == 1 ? true : false;
+        return $this->get('REG_count') === 1 ? true : false;
     }
 
 
@@ -1257,14 +1257,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     {
         $question_groups = array();
         if ($this->event() instanceof EE_Event) {
-            $question_groups = $this->event()->question_groups(
-                array(
-                    array(
-                        'Event_Question_Group.EQG_primary' => $this->count() == 1 ? true : false,
-                    ),
-                    'order_by' => array('QSG_order' => 'ASC'),
-                )
-            );
+            $query_params = [
+                [
+                    'Event_Question_Group.'
+                    . EEM_Event_Question_Group::instance()->field_name_for_category(
+                        $this->is_primary_registrant()
+                    ) => true
+                ],
+                'order_by' => ['QSG_order' => 'ASC']];
+            $question_groups = $this->event()->question_groups($query_params);
         }
         return $question_groups;
     }
@@ -1277,18 +1278,23 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @return int
      * @throws EE_Error
      * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function count_question_groups()
     {
         $qg_count = 0;
         if ($this->event() instanceof EE_Event) {
+            if ($this->is_primary_registrant()) {
+                $query_params =[['Event_Question_Group.EQG_primary' => true]];
+            } else {
+                $query_params = [['Event_Question_Group.EQG_additional' => true]];
+            }
             $qg_count = $this->event()->count_related(
                 'Question_Group',
-                array(
-                    array(
-                        'Event_Question_Group.EQG_primary' => $this->count() == 1 ? true : false,
-                    ),
-                )
+                $query_params
             );
         }
         return $qg_count;

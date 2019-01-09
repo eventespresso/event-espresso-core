@@ -102,30 +102,60 @@ class EE_DMS_4_1_0_event_question_group extends EE_Data_Migration_Script_Stage_T
     private function _insert_event_question_group($old_event, $old_question_group_id, $primary)
     {
         global $wpdb;
-        $new_question_group_id =$this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_qst_group", intval($old_question_group_id), $wpdb->prefix."esp_question_group");
+        $new_question_group_id = $this->get_migration_script()->get_mapping_new_pk(
+            $wpdb->prefix . "events_qst_group",
+            intval($old_question_group_id),
+            $wpdb->prefix . "esp_question_group"
+        );
 
         if (! $new_question_group_id) {
-            $this->add_error(sprintf(__("Could not find 4.1 question ID for 3.1 question id #%s on event $%s", "event_espresso"), $old_question_group_id, $old_event['id']));
+            $this->add_error(
+                sprintf(
+                    // translators: %s question ID, %s event ID
+                    __("Could not find 4.1 question ID for 3.1 question id #%s on event $%s", "event_espresso"),
+                    $old_question_group_id,
+                    $old_event['id']
+                )
+            );
             return 0;
         }
-        $new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_detail", intval($old_event['id']), $wpdb->posts);
+        $new_event_id = $this->get_migration_script()->get_mapping_new_pk(
+            $wpdb->prefix . "events_detail",
+            intval($old_event['id']),
+            $wpdb->posts
+        );
         if (! $new_question_group_id) {
-            $this->add_error(sprintf(__("Could not find 4.1 event 3.1 event id #%s", "event_espresso"), $old_event['id']));
+            $this->add_error(
+                sprintf(
+                    // translators: %s event ID
+                    __("Could not find 4.1 event 3.1 event id #%s", "event_espresso"),
+                    $old_event['id']
+                )
+            );
             return 0;
         }
         $cols_n_values = array(
             'EVT_ID'=>$new_event_id,
             'QSG_ID'=>$new_question_group_id,
-            'EQG_primary'=>$primary
+            EEM_Event_Question_Group::instance()->field_name_for_category($primary) => true
         );
+
         $datatypes = array(
             '%d',// EVT_ID
             '%d',// QSG_ID
-            '%d',// EQG_primary
+            '%d',// EQG_primary or EQG_additional
         );
         $success = $wpdb->insert($this->_new_table, $cols_n_values, $datatypes);
         if (! $success) {
-            $this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_event, $this->_new_table, $cols_n_values, $datatypes));
+            $this->add_error(
+                $this->get_migration_script()->_create_error_message_for_db_insertion(
+                    $this->_old_table,
+                    $old_event,
+                    $this->_new_table,
+                    $cols_n_values,
+                    $datatypes
+                )
+            );
             return 0;
         }
         return $wpdb->insert_id;

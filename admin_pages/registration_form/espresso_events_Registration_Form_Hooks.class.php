@@ -82,8 +82,8 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
         // restore revision for primary questions
         $post_evt->restore_revision(
             $revision_id,
-            array('Question_Group'),
-            array('Question_Group' => array('Event_Question_Group.EQG_primary' => 1))
+            ['Question_Group'],
+            ['Question_Group' => ['Event_Question_Group.EQG_primary' => true]]
         );
         return $post_evt;
     }
@@ -130,7 +130,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
             $EQGs = ! empty($event_id)
                 ? $this->_event->get_many_related(
                     'Question_Group',
-                    array(array('Event_Question_Group.EQG_primary' => 1))
+                    [['Event_Question_Group.EQG_primary' => true]]
                 )
                 : array();
             $EQGids = array_keys($EQGs);
@@ -198,7 +198,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
         // let's get all current question groups associated with this event.
         $current_qgs = $evtobj->get_many_related(
             'Question_Group',
-            array(array('Event_Question_Group.EQG_primary' => 1))
+            [['Event_Question_Group.EQG_primary' => true]]
         );
         $current_qgs = array_keys($current_qgs); // we just want the ids
 
@@ -207,7 +207,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
             foreach ($question_groups as $id => $val) {
                 // add to event
                 if ($val) {
-                    $qg = $evtobj->_add_relation_to($id, 'Question_Group', array('EQG_primary' => 1));
+                    $qg = $evtobj->_add_relation_to($id, 'Question_Group', ['EQG_primary' => true]);
                 }
                 $success[] = ! empty($qg) ? 1 : 0;
             }
@@ -217,7 +217,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
         $removed_qgs = array_diff($current_qgs, $added_qgs);
 
         foreach ($removed_qgs as $qgid) {
-            $qg = $evtobj->_remove_relation_to($qgid, 'Question_Group', array('EQG_primary' => 1));
+            $qg = $evtobj->_remove_relation_to($qgid, 'Question_Group', ['EQG_primary' => true]);
             $success[] = ! empty($qg) ? 1 : 0;
         }
         return in_array(0, $success, true) ? false : true;

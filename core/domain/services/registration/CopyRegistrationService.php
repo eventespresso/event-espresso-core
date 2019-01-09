@@ -8,6 +8,7 @@ use EE_Payment;
 use EE_Question;
 use EE_Registration;
 use EE_Registration_Payment;
+use EEM_Event_Question_Group;
 use EventEspresso\core\domain\services\DomainService;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
@@ -47,14 +48,18 @@ class CopyRegistrationService extends DomainService
         $answers = $this->reindexAnswersByQuestionId($registration_to_copy->answers());
         // get questions to new event reg form
         $new_event = $target_registration->event();
-        $question_groups = $new_event->question_groups(
-            array(
-                array(
-                    'Event.EVT_ID'                     => $new_event->ID(),
-                    'Event_Question_Group.EQG_primary' => $registration_to_copy->is_primary_registrant(),
-                ),
-                'order_by' => array('QSG_order' => 'ASC'),
-            )
+        $field_name = 'Event_Question_Group.'
+            . EEM_Event_Question_Group::instance()->field_name_for_category(
+                $registration_to_copy->is_primary_registrant()
+            );
+        $question_groups = $new_event->question_groups([
+                [
+                    'Event.EVT_ID' => $new_event->ID(),
+                    $field_name => true,
+                ],
+                'order_by' => ['QSG_order' => 'ASC'],
+            ]
+
         );
         foreach ($question_groups as $question_group) {
             if ($question_group instanceof \EE_Question_Group) {

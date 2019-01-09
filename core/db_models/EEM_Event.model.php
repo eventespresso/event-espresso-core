@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\orm\ModelFieldFactory;
 
 /**
@@ -267,6 +269,7 @@ class EEM_Event extends EEM_CPT_Base
             'Registration'           => new EE_Has_Many_Relation(),
             'Datetime'               => new EE_Has_Many_Relation(),
             'Question_Group'         => new EE_HABTM_Relation('Event_Question_Group'),
+            'Event_Question_Group'   => new EE_Has_Many_Relation(),
             'Venue'                  => new EE_HABTM_Relation('Event_Venue'),
             'Term_Relationship'      => new EE_Has_Many_Relation(),
             'Term_Taxonomy'          => new EE_HABTM_Relation('Term_Relationship'),
@@ -388,21 +391,26 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
-
     /**
      * get_question_groups
      *
-     * @param int     $EVT_ID
+     * @param int $EVT_ID
      * @param boolean $for_primary_attendee
      * @return array|bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_event_question_groups($EVT_ID = 0, $for_primary_attendee = true)
     {
         if (! isset($EVT_ID) || ! absint($EVT_ID)) {
             EE_Error::add_error(
                 esc_html__(
+                    // @codingStandardsIgnoreStart
                     'An error occurred. No Event Question Groups could be retrieved because an Event ID was not received.',
+                    // @codingStandardsIgnoreEnd
                     'event_espresso'
                 ),
                 __FILE__,
@@ -411,14 +419,18 @@ class EEM_Event extends EEM_CPT_Base
             );
             return false;
         }
-        return EE_Registry::instance()->load_model('Event_Question_Group')->get_all(
-            array(
-                array(
-                    'EVT_ID'      => $EVT_ID,
-                    'EQG_primary' => $for_primary_attendee,
-                ),
-            )
-        );
+        $query_params = [
+            [
+                'EVT_ID' => $EVT_ID,
+                EEM_Event_Question_Group::instance()->field_name_for_category($for_primary_attendee) => true
+            ]
+        ];
+        if ($for_primary_attendee) {
+            $query_params[0][] = true;
+        } else {
+            $query_params[0]['EQG_additional'] = true;
+        }
+        return EE_Registry::instance()->load_model('Event_Question_Group')->get_all($query_params);
     }
 
 
@@ -447,14 +459,18 @@ class EEM_Event extends EEM_CPT_Base
         }
         $where_params = array(
             'Event_Question_Group.EVT_ID'      => $EVT_ID,
-            'Event_Question_Group.EQG_primary' => $registration->count() === 1 ? true : false,
             'QSG_deleted'                      => false,
         );
+        if( $registration->is_primary_registrant()) {
+            $where_params['Event_Question_Group.EQG_primary'] = true;
+        } else {
+            $where_params['Event_Question_Group.EQG_additional'] = true;
+        }
         return EE_Registry::instance()->load_model('Question_Group')->get_all(
-            array(
+            [
                 $where_params,
-                'order_by' => array('QSG_order' => 'ASC'),
-            )
+                'order_by' => ['QSG_order' => 'ASC'],
+            ]
         );
     }
 

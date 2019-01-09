@@ -67,7 +67,7 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
                 ],
                 ['%d']
             );
-            if( ! $successful_delete) {
+            if (! $successful_delete) {
                 $this->add_error(
                     sprintf(
                         __('Could not delete old event-question group relation row "%1$s" because "%2$s"', 'event_espresso'),
