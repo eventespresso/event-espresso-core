@@ -64,6 +64,7 @@
 		"@wordpress/keycodes": "^1.1.0",
 		"@wordpress/plugins": "^1.0.4",
 		"@wordpress/scripts": "^2.5.0",
+		"@wordpress/url": "^2.3.3",
 		"@wordpress/viewport": "^1.0.4",
 		"autoprefixer": "^8.6.5",
 		"babel-loader": "8.0.0",
