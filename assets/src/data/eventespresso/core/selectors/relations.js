@@ -122,6 +122,51 @@ const getRelatedEntities = createSelector(
 );
 
 /**
+ * Looks up the relations queued for a given model first from the actual relation
+ * type in the state, and then a reverse lookup in the index if not there.
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {string} type 'add' or 'delete'
+ * @return {Object} Returns an object keyed by entity ids for the given model.
+ * The values on for each entity id is an object keyed by relation names and
+ * with values being an array of ids for relation. Example:
+ * {
+ *   10: {
+ *     datetimes: [ 22, 23 ],
+ *     message_template_groups: [ 2, 4 ],
+ *   },
+ *   20: {
+ *     datetimes: [ 24, 25 ],
+ *   },
+ * }
+ */
+const lookupRelationsQueudForModel = ( state, modelName, type = 'add' ) => {
+	const forIndexLookup = pluralModelName( modelName );
+	const forAddLookup = singularModelName( modelName );
+	if ( state.dirty.relations.hasIn( [ type, forAddLookup ] ) ) {
+		return state.dirty.relations.getIn( [ type, forAddLookup ] ).toJS();
+	}
+	if ( state.dirty.relations.hasIn( [ 'index', forIndexLookup ] ) ) {
+		let relations = Map();
+		state.dirty.relations.getIn( [ 'index', forIndexLookup ] ).forEach(
+			( relationMap, entityId ) => {
+				relationMap.forEach( ( relationRecord, model ) => {
+					if ( relationRecord.has( type ) ) {
+						relations = relations.setIn(
+							[ entityId, pluralModelName( model ) ],
+							relationRecord.get( type )
+						);
+					}
+				} );
+			}
+		);
+		return relations.toJS();
+	}
+	return {};
+};
+
+/**
  * Retrieves all the queued relation additions for the given model
  *
  * @param {Object} state
@@ -141,10 +186,12 @@ const getRelatedEntities = createSelector(
  *
  */
 const getRelationAdditionsQueuedForModel = createSelector(
-	( state, modelName ) => ( state.dirty.relations.getIn(
-		[ 'add', modelName ] ) || Map() ).toJS(),
+	( state, modelName ) => {
+		return lookupRelationsQueudForModel( state, modelName );
+	},
 	( state, modelName ) => [
-		state.dirty.relations.getIn( [ 'add', modelName ] ),
+		state.dirty.relations.getIn( [ 'add', singularModelName( modelName ) ] ),
+		state.dirty.relations.getIn( [ 'index', pluralModelName( modelName ) ] ),
 	]
 );
 
@@ -160,11 +207,14 @@ const getRelationAdditionsQueuedForModel = createSelector(
  * with values being an array of ids for relation.
  */
 const getRelationDeletionsQueuedForModel = createSelector(
-	( state, modelName ) => ( state.dirty.relations.getIn(
-		[ 'delete', modelName ]
-	) || Map() ).toJS(),
+	( state, modelName ) => {
+		return lookupRelationsQueudForModel( state, modelName, 'delete' );
+	},
 	( state, modelName ) => [
-		state.dirty.relations.getIn( [ 'delete', modelName ] ),
+		state.dirty.relations.getIn(
+			[ 'delete', singularModelName( modelName ) ]
+		),
+		state.dirty.relations.getIn( [ 'index', pluralModelName( modelName ) ] ),
 	]
 );
 

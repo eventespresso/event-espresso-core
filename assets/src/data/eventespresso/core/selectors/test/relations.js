@@ -258,6 +258,15 @@ describe( 'Dirty relations tests', () => {
 				60: { datetimes: [ 20 ] },
 			} );
 		} );
+		it( 'returns expected object when there are records for the given ' +
+			'relation (reverse lookup)', () => {
+			expect( getRelationAdditionsQueuedForModel(
+				originalState,
+				'datetime'
+			) ).toEqual( {
+				20: { tickets: [ 60 ] },
+			} );
+		} );
 		it( 'returns cached copy when state has not changed', () => {
 			const testResult = getRelationAdditionsQueuedForModel(
 				originalState,
@@ -313,6 +322,15 @@ describe( 'Dirty relations tests', () => {
 				'event',
 			) ).toEqual( {
 				10: { datetimes: [ 20 ] },
+			} );
+		} );
+		it( 'returns expected object when there are records for the given ' +
+			'relation (reverse lookup)', () => {
+			expect( getRelationDeletionsQueuedForModel(
+				originalState,
+				'datetime'
+			) ).toEqual( {
+				20: { events: [ 10 ], tickets: [ 50 ] },
 			} );
 		} );
 		it( 'returns cached copy when state has not changed', () => {
