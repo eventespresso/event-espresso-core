@@ -31,7 +31,9 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
 
 
     /**
-     * updates the question with the new question type
+     * Removes the duplicate event_question_group rows that only had EQG_primary=0. Now we just have one row
+     * joining event-to-question-groups with two columns: EQG_primary and EQG_additional, indicating which question
+     * groups apply to which category of registrant.
      * @param array $event_question_group an associative array where keys are column names and values are their values.
      * @return null
      */
