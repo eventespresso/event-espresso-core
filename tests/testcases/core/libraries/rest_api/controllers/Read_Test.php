@@ -603,6 +603,18 @@ class Read_Test extends EE_REST_TestCase
                                     'single' => false,
                                 ),
                         ),
+                    'https://api.eventespresso.com/event_question_groups'   =>
+                        array(
+                            0 =>
+                                array(
+                                    'href'   => rest_url(
+                                        '/ee/v4.8.29/events/'
+                                        . $event_id
+                                        . '/event_question_groups'
+                                    ),
+                                    'single' => false,
+                                ),
+                        ),
                 ),
                 '_protected' => array()
             ),

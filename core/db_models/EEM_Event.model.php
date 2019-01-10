@@ -434,14 +434,17 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
-
     /**
      * get_question_groups
      *
-     * @param int             $EVT_ID
+     * @param int $EVT_ID
      * @param EE_Registration $registration
      * @return array|bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_question_groups_for_event($EVT_ID = 0, EE_Registration $registration)
     {
@@ -457,18 +460,15 @@ class EEM_Event extends EEM_CPT_Base
             );
             return false;
         }
-        $where_params = array(
-            'Event_Question_Group.EVT_ID'      => $EVT_ID,
-            'QSG_deleted'                      => false,
-        );
-        if( $registration->is_primary_registrant()) {
-            $where_params['Event_Question_Group.EQG_primary'] = true;
-        } else {
-            $where_params['Event_Question_Group.EQG_additional'] = true;
-        }
         return EE_Registry::instance()->load_model('Question_Group')->get_all(
             [
-                $where_params,
+                [
+                    'Event_Question_Group.EVT_ID'      => $EVT_ID,
+                    'Event_Question_Group.'
+                        . EEM_Event_Question_Group::instance()->fieldNameForContext(
+                            $registration->is_primary_registrant()
+                        ) => true
+                ],
                 'order_by' => ['QSG_order' => 'ASC'],
             ]
         );

@@ -1251,23 +1251,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @return EE_Question_Group[]
      * @throws EE_Error
-     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function question_groups()
     {
-        $question_groups = array();
-        if ($this->event() instanceof EE_Event) {
-            $query_params = [
-                [
-                    'Event_Question_Group.'
-                    . EEM_Event_Question_Group::instance()->fieldNameForContext(
-                        $this->is_primary_registrant()
-                    ) => true
-                ],
-                'order_by' => ['QSG_order' => 'ASC']];
-            $question_groups = $this->event()->question_groups($query_params);
-        }
-        return $question_groups;
+        return EEM_Event::instance()->get_question_groups_for_event($this->event_ID(), $this);
     }
 
 
@@ -1285,19 +1276,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function count_question_groups()
     {
-        $qg_count = 0;
-        if ($this->event() instanceof EE_Event) {
-            if ($this->is_primary_registrant()) {
-                $query_params =[['Event_Question_Group.EQG_primary' => true]];
-            } else {
-                $query_params = [['Event_Question_Group.EQG_additional' => true]];
-            }
-            $qg_count = $this->event()->count_related(
-                'Question_Group',
-                $query_params
-            );
-        }
-        return $qg_count;
+        return EEM_Event::instance()->count_related(
+            $this->event_ID(),
+            'Question_Group',
+            [
+                [
+                    'Event_Question_Group.'
+                    . EEM_Event_Question_Group::instance()->fieldNameForContext($this->is_primary_registrant()) => true,
+                ]
+            ]
+        );
     }
 
 

@@ -58,9 +58,7 @@ class CopyRegistrationService extends DomainService
                     $field_name => true,
                 ],
                 'order_by' => ['QSG_order' => 'ASC'],
-            ]
-
-        );
+            ]);
         foreach ($question_groups as $question_group) {
             if ($question_group instanceof \EE_Question_Group) {
                 foreach ($question_group->questions() as $question) {
