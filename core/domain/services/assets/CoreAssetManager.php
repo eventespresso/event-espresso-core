@@ -256,7 +256,17 @@ class CoreAssetManager extends AssetManager
                 CoreAssetManager::JS_HANDLE_VALUE_OBJECTS
             )
         )
-             ->setRequiresTranslation();
+             ->setRequiresTranslation()
+             ->setInlineDataCallback(
+                 function() {
+                     wp_add_inline_script(
+                         CoreAssetManager::JS_HANDLE_DATA_STORES,
+                         is_admin()
+                             ? 'wp.apiFetch.use( eejs.middleWares.apiFetch.capsMiddleware( eejs.middleWares.apiFetch.CONTEXT_CAPS_EDIT ) )'
+                             : 'wp.apiFetch.use( eejs.middleWares.apiFetch.capsMiddleware )'
+                     );
+                 }
+             );
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_HOCS,
