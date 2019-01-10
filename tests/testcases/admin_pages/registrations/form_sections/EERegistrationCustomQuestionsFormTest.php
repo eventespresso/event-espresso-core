@@ -8,7 +8,6 @@
  * @package     Event Espresso
  * @author         Mike Nelson
  * @since         $VID:$
- * @group current
  *
  */
 class EERegistrationCustomQuestionsFormTest extends EE_UnitTestCase

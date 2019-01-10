@@ -16,7 +16,6 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @group data_migration_scripts
  * @group core/data_migration_scripts
  * @group EE_DMS_4_10_0_Tests
- * @group current
  *
  */
 class EE_DMS_4_10_0_Tests extends EE_UnitTestCase{

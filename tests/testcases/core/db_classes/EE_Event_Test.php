@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 
 /**
@@ -587,6 +590,202 @@ class EE_Event_Test extends EE_UnitTestCase
         $this->assertTrue($sold_out);
         $this->assertEquals(EEM_Event::sold_out, $event->status());
         $this->assertEquals(EE_Datetime::sold_out, $event->get_active_status(true));
+    }
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function testAddQuestionGroupPrimary()
+    {
+        $e = $this->new_model_obj_with_dependencies('Event');
+        $this->assertEquals(
+            0,
+            EEM_Event_Question_Group::instance()->count(
+                [
+                    [
+                        'EVT_ID' => $e->ID(),
+                        'QSG_ID' => 1,
+                        'EQG_primary' => true
+                    ]
+                ]
+            )
+        );
+        $e->add_question_group(1, true);
+        $this->assertEquals(
+            1,
+            EEM_Event_Question_Group::instance()->count(
+                [
+                    [
+                        'EVT_ID' => $e->ID(),
+                        'QSG_ID' => 1,
+                        'EQG_primary' => true
+                    ]
+                ]
+            )
+        );
+    }
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testAddQuestionGroupAdditional()
+    {
+        $e = $this->new_model_obj_with_dependencies('Event');
+        $this->assertEquals(
+            0,
+            EEM_Event_Question_Group::instance()->count(
+                [
+                    [
+                        'EVT_ID' => $e->ID(),
+                        'QSG_ID' => 1,
+                        'EQG_additional' => true
+                    ]
+                ]
+            )
+        );
+        $e->add_question_group(1, false);
+        $this->assertEquals(
+            1,
+            EEM_Event_Question_Group::instance()->count(
+                [
+                    [
+                        'EVT_ID' => $e->ID(),
+                        'QSG_ID' => 1,
+                        'EQG_additional' => true
+                    ]
+                ]
+            )
+        );
+    }
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testRemoveQuestionGroupPrimary()
+    {
+        $e = $this->new_model_obj_with_dependencies('Event');
+        $e->add_question_group(1, true);
+        $this->assertEquals(
+            1,
+            EEM_Event_Question_Group::instance()->count(
+                [
+                    [
+                        'EVT_ID' => $e->ID(),
+                        'QSG_ID' => 1,
+                        'EQG_primary' => true
+                    ]
+                ]
+            )
+        );
+        $e->remove_question_group(1, true);
+        $this->assertEquals(
+            0,
+            EEM_Event_Question_Group::instance()->count(
+                [
+                    [
+                        'EVT_ID' => $e->ID(),
+                        'QSG_ID' => 1,
+                        'EQG_primary' => true
+                    ]
+                ]
+            )
+        );
+    }
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testRemoveQuestionGroupAdditional()
+    {
+        $e = $this->new_model_obj_with_dependencies('Event');
+        $e->add_question_group(1, false);
+        $this->assertEquals(
+            1,
+            EEM_Event_Question_Group::instance()->count(
+                [
+                    [
+                        'EVT_ID' => $e->ID(),
+                        'QSG_ID' => 1,
+                        'EQG_additional' => true
+                    ]
+                ]
+            )
+        );
+        $e->remove_question_group(1, false);
+        $this->assertEquals(
+            0,
+            EEM_Event_Question_Group::instance()->count(
+                [
+                    [
+                        'EVT_ID' => $e->ID(),
+                        'QSG_ID' => 1,
+                        'EQG_additional' => true
+                    ]
+                ]
+            )
+        );
+    }
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function testRemoveQuestionGroupAdditionalStillPrimary()
+    {
+        $e = $this->new_model_obj_with_dependencies('Event');
+        $e->add_question_group(1, true);
+        $e->add_question_group(1, false);
+        $this->assertEquals(
+            1,
+            EEM_Event_Question_Group::instance()->count(
+                [
+                    [
+                        'EVT_ID' => $e->ID(),
+                        'QSG_ID' => 1,
+                        'EQG_primary' => true,
+                        'EQG_additional' => true
+                    ]
+                ]
+            )
+        );
+        $e->remove_question_group(1, false);
+        $this->assertEquals(
+            1,
+            EEM_Event_Question_Group::instance()->count(
+                [
+                    [
+                        'EVT_ID' => $e->ID(),
+                        'QSG_ID' => 1,
+                        'EQG_primary' => true,
+                        'EQG_additional' => false
+                    ]
+                ]
+            )
+        );
     }
 }
 // End of file EE_Event_Test.php
