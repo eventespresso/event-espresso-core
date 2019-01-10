@@ -82,7 +82,10 @@ export function deleteEntity(
 	state = fromJS( DEFAULT_CORE_STATE.dirty.delete ),
 	action
 ) {
-	return processAction( state, action );
+	return action.type === types.RECEIVE_DELETE_ENTITY_ID ||
+		action.type === types.REMOVE_DELETE_ENTITY_ID ?
+		processAction( state, action ) :
+		state;
 }
 
 /**
@@ -96,5 +99,8 @@ export function trashEntity(
 	state = fromJS( DEFAULT_CORE_STATE.dirty.trash ),
 	action
 ) {
-	return processAction( state, action );
+	return action.type === types.RECEIVE_TRASH_ENTITY_ID ||
+		action.type === types.REMOVE_TRASH_ENTITY_ID ?
+		processAction( state, action ):
+		state;
 }
