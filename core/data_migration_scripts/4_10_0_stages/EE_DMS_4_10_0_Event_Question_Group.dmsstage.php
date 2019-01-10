@@ -24,10 +24,9 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
         global $wpdb;
         $this->_pretty_name = __('Event-Question Group Relations', 'event_espresso');
         $this->_old_table = $wpdb->prefix.'esp_event_question_group';
-        $this->_extra_where_sql = "WHERE EQG_primary = 0";
+        $this->_extra_where_sql = "WHERE EQG_primary = 0 AND EQG_additional=0";
         parent::__construct();
     }
-
 
 
     /**
@@ -79,5 +78,24 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
                 );
             }
         }
+    }
+
+    /**
+     * Gets the rows for the existing table that shouldn't exist in 4.10.
+     * Specifically the rows where EQG_primary=false and EQG_additional=false.
+     * Gotcha: because the migration is REMOVING rows as it goes, we shouldn't use the offset.
+     *
+     * @global wpdb $wpdb
+     * @param int   $limit
+     * @return array of arrays like $wpdb->get_results($sql, ARRAY_A)
+     */
+    protected function _get_rows($limit)
+    {
+        global $wpdb;
+        $query = "SELECT * FROM {$this->_old_table} {$this->_extra_where_sql} " . $wpdb->prepare(
+            "LIMIT %d",
+            $limit
+        );
+        return $wpdb->get_results($query, ARRAY_A);
     }
 }
