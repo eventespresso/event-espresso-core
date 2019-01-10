@@ -1258,7 +1258,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
             $question_group_id_or_obj,
             'Question_Group',
             [
-                EEM_Event_Question_Group::instance()->field_name_for_category($for_primary) => true
+                EEM_Event_Question_Group::instance()->fieldNameForContext($for_primary) => true
             ]
         );
     }
@@ -1289,8 +1289,8 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
                 ]
             ]
         );
-        $field_to_update = EEM_Event_Question_Group::instance()->field_name_for_category($for_primary);
-        $other_field = EEM_Event_Question_Group::instance()->field_name_for_category(! $for_primary);
+        $field_to_update = EEM_Event_Question_Group::instance()->fieldNameForContext($for_primary);
+        $other_field = EEM_Event_Question_Group::instance()->fieldNameForContext(! $for_primary);
         if ($existing_relation->get($other_field) === false) {
             // Delete it. It's now no longer for primary or additional question groups.
             return $this->_remove_relation_to($question_group_id_or_obj, 'Question_Group');

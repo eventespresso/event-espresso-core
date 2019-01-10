@@ -137,7 +137,7 @@ class EE_DMS_4_1_0_event_question_group extends EE_Data_Migration_Script_Stage_T
         $cols_n_values = array(
             'EVT_ID'=>$new_event_id,
             'QSG_ID'=>$new_question_group_id,
-            EEM_Event_Question_Group::instance()->field_name_for_category($primary) => true
+            EEM_Event_Question_Group::instance()->fieldNameForContext($primary) => true
         );
 
         $datatypes = array(

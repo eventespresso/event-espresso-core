@@ -422,7 +422,7 @@ class EEM_Event extends EEM_CPT_Base
         $query_params = [
             [
                 'EVT_ID' => $EVT_ID,
-                EEM_Event_Question_Group::instance()->field_name_for_category($for_primary_attendee) => true
+                EEM_Event_Question_Group::instance()->fieldNameForContext($for_primary_attendee) => true
             ]
         ];
         if ($for_primary_attendee) {

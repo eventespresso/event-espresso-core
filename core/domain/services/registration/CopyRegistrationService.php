@@ -49,7 +49,7 @@ class CopyRegistrationService extends DomainService
         // get questions to new event reg form
         $new_event = $target_registration->event();
         $field_name = 'Event_Question_Group.'
-            . EEM_Event_Question_Group::instance()->field_name_for_category(
+            . EEM_Event_Question_Group::instance()->fieldNameForContext(
                 $registration_to_copy->is_primary_registrant()
             );
         $question_groups = $new_event->question_groups([

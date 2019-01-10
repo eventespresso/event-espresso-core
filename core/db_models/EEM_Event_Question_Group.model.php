@@ -7,7 +7,17 @@
  */
 class EEM_Event_Question_Group extends EEM_Base
 {
-    // private instance of the Attendee object
+    /**
+     * Name of the field indicating an event should use the question group for the primary attendee
+     */
+    const PRIMARY = 'EQG_primary';
+
+    /**
+     * Name of hte field indicating an event should use the question group for additional attendees
+     */
+    const ADDITIONAL = 'EQG_additional';
+
+    // private instance of the Event_Question_Group object
     protected static $_instance = null;
 
     protected function __construct($timezone = null)
@@ -42,11 +52,26 @@ class EEM_Event_Question_Group extends EEM_Base
     /**
      * Decides whether to use the 'EQG_primary' or newer 'EQG_additional' for use in queries, based on whether
      * this is concerning primary attendees or additional attendees.
+     * If 1, true, or "primary" is passed in, returns EQG_primary. If 0, false, or "additional" is passed in, returns
+     * EQG_additional.
      * @since $VID:$
-     * @param $for_primary_attendees
+     * @param string|boolean|int $context
      * @return string
      */
-    public function field_name_for_category($for_primary_attendees) {
-        return $for_primary_attendees ? 'EQG_primary' : 'EQG_additional';
+    public function fieldNameForContext($context)
+    {
+        switch ($context) {
+            case 'additional':
+            case false:
+            case 0:
+                $field_name = EEM_Event_Question_Group::ADDITIONAL;
+                break;
+            case 'primary':
+            case true:
+            case 1:
+            default:
+                $field_name = EEM_Event_Question_Group::PRIMARY;
+        }
+        return apply_filters('FHEE__EEM_Event_Question_Group__fieldNameForContext', $field_name, $context);
     }
 }

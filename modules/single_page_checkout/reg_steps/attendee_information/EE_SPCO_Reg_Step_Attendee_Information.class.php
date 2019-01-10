@@ -268,12 +268,14 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         // verify that registration has valid event
         if ($registration->event() instanceof EE_Event) {
             $field_name = 'Event_Question_Group.'
-                . EEM_Event_Question_Group::instance()->field_name_for_category(
+                . EEM_Event_Question_Group::instance()->fieldNameForContext(
                     $registration->is_primary_registrant()
                 );
             $question_groups = $registration->event()->question_groups(
                 apply_filters(
+                    // @codingStandardsIgnoreStart
                     'FHEE__EE_SPCO_Reg_Step_Attendee_Information___registrations_reg_form__question_groups_query_parameters',
+                    // @codingStandardsIgnoreEnd
                     [
                         [
                             'Event.EVT_ID'                     => $registration->event()->ID(),

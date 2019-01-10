@@ -1260,7 +1260,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             $query_params = [
                 [
                     'Event_Question_Group.'
-                    . EEM_Event_Question_Group::instance()->field_name_for_category(
+                    . EEM_Event_Question_Group::instance()->fieldNameForContext(
                         $this->is_primary_registrant()
                     ) => true
                 ],

@@ -76,7 +76,7 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
                         'Question.QST_system*null' => ['IS_NULL']
                     ],
                     'Event_Question_Group.'
-                    . EEM_Event_Question_Group::instance()->field_name_for_category(
+                    . EEM_Event_Question_Group::instance()->fieldNameForContext(
                         $reg->is_primary_registrant()
                     ) => true
                 ],
