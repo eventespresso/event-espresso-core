@@ -6,7 +6,6 @@ import {
 	removeRelationForEntity,
 } from '../delete-relations-generators';
 import {
-	removeDirtyRelationIndex,
 	removeDirtyRelationAddition,
 	removeRelatedEntities,
 } from '../remove-relations';
@@ -15,7 +14,6 @@ import {
 } from '../remove-entities';
 import {
 	receiveDirtyRelationDeletion,
-	receiveDirtyRelationIndex,
 } from '../receive-relations';
 
 describe( 'removeDirtyRelationForAddition', () => {
@@ -25,7 +23,7 @@ describe( 'removeDirtyRelationForAddition', () => {
 		'datetimes',
 		20
 	);
-	[ removeDirtyRelationIndex, removeDirtyRelationAddition ].forEach(
+	[ removeDirtyRelationAddition ].forEach(
 		( actionMethod ) => {
 			it( 'yields expected value for ' + actionMethod.name, () => {
 				const { value } = fullfillment.next();
@@ -59,10 +57,6 @@ describe( 'removeRelationForEntity()', () => {
 		[
 			removeDirtyRelationForAddition,
 			[ 'event', 10, 'datetimes', 20 ],
-		],
-		[
-			receiveDirtyRelationIndex,
-			[ 'datetimes', 20, 'event', 10, false ],
 		],
 		[
 			receiveDirtyRelationDeletion,

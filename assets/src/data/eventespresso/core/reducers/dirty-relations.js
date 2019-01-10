@@ -68,7 +68,7 @@ const relationExistsAlready = ( state, action, relationMap ) => {
  */
 const getRelationMap = ( state, action ) => {
 	const { relationName, relationEntityId: relationId, modelName } = action;
-	// get the map from the index
+	// get the map for the queueType
 	return state.getIn(
 		[ 'index', relationName, relationId, modelName ]
 	) || Map();
@@ -108,13 +108,15 @@ function indexRelations( state, action, relationMap ) {
 	let entityIds = relationMap.get( queueType ) || Set();
 	const path = [ relationName, relationEntityId, modelName, queueType ];
 	switch ( type ) {
-		case types.RECEIVE_DIRTY_RELATION_INDEX:
+		case types.RECEIVE_DIRTY_RELATION_ADDITION:
+		case types.RECEIVE_DIRTY_RELATION_DELETION:
 			if ( idExistsInSet( entityId, entityIds ) ) {
 				return state;
 			}
 			state = state.setIn( path, entityIds.add( entityId ) );
 			break;
-		case types.REMOVE_DIRTY_RELATION_INDEX:
+		case types.REMOVE_DIRTY_RELATION_ADDITION:
+		case types.REMOVE_DIRTY_RELATION_DELETION:
 			if ( ! idExistsInSet( entityId, entityIds ) ) {
 				return state;
 			}
@@ -159,11 +161,9 @@ function getRelationIdsFromState( state, action ) {
  */
 function requiresUpdate( state, action, relationMap ) {
 	switch ( action.type ) {
-		case types.RECEIVE_DIRTY_RELATION_INDEX:
 		case types.RECEIVE_DIRTY_RELATION_ADDITION:
 		case types.RECEIVE_DIRTY_RELATION_DELETION:
 			return ! relationExistsAlready( state, action, relationMap );
-		case types.REMOVE_DIRTY_RELATION_INDEX:
 		case types.REMOVE_DIRTY_RELATION_ADDITION:
 		case types.REMOVE_DIRTY_RELATION_DELETION:
 			return relationExistsAlready( state, action, relationMap );
@@ -392,9 +392,9 @@ function dirtyRelations( state, action ) {
 		return state;
 	}
 	switch ( type ) {
-		case types.RECEIVE_DIRTY_RELATION_INDEX:
-		case types.REMOVE_DIRTY_RELATION_INDEX:
-			return state.set(
+		case types.RECEIVE_DIRTY_RELATION_ADDITION:
+		case types.REMOVE_DIRTY_RELATION_ADDITION:
+			state = state.set(
 				'index',
 				indexRelations(
 					Map( state.get( 'index' ) ),
@@ -402,8 +402,6 @@ function dirtyRelations( state, action ) {
 					relationMap
 				)
 			);
-		case types.RECEIVE_DIRTY_RELATION_ADDITION:
-		case types.REMOVE_DIRTY_RELATION_ADDITION:
 			return state.set(
 				'add',
 				updateRelationState(
@@ -414,6 +412,14 @@ function dirtyRelations( state, action ) {
 			);
 		case types.RECEIVE_DIRTY_RELATION_DELETION:
 		case types.REMOVE_DIRTY_RELATION_DELETION:
+			state = state.set(
+				'index',
+				indexRelations(
+					Map( state.get( 'index' ) ),
+					action,
+					relationMap
+				)
+			);
 			return state.set(
 				'delete',
 				updateRelationState(

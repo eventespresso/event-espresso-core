@@ -78,16 +78,6 @@ describe( 'createActions()', () => {
 			),
 		],
 		[
-			'receiveDirtyRelationIndexForEventId',
-			[ 'datetimes', 20, 10 ],
-			actions.receiveDirtyRelationIndex(
-				'datetimes',
-				20,
-				'event',
-				10
-			),
-		],
-		[
 			'receiveDirtyRelationAdditionForEventId',
 			[ 'datetimes', 20, 10 ],
 			actions.receiveDirtyRelationAddition(

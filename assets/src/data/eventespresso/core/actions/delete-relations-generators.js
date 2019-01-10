@@ -3,11 +3,9 @@
  */
 import { removeEntityById } from './remove-entities';
 import {
-	receiveDirtyRelationIndex,
 	receiveDirtyRelationDeletion,
 } from './receive-relations';
 import {
-	removeDirtyRelationIndex,
 	removeDirtyRelationAddition,
 	removeRelatedEntities,
 } from './remove-relations';
@@ -34,12 +32,6 @@ function* removeDirtyRelationForAddition(
 	relationName,
 	relationEntityId,
 ) {
-	yield removeDirtyRelationIndex(
-		relationName,
-		relationEntityId,
-		modelName,
-		entityId
-	);
 	yield removeDirtyRelationAddition(
 		relationName,
 		relationEntityId,
@@ -77,13 +69,6 @@ function* removeRelationForEntity(
 		entityId,
 		relationName,
 		relationEntityId,
-	);
-	yield receiveDirtyRelationIndex(
-		pluralRelationName,
-		relationEntityId,
-		modelName,
-		entityId,
-		false
 	);
 	yield receiveDirtyRelationDeletion(
 		pluralRelationName,

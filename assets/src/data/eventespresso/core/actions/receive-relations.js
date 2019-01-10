@@ -40,44 +40,6 @@ function receiveRelatedEntities(
 }
 
 /**
- * Action creator for queuing the relation index entry for given data.
- *
- * @param {string} relationName
- * @param {number} relationEntityId
- * @param {string} modelName
- * @param {number} entityId
- * @param {boolean} addRelation
- * @return {
- * 	{
- * 		type: string,
- * 		relationName: string,
- * 		relationEntityId: number,
- * 		modelName: string,
- * 		entityId: number,
- * 		queueType: string
- * 	}
- * } An action object.
- */
-function receiveDirtyRelationIndex(
-	relationName,
-	relationEntityId,
-	modelName,
-	entityId,
-	addRelation = true,
-) {
-	return {
-		type: types.RECEIVE_DIRTY_RELATION_INDEX,
-		relationName,
-		relationEntityId,
-		modelName,
-		entityId,
-		queueType: addRelation ?
-			TYPE_QUEUE_RELATION_ADD :
-			TYPE_QUEUE_RELATION_DELETE,
-	};
-}
-
-/**
  * Action creator for queuing the a relation creation for the given data.
  *
  * @param {string} relationName
@@ -180,7 +142,6 @@ function receiveUpdatedEntityIdForRelations(
 
 export {
 	receiveRelatedEntities,
-	receiveDirtyRelationIndex,
 	receiveDirtyRelationAddition,
 	receiveDirtyRelationDeletion,
 	receiveUpdatedEntityIdForRelations,

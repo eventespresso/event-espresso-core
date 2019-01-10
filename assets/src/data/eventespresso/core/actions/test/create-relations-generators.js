@@ -16,7 +16,6 @@ import {
 import {
 	receiveRelatedEntities,
 	receiveDirtyRelationAddition,
-	receiveDirtyRelationIndex,
 } from '../receive-relations';
 import { EventEntities } from '../../../test/fixtures/base';
 
@@ -61,7 +60,7 @@ describe( 'createRelation()', () => {
 		} );
 		describe( 'yields action objects for receiving dirty relations', () => {
 			const args = [ 'events', 20, 'datetime', 40 ];
-			[ receiveDirtyRelationIndex, receiveDirtyRelationAddition ].forEach(
+			[ receiveDirtyRelationAddition ].forEach(
 				( actionMethod ) => {
 					it( actionMethod.name + '()', () => {
 						const { value } = fulfillment.next();
@@ -122,7 +121,7 @@ describe( 'createRelations()', () => {
 	describe( 'yields action objects for receiving dirty relations (for all ' +
 		'expected ids)', () => {
 		[ 20, 30 ].forEach( ( relationId ) => {
-			[ receiveDirtyRelationIndex, receiveDirtyRelationAddition ].forEach(
+			[ receiveDirtyRelationAddition ].forEach(
 				( actionMethod ) => {
 					it( actionMethod.name + '()', () => {
 						const { value } = fulfillment.next();

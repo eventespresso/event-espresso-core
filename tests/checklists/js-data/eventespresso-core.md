@@ -39,7 +39,6 @@ A `*` next to the selector means that this has a corresponding resolver
 
 Note: the following actions don't really need tested directly because they are indirectly covered by other tests regarding removing relations.
 
-* [ ] receiveDirtyRelationIndex( modelName, relationEntityId, modelname, entityId, addRelation (bool) ) - this queues up the relation for either addition or deletion in the relation index state.
 * [ ] receiveDirtyRelationAddition( relationName, relationEntityId, modelName, entityId ) - this queues up the relation for addition.
 * [ ] receiveDirtyRelationDeletion( relationName, relationEntityId, modelName, entityId ) - this queues up the relation for deletion.
 * [ ] receiveUpdatedEntityIdForRelations( modelName, oldEntityId, newEntityId ) - triggers the replacement of any instance of the old entity id in the state for the given model with the new entity id (across the entire state tree).

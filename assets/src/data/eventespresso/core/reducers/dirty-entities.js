@@ -101,6 +101,6 @@ export function trashEntity(
 ) {
 	return action.type === types.RECEIVE_TRASH_ENTITY_ID ||
 		action.type === types.REMOVE_TRASH_ENTITY_ID ?
-		processAction( state, action ):
+		processAction( state, action ) :
 		state;
 }

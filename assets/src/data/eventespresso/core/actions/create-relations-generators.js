@@ -16,7 +16,6 @@ import { getIdsFromBaseEntityArray } from '@eventespresso/helpers';
 import {
 	receiveRelatedEntities,
 	receiveDirtyRelationAddition,
-	receiveDirtyRelationIndex,
 } from './receive-relations';
 import { receiveEntityRecords } from './receive-entities';
 import { resolveGetEntityByIdForIds } from '../../base-resolvers';
@@ -57,12 +56,6 @@ function* createRelation(
 		entityId,
 		relationName,
 		[ relationEntity.id ]
-	);
-	yield receiveDirtyRelationIndex(
-		relationName,
-		relationEntity.id,
-		modelName,
-		entityId
 	);
 	yield receiveDirtyRelationAddition(
 		relationName,
@@ -117,12 +110,6 @@ function* createRelations(
 	relationIds = [ ...relationIds ];
 	while ( relationIds.length > 0 ) {
 		const relationId = relationIds.shift();
-		yield receiveDirtyRelationIndex(
-			relationName,
-			relationId,
-			modelName,
-			entityId
-		);
 		yield receiveDirtyRelationAddition(
 			relationName,
 			relationId,

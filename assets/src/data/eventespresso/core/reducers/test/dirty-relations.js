@@ -276,7 +276,7 @@ describe( 'dirty relations tests', () => {
 			it( 'does not duplicate relations in state', () => {
 				expect( dirtyRelations(
 					originalState,
-					testAction( types.RECEIVE_DIRTY_RELATION_INDEX )(
+					testAction( types.RECEIVE_DIRTY_RELATION_ADDITION )(
 						'events',
 						10,
 						'datetime',
@@ -284,92 +284,6 @@ describe( 'dirty relations tests', () => {
 					)
 				) ).toBe( originalState );
 			} );
-		} );
-		describe( 'index state updates', () => {
-			describe( types.RECEIVE_DIRTY_RELATION_INDEX + ' action type',
-				() => {
-					const action = testAction( types.RECEIVE_DIRTY_RELATION_INDEX );
-					it( 'returns original state if given model entity id already exists',
-						() => {
-							expect( dirtyRelations(
-								originalState,
-								action()
-							) ).toBe( originalState );
-						}
-					);
-					it( 'returns expected state for new index added', () => {
-						const result = dirtyRelations(
-							originalState,
-							action(
-								'tickets',
-								200,
-								'datetime',
-								20
-							)
-						);
-						expect( result ).not.toBe( originalState );
-						expect( result.toJS() ).toEqual(
-							{
-								...originalState.toJS(),
-								index: {
-									...originalState.get( 'index' ).toJS(),
-									datetimes: {
-										20: {
-											...originalState.getIn(
-												[ 'index', 'datetimes', 20 ]
-											).toJS(),
-											ticket: {
-												delete: [ 50, 200 ],
-												add: [ 60 ],
-											},
-										},
-									},
-								},
-							}
-						);
-					} );
-				}
-			);
-			describe( types.REMOVE_DIRTY_RELATION_INDEX + ' action type',
-				() => {
-					const action = testAction( types.REMOVE_DIRTY_RELATION_INDEX );
-					it( 'returns original state if given model entity id does not ' +
-						'already exist', () => {
-						expect( dirtyRelations(
-							originalState,
-							action(
-								'events',
-								20,
-								'datetime',
-								50
-							)
-						) ).toBe( originalState );
-					} );
-					it( 'returns expected state for index removed', () => {
-						const result = dirtyRelations(
-							originalState,
-							action()
-						);
-						expect( result ).not.toBe( originalState );
-						expect( result.toJS() ).toEqual(
-							{
-								...originalState.toJS(),
-								index: {
-									...originalState.get( 'index' ).toJS(),
-									datetimes: {
-										20: {
-											ticket: {
-												delete: [ 50 ],
-												add: [ 60 ],
-											},
-										},
-									},
-								},
-							}
-						);
-					} );
-				}
-			);
 		} );
 		describe( 'add and delete state updates', () => {
 			[
@@ -379,6 +293,20 @@ describe( 'dirty relations tests', () => {
 					[ 'tickets', 400, 'datetime', 20, 'add' ],
 					() => ( {
 						...originalState.toJS(),
+						index: {
+							...originalState.get( 'index' ).toJS(),
+							datetimes: {
+								20: {
+									...originalState.getIn(
+										[ 'index', 'datetimes', 20 ]
+									).toJS(),
+									ticket: {
+										delete: [ 50 ],
+										add: [ 60, 400 ],
+									},
+								},
+							},
+						},
 						add: {
 							...originalState.get( 'add' ).toJS(),
 							ticket: {
@@ -398,6 +326,20 @@ describe( 'dirty relations tests', () => {
 					[ 'tickets', 400, 'datetime', 20, 'delete' ],
 					() => ( {
 						...originalState.toJS(),
+						index: {
+							...originalState.get( 'index' ).toJS(),
+							datetimes: {
+								20: {
+									...originalState.getIn(
+										[ 'index', 'datetimes', 20 ]
+									).toJS(),
+									ticket: {
+										delete: [ 50, 400 ],
+										add: [ 60 ],
+									},
+								},
+							},
+						},
 						delete: {
 							...originalState.get( 'delete' ).toJS(),
 							ticket: {
@@ -444,6 +386,19 @@ describe( 'dirty relations tests', () => {
 					[ 'tickets', 60, 'datetime', 20, 'add' ],
 					() => ( {
 						...originalState.toJS(),
+						index: {
+							...originalState.get( 'index' ).toJS(),
+							datetimes: {
+								20: {
+									event: {
+										delete: [ 10 ],
+									},
+									ticket: {
+										delete: [ 50 ],
+									},
+								},
+							},
+						},
 						add: {},
 					} ),
 				],
@@ -453,6 +408,19 @@ describe( 'dirty relations tests', () => {
 					[ 'tickets', 50, 'datetime', 20, 'delete' ],
 					() => ( {
 						...originalState.toJS(),
+						index: {
+							...originalState.get( 'index' ).toJS(),
+							datetimes: {
+								20: {
+									event: {
+										delete: [ 10 ],
+									},
+									ticket: {
+										add: [ 60 ],
+									},
+								},
+							},
+						},
 						delete: {
 							event: {
 								...originalState
