@@ -68,7 +68,6 @@
 		"babel-eslint": "^8.2.6",
 		"babel-loader": "8.0.0",
 		"babel-plugin-dev-expression": "^0.2.1",
-		"check-node-version": "^3.2.0",
 		"clean-webpack-plugin": "^0.1.18",
 		"codecov": "^3.1.0",
 		"concurrently": "^3.6.1",
