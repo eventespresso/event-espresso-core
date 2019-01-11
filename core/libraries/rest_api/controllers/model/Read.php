@@ -620,9 +620,9 @@ class Read extends Base
             $this->checkPassword(
                 $model,
                 $db_row,
-                array(
-                    0 => array(
-                        $model->primary_key_name() => $db_row[ $model->get_primary_key_field()->get_qualified_column() ]
+                $model->alter_query_params_to_restrict_by_ID(
+                    $model->get_index_primary_key_string(
+                        $model->deduce_fields_n_values_from_cols_n_values($db_row)
                     )
                 ),
                 $rest_request
