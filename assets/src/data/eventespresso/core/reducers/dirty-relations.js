@@ -8,6 +8,7 @@ import {
 } from '@eventespresso/model';
 import { fromJS, Set, Map } from 'immutable';
 import { removeEmptyFromState } from '@eventespresso/helpers';
+import cuid from 'cuid';
 
 /**
  * Internal imports.
@@ -124,7 +125,7 @@ function indexRelations( state, action, relationMap ) {
 				entityIds.keyOf( entityId )
 			);
 			if ( entityIds.isEmpty() ) {
-				state = removeEmptyFromState( state, path );
+				state = removeEmptyFromState( state, path, 0 );
 			} else {
 				state = state.setIn( path, entityIds );
 			}
@@ -361,7 +362,10 @@ const normalizeActionForState = ( state, action ) => {
 		entityId,
 		relationEntityId,
 	} = action;
-	if ( modelName && index.has( pluralModelName( modelName ) ) ) {
+	if ( modelName &&
+		relationName &&
+		index.has( pluralModelName( modelName ) )
+	) {
 		// okay this model has already been used as a relation on another model
 		// so let's normalize and make it the relation instead.
 		return {
@@ -372,8 +376,14 @@ const normalizeActionForState = ( state, action ) => {
 			relationEntityId: entityId,
 		};
 	}
-	// we can return as is
-	return action;
+	// we can return as is but lets normalize the incoming names
+	return {
+		...action,
+		modelName: modelName ? singularModelName( modelName ) : modelName,
+		relationName: relationName ?
+			pluralModelName( relationName ) :
+			relationName,
+	};
 };
 
 /**
@@ -412,6 +422,14 @@ function dirtyRelations( state, action ) {
 			);
 		case types.RECEIVE_DIRTY_RELATION_DELETION:
 		case types.REMOVE_DIRTY_RELATION_DELETION:
+			// if the relation or entity id is a cuid, then we skip this because
+			// the relation has never been persisted anyways.
+			if (
+				cuid.isCuid( action.relationEntityId ) ||
+				cuid.isCuid( action.entityId )
+			) {
+				return state;
+			}
 			state = state.set(
 				'index',
 				indexRelations(

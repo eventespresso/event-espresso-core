@@ -41,7 +41,7 @@ function removeAllRelatedEntitiesForModelEntity( modelName, entityId ) {
  * @param {string} modelName
  * @param {number} entityId
  * @param {string} relationName
- * @param {Array} relationEntityIds
+ * @param {Array} relatedEntityIds
  * @return {
  * 	{
  * 		type: string,
@@ -56,14 +56,14 @@ function removeRelatedEntities(
 	modelName,
 	entityId,
 	relationName,
-	relationEntityIds,
+	relatedEntityIds,
 ) {
 	return {
 		type: types.REMOVE_RELATED_ENTITY_IDS,
 		modelName,
 		entityId,
 		relationName,
-		relationEntityIds,
+		relatedEntityIds,
 	};
 }
 

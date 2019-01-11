@@ -2,6 +2,7 @@
  * External imports
  */
 import { Map, fromJS, Set } from 'immutable';
+import cuid from 'cuid';
 
 /**
  * Internal dependencies
@@ -453,6 +454,40 @@ describe( 'dirty relations tests', () => {
 						);
 						expect( result ).not.toBe( originalState );
 						expect( result.toJS() ).toEqual( expectedChange() );
+					} );
+				} );
+			} );
+			describe( 'delete state updates when relation or entity ids are ' +
+				'a cuid', () => {
+				[
+					[
+						'returns original state when relation id is cuid',
+						[ 'tickets', 400, 'datetime', cuid(), 'delete' ],
+					],
+					[
+						'returns original state when entity id is cuid',
+						[ 'tickets', cuid(), 'datetime', 20 ],
+					],
+				].forEach( ( [ description, args ] ) => {
+					it( description + ' when adding to relation deletion ' +
+						'queue', () => {
+						const action = testAction(
+							types.RECEIVE_DIRTY_RELATION_DELETION
+						);
+						expect( dirtyRelations(
+							originalState,
+							action( ...args )
+						) ).toBe( originalState );
+					} );
+					it( description + ' when removing relation deletion ' +
+						'queue', () => {
+						const action = testAction(
+							types.REMOVE_DIRTY_RELATION_DELETION
+						);
+						expect( dirtyRelations(
+							originalState,
+							action( ...args )
+						) ).toBe( originalState );
 					} );
 				} );
 			} );
