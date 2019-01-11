@@ -3,6 +3,7 @@
  */
 import { isResolving, hasFinishedResolving } from '../base-selectors';
 import { REDUCER_KEY } from './constants';
+import { Map } from 'immutable';
 
 /**
  * External imports
@@ -18,7 +19,8 @@ import { normalizeEntityId } from '@eventespresso/helpers';
  * @return {Object} The schema object or null if it doesn't exist.
  */
 export function getSchemaForModel( state, modelName ) {
-	return state.schema.get( singularModelName( modelName ), null );
+	const schema = state.schema.get( singularModelName( modelName ), null );
+	return ! ( schema instanceof Map ) ? schema : null;
 }
 
 /**
@@ -63,7 +65,8 @@ export function hasResolvedSchemaForModel( state, modelName ) {
  * exist.
  */
 export function getFactoryForModel( state, modelName ) {
-	return state.factory.get( singularModelName( modelName ), null );
+	const factory = state.factory.get( singularModelName( modelName ), null );
+	return ! ( factory instanceof Map ) ? factory : null;
 }
 
 /**
