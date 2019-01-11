@@ -27,6 +27,12 @@ const { relations: types } = ACTION_TYPES;
  * @return {Immutable.Map} Existing or new state.
  */
 const normalizedReceiveAndRemoveRelations = ( state, action ) => {
+	// first normalize the action
+	action = {
+		...action,
+		modelName: singularModelName( action.modelName ),
+		relationName: pluralModelName( action.relationName ),
+	};
 	const {
 		modelName,
 		relationName,
@@ -107,10 +113,10 @@ const setRelationIndex = ( state, relationData, removal = false ) => {
 function receiveAndRemoveRelations( state, action ) {
 	const {
 		modelName,
+		relationName,
 		entityId,
 		type,
 	} = action;
-	const relationName = pluralModelName( action.relationName );
 	const relationEntityIds = Set( action.relatedEntityIds );
 	const path = [ 'entityMap', modelName, entityId, relationName ];
 
@@ -126,7 +132,9 @@ function receiveAndRemoveRelations( state, action ) {
 			break;
 		case types.REMOVE_RELATED_ENTITY_IDS:
 			const idsAfterRemoval = existingIds.filter(
-				( id ) => relationEntityIds.keyOf( id ) === -1
+				( id ) => ! relationEntityIds.keyOf(
+					normalizeEntityId( id )
+				)
 			);
 			if ( idsAfterRemoval === existingIds ) {
 				return state;
@@ -254,14 +262,16 @@ const replaceRelationRecords = (
 					relationRecord
 						.delete( relationRecord.keyOf( oldEntityId ) )
 						.add( newEntityId );
-				state = removeOnly ?
-					subState = removeEmptyFromState(
+				if ( removeOnly ) {
+					removeEmptyFromState(
 						subState,
 						relationPath,
 						1,
 						false
-					) :
+					);
+				} else {
 					subState.setIn( relationPath, relationRecord );
+				}
 			}
 		} );
 	} );
