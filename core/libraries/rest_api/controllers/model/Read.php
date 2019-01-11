@@ -306,35 +306,8 @@ class Read extends Base
         $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
             $controller->setRequestedVersion($version);
-            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
-                return $controller->sendResponse(
-                    new WP_Error(
-                        'endpoint_parsing_error',
-                        sprintf(
-                            __(
-                                'There is no model for endpoint %s. Please contact event espresso support',
-                                'event_espresso'
-                            ),
-                            $model_name
-                        )
-                    )
-                );
-            }
-            $main_model = $controller->getModelVersionInfo()->loadModel($model_name);
-            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($related_model_name)) {
-                return $controller->sendResponse(
-                    new WP_Error(
-                        'endpoint_parsing_error',
-                        sprintf(
-                            __(
-                                'There is no model for endpoint %s. Please contact event espresso support',
-                                'event_espresso'
-                            ),
-                            $related_model_name
-                        )
-                    )
-                );
-            }
+            $main_model = $controller->validateModel($model_name);
+            $controller->validateModel($related_model_name);
             return $controller->sendResponse(
                 $controller->getEntitiesFromRelation(
                     $request->get_param('id'),
@@ -647,9 +620,9 @@ class Read extends Base
             $this->checkPassword(
                 $model,
                 $db_row,
-                array(
-                    0 => array(
-                        $model->primary_key_name() => $db_row[ $model->get_primary_key_field()->get_qualified_column() ]
+                $model->alter_query_params_to_restrict_by_ID(
+                    $model->get_index_primary_key_string(
+                        $model->deduce_fields_n_values_from_cols_n_values($db_row)
                     )
                 ),
                 $rest_request
