@@ -1,6 +1,8 @@
+# Checklist for `eventespresso/core` selectors/dispatches
+
 ## Selectors
 
-A `*` next to the selector means that this has a corresponding resolver
+A `*` next to the selector means that this has a corresponding resolver.
 
 * [ ] getEntityRecordsForModel( modelName ) - returns entities indexed by primary key
 * [ ] getEntitiesForModel( modelName ) - returns array of entities
@@ -18,7 +20,7 @@ A `*` next to the selector means that this has a corresponding resolver
 
 ## Dispatch Actions
 
-* [ ] createEntity( modelName, baseEntity ) - new entity instance (BaseEntity child)
+* [ ] createEntity( modelName, plainObject ) - new entity instance (returns BaseEntity child)
 * [ ] createRelation( modelName, entityId, relationName, relationEntity ) - ensure the state reflects the expected values.
 * [ ] createRelations( modelName, entityId, relationName, relationEntities ) - same as above but for multiple relation entities for the given model, entity id, and relation
 * [ ] deleteEntityById( modelName, entityId ) - ensure the state reflects the expected values
@@ -28,8 +30,6 @@ A `*` next to the selector means that this has a corresponding resolver
 * [ ] receiveEntityRecords( modelName, entities ) - adds the entity records to the state. Note this should not replace any record already in the state.
 * [ ] receiveAndReplaceEntityRecords( modelName, entities ) - same as the previous except this will replace any already existing record for entities in the state.
 * [ ] receiveEntity( entity ) - Adds the entity to the state (but does not replace the entity already in the state if it exists)
-* [ ] receiveTrashEntityId( modelName, entityId ) - This queues up the given entity for trashing in the state.
-* [ ] receiveDeleteEntityId( modelName, entityId ) - Same as the previous except queues for deleting.
 * [ ] receiveRelatedEntities( modelName, entityId, relationName, relatedEntityIds ) - Adds the relation to the state.
 * [ ] removeEntityById( modelName, entityId ) - removes the entity from the state tree
 * [ ] removeDeleteEntityId( modelName, entityId ) - removes the entity from being queued for delete
@@ -41,9 +41,9 @@ Note: the following actions don't really need tested directly because they are i
 
 * [ ] receiveDirtyRelationAddition( relationName, relationEntityId, modelName, entityId ) - this queues up the relation for addition.
 * [ ] receiveDirtyRelationDeletion( relationName, relationEntityId, modelName, entityId ) - this queues up the relation for deletion.
+* [ ] receiveTrashEntityId( modelName, entityId ) - This queues up the given entity for trashing in the state.
+* [ ] receiveDeleteEntityId( modelName, entityId ) - Same as the previous except queues for deleting.
 * [ ] receiveUpdatedEntityIdForRelations( modelName, oldEntityId, newEntityId ) - triggers the replacement of any instance of the old entity id in the state for the given model with the new entity id (across the entire state tree).
-* [ ] removeDirtyRelationIndex( relationName, relationEntityId, modelName, entityId, addRelation ) - removes the described relation from the relation index state.
-* [ ] removeDirtyRelationForType( relationName, relationEntityId, modelName, entityId, addRelation ) - removes the dirty relation from the state for the given relation action type (delete or add)
 * [ ] removeDirtyRelationAddition( relationName, relationEntityId, modelName, entityId ) - specific method wrapping removeDirtyRelationForType
 * [ ] removeDirtyRelationDeletion( relationName, relationEntityId, modelName, entityId ) - specific method wrapping removeDirtyRelationForType
 
