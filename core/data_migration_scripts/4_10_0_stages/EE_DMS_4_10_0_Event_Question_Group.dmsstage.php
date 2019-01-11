@@ -2,7 +2,7 @@
 
 /**
  *
- * EE_DMS_4_10_0_Event_QUestion_Group
+ * EE_DMS_4_10_0_Event_Question_Group
  *
  * @package         Event Espresso
  * @subpackage
@@ -16,8 +16,6 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
 
     /**
      * Just initializes the status of the migration
-     *
-     * @return EE_DMS_4_10_0_Event_QUestion_Group
      */
     public function __construct()
     {
