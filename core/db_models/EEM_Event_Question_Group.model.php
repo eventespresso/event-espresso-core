@@ -60,15 +60,16 @@ class EEM_Event_Question_Group extends EEM_Base
      */
     public function fieldNameForContext($context)
     {
+        // Basically do a strict switch statement.
         switch (true) {
-            case 'additional' === $context:
-            case false === $context:
-            case 0 === $context:
+            case $context === 'additional':
+            case $context === false:
+            case $context === 0:
                 $field_name = EEM_Event_Question_Group::ADDITIONAL;
                 break;
-            case 'primary' === $context:
-            case true === $context:
-            case 1 === $context:
+            case $context === 'primary':
+            case $context === true:
+            case $context === 1:
             default:
                 $field_name = EEM_Event_Question_Group::PRIMARY;
         }
