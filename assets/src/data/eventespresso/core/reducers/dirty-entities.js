@@ -38,9 +38,7 @@ const removeFromState = ( state, modelName, entityId ) => {
 	if ( ! entityIds.includes( entityId ) ) {
 		return state;
 	}
-	entityIds = entityIds.delete(
-		entityIds.keyOf( entityId )
-	);
+	entityIds = entityIds.delete( entityId );
 	return entityIds.isEmpty() ?
 		state.delete( modelName ) :
 		state.set( modelName, entityIds );

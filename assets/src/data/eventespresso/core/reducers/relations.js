@@ -89,7 +89,7 @@ const setRelationIndex = ( state, relationData, removal = false ) => {
 		let existingIds = state.getIn( path ) || Set();
 		if ( removal ) {
 			existingIds = existingIds.delete(
-				existingIds.keyOf( entityId )
+				entityId
 			);
 		} else {
 			existingIds = existingIds.add( entityId );
@@ -258,11 +258,11 @@ const replaceRelationRecords = (
 				let relationRecord = subState.getIn( relationPath ) || Set();
 				relationRecord = removeOnly ?
 					relationRecord
-						.delete( relationRecord.keyOf( oldEntityId ) ) :
+						.delete( oldEntityId ) :
 					relationRecord
-						.delete( relationRecord.keyOf( oldEntityId ) )
+						.delete( oldEntityId )
 						.add( newEntityId );
-				if ( removeOnly ) {
+				if ( removeOnly && relationRecord.isEmpty() ) {
 					removeEmptyFromState(
 						subState,
 						relationPath,

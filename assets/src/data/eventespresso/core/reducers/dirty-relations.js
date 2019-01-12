@@ -121,9 +121,7 @@ function indexRelations( state, action, relationMap ) {
 			if ( ! idExistsInSet( entityId, entityIds ) ) {
 				return state;
 			}
-			entityIds = entityIds.delete(
-				entityIds.keyOf( entityId )
-			);
+			entityIds = entityIds.delete( entityId );
 			if ( entityIds.isEmpty() ) {
 				state = removeEmptyFromState( state, path, 0 );
 			} else {
@@ -213,9 +211,7 @@ function updateRelationState( state, action, relationMap ) {
 			if ( ! relationIds.includes( relationEntityId ) ) {
 				break;
 			}
-			relationIds = relationIds.delete(
-				relationIds.keyOf( relationEntityId )
-			);
+			relationIds = relationIds.delete( relationEntityId );
 			if ( relationIds.isEmpty() ) {
 				state = removeEmptyFromState( state, path, 0 );
 			} else {
@@ -310,7 +306,7 @@ const replaceIds = ( stateProperty, state, modelName, oldId, newId ) => {
 				topLevelName,
 			];
 			let ids = state.getIn( relationPath ) || Set();
-			ids = ids.delete( ids.keyOf( oldId ) ).add( newId );
+			ids = ids.delete( oldId ).add( newId );
 			return state.setIn( relationPath, ids );
 		};
 		if ( mapOrIds instanceof Map ) {
@@ -331,7 +327,7 @@ const replaceIds = ( stateProperty, state, modelName, oldId, newId ) => {
 					[ ...relationPath, relationId, topLevelName ]
 				);
 				let ids = indexRecord.get( stateProperty ) || Set();
-				ids = ids.delete( ids.keyOf( oldId ) ).add( newId );
+				ids = ids.delete( oldId ).add( newId );
 				indexRecord = indexRecord.set( stateProperty, ids );
 				state = state.setIn(
 					[ ...relationPath, relationId, topLevelName ],
@@ -496,9 +492,7 @@ const clearRelatedEntitiesForEntity = (
 						];
 						if ( subState.hasIn( path ) ) {
 							let entityIds = subState.getIn( path ) || Set();
-							entityIds = entityIds.delete(
-								entityIds.keyOf( entityIdRemoved )
-							);
+							entityIds = entityIds.delete( entityIdRemoved );
 							if ( ! entityIds.isEmpty() ) {
 								subState.setIn( path, entityIds );
 							} else {
@@ -531,7 +525,7 @@ const clearRelatedEntitiesForEntity = (
 									let entityIds = subState.getIn( path ) ||
 										Set();
 									entityIds = entityIds.delete(
-										entityIds.keyOf( entityIdRemoved )
+										entityIdRemoved
 									);
 									if ( ! entityIds.isEmpty() ) {
 										subState.setIn( path, entityIds );

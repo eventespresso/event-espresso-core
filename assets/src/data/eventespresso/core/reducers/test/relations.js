@@ -2,6 +2,7 @@
  * External imports
  */
 import { Set, Map } from 'immutable';
+import cuid from 'cuid';
 
 /**
  * Internal imports
@@ -16,13 +17,17 @@ import { EventEntities, DateTimeEntities } from '../../../test/fixtures/base';
 import { ACTION_TYPES } from '../../actions/action-types';
 
 const { relations: types } = ACTION_TYPES;
+const testCuid = cuid();
 const originalState = mockStateForTests.relations
 	.setIn(
 		[ 'index', 'datetimes', 55 ],
-		Map().set( 'event', Set.of( 10 ) )
+		Map().set( 'event', Set.of( 10, testCuid ) )
 	).setIn(
 		[ 'entityMap', 'event', 10, 'datetimes' ],
 		Set.of( 52, 55 )
+	).setIn(
+		[ 'entityMap', 'event', testCuid, 'datetimes' ],
+		Set.of( 55 )
 	);
 
 describe( normalizedReceiveAndRemoveRelations.name + '()', () => {
@@ -45,28 +50,49 @@ describe( normalizedReceiveAndRemoveRelations.name + '()', () => {
 		.forEach( ( type ) => {
 			describe( type + ' action type', () => {
 				[
-					// [
-					// 	'correctly normalize incoming relation and return expected state',
-					// 	'datetime',
-					// 	'event',
-					// 	52,
-					// 	[ 10 ],
-					// 	originalState,
-					// 	originalState
-					// 		.deleteIn( [ 'index', 'datetimes', 52 ] )
-					// 		.deleteIn( [ 'entityMap', 'event', 10 ] ),
-					// ],
-					// [
-					// 	'expected state for existing entities relations in state',
-					// 	'event',
-					// 	'datetime',
-					// 	10,
-					// 	[ 52 ],
-					// 	originalState,
-					// 	originalState
-					// 		.deleteIn( [ 'index', 'datetimes', 52 ] )
-					// 		.deleteIn( [ 'entityMap', 'event', 10 ] ),
-					// ],
+					[
+						'correctly normalize incoming relation and return expected state',
+						'datetime',
+						'event',
+						52,
+						[ 10 ],
+						originalState,
+						originalState
+							.deleteIn( [ 'index', 'datetimes', 52 ] )
+							.setIn(
+								[ 'entityMap', 'event', 10, 'datetimes' ],
+								Set.of( 55 )
+							),
+					],
+					[
+						'correctly normalize incoming relation and return expected state' +
+						'for datetime for when index has multiple relation ids and ' +
+						'entity map does not',
+						'datetime',
+						'event',
+						55,
+						[ testCuid ],
+						originalState,
+						originalState
+							.setIn(
+								[ 'index', 'datetimes', 55, 'event' ],
+								Set.of( 10 ),
+							).deleteIn( [ 'entityMap', 'event', testCuid ] ),
+					],
+					[
+						'expected state for existing entities relations in state',
+						'event',
+						'datetime',
+						10,
+						[ 52 ],
+						originalState,
+						originalState
+							.deleteIn( [ 'index', 'datetimes', 52 ] )
+							.setIn(
+								[ 'entityMap', 'event', 10, 'datetimes' ],
+								Set.of( 55 )
+							),
+					],
 					[
 						'expected state for new entities relations in state',
 						'event',
@@ -210,10 +236,12 @@ describe( removeRelatedEntitiesForEntity.name + '()', () => {
 			[ 'events', '10' ],
 			originalState
 				.deleteIn( [ 'index', 'datetimes', 52 ] )
-				.deleteIn( [ 'index', 'datetimes', 55 ] )
+				.setIn(
+					[ 'index', 'datetimes', 55, 'event' ],
+					Set.of( testCuid )
+				)
 				.deleteIn( [ 'entityMap', 'event', 10 ] ),
 		],
-
 	].forEach( ( [
 		description,
 		args,
