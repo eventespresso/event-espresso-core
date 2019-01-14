@@ -17,17 +17,13 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  * but this is NOT required. And in fact, the items they are related to CAN be deleted, but
  * the line item should still exist (in this case it merely shows that there was ONCE a model
  * object the line item was based off of).
- *
  * In usage, Line Items are first stored on the EE_Cart, but not saved until a user's registration is
  * finalized (like how the EE_Transaction is stored in the session until it is confirmed).
  * Many of their methods (like
  *
- *
  * @package            Event Espresso
- * @subpackage        includes/models/EEM_Line_Item.model.php
- * @author            Mike Nelson
- *
- * ------------------------------------------------------------------------
+ * @subpackage         includes/models/EEM_Line_Item.model.php
+ * @author             Mike Nelson
  */
 class EEM_Line_Item extends EEM_Base
 {
@@ -48,8 +44,7 @@ class EEM_Line_Item extends EEM_Base
 
     /**
      * Indicating individual items purchased, or discounts or surcharges.
-     * The sum of all the regular line items  plus the tax items should equal
-     * the grand total.
+     * The sum of all the regular line items  plus the tax items should equal the grand total.
      * Possible children are sub-line-items and cancellations.
      * For flat items, LIN_unit_price * LIN_quantity = LIN_total. Its LIN_total is the sum of all the children
      * LIN_totals. Its LIN_percent = 0.
@@ -73,15 +68,14 @@ class EEM_Line_Item extends EEM_Base
      * Line item indicating a sub-total (eg total for an event, or pre-tax subtotal).
      * Direct children should be event subtotals.
      * Should have quantity of 1, and a LIN_total and LIN_unit_price of the sum of all its sub-items' LIN_totals.
-     *
      */
     const type_sub_total = 'sub-total';
 
     /**
-     * Line item for the grand total of an order. Its direct children
-     * should be tax subtotals and (pre-tax) subtotals, and possibly a regular line item
-     * indicating a transaction-wide discount/surcharge. Should have a quantity of 1, a LIN_total and LIN_unit_price of
-     * the entire order's mount.
+     * Line item for the grand total of an order.
+     * Its direct children should be tax subtotals and (pre-tax) subtotals,
+     * and possibly a regular line item indicating a transaction-wide discount/surcharge.
+     * Should have a quantity of 1, a LIN_total and LIN_unit_price of the entire order's amount.
      */
     const type_total = 'total';
 
@@ -99,16 +93,34 @@ class EEM_Line_Item extends EEM_Base
      */
     const type_cancellation = 'cancellation';
 
-    // private instance of the EEM_Line_Item object
-    protected static $_instance = null;
+    // various line item object types
+    const OBJ_TYPE_EVENT = 'Event';
+
+    const OBJ_TYPE_PRICE = 'Price';
+
+    const OBJ_TYPE_PROMOTION = 'Promotion';
+
+    const OBJ_TYPE_TICKET = 'Ticket';
+
+    const OBJ_TYPE_TRANSACTION = 'Transaction';
+
+    /**
+     * @var EEM_Line_Item $_instance
+     */
+    protected static $_instance;
 
 
     /**
-     *        private constructor to prevent direct creation
+     * private constructor to prevent direct creation
+     *
      * @Constructor
-     * @access protected
-     * @param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-     * @return \EEM_Line_Item
+     * @param string $timezone string representing the timezone we want to set for returned Date Time Strings
+     *                         (and any incoming timezone data that gets saved).
+     *                         Note this just sends the timezone info to the date time model field objects.
+     *                         Default is NULL
+     *                         (and will be assumed using the set timezone in the 'timezone_string' wp option)
+     * @throws EE_Error
+     * @throws InvalidArgumentException
      */
     protected function __construct($timezone)
     {
@@ -116,42 +128,124 @@ class EEM_Line_Item extends EEM_Base
         $this->plural_item = __('Line Items', 'event_espresso');
 
         $this->_tables = array(
-            'Line_Item' => new EE_Primary_Table('esp_line_item', 'LIN_ID')
+            'Line_Item' => new EE_Primary_Table('esp_line_item', 'LIN_ID'),
         );
-        $line_items_can_be_for = apply_filters('FHEE__EEM_Line_Item__line_items_can_be_for', array('Ticket', 'Price', 'Event'));
+        $line_items_can_be_for = apply_filters('FHEE__EEM_Line_Item__line_items_can_be_for',
+            array('Ticket', 'Price', 'Event'));
         $this->_fields = array(
             'Line_Item' => array(
-                'LIN_ID' => new EE_Primary_Key_Int_Field('LIN_ID', __("ID", "event_espresso")),
-                'LIN_code' => new EE_Slug_Field('LIN_code', __("Code for index into Cart", "event_espresso"), true),
-                'TXN_ID' => new EE_Foreign_Key_Int_Field('TXN_ID', __("Transaction ID", "event_espresso"), true, null, 'Transaction'),
-                'LIN_name' => new EE_Full_HTML_Field('LIN_name', __("Line Item Name", "event_espresso"), false, ''),
-                'LIN_desc' => new EE_Full_HTML_Field('LIN_desc', __("Line Item Description", "event_espresso"), true),
-                'LIN_unit_price' => new EE_Money_Field('LIN_unit_price', __("Unit Price", "event_espresso"), false, 0),
-                'LIN_percent' => new EE_Float_Field('LIN_percent', __("Percent", "event_espresso"), false, 0),
-                'LIN_is_taxable' => new EE_Boolean_Field('LIN_is_taxable', __("Taxable", "event_espresso"), false, false),
-                'LIN_order' => new EE_Integer_Field('LIN_order', __("Order of Application towards total of parent", "event_espresso"), false, 1),
-                'LIN_total' => new EE_Money_Field('LIN_total', __("Total (unit price x quantity)", "event_espresso"), false, 0),
-                'LIN_quantity' => new EE_Integer_Field('LIN_quantity', __("Quantity", "event_espresso"), true, 1),
-                'LIN_parent' => new EE_Integer_Field('LIN_parent', __("Parent ID (this item goes towards that Line Item's total)", "event_espresso"), true, null),
-                'LIN_type' => new EE_Enum_Text_Field('LIN_type', __("Type", "event_espresso"), false, 'line-item', array(
-                        self::type_line_item => __("Line Item", "event_espresso"),
-                        self::type_sub_line_item => __("Sub-Item", "event_espresso"),
-                        self::type_sub_total => __("Subtotal", "event_espresso"),
-                        self::type_tax_sub_total => __("Tax Subtotal", "event_espresso"),
-                        self::type_tax => __("Tax", "event_espresso"),
-                        self::type_total => __("Total", "event_espresso"),
-                        self::type_cancellation => __('Cancellation', 'event_espresso')
-                    )),
-                'OBJ_ID' => new EE_Foreign_Key_Int_Field('OBJ_ID', __('ID of Item purchased.', 'event_espresso'), true, null, $line_items_can_be_for),
-                'OBJ_type' => new EE_Any_Foreign_Model_Name_Field('OBJ_type', __("Model Name this Line Item is for", "event_espresso"), true, null, $line_items_can_be_for),
-                'LIN_timestamp' => new EE_Datetime_Field('LIN_timestamp', __('When the line item was created', 'event_espresso'), false, EE_Datetime_Field::now, $timezone),
-            )
+                'LIN_ID'         => new EE_Primary_Key_Int_Field(
+                    'LIN_ID',
+                    __('ID', 'event_espresso')
+                ),
+                'LIN_code'       => new EE_Slug_Field(
+                    'LIN_code',
+                    __('Code for index into Cart', 'event_espresso'),
+                    true
+                ),
+                'TXN_ID'         => new EE_Foreign_Key_Int_Field(
+                    'TXN_ID',
+                    __('Transaction ID', 'event_espresso'),
+                    true,
+                    null,
+                    'Transaction'
+                ),
+                'LIN_name'       => new EE_Full_HTML_Field(
+                    'LIN_name',
+                    __('Line Item Name', 'event_espresso'),
+                    false,
+                    ''
+                ),
+                'LIN_desc'       => new EE_Full_HTML_Field(
+                    'LIN_desc',
+                    __('Line Item Description', 'event_espresso'),
+                    true
+                ),
+                'LIN_unit_price' => new EE_Money_Field(
+                    'LIN_unit_price',
+                    __('Unit Price', 'event_espresso'),
+                    false,
+                    0
+                ),
+                'LIN_percent'    => new EE_Float_Field(
+                    'LIN_percent',
+                    __('Percent', 'event_espresso'),
+                    false,
+                    0
+                ),
+                'LIN_is_taxable' => new EE_Boolean_Field(
+                    'LIN_is_taxable',
+                    __('Taxable', 'event_espresso'),
+                    false,
+                    false
+                ),
+                'LIN_order'      => new EE_Integer_Field(
+                    'LIN_order',
+                    __('Order of Application towards total of parent', 'event_espresso'),
+                    false,
+                    1
+                ),
+                'LIN_total'      => new EE_Money_Field(
+                    'LIN_total',
+                    __('Total (unit price x quantity)', 'event_espresso'),
+                    false,
+                    0
+                ),
+                'LIN_quantity'   => new EE_Integer_Field(
+                    'LIN_quantity',
+                    __('Quantity', 'event_espresso'),
+                    true,
+                    1
+                ),
+                'LIN_parent'     => new EE_Integer_Field(
+                    'LIN_parent',
+                    __("Parent ID (this item goes towards that Line Item's total)", 'event_espresso'),
+                    true,
+                    null
+                ),
+                'LIN_type'       => new EE_Enum_Text_Field(
+                    'LIN_type',
+                    __('Type', 'event_espresso'),
+                    false,
+                    'line-item',
+                    array(
+                        self::type_line_item     => __('Line Item', 'event_espresso'),
+                        self::type_sub_line_item => __('Sub-Item', 'event_espresso'),
+                        self::type_sub_total     => __('Subtotal', 'event_espresso'),
+                        self::type_tax_sub_total => __('Tax Subtotal', 'event_espresso'),
+                        self::type_tax           => __('Tax', 'event_espresso'),
+                        self::type_total         => __('Total', 'event_espresso'),
+                        self::type_cancellation  => __('Cancellation', 'event_espresso'),
+                    )
+                ),
+                'OBJ_ID'         => new EE_Foreign_Key_Int_Field(
+                    'OBJ_ID',
+                    __('ID of Item purchased.', 'event_espresso'),
+                    true,
+                    null,
+                    $line_items_can_be_for
+                ),
+                'OBJ_type'       => new EE_Any_Foreign_Model_Name_Field(
+                    'OBJ_type',
+                    __('Model Name this Line Item is for', 'event_espresso'),
+                    true,
+                    null,
+                    $line_items_can_be_for
+                ),
+                'LIN_timestamp'  => new EE_Datetime_Field(
+                    'LIN_timestamp',
+                    __('When the line item was created', 'event_espresso'),
+                    false,
+                    EE_Datetime_Field::now,
+                    $timezone
+                ),
+            ),
         );
         $this->_model_relations = array(
             'Transaction' => new EE_Belongs_To_Relation(),
-            'Ticket' => new EE_Belongs_To_Any_Relation(),
-            'Price' => new EE_Belongs_To_Any_Relation(),
-            'Event' => new EE_Belongs_To_Any_Relation()
+            'Ticket'      => new EE_Belongs_To_Any_Relation(),
+            'Price'       => new EE_Belongs_To_Any_Relation(),
+            'Event'       => new EE_Belongs_To_Any_Relation(),
         );
         $this->_model_chain_to_wp_user = 'Transaction.Registration.Event';
         $this->_caps_slug = 'transactions';
@@ -161,43 +255,64 @@ class EEM_Line_Item extends EEM_Base
 
     /**
      * Gets all the line items for this transaction of the given type
-     * @param string $line_item_type like one of EEM_Line_Item::type_*
+     *
+     * @param string             $line_item_type like one of EEM_Line_Item::type_*
      * @param EE_Transaction|int $transaction
-     * @return EE_Line_Item[]
+     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_all_of_type_for_transaction($line_item_type, $transaction)
     {
         $transaction = EEM_Transaction::instance()->ensure_is_ID($transaction);
-        return $this->get_all(array(array(
-            'LIN_type' => $line_item_type,
-            'TXN_ID' => $transaction
-        )));
+        return $this->get_all(array(
+            array(
+                'LIN_type' => $line_item_type,
+                'TXN_ID'   => $transaction,
+            ),
+        ));
     }
 
 
     /**
      * Gets all line items unrelated to tickets that are normal line items
      * (eg shipping, promotions, and miscellaneous other stuff should probably fit in this category)
+     *
      * @param EE_Transaction|int $transaction
-     * @return EE_Line_Item[]
+     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_all_non_ticket_line_items_for_transaction($transaction)
     {
         $transaction = EEM_Transaction::instance()->ensure_is_ID($transaction);
-        return $this->get_all(array(array(
-            'LIN_type' => self::type_line_item,
-            'TXN_ID' => $transaction,
-            'OR' => array(
-                'OBJ_type*notticket' => array('!=', 'Ticket'),
-                'OBJ_type*null' => array('IS_NULL'))
-        )));
+        return $this->get_all(array(
+            array(
+                'LIN_type' => self::type_line_item,
+                'TXN_ID'   => $transaction,
+                'OR'       => array(
+                    'OBJ_type*notticket' => array('!=', EEM_Line_Item::OBJ_TYPE_TICKET),
+                    'OBJ_type*null'      => array('IS_NULL'),
+                ),
+            ),
+        ));
     }
+
 
     /**
      * Deletes line items with no transaction who have passed the transaction cutoff time.
      * This needs to be very efficient
      * because if there are spam bots afoot there will be LOTS of line items
+     *
      * @return int count of how many deleted
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function delete_line_items_with_no_transaction()
     {
@@ -223,17 +338,24 @@ class EEM_Line_Item extends EEM_Base
      * get_line_item_for_transaction_object
      * Gets a transaction's line item record for a specific object such as a EE_Event or EE_Ticket
      *
-     * @param int $TXN_ID
-     * @param \EE_Base_Class $object
-     * @return EE_Line_Item[]
+     * @param int           $TXN_ID
+     * @param EE_Base_Class $object
+     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_line_item_for_transaction_object($TXN_ID, EE_Base_Class $object)
     {
-        return $this->get_all(array(array(
-            'TXN_ID' => $TXN_ID,
-            'OBJ_type' => str_replace('EE_', '', get_class($object)),
-            'OBJ_ID' => $object->ID()
-        )));
+        return $this->get_all(array(
+            array(
+                'TXN_ID'   => $TXN_ID,
+                'OBJ_type' => str_replace('EE_', '', get_class($object)),
+                'OBJ_ID'   => $object->ID(),
+            ),
+        ));
     }
 
 
@@ -241,17 +363,21 @@ class EEM_Line_Item extends EEM_Base
      * get_object_line_items_for_transaction
      * Gets all of the the object line items for a transaction, based on an object type plus an array of object IDs
      *
-     * @param int $TXN_ID
+     * @param int    $TXN_ID
      * @param string $OBJ_type
-     * @param array $OBJ_IDs
-     * @return EE_Line_Item[]
+     * @param array  $OBJ_IDs
+     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws EE_Error
      */
-    public function get_object_line_items_for_transaction($TXN_ID, $OBJ_type = 'Event', $OBJ_IDs = array())
-    {
+    public function get_object_line_items_for_transaction(
+        $TXN_ID,
+        $OBJ_type = EEM_Line_Item::OBJ_TYPE_EVENT,
+        $OBJ_IDs = array()
+    ) {
         $query_params = array(
             'OBJ_type' => $OBJ_type,
             // if incoming $OBJ_IDs is an array, then make sure it is formatted correctly for the query
-            'OBJ_ID' => is_array($OBJ_IDs) && !isset($OBJ_IDs['IN']) ? array('IN', $OBJ_IDs) : $OBJ_IDs
+            'OBJ_ID'   => is_array($OBJ_IDs) && ! isset($OBJ_IDs['IN']) ? array('IN', $OBJ_IDs) : $OBJ_IDs,
         );
         if ($TXN_ID) {
             $query_params['TXN_ID'] = $TXN_ID;
@@ -264,15 +390,20 @@ class EEM_Line_Item extends EEM_Base
      * get_all_ticket_line_items_for_transaction
      *
      * @param EE_Transaction $transaction
-     * @return EE_Line_Item[]
+     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_all_ticket_line_items_for_transaction(EE_Transaction $transaction)
     {
         return $this->get_all(array(
             array(
-                'TXN_ID' => $transaction->ID(),
-                'OBJ_type' => 'Ticket',
-            )
+                'TXN_ID'   => $transaction->ID(),
+                'OBJ_type' => EEM_Line_Item::OBJ_TYPE_TICKET,
+            ),
         ));
     }
 
@@ -282,16 +413,20 @@ class EEM_Line_Item extends EEM_Base
      *
      * @param int $TXN_ID
      * @param int $TKT_ID
-     * @return \EE_Line_Item
+     * @return EE_Base_Class|EE_Line_Item|EE_Soft_Delete_Base_Class|NULL
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_ticket_line_item_for_transaction($TXN_ID, $TKT_ID)
     {
         return $this->get_one(array(
             array(
-                'TXN_ID' => EEM_Transaction::instance()->ensure_is_ID($TXN_ID),
-                'OBJ_ID' => $TKT_ID,
-                'OBJ_type' => 'Ticket',
-            )
+                'TXN_ID'   => EEM_Transaction::instance()->ensure_is_ID($TXN_ID),
+                'OBJ_ID'   => $TKT_ID,
+                'OBJ_type' => EEM_Line_Item::OBJ_TYPE_TICKET,
+            ),
         ));
     }
 
@@ -300,21 +435,21 @@ class EEM_Line_Item extends EEM_Base
      * get_existing_promotion_line_item
      * searches the cart for existing line items for the specified promotion
      *
-     * @since   1.0.0
-     *
+     * @since 1.0.0
      * @param EE_Line_Item $parent_line_item
      * @param EE_Promotion $promotion
-     * @return EE_Line_Item
+     * @return EE_Base_Class|EE_Line_Item|EE_Soft_Delete_Base_Class|NULL
+     * @throws EE_Error
      */
     public function get_existing_promotion_line_item(EE_Line_Item $parent_line_item, EE_Promotion $promotion)
     {
         return $this->get_one(array(
             array(
-                'TXN_ID' => $parent_line_item->TXN_ID(),
+                'TXN_ID'     => $parent_line_item->TXN_ID(),
                 'LIN_parent' => $parent_line_item->ID(),
-                'OBJ_type' => 'Promotion',
-                'OBJ_ID' => $promotion->ID()
-            )
+                'OBJ_type'   => EEM_Line_Item::OBJ_TYPE_PROMOTION,
+                'OBJ_ID'     => $promotion->ID(),
+            ),
         ));
     }
 
@@ -324,48 +459,57 @@ class EEM_Line_Item extends EEM_Base
      * searches the cart for any and all existing promotion line items
      *
      * @since   1.0.0
-     *
      * @param EE_Line_Item $parent_line_item
-     * @return EE_Line_Item[]
+     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @throws EE_Error
      */
     public function get_all_promotion_line_items(EE_Line_Item $parent_line_item)
     {
         return $this->get_all(array(
             array(
-                'TXN_ID' => $parent_line_item->TXN_ID(),
+                'TXN_ID'     => $parent_line_item->TXN_ID(),
                 'LIN_parent' => $parent_line_item->ID(),
-                'OBJ_type' => 'Promotion'
-            )
+                'OBJ_type'   => EEM_Line_Item::OBJ_TYPE_PROMOTION,
+            ),
         ));
     }
+
 
     /**
      * Gets the registration's corresponding line item.
      * Note: basically does NOT support having multiple line items for a single ticket,
      * which would happen if some of the registrations had a price modifier while others didn't.
      * In order to support that, we'd probably need a LIN_ID on registrations or something.
+     *
      * @param EE_Registration $registration
-     * @return EE_Line_ITem
+     * @return EE_Base_Class|EE_Line_ITem|EE_Soft_Delete_Base_Class|NULL
+     * @throws EE_Error
      */
     public function get_line_item_for_registration(EE_Registration $registration)
     {
         return $this->get_one($this->line_item_for_registration_query_params($registration));
     }
 
+
     /**
      * Gets the query params used to retrieve a specific line item for the given registration
+     *
      * @param EE_Registration $registration
-     * @param array $original_query_params any extra query params you'd like to be merged with
-     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array           $original_query_params any extra query params you'd like to be merged with
+     * @return array @see
+     *      https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @throws EE_Error
      */
-    public function line_item_for_registration_query_params(EE_Registration $registration, $original_query_params = array())
-    {
+    public function line_item_for_registration_query_params(
+        EE_Registration $registration,
+        $original_query_params = array()
+    ) {
         return array_replace_recursive($original_query_params, array(
             array(
-                'OBJ_ID' => $registration->ticket_ID(),
-                'OBJ_type' => 'Ticket',
-                'TXN_ID' => $registration->transaction_ID()
-            )
+                'OBJ_ID'   => $registration->ticket_ID(),
+                'OBJ_type' => EEM_Line_Item::OBJ_TYPE_TICKET,
+                'TXN_ID'   => $registration->transaction_ID(),
+            ),
         ));
     }
 
@@ -424,7 +568,7 @@ class EEM_Line_Item extends EEM_Base
     private function get_total_line_items_for_carts($expired = null)
     {
         $where_params = array(
-            'TXN_ID' => 0,
+            'TXN_ID'   => 0,
             'LIN_type' => 'total',
         );
         if ($expired !== null) {
@@ -465,9 +609,9 @@ class EEM_Line_Item extends EEM_Base
             array(
                 array(
                     'TXN_ID'        => 0,
-                    'OBJ_type'      => 'Ticket',
+                    'OBJ_type'      => EEM_Line_Item::OBJ_TYPE_TICKET,
                     'LIN_timestamp' => array('<=', $timestamp),
-                )
+                ),
             )
         );
     }
