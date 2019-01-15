@@ -949,7 +949,7 @@ class EEH_Line_Item
      * any old taxes are removed
      *
      * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
-     * @return float|bool
+     * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
@@ -1628,14 +1628,10 @@ class EEH_Line_Item
         EE_Line_Item $line_item,
         $billable_ticket_quantities = array()
     ) {
-        $running_totals = [];
-        // init running grand total if not already
-        if (! isset($running_totals['total'])) {
-            $running_totals['total'] = 0;
-        }
-        if (! isset($running_totals['taxable'])) {
-            $running_totals['taxable'] = array('total' => 0);
-        }
+        $running_totals = [
+            'total'   => 0,
+            'taxable' => ['total' => 0]
+        ];
         foreach ($line_item->children() as $child_line_item) {
             switch ($child_line_item->type()) {
                 case EEM_Line_Item::type_sub_total:
@@ -1899,9 +1895,9 @@ class EEH_Line_Item
      */
     public static function non_empty_line_item(EE_Line_Item $line_item)
     {
-        if ($line_item->type() === EEM_Line_Item::type_line_item &&
-            $line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_TICKET &&
-            $line_item->quantity() === 0
+        if ($line_item->type() === EEM_Line_Item::type_line_item
+            && $line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_TICKET
+            && $line_item->quantity() === 0
         ) {
             return null;
         }
@@ -1957,9 +1953,9 @@ class EEH_Line_Item
     {
         EE_Error::doing_it_wrong(
             'EEH_Line_Item::get_items_subtotal()',
-            esc_html__(
-                'Method replaced with EEH_Line_Item::get_pre_tax_subtotal()',
-                'event_espresso'
+            sprintf(
+                esc_html__('Method replaced with %1$s', 'event_espresso'),
+                'EEH_Line_Item::get_pre_tax_subtotal()'
             ),
             '4.6.0'
         );
@@ -1981,9 +1977,9 @@ class EEH_Line_Item
     {
         EE_Error::doing_it_wrong(
             'EEH_Line_Item::create_default_total_line_item()',
-            esc_html__(
-                'Method replaced with EEH_Line_Item::create_total_line_item()',
-                'event_espresso'
+            sprintf(
+                esc_html__('Method replaced with %1$s', 'event_espresso'),
+                'EEH_Line_Item::create_total_line_item()'
             ),
             '4.6.0'
         );
@@ -2006,9 +2002,9 @@ class EEH_Line_Item
     {
         EE_Error::doing_it_wrong(
             'EEH_Line_Item::create_default_tickets_subtotal()',
-            esc_html__(
-                'Method replaced with EEH_Line_Item::create_pre_tax_subtotal()',
-                'event_espresso'
+            sprintf(
+                esc_html__('Method replaced with %1$s', 'event_espresso'),
+                'EEH_Line_Item::create_pre_tax_subtotal()'
             ),
             '4.6.0'
         );
@@ -2031,9 +2027,9 @@ class EEH_Line_Item
     {
         EE_Error::doing_it_wrong(
             'EEH_Line_Item::create_default_taxes_subtotal()',
-            esc_html__(
-                'Method replaced with EEH_Line_Item::create_taxes_subtotal()',
-                'event_espresso'
+            sprintf(
+                esc_html__('Method replaced with %1$s', 'event_espresso'),
+                'EEH_Line_Item::create_taxes_subtotal()'
             ),
             '4.6.0'
         );
@@ -2056,9 +2052,9 @@ class EEH_Line_Item
     {
         EE_Error::doing_it_wrong(
             'EEH_Line_Item::create_default_event_subtotal()',
-            esc_html__(
-                'Method replaced with EEH_Line_Item::create_event_subtotal()',
-                'event_espresso'
+            sprintf(
+                esc_html__('Method replaced with %1$s', 'event_espresso'),
+                'EEH_Line_Item::create_event_subtotal()'
             ),
             '4.6.0'
         );
