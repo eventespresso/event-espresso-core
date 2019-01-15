@@ -57,7 +57,6 @@ class EspressoEditorAssetManager extends AssetManager
                 self::ASSET_CHUNK_NAME_EDITOR
             ),
             [
-                CoreAssetManager::JS_HANDLE_JQUERY,
                 CoreAssetManager::JS_HANDLE_COMPONENTS,
                 CoreAssetManager::JS_HANDLE_HOCS,
                 'ee-datepicker'
