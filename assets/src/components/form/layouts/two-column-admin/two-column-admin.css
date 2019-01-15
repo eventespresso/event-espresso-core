@@ -1,13 +1,15 @@
-/* BOOTSTRAP Styles
-* copied here to prevent them affecting entire WordPress admin
-* -------------------------------------------------------------------------*/
+/* -------------------------------------------------------------------------
+ * Event Espresso twoColumnAdminFormLayout Stylesheet
+ * (c) 2018 Event Espresso
+ * -------------------------------------------------------------------------*/
 
 .ee-two-column-admin {
     margin: 0 !important;
     padding: 0 !important;
+    position: relative;
 }
 
-.ee-two-column-admin *,
+.ee-two-column-admin div,
 .ee-two-column-admin::before,
 .ee-two-column-admin::after {
     box-sizing: border-box !important;
@@ -15,6 +17,11 @@
 
 .ee-two-column-admin .opacity-50 {
     opacity: 0.5;
+}
+
+.ee-two-column-admin .ee-form-section {
+    display: block;
+    width:100%;
 }
 
 .ee-two-column-admin .border {
@@ -69,18 +76,31 @@
     display: flex;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
-    margin: 1rem 0;
-    margin-right: -15px;
-    margin-left: -15px;
+    margin: 0 0 1rem;
     min-height: 3rem;
 }
 
+.ee-two-column-admin .px-3 .ee-form-row:not(li) {
+    margin: 0 -15px 1rem -15px;
+}
+
+.ee-two-column-admin .offset-sm-1 {
+    margin-left: 8.333333%;
+}
 .ee-two-column-admin .offset-sm-2 {
     margin-left: 16.666667%;
 }
-
 .ee-two-column-admin .offset-sm-3 {
     margin-left: 25%;
+}
+.ee-two-column-admin .offset-sm-4 {
+    margin-left: 33.333333%;
+}
+.ee-two-column-admin .offset-sm-5 {
+    margin-left: 41.666667%;
+}
+.ee-two-column-admin .offset-sm-6 {
+    margin-left: 50%;
 }
 
 .ee-two-column-admin .col-sm-1,
@@ -389,4 +409,71 @@
     font-size: inherit;
     line-height: inherit;
     margin: 0;
+}
+
+
+.ee-two-column-admin .ee-form-save-cancel-buttons-div {
+    /*background-color: #fff;*/
+    /*border-top: 1px solid #e2e4e7;*/
+    /*box-sizing: border-box;*/
+    /*bottom: 0;*/
+    /*!*padding: 2em;*!*/
+    /*position: absolute;*/
+    /*text-align: right;*/
+    /*width: 100%;*/
+    /*z-index: 999;*/
+}
+
+.ee-two-column-admin .ee-form-button + .ee-form-button,
+.ee-two-column-admin .button-primary + .button-primary,
+.ee-two-column-admin .button-primary + .button-secondary,
+.ee-two-column-admin .button-secondary + .button-primary,
+.ee-two-column-admin .button-secondary + .button-secondary {
+    margin-left: 2em;
+    margin-right: 0;
+}
+
+/*.ee-two-column-admin .ee-form-info {*/
+    /*border: 6px solid #e8f2f7;*/
+    /*border-radius: 18px;*/
+    /*padding: 20px 28px 20px 60px;*/
+/*}*/
+/*border-radius: 18px 18px 0 18px;*/
+/*box-sizing: border-box !important;*/
+
+
+.ee-two-column-admin .ee-input-width-1 {
+    -ms-flex: 0 0 8.333333%;
+    flex: 0 0 8.333333%;
+    max-width: 8.333333%;
+}
+
+.ee-two-column-admin .ee-input-width-2 {
+    -ms-flex: 0 0 16.666667%;
+    flex: 0 0 16.666667%;
+    max-width: 16.666667%;
+}
+
+.ee-two-column-admin .ee-input-width-3 {
+    -ms-flex: 0 0 25%;
+    flex: 0 0 25%;
+    max-width: 25%;
+}
+
+.ee-two-column-admin .ee-input-width-4 {
+    -ms-flex: 0 0 33%;
+    flex: 0 0 33%;
+    max-width: 33%;
+}
+
+.ee-two-column-admin .ee-input-width-5 {
+    -ms-flex: 0 0 41.666667%;
+    flex: 0 0 41.666667%;
+    max-width: 41.666667%;
+}
+
+.ee-two-column-admin .ee-input-width-6 {
+    -ms-flex: 0 0 50%;
+    flex: 0 0 50%;
+    max-width: 50%;
 }
