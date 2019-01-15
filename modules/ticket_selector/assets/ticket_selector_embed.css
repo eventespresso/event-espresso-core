@@ -68,6 +68,7 @@ input[type="submit"] {
 	width: auto;
 	border-radius: 3px;
 	display: inline-block;
+	-webkit-appearance: none;
 }
 
 input:hover[type="submit"] {
