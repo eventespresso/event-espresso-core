@@ -73,31 +73,6 @@ class EditorDateGridItem extends Component {
 	};
 
 	toggleEditor = () => {
-		// console.log( ' $$$$ ' );
-		// if ( event.target ) {
-		// console.log(
-		// 	'EditorDateGridItem.toggleEditor() event.target',
-		// 	event.target
-		// );
-		// if ( event.target.textContent ) {
-		// console.log(
-		// 	'EditorDateGridItem.toggleEditor() textContent',
-		// 	event.target.textContent
-		// );
-		// console.log(
-		// 	'EditorDateGridItem.toggleEditor() this.buttonLabel',
-		// 	this.buttonLabel
-		// );
-		// if ( event.target.textContent !== this.buttonLabel ) {
-		// console.log( 'EditorDateGridItem.toggleEditor() DO NOT CLOSE' );
-		// return;
-		// }
-		// }
-		// }
-		// console.log(
-		// 	'EditorDateGridItem.toggleEditor() editorOpen: ',
-		// 	this.state.editorOpen
-		// );
 		this.setState( prevState => ( {
 			editorOpen: ! prevState.editorOpen,
 		} ) );
