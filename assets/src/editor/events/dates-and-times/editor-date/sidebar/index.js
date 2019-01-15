@@ -2,7 +2,7 @@
  * External imports
  */
 import { Component, Fragment } from 'react';
-import { hooks } from '@eventespresso/eejs';
+import { applyFilters } from '@wordpress/hooks';
 import { DropDownMenu, IconMenuItem } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
 
@@ -10,6 +10,7 @@ import { __ } from '@eventespresso/i18n';
  * Internal dependencies
  */
 import { editEventDate, copyEventDate, trashEventDate } from '../actions';
+import { SidebarMenuItem } from './sidebar-menu-item';
 import './style.css';
 
 /**
@@ -68,9 +69,9 @@ class EditorDateSidebar extends Component {
 			<IconMenuItem
 				index={ 1 }
 				tooltip={ __( 'edit event date', 'event_espresso' ) }
-				id={ 'edit-date-' + eventDate.id }
-				htmlClass={ 'edit-date' }
-				dashicon={ 'edit' }
+				id={ `edit-date-${ eventDate.id }` }
+				htmlClass="edit-date"
+				dashicon="edit"
 				onClick={ () => editEventDate( eventDate ) }
 			/>
 		);
@@ -87,9 +88,9 @@ class EditorDateSidebar extends Component {
 			<IconMenuItem
 				index={ 2 }
 				tooltip={ __( 'assign tickets', 'event_espresso' ) }
-				id={ 'view-tickets-date-' + eventDate.id }
-				htmlClass={ 'view-tickets-date' }
-				dashicon={ 'tickets-alt' }
+				id={ `view-tickets-date-${ eventDate.id }` }
+				htmlClass="view-tickets-date"
+				dashicon="tickets-alt"
 				onClick={ () => viewTicketsHandler( eventDate ) }
 			/>
 		);
@@ -104,8 +105,14 @@ class EditorDateSidebar extends Component {
 	renderSidebarMenuItems = ( eventDate, sidebarMenuItems ) => {
 		return sidebarMenuItems.map(
 			function( sidebarMenuItem, index ) {
+				// console.log(
+				// 	'EditorDateSidebar.renderSidebarMenuItems()' +
+				// 	' sidebarMenuItem',
+				// 	sidebarMenuItem
+				// );
 				return sidebarMenuItem && sidebarMenuItem.type && (
 					sidebarMenuItem.type === DropDownMenu ||
+					sidebarMenuItem.type === SidebarMenuItem ||
 					sidebarMenuItem.type === IconMenuItem
 				) && (
 					<Fragment key={ index }>
@@ -124,7 +131,7 @@ class EditorDateSidebar extends Component {
 		sidebarMenuItems.push(
 			this.viewTicketsMenuItem( eventDate, viewTicketsHandler )
 		);
-		sidebarMenuItems = hooks.applyFilters(
+		sidebarMenuItems = applyFilters(
 			'FHEE__EditorDates__EditorDateSidebar__SidebarMenuItems',
 			sidebarMenuItems,
 			eventDate
