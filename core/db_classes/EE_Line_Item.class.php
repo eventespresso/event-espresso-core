@@ -1713,7 +1713,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
             sprintf(
                 esc_html__('Method replaced with %1$s', 'event_espresso'),
                 'EEH_Line_Item::get_descendants_of_type()'
-                ),
+            ),
             '4.6.0'
         );
         return EEH_Line_Item::get_descendants_of_type($this, $type);
