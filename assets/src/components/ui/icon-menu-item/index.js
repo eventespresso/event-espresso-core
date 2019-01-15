@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import PropTypes from 'prop-types'
 import { IconButton } from '@wordpress/components';
 
@@ -32,6 +32,7 @@ class IconMenuItem extends Component {
 			tooltip,
 			dashicon,
 			onClick,
+			externalApp = null,
 			...otherProps
 		} = this.props;
 		let { htmlClass, tooltipPosition } = this.props;
@@ -41,16 +42,21 @@ class IconMenuItem extends Component {
 		htmlClass += ` ee-icon-menu-item-${ index }`;
 		htmlClass += ' ee-icon-menu-item clickable';
 		tooltipPosition = tooltipPosition ? tooltipPosition : 'top left';
-		return <IconButton
-			id={ `ee-icon-menu-item-${ id }` }
-			className={ htmlClass }
-			onClick={ ( event ) => onClick( event ) }
-			onKeyPress={ ( event ) => onClick( event ) }
-			tooltip={ tooltip }
-			labelPosition={ tooltipPosition }
-			icon={ dashicon }
-			{ ...otherProps }
-		/>;
+		return (
+			<Fragment>
+				<IconButton
+					id={ `ee-icon-menu-item-${ id }` }
+					className={ htmlClass }
+					onClick={ ( event ) => onClick( event ) }
+					onKeyPress={ ( event ) => onClick( event ) }
+					tooltip={ tooltip }
+					labelPosition={ tooltipPosition }
+					icon={ dashicon }
+					{ ...otherProps }
+				/>
+				{ externalApp }
+			</Fragment>
+		);
 	}
 }
 
