@@ -734,21 +734,21 @@ class Transactions_Admin_Page extends EE_Admin_Page
         }
         $this->_template_args['amount_due_class'] = '';
 
-        if ((float) $this->_transaction->paid() === (float) $this->_transaction->total()) {
+        if ($this->_transaction->paid() === $this->_transaction->total()) {
             // paid in full
             $this->_template_args['amount_due'] = false;
         } elseif ($this->_transaction->paid() > $this->_transaction->total()) {
             // overpaid
             $this->_template_args['amount_due_class'] = 'txn-overview-no-payment-spn';
-        } elseif ((float) $this->_transaction->total() > (float) 0) {
-            if ((float) $this->_transaction->paid() > (float) 0) {
+        } elseif ($this->_transaction->total() > (float) 0) {
+            if ($this->_transaction->paid() > (float) 0) {
                 // monies owing
                 $this->_template_args['amount_due_class'] = 'txn-overview-part-payment-spn';
-            } elseif ((float) $this->_transaction->paid() === (float) 0) {
+            } elseif ($this->_transaction->paid() === (float) 0) {
                 // no payments made yet
                 $this->_template_args['amount_due_class'] = 'txn-overview-no-payment-spn';
             }
-        } elseif ((float) $this->_transaction->total() === (float) 0) {
+        } elseif ($this->_transaction->total() === (float) 0) {
             // free event
             $this->_template_args['amount_due'] = false;
         }
