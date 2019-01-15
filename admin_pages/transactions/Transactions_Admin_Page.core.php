@@ -937,18 +937,18 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 && $this->_transaction->status_ID() !== EEM_Transaction::complete_status_code
                 && $this->_transaction->status_ID() !== EEM_Transaction::overpaid_status_code
                     ? EEH_Template::get_button_or_link(
-                    EE_Admin_Page::add_query_args_and_nonce(
-                        array(
-                            'action'      => 'send_payment_reminder',
-                            'TXN_ID'      => $this->_transaction->ID(),
-                            'redirect_to' => 'view_transaction',
+                        EE_Admin_Page::add_query_args_and_nonce(
+                            array(
+                                'action'      => 'send_payment_reminder',
+                                'TXN_ID'      => $this->_transaction->ID(),
+                                'redirect_to' => 'view_transaction',
+                            ),
+                            TXN_ADMIN_URL
                         ),
-                        TXN_ADMIN_URL
-                    ),
-                    esc_html__(' Send Payment Reminder', 'event_espresso'),
-                    'button secondary-button',
-                    'dashicons dashicons-email-alt'
-                )
+                        esc_html__(' Send Payment Reminder', 'event_espresso'),
+                        'button secondary-button',
+                        'dashicons dashicons-email-alt'
+                    )
                     : '';
         }
 
@@ -1254,13 +1254,12 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 ),
             ),
         );
-        $registrations_to_apply_payment_to = EEH_HTML::br()
-                                             . EEH_HTML::div(
-                '',
-                'txn-admin-apply-payment-to-registrations-dv',
-                '',
-                'clear: both; margin: 1.5em 0 0; display: none;'
-            );
+        $registrations_to_apply_payment_to = EEH_HTML::br() . EEH_HTML::div(
+            '',
+            'txn-admin-apply-payment-to-registrations-dv',
+            '',
+            'clear: both; margin: 1.5em 0 0; display: none;'
+        );
         $registrations_to_apply_payment_to .= EEH_HTML::br() . EEH_HTML::div('', '', 'admin-primary-mbox-tbl-wrap');
         $registrations_to_apply_payment_to .= EEH_HTML::table('', '', 'admin-primary-mbox-tbl');
         $registrations_to_apply_payment_to .= EEH_HTML::thead(

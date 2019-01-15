@@ -509,8 +509,10 @@ class EEH_Line_Item
         if ($ticket_line_item->OBJ_type() !== EEM_Line_Item::OBJ_TYPE_TICKET) {
             throw new EE_Error(
                 sprintf(
-                    esc_html__('The supplied line item must have an Object Type of "Ticket", not %1$s.',
-                        'event_espresso'),
+                    esc_html__(
+                        'The supplied line item must have an Object Type of "Ticket", not %1$s.',
+                        'event_espresso'
+                    ),
                     $ticket_line_item->type()
                 )
             );
@@ -1638,7 +1640,8 @@ class EEH_Line_Item
             switch ($child_line_item->type()) {
                 case EEM_Line_Item::type_sub_total:
                     $running_totals_from_subtotal = EEH_Line_Item::calculate_reg_final_prices_per_line_item(
-                        $child_line_item, $billable_ticket_quantities
+                        $child_line_item,
+                        $billable_ticket_quantities
                     );
                     // combine arrays but preserve numeric keys
                     $running_totals = array_replace_recursive($running_totals_from_subtotal, $running_totals);
