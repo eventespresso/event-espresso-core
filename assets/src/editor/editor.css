@@ -22,57 +22,6 @@
     font-style: italic;
 }
 
-.espresso-editor-legend-div .generated-date-div {
-    float: left;
-    font-size: 12px;
-    line-height: 12px !important;
-    height: 24px;
-    margin: 0 1em 0 0 !important;
-    padding: 6px;
-    position: relative;
-    top: -2px;
-}
-
-.espresso-editor-legend-div .generated-date-div .dashicon {
-    margin: 0 !important;
-}
-
-.rem-icon-button {
-    position: relative;
-    top: .3em;
-    vertical-align: middle !important;
-}
-
-.rem-icon-button .dashicon {
-    color: rgba(0, 0, 0, .5);
-    margin-right: .5em;
-    vertical-align: middle !important;
-}
-
-.rem-icon-button:hover .dashicon {
-    color: rgba(0, 0, 0, .75);
-}
-
-.rem-editor-buttons-div {
-    background-color: #fff;
-    border-top: 1px solid #e2e4e7;
-    box-sizing: border-box;
-    bottom: 0;
-    padding: 2em;
-    position: absolute;
-    text-align: right;
-    width: 100%;
-    z-index: 999;
-}
-
-.espresso-editor .button-primary + .button-primary,
-.espresso-editor .button-primary + .button-secondary,
-.espresso-editor .button-secondary + .button-primary,
-.espresso-editor .button-secondary + .button-secondary {
-    margin-left: 2em;
-    margin-right: 0;
-}
-
 .ee-small-shadow {
     box-shadow: 0 2px 4px rgba(0, 0, 0, .5), 0 5px 10px 5px rgba(0, 0, 0, .1);
 }
