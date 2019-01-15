@@ -1710,7 +1710,10 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     {
         EE_Error::doing_it_wrong(
             'EE_Line_Item::_get_descendants_of_type()',
-            esc_html__('Method replaced with EEH_Line_Item::get_descendants_of_type()', 'event_espresso'),
+            sprintf(
+                esc_html__('Method replaced with %1$s', 'event_espresso'),
+                'EEH_Line_Item::get_descendants_of_type()'
+                ),
             '4.6.0'
         );
         return EEH_Line_Item::get_descendants_of_type($this, $type);
@@ -1731,7 +1734,10 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     {
         EE_Error::doing_it_wrong(
             'EE_Line_Item::get_nearest_descendant_of_type()',
-            esc_html__('Method replaced with EEH_Line_Item::get_nearest_descendant_of_type()', 'event_espresso'),
+            sprintf(
+                esc_html__('Method replaced with %1$s', 'event_espresso'),
+                'EEH_Line_Item::get_nearest_descendant_of_type()'
+            ),
             '4.6.0'
         );
         return EEH_Line_Item::get_nearest_descendant_of_type($this, $type);
