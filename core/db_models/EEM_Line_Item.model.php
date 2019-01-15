@@ -124,117 +124,119 @@ class EEM_Line_Item extends EEM_Base
      */
     protected function __construct($timezone)
     {
-        $this->singular_item = __('Line Item', 'event_espresso');
-        $this->plural_item = __('Line Items', 'event_espresso');
+        $this->singular_item = esc_html__('Line Item', 'event_espresso');
+        $this->plural_item = esc_html__('Line Items', 'event_espresso');
 
         $this->_tables = array(
             'Line_Item' => new EE_Primary_Table('esp_line_item', 'LIN_ID'),
         );
-        $line_items_can_be_for = apply_filters('FHEE__EEM_Line_Item__line_items_can_be_for',
-            array('Ticket', 'Price', 'Event'));
+        $line_items_can_be_for = apply_filters(
+            'FHEE__EEM_Line_Item__line_items_can_be_for',
+            array('Ticket', 'Price', 'Event')
+        );
         $this->_fields = array(
             'Line_Item' => array(
                 'LIN_ID'         => new EE_Primary_Key_Int_Field(
                     'LIN_ID',
-                    __('ID', 'event_espresso')
+                    esc_html__('ID', 'event_espresso')
                 ),
                 'LIN_code'       => new EE_Slug_Field(
                     'LIN_code',
-                    __('Code for index into Cart', 'event_espresso'),
+                    esc_html__('Code for index into Cart', 'event_espresso'),
                     true
                 ),
                 'TXN_ID'         => new EE_Foreign_Key_Int_Field(
                     'TXN_ID',
-                    __('Transaction ID', 'event_espresso'),
+                    esc_html__('Transaction ID', 'event_espresso'),
                     true,
                     null,
                     'Transaction'
                 ),
                 'LIN_name'       => new EE_Full_HTML_Field(
                     'LIN_name',
-                    __('Line Item Name', 'event_espresso'),
+                    esc_html__('Line Item Name', 'event_espresso'),
                     false,
                     ''
                 ),
                 'LIN_desc'       => new EE_Full_HTML_Field(
                     'LIN_desc',
-                    __('Line Item Description', 'event_espresso'),
+                    esc_html__('Line Item Description', 'event_espresso'),
                     true
                 ),
                 'LIN_unit_price' => new EE_Money_Field(
                     'LIN_unit_price',
-                    __('Unit Price', 'event_espresso'),
+                    esc_html__('Unit Price', 'event_espresso'),
                     false,
                     0
                 ),
                 'LIN_percent'    => new EE_Float_Field(
                     'LIN_percent',
-                    __('Percent', 'event_espresso'),
+                    esc_html__('Percent', 'event_espresso'),
                     false,
                     0
                 ),
                 'LIN_is_taxable' => new EE_Boolean_Field(
                     'LIN_is_taxable',
-                    __('Taxable', 'event_espresso'),
+                    esc_html__('Taxable', 'event_espresso'),
                     false,
                     false
                 ),
                 'LIN_order'      => new EE_Integer_Field(
                     'LIN_order',
-                    __('Order of Application towards total of parent', 'event_espresso'),
+                    esc_html__('Order of Application towards total of parent', 'event_espresso'),
                     false,
                     1
                 ),
                 'LIN_total'      => new EE_Money_Field(
                     'LIN_total',
-                    __('Total (unit price x quantity)', 'event_espresso'),
+                    esc_html__('Total (unit price x quantity)', 'event_espresso'),
                     false,
                     0
                 ),
                 'LIN_quantity'   => new EE_Integer_Field(
                     'LIN_quantity',
-                    __('Quantity', 'event_espresso'),
+                    esc_html__('Quantity', 'event_espresso'),
                     true,
                     1
                 ),
                 'LIN_parent'     => new EE_Integer_Field(
                     'LIN_parent',
-                    __("Parent ID (this item goes towards that Line Item's total)", 'event_espresso'),
+                    esc_html__("Parent ID (this item goes towards that Line Item's total)", 'event_espresso'),
                     true,
                     null
                 ),
                 'LIN_type'       => new EE_Enum_Text_Field(
                     'LIN_type',
-                    __('Type', 'event_espresso'),
+                    esc_html__('Type', 'event_espresso'),
                     false,
                     'line-item',
                     array(
-                        self::type_line_item     => __('Line Item', 'event_espresso'),
-                        self::type_sub_line_item => __('Sub-Item', 'event_espresso'),
-                        self::type_sub_total     => __('Subtotal', 'event_espresso'),
-                        self::type_tax_sub_total => __('Tax Subtotal', 'event_espresso'),
-                        self::type_tax           => __('Tax', 'event_espresso'),
-                        self::type_total         => __('Total', 'event_espresso'),
-                        self::type_cancellation  => __('Cancellation', 'event_espresso'),
+                        self::type_line_item     => esc_html__('Line Item', 'event_espresso'),
+                        self::type_sub_line_item => esc_html__('Sub-Item', 'event_espresso'),
+                        self::type_sub_total     => esc_html__('Subtotal', 'event_espresso'),
+                        self::type_tax_sub_total => esc_html__('Tax Subtotal', 'event_espresso'),
+                        self::type_tax           => esc_html__('Tax', 'event_espresso'),
+                        self::type_total         => esc_html__('Total', 'event_espresso'),
+                        self::type_cancellation  => esc_html__('Cancellation', 'event_espresso'),
                     )
                 ),
                 'OBJ_ID'         => new EE_Foreign_Key_Int_Field(
                     'OBJ_ID',
-                    __('ID of Item purchased.', 'event_espresso'),
+                    esc_html__('ID of Item purchased.', 'event_espresso'),
                     true,
                     null,
                     $line_items_can_be_for
                 ),
                 'OBJ_type'       => new EE_Any_Foreign_Model_Name_Field(
                     'OBJ_type',
-                    __('Model Name this Line Item is for', 'event_espresso'),
+                    esc_html__('Model Name this Line Item is for', 'event_espresso'),
                     true,
                     null,
                     $line_items_can_be_for
                 ),
                 'LIN_timestamp'  => new EE_Datetime_Field(
                     'LIN_timestamp',
-                    __('When the line item was created', 'event_espresso'),
+                    esc_html__('When the line item was created', 'event_espresso'),
                     false,
                     EE_Datetime_Field::now,
                     $timezone
@@ -440,6 +442,10 @@ class EEM_Line_Item extends EEM_Base
      * @param EE_Promotion $promotion
      * @return EE_Base_Class|EE_Line_Item|EE_Soft_Delete_Base_Class|NULL
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_existing_promotion_line_item(EE_Line_Item $parent_line_item, EE_Promotion $promotion)
     {
@@ -462,6 +468,10 @@ class EEM_Line_Item extends EEM_Base
      * @param EE_Line_Item $parent_line_item
      * @return EE_Base_Class[]|EE_Line_Item[]
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_all_promotion_line_items(EE_Line_Item $parent_line_item)
     {
