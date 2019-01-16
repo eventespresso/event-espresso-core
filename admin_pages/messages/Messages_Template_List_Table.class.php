@@ -171,15 +171,13 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
     {
         // Return the name contents
         return sprintf(
-            '%1$s <span style="color:silver">(id:%2$s)</span><br />%3$s%4$s',
+            '%1$s <span style="color:silver">(id:%2$s)</span><br />%3$s',
             /* $1%s */
-            $this->_get_name_link_for_messenger($item),
+            ucwords($item->messenger_obj()->label['singular']),
             /* $2%s */
             $item->GRP_ID(),
             /* %4$s */
-            $this->_get_context_links($item),
-            /* $3%s */
-            $this->row_actions($this->_get_actions_for_messenger_column($item))
+            $this->_get_context_links($item)
         );
     }
 
@@ -327,7 +325,11 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
                               || ! $item->is_context_active($context)
                 ? ' mtp-inactive'
                 : '';
-            $context_title = ucwords($c_configs[ $context ]['label']);
+            $context_title = sprintf(
+                /* translators: Placeholder represents the context label. Example "Edit Event Admin" */
+                esc_html__('Edit %1$s', 'event_espresso'),
+                ucwords($c_configs[ $context ]['label'])
+            );
             $edit_link = EE_Admin_Page::add_query_args_and_nonce(
                 array(
                     'action'  => 'edit_message_template',
@@ -345,47 +347,5 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
         }
 
         return sprintf('<strong>%s:</strong> ', ucwords($c_label['plural'])) . implode(' | ', $ctxt);
-    }
-
-
-    /**
-     * Get the Name string from the messenger column (linked to edit if the context allows for that).
-     *
-     * @param EE_Message_Template_Group $item
-     * @return string
-     * @throws EE_Error
-     */
-    protected function _get_name_link_for_messenger(EE_Message_Template_Group $item)
-    {
-        $edit_url = $this->_get_edit_url($item);
-        return $edit_url
-            ? '<a href="' . $edit_url . '"'
-              . ' title="' . esc_attr__('Edit Template Group', 'event_espresso') . '">'
-              . ucwords($item->messenger_obj()->label['singular'])
-              . '</a>'
-            : ucwords($item->messenger_obj()->label['singular']);
-    }
-
-
-    /**
-     * Return the actions array for the messenger column.
-     *
-     * @param EE_Message_Template_Group $item
-     * @return array
-     * @throws EE_Error
-     */
-    protected function _get_actions_for_messenger_column(EE_Message_Template_Group $item)
-    {
-        $actions = array();
-        if ($edit_url = $this->_get_edit_url($item)) {
-            $actions = array(
-                'edit' => '<a href="' . $edit_url . '"'
-                          . ' class="' . $item->message_type() . '-edit-link"'
-                          . ' title="' . esc_attr__('Edit Template Group', 'event_espresso') . '">'
-                          . esc_html__('Edit', 'event_espresso')
-                          . '</a>',
-            );
-        }
-        return $actions;
     }
 }
