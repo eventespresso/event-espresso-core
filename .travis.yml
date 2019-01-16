@@ -89,7 +89,7 @@ jobs:
         - node
       before_install:
         - nvm install && nvm use
-        - npm install npm -g
+        - npm install npm --latest-npm
       script:
         - npm run ci || exit 1
     - language: node_js

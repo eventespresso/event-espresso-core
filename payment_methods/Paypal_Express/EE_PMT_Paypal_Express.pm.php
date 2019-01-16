@@ -61,8 +61,7 @@ class EE_PMT_Paypal_Express extends EE_PMT_Base
      */
     public function generate_new_settings_form()
     {
-        $form = new SettingsForm(array(), $this->get_help_tab_link());
-        return $form;
+        return new SettingsForm(array(), $this->get_help_tab_link());
     }
 
 

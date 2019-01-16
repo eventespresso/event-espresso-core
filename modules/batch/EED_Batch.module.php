@@ -200,7 +200,7 @@ class EED_Batch extends EED_Module
             array(
                 'ajax_url'      => WP_AJAX_URL,
                 'is_admin'      => (bool) is_admin(),
-                'error_message' => esc_html__('An error occurred and the job has been stopped.', 'event_espresso'),
+                'error_message' => esc_html__('An error occurred and the job has been stopped. Please refresh the page to try again.', 'event_espresso'),
             )
         );
         $job_handler_classname = stripslashes($_GET['job_handler']);
