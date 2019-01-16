@@ -12,7 +12,7 @@ use EventEspresso\core\services\payment_methods\forms\PayPalSettingsForm;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.76.p
  *
  */
 class PayPalProSettingsForm extends PayPalSettingsForm

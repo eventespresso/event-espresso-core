@@ -14,7 +14,7 @@ use EE_Text_Input;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.76.p
  *
  */
 class PayPalSettingsForm extends EE_Payment_Method_Form

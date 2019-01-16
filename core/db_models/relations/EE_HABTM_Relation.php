@@ -233,7 +233,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
 
     /**
      * Gets all the non-key fields (ie, not the primary key and not foreign keys) on the join model.
-     * @since $VID:$
+     * @since 4.9.76.p
      * @return EE_Model_Field_Base[]
      * @throws EE_Error
      */
@@ -259,7 +259,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
 
     /**
      * Returns true if the join model has non-key fields (ie, fields that aren't the primary key or foreign keys.)
-     * @since $VID:$
+     * @since 4.9.76.p
      * @return boolean
      */
     public function hasNonKeyFields()

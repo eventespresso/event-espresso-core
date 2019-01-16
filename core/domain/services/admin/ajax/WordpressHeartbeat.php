@@ -12,7 +12,7 @@ use EventEspresso\core\services\request\RequestInterface;
  *
  * @package EventEspresso\core\domain\services\admin\ajax
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.9.76.p
  */
 class WordpressHeartbeat
 {
@@ -46,7 +46,7 @@ class WordpressHeartbeat
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.76.p
      * @throws InvalidClassException
      */
     public function resolveRoutes()
