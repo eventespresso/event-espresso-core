@@ -68,45 +68,6 @@ function removeRelatedEntities(
 }
 
 /**
- * Action creator for removing the described relation from the relation index
- * state.
- *
- * @param {string} relationName
- * @param {number} relationEntityId
- * @param {string} modelName
- * @param {number} entityId
- * @param {boolean} addRelation
- * @return {
- * 	{
- * 		type: string,
- * 		relationName: string,
- * 		relationEntityId: number,
- * 		modelName: string,
- * 		entityId: number,
- * 		queueType: string
- * 	}
- * } An action object.
- */
-function removeDirtyRelationIndex(
-	relationName,
-	relationEntityId,
-	modelName,
-	entityId,
-	addRelation = true
-) {
-	return {
-		type: types.REMOVE_DIRTY_RELATION_INDEX,
-		relationName,
-		relationEntityId,
-		modelName,
-		entityId,
-		queueType: addRelation ?
-			TYPE_QUEUE_RELATION_ADD :
-			TYPE_QUEUE_RELATION_DELETE,
-	};
-}
-
-/**
  * Action creator for removing the dirty relation from the state for the given
  * relation action type (delete or add).
  *
@@ -218,6 +179,5 @@ export {
 	removeRelatedEntities,
 	removeDirtyRelationAddition,
 	removeDirtyRelationDeletion,
-	removeDirtyRelationIndex,
 	removeDirtyRelationForType,
 };

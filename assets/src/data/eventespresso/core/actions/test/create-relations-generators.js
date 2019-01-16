@@ -37,15 +37,10 @@ describe( 'createRelation()', () => {
 				expect( value ).toBeUndefined();
 				expect( done ).toBe( true );
 			} );
-		it( 'yields an action object for receiving entity records', () => {
+		it( 'yields an generator for receiving and resolving entities', () => {
 			reset( TestEvent );
 			const { value } = fulfillment.next();
-			expect( value ).toEqual(
-				receiveEntityRecords(
-					'event',
-					[ TestEvent ]
-				)
-			);
+			expect( isGenerator( value ) ).toBe( true );
 		} );
 		it( 'yields an action object for receiving related entities', () => {
 			const { value } = fulfillment.next();
@@ -100,12 +95,10 @@ describe( 'createRelations()', () => {
 		expect( value ).toBeUndefined();
 		expect( done ).toBe( true );
 	} );
-	it( 'yields an action object for receiving entity records', () => {
+	it( 'yields an generator for receiving entity records', () => {
 		reset( TestEvents, 'events' );
 		const { value } = fulfillment.next();
-		expect( value ).toEqual(
-			receiveEntityRecords( 'event', TestEvents )
-		);
+		expect( isGenerator( value ) ).toBe( true );
 	} );
 	it( 'yields an action object for receiving related entity ids', () => {
 		const { value } = fulfillment.next();

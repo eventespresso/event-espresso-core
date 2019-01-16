@@ -7,7 +7,10 @@ import {
 	singularModelName,
 } from '@eventespresso/model';
 import { fromJS, Set, Map } from 'immutable';
-import { removeEmptyFromState } from '@eventespresso/helpers';
+import {
+	removeEmptyFromState,
+	normalizeEntityId,
+} from '@eventespresso/helpers';
 import cuid from 'cuid';
 
 /**
@@ -44,8 +47,7 @@ const relationExistsAlready = ( state, action, relationMap ) => {
 		entityId,
 		queueType,
 	} = action;
-	let relationName = action.relationName;
-	let modelName = action.modelName;
+	let { relationName, modelName } = action;
 	if ( relationExistsInMap( relationMap, queueType, entityId ) ) {
 		return true;
 	}
@@ -231,11 +233,10 @@ function updateRelationState( state, action, relationMap ) {
  * @return {Immutable.Map} Either original or new state.
  */
 function replaceOldRelationIdWithNewRelationId( state, action ) {
-	const {
-		modelName,
-		oldEntityId,
-		newEntityId,
-	} = action;
+	let { oldEntityId, newEntityId } = action;
+	const { modelName } = action;
+	oldEntityId = normalizeEntityId( oldEntityId );
+	newEntityId = normalizeEntityId( newEntityId );
 	// replacements in index
 	let newState = replaceIds(
 		'index',
@@ -350,14 +351,12 @@ const replaceIds = ( stateProperty, state, modelName, oldId, newId ) => {
  * @return {Object} The action object to work with after normalization.
  */
 const normalizeActionForState = ( state, action ) => {
+	// normalizeIds
+	action.entityId = normalizeEntityId( action.entityId );
+	action.relationEntityId = normalizeEntityId( action.relationEntityId );
 	// we only use index to help with normalization
 	const index = state.get( 'index' );
-	const {
-		modelName,
-		relationName,
-		entityId,
-		relationEntityId,
-	} = action;
+	const { modelName, relationName, relationEntityId, entityId } = action;
 	if ( modelName &&
 		relationName &&
 		index.has( pluralModelName( modelName ) )
@@ -557,9 +556,10 @@ const clearRelatedEntitiesForEntity = (
  * @return {Immutable.Map} Either the original state or new state if it was updated.
  */
 function removeRelatedEntitiesForEntity( state, action ) {
-	const { modelName, entityId } = action;
+	const { modelName } = action;
 	const pluralName = pluralModelName( modelName );
 	const singleName = singularModelName( modelName );
+	const entityId = normalizeEntityId( action.entityId );
 	[
 		[ pluralName, entityId, 'index', [ 'add', 'delete' ] ],
 		[ singleName, entityId, 'add' ],

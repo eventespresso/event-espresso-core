@@ -54,8 +54,9 @@ function* persistEntityRecord( modelName, entity ) {
 	if ( ! isModelEntityFactoryOfModel( factory, modelName ) ) {
 		return null;
 	}
+	const path = applyQueryString( modelName );
 	const updatedEntity = yield fetch( {
-		path: applyQueryString( modelName ),
+		path: entity.isNew ? path : path + '/' + entity.id,
 		method: entity.isNew ? 'POST' : 'PUT',
 		data: entity.forPersist,
 	} );
@@ -95,7 +96,8 @@ function* persistForEntityId( modelName, entityId ) {
 		const persistedEntity = yield dispatch(
 			CORE_REDUCER_KEY,
 			'persistEntityRecord',
-			[ modelName, entity ]
+			modelName,
+			entity
 		);
 		return isModelEntityOfModel( persistedEntity, modelName ) ?
 			persistedEntity :
@@ -128,7 +130,8 @@ function* persistForEntityIds( modelName, entityIds = [] ) {
 		const persistedEntity = yield dispatch(
 			CORE_REDUCER_KEY,
 			'persistEntityRecord',
-			[ modelName, retrievedEntities.get( id ) ]
+			modelName,
+			retrievedEntities.get( id )
 		);
 		if ( isModelEntityOfModel( persistedEntity, modelName ) ) {
 			persistedEntities[ persistedEntity.id ] = persistedEntity;
@@ -152,11 +155,12 @@ function* persistDeletesForModel( modelName ) {
 	const deletedIds = [];
 	while ( entityIds.length > 0 ) {
 		const entityId = entityIds.shift();
-		const success = yield fetch( {
+		const response = yield fetch( {
 			path: applyQueryString( modelName ) + '/' + entityId,
 			data: { force: true },
 			method: 'DELETE',
 		} );
+		const success = response.deleted || false;
 		if ( success ) {
 			deletedIds.push( entityId );
 			yield removeDeleteEntityId( modelName, entityId );

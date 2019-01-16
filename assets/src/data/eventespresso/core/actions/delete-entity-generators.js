@@ -31,5 +31,6 @@ export function* deleteEntityById( modelName, entityId ) {
  */
 export function* trashEntityById( modelName, entityId ) {
 	yield removeEntityById( modelName, entityId );
+	yield removeAllRelatedEntitiesForModelEntity( modelName, entityId );
 	yield receiveTrashEntityId( modelName, entityId );
 }

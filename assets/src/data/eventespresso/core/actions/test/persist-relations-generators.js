@@ -199,31 +199,50 @@ describe( 'persistRelationsForEntityIdAndRelationId()', () => {
 		expect( value ).toBe( 0 );
 		expect( done ).toBe( true );
 	} );
-	it( 'yields the generator for persisting new entity and removing dirty ' +
+	it( 'yields dispatch action for persisting new entity and removing dirty ' +
 		'relations when the entityId is a cuid', () => {
 		reset( testCuid, 20 );
 		fulfillment.next();
 		const { value } = fulfillment.next( testRelationState );
-		expect( isGenerator( value ) ).toBe( true );
+		expect( value ).toEqual( dispatch(
+			CORE_REDUCER_KEY,
+			'persistNewEntityAndRemoveDirtyRelations',
+			'datetime',
+			20,
+			'event',
+			testCuid,
+			true,
+			[ 'event', testCuid ]
+		) );
 	} );
 	it( 'returns 0 when the new entity id could not be persisted', () => {
 		const { value, done } = fulfillment.next( 0 );
 		expect( value ).toBe( 0 );
 		expect( done ).toBe( true );
 	} );
-	it( 'yields a generator for persisting new entity and removing dirty ' +
+	it( 'yields a dispatch action for persisting new entity and removing dirty ' +
 		'relations when the relationId is a cuid', () => {
 		reset( 10, testCuid );
 		fulfillment.next();
 		const { value } = fulfillment.next( testRelationState );
-		expect( isGenerator( value ) ).toBe( true );
+		expect( value ).toEqual( dispatch(
+			CORE_REDUCER_KEY,
+			'persistNewEntityAndRemoveDirtyRelations',
+			'datetime',
+			testCuid,
+			'event',
+			10,
+			true,
+			[ 'datetime', testCuid ],
+			true,
+		) );
 	} );
 	it( 'returns 0 when the new relation id could not be persisted', () => {
 		const { value, done } = fulfillment.next( 0 );
 		expect( value ).toBe( 0 );
 		expect( done ).toBe( true );
 	} );
-	it( 'yeilds expected select action for getting the relation endpoint ' +
+	it( 'yields expected select action for getting the relation endpoint ' +
 		'when adding a relation', () => {
 		reset( 10, 20 );
 		fulfillment.next();
@@ -239,35 +258,51 @@ describe( 'persistRelationsForEntityIdAndRelationId()', () => {
 		);
 	} );
 	it( 'yields expected fetch action for the relation endpoint when adding ' +
-		'relation and schema store does not have it.', () => {
+		'relation and schema store has it.', () => {
+		reset( 10, 20 );
+		fulfillment.next();
+		fulfillment.next( testRelationState );
+		const { value } = fulfillment.next( 'ee/v4.8.36/events/10/datetimes' );
+		expect( value ).toEqual(
+			fetch( {
+				path: 'ee/v4.8.36/events/10/datetimes/20',
+				method: 'PUT',
+			} )
+		);
+	} );
+	it( 'yields expected response when relation endpoint is not ' +
+		'retrievable', () => {
 		reset( 10, 20 );
 		fulfillment.next();
 		fulfillment.next( testRelationState );
 		const { value } = fulfillment.next( '' );
-		expect( value ).toEqual(
-			fetch( {
-				path: '',
-				method: 'PUT',
-			} )
-		);
+		expect( value ).toBe( 0 );
 	} );
 	it( 'yields expected fetch action for the relation endpoint when removing ' +
 		'a relation', () => {
 		reset( 10, 20, false );
 		fulfillment.next();
 		fulfillment.next( testRelationState );
-		const { value } = fulfillment.next( '' );
+		const { value } = fulfillment.next( 'ee/v4.8.36/events/10/datetimes' );
 		expect( value ).toEqual(
 			fetch( {
-				path: '',
+				path: 'ee/v4.8.36/events/10/datetimes/20',
 				method: 'DELETE',
 			} )
 		);
 	} );
-	it( 'yields removing dirty relations generator when there is ' +
+	it( 'yields removing dirty relations dispatch action when there is ' +
 		'success', () => {
 		const { value } = fulfillment.next( true );
-		expect( isGenerator( value ) ).toBe( true );
+		expect( value ).toEqual( dispatch(
+			CORE_REDUCER_KEY,
+			'removeDirtyRelations',
+			'datetime',
+			20,
+			'event',
+			10,
+			false
+		) );
 	} );
 	it( 'returns relationId on successful request', () => {
 		const { value, done } = fulfillment.next();
@@ -278,7 +313,7 @@ describe( 'persistRelationsForEntityIdAndRelationId()', () => {
 		reset( 10, 20 );
 		fulfillment.next();
 		fulfillment.next( testRelationState );
-		fulfillment.next( '' );
+		fulfillment.next( 'ee/v4.8.36/events/10/datetimes' );
 		const { value, done } = fulfillment.next( false );
 		expect( value ).toBe( 0 );
 		expect( done ).toBe( true );
@@ -303,7 +338,8 @@ describe( 'persistNewEntityAndRemoveDirtyRelations()', () => {
 		expect( value ).toEqual( dispatch(
 			CORE_REDUCER_KEY,
 			'persistForEntityId',
-			[ 'event', 10 ]
+			'event',
+			10
 		) );
 	} );
 	it( 'returns 0 if a model entity is not returned', () => {
@@ -336,16 +372,6 @@ describe( 'removeDirtyRelations()', () => {
 	it( 'yields action for removing dirty relation for type', () => {
 		const { value } = fulfillment.next();
 		expect( value ).toEqual( removeDirtyRelationForType(
-			'datetime',
-			20,
-			'event',
-			10,
-			true
-		) );
-	} );
-	it( 'yields action for removing dirty relation index', () => {
-		const { value } = fulfillment.next();
-		expect( value ).toEqual( removeDirtyRelationIndex(
 			'datetime',
 			20,
 			'event',

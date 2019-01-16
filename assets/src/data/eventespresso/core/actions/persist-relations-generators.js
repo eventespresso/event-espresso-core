@@ -10,10 +10,7 @@ import { singularModelName } from '@eventespresso/model';
  * Internal imports.
  */
 import { fetch, select, dispatch } from '../../base-controls';
-import {
-	removeDirtyRelationForType,
-	removeDirtyRelationIndex,
-} from './remove-relations';
+import { removeDirtyRelationForType } from './remove-relations';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
 
@@ -219,7 +216,9 @@ function* persistRelationsForEntityIdAndRelationId(
 	}
 	// is the entityId a cuid?  If so, then let's persist.
 	if ( cuid.isCuid( entityId ) ) {
-		entityId = yield persistNewEntityAndRemoveDirtyRelations(
+		entityId = yield dispatch(
+			CORE_REDUCER_KEY,
+			'persistNewEntityAndRemoveDirtyRelations',
 			relationName,
 			relationId,
 			modelName,
@@ -237,13 +236,15 @@ function* persistRelationsForEntityIdAndRelationId(
 
 	// is the relationId a cuid? If so, then let's persist
 	if ( cuid.isCuid( relationId ) ) {
-		relationId = yield persistNewEntityAndRemoveDirtyRelations(
+		relationId = yield dispatch(
+			CORE_REDUCER_KEY,
+			'persistNewEntityAndRemoveDirtyRelations',
 			relationName,
 			relationId,
 			modelName,
 			entityId,
 			addRelation,
-			[ relationId, singularModelName( relationName ) ],
+			[ singularModelName( relationName ), relationId ],
 			! entityIdChanged,
 		);
 		// if relationId is 0, bail because it didn't get persisted so relations
@@ -259,10 +260,10 @@ function* persistRelationsForEntityIdAndRelationId(
 		entityId,
 		relationName,
 	);
-	const success = ! endpoint ?
+	const success = endpoint ?
 		yield fetch(
 			{
-				path: endpoint,
+				path: endpoint + '/' + relationId,
 				method: addRelation ? 'PUT' : 'DELETE',
 			}
 		) :
@@ -271,7 +272,9 @@ function* persistRelationsForEntityIdAndRelationId(
 		// Even when ids have changed, this should catch any potential queued
 		// relation items for those things that got updated in state in a prior
 		// dispatch
-		yield removeDirtyRelations(
+		yield dispatch(
+			CORE_REDUCER_KEY,
+			'removeDirtyRelations',
 			relationName,
 			relationId,
 			modelName,
@@ -309,11 +312,11 @@ function* persistNewEntityAndRemoveDirtyRelations(
 	const persistedEntity = yield dispatch(
 		CORE_REDUCER_KEY,
 		'persistForEntityId',
-		persistingArguments,
+		...persistingArguments,
 	);
 	// if not dispatched successfully then let's bail because relation can't
 	// be persisted
-	if ( ! isModelEntityOfModel( persistedEntity, modelName ) ) {
+	if ( ! isModelEntityOfModel( persistedEntity, persistingArguments[ 0 ] ) ) {
 		return 0;
 	}
 	if ( doRelationRemoval ) {
@@ -353,13 +356,6 @@ function* removeDirtyRelations(
 		modelName,
 		entityId,
 		addRelation
-	);
-	yield removeDirtyRelationIndex(
-		relationName,
-		relationId,
-		modelName,
-		entityId,
-		addRelation,
 	);
 }
 

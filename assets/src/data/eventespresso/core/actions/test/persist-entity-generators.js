@@ -80,7 +80,7 @@ describe( 'persistEntityRecord()', () => {
 		fulfillment.next();
 		const { value } = fulfillment.next( eventFactory );
 		expect( value ).toEqual( fetch( {
-			path: '/ee/v4.8.36/events',
+			path: '/ee/v4.8.36/events/10',
 			method: 'PUT',
 			data: ChangedEvent.forPersist,
 		} ) );
@@ -174,7 +174,8 @@ describe( 'persistForEntityId()', () => {
 			dispatch(
 				CORE_REDUCER_KEY,
 				'persistEntityRecord',
-				[ 'event', TestEvent ]
+				'event',
+				TestEvent
 			)
 		);
 	} );
@@ -216,13 +217,15 @@ describe( 'persistForEntityIds()', () => {
 		expect( value ).toEqual( dispatch(
 			CORE_REDUCER_KEY,
 			'persistEntityRecord',
-			[ 'event', EventEntities.b ]
+			'event',
+			EventEntities.b
 		) );
 		value = fulfillment.next( EventEntities.b ).value;
 		expect( value ).toEqual( dispatch(
 			CORE_REDUCER_KEY,
 			'persistEntityRecord',
-			[ 'event', EventEntities.c ]
+			'event',
+			EventEntities.c
 		) );
 	} );
 	it( 'returns expected response for successful persistence', () => {
@@ -263,7 +266,7 @@ describe( 'persistDeletesForModel', () => {
 			data: { force: true },
 			method: 'DELETE',
 		} ) );
-		const { value: removeAction } = fulfillment.next( true );
+		const { value: removeAction } = fulfillment.next( { deleted: true } );
 		expect( removeAction ).toEqual( removeDeleteEntityId(
 			'event',
 			10
@@ -274,7 +277,7 @@ describe( 'persistDeletesForModel', () => {
 			data: { force: true },
 			method: 'DELETE',
 		} ) );
-		const { value: removeAction2 } = fulfillment.next( true );
+		const { value: removeAction2 } = fulfillment.next( { deleted: true } );
 		expect( removeAction2 ).toEqual( removeDeleteEntityId(
 			'event',
 			20,

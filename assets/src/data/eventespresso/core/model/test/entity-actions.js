@@ -89,13 +89,9 @@ describe( 'createActions()', () => {
 			},
 		],
 		[
-			'receiveEventRecords',
+			'receiveEventsAndResolve',
 			[ [ 10, 20 ] ],
-			{
-				type: types.RECEIVE_ENTITY_RECORDS,
-				modelName: 'event',
-				entities: [ 10, 20 ],
-			},
+			'generator',
 		],
 		[
 			'receiveAndReplaceEventRecords',

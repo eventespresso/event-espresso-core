@@ -79,9 +79,10 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 		) ] = ( entityId ) => action.removeTrashEntityId( modelName, entityId );
 		actions[ getMethodName(
 			modelName,
-			'records',
+			'andResolve',
 			'receive',
-		) ] = ( entities ) => action.receiveEntityRecords(
+			true
+		) ] = ( entities ) => action.receiveEntitiesAndResolve(
 			modelName,
 			entities
 		);

@@ -17,7 +17,7 @@ import {
 	receiveRelatedEntities,
 	receiveDirtyRelationAddition,
 } from './receive-relations';
-import { receiveEntityRecords } from './receive-entities';
+import { receiveEntitiesAndResolve } from './create-entities-generators';
 import { resolveGetEntityByIdForIds } from '../../base-resolvers';
 
 /**
@@ -47,7 +47,7 @@ function* createRelation(
 		);
 		return;
 	}
-	yield receiveEntityRecords(
+	yield receiveEntitiesAndResolve(
 		singularRelationName,
 		[ relationEntity ]
 	);
@@ -100,7 +100,7 @@ function* createRelations(
 		return;
 	}
 	let relationIds = getIdsFromBaseEntityArray( relationEntities );
-	yield receiveEntityRecords( singularRelationName, relationEntities );
+	yield receiveEntitiesAndResolve( singularRelationName, relationEntities );
 	yield receiveRelatedEntities(
 		modelName,
 		entityId,

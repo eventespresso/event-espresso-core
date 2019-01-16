@@ -125,16 +125,6 @@ describe( 'createActions()', () => {
 			),
 		],
 		[
-			'removeDirtyRelationIndexForEventIdAndRelation',
-			[ 'datetimes', 20, 10 ],
-			actions.removeDirtyRelationIndex(
-				'datetimes',
-				20,
-				'event',
-				10,
-			),
-		],
-		[
 			'removeDirtyRelationAdditionForEventIdAndRelation',
 			[ 'datetimes', 20, 10 ],
 			actions.removeDirtyRelationAddition(

@@ -27,7 +27,11 @@ describe( 'deleteEntityById()', () => {
 } );
 describe( 'trashEntityById()', () => {
 	const fulfillment = trashEntityById( 'event', 10 );
-	[ removeEntityById, receiveTrashEntityId ].forEach( ( actionMethod ) => {
+	[
+		removeEntityById,
+		removeAllRelatedEntitiesForModelEntity,
+		receiveTrashEntityId,
+	].forEach( ( actionMethod ) => {
 		it( 'yields expected action for ' + actionMethod.name, () => {
 			const { value } = fulfillment.next();
 			expect( value ).toEqual( actionMethod( 'event', 10 ) );
