@@ -11,9 +11,6 @@ import {
 	createRelations,
 } from '../create-relations-generators';
 import {
-	receiveEntityRecords,
-} from '../receive-entities';
-import {
 	receiveRelatedEntities,
 	receiveDirtyRelationAddition,
 } from '../receive-relations';

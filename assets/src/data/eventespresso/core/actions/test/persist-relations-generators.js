@@ -19,10 +19,7 @@ import {
 	getRelationState,
 } from '../persist-relations-generators';
 import { fetch, select, dispatch } from '../../../base-controls';
-import {
-	removeDirtyRelationForType,
-	removeDirtyRelationIndex,
-} from '../remove-relations';
+import { removeDirtyRelationForType } from '../remove-relations';
 import { EventEntities } from '../../../test/fixtures/base';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../../constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../../schema/constants';
