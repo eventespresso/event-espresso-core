@@ -156,7 +156,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.9.76.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException

@@ -5758,14 +5758,18 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Used to build a primary key string (when the model has no primary key),
      * which can be used a unique string to identify this model object.
      *
-     * @param array $cols_n_values keys are field names, values are their values
+     * @param array $fields_n_values keys are field names, values are their values.
+     *                               Note: if you have results from `EEM_Base::get_all_wpdb_results()`, you need to
+     *                               run it through `EEM_Base::deduce_fields_n_values_from_cols_n_values()`
+     *                               before passing it to this function (that will convert it from columns-n-values
+     *                               to field-names-n-values).
      * @return string
      * @throws EE_Error
      */
-    public function get_index_primary_key_string($cols_n_values)
+    public function get_index_primary_key_string($fields_n_values)
     {
         $cols_n_values_for_primary_key_index = array_intersect_key(
-            $cols_n_values,
+            $fields_n_values,
             $this->get_combined_primary_key_fields()
         );
         return http_build_query($cols_n_values_for_primary_key_index);
