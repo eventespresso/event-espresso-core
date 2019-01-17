@@ -36,7 +36,7 @@ jQuery(document).ready(function($) {
 			}
 		}
 		var $eventCart = $( 'input[name="event_cart"]' );
-		if ( has_selection > 0 || ( $eventCart.length && $eventCart.val() === 'view' ) ) {
+		if ( has_selection > 0 || ( $eventCart.length && $eventCart.val() === 'view' ) || $('input' ).length < 2 ) {
 			return true;
 		} else {
 			e.preventDefault();
