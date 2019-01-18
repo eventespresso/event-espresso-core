@@ -1,13 +1,18 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+use EE_Error;
 use EE_REST_TestCase;
 use EED_Core_Rest_Api;
 use EEM_CPT_Base;
 use EEM_Event;
 use EventEspresso\core\domain\services\event\EventSpacesCalculator;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\rest_api\controllers\Base as Controller_Base;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use InvalidArgumentException;
+use ReflectionException;
 use WP_REST_Request;
 
 if (! defined('EVENT_ESPRESSO_VERSION')) {
@@ -698,11 +703,11 @@ class Read_Test extends EE_REST_TestCase
 
     /**
      * @since 4.9.74.p
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     public function test_handle_request_get_one__registration_include_answers_and_question_bare_min_from_each()
     {
@@ -733,11 +738,11 @@ class Read_Test extends EE_REST_TestCase
 
     /**
      * @since 4.9.74.p
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     public function test_handle_request_get_one__doesnt_exist()
     {
@@ -936,7 +941,7 @@ class Read_Test extends EE_REST_TestCase
 
     /**
      * @group 536 see https://github.com/eventespresso/event-espresso-core/pull/536
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function testHandleRequestGetAllSoldOutEventsToo()
     {
@@ -990,7 +995,7 @@ class Read_Test extends EE_REST_TestCase
 
     /**
      * @group 536
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function testHandleRequestGetAllIncludeDatetimesToSoldOutEvents()
     {
@@ -1034,7 +1039,7 @@ class Read_Test extends EE_REST_TestCase
      * This was temporarily broken while working on 536, but no test picked up on it, so here's one that does.
      *
      * @group 536 see https://github.com/eventespresso/event-espresso-core/pull/536
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function testHandleRequestGetAllVenues()
     {
@@ -1076,7 +1081,7 @@ class Read_Test extends EE_REST_TestCase
      * Reproduces https://github.com/eventespresso/event-espresso-core/issues/845, which has been an often-recurring
      * regression.
      * @since 4.9.76.p
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function testHandleRequestGeAllTermRelationships()
     {
@@ -1375,6 +1380,50 @@ class Read_Test extends EE_REST_TestCase
             $data[0]['EVT_desc']['rendered'],
             $data[1]['EVT_desc']['rendered']
         );
+    }
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     */
+    public function testHandleGetOneIncludeInnaccessibleModel()
+    {
+        // Create an event and some registrations
+        $e = $this->new_model_obj_with_dependencies(
+            'Event',
+            [
+                'status' => EEM_Event::post_status_publish
+            ]
+        );
+        $d = $this->new_model_obj_with_dependencies('Datetime');
+        $t = $this->new_model_obj_with_dependencies('Ticket');
+        $d->_add_relation_to($t, 'Ticket');
+        $r = $this->new_model_obj_with_dependencies(
+            'Registration',
+            [
+                'EVT_ID' => $e->ID(),
+                'TKT_ID' => $t->ID()
+            ]
+        );
+
+        // Request to include the registrations.
+        $request = new WP_REST_Request( 'GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
+        $request->set_query_params(
+            array(
+                'include' => 'Registration',
+            )
+        );
+        $response = rest_do_request($request);
+        $data = $response->get_data();
+
+        // The registrations should just be removed, we shouldn't have a big error response.
+        $this->assertArrayNotHasKey('code', $data);
+        $this->assertEquals($e->ID(), $data['EVT_ID']);
+        $this->assertIsNull($data['registrations']);
     }
 }
 // End of file Read_Test.php
