@@ -10,6 +10,7 @@ This dispatch action has automatically generated model specific equivalents that
 This returns a promise that resolves to the constructed `BaseEntity` instance once complete.
 
 **Arguments**
+
 | Argument | Type | Description |
 | -------- | ---- | ----------- |
 | `modelName`         | string      | The name of the model the incoming data is for.             |

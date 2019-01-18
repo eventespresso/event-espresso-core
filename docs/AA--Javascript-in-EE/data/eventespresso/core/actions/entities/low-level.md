@@ -88,3 +88,60 @@ This does not return a value.
 ```js
 wp.data.dispatch( 'eventespresso/core' ).receiveDeleteEntityId( 'event', 10 );
 ```
+
+## `removeEntityById( modelName, entityId )`
+Dispatch an action for removing an entity with the given entityId for the given model from the state.  **Note:** any relations, queued deletes/trashes, or queued relation adds/deletes will remain in the state when removing the entity using this action.
+
+This dispatch action has automatically generated model specific equivalents that can be used: `removeEventById`, `removeDatetimeById` etc.  When using a model specific equivalent you only need to pass along the `entityId` argument.
+
+This does not return a value.
+
+**Arguments:**
+
+| Argument    | Type   |Description                             |
+| ----------- | ------ |----------------------------------------|
+| `modelName` | string |The model the given entity id belongs to|
+| `entityId`  | number\|string | The id for the entity being removed.                                 |
+
+**Example:**
+```js
+wp.data.dispatch( 'eventespresso/core' ).removeEntityById( 'event', 10 );
+```
+
+## `removeDeleteEntityId( modelName, entityId )`
+Dispatch an action for removing the queue for deleting the given entity from the state (i.e. cancel a delete).
+
+This dispatch action has automatically generated model specific equivalents that can be used: `removeDeleteEventId`, `removeDeleteDatetimeId` etc.  When using a model specific equivalent you only need to pass along the `entityId` argument.
+
+This does not return a value.
+
+**Arguments:**
+
+| Argument    | Type    | Description                               |
+| ----------- | ------- | ----------------------------------------- |
+| `modelName` | string  | The model the given entity id belongs to. |
+| `entityId`  | number\|string | The id for the entity being removed.                                           |
+
+**Example:**
+```js
+wp.data.dispatch( 'eventespresso/core' ).removeDeleteEntityId( 'event', 10 );
+```
+
+## `removeTrashEntityId( modelName, entityId )`
+Dispatch an action for removing the queue for trashing the given entity from the state (i.e. cancel a trash).
+
+This dispatch action has automatically generated model specific equivalents that can be used: `removeTrashEventId`, `removeTrashDatetimeId` etc.  When using a model specific equivalent you only need to pass along the `entityId` argument.
+
+This does not return a value.
+
+**Arguments:**
+
+| Argument    | Type    | Description                               |
+| ----------- | ------- | ----------------------------------------- |
+| `modelName` | string  | The model the given entity id belongs to. |
+| `entityId`  | number\|string | The id for the entity being removed.                                           |
+
+**Example:**
+```js
+wp.data.dispatch( 'eventespresso/core' ).removeTrashEntityId( 'event', 10 );
+```

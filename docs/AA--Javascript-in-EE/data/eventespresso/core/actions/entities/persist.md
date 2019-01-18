@@ -114,3 +114,30 @@ This will return a promise that resolves to an empty array or an array of ids fo
 ```js
 const TrashedEventIds = await wp.data.dispatch( 'eventespresso/core' ).persistTrashesForModel( 'event' );
 ```
+
+## `persistAllDeletes()`
+This triggers persisting all deletes and trashes queued in the state (across all models).
+
+This will return a promise that resolves to an object indexed by `delete` and `trash` where each value is an array of entity ids persisted in each model.  Example response:
+
+```js
+response = {
+  delete: {
+    event: [ 10, 20 ]
+  },
+  trash: {
+    ticket: [ 30 ],
+    datetime: [ 10 ],
+  }
+}
+```
+
+**Arguments:**
+
+There are no arguments for this dispatch action.
+
+**Example:**
+
+```js
+const deletesAndTrash = wp.data.dispatch( 'eventespresso/core' ).persistAllDeletes();
+```
