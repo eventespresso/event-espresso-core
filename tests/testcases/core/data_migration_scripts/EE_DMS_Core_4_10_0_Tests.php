@@ -111,7 +111,60 @@ class EE_DMS_4_10_0_Tests extends EE_UnitTestCase{
         $this->assertEquals(10, EEM_Event_Question_Group::instance()->count());
     }
 
-        // More than 50 question groups (make sure they all get migrated)
+    /**
+     * An event with personal question group for primary and additional attendees.
+     * @since $VID:$
+     * @group current
+     */
+    public function testMigrateManyQuestionGroupslForPrimaryAndAdditional()
+    {
+        // Create 2 custom question groups.
+        $cqg1 = $this->new_model_obj_with_dependencies('Question_Group');
+        $q1 = $this->new_model_obj_with_dependencies('Question');
+        $cqg1->_add_relation_to($q1,'Question');
+        $cqg2 = $this->new_model_obj_with_dependencies('Question_Group');
+        $q2 = $this->new_model_obj_with_dependencies('Question');
+        $cqg2->_add_relation_to($q2, 'Question');
+
+        // Create an event with ALL the question groups.
+        $e = $this->new_model_obj_with_dependencies('Event');
+        $e->add_question_group(EEM_Question_Group::system_personal, true);
+        $e->add_question_group(EEM_Question_Group::system_address, true);
+        $e->add_question_group($cqg1, true);
+        $e->add_question_group($cqg2, true);
+
+        foreach(array(
+            EEM_Question_Group::system_personal,
+            EEM_Question_Group::system_address,
+            $cqg1->ID(),
+            $cqg2->ID()
+            ) as $question_group_id) {
+            $e->add_question_group($question_group_id, true);
+            // Manually enter the duplicate row. In 4.9 and lower, this meant the question group was for additional
+            // attendees.
+            EEM_Event_Question_Group::instance()->insert(
+                [
+                    'EVT_ID' => $e->ID(),
+                    'QSG_ID' => $question_group_id,
+                    'EQG_primary' => false,
+                ]
+            );
+        }
+
+        $this->assertEquals(8, EEM_Event_Question_Group::instance()->count());
+        $this->migrateFiveEventQuestionGroups();
+        $this->migrateFiveEventQuestionGroups();
+        // That "duplicate" row should have been removed...
+        $this->assertEquals(4, EEM_Event_Question_Group::instance()->count());
+        // And double-check we still find those groups are related.
+        $primary_attendee_question_groups = EEM_Event::instance()->get_event_question_groups($e->ID(), true);
+        $this->assertEquals(4, count($primary_attendee_question_groups));
+        $additional_attendee_question_groups = EEM_Event::instance()->get_event_question_groups($e->ID(), false);
+        $this->assertEquals(4, count($additional_attendee_question_groups));
+    }
+
+
+    // More than 50 question groups (make sure they all get migrated)
 
 
 	protected function migrateFiveEventQuestionGroups()

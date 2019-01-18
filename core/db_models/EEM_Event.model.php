@@ -426,7 +426,7 @@ class EEM_Event extends EEM_CPT_Base
             ]
         ];
         if ($for_primary_attendee) {
-            $query_params[0][] = true;
+            $query_params[0]['EQG_primary'] = true;
         } else {
             $query_params[0]['EQG_additional'] = true;
         }
