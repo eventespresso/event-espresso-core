@@ -81,7 +81,7 @@ const { AvatarImage } = eejs.components;
 import { AvatarImage } from '@eventespresso/components'
 ```
 
-Note: this package isn't published yet so you'll need to point to it via your build process. For example, if you use webpack you can register this as an external via:
+**Note**: this package isn't published yet so you'll need to point to it via your build process. For example, if you use webpack you can register this as an external via:
 
 ```js
 module.exports = {
@@ -91,7 +91,7 @@ module.exports = {
 }
 ```
 
-You will need to ensure that the eventespresso components bundle is a dependency for your implemented code.  You could do something like this:
+You will need to ensure that the event espresso components bundle is a dependency for your implemented code.  You could do something like this:
 
 ```php
 use EventEspresso\core\domain\services\assets\CoreAssetManager;

@@ -18,10 +18,10 @@ Used to indicate a loading state or not.
 - Default: `false`
 
 ### `attendees`
-Expected to be a `Map` of Attendee model entity instances.
-- Type: `Map`
+Expected to be an `Array` of Attendee model entity instances.
+- Type: `Array`
 - Required: no
-- Default: `new Map()`
+- Default: `[]`
 
 ### `showGravatar`
 Used to flag whether to show the gravatar for the attendee or not. **Note:** if this is true, then you will either need the gravatar included with each `Attendee` model-entity in the included `attendees` map (found on the `userAvatar` property) or have it included in the passed through `avatarOptions` prop (exposed on `avatarOptions.avatarUrl`)
