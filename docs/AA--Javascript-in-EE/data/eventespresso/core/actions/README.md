@@ -7,9 +7,11 @@ These are actions that record information in the `eventespresso/core` store stat
 ### Create ([entities](./entities/create.md) & [relations](./relations/create.md))
 The following actions are used for any creating entities or adding created entities outside of the store to the store state.
 
-| Action | Description |
-| ------ | ----------- |
-|        |             |
+| Action                                                                                         |       Description                                                                                                                                    |
+| -----------------------------------------------------------------------------------------------| -----------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`createEntity`](./entities/create.md#createentity-modelname-entity-)                          |       Dispatch action for creating a `BaseEntity` instance for the given model from the incoming data and adding it to state.                        |
+| [`receiveEntityAndResolve`](./entities/create.md#receiveentityandresolve-entity-)              |       Dispatch action for receiving a `BaseEntity` instance, adding it to the state, and also resolving the `getEntityById` selector for that entity.|
+| [`receiveEntitiesAndResolve`](./entities/create.md#receiveentitiesandresolve-modelname-entity-)|       Same as `receiveEntityAndResolves` except handles multiple entities.                                                                           |
 
 ### Delete ([entities](./entities/delete.md) & [relations](./relations/delete.md))
 
