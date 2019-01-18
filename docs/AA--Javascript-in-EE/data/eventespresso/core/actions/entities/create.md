@@ -54,5 +54,5 @@ This does not return a value.
 
 **Example:**
 ```js
-wp.dispatch( 'eventespresso/core' ).receiveEventsAndResolve( [ EventA, EventB ] );
+wp.data.dispatch( 'eventespresso/core' ).receiveEventsAndResolve( [ EventA, EventB ] );
 ```

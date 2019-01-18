@@ -9,6 +9,7 @@ Dispatches an action for receiving entities into the state.  Note that entities 
 This does not return a value.
 
 **Arguments:**
+
 | Argument    | Type   | Description                                               |
 | ----------- | ------ | ----------------------------------------------------------|
 | `modelName` | string | The name of the model the entities belong to (eg. `event`)|
@@ -26,6 +27,7 @@ This dispatch action has automatically generated model specific equivalents that
 This does not return a value.
 
 **Arguments:**
+
 | Argument   | Type   | Description                                                                                                    |
 | -----------| ------ | ---------------------------------------------------------------------------------------------------------------|
 | `modelName`| string | The name of the model the entities belong to (eg. `event` )                                                    |
@@ -42,6 +44,7 @@ Dispatches an action receiving an instance of `BaseEntity` into the state.  Note
 This does not return a value.
 
 **Arguments:**
+
 | Argument | Type | Description |
 | -------- | ---- | ----------- |
 | `entity`         | `BaseEntity`      | An instance of `BaseEntity`|

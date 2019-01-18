@@ -34,7 +34,7 @@ This does not return anything.
   
   **Example:**
 ```js
-wp.dispatch( 'eventespresso/core' ).deleteEventById( 10 );
+wp.data.dispatch( 'eventespresso/core' ).deleteEventById( 10 );
 ```
 ## `trashEntityById( modelName, entityId )`
 
@@ -53,5 +53,5 @@ This does not return anything.
   
   **Example:**
 ```js
-wp.dispatch( 'eventespresso/core' ).trashEntityById( 'event', 10 );
+wp.data.dispatch( 'eventespresso/core' ).trashEntityById( 'event', 10 );
 ```
