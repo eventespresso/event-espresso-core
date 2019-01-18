@@ -18,7 +18,7 @@ use WP_REST_Request;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.9.76.p
  *
  */
 class WriteRemoveRelationTest extends EE_REST_TestCase
@@ -26,7 +26,7 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
 
     /**
      * Successful relation removal.
-     * @since $VID:$
+     * @since 4.9.76.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -77,7 +77,7 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
 
     /**
      * Test HABTM removal relations.
-     * @since $VID:$
+     * @since 4.9.76.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -124,7 +124,7 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
 
     /**
      * Test HABTM with wrong params
-     * @since $VID:$
+     * @since 4.9.76.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -160,7 +160,7 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
 
     /**
      * No related item
-     * @since $VID:$
+     * @since 4.9.76.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -187,7 +187,7 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
 
     /**
      * No primary item
-     * @since $VID:$
+     * @since 4.9.76.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -214,7 +214,7 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
 
     /**
      * Already related
-     * @since $VID:$
+     * @since 4.9.76.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -258,7 +258,7 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
 
     /**
      * Valid request but not authenticated
-     * @since $VID:$
+     * @since 4.9.76.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -292,7 +292,7 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
 
     /**
      * Valid request but doesn't have sufficient privileges.
-     * @since $VID:$
+     * @since 4.9.76.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException

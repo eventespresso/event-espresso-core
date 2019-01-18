@@ -1328,7 +1328,7 @@ class EED_Core_Rest_Api extends \EED_Module
 
     /**
      * Determines the EE REST API debug mode is activated, or not.
-     * @since $VID:$
+     * @since 4.9.76.p
      * @return bool
      */
     public static function debugMode()
