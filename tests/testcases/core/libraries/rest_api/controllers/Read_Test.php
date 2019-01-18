@@ -1383,6 +1383,9 @@ class Read_Test extends EE_REST_TestCase
     }
 
     /**
+     * Reproduces https://github.com/eventespresso/event-espresso-core/issues/903
+     * where including an innaccessible model caused the entire request to fail instead
+     * of just swapping out the response for null.
      * @since $VID:$
      * @throws EE_Error
      * @throws InvalidDataTypeException
@@ -1411,7 +1414,7 @@ class Read_Test extends EE_REST_TestCase
         );
 
         // Request to include the registrations.
-        $request = new WP_REST_Request( 'GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events');
+        $request = new WP_REST_Request( 'GET', '/' . EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $e->ID());
         $request->set_query_params(
             array(
                 'include' => 'Registration',
@@ -1423,7 +1426,7 @@ class Read_Test extends EE_REST_TestCase
         // The registrations should just be removed, we shouldn't have a big error response.
         $this->assertArrayNotHasKey('code', $data);
         $this->assertEquals($e->ID(), $data['EVT_ID']);
-        $this->assertIsNull($data['registrations']);
+        $this->assertEquals(array(), $data['registrations']);
     }
 }
 // End of file Read_Test.php

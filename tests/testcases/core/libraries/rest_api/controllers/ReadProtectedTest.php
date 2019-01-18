@@ -1319,7 +1319,7 @@ class ReadProtectedTest extends EE_REST_TestCase
     }
 
     /**
-     * Test fetching an protected model, and including an  UNprotected model (venue to country), and the wrong
+     * Test fetching an unprotected model, and including a protected model (country to venue), and the wrong
      * password is provided.
      * @since 4.9.74.p
      * @throws EE_Error
@@ -1349,7 +1349,9 @@ class ReadProtectedTest extends EE_REST_TestCase
         $response = rest_do_request($request);
         $this->assertInstanceOf('WP_REST_Response', $response);
         $data = $response->get_data();
-        $this->assertEquals('rest_post_incorrect_password', $data['code']);
+        $this->assertArrayNotHasKey('code', $data);
+        $this->assertEquals('CA', $data['CNT_ISO']);
+        $this->assertEquals(array(), $data['venues']);
     }
 
     /**
