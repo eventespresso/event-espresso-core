@@ -51,6 +51,7 @@ This does not return a value.
 | ----------- | ------ | --------------------------------------------------------- |
 | `modelName` | string | The name of the model the entities in the array belong to |
 | `entities`  | Array  | An array of `BaseEntity` instances                        |
+
 **Example:**
 ```js
 wp.dispatch( 'eventespresso/core' ).receiveEventsAndResolve( [ EventA, EventB ] );
