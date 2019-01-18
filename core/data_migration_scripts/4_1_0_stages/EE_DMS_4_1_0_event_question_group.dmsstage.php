@@ -137,13 +137,13 @@ class EE_DMS_4_1_0_event_question_group extends EE_Data_Migration_Script_Stage_T
         $cols_n_values = array(
             'EVT_ID'=>$new_event_id,
             'QSG_ID'=>$new_question_group_id,
-            EEM_Event_Question_Group::instance()->fieldNameForContext($primary) => true
+            'EQG_primary' => $primary
         );
 
         $datatypes = array(
             '%d',// EVT_ID
             '%d',// QSG_ID
-            '%d',// EQG_primary or EQG_additional
+            '%d',// EQG_primary
         );
         $success = $wpdb->insert($this->_new_table, $cols_n_values, $datatypes);
         if (! $success) {
