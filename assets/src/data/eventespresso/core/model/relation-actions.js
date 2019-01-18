@@ -197,22 +197,6 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 		actions[ getMethodName(
 			modelName,
 			'idAndRelation',
-			'removeDirtyRelationIndexFor'
-		) ] = (
-			relationName,
-			relationEntityId,
-			entityId,
-			addRelation = true,
-		) => action.removeDirtyRelationIndex(
-			relationName,
-			relationEntityId,
-			modelName,
-			entityId,
-			addRelation
-		);
-		actions[ getMethodName(
-			modelName,
-			'idAndRelation',
 			'removeDirtyRelationAdditionFor'
 		) ] = (
 			relationName,
