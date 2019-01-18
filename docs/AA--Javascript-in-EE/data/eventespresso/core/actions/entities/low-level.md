@@ -1,4 +1,4 @@
-These are actions that are used internally by other actions listed in this page and should be used with care because used incorrectly could lead to some unexpected results for persist actions.  Generally speaking, client code should avoid dispatching these actions directly.
+These are actions that are used internally by other actions and should be used with care because if used incorrectly it could lead to some unexpected results for persist actions.  Generally speaking, client code should avoid dispatching these actions directly.
 
 These are non-persisting actions.
 
