@@ -37,7 +37,7 @@ These are various actions that end up persisting the current state to the server
 | -----------------------------------------------------------------------------------| -----------------------------------------------------------------------------------|
 | [`persistDeletesForModel`](./entities/persist.md#persistdeletesformodel-modelname-)| Will persist any entity deletes currently queued in the state.                     |
 | [`persistTrashesForModel`](./entities/persist.md#persisttrashesformodel-modelname-)| Will persist any entity trashes currently queued in the state.                     |
-| [`persistAllDeletes`](./entities/persist.md#persistalldeletes--)                   | Triggers persisting all deletes and trashes queued in the state (across all models)|
+| [`persistAllDeletes`](./entities/persist.md#persistalldeletes)                     | Triggers persisting all deletes and trashes queued in the state (across all models)|
 
 ## Low Level Actions
 These are actions that are used internally by other actions listed in this page and should be used with care because used incorrectly could lead to some unexpected results for persist actions.  Generally speaking, client code should avoid dispatching these actions directly.
