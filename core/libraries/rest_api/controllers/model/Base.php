@@ -86,7 +86,7 @@ class Base extends Controller_Base
     /**
      * Verifies the model name provided was valid. If so, returns the model (as an object). Otherwise, throws an
      * exception. Must be called after `setRequestedVersion()`.
-     * @since $VID:$
+     * @since 4.9.76.p
      * @param $model_name
      * @return EEM_Base
      * @throws EE_Error
