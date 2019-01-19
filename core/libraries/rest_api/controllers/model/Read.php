@@ -981,18 +981,22 @@ class Read extends Base
                     )
                 );
                 if (! $included_items_protected) {
-                    $related_results = $this->getEntitiesFromRelationUsingModelQueryParams(
-                        $primary_model_query_params,
-                        $relation_obj,
-                        $pretend_related_request
-                    );
+                    try {
+                        $related_results = $this->getEntitiesFromRelationUsingModelQueryParams(
+                            $primary_model_query_params,
+                            $relation_obj,
+                            $pretend_related_request
+                        );
+                    } catch (RestException $e) {
+                        $related_results = null;
+                    }
                 } else {
                     // they're protected, hide them.
-                    $related_results = $relation_obj instanceof EE_Belongs_To_Relation ? null : array();
+                    $related_results = null;
                     $entity_array['_protected'][] = Read::getRelatedEntityName($relation_name, $relation_obj);
                 }
-                if ($related_results instanceof WP_Error) {
-                    $related_results = null;
+                if ($related_results instanceof WP_Error || $related_results === null) {
+                    $related_results = $relation_obj instanceof EE_Belongs_To_Relation ? null : array();
                 }
                 $entity_array[ Read::getRelatedEntityName($relation_name, $relation_obj) ] = $related_results;
             }
