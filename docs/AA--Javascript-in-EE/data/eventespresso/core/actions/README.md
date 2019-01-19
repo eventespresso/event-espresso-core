@@ -34,6 +34,10 @@ These are various actions that end up persisting the current state to the server
 | [`persistEntityRecord`](./entities/persist.md#persistentityrecord-modelname-entity-)     |Dispatch action that persists the given entity to the server if it is new or has changes.                                       |
 | [`persistForEntityId`](./entities/persist.md#persistforentityid-modelname-entityid-)     |Dispatch action that persists an entity in the state matching the given id if it is new or has changes.                         |
 | [`persistForEntityIds`](./entities/persist.md#persistforentityids-modelname-entityids---)|Dispatch action that persists any entities currently in the state that match the given entity ids when they are new or changed. |
+| [`persistAddRelationsForModel`](./relations/persist.md#persistaddrelationsformodel-modelname-)                                                                         | Triggers persisting any queued relation additions for the given model to the database                                 |
+| [`persistRelationsForEntityId`](./relations/persist.md#persistrelationsforentityid-modelname-entityid-addrelation---)                                                  | Persists relations for the given model and entity id and given type (add or delete)                                   |
+| [`persistRelationsForEntityIdAndRelation`](./relations/persist.md#persistrelatoinsforentityidandrelation-modelname-entityid-relationname-add-relation---)              | Persists relations for the given entity and relation entities belonging to the given relation model for the given type|
+| [`persistRelationsForEntityIdAndRelationId`](./relations/persist.md#persistrelationsforentityidandrelationid-modelname-entityid-relationname-relationid-addrelation---)| Persists relations for the given entity and relation entity and given type                                            |
 
 ### Delete
 
@@ -42,11 +46,11 @@ These are various actions that end up persisting the current state to the server
 | [`persistDeletesForModel`](./entities/persist.md#persistdeletesformodel-modelname-)                                                                                    | Will persist any entity deletes currently queued in the state.                                                        |
 | [`persistTrashesForModel`](./entities/persist.md#persisttrashesformodel-modelname-)                                                                                    | Will persist any entity trashes currently queued in the state.                                                        |
 | [`persistAllDeletes`](./entities/persist.md#persistalldeletes)                                                                                                         | Triggers persisting all deletes and trashes queued in the state (across all models)                                   |
-| [`persistAddRelationsForModel`](./relations/persist.md#persistaddrelationsformodel-modelname-)                                                                         | Triggers persisting any queued relation additions for the given model to the database                                 |
 | [`persistDeleteRelationsForModel`](./relations/persist.md#persistdeleterelationsformodel-modelname-)                                                                   | Triggers persisting any queued relation deletions for the given model to the database                                 |
 | [`persistRelationsForEntityId`](./relations/persist.md#persistrelationsforentityid-modelname-entityid-addrelation---)                                                  | Persists relations for the given model and entity id and given type (add or delete)                                   |
 | [`persistRelationsForEntityIdAndRelation`](./relations/persist.md#persistrelatoinsforentityidandrelation-modelname-entityid-relationname-add-relation---)              | Persists relations for the given entity and relation entities belonging to the given relation model for the given type|
 | [`persistRelationsForEntityIdAndRelationId`](./relations/persist.md#persistrelationsforentityidandrelationid-modelname-entityid-relationname-relationid-addrelation---)| Persists relations for the given entity and relation entity and given type                                            |
+
 
 ## Low Level Actions
 These are actions that are used internally by other actions listed in this page and should be used with care because used incorrectly could lead to some unexpected results for persist actions.  Generally speaking, client code should avoid dispatching these actions directly.
