@@ -257,13 +257,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
         if( $also_decrease_reserved) {
             $success = $this->adjustNumericFieldsInDb(
                 [
+                    'DTT_reserved' => $qty * -1,
                     'DTT_sold' => $qty
                 ]
             );
         } else {
             $success = $this->adjustNumericFieldsInDb(
                 [
-                    'DTT_reserved' => $qty * -1,
                     'DTT_sold' => $qty
                 ]
             );

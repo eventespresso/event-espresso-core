@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
@@ -22,9 +25,8 @@ class EE_Datetime_Test extends EE_UnitTestCase{
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @group current
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
 	function test_increase_sold(){
 	    $original_sold_count = 5;

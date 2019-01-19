@@ -1212,7 +1212,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @group current
      */
     public function testAdjustNumericFieldsInDb()
     {
