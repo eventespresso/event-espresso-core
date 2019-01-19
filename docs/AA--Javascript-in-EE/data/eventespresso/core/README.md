@@ -22,16 +22,9 @@ const MyEvent = withSelect( ( select, ownProps )  => {
   event: select( 'eventespresso/core' ).getEventById( ownProps.eventId  );
 } )( MyEventBase );
 ```
-All the dispatch actions and selectors for this data store are split into their own documentation.
+All the dispatch actions and selectors for this data store are split into their own documentation:
 
-## Actions
-| type                           | description                                                 |
-| -------------------------------| ------------------------------------------------------------|
-| [entities](./entity-actions)   | All dispatch actions for single or multiple entities.       |
-| [relations](./relation-actions)| All dispatch actions for working with relations to entities.|
-
-## Selectors
-| type                                | description                                     |
-| ------------------------------------| ----------------------------------------------- |
-| [entities](./entity-selectors.md)   | Selectors for retrieving entities.              |
-| [relations](./relation-selectors.md)| Selectors for retrieving relations to entities. |
+| Document                          | Description                                     |
+| ----------------------------------| ------------------------------------------------|
+| [Actions](./actions/README.md)    | All actions for the `eventespresso/core` store  |
+| [Selectors](./selectors/README.md)| All selectors for the `eventespresso/core` store|
