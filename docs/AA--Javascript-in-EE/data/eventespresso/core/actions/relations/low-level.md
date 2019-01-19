@@ -93,7 +93,7 @@ This does not return a value.
 wp.data.dispatch( 'eventespresso/core' ).receiveUpdatedEntityIdForRelations( 'event', 'cjr289a0y00003g8rgzhkrwv5', 24 );
 ```
 
-## `removeAllRelatedEntitiesforModelEntity( modelName, entityId`
+## `removeAllRelatedEntitiesforModelEntity( modelName, entityId )`
 
 This dispatch action removes all indexed relations for the given specific entity from the state.  This includes:
 
