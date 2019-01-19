@@ -3088,7 +3088,7 @@ abstract class EE_Base_Class
             throw new InvalidArgumentException(
                 esc_html__(
                     'EE_Base_Class::updateFieldsInDB was passed an empty array of fields.',
-                'event_espresso'
+                    'event_espresso'
                 )
             );
         }

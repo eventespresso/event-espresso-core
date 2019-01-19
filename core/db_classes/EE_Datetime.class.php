@@ -254,7 +254,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     public function increaseSold($qty = 1, $also_decrease_reserved = true)
     {
         $qty = absint($qty);
-        if( $also_decrease_reserved) {
+        if ($also_decrease_reserved) {
             $success = $this->adjustNumericFieldsInDb(
                 [
                     'DTT_reserved' => $qty * -1,

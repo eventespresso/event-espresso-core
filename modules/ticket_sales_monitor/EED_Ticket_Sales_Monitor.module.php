@@ -305,7 +305,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             }
             $this->_ticket_quantity_decremented($ticket);
         }
-        if( $this->_reserve_ticket($ticket, $qty) ){
+        if ($this->_reserve_ticket($ticket, $qty)) {
             return $qty;
         } else {
             return 0;

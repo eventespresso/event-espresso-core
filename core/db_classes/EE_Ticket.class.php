@@ -917,7 +917,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         $this->add_extra_meta(EE_Ticket::META_KEY_TICKET_RESERVATIONS, "{$qty} from {$source}");
         $success = false;
         $datetimes_adjusted_successfully = $this->increaseReservedForDatetimes($qty);
-        if( $datetimes_adjusted_successfully ) {
+        if ($datetimes_adjusted_successfully) {
             $success = $this->incrementFieldConditionallyInDb(
                 'TKT_reserved',
                 'TKT_sold',
@@ -972,7 +972,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
             }
             // If somewhere along the way we detected a datetime whose
             // limit was exceeded, do a manual rollback.
-            if( $limit_exceeded ) {
+            if ($limit_exceeded) {
                 $this->decreaseReservedForDatetimes($qty, $datetimes_updated);
                 return false;
             }
