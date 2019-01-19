@@ -1204,4 +1204,34 @@ class EE_Base_Class_Test extends EE_UnitTestCase
             spl_object_hash($new_ee_datetime->internalDateTimeObject('MCK_datetime'))
         );
     }
+
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @group current
+     */
+    public function testAdjustNumericFieldsInDb()
+    {
+        $original_sold_count = 5;
+        $original_reserved_count = 10;
+        $d = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            [
+                'DTT_sold' => $original_sold_count,
+                'DTT_reserved' => $original_reserved_count
+            ]
+        );
+        $d->adjustNumericFieldsInDb(
+            [
+                    'DTT_sold' => 1,
+                    'DTT_reserved' => -1,
+            ]
+        );
+        $this->assertEquals($original_sold_count + 1, $d->sold());
+        $this->assertEquals($original_reserved_count - 1, $d->reserved());
+    }
 }

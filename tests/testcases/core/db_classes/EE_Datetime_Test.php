@@ -17,13 +17,32 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_Datetime_Test extends EE_UnitTestCase{
 
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @group current
+     */
 	function test_increase_sold(){
-		$d = EE_Datetime::new_instance();
-		$this->assertEquals($d->get('DTT_sold'),0);
+	    $original_sold_count = 5;
+	    $original_reserved_count = 10;
+		$d = EE_Datetime::new_instance(
+		    [
+		        'DTT_sold' => $original_sold_count,
+                'DTT_reserved' => $original_reserved_count
+            ]
+        );
+		$this->assertEquals($d->get('DTT_sold'), $original_sold_count);
+        $this->assertEquals($d->get('DTT_reserved'), $original_reserved_count);
 		$d->increaseSold();
-		$this->assertEquals($d->get('DTT_sold'),1);
-		$d->increaseSold(2);
-		$this->assertEquals($d->get('DTT_sold'),3);
+		$this->assertEquals($d->get('DTT_sold'), $original_sold_count + 1);
+        $this->assertEquals($d->get('DTT_reserved'), $original_reserved_count - 1);
+		$d->increaseSold(2, false);
+		$this->assertEquals($d->get('DTT_sold'), $original_sold_count + 3);
+        $this->assertEquals($d->get('DTT_reserved'), $original_reserved_count - 1);
 	}
 	function test_decrease_sold(){
 		$d = EE_Datetime::new_instance(array('DTT_sold'=>5));
