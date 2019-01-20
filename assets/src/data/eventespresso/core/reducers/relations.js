@@ -259,7 +259,9 @@ const replaceRelationRecords = (
 						false
 					);
 				} else {
-					relationRecord = relationRecord.add( newEntityId );
+					relationRecord = removeOnly ?
+						relationRecord :
+						relationRecord.add( newEntityId );
 					subState.setIn( relationPath, relationRecord );
 				}
 			}
