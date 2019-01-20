@@ -166,8 +166,7 @@ function* persistDeletesForModel( modelName ) {
 			data: { force: true },
 			method: 'DELETE',
 		} );
-		const success = response.deleted || false;
-		if ( success ) {
+		if ( response.deleted ) {
 			deletedIds.push( entityId );
 			yield removeDeleteEntityId( modelName, entityId );
 		}
