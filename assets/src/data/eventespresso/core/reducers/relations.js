@@ -130,7 +130,9 @@ function receiveAndRemoveRelations( state, action ) {
 					normalizeEntityId( id )
 				)
 			);
-			if ( idsAfterRemoval === existingIds ) {
+			// Immutable.Set().filter() returns new instance, so let's compare
+			// size.
+			if ( idsAfterRemoval.count() === existingIds.count() ) {
 				return state;
 			}
 			if ( ! idsAfterRemoval.isEmpty() ) {
