@@ -171,6 +171,7 @@ function removeDirtyRelationDeletion(
 		relationEntityId,
 		modelName,
 		entityId,
+		false,
 	);
 }
 
