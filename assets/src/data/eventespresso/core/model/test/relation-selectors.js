@@ -17,7 +17,8 @@ describe( 'createSelectors()', () => {
 			'getQueuedEventAdditionRelations',
 			[ mockStateForTests ],
 			selectors.getRelationAdditionsQueuedForModel(
-				mockStateForTests, 'event'
+				mockStateForTests,
+				'event'
 			),
 		],
 		[
