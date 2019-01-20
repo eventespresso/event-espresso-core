@@ -87,18 +87,12 @@ const setRelationIndex = ( state, relationData, removal = false ) => {
 		const relationId = relationIds.shift();
 		const path = [ 'index', relationName, relationId, modelName ];
 		let existingIds = state.getIn( path ) || Set();
-		if ( removal ) {
-			existingIds = existingIds.delete(
-				entityId
-			);
-		} else {
-			existingIds = existingIds.add( entityId );
-		}
-		if ( ! existingIds.isEmpty() ) {
-			state = state.setIn( path, existingIds );
-		} else {
-			state = removeEmptyFromState( state, path );
-		}
+		existingIds = removal ?
+			existingIds.delete( entityId ) :
+			existingIds.add( entityId );
+		state = existingIds.isEmpty() ?
+			removeEmptyFromState( state, path ) :
+			state.setIn( path, existingIds );
 	}
 	return state;
 };
