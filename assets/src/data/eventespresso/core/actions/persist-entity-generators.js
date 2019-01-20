@@ -132,12 +132,11 @@ function* persistForEntityIds( modelName, entityIds = [] ) {
 	const retrievedIds = Array.from( retrievedEntities.keys() );
 	const persistedEntities = {};
 	while ( retrievedIds.length > 0 ) {
-		const id = retrievedIds.shift();
 		const persistedEntity = yield dispatch(
 			CORE_REDUCER_KEY,
 			'persistEntityRecord',
 			modelName,
-			retrievedEntities.get( id )
+			retrievedEntities.get( retrievedIds.pop() )
 		);
 		if ( isModelEntityOfModel( persistedEntity, modelName ) ) {
 			persistedEntities[ persistedEntity.id ] = persistedEntity;
@@ -160,7 +159,7 @@ function* persistDeletesForModel( modelName ) {
 	);
 	const deletedIds = [];
 	while ( entityIds.length > 0 ) {
-		const entityId = entityIds.shift();
+		const entityId = entityIds.pop();
 		const response = yield fetch( {
 			path: applyQueryString( modelName ) + '/' + entityId,
 			data: { force: true },
@@ -188,7 +187,7 @@ function* persistTrashesForModel( modelName ) {
 	);
 	const trashedIds = [];
 	while ( entityIds.length > 0 ) {
-		const entityId = entityIds.shift();
+		const entityId = entityIds.pop();
 		const success = yield fetch( {
 			path: applyQueryString( modelName ) + '/' + entityId,
 			method: 'DELETE',
@@ -216,7 +215,7 @@ function* persistAllDeletes() {
 	const deletedIds = {},
 		trashedIds = {};
 	while ( modelsForDelete.length > 0 ) {
-		const modelForDelete = modelsForDelete.shift();
+		const modelForDelete = modelsForDelete.pop();
 		const idsDeleted = yield persistDeletesForModel( modelForDelete );
 		if ( ! isEmpty( idsDeleted ) ) {
 			deletedIds[ modelForDelete ] = idsDeleted;
@@ -227,7 +226,7 @@ function* persistAllDeletes() {
 		'getModelsQueuedForTrash'
 	);
 	while ( modelsForTrash.length > 0 ) {
-		const modelForTrash = modelsForTrash.shift();
+		const modelForTrash = modelsForTrash.pop();
 		const idsTrashed = yield persistTrashesForModel( modelForTrash );
 		if ( ! isEmpty( idsTrashed ) ) {
 			trashedIds[ modelForTrash ] = idsTrashed;

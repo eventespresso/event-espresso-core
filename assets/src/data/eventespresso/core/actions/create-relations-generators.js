@@ -109,10 +109,9 @@ function* createRelations(
 	);
 	relationIds = [ ...relationIds ];
 	while ( relationIds.length > 0 ) {
-		const relationId = relationIds.shift();
 		yield receiveDirtyRelationAddition(
 			relationName,
-			relationId,
+			relationIds.pop(),
 			modelName,
 			entityId,
 		);

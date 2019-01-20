@@ -57,7 +57,7 @@ const normalizedReceiveAndRemoveRelations = ( state, action ) => {
 		};
 		// loop through each existing relation id and get the state for each
 		while ( relatedEntityIds.length > 0 ) {
-			newAction.entityId = relatedEntityIds.shift();
+			newAction.entityId = relatedEntityIds.pop();
 			state = receiveAndRemoveRelations( state, newAction );
 		}
 		return state;

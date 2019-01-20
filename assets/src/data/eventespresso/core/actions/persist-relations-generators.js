@@ -62,7 +62,7 @@ function* persistRelationsForModel( modelName, addRelation = true ) {
 	const relationsPersisted = {};
 	const entityIds = keys( relationState );
 	while ( entityIds.length > 0 ) {
-		const entityId = entityIds.shift();
+		const entityId = entityIds.pop();
 		const persistedRelations = yield persistRelationsForEntityId(
 			modelName,
 			entityId,
@@ -112,7 +112,7 @@ function* persistRelationsForEntityId(
 	}
 	const persistedRelations = {};
 	while ( relationNames.length > 0 ) {
-		const relationName = relationNames.shift();
+		const relationName = relationNames.pop();
 		const persistedRelationIds =
 			yield persistRelationsForEntityIdAndRelation(
 				modelName,
@@ -169,7 +169,7 @@ function* persistRelationsForEntityIdAndRelation(
 				modelName,
 				entityId,
 				relationName,
-				relationEntityIds.shift(),
+				relationEntityIds.pop(),
 				addRelation,
 				relationState
 			);

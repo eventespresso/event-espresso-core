@@ -115,7 +115,7 @@ export function* resolveGetEntityByIdForIds( modelName, entityIds ) {
 			'finishResolution',
 			CORE_REDUCER_KEY,
 			'getEntityById',
-			[ modelName, entityIds.shift() ]
+			[ modelName, entityIds.pop() ]
 		);
 	}
 }
@@ -134,7 +134,7 @@ export function* resolveGetRelatedEntities(
 	relationIds
 ) {
 	while ( relationIds.length > 0 ) {
-		const relationEntity = relationEntities.get( relationIds.shift() );
+		const relationEntity = relationEntities.get( relationIds.pop() );
 		if ( relationEntity ) {
 			yield dispatch(
 				'core/data',
