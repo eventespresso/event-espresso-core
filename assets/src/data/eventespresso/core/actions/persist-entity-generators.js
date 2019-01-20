@@ -39,14 +39,20 @@ import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
  * returned.  Otherwise null.
  */
 function* persistEntityRecord( modelName, entity ) {
-	// if this is not a model entity or its not dirty then bail.
-	if ( ! isModelEntityOfModel( entity, modelName ) || entity.isClean ) {
+	// check if is an instance of BaseEntity
+	if ( ! isModelEntityOfModel( entity, modelName ) ) {
 		warning(
 			false,
-			isModelEntityOfModel( entity, modelName ) ?
-				'The entity provided has no changes to persist.' :
-				'The provided entity is not a BaseEntity child for the ' +
-				'provided model'
+			'The provided entity is not a BaseEntity child for the ' +
+			'provided model'
+		);
+		return null;
+	}
+	// check if there are any changes in the entity
+	if ( entity.isClean ) {
+		warning(
+			false,
+			'The entity provided has no changes to persist'
 		);
 		return null;
 	}
