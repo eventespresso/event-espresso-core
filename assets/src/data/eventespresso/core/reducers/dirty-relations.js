@@ -41,7 +41,7 @@ const relationExistsInMap = ( relationMap, queueType, entityId ) => {
  * @param {Immutable.Map} relationMap
  * @return {boolean} True means the relation exists in the state.
  */
-const relationExistsAlready = ( state, action, relationMap ) => {
+const hasRelation = ( state, action, relationMap ) => {
 	const {
 		relationEntityId,
 		entityId,
@@ -164,10 +164,10 @@ function requiresUpdate( state, action, relationMap ) {
 	switch ( action.type ) {
 		case types.RECEIVE_DIRTY_RELATION_ADDITION:
 		case types.RECEIVE_DIRTY_RELATION_DELETION:
-			return ! relationExistsAlready( state, action, relationMap );
+			return ! hasRelation( state, action, relationMap );
 		case types.REMOVE_DIRTY_RELATION_ADDITION:
 		case types.REMOVE_DIRTY_RELATION_DELETION:
-			return relationExistsAlready( state, action, relationMap );
+			return hasRelation( state, action, relationMap );
 	}
 	return false;
 }
