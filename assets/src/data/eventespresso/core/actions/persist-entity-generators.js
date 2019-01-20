@@ -44,7 +44,7 @@ function* persistEntityRecord( modelName, entity ) {
 		warning(
 			false,
 			'The provided entity is not a BaseEntity child for the ' +
-			'provided model'
+			'provided model.'
 		);
 		return null;
 	}
@@ -52,7 +52,7 @@ function* persistEntityRecord( modelName, entity ) {
 	if ( entity.isClean ) {
 		warning(
 			false,
-			'The entity provided has no changes to persist'
+			'The entity provided has no changes to persist.'
 		);
 		return null;
 	}

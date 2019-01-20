@@ -46,7 +46,7 @@ describe( 'persistEntityRecord()', () => {
 		const { value, done } = fulfillment.next();
 		expect( console ).toHaveErroredWith(
 			'Warning: The provided entity is not a BaseEntity child for the ' +
-			'provided model'
+			'provided model.'
 		);
 		expect( value ).toBe( null );
 		expect( done ).toBe( true );
@@ -218,14 +218,14 @@ describe( 'persistForEntityIds()', () => {
 			CORE_REDUCER_KEY,
 			'persistEntityRecord',
 			'event',
-			EventEntities.b
+			EventEntities.c
 		) );
 		value = fulfillment.next( EventEntities.b ).value;
 		expect( value ).toEqual( dispatch(
 			CORE_REDUCER_KEY,
 			'persistEntityRecord',
 			'event',
-			EventEntities.c
+			EventEntities.b
 		) );
 	} );
 	it( 'returns expected response for successful persistence', () => {
@@ -262,30 +262,30 @@ describe( 'persistDeletesForModel', () => {
 		fulfillment.next();
 		const { value: fetchAction } = fulfillment.next( [ 10, 20 ] );
 		expect( fetchAction ).toEqual( fetch( {
-			path: '/ee/v4.8.36/events/10',
+			path: '/ee/v4.8.36/events/20',
 			data: { force: true },
 			method: 'DELETE',
 		} ) );
 		const { value: removeAction } = fulfillment.next( { deleted: true } );
 		expect( removeAction ).toEqual( removeDeleteEntityId(
 			'event',
-			10
+			20
 		) );
 		const { value: fetchAction2 } = fulfillment.next();
 		expect( fetchAction2 ).toEqual( fetch( {
-			path: '/ee/v4.8.36/events/20',
+			path: '/ee/v4.8.36/events/10',
 			data: { force: true },
 			method: 'DELETE',
 		} ) );
 		const { value: removeAction2 } = fulfillment.next( { deleted: true } );
 		expect( removeAction2 ).toEqual( removeDeleteEntityId(
 			'event',
-			20,
+			10,
 		) );
 	} );
 	it( 'returns expected array of ids for persisted deletes', () => {
 		const { value, done } = fulfillment.next();
-		expect( value ).toEqual( [ 10, 20 ] );
+		expect( value ).toEqual( [ 20, 10 ] );
 		expect( done ).toBe( true );
 	} );
 } );
@@ -315,28 +315,28 @@ describe( 'persistTrashesForModel()', () => {
 		fulfillment.next();
 		const { value: fetchAction } = fulfillment.next( [ 10, 20 ] );
 		expect( fetchAction ).toEqual( fetch( {
-			path: '/ee/v4.8.36/events/10',
+			path: '/ee/v4.8.36/events/20',
 			method: 'DELETE',
 		} ) );
 		const { value: removeAction } = fulfillment.next( true );
 		expect( removeAction ).toEqual( removeTrashEntityId(
 			'event',
-			10
+			20
 		) );
 		const { value: fetchAction2 } = fulfillment.next();
 		expect( fetchAction2 ).toEqual( fetch( {
-			path: '/ee/v4.8.36/events/20',
+			path: '/ee/v4.8.36/events/10',
 			method: 'DELETE',
 		} ) );
 		const { value: removeAction2 } = fulfillment.next( true );
 		expect( removeAction2 ).toEqual( removeTrashEntityId(
 			'event',
-			20,
+			10,
 		) );
 	} );
 	it( 'returns expected array of ids for persisted trashes', () => {
 		const { value, done } = fulfillment.next();
-		expect( value ).toEqual( [ 10, 20 ] );
+		expect( value ).toEqual( [ 20, 10 ] );
 		expect( done ).toBe( true );
 	} );
 } );
@@ -379,12 +379,12 @@ describe( 'persistAllDeletes()', () => {
 		const { value, done } = fulfillment.next( [ 70, 80 ] );
 		expect( value ).toEqual( {
 			deleted: {
-				event: [ 10, 20 ],
-				datetime: [ 30, 40 ],
+				event: [ 30, 40 ],
+				datetime: [ 10, 20 ],
 			},
 			trashed: {
-				ticket: [ 50, 60 ],
-				registration: [ 70, 80 ],
+				ticket: [ 70, 80 ],
+				registration: [ 50, 60 ],
 			},
 		} );
 		expect( done ).toBe( true );

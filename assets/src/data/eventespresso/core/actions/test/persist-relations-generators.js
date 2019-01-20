@@ -124,8 +124,8 @@ describe( 'persistRelationsForEntityId()', () => {
 	it( 'returns an object of relations and ids that were persisted', () => {
 		const { value, done } = fulfillment.next( [ 30, 40 ] );
 		expect( value ).toEqual( {
-			datetime: [ 10, 20 ],
-			message_template: [ 30, 40 ],
+			datetime: [ 30, 40 ],
+			message_template: [ 10, 20 ],
 		} );
 		expect( done ).toBe( true );
 	} );

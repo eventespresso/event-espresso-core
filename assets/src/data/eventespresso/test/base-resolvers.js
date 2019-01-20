@@ -178,9 +178,9 @@ describe( 'resolveGetEntityByIdForIds()', () => {
 		);
 		reset();
 		const { value: firstValue } = fulfillment.next();
-		expect( firstValue ).toEqual( dispatchAction( 10 ) );
+		expect( firstValue ).toEqual( dispatchAction( 20 ) );
 		const { value: secondValue } = fulfillment.next();
-		expect( secondValue ).toEqual( dispatchAction( 20 ) );
+		expect( secondValue ).toEqual( dispatchAction( 10 ) );
 		const { value, done } = fulfillment.next();
 		expect( value ).toBeUndefined();
 		expect( done ).toBe( true );

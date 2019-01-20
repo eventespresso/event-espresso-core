@@ -110,7 +110,7 @@ describe( 'createRelations()', () => {
 	} );
 	describe( 'yields action objects for receiving dirty relations (for all ' +
 		'expected ids)', () => {
-		[ 20, 30 ].forEach( ( relationId ) => {
+		[ 30, 20 ].forEach( ( relationId ) => {
 			[ receiveDirtyRelationAddition ].forEach(
 				( actionMethod ) => {
 					it( actionMethod.name + '()', () => {
