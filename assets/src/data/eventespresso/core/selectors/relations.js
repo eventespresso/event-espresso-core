@@ -241,14 +241,14 @@ const countRelationModelsIndexedForEntity = createSelector(
 		entityId = normalizeEntityId( entityId );
 		// first from the entityMap
 		let countRelations = (
-			state.relations.getIn( [ 'entityMap', singleName, entityId ] ) ||
-				Map()
+			state.relations
+				.getIn( [ 'entityMap', singleName, entityId ] ) || Map()
 		).count();
 
 		// consider maybe in the index (exists as a relation for another model)
 		countRelations += (
-			state.relations.getIn( [ 'index', pluralName, entityId ] ) ||
-				Map()
+			state.relations
+				.getIn( [ 'index', pluralName, entityId ] ) || Map()
 		).count();
 		return countRelations;
 	},
