@@ -23,11 +23,10 @@ function shouldBeAppended( pathType, options ) {
 }
 
 /**
- * Middleware for the @wordpress/api-fetch library that appends the query arg
- * context with the value of `read_admin` to every get request to an
- * ee/v4.8.36 endpoint.
+ * Middleware for the @wordpress/api-fetch library that the given context
+ * to the `caps` query arg on every EE GET request.
  *
- * @param { string } context
+ * @param { string } context Defaults to 'read'
  * @return {function} middleware callback
  */
 const capsMiddleware = ( context = CONTEXT_CAPS_READ ) => ( options, next ) => {
