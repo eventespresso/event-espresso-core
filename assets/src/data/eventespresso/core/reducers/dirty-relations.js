@@ -470,6 +470,23 @@ const clearRelatedEntitiesForEntity = (
 		entityIdRemoved,
 	];
 
+	const clearEntityIdsInPath = ( subState, path ) => {
+		if ( subState.hasIn( path ) ) {
+			let entityIds = subState.getIn( path ) || Set();
+			entityIds = entityIds.delete( entityIdRemoved );
+			if ( ! entityIds.isEmpty() ) {
+				subState.setIn( path, entityIds );
+			} else {
+				removeEmptyFromState(
+					subState,
+					path,
+					1,
+					false
+				);
+			}
+		}
+	};
+
 	if ( state.hasIn( recordPath ) ) {
 		state = state.withMutations( ( subState ) => {
 			const mainRecord = subState.getIn( recordPath );
@@ -482,27 +499,16 @@ const clearRelatedEntitiesForEntity = (
 			mainRecord.forEach( ( relationRecord, relationModelName ) => {
 				if ( relationRecord instanceof Set ) {
 					relationRecord.forEach( ( relationId ) => {
-						const path = [
-							'index',
-							relationModelName,
-							relationId,
-							modelRemoved,
-							indexType,
-						];
-						if ( subState.hasIn( path ) ) {
-							let entityIds = subState.getIn( path ) || Set();
-							entityIds = entityIds.delete( entityIdRemoved );
-							if ( ! entityIds.isEmpty() ) {
-								subState.setIn( path, entityIds );
-							} else {
-								removeEmptyFromState(
-									subState,
-									path,
-									1,
-									false
-								);
-							}
-						}
+						clearEntityIdsInPath(
+							subState,
+							[
+								'index',
+								relationModelName,
+								relationId,
+								modelRemoved,
+								indexType,
+							]
+						);
 					} );
 				} else if (
 					relationTypes !== null &&
@@ -514,29 +520,15 @@ const clearRelatedEntitiesForEntity = (
 								relationType
 							) || Set();
 							relationIds.forEach( ( relationId ) => {
-								const path = [
-									relationType,
-									relationModelName,
-									relationId,
-									modelRemoved,
-								];
-								if ( subState.hasIn( path ) ) {
-									let entityIds = subState.getIn( path ) ||
-										Set();
-									entityIds = entityIds.delete(
-										entityIdRemoved
-									);
-									if ( ! entityIds.isEmpty() ) {
-										subState.setIn( path, entityIds );
-									} else {
-										removeEmptyFromState(
-											subState,
-											path,
-											1,
-											false
-										);
-									}
-								}
+								clearEntityIdsInPath(
+									subState,
+									[
+										relationType,
+										relationModelName,
+										relationId,
+										modelRemoved,
+									]
+								);
 							} );
 						}
 					} );
