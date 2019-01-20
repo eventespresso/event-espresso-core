@@ -250,12 +250,7 @@ const replaceRelationRecords = (
 					modelName,
 				];
 				let relationRecord = subState.getIn( relationPath ) || Set();
-				relationRecord = removeOnly ?
-					relationRecord
-						.delete( oldEntityId ) :
-					relationRecord
-						.delete( oldEntityId )
-						.add( newEntityId );
+				relationRecord = relationRecord.delete( oldEntityId );
 				if ( removeOnly && relationRecord.isEmpty() ) {
 					removeEmptyFromState(
 						subState,
@@ -264,6 +259,7 @@ const replaceRelationRecords = (
 						false
 					);
 				} else {
+					relationRecord = relationRecord.add( newEntityId );
 					subState.setIn( relationPath, relationRecord );
 				}
 			}
