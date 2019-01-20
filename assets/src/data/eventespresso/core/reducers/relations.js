@@ -226,9 +226,7 @@ const replaceRelationRecords = (
 		subState.deleteIn( oldEntityPath );
 		oldEntityPath.pop();
 		if ( removeOnly ) {
-			if (
-				subState.getIn( oldEntityPath ).isEmpty()
-			) {
+			if ( subState.getIn( oldEntityPath ).isEmpty() ) {
 				subState.deleteIn( oldEntityPath );
 			}
 		} else {
