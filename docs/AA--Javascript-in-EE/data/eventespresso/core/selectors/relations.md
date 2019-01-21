@@ -79,7 +79,7 @@ const relationAdditionsQueuedForEvent = wp.data.select( 'eventespresso/core' )
     .getRelationAdditionsQueuedForModel( 'event' );
 ```
 
-`getRelationDeletionsQueuedForModel( modelName )`
+## `getRelationDeletionsQueuedForModel( modelName )`
 
 Retrieves all the queued relation deletions in the state for the given model.
 
