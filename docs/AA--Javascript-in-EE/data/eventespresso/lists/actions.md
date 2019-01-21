@@ -33,8 +33,7 @@ Action creator for receiving an array of model entity instances for the given mo
 | `queryString` | string | The query string used in the rest request for retrieving the entities. |
 | `entities`    | Array  | An array of `BaseEntity` instances for storage in the state.           |
 
-
-#### Example
+### Example
 ```js
 wp.data.dispatch( 'eventespresso/lists' ).receiveEntityResponse( 'event', '?where[TermRelationship.Term_Taxonomy.Term.slug]=minus-the-bear', eventsFromResponse );
 ```
