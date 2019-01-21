@@ -50,7 +50,7 @@ Returns the model entity for the given model name and entity id.  The id is expe
 
 This selector has automatically generated model specific equivalents that can be used: `getEventById`, `getDatetimeById` etc.  When using a model specific equivalent you only need to pass along the `entityId` argument.
 
-**Note:** Due to this being a resolved value, it is important to consider that `null` _might_ could be returned while in resolution.  It is recommended to use `wp.data.subscribe` to ensure whatever is using the value updates appropriately when the state changes.
+**Note:** Due to this being a resolved value, it is important to consider that `null` _could_ be returned while in resolution.  It is recommended to use `wp.data.subscribe` to ensure whatever is using the value updates appropriately when the state changes.
 
   If the entity is not in the state or cannot be resolved, `null` is returned. 
 
