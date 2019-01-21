@@ -2545,6 +2545,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @throws RuntimeException
      */
     public function recalculateLineItems()
     {
@@ -2561,7 +2562,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             && EEH_Money::compare_floats($transaction->total(), $total_line_item->total(), '!=')
         ) {
             $transaction->set_total($total_line_item->total());
-            $success = $transaction->save();
+            $success = $transaction->update_status_based_on_total_paid();
         }
         $this->_redirect_after_action(
             (bool) $success,
