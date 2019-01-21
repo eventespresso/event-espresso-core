@@ -376,7 +376,7 @@ class Write extends Base
 
     /**
      * Adds a relation between the specified models (if it doesn't already exist.)
-     * @since $VID:$
+     * @since 4.9.76.p
      * @param WP_REST_Request $request
      * @return WP_REST_Response
      */
@@ -401,7 +401,7 @@ class Write extends Base
 
     /**
      * Adds a relation between the two model specified model objects.
-     * @since $VID:$
+     * @since 4.9.76.p
      * @param EEM_Base $model
      * @param EE_Model_Relation_Base $relation
      * @param WP_REST_Request $request
@@ -455,7 +455,7 @@ class Write extends Base
 
     /**
      * Removes the relation between the specified models (if it exists).
-     * @since $VID:$
+     * @since 4.9.76.p
      * @param WP_REST_Request $request
      * @return WP_REST_Response
      */
@@ -479,7 +479,7 @@ class Write extends Base
 
     /**
      * Adds a relation between the two model specified model objects.
-     * @since $VID:$
+     * @since 4.9.76.p
      * @param EEM_Base $model
      * @param EE_Model_Relation_Base $relation
      * @param WP_REST_Request $request
@@ -549,7 +549,7 @@ class Write extends Base
      * Gets the model objects indicated by the model, relation object, and request.
      * Throws an exception if the first object doesn't exist, and currently if the related object also doesn't exist.
      * However, this behaviour may change, as we may add support for simultaneously creating and relating data.
-     * @since $VID:$
+     * @since 4.9.76.p
      * @param EEM_Base $model
      * @param EE_Model_Relation_Base $relation
      * @param WP_REST_Request $request
@@ -588,7 +588,7 @@ class Write extends Base
 
     /**
      * Gets the model with that ID or throws a REST exception.
-     * @since $VID:$
+     * @since 4.9.76.p
      * @param EEM_Base $model
      * @param $id
      * @return EE_Base_Class

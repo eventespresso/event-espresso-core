@@ -159,7 +159,7 @@ class EspressoEventAttendees extends EspressoShortcode
                 'status'              => EEM_Registration::status_id_approved,
                 'show_gravatar'       => false,
                 'display_on_archives' => false,
-                'limit'               => 10,
+                'limit'               => 999,
             )
         );
     }
