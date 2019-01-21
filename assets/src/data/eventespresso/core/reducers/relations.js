@@ -84,8 +84,7 @@ const setRelationIndex = ( state, relationData, removal = false ) => {
 	const relationName = pluralModelName( relationData.relationName );
 	const relationIds = [ ...relatedEntityIds ];
 	while ( relationIds.length > 0 ) {
-		const relationId = relationIds.shift();
-		const path = [ 'index', relationName, relationId, modelName ];
+		const path = [ 'index', relationName, relationIds.pop(), modelName ];
 		let existingIds = state.getIn( path ) || Set();
 		existingIds = removal ?
 			existingIds.delete( entityId ) :
@@ -242,11 +241,10 @@ const replaceRelationRecords = (
 		relationIds = relationIds.toArray();
 		state = state.withMutations( ( subState ) => {
 			while ( relationIds.length > 0 ) {
-				const relationId = relationIds.shift();
 				const relationPath = [
 					loopProperty,
 					relationName,
-					relationId,
+					relationIds.pop(),
 					modelName,
 				];
 				let relationRecord = subState.getIn( relationPath ) || Set();
