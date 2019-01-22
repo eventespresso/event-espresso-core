@@ -40,8 +40,8 @@ The following are all the actions and selectors available for this data store:
 
 | Action                                                                                                                                 | Description                                                                      |
 | ---------------------------------------------------------------------------------------------------------------------------------------| -------------------------------------------------------------------------------- |
-| [`receiveSchemaForModel`](./actions.md#receiveschemaformodel-modelname-schema-)                                                        | Dispatch action for receiving the schema for a given model into the state        |
-| [`receiveFactoryForModel`](./actions.md#receivefactoryformodel-modelname-factory-)                                                     | Dispatch action for receiving the factory for a given model into the state       |
+| [`receiveSchemaForModel`](./actions.md#receiveschemaformodel-modelname-schema---)                                                      | Dispatch action for receiving the schema for a given model into the state        |
+| [`receiveFactoryForModel`](./actions.md#receivefactoryformodel-modelname-factory---)                                                   | Dispatch action for receiving the factory for a given model into the state       |
 | [`receiveRelationEndpointForModelEntity`](./actions.md#receiverelationendpointformodelentity-modelname-entityid-relationname-endpoint-)| Receives the endpoint path for a given model entity and relation into the state. |
 
 ### Selectors

@@ -1,6 +1,6 @@
 The following set of dispatching action creators are available on the object returned by `wp.data.dispatch( 'eventespresso/schema' )`.
 
-## `receiveSchema( modelName, schema = {} )`
+## `receiveSchemaForModel( modelName, schema = {} )`
 
 Receives a schema for the given model and adds to state.
 
