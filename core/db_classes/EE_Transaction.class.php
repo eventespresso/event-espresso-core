@@ -1730,7 +1730,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @param string $source function name that called this method
      * @return boolean | int
      */
-    public function delete($source = '')
+    public function delete($source = 'unknown')
     {
         $current_user = wp_get_current_user();
         $this->add_extra_meta(
@@ -1738,7 +1738,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
             array(
                 'deleted-by' => $current_user->ID ? $current_user->display_name : 'unauthed user',
                 'timestamp'  => time(),
-                'source'     => $source ? $source : 'unknown',
+                'source'     => $source,
             )
         );
         return parent::delete();
