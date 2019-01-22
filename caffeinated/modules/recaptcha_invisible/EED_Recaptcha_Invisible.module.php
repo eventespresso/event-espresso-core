@@ -4,6 +4,7 @@ use EventEspresso\caffeinated\modules\recaptcha_invisible\RecaptchaFactory;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * EED_Recaptcha_Invisible
@@ -183,14 +184,14 @@ class EED_Recaptcha_Invisible extends EED_Module
 
 
     /**
-     * @param EE_Request $request
+     * @param RequestInterface $request
      * @return bool
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws RuntimeException
      */
-    public static function verifyToken(EE_Request $request)
+    public static function verifyToken(RequestInterface $request)
     {
         return RecaptchaFactory::create()->verifyToken($request);
     }
@@ -250,8 +251,8 @@ class EED_Recaptcha_Invisible extends EED_Module
         if (! EED_Recaptcha_Invisible::processSpcoRegStepForm($reg_form)) {
             return $req_data;
         }
-        /** @var EE_Request $request */
-        $request = LoaderFactory::getLoader()->getShared('EE_Request');
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
         if (! EED_Recaptcha_Invisible::verifyToken($request)) {
             if ($request->isAjax()) {
                 $json_response = new EE_SPCO_JSON_Response();
@@ -308,12 +309,12 @@ class EED_Recaptcha_Invisible extends EED_Module
         if (RecaptchaFactory::create()->recaptchaPassed()) {
             return;
         }
-        /** @var EE_Request $request */
-        $request = LoaderFactory::getLoader()->getShared('EE_Request');
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
         if (! EED_Recaptcha_Invisible::verifyToken($request)) {
-            $event_id = $request->get('tkt-slctr-event-id');
-            $return_url = $request->is_set("tkt-slctr-return-url-{$event_id}")
-                ? $request->get("tkt-slctr-return-url-{$event_id}")
+            $event_id = $request->getRequestParam('tkt-slctr-event-id');
+            $return_url = $request->requestParamIsSet("tkt-slctr-return-url-{$event_id}")
+                ? $request->getRequestParam("tkt-slctr-return-url-{$event_id}")
                 : get_permalink($event_id);
             EEH_URL::safeRedirectAndExit($return_url);
         }
