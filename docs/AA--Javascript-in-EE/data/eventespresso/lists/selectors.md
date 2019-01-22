@@ -26,6 +26,8 @@ Selector for retrieving an array of model entity instances for a given model nam
 
 This selector has automatically generated model specific equivalents that can be used: `getEvents`, `getDatetimes` etc.  When using a model specific equivalent you only need to pass along the `queryString` argument.
 
+This returns an array of `BaseEntity` instances.
+
 ### Arguments:
 
 | Argument      | Type   | Description                                                  |
@@ -38,15 +40,59 @@ This selector has automatically generated model specific equivalents that can be
 const events = wp.data.select( 'eventespresso/lists' )
   .getEntities( 'event', '?where[TermRelationship.Term_Taxonomy.Term.slug]=minus-the-bear' );
 ```
-### `isRequestingItems( identifier, queryString )`
-Returns whether the items (true/false) for the given identifier and query string are being requested.  This is applicable when the initial selection has been made and it's result is being resolved via an api request.
-#### Example:
+
+## `getEntitiesByIds( modelName, ids = [] )`
+
+Returns all the model entities for the given model name and query string.
+
+**Note:**  This selector has an accompanying resolver that is used to request the items from the server when the selector has not been resolved yet.
+
+This selector has automatically generated model specific equivalents that can be used: `getEventsByIds`, `getDatetimesByIds` etc.  When using a model specific equivalent you only need to pass along the `ids` argument.
+
+This returns an array of `BaseEntity` instances.
+
+### Arguments
+
+| Argument    | Type   | Description                                      |
+| ----------- | ------ | ------------------------------------------------ |
+| `modelName` | string | The name of the model the entity ids belong to.  |
+| `entityIds` | Array  | An array of ids for the entities to be retrieved |
+
+### Example:
+
 ```js
-const itemsAreLoading = wp.data.select( 'eventespresso/lists' ).isRequestingItems( 'shoes', 'shoes/?size=xl' );
+events = wp.data.select( 'eventespresso/lists' ).getEntitiesByIds( 'event', [ 10, 20, 30 ] );
 ```
-### `isRequestingEntities( modelName, queryString )`
-Returns whether the model entities for the given model and query string are being requested.  This is applicable when this is the initial selection has been made and it's result is being resolved via an api request.
-#### Example:
+
+## `isRequestingItems( identifier, queryString )`
+Returns whether the items (true/false) for the given identifier and query string are being requested via the `getItems` selector.  This is applicable when the initial selection has been made and it's result is being resolved via an api request.
+
+### Arguments
+
+|  Argument      | Type   | Description                               |
+| -------------- | ------ | ----------------------------------------- |
+|  `identifier`  | string | The identifier used for the selection.    |
+|  `queryString` | string | The query string used for the selection.  |
+
+### Example:
 ```js
-const eventsAreLoading = wp.data.select( 'eventespresso/lists' ).isRequestingEntities( '?where[TermRelationship.Term_Taxonomy.Term.slug]=minus-the-bear' );
+const itemsAreLoading = wp.data.select( 'eventespresso/lists' )
+  .isRequestingItems( 'shoes', 'shoes/?size=xl' );
+```
+
+## `isRequestingEntities( modelName, queryString )`
+
+Returns whether the model entities for the given model and query string are being requested via the `getEntities` selector.  This is applicable when this is the initial selection has been made and it's result is being resolved via an api request.
+
+### Arguments:
+
+| Argument      | Type   | Description                              |
+| ------------- | ------ | ---------------------------------------- |
+| `modelName`   | string | The model name used in the selection.    |
+| `queryString` | string | The query string used for the selection. |
+
+### Example:
+```js
+const eventsAreLoading = wp.data.select( 'eventespresso/lists' )
+  .isRequestingEntities( '?where[TermRelationship.Term_Taxonomy.Term.slug]=minus-the-bear' );
 ```

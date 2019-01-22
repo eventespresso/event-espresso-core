@@ -36,3 +36,10 @@ This is a list of all the dispatch actions and selectors exposed on the `eventes
 
 ### Selectors
 
+| Selector                                                                            | Description                                                                      |
+| ------------------------------------------------------------------------------------| ---------------------------------------------------------------------------------|
+| [`getItems`](./selectors.md#getItems-identifier-querystring-)                       | Returns an array of items in the state for the given identifier and query string.|
+| [`getEntities`](./selectors.md#getentities-modelname-querystring-)                  | Returns an array of model entities for the given model name and query string     |
+| [`getEntitiesByIds`](./selectors.md#getentitiesbyids-modelname-ids---)              | Returns an array of model entities for the given model name and ids.             |
+| [`isRequestingItems`](./selectors.md#isrequestingitems-identifier-querystring-)     | Returns whether the `getItems` selector is being resolved.                       |
+| [`isRequestingEntities`](./selectors.md#isrequestingentities-modelname-querystring-)| Returns whether the `getEntities` selector is being resolved.                    |
