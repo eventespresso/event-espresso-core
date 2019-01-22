@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\caffeinated\payment_methods\PayPal_Pro\forms\PayPalProSettingsForm;
+use EventEspresso\caffeinated\payment_methods\Paypal_Pro\forms\PayPalProSettingsForm;
 
 /**
  * EEPMT_Paypal_Pro
