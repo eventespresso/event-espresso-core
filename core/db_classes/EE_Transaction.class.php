@@ -20,6 +20,13 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     const LOCK_EXPIRATION = 2;
 
     /**
+     * extra meta key for tracking when transactions are deleted and by who
+     *
+     * @type string
+     */
+    const EXTRA_META_KEY_TXN_DELETED = 'transaction-deleted';
+
+    /**
      * txn status upon initial construction.
      *
      * @var string
@@ -768,6 +775,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      *
      * @param string $type 'html' or 'pdf' (default is pdf)
      * @return string
+     * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -819,6 +827,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      *
      * @param string $type 'pdf' or 'html' (default is 'html')
      * @return string
+     * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1653,9 +1662,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * updates the TXN status based on the amount paid
      *
      * @throws EE_Error
+     * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
+     * @throws ReflectionException
      * @throws RuntimeException
      * @throws ReflectionException
      */
@@ -1713,5 +1723,24 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
             return EEH_Line_Item::apply_taxes($total_line_item, true);
         }
         return false;
+	}
+
+
+    /**
+     * @param string $source function name that called this method
+     * @return boolean | int
+     */
+    public function delete($source = '')
+    {
+        $current_user = wp_get_current_user();
+        $this->add_extra_meta(
+            EE_Transaction::EXTRA_META_KEY_TXN_DELETED,
+            array(
+                'deleted-by' => $current_user->ID ? $current_user->display_name : 'unauthed user',
+                'timestamp'  => time(),
+                'source'     => $source ? $source : 'unknown',
+            )
+        );
+        return parent::delete();
     }
 }
