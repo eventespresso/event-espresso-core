@@ -58,7 +58,7 @@ https://demoee.org/wp-json/ee/v4.8.36/events
 
 ### Specifying Binary Operators: =, !=, <, <=, >, >=, LIKE,
 
-> In $VID:$ a new simpler syntax was introduced. If your API client needs to work with older versions of Event Espresso, please [refer to the old
+> In 4.9.74 a new simpler syntax was introduced. If your API client needs to work with older versions of Event Espresso, please [refer to the old
 syntax](https://github.com/eventespresso/event-espresso-core/blob/4.9.70.p/docs/C--REST-API/ee4-rest-api-GET-filtering-results.md#specifying-binary-operators-------like) (which is still maintained, but not documented because it was so painful!)
 
 The default operator used in where conditions is always = (equals). Just like when querying models, you can specify other operators.
@@ -188,7 +188,7 @@ https://demoee.org/wp-json/ee/v4.8.36/events?caps=edit
 
 ## password
 
-New in Event Espresso $VID:$.
+New in Event Espresso 4.9.74.
 
 Some data, like event descriptions, can be password-protected (see the section in [reading data](ee4-rest-api-reading-data.md#Password-protected Data)).
 If you know the password, just add the password query parameter to any request, eg
