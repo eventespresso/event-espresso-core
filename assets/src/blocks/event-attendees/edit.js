@@ -506,6 +506,10 @@ export default withSelect( ( select, ownProps ) => {
 		order = defaultProps.order,
 	} = ownProps.attributes;
 
+	/**
+	 * @todo, make sure default where conditions are added here (this_model_only)
+	 * @type {{forDatetimeId: (shim|number|settings.attributes.datetimeId|{default, type}), forStatusId: *, forTicketId: (shim|number|settings.attributes.ticketId|{default, type}), limit: number, orderBy: *, showGravatar: boolean, forEventId: (shim|number|settings.attributes.eventId|{default, type}), order: *}}
+	 */
 	const queryData = {
 		forEventId: eventId,
 		forDatetimeId: datetimeId,
