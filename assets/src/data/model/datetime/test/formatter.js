@@ -1,4 +1,11 @@
+/**
+ * Internal imports
+ */
 import formatters, { prettyDateFromDateTime } from '../formatter';
+
+/**
+ * External imports
+ */
 import moment from 'moment-timezone';
 import {
 	DATE_TIME_FORMAT_MYSQL,
@@ -6,6 +13,11 @@ import {
 	DATE_TIME_FORMAT_SITE,
 	TIME_FORMAT_SITE,
 } from '@eventespresso/helpers';
+import {
+	ServerDateTime as DateTime,
+	Duration,
+} from '@eventespresso/value-objects';
+import { DateTimeFactory } from '@test/fixtures';
 
 const {
 	formatDatesOnEntities,
@@ -391,43 +403,53 @@ describe( 'convertEntitiesDatesToMoment()', () => {
 } );
 
 describe( 'prettyDateFromDateTime', () => {
+	const testDate = DateTime.fromISO( '2019-01-23T19:20:03.531Z' );
+	const getDateTimeEntity = (
+		name,
+		start,
+		end
+	) => name ? DateTimeFactory.createNew(
+		{
+			DTT_name: name,
+			DTT_EVT_start: start,
+			DTT_EVT_end: end,
+		}
+	) :
+		DateTimeFactory.createNew( { DTT_EVT_start: start, DTT_EVT_end: end } );
 	it( 'returns expected value for no arguments passed in', () => {
 		expect( prettyDateFromDateTime() ).toEqual( '' );
 	} );
 	it( 'returns expected value when DTT_name is present and start date and' +
 		' end date are on different days',
 	() => {
-		expect( prettyDateFromDateTime( testEntities[ 3 ] ) ).toEqual(
-			'Test Date D' + ' (' + moment( testLocalMoment )
-				.format( DATE_TIME_FORMAT_SITE ) +
-			' - ' + moment( testLocalMoment )
-				.add( 1, 'd' )
-				.format( DATE_TIME_FORMAT_SITE ) + ')',
+		const endDate = testDate.plus(
+			Duration.fromObject( { [ Duration.UNIT_DAYS ]: 2 } )
+		);
+		expect( prettyDateFromDateTime(
+			getDateTimeEntity(
+				'Test Date D',
+				testDate,
+				endDate,
+			)
+		) ).toEqual(
+			'Test Date D' + ' (' + testDate.toFormat( DATE_TIME_FORMAT_SITE ) +
+			' - ' + endDate.toFormat( DATE_TIME_FORMAT_SITE ) + ')',
 		);
 	},
 	);
 	it( 'returns expected value when DTT_name is not present and start date' +
 		' and end date are on the same day',
 	() => {
-		expect( prettyDateFromDateTime( testEntities[ 2 ] ) ).toEqual(
-			moment( testLocalMoment ).format( DATE_TIME_FORMAT_SITE ) +
-			' - ' + moment( testLocalMoment ).add( 1, 'h' )
-				.format( TIME_FORMAT_SITE ),
+		const endDate = testDate.plus(
+			Duration.fromObject( { [ Duration.UNIT_HOURS ]: 1 } )
 		);
-	},
-	);
-	it( 'returns expected value when DTT_name is not present and start date' +
-		' is not present', () => {
-		expect( prettyDateFromDateTime( testEntities[ 5 ] ) ).toEqual(
-			'Test Date F' + ' (' + moment( testLocalMoment )
-				.format( DATE_TIME_FORMAT_SITE ) + ')'
-		);
-	} );
-	it( 'returns expected value when DTT_name is present and end date' +
-		' is not present', () => {
-		expect( prettyDateFromDateTime( testEntities[ 4 ] ) ).toEqual(
-			'Test Date E' + ' (' + moment( testLocalMoment )
-				.format( DATE_TIME_FORMAT_SITE ) + ')'
+		expect( prettyDateFromDateTime( getDateTimeEntity(
+			'',
+			testDate,
+			endDate,
+		) ) ).toEqual(
+			testDate.toFormat( DATE_TIME_FORMAT_SITE ) +
+			' - ' + endDate.toFormat( TIME_FORMAT_SITE ),
 		);
 	} );
 } );
