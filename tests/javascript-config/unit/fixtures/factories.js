@@ -8,11 +8,11 @@ import { DateTimeSchema } from './datetime-schema';
 export const EventFactory = createEntityFactory(
 	'event',
 	EventSchema.schema,
-	MODEL_PREFIXES.event
+	MODEL_PREFIXES( 'event' )
 );
 
 export const DateTimeFactory = createEntityFactory(
 	'datetime',
 	DateTimeSchema.schema,
-	MODEL_PREFIXES.datetime,
+	MODEL_PREFIXES( 'datetime' ),
 );

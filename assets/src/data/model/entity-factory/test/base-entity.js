@@ -191,7 +191,7 @@ describe( 'createEntityFactory()', () => {
 		'termTaxonomiesResource',
 		'messageTemplateGroupsResource',
 		'attendeesResource',
-		'wpUserResource',
+		'wpUsersResource',
 		'postMetasResource',
 		'extraMetasResource',
 		'changeLogsResource',

@@ -24,7 +24,7 @@ export const LESS_THAN_AND_EQUAL = encodeURIComponent( '<=' );
 export const getQueryString = (
 	queryData = {},
 	whereConditions = () => null,
-	mapOrderBy = orderBy => orderBy,
+	mapOrderBy = ( orderBy ) => orderBy,
 ) => {
 	const where = whereConditions( queryData );
 	const { limit, order, orderBy } = queryData;

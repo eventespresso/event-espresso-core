@@ -221,10 +221,10 @@ describe( 'Testing extractor functions for model-entity factory.', () => {
 		it( 'returns a relation name from a given formatted link', () => {
 			expect( getRelationNameFromLink(
 				'https://api.eventespresso.com/registration'
-			) ).toBe( 'registration' );
+			) ).toBe( 'registrations' );
 			expect( getRelationNameFromLink(
 				'https://api.eventespresso.com/some_test_relation'
-			) ).toBe( 'someTestRelation' );
+			) ).toBe( 'someTestRelations' );
 		} );
 	} );
 	describe( 'deriveDefaultValueForType()', () => {

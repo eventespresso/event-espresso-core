@@ -39,3 +39,9 @@ export { locale as SERVER_LOCALE } from './locale';
  * Custom exceptions
  */
 export * from './exceptions';
+
+/**
+ * Middle-wares for various libraries
+ */
+import * as mw from './middlewares';
+export const middleWares = mw;
