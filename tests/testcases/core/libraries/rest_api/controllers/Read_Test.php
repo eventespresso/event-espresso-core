@@ -1386,7 +1386,7 @@ class Read_Test extends EE_REST_TestCase
      * Reproduces https://github.com/eventespresso/event-espresso-core/issues/903
      * where including an innaccessible model caused the entire request to fail instead
      * of just swapping out the response for null.
-     * @since $VID:$
+     * @since 4.9.77.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException

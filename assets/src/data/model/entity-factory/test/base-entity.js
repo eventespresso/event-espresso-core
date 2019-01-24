@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { DateTime } from '@eventespresso/vo';
+import { DateTime } from '@eventespresso/value-objects';
 import { PRIVATE_PROPERTIES, SAVE_STATE } from '../constants';
 import { isCuid } from 'cuid';
 import { isArray } from 'lodash';

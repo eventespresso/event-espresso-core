@@ -59,5 +59,3 @@ describe( 'ModelSelect props check', () => {
 		expect( wrapper.childAt( 0 ).text() ).toEqual( 'Label for Select' );
 	} );
 } );
-
-// location: assets/src/components/form/select/test/model-select.js

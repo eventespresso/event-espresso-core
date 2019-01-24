@@ -2,7 +2,7 @@
  * External imports
  */
 import { InvalidDateTime } from '@eventespresso/eejs';
-import { DateTime, Money, SiteCurrency } from '@eventespresso/vo';
+import { DateTime, Money, SiteCurrency } from '@eventespresso/value-objects';
 import {
 	EventSchemaProperties,
 	RegistrationSchemaProperties,
