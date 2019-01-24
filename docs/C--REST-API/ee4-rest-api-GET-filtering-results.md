@@ -281,7 +281,7 @@ will *not* have default datetime where conditions added (so both deleted and non
 ```php
 https://demoee.org/wp-json/ee/v4.8.36/datetimes?where[Ticket.TKT_price][<]=10&caps=read_admin
 ```
-will have default datetime and ticket where conditions added (so only non-deleted tickets for non-deleted tickets will be returned).
+will have default datetime and ticket where conditions added (so only non-deleted datetimes for non-deleted tickets will be returned).
 
 ```php
 https://demoee.org/wp-json/ee/v4.8.36/datetimes?default_where_conditions=minimum&where[Ticket.TKT_price][<]=10&caps=read_admin
