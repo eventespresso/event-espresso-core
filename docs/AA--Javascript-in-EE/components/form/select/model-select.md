@@ -33,9 +33,9 @@ The following options in this object are generated and set in the ModelSelect co
 
 ### modelEntities
 
-This is expected to be a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) of model entity objects for the model corresponding to the value in the `modelName` prop.  
+This is expected to be an `Array` of model entity objects for the model corresponding to the value in the `modelName` prop.  
 
-- Type: `Map`
+- Type: `Array`
 - Required: No
 - Default: `[]`
 
@@ -139,7 +139,7 @@ const { ModelSelect, ModelEnhancedSelect } = eejs.components;
 import { ModelSelect, ModelEnhancedSelect } from '@eventespresso/components'
 ```
 
-Note: this package isn't published yet so you'll need to point to it via your build process. For example, if you use webpack you can register this as an external via:
+**Note**: this package isn't published yet so you'll need to point to it via your build process. For example, if you use webpack you can register this as an external via:
 
 ```js
 module.exports = {
@@ -149,7 +149,7 @@ module.exports = {
 }
 ```
 
-You will need to ensure that the eventespresso components bundle is a dependency for your implemented code.  You could do something like this:
+You will need to ensure that the event espresso components bundle is a dependency for your implemented code.  You could do something like this:
 
 ```php
 use EventEspresso\core\domain\services\assets\CoreAssetManager;
