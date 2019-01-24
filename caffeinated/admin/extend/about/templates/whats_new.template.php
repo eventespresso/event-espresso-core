@@ -47,49 +47,30 @@
     }
     ?>
 
-    <h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.9</h2>
+    <h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.10</h2>
     <p>This release brought many background updates/improvements to existing core features, and support for many new
         add-on & features. Here are the most interesting updates:</p>
     <h3>New Features</h3>
-    <p><strong>Message Queue System</strong>
-        <br>This new system tracks and prioritizes when messages are generated and when they are sent. When messages are
-        triggered, they are no longer generated immediately and sent on the same request. Instead, they enter into the
-        queue and all processing happens on separate requests.</p>
-    <p align="right"><a
-            href="https://eventespresso.com/wiki/message-queue-system/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=messages_system_link&ap_id=EEspresso"
-            target="_blank">Read More</a>
+    <p><strong>Attendee Block for WordPress 5 Gutenberg</strong>
+        <br>The Event Attendees block allows you to easily insert a list of attendees from any designated event, datetime, or ticket, from anywhere in your content in a post, page or another post type that supports the new WordPress 5.0 page/post Editor.</p>
+    <p align="right"><a href="https://eventespresso.com/2018/12/event-espresso-and-wordpress-5-0/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=gutenberg_link&ap_id=EEspresso" target="_blank">Read More</a>
 
-    <p><strong>New Registration Question Types</strong><br>
-        Introduced a few new question types, such as "US phone", "integer", "decimal", "url" and "year" which allow site
-        admins to have validated answers to these types of questions. These new fields add the ability to validate
-        questions based on the type of the question. For instance, site admins can have questions that need to be
-        validated as email addresses or URLs.</p>
-    <p align="right"><a
-            href="https://eventespresso.com/2016/04/event-espresso-4-9-beta-now-available/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=rest_api_core_link&ap_id=EEspresso#questions"
-            target="_blank">Read More</a>
+    <p><strong>New Date and Time Filter Max Checked Option</strong><br>
+        NEED CONTENT</p>
+    <p align="right"><a href="https://eventespresso.com/2016/04/event-espresso-4-9-beta-now-available/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=rest_api_core_link&ap_id=EEspresso#questions" target="_blank">Read More</a>
 
-    <p><strong>REST API Added to EE4 Core</strong><br>EE4 REST API is a simple but powerful way to interact with Event
-        Espresso. Even though the EE4 REST API is not readily visible to users, over time user’s will experience the
-        benefits of more interactive Event Espresso websites. Once we roll out the WRITE endpoints Mobile, desktop and
-        web applications can get data from Event Espresso and do anything you can do via the admin panel. It’s like the
-        admin panel, minus the user interface (UI).</p>
-    <p>The availability of the EE4 REST API as a core feature also means less time spent by developers creating
-        something similar, and more time spent creating features and custom applications.</p>
-    <p align="right"><a
-            href="https://eventespresso.com/2016/01/rest-api-now-in-ee4-core/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=rest_api_core_link&ap_id=EEspresso"
-            target="_blank">Read More</a>
+    <p><strong>GDPR Compliance Features</strong><br>
+        Along with the new GDPR regulations comes new features in WordPress and Event Espresso 4. The<a href="https://wordpress.org/news/2018/05/wordpress-4-9-6-privacy-and-maintenance-release/"> latest Privacy and Maintenance release of WordPress, 4.9.6,</a> comes with many features to help your website become GDPR compliant. Event Espresso has contributed to those new features, and makes use of them in Event Espresso 4.9.62. Below is a list of new features that are shipping with Event Espresso to support the new GDPR regulations.</p>
+    <ol>
+        <li><strong>Export Personal Data</strong><br><a href="https://wordpress.org/news/2018/05/wordpress-4-9-6-privacy-and-maintenance-release/">WordPress 4.9.6 allows admins to generate a report of an individual’s personal information</a> and send it to them. In Event Espresso 4, we <a href="https://eventespresso.com/features/gdpr-compliant/#export-personal-data">add the individual’s registration details</a> to the report automatically when it’s being created.</li>
+        <li><strong>Erase Personal Data</strong>Along with the ability to export data, WordPress 4.9.6 adds a tool that allows site admins to erase personal data stored in their WordPress site. When an admin erases an individual’s personal data, <a href="https://eventespresso.com/features/gdpr-compliant/#erase-personal-data">Event Espresso makes sure their registration data is also erased</a>.</li>
+        <li><strong>GDPR/Privacy Policy Content Tool</strong><br>Per GDPR regulations, site owners need to have a Privacy Policy page. By default, WordPress doesn’t collect any data from visitors unless they post a comment. However many plugins add third-party services that collect visitor data. <a href="https://wordpress.org/news/2018/05/wordpress-4-9-6-privacy-and-maintenance-release/">WordPress 4.9.6 adds a Privacy Policy guide</a> to help you create a comprehensive “Privacy Policy” page. Event Espresso 4.9.62 <a href="https://eventespresso.com/features/gdpr-compliant/#privacy-policy-tool">adds suggested text to this guide page</a>, to help you know what Event Espresso is doing with regards to user privacy.</li>
+    </ol>
+    <p align="right"><a href="https://eventespresso.com/2018/05/gdpr-registration-data-event-ticketing-website/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=gdpr_link&ap_id=EEspresso" target="_blank">Read More</a></p>
 
-    <h3>Enhancements/Fixes</h3>
-    <p><strong>Updated Registration and Transaction Reports</strong>
-        <br>Switched to using Google Visualization API for our registrations and transaction visualization charts. This
-        opens the door to future reporting features and serves as a great example for add-on developers.</p>
-
-    <p><strong>Messages System Refactored</strong>
-        <br>The messages system and other core systems were refactored to improve the framework for adding new features
-        and to improve performance. If you are a developer and want more technical overview, click the read more link.
-    </p>
-    <p align="right"><a
-            href="http://developer.eventespresso.com/changes-to-the-messages-system-coming-in-ee-4-9/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=messages_system_link&ap_id=EEspresso">Read
+    <h3>REST API WRITE Endpoints</h3>
+    <p>With WRITE endpoints in the Event Espresso 4 REST API, developers will find it much easier to create innovative new features for Event Espresso. In fact, we are already starting development of recurring events, and are close to releasing a beta version of the Waiting List Manager. Both of these add-ons wouldn’t be possible without the REST API.</p>
+    <p align="right"><a href="https://eventespresso.com/2017/09/api-write-endpoints-event-espresso/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=rest_api_link&ap_id=EEspresso">Read
             More</a>
 
 
