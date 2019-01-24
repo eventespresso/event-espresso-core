@@ -512,6 +512,7 @@ export default withSelect( ( select, ownProps ) => {
 		forTicketId: ticketId,
 		forStatusId: status,
 		showGravatar: true,
+		defaultWhereConditions: 'full_this_minimum_others',
 		order,
 		orderBy,
 		limit: 100,

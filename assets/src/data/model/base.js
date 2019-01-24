@@ -27,10 +27,15 @@ export const getQueryString = (
 	mapOrderBy = ( orderBy ) => orderBy,
 ) => {
 	const where = whereConditions( queryData );
-	const { limit, order, orderBy } = queryData;
+	const { limit, order, orderBy, defaultWhereConditions } = queryData;
 	const queryParams = [];
 	if ( ! isUndefined( limit ) ) {
 		queryParams.push( `limit=${ limit }` );
+	}
+	if ( ! isUndefined( defaultWhereConditions ) ) {
+		queryParams.push(
+			`default_where_conditions=${ defaultWhereConditions }`
+		);
 	}
 	if ( ! isUndefined( mapOrderBy( orderBy ) ) ) {
 		if ( isArray( mapOrderBy( orderBy ) ) ) {
