@@ -239,8 +239,82 @@ https://demoee.org/wp-json/ee/v4.8.36/events?caps=read_admin
 
 See [the documentation on what capability contexts are valid](#caps).
 
-password in queries
+## default_where_conditions
 
-Querying 
+When issuing a query, default where conditions are added. These vary by model, but generally:
+
+* for Custom Post Type resources (with a field of type "WP_Post_Status_Field"), posts with status "trash" and "auto-draft" are excluded
+* for soft-deleteable resources (with a field of type "Trashed_Flag_Field"), soft-deleted/trashed/archived entities are excluded.
+
+These are added onto the where conditions added based on [the request's capability context](#caps), and they're added on for each resource used in the query. 
+
+For example, the query 
+
+```php
+https://demoee.org/wp-json/ee/v4.8.36/events?order_by[Datetime.DTT_EVT_start]=DESC
+```
+
+will have default where conditions for both events (custom post type resource) and datetimes (soft-deletable resource). This means
+only events which aren't trashed or an auto-draft will be returned, so long as they have at least one non-trashed datetime.
+
+
+This behaviour can be overriden using the query parameter `default_where_conditions`. The following values are accepted over the REST API:
+
+* `all` (default) default where conditions for all models in the query are added
+* `full_this_minimum_others` all the default where conditions for the queried model are included, but none for other models are added
+* `minimum` no default where conditions are added
+
+([this a subset of what's available when querying using the models directly](../G--Model-System/model-query-params.md#default_where_conditions))
+
+Examples:
+
+```php
+https://demoee.org/wp-json/ee/v4.8.36/datetimes&caps=read_admin
+```
+will have datetime default where conditions added (so only non-deleted datetimes will be returned).
+
+```php
+https://demoee.org/wp-json/ee/v4.8.36/datetimes?default_where_conditions=minimum&caps=read_admin
+```
+will *not* have default datetime where conditions added (so both deleted and non-deleted datetimes will be returned).
+
+```php
+https://demoee.org/wp-json/ee/v4.8.36/datetimes?where[Ticket.TKT_price][<]=10&caps=read_admin
+```
+will have default datetime and ticket where conditions added (so only non-deleted tickets for non-deleted tickets will be returned).
+
+```php
+https://demoee.org/wp-json/ee/v4.8.36/datetimes?default_where_conditions=minimum&where[Ticket.TKT_price][<]=10&caps=read_admin
+```
+will *not* have any default where conditions added (so both deleted and non-deleted datetimes for deleted and non-deleted tickets will be returned).
+
+```php
+https://demoee.org/wp-json/ee/v4.8.36/datetimes?default_where_conditions=full_this_minimum_others&where[Ticket.TKT_price][<]=10&caps=read_admin
+```
+will have default datetime where conditions added, but no default where conditions for tickets (so both deleted and non-deleted datetimes for any ticket, regardless of whether the ticket was deleted or not).
+
+### Gotcha default where conditions for related models used in queries can have initiall unexpected results
+
+For example
+
+```php
+https://demoee.org/wp-json/ee/v4.8.36/datetimes?caps=read_admin
+```
+will return all non-deleted datetimes
+
+```php
+https://demoee.org/wp-json/ee/v4.8.36/datetimes?force_join=Ticket&caps=read_admin
+```
+will return all non-deleted datetimes so long as there is a related non-deleted Ticket. 
+
+This means that if a datetime is only related to a single deleted/archived ticket, it will be returned in the first query, but not the second.
+
+This can be overcome by using `default_where_conditions=full_this_minimum_others`, eg
+
+```php
+https://demoee.org/wp-json/ee/v4.8.36/datetimes?default_where_conditions=full_this_minimum_others&force_join=Ticket&caps=read_admin
+```
+
+will return non-deleted datetimes, regardless of whether their related tickets are deleted or not.
 
 
