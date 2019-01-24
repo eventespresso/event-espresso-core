@@ -1,10 +1,18 @@
+/**
+ * Internal imports
+ */
 import buildOptions from '../build-options';
-import moment from 'moment-timezone';
+import { prettyDateFromDateTime } from '../../../../../data/model/datetime/formatter';
+
+/**
+ * External imports
+ */
 import {
 	DATE_TIME_FORMAT_SITE,
 	TIME_FORMAT_SITE,
 } from '@eventespresso/helpers';
-import { prettyDateFromDateTime } from '../../../../../data/model/datetime/formatter';
+import { ServerDateTime as DateTime, Duration } from '@eventespresso/value-objects';
+import { DateTimeFactory } from '@test/fixtures';
 
 describe( 'buildOptions()', () => {
 	const testResponse = [
@@ -83,29 +91,30 @@ describe( 'buildOptions()', () => {
 		);
 	} );
 	it( 'returns expected values for options using default optionsEntityMap for DatetimeSelect', () => {
-		const testLocalMoment = moment( '2018-12-24 05:00:00' ).local();
-		const dateTimeResponse = [
+		const testDate = DateTime.fromISO( '2019-01-23T19:20:03.531Z' );
+		const testEndDate = testDate.plus( Duration.fromObject(
+			{ [ Duration.UNIT_HOURS ]: 1 } )
+		);
+		const testDateTime = DateTimeFactory.createNew(
 			{
-				DTT_ID: 30,
 				DTT_name: 'DateTime 1',
-				DTT_EVT_start: moment( testLocalMoment ).format(),
-				DTT_EVT_end: moment( testLocalMoment ).add( 1, 'h' ).format(),
-			},
-		];
+				DTT_EVT_start: testDate,
+				DTT_EVT_end: testEndDate,
+			}
+		);
+		const response = [ testDateTime ];
 		const expectedLabel = 'DateTime 1' + ' (' +
-			moment( testLocalMoment ).format( DATE_TIME_FORMAT_SITE ) +
+			testDate.toFormat( DATE_TIME_FORMAT_SITE ) +
 			' - ' +
-			moment( testLocalMoment ).add( 1, 'h' ).format( TIME_FORMAT_SITE ) +
+			testEndDate.toFormat( TIME_FORMAT_SITE ) +
 			')';
-		expect( buildOptions( dateTimeResponse, datetimeOptionsEntityMap ) ).toEqual(
+		expect( buildOptions( response, datetimeOptionsEntityMap ) ).toEqual(
 			[
 				{
-					value: 30,
+					value: testDateTime.DTT_ID,
 					label: expectedLabel,
 				},
 			]
 		);
 	} );
 } );
-
-// location: assets/src/components/form/select/test/build-options.js
