@@ -12,7 +12,7 @@ import { isArray } from 'lodash';
  */
 export const mergeAndDeDuplicateArrays = ( ...arrays ) => [
 	...new Set( [].concat(
-		...arrays.filter( item => isArray( item ) )
+		...arrays.filter( ( item ) => isArray( item ) )
 	) ),
 ];
 
@@ -28,7 +28,9 @@ export const mergeAndDeDuplicateArrays = ( ...arrays ) => [
 export const mergeAndDeDuplicateObjects = ( property, ...arrays ) => {
 	return [].concat( ...arrays ).reduce(
 		( a, b ) => {
-			return ! a.filter( c => b[ property ] === c[ property ] ).length ?
+			return ! a.filter(
+				( c ) => b[ property ] === c[ property ]
+			).length ?
 				[ ...a, b ] :
 				a;
 		},

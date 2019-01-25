@@ -241,7 +241,7 @@ class CountrySubRegionDao
 
     /**
      * @param string $CNT_ISO
-     * @since $VID:$
+     * @since 4.9.76.p
      * @return array
      * @throws EE_Error
      * @throws InvalidArgumentException

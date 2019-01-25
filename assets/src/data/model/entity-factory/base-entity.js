@@ -130,7 +130,7 @@ const nameClass = ( name, extendedClass ) => {
  * @param {Array} fieldPrefixes An array of field prefixes for base fields on
  * on the model (eg. Event model has `[ EVT ]` prefixes on fields, Datetime model
  * has [ `DTT`, `DTT_EVT` ]
- * @return {function(*=)} A factory for instantiating an entity instance.
+ * @return {Object} A factory for instantiating an entity instance.
  */
 const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => {
 	const Entity = nameClass(

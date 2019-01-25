@@ -24,13 +24,18 @@ export const LESS_THAN_AND_EQUAL = encodeURIComponent( '<=' );
 export const getQueryString = (
 	queryData = {},
 	whereConditions = () => null,
-	mapOrderBy = orderBy => orderBy,
+	mapOrderBy = ( orderBy ) => orderBy,
 ) => {
 	const where = whereConditions( queryData );
-	const { limit, order, orderBy } = queryData;
+	const { limit, order, orderBy, defaultWhereConditions } = queryData;
 	const queryParams = [];
 	if ( ! isUndefined( limit ) ) {
 		queryParams.push( `limit=${ limit }` );
+	}
+	if ( ! isUndefined( defaultWhereConditions ) ) {
+		queryParams.push(
+			`default_where_conditions=${ defaultWhereConditions }`
+		);
 	}
 	if ( ! isUndefined( mapOrderBy( orderBy ) ) ) {
 		if ( isArray( mapOrderBy( orderBy ) ) ) {
