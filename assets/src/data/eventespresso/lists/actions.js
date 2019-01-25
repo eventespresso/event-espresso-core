@@ -1,4 +1,9 @@
 /**
+ * Internal imports
+ */
+import { ACTION_TYPES as types } from './action-types';
+
+/**
  * Returns an action object used in updating the store with the provided items
  * retrieved from a request using the given querystring.
  *
@@ -19,7 +24,7 @@
  */
 export function receiveResponse( identifier, queryString, items = [] ) {
 	return {
-		type: 'RECEIVE_LIST',
+		type: types.RECEIVE_LIST,
 		identifier,
 		queryString,
 		items,
@@ -32,17 +37,17 @@ export function receiveResponse( identifier, queryString, items = [] ) {
  *
  * @param {string} modelName
  * @param {string} queryString
- * @param {Map<number,Object>}entities
+ * @param {Array<BaseEntity>}entities
  * @return {{type: string, identifier: string, queryString: string, items:
- *   Map<number,Object>}} An action object.
+ *   Array<BaseEntity>}} An action object.
  */
 export function receiveEntityResponse(
 	modelName,
 	queryString,
-	entities = new Map(),
+	entities = [],
 ) {
 	return {
-		type: 'RECEIVE_ENTITY_LIST',
+		type: types.RECEIVE_ENTITY_LIST,
 		identifier: modelName,
 		queryString,
 		items: entities,

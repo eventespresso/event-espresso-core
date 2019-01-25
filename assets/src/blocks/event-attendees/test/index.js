@@ -22,7 +22,7 @@ describe( 'EventAttendeesEditor Block', () => {
 		'and has attendees', () => {
 		const testProps = {
 			isLoading: false,
-			attendees: new Map( [ [ 10, { ATT_ID: 10, ATT_fname: 'dude' } ] ] ),
+			attendees: [ { ATT_ID: 10, ATT_fname: 'dude' } ],
 		};
 		const wrapper = shallow( <EventAttendeesEditor { ...testProps } /> );
 		expect( wrapper ).toMatchSnapshot();

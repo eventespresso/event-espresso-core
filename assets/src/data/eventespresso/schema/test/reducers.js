@@ -1,18 +1,31 @@
 /**
  * External dependencies
  */
-import deepFreeze from 'deep-freeze';
 import { EventSchema } from '@test/fixtures';
+import { DEFAULT_SCHEMA_STATE } from '@eventespresso/model';
 
 /**
  * Internal dependencies
  */
-import { receiveSchema, receiveFactory } from '../reducers';
+import {
+	receiveSchema,
+	receiveFactory,
+	receiveRelationEndpointForEntity,
+} from '../reducers';
 import { eventFactory } from '../../test/fixtures/base';
+import { fromJS } from 'immutable';
+import { ACTION_TYPES as types } from '../action-types';
 
 const expectedDefaultState = {
-	schema: { datetime: {}, event: {}, term: {}, ticket: {}, venue: {} },
-	factory: { datetime: {}, event: {}, term: {}, ticket: {}, venue: {} },
+	schema: fromJS(
+		{ datetime: {}, event: {}, term: {}, ticket: {}, venue: {} }
+	),
+	factory: fromJS(
+		{ datetime: {}, event: {}, term: {}, ticket: {}, venue: {} }
+	),
+	relationEndpoints: fromJS(
+		{ datetime: {}, event: {}, term: {}, ticket: {}, venue: {} }
+	),
 };
 
 describe( 'receiveSchema()', () => {
@@ -49,81 +62,117 @@ describe( 'receiveSchema()', () => {
 	} );
 	it( 'returns the expected default object (from mock data)', () => {
 		const state = receiveSchema( undefined, {} );
-		expect( state ).toEqual( expectedDefaultState.schema );
+		expect( state ).toEqual( fromJS( DEFAULT_SCHEMA_STATE.schema ) );
 	} );
-	describe( 'RECEIVE_SCHEMA_RECORD action handling', () => {
+	describe( types.RECEIVE_SCHEMA_RECORD + ' action handling', () => {
 		describe( 'returns correct state for multiple consecutive ' +
 			'queries', () => {
-			const originalState = deepFreeze( expectedDefaultState.schema );
+			const originalState = expectedDefaultState.schema;
 			const testConditions = [
 				[
 					'datetime',
 					{},
-					expectedDefaultState.schema,
+					originalState,
 					true,
 				],
 				[
 					'event',
 					{ schema: EventSchema },
-					{
-						...expectedDefaultState.schema,
-						event: EventSchema,
-					},
+					originalState.set( 'event', EventSchema ),
 					false,
 				],
 				[
 					'event',
 					{ schema: EventSchema },
-					{
-						...expectedDefaultState.schema,
-						event: EventSchema,
-					},
+					originalState.set( 'event', EventSchema ),
 					true,
 				],
 			];
 			testRunner(
 				testConditions,
 				originalState,
-				'RECEIVE_SCHEMA_RECORD',
+				types.RECEIVE_SCHEMA_RECORD,
 				receiveSchema,
 			);
 		} );
 	} );
-	describe( 'RECEIVE_FACTORY_FOR_MODEL action handling', () => {
+	describe( types.RECEIVE_FACTORY_FOR_MODEL + ' action handling', () => {
 		describe( 'returns correct state for multiple consecutive ' +
 			'queries', () => {
-			const originalState = deepFreeze( expectedDefaultState.factory );
+			const originalState = expectedDefaultState.factory;
 			const testConditions = [
 				[
 					'datetime',
 					{},
-					expectedDefaultState.factory,
+					originalState,
 					true,
 				],
 				[
 					'event',
 					{ factory: eventFactory },
-					{
-						...expectedDefaultState.factory,
-						event: eventFactory,
-					},
+					originalState.set( 'event', eventFactory ),
 					false,
 				],
 				[
 					'event',
 					{ factory: eventFactory },
-					{
-						...expectedDefaultState.factory,
-						event: eventFactory,
-					},
+					originalState.set( 'event', eventFactory ),
 					true,
 				],
 			];
 			testRunner(
 				testConditions,
 				originalState,
-				'RECEIVE_FACTORY_FOR_MODEL',
+				types.RECEIVE_FACTORY_FOR_MODEL,
 				receiveFactory,
+			);
+		} );
+	} );
+	describe( types.RECEIVE_RELATION_ENDPOINT_FOR_MODEL_ENTITY + ' action ' +
+		'handling', () => {
+		describe( 'returns correct state for multiple consecutive ' +
+			'queries', () => {
+			const originalState = expectedDefaultState.relationEndpoints;
+			const testConditions = [
+				[
+					'datetime',
+					{},
+					originalState,
+					true,
+				],
+				[
+					'event',
+					{
+						entityId: '10',
+						modelName: 'event',
+						relationName: 'datetime',
+						endpoint: 'event/10/datetimes',
+					},
+					originalState.setIn(
+						[ 'event', 10, 'datetimes' ],
+						'event/10/datetimes'
+					),
+					false,
+				],
+				[
+					'event',
+					{
+						entityId: '10',
+						relationName: 'datetime',
+						endpoint: 'event/10/datetimes',
+					},
+					originalState.setIn(
+						[ 'event', 10, 'datetimes' ],
+						'event/10/datetimes'
+					),
+					true,
+				],
+			];
+			testRunner(
+				testConditions,
+				originalState,
+				types.RECEIVE_RELATION_ENDPOINT_FOR_MODEL_ENTITY,
+				receiveRelationEndpointForEntity
 			);
 		} );
 	} );

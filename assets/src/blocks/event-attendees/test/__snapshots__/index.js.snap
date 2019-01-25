@@ -127,12 +127,12 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
 <React.Fragment>
   <EventAttendeeList
     attendees={
-      Map {
-        10 => Object {
+      Array [
+        Object {
           "ATT_ID": 10,
           "ATT_fname": "dude",
         },
-      }
+      ]
     }
     avatarOptions={
       Object {

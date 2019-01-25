@@ -23,7 +23,7 @@ export function NotWithPostTypeCheck( {
 	if ( postType ) {
 		isExcluded = some(
 			castArray( excludedPostTypeSlugs ),
-			type => postType === type
+			( type ) => postType === type
 		);
 	}
 	if ( isExcluded ) {
