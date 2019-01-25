@@ -248,18 +248,40 @@ This behaves exactly like the `where` conditions in the array, except these cond
 This forces a join in the query with the named models. It should be a numerically indexed array, where values are models to be joined in the query.  For example, `array('Attendee', 'Payment', 'Datetime' )`.  You may join with transient models using a period, for example `Registration.Transaction.Payment`. You will probably only want to do this in hopes of increasing efficiency, as related models which belongs to the current model (ie, the current model has a foreign key to them, like how Registration belongs to Attendee) can be cached in order to avoid future queries.
 
 ## `default_where_conditions`
-This can be set to `none`, `this_model_only`, `other_models_only`, or `all`.  
+Default where conditions are added onto some models. Those extending `EEM_CPT_Base` automatically `post_type` set (so only posts of their post type are returned),
+and exclude `auto-draft` and `trash` posts; those extending `EEM_Soft_Delete_Base` automatically have their deleted flag
+(field of type `EE_Trash_Field_Flag`) set to false (so only non-trashed/deleted/archived items are returned).
+
+These default where conditions are not only added for the model currently being queried, but also for related models mentioned in the query params. 
+
+Eg
+```php
+EEM_Registration::instance()->get_all(
+    [
+        'force_join' => ['Event']
+    ]
+);
+```
+will return all non-deleted registrations for non-trashed, non-auto-draft events.
+
+This behaviour can by overridden by `default_where_conditions` query parameter. 
+
+This can be set to `all` (default), `minimum`, `full_this_minimum_others`, `none`, `this_model_only`, `other_models_only`.  
+### `all`
+This is used to ensure default where conditions for the queried model and any other models mentioned in the query params are used. 
 ### `minimum`
 Set this value to disable all but essential default where conditions. For example, when querying custom post types (eg events, venues, attendees) draft and trashed ones are excluded, but this setting will make them returned as well. 
 However, this will ensure only posts of the correct type are returned (as opposed to `none`).
+### `full_this_minimum_others`
+This is a mix of `minimum` and `all`. It applies all where conditions for the queried model, but only the minimum where conditions for other models used
+in the query params.
 ### `none`
 Only for advanced usage. A step beyond `minimum`, this means that when querying events you may get other post types returned. Usually `minimum` is a better option.
 ### `other_models_only`
 Set this value to disable _only_ **this** model's default where conditions.
 ### `this_model_only`
 Set this value to only use _this_ model's default where conditions.
-### `all`
-This is used to ensure _all_ default where conditions for the query are used.
+
 
 ## `caps`
 This query parameter controls what capability requirements apply to the query. For example, should we _not_ apply any capabilities/permissions/restrictions and return everything? Or should we only show the current user items they should be able to view on the frontend/backend/edit/delete?  This can be set to `none` (default), `read_frontend`, `read_backend`, `edit`, or `delete`
