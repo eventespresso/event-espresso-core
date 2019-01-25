@@ -2650,7 +2650,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     ),
                     REG_ADMIN_URL
                 );
-                $this->_template_args['attendees'][ $att_nmbr ]['event_name'] = $registration->event_obj()->name();
+                $this->_template_args['attendees'][ $att_nmbr ]['event_name'] = $registration->event_obj() instanceof EE_Event 
+                    ? $registration->event_obj()->name()
+                    : '';
                 $att_nmbr++;
             }
             $this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
