@@ -134,7 +134,8 @@ export const isEntityField = ( fieldName, schema ) =>
 	( ! isReadOnly( fieldName, schema ) ||
 		isPrimaryKeyField( fieldName, schema )
 	) &&
-	! isUTCDateTimeField( fieldName );
+	! isUTCDateTimeField( fieldName ) &&
+	fieldName !== '_protected';
 
 /**
  * Indicates whether the field represents a value of money from the provided

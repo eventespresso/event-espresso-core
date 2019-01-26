@@ -8,6 +8,7 @@ import { isArray } from 'lodash';
 import {
 	EventSchema,
 	EventResponse,
+	PasswordProtectedEventResponse,
 	DateTimeSchema,
 	AuthedDateTimeResponse,
 	AuthedEventResponse,
@@ -175,6 +176,7 @@ describe( 'createEntityFactory()', () => {
 		'schema',
 		'modelName',
 		'originalFieldsAndValues',
+		'protectedFields',
 	];
 	const calculatedFieldProperties = [
 		'hasCalculatedField',
@@ -546,6 +548,47 @@ describe( 'createEntityFactory()', () => {
 					} );
 				} );
 			} );
+		describe( 'creating entity from authed password protected rest response' +
+			' (fromExisting)', () => {
+			describe( 'creating entity', () => {
+				const event = EventFactory.fromExisting(
+					PasswordProtectedEventResponse
+				);
+				baseTests( event, allProperties );
+				it( 'has expected protected fields', () => {
+					expect( event.protectedFields ).toEqual(
+						[
+							'password',
+							'EVT_desc',
+							'EVT_short_desc',
+							'EVT_display_desc',
+							'EVT_display_ticket_selector',
+							'EVT_visible_on',
+							'EVT_additional_limit',
+							'EVT_default_registration_status',
+							'EVT_member_only',
+							'EVT_phone',
+							'EVT_allow_overflow',
+							'EVT_timezone_string',
+							'EVT_external_URL',
+							'EVT_donations',
+							'dummy_field'
+						]
+					);
+				} );
+				it( 'isFieldPasswordProtected getter returns expected ' +
+					'value', () => {
+					expect( event.isFieldPasswordProtected( 'EVT_desc' ) )
+						.toBe( true );
+					expect( event.isFieldPasswordProtected( 'invalid' ) )
+						.toBe( false );
+				} );
+				it( 'returns expected value for `isPasswordProtected` ' +
+					'getter', () => {
+					expect( event.isPasswordProtected ).toBe( true );
+				} );
+			} );
+		} );
 	} );
 	describe( 'multiple key prefix handling', () => {
 		const DateTimeFactory = createEntityFactory(
