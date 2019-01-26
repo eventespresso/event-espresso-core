@@ -572,7 +572,7 @@ describe( 'createEntityFactory()', () => {
 							'EVT_timezone_string',
 							'EVT_external_URL',
 							'EVT_donations',
-							'dummy_field'
+							'dummy_field',
 						]
 					);
 				} );
