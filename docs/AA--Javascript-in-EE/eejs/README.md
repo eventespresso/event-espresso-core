@@ -20,6 +20,18 @@ const config = {
 
 Currently the following things are exposed:
 
-| module | description                                                                                                      |
-| ------ | -----------------------------------------------------------------------------------------------------------------|
-| `data` | An object referencing arbitrary data that can be passed from the server to the client for use in other javascript|
+| module                                                     |                                                            description                                                                                                             |
+| -----------------------------------------------------------| -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`data`](./data.md)                                        |                                                            An object referencing arbitrary data that can be passed from the server to the client for use in other javascript       |
+| [exceptions](./exceptions.md)                              |                                                            Custom exception classes are exposed as properties on `eejs`                                                            |
+| [configuration](./configuration.md)                        |                                                            Various configuration objects are exposed as properties on `eejs` for things like currency, server locale, and timezone.|
+| [`components`](../components/README.md)                    |                                                            This exposes all the public react components for use in react apps/gutenberg blocks.                                    |
+| [`editorHocs`](../editor-higher-order-components/README.md)|                                                            Higher order react components usable in a gutenberg editor context.                                                     |
+| [`helpers`](./helpers.md)                                  |                                                            Various helper type functions.                                                                                          |
+| [`i18n`](./i18n.md)                                        |                                                            A javascript string localization utility (effectively a wrapper/shim around wp.i18n)                                    |
+| [`middelwares`](./middlewares.md)                          |                                                            Exposes various middleware classes implemented in libraries using them.                                                 |
+| [`model`](./model.md)                                      |                                                            Various functions and objects used within the Event Espresso data model.
+| [`routes`](./routes.md)                                                           |         Exposes various functions and objects used for Event Espresso route data.                                                                                                                                                                           |
+| [`validators`](./validators.md)                                                           |           Exposes various validation utility functions.                                                                                                                                                                         |
+| [`valueObjects`](../value-objects/README.md) | Various value object classes (`DateTime`, `Money` etc). |
+| [`vendor`](./vendor.md)                                                           | Various third-party libraries (`redux`, `moment-timezone` etc)                                                                                                                                                                                    |
