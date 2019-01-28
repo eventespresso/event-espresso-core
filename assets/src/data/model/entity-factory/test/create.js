@@ -317,8 +317,8 @@ describe( 'testing create functions for model-entity factory', () => {
 		} );
 		describe( 'relation resource properties are as expected', () => {
 			it( 'has expected properties', () => {
-				expect( testInstance.eventResource ).toBeDefined();
-				expect( testInstance.transactionResource ).toBeDefined();
+				expect( testInstance.eventsResource ).toBeDefined();
+				expect( testInstance.transactionsResource ).toBeDefined();
 			} );
 		} );
 		describe( 'getRelations getter is defined and has expected value',
@@ -328,7 +328,7 @@ describe( 'testing create functions for model-entity factory', () => {
 				} );
 				it( 'has expected value', () => {
 					expect( testInstance.getRelations ).toEqual(
-						[ 'event', 'transaction' ]
+						[ 'events', 'transactions' ]
 					);
 				} );
 			} );

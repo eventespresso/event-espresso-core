@@ -2,7 +2,7 @@
 Event Espresso 4 data is highly inter-related (see [Relations: Discovering Them, What Relations Establish](ee4-rest-api-writing-data.md#relations-discovering-them-what-relations-establish).)
 
 In order to modify how data is related, you are free to directly edit each entity's foreign keys (eg `EVT_ID` on datetimes is a foreign key, indicating which event the registration belongs to) and entries in their join resource (eg the resource `question_group_question` is actually a resource between questions and question groups).
-However, as of $VID:$, the EE4 REST API also provides helper endpoints for adding and removing relations.
+However, as of 4.9.74, the EE4 REST API also provides helper endpoints for adding and removing relations.
 
 For each read-only route for fetching related items (eg `events/123/datetimes`) there is a corresponding write-only 
 route (eg `events/123/datetimes/456`) for adding or removing relations. These relations-editing routes are the same
