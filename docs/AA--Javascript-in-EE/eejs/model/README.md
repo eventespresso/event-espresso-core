@@ -40,6 +40,7 @@ Various functions related to endpoint data.
 | Property |   Description                                                                             |
 | -------- | ------------------------------------------------------------------------------------------|
 | `endpoints` |   An object containing all the exposed endpoints for rest requests (indexed by model name)|
+| [`applyQueryString`](./endpoints.md#applyquerystring-modelname-querystring---) | A function for applying a provided query string to the endpoint for a given model name and returning the entire string for use in a request.
 | [`getEndpoint`](./endpoints.md#getendpoint-modelname-) |   A function for retrieving the endpoint for the given Model name.                        |
 | [`stripBaseRouteFromUrl`](./endpoints.md#stripbaseroutefromurl-url-)         |   Strips the rest base path from the given url string.                                    |
 
@@ -63,7 +64,6 @@ Various helper functions related to base functionality for the `eejs.model` modu
 
 | Property | Description |
 | -------- | ----------- |
-| [`applyQueryString`](./base.md#applyquerystring-modelname-querystring---) | A function for applying a provided query string to the endpoint for a given model name and returning the entire string for use in a request.
 | [`pluralModelName`](./base.md#pluralmodelname-modelname-)         | A memoized function that normalizes to the plural form of a given model name for the incoming string.             |
 | [`singularModelName`](./base.md#singularmodelname-modelname-)         | A memoized function that normalizes to the singular form of a given model name for the incoming string.             |
 | [`getQueryString`](./base.md#getquerystring-querydata---whereconditions----null-maporderby--orderby--orderby) | A function that returns a query string for use by a REST request given a set of queryData.
