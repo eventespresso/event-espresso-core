@@ -2,8 +2,8 @@ There are a number of configuration properties that are available on the `eejs` 
 
 | Property                                                   | Purpose                                                                         |
 | -----------------------------------------------------------| --------------------------------------------------------------------------------|
-| [`CURRENCY_CONFIG`](./configuration.md#eejs.currencyconfig)| An `object` containing various current currency settings from the server        |
-| [`SERVER_LOCALE`](./configuration.md#eejs-serverlocale)    | An `object` containing the `user` and `site` locale currently set on the server.|
+| [`CURRENCY_CONFIG`](./configuration.md#eejscurrency_config)| An `object` containing various current currency settings from the server        |
+| [`SERVER_LOCALE`](./configuration.md#eejsserver_locale)    | An `object` containing the `user` and `site` locale currently set on the server.|
 | [`TIMEZONE_CONFIG`](./configuration.md#eejstimezone_config)| An `object` containing the current timezone settings from the server.           |
 
 ## `eejs.CURRENCY_CONFIG`
