@@ -30,7 +30,7 @@ These are various properties that are assertion type functions.
 | [`assertEntityHasKey`](./assertions.md#assertentityhaskey-key-entity-message---) | A function that validates (throws an exception when not valid) whether the given key exists in the provided entity object. This is used when calling code wants an exception to be thrown.
 | [`assertImmutableObjectHasPath`](./assertions.md#assertimmutableobjecthaspath-path-immutable-message---)         | Asserts whether the given path in the provided immutable object exists.             |
 | [`assertIsArray`](./assertions.md#assertisarray-items-message---) | A function that validates (throws an exception when not valid) whether the given value is an array
-| [`assertIsNotEmpty`](./assertions.md#assertisnotempty-items-message---) | A function that validates (throws an exception when not valid) whether the given value is empty or not.  Call this validator when you want to make sure the provided value is NOT empty.
+| [`assertIsNotEmpty`](./assertions.md#assertisnotempty-item-message---) | A function that validates (throws an exception when not valid) whether the given value is empty or not.  Call this validator when you want to make sure the provided value is NOT empty.
 | [`assertIsMap`](./assertions.md#assertismap-item-message---)         | A function that asserts whether the given value is a Javascript [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) object.             |
 
 ### Endpoints
