@@ -9,11 +9,11 @@ This property is a set of various "helper" or utility functions with various pur
 | `DATE_TIME_FORMAT_SITE` | A format string used to represent whatever is the current set date and time format for the current WordPress site.
 | `DATE_FORMAT_SITE` | Just the date format string for the site.
 | `TIME_FORMAT_SITE` | Just the time format string for the site.
-| [`formatDateString`](./helpers.md#eejshelpersformatdatestring-datestring-format-local-) | A function that receives `dateString`, `format` and `local` arguments and returns a string in the provided format. |
-|[`formatMysqlDateString`](./helpers.md#eejshelpersformatmysqldatestring-datestring-local-) | A function that receives `dateString` and `local` arguments and returns a string in the MySql date and time format. |
-| [`formatSiteDateString`](./helpers.md#eejshelpersformatsitedatestring-datestring-local-) | A function that returns the provided dateString in the format currently set site date and time format.
-| [`stringToMoment`](./helpers.md#eejshelpersstringtomoment-datestring-) | A function that receives a `moment` library parseable date string and returns a `moment` object.
-| [`allDateTimesAsString`](./helpers.md#eejshelpersalldatetimesasstring-separator-datestrings-) | Receives an indefinite number of dateStrings as arguments and concatenates them together with the provided separator.
+| [`formatDateString`](./helpers.md#eejshelpersformatdatestring-datestring---format--date_time_format_is8601-local--true-) | A function that receives `dateString`, `format` and `local` arguments and returns a string in the provided format. |
+|[`formatMysqlDateString`](./helpers.md#eejshelpersformatmysqldatestring-datestring---local--true-) | A function that receives `dateString` and `local` arguments and returns a string in the MySql date and time format. |
+| [`formatSiteDateString`](./helpers.md#eejshelpersformatsitedatestring-datestring---local--true-) | A function that returns the provided dateString in the format currently set site date and time format.
+| [`stringToMoment`](./helpers.md#eejshelpersstringtomoment-datestring---) | A function that receives a `moment` library parseable date string and returns a `moment` object.
+| [`allDateTimesAsString`](./helpers.md#eejshelpersalldatetimesasstring-separator------datestrings-) | Receives an indefinite number of dateStrings as arguments and concatenates them together with the provided separator.
 | `dateFormats` | All object containing all available site formats exposed via the eejs.data global from the server |
 | `FORMAT_SITE_DATE` | The date format used by the site (or mysql date format if not set |
 | `FORMAT_SITE_TIME` | The time format used by the site (or mysql date format if not set |
@@ -26,7 +26,7 @@ This property is a set of various "helper" or utility functions with various pur
 | [`mergeAndDeDuplicateArrays`](./helpers.md#eejshelpersmergeanddeduplicatearrays-arrays-)        | Given any number of arrays as arguments, this function will merge and de-duplicate entries in the arrays so there are is only one of each value in the returned (new) array.             |
 | [`mergeAndDeDuplicateObjects`](./helpers.md#eejshelpersmergeanddeduplicateobjects-property-arrays-)        |  Given any number of arrays of objects, this function will merge and de-duplicate into one array with no duplicates, values for those objects with the provided property.            |
 | [`normalizeEntityId`](./helpers.md#eejshelpersnormalizeentityid-id-)        | Given a value representing an id, this will _normalize_ it.  Normalizing means that if the incoming value is a `cuid`, then it is left as a string.  Otherwise it is cast to an integer.  The purpose being that something like, `'20'` (string) would become `20` (integer)            |
-| [`removeEmptyFromState`](./helpers.md#eejshelpersremoveemptyfromstate-state-path-lengthremaining-withmutations-)        | Utility function for recursively removing empty `List`/`Map` from the `Map` on the given path ([`Immutable.Map`](https://facebook.github.io/immutable-js/docs/#/Map) or [`Immutable.List`](https://facebook.github.io/immutable-js/docs/#/List))             |
+| [`removeEmptyFromState`](./helpers.md#eejshelpersremoveemptyfromstate-state-path-lengthremaining--1-withmutations--true-)        | Utility function for recursively removing empty `List`/`Map` from the `Map` on the given path ([`Immutable.Map`](https://facebook.github.io/immutable-js/docs/#/Map) or [`Immutable.List`](https://facebook.github.io/immutable-js/docs/#/List))             |
 
 
 ## `eejs.helpers.formatDateString( dateString = '', format = DATE_TIME_FORMAT_ISO8601, local = true )`
