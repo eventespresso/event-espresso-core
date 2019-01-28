@@ -9,7 +9,7 @@ This property is a set of various "helper" or utility functions with various pur
 | `DATE_TIME_FORMAT_SITE` | A format string used to represent whatever is the current set date and time format for the current WordPress site.
 | `DATE_FORMAT_SITE` | Just the date format string for the site.
 | `TIME_FORMAT_SITE` | Just the time format string for the site.
-| [`formatDateString`](./helpers.md#eejshelpersformatdatestring-datestring---format--date_time_format_is8601-local--true-) | A function that receives `dateString`, `format` and `local` arguments and returns a string in the provided format. |
+| [`formatDateString`](./helpers.md#eejshelpersformatdatestring-datestring---format--date_time_format_iso8601-local--true-) | A function that receives `dateString`, `format` and `local` arguments and returns a string in the provided format. |
 |[`formatMysqlDateString`](./helpers.md#eejshelpersformatmysqldatestring-datestring---local--true-) | A function that receives `dateString` and `local` arguments and returns a string in the MySql date and time format. |
 | [`formatSiteDateString`](./helpers.md#eejshelpersformatsitedatestring-datestring---local--true-) | A function that returns the provided dateString in the format currently set site date and time format.
 | [`stringToMoment`](./helpers.md#eejshelpersstringtomoment-datestring---) | A function that receives a `moment` library parseable date string and returns a `moment` object.
