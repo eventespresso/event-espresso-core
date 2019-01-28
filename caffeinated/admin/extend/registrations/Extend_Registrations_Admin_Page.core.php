@@ -1158,7 +1158,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         $event_id = isset($this->_req_data['event_id']) ? $this->_req_data['event_id'] : null;
         /** @var EE_Event $event */
         $event = EEM_Event::instance()->get_one_by_ID($event_id);
-        $this->_template_args['before_list_table'] = ! empty($event_id) && $event instanceof EE_Event
+        $this->_template_args['before_list_table'] = $event instanceof EE_Event
             ? '<h2>' . sprintf(
                 esc_html__('Viewing Registrations for Event: %s', 'event_espresso'),
                 EEM_Event::instance()->get_one_by_ID($event_id)->get('EVT_name')
