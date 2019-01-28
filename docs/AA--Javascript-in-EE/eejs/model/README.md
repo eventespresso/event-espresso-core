@@ -51,13 +51,13 @@ Various functions related to primary key retrieval.
 | Property | Description |
 | -------- | ----------- |
 | `primaryKeys` | An object containing a map of modelName to primary key for that model. |
-| [`valuesForCombinedPrimaryKeys`](./primary-keys.md#valuesforcombinedprimarykeys-keys-entity-) | A function that returns a string representation for the given keys from the provided entity.  This function would be used for models that have combined primary keys (delivered as an array)
-| [`valueForPrimaryKey`](./primary-keys.md#valueforprimarykey-key-entity-) | A function that returns the value for the given key from the provided entity. This function would be used for models that have only one primary key.
-| [`getPrimaryKey`](./primary-keys.md#getprimarykey-modelname-) | A function that returns the primary key (or combined primary keys) from the available data for a given model name.
-| [`getPrimaryKeyQueryString`](./primary-keys.md#getprimarykeystring-modelname-keyvalues---)         | Returns a query string for getting the entities belonging to a model for the given primary key values.             |
-| [`getEntityPrimaryKeyValues`](./primary-keys.md#getentityprimarykeyvalues-modelname-entity) | A memoized function that returns the values for the primary keys from the provided entity.
-| [`keyEntitiesByPrimaryKeyValue`](./primary-keys.md#keyentitiesbyprimarykeyvalue-modelname-entities---) | A function that receives an array of entities and returns a collection of those same entities indexed by the primary key value for each entity.
-| [`createAndKeyEntitiesByPrimaryKeyValue`](./primary-keys.md#createandkeyentitiesbyprimarykeyvalue-factory-entities-)         | A function that creates an array of entity instances using the given factory and array of entity values.              |
+| [`valuesForCombinedPrimaryKeys`](./primary-keys.md#eejsmodelvaluesforcombinedprimarykeys-keys-entity-) | A function that returns a string representation for the given keys from the provided entity.  This function would be used for models that have combined primary keys (delivered as an array)
+| [`valueForPrimaryKey`](./primary-keys.md#eejsmodelvalueforprimarykey-key-entity-) | A function that returns the value for the given key from the provided entity. This function would be used for models that have only one primary key.
+| [`getPrimaryKey`](./primary-keys.md#eejsmodelgetprimarykey-modelname-) | A function that returns the primary key (or combined primary keys) from the available data for a given model name.
+| [`getPrimaryKeyQueryString`](./primary-keys.md#eejsmodelgetprimarykeystring-modelname-keyvalues---)         | Returns a query string for getting the entities belonging to a model for the given primary key values.             |
+| [`getEntityPrimaryKeyValues`](./primary-keys.md#eejsmodelgetentityprimarykeyvalues-modelname-entity) | A memoized function that returns the values for the primary keys from the provided entity.
+| [`keyEntitiesByPrimaryKeyValue`](./primary-keys.md#eejsmodelkeyentitiesbyprimarykeyvalue-modelname-entities---) | A function that receives an array of entities and returns a collection of those same entities indexed by the primary key value for each entity.
+| [`createAndKeyEntitiesByPrimaryKeyValue`](./primary-keys.md#eejsmodelcreateandkeyentitiesbyprimarykeyvalue-factory-entities-)         | A function that creates an array of entity instances using the given factory and array of entity values.              |
 
 ### Base
 
