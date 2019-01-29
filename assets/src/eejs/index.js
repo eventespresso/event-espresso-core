@@ -45,3 +45,8 @@ export * from './exceptions';
  */
 import * as mw from './middlewares';
 export const middleWares = mw;
+
+/**
+ * environment constant indicating development server
+ */
+export const __DEV__ = process.env.NODE_ENV !== 'production';
