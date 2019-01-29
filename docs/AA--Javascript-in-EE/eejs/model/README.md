@@ -75,12 +75,12 @@ Various model specific functions/interfaces.  In many cases these are composed f
 
 | Property | Description |
 | -------- | ----------- |
-| [`dateTimeModel`](./datetime-model.md) | A module containing all model related interfaces for the DateTime model.
-| [`eventModel`](./event-model.md) | A module containing all model related interfaces for the Event model.
-| [`attendeeModel`](./attendee-model.md)         | A module containing all model related interfaces for the Attendee model.             |
-| [`registrationModel`](./registration-model.md) | A module containing all model related interfaces for the Registration model.
-| [`statusModel`](./status-model.md) | A module containing all model related interfaces for the Status model.
-| [`ticketModel`](./ticket-model.md) | A module containing all model related interfaces for the Ticket model.
-| [`checkInModel`](./check-in-model.md) | A module containing all model related interfaces for the Checkin model.
+| [`dateTimeModel`](./datettime/README.md) | A module containing all model related interfaces for the DateTime model.
+| [`eventModel`](./event/README.md) | A module containing all model related interfaces for the Event model.
+| [`attendeeModel`](./attendee/README.md)         | A module containing all model related interfaces for the Attendee model.             |
+| [`registrationModel`](./registration/README.md) | A module containing all model related interfaces for the Registration model.
+| [`statusModel`](./status/README.md) | A module containing all model related interfaces for the Status model.
+| [`ticketModel`](./ticket/README.md) | A module containing all model related interfaces for the Ticket model.
+| [`checkInModel`](./check-in/README.md) | A module containing all model related interfaces for the Checkin model.
 
 Note: The list of exposed models will be added to over time so the above list may be out of date. You can find all the models and their exposed interfaces [here](../../../assets/src/data/model/)
