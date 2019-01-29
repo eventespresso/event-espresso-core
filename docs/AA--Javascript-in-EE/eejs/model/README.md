@@ -65,9 +65,9 @@ Various helper functions related to base functionality for the `eejs.model` modu
 
 | Property | Description |
 | -------- | ----------- |
-| [`pluralModelName`](./base.md#pluralmodelname-modelname-)         | A memoized function that normalizes to the plural form of a given model name for the incoming string.             |
-| [`singularModelName`](./base.md#singularmodelname-modelname-)         | A memoized function that normalizes to the singular form of a given model name for the incoming string.             |
-| [`getQueryString`](./base.md#getquerystring-querydata---whereconditions----null-maporderby--orderby--orderby) | A function that returns a query string for use by a REST request given a set of queryData.
+| [`pluralModelName`](./base.md#eejsmodelpluralmodelname-modelname-)         | A memoized function that normalizes to the plural form of a given model name for the incoming string.             |
+| [`singularModelName`](./base.md#eejsmodelsingularmodelname-modelname-)         | A memoized function that normalizes to the singular form of a given model name for the incoming string.             |
+| [`getQueryString`](./base.md#eejsmodelgetquerystring-querydata---whereconditions----null-maporderby---orderby---orderby-) | A function that returns a query string for use by a REST request given a set of queryData.
 
 ### Models
 
