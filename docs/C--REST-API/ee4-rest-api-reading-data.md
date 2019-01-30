@@ -185,7 +185,7 @@ However, if you want more control of how times are displayed (eg you want to dis
 Requests to `mysite.com/wp-json/ee/v4.8.34/events`, and also the equivalent endpoint in EE namespaces 4.8.33 and 4.8.29, and also `venues` and `attendees`, included the "featured_image_url" element on each event, venue, and attendee. However, in 4.8.36 the "featured_image_url" element has been removed. Please see the newly added image_* calculated fields on events.
 
 ### Password-protected Data
-New in Event Espresso $VID:$.
+New in Event Espresso 4.9.74.
 If you set a password on an event or venue (and other custom post types used by Event Espresso) some of their data will be replaced with default values. 
 For example, if you set a password on an event, its description, excerpt, external URL, among others, will be replaced with their default values (usually blank strings).
 The exact list of properties that were protected is listed in the `_protected` property.

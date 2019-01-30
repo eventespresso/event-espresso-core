@@ -70,9 +70,9 @@ is the ID of the registration to whom belongs the answer), an integer `QST_ID` (
 registration answered), and a string or JSON object for `ANS_value` (most answers to questions just take a single 
 string, but some, like checkbox or multi-select inputs, take a JSON array).
    
-# Creating/Posting
+## Creating/Posting
 To create a new entry, send a `POST` request to the resource's collection route. Eg, to create a new answer entity, send it to `ee/v4.8.36/answers`.
-You only need to provide the arguments which have `required: true` (see (Discovering What Arguments I Need to Provide)[##Discovering What Arguments I Need to Provide]).
+You only need to provide the arguments which have `required: true` (see [Discovering What Arguments I Need to Provide](#discovering-what-arguments-i-need-to-provide)).
 
 For example, here is a screenshot from Postman, where a POST request created a new answer with value "Alderan":
 ![POSTing an Answer with a String value](../images/postman-post-single-value.JPG)
@@ -84,7 +84,7 @@ Here is another screenshot from Postman, where a POST request created a new answ
 After a successfully posting a new item, it is immediately returned in the response. Note: you can include a query string on these requests too, to modify
 what data is returned, just like a standard GET request. See [our section on reading data](ee4-rest-api-reading-data.md).
 
-# Updating/Putting
+## Updating/Putting
 
 To update an entity, send a `PUT` or `PATCH` request to the entity's route. E.g., if you want to update the answer with ID `123`, the request
  would go to `ee/v4.8.36/answers/123`.
@@ -96,11 +96,11 @@ For example, here we only update the answer's `ANS_value`, while leaving the `RE
 
 **Gotcha!** `PUT` and `DELETE` requests need to use the `x-www-form-urlencoded` option. See [the related GitHub issue](https://github.com/WP-API/WP-API/issues/2451).
 
-# Deleting
+## Deleting
 
 There are two kinds of "delete"s: trashing/soft-deleting/archiving, and then hard/permanent deletes.
 
-## Trashing/Soft-Deleting/Archiving
+### Trashing/Soft-Deleting/Archiving
 
 To trash/archive/soft-delete an entity, send a `DELETE` request to the entity's route.
  
@@ -117,7 +117,7 @@ On events, venues, and attendees, "trashing" an event changes their status to "t
  
  However, not all EE4 resources can be trashed. For these, you need to specify a permanent deletion, as explained below.
  
-## Permanent/Hard Deleting
+### Permanent/Hard Deleting
  
 If you want to delete the entity permanently, you need to 
 provide the `force` argument and set it to `true` ("permanent" may have been a better name for this argument, but we used this for the sake of consistency with the WP API's core routes).
@@ -127,21 +127,21 @@ provide the `force` argument and set it to `true` ("permanent" may have been a b
 Notice that the response contains `success`, indicating whether the entity was successfully removed from the database or not. It also includes `previous`, which is the entity
 before it was deleted (which no longer exists).
 
-## Blocking Deletes
+### Blocking Deletes
 
 Before an entity is deleted, Event Espresso automatically checks there is no other data that relies on it (ie, has a foreign key to it). If it does, the request will fail.
 In order to circumvent this, you will need to first delete that dependent data. E.g., before you can delete a registration, you will first need to delete its answers.
 Alternatively, you can provide the argument `allow_blocking` and set it to `false`.
 
-# Gotchas:
+## Gotchas:
 
-## How Do My User's Capabilities Affect My Ability to Write Data?
+### How Do My User's Capabilities Affect My Ability to Write Data?
 
 In this initial implementation, we have overly simplified use of capabilities: basically, site administrators can 
 write to ALL EE4 resources, whereas every other user can't. We are working on enabling more fine-grained capabilities
  (like allowing an event manager to write to their own events, but not others' events) but that is not yet completed. 
 
-## Relations: discovering them, what relations establish 
+### Relations: discovering them, what relations establish 
 
 EE4 data is also highly inter-related. E.g., each event has 
 many datetimes, which can have many tickets, which can have many registrations for those tickets, which each have an 
@@ -151,9 +151,10 @@ HTTP request to a route you want to know more about, and inspect it's schema. [L
 schemas here](ee4-rest-api-schema.md#relations). The properties which are marked as `foreign_key` indicate entities of this type depend on that related entity.
 E.g., registrations have an `ATT_ID`, which is a foreign key to `Attendee`s, meaning registrations should point to related attendee records. So before you create
 a registration, either create a new attendee, or find the ID of an attendee ID you want to attribute this registration to.
+In 4.9.74, endpoints were added that simplify adding and removing relations between entities, please read [EE4 REST API: Editing Relations](ee4-rest-api-editing-relations.md).
 
 
-## Dates and Times; provide GMT or non-GMT?
+### Dates and Times; provide GMT or non-GMT?
 
 When inserting or updating entities with datetime properties, you can either provide the GMT or non-GMT fields (if you provide both, the GMT field will be ignored, like
 it currently is with WP core API, although this behavior may change if WP API changes). E.g., when creating a ticket, you can set its start date using either
@@ -163,7 +164,7 @@ it currently is with WP core API, although this behavior may change if WP API ch
 It is recommended you use the GMT properties because it is likely the timezone you currently live in is not necessarily the same as the WordPress site's default timezone,
 and so you may see unexpected results using the non-GMT property.
 
-## Serialized data
+### Serialized data
 
 Entity properties of type `object` can have JSON objects (eg `{"foo":"bar"}`) or JSON arrays (eg `["foo","bar"]`) submitted to them. But you CANNOT submit a string
 of serialized PHP (eg `a:1:{s:3:"foo";s:3:"bar";}`). Even if the string you are submitting doesn't contain any PHP objects, the EE4 REST API will not accept any string of serialized data.

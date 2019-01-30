@@ -16,7 +16,7 @@ import { endpoints } from './endpoints.js';
  * @param { Object } modelNameEndpoints
  * @return { Object } An object of { { modelName } : {} }
  */
-const mapToObjectValues = modelNameEndpoints => {
+const mapToObjectValues = ( modelNameEndpoints ) => {
 	return mapValues( modelNameEndpoints,
 		function() {
 			return {};
@@ -44,8 +44,18 @@ export const DEFAULT_CORE_STATE = {
 	entities: {
 		...getDefaultModelEntitiesObject(),
 	},
-	entityIds: {
-		...DEFAULT_LISTS_STATE,
+	relations: {
+		index: {},
+		entityMap: {},
+	},
+	dirty: {
+		relations: {
+			index: {},
+			delete: {},
+			add: {},
+		},
+		trash: {},
+		delete: {},
 	},
 };
 
@@ -58,6 +68,9 @@ export const DEFAULT_SCHEMA_STATE = {
 		...getDefaultModelEntitiesObject(),
 	},
 	factory: {
+		...getDefaultModelEntitiesObject(),
+	},
+	relationEndpoints: {
 		...getDefaultModelEntitiesObject(),
 	},
 };
