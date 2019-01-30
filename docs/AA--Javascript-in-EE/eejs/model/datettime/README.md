@@ -25,11 +25,11 @@ Various formatter helpers for this model.
 
 These are various helper functions for generating datetime related queries.
 
-| Property                                                  |  Description                                                                                                                                |
-| ----------------------------------------------------------| ------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`nowDateAndTime`](./query.md#nowdateandtime)             |  A function that returns a `moment` instance representing now.                                                                              |
-| [`queryDataTypes`](./query.md#querydatatypes)             |  A prop-types configuration option describing query data attributes for this model                                                          |
-| [`defaultQueryData`](./query.md#defaultquerydata)         |  An object describing defaults for the query data on this model.                                                                            |
-| [`mapOrderBy`](./query.md#maporderby-orderby-)            |  A function used to map an orderBy string to the actual value used in a REST query from the context of this model.                          |
-| [`whereConditions`](./query.md#whereconditions-querydata-)|  A function building a where conditions query string for this models collection endpoint request using provided incoming query data object. |
-| [`getQueryString`](./query.md#getquerystring-querydata-)  |  A function that returns a query string usable with the collection endpoint for this model.                                                 |
+| Property                                                                        |  Description                                                                                                                                |
+| --------------------------------------------------------------------------------| ------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`nowDateAndTime`](./query.md#eejsmodeldatetimemodelnowdateandtime)             |  A function that returns a `moment` instance representing now.                                                                              |
+| [`queryDataTypes`](./query.md#eejsmodeldatetimemodelquerydatatypes)             |  A prop-types configuration option describing query data attributes for this model                                                          |
+| [`defaultQueryData`](./query.md#eejsmodeldatetimemodeldefaultquerydata)         |  An object describing defaults for the query data on this model.                                                                            |
+| [`mapOrderBy`](./query.md#eejsmodeldatetimemodelmaporderby-orderby-)            |  A function used to map an orderBy string to the actual value used in a REST query from the context of this model.                          |
+| [`whereConditions`](./query.md#eejsmodeldatetimemodelwhereconditions-querydata-)|  A function building a where conditions query string for this models collection endpoint request using provided incoming query data object. |
+| [`getQueryString`](./query.md#eejsmodeldatetimemodelgetquerystring-querydata-)  |  A function that returns a query string usable with the collection endpoint for this model.                                                 |
