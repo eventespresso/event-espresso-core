@@ -14,7 +14,7 @@ There are a number of constants available on `eejs.model.checkInModel`
 
 ## Query
 
-These are various helper functions for generating datetime related queries.
+These are various helper functions for generating check-in related queries.
 
 | Property                                                                        |  Description                                                                                                                                |
 | --------------------------------------------------------------------------------| ------------------------------------------------------------------------------------------------------------------------------------------- |
