@@ -28,12 +28,18 @@ describe( 'DEFAULT_CORE_STATE', () => {
 				venue: {},
 				term: {},
 			},
-			entityIds: {
-				datetime: {},
-				event: {},
-				ticket: {},
-				venue: {},
-				term: {},
+			relations: {
+				index: {},
+				entityMap: {},
+			},
+			dirty: {
+				relations: {
+					index: {},
+					delete: {},
+					add: {},
+				},
+				trash: {},
+				delete: {},
 			},
 		};
 		expect( DEFAULT_CORE_STATE ).toEqual( expectedState );
