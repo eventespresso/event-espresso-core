@@ -75,7 +75,7 @@ Various model specific functions/interfaces.  In many cases these are composed f
 
 | Property | Description |
 | -------- | ----------- |
-| [`dateTimeModel`](./datettime/README.md) | A module containing all model related interfaces for the DateTime model.
+| [`dateTimeModel`](./datetime/README.md) | A module containing all model related interfaces for the DateTime model.
 | [`eventModel`](./event/README.md) | A module containing all model related interfaces for the Event model.
 | [`attendeeModel`](./attendee/README.md)         | A module containing all model related interfaces for the Attendee model.             |
 | [`registrationModel`](./registration/README.md) | A module containing all model related interfaces for the Registration model.
