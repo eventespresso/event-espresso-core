@@ -41,12 +41,6 @@ console.log( eejs.model.dateTimeModel.mapOrderBy( 'start_date' ) );
 
 This builds where conditions for a datetime REST endpoint request using provided data.  
 
-In the object passed in to this function, only the following properties are handled:
-
-* **month**:  Expected to be in a month format recognized by `moment`
-* **showExpired**: Expected to be a `boolean` that indicates whether or not "expired" dates should be retrieved.  If `false` then any dates prior to "now" will not  be retrieved.
-* **forEventId**: Used to restrict the dates returned to those for the given Event id.  Expects `number` type.
-
 This returns a string which is the assembled where conditions for the query.
 
 ### Arguments
