@@ -332,11 +332,7 @@ if ( ! function_exists( 'espresso_event_status' )) {
 	 * @return string
 	 */
 	function espresso_event_status( $EVT_ID = 0, $echo = TRUE ) {
-		if ( $echo ) {
-			echo EEH_Event_View::event_active_status( $EVT_ID );
-			return '';
-		}
-		return EEH_Event_View::event_active_status( $EVT_ID );
+		return EEH_Event_View::event_active_status( $EVT_ID, $echo );
 	}
 }
 
