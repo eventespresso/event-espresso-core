@@ -47,7 +47,7 @@ export const valuesForCombinedPrimaryKeys = memoize( ( keys, entity ) => {
  * This function would be used for models that have only one primary key.
  *
  * @type {memoized}
- * @return { number } The value for the key in the provided entity.
+ * @return { function } The value for the key in the provided entity.
  * @throws { Exception }
  */
 export const valueForPrimaryKey = memoize( ( key, entity ) => {
@@ -59,7 +59,7 @@ export const valueForPrimaryKey = memoize( ( key, entity ) => {
  * Returns the primary key (or combined primary keys) from the available data.
  *
  * @type {memoized}
- * @return { string|Array }
+ * @return { function(string) }
  * @throws { Exception }
  */
 export const getPrimaryKey = memoize( ( modelName ) => {
@@ -68,10 +68,23 @@ export const getPrimaryKey = memoize( ( modelName ) => {
 } );
 
 /**
+ * Returns a query string for getting the entities belonging to a model for the
+ * given primary key values
+ *
+ * @type {memoized}
+ */
+export const getPrimaryKeyQueryString = memoize(
+	( modelName, keyValues = [] ) => {
+		const primaryKey = getPrimaryKey( modelName );
+		return `[${ primaryKey }][IN]=` + keyValues.join();
+	}
+);
+
+/**
  * Returns the values for the primary keys from the provided entity.
  *
  * @type {memoized}
- * @return { string }  If the model has only one primary key then the value will
+ * @return { function }  If the model has only one primary key then the value will
  * be a simple string.  If the model has combined primary keys, then the value
  * will be as string in the format `%s.%s` for the primary key values.
  * @throws { Exception }
@@ -118,7 +131,7 @@ export const keyEntitiesByPrimaryKeyValue = ( modelName, entities = [] ) => {
  *
  * @param {Object} factory
  * @param {Map} entities
- * @return {Object<number,Object>}  An array of entity instances indexed by
+ * @return {Map}  An array of entity instances indexed by
  * their primary key value
  */
 export const createAndKeyEntitiesByPrimaryKeyValue = (

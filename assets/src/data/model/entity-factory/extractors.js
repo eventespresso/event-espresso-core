@@ -20,6 +20,8 @@ import {
 	ServerDateTime as DateTime,
 } from '../../../vo';
 
+import { pluralModelName } from '../model-names';
+
 import {
 	hasRawProperty,
 	hasPrettyProperty,
@@ -170,7 +172,7 @@ export const deriveRenderedValue = ( value ) => {
  * link.
  */
 export const getRelationNameFromLink = ( resourceLink ) => {
-	return camelCase( last( resourceLink.split( '/' ) ) );
+	return pluralModelName( camelCase( last( resourceLink.split( '/' ) ) ) );
 };
 
 /**
@@ -182,17 +184,19 @@ export const getRelationNameFromLink = ( resourceLink ) => {
 export const getBaseFieldsAndValuesForPersisting = ( entityInstance ) => {
 	return reduce( entityInstance.originalFieldsAndValues, (
 		fieldsAndValues,
-		fieldValue,
+		originalFieldValue,
 		fieldName
 	) => {
 		if (
 			isEntityField( fieldName, entityInstance.schema ) &&
 			! isPrimaryKeyField( fieldName, entityInstance.schema )
 		) {
-			return fieldsAndValues[ fieldName ] = maybeConvertFromValueObject(
-				fieldValue,
+			fieldsAndValues[ fieldName ] = maybeConvertFromValueObject(
+				entityInstance[ fieldName ],
 			);
+			return fieldsAndValues;
 		}
+		return fieldsAndValues;
 	}, {} );
 };
 

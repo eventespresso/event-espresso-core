@@ -360,9 +360,9 @@ const forPersist = ( instance ) => {
  * @param {Object} instance
  */
 export const createPersistingGettersAndSetters = ( instance ) => {
-	createGetter( instance, 'forUpdate', forUpdate );
-	createGetter( instance, 'forInsert', forInsert );
-	createGetter( instance, 'forPersist', forPersist );
+	createCallbackGetter( instance, 'forUpdate', forUpdate );
+	createCallbackGetter( instance, 'forInsert', forInsert );
+	createCallbackGetter( instance, 'forPersist', forPersist );
 };
 
 /**

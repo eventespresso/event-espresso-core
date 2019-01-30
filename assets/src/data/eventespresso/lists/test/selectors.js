@@ -4,19 +4,17 @@
 import {
 	getItems,
 	getEntities,
+	getEntitiesByIds,
 	isRequestingItems,
 	isRequestingEntities,
 } from '../selectors';
 
 /**
- * WordPress dependencies
- */
-import { select } from '@wordpress/data';
-
-/**
  * External dependencies
  */
+import { select } from '@wordpress/data';
 import { Exception } from '@eventespresso/eejs';
+import { Set, OrderedMap, Map } from 'immutable';
 
 jest.mock( '@wordpress/data', () => ( {
 	...require.requireActual( '@wordpress/data' ),
@@ -26,7 +24,13 @@ jest.mock( '@wordpress/data', () => ( {
 describe( 'testing getters', () => {
 	const testConditions = [
 		[
-			{ generic: { 'some_query_string=1': [ { id: 1 } ] } },
+			Map().set(
+				'generic',
+				Map().set(
+					'some_query_string=1',
+					Set.of( { id: 1 } )
+				)
+			),
 			getItems,
 			'getItems()',
 			'identifier',
@@ -35,13 +39,19 @@ describe( 'testing getters', () => {
 			[ { id: 1 } ],
 		],
 		[
-			{ event: { 'some_query_string=1': { 1: {} } } },
+			Map().set(
+				'event',
+				Map().set(
+					'some_query_string=1',
+					OrderedMap().set( 1, {} )
+				)
+			),
 			getEntities,
 			'getEntities()',
 			'modelName',
 			'event',
-			new Map(),
-			{ 1: {} },
+			[],
+			[ {} ],
 		],
 	];
 	testConditions.forEach( ( [
@@ -54,6 +64,7 @@ describe( 'testing getters', () => {
 		expectedResponse,
 	] ) => {
 		describe( describeDescription, () => {
+			beforeEach( () => methodTested.clear() );
 			it( 'returns expected default value when ' + testDescriptionPart +
 				' or queryString not found in state', () => {
 				expect( methodTested(
@@ -75,7 +86,52 @@ describe( 'testing getters', () => {
 					'some_query_string=1',
 				) ).toEqual( expectedResponse );
 			} );
+			it( 'returns cached value for key on repeated calls', () => {
+				const testResult = methodTested(
+					state,
+					mainStateIdentifier,
+					'some_query_string=1'
+				);
+				expect( methodTested(
+					state,
+					mainStateIdentifier,
+					'some_query_string=1'
+				) ).toBe( testResult );
+			} );
 		} );
+	} );
+} );
+
+describe( 'getEntitiesByIds()', () => {
+	const originalState = Map().set(
+		'event',
+		Map().set(
+			'[EVT_ID][IN]=10,20',
+			OrderedMap( [ [ 10, {} ], [ 20, {} ] ] )
+		)
+	);
+	it( 'returns expected default value when model doesn\'t exist in the ' +
+		'state', () => {
+		expect( getEntitiesByIds( originalState, 'cheese', [ 10, 20 ] ) )
+			.toEqual( [] );
+	} );
+	it( 'returns expected default value when ids do not exist in the ' +
+		'state (for the query being made)', () => {
+		expect( getEntitiesByIds( originalState, 'event', [ 10 ] ) )
+			.toEqual( [] );
+	} );
+	it( 'returns expected value for query matching state contents', () => {
+		expect( getEntitiesByIds( originalState, 'event', [ 10, 20 ] ) )
+			.toEqual( [ {}, {} ] );
+	} );
+	it( 'returns expected cached value on repeated calls', () => {
+		const testResult = getEntitiesByIds(
+			originalState,
+			'event',
+			[ 10, 20 ]
+		);
+		expect( getEntitiesByIds( originalState, 'event', [ 10, 20 ] ) )
+			.toBe( testResult );
 	} );
 } );
 
@@ -113,12 +169,14 @@ describe( 'isRequesting()', () => {
 	];
 
 	describe( 'isRequestingItems()', () => {
-		const state = {
-			generic: {},
-		};
+		const state = Map().set( 'generic', Map() );
 		it( 'throws an exception when identifier is invalid', () => {
 			const testCondition = () => {
-				isRequestingItems( state, 'invalid', 'some_query_string=1' );
+				isRequestingItems(
+					state,
+					'invalid',
+					'some_query_string=1'
+				);
 			};
 			expect( testCondition ).toThrowError( Exception );
 		} );
@@ -138,9 +196,7 @@ describe( 'isRequesting()', () => {
 		} );
 	} );
 	describe( 'isRequestingEntities()', () => {
-		const state = {
-			event: {},
-		};
+		const state = Map().set( 'event', Map() );
 		it( 'throws an exception when identifier is invalid', () => {
 			const testCondition = () => {
 				isRequestingItems( state, 'invalid', 'some_query_string=1' );

@@ -6,3 +6,4 @@ export { default as InvalidISO8601String } from './invalid-iso8601-string';
 export { default as InvalidLocale } from './invalid-locale';
 export { default as InvalidDatetime } from './invalid-datetime';
 export { default as InvalidType } from './invalid-type';
+export { default as InvalidModelEntity } from './invalid-model-entity';
