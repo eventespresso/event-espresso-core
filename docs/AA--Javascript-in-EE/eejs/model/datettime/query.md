@@ -63,3 +63,20 @@ The following are properties that are used from the incoming `queryData` object:
 // where[Event.EVT_ID]=10
 console.log( eejs.model.dateTimeModel.whereConditions( { forEventId: 10 } ) );
 ```
+
+## `eejs.model.dateTimeModel.getQueryString( queryData = {} )`
+
+Returns a query string for use by a REST request against the datetime endpoint given a set of queryData.
+
+## Arguments
+
+| Argument    | Type   | Description                                                                                                                                                                                                    |
+| ----------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `queryData` | Object | This is a collection of key/value pairs that are used to assemble the query string for the request.  The properties that can be used for this object are described by `eejs.model.dateTimeModel.queryDataTypes`|
+
+### Example
+
+```js
+// limit=10&where[EVT_ID]=20
+console.log( eejs.model.dateTimeModel.getQueryString( { limit: 10, forEventId: 20 } ) );
+```
