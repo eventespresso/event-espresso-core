@@ -61,7 +61,6 @@ class EEM_Payment_Method extends EEM_Base
                 'PMD_scope' => new EE_Serialized_Text_Field('PMD_scope', __("Usable From?", 'event_espresso'), false, array()), // possible values currently are 'CART','ADMIN','API'
         ) );
         $this->_model_relations = array(
- //         'Event'=>new EE_HABTM_Relation('Event_Payment_Method'),
             'Payment' => new EE_Has_Many_Relation(),
             'Currency' => new EE_HABTM_Relation('Currency_Payment_Method'),
             'Transaction' => new EE_Has_Many_Relation(),
@@ -149,8 +148,8 @@ class EEM_Payment_Method extends EEM_Base
      * Creates the $query_params that can be passed into any EEM_Payment_Method as their $query_params
      * argument to get all active for a given scope
      * @param string $scope one of the constants EEM_Payment_Method::scope_*
-     * @param array $query_params like EEM_Base::get_all.
-     * @return array like param of EEM_Base::get_all()
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @throws EE_Error
      */
     protected function _get_query_params_for_all_active($scope = null, $query_params = array())
@@ -176,8 +175,8 @@ class EEM_Payment_Method extends EEM_Base
      * Creates the $query_params that can be passed into any EEM_Payment_Method as their $query_params
      * argument to get all active for a given scope
      * @param string $scope one of the constants EEM_Payment_Method::scope_*
-     * @param array $query_params like EEM_Base::get_all.
-     * @return array like param of EEM_Base::get_all()
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @throws EE_Error
      */
     public function get_query_params_for_all_active($scope = null, $query_params = array())

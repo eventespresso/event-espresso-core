@@ -26,7 +26,7 @@ class EE_Model_Matching_Query_Validation_Strategy extends EE_Validation_Strategy
     /**
      * @param string $validation_error_message
      * @param string $model_name  name of an EEM_Base model
-     * @param array  $query_params     @see EEM_Base::get_all()
+     * @param array  $query_params     @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param string $input_field_name the input will be treated as this field's value
      * @throws \EE_Error
      */

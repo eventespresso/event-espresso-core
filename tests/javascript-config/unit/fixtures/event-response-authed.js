@@ -133,4 +133,5 @@ export const AuthedEventResponse = {
 		],
 	},
 	_calculated_fields: {},
+	_protected: [],
 };

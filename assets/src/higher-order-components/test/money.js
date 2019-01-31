@@ -2,7 +2,7 @@
  * Internal Imports
  */
 import withMoney from '../money';
-import { Money, SiteCurrency } from '@eventespresso/vo';
+import { Money, SiteCurrency } from '@eventespresso/value-objects';
 
 /**
  * External Imports

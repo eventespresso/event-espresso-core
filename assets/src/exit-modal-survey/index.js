@@ -31,7 +31,7 @@ const modalProps = {
 		},
 		typeFormStyle: {
 			width: '600px',
-			height: '400px',
+			height: '600px',
 		},
 	},
 	typeFormUrl: 'https://eventespresso.typeform.com/to/O1DDym?' + queryString,

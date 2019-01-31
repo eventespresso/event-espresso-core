@@ -14,7 +14,7 @@ Name | Description |
 ## props
 The generated `ModelSelectComponent` component receives and passes through all the props usable by the [`<ModelEnhancedSelect />`](model-select.md) component.
 
-Along with those it receieves the following common props for interacting with selects:
+Along with those it receives the following common props for interacting with selects:
 
 ### selected
 This is expected to be whatever the selected value for the select input is. 
@@ -52,7 +52,7 @@ const { createModelSelect } = eejs.components;
 import { createModelSelect } from '@eventespresso/components';
 ```
 
-**Note:** Currently this package is only Note: this package isn't published yet so you'll need to point to it via your build process. For example, if you use webpack you can register this as an external via:
+**Note**: this package isn't published yet so you'll need to point to it via your build process. For example, if you use webpack you can register this as an external via:
 
 ```js
 module.exports = {
@@ -62,7 +62,7 @@ module.exports = {
 }
 ```
 
-You will need to ensure that the eventespresso components bundle is a dependency for your implemented code.  You could do something like this:
+You will need to ensure that the event espresso components bundle is a dependency for your implemented code.  You could do something like this:
 
 ```php
 use EventEspresso\core\domain\services\assets\CoreAssetManager;

@@ -9,6 +9,8 @@ use EE_Error;
 use EE_Infinite_Integer_Field;
 use EE_Maybe_Serialized_Simple_HTML_Field;
 use EE_Model_Field_Base;
+use EE_Password_Field;
+use EE_Restriction_Generator_Base;
 use EE_Serialized_Text_Field;
 use EED_Core_Rest_Api;
 use EEM_Base;
@@ -552,7 +554,7 @@ class ModelDataTranslator
      * Prepares all the sub-conditions query parameters (eg having or where conditions) for use in the rest api
      *
      * @param array    $inputted_query_params_of_this_type  eg like the "where" or "having" conditions query params
-     *                                                      passed into EEM_Base::get_all()
+     *                                                      @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @param EEM_Base $model
      * @param string   $requested_version                   eg "4.8.36"
      * @return array ready for use in the rest api query params

@@ -81,5 +81,5 @@ $registry->registerManifestFile(
 
 Related documents that should be read are:
 
-- [`eejs-core` dependency](eejs-core-dependency.md)
-- [The `eejs.data` api](eejs-data-api.md)
+- [`eejs-core` dependency](./eejs-core-dependency.md)
+- [The `eejs.data` api](./eejs-data-api.md)

@@ -2,8 +2,16 @@
 
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+use DomainException;
 use EE_DB_Only_Field_Base;
+use EE_HABTM_Relation;
+use EE_Model_Relation_Base;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use Exception;
+use InvalidArgumentException;
+use ReflectionException;
 use \WP_REST_Request;
 use \WP_REST_Response;
 use EventEspresso\core\libraries\rest_api\Capabilities;
@@ -57,7 +65,7 @@ class Write extends Base
                     $request
                 )
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $controller->sendResponse($e);
         }
     }
@@ -82,7 +90,7 @@ class Write extends Base
                     $request
                 )
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $controller->sendResponse($e);
         }
     }
@@ -107,7 +115,7 @@ class Write extends Base
                     $request
                 )
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $controller->sendResponse($e);
         }
     }
@@ -314,6 +322,19 @@ class Write extends Base
         $read_controller->setRequestedVersion($this->getRequestedVersion());
         // the simulates request really doesn't need any info downstream
         $simulated_request = new WP_REST_Request('GET');
+        // set the caps context on the simulated according to the original request.
+        switch ($request->get_method()) {
+            case 'POST':
+            case 'PUT':
+                $caps_context = EEM_Base::caps_edit;
+                break;
+            case 'DELETE':
+                $caps_context = EEM_Base::caps_delete;
+                break;
+            default:
+                $caps_context = EEM_Base::caps_read_admin;
+        }
+        $simulated_request->set_param('caps', $caps_context);
         return $read_controller->createEntityFromWpdbResult(
             $model_obj->get_model(),
             $simulated_db_row,
@@ -351,5 +372,240 @@ class Write extends Base
         $read_controller = new Read();
         $read_controller->setRequestedVersion($this->getRequestedVersion());
         return $read_controller->getEntityFromModel($model, $get_request);
+    }
+
+    /**
+     * Adds a relation between the specified models (if it doesn't already exist.)
+     * @since 4.9.76.p
+     * @param WP_REST_Request $request
+     * @return WP_REST_Response
+     */
+    public static function handleRequestAddRelation(WP_REST_Request $request, $version, $model_name, $related_model_name)
+    {
+        $controller = new Write();
+        try {
+            $controller->setRequestedVersion($version);
+            $main_model = $controller->validateModel($model_name);
+            $controller->validateModel($related_model_name);
+            return $controller->sendResponse(
+                $controller->addRelation(
+                    $main_model,
+                    $main_model->related_settings_for($related_model_name),
+                    $request
+                )
+            );
+        } catch (Exception $e) {
+            return $controller->sendResponse($e);
+        }
+    }
+
+    /**
+     * Adds a relation between the two model specified model objects.
+     * @since 4.9.76.p
+     * @param EEM_Base $model
+     * @param EE_Model_Relation_Base $relation
+     * @param WP_REST_Request $request
+     * @return array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws RestException
+     * @throws DomainException
+     */
+    public function addRelation(EEM_Base $model, EE_Model_Relation_Base $relation, WP_REST_Request $request)
+    {
+        list($model_obj, $other_obj) = $this->getBothModelObjects($model, $relation, $request);
+        $extra_params = array();
+        if ($relation instanceof EE_HABTM_Relation) {
+            $extra_params = array_intersect_key(
+                ModelDataTranslator::prepareConditionsQueryParamsForModels(
+                    $request->get_body_params(),
+                    $relation->get_join_model(),
+                    $this->getModelVersionInfo()->requestedVersion(),
+                    true
+                ),
+                $relation->getNonKeyFields()
+            );
+        }
+        // Add a relation.
+        $related_obj = $model_obj->_add_relation_to(
+            $other_obj,
+            $relation->get_other_model()->get_this_model_name(),
+            $extra_params
+        );
+        $response = array(
+            strtolower($model->get_this_model_name()) => $this->returnModelObjAsJsonResponse($model_obj, $request),
+            strtolower($relation->get_other_model()->get_this_model_name()) => $this->returnModelObjAsJsonResponse($related_obj, $request),
+        );
+        if ($relation instanceof EE_HABTM_Relation) {
+            $join_model_obj = $relation->get_join_model()->get_one(
+                array(
+                    array(
+                        $model->primary_key_name() => $model_obj->ID(),
+                        $relation->get_other_model()->primary_key_name() => $related_obj->ID()
+                    )
+                )
+            );
+            $response['join'][ strtolower($relation->get_join_model()->get_this_model_name()) ] = $this->returnModelObjAsJsonResponse($join_model_obj, $request);
+        }
+        return $response;
+    }
+
+
+    /**
+     * Removes the relation between the specified models (if it exists).
+     * @since 4.9.76.p
+     * @param WP_REST_Request $request
+     * @return WP_REST_Response
+     */
+    public static function handleRequestRemoveRelation(WP_REST_Request $request, $version, $model_name, $related_model_name)
+    {
+        $controller = new Write();
+        try {
+            $controller->setRequestedVersion($version);
+            $main_model = $controller->getModelVersionInfo()->loadModel($model_name);
+            return $controller->sendResponse(
+                $controller->removeRelation(
+                    $main_model,
+                    $main_model->related_settings_for($related_model_name),
+                    $request
+                )
+            );
+        } catch (Exception $e) {
+            return $controller->sendResponse($e);
+        }
+    }
+
+    /**
+     * Adds a relation between the two model specified model objects.
+     * @since 4.9.76.p
+     * @param EEM_Base $model
+     * @param EE_Model_Relation_Base $relation
+     * @param WP_REST_Request $request
+     * @return array
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws RestException
+     */
+    public function removeRelation(EEM_Base $model, EE_Model_Relation_Base $relation, WP_REST_Request $request)
+    {
+        // This endpoint doesn't accept body parameters (it's understandable to think it might, so let developers know
+        // up-front that it doesn't.)
+        if (!empty($request->get_body_params())) {
+            $body_params = $request->get_body_params();
+            throw new RestException(
+                'invalid_field',
+                sprintf(
+                    esc_html__('This endpoint doesn\'t accept post body arguments, you sent in %1$s', 'event_espresso'),
+                    implode(array_keys($body_params))
+                )
+            );
+        }
+        list($model_obj, $other_obj) = $this->getBothModelObjects($model, $relation, $request);
+        // Remember the old relation, if it used a join entry.
+        $join_model_obj = null;
+        if ($relation instanceof EE_HABTM_Relation) {
+            $join_model_obj = $relation->get_join_model()->get_one(
+                array(
+                    array(
+                        $model->primary_key_name() => $model_obj->ID(),
+                        $relation->get_other_model()->primary_key_name() => $other_obj->ID()
+                    )
+                )
+            );
+        }
+        // Remove the relation.
+        $related_obj = $model_obj->_remove_relation_to(
+            $other_obj,
+            $relation->get_other_model()->get_this_model_name()
+        );
+        $response = array(
+            strtolower($model->get_this_model_name()) => $this->returnModelObjAsJsonResponse($model_obj, $request),
+            strtolower($relation->get_other_model()->get_this_model_name()) => $this->returnModelObjAsJsonResponse($related_obj, $request),
+        );
+        if ($relation instanceof EE_HABTM_Relation) {
+            $join_model_obj_after_removal = $relation->get_join_model()->get_one(
+                array(
+                    array(
+                        $model->primary_key_name() => $model_obj->ID(),
+                        $relation->get_other_model()->primary_key_name() => $other_obj->ID()
+                    )
+                )
+            );
+            if ($join_model_obj instanceof EE_Base_Class) {
+                $response['join'][ strtolower($relation->get_join_model()->get_this_model_name()) ] = $this->returnModelObjAsJsonResponse($join_model_obj, $request);
+            } else {
+                $response['join'][ strtolower($relation->get_join_model()->get_this_model_name()) ] = null;
+            }
+        }
+        return $response;
+    }
+
+    /**
+     * Gets the model objects indicated by the model, relation object, and request.
+     * Throws an exception if the first object doesn't exist, and currently if the related object also doesn't exist.
+     * However, this behaviour may change, as we may add support for simultaneously creating and relating data.
+     * @since 4.9.76.p
+     * @param EEM_Base $model
+     * @param EE_Model_Relation_Base $relation
+     * @param WP_REST_Request $request
+     * @return array {
+     * @type EE_Base_Class $model_obj
+     * @type EE_Base_Class|null $other_model_obj
+     * }
+     * @throws RestException
+     */
+    protected function getBothModelObjects(EEM_Base $model, EE_Model_Relation_Base $relation, WP_REST_Request $request)
+    {
+        // Check generic caps. For now, we're only allowing access to this endpoint to full admins.
+        Capabilities::verifyAtLeastPartialAccessTo($model, EEM_Base::caps_edit, 'edit');
+        $default_cap_to_check_for = EE_Restriction_Generator_Base::get_default_restrictions_cap();
+        if (! current_user_can($default_cap_to_check_for)) {
+            throw new RestException(
+                'rest_cannot_edit_' . EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
+                sprintf(
+                    esc_html__(
+                        // @codingStandardsIgnoreStart
+                        'For now, only those with the admin capability to "%1$s" are allowed to use the REST API to add relations in Event Espresso.',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
+                    $default_cap_to_check_for
+                ),
+                array('status' => 403)
+            );
+        }
+        // Get the main model object.
+        $model_obj = $this->getOneOrThrowException($model, $request->get_param('id'));
+        // For now, we require the other model object to exist too. This might be relaxed later.
+        $other_obj = $this->getOneOrThrowException($relation->get_other_model(), $request->get_param('related_id'));
+        return array($model_obj,$other_obj);
+    }
+
+    /**
+     * Gets the model with that ID or throws a REST exception.
+     * @since 4.9.76.p
+     * @param EEM_Base $model
+     * @param $id
+     * @return EE_Base_Class
+     * @throws RestException
+     */
+    protected function getOneOrThrowException(EEM_Base $model, $id)
+    {
+        $model_obj = $model->get_one_by_ID($id);
+        // @todo: check they can permission for it. For now unnecessary because only full admins can use this endpoint.
+        if ($model_obj instanceof EE_Base_Class) {
+            return $model_obj;
+        }
+        $lowercase_model_name = strtolower($model->get_this_model_name());
+        throw new RestException(
+            sprintf('rest_%s_invalid_id', $lowercase_model_name),
+            sprintf(__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
+            array('status' => 404)
+        );
     }
 }

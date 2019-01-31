@@ -2329,8 +2329,8 @@ abstract class EE_Base_Class
      *                You can optionally include an array of key=>value pairs that allow you to further constrict the
      *                relation to being added. However, keep in mind that the columns (keys) given must match a column
      *                on the JOIN table and currently only the HABTM models accept these additional conditions. Also
-     *                remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is
-     *                created in the join table.
+     *                remember that if an exact match isn't found for these extra cols/val pairs, then no row is
+     *                deleted.
      * @return EE_Base_Class the relation was removed from
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -2373,7 +2373,7 @@ abstract class EE_Base_Class
      * Removes ALL the related things for the $relationName.
      *
      * @param string $relationName
-     * @param array  $where_query_params like EEM_Base::get_all's $query_params[0] (where conditions)
+     * @param array  $where_query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @return EE_Base_Class
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -2422,7 +2422,7 @@ abstract class EE_Base_Class
      * because we want to get even deleted items etc.
      *
      * @param string $relationName key in the model's _model_relations array
-     * @param array  $query_params like EEM_Base::get_all
+     * @param array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @return EE_Base_Class[]     Results not necessarily indexed by IDs, because some results might not have primary
      *                             keys or might not be saved yet. Consider using EEM_Base::get_IDs() on these
      *                             results if you want IDs
@@ -2474,7 +2474,7 @@ abstract class EE_Base_Class
      * unless otherwise specified in the $query_params
      *
      * @param string $relation_name  model_name like 'Event', or 'Registration'
-     * @param array  $query_params   like EEM_Base::get_all's
+     * @param array  $query_params   @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param string $field_to_count name of field to count by. By default, uses primary key
      * @param bool   $distinct       if we want to only count the distinct values for the column then you can trigger
      *                               that by the setting $distinct to TRUE;
@@ -2502,7 +2502,7 @@ abstract class EE_Base_Class
      * Note: ignores default_where_conditions by default, unless otherwise specified in the $query_params
      *
      * @param string $relation_name model_name like 'Event', or 'Registration'
-     * @param array  $query_params  like EEM_Base::get_all's
+     * @param array  $query_params  @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param string $field_to_sum  name of field to count by.
      *                              By default, uses primary key
      *                              (which doesn't make much sense, so you should probably change it)
@@ -2528,7 +2528,7 @@ abstract class EE_Base_Class
      * Gets the first (ie, one) related model object of the specified type.
      *
      * @param string $relationName key in the model's _model_relations array
-     * @param array  $query_params like EEM_Base::get_all
+     * @param array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class (not an array, a single object)
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -2596,7 +2596,7 @@ abstract class EE_Base_Class
      * If this model object doesn't exist yet in the DB, just removes its related things
      *
      * @param string $relationName
-     * @param array  $query_params like EEM_Base::get_all's
+     * @param array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return int how many deleted
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -2628,7 +2628,7 @@ abstract class EE_Base_Class
      * to delete_related(). If this model object doesn't exist in the DB, just remove its related things
      *
      * @param string $relationName
-     * @param array  $query_params like EEM_Base::get_all's
+     * @param array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return int how many deleted (including those soft deleted)
      * @throws ReflectionException
      * @throws InvalidArgumentException

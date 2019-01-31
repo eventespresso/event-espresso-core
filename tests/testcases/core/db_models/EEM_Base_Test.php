@@ -1219,7 +1219,6 @@ class EEM_Base_Test extends EE_UnitTestCase
         $this->assertInstanceOf('EE_Attendee', $attendee);
         $this->assertEquals(3, $attendee->getCustomSelect('registration_count'));
     }
-
 }
 
 // End of file EEM_Base_Test.php

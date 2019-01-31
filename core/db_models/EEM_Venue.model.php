@@ -70,7 +70,29 @@ class EEM_Venue extends EEM_CPT_Base
                 ),
                 'VNU_order'      => new EE_Integer_Field('menu_order', __("Venue order", "event_espresso"), false, 1),
                 'post_type'      => new EE_WP_Post_Type_Field('espresso_venues'),
-                // EE_Plain_Text_Field('post_type', __("Venue post type", "event_espresso"), false, 'espresso_venues'),
+                'password' => new EE_Password_Field(
+                    'post_password',
+                    __('Password', 'event_espresso'),
+                    false,
+                    '',
+                    array(
+                        'VNU_desc',
+                        'VNU_short_desc',
+                        'VNU_address',
+                        'VNU_address2',
+                        'VNU_city',
+                        'STA_ID',
+                        'CNT_ISO',
+                        'VNU_zip',
+                        'VNU_phone',
+                        'VNU_capacity',
+                        'VNU_url',
+                        'VNU_virtual_phone',
+                        'VNU_virtual_url',
+                        'VNU_google_map_link',
+                        'VNU_enable_for_gmap',
+                    )
+                )
             ),
             'Venue_Meta' => array(
                 'VNUM_ID'             => new EE_DB_Only_Int_Field(
@@ -170,6 +192,7 @@ class EEM_Venue extends EEM_CPT_Base
         );
         // this model is generally available for reading
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+        $this->model_chain_to_password = '';
         parent::__construct($timezone);
     }
 }

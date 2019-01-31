@@ -1,31 +1,7 @@
 module.exports = {
-	parser: 'babel-eslint',
 	extends: [
-		'wordpress',
-		'plugin:wordpress/esnext',
-		'plugin:react/recommended',
-		'plugin:jsx-a11y/recommended',
-	],
-	env: {
-		browser: false,
-		es6: true,
-		node: true,
-	},
-	parserOptions: {
-		sourceType: 'module',
-		ecmaFeatures: {
-			jsx: true,
-		},
-	},
-	globals: {
-		wp: true,
-		window: true,
-		document: true,
-	},
-	plugins: [
-		'wordpress',
-		'react',
-		'jsx-a11y',
+		'plugin:@wordpress/eslint-plugin/recommended',
+		'plugin:jest/recommended',
 	],
 	rules: {
 		'array-bracket-spacing': [ 'error', 'always' ],

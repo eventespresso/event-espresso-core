@@ -1,9 +1,11 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+use EEM_Base;
 use EventEspresso\core\libraries\rest_api\controllers\Base as Controller_Base;
 use EventEspresso\core\libraries\rest_api\ModelVersionInfo;
 use EE_Error;
+use EventEspresso\core\libraries\rest_api\RestException;
 
 /**
  * Base
@@ -79,6 +81,32 @@ class Base extends Controller_Base
             }
         }
         return false;
+    }
+
+    /**
+     * Verifies the model name provided was valid. If so, returns the model (as an object). Otherwise, throws an
+     * exception. Must be called after `setRequestedVersion()`.
+     * @since 4.9.76.p
+     * @param $model_name
+     * @return EEM_Base
+     * @throws EE_Error
+     * @throws RestException
+     */
+    protected function validateModel($model_name)
+    {
+        if (! $this->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
+            throw new RestException(
+                'endpoint_parsing_error',
+                sprintf(
+                    __(
+                        'There is no model for endpoint %s. Please contact event espresso support',
+                        'event_espresso'
+                    ),
+                    $model_name
+                )
+            );
+        }
+        return $this->getModelVersionInfo()->loadModel($model_name);
     }
 }
 // End of file Base.php
