@@ -69,6 +69,17 @@ Various helper functions related to base functionality for the `eejs.model` modu
 | [`singularModelName`](./base.md#eejsmodelsingularmodelname-modelname-)         | A memoized function that normalizes to the singular form of a given model name for the incoming string.             |
 | [`getQueryString`](./base.md#eejsmodelgetquerystring-querydata---whereconditions----null-maporderby---orderby---orderby-) | A function that returns a query string for use by a REST request given a set of queryData.
 
+### Entity Factory Factory
+
+This is a factory object that handles creating `BaseEntity` factories for models so that in turn the created factories can create `BaseEntity` instances for those models.  `BaseEntity` is an interface to entity data returned from a model REST request.
+
+| Property                                                   |   Description                                                                                                                                                                                                           |
+| -----------------------------------------------------------| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`createEntityFactory`](./entity-factory/entity-factory.md)|   A factory for creating an entity factory.  Calling this returns an object with factory functions that instantiate an instance of a named `BaseEntity` object.  The `modelName` is used as the name for the new entity.|
+| [`MODEL_PREFIXES`](./entity-factory/model-prefixes.md)     |   A function that maps model names to an array of model specific prefixes used on fields for that model.  For instance, entity fields in the event model are prefixed with `EVT`.                                       |
+| `SAVE_STATE`                                               |   This is an object of constants describing the current `save_state` for an entity.  The values are symbols.                                                                                                            |
+
+
 ### Models
 
 Various model specific functions/interfaces.  In many cases these are composed from the [`Base`](./README.md#base) helper functions.
