@@ -37,7 +37,6 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         help="Used to adjust the number of attendees displayed (There is %d total attendee for the current filter settings)."
         label="Number of Attendees to Display:"
         limit={100}
-        max={100}
         min={1}
         onLimitChange={[Function]}
         withSlider={false}
@@ -179,7 +178,6 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         help="Used to adjust the number of attendees displayed (There is %d total attendee for the current filter settings)."
         label="Number of Attendees to Display:"
         limit={100}
-        max={100}
         min={1}
         onLimitChange={[Function]}
         withSlider={false}
@@ -303,7 +301,6 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         help="Used to adjust the number of attendees displayed (There is %d total attendee for the current filter settings)."
         label="Number of Attendees to Display:"
         limit={100}
-        max={100}
         min={1}
         onLimitChange={[Function]}
         withSlider={false}
