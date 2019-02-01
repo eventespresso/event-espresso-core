@@ -36,6 +36,8 @@ export const QueryLimit = ( {
 			type="number"
 			value={ limit }
 			label={ label }
+			min={ min }
+			max={ max }
 			onChange={ onLimitChange }
 			{ ...rest }
 		/> );
