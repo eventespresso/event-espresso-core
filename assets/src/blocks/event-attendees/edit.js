@@ -89,7 +89,7 @@ export class EventAttendeesEditor extends Component {
 			status: statusModel.REGISTRATION_STATUS_ID.APPROVED,
 			showGravatar: true,
 			displayOnArchives: false,
-			limit: 10,
+			limit: 100,
 			orderBy: 'lastThenFirstName',
 			order: QUERY_ORDER_ASC,
 			avatarSize: 24,
