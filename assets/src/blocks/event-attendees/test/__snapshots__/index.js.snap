@@ -36,10 +36,10 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
       <QueryLimit
         help="Used to adjust the number of attendees displayed (There is %d total attendee for the current filter settings)."
         label="Number of Attendees to Display:"
-        limit={10}
-        max={100}
+        limit={100}
         min={1}
         onLimitChange={[Function]}
+        withSlider={false}
       />
       <WithInstanceId(SelectControl)
         label="Order Attendees by:"
@@ -177,10 +177,10 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
       <QueryLimit
         help="Used to adjust the number of attendees displayed (There is %d total attendee for the current filter settings)."
         label="Number of Attendees to Display:"
-        limit={10}
-        max={100}
+        limit={100}
         min={1}
         onLimitChange={[Function]}
+        withSlider={false}
       />
       <WithInstanceId(SelectControl)
         label="Order Attendees by:"
@@ -300,10 +300,10 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
       <QueryLimit
         help="Used to adjust the number of attendees displayed (There is %d total attendee for the current filter settings)."
         label="Number of Attendees to Display:"
-        limit={10}
-        max={100}
+        limit={100}
         min={1}
         onLimitChange={[Function]}
+        withSlider={false}
       />
       <WithInstanceId(SelectControl)
         label="Order Attendees by:"
