@@ -171,13 +171,14 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
     {
         // Return the name contents
         return sprintf(
-            '%1$s <span style="color:silver">(id:%2$s)</span><br />%3$s',
+            '%1$s <span style="color:silver">(id:%2$s)</span><br />%3$s%4$s',
             /* $1%s */
             ucwords($item->messenger_obj()->label['singular']),
             /* $2%s */
             $item->GRP_ID(),
             /* %4$s */
-            $this->_get_context_links($item)
+            $this->_get_context_links($item),
+            $this->row_actions($this->_get_actions_for_messenger_column($item))
         );
     }
 
@@ -347,5 +348,19 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
         }
 
         return sprintf('<strong>%s:</strong> ', ucwords($c_label['plural'])) . implode(' | ', $ctxt);
+    }
+
+
+    /**
+     * Returns the actions for the messenger column.
+     *
+     * Note: Children classes may override this so do not remove it.
+     *
+     * @param EE_Message_Template_Group $item
+     * @return array
+     */
+    protected function _get_actions_for_messenger_column(EE_Message_Template_Group $item)
+    {
+        return [];
     }
 }

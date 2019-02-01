@@ -43,5 +43,5 @@ Of course, if you know for sure you're not going to need `eejs`, you can simply 
 
 Related reading:
 
-- [Asset Caching By Filename](asset-caching-by-filename.md)
-- [The `eejs.data` api](eejs-data-api.md)
+- [Asset Caching By Filename](./asset-caching-by-filename.md)
+- [The `eejs.data` api](./eejs-data-api.md)
