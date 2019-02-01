@@ -224,7 +224,7 @@ class RegisterCustomPostTypes
             ),
             'filter_items_list'        => sprintf(
                 /* Translators: Post Type Label */
-                esc_html_x('Filter %s list', 'Filter events list', 'event_espresso'),
+                esc_html_x('Filter %s list', 'Filter Events list', 'event_espresso'),
                 $plural_name
             ),
             'items_list_navigation'    => sprintf(
