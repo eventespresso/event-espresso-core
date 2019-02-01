@@ -16,7 +16,7 @@ const EnhancedComponent = withMoney( [ propA, propB ] )( MyComponent );
 <EnhancedComponent propA={ 1.25 } propB= { 2.30 } propC= { 'some string ' } />
 // this will result with propA and propB being converted to `Money` value objects within the context of `MyComponent`.
 ```
-If provided as a `function` then it's up to the implementation to define how the props are mapped to Money objects.  The function will receive the `props` from and a `Money` constructor for the function to use to generate `Money` instances. The expected return value from the function is an object with each converted `props` as a key (and values are the converted values) and a `new` key labelled `convertedValues` that is an array of `just` the converted values as primitives.  If this is not present an error will be thrown.  This is necessary for doing _shallow equality_ checks which in turn is used to determined whether to re-render or not.
+If provided as a `function` then it's up to the implementation to define how the props are mapped to Money objects.  The function will receive the `props` from and a `Money` constructor for the function to use to generate `Money` instances. The expected return value from the function is an object with each converted `props` as a key (and values are the converted values) and a `new` key labelled `convertedValues` that is an array of **just**  the converted values as primitives.  If this is not present an error will be thrown.  This is necessary for doing _shallow equality_ checks which in turn is used to determined whether to re-render or not.
 
 **Example:**
 ```js

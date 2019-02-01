@@ -145,4 +145,4 @@ var data = eejs.data || {},
 
 ## Anything else?
 
-You can read more about the `eejs` global module in [this document](eejs-module.md).
+You can read more about the `eejs` global module in [this document](./eejs/README.md).

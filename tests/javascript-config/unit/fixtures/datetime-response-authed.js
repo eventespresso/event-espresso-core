@@ -60,4 +60,5 @@ export const AuthedDateTimeResponse = {
 		],
 	},
 	_calculated_fields: {},
+	_protected: [],
 };

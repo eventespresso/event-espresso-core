@@ -162,6 +162,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             && ! empty($new_STS_ID) // as well as the new status
             && $this->ID() // ensure registration is in the db
         ) {
+            // update internal status first
+            parent::set('STS_ID', $new_STS_ID, $use_default);
+            // THEN handle other changes that occur when reg status changes
             // TO approved
             if ($new_STS_ID === EEM_Registration::status_id_approved) {
                 // reserve a space by incrementing ticket and datetime sold values

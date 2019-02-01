@@ -86,7 +86,7 @@ class EventAttendees extends Block
                 ),
                 'limit'             => array(
                     'type'    => 'number',
-                    'default' => 10,
+                    'default' => 100,
                 ),
                 'order' => array(
                     'type' => 'string',
