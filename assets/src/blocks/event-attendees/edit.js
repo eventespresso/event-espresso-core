@@ -369,6 +369,7 @@ export class EventAttendeesEditor extends Component {
 						onLimitChange={ this.setLimit }
 						min={ 1 }
 						max={ 100 }
+						withSlider={ false }
 						help={ sprintf(
 							_n(
 								'Used to adjust the number of attendees displayed (There is %d total attendee for the current filter settings).',
