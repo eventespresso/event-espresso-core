@@ -1,30 +1,62 @@
 /**
  * External imports
  */
+import moment from 'moment-timezone';
 import { Component, Fragment } from 'react';
 import { applyFilters } from '@wordpress/hooks';
 import { DropDownMenu, IconMenuItem } from '@eventespresso/components';
-import { __ } from '@eventespresso/i18n';
+import { __, sprintf, _x } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
  */
-import { editEventDate, copyEventDate, trashEventDate } from '../actions';
-import { SidebarMenuItem } from './sidebar-menu-item';
+import { copyEventDate, trashEventDate } from '../action-handlers';
+import { EntityActionMenuItem } from '../../../entity-action-menu-item';
+import { DatesAndTicketsManagerModal, EditEventDateFormModal } from '../';
 import './style.css';
 
 /**
- * EditorDateSidebar
+ * ActionsMenu
  *
  * @constructor
  * @param {Object} eventDate    JSON object defining the Event Date
- * @return {string} rendered menu
+ * @return {Object} rendered menu
  */
-class EditorDateSidebar extends Component {
+class ActionsMenu extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
+			editorOpen: false,
+			editTickets: false,
+		};
+	}
+
+	/**
+	 * opens and closes EditEventDateFormModal
+	 *
+	 * @function
+	 */
+	toggleEditor = () => {
+		this.setState( ( prevState ) => (
+			{ editorOpen: ! prevState.editorOpen }
+		) );
+	};
+
+	/**
+	 * opens and closes DatesAndTicketsManagerModal
+	 *
+	 * @function
+	 */
+	toggleTickets = () => {
+		this.setState( ( prevState ) => (
+			{ editTickets: ! prevState.editTickets }
+		) );
+	};
+
 	/**
 	 * @function
 	 * @param {Object} eventDate    JSON object defining the Event Date
-	 * @return {IconMenuItem}    Edit Event Date IconMenuItem
+	 * @return {DropDownMenu}    Edit Event Date DropDownMenu
 	 */
 	mainDropDownMenu = ( eventDate ) => {
 		return (
@@ -35,7 +67,7 @@ class EditorDateSidebar extends Component {
 					{
 						title: __( 'edit date', 'event_espresso' ),
 						icon: 'edit',
-						onClick: () => editEventDate( eventDate ),
+						onClick: this.toggleEditor,
 					},
 					{
 						title: __( 'copy date', 'event_espresso' ),
@@ -72,18 +104,17 @@ class EditorDateSidebar extends Component {
 				id={ `edit-date-${ eventDate.id }` }
 				htmlClass="edit-date"
 				dashicon="edit"
-				onClick={ () => editEventDate( eventDate ) }
+				onClick={ this.toggleEditor }
 			/>
 		);
 	};
 
 	/**
 	 * @function
-	 * @param {Object} eventDate    		JSON object defining the Event Date
-	 * @param {Function} viewTicketsHandler callback for displaying ticket list
+	 * @param {Object} eventDate JSON object defining the Event Date
 	 * @return {IconMenuItem}    View Tickets for Event Date IconMenuItem
 	 */
-	viewTicketsMenuItem = ( eventDate, viewTicketsHandler ) => {
+	viewTicketsMenuItem = ( eventDate ) => {
 		return (
 			<IconMenuItem
 				index={ 2 }
@@ -91,7 +122,7 @@ class EditorDateSidebar extends Component {
 				id={ `view-tickets-date-${ eventDate.id }` }
 				htmlClass="view-tickets-date"
 				dashicon="tickets-alt"
-				onClick={ () => viewTicketsHandler( eventDate ) }
+				onClick={ this.toggleTickets }
 			/>
 		);
 	};
@@ -105,46 +136,74 @@ class EditorDateSidebar extends Component {
 	renderSidebarMenuItems = ( eventDate, sidebarMenuItems ) => {
 		return sidebarMenuItems.map(
 			function( sidebarMenuItem, index ) {
-				// console.log(
-				// 	'EditorDateSidebar.renderSidebarMenuItems()' +
-				// 	' sidebarMenuItem',
-				// 	sidebarMenuItem
-				// );
-				return sidebarMenuItem && sidebarMenuItem.type && (
-					sidebarMenuItem.type === DropDownMenu ||
-					sidebarMenuItem.type === SidebarMenuItem ||
-					sidebarMenuItem.type === IconMenuItem
-				) && (
-					<Fragment key={ index }>
-						{ sidebarMenuItem }
-					</Fragment>
+				return (
+					sidebarMenuItem && sidebarMenuItem.type &&
+					(
+						sidebarMenuItem.type === DropDownMenu ||
+						sidebarMenuItem.type === EntityActionMenuItem ||
+						sidebarMenuItem.type === IconMenuItem
+					) ?
+						<Fragment key={ index }>
+							{ sidebarMenuItem }
+						</Fragment> :
+						null
 				);
-			}
+			},
 		);
 	};
 
 	render() {
-		const { eventDate, viewTicketsHandler } = this.props;
+		const { eventDate, allTickets, onUpdate } = this.props;
 		let sidebarMenuItems = [];
 		sidebarMenuItems.push( this.mainDropDownMenu( eventDate ) );
 		sidebarMenuItems.push( this.editDateMenuItem( eventDate ) );
-		sidebarMenuItems.push(
-			this.viewTicketsMenuItem( eventDate, viewTicketsHandler )
-		);
+		sidebarMenuItems.push( this.viewTicketsMenuItem( eventDate ) );
 		sidebarMenuItems = applyFilters(
 			'FHEE__EditorDates__EditorDateSidebar__SidebarMenuItems',
 			sidebarMenuItems,
 			eventDate
 		);
-		return (
+		let date = eventDate.start;
+		if ( ! moment.isMoment( date ) ) {
+			date = date instanceof Date ?
+				date :
+				new Date( date );
+			date = moment( date );
+		}
+
+		return eventDate && eventDate.id ? (
 			<div
 				id={ `ee-editor-date-sidebar-menu-${ eventDate.id }` }
 				className={ 'ee-editor-date-sidebar-menu' }
 			>
 				{ this.renderSidebarMenuItems( eventDate, sidebarMenuItems ) }
+				<EditEventDateFormModal
+					eventDate={ eventDate }
+					closeModal={ this.toggleEditor }
+					editorOpen={ this.state.editorOpen }
+				/>
+				<DatesAndTicketsManagerModal
+					dates={ [ eventDate ] }
+					tickets={ allTickets }
+					closeModal={ this.toggleTickets }
+					editorOpen={ this.state.editTickets }
+					onUpdate={ onUpdate }
+					modalProps={ {
+						title: sprintf(
+							_x(
+								'Ticket Assignments for: %1$s',
+								'Ticket Assignments for: Date & date name',
+								'event_espresso'
+							),
+							`${ eventDate.name } (${ date.format( 'ddd MMM' +
+								' DD, YYYY' ) })`
+						),
+						closeButtonLabel: null,
+					} }
+				/>
 			</div>
-		);
+		) : null;
 	}
 }
 
-export default EditorDateSidebar;
+export default ActionsMenu;
