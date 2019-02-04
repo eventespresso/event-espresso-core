@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { isArray } from 'lodash';
+// import { isArray } from 'lodash';
 
 /**
  * Internal imports
@@ -26,16 +26,17 @@ import { InputLabel } from '../inputs/base/input-label';
  * @param {Object} AutoColumnRow form layout strategy row component
  * @return {Object} rendered form row
  */
-export const AutoFormRow = ( {
+const AutoFormRow = ( {
 	FormElement,
 	AutoColumnRow,
 } ) => {
+	// console.log( 'AutoFormRow FormElement', FormElement );
 	let label = null;
 	let input = null;
 	let row = null;
-	if ( FormElement.type ) {
+	if ( FormElement && FormElement.type && FormElement.type.name ) {
 		const name = FormElement.type.name;
-		if ( name === 'FormRow' ) {
+		if ( name !== 'InputLabel' && name !== 'FormInput' && name !== 'Field' ) {
 			return FormElement;
 		}
 		if ( name === 'InputLabel' ) {
@@ -43,7 +44,7 @@ export const AutoFormRow = ( {
 		}
 		if ( name === 'FormInput' || name === 'Field' ) {
 			input = FormElement;
-			const validations = isArray( FormElement.props.validations ) ?
+			const validations = Array.isArray( FormElement.props.validations ) ?
 				FormElement.props.validations :
 				[ FormElement.props.validations ];
 			const attributes = addValidatorsToAttributes(
@@ -63,15 +64,17 @@ export const AutoFormRow = ( {
 				);
 			}
 		}
-	}
-	if ( label && input ) {
-		row = (
-			<AutoColumnRow>
-				{ label }
-				{ input }
-			</AutoColumnRow>
-		);
-		return row;
+		if ( label && input ) {
+			row = (
+				<AutoColumnRow>
+					{ label }
+					{ input }
+				</AutoColumnRow>
+			);
+			return row;
+		}
 	}
 	return null;
 };
+
+export default AutoFormRow;
