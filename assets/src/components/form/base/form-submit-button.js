@@ -13,14 +13,20 @@ import './form-submit-button.css';
 /**
  * @function
  * @param {boolean} submitting
+ * @param {boolean} disabled
  * @param {string} buttonText
  * @param {string} submittingText
+ * @param {string} htmlId
+ * @param {string} htmlClass
  * @return {Object} rendered submit button for form
  */
 export const FormSubmitButton = ( {
 	submitting,
+	disabled,
 	buttonText = '',
 	submittingText = '',
+	htmlId = '',
+	htmlClass = '',
 } ) => {
 	buttonText = buttonText ? buttonText : __( 'Submit', 'event_espresso' );
 	submittingText = submittingText ?
@@ -31,6 +37,9 @@ export const FormSubmitButton = ( {
 			<span className="ee-ellipsis-span">{ submittingText }</span>
 		</p> :
 		null;
+	htmlClass = htmlClass ?
+		`${ htmlClass } ee-form-button-submit ee-form-button` :
+		'ee-form-button-submit ee-form-button';
 	return (
 		<Fragment>
 			{
@@ -38,7 +47,9 @@ export const FormSubmitButton = ( {
 				<Button
 					isPrimary
 					type="submit"
-					disabled={ submitting }
+					disabled={ submitting || disabled }
+					id={ htmlId }
+					className={ htmlClass }
 				>
 					{ buttonText }
 				</Button>
