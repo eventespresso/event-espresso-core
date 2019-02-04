@@ -1,27 +1,31 @@
 /**
  * External imports
  */
-import { isArray } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 
 /**
  * Internal imports
  */
 import { HTML5_INPUT_TYPES } from './base/constants';
 import { CheckboxInput } from './checkbox-input';
+import { DateTimeInput } from './date-time-input';
+import { HiddenInput } from './hidden-input';
 import { RadioInput } from './radio-input';
 import { SelectInput } from './select-input';
 import { Textarea } from './textarea';
 import { TextInput } from './text-input';
-import { InputError } from './base/input-error';
-import { InputHelpText } from './base/input-help-text';
+import { ToggleInput } from './toggle-input';
+import { DefaultInputLayout } from './base/default-input-layout';
 import {
 	cleanUpInputAttributes,
 	composeValidators,
 	addValidatorsToAttributes,
 	prepareDataSet,
 } from './base/utils';
+
+// add some extra input types
+HTML5_INPUT_TYPES.push( 'toggle' );
 
 /**
  * FormInput
@@ -42,7 +46,7 @@ import {
 export class FormInput extends Component {
 	static propTypes = {
 		type: PropTypes.oneOf( HTML5_INPUT_TYPES ).isRequired,
-		name: PropTypes.string,
+		name: PropTypes.string.isRequired,
 		htmlId: PropTypes.string.isRequired,
 		htmlClass: PropTypes.string,
 		value: PropTypes.oneOfType( [
@@ -54,6 +58,7 @@ export class FormInput extends Component {
 		options: PropTypes.array,
 		helpText: PropTypes.string,
 		helpTextID: PropTypes.string,
+		InputLayout: PropTypes.object,
 	};
 
 	render() {
@@ -61,11 +66,12 @@ export class FormInput extends Component {
 			type,
 			name,
 			htmlId,
-			helpText = '',
+			InputLayout,
 			...rest
 		} = this.props;
 		let {
 			helpTextID,
+			helpText = '',
 			htmlClass = '',
 			dataSet = {},
 			validations = [],
@@ -74,7 +80,7 @@ export class FormInput extends Component {
 		htmlClass = this.props.required ? `${ htmlClass } required` : htmlClass;
 		// ensure data attributes are properly named
 		dataSet = prepareDataSet( dataSet );
-		validations = isArray( validations ) ? validations : [ validations ];
+		validations = Array.isArray( validations ) ? validations : [ validations ];
 		// remove attributes that should not be passed to inputs
 		let attributes = cleanUpInputAttributes( rest );
 		// add attributes based on validations
@@ -84,6 +90,16 @@ export class FormInput extends Component {
 
 		let formInput = null;
 		switch ( type ) {
+			case 'hidden' :
+				return (
+					<HiddenInput
+						name={ name }
+						htmlId={ htmlId }
+						dataSet={ dataSet }
+						validate={ validations }
+						{ ...attributes }
+					/>
+				);
 			case 'checkbox' :
 				formInput = (
 					<CheckboxInput
@@ -138,6 +154,39 @@ export class FormInput extends Component {
 					/>
 				);
 				break;
+			case 'date' :
+			case 'month' :
+			case 'datetime-local' :
+				formInput = (
+					<DateTimeInput
+						name={ name }
+						htmlId={ htmlId }
+						htmlClass={ htmlClass }
+						aria-describedby={ helpTextID }
+						{ ...dataSet }
+						{ ...attributes }
+						{ ...validations }
+					/>
+				);
+				break;
+			case 'toggle' :
+				const checked = !! attributes.initialValue;
+				delete attributes.initialValue;
+				delete attributes.inputWidth;
+				formInput = (
+					<ToggleInput
+						name={ name }
+						checked={ checked }
+						htmlId={ htmlId }
+						htmlClass={ htmlClass }
+						aria-describedby={ helpTextID }
+						{ ...dataSet }
+						{ ...attributes }
+						{ ...validations }
+					/>
+				);
+				helpText = '';
+				break;
 			default :
 				delete attributes.initialValue;
 				formInput = (
@@ -153,15 +202,20 @@ export class FormInput extends Component {
 					/>
 				);
 		}
-		return formInput && (
-			<Fragment>
-				{ formInput }
-				<InputError inputName={ name } />
-				<InputHelpText
-					helpTextID={ helpTextID }
-					helpText={ helpText }
-				/>
-			</Fragment>
+		return InputLayout ? (
+			<InputLayout
+				inputName={ name }
+				formInput={ formInput }
+				helpTextID={ helpTextID }
+				helpText={ helpText }
+			/>
+		) : (
+			<DefaultInputLayout
+				inputName={ name }
+				formInput={ formInput }
+				helpTextID={ helpTextID }
+				helpText={ helpText }
+			/>
 		);
 	}
 }
