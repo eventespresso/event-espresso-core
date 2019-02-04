@@ -46,6 +46,15 @@
     border-top: none;
 }
 
+.ee-editor-event-dates-and-tickets .ee-metabox-heading {
+    color: #58575c;
+    font-weight: bold;
+    text-shadow: 0 1px #fff;
+}
+.ee-metabox-heading .dashicon {
+    margin : 0 .5rem 0 5px;
+}
+
 /* Modal Styles
 * -------------------------------------------------------------------------*/
 
