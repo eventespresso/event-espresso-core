@@ -163,7 +163,9 @@ const validReglimit = date => {
  * @return {boolean} true if regLimit property is valid and NOT infinite
  */
 const validFiniteReglimit = date => {
-	return validReglimit( date ) && date.regLimit !== 'INF';
+	return validReglimit( date ) &&
+		date.regLimit !== 'INF' &&
+		date.regLimit !== Infinity;
 };
 
 /**
@@ -171,7 +173,9 @@ const validFiniteReglimit = date => {
  * @return {boolean} true if regLimit property is valid and unlimited
  */
 const validInfiniteReglimit = date => {
-	return validReglimit( date ) && date.regLimit === 'INF';
+	return validReglimit( date ) && (
+		date.regLimit === 'INF' || date.regLimit === Infinity
+	);
 };
 
 /**
