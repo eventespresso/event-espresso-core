@@ -19,7 +19,10 @@ class IconMenuItem extends Component {
 		index: PropTypes.number.isRequired,
 		id: PropTypes.string.isRequired,
 		htmlClass: PropTypes.string.isRequired,
-		dashicon: PropTypes.string.isRequired,
+		dashicon: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.string,
+		] ).isRequired,
 		tooltip: PropTypes.string.isRequired,
 		tooltipPosition: PropTypes.string,
 		onClick: PropTypes.func.isRequired,
@@ -32,16 +35,15 @@ class IconMenuItem extends Component {
 			tooltip,
 			dashicon,
 			onClick,
+			tooltipPosition = 'top left',
 			externalApp = null,
 			...otherProps
 		} = this.props;
-		let { htmlClass, tooltipPosition } = this.props;
+		let { htmlClass } = this.props;
 		delete otherProps.htmlClass;
-		delete otherProps.tooltipPosition;
 		htmlClass = `ee-icon-menu-item-${ htmlClass }`;
 		htmlClass += ` ee-icon-menu-item-${ index }`;
 		htmlClass += ' ee-icon-menu-item clickable';
-		tooltipPosition = tooltipPosition ? tooltipPosition : 'top left';
 		return (
 			<Fragment>
 				<IconButton
