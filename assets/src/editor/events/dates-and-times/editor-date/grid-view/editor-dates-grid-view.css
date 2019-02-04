@@ -88,6 +88,7 @@
 }
 
 .ee-editor-date-desc-div.ee-date-desc-excerpt span {
+    display: block;
     max-height: 42px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -114,6 +115,23 @@
     right: 2px;
     top: 2px;
 }
+
+.ee-primary-event-date {
+    color: #fff;
+    left: -2px;
+    position: absolute;
+    top: -2px;
+}
+
+
+.ee-primary-event-date:active,
+.ee-primary-event-date:focus,
+.ee-primary-event-date:hover {
+    background: none !important;
+    color: #fff !important;
+    box-shadow: none !important;
+}
+
 
 
 
