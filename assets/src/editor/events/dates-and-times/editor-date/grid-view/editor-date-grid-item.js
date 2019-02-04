@@ -3,7 +3,8 @@
  */
 import moment from 'moment-timezone';
 import { Component, Fragment } from 'react';
-import { __, sprintf, _x } from '@eventespresso/i18n';
+import { IconButton } from '@wordpress/components';
+import { __ } from '@eventespresso/i18n';
 import {
 	BiggieCalendarDate,
 	MediumCalendarDate,
@@ -13,11 +14,8 @@ import {
 /**
  * Internal dependencies
  */
-import {
-	DatesAndTicketsManagerModal,
-	EditorDateDetails,
-	EditorDateSidebar,
-} from '../';
+import { default as EditorDateDetails } from './editor-date-details';
+import { ActionsMenu } from '../';
 
 /**
  * EditorDateGridItem
@@ -27,11 +25,6 @@ import {
  * @param {Object} date    JSON object defining the Event Date
  */
 class EditorDateGridItem extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = { editorOpen: false };
-	}
-
 	/**
 	 * getStatusClass
 	 *
@@ -70,12 +63,6 @@ class EditorDateGridItem extends Component {
 			case 'DTU' :
 				return 'ee-blue-background';
 		}
-	};
-
-	toggleEditor = () => {
-		this.setState( prevState => ( {
-			editorOpen: ! prevState.editorOpen,
-		} ) );
 	};
 
 	/**
@@ -126,40 +113,30 @@ class EditorDateGridItem extends Component {
 		}
 	};
 
-	// viewEventDateTickets = ( event, data ) => {
-	// 	event.preventDefault();
-	// 	console.log( ' >>> CLICK <<< VIEW EVENT DATE TICKETS data.eventDate',
-	// 		data.eventDate
-	// 	);
-	// 	this.toggleEditor();
-	// };
-
 	render() {
-		// console.log( '' );
-		// console.log( 'EditorDateGridItem.render() props: ', this.props );
 		const {
 			eventDate,
 			allTickets,
+			onUpdate,
 			showDate = 'start',
 			showDesc = 'excerpt',
 			showVenue = true,
-			onUpdate,
 		} = this.props;
-		// const statusClass = this.getStatusClass( eventDate );
-		this.id = `event-date-ticket-list-modal-${ eventDate.id }`;
-		const buttonLabel = __(
-			'Close Event Date Ticket List ',
-			'event_espresso'
-		) + eventDate.id;
-		this.buttonLabel = buttonLabel;
+		// console.log( '' );
+		// console.log( 'EditorDateGridItem.render() props: ', this.props );
+		// console.log( 'EditorDateGridItem.render() eventDate: ', eventDate );
 
-		let date = eventDate.start;
-		if ( ! moment.isMoment( date ) ) {
-			date = date instanceof Date ?
-				date :
-				new Date( date );
-			date = moment( date );
-		}
+		const isPrimary = eventDate.isPrimary ? (
+			<IconButton
+				className="ee-primary-event-date"
+				icon="star-empty"
+				label={ __(
+					'this is the primary date for this event',
+					'event_espresso'
+				) }
+				labelPosition="top right"
+			/>
+		) : null;
 		return (
 			<Fragment>
 				<div className="ee-editor-date-main">
@@ -170,30 +147,12 @@ class EditorDateGridItem extends Component {
 						showVenue={ showVenue }
 					/>
 				</div>
-				<EditorDateSidebar
+				<ActionsMenu
 					eventDate={ eventDate }
-					viewTicketsHandler={ this.toggleEditor }
-				/>
-				<DatesAndTicketsManagerModal
-					dates={ [ eventDate ] }
-					tickets={ allTickets }
-					editorOpen={ this.state.editorOpen }
-					closeModal={ this.toggleEditor }
+					allTickets={ allTickets }
 					onUpdate={ onUpdate }
-					modalProps={ {
-						title: sprintf(
-							_x(
-								'Ticket Assignments for: %1$s',
-								'Ticket Assignments for: Date & date name',
-								'event_espresso'
-							),
-							`${ eventDate.name } (${ date.format( 'ddd MMM' +
-								' DD, YYYY' ) })`
-						),
-						// customClass: 'ee-event-date-tickets-manager-modal',
-						closeButtonLabel: null,
-					} }
 				/>
+				{ isPrimary }
 			</Fragment>
 		);
 	}
