@@ -4,14 +4,7 @@
 import { Component } from 'react';
 import { __ } from '@eventespresso/i18n';
 import { Dashicon } from '@wordpress/components';
-import { EntityDetailsPanel } from '@eventespresso/components';
-
-/**
- * Internal dependencies
- */
-import {
-	InlineEditInput,
-} from '../../../../components/form/inputs/inline-edit-input';
+import { EntityDetailsPanel, InlineEditInput } from '@eventespresso/components';
 
 /**
  * EditorDateDetails
@@ -21,6 +14,11 @@ import {
  * @return {string}    date details
  */
 class EditorDateDetails extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = { eventDate: props.eventDate ? props.eventDate : {} };
+	}
+
 	/**
 	 * dateName
 	 *
@@ -35,9 +33,11 @@ class EditorDateDetails extends Component {
 		return (
 			<h1 className={ htmlClass }>
 				<InlineEditInput
+					htmlId={ `event-date-name-${ eventDate.id }` }
 					type="text"
 					value={ eventDate.name }
-					onChange={ event => this.updateName( event.target.value ) }
+					onChange={ this.updateName }
+					label={ __( 'Date Name', 'event_espresso' ) }
 				/>
 			</h1>
 		);
@@ -58,11 +58,11 @@ class EditorDateDetails extends Component {
 		return (
 			<div className={ htmlClass }>
 				<InlineEditInput
+					htmlId={ `event-date-desc-${ eventDate.id }` }
 					type="textarea"
 					value={ eventDate.description }
-					onChange={
-						event => this.updateDescription( event.target.value )
-					}
+					onChange={ this.updateDescription }
+					label={ __( 'Date Description', 'event_espresso' ) }
 				/>
 			</div>
 		);
@@ -111,28 +111,27 @@ class EditorDateDetails extends Component {
 	dateSoldReservedCapacity = ( eventDate ) => {
 		const details = [
 			{
-				id: 'event-date-sold',
+				id: `event-date-sold-${ eventDate.id }`,
 				label: __( 'sold', 'event_espresso' ),
 				value: eventDate.sold,
 			},
 			{
-				id: 'event-date-reserved',
+				id: `event-date-reserved-${ eventDate.id }`,
 				label: __( 'reserved', 'event_espresso' ),
 				value: eventDate.reserved,
 			},
 			{
-				id: 'event-date-capacity',
+				id: `event-date-capacity-${ eventDate.id }`,
 				label: __( 'capacity', 'event_espresso' ),
 				value: eventDate.regLimit,
 				editable: {
 					type: 'text',
 					valueType: 'number',
-					onChange:
-						event => this.updateCapacity( event.target.value ),
+					onChange: this.updateCapacity,
 				},
 			},
 			{
-				id: 'event-date-registrants',
+				id: `event-date-registrants-${ eventDate.id }`,
 				label: __( 'registrants', 'event_espresso' ),
 				value: this.getDatetimeRegistrationsLink( eventDate ),
 			},
@@ -169,7 +168,13 @@ class EditorDateDetails extends Component {
 	 * @param {string} name new name for event date
 	 */
 	updateName = ( name ) => {
-		this.props.eventDate.name = name;
+		console.log( '>>> EditorDateDetails.updateName()', name );
+		this.setState(
+			( prevState ) => {
+				prevState.eventDate.name = name;
+				return { eventDate: prevState.eventDate };
+			}
+		);
 	};
 
 	/**
@@ -177,7 +182,13 @@ class EditorDateDetails extends Component {
 	 * @param {string} description new description for event date
 	 */
 	updateDescription = ( description ) => {
-		this.props.eventDate.description = description;
+		console.log( '>>> EditorDateDetails.updateDescription()', description );
+		this.setState(
+			( prevState ) => {
+				prevState.eventDate.description = description;
+				return { eventDate: prevState.eventDate };
+			}
+		);
 	};
 
 	/**
@@ -185,19 +196,30 @@ class EditorDateDetails extends Component {
 	 * @param {number} capacity new reg limit for event date
 	 */
 	updateCapacity = ( capacity ) => {
-		this.props.eventDate.regLimit = capacity;
+		console.log( '>>> EditorDateDetails.updateCapacity()', capacity );
+		this.setState(
+			( prevState ) => {
+				prevState.eventDate.capacity = capacity;
+				return { eventDate: prevState.eventDate };
+			}
+		);
 	};
 
 	render() {
-		const { eventDate, showDesc = 'excerpt', showVenue } = this.props;
-		return (
+		const eventDate = this.state.eventDate;
+		// console.log(
+		// 	'EditorDateDetails.render() eventDate',
+		// 	eventDate
+		// );
+		const { showDesc = 'excerpt', showVenue } = this.props;
+		return eventDate && eventDate.id ? (
 			<div className={ 'ee-editor-date-details-wrapper-div' }>
 				{ this.dateName( eventDate ) }
 				{ this.description( eventDate, showDesc ) }
 				{ this.venueName( eventDate, showVenue ) }
 				{ this.dateSoldReservedCapacity( eventDate ) }
 			</div>
-		);
+		) : null;
 	}
 }
 
