@@ -45,18 +45,19 @@ class EntityDetailsPanel extends Component {
 	 * entityDetail
 	 *
 	 * @function
-	 * @param {string} id   	identifier for data item being displayed
-	 * @param {string} label   	label for the data item being displayed
-	 * @param {string} value    value for the data item being displayed
-	 * @param {Object} editable InlineEditInput parameters
-	 * @return {string}    		rendered details
+	 * @param {string} id   		identifier for data item being displayed
+	 * @param {string} label   		label for the data item being displayed
+	 * @param {number|string} value value for the data item being displayed
+	 * @param {Object} editable 	InlineEditInput parameters
+	 * @return {string}    			rendered details
 	 */
 	entityDetail = ( { id, label, value, editable = {} } ) => {
-		value = value === 'INF' ?
+		value = value === 'INF' || value === Infinity ?
 			<span className={ 'ee-infinity-sign' }>&infin;</span> :
 			value;
 		value = ! isEmpty( editable ) ?
 			<InlineEditInput
+				htmlId={ id }
 				value={ value }
 				{ ...editable }
 			/> :
@@ -93,7 +94,6 @@ class EntityDetailsPanel extends Component {
 		htmlClass = htmlClass ?
 			`${ htmlClass } ee-entity-details-panel-div` :
 			'ee-entity-details-panel-div';
-
 		return (
 			<div className={ htmlClass }>
 				{
