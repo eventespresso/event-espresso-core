@@ -13,10 +13,8 @@ import {
 /**
  * Internal dependencies
  */
-import { EditorTicketDetails } from '../editor-ticket-details';
-// import { EditorTicketSidebar } from '../sidebar/editor-ticket-sidebar';
-// import { EditorTicketListModal } from '../../../tickets/editor-ticket/editor-tickets-list';
-// import { TicketEditorModal } from 'assets/src/editor/tickets/ticket-editor';
+import { EditorTicketDetails } from './';
+import { ActionsMenu } from '../actions-menu';
 
 /**
  * EditorTicketGridItem
@@ -26,11 +24,6 @@ import { EditorTicketDetails } from '../editor-ticket-details';
  * @return {string}        The ticket rendered as a block
  */
 class EditorTicketGridItem extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = { editorOpen: false };
-	}
-
 	/**
 	 * @function
 	 * @param {Object} ticket
@@ -102,47 +95,11 @@ class EditorTicketGridItem extends Component {
 
 	/**
 	 * @function
-	 * @param {Object} event
-	 */
-	toggleEditor = ( event ) => {
-		// console.log( ' $$$$ ' );
-		if ( event.target ) {
-			// console.log(
-			// 	'EditorTicketGridItem.toggleEditor() event.target',
-			// 	event.target
-			// );
-			if ( event.target.textContent ) {
-				// console.log(
-				// 	'EditorTicketGridItem.toggleEditor() textContent',
-				// 	event.target.textContent
-				// );
-				// console.log(
-				// 	'EditorTicketGridItem.toggleEditor() this.buttonLabel',
-				// 	this.buttonLabel
-				// );
-				if ( event.target.textContent !== this.buttonLabel ) {
-					// console.log( 'EditorTicketGridItem.toggleEditor() DO NOT CLOSE' );
-					return;
-				}
-			}
-		}
-		// console.log(
-		// 	'EditorTicketGridItem.toggleEditor() editorOpen: ',
-		// 	this.state.editorOpen
-		// );
-		this.setState( prevState => ( {
-			editorOpen: ! prevState.editorOpen,
-		} ) );
-	};
-
-	/**
-	 * @function
 	 * @param {Object} ticket
 	 * @param {string} showDate
 	 * @return {Object} rendered ticket
 	 */
 	displayTicket = ( ticket, showDate ) => {
-		// console.log( 'EditorTicketGridItem.displayTicket() ticket: ', ticket );
 		let sidebarColorClass = 'ee-editor-ticket-calendar-sidebar ';
 		sidebarColorClass += this.getBgColorClass( ticket );
 		const startDate = moment( ticket.startDate );
@@ -210,19 +167,21 @@ class EditorTicketGridItem extends Component {
 		// console.log( 'EditorTicketGridItem.render() props: ', this.props );
 		const {
 			ticket,
+			allDates,
+			onUpdate,
 			displayTicketDate = 'start',
 		} = this.props;
-		// const statusClass = this.getTicketStatusClass( ticket );
 		return (
 			<Fragment>
 				<div className="ee-editor-ticket-main">
 					<EditorTicketDetails ticket={ ticket } />
 					{ this.displayTicket( ticket, displayTicketDate ) }
 				</div>
-				{/*<EditorTicketSidebar*/}
-					{/*ticket={ ticket }*/}
-					{/*viewTicketsHandler={ this.toggleEditor }*/}
-				{/*/>*/}
+				<ActionsMenu
+					ticket={ ticket }
+					allDates={ allDates }
+					onUpdate={ onUpdate }
+				/>
 			</Fragment>
 		);
 	}

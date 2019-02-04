@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { default as EditorTicketGridItem } from './editor-ticket-grid-item';
+import { EditorTicketGridItem } from './';
 import './editor-tickets-grid-view.css';
 
 /**
@@ -15,13 +15,11 @@ import './editor-tickets-grid-view.css';
  * @param {mixed} otherProps
  * @return {Component}          list of rendered Tickets
  */
-export const EditorTicketsGridView = ( {
+const EditorTicketsGridView = ( {
 	entities,
 	htmlClass,
 	...otherProps
 } ) => {
-	// console.log( '' );
-	// console.log( 'EditorTicketsGridView otherProps', otherProps );
 	htmlClass = htmlClass ?
 		`${ htmlClass } ee-tickets-list-grid-view` :
 		'ee-tickets-list-list-view';
@@ -43,3 +41,5 @@ export const EditorTicketsGridView = ( {
 		</div>
 	);
 };
+
+export default EditorTicketsGridView;
