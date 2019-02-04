@@ -4,13 +4,14 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { isBoolean, isFunction, uniqueId } from 'lodash';
-
-/**
- * WordPress Imports
- */
 import { Modal } from '@wordpress/components';
 
-const withEditorModal = ( modalProps ) => WrappedComponent => {
+/**
+ * Internal Imports
+ */
+import './style.css';
+
+const withEditorModal = ( modalProps ) => ( WrappedComponent ) => {
 	return class extends Component {
 		static propTypes = {
 			title: PropTypes.string,
@@ -29,10 +30,7 @@ const withEditorModal = ( modalProps ) => WrappedComponent => {
 		}
 
 		closeModal = () => {
-			// console.log( ' #### ' );
-			// console.log( 'withEditorModal.toggleEditor())', event );
-			// console.log( 'withEditorModal.toggleEditor() key', this.key );
-			this.setState( prevState => ( {
+			this.setState( ( prevState ) => ( {
 				editorOpen: ! prevState.editorOpen,
 			} ) );
 		};
@@ -41,7 +39,6 @@ const withEditorModal = ( modalProps ) => WrappedComponent => {
 			modalProps = this.props.modalProps ?
 				this.props.modalProps :
 				modalProps;
-			// console.log( 'withEditorModal modalProps', modalProps );
 			const {
 				title,
 				customClass,
@@ -50,8 +47,6 @@ const withEditorModal = ( modalProps ) => WrappedComponent => {
 			} = modalProps;
 			const { ...passedProps } = this.props;
 			delete passedProps.modalProps;
-			// console.log( 'withEditorModal passedProps', passedProps );
-			// onUpdate
 			let {
 				id,
 				buttonLabel,
@@ -59,14 +54,11 @@ const withEditorModal = ( modalProps ) => WrappedComponent => {
 				closeModal,
 			} = this.props;
 			id = id ? id : uniqueId( 'ee-editor-modal-' );
-			// console.log( 'withEditorModal key: ' + id + ' editorOpen: ' + editorOpen );
 			buttonLabel = buttonLabel ? buttonLabel : closeButtonLabel;
 			if ( ! isFunction( closeModal ) ) {
-				// console.log( 'withEditorModal use internal state' );
 				editorOpen = this.state.editorOpen;
 				closeModal = this.closeModal;
 			}
-			// console.log( 'withEditorModal closeModal', closeModal );
 			return editorOpen && (
 				<Modal
 					id={ id }
