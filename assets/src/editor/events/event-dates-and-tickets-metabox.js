@@ -4,9 +4,10 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { concat, differenceWith, isEqual } from 'lodash';
-import { Panel, PanelBody, PanelRow } from '@wordpress/components';
+import { Dashicon, Panel, PanelBody, PanelRow } from '@wordpress/components';
 import { __ } from '@eventespresso/i18n';
 import { filterStateHandler } from '@eventespresso/higher-order-components';
+import { EspressoIcon } from '@eventespresso/components';
 
 /**
  * Internal imports
@@ -61,11 +62,8 @@ class EventDatesAndTicketsMetabox extends Component {
 	/**
 	 * @param {Object} newState
 	 */
-	hasUpdates = newState => {
+	hasUpdates = ( newState ) => {
 		if ( this.state !== newState ) {
-			// console.log( '' );
-			// console.log( 'EventDatesAndTicketsMetabox.hasUpdates()' );
-			// console.log( ' > newState:', newState );
 			this.setState( newState );
 		}
 	};
@@ -74,7 +72,7 @@ class EventDatesAndTicketsMetabox extends Component {
 	 * @param {Array} entities
 	 * @return {Object} filter state object
 	 */
-	getFilterState = entities => {
+	getFilterState = ( entities ) => {
 		// merge initial filter bar state objects with entities
 		let state = {
 			...datesListFilterState.initialState,
@@ -125,8 +123,6 @@ class EventDatesAndTicketsMetabox extends Component {
 		const { eventId } = this.props;
 		const {
 			entities,
-			// datesPerPage,
-			// ticketsPerPage,
 			...otherProps
 		} = this.state;
 		const datetimes = getFilteredDatesList(
@@ -135,23 +131,32 @@ class EventDatesAndTicketsMetabox extends Component {
 			this.state.sortDates
 		);
 		const allTickets = this.getEventDateTickets( entities );
-		let tickets = this.state.isChained ?
-			this.getEventDateTickets( datetimes ) :
-			allTickets;
-		tickets = getFilteredTicketsList(
-			tickets,
+		const filteredTickets = getFilteredTicketsList(
+			allTickets,
+			this.state.showTickets,
+			this.state.sortTickets
+		);
+		const tickets = getFilteredTicketsList(
+			this.getEventDateTickets( datetimes ),
 			this.state.showTickets,
 			this.state.sortTickets
 		);
 		// console.log( '' );
 		// console.log( 'EventDatesAndTicketsMetabox.render()' );
+		// console.log( ' > this.state:', this.state );
 		// console.log( ' > this.props:', this.props );
 		// console.log( ' > otherProps:', otherProps );
 		// console.log( ' # datetimes:', datetimes.length );
 		// console.log( ' # tickets:', tickets.length );
 		return (
-			<div id={ `ee-editor-event-dates-and-tickets-${ eventId }` }>
-				<h1>{ __( 'Event Dates', 'event_espresso' ) }</h1>
+			<div
+				id={ `ee-editor-event-dates-and-tickets-${ eventId }` }
+				className="ee-editor-event-dates-and-tickets"
+			>
+				<h1 className="ee-metabox-heading">
+					<EspressoIcon icon="calendar" />
+					{ __( 'Event Dates', 'event_espresso' ) }
+				</h1>
 				<Panel>
 					<PanelBody
 						id={ `ee-editor-event-dates-${ eventId }` }
@@ -172,7 +177,10 @@ class EventDatesAndTicketsMetabox extends Component {
 					</PanelBody>
 				</Panel>
 				<br />
-				<h1>{ __( 'Available Tickets', 'event_espresso' ) }</h1>
+				<h1 className="ee-metabox-heading">
+					<Dashicon icon="tickets-alt" />
+					{ __( 'Available Tickets', 'event_espresso' ) }
+				</h1>
 				<Panel>
 					<PanelBody
 						id={ `ee-editor-event-tickets-${ eventId }` }
@@ -182,6 +190,9 @@ class EventDatesAndTicketsMetabox extends Component {
 							<div>
 								<EditorTicketsList
 									entities={ tickets }
+									allDates={ entities }
+									allTickets={ filteredTickets }
+									isChained={ this.state.isChained }
 									prefiltered
 									for="event-tickets-metabox"
 									{ ...otherProps }
