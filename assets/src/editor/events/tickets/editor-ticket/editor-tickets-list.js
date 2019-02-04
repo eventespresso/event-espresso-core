@@ -8,8 +8,8 @@ import { __ } from '@eventespresso/i18n';
 /**
  * Internal dependencies
  */
-import { EditorTicketsGridView } from './grid-view/editor-tickets-grid-view';
-import { EditorTicketsListView } from './list-view/editor-tickets-list-view';
+import { EditorTicketsGridView } from './grid-view/';
+import { EditorTicketsListView } from './list-view/';
 import { default as PaginatedTicketsListWithFilterBar } from './filter-bar';
 
 /**
