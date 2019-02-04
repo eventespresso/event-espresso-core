@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  * This class is used for generating EE_Message objects with given info.
  *
@@ -252,7 +254,7 @@ class EE_Messages_Generator
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidInterfaceException
      */
     protected function _generate()
     {
@@ -322,7 +324,7 @@ class EE_Messages_Generator
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidInterfaceException
      */
     protected function _get_message_template_group()
     {
@@ -395,7 +397,7 @@ class EE_Messages_Generator
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidInterfaceException
      */
     protected function _specific_message_template_group_from_queue()
     {
@@ -431,7 +433,7 @@ class EE_Messages_Generator
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidInterfaceException
      */
     protected function _queue_shares_same_message_template_group_for_events(array $event_ids)
     {
@@ -462,7 +464,7 @@ class EE_Messages_Generator
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidInterfaceException
      */
     protected function _get_shared_message_template_for_events(array $event_ids)
     {
@@ -498,7 +500,7 @@ class EE_Messages_Generator
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidInterfaceException
      */
     protected function _get_global_message_template_group_for_current_messenger_and_message_type()
     {
@@ -950,9 +952,6 @@ class EE_Messages_Generator
      *
      * @param EE_Message_To_Generate $message_to_generate
      * @param bool                   $test_send Whether this is just a test send or not.  Typically used for previews.
-     * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     public function create_and_add_message_to_queue(EE_Message_To_Generate $message_to_generate, $test_send = false)
     {
@@ -961,8 +960,17 @@ class EE_Messages_Generator
 
         $message = $message_to_generate->get_EE_Message();
 
-        // is there a GRP_ID in the request?
-        if ($GRP_ID = EE_Registry::instance()->REQ->get('GRP_ID')) {
+        $GRP_ID = EE_Registry::instance()->REQ->get('GRP_ID', 0) > 0
+            ? EE_Registry::instance()->REQ->get('GRP_ID')
+            : apply_filters(
+                'FHEE__EE_Messages_Generator__create_and_add_message_to_queue_GRP_ID',
+                0,
+                $message,
+                $message_to_generate,
+                $test_send
+            );
+
+        if ($GRP_ID > 0) {
             $message->set_GRP_ID($GRP_ID);
         }
 
