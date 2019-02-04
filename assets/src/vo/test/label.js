@@ -43,13 +43,13 @@ describe( 'Label Value Object', () => {
 				[ 'wIerd Camel case', 'Wierd Camel Case' ],
 			];
 			it( 'returns the singular label in Sentence Case', () => {
-				testCases.forEach( testCase => {
+				testCases.forEach( ( testCase ) => {
 					newInstance = testInstance.setSingular( testCase[ 0 ] );
 					expect( newInstance.asSentenceCase() ).toBe( testCase[ 1 ] );
 				} );
 			} );
 			it( 'returns the plural label in Sentence Case', () => {
-				testCases.forEach( testCase => {
+				testCases.forEach( ( testCase ) => {
 					newInstance = testInstance.setPlural( testCase[ 0 ] );
 					expect( newInstance.asSentenceCase( false ) )
 						.toBe( testCase[ 1 ] );
@@ -64,13 +64,13 @@ describe( 'Label Value Object', () => {
 				[ 'wIerd Camel case', 'wierd camel case' ],
 			];
 			it( 'returns the singular label in Lower Case', () => {
-				testCases.forEach( testCase => {
+				testCases.forEach( ( testCase ) => {
 					newInstance = testInstance.setSingular( testCase[ 0 ] );
 					expect( newInstance.asLowerCase() ).toBe( testCase[ 1 ] );
 				} );
 			} );
 			it( 'returns the plural label in Lower Case', () => {
-				testCases.forEach( testCase => {
+				testCases.forEach( ( testCase ) => {
 					newInstance = testInstance.setPlural( testCase[ 0 ] );
 					expect( newInstance.asLowerCase( false ) )
 						.toBe( testCase[ 1 ] );
@@ -85,13 +85,13 @@ describe( 'Label Value Object', () => {
 				[ 'wIerd Camel case', 'WIERD CAMEL CASE' ],
 			];
 			it( 'returns the singular label in Upper Case', () => {
-				testCases.forEach( testCase => {
+				testCases.forEach( ( testCase ) => {
 					newInstance = testInstance.setSingular( testCase[ 0 ] );
 					expect( newInstance.asUpperCase() ).toBe( testCase[ 1 ] );
 				} );
 			} );
 			it( 'returns the plural label in Upper Case', () => {
-				testCases.forEach( testCase => {
+				testCases.forEach( ( testCase ) => {
 					newInstance = testInstance.setPlural( testCase[ 0 ] );
 					expect( newInstance.asUpperCase( false ) )
 						.toBe( testCase[ 1 ] );

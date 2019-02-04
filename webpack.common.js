@@ -14,6 +14,7 @@ const externals = {
 	'@wordpress/editor': 'wp.editor',
 	'@wordpress/compose': 'wp.compose',
 	'@wordpress/hooks': 'wp.hooks',
+	'@wordpress/url': 'wp.url',
 	react: 'React',
 	'react-dom': 'ReactDOM',
 	'react-redux': 'eejs.vendor.reactRedux',

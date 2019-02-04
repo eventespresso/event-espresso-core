@@ -2329,8 +2329,8 @@ abstract class EE_Base_Class
      *                You can optionally include an array of key=>value pairs that allow you to further constrict the
      *                relation to being added. However, keep in mind that the columns (keys) given must match a column
      *                on the JOIN table and currently only the HABTM models accept these additional conditions. Also
-     *                remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is
-     *                created in the join table.
+     *                remember that if an exact match isn't found for these extra cols/val pairs, then no row is
+     *                deleted.
      * @return EE_Base_Class the relation was removed from
      * @throws ReflectionException
      * @throws InvalidArgumentException

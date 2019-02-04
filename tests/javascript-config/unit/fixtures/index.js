@@ -8,6 +8,9 @@ export { AuthedDateTimeResponse } from './datetime-response-authed';
 export { EventResponse } from './event-response-non-authed';
 export { AuthedEventResponse } from './event-response-authed';
 export {
+	PasswordProtectedEventResponse,
+} from './event-response-password-protected-authed';
+export {
 	RegistrationSchema,
 	RegistrationSchemaProperties,
 } from './registration-schema';

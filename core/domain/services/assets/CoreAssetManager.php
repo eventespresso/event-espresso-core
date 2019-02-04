@@ -256,7 +256,17 @@ class CoreAssetManager extends AssetManager
                 CoreAssetManager::JS_HANDLE_VALUE_OBJECTS
             )
         )
-             ->setRequiresTranslation();
+             ->setRequiresTranslation()
+             ->setInlineDataCallback(
+                 function() {
+                     wp_add_inline_script(
+                         CoreAssetManager::JS_HANDLE_DATA_STORES,
+                         is_admin()
+                             ? 'wp.apiFetch.use( eejs.middleWares.apiFetch.capsMiddleware( eejs.middleWares.apiFetch.CONTEXT_CAPS_EDIT ) )'
+                             : 'wp.apiFetch.use( eejs.middleWares.apiFetch.capsMiddleware )'
+                     );
+                 }
+             );
 
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_HOCS,
@@ -291,6 +301,7 @@ class CoreAssetManager extends AssetManager
         $this->registry->addData(
             'paths',
             array(
+                'base_rest_route' => rest_url(),
                 'rest_route' => rest_url('ee/v4.8.36/'),
                 'collection_endpoints' => EED_Core_Rest_Api::getCollectionRoutesIndexedByModelName(),
                 'primary_keys' => EED_Core_Rest_Api::getPrimaryKeyNamesIndexedByModelName(),

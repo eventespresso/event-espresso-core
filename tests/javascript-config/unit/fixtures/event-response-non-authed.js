@@ -132,4 +132,5 @@ export const EventResponse = {
 		],
 	},
 	_calculated_fields: {},
+	_protected: [],
 };
