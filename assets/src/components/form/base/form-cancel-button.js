@@ -10,20 +10,29 @@ import { Button } from '@wordpress/components';
  * @param {boolean} submitting
  * @param {boolean} pristine
  * @param {string} buttonText
+ * @param {string} htmlId
+ * @param {string} htmlClass
  * @return {Object} rendered submit button for form
  */
-export const FormResetButton = ( {
+export const FormCancelButton = ( {
 	onClick,
 	pristine,
 	submitting,
 	buttonText = '',
+	htmlId = '',
+	htmlClass = '',
 } ) => {
-	buttonText = buttonText ? buttonText : __( 'Reset', 'event_espresso' );
+	buttonText = buttonText ? buttonText : __( 'Cancel', 'event_espresso' );
+	htmlClass = htmlClass ?
+		`${ htmlClass } ee-form-button-cancel ee-form-button` :
+		'ee-form-button-cancel ee-form-button';
 	return (
 		<Button
 			isDefault
 			onClick={ onClick }
 			disabled={ submitting || pristine }
+			id={ htmlId }
+			className={ htmlClass }
 		>
 			{ buttonText }
 		</Button>
