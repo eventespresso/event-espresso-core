@@ -100,9 +100,10 @@ class EED_Admin_Refactor extends EED_Module
             if (! $datetime instanceof EE_Datetime) {
                 continue;
             }
-            $DTD_ID = $datetime->ID();
+            $DTD_ID = (int) $datetime->ID();
             $datetime_data = array(
                 'id' => $DTD_ID,
+                'EVT_ID' => $this->post->ID,
                 'name' => $datetime->name(),
                 'description' => $datetime->description(),
                 'start' => $datetime->start_date(DATE_RFC822), // 'D M d Y H:i:s O'
@@ -116,6 +117,7 @@ class EED_Admin_Refactor extends EED_Module
                 'reserved' => $datetime->reserved(),
                 'regLimit' => $datetime->reg_limit() === INF ? 'INF' : $datetime->reg_limit(),
                 'order' => $datetime->order(),
+                'isPrimary' => $datetime->is_primary() || $DTD_ID === 20,
                 'venue' => $venue_name,
                 'edit_venue_link' => $edit_venue_link,
                 'tickets' => $this->getTicketData($datetime)
