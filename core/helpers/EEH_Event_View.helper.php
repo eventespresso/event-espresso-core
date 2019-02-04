@@ -102,10 +102,10 @@ class EEH_Event_View extends EEH_Base
      * @param    int $EVT_ID
      *  @return     string
      */
-    public static function event_active_status($EVT_ID = 0)
+    public static function event_active_status($EVT_ID = 0, $echo = true)
     {
         $event = EEH_Event_View::get_event($EVT_ID);
-        return $event instanceof EE_Event ? $event->pretty_active_status() : 'inactive';
+        return $event instanceof EE_Event ? $event->pretty_active_status($echo) : 'inactive';
     }
 
 
