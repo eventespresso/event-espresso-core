@@ -30,7 +30,7 @@ class FormSaveCancelButtons extends Component {
 		return (
 			<FormSection htmlClass={ htmlClass }>
 				<FormRow>
-					<FormColumn colSize={ 6 } offset={ 2 }>
+					<FormColumn colSize={ 6 } offset={ 3 }>
 						{ submitButton }
 						{ cancelButton }
 					</FormColumn>

@@ -7,29 +7,35 @@ import PropTypes from 'prop-types';
  *
  * @constructor
  * @param {Object} children
- * @param {boolean} offset
+ * @param {string} htmlClass
+ * @param {number} offset
  * @param {number|string} colSize
  * @param {string} align
+ * @param {Object} extraAttributes
  * @return {Object} rendered form row column
  */
 const FormColumn = ( {
 	children,
-	colSize = 2,
+	htmlClass,
+	colSize = 3,
 	offset = 0,
 	align = 'left',
+	...extraAttributes
 } ) => {
 	const input = children ? children : null;
-	if ( input === null || input.type === undefined ||
-		( input.type.name && input.type.name === 'HiddenInput' )
+	if (
+		! input ||
+		( input.type && input.type.name && input.type.name === 'HiddenInput' )
 	) {
 		return input;
 	}
-	let htmlClass = offset ?
-		`col-sm-${ colSize } offset-sm-${ offset }` :
-		`col-sm-${ colSize }`;
+	htmlClass = htmlClass ? `${ htmlClass } ` : '';
+	htmlClass = offset ?
+		`${ htmlClass }col-sm-${ colSize } offset-sm-${ offset }` :
+		`${ htmlClass }col-sm-${ colSize }`;
 	htmlClass += align === 'right' ? ' text-sm-right' : '';
 	return (
-		<div className={ htmlClass }>
+		<div className={ htmlClass } { ...extraAttributes }>
 			{ input }
 		</div>
 	);

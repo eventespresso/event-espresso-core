@@ -7,7 +7,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal imports
  */
-import { FormColumn, FormRow } from './index';
+import { default as FormColumn } from './form-column';
+import { default as FormRow } from './form-row';
 
 /**
  * AutoColumnRow
@@ -31,7 +32,7 @@ class AutoColumnRow extends Component {
 						if ( index % 2 !== 0 ) {
 							const colSize = child.props.labelColSize ?
 								child.props.labelColSize :
-								2;
+								3;
 							return (
 								<FormColumn align="right" colSize={ colSize }>
 									{ child }
@@ -40,7 +41,7 @@ class AutoColumnRow extends Component {
 						}
 						const colSize = child.props.colSize ?
 							child.props.colSize :
-							2;
+							7;
 						return (
 							<FormColumn colSize={ colSize }>
 								{ child }
