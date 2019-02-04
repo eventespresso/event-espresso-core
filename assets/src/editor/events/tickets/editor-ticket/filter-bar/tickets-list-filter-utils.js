@@ -86,14 +86,16 @@ export const filterTickets = ( tickets, show = 'on-sale-and-pending' ) => {
  * @return {Array}         filtered tickets array
  */
 export const sortTicketsList = ( tickets, order = 'chronologically' ) => {
-	const now = new moment();
+	const now = moment();
 	switch ( order ) {
 		case 'chronologically' :
 			tickets = sortBy(
 				tickets,
 				[
 					function( ticket ) {
-						return now.isBefore( ticket.start );
+						return ticket && ticket.start ?
+							now.isBefore( ticket.start ) :
+							true;
 					},
 				]
 			);
@@ -166,6 +168,7 @@ const validQuantity = ticket => {
 const validFiniteQuantity = ticket => {
 	return validQuantity( ticket ) &&
 		ticket.qty !== 'INF' &&
+		ticket.qty !== Infinity &&
 		parseInt( ticket.qty ) > 0;
 };
 
@@ -174,7 +177,9 @@ const validFiniteQuantity = ticket => {
  * @return {boolean} true if qty property is valid and unlimited
  */
 const validInfiniteQuantity = ticket => {
-	return validQuantity( ticket ) && ticket.qty === 'INF';
+	return validQuantity( ticket ) && (
+		ticket.qty === 'INF' || ticket.qty === Infinity
+	);
 };
 
 /**
