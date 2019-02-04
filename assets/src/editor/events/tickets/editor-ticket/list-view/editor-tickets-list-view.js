@@ -6,7 +6,7 @@ import { __ } from '@eventespresso/i18n';
 /**
  * Internal dependencies
  */
-import { EditorTicketListItem } from './editor-ticket-list-item';
+import { EditorTicketListItem } from './';
 import './editor-tickets-list-view.css';
 
 /**
@@ -19,7 +19,7 @@ import './editor-tickets-list-view.css';
  * @param {mixed} otherProps
  * @return {Component} 			list of rendered Event Dates
  */
-export const EditorTicketsListView = ( {
+const EditorTicketsListView = ( {
 	entities,
 	htmlClass,
 	...otherProps
@@ -76,3 +76,5 @@ export const EditorTicketsListView = ( {
 		</div>
 	);
 };
+
+export default EditorTicketsListView;
