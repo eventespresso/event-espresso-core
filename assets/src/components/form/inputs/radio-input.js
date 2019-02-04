@@ -23,6 +23,7 @@ import { OptionLabelSize } from './base/option-label-size';
  * @param {boolean} btnGroup
  * @param {string} helpTextID
  * @param {Object} dataSet
+ * @param {string} inputWidth
  * @param {Object} attributes
  * @return {string} rendered date name form row
  */
@@ -37,6 +38,7 @@ export class RadioInput extends Component {
 		options: PropTypes.array,
 		onChange: PropTypes.func,
 		btnGroup: PropTypes.bool,
+		inputWidth: PropTypes.string,
 		helpTextID: PropTypes.string,
 		dataSet: PropTypes.object,
 	};
@@ -80,13 +82,17 @@ export class RadioInput extends Component {
 			options,
 			helpTextID,
 			btnGroup = true,
+			inputWidth = '',
 			...attributes
 		} = this.props;
 
 		const labelClass = btnGroup ?
 			'btn btn-primary' :
 			'ee-radio-label-after' + OptionLabelSize( options );
-		const divClass = btnGroup ? 'btn-group' : 'ee-checkbox-group';
+		let divClass = btnGroup ? 'btn-group' : 'ee-checkbox-group';
+		divClass = inputWidth ?
+			`${ divClass } ee-input-width-${ inputWidth }` :
+			divClass;
 		return (
 			<div className={ divClass }>
 				<OptionInputs

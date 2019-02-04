@@ -18,6 +18,7 @@ import { HTML5_INPUT_TYPES_TEXT } from './base/constants';
  * @param {string} htmlClass
  * @param {string} helpTextID
  * @param {Object} dataSet
+ * @param {number|string} inputWidth
  * @param {Object} attributes
  * @return {string} rendered date name form row
  */
@@ -27,8 +28,12 @@ export const TextInput = ( {
 	htmlClass,
 	helpTextID,
 	dataSet,
+	inputWidth = '',
 	...attributes
 } ) => {
+	htmlClass = inputWidth ?
+		`${ htmlClass } ee-input-width-${ inputWidth }` :
+		htmlClass;
 	return (
 		<Field
 			component="input"
@@ -49,4 +54,8 @@ TextInput.propTypes = {
 	onChange: PropTypes.func,
 	helpTextID: PropTypes.string,
 	dataSet: PropTypes.object,
+	inputWidth: PropTypes.oneOfType( [
+		PropTypes.number,
+		PropTypes.string,
+	] ),
 };

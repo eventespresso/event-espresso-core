@@ -14,6 +14,7 @@ import { Field } from 'react-final-form';
  * @param {Array} options
  * @param {string} helpTextID
  * @param {Object} dataSet
+ * @param {string} inputWidth
  * @param {Object} attributes
  * @return {string} rendered date name form row
  */
@@ -23,6 +24,7 @@ export const SelectInput = ( {
 	options,
 	helpTextID,
 	dataSet,
+	inputWidth = '',
 	...attributes
 } ) => {
 	options = isArray( options ) ? options : [];
@@ -31,6 +33,9 @@ export const SelectInput = ( {
 			{ option.label }
 		</option>
 	) );
+	htmlClass = inputWidth ?
+		`${ htmlClass } ee-input-width-${ inputWidth }` :
+		htmlClass;
 	return (
 		<Field
 			component="select"
@@ -56,4 +61,5 @@ SelectInput.propTypes = {
 	onChange: PropTypes.func,
 	helpTextID: PropTypes.string,
 	dataSet: PropTypes.object,
+	inputWidth: PropTypes.string,
 };
