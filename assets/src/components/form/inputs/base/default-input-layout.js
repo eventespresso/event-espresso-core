@@ -1,0 +1,36 @@
+/**
+ * External imports
+ */
+import { Fragment } from 'react';
+
+/**
+ * Internal imports
+ */
+import { InputError } from './input-error';
+import { InputHelpText } from './input-help-text';
+
+/**
+ * @function
+ * @param {Object} formInput
+ * @param {string} inputName
+ * @param {string} helpTextID
+ * @param {string} helpText
+ * @return {Object} rendered form input
+ */
+export const DefaultInputLayout = ( {
+	formInput,
+	inputName,
+	helpTextID,
+	helpText,
+} ) => {
+	return formInput && (
+		<Fragment>
+			{ formInput }
+			<InputError inputName={ inputName } />
+			<InputHelpText
+				helpTextID={ helpTextID }
+				helpText={ helpText }
+			/>
+		</Fragment>
+	);
+};
