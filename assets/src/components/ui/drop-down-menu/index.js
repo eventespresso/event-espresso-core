@@ -31,16 +31,15 @@ class DropDownMenu extends Component {
 	render() {
 		const {
 			menuItems,
+			tooltipPosition = 'top left',
 			index = 0,
 			...otherProps
 		} = this.props;
-		let { htmlClass, tooltipPosition } = this.props;
+		let { htmlClass } = this.props;
 		delete otherProps.htmlClass;
-		delete otherProps.tooltipPosition;
 		htmlClass = htmlClass ? `${ htmlClass } ` : '';
 		htmlClass += `ee-drop-down-menu-${ index }`;
 		htmlClass += ' ee-drop-down-menu clickable';
-		tooltipPosition = tooltipPosition ? tooltipPosition : 'top left';
 		return (
 			<DropdownMenu
 				tabIndex={ index }
