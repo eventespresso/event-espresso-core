@@ -28,52 +28,6 @@ export class DatesAndTicketsManager extends Component {
 		};
 	}
 
-	/**
-	 * @function
-	 * @param {Array} allDates
-	 * @param {Object} filterEntity
-	 * @return {Array} tickets
-	 */
-	// filterForDate = ( allDates, filterEntity ) => {
-	// 	let tickets = [];
-	// 	allDates.map(
-	// 		( eventDate ) => {
-	// 			if ( eventDate === filterEntity ) {
-	// 				tickets = differenceWith(
-	// 					tickets,
-	// 					eventDate.tickets,
-	// 					isEqual
-	// 				);
-	// 				tickets = concat( tickets, eventDate.tickets );
-	// 			}
-	// 		}
-	// 	);
-	// 	return tickets;
-	// };
-
-	/**
-	 * @function
-	 * @param {Array} allTickets
-	 * @param {Object} filterEntity
-	 * @return {Array} tickets
-	 */
-	// filterForTicket = ( allTickets, filterEntity ) => {
-	// 	let eventDates = [];
-	// 	allTickets.map(
-	// 		( ticket ) => {
-	// 			if ( ticket === filterEntity ) {
-	// 				eventDates = differenceWith(
-	// 					eventDates,
-	// 					ticket.tickets,
-	// 					isEqual
-	// 				);
-	// 				eventDates = concat( eventDates, ticket.tickets );
-	// 			}
-	// 		}
-	// 	);
-	// 	return eventDates;
-	// };
-
 	processChanges = () => {
 		// console.log( '' );
 		// console.log( 'DatesAndTicketsManager.processChanges()' );
@@ -228,7 +182,7 @@ export class DatesAndTicketsManager extends Component {
 			{ id: date.id }
 		);
 		if ( eventDate ) {
-			this.setState( prevState => {
+			this.setState( ( prevState ) => {
 				if ( ! Array.isArray( prevState.assigned[ date.id ] ) ) {
 					prevState.assigned[ date.id ] = [];
 				}
@@ -281,7 +235,7 @@ export class DatesAndTicketsManager extends Component {
 			{ id: date.id }
 		);
 		if ( eventDate ) {
-			this.setState( prevState => {
+			this.setState( ( prevState ) => {
 				if ( ! Array.isArray( prevState.removed[ date.id ] ) ) {
 					prevState.removed[ date.id ] = [];
 				}
@@ -518,7 +472,7 @@ export class DatesAndTicketsManager extends Component {
 																	icon={ icon }
 																	style={ style }
 																	onClick={
-																		event => {
+																		( event ) => {
 																			event.preventDefault();
 																			event.stopPropagation();
 																			action(
@@ -528,7 +482,7 @@ export class DatesAndTicketsManager extends Component {
 																		}
 																	}
 																	onKeyDown={
-																		event => {
+																		( event ) => {
 																			if ( event.keyCode === ENTER ) {
 																				event.preventDefault();
 																				event.stopPropagation();
@@ -555,7 +509,7 @@ export class DatesAndTicketsManager extends Component {
 				<br />
 				<Button
 					onClick={
-						event => {
+						( event ) => {
 							event.preventDefault();
 							event.stopPropagation();
 							this.processChanges();
@@ -567,7 +521,7 @@ export class DatesAndTicketsManager extends Component {
 				</Button>
 				<Button
 					onClick={
-						event => {
+						( event ) => {
 							event.preventDefault();
 							event.stopPropagation();
 							this.toggleEditor();
