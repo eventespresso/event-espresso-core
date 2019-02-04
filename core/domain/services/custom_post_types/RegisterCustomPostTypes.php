@@ -163,48 +163,122 @@ class RegisterCustomPostTypes
     private function getLabels($singular_name, $plural_name, $singular_slug, $plural_slug)
     {
         return array(
-            'name'               => $plural_name,
-            'singular_name'      => $singular_name,
-            'singular_slug'      => $singular_slug,
-            'plural_slug'        => $plural_slug,
-            'add_new'            => sprintf(
+            'name'                     => $plural_name,
+            'singular_name'            => $singular_name,
+            'singular_slug'            => $singular_slug,
+            'plural_slug'              => $plural_slug,
+            'add_new'                  => sprintf(
+                /* Translators: Post Type Label */
                 esc_html_x('Add %s', 'Add Event', 'event_espresso'),
                 $singular_name
             ),
-            'add_new_item'       => sprintf(
+            'add_new_item'             => sprintf(
+                /* Translators: Post Type Label */
                 esc_html_x('Add New %s', 'Add New Event', 'event_espresso'),
                 $singular_name
             ),
-            'edit_item'          => sprintf(
+            'edit_item'                => sprintf(
+                /* Translators: Post Type Label */
                 esc_html_x('Edit %s', 'Edit Event', 'event_espresso'),
                 $singular_name
             ),
-            'new_item'           => sprintf(
+            'new_item'                 => sprintf(
+                /* Translators: Post Type Label */
                 esc_html_x('New %s', 'New Event', 'event_espresso'),
                 $singular_name
             ),
-            'all_items'          => sprintf(
+            'all_items'                => sprintf(
+                /* Translators: Post Type Label */
                 esc_html_x('All %s', 'All Events', 'event_espresso'),
                 $plural_name
             ),
-            'view_item'          => sprintf(
+            'view_item'                => sprintf(
+                /* Translators: Post Type Label */
                 esc_html_x('View %s', 'View Event', 'event_espresso'),
                 $singular_name
             ),
-            'search_items'       => sprintf(
+            'view_items'               => sprintf(
+                /* Translators: Post Type Label */
+                esc_html_x('View %s', 'View Events', 'event_espresso'),
+                $plural_name
+            ),
+            'archives'                 => sprintf(
+                /* Translators: Post Type Label */
+                esc_html_x('%s Archives', 'Event Archives', 'event_espresso'),
+                $singular_name
+            ),
+            'attributes'               => sprintf(
+                /* Translators: Post Type Label */
+                esc_html_x('%s Attributes', 'Event Attributes', 'event_espresso'),
+                $singular_name
+            ),
+            'insert_into_item'         => sprintf(
+                /* Translators: Post Type Label */
+                esc_html_x('Insert into this %s', 'Insert into this Event', 'event_espresso'),
+                $singular_name
+            ),
+            'uploaded_to_this_item'    => sprintf(
+                /* Translators: Post Type Label */
+                esc_html_x('Uploaded to this %s', 'Uploaded to this Event', 'event_espresso'),
+                $singular_name
+            ),
+            'filter_items_list'        => sprintf(
+                /* Translators: Post Type Label */
+                esc_html_x('Filter %s list', 'Filter Events list', 'event_espresso'),
+                $plural_name
+            ),
+            'items_list_navigation'    => sprintf(
+                /* Translators: Post Type Label */
+                esc_html_x('%s list navigation', 'Events list navigation', 'event_espresso'),
+                $plural_name
+            ),
+            'items_list'               => sprintf(
+                /* Translators: Post Type Label */
+                esc_html_x('%s list', 'Events list', 'event_espresso'),
+                $plural_name
+            ),
+            'item_published'           => sprintf(
+                /* Translators: Post Type Label */
+                esc_html_x('%s published', 'Event published', 'event_espresso'),
+                $singular_name
+            ),
+            'item_published_privately' => sprintf(
+                /* Translators: Post Type Label */
+                esc_html_x('%s published privately', 'Event published privately', 'event_espresso'),
+                $singular_name
+            ),
+            'item_reverted_to_draft'   => sprintf(
+                /* Translators: Post Type Label */
+                esc_html_x('%s reverted to draft', 'Event reverted to draft', 'event_espresso'),
+                $singular_name
+            ),
+            'item_scheduled'           => sprintf(
+                /* Translators: Post Type Label */
+                esc_html_x('%s scheduled', 'Event scheduled', 'event_espresso'),
+                $singular_name
+            ),
+            'item_updated'             => sprintf(
+                /* Translators: Post Type Label */
+                esc_html_x('%s updated', 'Event updated', 'event_espresso'),
+                $singular_name
+            ),
+            'search_items'             => sprintf(
+                /* Translators: Post Type Label */
                 esc_html_x('Search %s', 'Search Events', 'event_espresso'),
                 $plural_name
             ),
-            'not_found'          => sprintf(
+            'not_found'                => sprintf(
+                /* Translators: Post Type Label */
                 esc_html_x('No %s found', 'No Events found', 'event_espresso'),
                 $plural_name
             ),
-            'not_found_in_trash' => sprintf(
+            'not_found_in_trash'       => sprintf(
+                /* Translators: Post Type Label */
                 esc_html_x('No %s found in Trash', 'No Events found in Trash', 'event_espresso'),
                 $plural_name
             ),
-            'parent_item_colon'  => '',
-            'menu_name'          => $plural_name,
+            'parent_item_colon'        => '',
+            'menu_name'                => $plural_name,
         );
     }
 
