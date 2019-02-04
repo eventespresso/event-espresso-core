@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import { filter, without } from 'lodash';
 import { __ } from '@eventespresso/i18n';
 
 /**
@@ -32,9 +33,9 @@ const EntityList = ( {
 	noResultsText = '',
 	...otherProps
 } ) => {
-	if ( ! Array.isArray( entities ) ) {
-		return null;
-	}
+	entities = Array.isArray( entities ) ? entities : [];
+	// Remove undefined from the array
+	entities = without( entities, undefined );
 	if ( entities.length === 0 ) {
 		noResultsText = noResultsText !== '' ?
 			noResultsText :
