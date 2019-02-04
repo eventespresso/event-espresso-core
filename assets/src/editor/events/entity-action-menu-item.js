@@ -4,11 +4,11 @@
 import { Component } from 'react';
 
 /**
- * SidebarMenuItem
+ * EntityActionMenuItem
  * just a wrapper for an IconButton and additional component
- * (most likely a modal component) so that it can be added to a sidebar menu
+ * (most likely a modal component) so that it can be added to a menu
  */
-export class SidebarMenuItem extends Component {
+export class EntityActionMenuItem extends Component {
 	render() {
 		return this.props.children;
 	}
