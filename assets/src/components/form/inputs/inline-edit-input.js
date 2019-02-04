@@ -2,7 +2,7 @@
  * External imports
  */
 import PropTypes from 'prop-types';
-import { Component, createRef } from 'react';
+import { Component, createRef, Fragment } from 'react';
 import { ENTER, ESCAPE, SPACE } from '@wordpress/keycodes';
 import { __ } from '@eventespresso/i18n';
 
@@ -24,6 +24,7 @@ import './inline-edit-input.css';
  */
 export class InlineEditInput extends Component {
 	static propTypes = {
+		htmlId: PropTypes.string.isRequired,
 		onChange: PropTypes.func.isRequired,
 		value: PropTypes.oneOfType( [
 			PropTypes.number,
@@ -31,17 +32,25 @@ export class InlineEditInput extends Component {
 			PropTypes.string,
 		] ).isRequired,
 		type: PropTypes.string,
+		label: PropTypes.string,
 		valueType: PropTypes.string,
 	};
 
 	constructor( props ) {
 		super( props );
 		this.input = createRef();
-		this.state = {
-			editing: false,
-			origValue: props.value,
-			value: props.value,
-		};
+		this.state = {};
+	}
+
+	componentDidMount() {
+		this.setState(
+			{
+				editing: this.props.value === '',
+				origValue: this.props.value,
+				value: this.props.value,
+				onChange: this.props.onChange,
+			}
+		);
 	}
 
 	/**
@@ -88,6 +97,7 @@ export class InlineEditInput extends Component {
 	 */
 	done = () => {
 		this.setState( { editing: false } );
+		this.state.onChange( this.state.value );
 	};
 
 	/**
@@ -126,53 +136,76 @@ export class InlineEditInput extends Component {
 	 * @param {Object} event
 	 */
 	textChange = event => {
-		if ( event && event.target && event.target.value ) {
+		if (
+			event &&
+			event.target &&
+			typeof event.target.value !== 'undefined'
+		) {
 			this.setState( { value: event.target.value } );
 		}
 	};
 
 	/**
 	 * renders the input in edit mode
+	 * @param {string} htmlId 			input identifier
 	 * @param {string|number} value 	current value for input
 	 * @param {string} type 			text input or textarea
 	 * @param {string} valueType 		data type for value
+	 * @param {string} label 			displayed when editing
 	 * @param {Object} inputProps		additional passed props
 	 * @return {Object}					the rendered input
 	 */
-	editComponent = ( value, type, valueType, inputProps ) => {
+	editComponent = (
+		htmlId,
+		value,
+		type,
+		valueType,
+		label,
+		inputProps
+	) => {
 		const inputValue = typeof this.state.value === 'string' ||
 		typeof this.state.value === 'number' ?
 			this.state.value :
 			'';
-		delete inputProps.value;
 		const htmlClass = valueType === 'number' ?
 			'ee-inline-edit-input ee-inline-edit-input-number' :
 			'ee-inline-edit-input';
-
-		return type === 'textarea' ? (
+		const input = type === 'textarea' ? (
 			<textarea
 				ref={ this.input }
+				id={ htmlId }
 				className={ htmlClass }
 				onBlur={ this.done }
 				onInput={ this.textChange }
 				onKeyDown={ this.keyDownInput }
-				value={ inputValue }
-				aria-label={ __( 'click to edit', 'event_espresso' ) }
+				defaultValue={ inputValue }
 				{ ...inputProps }
 			/>
 		) : (
 			<input
 				ref={ this.input }
+				id={ htmlId }
 				type={ type }
 				className={ htmlClass }
 				onBlur={ this.done }
 				onInput={ this.textChange }
 				onKeyDown={ this.keyDownInput }
-				value={ inputValue }
-				aria-label={ __( 'click to edit', 'event_espresso' ) }
+				defaultValue={ inputValue }
 				{ ...inputProps }
 			/>
 		);
+
+		return label ? (
+			<Fragment>
+				<label
+					htmlFor={ htmlId }
+					className="ee-inline-edit-label"
+				>
+					{ label }
+				</label>
+				{ input }
+			</Fragment>
+		) : input;
 	};
 
 	/**
@@ -188,6 +221,7 @@ export class InlineEditInput extends Component {
 				onFocus={ this.edit }
 				onKeyDown={ this.keySelect }
 				className="ee-inline-edit-text clickable"
+				aria-label={ __( 'click to edit', 'event_espresso' ) }
 			>
 				{ this.state.value }
 			</span>
@@ -196,13 +230,23 @@ export class InlineEditInput extends Component {
 
 	render() {
 		const {
+			htmlId,
 			value,
 			type = 'text',
 			valueType = 'string',
+			label = '',
 			...inputProps
 		} = this.props;
-		if ( this.state.editing ) {
-			return this.editComponent( value, type, valueType, inputProps );
+		delete inputProps.onChange;
+		if ( this.state.editing || value === '' ) {
+			return this.editComponent(
+				htmlId,
+				value,
+				type,
+				valueType,
+				label,
+				inputProps
+			);
 		}
 		return this.displayComponent();
 	}

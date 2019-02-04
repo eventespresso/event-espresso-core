@@ -18,3 +18,11 @@
 .ee-inline-edit-input-number {
     text-align: right;
 }
+
+.ee-inline-edit-label {
+    font-size: 12px !important;
+    font-weight: normal !important;
+    line-height: 15px !important;
+    margin: 0 !important;
+    width: 95% !important;
+}
