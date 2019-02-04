@@ -89,6 +89,7 @@ final class EE_Admin implements InterminableInterface
         add_filter('pre_update_option', array($this, 'check_for_invalid_datetime_formats'), 100, 2);
         add_filter('admin_footer_text', array($this, 'espresso_admin_footer'));
         add_action('load-plugins.php', array($this, 'hookIntoWpPluginsPage'));
+        add_action('display_post_states', array($this, 'displayStateForCriticalPages'), 10, 2);
         // reset Environment config (we only do this on admin page loads);
         EE_Registry::instance()->CFG->environment->recheck_values();
         do_action('AHEE__EE_Admin__loaded');
@@ -1007,5 +1008,34 @@ final class EE_Admin implements InterminableInterface
         $this->getLoader()
                      ->getShared('EventEspresso\core\domain\services\admin\PluginUpsells')
                      ->decafUpsells();
+    }
+
+
+    /**
+     * Hooks into the "post states" filter in a wp post type list table.
+     *
+     * @param array   $post_states
+     * @param WP_Post $post
+     * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function displayStateForCriticalPages($post_states, $post)
+    {
+        $post_states = (array) $post_states;
+        if (! $post instanceof WP_Post || $post->post_type !== 'page') {
+            return $post_states;
+        }
+        /** @var EE_Core_Config $config */
+        $config = $this->getLoader()->getShared('EE_Config')->core;
+        if (in_array($post->ID, $config->get_critical_pages_array(), true)) {
+            $post_states[] = sprintf(
+                /* Translators: Using company name - Event Espresso Critical Page */
+                esc_html__('%s Critical Page', 'event_espresso'),
+                'Event Espresso'
+            );
+        }
+        return $post_states;
     }
 }
