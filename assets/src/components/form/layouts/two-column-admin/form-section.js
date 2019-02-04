@@ -7,7 +7,7 @@ import { Children } from 'react';
 /**
  * Internal imports
  */
-import { AutoFormRow } from '../../base/auto-form-row';
+import { default as AutoFormRow } from '../../base/auto-form-row';
 import { default as AutoColumnRow } from './auto-column-row';
 
 /**
@@ -22,19 +22,24 @@ import { default as AutoColumnRow } from './auto-column-row';
  * @return {Object} rendered form section
  */
 const FormSection = ( { children, htmlId = '', htmlClass = '' } ) => {
+	// console.log( '' );
+	// console.log( 'FormSection', htmlId, htmlClass );
 	htmlClass = htmlClass ?
-		`${ htmlClass } espresso-form-section px-0 pt-3 border rounded` :
-		'espresso-form-section px-0 pt-3 border rounded';
+		`${ htmlClass } ee-form-section px-0 pt-3 border rounded` :
+		'ee-form-section px-0 pt-3 border rounded';
 	return (
 		<div id={ htmlId } className={ htmlClass }>
 			<div className="px-3">
 				{
-					Children.map( children, ( child ) => (
-						<AutoFormRow
-							FormElement={ child }
-							AutoColumnRow={ AutoColumnRow }
-						/>
-					) )
+					Children.map( children, ( child, index ) => {
+						return (
+							<AutoFormRow
+								key={ index }
+								FormElement={ child }
+								AutoColumnRow={ AutoColumnRow }
+							/>
+						);
+					} )
 				}
 			</div>
 		</div>
