@@ -162,7 +162,11 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
               . __('Delete', 'event_espresso') . '</a>'
             : '';
 
-        return sprintf('%1$s %2$s', $item->get_datetime('CHK_timestamp'), $this->row_actions($actions));
+        return sprintf(
+            '%1$s %2$s',
+            $item->get_datetime('CHK_timestamp', '', 'H:m:s a'),
+            $this->row_actions($actions)
+        );
     }
 
 
