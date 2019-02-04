@@ -8,8 +8,7 @@ import { __ } from '@eventespresso/i18n';
 /**
  * Internal dependencies
  */
-import { default as EditorDateSidebar } from '../sidebar';
-// import { EditorTicketListModal } from '../../../tickets/editor-ticket/editor-tickets-list';
+import { ActionsMenu } from '../';
 
 /**
  * EditorDateListItem
@@ -20,11 +19,6 @@ import { default as EditorDateSidebar } from '../sidebar';
  * @return {string}        The date rendered as a block
  */
 class EditorDateListItem extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = { editorOpen: false };
-	}
-
 	/**
 	 * getStatusClass
 	 *
@@ -66,38 +60,6 @@ class EditorDateListItem extends Component {
 	};
 
 	/**
-	 * @function
-	 * @param {Object} event
-	 */
-	toggleEditor = ( event ) => {
-		if ( event.target ) {
-			// console.log( ' $$$$ ' );
-			// console.log(
-			// 	'EditorDateGridBlock.toggleEditor() event.target',
-			// 	event.target
-			// );
-			if ( event.target.textContent ) {
-				// console.log(
-				// 	'EditorDateGridBlock.toggleEditor() textContent',
-				// 	event.target.textContent
-				// );
-				// console.log(
-				// 	'EditorDateGridBlock.toggleEditor() this.buttonLabel',
-				// 	this.buttonLabel
-				// );
-				if ( event.target.textContent !== this.buttonLabel ) {
-					// console.log( 'EditorDateGridBlock.toggleEditor() DO NOT CLOSE' );
-					return;
-				}
-			}
-		}
-		// console.log( 'EditorDateGridBlock.toggleEditor() ID: ', this.id );
-		this.setState( prevState => ( {
-			editorOpen: ! prevState.editorOpen,
-		} ) );
-	};
-
-	/**
 	 * dateSoldReservedCapacity
 	 *
 	 * @function
@@ -121,27 +83,15 @@ class EditorDateListItem extends Component {
 		);
 	};
 
-	// viewEventDateTickets = ( event, data ) => {
-	// 	event.preventDefault();
-	// 	console.log( ' >>> CLICK <<< VIEW EVENT DATE TICKETS data.eventDate',
-	// 		data.eventDate
-	// 	);
-	// 	this.toggleEditor();
-	// };
-
 	render() {
-		const { eventDate } = this.props;
+		const { eventDate, allTickets, onUpdate } = this.props;
 		this.id = `event-date-ticket-list-modal-${ eventDate.id }`;
 		// console.log( '' );
-		// console.log( 'editorDate() props: ', this.props );
+		// console.log( 'EditorDateListItem.render() props: ', this.props );
 		const statusClass = this.getStatusClass( eventDate );
 		const bgClass = this.getBgColorClass( eventDate );
-		const buttonLabel = __(
-			'Close Event Date Ticket List ',
-			'event_espresso'
-		) + eventDate.id;
-		this.buttonLabel = buttonLabel;
-		const regLimit = eventDate.regLimit === 'INF' ?
+		const regLimit = eventDate.regLimit === 'INF' ||
+		eventDate.regLimit === Infinity ?
 			( <span className={ 'ee-infinity-sign' }>&infin;</span> ) :
 			eventDate.regLimit;
 		const regLink = this.getDatetimeRegistrationsLink( eventDate );
@@ -229,9 +179,10 @@ class EditorDateListItem extends Component {
 						<span className="ee-date-list-item-label">
 							{ __( 'Actions:', 'event_espresso' ) }
 						</span>
-						<EditorDateSidebar
+						<ActionsMenu
 							eventDate={ eventDate }
-							viewTicketsHandler={ this.toggleEditor }
+							allTickets={ allTickets }
+							onUpdate={ onUpdate }
 						/>
 					</div>
 				</div>
