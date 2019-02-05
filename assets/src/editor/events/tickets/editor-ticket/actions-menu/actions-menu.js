@@ -18,7 +18,7 @@ import { __, sprintf, _x } from '@eventespresso/i18n';
 import { copyTicket, trashTicket } from '../action-handlers';
 import { EntityActionMenuItem } from '../../../entity-action-menu-item';
 import { DatesAndTicketsManagerModal, EditTicketFormModal } from '../';
-import { default as TicketPriceCalculatorModal } from '../price-calculator/ticket-price-calculator';
+import { default as TicketPriceCalculatorFormModal } from '../price-calculator/ticket-price-calculator-form-modal';
 import './style.css';
 
 /**
@@ -236,8 +236,8 @@ class ActionsMenu extends Component {
 						closeButtonLabel: null,
 					} }
 				/>
-				<TicketPriceCalculatorModal
-					ticket={ ticket }
+				<TicketPriceCalculatorFormModal
+					ticketId={ ticket.id }
 					closeModal={ this.toggleCalculator }
 					editorOpen={ this.state.calculator }
 				/>
