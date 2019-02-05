@@ -258,7 +258,6 @@ class Payments_Admin_Page extends EE_Admin_Page
          * recheck here.
          */
         EE_Registry::instance()->load_lib('Payment_Method_Manager');
-        EEM_Payment_Method::instance()->verify_button_urls();
         // setup tabs, one for each payment method type
         $tabs = array();
         $payment_methods = array();
