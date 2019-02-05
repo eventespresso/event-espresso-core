@@ -86,9 +86,9 @@ export const ticketEntityFormInputs = (
 				key="price"
 				type="number"
 				name={ `${ prefix }-price-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-max-${ ticketId }` ] || null }
+				initialValue={ values[ `${ prefix }-price-${ ticketId }` ] || null }
 				label={ __( 'Ticket Price', 'event_espresso' ) }
-				htmlId={ `${ prefix }-max-${ ticketId }` }
+				htmlId={ `${ prefix }-price-${ ticketId }` }
 				helpText={ __(
 					'The amount of money charged for this ticket. Leave blank' +
 					' to make this ticket selection free.',
