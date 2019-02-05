@@ -3,7 +3,6 @@
  */
 import { Component } from 'react';
 import { Form } from 'react-final-form';
-// import { isFunc } from 'lodash';
 
 /**
  * Internal imports
@@ -40,9 +39,9 @@ export const withFormHandler = (
 	 * FormHandler
 	 *
 	 * @param {Function} form component
-	 * @param {Function} loadHandler a function that supplies the form data
-	 * @param {Function} submitHandler a function that processes the submitted form
-	 * @param {Function} resetHandler a function called when resetting the form
+	 * @param {Function} loadHandler callback that supplies the form data
+	 * @param {Function} submitHandler callback that processes the form
+	 * @param {Function} resetHandler callback for resetting the form
 	 * @param {string} errorMessage custom message displayed when things go bad
 	 */
 	class FormHandler extends Component {
@@ -51,7 +50,6 @@ export const withFormHandler = (
 		 * @param {Object} props
 		 */
 		constructor( props ) {
-			// console.log( 'FormHandler,constructor()' );
 			super( props );
 			this.state = {
 				loading: false,
@@ -67,7 +65,6 @@ export const withFormHandler = (
 					props.resetHandler :
 					resetHandler,
 			};
-			// console.log( '** FormHandler props', props );
 		}
 
 		/**
@@ -94,7 +91,7 @@ export const withFormHandler = (
 		}
 
 		render() {
-			// console.log( 'FormHandler.render() state', this.state );
+			// console.log( 'withFormHandler.render() state', this.state );
 			const { data, loading, errorMessage = '' } = this.state;
 			const { ...formProps } = this.props;
 			return (
@@ -117,7 +114,7 @@ export const withFormHandler = (
 									disabled={ pristine || invalid }
 								/>
 							);
-							const formReset = event => {
+							const formReset = ( event ) => {
 								this.reset();
 								this.state.resetHandler( event );
 								form.reset( event );
