@@ -2846,7 +2846,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $success,
             $what,
             $action_desc,
-            array('action' => 'default'),
+            $this->mergeExistingRequestParamsWithRedirectArgs(['action' => 'default']),
             true
         );
     }
