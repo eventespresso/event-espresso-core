@@ -44,7 +44,7 @@ class EditTicketFormModal extends Component {
 	 * @function
 	 * @param {Object} data
 	 */
-	submitHandler = async data => {
+	submitHandler = async ( data ) => {
 		console.log( 'EditTicketFormModal.submitHandler()' );
 		console.log( ' >>> SUBMITTING DATA <<<', data );
 		const ticket = ticketEntityFormSubmitHandler(
@@ -60,7 +60,7 @@ class EditTicketFormModal extends Component {
 	 * @function
 	 * @param {Object} event
 	 */
-	resetHandler = event => {
+	resetHandler = ( event ) => {
 		console.log( 'EditTicketFormModal.resetHandler()' );
 		console.log( ' >>> FORM RESET <<<', event );
 		this.setState( { ticket: this.state.originalTicket } );
