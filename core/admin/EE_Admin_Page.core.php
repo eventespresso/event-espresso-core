@@ -3711,7 +3711,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             ),
             'default' => (int) apply_filters(
                 'FHEE__EE_Admin_Page___per_page_screen_options__default',
-                10
+                20
             ),
             'option'  => $this->_current_page . '_' . $this->_current_view . '_per_page',
         );
