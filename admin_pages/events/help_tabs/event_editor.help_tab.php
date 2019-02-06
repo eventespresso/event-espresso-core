@@ -3,7 +3,7 @@
 <?php _e('This page allows you to create and edit events with Event Espresso.', 'event_espresso'); ?>
 </p>
 <p class="ee-attention">
-<?php _e('Notice: Allowing too many registrations to be processed with a single order can cause transactions to fail. The decision of how many tickets you allow to be purchased per order should be influenced by your web hosting, how much traffic you get to your website, and the complexity of your registration forms. A more powerful web server will reduce the likelihood of transactions failing.', 'event_espresso'); ?>
+<?php _e('Please be advised: If you update any registration-related details (i.e. custom questions, messages, tickets, datetimes, etc.) while a registration is in progress, the registration process could be interrupted and result in errors for the person registering and potentially incorrect registration or transaction data inside Event Espresso. We recommend editing events during a period of slow traffic, or even temporarily changing the status of an event to "Draft" until your edits are complete.', 'event_espresso'); ?>
 </p>
 <p>
 <strong><?php _e('Screen Options', 'event_espresso'); ?></strong><br /> 

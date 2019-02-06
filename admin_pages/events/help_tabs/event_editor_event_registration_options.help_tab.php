@@ -40,6 +40,9 @@
 <li>
 <strong><?php _e('Maximum number of tickets allowed per order for this event', 'event_espresso'); ?></strong><br />
 <?php _e('Control how many tickets can be purchased in a single order.', 'event_espresso'); ?>
+<div class="ee-attention">
+<?php _e('Notice: Allowing too many registrations to be processed with a single order can cause transactions to fail. The decision of how many tickets you allow to be purchased per order should be influenced by your web hosting, how much traffic you get to your website, and the complexity of your registration forms. A more powerful web server will reduce the likelihood of transactions failing.', 'event_espresso'); ?>
+</div>
 </li>
 <li>
 <strong><?php _e('Alternative Registration Page', 'event_espresso'); ?></strong><br />
