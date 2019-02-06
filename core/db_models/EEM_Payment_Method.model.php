@@ -264,9 +264,15 @@ class EEM_Payment_Method extends EEM_Base
         $payment_methods = is_array($payment_methods) ? $payment_methods : $this->get_all_active(EEM_Payment_Method::scope_cart);
         foreach ($payment_methods as $payment_method) {
             try {
-                // If there is really no button URL at all, reset it to the default.
+                // If there is really no button URL at all, or if the button URLs still point to decaf folder even
+                // though this is a caffeinated install, reset it to the default.
                 $current_button_url = $payment_method->button_url();
-                if (empty($current_button_url)) {
+                if (empty($current_button_url)
+                || (
+                        strpos($current_button_url, 'decaf') !== false
+                        && strpos($payment_method->type_obj()->default_button_url(), 'decaf') === false
+                    )
+                ) {
                     $payment_method->save(
                         [
                             'PMD_button_url' => $payment_method->type_obj()->default_button_url()
