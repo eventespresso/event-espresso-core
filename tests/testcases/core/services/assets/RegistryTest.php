@@ -114,6 +114,38 @@ class RegistryTest extends EE_UnitTestCase
     }
 
 
+    public function pushDataWithArrayProvider() {
+        return [
+            'initial creation of dataset when it does not exist' => [ 'test', 'foo', [ 'foo' ] ],
+            'adding a string to existing dataset' => [ 'test', 'bar', [ 'foo', 'bar' ] ],
+            'adding an array to existing dataset' => [ 'test', [ 'howdy', 'there' ], [ 'foo', 'bar', 'howdy', 'there' ] ]
+        ];
+    }
+
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function testPushDataWithArrayAddingData()
+    {
+        foreach ($this->pushDataWithArrayProvider() as $test_description => $test_data) {
+            list($key, $value, $expected) = $test_data;
+            $this->registry->pushData($key, $value);
+            $this->assertEquals($expected, $this->registry->getData($key), $test_description);
+        }
+    }
+
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testPushDataExceptionWhenExistingDataIsScalar()
+    {
+        $this->registry->addData( 'test', 'foo' );
+        $this->registry->pushData( 'test', 'bar' );
+    }
+
+
     /**
      * @group 10304
      * @throws InvalidArgumentException
