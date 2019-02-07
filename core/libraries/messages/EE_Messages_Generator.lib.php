@@ -981,7 +981,7 @@ class EE_Messages_Generator
         $request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
 
         $message = $message_to_generate->get_EE_Message();
-        $GRP_ID = $request->get('GRP_ID', 0);
+        $GRP_ID = $request->getRequestParam('GRP_ID', 0);
 
         $GRP_ID = apply_filters(
             'FHEE__EE_Messages_Generator__create_and_add_message_to_queue_GRP_ID',
