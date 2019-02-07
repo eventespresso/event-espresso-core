@@ -734,7 +734,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         EE_Error::add_attention(
             sprintf(
                 esc_html__(
-                    'Registration for your event is open. Making changes may disrupt any registrations in progress. %sLearn more%s',
+                    'Registration for your event is open. Making changes may disrupt any transactions in progress. %sLearn more%s',
                     'event_espresso'
                 ),
                 '<a class="espresso-help-tab-lnk">',
