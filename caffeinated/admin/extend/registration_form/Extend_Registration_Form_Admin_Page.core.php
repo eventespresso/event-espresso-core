@@ -672,6 +672,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $set_column_values = $this->_set_column_values_for($this->_question_group_model);
         if ($new_question_group) {
+            // make sure identifier is unique
+            $identifier_value = isset($set_column_values['QSG_identifier']) ? $set_column_values['QSG_identifier'] : '';
+            $identifier_exists = ! empty($identifier_value)
+                ? $this->_question_group_model->count([['QSG_identifier' => $set_column_values['QSG_identifier']]]) > 0
+                : false;
+            if ($identifier_exists) {
+                $set_column_values['QSG_identifier'] .= uniqid('id', true);
+            }
             $QSG_ID = $this->_question_group_model->insert($set_column_values);
             $success = $QSG_ID ? 1 : 0;
         } else {
