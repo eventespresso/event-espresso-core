@@ -957,18 +957,18 @@ class EE_Messages_Generator
     {
         // prep data
         $data = $this->_prepare_data_for_queue($message_to_generate, $message_to_generate->preview());
+        $request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
 
         $message = $message_to_generate->get_EE_Message();
+        $GRP_ID = $request->get('GRP_ID', 0);
 
-        $GRP_ID = EE_Registry::instance()->REQ->get('GRP_ID', 0) > 0
-            ? EE_Registry::instance()->REQ->get('GRP_ID')
-            : apply_filters(
-                'FHEE__EE_Messages_Generator__create_and_add_message_to_queue_GRP_ID',
-                0,
-                $message,
-                $message_to_generate,
-                $test_send
-            );
+        $GRP_ID = apply_filters(
+            'FHEE__EE_Messages_Generator__create_and_add_message_to_queue_GRP_ID',
+            $GRP_ID > 0 ? $GRP_ID : $message->GRP_ID(),
+            $message,
+            $message_to_generate,
+            $test_send
+        );
 
         if ($GRP_ID > 0) {
             $message->set_GRP_ID($GRP_ID);
