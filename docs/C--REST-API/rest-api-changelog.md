@@ -3,7 +3,7 @@
 
 This is a log of client-facing changes made to the EE4 REST API (ie, changes to internal implementations aren't listed here, just changes that affect consumers of the API). For a complete list of changes to EE4, please see [the EE4 changelog](https://eventespresso.com/wiki/ee4-changelog/)
 
-## $VID:$
+## 4.9.74
 - Added endpoints for adding and removing relations. Eg a POST request to "/wp-json/ee/v4.8.36/events/1/datetimes/2" will make datetime 2 related to event 1; whereas a DELETE request to that same endpoint will make them unrelated.
 - Added support for simpler querystring syntax. Eg the following are now valid: "wp-json/ee/v4.8.36/events?where[EVT_ID][IN]=1,2,3", "wp-json/ee/v4.8.36/tickets?where[TKT_name][IN]=['cheap','expensive']", and "wp-json/ee/v4.8.36/datetimes?where[DTT_EVT_start][<]=2018-01-01T00:00:00"
 - Fixed password-protected events, venues, and attendees so their sensitive data is replaced with default data.

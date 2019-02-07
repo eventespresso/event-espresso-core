@@ -207,7 +207,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         $this->_screen = $this->_admin_page->get_current_page() . '_' . $this->_admin_page->get_current_view();
         $this->_yes_no = array(__('No', 'event_espresso'), __('Yes', 'event_espresso'));
 
-        $this->_per_page = $this->get_items_per_page($this->_screen . '_per_page', 10);
+        $this->_per_page = $this->get_items_per_page($this->_screen . '_per_page', 20);
 
         $this->_setup_data();
         $this->_add_view_counts();

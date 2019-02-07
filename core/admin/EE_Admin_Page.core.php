@@ -3410,6 +3410,31 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
 
     /**
+     * Helper method for merging existing request data with the returned redirect url.
+     *
+     * This is typically used for redirects after an action so that if the original view was a filtered view those
+     * filters are still applied.
+     *
+     * @param array $new_route_data
+     * @return array
+     */
+    protected function mergeExistingRequestParamsWithRedirectArgs(array $new_route_data)
+    {
+        foreach ($this->_req_data as $ref => $value) {
+            // unset nonces
+            if (strpos($ref, 'nonce') !== false) {
+                unset($this->_req_data[ $ref ]);
+                continue;
+            }
+            // urlencode values.
+            $value = is_array($value) ? array_map('urlencode', $value) : urlencode($value);
+            $this->_req_data[ $ref ] = $value;
+        }
+        return array_merge($this->_req_data, $new_route_data);
+    }
+
+
+    /**
      *    _redirect_after_action
      *
      * @param int    $success            - whether success was for two or more records, or just one, or none
@@ -3686,7 +3711,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             ),
             'default' => (int) apply_filters(
                 'FHEE__EE_Admin_Page___per_page_screen_options__default',
-                10
+                20
             ),
             'option'  => $this->_current_page . '_' . $this->_current_view . '_per_page',
         );

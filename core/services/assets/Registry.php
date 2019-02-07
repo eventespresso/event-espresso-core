@@ -245,12 +245,16 @@ class Registry
     /**
      * Similar to addData except this allows for users to push values to an existing key where the values on key are
      * elements in an array.
-     * When you use this method, the value you include will be appended to the end of an array on $key.
-     * So if the $key was 'test' and you added a value of 'my_data' then it would be represented in the javascript
+     *
+     * When you use this method, the value you include will be merged with the array on $key.
+     * So if the $key was 'test' and you added a value of ['my_data'] then it would be represented in the javascript
      * object like this, eejs.data.test = [ my_data,
      * ]
-     * If there has already been a scalar value attached to the data object given key, then
+     * If there has already been a scalar value attached to the data object given key (via addData for instance), then
      * this will throw an exception.
+     *
+     * Caution: Only add data using this method if you are okay with the potential for additional data added on the same
+     * key potentially overriding the existing data on merge (specifically with associative arrays).
      *
      * @param string       $key   Key to attach data to.
      * @param string|array $value Value being registered.
@@ -276,7 +280,11 @@ class Registry
                 )
             );
         }
-        $this->jsdata[ $key ][] = $value;
+        if ( ! isset( $this->jsdata[ $key ] ) ) {
+            $this->jsdata[ $key ] = is_array($value) ? $value : [$value];
+        } else {
+            $this->jsdata[ $key ] = array_merge( $this->jsdata[$key], (array) $value);
+        }
     }
 
 
