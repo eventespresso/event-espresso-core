@@ -682,11 +682,27 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             }
             $QSG_ID = $this->_question_group_model->insert($set_column_values);
             $success = $QSG_ID ? 1 : 0;
+            if ($success === 0) {
+                EE_Error::add_error(
+                    esc_html__('Something went wrong saving the question group.', 'event_espresso'),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
+                $this->_redirect_after_action(
+                    false,
+                    '',
+                    '',
+                    array('action' => 'edit_question_group', 'QSG_ID' => $QSG_ID),
+                    true
+                );
+            }
         } else {
             $QSG_ID = absint($this->_req_data['QSG_ID']);
             unset($set_column_values['QSG_ID']);
             $success = $this->_question_group_model->update($set_column_values, array(array('QSG_ID' => $QSG_ID)));
         }
+
         $phone_question_id = EEM_Question::instance()->get_Question_ID_from_system_string(
             EEM_Attendee::system_question_phone
         );
