@@ -1,11 +1,11 @@
 /**
- * Internal imports
+ * Internal dependencies
  */
 import '../exit-modal-survey';
 import './style.css';
 
 /**
- * External imports
+ * External dependencies
  */
 import $ from 'jquery';
 
