@@ -144,7 +144,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets all the datetimes for this event
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Datetime[]
      * @throws EE_Error
      */
@@ -226,7 +226,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets all the tickets available for purchase of this event
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Ticket[]
      * @throws EE_Error
      */
@@ -694,7 +694,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets all the venues related ot the event. May provide additional $query_params if desired
      *
-     * @param array $query_params like EEM_Base::get_all's $query_params
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Venue[]
      * @throws EE_Error
      */
@@ -1161,6 +1161,23 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
     /**
+     * This returns the number of different ticket types currently on sale for this event.
+     *
+     * @return int
+     * @throws EE_Error
+     */
+    public function countTicketsOnSale()
+    {
+        $where = array(
+            'Datetime.EVT_ID' => $this->ID(),
+            'TKT_start_date'  => array('<', time()),
+            'TKT_end_date'    => array('>', time()),
+        );
+        return EEM_Ticket::instance()->count(array($where));
+    }
+
+
+    /**
      * This returns whether there are any tickets on sale for this event.
      *
      * @return bool true = YES tickets on sale.
@@ -1168,16 +1185,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      */
     public function tickets_on_sale()
     {
-        $earliest_ticket = $this->get_ticket_with_earliest_start_time();
-        $latest_ticket = $this->get_ticket_with_latest_end_time();
-        if (! $latest_ticket instanceof EE_Ticket && ! $earliest_ticket instanceof EE_Ticket) {
-            return false;
-        }
-        // check on sale for these two tickets.
-        if ($latest_ticket->is_on_sale() || $earliest_ticket->is_on_sale()) {
-            return true;
-        }
-        return false;
+        return $this->countTicketsOnSale() > 0;
     }
 
 
@@ -1200,7 +1208,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets the first term for 'espresso_event_categories' we can find
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class|EE_Term|null
      * @throws EE_Error
      */
@@ -1266,7 +1274,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets all the question groups, ordering them by QSG_order ascending
      *
-     * @param array $query_params @see EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Question_Group[]
      * @throws EE_Error
      */

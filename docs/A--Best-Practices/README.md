@@ -18,6 +18,5 @@ We established coding standards because code isn’t only supposed to do things,
 | [Code Reviews](https://github.com/eventespresso/event-espresso-core/blob/master/docs/A--Best-Practices/development/code-review.md) | Code Review Best Practices in EE
 | [Javascript Best Practices](../AA--Javascript-in-EE) | Various best practices and tools related to EE javascript
 | [Code Style Tools and Resources](code-style-tools-resources.md) | Tools and Resources for EE code styles and best practices (including IDE instructions, linting etc)
-| [Changelog](change-log.md) | How we use the `CHANGELOG.md` file.
 
 

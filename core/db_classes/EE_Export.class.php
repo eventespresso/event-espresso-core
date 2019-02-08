@@ -749,7 +749,7 @@ class EE_Export
      * @recursive function for exporting table data and merging the results with the next results
      * @access    private
      * @param array $models_to_export keys are model names (eg 'Event', 'Attendee', etc.) and values are arrays of
-     *                                query params like on EEM_Base::get_all
+     *                                query params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return array on success, FALSE on fail
      */
     private function _get_export_data_for_models($models_to_export = array())

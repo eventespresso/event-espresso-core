@@ -49,7 +49,6 @@ class URLValidatorTest extends EE_UnitTestCase
     /**
      * @dataProvider urlsToTest
      * @since 4.9.68.p
-     * @group current
      *
      */
     public function testIsValid($url, $should_be_valid)

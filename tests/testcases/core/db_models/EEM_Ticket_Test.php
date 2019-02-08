@@ -34,5 +34,62 @@ class EEM_Ticket_Test extends EE_UnitTestCase {
 		}
 	}
 
+    /**
+     * @since 4.9.74.p
+     * @group private-1
+     */
+    public function testGetAllExcludeProtected()
+    {
+        // create two events, one is password-protected
+        $e_password = $this->new_model_obj_with_dependencies(
+            'Event',
+            array(
+                'status' => EEM_Event::post_status_publish,
+                'password' => 'foobar'
+            )
+        );
+        $e_no_password = $this->new_model_obj_with_dependencies(
+            'Event',
+            array(
+                'status' => EEM_Event::post_status_publish,
+                'password' => ''
+            )
+        );
+
+        // create related data
+        $d_password = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e_password->ID()
+            )
+        );
+        $d_no_password = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e_no_password->ID()
+            )
+        );
+
+        $t_password = $this->new_model_obj_with_dependencies('Ticket');
+        $t_password->_add_relation_to($d_password->ID(),'Datetime');
+
+        $t_no_password = $this->new_model_obj_with_dependencies('Ticket');
+        $t_no_password->_add_relation_to($d_no_password->ID(),'Datetime');
+
+        // and a general ticket too!
+
+        $t_default = $this->new_model_obj_with_dependencies(
+            'Ticket',
+            array(
+                'TKT_is_default' => true
+            )
+        );
+
+        // fetch related data. Those for password-protected events should be excluded
+        $ticket_ids = EEM_Ticket::instance()->get_col(array('exclude_protected'=>true));
+        $this->assertArrayContains((string) $t_no_password->ID(),$ticket_ids);
+        $this->assertArrayContains((string) $t_default->ID(), $ticket_ids);
+        $this->assertArrayDoesNotContain((string) $t_password->ID(), $ticket_ids);
+    }
 }
 // Location: tests/testcases/core/db_models/EEM_Ticket_Test.php

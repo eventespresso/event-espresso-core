@@ -431,7 +431,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                 $itemized_list = array();
                 $this->log(
                     array(
-                        esc_html__(
+                        (string) esc_html__(
                             'Could not generate a proper item list with:',
                             'event_espresso'
                         ) => $request_response_args

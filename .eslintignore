@@ -3,7 +3,8 @@ node_modules
 acceptance_tests
 admin_pages
 caffeinated
-core
+/bin/
+/core/
 docs
 languages
 modules
@@ -15,3 +16,4 @@ ui
 widgets
 wp-assets
 coverage
+assets/vendor

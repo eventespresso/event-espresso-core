@@ -80,7 +80,7 @@ class EE_Default_Where_Conditions
     /**
      * Gets the where conditions to be added onto the query
      * @param string $model_relation_chain
-     * @return array like what's expected in EEM_Base::get_all()'s $query_params[0]
+     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      */
     public function get_default_where_conditions($model_relation_chain = '')
     {

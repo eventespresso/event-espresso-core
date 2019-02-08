@@ -136,7 +136,7 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation
      * in here.
      *
      * @param  EE_Base_Class|int $model_object_or_id
-     * @param  array             $query_params                            like EEM_Base::get_all's $query_params
+     * @param  array             $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param  boolean           $values_already_prepared_by_model_object @deprecated since 4.8.1
      * @return EE_Base_Class[]
      * @throws \EE_Error

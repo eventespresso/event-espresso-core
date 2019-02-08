@@ -496,6 +496,10 @@ class EEH_DTT_Helper
                 'time' => $time_format['js'],
             ),
             'moment' => $date_format['moment'] . ' ' . $time_format['moment'],
+            'moment_split' => array(
+                'date' => $date_format['moment'],
+                'time' => $time_format['moment']
+            )
         );
     }
 

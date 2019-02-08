@@ -122,19 +122,21 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
             'Event'   => new EE_Belongs_To_Relation(),
             'Checkin' => new EE_Has_Many_Relation(),
         );
-        $this->_model_chain_to_wp_user = 'Event';
+        $path_to_event_model = 'Event';
+        $this->model_chain_to_password = $path_to_event_model;
+        $this->_model_chain_to_wp_user = $path_to_event_model;
         // this model is generally available for reading
         $this->_cap_restriction_generators[ EEM_Base::caps_read ]       = new EE_Restriction_Generator_Event_Related_Public(
-            'Event'
+            $path_to_event_model
         );
         $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Event_Related_Protected(
-            'Event'
+            $path_to_event_model
         );
         $this->_cap_restriction_generators[ EEM_Base::caps_edit ]       = new EE_Restriction_Generator_Event_Related_Protected(
-            'Event'
+            $path_to_event_model
         );
         $this->_cap_restriction_generators[ EEM_Base::caps_delete ]     = new EE_Restriction_Generator_Event_Related_Protected(
-            'Event',
+            $path_to_event_model,
             EEM_Base::caps_edit
         );
         parent::__construct($timezone);
@@ -464,7 +466,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * This returns a wpdb->results        Array of all DTT month and years matching the incoming query params and
      * grouped by month and year.
      *
-     * @param  array  $where_params      Array of query_params as described in the comments for EEM_Base::get_all()
+     * @param  array  $where_params      @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @param  string $evt_active_status A string representing the evt active status to filter the months by.
      *                                   Can be:
      *                                   - '' = no filter

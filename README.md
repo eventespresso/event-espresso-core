@@ -1,7 +1,7 @@
 # Event Espresso Core
 
 [![Latest Tag](https://img.shields.io/github/tag/eventespresso/event-espresso-core.svg?style=flat&label=Latest%20Tag)](https://github.com/eventespresso/event-espresso-core/releases)
-[![Travis](https://travis-ci.org/eventespresso/event-espresso-core.svg?branch=master)](https://travis-ci.org/eventespresso/event-espresso-core)
+[![Travis](https://travis-ci.com/eventespresso/event-espresso-core.svg?branch=master)](https://travis-ci.com/eventespresso/event-espresso-core)
 [![PHP](https://img.shields.io/badge/PHP-7%20Ready-brightgreen.svg?style=flat)](https://eventespresso.com/)
 [![WordPress](https://img.shields.io/badge/WordPress-v4.7.x+%20Tested-brightgreen.svg?style=flat)](https://eventespresso.com/)
 [![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=flat)](https://www.gnu.org/licenses/gpl-2.0.html)
@@ -24,7 +24,7 @@ Resources on Event Espresso 4 for a beginner to advanced users.
 
 [View Event Espresso 4 Documentation →](https://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+documentation)
 
-Notable changes for each released version of the project can be found in our [changelog](CHANGELOG.md)
+Notable changes for each released version of the project can be found in our [changelog](https://eventespresso.com/wiki/ee4-changelog/)
 
 ## Mobile Event Apps
 The Event Espresso 4 check-in & ticket scanning event app is available for [Android](http://evts.io/EE4_Android_App?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=mobile+event+apps+android) and [Apple](http://evts.io/EE4_Apple_App?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=mobile+event+apps+apple) devices.

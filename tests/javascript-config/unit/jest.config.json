@@ -6,12 +6,25 @@
 		"!**/vendor/**",
 		"!**/test/**"
 	],
+	"moduleDirectories": ["node_modules"],
 	"moduleNameMapper": {
-		"@eventespresso\\/(eejs)": "$1"
+		"@eventespresso\\/(eejs)": "assets/src/$1",
+		"@eventespresso\/helpers": "assets/src/data/helpers",
+		"@eventespresso\/validators": "assets/src/eejs/validators",
+		"@eventespresso\/model": "assets/src/data/model",
+		"@eventespresso\/value-objects": "assets/src/vo",
+		"@eventespresso\/components": "assets/src/components",
+		"@eventespresso\/editor-hocs": "assets/src/editor/hocs",
+		"tinymce": "<rootDir>/tests/javascript-config/unit/mocks/tinymce",
+		"@wordpress/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
+		"@eventespresso/i18n": "<rootDir>/tests/javascript-config/unit/mocks/i18n",
+		"@wordpress/is-shallow-equal/objects": "<rootDir>/node_modules/@wordpress/is-shallow-equal/build/objects",
+		"@test/fixtures": "<rootDir>/tests/javascript-config/unit/fixtures"
 	},
 	"preset": "@wordpress/jest-preset-default",
 	"setupFiles": [
-		"<rootDir>/tests/javascript-config/unit/setup-globals.js"
+		"core-js/fn/symbol/async-iterator",
+		"<rootDir>/tests/javascript-config/unit/setup-globals"
 	],
 	"testPathIgnorePatterns": [
 		"/node_modules/",

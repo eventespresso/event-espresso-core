@@ -198,28 +198,32 @@ class Datetime extends DatetimeCalculationBase
                     'Calculates the total spaces available on the datetime, taking into account ticket limits too.',
                     'event_espresso'
                 ),
-                'type' => 'number'
+                'type' => 'number',
+                'protected' => true,
             ),
             'registrations_checked_in_count' => array(
                 'description' => esc_html__(
                     'Counts registrations who have checked into this datetime.',
                     'event_espresso'
                 ),
-                'type' => 'number'
+                'type' => 'number',
+                'protected' => true,
             ),
             'registrations_checked_out_count' => array(
                 'description' => esc_html__(
                     'Counts registrations who have checked out of this datetime.',
                     'event_espresso'
                 ),
-                'type' => 'number'
+                'type' => 'number',
+                'protected' => true,
             ),
             'spots_taken_pending_payment' => array(
                 'description' => esc_html__(
                     'The count of pending-payment registrations for this event (regardless of how many datetimes each registration\'s ticket purchase is for',
                     'event_espresso'
                 ),
-                'type' => 'number'
+                'type' => 'number',
+                'protected' => true,
             ),
         );
     }

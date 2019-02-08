@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
 
 /**
@@ -16,13 +18,20 @@ use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
 class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
 {
 
-
+    /**
+     * EE_Registration_CheckIn_List_Table constructor.
+     *
+     * @param EE_Admin_Page $admin_page
+     */
     public function __construct($admin_page)
     {
         parent::__construct($admin_page);
     }
 
 
+    /**
+     * @throws EE_Error
+     */
     protected function _setup_data()
     {
         $this->_data = $this->_get_checkins($this->_per_page);
@@ -30,6 +39,9 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
     }
 
 
+    /**
+     * Sets up the properties for the list table.
+     */
     protected function _set_properties()
     {
         $this->_wp_list_args = array(
@@ -55,45 +67,92 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
     }
 
 
+    /**
+     * @return array
+     */
     protected function _get_table_filters()
     {
-        return array();
+        return [];
     }
 
-    // remove the search box
+
+    /**
+     * Returning an empty string to remove the search box for this view.
+     *
+     * @param string $text
+     * @param string $input_id
+     * @return string
+     */
     public function search_box($text, $input_id)
     {
         return '';
     }
 
 
+    /**
+     * @throws EE_Error
+     */
     protected function _add_view_counts()
     {
         $this->_views['all']['count'] = $this->_get_checkins(null, true);
     }
 
 
+    /**
+     * @param EE_Checkin $item
+     * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
     public function column_cb($item)
     {
         return sprintf('<input type="checkbox" name="checkbox[%1$s]" />', $item->ID());
     }
 
 
+    /**
+     * @param EE_Checkin $item
+     * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
     public function column_CHK_in(EE_Checkin $item)
     {
         $checkin_status_dashicon = CheckinStatusDashicon::fromCheckin($item);
-        return '<span class="' . $checkin_status_dashicon->cssClasses() . '"></span><span class="show-on-mobile-view-only">' . $item->get_datetime('CHK_timestamp') . '</span>';
+        return '<span class="'
+               . $checkin_status_dashicon->cssClasses()
+               . '"></span><span class="show-on-mobile-view-only">'
+               . $item->get_datetime('CHK_timestamp')
+               . '</span>';
     }
 
 
+    /**
+     * @param EE_Checkin $item
+     * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
     public function column_CHK_timestamp(EE_Checkin $item)
     {
         $actions = array();
-        $delete_url = EE_Admin_Page::add_query_args_and_nonce(array('action'  => 'delete_checkin_row',
-                                                                    'DTT_ID'  => $this->_req_data['DTT_ID'],
-                                                                    '_REG_ID' => $this->_req_data['_REG_ID'],
-                                                                    'CHK_ID'  => $item->ID(),
-        ));
+        $delete_url = EE_Admin_Page::add_query_args_and_nonce(
+            array(
+                'action'  => 'delete_checkin_row',
+                'DTT_ID'  => $this->_req_data['DTT_ID'],
+                '_REG_ID' => $this->_req_data['_REG_ID'],
+                'CHK_ID'  => $item->ID(),
+            )
+        );
         $actions['delete_checkin'] = EE_Registry::instance()->CAP->current_user_can(
             'ee_delete_checkins',
             'espresso_registrations_delete_checkin_row'
@@ -103,7 +162,11 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
               . __('Delete', 'event_espresso') . '</a>'
             : '';
 
-        return sprintf('%1$s %2$s', $item->get_datetime('CHK_timestamp'), $this->row_actions($actions));
+        return sprintf(
+            '%1$s %2$s',
+            $item->get_datetime('CHK_timestamp', '', 'H:m:s a'),
+            $this->row_actions($actions)
+        );
     }
 
 
@@ -111,10 +174,13 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
      * This retrieves all the Check-ins for the given parameters.
      * experimenting with having the query for the table values within the list table.
      *
-     * @access protected
      * @param int  $per_page How many to retrieve per page
      * @param bool $count    Whether to return a count or not
      * @return EE_Checkin[]|int
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _get_checkins($per_page = 10, $count = false)
     {
@@ -141,12 +207,17 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
         }
 
         // set orderby
-        $orderby = 'CHK_timestamp'; // note that with this table we're only providing the option to orderby the timestamp value.
+        // note that with this table we're only providing the option to orderby the timestamp value.
+        $orderby = 'CHK_timestamp';
 
         $order = ! empty($this->_req_data['order']) ? $this->_req_data['order'] : 'ASC';
 
-        $current_page = isset($this->_req_data['paged']) && ! empty($this->_req_data['paged']) ? $this->_req_data['paged'] : 1;
-        $per_page = isset($this->_req_data['perpage']) && ! empty($this->_req_data['perpage']) ? $this->_req_data['perpage'] : $per_page;
+        $current_page = isset($this->_req_data['paged']) && ! empty($this->_req_data['paged'])
+            ? $this->_req_data['paged']
+            : 1;
+        $per_page = isset($this->_req_data['perpage']) && ! empty($this->_req_data['perpage'])
+            ? $this->_req_data['perpage']
+            : $per_page;
         $limit = null;
         if (! $count) {
             $offset = ($current_page - 1) * $per_page;

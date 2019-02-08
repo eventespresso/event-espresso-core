@@ -111,12 +111,7 @@ class DbSafeDateTime extends DateTime
      */
     public function __wakeup()
     {
-        $this->_datetime_string = str_replace(
-            array('-0001-11-29', '-0001-11-30'),
-            '0000-00-00',
-            $this->_datetime_string
-        );
-        $date = DateTime::createFromFormat(
+        $date = self::createFromFormat(
             DbSafeDateTime::db_safe_timestamp_format,
             $this->_datetime_string
         );
@@ -143,6 +138,21 @@ class DbSafeDateTime extends DateTime
 
 
     /**
+     * Normalizes incoming date string so that it is a bit more stable for use.
+     * @param string $date_string
+     * @return string
+     */
+    public static function normalizeInvalidDate($date_string)
+    {
+        return str_replace(
+            array('-0001-11-29', '-0001-11-30', '0000-00-00'),
+            '0000-01-03',
+            $date_string
+        );
+    }
+
+
+    /**
      * Creates a DbSafeDateTime from ye old DateTime
      *
      * @param DateTime $datetime
@@ -154,6 +164,28 @@ class DbSafeDateTime extends DateTime
             $datetime->format(\EE_Datetime_Field::mysql_timestamp_format),
             new DateTimeZone($datetime->format('e'))
         );
+    }
+
+
+    /**
+     * Parse a string into a new DateTime object according to the specified format
+     *
+     * @param string       $format   Format accepted by date().
+     * @param string       $time     String representing the time.
+     * @param DateTimeZone $timezone A DateTimeZone object representing the desired time zone.
+     * @return DbSafeDateTime|boolean
+     * @link https://php.net/manual/en/datetime.createfromformat.php
+     */
+    public static function createFromFormat($format, $time, $timezone = null)
+    {
+        $time = self::normalizeInvalidDate($time);
+        // Various php versions handle the third argument differently.  This conditional accounts for that.
+        $DateTime = $timezone === null
+            ? parent::createFromFormat($format, $time)
+            : parent::createFromFormat($format, $time, $timezone);
+        return $DateTime instanceof DateTime
+            ? self::createFromDateTime($DateTime)
+            : $DateTime;
     }
 
 

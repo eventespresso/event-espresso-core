@@ -1267,7 +1267,7 @@ final class EE_Config implements ResettableInterface
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
-        EE_Config::$_module_route_map[ $key ][ $route ] = array('EED_' . $module, $method_name);
+        EE_Config::$_module_route_map[ (string) $key ][ (string) $route ] = array('EED_' . $module, $method_name);
         return true;
     }
 
@@ -1923,37 +1923,37 @@ class EE_Organization_Config extends EE_Config_Base
      * @var string $address_1
      * eg 123 Onna Road
      */
-    public $address_1;
+    public $address_1 = '';
 
     /**
      * @var string $address_2
      * eg PO Box 123
      */
-    public $address_2;
+    public $address_2 = '';
 
     /**
      * @var string $city
      * eg Inna City
      */
-    public $city;
+    public $city = '';
 
     /**
      * @var int $STA_ID
      * eg 4
      */
-    public $STA_ID;
+    public $STA_ID = 0;
 
     /**
      * @var string $CNT_ISO
      * eg US
      */
-    public $CNT_ISO;
+    public $CNT_ISO = '';
 
     /**
      * @var string $zip
      * eg 12345  or V1A 2B3
      */
-    public $zip;
+    public $zip = '';
 
     /**
      * @var string $email
@@ -1965,19 +1965,19 @@ class EE_Organization_Config extends EE_Config_Base
      * @var string $phone
      * eg. 111-111-1111
      */
-    public $phone;
+    public $phone = '';
 
     /**
      * @var string $vat
      * VAT/Tax Number
      */
-    public $vat;
+    public $vat = '';
 
     /**
      * @var string $logo_url
      * eg http://www.somedomain.com/wp-content/uploads/kittehs.jpg
      */
-    public $logo_url;
+    public $logo_url = '';
 
     /**
      * The below are all various properties for holding links to organization social network profiles
@@ -1989,42 +1989,42 @@ class EE_Organization_Config extends EE_Config_Base
      *
      * @var string
      */
-    public $facebook;
+    public $facebook = '';
 
     /**
      * twitter (twitter.com/twitter_handle)
      *
      * @var string
      */
-    public $twitter;
+    public $twitter = '';
 
     /**
      * linkedin (linkedin.com/in/profile_name)
      *
      * @var string
      */
-    public $linkedin;
+    public $linkedin = '';
 
     /**
      * pinterest (www.pinterest.com/profile_name)
      *
      * @var string
      */
-    public $pinterest;
+    public $pinterest = '';
 
     /**
      * google+ (google.com/+profileName)
      *
      * @var string
      */
-    public $google;
+    public $google = '';
 
     /**
      * instagram (instagram.com/handle)
      *
      * @var string
      */
-    public $instagram;
+    public $instagram = '';
 
 
     /**
@@ -2037,22 +2037,7 @@ class EE_Organization_Config extends EE_Config_Base
         // set default organization settings
         // decode HTML entities from the WP blogname, because it's stored in the DB with HTML entities encoded
         $this->name = wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES);
-        $this->address_1 = '123 Onna Road';
-        $this->address_2 = 'PO Box 123';
-        $this->city = 'Inna City';
-        $this->STA_ID = 4;
-        $this->CNT_ISO = 'US';
-        $this->zip = '12345';
         $this->email = get_bloginfo('admin_email');
-        $this->phone = '';
-        $this->vat = '123456789';
-        $this->logo_url = '';
-        $this->facebook = '';
-        $this->twitter = '';
-        $this->linkedin = '';
-        $this->pinterest = '';
-        $this->google = '';
-        $this->instagram = '';
     }
 }
 
@@ -3010,6 +2995,13 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
      */
     private $datetime_selector_threshold = 3;
 
+    /**
+     * determines the maximum number of "checked" dates in the date and time filter
+     *
+     * @var int $datetime_selector_checked
+     */
+    private $datetime_selector_max_checked = 10;
+
 
     /**
      *    class constructor
@@ -3021,6 +3013,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
         $this->show_expired_tickets = true;
         $this->show_datetime_selector = \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
         $this->datetime_selector_threshold = 3;
+        $this->datetime_selector_max_checked = 10;
     }
 
 
@@ -3108,6 +3101,24 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
         $datetime_selector_threshold = absint($datetime_selector_threshold);
         $this->datetime_selector_threshold = $datetime_selector_threshold ? $datetime_selector_threshold : 3;
     }
+
+
+    /**
+     * @return int
+     */
+    public function getDatetimeSelectorMaxChecked()
+    {
+        return $this->datetime_selector_max_checked;
+    }
+
+
+    /**
+     * @param int $datetime_selector_max_checked
+     */
+    public function setDatetimeSelectorMaxChecked($datetime_selector_max_checked)
+    {
+        $this->datetime_selector_max_checked = absint($datetime_selector_max_checked);
+    }
 }
 
 /**
@@ -3168,7 +3179,6 @@ class EE_Environment_Config extends EE_Config_Base
     {
         if (! empty($this->php->max_input_vars)
             && ($input_count >= $this->php->max_input_vars)
-            && (PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3 && PHP_RELEASE_VERSION >= 9)
         ) {
             return sprintf(
                 __(

@@ -1083,6 +1083,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 );
             }
 
+            $existing_notices = is_array( $existing_notices ) ? $existing_notices : array();
 
             //k make sure there are no existing notices matching the incoming notices and only append new notices
             //(unless overwrite is set to true).
@@ -1159,6 +1160,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
 
             //okay let's get any extra notices
             $notices = get_option('pue_special_notices_' . $this->_installed_version, array());
+            $notices = is_array($notices) ? $notices : array();
 
             //setup the message content for each notice;
             $errors = $attentions = $successes = '';
@@ -1641,7 +1643,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
         {
             $state = get_site_option($this->optionName);
 
-            if (empty($state)) {
+            if (empty($state) || ! is_object($state)) {
                 $state = new StdClass;
                 $state->checkedVersion = '';
                 $state->update = null;

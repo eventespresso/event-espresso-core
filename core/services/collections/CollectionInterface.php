@@ -1,6 +1,11 @@
 <?php
 namespace EventEspresso\core\services\collections;
 
+use ArrayAccess;
+use Countable;
+use Iterator;
+use Serializable;
+
 /**
  * Interface CollectionInterface
  * interface for classes that manage a set of entities that all adhere to the same interface
@@ -8,7 +13,7 @@ namespace EventEspresso\core\services\collections;
  *
  * @package EventEspresso\core\services\collections
  */
-interface CollectionInterface
+interface CollectionInterface extends Countable, Iterator, Serializable, ArrayAccess
 {
 
     /**

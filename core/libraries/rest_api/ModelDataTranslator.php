@@ -9,8 +9,14 @@ use EE_Error;
 use EE_Infinite_Integer_Field;
 use EE_Maybe_Serialized_Simple_HTML_Field;
 use EE_Model_Field_Base;
+use EE_Password_Field;
+use EE_Restriction_Generator_Base;
 use EE_Serialized_Text_Field;
+use EED_Core_Rest_Api;
 use EEM_Base;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use InvalidArgumentException;
 
 /**
  * Class Model_Data_Translator
@@ -363,17 +369,20 @@ class ModelDataTranslator
      * Prepares condition-query-parameters (like what's in where and having) from
      * the format expected in the API to use in the models
      *
-     * @param array    $inputted_query_params_of_this_type
+     * @param array $inputted_query_params_of_this_type
      * @param EEM_Base $model
-     * @param string   $requested_version
-     * @param boolean  $writing whether this data will be written to the DB, or if we're just building a query.
+     * @param string $requested_version
+     * @param boolean $writing whether this data will be written to the DB, or if we're just building a query.
      *                          If we're writing to the DB, we don't expect any operators, or any logic query
      *                          parameters, and we also won't accept serialized data unless the current user has
      *                          unfiltered_html.
      * @return array
      * @throws DomainException
-     * @throws RestException
      * @throws EE_Error
+     * @throws RestException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public static function prepareConditionsQueryParamsForModels(
         $inputted_query_params_of_this_type,
@@ -382,171 +391,12 @@ class ModelDataTranslator
         $writing = false
     ) {
         $query_param_for_models = array();
-        $valid_operators = $model->valid_operators();
+        $context = new RestIncomingQueryParamContext($model, $requested_version, $writing);
         foreach ($inputted_query_params_of_this_type as $query_param_key => $query_param_value) {
-            $is_gmt_datetime_field = false;
-            $query_param_sans_stars = ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey(
-                $query_param_key
-            );
-            $field = ModelDataTranslator::deduceFieldFromQueryParam(
-                $query_param_sans_stars,
-                $model
-            );
-            // double-check is it a *_gmt field?
-            if (! $field instanceof EE_Model_Field_Base
-                && ModelDataTranslator::isGmtDateFieldName($query_param_sans_stars)
-            ) {
-                // yep, take off '_gmt', and find the field
-                $query_param_key = ModelDataTranslator::removeGmtFromFieldName($query_param_sans_stars);
-                $field = ModelDataTranslator::deduceFieldFromQueryParam(
-                    $query_param_key,
-                    $model
-                );
-                $timezone = 'UTC';
-                $is_gmt_datetime_field = true;
-            } elseif ($field instanceof EE_Datetime_Field) {
-                // so it's not a GMT field. Set the timezone on the model to the default
-                $timezone = \EEH_DTT_Helper::get_valid_timezone_string();
-            } else {
-                // just keep using what's already set for the timezone
-                $timezone = $model->get_timezone();
-            }
-            if ($field instanceof EE_Model_Field_Base) {
-                if (! $writing && is_array($query_param_value)) {
-                    if (! \EEH_Array::is_array_numerically_and_sequentially_indexed($query_param_value)) {
-                        if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
-                            throw new RestException(
-                                'numerically_indexed_array_of_values_only',
-                                sprintf(
-                                    esc_html__(
-                                        'The array provided for the parameter "%1$s" should be numerically indexed.',
-                                        'event_espresso'
-                                    ),
-                                    $query_param_key
-                                ),
-                                array(
-                                    'status' => 400,
-                                )
-                            );
-                        }
-                    }
-                    // did they specify an operator?
-                    if (isset($query_param_value[0])
-                        && isset($valid_operators[ $query_param_value[0] ])
-                    ) {
-                        $op = $query_param_value[0];
-                        $translated_value = array($op);
-                        if (array_key_exists($op, $model->valid_in_style_operators())
-                            && isset($query_param_value[1])
-                            && ! isset($query_param_value[2])
-                        ) {
-                            $translated_value[] = ModelDataTranslator::prepareFieldValuesFromJson(
-                                $field,
-                                $query_param_value[1],
-                                $requested_version,
-                                $timezone
-                            );
-                        } elseif (array_key_exists($op, $model->valid_between_style_operators())
-                                  && isset($query_param_value[1])
-                                  && is_array($query_param_value[1])
-                                  && isset($query_param_key[1][0], $query_param_value[1][1])
-                                  && ! isset($query_param_value[1][2])
-                                  && ! isset($query_param_value[2])
-                        ) {
-                            $translated_value[] = array(
-                                ModelDataTranslator::prepareFieldValuesFromJson(
-                                    $field,
-                                    $query_param_value[1][0],
-                                    $requested_version,
-                                    $timezone
-                                ),
-                                ModelDataTranslator::prepareFieldValuesFromJson(
-                                    $field,
-                                    $query_param_value[1][1],
-                                    $requested_version,
-                                    $timezone
-                                )
-                            );
-                        } elseif (array_key_exists($op, $model->valid_like_style_operators())
-                                  && isset($query_param_value[1])
-                                  && ! isset($query_param_value[2])
-                        ) {
-                            // we want to leave this value mostly-as-is (eg don't force it to be a float
-                            // or a boolean or an enum value. Leave it as-is with wildcards etc)
-                            // but do verify it at least doesn't have any serialized data
-                            ModelDataTranslator::throwExceptionIfContainsSerializedData($query_param_value[1]);
-                            $translated_value[] = $query_param_value[1];
-                        } elseif (array_key_exists($op, $model->valid_null_style_operators())
-                                  && ! isset($query_param_value[1])) {
-                            // no arguments should have been provided, so don't look for any
-                        } elseif (isset($query_param_value[1])
-                                  && ! isset($query_param_value[2])
-                                  && ! array_key_exists(
-                                      $op,
-                                      array_merge(
-                                          $model->valid_in_style_operators(),
-                                          $model->valid_null_style_operators(),
-                                          $model->valid_like_style_operators(),
-                                          $model->valid_between_style_operators()
-                                      )
-                                  )
-                        ) {
-                            // it's a valid operator, but none of the exceptions. Treat it normally.
-                            $translated_value[] = ModelDataTranslator::prepareFieldValuesFromJson(
-                                $field,
-                                $query_param_value[1],
-                                $requested_version,
-                                $timezone
-                            );
-                        } else {
-                            // so they provided a valid operator, but wrong number of arguments
-                            if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
-                                throw new RestException(
-                                    'wrong_number_of_arguments',
-                                    sprintf(
-                                        esc_html__(
-                                            'The operator you provided, "%1$s" had the wrong number of arguments',
-                                            'event_espresso'
-                                        ),
-                                        $op
-                                    ),
-                                    array(
-                                        'status' => 400,
-                                    )
-                                );
-                            }
-                            $translated_value = null;
-                        }
-                    } else {
-                        // so they didn't provide a valid operator
-                        if (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
-                            throw new RestException(
-                                'invalid_operator',
-                                sprintf(
-                                    esc_html__(
-                                        'You provided an invalid parameter, with key "%1$s" and value "%2$s"',
-                                        'event_espresso'
-                                    ),
-                                    $query_param_key,
-                                    $query_param_value
-                                ),
-                                array(
-                                    'status' => 400,
-                                )
-                            );
-                        }
-                        // if we aren't in debug mode, then just try our best to fulfill the user's request
-                        $translated_value = null;
-                    }
-                } else {
-                    $translated_value = ModelDataTranslator::prepareFieldValueFromJson(
-                        $field,
-                        $query_param_value,
-                        $requested_version,
-                        $timezone
-                    );
-                }
-                if ((isset($query_param_for_models[ $query_param_key ]) && $is_gmt_datetime_field)
+            $query_param_meta = new RestIncomingQueryParamMetadata($query_param_key, $query_param_value, $context);
+            if ($query_param_meta->getField() instanceof EE_Model_Field_Base) {
+                $translated_value = $query_param_meta->determineConditionsQueryParameterValue();
+                if ((isset($query_param_for_models[ $query_param_meta->getQueryParamKey() ]) && $query_param_meta->isGmtField())
                     || $translated_value === null
                 ) {
                     // they have already provided a non-gmt field, ignore the gmt one. That's what WP core
@@ -554,53 +404,16 @@ class ModelDataTranslator
                     // OR we couldn't create a translated value from their input
                     continue;
                 }
-                $query_param_for_models[ $query_param_key ] = $translated_value;
+                $query_param_for_models[ $query_param_meta->getQueryParamKey() ] = $translated_value;
             } else {
-                // so this param doesn't correspond to a field eh?
-                if ($writing) {
-                    // always tell API clients about invalid parameters when they're creating data. Otherwise,
-                    // they are probably going to create invalid data
-                    throw new RestException(
-                        'invalid_field',
-                        sprintf(
-                            esc_html__('You have provided an invalid parameter: "%1$s"', 'event_espresso'),
-                            $query_param_key
-                        )
-                    );
-                } else {
-                    // so it's not for a field, is it a logic query param key?
-                    if (in_array(
-                        $query_param_sans_stars,
-                        $model->logic_query_param_keys()
-                    )) {
-                        $query_param_for_models[ $query_param_key ] = ModelDataTranslator::prepareConditionsQueryParamsForModels(
-                            $query_param_value,
-                            $model,
-                            $requested_version
-                        );
-                    } elseif (defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE) {
-                        // only tell API clients they got it wrong if we're in debug mode
-                        // otherwise try our best ot fulfill their request by ignoring this invalid data
-                        throw new RestException(
-                            'invalid_parameter',
-                            sprintf(
-                                esc_html__(
-                                    'You provided an invalid parameter, with key "%1$s"',
-                                    'event_espresso'
-                                ),
-                                $query_param_sans_stars
-                            ),
-                            array(
-                                'status' => 400,
-                            )
-                        );
-                    }
+                $nested_query_params = $query_param_meta->determineNestedConditionQueryParameters();
+                if ($nested_query_params) {
+                    $query_param_for_models[ $query_param_meta->getQueryParamKey() ] = $nested_query_params;
                 }
             }
         }
         return $query_param_for_models;
     }
-
 
     /**
      * Mostly checks if the last 4 characters are "_gmt", indicating its a
@@ -709,7 +522,7 @@ class ModelDataTranslator
         $requested_version = null
     ) {
         if ($requested_version === null) {
-            $requested_version = \EED_Core_Rest_Api::latest_rest_api_version();
+            $requested_version = EED_Core_Rest_Api::latest_rest_api_version();
         }
         $rest_query_params = $model_query_params;
         if (isset($model_query_params[0])) {
@@ -741,7 +554,7 @@ class ModelDataTranslator
      * Prepares all the sub-conditions query parameters (eg having or where conditions) for use in the rest api
      *
      * @param array    $inputted_query_params_of_this_type  eg like the "where" or "having" conditions query params
-     *                                                      passed into EEM_Base::get_all()
+     *                                                      @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @param EEM_Base $model
      * @param string   $requested_version                   eg "4.8.36"
      * @return array ready for use in the rest api query params

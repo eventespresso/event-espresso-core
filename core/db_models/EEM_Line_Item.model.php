@@ -356,7 +356,7 @@ class EEM_Line_Item extends EEM_Base
      * Gets the query params used to retrieve a specific line item for the given registration
      * @param EE_Registration $registration
      * @param array $original_query_params any extra query params you'd like to be merged with
-     * @return array like EEM_Base::get_all()'s $query_params
+     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     public function line_item_for_registration_query_params(EE_Registration $registration, $original_query_params = array())
     {

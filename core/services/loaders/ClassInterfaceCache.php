@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\loaders;
 
 use EventEspresso\core\domain\values\FullyQualifiedName;
+use EventEspresso\core\exceptions\InvalidAliasException;
 
 /**
  * Class ClassInterfaceCache
@@ -35,7 +36,8 @@ class ClassInterfaceCache
      */
     public function getFqn($fqn)
     {
-        return $fqn instanceof FullyQualifiedName ? $fqn->string() : $fqn;
+        $fqn = $fqn instanceof FullyQualifiedName ? $fqn->string() : $fqn;
+        return ltrim($fqn, '\\');
     }
 
 
@@ -79,11 +81,15 @@ class ClassInterfaceCache
      * @param string $fqn       the class name that should be used (concrete class to replace interface)
      * @param string $alias     the class name that would be type hinted for (abstract parent or interface)
      * @param string $for_class the class that has the dependency (is type hinting for the interface)
+     * @throws InvalidAliasException
      */
     public function addAlias($fqn, $alias, $for_class = '')
     {
         $fqn   = $this->getFqn($fqn);
         $alias = $this->getFqn($alias);
+        if (strpos($alias, '\\') !== false && ! is_subclass_of($fqn, $alias)) {
+            throw new InvalidAliasException($fqn, $alias);
+        }
         // are we adding an alias for a specific class?
         if ($for_class !== '') {
             // make sure it's set up as an array

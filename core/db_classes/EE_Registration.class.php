@@ -160,6 +160,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             && ! empty($new_STS_ID) // as well as the new status
             && $this->ID() // ensure registration is in the db
         ) {
+            // update internal status first
+            parent::set('STS_ID', $new_STS_ID, $use_default);
+            // THEN handle other changes that occur when reg status changes
             // TO approved
             if ($new_STS_ID === EEM_Registration::status_id_approved) {
                 // reserve a space by incrementing ticket and datetime sold values
@@ -177,8 +180,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                     $context
                 );
             }
-            // update status
-            parent::set('STS_ID', $new_STS_ID, $use_default);
             $this->_update_if_canceled_or_declined($new_STS_ID, $old_STS_ID, $context);
             if ($this->statusChangeUpdatesTransaction($context)) {
                 $this->updateTransactionAfterStatusChange();
@@ -1217,7 +1218,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Gets related answers
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Answer[]
      * @throws EE_Error
      */

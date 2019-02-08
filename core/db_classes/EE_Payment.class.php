@@ -587,7 +587,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
     /**
      * Gets all the extra meta info on this payment
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Extra_Meta
      * @throws \EE_Error
      */
@@ -793,7 +793,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
     /**
      * Gets details regarding which registrations this payment was applied to
      *
-     * @param array $query_params like EEM_Base::get_all
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Registration_Payment[]
      * @throws \EE_Error
      */

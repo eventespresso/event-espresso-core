@@ -423,7 +423,12 @@ class EEH_Debug_Tools
 
     protected static function plainOutput()
     {
-        return defined('EE_TESTS_DIR') || (defined('DOING_AJAX') && DOING_AJAX);
+        return defined('EE_TESTS_DIR')
+               || (defined('DOING_AJAX') && DOING_AJAX)
+               || (
+                   isset($_SERVER['REQUEST_URI'])
+                   && strpos(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), 'wp-json') !== false
+               );
     }
 
 

@@ -543,18 +543,18 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
             $default_admin_only_payment_methods = apply_filters(
                 'FHEE__EEH_Activation__add_default_admin_only_payments__default_admin_only_payment_methods',
                 array(
-                    __("Bank", 'event_espresso')        => __("Bank Draft", 'event_espresso'),
-                    __("Cash", 'event_espresso')        => __("Cash Delivered Physically", 'event_espresso'),
-                    __("Check", 'event_espresso')       => __("Paper Check", 'event_espresso'),
-                    __("Credit Card", 'event_espresso') => __("Offline Credit Card Payment", 'event_espresso'),
-                    __("Debit Card", 'event_espresso')  => __("Offline Debit Payment", 'event_espresso'),
-                    __("Invoice", 'event_espresso')     => __(
+                    (string) __("Bank", 'event_espresso')        => __("Bank Draft", 'event_espresso'),
+                    (string) __("Cash", 'event_espresso')        => __("Cash Delivered Physically", 'event_espresso'),
+                    (string) __("Check", 'event_espresso')       => __("Paper Check", 'event_espresso'),
+                    (string) __("Credit Card", 'event_espresso') => __("Offline Credit Card Payment", 'event_espresso'),
+                    (string) __("Debit Card", 'event_espresso')  => __("Offline Debit Payment", 'event_espresso'),
+                    (string) __("Invoice", 'event_espresso')     => __(
                         "Invoice received with monies included",
                         'event_espresso'
                     ),
-                    __("Money Order", 'event_espresso') => '',
-                    __("Paypal", 'event_espresso')      => __("Paypal eCheck, Invoice, etc", 'event_espresso'),
-                    __('Other', 'event_espresso')       => __('Other method of payment', 'event_espresso'),
+                    (string) __("Money Order", 'event_espresso') => '',
+                    (string) __("Paypal", 'event_espresso')      => __("Paypal eCheck, Invoice, etc", 'event_espresso'),
+                    (string) __('Other', 'event_espresso')       => __('Other method of payment', 'event_espresso'),
                 )
             );
             // make sure we hae payment method records for the following

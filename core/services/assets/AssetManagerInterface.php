@@ -5,6 +5,7 @@ namespace EventEspresso\core\services\assets;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\domain\values\assets\ManifestFile;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
+use EventEspresso\core\domain\values\assets\VendorJavascriptAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
@@ -19,6 +20,11 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 interface AssetManagerInterface
 {
+    /**
+     * @since 4.9.71.p
+     * @return string
+     */
+    public function assetNamespace();
 
     /**
      * @since 4.9.62.p
@@ -57,6 +63,20 @@ interface AssetManagerInterface
     public function addJavascript(
         $handle,
         $source,
+        array $dependencies = array(),
+        $load_in_footer = true
+    );
+
+
+    /**
+     * @since 4.9.71.p
+     * @param string $handle
+     * @param array  $dependencies
+     * @param bool   $load_in_footer
+     * @return JavascriptAsset
+     */
+    public function addVendorJavascript(
+        $handle,
         array $dependencies = array(),
         $load_in_footer = true
     );

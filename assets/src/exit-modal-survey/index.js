@@ -31,21 +31,21 @@ const modalProps = {
 		},
 		typeFormStyle: {
 			width: '600px',
-			height: '400px',
+			height: '600px',
 		},
 	},
 	typeFormUrl: 'https://eventespresso.typeform.com/to/O1DDym?' + queryString,
 	introText: __(
 		'Do you have a moment to share why you are deactivating Event Espresso?',
-		'event_espresso'
+		'event_espresso',
 	),
 	doSurveyButtonText: __(
 		'Sure I\'ll help',
-		'event_espresso'
+		'event_espresso',
 	),
 	skipButtonText: __(
 		'Skip',
-		'event_espresso'
+		'event_espresso',
 	),
 	buttonClass: {
 		doSurvey: 'button button-primary',

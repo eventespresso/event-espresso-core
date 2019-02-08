@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\entities\shortcodes;
 
+use DomainException;
 use EE_Datetime;
 use EE_Error;
 use EE_Event;
@@ -14,7 +15,10 @@ use EEM_Event;
 use EEM_Registration;
 use EEM_Ticket;
 use EventEspresso\core\exceptions\EntityNotFoundException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
+use InvalidArgumentException;
 
 /**
  * Class EspressoEventAttendees
@@ -100,21 +104,21 @@ class EspressoEventAttendees extends EspressoShortcode
      * @param array $attributes
      * @return string
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws DomainException
      */
     public function processShortcode($attributes = array())
     {
         // grab attributes and merge with defaults
         $attributes = $this->getAttributes((array) $attributes);
-        $archive = is_archive();
+        $attributes['limit'] = (int) $attributes['limit'];
         $display_on_archives = filter_var($attributes['display_on_archives'], FILTER_VALIDATE_BOOLEAN);
         // don't display on archives unless 'display_on_archives' is true
-        if ($archive && ! $display_on_archives) {
+        if ($attributes['limit'] === 0 || (! $display_on_archives && is_archive())) {
             return '';
         }
-
         try {
             $this->setBaseTemplateArguments($attributes);
             $this->validateEntities($attributes);
@@ -155,6 +159,7 @@ class EspressoEventAttendees extends EspressoShortcode
                 'status'              => EEM_Registration::status_id_approved,
                 'show_gravatar'       => false,
                 'display_on_archives' => false,
+                'limit'               => 999,
             )
         );
     }
@@ -170,9 +175,9 @@ class EspressoEventAttendees extends EspressoShortcode
      *
      * @param array $attributes
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     private function setBaseTemplateArguments(array $attributes)
     {
@@ -252,9 +257,9 @@ class EspressoEventAttendees extends EspressoShortcode
      * @param array $attributes
      * @return EE_Event|null
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     private function getEvent(array $attributes)
     {
@@ -305,9 +310,9 @@ class EspressoEventAttendees extends EspressoShortcode
      * @param array $attributes
      * @return EE_Datetime|null
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     private function getDatetime(array $attributes)
     {
@@ -325,9 +330,9 @@ class EspressoEventAttendees extends EspressoShortcode
      * @param array $attributes
      * @return \EE_Base_Class|EE_Ticket|null
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     private function getTicket(array $attributes)
     {
@@ -348,8 +353,11 @@ class EspressoEventAttendees extends EspressoShortcode
     private function setAdditionalQueryParams(array $attributes)
     {
         $reg_status_array = EEM_Registration::reg_status_array();
-        if ($attributes['status'] !== 'all' && isset($reg_status_array[ $attributes['status'] ])) {
+        if (isset($reg_status_array[ $attributes['status'] ])) {
             $this->query_params[0]['Registration.STS_ID'] = $attributes['status'];
+        }
+        if (absint($attributes['limit'])) {
+            $this->query_params['limit'] = $attributes['limit'];
         }
         $this->query_params['group_by'] = array('ATT_ID');
         $this->query_params['order_by'] = (array) apply_filters(

@@ -2,7 +2,6 @@
 
 /**
  * EE_Question_Form_Input class
- *
  *    a conglomerate type object that combines an EE_Question object with an EE_Answer object
  *    as well as some of it's own class properties to facilitate use within the EEH_Form_Fields.helper class
  *    access to the EE_Question and EE_Answer objects properties are done indirectly via a super getter and setter
@@ -57,6 +56,11 @@ class EE_Question_Form_Input
      * @var string
      */
     private $QST_input_class = '';
+
+    /**
+     * @var bool $QST_disabled
+     */
+    private $QST_disabled = false;
 
 
     /**
@@ -200,8 +204,10 @@ class EE_Question_Form_Input
     private function _set_input_id($qstn_id)
     {
         $input_id = isset($this->_QST_meta['input_id']) && ! empty($this->_QST_meta['input_id'])
-            ? $this->_QST_meta['input_id'] : sanitize_key(strip_tags($this->_QST->get('QST_display_text')));
-        $this->QST_input_id = $this->_QST_meta['append_qstn_id'] && ! empty($qstn_id) ? $input_id . '-' . $qstn_id
+            ? $this->_QST_meta['input_id']
+            : sanitize_key(strip_tags($this->_QST->get('QST_display_text')));
+        $this->QST_input_id = $this->_QST_meta['append_qstn_id'] && ! empty($qstn_id)
+            ? $input_id . '-' . $qstn_id
             : $input_id;
     }
 
@@ -228,8 +234,14 @@ class EE_Question_Form_Input
     public function set_question_form_input_answer($qstn_id)
     {
         // check for answer in $_REQUEST in case we are reprocessing a form after an error
-        if (isset($this->_QST_meta['EVT_ID']) && isset($this->_QST_meta['att_nmbr']) && isset($this->_QST_meta['date']) && isset($this->_QST_meta['time']) && isset($this->_QST_meta['price_id'])) {
-            if (isset($_REQUEST['qstn'][ $this->_QST_meta['EVT_ID'] ][ $this->_QST_meta['att_nmbr'] ][ $this->_QST_meta['date'] ][ $this->_QST_meta['time'] ][ $this->_QST_meta['price_id'] ][ $qstn_id ])) {
+        if (isset($this->_QST_meta['EVT_ID'])
+            && isset($this->_QST_meta['att_nmbr'])
+            && isset($this->_QST_meta['date'])
+            && isset($this->_QST_meta['time'])
+            && isset($this->_QST_meta['price_id'])
+        ) {
+            if (isset($_REQUEST['qstn'][ $this->_QST_meta['EVT_ID'] ][ $this->_QST_meta['att_nmbr'] ][ $this->_QST_meta['date'] ][ $this->_QST_meta['time'] ][ $this->_QST_meta['price_id'] ][ $qstn_id ])
+            ) {
                 $answer = $_REQUEST['qstn'][ $this->_QST_meta['EVT_ID'] ][ $this->_QST_meta['att_nmbr'] ][ $this->_QST_meta['date'] ][ $this->_QST_meta['time'] ][ $this->_QST_meta['price_id'] ][ $qstn_id ];
                 $this->_ANS->set('ANS_value', $answer);
             }
@@ -272,19 +284,28 @@ class EE_Question_Form_Input
                     $type = isset($input_types[ $field_ID ]) ? $input_types[ $field_ID ]['type'] : 'TEXT';
                     // input name
                     $input_name = isset($input_types[ $field_ID ]) && isset($input_types[ $field_ID ]['input_name'])
-                        ? $input_types[ $field_ID ]['input_name'] . '[' . $field_ID . ']' : $field_ID;
+                        ? $input_types[ $field_ID ]['input_name'] . '[' . $field_ID . ']'
+                        : $field_ID;
                     // css class for input
                     $class = isset($input_types[ $field_ID ]['class']) && ! empty($input_types[ $field_ID ]['class'])
-                        ? ' ' . $input_types[ $field_ID ]['class'] : '';
+                        ? ' ' . $input_types[ $field_ID ]['class']
+                        : '';
                     // whether to apply htmlentities to answer
                     $htmlentities = isset($input_types[ $field_ID ]['htmlentities'])
-                        ? $input_types[ $field_ID ]['htmlentities'] : true;
+                        ? $input_types[ $field_ID ]['htmlentities']
+                        : true;
                     // whether to apply htmlentities to answer
-                    $label_b4 = isset($input_types[ $field_ID ]['label_b4']) ? $input_types[ $field_ID ]['label_b4']
+                    $label_b4 = isset($input_types[ $field_ID ]['label_b4'])
+                        ? $input_types[ $field_ID ]['label_b4']
                         : false;
                     // whether to apply htmlentities to answer
                     $use_desc_4_label = isset($input_types[ $field_ID ]['use_desc_4_label'])
-                        ? $input_types[ $field_ID ]['use_desc_4_label'] : false;
+                        ? $input_types[ $field_ID ]['use_desc_4_label']
+                        : false;
+                    // whether input is disabled
+                    $disabled = isset($input_types[ $field_ID ]['disabled'])
+                        ? $input_types[ $field_ID ]['disabled']
+                        : false;
 
                     // create EE_Question_Form_Input object
                     $QFI = new EE_Question_Form_Input(
@@ -334,7 +355,7 @@ class EE_Question_Form_Input
                         }
                     }
                     // we don't want ppl manually changing primary keys cuz that would just lead to total craziness man
-                    if ($field_ID == $object->get_model()->primary_key_name()) {
+                    if ($disabled || $field_ID == $object->get_model()->primary_key_name()) {
                         $QFI->set('QST_disabled', true);
                     }
                     // EEH_Debug_Tools::printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -378,7 +399,7 @@ class EE_Question_Form_Input
             } elseif (EEM_Answer::instance()->has_field($property)) {
                 $this->_ANS->set($property, $value);
             } elseif ($this->_question_form_input_property_exists(__CLASS__, $property)) {
-                echo "<hr>$property is a prop of QFI";
+                // echo "<hr>$property is a prop of QFI";
                 $this->{$property} = $value;
                 return true;
             }

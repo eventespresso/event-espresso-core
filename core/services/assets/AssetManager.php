@@ -2,10 +2,12 @@
 
 namespace EventEspresso\core\services\assets;
 
+use DomainException;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\domain\values\assets\ManifestFile;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
+use EventEspresso\core\domain\values\assets\VendorJavascriptAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
@@ -57,6 +59,16 @@ abstract class AssetManager implements AssetManagerInterface
 
 
     /**
+     * @since 4.9.71.p
+     * @return string
+     */
+    public function assetNamespace()
+    {
+        return $this->domain->assetNamespace();
+    }
+
+
+    /**
      * @return void
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
@@ -65,7 +77,7 @@ abstract class AssetManager implements AssetManagerInterface
      */
     public function addManifestFile()
     {
-        // if a manifest file has already been added for this domain, then just return that one
+        // if a manifest file has already been added for this domain, then just return
         if ($this->assets->has($this->domain->assetNamespace())) {
             return;
         }
@@ -110,6 +122,33 @@ abstract class AssetManager implements AssetManagerInterface
         );
         $this->assets->add($asset, $handle);
         return $asset;
+    }
+
+
+    /**
+     * @param string $handle
+     * @param array  $dependencies
+     * @param bool   $load_in_footer
+     * @return JavascriptAsset
+     * @throws DuplicateCollectionIdentifierException
+     * @throws InvalidDataTypeException
+     * @throws InvalidEntityException
+     * @throws DomainException
+     * @since 4.9.71.p
+     */
+    public function addVendorJavascript(
+        $handle,
+        array $dependencies = array(),
+        $load_in_footer = true
+    ) {
+        $dev_suffix = wp_scripts_get_suffix('dev');
+        $vendor_path = $this->domain->pluginUrl() . 'assets/vendor/';
+        return $this->addJavascript(
+            $handle,
+            "{$vendor_path}{$handle}{$dev_suffix}.js",
+            $dependencies,
+            $load_in_footer
+        );
     }
 
 

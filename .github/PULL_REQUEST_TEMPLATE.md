@@ -15,11 +15,10 @@
 
 ## Checklist
 
-* [ ] I have added a changelog entry for this pull request
 * [ ] I have read the documentation relating to systems affected by this pull request, see https://github.com/eventespresso/event-espresso-core/tree/master/docs
 * [ ] User input is adequately validated and sanitized
 * [ ] all publicly displayed strings are internationalized (usually using `esc_html__()`, see https://codex.wordpress.org/I18n_for_WordPress_Developers)
 * [ ] My code is tested.
 * [ ] My code follows the Event Espresso code style.
 * [ ] My code has proper inline documentation.
-* [ ] My code accounts for when the site is Maintenance Mode (MM2 especially disallows usage of models)
+* [ ] My code accounts for when the site is in Maintenance Mode (MM2 especially disallows usage of models)

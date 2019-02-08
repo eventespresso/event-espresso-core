@@ -37,6 +37,11 @@ class RequestTypeContext extends Context
     const AJAX_FRONT = 'frontend-ajax-request';
 
     /**
+     * indicates that the current request is for the WP Heartbeat
+     */
+    const AJAX_HEARTBEAT = 'admin-ajax-heartbeat';
+
+    /**
      * indicates that the current request is being made via AJAX, but is NOT for EE
      */
     const AJAX_OTHER = 'other-ajax-request';
@@ -70,6 +75,11 @@ class RequestTypeContext extends Context
      * indicates that the current request is for content that is to be displayed within an iframe
      */
     const IFRAME = 'iframe-request';
+
+    /**
+     * indicates that the current request is for the WP REST API
+     */
+    const WP_API = 'wp-rest-api';
 
     /**
      * indicates that the current request is a loopback sent from WP core to test for errors
@@ -124,6 +134,7 @@ class RequestTypeContext extends Context
                     RequestTypeContext::ADMIN,
                     RequestTypeContext::AJAX_ADMIN,
                     RequestTypeContext::AJAX_FRONT,
+                    RequestTypeContext::AJAX_HEARTBEAT,
                     RequestTypeContext::AJAX_OTHER,
                     RequestTypeContext::API,
                     RequestTypeContext::CLI,
@@ -131,6 +142,7 @@ class RequestTypeContext extends Context
                     RequestTypeContext::FEED,
                     RequestTypeContext::FRONTEND,
                     RequestTypeContext::IFRAME,
+                    RequestTypeContext::WP_API,
                     RequestTypeContext::WP_SCRAPE,
                 )
             );
