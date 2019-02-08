@@ -30,3 +30,5 @@ All the dispatch actions and selectors for this data store are split into their 
 | ----------------------------------| ------------------------------------------------|
 | [Actions](./actions/README.md)    | All actions for the `eventespresso/core` store  |
 | [Selectors](./selectors/README.md)| All selectors for the `eventespresso/core` store|
+
+Testing doc only change
