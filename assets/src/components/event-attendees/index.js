@@ -5,7 +5,6 @@ import { Component } from '@wordpress/element';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import classNames from 'classnames';
-import cuid from 'cuid';
 
 /**
  * Internal Imports
@@ -37,14 +36,16 @@ export default class EventAttendeeList extends Component {
 		}
 		const listItems = attendees.map(
 			( attendee ) => {
-				const id = attendee.id || cuid();
-				return <AttendeeListItem
-					key={ id }
-					attendee={ attendee }
-					showGravatar={ showGravatar }
-					isLoading={ isLoading }
-					{ ...this.props }
-				/>;
+				if ( attendee.id ) {
+					return <AttendeeListItem
+						key={ attendee.id }
+						attendee={ attendee }
+						showGravatar={ showGravatar }
+						isLoading={ isLoading }
+						{ ...this.props }
+					/>;
+				}
+				return '';
 			}
 		);
 		return (
