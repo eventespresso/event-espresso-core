@@ -228,4 +228,22 @@ class EEH_Money extends EEH_Base
         }
         return $currency_config;
     }
+
+    /** 
+     * Rounds the number to a whole penny amount 
+     * @param float $amount 
+     * @param string $currency_code 
+     * @return float 
+     */ 
+    public static function round_for_currency($amount, $currency_code)
+    { 
+        $dec_places = EEM_Currency::instance()->get_var(
+            array(array('CUR_code' => $currency_code), 'limit' => 1),
+            'CUR_dec_plc'
+        ); 
+        if($dec_places === false || $dec_places === null) { 
+            $dec_places = EE_Config::instance()->currency->dec_plc; 
+        } 
+        return round($amount, $dec_places); 
+    } 
 }
