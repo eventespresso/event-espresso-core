@@ -367,6 +367,9 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      */
     public function set_unit_price($unit_price)
     {
+        if($this->type() !== EEM_Line_Item::type_sub_line_item) { 
+            $unit_price = EEH_Money::round_for_currency($unit_price, EE_Config::instance()->currency->code);
+        } 
         $this->set('LIN_unit_price', $unit_price);
     }
 
@@ -473,6 +476,9 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      */
     public function set_total($total)
     {
+        if($this->type() !== EEM_Line_Item::type_sub_line_item) { 
+            $total = EEH_Money::round_for_currency($total, EE_Config::instance()->currency->code); 
+        } 
         $this->set('LIN_total', $total);
     }
 
