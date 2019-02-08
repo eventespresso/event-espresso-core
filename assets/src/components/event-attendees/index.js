@@ -32,7 +32,7 @@ export default class EventAttendeeList extends Component {
 	getAttendeeList() {
 		const { attendees, showGravatar, isLoading } = this.props;
 		if ( isEmpty( attendees ) ) {
-			return '';
+			return null;
 		}
 		const listItems = attendees.map(
 			( attendee ) => {
@@ -45,7 +45,7 @@ export default class EventAttendeeList extends Component {
 						{ ...this.props }
 					/>;
 				}
-				return '';
+				return null;
 			}
 		);
 		return (
