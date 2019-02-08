@@ -22,6 +22,14 @@ before_install:
         phpenv config-rm xdebug.ini
         echo "xdebug removed";
       fi
+   - |
+     if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+       TRAVIS_COMMIT_RANGE="FETCH_HEAD...$TRAVIS_BRANCH"
+     fi
+     git diff --name-only $TRAVIS_COMMIT_RANGE | grep -qvE '(\.md$)|(^(docs|examples))/' || {
+       echo "Only docs were updated, stopping build process."
+       exit
+     }
 before_script:
   - bash tests/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
