@@ -19,7 +19,9 @@ const MyEventBase = ( { event } ) => {
 };
 
 const MyEvent = withSelect( ( select, ownProps )  => {
-  event: select( 'eventespresso/core' ).getEventById( ownProps.eventId  );
+  return {
+    event: select( 'eventespresso/core' ).getEventById( ownProps.eventId  );
+   }
 } )( MyEventBase );
 ```
 All the dispatch actions and selectors for this data store are split into their own documentation:

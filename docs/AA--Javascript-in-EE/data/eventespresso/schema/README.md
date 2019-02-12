@@ -28,7 +28,9 @@ const NewEventBase = ( { eventFactory, eventData } => {
   }
 } );
 export default withSelect( ( select ) => {
-  eventFactory: select( 'eventespresso/schema' ).getFactoryForModel( 'event' );
+  return {
+    eventFactory: select( 'eventespresso/schema' ).getFactoryForModel( 'event' );
+  }
 } );
 ```
 
