@@ -1,0 +1,34 @@
+/* -------------------------------------------------------------------------
+ * Event Espresso InlineEditInput Stylesheet
+ * (c) 2018 Event Espresso
+ * -------------------------------------------------------------------------*/
+
+.ee-form-row .ee-inline-edit-text {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #58575c;
+}
+
+.ee-form-row .ee-inline-edit-text:hover {
+    color: #759427; /* !important */
+}
+
+.ee-form-row .ee-inline-edit-input {
+    border: 1px solid #b3b3b3; /* !important */
+    box-shadow: none; /* !important */
+    display: inline-block;
+    font-weight: normal;
+    width: 95%;
+}
+
+.ee-form-row .ee-inline-edit-input-number {
+    text-align: right;
+}
+
+.ee-form-row .ee-inline-edit-label {
+    font-size: 12px; /* !important */
+    font-weight: normal; /* !important */
+    line-height: 15px; /* !important */
+    margin: 0; /* !important */
+    width: 95%; /* !important */
+}
