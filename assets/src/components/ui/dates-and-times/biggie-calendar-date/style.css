@@ -1,0 +1,177 @@
+/* -------------------------------------------------------------------------
+ * Event Espresso BiggieCalendarDate Stylesheet
+ * (c) 2018 Event Espresso
+ * -------------------------------------------------------------------------*/
+
+.biggie-calendar-date-bg {
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, .25) 50%, rgba(255, 255, 255, 0) 0%);
+    background-size: 1px 5px;
+    background-repeat: repeat-y;
+    box-sizing: border-box;
+    color: #fff;
+    height: 100%;
+    padding: 0 10px 10px 10px;
+    position: absolute;
+    text-align: center;
+    width: 140px;
+}
+
+.biggie-calendar-date-bg.bcd-pos-left {
+    background-position: right;
+    float: left;
+    left: 0;
+}
+.biggie-calendar-date-bg.bcd-pos-right {
+    background-position: left;
+    float: right;
+    right: 0;
+}
+
+.biggie-calendar-date-header {
+    color: rgba(255, 255, 255, .9);
+    font-size: 9px;
+    letter-spacing: 2px;
+    line-height: 27px;
+}
+
+.biggie-calendar-date .weekday {
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 18px;
+    letter-spacing: 1px;
+}
+
+.biggie-calendar-date .month {
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 20px;
+}
+
+.month-day-sep {
+    display: none;
+}
+
+.biggie-calendar-date .day {
+    color: rgba(255, 255, 255, .8);
+    font-size: 45px;
+    font-weight: bold;
+    line-height: 36px;
+    text-shadow: -1px -1px rgba(0, 0, 0, .15);
+}
+
+.biggie-calendar-date .year {
+    font-size: 12px;
+    letter-spacing: 8px;
+    line-height: 18px;
+    left: 3px;
+    position: relative;
+}
+
+.biggie-calendar-date-footer {
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin: 5px 0 0;
+    text-shadow: -1px -1px rgba(0, 0, 0, .15);
+}
+
+
+
+
+/* Media Queries for specific screen sizes
+ * -------------------------------------------------------------------------*/
+
+@media only screen and (max-width: 1920px) {
+}
+
+@media only screen and (max-width: 1600px) {
+}
+
+@media only screen and (max-width: 1366px) {
+}
+
+@media only screen and (max-width: 1280px) {
+}
+
+@media only screen and (max-width: 1024px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+@media only screen and (max-width: 960px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+@media only screen and (max-width: 850px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Tablet */
+@media screen and ( max-width: 782px ) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+}
+
+@media only screen and (max-width: 480px) {
+    .biggie-calendar-date-bg.bcd-pos-left {
+        background-position: bottom;
+        float: none;
+        /*left: unset;*/
+    }
+
+    .biggie-calendar-date-bg.bcd-pos-right {
+        background-position: top;
+        float: none;
+        /*right: unset;*/
+    }
+
+    .biggie-calendar-date-bg {
+        background-image: linear-gradient(to right, rgba(0, 0, 0, .25) 50%, rgba(255, 255, 255, 0) 0%);
+        background-position: top;
+        background-size: 5px 1px;
+        background-repeat: repeat-x;
+        clear: both;
+        float: none;
+        height: auto;
+        padding: 10px;
+        position: relative;
+        right: unset;
+        width: 100% !important;
+    }
+
+    .biggie-calendar-date,
+    .biggie-calendar-date-header,
+    .biggie-calendar-date-footer,
+    .month-day-sep {
+        display: inline-block;
+        line-height: 21px;
+    }
+
+    .biggie-calendar-date-header {
+        margin: 0 1rem 0 0;
+    }
+
+    .biggie-calendar-date-footer {
+        margin: 0 0 0 1rem;
+    }
+
+    .biggie-calendar-date .weekday,
+    .biggie-calendar-date .month,
+    .biggie-calendar-date .day,
+    .biggie-calendar-date .year {
+        color: #fff;
+        display: inline-block;
+        font-size: 18px;
+        font-weight: normal;
+        line-height: 21px;
+        letter-spacing: 0;
+        margin: 0 .25rem;
+        text-shadow: none;
+    }
+
+    .biggie-calendar-date .year {
+        left: unset;
+    }
+}
+
+@media only screen and (max-width: 360px) {
+}
