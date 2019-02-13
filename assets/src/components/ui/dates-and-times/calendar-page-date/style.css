@@ -1,0 +1,56 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso calendarPageDateDisplay Stylesheet
+ * (c) 2018 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+
+.ee-calendar-page-date-wrapper {
+    box-sizing: border-box;
+    font-size: 18px;
+    font-weight: bold;
+    float: left;
+    line-height: 24px;
+    margin: 0;
+    min-height: 77px;
+    padding: 0 20px 0 0;
+    text-align: center;
+}
+
+.ee-calendar-page-date-page {
+}
+
+.ee-calendar-page-date-wrapper-start,
+.ee-calendar-page-date-wrapper-end {
+    height: 60px;
+    width: 60px;
+}
+
+.ee-calendar-page-date-month {
+    /*background: rgba(0, 0, 0, .1);*/
+    border: 1px solid rgba(255, 255, 255, .25);
+    border-bottom: none;
+    color: #fff;
+    height: 30px;
+}
+
+.ee-calendar-page-date-day {
+    background: #fff;
+    border: 1px solid #fff;
+    border-top: none;
+    color: #333;
+    height: 30px;
+}
+
+.ee-calendar-page-date-to {
+    color: rgba(255, 255, 255, .75);
+    position: relative;
+    top: 1px;
+    left: 25px;
+    font-size: 8px;
+    letter-spacing: 1px;
+    line-height: 12px;
+}
+
+.ee-calendar-page-date-wrapper-end {
+    display: none;
+}
