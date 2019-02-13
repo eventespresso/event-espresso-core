@@ -32,7 +32,7 @@ const withEditorModal = ( modalProps ) => ( WrappedComponent ) => {
 	return class extends Component {
 		static propTypes = {
 			editorOpen: PropTypes.bool.isRequired,
-			title: PropTypes.string.isRequired,
+			title: PropTypes.string,
 			customClass: PropTypes.string,
 			buttonLabel: PropTypes.string,
 			closeModal: PropTypes.func,
