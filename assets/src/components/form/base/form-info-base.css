@@ -1,0 +1,83 @@
+/* -------------------------------------------------------------------------
+ * Event Espresso FormInfoBase Stylesheet
+ * (c) 2018 Event Espresso
+ * -------------------------------------------------------------------------*/
+
+.ee-form-info-row.is-dismissable {
+    max-height: 500px;
+    min-height: 0 !important;
+    overflow: hidden;
+    transition: max-height 0.25s ease-in-out;
+}
+
+.ee-form-info-row.is-dismissable.dismissed {
+    max-height: 0 !important;
+}
+
+.ee-form-info {
+    color: #706e73;
+    font-size: 1rem;
+    font-style: italic;
+    height: auto;
+    line-height: 1.5rem;
+    position: relative;
+}
+
+.ee-form-info-row.is-dismissable .ee-form-info {
+    padding: 20px 20px 0 0;
+}
+
+/*.ee-form-info.has-info-type {*/
+    /*padding-left: 46px;*/
+/*}*/
+
+.ee-form-info .ee-form-info-type {
+    background: #fff;
+    color: #e8f2f7;
+    /*float: left;*/
+    /*margin: 0 .5rem 1rem 0;*/
+    left: -66px;
+    position: absolute;
+    top: 2px;
+}
+
+.ee-form-info .ee-form-info-dismiss {
+    background: #fff;
+    color: #b3b3b3;
+    padding: 4px;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.ee-form-info .ee-form-info-dismiss:hover,
+.ee-form-info .ee-form-info-dismiss:focus,
+.ee-form-info .ee-form-info-dismiss:active {
+    box-shadow: none !important;
+    color: #706e73 !important;
+    outline: none !important;
+}
+
+.dismissed .ee-form-info .ee-form-info-dismiss:hover {
+    -webkit-animation: spin .25s ease-in infinite;
+    -moz-animation: spin .25s ease-in infinite;
+    animation: spin .25s ease-in infinite;
+}
+
+@-moz-keyframes spin {
+    100% {
+        -moz-transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
