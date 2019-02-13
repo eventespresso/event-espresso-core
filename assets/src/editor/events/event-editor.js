@@ -9,10 +9,11 @@ const container = document.getElementById( 'normal-sortables' );
 const editor = document.createElement( 'div' );
 editor.className = 'ee-editor-div';
 container.prepend( editor );
+const eventId = window.eeEditorEventId;
 
-ReactDOM.render(
-	<EventDatesAndTicketsMetabox
-		eventId={ window.eeEditorEventId }
-	/>,
-	editor
-);
+if ( eventId ) {
+	ReactDOM.render(
+		<EventDatesAndTicketsMetabox eventId={ eventId } />,
+		editor
+	);
+}
