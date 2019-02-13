@@ -1,0 +1,274 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso Tickets List List View Stylesheet
+ * © 2018 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+/* table (ul) */
+.ee-tickets-list-list-view {
+    font-size: 1rem;
+    font-weight: normal;
+    margin: .5rem 0 1rem;
+}
+
+/* table rows (div) */
+.ee-tickets-list-list-view > div {
+    margin: 0 0 1px;
+    border: 1px solid #ffffff;
+}
+
+/* headers row */
+.ee-tickets-list-list-view > div:nth-of-type(1) {
+    background: none !important;
+    border: none !important;
+}
+
+/* zebra striping */
+.ee-tickets-list-list-view > div:nth-of-type(even) {
+    background: #fcfcfc;
+    border: 1px solid #fcfcfc;
+}
+
+/* row highlighting */
+.ee-tickets-list-list-view > div:hover {
+    background: #f8f8f8;
+    border: 1px solid #eeeeee;
+}
+
+/* table rows (inner) */
+.ee-editor-ticket-list-items {
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+/* table cells */
+.ee-ticket-list-item {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font-size: 15px;
+    line-height: 36px;
+    height: 56px;
+    padding: 10px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/* headers */
+.ee-tickets-list-list-view > div:nth-of-type(1) .ee-ticket-list-item {
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 18px;
+    height: auto;
+    padding-bottom: 5px;
+}
+
+/* status bar */
+.ee-editor-ticket-list-items > div:nth-of-type(1) {
+    padding: 0;
+    width: 5px;
+}
+
+/* ID */
+.ee-editor-ticket-list-items > div:nth-of-type(2) {
+    min-width: 20px;
+    /*padding-left: 20px;*/
+    text-align: right;
+    width: 5%;
+}
+
+/* Name */
+.ee-editor-ticket-list-items > div:nth-of-type(3) {
+    width: 25%;
+}
+
+/* Start Date & End Date */
+.ee-editor-ticket-list-items > div:nth-of-type(4),
+.ee-editor-ticket-list-items > div:nth-of-type(5) {
+    width: 15%;
+}
+
+/* Sold, Reserved, & Capacity */
+.ee-editor-ticket-list-items > div:nth-of-type(6),
+.ee-editor-ticket-list-items > div:nth-of-type(7),
+.ee-editor-ticket-list-items > div:nth-of-type(8) {
+    text-align: right;
+    width: 6%;
+}
+
+/* Registrants */
+.ee-editor-ticket-list-items > div:nth-of-type(9) {
+    text-align: center;
+    width: 7.5%;
+}
+
+/* Actions */
+.ee-editor-ticket-list-items > div:nth-of-type(10) {
+    position: relative;
+    overflow: visible;
+    text-align: center;
+    width: 14%;
+}
+
+.ee-ticket-list-item .ee-infinity-sign {
+    font-size: 16px;
+    margin-top: -4px;
+}
+
+.ee-ticket-list-item .dashicons {
+    margin:0;
+}
+
+/* row level labels */
+.ee-ticket-list-item-label {
+    display: none;
+}
+
+/* status bar value */
+.ee-editor-ticket-list-items > div:nth-of-type(1) .ee-ticket-list-item-value {
+    display: none;
+}
+
+
+/* Media Queries for smaller screens
+ * -------------------------------------------------------------------------*/
+
+@media only screen and (max-width: 1600px) {
+    /* headers row */
+    .ee-tickets-list-list-view > div:nth-of-type(1) {
+        display: none !important;
+    }
+
+    /* table rows */
+    .ee-tickets-list-list-view > div,
+    .ee-tickets-list-list-view > div:hover {
+        background: none !important;
+        border: none !important;
+        /*padding: 0;*/
+    }
+
+    /* table rows (inner) */
+    .ee-editor-ticket-list-items {
+        flex-flow: column nowrap;
+    }
+
+    /* table cells */
+    .ee-ticket-list-item {
+        line-height: 18px;
+        height: auto;
+        overflow: visible;
+        padding: 10px;
+        /*position: unset !important;*/
+        text-align: left !important;
+        text-overflow: unset;
+        white-space: normal;
+        width: auto !important;
+        word-break: break-word;
+    }
+
+    /* row level labels */
+    .ee-ticket-list-item-label {
+        color: #706e73;
+        display: inline-block;
+        font-size: 13px;
+        padding: 0 10px 0 0;
+        text-align: right;
+        width: 25%;
+    }
+
+    .ee-ticket-list-item-value {
+        display: inline-block;
+    }
+    /* Date Name in status bar value */
+    .ee-editor-ticket-list-items > div:nth-of-type(1) .ee-ticket-list-item-value {
+        display: block;
+    }
+
+    /* status bar */
+    .ee-editor-ticket-list-items > div:nth-of-type(1) {
+        color: #fff !important;
+        padding: 10px;
+        width: auto;
+    }
+
+    /* status bar */
+    /*.ee-editor-ticket-list-items > div:nth-of-type(1) .ee-ticket-list-item-label {*/
+    /*display: none;*/
+    /*width: auto;*/
+    /*}*/
+    /* Name */
+    .ee-editor-ticket-list-items > div:nth-of-type(3),
+        /* status bar */
+    .ee-editor-ticket-list-items > div:nth-of-type(1) .ee-ticket-list-item-label {
+        display: none;
+    }
+
+
+    /* Actions */
+    /*.ee-editor-ticket-list-items > div:nth-of-type(10) .ee-ticket-list-item-label {*/
+    /*padding-top: 8px;*/
+    /*}*/
+    /* Actions  menu */
+    .ee-tickets-list-list-view .ee-editor-ticket-actions-menu {
+        /*position: relative !important;*/
+        left: 25%;
+        padding-left: 10px;
+        right: unset;
+        /*top: unset;*/
+        top: 2px;
+    }
+
+    .ee-tickets-list-list-view .ee-dropdown-menu-div {
+        /*position: relative !important;*/
+        left: 12%;
+        right: unset;
+        /*top: unset;*/
+        /*position: absolute;*/
+        /*top: -6px;*/
+    }
+
+}
+
+@media only screen and (max-width: 1280px) {
+}
+
+@media only screen and (max-width: 1024px) {
+}
+
+@media only screen and (max-width: 768px) {
+}
+
+@media only screen and (max-width: 600px) and (min-width: 481px) {
+}
+
+@media only screen and (max-width: 540px) and (min-width: 481px) {
+}
+
+@media only screen and (max-width: 480px) {
+}
+
+@media only screen and (max-width: 360px) {
+}
+
+@media only screen and (max-width: 320px) {
+}
+
+
+/* WordPress Media Query breakpoints
+ * -------------------------------------------------------------------------*/
+
+/* Auto-folding of the admin menu */
+@media only screen and (max-width: 960px) {
+}
+
+/* one column on the post write/edit screen */
+@media only screen and (max-width: 850px) {
+}
+
+/* Tablet */
+@media screen and ( max-width: 782px ) {
+}
+
+/* Smartphone */
+@media screen and (max-width: 600px) {
+}
