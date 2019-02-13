@@ -565,6 +565,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             EVENT_ESPRESSO_VERSION,
             true
         );
+        add_action(
+            'admin_footer',
+            function () {
+                $eventId = isset($_REQUEST['post']) ? absint($_REQUEST['post']) : 0;
+                if ($eventId) {
+                    echo '
+        <script type="text/javascript">
+            /* <![CDATA[ */ var eeEditorEventId = ' . $eventId . ' /* ]]> */
+        </script>';
+                }
+            }
+        );
     }
 
 
@@ -1495,14 +1507,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function _register_event_editor_meta_boxes()
     {
         $this->verify_cpt_object();
-        add_meta_box(
-            'espresso_event_editor_tickets',
-            esc_html__('Event Datetime & Ticket', 'event_espresso'),
-            array($this, 'ticket_metabox'),
-            $this->page_slug,
-            'normal',
-            'high'
-        );
+        // add_meta_box(
+        //     'espresso_event_editor_tickets',
+        //     esc_html__('Event Datetime & Ticket', 'event_espresso'),
+        //     array($this, 'ticket_metabox'),
+        //     $this->page_slug,
+        //     'normal',
+        //     'high'
+        // );
         add_meta_box(
             'espresso_event_editor_event_options',
             esc_html__('Event Registration Options', 'event_espresso'),
