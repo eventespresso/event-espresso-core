@@ -13,27 +13,37 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 {
 
     /**
-     * The following constants are used by the ticket_status() method to indicate whether a ticket is on sale or not.
+     * TicKet Sold out:
+     * constant used by ticket_status() to indicate that a ticket is sold out
+     * and no longer available for purchase
      */
     const sold_out = 'TKS';
 
     /**
-     *
+     * TicKet Expired:
+     * constant used by ticket_status() to indicate that a ticket is expired
+     * and no longer available for purchase
      */
     const expired = 'TKE';
 
     /**
-     *
+     * TicKet Archived:
+     * constant used by ticket_status() to indicate that a ticket is archived
+     * and no longer available for purchase
      */
     const archived = 'TKA';
 
     /**
-     *
+     * TicKet Pending:
+     * constant used by ticket_status() to indicate that a ticket is pending
+     * and is NOT YET available for purchase
      */
     const pending = 'TKP';
 
     /**
-     *
+     * TicKet On sale:
+     * constant used by ticket_status() to indicate that a ticket is On Sale
+     * and IS available for purchase
      */
     const onsale = 'TKO';
 
