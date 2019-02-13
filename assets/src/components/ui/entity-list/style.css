@@ -1,0 +1,32 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso EntityList Stylesheet
+ * © 2018 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+.ee-entity-list-no-results {
+    background: #fcfcfc;
+    font-size: 1rem;
+    font-weight: normal;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.ee-green-background {
+    background-color: #93b343;
+}
+
+.ee-lt-grey-background {
+    background-color: #a0a5a5;
+}
+
+.ee-orange-background {
+    background-color: #f8ae00;
+}
+
+.ee-blue-background {
+    background-color: #3297c3;
+}
+
+.ee-violet-background {
+    background-color: #a16ec6;
+}
