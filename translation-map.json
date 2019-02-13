@@ -1,12 +1,14 @@
 {
   "eventespresso-editor-hocs": [],
-  "eventespresso-value-objects": [],
   "eventespresso-hocs": [],
+  "eventespresso-value-objects": [],
   "eventespresso-validators": [],
   "eventespresso-helpers": [],
   "eventespresso-model": [
     null,
     "The provided entity (%s) does not have the given property (%s)",
+    null,
+    "The provided immutable object (%s) does not have the given path (%s)",
     "The provided value is not an array.",
     "The provided items must not be empty",
     "The provided item must be a Map object",
@@ -81,6 +83,8 @@
     "Limit",
     null,
     "The provided entity (%s) does not have the given property (%s)",
+    null,
+    "The provided immutable object (%s) does not have the given path (%s)",
     "The provided value is not an array.",
     "The provided items must not be empty",
     "The provided item must be a Map object",
@@ -177,6 +181,8 @@
   "eventespresso-data-stores": [
     null,
     "The provided entity (%s) does not have the given property (%s)",
+    null,
+    "The provided immutable object (%s) does not have the given path (%s)",
     "The provided value is not an array.",
     "The provided items must not be empty",
     "The provided item must be a Map object",
