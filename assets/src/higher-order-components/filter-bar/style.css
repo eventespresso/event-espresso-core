@@ -1,0 +1,173 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso withEntityListFilterBar Stylesheet
+ * © 2018 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+.ee-entity-list-filter-bar-wrapper {
+    background: #ffffff;;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    padding: .5rem .5rem 0;
+    border-bottom: 1px solid #f4f4f4;
+    margin: 0 0 1rem;
+}
+.ee-entity-list-filter-bar,
+.ee-entity-list-view-bar {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.ee-entity-list-filter-bar {
+    justify-content: flex-start;
+    width: 70%;
+}
+
+.ee-entity-list-view-bar {
+    max-height: 36px;
+    justify-content: flex-end;
+    margin: -1px -4px .75rem 0;
+    text-align: right;
+    width: 30%;
+}
+
+.ee-entity-list-view-bar .ee-view-filter {
+    position: relative;
+    top: -4px;
+}
+
+.ee-entity-list-filter-bar .ee-filter-bar-filter {
+    margin: 0 1rem .75rem 0;
+    max-width: 100%;
+}
+
+.ee-entity-list-view-bar .ee-filter-bar-filter {
+    display: flex;
+    flex-flow: row nowrap;
+    height: 36px;
+    justify-content: flex-end;
+    margin: 0 0 0 1rem;
+    max-width: 100%;
+}
+
+.ee-entity-list-view-bar .ee-per-page-filter {
+    margin-right: 4px;
+    max-height: 36px;
+    max-width: 115px;
+}
+
+.ee-entity-list-view-bar .ee-grid-view-filter {
+    margin: 0 -4px 0 0;
+}
+
+.ee-entity-list-view-bar .ee-grid-view-filter,
+.ee-entity-list-view-bar .ee-list-view-filter {
+    height: 36px;
+    width: 36px;
+}
+
+.ee-entity-list-view-bar .components-icon-button {
+    color: #706e73;
+    margin-bottom: -3px;
+}
+
+.ee-entity-list-view-bar .components-icon-button.active-list {
+    color: #3297c3;
+}
+
+.ee-entity-list-filter-bar-wrapper .components-base-control__label {
+    color: #706e73;
+    font-weight: bold;
+    margin: 0 .5rem .25rem 0;
+    white-space: nowrap;
+}
+
+.ee-entity-list-filter-bar-wrapper .components-base-control__label,
+.ee-entity-list-filter-bar-wrapper .components-select-control__input {
+    display: inline-block;
+    width: auto;
+    max-width: 100%;
+}
+
+
+
+/* Media Queries for specific screen sizes
+ * -------------------------------------------------------------------------*/
+
+@media only screen and (max-width: 1920px) {
+}
+
+@media only screen and (max-width: 1600px) {
+}
+
+@media only screen and (max-width: 1366px) {
+}
+
+@media only screen and (max-width: 1280px) {
+    .ee-entity-list-filter-bar-wrapper .components-base-control__label,
+    .ee-entity-list-filter-bar-wrapper .components-select-control__input {
+        display: block;
+    }
+
+    .ee-entity-list-view-bar {
+        max-height: 118px;
+    }
+
+    .ee-entity-list-view-bar .ee-view-filter {
+        top: 9px;
+    }
+}
+
+@media only screen and (max-width: 1024px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+@media only screen and (max-width: 960px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+@media only screen and (max-width: 850px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Tablet */
+@media screen and ( max-width: 782px ) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+    .ee-entity-list-filter-bar-wrapper {
+        flex-flow: column nowrap;
+        padding-bottom: 1rem;
+    }
+
+    .ee-entity-list-filter-bar,
+    .ee-entity-list-view-bar {
+        width: 100%;
+    }
+
+    .ee-entity-list-view-bar {
+        flex-flow: row nowrap;
+        justify-content: flex-start;
+        height: 54px;
+        margin: 0;
+        text-align: left;
+    }
+
+    .ee-entity-list-view-bar .ee-filter-bar-filter {
+        margin: 0 1rem 0 0;
+    }
+
+    .ee-entity-list-view-bar .ee-view-filter {
+        top: 9px;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+}
+
+@media only screen and (max-width: 360px) {
+}
+
