@@ -1,0 +1,96 @@
+/* -------------------------------------------------------------------------
+ * Event Espresso withEditorModal Stylesheet
+ * (c) 2018 Event Espresso
+ * -------------------------------------------------------------------------*/
+
+.components-modal__frame.ee-editor-modal {
+    height: 80%;
+    max-width: 100%;
+    transform: translate(-50%, -10%);
+    top: 20%;
+    width: 60%;
+}
+
+.ee-editor-modal .components-modal__content {
+    padding: 0;
+}
+
+.ee-editor-modal .components-modal__header {
+    margin: 0 0 -1px;
+    padding: 0 8px;
+}
+
+.ee-editor-modal .components-modal__header-heading {
+    font-size: 1.5rem;
+    margin-left: 1rem;
+}
+
+
+/* Media Queries for specific screen sizes
+ * -------------------------------------------------------------------------*/
+
+@media only screen and (max-width: 1920px) {
+}
+
+@media only screen and (max-width: 1600px) {
+}
+
+@media only screen and (max-width: 1366px) {
+}
+
+@media only screen and (max-width: 1280px) {
+    .components-modal__frame.ee-editor-modal {
+        height: 90%;
+        max-width: 100%;
+        transform: translate(-50%, -5%);
+        top: 10%;
+        width: 80%;
+    }
+}
+
+@media only screen and (max-width: 1024px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+@media only screen and (max-width: 960px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+@media only screen and (max-width: 850px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Tablet */
+@media screen and ( max-width: 782px ) {
+    .components-modal__frame.ee-editor-modal {
+        height: 90%;
+        max-width: 100%;
+        transform: translate(-50%, -5%);
+        top: 10%;
+        width: 90%;
+    }
+}
+
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+    .components-modal__frame.ee-editor-modal {
+        height: 95%;
+        max-width: 95%;
+        transform: translate(-50%, -2.5%);
+        top: 2.5%;
+        width: 95%;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .components-modal__frame.ee-editor-modal {
+        height: 100%;
+        max-width: 100%;
+        transform: none;
+        top: 0;
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 360px) {
+}
+
