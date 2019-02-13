@@ -58,12 +58,22 @@ describe( 'Money Value Object', () => {
 					'settings',
 					{
 						...settings,
-						...DefaultCurrency.toAccountingSettings(),
+						...DefaultCurrency.toAccountingSettings().currency,
 					}
 				);
 				expect( testMoney.formatter ).toHaveProperty( 'format' );
 			}
 		);
+		it( 'formatter has correct settings from currency', () => {
+			const currency = new Currency(
+				{
+					code: 'dolla',
+					sign: '🥇',
+				}
+			);
+			const money = new Money( testDecimal, currency );
+			expect( money.formatter.settings.symbol ).toBe( '🥇' );
+		} );
 		it( 'expects three Money objects constructed using various types' +
 			' of amounts that result in the same value are equal as ' +
 			'expected', () => {
