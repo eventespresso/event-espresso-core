@@ -558,6 +558,12 @@ class EEH_Debug_Tools
     ) {
         // return;
         $file = str_replace(rtrim(ABSPATH, '\\/'), '', $file);
+        if (empty($var) && empty($var_name)) {
+            $var = $file;
+            $var_name = "line $line";
+            $file = '';
+            $line = '';
+        }
         $margin = is_admin() ? ' 180px' : '0';
         // $print_r = false;
         if (is_string($var)) {
