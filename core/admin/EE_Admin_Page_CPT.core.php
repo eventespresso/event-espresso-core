@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\assets\EspressoEditorAssetManager;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -850,9 +851,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * This simply verifies if the cpt_model_object is instantiated for the given page and throws an error message
      * accordingly.
      *
-     * @access public
-     * @throws EE_Error
      * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function verify_cpt_object()
     {
@@ -885,6 +889,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                 __LINE__
             );
         }
+        $this->loadEspressoEditorAssetManager();
     }
 
 
@@ -928,6 +933,41 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                 wp_localize_script('ee_admin_js', 'eeCPTstatuses', $ee_cpt_statuses);
             }
         }
+    }
+
+
+    /**
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    private function loadEspressoEditorAssetManager()
+    {
+        EE_Dependency_Map::register_dependencies(
+            'EventEspresso\core\domain\services\assets\EspressoEditorAssetManager',
+            array(
+                'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
+            )
+        );
+        LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\domain\services\assets\EspressoEditorAssetManager'
+        );
+        add_action('admin_enqueue_scripts', array($this, 'enqueueEspressoEditorAssets'), 100);
+    }
+
+
+    /**
+     * enqueue_scripts - Load the scripts and css
+     *
+     * @return void
+     * @throws DomainException
+     */
+    public function enqueueEspressoEditorAssets()
+    {
+        wp_enqueue_style(EspressoEditorAssetManager::CSS_HANDLE_EDITOR);
+        wp_enqueue_script(EspressoEditorAssetManager::JS_HANDLE_EDITOR);
     }
 
 
