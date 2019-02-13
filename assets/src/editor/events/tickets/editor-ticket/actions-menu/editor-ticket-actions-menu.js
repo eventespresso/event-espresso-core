@@ -15,10 +15,13 @@ import { __, sprintf, _x } from '@eventespresso/i18n';
 /**
  * Internal dependencies
  */
+import { EditTicketFormModal } from '../';
 import { copyTicket, trashTicket } from '../action-handlers';
 import { EntityActionMenuItem } from '../../../entity-action-menu-item';
-import { DatesAndTicketsManagerModal, EditTicketFormModal } from '../';
-import { default as TicketPriceCalculatorFormModal } from '../price-calculator/ticket-price-calculator-form-modal';
+import { DatesAndTicketsManagerModal } from '../../../dates-and-tickets-metabox';
+import {
+	default as TicketPriceCalculatorFormModal,
+} from '../price-calculator/ticket-price-calculator-form-modal';
 import './style.css';
 
 /**

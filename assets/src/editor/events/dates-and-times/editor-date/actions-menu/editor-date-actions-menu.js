@@ -10,9 +10,10 @@ import { __, sprintf, _x } from '@eventespresso/i18n';
 /**
  * Internal dependencies
  */
+import { EditEventDateFormModal } from '../';
 import { copyEventDate, trashEventDate } from '../action-handlers';
 import { EntityActionMenuItem } from '../../../entity-action-menu-item';
-import { DatesAndTicketsManagerModal, EditEventDateFormModal } from '../';
+import { DatesAndTicketsManagerModal } from '../../../dates-and-tickets-metabox';
 import './style.css';
 
 /**
