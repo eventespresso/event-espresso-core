@@ -1,0 +1,162 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso EntityDetailsPanel Stylesheet
+ * © 2018 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+.ee-entity-details-panel-div {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    font-size: 21px;
+    height: 42px;
+    line-height: 21px;
+    width: 240px;
+}
+
+.ee-entity-details-panel-div .ee-inline-edit-text {
+    font-size: 21px;
+    line-height: 21px;
+}
+
+.ee-entity-details-div {
+    display: flex;
+    flex-direction: column-reverse;
+    max-width: 50px;
+}
+
+.ee-entity-details-div .ee-inline-edit-input {
+    max-width: 50px;
+    margin: 0 0 -3px;
+}
+
+.ee-entity-details-label-div {
+    color: #706e73;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.ee-entity-details-value-div {
+    font-weight: bold;
+}
+
+.ee-entity-details-separator {
+    border: 0 solid rgba(0, 0, 0, 0);
+    border-left: 1px solid rgba(0, 0, 0, .25);
+    height: 40px;
+}
+
+.ee-infinity-sign {
+    font-size: 24px;
+    margin-top: -6px;
+    vertical-align: middle;
+}
+
+.ee-entity-details-value-div a {
+    border-color: transparent;
+    box-shadow: none;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #706e73;
+    display: block;
+    font-size: 24px;
+    height: 32px;
+    line-height: 21px;
+    margin: 0 auto -6px;
+    outline-style: none;
+    text-decoration: none !important;
+    width: 36px;
+}
+
+.ee-entity-details-value-div .dashicons {
+    margin: 0;
+    top: 2px !important;
+}
+
+.ee-entity-details-value-div a:hover,
+.ee-entity-details-value-div a:active {
+    color: #3297c3;
+}
+
+.ee-entity-details-value-div a:focus {
+    color: #191e23;
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 1px #6c7781, inset 0 0 0 2px #fff;
+    outline: 2px solid transparent;
+    outline-offset: -2px;
+}
+
+
+
+/* Media Queries for specific screen sizes
+ * -------------------------------------------------------------------------*/
+
+@media only screen and (max-width: 1920px) {
+}
+
+@media only screen and (max-width: 1600px) {
+}
+
+@media only screen and (max-width: 1366px) {
+}
+
+@media only screen and (max-width: 1280px) {
+}
+
+@media only screen and (max-width: 1024px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+@media only screen and (max-width: 960px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+@media only screen and (max-width: 850px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Tablet */
+@media screen and ( max-width: 782px ) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+}
+
+@media only screen and (max-width: 480px) {
+    .ee-entity-details-panel-div {
+        flex-direction: column;
+        font-size: 21px;
+        line-height: 30px;
+        height: auto;
+        padding: 1rem 0 0;
+        text-align: center;
+        width: 100%;
+    }
+
+    .ee-entity-details-div {
+        flex-direction: row;
+        text-align: center;
+        width: 100%;
+    }
+
+    .ee-entity-details-value-div {
+        padding-left: 10px;
+        text-align: center;
+        width: 10%;
+    }
+
+    .ee-entity-details-label-div {
+        color: #706e73;
+        font-size: 14px;
+        letter-spacing: 0;
+        text-align: right;
+        width: 50%;
+    }
+
+    .ee-entity-details-separator {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 360px) {
+}
