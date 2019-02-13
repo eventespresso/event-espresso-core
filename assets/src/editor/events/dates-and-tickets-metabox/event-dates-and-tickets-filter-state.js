@@ -28,11 +28,15 @@ import {
 const removeUndefined = ( a ) => ! isUndefined( a );
 
 /**
- * EventDatesAndTicketsMetabox
+ * EventDatesAndTicketsFilterState
  * manages state for the Event Dates and Available Tickets "metaboxes"
  *
  * @constructor
+ * @param {number|string} eventId
  * @param {Array} eventDates
+ * @param {Array} eventDateTickets
+ * @param {Object} eventDateTicketMap
+ * @param {Function} render
  */
 class EventDatesAndTicketsFilterState extends Component {
 	static propTypes = {
