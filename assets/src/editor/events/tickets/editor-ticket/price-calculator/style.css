@@ -1,0 +1,60 @@
+/* -------------------------------------------------------------------------
+ * Event Espresso TicketPriceCalculatorForm Stylesheet
+ * (c) 2019 Event Espresso
+ * -------------------------------------------------------------------------*/
+
+.ee-ticket-price-calculator-form-section .px-3 .ee-form-row-header.ee-form-row:not(li) {
+    margin-bottom: 0;
+    min-height: 1rem;
+}
+
+.ee-ticket-price-calculator-form-section .px-3 .ee-form-row-footer.ee-form-row:not(li) {
+    border-top: 2px solid #e7e6e4;
+    margin-bottom: 0;
+    min-height: 1rem;
+    padding: 1rem 0 0;
+}
+
+.ee-ticket-price-calculator-form-section .px-3 .ee-form-row-footer .col-sm-2:first-of-type {
+    text-align: right;
+}
+
+.ee-ticket-price-calculator-form-section h4 {
+    color: #58575c;
+    font-size: 1rem;
+    margin: 0 0 .25rem .25rem;
+}
+
+.ee-ticket-price-calculator-form-section .ee-ticket-price-calculator-price,
+.ee-ticket-price-calculator-form-section .ee-ticket-price-calculator-total,
+.ee-ticket-price-calculator-form-section .ee-ticket-price-calculator-price label,
+.ee-ticket-price-calculator-form-section .ee-ticket-price-calculator-total label {
+    line-height: 1.1;
+    text-align: right;
+}
+
+.ee-ticket-price-calculator-form-section .ee-ticket-price-calculator-total label {
+    color: #b3b3b3;
+    font-size: 1.5rem;
+    padding: 0.375rem 0;
+}
+
+.ee-ticket-price-calculator-form-section .ee-ticket-price-calculator-price .ee-inline-edit-text {
+    display: inline-block;
+    font-size: 1.05rem;
+    padding: 0.375rem 0.75rem;
+}
+
+.ee-ticket-price-calculator-form-section .ee-form-row-footer .ee-ticket-price-calculator-price {
+    padding-top: 0.5rem;
+}
+
+.ee-ticket-price-calculator-form-section .ee-form-row-footer .ee-ticket-price-calculator-price .ee-inline-edit-text {
+    font-size: 1.2rem;
+    line-height: 1.2;
+    padding: 0.375rem 0.75rem 0.375rem;
+}
+
+.ee-ticket-price-calculator-form-section button {
+    margin: 0.375rem .5rem 0.375rem 0;
+}
