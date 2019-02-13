@@ -185,6 +185,36 @@ const config = [
 					exclude: /node_modules/,
 					loader: 'babel-loader',
 				},
+				{
+					test: /\.css$/,
+					use: [
+						miniExtract.loader,
+						{
+							loader: 'css-loader',
+							query: {
+								modules: true,
+								localIdentName: '[local]',
+							},
+							//can't use minimize because cssnano (the
+							// dependency) doesn't parser the browserlist
+							// extension in package.json correctly, there's
+							// a pending update for it but css-loader
+							// doesn't have the latest yet.
+							// options: {
+							//     minimize: true
+							// }
+						},
+						{
+							loader: 'postcss-loader',
+							options: {
+								plugins: function() {
+									return [ autoprefixer ];
+								},
+								sourceMap: true,
+							},
+						},
+					],
+				},
 			],
 		},
 		output: {
@@ -200,11 +230,11 @@ const config = [
 			components: assets + 'components/index.js',
 		},
 		externals: Object.assign( externals, {
-			'@eventespresso/higher-order-components': 'eejs.hocs',
 			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
 			'@eventespresso/value-objects': 'eejs.valueObjects',
+			'@eventespresso/higher-order-components': 'eejs.hocs',
 		} ),
 		module: {
 			rules: [
@@ -258,12 +288,12 @@ const config = [
 			'editor-hocs': assets + 'editor/hocs/index.js',
 		},
 		externals: Object.assign( externals, {
-			'@eventespresso/higher-order-components': 'eejs.hocs',
-			'@eventespresso/components': 'eejs.components',
 			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
 			'@eventespresso/value-objects': 'eejs.valueObjects',
+			'@eventespresso/higher-order-components': 'eejs.hocs',
+			'@eventespresso/components': 'eejs.components',
 		} ),
 		module: {
 			rules: [
@@ -312,6 +342,69 @@ const config = [
 		},
 	},
 	{
+		configName: 'editor',
+		entry: {
+			editor: [
+				assets + 'editor/index.js',
+			],
+		},
+		externals: Object.assign( externals, {
+			'@eventespresso/validators': 'eejs.validators',
+			'@eventespresso/helpers': 'eejs.helpers',
+			'@eventespresso/model': 'eejs.model',
+			'@eventespresso/value-objects': 'eejs.valueObjects',
+			'@eventespresso/higher-order-components': 'eejs.hocs',
+			'@eventespresso/components': 'eejs.components',
+			'@eventespresso/editor-hocs': 'eejs.editorHocs',
+		} ),
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+
+				},
+				{
+					test: /\.css$/,
+					use: [
+						miniExtract.loader,
+						{
+							loader: 'css-loader',
+							query: {
+								modules: true,
+								localIdentName: '[local]',
+							},
+							//can't use minimize because cssnano (the
+							// dependency) doesn't parser the browserlist
+							// extension in package.json correctly, there's
+							// a pending update for it but css-loader
+							// doesn't have the latest yet.
+							// options: {
+							//     minimize: true
+							// }
+						},
+						{
+							loader: 'postcss-loader',
+							options: {
+								plugins: function() {
+									return [ autoprefixer ];
+								},
+								sourceMap: true,
+							},
+						},
+					],
+				},
+			],
+		},
+		output: {
+			filename: 'ee-[name].[chunkhash].dist.js',
+			path: path.resolve( __dirname, 'assets/dist' ),
+			library: [ 'eejs', '[name]' ],
+			libraryTarget: 'var',
+		},
+	},
+	{
 		configName: 'base',
 		entry: {
 			'wp-plugins-page': [
@@ -328,12 +421,12 @@ const config = [
 			],
 		},
 		externals: Object.assign( externals, {
-			'@eventespresso/higher-order-components': 'eejs.hocs',
-			'@eventespresso/components': 'eejs.components',
 			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
 			'@eventespresso/model': 'eejs.model',
 			'@eventespresso/value-objects': 'eejs.valueObjects',
+			'@eventespresso/higher-order-components': 'eejs.hocs',
+			'@eventespresso/components': 'eejs.components',
 			'@eventespresso/editor-hocs': 'eejs.editorHocs',
 		} ),
 		output: {
