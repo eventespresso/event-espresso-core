@@ -7,7 +7,7 @@ import { Money, SiteCurrency } from '@eventespresso/value-objects';
 /**
  * External Imports
  */
-import { Component } from 'react';
+import { Component } from '@wordpress/element';
 import renderer from 'react-test-renderer';
 
 jest.mock( '@eventespresso/eejs', () => ( {
