@@ -84,7 +84,7 @@ export class Currency {
 		this.decimalMark = currencyConfig.decimalMark || this.decimalMark;
 		this.thousandsSeparator = currencyConfig.thousandsSeparator || this.thousandsSeparator;
 		this.subunits = currencyConfig.subunits ||
-			Math.pow( 10, this.decimalMark );
+			Math.pow( 10, this.decimalPlaces );
 		Object.freeze( this );
 	}
 
