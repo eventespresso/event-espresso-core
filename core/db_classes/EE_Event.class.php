@@ -892,8 +892,10 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
         }
         $spaces_remaining = $this->spaces_remaining($tickets);
         if ($spaces_remaining < 1) {
-            $this->set_status(EEM_Event::sold_out);
-            $this->save();
+            if ($this->status() !== EEM_Event::post_status_private) {
+                $this->set_status(EEM_Event::sold_out);
+                $this->save();
+            }
             $sold_out = true;
         } else {
             $sold_out = false;
