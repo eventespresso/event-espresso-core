@@ -167,11 +167,11 @@ export default class Money {
 	setFormatter() {
 		// only initialize if its not already initialized
 		if ( isEmpty( this.formatter ) ) {
-			Accounting.settings = {
-				...Accounting.settings,
-				...this.currency.toAccountingSettings(),
+			this.formatter = { ...Accounting };
+			this.formatter.settings = {
+				...this.formatter.settings,
+				...this.currency.toAccountingSettings().currency,
 			};
-			this.formatter = Accounting;
 		}
 		return this;
 	}
