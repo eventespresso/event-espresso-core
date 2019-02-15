@@ -459,10 +459,11 @@ jQuery(document).ready( function($) {
 		 */
 		set_listener_for_input_validation_value_change : function() {
 			SPCO.form_inputs.focusout( function() {
-				if ( this.type !== 'file' ) {
-                    $(this).val( $.trim( $(this).val() ) );
-				}
-				$(this).valid();
+		        var input = $(this);
+		        if ( this.type !== 'file' && this.type !== 'select-multiple' ) {
+                    input.val( $.trim( input.val() ) );
+		        }
+		        input.valid();
             });
 		},
 
