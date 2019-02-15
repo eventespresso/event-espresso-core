@@ -2,9 +2,9 @@
  * External imports
  */
 import { sortBy } from 'lodash';
-import { Component } from 'react';
-import { Button, Dashicon, IconButton } from '@wordpress/components';
-import { withSelect } from '@wordpress/data';
+import { Component } from '@wordpress/element';
+import { Button, IconButton } from '@wordpress/components';
+import { dispatch } from '@wordpress/data';
 import { sprintf, __ } from '@eventespresso/i18n';
 import {
 	InlineEditInput,
@@ -12,6 +12,7 @@ import {
 	twoColumnAdminFormLayout,
 	// validations,
 } from '@eventespresso/components';
+import { Money, SiteCurrency } from '@eventespresso/value-objects';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
@@ -45,7 +46,7 @@ class TicketPriceCalculatorForm extends Component {
 		super( props );
 		this.toggleEditor = props.closeModal;
 		this.state = {
-			priceModifiers: {},
+			priceModifiers: [],
 		};
 	}
 
@@ -77,7 +78,7 @@ class TicketPriceCalculatorForm extends Component {
 			<FormColumn colSize="3h">
 				<h4>{ __( 'Description', 'event_espresso' ) }</h4>
 			</FormColumn>
-			<FormColumn colSize="1h">
+			<FormColumn colSize="1h" htmlClass="text-sm-right">
 				<h4>{ __( 'Amount', 'event_espresso' ) }</h4>
 			</FormColumn>
 			<FormColumn colSize={ 1 }>
@@ -92,14 +93,11 @@ class TicketPriceCalculatorForm extends Component {
 		priceTypeOptions,
 		currencyFormatter,
 	) => {
-		console.log( 'TicketPriceCalculator.priceModifiers() price: ',
-			price
-		);
 		const prefix = `${ ticketPrefix }-price-${ price.id }`;
 		return (
-			<FormRow>
-				<FormColumn colSize="h">
-					{ price.id }
+			<FormRow key={ price.id } htmlClass="ee-form-row-price">
+				<FormColumn colSize="h" htmlClass="text-sm-right">
+					<span>{ parseInt( price.id ) || 0 }</span>
 				</FormColumn>
 				<FormColumn colSize={ 2 }>
 					<InputLabel
@@ -116,9 +114,6 @@ class TicketPriceCalculatorForm extends Component {
 						}
 						options={ priceTypeOptions }
 						htmlId={ `${ prefix }-type` }
-						// onChange={ ( text ) => {
-						// 	console.log( 'text', text );
-						// } }
 						disabled={ price.prtId === 1 }
 					/>
 				</FormColumn>
@@ -162,7 +157,7 @@ class TicketPriceCalculatorForm extends Component {
 				</FormColumn>
 				<FormColumn
 					colSize="1h"
-					htmlClass="ee-ticket-price-calculator-price"
+					htmlClass="ee-ticket-price-calculator-price text-sm-right"
 				>
 					<InputLabel
 						label={ __( 'Amount', 'event_espresso' ) }
@@ -197,6 +192,7 @@ class TicketPriceCalculatorForm extends Component {
 			<FormColumn colSize="7h" offset="h">
 				<Button
 					isDefault
+					onClick={ this.addPriceModifier }
 				>
 					{ __( 'Add Price Modifier', 'event_espresso' ) }
 				</Button>
@@ -212,7 +208,7 @@ class TicketPriceCalculatorForm extends Component {
 			</FormColumn>
 			<FormColumn
 				colSize={ 2 }
-				htmlClass="ee-ticket-price-calculator-price"
+				htmlClass="ee-ticket-price-calculator-price text-sm-right"
 			>
 				<InlineEditInput
 					key="total"
@@ -235,8 +231,27 @@ class TicketPriceCalculatorForm extends Component {
 		</FormRow>
 	);
 
-	addPriceModifier = () => {
-
+	addPriceModifier = async () => {
+		let order = this.state.priceModifiers.length;
+		order++;
+		const priceModifier = await dispatch( 'eventespresso/core' )
+			.createEntity(
+				'price',
+				{
+					PRT_ID: 2,
+					PRC_name: '',
+					PRC_desc: '',
+					PRC_amount: new Money( 0, SiteCurrency ),
+					PRC_order: order,
+				}
+			);
+		if ( isModelEntityOfModel( priceModifier, 'price' ) ) {
+			this.setState( ( prevState ) => {
+				const priceModifiers = prevState.priceModifiers;
+				priceModifiers.push( priceModifier );
+				return { priceModifiers: priceModifiers };
+			} );
+		}
 	};
 
 	formatMoney = ( value ) => sprintf( '$ %1$d', value );
@@ -245,22 +260,22 @@ class TicketPriceCalculatorForm extends Component {
 		this.counter++;
 		const {
 			ticket,
-			prices,
 			priceTypes,
 			submitButton,
 			cancelButton,
 			initialValues = {},
 			currentValues = {},
 		} = this.props;
-		console.log( '' );
+		let { prices } = this.props;
+		// console.log( '' );
 		// console.log( 'TicketPriceCalculator.render()', this.props );
-		console.log( 'TicketPriceCalculator.render() ticket: ', ticket );
+		// console.log( 'TicketPriceCalculator.render() ticket: ', ticket );
 		// console.log( 'TicketPriceCalculator.render() prices: ', prices );
-		console.log( 'TicketPriceCalculator.render() priceTypes: ', priceTypes );
+		// console.log( 'TicketPriceCalculator.render() priceTypes: ', priceTypes );
 		// console.log( 'TicketPriceCalculator.render() initialValues', initialValues );
 		// console.log( 'TicketPriceCalculator.render() currentValues', currentValues );
 		const priceTypeOptions = this.buildPriceTypeOptions( priceTypes );
-		console.log( 'TicketPriceCalculator.render() priceTypeOptions: ', priceTypeOptions );
+		// console.log( 'TicketPriceCalculator.render() priceTypeOptions: ', priceTypeOptions );
 
 		let ticketPrefix = TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX;
 		ticketPrefix += '-ticket-' + ticket.id;
@@ -275,6 +290,18 @@ class TicketPriceCalculatorForm extends Component {
 		// formRows.push(
 		// 	this.basePrice( ticketPrefix, values, currencyFormatter )
 		// );
+		const priceModifiers = this.state.priceModifiers;
+		if ( Array.isArray( priceModifiers ) && priceModifiers.length ) {
+			// console.log(
+			// 	'TicketPriceCalculator.render() priceModifiers: ',
+			// 	priceModifiers
+			// );
+			prices = prices.concat( priceModifiers );
+			// console.log(
+			// 	'TicketPriceCalculator.render() prices: ',
+			// 	prices
+			// );
+		}
 		const priceCount = prices.length;
 		if ( priceCount ) {
 			const sortedPrices = sortBy( prices, [ 'prtId', 'order' ] );
@@ -298,9 +325,9 @@ class TicketPriceCalculatorForm extends Component {
 		formRows.push(
 			this.formFooter( ticketPrefix, values, currencyFormatter )
 		);
-		console.log( 'TicketPriceCalculator.render() formRows: ',
-			formRows
-		);
+		// console.log( 'TicketPriceCalculator.render() formRows: ',
+		// 	formRows
+		// );
 
 		return ticket && ticket.id ? (
 			<FormWrapper>
@@ -322,7 +349,20 @@ class TicketPriceCalculatorForm extends Component {
 }
 
 /**
- * Enhanced TicketPriceCalculatorForm with FormHandler
+ * Enhanced TicketPriceCalculatorForm with FormHandler withDispatch
  */
 export default withFormHandler( TicketPriceCalculatorForm );
+
+// export default withFormHandler(
+// 	withDispatch( ( dispatch, ownProps ) => {
+// 		const { startSale } = dispatch( 'my-shop' );
+// 		const { discountPercent } = ownProps;
+//
+// 		return {
+// 			onClick() {
+// 				startSale( discountPercent );
+// 			},
+// 		};
+// 	} )( TicketPriceCalculatorForm )
+// );
 
