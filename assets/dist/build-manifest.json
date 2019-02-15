@@ -1,7 +1,7 @@
 {
   "components.css": "ee-components.0878e42e86414ed2e87b.dist.css",
-  "components.js": "ee-components.3c0575e5cae50bfb028b.dist.js",
-  "data-stores.js": "ee-data-stores.fe0da06a70f4942fc5e5.dist.js",
+  "components.js": "ee-components.bbb9426faa32aca21446.dist.js",
+  "data-stores.js": "ee-data-stores.747c55b51430f734a60a.dist.js",
   "editor-hocs.js": "ee-editor-hocs.15a813aac7a51b5473cb.dist.js",
   "editor.css": "ee-editor.dae62f9994cd06449a66.dist.css",
   "editor.js": "ee-editor.069135e1d72f70ce9853.dist.js",
@@ -14,9 +14,9 @@
   "hocs.css": "ee-hocs.43f1c9744f3a03ef8a1b.dist.css",
   "hocs.js": "ee-hocs.4f532d51f28c7ef175f2.dist.js",
   "manifest.js": "ee-manifest.45b8faa573682047153a.dist.js",
-  "model.js": "ee-model.a393a53d7ad72919ab6b.dist.js",
-  "validators.js": "ee-validators.400994f2dc2c8922b864.dist.js",
-  "valueObjects.js": "ee-valueObjects.ed39fd9628193a976b32.dist.js",
+  "model.js": "ee-model.b0c33d9e7403a6443eca.dist.js",
+  "validators.js": "ee-validators.a528908a7b9fe1495f98.dist.js",
+  "valueObjects.js": "ee-valueObjects.c4bac02506e628d70108.dist.js",
   "vendor.js": "ee-vendor.bd38b3513999b11ec414.dist.js",
   "wp-plugins-page.css": "ee-wp-plugins-page.4b29c2cf08863917d761.dist.css",
   "wp-plugins-page.js": "ee-wp-plugins-page.8e26148ab0ff9ad0eb72.dist.js"
