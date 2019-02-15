@@ -10,6 +10,7 @@ import {
 	pickBy,
 	isArray,
 } from 'lodash';
+import { instanceOf } from '@eventespresso/validators';
 
 /**
  * Internal imports
@@ -55,7 +56,7 @@ export const maybeConvertToValueObject = ( fieldName, fieldValue, schema ) => {
 	}
 	if (
 		isMoneyField( fieldName, schema ) &&
-		! ( fieldValue instanceof Money )
+		! ( instanceOf( fieldValue, 'Money' ) )
 	) {
 		return new Money( fieldValue, SiteCurrency );
 	}
@@ -87,7 +88,6 @@ export const maybeConvertFromValueObjectWithAssertions = (
 	fieldValue,
 	schema
 ) => {
-	maybeAssertValueObject( fieldName, fieldValue, schema );
 	if ( isDateTimeField( fieldName, schema ) ) {
 		DateTime.assertIsDateTime( fieldValue );
 		fieldValue = fieldValue.toISO();
@@ -109,7 +109,7 @@ export const maybeConvertFromValueObjectWithAssertions = (
 export const maybeConvertFromValueObject = ( fieldValue ) => {
 	if ( DateTime.validateIsDateTime( fieldValue ) ) {
 		fieldValue = fieldValue.toISO();
-	} else if ( fieldValue instanceof Money ) {
+	} else if ( instanceOf( fieldValue, 'Money' ) ) {
 		fieldValue = fieldValue.toNumber();
 	}
 	return fieldValue;

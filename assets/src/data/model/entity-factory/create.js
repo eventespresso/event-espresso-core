@@ -327,7 +327,7 @@ const populateMissingFields = ( instance ) => {
 		getEntityFieldsFromSchema( instance ),
 		( schemaProperties, fieldName ) => {
 			if (
-				! instance[ fieldName ] &&
+				typeof instance[ fieldName ]  === 'undefined' &&
 				! isPrimaryKeyField( fieldName, instance.schema )
 			) {
 				setInitialEntityFieldsAndValues(
