@@ -3,4 +3,4 @@ export {
 } from './dates-and-tickets-manager';
 export {
 	default as EventDatesAndTicketsMetabox,
-} from './event-dates-and-tickets-metabox';
+} from './dates-and-tickets-metabox';
