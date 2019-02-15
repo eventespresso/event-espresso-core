@@ -2,7 +2,7 @@
  * External imports
  */
 // import { isFunc } from 'lodash';
-import { Component } from 'react';
+import { Component } from '@wordpress/element';
 import { Form } from 'react-final-form';
 
 /**
@@ -100,6 +100,7 @@ export const withFormHandler = (
 				loading,
 				formData = null,
 				errorMessage = '',
+				loadingNotice = '',
 				...formProps
 			} = this.props;
 			// console.log( 'withFormHandler.render() formData', formData );
@@ -137,7 +138,10 @@ export const withFormHandler = (
 							);
 							return (
 								<form onSubmit={ handleSubmit }>
-									<FormPlaceholder loading={ loading } />
+									<FormPlaceholder
+										loading={ loading }
+										notice={ loadingNotice }
+									/>
 									<FormContainer loading={ loading } >
 										<FormComponent
 											initialValues={ formData }
