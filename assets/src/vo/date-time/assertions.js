@@ -123,7 +123,7 @@ export function validateIsDate( date ) {
 /**
  * Asserts whether the given value is an instance of Date.
  * @param {Date} date
- * @throws TypeErrorj
+ * @throws TypeError
  */
 export function assertIsDate( date ) {
 	if ( ! validateIsDate( date ) ) {
