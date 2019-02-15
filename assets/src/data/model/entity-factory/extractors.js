@@ -32,7 +32,6 @@ import {
 	isPrimaryKeyField,
 	isEntityField,
 } from './booleans';
-import { maybeAssertValueObject } from './assertions';
 import { validateTypeForField } from './validators';
 import { VALIDATE_TYPE } from './constants';
 
