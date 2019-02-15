@@ -2,11 +2,11 @@
  * External imports
  */
 import { isEmpty } from 'lodash';
-import { Component } from 'react';
+import { Component } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 // import { EspressoIcon } from '@eventespresso/components';
-import { __ } from '@eventespresso/i18n';
+import { __, _x, sprintf } from '@eventespresso/i18n';
 import { withEditorModal } from '@eventespresso/higher-order-components';
 
 /**
@@ -223,11 +223,20 @@ class TicketPriceCalculatorFormModal extends Component {
 
 		return (
 			<TicketPriceCalculatorForm
-				// loadHandler={ this.loadHandler }
 				{ ...formData }
 				loadHandler={ null }
 				submitHandler={ this.submitHandler }
 				resetHandler={ this.resetHandler }
+				loadingNotice={
+					sprintf(
+						_x(
+							'loading ticket prices%s',
+							'loading ticket prices...',
+							'event_espresso'
+						),
+						String.fromCharCode( '8230' )
+					)
+				}
 				{ ...formProps }
 			/>
 		);
@@ -243,8 +252,7 @@ export default withEditorModal( {
 	closeButtonLabel: __( 'close ticket price calculator', 'event_espresso' ),
 } )(
 	withSelect( ( select, ownProps ) => {
-		const ticket = select( 'eventespresso/core' )
-			.getTicketById( ownProps.ticketId );
+		const ticket = ownProps.ticket;
 		let prices = DEFAULT_EMPTY_ARRAY;
 		if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
 			prices = select( 'eventespresso/core' )
@@ -252,10 +260,10 @@ export default withEditorModal( {
 		}
 		const priceTypes = select( 'eventespresso/lists' )
 			.getEntities( 'price_type' );
-		return ticket && ! isEmpty( prices ) && ! isEmpty( priceTypes ) ? {
+		return {
 			ticket,
 			prices,
 			priceTypes,
-		} : {};
+		};
 	} )( TicketPriceCalculatorFormModal )
 );
