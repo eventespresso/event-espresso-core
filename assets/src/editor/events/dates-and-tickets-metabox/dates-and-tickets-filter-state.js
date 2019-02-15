@@ -2,8 +2,8 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { isEmpty, isUndefined, uniq } from 'lodash';
+import { Component } from '@wordpress/element';
+import { isEmpty, uniq } from 'lodash';
 import { withSelect } from '@wordpress/data';
 import { filterStateHandler } from '@eventespresso/higher-order-components';
 import { isModelEntityOfModel } from '@eventespresso/validators';
@@ -24,11 +24,14 @@ import {
 import {
 	getFilteredTicketsList,
 } from '../tickets/editor-ticket/filter-bar/with-tickets-list-filter-bar';
-
-const removeUndefined = ( a ) => ! isUndefined( a );
+import {
+	buildEventDateTicketRelationsMap,
+	condenseArray,
+	getDatetimeEntityIds,
+} from './dates-and-tickets-filter-state-utils';
 
 /**
- * EventDatesAndTicketsFilterState
+ * DatesAndTicketsFilterState
  * manages state for the Event Dates and Available Tickets "metaboxes"
  *
  * @constructor
@@ -38,7 +41,7 @@ const removeUndefined = ( a ) => ! isUndefined( a );
  * @param {Object} eventDateTicketMap
  * @param {Function} render
  */
-class EventDatesAndTicketsFilterState extends Component {
+class DatesAndTicketsFilterState extends Component {
 	static propTypes = {
 		eventId: PropTypes.oneOfType( [
 			PropTypes.number,
@@ -143,7 +146,7 @@ class EventDatesAndTicketsFilterState extends Component {
 			...otherProps
 		} = this.state;
 		// console.log( '' );
-		// console.log( 'EventDatesAndTicketsFilterState.render()' );
+		// console.log( 'DatesAndTicketsFilterState.render()' );
 		// console.log( ' > this.props:', this.props );
 		// console.log( ' > this.state:', this.state );
 		let datetimes = [];
@@ -195,58 +198,27 @@ class EventDatesAndTicketsFilterState extends Component {
 export default withSelect( ( select, ownProps ) => {
 	let eventDates = [];
 	let eventDateTickets = [];
-	const eventDateTicketMap = {};
-	const event = select( 'eventespresso/core' ).getEventById(
-		ownProps.eventId
-	);
+	let eventDateIds = [];
+	let eventDateTicketMap = {};
+	const coreStore = select( 'eventespresso/core' );
+	const listStore = select( 'eventespresso/lists' );
+	const event = coreStore.getEventById( ownProps.eventId );
 	if ( isModelEntityOfModel( event, 'event' ) ) {
-		eventDates = select( 'eventespresso/core' )
-			.getRelatedEntities( event, 'datetimes' );
-		if ( Array.isArray( eventDates ) && eventDates.length > 0 ) {
-			for ( let i = 0; i < eventDates.length; i ++ ) {
-				const eventDate = eventDates[ i ];
-				if (
-					eventDate &&
-					isModelEntityOfModel( eventDate, 'datetime' ) &&
-					eventDate.id
-				) {
-					const tickets = select( 'eventespresso/core' )
-						.getRelatedEntities( eventDate, 'tickets' );
-					if ( Array.isArray( tickets ) && tickets.length > 0 ) {
-						for ( let x = 0; x < tickets.length; x ++ ) {
-							const ticket = tickets[ x ];
-							if (
-								ticket &&
-								isModelEntityOfModel( ticket, 'ticket' ) &&
-								ticket.id
-							) {
-								eventDateTickets.push( ticket );
-								if (
-									isEmpty(
-										eventDateTicketMap[ eventDate.id ]
-									)
-								) {
-									eventDateTicketMap[ eventDate.id ] = [];
-								}
-								eventDateTicketMap[ eventDate.id ].push(
-									ticket
-								);
-							}
-						}
-					}
-					if ( ! isEmpty( eventDateTicketMap[ eventDate.id ] ) ) {
-						eventDateTicketMap[ eventDate.id ] =
-							eventDateTicketMap[ eventDate.id ].filter(
-								removeUndefined
-							);
-					}
-				}
-			}
-			eventDates = eventDates.filter( removeUndefined );
-			eventDates = uniq( eventDates );
-			eventDateTickets = eventDateTickets.filter( removeUndefined );
-			eventDateTickets = uniq( eventDateTickets );
+		eventDates = coreStore.getRelatedEntities( event, 'datetimes' );
+		eventDates = condenseArray( eventDates );
+		if ( ! isEmpty( eventDates ) ) {
+			eventDateIds = getDatetimeEntityIds( eventDates );
+			const queryString = 'where[Datetime.DTT_ID][IN]=[' +
+				eventDateIds.join( ',' ) + ']';
+			const ticketQueryString = queryString +
+				'&default_where_conditions=minimum';
+			eventDateTickets = listStore.getEntities( 'ticket', ticketQueryString );
+			eventDateTicketMap = buildEventDateTicketRelationsMap(
+				eventDateIds,
+				eventDateTickets,
+				listStore.getEntities( 'datetime_ticket', queryString )
+			);
 		}
 	}
 	return { event, eventDates, eventDateTickets, eventDateTicketMap };
-} )( EventDatesAndTicketsFilterState );
+} )( DatesAndTicketsFilterState );
