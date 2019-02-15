@@ -667,6 +667,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $link .= '<br><span class="ee-status-text-small">'
                  . EEH_Template::pretty_status($item->status_ID(), false, 'sentence')
                  . '</span>';
+        $action = [ '_REG_ID' => $item->ID() ];
+        if (isset($this->_req_data['event_id'])) {
+            $action['event_id'] = $item->event_ID();
+        }
         // trash/restore/delete actions
         $actions = array();
         if ($this->_view !== 'trash'
@@ -676,11 +680,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'espresso_registrations_trash_registrations',
                 $item->ID()
             )) {
+            $action['action'] = 'trash_registrations';
             $trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
-                array(
-                    'action'  => 'trash_registrations',
-                    '_REG_ID' => $item->ID(),
-                ),
+                $action,
                 REG_ADMIN_URL
             );
             $actions['trash'] = '<a href="'
@@ -695,11 +697,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'espresso_registrations_restore_registrations',
                 $item->ID()
             )) {
+                $action['action'] = 'restore_registrations';
                 $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
-                    array(
-                        'action'  => 'restore_registrations',
-                        '_REG_ID' => $item->ID(),
-                    ),
+                    $action,
                     REG_ADMIN_URL
                 );
                 $actions['restore'] = '<a href="'
@@ -713,11 +713,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'espresso_registrations_ee_delete_registrations',
                 $item->ID()
             )) {
+                $action['action'] = 'delete_registrations';
                 $delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
-                    array(
-                        'action'  => 'delete_registrations',
-                        '_REG_ID' => $item->ID(),
-                    ),
+                    $action,
                     REG_ADMIN_URL
                 );
                 $actions['delete'] = '<a href="'
