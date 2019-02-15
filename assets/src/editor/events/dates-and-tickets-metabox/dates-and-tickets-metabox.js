@@ -2,9 +2,9 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import { Component, Fragment } from '@wordpress/element';
 import { Dashicon, Panel, PanelBody, PanelRow } from '@wordpress/components';
-import { __ } from '@eventespresso/i18n';
+import { __, _x, sprintf } from '@eventespresso/i18n';
 import {
 	EspressoIcon,
 	FormContainer,
@@ -22,16 +22,16 @@ import {
 	default as EditorTicketsList,
 } from '../tickets/editor-ticket/editor-tickets-list';
 import {
-	default as EventDatesAndTicketsFilterState,
-} from './event-dates-and-tickets-filter-state';
+	default as DatesAndTicketsFilterState,
+} from './dates-and-tickets-filter-state';
 
 /**
- * EventDatesAndTicketsMetabox
+ * DatesAndTicketsMetabox
  * displays the Event Dates and Available Tickets "metaboxes"
  *
  * @constructor
  */
-class EventDatesAndTicketsMetabox extends Component {
+class DatesAndTicketsMetabox extends Component {
 	static propTypes = {
 		eventId: PropTypes.oneOfType( [
 			PropTypes.number,
@@ -42,10 +42,10 @@ class EventDatesAndTicketsMetabox extends Component {
 	render() {
 		const { eventId } = this.props;
 		// console.log( '' );
-		// console.log( 'EventDatesAndTicketsMetabox.render()' );
+		// console.log( 'DatesAndTicketsMetabox.render()' );
 		// console.log( ' > this.props:', this.props );
 		return (
-			<EventDatesAndTicketsFilterState
+			<DatesAndTicketsFilterState
 				eventId={ eventId }
 				render={ ( {
 					loading,
@@ -62,10 +62,16 @@ class EventDatesAndTicketsMetabox extends Component {
 						<Fragment>
 							<FormPlaceholder
 								loading={ loading }
-								notice={ __(
-									'loading event dates and available tickets',
-									'event_espresso'
-								) }
+								notice={
+									sprintf(
+										_x(
+											'loading event dates and available tickets%s',
+											'loading event dates and available tickets...',
+											'event_espresso'
+										),
+										String.fromCharCode( '8230' )
+									)
+								}
 							/>
 							<FormContainer loading={ loading }>
 								<div
@@ -133,4 +139,4 @@ class EventDatesAndTicketsMetabox extends Component {
 	}
 }
 
-export default EventDatesAndTicketsMetabox;
+export default DatesAndTicketsMetabox;
