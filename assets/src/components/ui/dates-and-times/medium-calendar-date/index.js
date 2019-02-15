@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Fragment } from 'react';
+import { Fragment } from '@wordpress/element';
 // import { DateTime } from '@eventespresso/value-objects';
 
 /**

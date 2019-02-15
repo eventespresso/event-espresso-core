@@ -2,7 +2,7 @@
  * External imports
  */
 import moment from 'moment-timezone';
-import { Component } from 'react';
+import { Component } from '@wordpress/element';
 import PropTypes from 'prop-types';
 import { find, findIndex } from 'lodash';
 import { ENTER } from '@wordpress/keycodes';

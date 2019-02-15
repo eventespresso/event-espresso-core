@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
+import { Component } from '@wordpress/element';
 import { Path, SVG } from '@wordpress/components';
 
 /**

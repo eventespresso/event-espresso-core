@@ -2,7 +2,7 @@
  * External imports
  */
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import { IconButton, SelectControl } from '@wordpress/components';
 

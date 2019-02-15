@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Component } from 'react';
+import { Component } from '@wordpress/element';
 
 /**
  * EntityActionMenuItem

@@ -2,7 +2,7 @@
  * External imports
  */
 // import moment from 'moment-timezone';
-import { Component, Fragment } from 'react';
+import { Component, Fragment } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import {
 	BiggieCalendarDate,

@@ -1,7 +1,7 @@
 /**
  * External Imports
  */
-import { Component } from 'react';
+import { Component } from '@wordpress/element';
 import PropTypes from 'prop-types';
 import { isBoolean, isFunction, uniqueId } from 'lodash';
 import { Modal } from '@wordpress/components';

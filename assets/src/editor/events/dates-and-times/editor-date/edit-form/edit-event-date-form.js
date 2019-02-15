@@ -2,7 +2,7 @@
  * External imports
  */
 import { isEmpty } from 'lodash';
-import { Component } from 'react';
+import { Component } from '@wordpress/element';
 // import { __ } from '@eventespresso/i18n';
 import {
 	withFormHandler,

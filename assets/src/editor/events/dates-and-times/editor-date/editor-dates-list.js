@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Component } from 'react';
+import { Component } from '@wordpress/element';
 import { EntityList } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
 

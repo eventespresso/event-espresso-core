@@ -3,7 +3,7 @@
  */
 import { isFunction } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, createRef, Fragment } from 'react';
+import { Component, createRef, Fragment } from '@wordpress/element';
 import { ENTER, ESCAPE, SPACE } from '@wordpress/keycodes';
 import { __ } from '@eventespresso/i18n';
 

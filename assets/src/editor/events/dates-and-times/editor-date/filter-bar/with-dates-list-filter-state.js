@@ -2,7 +2,7 @@
  * External imports
  */
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component } from '@wordpress/element';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { filterStateHandler } from '@eventespresso/higher-order-components';
 

@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
-import { Component } from 'react';
+import { Component } from '@wordpress/element';
 import { Field } from 'react-final-form';
 import {
 	__experimentalGetSettings as getSettings,

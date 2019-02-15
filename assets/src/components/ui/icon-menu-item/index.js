@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Component, Fragment } from 'react';
+import { Component, Fragment } from '@wordpress/element';
 import PropTypes from 'prop-types'
 import { IconButton } from '@wordpress/components';
 

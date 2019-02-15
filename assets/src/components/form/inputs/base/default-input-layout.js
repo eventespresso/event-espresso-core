@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Fragment } from 'react';
+import { Fragment } from '@wordpress/element';
 
 /**
  * Internal imports

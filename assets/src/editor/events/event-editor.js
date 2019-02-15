@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import ReactDOM from 'react-dom';
+import { render } from '@wordpress/element';
 
 import { EventDatesAndTicketsMetabox } from './';
 
@@ -12,7 +12,7 @@ container.prepend( editor );
 const eventId = window.eeEditorEventId;
 
 if ( eventId ) {
-	ReactDOM.render(
+	render(
 		<EventDatesAndTicketsMetabox eventId={ eventId } />,
 		editor
 	);

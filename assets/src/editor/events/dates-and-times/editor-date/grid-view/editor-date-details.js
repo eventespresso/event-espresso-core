@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Component } from 'react';
+import { Component } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import { Dashicon } from '@wordpress/components';
 import { EntityDetailsPanel, InlineEditInput } from '@eventespresso/components';

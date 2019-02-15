@@ -2,7 +2,7 @@
  * External imports
  */
 import moment from 'moment-timezone';
-import { Component, Fragment } from 'react';
+import { Component, Fragment } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import {
 	DropDownMenu,
@@ -241,9 +241,9 @@ class EditorTicketActionsMenu extends Component {
 					} }
 				/>
 				<TicketPriceCalculatorFormModal
-					// ticket={ ticket }
+					ticket={ ticket }
 					// prices={ [] }
-					ticketId={ ticket.id }
+					// ticketId={ ticket.id }
 					closeModal={ this.toggleCalculator }
 					editorOpen={ this.state.calculator }
 				/>

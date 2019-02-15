@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Fragment } from 'react';
+import { Fragment } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import { Button } from '@wordpress/components';
 

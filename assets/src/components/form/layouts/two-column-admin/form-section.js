@@ -2,7 +2,7 @@
  * External imports
  */
 import PropTypes from 'prop-types';
-import { Children } from 'react';
+import { Children } from '@wordpress/element';
 
 /**
  * Internal imports

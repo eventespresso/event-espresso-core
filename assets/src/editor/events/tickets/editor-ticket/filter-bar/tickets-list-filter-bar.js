@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Component, Fragment } from 'react';
+import { Component, Fragment } from '@wordpress/element';
 import { IconButton, SelectControl } from '@wordpress/components';
 import { __ } from '@eventespresso/i18n';
 import PropTypes from 'prop-types';

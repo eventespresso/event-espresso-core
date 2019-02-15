@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Component, Fragment } from 'react';
+import { Component, Fragment } from '@wordpress/element';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { EntityListFilterBar } from '@eventespresso/higher-order-components';
 import { __ } from '@eventespresso/i18n';
