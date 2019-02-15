@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\options;
 
+use EventEspresso\core\services\json\JsonSerializableAndUnserializable;
+
 /**
  * Interface JsonWpOptionSerializableInterface
  *
@@ -13,7 +15,7 @@ namespace EventEspresso\core\services\options;
  * @since         $VID:$
  *
  */
-interface JsonWpOptionSerializableInterface
+interface JsonWpOptionSerializableInterface extends JsonSerializableAndUnserializable
 {
     /**
      * Gets the value to use for wp_options.option_name. Note this is not static, so it can use object properties to
@@ -22,23 +24,6 @@ interface JsonWpOptionSerializableInterface
      * @return string
      */
     public function getWpOptionName();
-
-    /**
-     * Creates a simple PHP array or stdClass from this object's properties, which can be easily serialized using
-     * wp_json_serialize().
-     * @since $VID:$
-     * @return mixed
-     */
-    public function toJsonSerializableData();
-
-    /**
-     * Initializes this object from data
-     * @since $VID:$
-     * @param mixed $data
-     * @return boolean success
-     */
-    public function fromJsonSerializedData($data);
-
 }
 // End of file JsonWpOptionSerializableInterface.php
 // Location: EventEspresso\core\services\options/JsonWpOptionSerializableInterface.php
