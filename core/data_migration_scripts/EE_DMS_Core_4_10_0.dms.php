@@ -37,11 +37,6 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
 class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
 {
     /**
-     * @var EE_DMS_Core_4_9_0
-     */
-    protected $dms_4_9;
-
-    /**
      *
      * @param TableManager  $table_manager
      * @param TableAnalysis $table_analysis
@@ -54,7 +49,7 @@ class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
         if (! $dms_4_9 instanceof EE_DMS_Core_4_9_0) {
             $dms_4_9 = LoaderFactory::getLoader()->getShared('EE_DMS_Core_4_9_0');
         }
-        $this->dms_4_9 = $dms_4_9;
+        $this->previous_dms = $dms_4_9;
         $this->_pretty_name = esc_html__("Data Update to Event Espresso 4.10.0", "event_espresso");
         $this->_priority = 10;
         $this->_migration_stages = array(
@@ -614,7 +609,7 @@ class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
      */
     public function insert_default_data()
     {
-        $this->dms_4_9->insert_default_data();
+        $this->previous_dms->insert_default_data();
     }
 
 

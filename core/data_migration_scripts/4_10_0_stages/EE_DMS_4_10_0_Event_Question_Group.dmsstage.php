@@ -96,4 +96,32 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
         );
         return $wpdb->get_results($query, ARRAY_A);
     }
+
+    /**
+     * IMPORTANT: if an error is encountered, or everything is finished, this stage should update its status property
+     * accordingly. Note: it should not alter the count of items migrated. That is done in the public function that
+     * calls this. IMPORTANT: The count of items migrated should ONLY be less than $num_items_to_migrate when it's the
+     * last migration step, otherwise it should always return $num_items_to_migrate. (Eg, if we're migrating attendees
+     * rows from the database, and $num_items_to_migrate is set to 50, then we SHOULD actually migrate 50 rows,but at
+     * very least we MUST report/return 50 items migrated)
+     *
+     * @param int $num_items
+     * @return int number of items ACTUALLY migrated
+     */
+    public function _migration_step($num_items = 50)
+    {
+        // Count the items right away. This migration step will be removing those rows, so we need to count them
+        // right away to get an accurate count.
+        $this->count_records_to_migrate();
+        $rows = $this->_get_rows($num_items);
+        $items_actually_migrated = 0;
+        foreach ($rows as $old_row) {
+            $this->_migrate_old_row($old_row);
+            $items_actually_migrated++;
+        }
+        if ($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()) {
+            $this->set_completed();
+        }
+        return $items_actually_migrated;
+    }
 }
