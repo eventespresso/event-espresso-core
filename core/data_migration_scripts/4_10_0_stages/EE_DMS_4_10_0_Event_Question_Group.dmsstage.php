@@ -98,12 +98,8 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
     }
 
     /**
-     * IMPORTANT: if an error is encountered, or everything is finished, this stage should update its status property
-     * accordingly. Note: it should not alter the count of items migrated. That is done in the public function that
-     * calls this. IMPORTANT: The count of items migrated should ONLY be less than $num_items_to_migrate when it's the
-     * last migration step, otherwise it should always return $num_items_to_migrate. (Eg, if we're migrating attendees
-     * rows from the database, and $num_items_to_migrate is set to 50, then we SHOULD actually migrate 50 rows,but at
-     * very least we MUST report/return 50 items migrated)
+     * Slight departure from the normal procedure here: because this removes rows from the DB, we need to ensure
+     * we count the records first, then do the migration.
      *
      * @param int $num_items
      * @return int number of items ACTUALLY migrated
