@@ -2,17 +2,18 @@
  * Internal imports
  */
 import * as baseFormatter from '../base-date-formatter';
+
+/**
+ * External imports
+ */
+import { forOwn, pullAt } from 'lodash';
 import {
 	TIME_FORMAT_SITE,
 	DATE_TIME_FORMAT_SITE,
 	allDateTimesAsString,
 	SEPARATOR_SPACE_DASH_SPACE,
 } from '@eventespresso/helpers';
-
-/**
- * External imports
- */
-import { forOwn, pullAt } from 'lodash';
+import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * Array of fields that have date information
@@ -62,51 +63,41 @@ forOwn( baseFormatter, ( implementation, functionName ) => {
  * This will account for if both start and end are in the same day and simply
  * use time for the end part.
  *
- * @param { Object } DateTimeEntity
+ * @param { BaseEntity } DateTimeEntity
  * @return { string }  A formatted string representing the provided
  *    DateTimeEntity.
  */
-export const prettyDateFromDateTime = ( DateTimeEntity = {} ) => {
+export const prettyDateFromDateTime = ( DateTimeEntity ) => {
 	let content = '';
-	DateTimeEntity = formatters.convertEntityDatesToMoment( DateTimeEntity );
-	if ( DateTimeEntity.DTT_EVT_start && DateTimeEntity.DTT_EVT_end ) {
-		if ( DateTimeEntity.DTT_EVT_start.local().format( 'md' ) ===
-			DateTimeEntity.DTT_EVT_end.local().format( 'md' ) ) {
+	if ( isModelEntityOfModel( DateTimeEntity, 'datetime' ) ) {
+		if ( DateTimeEntity.DTT_EVT_start.hasSame(
+			DateTimeEntity.DTT_EVT_end,
+			'day'
+		) ) {
 			content += allDateTimesAsString(
 				SEPARATOR_SPACE_DASH_SPACE,
-				DateTimeEntity.DTT_EVT_start.format(
+				DateTimeEntity.DTT_EVT_start.toFormat(
 					DATE_TIME_FORMAT_SITE
 				),
-				DateTimeEntity.DTT_EVT_end.format(
+				DateTimeEntity.DTT_EVT_end.toFormat(
 					TIME_FORMAT_SITE
 				),
 			);
 		} else {
 			content += allDateTimesAsString(
 				SEPARATOR_SPACE_DASH_SPACE,
-				DateTimeEntity.DTT_EVT_start.format(
+				DateTimeEntity.DTT_EVT_start.toFormat(
 					DATE_TIME_FORMAT_SITE
 				),
-				DateTimeEntity.DTT_EVT_end.format(
+				DateTimeEntity.DTT_EVT_end.toFormat(
 					DATE_TIME_FORMAT_SITE
 				),
 			);
 		}
-	} else {
-		if ( DateTimeEntity.DTT_EVT_start ) {
-			content += DateTimeEntity.DTT_EVT_start.format(
-				DATE_TIME_FORMAT_SITE
-			);
-		}
-		if ( DateTimeEntity.DTT_EVT_end ) {
-			content += DateTimeEntity.DTT_EVT_end.format(
-				DATE_TIME_FORMAT_SITE
-			);
-		}
+		content = DateTimeEntity.DTT_name ?
+			`${ DateTimeEntity.DTT_name } (${ content })` :
+			content;
 	}
-	content = DateTimeEntity.DTT_name ?
-		`${ DateTimeEntity.DTT_name } (${ content })` :
-		content;
 	return content;
 };
 

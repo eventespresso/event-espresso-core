@@ -4,19 +4,25 @@
 import {
 	EventSchema,
 	DateTimeSchema,
+	EventFactory,
+	DateTimeFactory,
 } from '@test/fixtures';
-import {
-	eventFactory,
-	dateTimeFactory,
-} from '../../../test/fixtures/base';
+import { fromJS, Map } from 'immutable';
 
 export const mockStateForTests = {
-	schema: {
-		event: EventSchema,
-		datetime: DateTimeSchema,
-	},
-	factory: {
-		event: eventFactory,
-		datetime: dateTimeFactory,
-	},
+	schema: Map().set( 'event', EventSchema ).set( 'datetime', DateTimeSchema ),
+	factory: Map().set( 'event', EventFactory ).set( 'datetime', DateTimeFactory ),
+	relationEndpoints: Map().set(
+		'event',
+		Map().set(
+			10,
+			fromJS( { datetimes: '/ee/v4.8.36/events/10/datetimes' } )
+		)
+	).set(
+		'datetime',
+		Map().set(
+			52,
+			fromJS( { events: '/ee/v4.8.36/datetimes/52/event' } )
+		)
+	),
 };

@@ -14,3 +14,10 @@
 | Checklists                                 | Has Acceptance test |
 | -------------------------------------------| ------------------- |
 | [EventAttendees](blocks/event-attendees.md)|                     |
+
+## Javascript Data (wp.data api stuff)
+| Checklists | Has Acceptance Test |
+| ---------- | -----------|
+| [`eventespresso/core`](./js-data/eventespresso-core.md) | |
+| [`eventespresso/lists`](./js-data/eventespresso-lists.md) | |
+| [`eventespresso/schema`](./js-data/eventespresso-schema.md) | |

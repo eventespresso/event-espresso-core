@@ -39,3 +39,14 @@ export { locale as SERVER_LOCALE } from './locale';
  * Custom exceptions
  */
 export * from './exceptions';
+
+/**
+ * Middle-wares for various libraries
+ */
+import * as mw from './middlewares';
+export const middleWares = mw;
+
+/**
+ * environment constant indicating development server
+ */
+export const __DEV__ = process.env.NODE_ENV !== 'production';

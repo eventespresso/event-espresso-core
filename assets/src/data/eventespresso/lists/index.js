@@ -10,7 +10,7 @@ import reducer from './reducers';
 import * as selectors from './selectors';
 import * as actions from './actions';
 import * as resolvers from './resolvers';
-import { createEntitySelectors, createEntityResolvers } from './entities';
+import { createEntitySelectors, createEntityResolvers } from './model';
 import { REDUCER_KEY } from './constants';
 import controls from '../base-controls';
 

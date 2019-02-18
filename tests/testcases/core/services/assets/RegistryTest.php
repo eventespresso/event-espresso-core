@@ -114,6 +114,64 @@ class RegistryTest extends EE_UnitTestCase
     }
 
 
+    public function pushDataWithArrayProvider()
+    {
+        return [
+            'initial creation of dataset when it does not exist' => ['test', 'foo', ['foo']],
+            'adding a string to existing dataset'                => ['test', 'bar', ['foo', 'bar']],
+            'adding an array to existing dataset'                => [
+                'test',
+                ['howdy', 'there'],
+                ['foo', 'bar', 'howdy', 'there'],
+            ],
+        ];
+    }
+
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function testPushDataWithArrayAddingData()
+    {
+        foreach ($this->pushDataWithArrayProvider() as $test_description => $test_data) {
+            list($key, $value, $expected) = $test_data;
+            $this->registry->pushData($key, $value);
+            $this->assertEquals($expected, $this->registry->getData($key), $test_description);
+        }
+    }
+
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testPushDataExceptionWhenExistingDataIsScalar()
+    {
+        $this->registry->addData( 'test', 'foo' );
+        $this->registry->pushData( 'test', 'bar' );
+    }
+
+
+    public function pushDataWithAssociativeArrayProvider()
+    {
+        return [
+            'initial creation of dataset'           => ['test', ['a' => 'foo'], ['a' => 'foo']],
+            'adding new item with different key'    => ['test', ['b' => 'bar'], ['a' => 'foo', 'b' => 'bar']],
+            'adding new item with pre-existing key' => ['test', ['a' => 'bar'], ['a' => 'bar', 'b' => 'bar']],
+            'adding scalar array'                   => ['test', 'hello', ['a' => 'bar', 'b' => 'bar', 'hello']],
+        ];
+    }
+
+    
+    public function testPushDataWithAssociativeArray()
+    {
+        foreach ($this->pushDataWithAssociativeArrayProvider() as $test_description => $test_data) {
+            list($key, $value, $expected) = $test_data;
+            $this->registry->pushData($key, $value);
+            $this->assertEquals($expected, $this->registry->getData($key), $test_description);
+        }
+    }
+
+
     /**
      * @group 10304
      * @throws InvalidArgumentException

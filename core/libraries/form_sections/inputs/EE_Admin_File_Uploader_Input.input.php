@@ -31,7 +31,7 @@ class EE_Admin_File_Uploader_Input extends EE_Form_Input_Base
                     isset($input_settings['validation_error_message'])
                         ? $input_settings['validation_error_message']
                         : null,
-                    true
+                    false
                 )
             )
         );

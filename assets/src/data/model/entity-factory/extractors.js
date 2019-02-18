@@ -10,6 +10,7 @@ import {
 	pickBy,
 	isArray,
 } from 'lodash';
+import { instanceOf } from '@eventespresso/validators';
 
 /**
  * Internal imports
@@ -20,6 +21,8 @@ import {
 	ServerDateTime as DateTime,
 } from '../../../vo';
 
+import { pluralModelName } from '../model-names';
+
 import {
 	hasRawProperty,
 	hasPrettyProperty,
@@ -29,7 +32,6 @@ import {
 	isPrimaryKeyField,
 	isEntityField,
 } from './booleans';
-import { maybeAssertValueObject } from './assertions';
 import { validateTypeForField } from './validators';
 import { VALIDATE_TYPE } from './constants';
 
@@ -53,7 +55,7 @@ export const maybeConvertToValueObject = ( fieldName, fieldValue, schema ) => {
 	}
 	if (
 		isMoneyField( fieldName, schema ) &&
-		! ( fieldValue instanceof Money )
+		! ( instanceOf( fieldValue, 'Money' ) )
 	) {
 		return new Money( fieldValue, SiteCurrency );
 	}
@@ -85,7 +87,6 @@ export const maybeConvertFromValueObjectWithAssertions = (
 	fieldValue,
 	schema
 ) => {
-	maybeAssertValueObject( fieldName, fieldValue, schema );
 	if ( isDateTimeField( fieldName, schema ) ) {
 		DateTime.assertIsDateTime( fieldValue );
 		fieldValue = fieldValue.toISO();
@@ -107,7 +108,7 @@ export const maybeConvertFromValueObjectWithAssertions = (
 export const maybeConvertFromValueObject = ( fieldValue ) => {
 	if ( DateTime.validateIsDateTime( fieldValue ) ) {
 		fieldValue = fieldValue.toISO();
-	} else if ( fieldValue instanceof Money ) {
+	} else if ( instanceOf( fieldValue, 'Money' ) ) {
 		fieldValue = fieldValue.toNumber();
 	}
 	return fieldValue;
@@ -170,7 +171,7 @@ export const deriveRenderedValue = ( value ) => {
  * link.
  */
 export const getRelationNameFromLink = ( resourceLink ) => {
-	return camelCase( last( resourceLink.split( '/' ) ) );
+	return pluralModelName( camelCase( last( resourceLink.split( '/' ) ) ) );
 };
 
 /**
@@ -182,17 +183,19 @@ export const getRelationNameFromLink = ( resourceLink ) => {
 export const getBaseFieldsAndValuesForPersisting = ( entityInstance ) => {
 	return reduce( entityInstance.originalFieldsAndValues, (
 		fieldsAndValues,
-		fieldValue,
+		originalFieldValue,
 		fieldName
 	) => {
 		if (
 			isEntityField( fieldName, entityInstance.schema ) &&
 			! isPrimaryKeyField( fieldName, entityInstance.schema )
 		) {
-			return fieldsAndValues[ fieldName ] = maybeConvertFromValueObject(
-				fieldValue,
+			fieldsAndValues[ fieldName ] = maybeConvertFromValueObject(
+				entityInstance[ fieldName ],
 			);
+			return fieldsAndValues;
 		}
+		return fieldsAndValues;
 	}, {} );
 };
 

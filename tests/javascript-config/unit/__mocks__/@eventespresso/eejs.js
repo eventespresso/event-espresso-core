@@ -9,6 +9,7 @@ const {
 	InvalidISO8601String,
 	InvalidLocale,
 	InvalidDateTime,
+	InvalidModelEntity,
 } = require( '../../../../../assets/src/eejs' );
 
 const newCurrencyConfig = {
@@ -24,6 +25,7 @@ const newCurrencyConfig = {
 
 module.exports.data = {
 	paths: {
+		base_rest_route: 'http://ee.test/wp-json/',
 		collection_endpoints: {
 			event: '/ee/v4.8.36/events',
 			datetime: '/ee/v4.8.36/datetimes',
@@ -80,3 +82,4 @@ module.exports.InvalidTimezone = InvalidTimezone;
 module.exports.InvalidISO8601String = InvalidISO8601String;
 module.exports.InvalidLocale = InvalidLocale;
 module.exports.InvalidDateTime = InvalidDateTime;
+module.exports.InvalidModelEntity = InvalidModelEntity;
