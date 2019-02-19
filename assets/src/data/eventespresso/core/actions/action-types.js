@@ -21,7 +21,7 @@ const relations = {
 };
 
 const modelSpecific = {
+	RECEIVE_SELECTOR_VALUE: 'RECEIVE_SELECTOR_VALUE',
+};
 
-}
-
-export const ACTION_TYPES = { entities, relations };
+export const ACTION_TYPES = { entities, relations, modelSpecific };
