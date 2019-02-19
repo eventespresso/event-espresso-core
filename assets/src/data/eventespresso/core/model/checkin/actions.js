@@ -12,7 +12,7 @@ import { __ } from '@eventespresso/i18n';
 /**
  * Internal imports
  */
-import { dispatch, fetch, select } from '../../../base-controls';
+import { dispatch, fetch, resolveSelect } from '../../../base-controls';
 import { REDUCER_KEY } from '../../constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../../schema/constants';
 
@@ -45,14 +45,20 @@ export function* receiveLatestCheckin(
 		'finishResolution',
 		REDUCER_KEY,
 		'getEntityById',
-		'checkin',
-		checkinEntity.id
+		[ 'checkin', checkinEntity.id ]
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		REDUCER_KEY,
+		'getLatestCheckin',
+		[ registrationId, dateTimeId ]
 	);
 	yield dispatch(
 		REDUCER_KEY,
 		'receiveSelectorValue',
 		'getLatestCheckin',
-		checkinEntity,
+		checkinEntity.id,
 		registrationId,
 		dateTimeId,
 	);
@@ -88,7 +94,7 @@ export function* toggleCheckin( registrationId, dateTimeId, force = false ) {
 		);
 		return null;
 	}
-	const factory = yield select(
+	const factory = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'getFactoryForModel',
 		'checkin'

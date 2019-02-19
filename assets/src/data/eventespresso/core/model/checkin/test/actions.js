@@ -1,4 +1,4 @@
-import { dispatch, fetch, select } from '../../../../base-controls';
+import { dispatch, fetch, resolveSelect } from '../../../../base-controls';
 import {
 	CheckinFactory,
 	AuthedCheckinResponse,
@@ -23,8 +23,8 @@ dispatch.mockImplementation( ( ...args ) => {
 	return actualDispatch( ...args );
 } );
 
-select.mockImplementation( ( ...args ) => {
-	const { select: actualSelect } = jest.requireActual(
+resolveSelect.mockImplementation( ( ...args ) => {
+	const { resolveSelect: actualSelect } = jest.requireActual(
 		'../../../../base-controls'
 	);
 	return actualSelect( ...args );
@@ -79,8 +79,20 @@ describe( 'receiveLatestCheckin()', () => {
 				'finishResolution',
 				REDUCER_KEY,
 				'getEntityById',
-				'checkin',
-				AuthedCheckinEntity.id
+				[ 'checkin', AuthedCheckinEntity.id ]
+			)
+		);
+	} );
+	it( 'yields the dispatch action for finishing the resolution on ' +
+		'getLatestCheckin', () => {
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			dispatch(
+				'core/data',
+				'finishResolution',
+				REDUCER_KEY,
+				'getLatestCheckin',
+				[ 10, 20 ]
 			)
 		);
 	} );
@@ -91,7 +103,7 @@ describe( 'receiveLatestCheckin()', () => {
 				REDUCER_KEY,
 				'receiveSelectorValue',
 				'getLatestCheckin',
-				AuthedCheckinEntity,
+				AuthedCheckinEntity.id,
 				10,
 				20
 			)
@@ -140,7 +152,7 @@ describe( 'toggleCheckin', () => {
 					'/10/toggle_checkin_for_datetime/20',
 				method: 'POST',
 				data: {
-					force: false
+					force: false,
 				},
 			} )
 		);
@@ -148,7 +160,7 @@ describe( 'toggleCheckin', () => {
 	it( 'yields select action for getting the factory', () => {
 		const { value } = fulfillment.next( AuthedCheckinResponse );
 		expect( value ).toEqual(
-			select(
+			resolveSelect(
 				SCHEMA_REDUCER_KEY,
 				'getFactoryForModel',
 				'checkin'

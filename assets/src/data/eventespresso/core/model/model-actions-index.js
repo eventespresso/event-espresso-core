@@ -1,2 +1,2 @@
-export * from 'model-specific-actions';
-export * from 'checkin/actions';
+export * from './model-specific-actions';
+export * from './checkin/actions';

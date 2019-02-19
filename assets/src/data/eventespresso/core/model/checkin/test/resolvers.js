@@ -1,10 +1,9 @@
-import { dispatch, fetch, select } from '../../../../base-controls';
+import { dispatch, fetch, resolveSelect } from '../../../../base-controls';
 import {
 	CheckinFactory,
 	AuthedCheckinResponse,
 	AuthedCheckinEntity,
 } from '@test/fixtures';
-import { InvalidModelEntity } from '@eventespresso/eejs';
 import { getEndpoint } from '@eventespresso/model';
 
 /**
@@ -23,8 +22,8 @@ dispatch.mockImplementation( ( ...args ) => {
 	return actualDispatch( ...args );
 } );
 
-select.mockImplementation( ( ...args ) => {
-	const { select: actualSelect } = jest.requireActual(
+resolveSelect.mockImplementation( ( ...args ) => {
+	const { resolveSelect: actualSelect } = jest.requireActual(
 		'../../../../base-controls'
 	);
 	return actualSelect( ...args );
@@ -65,7 +64,7 @@ describe( 'getLatestCheckin()', () => {
 			fetch(
 				{
 					path: getEndpoint( 'checkin' ) +
-						'/where[REG_ID]=10&where[DTT_ID]=20' +
+						'/?where[REG_ID]=10&where[DTT_ID]=20' +
 						'&order_by[CHK_timestamp]=DESC&limit=1',
 					method: 'GET',
 				}
@@ -77,12 +76,12 @@ describe( 'getLatestCheckin()', () => {
 		expect( value ).toBeNull();
 		expect( done ).toBe( true );
 	} );
-	it( 'yields select action for getting the checkin factory', () => {
+	it( 'yields resolveSelect action for getting the checkin factory', () => {
 		reset();
 		fulfillment.next();
-		const { value } = fulfillment.next( AuthedCheckinResponse );
+		const { value } = fulfillment.next( [ AuthedCheckinResponse ] );
 		expect( value ).toEqual(
-			select(
+			resolveSelect(
 				SCHEMA_REDUCER_KEY,
 				'getFactoryForModel',
 				'checkin',
@@ -98,7 +97,7 @@ describe( 'getLatestCheckin()', () => {
 		'state', () => {
 		reset();
 		fulfillment.next();
-		fulfillment.next( AuthedCheckinResponse );
+		fulfillment.next( [ AuthedCheckinResponse ] );
 		const { value } = fulfillment.next( CheckinFactory );
 		expect( value ).toEqual(
 			dispatch(
