@@ -2556,13 +2556,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         $success = false;
         if ($total_line_item instanceof EE_Line_Item) {
             EEH_Line_Item::resetIsTaxableForTickets($total_line_item);
-            $success = EEH_Line_Item::apply_taxes($total_line_item);
-        }
-        if ($success
-            && EEH_Money::compare_floats($transaction->total(), $total_line_item->total(), '!=')
-        ) {
-            $transaction->set_total($total_line_item->total());
-            $success = $transaction->update_status_based_on_total_paid();
+            $success = EEH_Line_Item::apply_taxes($total_line_item, true);
         }
         $this->_redirect_after_action(
             (bool) $success,
