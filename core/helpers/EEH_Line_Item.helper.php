@@ -949,14 +949,16 @@ class EEH_Line_Item
      * any old taxes are removed
      *
      * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
+     * @param bool         $update_txn_status
      * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
      */
-    public static function apply_taxes(EE_Line_Item $total_line_item)
+    public static function apply_taxes(EE_Line_Item $total_line_item, $update_txn_status = false)
     {
         /** @type EEM_Price $EEM_Price */
         $EEM_Price = EE_Registry::instance()->load_model('Price');
@@ -996,7 +998,7 @@ class EEH_Line_Item
         }
         // only recalculate totals if something changed
         if ($deleted || $updates) {
-            $total_line_item->recalculate_total_including_taxes();
+            $total_line_item->recalculate_total_including_taxes($update_txn_status);
             return true;
         }
         return false;
