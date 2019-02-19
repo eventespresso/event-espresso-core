@@ -27,50 +27,8 @@ export default createHigherOrderComponent(
 				entities: PropTypes.arrayOf( PropTypes.object ).isRequired,
 			};
 
-			constructor( props ) {
-				super( props );
-				this.state = this.getFilterState( this.props.entities );
-			}
-
-			componentDidMount() {
-				filterStateHandler.addListener( this.hasUpdates );
-			}
-
-			componentWillUnmount() {
-				filterStateHandler.removeListener( this.hasUpdates );
-			}
-
-			/**
-			 * @param {Object} newState
-			 */
-			hasUpdates = newState => {
-				if ( this.state !== newState ) {
-					this.setState( newState );
-				}
-			};
-
-			/**
-			 * @param {Array} entities
-			 * @return {Object} filter state object
-			 */
-			getFilterState = entities => {
-				// state with added actions for tickets list filters
-				return filterStateHandler.register(
-					ticketsListFilterState.handler,
-					// merge initial filter bar state object with entities
-					{
-						...ticketsListFilterState.initialState,
-						...{ entities: entities, tickets: entities },
-					}
-				);
-			};
-
 			render() {
-				const { ...otherProps } = this.props;
-				return <TicketsListFilterBar
-					{ ...this.state }
-					{ ...otherProps }
-				/>;
+				return <TicketsListFilterBar{ ...this.props }/>;
 			}
 		}
 		return compose( [
