@@ -22,11 +22,11 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base
 
 
     /**
-     * @param string $type
+     * @param string $allowed_extensions
      */
-    public function __construct($type = 'text')
+    public function __construct($allowed_extensions = 'text')
     {
-        $this->_type = $type;
+        $this->_type = $allowed_extensions;
         parent::__construct();
     }
 
