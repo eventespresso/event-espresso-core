@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Component } from 'react';
+import { Component } from '@wordpress/element';
 import { isFunction, isArray } from 'lodash';
 import isShallowEqualArrays from '@wordpress/is-shallow-equal';
 import warning from 'warning';
