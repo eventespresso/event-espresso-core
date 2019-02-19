@@ -27,7 +27,7 @@ import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../../schema/constants';
 export function* receiveLatestCheckin(
 	checkinEntity,
 	registrationId,
-	dateTimeId,
+	dateTimeId
 ) {
 	if ( ! isModelEntityOfModel( checkinEntity, 'checkin' ) ) {
 		throw new InvalidModelEntity(
@@ -63,9 +63,11 @@ export function* receiveLatestCheckin(
  *
  * @param {number} registrationId
  * @param {number} dateTimeId
+ * @param {boolean} force  If true, then whether the registration CAN be checked
+ * in or not is ignored.
  * @return {BaseEntity|null} Null if there is an error or the new Checkin entity
  */
-export function* toggleCheckin( registrationId, dateTimeId ) {
+export function* toggleCheckin( registrationId, dateTimeId, force = false ) {
 	let checkInResponse;
 	const path = `${ getEndpoint( 'registration' ) }/` +
 		`${ registrationId }/toggle_checkin_for_datetime/${ dateTimeId }`;
@@ -73,6 +75,7 @@ export function* toggleCheckin( registrationId, dateTimeId ) {
 		checkInResponse = yield fetch( {
 			path,
 			method: 'POST',
+			data: { force },
 		} );
 	} catch ( error ) {
 		yield dispatch(

@@ -101,7 +101,10 @@ describe( 'receiveLatestCheckin()', () => {
 
 describe( 'toggleCheckin', () => {
 	let fulfillment;
-	const reset = () => fulfillment = toggleCheckin( 10, 20 );
+	const reset = () => fulfillment = toggleCheckin(
+		10,
+		20
+	);
 	const rewind = () => {
 		fetchDoActual();
 		reset();
@@ -136,6 +139,9 @@ describe( 'toggleCheckin', () => {
 				path: getEndpoint( 'registration' ) +
 					'/10/toggle_checkin_for_datetime/20',
 				method: 'POST',
+				data: {
+					force: false
+				},
 			} )
 		);
 	} );
