@@ -105,13 +105,13 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
         $delete_link = EE_Admin_Page::add_query_args_and_nonce($delete_query_args, EVENTS_ADMIN_URL);
 
         $actions = array(
-            'edit' => '<a href="' . $edit_link . '" title="' . esc_attr__(
+            'edit' => '<a href="' . $edit_link . '" aria-label="' . esc_attr__(
                 'Edit Category',
                 'event_espresso'
             ) . '">' . esc_html__('Edit', 'event_espresso') . '</a>',
         );
 
-        $actions['delete'] = '<a href="' . $delete_link . '" title="' . esc_attr__(
+        $actions['delete'] = '<a href="' . $delete_link . '" aria-label="' . esc_attr__(
             'Delete Category',
             'event_espresso'
         ) . '">' . esc_html__('Delete', 'event_espresso') . '</a>';
