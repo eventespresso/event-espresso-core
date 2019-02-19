@@ -424,8 +424,13 @@
 
 .status-RWL { color : #8A549A; }
 
-#admin-primary-mbox-reg-details-dv .secondary-button {
-    margin:0 0 10px 10px;
+#admin-primary-mbox-reg-details-dv .button {
+    margin : 10px 0;
+}
+
+#additional-registration-actions-dv ul li {
+    display      : inline-block;
+    margin-right : 10px;
 }
 
 #reg_status_change_form {
