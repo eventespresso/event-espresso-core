@@ -41,7 +41,7 @@ module.exports.data = {
 			ticket: 'TKT_ID',
 			venue: 'VNU_ID',
 			term: [ 'TERM_ID', 'TAXONOMY_ID' ],
-			checkin: [ 'CHK_IN' ],
+			checkin: [ 'CHK_ID' ],
 			registration: [ 'REG_ID' ],
 		},
 	},
