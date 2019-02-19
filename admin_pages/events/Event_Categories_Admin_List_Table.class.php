@@ -34,18 +34,18 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
     protected function _set_properties()
     {
         $this->_wp_list_args = array(
-            'singular' => __('event category', 'event_espresso'),
-            'plural'   => __('event categories', 'event_espresso'),
+            'singular' => esc_html__('event category', 'event_espresso'),
+            'plural'   => esc_html__('event categories', 'event_espresso'),
             'ajax'     => true, // for now,
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
 
         $this->_columns = array(
             'cb'        => '<input type="checkbox" />',
-            'id'        => __('ID', 'event_espresso'),
-            'name'      => __('Name', 'event_espresso'),
-            'shortcode' => __('Shortcode', 'event_espresso'),
-            'count'     => __('Events', 'event_espresso'),
+            'id'        => esc_html__('ID', 'event_espresso'),
+            'name'      => esc_html__('Name', 'event_espresso'),
+            'shortcode' => esc_html__('Shortcode', 'event_espresso'),
+            'count'     => esc_html__('Events', 'event_espresso'),
         );
 
         $this->_sortable_columns = array(
@@ -108,14 +108,13 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
             'edit' => '<a href="' . $edit_link . '" title="' . esc_attr__(
                 'Edit Category',
                 'event_espresso'
-            ) . '">' . __('Edit', 'event_espresso') . '</a>',
+            ) . '">' . esc_html__('Edit', 'event_espresso') . '</a>',
         );
-
 
         $actions['delete'] = '<a href="' . $delete_link . '" title="' . esc_attr__(
             'Delete Category',
             'event_espresso'
-        ) . '">' . __('Delete', 'event_espresso') . '</a>';
+        ) . '">' . esc_html__('Delete', 'event_espresso') . '</a>';
 
         $actions['view'] = sprintf(
             '<a href="%s" aria-label="%s">%s</a>',
