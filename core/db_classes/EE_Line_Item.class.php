@@ -1168,14 +1168,16 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * TXN_total (provided this line item is allowed to persist, otherwise we don't
      * want to change a persistable transaction with info from a non-persistent line item)
      *
+     * @param bool $update_txn_status
      * @return float
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @throws RuntimeException
      */
-    public function recalculate_total_including_taxes()
+    public function recalculate_total_including_taxes($update_txn_status = false)
     {
         $pre_tax_total = $this->recalculate_pre_tax_total();
         $tax_total = $this->recalculate_taxes_and_tax_total();
@@ -1191,6 +1193,11 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
                EE_Transaction
         ) {
             $this->transaction()->set_total($total);
+            if ($update_txn_status) {
+                // don't save the TXN because that will be done below
+                // and the following method only saves if the status changes
+                $this->transaction()->update_status_based_on_total_paid(false);
+            }
             if ($this->transaction()->ID()) {
                 $this->transaction()->save();
             }
