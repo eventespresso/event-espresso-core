@@ -3,7 +3,8 @@
  */
 import PropTypes from 'prop-types';
 import { Component } from '@wordpress/element';
-import { createHigherOrderComponent } from '@wordpress/compose';
+import { createHigherOrderComponent, compose } from '@wordpress/compose';
+import { withSelect, withDispatch } from '@wordpress/data'
 
 /**
  * Internal dependencies
@@ -72,7 +73,48 @@ export default createHigherOrderComponent(
 				/>;
 			}
 		}
-		return TicketsListFilterState;
+		return compose( [
+			withSelect( ( select, ownProps ) => {
+				const {
+					showTickets = 'on-sale-and-pending',
+					sortTickets = 'chronologically',
+					displayTicketDate = 'both',
+					isChained = true,
+				} = ownProps;
+				const selectData = select( 'eventespresso/filter-state' );
+				return {
+					showTickets: selectData
+						.getItemToShow( 'ticket', 'showTickets' ) ||
+						showTickets,
+					sortTickets: selectData
+						.getSortBy( 'ticket' ) ||
+						sortTickets,
+					displayTicketDate: selectData
+						.getItemToShowWithValue( 'ticket', 'displayTicketDate' ) ||
+						displayTicketDate,
+					isChained: selectData
+						.getIsChained( 'ticket' ) ||
+						isChained,
+				};
+			} ),
+			withDispatch( ( dispatch ) => {
+				const dispatchData = dispatch( 'eventespresso/filter-state' );
+				return {
+					setShowTickets: ( itemToShow ) => dispatchData
+						.setItemToShow( 'ticket', itemToShow ),
+					setSortTickets: ( sortBy ) => dispatchData
+						.setSortBy( 'ticket', sortBy ),
+					setDisplayTicketDate: ( ticketDateValue ) => dispatchData
+						.setItemToShowWithValue(
+							'ticket',
+							'displayTicketDate',
+							ticketDateValue
+						),
+					setIsChained: ( isChained ) => dispatchData
+						.setIsChained( 'ticket', isChained ),
+				};
+			} ),
+		] )( TicketsListFilterState );
 	},
 	'withTicketsListFilterState'
 );
