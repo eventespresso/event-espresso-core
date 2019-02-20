@@ -11,7 +11,6 @@ import { InvalidModelEntity } from '@eventespresso/eejs';
  * Internal imports
  */
 import { resolveSelect, dispatch } from '../../base-controls';
-import { receiveEntity, receiveEntityRecords } from './receive-entities';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
 
