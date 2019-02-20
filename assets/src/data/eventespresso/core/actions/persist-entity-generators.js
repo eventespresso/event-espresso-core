@@ -15,11 +15,13 @@ import warning from 'warning';
 /**
  * Internal imports.
  */
-import { fetch, select, dispatch } from '../../base-controls';
 import {
-	getFactoryByModel,
-	resolveGetEntityByIdForIds,
-} from '../../base-resolvers';
+	fetch,
+	select,
+	dispatch,
+	resolveSelect,
+	resolveDispatch
+} from '../../base-controls';
 import {
 	removeEntityById,
 	removeDeleteEntityId,
@@ -28,6 +30,7 @@ import {
 import { receiveAndReplaceEntityRecords } from './receive-entities';
 import { receiveUpdatedEntityIdForRelations } from './receive-relations';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
+import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
 
 /**
  * Action generator for persisting an entity record (insert/update)
@@ -56,7 +59,11 @@ function* persistEntityRecord( modelName, entity ) {
 		);
 		return null;
 	}
-	const factory = yield getFactoryByModel( modelName );
+	const factory = yield resolveSelect(
+		SCHEMA_REDUCER_KEY,
+		'getFactoryForModel',
+		modelName
+	);
 	if ( ! isModelEntityFactoryOfModel( factory, modelName ) ) {
 		return null;
 	}
@@ -73,7 +80,13 @@ function* persistEntityRecord( modelName, entity ) {
 	const newId = updatedEntityRecord.id;
 	if ( entity.isNew ) {
 		yield removeEntityById( modelName, entity.id );
-		yield resolveGetEntityByIdForIds( modelName, [ newId ] );
+		yield dispatch(
+			'core/data',
+			'finishResolution',
+			CORE_REDUCER_KEY,
+			'getEntityById',
+			[ modelName, newId ]
+		);
 		yield receiveUpdatedEntityIdForRelations( modelName, entity.id, newId );
 	}
 	yield receiveAndReplaceEntityRecords(
@@ -92,7 +105,7 @@ function* persistEntityRecord( modelName, entity ) {
  * returned (may have a new id!), otherwise null is returned.
  */
 function* persistForEntityId( modelName, entityId ) {
-	const entity = yield select(
+	const entity = yield resolveSelect(
 		CORE_REDUCER_KEY,
 		'getEntityById',
 		modelName,
@@ -216,7 +229,11 @@ function* persistAllDeletes() {
 		trashedIds = {};
 	while ( modelsForDelete.length > 0 ) {
 		const modelForDelete = modelsForDelete.pop();
-		const idsDeleted = yield persistDeletesForModel( modelForDelete );
+		const idsDeleted = yield resolveDispatch(
+			CORE_REDUCER_KEY,
+			'persistDeletesForModel',
+			modelForDelete
+		);
 		if ( ! isEmpty( idsDeleted ) ) {
 			deletedIds[ modelForDelete ] = idsDeleted;
 		}
@@ -227,7 +244,11 @@ function* persistAllDeletes() {
 	);
 	while ( modelsForTrash.length > 0 ) {
 		const modelForTrash = modelsForTrash.pop();
-		const idsTrashed = yield persistTrashesForModel( modelForTrash );
+		const idsTrashed = yield resolveDispatch(
+			CORE_REDUCER_KEY,
+			'persistTrashesForModel',
+			modelForTrash
+		);
 		if ( ! isEmpty( idsTrashed ) ) {
 			trashedIds[ modelForTrash ] = idsTrashed;
 		}
