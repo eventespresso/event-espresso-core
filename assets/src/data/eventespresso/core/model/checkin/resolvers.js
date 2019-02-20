@@ -3,7 +3,8 @@
  */
 import { getEndpoint } from '@eventespresso/model';
 import { isModelEntityFactoryOfModel } from '@eventespresso/validators';
-import { isEmpty } from 'lodash';
+import { isEmpty, isUndefined } from 'lodash';
+import warning from 'warning';
 
 /**
  * Internal imports
@@ -21,6 +22,11 @@ import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../../schema/constants';
  */
 export function* getLatestCheckin( registrationId, dateTimeId ) {
 	let checkInResponse;
+	warning(
+		! isUndefined( registrationId ) && ! isUndefined( dateTimeId ),
+		'Both a registration id and datetime id are needed for getting the ' +
+		'latest checkin.'
+	);
 	const path = `${ getEndpoint( 'checkin' ) }/` +
 		`?where[REG_ID]=${ registrationId }&where[DTT_ID]=${ dateTimeId }` +
 		'&order_by[CHK_timestamp]=DESC&limit=1';
@@ -45,6 +51,10 @@ export function* getLatestCheckin( registrationId, dateTimeId ) {
 		'checkin'
 	);
 	if ( ! isModelEntityFactoryOfModel( factory, 'checkin' ) ) {
+		warning(
+			false,
+			'The factory for the checkin model could not be retrieved.'
+		);
 		return null;
 	}
 	const newCheckin = factory.fromExisting( checkInResponse );

@@ -171,6 +171,7 @@ describe( 'toggleCheckin', () => {
 		const { value, done } = fulfillment.next( {} );
 		expect( value ).toBeNull();
 		expect( done ).toBe( true );
+		expect( console ).toHaveErrored();
 	} );
 	it( 'yields dispatch action for new checkin when factory is successfully ' +
 		'retrieved', () => {

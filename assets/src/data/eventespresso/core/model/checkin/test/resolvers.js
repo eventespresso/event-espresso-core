@@ -92,6 +92,7 @@ describe( 'getLatestCheckin()', () => {
 		const { value, done } = fulfillment.next( {} );
 		expect( value ).toBeNull();
 		expect( done ).toBe( true );
+		expect( console ).toHaveErrored();
 	} );
 	it( 'yields dispatch action for receiving checkin entity to the ' +
 		'state', () => {

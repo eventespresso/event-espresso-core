@@ -8,6 +8,7 @@ import {
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import { getEndpoint } from '@eventespresso/model';
 import { __ } from '@eventespresso/i18n';
+import warning from 'warning';
 
 /**
  * Internal imports
@@ -100,6 +101,10 @@ export function* toggleCheckin( registrationId, dateTimeId, force = false ) {
 		'checkin'
 	);
 	if ( ! isModelEntityFactoryOfModel( factory, 'checkin' ) ) {
+		warning(
+			false,
+			'The factory for the checkin model could not be retrieved.'
+		);
 		return null;
 	}
 	const newCheckin = factory.fromExisting( checkInResponse );
