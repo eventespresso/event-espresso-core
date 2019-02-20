@@ -20,4 +20,8 @@ const relations = {
 		'RECEIVE_UPDATED_ENTITY_ID_FOR_RELATIONS',
 };
 
-export const ACTION_TYPES = { entities, relations };
+const modelSpecific = {
+	RECEIVE_SELECTOR_VALUE: 'RECEIVE_SELECTOR_VALUE',
+};
+
+export const ACTION_TYPES = { entities, relations, modelSpecific };

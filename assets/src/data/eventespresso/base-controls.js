@@ -5,6 +5,7 @@ import apiFetch from '@wordpress/api-fetch';
 import {
 	select as selectData,
 	dispatch as dispatchData,
+	subscribe,
 } from '@wordpress/data';
 
 /**
@@ -37,6 +38,22 @@ export function select( reducerKey, selectorName, ...args ) {
 }
 
 /**
+ * Returns the action object for resolving a selector that has a resolver.
+ * @param {string} reducerKey
+ * @param {string} selectorName
+ * @param {Array} args
+ * @return {Object} An action object.
+ */
+export function resolveSelect( reducerKey, selectorName, ...args ) {
+	return {
+		type: 'RESOLVE_SELECT',
+		reducerKey,
+		selectorName,
+		args,
+	};
+}
+
+/**
  * Returns the action object for a dispatch control.
  * @param {string} reducerKey
  * @param {string} dispatchName
@@ -62,6 +79,27 @@ const controls = {
 	},
 	DISPATCH( { reducerKey, dispatchName, args } ) {
 		return dispatchData( reducerKey )[ dispatchName ]( ...args );
+	},
+	RESOLVE_SELECT( { reducerKey, selectorName, args } ) {
+		return new Promise( ( resolve ) => {
+			const hasFinished = () => selectData( 'core/data' )
+				.hasFinishedResolution( reducerKey, selectorName, args );
+			const getResult = () => selectData( reducerKey )[ selectorName ]
+				.apply( null, args );
+
+			// trigger the selector (to trigger the resolver)
+			const result = getResult();
+			if ( hasFinished() ) {
+				return resolve( result );
+			}
+
+			const unsubscribe = subscribe( () => {
+				if ( hasFinished() ) {
+					unsubscribe();
+					resolve( getResult() );
+				}
+			} );
+		} );
 	},
 };
 
