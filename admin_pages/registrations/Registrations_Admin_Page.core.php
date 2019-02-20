@@ -2222,7 +2222,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     TXN_ADMIN_URL
                 ),
                 esc_html__(' View Transaction', 'event_espresso'),
-                'button button-primary right',
+                'button secondary-button right',
                 'dashicons dashicons-cart'
             );
         } else {
