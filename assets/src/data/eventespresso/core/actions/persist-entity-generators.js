@@ -20,7 +20,7 @@ import {
 	select,
 	dispatch,
 	resolveSelect,
-	resolveDispatch
+	resolveDispatch,
 } from '../../base-controls';
 import {
 	removeEntityById,
@@ -31,6 +31,9 @@ import { receiveAndReplaceEntityRecords } from './receive-entities';
 import { receiveUpdatedEntityIdForRelations } from './receive-relations';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
+
+const DEFAULT_EMPTY_OBJECT = {};
+const DEFAULT_EMPTY_ARRAY = [];
 
 /**
  * Action generator for persisting an entity record (insert/update)
@@ -143,7 +146,7 @@ function* persistForEntityIds( modelName, entityIds = [] ) {
 		keyEntitiesByPrimaryKeyValue( 'event', entities ) :
 		new Map();
 	const retrievedIds = Array.from( retrievedEntities.keys() );
-	const persistedEntities = {};
+	const persistedEntities = DEFAULT_EMPTY_OBJECT;
 	while ( retrievedIds.length > 0 ) {
 		const persistedEntity = yield dispatch(
 			CORE_REDUCER_KEY,
@@ -170,7 +173,7 @@ function* persistDeletesForModel( modelName ) {
 		'getEntityIdsQueuedForDelete',
 		modelName
 	);
-	const deletedIds = [];
+	const deletedIds = DEFAULT_EMPTY_ARRAY;
 	while ( entityIds.length > 0 ) {
 		const entityId = entityIds.pop();
 		const response = yield fetch( {
@@ -198,7 +201,7 @@ function* persistTrashesForModel( modelName ) {
 		'getEntityIdsQueuedForTrash',
 		modelName
 	);
-	const trashedIds = [];
+	const trashedIds = DEFAULT_EMPTY_ARRAY;
 	while ( entityIds.length > 0 ) {
 		const entityId = entityIds.pop();
 		const success = yield fetch( {
@@ -225,8 +228,8 @@ function* persistAllDeletes() {
 		CORE_REDUCER_KEY,
 		'getModelsQueuedForDelete'
 	);
-	const deletedIds = {},
-		trashedIds = {};
+	const deletedIds = DEFAULT_EMPTY_OBJECT,
+		trashedIds = DEFAULT_EMPTY_OBJECT;
 	while ( modelsForDelete.length > 0 ) {
 		const modelForDelete = modelsForDelete.pop();
 		const idsDeleted = yield resolveDispatch(
