@@ -19,6 +19,8 @@ describe( 'primaryKeys', () => {
 				ticket: 'TKT_ID',
 				venue: 'VNU_ID',
 				term: [ 'TERM_ID', 'TAXONOMY_ID' ],
+				checkin: [ 'CHK_ID' ],
+				registration: [ 'REG_ID' ],
 			},
 		);
 	} );

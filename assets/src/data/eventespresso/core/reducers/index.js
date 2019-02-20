@@ -9,6 +9,7 @@ import { combineReducers } from '@wordpress/data';
 import entities from './entities';
 import relations from './relations';
 import dirty from './dirty';
+import modelSpecific from './model-specific-reducers';
 
 /**
  * Reducers for entities, relations and dirty state.
@@ -16,4 +17,9 @@ import dirty from './dirty';
  * Be aware that the root state is a plain object but the slices (entities,
  * relations, dirty) are immutable Maps.
  */
-export default combineReducers( { entities, relations, dirty } );
+export default combineReducers( {
+	entities,
+	relations,
+	dirty,
+	modelSpecific,
+} );
