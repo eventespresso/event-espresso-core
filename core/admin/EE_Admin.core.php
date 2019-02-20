@@ -1053,16 +1053,16 @@ final class EE_Admin implements InterminableInterface
         if (EE_PLUGIN_BASENAME === $file) {
             $row_meta = array(
                 'docs' => '<a href="https://eventespresso.com/support/documentation/versioned-docs/?doc_ver=ee4"'
-                          . ' aria-label="' 
-                          . esc_attr__('View Event Espresso documentation', 'espresso_events') 
-                          . '">' 
-                          . esc_html__('Docs', 'espresso_events') 
+                          . ' aria-label="'
+                          . esc_attr__('View Event Espresso documentation', 'event_espresso')
+                          . '">'
+                          . esc_html__('Docs', 'event_espresso')
                           . '</a>',
                 'api'  => '<a href="https://github.com/eventespresso/event-espresso-core/tree/master/docs/C--REST-API"'
                           . ' aria-label="'
-                          . esc_attr__('View Event Espresso API docs', 'espresso_events')
+                          . esc_attr__('View Event Espresso API docs', 'event_espresso')
                           . '">'
-                          . esc_html__('API docs', 'espresso_events')
+                          . esc_html__('API docs', 'event_espresso')
                           . '</a>',
             );
             return array_merge($meta, $row_meta);
