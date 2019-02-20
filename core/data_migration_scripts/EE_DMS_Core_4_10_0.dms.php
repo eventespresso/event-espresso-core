@@ -4,7 +4,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
-use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * Meant to add the new ee_message table to the database.
@@ -27,12 +26,12 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
 
 
 /**
- * Class EE_DMS_Core_4_9_0
+ * Class EE_DMS_Core_4_10_0
  *
  * @package               Event Espresso
  * @subpackage            core
  * @author                Mike Nelson
- * @since                 4.6.0
+ * @since                 $VID:$
  */
 class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
 {
@@ -46,9 +45,6 @@ class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
         TableAnalysis $table_analysis = null,
         EE_DMS_Core_4_9_0 $dms_4_9
     ) {
-        if (! $dms_4_9 instanceof EE_DMS_Core_4_9_0) {
-            $dms_4_9 = LoaderFactory::getLoader()->getShared('EE_DMS_Core_4_9_0');
-        }
         $this->previous_dms = $dms_4_9;
         $this->_pretty_name = esc_html__("Data Update to Event Espresso 4.10.0", "event_espresso");
         $this->_priority = 10;
@@ -76,10 +72,8 @@ class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
             //          echo "no version string provided: $version_string";
             // no version string provided... this must be pre 4.3
             return false;// changed mind. dont want people thinking they should migrate yet because they cant
-        } else {
-            //          echo "$version_string doesnt apply";
-            return false;
         }
+        return false;
     }
 
 
