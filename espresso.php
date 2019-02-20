@@ -3,7 +3,7 @@
   Plugin Name:Event Espresso
   Plugin URI: http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: Manage events, sell tickets, and receive payments from your WordPress website. Reduce event administration time, cut-out ticketing fees, and own your customer data. | <a href="https://eventespresso.com/add-ons/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Extensions</a> | <a href="https://eventespresso.com/pricing/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Sales</a> | <a href="admin.php?page=espresso_support">Support</a>
-  Version: 4.9.79.rc.005
+  Version: 4.9.79.rc.007
   Author: Event Espresso
   Author URI: http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: GPLv2
@@ -102,7 +102,7 @@ if (function_exists('espresso_version')) {
          */
         function espresso_version()
         {
-            return apply_filters('FHEE__espresso__espresso_version', '4.9.79.rc.005');
+            return apply_filters('FHEE__espresso__espresso_version', '4.9.79.rc.007');
         }
 
         /**

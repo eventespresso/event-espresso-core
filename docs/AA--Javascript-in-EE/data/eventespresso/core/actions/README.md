@@ -4,7 +4,7 @@ The following set of dispatch actions are available on the object returned by `w
 ## Non Persisting Actions
 These are actions that record information in the `eventespresso/core` store state.  They do not persist anything to the server.
 
-### Create ([entities](./entities/create.md) & [relations](./relations/create.md))
+### Create ([entities](./entities/create.md), [relations](./relations/create.md))
 The following actions are used for any creating entities or adding created entities outside of the store to the store state.
 
 | Action                                                                                                      |       Description                                                                                                                                    |
@@ -38,6 +38,7 @@ These are various actions that end up persisting the current state to the server
 | [`persistRelationsForEntityId`](./relations/persist.md#persistrelationsforentityid-modelname-entityid-addrelation--true-)                                                  | Persists relations for the given model and entity id and given type (add or delete)                                   |
 | [`persistRelationsForEntityIdAndRelation`](./relations/persist.md#persistrelationsforentityidandrelation-modelname-entityid-relationname-add-relation--true-)              | Persists relations for the given entity and relation entities belonging to the given relation model for the given type|
 | [`persistRelationsForEntityIdAndRelationId`](./relations/persist.md#persistrelationsforentityidandrelationid-modelname-entityid-relationname-relationid-addrelation--true-)| Persists relations for the given entity and relation entity and given type                                            |
+| [`toggleCheckin`](./model-specific/persist.md#togglecheckin-registrationid-datetimeid-force--false-) | Toggles the state of a checkin for a given registration id and datetime id and returns the new created checkin entity.                                                                                                                             |                                                                                                                                |
 
 ### Delete
 
@@ -73,3 +74,4 @@ These are actions that are used internally by other actions listed in this page 
 | [`removeRelatedEntities`](./relations/low-level.md#removerelatedentities-modelname-entityid-relationname-relatedentityids-)              | Removes any recorded relations for the given entity and relation entities in the state. This does **not** queue persisting the removal of relations on the server. It **only** affects records locally in the state.             |
 | [`removeDirtyRelationAddition`](./relations/low-level.md#removedirtyrelationaddition-relationname-relationentityid-modelname-entityid-)  | Removes the relation addition queued for persisting from the state record.                                                                                                                                                       |
 | [`removeDirtyRelationDeletion`](./relations/low-level.md#removedirtyrelationdeletion-relationname-relationentityid-modelname-entityid-)  | Removes the relation deletion queued for persisting from the state record.                                                                                                                                                       |
+| [`receiveLatestCheckin`](./model-specific/low-level.md#receivelatestcheckin-checkinentity-registrationid-datetimeid-)                    | Receives the latest checkin record into the state for the given registration id and datetime id.                                                                                                                                 |
