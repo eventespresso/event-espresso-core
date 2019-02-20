@@ -12,7 +12,7 @@ This action makes use of that endpoint and returns the new instance of `BaseEnti
 | -------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | registrationId | `number    `          | The registration id for the registration having its checkin state changed.                                                                                             |
 | datetimeId     | `number`              | The datetime id for the datetime the registration is having the checkin state changed for.                                                                             |
-| force          | `boolean`             | This is used to flag whether consideration should be given to whether the registration can be checked-in for the given datetime.  If true, then no restrictions apply. |
+| force          | `boolean`             | Flag to indicate whether registration checked-in restrictions for the given datetime should be ignored. |
 
 ## Example
 
