@@ -10,11 +10,10 @@ import { InvalidModelEntity } from '@eventespresso/eejs';
 /**
  * Internal imports
  */
-import {
-	getFactoryByModel,
-	resolveGetEntityByIdForIds,
-} from '../../base-resolvers';
+import { resolveSelect, dispatch } from '../../base-controls';
 import { receiveEntity, receiveEntityRecords } from './receive-entities';
+import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
+import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
 
 /**
  * Returns an action generator for creating a model entity instance and
@@ -27,12 +26,20 @@ import { receiveEntity, receiveEntityRecords } from './receive-entities';
  * instance is returned, otherwise null.
  */
 export function* createEntity( modelName, entity ) {
-	const factory = yield getFactoryByModel( modelName );
+	const factory = yield resolveSelect(
+		SCHEMA_REDUCER_KEY,
+		'getFactoryForModel',
+		modelName
+	);
 	if ( ! isModelEntityFactoryOfModel( factory, modelName ) ) {
 		return null;
 	}
 	const entityInstance = factory.createNew( entity );
-	yield receiveEntityAndResolve( entityInstance );
+	yield dispatch(
+		CORE_REDUCER_KEY,
+		'receiveEntityAndResolve',
+		entityInstance
+	);
 	return entityInstance;
 }
 
@@ -45,10 +52,17 @@ export function* createEntity( modelName, entity ) {
  */
 export function* receiveEntityAndResolve( entity ) {
 	assertIsModelEntity( entity );
-	yield receiveEntity( entity );
-	yield resolveGetEntityByIdForIds(
-		entity.modelName.toLowerCase(),
-		[ entity.id ]
+	yield dispatch(
+		CORE_REDUCER_KEY,
+		'receiveEntity',
+		entity
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		CORE_REDUCER_KEY,
+		'getEntityById',
+		[ entity.modelName.toLowerCase(), entity.id ]
 	);
 }
 
@@ -58,16 +72,27 @@ export function* receiveEntityAndResolve( entity ) {
  * @param {Array<BaseEntity>}entities
  */
 export function* receiveEntitiesAndResolve( modelName, entities ) {
-	yield resolveGetEntityByIdForIds(
-		modelName,
-		entities.map(
-			( entity ) => {
-				assertIsModelEntity( entity );
-				return entity.id;
-			}
-		)
+	const entityIds = entities.map(
+		( entity ) => {
+			assertIsModelEntity( entity );
+			return entity.id;
+		}
 	);
-	yield receiveEntityRecords( modelName, entities );
+	while ( entityIds.length > 0 ) {
+		yield dispatch(
+			'core/data',
+			'finishResolution',
+			CORE_REDUCER_KEY,
+			'getEntityById',
+			[ modelName, entityIds.pop() ]
+		);
+	}
+	yield dispatch(
+		CORE_REDUCER_KEY,
+		'receiveEntityRecords',
+		modelName,
+		entities,
+	);
 }
 
 /**
