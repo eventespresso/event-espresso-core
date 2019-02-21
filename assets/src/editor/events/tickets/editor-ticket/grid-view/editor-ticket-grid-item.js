@@ -10,6 +10,7 @@ import {
 	withEntityPaperFrame,
 } from '@eventespresso/components';
 import { ticketModel } from '@eventespresso/model';
+import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * Internal dependencies
@@ -124,7 +125,7 @@ class EditorTicketGridItem extends Component {
 				label = __( 'Sale Ended', 'event_espresso' );
 			}
 		}
-		const status = this.getTicketStatus( ticket );
+		const ticketStatus = this.getTicketStatus( ticket );
 
 		switch ( showDate ) {
 			case 'end' :
@@ -132,7 +133,7 @@ class EditorTicketGridItem extends Component {
 					date={ ticket.endDate }
 					htmlClass={ sidebarColorClass }
 					headerText={ label }
-					footerText={ [ end, status ] }
+					footerText={ [ end, ticketStatus ] }
 					position="right"
 				/>;
 			case 'both' :
@@ -148,7 +149,7 @@ class EditorTicketGridItem extends Component {
 						<MediumCalendarDate
 							date={ ticket.endDate }
 							headerText={ __( 'to', 'event_espresso' ) }
-							footerText={ [ end, status ] }
+							footerText={ [ end, ticketStatus ] }
 							position="right"
 						/>
 					</div>
@@ -159,7 +160,7 @@ class EditorTicketGridItem extends Component {
 					date={ ticket.startDate }
 					htmlClass={ sidebarColorClass }
 					headerText={ label }
-					footerText={ [ start, status ] }
+					footerText={ [ start, ticketStatus ] }
 					position="right"
 				/>;
 		}
@@ -174,6 +175,9 @@ class EditorTicketGridItem extends Component {
 			onUpdate,
 			displayTicketDate = 'start',
 		} = this.props;
+		if ( ! isModelEntityOfModel( ticket, ticketModel.MODEL_NAME ) ) {
+			return null;
+		}
 		return (
 			<Fragment>
 				<div className="ee-editor-ticket-main">

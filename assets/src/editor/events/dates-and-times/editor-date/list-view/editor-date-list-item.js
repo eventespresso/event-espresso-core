@@ -1,9 +1,10 @@
 /**
  * External imports
  */
-import moment from 'moment-timezone';
 import { Component } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
+import { dateTimeModel } from '@eventespresso/model';
+import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * Internal dependencies
@@ -44,7 +45,8 @@ class EditorDateListItem extends Component {
 	 *
 	 * @function
 	 * @param {Object} eventDate    JSON object defining the Event Date
-	 * @return {string}    CSS class corresponding to the background color for the container
+	 * @return {string}    CSS class corresponding to the background color for
+	 *   the container
 	 */
 	getBgColorClass = ( eventDate ) => {
 		switch ( eventDate.status ) {
@@ -85,9 +87,13 @@ class EditorDateListItem extends Component {
 
 	render() {
 		const { eventDate, allTickets, onUpdate } = this.props;
-		this.id = `event-date-ticket-list-modal-${ eventDate.id }`;
+		if ( ! isModelEntityOfModel( eventDate, dateTimeModel.MODEL_NAME ) ) {
+			return null;
+		}
 		// console.log( '' );
-		// console.log( 'EditorDateListItem.render() props: ', this.props );
+		// console.log( 'EditorDateListItem.render()' );
+		// console.log( ' > props: ', this.props );
+		this.id = `event-date-ticket-list-modal-${ eventDate.id }`;
 		const statusClass = this.getStatusClass( eventDate );
 		const bgClass = this.getBgColorClass( eventDate );
 		const regLimit = eventDate.regLimit === 'INF' ||
@@ -95,8 +101,6 @@ class EditorDateListItem extends Component {
 			( <span className={ 'ee-infinity-sign' }>&infin;</span> ) :
 			eventDate.regLimit;
 		const regLink = this.getDatetimeRegistrationsLink( eventDate );
-		const startDate = moment( new Date( eventDate.start ) );
-		const endDate = moment( new Date( eventDate.end ) );
 
 		return (
 			<div id={ `ee-editor-date-list-view-div-${ eventDate.id }` }
@@ -132,7 +136,7 @@ class EditorDateListItem extends Component {
 							{ __( 'Start Date:', 'event_espresso' ) }
 						</span>
 						<span className="ee-date-list-item-value">
-							{ startDate.format( 'ddd MMM YY h:mm a' ) }
+							{ eventDate.start.toFormat( 'ddd MMM YY h:mm a' ) }
 						</span>
 					</div>
 					<div className="ee-date-list-item">
@@ -140,7 +144,7 @@ class EditorDateListItem extends Component {
 							{ __( 'End Date:', 'event_espresso' ) }
 						</span>
 						<span className="ee-date-list-item-value">
-							{ endDate.format( 'ddd MMM YY h:mm a' ) }
+							{ eventDate.end.toFormat( 'ddd MMM YY h:mm a' ) }
 						</span>
 					</div>
 					<div className="ee-date-list-item">

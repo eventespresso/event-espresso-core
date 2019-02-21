@@ -10,6 +10,7 @@ import {
 	withEntityPaperFrame,
 } from '@eventespresso/components';
 import { dateTimeModel } from '@eventespresso/model';
+import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * Internal dependencies
@@ -17,7 +18,7 @@ import { dateTimeModel } from '@eventespresso/model';
 import { default as EditorDateDetails } from './editor-date-details';
 import { EditorDateActionsMenu } from '../';
 
-const { status, DATETIME_STATUS_ID } = dateTimeModel;
+const { status, DATETIME_STATUS_ID, MODEL_NAME } = dateTimeModel;
 
 /**
  * EditorDateGridItem
@@ -125,6 +126,10 @@ class EditorDateGridItem extends Component {
 			showDesc = 'excerpt',
 			showVenue = true,
 		} = this.props;
+		if ( ! isModelEntityOfModel( eventDate, MODEL_NAME ) ) {
+			return null;
+		}
+
 		// console.log( '' );
 		// console.log( 'EditorDateGridItem.render() props: ', this.props );
 		// console.log( 'EditorDateGridItem.render() eventDate: ', eventDate );
