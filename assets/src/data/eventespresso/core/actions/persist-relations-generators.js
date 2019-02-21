@@ -9,10 +9,18 @@ import { singularModelName } from '@eventespresso/model';
 /**
  * Internal imports.
  */
-import { fetch, select, dispatch } from '../../base-controls';
+import {
+	fetch,
+	select,
+	resolveDispatch,
+	resolveSelect,
+} from '../../base-controls';
 import { removeDirtyRelationForType } from './remove-relations';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
+
+const DEFAULT_EMPTY_OBJECT = {};
+const DEFAULT_EMPTY_ARRAY = [];
 
 /**
  * Action generator for persisting any queued add relations to the server
@@ -24,7 +32,11 @@ import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
  * names with values of relation Ids persisted.
  */
 function* persistAddRelationsForModel( modelName ) {
-	return yield persistRelationsForModel( modelName );
+	return yield resolveDispatch(
+		CORE_REDUCER_KEY,
+		'persistRelationsForModel',
+		modelName
+	);
 }
 
 /**
@@ -37,9 +49,11 @@ function* persistAddRelationsForModel( modelName ) {
  * names with values of relation Ids persisted.
  */
 function* persistDeleteRelationsForModel( modelName ) {
-	return yield persistRelationsForModel(
+	return yield resolveDispatch(
+		CORE_REDUCER_KEY,
+		'persistRelationsForModel',
 		modelName,
-		false
+		false,
 	);
 }
 
@@ -55,15 +69,22 @@ function* persistDeleteRelationsForModel( modelName ) {
  * names with values of relation Ids persisted.
  */
 function* persistRelationsForModel( modelName, addRelation = true ) {
-	const relationState = yield getRelationState( modelName, addRelation );
+	const relationState = yield resolveDispatch(
+		CORE_REDUCER_KEY,
+		'getRelationState',
+		modelName,
+		addRelation
+	);
 	if ( isEmpty( relationState ) ) {
-		return {};
+		return DEFAULT_EMPTY_OBJECT;
 	}
-	const relationsPersisted = {};
+	const relationsPersisted = DEFAULT_EMPTY_OBJECT;
 	const entityIds = keys( relationState );
 	while ( entityIds.length > 0 ) {
 		const entityId = entityIds.pop();
-		const persistedRelations = yield persistRelationsForEntityId(
+		const persistedRelations = yield resolveDispatch(
+			CORE_REDUCER_KEY,
+			'persistRelationsForEntityId',
 			modelName,
 			entityId,
 			addRelation,
@@ -94,27 +115,31 @@ function* persistRelationsForEntityId(
 	modelName,
 	entityId,
 	addRelation = true,
-	relationState = {}
+	relationState = DEFAULT_EMPTY_OBJECT
 ) {
-	relationState = yield getRelationState(
+	relationState = yield resolveDispatch(
+		CORE_REDUCER_KEY,
+		'getRelationState',
 		modelName,
 		addRelation,
 		relationState
 	);
 	if ( isEmpty( relationState ) ) {
-		return {};
+		return DEFAULT_EMPTY_OBJECT;
 	}
 	const relationNames = relationState[ entityId ] ?
 		keys( relationState[ entityId ] ) :
-		[];
+		DEFAULT_EMPTY_ARRAY;
 	if ( isEmpty( relationNames ) ) {
-		return {};
+		return DEFAULT_EMPTY_OBJECT;
 	}
-	const persistedRelations = {};
+	const persistedRelations = DEFAULT_EMPTY_OBJECT;
 	while ( relationNames.length > 0 ) {
 		const relationName = relationNames.pop();
 		const persistedRelationIds =
-			yield persistRelationsForEntityIdAndRelation(
+			yield resolveDispatch(
+				CORE_REDUCER_KEY,
+				'persistRelationsForEntityIdAndRelation',
 				modelName,
 				entityId,
 				relationName,
@@ -148,24 +173,28 @@ function* persistRelationsForEntityIdAndRelation(
 	entityId,
 	relationName,
 	addRelation = true,
-	relationState = {}
+	relationState = DEFAULT_EMPTY_OBJECT
 ) {
-	relationState = yield getRelationState(
+	relationState = yield resolveDispatch(
+		CORE_REDUCER_KEY,
+		'getRelationState',
 		modelName,
 		addRelation,
 		relationState
 	);
 	if ( isEmpty( relationState ) ) {
-		return [];
+		return DEFAULT_EMPTY_ARRAY;
 	}
 	const relationEntityIds = relationState[ entityId ] &&
 	relationState[ entityId ][ relationName ] ?
 		relationState[ entityId ][ relationName ] :
-		[];
-	const persistedRelationIds = [];
+		DEFAULT_EMPTY_ARRAY;
+	const persistedRelationIds = DEFAULT_EMPTY_ARRAY;
 	while ( relationEntityIds.length > 0 ) {
 		const persistedRelationId =
-			yield persistRelationsForEntityIdAndRelationId(
+			yield resolveDispatch(
+				CORE_REDUCER_KEY,
+				'persistRelationsForEntityIdAndRelationId',
 				modelName,
 				entityId,
 				relationName,
@@ -203,9 +232,11 @@ function* persistRelationsForEntityIdAndRelationId(
 	relationName,
 	relationId,
 	addRelation = true,
-	relationState = {}
+	relationState = DEFAULT_EMPTY_OBJECT
 ) {
-	relationState = yield getRelationState(
+	relationState = yield resolveDispatch(
+		CORE_REDUCER_KEY,
+		'getRelationState',
 		modelName,
 		addRelation,
 		relationState
@@ -216,7 +247,7 @@ function* persistRelationsForEntityIdAndRelationId(
 	}
 	// is the entityId a cuid?  If so, then let's persist.
 	if ( cuid.isCuid( entityId ) ) {
-		entityId = yield dispatch(
+		entityId = yield resolveDispatch(
 			CORE_REDUCER_KEY,
 			'persistNewEntityAndRemoveDirtyRelations',
 			relationName,
@@ -236,7 +267,7 @@ function* persistRelationsForEntityIdAndRelationId(
 
 	// is the relationId a cuid? If so, then let's persist
 	if ( cuid.isCuid( relationId ) ) {
-		relationId = yield dispatch(
+		relationId = yield resolveDispatch(
 			CORE_REDUCER_KEY,
 			'persistNewEntityAndRemoveDirtyRelations',
 			relationName,
@@ -253,7 +284,7 @@ function* persistRelationsForEntityIdAndRelationId(
 			return relationId;
 		}
 	}
-	const endpoint = yield select(
+	const endpoint = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'getRelationEndpointForEntityId',
 		modelName,
@@ -272,9 +303,7 @@ function* persistRelationsForEntityIdAndRelationId(
 		// Even when ids have changed, this should catch any potential queued
 		// relation items for those things that got updated in state in a prior
 		// dispatch
-		yield dispatch(
-			CORE_REDUCER_KEY,
-			'removeDirtyRelations',
+		yield removeDirtyRelationForType(
 			relationName,
 			relationId,
 			modelName,
@@ -309,7 +338,7 @@ function* persistNewEntityAndRemoveDirtyRelations(
 	persistingArguments,
 	doRelationRemoval = true,
 ) {
-	const persistedEntity = yield dispatch(
+	const persistedEntity = yield resolveDispatch(
 		CORE_REDUCER_KEY,
 		'persistForEntityId',
 		...persistingArguments,
@@ -322,41 +351,15 @@ function* persistNewEntityAndRemoveDirtyRelations(
 	if ( doRelationRemoval ) {
 		// ensure oldId is removed from items (this is a failsafe in case the
 		// id swap in relation state isn't complete yet).
-		yield removeDirtyRelations(
+		yield removeDirtyRelationForType(
 			relationName,
 			relationId,
 			modelName,
 			entityId,
-			addRelation,
+			addRelation
 		);
 	}
 	return persistedEntity.id;
-}
-
-/**
- * Action generator handling removing the dirty relation records in the state
- * for the given data (internal only for calling during a persist action)
- *
- * @param {string} relationName
- * @param {number} relationId
- * @param {string} modelName
- * @param {number} entityId
- * @param {boolean} addRelation
- */
-function* removeDirtyRelations(
-	relationName,
-	relationId,
-	modelName,
-	entityId,
-	addRelation
-) {
-	yield removeDirtyRelationForType(
-		relationName,
-		relationId,
-		modelName,
-		entityId,
-		addRelation
-	);
 }
 
 /**
@@ -374,7 +377,7 @@ function* removeDirtyRelations(
 function* getRelationState(
 	modelName,
 	addRelation = true,
-	relationState = {}
+	relationState = DEFAULT_EMPTY_OBJECT
 ) {
 	const selector = addRelation ?
 		'getRelationAdditionsQueuedForModel' :
@@ -397,6 +400,5 @@ export {
 	persistRelationsForEntityIdAndRelation,
 	persistRelationsForEntityIdAndRelationId,
 	persistNewEntityAndRemoveDirtyRelations,
-	removeDirtyRelations,
 	getRelationState,
 };

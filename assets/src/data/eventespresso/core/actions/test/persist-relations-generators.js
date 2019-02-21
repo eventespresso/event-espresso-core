@@ -1,7 +1,6 @@
 /**
  * External imports
  */
-import { isGenerator } from '@eventespresso/validators';
 import cuid from 'cuid';
 
 /**
@@ -15,10 +14,14 @@ import {
 	persistRelationsForEntityIdAndRelation,
 	persistRelationsForEntityIdAndRelationId,
 	persistNewEntityAndRemoveDirtyRelations,
-	removeDirtyRelations,
 	getRelationState,
 } from '../persist-relations-generators';
-import { fetch, select, dispatch } from '../../../base-controls';
+import {
+	fetch,
+	select,
+	resolveDispatch,
+	resolveSelect,
+} from '../../../base-controls';
 import { removeDirtyRelationForType } from '../remove-relations';
 import { EventEntities } from '../../../test/fixtures/base';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../../constants';
@@ -26,37 +29,49 @@ import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../../schema/constants';
 
 describe( 'persistAddRelationsForModel()', () => {
 	const fulfillment = persistAddRelationsForModel( 'event' );
-	it( 'yields generator for persisting relations for the given model', () => {
+	it( 'yields resolve dispatch action for persisting relations for the ' +
+		'given model', () => {
 		const { value } = fulfillment.next();
-		expect( isGenerator( value ) ).toBe( true );
-	} );
-	it( 'returns an object from the generator response', () => {
-		const { value, done } = fulfillment.next( {} );
-		expect( value ).toEqual( {} );
-		expect( done ).toBe( true );
+		expect( value ).toEqual(
+			resolveDispatch(
+				CORE_REDUCER_KEY,
+				'persistRelationsForModel',
+				'event'
+			)
+		);
 	} );
 } );
 
 describe( 'persistDeleteRelationsforModel()', () => {
 	const fulfillment = persistDeleteRelationsForModel( 'event' );
-	it( 'yields generator for persisting relations for the given model', () => {
+	it( 'yields resolve dispatch action for persisting relations for the ' +
+		'given model', () => {
 		const { value } = fulfillment.next();
-		expect( isGenerator( value ) ).toBe( true );
-	} );
-	it( 'returns an object from the generator response', () => {
-		const { value, done } = fulfillment.next( {} );
-		expect( value ).toEqual( {} );
-		expect( done ).toBe( true );
+		expect( value ).toEqual(
+			resolveDispatch(
+				CORE_REDUCER_KEY,
+				'persistRelationsForModel',
+				'event',
+				false
+			)
+		);
 	} );
 } );
 
 describe( 'persistRelationsForModel()', () => {
 	let fulfillment;
 	const reset = () => fulfillment = persistRelationsForModel( 'event' );
-	it( 'yields generator for getting relation state', () => {
+	it( 'yields resolve dispatch action for getting relation state', () => {
 		reset();
 		const { value } = fulfillment.next();
-		expect( isGenerator( value ) ).toBe( true );
+		expect( value ).toEqual(
+			resolveDispatch(
+				CORE_REDUCER_KEY,
+				'getRelationState',
+				'event',
+				true
+			)
+		);
 	} );
 	it( 'returns an empty object if there is no relation state for the ' +
 		'model', () => {
