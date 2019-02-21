@@ -25,8 +25,6 @@ export const EditorDatesGridView = ( {
 	htmlClass,
 	...otherProps
 } ) => {
-	// console.log( '' );
-	// console.log( 'EditorDatesGridView showVenue', showVenue );
 	htmlClass = htmlClass ?
 		`${ htmlClass } ee-dates-list-grid-view` :
 		'ee-dates-list-grid-view';

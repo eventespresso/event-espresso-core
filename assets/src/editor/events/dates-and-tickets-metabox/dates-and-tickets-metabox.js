@@ -41,9 +41,6 @@ class DatesAndTicketsMetabox extends Component {
 
 	render() {
 		const { eventId } = this.props;
-		// console.log( '' );
-		// console.log( 'DatesAndTicketsMetabox.render()' );
-		// console.log( ' > this.props:', this.props );
 		return (
 			<DatesAndTicketsFilterState
 				eventId={ eventId }

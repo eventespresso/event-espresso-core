@@ -1,10 +1,10 @@
 /**
  * External imports
  */
+import PropTypes from 'prop-types';
 import { Component, Fragment } from '@wordpress/element';
 import { IconButton, SelectControl } from '@wordpress/components';
 import { __ } from '@eventespresso/i18n';
-import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -203,30 +203,6 @@ class TicketsListFilterBar extends Component {
 	 * @return {Object} rendered displayTickets filter
 	 */
 	ticketsChained = ( isChained, setIsChained ) => {
-		// return (
-		// 	<SelectControl
-		// 		label={ __( 'showing', 'event_espresso' ) }
-		// 		className="espresso-ticket-list-filter-bar-display-is-chained"
-		// 		value={ isChained }
-		// 		options={ [
-		// 			{
-		// 				value: true,
-		// 				label: __(
-		// 					'tickets for above dates only',
-		// 					'event_espresso'
-		// 				),
-		// 			},
-		// 			{
-		// 				value: false,
-		// 				label: __(
-		// 					'tickets for all event dates',
-		// 					'event_espresso'
-		// 				),
-		// 			},
-		// 		] }
-		// 		onChange={ setIsChained }
-		// 	/>
-		// );
 		return (
 			<IconButton
 				label={ isChained ?
@@ -234,8 +210,8 @@ class TicketsListFilterBar extends Component {
 					__( 'showing tickets for all event dates', 'event_espresso' )
 				}
 				icon={ isChained ? 'admin-links' : 'editor-unlink' }
-				onClick={ event => setIsChained( event.target.value ) }
-				value={ ! isChained }
+				onClick={ ( event ) => setIsChained( !! event.target.value ) }
+				value={ !! isChained }
 			/>
 		);
 	};

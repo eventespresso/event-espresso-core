@@ -35,17 +35,13 @@ export const getFilteredDatesList = ( entities, showDates, sortDates ) => {
  * with an EntityListFilterBar & DateListFilterBar component
  * that controls how entities are displayed
  *
- * @param {Object} paginationConfig
- * @return {Object} EntityList with added EntityPagination
+ * @param {Object} EntityList
+ * @return {Object} EntityList with added DateListFilterBar
  */
 export default createHigherOrderComponent(
 	( EntityList ) => {
 		return class extends Component {
 			render() {
-				// console.log(
-				// 	'withDatesListFilterBar this.props:',
-				// 	this.props
-				// );
 				const {
 					displayDates,
 					showDates,

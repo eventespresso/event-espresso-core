@@ -1,10 +1,10 @@
 /**
  * External imports
  */
+import PropTypes from 'prop-types';
 import { Component, Fragment } from '@wordpress/element';
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@eventespresso/i18n';
-import PropTypes from 'prop-types';
 
 /**
  * DatesListFilterBar

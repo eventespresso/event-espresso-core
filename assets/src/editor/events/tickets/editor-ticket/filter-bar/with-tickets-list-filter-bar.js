@@ -11,9 +11,6 @@ import { EntityListFilterBar } from '@eventespresso/higher-order-components';
  */
 import { filterTickets, sortTicketsList } from './tickets-list-filter-utils';
 import { default as TicketListFilterBar } from './tickets-list-filter-bar';
-// import {
-// 	EntityListFilterBar,
-// } from '../../../../../higher-order-components/filter-bar';
 
 /**
  * filters the tickets list based on the current filter state
@@ -37,8 +34,8 @@ export const getFilteredTicketsList = ( entities, showTickets, sortTickets ) => 
  * with an EntityListFilterBar & TicketListFilterBar component
  * that controls how entities are displayed
  *
- * @param {Object} paginationConfig
- * @return {Object} EntityList with added EntityPagination
+ * @param {Object} EntityList
+ * @return {Object} EntityList with added TicketsListFilterBar
  */
 export default createHigherOrderComponent(
 	( EntityList ) => {
@@ -61,10 +58,6 @@ export default createHigherOrderComponent(
 					prefiltered = false,
 					...otherProps
 				} = this.props;
-				// console.log(
-				// 	'withTicketsListFilterBar.render() otherProps',
-				// 	otherProps
-				// );
 				let { entities } = this.props;
 				entities = prefiltered ?
 					entities :

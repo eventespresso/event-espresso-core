@@ -9,7 +9,6 @@ import {
 } from '@wordpress/compose';
 import { Component, Fragment } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
-
 import JwPagination from 'jw-react-pagination';
 
 /**
@@ -49,14 +48,12 @@ export default ( paginationConfig = {} ) => createHigherOrderComponent(
 				 * @function
 				 * @param {Array} entityPage
 				 */
-				onPaginationChange = entityPage => {
+				onPaginationChange = ( entityPage ) => {
 					// update local state with new page of items
 					this.setState( { entityPage } );
 				};
 
 				render() {
-					// console.log( '' );
-					// console.log( 'EntityPagination props:', this.props );
 					const {
 						entities,
 						instanceId = 0,
