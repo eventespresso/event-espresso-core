@@ -28,5 +28,3 @@ export const PaginatedEntityListWithFilterBarAndState = (
 ) );
 
 export { default as EntityListFilterBar } from './entity-list-filter-bar';
-export { default as filterStateHandler } from './filter-state-handler';
-export { default as viewFilterState } from './view-filter-state';
