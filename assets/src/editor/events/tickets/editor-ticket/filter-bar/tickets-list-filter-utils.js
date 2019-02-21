@@ -1,8 +1,10 @@
 /**
  * External imports
  */
-import { filter, first, sortBy } from 'lodash';
+
 import moment from 'moment-timezone';
+import { filter, first, sortBy } from 'lodash';
+import { ticketModel } from '@eventespresso/model';
 
 /**
  * filterTickets
@@ -20,14 +22,24 @@ export const filterTickets = ( tickets, show = 'on-sale-and-pending' ) => {
 			return filter(
 				tickets,
 				function( ticket ) {
-					return validStatus( ticket ) &&
-						( ticket.status === 'TKO' || ticket.status === 'TKP' );
-				}
+					return ticketModel.isOnSale( ticket ) ||
+						ticketModel.isPending( ticket );
+				},
 			);
 		case 'on-sale-only' :
-			return filter( tickets, { status: 'TKO' } );
+			return filter(
+				tickets,
+				function( ticket ) {
+					return ticketModel.isOnSale( ticket );
+				},
+			);
 		case 'pending-only' :
-			return filter( tickets, { status: 'TKP' } );
+			return filter(
+				tickets,
+				function( ticket ) {
+					return ticketModel.isPending( ticket );
+				},
+			);
 		case 'next-on-sale-or-pending-only' :
 			tickets = filterTickets( tickets );
 			tickets = sortTicketsList( tickets );
@@ -36,43 +48,52 @@ export const filterTickets = ( tickets, show = 'on-sale-and-pending' ) => {
 			return filter(
 				tickets,
 				function( ticket ) {
-					return (
-						validStatus( ticket ) && ticket.status === 'TKS'
-					) || percentSoldAtOrAbove( ticket, 100 );
-				}
+					return ticketModel.isSoldOut( ticket ) ||
+						percentSoldAtOrAbove( ticket, 100 );
+				},
 			);
 		case 'above-90-sold' :
 			return filter(
 				tickets,
 				function( ticket ) {
 					return percentSoldAtOrAbove( ticket, 90 );
-				}
+				},
 			);
 		case 'above-75-sold' :
 			return filter(
 				tickets,
 				function( ticket ) {
 					return percentSoldAtOrAbove( ticket, 75 );
-				}
+				},
 			);
 		case 'above-50-sold' :
 			return filter(
 				tickets,
 				function( ticket ) {
 					return percentSoldAtOrAbove( ticket, 50 );
-				}
+				},
 			);
 		case 'below-50-sold' :
 			return filter(
 				tickets,
 				function( ticket ) {
 					return percentSoldBelow( ticket, 50 );
-				}
+				},
 			);
 		case 'expired-only' :
-			return filter( tickets, { status: 'TKE' } );
+			return filter(
+				tickets,
+				function( ticket ) {
+					return ticketModel.isExpired( ticket );
+				},
+			);
 		case 'archived-only' :
-			return filter( tickets, { status: 'TKA' } );
+			return filter(
+				tickets,
+				function( ticket ) {
+					return ticketModel.isArchived( ticket );
+				},
+			);
 	}
 	return tickets;
 };
@@ -93,11 +114,11 @@ export const sortTicketsList = ( tickets, order = 'chronologically' ) => {
 				tickets,
 				[
 					function( ticket ) {
-						return ticket && ticket.start ?
-							now.isBefore( ticket.start ) :
+						return ticket && ticket.startDate ?
+							now.isBefore( ticket.startDate ) :
 							true;
 					},
-				]
+				],
 			);
 			break;
 		case 'by-name' :
@@ -147,17 +168,9 @@ const percentSoldBelow = ( ticket, maxQuantity ) => {
 
 /**
  * @param {Object} ticket    event ticket object
- * @return {boolean} true if status property is valid
- */
-const validStatus = ticket => {
-	return typeof ticket.status === 'string';
-};
-
-/**
- * @param {Object} ticket    event ticket object
  * @return {boolean} true if qty property is valid
  */
-const validQuantity = ticket => {
+const validQuantity = ( ticket ) => {
 	return typeof ticket.qty === 'string' || typeof ticket.qty === 'number';
 };
 
@@ -165,7 +178,7 @@ const validQuantity = ticket => {
  * @param {Object} ticket    event ticket object
  * @return {boolean} true if qty property is valid and NOT infinite
  */
-const validFiniteQuantity = ticket => {
+const validFiniteQuantity = ( ticket ) => {
 	return validQuantity( ticket ) &&
 		ticket.qty !== 'INF' &&
 		ticket.qty !== Infinity &&
@@ -176,7 +189,7 @@ const validFiniteQuantity = ticket => {
  * @param {Object} ticket    event ticket object
  * @return {boolean} true if qty property is valid and unlimited
  */
-const validInfiniteQuantity = ticket => {
+const validInfiniteQuantity = ( ticket ) => {
 	return validQuantity( ticket ) && (
 		ticket.qty === 'INF' || ticket.qty === Infinity
 	);
@@ -186,6 +199,6 @@ const validInfiniteQuantity = ticket => {
  * @param {Object} ticket    event ticket object
  * @return {boolean} true if qty property is valid
  */
-const validSold = ticket => {
+const validSold = ( ticket ) => {
 	return typeof ticket.sold === 'string' || typeof ticket.sold === 'number';
 };
