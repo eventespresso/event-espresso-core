@@ -70,6 +70,23 @@ export function dispatch( reducerKey, dispatchName, ...args ) {
 	};
 }
 
+/**
+ * Returns the action object for a resolve dispatch control
+ *
+ * @param {string} reducerKey
+ * @param {string} dispatchName
+ * @param {Array} args
+ * @return {Object} The action object.
+ */
+export function resolveDispatch( reducerKey, dispatchName, ...args ) {
+	return {
+		type: 'RESOLVE_DISPATCH',
+		reducerKey,
+		dispatchName,
+		args,
+	};
+}
+
 const controls = {
 	FETCH_FROM_API( { request } ) {
 		return apiFetch( request );
@@ -79,6 +96,9 @@ const controls = {
 	},
 	DISPATCH( { reducerKey, dispatchName, args } ) {
 		return dispatchData( reducerKey )[ dispatchName ]( ...args );
+	},
+	async RESOLVE_DISPATCH( { reducerKey, dispatchName, args } ) {
+		return await dispatchData( reducerKey )[ dispatchName ]( ...args );
 	},
 	RESOLVE_SELECT( { reducerKey, selectorName, args } ) {
 		return new Promise( ( resolve ) => {
