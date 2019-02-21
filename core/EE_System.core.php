@@ -394,6 +394,7 @@ final class EE_System implements ResettableInterface
                 array('activate', 'activate-selected'),
                 true
             )
+            && ($this->request->isWordPressApi() || $this->request->isApi())
         ) {
             include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
         }
