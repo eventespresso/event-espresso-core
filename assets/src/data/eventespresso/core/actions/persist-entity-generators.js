@@ -146,7 +146,10 @@ function* persistForEntityIds( modelName, entityIds = [] ) {
 		keyEntitiesByPrimaryKeyValue( 'event', entities ) :
 		new Map();
 	const retrievedIds = Array.from( retrievedEntities.keys() );
-	const persistedEntities = DEFAULT_EMPTY_OBJECT;
+	if ( retrievedIds.length < 1 ) {
+		return DEFAULT_EMPTY_OBJECT;
+	}
+	const persistedEntities = {};
 	while ( retrievedIds.length > 0 ) {
 		const persistedEntity = yield dispatch(
 			CORE_REDUCER_KEY,
@@ -173,7 +176,10 @@ function* persistDeletesForModel( modelName ) {
 		'getEntityIdsQueuedForDelete',
 		modelName
 	);
-	const deletedIds = DEFAULT_EMPTY_ARRAY;
+	if ( entityIds.length < 0 ) {
+		return DEFAULT_EMPTY_ARRAY;
+	}
+	const deletedIds = [];
 	while ( entityIds.length > 0 ) {
 		const entityId = entityIds.pop();
 		const response = yield fetch( {
@@ -201,7 +207,10 @@ function* persistTrashesForModel( modelName ) {
 		'getEntityIdsQueuedForTrash',
 		modelName
 	);
-	const trashedIds = DEFAULT_EMPTY_ARRAY;
+	if ( entityIds.length < 1 ) {
+		return DEFAULT_EMPTY_ARRAY;
+	}
+	const trashedIds = [];
 	while ( entityIds.length > 0 ) {
 		const entityId = entityIds.pop();
 		const success = yield fetch( {
@@ -228,8 +237,10 @@ function* persistAllDeletes() {
 		CORE_REDUCER_KEY,
 		'getModelsQueuedForDelete'
 	);
-	const deletedIds = DEFAULT_EMPTY_OBJECT,
-		trashedIds = DEFAULT_EMPTY_OBJECT;
+	if ( modelsForDelete.length < 1 ) {
+		return DEFAULT_EMPTY_OBJECT;
+	}
+	const deletedIds = {};
 	while ( modelsForDelete.length > 0 ) {
 		const modelForDelete = modelsForDelete.pop();
 		const idsDeleted = yield resolveDispatch(
@@ -245,6 +256,10 @@ function* persistAllDeletes() {
 		CORE_REDUCER_KEY,
 		'getModelsQueuedForTrash'
 	);
+	if ( modelsForTrash.length < 1 ) {
+		return DEFAULT_EMPTY_OBJECT;
+	}
+	const trashedIds = {};
 	while ( modelsForTrash.length > 0 ) {
 		const modelForTrash = modelsForTrash.pop();
 		const idsTrashed = yield resolveDispatch(
