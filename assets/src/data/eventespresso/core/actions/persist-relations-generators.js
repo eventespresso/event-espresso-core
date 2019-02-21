@@ -78,10 +78,13 @@ function* persistRelationsForModel( modelName, addRelation = true ) {
 	if ( isEmpty( relationState ) ) {
 		return DEFAULT_EMPTY_OBJECT;
 	}
-	const relationsPersisted = DEFAULT_EMPTY_OBJECT;
 	const entityIds = keys( relationState );
+	const relationsPersisted = entityIds.length > 0 ?
+		{ ...DEFAULT_EMPTY_OBJECT } :
+		DEFAULT_EMPTY_OBJECT;
 	while ( entityIds.length > 0 ) {
 		const entityId = entityIds.pop();
+
 		const persistedRelations = yield resolveDispatch(
 			CORE_REDUCER_KEY,
 			'persistRelationsForEntityId',
@@ -133,7 +136,7 @@ function* persistRelationsForEntityId(
 	if ( isEmpty( relationNames ) ) {
 		return DEFAULT_EMPTY_OBJECT;
 	}
-	const persistedRelations = DEFAULT_EMPTY_OBJECT;
+	const persistedRelations = { ...DEFAULT_EMPTY_OBJECT };
 	while ( relationNames.length > 0 ) {
 		const relationName = relationNames.pop();
 		const persistedRelationIds =
@@ -187,9 +190,12 @@ function* persistRelationsForEntityIdAndRelation(
 	}
 	const relationEntityIds = relationState[ entityId ] &&
 	relationState[ entityId ][ relationName ] ?
-		relationState[ entityId ][ relationName ] :
+		[ ...relationState[ entityId ][ relationName ] ] :
 		DEFAULT_EMPTY_ARRAY;
-	const persistedRelationIds = DEFAULT_EMPTY_ARRAY;
+	if ( relationEntityIds.length < 1 ) {
+		return DEFAULT_EMPTY_ARRAY;
+	}
+	const persistedRelationIds = [];
 	while ( relationEntityIds.length > 0 ) {
 		const persistedRelationId =
 			yield resolveDispatch(
