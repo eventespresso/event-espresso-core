@@ -5,9 +5,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
 import { Component } from '@wordpress/element';
 import { Field } from 'react-final-form';
-import {
-	__experimentalGetSettings as getSettings,
-} from '@wordpress/date';
+import { getSettings } from '@wordpress/date';
 import { Button, DateTimePicker, Dropdown } from '@wordpress/components';
 import { ENTER, SPACE } from '@wordpress/keycodes';
 import { __ } from '@eventespresso/i18n';
