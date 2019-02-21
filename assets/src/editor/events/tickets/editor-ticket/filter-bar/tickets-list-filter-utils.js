@@ -2,7 +2,8 @@
  * External imports
  */
 import { filter, first, sortBy } from 'lodash';
-import moment from 'moment-timezone';
+import {ticketModel} from '@eventespresso/model';
+
 
 /**
  * filterTickets
@@ -20,14 +21,24 @@ export const filterTickets = ( tickets, show = 'on-sale-and-pending' ) => {
 			return filter(
 				tickets,
 				function( ticket ) {
-					return validStatus( ticket ) &&
-						( ticket.status === 'TKO' || ticket.status === 'TKP' );
+                    return ticketModel.isOnSale(ticket) |
+                        ticketModel.isPending(ticket);
 				}
 			);
 		case 'on-sale-only' :
-			return filter( tickets, { status: 'TKO' } );
+            return filter(
+                tickets,
+                function (ticket) {
+                    return ticketModel.isOnSale(ticket);
+                }
+            );
 		case 'pending-only' :
-			return filter( tickets, { status: 'TKP' } );
+            return filter(
+                tickets,
+                function (ticket) {
+                    return ticketModel.isPending(ticket);
+                }
+            );
 		case 'next-on-sale-or-pending-only' :
 			tickets = filterTickets( tickets );
 			tickets = sortTicketsList( tickets );
@@ -36,9 +47,8 @@ export const filterTickets = ( tickets, show = 'on-sale-and-pending' ) => {
 			return filter(
 				tickets,
 				function( ticket ) {
-					return (
-						validStatus( ticket ) && ticket.status === 'TKS'
-					) || percentSoldAtOrAbove( ticket, 100 );
+                    return ticketModel.isSoldOut(ticket) |
+                        percentSoldAtOrAbove(ticket, 100);
 				}
 			);
 		case 'above-90-sold' :
@@ -70,9 +80,19 @@ export const filterTickets = ( tickets, show = 'on-sale-and-pending' ) => {
 				}
 			);
 		case 'expired-only' :
-			return filter( tickets, { status: 'TKE' } );
+            return filter(
+                tickets,
+                function (ticket) {
+                    return ticketModel.isExpired(ticket);
+                }
+            );
 		case 'archived-only' :
-			return filter( tickets, { status: 'TKA' } );
+            return filter(
+                tickets,
+                function (ticket) {
+                    return ticketModel.isArchived(ticket);
+                }
+            );
 	}
 	return tickets;
 };
@@ -93,8 +113,8 @@ export const sortTicketsList = ( tickets, order = 'chronologically' ) => {
 				tickets,
 				[
 					function( ticket ) {
-						return ticket && ticket.start ?
-							now.isBefore( ticket.start ) :
+                        return ticket && ticket.startDate ?
+                            now.isBefore(ticket.startDate) :
 							true;
 					},
 				]
@@ -143,14 +163,6 @@ const percentSoldBelow = ( ticket, maxQuantity ) => {
 			parseInt( ticket.qty ) < ( maxQuantity / 100 )
 		)
 	);
-};
-
-/**
- * @param {Object} ticket    event ticket object
- * @return {boolean} true if status property is valid
- */
-const validStatus = ticket => {
-	return typeof ticket.status === 'string';
 };
 
 /**
