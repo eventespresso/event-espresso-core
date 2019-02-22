@@ -80,7 +80,7 @@ function* persistRelationsForModel( modelName, addRelation = true ) {
 	}
 	const entityIds = keys( relationState );
 	const relationsPersisted = entityIds.length > 0 ?
-		{ ...DEFAULT_EMPTY_OBJECT } :
+		{} :
 		DEFAULT_EMPTY_OBJECT;
 	while ( entityIds.length > 0 ) {
 		const entityId = entityIds.pop();
