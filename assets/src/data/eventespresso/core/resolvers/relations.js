@@ -19,12 +19,15 @@ import { isEmpty } from 'lodash';
 /**
  * Internal Imports
  */
-import { fetch, dispatch, select } from '../../base-controls';
 import {
-	getFactoryByModel,
+	fetch,
+	dispatch,
+	select,
+	resolveSelect,
 	resolveGetEntityByIdForIds,
 	resolveGetRelatedEntities,
-} from '../../base-resolvers';
+} from '../../base-controls';
+
 import {
 	receiveEntityRecords,
 	receiveRelatedEntities,
@@ -32,6 +35,8 @@ import {
 import { keepExistingEntitiesInObject } from '../../base-model';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
+
+const DEFAULT_EMPTY_ARRAY = [];
 
 /**
  * A resolver for getting relation entities for the given model name and entity
@@ -83,15 +88,19 @@ export function* getRelatedEntities( entity, relationModelName ) {
 		path: relationEndpoint,
 	} );
 	if ( ! relationEntities.length ) {
-		return [];
+		return DEFAULT_EMPTY_ARRAY;
 	}
 
-	const factory = yield getFactoryByModel( singularRelationName );
+	const factory = yield resolveSelect(
+		SCHEMA_REDUCER_KEY,
+		'getFactoryForModel',
+		singularRelationName
+	);
 	if ( ! isModelEntityFactoryOfModel(
 		factory,
 		singularRelationName
 	) ) {
-		return [];
+		return DEFAULT_EMPTY_ARRAY;
 	}
 
 	let fullEntities = keyEntitiesByPrimaryKeyValue(
