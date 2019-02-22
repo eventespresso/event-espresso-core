@@ -53,7 +53,7 @@ function* persistDeleteRelationsForModel( modelName ) {
 		CORE_REDUCER_KEY,
 		'persistRelationsForModel',
 		modelName,
-		false,
+		false
 	);
 }
 
