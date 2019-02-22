@@ -67,7 +67,7 @@ export function* getRelatedEntities( entity, relationModelName ) {
 			modelName,
 			pluralRelationName
 		);
-		return [];
+		return DEFAULT_EMPTY_ARRAY;
 	}
 	yield dispatch(
 		SCHEMA_REDUCER_KEY,
