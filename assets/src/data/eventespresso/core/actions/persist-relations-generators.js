@@ -136,7 +136,7 @@ function* persistRelationsForEntityId(
 	if ( isEmpty( relationNames ) ) {
 		return DEFAULT_EMPTY_OBJECT;
 	}
-	const persistedRelations = { ...DEFAULT_EMPTY_OBJECT };
+	const persistedRelations = {};
 	while ( relationNames.length > 0 ) {
 		const relationName = relationNames.pop();
 		const persistedRelationIds =
