@@ -1,19 +1,12 @@
 /**
- * External imports
- */
-import { isGenerator } from '@eventespresso/validators';
-
-/**
  * Internal imports
  */
 import {
 	createRelation,
 	createRelations,
 } from '../create-relations-generators';
-import {
-	receiveRelatedEntities,
-	receiveDirtyRelationAddition,
-} from '../receive-relations';
+import { dispatch } from '../../../base-controls';
+import { REDUCER_KEY } from '../../constants';
 import { EventEntities } from '../../../test/fixtures/base';
 
 describe( 'createRelation()', () => {
@@ -34,15 +27,24 @@ describe( 'createRelation()', () => {
 				expect( value ).toBeUndefined();
 				expect( done ).toBe( true );
 			} );
-		it( 'yields an generator for receiving and resolving entities', () => {
+		it( 'yields a dispatch action for receiving and resolving entities', () => {
 			reset( TestEvent );
 			const { value } = fulfillment.next();
-			expect( isGenerator( value ) ).toBe( true );
+			expect( value ).toEqual(
+				dispatch(
+					REDUCER_KEY,
+					'receiveEntityAndResolve',
+					'event',
+					TestEvent
+				)
+			);
 		} );
-		it( 'yields an action object for receiving related entities', () => {
+		it( 'yields a dispatch action for receiving related entities', () => {
 			const { value } = fulfillment.next();
 			expect( value ).toEqual(
-				receiveRelatedEntities(
+				dispatch(
+					REDUCER_KEY,
+					'receiveRelatedEntities',
 					'datetime',
 					40,
 					'events',
@@ -50,21 +52,19 @@ describe( 'createRelation()', () => {
 				)
 			);
 		} );
-		describe( 'yields action objects for receiving dirty relations', () => {
-			const args = [ 'events', 20, 'datetime', 40 ];
-			[ receiveDirtyRelationAddition ].forEach(
-				( actionMethod ) => {
-					it( actionMethod.name + '()', () => {
-						const { value } = fulfillment.next();
-						expect( value ).toEqual( actionMethod( ...args ) );
-					} );
-				}
-			);
-		} );
-		it( 'yields generator for resolving entity id ' +
-			'selector', () => {
+		it( 'yields a dispatch action for receiving dirty relation ' +
+			'addition', () => {
 			const { value } = fulfillment.next();
-			expect( isGenerator( value ) ).toBe( true );
+			expect( value ).toEqual(
+				dispatch(
+					REDUCER_KEY,
+					'receiveDirtyRelationAddition',
+					'events',
+					20,
+					'datetime',
+					40,
+				)
+			);
 		} );
 	} );
 } );
@@ -92,15 +92,24 @@ describe( 'createRelations()', () => {
 		expect( value ).toBeUndefined();
 		expect( done ).toBe( true );
 	} );
-	it( 'yields an generator for receiving entity records', () => {
+	it( 'yields a dispatch action for receiving entity records', () => {
 		reset( TestEvents, 'events' );
 		const { value } = fulfillment.next();
-		expect( isGenerator( value ) ).toBe( true );
+		expect( value ).toEqual(
+			dispatch(
+				REDUCER_KEY,
+				'receiveEntitiesAndResolve',
+				'event',
+				TestEvents
+			)
+		);
 	} );
-	it( 'yields an action object for receiving related entity ids', () => {
+	it( 'yields dispatch action for receiving related entity ids', () => {
 		const { value } = fulfillment.next();
 		expect( value ).toEqual(
-			receiveRelatedEntities(
+			dispatch(
+				REDUCER_KEY,
+				'receiveRelatedEntities',
 				'datetime',
 				40,
 				'events',
@@ -108,18 +117,20 @@ describe( 'createRelations()', () => {
 			)
 		);
 	} );
-	describe( 'yields action objects for receiving dirty relations (for all ' +
+	describe( 'yields dispatch actions for receiving dirty relations (for all ' +
 		'expected ids)', () => {
 		[ 30, 20 ].forEach( ( relationId ) => {
-			[ receiveDirtyRelationAddition ].forEach(
-				( actionMethod ) => {
-					it( actionMethod.name + '()', () => {
-						const { value } = fulfillment.next();
-						const args = [ 'events', relationId, 'datetime', 40 ];
-						expect( value ).toEqual( actionMethod( ...args ) );
-					} );
-				}
-			);
+			it( 'yields dispatch action for id:' + relationId, () => {
+				const { value } = fulfillment.next();
+				const args = [ 'events', relationId, 'datetime', 40 ];
+				expect( value ).toEqual(
+					dispatch(
+						REDUCER_KEY,
+						'receiveDirtyRelationAddition',
+						...args
+					)
+				);
+			} );
 		} );
 	} );
 } );
