@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { EventSchema } from '@test/fixtures';
-import { isGenerator } from '@eventespresso/validators';
 import { getEndpoint } from '@eventespresso/model';
 
 /**
@@ -19,9 +18,9 @@ import {
 	receiveRelationEndpointForModelEntity,
 } from '../actions';
 import { eventFactory, EventEntities } from '../../test/fixtures/base';
-import { fetchFromApi } from '../controls';
-import { select } from '../../base-controls';
+import { fetch, resolveSelect } from '../../base-controls';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../../core/constants';
+import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../constants';
 
 const poorManSerializer = ( item ) => {
 	return JSON.parse( JSON.stringify( item ) );
@@ -78,8 +77,14 @@ describe( 'getFactoryForModel()', () => {
 		it( 'yields expected generator for schema selector when no ' +
 			'schema provided', () => {
 			reset();
-			const { value: getSchemaByModelGenerator } = fulfillment.next();
-			expect( isGenerator( getSchemaByModelGenerator ) ).toBe( true );
+			const { value } = fulfillment.next();
+			expect( value ).toEqual(
+				resolveSelect(
+					SCHEMA_REDUCER_KEY,
+					'getSchemaForModel',
+					'event'
+				)
+			);
 		} );
 		it( 'returns null when there is no schema for the given model', () => {
 			const { value, done } = fulfillment.next( {} );
@@ -109,10 +114,10 @@ describe( 'getRelationEndpointForEntityId()', () => {
 		10,
 		'datetimes'
 	);
-	it( 'yields select action for getting entity by Id', () => {
+	it( 'yields resolve select control action for getting entity by id', () => {
 		reset();
 		const { value } = fulfillment.next();
-		expect( value ).toEqual( select(
+		expect( value ).toEqual( resolveSelect(
 			CORE_REDUCER_KEY,
 			'getEntityById',
 			'event',
@@ -135,7 +140,7 @@ describe( 'getRelationEndpointForEntityId()', () => {
 		reset();
 		fulfillment.next();
 		const { value } = fulfillment.next( {} );
-		expect( value ).toEqual( fetchFromApi(
+		expect( value ).toEqual( fetch(
 			{
 				path: getEndpoint( 'event' ) + '/' + 10,
 			}

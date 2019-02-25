@@ -118,23 +118,6 @@ export const createActions = ( action ) => MODEL_NAMES.reduce(
 		actions[ getMethodName(
 			modelName,
 			'id',
-			'removeDirtyRelationsFor'
-		) ] = (
-			entityId,
-			relationName,
-			relationId,
-			addRelation = true
-		) => action
-			.removeDirtyRelations(
-				relationName,
-				relationId,
-				modelName,
-				entityId,
-				addRelation
-			);
-		actions[ getMethodName(
-			modelName,
-			'id',
 			'receiveRelatedEntitiesFor'
 		) ] = ( entityId, relationName, relationEntityIds ) => action
 			.receiveRelatedEntities(
