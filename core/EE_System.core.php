@@ -386,7 +386,8 @@ final class EE_System implements ResettableInterface
         // also, don't load the basic auth when a plugin is getting activated, because
         // it could be the basic auth plugin, and it doesn't check if its methods are already defined
         // and causes a fatal error
-        if ($this->request->getRequestParam('activate') !== 'true'
+        if (($this->request->isWordPressApi() || $this->request->isApi())
+            && $this->request->getRequestParam('activate') !== 'true'
             && ! function_exists('json_basic_auth_handler')
             && ! function_exists('json_basic_auth_error')
             && ! in_array(
@@ -394,7 +395,6 @@ final class EE_System implements ResettableInterface
                 array('activate', 'activate-selected'),
                 true
             )
-            && ($this->request->isWordPressApi() || $this->request->isApi())
         ) {
             include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
         }
