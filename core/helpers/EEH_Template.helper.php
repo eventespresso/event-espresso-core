@@ -436,11 +436,12 @@ class EEH_Template
      * This helper takes a raw float value and formats it according to the default config country currency settings, or
      * the country currency settings from the supplied country ISO code
      *
-     * @param float   $amount       raw money value
-     * @param boolean $return_raw   whether to return the formatted float value only with no currency sign or code
-     * @param boolean $display_code whether to display the country code (USD). Default = TRUE
-     * @param string  $CNT_ISO      2 letter ISO code for a country
-     * @param string  $cur_code_span_class
+     * @param  float   $amount       raw money value
+     * @param  boolean $return_raw   whether to return the formatted float value only with no currency sign or code
+     * @param  boolean $display_code whether to display the country code (USD). Default = TRUE
+     * @param string   $CNT_ISO      2 letter ISO code for a country
+     * @param string   $cur_code_span_class
+     * @param boolean $allow_partial_pennies whether to allow displaying partial penny amounts
      * @return string        the html output for the formatted money value
      */
     public static function format_currency(
@@ -448,7 +449,8 @@ class EEH_Template
         $return_raw = false,
         $display_code = true,
         $CNT_ISO = '',
-        $cur_code_span_class = 'currency-code'
+        $cur_code_span_class = 'currency-code',
+        $allow_partial_pennies = false
     ) {
         // ensure amount was received
         if ($amount === null) {
@@ -468,52 +470,68 @@ class EEH_Template
         try {
             // was a country ISO code passed ? if so generate currency config object for that country
             $mny = $CNT_ISO !== '' ? new EE_Currency_Config($CNT_ISO) : null;
-        } catch (Exception $e) {
-            // eat exception
-            $mny = null;
-        }
-        // verify results
-        if (! $mny instanceof EE_Currency_Config) {
-            // set default config country currency settings
-            $mny = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
-                ? EE_Registry::instance()->CFG->currency
-                : new EE_Currency_Config();
-        }
-        // format float
-        $amount_formatted = number_format($amount, $mny->dec_plc, $mny->dec_mrk, $mny->thsnds);
-        // add formatting ?
-        if (! $return_raw) {
-            // add currency sign
-            if ($mny->sign_b4) {
-                if ($amount >= 0) {
-                    $amount_formatted = $mny->sign . $amount_formatted;
-                } else {
-                    $amount_formatted = '-' . $mny->sign . str_replace('-', '', $amount_formatted);
-                }
-            } else {
-                $amount_formatted = $amount_formatted . $mny->sign;
+
+            // verify results
+            if (! $mny instanceof EE_Currency_Config) {
+                // set default config country currency settings
+                $mny = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
+                    ? EE_Registry::instance()->CFG->currency
+                    : new EE_Currency_Config();
             }
 
-            // filter to allow global setting of display_code
-            $display_code = (bool) apply_filters(
-                'FHEE__EEH_Template__format_currency__display_code',
-                $display_code
+            // format float
+            $decimal_places_to_use = $mny->dec_plc;
+            // If we're allowing showing partial penny amounts, determine how many decimal places to use.
+            if($allow_partial_pennies){
+                $pos_of_period = strrpos($amount, '.');
+                if($pos_of_period !== false) {
+                    // Use a max of two extra decimal places (more than that and it starts
+                    // to look silly), but at least the normal number of decimal places.
+                    $decimal_places_to_use = min(
+                            max(
+                            strlen($amount) - 1 - strpos($amount, '.'),
+                            $decimal_places_to_use
+                        ),
+                        $decimal_places_to_use + 2
+                    );
+                }
+            }
+            $amount_formatted = number_format($amount, $decimal_places_to_use, $mny->dec_mrk, $mny->thsnds);
+
+            // add formatting ?
+            if (! $return_raw) {
+                // add currency sign
+                if ($mny->sign_b4) {
+                    if ($amount >= 0) {
+                        $amount_formatted = $mny->sign . $amount_formatted;
+                    } else {
+                        $amount_formatted = '-' . $mny->sign . str_replace('-', '', $amount_formatted);
+                    }
+                } else {
+                    $amount_formatted = $amount_formatted . $mny->sign;
+                }
+
+                // filter to allow global setting of display_code
+                $display_code = apply_filters('FHEE__EEH_Template__format_currency__display_code', $display_code);
+
+                // add currency code ?
+                $amount_formatted = $display_code ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount_formatted;
+            }
+
+            // filter results
+            $amount_formatted = apply_filters(
+                'FHEE__EEH_Template__format_currency__amount_formatted',
+                $amount_formatted,
+                $mny,
+                $return_raw
             );
 
-            // add currency code ?
-            $amount_formatted = $display_code
-                ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>'
-                : $amount_formatted;
+            // clean up vars
+            unset($mny);
+
+        } catch (Exception $e) {
+            // eat exception
         }
-        // filter results
-        $amount_formatted = apply_filters(
-            'FHEE__EEH_Template__format_currency__amount_formatted',
-            $amount_formatted,
-            $mny,
-            $return_raw
-        );
-        // clean up vars
-        unset($mny);
         // return formatted currency amount
         return $amount_formatted;
     }
