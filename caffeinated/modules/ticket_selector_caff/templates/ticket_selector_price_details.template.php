@@ -79,9 +79,15 @@ if ($display_ticket_price) { ?>
                         <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>"
                             class="jst-rght small-text">
                             <?php
-                            echo EEH_Template::format_currency(
-                                $new_sub_total
-                            ); ?></td>
+                                echo EEH_Template::format_currency(
+                                    $new_sub_total,
+                                    false,
+                                    true,
+                                    '',
+                                    'currency-code',
+                                    true
+                                );
+                             ?></td>
                         <?php $running_total += $new_sub_total; ?>
                     </tr>
                 <?php } ?>
@@ -109,9 +115,13 @@ if ($display_ticket_price) { ?>
                             <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>"
                                 class="jst-rght small-text">
                                 <?php
-                                echo EEH_Template::format_currency(
-                                    $tax_amount
-                                ); ?></td>
+                                if($price_mod->is_percent()) {
+                                    echo $new_sub_total;
+                                } else {
+                                    echo EEH_Template::format_currency(
+                                        $new_sub_total
+                                    );
+                                } ?></td>
                             <?php $running_total += $tax_amount; ?>
                         </tr>
                     <?php } ?>
