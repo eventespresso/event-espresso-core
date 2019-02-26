@@ -3,11 +3,9 @@
  */
 import { isEmpty } from 'lodash';
 import { Component } from '@wordpress/element';
-// import { __ } from '@eventespresso/i18n';
 import {
 	withFormHandler,
 	twoColumnAdminFormLayout,
-	// validations,
 } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
 
@@ -18,7 +16,7 @@ import { eventDateEntityFormInputs } from './event-date-entity-form-inputs';
 
 /**
  * @function
- * @param {Object} eventDate    JSON object defining the Event Date
+ * @param {Object} eventDate model object defining the Event Date
  */
 class EditEventDateForm extends Component {
 	render() {
@@ -37,15 +35,8 @@ class EditEventDateForm extends Component {
 		) {
 			return null;
 		}
-		// console.log( '' );
-		// console.log( 'EditEventDateForm.render()', this.props );
-		// console.log( 'EditEventDateForm.render() initialValues', initialValues );
-		// console.log( 'EditEventDateForm.render() currentValues', currentValues );
 		const {
-			// InputLabel,
 			FormInput,
-			// FormColumn,
-			// FormRow,
 			FormSection,
 			FormWrapper,
 			FormSaveCancelButtons,
