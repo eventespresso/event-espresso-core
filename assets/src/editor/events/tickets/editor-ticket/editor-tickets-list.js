@@ -26,15 +26,12 @@ class EditorTicketsList extends Component {
 	render() {
 		const {
 			entities,
-			allTickets,
-			isChained,
 			view = 'grid',
 			...otherProps
 		} = this.props;
-		const tickets = isChained ? entities : allTickets;
 		return (
 			<EntityList
-				entities={ tickets }
+				entities={ entities }
 				EntityGridView={ EditorTicketsGridView }
 				EntityListView={ EditorTicketsListView }
 				view={ view }
