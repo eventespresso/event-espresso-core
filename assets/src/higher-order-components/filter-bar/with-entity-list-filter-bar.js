@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import { isFunction } from 'lodash';
 import { Component, Fragment } from '@wordpress/element';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { __ } from '@eventespresso/i18n';
@@ -20,9 +21,21 @@ import { default as EntityListFilterBar } from './entity-list-filter-bar';
 export default createHigherOrderComponent(
 	( EntityList ) => {
 		return class extends Component {
+			searchEntities = ( searchText, entities ) => {
+				return searchText !== '' ?
+					entities.filter( ( entity ) => {
+						const entityName = entity.name ? entity.name : '';
+						return entityName.toLowerCase().search(
+							searchText.toLowerCase() ) !== -1;
+					} ) :
+					entities;
+			};
+
 			render() {
+				let { entities } = this.props;
 				const {
-					entities,
+					searchText,
+					setSearchText,
 					perPage,
 					view,
 					setPerPage,
@@ -30,9 +43,14 @@ export default createHigherOrderComponent(
 					setGridView,
 					...otherProps
 				} = this.props;
+				entities = isFunction( setSearchText ) ?
+					this.searchEntities( searchText, entities ) :
+					entities;
 				return (
 					<Fragment>
 						<EntityListFilterBar
+							searchText={ searchText }
+							setSearchText={ setSearchText }
 							perPage={ perPage }
 							view={ view }
 							setPerPage={ setPerPage }
