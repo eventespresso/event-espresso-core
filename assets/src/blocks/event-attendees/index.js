@@ -54,7 +54,7 @@ export const settings = {
 		},
 		limit: {
 			type: 'number',
-			default: 10,
+			default: 100,
 		},
 		order: {
 			type: 'string',

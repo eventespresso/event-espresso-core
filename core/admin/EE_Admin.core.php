@@ -89,6 +89,8 @@ final class EE_Admin implements InterminableInterface
         add_filter('pre_update_option', array($this, 'check_for_invalid_datetime_formats'), 100, 2);
         add_filter('admin_footer_text', array($this, 'espresso_admin_footer'));
         add_action('load-plugins.php', array($this, 'hookIntoWpPluginsPage'));
+        add_action('display_post_states', array($this, 'displayStateForCriticalPages'), 10, 2);
+        add_filter('plugin_row_meta', array($this, 'addLinksToPluginRowMeta'), 10, 2);
         // reset Environment config (we only do this on admin page loads);
         EE_Registry::instance()->CFG->environment->recheck_values();
         do_action('AHEE__EE_Admin__loaded');
@@ -1007,5 +1009,64 @@ final class EE_Admin implements InterminableInterface
         $this->getLoader()
                      ->getShared('EventEspresso\core\domain\services\admin\PluginUpsells')
                      ->decafUpsells();
+    }
+
+
+    /**
+     * Hooks into the "post states" filter in a wp post type list table.
+     *
+     * @param array   $post_states
+     * @param WP_Post $post
+     * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function displayStateForCriticalPages($post_states, $post)
+    {
+        $post_states = (array) $post_states;
+        if (! $post instanceof WP_Post || $post->post_type !== 'page') {
+            return $post_states;
+        }
+        /** @var EE_Core_Config $config */
+        $config = $this->getLoader()->getShared('EE_Config')->core;
+        if (in_array($post->ID, $config->get_critical_pages_array(), true)) {
+            $post_states[] = sprintf(
+                /* Translators: Using company name - Event Espresso Critical Page */
+                esc_html__('%s Critical Page', 'event_espresso'),
+                'Event Espresso'
+            );
+        }
+        return $post_states;
+    }
+
+
+    /**
+     * Show documentation links on the plugins page
+     *
+     * @param mixed $meta Plugin Row Meta
+     * @param mixed $file Plugin Base file
+     * @return array
+     */
+    public function addLinksToPluginRowMeta($meta, $file)
+    {
+        if (EE_PLUGIN_BASENAME === $file) {
+            $row_meta = array(
+                'docs' => '<a href="https://eventespresso.com/support/documentation/versioned-docs/?doc_ver=ee4"'
+                          . ' aria-label="'
+                          . esc_attr__('View Event Espresso documentation', 'event_espresso')
+                          . '">'
+                          . esc_html__('Docs', 'event_espresso')
+                          . '</a>',
+                'api'  => '<a href="https://github.com/eventespresso/event-espresso-core/tree/master/docs/C--REST-API"'
+                          . ' aria-label="'
+                          . esc_attr__('View Event Espresso API docs', 'event_espresso')
+                          . '">'
+                          . esc_html__('API docs', 'event_espresso')
+                          . '</a>',
+            );
+            return array_merge($meta, $row_meta);
+        }
+        return (array) $meta;
     }
 }

@@ -19,7 +19,9 @@ const EventsListBase = ( { events } ) => {
   )
 }
 const EventList = withSelect( ( select ) => {
-  events: select( 'eventespresso/lists' ).getEvents();
+  return {
+    events: select( 'eventespresso/lists' ).getEvents();
+  }
 } )
 ```
 

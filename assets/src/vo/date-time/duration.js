@@ -6,6 +6,7 @@ import momentDurationFormatSetup from 'moment-duration-format';
 import { capitalize, pick, keys, omit, mapValues } from 'lodash';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import warning from 'warning';
+import { instanceOf } from '@eventespresso/validators';
 
 /**
  * Internal imports
@@ -211,7 +212,8 @@ export default class Duration {
 	 * @return {boolean}  True means it is a valid Duration object.
 	 */
 	static isValidDuration( duration ) {
-		return duration instanceof Duration && duration.isValid;
+		return instanceOf( duration, 'Duration' ) &&
+			duration.isValid;
 	}
 
 	/**
@@ -236,7 +238,7 @@ export default class Duration {
 	 * Note: true may still mean that the Duration instance is not valid!
 	 */
 	static isDuration( duration ) {
-		return duration instanceof Duration;
+		return instanceOf( duration, 'Duration' );
 	}
 
 	/**

@@ -1,14 +1,19 @@
 /**
  * External imports
  */
-import { isGenerator } from '@eventespresso/validators';
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import { AuthedDateTimeResponse } from '@test/fixtures';
 
 /**
  * Internal imports
  */
-import { fetch, dispatch, select } from '../../../base-controls';
+import {
+	fetch,
+	dispatch,
+	select,
+	resolveSelect,
+	resolveGetEntityByIdForIds,
+} from '../../../base-controls';
 import { getRelatedEntities } from '../relations';
 import { dateTimeFactory, EventEntities } from '../../../test/fixtures/base';
 import { receiveRelatedEntities } from '../../actions';
@@ -80,13 +85,20 @@ describe( getRelatedEntities.name + '()', () => {
 		expect( value ).toEqual( [] );
 		expect( done ).toBe( true );
 	} );
-	it( 'yields a generator for getting the factory for the relation', () => {
+	it( 'yields a control action for getting the factory for the ' +
+		'relation', () => {
 		reset();
 		fulfillment.next();
 		fulfillment.next();
 		fulfillment.next();
 		const { value } = fulfillment.next( [ AuthedDateTimeResponse ] );
-		expect( isGenerator( value ) ).toBe( true );
+		expect( value ).toEqual(
+			resolveSelect(
+				SCHEMA_REDUCER_KEY,
+				'getFactoryForModel',
+				'datetime'
+			)
+		);
 	} );
 	it( 'yields an empty array if the value retrieved is not a factory for ' +
 		'given relation', () => {
@@ -124,13 +136,19 @@ describe( getRelatedEntities.name + '()', () => {
 			)
 		);
 	} );
-	it( 'yields generator for resolving related entities', () => {
+	it( 'yields control action for resolving related entities', () => {
 		const { value } = fulfillment.next();
-		expect( isGenerator( value ) ).toBe( true );
+		expect( value.type ).toBe( 'RESOLVE_GET_RELATED_ENTITIES' );
+		expect( value.relationIds ).toEqual( [ AuthedDateTimeResponse.DTT_ID ] );
 	} );
-	it( 'yields generator for resolving get entity by id for ids', () => {
+	it( 'yields control action for resolving get entity by id for ids', () => {
 		const { value } = fulfillment.next();
-		expect( isGenerator( value ) ).toBe( true );
+		expect( value ).toEqual(
+			resolveGetEntityByIdForIds(
+				'datetime',
+				[ AuthedDateTimeResponse.DTT_ID ]
+			)
+		);
 	} );
 	it( 'returns the related model entity instances', () => {
 		const { value, done } = fulfillment.next();

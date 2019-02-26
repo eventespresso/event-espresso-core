@@ -14,6 +14,7 @@ A React component for adding a numeric Range Control input for setting the numbe
     onLimitChange={
         ( value ) => onChangeCallback( { limit: value } )
     }
+    withSlider={ false }
 />
 ```
 
@@ -58,6 +59,14 @@ The  function called when a change of value is detected. Used for saving the val
 
 - Type: `Function`
 - Required: Yes
+
+### withSlider
+
+This indicates whether to show a range control slider or not.  If set to false, then only a number input is rendered.
+
+- Type: `boolean`
+- Required: No
+- Default: `true`
 
 
 ## Usage within a Block's edit callback

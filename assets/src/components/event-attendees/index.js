@@ -32,17 +32,20 @@ export default class EventAttendeeList extends Component {
 	getAttendeeList() {
 		const { attendees, showGravatar, isLoading } = this.props;
 		if ( isEmpty( attendees ) ) {
-			return '';
+			return null;
 		}
 		const listItems = attendees.map(
-			( attendee, index ) => {
-				return <AttendeeListItem
-					key={ index }
-					attendee={ attendee }
-					showGravatar={ showGravatar }
-					isLoading={ isLoading }
-					{ ...this.props }
-				/>;
+			( attendee ) => {
+				if ( attendee.id ) {
+					return <AttendeeListItem
+						key={ attendee.id }
+						attendee={ attendee }
+						showGravatar={ showGravatar }
+						isLoading={ isLoading }
+						{ ...this.props }
+					/>;
+				}
+				return null;
 			}
 		);
 		return (
