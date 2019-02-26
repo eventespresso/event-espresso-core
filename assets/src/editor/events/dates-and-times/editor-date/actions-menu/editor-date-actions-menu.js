@@ -6,6 +6,7 @@ import { Component, Fragment } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { DropDownMenu, IconMenuItem } from '@eventespresso/components';
 import { __, sprintf, _x } from '@eventespresso/i18n';
+import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * Internal dependencies
@@ -156,6 +157,9 @@ class EditorDateActionsMenu extends Component {
 
 	render() {
 		const { eventDate, allTickets, onUpdate } = this.props;
+		if ( ! isModelEntityOfModel( eventDate, 'datetime' ) ) {
+			return null;
+		}
 		let sidebarMenuItems = [];
 		sidebarMenuItems.push( this.mainDropDownMenu( eventDate ) );
 		sidebarMenuItems.push( this.editDateMenuItem( eventDate ) );
