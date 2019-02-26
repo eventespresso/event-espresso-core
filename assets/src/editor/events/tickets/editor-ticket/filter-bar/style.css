@@ -3,9 +3,11 @@
  * © 2018 Event Espresso
  * ------------------------------------------------------------------------- */
 
+.ee-entity-list-filter-bar .ee-filter-bar-filter.ee-show-tickets-filter {
+    margin-right: .25rem;
+}
+
 .ee-entity-list-filter-bar .ee-ticket-dates-chained-filter {
     margin-right: .75rem;
-}
-.ee-ticket-dates-chained-filter .components-icon-button {
-    top: -3px;
+    margin-top: 1px;
 }
