@@ -37,6 +37,7 @@ export class InlineEditInput extends Component {
 		label: PropTypes.string,
 		valueType: PropTypes.string,
 		valueFormatter: PropTypes.func,
+		formatterSettings: PropTypes.object,
 	};
 
 	constructor( props ) {
@@ -216,11 +217,12 @@ export class InlineEditInput extends Component {
 	/**
 	 * renders the text in display mode
 	 * @param {Function} valueFormatter formatting callback
+	 * @param {Object} formatterSettings
 	 * @return {Object} rendered span tag
 	 */
-	displayComponent = ( valueFormatter ) => {
+	displayComponent = ( valueFormatter, formatterSettings ) => {
 		const value = isFunction( valueFormatter ) ?
-			valueFormatter( this.state.value ) :
+			valueFormatter( this.state.value, formatterSettings ) :
 			this.state.value;
 		return (
 			<Fragment>
@@ -261,6 +263,7 @@ export class InlineEditInput extends Component {
 			type = 'text',
 			valueType = 'string',
 			valueFormatter = null,
+			formatterSettings = {},
 			label = '',
 			...inputProps
 		} = this.props;
@@ -275,6 +278,6 @@ export class InlineEditInput extends Component {
 				inputProps
 			);
 		}
-		return this.displayComponent( valueFormatter );
+		return this.displayComponent( valueFormatter, formatterSettings );
 	}
 }
