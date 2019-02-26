@@ -202,3 +202,20 @@ const validInfiniteQuantity = ( ticket ) => {
 const validSold = ( ticket ) => {
 	return typeof ticket.sold === 'string' || typeof ticket.sold === 'number';
 };
+
+/**
+ * searchTickets
+ * reduces tickets array based on value of the "searchDateName" filter
+ *
+ * @param {Array} tickets 		original tickets array
+ * @param {string} searchText 	value for the "searchTicketName" filter
+ * @return {Array} 				filtered tickets array
+ */
+export const searchTickets = ( tickets, searchText = '' ) => {
+	return searchText !== '' ?
+		tickets.filter( ( ticket ) => {
+			return ticket.name.toLowerCase()
+				.search( searchText.toLowerCase() ) !== -1;
+		} ) :
+		tickets;
+};
