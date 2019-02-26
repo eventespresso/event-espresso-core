@@ -18,15 +18,23 @@ export default createHigherOrderComponent(
 	compose( [
 		withSelect( ( select, ownProps ) => {
 			const {
+				searchText = '',
 				perPage = 6,
 				view = 'grid',
 			} = ownProps;
 			const store = select( 'eventespresso/filter-state' );
 			return {
-				perPage: store.getFilter(
+				searchText: store.getFilter(
 					'entity-list',
-					'perPage',
-					perPage
+					'searchText',
+					searchText
+				),
+				perPage: parseInt(
+					store.getFilter(
+						'entity-list',
+						'perPage',
+						perPage
+					)
 				),
 				view: store.getFilter(
 					'entity-list',
@@ -38,10 +46,15 @@ export default createHigherOrderComponent(
 		withDispatch( ( dispatch ) => {
 			const store = dispatch( 'eventespresso/filter-state' );
 			return {
+				setSearchText: ( searchText ) => store.setFilter(
+					'entity-list',
+					'searchText',
+					searchText
+				),
 				setPerPage: ( perPage ) => store.setFilter(
 					'entity-list',
 					'perPage',
-					perPage
+					parseInt( perPage )
 				),
 				setListView: () => store.setFilter(
 					'entity-list',
