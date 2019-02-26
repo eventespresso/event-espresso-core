@@ -11,7 +11,7 @@
     display: flex;
     flex-flow: row wrap;
     justify-content: space-between;
-    padding: .5rem .5rem 0;
+    padding: .5rem;
     border-bottom: 1px solid #f4f4f4;
     margin: 0 0 1rem;
 }
@@ -23,25 +23,28 @@
 
 .ee-entity-list-filter-bar {
     justify-content: flex-start;
-    width: 70%;
+    /*width: 70%;*/
 }
 
 .ee-entity-list-view-bar {
     max-height: 36px;
     justify-content: flex-end;
     margin: -1px -4px .75rem 0;
+    /*width: 30%;*/
+}
+.ee-entity-list-filter-bar-perPage-select {
     text-align: right;
-    width: 30%;
 }
 
-.ee-entity-list-view-bar .ee-view-filter {
-    position: relative;
-    top: -4px;
-}
+/*.ee-entity-list-view-bar .ee-view-filter {*/
+    /*position: relative;*/
+    /*top: -4px;*/
+/*}*/
 
 .ee-entity-list-filter-bar .ee-filter-bar-filter {
     margin: 0 1rem .75rem 0;
     max-width: 100%;
+    white-space: pre;
 }
 
 .ee-entity-list-view-bar .ee-filter-bar-filter {
@@ -52,11 +55,14 @@
     margin: 0 0 0 1rem;
     max-width: 100%;
 }
+.ee-entity-list-view-bar .ee-filter-bar-filter.ee-search-filter {
+    margin: 0;
+}
 
 .ee-entity-list-view-bar .ee-per-page-filter {
     margin-right: 4px;
     max-height: 36px;
-    max-width: 115px;
+    /*max-width: 115px;*/
 }
 
 .ee-entity-list-view-bar .ee-grid-view-filter {
@@ -81,17 +87,42 @@
 .ee-entity-list-filter-bar-wrapper .components-base-control__label {
     color: #706e73;
     font-weight: bold;
-    margin: 0 .5rem .25rem 0;
+    margin: .25rem .5rem .1rem 5px;
     white-space: nowrap;
 }
 
 .ee-entity-list-filter-bar-wrapper .components-base-control__label,
+.ee-entity-list-filter-bar-wrapper .components-text-control__input,
 .ee-entity-list-filter-bar-wrapper .components-select-control__input {
     display: inline-block;
     width: auto;
     max-width: 100%;
 }
 
+.ee-entity-list-filter-bar-wrapper input,
+.ee-entity-list-filter-bar-wrapper select {
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ddd;
+    border-radius: 0.25rem;
+    box-shadow: none;
+    color: #58575c;
+    display: inline-block;
+    font-size: 1rem;
+    line-height: 1;
+    height: 2.25rem;
+    padding: 0.25rem 0.5rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    vertical-align: middle;
+    width: 100%;
+}
+
+
+.ee-entity-list-filter-bar-wrapper select option {
+    line-height: 20 !important;;
+    min-height: 30rem !important;;
+    padding: 10rem 0.5rem !important;
+}
 
 
 /* Media Queries for specific screen sizes
