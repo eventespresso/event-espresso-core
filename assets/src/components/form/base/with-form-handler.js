@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-// import { isFunc } from 'lodash';
+import { isEmpty, isFunction } from 'lodash';
 import { Component } from '@wordpress/element';
 import { Form } from 'react-final-form';
 
@@ -53,9 +53,9 @@ export const withFormHandler = (
 		constructor( props ) {
 			super( props );
 			this.state = {
-				// loading: false,
+				loading: false,
 				changes: false,
-				// data: {},
+				data: {},
 				loadHandler: props.loadHandler ?
 					props.loadHandler :
 					loadHandler,
@@ -85,25 +85,25 @@ export const withFormHandler = (
 		/**
 		 * @function
 		 */
-		// async componentDidMount() {
-		// 	if ( isFunc( this.state.loadHandler ) ) {
-		// 		this.setState( { loading: true } );
-		// 		const data = await this.state.loadHandler();
-		// 		this.setState( { loading: false, data } );
-		// 	}
-		// }
+		async componentDidMount() {
+			if ( isFunction( this.state.loadHandler ) ) {
+				this.setState( { loading: true } );
+				const data = await this.state.loadHandler();
+				this.setState( { loading: false, data } );
+			}
+		}
 
 		render() {
-			// console.log( 'withFormHandler.render() state', this.state );
-			// const { data, loading, errorMessage = '' } = this.state;
 			const {
 				loading,
-				formData = null,
 				errorMessage = '',
 				loadingNotice = '',
 				...formProps
 			} = this.props;
-			// console.log( 'withFormHandler.render() formData', formData );
+			let { formData = null } = this.props;
+			formData = formData === null && ! isEmpty( this.state.data ) ?
+				this.state.data :
+				formData;
 			return (
 				<FormErrorBoundary errorMessage={ errorMessage } >
 					<Form
