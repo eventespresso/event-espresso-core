@@ -21,6 +21,7 @@ export default createHigherOrderComponent(
 				sortTickets = 'chronologically',
 				displayTicketDate = 'start',
 				isChained = true,
+				searchTicketName = '',
 				ticketsPerPage = 6,
 				ticketsView = 'grid',
 			} = ownProps;
@@ -46,10 +47,17 @@ export default createHigherOrderComponent(
 					'isChained',
 					isChained
 				),
-				ticketsPerPage: store.getFilter(
-					'event-editor-ticket-list',
-					'ticketsPerPage',
-					ticketsPerPage
+				searchTicketName: store.getFilter(
+					'entity-list',
+					'searchTicketName',
+					searchTicketName
+				),
+				ticketsPerPage: parseInt(
+					store.getFilter(
+						'event-editor-ticket-list',
+						'ticketsPerPage',
+						ticketsPerPage
+					)
 				),
 				ticketsView: store.getFilter(
 					'event-editor-ticket-list',
@@ -80,12 +88,17 @@ export default createHigherOrderComponent(
 				setIsChained: ( isChained ) => store.setFilter(
 					'event-editor-ticket-list',
 					'isChained',
-					isChained
+					!! isChained
+				),
+				setSearchTicketName: ( searchTicketName ) => store.setFilter(
+					'entity-list',
+					'searchTicketName',
+					searchTicketName
 				),
 				setTicketsPerPage: ( ticketsPerPage ) => store.setFilter(
 					'event-editor-ticket-list',
 					'ticketsPerPage',
-					ticketsPerPage
+					parseInt( ticketsPerPage )
 				),
 				setTicketsListView: () => store.setFilter(
 					'event-editor-ticket-list',

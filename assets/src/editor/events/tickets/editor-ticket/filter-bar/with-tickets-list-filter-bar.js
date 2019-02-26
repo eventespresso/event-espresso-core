@@ -9,7 +9,11 @@ import { EntityListFilterBar } from '@eventespresso/higher-order-components';
 /**
  * Internal dependencies
  */
-import { filterTickets, sortTicketsList } from './tickets-list-filter-utils';
+import {
+	filterTickets,
+	searchTickets,
+	sortTicketsList,
+} from './tickets-list-filter-utils';
 import { default as TicketListFilterBar } from './tickets-list-filter-bar';
 
 /**
@@ -50,6 +54,8 @@ export default createHigherOrderComponent(
 					setDisplayTicketDate,
 					isChained,
 					setIsChained,
+					searchTicketName,
+					setSearchTicketName,
 					ticketsPerPage,
 					setTicketsPerPage,
 					ticketsView,
@@ -59,6 +65,7 @@ export default createHigherOrderComponent(
 					...otherProps
 				} = this.props;
 				let { entities } = this.props;
+				entities = searchTickets( entities, searchTicketName );
 				entities = prefiltered ?
 					entities :
 					getFilteredTicketsList(
@@ -70,6 +77,9 @@ export default createHigherOrderComponent(
 				return (
 					<Fragment>
 						<EntityListFilterBar
+							name="TicketListFilterBar"
+							searchText={ searchTicketName }
+							setSearchText={ setSearchTicketName }
 							perPage={ ticketsPerPage }
 							view={ ticketsView }
 							setPerPage={ setTicketsPerPage }
