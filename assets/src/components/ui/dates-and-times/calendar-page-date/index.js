@@ -33,6 +33,7 @@ class CalendarPageDate extends Component {
 			PropTypes.object,
 			PropTypes.instanceOf( DateTime )
 		] ),
+		size: PropTypes.oneOf( [ 'tiny', 'small', 'medium', 'big' ] ),
 		statusClass: PropTypes.string,
 	};
 
@@ -115,10 +116,13 @@ class CalendarPageDate extends Component {
 		const {
 			startDate = null,
 			endDate = null,
+			size = 'small',
 			statusClass = '',
 		} = this.props;
+		let htmlClass = 'ee-calendar-page-date-wrapper ';
+		htmlClass += `ee-calendar-page-date-${ size }`;
 		return  (
-			<div className={ 'ee-calendar-page-date-wrapper' }>
+			<div className={ htmlClass }>
 				{ this.getStartDate( startDate, statusClass ) }
 				{ this.getDivider( startDate, endDate ) }
 				{ this.getEndDate( endDate, statusClass ) }

@@ -1,44 +1,96 @@
 /** -------------------------------------------------------------------------
- * Event Espresso calendarPageDateDisplay Stylesheet
+ * Event Espresso CalendarPageDate Stylesheet
  * (c) 2018 Event Espresso
  * ------------------------------------------------------------------------- */
 
-
 .ee-calendar-page-date-wrapper {
     box-sizing: border-box;
-    font-size: 18px;
-    font-weight: bold;
-    float: left;
-    line-height: 24px;
     margin: 0;
-    min-height: 77px;
-    padding: 0 20px 0 0;
+    padding: 0;
     text-align: center;
 }
 
-.ee-calendar-page-date-page {
+.ee-calendar-page-date-tiny .ee-calendar-page-date-wrapper-start,
+.ee-calendar-page-date-tiny .ee-calendar-page-date-wrapper-end {
+    height: 35px;
+    width: 35px;
 }
 
-.ee-calendar-page-date-wrapper-start,
-.ee-calendar-page-date-wrapper-end {
-    height: 60px;
-    width: 60px;
+.ee-calendar-page-date-small .ee-calendar-page-date-wrapper-start,
+.ee-calendar-page-date-small .ee-calendar-page-date-wrapper-end {
+    height: 50px;
+    width: 50px;
+}
+
+.ee-calendar-page-date-medium .ee-calendar-page-date-wrapper-start,
+.ee-calendar-page-date-medium .ee-calendar-page-date-wrapper-end {
+    height: 75px;
+    width: 75px;
+}
+
+.ee-calendar-page-date-big .ee-calendar-page-date-wrapper-start,
+.ee-calendar-page-date-big .ee-calendar-page-date-wrapper-end {
+    height: 100px;
+    width: 100px;
 }
 
 .ee-calendar-page-date-month {
-    /*background: rgba(0, 0, 0, .1);*/
+    background: rgba(0, 0, 0, .05);
     border: 1px solid rgba(255, 255, 255, .25);
     border-bottom: none;
     color: #fff;
-    height: 30px;
+    font-weight: bold;
+    letter-spacing: 2px;
 }
+.ee-calendar-page-date-tiny .ee-calendar-page-date-month {
+    font-size: 10px;
+    height: 14px;
+    line-height: 13px;
+}
+.ee-calendar-page-date-small .ee-calendar-page-date-month {
+    font-size: 14px;
+    height: 20px;
+    line-height: 18px;
+}
+.ee-calendar-page-date-medium .ee-calendar-page-date-month {
+    font-size: 21px;
+    height: 30px;
+    line-height: 27px;
+}
+.ee-calendar-page-date-big .ee-calendar-page-date-month {
+    font-size: 28px;
+    height: 40px;
+    line-height: 36px;
+}
+
 
 .ee-calendar-page-date-day {
     background: #fff;
     border: 1px solid #fff;
     border-top: none;
-    color: #333;
+    color: #58575c;
+    font-family: "Arial Black", Gadget, sans-serif;
+    font-weight: bold;
+}
+.ee-calendar-page-date-tiny .ee-calendar-page-date-day {
+    font-size: 14px;
+    height: 21px;
+    line-height: 21px;
+}
+.ee-calendar-page-date-small .ee-calendar-page-date-day {
+    font-size: 20px;
     height: 30px;
+    line-height: 30px;
+}
+.ee-calendar-page-date-medium .ee-calendar-page-date-day {
+    font-size: 30px;
+    height: 45px;
+    line-height: 45px;
+}
+.ee-calendar-page-date-big .ee-calendar-page-date-day {
+    font-size: 40px;
+    height: 60px;
+    line-height: 60px;
 }
 
 .ee-calendar-page-date-to {
@@ -49,8 +101,4 @@
     font-size: 8px;
     letter-spacing: 1px;
     line-height: 12px;
-}
-
-.ee-calendar-page-date-wrapper-end {
-    display: none;
 }
