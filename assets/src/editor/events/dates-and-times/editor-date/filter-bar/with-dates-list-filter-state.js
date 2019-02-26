@@ -21,6 +21,7 @@ export default createHigherOrderComponent(
 				showDates = 'active-upcoming',
 				sortDates = 'chronologically',
 				displayDates = 'start',
+				searchDateName = '',
 				datesPerPage = 6,
 				datesView = 'grid',
 			} = ownProps;
@@ -41,10 +42,17 @@ export default createHigherOrderComponent(
 					'displayDates',
 					displayDates
 				),
-				datesPerPage: store.getFilter(
-					'event-editor-dates-list',
-					'datesPerPage',
-					datesPerPage
+				searchDateName: store.getFilter(
+					'entity-list',
+					'searchDateName',
+					searchDateName
+				),
+				datesPerPage: parseInt(
+					store.getFilter(
+						'event-editor-dates-list',
+						'datesPerPage',
+						datesPerPage
+					)
 				),
 				datesView: store.getFilter(
 					'event-editor-dates-list',
@@ -71,10 +79,15 @@ export default createHigherOrderComponent(
 					'displayDates',
 					displayDates
 				),
+				setSearchDateName: ( searchDateName ) => store.setFilter(
+					'entity-list',
+					'searchDateName',
+					searchDateName
+				),
 				setDatesPerPage: ( datesPerPage ) => store.setFilter(
 					'event-editor-dates-list',
 					'datesPerPage',
-					datesPerPage
+					parseInt( datesPerPage )
 				),
 				setDatesListView: () => store.setFilter(
 					'event-editor-dates-list',
