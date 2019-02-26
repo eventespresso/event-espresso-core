@@ -1,9 +1,12 @@
 /**
  * External imports
  */
+import { dispatch } from '@wordpress/data';
 import { Component } from '@wordpress/element';
-import { __ } from '@eventespresso/i18n';
 import { EntityDetailsPanel, InlineEditInput } from '@eventespresso/components';
+import { __ } from '@eventespresso/i18n';
+import { isModelEntityOfModel } from '@eventespresso/validators';
+import { Money, SiteCurrency } from '@eventespresso/value-objects';
 
 /**
  * EditorTicketDetails
@@ -22,7 +25,7 @@ class EditorTicketDetails extends Component {
 	 * ticketName
 	 *
 	 * @function
-	 * @param {Object} ticket 	JSON object defining the Ticket
+	 * @param {Ticket} ticket 	JSON object defining the Ticket
 	 * @return {string}     	ticket name
 	 */
 	ticketName = ( ticket ) => {
@@ -35,7 +38,9 @@ class EditorTicketDetails extends Component {
 					htmlId={ `editor-ticket-name-${ ticket.id }` }
 					type="text"
 					value={ ticket.name }
-					onChange={ this.updateName }
+					onChange={ async ( name ) => {
+						return await this.updateName( name, ticket );
+					} }
 					label={ __( 'Ticket Name', 'event_espresso' ) }
 				/>
 			</h1>
@@ -60,7 +65,9 @@ class EditorTicketDetails extends Component {
 					htmlId={ `editor-ticket-desc-${ ticket.id }` }
 					type="textarea"
 					value={ ticket.description }
-					onChange={ this.updateDescription }
+					onChange={ async ( desc ) => {
+						return await this.updateDescription( desc, ticket );
+					} }
 					label={ __( 'Ticket Description', 'event_espresso' ) }
 				/>
 			</div>
@@ -83,7 +90,9 @@ class EditorTicketDetails extends Component {
 						htmlId={ `editor-ticket-price-${ ticket.id }` }
 						type="text"
 						value={ ticket.price.amount.toNumber() }
-						onChange={ this.updatePrice }
+						onChange={ async ( price ) => {
+							return await this.updatePrice( price, ticket );
+						} }
 						label={ __( 'Ticket Price', 'event_espresso' ) }
 						valueFormatter={ ticket.price.formatter.formatMoney }
 					/>
@@ -114,11 +123,13 @@ class EditorTicketDetails extends Component {
 			{
 				id: 'ticket-qty',
 				label: __( 'quantity', 'event_espresso' ),
-				value: ticket.qty,
+				value: ticket.qty || Infinity,
 				editable: {
 					type: 'text',
 					valueType: 'number',
-					onChange: this.updateQuantity,
+					onChange: async ( qty ) => {
+						return await this.updateQuantity( qty, ticket );
+					},
 				},
 			},
 			{
@@ -136,57 +147,82 @@ class EditorTicketDetails extends Component {
 	/**
 	 * @function
 	 * @param {string} name new name for ticket
+	 * @param {Ticket} ticket
+	 * @return {boolean} true if saved
 	 */
-	updateName = ( name ) => {
-		console.log( '>>> EditorTicketDetails.updateName()', name );
-		this.setState(
-			( prevState ) => {
-				prevState.ticket.name = name;
-				return { ticket: prevState.ticket };
-			}
-		);
+	updateName = async ( name, ticket ) => {
+		if (
+			isModelEntityOfModel( ticket, 'ticket' ) &&
+			ticket.name !== name
+		) {
+			ticket.name = name;
+			await dispatch( 'eventespresso/core' ).persistTicketRecord(
+				ticket
+			);
+			return true;
+		}
+		return false;
 	};
 
 	/**
 	 * @function
 	 * @param {string} description new description for ticket
+	 * @param {Ticket} ticket
+	 * @return {boolean} true if saved
 	 */
-	updateDescription = ( description ) => {
-		console.log( '>>> EditorTicketDetails.updateDescription()', description );
-		this.setState(
-			( prevState ) => {
-				prevState.ticket.description = description;
-				return { ticket: prevState.ticket };
-			}
-		);
+	updateDescription = async ( description, ticket ) => {
+		if (
+			isModelEntityOfModel( ticket, 'ticket' ) &&
+			ticket.description !== description
+		) {
+			ticket.description = description;
+			await dispatch( 'eventespresso/core' ).persistTicketRecord(
+				ticket
+			);
+			return true;
+		}
+		return false;
 	};
 
 	/**
 	 * @function
 	 * @param {number} price new price for ticket
+	 * @param {Ticket} ticket
+	 * @return {boolean} true if saved
 	 */
-	updatePrice = ( price ) => {
-		console.log( '>>> EditorTicketDetails.updatePrice()', price );
-		this.setState(
-			( prevState ) => {
-				prevState.ticket.price = price;
-				return { ticket: prevState.ticket };
-			}
-		);
+	updatePrice = async ( price, ticket ) => {
+		if (
+			isModelEntityOfModel( ticket, 'ticket' ) &&
+			ticket.price !== price
+		) {
+			ticket.price = new Money( price, SiteCurrency );
+			await dispatch( 'eventespresso/core' ).persistTicketRecord(
+				ticket
+			);
+			return true;
+		}
+		return false;
 	};
 
 	/**
 	 * @function
 	 * @param {number} qty new number of available tickets
+	 * @param {Ticket} ticket
+	 * @return {boolean} true if saved
 	 */
-	updateQuantity = ( qty ) => {
-		console.log( '>>> EditorTicketDetails.updateQuantity()', qty );
-		this.setState(
-			( prevState ) => {
-				prevState.ticket.qty = qty;
-				return { ticket: prevState.ticket };
-			}
-		);
+	updateQuantity = async ( qty, ticket ) => {
+		qty = parseInt( qty );
+		if (
+			isModelEntityOfModel( ticket, 'ticket' ) &&
+			ticket.qty !== qty
+		) {
+			ticket.qty = qty;
+			await dispatch( 'eventespresso/core' ).persistTicketRecord(
+				ticket
+			);
+			return true;
+		}
+		return false;
 	};
 
 	render() {
