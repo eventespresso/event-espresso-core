@@ -6,7 +6,7 @@ import { Component, Fragment } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import {
 	BiggieCalendarDate,
-	MediumCalendarDate,
+	CalendarDateRange,
 	withEntityPaperFrame,
 } from '@eventespresso/components';
 import { ticketModel } from '@eventespresso/model';
@@ -18,7 +18,12 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 import { EditorTicketDetails } from './';
 import { EditorTicketActionsMenu } from '../actions-menu';
 
-const { status, TICKET_STATUS_ID } = ticketModel;
+const {
+	getBackgroundColorClass,
+	getTicketStatusTextLabel,
+	status,
+	TICKET_STATUS_ID,
+} = ticketModel;
 
 /**
  * EditorTicketGridItem
@@ -31,101 +36,34 @@ class EditorTicketGridItem extends Component {
 	/**
 	 * @function
 	 * @param {Object} ticket
-	 * @return {string} ticket status
-	 */
-	getTicketStatus = ( ticket ) => {
-		let ticketStatus = null;
-		switch ( status( ticket ) ) {
-			case TICKET_STATUS_ID.SOLD_OUT :
-				ticketStatus = __( 'SOLD OUT', 'event_espresso' );
-				break;
-			case TICKET_STATUS_ID.EXPIRED :
-				ticketStatus = __( 'EXPIRED', 'event_espresso' );
-				break;
-			case TICKET_STATUS_ID.PENDING :
-				ticketStatus = __( 'PENDING', 'event_espresso' );
-				break;
-			case TICKET_STATUS_ID.ONSALE :
-				ticketStatus = __( 'ON SALE', 'event_espresso' );
-				break;
-			case TICKET_STATUS_ID.ARCHIVED :
-				ticketStatus = __( 'ARCHIVED', 'event_espresso' );
-				break;
-		}
-		return <span key={ 1 }>{ ticketStatus }</span>;
-	};
-
-	/**
-	 * @function
-	 * @param {Object} ticket
-	 * @return {string} ticket status
-	 */
-	getTicketStatusClass = ( ticket ) => {
-		switch ( status( ticket ) ) {
-			case TICKET_STATUS_ID.SOLD_OUT :
-				return 'ee-ticket-status-sold-out';
-			case TICKET_STATUS_ID.EXPIRED :
-				return 'ee-ticket-status-expired';
-			case TICKET_STATUS_ID.PENDING :
-				return 'ee-ticket-status-pending';
-			case TICKET_STATUS_ID.ONSALE :
-				return 'ee-ticket-status-on-sale';
-			case TICKET_STATUS_ID.ARCHIVED :
-				return 'ee-ticket-status-archived';
-		}
-	};
-
-	/**
-	 * getBgColorClass
-	 *
-	 * @function
-	 * @param {Object} ticket    JSON object defining the Event Ticket
-	 * @return {string}    CSS class corresponding to the background color for the container
-	 */
-	getBgColorClass = ( ticket ) => {
-		switch ( ticketModel.status( ticket ) ) {
-			case TICKET_STATUS_ID.ONSALE :
-				return 'ee-green-background';
-			case TICKET_STATUS_ID.EXPIRED :
-				return 'ee-lt-grey-background';
-			case TICKET_STATUS_ID.SOLD_OUT :
-				return 'ee-orange-background';
-			case TICKET_STATUS_ID.PENDING :
-				return 'ee-blue-background';
-			case TICKET_STATUS_ID.ARCHIVED :
-				return 'ee-violet-background';
-		}
-	};
-
-	/**
-	 * @function
-	 * @param {Object} ticket
 	 * @param {string} showDate
 	 * @return {Object} rendered ticket
 	 */
 	displayTicket = ( ticket, showDate ) => {
 		let sidebarColorClass = 'ee-editor-ticket-calendar-sidebar ';
-		sidebarColorClass += this.getBgColorClass( ticket );
+		sidebarColorClass += getBackgroundColorClass( ticket );
 		// const startDate = moment( ticket.startDate );
 		const start = ticket.startDate.toFormat( 'h:mm a' );
 		// const endDate = moment( ticket.endDate );
 		const end = ticket.endDate.toFormat( 'h:mm a' );
-
+		const ticketStatusID = status( ticket );
 		let label = '';
 		if ( showDate === 'start' ) {
 			label = __( 'Sale Started', 'event_espresso' );
-			if ( ticket.status === 'TKE' ) {
+			if ( ticketStatusID === TICKET_STATUS_ID.EXPIRED ) {
 				label = __( 'Sale Ended', 'event_espresso' );
-			} else if ( ticket.status === 'TKP' ) {
+			} else if ( ticketStatusID === TICKET_STATUS_ID.PENDING ) {
 				label = __( 'Goes On Sale', 'event_espresso' );
 			}
 		} else if ( showDate === 'end' ) {
 			label = __( 'Sale Ends', 'event_espresso' );
-			if ( ticket.status === 'TKE' ) {
+			if ( ticketStatusID === TICKET_STATUS_ID.EXPIRED ) {
 				label = __( 'Sale Ended', 'event_espresso' );
 			}
 		}
-		const ticketStatus = this.getTicketStatus( ticket );
+		const ticketStatus = (
+			<span key={ 1 }>{ getTicketStatusTextLabel( ticket ) }</span>
+		);
 
 		switch ( showDate ) {
 			case 'end' :
@@ -138,21 +76,13 @@ class EditorTicketGridItem extends Component {
 				/>;
 			case 'both' :
 				return (
-					<div className={
-						`${ sidebarColorClass } medium-calendar-date-wrapper  mcd-pos-right`
-					} >
-						<MediumCalendarDate
-							date={ ticket.startDate }
-							footerText={ start }
-							position="right"
-						/>
-						<MediumCalendarDate
-							date={ ticket.endDate }
-							headerText={ __( 'to', 'event_espresso' ) }
-							footerText={ [ end, ticketStatus ] }
-							position="right"
-						/>
-					</div>
+					<CalendarDateRange
+						startDate={ ticket.startDate }
+						endDate={ ticket.endDate }
+						htmlClass={ sidebarColorClass }
+						footerText={ <strong>{ ticketStatus }</strong> }
+						position="right"
+					/>
 				);
 			case 'start' :
 			default :
@@ -178,9 +108,12 @@ class EditorTicketGridItem extends Component {
 		if ( ! isModelEntityOfModel( ticket, ticketModel.MODEL_NAME ) ) {
 			return null;
 		}
+		const dateStyleClass = displayTicketDate === 'both' ?
+			'ee-editor-date-range' :
+			'ee-editor-date-single';
 		return (
 			<Fragment>
-				<div className="ee-editor-ticket-main">
+				<div className={ `ee-editor-ticket-main ${ dateStyleClass }` }>
 					<EditorTicketDetails ticket={ ticket } />
 					{ this.displayTicket( ticket, displayTicketDate ) }
 				</div>
