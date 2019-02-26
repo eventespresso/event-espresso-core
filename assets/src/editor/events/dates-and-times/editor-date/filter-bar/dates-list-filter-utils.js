@@ -202,3 +202,21 @@ const validSold = ( date ) => {
 	return typeof date.sold === 'string' ||
 		typeof date.sold === 'number';
 };
+
+/**
+ * searchDates
+ * reduces dates array based on value of the "searchDateName" filter
+ *
+ * @param {Array} dates    		original dates array
+ * @param {string} searchText 	value for the "searchDateName" filter
+ * @return {Array}         		filtered dates array
+ */
+export const searchDates = ( dates, searchText = '' ) => {
+	dates = searchText !== '' ?
+		dates.filter( ( date ) => {
+			return date.name.toLowerCase()
+				.search( searchText.toLowerCase() ) !== -1;
+		} ) :
+		dates;
+	return dates;
+};
