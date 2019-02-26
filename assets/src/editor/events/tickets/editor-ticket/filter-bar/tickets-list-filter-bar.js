@@ -203,6 +203,7 @@ class TicketsListFilterBar extends Component {
 	 * @return {Object} rendered displayTickets filter
 	 */
 	ticketsChained = ( isChained, setIsChained ) => {
+		isChained = !! isChained;
 		return (
 			<IconButton
 				label={ isChained ?
@@ -210,8 +211,8 @@ class TicketsListFilterBar extends Component {
 					__( 'showing tickets for all event dates', 'event_espresso' )
 				}
 				icon={ isChained ? 'admin-links' : 'editor-unlink' }
-				onClick={ ( event ) => setIsChained( !! event.target.value ) }
-				value={ !! isChained }
+				onClick={ () => setIsChained( ! isChained ) }
+				value={ isChained }
 			/>
 		);
 	};
@@ -261,9 +262,9 @@ class TicketsListFilterBar extends Component {
 		return (
 			<Fragment>
 				{ showFilter }
+				{ isChainedFilter }
 				{ sortFilter }
 				{ displayFilter }
-				{ isChainedFilter }
 			</Fragment>
 		);
 	}
