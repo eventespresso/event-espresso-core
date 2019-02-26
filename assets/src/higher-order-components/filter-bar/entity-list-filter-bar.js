@@ -2,9 +2,10 @@
  * External imports
  */
 import PropTypes from 'prop-types';
-import { Component } from '@wordpress/element';
+import { isFunction } from 'lodash';
+import { Component, Fragment } from '@wordpress/element';
+import { IconButton, SelectControl, TextControl } from '@wordpress/components';
 import { __ } from '@eventespresso/i18n';
-import { IconButton, SelectControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -34,6 +35,24 @@ class EntityListFilterBar extends Component {
 	};
 
 	/**
+	 * @param {string} searchText
+	 * @param {Function} setSearchText
+	 * @return {Object} rendered search input
+	 */
+	search = ( searchText, setSearchText ) => {
+		return isFunction( setSearchText ) ? (
+			<Fragment>
+				<TextControl
+					label={ __( 'search', 'event_espresso' ) }
+					className="ee-entity-list-filter-bar-search"
+					value={ searchText }
+					onChange={ setSearchText }
+				/>
+			</Fragment>
+		) : null;
+	};
+
+	/**
 	 * @param {string} perPage
 	 * @param {Function} setPerPage
 	 * @return {Object} rendered perPage select input
@@ -44,6 +63,7 @@ class EntityListFilterBar extends Component {
 			className="ee-entity-list-filter-bar-perPage-select"
 			value={ perPage }
 			options={ [
+				{ value: 2, label: 2 },
 				{ value: 6, label: 6 },
 				{ value: 12, label: 12 },
 				{ value: 24, label: 24 },
@@ -83,6 +103,8 @@ class EntityListFilterBar extends Component {
 
 	render() {
 		const {
+			searchText = '',
+			setSearchText,
 			perPage,
 			view,
 			setPerPage,
@@ -98,6 +120,10 @@ class EntityListFilterBar extends Component {
 			<div className="ee-entity-list-filter-bar-wrapper">
 				{ entityFilters }
 				<div className="ee-entity-list-view-bar">
+					<div
+						className="ee-search-filter ee-filter-bar-filter">
+						{ this.search( searchText, setSearchText ) }
+					</div>
 					<div
 						className="ee-per-page-filter ee-filter-bar-filter">
 						{ this.perPage( perPage, setPerPage ) }
