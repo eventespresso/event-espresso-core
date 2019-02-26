@@ -5,8 +5,11 @@ import { dispatch } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import { EntityDetailsPanel, InlineEditInput } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
+import { ticketModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { Money, SiteCurrency } from '@eventespresso/value-objects';
+
+const { MODEL_NAME: TICKET } = ticketModel;
 
 /**
  * EditorTicketDetails
@@ -95,6 +98,7 @@ class EditorTicketDetails extends Component {
 						} }
 						label={ __( 'Ticket Price', 'event_espresso' ) }
 						valueFormatter={ ticket.price.formatter.formatMoney }
+						formatterSettings={ ticket.price.formatter.settings }
 					/>
 				</h2>
 			) :
@@ -152,7 +156,7 @@ class EditorTicketDetails extends Component {
 	 */
 	updateName = async ( name, ticket ) => {
 		if (
-			isModelEntityOfModel( ticket, 'ticket' ) &&
+			isModelEntityOfModel( ticket, TICKET ) &&
 			ticket.name !== name
 		) {
 			ticket.name = name;
@@ -172,7 +176,7 @@ class EditorTicketDetails extends Component {
 	 */
 	updateDescription = async ( description, ticket ) => {
 		if (
-			isModelEntityOfModel( ticket, 'ticket' ) &&
+			isModelEntityOfModel( ticket, TICKET ) &&
 			ticket.description !== description
 		) {
 			ticket.description = description;
@@ -192,7 +196,7 @@ class EditorTicketDetails extends Component {
 	 */
 	updatePrice = async ( price, ticket ) => {
 		if (
-			isModelEntityOfModel( ticket, 'ticket' ) &&
+			isModelEntityOfModel( ticket, TICKET ) &&
 			ticket.price !== price
 		) {
 			ticket.price = new Money( price, SiteCurrency );
@@ -213,7 +217,7 @@ class EditorTicketDetails extends Component {
 	updateQuantity = async ( qty, ticket ) => {
 		qty = parseInt( qty );
 		if (
-			isModelEntityOfModel( ticket, 'ticket' ) &&
+			isModelEntityOfModel( ticket, TICKET ) &&
 			ticket.qty !== qty
 		) {
 			ticket.qty = qty;
@@ -228,7 +232,7 @@ class EditorTicketDetails extends Component {
 	render() {
 		const ticket = this.state.ticket;
 		const { showDesc = 'excerpt', showPrice = true } = this.props;
-		return ticket && ticket.id ? (
+		return isModelEntityOfModel( ticket, TICKET ) ? (
 			<div className={ 'ee-editor-ticket-details-wrapper-div' }>
 				{ this.ticketName( ticket ) }
 				{ this.ticketPrice( ticket, showPrice ) }
