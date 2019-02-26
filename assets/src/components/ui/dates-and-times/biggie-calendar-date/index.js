@@ -1,12 +1,16 @@
 /**
  * External imports
  */
-// import { DateTime } from '@eventespresso/value-objects';
+import PropTypes from 'prop-types';
+import { isFunction } from 'lodash';
+import { IconButton } from '@wordpress/components';
+import { DateTime } from '@eventespresso/value-objects';
 
 /**
  * Internal dependencies
  */
 import './style.css';
+import { EspressoIcon } from '../../image/espresso-icon';
 
 /**
  * Displays a full calendar date, but REALLY BIG!!!
@@ -17,6 +21,8 @@ import './style.css';
  * @param {string} htmlClass
  * @param {string} headerText
  * @param {string} footerText
+ * @param {Function} onEdit
+ * @param {Object} editButton
  * @return {string} rendered date
  */
 const BiggieCalendarDate = ( {
@@ -25,14 +31,25 @@ const BiggieCalendarDate = ( {
 	headerText,
 	footerText,
 	position = 'left',
+	onEdit = null,
+	editButton = {},
 } ) => {
-	// console.log( 'BiggieCalendarDate date: ', date );
 	htmlClass = htmlClass ?
 		`${ htmlClass } biggie-calendar-date-bg` :
 		'biggie-calendar-date-bg';
 	htmlClass = position === 'left' ?
 		`${ htmlClass } bcd-pos-left` :
 		`${ htmlClass } bcd-pos-right`;
+	const editDateButton = isFunction( onEdit ) ? (
+		<IconButton
+			className="ee-edit-calendar-date-btn"
+			onClick={ ( event ) => onEdit( event ) }
+			onKeyPress={ ( event ) => onEdit( event ) }
+			tooltip={ editButton.tooltip }
+			labelPosition={ editButton.tooltipPosition }
+			icon={ <EspressoIcon icon="calendar"/> }
+		/>
+	): null;
 	return (
 		<div className={ htmlClass }>
 			{
@@ -64,8 +81,29 @@ const BiggieCalendarDate = ( {
 					</div>
 				)
 			}
+			{ editDateButton }
 		</div>
 	);
+};
+
+BiggieCalendarDate.propTypes = {
+	date: PropTypes.oneOfType( [
+		PropTypes.object,
+		PropTypes.instanceOf( DateTime )
+	] ),
+	htmlClass: PropTypes.string,
+	headerText: PropTypes.oneOfType( [
+		PropTypes.array,
+		PropTypes.object,
+		PropTypes.string,
+	] ),
+	footerText: PropTypes.oneOfType( [
+		PropTypes.array,
+		PropTypes.object,
+		PropTypes.string,
+	] ),
+	onEdit: PropTypes.func,
+	editButton: PropTypes.object,
 };
 
 export default BiggieCalendarDate;

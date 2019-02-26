@@ -74,7 +74,18 @@
     text-shadow: -1px -1px rgba(0, 0, 0, .15);
 }
 
+.biggie-calendar-date-bg .ee-edit-calendar-date-btn {
+    color: rgba(255, 255, 255, .5);
+    display: inline-block;
+}
 
+.biggie-calendar-date-bg .ee-edit-calendar-date-btn:focus:enabled,
+.biggie-calendar-date-bg .ee-edit-calendar-date-btn:not(:disabled):not([aria-disabled="true"]):not(.is-default):hover,
+.biggie-calendar-date-bg .ee-edit-calendar-date-btn:not(:disabled):not([aria-disabled="true"]):not(.is-default):active {
+    background-color: transparent;
+    color: #fff;
+    box-shadow: none;
+}
 
 
 /* Media Queries for specific screen sizes
@@ -115,13 +126,11 @@
     .biggie-calendar-date-bg.bcd-pos-left {
         background-position: bottom;
         float: none;
-        /*left: unset;*/
     }
 
     .biggie-calendar-date-bg.bcd-pos-right {
         background-position: top;
         float: none;
-        /*right: unset;*/
     }
 
     .biggie-calendar-date-bg {
