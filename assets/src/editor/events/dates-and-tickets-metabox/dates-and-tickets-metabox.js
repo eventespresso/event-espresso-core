@@ -50,25 +50,23 @@ class DatesAndTicketsMetabox extends Component {
 					allDates,
 					tickets,
 					allTickets,
-					filteredTickets,
 					isChained,
 					updateDatesAndTickets,
 					...otherProps
 				} ) => {
+					const notice = sprintf(
+						_x(
+							'loading event dates and available tickets%s',
+							'loading event dates and available tickets...',
+							'event_espresso'
+						),
+						String.fromCharCode( '8230' )
+					);
 					return (
 						<Fragment>
 							<FormPlaceholder
 								loading={ loading }
-								notice={
-									sprintf(
-										_x(
-											'loading event dates and available tickets%s',
-											'loading event dates and available tickets...',
-											'event_espresso'
-										),
-										String.fromCharCode( '8230' )
-									)
-								}
+								notice={ notice }
 							/>
 							<FormContainer loading={ loading }>
 								<div
@@ -115,7 +113,6 @@ class DatesAndTicketsMetabox extends Component {
 													<EditorTicketsList
 														entities={ tickets }
 														allDates={ allDates }
-														allTickets={ filteredTickets }
 														isChained={ isChained }
 														prefiltered
 														for="event-tickets-metabox"

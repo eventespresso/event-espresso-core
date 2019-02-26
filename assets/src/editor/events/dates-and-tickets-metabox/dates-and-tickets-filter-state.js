@@ -97,7 +97,6 @@ class DatesAndTicketsFilterState extends Component {
 			...otherProps
 		} = this.props;
 		let datetimes = [];
-		let filteredTickets = [];
 		let tickets = [];
 
 		if ( ! isEmpty( eventDates ) ) {
@@ -106,13 +105,11 @@ class DatesAndTicketsFilterState extends Component {
 				showDates,
 				sortDates
 			);
-			filteredTickets = getFilteredTicketsList(
-				eventDateTickets,
-				showTickets,
-				sortTickets
-			);
+			tickets = isChained ?
+				this.getEventDateTickets( datetimes, eventDateTicketMap ) :
+				eventDateTickets;
 			tickets = getFilteredTicketsList(
-				this.getEventDateTickets( datetimes, eventDateTicketMap ),
+				tickets,
 				showTickets,
 				sortTickets
 			);
@@ -124,7 +121,6 @@ class DatesAndTicketsFilterState extends Component {
 			allDates: eventDates,
 			tickets: tickets,
 			allTickets: eventDateTickets,
-			filteredTickets: filteredTickets,
 			showDates: showDates,
 			sortDates: sortDates,
 			showTickets: showTickets,
