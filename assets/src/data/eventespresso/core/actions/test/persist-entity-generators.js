@@ -1,9 +1,4 @@
 /**
- * External imports
- */
-import { isGenerator } from '@eventespresso/validators';
-
-/**
  * Internal imports
  */
 import {
@@ -14,7 +9,13 @@ import {
 	persistTrashesForModel,
 	persistAllDeletes,
 } from '../persist-entity-generators';
-import { fetch, select, dispatch } from '../../../base-controls';
+import {
+	fetch,
+	select,
+	dispatch,
+	resolveSelect,
+	resolveDispatch,
+} from '../../../base-controls';
 import {
 	receiveAndReplaceEntityRecords,
 } from '../receive-entities';
@@ -32,6 +33,7 @@ import {
 	EventResponses,
 } from '../../../test/fixtures/base';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../../constants';
+import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../../schema/constants';
 
 describe( 'persistEntityRecord()', () => {
 	let fulfillment;
@@ -60,12 +62,18 @@ describe( 'persistEntityRecord()', () => {
 		expect( value ).toBe( null );
 		expect( done ).toBe( true );
 	} );
-	it( 'yields a generator for retrieving factory', () => {
+	it( 'yields a resolveSelect action for for retrieving factory', () => {
 		const ChangedEvent = EventEntities.a;
 		ChangedEvent.desc = 'Changed Event';
 		reset( 'event', ChangedEvent );
 		const { value } = fulfillment.next();
-		expect( isGenerator( value ) ).toBe( true );
+		expect( value ).toEqual(
+			resolveSelect(
+				SCHEMA_REDUCER_KEY,
+				'getFactoryForModel',
+				'event',
+			)
+		);
 	} );
 	it( 'returns null if there is no retrievable factory for the given ' +
 		'model', () => {
@@ -108,10 +116,17 @@ describe( 'persistEntityRecord()', () => {
 				)
 			);
 		} );
-		it( 'yields generator for resolving getting the new entity by ' +
+		it( 'yields dispatch action for resolving getting the new entity by ' +
 			'id', () => {
 			const { value } = fulfillment.next();
-			expect( isGenerator( value ) ).toBe( true );
+			// we don't have access to the generated cuid so cannot do a full
+			// object equality check.
+			expect( value.type ).toBe( 'DISPATCH' );
+			expect( value.reducerKey ).toBe( 'core/data' );
+			expect( value.dispatchName ).toBe( 'finishResolution' );
+			expect( value.args[ 0 ] ).toBe( CORE_REDUCER_KEY );
+			expect( value.args[ 1 ] ).toBe( 'getEntityById' );
+			expect( value.args[ 2 ][ 0 ] ).toBe( 'event' );
 		} );
 		it( 'yields expected action object for adding updated entity id to ' +
 			'existing relations in the state', () => {
@@ -148,11 +163,11 @@ describe( 'persistForEntityId()', () => {
 		'event',
 		20
 	);
-	it( 'yields action for selecting the entity by id', () => {
+	it( 'yields resolve select action for selecting the entity by id', () => {
 		reset();
 		const { value } = fulfillment.next();
 		expect( value ).toEqual(
-			select(
+			resolveSelect(
 				CORE_REDUCER_KEY,
 				'getEntityById',
 				'event',
@@ -350,14 +365,26 @@ describe( 'persistAllDeletes()', () => {
 			'getModelsQueuedForDelete'
 		) );
 	} );
-	it( 'yields expected generators for persisting deletes on entities ' +
-		'queued', () => {
+	it( 'yields expected resolve dispatch action for persisting deletes on ' +
+		'entities queued', () => {
 		const { value: deleteAction } = fulfillment.next(
 			[ 'event', 'datetime' ]
 		);
-		expect( isGenerator( deleteAction ) ).toBe( true );
+		expect( deleteAction ).toEqual(
+			resolveDispatch(
+				CORE_REDUCER_KEY,
+				'persistDeletesForModel',
+				'datetime'
+			)
+		);
 		const { value: deleteAction2 } = fulfillment.next( [ 10, 20 ] );
-		expect( isGenerator( deleteAction2 ) ).toBe( true );
+		expect( deleteAction2 ).toEqual(
+			resolveDispatch(
+				CORE_REDUCER_KEY,
+				'persistDeletesForModel',
+				'event'
+			)
+		);
 	} );
 	it( 'yields expected select action for models queued for trash', () => {
 		const { value } = fulfillment.next( [ 30, 40 ] );
@@ -366,14 +393,26 @@ describe( 'persistAllDeletes()', () => {
 			'getModelsQueuedForTrash'
 		) );
 	} );
-	it( 'yields expected generators for persisting trash on deletes ' +
-		'queued', () => {
+	it( 'yields expected resolve dispatch action for persisting trash on ' +
+		'deletes queued', () => {
 		const { value: trashAction } = fulfillment.next(
 			[ 'ticket', 'registration' ]
 		);
-		expect( isGenerator( trashAction ) ).toBe( true );
+		expect( trashAction ).toEqual(
+			resolveDispatch(
+				CORE_REDUCER_KEY,
+				'persistTrashesForModel',
+				'registration'
+			)
+		);
 		const { value: trashAction2 } = fulfillment.next( [ 50, 60 ] );
-		expect( isGenerator( trashAction2 ) ).toBe( true );
+		expect( trashAction2 ).toEqual(
+			resolveDispatch(
+				CORE_REDUCER_KEY,
+				'persistTrashesForModel',
+				'ticket'
+			)
+		);
 	} );
 	it( 'returns expected object on completion', () => {
 		const { value, done } = fulfillment.next( [ 70, 80 ] );

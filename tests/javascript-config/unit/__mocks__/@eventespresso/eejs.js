@@ -32,6 +32,8 @@ module.exports.data = {
 			ticket: '/ee/v4.8.36/tickets',
 			venue: '/ee/v4.8.36/venues',
 			term: '/ee/v4.8.36/terms',
+			checkin: '/ee/v4.8.36/checkins',
+			registration: '/ee/v4.8.36/registrations',
 		},
 		primary_keys: {
 			event: 'EVT_ID',
@@ -39,6 +41,8 @@ module.exports.data = {
 			ticket: 'TKT_ID',
 			venue: 'VNU_ID',
 			term: [ 'TERM_ID', 'TAXONOMY_ID' ],
+			checkin: [ 'CHK_ID' ],
+			registration: [ 'REG_ID' ],
 		},
 	},
 	site_formats: {

@@ -15,6 +15,8 @@ import {
 } from '@eventespresso/model';
 import { OrderedMap, Set } from 'immutable';
 
+const DEFAULT_EMPTY_ARRAY = [];
+
 /**
  * Generic helper for retrieving items from state for given identifier and
  * queryString.
@@ -88,7 +90,7 @@ export const getEntitiesByIds = ( state, modelName, ids = [] ) => {
 		const queryString = getPrimaryKeyQueryString( modelName, ids );
 		return getEntities( state, modelName, queryString );
 	} catch ( e ) {
-		return [];
+		return DEFAULT_EMPTY_ARRAY;
 	}
 };
 

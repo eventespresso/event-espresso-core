@@ -13,12 +13,8 @@ import { getIdsFromBaseEntityArray } from '@eventespresso/helpers';
 /**
  * Internal imports
  */
-import {
-	receiveRelatedEntities,
-	receiveDirtyRelationAddition,
-} from './receive-relations';
-import { receiveEntitiesAndResolve } from './create-entities-generators';
-import { resolveGetEntityByIdForIds } from '../../base-resolvers';
+import { dispatch } from '../../base-controls';
+import { REDUCER_KEY } from '../constants';
 
 /**
  * Action generator yielding actions that add the relation to the state for a
@@ -47,25 +43,27 @@ function* createRelation(
 		);
 		return;
 	}
-	yield receiveEntitiesAndResolve(
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveEntityAndResolve',
 		singularRelationName,
-		[ relationEntity ]
+		relationEntity
 	);
-	yield receiveRelatedEntities(
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveRelatedEntities',
 		modelName,
 		entityId,
 		relationName,
 		[ relationEntity.id ]
 	);
-	yield receiveDirtyRelationAddition(
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveDirtyRelationAddition',
 		relationName,
 		relationEntity.id,
 		modelName,
 		entityId,
-	);
-	yield resolveGetEntityByIdForIds(
-		singularRelationName,
-		[ relationEntity.id ]
 	);
 }
 
@@ -100,8 +98,15 @@ function* createRelations(
 		return;
 	}
 	let relationIds = getIdsFromBaseEntityArray( relationEntities );
-	yield receiveEntitiesAndResolve( singularRelationName, relationEntities );
-	yield receiveRelatedEntities(
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveEntitiesAndResolve',
+		singularRelationName,
+		relationEntities
+	);
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveRelatedEntities',
 		modelName,
 		entityId,
 		relationName,
@@ -109,7 +114,9 @@ function* createRelations(
 	);
 	relationIds = [ ...relationIds ];
 	while ( relationIds.length > 0 ) {
-		yield receiveDirtyRelationAddition(
+		yield dispatch(
+			REDUCER_KEY,
+			'receiveDirtyRelationAddition',
 			relationName,
 			relationIds.pop(),
 			modelName,
