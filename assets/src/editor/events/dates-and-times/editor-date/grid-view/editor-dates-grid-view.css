@@ -23,6 +23,10 @@
     overflow: hidden;
 }
 
+.ee-editor-date-main.ee-editor-date-range {
+    min-height: 210px;
+}
+
 /* DATE DETAILS */
 
 .ee-editor-date-details-wrapper-div {
@@ -45,10 +49,10 @@
     font-size: 24px !important;
     font-weight: bold !important;
     line-height: 24px !important;
-    margin: 5px 0 10px !important;
+    margin: 5px 0 0 !important;
     min-height: 30px;
     overflow: hidden;
-    padding: 0 !important;
+    padding: 0 0 .5rem !important;
     text-overflow: ellipsis;
     width: 100%;
 }
