@@ -141,7 +141,7 @@ const getRelatedEntities = createSelector(
  *   },
  * }
  */
-const lookupRelationsQueudForModel = ( state, modelName, type = 'add' ) => {
+const lookupRelationsQueuedForModel = ( state, modelName, type = 'add' ) => {
 	const forIndexLookup = pluralModelName( modelName );
 	const forAddLookup = singularModelName( modelName );
 	if ( state.dirty.relations.hasIn( [ type, forAddLookup ] ) ) {
@@ -187,7 +187,7 @@ const lookupRelationsQueudForModel = ( state, modelName, type = 'add' ) => {
  */
 const getRelationAdditionsQueuedForModel = createSelector(
 	( state, modelName ) => {
-		return lookupRelationsQueudForModel( state, modelName );
+		return lookupRelationsQueuedForModel( state, modelName );
 	},
 	( state, modelName ) => [
 		state.dirty.relations.getIn( [ 'add', singularModelName( modelName ) ] ),
@@ -208,7 +208,7 @@ const getRelationAdditionsQueuedForModel = createSelector(
  */
 const getRelationDeletionsQueuedForModel = createSelector(
 	( state, modelName ) => {
-		return lookupRelationsQueudForModel( state, modelName, 'delete' );
+		return lookupRelationsQueuedForModel( state, modelName, 'delete' );
 	},
 	( state, modelName ) => [
 		state.dirty.relations.getIn(
