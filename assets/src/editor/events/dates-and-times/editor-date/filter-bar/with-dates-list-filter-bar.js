@@ -10,20 +10,24 @@ import { __ } from '@eventespresso/i18n';
  * Internal dependencies
  */
 import { default as DateListFilterBar } from './dates-list-filter-bar';
-import { filterDates, sortDatesList } from './dates-list-filter-utils';
+import {
+	filterDates,
+	searchDates,
+	sortDatesList,
+} from './dates-list-filter-utils';
 
 /**
  * filters the dates list based on the current filter state
  *
- * @param {Array} entities
+ * @param {Array} dates
  * @param {string} showDates
  * @param {string} sortDates
  * @return {Array} filtered list of dates
  */
-export const getFilteredDatesList = ( entities, showDates, sortDates ) => {
-	return showDates && sortDates && entities ?
+export const getFilteredDatesList = ( dates, showDates, sortDates ) => {
+	return showDates && sortDates && dates ?
 		sortDatesList(
-			filterDates( entities, showDates ),
+			filterDates( dates, showDates ),
 			sortDates
 		) :
 		[];
@@ -49,8 +53,10 @@ export default createHigherOrderComponent(
 					setDisplayDates,
 					setShowDates,
 					setSortDates,
+					searchDateName,
 					datesPerPage,
 					datesView,
+					setSearchDateName,
 					setDatesPerPage,
 					setDatesListView,
 					setDatesGridView,
@@ -59,16 +65,21 @@ export default createHigherOrderComponent(
 				} = this.props;
 				delete otherProps.entities;
 				let { entities } = this.props;
+				entities = searchDates( entities, searchDateName );
 				entities = prefiltered ?
 					entities :
 					getFilteredDatesList(
 						entities,
 						showDates,
-						sortDates
+						sortDates,
+						searchDateName
 					);
 				return (
 					<Fragment>
 						<EntityListFilterBar
+							name="DateListFilterBar"
+							searchText={ searchDateName }
+							setSearchText={ setSearchDateName }
 							perPage={ datesPerPage }
 							view={ datesView }
 							setPerPage={ setDatesPerPage }
