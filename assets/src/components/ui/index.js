@@ -1,4 +1,5 @@
 export { default as BiggieCalendarDate } from './dates-and-times/biggie-calendar-date';
+export { default as CalendarDateRange } from './dates-and-times/calendar-date-range';
 export { default as CalendarPageDate } from './dates-and-times/calendar-page-date';
 export { default as MediumCalendarDate } from './dates-and-times/medium-calendar-date';
 export { default as DropDownMenu } from './drop-down-menu';

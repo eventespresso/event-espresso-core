@@ -1,0 +1,69 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso CalendarDateRange Stylesheet
+ * (c) 2018 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+.ee-calendar-date-range-wrapper {
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, .25) 50%, rgba(255, 255, 255, 0) 0%);
+    background-size: 1px 5px;
+    background-repeat: repeat-y;
+    box-sizing: border-box;
+    color: #fff;
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 18px;
+    height: 100%;
+    padding: 5px 10px;
+    position: absolute;
+    text-align: center;
+    width: 140px;
+}
+
+.ee-calendar-date-range-wrapper.cdr-pos-left {
+    background-position: right;
+    float: left;
+    left: 0;
+}
+
+.ee-calendar-date-range-wrapper.cdr-pos-right {
+    background-position: left;
+    float: right;
+    right: 0;
+}
+
+.ee-calendar-date-range-wrapper .ee-calendar-page-date-wrapper > div {
+    margin: 2px auto 0;
+}
+
+.ee-cdr-weekday {
+    display: inline-block;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.ee-cdr-time {
+    padding: 10px 0 3px;
+    text-align: center;
+}
+
+.ee-calendar-date-range-separator {
+    box-sizing: border-box;
+    clear: both;
+    color: rgba(255, 255, 255, .7);
+    padding: 8px 25px 0;
+    text-align: center;
+    width: 100%;
+}
+
+
+.ee-calendar-time-separator {
+    color: rgba(255, 255, 255, .7);
+    margin: 0 3px;
+}
+
+.ee-calendar-date-range-header,
+.ee-calendar-date-range-footer {
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-shadow: -1px -1px rgba(0, 0, 0, .15);
+}
