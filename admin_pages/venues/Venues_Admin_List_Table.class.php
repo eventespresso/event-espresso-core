@@ -132,10 +132,13 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
                 'post'   => $item->ID(),
             );
             $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EE_VENUES_ADMIN_URL);
-            $actions['edit'] = '<a href="' . $edit_link . '" title="' . esc_attr__(
-                'Edit Venue',
-                'event_espresso'
-            ) . '">' . __('Edit', 'event_espresso') . '</a>';
+            $actions['edit'] = '<a href="' . $edit_link . '"'
+                               . 'aria-label="' 
+                               /* Translators: The name of the venue */
+                               . sprintf(esc_attr__('Edit Venue (%s)', 'event_espresso'), $item->name())
+                               . '">' 
+                               . esc_html__('Edit', 'event_espresso') 
+                               . '</a>';
         }
 
 
@@ -187,36 +190,60 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
                     'espresso_venues_restore_venue',
                     $item->ID()
                 )) {
-                    $actions['restore_from_trash'] = '<a href="' . $restore_venue_link . '" title="' . esc_attr__(
-                        'Restore from Trash',
-                        'event_espresso'
-                    ) . '">' . __('Restore from Trash', 'event_espresso') . '</a>';
+                    $actions['restore_from_trash'] = '<a href="' . $restore_venue_link . '"'
+                                                     . ' aria-label="' 
+                                                     . sprintf(
+                                                         /* Translators: The name of the venue */
+                                                         esc_attr__(
+                                                             'Restore from Trash the venue: %s',
+                                                             'event_espresso'
+                                                         ),
+                                                         $item->name()
+                                                     )
+                                                     . '">'
+                                                     . esc_html__('Restore from Trash', 'event_espresso')
+                                                     . '</a>';
                 }
                 if ($item->count_related('Event') === 0 && EE_Registry::instance()->CAP->current_user_can(
                     'ee_delete_venue',
                     'espresso_venues_delete_venue',
                     $item->ID()
                 )) {
-                    $actions['delete permanently'] = '<a href="' . $delete_venue_link . '" title="' . esc_attr__(
-                        'Delete Permanently',
-                        'event_espresso'
-                    ) . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
+                    $actions['delete permanently'] = '<a href="' . $delete_venue_link . '"'
+                                                     . ' aria-label="'
+                                                     . sprintf(
+                                                         /* Translators: The name of the venue. */
+                                                         esc_attr__('Delete Permanently the venue: %s', 'event_espresso'),
+                                                         $item->name()
+                                                     )
+                                                     . '">'
+                                                     . esc_html__('Delete Permanently', 'event_espresso')
+                                                     . '</a>';
                 }
                 break;
             default:
-                $actions['view'] = '<a href="' . $view_link . '" title="' . esc_attr__(
-                    'View Venue',
-                    'event_espresso'
-                ) . '">' . __('View', 'event_espresso') . '</a>';
+                $actions['view'] = '<a href="' . $view_link . '"'
+                                   . ' aria-label="'
+                                   /* Translators: The name of the venue */
+                                   . sprintf(esc_attr__('View Venue (%s)', 'event_espresso'), $item->name())
+                                   . '">'
+                                   . esc_html__('View', 'event_espresso')
+                                   . '</a>';
                 if (EE_Registry::instance()->CAP->current_user_can(
                     'ee_delete_venue',
                     'espresso_venues_trash_venue',
                     $item->ID()
                 )) {
-                    $actions['move to trash'] = '<a href="' . $trash_venue_link . '" title="' . esc_attr__(
-                        'Trash Event',
-                        'event_espresso'
-                    ) . '">' . __('Trash', 'event_espresso') . '</a>';
+                    $actions['move to trash'] = '<a href="' . $trash_venue_link . '"'
+                                                . ' aria-label="'
+                                                . sprintf(
+                                                    /* Translators: The name of the venue */
+                                                    esc_attr__('Move the venue %s to the trash.', 'event_espresso'),
+                                                    $item->name()
+                                                )
+                                                . '">'
+                                                . esc_html__('Trash', 'event_espresso')
+                                                . '</a>';
                 }
         }
         return $actions;
