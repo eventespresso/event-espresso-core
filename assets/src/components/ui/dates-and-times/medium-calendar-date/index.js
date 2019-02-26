@@ -1,8 +1,9 @@
 /**
  * External imports
  */
+import PropTypes from 'prop-types';
 import { Fragment } from '@wordpress/element';
-// import { DateTime } from '@eventespresso/value-objects';
+import { DateTime } from '@eventespresso/value-objects';
 
 /**
  * Internal dependencies
@@ -29,7 +30,6 @@ const MediumCalendarDate = ( {
 	position = 'left',
 	addWrapper = false,
 } ) => {
-	// console.log( 'MediumCalendarDate', date );
 	htmlClass = htmlClass ?
 		`${ htmlClass } medium-calendar-date-wrapper` :
 		'medium-calendar-date-wrapper';
@@ -67,6 +67,26 @@ const MediumCalendarDate = ( {
 	return addWrapper ? (
 		<div className={ htmlClass }>{ mediumDate }</div>
 	) : mediumDate;
+};
+
+MediumCalendarDate.propTypes = {
+	date: PropTypes.oneOfType( [
+		PropTypes.object,
+		PropTypes.instanceOf( DateTime )
+	] ).isRequired,
+	headerText: PropTypes.oneOfType( [
+		PropTypes.array,
+		PropTypes.object,
+		PropTypes.string,
+	] ),
+	footerText: PropTypes.oneOfType( [
+		PropTypes.array,
+		PropTypes.object,
+		PropTypes.string,
+	] ),
+	htmlClass: PropTypes.string,
+	position: PropTypes.string,
+	addWrapper: PropTypes.bool,
 };
 
 export default MediumCalendarDate;
