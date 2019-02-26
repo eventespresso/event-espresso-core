@@ -12,6 +12,8 @@ describe( 'DEFAULT_LISTS_STATE', () => {
 			ticket: {},
 			venue: {},
 			term: {},
+			checkin: {},
+			registration: {},
 		};
 		expect( DEFAULT_LISTS_STATE ).toEqual( expectedState );
 	} );
@@ -27,6 +29,8 @@ describe( 'DEFAULT_CORE_STATE', () => {
 				ticket: {},
 				venue: {},
 				term: {},
+				checkin: {},
+				registration: {},
 			},
 			relations: {
 				index: {},

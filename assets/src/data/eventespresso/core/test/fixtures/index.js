@@ -73,4 +73,5 @@ export const mockStateForTests = {
 			add: {},
 		} ),
 	},
+	modelSpecific: Set(),
 };

@@ -64,7 +64,7 @@ function* removeRelationForEntity(
 		relationName,
 		[ relationEntityId ],
 	);
-	yield removeDirtyRelationForAddition(
+	yield removeDirtyRelationAddition(
 		modelName,
 		entityId,
 		relationName,
