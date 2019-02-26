@@ -1,4 +1,8 @@
 /**
+ * External imports
+ */
+import { Money } from '@eventespresso/value-objects';
+import { isModelEntityOfModel } from '@eventespresso/validators';/**
  * returns an object mapping Ticket Entity properties to form inputs
  *
  * @function
@@ -6,6 +10,9 @@
  * @return {Object} rendered form
  */
 export const ticketEntityFormSchema = ( ticket ) => {
+	if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
+		return {};
+	}
 	// console.log( 'ticketEntityFormSchema() ticket', ticket );
 	return {
 		[ `ee-ticket-id-${ ticket.id }` ]: ticket.id,
@@ -18,7 +25,10 @@ export const ticketEntityFormSchema = ( ticket ) => {
 		[ `ee-ticket-required-${ ticket.id }` ]: ticket.required || false,
 		[ `ee-ticket-min-${ ticket.id }` ]: ticket.min || null,
 		[ `ee-ticket-max-${ ticket.id }` ]: stripInfinity( ticket.max ),
-		[ `ee-ticket-price-${ ticket.id }` ]: ticket.price || 0,
+		[ `ee-ticket-price-${ ticket.id }` ]: ticket.price.amount &&
+		ticket.price.amount.amount ?
+			ticket.price.amount.amount.toNumber() :
+			null,
 		[ `ee-ticket-start-${ ticket.id }` ]: ticket.startDate,
 		[ `ee-ticket-end-${ ticket.id }` ]: ticket.endDate,
 		[ `ee-ticket-taxable-${ ticket.id }` ]: ticket.taxable || false,
