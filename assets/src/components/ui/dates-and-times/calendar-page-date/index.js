@@ -1,10 +1,11 @@
 /**
  * External imports
  */
+import PropTypes from 'prop-types';
 import { Component } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import { DateTime } from '@eventespresso/value-objects';
-import { dateTimeModel } from '@eventespresso/model';
+import { instanceOf } from '@eventespresso/validators';
 
 /**
  * Internal dependencies
@@ -17,24 +18,38 @@ import './style.css';
  * one of those mini calendars where each page is a day
  *
  * @function
- * @param {DateTime} startDate 	Date object for defining the start of an Event Date
- * @param {DateTime} endDate    Date object for defining the end of an Event Date
- * @return {string}         The date rendered to look like a calendar page
+ * @param {DateTime} startDate 	DateTime defining the start of an Event
+ * @param {DateTime} endDate 	DateTime defining the end of an Event
+ * @param {string} statusClass
+ * @return {string} 			The date rendered to look like a calendar page
  */
 class CalendarPageDate extends Component {
+	static propTypes = {
+		startDate: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.instanceOf( DateTime )
+		] ),
+		endDate: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.instanceOf( DateTime )
+		] ),
+		statusClass: PropTypes.string,
+	};
+
 	/**
 	 * StartDate
 	 *
 	 * @function
 	 * @param {DateTime} startDate object
+	 * @param {string} statusClass
 	 * @return {string} The start date formatted to look like a calendar page
 	 */
-	getStartDate = ( startDate ) => {
-		return (
+	getStartDate = ( startDate, statusClass ) => {
+		return instanceOf( startDate, 'DateTime' ) ? (
 			<div className="ee-calendar-page-date-wrapper-start" >
-				{ this.renderCalendarPage( startDate ) }
+				{ this.renderCalendarPage( startDate, statusClass ) }
 			</div>
-		);
+		) : null;
 	};
 
 	/**
@@ -42,42 +57,44 @@ class CalendarPageDate extends Component {
 	 *
 	 * @function
 	 * @param {DateTime} endDate object
+	 * @param {string} statusClass
 	 * @return {string} The end date formatted to look like a calendar page
 	 */
-	getEndDate = ( endDate ) => {
-		return (
+	getEndDate = ( endDate, statusClass ) => {
+		return instanceOf( endDate, 'DateTime' ) ? (
 			<div className="ee-calendar-page-date-wrapper-end" >
-				{ this.getDivider() }
-				{ this.renderCalendarPage( endDate, 'end' ) }
+				{ this.renderCalendarPage( endDate, statusClass, 'end' ) }
 			</div>
-		);
+		) : null;
 	};
 
 	/**
 	 * getDivider
 	 *
 	 * @function
+	 * @param {DateTime} startDate object
+	 * @param {DateTime} endDate object
 	 * @return {string} a separator between the start and end date
 	 */
-	getDivider = () => {
-		return (
+	getDivider = ( startDate, endDate  ) => {
+		return startDate && endDate ? (
 			<div className="ee-calendar-page-date-to">
 				{ __( 'TO', 'event_espresso' ) }
 			</div>
-		);
+		) : null;
 	};
 
 	/**
 	 * renderCalendarPage
 	 *
 	 * @function
-	 * @param {DateTime} eventDate object
+	 * @param {DateTime} date object
+	 * @param {string} statusClass
 	 * @param {string} startOrEnd whether date is a start date or end date
 	 * @return {string} The day formatted to look like a calendar page
 	 */
-	renderCalendarPage = ( eventDate, startOrEnd = 'start' ) => {
-		let htmlClass = this.getBgColorClass( eventDate );
-		htmlClass = `ee-calendar-page-date-month ${ htmlClass }`;
+	renderCalendarPage = ( date, statusClass, startOrEnd = 'start' ) => {
+		let htmlClass = `ee-calendar-page-date-month ${ statusClass }`;
 		return (
 			<div className={
 				'ee-calendar-page-date-' +
@@ -85,65 +102,26 @@ class CalendarPageDate extends Component {
 				' ee-calendar-page-date-page'
 			}>
 				<div className={ htmlClass }>
-					{ this.getMonth( eventDate ) }
+					{ date.toFormat( 'MMM' ) }
 				</div>
 				<div className={ 'ee-calendar-page-date-day' }>
-					{ this.getDay( eventDate ) }
+					{ date.toFormat( 'DD' ) }
 				</div>
 			</div>
 		);
 	};
 
-	/**
-	 * getBgColorClass
-	 *
-	 * @function
-	 * @param {DateTime} date
-	 * @return {string}  CSS class for the container background color
-	 */
-	getBgColorClass = ( date ) => {
-		switch ( dateTimeModel.status( date ) ) {
-			case 'DTA' :
-				return 'ee-green-background';
-			case 'DTE' :
-				return 'ee-lt-grey-background';
-			case 'DTS' :
-				return 'ee-orange-background';
-			case 'DTU' :
-			default:
-				return 'ee-blue-background';
-		}
-	};
-
-	/**
-	 * getMonth
-	 *
-	 * @function
-	 * @param {DateTime} eventDate Date object
-	 * @return {string}  The month formatted like 'Jan', 'Feb', 'Mar', etc
-	 */
-	getMonth = ( eventDate ) => {
-		return eventDate.toFormat( 'MMM' );
-	};
-
-	/**
-	 * getDay
-	 *
-	 * @function
-	 * @param {DateTime} eventDate Date object
-	 * @return {string}  The day formatted like 01, 02, 03, etc
-	 */
-	getDay = ( eventDate ) => {
-		return eventDate.toFormat( 'DD' );
-	};
-
 	render() {
-		const { startDate, endDate } = this.props;
-		return startDate instanceof DateTime &&
-			endDate instanceof DateTime && (
+		const {
+			startDate = null,
+			endDate = null,
+			statusClass = '',
+		} = this.props;
+		return  (
 			<div className={ 'ee-calendar-page-date-wrapper' }>
-				{ this.getStartDate( startDate ) }
-				{ this.getEndDate( endDate ) }
+				{ this.getStartDate( startDate, statusClass ) }
+				{ this.getDivider( startDate, endDate ) }
+				{ this.getEndDate( endDate, statusClass ) }
 			</div>
 		);
 	};
