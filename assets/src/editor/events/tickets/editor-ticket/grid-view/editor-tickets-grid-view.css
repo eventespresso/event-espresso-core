@@ -23,6 +23,10 @@
     overflow: hidden;
 }
 
+.ee-editor-ticket-main.ee-editor-date-range {
+    min-height: 225px;
+}
+
 /* DATE DETAILS */
 
 .ee-editor-ticket-details-wrapper-div {
@@ -39,19 +43,21 @@
     width: 100%;
 }
 
-.ee-editor-ticket-name-heading {
+.ee-editor-ticket-name-heading,
+.ee-editor-ticket-name-heading .ee-inline-edit-text {
     color: #58575c;
     font-size: 24px !important;
     font-weight: bold !important;
     line-height: 24px !important;
-    margin: 0 0 10px !important;
+    margin: 5px 0 0 !important;
     min-height: 30px;
     overflow: hidden;
-    padding: 0 !important;
+    padding: 0 0 .5rem !important;
     text-overflow: ellipsis;
     width: 100%;
 }
-.ee-editor-ticket-name-heading.ee-long-title {
+.ee-editor-ticket-name-heading.ee-long-title,
+.ee-editor-ticket-name-heading.ee-long-title .ee-inline-edit-text {
     font-size: 18px !important;
     line-height: 18px !important;
 }
@@ -75,12 +81,14 @@
     max-height: unset;
 }
 
-.ee-ticket-price {
-    color: #706e73 !important;
-    font-size: 24px !important;
+.ee-ticket-price,
+.ee-ticket-price .ee-inline-edit-text {
+    color: #908d94 !important;
+    font-size: 21px !important;
     font-weight: bold !important;
-    line-height: 24px !important;
-    margin: 0 0 10px !important;
+    line-height: 21px !important;
+    margin: 0 !important;
+    padding: 0 0 .5rem !important;
     text-align: center;
 }
 
