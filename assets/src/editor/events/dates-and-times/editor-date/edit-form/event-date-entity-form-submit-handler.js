@@ -20,17 +20,15 @@ export const eventDateEntityFormSubmitHandler = async ( eventDate, formData ) =>
 	}
 	const id = eventDate.id;
 	const prefix = 'ee-event-date';
-	const startDate = formData[ `${ prefix }-start-${ id }` ];
-	const endDate = formData[ `${ prefix }-end-${ id }` ];
 	eventDate.name = formData[ `${ prefix }-name-${ id }` ];
 	eventDate.description = formData[ `${ prefix }-description-${ id }` ];
-	eventDate.start = new DateTime( startDate );
-	eventDate.end = new DateTime( endDate );
+	eventDate.start = new DateTime( formData[ `${ prefix }-start-${ id }` ] );
+	eventDate.end = new DateTime( formData[ `${ prefix }-end-${ id }` ] );
 	eventDate.regLimit = parseInt( formData[ `${ prefix }-reg-limit-${ id }` ] );
-	eventDate.isPrimary = formData[ `${ prefix }-is-primary-${ id }` ];
+	eventDate.isPrimary = !! formData[ `${ prefix }-is-primary-${ id }` ];
 	eventDate.order = parseInt( formData[ `${ prefix }-order-${ id }` ] );
 	eventDate.parent = parseInt( formData[ `${ prefix }-parent-${ id }` ] );
-	eventDate.deleted = formData[ `${ prefix }-deleted-${ id }` ];
+	eventDate.deleted = !! formData[ `${ prefix }-deleted-${ id }` ];
 	return await dispatch( 'eventespresso/core' ).persistDatetimeRecord(
 		eventDate
 	);
