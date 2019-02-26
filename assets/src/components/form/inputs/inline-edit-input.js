@@ -3,6 +3,7 @@
  */
 import { isFunction } from 'lodash';
 import PropTypes from 'prop-types';
+import { Spinner } from '@wordpress/components';
 import { Component, createRef, Fragment } from '@wordpress/element';
 import { ENTER, ESCAPE, SPACE } from '@wordpress/keycodes';
 import { __ } from '@eventespresso/i18n';
@@ -41,7 +42,7 @@ export class InlineEditInput extends Component {
 	constructor( props ) {
 		super( props );
 		this.input = createRef();
-		this.state = {};
+		this.state = { saving: false };
 	}
 
 	componentDidMount() {
@@ -51,6 +52,7 @@ export class InlineEditInput extends Component {
 				origValue: this.props.value,
 				value: this.props.value,
 				onChange: this.props.onChange,
+				saving: false,
 			}
 		);
 	}
@@ -97,9 +99,10 @@ export class InlineEditInput extends Component {
 	 * sets editing mode to false
 	 * @function
 	 */
-	done = () => {
-		this.setState( { editing: false } );
-		this.state.onChange( this.state.value );
+	done = async () => {
+		this.setState( { editing: false, saving: true } );
+		await this.state.onChange( this.state.value );
+		this.setState( { saving: false } );
 	};
 
 	/**
@@ -196,7 +199,6 @@ export class InlineEditInput extends Component {
 				{ ...inputProps }
 			/>
 		);
-
 		return label ? (
 			<Fragment>
 				<label
@@ -206,6 +208,7 @@ export class InlineEditInput extends Component {
 					{ label }
 				</label>
 				{ input }
+				{ this.spinner() }
 			</Fragment>
 		) : input;
 	};
@@ -220,18 +223,35 @@ export class InlineEditInput extends Component {
 			valueFormatter( this.state.value ) :
 			this.state.value;
 		return (
-			<span
-				role="button"
-				tabIndex="0"
-				onClick={ this.edit }
-				onFocus={ this.edit }
-				onKeyDown={ this.keySelect }
-				className="ee-inline-edit-text clickable"
-				aria-label={ __( 'click to edit', 'event_espresso' ) }
-			>
-				{ value }
-			</span>
+			<Fragment>
+				<span
+					role="button"
+					tabIndex="0"
+					onClick={ this.edit }
+					onFocus={ this.edit }
+					onKeyDown={ this.keySelect }
+					className="ee-inline-edit-text clickable"
+					aria-label={ __( 'click to edit', 'event_espresso' ) }
+				>
+					{ value }
+				</span>
+				{ this.spinner() }
+			</Fragment>
 		);
+	};
+
+	/**
+	 * @return {Object} rendered spinner
+	 */
+	spinner = () => {
+		return this.state.saving ? (
+			<div className="ee-inline-edit-spinner ee-small-shadow">
+				<Spinner />
+				<span className="ee-inline-edit-notice">
+					{ __( 'saving', 'event_espresso' ) }
+				</span>
+			</div>
+		) : null;
 	};
 
 	render() {
