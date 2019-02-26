@@ -85,8 +85,8 @@ export class Currency {
 		this.singularLabel = currencyConfig.singularLabel || '';
 		this.pluralLabel = currencyConfig.pluralLabel || '';
 		this.sign = currencyConfig.sign;
-		this.signB4 = isUndefined( currencyConfig.signB4) ?
-			this.signBr :
+		this.signB4 = isUndefined( currencyConfig.signB4 ) ?
+			this.signB4 :
 			currencyConfig.signB4;
 		this.decimalPlaces = isUndefined( currencyConfig.decimalPlaces ) ?
 			this.decimalPlaces :
