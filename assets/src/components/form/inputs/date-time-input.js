@@ -10,6 +10,8 @@ import { Button, DateTimePicker, Dropdown } from '@wordpress/components';
 import { ENTER, SPACE } from '@wordpress/keycodes';
 import { __ } from '@eventespresso/i18n';
 
+import './date-time-input.css';
+
 /**
  * generates an HTML5 text input that opens a WP Dropdown + DateTimePicker
  * for populating the input with a date and time
@@ -27,7 +29,10 @@ import { __ } from '@eventespresso/i18n';
 class DateTimeDropdown extends Component {
 	static propTypes = {
 		input: PropTypes.object.isRequired,
-		initialValue: PropTypes.string.isRequired,
+		initialValue: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.string,
+		] ).isRequired,
 		htmlId: PropTypes.string.isRequired,
 		htmlClass: PropTypes.string,
 		helpTextID: PropTypes.string,
@@ -69,7 +74,6 @@ class DateTimeDropdown extends Component {
 	 * @param {string} newDate
 	 */
 	onChange = ( newDate ) => {
-		// console.log( ' >>> CHANGE <<< DateTimeInput.onChange()', newDate );
 		this.setState( { newValue: newDate } );
 	};
 
@@ -80,7 +84,6 @@ class DateTimeDropdown extends Component {
 	 * @param {string} newDate
 	 */
 	cancel = () => {
-		// console.log( ' >>> CANCEL <<< DateTimeInput.cancel()' );
 		this.setState( ( prevState ) => (
 			{ inputValue: prevState.prevValue }
 		) );
@@ -93,7 +96,6 @@ class DateTimeDropdown extends Component {
 	 * @param {string} newDate
 	 */
 	update = () => {
-		// console.log( ' >>> UPDATE <<< DateTimeInput.update()' );
 		this.setState( ( prevState ) => {
 			prevState.onChange( prevState.newValue );
 			return {
@@ -104,9 +106,6 @@ class DateTimeDropdown extends Component {
 	};
 
 	render() {
-		// console.log( '' );
-		// console.log( 'DateTimeInput.render() props', this.props );
-		// 	console.log( 'DateTimeInput.render() state', this.state );
 		const {
 			input,
 			htmlId,

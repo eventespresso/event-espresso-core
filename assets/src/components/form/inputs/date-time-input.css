@@ -1,0 +1,78 @@
+/* -------------------------------------------------------------------------
+ * Event Espresso DateTimeInput Stylesheet
+ * (c) 2019 Event Espresso
+ * -------------------------------------------------------------------------*/
+
+.ee-date-time-input-dialog {
+    margin-left: -50% !important;
+    margin-top: -10% !important;
+}
+
+
+/* Media Queries for specific screen sizes
+ * -------------------------------------------------------------------------*/
+
+@media only screen and (max-width: 1920px) {
+}
+
+@media only screen and (max-width: 1600px) {
+    .ee-date-time-input-dialog {
+        margin-left: -50% !important;
+        margin-top: -11% !important;
+    }
+}
+
+@media only screen and (max-width: 1366px) {
+    .ee-date-time-input-dialog {
+        margin-left: -50% !important;
+        margin-top: -12% !important;
+    }
+}
+
+@media only screen and (max-width: 1280px) {
+    .ee-date-time-input-dialog {
+        margin-left: -32.5% !important;
+        margin-top: -5% !important;
+    }
+}
+
+@media only screen and (max-width: 1024px) {
+    .ee-date-time-input-dialog {
+        margin-left: -32.5% !important;
+        margin-top: -5% !important;
+    }
+}
+
+/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+@media only screen and (max-width: 960px) {
+    .ee-date-time-input-dialog {
+        margin-left: -30% !important;
+        margin-top: -5.5% !important;
+    }
+}
+
+/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+@media only screen and (max-width: 850px) {
+    .ee-date-time-input-dialog {
+        margin-left: -25% !important;
+        margin-top: -6.5% !important;
+    }
+}
+
+/* WordPress Admin Media Query Breakpoint: Tablet */
+@media screen and ( max-width: 782px ) {
+    .ee-date-time-input-dialog {
+        margin-left: -20% !important;
+        margin-top: -7.5% !important;
+    }
+}
+
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+}
+
+@media only screen and (max-width: 480px) {
+}
+
+@media only screen and (max-width: 360px) {
+}
