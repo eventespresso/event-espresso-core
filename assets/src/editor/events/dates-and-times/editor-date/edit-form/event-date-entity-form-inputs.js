@@ -26,34 +26,24 @@ export const eventDateEntityFormInputs = (
 	if ( ! eventDate || ( eventDate && ! eventDate.id ) ) {
 		return null;
 	}
-	// console.log( '' );
-	// console.log( 'EventDateEntityFormInputs eventDate', eventDate );
-	// console.log( 'EventDateEntityFormInputs currentValues', currentValues );
-	// console.log( 'EventDateEntityFormInputs exclude', exclude );
 	const values = currentValues;
 	const prefix = 'ee-event-date';
 	const dateId = eventDate.id;
 	const inputs = [];
-	if ( indexOf( exclude, 'DTT_ID' ) < 0 ) {
-		inputs.push(
-			<FormInput
-				key="id"
-				type="number"
-				name={ `${ prefix }-id-${ dateId }` }
-				initialValue={ values[ `${ prefix }-id-${ dateId }` ] }
-				label={ __( 'Date ID', 'event_espresso' ) }
-				htmlId={ `${ prefix }-id-${ dateId }` }
-				// validators={ [
-				// 	validations.isInteger,
-				// 	validations.minNumber( 0 ),
-				// ] }
-				inputWidth={ 3 }
-				required
-				min={ 0 }
-				disabled
-			/>,
-		);
-	}
+	inputs.push(
+		<FormInput
+			key="id"
+			type="number"
+			name={ `${ prefix }-id-${ dateId }` }
+			initialValue={ values[ `${ prefix }-id-${ dateId }` ] }
+			label={ __( 'Date ID', 'event_espresso' ) }
+			htmlId={ `${ prefix }-id-${ dateId }` }
+			inputWidth={ 3 }
+			required
+			min={ 0 }
+			disabled
+		/>,
+	);
 	if ( indexOf( exclude, 'EVT_ID' ) < 0 ) {
 		inputs.push(
 			<FormInput
@@ -63,10 +53,6 @@ export const eventDateEntityFormInputs = (
 				initialValue={ values[ `${ prefix }-event-id-${ dateId }` ] || 0 }
 				label={ __( 'Event ID', 'event_espresso' ) }
 				htmlId={ `${ prefix }-event-id-${ dateId }` }
-				// validators={ [
-				// 	validations.isInteger,
-				// 	validations.minNumber( 0 ),
-				// ] }
 				inputWidth={ 3 }
 				required
 				min={ 0 }
@@ -121,7 +107,7 @@ export const eventDateEntityFormInputs = (
 				key="end"
 				type="datetime-local"
 				name={ `${ prefix }-end-${ dateId }` }
-				initialValue={ values[ `${ prefix }-start-${ dateId }` ] }
+				initialValue={ values[ `${ prefix }-end-${ dateId }` ] }
 				label={ __( 'End Time', 'event_espresso' ) }
 				htmlId={ `${ prefix }-end-${ dateId }` }
 				validations={ validations.required }
@@ -145,10 +131,6 @@ export const eventDateEntityFormInputs = (
 					' particular date. Leave blank for no limit.',
 					'event_espresso',
 				) }
-				// validators={ [
-				// 	validations.isInteger,
-				// 	validations.minNumber( 0 ),
-				// ] }
 				inputWidth={ 3 }
 				min={ 0 }
 			/>,
@@ -235,10 +217,6 @@ export const eventDateEntityFormInputs = (
 				initialValue={ values[ `${ prefix }-parent-${ dateId }` ] || 0 }
 				label={ __( 'Parent Date', 'event_espresso' ) }
 				htmlId={ `${ prefix }-parent-${ dateId }` }
-				// validators={ [
-				// 	validations.isInteger,
-				// 	validations.minNumber( 0 ),
-				// ] }
 				inputWidth={ 2 }
 			/>,
 		);
@@ -264,6 +242,5 @@ export const eventDateEntityFormInputs = (
 			/>,
 		);
 	}
-	// console.log( 'EventDateEntityFormInputs inputs', inputs );
 	return inputs;
 };
