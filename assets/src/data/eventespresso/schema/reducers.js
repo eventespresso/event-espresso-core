@@ -95,6 +95,17 @@ export const receiveRelationEndpointForEntity = (
 	return state;
 };
 
+export const receiveRelationSchema = ( state = Map(), action ) => {
+	if ( action.type === types.RECEIVE_RELATION_TYPE ) {
+		const modelName = singularModelName( action.modelName );
+		const relationName = pluralModelName( action.relationName );
+		return state.setIn(
+			[ modelName, relationName ],
+			action.schema
+		);
+	}
+};
+
 /**
  * Be aware that the root state is a plain object but each slice ('schema',
  * 'factory', 'relationEndpoints') is an immutable Map.
@@ -103,4 +114,5 @@ export default combineReducers( {
 	schema: receiveSchema,
 	factory: receiveFactory,
 	relationEndpoints: receiveRelationEndpointForEntity,
+	relationSchema: receiveRelationSchema,
 } );
