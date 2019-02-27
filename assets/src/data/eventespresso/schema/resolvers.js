@@ -38,7 +38,7 @@ import {
  * @return {Object} Retrieved schema.
  */
 export function* getSchemaForModel( modelName ) {
-	const path = getEndpoint( modelName );
+	const path = getEndpoint( singularModelName( modelName ) );
 	const schema = yield fetch( { path, method: 'OPTIONS' } );
 	yield receiveSchemaForModel( modelName, schema );
 	return schema;
@@ -146,7 +146,12 @@ export function* hasJoinTableRelation( modelName, relationName ) {
 }
 
 export function* getRelationType( modelName, relationName ) {
-	const relationSchema = yield getRelationSchema( modelName, relationName );
+	const relationSchema = yield resolveSelect(
+		SCHEMA_REDUCER_KEY,
+		'getRelationSchema',
+		modelName,
+		relationName
+	);
 	return relationSchema !== null ? relationSchema.relation_type : '';
 }
 
