@@ -193,19 +193,19 @@ export function* getRelatedEntitiesForIds(
 	const factory = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'getFactoryForModel',
-		relationName
+		singularRelationName
 	);
 	let hasSetMap = Map();
 	if ( hasJoinTable ) {
 		// prepare a fetch using the join table with relations in the response.
-		const joinModel = pluralModelName( relationSchema.joining_model_name );
-		path = getEndpoint( joinModel ) +
-			'/?where' +
-			getPrimaryKeyQueryString(
-				singularModelName( modelName ),
-				entityIds
-			) +
-			'&include=' + getModelNameForRequest( relationName ) + '.*';
+		path = getEndpoint(
+			singularModelName( relationSchema.joining_model_name ).toLowerCase()
+		);
+		path += '/?where' + getPrimaryKeyQueryString(
+			singularModelName( modelName ),
+			entityIds
+		);
+		path += '&include=' + getModelNameForRequest( relationName ) + '.*';
 		response = yield fetch( { path } );
 		if ( ! response.length ) {
 			return;
