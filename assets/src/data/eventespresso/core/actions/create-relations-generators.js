@@ -151,7 +151,6 @@ function* resolveRelationRecordForRelation(
 		yield dispatch(
 			REDUCER_KEY,
 			'receiveEntityAndResolve',
-			singularRelationName,
 			relationEntity
 		);
 	}
