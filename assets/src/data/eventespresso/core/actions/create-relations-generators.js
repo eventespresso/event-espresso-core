@@ -13,7 +13,7 @@ import { getIdsFromBaseEntityArray } from '@eventespresso/helpers';
 /**
  * Internal imports
  */
-import { dispatch } from '../../base-controls';
+import { dispatch, select, resolveSelect } from '../../base-controls';
 import { REDUCER_KEY } from '../constants';
 
 /**
@@ -125,6 +125,66 @@ function* createRelations(
 	}
 }
 
+function* resolveRelationRecordForRelation(
+	relationEntity,
+	modelName,
+	modelId
+) {
+	const singularRelationName = singularModelName( relationEntity.modelName );
+	const pluralRelationName = pluralModelName( relationEntity.modelName );
+	const hasEntity = yield select(
+		'core/data',
+		'hasFinishedResolution',
+		REDUCER_KEY,
+		'getEntityById',
+		[ singularRelationName, relationEntity.id ]
+	);
+	relationEntity = hasEntity ?
+		yield select(
+			REDUCER_KEY,
+			'getEntityById',
+			singularRelationName,
+			relationEntity.id
+		) :
+		relationEntity;
+	if ( ! hasEntity ) {
+		yield dispatch(
+			REDUCER_KEY,
+			'receiveEntityAndResolve',
+			singularRelationName,
+			relationEntity
+		);
+	}
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveRelatedEntities',
+		modelName,
+		modelId,
+		pluralRelationName,
+		[ relationEntity.id ]
+	);
+	const modelEntity = yield resolveSelect(
+		REDUCER_KEY,
+		'getEntityById',
+		modelName,
+		modelId
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		REDUCER_KEY,
+		'getRelatedEntities',
+		[ modelEntity, pluralRelationName ]
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		REDUCER_KEY,
+		'getRelatedEntities',
+		[ relationEntity, pluralModelName( modelName ) ]
+	);
+}
+
 /**
  * Asserts that the provided map has BaseEntity instances for the expected
  * model name.
@@ -142,4 +202,4 @@ const assertArrayHasEntitiesForModel = ( entities, relationModelName ) => {
 	}
 };
 
-export { createRelation, createRelations };
+export { createRelation, createRelations, resolveRelationRecordForRelation };
