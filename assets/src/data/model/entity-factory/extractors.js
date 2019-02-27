@@ -174,6 +174,23 @@ export const getRelationNameFromLink = ( resourceLink ) => {
 	return pluralModelName( camelCase( last( resourceLink.split( '/' ) ) ) );
 };
 
+export const getBaseFieldsAndValuesForCloning = ( entityInstance ) => {
+	return reduce( entityInstance.originalFieldsAndValues, (
+		fieldsAndValues,
+		originalFieldValue,
+		fieldName
+	) => {
+		if (
+			isEntityField( fieldName, entityInstance.schema ) &&
+			! isPrimaryKeyField( fieldName, entityInstance.schema )
+		) {
+			fieldsAndValues[ fieldName ] = entityInstance[ fieldName ];
+			return fieldsAndValues;
+		}
+		return fieldsAndValues;
+	}, {} );
+}
+
 /**
  * Returns a plain object containing the entity field name and values from the
  * provided entity instance

@@ -113,6 +113,16 @@ class BaseEntity {
 		return ( fieldName ) => this.protectedFields.indexOf( fieldName ) > -1;
 	}
 
+	get clone() {
+		return new BaseEntity(
+			this.modelName,
+			this.forClone,
+			{ $schema: {}, properties: this.schema },
+			this.fieldPrefixes,
+			true
+		);
+	}
+
 	static name = 'BaseEntity'
 }
 

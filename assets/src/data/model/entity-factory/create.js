@@ -24,6 +24,7 @@ import {
 	deriveRenderedValue,
 	derivePreparedValueForField,
 	getRelationNameFromLink,
+	getBaseFieldsAndValuesForCloning,
 	getBaseFieldsAndValuesForPersisting,
 	getPrimaryKeyFieldsFromSchema,
 	getEntityFieldsFromSchema,
@@ -340,6 +341,10 @@ const populateMissingFields = ( instance ) => {
 	);
 };
 
+const forClone = ( instance ) => {
+	return getBaseFieldsAndValuesForCloning( instance );
+};
+
 /**
  * Returns a plain object of the entity fields and values from this entity
  * instance prepared for use in an update request.
@@ -392,6 +397,7 @@ export const createPersistingGettersAndSetters = ( instance ) => {
 	createCallbackGetter( instance, 'forUpdate', forUpdate );
 	createCallbackGetter( instance, 'forInsert', forInsert );
 	createCallbackGetter( instance, 'forPersist', forPersist );
+	createCallbackGetter( instance, 'forClone', forClone );
 };
 
 /**

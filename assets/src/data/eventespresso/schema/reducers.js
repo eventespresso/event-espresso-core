@@ -12,7 +12,7 @@ import {
 	isSchemaResponseOfModel,
 	isModelEntityFactoryOfModel,
 } from '@eventespresso/validators';
-import { fromJS } from 'immutable';
+import { fromJS, Map } from 'immutable';
 
 /**
  * Internal imports
@@ -96,14 +96,15 @@ export const receiveRelationEndpointForEntity = (
 };
 
 export const receiveRelationSchema = ( state = Map(), action ) => {
-	if ( action.type === types.RECEIVE_RELATION_TYPE ) {
+	if ( action.type === types.RECEIVE_RELATION_SCHEMA ) {
 		const modelName = singularModelName( action.modelName );
 		const relationName = pluralModelName( action.relationName );
 		return state.setIn(
 			[ modelName, relationName ],
-			action.schema
+			action.relationSchema
 		);
 	}
+	return state;
 };
 
 /**
