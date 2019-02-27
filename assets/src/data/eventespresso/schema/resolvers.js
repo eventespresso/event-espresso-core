@@ -13,6 +13,8 @@ import {
 	pluralModelName,
 	singularModelName,
 } from '@eventespresso/model';
+import { isUndefined } from 'lodash';
+
 
 /**
  * Internal dependencies
@@ -21,10 +23,14 @@ import {
 	receiveSchemaForModel,
 	receiveFactoryForModel,
 	receiveRelationEndpointForModelEntity,
+	receiveRelationSchema,
 } from './actions';
 import { fetch, resolveSelect } from '../base-controls';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../core/constants';
-import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from './constants';
+import {
+	REDUCER_KEY as SCHEMA_REDUCER_KEY,
+	JOIN_RELATION_TYPES,
+} from './constants';
 
 /**
  * A resolver for getting the schema for a given model name.
@@ -127,4 +133,52 @@ export function* getRelationEndpointForEntityId(
 		);
 	}
 	return endpoint;
+}
+
+export function* hasJoinTableRelation( modelName, relationName ) {
+	const relationType = yield resolveSelect(
+		SCHEMA_REDUCER_KEY,
+		'getRelationType',
+		modelName,
+		relationName,
+	);
+	return JOIN_RELATION_TYPES.indexOf( relationType ) > -1;
+}
+
+export function* getRelationType( modelName, relationName ) {
+	const relationSchema = yield getRelationSchema( modelName, relationName );
+	return relationSchema !== null ? relationSchema.relation_type : '';
+}
+
+export function* getRelationSchema( modelName, relationName ) {
+	modelName = singularModelName( modelName );
+	const pluralRelationName = pluralModelName( relationName );
+	const singularRelationName = singularModelName( relationName );
+	const schema = yield resolveSelect(
+		SCHEMA_REDUCER_KEY,
+		'getSchemaForModel',
+		modelName
+	);
+	if ( schema === null ) {
+		throw new Error(
+			'The ' + modelName + ' does not have a schema'
+		);
+	}
+	// is there a schema for plural relation name?
+	let typeSchema = schema.schema.properties[ pluralRelationName ] || null;
+	typeSchema = typeSchema === null &&
+		! isUndefined( schema.schema.properties[ singularRelationName ] ) ?
+		schema.schema.properties[ singularRelationName ] :
+		typeSchema;
+	if ( typeSchema === null ) {
+		throw new Error(
+			'There is no relation for ' + relationName + ' on the ' +
+			'model ' + modelName
+		);
+	}
+	yield receiveRelationSchema(
+		modelName,
+		relationName,
+		typeSchema
+	);
 }

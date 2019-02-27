@@ -19,18 +19,6 @@ import {
 } from './constants';
 
 /**
- * @todo
- * need to add relation type awareness to built entities. The schema can be used
- * to determine relation type.
- *
- * - `relationType` getter/setter
- * - `hasJoinTable` getter
- * - `joinModelName` name of model name for joins (probably needs to be an array
- *    indexed by join model name).
- * - `joinRelationModel` name of model the join table is for.
- */
-
-/**
  * BaseEntity is the basic class for all entities.  createEntityFactory returns
  * an instance of this and all the getters/setters for fields etc are
  * dynamically created via the constructor.
