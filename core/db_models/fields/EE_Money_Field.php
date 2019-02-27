@@ -47,7 +47,14 @@ class EE_Money_Field extends EE_Float_Field
             $display_code = true;
         }
         // we don't use the $pretty_float because format_currency will take care of it.
-        return EEH_Template::format_currency($value_on_field_to_be_outputted, false, $display_code);
+        return EEH_Template::format_currency(
+            $value_on_field_to_be_outputted,
+            false,
+            $display_code,
+            '',
+            'currency-code',
+            ! $this->_whole_pennies_only
+        );
     }
 
     /**

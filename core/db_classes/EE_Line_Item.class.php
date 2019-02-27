@@ -340,7 +340,8 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
 
 
     /**
-     * Gets unit_price
+     * Gets unit_price for flat rate items. Percent items should set this to 0.
+     * You may alternatively want to use prettyUnitPrice(), which works for flat and percent items.
      *
      * @return float
      * @throws EE_Error
@@ -354,6 +355,25 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
         return $this->get('LIN_unit_price');
     }
 
+    public function prettyUnitPrice()
+    {
+        if($this->parent_ID() !== 0
+            && $this->parent() instanceof EE_Line_Item
+            && $this->parent()->type() === EEM_Line_Item::type_line_item
+        ) {
+            $quantity = $this->parent()->quantity();
+        } else {
+            $quantity = $this->quantity();
+        }
+        if($this->is_percent()) {
+            return $this->get_model()->field_settings_for('LIN_unit_price')->prepare_for_pretty_echoing(
+                $this->total() / $quantity,
+                'no_currency_code'
+            );
+        } else {
+            return $this->unit_price_no_code();
+        }
+    }
 
     /**
      * Sets unit_price
@@ -1301,12 +1321,8 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
             if ($child_line_item instanceof EE_Line_Item && ! $child_line_item->is_cancellation()) {
                 // percentage line items are based on total so far
                 if ($child_line_item->is_percent()) {
-                    // round as we go so that the line items add up ok
-                    $percent_total = round(
-                        $calculated_total_so_far * $child_line_item->percent() / 100,
-                        EE_Registry::instance()->CFG->currency->dec_plc
-                    );
-                    $child_line_item->set_total($percent_total);
+                    $percent_total = $calculated_total_so_far * $child_line_item->percent() / 100;
+                    $child_line_item->set_total($calculated_total_so_far * $child_line_item->percent() / 100);
                     // so far all percent line items should have a quantity of 1
                     // (ie, no double percent discounts. Although that might be requested someday)
                     $child_line_item->set_quantity(1);
@@ -1363,10 +1379,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
                 if ($child_line_item->is_percent()) {
                     // it should be the unit-price-so-far multiplied by teh percent multiplied by the quantity
                     // not total multiplied by percent, because that ignores rounding along-the-way
-                    $percent_unit_price = round(
-                        $unit_price_for_total * $child_line_item->percent() / 100,
-                        EE_Registry::instance()->CFG->currency->dec_plc
-                    );
+                    $percent_unit_price = $unit_price_for_total * $child_line_item->percent() / 100;
                     $percent_total = $percent_unit_price * $quantity_for_total;
                     $child_line_item->set_total($percent_total);
                     // so far all percent line items should have a quantity of 1
@@ -1386,7 +1399,10 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
                 }
             }
         }
-        return $calculated_total_so_far;
+        return round(
+            $unit_price_for_total,
+            EE_Registry::instance()->CFG->currency->dec_plc
+        ) * $quantity_for_total;
     }
 
 

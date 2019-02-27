@@ -410,21 +410,11 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                                                   . '</span>' : '';
         // name td
         $html .= EEH_HTML::td($name_and_desc, '', 'item_l sub-item');
-        $qty = $parent_line_item instanceof EE_Line_Item ? $parent_line_item->quantity() : 1;
-        // discount/surcharge td
-        if ($line_item->is_percent()) {
-            $html .= EEH_HTML::td(
-                EEH_Template::format_currency(
-                    $line_item->total() / $qty,
-                    false,
-                    false
-                ),
-                '',
-                'item_c jst-rght'
-            );
-        } else {
-            $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'item_c jst-rght');
-        }
+        $html .= EEH_HTML::td(
+                $line_item->prettyUnitPrice(),
+            '',
+            'item_c jst-rght'
+        );
         // no quantity td
         $html .= EEH_HTML::td();
         // no total td
