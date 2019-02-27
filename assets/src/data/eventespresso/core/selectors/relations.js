@@ -14,7 +14,10 @@ import { Map, Set } from 'immutable';
 /**
  * Internal imports
  */
-import { getEntitiesByIds } from './entities';
+import {
+	getEntitiesByIds,
+	getEntityById,
+} from './entities';
 
 const DEFAULT_EMPTY_SET = Set();
 
@@ -117,6 +120,36 @@ const getRelatedEntities = createSelector(
 			state,
 			entity,
 			relationName
+		),
+	]
+);
+
+export const getRelatedEntitiesForIds = createSelector(
+	( state, modelName, entityIds, relationName ) => {
+		const relationEntities = Set();
+		entityIds.forEach( ( entityId ) => {
+			const entity = getEntityById(
+				state,
+				singularModelName( modelName ),
+				entityId
+			);
+			const relatedEntities = getRelatedEntities(
+				state,
+				entity,
+				pluralModelName( relationName )
+			);
+			relationEntities.merge( relatedEntities );
+		} );
+		return relationEntities;
+	},
+	( state, modelName, entityIds, relationName ) => [
+		...getEntitiesByIds.getDependants(
+			state,
+			singularModelName( modelName ),
+		),
+		...getEntitiesByIds.getDependants(
+			state,
+			singularModelName( relationName )
 		),
 	]
 );

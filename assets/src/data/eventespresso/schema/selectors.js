@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { isResolving, hasFinishedResolving } from '../base-selectors';
-import { REDUCER_KEY } from './constants';
+import { REDUCER_KEY, JOIN_RELATION_TYPES } from './constants';
 import { Map } from 'immutable';
 
 /**
@@ -19,8 +19,7 @@ import { normalizeEntityId } from '@eventespresso/helpers';
  * @return {Object} The schema object or null if it doesn't exist.
  */
 export function getSchemaForModel( state, modelName ) {
-	const schema = state.schema.get( singularModelName( modelName ), null );
-	return ! ( schema instanceof Map ) ? schema : null;
+	return state.schema.get( singularModelName( modelName ), null );
 }
 
 /**
@@ -152,3 +151,25 @@ export function isRequestingRelationEndpointForEntityId(
 		relationModelName,
 	);
 }
+
+export const hasJoinTableRelation = ( state, modelName, relationName ) => {
+	modelName = singularModelName( modelName );
+	relationName = pluralModelName( relationName );
+	const relationType = getRelationType( state, modelName, relationName );
+	return JOIN_RELATION_TYPES.indexOf( relationType ) > -1;
+};
+
+export const getRelationType = ( state, modelName, relationName ) => {
+	modelName = singularModelName( modelName );
+	relationName = pluralModelName( relationName );
+	const relationSchema = getRelationSchema( state, modelName, relationName );
+	return relationSchema !== null ?
+		relationSchema.relation_type :
+		'';
+};
+
+export const getRelationSchema = ( state, modelName, relationName ) => {
+	modelName = singularModelName( modelName );
+	relationName = pluralModelName( relationName );
+	return state.relationSchema.getIn( [ modelName, relationName ], null );
+};
