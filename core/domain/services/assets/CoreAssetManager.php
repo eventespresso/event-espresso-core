@@ -88,6 +88,10 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_WP_PLUGINS_PAGE = 'ee-wp-plugins-page';
 
+    const JS_HANDLE_DEMO_APP = 'ee-demo-app';
+
+    const CSS_HANDLE_DEMO_APP = 'ee-demo-app';
+
     // EE CSS assets handles
     const CSS_HANDLE_DEFAULT = 'espresso_default';
 
@@ -575,10 +579,20 @@ class CoreAssetManager extends AssetManager
             )
         )
         ->setRequiresTranslation();
+        $this->addJavascript(
+            CoreAssetManager::JS_HANDLE_DEMO_APP,
+            $this->registry->getJsUrl($this->domain->assetNamespace(), 'demo-app'),
+            [self::JS_HANDLE_COMPONENTS]
+        );
 
         $this->addStylesheet(
             CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE,
             $this->registry->getCssUrl($this->domain->assetNamespace(), 'wp-plugins-page')
+        );
+        $this->addStylesheet(
+            CoreAssetManager::CSS_HANDLE_DEMO_APP,
+            $this->registry->getCssUrl($this->domain->assetNamespace(), 'demo-app'),
+            [self::CSS_HANDLE_COMPONENTS, 'wp-components']
         );
     }
 }

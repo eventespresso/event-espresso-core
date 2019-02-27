@@ -1,24 +1,25 @@
-import { TextInput, Button, Spinner } from '@wordpress/components';
-import { Fragment, Component } from '@wordpress/element';
+import { TextControl, Button, Spinner } from '@wordpress/components';
+import { Fragment, Component, render as domRender } from '@wordpress/element';
 import { withState, compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import './app.css';
 
 class EventInput extends Component {
 	constructor( props ) {
 		super( props );
-		this.state = { eventId: props.eventId };
+		this.state = { eventId: props.eventId || 0 };
 	}
 
-	setEventId = ( event ) => {
-		this.setState( { eventId: event.target.value } );
+	setEventId = ( id ) => {
+		this.setState( { eventId: id } );
 	};
 
 	onEventSubmit = () => this.props.onEventClick( this.state.eventId );
 
 	render() {
 		return <div>
-			<TextInput
+			<TextControl
 				label={ 'Enter the EventId here' }
 				value={ this.state.eventId }
 				onChange={ this.setEventId }
@@ -27,18 +28,23 @@ class EventInput extends Component {
 				label={ 'Retrieve Event' }
 				isPrimary={ true }
 				onClick={ this.onEventSubmit }
-			/>
+			>
+				Retrieve Event
+			</Button>
 		</div>;
 	}
 }
 
-const DatesList = ( { datetimes, onDateClone } ) => {
+const DatesList = ( { eventId, datetimes, onDateClone } ) => {
 	function getDatetimesList() {
 		if ( datetimes.length > 0 ) {
 			return datetimes.map( ( datetime ) => <li key={ datetime.id }>
 				{ datetime.start.toFormat() }
 				<br />
-				<CloneDateTimeButton datetime={ datetime } onClick={ onDateClone } />
+				<CloneDateTimeButton
+					datetime={ datetime }
+					onCloneDateTime={ onDateClone }
+				/>
 			</li> );
 		}
 		return <li><Spinner /></li>;
@@ -54,12 +60,18 @@ const DatetimesList = withDispatch( ( dispatch, ownProps, { select } ) => {
 		const { getRelatedEntities } = select( 'eventespresso/core' );
 		const { createEntity, createRelations } = dispatch( 'eventespresso/core' );
 		const tickets = getRelatedEntities( datetime, 'tickets' );
-		const newDateTime = await createEntity( 'datetime', datetime.forInsert );
+		const newDateTime = await createEntity( 'datetime', datetime.forClone );
 		createRelations(
 			'datetime',
 			newDateTime.id,
 			'tickets',
 			tickets
+		);
+		createRelations(
+			'event',
+			ownProps.eventId,
+			'datetimes',
+			[ newDateTime ]
 		);
 	}
 	return { onDateClone };
@@ -78,49 +90,26 @@ const TicketsList = ( { tickets } ) => {
 	</div>;
 };
 
-const DateAndTicketList = ( { isInitializing, datetimes = [], tickets = [] } ) => {
+const DateAndTicketList = ( {
+	eventId,
+	isInitializing = true,
+	datetimes = [],
+	tickets = [],
+} ) => {
 	function getContent() {
 		return isInitializing ?
 			<Spinner /> :
 			<Fragment>
-				<DatetimesList datetimes={ datetimes } />
+				<DatetimesList eventId={ eventId } datetimes={ datetimes } />
 				<TicketsList tickets={ tickets } />
 			</Fragment>;
 	}
 	return <div>{ getContent() }</div>;
 };
 
-const DatetimeAndTicketList = withSelect( ( select, ownProps ) => {
-	const { isInitializing } = ownProps;
-	const { getEntitiesForModel } = select( 'eventespresso/core' );
-	if ( isInitializing ) {
-		return ownProps;
-	}
-	return {
-		datetimes: getEntitiesForModel( 'datetime' ),
-		tickets: getEntitiesForModel( 'ticket' ),
-	};
-} )( DateAndTicketList );
-
-const CloneDateTimeButton = ( { onCloneDateTime, datetime } ) => {
-	function onClick() {
-		onCloneDateTime( datetime );
-	}
-	return <Button onClick={ onClick } label={ 'Clone Datetime' } />;
-};
-
-
-const Main = ( { eventId, setState, isInitializing = true } ) => {
-	return <div>
-		<EventInput eventId={ eventId } onClick={ ( id ) => setState( { eventId: id } ) } />
-		<DatetimeAndTicketList isInitializing={ isInitializing } /> :
-	</div>;
-}
-
-export default compose( [
-	withState( { eventId: 0 } ),
+const DatetimeAndTicketList = compose( [
 	withSelect( ( select, ownProps ) => {
-		const { eventId, isInitializing } = ownProps;
+		const { eventId, isInitializing = true } = ownProps;
 		const {
 			getEntityById,
 			getRelatedEntities,
@@ -130,8 +119,8 @@ export default compose( [
 		if ( eventId === 0 || ! isInitializing ) {
 			return ownProps;
 		}
-		const Event = getEntityById( eventId );
-		if ( ! isModelEntityOfModel( Event ) ) {
+		const Event = getEntityById( 'event', eventId );
+		if ( ! isModelEntityOfModel( Event, 'event' ) ) {
 			return ownProps;
 		}
 		const Datetimes = getRelatedEntities( Event, 'datetimes' );
@@ -161,7 +150,43 @@ export default compose( [
 			isInitializing: ! relatedEntitiesIsResolved,
 		};
 	} ),
-] )( Main );
+	withSelect( ( select, ownProps ) => {
+		const { isInitializing } = ownProps;
+		const { getEntitiesForModel } = select( 'eventespresso/core' );
+		if ( isInitializing ) {
+			return ownProps;
+		}
+		return {
+			datetimes: getEntitiesForModel( 'datetime' ),
+			tickets: getEntitiesForModel( 'ticket' ),
+		};
+	} ),
+] )( DateAndTicketList );
 
-// @todo use the dom to insert the app and then setup a file this gets exported to.
-// then enqueue this in EE admin somewhere for testing with.
+const CloneDateTimeButton = ( { onCloneDateTime, datetime } ) => {
+	function onClick() {
+		onCloneDateTime( datetime );
+	}
+	return <Button isPrimary={ true } onClick={ onClick } label={ 'Clone Datetime' } >
+		Clone Datetime
+	</Button>;
+};
+
+const MainContents = ( { eventId, setState } ) => {
+	function onEventChange( id ) {
+		setState( { eventId: id } );
+	}
+	function getDateAndTicketList() {
+		return eventId === 0 ?
+			'' :
+			<DatetimeAndTicketList eventId={ eventId } />;
+	}
+	return <div>
+		<EventInput eventId={ eventId } onEventClick={ onEventChange } />
+		{ getDateAndTicketList() }
+	</div>;
+};
+
+const Main = withState( { eventId: 0 } )( MainContents );
+
+domRender( <Main />, document.getElementById( 'main-app' ) );

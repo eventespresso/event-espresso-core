@@ -326,6 +326,9 @@ const config = [
 			'eventespresso-core-blocks-frontend': [
 				assets + 'blocks/index-frontend.js',
 			],
+			'demo-app': [
+				assets + 'demo/app.js',
+			],
 		},
 		externals: Object.assign( externals, {
 			'@eventespresso/higher-order-components': 'eejs.hocs',

@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\services\assets\CoreAssetManager;
+
 /**
  * Events_Admin_Page
  * This contains the logic for setting up the Events related pages.
@@ -228,6 +230,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'category_list'                 => array(
                 'func'       => '_category_list_table',
                 'capability' => 'ee_manage_event_categories',
+            ),
+            'demo_page' => array(
+                'func' => 'demoPage',
+                'capability' => 'administrator',
             ),
         );
     }
@@ -500,6 +506,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'metaboxes'     => $this->_default_espresso_metaboxes,
                 'require_nonce' => false,
             ),
+            'demo_page'      => array(
+                'nav'           => array(
+                    'label' => esc_html__('Wp Data Demo', 'event_espresso'),
+                    'order' => 50,
+                ),
+                'require_nonce' => false,
+            ),
         );
     }
 
@@ -599,6 +612,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             EVENT_ESPRESSO_VERSION
         );
         wp_enqueue_script('event-datetime-metabox');
+    }
+
+    public function load_scripts_styles_demo_page()
+    {
+        wp_enqueue_script(CoreAssetManager::JS_HANDLE_DEMO_APP);
+        wp_enqueue_style(CoreAssetManager::CSS_HANDLE_DEMO_APP);
     }
 
 
@@ -2678,5 +2697,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         );
         $this->_template_args['success'] = true;
         $this->_return_json(true, array('action' => 'create_new'));
+    }
+
+    public function demoPage()
+    {
+        $this->_template_args['admin_page_content'] = '<div id="main-app"></div>';
+        $this->display_admin_page_with_no_sidebar();
     }
 }
