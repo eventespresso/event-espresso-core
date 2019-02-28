@@ -71,7 +71,7 @@ describe( 'Currency Value Object', () => {
 							format: {
 								pos: '%s%v',
 								neg: '- $s%v',
-								zero: '%s--',
+								zero: '%s%v',
 							},
 							decimal: '.',
 							thousand: ',',
