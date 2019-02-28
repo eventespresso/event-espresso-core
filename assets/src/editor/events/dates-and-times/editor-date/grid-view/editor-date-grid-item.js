@@ -35,11 +35,8 @@ class EditorDateGridItem extends Component {
 	 * @return {Object} rendered date
 	 */
 	displayDate = ( eventDate, showDate ) => {
-		// console.log( 'EditorDateGridItem.displayDate()' );
-		// console.log( '> eventDate: ', eventDate );
 		let sidebarColorClass = 'ee-editor-date-calendar-sidebar ';
 		sidebarColorClass += getBackgroundColorClass( eventDate );
-		// console.log( '> sidebarColorClass: ', sidebarColorClass );
 		switch ( showDate ) {
 			case 'end' :
 				return <BiggieCalendarDate
@@ -71,6 +68,7 @@ class EditorDateGridItem extends Component {
 		const {
 			eventDate,
 			allTickets,
+			eventDateTicketMap,
 			onUpdate,
 			showDate = 'start',
 			showDesc = 'excerpt',
@@ -79,10 +77,6 @@ class EditorDateGridItem extends Component {
 		if ( ! isModelEntityOfModel( eventDate, MODEL_NAME ) ) {
 			return null;
 		}
-
-		// console.log( '' );
-		// console.log( 'EditorDateGridItem.render() props: ', this.props );
-		// console.log( 'EditorDateGridItem.render() eventDate: ', eventDate );
 
 		const isPrimary = eventDate.isPrimary ? (
 			<IconButton
@@ -111,6 +105,7 @@ class EditorDateGridItem extends Component {
 				<EditorDateActionsMenu
 					eventDate={ eventDate }
 					allTickets={ allTickets }
+					eventDateTicketMap={ eventDateTicketMap }
 					onUpdate={ onUpdate }
 				/>
 				{ isPrimary }

@@ -86,7 +86,12 @@ class EditorDateListItem extends Component {
 	};
 
 	render() {
-		const { eventDate, allTickets, onUpdate } = this.props;
+		const {
+			eventDate,
+			allTickets,
+			eventDateTicketMap,
+			onUpdate,
+		} = this.props;
 		if ( ! isModelEntityOfModel( eventDate, dateTimeModel.MODEL_NAME ) ) {
 			return null;
 		}
@@ -186,6 +191,7 @@ class EditorDateListItem extends Component {
 						<EditorDateActionsMenu
 							eventDate={ eventDate }
 							allTickets={ allTickets }
+							eventDateTicketMap={ eventDateTicketMap }
 							onUpdate={ onUpdate }
 						/>
 					</div>
