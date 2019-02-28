@@ -12,6 +12,7 @@ import {
 	isUndefined,
 	isFunction,
 } from 'lodash';
+import { instanceOf } from '@eventespresso/validators';
 
 /**
  * Internal imports
@@ -207,7 +208,7 @@ export default class DateTime {
 	 * @return {boolean} returns true if it is an instance of DateTime
 	 */
 	static validateIsDateTime( datetime ) {
-		return datetime instanceof DateTime;
+		return instanceOf( datetime, 'DateTime' );
 	}
 
 	/**

@@ -119,7 +119,7 @@ function receiveAndRemoveRelations( state, action ) {
 		case types.RECEIVE_RELATED_ENTITY_IDS:
 			state = state.setIn(
 				path,
-				existingIds.concat( fromJS( relationEntityIds ) )
+				existingIds.concat( relationEntityIds )
 			);
 			state = setRelationIndex( state, action );
 			break;

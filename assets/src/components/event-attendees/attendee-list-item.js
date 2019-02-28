@@ -40,7 +40,7 @@ const AttendeeListItem = ( {
 		}
 		return showGravatar ?
 			<AvatarImage avatarUrl={ url } { ...avatarOptions } /> :
-			'';
+			null;
 	}
 
 	if ( ! isModelEntityOfModel( attendee, 'attendee' ) ) {
@@ -48,7 +48,7 @@ const AttendeeListItem = ( {
 			false,
 			'The EventAttendee component expects an attendee model entity.'
 		);
-		return '';
+		return null;
 	}
 
 	return (

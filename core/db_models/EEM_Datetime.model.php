@@ -121,6 +121,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
             'Ticket'  => new EE_HABTM_Relation('Datetime_Ticket'),
             'Event'   => new EE_Belongs_To_Relation(),
             'Checkin' => new EE_Has_Many_Relation(),
+            'Datetime_Ticket' => new EE_Has_Many_Relation(),
         );
         $path_to_event_model = 'Event';
         $this->model_chain_to_password = $path_to_event_model;

@@ -37,6 +37,31 @@ describe( 'Currency Value Object', () => {
 			expect( changeProperty ).toThrow();
 			expect( testCurrency.code ).toEqual( 'USD' );
 		} );
+		describe( 'returns expected default props', () => {
+			const testCurrency = new Currency( {
+				code: 'dolla',
+				sign: '🥇',
+			} );
+			[
+				[ 'code', 'dolla' ],
+				[ 'singularLabel', '' ],
+				[ 'pluralLabel', '' ],
+				[ 'sign', '🥇' ],
+				[ 'signB4', true ],
+				[ 'decimalPlaces', 2 ],
+				[ 'thousandsSeparator', ',' ],
+				[ 'subunits', 100 ],
+			].forEach( ( [
+				propertyName,
+				expectedValue,
+			] ) => {
+				it( 'has expected value for the ' + propertyName +
+					' property', () => {
+					expect( testCurrency[ propertyName ] )
+						.toBe( expectedValue );
+				} );
+			} );
+		} );
 		describe( 'toAccountingSettings()', () => {
 			it( 'returns expected shape for object', () => {
 				expect( currency().toAccountingSettings() ).toEqual(

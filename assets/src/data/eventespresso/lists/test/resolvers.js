@@ -21,8 +21,11 @@ import {
 	select,
 	dispatch,
 	fetch,
+	resolveSelect,
+	resolveGetEntityByIdForIds,
 } from '../../base-controls';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../../core/constants';
+import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
 
 describe( 'getItems()', () => {
 	describe( 'yields with expected response', () => {
@@ -53,10 +56,16 @@ describe( 'buildAndDispatchEntitiesFromResponse()', () => {
 		'event',
 		response
 	);
-	it( 'yields expected getFactoryByModel generator', () => {
+	it( 'yields expected control action for getting the factory', () => {
 		reset();
 		const { value } = fulfillment.next();
-		expect( isGenerator( value ) ).toBe( true );
+		expect( value ).toEqual(
+			resolveSelect(
+				SCHEMA_REDUCER_KEY,
+				'getFactoryForModel',
+				'event'
+			)
+		);
 	} );
 	it( 'returns an empty array when factory could not be retrieved', () => {
 		const { value, done } = fulfillment.next( {} );
@@ -103,9 +112,14 @@ describe( 'buildAndDispatchEntitiesFromResponse()', () => {
 			)
 		);
 	} );
-	it( 'yields generator for resolveGetEntityByIdForIds', () => {
+	it( 'yields control action for resolveGetEntityByIdForIds', () => {
 		const { value } = fulfillment.next();
-		expect( isGenerator( value ) ).toBe( true );
+		expect( value ).toEqual(
+			resolveGetEntityByIdForIds(
+				'event',
+				[ EventEntities.a.id ]
+			)
+		);
 	} );
 	it( 'returns expected entities on completion', () => {
 		const { value, done } = fulfillment.next();

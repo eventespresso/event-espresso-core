@@ -48,6 +48,8 @@ const isNewBlock = ( { eventId, datetimeId, ticketId } ) => eventId === 0 &&
 
 const DEFAULT_ARRAY = [];
 
+let highestRequestedLimit = 200;
+
 /**
  * EventAttendeesEditor Component
  *
@@ -89,7 +91,7 @@ export class EventAttendeesEditor extends Component {
 			status: statusModel.REGISTRATION_STATUS_ID.APPROVED,
 			showGravatar: true,
 			displayOnArchives: false,
-			limit: 10,
+			limit: 100,
 			orderBy: 'lastThenFirstName',
 			order: QUERY_ORDER_ASC,
 			avatarSize: 24,
@@ -368,7 +370,7 @@ export class EventAttendeesEditor extends Component {
 						limit={ attributes.limit }
 						onLimitChange={ this.setLimit }
 						min={ 1 }
-						max={ 100 }
+						withSlider={ false }
 						help={ sprintf(
 							_n(
 								'Used to adjust the number of attendees displayed (There is %d total attendee for the current filter settings).',
@@ -504,7 +506,17 @@ export default withSelect( ( select, ownProps ) => {
 		status = defaultProps.status,
 		orderBy = defaultProps.orderBy,
 		order = defaultProps.order,
+		limit = defaultProps.limit,
 	} = ownProps.attributes;
+
+	// This ensures that we don't query unnecessarily since if the limit is
+	// lower than a query we've already done, then we already have cached data
+	// for this limit (and cache is still busted by any other query changes)
+	highestRequestedLimit = ! limit ||
+		isNaN( limit ) ||
+		limit <= highestRequestedLimit ?
+		highestRequestedLimit :
+		limit;
 
 	const queryData = {
 		forEventId: eventId,
@@ -515,7 +527,7 @@ export default withSelect( ( select, ownProps ) => {
 		defaultWhereConditions: 'full_this_minimum_others',
 		order,
 		orderBy,
-		limit: 100,
+		limit: highestRequestedLimit,
 	};
 
 	const queryString = attendeeModel.getQueryString( queryData );
