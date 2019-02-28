@@ -7,7 +7,7 @@ import { InvalidSchema } from '@eventespresso/eejs';
 import { isSchema } from '@eventespresso/validators';
 import {
 	Money,
-	ServerDateTime as DateTime
+	ServerDateTime as DateTime,
 } from '@eventespresso/value-objects';
 /**
  * Internal imports
