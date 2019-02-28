@@ -3,7 +3,12 @@
  */
 import PropTypes from 'prop-types';
 import { Component, Fragment } from '@wordpress/element';
-import { Dashicon, Panel, PanelBody, PanelRow } from '@wordpress/components';
+import {
+	Dashicon,
+	Panel,
+	PanelBody,
+	PanelRow,
+} from '@wordpress/components';
 import { __, _x, sprintf } from '@eventespresso/i18n';
 import {
 	EspressoIcon,
@@ -51,6 +56,7 @@ class DatesAndTicketsMetabox extends Component {
 					tickets,
 					allTickets,
 					isChained,
+					eventDateTicketMap,
 					updateDatesAndTickets,
 					...otherProps
 				} ) => {
@@ -82,12 +88,12 @@ class DatesAndTicketsMetabox extends Component {
 											id={ `ee-editor-event-dates-${ eventId }` }
 											className="ee-editor-event-dates espresso-editor"
 										>
-											<PanelRow
-												className="ee-editor-event-dates ee-form-row">
+											<PanelRow className="ee-editor-event-dates ee-form-row">
 												<div>
 													<EditorDatesList
 														entities={ datetimes }
 														allTickets={ allTickets }
+														eventDateTicketMap={ eventDateTicketMap }
 														onUpdate={ updateDatesAndTickets }
 														prefiltered
 														for="event-dates-metabox"
@@ -114,6 +120,7 @@ class DatesAndTicketsMetabox extends Component {
 														entities={ tickets }
 														allDates={ allDates }
 														isChained={ isChained }
+														eventDateTicketMap={ eventDateTicketMap }
 														prefiltered
 														for="event-tickets-metabox"
 														{ ...otherProps }
