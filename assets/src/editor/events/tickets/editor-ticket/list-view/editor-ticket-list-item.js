@@ -67,6 +67,7 @@ class EditorTicketListItem extends Component {
 		const {
 			ticket,
 			allDates,
+			eventDateTicketMap,
 			onUpdate,
 		} = this.props;
 		if ( ! isModelEntityOfModel( ticket, ticketModel.MODEL_NAME ) ) {
@@ -167,6 +168,7 @@ class EditorTicketListItem extends Component {
 						<EditorTicketActionsMenu
 							ticket={ ticket }
 							allDates={ allDates }
+							eventDateTicketMap={ eventDateTicketMap }
 							onUpdate={ onUpdate }
 						/>
 					</div>

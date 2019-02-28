@@ -102,6 +102,7 @@ class EditorTicketGridItem extends Component {
 		const {
 			ticket,
 			allDates,
+			eventDateTicketMap,
 			onUpdate,
 			displayTicketDate = 'start',
 		} = this.props;
@@ -120,6 +121,7 @@ class EditorTicketGridItem extends Component {
 				<EditorTicketActionsMenu
 					ticket={ ticket }
 					allDates={ allDates }
+					eventDateTicketMap={ eventDateTicketMap }
 					onUpdate={ onUpdate }
 				/>
 			</Fragment>
