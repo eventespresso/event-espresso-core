@@ -4,6 +4,10 @@
 import { indexOf } from 'lodash';
 import { __ } from '@eventespresso/i18n';
 import { validations } from '@eventespresso/components';
+import { dateTimeModel } from '@eventespresso/model';
+import { isModelEntityOfModel } from '@eventespresso/validators';
+
+const { MODEL_NAME: DATETIME } = dateTimeModel;
 
 /**
  * eventDateEntityFormInputs
@@ -23,27 +27,29 @@ export const eventDateEntityFormInputs = (
 	currentValues = [],
 	FormInput,
 ) => {
-	if ( ! eventDate || ( eventDate && ! eventDate.id ) ) {
-		return null;
+	const inputs = [];
+	if ( ! isModelEntityOfModel( eventDate, DATETIME ) ) {
+		return inputs;
 	}
 	const values = currentValues;
 	const prefix = 'ee-event-date';
 	const dateId = eventDate.id;
-	const inputs = [];
-	inputs.push(
-		<FormInput
-			key="id"
-			type="number"
-			name={ `${ prefix }-id-${ dateId }` }
-			initialValue={ values[ `${ prefix }-id-${ dateId }` ] }
-			label={ __( 'Date ID', 'event_espresso' ) }
-			htmlId={ `${ prefix }-id-${ dateId }` }
-			inputWidth={ 3 }
-			required
-			min={ 0 }
-			disabled
-		/>,
-	);
+	if ( parseInt( dateId ) && indexOf( exclude, 'DTT_ID' ) < 0 ) {
+		inputs.push(
+			<FormInput
+				key="id"
+				type="number"
+				name={ `${ prefix }-id-${ dateId }` }
+				initialValue={ values[ `${ prefix }-id-${ dateId }` ] }
+				label={ __( 'Date ID', 'event_espresso' ) }
+				htmlId={ `${ prefix }-id-${ dateId }` }
+				inputWidth={ 3 }
+				required
+				min={ 0 }
+				disabled
+			/>,
+		);
+	}
 	if ( indexOf( exclude, 'EVT_ID' ) < 0 ) {
 		inputs.push(
 			<FormInput
