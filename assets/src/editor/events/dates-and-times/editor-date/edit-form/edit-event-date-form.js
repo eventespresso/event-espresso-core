@@ -8,6 +8,8 @@ import {
 	twoColumnAdminFormLayout,
 } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
+import { dateTimeModel } from '@eventespresso/model';
+import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * Internal dependencies
@@ -45,7 +47,6 @@ class EditEventDateForm extends Component {
 
 		// entity properties we don't want to be editable
 		const exclude = [
-			'DTT_ID',
 			'EVT_ID',
 			'sold',
 			'reserved',
@@ -59,20 +60,22 @@ class EditEventDateForm extends Component {
 			currentValues,
 			FormInput
 		);
-		formRows.unshift(
-			<FormInfo
-				key="formInfo"
-				formInfo={
-					__(
-						'all fields marked with an asterisk are required',
-						'event_espresso'
-					)
-				}
-				dismissable={ false }
-			/>
-		);
-
-		return eventDate && eventDate.id ? (
+		if ( Array.isArray( formRows ) ) {
+			formRows.unshift(
+				<FormInfo
+					key="formInfo"
+					formInfo={
+						__(
+							'all fields marked with an asterisk are required',
+							'event_espresso'
+						)
+					}
+					dismissable={ false }
+				/>
+			);
+		}
+		const { MODEL_NAME: DATETIME } = dateTimeModel;
+		return isModelEntityOfModel( eventDate, DATETIME ) ? (
 			<FormWrapper>
 				<FormSection
 					htmlId={
