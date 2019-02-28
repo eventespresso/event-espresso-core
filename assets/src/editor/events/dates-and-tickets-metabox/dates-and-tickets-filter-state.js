@@ -47,6 +47,7 @@ class DatesAndTicketsFilterState extends Component {
 			PropTypes.number,
 			PropTypes.string,
 		] ).isRequired,
+		event: PropTypes.object,
 		eventDates: PropTypes.arrayOf( PropTypes.object ),
 		eventDateTickets: PropTypes.arrayOf( PropTypes.object ),
 		eventDateTicketMap: PropTypes.object,
@@ -86,6 +87,7 @@ class DatesAndTicketsFilterState extends Component {
 	render() {
 		const {
 			render,
+			event,
 			eventDates,
 			eventDateTickets,
 			eventDateTicketMap,
@@ -117,6 +119,7 @@ class DatesAndTicketsFilterState extends Component {
 
 		return render( {
 			loading: isEmpty( eventDates ) || isEmpty( eventDateTickets ),
+			event: event,
 			datetimes: datetimes,
 			allDates: eventDates,
 			tickets: tickets,
@@ -126,6 +129,7 @@ class DatesAndTicketsFilterState extends Component {
 			showTickets: showTickets,
 			sortTickets: sortTickets,
 			isChained: isChained,
+			eventDateTicketMap: eventDateTicketMap,
 			updateDatesAndTickets: this.updateDatesAndTickets,
 			...otherProps,
 		} );
