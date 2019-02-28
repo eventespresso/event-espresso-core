@@ -1,8 +1,10 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
- *
  * EEH_Line_Item
- *
  * This should be the main class which is aware of the line item tree structure, and
  * should take care of common operations like inserting items into it, updating
  * items in it based on what the line items are for, and removed line items.
@@ -12,18 +14,12 @@
  * or admin-side cancellations etc).
  * Generally all these functions will first take the total line item and figure things out from there
  *
- * @package            Event Espresso
+ * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
- *
  */
 class EEH_Line_Item
 {
-
-    // other functions: cancel ticket purchase
-    // delete ticket purchase
-    // add promotion
-
 
     /**
      * Adds a simple item (unrelated to any other model object) to the provided PARENT line item.
@@ -33,29 +29,40 @@ class EEH_Line_Item
      * to keep the registration final prices in-sync with the transaction's total.
      *
      * @param EE_Line_Item $parent_line_item
-     * @param string $name
-     * @param float $unit_price
-     * @param string $description
-     * @param int $quantity
-     * @param boolean $taxable
-     * @param boolean $code if set to a value, ensures there is only one line item with that code
+     * @param string       $name
+     * @param float        $unit_price
+     * @param string       $description
+     * @param int          $quantity
+     * @param boolean      $taxable
+     * @param boolean      $code if set to a value, ensures there is only one line item with that code
      * @return boolean success
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function add_unrelated_item(EE_Line_Item $parent_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = false, $code = null)
-    {
+    public static function add_unrelated_item(
+        EE_Line_Item $parent_line_item,
+        $name,
+        $unit_price,
+        $description = '',
+        $quantity = 1,
+        $taxable = false,
+        $code = null
+    ) {
         $items_subtotal = self::get_pre_tax_subtotal($parent_line_item);
         $line_item = EE_Line_Item::new_instance(array(
-            'LIN_name' => $name,
-            'LIN_desc' => $description,
+            'LIN_name'       => $name,
+            'LIN_desc'       => $description,
             'LIN_unit_price' => $unit_price,
-            'LIN_quantity' => $quantity,
-            'LIN_percent' => null,
+            'LIN_quantity'   => $quantity,
+            'LIN_percent'    => null,
             'LIN_is_taxable' => $taxable,
-            'LIN_order' => $items_subtotal instanceof EE_Line_Item ? count($items_subtotal->children()) : 0,
-            'LIN_total' => (float) $unit_price * (int) $quantity,
-            'LIN_type' => EEM_Line_Item::type_line_item,
-            'LIN_code' => $code,
+            'LIN_order'      => $items_subtotal instanceof EE_Line_Item ? count($items_subtotal->children()) : 0,
+            'LIN_total'      => (float) $unit_price * (int) $quantity,
+            'LIN_type'       => EEM_Line_Item::type_line_item,
+            'LIN_code'       => $code,
         ));
         $line_item = apply_filters(
             'FHEE__EEH_Line_Item__add_unrelated_item__line_item',
@@ -76,25 +83,30 @@ class EEH_Line_Item
      * after using this, to keep the registration final prices in-sync with the transaction's total.
      *
      * @param EE_Line_Item $parent_line_item
-     * @param string $name
-     * @param float $percentage_amount
-     * @param string $description
-     * @param boolean $taxable
+     * @param string       $name
+     * @param float        $percentage_amount
+     * @param string       $description
+     * @param boolean      $taxable
      * @return boolean success
-     * @throws \EE_Error
+     * @throws EE_Error
      */
-    public static function add_percentage_based_item(EE_Line_Item $parent_line_item, $name, $percentage_amount, $description = '', $taxable = false)
-    {
+    public static function add_percentage_based_item(
+        EE_Line_Item $parent_line_item,
+        $name,
+        $percentage_amount,
+        $description = '',
+        $taxable = false
+    ) {
         $line_item = EE_Line_Item::new_instance(array(
-            'LIN_name' => $name,
-            'LIN_desc' => $description,
+            'LIN_name'       => $name,
+            'LIN_desc'       => $description,
             'LIN_unit_price' => 0,
-            'LIN_percent' => $percentage_amount,
-            'LIN_quantity' => 1,
+            'LIN_percent'    => $percentage_amount,
+            'LIN_quantity'   => 1,
             'LIN_is_taxable' => $taxable,
-            'LIN_total' => (float) ($percentage_amount * ($parent_line_item->total() / 100)),
-            'LIN_type' => EEM_Line_Item::type_line_item,
-            'LIN_parent' => $parent_line_item->ID()
+            'LIN_total'      => (float) ($percentage_amount * ($parent_line_item->total() / 100)),
+            'LIN_type'       => EEM_Line_Item::type_line_item,
+            'LIN_parent'     => $parent_line_item->ID(),
         ));
         $line_item = apply_filters(
             'FHEE__EEH_Line_Item__add_percentage_based_item__line_item',
@@ -115,20 +127,33 @@ class EEH_Line_Item
      * after using this, to keep the registration final prices in-sync with the transaction's total.
      *
      * @param EE_Line_Item $total_line_item grand total line item of type EEM_Line_Item::type_total
-     * @param EE_Ticket $ticket
-     * @param int $qty
-     * @return \EE_Line_Item
-     * @throws \EE_Error
+     * @param EE_Ticket    $ticket
+     * @param int          $qty
+     * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function add_ticket_purchase(EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1)
     {
-        if (!$total_line_item instanceof EE_Line_Item || !$total_line_item->is_total()) {
-            throw new EE_Error(sprintf(__('A valid line item total is required in order to add tickets. A line item of type "%s" was passed.', 'event_espresso'), $ticket->ID(), $total_line_item->ID()));
+        if (! $total_line_item instanceof EE_Line_Item || ! $total_line_item->is_total()) {
+            throw new EE_Error(
+                sprintf(
+                    esc_html__(
+                        'A valid line item total is required in order to add tickets. A line item of type "%s" was passed.',
+                        'event_espresso'
+                    ),
+                    $ticket->ID(),
+                    $total_line_item->ID()
+                )
+            );
         }
         // either increment the qty for an existing ticket
         $line_item = self::increment_ticket_qty_if_already_in_cart($total_line_item, $ticket, $qty);
         // or add a new one
-        if (!$line_item instanceof EE_Line_Item) {
+        if (! $line_item instanceof EE_Line_Item) {
             $line_item = self::create_ticket_line_item($total_line_item, $ticket, $qty);
         }
         $total_line_item->recalculate_total_including_taxes();
@@ -138,14 +163,22 @@ class EEH_Line_Item
 
     /**
      * Returns the new line item created by adding a purchase of the ticket
-     * @param \EE_Line_Item $total_line_item
-     * @param EE_Ticket $ticket
-     * @param int $qty
-     * @return \EE_Line_Item
-     * @throws \EE_Error
+     *
+     * @param EE_Line_Item $total_line_item
+     * @param EE_Ticket    $ticket
+     * @param int          $qty
+     * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function increment_ticket_qty_if_already_in_cart(EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1)
-    {
+    public static function increment_ticket_qty_if_already_in_cart(
+        EE_Line_Item $total_line_item,
+        EE_Ticket $ticket,
+        $qty = 1
+    ) {
         $line_item = null;
         if ($total_line_item instanceof EE_Line_Item && $total_line_item->is_total()) {
             $ticket_line_items = EEH_Line_Item::get_ticket_line_items($total_line_item);
@@ -171,13 +204,17 @@ class EEH_Line_Item
      * Does NOT save or recalculate other line items totals
      *
      * @param EE_Line_Item $line_item
-     * @param int $qty
+     * @param int          $qty
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function increment_quantity(EE_Line_Item $line_item, $qty = 1)
     {
-        if (!$line_item->is_percent()) {
+        if (! $line_item->is_percent()) {
             $qty += $line_item->quantity();
             $line_item->set_quantity($qty);
             $line_item->set_total($line_item->unit_price() * $qty);
@@ -196,13 +233,17 @@ class EEH_Line_Item
      * Does NOT save or recalculate other line items totals
      *
      * @param EE_Line_Item $line_item
-     * @param int $qty
+     * @param int          $qty
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function decrement_quantity(EE_Line_Item $line_item, $qty = 1)
     {
-        if (!$line_item->is_percent()) {
+        if (! $line_item->is_percent()) {
             $qty = $line_item->quantity() - $qty;
             $qty = max($qty, 0);
             $line_item->set_quantity($qty);
@@ -222,12 +263,16 @@ class EEH_Line_Item
      * Does NOT save them or recalculate totals.
      *
      * @param EE_Line_Item $line_item
-     * @param int $new_quantity
-     * @throws \EE_Error
+     * @param int          $new_quantity
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function update_quantity(EE_Line_Item $line_item, $new_quantity)
     {
-        if (!$line_item->is_percent()) {
+        if (! $line_item->is_percent()) {
             $line_item->set_quantity($new_quantity);
             $line_item->set_total($line_item->unit_price() * $new_quantity);
             $line_item->save();
@@ -242,36 +287,40 @@ class EEH_Line_Item
 
     /**
      * Returns the new line item created by adding a purchase of the ticket
+     *
      * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
-     * @param EE_Ticket $ticket
-     * @param int $qty
-     * @return \EE_Line_Item
-     * @throws \EE_Error
+     * @param EE_Ticket    $ticket
+     * @param int          $qty
+     * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function create_ticket_line_item(EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1)
     {
         $datetimes = $ticket->datetimes();
         $first_datetime = reset($datetimes);
+        $first_datetime_name = esc_html__('Event', 'event_espresso');
         if ($first_datetime instanceof EE_Datetime && $first_datetime->event() instanceof EE_Event) {
             $first_datetime_name = $first_datetime->event()->name();
-        } else {
-            $first_datetime_name = __('Event', 'event_espresso');
         }
         $event = sprintf(_x('(For %1$s)', '(For Event Name)', 'event_espresso'), $first_datetime_name);
         // get event subtotal line
         $events_sub_total = self::get_event_line_item_for_ticket($total_line_item, $ticket);
         // add $ticket to cart
         $line_item = EE_Line_Item::new_instance(array(
-            'LIN_name' => $ticket->name(),
-            'LIN_desc' => $ticket->description() !== '' ? $ticket->description() . ' ' . $event : $event,
+            'LIN_name'       => $ticket->name(),
+            'LIN_desc'       => $ticket->description() !== '' ? $ticket->description() . ' ' . $event : $event,
             'LIN_unit_price' => $ticket->price(),
-            'LIN_quantity' => $qty,
+            'LIN_quantity'   => $qty,
             'LIN_is_taxable' => $ticket->taxable(),
-            'LIN_order' => count($events_sub_total->children()),
-            'LIN_total' => $ticket->price() * $qty,
-            'LIN_type' => EEM_Line_Item::type_line_item,
-            'OBJ_ID' => $ticket->ID(),
-            'OBJ_type' => 'Ticket'
+            'LIN_order'      => count($events_sub_total->children()),
+            'LIN_total'      => $ticket->price() * $qty,
+            'LIN_type'       => EEM_Line_Item::type_line_item,
+            'OBJ_ID'         => $ticket->ID(),
+            'OBJ_type'       => EEM_Line_Item::OBJ_TYPE_TICKET,
         ));
         $line_item = apply_filters(
             'FHEE__EEH_Line_Item__create_ticket_line_item__line_item',
@@ -286,15 +335,15 @@ class EEH_Line_Item
                 ? $running_total_for_ticket * $price->amount() / 100
                 : $price->amount() * $qty;
             $sub_line_item = EE_Line_Item::new_instance(array(
-                'LIN_name' => $price->name(),
-                'LIN_desc' => $price->desc(),
-                'LIN_quantity' => $price->is_percent() ? null : $qty,
+                'LIN_name'       => $price->name(),
+                'LIN_desc'       => $price->desc(),
+                'LIN_quantity'   => $price->is_percent() ? null : $qty,
                 'LIN_is_taxable' => false,
-                'LIN_order' => $price->order(),
-                'LIN_total' => $sign * $price_total,
-                'LIN_type' => EEM_Line_Item::type_sub_line_item,
-                'OBJ_ID' => $price->ID(),
-                'OBJ_type' => 'Price'
+                'LIN_order'      => $price->order(),
+                'LIN_total'      => $sign * $price_total,
+                'LIN_type'       => EEM_Line_Item::type_sub_line_item,
+                'OBJ_ID'         => $price->ID(),
+                'OBJ_type'       => EEM_Line_Item::OBJ_TYPE_PRICE,
             ));
             $sub_line_item = apply_filters(
                 'FHEE__EEH_Line_Item__create_ticket_line_item__sub_line_item',
@@ -323,7 +372,11 @@ class EEH_Line_Item
      * @param EE_Line_Item $total_line_item
      * @param EE_Line_Item $item to be added
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function add_item(EE_Line_Item $total_line_item, EE_Line_Item $item)
     {
@@ -344,17 +397,24 @@ class EEH_Line_Item
      * ALL totals and subtotals will NEED TO BE UPDATED after performing this action
      *
      * @param EE_Line_Item $ticket_line_item
-     * @param int $qty
+     * @param int          $qty
      * @return bool success
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function cancel_ticket_line_item(EE_Line_Item $ticket_line_item, $qty = 1)
     {
         // validate incoming line_item
-        if ($ticket_line_item->OBJ_type() !== 'Ticket') {
+        if ($ticket_line_item->OBJ_type() !== EEM_Line_Item::OBJ_TYPE_TICKET) {
             throw new EE_Error(
                 sprintf(
-                    __('The supplied line item must have an Object Type of "Ticket", not %1$s.', 'event_espresso'),
+                    esc_html__(
+                        'The supplied line item must have an Object Type of "Ticket", not %1$s.',
+                        'event_espresso'
+                    ),
                     $ticket_line_item->type()
                 )
             );
@@ -362,7 +422,10 @@ class EEH_Line_Item
         if ($ticket_line_item->quantity() < $qty) {
             throw new EE_Error(
                 sprintf(
-                    __('Can not cancel %1$d ticket(s) because the supplied line item has a quantity of %2$d.', 'event_espresso'),
+                    esc_html__(
+                        'Can not cancel %1$d ticket(s) because the supplied line item has a quantity of %2$d.',
+                        'event_espresso'
+                    ),
                     $qty,
                     $ticket_line_item->quantity()
                 )
@@ -372,8 +435,8 @@ class EEH_Line_Item
         $ticket_line_item->set_quantity($ticket_line_item->quantity() - $qty);
         foreach ($ticket_line_item->children() as $child_line_item) {
             if ($child_line_item->is_sub_line_item()
-                && !$child_line_item->is_percent()
-                && !$child_line_item->is_cancellation()
+                && ! $child_line_item->is_percent()
+                && ! $child_line_item->is_cancellation()
             ) {
                 $child_line_item->set_quantity($child_line_item->quantity() - $qty);
             }
@@ -391,25 +454,31 @@ class EEH_Line_Item
         } else {
             // create cancellation sub line item
             $cancellation_line_item = EE_Line_Item::new_instance(array(
-                'LIN_name' => __('Cancellation', 'event_espresso'),
-                'LIN_desc' => sprintf(
-                    _x('Cancelled %1$s : %2$s', 'Cancelled Ticket Name : 2015-01-01 11:11', 'event_espresso'),
+                'LIN_name'       => esc_html__('Cancellation', 'event_espresso'),
+                'LIN_desc'       => sprintf(
+                    esc_html_x(
+                        'Cancelled %1$s : %2$s',
+                        'Cancelled Ticket Name : 2015-01-01 11:11',
+                        'event_espresso'
+                    ),
                     $ticket_line_item->name(),
                     current_time(get_option('date_format') . ' ' . get_option('time_format'))
                 ),
                 'LIN_unit_price' => 0, // $ticket_line_item->unit_price()
-                'LIN_quantity' => $qty,
+                'LIN_quantity'   => $qty,
                 'LIN_is_taxable' => $ticket_line_item->is_taxable(),
-                'LIN_order' => count($ticket_line_item->children()),
-                'LIN_total' => 0, // $ticket_line_item->unit_price()
-                'LIN_type' => EEM_Line_Item::type_cancellation,
+                'LIN_order'      => count($ticket_line_item->children()),
+                'LIN_total'      => 0, // $ticket_line_item->unit_price()
+                'LIN_type'       => EEM_Line_Item::type_cancellation,
             ));
             $ticket_line_item->add_child_line_item($cancellation_line_item);
         }
         if ($ticket_line_item->save_this_and_descendants() > 0) {
             // decrement parent line item quantity
             $event_line_item = $ticket_line_item->parent();
-            if ($event_line_item instanceof EE_Line_Item && $event_line_item->OBJ_type() === 'Event') {
+            if ($event_line_item instanceof EE_Line_Item
+                && $event_line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_EVENT
+            ) {
                 $event_line_item->set_quantity($event_line_item->quantity() - $qty);
                 $event_line_item->save();
             }
@@ -426,17 +495,24 @@ class EEH_Line_Item
      * ALL totals and subtotals will NEED TO BE UPDATED after performing this action
      *
      * @param EE_Line_Item $ticket_line_item
-     * @param int $qty
+     * @param int          $qty
      * @return bool success
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function reinstate_canceled_ticket_line_item(EE_Line_Item $ticket_line_item, $qty = 1)
     {
         // validate incoming line_item
-        if ($ticket_line_item->OBJ_type() !== 'Ticket') {
+        if ($ticket_line_item->OBJ_type() !== EEM_Line_Item::OBJ_TYPE_TICKET) {
             throw new EE_Error(
                 sprintf(
-                    __('The supplied line item must have an Object Type of "Ticket", not %1$s.', 'event_espresso'),
+                    esc_html__(
+                        'The supplied line item must have an Object Type of "Ticket", not %1$s.',
+                        'event_espresso'
+                    ),
                     $ticket_line_item->type()
                 )
             );
@@ -448,13 +524,13 @@ class EEH_Line_Item
         );
         $cancellation_line_item = reset($cancellation_line_item);
         // verify that this ticket was indeed previously cancelled
-        if (!$cancellation_line_item instanceof EE_Line_Item) {
+        if (! $cancellation_line_item instanceof EE_Line_Item) {
             return false;
         }
         if ($cancellation_line_item->quantity() > $qty) {
             // decrement cancelled quantity
             $cancellation_line_item->set_quantity($cancellation_line_item->quantity() - $qty);
-        } elseif ($cancellation_line_item->quantity() == $qty) {
+        } elseif ($cancellation_line_item->quantity() === $qty) {
             // decrement cancelled quantity in case anyone still has the object kicking around
             $cancellation_line_item->set_quantity($cancellation_line_item->quantity() - $qty);
             // delete because quantity will end up as 0
@@ -466,7 +542,7 @@ class EEH_Line_Item
             // what ?!?! negative quantity ?!?!
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Can not reinstate %1$d cancelled ticket(s) because the cancelled ticket quantity is only %2$d.',
                         'event_espresso'
                     ),
@@ -480,7 +556,9 @@ class EEH_Line_Item
         if ($ticket_line_item->save_this_and_descendants() > 0) {
             // increment parent line item quantity
             $event_line_item = $ticket_line_item->parent();
-            if ($event_line_item instanceof EE_Line_Item && $event_line_item->OBJ_type() === 'Event') {
+            if ($event_line_item instanceof EE_Line_Item
+                && $event_line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_EVENT
+            ) {
                 $event_line_item->set_quantity($event_line_item->quantity() + $qty);
             }
             EEH_Line_Item::get_grand_total_and_recalculate_everything($ticket_line_item);
@@ -495,7 +573,12 @@ class EEH_Line_Item
      * then EE_Line_Item::recalculate_total_including_taxes() on the result
      *
      * @param EE_Line_Item $line_item
-     * @return \EE_Line_Item
+     * @return float
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function get_grand_total_and_recalculate_everything(EE_Line_Item $line_item)
     {
@@ -508,8 +591,12 @@ class EEH_Line_Item
      * Gets the line item which contains the subtotal of all the items
      *
      * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
-     * @return \EE_Line_Item
-     * @throws \EE_Error
+     * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function get_pre_tax_subtotal(EE_Line_Item $total_line_item)
     {
@@ -524,8 +611,12 @@ class EEH_Line_Item
      * Gets the line item for the taxes subtotal
      *
      * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
-     * @return \EE_Line_Item
-     * @throws \EE_Error
+     * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function get_taxes_subtotal(EE_Line_Item $total_line_item)
     {
@@ -537,10 +628,14 @@ class EEH_Line_Item
     /**
      * sets the TXN ID on an EE_Line_Item if passed a valid EE_Transaction object
      *
-     * @param EE_Line_Item $line_item
+     * @param EE_Line_Item   $line_item
      * @param EE_Transaction $transaction
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function set_TXN_ID(EE_Line_Item $line_item, $transaction = null)
     {
@@ -559,16 +654,20 @@ class EEH_Line_Item
      * existing taxes as children of the taxes subtotal line item)
      *
      * @param EE_Transaction $transaction
-     * @return \EE_Line_Item of type total
-     * @throws \EE_Error
+     * @return EE_Line_Item of type total
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function create_total_line_item($transaction = null)
     {
         $total_line_item = EE_Line_Item::new_instance(array(
             'LIN_code' => 'total',
-            'LIN_name' => __('Grand Total', 'event_espresso'),
+            'LIN_name' => esc_html__('Grand Total', 'event_espresso'),
             'LIN_type' => EEM_Line_Item::type_total,
-            'OBJ_type' => 'Transaction'
+            'OBJ_type' => EEM_Line_Item::OBJ_TYPE_TRANSACTION,
         ));
         $total_line_item = apply_filters(
             'FHEE__EEH_Line_Item__create_total_line_item__total_line_item',
@@ -584,17 +683,21 @@ class EEH_Line_Item
     /**
      * Creates a default items subtotal line item
      *
-     * @param EE_Line_Item $total_line_item
+     * @param EE_Line_Item   $total_line_item
      * @param EE_Transaction $transaction
      * @return EE_Line_Item
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected static function create_pre_tax_subtotal(EE_Line_Item $total_line_item, $transaction = null)
     {
         $pre_tax_line_item = EE_Line_Item::new_instance(array(
             'LIN_code' => 'pre-tax-subtotal',
-            'LIN_name' => __('Pre-Tax Subtotal', 'event_espresso'),
-            'LIN_type' => EEM_Line_Item::type_sub_total
+            'LIN_name' => esc_html__('Pre-Tax Subtotal', 'event_espresso'),
+            'LIN_type' => EEM_Line_Item::type_sub_total,
         ));
         $pre_tax_line_item = apply_filters(
             'FHEE__EEH_Line_Item__create_pre_tax_subtotal__pre_tax_line_item',
@@ -611,17 +714,21 @@ class EEH_Line_Item
      * Creates a line item for the taxes subtotal and finds all the tax prices
      * and applies taxes to it
      *
-     * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
+     * @param EE_Line_Item   $total_line_item of type EEM_Line_Item::type_total
      * @param EE_Transaction $transaction
      * @return EE_Line_Item
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected static function create_taxes_subtotal(EE_Line_Item $total_line_item, $transaction = null)
     {
         $tax_line_item = EE_Line_Item::new_instance(array(
-            'LIN_code' => 'taxes',
-            'LIN_name' => __('Taxes', 'event_espresso'),
-            'LIN_type' => EEM_Line_Item::type_tax_sub_total,
+            'LIN_code'  => 'taxes',
+            'LIN_name'  => esc_html__('Taxes', 'event_espresso'),
+            'LIN_type'  => EEM_Line_Item::type_tax_sub_total,
             'LIN_order' => 1000,// this should always come last
         ));
         $tax_line_item = apply_filters(
@@ -639,11 +746,15 @@ class EEH_Line_Item
     /**
      * Creates a default items subtotal line item
      *
-     * @param EE_Line_Item $pre_tax_line_item
+     * @param EE_Line_Item   $pre_tax_line_item
      * @param EE_Transaction $transaction
-     * @param EE_Event $event
+     * @param EE_Event       $event
      * @return EE_Line_Item
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function create_event_subtotal(EE_Line_Item $pre_tax_line_item, $transaction = null, $event = null)
     {
@@ -652,8 +763,8 @@ class EEH_Line_Item
             'LIN_name' => self::get_event_name($event),
             'LIN_desc' => self::get_event_desc($event),
             'LIN_type' => EEM_Line_Item::type_sub_total,
-            'OBJ_type' => 'Event',
-            'OBJ_ID' => $event instanceof EE_Event ? $event->ID() : 0
+            'OBJ_type' => EEM_Line_Item::OBJ_TYPE_EVENT,
+            'OBJ_ID'   => $event instanceof EE_Event ? $event->ID() : 0,
         ));
         $event_line_item = apply_filters(
             'FHEE__EEH_Line_Item__create_event_subtotal__event_line_item',
@@ -670,32 +781,41 @@ class EEH_Line_Item
      *
      * @param EE_Event $event
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function get_event_code($event)
     {
         return 'event-' . ($event instanceof EE_Event ? $event->ID() : '0');
     }
 
+
     /**
      * Gets the event name
+     *
      * @param EE_Event $event
      * @return string
+     * @throws EE_Error
      */
     public static function get_event_name($event)
     {
-        return $event instanceof EE_Event ? mb_substr($event->name(), 0, 245) : __('Event', 'event_espresso');
+        return $event instanceof EE_Event
+            ? mb_substr($event->name(), 0, 245)
+            : esc_html__('Event', 'event_espresso');
     }
+
 
     /**
      * Gets the event excerpt
+     *
      * @param EE_Event $event
      * @return string
+     * @throws EE_Error
      */
     public static function get_event_desc($event)
     {
         return $event instanceof EE_Event ? $event->short_description() : '';
     }
+
 
     /**
      * Given the grand total line item and a ticket, finds the event sub-total
@@ -703,32 +823,45 @@ class EEH_Line_Item
      *
      * @access public
      * @param EE_Line_Item $grand_total the grand total line item
-     * @param EE_Ticket $ticket
-     * @throws \EE_Error
+     * @param EE_Ticket    $ticket
      * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function get_event_line_item_for_ticket(EE_Line_Item $grand_total, EE_Ticket $ticket)
     {
         $first_datetime = $ticket->first_datetime();
-        if (!$first_datetime instanceof EE_Datetime) {
+        if (! $first_datetime instanceof EE_Datetime) {
             throw new EE_Error(
-                sprintf(__('The supplied ticket (ID %d) has no datetimes', 'event_espresso'), $ticket->ID())
+                sprintf(
+                    __('The supplied ticket (ID %d) has no datetimes', 'event_espresso'),
+                    $ticket->ID()
+                )
             );
         }
         $event = $first_datetime->event();
-        if (!$event instanceof EE_Event) {
+        if (! $event instanceof EE_Event) {
             throw new EE_Error(
                 sprintf(
-                    __('The supplied ticket (ID %d) has no event data associated with it.', 'event_espresso'),
+                    esc_html__(
+                        'The supplied ticket (ID %d) has no event data associated with it.',
+                        'event_espresso'
+                    ),
                     $ticket->ID()
                 )
             );
         }
         $events_sub_total = EEH_Line_Item::get_event_line_item($grand_total, $event);
-        if (!$events_sub_total instanceof EE_Line_Item) {
+        if (! $events_sub_total instanceof EE_Line_Item) {
             throw new EE_Error(
                 sprintf(
-                    __('There is no events sub-total for ticket %s on total line item %d', 'event_espresso'),
+                    esc_html__(
+                        'There is no events sub-total for ticket %s on total line item %d',
+                        'event_espresso'
+                    ),
                     $ticket->ID(),
                     $grand_total->ID()
                 )
@@ -742,9 +875,13 @@ class EEH_Line_Item
      * Gets the event line item
      *
      * @param EE_Line_Item $grand_total
-     * @param EE_Event $event
+     * @param EE_Event     $event
      * @return EE_Line_Item for the event subtotal which is a child of $grand_total
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function get_event_line_item(EE_Line_Item $grand_total, $event)
     {
@@ -754,18 +891,19 @@ class EEH_Line_Item
         $found = false;
         foreach (EEH_Line_Item::get_event_subtotals($grand_total) as $event_line_item) {
             // default event subtotal, we should only ever find this the first time this method is called
-            if (!$event_line_item->OBJ_ID()) {
+            if (! $event_line_item->OBJ_ID()) {
                 // let's use this! but first... set the event details
                 EEH_Line_Item::set_event_subtotal_details($event_line_item, $event);
                 $found = true;
                 break;
-            } elseif ($event_line_item->OBJ_ID() === $event->ID()) {
+            }
+            if ($event_line_item->OBJ_ID() === $event->ID()) {
                 // found existing line item for this event in the cart, so break out of loop and use this one
                 $found = true;
                 break;
             }
         }
-        if (!$found) {
+        if (! $found) {
             // there is no event sub-total yet, so add it
             $pre_tax_subtotal = EEH_Line_Item::get_pre_tax_subtotal($grand_total);
             // create a new "event" subtotal below that
@@ -780,11 +918,15 @@ class EEH_Line_Item
     /**
      * Creates a default items subtotal line item
      *
-     * @param EE_Line_Item $event_line_item
-     * @param EE_Event $event
+     * @param EE_Line_Item   $event_line_item
+     * @param EE_Event       $event
      * @param EE_Transaction $transaction
-     * @return EE_Line_Item
-     * @throws \EE_Error
+     * @return void
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function set_event_subtotal_details(
         EE_Line_Item $event_line_item,
@@ -807,9 +949,16 @@ class EEH_Line_Item
      * any old taxes are removed
      *
      * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
-     * @throws \EE_Error
+     * @param bool         $update_txn_status
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
      */
-    public static function apply_taxes(EE_Line_Item $total_line_item)
+    public static function apply_taxes(EE_Line_Item $total_line_item, $update_txn_status = false)
     {
         /** @type EEM_Price $EEM_Price */
         $EEM_Price = EE_Registry::instance()->load_model('Price');
@@ -818,33 +967,41 @@ class EEH_Line_Item
         ksort($ordered_taxes);
         $taxes_line_item = self::get_taxes_subtotal($total_line_item);
         // just to be safe, remove its old tax line items
-        $taxes_line_item->delete_children_line_items();
+        $deleted = $taxes_line_item->delete_children_line_items();
+        $updates = false;
         // loop thru taxes
         foreach ($ordered_taxes as $order => $taxes) {
             foreach ($taxes as $tax) {
                 if ($tax instanceof EE_Price) {
                     $tax_line_item = EE_Line_Item::new_instance(
                         array(
-                            'LIN_name' => $tax->name(),
-                            'LIN_desc' => $tax->desc(),
-                            'LIN_percent' => $tax->amount(),
+                            'LIN_name'       => $tax->name(),
+                            'LIN_desc'       => $tax->desc(),
+                            'LIN_percent'    => $tax->amount(),
                             'LIN_is_taxable' => false,
-                            'LIN_order' => $order,
-                            'LIN_total' => 0,
-                            'LIN_type' => EEM_Line_Item::type_tax,
-                            'OBJ_type' => 'Price',
-                            'OBJ_ID' => $tax->ID()
+                            'LIN_order'      => $order,
+                            'LIN_total'      => 0,
+                            'LIN_type'       => EEM_Line_Item::type_tax,
+                            'OBJ_type'       => EEM_Line_Item::OBJ_TYPE_PRICE,
+                            'OBJ_ID'         => $tax->ID(),
                         )
                     );
                     $tax_line_item = apply_filters(
                         'FHEE__EEH_Line_Item__apply_taxes__tax_line_item',
                         $tax_line_item
                     );
-                    $taxes_line_item->add_child_line_item($tax_line_item);
+                    $updates = $taxes_line_item->add_child_line_item($tax_line_item) ?
+                        true :
+                        $updates;
                 }
             }
         }
-        $total_line_item->recalculate_total_including_taxes();
+        // only recalculate totals if something changed
+        if ($deleted || $updates) {
+            $total_line_item->recalculate_total_including_taxes($update_txn_status);
+            return true;
+        }
+        return false;
     }
 
 
@@ -854,12 +1011,16 @@ class EEH_Line_Item
      *
      * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
      * @return float
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function ensure_taxes_applied($total_line_item)
     {
         $taxes_subtotal = self::get_taxes_subtotal($total_line_item);
-        if (!$taxes_subtotal->children()) {
+        if (! $taxes_subtotal->children()) {
             self::apply_taxes($total_line_item);
         }
         return $taxes_subtotal->total();
@@ -871,7 +1032,11 @@ class EEH_Line_Item
      *
      * @param EE_Line_Item $parent_line_item
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function delete_all_child_items(EE_Line_Item $parent_line_item)
     {
@@ -900,9 +1065,11 @@ class EEH_Line_Item
      * should probably change because of this).
      * You should call EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
      * after using this, to keep the registration final prices in-sync with the transaction's total.
-     * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
+     *
+     * @param EE_Line_Item      $total_line_item of type EEM_Line_Item::type_total
      * @param array|bool|string $line_item_codes
      * @return int number of items successfully removed
+     * @throws EE_Error
      */
     public static function delete_items(EE_Line_Item $total_line_item, $line_item_codes = false)
     {
@@ -910,7 +1077,7 @@ class EEH_Line_Item
         if ($total_line_item->type() !== EEM_Line_Item::type_total) {
             EE_Error::doing_it_wrong(
                 'EEH_Line_Item::delete_items',
-                __(
+                esc_html__(
                     'This static method should only be called with a TOTAL line item, otherwise we won\'t recalculate the totals correctly',
                     'event_espresso'
                 ),
@@ -920,7 +1087,7 @@ class EEH_Line_Item
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
         // check if only a single line_item_id was passed
-        if (!empty($line_item_codes) && !is_array($line_item_codes)) {
+        if (! empty($line_item_codes) && ! is_array($line_item_codes)) {
             // place single line_item_id in an array to appear as multiple line_item_ids
             $line_item_codes = array($line_item_codes);
         }
@@ -944,15 +1111,19 @@ class EEH_Line_Item
      * tax and updates the total line item accordingly
      *
      * @param EE_Line_Item $total_line_item
-     * @param float $amount
-     * @param string $name
-     * @param string $description
-     * @param string $code
-     * @param boolean $add_to_existing_line_item
+     * @param float        $amount
+     * @param string       $name
+     * @param string       $description
+     * @param string       $code
+     * @param boolean      $add_to_existing_line_item
      *                          if true, and a duplicate line item with the same code is found,
      *                          $amount will be added onto it; otherwise will simply set the taxes to match $amount
      * @return EE_Line_Item the new tax line item created
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function set_total_tax_to(
         EE_Line_Item $total_line_item,
@@ -980,14 +1151,14 @@ class EEH_Line_Item
         } else {
             // no existing tax item. Create it
             $new_tax = EE_Line_Item::new_instance(array(
-                'TXN_ID' => $total_line_item->TXN_ID(),
-                'LIN_name' => $name ? $name : __('Tax', 'event_espresso'),
-                'LIN_desc' => $description ? $description : '',
+                'TXN_ID'      => $total_line_item->TXN_ID(),
+                'LIN_name'    => $name ? $name : esc_html__('Tax', 'event_espresso'),
+                'LIN_desc'    => $description ? $description : '',
                 'LIN_percent' => $taxable_total ? ($amount / $taxable_total * 100) : 0,
-                'LIN_total' => $amount,
-                'LIN_parent' => $tax_subtotal->ID(),
-                'LIN_type' => EEM_Line_Item::type_tax,
-                'LIN_code' => $code
+                'LIN_total'   => $amount,
+                'LIN_parent'  => $tax_subtotal->ID(),
+                'LIN_type'    => EEM_Line_Item::type_tax,
+                'LIN_code'    => $code,
             ));
         }
 
@@ -1007,10 +1178,12 @@ class EEH_Line_Item
     /**
      * Makes all the line items which are children of $line_item taxable (or not).
      * Does NOT save the line items
+     *
      * @param EE_Line_Item $line_item
-     * @param string $code_substring_for_whitelist if this string is part of the line item's code
-     *  it will be whitelisted (ie, except from becoming taxable)
-     * @param boolean $taxable
+     * @param boolean      $taxable
+     * @param string       $code_substring_for_whitelist if this string is part of the line item's code
+     *                                                   it will be whitelisted (ie, except from becoming taxable)
+     * @throws EE_Error
      */
     public static function set_line_items_taxable(
         EE_Line_Item $line_item,
@@ -1019,13 +1192,17 @@ class EEH_Line_Item
     ) {
         $whitelisted = false;
         if ($code_substring_for_whitelist !== null) {
-            $whitelisted = strpos($line_item->code(), $code_substring_for_whitelist) !== false ? true : false;
+            $whitelisted = strpos($line_item->code(), $code_substring_for_whitelist) !== false;
         }
-        if (!$whitelisted && $line_item->is_line_item()) {
+        if (! $whitelisted && $line_item->is_line_item()) {
             $line_item->set_is_taxable($taxable);
         }
         foreach ($line_item->children() as $child_line_item) {
-            EEH_Line_Item::set_line_items_taxable($child_line_item, $taxable, $code_substring_for_whitelist);
+            EEH_Line_Item::set_line_items_taxable(
+                $child_line_item,
+                $taxable,
+                $code_substring_for_whitelist
+            );
         }
     }
 
@@ -1034,12 +1211,13 @@ class EEH_Line_Item
      * Gets all descendants that are event subtotals
      *
      * @uses  EEH_Line_Item::get_subtotals_of_object_type()
-     * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+     * @param EE_Line_Item $parent_line_item - the line item to find descendants of
      * @return EE_Line_Item[]
+     * @throws EE_Error
      */
     public static function get_event_subtotals(EE_Line_Item $parent_line_item)
     {
-        return self::get_subtotals_of_object_type($parent_line_item, 'Event');
+        return self::get_subtotals_of_object_type($parent_line_item, EEM_Line_Item::OBJ_TYPE_EVENT);
     }
 
 
@@ -1047,9 +1225,10 @@ class EEH_Line_Item
      * Gets all descendants subtotals that match the supplied object type
      *
      * @uses  EEH_Line_Item::_get_descendants_by_type_and_object_type()
-     * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
-     * @param string $obj_type
+     * @param EE_Line_Item $parent_line_item - the line item to find descendants of
+     * @param string       $obj_type
      * @return EE_Line_Item[]
+     * @throws EE_Error
      */
     public static function get_subtotals_of_object_type(EE_Line_Item $parent_line_item, $obj_type = '')
     {
@@ -1065,12 +1244,16 @@ class EEH_Line_Item
      * Gets all descendants that are tickets
      *
      * @uses  EEH_Line_Item::get_line_items_of_object_type()
-     * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+     * @param EE_Line_Item $parent_line_item - the line item to find descendants of
      * @return EE_Line_Item[]
+     * @throws EE_Error
      */
     public static function get_ticket_line_items(EE_Line_Item $parent_line_item)
     {
-        return self::get_line_items_of_object_type($parent_line_item, 'Ticket');
+        return self::get_line_items_of_object_type(
+            $parent_line_item,
+            EEM_Line_Item::OBJ_TYPE_TICKET
+        );
     }
 
 
@@ -1078,37 +1261,52 @@ class EEH_Line_Item
      * Gets all descendants subtotals that match the supplied object type
      *
      * @uses  EEH_Line_Item::_get_descendants_by_type_and_object_type()
-     * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
-     * @param string $obj_type
+     * @param EE_Line_Item $parent_line_item - the line item to find descendants of
+     * @param string       $obj_type
      * @return EE_Line_Item[]
+     * @throws EE_Error
      */
     public static function get_line_items_of_object_type(EE_Line_Item $parent_line_item, $obj_type = '')
     {
-        return self::_get_descendants_by_type_and_object_type($parent_line_item, EEM_Line_Item::type_line_item, $obj_type);
+        return self::_get_descendants_by_type_and_object_type(
+            $parent_line_item,
+            EEM_Line_Item::type_line_item,
+            $obj_type
+        );
     }
 
 
     /**
      * Gets all the descendants (ie, children or children of children etc) that are of the type 'tax'
+     *
      * @uses  EEH_Line_Item::get_descendants_of_type()
-     * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+     * @param EE_Line_Item $parent_line_item - the line item to find descendants of
      * @return EE_Line_Item[]
+     * @throws EE_Error
      */
     public static function get_tax_descendants(EE_Line_Item $parent_line_item)
     {
-        return EEH_Line_Item::get_descendants_of_type($parent_line_item, EEM_Line_Item::type_tax);
+        return EEH_Line_Item::get_descendants_of_type(
+            $parent_line_item,
+            EEM_Line_Item::type_tax
+        );
     }
 
 
     /**
      * Gets all the real items purchased which are children of this item
+     *
      * @uses  EEH_Line_Item::get_descendants_of_type()
-     * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+     * @param EE_Line_Item $parent_line_item - the line item to find descendants of
      * @return EE_Line_Item[]
+     * @throws EE_Error
      */
     public static function get_line_item_descendants(EE_Line_Item $parent_line_item)
     {
-        return EEH_Line_Item::get_descendants_of_type($parent_line_item, EEM_Line_Item::type_line_item);
+        return EEH_Line_Item::get_descendants_of_type(
+            $parent_line_item,
+            EEM_Line_Item::type_line_item
+        );
     }
 
 
@@ -1116,23 +1314,31 @@ class EEH_Line_Item
      * Gets all descendants of supplied line item that match the supplied line item type
      *
      * @uses  EEH_Line_Item::_get_descendants_by_type_and_object_type()
-     * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
-     * @param string $line_item_type one of the EEM_Line_Item constants
+     * @param EE_Line_Item $parent_line_item - the line item to find descendants of
+     * @param string       $line_item_type   one of the EEM_Line_Item constants
      * @return EE_Line_Item[]
+     * @throws EE_Error
      */
     public static function get_descendants_of_type(EE_Line_Item $parent_line_item, $line_item_type)
     {
-        return self::_get_descendants_by_type_and_object_type($parent_line_item, $line_item_type, null);
+        return self::_get_descendants_by_type_and_object_type(
+            $parent_line_item,
+            $line_item_type,
+            null
+        );
     }
 
 
     /**
-     * Gets all descendants of supplied line item that match the supplied line item type and possibly the object type as well
+     * Gets all descendants of supplied line item that match the supplied line item type and possibly the object type
+     * as well
      *
-     * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
-     * @param string $line_item_type one of the EEM_Line_Item constants
-     * @param string | NULL $obj_type object model class name (minus prefix) or NULL to ignore object type when searching
+     * @param EE_Line_Item  $parent_line_item - the line item to find descendants of
+     * @param string        $line_item_type   one of the EEM_Line_Item constants
+     * @param string | NULL $obj_type         object model class name (minus prefix) or NULL to ignore object type when
+     *                                        searching
      * @return EE_Line_Item[]
+     * @throws EE_Error
      */
     protected static function _get_descendants_by_type_and_object_type(
         EE_Line_Item $parent_line_item,
@@ -1169,27 +1375,34 @@ class EEH_Line_Item
      * Gets all descendants subtotals that match the supplied object type
      *
      * @uses  EEH_Line_Item::_get_descendants_by_type_and_object_type()
-     * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
-     * @param string $OBJ_type object type (like Event)
-     * @param array $OBJ_IDs array of OBJ_IDs
+     * @param EE_Line_Item $parent_line_item - the line item to find descendants of
+     * @param string       $OBJ_type         object type (like Event)
+     * @param array        $OBJ_IDs          array of OBJ_IDs
      * @return EE_Line_Item[]
+     * @throws EE_Error
      */
     public static function get_line_items_by_object_type_and_IDs(
         EE_Line_Item $parent_line_item,
         $OBJ_type = '',
         $OBJ_IDs = array()
     ) {
-        return self::_get_descendants_by_object_type_and_object_ID($parent_line_item, $OBJ_type, $OBJ_IDs);
+        return self::_get_descendants_by_object_type_and_object_ID(
+            $parent_line_item,
+            $OBJ_type,
+            $OBJ_IDs
+        );
     }
 
 
     /**
-     * Gets all descendants of supplied line item that match the supplied line item type and possibly the object type as well
+     * Gets all descendants of supplied line item that match the supplied line item type and possibly the object type
+     * as well
      *
-     * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
-     * @param string $OBJ_type object type (like Event)
-     * @param array $OBJ_IDs array of OBJ_IDs
+     * @param EE_Line_Item $parent_line_item - the line item to find descendants of
+     * @param string       $OBJ_type         object type (like Event)
+     * @param array        $OBJ_IDs          array of OBJ_IDs
      * @return EE_Line_Item[]
+     * @throws EE_Error
      */
     protected static function _get_descendants_by_object_type_and_object_ID(
         EE_Line_Item $parent_line_item,
@@ -1226,9 +1439,14 @@ class EEH_Line_Item
      * the specified type and returns it, else NULL
      *
      * @uses  EEH_Line_Item::_get_nearest_descendant()
-     * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
-     * @param string $type like one of the EEM_Line_Item::type_*
+     * @param EE_Line_Item $parent_line_item - the line item to find descendants of
+     * @param string       $type             like one of the EEM_Line_Item::type_*
      * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function get_nearest_descendant_of_type(EE_Line_Item $parent_line_item, $type)
     {
@@ -1241,9 +1459,14 @@ class EEH_Line_Item
      * having the specified LIN_code and returns it, else NULL
      *
      * @uses  EEH_Line_Item::_get_nearest_descendant()
-     * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
-     * @param string $code any value used for LIN_code
+     * @param EE_Line_Item $parent_line_item - the line item to find descendants of
+     * @param string       $code             any value used for LIN_code
      * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function get_nearest_descendant_having_code(EE_Line_Item $parent_line_item, $code)
     {
@@ -1255,10 +1478,15 @@ class EEH_Line_Item
      * Uses a breadth-first-search in order to find the nearest descendant
      * having the specified LIN_code and returns it, else NULL
      *
-     * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
-     * @param string $search_field name of EE_Line_Item property
-     * @param string $value any value stored in $search_field
+     * @param EE_Line_Item $parent_line_item - the line item to find descendants of
+     * @param string       $search_field     name of EE_Line_Item property
+     * @param string       $value            any value stored in $search_field
      * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected static function _get_nearest_descendant(EE_Line_Item $parent_line_item, $search_field, $value)
     {
@@ -1268,7 +1496,11 @@ class EEH_Line_Item
             }
         }
         foreach ($parent_line_item->children() as $child) {
-            $descendant_found = self::_get_nearest_descendant($child, $search_field, $value);
+            $descendant_found = self::_get_nearest_descendant(
+                $child,
+                $search_field,
+                $value
+            );
             if ($descendant_found) {
                 return $descendant_found;
             }
@@ -1282,8 +1514,8 @@ class EEH_Line_Item
      * else recursively walks up the line item tree until a parent of type total is found,
      *
      * @param EE_Line_Item $line_item
-     * @return \EE_Line_Item
-     * @throws \EE_Error
+     * @return EE_Line_Item
+     * @throws EE_Error
      */
     public static function find_transaction_grand_total_for_line_item(EE_Line_Item $line_item)
     {
@@ -1303,7 +1535,10 @@ class EEH_Line_Item
         }
         throw new EE_Error(
             sprintf(
-                __('A valid grand total for line item %1$d was not found.', 'event_espresso'),
+                esc_html__(
+                    'A valid grand total for line item %1$d was not found.',
+                    'event_espresso'
+                ),
                 $line_item->ID()
             )
         );
@@ -1314,18 +1549,18 @@ class EEH_Line_Item
      * Prints out a representation of the line item tree
      *
      * @param EE_Line_Item $line_item
-     * @param int $indentation
+     * @param int          $indentation
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function visualize(EE_Line_Item $line_item, $indentation = 0)
     {
         echo defined('EE_TESTS_DIR') ? "\n" : '<br />';
-        if (!$indentation) {
+        if (! $indentation) {
             echo defined('EE_TESTS_DIR') ? "\n" : '<br />';
         }
         for ($i = 0; $i < $indentation; $i++) {
-            echo ". ";
+            echo '. ';
         }
         $breakdown = '';
         if ($line_item->is_line_item()) {
@@ -1335,12 +1570,14 @@ class EEH_Line_Item
                 $breakdown = '$' . "{$line_item->unit_price()} x {$line_item->quantity()}";
             }
         }
-        echo $line_item->name() . " [ ID:{$line_item->ID()} | qty:{$line_item->quantity()} ] {$line_item->type()} : " . '$' . "{$line_item->total()}";
+        echo $line_item->name();
+        echo " [ ID:{$line_item->ID()} | qty:{$line_item->quantity()} ] {$line_item->type()} : ";
+        echo '$' . (string) $line_item->total();
         if ($breakdown) {
             echo " ( {$breakdown} )";
         }
         if ($line_item->is_taxable()) {
-            echo "  * taxable";
+            echo '  * taxable';
         }
         if ($line_item->children()) {
             foreach ($line_item->children() as $child) {
@@ -1358,7 +1595,6 @@ class EEH_Line_Item
      * then I'll get 1/10 of that $5 discount, which is $0.50, and brent will get
      * 9/10ths of that $5 discount, which is $4.50. So my final price should be $0.50
      * and brent's final price should be $5.50.
-     *
      * In order to do this, we basically need to traverse the line item tree calculating
      * the running totals (just as if we were recalculating the total), but when we identify
      * regular line items, we need to keep track of their share of the grand total.
@@ -1367,35 +1603,44 @@ class EEH_Line_Item
      * when there are non-taxable items; otherwise they would be the same)
      *
      * @param EE_Line_Item $line_item
-     * @param array $billable_ticket_quantities array of EE_Ticket IDs and their corresponding quantity that
-     *                                                                            can be included in price calculations at this moment
+     * @param array        $billable_ticket_quantities  array of EE_Ticket IDs and their corresponding quantity that
+     *                                                  can be included in price calculations at this moment
      * @return array        keys are line items for tickets IDs and values are their share of the running total,
-     *                                          plus the key 'total', and 'taxable' which also has keys of all the ticket IDs. Eg
-     *                                          array(
-     *                                          12 => 4.3
-     *                                          23 => 8.0
-     *                                          'total' => 16.6,
-     *                                          'taxable' => array(
-     *                                          12 => 10,
-     *                                          23 => 4
-     *                                          ).
-     *                                          So to find which registrations have which final price, we need to find which line item
-     *                                          is theirs, which can be done with
-     *                                          `EEM_Line_Item::instance()->get_line_item_for_registration( $registration );`
+     *                                                  plus the key 'total', and 'taxable' which also has keys of all
+     *                                                  the ticket IDs.
+     *                                                  Eg array(
+     *                                                      12 => 4.3
+     *                                                      23 => 8.0
+     *                                                      'total' => 16.6,
+     *                                                      'taxable' => array(
+     *                                                          12 => 10,
+     *                                                          23 => 4
+     *                                                      ).
+     *                                                  So to find which registrations have which final price, we need
+     *                                                  to find which line item is theirs, which can be done with
+     *                                                  `EEM_Line_Item::instance()->get_line_item_for_registration(
+     *                                                  $registration );`
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function calculate_reg_final_prices_per_line_item(EE_Line_Item $line_item, $billable_ticket_quantities = array())
-    {
-        // init running grand total if not already
-        if (!isset($running_totals['total'])) {
-            $running_totals['total'] = 0;
-        }
-        if (!isset($running_totals['taxable'])) {
-            $running_totals['taxable'] = array('total' => 0);
-        }
+    public static function calculate_reg_final_prices_per_line_item(
+        EE_Line_Item $line_item,
+        $billable_ticket_quantities = array()
+    ) {
+        $running_totals = [
+            'total'   => 0,
+            'taxable' => ['total' => 0]
+        ];
         foreach ($line_item->children() as $child_line_item) {
             switch ($child_line_item->type()) {
                 case EEM_Line_Item::type_sub_total:
-                    $running_totals_from_subtotal = EEH_Line_Item::calculate_reg_final_prices_per_line_item($child_line_item, $billable_ticket_quantities);
+                    $running_totals_from_subtotal = EEH_Line_Item::calculate_reg_final_prices_per_line_item(
+                        $child_line_item,
+                        $billable_ticket_quantities
+                    );
                     // combine arrays but preserve numeric keys
                     $running_totals = array_replace_recursive($running_totals_from_subtotal, $running_totals);
                     $running_totals['total'] += $running_totals_from_subtotal['total'];
@@ -1422,7 +1667,7 @@ class EEH_Line_Item
 
                 case EEM_Line_Item::type_line_item:
                     // ticket line items or ????
-                    if ($child_line_item->OBJ_type() === 'Ticket') {
+                    if ($child_line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_TICKET) {
                         // kk it's a ticket
                         if (isset($running_totals[ $child_line_item->ID() ])) {
                             // huh? that shouldn't happen.
@@ -1483,16 +1728,23 @@ class EEH_Line_Item
 
 
     /**
-     * @param \EE_Line_Item $total_line_item
-     * @param \EE_Line_Item $ticket_line_item
+     * @param EE_Line_Item $total_line_item
+     * @param EE_Line_Item $ticket_line_item
      * @return float | null
-     * @throws \OutOfRangeException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws OutOfRangeException
+     * @throws ReflectionException
      */
-    public static function calculate_final_price_for_ticket_line_item(\EE_Line_Item $total_line_item, \EE_Line_Item $ticket_line_item)
-    {
+    public static function calculate_final_price_for_ticket_line_item(
+        EE_Line_Item $total_line_item,
+        EE_Line_Item $ticket_line_item
+    ) {
         static $final_prices_per_ticket_line_item = array();
         if (empty($final_prices_per_ticket_line_item)) {
-            $final_prices_per_ticket_line_item = \EEH_Line_Item::calculate_reg_final_prices_per_line_item(
+            $final_prices_per_ticket_line_item = EEH_Line_Item::calculate_reg_final_prices_per_line_item(
                 $total_line_item
             );
         }
@@ -1501,7 +1753,7 @@ class EEH_Line_Item
             return $final_prices_per_ticket_line_item[ $ticket_line_item->ID() ];
         }
         $message = sprintf(
-            __(
+            esc_html__(
                 'The final price for the ticket line item (ID:%1$d) could not be calculated.',
                 'event_espresso'
             ),
@@ -1509,10 +1761,9 @@ class EEH_Line_Item
         );
         if (WP_DEBUG) {
             $message .= '<br>' . print_r($final_prices_per_ticket_line_item, true);
-            throw new \OutOfRangeException($message);
-        } else {
-            EE_Log::instance()->log(__CLASS__, __FUNCTION__, $message);
+            throw new OutOfRangeException($message);
         }
+        EE_Log::instance()->log(__CLASS__, __FUNCTION__, $message);
         return null;
     }
 
@@ -1521,16 +1772,22 @@ class EEH_Line_Item
      * Creates a duplicate of the line item tree, except only includes billable items
      * and the portion of line items attributed to billable things
      *
-     * @param EE_Line_Item $line_item
+     * @param EE_Line_Item      $line_item
      * @param EE_Registration[] $registrations
-     * @return \EE_Line_Item
-     * @throws \EE_Error
+     * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function billable_line_item_tree(EE_Line_Item $line_item, $registrations)
     {
         $copy_li = EEH_Line_Item::billable_line_item($line_item, $registrations);
         foreach ($line_item->children() as $child_li) {
-            $copy_li->add_child_line_item(EEH_Line_Item::billable_line_item_tree($child_li, $registrations));
+            $copy_li->add_child_line_item(
+                EEH_Line_Item::billable_line_item_tree($child_li, $registrations)
+            );
         }
         // if this is the grand total line item, make sure the totals all add up
         // (we could have duplicated this logic AS we copied the line items, but
@@ -1546,21 +1803,29 @@ class EEH_Line_Item
      * Creates a new, unsaved line item from $line_item that factors in the
      * number of billable registrations on $registrations.
      *
-     * @param EE_Line_Item $line_item
-     * @return EE_Line_Item
-     * @throws \EE_Error
+     * @param EE_Line_Item      $line_item
      * @param EE_Registration[] $registrations
+     * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function billable_line_item(EE_Line_Item $line_item, $registrations)
     {
         $new_li_fields = $line_item->model_field_array();
         if ($line_item->type() === EEM_Line_Item::type_line_item &&
-            $line_item->OBJ_type() === 'Ticket'
+            $line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_TICKET
         ) {
             $count = 0;
             foreach ($registrations as $registration) {
                 if ($line_item->OBJ_ID() === $registration->ticket_ID() &&
-                    in_array($registration->status_ID(), EEM_Registration::reg_statuses_that_allow_payment())
+                    in_array(
+                        $registration->status_ID(),
+                        EEM_Registration::reg_statuses_that_allow_payment(),
+                        true
+                    )
                 ) {
                     $count++;
                 }
@@ -1578,8 +1843,12 @@ class EEH_Line_Item
      * are removed, and line items with a quantity of 0
      *
      * @param EE_Line_Item $line_item |null
-     * @return \EE_Line_Item|null
-     * @throws \EE_Error
+     * @return EE_Line_Item|null
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function non_empty_line_items(EE_Line_Item $line_item)
     {
@@ -1595,7 +1864,7 @@ class EEH_Line_Item
             if ($child_li_copy !== null) {
                 $copied_li->add_child_line_item($child_li_copy);
                 if ($child_li_copy->type() === EEM_Line_Item::type_line_item &&
-                    $child_li_copy->OBJ_type() === 'Ticket'
+                    $child_li_copy->OBJ_type() === EEM_Line_Item::OBJ_TYPE_TICKET
                 ) {
                     $ticket_children++;
                 }
@@ -1605,7 +1874,7 @@ class EEH_Line_Item
         // we basically want to ignore it
         if ($ticket_children === 0
             && $line_item->type() === EEM_Line_Item::type_sub_total
-            && $line_item->OBJ_type() === 'Event'
+            && $line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_EVENT
             && $line_item->total() === 0
         ) {
             return null;
@@ -1620,13 +1889,17 @@ class EEH_Line_Item
      *
      * @param EE_Line_Item $line_item
      * @return EE_Line_Item
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function non_empty_line_item(EE_Line_Item $line_item)
     {
-        if ($line_item->type() === EEM_Line_Item::type_line_item &&
-            $line_item->OBJ_type() === 'Ticket' &&
-            $line_item->quantity() === 0
+        if ($line_item->type() === EEM_Line_Item::type_line_item
+            && $line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_TICKET
+            && $line_item->quantity() === 0
         ) {
             return null;
         }
@@ -1637,17 +1910,57 @@ class EEH_Line_Item
     }
 
 
+    /**
+     * Cycles through all of the ticket line items for the supplied total line item
+     * and ensures that the line item's "is_taxable" field matches that of its corresponding ticket
+     *
+     * @param EE_Line_Item $total_line_item
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public static function resetIsTaxableForTickets(EE_Line_Item $total_line_item)
+    {
+        $ticket_line_items = self::get_ticket_line_items($total_line_item);
+        foreach ($ticket_line_items as $ticket_line_item) {
+            if ($ticket_line_item instanceof EE_Line_Item
+                && $ticket_line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_TICKET
+            ) {
+                $ticket = $ticket_line_item->ticket();
+                if ($ticket instanceof EE_Ticket && $ticket->taxable() !== $ticket_line_item->is_taxable()) {
+                    $ticket_line_item->set_is_taxable($ticket->taxable());
+                    $ticket_line_item->save();
+                }
+            }
+        }
+    }
+
+
 
     /**************************************** @DEPRECATED METHODS *************************************** */
     /**
      * @deprecated
      * @param EE_Line_Item $total_line_item
-     * @return \EE_Line_Item
-     * @throws \EE_Error
+     * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function get_items_subtotal(EE_Line_Item $total_line_item)
     {
-        EE_Error::doing_it_wrong('EEH_Line_Item::get_items_subtotal()', __('Method replaced with EEH_Line_Item::get_pre_tax_subtotal()', 'event_espresso'), '4.6.0');
+        EE_Error::doing_it_wrong(
+            'EEH_Line_Item::get_items_subtotal()',
+            sprintf(
+                esc_html__('Method replaced with %1$s', 'event_espresso'),
+                'EEH_Line_Item::get_pre_tax_subtotal()'
+            ),
+            '4.6.0'
+        );
         return self::get_pre_tax_subtotal($total_line_item);
     }
 
@@ -1655,54 +1968,98 @@ class EEH_Line_Item
     /**
      * @deprecated
      * @param EE_Transaction $transaction
-     * @return \EE_Line_Item
-     * @throws \EE_Error
+     * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function create_default_total_line_item($transaction = null)
     {
-        EE_Error::doing_it_wrong('EEH_Line_Item::create_default_total_line_item()', __('Method replaced with EEH_Line_Item::create_total_line_item()', 'event_espresso'), '4.6.0');
+        EE_Error::doing_it_wrong(
+            'EEH_Line_Item::create_default_total_line_item()',
+            sprintf(
+                esc_html__('Method replaced with %1$s', 'event_espresso'),
+                'EEH_Line_Item::create_total_line_item()'
+            ),
+            '4.6.0'
+        );
         return self::create_total_line_item($transaction);
     }
 
 
     /**
      * @deprecated
-     * @param EE_Line_Item $total_line_item
+     * @param EE_Line_Item   $total_line_item
      * @param EE_Transaction $transaction
-     * @return \EE_Line_Item
-     * @throws \EE_Error
+     * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function create_default_tickets_subtotal(EE_Line_Item $total_line_item, $transaction = null)
     {
-        EE_Error::doing_it_wrong('EEH_Line_Item::create_default_tickets_subtotal()', __('Method replaced with EEH_Line_Item::create_pre_tax_subtotal()', 'event_espresso'), '4.6.0');
+        EE_Error::doing_it_wrong(
+            'EEH_Line_Item::create_default_tickets_subtotal()',
+            sprintf(
+                esc_html__('Method replaced with %1$s', 'event_espresso'),
+                'EEH_Line_Item::create_pre_tax_subtotal()'
+            ),
+            '4.6.0'
+        );
         return self::create_pre_tax_subtotal($total_line_item, $transaction);
     }
 
 
     /**
      * @deprecated
-     * @param EE_Line_Item $total_line_item
+     * @param EE_Line_Item   $total_line_item
      * @param EE_Transaction $transaction
-     * @return \EE_Line_Item
-     * @throws \EE_Error
+     * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function create_default_taxes_subtotal(EE_Line_Item $total_line_item, $transaction = null)
     {
-        EE_Error::doing_it_wrong('EEH_Line_Item::create_default_taxes_subtotal()', __('Method replaced with EEH_Line_Item::create_taxes_subtotal()', 'event_espresso'), '4.6.0');
+        EE_Error::doing_it_wrong(
+            'EEH_Line_Item::create_default_taxes_subtotal()',
+            sprintf(
+                esc_html__('Method replaced with %1$s', 'event_espresso'),
+                'EEH_Line_Item::create_taxes_subtotal()'
+            ),
+            '4.6.0'
+        );
         return self::create_taxes_subtotal($total_line_item, $transaction);
     }
 
 
     /**
      * @deprecated
-     * @param EE_Line_Item $total_line_item
+     * @param EE_Line_Item   $total_line_item
      * @param EE_Transaction $transaction
-     * @return \EE_Line_Item
-     * @throws \EE_Error
+     * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function create_default_event_subtotal(EE_Line_Item $total_line_item, $transaction = null)
     {
-        EE_Error::doing_it_wrong('EEH_Line_Item::create_default_event_subtotal()', __('Method replaced with EEH_Line_Item::create_event_subtotal()', 'event_espresso'), '4.6.0');
+        EE_Error::doing_it_wrong(
+            'EEH_Line_Item::create_default_event_subtotal()',
+            sprintf(
+                esc_html__('Method replaced with %1$s', 'event_espresso'),
+                'EEH_Line_Item::create_event_subtotal()'
+            ),
+            '4.6.0'
+        );
         return self::create_event_subtotal($total_line_item, $transaction);
     }
 }
