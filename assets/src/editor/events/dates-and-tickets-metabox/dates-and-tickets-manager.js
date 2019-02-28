@@ -1,7 +1,6 @@
 /**
  * External imports
  */
-import moment from 'moment-timezone';
 import { Component } from '@wordpress/element';
 import PropTypes from 'prop-types';
 import { find, findIndex } from 'lodash';
@@ -9,8 +8,13 @@ import { ENTER } from '@wordpress/keycodes';
 import { Button, IconButton } from '@wordpress/components';
 import { __ } from '@eventespresso/i18n';
 import { withEditorModal } from '@eventespresso/higher-order-components';
+import { dateTimeModel, ticketModel } from '@eventespresso/model';
+import { isModelEntityOfModel } from '@eventespresso/validators';
 
 const noIndex = -1;
+
+const { MODEL_NAME: DATETIME } = dateTimeModel;
+const { MODEL_NAME: TICKET } = ticketModel;
 
 export class DatesAndTicketsManager extends Component {
 	static propTypes = {
@@ -265,9 +269,10 @@ export class DatesAndTicketsManager extends Component {
 		// console.log( ' > this.props', this.props );
 		// console.log( ' > dates', this.props.dates );
 		// console.log( ' > tickets', this.props.tickets );
+		// console.log( ' > eventDateTicketMap', this.props.eventDateTicketMap );
 		// console.log( ' > assigned', this.state.assigned );
 		// console.log( ' > removed', this.state.removed );
-		const { dates, tickets } = this.props;
+		const { dates, tickets, eventDateTicketMap } = this.props;
 		// const { filterEntity, filterFor = 'all' } = this.props;
 		// if ( filterFor === 'date' ) {
 		// 	tickets = this.filterForDate( dates, filterEntity );
@@ -286,7 +291,9 @@ export class DatesAndTicketsManager extends Component {
 		const header = {
 			// background: '#f8f8f8',
 			borderBottom: '1px solid #ccc',
+			boxSizing: 'border-box',
 			// height: '120px',
+			padding: '0 5px',
 			textAlign: 'center',
 			verticalAlign: 'bottom',
 			width: width + '%',
@@ -297,7 +304,7 @@ export class DatesAndTicketsManager extends Component {
 			overflow: 'hidden',
 			textOverflow: 'ellipsis',
 			whiteSpace: 'nowrap',
-			maxWidth: '120px',
+			// maxWidth: '120px',
 		};
 		const dateLabel = {
 			display: 'block',
@@ -343,15 +350,23 @@ export class DatesAndTicketsManager extends Component {
 							{ datesHeader }
 							{
 								tickets.map(
-									( ticket, index1 ) => (
-										<td key={ index1 } style={ header }>
-											<span style={ headerText }>
-												{ `${ ticket.name }` }
-												<br />
-												{ `$${ ticket.price }` }
-											</span>
-										</td>
-									)
+									( ticket, index1 ) => {
+										if ( ! isModelEntityOfModel(
+											ticket,
+											TICKET
+										) ) {
+											return null;
+										}
+										return (
+											<td key={ index1 } style={ header }>
+												<span style={ headerText }>
+													{ `${ ticket.name }` }
+													<br />
+													{ `$${ ticket.price }` }
+												</span>
+											</td>
+										);
+									}
 								)
 							}
 						</tr>
@@ -360,30 +375,40 @@ export class DatesAndTicketsManager extends Component {
 						{
 							dates.map(
 								( eventDate, index2 ) => {
-									index2++;
-									let date = eventDate.start;
-									if ( ! moment.isMoment( date ) ) {
-										date = date instanceof Date ?
-											date :
-											new Date( date );
-										date = moment( date );
+									if ( ! isModelEntityOfModel(
+										eventDate,
+										DATETIME
+									) ) {
+										return null;
 									}
-									// console.log( '' );
-									// console.log( 'eventDate:', eventDate.id );
+									index2++;
+									const eventDateTickets = eventDateTicketMap[
+										eventDate.id
+									] ?
+										eventDateTicketMap[ eventDate.id ] :
+										[];
+									console.log( '' );
+									console.log( 'eventDate:', eventDate.id );
 									// console.log(
 									// 	'eventDate',
 									// 	eventDate.id,
-									// 	'eventDate.tickets',
-									// 	eventDate.tickets
+									// 	'eventDateTickets',
+									// 	eventDateTickets
 									// );
+
 									const rowStyle = ( index2 - 1 ) % 2 === 1 ?
 										odd :
 										{};
 									const dateHeader = showDatesColumn ?
 										(
 											<td key={ 0 } style={ dateLabel }>
-												{ `${ date.format( 'ddd MMM DD,' +
-													' YYYY' ) } - ${ eventDate.name }` }
+												{
+													`${
+														eventDate.start.toFormat(
+															'ddd MMM DD, YYYY'
+														)
+													} - ${ eventDate.name }`
+												}
 											</td>
 										) :
 										null;
@@ -395,11 +420,11 @@ export class DatesAndTicketsManager extends Component {
 													( ticket, index3 ) => {
 														index3++;
 														// const hasTicket = indexOf(
-														// 	eventDate.tickets,
+														// 	eventDateTickets,
 														// 	ticket
 														// ) > noIndex;
 														const hasTicket = findIndex(
-															eventDate.tickets,
+															eventDateTickets,
 															{ id: ticket.id }
 														) > noIndex;
 														const isAssigned = this.isAssigned(
@@ -516,6 +541,7 @@ export class DatesAndTicketsManager extends Component {
 						}
 					}
 					isPrimary
+					isLarge
 				>
 					{ __( 'Update Ticket Assignments', 'event_espresso' ) }
 				</Button>
