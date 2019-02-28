@@ -35,6 +35,8 @@ export const eventDateEntityFormSchema = ( eventDate ) => {
 	};
 };
 
-const stripInf = ( number ) => number !== 'INF' || number !== Infinity ?
-	number :
-	null;
+const stripInf = ( number ) => {
+	return number !== 'INF' && number !== Infinity && number > 0 ?
+		number :
+		null;
+};
