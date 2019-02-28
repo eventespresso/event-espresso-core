@@ -60,6 +60,8 @@ class EditorDatesList extends Component {
 
 	/**
 	 * @function
+	 * @param {Object} eventEntity model object defining the Event
+	 * Dates
 	 */
 	addNewEventDate = () => {
 		createEntity( DATETIME, {} ).then(
