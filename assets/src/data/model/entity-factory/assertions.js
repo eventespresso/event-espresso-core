@@ -5,6 +5,10 @@ import { isUndefined } from 'lodash';
 import { sprintf } from '@eventespresso/i18n';
 import { InvalidSchema } from '@eventespresso/eejs';
 import { isSchema } from '@eventespresso/validators';
+import {
+	Money,
+	ServerDateTime as DateTime
+} from '@eventespresso/value-objects';
 /**
  * Internal imports
  */
@@ -12,7 +16,6 @@ import {
 	isDateTimeField,
 	isMoneyField,
 } from './booleans';
-import { Money, ServerDateTime as DateTime } from '../../../vo';
 import {
 	isShallowValidValueForField,
 	validateEnumType,

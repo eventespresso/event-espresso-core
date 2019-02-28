@@ -19,7 +19,7 @@ import {
 	Money,
 	SiteCurrency,
 	ServerDateTime as DateTime,
-} from '../../../vo';
+} from '@eventespresso/value-objects';
 
 import { pluralModelName } from '../model-names';
 
