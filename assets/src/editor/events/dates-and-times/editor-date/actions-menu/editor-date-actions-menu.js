@@ -1,11 +1,11 @@
 /**
  * External imports
  */
-import moment from 'moment-timezone';
 import { Component, Fragment } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { DropDownMenu, IconMenuItem } from '@eventespresso/components';
 import { __, sprintf, _x } from '@eventespresso/i18n';
+import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
@@ -16,6 +16,8 @@ import { copyEventDate, trashEventDate } from '../action-handlers';
 import { EntityActionMenuItem } from '../../../entity-action-menu-item';
 import { DatesAndTicketsManagerModal } from '../../../dates-and-tickets-metabox';
 import './style.css';
+
+const { MODEL_NAME: DATETIME } = dateTimeModel;
 
 /**
  * EditorDateActionsMenu
@@ -156,8 +158,13 @@ class EditorDateActionsMenu extends Component {
 	};
 
 	render() {
-		const { eventDate, allTickets, onUpdate } = this.props;
-		if ( ! isModelEntityOfModel( eventDate, 'datetime' ) ) {
+		const {
+			eventDate,
+			allTickets,
+			onUpdate,
+			eventDateTicketMap,
+		} = this.props;
+		if ( ! isModelEntityOfModel( eventDate, DATETIME ) ) {
 			return null;
 		}
 		let sidebarMenuItems = [];
@@ -169,13 +176,6 @@ class EditorDateActionsMenu extends Component {
 			sidebarMenuItems,
 			eventDate
 		);
-		let date = eventDate.start;
-		if ( ! moment.isMoment( date ) ) {
-			date = date instanceof Date ?
-				date :
-				new Date( date );
-			date = moment( date );
-		}
 
 		return eventDate && eventDate.id ? (
 			<div
@@ -191,6 +191,7 @@ class EditorDateActionsMenu extends Component {
 				<DatesAndTicketsManagerModal
 					dates={ [ eventDate ] }
 					tickets={ allTickets }
+					eventDateTicketMap={ eventDateTicketMap }
 					closeModal={ this.toggleTickets }
 					editorOpen={ this.state.editTickets }
 					onUpdate={ onUpdate }
@@ -201,8 +202,9 @@ class EditorDateActionsMenu extends Component {
 								'Ticket Assignments for: Date & date name',
 								'event_espresso'
 							),
-							`${ eventDate.name } (${ date.format( 'ddd MMM' +
-								' DD, YYYY' ) })`
+							`${ eventDate.name } (${
+								eventDate.start.toFormat( 'ddd MMM DD, YYYY' )
+							})`
 						),
 						closeButtonLabel: null,
 					} }
