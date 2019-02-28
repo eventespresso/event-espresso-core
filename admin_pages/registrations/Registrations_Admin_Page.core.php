@@ -2015,17 +2015,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         } else {
             $route = array('action' => 'default');
         }
-        // unset nonces
-        foreach ($this->_req_data as $ref => $value) {
-            if (strpos($ref, 'nonce') !== false) {
-                unset($this->_req_data[ $ref ]);
-                continue;
-            }
-            $value = is_array($value) ? array_map('urlencode', $value) : urlencode($value);
-            $this->_req_data[ $ref ] = $value;
-        }
-        // merge request vars so that the reloaded list table contains any existing filter query params
-        $route = array_merge($this->_req_data, $route);
+        $route = $this->mergeExistingRequestParamsWithRedirectArgs($route);
         $this->_redirect_after_action($success, '', '', $route, true);
     }
 
@@ -2799,7 +2789,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $trash
                 ? esc_html__('moved to the trash', 'event_espresso')
                 : esc_html__('restored', 'event_espresso'),
-            array('action' => 'default'),
+            $this->mergeExistingRequestParamsWithRedirectArgs(array('action' => 'default')),
             $overwrite_msgs
         );
     }
@@ -2858,7 +2848,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $success,
             $what,
             $action_desc,
-            array('action' => 'default'),
+            $this->mergeExistingRequestParamsWithRedirectArgs(['action' => 'default']),
             true
         );
     }

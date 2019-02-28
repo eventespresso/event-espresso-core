@@ -2,4 +2,4 @@ These are components that are used for various query attributes (where "query" t
 
 | Component | Description |
 | --------- | ---------- |
-| [QueryLimit](limit.md) | A React component for adding a WordPress Range Control input for setting a query's limit clause.
+| [QueryLimit](./limit.md) | A React component for adding a WordPress Range Control input for setting a query's limit clause.

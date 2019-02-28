@@ -7,7 +7,7 @@ jQuery(document).ready(function($) {
 	$(document).on('click', '.ticket-selector-submit-btn', function(e) {
 		e.stopPropagation();
 		var has_selection = 0;
-		if ( $('.tkt-slctr-tbl' ).length > 0 ) {
+		if ( $( '.tkt-slctr-tbl' ).length > 0 ) {
 			//grab all values for selects
 			$( '.ticket-selector-tbl-qty-slct' ).each( function( ind ) {
 				if ( $( this ).val() > 0 ) {
@@ -36,7 +36,7 @@ jQuery(document).ready(function($) {
 			}
 		}
 		var $eventCart = $( 'input[name="event_cart"]' );
-		if ( has_selection > 0 || ( $eventCart.length && $eventCart.val() === 'view' ) ) {
+		if ( has_selection > 0 || ( $eventCart.length && $eventCart.val() === 'view' ) || $( 'input' ).length < 2 ) {
 			return true;
 		} else {
 			e.preventDefault();

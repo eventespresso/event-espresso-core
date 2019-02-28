@@ -4,9 +4,14 @@
  */
 export { EventSchema, EventSchemaProperties } from './event-schema';
 export { DateTimeSchema, DateTimeSchemaProperties } from './datetime-schema';
+export { CheckinSchema, CheckinSchemaProperties } from './checkin-schema';
 export { AuthedDateTimeResponse } from './datetime-response-authed';
 export { EventResponse } from './event-response-non-authed';
 export { AuthedEventResponse } from './event-response-authed';
+export {
+	PasswordProtectedEventResponse,
+} from './event-response-password-protected-authed';
+export { AuthedCheckinResponse } from './checkin-response-authed'
 export {
 	RegistrationSchema,
 	RegistrationSchemaProperties,

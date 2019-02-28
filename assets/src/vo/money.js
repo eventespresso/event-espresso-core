@@ -6,11 +6,7 @@ import * as Accounting from 'accounting-js';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import { Exception } from '@eventespresso/eejs';
 import { isEmpty } from 'lodash';
-
-/**
- * Internal imports
- */
-import { Currency } from './currency';
+import { instanceOf } from '@eventespresso/validators';
 
 /**
  * Asserts if incoming value is an instance of Money
@@ -18,7 +14,7 @@ import { Currency } from './currency';
  * @throws {TypeError}
  */
 const assertMoney = ( money ) => {
-	if ( ! ( money instanceof Money ) ) {
+	if ( ! ( instanceOf( money, 'Money' ) ) ) {
 		throw new TypeError( 'Instance of Money required' );
 	}
 };
@@ -29,7 +25,7 @@ const assertMoney = ( money ) => {
  * @throws {TypeError}
  */
 const assertCurrency = ( currency ) => {
-	if ( ! ( currency instanceof Currency ) ) {
+	if ( ! ( instanceOf( currency, 'Currency' ) ) ) {
 		throw new TypeError( 'Instance of Currency required' );
 	}
 };
@@ -135,7 +131,7 @@ export default class Money {
 	setCurrency( currency ) {
 		Money.assertCurrency( currency );
 		// if there's already a currency set, then return a new object.
-		if ( this.currency instanceof Currency ) {
+		if ( instanceOf( this.currency, 'Currency' ) ) {
 			return new Money( this.amount, currency );
 		}
 		this.currency = currency;
@@ -150,9 +146,11 @@ export default class Money {
 	 * property.
 	 */
 	setAmount( amount ) {
-		const value = amount instanceof Decimal ? amount.toNumber() : amount;
+		const value = instanceOf( amount, 'Decimal' ) ?
+			amount.toNumber() :
+			amount;
 		// if there's already an amount set, then return a new object.
-		if ( this.amount instanceof Decimal ) {
+		if ( instanceOf( this.amount, 'Decimal' ) ) {
 			return new Money( new Decimal( value ), this.currency );
 		}
 		this.amount = new Decimal( value );
@@ -167,11 +165,11 @@ export default class Money {
 	setFormatter() {
 		// only initialize if its not already initialized
 		if ( isEmpty( this.formatter ) ) {
-			Accounting.settings = {
-				...Accounting.settings,
-				...this.currency.toAccountingSettings(),
+			this.formatter = { ...Accounting };
+			this.formatter.settings = {
+				...this.formatter.settings,
+				...this.currency.toAccountingSettings().currency,
 			};
-			this.formatter = Accounting;
 		}
 		return this;
 	}
@@ -290,7 +288,7 @@ export default class Money {
 		// convert ratios to decimal and generate total.
 		ratios.forEach( ( ratio ) => {
 			convertedRatios.push(
-				ratio instanceof Decimal ? ratio : new Decimal( ratio )
+				instanceOf( ratio, 'Decimal' ) ? ratio : new Decimal( ratio )
 			);
 			total = total.plus( ratio );
 		} );
@@ -461,7 +459,7 @@ export default class Money {
 	toString() {
 		return this.formatter.format(
 			this.amount.toNumber(),
-			Accounting.settings
+			this.formatter.settings
 		);
 	}
 

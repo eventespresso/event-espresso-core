@@ -219,6 +219,9 @@ export const createEntityGettersAndSetters = ( instance ) => {
 			if ( fieldName === '_calculated_fields' ) {
 				setCalculatedFieldAndValues( instance, fieldValue );
 			}
+			if ( fieldName === '_protected' ) {
+				populateProtectedFieldsProperty( instance, fieldValue );
+			}
 			if ( fieldName === 'link' ) {
 				createGetter( instance, 'link', fieldValue );
 			}
@@ -236,6 +239,29 @@ export const createEntityGettersAndSetters = ( instance ) => {
 
 	populatePrimaryKeys( instance );
 	populateMissingFields( instance );
+};
+
+/**
+ * Populates the `protectedFields` property on the instance.
+ *
+ * @param {Object} instance
+ * @param {Array} protectedFields
+ */
+const populateProtectedFieldsProperty = ( instance, protectedFields ) => {
+	// get any calculated protected fields.
+	const calculatedFields = instance
+		.originalFieldsAndValues
+		._calculated_fields || {};
+	if (
+		calculatedFields._protected &&
+		isArray( calculatedFields._protected )
+	) {
+		protectedFields = [
+			...protectedFields,
+			...calculatedFields._protected,
+		];
+	}
+	createGetter( instance, 'protectedFields', protectedFields );
 };
 
 /**
@@ -291,6 +317,9 @@ const setValidateTypeForField = ( instance, fieldName, fieldValue ) => {
  * @param {Object} instance
  */
 const populateMissingFields = ( instance ) => {
+	if ( typeof instance.protectedFields === 'undefined' ) {
+		populateProtectedFieldsProperty( instance, [] );
+	}
 	if ( ! instance.isNew ) {
 		return;
 	}
@@ -298,7 +327,7 @@ const populateMissingFields = ( instance ) => {
 		getEntityFieldsFromSchema( instance ),
 		( schemaProperties, fieldName ) => {
 			if (
-				! instance[ fieldName ] &&
+				typeof instance[ fieldName ] === 'undefined' &&
 				! isPrimaryKeyField( fieldName, instance.schema )
 			) {
 				setInitialEntityFieldsAndValues(
@@ -599,11 +628,13 @@ const hasCalculatedFieldCallback = ( instance ) =>
  */
 export const setCalculatedFieldAndValues = ( instance, fieldsAndValues ) => {
 	forEach( fieldsAndValues, ( calculatedFieldValue, calculatedFieldName ) => {
-		createGetter(
-			instance,
-			camelCase( calculatedFieldName ),
-			calculatedFieldValue
-		);
+		if ( calculatedFieldName !== '_protected' ) {
+			createGetter(
+				instance,
+				camelCase( calculatedFieldName ),
+				calculatedFieldValue
+			);
+		}
 	} );
 	createCallbackGetter(
 		instance,

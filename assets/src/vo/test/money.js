@@ -58,12 +58,22 @@ describe( 'Money Value Object', () => {
 					'settings',
 					{
 						...settings,
-						...DefaultCurrency.toAccountingSettings(),
+						...DefaultCurrency.toAccountingSettings().currency,
 					}
 				);
 				expect( testMoney.formatter ).toHaveProperty( 'format' );
 			}
 		);
+		it( 'formatter has correct settings from currency', () => {
+			const currency = new Currency(
+				{
+					code: 'dolla',
+					sign: '🥇',
+				}
+			);
+			const money = new Money( testDecimal, currency );
+			expect( money.formatter.settings.symbol ).toBe( '🥇' );
+		} );
 		it( 'expects three Money objects constructed using various types' +
 			' of amounts that result in the same value are equal as ' +
 			'expected', () => {
@@ -396,6 +406,27 @@ describe( 'Money Value Object', () => {
 			it( 'returns the expected formatted string for the currency value on ' +
 				' string output', () => {
 				expect( testMoney + '' ).toBe( '$1.25' );
+			} );
+			it( 'returns expected formatted string for currency ' +
+				'settings', () => {
+				const currency = new Currency(
+					{
+						code: 'dolla',
+						sign: '🥇',
+						signB4: false,
+					}
+				);
+				const money = new Money( testDecimal, currency );
+				expect( money + '' ).toBe( '1.25🥇' );
+			} );
+			it( 'returns correct decimal places when set to 0', () => {
+				const currency = new Currency( {
+					code: 'dolla',
+					sign: '$',
+					decimalPlaces: 0,
+				} );
+				const money = new Money( testDecimal, currency );
+				expect( money + '' ).toBe( '$1' );
 			} );
 		} );
 		describe( 'toJSON()', () => {

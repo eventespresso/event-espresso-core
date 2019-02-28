@@ -96,6 +96,23 @@ class BaseEntity {
 		return this.saveState === SAVE_STATE.CLEAN;
 	}
 
+	/**
+	 * Whether the entity has any password protected fields.
+	 * @return {boolean} True means it does, false means it doesn't.
+	 */
+	get isPasswordProtected() {
+		return this.protectedFields.length > 0;
+	}
+
+	/**
+	 * Whether the given fieldName is a password protected field.
+	 * @return {function(string): boolean}  Returns a function that can be used
+	 * to check if the given field name is a protected field in this entity.
+	 */
+	get isFieldPasswordProtected() {
+		return ( fieldName ) => this.protectedFields.indexOf( fieldName ) > -1;
+	}
+
 	static name = 'BaseEntity'
 }
 

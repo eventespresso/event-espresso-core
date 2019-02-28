@@ -892,8 +892,10 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
         }
         $spaces_remaining = $this->spaces_remaining($tickets);
         if ($spaces_remaining < 1) {
-            $this->set_status(EEM_Event::sold_out);
-            $this->save();
+            if ($this->status() !== EEM_Event::post_status_private) {
+                $this->set_status(EEM_Event::sold_out);
+                $this->save();
+            }
             $sold_out = true;
         } else {
             $sold_out = false;
@@ -1024,7 +1026,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
         }
         $where_params_for_event = array(array('EVT_ID' => $this->ID()));
         // if event is published:
-        if ($this->status() === 'publish') {
+        if ($this->status() === EEM_Event::post_status_publish || $this->status() === EEM_Event::post_status_private) {
             // active?
             if (EEM_Datetime::instance()->get_datetime_count_for_status(
                 EE_Datetime::active,
