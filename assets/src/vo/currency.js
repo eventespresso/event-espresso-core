@@ -115,7 +115,7 @@ export class Currency {
 				format: {
 					pos: this.signB4 ? '%s%v' : '%v%s',
 					neg: this.signB4 ? '- $s%v' : '- %v%s',
-					zero: this.signB4 ? '%s--' : '--%s',
+					zero: this.signB4 ? '%s%v' : '%v%s',
 				},
 				...decimalInfo,
 			},
