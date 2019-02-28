@@ -23,6 +23,7 @@ class EditEventDateFormModal extends Component {
 		super( props );
 		this.toggleEditor = props.closeModal;
 		this.state = {
+			event: props.event ? props.event : {},
 			eventDate: props.eventDate ? props.eventDate : {},
 			originalEventDate: props.eventDate ? props.eventDate : {},
 		};
@@ -32,22 +33,25 @@ class EditEventDateFormModal extends Component {
 	 * @function
 	 * @return {Object} data
 	 */
-	loadHandler = async () => {
-		const data = eventDateEntityFormSchema( this.state.eventDate );
-		return data;
+	loadHandler = () => {
+		return eventDateEntityFormSchema( this.state.eventDate );
 	};
 
 	/**
 	 * @function
 	 * @param {Object} data
 	 */
-	submitHandler = async ( data ) => {
-		const eventDate = await eventDateEntityFormSubmitHandler(
+	submitHandler = ( data ) => {
+		eventDateEntityFormSubmitHandler(
+			this.state.event,
 			this.state.eventDate,
 			data
+		).then(
+			( eventDate ) => {
+				this.setState( { eventDate: eventDate } );
+				this.toggleEditor();
+			}
 		);
-		this.setState( { eventDate: eventDate } );
-		this.toggleEditor();
 	};
 
 	/**
