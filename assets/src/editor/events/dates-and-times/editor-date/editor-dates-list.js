@@ -1,43 +1,119 @@
 /**
  * External imports
  */
+import { dispatch } from '@wordpress/data';
 import { Component } from '@wordpress/element';
-import { EntityList } from '@eventespresso/components';
+import {
+	EntityList,
+	FancyButton,
+	twoColumnAdminFormLayout,
+} from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
+import { dateTimeModel } from '@eventespresso/model';
 
 /**
  * Internal dependencies
  */
-import { EditorDatesGridView, EditorDatesListView } from './index';
+import { EditorDatesGridView, EditorDatesListView } from './';
 import { default as PaginatedDatesListWithFilterBar } from './filter-bar';
+import { EditEventDateFormModal } from '../';
+
+const {
+	FormColumn,
+	FormRow,
+	FormSection,
+	FormWrapper,
+} = twoColumnAdminFormLayout;
+
+const { createEntity } = dispatch( 'eventespresso/core' );
+const { MODEL_NAME: DATETIME } = dateTimeModel;
 
 /**
  * EditorDatesList
  * EntityList component for displaying event dates in the editor
  *
- * @function
+ * @class
  * @param {Array} entities 	array of JSON objects defining the Event Dates
  * @param {string} view
  * @param {Function} retrieveDates
  * @param {mixed} otherProps
- * @return {Component}          list of rendered Event Dates
  */
 class EditorDatesList extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
+			editorOpen: false,
+			newEventDate: null,
+		};
+	}
+
+	/**
+	 * opens and closes EditEventDateFormModal
+	 *
+	 * @function
+	 */
+	toggleEditor = () => {
+		this.setState( ( prevState ) => (
+			{ editorOpen: ! prevState.editorOpen }
+		) );
+	};
+
+	/**
+	 * @function
+	 */
+	addNewEventDate = () => {
+		createEntity( DATETIME, {} ).then(
+			( newEventDate ) => {
+				this.setState( ( prevState ) => {
+					return {
+						editorOpen: ! prevState.editorOpen,
+						newEventDate: newEventDate,
+					};
+				} );
+			}
+		);
+	};
+
 	render() {
-		const { view, ...otherProps } = this.props;
+		const { event, view, ...otherProps } = this.props;
 		return (
-			<EntityList
-				EntityGridView={ EditorDatesGridView }
-				EntityListView={ EditorDatesListView }
-				view={ view }
-				noResultsText={
-					__(
-						'no results found (try changing filters)',
-						'event_espresso'
-					)
-				}
-				{ ...otherProps }
-			/>
+			<FormWrapper>
+				<EntityList
+					EntityGridView={ EditorDatesGridView }
+					EntityListView={ EditorDatesListView }
+					view={ view }
+					noResultsText={
+						__(
+							'no results found (try changing filters)',
+							'event_espresso'
+						)
+					}
+					{ ...otherProps }
+				/>
+				<FormSection>
+					<FormRow>
+						<FormColumn colSize={ 2 } offset={ 10 } >
+							<br />
+							<FancyButton
+								icon="calendar"
+								style="wp-default"
+								label={ __( 'Add New Date', 'event_espresso' ) }
+								onClick={ ( e ) => {
+									e.preventDefault();
+									e.stopPropagation();
+									this.addNewEventDate();
+								} }
+							/>
+						</FormColumn>
+					</FormRow>
+				</FormSection>
+				<EditEventDateFormModal
+					event={ event }
+					eventDate={ this.state.newEventDate }
+					closeModal={ this.toggleEditor }
+					editorOpen={ this.state.editorOpen }
+				/>
+			</FormWrapper>
 		);
 	}
 }
