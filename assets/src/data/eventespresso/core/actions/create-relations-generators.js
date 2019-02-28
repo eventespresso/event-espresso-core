@@ -46,7 +46,6 @@ function* createRelation(
 	yield dispatch(
 		REDUCER_KEY,
 		'receiveEntityAndResolve',
-		singularRelationName,
 		relationEntity
 	);
 	yield dispatch(
