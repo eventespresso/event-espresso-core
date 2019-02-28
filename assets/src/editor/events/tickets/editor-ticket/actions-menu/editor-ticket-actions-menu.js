@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import moment from 'moment-timezone';
+import { withSelect } from '@wordpress/data';
 import { Component, Fragment } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import {
@@ -9,8 +9,11 @@ import {
 	EspressoIcon,
 	IconMenuItem,
 } from '@eventespresso/components';
-
 import { __, sprintf, _x } from '@eventespresso/i18n';
+import { ticketModel } from '@eventespresso/model';
+import { isModelEntityOfModel } from '@eventespresso/validators';
+
+const { MODEL_NAME: TICKET } = ticketModel;
 
 /**
  * Internal dependencies
@@ -191,7 +194,10 @@ class EditorTicketActionsMenu extends Component {
 	};
 
 	render() {
-		const { ticket, allDates, onUpdate } = this.props;
+		const { ticket, allDates, onUpdate, eventDateTicketMap } = this.props;
+		if ( ! isModelEntityOfModel( ticket, TICKET ) ) {
+			return null;
+		}
 		let sidebarMenuItems = [];
 		sidebarMenuItems.push( this.mainDropDownMenu( ticket ) );
 		sidebarMenuItems.push( this.editTicketMenuItem( ticket ) );
@@ -202,13 +208,6 @@ class EditorTicketActionsMenu extends Component {
 			sidebarMenuItems,
 			ticket
 		);
-		let date = ticket.start;
-		if ( ! moment.isMoment( date ) ) {
-			date = date instanceof Date ?
-				date :
-				new Date( date );
-			date = moment( date );
-		}
 
 		return ticket && ticket.id ? (
 			<div
@@ -224,26 +223,24 @@ class EditorTicketActionsMenu extends Component {
 				<DatesAndTicketsManagerModal
 					dates={ allDates }
 					tickets={ [ ticket ] }
+					eventDateTicketMap={ eventDateTicketMap }
 					closeModal={ this.toggleTickets }
 					editorOpen={ this.state.assignDates }
 					onUpdate={ onUpdate }
 					modalProps={ {
 						title: sprintf(
 							_x(
-								'Ticket Assignments for: %1$s',
-								'Ticket Assignments for: Date & date name',
+								'Date Assignments for Ticket:  %1$s',
+								'Date Assignments for Ticket:  Ticket name',
 								'event_espresso'
 							),
-							`${ ticket.name } (${ date.format( 'ddd MMM' +
-								' DD, YYYY' ) })`
+							ticket.name
 						),
 						closeButtonLabel: null,
 					} }
 				/>
 				<TicketPriceCalculatorFormModal
 					ticket={ ticket }
-					// prices={ [] }
-					// ticketId={ ticket.id }
 					closeModal={ this.toggleCalculator }
 					editorOpen={ this.state.calculator }
 				/>
@@ -252,4 +249,10 @@ class EditorTicketActionsMenu extends Component {
 	}
 }
 
-export default EditorTicketActionsMenu;
+export default withSelect( ( select, ownProps ) => {
+	const ticket = ownProps.ticket;
+	if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
+		select( 'eventespresso/core' ).getRelatedEntities( ticket, 'prices' );
+	}
+	return { ...ownProps };
+} )( EditorTicketActionsMenu );
