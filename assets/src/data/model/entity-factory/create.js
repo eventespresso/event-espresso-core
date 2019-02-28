@@ -360,7 +360,10 @@ const forUpdate = ( instance ) => {
  * @return {Object} Plain object of field:value pairs.
  */
 const forInsert = ( instance ) => {
-	const entityValues = getBaseFieldsAndValuesForPersisting( instance );
+	const entityValues = getBaseFieldsAndValuesForPersisting(
+		instance,
+		true
+	);
 	instance.primaryKeys.forEach( ( primaryKey ) => {
 		entityValues[ primaryKey ] = instance[ primaryKey ];
 	} );
