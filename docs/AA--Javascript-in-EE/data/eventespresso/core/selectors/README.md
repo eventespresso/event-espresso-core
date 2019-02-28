@@ -22,3 +22,9 @@ The following are a list of selectors that are available on the `eventespresso/c
 | [`getRelationAdditionsQueuedForModel`](./relations.md#getrelationadditionsqueuedformodel-modelname-)           | Retrieves all the queued relation additions in the state for the given model.                                                              |
 | [`getRelationDeletionsQueuedForModel`](./relations.md#getrelationdeletionsqueuedformodel-modelname-)           | Retrieves all the queued relation deletions in the state for the given model.                                                              |
 | [`countRelationModelsIndexedForEntity`](./relations.md#countrelationmodelsindexedforentity-modelname-entityid-)| Returns a count of all the relation models (not count of entities) that exist in the state being related to the given model and entity id. |
+
+## Model  Specific
+
+| Selector                                                                             | Description                                                                      |
+| -------------------------------------------------------------------------------------| -------------------------------------------------------------------------------- |
+| [`getLatestCheckin`](./model-specific.md#getlatestcheckin-registrationid-datetimeid-)| Returns the latest checkin record for the given registration id and datetime id. |

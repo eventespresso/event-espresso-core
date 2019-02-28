@@ -1,9 +1,6 @@
 /**
  * External imports
  */
-import {
-	isGenerator,
-} from '@eventespresso/validators';
 import { AuthedEventResponse } from '@test/fixtures';
 
 /**
@@ -11,8 +8,9 @@ import { AuthedEventResponse } from '@test/fixtures';
  */
 import { getEntityById } from '../entities';
 import { eventFactory } from '../../../test/fixtures/base';
-import { fetch } from '../../../base-controls';
+import { fetch, resolveSelect } from '../../../base-controls';
 import { receiveEntityRecords } from '../../actions';
+import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../../schema/constants';
 
 describe( getEntityById.name + '()', () => {
 	describe( 'yields with expected response', () => {
@@ -31,9 +29,15 @@ describe( getEntityById.name + '()', () => {
 				}
 			) );
 		} );
-		it( 'yields generator for getting factory', () => {
+		it( 'yields resolve select action for getting factory', () => {
 			const { value } = fulfillment.next();
-			expect( isGenerator( value ) ).toBe( true );
+			expect( value ).toEqual(
+				resolveSelect(
+					SCHEMA_REDUCER_KEY,
+					'getFactoryForModel',
+					'event'
+				)
+			);
 		} );
 		it( 'returns null if the factory retrieved is not correct for the ' +
 			'model', () => {

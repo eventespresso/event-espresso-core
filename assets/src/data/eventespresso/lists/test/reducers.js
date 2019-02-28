@@ -49,7 +49,15 @@ describe( 'receiveListItems()', () => {
 	it( 'returns the expected default object (from mock data)', () => {
 		const state = receiveListItems( undefined, {} );
 		expect( state ).toEqual(
-			fromJS( { datetime: {}, event: {}, term: {}, ticket: {}, venue: {} } ),
+			fromJS( {
+				datetime: {},
+				event: {},
+				term: {},
+				ticket: {},
+				venue: {},
+				checkin: {},
+				registration: {},
+			} ),
 		);
 	} );
 	describe( 'RECEIVE_LIST action handling', () => {
