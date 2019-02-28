@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import { EntityList } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
@@ -47,4 +48,7 @@ class EditorTicketsList extends Component {
 	}
 }
 
-export default PaginatedTicketsListWithFilterBar( EditorTicketsList );
+export default withSelect( ( select, ownProps ) => {
+	select( 'eventespresso/lists' ).getEntities( 'price_type' );
+	return { ...ownProps };
+} )( PaginatedTicketsListWithFilterBar( EditorTicketsList ) );
