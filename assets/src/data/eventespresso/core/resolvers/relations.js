@@ -18,7 +18,7 @@ import {
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import warning from 'warning';
 import { isEmpty, startCase, isUndefined, isArray } from 'lodash';
-import { Map } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 
 /**
  * Internal Imports
@@ -195,7 +195,7 @@ export function* getRelatedEntitiesForIds(
 		'getFactoryForModel',
 		singularRelationName
 	);
-	let hasSetMap = Map();
+	let hasSetMap = ImmutableMap();
 	if ( hasJoinTable ) {
 		// prepare a fetch using the join table with relations in the response.
 		path = getEndpoint(

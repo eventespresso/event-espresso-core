@@ -165,6 +165,7 @@ describe( 'createEntityFactory()', () => {
 		'evtDonations',
 		'setEVT_donations',
 		'donationsRendered',
+		'forClone',
 		'forUpdate',
 		'forInsert',
 		'forPersist',
