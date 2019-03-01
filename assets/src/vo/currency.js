@@ -1,7 +1,13 @@
 /**
  * External imports
  */
-import { isEmpty, isString, isNumber, isBoolean } from 'lodash';
+import {
+	isEmpty,
+	isString,
+	isNumber,
+	isBoolean,
+	isUndefined,
+} from 'lodash';
 import { Exception, CURRENCY_CONFIG } from '@eventespresso/eejs';
 import warning from 'warning';
 
@@ -79,8 +85,12 @@ export class Currency {
 		this.singularLabel = currencyConfig.singularLabel || '';
 		this.pluralLabel = currencyConfig.pluralLabel || '';
 		this.sign = currencyConfig.sign;
-		this.signB4 = currencyConfig.signB4 || this.signB4;
-		this.decimalPlaces = currencyConfig.decimalPlaces || this.decimalPlaces;
+		this.signB4 = isUndefined( currencyConfig.signB4 ) ?
+			this.signB4 :
+			currencyConfig.signB4;
+		this.decimalPlaces = isUndefined( currencyConfig.decimalPlaces ) ?
+			this.decimalPlaces :
+			currencyConfig.decimalPlaces;
 		this.decimalMark = currencyConfig.decimalMark || this.decimalMark;
 		this.thousandsSeparator = currencyConfig.thousandsSeparator || this.thousandsSeparator;
 		this.subunits = currencyConfig.subunits ||
@@ -105,7 +115,7 @@ export class Currency {
 				format: {
 					pos: this.signB4 ? '%s%v' : '%v%s',
 					neg: this.signB4 ? '- $s%v' : '- %v%s',
-					zero: this.signB4 ? '%s--' : '--%s',
+					zero: this.signB4 ? '%s%v' : '%v%s',
 				},
 				...decimalInfo,
 			},

@@ -15,7 +15,7 @@
  * @package 		EE4 Addon Skeleton
  * @subpackage 	tests
  */
-class espresso_promotions_tests extends EE_UnitTestCase {
+class EE_New_Payment_Method_Tests extends EE_UnitTestCase {
 
 	/**
 	 * Tests the loading of the main file

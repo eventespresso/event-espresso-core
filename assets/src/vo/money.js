@@ -459,7 +459,7 @@ export default class Money {
 	toString() {
 		return this.formatter.format(
 			this.amount.toNumber(),
-			Accounting.settings
+			this.formatter.settings
 		);
 	}
 
