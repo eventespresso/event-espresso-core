@@ -87,6 +87,7 @@ class EditorDateListItem extends Component {
 
 	render() {
 		const {
+			event,
 			eventDate,
 			allTickets,
 			eventDateTicketMap,
@@ -95,9 +96,6 @@ class EditorDateListItem extends Component {
 		if ( ! isModelEntityOfModel( eventDate, dateTimeModel.MODEL_NAME ) ) {
 			return null;
 		}
-		// console.log( '' );
-		// console.log( 'EditorDateListItem.render()' );
-		// console.log( ' > props: ', this.props );
 		this.id = `event-date-ticket-list-modal-${ eventDate.id }`;
 		const statusClass = this.getStatusClass( eventDate );
 		const bgClass = this.getBgColorClass( eventDate );
@@ -189,6 +187,7 @@ class EditorDateListItem extends Component {
 							{ __( 'Actions:', 'event_espresso' ) }
 						</span>
 						<EditorDateActionsMenu
+							event={ event }
 							eventDate={ eventDate }
 							allTickets={ allTickets }
 							eventDateTicketMap={ eventDateTicketMap }

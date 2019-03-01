@@ -63,9 +63,9 @@ class EditorDateGridItem extends Component {
 				/>;
 		}
 	};
-
 	render() {
 		const {
+			event,
 			eventDate,
 			allTickets,
 			eventDateTicketMap,
@@ -77,7 +77,6 @@ class EditorDateGridItem extends Component {
 		if ( ! isModelEntityOfModel( eventDate, MODEL_NAME ) ) {
 			return null;
 		}
-
 		const isPrimary = eventDate.isPrimary ? (
 			<IconButton
 				className="ee-primary-event-date"
@@ -97,12 +96,14 @@ class EditorDateGridItem extends Component {
 				<div className={ `ee-editor-date-main ${ dateStyleClass }` }>
 					{ this.displayDate( eventDate, showDate ) }
 					<EditorDateDetails
+						event={ event }
 						eventDate={ eventDate }
 						showDesc={ showDesc }
 						showVenue={ showVenue }
 					/>
 				</div>
 				<EditorDateActionsMenu
+					event={ event }
 					eventDate={ eventDate }
 					allTickets={ allTickets }
 					eventDateTicketMap={ eventDateTicketMap }
