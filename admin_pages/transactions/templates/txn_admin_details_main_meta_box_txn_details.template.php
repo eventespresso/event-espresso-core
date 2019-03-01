@@ -255,7 +255,7 @@
                         <div id="payment-id-PAY_ID">PAY_ID</div>
                     </td>
                     <td class=" jst-left">
-                        <div id="payment-date-PAY_ID"></div>
+                        <div id="payment-date-PAY_ID" class="payment-date-dv"></div>
                     </td>
                     <td class=" jst-left">
                         <div id="payment-method-PAY_ID"></div>
