@@ -174,9 +174,8 @@ export const getRelationNameFromLink = ( resourceLink ) => {
 };
 
 export const getBaseFieldsAndValuesForCloning = ( entityInstance ) => {
-	return reduce( entityInstance.originalFieldsAndValues, (
+	return Object.keys( entityInstance ).reduce( (
 		fieldsAndValues,
-		originalFieldValue,
 		fieldName
 	) => {
 		if (
