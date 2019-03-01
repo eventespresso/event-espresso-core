@@ -92,7 +92,7 @@ export const createGetterAndSetter = (
 	instance,
 	fieldName,
 	initialFieldValue,
-	opts = {}
+	opts = {},
 ) => {
 	let propertyValue = initialFieldValue;
 	Object.defineProperty( instance, fieldName, {
@@ -106,6 +106,7 @@ export const createGetterAndSetter = (
 				instance
 			);
 			setSaveState( instance, SAVE_STATE.DIRTY );
+			setFieldToPersist( instance, fieldName );
 			propertyValue = receivedValue;
 		},
 		...opts,
@@ -364,7 +365,10 @@ const forUpdate = ( instance ) => {
  * @return {Object} Plain object of field:value pairs.
  */
 const forInsert = ( instance ) => {
-	const entityValues = getBaseFieldsAndValuesForPersisting( instance );
+	const entityValues = getBaseFieldsAndValuesForPersisting(
+		instance,
+		true
+	);
 	instance.primaryKeys.forEach( ( primaryKey ) => {
 		entityValues[ primaryKey ] = instance[ primaryKey ];
 	} );
@@ -740,5 +744,18 @@ export const setSaveState = ( instance, saveState ) => {
 				'Save state for entity can only be set to either ' +
 				'SAVE_STATE.DIRTY, SAVE_STATE.NEW or SAVE_STATE.CLEAN'
 			);
+	}
+};
+
+/**
+ * Add the field name to the fieldToPersistOnInsert property on the instance
+ * if it exists.
+ *
+ * @param {Object} instance
+ * @param {string} fieldName
+ */
+export const setFieldToPersist = ( instance, fieldName ) => {
+	if ( instance.fieldsToPersistOnInsert ) {
+		instance.fieldsToPersistOnInsert.add( fieldName );
 	}
 };

@@ -5,7 +5,6 @@ import {
 	isPlainObject,
 	camelCase,
 	last,
-	reduce,
 	pick,
 	pickBy,
 	isArray,
@@ -175,7 +174,7 @@ export const getRelationNameFromLink = ( resourceLink ) => {
 };
 
 export const getBaseFieldsAndValuesForCloning = ( entityInstance ) => {
-	return reduce( entityInstance.originalFieldsAndValues, (
+	return Object.keys( entityInstance ).reduce( (
 		fieldsAndValues,
 		originalFieldValue,
 		fieldName
@@ -195,12 +194,20 @@ export const getBaseFieldsAndValuesForCloning = ( entityInstance ) => {
  * Returns a plain object containing the entity field name and values from the
  * provided entity instance
  * @param {Object} entityInstance
+ * @param {boolean} forInsert  Whether to return the fields and values for
+ * insert or for update.
  * @return {Object} A plain object
  */
-export const getBaseFieldsAndValuesForPersisting = ( entityInstance ) => {
-	return reduce( entityInstance.originalFieldsAndValues, (
+export const getBaseFieldsAndValuesForPersisting = (
+	entityInstance,
+	forInsert = false
+) => {
+	const iterator = forInsert ?
+		Array.from( entityInstance.fieldsToPersistOnInsert.values() ) :
+		Object.keys( entityInstance );
+
+	return iterator.reduce( (
 		fieldsAndValues,
-		originalFieldValue,
 		fieldName
 	) => {
 		if (
