@@ -93,7 +93,7 @@
     width: 90%;
 }
 
-.ee-editor-date-desc-div.ee-date-desc-excerpt span {
+.ee-editor-date-desc-div.ee-date-desc-excerpt > span {
     display: block;
     max-height: 42px;
     overflow: hidden;
@@ -101,7 +101,7 @@
     white-space: nowrap;
 }
 
-.ee-editor-date-desc-div.ee-date-desc-excerpt textarea {
+.ee-editor-date-desc-div.ee-date-desc-excerpt > textarea {
     max-height: unset;
 }
 
