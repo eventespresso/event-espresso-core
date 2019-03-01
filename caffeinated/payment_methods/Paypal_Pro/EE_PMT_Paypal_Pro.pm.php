@@ -161,6 +161,16 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
         return $billing_values;
     }
 
+    /**
+     * Override parent to account for a change in extra meta inputs in 4.9.75.p
+     * @since $VID:$
+     * @param EE_Payment_Method $payment_method_instance
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
     public function set_instance($payment_method_instance)
     {
         // Check for the old extra meta inputs
