@@ -5,9 +5,9 @@ import {
 	createRelation,
 	createRelations,
 } from '../create-relations-generators';
-import { dispatch } from '../../../base-controls';
+import { dispatch, resolveSelect } from '../../../base-controls';
 import { REDUCER_KEY } from '../../constants';
-import { EventEntities } from '../../../test/fixtures/base';
+import { EventEntities, DateTimeEntities } from '../../../test/fixtures/base';
 
 describe( 'createRelation()', () => {
 	describe( 'yields with expected response', () => {
@@ -34,7 +34,6 @@ describe( 'createRelation()', () => {
 				dispatch(
 					REDUCER_KEY,
 					'receiveEntityAndResolve',
-					'event',
 					TestEvent
 				)
 			);
@@ -117,17 +116,54 @@ describe( 'createRelations()', () => {
 			)
 		);
 	} );
+	it( 'yields resolveSelect control for getting the entity by id', () => {
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			resolveSelect(
+				REDUCER_KEY,
+				'getEntityById',
+				'datetime',
+				40,
+			)
+		);
+	} );
+	it( 'yields dispatch control action for finishing the resolution on ' +
+		'getRelatedEntities', () => {
+		const { value } = fulfillment.next( DateTimeEntities.a );
+		expect( value ).toEqual(
+			dispatch(
+				'core/data',
+				'finishResolution',
+				REDUCER_KEY,
+				'getRelatedEntities',
+				[ DateTimeEntities.a, 'events' ]
+			)
+		);
+	} );
 	describe( 'yields dispatch actions for receiving dirty relations (for all ' +
 		'expected ids)', () => {
-		[ 30, 20 ].forEach( ( relationId ) => {
-			it( 'yields dispatch action for id:' + relationId, () => {
+		[ EventEntities.c, EventEntities.b ].forEach( ( relationEntity ) => {
+			it( 'yields dispatch action for id:' + relationEntity.id, () => {
 				const { value } = fulfillment.next();
-				const args = [ 'events', relationId, 'datetime', 40 ];
+				const args = [ 'events', relationEntity.id, 'datetime', 40 ];
 				expect( value ).toEqual(
 					dispatch(
 						REDUCER_KEY,
 						'receiveDirtyRelationAddition',
 						...args
+					)
+				);
+			} );
+			it( 'yields dispatch action for finishing the resolution for ' +
+				'get relatedEntities for id: ' + relationEntity.id, () => {
+				const { value } = fulfillment.next();
+				expect( value ).toEqual(
+					dispatch(
+						'core/data',
+						'finishResolution',
+						REDUCER_KEY,
+						'getRelatedEntities',
+						[ relationEntity, 'datetimes' ]
 					)
 				);
 			} );
