@@ -83,6 +83,7 @@ function* createRelations(
 ) {
 	relationName = pluralModelName( relationName );
 	const singularRelationName = singularModelName( relationName );
+	const pluralRelationName = pluralModelName( relationName );
 
 	try {
 		assertArrayHasEntitiesForModel( relationEntities, singularRelationName );
@@ -110,6 +111,19 @@ function* createRelations(
 		entityId,
 		relationName,
 		relationIds,
+	);
+	const modelEntity = yield resolveSelect(
+		REDUCER_KEY,
+		'getEntityById',
+		modelName,
+		entityId,
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		REDUCER_KEY,
+		'getRelatedEntities',
+		[ modelEntity, pluralRelationName ]
 	);
 	relationIds = [ ...relationIds ];
 	while ( relationIds.length > 0 ) {
