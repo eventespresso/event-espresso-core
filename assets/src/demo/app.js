@@ -35,7 +35,7 @@ class EventInput extends Component {
 	}
 }
 
-const DatesList = ( { eventId, datetimes, onDateClone } ) => {
+const DatesList = ( { datetimes, onDateClone } ) => {
 	function getDatetimesList() {
 		if ( datetimes.length > 0 ) {
 			return datetimes.map( ( datetime ) => <li key={ datetime.id }>
@@ -51,7 +51,7 @@ const DatesList = ( { eventId, datetimes, onDateClone } ) => {
 	}
 	return <div>
 		<h2>Datetimes List</h2>
-		<ul>{ getDatetimesList() }</ul>;
+		<ul>{ getDatetimesList() }</ul>
 	</div>;
 };
 
