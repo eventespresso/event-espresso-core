@@ -2,13 +2,19 @@
  * External imports
  */
 import { Dashicon } from '@wordpress/components';
-import { dispatch } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import { EntityDetailsPanel, InlineEditInput } from '@eventespresso/components';
 import { data } from '@eventespresso/eejs';
 import { __ } from '@eventespresso/i18n';
+import { dateTimeModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
+/**
+ * Internal dependencies
+ */
+import { updateEventDate } from '../action-handlers/update-event-date';
+
+const { MODEL_NAME: DATETIME } = dateTimeModel;
 /**
  * EditorDateDetails
  *
@@ -17,21 +23,15 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * @return {string}    date details
  */
 class EditorDateDetails extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			eventDate: props.eventDate ? props.eventDate : {},
-		};
-	}
-
 	/**
 	 * dateName
 	 *
 	 * @function
-	 * @param {DateTime} eventDate    model object defining the Event Date
+	 * @param {Object} event 		model object defining the Event
+	 * @param {Object} eventDate 	model object defining the Event Date
 	 * @return {string}    date name
 	 */
-	dateName = ( eventDate ) => {
+	dateName = ( event, eventDate ) => {
 		const htmlClass = eventDate.name && eventDate.name.length > 40 ?
 			'ee-editor-date-name-heading ee-long-title' :
 			'ee-editor-date-name-heading';
@@ -42,9 +42,14 @@ class EditorDateDetails extends Component {
 					type="text"
 					value={ eventDate.name }
 					onChange={ async ( name ) => {
-						return await this.updateName( name, eventDate );
+						return await this.updateName( name, event, eventDate );
 					} }
 					label={ __( 'Date Name', 'event_espresso' ) }
+					noticeStyle={
+						{
+							left: '50px',
+						}
+					}
 				/>
 			</h1>
 		);
@@ -54,11 +59,12 @@ class EditorDateDetails extends Component {
 	 * description
 	 *
 	 * @function
-	 * @param {DateTime} eventDate model object defining the Event Date
+	 * @param {Object} event        model object defining the Event
+	 * @param {Object} eventDate    model object defining the Event Date
 	 * @param {string} showDesc
 	 * @return {string} date description
 	 */
-	description = ( eventDate, showDesc ) => {
+	description = ( event, eventDate, showDesc ) => {
 		const htmlClass = showDesc === 'excerpt' ?
 			'ee-editor-date-desc-div ee-date-desc-excerpt' :
 			'ee-editor-date-desc-div';
@@ -69,7 +75,11 @@ class EditorDateDetails extends Component {
 					type="textarea"
 					value={ eventDate.description }
 					onChange={ async ( desc ) => {
-						return await this.updateDescription( desc, eventDate );
+						return await this.updateDescription(
+							desc,
+							event,
+							eventDate
+						);
 					} }
 					label={ __( 'Date Description', 'event_espresso' ) }
 				/>
@@ -81,7 +91,7 @@ class EditorDateDetails extends Component {
 	 * venueName
 	 *spco-display-event-questions-lnk
 	 * @function
-	 * @param {Object} eventDate model object defining the Event Date
+	 * @param {Object} eventDate    model object defining the Event Date
 	 * @param {boolean} showVenue
 	 * @return {string}    venue name
 	 */
@@ -114,10 +124,11 @@ class EditorDateDetails extends Component {
 	 * dateSoldReservedCapacity
 	 *
 	 * @function
-	 * @param {DateTime} eventDate    model object defining the Event Date
+	 * @param {Object} event        model object defining the Event
+	 * @param {Object} eventDate    model object defining the Event Date
 	 * @return {string}    date details
 	 */
-	dateSoldReservedCapacity = ( eventDate ) => {
+	dateSoldReservedCapacity = ( event, eventDate ) => {
 		const details = [
 			{
 				id: `event-date-sold-${ eventDate.id }`,
@@ -137,7 +148,11 @@ class EditorDateDetails extends Component {
 					type: 'text',
 					valueType: 'number',
 					onChange: async ( capacity ) => {
-						return await this.updateCapacity( capacity, eventDate );
+						return await this.updateCapacity(
+							capacity,
+							event,
+							eventDate
+						);
 					},
 				},
 			},
@@ -157,7 +172,7 @@ class EditorDateDetails extends Component {
 	 * dateSoldReservedCapacity
 	 *
 	 * @function
-	 * @param {Object} eventDate    JSON object defining the Event Date
+	 * @param {Object} eventDate    model object defining the Event Date
 	 * @return {string}    link to registrations list table for datetime
 	 */
 	getDatetimeRegistrationsLink = ( eventDate ) => {
@@ -181,78 +196,65 @@ class EditorDateDetails extends Component {
 
 	/**
 	 * @function
-	 * @param {string} name new name for event date
-	 * @param {DateTime} eventDate
+	 * @param {string} name 		new name for event date
+	 * @param {Object} event        model object defining the Event
+	 * @param {Object} eventDate    model object defining the Event Date
 	 * @return {boolean} true if saved
 	 */
-	updateName = async ( name, eventDate ) => {
+	updateName = async ( name, event, eventDate ) => {
 		if (
-			isModelEntityOfModel( eventDate, 'datetime' ) &&
+			isModelEntityOfModel( eventDate, DATETIME ) &&
 			eventDate.name !== name
 		) {
 			eventDate.name = name;
-			await dispatch( 'eventespresso/core' ).persistDatetimeRecord(
-				eventDate
-			);
-			return true;
+			return updateEventDate( event, eventDate );
 		}
-		return false;
 	};
 
 	/**
 	 * @function
-	 * @param {string} description new description for event date
-	 * @param {DateTime} eventDate
+	 * @param {string} description 	new description for event date
+	 * @param {Object} event        model object defining the Event
+	 * @param {Object} eventDate    model object defining the Event Date
 	 * @return {boolean} true if saved
 	 */
-	updateDescription = async ( description, eventDate ) => {
+	updateDescription = async ( description, event, eventDate ) => {
 		if (
-			isModelEntityOfModel( eventDate, 'datetime' ) &&
+			isModelEntityOfModel( eventDate, DATETIME ) &&
 			eventDate.description !== description
 		) {
 			eventDate.description = description;
-			await dispatch( 'eventespresso/core' ).persistDatetimeRecord(
-				eventDate
-			);
-			return true;
+			return updateEventDate( event, eventDate );
 		}
-		return false;
 	};
 
 	/**
 	 * @function
-	 * @param {number|string} capacity new reg limit for event date
-	 * @param {DateTime} eventDate
+	 * @param {number|string} 		capacity new reg limit for event date
+	 * @param {Object} event        model object defining the Event
+	 * @param {Object} eventDate    model object defining the Event Date
 	 * @return {boolean} true if saved
 	 */
-	updateCapacity = async ( capacity, eventDate ) => {
+	updateCapacity = async ( capacity, event, eventDate ) => {
 		capacity = parseInt( capacity );
 		if (
-			isModelEntityOfModel( eventDate, 'datetime' ) &&
+			isModelEntityOfModel( eventDate, DATETIME ) &&
 			eventDate.regLimit !== capacity
 		) {
 			eventDate.regLimit = capacity;
-			await dispatch( 'eventespresso/core' ).persistDatetimeRecord(
-				eventDate
-			);
-			return true;
+			return updateEventDate( event, eventDate );
 		}
-		return false;
 	};
 
 	render() {
-		const eventDate = this.state.eventDate;
-		// console.log(
-		// 	'EditorDateDetails.render() eventDate',
-		// 	eventDate
-		// );
+		const { event, eventDate } = this.props;
 		const { showDesc = 'excerpt', showVenue } = this.props;
-		return isModelEntityOfModel( eventDate, 'datetime' ) ? (
+		return isModelEntityOfModel( eventDate, DATETIME ) ? (
 			<div className={ 'ee-editor-date-details-wrapper-div' }>
-				{ this.dateName( eventDate ) }
-				{ this.description( eventDate, showDesc ) }
+				{ this.dateName( event, eventDate ) }
+				{ this.description( event, eventDate, showDesc ) }
 				{ this.venueName( eventDate, showVenue ) }
-				{ this.dateSoldReservedCapacity( eventDate ) }
+				{ this.dateSoldReservedCapacity( event, eventDate ) }
 			</div>
 		) : null;
 	}
