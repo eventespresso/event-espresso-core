@@ -92,9 +92,9 @@ const TicketsList = ( { tickets } ) => {
 
 const DateAndTicketList = ( {
 	eventId,
-	isInitializing = true,
 	datetimes = [],
 	tickets = [],
+	isInitializing,
 } ) => {
 	function getContent() {
 		return isInitializing ?
@@ -108,8 +108,21 @@ const DateAndTicketList = ( {
 };
 
 const DatetimeAndTicketList = compose( [
+	withState( { isInitializing: true } ),
 	withSelect( ( select, ownProps ) => {
-		const { eventId, isInitializing = true } = ownProps;
+		const { isInitializing } = ownProps;
+		const { getEntitiesForModel } = select( 'eventespresso/core' );
+		if ( isInitializing ) {
+			return ownProps;
+		}
+		return {
+			datetimes: getEntitiesForModel( 'datetime' ),
+			tickets: getEntitiesForModel( 'ticket' ),
+		};
+	} ),
+	withSelect( ( select, ownProps ) => {
+		console.log( 'datelistbeginning', ownProps.isInitializing );
+		const { eventId, isInitializing, setState } = ownProps;
 		const {
 			getEntityById,
 			getRelatedEntities,
@@ -124,6 +137,7 @@ const DatetimeAndTicketList = compose( [
 			return ownProps;
 		}
 		const Datetimes = getRelatedEntities( Event, 'datetimes' );
+		console.log( 'DatetimeAndTicketList', eventId, isInitializing, Datetimes );
 		const relatedIsResolved = hasFinishedResolution(
 			'eventespresso/core',
 			'getRelatedEntities',
@@ -133,10 +147,8 @@ const DatetimeAndTicketList = compose( [
 			return ownProps;
 		}
 		if ( ! Datetimes.length ) {
-			return {
-				...ownProps,
-				isInitializing: false,
-			};
+			setState( { isInitializing: false } );
+			return ownProps;
 		}
 		const datetimeIds = Datetimes.map( ( datetime ) => datetime.id );
 		getRelatedEntitiesForIds( 'datetime', datetimeIds, 'tickets' );
@@ -145,21 +157,9 @@ const DatetimeAndTicketList = compose( [
 			'getRelatedEntitiesForIds',
 			[ 'datetime', datetimeIds, 'tickets' ]
 		);
-		return {
-			...ownProps,
-			isInitializing: ! relatedEntitiesIsResolved,
-		};
-	} ),
-	withSelect( ( select, ownProps ) => {
-		const { isInitializing } = ownProps;
-		const { getEntitiesForModel } = select( 'eventespresso/core' );
-		if ( isInitializing ) {
-			return ownProps;
-		}
-		return {
-			datetimes: getEntitiesForModel( 'datetime' ),
-			tickets: getEntitiesForModel( 'ticket' ),
-		};
+		setState( { isInitializing: false } );
+		console.log( 'DateList', relatedEntitiesIsResolved, isInitializing, ! relatedEntitiesIsResolved );
+		return ownProps;
 	} ),
 ] )( DateAndTicketList );
 
