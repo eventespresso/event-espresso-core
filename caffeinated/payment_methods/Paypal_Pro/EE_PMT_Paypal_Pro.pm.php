@@ -184,9 +184,9 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
             ]
         );
         // If they existed, set the new ones instead
-        if( ! empty($old_extra_metas)){
-            foreach($old_extra_metas as $old_extra_meta){
-                $old_extra_meta->set('EXM_key','api_' . $old_extra_meta->get('EXM_key'));
+        if (!empty($old_extra_metas)) {
+            foreach ($old_extra_metas as $old_extra_meta) {
+                $old_extra_meta->set('EXM_key', 'api_' . $old_extra_meta->get('EXM_key'));
                 $old_extra_meta->save();
             }
         }
