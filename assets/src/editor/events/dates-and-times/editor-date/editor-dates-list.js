@@ -84,12 +84,7 @@ class EditorDatesList extends Component {
 					EntityGridView={ EditorDatesGridView }
 					EntityListView={ EditorDatesListView }
 					view={ view }
-					noResultsText={
-						__(
-							'no results found (try changing filters)',
-							'event_espresso'
-						)
-					}
+					event={ event }
 					{ ...otherProps }
 				/>
 				<FormSection>
