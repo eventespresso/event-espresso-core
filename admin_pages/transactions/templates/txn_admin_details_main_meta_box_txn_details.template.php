@@ -257,10 +257,8 @@
                     <td class=" jst-left">
                         <div id="payment-date-PAY_ID"></div>
                     </td>
-                    <td class=" jst-cntr">
-                        <div id="payment-method-PAY_ID"></div>
-                    </td>
                     <td class=" jst-left">
+                        <div id="payment-method-PAY_ID"></div>
                         <div id="payment-gateway-PAY_ID">
                         </div>
                         <div id="payment-gateway-id-PAY_ID" class="hidden"></div>
