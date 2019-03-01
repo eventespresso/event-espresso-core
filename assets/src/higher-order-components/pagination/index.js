@@ -94,6 +94,12 @@ export default ( paginationConfig = {} ) => createHigherOrderComponent(
 							}
 							<EntityList
 								entities={ this.state.entityPage }
+								noResultsText={
+									__(
+										'no results found (try changing filters)',
+										'event_espresso'
+									)
+								}
 								{ ...otherProps }
 							/>
 							{
