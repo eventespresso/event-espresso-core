@@ -188,7 +188,7 @@ export const getBaseFieldsAndValuesForCloning = ( entityInstance ) => {
 		}
 		return fieldsAndValues;
 	}, {} );
-}
+};
 
 /**
  * Returns a plain object containing the entity field name and values from the

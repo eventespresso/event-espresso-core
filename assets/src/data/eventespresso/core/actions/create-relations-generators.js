@@ -83,6 +83,7 @@ function* createRelations(
 ) {
 	relationName = pluralModelName( relationName );
 	const singularRelationName = singularModelName( relationName );
+	const pluralRelationName = pluralModelName( relationName );
 
 	try {
 		assertArrayHasEntitiesForModel( relationEntities, singularRelationName );
@@ -96,7 +97,7 @@ function* createRelations(
 		);
 		return;
 	}
-	let relationIds = getIdsFromBaseEntityArray( relationEntities );
+	const relationIds = getIdsFromBaseEntityArray( relationEntities );
 	yield dispatch(
 		REDUCER_KEY,
 		'receiveEntitiesAndResolve',
@@ -111,15 +112,36 @@ function* createRelations(
 		relationName,
 		relationIds,
 	);
-	relationIds = [ ...relationIds ];
-	while ( relationIds.length > 0 ) {
+	const modelEntity = yield resolveSelect(
+		REDUCER_KEY,
+		'getEntityById',
+		modelName,
+		entityId,
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		REDUCER_KEY,
+		'getRelatedEntities',
+		[ modelEntity, pluralRelationName ]
+	);
+	const relationsToResolve = [ ...relationEntities ];
+	while ( relationsToResolve.length > 0 ) {
+		const relationEntity = relationsToResolve.pop();
 		yield dispatch(
 			REDUCER_KEY,
 			'receiveDirtyRelationAddition',
 			relationName,
-			relationIds.pop(),
+			relationEntity.id,
 			modelName,
 			entityId,
+		);
+		yield dispatch(
+			'core/data',
+			'finishResolution',
+			REDUCER_KEY,
+			'getRelatedEntities',
+			[ relationEntity, pluralModelName( modelName ) ]
 		);
 	}
 }
