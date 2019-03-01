@@ -97,7 +97,7 @@ function* createRelations(
 		);
 		return;
 	}
-	let relationIds = getIdsFromBaseEntityArray( relationEntities );
+	const relationIds = getIdsFromBaseEntityArray( relationEntities );
 	yield dispatch(
 		REDUCER_KEY,
 		'receiveEntitiesAndResolve',
@@ -125,15 +125,23 @@ function* createRelations(
 		'getRelatedEntities',
 		[ modelEntity, pluralRelationName ]
 	);
-	relationIds = [ ...relationIds ];
-	while ( relationIds.length > 0 ) {
+	const relationsToResolve = [ ...relationEntities ];
+	while ( relationsToResolve.length > 0 ) {
+		const relationEntity = relationsToResolve.pop();
 		yield dispatch(
 			REDUCER_KEY,
 			'receiveDirtyRelationAddition',
 			relationName,
-			relationIds.pop(),
+			relationEntity.id,
 			modelName,
 			entityId,
+		);
+		yield dispatch(
+			'core/data',
+			'finishResolution',
+			REDUCER_KEY,
+			'getRelatedEntities',
+			[ relationEntity, pluralModelName( modelName ) ]
 		);
 	}
 }
