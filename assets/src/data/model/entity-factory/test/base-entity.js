@@ -173,6 +173,7 @@ describe( 'createEntityFactory()', () => {
 		'primaryKeys',
 		'hasMultiplePrimaryKeys',
 		'fieldPrefixes',
+		'fieldsToPersistOnInsert',
 		'schema',
 		'modelName',
 		'originalFieldsAndValues',
@@ -616,6 +617,31 @@ describe( 'createEntityFactory()', () => {
 			test( 'The ' + fieldName + ' field exists', () => {
 				expect( DateTimeEntity[ fieldName ] ).toBeDefined();
 			} );
+		} );
+	} );
+	describe( 'forPersist returns expected values', () => {
+		const factory = createEntityFactory(
+			'datetime',
+			DateTimeSchema.schema,
+			[ 'DTT_EVT', 'DTT' ]
+		);
+		it( 'returns expected values with nothing provided on new entity' +
+			'instantiation', () => {
+			const entity = factory.createNew( {} );
+			expect( entity.forPersist ).toEqual( {
+				DTT_ID: entity.id,
+			} );
+		} );
+		it( 'returns expected values with nothing provided on new entity ' +
+			'instantiation and setters used to set values', () => {
+			const entity = factory.createNew( {} );
+			entity.name = 'Test Datetime';
+			expect( entity.forPersist ).toEqual(
+				{
+					DTT_ID: entity.id,
+					DTT_name: 'Test Datetime',
+				}
+			);
 		} );
 	} );
 } );
