@@ -135,6 +135,14 @@ export function* getRelationEndpointForEntityId(
 	return endpoint;
 }
 
+/**
+ * A resolver for returning whether the given modelName and relationName have
+ * a join table for representing their relation.
+ *
+ * @param {string} modelName
+ * @param {string} relationName
+ * @return {boolean}  True means there is a join table, false means there isn't.
+ */
 export function* hasJoinTableRelation( modelName, relationName ) {
 	const relationType = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
@@ -145,6 +153,14 @@ export function* hasJoinTableRelation( modelName, relationName ) {
 	return JOIN_RELATION_TYPES.indexOf( relationType ) > -1;
 }
 
+/**
+ * A resolver for getting the relation type describing the relation between
+ * modelName and relationName
+ *
+ * @param {string} modelName
+ * @param {string} relationName
+ * @return {string}  The relation type to describe the relation
+ */
 export function* getRelationType( modelName, relationName ) {
 	const relationSchema = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
@@ -155,6 +171,14 @@ export function* getRelationType( modelName, relationName ) {
 	return relationSchema !== null ? relationSchema.relation_type : '';
 }
 
+/**
+ * A resolver for retrieving the relation schema from the server for the given
+ * modelName and relationName.
+ *
+ * @param {string} modelName
+ * @param {string} relationName
+ * @throws Error
+ */
 export function* getRelationSchema( modelName, relationName ) {
 	modelName = singularModelName( modelName );
 	const pluralRelationName = pluralModelName( relationName );

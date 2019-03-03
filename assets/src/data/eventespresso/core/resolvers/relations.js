@@ -163,6 +163,16 @@ export function* getRelatedEntities( entity, relationModelName ) {
 	return entityArray;
 }
 
+/**
+ * Resolver for the getRelatedEntitiesForIds selector
+ *
+ * @param {string} modelName
+ * @param {Array<number>} entityIds
+ * @param {string} relationName
+ *
+ * @return {undefined|Array} If there is no schema for the relation, an
+ * empty array is returned.
+ */
 export function* getRelatedEntitiesForIds(
 	modelName,
 	entityIds,
@@ -246,7 +256,7 @@ export function* getRelatedEntitiesForIds(
 		}
 	} else {
 		path = getEndpoint( singularRelationName ) +
-			'?where' + getPrimaryKeyQueryString( modelName, entityIds );
+			'/?where' + getPrimaryKeyQueryString( modelName, entityIds );
 		response = yield fetch( { path } );
 		if ( ! response.length ) {
 			return;

@@ -4,8 +4,9 @@
 import {
 	createRelation,
 	createRelations,
+	resolveRelationRecordForRelation,
 } from '../create-relations-generators';
-import { dispatch, resolveSelect } from '../../../base-controls';
+import { dispatch, resolveSelect, select } from '../../../base-controls';
 import { REDUCER_KEY } from '../../constants';
 import { EventEntities, DateTimeEntities } from '../../../test/fixtures/base';
 
@@ -168,5 +169,104 @@ describe( 'createRelations()', () => {
 				);
 			} );
 		} );
+	} );
+} );
+
+describe( 'resolveRelationRecordForRelation', () => {
+	let fulfillment;
+	const reset = () => fulfillment = resolveRelationRecordForRelation(
+		DateTimeEntities.a,
+		'event',
+		20
+	);
+	it( 'yields select control action for whether the resolution has ' +
+		'finished for the getEntityById selector for the incoming relation ' +
+		'id', () => {
+		reset();
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			select(
+				'core/data',
+				'hasFinishedResolution',
+				REDUCER_KEY,
+				'getEntityById',
+				[ 'datetime', DateTimeEntities.a.id ]
+			)
+		);
+	} );
+	it( 'if entity exists in the state, then yields select action for ' +
+		'getting that entity from the state (it serves as authority)', () => {
+		const { value } = fulfillment.next( true );
+		expect( value ).toEqual(
+			select(
+				REDUCER_KEY,
+				'getEntityById',
+				'datetime',
+				DateTimeEntities.a.id
+			)
+		);
+	} );
+	it( 'if entity does not exist in the state, then yields dispatch control ' +
+		'for receiveEntityAndResolve', () => {
+		reset();
+		fulfillment.next();
+		const { value } = fulfillment.next( false );
+		expect( value ).toEqual(
+			dispatch(
+				REDUCER_KEY,
+				'receiveEntityAndResolve',
+				DateTimeEntities.a
+			)
+		);
+	} );
+	it( 'yields dispatch control action for receiveRelatedEntities', () => {
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			dispatch(
+				REDUCER_KEY,
+				'receiveRelatedEntities',
+				'event',
+				20,
+				'datetimes',
+				[ DateTimeEntities.a.id ]
+			)
+		);
+	} );
+	it( 'yields resolveSelect control action for getEntityById', () => {
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			resolveSelect(
+				REDUCER_KEY,
+				'getEntityById',
+				'event',
+				20,
+			)
+		);
+	} );
+	it( 'yields dispatch control action for finishing the resolution on the ' +
+		'getRelatedEntities selector for the relation on the model', () => {
+		const { value } = fulfillment.next( EventEntities.a );
+		expect( value ).toEqual(
+			dispatch(
+				'core/data',
+				'finishResolution',
+				REDUCER_KEY,
+				'getRelatedEntities',
+				[ EventEntities.a, 'datetimes' ]
+			)
+		);
+	} );
+	it( 'yields dispatch control action for finishing the resolution on the ' +
+		'getRelatedEntities selector for the model on the relation', () => {
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			dispatch(
+				'core/data',
+				'finishResolution',
+				REDUCER_KEY,
+				'getRelatedEntities',
+				[ DateTimeEntities.a, 'events' ]
+			)
+		);
 	} );
 } );

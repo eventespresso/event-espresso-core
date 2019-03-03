@@ -645,4 +645,21 @@ describe( 'createEntityFactory()', () => {
 			);
 		} );
 	} );
+	describe( 'clone property', () => {
+		const factory = createEntityFactory(
+			'event',
+			EventSchema.schema,
+			[ 'EVT_ID' ]
+		);
+		it( 'returns a new instance of BaseEntity', () => {
+			const entity = factory.fromExisting( EventResponse );
+			const newEntity = entity.clone;
+			expect( newEntity ).not.toBe( entity );
+		} );
+		it( 'returns a new instance that differs only in id', () => {
+			const entity = factory.fromExisting( EventResponse );
+			const newEntity = entity.clone;
+			expect( newEntity.forUpdate ).toEqual( entity.forUpdate );
+		} );
+	} );
 } );
