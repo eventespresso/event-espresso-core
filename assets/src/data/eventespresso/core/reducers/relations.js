@@ -116,7 +116,6 @@ function receiveAndRemoveRelations( state, action ) {
 
 	const existingIds = state.getIn( path, Set() );
 
-
 	switch ( type ) {
 		case types.RECEIVE_RELATED_ENTITY_IDS:
 			state = state.setIn(
