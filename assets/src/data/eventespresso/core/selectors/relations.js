@@ -132,7 +132,7 @@ const getRelatedEntities = createSelector(
  * single entity.  This allows you to get all the relations for a given set of
  * entity ids (i.e. Get all datetimes related to the event ids: 10, 20, and 30).
  *
- * This selector is wired up to a selector that does an efficient request to
+ * This selector is wired up to a resolver that does an efficient request to
  * retrieve all those entities and then dispatch the appropriate actions so
  * the relation state is correctly recorded for each relation.
  *
