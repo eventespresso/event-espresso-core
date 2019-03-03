@@ -73,5 +73,5 @@ export const DEFAULT_SCHEMA_STATE = {
 	relationEndpoints: {
 		...getDefaultModelEntitiesObject(),
 	},
-	relationSchema: {}
+	relationSchema: {},
 };

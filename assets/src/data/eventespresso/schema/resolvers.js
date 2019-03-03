@@ -15,7 +15,6 @@ import {
 } from '@eventespresso/model';
 import { isUndefined } from 'lodash';
 
-
 /**
  * Internal dependencies
  */

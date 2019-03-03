@@ -3,7 +3,7 @@
  */
 import { EventSchema } from '@test/fixtures';
 import { DEFAULT_SCHEMA_STATE } from '@eventespresso/model';
-import { Map } from 'immutable';
+import { Map, fromJS } from 'immutable';
 
 /**
  * Internal dependencies
@@ -15,7 +15,6 @@ import {
 	receiveRelationSchema,
 } from '../reducers';
 import { eventFactory } from '../../test/fixtures/base';
-import { fromJS } from 'immutable';
 import { ACTION_TYPES as types } from '../action-types';
 
 const expectedDefaultState = {

@@ -206,7 +206,7 @@ describe( 'getRelatedEntitiesForIds()', () => {
 				'ticket',
 				'datetimes'
 			)
-		 );
+		);
 	} );
 	it( 'returns empty array if relationSchema is not available', () => {
 		const { value, done } = fulfillment.next( null );
