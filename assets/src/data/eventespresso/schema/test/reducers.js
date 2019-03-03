@@ -3,6 +3,7 @@
  */
 import { EventSchema } from '@test/fixtures';
 import { DEFAULT_SCHEMA_STATE } from '@eventespresso/model';
+import { Map } from 'immutable';
 
 /**
  * Internal dependencies
@@ -11,6 +12,7 @@ import {
 	receiveSchema,
 	receiveFactory,
 	receiveRelationEndpointForEntity,
+	receiveRelationSchema,
 } from '../reducers';
 import { eventFactory } from '../../test/fixtures/base';
 import { fromJS } from 'immutable';
@@ -26,6 +28,7 @@ const expectedDefaultState = {
 	relationEndpoints: fromJS(
 		{ datetime: {}, event: {}, term: {}, ticket: {}, venue: {} }
 	),
+	relationSchema: Map(),
 };
 
 describe( 'receiveSchema()', () => {
@@ -173,6 +176,52 @@ describe( 'receiveSchema()', () => {
 				originalState,
 				types.RECEIVE_RELATION_ENDPOINT_FOR_MODEL_ENTITY,
 				receiveRelationEndpointForEntity
+			);
+		} );
+	} );
+	describe( types.RECEIVE_RELATION_SCHEMA + ' action handling', () => {
+		describe( 'returns correct state for multiple consecutive ' +
+			'queries', () => {
+			const originalState = expectedDefaultState.relationSchema;
+			const testConditions = [
+				[
+					'event',
+					{
+						relationName: 'datetimes',
+						relationSchema: { foo: 'bar' },
+					},
+					originalState
+						.setIn( [ 'event', 'datetimes' ], { foo: 'bar' } ),
+					false,
+				],
+				[
+					'datetime',
+					{
+						relationName: 'events',
+						relationSchema: { foo: 'bar' },
+					},
+					originalState
+						.setIn( [ 'event', 'datetimes' ], { foo: 'bar' } )
+						.setIn( [ 'datetime', 'events' ], { foo: 'bar' } ),
+					false,
+				],
+				[
+					'datetime',
+					{
+						relationName: 'event',
+						relationSchema: { foo: 'bar' },
+					},
+					originalState
+						.setIn( [ 'event', 'datetimes' ], { foo: 'bar' } )
+						.setIn( [ 'datetime', 'events' ], { foo: 'bar' } ),
+					true,
+				],
+			];
+			testRunner(
+				testConditions,
+				originalState,
+				types.RECEIVE_RELATION_SCHEMA,
+				receiveRelationSchema
 			);
 		} );
 	} );
