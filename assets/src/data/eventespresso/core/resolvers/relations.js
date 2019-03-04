@@ -232,25 +232,28 @@ export function* getRelatedEntitiesForIds(
 				! isArray( relationRecords ) ?
 				[ relationRecords ] :
 				relationRecords;
-			while ( relationRecords.length > 0 ) {
-				const modelId = record[ modelPrimaryKey ];
-				const relationId = record[ relationPrimaryKey ];
-				const relationRecord = relationRecords.pop();
-				if ( relationRecord !== null &&
-					! hasSetMap.hasIn( [ modelId, relationId ] )
-				) {
-					const relationEntity = factory.fromExisting( relationRecord );
-					yield dispatch(
-						CORE_REDUCER_KEY,
-						'resolveRelationRecordForRelation',
-						relationEntity,
-						modelName,
-						modelId,
-					);
-					hasSetMap = hasSetMap.setIn(
-						[ modelId, relationId ],
-						true
-					);
+			if ( relationRecords !== null ) {
+				while ( relationRecords.length > 0 ) {
+					const modelId = record[ modelPrimaryKey ];
+					const relationId = record[ relationPrimaryKey ];
+					const relationRecord = relationRecords.pop();
+					if ( relationRecord !== null &&
+						! hasSetMap.hasIn( [ modelId, relationId ] )
+					) {
+						const relationEntity = factory.fromExisting(
+							relationRecord );
+						yield dispatch(
+							CORE_REDUCER_KEY,
+							'resolveRelationRecordForRelation',
+							relationEntity,
+							modelName,
+							modelId,
+						);
+						hasSetMap = hasSetMap.setIn(
+							[ modelId, relationId ],
+							true
+						);
+					}
 				}
 			}
 		}
