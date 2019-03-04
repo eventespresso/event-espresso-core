@@ -121,7 +121,6 @@ const DatetimeAndTicketList = compose( [
 		};
 	} ),
 	withSelect( ( select, ownProps ) => {
-		console.log( 'datelistbeginning', ownProps.isInitializing );
 		const { eventId, isInitializing, setState } = ownProps;
 		const {
 			getEntityById,
@@ -137,7 +136,6 @@ const DatetimeAndTicketList = compose( [
 			return ownProps;
 		}
 		const Datetimes = getRelatedEntities( Event, 'datetimes' );
-		console.log( 'DatetimeAndTicketList', eventId, isInitializing, Datetimes );
 		const relatedIsResolved = hasFinishedResolution(
 			'eventespresso/core',
 			'getRelatedEntities',
@@ -158,8 +156,6 @@ const DatetimeAndTicketList = compose( [
 			[ 'datetime', datetimeIds, 'tickets' ]
 		);
 		setState( { isInitializing: false } );
-		console.log( 'DateList', relatedEntitiesIsResolved, isInitializing, ! relatedEntitiesIsResolved );
-		return ownProps;
 	} ),
 ] )( DateAndTicketList );
 
