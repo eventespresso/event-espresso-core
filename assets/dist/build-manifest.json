@@ -2,6 +2,8 @@
   "components.css": "ee-components.997177945b17ee98a639.dist.css",
   "components.js": "ee-components.862d05bcd21aee9a8e46.dist.js",
   "data-stores.js": "ee-data-stores.5730d2796de06a3cc59e.dist.js",
+  "demo-app.css": "ee-demo-app.1d9252864c9f252a2cf7.dist.css",
+  "demo-app.js": "ee-demo-app.7c00c1a86c1f966108e4.dist.js",
   "editor-hocs.js": "ee-editor-hocs.15a813aac7a51b5473cb.dist.js",
   "eejs.js": "ee-eejs.4bd48b02f85a875e3121.dist.js",
   "eventespresso-core-blocks-frontend.css": "ee-eventespresso-core-blocks-frontend.f0ea9ad96d720bc8dc9b.dist.css",
