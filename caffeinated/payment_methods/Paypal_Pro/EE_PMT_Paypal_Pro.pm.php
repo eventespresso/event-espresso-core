@@ -163,7 +163,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
 
     /**
      * Override parent to account for a change in extra meta inputs in 4.9.75.p
-     * @since $VID:$
+     * @since 4.9.79.p
      * @param EE_Payment_Method $payment_method_instance
      * @throws EE_Error
      * @throws InvalidArgumentException
