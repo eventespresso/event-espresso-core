@@ -18,7 +18,7 @@ import {
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import warning from 'warning';
 import { isEmpty, startCase, isUndefined, isArray } from 'lodash';
-import { Map } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 
 /**
  * Internal Imports
@@ -163,6 +163,16 @@ export function* getRelatedEntities( entity, relationModelName ) {
 	return entityArray;
 }
 
+/**
+ * Resolver for the getRelatedEntitiesForIds selector
+ *
+ * @param {string} modelName
+ * @param {Array<number>} entityIds
+ * @param {string} relationName
+ *
+ * @return {undefined|Array} If there is no schema for the relation, an
+ * empty array is returned.
+ */
 export function* getRelatedEntitiesForIds(
 	modelName,
 	entityIds,
@@ -195,7 +205,7 @@ export function* getRelatedEntitiesForIds(
 		'getFactoryForModel',
 		singularRelationName
 	);
-	let hasSetMap = Map();
+	let hasSetMap = ImmutableMap();
 	if ( hasJoinTable ) {
 		// prepare a fetch using the join table with relations in the response.
 		path = getEndpoint(
@@ -246,7 +256,7 @@ export function* getRelatedEntitiesForIds(
 		}
 	} else {
 		path = getEndpoint( singularRelationName ) +
-			'?where' + getPrimaryKeyQueryString( modelName, entityIds );
+			'/?where' + getPrimaryKeyQueryString( modelName, entityIds );
 		response = yield fetch( { path } );
 		if ( ! response.length ) {
 			return;

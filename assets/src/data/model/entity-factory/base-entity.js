@@ -118,6 +118,13 @@ class BaseEntity {
 		return ( fieldName ) => this.protectedFields.indexOf( fieldName ) > -1;
 	}
 
+	/**
+	 * Used to clone the current entity object.  This results in an instance of
+	 * BaseEntity that is equivalent as this current instance (except it will
+	 * have a new generated id).
+	 *
+	 * @return {BaseEntity} A new instance of BaseEntity
+	 */
 	get clone() {
 		return new BaseEntity(
 			this.modelName,

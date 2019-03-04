@@ -13,6 +13,7 @@ import {
 	isModelEntityFactoryOfModel,
 } from '@eventespresso/validators';
 import { fromJS, Map } from 'immutable';
+import isShallowEqual from '@wordpress/is-shallow-equal';
 
 /**
  * Internal imports
@@ -20,9 +21,9 @@ import { fromJS, Map } from 'immutable';
 import { ACTION_TYPES as types } from './action-types';
 /**
  * Reducer for a model schema.
- * @param {Immutable.Map} state
+ * @param {Map} state
  * @param {Object} action
- * @return {Immutable.Map} The new (or original) state.
+ * @return {Map} The new (or original) state.
  */
 export const receiveSchema = (
 	state = fromJS( DEFAULT_SCHEMA_STATE.schema ),
@@ -45,9 +46,9 @@ export const receiveSchema = (
 
 /**
  * Reducer for a model factory
- * @param {Immutable.Map} state
+ * @param {Map} state
  * @param {Object} action
- * @return {Immutable.Map} the new (or original) state.
+ * @return {Map} the new (or original) state.
  */
 export const receiveFactory = (
 	state = fromJS( DEFAULT_SCHEMA_STATE.factory ),
@@ -71,9 +72,9 @@ export const receiveFactory = (
 /**
  * Reducer for relation endpoints.
  *
- * @param {Immutable.Map}state
+ * @param {Map}state
  * @param {Object} action
- * @return {Immutable.Map} New or original state.
+ * @return {Map} New or original state.
  */
 export const receiveRelationEndpointForEntity = (
 	state = fromJS( DEFAULT_SCHEMA_STATE.relationEndpoints ),
@@ -95,10 +96,23 @@ export const receiveRelationEndpointForEntity = (
 	return state;
 };
 
+/**
+ * Reducer for relation schema
+ *
+ * @param {Map} state
+ * @param {Object} action
+ * @return {Map} New or original state
+ */
 export const receiveRelationSchema = ( state = Map(), action ) => {
 	if ( action.type === types.RECEIVE_RELATION_SCHEMA ) {
 		const modelName = singularModelName( action.modelName );
 		const relationName = pluralModelName( action.relationName );
+		if ( isShallowEqual(
+			state.getIn( [ modelName, relationName ], {} ),
+			action.relationSchema,
+		) ) {
+			return state;
+		}
 		return state.setIn(
 			[ modelName, relationName ],
 			action.relationSchema

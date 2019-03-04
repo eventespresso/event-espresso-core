@@ -342,6 +342,14 @@ const populateMissingFields = ( instance ) => {
 	);
 };
 
+/**
+ * Returns a plain object of entity fields and values from this entity instance
+ * for use in cloning the entity.
+ *
+ * @param {BaseEntity} instance
+ *
+ * @return {Object} Plain object of all field:value pairs.
+ */
 const forClone = ( instance ) => {
 	return getBaseFieldsAndValuesForCloning( instance );
 };

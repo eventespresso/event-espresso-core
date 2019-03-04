@@ -152,6 +152,15 @@ export function isRequestingRelationEndpointForEntityId(
 	);
 }
 
+/**
+ * Selector returning whether the relation between the given model name and
+ * relation name has a join table.
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {string} relationName
+ * @return {boolean} True means there is a join table, false means there isn't.
+ */
 export const hasJoinTableRelation = ( state, modelName, relationName ) => {
 	modelName = singularModelName( modelName );
 	relationName = pluralModelName( relationName );
@@ -159,6 +168,15 @@ export const hasJoinTableRelation = ( state, modelName, relationName ) => {
 	return JOIN_RELATION_TYPES.indexOf( relationType ) > -1;
 };
 
+/**
+ * Selector returning the relation type describing the relation between the
+ * given model name and relation name.
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {string} relationName
+ * @return {string}  The relation type (eg. "EE_HABTM_Relation")
+ */
 export const getRelationType = ( state, modelName, relationName ) => {
 	modelName = singularModelName( modelName );
 	relationName = pluralModelName( relationName );
@@ -168,6 +186,15 @@ export const getRelationType = ( state, modelName, relationName ) => {
 		'';
 };
 
+/**
+ * Selector returning the relation schema describing the relation between the
+ * given model name and relation name.
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {string} relationName
+ * @return {Object|null} An object or null if there is no relation schema.
+ */
 export const getRelationSchema = ( state, modelName, relationName ) => {
 	modelName = singularModelName( modelName );
 	relationName = pluralModelName( relationName );

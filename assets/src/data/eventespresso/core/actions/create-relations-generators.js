@@ -146,6 +146,20 @@ function* createRelations(
 	}
 }
 
+/**
+ * This action is used to ensure a relation Entity related to the given
+ * model entity id is both added to the state and various selectors for these
+ * are resolved so no additional resolution happens for these.
+ *
+ * The purpose for this action is to allow for doing more efficient batch
+ * queries of entities from an api request and then triggering the resolution of
+ * any more granular selectors that have resolvers.  This basically allows one
+ * to hydrate the `eventespresso/core` state with more efficient queries.
+ *
+ * @param {BaseEntity} relationEntity
+ * @param {string} modelName
+ * @param {number|string} modelId
+ */
 function* resolveRelationRecordForRelation(
 	relationEntity,
 	modelName,
