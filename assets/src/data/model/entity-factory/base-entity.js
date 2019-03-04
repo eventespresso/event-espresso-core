@@ -52,6 +52,11 @@ class BaseEntity {
 		);
 		createGetter( this, 'modelName', modelName );
 		createGetter( this, 'originalFieldsAndValues', entityFieldsAndValues );
+		createGetter(
+			this,
+			'fieldsToPersistOnInsert',
+			new Set( Object.keys( entityFieldsAndValues ) )
+		);
 		createEntityGettersAndSetters( this );
 		createPersistingGettersAndSetters( this );
 	}
