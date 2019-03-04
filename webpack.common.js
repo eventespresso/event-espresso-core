@@ -124,6 +124,7 @@ const config = [
 		externals: Object.assign( externals, {
 			'@eventespresso/validators': 'eejs.validators',
 			'@eventespresso/helpers': 'eejs.helpers',
+			'@eventespresso/value-objects': 'eejs.valueObjects',
 		} ),
 		module: {
 			rules: [

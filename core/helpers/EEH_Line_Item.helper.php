@@ -1915,7 +1915,7 @@ class EEH_Line_Item
      * and ensures that the line item's "is_taxable" field matches that of its corresponding ticket
      *
      * @param EE_Line_Item $total_line_item
-     * @since $VID:$
+     * @since 4.9.79.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException

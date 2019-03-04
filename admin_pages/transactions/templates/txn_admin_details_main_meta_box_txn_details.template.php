@@ -75,7 +75,6 @@
                     <th class="jst-cntr"></th>
                     <th class="jst-cntr"><?php esc_html_e('ID', 'event_espresso'); ?></th>
                     <th class="jst-left"><?php esc_html_e('Date', 'event_espresso'); ?></th>
-                    <th class="jst-cntr"><?php esc_html_e('Source', 'event_espresso'); ?></th>
                     <th class="jst-left"><?php esc_html_e('Method', 'event_espresso'); ?></th>
                     <th class="jst-left"><?php esc_html_e('Gateway Response', 'event_espresso'); ?></th>
                     <th class="jst-left"><?php esc_html_e('TXN&nbsp;ID / CHQ&nbsp;#', 'event_espresso'); ?></th>
@@ -131,12 +130,10 @@
                                 <div id="payment-date-<?php echo $PAY_ID; ?>"
                                      class="payment-date-dv"><?php echo $payment->timestamp('Y-m-d', 'g:i a'); ?></div>
                             </td>
-                            <td class=" jst-cntr">
+                            <td class=" jst-left">
                                 <div id="payment-method-<?php echo $PAY_ID; ?>">
                                     <?php echo $payment->source(); ?>
                                 </div>
-                            </td>
-                            <td class=" jst-left">
                                 <div id="payment-gateway-<?php echo $PAY_ID; ?>">
                                     <?php echo $payment->payment_method()
                                         ? $payment->payment_method()->admin_name()
@@ -153,7 +150,7 @@
                             <td class=" jst-left">
                                 <div id="payment-response-<?php echo $PAY_ID; ?>"><?php echo $payment->gateway_response(); ?></div>
                             </td>
-                            <td class=" jst-left">
+                            <td class=" jst-left payment-txn-id-chq-nmbr">
                                 <div
                                     id="payment-txn-id-chq-nmbr-<?php echo $PAY_ID; ?>"><?php echo $payment->txn_id_chq_nmbr(); ?></div>
                             </td>
@@ -189,13 +186,13 @@
                         : '';
                     ?>
                     <tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr hidden">
-                        <td class=" jst-rght" colspan="11">
+                        <td class=" jst-rght" colspan="10">
                             <span class="important-notice"><?php echo $no_payment_text; ?></span>
                         </td>
                     </tr>
                     <tr id="txn-admin-payments-total-tr"
                         class="admin-primary-mbox-total-tr<?php echo $pay_totals_class; ?>">
-                        <th class=" jst-rght" colspan="10"><span
+                        <th class=" jst-rght" colspan="9"><span
                                 id="payments-total-spn">
                                 <?php echo $overpaid
                                            . sprintf(
@@ -215,12 +212,12 @@
                     </tr>
                 <?php else : ?>
                     <tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr">
-                        <td class=" jst-rght" colspan="11">
+                        <td class=" jst-rght" colspan="10">
                             <span class="important-notice"><?php echo $no_payment_text; ?></span>
                         </td>
                     </tr>
                     <tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr hidden">
-                        <th class=" jst-rght" colspan="10"><span
+                        <th class=" jst-rght" colspan="9"><span
                                 id="payments-total-spn">
                                 <?php echo esc_html__(
                                     'Payments Total',
@@ -258,12 +255,10 @@
                         <div id="payment-id-PAY_ID">PAY_ID</div>
                     </td>
                     <td class=" jst-left">
-                        <div id="payment-date-PAY_ID"></div>
-                    </td>
-                    <td class=" jst-cntr">
-                        <div id="payment-method-PAY_ID"></div>
+                        <div id="payment-date-PAY_ID" class="payment-date-dv"></div>
                     </td>
                     <td class=" jst-left">
+                        <div id="payment-method-PAY_ID"></div>
                         <div id="payment-gateway-PAY_ID">
                         </div>
                         <div id="payment-gateway-id-PAY_ID" class="hidden"></div>

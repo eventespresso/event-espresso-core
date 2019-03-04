@@ -2539,7 +2539,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
 
     /**
-     * @since $VID:$
+     * @since 4.9.79.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException

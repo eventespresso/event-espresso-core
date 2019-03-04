@@ -234,7 +234,8 @@ class CoreAssetManager extends AssetManager
             CoreAssetManager::JS_HANDLE_MODEL,
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'model'),
             array(
-                CoreAssetManager::JS_HANDLE_HELPERS
+                CoreAssetManager::JS_HANDLE_HELPERS,
+                CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
             )
         )->setRequiresTranslation();
 
@@ -242,7 +243,8 @@ class CoreAssetManager extends AssetManager
             CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
             $this->registry->getJsUrl($this->domain->assetNamespace(), 'valueObjects'),
             array(
-                CoreAssetManager::JS_HANDLE_MODEL
+                CoreAssetManager::JS_HANDLE_VALIDATORS,
+                CoreAssetManager::JS_HANDLE_HELPERS,
             )
         )->setRequiresTranslation();
 
@@ -253,7 +255,8 @@ class CoreAssetManager extends AssetManager
                 CoreAssetManager::JS_HANDLE_VENDOR,
                 'wp-data',
                 'wp-api-fetch',
-                CoreAssetManager::JS_HANDLE_VALUE_OBJECTS
+                CoreAssetManager::JS_HANDLE_VALUE_OBJECTS,
+                CoreAssetManager::JS_HANDLE_MODEL,
             )
         )
              ->setRequiresTranslation()
