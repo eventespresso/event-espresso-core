@@ -315,10 +315,20 @@ const countRelationModelsIndexedForEntity = createSelector(
 	}
 );
 
+/**
+ * Return the contents of the state.relations map.
+ *
+ * @param {Object} state
+ *
+ * @return {Map} The state.relations map.
+ */
+const getAllRelationsInState = ( state ) => state.relations;
+
 export {
 	getRelatedEntities,
 	getRelationIdsForEntityRelation,
 	getRelationAdditionsQueuedForModel,
 	getRelationDeletionsQueuedForModel,
 	countRelationModelsIndexedForEntity,
+	getAllRelationsInState,
 };
