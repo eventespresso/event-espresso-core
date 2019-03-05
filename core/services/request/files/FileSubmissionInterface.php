@@ -14,7 +14,6 @@ namespace EventEspresso\core\services\request\files;
  */
 interface FileSubmissionInterface
 {
-    public function __construct($name, $tmp_file, $size, $error_code = null);
 
     /**
      * @return string
