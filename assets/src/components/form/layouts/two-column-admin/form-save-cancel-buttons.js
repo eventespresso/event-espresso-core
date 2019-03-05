@@ -27,7 +27,7 @@ class FormSaveCancelButtons extends Component {
 		const {
 			submitButton,
 			cancelButton,
-			colSize = 6,
+			colSize = 3,
 			offset = 3,
 		} = this.props;
 		let { htmlClass } = this.props;
