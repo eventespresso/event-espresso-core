@@ -8,7 +8,7 @@ import { Button } from '@wordpress/components';
 /**
  * Internal imports
  */
-import './form-submit-button.css';
+import { SubmittingNotice } from './submitting-notice';
 
 /**
  * @function
@@ -18,6 +18,7 @@ import './form-submit-button.css';
  * @param {string} submittingText
  * @param {string} htmlId
  * @param {string} htmlClass
+ * @param {string} noticeClass
  * @return {Object} rendered submit button for form
  */
 export const FormSubmitButton = ( {
@@ -27,33 +28,28 @@ export const FormSubmitButton = ( {
 	submittingText = '',
 	htmlId = '',
 	htmlClass = '',
+	noticeClass = '',
 } ) => {
 	buttonText = buttonText ? buttonText : __( 'Submit', 'event_espresso' );
-	submittingText = submittingText ?
-		submittingText :
-		__( 'submitting', 'event_espresso' );
-	const submittingNotice = submitting ?
-		<p className="ee-form-submitting-notice">
-			<span className="ee-ellipsis-span">{ submittingText }</span>
-		</p> :
-		null;
 	htmlClass = htmlClass ?
 		`${ htmlClass } ee-form-button-submit ee-form-button` :
 		'ee-form-button-submit ee-form-button';
 	return (
 		<Fragment>
-			{
-				submittingNotice ||
-				<Button
-					isPrimary
-					type="submit"
-					disabled={ submitting || disabled }
-					id={ htmlId }
-					className={ htmlClass }
-				>
-					{ buttonText }
-				</Button>
-			}
+			<SubmittingNotice
+				submitting={ submitting }
+				submittingText={ submittingText }
+				htmlClass={ noticeClass }
+			/>
+			<Button
+				isPrimary
+				type="submit"
+				disabled={ submitting || disabled }
+				id={ htmlId }
+				className={ htmlClass }
+			>
+				{ buttonText }
+			</Button>
 		</Fragment>
 	);
 };
