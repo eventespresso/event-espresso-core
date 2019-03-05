@@ -70,6 +70,7 @@
 
 .ee-entity-details-div.has-tooltip .ee-entity-details-value-div a {
     font-size: 13px;
+    font-weight: normal;
 }
 
 .ee-entity-details-value-div .dashicon {

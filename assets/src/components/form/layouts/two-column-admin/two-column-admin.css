@@ -314,7 +314,8 @@
 .ee-two-column-admin input:disabled,
 .ee-two-column-admin select:disabled,
 .ee-two-column-admin textarea:disabled {
-    background: var(--ee-off-white);
+    background: var(--ee-near-white);
+    color: var(--ee-grey);
 }
 
 .ee-two-column-admin input[type="checkbox"],

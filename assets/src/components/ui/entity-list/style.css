@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------- */
 
 .ee-entity-list-no-results {
-    background: var(--ee-near-white);
+    background: var(--ee-not-quite-white);
     font-size: 1rem;
     font-weight: normal;
     padding: 4rem 2rem;
