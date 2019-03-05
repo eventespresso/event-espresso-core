@@ -73,7 +73,7 @@ const FancyButton = ( {
 	htmlClass += ' ' + sizeClass;
 	icon = icon === 'calendar' || icon === 'calculator' ?
 		<EspressoIcon icon={ icon } size={ iconSize }/> :
-		<Dashicon icon={ icon } size={ iconSize }/>
+		<Dashicon icon={ icon } size={ iconSize }/>;
 	return (
 		<Button className={ htmlClass } onClick={ onClick }>
 			<span className="text-wrap">{ label }</span>
