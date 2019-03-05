@@ -30,7 +30,7 @@
 }
 
 .ee-two-column-admin .border {
-    /*border: 1px solid #e7e6e4;*/
+    /*border: 1px solid var(--ee-off-white);*/
 }
 
 .ee-two-column-admin .rounded {
@@ -267,12 +267,12 @@
 }
 
 .ee-two-column-admin .form-control::placeholder {
-    color: #a9aba6;
+    color: var(--ee-lite-grey);
     opacity: 1;
 }
 
 .ee-two-column-admin .form-control::-moz-placeholder {
-    color: #a9aba6;
+    color: var(--ee-lite-grey);
     opacity: 1;
 }
 
@@ -287,10 +287,10 @@
     padding: 0.375rem 0.75rem;
     font-size: 1rem;
     line-height: 1.5;
-    color: #58575c;
-    background-color: #fff;
+    color: var(--ee-dark-grey);
+    background-color: var(--ee-white);
     background-clip: padding-box;
-    border: 1px solid #b3b3b3;
+    border: 1px solid var(--ee-lite-grey);
     border-radius: 0.25rem;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
@@ -314,7 +314,7 @@
 .ee-two-column-admin input:disabled,
 .ee-two-column-admin select:disabled,
 .ee-two-column-admin textarea:disabled {
-    background: #f8f8f8;
+    background: var(--ee-off-white);
 }
 
 .ee-two-column-admin input[type="checkbox"],
@@ -417,21 +417,21 @@
 
 .ee-two-column-admin .btn-primary {
     color: inherit;
-    background-color: #fff;
-    border-color: #b3b3b3;
+    background-color: var(--ee-white);
+    border-color: var(--ee-lite-grey);
 }
 
 .ee-two-column-admin .show > .btn-primary.dropdown-toggle,
 .ee-two-column-admin .btn-primary:not(:disabled):not(.disabled).active {
-    color: #fff;
-    background-color: #3297c3;
-    border-color: #3297c3;
+    color: var(--ee-white);
+    background-color: var(--ee-blue);
+    border-color: var(--ee-blue);
 }
 
 .ee-two-column-admin .btn-primary:not(:disabled):not(.disabled):active {
-    color: #fff;
-    background-color: #36a6d6;
-    border-color: #36a6d6;
+    color: var(--ee-white);
+    background-color: var(--ee-brite-blue);
+    border-color: var(--ee-brite-blue);
 }
 
 .ee-two-column-admin .btn-primary input {
@@ -445,7 +445,7 @@
 }
 
 .ee-two-column-admin .espresso-input-help-text {
-    color: #706e73;
+    color: var(--ee-grey);
     display: inline-block;
     font-style: italic;
     line-height: inherit;
@@ -534,7 +534,7 @@
 }
 
 .ee-two-column-admin .ee-checkbox-toggle input[type="checkbox"] {
-    border: 1px solid #a9aba6;
+    border: 1px solid var(--ee-lite-grey);
     border-radius: 2px;
     box-sizing: border-box;
     height: 21px;
@@ -544,13 +544,13 @@
 }
 
 .ee-two-column-admin .ee-checkbox-toggle input[type="checkbox"]:checked {
-    background: #3297c3;
-    border-color: #3297c3;
-    color: #3297c3;
+    background: var(--ee-blue);
+    border-color: var(--ee-blue);
+    color: var(--ee-blue);
 }
 
 .ee-two-column-admin .ee-checkbox-toggle input[type="checkbox"]:checked::before {
-    color: #fff;
+    color: var(--ee-white);
     content: "\f147";
     display: inline-block;
     float: left;

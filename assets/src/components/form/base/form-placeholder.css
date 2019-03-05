@@ -4,12 +4,12 @@
  * -------------------------------------------------------------------------*/
 
 .ee-form-placeholder-div {
-    border: 1px dashed #ddd;
+    border: 1px dashed var(--ee-grey-white);
     margin: 2em;
 }
 
 .ee-editor-div > .ee-form-placeholder-div {
-    border-color:#ccc;
+    border-color: var(--ee-grey-white);
     margin: 2em 0;
 }
 
@@ -28,7 +28,7 @@
 }
 
 .ee-loading-div {
-    color: #7e8993;
+    color: var(--ee-grey);
     line-height: 24px;
     margin: 4em auto;
     text-align: center !important;

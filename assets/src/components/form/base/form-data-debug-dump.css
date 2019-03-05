@@ -14,8 +14,8 @@
 
 .ee-form-data-dump-div pre {
     border-radius: 3px;
-    color: #adc42d;
-    background-color: #1d2c41;
+    color: var(--ee-lite-green);
+    background-color: var(--ee-indigo);
     line-height: 1.5;
     padding: 1.5em 2em;
     position: relative;

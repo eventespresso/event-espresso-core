@@ -6,16 +6,16 @@
 .ee-form-row .ee-inline-edit-text {
     font-size: 1rem;
     line-height: 1.5;
-    color: #58575c;
+    color: var(--ee-dark-grey);
 }
 
 .ee-form-row .ee-inline-edit-text:hover {
-    color: #759427; /* !important */
+    color: var(--ee-green) !important;
 }
 
 .ee-form-row .ee-inline-edit-input {
-    border: 1px solid #b3b3b3; /* !important */
-    box-shadow: none; /* !important */
+    border: 1px solid var(--ee-lite-grey);
+    box-shadow: none;
     display: inline-block;
     font-weight: normal;
     width: 95%;
@@ -26,65 +26,9 @@
 }
 
 .ee-form-row .ee-inline-edit-label {
-    font-size: 12px; /* !important */
-    font-weight: normal; /* !important */
+    font-size: 12px;
+    font-weight: normal;
     line-height: 15px !important;
-    margin: 0; /* !important */
-    width: 95%; /* !important */
-}
-
-.ee-inline-edit-spinner {
-    background-color: rgba( 255, 255, 255, 1 );
-    border-radius: 3px;
-    display: block;
-    /*left: 50%;*/
-    margin: -1.5rem auto 0;
-    padding: .2rem 1rem .3rem;
-    /*position: absolute;*/
-    position: relative;
-    text-align: left;
-    /*top: -1rem;*/
-    width: 80px;
-    z-index: 99;
-}
-.ee-inline-edit-spinner .components-spinner {
-    background-color: #759427 !important;
-    display: inline-block !important;
-    float: unset !important;
-    height: 14px !important;
-    margin: 0 .5rem 0 0;
-    position: relative;
-    top: 1px;
-    width: 14px !important;
-    vertical-align: middle;
-}
-.ee-inline-edit-spinner .ee-inline-edit-notice {
-    color: #759427;
-    display: inline-block !important;
-    font-size: 14px !important;
-    font-weight: normal !important;
-    vertical-align: middle;
-}
-
-
-.ee-inline-edit-spinner .ee-inline-edit-notice:after {
-    overflow: hidden;
-    display: inline-block;
-    vertical-align: bottom;
-    -webkit-animation: ellipsis steps(4, end) 900ms infinite;
-    animation: ellipsis steps(4, end) 900ms infinite;
-    content: "\2026"; /* ascii code for the ellipsis character */
-    width: 0;
-}
-
-@keyframes ellipsis {
-    to {
-        width: 1.25em;
-    }
-}
-
-@-webkit-keyframes ellipsis {
-    to {
-        width: 1.25em;
-    }
+    margin: 0;
+    width: 95%;
 }

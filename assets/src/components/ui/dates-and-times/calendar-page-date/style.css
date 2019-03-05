@@ -38,7 +38,7 @@
     background: rgba(0, 0, 0, .05);
     border: 1px solid rgba(255, 255, 255, .25);
     border-bottom: none;
-    color: #fff;
+    color: var(--ee-white);
     font-weight: bold;
     letter-spacing: 2px;
 }
@@ -65,10 +65,10 @@
 
 
 .ee-calendar-page-date-day {
-    background: #fff;
-    border: 1px solid #fff;
+    background: var(--ee-white);
+    border: 1px solid var(--ee-white);
     border-top: none;
-    color: #58575c;
+    color: var(--ee-dark-grey);
     font-family: "Arial Black", Gadget, sans-serif;
     font-weight: bold;
 }

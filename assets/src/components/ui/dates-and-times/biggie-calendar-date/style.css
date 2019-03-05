@@ -8,7 +8,7 @@
     background-size: 1px 5px;
     background-repeat: repeat-y;
     box-sizing: border-box;
-    color: #fff;
+    color: var(--ee-white);
     height: 100%;
     padding: 0 10px 10px 10px;
     position: absolute;
@@ -83,7 +83,7 @@
 .biggie-calendar-date-bg .ee-edit-calendar-date-btn:not(:disabled):not([aria-disabled="true"]):not(.is-default):hover,
 .biggie-calendar-date-bg .ee-edit-calendar-date-btn:not(:disabled):not([aria-disabled="true"]):not(.is-default):active {
     background-color: transparent;
-    color: #fff;
+    color: var(--ee-white);
     box-shadow: none;
 }
 
@@ -167,7 +167,7 @@
     .biggie-calendar-date .month,
     .biggie-calendar-date .day,
     .biggie-calendar-date .year {
-        color: #fff;
+        color: var(--ee-white);
         display: inline-block;
         font-size: 18px;
         font-weight: normal;

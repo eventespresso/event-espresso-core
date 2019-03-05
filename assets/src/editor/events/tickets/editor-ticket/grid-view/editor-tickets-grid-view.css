@@ -12,8 +12,8 @@
 }
 
 .ee-editor-ticket-main {
-    background: #fff;
-    color: #58575c;
+    background: var(--ee-white);
+    color: var(--ee-dark-grey);
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -45,7 +45,7 @@
 
 .ee-editor-ticket-name-heading,
 .ee-editor-ticket-name-heading .ee-inline-edit-text {
-    color: #58575c;
+    color: var(--ee-dark-grey);
     font-size: 24px !important;
     font-weight: bold !important;
     line-height: 24px !important;
@@ -63,7 +63,7 @@
 }
 
 .ee-editor-ticket-desc-div {
-    color: #706e73;
+    color: var(--ee-grey);
     font-size: 14px;
     margin: 0 0 .5rem;
     width: 90%;
@@ -83,7 +83,7 @@
 
 .ee-ticket-price,
 .ee-ticket-price .ee-inline-edit-text {
-    color: #908d94 !important;
+    color: var(--ee-grey) !important;
     font-size: 21px !important;
     font-weight: bold !important;
     line-height: 21px !important;

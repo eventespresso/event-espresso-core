@@ -3,16 +3,6 @@
  * © 2019 Event Espresso
  * ------------------------------------------------------------------------- */
 
-/*
-color map
-blue    3297c3
-slate   2d323e
-gray    58575c
-green   759427
-orange  eb4f21
-pink    f06291
-*/
-
 
 /***************************
  * TWO TONE BUTTON STYLE
@@ -20,7 +10,7 @@ pink    f06291
 
 
 .ee-button-twotone {
-    background: #3297c3;
+    background: var(--ee-blue);
     border: none;
     box-shadow: 0 2px 1px rgba(0, 0, 0, .75), 0 0 3px rgba(0, 0, 0, .1);
     box-sizing: border-box;
@@ -32,20 +22,20 @@ pink    f06291
     padding: 10px 70px 10px 20px;
     position: relative;
     text-align: center;
-    text-shadow: -1px -1px rgba(0, 0, 0, .2);
 }
 
 .ee-button-twotone:hover {
-    color: #fff;
+    text-shadow: -1px -1px rgba(0, 0, 0, .2);
 }
 
 .ee-button-twotone .text-wrap {
     font-family: "Arial Black", Gadget, sans-serif;
+    font-weight: bold;
 }
 
 .ee-button-twotone .img-wrap {
     box-sizing: border-box;
-    background: #58575c;
+    background: var(--ee-dark-grey);
     height: 50px;
     margin: 0;
     padding: 12px 10px 10px;
@@ -56,15 +46,15 @@ pink    f06291
 }
 
 .ee-button-twotone:hover .img-wrap {
-    background: #fff;
+    background: var(--ee-white);
 }
 
 .ee-button-twotone .espresso-icon {
-    color: #fff;
+    color: var(--ee-white);
 }
 
 .ee-button-twotone:hover .espresso-icon {
-    color: #3297c3;
+    color: var(--ee-blue);
 }
 
 
@@ -73,15 +63,14 @@ pink    f06291
  ***************************/
 
 .ee-button-woosh {
-    background-color: #2d323e;
+    background-color: var(--ee-charcoal);
     border: none;
-    border-bottom: 3px solid #759427;
+    border-bottom: 3px solid var(--ee-green);
     box-shadow: 0 2px 1px rgba(0, 0, 0, .75), 0 0 3px rgba(0, 0, 0, .1);
-    /*box-shadow: none;*/
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
     box-sizing: content-box;
-    color: #fff;
+    color: var(--ee-white);
     cursor: pointer;
     display: block;
     margin: 0 auto;
@@ -97,40 +86,35 @@ pink    f06291
     font-size: .8rem;
     height: .8rem;
     line-height: .7rem;
-    /*padding: 2px 40px 2px 20px;*/
-    padding: .6rem 2.5rem .55rem 1.8rem;
+    padding: .6rem 2.4rem .55rem 1rem;
 }
 
 .ee-button-woosh.ee-small-button {
     font-size: .9rem;
     height: .85rem;
     line-height: .75rem;
-    /*padding: 4px 46px 4px 23px;*/
-    padding: .7rem 3rem .65rem 2rem;
+    padding: .7rem 2.8rem .65rem 1.2rem;
 }
 
 .ee-button-woosh.ee-medium-button {
     font-size: 1rem;
     height: 1rem;
     line-height: .85rem;
-    /*padding: 6px 54px 6px 27px;*/
-    padding: .8rem 3.2rem .75rem 2.4rem;
+    padding: .8rem 3rem .75rem 1.5rem;
 }
 
 .ee-button-woosh.ee-big-button {
     font-size: 1.2rem;
     height: 1.2rem;
     line-height: 1rem;
-    /*padding: 8px 50px 8px 30px;*/
-    padding: .9rem 3.6rem .85rem 2.7rem;
+    padding: .9rem 3.3rem .85rem 1.8rem;
 }
 
 .ee-button-woosh.ee-huge-button {
     font-size: 1.4rem;
     height: 1.4rem;
     line-height: 1.25rem;
-    /*padding: 10px 80px 10px 40px;*/
-    padding: 1rem 4rem .9rem 2.4rem;
+    padding: 1rem 3.6rem .9rem 2.2rem;
 }
 
 .ee-button-woosh .text-wrap {
@@ -158,7 +142,7 @@ pink    f06291
     top: 50%;
     height: 300px;
     width: 300px;
-    background: #759427;
+    background: var(--ee-green);
     -webkit-transition: all .25s ease-in-out;
     transition: all .25s ease-in-out;
     -webkit-transform: translateX(-325px) translateY(-40%) rotate(45deg);

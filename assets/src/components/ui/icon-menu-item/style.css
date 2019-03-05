@@ -4,12 +4,12 @@
  * ------------------------------------------------------------------------- */
 
 .ee-icon-menu-item {
-    color: #706e73;
+    color: var(--ee-grey);
     height: 36px;
     margin: 0 0 5px;
     width: 36px;
 }
 
 .ee-icon-menu-item:hover {
-    color: #3297c3 !important;
+    color: var(--ee-blue) !important;
 }

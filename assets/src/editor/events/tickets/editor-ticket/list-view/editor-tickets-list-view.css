@@ -13,7 +13,7 @@
 /* table rows (div) */
 .ee-tickets-list-list-view > div {
     margin: 0 0 1px;
-    border: 1px solid #ffffff;
+    border: 1px solid var(--ee-white);
 }
 
 /* headers row */
@@ -24,14 +24,14 @@
 
 /* zebra striping */
 .ee-tickets-list-list-view > div:nth-of-type(even) {
-    background: #fcfcfc;
-    border: 1px solid #fcfcfc;
+    background: var(--ee-not-quite-white);
+    border: 1px solid var(--ee-not-quite-white);
 }
 
 /* row highlighting */
 .ee-tickets-list-list-view > div:hover {
-    background: #f8f8f8;
-    border: 1px solid #eeeeee;
+    background: var(--ee-near-white);
+    border: 1px solid var(--ee-near-white);
 }
 
 /* table rows (inner) */
@@ -168,7 +168,7 @@
 
     /* row level labels */
     .ee-ticket-list-item-label {
-        color: #706e73;
+        color: var(--ee-grey);
         display: inline-block;
         font-size: 13px;
         padding: 0 10px 0 0;
@@ -186,7 +186,7 @@
 
     /* status bar */
     .ee-editor-ticket-list-items > div:nth-of-type(1) {
-        color: #fff !important;
+        color: var(--ee-white) !important;
         padding: 10px;
         width: auto;
     }

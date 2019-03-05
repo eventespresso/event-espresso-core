@@ -37,7 +37,7 @@
     width: 50%;
     top: 70%;
     max-width: 300px;
-    background: #000;
+    background: var(--ee-black);
     -webkit-box-shadow: 0 15px 10px rgba(0, 0, 0, .75);
     -moz-box-shadow: 0 15px 10px rgba(0, 0, 0, .75);
     box-shadow: 0 15px 10px rgba(0, 0, 0, .75);

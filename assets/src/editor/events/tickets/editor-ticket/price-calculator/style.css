@@ -9,14 +9,14 @@
 }
 
 .ee-ticket-price-calculator-form-section .px-3 .ee-form-row-footer.ee-form-row:not(li) {
-    border-top: 2px solid #e7e6e4;
+    border-top: 2px solid var(--ee-off-white);
     margin-bottom: 0;
     min-height: 1rem;
     padding: 1rem 0 0;
 }
 
 .ee-ticket-price-calculator-form-section h4 {
-    color: #58575c;
+    color: var(--ee-dark-grey);
     font-size: 1rem;
     margin: 0 0 .25rem .25rem;
 }
@@ -29,7 +29,7 @@
 }
 
 .ee-ticket-price-calculator-form-section .ee-ticket-price-calculator-total label {
-    color: #b3b3b3;
+    color: var(--ee-lite-grey);
     font-size: 1.5rem;
     padding: 0.375rem 0;
 }

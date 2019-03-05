@@ -12,8 +12,8 @@
 }
 
 .ee-editor-date-main {
-    background: #fff;
-    color: #58575c;
+    background: var(--ee-white);
+    color: var(--ee-dark-grey);
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -45,7 +45,7 @@
 
 .ee-editor-date-name-heading,
 .ee-editor-date-name-heading .ee-inline-edit-text {
-    color: #58575c;
+    color: var(--ee-dark-grey);
     font-size: 24px !important;
     font-weight: bold !important;
     line-height: 24px !important;
@@ -70,7 +70,7 @@
 }
 
 .ee-editor-date-edit-venue-link {
-    color: #706e73;
+    color: var(--ee-grey);
     /*font-size: 12px !important;*/
     font-weight: normal !important;
     /*margin-left: 1em;*/
@@ -87,7 +87,7 @@
 }
 
 .ee-editor-date-desc-div {
-    color: #706e73;
+    color: var(--ee-grey);
     font-size: 14px;
     margin: 0 0 10px;
     width: 90%;
@@ -123,7 +123,7 @@
 }
 
 .ee-primary-event-date {
-    color: #fff;
+    color: var(--ee-white);
     left: -2px;
     position: absolute;
     top: -2px;
@@ -134,7 +134,7 @@
 .ee-primary-event-date:focus,
 .ee-primary-event-date:hover {
     background: none !important;
-    color: #fff !important;
+    color: var(--ee-white) !important;
     box-shadow: none !important;
 }
 

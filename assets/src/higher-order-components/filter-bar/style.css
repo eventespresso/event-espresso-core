@@ -4,15 +4,18 @@
  * ------------------------------------------------------------------------- */
 
 .ee-entity-list-filter-bar-wrapper {
-    background: #ffffff;;
+    background: var(--ee-white);
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+    color: var(--ee-dark-grey);
     display: flex;
     flex-flow: row wrap;
     justify-content: space-between;
     padding: .5rem;
-    border-bottom: 1px solid #f4f4f4;
+    border-bottom-color: var(--ee-grey-white);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
     margin: 0 0 1rem;
 }
 .ee-entity-list-filter-bar,
@@ -23,23 +26,16 @@
 
 .ee-entity-list-filter-bar {
     justify-content: flex-start;
-    /*width: 70%;*/
 }
 
 .ee-entity-list-view-bar {
     max-height: 36px;
     justify-content: flex-end;
     margin: -1px -4px .75rem 0;
-    /*width: 30%;*/
 }
 .ee-entity-list-filter-bar-perPage-select {
     text-align: right;
 }
-
-/*.ee-entity-list-view-bar .ee-view-filter {*/
-    /*position: relative;*/
-    /*top: -4px;*/
-/*}*/
 
 .ee-entity-list-filter-bar .ee-filter-bar-filter {
     margin: 0 1rem .75rem 0;
@@ -62,7 +58,6 @@
 .ee-entity-list-view-bar .ee-per-page-filter {
     margin-right: 4px;
     max-height: 36px;
-    /*max-width: 115px;*/
 }
 
 .ee-entity-list-view-bar .ee-grid-view-filter {
@@ -76,16 +71,16 @@
 }
 
 .ee-entity-list-view-bar .components-icon-button {
-    color: #706e73;
+    color: var(--ee-grey);
     margin-bottom: -3px;
 }
 
 .ee-entity-list-view-bar .components-icon-button.active-list {
-    color: #3297c3;
+    color: var(--ee-blue);
 }
 
 .ee-entity-list-filter-bar-wrapper .components-base-control__label {
-    color: #706e73;
+    color: var(--ee-dark-grey);
     font-weight: bold;
     margin: .25rem .5rem .1rem 5px;
     white-space: nowrap;
@@ -101,12 +96,12 @@
 
 .ee-entity-list-filter-bar-wrapper input,
 .ee-entity-list-filter-bar-wrapper select {
-    background-color: #fff;
+    background-color: var(--ee-white);
     background-clip: padding-box;
-    border: 1px solid #ddd;
+    border: 1px solid var(--ee-grey-white);
     border-radius: 0.25rem;
     box-shadow: none;
-    color: #58575c;
+    color: var(--ee-dark-grey);
     display: inline-block;
     font-size: 1rem;
     line-height: 1;

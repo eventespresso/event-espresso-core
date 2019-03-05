@@ -8,7 +8,7 @@
     background-size: 1px 5px;
     background-repeat: repeat-y;
     box-sizing: border-box;
-    color: #fff;
+    color: var(--ee-white);
     font-size: 12px;
     font-weight: normal;
     line-height: 18px;

@@ -8,9 +8,9 @@
 }
 
 .espresso-input-error span {
-    background-color: #f06291;
+    background-color: var(--ee-hot-pink);
     border-radius: 3px;
-    color: #fff;
+    color: var(--ee-white);
     letter-spacing: 1px;
     line-height: 1.2;
     padding: .15em .5em .25em;
