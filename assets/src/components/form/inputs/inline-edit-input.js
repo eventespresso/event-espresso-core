@@ -3,7 +3,6 @@
  */
 import { isFunction } from 'lodash';
 import PropTypes from 'prop-types';
-import { Spinner } from '@wordpress/components';
 import { Component, createRef, Fragment } from '@wordpress/element';
 import { ENTER, ESCAPE, SPACE } from '@wordpress/keycodes';
 import { __ } from '@eventespresso/i18n';
@@ -12,6 +11,7 @@ import { __ } from '@eventespresso/i18n';
  * Internal imports
  */
 import './inline-edit-input.css';
+import { SubmittingNotice } from '../base/submitting-notice';
 
 /**
  * InlineEditInput
@@ -38,6 +38,7 @@ export class InlineEditInput extends Component {
 		valueType: PropTypes.string,
 		valueFormatter: PropTypes.func,
 		formatterSettings: PropTypes.object,
+		noticeStyle: PropTypes.object,
 	};
 
 	constructor( props ) {
@@ -65,13 +66,26 @@ export class InlineEditInput extends Component {
 	 * @param {Object} prevState
 	 */
 	componentDidUpdate = ( prevProps, prevState ) => {
-		if ( this.state.editing && ! prevState.editing ) {
-			this.input.current.focus();
-		} else if (
-			this.state.editing &&
+		if (
+			! prevProps.saving &&
+			! this.state.saving &&
+			typeof prevState.value !== 'undefined' &&
+			prevState.value === this.state.value &&
 			prevProps.value !== this.props.value
 		) {
-			this.done();
+			// value was changed externally, so update it
+			this.setState( {
+				editing: this.props.value === '',
+				value: this.props.value,
+			} );
+		} else if ( this.state.editing ) {
+			if ( ! prevState.editing ) {
+				// focus on input when editing begins
+				this.input.current.focus();
+			} else if ( prevProps.value !== this.props.value ) {
+				// editing is complete
+				this.done();
+			}
 		}
 	};
 
@@ -101,9 +115,13 @@ export class InlineEditInput extends Component {
 	 * @function
 	 */
 	done = async () => {
-		this.setState( { editing: false, saving: true } );
-		await this.state.onChange( this.state.value );
-		this.setState( { saving: false } );
+		this.setState( { saving: true } );
+		await this.state.onChange( this.state.value ).then( () => {
+			this.setState( {
+				editing: this.state.value === '',
+				saving: false,
+			} );
+		} );
 	};
 
 	/**
@@ -159,6 +177,7 @@ export class InlineEditInput extends Component {
 	 * @param {string} valueType 		data type for value
 	 * @param {string} label 			displayed when editing
 	 * @param {Object} inputProps		additional passed props
+	 * @param {Object} noticeStyle
 	 * @return {Object}					the rendered input
 	 */
 	editComponent = (
@@ -167,7 +186,8 @@ export class InlineEditInput extends Component {
 		type,
 		valueType,
 		label,
-		inputProps
+		inputProps,
+		noticeStyle
 	) => {
 		const inputValue = typeof this.state.value === 'string' ||
 		typeof this.state.value === 'number' ?
@@ -202,6 +222,7 @@ export class InlineEditInput extends Component {
 		);
 		return label ? (
 			<Fragment>
+				{ this.spinner( noticeStyle ) }
 				<label
 					htmlFor={ htmlId }
 					className="ee-inline-edit-label"
@@ -209,7 +230,6 @@ export class InlineEditInput extends Component {
 					{ label }
 				</label>
 				{ input }
-				{ this.spinner() }
 			</Fragment>
 		) : input;
 	};
@@ -219,13 +239,15 @@ export class InlineEditInput extends Component {
 	 * @param {Function} valueFormatter formatting callback
 	 * @param {Object} formatterSettings
 	 * @return {Object} rendered span tag
+	 * @param {Object} noticeStyle
 	 */
-	displayComponent = ( valueFormatter, formatterSettings ) => {
+	displayComponent = ( valueFormatter, formatterSettings, noticeStyle ) => {
 		const value = isFunction( valueFormatter ) ?
 			valueFormatter( this.state.value, formatterSettings ) :
 			this.state.value;
 		return (
 			<Fragment>
+				{ this.spinner( noticeStyle ) }
 				<span
 					role="button"
 					tabIndex="0"
@@ -237,23 +259,22 @@ export class InlineEditInput extends Component {
 				>
 					{ value }
 				</span>
-				{ this.spinner() }
 			</Fragment>
 		);
 	};
 
 	/**
+	 * @param {Object} noticeStyle
 	 * @return {Object} rendered spinner
 	 */
-	spinner = () => {
-		return this.state.saving ? (
-			<div className="ee-inline-edit-spinner ee-small-shadow">
-				<Spinner />
-				<span className="ee-inline-edit-notice">
-					{ __( 'saving', 'event_espresso' ) }
-				</span>
-			</div>
-		) : null;
+	spinner = ( noticeStyle ) => {
+		return (
+			<SubmittingNotice
+				submitting={ this.state.saving }
+				submittingText={ __( 'saving', 'event_espresso' ) }
+				style={ noticeStyle }
+			/>
+		);
 	};
 
 	render() {
@@ -264,6 +285,7 @@ export class InlineEditInput extends Component {
 			valueType = 'string',
 			valueFormatter = null,
 			formatterSettings = {},
+			noticeStyle = {},
 			label = '',
 			...inputProps
 		} = this.props;
@@ -275,9 +297,14 @@ export class InlineEditInput extends Component {
 				type,
 				valueType,
 				label,
-				inputProps
+				inputProps,
+				noticeStyle
 			);
 		}
-		return this.displayComponent( valueFormatter, formatterSettings );
+		return this.displayComponent(
+			valueFormatter,
+			formatterSettings,
+			noticeStyle,
+		);
 	}
 }
