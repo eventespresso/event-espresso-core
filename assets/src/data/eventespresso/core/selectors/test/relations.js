@@ -9,6 +9,7 @@ import { fromJS, Map, Set } from 'immutable';
  */
 import {
 	getRelatedEntities,
+	getRelatedEntitiesForIds,
 	getRelationIdsForEntityRelation,
 	getRelationAdditionsQueuedForModel,
 	getRelationDeletionsQueuedForModel,
@@ -475,5 +476,46 @@ describe( 'countRelationModelsIndexedForEntity()', () => {
 				'52',
 			) ).toBe( 2 );
 		} );
+	} );
+} );
+
+describe( 'getRelatedEntitiesForIds()', () => {
+	beforeEach( () => getRelatedEntitiesForIds.clear() );
+	it( 'returns expected entities for given arguments', () => {
+		expect( getRelatedEntitiesForIds(
+			mockStateForTests,
+			'event',
+			[ 10, 20 ],
+			'datetimes'
+		) ).toEqual(
+			[
+				DateTimeEntities.a,
+				DateTimeEntities.b,
+			]
+		);
+	} );
+	it( 'returns expected entities for given arguments when the same ' +
+		'relation entity is shared across multiple model entity ids', () => {
+		const testState = {
+			...mockStateForTests,
+			relations: mockStateForTests.relations.setIn(
+				[ 'index', 'datetimes', 54 ],
+				Map().set( 'event', Set.of( 10, 30 ) )
+			).setIn(
+				[ 'entityMap', 'event', 10 ],
+				Map().set( 'datetimes', Set.of( 52, 54 ) )
+			),
+		};
+		expect( getRelatedEntitiesForIds(
+			testState,
+			'event',
+			[ 10, 30 ],
+			'datetimes',
+		) ).toEqual(
+			[
+				DateTimeEntities.a,
+				DateTimeEntities.c,
+			]
+		);
 	} );
 } );

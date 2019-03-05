@@ -30,6 +30,7 @@ module.exports.data = {
 			event: '/ee/v4.8.36/events',
 			datetime: '/ee/v4.8.36/datetimes',
 			ticket: '/ee/v4.8.36/tickets',
+			datetime_ticket: '/ee/v4.8.36/datetime_tickets',
 			venue: '/ee/v4.8.36/venues',
 			term: '/ee/v4.8.36/terms',
 			checkin: '/ee/v4.8.36/checkins',
