@@ -67,10 +67,23 @@ export const isUpcoming = ( DateTimeEntity ) => {
 /**
  * @function
  * @param {Object} DateTimeEntity model object
+ * @return {boolean} true if ticket is archived
+ */
+export const isTrashed = ( DateTimeEntity ) => {
+	assertDateTimeEntity( DateTimeEntity );
+	return DateTimeEntity.deleted;
+};
+
+/**
+ * @function
+ * @param {Object} DateTimeEntity model object
  * @return {string} status ID
  */
 export const status = ( DateTimeEntity ) => {
 	assertDateTimeEntity( DateTimeEntity );
+	if ( isTrashed( DateTimeEntity ) ) {
+		return DATETIME_STATUS_ID.TRASHED;
+	}
 	if ( isExpired( DateTimeEntity ) ) {
 		return DATETIME_STATUS_ID.EXPIRED;
 	}
@@ -83,7 +96,34 @@ export const status = ( DateTimeEntity ) => {
 	if ( isActive( DateTimeEntity ) ) {
 		return DATETIME_STATUS_ID.ACTIVE;
 	}
-	return null;
+	return DATETIME_STATUS_ID.INACTIVE;
+};
+
+/**
+ * @function
+ * @param {Object} DateTimeEntity model object
+ * @return {string}    CSS class for the background color
+ */
+export const statusColorClass = ( DateTimeEntity ) => {
+	switch ( status( DateTimeEntity ) ) {
+		case DATETIME_STATUS_ID.ACTIVE :
+			return 'green';
+		case DATETIME_STATUS_ID.CANCELLED :
+			return 'red';
+		case DATETIME_STATUS_ID.EXPIRED :
+			return 'lite-grey';
+		case DATETIME_STATUS_ID.INACTIVE :
+			return 'dark-blue';
+		case DATETIME_STATUS_ID.POSTPONED :
+			return 'purple';
+		case DATETIME_STATUS_ID.SOLD_OUT :
+			return 'gold';
+		case DATETIME_STATUS_ID.TRASHED :
+			return 'dark-grey';
+		case DATETIME_STATUS_ID.UPCOMING :
+		default:
+			return 'blue';
+	}
 };
 
 /**
@@ -92,16 +132,28 @@ export const status = ( DateTimeEntity ) => {
  * @return {string}    CSS class for the background color
  */
 export const getBackgroundColorClass = ( DateTimeEntity ) => {
-	switch ( status( DateTimeEntity ) ) {
-		case DATETIME_STATUS_ID.ACTIVE :
-			return 'ee-green-background';
-		case DATETIME_STATUS_ID.EXPIRED :
-			return 'ee-lt-grey-background';
-		case DATETIME_STATUS_ID.SOLD_OUT :
-			return 'ee-orange-background';
-		case DATETIME_STATUS_ID.UPCOMING :
-		default:
-			return 'ee-blue-background';
+	return `ee-${ statusColorClass( DateTimeEntity ) }-background`;
+};
+
+/**
+ * @function
+ * @param {Object} DateTimeEntity model object
+ * @param {string} border 'all', 'top', 'right', 'bottom', 'left'
+ * @return {string}    CSS class for the background color
+ */
+export const getBorderColorClass = ( DateTimeEntity, border = 'all' ) => {
+	const color = statusColorClass( DateTimeEntity );
+	switch ( border ) {
+		case 'all':
+			return `ee-${ color }-border`;
+		case 'top':
+			return `ee-${ color }-border-top`;
+		case 'right':
+			return `ee-${ color }-border-right`;
+		case 'bottom':
+			return `ee-${ color }-border-bottom`;
+		case 'left':
+			return `ee-${ color }-border-left`;
 	}
 };
 
