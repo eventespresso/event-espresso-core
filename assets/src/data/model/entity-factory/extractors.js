@@ -174,6 +174,31 @@ export const getRelationNameFromLink = ( resourceLink ) => {
 };
 
 /**
+ * Returns a plain object containing the entity field names and values from the
+ * provided entity instance.  The values are not prepared and match exactly what
+ * is currently set on this entity.
+ *
+ * @param {BaseEntity} entityInstance
+ *
+ * @return {Object} A plain object
+ */
+export const getBaseFieldsAndValuesForCloning = ( entityInstance ) => {
+	return Object.keys( entityInstance ).reduce( (
+		fieldsAndValues,
+		fieldName
+	) => {
+		if (
+			isEntityField( fieldName, entityInstance.schema ) &&
+			! isPrimaryKeyField( fieldName, entityInstance.schema )
+		) {
+			fieldsAndValues[ fieldName ] = entityInstance[ fieldName ];
+			return fieldsAndValues;
+		}
+		return fieldsAndValues;
+	}, {} );
+};
+
+/**
  * Returns a plain object containing the entity field name and values from the
  * provided entity instance
  * @param {Object} entityInstance
