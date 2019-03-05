@@ -63,7 +63,7 @@ class BootstrapRequestResponseObjects
     public function buildRequestResponse()
     {
         // load our Request and Response objects
-        $this->request = new Request($_GET, $_POST, $_COOKIE, $_SERVER);
+        $this->request = new Request($_GET, $_POST, $_COOKIE, $_SERVER, $_FILES);
         $this->response = new Response();
     }
 
