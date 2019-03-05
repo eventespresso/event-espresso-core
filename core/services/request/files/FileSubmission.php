@@ -7,8 +7,8 @@ use finfo;
 /**
  * Class FileSubmission
  *
- * All the info about a file from $_FILES (except mimetype, because that's not reliable), but put together onto one
- * object with a few helpers.
+ * All the info about a file from $_FILES (except we determine mimetype ourselves, because what's in $_FILES isn't
+ * reliable), but put together onto one object with a few helpers.
  * FilesDataHandler takes care of creating these from $_FILES.
  *
  * @package     Event Espresso
