@@ -22,10 +22,11 @@ class RouteMatchSpecificationTestBase extends PHPUnit_Framework_TestCase
         array $get = array(),
         array $post = array(),
         array $cookie = array(),
-        array $server = array()
+        array $server = array(),
+        array $files = array()
     ) {
         return new RouteMatchSpecificationMock(
-            $this->getRequest($get, $post, $cookie, $server)
+            $this->getRequest($get, $post, $cookie, $server, $files)
         );
     }
 
@@ -37,9 +38,10 @@ class RouteMatchSpecificationTestBase extends PHPUnit_Framework_TestCase
         array $get = array(),
         array $post = array(),
         array $cookie = array(),
-        array $server = array()
+        array $server = array(),
+        array $files = array()
     ) {
-        return new Request($get, $post, $cookie, $server);
+        return new Request($get, $post, $cookie, $server, $files);
     }
 
     /**

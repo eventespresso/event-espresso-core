@@ -8,6 +8,7 @@ describe( 'DEFAULT_LISTS_STATE', () => {
 		'on the endpoints', () => {
 		const expectedState = {
 			datetime: {},
+			datetime_ticket: {},
 			event: {},
 			ticket: {},
 			venue: {},
@@ -25,6 +26,7 @@ describe( 'DEFAULT_CORE_STATE', () => {
 		const expectedState = {
 			entities: {
 				datetime: {},
+				datetime_ticket: {},
 				event: {},
 				ticket: {},
 				venue: {},

@@ -11,11 +11,15 @@ import {
 	getSchemaForModel,
 	getFactoryForModel,
 	getRelationEndpointForEntityId,
+	hasJoinTableRelation,
+	getRelationType,
+	getRelationSchema,
 } from '../resolvers';
 import {
 	receiveSchemaForModel,
 	receiveFactoryForModel,
 	receiveRelationEndpointForModelEntity,
+	receiveRelationSchema,
 } from '../actions';
 import { eventFactory, EventEntities } from '../../test/fixtures/base';
 import { fetch, resolveSelect } from '../../base-controls';
@@ -189,5 +193,106 @@ describe( 'getRelationEndpointForEntityId()', () => {
 		const { value, done } = fulfillment.next();
 		expect( value ).toEqual( 'https://some_endpoint' );
 		expect( done ).toBe( true );
+	} );
+} );
+
+describe( 'hasJoinTableRelation()', () => {
+	let fulfillment;
+	const reset = () => fulfillment = hasJoinTableRelation(
+		'event',
+		'datetimes'
+	);
+	it( 'yields resolveSelect control for getting the relation type', () => {
+		reset();
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			resolveSelect(
+				SCHEMA_REDUCER_KEY,
+				'getRelationType',
+				'event',
+				'datetimes'
+			)
+		);
+	} );
+	it( 'returns expected value when relation type is not a join table', () => {
+		const { value, done } = fulfillment.next( 'BELONGS_TO' );
+		expect( value ).toBe( false );
+		expect( done ).toBe( true );
+	} );
+} );
+
+describe( 'getRelationType()', () => {
+	let fulfillment;
+	const reset = () => fulfillment = getRelationType( 'event', 'datetimes' );
+	it( 'yields resolveSelecto control action for getting the relation ' +
+		'schema', () => {
+		reset();
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			resolveSelect(
+				SCHEMA_REDUCER_KEY,
+				'getRelationSchema',
+				'event',
+				'datetimes',
+			)
+		);
+	} );
+	it( 'returns empty string if schema returns null', () => {
+		const { value, done } = fulfillment.next( null );
+		expect( value ).toBe( '' );
+		expect( done ).toBe( true );
+	} );
+	it( 'returns relation type from schema if schema is not null', () => {
+		reset();
+		fulfillment.next();
+		const { value, done } = fulfillment.next( { relation_type: 'foo' } );
+		expect( value ).toBe( 'foo' );
+		expect( done ).toBe( true );
+	} );
+} );
+describe( 'getRelationSchema()', () => {
+	let fulfillment;
+	const reset = () => fulfillment = getRelationSchema( 'event', 'datetimes' );
+	it( 'yields resolveSelect control for getting the Schema for the ' +
+		'model', () => {
+		reset();
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			resolveSelect(
+				SCHEMA_REDUCER_KEY,
+				'getSchemaForModel',
+				'event'
+			)
+		);
+	} );
+	it( 'throws an error if a schema is not returned', () => {
+		const test = () => fulfillment.next( null );
+		expect( test ).toThrowError();
+	} );
+	it( 'throws an error if there is no schema for the relation in the returned' +
+		'model schema', () => {
+		reset();
+		fulfillment.next();
+		const test = () => fulfillment.next( {} );
+		expect( test ).toThrowError();
+	} );
+	it( 'yields the receiveRelationSchema action when a schema is ' +
+		'returned', () => {
+		reset();
+		fulfillment.next();
+		const { value } = fulfillment.next( {
+			schema: {
+				properties: {
+					datetimes: 'foo',
+				},
+			},
+		} );
+		expect( value ).toEqual(
+			receiveRelationSchema(
+				'event',
+				'datetimes',
+				'foo'
+			)
+		);
 	} );
 } );
