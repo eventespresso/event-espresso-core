@@ -13,7 +13,27 @@ use UnexpectedValueException;
 /**
  * Class FilesDataHandler
  *
- * Description
+ * Helper for dealing with PHP's $_FILES. Instead of working with a sometimes puzzling array, with file info
+ * dispersed throughout, creates a single array of FileSubmissionInterface objects. This array can be multi-dimensional,
+ * but its shape follows that of $_POST and $_GET.
+ * Eg, access all file info for a file input named "file1" using
+ *
+ * ```
+ * $data_handler = LoaderFactory::getLoader()->load(' EventEspresso\core\services\request\files\FilesDataHandler');
+ * $files = $data_handler->getFileObjects();
+ * $file = $files['file1'];
+ * ```
+ *
+ * and for a file input named "my[great][file][input]", use the same code but change the last line to:
+ *
+ * ```
+ * $file = $files['my']['great']['file']['input'];
+ * ```
+ *
+ * In both cases, $file will be a FileSubmissionInterface object, containing the file's name, temporary filepath, size,
+ * error code, and helpers to get its mime type and extension.
+ *
+ *
  *
  * @package     Event Espresso
  * @author         Mike Nelson
@@ -37,6 +57,10 @@ class FilesDataHandler
      */
     protected $initialized = false;
 
+    /**
+     * FilesDataHandler constructor.
+     * @param Request $request
+     */
     public function __construct(Request $request)
     {
         $this->request = $request;
@@ -59,6 +83,7 @@ class FilesDataHandler
     }
 
     /**
+     * Sets up the file objects from the request's $_FILES data.
      * @since $VID:$
      * @throws UnexpectedValueException
      */
@@ -93,7 +118,7 @@ class FilesDataHandler
                         'Unexpected PHP $_FILES data format. "%1$s" was expected to be an array.',
                         'event_espresso'
                     ),
-                    (string)$files_data
+                    (string) $files_data
                 )
             );
         }
@@ -105,7 +130,7 @@ class FilesDataHandler
                         'Unexpected PHP $_FILES data format. "%1$s" was expected to be an array.',
                         'event_espresso'
                     ),
-                    (string)$first_value
+                    (string) $first_value
                 )
             );
         }
@@ -116,20 +141,6 @@ class FilesDataHandler
         }
         // yep, just 2d array
         return false;
-    }
-
-
-    protected function parse2dFilesArray($files_data)
-    {
-        foreach ($files_data as $input_name => $input_parts) {
-            $this->file_objects[$input_name] =
-                new FileSubmission(
-                    $input_parts['name'],
-                    $input_parts['tmp_name'],
-                    $input_parts['size'],
-                    $input_parts['error']
-                );
-        }
     }
 
     /**
@@ -163,6 +174,7 @@ class FilesDataHandler
     }
 
     /**
+     * Recursively explores the array until it finds a leaf node, and tacks `$type` as a final index in front of it.
      * @since $VID:$
      * @param $data either 'name', 'tmp_name', 'size', or 'error'
      * @param $type
@@ -173,18 +185,22 @@ class FilesDataHandler
         $organized_data = [];
         foreach ($data as $key => $val) {
             if (is_array($val)) {
-                $organized_data[$key] = $this->organizeFilesData($val, $type);
+                $organized_data[ $key ] = $this->organizeFilesData($val, $type);
             } else {
-                $organized_data[$key][$type] = $val;
+                $organized_data[ $key ][ $type ] = $val;
             }
         }
         return $organized_data;
     }
 
     /**
+     * Takes the organized $_FILES array (where all file info is located at the same spot as you'd expect an input
+     * to be in $_GET or $_POST, with all the file's data located side-by-side in an array) and creates a
+     * multi-dimensional array of FileSubmissionInterface objects.
      * @since $VID:$
      * @param $organized_files
      * @return array
+     * @throws UnexpectedValueException
      */
     protected function createFileObjects($organized_files)
     {
@@ -195,22 +211,21 @@ class FilesDataHandler
                         'Unexpected PHP $organized_files data format. "%1$s" was expected to be an array.',
                         'event_espresso'
                     ),
-                    (string)$organized_files
+                    (string) $organized_files
                 )
             );
         }
-        // keep searching
         $objs = [];
         foreach ($organized_files as $key => $value) {
             if (isset($value['name'], $value['tmp_name'], $value['size'])) {
-                $objs[$key] = new FileSubmission(
+                $objs[ $key ] = new FileSubmission(
                     $value['name'],
                     $value['tmp_name'],
                     $value['size'],
                     $value['error']
                 );
             } else {
-                $objs[$key] = $this->createFileObjects($value);
+                $objs[ $key ] = $this->createFileObjects($value);
             }
         }
         return $objs;

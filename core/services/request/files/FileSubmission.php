@@ -53,8 +53,8 @@ class FileSubmission implements FileSubmissionInterface
     {
         $this->name = basename($name);
         $this->tmp_file = $tmp_file;
-        $this->size = (int)$size;
-        $this->error_code = (int)$error_code;
+        $this->size = (int) $size;
+        $this->error_code = (int) $error_code;
     }
 
     /**
@@ -83,7 +83,7 @@ class FileSubmission implements FileSubmissionInterface
      */
     protected function determineType()
     {
-        if (! $this->getTmpFile()){
+        if (!$this->getTmpFile()) {
             return '';
         }
         $finfo = new finfo(FILEINFO_MIME_TYPE);
@@ -110,7 +110,7 @@ class FileSubmission implements FileSubmissionInterface
      */
     protected function determineExtension()
     {
-        if (! $this->getTmpFile()){
+        if (!$this->getTmpFile()) {
             return '';
         }
         return pathinfo($this->getTmpFile(), PATHINFO_EXTENSION);
