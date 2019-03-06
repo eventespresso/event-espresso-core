@@ -51,6 +51,7 @@ describe( 'receiveListItems()', () => {
 		expect( state ).toEqual(
 			fromJS( {
 				datetime: {},
+				datetime_ticket: {},
 				event: {},
 				term: {},
 				ticket: {},

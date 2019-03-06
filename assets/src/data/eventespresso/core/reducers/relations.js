@@ -32,12 +32,13 @@ const normalizedReceiveAndRemoveRelations = ( state, action ) => {
 		...action,
 		modelName: singularModelName( action.modelName ),
 		relationName: pluralModelName( action.relationName ),
+		entityId: normalizeEntityId( action.entityId ),
 	};
 	const {
 		modelName,
 		relationName,
-		entityId,
 		relatedEntityIds,
+		entityId,
 	} = action;
 	// if modelName exists, then we just process as is.
 	if ( state.hasIn( [ 'entityMap', modelName ] ) ) {
@@ -57,7 +58,7 @@ const normalizedReceiveAndRemoveRelations = ( state, action ) => {
 		};
 		// loop through each existing relation id and get the state for each
 		while ( relatedEntityIds.length > 0 ) {
-			newAction.entityId = relatedEntityIds.pop();
+			newAction.entityId = normalizeEntityId( relatedEntityIds.pop() );
 			state = receiveAndRemoveRelations( state, newAction );
 		}
 		return state;
@@ -113,7 +114,7 @@ function receiveAndRemoveRelations( state, action ) {
 	const relationEntityIds = Set( action.relatedEntityIds );
 	const path = [ 'entityMap', modelName, entityId, relationName ];
 
-	const existingIds = state.getIn( path ) || Set();
+	const existingIds = state.getIn( path, Set() );
 
 	switch ( type ) {
 		case types.RECEIVE_RELATED_ENTITY_IDS:
