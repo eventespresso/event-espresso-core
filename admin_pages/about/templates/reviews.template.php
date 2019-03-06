@@ -19,7 +19,7 @@
     <h2 class="about-headline-callout"><?php _e('Rave Reviews About Event Espresso 4', 'event_espresso'); ?></h2>
     <p>See what people have to say about the Event Espresso software and support services on <a
             href="http://evts.io/EEDecafFBReviews">Facebook</a>, <a href="http://evts.io/EEDecafReviews"
-                                                                    target="_blank">WordPress.org</a> and <a
+                                                                    target="_blank" rel="noopener noreferrer">WordPress.org</a> and <a
             href="https://eventespresso.com/about/testimonials/">EventEspresso.com</a>:</p>
     <div class="feature-section col three-col about-updates">
         <div class="col-1">
