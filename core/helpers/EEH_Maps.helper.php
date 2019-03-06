@@ -158,7 +158,7 @@ class EEH_Maps
         switch ($type) {
             case 'text':
             default:
-                $text = $text == '' ? __('Map and Directions', 'event_espresso') : $text;
+                $text = $text == '' ? esc_html__('Map and Directions', 'event_espresso') : $text;
                 break;
 
             case 'url_only':
