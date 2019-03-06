@@ -11,7 +11,12 @@
     <p class="clearfix">
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
             <?php _e('Phone #', 'event_espresso'); ?>
-        </span><?php echo $phone; ?>
+        </span>
+        <?php if (! empty($phone)) : ?>
+            <a href="tel:<?php echo $phone; ?>">
+                <?php echo $phone; ?>
+            </a>
+        <?php endif; ?>
     </p>
     <p class="clearfix">
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
