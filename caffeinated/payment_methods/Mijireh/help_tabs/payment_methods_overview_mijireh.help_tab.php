@@ -6,7 +6,7 @@
     <?php
     printf(
         esc_html__(
-            'Mijireh is basically a middle-man between Event Espresso and over 90 payment gateways. Most of the configuration occurs on %1$sMijireh\' website%2$s, where you configure your Mijireh store with the %3$spayment gateway of your choice%4$s.',
+            'Mijireh is basically a middle-man between Event Espresso and over 90 payment gateways. Most of the configuration occurs on %1$sMijireh\'s website%2$s, where you configure your Mijireh store with the %3$spayment gateway of your choice%4$s.',
             'event_espresso'
         ),
         '<a href="http://www.mijireh.com/" target="_blank" rel="noopener noreferrer">',
