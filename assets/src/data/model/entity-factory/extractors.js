@@ -5,7 +5,6 @@ import {
 	isPlainObject,
 	camelCase,
 	last,
-	reduce,
 	pick,
 	pickBy,
 	isArray,
@@ -19,7 +18,7 @@ import {
 	Money,
 	SiteCurrency,
 	ServerDateTime as DateTime,
-} from '../../../vo';
+} from '@eventespresso/value-objects';
 
 import { pluralModelName } from '../model-names';
 
@@ -175,15 +174,48 @@ export const getRelationNameFromLink = ( resourceLink ) => {
 };
 
 /**
+ * Returns a plain object containing the entity field names and values from the
+ * provided entity instance.  The values are not prepared and match exactly what
+ * is currently set on this entity.
+ *
+ * @param {BaseEntity} entityInstance
+ *
+ * @return {Object} A plain object
+ */
+export const getBaseFieldsAndValuesForCloning = ( entityInstance ) => {
+	return Object.keys( entityInstance ).reduce( (
+		fieldsAndValues,
+		fieldName
+	) => {
+		if (
+			isEntityField( fieldName, entityInstance.schema ) &&
+			! isPrimaryKeyField( fieldName, entityInstance.schema )
+		) {
+			fieldsAndValues[ fieldName ] = entityInstance[ fieldName ];
+			return fieldsAndValues;
+		}
+		return fieldsAndValues;
+	}, {} );
+};
+
+/**
  * Returns a plain object containing the entity field name and values from the
  * provided entity instance
  * @param {Object} entityInstance
+ * @param {boolean} forInsert  Whether to return the fields and values for
+ * insert or for update.
  * @return {Object} A plain object
  */
-export const getBaseFieldsAndValuesForPersisting = ( entityInstance ) => {
-	return reduce( entityInstance.originalFieldsAndValues, (
+export const getBaseFieldsAndValuesForPersisting = (
+	entityInstance,
+	forInsert = false
+) => {
+	const iterator = forInsert ?
+		Array.from( entityInstance.fieldsToPersistOnInsert.values() ) :
+		Object.keys( entityInstance );
+
+	return iterator.reduce( (
 		fieldsAndValues,
-		originalFieldValue,
 		fieldName
 	) => {
 		if (

@@ -7,6 +7,9 @@ import {
 	pluralModelName,
 	singularModelName,
 	stripBaseRouteFromUrl,
+	getPrimaryKeyQueryString,
+	getPrimaryKey,
+	getEndpoint,
 } from '@eventespresso/model';
 import {
 	isModelEntityFactoryOfModel,
@@ -14,17 +17,20 @@ import {
 } from '@eventespresso/validators';
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import warning from 'warning';
-import { isEmpty } from 'lodash';
+import { isEmpty, startCase, isUndefined, isArray } from 'lodash';
+import { Map as ImmutableMap } from 'immutable';
 
 /**
  * Internal Imports
  */
-import { fetch, dispatch, select } from '../../base-controls';
 import {
-	getFactoryByModel,
+	fetch,
+	dispatch,
+	select,
+	resolveSelect,
 	resolveGetEntityByIdForIds,
 	resolveGetRelatedEntities,
-} from '../../base-resolvers';
+} from '../../base-controls';
 import {
 	receiveEntityRecords,
 	receiveRelatedEntities,
@@ -32,6 +38,8 @@ import {
 import { keepExistingEntitiesInObject } from '../../base-model';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
+
+const DEFAULT_EMPTY_ARRAY = [];
 
 /**
  * A resolver for getting relation entities for the given model name and entity
@@ -62,7 +70,7 @@ export function* getRelatedEntities( entity, relationModelName ) {
 			modelName,
 			pluralRelationName
 		);
-		return [];
+		return DEFAULT_EMPTY_ARRAY;
 	}
 	yield dispatch(
 		SCHEMA_REDUCER_KEY,
@@ -83,15 +91,19 @@ export function* getRelatedEntities( entity, relationModelName ) {
 		path: relationEndpoint,
 	} );
 	if ( ! relationEntities.length ) {
-		return [];
+		return DEFAULT_EMPTY_ARRAY;
 	}
 
-	const factory = yield getFactoryByModel( singularRelationName );
+	const factory = yield resolveSelect(
+		SCHEMA_REDUCER_KEY,
+		'getFactoryForModel',
+		singularRelationName
+	);
 	if ( ! isModelEntityFactoryOfModel(
 		factory,
 		singularRelationName
 	) ) {
-		return [];
+		return DEFAULT_EMPTY_ARRAY;
 	}
 
 	let fullEntities = keyEntitiesByPrimaryKeyValue(
@@ -150,3 +162,134 @@ export function* getRelatedEntities( entity, relationModelName ) {
 	);
 	return entityArray;
 }
+
+/**
+ * Resolver for the getRelatedEntitiesForIds selector
+ *
+ * @param {string} modelName
+ * @param {Array<number>} entityIds
+ * @param {string} relationName
+ *
+ * @return {undefined|Array} If there is no schema for the relation, an
+ * empty array is returned.
+ */
+export function* getRelatedEntitiesForIds(
+	modelName,
+	entityIds,
+	relationName
+) {
+	let path, response, records;
+	const hasJoinTable = yield resolveSelect(
+		SCHEMA_REDUCER_KEY,
+		'hasJoinTableRelation',
+		modelName,
+		relationName,
+	);
+	const relationSchema = yield resolveSelect(
+		SCHEMA_REDUCER_KEY,
+		'getRelationSchema',
+		modelName,
+		relationName,
+	);
+	const relationPrimaryKey = getPrimaryKey(
+		singularModelName( relationName )
+	);
+	const modelPrimaryKey = getPrimaryKey( singularModelName( modelName ) );
+	const singularRelationName = singularModelName( relationName );
+	const pluralRelationName = pluralModelName( relationName );
+	if ( relationSchema === null ) {
+		return DEFAULT_EMPTY_ARRAY;
+	}
+	const factory = yield resolveSelect(
+		SCHEMA_REDUCER_KEY,
+		'getFactoryForModel',
+		singularRelationName
+	);
+	let hasSetMap = ImmutableMap();
+	if ( hasJoinTable ) {
+		// prepare a fetch using the join table with relations in the response.
+		path = getEndpoint(
+			singularModelName( relationSchema.joining_model_name ).toLowerCase()
+		);
+		path += '/?where' + getPrimaryKeyQueryString(
+			singularModelName( modelName ),
+			entityIds
+		);
+		path += '&include=' + getModelNameForRequest( relationName ) + '.*';
+		response = yield fetch( { path } );
+		if ( ! response.length ) {
+			return;
+		}
+		records = [ ...response ];
+		while ( records.length > 0 ) {
+			const record = records.pop();
+			let relationRecords = record[ pluralRelationName ] || null;
+			relationRecords = relationRecords === null &&
+			! isUndefined( record[ singularRelationName ] ) ?
+				record[ singularRelationName ] :
+				relationRecords;
+			relationRecords = relationRecords !== null &&
+				! isArray( relationRecords ) ?
+				[ relationRecords ] :
+				relationRecords;
+			if ( relationRecords !== null ) {
+				while ( relationRecords.length > 0 ) {
+					const modelId = record[ modelPrimaryKey ];
+					const relationId = record[ relationPrimaryKey ];
+					const relationRecord = relationRecords.pop();
+					if ( relationRecord !== null &&
+						! hasSetMap.hasIn( [ modelId, relationId ] )
+					) {
+						const relationEntity = factory.fromExisting(
+							relationRecord );
+						yield dispatch(
+							CORE_REDUCER_KEY,
+							'resolveRelationRecordForRelation',
+							relationEntity,
+							modelName,
+							modelId,
+						);
+						hasSetMap = hasSetMap.setIn(
+							[ modelId, relationId ],
+							true
+						);
+					}
+				}
+			}
+		}
+	} else {
+		path = getEndpoint( singularRelationName ) +
+			'/?where' + getPrimaryKeyQueryString( modelName, entityIds );
+		response = yield fetch( { path } );
+		if ( ! response.length ) {
+			return;
+		}
+		records = [ ...response ];
+		while ( records.length > 0 ) {
+			const record = records.pop();
+			const modelId = record[ modelPrimaryKey ];
+			const relationId = record[ relationPrimaryKey ];
+			if ( ! hasSetMap.hasIn( [ modelId, relationId ] ) ) {
+				const relationEntity = factory.fromExisting( record );
+				yield dispatch(
+					CORE_REDUCER_KEY,
+					'resolveRelationRecordForRelation',
+					relationEntity,
+					modelName,
+					modelId,
+				);
+				hasSetMap = hasSetMap.setIn(
+					[ modelId, relationId ],
+					true
+				);
+			}
+		}
+	}
+}
+
+const getModelNameForRequest = ( modelName ) => {
+	modelName = singularModelName( modelName );
+	modelName = modelName.replace( '_', ' ' );
+	modelName = startCase( modelName );
+	return modelName.replace( ' ', '_' );
+};

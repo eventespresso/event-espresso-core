@@ -184,7 +184,7 @@ class DependencyResolverTest extends PHPUnit_Framework_TestCase
      */
     public function getBoneHurtingJuice()
     {
-        $request = new Request($this->request_params, array(), array(), array());
+        $request = new Request($this->request_params, array(), array(), array(), array());
         return new Owie(
             new Ouch(
                 new Oof($request),

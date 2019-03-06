@@ -14,7 +14,10 @@ import { Map, Set } from 'immutable';
 /**
  * Internal imports
  */
-import { getEntitiesByIds } from './entities';
+import {
+	getEntitiesByIds,
+	getEntityById,
+} from './entities';
 
 const DEFAULT_EMPTY_SET = Set();
 
@@ -122,6 +125,55 @@ const getRelatedEntities = createSelector(
 );
 
 /**
+ * Efficient selector for getting all the related entities for the given model,
+ * it's entity ids, and the relation name.
+ *
+ * Instead of using the `getRelations` selector which gets the relations for a
+ * single entity.  This allows you to get all the relations for a given set of
+ * entity ids (i.e. Get all datetimes related to the event ids: 10, 20, and 30).
+ *
+ * This selector is wired up to a resolver that does an efficient request to
+ * retrieve all those entities and then dispatch the appropriate actions so
+ * the relation state is correctly recorded for each relation.
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {Array<number>} entityIds
+ * @param {string} relationName
+ * @return {Array<BaseEntity>} An array of BaseEntity instances for the
+ * relations.
+ */
+export const getRelatedEntitiesForIds = createSelector(
+	( state, modelName, entityIds, relationName ) => {
+		let relationEntities = Set();
+		entityIds.forEach( ( entityId ) => {
+			const entity = getEntityById(
+				state,
+				singularModelName( modelName ),
+				entityId
+			);
+			const relatedEntities = getRelatedEntities(
+				state,
+				entity,
+				pluralModelName( relationName )
+			);
+			relationEntities = relationEntities.merge( relatedEntities );
+		} );
+		return relationEntities.toJS();
+	},
+	( state, modelName, entityIds, relationName ) => [
+		...getEntitiesByIds.getDependants(
+			state,
+			singularModelName( modelName ),
+		),
+		...getEntitiesByIds.getDependants(
+			state,
+			singularModelName( relationName )
+		),
+	]
+);
+
+/**
  * Looks up the relations queued for a given model first from the actual relation
  * type in the state, and then a reverse lookup in the index if not there.
  *
@@ -141,7 +193,7 @@ const getRelatedEntities = createSelector(
  *   },
  * }
  */
-const lookupRelationsQueudForModel = ( state, modelName, type = 'add' ) => {
+const lookupRelationsQueuedForModel = ( state, modelName, type = 'add' ) => {
 	const forIndexLookup = pluralModelName( modelName );
 	const forAddLookup = singularModelName( modelName );
 	if ( state.dirty.relations.hasIn( [ type, forAddLookup ] ) ) {
@@ -187,7 +239,7 @@ const lookupRelationsQueudForModel = ( state, modelName, type = 'add' ) => {
  */
 const getRelationAdditionsQueuedForModel = createSelector(
 	( state, modelName ) => {
-		return lookupRelationsQueudForModel( state, modelName );
+		return lookupRelationsQueuedForModel( state, modelName );
 	},
 	( state, modelName ) => [
 		state.dirty.relations.getIn( [ 'add', singularModelName( modelName ) ] ),
@@ -208,7 +260,7 @@ const getRelationAdditionsQueuedForModel = createSelector(
  */
 const getRelationDeletionsQueuedForModel = createSelector(
 	( state, modelName ) => {
-		return lookupRelationsQueudForModel( state, modelName, 'delete' );
+		return lookupRelationsQueuedForModel( state, modelName, 'delete' );
 	},
 	( state, modelName ) => [
 		state.dirty.relations.getIn(
