@@ -23,7 +23,7 @@ class EE_CVV_Input extends EE_Text_Input
             new EE_Text_Validation_Strategy(
                 isset($input_settings['validation_error_message'])
                     ?  $input_settings['validation_error_message']
-                    : __(
+                    : esc_html__(
                         'The CVV is either a 3 digit number on the back of your card, or 4 digit number on the front',
                         'event_espresso'
                     ),
@@ -38,7 +38,7 @@ class EE_CVV_Input extends EE_Text_Input
             )
         ) {
             $this->_html_label_text = sprintf(
-                _x(
+                esc_html_x(
                     '%1$s %2$s(What\'s this?)%3$s',
                     'CVV (What\'s this?)',
                     'event_espresso'
