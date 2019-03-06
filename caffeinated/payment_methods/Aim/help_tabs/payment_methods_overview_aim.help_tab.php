@@ -14,14 +14,14 @@
     <li>
         <strong><?php _e('Authorize.net API Login ID', 'event_espresso'); ?></strong><br/>
         <?php _e(
-            'Enter your API Login ID for Authorize.net. Learn how to find your <a href="https://support.authorize.net/authkb/index?page=content&id=A405"  target="_blank">API Login ID</a>.',
+            'Enter your API Login ID for Authorize.net. Learn how to find your <a href="https://support.authorize.net/authkb/index?page=content&id=A405" target="_blank" rel="noopener noreferrer">API Login ID</a>.',
             'event_espresso'
         ); ?>
     </li>
     <li>
         <strong><?php _e('Authorize.net Transaction Key', 'event_espresso'); ?></strong><br/>
         <?php _e(
-            'Enter your Transaction Key for Authorize.net. Learn how to find your <a href="https://support.authorize.net/authkb/index?page=content&id=A405" target="_blank">Transaction Key</a>.',
+            'Enter your Transaction Key for Authorize.net. Learn how to find your <a href="https://support.authorize.net/authkb/index?page=content&id=A405" target="_blank" rel="noopener noreferrer">Transaction Key</a>.',
             'event_espresso'
         ); ?>
     </li>
@@ -56,11 +56,11 @@
                 'To change your payment form settings in Authorize.net, %1$slog in to authorize.net%2$s, go to %3$sAccount then Payment Form%2$s, then %4$sForm Fields%2$s. It will look similar to %5$sthis%2$s. If you make a field required in Authorize.net, you should also make it required in Event Espresso. If it isn\'t required in Authorize.net, and you want to simplify the billing form in Event Espresso, you can exclude it from the Event Espresso Form too.',
                 'event_espresso'
             ),
-            '<a href="http://authorize.net" target="_blank">',
+            '<a href="http://authorize.net" target="_blank" rel="noopener noreferrer">',
             '</a>',
-            '<a href="https://monosnap.com/file/nebVteOkEXcdDIos88SojStWOifP23" target="_blank">',
-            '<a href="https://monosnap.com/file/WyxGJtev87TcDmdGBEZ2oi1xaBIQAm" target="_blank">',
-            '<a href="https://monosnap.com/image/DbCJNfEesWXeSNUs1wLIpGYODFw52m" target="_blank">'
+            '<a href="https://monosnap.com/file/nebVteOkEXcdDIos88SojStWOifP23" target="_blank" rel="noopener noreferrer">',
+            '<a href="https://monosnap.com/file/WyxGJtev87TcDmdGBEZ2oi1xaBIQAm" target="_blank" rel="noopener noreferrer">',
+            '<a href="https://monosnap.com/image/DbCJNfEesWXeSNUs1wLIpGYODFw52m" target="_blank" rel="noopener noreferrer">'
         ); ?>
     </li>
     <li>
