@@ -6,7 +6,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * Internal imports
  */
-import { DATETIME_STATUS_ID, MODEL_NAME } from './constants';
+import { DATETIME_STATUS_ID, MODEL_NAME, MONTH_IN_SECONDS } from './constants';
 
 /**
  * @function
@@ -28,8 +28,8 @@ const assertDateTimeEntity = ( DateTimeEntity ) => {
  */
 export const isActive = ( DateTimeEntity ) => {
 	assertDateTimeEntity( DateTimeEntity );
-	return DateTimeEntity.start.diffNow() < 0 &&
-		DateTimeEntity.end.diffNow() > 0;
+	return DateTimeEntity.start.diffNow().asSeconds() < 0 &&
+		DateTimeEntity.end.diffNow().asSeconds() > 0;
 };
 
 /**
@@ -39,7 +39,18 @@ export const isActive = ( DateTimeEntity ) => {
  */
 export const isExpired = ( DateTimeEntity ) => {
 	assertDateTimeEntity( DateTimeEntity );
-	return DateTimeEntity.end.diffNow() < 0;
+	return DateTimeEntity.end.diffNow().asSeconds() < 0;
+};
+
+/**
+ * @function
+ * @param {Object} DateTimeEntity model object
+ * @return {boolean} true if end date is in the past
+ */
+export const isRecentlyExpired = ( DateTimeEntity ) => {
+	assertDateTimeEntity( DateTimeEntity );
+	return DateTimeEntity.end.diffNow().asSeconds() < 0 &&
+		DateTimeEntity.end.diffNow().asSeconds() > ( MONTH_IN_SECONDS * -1 );
 };
 
 /**
@@ -61,7 +72,7 @@ export const isSoldOut = ( DateTimeEntity ) => {
  */
 export const isUpcoming = ( DateTimeEntity ) => {
 	assertDateTimeEntity( DateTimeEntity );
-	return DateTimeEntity.start.diffNow() > 0;
+	return DateTimeEntity.start.diffNow().asSeconds() > 0;
 };
 
 /**
