@@ -1567,7 +1567,7 @@ class EED_Single_Page_Checkout extends EED_Module
                         '<p>',
                         '</p>',
                         '<br />',
-                        '<a href="http://www.whatarecookies.com/enable.asp" target="_blank">',
+                        '<a href="http://www.whatarecookies.com/enable.asp" target="_blank" rel="noopener noreferrer">',
                         '</a>'
                     )
                 );
