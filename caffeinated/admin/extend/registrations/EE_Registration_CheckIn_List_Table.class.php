@@ -164,7 +164,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
 
         return sprintf(
             '%1$s %2$s',
-            $item->get_datetime('CHK_timestamp', '', 'H:m:s a'),
+            $item->get_datetime('CHK_timestamp', '', 'H:i:s a'),
             $this->row_actions($actions)
         );
     }

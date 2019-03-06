@@ -158,3 +158,66 @@ This returns a boolean.  True means that the `getRelationEndpointForEntityId` is
 const isLoading = wp.data.select( 'eventespresso/schema' )
   .isRequestingRelationEndpointForEntityId( 'event', 10, 'datetimes' );
 ```
+
+## `hasJoinTableRelation( modelName, relationName )`
+
+Selector returning whether the relation between the given model name and relation name has a join table.
+
+This returns a boolean.  True means the relation has a join table.  False means the relation does not have a join table.  **Note:** False is also returned when the relation type cannot be determined.
+
+### Arguments
+
+| Argument       | Type   | Description                                |
+| -------------- | ------ | -------------------------------------------|
+| `modelName`    | string | The name of the model the relation is from.|
+| `relationName` | string | The name of the model the relation is to.  |
+
+### Example
+
+**Note:** This selector is attached to a resolver, so you will want to use `wp.data.subscribe` api to ensure the `hasJoinTable` variable is populated with the result once the resolution is complete.
+
+```js
+const hasJoinTable = wp.data.select( 'eventespresso/core' ).hasJoinTableRelation( 'event', 'datetimes' );
+```
+
+## `getRelationType( modelName, relationName )`
+
+Selector returning the relation type describing the relation between the given model name and relation name.
+
+This returns a string indicating one of the possible relation types for the given relation.  Note, the relation type is for the context of the given model name _to_ the given relation name.  So for instance the relation type for event to datetime relations is `EE_Has_Many_Relation`, whereas the relation type for `datetime` to `events` relations is `EE_Belongs_To_Relation`.
+
+### Arguments
+
+| Argument       | Type   | Description                                |
+| -------------- | ------ | -------------------------------------------|
+| `modelName`    | string | The name of the model the relation is from.|
+| `relationName` | string | The name of the model the relation is to.  |
+
+### Example
+
+**Note:** This selector is attached to a resolver, so you will want to use `wp.data.subscribe` api to ensure the `relationType` variable is populated with the result once the resolution is complete.
+
+```js
+const relationType = wp.data.select('eventespresso/core' ).getRelationType( 'event', 'datetimes' );
+```
+
+## `getRelationSchema( modelName, relationName )`
+
+Selector returning the relation schema describing the relation between the given model name and relation name.
+
+**Note** the returned schema (a plain object), is s subset of the schema returned for the `modelName`.  It's expected the the relation schema for `getRelationSchema( 'event', 'datetimes' )` could _differ_ from `getRelationSchema( 'datetime', 'events' )` because the relation types differ depending on the direction of the relation.
+
+### Arguments
+
+| Argument       | Type   | Description                                |
+| -------------- | ------ | -------------------------------------------|
+| `modelName`    | string | The name of the model the relation is from.|
+| `relationName` | string | The name of the model the relation is to.  |
+
+### Example
+
+**Note:** This selector is attached to a resolver, so you will want to use `wp.data.subscribe` api to ensure the `relationSchema` variable is populated with the result once the resolution is complete.
+
+```js
+const relationSchema = wp.data.select('eventespresso/core' ).getRelationSchema( 'event', 'datetimes' );
+```

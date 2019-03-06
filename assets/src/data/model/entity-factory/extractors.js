@@ -18,7 +18,7 @@ import {
 	Money,
 	SiteCurrency,
 	ServerDateTime as DateTime,
-} from '../../../vo';
+} from '@eventespresso/value-objects';
 
 import { pluralModelName } from '../model-names';
 
@@ -171,6 +171,31 @@ export const deriveRenderedValue = ( value ) => {
  */
 export const getRelationNameFromLink = ( resourceLink ) => {
 	return pluralModelName( camelCase( last( resourceLink.split( '/' ) ) ) );
+};
+
+/**
+ * Returns a plain object containing the entity field names and values from the
+ * provided entity instance.  The values are not prepared and match exactly what
+ * is currently set on this entity.
+ *
+ * @param {BaseEntity} entityInstance
+ *
+ * @return {Object} A plain object
+ */
+export const getBaseFieldsAndValuesForCloning = ( entityInstance ) => {
+	return Object.keys( entityInstance ).reduce( (
+		fieldsAndValues,
+		fieldName
+	) => {
+		if (
+			isEntityField( fieldName, entityInstance.schema ) &&
+			! isPrimaryKeyField( fieldName, entityInstance.schema )
+		) {
+			fieldsAndValues[ fieldName ] = entityInstance[ fieldName ];
+			return fieldsAndValues;
+		}
+		return fieldsAndValues;
+	}, {} );
 };
 
 /**
