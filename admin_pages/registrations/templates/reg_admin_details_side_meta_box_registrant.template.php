@@ -5,8 +5,12 @@
         </span><?php echo $fname . ' ' . $lname; ?>
     </p>
     <p class="clearfix">
-        <span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php _e('Email', 'event_espresso'); ?></span><a
-            href="mailto:<?php echo $email; ?>"><?php echo $email; ?></a>
+        <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
+            <?php _e('Email', 'event_espresso'); ?>
+        </span>
+        <a href="mailto:<?php echo $email; ?>">
+            <?php echo $email; ?>
+        </a>
     </p>
     <p class="clearfix">
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
