@@ -174,11 +174,11 @@ class EEH_Maps
                     EE_Registry::instance()->CFG->map_settings->google_map_api_key
                 );
 
-                return '<a class="a_map_image_link" href="' . $google_map . '" target="_blank">' . '<img class="map_image_link" id="venue_map_' . $id . '" ' . $map_image_class . ' src="' . htmlentities2($scheme . 'maps.googleapis.com/maps/api/staticmap?center=' . urlencode($address_string) . '&amp;zoom=14&amp;size=' . $map_w . 'x' . $map_h . '&amp;markers=color:green|label:|' . urlencode($address_string) . '&amp;sensor=false&amp;key=' . $api_key) . '" /></a>';
+                return '<a class="a_map_image_link" href="' . $google_map . '" target="_blank" rel="noopener noreferrer">' . '<img class="map_image_link" id="venue_map_' . $id . '" ' . $map_image_class . ' src="' . htmlentities2($scheme . 'maps.googleapis.com/maps/api/staticmap?center=' . urlencode($address_string) . '&amp;zoom=14&amp;size=' . $map_w . 'x' . $map_h . '&amp;markers=color:green|label:|' . urlencode($address_string) . '&amp;sensor=false&amp;key=' . $api_key) . '" /></a>';
         }
 
         return $type === 'url_only'
             ? $text
-            : '<a href="' . $google_map . '" target="_blank">' . $text . '</a>';
+            : '<a href="' . $google_map . '" target="_blank" rel="noopener noreferrer">' . $text . '</a>';
     }
 }
