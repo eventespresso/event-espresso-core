@@ -18,21 +18,21 @@
     <li>
         <strong><?php _e('PayPal API Username', 'event_espresso'); ?></strong><br/>
         <?php _e(
-            'Enter your API Username for PayPal. Learn how to find your <a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank">API Username</a>.',
+            'Enter your API Username for PayPal. Learn how to find your <a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">API Username</a>.',
             'event_espresso'
         ); ?>
     </li>
     <li>
         <strong><?php _e('PayPal API Password', 'event_espresso'); ?></strong><br/>
         <?php _e(
-            'Enter your API Password for PayPal. Learn how to find your <a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank">API Password</a>.',
+            'Enter your API Password for PayPal. Learn how to find your <a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">API Password</a>.',
             'event_espresso'
         ); ?>
     </li>
     <li>
         <strong><?php _e('PayPal API Signature', 'event_espresso'); ?></strong><br/>
         <?php _e(
-            'Enter your API Signature for PayPal. Learn how to find your <a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank">API Signature</a>.',
+            'Enter your API Signature for PayPal. Learn how to find your <a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">API Signature</a>.',
             'event_espresso'
         ); ?>
     </li>
