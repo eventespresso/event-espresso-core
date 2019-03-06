@@ -44,7 +44,7 @@ class EE_CVV_Input extends EE_Text_Input
                     'event_espresso'
                 ),
                 $this->_html_label_text,
-                '<a href="https://www.cvvnumber.com/" target="_blank">',
+                '<a href="https://www.cvvnumber.com/" target="_blank" rel="noopener noreferrer">',
                 '</a>'
             );
         }
