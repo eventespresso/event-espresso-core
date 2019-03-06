@@ -13,14 +13,13 @@
 <br/>
 <?php printf(
     __('Note that if you are accessing your filesystem over FTP or SSH, and logging writes to the filesystem on every request, you should put your credentials in your wp-config.php file, as described %1$shere.%2$s', 'event_espresso'),
-    '<a href="https://codex.wordpress.org/Editing_wp-config.php#WordPress_Upgrade_Constants" target="_blank">',
+    '<a href="https://codex.wordpress.org/Editing_wp-config.php#WordPress_Upgrade_Constants" target="_blank" rel="noopener noreferrer">',
     '</a>'
 ); ?>
 </li>
 <li>
 <strong><?php _e('Enable Remote Logging', 'event_espresso'); ?></strong><br />
 <?php _e('Every time a page is accessed on your site, this option will send all Event Espresso registration form data, your server details, and debugging information to a remote server.', 'event_espresso'); ?>
-<?php _e(' To see for yourself, make a PostBin at <a href="http://www.postbin.org/" target="_blank">PostBin</a>. Then enter the PostBin URL into the "Remote Logging URL" field and update settings.', 'event_espresso'); ?>
 </li>
 <li>
 <strong><?php _e('Remote Logging URL', 'event_espresso'); ?></strong><br />
