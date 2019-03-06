@@ -41,7 +41,7 @@
                                 'An API key is now required to use the Google Maps API: %1$sclick here to get an API key%2$s',
                                 'event_espresso'
                             ),
-                            '<a href="https://console.developers.google.com/flows/enableapi?apiid=maps_backend,geocoding_backend,directions_backend,distance_matrix_backend,elevation_backend,static_maps_backend&keyType=CLIENT_SIDE&reusekey=true" target="_blank">',
+                            '<a href="https://console.developers.google.com/flows/enableapi?apiid=maps_backend,geocoding_backend,directions_backend,distance_matrix_backend,elevation_backend,static_maps_backend&keyType=CLIENT_SIDE&reusekey=true" target="_blank" rel="noopener noreferrer">',
                             '</a>'
                         );
                         ?>
