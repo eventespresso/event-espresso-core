@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\request\files;
 
 use finfo;
+use InvalidArgumentException;
 
 /**
  * Class FileSubmission
@@ -49,10 +50,29 @@ class FileSubmission implements FileSubmissionInterface
      */
     protected $error_code;
 
+    /**
+     * FileSubmission constructor.
+     * @param $name
+     * @param $tmp_file
+     * @param $size
+     * @param null $error_code
+     * @throws InvalidArgumentException
+     */
     public function __construct($name, $tmp_file, $size, $error_code = null)
     {
         $this->name = basename($name);
-        $this->tmp_file = $tmp_file;
+        if (parse_url($tmp_file, PHP_URL_SCHEME)) {
+            // Wait a minute- just local filepaths please, no URL schemes allowed!
+            throw new InvalidArgumentException(
+                sprintf(
+                    // @codingStandardsIgnoreStart
+                    esc_html__('The filepath of the temporary file ("%1$s") indicates is located elsewhere, that’s not ok!', 'event_espresso'),
+                    // @codingStandardsIgnoreEnd
+                    $tmp_file
+                )
+            );
+        }
+        $this->tmp_file = (string) $tmp_file;
         $this->size = (int) $size;
         $this->error_code = (int) $error_code;
     }

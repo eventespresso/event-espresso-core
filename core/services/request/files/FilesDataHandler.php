@@ -8,6 +8,7 @@ use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
 use EventEspresso\core\services\collections\CollectionLoaderException;
 use EventEspresso\core\services\request\Request;
+use InvalidArgumentException;
 use UnexpectedValueException;
 
 /**
@@ -70,9 +71,8 @@ class FilesDataHandler
      * @since $VID:$
      * @return array with a similar structure to $_POST and $_GET (ie, it can be multi-dimensional) but the "leaf"
      * nodes are all of type FileSubmissionInterface
-     * @throws CollectionDetailsException
-     * @throws CollectionLoaderException
      * @throws UnexpectedValueException
+     * @throws InvalidArgumentException
      */
     public function getFileObjects()
     {
@@ -86,6 +86,7 @@ class FilesDataHandler
      * Sets up the file objects from the request's $_FILES data.
      * @since $VID:$
      * @throws UnexpectedValueException
+     * @throws InvalidArgumentException
      */
     protected function initialize()
     {
@@ -201,6 +202,7 @@ class FilesDataHandler
      * @param $organized_files
      * @return array
      * @throws UnexpectedValueException
+     * @throws InvalidArgumentException
      */
     protected function createFileObjects($organized_files)
     {
