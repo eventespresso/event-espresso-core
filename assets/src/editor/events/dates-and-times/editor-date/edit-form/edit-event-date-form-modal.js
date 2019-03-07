@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import PropTypes from 'prop-types';
 import { Component } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import { withEditorModal } from '@eventespresso/higher-order-components';
@@ -19,11 +20,19 @@ import {
  * @param {Object} eventDate model object defining the Event Date
  */
 class EditEventDateFormModal extends Component {
+	static propTypes = {
+		event: PropTypes.object,
+		eventDate: PropTypes.object,
+		loadHandler: PropTypes.func,
+		submitHandler: PropTypes.func,
+		resetHandler: PropTypes.func,
+		// onUpdate: PropTypes.func.isRequired,
+	};
+
 	constructor( props ) {
 		super( props );
 		this.toggleEditor = props.closeModal;
 		this.state = {
-			event: props.event ? props.event : {},
 			eventDate: props.eventDate ? props.eventDate : {},
 			originalEventDate: props.eventDate ? props.eventDate : {},
 		};
@@ -40,16 +49,18 @@ class EditEventDateFormModal extends Component {
 	/**
 	 * @function
 	 * @param {Object} data
+	 * @return {Object} updated dateEntity
 	 */
-	submitHandler = ( data ) => {
-		eventDateEntityFormSubmitHandler(
-			this.state.event,
+	submitHandler = async ( data ) => {
+		return eventDateEntityFormSubmitHandler(
+			this.props.event,
 			this.state.eventDate,
 			data
 		).then(
 			( eventDate ) => {
 				this.setState( { eventDate: eventDate } );
 				this.toggleEditor();
+				// this.props.onUpdate();
 			}
 		);
 	};
