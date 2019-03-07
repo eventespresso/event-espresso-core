@@ -20,7 +20,7 @@
 }
 
 .ee-editor-date-actions-menu .components-dropdown-menu__menu .components-dropdown-menu__menu-item {
-    color: var(--ee-grey);
+    color: var(--ee-dark-grey);
     padding: 8px 32px 8px 12px;
     white-space: nowrap;
 }
@@ -36,7 +36,7 @@
 
 .ee-editor-date-actions-menu .components-dropdown-menu .components-dropdown-menu__toggle {
     border: none;
-    color: var(--ee-grey);
+    color: var(--ee-dark-grey);
     padding: 8px 4px;
 }
 .ee-editor-date-actions-menu .components-dropdown-menu .components-dropdown-menu__toggle:hover,
