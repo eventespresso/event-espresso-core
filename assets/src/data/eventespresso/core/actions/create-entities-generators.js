@@ -37,7 +37,6 @@ export function* createEntity( modelName, entity ) {
 	yield dispatch(
 		CORE_REDUCER_KEY,
 		'receiveEntityAndResolve',
-		modelName,
 		entityInstance
 	);
 	return entityInstance;
@@ -48,10 +47,9 @@ export function* createEntity( modelName, entity ) {
  * BaseEntity instance and resolving the related selector for retrieving that
  * entity instance.
  *
- * @param {string} modelName
  * @param {BaseEntity} entity
  */
-export function* receiveEntityAndResolve( modelName, entity ) {
+export function* receiveEntityAndResolve( entity ) {
 	assertIsModelEntity( entity );
 	yield dispatch(
 		CORE_REDUCER_KEY,
@@ -63,7 +61,7 @@ export function* receiveEntityAndResolve( modelName, entity ) {
 		'finishResolution',
 		CORE_REDUCER_KEY,
 		'getEntityById',
-		[ modelName.toLowerCase(), entity.id ]
+		[ entity.modelName.toLowerCase(), entity.id ]
 	);
 }
 
