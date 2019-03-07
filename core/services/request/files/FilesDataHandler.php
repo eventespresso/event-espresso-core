@@ -158,8 +158,8 @@ class FilesDataHandler
     protected function fixFilesDataArray($files_data)
     {
         $sane_files_array = [];
-        foreach ($files_data as $top_key => $top_key_avlue) {
-            foreach ($top_key_avlue as $lower_key => $lower_key_value) {
+        foreach ($files_data as $top_key => $top_key_value) {
+            foreach ($top_key_value as $lower_key => $lower_key_value) {
                 foreach ($lower_key_value as $lowest_key => $lowest_key_value) {
                     $next_data = [
                         $top_key => [
@@ -257,9 +257,9 @@ class FilesDataHandler
         $generated_string = '';
         foreach ($parts as $part) {
             if ($generated_string === '') {
-                $generated_string = (string)$part;
+                $generated_string = (string) $part;
             } else {
-                $generated_string .= '[' . (string)$part . ']';
+                $generated_string .= '[' . (string) $part . ']';
             }
         }
         return $generated_string;
