@@ -11,6 +11,8 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  */
 import { EditorDateActionsMenu } from '../';
 
+const { MODEL_NAME: DATETIME, getBackgroundColorClass } = dateTimeModel;
+
 /**
  * EditorDateListItem
  * Displays comEvent Date as a table row similar to existing event editor UI
@@ -37,27 +39,6 @@ class EditorDateListItem extends Component {
 				return 'ee-datetime-sold-out';
 			case 'DTU' :
 				return 'ee-datetime-upcoming';
-		}
-	};
-
-	/**
-	 * getBgColorClass
-	 *
-	 * @function
-	 * @param {Object} eventDate    JSON object defining the Event Date
-	 * @return {string}    CSS class corresponding to the background color for
-	 *   the container
-	 */
-	getBgColorClass = ( eventDate ) => {
-		switch ( eventDate.status ) {
-			case 'DTA' :
-				return 'ee-green-background';
-			case 'DTE' :
-				return 'ee-lt-grey-background';
-			case 'DTS' :
-				return 'ee-orange-background';
-			case 'DTU' :
-				return 'ee-blue-background';
 		}
 	};
 
@@ -91,14 +72,14 @@ class EditorDateListItem extends Component {
 			eventDate,
 			allTickets,
 			eventDateTicketMap,
-			onUpdate,
+			// onUpdate,
 		} = this.props;
-		if ( ! isModelEntityOfModel( eventDate, dateTimeModel.MODEL_NAME ) ) {
+		if ( ! isModelEntityOfModel( eventDate, DATETIME ) ) {
 			return null;
 		}
 		this.id = `event-date-ticket-list-modal-${ eventDate.id }`;
 		const statusClass = this.getStatusClass( eventDate );
-		const bgClass = this.getBgColorClass( eventDate );
+		const bgClass = getBackgroundColorClass( eventDate );
 		const regLimit = eventDate.regLimit === 'INF' ||
 		eventDate.regLimit === Infinity ?
 			( <span className={ 'ee-infinity-sign' }>&infin;</span> ) :
@@ -191,7 +172,7 @@ class EditorDateListItem extends Component {
 							eventDate={ eventDate }
 							allTickets={ allTickets }
 							eventDateTicketMap={ eventDateTicketMap }
-							onUpdate={ onUpdate }
+							// onUpdate={ onUpdate }
 						/>
 					</div>
 				</div>
