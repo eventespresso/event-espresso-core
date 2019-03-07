@@ -33,8 +33,7 @@ class FilesDataHandlerTest extends PHPUnit_Framework_TestCase
             []
         );
         $files_data_handler = new FilesDataHandler($request);
-        $file_objs = $files_data_handler->getFileObjects();
-        $this->assertEmpty($file_objs);
+        $this->assertNull($files_data_handler->getFileObject('doesnt-exist'));
     }
 
     /**
@@ -57,8 +56,14 @@ class FilesDataHandlerTest extends PHPUnit_Framework_TestCase
             ]
         );
         $files_data_handler = new FilesDataHandler($request);
-        $file_obj = $files_data_handler->getFileObjectFromNameParts(['file_input']);
-        $this->assertInstanceOf('EventEspresso\core\services\request\files\FileSubmission',$file_obj);
+        $this->assertInstanceOf(
+            'EventEspresso\core\services\request\files\FileSubmission',
+            $files_data_handler->getFileObjectFromNameParts(['file_input'])
+        );
+        $this->assertInstanceOf(
+            'EventEspresso\core\services\request\files\FileSubmission',
+            $files_data_handler->getFileObject('file_input')
+        );
     }
 
     /**
@@ -105,10 +110,16 @@ class FilesDataHandlerTest extends PHPUnit_Framework_TestCase
             ]
         );
         $files_data_handler = new FilesDataHandler($request);
-        $file_obj = $files_data_handler->getFileObjectFromNameParts(
-            ['my', 'file', 'input1']
+        $this->assertInstanceOf(
+            'EventEspresso\core\services\request\files\FileSubmission',
+            $files_data_handler->getFileObjectFromNameParts(
+                ['my', 'file', 'input1']
+            )
         );
-        $this->assertInstanceOf('EventEspresso\core\services\request\files\FileSubmission',$file_obj);
+        $this->assertInstanceOf(
+            'EventEspresso\core\services\request\files\FileSubmission',
+            $files_data_handler->getFileObject('my[file][input1]')
+        );
     }
 
     /**
@@ -155,8 +166,14 @@ class FilesDataHandlerTest extends PHPUnit_Framework_TestCase
             ]
         );
         $files_data_handler = new FilesDataHandler($request);
-        $file_obj = $files_data_handler->getFileObjectFromNameParts(['my', 'great', 'file', 'input1']);
-        $this->assertInstanceOf('EventEspresso\core\services\request\files\FileSubmission',$file_obj);
+        $this->assertInstanceOf(
+            'EventEspresso\core\services\request\files\FileSubmission',
+            $files_data_handler->getFileObjectFromNameParts(['my', 'great', 'file', 'input1'])
+        );
+        $this->assertInstanceOf(
+            'EventEspresso\core\services\request\files\FileSubmission',
+            $files_data_handler->getFileObject('my[great][file][input1]')
+        );
     }
 }
 // End of file FilesDataHandlerTest.php

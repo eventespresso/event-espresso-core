@@ -11,20 +11,19 @@ use UnexpectedValueException;
  * Class FilesDataHandler
  *
  * Helper for dealing with PHP's $_FILES. Instead of working with a sometimes puzzling array, with file info
- * dispersed throughout, creates a single array of FileSubmissionInterface objects. This array can be multi-dimensional,
- * but its shape follows that of $_POST and $_GET.
+ * dispersed throughout, creates a single collection of FileSubmissionInterface objects. This collection is a
+ * one-dimensional list, where identifiers are the HTML input names.
  * Eg, access all file info for a file input named "file1" using
  *
  * ```
  * $data_handler = LoaderFactory::getLoader()->load(' EventEspresso\core\services\request\files\FilesDataHandler');
- * $files = $data_handler->getFileObjects();
- * $file = $files['file1'];
+ * $file = $data_handler->getFileObject('file1);
  * ```
  *
  * and for a file input named "my[great][file][input]", use the same code but change the last line to:
  *
  * ```
- * $file = $files['my']['great']['file']['input'];
+ * $file = $data_handler->getFileObject('my[great][file][input]');
  * ```
  *
  * In both cases, $file will be a FileSubmissionInterface object, containing the file's name, temporary filepath, size,
@@ -69,11 +68,9 @@ class FilesDataHandler
      * @throws UnexpectedValueException
      * @throws InvalidArgumentException
      */
-    public function getFileObjects()
+    protected function getFileObjects()
     {
-        if (!$this->initialized) {
-            $this->initialize();
-        }
+        $this->initialize();
         return $this->file_objects;
     }
 
@@ -86,6 +83,15 @@ class FilesDataHandler
      */
     protected function initialize()
     {
+        if ($this->initialized) {
+            return;
+        }
+        $this->file_objects = new Collection(
+            // collection interface
+            'EventEspresso\core\services\request\files\FileSubmissionInterface',
+            // collection name
+            'submitted_files'
+        );
         $files_raw_data = $this->request->filesParams();
         if (empty($files_raw_data)) {
             return;
@@ -95,12 +101,6 @@ class FilesDataHandler
         } else {
             $data = $files_raw_data;
         }
-        $this->file_objects = new Collection(
-            // collection interface
-            'EventEspresso\core\services\request\files\FileSubmissionInterface',
-            // collection name
-            'submitted_files'
-        );
         $this->createFileObjects($data);
         $this->initialized = true;
     }
@@ -269,7 +269,7 @@ class FilesDataHandler
      * Gets the input by the indicated $name_parts.
      * Eg if you're looking for an input named "my[great][file][input1]", $name_parts
      * should be `['my', 'great', 'file', 'input1']`.
-     * Alternatively, you could use `FileDataHandler::getFileObjects()->get('my[great][file][input1]');`
+     * Alternatively, you could use `FileDataHandler::getFileObject('my[great][file][input1]');`
      * @since $VID:$
      * @param $name_parts
      * @throws UnexpectedValueException
@@ -278,6 +278,19 @@ class FilesDataHandler
     public function getFileObjectFromNameParts($name_parts)
     {
         return $this->getFileObjects()->get($this->inputNameFromParts($name_parts));
+    }
+
+    /**
+     * Gets the FileSubmissionInterface corresponding to the HTML name provided.
+     * @since $VID:$
+     * @param $html_name
+     * @return mixed
+     * @throws InvalidArgumentException
+     * @throws UnexpectedValueException
+     */
+    public function getFileObject($html_name)
+    {
+        return $this->getFileObjects()->get($html_name);
     }
 }
 // End of file FilesDataHandler.php
