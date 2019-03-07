@@ -57,9 +57,8 @@ class FilesDataHandlerTest extends PHPUnit_Framework_TestCase
             ]
         );
         $files_data_handler = new FilesDataHandler($request);
-        $file_objs = $files_data_handler->getFileObjects();
-        $this->assertArrayHasKey('file_input', $file_objs);
-        $this->assertInstanceOf('EventEspresso\core\services\request\files\FileSubmission',$file_objs['file_input']);
+        $file_obj = $files_data_handler->getFileObjectFromNameParts(['file_input']);
+        $this->assertInstanceOf('EventEspresso\core\services\request\files\FileSubmission',$file_obj);
     }
 
     /**
@@ -106,9 +105,10 @@ class FilesDataHandlerTest extends PHPUnit_Framework_TestCase
             ]
         );
         $files_data_handler = new FilesDataHandler($request);
-        $file_objs = $files_data_handler->getFileObjects();
-        $this->assertTrue( isset($file_objs['my']['file']['input1']));
-        $this->assertInstanceOf('EventEspresso\core\services\request\files\FileSubmission',$file_objs['my']['file']['input1']);
+        $file_obj = $files_data_handler->getFileObjectFromNameParts(
+            ['my', 'file', 'input1']
+        );
+        $this->assertInstanceOf('EventEspresso\core\services\request\files\FileSubmission',$file_obj);
     }
 
     /**
@@ -155,9 +155,8 @@ class FilesDataHandlerTest extends PHPUnit_Framework_TestCase
             ]
         );
         $files_data_handler = new FilesDataHandler($request);
-        $file_objs = $files_data_handler->getFileObjects();
-        $this->assertTrue( isset($file_objs['my']['great']['file']['input1']));
-        $this->assertInstanceOf('EventEspresso\core\services\request\files\FileSubmission',$file_objs['my']['great']['file']['input1']);
+        $file_obj = $files_data_handler->getFileObjectFromNameParts(['my', 'great', 'file', 'input1']);
+        $this->assertInstanceOf('EventEspresso\core\services\request\files\FileSubmission',$file_obj);
     }
 }
 // End of file FilesDataHandlerTest.php

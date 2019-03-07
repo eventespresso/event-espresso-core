@@ -2,11 +2,7 @@
 
 namespace EventEspresso\core\services\request\files;
 
-use EventEspresso\core\services\collections\CollectionDetails;
-use EventEspresso\core\services\collections\CollectionDetailsException;
-use EventEspresso\core\services\collections\CollectionInterface;
-use EventEspresso\core\services\collections\CollectionLoader;
-use EventEspresso\core\services\collections\CollectionLoaderException;
+use EventEspresso\core\services\collections\Collection;
 use EventEspresso\core\services\request\Request;
 use InvalidArgumentException;
 use UnexpectedValueException;
@@ -49,7 +45,7 @@ class FilesDataHandler
     protected $request;
 
     /**
-     * @var array
+     * @var CollectionInterface | FileSubmissionInterface[]
      */
     protected $file_objects;
 
@@ -69,8 +65,7 @@ class FilesDataHandler
 
     /**
      * @since $VID:$
-     * @return array with a similar structure to $_POST and $_GET (ie, it can be multi-dimensional) but the "leaf"
-     * nodes are all of type FileSubmissionInterface
+     * @return CollectionInterface | FileSubmissionInterface[]
      * @throws UnexpectedValueException
      * @throws InvalidArgumentException
      */
@@ -87,6 +82,7 @@ class FilesDataHandler
      * @since $VID:$
      * @throws UnexpectedValueException
      * @throws InvalidArgumentException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
     protected function initialize()
     {
@@ -99,7 +95,13 @@ class FilesDataHandler
         } else {
             $data = $files_raw_data;
         }
-        $this->file_objects = $this->createFileObjects($data);
+        $this->file_objects = new Collection(
+            // collection interface
+            'EventEspresso\core\services\request\files\FileSubmissionInterface',
+            // collection name
+            'submitted_files'
+        );
+        $this->createFileObjects($data);
         $this->initialized = true;
     }
 
@@ -197,14 +199,14 @@ class FilesDataHandler
     /**
      * Takes the organized $_FILES array (where all file info is located at the same spot as you'd expect an input
      * to be in $_GET or $_POST, with all the file's data located side-by-side in an array) and creates a
-     * multi-dimensional array of FileSubmissionInterface objects.
+     * multi-dimensional array of FileSubmissionInterface objects. Stores it in `$this->file_objects`.
      * @since $VID:$
-     * @param $organized_files
-     * @return array
+     * @param array $organized_files $_FILES but organized like $_POST
+     * @param array $name_parts_so_far for multidimensional HTML form names,
      * @throws UnexpectedValueException
      * @throws InvalidArgumentException
      */
-    protected function createFileObjects($organized_files)
+    protected function createFileObjects($organized_files, $name_parts_so_far = [])
     {
         if (!is_array($organized_files)) {
             throw new UnexpectedValueException(
@@ -217,20 +219,65 @@ class FilesDataHandler
                 )
             );
         }
-        $objs = [];
         foreach ($organized_files as $key => $value) {
+            array_push(
+                $name_parts_so_far,
+                $key
+            );
             if (isset($value['name'], $value['tmp_name'], $value['size'])) {
-                $objs[ $key ] = new FileSubmission(
-                    $value['name'],
-                    $value['tmp_name'],
-                    $value['size'],
-                    $value['error']
+                $html_name = $this->inputNameFromParts($name_parts_so_far);
+                $this->file_objects->add(
+                    new FileSubmission(
+                        $html_name,
+                        $value['name'],
+                        $value['tmp_name'],
+                        $value['size'],
+                        $value['error']
+                    ),
+                    $html_name
                 );
             } else {
-                $objs[ $key ] = $this->createFileObjects($value);
+                $this->createFileObjects($value, $name_parts_so_far);
             }
         }
-        return $objs;
+    }
+
+    /**
+     * Takes the input name parts, like `['my', 'great', 'file', 'input1']`
+     * and returns the HTML name for it, "my[great][file][input1]"
+     * @since $VID:$
+     * @param $parts
+     * @throws UnexpectedValueException
+     */
+    protected function inputNameFromParts($parts)
+    {
+        if (!is_array($parts)) {
+            throw new UnexpectedValueException(esc_html__('Name parts should be an array.', 'event_espresso'));
+        }
+        $generated_string = '';
+        foreach ($parts as $part) {
+            if ($generated_string === '') {
+                $generated_string = (string)$part;
+            } else {
+                $generated_string .= '[' . (string)$part . ']';
+            }
+        }
+        return $generated_string;
+    }
+
+    /**
+     * Gets the input by the indicated $name_parts.
+     * Eg if you're looking for an input named "my[great][file][input1]", $name_parts
+     * should be `['my', 'great', 'file', 'input1']`.
+     * Alternatively, you could use `FileDataHandler::getFileObjects()->get('my[great][file][input1]');`
+     * @since $VID:$
+     * @param $name_parts
+     * @throws UnexpectedValueException
+     * @return FileSubmissionInterface
+     */
+    public function getFileObjectFromNameParts($name_parts)
+    {
+        return $this->getFileObjects()->get($this->inputNameFromParts($name_parts));
     }
 }
 // End of file FilesDataHandler.php

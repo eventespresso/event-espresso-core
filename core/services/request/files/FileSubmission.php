@@ -61,13 +61,15 @@ class FileSubmission implements FileSubmissionInterface
     public function __construct($name, $tmp_file, $size, $error_code = null)
     {
         $this->name = basename($name);
-        if (parse_url($tmp_file, PHP_URL_SCHEME)) {
+        $scheme = parse_url($tmp_file, PHP_URL_SCHEME);
+        if (in_array($scheme, ['http', 'https'])) {
             // Wait a minute- just local filepaths please, no URL schemes allowed!
             throw new InvalidArgumentException(
                 sprintf(
                     // @codingStandardsIgnoreStart
-                    esc_html__('The filepath of the temporary file ("%1$s") indicates is located elsewhere, that’s not ok!', 'event_espresso'),
+                    esc_html__('The scheme ("%1$s") on the temporary file ("%2$s") indicates is located elsewhere, that’s not ok!', 'event_espresso'),
                     // @codingStandardsIgnoreEnd
+                    $scheme,
                     $tmp_file
                 )
             );
