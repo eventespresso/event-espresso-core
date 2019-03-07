@@ -17,7 +17,7 @@ import cuid from 'cuid';
  * Internal imports.
  */
 import { ACTION_TYPES } from '../actions/action-types';
-const { relations: types } = ACTION_TYPES;
+const { relations: types, resets: resetTypes } = ACTION_TYPES;
 
 /**
  * Used to determine whether the relation exists in the provided map.
@@ -571,6 +571,83 @@ function removeRelatedEntitiesForEntity( state, action ) {
 }
 
 /**
+ * Handles clearing the given model from the state.
+ *
+ * @param {Immutable.Map} state
+ * @param {Object} action
+ *
+ * @return {Immutable.Map} New state.
+ */
+const clearStateForModel = ( state, action ) => {
+	const singularName = singularModelName( action.modelName );
+	const pluralName = pluralModelName( action.modelName );
+	// index record path
+	state = clearModelFromSubstate(
+		state,
+		'index',
+		pluralName,
+		singularName
+	);
+
+	// delete record path
+	state = clearModelFromSubstate(
+		state,
+		'delete',
+		singularName,
+		pluralName,
+	);
+
+	// add record path
+	state = clearModelFromSubstate(
+		state,
+		'add',
+		singularName,
+		pluralName,
+	);
+	return state;
+};
+
+/**
+ * For the given arguments clears the model from the substate on the given state
+ * for the given substate key.
+ *
+ * @param {Immutable.Map} state
+ * @param {string} subStateKey
+ * @param {string} modelName
+ * @param {string} modelNameAsRelation
+ * @return {Immutable.Map} The new state.
+ */
+const clearModelFromSubstate = (
+	state,
+	subStateKey,
+	modelName,
+	modelNameAsRelation
+) => {
+	state = state.deleteIn( [ subStateKey, modelName ] );
+	let subState = state.get( subStateKey );
+	subState = subState.withMutations( ( mutatedState ) => {
+		state.get( subStateKey ).forEach( ( entityMaps, relationName ) => {
+			entityMaps.forEach( ( modelMap, relationEntityId ) => {
+				const deletePath = [
+					relationName,
+					relationEntityId,
+					modelNameAsRelation,
+				];
+				mutatedState.deleteIn( deletePath );
+				removeEmptyFromState(
+					mutatedState,
+					deletePath,
+					1,
+					false,
+				);
+			} );
+		} );
+	} );
+	state = state.set( subStateKey, subState );
+	return state;
+};
+
+/**
  * exports useful for testing.
  */
 export {
@@ -595,7 +672,15 @@ export default (
 			return replaceOldRelationIdWithNewRelationId( state, action );
 		case types.REMOVE_RELATED_ENTITIES_FOR_ENTITY:
 			return removeRelatedEntitiesForEntity( state, action );
-		default:
+		case resetTypes.RESET_ALL_STATE:
+			return fromJS( DEFAULT_CORE_STATE.dirty.relations );
+		case resetTypes.RESET_STATE_FOR_MODEL:
+			return clearStateForModel( state, action );
+		case types.RECEIVE_DIRTY_RELATION_ADDITION:
+		case types.REMOVE_DIRTY_RELATION_ADDITION:
+		case types.RECEIVE_DIRTY_RELATION_DELETION:
+		case types.REMOVE_DIRTY_RELATION_DELETION:
 			return dirtyRelations( state, action );
 	}
+	return state;
 };
