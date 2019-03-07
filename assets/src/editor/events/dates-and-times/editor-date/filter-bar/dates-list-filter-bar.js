@@ -75,31 +75,50 @@ class DatesListFilterBar extends Component {
 					},
 					{
 						value: 'above-90-capacity',
-						label: __( 'dates above 90% capacity',
+						label: __(
+							'dates above 90% capacity',
 							'event_espresso'
 						),
 					},
 					{
 						value: 'above-75-capacity',
-						label: __( 'dates above 75% capacity',
+						label: __(
+							'dates above 75% capacity',
 							'event_espresso'
 						),
 					},
 					{
 						value: 'above-50-capacity',
-						label: __( 'dates above 50% capacity',
+						label: __(
+							'dates above 50% capacity',
 							'event_espresso'
 						),
 					},
 					{
 						value: 'below-50-capacity',
-						label: __( 'dates below 50% capacity',
+						label: __(
+							'dates below 50% capacity',
+							'event_espresso'
+						),
+					},
+					{
+						value: 'recently-expired-only',
+						label: __(
+							'recently expired dates',
 							'event_espresso'
 						),
 					},
 					{
 						value: 'expired-only',
-						label: __( 'expired dates only',
+						label: __(
+							'all expired dates',
+							'event_espresso'
+						),
+					},
+					{
+						value: 'trashed-only',
+						label: __(
+							'trashed dates only',
 							'event_espresso'
 						),
 					},

@@ -1,9 +1,9 @@
 /**
  * External imports
  */
-import moment from 'moment-timezone';
 import { filter, first, sortBy } from 'lodash';
 import { dateTimeModel } from '@eventespresso/model';
+import { DateTime } from '@eventespresso/value-objects';
 
 /**
  * filterDates
@@ -14,9 +14,15 @@ import { dateTimeModel } from '@eventespresso/model';
  * @return {Array}         filtered dates array
  */
 export const filterDates = ( dates, showDates = 'active-upcoming' ) => {
+	dates = sortDatesList( dates );
 	switch ( showDates ) {
 		case 'all' :
-			return dates;
+			return filter(
+				dates,
+				function( date ) {
+					return ! dateTimeModel.isTrashed( date );
+				}
+			);
 		case 'active-upcoming' :
 			return filter(
 				dates,
@@ -41,50 +47,70 @@ export const filterDates = ( dates, showDates = 'active-upcoming' ) => {
 			);
 		case 'next-active-upcoming-only' :
 			dates = filterDates( dates );
-			dates = sortDatesList( dates );
 			return [ first( dates ) ];
 		case 'sold-out-only' :
 			return filter(
 				dates,
 				function( date ) {
-					return (
-						validStatus( date ) && date.status === 'DTS'
-					) || capacityAtOrAbove( date, 100 );
+					return ! dateTimeModel.isTrashed( date ) && ( (
+						validStatus( date ) &&
+						dateTimeModel.isSoldOut( date )
+					) || capacityAtOrAbove( date, 100 ) );
 				}
 			);
 		case 'above-90-capacity' :
 			return filter(
 				dates,
 				function( date ) {
-					return capacityAtOrAbove( date, 90 );
+					return ! dateTimeModel.isTrashed( date ) &&
+						capacityAtOrAbove( date, 90 );
 				}
 			);
 		case 'above-75-capacity' :
 			return filter(
 				dates,
 				function( date ) {
-					return capacityAtOrAbove( date, 75 );
+					return ! dateTimeModel.isTrashed( date ) &&
+						capacityAtOrAbove( date, 75 );
 				}
 			);
 		case 'above-50-capacity' :
 			return filter(
 				dates,
 				function( date ) {
-					return capacityAtOrAbove( date, 50 );
+					return ! dateTimeModel.isTrashed( date ) &&
+						capacityAtOrAbove( date, 50 );
 				}
 			);
 		case 'below-50-capacity' :
 			return filter(
 				dates,
 				function( date ) {
-					return capacityBelow( date, 50 );
+					return ! dateTimeModel.isTrashed( date ) &&
+						capacityBelow( date, 50 );
+				}
+			);
+		case 'recently-expired-only' :
+			return filter(
+				dates,
+				function( date ) {
+					return dateTimeModel.isRecentlyExpired( date ) &&
+						! dateTimeModel.isTrashed( date );
 				}
 			);
 		case 'expired-only' :
 			return filter(
 				dates,
 				function( date ) {
-					return dateTimeModel.isExpired( date );
+					return dateTimeModel.isExpired( date ) &&
+						! dateTimeModel.isTrashed( date );
+				}
+			);
+		case 'trashed-only' :
+			return filter(
+				dates,
+				function( date ) {
+					return dateTimeModel.isTrashed( date );
 				}
 			);
 	}
@@ -100,14 +126,15 @@ export const filterDates = ( dates, showDates = 'active-upcoming' ) => {
  * @return {Array}         filtered dates array
  */
 export const sortDatesList = ( dates, sort = 'chronologically' ) => {
-	const now = new moment();
 	switch ( sort ) {
 		case 'chronologically' :
 			dates = sortBy(
 				dates,
 				[
 					function( date ) {
-						return now.isBefore( date.start );
+						return DateTime.isValid( date.start ) ?
+							date.start.toMillis() :
+							0;
 					},
 				]
 			);
