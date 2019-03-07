@@ -10,53 +10,82 @@ const { MODEL_NAME: DATETIME } = dateTimeModel;
 const { MODEL_NAME: EVENT } = eventModel;
 const { MODEL_NAME: TICKET } = ticketModel;
 
+const { getRelatedEntities } = select( 'eventespresso/core' );
+const {
+	createEntity,
+	createRelations,
+	persistEntityRecord,
+	persistRelationsForEntityId,
+} = dispatch( 'eventespresso/core' );
+
 /**
  * @function
  * @param {Object} datetimeEntity  EE Date object
- * @return {Object} bool true if copy was successful
+ * @param {Array} eventDateTicketMap Event Date Ticket Relations Map
+ * @return {boolean}  true if copy was successful
  */
-export const copyEventDate = async ( datetimeEntity ) => {
+export const copyEventDate = async ( datetimeEntity, eventDateTicketMap ) => {
 	if ( ! isModelEntityOfModel( datetimeEntity, DATETIME ) ) {
 		return false;
 	}
-	const store = select( 'eventespresso/core' );
-	const server = dispatch( 'eventespresso/core' );
-	let newDatetimeEntity = await server.createEntity(
+	const tickets = eventDateTicketMap[ datetimeEntity.id ] ?
+		eventDateTicketMap[ datetimeEntity.id ] :
+		[];
+	createEntity(
 		DATETIME,
-		{
-			EVT_ID: datetimeEntity.EVT_ID,
-			DTT_name: datetimeEntity.name,
-			DTT_description: datetimeEntity.description,
-			DTT_EVT_start: datetimeEntity.start,
-			DTT_EVT_end: datetimeEntity.end,
-			DTT_reg_limit: datetimeEntity.regLimit,
-			DTT_sold: 0,
-			DTT_reserved: 0,
-			DTT_is_primary: datetimeEntity.isPrimary,
-			DTT_order: datetimeEntity.order,
-			DTT_parent: datetimeEntity.parent,
-			DTT_deleted: datetimeEntity.deleted,
+		datetimeEntity.forClone
+	).then(
+		async ( newDatetimeEntity ) => {
+			if ( ! isEmpty( tickets ) ) {
+				createRelations(
+					DATETIME,
+					newDatetimeEntity.id,
+					TICKET,
+					tickets
+				);
+			}
+			createRelations(
+				EVENT,
+				datetimeEntity.EVT_ID,
+				DATETIME,
+				[ newDatetimeEntity ]
+			);
+			return Promise.resolve( newDatetimeEntity );
+		}
+	).then(
+		async ( newDatetimeEntity ) => {
+			return await persistEntityRecord(
+				DATETIME,
+				newDatetimeEntity
+			);
+		}
+	).then(
+		async ( newDatetimeEntity ) => {
+			const newDatetime = newDatetimeEntity;
+			persistRelationsForEntityId(
+				DATETIME,
+				newDatetime.id
+			).then(
+				async () => {
+					new Promise(
+						( resolve ) => {
+							if ( isModelEntityOfModel( newDatetime, DATETIME ) ) {
+								const newTickets = getRelatedEntities(
+									newDatetime,
+									TICKET
+								);
+								if ( ! isEmpty( newTickets ) ) {
+									resolve( newTickets );
+								}
+							}
+						}
+					).then(
+						() => {
+							return true;
+						}
+					);
+				}
+			);
 		}
 	);
-	server.createRelation(
-		EVENT,
-		datetimeEntity.EVT_ID,
-		DATETIME,
-		newDatetimeEntity
-	);
-	const ticketEntities = store.getRelatedEntities( datetimeEntity, TICKET );
-	if ( Array.isArray( ticketEntities ) && ! isEmpty( ticketEntities ) ) {
-		return await dispatch( 'eventespresso/core' ).createRelations(
-			DATETIME,
-			newDatetimeEntity.id,
-			TICKET,
-			ticketEntities
-		);
-	}
-	newDatetimeEntity = await server.persistEntityRecord(
-		DATETIME,
-		newDatetimeEntity
-	);
-	server.persistRelationsForEntityId( DATETIME, newDatetimeEntity.id );
-	return true;
 };
