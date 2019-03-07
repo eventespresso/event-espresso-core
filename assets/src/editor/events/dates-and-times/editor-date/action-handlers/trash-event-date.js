@@ -9,12 +9,12 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * @function
  * @param {Object} datetimeEntity  EE Date object
- * @return {Object} new eventDate
+ // * @return {Object} new eventDate
  */
 export const trashEventDate = async ( datetimeEntity ) => {
 	const { MODEL_NAME: DATETIME } = dateTimeModel;
 	if ( ! isModelEntityOfModel( datetimeEntity, DATETIME ) ) {
-		return null;
+		return;
 	}
 	if ( ! window.confirm(
 		__(
@@ -22,10 +22,15 @@ export const trashEventDate = async ( datetimeEntity ) => {
 			'event_espresso'
 		)
 	) ) {
-		return null;
+		return;
 	}
-	return await dispatch( 'eventespresso/core' ).trashEntityById(
+	const {
+		trashEntityById,
+		persistTrashesForModel,
+	} = dispatch( 'eventespresso/core' );
+	await trashEntityById(
 		DATETIME,
 		datetimeEntity.id
 	);
+	persistTrashesForModel( DATETIME );
 };
