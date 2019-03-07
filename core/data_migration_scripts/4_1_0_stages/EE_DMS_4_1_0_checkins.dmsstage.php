@@ -58,7 +58,15 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table
             $new_reg_id = $new_registrations_for_attendee[ $i ];
             if (! $new_reg_id) {
                 $this->add_error(sprintf(
-                    esc_html__('It appears we wanted to check-in more registrations than actually exist. The old attendee record (%1$s) indicated we should check-in %2$d registrations, but there are only %3$d registrations for that attendee (%4$s)', 'event_espresso'),
+                    esc_html__(
+                        /* translators: %1$s database row represented in JSON, %2$s number of registrations to check-in
+                        *  %3$s number of registrations for the attendee, %4$s new registration rows represented in JSON
+                        */
+                        // @codingStandardsIgnoreStart
+                        'It appears we wanted to check-in more registrations than actually exist. The old attendee record (%1$s) indicated we should check-in %2$d registrations, but there are only %3$d registrations for that attendee (%4$s)',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
                     $this->_json_encode($old_row),
                     abs($num_to_checkin_at_this_time),
                     count($new_registrations_for_attendee),
@@ -66,22 +74,26 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table
                 ));
                 break;
             }
-            $new_last_checkin_record = $wpdb->get_row(
-                $wpdb->prepare("SELECT * FROM $this->_new_table WHERE REG_ID = %d ORDER BY CHK_ID DESC LIMIT 1", $new_reg_id),
-                ARRAY_A
+            $existing_checkin_record = $wpdb->get_var(
+                $wpdb->prepare(
+                    "SELECT CHK_ID FROM $this->_new_table WHERE REG_ID = %d ORDER BY CHK_ID DESC LIMIT 1",
+                    $new_reg_id
+                )
             );
-            if (! $new_last_checkin_record) {
-                $is_checked_in = false;
-            } else {
-                $is_checked_in = intval($new_last_checkin_record['CHK_in']);
-            }
-            $new_id = $this->_insert_checkin_record($new_reg_id, $new_datetime);
-            if ($new_id) {
-                $new_checkin_ids[]= $new_id;
+            if (! $existing_checkin_record) {
+                $new_id = $this->_insert_checkin_record($new_reg_id, $new_datetime);
+                if ($new_id) {
+                    $new_checkin_ids[]= $new_id;
+                }
             }
         }
         if ($new_checkin_ids) {
-            $this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_table, $new_checkin_ids);
+            $this->get_migration_script()->set_mapping(
+                $this->_old_table,
+                $old_row['id'],
+                $this->_new_table,
+                $new_checkin_ids
+            );
         }
     }
 
