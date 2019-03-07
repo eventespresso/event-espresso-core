@@ -58,6 +58,8 @@ export const buildEventDateTicketRelationsMap = (
 ) => {
 	const relationsMap = {};
 	if (
+		Array.isArray( eventDateIds ) &&
+		! isEmpty( eventDateIds ) &&
 		Array.isArray( ticketEntities ) &&
 		! isEmpty( ticketEntities ) &&
 		Array.isArray( datetimeTicketEntities ) &&
