@@ -77,12 +77,17 @@ class DatesAndTicketsFilterState extends Component {
 		return uniq( tickets );
 	};
 
-	/**
-	 * @function
-	 */
-	updateDatesAndTickets = () => {
-		this.forceUpdate();
-	};
+	// /**
+	//  * @function
+	//  */
+	// updateDatesAndTickets = () => {
+	// 	console.log( '' );
+	// 	console.log(
+	// 		'*** *** DatesAndTicketsFilterState.updateDatesAndTickets() *** ***'
+	// 	);
+	// 	console.log( '' );
+	// 	// this.forceUpdate();
+	// };
 
 	render() {
 		const {
@@ -130,7 +135,7 @@ class DatesAndTicketsFilterState extends Component {
 			sortTickets: sortTickets,
 			isChained: isChained,
 			eventDateTicketMap: eventDateTicketMap,
-			updateDatesAndTickets: this.updateDatesAndTickets,
+			// updateDatesAndTickets: this.updateDatesAndTickets,
 			...otherProps,
 		} );
 	}
