@@ -112,7 +112,19 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table
 
         $new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_detail", $old_attendee['event_id'], $wpdb->posts);
         if (! $new_event_id) {
-            $this->add_error(sprintf(esc_html__('Could not find new event ID with old event ID %d, on attendee row %s; and because of that couldn\'t find the correct datetime for Check-in', 'event_espresso'), $old_attendee['event_id'], $this->_json_encode($old_attendee)));
+            $this->add_error(
+                sprintf(
+                    esc_html__(
+                        /* translators: 1: original event ID, 2: original attendee database row */
+                        // @codingStandardsIgnoreStart
+                        'Could not find new event ID with old event ID %1$d, on attendee row %2$s; and because of that couldn\'t find the correct datetime for Check-in',
+                        // @codingStandardsIgnoreEnd
+                        'event_espresso'
+                    ),
+                    $old_attendee['event_id'],
+                    $this->_json_encode($old_attendee)
+                )
+            );
             return 0;
         }
         $old_att_start_date = $old_attendee['start_date'];
