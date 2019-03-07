@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { Dashicon } from '@wordpress/components';
+import { Dashicon, Tooltip } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { EntityDetailsPanel, InlineEditInput } from '@eventespresso/components';
 import { data } from '@eventespresso/eejs';
@@ -99,22 +99,25 @@ class EditorDateDetails extends Component {
 		return showVenue && eventDate.venue ?
 			(
 				<h3 className="ee-editor-date-location-div">
-					<a
-						href={ eventDate.edit_venue_link }
-						title={ __(
+					<Tooltip
+						text={ __(
 							'venue editor opens in a new window',
 							'event_espresso',
 						) }
-						className="ee-editor-date-edit-venue-link"
-						target="_blank"
-						rel="noopener noreferrer"
 					>
-						<Dashicon icon="location" size={ 16 } />
-						<span className="ee-editor-date-venue-name-span">
-							{ eventDate.venue }
-						</span>
-						<Dashicon icon="external" size={ 12 } />
-					</a>
+						<a
+							href={ eventDate.edit_venue_link }
+							className="ee-editor-date-edit-venue-link"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<Dashicon icon="location" size={ 16 } />
+							<span className="ee-editor-date-venue-name-span">
+								{ eventDate.venue }
+							</span>
+							<Dashicon icon="external" size={ 12 } />
+						</a>
+					</Tooltip>
 				</h3>
 			) :
 			'';
@@ -158,6 +161,7 @@ class EditorDateDetails extends Component {
 			},
 			{
 				id: `event-date-registrants-${ eventDate.id }`,
+				htmlClass: 'has-tooltip',
 				label: __( 'registrants', 'event_espresso' ),
 				value: this.getDatetimeRegistrationsLink( eventDate ),
 			},
@@ -182,15 +186,21 @@ class EditorDateDetails extends Component {
 		regListUrl += `&datetime_id=${ eventDate.id }`;
 		regListUrl += '&action=default&return=edit';
 		return (
-			<a
-				href={ regListUrl }
-				title={ __( 'View registrations for this datetime.', 'event_espresso' ) }
-				className={ 'ee-editor-date-details-reg-url-link' }
-				target={ '_blank' }
-				rel={ 'noopener norefferer' }
+			<Tooltip
+				text={ __(
+					'view registrations for this datetime.',
+					'event_espresso'
+				) }
 			>
-				<span className="dashicons dashicons-groups clickable"></span>
-			</a>
+				<a
+					href={ regListUrl }
+					className={ 'ee-editor-date-details-reg-url-link' }
+					target={ '_blank' }
+					rel={ 'noopener norefferer' }
+				>
+					<Dashicon icon="groups" size={ 24 } />
+				</a>
+			</Tooltip>
 		);
 	};
 
