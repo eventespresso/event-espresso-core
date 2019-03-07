@@ -320,6 +320,26 @@
 												</div>
 												
 												<h3 class="service-settings-heading">Payment Gateways</h3>
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
+																<h4>Stripe Payment Gateway</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-stripe-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=stripe_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/ee4-stripe-logo-231x151.jpg"></a>Stripe is the easiest way to accept credit and debit card payments with Event Espresso. With Stripe, you can create exactly the payment experience you want in your Event Espresso powered website, and Stripe handles everything from security to transfers to your bank account. You can get started immediately.</p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-stripe-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=stripe_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/stripe-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=stripe_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+												</div>
 												
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
@@ -508,27 +528,6 @@
 																<li>
 																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-sage-pay-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=sagepay_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
 																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/sage-pay-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=sagepay_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
-																</li>
-															</ul>
-														</div>
-													</div>
-												</div>
-
-												<div class="service-div-settings">
-													<div class="service-div-settings-top">
-														<div class="service-div-inner-content">
-															<div class="name column-name">
-																<h4>Stripe Payment Gateway</h4>
-															</div>
-															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-stripe-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=stripe_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/ee4-stripe-logo-231x151.jpg"></a>Stripe is the easiest way to accept credit and debit card payments with Event Espresso. With Stripe, you can create exactly the payment experience you want in your Event Espresso powered website, and Stripe handles everything from security to transfers to your bank account. You can get started immediately.</p>
-															</div>
-														</div>
-														<div class="action-links">
-															<ul class="plugin-action-buttons-custom">
-																<li>
-																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-stripe-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=stripe_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
-																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/stripe-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=stripe_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
 																</li>
 															</ul>
 														</div>
