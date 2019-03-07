@@ -212,9 +212,8 @@ class EditorDateActionsMenu extends Component {
 					// onUpdate={ onUpdate }
 				/>
 				<DatesAndTicketsManagerModal
-					eventDate={ eventDate }
-					// dates={ [ eventDate ] }
-					// tickets={ [] } // allTickets
+					date={ eventDate }
+					allTickets={ allTickets }
 					// eventDateTicketMap={ eventDateTicketMap }
 					closeModal={ this.toggleTickets }
 					editorOpen={ this.state.editTickets }

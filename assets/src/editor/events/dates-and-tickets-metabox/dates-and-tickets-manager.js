@@ -1,11 +1,14 @@
 /**
  * External imports
  */
+
+import { withState, compose } from '@wordpress/compose';
+import { withSelect, withDispatch } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import PropTypes from 'prop-types';
 import { find, findIndex } from 'lodash';
 import { ENTER } from '@wordpress/keycodes';
-import { Button, IconButton } from '@wordpress/components';
+import { Button, IconButton, Spinner } from '@wordpress/components';
 import { __ } from '@eventespresso/i18n';
 import { withEditorModal } from '@eventespresso/higher-order-components';
 import { dateTimeModel, ticketModel } from '@eventespresso/model';
@@ -33,56 +36,26 @@ export class DatesAndTicketsManager extends Component {
 	}
 
 	processChanges = () => {
-		// console.log( '' );
-		// console.log( 'DatesAndTicketsManager.processChanges()' );
-		// console.log( ' > dates', this.props.dates );
-		// console.log( ' > tickets', this.props.tickets );
-		// console.log( ' > assigned', this.state.assigned );
-		// console.log( ' > removed', this.state.removed );
 		let update = false;
 		for ( let dateID in this.state.removed ) {
 			dateID = parseInt( dateID );
 			if ( this.state.removed.hasOwnProperty( dateID ) ) {
-				// console.log( ' > > dateID', dateID );
 				const ticketsToRemove = this.state.removed[ dateID ];
-				// console.log( ' > > ticketsToRemove', ticketsToRemove );
 				if ( Array.isArray( ticketsToRemove ) ) {
 					ticketsToRemove.map(
 						( ticketToRemove ) => {
-							// console.log(
-							// 	' > > > ticketToRemove',
-							// 	ticketToRemove
-							// );
 							const date = find(
 								this.props.dates,
 								{ id: dateID }
 							);
 							if ( date !== undefined ) {
-								// console.log( ' > > > date', date );
 								const index = findIndex(
 									date.tickets,
 									{ id: ticketToRemove.id }
 								);
-								// console.log( ' > > > index', index );
 								if ( index > noIndex ) {
-									// console.log(
-									// 	' > > > > date.tickets',
-									// 	date.tickets
-									// );
-									// console.log(
-									// 	' > > > > DELETE',
-									// 	date.tickets[ index ]
-									// );
 									date.tickets.splice( index, 1 );
 									update = true;
-									// console.log(
-									// 	' > > > > deleted?',
-									// 	typeof date.tickets[ index ] === 'undefined'
-									// );
-									// console.log(
-									// 	' > > > > date.tickets',
-									// 	date.tickets
-									// );
 								}
 							}
 						}
@@ -93,16 +66,10 @@ export class DatesAndTicketsManager extends Component {
 		for ( let dateID in this.state.assigned ) {
 			dateID = parseInt( dateID );
 			if ( this.state.assigned.hasOwnProperty( dateID ) ) {
-				// console.log( ' > > dateID', dateID );
 				const ticketsToAssign = this.state.assigned[ dateID ];
-				// console.log( ' > > ticketsToAssign', ticketsToAssign );
 				if ( Array.isArray( ticketsToAssign ) ) {
 					ticketsToAssign.map(
 						( ticketToAssign ) => {
-							// console.log(
-							// 	' > > > ticketToAssign',
-							// 	ticketToAssign
-							// );
 							const date = find(
 								this.props.dates,
 								{ id: dateID }
@@ -115,24 +82,8 @@ export class DatesAndTicketsManager extends Component {
 								if ( index === noIndex &&
 									Array.isArray( date.tickets )
 								) {
-									// console.log(
-									// 	' > > > > date.tickets.length',
-									// 	date.tickets.length
-									// );
-									// console.log(
-									// 	' > > > > date.tickets',
-									// 	date.tickets
-									// );
 									date.tickets.push( ticketToAssign );
 									update = true;
-									// console.log(
-									// 	' > > > > date.tickets.length',
-									// 	date.tickets.length
-									// );
-									// console.log(
-									// 	' > > > > date.tickets',
-									// 	date.tickets
-									// );
 								}
 							}
 						}
@@ -140,14 +91,6 @@ export class DatesAndTicketsManager extends Component {
 				}
 			}
 		}
-		// console.log(
-		// 	'typeof this.props.toggleEditor',
-		// 	typeof this.props.toggleEditor
-		// );
-		// console.log(
-		// 	'this.props.toggleEditor',
-		// 	this.props.toggleEditor
-		// );
 		this.toggleEditor( update );
 	};
 
@@ -165,16 +108,16 @@ export class DatesAndTicketsManager extends Component {
 	};
 
 	isAssigned = ( assigned, date, ticket, returnIndex = false ) => {
-		let index = -1;
+		let index = noIndex;
 		if ( Array.isArray( assigned[ date.id ] ) ) {
 			index = findIndex( assigned[ date.id ], { id: ticket.id } );
 		}
-		return returnIndex ? index : index > -1;
+		return returnIndex ? index : index > noIndex;
 	};
 
 	unAssignTicket = ( assigned, date, ticket ) => {
 		const index = this.isAssigned( assigned, date, ticket, true );
-		if ( index > -1 ) {
+		if ( index > noIndex ) {
 			delete assigned[ date.id ][ index ];
 		}
 		return assigned;
@@ -198,10 +141,6 @@ export class DatesAndTicketsManager extends Component {
 					date,
 					ticket
 				);
-				// console.log( '' );
-				// console.log( 'DatesAndTicketsManager.assignTicket()' );
-				// console.log( ' >  prevState.assigned', prevState.assigned );
-				// console.log( ' >  prevState.removed', prevState.removed );
 				return ( {
 					assigned: prevState.assigned,
 					removed: prevState.removed,
@@ -211,23 +150,16 @@ export class DatesAndTicketsManager extends Component {
 	};
 
 	isRemoved = ( removed, date, ticket, returnIndex = false ) => {
-		let index = -1;
+		let index = noIndex;
 		if ( Array.isArray( removed[ date.id ] ) ) {
 			index = findIndex( removed[ date.id ], { id: ticket.id } );
 		}
-		if ( date.id === 26 && ticket.id === 29 ) {
-			// console.log( '' );
-			// console.log( 'DatesAndTicketsManager.isRemoved()' );
-			// console.log( ' > index', index );
-		}
-		return returnIndex ? index : index > -1;
+		return returnIndex ? index : index > noIndex;
 	};
 
 	unRemoveTicket = ( removed, date, ticket ) => {
-	// 	console.log( '' );
-	// 	console.log( 'DatesAndTicketsManager.unRemoveTicket()' );
 		const index = this.isRemoved( removed, date, ticket, true );
-		if ( index > -1 ) {
+		if ( index > noIndex ) {
 			delete removed[ date.id ][ index ];
 		}
 		return removed;
@@ -251,10 +183,6 @@ export class DatesAndTicketsManager extends Component {
 					date,
 					ticket
 				);
-				// console.log( '' );
-				// console.log( 'DatesAndTicketsManager.removeTicket()' );
-				// console.log( ' >  prevState.assigned', prevState.assigned );
-				// console.log( ' >  prevState.removed', prevState.removed );
 				return ( {
 					assigned: prevState.assigned,
 					removed: prevState.removed,
@@ -264,47 +192,33 @@ export class DatesAndTicketsManager extends Component {
 	};
 
 	render() {
-		// console.log( '' );
-		// console.log( 'DatesAndTicketsManager.render()' );
-		// console.log( ' > this.props', this.props );
-		// console.log( ' > dates', this.props.dates );
-		// console.log( ' > tickets', this.props.tickets );
-		// console.log( ' > eventDateTicketMap', this.props.eventDateTicketMap );
-		// console.log( ' > assigned', this.state.assigned );
-		// console.log( ' > removed', this.state.removed );
-		const { dates, tickets, eventDateTicketMap } = this.props;
-		// const { filterEntity, filterFor = 'all' } = this.props;
-		// if ( filterFor === 'date' ) {
-		// 	tickets = this.filterForDate( dates, filterEntity );
-		// } else if ( filterFor === 'ticket' ) {
-		// 	dates = this.filterForTicket( tickets, filterEntity );
-		// }
+		const { loading, dates, tickets, eventDateTicketMap } = this.props;
+		if ( loading ) {
+			return <Spinner />;
+		}
+		console.log( '' );
+		console.log( 'DatesAndTicketsManager.render()' );
+		console.log( ' > props: ', this.props );
 		const width = tickets.length ? 75 / tickets.length : 75;
 		const header0 = {
-			// background: '#f8f8f8',
-			borderBottom: '1px solid #ccc',
+			borderBottom: '1px solid var(--ee-lite-grey)',
 			textAlign: 'left',
 			verticalAlign: 'bottom',
 			width: '25%',
-			// width: '300px',
 		};
 		const header = {
-			// background: '#f8f8f8',
-			borderBottom: '1px solid #ccc',
+			borderBottom: '1px solid var(--ee-lite-grey)',
 			boxSizing: 'border-box',
-			// height: '120px',
 			padding: '0 5px',
 			textAlign: 'center',
 			verticalAlign: 'bottom',
 			width: width + '%',
-			// width: '120px',
 		};
 		const headerText = {
 			display: 'block',
 			overflow: 'hidden',
 			textOverflow: 'ellipsis',
 			whiteSpace: 'nowrap',
-			// maxWidth: '120px',
 		};
 		const dateLabel = {
 			display: 'block',
@@ -314,20 +228,13 @@ export class DatesAndTicketsManager extends Component {
 			textOverflow: 'ellipsis',
 			verticalAlign: 'middle',
 			whiteSpace: 'nowrap',
-			// width: '30%',
-			// width: '300px',
 		};
 		const container = {
-			// borderTop: '1px solid #eee',
-			// borderLeft: '1px solid #eee',
 			boxSizing: 'border-box',
 			padding: '25px',
 			minWidth: '600px',
 		};
 		const tbl = {
-			// borderTop: '1px solid #eee',
-			// borderLeft: '1px solid #eee',
-			// width: '100%',
 		};
 		const cell = {
 			textAlign: 'center',
@@ -336,7 +243,7 @@ export class DatesAndTicketsManager extends Component {
 			margin: '0 auto',
 		};
 		const odd = {
-			background: '#f8f8f8',
+			background: 'var(--ee-not-quite-white)',
 		};
 		const showDatesColumn = dates.length > 1;
 		const datesHeader = showDatesColumn ?
@@ -382,19 +289,14 @@ export class DatesAndTicketsManager extends Component {
 										return null;
 									}
 									index2++;
+									console.log( '' );
+									console.log( 'DatesAndTicketsManager.render(293)' );
+									console.log( ' > eventDate: ', eventDate );
 									const eventDateTickets = eventDateTicketMap[
 										eventDate.id
 									] ?
 										eventDateTicketMap[ eventDate.id ] :
 										[];
-									console.log( '' );
-									console.log( 'eventDate:', eventDate.id );
-									// console.log(
-									// 	'eventDate',
-									// 	eventDate.id,
-									// 	'eventDateTickets',
-									// 	eventDateTickets
-									// );
 
 									const rowStyle = ( index2 - 1 ) % 2 === 1 ?
 										odd :
@@ -419,10 +321,6 @@ export class DatesAndTicketsManager extends Component {
 												tickets.map(
 													( ticket, index3 ) => {
 														index3++;
-														// const hasTicket = indexOf(
-														// 	eventDateTickets,
-														// 	ticket
-														// ) > noIndex;
 														const hasTicket = findIndex(
 															eventDateTickets,
 															{ id: ticket.id }
@@ -443,48 +341,19 @@ export class DatesAndTicketsManager extends Component {
 														isAssigned > noIndex ?
 															'tickets-alt' :
 															'no-alt';
-														// if (
-														// 	eventDate.id === 19 &&
-														// 	ticket.id === 29
-														// ) {
-														// 	console.log(
-														// 		'> hasTicket',
-														// 		hasTicket
-														// 	);
-														// 	console.log(
-														// 		'> isAssigned',
-														// 		isAssigned
-														// 	);
-														// 	console.log(
-														// 		'> isRemoved',
-														// 		isRemoved
-														// 	);
-														// 	console.log( '' );
-														// }
 														let style = btn;
 														if ( ! hasTicket && isAssigned > noIndex ) {
 															style = {
 																...style,
-																...{ color: 'green' },
+																...{ color: 'var(--ee-brite-green)' },
 															};
 														}
 														if ( hasTicket && isRemoved > noIndex ) {
 															style = {
 																...style,
-																...{ color: 'red' },
+																...{ color: 'var(--ee-red)' },
 															};
 														}
-														// console.log(
-														// 	'eventDate',
-														// 	eventDate.id,
-														// 	'hasTicket',
-														// 	ticket.id,
-														// 	hasTicket,
-														// 	'or is new',
-														// 	isNew,
-														// 	'or yoinked',
-														// 	isYoinked
-														// );
 														const action = ( hasTicket && isRemoved === noIndex ) ||
 														isAssigned > noIndex ?
 															this.removeTicket :
@@ -562,13 +431,128 @@ export class DatesAndTicketsManager extends Component {
 	}
 }
 
+// /**
+//  * Enhanced DatesAndTicketsManager with Modal
+//  */
+// const DatesAndTicketsManagerModal = withEditorModal( {
+// 	title: __( 'Event Date Ticket Assignments', 'event_espresso' ),
+// 	customClass: 'ee-event-date-tickets-manager-modal',
+// 	closeButtonLabel: __( 'close event date tickets manager', 'event_espresso' ),
+// } )( DatesAndTicketsManager );
+//
+// export default DatesAndTicketsManagerModal;
+
 /**
  * Enhanced DatesAndTicketsManager with Modal
  */
-const DatesAndTicketsManagerModal = withEditorModal( {
-	title: __( 'Event Date Ticket Assignments', 'event_espresso' ),
-	customClass: 'ee-event-date-tickets-manager-modal',
-	closeButtonLabel: __( 'close event date tickets manager', 'event_espresso' ),
-} )( DatesAndTicketsManager );
 
-export default DatesAndTicketsManagerModal;
+export default compose( [
+	withEditorModal( {
+		title: __( 'Event Date Ticket Assignments', 'event_espresso' ),
+		customClass: 'ee-event-date-tickets-manager-modal',
+		closeButtonLabel: __( 'close event date tickets manager',
+			'event_espresso'
+		),
+	} ),
+	withState( {
+		loading: true,
+		dates: [],
+		tickets: [],
+		eventDateTicketMap: [],
+	} ),
+	withSelect( ( select, ownProps ) => {
+		console.log( '' );
+		console.log( 'DatesAndTicketsManager.withSelect(1)' );
+		console.log( ' > ownProps: ', ownProps );
+		const {
+			loading,
+			date,
+			allDates,
+			ticket,
+			allTickets,
+			setState,
+			dates,
+			tickets,
+		} = ownProps;
+		let { eventDateTicketMap } = ownProps;
+		let dtmProps = {
+			loading: true,
+			dates: dates,
+			tickets: tickets,
+			eventDateTicketMap: eventDateTicketMap,
+		};
+		if ( ! loading ) {
+			console.log( ' > dtmProps: ', dtmProps );
+			return dtmProps;
+		}
+		if ( isModelEntityOfModel( date, DATETIME ) ) {
+			console.log( ' > date: ', date );
+			const { getRelatedEntities } = select( 'eventespresso/core' );
+			const { hasFinishedResolution } = select( 'core/data' );
+			console.log( ' > > Fetching Related Entities' );
+			const relatedTickets = getRelatedEntities( date, TICKET );
+			const relationsResolved = hasFinishedResolution(
+				'eventespresso/core',
+				'getRelatedEntities',
+				[ date, TICKET ]
+			);
+			console.log( ' > > > relationsResolved:', relationsResolved );
+			if ( ! relationsResolved || ! Array.isArray( relatedTickets ) ) {
+				return dtmProps;
+			}
+			dtmProps = {
+				loading: false,
+				dates: [ date ],
+				tickets: allTickets,
+				eventDateTicketMap: { [ date.id ]: relatedTickets },
+			};
+			setState( dtmProps );
+		} else if ( isModelEntityOfModel( ticket, TICKET ) ) {
+			console.log( ' > ticket: ', ticket );
+			const { getRelatedEntities } = select( 'eventespresso/core' );
+			const { hasFinishedResolution } = select( 'core/data' );
+			console.log( ' > > Fetching Related Entities' );
+			const relatedDates = getRelatedEntities( ticket, DATETIME );
+			const relationsResolved = hasFinishedResolution(
+				'eventespresso/core',
+				'getRelatedEntities',
+				[ ticket, DATETIME ]
+			);
+			console.log( ' > > > relationsResolved:', relationsResolved );
+			if ( ! relationsResolved || ! Array.isArray( relatedDates ) ) {
+				return dtmProps;
+			}
+			console.log( ' > > > relatedDates:', relatedDates );
+			eventDateTicketMap = [];
+			for ( let x = 0; x < relatedDates.length; x++ ) {
+				const relatedDate = relatedDates[ x ];
+				if ( isModelEntityOfModel( relatedDate, DATETIME ) ) {
+					eventDateTicketMap[ relatedDate.id ] = ticket;
+				}
+			}
+			dtmProps = {
+				loading: false,
+				dates: allDates,
+				tickets: [ ticket ],
+				eventDateTicketMap: eventDateTicketMap,
+			};
+			setState( dtmProps );
+		}
+		console.log( ' > final dtmProps: ', dtmProps );
+		return dtmProps;
+	} ),
+	withSelect( ( select, ownProps ) => {
+		console.log( '' );
+		console.log( 'DatesAndTicketsManager.withSelect(2)' );
+		console.log( ' > ownProps: ', ownProps );
+		const { loading, dates, tickets, eventDateTicketMap } = ownProps;
+		if ( loading ) {
+			return {
+				loading,
+				dates,
+				tickets,
+				eventDateTicketMap,
+			};
+		}
+	} ),
+] )( DatesAndTicketsManager );

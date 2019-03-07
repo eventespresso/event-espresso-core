@@ -221,9 +221,9 @@ class EditorTicketActionsMenu extends Component {
 					editorOpen={ this.state.editorOpen }
 				/>
 				<DatesAndTicketsManagerModal
-					dates={ allDates }
-					tickets={ [ ticket ] }
-					eventDateTicketMap={ eventDateTicketMap }
+					allDates={ allDates }
+					ticket={ ticket }
+					// eventDateTicketMap={ eventDateTicketMap }
 					closeModal={ this.toggleTickets }
 					editorOpen={ this.state.assignDates }
 					onUpdate={ onUpdate }
