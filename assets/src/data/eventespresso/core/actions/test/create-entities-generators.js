@@ -44,7 +44,7 @@ describe( 'createEntity()', () => {
 			const { value } = fulfillment.next( eventFactory );
 			expect( value.type ).toBe( 'DISPATCH' );
 			expect( value.reducerKey ).toBe( CORE_REDUCER_KEY );
-			expect( value.args[ 0 ].EVT_name ).toBe( 'test event' );
+			expect( value.args[ 1 ].EVT_name ).toBe( 'test event' );
 		} );
 		it( 'returns entityInstance', () => {
 			const { value: event } = fulfillment.next();
@@ -59,7 +59,10 @@ describe( 'receiveEntityAndResolve()', () => {
 	const TestEvent = eventFactory.createNew(
 		{ EVT_name: 'test event' }
 	);
-	const reset = () => fulfillment = receiveEntityAndResolve( TestEvent );
+	const reset = () => fulfillment = receiveEntityAndResolve(
+		'event',
+		TestEvent
+	);
 	it( 'yields dispatch action for receiving the entity', () => {
 		reset();
 		const { value } = fulfillment.next();
