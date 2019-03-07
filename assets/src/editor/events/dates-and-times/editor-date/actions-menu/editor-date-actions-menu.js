@@ -60,10 +60,11 @@ class EditorDateActionsMenu extends Component {
 
 	/**
 	 * @function
-	 * @param {Object} eventDate    JSON object defining the Event Date
-	 * @return {DropDownMenu}    Edit Event Date DropDownMenu
+	 * @param {Object} eventDate    	 JSON object defining the Event Date
+	 * @param {Array} eventDateTicketMap Event Date Ticket Relations Map
+	 * @return {DropDownMenu}    		 Edit Event Date DropDownMenu
 	 */
-	mainDropDownMenu = ( eventDate ) => {
+	mainDropDownMenu = ( eventDate, eventDateTicketMap ) => {
 		return (
 			<DropDownMenu
 				tooltip={ __( 'event date main menu', 'event_espresso' ) }
@@ -77,7 +78,10 @@ class EditorDateActionsMenu extends Component {
 					{
 						title: __( 'copy date', 'event_espresso' ),
 						icon: 'admin-page',
-						onClick: () => copyEventDate( eventDate ),
+						onClick: () => copyEventDate(
+							eventDate,
+							eventDateTicketMap
+						),
 					},
 					{
 						title: __( 'trash date', 'event_espresso' ),
@@ -134,6 +138,26 @@ class EditorDateActionsMenu extends Component {
 
 	/**
 	 * @function
+	 * @param {Object} eventDate    	 JSON object defining the Event Date
+	 * @param {Array} eventDateTicketMap Event Date Ticket Relations Map
+	 * @return {Array}    				 Array of IconMenuItem objects
+	 */
+	addSidebarMenuItems = ( eventDate, eventDateTicketMap ) => {
+		const sidebarMenuItems = [];
+		sidebarMenuItems.push(
+			this.mainDropDownMenu( eventDate, eventDateTicketMap )
+		);
+		sidebarMenuItems.push( this.editDateMenuItem( eventDate ) );
+		sidebarMenuItems.push( this.viewTicketsMenuItem( eventDate ) );
+		return applyFilters(
+			'FHEE__EditorDates__EditorDateSidebar__SidebarMenuItems',
+			sidebarMenuItems,
+			eventDate
+		);
+	};
+
+	/**
+	 * @function
 	 * @param {Object} eventDate    	JSON object defining the Event Date
 	 * @param {Array} sidebarMenuItems  Array of IconMenuItem objects
 	 * @return {Array}    				Array of rendered IconMenuItem list items
@@ -159,42 +183,42 @@ class EditorDateActionsMenu extends Component {
 
 	render() {
 		const {
+			event,
 			eventDate,
 			allTickets,
-			onUpdate,
+			// onUpdate,
 			eventDateTicketMap,
 		} = this.props;
 		if ( ! isModelEntityOfModel( eventDate, DATETIME ) ) {
 			return null;
 		}
-		let sidebarMenuItems = [];
-		sidebarMenuItems.push( this.mainDropDownMenu( eventDate ) );
-		sidebarMenuItems.push( this.editDateMenuItem( eventDate ) );
-		sidebarMenuItems.push( this.viewTicketsMenuItem( eventDate ) );
-		sidebarMenuItems = applyFilters(
-			'FHEE__EditorDates__EditorDateSidebar__SidebarMenuItems',
-			sidebarMenuItems,
-			eventDate
-		);
 
 		return eventDate && eventDate.id ? (
 			<div
 				id={ `ee-editor-date-actions-menu-${ eventDate.id }` }
 				className={ 'ee-editor-date-actions-menu' }
 			>
-				{ this.renderSidebarMenuItems( eventDate, sidebarMenuItems ) }
+				{
+					this.renderSidebarMenuItems(
+						eventDate,
+						this.addSidebarMenuItems( eventDate, eventDateTicketMap )
+					)
+				}
 				<EditEventDateFormModal
+					event={ event }
 					eventDate={ eventDate }
 					closeModal={ this.toggleEditor }
 					editorOpen={ this.state.editorOpen }
+					// onUpdate={ onUpdate }
 				/>
 				<DatesAndTicketsManagerModal
-					dates={ [ eventDate ] }
-					tickets={ allTickets }
-					eventDateTicketMap={ eventDateTicketMap }
+					eventDate={ eventDate }
+					// dates={ [ eventDate ] }
+					// tickets={ [] } // allTickets
+					// eventDateTicketMap={ eventDateTicketMap }
 					closeModal={ this.toggleTickets }
 					editorOpen={ this.state.editTickets }
-					onUpdate={ onUpdate }
+					// onUpdate={ onUpdate }
 					modalProps={ {
 						title: sprintf(
 							_x(
