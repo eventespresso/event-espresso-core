@@ -853,6 +853,9 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
                 'EE_Environment_Config'            => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspresso\core\services\request\files\FilesDataHandler' => array(
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+            ),
         );
     }
 
