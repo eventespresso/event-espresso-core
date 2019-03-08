@@ -198,7 +198,7 @@ export function* resetAllModelSpecific() {
 }
 
 /**
- * Resets all state for a given model specific selector and its arguments.
+ * Resets all state for a given model specific selector and its args
  *
  * @param {string} selectorName
  * @param {Array} args
