@@ -1,10 +1,10 @@
 <?php
 
-use EventEspresso\core\entities\forms\UploadedFile;
+use EventEspresso\core\services\request\files\FileSubmissionInterface;
 
 /**
  * EE_File_Normalization
- * Takes the input from $_FILES and creates an UploadedFile object.
+ * Takes the input from $_FILES and creates an FileSubmissionInterface object.
  *
  * @package               Event Espresso
  * @subpackage
@@ -16,13 +16,11 @@ class EE_File_Normalization extends EE_Normalization_Strategy_Base
     /**
      * Convert the $_FILES inputted data into a well-defined object.
      * @param string $value_to_normalize
-     * @return UploadedFile
+     * @return FileSubmissionInterface
      */
     public function normalize($value_to_normalize)
     {
-        if (is_array($value_to_normalize)) {
-            return new UploadedFile($value_to_normalize);
-        } elseif( $value_to_normalize instanceof UploadedFile){
+        if( $value_to_normalize instanceof FileSubmissionInterface){
             return $value_to_normalize;
         } else {
             throw new EE_Validation_Error(
@@ -40,12 +38,10 @@ class EE_File_Normalization extends EE_Normalization_Strategy_Base
      */
     public function unnormalize($normalized_value)
     {
-        if ($normalized_value instanceof UploadedFile) {
+        if ($normalized_value instanceof FileSubmissionInterface) {
             // Leave it as the object, it can be treated like a string because it
             // overrides __toString()
             return $normalized_value;
-        } elseif (is_array($normalized_value)) {
-            return new UploadedFile($normalized_value);
         } else {
             return (string) $normalized_value;
         }

@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 /**
  * EE_File_Input
  *
@@ -104,62 +106,8 @@ class EE_File_Input extends EE_Form_Input_Base
      */
     public function find_form_data_for_this_section($req_data)
     {
-        $name_parts = $this->getInputNameParts();
-        // now get the value for the input
-        $value = $this->findFileData($name_parts, $req_data);
-
-        if (empty($value)) {
-            $value = $this->findFileData($name_parts, $_FILES);
-        }
-        if (empty($value)) {
-            array_shift($name_parts);
-            // check if this thing's name is at the TOP level of the request data
-            $value = $this->findFileData($name_parts, $req_data);
-        }
-        return $value;
-    }
-
-    /**
-     * Look for the file's data in this request data.
-     * @since $VID:$
-     * @param $name_parts
-     * @param $req_data
-     * @return array
-     */
-    protected function findFileData($name_parts, $req_data)
-    {
-        $file_parts = [
-            'name',
-            'error',
-            'size',
-            'tmp_name',
-            'type'
-        ];
-        $file_data = [];
-        foreach($file_parts as $file_part){
-            $datum = $this->findRequestForSectionUsingNameParts($this->getFileDataNameParts($name_parts, $file_part),$req_data);
-            if(!empty($datum)) {
-                $file_data[$file_part] = $datum;
-            }
-        }
-        return $file_data;
-    }
-
-    /**
-     * Finds the file name parts for the desired file data.
-     * @since $VID:$
-     * @param $original_name_parts
-     * @param $file_data_sought
-     * @return array
-     */
-    protected function getFileDataNameParts($original_name_parts, $file_data_sought){
-        return
-            array_merge(
-                [
-                    $original_name_parts[0],
-                    $file_data_sought
-                ],
-            array_slice($original_name_parts, 1)
-        );
+        // ignore $req_data. Files are in the files data handler.
+        $fileDataHandler = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\files\FilesDataHandler');
+        return $fileDataHandler->getFileObject($this->html_name());
     }
 }
