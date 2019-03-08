@@ -4,8 +4,11 @@
 </p>
 <p>
     <?php printf(
-        __('See %1$shere%2$s for list of currencies supported by Authorize.net AIM.', 'event_espresso'),
-        "<a href='http://www.authorize.net/international/'  target='_blank'>",
+        esc_html__(
+            'See %1$shere%2$s for list of currencies supported by Authorize.net AIM.',
+            'event_espresso'
+        ),
+        "<a href='https://support.authorize.net/s/article/Which-Currencies-Does-Authorize-Net-Support/' target='_blank' rel='noopener noreferrer'>",
         "</a>"
     ); ?>
 </p>
@@ -13,16 +16,24 @@
 <ul>
     <li>
         <strong><?php esc_html_e('Authorize.net API Login ID', 'event_espresso'); ?></strong><br/>
-        <?php esc_html_e(
-            'Enter your API Login ID for Authorize.net. Learn how to find your <a href="https://support.authorize.net/authkb/index?page=content&id=A405" target="_blank" rel="noopener noreferrer">API Login ID</a>.',
-            'event_espresso'
+        <?php printf(
+            esc_html__(
+                'Enter your API Login ID for Authorize.net. Learn how to find your %1$sAPI Login%2$s ID.',
+                'event_espresso'
+            ),
+            '<a href="https://support.authorize.net/authkb/index?page=content&id=A405" target="_blank" rel="noopener noreferrer">',
+            '</a>'
         ); ?>
     </li>
     <li>
         <strong><?php esc_html_e('Authorize.net Transaction Key', 'event_espresso'); ?></strong><br/>
-        <?php esc_html_e(
-            'Enter your Transaction Key for Authorize.net. Learn how to find your <a href="https://support.authorize.net/authkb/index?page=content&id=A405" target="_blank" rel="noopener noreferrer">Transaction Key</a>.',
-            'event_espresso'
+        <?php printf(
+            esc_html__(
+                'Enter your Transaction Key for Authorize.net. Learn how to find your %1$sTransaction Key%2$s.',
+                'event_espresso'
+            ),
+            '<a href="https://support.authorize.net/authkb/index?page=content&id=A405" target="_blank" rel="noopener noreferrer">',
+            '</a>'
         ); ?>
     </li>
     <li>
@@ -66,7 +77,7 @@
     <li>
         <strong><?php esc_html_e('Server', 'event_espresso'); ?></strong>
         <?php esc_html_e(
-            'Use this setting to change the server where Authorize.net AIM requests are sent. Change this to "Authorize.net/Akamai" before June 30th 2016 to verify your server wil work with Authorize.net\'s servers which will be in use after that date.',
+            'Use this setting to change the server where Authorize.net AIM requests are sent. Change this to "Authorize.net/Akamai" before June 30th 2016 to verify your server will work with Authorize.net\'s servers which will be in use after that date.',
             'event_espresso'
         ); ?>
     </li>
