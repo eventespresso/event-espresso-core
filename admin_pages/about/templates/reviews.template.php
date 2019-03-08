@@ -23,9 +23,9 @@
             href="https://eventespresso.com/about/testimonials/">EventEspresso.com</a>:</p>
     <div class="feature-section col three-col about-updates">
         <div class="col-1">
-            <h2>
+            <h3>
                 <a href="https://wordpress.org/support/topic/amazing-plugin-has-been-running-our-school-for-over-5-years-now/">Amazing
-                    Plugin – has been running our school for over 5 years now!</a></h2>
+                    Plugin – has been running our school for over 5 years now!</a></h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
@@ -44,7 +44,7 @@
                                     href="https://wordpress.org/support/users/sock2me/" title="View sock2me's profile"
                                     class="bbp-author-name" rel="nofollow">sock2me</a></p>
                             <p>I started using EE many years ago and we still use it everyday to run our school at <a
-                                    href="https://portlandfashioninstitute.com" target="_blank" rel="nofollow">Portland
+                                    href="https://portlandfashioninstitute.com" target="_blank" rel="noopener noreferrer nofollow">Portland
                                     Sewing</a>. For the cost, there is no other program out there that can do what this
                                 does. Their support people are awesome – as is their forum. And they continue to improve
                                 the application – you can vote for what features you’d like to add and they reach out to
@@ -60,8 +60,8 @@
             </ul>
         </div>
         <div class="col-2">
-            <h2><a href="https://wordpress.org/support/topic/elegant-event-management-for-wordpress/">Elegant event
-                    management for WordPress</a></h2>
+            <h3><a href="https://wordpress.org/support/topic/elegant-event-management-for-wordpress/">Elegant event
+                    management for WordPress</a></h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
@@ -101,8 +101,8 @@
             </ul>
         </div>
         <div class="col-3 last-feature">
-            <h2><a href="https://wordpress.org/support/topic/the-best-event-plugin-system-we-have-used/">The best event
-                    plugin system we have used!</a></h2>
+            <h3><a href="https://wordpress.org/support/topic/the-best-event-plugin-system-we-have-used/">The best event
+                    plugin system we have used!</a></h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
@@ -150,8 +150,8 @@
     <hr/>
     <div class="feature-section col three-col about-updates">
         <div class="col-1">
-            <h2><a href="https://wordpress.org/support/topic/using-ee-for-duluth-folk-school-registration/">Using EE for
-                    Duluth Folk School Registration</a></h2>
+            <h3><a href="https://wordpress.org/support/topic/using-ee-for-duluth-folk-school-registration/">Using EE for
+                    Duluth Folk School Registration</a></h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
@@ -187,7 +187,7 @@
             </ul>
         </div>
         <div class="col-2">
-            <h2><a href="https://wordpress.org/support/topic/excellent-event-plugin-3/">Excellent Event Plugin</a></h2>
+            <h3><a href="https://wordpress.org/support/topic/excellent-event-plugin-3/">Excellent Event Plugin</a></h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
@@ -223,8 +223,8 @@
             </ul>
         </div>
         <div class="col-3 last-feature">
-            <h2><a href="https://wordpress.org/support/topic/event-espresso-to-the-max/">Event Espresso to the MAX!</a>
-            </h2>
+            <h3><a href="https://wordpress.org/support/topic/event-espresso-to-the-max/">Event Espresso to the MAX!</a>
+            </h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
@@ -270,8 +270,8 @@
     <hr/>
     <div class="feature-section col three-col about-updates">
         <div class="col-1">
-            <h2><a href="https://wordpress.org/support/topic/a-comprehensive-event-management-plugin/">A comprehensive
-                    Event management plugin</a></h2>
+            <h3><a href="https://wordpress.org/support/topic/a-comprehensive-event-management-plugin/">A comprehensive
+                    Event management plugin</a></h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
@@ -304,8 +304,8 @@
         </div>
 
         <div class="col-2">
-            <h2><a href="https://wordpress.org/support/topic/event-espresso-does-it-all/">Event Espresso Does It All</a>
-            </h2>
+            <h3><a href="https://wordpress.org/support/topic/event-espresso-does-it-all/">Event Espresso Does It All</a>
+            </h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
@@ -336,8 +336,8 @@
         </div>
 
         <div class="col-3 last-feature">
-            <h2><a href="https://wordpress.org/support/topic/there-is-only-1-event-registration-plugin/">There is only 1
-                    Event Registration Plugin!</a></h2>
+            <h3><a href="https://wordpress.org/support/topic/there-is-only-1-event-registration-plugin/">There is only 1
+                    Event Registration Plugin!</a></h3>
             <div class="wporg-ratings" title="5 out of 5 stars" style="color:#ffb900;"><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
                     class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span
