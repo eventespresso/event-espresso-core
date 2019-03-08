@@ -158,19 +158,17 @@ class FilesDataHandler
     protected function fixFilesDataArray($files_data)
     {
         $sane_files_array = [];
-        foreach ($files_data as $top_key => $top_key_value) {
-            foreach ($top_key_value as $lower_key => $lower_key_value) {
-                foreach ($lower_key_value as $lowest_key => $lowest_key_value) {
-                    $next_data = [
-                        $top_key => [
-                            $lowest_key => $this->organizeFilesData($lowest_key_value, $lower_key, $lowest_key)
-                        ]
-                    ];
-                    $sane_files_array = array_merge_recursive(
-                        $sane_files_array,
-                        $next_data
-                    );
+        foreach ($files_data as $top_level_name => $top_level_children) {
+            $sub_array = [];
+            $sane_files_array[$top_level_name] = [];
+            foreach ($top_level_children as $file_data_part => $second_level_children) {
+                foreach ($second_level_children as $next_level_name => $sub_values) {
+                    $sub_array[$next_level_name] = $this->organizeFilesData($sub_values, $file_data_part);
                 }
+                $sane_files_array[$top_level_name] = array_replace_recursive(
+                    $sub_array,
+                    $sane_files_array[$top_level_name]
+                );
             }
         }
         return $sane_files_array;
@@ -179,18 +177,24 @@ class FilesDataHandler
     /**
      * Recursively explores the array until it finds a leaf node, and tacks `$type` as a final index in front of it.
      * @since $VID:$
-     * @param $data either 'name', 'tmp_name', 'size', or 'error'
-     * @param $type
-     * @return array
+     * @param $data array|string
+     * @param $type 'name', 'tmp_name', 'size', or 'error'
+     * @param $name string
+     * @return array|string
      */
     protected function organizeFilesData($data, $type)
     {
+        if(! is_array($data)) {
+            return [
+                $type => $data
+            ];
+        }
         $organized_data = [];
-        foreach ($data as $key => $val) {
-            if (is_array($val)) {
-                $organized_data[ $key ] = $this->organizeFilesData($val, $type);
+        foreach ($data as $input_name_part => $sub_inputs_or_value) {
+            if (is_array($sub_inputs_or_value)) {
+                $organized_data[$input_name_part] = $this->organizeFilesData($sub_inputs_or_value, $type);
             } else {
-                $organized_data[ $key ][ $type ] = $val;
+                $organized_data[$input_name_part][$type] = $sub_inputs_or_value;
             }
         }
         return $organized_data;
@@ -220,15 +224,15 @@ class FilesDataHandler
             );
         }
         foreach ($organized_files as $key => $value) {
+            $this_input_name_parts = $name_parts_so_far;
             array_push(
-                $name_parts_so_far,
+                $this_input_name_parts,
                 $key
             );
             if (isset($value['name'], $value['tmp_name'], $value['size'])) {
-                $html_name = $this->inputNameFromParts($name_parts_so_far);
+                $html_name = $this->inputNameFromParts($this_input_name_parts);
                 $this->file_objects->add(
                     new FileSubmission(
-                        $html_name,
                         $value['name'],
                         $value['tmp_name'],
                         $value['size'],
@@ -237,7 +241,7 @@ class FilesDataHandler
                     $html_name
                 );
             } else {
-                $this->createFileObjects($value, $name_parts_so_far);
+                $this->createFileObjects($value, $this_input_name_parts);
             }
         }
     }
