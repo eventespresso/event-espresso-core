@@ -125,6 +125,64 @@ class FilesDataHandlerTest extends PHPUnit_Framework_TestCase
     /**
      * @since $VID:$
      */
+    public function testGetOrganizedFiles2dAnd3dArray()
+    {
+        $request = new Request(
+            [],
+            [],
+            [],
+            [],
+            [
+                'my' => [
+                    'name' => [
+                        'file' => [
+                            'input1' => 'funnycatphoto.gif',
+                            'input2' => 'registrations.csv',
+                            'input3' => 'piratedvideo.mov'
+                        ],
+                        'input4' => 'unexpected.gif'
+                    ],
+                    'size' => [
+                        'file' => [
+                            'input1' => 123,
+                            'input2' => 456,
+                            'input3' => 1234567890
+                        ],
+                        'input4' => 123,
+                    ],
+                    'tmp_name' => [
+                        'file' => [
+                            'input1' => 'fewgrgfew.gif',
+                            'input2' => 'gbegr/rgrer.csv',
+                            'input3' => 'grgt/wef/wegr.mov'
+                        ],
+                        'input4' => 'ougif/iyv.gif'
+                    ],
+                    'error' => [
+                        'file' => [
+                            'input1' => UPLOAD_ERR_OK,
+                            'input2' => UPLOAD_ERR_OK,
+                            'input3' => UPLOAD_ERR_INI_SIZE
+                        ],
+                        'input4'=> UPLOAD_ERR_OK
+                    ]
+                ]
+            ]
+        );
+        $files_data_handler = new FilesDataHandler($request);
+        $this->assertInstanceOf(
+            'EventEspresso\core\services\request\files\FileSubmission',
+            $files_data_handler->getFileObject('my[file][input1]')
+        );
+        $this->assertInstanceOf(
+            'EventEspresso\core\services\request\files\FileSubmission',
+            $files_data_handler->getFileObject('my[input4]')
+        );
+    }
+
+    /**
+     * @since $VID:$
+     */
     public function testGetOrganizedFiles4dArray()
     {
         $request = new Request(
