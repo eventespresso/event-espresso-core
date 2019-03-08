@@ -7,9 +7,9 @@ import { isModelEntityFactoryOfModel } from '@eventespresso/validators';
 /**
  * Internal Imports
  */
-import { fetch } from '../../base-controls';
-import { getFactoryByModel } from '../../base-resolvers';
+import { fetch, resolveSelect } from '../../base-controls';
 import { receiveEntityRecords } from './../actions';
+import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
 
 /**
  * A resolver for getting an entity for the given model name and entity id.
@@ -23,7 +23,11 @@ export function* getEntityById( modelName, entityId ) {
 	const entity = yield fetch( {
 		path: getEndpoint( modelName ) + '/' + entityId,
 	} );
-	const factory = yield getFactoryByModel( modelName );
+	const factory = yield resolveSelect(
+		SCHEMA_REDUCER_KEY,
+		'getFactoryForModel',
+		modelName
+	);
 	if ( ! isModelEntityFactoryOfModel( factory, modelName ) ) {
 		return null;
 	}

@@ -1,15 +1,20 @@
 /**
  * External imports
  */
-import { isGenerator } from '@eventespresso/validators';
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import { AuthedDateTimeResponse } from '@test/fixtures';
 
 /**
  * Internal imports
  */
-import { fetch, dispatch, select } from '../../../base-controls';
-import { getRelatedEntities } from '../relations';
+import {
+	fetch,
+	dispatch,
+	select,
+	resolveSelect,
+	resolveGetEntityByIdForIds,
+} from '../../../base-controls';
+import { getRelatedEntities, getRelatedEntitiesForIds } from '../relations';
 import { dateTimeFactory, EventEntities } from '../../../test/fixtures/base';
 import { receiveRelatedEntities } from '../../actions';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../../constants';
@@ -80,13 +85,20 @@ describe( getRelatedEntities.name + '()', () => {
 		expect( value ).toEqual( [] );
 		expect( done ).toBe( true );
 	} );
-	it( 'yields a generator for getting the factory for the relation', () => {
+	it( 'yields a control action for getting the factory for the ' +
+		'relation', () => {
 		reset();
 		fulfillment.next();
 		fulfillment.next();
 		fulfillment.next();
 		const { value } = fulfillment.next( [ AuthedDateTimeResponse ] );
-		expect( isGenerator( value ) ).toBe( true );
+		expect( value ).toEqual(
+			resolveSelect(
+				SCHEMA_REDUCER_KEY,
+				'getFactoryForModel',
+				'datetime'
+			)
+		);
 	} );
 	it( 'yields an empty array if the value retrieved is not a factory for ' +
 		'given relation', () => {
@@ -124,18 +136,182 @@ describe( getRelatedEntities.name + '()', () => {
 			)
 		);
 	} );
-	it( 'yields generator for resolving related entities', () => {
+	it( 'yields control action for resolving related entities', () => {
 		const { value } = fulfillment.next();
-		expect( isGenerator( value ) ).toBe( true );
+		expect( value.type ).toBe( 'RESOLVE_GET_RELATED_ENTITIES' );
+		expect( value.relationIds ).toEqual( [ AuthedDateTimeResponse.DTT_ID ] );
 	} );
-	it( 'yields generator for resolving get entity by id for ids', () => {
+	it( 'yields control action for resolving get entity by id for ids', () => {
 		const { value } = fulfillment.next();
-		expect( isGenerator( value ) ).toBe( true );
+		expect( value ).toEqual(
+			resolveGetEntityByIdForIds(
+				'datetime',
+				[ AuthedDateTimeResponse.DTT_ID ]
+			)
+		);
 	} );
 	it( 'returns the related model entity instances', () => {
 		const { value, done } = fulfillment.next();
 		expect( value ).toHaveLength( 1 );
 		expect( value[ 0 ].id ).toEqual( AuthedDateTimeResponse.DTT_ID );
 		expect( done ).toBe( true );
+	} );
+} );
+
+describe( 'getRelatedEntitiesForIds()', () => {
+	let fulfillment;
+	const simulatedDatetimeTicketResponse = [
+		{
+			DTT_ID: 50,
+			TKT_ID: 10,
+			datetimes: [
+				AuthedDateTimeResponse,
+			],
+		},
+		{
+			DTT_ID: 50,
+			TKT_ID: 20,
+			datetimes: [
+				AuthedDateTimeResponse,
+			],
+		},
+	];
+	const reset = (
+		modelName = 'ticket',
+		entityIds = [ 10, 20 ],
+		relationName = 'datetimes',
+	) => fulfillment = getRelatedEntitiesForIds(
+		modelName,
+		entityIds,
+		relationName
+	);
+	it( 'yields resolveSelect for hasJoinTableRelation selector', () => {
+		reset();
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			resolveSelect(
+				SCHEMA_REDUCER_KEY,
+				'hasJoinTableRelation',
+				'ticket',
+				'datetimes'
+			)
+		);
+	} );
+	it( 'yields resolveSelect control for getRelationSchema', () => {
+		const { value } = fulfillment.next( true );
+		expect( value ).toEqual(
+			resolveSelect(
+				SCHEMA_REDUCER_KEY,
+				'getRelationSchema',
+				'ticket',
+				'datetimes'
+			)
+		);
+	} );
+	it( 'returns empty array if relationSchema is not available', () => {
+		const { value, done } = fulfillment.next( null );
+		expect( value ).toEqual( [] );
+		expect( done ).toBe( true );
+	} );
+	it( 'yields resolveSelect control for getFactoryForModel when ' +
+		'relationSchema available', () => {
+		reset();
+		fulfillment.next();
+		fulfillment.next( true );
+		const { value } = fulfillment.next(
+			{ joining_model_name: 'Datetime_Ticket' }
+		);
+		expect( value ).toEqual(
+			resolveSelect(
+				SCHEMA_REDUCER_KEY,
+				'getFactoryForModel',
+				'datetime'
+			)
+		);
+	} );
+	describe( 'when relation has join table', () => {
+		it( 'yields expected fetch control when relationSchema is available', () => {
+			reset();
+			fulfillment.next();
+			fulfillment.next( true );
+			fulfillment.next( { joining_model_name: 'Datetime_Ticket' } );
+			const { value } = fulfillment.next( dateTimeFactory );
+			expect( value ).toEqual(
+				fetch(
+					{
+						path: '/ee/v4.8.36/datetime_tickets/?where' +
+							'[TKT_ID][IN]=10,20&include=Datetime.*',
+					}
+				)
+			);
+		} );
+		describe( 'yields expected action for each item in the response but ' +
+			'only once for each same relation record', () => {
+			it( 'yields first control action for dispatching ' +
+				'resolveRelationRecordForRelation', () => {
+				const { value } = fulfillment.next( simulatedDatetimeTicketResponse );
+				expect( value.type ).toBe( 'DISPATCH' );
+				expect( value.reducerKey ).toBe( CORE_REDUCER_KEY );
+				expect( value.dispatchName ).toBe( 'resolveRelationRecordForRelation' );
+				expect( value.args[ 0 ].modelName ).toBe( 'datetime' );
+				expect( value.args[ 1 ] ).toBe( 'ticket' );
+				expect( value.args[ 2 ] ).toBe( 20 );
+			} );
+			it( 'yields second control action for dispatching ' +
+				'resolveRelationRecordForRelation', () => {
+				const { value } = fulfillment.next();
+				expect( value.type ).toBe( 'DISPATCH' );
+				expect( value.reducerKey ).toBe( CORE_REDUCER_KEY );
+				expect( value.dispatchName ).toBe( 'resolveRelationRecordForRelation' );
+				expect( value.args[ 0 ].modelName ).toBe( 'datetime' );
+				expect( value.args[ 1 ] ).toBe( 'ticket' );
+				expect( value.args[ 2 ] ).toBe( 10 );
+			} );
+		} );
+	} );
+	describe( 'when relation does not have join table', () => {
+		it( 'yields expected fetch control when relationSchema is available', () => {
+			reset(
+				'event',
+				[ 10, 20 ],
+				'datetimes'
+			);
+			fulfillment.next();
+			fulfillment.next( false );
+			fulfillment.next( { joining_model_name: 'Datetime_Ticket' } );
+			const { value } = fulfillment.next( dateTimeFactory );
+			expect( value ).toEqual(
+				fetch(
+					{
+						path: '/ee/v4.8.36/datetimes/?where' +
+							'[EVT_ID][IN]=10,20',
+					}
+				)
+			);
+		} );
+		describe( 'yields expected action for each item in the response but ' +
+			'only once for each same relation record', () => {
+			// this test will only yield one action because the test deliberately
+			// sends the same DateTimeResponse (which will have the same event
+			// ids each time through the loop)
+			it( 'yields first control action for dispatching ' +
+				'resolveRelationRecordForRelation', () => {
+				const { value } = fulfillment.next( [
+					AuthedDateTimeResponse,
+					AuthedDateTimeResponse,
+				] );
+				expect( value.type ).toBe( 'DISPATCH' );
+				expect( value.reducerKey ).toBe( CORE_REDUCER_KEY );
+				expect( value.dispatchName ).toBe( 'resolveRelationRecordForRelation' );
+				expect( value.args[ 0 ].modelName ).toBe( 'datetime' );
+				expect( value.args[ 1 ] ).toBe( 'event' );
+				expect( value.args[ 2 ] ).toBe( 523 );
+			} );
+			it( 'yields no more actions', () => {
+				const { value, done } = fulfillment.next();
+				expect( value ).toBeUndefined();
+				expect( done ).toBe( true );
+			} );
+		} );
 	} );
 } );

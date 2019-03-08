@@ -407,6 +407,27 @@ describe( 'Money Value Object', () => {
 				' string output', () => {
 				expect( testMoney + '' ).toBe( '$1.25' );
 			} );
+			it( 'returns expected formatted string for currency ' +
+				'settings', () => {
+				const currency = new Currency(
+					{
+						code: 'dolla',
+						sign: '🥇',
+						signB4: false,
+					}
+				);
+				const money = new Money( testDecimal, currency );
+				expect( money + '' ).toBe( '1.25🥇' );
+			} );
+			it( 'returns correct decimal places when set to 0', () => {
+				const currency = new Currency( {
+					code: 'dolla',
+					sign: '$',
+					decimalPlaces: 0,
+				} );
+				const money = new Money( testDecimal, currency );
+				expect( money + '' ).toBe( '$1' );
+			} );
 		} );
 		describe( 'toJSON()', () => {
 			it( 'returns the expected serialized JSON string representing the' +

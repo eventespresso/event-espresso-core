@@ -11,7 +11,7 @@ import * as selectors from './selectors';
 import * as actions from './actions';
 import * as resolvers from './resolvers';
 import reducer from './reducers';
-import controls from './controls';
+import controls from '../base-controls';
 import { createEntitySelectors, createEntityResolvers } from './model';
 
 /**
