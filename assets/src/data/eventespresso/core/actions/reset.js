@@ -7,6 +7,7 @@ import {
 } from '@eventespresso/model';
 import { some, keys } from 'lodash';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+import { select as dataSelect } from '@wordpress/data';
 
 /**
  * Internal imports
@@ -33,6 +34,15 @@ export function* resetEntireState() {
 		'getCachedResolvers',
 		REDUCER_KEY
 	);
+
+	if ( invalidateActionsAvailable() ) {
+		yield dispatch(
+			'core/data',
+			'invalidateResolutionForStore',
+			REDUCER_KEY,
+		);
+		return;
+	}
 
 	// dispatch invalidation of the cached resolvers
 	for ( const selector in resolvers ) {
@@ -217,3 +227,12 @@ export function* resetModelSpecificForSelector( selectorName, ...args ) {
 		args,
 	);
 }
+
+/**
+ * Helper for determining if actions are available in the `core/data` package.
+ *
+ * @return {boolean}  True means additional invalidation actions available.
+ */
+const invalidateActionsAvailable = () => {
+	return dataSelect( 'core/data' ).invalidateResolutionForStore !== undefined;
+};
