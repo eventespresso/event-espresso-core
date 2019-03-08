@@ -125,7 +125,7 @@ const modelNameInSelector = ( selectorName, modelName ) => {
 const modelNameInArgs = ( args, modelName ) => {
 	const singularName = singularModelName( modelName );
 	const pluralName = pluralModelName( modelName );
-	const hasModelName =  args.indexOf( singularName ) > -1 ||
+	const hasModelName = args.indexOf( singularName ) > -1 ||
 		args.indexOf( pluralName ) > -1;
 	if ( hasModelName ) {
 		return true;
@@ -140,7 +140,6 @@ const modelNameInArgs = ( args, modelName ) => {
 				isModelEntityOfModel( arg, pluralName );
 		}
 	);
-
 };
 
 /**
@@ -161,7 +160,7 @@ const selectorIsModelSpecific = (
 	selectorsToInvalidate = selectorsToInvalidate === null ?
 		keys( modelSpecificSelectors ) :
 		selectorsToInvalidate;
-	return selectorsToInvalidate.indexOf( selectorName ) > -1
+	return selectorsToInvalidate.indexOf( selectorName ) > -1;
 };
 
 /**
