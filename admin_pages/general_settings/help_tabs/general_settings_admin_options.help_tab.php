@@ -12,7 +12,7 @@
 <?php esc_html_e('This option will save all Event Espresso registration form data, and debugging information to a file in the /wp-content/uploads/espresso/logs directory on your server. This will occur each time a page is accessed on your site until this option is turned off.', 'event_espresso'); ?>
 <br/>
 <?php printf(
-    __('Note that if you are accessing your filesystem over FTP or SSH, and logging writes to the filesystem on every request, you should put your credentials in your wp-config.php file, as described %1$shere.%2$s', 'event_espresso'),
+    esc_html__('Note that if you are accessing your filesystem over FTP or SSH, and logging writes to the filesystem on every request, you should put your credentials in your wp-config.php file, as described %1$shere.%2$s', 'event_espresso'),
     '<a href="https://codex.wordpress.org/Editing_wp-config.php#WordPress_Upgrade_Constants" target="_blank" rel="noopener noreferrer">',
     '</a>'
 ); ?>
@@ -41,7 +41,14 @@ define( 'EELOGGING_KEY', 'YOUR REMOTE KEY' );</pre>
 </li>
 <li>
 <strong><?php esc_html_e('Event Espresso Affiliate ID', 'event_espresso'); ?></strong><br />
-<?php esc_html_e(' You can also monetize this link by signing up to our <a href="http://eventespresso.com/affiliates/">affiliate program</a> and adding in your affiliate ID here.', 'event_espresso'); ?>
+<?php printf(
+	esc_html__(
+		'You can also monetize this link by signing up to our %1$saffiliate program%2$s and adding in your affiliate ID here.',
+		'event_espresso'
+	),
+	'<a href="https://eventespresso.com/affiliates/">',
+	'</a>'
+); ?>
 </li>
 </ul>
 <p><strong><?php esc_html_e('Help Tour Global Activation', 'event_espresso'); ?></strong></p>
@@ -50,7 +57,7 @@ define( 'EELOGGING_KEY', 'YOUR REMOTE KEY' );</pre>
 </p>
 <p>
 <strong><?php esc_html_e('Recommendations', 'event_espresso'); ?></strong>
-<?php esc_html_e('Want to see a tour of this screen? Click on the Admin Options Tour button which appears on the right side of the page. <br />To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.', 'event_espresso'); ?>
+<?php esc_html_e('Want to see a tour of this screen? Click on the Admin Options Tour button which appears on the right side of the page. To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.', 'event_espresso'); ?>
 </p>
 <p>
 <strong><?php esc_html_e('Screen Options', 'event_espresso'); ?></strong><br />
