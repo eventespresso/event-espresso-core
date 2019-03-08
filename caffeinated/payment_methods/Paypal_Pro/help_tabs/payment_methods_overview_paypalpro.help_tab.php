@@ -5,7 +5,7 @@
 <p>
     <?php printf(
         esc_html__('See %1$shere%2$s for list of currencies supported by Paypal Pro.', 'event_espresso'),
-        "<a href='https://www.paypal.com/multicurrency'  target='_blank' rel='noopener noreferrer'>",
+        "<a href='https://www.paypal.com/multicurrency' target='_blank' rel='noopener noreferrer'>",
         "</a>"
     ); ?>
 </p>
@@ -17,23 +17,35 @@
     </li>
     <li>
         <strong><?php esc_html_e('PayPal API Username', 'event_espresso'); ?></strong><br/>
-        <?php esc_html_e(
-            'Enter your API Username for PayPal. Learn how to find your <a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">API Username</a>.',
-            'event_espresso'
+        <?php printf(
+            esc_html__(
+                'Enter your API Username for PayPal. Learn how to find your %1$sAPI Username%2$s.',
+                'event_espresso'
+            ),
+            '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
+            '</a>'
         ); ?>
     </li>
     <li>
         <strong><?php esc_html_e('PayPal API Password', 'event_espresso'); ?></strong><br/>
-        <?php esc_html_e(
-            'Enter your API Password for PayPal. Learn how to find your <a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">API Password</a>.',
-            'event_espresso'
+        <?php printf(
+            esc_html__(
+                'Enter your API Password for PayPal. Learn how to find your %1$sAPI Password%2$s.',
+                'event_espresso'
+            ),
+            '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
+            '</a>'
         ); ?>
     </li>
     <li>
         <strong><?php esc_html_e('PayPal API Signature', 'event_espresso'); ?></strong><br/>
-        <?php esc_html_e(
-            'Enter your API Signature for PayPal. Learn how to find your <a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">API Signature</a>.',
-            'event_espresso'
+        <?php printf(
+            esc_html__(
+                'Enter your API Signature for PayPal. Learn how to find your %1$sAPI Signature%2$s.',
+                'event_espresso'
+            ),
+            '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
+            '</a>'
         ); ?>
     </li>
     <li>
