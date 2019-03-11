@@ -92,6 +92,7 @@ class DatesAndTicketsMetabox extends Component {
 												<div>
 													<EditorDatesList
 														entities={ datetimes }
+														allDates={ allDates }
 														allTickets={ allTickets }
 														eventDateTicketMap={ eventDateTicketMap }
 														// onUpdate={ updateDatesAndTickets }
