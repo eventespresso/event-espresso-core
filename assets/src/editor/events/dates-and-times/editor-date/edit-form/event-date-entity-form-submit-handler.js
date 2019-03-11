@@ -34,29 +34,15 @@ export const eventDateEntityFormSubmitHandler = (
 				' invalid Date Entity was supplied. ', 'event_espresso' )
 		);
 	}
-	const id = dateEntity.id;
-	const prefix = 'ee-event-date';
-	dateEntity.name = formData[ `${ prefix }-name-${ id }` ] || '';
-	dateEntity.description = formData[ `${ prefix }-description-${ id }` ] ||
-		'';
-	dateEntity.start = new DateTime(
-		formData[ `${ prefix }-start-${ id }` ] || ''
-	);
-	dateEntity.end = new DateTime(
-		formData[ `${ prefix }-end-${ id }` ] || ''
-	);
-	dateEntity.regLimit = parseInt(
-		formData[ `${ prefix }-reg-limit-${ id }` ] || -1
-	);
-	dateEntity.isPrimary = ! ! formData[ `${ prefix }-is-primary-${ id }` ] ||
-		false;
-	dateEntity.order = parseInt(
-		formData[ `${ prefix }-order-${ id }` ] || 0
-	);
-	dateEntity.parent = parseInt(
-		formData[ `${ prefix }-parent-${ id }` ] || 0
-	);
-	dateEntity.deleted = ! ! formData[ `${ prefix }-deleted-${ id }` ] ||
-		false;
+	const prefix = `ee-event-date-${ dateEntity.id }`;
+	dateEntity.name = formData[ `${ prefix }-name` ] || '';
+	dateEntity.description = formData[ `${ prefix }-description` ] || '';
+	dateEntity.start = new DateTime( formData[ `${ prefix }-start` ] || '' );
+	dateEntity.end = new DateTime( formData[ `${ prefix }-end` ] || '' );
+	dateEntity.regLimit = parseInt( formData[ `${ prefix }-reg-limit` ] || -1 );
+	dateEntity.isPrimary = !! formData[ `${ prefix }-is-primary` ] || false;
+	dateEntity.order = parseInt( formData[ `${ prefix }-order` ] || 0 );
+	dateEntity.parent = parseInt( formData[ `${ prefix }-parent` ] || 0 );
+	dateEntity.deleted = !! formData[ `${ prefix }-deleted` ] || false;
 	return updateEventDate( eventEntity, dateEntity );
 };

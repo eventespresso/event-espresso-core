@@ -6,7 +6,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * returns an object mapping
  * Event Date Entity properties
- * to form inputs
+ * to form prefixs
  *
  * @function
  * @param {Object} eventDate  EE Date object
@@ -16,26 +16,25 @@ export const eventDateEntityFormSchema = ( eventDate ) => {
 	if ( ! isModelEntityOfModel( eventDate, 'datetime' ) ) {
 		return {};
 	}
-	const id = eventDate.id;
-	const prefix = 'ee-event-date';
+	const prefix = `ee-event-date-${ eventDate.id }`;
 	return {
-		[ `${ prefix }-id-${ id }` ]: id,
-		[ `${ prefix }-event-id-${ id }` ]: eventDate.EVT_ID,
-		[ `${ prefix }-name-${ id }` ]: eventDate.name || '',
-		[ `${ prefix }-description-${ id }` ]: eventDate.description || '',
-		[ `${ prefix }-start-${ id }` ]: eventDate.start.toISO(),
-		[ `${ prefix }-end-${ id }` ]: eventDate.end.toISO(),
-		[ `${ prefix }-reg-limit-${ id }` ]: stripInf( eventDate.regLimit ),
-		[ `${ prefix }-sold-${ id }` ]: eventDate.sold || 0,
-		[ `${ prefix }-reserved-${ id }` ]: eventDate.reserved || 0,
-		[ `${ prefix }-is-primary-${ id }` ]: eventDate.isPrimary || false,
-		[ `${ prefix }-order-${ id }` ]: eventDate.order || 0,
-		[ `${ prefix }-parent-${ id }` ]: eventDate.parent || 0,
-		[ `${ prefix }-deleted-${ id }` ]: eventDate.deleted || false,
+		[ `${ prefix }-id` ]: eventDate.id,
+		[ `${ prefix }-event-id` ]: eventDate.EVT_ID,
+		[ `${ prefix }-name` ]: eventDate.name || '',
+		[ `${ prefix }-description` ]: eventDate.description || '',
+		[ `${ prefix }-start` ]: eventDate.start.toISO(),
+		[ `${ prefix }-end` ]: eventDate.end.toISO(),
+		[ `${ prefix }-reg-limit` ]: stripInfinity( eventDate.regLimit ),
+		[ `${ prefix }-sold` ]: eventDate.sold || 0,
+		[ `${ prefix }-reserved` ]: eventDate.reserved || 0,
+		[ `${ prefix }-is-primary` ]: eventDate.isPrimary || false,
+		[ `${ prefix }-order` ]: eventDate.order || 0,
+		[ `${ prefix }-parent` ]: eventDate.parent || 0,
+		[ `${ prefix }-deleted` ]: eventDate.deleted || false,
 	};
 };
 
-const stripInf = ( number ) => {
+const stripInfinity = ( number ) => {
 	return number !== 'INF' && number !== Infinity && number > 0 ?
 		number :
 		null;

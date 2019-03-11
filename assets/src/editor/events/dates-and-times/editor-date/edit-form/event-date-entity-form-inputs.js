@@ -32,17 +32,16 @@ export const eventDateEntityFormInputs = (
 		return inputs;
 	}
 	const values = currentValues;
-	const prefix = 'ee-event-date';
-	const dateId = eventDate.id;
-	if ( parseInt( dateId ) && indexOf( exclude, 'DTT_ID' ) < 0 ) {
+	const prefix = `ee-event-date-${ eventDate.id }`;
+	if ( parseInt( eventDate.id ) && indexOf( exclude, 'DTT_ID' ) < 0 ) {
 		inputs.push(
 			<FormInput
 				key="id"
 				type="number"
-				name={ `${ prefix }-id-${ dateId }` }
-				initialValue={ values[ `${ prefix }-id-${ dateId }` ] }
+				name={ `${ prefix }-id` }
+				initialValue={ values[ `${ prefix }-id` ] }
 				label={ __( 'Date ID', 'event_espresso' ) }
-				htmlId={ `${ prefix }-id-${ dateId }` }
+				htmlId={ `${ prefix }-id` }
 				inputWidth={ 3 }
 				required
 				min={ 0 }
@@ -55,10 +54,10 @@ export const eventDateEntityFormInputs = (
 			<FormInput
 				key="event"
 				type="number"
-				name={ `${ prefix }-event-id-${ dateId }` }
-				initialValue={ values[ `${ prefix }-event-id-${ dateId }` ] || 0 }
+				name={ `${ prefix }-event-id` }
+				initialValue={ values[ `${ prefix }-event-id` ] || 0 }
 				label={ __( 'Event ID', 'event_espresso' ) }
-				htmlId={ `${ prefix }-event-id-${ dateId }` }
+				htmlId={ `${ prefix }-event-id` }
 				inputWidth={ 3 }
 				required
 				min={ 0 }
@@ -71,10 +70,10 @@ export const eventDateEntityFormInputs = (
 			<FormInput
 				key="name"
 				type="text"
-				name={ `${ prefix }-name-${ dateId }` }
-				initialValue={ values[ `${ prefix }-name-${ dateId }` ] || '' }
+				name={ `${ prefix }-name` }
+				initialValue={ values[ `${ prefix }-name` ] || '' }
 				label={ __( 'Date Label', 'event_espresso' ) }
-				htmlId={ `${ prefix }-name-${ dateId }` }
+				htmlId={ `${ prefix }-name` }
 				minLength={ 3 }
 				required
 			/>,
@@ -85,10 +84,10 @@ export const eventDateEntityFormInputs = (
 			<FormInput
 				key="description"
 				type="textarea"
-				name={ `${ prefix }-description-${ dateId }` }
-				initialValue={ values[ `${ prefix }-description-${ dateId }` ] || '' }
+				name={ `${ prefix }-description` }
+				initialValue={ values[ `${ prefix }-description` ] || '' }
 				label={ __( 'Description', 'event_espresso' ) }
-				htmlId={ `${ prefix }-description-${ dateId }` }
+				htmlId={ `${ prefix }-description` }
 			/>,
 		);
 	}
@@ -97,10 +96,10 @@ export const eventDateEntityFormInputs = (
 			<FormInput
 				key="start"
 				type="datetime-local"
-				name={ `${ prefix }-start-${ dateId }` }
-				initialValue={ values[ `${ prefix }-start-${ dateId }` ] }
+				name={ `${ prefix }-start` }
+				initialValue={ values[ `${ prefix }-start` ] }
 				label={ __( 'Start Time', 'event_espresso' ) }
-				htmlId={ `${ prefix }-start-${ dateId }` }
+				htmlId={ `${ prefix }-start` }
 				validations={ validations.required }
 				inputWidth={ 6 }
 				required
@@ -112,10 +111,10 @@ export const eventDateEntityFormInputs = (
 			<FormInput
 				key="end"
 				type="datetime-local"
-				name={ `${ prefix }-end-${ dateId }` }
-				initialValue={ values[ `${ prefix }-end-${ dateId }` ] }
+				name={ `${ prefix }-end` }
+				initialValue={ values[ `${ prefix }-end` ] }
 				label={ __( 'End Time', 'event_espresso' ) }
-				htmlId={ `${ prefix }-end-${ dateId }` }
+				htmlId={ `${ prefix }-end` }
 				validations={ validations.required }
 				inputWidth={ 6 }
 				required
@@ -127,10 +126,10 @@ export const eventDateEntityFormInputs = (
 			<FormInput
 				key="regLimit"
 				type="number"
-				name={ `${ prefix }-reg-limit-${ dateId }` }
-				initialValue={ values[ `${ prefix }-reg-limit-${ dateId }` ] || Infinity }
+				name={ `${ prefix }-reg-limit` }
+				initialValue={ values[ `${ prefix }-reg-limit` ] || Infinity }
 				label={ __( 'Capacity', 'event_espresso' ) }
-				htmlId={ `${ prefix }-reg-limit-${ dateId }` }
+				htmlId={ `${ prefix }-reg-limit` }
 				helpText={ __(
 					'The maximum number of registrants' +
 					' that can attend the event at this' +
@@ -147,10 +146,10 @@ export const eventDateEntityFormInputs = (
 			<FormInput
 				key="sold"
 				type="number"
-				name={ `${ prefix }-sold-${ dateId }` }
-				initialValue={ values[ `${ prefix }-sold-${ dateId }` ] || 0 }
+				name={ `${ prefix }-sold` }
+				initialValue={ values[ `${ prefix }-sold` ] || 0 }
 				label={ __( 'Sold Count', 'event_espresso' ) }
-				htmlId={ `${ prefix }-sold-${ dateId }` }
+				htmlId={ `${ prefix }-sold` }
 				helpText={ __(
 					'Quantity of tickets that have been' +
 					' sold for this Date',
@@ -166,10 +165,10 @@ export const eventDateEntityFormInputs = (
 			<FormInput
 				key="reserved"
 				type="number"
-				name={ `${ prefix }-reserved-${ dateId }` }
-				initialValue={ values[ `${ prefix }-reserved-${ dateId }` ] || 0 }
+				name={ `${ prefix }-reserved` }
+				initialValue={ values[ `${ prefix }-reserved` ] || 0 }
 				label={ __( 'Reserved Count', 'event_espresso' ) }
-				htmlId={ `${ prefix }-reserved-${ dateId }` }
+				htmlId={ `${ prefix }-reserved` }
 				helpText={ __(
 					'Quantity of tickets reserved,' +
 					' but not yet fully purchased',
@@ -185,10 +184,10 @@ export const eventDateEntityFormInputs = (
 			<FormInput
 				key="isPrimary"
 				type="toggle"
-				name={ `${ prefix }-is-primary-${ dateId }` }
-				initialValue={ values[ `${ prefix }-is-primary-${ dateId }` ] || false }
+				name={ `${ prefix }-is-primary` }
+				initialValue={ values[ `${ prefix }-is-primary` ] || false }
 				label={ __( 'Is Primary Date', 'event_espresso' ) }
-				htmlId={ `${ prefix }-is-primary-${ dateId }` }
+				htmlId={ `${ prefix }-is-primary` }
 				helpTextIfChecked={ __(
 					'this is the primary date for this event',
 					'event_espresso',
@@ -206,10 +205,10 @@ export const eventDateEntityFormInputs = (
 			<FormInput
 				key="order"
 				type="number"
-				name={ `${ prefix }-order-${ dateId }` }
-				initialValue={ values[ `${ prefix }-order-${ dateId }` ] || 0 }
+				name={ `${ prefix }-order` }
+				initialValue={ values[ `${ prefix }-order` ] || 0 }
 				label={ __( 'Display Order', 'event_espresso' ) }
-				htmlId={ `${ prefix }-order-${ dateId }` }
+				htmlId={ `${ prefix }-order` }
 				inputWidth={ 2 }
 			/>,
 		);
@@ -219,10 +218,10 @@ export const eventDateEntityFormInputs = (
 			<FormInput
 				key="parent"
 				type="text"
-				name={ `${ prefix }-parent-${ dateId }` }
-				initialValue={ values[ `${ prefix }-parent-${ dateId }` ] || 0 }
+				name={ `${ prefix }-parent` }
+				initialValue={ values[ `${ prefix }-parent` ] || 0 }
 				label={ __( 'Parent Date', 'event_espresso' ) }
-				htmlId={ `${ prefix }-parent-${ dateId }` }
+				htmlId={ `${ prefix }-parent` }
 				inputWidth={ 2 }
 			/>,
 		);
@@ -232,10 +231,10 @@ export const eventDateEntityFormInputs = (
 			<FormInput
 				key="deleted"
 				type="toggle"
-				name={ `${ prefix }-deleted-${ dateId }` }
-				initialValue={ values[ `${ prefix }-deleted-${ dateId }` ] || false }
+				name={ `${ prefix }-deleted` }
+				initialValue={ values[ `${ prefix }-deleted` ] || false }
 				label={ __( 'Archived', 'event_espresso' ) }
-				htmlId={ `${ prefix }-deleted-${ dateId }` }
+				htmlId={ `${ prefix }-deleted` }
 				helpTextIfChecked={ __(
 					'this event date is archived',
 					'event_espresso',
