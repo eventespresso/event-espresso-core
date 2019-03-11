@@ -31,24 +31,24 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <h2><?php printf(__('Hello, %s:', 'event_espresso'), '[PRIMARY_REGISTRANT_FNAME] [PRIMARY_REGISTRANT_LNAME]'); ?></h2>
-                                    <p class="lead"><?php _e("We're just notifying you of a successful payment made for the following transaction and tickets:", 'event_espresso'); ?></p>
-                                    <h3><?php _e('Payment Details:', 'event_espresso'); ?></h3>
+                                    <h2><?php printf(esc_html__('Hello, %s:', 'event_espresso'), '[PRIMARY_REGISTRANT_FNAME] [PRIMARY_REGISTRANT_LNAME]'); ?></h2>
+                                    <p class="lead"><?php esc_html_e("We're just notifying you of a successful payment made for the following transaction and tickets:", 'event_espresso'); ?></p>
+                                    <h3><?php esc_html_e('Payment Details:', 'event_espresso'); ?></h3>
                                     <ul>
                                         <li>
-                                            <strong><?php _e('Payment Status:', 'event_espresso'); ?></strong> [PAYMENT_STATUS]
+                                            <strong><?php esc_html_e('Payment Status:', 'event_espresso'); ?></strong> [PAYMENT_STATUS]
                                         </li>
                                         <li>
-                                            <strong><?php _e('Transaction ID:', 'event_espresso'); ?></strong> [TXN_ID]
+                                            <strong><?php esc_html_e('Transaction ID:', 'event_espresso'); ?></strong> [TXN_ID]
                                         </li>
                                         <li>
-                                            <strong><?php _e('Total Cost:', 'event_espresso'); ?></strong> [TOTAL_COST]
+                                            <strong><?php esc_html_e('Total Cost:', 'event_espresso'); ?></strong> [TOTAL_COST]
                                         </li>
                                         <li>
-                                            <strong><?php _e('Payment Amount:', 'event_espresso'); ?></strong> [AMOUNT_PAID]
+                                            <strong><?php esc_html_e('Payment Amount:', 'event_espresso'); ?></strong> [AMOUNT_PAID]
                                         </li>
                                         <li>
-                                            <strong><?php _e('Amount Due:', 'event_espresso'); ?></strong> [TOTAL_OWING]
+                                            <strong><?php esc_html_e('Amount Due:', 'event_espresso'); ?></strong> [TOTAL_OWING]
                                         </li>
                                     </ul>
                                     [EVENT_LIST]
@@ -75,9 +75,9 @@
                                     <tbody>
                                         <tr>
                                             <td>
-                                                <h3><?php _e('Connect with Us:', 'event_espresso'); ?></h3>
-                                                <a class="soc-btn fb" href="[CO_FACEBOOK_URL]"><?php _e('Facebook', 'event_espresso'); ?></a>
-                                                <a class="soc-btn tw" href="[CO_TWITTER_URL]"><?php _e('Twitter', 'event_espresso'); ?></a>
+                                                <h3><?php esc_html_e('Connect with Us:', 'event_espresso'); ?></h3>
+                                                <a class="soc-btn fb" href="[CO_FACEBOOK_URL]"><?php esc_html_e('Facebook', 'event_espresso'); ?></a>
+                                                <a class="soc-btn tw" href="[CO_TWITTER_URL]"><?php esc_html_e('Twitter', 'event_espresso'); ?></a>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -87,9 +87,9 @@
                                     <tbody>
                                         <tr>
                                             <td>
-                                                <h3><?php _e('Contact Info:', 'event_espresso'); ?></h3>
-                                                <?php _e('Phone:', 'event_espresso'); ?> <strong>[CO_PHONE]</strong>
-                                                <?php _e('Email:', 'event_espresso'); ?>
+                                                <h3><?php esc_html_e('Contact Info:', 'event_espresso'); ?></h3>
+                                                <?php esc_html_e('Phone:', 'event_espresso'); ?> <strong>[CO_PHONE]</strong>
+                                                <?php esc_html_e('Email:', 'event_espresso'); ?>
                                                 <strong><a href="mailto:[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong>
                                             </td>
                                         </tr>

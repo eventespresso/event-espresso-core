@@ -33,8 +33,8 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <h2><?php printf(__('Hello, %s:', 'event_espresso'), '[RECIPIENT_FNAME]'); ?></h2>
-                                    <p class="lead"><?php _e("We've got a few things we want to share with you!", 'event_espresso'); ?></p>
+                                    <h2><?php printf(esc_html__('Hello, %s:', 'event_espresso'), '[RECIPIENT_FNAME]'); ?></h2>
+                                    <p class="lead"><?php esc_html_e("We've got a few things we want to share with you!", 'event_espresso'); ?></p>
                                     <div>
                                         [NEWSLETTER_CONTENT]
                                     </div>
@@ -64,8 +64,8 @@
                                     <tbody>
                                         <tr>
                                             <td>
-                                                <h5><?php _e('Connect with Us:', 'event_espresso'); ?></h5>
-                                                <a class="soc-btn fb" href="[CO_FACEBOOK_URL]"><?php _e('Facebook', 'event_espresso'); ?></a> <a class="soc-btn tw" href="[CO_TWITTER_URL]"><?php _e('Twitter', 'event_espresso'); ?></a>
+                                                <h5><?php esc_html_e('Connect with Us:', 'event_espresso'); ?></h5>
+                                                <a class="soc-btn fb" href="[CO_FACEBOOK_URL]"><?php esc_html_e('Facebook', 'event_espresso'); ?></a> <a class="soc-btn tw" href="[CO_TWITTER_URL]"><?php esc_html_e('Twitter', 'event_espresso'); ?></a>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -77,9 +77,9 @@
                                     <tbody>
                                         <tr>
                                             <td>
-                                                <h5><?php _e('Contact Info:', 'event_espresso'); ?></h5>
-                                                <?php _e('Phone:', 'event_espresso'); ?> <strong>[CO_PHONE]</strong>
-                                                <?php _e('Email:', 'event_espresso'); ?> <strong><a href="[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong>
+                                                <h5><?php esc_html_e('Contact Info:', 'event_espresso'); ?></h5>
+                                                <?php esc_html_e('Phone:', 'event_espresso'); ?> <strong>[CO_PHONE]</strong>
+                                                <?php esc_html_e('Email:', 'event_espresso'); ?> <strong><a href="[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong>
                                             </td>
                                         </tr>
                                     </tbody>
