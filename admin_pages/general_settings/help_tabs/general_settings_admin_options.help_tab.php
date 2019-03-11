@@ -42,12 +42,12 @@ define( 'EELOGGING_KEY', 'YOUR REMOTE KEY' );</pre>
 <li>
 <strong><?php esc_html_e('Event Espresso Affiliate ID', 'event_espresso'); ?></strong><br />
 <?php printf(
-	esc_html__(
-		'You can also monetize this link by signing up to our %1$saffiliate program%2$s and adding in your affiliate ID here.',
-		'event_espresso'
-	),
-	'<a href="https://eventespresso.com/affiliates/">',
-	'</a>'
+    esc_html__(
+        'You can also monetize this link by signing up to our %1$saffiliate program%2$s and adding in your affiliate ID here.',
+        'event_espresso'
+    ),
+    '<a href="https://eventespresso.com/affiliates/">',
+    '</a>'
 ); ?>
 </li>
 </ul>
