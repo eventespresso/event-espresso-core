@@ -9,6 +9,11 @@ import { ticketModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { Money, SiteCurrency } from '@eventespresso/value-objects';
 
+/**
+ * Internal dependencies
+ */
+import { updateTicket } from '../action-handlers/update-ticket';
+
 const { MODEL_NAME: TICKET } = ticketModel;
 
 /**
@@ -160,12 +165,8 @@ class EditorTicketDetails extends Component {
 			ticket.name !== name
 		) {
 			ticket.name = name;
-			await dispatch( 'eventespresso/core' ).persistTicketRecord(
-				ticket
-			);
-			return true;
+			return updateTicket( ticket );
 		}
-		return false;
 	};
 
 	/**
@@ -180,12 +181,8 @@ class EditorTicketDetails extends Component {
 			ticket.description !== description
 		) {
 			ticket.description = description;
-			await dispatch( 'eventespresso/core' ).persistTicketRecord(
-				ticket
-			);
-			return true;
+			return updateTicket( ticket );
 		}
-		return false;
 	};
 
 	/**
@@ -200,12 +197,8 @@ class EditorTicketDetails extends Component {
 			ticket.price !== price
 		) {
 			ticket.price = new Money( price, SiteCurrency );
-			await dispatch( 'eventespresso/core' ).persistTicketRecord(
-				ticket
-			);
-			return true;
+			return updateTicket( ticket );
 		}
-		return false;
 	};
 
 	/**
@@ -221,12 +214,8 @@ class EditorTicketDetails extends Component {
 			ticket.qty !== qty
 		) {
 			ticket.qty = qty;
-			await dispatch( 'eventespresso/core' ).persistTicketRecord(
-				ticket
-			);
-			return true;
+			return updateTicket( ticket );
 		}
-		return false;
 	};
 
 	render() {
