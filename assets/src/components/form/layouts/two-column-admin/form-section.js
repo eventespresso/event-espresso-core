@@ -22,8 +22,6 @@ import { default as AutoColumnRow } from './auto-column-row';
  * @return {Object} rendered form section
  */
 const FormSection = ( { children, htmlId = '', htmlClass = '' } ) => {
-	// console.log( '' );
-	// console.log( 'FormSection', htmlId, htmlClass );
 	htmlClass = htmlClass ?
 		`${ htmlClass } ee-form-section px-0 pt-3 border rounded` :
 		'ee-form-section px-0 pt-3 border rounded';
