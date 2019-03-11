@@ -166,7 +166,7 @@ class FileSubmission implements FileSubmissionInterface
      */
     public function __toString()
     {
-        return $this->getTmpFile();
+        return $this->getName();
     }
 
     /**
