@@ -20,7 +20,7 @@ class EE_File_Normalization extends EE_Normalization_Strategy_Base
      */
     public function normalize($value_to_normalize)
     {
-        if( $value_to_normalize instanceof FileSubmissionInterface){
+        if( $value_to_normalize instanceof FileSubmissionInterface || is_null($value_to_normalize)){
             return $value_to_normalize;
         } else {
             throw new EE_Validation_Error(
@@ -38,7 +38,7 @@ class EE_File_Normalization extends EE_Normalization_Strategy_Base
      */
     public function unnormalize($normalized_value)
     {
-        if ($normalized_value instanceof FileSubmissionInterface) {
+        if ($normalized_value instanceof FileSubmissionInterface || is_null($normalized_value)) {
             // Leave it as the object, it can be treated like a string because it
             // overrides __toString()
             return $normalized_value;

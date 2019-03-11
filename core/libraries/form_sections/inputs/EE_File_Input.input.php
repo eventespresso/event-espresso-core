@@ -110,4 +110,15 @@ class EE_File_Input extends EE_Form_Input_Base
         $fileDataHandler = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\files\FilesDataHandler');
         return $fileDataHandler->getFileObject($this->html_name());
     }
+
+    /**
+     * Don't transform the file submission object into a string, thanks.
+     *
+     * @param string $value
+     * @return null|string
+     */
+    protected function _sanitize($value)
+    {
+        return $value;
+    }
 }
