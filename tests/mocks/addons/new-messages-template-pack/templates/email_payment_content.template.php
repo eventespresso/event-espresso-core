@@ -68,7 +68,7 @@
 <tr>
 <td>
 <h3><?php _e('Connect with Us:', 'ee-new-messages-template-pack-test'); ?></h3>
-<a class="soc-btn fb" href="[CO_FACEBOOK_URL]"><?php _e('Facebook', 'ee-new-messages-template-pack-test'); ?></a> <a class="soc-btn tw" href="[CO_TWITTER_URL]"><?php _e('Twitter', 'ee-new-messages-template-pack-test'); ?></a> <a class="soc-btn gp" href="[CO_GOOGLE_URL]"><?php _e('Google+', 'ee-new-messages-template-pack-test'); ?></a></td>
+<a class="soc-btn fb" href="[CO_FACEBOOK_URL]"><?php _e('Facebook', 'ee-new-messages-template-pack-test'); ?></a> <a class="soc-btn tw" href="[CO_TWITTER_URL]"><?php _e('Twitter', 'ee-new-messages-template-pack-test'); ?></a></td>
 </tr>
 </tbody>
 </table>
