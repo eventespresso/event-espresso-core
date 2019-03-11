@@ -25,4 +25,13 @@ export const mockStateForTests = {
 			fromJS( { events: '/ee/v4.8.36/datetimes/52/event' } )
 		)
 	),
+	relationSchema: Map()
+		.setIn(
+			[ 'event', 'datetimes' ],
+			EventSchema.schema.properties.datetimes
+		)
+		.setIn(
+			[ 'event', 'venues' ],
+			EventSchema.schema.properties.venues
+		),
 };

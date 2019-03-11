@@ -59,11 +59,12 @@ class RequestTest extends PHPUnit_Framework_TestCase
      * @param array $post
      * @param array $cookie
      * @param array $server
+     * @param array $files
      * @return EE_Request
      */
-    private function getLegacyRequest(array $get, array $post, array $cookie, array $server)
+    private function getLegacyRequest(array $get, array $post, array $cookie, array $server, array $files = array())
     {
-        $request = new Request($get, $post, $cookie, $server);
+        $request = new Request($get, $post, $cookie, $server, $files);
         $legacy_request = new EE_Request(array(), array(), array());
         $legacy_request->setRequest($request);
         return $legacy_request;

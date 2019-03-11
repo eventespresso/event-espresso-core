@@ -1322,7 +1322,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                             'event_espresso'
                         ),
                         '<br />',
-                        '<a href="http://php.net/manual/en/pcre.installation.php" target="_blank">http://php.net/manual/en/pcre.installation.php</a>'
+                        '<a href="http://php.net/manual/en/pcre.installation.php" target="_blank" rel="noopener noreferrer">http://php.net/manual/en/pcre.installation.php</a>'
                     ),
                     __FILE__,
                     __FUNCTION__,

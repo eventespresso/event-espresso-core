@@ -36,6 +36,10 @@ This returns a plain object containing all the fields and values ready for using
 
 This property will intelligently determine whether `forUpdate` or `forInsert` should be used to return data for persisting to the server based on the internal `SAVE_STATE` flag indicating what "type" of entity instance this is.
 
+### `forClone`
+
+This returns a plain object containing all the fields and values ready for using to clone the entity.  This means all values will be in the prepared formate for creating a new entity instance.  This will not include the primary keys and their values.
+
 ### `getRendered( fieldName )`
 
 This is a getter function for retrieving the rendered value of a given field name.  This is useful for fields that have values as [`value objects`](../../../value-objects/README.md) (typically date or money fields) or for fields that have `raw` and `rendered` (or `pretty`) representations (example `EVT_desc`).  Using this function along with a field name is a safe way to always retrieve a value for a field suitable for display in ui.
