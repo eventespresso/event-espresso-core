@@ -20,7 +20,7 @@ class EE_File_Normalization extends EE_Normalization_Strategy_Base
      */
     public function normalize($value_to_normalize)
     {
-        if( $value_to_normalize instanceof FileSubmissionInterface || is_null($value_to_normalize)){
+        if ($value_to_normalize instanceof FileSubmissionInterface || is_null($value_to_normalize)) {
             return $value_to_normalize;
         } else {
             throw new EE_Validation_Error(

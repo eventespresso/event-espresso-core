@@ -49,7 +49,6 @@ class JsonWpOptionManager
             false
         );
     }
-
 }
 // End of file JsonWpOptionManager.php
 // Location: EventEspresso\core\services\options/JsonWpOptionManager.php

@@ -586,7 +586,7 @@ abstract class FormHandler implements FormHandlerInterface
         if ($form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
             || $form_config === FormHandler::ADD_FORM_TAGS_ONLY
         ) {
-            if($this->requiresMultipartEnctype()){
+            if ($this->requiresMultipartEnctype()) {
                 $additional_props = 'enctype="multipart/form-data"';
             } else {
                 $additional_props = '';
@@ -618,8 +618,8 @@ abstract class FormHandler implements FormHandlerInterface
      */
     public function requiresMultipartEnctype()
     {
-        foreach($this->form()->inputs_in_subsections() as $input){
-            if($input instanceof EE_File_Input){
+        foreach ($this->form()->inputs_in_subsections() as $input) {
+            if ($input instanceof EE_File_Input) {
                 return true;
             }
         }

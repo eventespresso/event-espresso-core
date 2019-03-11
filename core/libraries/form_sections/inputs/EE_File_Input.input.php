@@ -55,7 +55,7 @@ class EE_File_Input extends EE_Form_Input_Base
         $this->add_validation_strategy(
             new EE_Text_Validation_Strategy(
                 sprintf(
-                // translators: %1$s is a list of allowed file extensions.
+                    // translators: %1$s is a list of allowed file extensions.
                     esc_html__('Please provide a file of the requested filetype: %1$s', 'event_espresso'),
                     implode(', ', $this->allowed_file_extensions)
                 ),
@@ -70,25 +70,25 @@ class EE_File_Input extends EE_Form_Input_Base
             . ' extension="'
             . implode(
                 ',',
-//                array_merge(
-//                    array_map(
-//                        function ($mime_type) {
-//                            if(strpos($mime_type, '/') === false) {
-//                                return $mime_type . '/*';
-//                            } else {
-//                                return $mime_type;
-//                            }
-//
-//                        },
-//                        $this->allowed_mime_types
-//                    )
+                //                array_merge(
+                //                    array_map(
+                //                        function ($mime_type) {
+                //                            if(strpos($mime_type, '/') === false) {
+                //                                return $mime_type . '/*';
+                //                            } else {
+                //                                return $mime_type;
+                //                            }
+                //
+                //                        },
+                //                        $this->allowed_mime_types
+                //                    )
                     array_map(
                         function ($file_extension) {
                             return  $file_extension;
                         },
                         $this->allowed_file_extensions
                     )
-//                )
+                //                )
             )
             . '"'
         );

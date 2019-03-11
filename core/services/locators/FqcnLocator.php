@@ -151,8 +151,8 @@ class FqcnLocator extends Locator
         $prefix = null;
         $namespace_segments_to_try = $namespace_segments;
         $removed_namespace_segments = [];
-        while( ! empty($namespace_segments_to_try)) {
-            $namespace_to_try = implode( Psr4Autoloader::NS, $namespace_segments_to_try);
+        while (! empty($namespace_segments_to_try)) {
+            $namespace_to_try = implode(Psr4Autoloader::NS, $namespace_segments_to_try);
             // check if there's a base directory registered for that namespace
             $prefix = $psr4_loader->prefixes($namespace_to_try . Psr4Autoloader::NS);
             // nope? then the incoming namespace is invalid

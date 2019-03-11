@@ -30,7 +30,6 @@ interface JsonSerializableAndUnserializable
      * @return boolean success
      */
     public function fromJsonSerializedData($data);
-
 }
 // End of file JsonSerializableAndUnserializable.php
 // Location: EventEspresso\core\services\json/JsonSerializableAndUnserializable.php
