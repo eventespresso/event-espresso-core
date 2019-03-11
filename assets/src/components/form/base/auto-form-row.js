@@ -71,7 +71,7 @@ const AutoFormRow = ( {
 			return row;
 		}
 	}
-	return null;
+	return FormElement;
 };
 
 export default AutoFormRow;
