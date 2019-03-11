@@ -2,21 +2,31 @@
  * External imports
  */
 
-import { withState, compose } from '@wordpress/compose';
-import { withSelect, withDispatch } from '@wordpress/data';
-import { Component } from '@wordpress/element';
+import { filter, find, findIndex } from 'lodash';
 import PropTypes from 'prop-types';
-import { find, findIndex } from 'lodash';
+import { IconButton } from '@wordpress/components';
+import { Component, Fragment } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
-import { Button, IconButton, Spinner } from '@wordpress/components';
+import {
+	CalendarPageDate,
+	FormContainer,
+	FormPlaceholder,
+	twoColumnAdminFormLayout,
+} from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
-import { withEditorModal } from '@eventespresso/higher-order-components';
 import { dateTimeModel, ticketModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
+/**
+ * Internal imports
+ */
+import {
+	default as withDatesAndTicketsManagerState,
+} from './with-dates-and-tickets-manager-state';
+
 const noIndex = -1;
 
-const { MODEL_NAME: DATETIME } = dateTimeModel;
+const { MODEL_NAME: DATETIME, getBackgroundColorClass } = dateTimeModel;
 const { MODEL_NAME: TICKET } = ticketModel;
 
 export class DatesAndTicketsManager extends Component {
@@ -32,66 +42,47 @@ export class DatesAndTicketsManager extends Component {
 		this.state = {
 			assigned: {},
 			removed: {},
+			submitting: false,
 		};
 	}
 
 	processChanges = () => {
-		let update = false;
+		const relationUpdates = [];
+		this.setState( { submitting: true } );
 		for ( let dateID in this.state.removed ) {
 			dateID = parseInt( dateID );
 			if ( this.state.removed.hasOwnProperty( dateID ) ) {
-				const ticketsToRemove = this.state.removed[ dateID ];
-				if ( Array.isArray( ticketsToRemove ) ) {
-					ticketsToRemove.map(
-						( ticketToRemove ) => {
-							const date = find(
-								this.props.dates,
-								{ id: dateID }
-							);
-							if ( date !== undefined ) {
-								const index = findIndex(
-									date.tickets,
-									{ id: ticketToRemove.id }
-								);
-								if ( index > noIndex ) {
-									date.tickets.splice( index, 1 );
-									update = true;
-								}
-							}
-						}
-					);
+				const date = find( this.props.dates, { id: dateID } );
+				if ( isModelEntityOfModel( date, DATETIME ) ) {
+					const ticketsToRemove = this.state.removed[ dateID ];
+					if ( Array.isArray( ticketsToRemove ) ) {
+						relationUpdates.push(
+							this.removeTickets( date, ticketsToRemove )
+						);
+					}
 				}
 			}
 		}
 		for ( let dateID in this.state.assigned ) {
 			dateID = parseInt( dateID );
 			if ( this.state.assigned.hasOwnProperty( dateID ) ) {
-				const ticketsToAssign = this.state.assigned[ dateID ];
-				if ( Array.isArray( ticketsToAssign ) ) {
-					ticketsToAssign.map(
-						( ticketToAssign ) => {
-							const date = find(
-								this.props.dates,
-								{ id: dateID }
-							);
-							if ( date !== undefined ) {
-								const index = findIndex(
-									date.tickets,
-									{ id: ticketToAssign.id }
-								);
-								if ( index === noIndex &&
-									Array.isArray( date.tickets )
-								) {
-									date.tickets.push( ticketToAssign );
-									update = true;
-								}
-							}
-						}
-					);
+				const date = find( this.props.dates, { id: dateID } );
+				if ( isModelEntityOfModel( date, DATETIME ) ) {
+					const ticketsToAssign = this.state.assigned[ dateID ];
+					if ( Array.isArray( ticketsToAssign ) ) {
+						relationUpdates.push(
+							this.addTickets( date, ticketsToAssign )
+						);
+					}
 				}
 			}
 		}
-		this.toggleEditor( update );
+		Promise.all( relationUpdates ).then( ( updates ) => {
+			const wasUpdated = filter( updates, ( updated ) => {
+				return !! updated;
+			} );
+			this.toggleEditor( wasUpdated.length > 0 );
+		} );
 	};
 
 	toggleEditor = ( update = false ) => {
@@ -103,6 +94,8 @@ export class DatesAndTicketsManager extends Component {
 			) {
 				this.props.onUpdate();
 			}
+			this.resetRelationsMap();
+			this.setState( { submitting: false } );
 			this.props.closeModal();
 		}
 	};
@@ -192,16 +185,34 @@ export class DatesAndTicketsManager extends Component {
 	};
 
 	render() {
-		const { loading, dates, tickets, eventDateTicketMap } = this.props;
-		if ( loading ) {
-			return <Spinner />;
-		}
-		console.log( '' );
-		console.log( 'DatesAndTicketsManager.render()' );
-		console.log( ' > props: ', this.props );
+		const {
+			loading,
+			dates,
+			tickets,
+			eventDateTicketMap,
+			resetRelationsMap,
+			addTickets,
+			removeTickets,
+		} = this.props;
+		this.resetRelationsMap = resetRelationsMap;
+		this.addTickets = addTickets;
+		this.removeTickets = removeTickets;
+
+		const {
+			FormSection,
+			FormWrapper,
+			FormSubmitButton,
+			FormCancelButton,
+			FormSaveCancelButtons,
+		} = twoColumnAdminFormLayout;
+		// console.log( '' );
+		// console.log( 'DatesAndTicketsManager.render()' );
+		// console.log( ' > props: ', this.props );
+		// console.log( ' > addTickets: ', addTickets );
 		const width = tickets.length ? 75 / tickets.length : 75;
 		const header0 = {
 			borderBottom: '1px solid var(--ee-lite-grey)',
+			maxWidth: '25%',
 			textAlign: 'left',
 			verticalAlign: 'bottom',
 			width: '25%',
@@ -210,6 +221,7 @@ export class DatesAndTicketsManager extends Component {
 			borderBottom: '1px solid var(--ee-lite-grey)',
 			boxSizing: 'border-box',
 			padding: '0 5px',
+			maxWidth: width + '%',
 			textAlign: 'center',
 			verticalAlign: 'bottom',
 			width: width + '%',
@@ -222,18 +234,28 @@ export class DatesAndTicketsManager extends Component {
 		};
 		const dateLabel = {
 			display: 'block',
-			lineHeight: '38px',
+			lineHeight: '16px',
 			overflow: 'hidden',
-			padding: '0 0 0 10px',
+			padding: '3px 10px',
 			textOverflow: 'ellipsis',
 			verticalAlign: 'middle',
 			whiteSpace: 'nowrap',
 		};
-		const container = {
-			boxSizing: 'border-box',
-			padding: '25px',
-			minWidth: '600px',
+		const yearRowStyle = {
+			color: 'var(--ee-grey-white)',
+			fontWeight: 'bold',
+			letterSpacing: '3px',
+			lineHeight: '16px',
+			padding: '10px 10px 1px 10px',
+			textAlign: 'left',
+			verticalAlign: 'middle',
+			width: '100%',
 		};
+		// const container = {
+		// 	boxSizing: 'border-box',
+		// 	padding: '25px',
+		// 	minWidth: '600px',
+		// };
 		const tbl = {
 		};
 		const cell = {
@@ -249,310 +271,255 @@ export class DatesAndTicketsManager extends Component {
 		const datesHeader = showDatesColumn ?
 			( <td key={ 0 } style={ header0 }></td> ) :
 			null;
+		const submitButton = (
+			<FormSubmitButton
+				onClick={
+					( event ) => {
+						event.preventDefault();
+						event.stopPropagation();
+						this.processChanges();
+					}
+				}
+				buttonText={ __(
+					'Update Ticket Assignments',
+					'event_espresso'
+				) }
+				submitting={ this.state.submitting }
+			/>
+		);
+		const cancelButton = (
+			<FormCancelButton
+				onClick={
+					( event ) => {
+						event.preventDefault();
+						event.stopPropagation();
+						this.toggleEditor();
+					}
+				}
+			/>
+		);
+		const getRowStyle = ( index ) => ( index - 1 ) % 2 === 1 ?
+			odd :
+			{};
+		let year = 0;
+		let yearRow = null;
+		let indexMod = 0;
 		return (
-			<div style={ container }>
-				<table style={ tbl }>
-					<thead>
-						<tr>
-							{ datesHeader }
-							{
-								tickets.map(
-									( ticket, index1 ) => {
-										if ( ! isModelEntityOfModel(
-											ticket,
-											TICKET
-										) ) {
-											return null;
-										}
-										return (
-											<td key={ index1 } style={ header }>
-												<span style={ headerText }>
-													{ `${ ticket.name }` }
-													<br />
-													{ `$${ ticket.price }` }
-												</span>
-											</td>
-										);
-									}
-								)
-							}
-						</tr>
-					</thead>
-					<tbody>
-						{
-							dates.map(
-								( eventDate, index2 ) => {
-									if ( ! isModelEntityOfModel(
-										eventDate,
-										DATETIME
-									) ) {
-										return null;
-									}
-									index2++;
-									console.log( '' );
-									console.log( 'DatesAndTicketsManager.render(293)' );
-									console.log( ' > eventDate: ', eventDate );
-									const eventDateTickets = eventDateTicketMap[
-										eventDate.id
-									] ?
-										eventDateTicketMap[ eventDate.id ] :
-										[];
-
-									const rowStyle = ( index2 - 1 ) % 2 === 1 ?
-										odd :
-										{};
-									const dateHeader = showDatesColumn ?
-										(
-											<td key={ 0 } style={ dateLabel }>
-												{
-													`${
-														eventDate.start.toFormat(
-															'ddd MMM DD, YYYY'
-														)
-													} - ${ eventDate.name }`
-												}
-											</td>
-										) :
-										null;
-									return (
-										<tr key={ index2 } style={ rowStyle }>
-											{ dateHeader }
-											{
-												tickets.map(
-													( ticket, index3 ) => {
-														index3++;
-														const hasTicket = findIndex(
-															eventDateTickets,
-															{ id: ticket.id }
-														) > noIndex;
-														const isAssigned = this.isAssigned(
-															this.state.assigned,
-															eventDate,
-															ticket,
-															true
-														);
-														const isRemoved = this.isRemoved(
-															this.state.removed,
-															eventDate,
-															ticket,
-															true
-														);
-														const icon = ( hasTicket && isRemoved === noIndex ) ||
-														isAssigned > noIndex ?
-															'tickets-alt' :
-															'no-alt';
-														let style = btn;
-														if ( ! hasTicket && isAssigned > noIndex ) {
-															style = {
-																...style,
-																...{ color: 'var(--ee-brite-green)' },
-															};
-														}
-														if ( hasTicket && isRemoved > noIndex ) {
-															style = {
-																...style,
-																...{ color: 'var(--ee-red)' },
-															};
-														}
-														const action = ( hasTicket && isRemoved === noIndex ) ||
-														isAssigned > noIndex ?
-															this.removeTicket :
-															this.assignTicket;
-														return (
-															<td key={ index3 }
-																style={ cell }
-															>
-																<IconButton
-																	icon={ icon }
-																	style={ style }
-																	onClick={
-																		( event ) => {
-																			event.preventDefault();
-																			event.stopPropagation();
-																			action(
-																				eventDate,
-																				ticket
-																			);
-																		}
-																	}
-																	onKeyDown={
-																		( event ) => {
-																			if ( event.keyCode === ENTER ) {
-																				event.preventDefault();
-																				event.stopPropagation();
-																				action(
-																					eventDate,
-																					ticket
-																				);
-																			}
-																		}
-																	}
-																/>
-															</td>
-														);
+			<Fragment>
+				<FormPlaceholder
+					loading={ loading }
+					notice={ __(
+						'loading event date ticket relations',
+						'event_espresso'
+					) }
+				/>
+				<FormContainer loading={ loading } >
+					<FormWrapper>
+						<FormSection>
+							<table style={ tbl }>
+								<thead>
+									<tr>
+										{ datesHeader }
+										{
+											tickets.map(
+												( ticket, index1 ) => {
+													if ( ! isModelEntityOfModel(
+														ticket,
+														TICKET
+													) ) {
+														return null;
 													}
-												)
+													return (
+														<td key={ index1 } style={ header }>
+															<span style={ headerText }>
+																{ `${ ticket.name }` }
+																<br />
+																{ `$${ ticket.price }` }
+															</span>
+														</td>
+													);
+												}
+											)
+										}
+									</tr>
+								</thead>
+								<tbody>
+									{
+										dates.map(
+											( eventDate, index2 ) => {
+												if ( ! isModelEntityOfModel(
+													eventDate,
+													DATETIME
+												) ) {
+													return null;
+												}
+												index2 = index2 + indexMod + 1;
+												const dateYear = parseInt(
+													eventDate.start.toFormat( 'YYYY' )
+												);
+												if ( showDatesColumn && dateYear > year ) {
+													year = dateYear;
+													yearRow = (
+														<tr style={ getRowStyle( index2 ) } >
+															<td
+																key={ 0 }
+																colSpan={ 2 }
+																style={ yearRowStyle }
+															>
+																<div>
+																	{ year }
+																</div>
+															</td>
+														</tr>
+													);
+													indexMod++;
+													index2++;
+												} else {
+													yearRow = null;
+												}
+												// console.log( '' );
+												// console.log( 'DatesAndTicketsManager.render(293)' );
+												// console.log( ' > eventDate: ', eventDate );
+												const eventDateTickets = eventDateTicketMap[
+													eventDate.id
+												] ?
+													eventDateTicketMap[ eventDate.id ] :
+													[];
+												const rowStyle = getRowStyle( index2 );
+												const dateHeader = showDatesColumn ?
+													(
+														<td key={ 0 } style={ dateLabel }>
+															<div style={ { display: 'inline-block' } }>
+																<CalendarPageDate
+																	startDate={
+																		eventDate.start
+																	}
+																	statusClass={
+																		getBackgroundColorClass(
+																			eventDate
+																		)
+																	}
+																	size={ 'tiny' }
+																	style={ {
+																		border: '1px solid var(--ee-off-white)',
+																		display: 'inline-block',
+																		margin: '1px 10px 1px 0',
+																	} }
+																/>
+															</div>
+															<span
+																style={ {
+																	display: 'inline-block',
+																	fontSize: '16px',
+																	position: 'relative',
+																	top: '-8px',
+																} }>
+																{ eventDate.name }
+															</span>
+														</td>
+													) :
+													null;
+												return (
+													<Fragment key={ index2 }>
+														{ yearRow }
+														<tr style={ rowStyle }>
+															{ dateHeader }
+															{
+																tickets.map(
+																	( ticket, index3 ) => {
+																		index3++;
+																		const hasTicket = findIndex(
+																			eventDateTickets,
+																			{ id: ticket.id }
+																		) > noIndex;
+																		const isAssigned = this.isAssigned(
+																			this.state.assigned,
+																			eventDate,
+																			ticket,
+																			true
+																		);
+																		const isRemoved = this.isRemoved(
+																			this.state.removed,
+																			eventDate,
+																			ticket,
+																			true
+																		);
+																		const icon = ( hasTicket && isRemoved === noIndex ) ||
+																		isAssigned > noIndex ?
+																			'tickets-alt' :
+																			'no-alt';
+																		let style = btn;
+																		if ( ! hasTicket && isAssigned > noIndex ) {
+																			style = {
+																				...style,
+																				...{ color: 'var(--ee-brite-green)' },
+																			};
+																		}
+																		if ( hasTicket && isRemoved > noIndex ) {
+																			style = {
+																				...style,
+																				...{ color: 'var(--ee-red)' },
+																			};
+																		}
+																		const action = ( hasTicket && isRemoved === noIndex ) ||
+																		isAssigned > noIndex ?
+																			this.removeTicket :
+																			this.assignTicket;
+																		return (
+																			<td key={ index3 }
+																				style={ cell }
+																			>
+																				<IconButton
+																					icon={ icon }
+																					style={ style }
+																					onClick={
+																						( event ) => {
+																							event.preventDefault();
+																							event.stopPropagation();
+																							action(
+																								eventDate,
+																								ticket
+																							);
+																						}
+																					}
+																					onKeyDown={
+																						( event ) => {
+																							if ( event.keyCode === ENTER ) {
+																								event.preventDefault();
+																								event.stopPropagation();
+																								action(
+																									eventDate,
+																									ticket
+																								);
+																							}
+																						}
+																					}
+																				/>
+																			</td>
+																		);
+																	}
+																)
+															}
+														</tr>
+													</Fragment>
+												);
 											}
-										</tr>
-									);
-								}
-							)
-						}
-					</tbody>
-				</table>
-				<br />
-				<Button
-					onClick={
-						( event ) => {
-							event.preventDefault();
-							event.stopPropagation();
-							this.processChanges();
-						}
-					}
-					isPrimary
-					isLarge
-				>
-					{ __( 'Update Ticket Assignments', 'event_espresso' ) }
-				</Button>
-				<Button
-					onClick={
-						( event ) => {
-							event.preventDefault();
-							event.stopPropagation();
-							this.toggleEditor();
-						}
-					}
-					isDefault
-				>
-					{ __( 'Cancel', 'event_espresso' ) }
-				</Button>
-			</div>
+										)
+									}
+								</tbody>
+							</table>
+						</FormSection>
+						<FormSaveCancelButtons
+							submitButton={ submitButton }
+							cancelButton={ cancelButton }
+							colSize={ 4 }
+							offset={ 8 }
+						/>
+					</FormWrapper>
+				</FormContainer>
+			</Fragment>
 		);
 	}
 }
 
-// /**
-//  * Enhanced DatesAndTicketsManager with Modal
-//  */
-// const DatesAndTicketsManagerModal = withEditorModal( {
-// 	title: __( 'Event Date Ticket Assignments', 'event_espresso' ),
-// 	customClass: 'ee-event-date-tickets-manager-modal',
-// 	closeButtonLabel: __( 'close event date tickets manager', 'event_espresso' ),
-// } )( DatesAndTicketsManager );
-//
-// export default DatesAndTicketsManagerModal;
-
-/**
- * Enhanced DatesAndTicketsManager with Modal
- */
-
-export default compose( [
-	withEditorModal( {
-		title: __( 'Event Date Ticket Assignments', 'event_espresso' ),
-		customClass: 'ee-event-date-tickets-manager-modal',
-		closeButtonLabel: __( 'close event date tickets manager',
-			'event_espresso'
-		),
-	} ),
-	withState( {
-		loading: true,
-		dates: [],
-		tickets: [],
-		eventDateTicketMap: [],
-	} ),
-	withSelect( ( select, ownProps ) => {
-		console.log( '' );
-		console.log( 'DatesAndTicketsManager.withSelect(1)' );
-		console.log( ' > ownProps: ', ownProps );
-		const {
-			loading,
-			date,
-			allDates,
-			ticket,
-			allTickets,
-			setState,
-			dates,
-			tickets,
-		} = ownProps;
-		let { eventDateTicketMap } = ownProps;
-		let dtmProps = {
-			loading: true,
-			dates: dates,
-			tickets: tickets,
-			eventDateTicketMap: eventDateTicketMap,
-		};
-		if ( ! loading ) {
-			console.log( ' > dtmProps: ', dtmProps );
-			return dtmProps;
-		}
-		if ( isModelEntityOfModel( date, DATETIME ) ) {
-			console.log( ' > date: ', date );
-			const { getRelatedEntities } = select( 'eventespresso/core' );
-			const { hasFinishedResolution } = select( 'core/data' );
-			console.log( ' > > Fetching Related Entities' );
-			const relatedTickets = getRelatedEntities( date, TICKET );
-			const relationsResolved = hasFinishedResolution(
-				'eventespresso/core',
-				'getRelatedEntities',
-				[ date, TICKET ]
-			);
-			console.log( ' > > > relationsResolved:', relationsResolved );
-			if ( ! relationsResolved || ! Array.isArray( relatedTickets ) ) {
-				return dtmProps;
-			}
-			dtmProps = {
-				loading: false,
-				dates: [ date ],
-				tickets: allTickets,
-				eventDateTicketMap: { [ date.id ]: relatedTickets },
-			};
-			setState( dtmProps );
-		} else if ( isModelEntityOfModel( ticket, TICKET ) ) {
-			console.log( ' > ticket: ', ticket );
-			const { getRelatedEntities } = select( 'eventespresso/core' );
-			const { hasFinishedResolution } = select( 'core/data' );
-			console.log( ' > > Fetching Related Entities' );
-			const relatedDates = getRelatedEntities( ticket, DATETIME );
-			const relationsResolved = hasFinishedResolution(
-				'eventespresso/core',
-				'getRelatedEntities',
-				[ ticket, DATETIME ]
-			);
-			console.log( ' > > > relationsResolved:', relationsResolved );
-			if ( ! relationsResolved || ! Array.isArray( relatedDates ) ) {
-				return dtmProps;
-			}
-			console.log( ' > > > relatedDates:', relatedDates );
-			eventDateTicketMap = [];
-			for ( let x = 0; x < relatedDates.length; x++ ) {
-				const relatedDate = relatedDates[ x ];
-				if ( isModelEntityOfModel( relatedDate, DATETIME ) ) {
-					eventDateTicketMap[ relatedDate.id ] = ticket;
-				}
-			}
-			dtmProps = {
-				loading: false,
-				dates: allDates,
-				tickets: [ ticket ],
-				eventDateTicketMap: eventDateTicketMap,
-			};
-			setState( dtmProps );
-		}
-		console.log( ' > final dtmProps: ', dtmProps );
-		return dtmProps;
-	} ),
-	withSelect( ( select, ownProps ) => {
-		console.log( '' );
-		console.log( 'DatesAndTicketsManager.withSelect(2)' );
-		console.log( ' > ownProps: ', ownProps );
-		const { loading, dates, tickets, eventDateTicketMap } = ownProps;
-		if ( loading ) {
-			return {
-				loading,
-				dates,
-				tickets,
-				eventDateTicketMap,
-			};
-		}
-	} ),
-] )( DatesAndTicketsManager );
+export default withDatesAndTicketsManagerState( DatesAndTicketsManager );
