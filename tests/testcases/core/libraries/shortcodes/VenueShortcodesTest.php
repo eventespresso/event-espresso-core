@@ -89,7 +89,7 @@ class VenueShortcodesTest extends EE_UnitTestCase
             array(
                 '[GOOGLE_MAP_LINK]',
                 '<a href="' . $google_map_url . '"'
-                . ' target="_blank">'
+                . ' target="_blank" rel="noopener noreferrer">'
                 . $google_map_url
                 . '</a>'
             )
