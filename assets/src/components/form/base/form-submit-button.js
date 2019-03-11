@@ -19,6 +19,7 @@ import { SubmittingNotice } from './submitting-notice';
  * @param {string} htmlId
  * @param {string} htmlClass
  * @param {string} noticeClass
+ * @param {Object} buttonProps
  * @return {Object} rendered submit button for form
  */
 export const FormSubmitButton = ( {
@@ -29,6 +30,7 @@ export const FormSubmitButton = ( {
 	htmlId = '',
 	htmlClass = '',
 	noticeClass = '',
+	...buttonProps
 } ) => {
 	buttonText = buttonText ? buttonText : __( 'Submit', 'event_espresso' );
 	htmlClass = htmlClass ?
@@ -47,6 +49,7 @@ export const FormSubmitButton = ( {
 				disabled={ submitting || disabled }
 				id={ htmlId }
 				className={ htmlClass }
+				{ ...buttonProps }
 			>
 				{ buttonText }
 			</Button>
