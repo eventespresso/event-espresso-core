@@ -1,10 +1,14 @@
 /**
  * External imports
  */
-import { dispatch } from '@wordpress/data';
 import { ticketModel } from '@eventespresso/model';
 import { DateTime, Money, SiteCurrency } from '@eventespresso/value-objects';
 import { isModelEntityOfModel } from '@eventespresso/validators';
+
+/**
+ * Internal dependencies
+ */
+import { updateTicket } from '../action-handlers/update-ticket';
 
 const { MODEL_NAME: TICKET } = ticketModel;
 
@@ -12,37 +16,33 @@ const { MODEL_NAME: TICKET } = ticketModel;
  * updates Ticket Entity properties given the supplied form data
  *
  * @function
- * @param {Object} ticket
+ * @param {Object} ticketEntity
  * @param {Object} formData
- * @return {Object} updates ticket
+ * @return {Promise} updated ticketEntity upon resolution
  */
-export const ticketEntityFormSubmitHandler = async ( ticket, formData ) => {
-	if ( ! isModelEntityOfModel( ticket, TICKET ) ) {
+export const ticketEntityFormSubmitHandler = async ( ticketEntity, formData ) => {
+	if ( ! isModelEntityOfModel( ticketEntity, TICKET ) ) {
 		return null;
 	}
-	const id = ticket.id;
-	const prefix = 'ee-ticket';
-	ticket.name = formData[ `${ prefix }-name-${ id }` ];
-	ticket.description = formData[ `${ prefix }-description-${ id }` ];
-	ticket.qty = parseInt( formData[ `${ prefix }-qty-${ id }` ] );
-	ticket.uses = parseInt( formData[ `${ prefix }-uses-${ id }` ] );
-	ticket.required = !! formData[ `${ prefix }-required-${ id }` ];
-	ticket.min = parseInt( formData[ `${ prefix }-min-${ id }` ] );
-	ticket.max = parseInt( formData[ `${ prefix }-max-${ id }` ] );
-	ticket.price = new Money(
-		formData[ `${ prefix }-price-${ id }` ],
+	const prefix = `ee-ticket-${ ticketEntity.id }`;
+	ticketEntity.name = formData[ `${ prefix }-name` ];
+	ticketEntity.description = formData[ `${ prefix }-description` ];
+	ticketEntity.qty = parseInt( formData[ `${ prefix }-qty` ] || -1 );
+	ticketEntity.uses = parseInt( formData[ `${ prefix }-uses` ] || -1 );
+	ticketEntity.required = !! formData[ `${ prefix }-required` ];
+	ticketEntity.min = parseInt( formData[ `${ prefix }-min` ] || 0 );
+	ticketEntity.max = parseInt( formData[ `${ prefix }-max` ] || -1 );
+	ticketEntity.price = new Money(
+		formData[ `${ prefix }-price` ] || 0,
 		SiteCurrency
 	);
-	ticket.startDate = new DateTime( formData[ `${ prefix }-start-${ id }` ] );
-	ticket.endDate = new DateTime( formData[ `${ prefix }-end-${ id }` ] );
-	ticket.taxable = !! formData[ `${ prefix }-taxable-${ id }` ];
-	ticket.order = parseInt( formData[ `${ prefix }-order-${ id }` ] );
-	ticket.isDefault = formData[ `${ prefix }-is-default-${ id }` ];
-	ticket.wpUser = parseInt( formData[ `${ prefix }-wp-user-${ id }` ] );
-	ticket.parent = parseInt( formData[ `${ prefix }-parent-${ id }` ] );
-	ticket.deleted = !! formData[ `${ prefix }-deleted-${ id }` ];
-	return await dispatch( 'eventespresso/core' ).persistEntityRecord(
-		TICKET,
-		ticket
-	);
+	ticketEntity.startDate = new DateTime( formData[ `${ prefix }-start` ] );
+	ticketEntity.endDate = new DateTime( formData[ `${ prefix }-end` ] );
+	ticketEntity.taxable = !! formData[ `${ prefix }-taxable` ];
+	ticketEntity.order = parseInt( formData[ `${ prefix }-order` ] );
+	ticketEntity.isDefault = !! formData[ `${ prefix }-is-default` ];
+	ticketEntity.wpUser = parseInt( formData[ `${ prefix }-wp-user` ] || 0 );
+	ticketEntity.parent = parseInt( formData[ `${ prefix }-parent` ] || 0 );
+	ticketEntity.deleted = !! formData[ `${ prefix }-deleted` ];
+	return updateTicket( ticketEntity );
 };

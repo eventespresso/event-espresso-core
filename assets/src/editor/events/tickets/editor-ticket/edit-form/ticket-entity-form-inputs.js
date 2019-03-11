@@ -31,18 +31,17 @@ export const ticketEntityFormInputs = (
 	// console.log( 'ticketEntityFormInputs currentValues', currentValues );
 	// console.log( 'ticketEntityFormInputs exclude', exclude );
 	const values = currentValues;
-	const prefix = 'ee-ticket';
-	const ticketId = ticket.id;
+	const prefix = `ee-ticket-${ ticket.id }`;
 	const inputs = [];
 	if ( indexOf( exclude, 'TKT_ID' ) < 0 ) {
 		inputs.push(
 			<FormInput
 				key="id"
 				type="number"
-				name={ `${ prefix }-id-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-id-${ ticketId }` ] }
+				name={ `${ prefix }-id` }
+				initialValue={ values[ `${ prefix }-id` ] }
 				label={ __( 'Ticket ID', 'event_espresso' ) }
-				htmlId={ `${ prefix }-id-${ ticketId }` }
+				htmlId={ `${ prefix }-id` }
 				// validators={ [
 				// 	validations.isInteger,
 				// 	validations.minNumber( 0 ),
@@ -59,10 +58,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="name"
 				type="text"
-				name={ `${ prefix }-name-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-name-${ ticketId }` ] || '' }
+				name={ `${ prefix }-name` }
+				initialValue={ values[ `${ prefix }-name` ] || '' }
 				label={ __( 'Ticket Label', 'event_espresso' ) }
-				htmlId={ `${ prefix }-name-${ ticketId }` }
+				htmlId={ `${ prefix }-name` }
 				minLength={ 3 }
 				required
 			/>,
@@ -73,10 +72,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="description"
 				type="textarea"
-				name={ `${ prefix }-description-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-description-${ ticketId }` ] || '' }
+				name={ `${ prefix }-description` }
+				initialValue={ values[ `${ prefix }-description` ] || '' }
 				label={ __( 'Description', 'event_espresso' ) }
-				htmlId={ `${ prefix }-description-${ ticketId }` }
+				htmlId={ `${ prefix }-description` }
 			/>,
 		);
 	}
@@ -85,10 +84,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="price"
 				type="number"
-				name={ `${ prefix }-price-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-price-${ ticketId }` ] || null }
+				name={ `${ prefix }-price` }
+				initialValue={ values[ `${ prefix }-price` ] || null }
 				label={ __( 'Ticket Price', 'event_espresso' ) }
-				htmlId={ `${ prefix }-price-${ ticketId }` }
+				htmlId={ `${ prefix }-price` }
 				helpText={ __(
 					'The amount of money charged for this ticket. Leave blank' +
 					' to make this ticket selection free.',
@@ -105,10 +104,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="taxable"
 				type="toggle"
-				name={ `${ prefix }-taxable-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-taxable-${ ticketId }` ] || false }
+				name={ `${ prefix }-taxable` }
+				initialValue={ values[ `${ prefix }-taxable` ] || false }
 				label={ __( 'Ticket is Taxable', 'event_espresso' ) }
-				htmlId={ `${ prefix }-taxable-${ ticketId }` }
+				htmlId={ `${ prefix }-taxable` }
 				helpTextIfChecked={ __(
 					'This ticket is taxable. All configured taxes will be' +
 					' applied to the price of this ticket upon purchase. ',
@@ -127,10 +126,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="start"
 				type="datetime-local"
-				name={ `${ prefix }-start-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-start-${ ticketId }` ] }
+				name={ `${ prefix }-start` }
+				initialValue={ values[ `${ prefix }-start` ] }
 				label={ __( 'Ticket Sales Start', 'event_espresso' ) }
-				htmlId={ `${ prefix }-start-${ ticketId }` }
+				htmlId={ `${ prefix }-start` }
 				validations={ validations.required }
 				inputWidth={ 6 }
 				required
@@ -142,10 +141,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="end"
 				type="datetime-local"
-				name={ `${ prefix }-end-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-start-${ ticketId }` ] }
+				name={ `${ prefix }-end` }
+				initialValue={ values[ `${ prefix }-start` ] }
 				label={ __( 'Ticket Sales End', 'event_espresso' ) }
-				htmlId={ `${ prefix }-end-${ ticketId }` }
+				htmlId={ `${ prefix }-end` }
 				validations={ validations.required }
 				inputWidth={ 6 }
 				required
@@ -157,10 +156,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="qty"
 				type="number"
-				name={ `${ prefix }-qty-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-qty-${ ticketId }` ] || Infinity }
+				name={ `${ prefix }-qty` }
+				initialValue={ values[ `${ prefix }-qty` ] || Infinity }
 				label={ __( 'Quantity', 'event_espresso' ) }
-				htmlId={ `${ prefix }-qty-${ ticketId }` }
+				htmlId={ `${ prefix }-qty` }
 				helpText={ __(
 					'The maximum number of tickets available for sale. ' +
 					'Leave blank for no limit.',
@@ -176,10 +175,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="sold"
 				type="number"
-				name={ `${ prefix }-sold-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-sold-${ ticketId }` ] || 0 }
+				name={ `${ prefix }-sold` }
+				initialValue={ values[ `${ prefix }-sold` ] || 0 }
 				label={ __( 'Sold Count', 'event_espresso' ) }
-				htmlId={ `${ prefix }-sold-${ ticketId }` }
+				htmlId={ `${ prefix }-sold` }
 				helpText={ __(
 					'Quantity of tickets that have been' +
 					' sold for this Ticket',
@@ -195,10 +194,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="reserved"
 				type="number"
-				name={ `${ prefix }-reserved-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-reserved-${ ticketId }` ] || 0 }
+				name={ `${ prefix }-reserved` }
+				initialValue={ values[ `${ prefix }-reserved` ] || 0 }
 				label={ __( 'Reserved Count', 'event_espresso' ) }
-				htmlId={ `${ prefix }-reserved-${ ticketId }` }
+				htmlId={ `${ prefix }-reserved` }
 				helpText={ __(
 					'Quantity of tickets reserved,' +
 					' but not yet fully purchased',
@@ -214,10 +213,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="uses"
 				type="number"
-				name={ `${ prefix }-uses-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-uses-${ ticketId }` ] || Infinity }
+				name={ `${ prefix }-uses` }
+				initialValue={ values[ `${ prefix }-uses` ] || Infinity }
 				label={ __( 'Number of Uses', 'event_espresso' ) }
-				htmlId={ `${ prefix }-uses-${ ticketId }` }
+				htmlId={ `${ prefix }-uses` }
 				helpText={ __(
 					'The number of event dates this ticket can be used for. ' +
 					'Example: A ticket might have access to 4 different' +
@@ -236,10 +235,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="required"
 				type="toggle"
-				name={ `${ prefix }-required-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-required-${ ticketId }` ] || false }
+				name={ `${ prefix }-required` }
+				initialValue={ values[ `${ prefix }-required` ] || false }
 				label={ __( 'Required', 'event_espresso' ) }
-				htmlId={ `${ prefix }-required-${ ticketId }` }
+				htmlId={ `${ prefix }-required` }
 				helpTextIfChecked={ __(
 					'This ticket is required and must be purchased. It will' +
 					' appear first in frontend ticket lists.',
@@ -259,10 +258,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="min"
 				type="number"
-				name={ `${ prefix }-min-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-min-${ ticketId }` ] || null }
+				name={ `${ prefix }-min` }
+				initialValue={ values[ `${ prefix }-min` ] || null }
 				label={ __( 'Minimum Quantity', 'event_espresso' ) }
-				htmlId={ `${ prefix }-min-${ ticketId }` }
+				htmlId={ `${ prefix }-min` }
 				helpText={ __(
 					'The minimum quantity that can be selected for this' +
 					' ticket. Use this to create ticket bundles or graduated' +
@@ -279,10 +278,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="max"
 				type="number"
-				name={ `${ prefix }-max-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-max-${ ticketId }` ] || Infinity }
+				name={ `${ prefix }-max` }
+				initialValue={ values[ `${ prefix }-max` ] || Infinity }
 				label={ __( 'Maximum Quantity', 'event_espresso' ) }
-				htmlId={ `${ prefix }-max-${ ticketId }` }
+				htmlId={ `${ prefix }-max` }
 				helpText={ __(
 					'The maximum quantity that can be selected for this' +
 					' ticket. Use this to create ticket bundles or graduated' +
@@ -299,10 +298,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="order"
 				type="number"
-				name={ `${ prefix }-order-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-order-${ ticketId }` ] || 0 }
+				name={ `${ prefix }-order` }
+				initialValue={ values[ `${ prefix }-order` ] || 0 }
 				label={ __( 'Display Order', 'event_espresso' ) }
-				htmlId={ `${ prefix }-order-${ ticketId }` }
+				htmlId={ `${ prefix }-order` }
 				inputWidth={ 2 }
 			/>,
 		);
@@ -312,10 +311,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="isDefault"
 				type="toggle"
-				name={ `${ prefix }-is-default-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-is-default-${ ticketId }` ] || false }
+				name={ `${ prefix }-is-default` }
+				initialValue={ values[ `${ prefix }-is-default` ] || false }
 				label={ __( 'Default Ticket', 'event_espresso' ) }
-				htmlId={ `${ prefix }-is-default-${ ticketId }` }
+				htmlId={ `${ prefix }-is-default` }
 				helpTextIfChecked={ __(
 					'this is a default ticket and will appear on all new' +
 					' events',
@@ -334,10 +333,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="wpUser"
 				type="number"
-				name={ `${ prefix }-wp-user-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-wp-user-${ ticketId }` ] || 0 }
+				name={ `${ prefix }-wp-user` }
+				initialValue={ values[ `${ prefix }-wp-user` ] || 0 }
 				label={ __( 'Parent Ticket', 'event_espresso' ) }
-				htmlId={ `${ prefix }-wp-user-${ ticketId }` }
+				htmlId={ `${ prefix }-wp-user` }
 				helpText={ __(
 					'The ID of the admin that created this ticket.',
 					'event_espresso',
@@ -351,10 +350,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="parent"
 				type="text"
-				name={ `${ prefix }-parent-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-parent-${ ticketId }` ] || 0 }
+				name={ `${ prefix }-parent` }
+				initialValue={ values[ `${ prefix }-parent` ] || 0 }
 				label={ __( 'Parent Ticket', 'event_espresso' ) }
-				htmlId={ `${ prefix }-parent-${ ticketId }` }
+				htmlId={ `${ prefix }-parent` }
 				inputWidth={ 2 }
 			/>,
 		);
@@ -364,10 +363,10 @@ export const ticketEntityFormInputs = (
 			<FormInput
 				key="deleted"
 				type="toggle"
-				name={ `${ prefix }-deleted-${ ticketId }` }
-				initialValue={ values[ `${ prefix }-deleted-${ ticketId }` ] || false }
+				name={ `${ prefix }-deleted` }
+				initialValue={ values[ `${ prefix }-deleted` ] || false }
 				label={ __( 'Archived', 'event_espresso' ) }
-				htmlId={ `${ prefix }-deleted-${ ticketId }` }
+				htmlId={ `${ prefix }-deleted` }
 				helpTextIfChecked={ __(
 					'this ticket is archived',
 					'event_espresso',
