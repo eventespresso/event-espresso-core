@@ -160,14 +160,14 @@ class FilesDataHandler
         $sane_files_array = [];
         foreach ($files_data as $top_level_name => $top_level_children) {
             $sub_array = [];
-            $sane_files_array[$top_level_name] = [];
+            $sane_files_array[ $top_level_name ] = [];
             foreach ($top_level_children as $file_data_part => $second_level_children) {
                 foreach ($second_level_children as $next_level_name => $sub_values) {
-                    $sub_array[$next_level_name] = $this->organizeFilesData($sub_values, $file_data_part);
+                    $sub_array[ $next_level_name ] = $this->organizeFilesData($sub_values, $file_data_part);
                 }
-                $sane_files_array[$top_level_name] = array_replace_recursive(
+                $sane_files_array[ $top_level_name ] = array_replace_recursive(
                     $sub_array,
-                    $sane_files_array[$top_level_name]
+                    $sane_files_array[ $top_level_name ]
                 );
             }
         }
@@ -184,7 +184,7 @@ class FilesDataHandler
      */
     protected function organizeFilesData($data, $type)
     {
-        if(! is_array($data)) {
+        if (! is_array($data)) {
             return [
                 $type => $data
             ];
@@ -192,9 +192,9 @@ class FilesDataHandler
         $organized_data = [];
         foreach ($data as $input_name_part => $sub_inputs_or_value) {
             if (is_array($sub_inputs_or_value)) {
-                $organized_data[$input_name_part] = $this->organizeFilesData($sub_inputs_or_value, $type);
+                $organized_data[ $input_name_part ] = $this->organizeFilesData($sub_inputs_or_value, $type);
             } else {
-                $organized_data[$input_name_part][$type] = $sub_inputs_or_value;
+                $organized_data[ $input_name_part ][ $type ] = $sub_inputs_or_value;
             }
         }
         return $organized_data;
