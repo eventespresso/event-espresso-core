@@ -17,6 +17,7 @@ import { dateTimeModel } from '@eventespresso/model';
 import { EditorDatesGridView, EditorDatesListView } from './';
 import { default as PaginatedDatesListWithFilterBar } from './filter-bar';
 import { EditEventDateFormModal } from '../';
+import { DatesAndTicketsManagerModal } from '../../dates-and-tickets-metabox';
 
 const {
 	FormColumn,
@@ -43,6 +44,7 @@ class EditorDatesList extends Component {
 		super( props );
 		this.state = {
 			editorOpen: false,
+			managerOpen: false,
 			newEventDate: null,
 		};
 	}
@@ -55,6 +57,17 @@ class EditorDatesList extends Component {
 	toggleEditor = () => {
 		this.setState( ( prevState ) => (
 			{ editorOpen: ! prevState.editorOpen }
+		) );
+	};
+
+	/**
+	 * opens and closes DatesAndTicketsManagerModal
+	 *
+	 * @function
+	 */
+	toggleManager = () => {
+		this.setState( ( prevState ) => (
+			{ managerOpen: ! prevState.managerOpen }
 		) );
 	};
 
@@ -77,10 +90,18 @@ class EditorDatesList extends Component {
 	};
 
 	render() {
-		const { event, view, ...otherProps } = this.props;
+		const {
+			view,
+			event,
+			entities,
+			allDates,
+			allTickets,
+			...otherProps
+		} = this.props;
 		return (
 			<FormWrapper>
 				<EntityList
+					entities={ entities }
 					EntityGridView={ EditorDatesGridView }
 					EntityListView={ EditorDatesListView }
 					view={ view }
@@ -88,9 +109,9 @@ class EditorDatesList extends Component {
 					{ ...otherProps }
 				/>
 				<FormSection>
+					<FormRow><br /></FormRow>
 					<FormRow>
-						<FormColumn colSize={ 2 } offset={ 10 } >
-							<br />
+						<FormColumn colSize={ 2 } offset={ 7 } >
 							<FancyButton
 								icon="calendar"
 								style="wp-default"
@@ -102,6 +123,18 @@ class EditorDatesList extends Component {
 								} }
 							/>
 						</FormColumn>
+						<FormColumn colSize={ 2 } >
+							<FancyButton
+								icon="tickets-alt"
+								style="wp-default"
+								label={ __( 'Ticket Assignments', 'event_espresso' ) }
+								onClick={ ( e ) => {
+									e.preventDefault();
+									e.stopPropagation();
+									this.toggleManager();
+								} }
+							/>
+						</FormColumn>
 					</FormRow>
 				</FormSection>
 				<EditEventDateFormModal
@@ -109,6 +142,19 @@ class EditorDatesList extends Component {
 					eventDate={ this.state.newEventDate }
 					closeModal={ this.toggleEditor }
 					editorOpen={ this.state.editorOpen }
+				/>
+				<DatesAndTicketsManagerModal
+					allDates={ allDates }
+					allTickets={ allTickets }
+					closeModal={ this.toggleManager }
+					editorOpen={ this.state.managerOpen }
+					modalProps={ {
+						title: __(
+							'Ticket Assignments for All Event Dates',
+							'event_espresso'
+						),
+						closeButtonLabel: null,
+					} }
 				/>
 			</FormWrapper>
 		);
