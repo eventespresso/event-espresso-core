@@ -141,7 +141,6 @@ class EditorTicketActionsMenu extends Component {
 				tooltip={ __( 'assign ticket to event dates', 'event_espresso' ) }
 				id={ `assign-ticket-dates-ticket-${ ticket.id }` }
 				htmlClass="view-tickets-dates"
-				// dashicon="calendar-alt"
 				dashicon={ <EspressoIcon icon="calendar" /> }
 				tooltipPosition="top right"
 				onClick={ this.toggleTickets }
@@ -194,7 +193,7 @@ class EditorTicketActionsMenu extends Component {
 	};
 
 	render() {
-		const { ticket, allDates, onUpdate, eventDateTicketMap } = this.props;
+		const { ticket, allDates } = this.props;
 		if ( ! isModelEntityOfModel( ticket, TICKET ) ) {
 			return null;
 		}
@@ -221,12 +220,10 @@ class EditorTicketActionsMenu extends Component {
 					editorOpen={ this.state.editorOpen }
 				/>
 				<DatesAndTicketsManagerModal
-					allDates={ allDates }
 					ticket={ ticket }
-					// eventDateTicketMap={ eventDateTicketMap }
+					allDates={ allDates }
 					closeModal={ this.toggleTickets }
 					editorOpen={ this.state.assignDates }
-					onUpdate={ onUpdate }
 					modalProps={ {
 						title: sprintf(
 							_x(
