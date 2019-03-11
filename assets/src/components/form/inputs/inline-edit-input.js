@@ -116,7 +116,9 @@ export class InlineEditInput extends Component {
 	 */
 	done = async () => {
 		this.setState( { saving: true } );
-		await this.state.onChange( this.state.value ).then( () => {
+		Promise.resolve(
+			await this.state.onChange( this.state.value )
+		).then( () => {
 			this.setState( {
 				editing: this.state.value === '',
 				saving: false,
