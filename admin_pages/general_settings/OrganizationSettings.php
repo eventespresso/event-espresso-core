@@ -326,15 +326,6 @@ class OrganizationSettings extends FormHandler
                             'required'        => false,
                         )
                     ),
-                    'organization_google'      => new EE_Text_Input(
-                        array(
-                            'html_name' => 'organization_google',
-                            'html_label_text' => esc_html__('Google+', 'event_espresso'),
-                            'other_html_attributes' => ' placeholder="google.com/+profilename"',
-                            'default'         => $this->organization_config->get_pretty('google'),
-                            'required'        => false,
-                        )
-                    ),
                     'organization_instagram'      => new EE_Text_Input(
                         array(
                             'html_name' => 'organization_instagram',
