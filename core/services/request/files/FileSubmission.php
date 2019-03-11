@@ -132,10 +132,14 @@ class FileSubmission implements FileSubmissionInterface
      */
     protected function determineExtension()
     {
-        if (!$this->getTmpFile()) {
+        $position_of_period = strrpos($this->getName(), '.');
+        if($position_of_period === false){
             return '';
         }
-        return pathinfo($this->getTmpFile(), PATHINFO_EXTENSION);
+        return mb_substr(
+            $this->getName(),
+            $position_of_period + 1
+        );
     }
 
     /**
