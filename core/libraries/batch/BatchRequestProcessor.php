@@ -2,6 +2,7 @@
 
 namespace EventEspressoBatchRequest;
 
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerInterface;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
@@ -143,7 +144,7 @@ class BatchRequestProcessor
                 )
             );
         }
-        $obj = new $classname;
+        $obj = LoaderFactory::getLoader()->getNew($classname);
         if (! $obj instanceof JobHandlerInterface) {
             throw new BatchRequestException(
                 sprintf(
