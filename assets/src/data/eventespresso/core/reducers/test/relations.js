@@ -1,13 +1,15 @@
 /**
  * External imports
  */
-import { Set, Map } from 'immutable';
+import { Set, Map, fromJS } from 'immutable';
 import cuid from 'cuid';
+import { DEFAULT_CORE_STATE } from '@eventespresso/model';
 
 /**
  * Internal imports
  */
 import {
+	default as reducer,
 	normalizedReceiveAndRemoveRelations,
 	updateEntityIdForRelations,
 	removeRelatedEntitiesForEntity,
@@ -16,7 +18,7 @@ import { mockStateForTests } from '../../test/fixtures';
 import { EventEntities, DateTimeEntities } from '../../../test/fixtures/base';
 import { ACTION_TYPES } from '../../actions/action-types';
 
-const { relations: types } = ACTION_TYPES;
+const { relations: types, resets: resetTypes } = ACTION_TYPES;
 const testCuid = cuid();
 const originalState = mockStateForTests.relations
 	.setIn(
@@ -255,5 +257,72 @@ describe( removeRelatedEntitiesForEntity.name + '()', () => {
 				)
 			).toEqual( expectedState );
 		} );
+	} );
+} );
+
+describe( 'RESET_ALL_STATE', () => {
+	it( 'returns default state', () => {
+		const newState = reducer(
+			originalState,
+			{
+				type: resetTypes.RESET_ALL_STATE,
+			}
+		);
+		expect( newState ).toEqual( fromJS( DEFAULT_CORE_STATE.relations ) );
+	} );
+} );
+
+describe( 'RESET_STATE_FOR_MODEL', () => {
+	it( 'returns original state if the model does not exist in it', () => {
+		const newState = reducer(
+			originalState,
+			{
+				type: resetTypes.RESET_STATE_FOR_MODEL,
+				modelName: 'checkin',
+			}
+		);
+		expect( originalState ).toBe( newState );
+	} );
+	it( 'returns expected state for model existing in state (when it would ' +
+		'clear the entire state)', () => {
+		const newState = reducer(
+			originalState,
+			{
+				type: resetTypes.RESET_STATE_FOR_MODEL,
+				modelName: 'event',
+			}
+		);
+		expect( newState.toJS() ).toEqual( DEFAULT_CORE_STATE.relations );
+	} );
+	it( 'returns expected state for model existing in state (when there are ' +
+		'other relations in the state', () => {
+		const testState = originalState.setIn(
+			[ 'index', 'datetimes', 55 ],
+			Map().set( 'ticket', Set.of( 20, testCuid ) )
+		).setIn(
+			[ 'entityMap', 'ticket', testCuid, 'datetimes' ],
+			Set.of( 55 )
+		);
+		const expectedState = testState.deleteIn(
+			[ 'index', 'datetimes', 55, 'event' ]
+		).deleteIn(
+			[ 'index', 'datetimes', 52 ]
+		).deleteIn(
+			[ 'index', 'datetimes', 53 ]
+		).deleteIn(
+			[ 'index', 'datetimes', 54 ]
+		).deleteIn(
+			[ 'index', 'datetimes', DateTimeEntities.d.id ]
+		).deleteIn(
+			[ 'entityMap', 'event' ]
+		);
+		const newState = reducer(
+			testState,
+			{
+				type: resetTypes.RESET_STATE_FOR_MODEL,
+				modelName: 'event',
+			}
+		);
+		expect( newState.toJS() ).toEqual( expectedState.toJS() );
 	} );
 } );
