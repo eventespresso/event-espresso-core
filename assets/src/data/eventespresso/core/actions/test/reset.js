@@ -8,7 +8,7 @@ import { EventEntity } from '@test/fixtures';
  * Internal imports.
  */
 import {
-	resetEntireState,
+	resetAllState,
 	resetStateForModel,
 	resetAllModelSpecific,
 	resetModelSpecificForSelector,
@@ -19,7 +19,7 @@ import { REDUCER_KEY } from '../../constants';
 
 const { resets: types } = ACTION_TYPES;
 
-describe( 'resetEntireState()', () => {
+describe( 'resetAllState()', () => {
 	const mockMap = {
 		selectorA: new EquivalentKeyMap(
 			[ [ 'foo', 'bar' ], [ 'hello', 'goodbye' ] ]
@@ -28,7 +28,7 @@ describe( 'resetEntireState()', () => {
 			[ [ 'foo', 'bar' ] ]
 		),
 	};
-	const fulfillment = resetEntireState();
+	const fulfillment = resetAllState();
 
 	it( 'yields action for resetting all state', () => {
 		const { value } = fulfillment.next();

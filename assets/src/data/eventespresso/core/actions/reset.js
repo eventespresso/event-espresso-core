@@ -22,7 +22,7 @@ const { resets: types } = ACTION_TYPES;
 /**
  * Resets the entire state to its default for the store.
  */
-export function* resetEntireState() {
+export function* resetAllState() {
 	// action for resetting the entire state.
 	yield {
 		type: types.RESET_ALL_STATE,
