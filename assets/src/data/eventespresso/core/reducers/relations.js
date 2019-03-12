@@ -359,7 +359,7 @@ const resetStateForModel = ( state, action ) => {
  * This clears entries in both the `index` and `entityMap` maps.
  *
  * "Main state" is used in this function to represent the top level state the
- * model's entries is being deleted from (i.e. entityMap or index).
+ * model's entries are being deleted from (i.e. entityMap or index).
  *
  * "Opposite state" is used in this function to represent the opposite top level
  * state.  So if the main state path points to entries in the entityMap, then
