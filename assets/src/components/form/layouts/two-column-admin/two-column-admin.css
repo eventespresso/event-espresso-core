@@ -10,6 +10,23 @@
     -webkit-font-smoothing: antialiased;
 }
 
+.ee-two-column-admin,
+.ee-two-column-admin .px-0,
+.ee-two-column-admin .px-3,
+.ee-two-column-admin .ee-form-row,
+.ee-two-column-admin .ee-form-section {
+    box-sizing: border-box !important;
+	max-width: 100%;
+	width: 100%;
+}
+
+.ee-two-column-admin .ee-form-section table {
+	box-sizing: border-box !important;
+	border-collapse: collapse;
+	max-width: 100%;
+	width: 100%;
+}
+
 .ee-two-column-admin div,
 .ee-two-column-admin::before,
 .ee-two-column-admin::after {
