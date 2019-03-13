@@ -87,7 +87,6 @@
                                                 <h3><?php esc_html_e('Connect with Us:', 'event_espresso'); ?></h3>
                                                 <a class="soc-btn fb" href="[CO_FACEBOOK_URL]"><?php esc_html_e('Facebook', 'event_espresso'); ?></a>
                                                 <a class="soc-btn tw" href="[CO_TWITTER_URL]"><?php esc_html_e('Twitter', 'event_espresso'); ?></a>
-                                                <a class="soc-btn gp" href="[CO_GOOGLE_URL]"><?php esc_html_e('Google+', 'event_espresso'); ?></a>
                                             </td>
                                         </tr>
                                     </tbody>

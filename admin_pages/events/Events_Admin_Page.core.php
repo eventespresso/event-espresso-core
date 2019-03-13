@@ -2675,7 +2675,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             : '';
         if (empty($timezone_string) || ! EEH_DTT_Helper::validate_timezone($timezone_string, false)) {
             EE_Error::add_error(
-                esc_html('An invalid timezone string submitted.', 'event_espresso'),
+                esc_html__('An invalid timezone string submitted.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
