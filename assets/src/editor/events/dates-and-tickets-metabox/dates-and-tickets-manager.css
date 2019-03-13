@@ -1,0 +1,139 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso DatesAndTicketsManager Stylesheet
+ * © 2019 Event Espresso
+ * ------------------------------------------------------------------------- */
+
+.ee-date-tickets-manager-table {
+    border-spacing: 0;
+    margin: 0 0 2em;
+    table-layout: fixed;
+}
+
+.ee-date-tickets-manager-table thead td {
+    border-bottom: 1px solid var(--ee-lite-grey);
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 1px;
+    text-align: center;
+    vertical-align: bottom;
+    white-space: nowrap;
+}
+
+.ee-date-tickets-manager-table thead .ee-dtm-dates-header {
+    max-width: 25%;
+    width: 25%;
+}
+
+.ee-date-tickets-manager-table .ee-dtm-ticket-header-title,
+.ee-date-tickets-manager-table .ee-dtm-ticket-header-price {
+    max-width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.ee-date-tickets-manager-table tbody .ee-dtm-year-row-style {
+    box-sizing: border-box;
+    color: var(--ee-grey-white);
+    font-weight: bold;
+    letter-spacing: 3px;
+    line-height: 16px;
+    padding: 10px 5px 1px 10px;
+    text-align: left;
+    width: 100%;
+}
+
+.ee-date-tickets-manager-table tbody td {
+    box-sizing: border-box;
+    max-width: 50%;
+    padding: 1px;
+    text-align: center;
+}
+
+.ee-date-tickets-manager-table tbody tr {
+    max-height: 62px;
+}
+
+.ee-date-tickets-manager-table tbody .ee-dtm-date-label {
+    display: flex;
+    height: 62px;
+    padding: 1px 5px;
+    text-align: left;
+    text-overflow: ellipsis;
+}
+
+.ee-date-tickets-manager-table .ee-calendar-page-date-wrapper {
+    border: 1px solid var(--ee-off-white);
+    flex : 0 0 auto;
+    max-width: 52px;
+    min-width: 52px;
+    margin: 4px 5px 4px 0;
+    padding: 0;
+}
+
+.ee-date-tickets-manager-table .ee-dtm-date-label-text {
+    flex: 1 1 auto;
+    font-size: 16px;
+    line-height: 16px;
+    margin: 10px 5px;
+}
+
+.ee-date-tickets-manager-table .components-icon-button.ee-dtm-ticket-relation-button {
+    border-radius: 0 !important;
+    border: 1px solid var(--ee-white);
+    box-shadow: none !important;
+    height: 60px;
+    margin: auto;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
+}
+
+.ee-date-tickets-manager-table .components-icon-button.ee-dtm-ticket-relation-button .dashicon {
+    flex: auto;
+}
+
+/* NO TICKET RELATION */
+.ee-date-tickets-manager-table .components-icon-button.ee-dtm-no-ticket-relation {
+    background: var(--ee-near-white) !important;
+    color: var(--ee-lite-grey);
+}
+.ee-date-tickets-manager-table .components-icon-button.ee-dtm-no-ticket-relation:hover,
+.ee-date-tickets-manager-table .components-icon-button.ee-dtm-no-ticket-relation:active {
+    border: 1px solid var(--ee-near-white) !important;
+    color: var(--ee-dark-grey) !important;
+}
+
+/* HAS TICKET RELATION */
+.ee-date-tickets-manager-table .components-icon-button.ee-dtm-has-ticket-relation {
+    background-color: var(--ee-blue) !important;
+    border: 1px solid var(--ee-white);
+    color: var(--ee-white) !important;
+}
+.ee-date-tickets-manager-table .components-icon-button.ee-dtm-has-ticket-relation:hover,
+.ee-date-tickets-manager-table .components-icon-button.ee-dtm-has-ticket-relation:active {
+    border: 1px solid var(--ee-blue);
+}
+
+/* ADD TICKET RELATION */
+.ee-date-tickets-manager-table .components-icon-button.ee-dtm-add-ticket-relation {
+    background: var(--ee-green) !important;
+    border: 1px solid var(--ee-white);
+    color: var(--ee-white) !important;
+}
+.ee-date-tickets-manager-table .components-icon-button.ee-dtm-add-ticket-relation:hover,
+.ee-date-tickets-manager-table .components-icon-button.ee-dtm-add-ticket-relation:active {
+    border: 1px solid var(--ee-green) !important;
+}
+
+/* REMOVE TICKET RELATION */
+.ee-date-tickets-manager-table .components-icon-button.ee-dtm-remove-ticket-relation {
+    background: var(--ee-hot-pink) !important;
+    border: 1px solid var(--ee-white);
+    color: var(--ee-white) !important;
+}
+.ee-date-tickets-manager-table .components-icon-button.ee-dtm-remove-ticket-relation:hover,
+.ee-date-tickets-manager-table .components-icon-button.ee-dtm-remove-ticket-relation:active {
+    border: 1px solid var(--ee-hot-pink) !important;
+}
