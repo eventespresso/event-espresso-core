@@ -102,6 +102,8 @@ class EditorDatesList extends Component {
 			<FormWrapper>
 				<EntityList
 					entities={ entities }
+					allDates={ allDates }
+					allTickets={ allTickets }
 					EntityGridView={ EditorDatesGridView }
 					EntityListView={ EditorDatesListView }
 					view={ view }
