@@ -47,19 +47,18 @@ class FqcnLocatorTest extends TestCase
 
     private function getExpectedFQCNs()
     {
-        return array(
+        $FQCNs = array(
             '\EventEspresso\tests\mocks\core\services\locator\test_dir\TestClassA',
             '\EventEspresso\tests\mocks\core\services\locator\test_dir\TestClassB',
         );
+        return sort($FQCNs);
     }
 
 
     public function testLocate()
     {
-        $this->assertEquals(
-            $this->getExpectedFQCNs(),
-            $this->file_locator->locate($this->test_fqcn)
-        );
+        $FQCNs = $this->file_locator->locate($this->test_fqcn);
+        $this->assertEquals($this->getExpectedFQCNs(), sort($FQCNs));
     }
 
 
@@ -73,10 +72,8 @@ class FqcnLocatorTest extends TestCase
     public function testGetFQCNs()
     {
         $this->file_locator->locate($this->test_fqcn);
-        $this->assertEquals(
-            $this->getExpectedFQCNs(),
-            $this->file_locator->getFQCNs()
-        );
+        $FQCNs = $this->file_locator->getFQCNs();
+        $this->assertEquals($this->getExpectedFQCNs(), sort($FQCNs));
     }
 }
 
