@@ -97,8 +97,6 @@ class EditorTicketGridItem extends Component {
 	};
 
 	render() {
-		// console.log( '' );
-		// console.log( 'EditorTicketGridItem.render() props: ', this.props );
 		const {
 			ticket,
 			allDates,

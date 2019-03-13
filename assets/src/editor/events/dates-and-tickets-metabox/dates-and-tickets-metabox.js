@@ -57,7 +57,6 @@ class DatesAndTicketsMetabox extends Component {
 					allTickets,
 					isChained,
 					eventDateTicketMap,
-					// updateDatesAndTickets,
 					...otherProps
 				} ) => {
 					const notice = sprintf(
@@ -95,7 +94,6 @@ class DatesAndTicketsMetabox extends Component {
 														allDates={ allDates }
 														allTickets={ allTickets }
 														eventDateTicketMap={ eventDateTicketMap }
-														// onUpdate={ updateDatesAndTickets }
 														prefiltered
 														for="event-dates-metabox"
 														{ ...otherProps }

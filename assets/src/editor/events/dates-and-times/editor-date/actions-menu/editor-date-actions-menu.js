@@ -186,13 +186,11 @@ class EditorDateActionsMenu extends Component {
 			event,
 			eventDate,
 			allTickets,
-			// onUpdate,
 			eventDateTicketMap,
 		} = this.props;
 		if ( ! isModelEntityOfModel( eventDate, DATETIME ) ) {
 			return null;
 		}
-
 		return eventDate && eventDate.id ? (
 			<div
 				id={ `ee-editor-date-actions-menu-${ eventDate.id }` }
@@ -209,15 +207,12 @@ class EditorDateActionsMenu extends Component {
 					eventDate={ eventDate }
 					closeModal={ this.toggleEditor }
 					editorOpen={ this.state.editorOpen }
-					// onUpdate={ onUpdate }
 				/>
 				<DatesAndTicketsManagerModal
 					date={ eventDate }
 					allTickets={ allTickets }
-					// eventDateTicketMap={ eventDateTicketMap }
 					closeModal={ this.toggleTickets }
 					editorOpen={ this.state.editTickets }
-					// onUpdate={ onUpdate }
 					modalProps={ {
 						title: sprintf(
 							_x(

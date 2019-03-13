@@ -1,7 +1,6 @@
 /**
  * External imports
  */
-import { dispatch } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import { EntityDetailsPanel, InlineEditInput } from '@eventespresso/components';
 import { __ } from '@eventespresso/i18n';
