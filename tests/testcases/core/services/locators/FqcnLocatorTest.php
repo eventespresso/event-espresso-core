@@ -69,6 +69,7 @@ class FqcnLocatorTest extends TestCase
         $this->assertCount(2, $this->file_locator);
     }
 
+
     public function testGetFQCNs()
     {
         $this->file_locator->locate($this->test_fqcn);
