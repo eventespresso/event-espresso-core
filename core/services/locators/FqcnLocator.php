@@ -118,10 +118,10 @@ class FqcnLocator extends Locator
                     $namespace .= Psr4Autoloader::NS;
                     if (strpos($file, $base_dir) === 0) {
                         $this->FQCNs[] = Psr4Autoloader::NS . str_replace(
-                                array($base_dir, DS),
-                                array($namespace, Psr4Autoloader::NS),
-                                $file
-                            );
+                            array($base_dir, DS),
+                            array($namespace, Psr4Autoloader::NS),
+                            $file
+                        );
                     }
                 }
             }
