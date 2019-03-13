@@ -39,7 +39,7 @@ export default createHigherOrderComponent(
 			initialized: false,
 			dates: [],
 			tickets: [],
-			eventDateTicketMap: [],
+			eventDateTicketMap: {},
 		} ),
 		withSelect( ( select, ownProps ) => {
 			const { editorOpen, initialized } = ownProps;
@@ -99,7 +99,7 @@ export default createHigherOrderComponent(
 				if ( ! relationsResolved || ! Array.isArray( relatedDates ) ) {
 					return dtmProps;
 				}
-				eventDateTicketMap = [];
+				eventDateTicketMap = {};
 				for ( let x = 0; x < relatedDates.length; x++ ) {
 					const relatedDate = relatedDates[ x ];
 					if ( isModelEntityOfModel( relatedDate, DATETIME ) ) {
@@ -139,7 +139,7 @@ export default createHigherOrderComponent(
 					return dtmProps;
 				}
 				let resolvedRelations = 0;
-				eventDateTicketMap = [];
+				eventDateTicketMap = {};
 				for ( let x = 0; x < allDates.length; x++ ) {
 					const oneDate = allDates[ x ];
 					if ( isModelEntityOfModel( oneDate, DATETIME ) && oneDate.id ) {
@@ -153,7 +153,7 @@ export default createHigherOrderComponent(
 							[ oneDate, TICKET ]
 						);
 						if ( ! relationsResolved ) {
-							return;
+							return dtmProps;
 						}
 						if ( Array.isArray( relatedTickets ) ) {
 							resolvedRelations++;
@@ -164,6 +164,9 @@ export default createHigherOrderComponent(
 									) {
 										eventDateTicketMap[ oneDate.id ] = [];
 									}
+									eventDateTicketMap[ oneDate.id ].push(
+										relatedTicket
+									);
 								}
 							} );
 						}
@@ -262,7 +265,12 @@ export default createHigherOrderComponent(
 		( DatesAndTicketsManager ) => {
 			return class extends Component {
 				static propTypes = {
-					entities: PropTypes.arrayOf( PropTypes.object ).isRequired,
+					loading: PropTypes.bool,
+					dates: PropTypes.arrayOf( PropTypes.object ).isRequired,
+					tickets: PropTypes.arrayOf( PropTypes.object ).isRequired,
+					eventDateTicketMap: PropTypes.object.isRequired,
+					addTickets: PropTypes.func.isRequired,
+					removeTickets: PropTypes.func.isRequired,
 				};
 				render() {
 					return (
