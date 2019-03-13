@@ -126,6 +126,7 @@ export const filterDates = ( dates, showDates = 'active-upcoming' ) => {
  * @return {Array}         filtered dates array
  */
 export const sortDatesList = ( dates, sort = 'chronologically' ) => {
+	dates = dates || [];
 	switch ( sort ) {
 		case 'chronologically' :
 			dates = sortBy(
