@@ -1,21 +1,30 @@
 <div id="admin-side-mbox-primary-registrant-dv" class="admin-side-mbox-dv">
     <p class="clearfix">
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
-            <?php _e('Name', 'event_espresso'); ?>
+            <?php esc_html_e('Name', 'event_espresso'); ?>
         </span><?php echo $fname . ' ' . $lname; ?>
     </p>
     <p class="clearfix">
-        <span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php _e('Email', 'event_espresso'); ?></span><a
-            href="mailto:<?php echo $email; ?>"><?php echo $email; ?></a>
+        <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
+            <?php esc_html_e('Email', 'event_espresso'); ?>
+        </span>
+        <a href="mailto:<?php echo $email; ?>">
+            <?php echo $email; ?>
+        </a>
     </p>
     <p class="clearfix">
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
-            <?php _e('Phone #', 'event_espresso'); ?>
-        </span><?php echo $phone; ?>
+            <?php esc_html_e('Phone #', 'event_espresso'); ?>
+        </span>
+        <?php if (! empty($phone)) : ?>
+            <a href="tel:<?php echo $phone; ?>">
+                <?php echo $phone; ?>
+            </a>
+        <?php endif; ?>
     </p>
     <p class="clearfix">
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
-            <?php _e('Address', 'event_espresso'); ?>
+            <?php esc_html_e('Address', 'event_espresso'); ?>
         </span>
     <div class="admin-side-mbox-text-dv">
         <?php echo $formatted_address; ?>

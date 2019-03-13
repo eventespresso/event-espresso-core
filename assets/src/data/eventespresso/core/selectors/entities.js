@@ -165,6 +165,15 @@ const getModelsQueuedForDelete = createSelector(
 	( state ) => [ state.dirty.delete ]
 );
 
+/**
+ * Returns the state.entities value.
+ *
+ * @param {Object} state
+ *
+ * @return {Map} The entities state immutable map.
+ */
+const getAllEntitiesInState = ( state ) => state.entities;
+
 export {
 	getEntityRecordsForModel,
 	getEntitiesForModel,
@@ -174,4 +183,5 @@ export {
 	getEntityIdsQueuedForDelete,
 	getModelsQueuedForDelete,
 	getModelsQueuedForTrash,
+	getAllEntitiesInState,
 };

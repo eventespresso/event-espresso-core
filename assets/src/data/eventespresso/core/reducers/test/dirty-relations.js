@@ -2,6 +2,7 @@
  * External imports
  */
 import { Map, fromJS, Set } from 'immutable';
+import { DEFAULT_CORE_STATE } from '@eventespresso/model';
 import cuid from 'cuid';
 
 /**
@@ -11,11 +12,12 @@ import {
 	replaceOldRelationIdWithNewRelationId,
 	removeRelatedEntitiesForEntity,
 	dirtyRelations,
+	default as reducer,
 } from '../dirty-relations';
 import { mockStateForTests } from '../../test/fixtures';
 import { ACTION_TYPES } from '../../actions/action-types';
 
-const { relations: types } = ACTION_TYPES;
+const { relations: types, resets: resetTypes } = ACTION_TYPES;
 
 let originalState;
 
@@ -491,6 +493,47 @@ describe( 'dirty relations tests', () => {
 					} );
 				} );
 			} );
+		} );
+	} );
+	describe( 'RESET_ALL_STATE', () => {
+		it( 'resets the state to its default', () => {
+			const newState = reducer( originalState, {
+				type: resetTypes.RESET_ALL_STATE,
+			} );
+			expect( newState ).not.toBe( originalState );
+			expect( newState ).toEqual(
+				fromJS( DEFAULT_CORE_STATE.dirty.relations )
+			);
+		} );
+	} );
+	describe( 'RESET_STATE_FOR_MODEL', () => {
+		let expectedState;
+		beforeEach( () => {
+			expectedState = originalState
+				.deleteIn( [ 'index', 'datetimes', 20, 'event' ] )
+				.deleteIn( [ 'delete', 'event' ] );
+		} );
+		it( 'only resets the state for the given model name', () => {
+			const newState = reducer(
+				originalState,
+				{
+					type: resetTypes.RESET_STATE_FOR_MODEL,
+					modelName: 'event',
+				}
+			);
+			expect( newState ).not.toBe( originalState );
+			expect( newState.toJS() ).toEqual( expectedState.toJS() );
+		} );
+		it( 'resets the state for the a model name that is not ' +
+			'normalized', () => {
+			const newState = reducer(
+				originalState,
+				{
+					type: resetTypes.RESET_STATE_FOR_MODEL,
+					modelName: 'events',
+				}
+			);
+			expect( newState.toJS() ).toEqual( expectedState.toJS() );
 		} );
 	} );
 } );
