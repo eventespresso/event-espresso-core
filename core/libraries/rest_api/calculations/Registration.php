@@ -119,7 +119,7 @@ class Registration extends RegistrationCalculationBase
                 'type' => 'object',
                 'properties' => array(),
                 'additionalProperties' => array(
-                    'description' => esc_html(
+                    'description' => esc_html__(
                         'Keys are date-time ids and values are the check-in status',
                         'event_espresso'
                     ),
