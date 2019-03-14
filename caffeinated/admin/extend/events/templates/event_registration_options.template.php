@@ -29,7 +29,9 @@ $settings_array = array(
                                          . __(
                                              'Default Registration Status',
                                              'event_espresso'
-                                         ) . '</label>' . $EVT_default_registration_status . '</p>',
+                                         ) . '</label>' 
+                                         . EEH_Template::get_help_tab_link('event_editor_event_registration_options_help_tab')
+                                         . $EVT_default_registration_status . '</p>',
 );
 // filter
 $settings_array = apply_filters('FHEE__caffeinated_event_registration_options__template__settings', $settings_array);
