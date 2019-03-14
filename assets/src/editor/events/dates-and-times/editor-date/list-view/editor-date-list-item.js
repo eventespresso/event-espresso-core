@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import { Dashicon, Tooltip } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import { dateTimeModel } from '@eventespresso/model';
@@ -51,18 +52,21 @@ class EditorDateListItem extends Component {
 	 */
 	getDatetimeRegistrationsLink = ( eventDate ) => {
 		return (
-			<a
-				href={ eventDate.reg_list_url }
-				aria-label={ __(
-					'View registrations for this datetime.',
+			<Tooltip
+				text={ __(
+					'view registrations for this datetime.',
 					'event_espresso'
 				) }
-				className={ 'ee-editor-date-details-reg-url-link' }
-				target={ '_blank' }
-				rel={ 'noopener norefferer' }
 			>
-				<span className="dashicons dashicons-groups clickable"></span>
-			</a>
+				<a
+					href={ eventDate.reg_list_url }
+					className={ 'ee-editor-date-details-reg-url-link' }
+					target={ '_blank' }
+					rel={ 'noopener norefferer' }
+				>
+					<Dashicon icon="groups" size={ 24 } />
+				</a>
+			</Tooltip>
 		);
 	};
 
