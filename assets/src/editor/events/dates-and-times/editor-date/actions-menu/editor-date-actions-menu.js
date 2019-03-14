@@ -142,7 +142,7 @@ class EditorDateActionsMenu extends Component {
 	 * @param {Array} eventDateTicketMap Event Date Ticket Relations Map
 	 * @return {Array}    				 Array of IconMenuItem objects
 	 */
-	addSidebarMenuItems = ( eventDate, eventDateTicketMap ) => {
+	getSidebarMenuItems = ( eventDate, eventDateTicketMap ) => {
 		const sidebarMenuItems = [];
 		sidebarMenuItems.push(
 			this.mainDropDownMenu( eventDate, eventDateTicketMap )
@@ -159,10 +159,14 @@ class EditorDateActionsMenu extends Component {
 	/**
 	 * @function
 	 * @param {Object} eventDate    	JSON object defining the Event Date
-	 * @param {Array} sidebarMenuItems  Array of IconMenuItem objects
+	 * @param {Array} eventDateTicketMap Event Date Ticket Relations Map
 	 * @return {Array}    				Array of rendered IconMenuItem list items
 	 */
-	renderSidebarMenuItems = ( eventDate, sidebarMenuItems ) => {
+	sidebarMenu = ( eventDate, eventDateTicketMap ) => {
+		const sidebarMenuItems = this.getSidebarMenuItems(
+			eventDate,
+			eventDateTicketMap
+		);
 		return sidebarMenuItems.map(
 			function( sidebarMenuItem, index ) {
 				return (
@@ -196,12 +200,7 @@ class EditorDateActionsMenu extends Component {
 				id={ `ee-editor-date-actions-menu-${ eventDate.id }` }
 				className={ 'ee-editor-date-actions-menu' }
 			>
-				{
-					this.renderSidebarMenuItems(
-						eventDate,
-						this.addSidebarMenuItems( eventDate, eventDateTicketMap )
-					)
-				}
+				{ this.sidebarMenu( eventDate, eventDateTicketMap ) }
 				<EditEventDateFormModal
 					event={ event }
 					eventDate={ eventDate }
