@@ -18,10 +18,12 @@
     border-bottom-width: 1px;
     margin: 0 0 1rem;
 }
+
 .ee-entity-list-filter-bar,
 .ee-entity-list-view-bar {
     display: flex;
     flex-flow: row wrap;
+    align-items: flex-end;
 }
 
 .ee-entity-list-filter-bar {
@@ -48,10 +50,11 @@
     flex-flow: row nowrap;
     height: 36px;
     justify-content: flex-end;
+    align-items: flex-end;
     margin: 0 0 0 1rem;
     max-width: 100%;
 }
-.ee-entity-list-view-bar .ee-filter-bar-filter.ee-search-filter {
+.ee-entity-list-view-bar .ee-search-filter {
     margin: 0;
 }
 
@@ -72,7 +75,6 @@
 
 .ee-entity-list-view-bar .components-icon-button {
     color: var(--ee-grey);
-    margin-bottom: -3px;
 }
 
 .ee-entity-list-view-bar .components-icon-button.active-list {
@@ -101,11 +103,12 @@
     border: 1px solid var(--ee-grey-white);
     border-radius: 0.25rem;
     box-shadow: none;
+    box-sizing: border-box !important;
     color: var(--ee-dark-grey);
     display: inline-block;
     font-size: 1rem;
     line-height: 1;
-    height: 2.25rem;
+    height: 36px !important;
     padding: 0.25rem 0.5rem;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     vertical-align: middle;
@@ -114,8 +117,8 @@
 
 
 .ee-entity-list-filter-bar-wrapper select option {
-    line-height: 20 !important;;
-    min-height: 30rem !important;;
+    line-height: 20 !important;
+    min-height: 30rem !important;
     padding: 10rem 0.5rem !important;
 }
 
@@ -133,17 +136,18 @@
 }
 
 @media only screen and (max-width: 1280px) {
+
     .ee-entity-list-filter-bar-wrapper .components-base-control__label,
     .ee-entity-list-filter-bar-wrapper .components-select-control__input {
         display: block;
     }
 
-    .ee-entity-list-view-bar {
-        max-height: 118px;
+    .ee-entity-list-filter-bar {
+        margin: 0 0 1.5rem;
     }
 
-    .ee-entity-list-view-bar .ee-view-filter {
-        top: 9px;
+    .ee-entity-list-view-bar {
+        max-height: 118px;
     }
 }
 
@@ -164,6 +168,7 @@
 
 /* WordPress Admin Media Query Breakpoint: Smartphone */
 @media screen and (max-width: 600px) {
+
     .ee-entity-list-filter-bar-wrapper {
         flex-flow: column nowrap;
         padding-bottom: 1rem;
@@ -183,15 +188,29 @@
     }
 
     .ee-entity-list-view-bar .ee-filter-bar-filter {
+        height: auto;
         margin: 0 1rem 0 0;
-    }
-
-    .ee-entity-list-view-bar .ee-view-filter {
-        top: 9px;
     }
 }
 
 @media only screen and (max-width: 480px) {
+
+    .ee-entity-list-filter-bar .ee-filter-bar-filter {
+        margin: 0 1rem .75rem 0;
+    }
+
+    .ee-entity-list-view-bar {
+        flex-flow: row wrap;
+        height: auto;
+        max-height: unset;
+    }
+
+    .ee-entity-list-view-bar .ee-filter-bar-filter {
+        height: auto;
+        justify-content: flex-start;
+        margin: 0 1rem .75rem 0;
+        max-height: unset;
+    }
 }
 
 @media only screen and (max-width: 360px) {

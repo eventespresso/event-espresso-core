@@ -11,7 +11,8 @@
 }
 
 /* table rows (div) */
-.ee-dates-list-list-view > div {
+.ee-editor-date-list-items,
+.ee-editor-date-list-view-div {
     margin: 0 0 1px;
     border: 1px solid var(--ee-white);
 }
@@ -72,7 +73,6 @@
 /* ID */
 .ee-editor-date-list-items > div:nth-of-type(2) {
     min-width: 20px;
-    /*padding-left: 20px;*/
     text-align: right;
     width: 5%;
 }
@@ -134,6 +134,19 @@
  * -------------------------------------------------------------------------*/
 
 @media only screen and (max-width: 1600px) {
+
+    .ee-dates-list-list-view {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-between;
+    }
+
+    .ee-editor-date-list-view-div {
+        margin: 0 0 1.5rem;
+        min-width: 260px;
+        width: 47.5%;
+    }
+
     /* headers row */
     .ee-dates-list-list-view > div:nth-of-type(1) {
         display: none !important;
@@ -141,15 +154,16 @@
 
     /* table rows */
     .ee-dates-list-list-view > div,
-    .ee-dates-list-list-view > div:hover {
+    .ee-dates-list-list-view > div:hover,
+    .ee-dates-list-list-view > div:nth-of-type(even) {
         background: none !important;
-        border: none !important;
-        /*padding: 0;*/
+        border: none;
     }
 
     /* table rows (inner) */
     .ee-editor-date-list-items {
         flex-flow: column nowrap;
+        border: 1px solid var(--ee-grey-white);
     }
 
     /* table cells */
@@ -158,7 +172,6 @@
         height: auto;
         overflow: visible;
         padding: 10px;
-        /*position: unset !important;*/
         text-align: left !important;
         text-overflow: unset;
         white-space: normal;
@@ -173,12 +186,19 @@
         font-size: 13px;
         padding: 0 10px 0 0;
         text-align: right;
-        width: 25%;
+        width: 33%;
     }
 
     .ee-date-list-item-value {
         display: inline-block;
     }
+
+    .ee-date-list-item-value .ee-editor-date-details-reg-url-link {
+        left: 8px;
+        position: relative;
+        top: 8px;
+    }
+
     /* Date Name in status bar value */
     .ee-editor-date-list-items > div:nth-of-type(1) .ee-date-list-item-value {
         display: block;
@@ -191,40 +211,24 @@
         width: auto;
     }
 
-    /* status bar */
-    /*.ee-editor-date-list-items > div:nth-of-type(1) .ee-date-list-item-label {*/
-    /*display: none;*/
-    /*width: auto;*/
-    /*}*/
     /* Name */
     .ee-editor-date-list-items > div:nth-of-type(3),
-        /* status bar */
+    /* status bar */
     .ee-editor-date-list-items > div:nth-of-type(1) .ee-date-list-item-label {
         display: none;
     }
 
-
-    /* Actions */
-    /*.ee-editor-date-list-items > div:nth-of-type(10) .ee-date-list-item-label {*/
-    /*padding-top: 8px;*/
-    /*}*/
     /* Actions  menu */
     .ee-dates-list-list-view .ee-editor-date-actions-menu {
-        /*position: relative !important;*/
-        left: 25%;
+        left: 33%;
         padding-left: 10px;
         right: unset;
-        /*top: unset;*/
         top: 2px;
     }
 
     .ee-dates-list-list-view .ee-dropdown-menu-div {
-        /*position: relative !important;*/
         left: 12%;
         right: unset;
-        /*top: unset;*/
-        /*position: absolute;*/
-        /*top: -6px;*/
     }
 
 }
@@ -245,6 +249,14 @@
 }
 
 @media only screen and (max-width: 480px) {
+
+    .ee-editor-date-list-view-div {
+        min-width: 240px;
+        width: 100%;
+    }
+    .ee-dates-list-list-view {
+        justify-content: center;
+    }
 }
 
 @media only screen and (max-width: 360px) {

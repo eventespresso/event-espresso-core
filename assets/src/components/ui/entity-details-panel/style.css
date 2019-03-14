@@ -126,12 +126,15 @@
 
 /* WordPress Admin Media Query Breakpoint: Smartphone */
 @media screen and (max-width: 600px) {
+    .ee-entity-details-panel-div {
+        font-size: 20px;
+        width: 200px;
+    }
 }
 
 @media only screen and (max-width: 480px) {
     .ee-entity-details-panel-div {
         flex-direction: column;
-        font-size: 21px;
         line-height: 30px;
         height: auto;
         padding: 1rem 0 0;
@@ -141,6 +144,7 @@
 
     .ee-entity-details-div {
         flex-direction: row;
+        max-width: unset;
         text-align: center;
         width: 100%;
     }
@@ -148,7 +152,7 @@
     .ee-entity-details-value-div {
         padding-left: 10px;
         text-align: center;
-        width: 10%;
+        width: 25%;
     }
 
     .ee-entity-details-label-div {

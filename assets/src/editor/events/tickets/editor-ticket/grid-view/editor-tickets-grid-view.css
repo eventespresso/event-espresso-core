@@ -30,16 +30,17 @@
 /* DATE DETAILS */
 
 .ee-editor-ticket-details-wrapper-div {
+    align-items: center;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    font-size: 16px;
-    padding: 10px 150px 60px 5px;
-    text-align: center;
     display: flex;
     flex-direction: column;
+    font-size: 16px;
     justify-content: flex-start;
-    align-items: center;
+    min-width: 400px;
+    padding: 10px 150px 60px 5px;
+    text-align: center;
     width: 100%;
 }
 
@@ -153,6 +154,26 @@
 
 /* WordPress Admin Media Query Breakpoint: Smartphone */
 @media screen and (max-width: 600px) {
+    .ee-editor-ticket-details-wrapper-div {
+        font-size: 15px;
+        min-width: 380px;
+    }
+
+    .ee-editor-ticket-name-heading,
+    .ee-editor-ticket-name-heading .ee-inline-edit-text {
+        font-size: 21px !important;
+        line-height: 21px !important;
+    }
+
+    .ee-editor-ticket-name-heading.ee-long-title,
+    .ee-editor-ticket-name-heading.ee-long-title .ee-inline-edit-text {
+        font-size: 16px !important;
+        line-height: 16px !important;
+    }
+
+    .ee-editor-ticket-desc-div {
+        font-size: 13px;
+    }
 }
 
 @media only screen and (max-width: 480px) {
@@ -164,11 +185,7 @@
     }
 
     .ee-editor-ticket-details-wrapper-div {
-        padding: 10px 42px 15px 10px;
-    }
-
-    .ee-tickets-list-grid-view .ee-editor-ticket-actions-menu {
-        top: 100px;
+        padding: 10px 10px 15px 42px;
     }
 
     .ee-editor-ticket-name-heading {

@@ -151,16 +151,12 @@
     .biggie-calendar-date-header,
     .biggie-calendar-date-footer,
     .month-day-sep {
-        display: inline-block;
         line-height: 21px;
     }
 
-    .biggie-calendar-date-header {
-        margin: 0 1rem 0 0;
-    }
-
+    .biggie-calendar-date-header,
     .biggie-calendar-date-footer {
-        margin: 0 0 0 1rem;
+        margin: 0;
     }
 
     .biggie-calendar-date .weekday,

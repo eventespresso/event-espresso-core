@@ -4,9 +4,11 @@
  * ------------------------------------------------------------------------- */
 
 .ee-entity-paper-frame-wrapper {
-    margin: 0 1% 25px 0;
+    margin: 0 .8% 25px 0;
+    max-width: 525px;
+    min-width: 435px;
     position: relative;
-    width: 49%;
+    width: 32.5%;
 }
 
 .ee-entity-wrapper {
@@ -15,6 +17,7 @@
     -moz-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
     box-sizing: border-box;
     max-width: 525px;
+    min-width: 435px;
     position: relative;
 }
 
@@ -66,30 +69,25 @@
  * -------------------------------------------------------------------------*/
 
 @media only screen and (max-width: 1920px) {
+}
+
+@media only screen and (max-width: 1766px) {
     .ee-entity-paper-frame-wrapper {
         margin-right: 1.5%;
         width: 48.5%;
     }
 }
 
-@media only screen and (max-width: 1600px) {
-    .ee-entity-paper-frame-wrapper {
-        margin-right: 2.5%;
-        width: 47.5%;
-    }
-}
-
 @media only screen and (max-width: 1366px) {
+    .ee-entity-wrapper,
+    .ee-entity-paper-frame,
     .ee-entity-paper-frame-wrapper {
-        margin-right: 0;
+        max-width: 525px;
         width: 100%;
     }
 }
 
 @media only screen and (max-width: 1280px) {
-    .ee-entity-paper-frame {
-        width: 100%;
-    }
 }
 
 @media only screen and (max-width: 1024px) {
@@ -101,20 +99,31 @@
 
 /* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
 @media only screen and (max-width: 850px) {
+    .ee-entity-wrapper,
+    .ee-entity-paper-frame,
+    .ee-entity-paper-frame-wrapper {
+        width: 100%;
+    }
+
+    .ee-entity-wrapper,
     .ee-entity-paper-frame {
-        width: 525px;
+        max-width: 525px;
     }
 }
 
 /* WordPress Admin Media Query Breakpoint: Tablet */
 @media screen and ( max-width: 782px ) {
-    .ee-entity-paper-frame {
-        width: 100%;
-    }
 }
 
 /* WordPress Admin Media Query Breakpoint: Smartphone */
 @media screen and (max-width: 600px) {
+    .ee-entity-wrapper,
+    .ee-entity-paper-frame,
+    .ee-entity-paper-frame-wrapper {
+        max-width: 100%;
+        min-width: 100%;
+        width: 100%;
+    }
 }
 
 @media only screen and (max-width: 480px) {

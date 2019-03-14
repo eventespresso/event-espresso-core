@@ -588,3 +588,99 @@
 .ee-two-column-admin .ee-hidden-label {
     display: none !important;
 }
+
+
+/* Media Queries for specific screen sizes
+ * -------------------------------------------------------------------------*/
+
+@media only screen and (max-width: 1920px) {
+}
+
+@media only screen and (max-width: 1600px) {
+}
+
+@media only screen and (max-width: 1366px) {
+}
+
+@media only screen and (max-width: 1280px) {
+}
+
+@media only screen and (max-width: 1024px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+@media only screen and (max-width: 960px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+@media only screen and (max-width: 850px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Tablet */
+@media screen and ( max-width: 782px ) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+}
+
+@media only screen and (max-width: 480px) {
+    .ee-two-column-admin .ee-form-row {
+        flex-flow: column nowrap;
+    }
+
+    .ee-two-column-admin .col-sm-h,
+    .ee-two-column-admin .col-sm-1,
+    .ee-two-column-admin .col-sm-1q,
+    .ee-two-column-admin .col-sm-1h,
+    .ee-two-column-admin .col-sm-2,
+    .ee-two-column-admin .col-sm-2h,
+    .ee-two-column-admin .col-sm-2-3q,
+    .ee-two-column-admin .col-sm-3,
+    .ee-two-column-admin .col-sm-3h,
+    .ee-two-column-admin .col-sm-4,
+    .ee-two-column-admin .col-sm-5,
+    .ee-two-column-admin .col-sm-6,
+    .ee-two-column-admin .col-sm-7,
+    .ee-two-column-admin .col-sm-8,
+    .ee-two-column-admin .col-sm-9,
+    .ee-two-column-admin .col-sm-10 {
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        margin-bottom: 1rem;
+        max-width: 100%;
+        white-space: normal;
+    }
+
+    .ee-two-column-admin .offset-sm-h,
+    .ee-two-column-admin .offset-sm-1,
+    .ee-two-column-admin .offset-sm-2,
+    .ee-two-column-admin .offset-sm-3,
+    .ee-two-column-admin .offset-sm-4,
+    .ee-two-column-admin .offset-sm-5,
+    .ee-two-column-admin .offset-sm-6,
+    .ee-two-column-admin .offset-sm-7,
+    .ee-two-column-admin .offset-sm-8,
+    .ee-two-column-admin .offset-sm-9,
+    .ee-two-column-admin .offset-sm-10 {
+        margin-left: 0;
+    }
+
+    .ee-two-column-admin .ee-form-button {
+        height: auto;
+        margin: 0 auto 1rem;
+        white-space: normal;
+    }
+
+    .ee-two-column-admin .ee-form-button + .ee-form-button,
+    .ee-two-column-admin .button-primary + .button-primary,
+    .ee-two-column-admin .button-primary + .button-secondary,
+    .ee-two-column-admin .button-secondary + .button-primary,
+    .ee-two-column-admin .button-secondary + .button-secondary {
+        margin-left: 1em;
+        margin-right: 0;
+    }
+}
+
+@media only screen and (max-width: 360px) {
+}
