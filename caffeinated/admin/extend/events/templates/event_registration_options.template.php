@@ -29,7 +29,7 @@ $settings_array = array(
                                          . esc_html__(
                                              'Default Registration Status',
                                              'event_espresso'
-                                         ) . '</label>' 
+                                         ) . '</label>'
                                          . EEH_Template::get_help_tab_link('event_editor_event_registration_options_help_tab')
                                          . $EVT_default_registration_status . '</p>',
 );
