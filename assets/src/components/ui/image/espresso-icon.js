@@ -62,6 +62,10 @@ export class EspressoIcon extends Component {
 					'M 4 0 h2 v2 h-2 v-2 z ' +
 					'M 14 0 h2 v2 h-2 v-2 z';
 				break;
+
+			case 'save':
+				path = 'M 1 17.5 v -16 l 0.5 -0.5 h 14.5 l 3 3 v 14.5 l -0.5 0.5 h -17 l -0.5 -0.5 z M 5 7 h 9 l 0.5 -0.5 v -4.5 h -9 v 4.5 l 0.5 0.5 z M 11 6.5 v -3.5 h 2 v 3 h -2 z M 4 11.5 v 0.5 h 12 v -0.5 z m 0 2 v 0.5 h 12 v -0.5 z m 0 2 v 0.5 h 12 v -0.5 z';
+				break;
 		}
 
 		if ( ! path ) {
