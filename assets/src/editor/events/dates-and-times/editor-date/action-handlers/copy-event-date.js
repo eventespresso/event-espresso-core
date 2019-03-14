@@ -64,7 +64,7 @@ export const copyEventDate = async ( datetimeEntity, eventDateTicketMap ) => {
 			const newDatetime = newDatetimeEntity;
 			persistRelationsForEntityId(
 				DATETIME,
-				newDatetime.id
+				newDatetimeEntity.id
 			).then(
 				async () => {
 					new Promise(

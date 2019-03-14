@@ -9,7 +9,6 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 /**
  * @function
  * @param {Object} datetimeEntity  EE Date object
- // * @return {Object} new eventDate
  */
 export const trashEventDate = async ( datetimeEntity ) => {
 	const { MODEL_NAME: DATETIME } = dateTimeModel;
