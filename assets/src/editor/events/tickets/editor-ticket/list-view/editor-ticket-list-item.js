@@ -1,7 +1,6 @@
 /**
  * External imports
  */
-// import moment from 'moment-timezone';
 import { Component } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 import { ticketModel } from '@eventespresso/model';
@@ -11,6 +10,8 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * Internal dependencies
  */
 import { EditorTicketActionsMenu } from '../actions-menu';
+
+const { MODEL_NAME: TICKET, getBackgroundColorClass } = ticketModel;
 
 /**
  * EditorDateGridBlock
@@ -40,29 +41,6 @@ class EditorTicketListItem extends Component {
 		}
 	};
 
-	/**
-	 * getBgColorClass
-	 *
-	 * @function
-	 * @param {Object} ticket    JSON object defining the Event Ticket
-	 * @return {string}    CSS class corresponding to the background color for
-	 *   the container
-	 */
-	getBgColorClass = ( ticket ) => {
-		switch ( ticket.status ) {
-			case 'TKO' :
-				return 'ee-green-background';
-			case 'TKE' :
-				return 'ee-lt-grey-background';
-			case 'TKS' :
-				return 'ee-orange-background';
-			case 'TKP' :
-				return 'ee-blue-background';
-			case 'TKA' :
-				return 'ee-violet-background';
-		}
-	};
-
 	render() {
 		const {
 			ticket,
@@ -70,19 +48,14 @@ class EditorTicketListItem extends Component {
 			eventDateTicketMap,
 			onUpdate,
 		} = this.props;
-		if ( ! isModelEntityOfModel( ticket, ticketModel.MODEL_NAME ) ) {
+		if ( ! isModelEntityOfModel( ticket, TICKET ) ) {
 			return null;
 		}
-		console.log( '' );
-		console.log( 'EditorTicketListItem.render()' );
-		console.log( ' > props: ', this.props );
 		const statusClass = this.getTicketStatusClass( ticket );
-		const bgClass = this.getBgColorClass( ticket );
+		const bgClass = getBackgroundColorClass( ticket );
 		const qty = ticket.qty === 'INF' || ticket.qty === Infinity ?
 			( <span className={ 'ee-infinity-sign' }>&infin;</span> ) :
 			ticket.qty;
-		// const startDate = moment( new Date( ticket.start ) );
-		// const endDate = moment( new Date( ticket.end ) );
 
 		return (
 			<div id={ `ee-editor-ticket-list-view-div-${ ticket.id }` }
