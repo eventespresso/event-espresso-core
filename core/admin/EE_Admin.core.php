@@ -465,7 +465,7 @@ final class EE_Admin implements InterminableInterface
                             );
                         }
                         ?>#tabs-panel-posttype-extra-nav-menu-pages-event-archives">
-                        <?php _e('Event Archive Pages', 'event_espresso'); ?>
+                        <?php esc_html_e('Event Archive Pages', 'event_espresso'); ?>
                     </a>
                 </li>
             </ul><!-- .posttype-tabs -->
@@ -501,7 +501,7 @@ final class EE_Admin implements InterminableInterface
                                      remove_query_arg($removed_args)
                                  )
                              );
-                        ?>#posttype-extra-nav-menu-pages>" class="select-all"><?php _e('Select All', 'event_espresso'); ?></a>
+                        ?>#posttype-extra-nav-menu-pages" class="select-all"><?php esc_html_e('Select All', 'event_espresso'); ?></a>
                 </span>
                 <span class="add-to-menu">
                     <input type="submit"<?php wp_nav_menu_disabled_check($nav_menu_selected_id); ?>
@@ -760,7 +760,12 @@ final class EE_Admin implements InterminableInterface
             array('page' => 'espresso_events'),
             admin_url('admin.php')
         );
-        $items['events']['text'] = sprintf(_n('%s Event', '%s Events', $events, 'event_espresso'), number_format_i18n($events));
+        $items['events']['text'] = sprintf(
+            esc_html(
+                _n('%s Event', '%s Events', $events, 'event_espresso')
+            ),
+            number_format_i18n($events)
+        );
         $items['events']['title'] = esc_html__('Click to view all Events', 'event_espresso');
         $registrations = EEM_Registration::instance()->count(
             array(
@@ -774,7 +779,9 @@ final class EE_Admin implements InterminableInterface
             admin_url('admin.php')
         );
         $items['registrations']['text'] = sprintf(
-            _n('%s Registration', '%s Registrations', $registrations, 'event_espresso'),
+            esc_html(
+                _n('%s Registration', '%s Registrations', $registrations, 'event_espresso')
+            ),
             number_format_i18n($registrations)
         );
         $items['registrations']['title'] = esc_html__('Click to view all registrations', 'event_espresso');
@@ -968,7 +975,7 @@ final class EE_Admin implements InterminableInterface
         EE_Error::doing_it_wrong(
             __METHOD__,
             sprintf(
-                __('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                esc_html__('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
                 '\EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
             ),
             '4.9.27'
@@ -987,7 +994,7 @@ final class EE_Admin implements InterminableInterface
         EE_Error::doing_it_wrong(
             __METHOD__,
             sprintf(
-                __('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                esc_html__('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
                 '\EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
             ),
             '4.9.27'

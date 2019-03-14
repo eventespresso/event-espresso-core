@@ -28,7 +28,7 @@ import { REDUCER_KEY as CORE_REDUCER_KEY } from '../../constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../../schema/constants';
 
 describe( 'persistAddRelationsForModel()', () => {
-	const fulfillment = persistAddRelationsForModel( 'event' );
+	const fulfillment = persistAddRelationsForModel( 'events' );
 	it( 'yields resolve dispatch action for persisting relations for the ' +
 		'given model', () => {
 		const { value } = fulfillment.next();
@@ -43,7 +43,7 @@ describe( 'persistAddRelationsForModel()', () => {
 } );
 
 describe( 'persistDeleteRelationsforModel()', () => {
-	const fulfillment = persistDeleteRelationsForModel( 'event' );
+	const fulfillment = persistDeleteRelationsForModel( 'events' );
 	it( 'yields resolve dispatch action for persisting relations for the ' +
 		'given model', () => {
 		const { value } = fulfillment.next();
@@ -60,7 +60,7 @@ describe( 'persistDeleteRelationsforModel()', () => {
 
 describe( 'persistRelationsForModel()', () => {
 	let fulfillment;
-	const reset = () => fulfillment = persistRelationsForModel( 'event' );
+	const reset = () => fulfillment = persistRelationsForModel( 'events' );
 	it( 'yields resolve dispatch action for getting relation state', () => {
 		reset();
 		const { value } = fulfillment.next();
@@ -111,7 +111,7 @@ describe( 'persistRelationsForModel()', () => {
 describe( 'persistRelationsForEntityId()', () => {
 	let fulfillment;
 	const reset = () => fulfillment = persistRelationsForEntityId(
-		'event',
+		'events',
 		10
 	);
 	it( 'yields resolve dispatch action for getting relation state', () => {
@@ -186,7 +186,7 @@ describe( 'persistRelationsForEntityId()', () => {
 describe( 'persistRelationsForEntityIdAndRelation', () => {
 	let fulfillment;
 	const reset = () => fulfillment = persistRelationsForEntityIdAndRelation(
-		'event',
+		'events',
 		10,
 		'datetime',
 	);
@@ -214,7 +214,7 @@ describe( 'persistRelationsForEntityIdAndRelation', () => {
 		fulfillment.next();
 		const { value: relationAction } = fulfillment.next( {
 			10: {
-				datetime: [ 10, 20 ],
+				datetimes: [ 10, 20 ],
 			},
 		} );
 		expect( relationAction ).toEqual(
@@ -223,12 +223,12 @@ describe( 'persistRelationsForEntityIdAndRelation', () => {
 				'persistRelationsForEntityIdAndRelationId',
 				'event',
 				10,
-				'datetime',
+				'datetimes',
 				20,
 				true,
 				{
 					10: {
-						datetime: [ 10, 20 ],
+						datetimes: [ 10, 20 ],
 					},
 				}
 			)
@@ -240,12 +240,12 @@ describe( 'persistRelationsForEntityIdAndRelation', () => {
 				'persistRelationsForEntityIdAndRelationId',
 				'event',
 				10,
-				'datetime',
+				'datetimes',
 				10,
 				true,
 				{
 					10: {
-						datetime: [ 10, 20 ],
+						datetimes: [ 10, 20 ],
 					},
 				}
 			)
@@ -262,7 +262,7 @@ describe( 'persistRelationsForEntityIdAndRelationId()', () => {
 	let fulfillment;
 	const reset = ( entityId, relationId, addRelation = true ) => fulfillment =
 		persistRelationsForEntityIdAndRelationId(
-			'event',
+			'events',
 			entityId,
 			'datetime',
 			relationId,
@@ -272,7 +272,7 @@ describe( 'persistRelationsForEntityIdAndRelationId()', () => {
 	const testRelationState = {
 		event: {
 			10: {
-				datetime: [ 20 ],
+				datetimes: [ 20 ],
 			},
 		},
 	};
@@ -302,7 +302,7 @@ describe( 'persistRelationsForEntityIdAndRelationId()', () => {
 		expect( value ).toEqual( resolveDispatch(
 			CORE_REDUCER_KEY,
 			'persistNewEntityAndRemoveDirtyRelations',
-			'datetime',
+			'datetimes',
 			20,
 			'event',
 			testCuid,
@@ -323,7 +323,7 @@ describe( 'persistRelationsForEntityIdAndRelationId()', () => {
 		expect( value ).toEqual( resolveDispatch(
 			CORE_REDUCER_KEY,
 			'persistNewEntityAndRemoveDirtyRelations',
-			'datetime',
+			'datetimes',
 			testCuid,
 			'event',
 			10,
@@ -348,7 +348,7 @@ describe( 'persistRelationsForEntityIdAndRelationId()', () => {
 				'getRelationEndpointForEntityId',
 				'event',
 				10,
-				'datetime'
+				'datetimes'
 			)
 		);
 	} );
@@ -390,7 +390,7 @@ describe( 'persistRelationsForEntityIdAndRelationId()', () => {
 		'success', () => {
 		const { value } = fulfillment.next( true );
 		expect( value ).toEqual( removeDirtyRelationForType(
-			'datetime',
+			'datetimes',
 			20,
 			'event',
 			10,
@@ -417,9 +417,9 @@ describe( 'persistNewEntityAndRemoveDirtyRelations()', () => {
 	let fulfillment;
 	const reset = ( doRelationRemoval = true ) => fulfillment =
 		persistNewEntityAndRemoveDirtyRelations(
-			'datetimes',
+			'datetime',
 			20,
-			'event',
+			'events',
 			10,
 			true,
 			[ 'event', 10 ],
