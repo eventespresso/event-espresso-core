@@ -76,7 +76,6 @@ class EditorDateListItem extends Component {
 			eventDate,
 			allTickets,
 			eventDateTicketMap,
-			// onUpdate,
 		} = this.props;
 		if ( ! isModelEntityOfModel( eventDate, DATETIME ) ) {
 			return null;
@@ -176,7 +175,6 @@ class EditorDateListItem extends Component {
 							eventDate={ eventDate }
 							allTickets={ allTickets }
 							eventDateTicketMap={ eventDateTicketMap }
-							// onUpdate={ onUpdate }
 						/>
 					</div>
 				</div>

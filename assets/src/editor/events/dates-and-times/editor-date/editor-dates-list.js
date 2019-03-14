@@ -129,7 +129,10 @@ class EditorDatesList extends Component {
 							<FancyButton
 								icon="tickets-alt"
 								style="wp-default"
-								label={ __( 'Ticket Assignments', 'event_espresso' ) }
+								label={ __(
+									'Ticket Assignments',
+									'event_espresso'
+								) }
 								onClick={ ( e ) => {
 									e.preventDefault();
 									e.stopPropagation();
