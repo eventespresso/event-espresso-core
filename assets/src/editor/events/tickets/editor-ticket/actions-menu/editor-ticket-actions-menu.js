@@ -169,11 +169,29 @@ class EditorTicketActionsMenu extends Component {
 
 	/**
 	 * @function
-	 * @param {Object} ticket    	JSON object defining the Ticket
-	 * @param {Array} sidebarMenuItems  Array of IconMenuItem objects
-	 * @return {Array}    				Array of rendered IconMenuItem list items
+	 * @param {Object} ticket 	model object defining the Ticket
+	 * @return {Array}          Array of IconMenuItem objects
 	 */
-	renderSidebarMenuItems = ( ticket, sidebarMenuItems ) => {
+	getSidebarMenuItems = ( ticket ) => {
+		const sidebarMenuItems = [];
+		sidebarMenuItems.push( this.mainDropDownMenu( ticket ) );
+		sidebarMenuItems.push( this.editTicketMenuItem( ticket ) );
+		sidebarMenuItems.push( this.calculatePriceMenuItem( ticket ) );
+		sidebarMenuItems.push( this.assignDatesMenuItem( ticket ) );
+		return applyFilters(
+			'FHEE__EditorDates__EditorDateSidebar__SidebarMenuItems',
+			sidebarMenuItems,
+			ticket
+		);
+	};
+
+	/**
+	 * @function
+	 * @param {Object} ticket 	model object defining the Ticket
+	 * @return {Array} 			Array of rendered IconMenuItem list items
+	 */
+	sidebarMenu = ( ticket ) => {
+		const sidebarMenuItems = this.getSidebarMenuItems( ticket );
 		return sidebarMenuItems.map(
 			( sidebarMenuItem, index ) => {
 				return (
@@ -197,23 +215,12 @@ class EditorTicketActionsMenu extends Component {
 		if ( ! isModelEntityOfModel( ticket, TICKET ) ) {
 			return null;
 		}
-		let sidebarMenuItems = [];
-		sidebarMenuItems.push( this.mainDropDownMenu( ticket ) );
-		sidebarMenuItems.push( this.editTicketMenuItem( ticket ) );
-		sidebarMenuItems.push( this.calculatePriceMenuItem( ticket ) );
-		sidebarMenuItems.push( this.assignDatesMenuItem( ticket ) );
-		sidebarMenuItems = applyFilters(
-			'FHEE__EditorDates__EditorDateSidebar__SidebarMenuItems',
-			sidebarMenuItems,
-			ticket
-		);
-
 		return ticket && ticket.id ? (
 			<div
 				id={ `ee-editor-ticket-actions-menu-${ ticket.id }` }
 				className={ 'ee-editor-ticket-actions-menu' }
 			>
-				{ this.renderSidebarMenuItems( ticket, sidebarMenuItems ) }
+				{ this.sidebarMenu( ticket ) }
 				<EditTicketFormModal
 					ticket={ ticket }
 					closeModal={ this.toggleEditor }
