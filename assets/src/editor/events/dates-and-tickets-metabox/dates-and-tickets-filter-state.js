@@ -165,4 +165,3 @@ export default createHigherOrderComponent(
 	] ),
 	'withDatesAndTicketsFilterState'
 )( DatesAndTicketsFilterState );
-

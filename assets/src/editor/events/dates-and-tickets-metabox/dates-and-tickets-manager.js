@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { filter, find, findIndex, isFunction } from 'lodash';
+import { findIndex, isFunction } from 'lodash';
 import PropTypes from 'prop-types';
 import { IconButton } from '@wordpress/components';
 import { Component, Fragment } from '@wordpress/element';
@@ -22,6 +22,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 import {
 	default as withDatesAndTicketsManagerState,
 } from './with-dates-and-tickets-manager-state';
+import * as handler from './ticket-assignments-handler';
 import './dates-and-tickets-manager.css';
 
 const noIndex = -1;
@@ -48,48 +49,6 @@ export class DatesAndTicketsManager extends Component {
 
 	/**
 	 * @function
-	 */
-	processChanges = () => {
-		const relationUpdates = [];
-		this.setState( { submitting: true } );
-		for ( let dateID in this.state.removed ) {
-			dateID = parseInt( dateID );
-			if ( this.state.removed.hasOwnProperty( dateID ) ) {
-				const date = find( this.props.dates, { id: dateID } );
-				if ( isModelEntityOfModel( date, DATETIME ) ) {
-					const ticketsToRemove = this.state.removed[ dateID ];
-					if ( Array.isArray( ticketsToRemove ) ) {
-						relationUpdates.push(
-							this.removeTickets( date, ticketsToRemove )
-						);
-					}
-				}
-			}
-		}
-		for ( let dateID in this.state.assigned ) {
-			dateID = parseInt( dateID );
-			if ( this.state.assigned.hasOwnProperty( dateID ) ) {
-				const date = find( this.props.dates, { id: dateID } );
-				if ( isModelEntityOfModel( date, DATETIME ) ) {
-					const ticketsToAssign = this.state.assigned[ dateID ];
-					if ( Array.isArray( ticketsToAssign ) ) {
-						relationUpdates.push(
-							this.addTickets( date, ticketsToAssign )
-						);
-					}
-				}
-			}
-		}
-		Promise.all( relationUpdates ).then( ( updates ) => {
-			const wasUpdated = filter( updates, ( updated ) => {
-				return !! updated;
-			} );
-			this.toggleEditor( wasUpdated.length > 0 );
-		} );
-	};
-
-	/**
-	 * @function
 	 * @param {boolean} update
 	 */
 	toggleEditor = ( update = false ) => {
@@ -100,134 +59,12 @@ export class DatesAndTicketsManager extends Component {
 			if ( isFunction( this.resetRelationsMap ) ) {
 				this.resetRelationsMap();
 			}
-			this.setState( { submitting: false } );
+			this.setState( {
+				assigned: {},
+				removed: {},
+				submitting: false,
+			} );
 			this.closeModal();
-		}
-	};
-
-	/**
-	 * @function
-	 * @param {Object} assigned
-	 * @param {Object} date
-	 * @param {Object} ticket
-	 * @param {boolean} returnIndex
-	 * @return {number|boolean} index for date id in assigned array or
-	 *  						boolean if returnIndex is false
-	 */
-	isAssigned = ( assigned, date, ticket, returnIndex = false ) => {
-		let index = noIndex;
-		if ( Array.isArray( assigned[ date.id ] ) ) {
-			index = findIndex( assigned[ date.id ], { id: ticket.id } );
-		}
-		return returnIndex ? index : index > noIndex;
-	};
-
-	/**
-	 * @function
-	 * @param {Object} assigned
-	 * @param {Object} date
-	 * @param {Object} ticket
-	 * @return {Object} assigned
-	 */
-	unAssignTicket = ( assigned, date, ticket ) => {
-		const index = this.isAssigned( assigned, date, ticket, true );
-		if ( index > noIndex ) {
-			delete assigned[ date.id ][ index ];
-		}
-		return assigned;
-	};
-
-	/**
-	 * @function
-	 * @param {Object} date
-	 * @param {Object} ticket
-	 */
-	assignTicket = ( date, ticket ) => {
-		const eventDate = find(
-			this.props.dates,
-			{ id: date.id }
-		);
-		if ( eventDate ) {
-			this.setState( ( prevState ) => {
-				if ( ! Array.isArray( prevState.assigned[ date.id ] ) ) {
-					prevState.assigned[ date.id ] = [];
-				}
-				if ( ! this.isAssigned( prevState.assigned, date, ticket ) ) {
-					prevState.assigned[ date.id ].push( ticket );
-				}
-				prevState.removed = this.unRemoveTicket(
-					prevState.removed,
-					date,
-					ticket
-				);
-				return ( {
-					assigned: prevState.assigned,
-					removed: prevState.removed,
-				} );
-			} );
-		}
-	};
-
-	/**
-	 * @function
-	 * @param {Object} removed
-	 * @param {Object} date
-	 * @param {Object} ticket
-	 * @param {boolean} returnIndex
-	 * @return {number|boolean} index for date id in removed array or
-	 *                        boolean if returnIndex is false
-	 */
-	isRemoved = ( removed, date, ticket, returnIndex = false ) => {
-		let index = noIndex;
-		if ( Array.isArray( removed[ date.id ] ) ) {
-			index = findIndex( removed[ date.id ], { id: ticket.id } );
-		}
-		return returnIndex ? index : index > noIndex;
-	};
-
-	/**
-	 * @function
-	 * @param {Object} removed
-	 * @param {Object} date
-	 * @param {Object} ticket
-	 * @return {Object} removed
-	 */
-	unRemoveTicket = ( removed, date, ticket ) => {
-		const index = this.isRemoved( removed, date, ticket, true );
-		if ( index > noIndex ) {
-			delete removed[ date.id ][ index ];
-		}
-		return removed;
-	};
-
-	/**
-	 * @function
-	 * @param {Object} date
-	 * @param {Object} ticket
-	 */
-	removeTicket = ( date, ticket ) => {
-		const eventDate = find(
-			this.props.dates,
-			{ id: date.id }
-		);
-		if ( eventDate ) {
-			this.setState( ( prevState ) => {
-				if ( ! Array.isArray( prevState.removed[ date.id ] ) ) {
-					prevState.removed[ date.id ] = [];
-				}
-				if ( ! this.isRemoved( prevState.removed, date, ticket ) ) {
-					prevState.removed[ date.id ].push( ticket );
-				}
-				prevState.assigned = this.unAssignTicket(
-					prevState.assigned,
-					date,
-					ticket
-				);
-				return ( {
-					assigned: prevState.assigned,
-					removed: prevState.removed,
-				} );
-			} );
 		}
 	};
 
@@ -237,7 +74,7 @@ export class DatesAndTicketsManager extends Component {
 	 * @param {Object} cellWidth
 	 * @return {Object} rendered table header cell
 	 */
-	ticketHeaders = ( tickets, cellWidth ) => {
+	ticketHeaders = ( tickets, cellWidth = null ) => {
 		return tickets.map(
 			( ticket, index1 ) => {
 				if ( ! isModelEntityOfModel(
@@ -246,15 +83,20 @@ export class DatesAndTicketsManager extends Component {
 				) ) {
 					return null;
 				}
+				/*  */
 				return (
-					<td key={ index1 } style={ cellWidth } >
+					<div
+						key={ index1 }
+						className="ee-dtm-ticket-header"
+						// style={ cellWidth }
+					>
 						<div className="ee-dtm-ticket-header-title" >
 							{ `${ ticket.name }` }
 						</div>
 						<div className="ee-dtm-ticket-header-price" >
 							{ `${ ticket.price }` }
 						</div>
-					</td>
+					</div>
 				);
 			}
 		);
@@ -275,8 +117,8 @@ export class DatesAndTicketsManager extends Component {
 		tickets,
 		eventDateTicketMap,
 		dateCount,
-		datesWidth,
-		cellWidth
+		datesWidth = null,
+		cellWidth = null
 	) => {
 		let year = 0;
 		let yearRow = null;
@@ -295,7 +137,7 @@ export class DatesAndTicketsManager extends Component {
 				);
 				if ( dateCount > 1 && dateYear > year ) {
 					year = dateYear;
-					yearRow = this.yearRow( dateCount, year );
+					yearRow = this.yearRow( year, datesWidth );
 					indexMod++;
 					index2++;
 				} else {
@@ -307,13 +149,12 @@ export class DatesAndTicketsManager extends Component {
 				return (
 					<Fragment key={ index2 }>
 						{ yearRow }
-						<tr>
+						<div className="ee-dtm-date-row">
 							{
 								this.dateHeader(
 									eventDate,
 									dateCount,
-									datesWidth,
-									cellWidth
+									datesWidth
 								)
 							}
 							{
@@ -324,7 +165,7 @@ export class DatesAndTicketsManager extends Component {
 									cellWidth
 								)
 							}
-						</tr>
+						</div>
 					</Fragment>
 				);
 			}
@@ -333,16 +174,19 @@ export class DatesAndTicketsManager extends Component {
 
 	/**
 	 * @function
-	 * @param {number} dateCount
 	 * @param {number} year
-	 * @return {Object} rendered table row
+	 * @param {Object} datesWidth
+	 * @return {Object} rendered table row style={ datesWidth }
 	 */
-	yearRow = ( dateCount, year ) => (
-		<tr>
-			<td colSpan={ dateCount } className="ee-dtm-year-row-style" >
-				<div>{ year }</div>
-			</td>
-		</tr>
+	yearRow = ( year, datesWidth ) => (
+		<div className="ee-dtm-year-row">
+			<div className="ee-dtm-date-label">{ year }</div>
+			{
+				this.props.tickets.map( ( i ) => (
+					<div key={ i } className="ee-dtm-date-row-ticket" ></div>
+				) )
+			}
+		</div>
 	);
 
 	/**
@@ -355,7 +199,14 @@ export class DatesAndTicketsManager extends Component {
 	dateHeader = ( eventDate, dateCount, datesWidth ) => {
 		return dateCount > 1 ?
 			(
-				<td key={ 0 } className="ee-dtm-date-label">
+				<div
+					key={ 0 }
+					className="ee-dtm-date-label"
+					// style={ datesWidth }
+				>
+					<div className="ee-dtm-date-label-text">
+						{ eventDate.name }
+					</div>
 					<CalendarPageDate
 						startDate={ eventDate.start }
 						statusClass={
@@ -363,10 +214,7 @@ export class DatesAndTicketsManager extends Component {
 						}
 						size={ 'small' }
 					/>
-					<div className="ee-dtm-date-label-text">
-						{ eventDate.name }
-					</div>
-				</td>
+				</div>
 			) :
 			null;
 	};
@@ -392,13 +240,13 @@ export class DatesAndTicketsManager extends Component {
 					eventDateTickets,
 					{ id: ticket.id }
 				) > noIndex;
-				const isAssigned = this.isAssigned(
+				const isAssigned = handler.isAssigned(
 					this.state.assigned,
 					eventDate,
 					ticket,
 					true
 				);
-				const isRemoved = this.isRemoved(
+				const isRemoved = handler.isRemoved(
 					this.state.removed,
 					eventDate,
 					ticket,
@@ -423,10 +271,14 @@ export class DatesAndTicketsManager extends Component {
 				}
 				const action = isAssigned > noIndex ||
 				( hasTicket && isRemoved === noIndex ) ?
-					this.removeTicket :
-					this.assignTicket;
+					handler.removeTicket :
+					handler.assignTicket;
 				return (
-					<td key={ index3 } style={ cellWidth } >
+					<div
+						key={ index3 }
+						className="ee-dtm-date-row-ticket"
+						// style={ cellWidth }
+					>
 						<IconButton
 							icon={ icon }
 							className={ bgColor }
@@ -434,19 +286,73 @@ export class DatesAndTicketsManager extends Component {
 							onClick={ ( event ) => {
 								event.preventDefault();
 								event.stopPropagation();
-								action( eventDate, ticket );
+								action(
+									this.setState,
+									this.props.dates,
+									eventDate,
+									ticket
+								);
 							} }
 							onKeyDown={ ( event ) => {
 								if ( event.keyCode === ENTER ) {
 									event.preventDefault();
 									event.stopPropagation();
-									action( eventDate, ticket );
+									action(
+										this.setState,
+										this.props.dates,
+										eventDate,
+										ticket
+									);
 								}
 							} }
 						/>
-					</td>
+					</div>
 				);
 			}
+		);
+	};
+
+	/**
+	 * @function
+	 * @param {Function} processChanges
+	 * @return {Object} rendered submit button
+	 */
+	submitButton = ( processChanges ) => {
+		const { FormSubmitButton } = twoColumnAdminFormLayout;
+		return (
+			<FormSubmitButton
+				onClick={
+					( event ) => {
+						event.preventDefault();
+						event.stopPropagation();
+						processChanges();
+					}
+				}
+				buttonText={ __(
+					'Update Ticket Assignments',
+					'event_espresso'
+				) }
+				submitting={ this.state.submitting }
+			/>
+		);
+	};
+
+	/**
+	 * @function
+	 * @return {Object} rendered cancel button
+	 */
+	cancelButton = () => {
+		const { FormCancelButton } = twoColumnAdminFormLayout;
+		return (
+			<FormCancelButton
+				onClick={
+					( event ) => {
+						event.preventDefault();
+						event.stopPropagation();
+						this.toggleEditor();
+					}
+				}
+			/>
 		);
 	};
 
@@ -462,17 +368,25 @@ export class DatesAndTicketsManager extends Component {
 			closeModal,
 			resetRelationsMap,
 		} = this.props;
-		this.addTickets = addTickets;
-		this.removeTickets = removeTickets;
 		this.onUpdate = onUpdate;
 		this.closeModal = closeModal;
 		this.resetRelationsMap = resetRelationsMap;
 
+		const processChanges = async () => {
+			this.setState( { submitting: true } );
+			const wasUpdated = await handler.processChanges(
+				dates,
+				this.state.assigned,
+				addTickets,
+				this.state.removed,
+				removeTickets
+			);
+			this.toggleEditor( wasUpdated );
+		};
+
 		const {
 			FormSection,
 			FormWrapper,
-			FormSubmitButton,
-			FormCancelButton,
 			FormSaveCancelButtons,
 		} = twoColumnAdminFormLayout;
 		const dateCount = dates.length;
@@ -489,35 +403,12 @@ export class DatesAndTicketsManager extends Component {
 			width: width + '%',
 		};
 		const datesHeader = dateCount > 1 ? (
-			<td key={ 0 } className="ee-dtm-dates-header" style={ datesWidth } />
+			<div
+				key={ 0 }
+				className="ee-dtm-dates-header"
+				// style={ datesWidth }
+			/>
 		) : null;
-		const submitButton = (
-			<FormSubmitButton
-				onClick={
-					( event ) => {
-						event.preventDefault();
-						event.stopPropagation();
-						this.processChanges();
-					}
-				}
-				buttonText={ __(
-					'Update Ticket Assignments',
-					'event_espresso'
-				) }
-				submitting={ this.state.submitting }
-			/>
-		);
-		const cancelButton = (
-			<FormCancelButton
-				onClick={
-					( event ) => {
-						event.preventDefault();
-						event.stopPropagation();
-						this.toggleEditor();
-					}
-				}
-			/>
-		);
 		return (
 			<Fragment>
 				<FormPlaceholder
@@ -530,19 +421,17 @@ export class DatesAndTicketsManager extends Component {
 				<FormContainer loading={ loading } >
 					<FormWrapper>
 						<FormSection>
-							<table className="ee-date-tickets-assignments-manager">
-								<thead>
-									<tr>
-										{ datesHeader }
-										{
-											this.ticketHeaders(
-												tickets,
-												cellWidth
-											)
-										}
-									</tr>
-								</thead>
-								<tbody>
+							<div className="ee-date-tickets-manager-wrapper">
+								<div className="ee-dtm-header">
+									{ datesHeader }
+									{
+										this.ticketHeaders(
+											tickets,
+											cellWidth
+										)
+									}
+								</div>
+								<div className="ee-dtm-body">
 									{
 										this.dateRows(
 											dates,
@@ -553,14 +442,14 @@ export class DatesAndTicketsManager extends Component {
 											cellWidth
 										)
 									}
-								</tbody>
-							</table>
+								</div>
+							</div>
 						</FormSection>
 						<FormSaveCancelButtons
-							submitButton={ submitButton }
-							cancelButton={ cancelButton }
-							colSize={ 4 }
-							offset={ 8 }
+							submitButton={ this.submitButton( processChanges ) }
+							cancelButton={ this.cancelButton() }
+							colSize={ 8 }
+							offset={ 4 }
 						/>
 					</FormWrapper>
 				</FormContainer>
