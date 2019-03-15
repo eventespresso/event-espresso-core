@@ -96,32 +96,27 @@ export const unAssignTicket = ( assigned, date, ticket ) => {
 
 /**
  * @function
- * @param {Function} setState
- * @param {Array} dates
+ * @param {Object} prevState
  * @param {Object} date
  * @param {Object} ticket
+ * @return {Object} updated state
  */
-export const assignTicket = ( setState, dates, date, ticket ) => {
-	const eventDate = find( dates, { id: date.id } );
-	if ( eventDate ) {
-		setState( ( prevState ) => {
-			if ( ! Array.isArray( prevState.assigned[ date.id ] ) ) {
-				prevState.assigned[ date.id ] = [];
-			}
-			if ( ! isAssigned( prevState.assigned, date, ticket ) ) {
-				prevState.assigned[ date.id ].push( ticket );
-			}
-			prevState.removed = unRemoveTicket(
-				prevState.removed,
-				date,
-				ticket
-			);
-			return ( {
-				assigned: prevState.assigned,
-				removed: prevState.removed,
-			} );
-		} );
+export const assignTicket = ( prevState, date, ticket ) => {
+	if ( ! Array.isArray( prevState.assigned[ date.id ] ) ) {
+		prevState.assigned[ date.id ] = [];
 	}
+	if ( ! isAssigned( prevState.assigned, date, ticket ) ) {
+		prevState.assigned[ date.id ].push( ticket );
+	}
+	prevState.removed = unRemoveTicket(
+		prevState.removed,
+		date,
+		ticket
+	);
+	return {
+		assigned: prevState.assigned,
+		removed: prevState.removed,
+	};
 };
 
 /**
@@ -158,30 +153,25 @@ export const unRemoveTicket = ( removed, date, ticket ) => {
 
 /**
  * @function
- * @param {Function} setState
- * @param {Array} dates
+ * @param {Object} prevState
  * @param {Object} date
  * @param {Object} ticket
+ * @return {Object} updated state
  */
-export const removeTicket = ( setState, dates, date, ticket ) => {
-	const eventDate = find( dates, { id: date.id } );
-	if ( eventDate ) {
-		setState( ( prevState ) => {
-			if ( ! Array.isArray( prevState.removed[ date.id ] ) ) {
-				prevState.removed[ date.id ] = [];
-			}
-			if ( ! isRemoved( prevState.removed, date, ticket ) ) {
-				prevState.removed[ date.id ].push( ticket );
-			}
-			prevState.assigned = unAssignTicket(
-				prevState.assigned,
-				date,
-				ticket
-			);
-			return ( {
-				assigned: prevState.assigned,
-				removed: prevState.removed,
-			} );
-		} );
+export const removeTicket = ( prevState, date, ticket ) => {
+	if ( ! Array.isArray( prevState.removed[ date.id ] ) ) {
+		prevState.removed[ date.id ] = [];
 	}
+	if ( ! isRemoved( prevState.removed, date, ticket ) ) {
+		prevState.removed[ date.id ].push( ticket );
+	}
+	prevState.assigned = unAssignTicket(
+		prevState.assigned,
+		date,
+		ticket
+	);
+	return {
+		assigned: prevState.assigned,
+		removed: prevState.removed,
+	};
 };

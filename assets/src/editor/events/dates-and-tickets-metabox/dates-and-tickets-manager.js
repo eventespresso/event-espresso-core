@@ -70,11 +70,44 @@ export class DatesAndTicketsManager extends Component {
 
 	/**
 	 * @function
+	 * @param {Object} date
+	 * @param {Object} ticket
+	 */
+	assignTicket = ( date, ticket ) => {
+		if (
+			! isModelEntityOfModel( date, DATETIME ) ||
+			! isModelEntityOfModel( ticket, TICKET )
+		) {
+			return;
+		}
+		this.setState( ( prevState ) =>
+			handler.assignTicket( prevState, date, ticket )
+		);
+	};
+
+	/**
+	 * @function
+	 * @param {Object} date
+	 * @param {Object} ticket
+	 */
+	removeTicket = ( date, ticket ) => {
+		if (
+			! isModelEntityOfModel( date, DATETIME ) ||
+			! isModelEntityOfModel( ticket, TICKET )
+		) {
+			return;
+		}
+		this.setState( ( prevState ) =>
+			handler.removeTicket( prevState, date, ticket )
+		);
+	};
+
+	/**
+	 * @function
 	 * @param {Array} tickets
-	 * @param {Object} cellWidth
 	 * @return {Object} rendered table header cell
 	 */
-	ticketHeaders = ( tickets, cellWidth = null ) => {
+	ticketHeaders = ( tickets ) => {
 		return tickets.map(
 			( ticket, index1 ) => {
 				if ( ! isModelEntityOfModel(
@@ -83,12 +116,10 @@ export class DatesAndTicketsManager extends Component {
 				) ) {
 					return null;
 				}
-				/*  */
 				return (
 					<div
 						key={ index1 }
 						className="ee-dtm-ticket-header"
-						// style={ cellWidth }
 					>
 						<div className="ee-dtm-ticket-header-title" >
 							{ `${ ticket.name }` }
@@ -108,8 +139,6 @@ export class DatesAndTicketsManager extends Component {
 	 * @param {Array} tickets
 	 * @param {Object} eventDateTicketMap
 	 * @param {number} dateCount
-	 * @param {Object} datesWidth
-	 * @param {Object} cellWidth
 	 * @return {Object} rendered table rows
 	 */
 	dateRows = (
@@ -117,12 +146,9 @@ export class DatesAndTicketsManager extends Component {
 		tickets,
 		eventDateTicketMap,
 		dateCount,
-		datesWidth = null,
-		cellWidth = null
 	) => {
 		let year = 0;
 		let yearRow = null;
-		let indexMod = 0;
 		return dates.map(
 			( eventDate, index2 ) => {
 				if ( ! isModelEntityOfModel(
@@ -131,15 +157,12 @@ export class DatesAndTicketsManager extends Component {
 				) ) {
 					return null;
 				}
-				index2 = index2 + indexMod + 1;
 				const dateYear = parseInt(
 					eventDate.start.toFormat( 'YYYY' )
 				);
 				if ( dateCount > 1 && dateYear > year ) {
 					year = dateYear;
-					yearRow = this.yearRow( year, datesWidth );
-					indexMod++;
-					index2++;
+					yearRow = this.yearRow( year );
 				} else {
 					yearRow = null;
 				}
@@ -150,19 +173,12 @@ export class DatesAndTicketsManager extends Component {
 					<Fragment key={ index2 }>
 						{ yearRow }
 						<div className="ee-dtm-date-row">
-							{
-								this.dateHeader(
-									eventDate,
-									dateCount,
-									datesWidth
-								)
-							}
+							{ this.dateHeader( eventDate, dateCount ) }
 							{
 								this.ticketCells(
 									eventDate,
 									tickets,
-									eventDateTickets,
-									cellWidth
+									eventDateTickets
 								)
 							}
 						</div>
@@ -175,16 +191,18 @@ export class DatesAndTicketsManager extends Component {
 	/**
 	 * @function
 	 * @param {number} year
-	 * @param {Object} datesWidth
-	 * @return {Object} rendered table row style={ datesWidth }
+	 * @return {Object} rendered table row
 	 */
-	yearRow = ( year, datesWidth ) => (
+	yearRow = ( year ) => (
 		<div className="ee-dtm-year-row">
 			<div className="ee-dtm-date-label">{ year }</div>
 			{
-				this.props.tickets.map( ( i ) => (
-					<div key={ i } className="ee-dtm-date-row-ticket" ></div>
-				) )
+				this.props.tickets.map( ( ticket, i ) => {
+					i++;
+					return (
+						<div key={ i } className="ee-dtm-date-row-ticket"></div>
+					);
+				} )
 			}
 		</div>
 	);
@@ -193,16 +211,14 @@ export class DatesAndTicketsManager extends Component {
 	 * @function
 	 * @param {Object} eventDate
 	 * @param {number} dateCount
-	 * @param {Object} datesWidth
 	 * @return {Object} rendered table cell
 	 */
-	dateHeader = ( eventDate, dateCount, datesWidth ) => {
+	dateHeader = ( eventDate, dateCount ) => {
 		return dateCount > 1 ?
 			(
 				<div
 					key={ 0 }
 					className="ee-dtm-date-label"
-					// style={ datesWidth }
 				>
 					<div className="ee-dtm-date-label-text">
 						{ eventDate.name }
@@ -224,15 +240,9 @@ export class DatesAndTicketsManager extends Component {
 	 * @param {Object} eventDate
 	 * @param {Object} tickets
 	 * @param {Array} eventDateTickets
-	 * @param {Object} cellWidth
 	 * @return {Object} rendered table cell
 	 */
-	ticketCells = (
-		eventDate,
-		tickets,
-		eventDateTickets,
-		cellWidth
-	) => {
+	ticketCells = ( eventDate, tickets, eventDateTickets ) => {
 		return tickets.map(
 			( ticket, index3 ) => {
 				index3++;
@@ -271,13 +281,12 @@ export class DatesAndTicketsManager extends Component {
 				}
 				const action = isAssigned > noIndex ||
 				( hasTicket && isRemoved === noIndex ) ?
-					handler.removeTicket :
-					handler.assignTicket;
+					this.removeTicket :
+					this.assignTicket;
 				return (
 					<div
 						key={ index3 }
 						className="ee-dtm-date-row-ticket"
-						// style={ cellWidth }
 					>
 						<IconButton
 							icon={ icon }
@@ -286,23 +295,13 @@ export class DatesAndTicketsManager extends Component {
 							onClick={ ( event ) => {
 								event.preventDefault();
 								event.stopPropagation();
-								action(
-									this.setState,
-									this.props.dates,
-									eventDate,
-									ticket
-								);
+								action( eventDate, ticket );
 							} }
 							onKeyDown={ ( event ) => {
 								if ( event.keyCode === ENTER ) {
 									event.preventDefault();
 									event.stopPropagation();
-									action(
-										this.setState,
-										this.props.dates,
-										eventDate,
-										ticket
-									);
+									action( eventDate, ticket );
 								}
 							} }
 						/>
@@ -390,24 +389,8 @@ export class DatesAndTicketsManager extends Component {
 			FormSaveCancelButtons,
 		} = twoColumnAdminFormLayout;
 		const dateCount = dates.length;
-		let divisor = tickets.length ? tickets.length : 1;
-		divisor += dateCount > 1 ? 2 : 0;
-		let width = 100 / divisor;
-		const cellWidth = {
-			maxWidth: width + '%',
-			width: width + '%',
-		};
-		width = width * 2;
-		const datesWidth = {
-			maxWidth: width + '%',
-			width: width + '%',
-		};
 		const datesHeader = dateCount > 1 ? (
-			<div
-				key={ 0 }
-				className="ee-dtm-dates-header"
-				// style={ datesWidth }
-			/>
+			<div className="ee-dtm-dates-header" />
 		) : null;
 		return (
 			<Fragment>
@@ -425,10 +408,7 @@ export class DatesAndTicketsManager extends Component {
 								<div className="ee-dtm-header">
 									{ datesHeader }
 									{
-										this.ticketHeaders(
-											tickets,
-											cellWidth
-										)
+										this.ticketHeaders( tickets )
 									}
 								</div>
 								<div className="ee-dtm-body">
@@ -437,9 +417,7 @@ export class DatesAndTicketsManager extends Component {
 											dates,
 											tickets,
 											eventDateTicketMap,
-											dateCount,
-											datesWidth,
-											cellWidth
+											dateCount
 										)
 									}
 								</div>
@@ -448,8 +426,6 @@ export class DatesAndTicketsManager extends Component {
 						<FormSaveCancelButtons
 							submitButton={ this.submitButton( processChanges ) }
 							cancelButton={ this.cancelButton() }
-							colSize={ 8 }
-							offset={ 4 }
 						/>
 					</FormWrapper>
 				</FormContainer>
