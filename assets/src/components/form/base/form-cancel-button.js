@@ -2,7 +2,11 @@
  * External imports
  */
 import { __ } from '@eventespresso/i18n';
-import { Button } from '@wordpress/components';
+
+/**
+ * Internal imports
+ */
+import { FancyButton } from '../../ui';
 
 /**
  * @function
@@ -27,14 +31,13 @@ export const FormCancelButton = ( {
 		`${ htmlClass } ee-form-button-cancel ee-form-button` :
 		'ee-form-button-cancel ee-form-button';
 	return (
-		<Button
-			isDefault
+		<FancyButton
+			style={ 'wp-default' }
+			buttonText={ buttonText }
+			id={ htmlId }
+			htmlClass={ htmlClass }
 			onClick={ onClick }
 			disabled={ submitting || pristine }
-			id={ htmlId }
-			className={ htmlClass }
-		>
-			{ buttonText }
-		</Button>
+		/>
 	);
 };

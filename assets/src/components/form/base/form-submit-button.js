@@ -3,12 +3,12 @@
  */
 import { Fragment } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
-import { Button } from '@wordpress/components';
 
 /**
  * Internal imports
  */
 import { SubmittingNotice } from './submitting-notice';
+import { FancyButton } from '../../ui';
 
 /**
  * @function
@@ -43,16 +43,15 @@ export const FormSubmitButton = ( {
 				submittingText={ submittingText }
 				htmlClass={ noticeClass }
 			/>
-			<Button
-				isPrimary
+			<FancyButton
 				type="submit"
+				buttonText={ buttonText }
 				disabled={ submitting || disabled }
 				id={ htmlId }
-				className={ htmlClass }
+				htmlClass={ htmlClass }
+				icon={ 'save' }
 				{ ...buttonProps }
-			>
-				{ buttonText }
-			</Button>
+			/>
 		</Fragment>
 	);
 };
