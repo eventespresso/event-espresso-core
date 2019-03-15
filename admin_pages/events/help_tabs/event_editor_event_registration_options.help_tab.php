@@ -60,7 +60,7 @@
     esc_html__(
         /* translators: Approved Registration status */
         'A status of %s means that a registration has been accepted as complete. The registration will count towards the registration limit, remaining tickets, and calculations for available seats. Payments (if necessary) can also be made by primary registrants with this status.',
-    'event_espresso'
+        'event_espresso'
     ),
     EEH_Template::pretty_status(EEM_Registration::status_id_approved, false, 'sentence')
 ); ?>
