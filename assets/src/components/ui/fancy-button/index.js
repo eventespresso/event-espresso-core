@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Button, Dashicon } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 
 /**
  * Internal imports
@@ -14,22 +14,26 @@ import { EspressoIcon } from '../';
  *  WP Button wrapper for adding styles
  *
  * @class
- * @param {string} label
+ * @param {string} buttonText
  * @param {string} icon
  * @param {Function} onClick
  * @param {string} size
  * @param {string} style
+ * @param {string} htmlClass
  */
 const FancyButton = ( {
-	label,
+	buttonText,
 	icon,
 	onClick,
 	size = 'medium',
 	style = 'wp-primary',
+	htmlClass = '',
 } ) => {
 	let iconSize = 24;
 	let sizeClass = 'ee-medium-button';
-	let htmlClass = 'ee-fancy-button';
+	htmlClass = htmlClass !== '' ?
+		`${ htmlClass } ee-fancy-button` :
+		'ee-fancy-button';
 	switch ( size ) {
 		case 'tiny':
 			iconSize = 18;
@@ -58,26 +62,31 @@ const FancyButton = ( {
 	}
 	switch ( style ) {
 		case 'wp-default':
-			htmlClass = 'ee-button-wp is-button is-default';
+			htmlClass += ' ee-button-wp is-button is-default';
 			break;
 		case 'wp-primary':
-			htmlClass = 'ee-button-wp is-button is-primary';
+			htmlClass += ' ee-button-wp is-button is-primary';
 			break;
 		case 'woosh':
-			htmlClass = 'ee-button-woosh';
+			htmlClass += ' ee-button-woosh';
 			break;
 		case 'twotone':
-			htmlClass = 'ee-button-twotone';
+			htmlClass += ' ee-button-twotone';
 			break;
 	}
 	htmlClass += ' ' + sizeClass;
-	icon = icon === 'calendar' || icon === 'calculator' ?
-		<EspressoIcon icon={ icon } size={ iconSize }/> :
-		<Dashicon icon={ icon } size={ iconSize }/>;
+	if ( icon ) {
+		icon = (
+			<span className="img-wrap">
+				<EspressoIcon icon={ icon } size={ iconSize }/>
+			</span>
+		);
+	} else {
+		htmlClass += ' ee-noIcon';
+	}
 	return (
 		<Button className={ htmlClass } onClick={ onClick }>
-			<span className="text-wrap">{ label }</span>
-			<span className="img-wrap">{ icon }</span>
+			<span className="text-wrap">{ buttonText }</span>{ icon }
 		</Button>
 	);
 };

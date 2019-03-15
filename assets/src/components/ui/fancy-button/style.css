@@ -175,8 +175,9 @@
 
 .ee-button-wp .img-wrap {
     position: relative;
-    right: -1rem;
-    top: -.375rem;
+    /*right: -1rem;*/
+    margin: 0 0 0 1rem;
+    top: -.3rem;
     vertical-align: middle;
 }
 
@@ -184,33 +185,33 @@
     font-size: .8rem;
     height: .8rem;
     line-height: .8rem;
-    padding: .6rem 1.8rem .5rem 1.2rem;
+    padding: .6rem 1.2rem;
 }
 
 .ee-button-wp.ee-small-button {
     font-size: .9rem;
     height: .85rem;
     line-height: .9rem;
-    padding: .7rem 2.1rem .6rem 1.4rem;
+    padding: .7rem 1.4rem;
 }
 
 .ee-button-wp.ee-medium-button {
     font-size: 1rem;
     height: 1rem;
     line-height: 1rem;
-    padding: .8rem 2.4rem .7rem 1.6rem;
+    padding: .8rem 1.6rem;
 }
 
 .ee-button-wp.ee-big-button {
     font-size: 1.2rem;
     height: 1.2rem;
     line-height: 1.2rem;
-    padding: .9rem 2.7rem .8rem 1.8rem;
+    padding: .9rem 1.8rem;
 }
 
 .ee-button-wp.ee-huge-button {
     font-size: 1.4rem;
     height: 1.4rem;
     line-height: 1.4rem;
-    padding: 1rem 3rem .9rem 2rem;
+    padding: 1rem 2rem;
 }
