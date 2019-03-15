@@ -2,7 +2,27 @@
  * External dependencies
  */
 import { Component } from '@wordpress/element';
-import { Path, SVG } from '@wordpress/components';
+import { Dashicon, Path, SVG } from '@wordpress/components';
+
+export const ESPRESSO_ICON_CALCULATOR = 'calculator';
+export const ESPRESSO_ICON_CALENDAR = 'calendar';
+export const ESPRESSO_ICON_SAVE = 'save';
+
+/**
+ * @function
+ * @param {string} icon
+ * @return {boolean} true if icon is an EspressoIcon
+ */
+export const isEspressoIcon = ( icon ) => {
+	switch ( icon ) {
+		case ESPRESSO_ICON_CALCULATOR:
+		case ESPRESSO_ICON_CALENDAR:
+		case ESPRESSO_ICON_SAVE:
+			return true;
+		default:
+			return false;
+	}
+};
 
 /**
  * Custom Event Espresso Dashicons
@@ -18,7 +38,7 @@ export class EspressoIcon extends Component {
 		let path;
 
 		switch ( icon ) {
-			case 'calculator':
+			case ESPRESSO_ICON_CALCULATOR:
 				path = 'M 3 0 v20 h14 v-20 h-14 z ' +
 					'm 2.5 2.5 h9 v2 h-9 v-2 z ' +
 					'm 0 4 h2 v1.75 h-2 v-1.75 z ' +
@@ -34,7 +54,7 @@ export class EspressoIcon extends Component {
 					'm 3.5 0 h2 v1.75 h-2 v-1.75 z ' +
 					'm 3.5 0 h2 v1.75 h-2 v-1.75 z ';
 				break;
-			case 'calendar':
+			case ESPRESSO_ICON_CALENDAR:
 				path = 'M 0 2 v18 h20 v-18 z ' +
 					'M 2 6.5 h16 v11.5 h-16 z ' +
 					'M 15.5 0 V8 h-1.38 L11.54 10.06 l .8 1.2 .92 -.74 c .12' +
@@ -63,9 +83,18 @@ export class EspressoIcon extends Component {
 					'M 14 0 h2 v2 h-2 v-2 z';
 				break;
 
-			case 'save':
+			case ESPRESSO_ICON_SAVE:
 				path = 'M 1 17.5 v -16 l 0.5 -0.5 h 14.5 l 3 3 v 14.5 l -0.5 0.5 h -17 l -0.5 -0.5 z M 5 7 h 9 l 0.5 -0.5 v -4.5 h -9 v 4.5 l 0.5 0.5 z M 11 6.5 v -3.5 h 2 v 3 h -2 z M 4 11.5 v 0.5 h 12 v -0.5 z m 0 2 v 0.5 h 12 v -0.5 z m 0 2 v 0.5 h 12 v -0.5 z';
 				break;
+			default:
+				return (
+					<Dashicon
+						icon={ icon }
+						size={ size }
+						className={ className }
+						{ ...otherProps }
+					/>
+				);
 		}
 
 		if ( ! path ) {
