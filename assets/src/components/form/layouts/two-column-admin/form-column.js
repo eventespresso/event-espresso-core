@@ -31,8 +31,8 @@ const FormColumn = ( {
 	}
 	htmlClass = htmlClass ? `${ htmlClass } ` : '';
 	htmlClass = offset ?
-		`${ htmlClass }col-sm-${ colSize } offset-sm-${ offset }` :
-		`${ htmlClass }col-sm-${ colSize }`;
+		`${ htmlClass }col-sm-${ colSize } offset-sm-${ offset } ee-form-col` :
+		`${ htmlClass }col-sm-${ colSize } ee-form-col`;
 	htmlClass += align === 'right' ? ' text-sm-right' : '';
 	return (
 		<div className={ htmlClass } { ...extraAttributes }>
