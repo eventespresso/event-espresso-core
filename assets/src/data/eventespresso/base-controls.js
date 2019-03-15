@@ -175,24 +175,20 @@ const controls = {
 				[ modelName, entityIds.pop() ]
 			);
 		}
-		// if controls return undefined then flow execution stops.  This ensures
-		// the flow continues.
-		return true;
 	},
 	RESOLVE_GET_RELATED_ENTITIES( { entity, relationEntities, relationIds } ) {
-		const relationEntity = relationEntities.get( relationIds.pop() );
-		if ( relationEntity ) {
-			dispatchData(
-				'core/data',
-				'finishResolution',
-				CORE_REDUCER_KEY,
-				'getRelatedEntities',
-				[ relationEntity, pluralModelName( entity.modelName ) ]
-			);
+		while ( relationIds.length > 0 ) {
+			const relationEntity = relationEntities.get( relationIds.pop() );
+			if ( relationEntity ) {
+				dispatchData(
+					'core/data',
+					'finishResolution',
+					CORE_REDUCER_KEY,
+					'getRelatedEntities',
+					[ relationEntity, pluralModelName( entity.modelName ) ]
+				);
+			}
 		}
-		// if controls return undefined then flow execution stops.  This ensures
-		// the flow continues.
-		return true;
 	},
 };
 
