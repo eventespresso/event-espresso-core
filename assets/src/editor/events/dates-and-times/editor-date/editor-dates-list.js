@@ -112,12 +112,12 @@ class EditorDatesList extends Component {
 				/>
 				<FormSection>
 					<FormRow><br /></FormRow>
-					<FormRow>
-						<FormColumn colSize={ 2 } offset={ 7 } >
+					<FormRow htmlClass={ 'ee-form-button-row' }>
+						<FormColumn colSize={ 2 }>
 							<FancyButton
 								icon="calendar"
 								style="wp-default"
-								label={ __( 'Add New Date', 'event_espresso' ) }
+								buttonText={ __( 'Add New Date', 'event_espresso' ) }
 								onClick={ ( e ) => {
 									e.preventDefault();
 									e.stopPropagation();
@@ -129,7 +129,7 @@ class EditorDatesList extends Component {
 							<FancyButton
 								icon="tickets-alt"
 								style="wp-default"
-								label={ __(
+								buttonText={ __(
 									'Ticket Assignments',
 									'event_espresso'
 								) }
