@@ -208,6 +208,7 @@
     }
 
     .ee-editor-date-details-wrapper-div {
+        min-width: unset;
         padding: 10px 42px 15px 10px;
     }
 

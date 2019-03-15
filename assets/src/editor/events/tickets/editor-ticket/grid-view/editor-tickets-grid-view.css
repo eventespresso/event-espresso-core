@@ -185,6 +185,7 @@
     }
 
     .ee-editor-ticket-details-wrapper-div {
+        min-width: unset;
         padding: 10px 10px 15px 42px;
     }
 
