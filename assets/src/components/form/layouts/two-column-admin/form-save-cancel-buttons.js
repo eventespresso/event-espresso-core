@@ -27,8 +27,8 @@ class FormSaveCancelButtons extends Component {
 		const {
 			submitButton,
 			cancelButton,
-			colSize = 3,
-			offset = 3,
+			colSize = 12,
+			offset = 0,
 		} = this.props;
 		let { htmlClass } = this.props;
 		htmlClass = htmlClass ?
@@ -36,7 +36,7 @@ class FormSaveCancelButtons extends Component {
 			'ee-form-save-cancel-buttons-div';
 		return (
 			<FormSection htmlClass={ htmlClass }>
-				<FormRow>
+				<FormRow htmlClass={ 'ee-form-button-row' }>
 					<FormColumn colSize={ colSize } offset={ offset }>
 						{ submitButton }
 						{ cancelButton }

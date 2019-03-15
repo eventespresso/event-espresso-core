@@ -484,6 +484,11 @@
 .ee-two-column-admin .ee-form-save-cancel-buttons-div {
     padding-top: 0;
 }
+.ee-two-column-admin .ee-form-button-row {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-end;
+}
 
 .ee-two-column-admin .ee-form-button + .ee-form-button,
 .ee-two-column-admin .button-primary + .button-primary,
