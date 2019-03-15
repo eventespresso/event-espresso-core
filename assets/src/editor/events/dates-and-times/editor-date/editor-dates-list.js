@@ -113,7 +113,7 @@ class EditorDatesList extends Component {
 				<FormSection>
 					<FormRow><br /></FormRow>
 					<FormRow htmlClass={ 'ee-form-button-row' }>
-						<FormColumn colSize={ 2 }>
+						<FormColumn colSize={ 12 }>
 							<FancyButton
 								icon="calendar"
 								style="wp-default"
@@ -124,8 +124,6 @@ class EditorDatesList extends Component {
 									this.addNewEventDate();
 								} }
 							/>
-						</FormColumn>
-						<FormColumn colSize={ 2 } >
 							<FancyButton
 								icon="tickets-alt"
 								style="wp-default"
