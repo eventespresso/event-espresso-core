@@ -195,7 +195,9 @@ export class DatesAndTicketsManager extends Component {
 	 */
 	yearRow = ( year ) => (
 		<div className="ee-dtm-year-row">
-			<div className="ee-dtm-date-label">{ year }</div>
+			<div className="ee-dtm-date-label">
+				<span>{ year }</span>
+			</div>
 			{
 				this.props.tickets.map( ( ticket, i ) => {
 					i++;
