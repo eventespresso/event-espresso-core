@@ -32,8 +32,8 @@ const FancyButton = ( {
 	let iconSize = 24;
 	let sizeClass = 'ee-medium-button';
 	htmlClass = htmlClass !== '' ?
-		`${ htmlClass } ee-fancy-button` :
-		'ee-fancy-button';
+		`${ htmlClass } ee-fancy-button ee-form-button` :
+		'ee-fancy-button ee-form-button';
 	switch ( size ) {
 		case 'tiny':
 			iconSize = 18;
