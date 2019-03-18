@@ -24,6 +24,7 @@ const {
 	FormRow,
 	FormSection,
 	FormWrapper,
+	FormSaveCancelButtons,
 } = twoColumnAdminFormLayout;
 
 const { createEntity } = dispatch( 'eventespresso/core' );
@@ -89,6 +90,47 @@ class EditorDatesList extends Component {
 		);
 	};
 
+	/**
+	 * @function
+	 * @return {Object} rendered button
+	 */
+	addNewDateButton = () => {
+		return (
+			<FancyButton
+				icon="calendar"
+				style="wp-default"
+				buttonText={ __( 'Add New Date', 'event_espresso' ) }
+				onClick={ ( e ) => {
+					e.preventDefault();
+					e.stopPropagation();
+					this.addNewEventDate();
+				} }
+			/>
+		);
+	};
+
+	/**
+	 * @function
+	 * @return {Object} rendered button
+	 */
+	ticketAssignmentsButton = () => {
+		return (
+			<FancyButton
+				icon="tickets-alt"
+				style="wp-default"
+				buttonText={ __(
+					'Ticket Assignments',
+					'event_espresso'
+				) }
+				onClick={ ( e ) => {
+					e.preventDefault();
+					e.stopPropagation();
+					this.toggleManager();
+				} }
+			/>
+		);
+	};
+
 	render() {
 		const {
 			view,
@@ -110,36 +152,10 @@ class EditorDatesList extends Component {
 					event={ event }
 					{ ...otherProps }
 				/>
-				<FormSection>
-					<FormRow><br /></FormRow>
-					<FormRow htmlClass={ 'ee-form-button-row' }>
-						<FormColumn colSize={ 12 }>
-							<FancyButton
-								icon="calendar"
-								style="wp-default"
-								buttonText={ __( 'Add New Date', 'event_espresso' ) }
-								onClick={ ( e ) => {
-									e.preventDefault();
-									e.stopPropagation();
-									this.addNewEventDate();
-								} }
-							/>
-							<FancyButton
-								icon="tickets-alt"
-								style="wp-default"
-								buttonText={ __(
-									'Ticket Assignments',
-									'event_espresso'
-								) }
-								onClick={ ( e ) => {
-									e.preventDefault();
-									e.stopPropagation();
-									this.toggleManager();
-								} }
-							/>
-						</FormColumn>
-					</FormRow>
-				</FormSection>
+				<FormSaveCancelButtons
+					submitButton={ this.addNewDateButton() }
+					cancelButton={ this.ticketAssignmentsButton() }
+				/>
 				<EditEventDateFormModal
 					event={ event }
 					eventDate={ this.state.newEventDate }
