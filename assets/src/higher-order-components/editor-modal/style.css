@@ -4,10 +4,8 @@
  * -------------------------------------------------------------------------*/
 
 .components-modal__frame.ee-editor-modal {
-    height: 80%;
+    height: 90%;
     max-width: 100%;
-    transform: translate(-50%, -10%);
-    top: 20%;
     width: 80%;
 }
 
@@ -40,10 +38,8 @@
 
 @media only screen and (max-width: 1280px) {
     .components-modal__frame.ee-editor-modal {
-        height: 90%;
+        height: 95%;
         max-width: 100%;
-        transform: translate(-50%, -5%);
-        top: 10%;
         width: 85%;
     }
 }
@@ -62,10 +58,8 @@
 /* WordPress Admin Media Query Breakpoint: Tablet */
 @media screen and ( max-width: 782px ) {
     .components-modal__frame.ee-editor-modal {
-        height: 90%;
+        height: 95%;
         max-width: 100%;
-        transform: translate(-50%, -5%);
-        top: 10%;
         width: 90%;
     }
 }
@@ -73,10 +67,8 @@
 /* WordPress Admin Media Query Breakpoint: Smartphone */
 @media screen and (max-width: 600px) {
     .components-modal__frame.ee-editor-modal {
-        height: 95%;
+        height: 97.5%;
         max-width: 95%;
-        transform: translate(-50%, -2.5%);
-        top: 2.5%;
         width: 95%;
     }
 }
@@ -85,8 +77,6 @@
     .components-modal__frame.ee-editor-modal {
         height: 100%;
         max-width: 100%;
-        transform: none;
-        top: 0;
         width: 100%;
     }
 }
