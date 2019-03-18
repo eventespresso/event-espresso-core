@@ -105,6 +105,10 @@ class EEH_Autoloader extends EEH_Base
     {
         $class_paths = is_array($class_paths) ? $class_paths : array( $class_paths );
         foreach ($class_paths as $class => $path) {
+            // skip all files that are not PHP
+            if (substr($path, strlen($path) - 3) !== 'php') {
+                continue;
+            }
             // don't give up! you gotta...
             // get some class
             if (empty($class)) {
