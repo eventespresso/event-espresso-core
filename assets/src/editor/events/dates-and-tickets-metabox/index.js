@@ -1,6 +1,6 @@
 export {
 	default as DatesAndTicketsManagerModal,
-} from './dates-and-tickets-manager';
+} from './with-dates-and-tickets-manager-state';
 export {
 	default as EventDatesAndTicketsMetabox,
 } from './dates-and-tickets-metabox';
