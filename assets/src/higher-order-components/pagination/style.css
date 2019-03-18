@@ -23,6 +23,7 @@
 .ee-entity-pagination .pagination > li > a,
 .ee-entity-pagination .pagination > li > span {
     position: relative;
+    cursor: pointer;
     float: left;
     padding: 6px 12px;
     margin-left: -1px;
@@ -53,7 +54,7 @@
 .ee-entity-pagination .pagination > .disabled > span:focus,
 .ee-entity-pagination .pagination > .disabled > span:hover {
     color: var(--ee-grey-white);
-    cursor: not-allowed;
+    cursor: default;
     border-color: var(--ee-off-white);
 }
 
@@ -61,8 +62,8 @@
 .ee-entity-pagination .pagination > li > a:hover,
 .ee-entity-pagination .pagination > li > span:focus,
 .ee-entity-pagination .pagination > li > span:hover {
-    z-index: 3;
     background-color: var(--ee-near-white);
+    z-index: 3;
 }
 
 .ee-entity-pagination .pagination > .active > a,
@@ -73,7 +74,6 @@
 .ee-entity-pagination .pagination > .active > span:hover {
     z-index: 2;
     color: var(--ee-near-white);
-    cursor: default;
     background-color: var(--ee-blue);
     border-color: var(--ee-blue);
 }
