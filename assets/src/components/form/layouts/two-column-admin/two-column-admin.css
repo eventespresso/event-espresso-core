@@ -297,8 +297,8 @@
     height: calc(2.25rem + 2px);
 }
 
-.ee-two-column-admin .form-control-wp .components-select-control__input,
-.ee-two-column-admin .form-control {
+.ee-two-column-admin .form-control,
+.ee-two-column-admin .form-control-wp .components-select-control__input {
     display: block;
     width: 100%;
     padding: 0.375rem 0.75rem;
@@ -484,10 +484,12 @@
 .ee-two-column-admin .ee-form-save-cancel-buttons-div {
     padding-top: 0;
 }
-.ee-two-column-admin .ee-form-button-row {
+.ee-two-column-admin .ee-form-button-row.ee-form-row:not(li) {
     display: flex;
     flex-flow: row wrap;
     justify-content: flex-end;
+    margin: 2rem 0 1rem;
+    text-align: right;
 }
 
 .ee-two-column-admin .ee-form-button + .ee-form-button,
