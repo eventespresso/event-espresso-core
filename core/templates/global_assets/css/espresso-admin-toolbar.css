@@ -78,3 +78,8 @@
 #wp-admin-bar-espresso-toolbar-extensions-and-services .ee-toolbar-icon::before {
     content: "\f174";
 }
+
+.ee-select2{
+    width:40em;
+    min-width:40em;
+}
