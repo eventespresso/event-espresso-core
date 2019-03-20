@@ -144,5 +144,5 @@ export const getAdminUrl = (
 	page = ADMIN_ROUTES.EVENTS,
 	action = ADMIN_ROUTE_ACTION_DEFAULT
 ) => {
-	return `${ ADMIN_URL }?admin.php&page=${ page }&action=${ action }`;
+	return `${ ADMIN_URL }admin.php?page=${ page }&action=${ action }`;
 };
