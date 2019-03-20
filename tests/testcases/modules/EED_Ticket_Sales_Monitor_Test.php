@@ -249,6 +249,270 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * Validates EED_Ticket_Sales_Monitor::validate_ticket_sale properly detects when a sale is ok.
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
+     * @group current
+     */
+    public function testValidateTicketSaleTruePositive()
+    {
+        $e = $this->new_model_obj_with_dependencies(
+            'Event',
+            [
+                'status' => EEM_Event::post_status_publish
+            ]
+        );
+        $d1 = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e->ID(),
+                'DTT_reserved' => 0,
+                'DTT_sold' => 0
+            ));
+        $d2 = $this->new_model_obj_with_dependencies(
+        'Datetime',
+        array(
+            'EVT_ID' => $e->ID(),
+            'DTT_reserved' => 0,
+            'DTT_sold' => 0
+        ));
+        $t = $this->new_model_obj_with_dependencies(
+            'Ticket',
+            [
+                'TKT_qty' => 1,
+                'TKT_reserved' => 0,
+                'TKT_sold' => 0,
+                'TKT_max' => 1,
+                'TKT_min' => 0
+            ]
+        );
+        $d1->_add_relation_to($t, 'Ticket');
+        $d2->_add_relation_to($t, 'Ticket');
+        $ticket_reserved = EED_Ticket_Sales_Monitor::validate_ticket_sale(1, $t);
+        $this->assertEquals(1, $ticket_reserved);
+        $d1->refresh_from_db();
+        $d2->refresh_from_db();
+        $t->refresh_from_db();
+        $this->assertEquals(1, $d1->reserved());
+        $this->assertEquals(1, $d2->reserved());
+        $this->assertEquals(1, $t->reserved());
+    }
+
+
+    /**
+     * Validates EED_Ticket_Sales_Monitor::validate_ticket_sale properly detects when a sale shouldn't occur.
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
+     * @group current
+     */
+    public function testValidateTicketSaleTrueNegative()
+    {
+        $e = $this->new_model_obj_with_dependencies(
+            'Event',
+            [
+                'status' => EEM_Event::post_status_publish
+            ]
+        );
+        $d1 = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e->ID(),
+                'DTT_reserved' => 1,
+                'DTT_sold' => 0
+            ));
+        $d2 = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e->ID(),
+                'DTT_reserved' => 0,
+                'DTT_sold' => 0
+            ));
+        $t = $this->new_model_obj_with_dependencies(
+            'Ticket',
+            [
+                'TKT_qty' => 1,
+                // this next line is important: that one ticket is reserved!
+                'TKT_reserved' => 1,
+                'TKT_sold' => 0,
+                'TKT_max' => 1,
+                'TKT_min' => 0
+            ]
+        );
+        $d1->_add_relation_to($t, 'Ticket');
+        $d2->_add_relation_to($t, 'Ticket');
+        $ticket_reserved = EED_Ticket_Sales_Monitor::validate_ticket_sale(1, $t);
+        $this->assertEquals(0, $ticket_reserved);
+        $d1->refresh_from_db();
+        $d2->refresh_from_db();
+        $t->refresh_from_db();
+        // Validate the reserved counts were unchanged.
+        $this->assertEquals(1, $d1->reserved());
+        $this->assertEquals(0, $d2->reserved());
+        $this->assertEquals(1, $t->reserved());
+    }
+
+    /**
+     * Simulates two simultaneous requests arriving to validate ticket sales.
+     * Normally, this runs into a concurrency problem because we first READ to verify the ticket sale is ok, and afterwards update.
+     * A problematic request is one where the DB is updated between when we read and update the DB because we will update the
+     * DB based on stale data.
+     * @since $VID:$
+     * @group current
+     */
+    public function testValidateTicketSaleConcurrentRequestTicketLimitReached()
+    {
+        $e = $this->new_model_obj_with_dependencies(
+            'Event',
+            [
+                'status' => EEM_Event::post_status_publish
+            ]
+        );
+        $d1 = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e->ID(),
+                'DTT_reserved' => 0,
+                'DTT_sold' => 0
+            ));
+        $d2 = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e->ID(),
+                'DTT_reserved' => 0,
+                'DTT_sold' => 0
+            ));
+        $t = $this->new_model_obj_with_dependencies(
+            'Ticket',
+            [
+                'TKT_qty' => 1,
+                'TKT_reserved' => 0,
+                'TKT_sold' => 0,
+                'TKT_max' => 1,
+                'TKT_min' => 0
+            ]
+        );
+        $d1->_add_relation_to($t, 'Ticket');
+        $d2->_add_relation_to($t, 'Ticket');
+
+        // Setup an action to simulate a simultaneous request that will swoop in during the ticket validation
+        // (after we read from the DB but before writing to it) and add a ticket reservation.
+        add_action(
+            'AHEE__EE_Ticket__increase_reserved__begin',
+            function($ticket, $quantity, $source) use ($t) {
+                EEM_Ticket::instance()->update(
+                    [
+                        'TKT_reserved' => 1,
+                    ],
+                    [
+                        [
+                            'TKT_ID' => $t->ID()
+                        ]
+                    ]
+                );
+            },
+            10,
+            3
+        );
+        $ticket_reserved = EED_Ticket_Sales_Monitor::validate_ticket_sale(1, $t);
+        // Now we should NOT reserve the ticket (alternatively we could at least keep the DB accurate
+        // about how many tickets were oversold.)
+        $this->assertEquals(0, $ticket_reserved);
+        $d1->refresh_from_db();
+        $d2->refresh_from_db();
+        $t->refresh_from_db();
+        // Validate the reserved counts were unchanged.
+        $this->assertEquals(0, $d1->reserved());
+        $this->assertEquals(0, $d2->reserved());
+        $this->assertEquals(1, $t->reserved());
+    }
+
+    /**
+     * Simulates two simultaneous requests arriving to validate ticket sales.
+     * Normally, this runs into a concurrency problem because we first READ to verify the ticket sale is ok, and afterwards update.
+     * A problematic request is one where the DB is updated between when we read and update the DB because we will update the
+     * DB based on stale data.
+     * @since $VID:$
+     * @group current
+     */
+    public function testValidateTicketSaleConcurrentRequestDatetimeLimitReached()
+    {
+        $e = $this->new_model_obj_with_dependencies(
+            'Event',
+            [
+                'status' => EEM_Event::post_status_publish
+            ]
+        );
+        $d1 = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e->ID(),
+                'DTT_reserved' => 0,
+                'DTT_sold' => 0,
+            ));
+        $d2 = $this->new_model_obj_with_dependencies(
+            'Datetime',
+            array(
+                'EVT_ID' => $e->ID(),
+                'DTT_reserved' => 1,
+                'DTT_sold' => 1,
+                // Note this datetime only has one more space!
+                'DTT_reg_limit' => 3,
+            ));
+        $t = $this->new_model_obj_with_dependencies(
+            'Ticket',
+            [
+                'TKT_qty' => EE_INF,
+                'TKT_reserved' => 0,
+                'TKT_sold' => 0,
+                'TKT_max' => EE_INF,
+                'TKT_min' => 0
+            ]
+        );
+        $d1->_add_relation_to($t, 'Ticket');
+        $d2->_add_relation_to($t, 'Ticket');
+
+        // Setup an action to simulate a simultaneous request that will swoop in during the ticket validation
+        // (after we read from the DB but before writing to it) and add a datetime reservation.
+        add_action(
+            'AHEE__EE_Ticket__increase_reserved__begin',
+            function($ticket, $quantity, $source) use ($d2) {
+                EEM_Datetime::instance()->update(
+                    [
+                        'DTT_reserved' => 2,
+                    ],
+                    [
+                        [
+                            'DTT_ID' => $d2->ID()
+                        ]
+                    ]
+                );
+            },
+            10,
+            3
+        );
+        $ticket_reserved = EED_Ticket_Sales_Monitor::validate_ticket_sale(1, $t);
+        // Now we should NOT reserve the ticket (alternatively we could at least keep the DB accurate
+        // about how many tickets were oversold.)
+        $this->assertEquals(0, $ticket_reserved);
+        $d1->refresh_from_db();
+        $d2->refresh_from_db();
+        $t->refresh_from_db();
+        // Validate the reserved counts were unchanged.
+        $this->assertEquals(0, $d1->reserved());
+        $this->assertEquals(2, $d2->reserved());
+        $this->assertEquals(0, $t->reserved());
+    }
 }
 // End of file EED_Ticket_Sales_Monitor_Test.php
 // Location: /tests/testcases/modules/EED_Ticket_Sales_Monitor_Test.php
