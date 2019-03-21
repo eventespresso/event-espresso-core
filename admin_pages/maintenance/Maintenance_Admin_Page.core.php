@@ -812,7 +812,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                         'date_range_end_date'    => new EE_Datepicker_Input(
                             array(
                                 'html_name'       => 'offset_date_end_range',
-                                'html_label_text' => esc_html(
+                                'html_label_text' => esc_html__(
                                     'End Date for dates the offset is applied to:',
                                     'event_espresso'
                                 ),

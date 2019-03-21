@@ -19,24 +19,30 @@
     else : ?>
     <p class="clearfix">
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
-            <?php _e(
+            <?php esc_html_e(
                 'Name',
                 'event_espresso'
             ); ?></span><?php echo $prime_reg_fname . ' ' . $prime_reg_lname; ?>
     </p>
     <p class="clearfix">
-        <span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php _e('Email', 'event_espresso'); ?></span><a
+        <span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php esc_html_e('Email', 'event_espresso'); ?></span><a
             href="mailto:<?php echo $prime_reg_email; ?>"><?php echo $prime_reg_email; ?></a>
     </p>
     <p class="clearfix">
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
-            <?php _e(
+            <?php esc_html_e(
                 'Phone #',
                 'event_espresso'
-            ); ?></span><?php echo $prime_reg_phone; ?>
+            ); ?>
+    </span>
+    <?php if (! empty($prime_reg_phone)) : ?>
+        <a href="tel:<?php echo $phone; ?>">
+            <?php echo $prime_reg_phone; ?>
+        </a>
+    <?php endif; ?>
     </p>
     <p class="clearfix">
-        <span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php _e('Address', 'event_espresso'); ?></span>
+        <span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php esc_html_e('Address', 'event_espresso'); ?></span>
     <div class="admin-side-mbox-text-dv">
         <?php echo $formatted_address; ?>
     </div>

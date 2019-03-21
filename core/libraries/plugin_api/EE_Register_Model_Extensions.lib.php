@@ -83,6 +83,13 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
         if (isset($config['model_extension_paths'])) {
             require_once(EE_LIBRARIES . 'plugin_api/db/EEME_Base.lib.php');
             $class_to_filepath_map = EEH_File::get_contents_of_folders($config['model_extension_paths']);
+            // remove all files that are not PHP
+            foreach ($class_to_filepath_map as $class => $path) {
+                if (substr($path, strlen($path) - 3) !== 'php') {
+                    unset($class_to_filepath_map[ $class ]);
+                    continue;
+                }
+            }
             EEH_Autoloader::register_autoloader($class_to_filepath_map);
             foreach (array_keys($class_to_filepath_map) as $classname) {
                 self::$_extensions[ $model_id ]['models'][ $classname ] = new $classname;

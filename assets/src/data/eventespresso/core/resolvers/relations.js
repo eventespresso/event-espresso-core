@@ -127,9 +127,11 @@ export function* getRelatedEntities( entity, relationModelName ) {
 
 	if ( ! isEmpty( existingEntities ) ) {
 		fullEntities = keepExistingEntitiesInObject(
-			existingEntities.map(
-				( entitiesObject, entityObj ) =>
-					entitiesObject[ entityObj.id ] = entity,
+			existingEntities.reduce(
+				( entitiesObject, entityObj ) => {
+					entitiesObject[ entityObj.id ] = entity;
+					return entitiesObject;
+				},
 				{}
 			),
 			fullEntities,
