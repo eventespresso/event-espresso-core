@@ -14,6 +14,7 @@ import {
 	hasJoinTableRelation,
 	getRelationType,
 	getRelationSchema,
+	getRelationResponseType,
 } from '../resolvers';
 import {
 	receiveSchemaForModel,
@@ -224,7 +225,7 @@ describe( 'hasJoinTableRelation()', () => {
 describe( 'getRelationType()', () => {
 	let fulfillment;
 	const reset = () => fulfillment = getRelationType( 'event', 'datetimes' );
-	it( 'yields resolveSelecto control action for getting the relation ' +
+	it( 'yields resolveSelect control action for getting the relation ' +
 		'schema', () => {
 		reset();
 		const { value } = fulfillment.next();
@@ -247,6 +248,37 @@ describe( 'getRelationType()', () => {
 		fulfillment.next();
 		const { value, done } = fulfillment.next( { relation_type: 'foo' } );
 		expect( value ).toBe( 'foo' );
+		expect( done ).toBe( true );
+	} );
+} );
+describe( 'getRelationResponseType', () => {
+	let fulfillment;
+	const reset = () => fulfillment = getRelationResponseType(
+		'event',
+		'datetimes'
+	);
+	it( 'yields resolve select control for getRelationSchema', () => {
+		reset();
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			resolveSelect(
+				SCHEMA_REDUCER_KEY,
+				'getRelationSchema',
+				'event',
+				'datetimes',
+			)
+		);
+	} );
+	it( 'returns empty string if relationSchema not available', () => {
+		const { value, done } = fulfillment.next( null );
+		expect( value ).toBe( '' );
+		expect( done ).toBe( true );
+	} );
+	it( 'returns expected value if relationSchema available', () => {
+		reset();
+		fulfillment.next();
+		const { value, done } = fulfillment.next( { type: 'array' } );
+		expect( value ).toBe( 'array' );
 		expect( done ).toBe( true );
 	} );
 } );
