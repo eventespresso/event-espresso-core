@@ -7,4 +7,7 @@ export {
 } from './filter-bar';
 export { default as withMoney } from './money';
 export { default as withEntityPagination } from './pagination';
+export {
+	default as withFormContainerAndPlaceholder,
+} from './with-form-container-and-placeholder';
 
