@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { DEFAULT_CORE_STATE } from '@eventespresso/model';
+import { DEFAULT_CORE_STATE, singularModelName } from '@eventespresso/model';
 import { fromJS, Set } from 'immutable';
 import { normalizeEntityId } from '@eventespresso/helpers';
 
@@ -9,7 +9,7 @@ import { normalizeEntityId } from '@eventespresso/helpers';
  * Internal imports.
  */
 import { ACTION_TYPES } from '../actions/action-types';
-const { entities: types } = ACTION_TYPES;
+const { entities: types, resets: resetTypes } = ACTION_TYPES;
 
 /**
  * Handle adding incoming data to state.
@@ -80,10 +80,16 @@ export function deleteEntity(
 	state = fromJS( DEFAULT_CORE_STATE.dirty.delete ),
 	action
 ) {
-	return action.type === types.RECEIVE_DELETE_ENTITY_ID ||
-		action.type === types.REMOVE_DELETE_ENTITY_ID ?
-		processAction( state, action ) :
-		state;
+	switch ( action.type ) {
+		case types.RECEIVE_DELETE_ENTITY_ID:
+		case types.REMOVE_DELETE_ENTITY_ID:
+			return processAction( state, action );
+		case resetTypes.RESET_ALL_STATE:
+			return fromJS( DEFAULT_CORE_STATE.dirty.delete );
+		case resetTypes.RESET_STATE_FOR_MODEL:
+			return state.delete( singularModelName( action.modelName ) );
+	}
+	return state;
 }
 
 /**
@@ -97,8 +103,14 @@ export function trashEntity(
 	state = fromJS( DEFAULT_CORE_STATE.dirty.trash ),
 	action
 ) {
-	return action.type === types.RECEIVE_TRASH_ENTITY_ID ||
-		action.type === types.REMOVE_TRASH_ENTITY_ID ?
-		processAction( state, action ) :
-		state;
+	switch ( action.type ) {
+		case types.RECEIVE_TRASH_ENTITY_ID:
+		case types.REMOVE_TRASH_ENTITY_ID:
+			return processAction( state, action );
+		case resetTypes.RESET_ALL_STATE:
+			return fromJS( DEFAULT_CORE_STATE.dirty.trash );
+		case resetTypes.RESET_STATE_FOR_MODEL:
+			return state.delete( singularModelName( action.modelName ) );
+	}
+	return state;
 }

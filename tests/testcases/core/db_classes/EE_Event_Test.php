@@ -518,7 +518,7 @@ class EE_Event_Test extends EE_UnitTestCase
         $ticket_A->_add_relation_to($datetime, 'Datetime');
         $this->assertEquals('publish', $event->status());
         $this->assertEquals(EE_Datetime::upcoming, $event->get_active_status());
-        $ticket_A->increase_sold(2);
+        $ticket_A->increaseSold(2);
         $this->assertEquals('publish', $event->status());
         $this->assertEquals(EE_Datetime::upcoming, $event->get_active_status(true));
         // now perform sold  out check
@@ -579,7 +579,7 @@ class EE_Event_Test extends EE_UnitTestCase
         $ticket_B->_add_relation_to($datetime, 'Datetime');
         $this->assertEquals('publish', $event->status());
         $this->assertEquals(EE_Datetime::upcoming, $event->get_active_status());
-        $ticket_B->increase_sold(2);
+        $ticket_B->increaseSold(2);
         $this->assertEquals('publish', $event->status());
         $this->assertEquals(EE_Datetime::upcoming, $event->get_active_status(true));
         // now perform sold  out check

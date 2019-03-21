@@ -75,11 +75,11 @@ class EEH_Line_Item
 
     /**
      * Adds a simple item ( unrelated to any other model object) to the total line item,
-     * in the correct spot in the line item tree. Automatically
-     * re-calculates the line item totals and updates the related transaction. But
-     * DOES NOT automatically upgrade the transaction's registrations' final prices (which
-     * should probably change because of this).
-     * You should call EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
+     * in the correct spot in the line item tree. Does not automatically
+     * re-calculate the line item totals, nor update the related transaction, nor upgrade the transaction's
+     * registrations' final prices (which should probably change because of this).
+     * You should call recalculate_total_including_taxes() on the grand total line item, then
+     * update the transaction's total, and EE_Registration_Processor::update_registration_final_prices()
      * after using this, to keep the registration final prices in-sync with the transaction's total.
      *
      * @param EE_Line_Item $parent_line_item

@@ -25,7 +25,7 @@ describe( 'eejs', () => {
 	describe( 'routes', () => {
 		it( 'provides the url to the events admin page by default.', () => {
 			expect( routes.getAdminUrl() ).toEqual(
-				'https://eetest.test/wp-admin/?admin.php&page=espresso_events&action=default'
+				'https://eetest.test/wp-admin/admin.php?page=espresso_events&action=default'
 			);
 		} );
 	} );

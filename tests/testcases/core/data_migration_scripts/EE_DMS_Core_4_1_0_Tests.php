@@ -21,7 +21,10 @@
  * @group core/data_migration_scripts
  */
 class EE_DMS_Core_4_1_0_Tests extends EE_UnitTestCase {
-	
+
+    /**
+     * @doesNotPerformAssertions
+     */
 	function test_stub(){
 		//no tests yet
 	}
