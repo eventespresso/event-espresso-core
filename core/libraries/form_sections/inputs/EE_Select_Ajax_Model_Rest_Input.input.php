@@ -136,7 +136,7 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base
                 ),
             ),
             'cache' => true,
-            'width' => '100'
+            'width' => 'resolve'
         );
         $select2_args = array_replace_recursive(
             $default_select2_args,
