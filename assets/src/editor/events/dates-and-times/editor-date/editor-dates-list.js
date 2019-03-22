@@ -20,9 +20,6 @@ import { EditEventDateFormModal } from '../';
 import { DatesAndTicketsManagerModal } from '../../dates-and-tickets-metabox';
 
 const {
-	FormColumn,
-	FormRow,
-	FormSection,
 	FormWrapper,
 	FormSaveCancelButtons,
 } = twoColumnAdminFormLayout;
