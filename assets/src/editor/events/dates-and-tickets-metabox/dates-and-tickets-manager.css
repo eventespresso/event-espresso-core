@@ -10,7 +10,6 @@
 
 /* header */
 .ee-ticket-assignments-manager .ee-rTable-header {
-    /*border-bottom: 1px solid var(--ee-lite-grey);*/
 }
 
 .ee-ticket-assignments-manager .ee-dtm-dates-header {
@@ -270,7 +269,7 @@
         padding-left: 15%;
     }
 
-    .ee-ticket-assignments-manager .ee-rTable-body-td .ee-rTable-inner {
+    .ee-ticket-assignments-manager .ee-rTable-body-td .ee-rTable-mobile-only-column-value {
         min-width: 120px;
     }
 
@@ -286,22 +285,20 @@
 @media screen and (max-width: 600px) {
     .ee-ticket-assignments-manager .ee-rTable-mobile-only-column-header .ee-dtm-ticket-header-div {
         font-size: 13px;
-        /*line-height: 15px;*/
         width: 100%;
     }
-    /*.ee-ticket-assignments-manager .ee-dtm-ticket-header-title {*/
-        /*!*height: 30px;*!*/
-    /*}*/
+
     .ee-ticket-assignments-manager .ee-dtm-date-label-text {
         width: calc(75% - 62px);
     }
-    .ee-ticket-assignments-manager .ee-rTable-body-td .ee-rTable-inner {
-        min-width: 94px;
-        width: 45%;
-    }
+
     .ee-ticket-assignments-manager .ee-rTable-mobile-only-column-header {
         padding-left: 10%;
         width: 55%;
+    }
+    .ee-ticket-assignments-manager .ee-rTable-body-td .ee-rTable-mobile-only-column-value {
+        min-width: 94px;
+        width: 45%;
     }
 }
 
@@ -315,7 +312,7 @@
         line-height: 16px;
         width: calc(100% - 62px);
     }
-    .ee-ticket-assignments-manager .ee-rTable-body-td .ee-rTable-inner {
+    .ee-ticket-assignments-manager .ee-rTable-body-td .ee-rTable-mobile-only-column-value {
         min-width: 62px;
         width: 40%;
     }
