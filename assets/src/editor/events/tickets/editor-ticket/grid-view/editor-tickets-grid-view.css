@@ -114,6 +114,7 @@
 .ee-tickets-list-grid-view .biggie-calendar-date-footer span {
     display: block;
     margin: .5rem 0 0;
+    text-transform: uppercase;
 }
 
 

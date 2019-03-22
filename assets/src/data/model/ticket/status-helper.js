@@ -131,19 +131,19 @@ export const getTicketStatusTextLabel = ( TicketEntity ) => {
 	let ticketStatus = null;
 	switch ( status( TicketEntity ) ) {
 		case TICKET_STATUS_ID.SOLD_OUT :
-			ticketStatus = __( 'SOLD OUT', 'event_espresso' );
+			ticketStatus = __( 'sold out', 'event_espresso' );
 			break;
 		case TICKET_STATUS_ID.EXPIRED :
-			ticketStatus = __( 'EXPIRED', 'event_espresso' );
+			ticketStatus = __( 'expired', 'event_espresso' );
 			break;
 		case TICKET_STATUS_ID.PENDING :
-			ticketStatus = __( 'PENDING', 'event_espresso' );
+			ticketStatus = __( 'pending', 'event_espresso' );
 			break;
 		case TICKET_STATUS_ID.ONSALE :
-			ticketStatus = __( 'ON SALE', 'event_espresso' );
+			ticketStatus = __( 'on sale', 'event_espresso' );
 			break;
 		case TICKET_STATUS_ID.ARCHIVED :
-			ticketStatus = __( 'ARCHIVED', 'event_espresso' );
+			ticketStatus = __( 'archived', 'event_espresso' );
 			break;
 	}
 	return ticketStatus;
