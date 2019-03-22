@@ -48,7 +48,8 @@ class TicketsListFilterBar extends Component {
 					{
 						value: 'all',
 						label: isChained ?
-							__( 'all tickets for above dates',
+							__(
+								'all tickets for above dates',
 								'event_espresso'
 							) :
 							__( 'all tickets for all dates', 'event_espresso' ),
@@ -83,35 +84,43 @@ class TicketsListFilterBar extends Component {
 					},
 					{
 						value: 'sold-out-only',
-						label: __( 'sold out tickets only', 'event_espresso' ),
+						label: __(
+							'sold out tickets only',
+							'event_espresso'
+						),
 					},
 					{
 						value: 'above-90-sold',
-						label: __( '90% available tickets sold',
+						label: __(
+							'tickets with 90% or more sold',
 							'event_espresso'
 						),
 					},
 					{
 						value: 'above-75-sold',
-						label: __( '75% available tickets sold ',
+						label: __(
+							'tickets with 75% or more sold',
 							'event_espresso'
 						),
 					},
 					{
 						value: 'above-50-sold',
-						label: __( '50% available tickets sold',
+						label: __(
+							'tickets with 50% or more sold',
 							'event_espresso'
 						),
 					},
 					{
 						value: 'below-50-sold',
-						label: __( 'less than 50% available tickets sold',
+						label: __(
+							'tickets with less than 50% sold',
 							'event_espresso'
 						),
 					},
 					{
 						value: 'expired-only',
-						label: __( 'expired tickets only',
+						label: __(
+							'expired tickets only',
 							'event_espresso'
 						),
 					},
