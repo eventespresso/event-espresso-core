@@ -87,11 +87,20 @@ export function* getRelatedEntities( entity, relationModelName ) {
 		'receiveRelationEndpointForModelEntity',
 		[ modelName, entity.id, pluralRelationName, relationEndpoint ]
 	);
-	const relationEntities = yield fetch( {
+
+	let relationEntities = yield fetch( {
 		path: relationEndpoint,
 	} );
+
+	relationEntities = ! isEmpty( relationEntities ) ?
+		relationEntities :
+		DEFAULT_EMPTY_ARRAY;
+	relationEntities = ! isArray( relationEntities ) ?
+		[ relationEntities ] :
+		relationEntities;
+
 	if ( ! relationEntities.length ) {
-		return DEFAULT_EMPTY_ARRAY;
+		return relationEntities;
 	}
 
 	const factory = yield resolveSelect(

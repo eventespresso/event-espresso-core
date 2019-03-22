@@ -153,6 +153,24 @@ export function isRequestingRelationEndpointForEntityId(
 }
 
 /**
+ * Selector returning the relation response type for the given relation.
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {string} relationName
+ * @return {string} The type for the relation returned for the given model and
+ * relation.
+ */
+export const getRelationResponseType = ( state, modelName, relationName ) => {
+	modelName = singularModelName( modelName );
+	relationName = pluralModelName( relationName );
+	const relationSchema = getRelationSchema( state, modelName, relationName );
+	return relationSchema !== null ?
+		relationSchema.type :
+		'';
+};
+
+/**
  * Selector returning whether the relation between the given model name and
  * relation name has a join table.
  *

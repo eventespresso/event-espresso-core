@@ -13,6 +13,7 @@ import {
 	hasJoinTableRelation,
 	getRelationSchema,
 	getRelationType,
+	getRelationResponseType,
 } from '../selectors';
 import { mockStateForTests } from './fixtures';
 
@@ -224,6 +225,26 @@ describe( 'getRelationType()', () => {
 				mockStateForTests,
 				'foo',
 				'bar',
+			)
+		).toBe( '' );
+	} );
+} );
+describe( 'getRelationResponseType', () => {
+	it( 'returns expected value for relation that exists', () => {
+		expect(
+			getRelationResponseType(
+				mockStateForTests,
+				'event',
+				'datetime'
+			)
+		).toBe( 'array' );
+	} );
+	it( 'returns empty string when relation does not exist', () => {
+		expect(
+			getRelationType(
+				mockStateForTests,
+				'foo',
+				'bar'
 			)
 		).toBe( '' );
 	} );
