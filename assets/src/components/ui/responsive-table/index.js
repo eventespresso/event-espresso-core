@@ -34,7 +34,6 @@ class ResponsiveTable extends Component {
 				] ).isRequired,
 				id: PropTypes.string,
 				class: PropTypes.string,
-				label: PropTypes.string,
 				extraProps: PropTypes.object,
 			} )
 		).isRequired,
@@ -55,7 +54,7 @@ class ResponsiveTable extends Component {
 			)
 		).isRequired,
 		metaData: PropTypes.shape( {
-			tableId: PropTypes.string.isRequired,
+			tableId: PropTypes.string,
 			tableCaption: PropTypes.string.isRequired,
 			showTableFooter: PropTypes.bool,
 			hasRowHeaders: PropTypes.bool,
@@ -71,16 +70,6 @@ class ResponsiveTable extends Component {
 			footerThClass: PropTypes.string,
 		} ),
 	};
-
-	// constructor( props ) {
-	// 	super( props );
-	// }
-
-	componentWillMount() {
-		console.log( '' );
-		console.log( 'ResponsiveTable.componentWillMount()' );
-		console.log( ' > props: ', this.props );
-	}
 
 	/**
 	 * @function
@@ -143,16 +132,12 @@ class ResponsiveTable extends Component {
 	 * @return {Object} rendered headings row
 	 */
 	tableHeader = ( columns ) => {
-		// console.log( '' );
-		// console.log( 'ResponsiveTable.tableHeader()' );
 		let rowProps = {};
 		const rowNumber = 0;
 		const headerCells = columns.map(
 			( column, colNumber ) => {
-				// console.log( ' > column', colNumber );
-				if ( column.hasOwnProperty( 'type' ) && column.type === 'row' ) {
+				if ( column.type && column.type === 'row' ) {
 					rowProps = column;
-					// console.log( ' > rowProps', rowProps );
 					colNumber--;
 					return null;
 				}
@@ -220,8 +205,6 @@ class ResponsiveTable extends Component {
 	 */
 	tableRow = ( rowNumber, tableRow, columns ) => {
 		rowNumber++; // because the header is row 0
-		// console.log( '' );
-		// console.log( ' > rowNumber', rowNumber );
 		warning(
 			Array.isArray( tableRow ),
 			`Data for row ${ rowNumber } is not an array.`
@@ -230,14 +213,12 @@ class ResponsiveTable extends Component {
 		let indexMod = 0;
 		const rowCells = tableRow.map(
 			( cellData, colNumber ) => {
-				if ( cellData.hasOwnProperty( 'type' ) && cellData.type === 'row' ) {
+				if ( cellData.type && cellData.type === 'row' ) {
 					rowProps = cellData;
-					// console.log( ' > rowProps', rowProps );
 					indexMod++;
 					return null;
 				}
 				colNumber -= indexMod;
-				// console.log( ' > > column', colNumber );
 				const column = columns[ colNumber ];
 				const hasRenderCallback = isFunction( cellData.render );
 				warning(
@@ -278,9 +259,7 @@ class ResponsiveTable extends Component {
 	 * @return {Object} rendered headings row
 	 */
 	tableCell = ( rowNumber, colNumber, column, cellData ) => {
-		console.log( ' > row '+ rowNumber + ' col ' + colNumber );
 		const isRowHeader = this.hasRowHeaders && colNumber === 0;
-		console.log( ' > > isRowHeader ', isRowHeader );
 		const columnId = cellData.id ?
 			cellData.id :
 			`ee-rTable-row-${ rowNumber }-col-${ colNumber }`;
@@ -308,10 +287,19 @@ class ResponsiveTable extends Component {
 				key={ `row-${ rowNumber }-col-${ colNumber }` }
 				id={ columnId }
 				className={ columnClass }
-				data-label={ column.label ? column.label : '' }
 				{ ...extraProps }
 			>
-				{ cellData.value }
+				<div
+					aria-hidden
+					className={ 'ee-rTable-mobile-only-column-header' }
+				>
+					{ column.value }
+				</div>
+				<div
+					className={ 'ee-rTable-mobile-only-column-value' }
+				>
+					{ cellData.value }
+				</div>
 			</td>
 		);
 	};
@@ -333,9 +321,10 @@ class ResponsiveTable extends Component {
 		this.setCssClasses( classes ? classes : {} );
 		this.columnCount = columns.length;
 		this.tableClass += ` ee-rTable-column-count-${ this.columnCount }`;
+		const tableHeader = this.tableHeader( columns );
 		const tableFooter = this.showTableFooter ? (
 			<tfoot className="ee-rTable-footer">
-			{ this.footerRow( columns ) }
+				{ tableHeader }
 			</tfoot>
 		) : null;
 		return (
@@ -352,7 +341,7 @@ class ResponsiveTable extends Component {
 						{ this.tableCaption }
 					</caption>
 					<thead className="ee-rTable-header">
-						{ this.tableHeader( columns ) }
+						{ tableHeader }
 					</thead>
 					<tbody className="ee-rTable-body">
 						{

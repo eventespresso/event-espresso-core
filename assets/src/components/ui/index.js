@@ -8,6 +8,6 @@ export { default as EntityList } from './entity-list';
 export { default as withEntityPaperFrame } from './entity-paper-frame';
 export { default as FancyButton } from './fancy-button';
 export { default as IconMenuItem } from './icon-menu-item';
-export { default as ResponsiveTable } from './responsive-table/table';
+export { default as ResponsiveTable } from './responsive-table';
 export * from './image';
 import './colors-default-theme-2019.css';
