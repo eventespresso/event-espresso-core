@@ -72,22 +72,11 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base
             'query_params',
             array()
         );
-        // Make sure limit and caps are always set.
+        // make sure limit and caps are always set
         $query_params = array_merge(
-            [
-                'limit' => 10,
-                'caps' => EEM_Base::caps_read_admin
-            ],
+            array( 'limit' => 10, 'caps' => EEM_Base::caps_read_admin ),
             $query_params
         );
-
-        // And default to showing the most recently created items first.
-        if ($model->has_primary_key_field()) {
-            $query_params['order_by'] = [
-                $model->primary_key_name() => 'DESC'
-            ];
-        }
-        
         $this->_value_field_name = EEH_Array::is_set(
             $input_settings,
             'value_field_name',
