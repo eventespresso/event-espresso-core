@@ -87,28 +87,20 @@ export function* getRelatedEntities( entity, relationModelName ) {
 		'receiveRelationEndpointForModelEntity',
 		[ modelName, entity.id, pluralRelationName, relationEndpoint ]
 	);
-	let relationResponseType = yield resolveSelect(
-		SCHEMA_REDUCER_KEY,
-		'getRelationResponseType',
-		modelName,
-		relationModelName,
-	);
-
-	relationResponseType = relationResponseType === '' ?
-		'array' :
-		relationResponseType;
 
 	let relationEntities = yield fetch( {
 		path: relationEndpoint,
 	} );
 
-	relationEntities = relationResponseType === 'object' &&
-		! isEmpty( relationEntities ) ?
+	relationEntities = ! isEmpty( relationEntities ) ?
+		relationEntities :
+		DEFAULT_EMPTY_ARRAY;
+	relationEntities = ! isArray( relationEntities ) ?
 		[ relationEntities ] :
 		relationEntities;
 
 	if ( ! relationEntities.length ) {
-		return DEFAULT_EMPTY_ARRAY;
+		return relationEntities;
 	}
 
 	const factory = yield resolveSelect(

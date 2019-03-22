@@ -71,19 +71,8 @@ describe( getRelatedEntities.name + '()', () => {
 			]
 		) );
 	} );
-	it( 'yields resolveSelect for getRelationResponseType', () => {
-		const { value } = fulfillment.next();
-		expect( value ).toEqual(
-			resolveSelect(
-				SCHEMA_REDUCER_KEY,
-				'getRelationResponseType',
-				'event',
-				'datetime'
-			)
-		);
-	} );
 	it( 'yields a fetch action for getting relations', () => {
-		const { value } = fulfillment.next( 'array' );
+		const { value } = fulfillment.next();
 		expect( value ).toEqual( fetch(
 			{
 				path: 'ee/v4.8.36/events/10/datetimes',
@@ -102,7 +91,6 @@ describe( getRelatedEntities.name + '()', () => {
 		fulfillment.next();
 		fulfillment.next();
 		fulfillment.next();
-		fulfillment.next( 'array' );
 		const { value } = fulfillment.next( [ AuthedDateTimeResponse ] );
 		expect( value ).toEqual(
 			resolveSelect(
@@ -123,7 +111,6 @@ describe( getRelatedEntities.name + '()', () => {
 		fulfillment.next();
 		fulfillment.next();
 		fulfillment.next();
-		fulfillment.next( 'array' );
 		fulfillment.next( [ AuthedDateTimeResponse ] );
 		const { value } = fulfillment.next( dateTimeFactory );
 		expect( value ).toEqual( select(
