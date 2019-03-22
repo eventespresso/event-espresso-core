@@ -135,6 +135,24 @@ export function* getRelationEndpointForEntityId(
 }
 
 /**
+ * A resolver for returning what the expected response type is for the given
+ * relation.
+ *
+ * @param {string} modelName  The model the relation is for.
+ * @param {string} relationName The model name the relation is to.
+ * @return {string} The type of the relation.
+ */
+export function* getRelationResponseType( modelName, relationName ) {
+	const relationSchema = yield resolveSelect(
+		SCHEMA_REDUCER_KEY,
+		'getRelationSchema',
+		modelName,
+		relationName,
+	);
+	return relationSchema !== null ? relationSchema.type : '';
+}
+
+/**
  * A resolver for returning whether the given modelName and relationName have
  * a join table for representing their relation.
  *
