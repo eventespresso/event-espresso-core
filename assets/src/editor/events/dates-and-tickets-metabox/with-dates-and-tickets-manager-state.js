@@ -1,13 +1,13 @@
 /**
  * External imports
  */
-import {
-	compose,
-	ifCondition,
-	withState,
-} from '@wordpress/compose';
+import { compose, withState } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
-import { withEditorModal } from '@eventespresso/higher-order-components';
+import {
+	withEditorModal,
+	withEntityPagination,
+	withFormContainerAndPlaceholder,
+} from '@eventespresso/higher-order-components';
 import { __ } from '@eventespresso/i18n';
 import { dateTimeModel, ticketModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
@@ -35,21 +35,25 @@ export default compose( [
 	withState( {
 		loading: true,
 		initialized: false,
-		dates: [],
+		entities: [],
 		tickets: [],
 		eventDateTicketMap: {},
+		entitiesPerPage: 6,
+		position: 'bottom',
+		notice: __(
+			'loading event date ticket assignments',
+			'event_espresso'
+		),
 	} ),
 	withSelect( ( select, ownProps ) => {
 		const { editorOpen, initialized } = ownProps;
-		if ( ! editorOpen || initialized ) {
-			return ownProps;
-		}
 		const {
+			loading,
 			date,
 			allDates,
 			ticket,
 			allTickets,
-			dates,
+			entities,
 			tickets,
 			setState,
 		} = ownProps;
@@ -58,12 +62,15 @@ export default compose( [
 			setState( { initialized: false } );
 		};
 		let dtmProps = {
-			loading: true,
-			dates,
+			loading,
+			entities,
 			tickets,
 			eventDateTicketMap,
 			resetRelationsMap,
 		};
+		if ( ! editorOpen || initialized ) {
+			return dtmProps;
+		}
 		if ( isModelEntityOfModel( date, DATETIME ) ) {
 			const { getRelatedEntities } = select( 'eventespresso/core' );
 			const { hasFinishedResolution } = select( 'core/data' );
@@ -79,7 +86,7 @@ export default compose( [
 			dtmProps = {
 				loading: false,
 				initialized: true,
-				dates: [ date ],
+				entities: [ date ],
 				tickets: allTickets,
 				eventDateTicketMap: { [ date.id ]: relatedTickets },
 				resetRelationsMap,
@@ -107,7 +114,7 @@ export default compose( [
 			dtmProps = {
 				loading: false,
 				initialized: true,
-				dates: sortDatesList( allDates ),
+				entities: sortDatesList( allDates ),
 				tickets: [ ticket ],
 				eventDateTicketMap: eventDateTicketMap,
 				resetRelationsMap,
@@ -176,7 +183,7 @@ export default compose( [
 			dtmProps = {
 				loading: false,
 				initialized: true,
-				dates: sortDatesList( allDates ),
+				entities: sortDatesList( allDates ),
 				tickets: allTickets,
 				eventDateTicketMap: eventDateTicketMap,
 				resetRelationsMap,
@@ -259,5 +266,9 @@ export default compose( [
 		closeButtonLabel: __( 'close event date tickets manager',
 			'event_espresso'
 		),
+	} ),
+	withFormContainerAndPlaceholder,
+	withEntityPagination( {
+		returnAsProp: true,
 	} ),
 ] )( DatesAndTicketsManager );
