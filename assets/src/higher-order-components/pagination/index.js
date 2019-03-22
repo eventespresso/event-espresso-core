@@ -1,7 +1,9 @@
 /**
  * External imports
  */
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
+import JwPagination from 'jw-react-pagination';
 import {
 	compose,
 	createHigherOrderComponent,
@@ -9,7 +11,6 @@ import {
 } from '@wordpress/compose';
 import { Component, Fragment } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
-import JwPagination from 'jw-react-pagination';
 
 /**
  * Internal dependencies
@@ -33,7 +34,10 @@ export default ( paginationConfig = {} ) => createHigherOrderComponent(
 				static propTypes = {
 					entities: PropTypes.array.isRequired,
 					instanceId: PropTypes.number.isRequired,
-					entitiesPerPage: PropTypes.number,
+					entitiesPerPage: PropTypes.oneOfType( [
+						PropTypes.string,
+						PropTypes.number,
+					] ),
 					position: PropTypes.string,
 				};
 
@@ -42,6 +46,13 @@ export default ( paginationConfig = {} ) => createHigherOrderComponent(
 					this.state = {
 						entityPage: [],
 					};
+				}
+
+				shouldComponentUpdate( nextProps, nextState ) {
+					return ! (
+						isEqual( nextProps, this.props ) &&
+						isEqual( nextState.entityPage, this.state.entityPage )
+					);
 				}
 
 				/**
@@ -56,7 +67,7 @@ export default ( paginationConfig = {} ) => createHigherOrderComponent(
 				render() {
 					const {
 						entities,
-						instanceId = 0,
+						instanceId,
 						entitiesPerPage = 10,
 						position = 'top',
 						...otherProps
@@ -73,6 +84,15 @@ export default ( paginationConfig = {} ) => createHigherOrderComponent(
 							previous: __( 'Previous', 'event_espresso' ),
 							next: __( 'Next', 'event_espresso' ),
 						};
+					const noResultsText = paginationConfig.noResultsText ?
+						paginationConfig.noResultsText :
+						__(
+							'no results found (try changing filters)',
+							'event_espresso'
+						);
+					const returnAsProp = paginationConfig.returnAsProp ?
+						paginationConfig.returnAsProp :
+						false;
 					const pagination = (
 						<div id={ `ee-entity-pagination-${ instanceId }` }
 							className="ee-entity-pagination"
@@ -85,28 +105,28 @@ export default ( paginationConfig = {} ) => createHigherOrderComponent(
 							/>
 						</div>
 					);
-					return entities && (
+					const topPagination = position === ( 'top' || 'both' ) ?
+						pagination :
+						null;
+					const bottomPagination = position === ( 'bottom' || 'both' ) ?
+						pagination :
+						null;
+					return returnAsProp ? (
+						<EntityList
+							pagination={ pagination }
+							entities={ this.state.entityPage }
+							noResultsText={ noResultsText }
+							{ ...otherProps }
+						/>
+					) : (
 						<Fragment>
-							{
-								position === ( 'top' || 'both' ) ?
-									pagination :
-									null
-							}
+							{ topPagination }
 							<EntityList
 								entities={ this.state.entityPage }
-								noResultsText={
-									__(
-										'no results found (try changing filters)',
-										'event_espresso'
-									)
-								}
+								noResultsText={ noResultsText }
 								{ ...otherProps }
 							/>
-							{
-								position === ( 'bottom' || 'both' ) ?
-									pagination :
-									null
-							}
+							{ bottomPagination }
 						</Fragment>
 					);
 				}
