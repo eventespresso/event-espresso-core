@@ -63,11 +63,6 @@ describe( 'createActions()', () => {
 			'generator',
 		],
 		[
-			'removeDirtyRelationsForEventId',
-			[ 10, 'datetimes', 20 ],
-			'generator',
-		],
-		[
 			'receiveRelatedEntitiesForEventId',
 			[ 10, 'datetimes', [ 20, 30 ] ],
 			actions.receiveRelatedEntities(

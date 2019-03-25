@@ -16,7 +16,7 @@ import { fromJS, Set, Map } from 'immutable';
  * Internal Imports
  */
 import { ACTION_TYPES } from '../actions/action-types';
-const { relations: types } = ACTION_TYPES;
+const { relations: types, resets: resetTypes } = ACTION_TYPES;
 
 /**
  * Handles normalizing the incoming action so that we're always only receiving
@@ -32,12 +32,13 @@ const normalizedReceiveAndRemoveRelations = ( state, action ) => {
 		...action,
 		modelName: singularModelName( action.modelName ),
 		relationName: pluralModelName( action.relationName ),
+		entityId: normalizeEntityId( action.entityId ),
 	};
 	const {
 		modelName,
 		relationName,
-		entityId,
 		relatedEntityIds,
+		entityId,
 	} = action;
 	// if modelName exists, then we just process as is.
 	if ( state.hasIn( [ 'entityMap', modelName ] ) ) {
@@ -57,7 +58,7 @@ const normalizedReceiveAndRemoveRelations = ( state, action ) => {
 		};
 		// loop through each existing relation id and get the state for each
 		while ( relatedEntityIds.length > 0 ) {
-			newAction.entityId = relatedEntityIds.pop();
+			newAction.entityId = normalizeEntityId( relatedEntityIds.pop() );
 			state = receiveAndRemoveRelations( state, newAction );
 		}
 		return state;
@@ -113,13 +114,13 @@ function receiveAndRemoveRelations( state, action ) {
 	const relationEntityIds = Set( action.relatedEntityIds );
 	const path = [ 'entityMap', modelName, entityId, relationName ];
 
-	const existingIds = state.getIn( path ) || Set();
+	const existingIds = state.getIn( path, Set() );
 
 	switch ( type ) {
 		case types.RECEIVE_RELATED_ENTITY_IDS:
 			state = state.setIn(
 				path,
-				existingIds.concat( fromJS( relationEntityIds ) )
+				existingIds.concat( relationEntityIds )
 			);
 			state = setRelationIndex( state, action );
 			break;
@@ -320,6 +321,96 @@ const removeRelatedEntitiesForEntity = ( state, action ) => {
 };
 
 /**
+ * Handles resetting the state for the given modelName in the action.
+ *
+ * @param {Immutable.Map} state
+ * @param {Object} action
+ *
+ * @return {Immutable.Map} The new (or existing if no changes) state.
+ */
+const resetStateForModel = ( state, action ) => {
+	const singularName = singularModelName( action.modelName );
+	const pluralName = pluralModelName( action.modelName );
+	const indexPath = [ 'index', pluralName ];
+	const entityMapPath = [ 'entityMap', singularName ];
+	if ( state.hasIn( indexPath ) ) {
+		state = clearModelNamesFromPath(
+			state,
+			indexPath,
+			'entityMap',
+			pluralName
+		);
+	}
+	if ( state.hasIn( entityMapPath ) ) {
+		state = clearModelNamesFromPath(
+			state,
+			entityMapPath,
+			'index',
+			singularName
+		);
+	}
+	return state;
+};
+
+/**
+ * Helper for clearing the entries in the dirty relations state for the given
+ * modelName.
+ *
+ * This clears entries in both the `index` and `entityMap` maps.
+ *
+ * "Main state" is used in this function to represent the top level state the
+ * model's entries are being deleted from (i.e. entityMap or index).
+ *
+ * "Opposite state" is used in this function to represent the opposite top level
+ * state.  So if the main state path points to entries in the entityMap, then
+ * the opposite state will be entries in the index.
+ *
+ * @param {Immutable.Map} state
+ * @param {Array} path The path for the main state being cleared.
+ * @param {string} mapProperty The property for the opposite state index being
+ * cleared.
+ * @param {string} relationModelName  The modelName string for the model being
+ * cleared from the opposite state map.
+ *
+ * @return {Immutable.Map} The new (or existing if no changes) state.
+ */
+const clearModelNamesFromPath = (
+	state,
+	path,
+	mapProperty,
+	relationModelName
+) => {
+	const mainState = state.getIn( path );
+	let oppositeState = state.get( mapProperty );
+	oppositeState = oppositeState.withMutations( ( subState ) => {
+		mainState.forEach( ( relationMap ) => {
+			relationMap.forEach( ( relationIds, relationName ) => {
+				relationIds.forEach( ( relationId ) => {
+					subState.deleteIn(
+						[ relationName, relationId, relationModelName ]
+					);
+					if (
+						subState.hasIn( [ relationName, relationId ] ) &&
+						subState.getIn(
+							[ relationName, relationId ]
+						).count() < 1
+					) {
+						removeEmptyFromState(
+							subState,
+							[ relationName, relationId ],
+							0,
+							false,
+						);
+					}
+				} );
+			} );
+		} );
+	} );
+	state = state.set( mapProperty, oppositeState );
+	return state.deleteIn( path );
+};
+
+/**
  * export for tests
  */
 export {
@@ -346,6 +437,10 @@ export default function relations(
 			return updateEntityIdForRelations( state, action );
 		case types.REMOVE_RELATED_ENTITIES_FOR_ENTITY:
 			return removeRelatedEntitiesForEntity( state, action );
+		case resetTypes.RESET_ALL_STATE:
+			return fromJS( DEFAULT_CORE_STATE.relations );
+		case resetTypes.RESET_STATE_FOR_MODEL:
+			return resetStateForModel( state, action );
 	}
 	return state;
 }

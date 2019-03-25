@@ -8,7 +8,7 @@
         <li>
             <?php printf(
                 esc_html__('%1$sEvent Espresso 4 Developer Documentation%2$s', 'event_espresso'),
-                '<a href="https://github.com/eventespresso/event-espresso-core/tree/master/docs#getting-started-with-the-ee-developer-docs" target="_blank">',
+                '<a href="https://github.com/eventespresso/event-espresso-core/tree/master/docs#getting-started-with-the-ee-developer-docs" target="_blank" rel="noopener noreferrer">',
                 '</a>'
             ); ?></li>
         <li>
@@ -49,7 +49,7 @@
         <li>
             <?php printf(
                 esc_html__('%1$sPayment Method Development%2$s', 'event_espresso'),
-                '<a href="https://github.com/eventespresso/event-espresso-core/blob/master/docs/L--Payment-Methods-and-Gateways/creating-a-payment-method.md" target="_blank">',
+                '<a href="https://github.com/eventespresso/event-espresso-core/blob/master/docs/L--Payment-Methods-and-Gateways/creating-a-payment-method.md" target="_blank" rel="noopener noreferrer">',
                 '</a>'
             ); ?></li>
         <li>
@@ -74,19 +74,19 @@
         <li>
             <?php printf(
                 esc_html__('%1$sREST API: Introduction%2$s', 'event_espresso'),
-                '<a href="https://github.com/eventespresso/event-espresso-core/blob/master/docs/C--REST-API/ee4-rest-api-introduction.md" target="_blank">',
+                '<a href="https://github.com/eventespresso/event-espresso-core/blob/master/docs/C--REST-API/ee4-rest-api-introduction.md" target="_blank" rel="noopener noreferrer">',
                 '</a>'
             ); ?></li>
         <li>
             <?php printf(
                 esc_html__('%1$sREST API: Reading Data%2$s', 'event_espresso'),
-                '<a href="https://github.com/eventespresso/event-espresso-core/blob/master/docs/C--REST-API/ee4-rest-api-reading-data.md" target="_blank">',
+                '<a href="https://github.com/eventespresso/event-espresso-core/blob/master/docs/C--REST-API/ee4-rest-api-reading-data.md" target="_blank" rel="noopener noreferrer">',
                 '</a>'
             ); ?></li>
         <li>
             <?php printf(
                 esc_html__('%1$sBuilding an EE4 Add-on Using the REST API%2$s', 'event_espresso'),
-                '<a href="https://github.com/eventespresso/event-espresso-core/blob/master/docs/T--Tutorials/building-an-ee4-addon-that-uses-angular-js-and-the-ee4-json-rest-api.md" target="_blank">',
+                '<a href="https://github.com/eventespresso/event-espresso-core/blob/master/docs/T--Tutorials/building-an-ee4-addon-that-uses-angular-js-and-the-ee4-json-rest-api.md" target="_blank" rel="noopener noreferrer">',
                 '</a>'
             ); ?></li>
     </ul>

@@ -1,5 +1,12 @@
+/**
+ * External imports
+ */
+import { Label } from '@eventespresso/value-objects';
+
+/**
+ * Internal imports
+ */
 import { prettyStatus, prettyStatuses } from '../helpers';
-import Label from '../../../../vo/label';
 import * as status from '../constants';
 
 describe( 'prettyStatus()', () => {

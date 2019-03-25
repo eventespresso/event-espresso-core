@@ -46,6 +46,13 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     private $server;
 
     /**
+     * $_FILES parameters
+     *
+     * @var array $files
+     */
+    private $files;
+
+    /**
      * $_REQUEST parameters
      *
      * @var array $request
@@ -82,14 +89,16 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * @param array $post
      * @param array $cookie
      * @param array $server
+     * @param array $files
      */
-    public function __construct(array $get, array $post, array $cookie, array $server)
+    public function __construct(array $get, array $post, array $cookie, array $server, array $files = array())
     {
         // grab request vars
         $this->get = $get;
         $this->post = $post;
         $this->cookie = $cookie;
         $this->server = $server;
+        $this->files = $files;
         $this->request = array_merge($this->get, $this->post);
         $this->ip_address = $this->visitorIp();
     }
@@ -137,6 +146,15 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     public function serverParams()
     {
         return $this->server;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function filesParams()
+    {
+        return $this->files;
     }
 
 

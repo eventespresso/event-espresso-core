@@ -13,12 +13,8 @@ import { getIdsFromBaseEntityArray } from '@eventespresso/helpers';
 /**
  * Internal imports
  */
-import {
-	receiveRelatedEntities,
-	receiveDirtyRelationAddition,
-} from './receive-relations';
-import { receiveEntitiesAndResolve } from './create-entities-generators';
-import { resolveGetEntityByIdForIds } from '../../base-resolvers';
+import { dispatch, select, resolveSelect } from '../../base-controls';
+import { REDUCER_KEY } from '../constants';
 
 /**
  * Action generator yielding actions that add the relation to the state for a
@@ -47,25 +43,26 @@ function* createRelation(
 		);
 		return;
 	}
-	yield receiveEntitiesAndResolve(
-		singularRelationName,
-		[ relationEntity ]
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveEntityAndResolve',
+		relationEntity
 	);
-	yield receiveRelatedEntities(
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveRelatedEntities',
 		modelName,
 		entityId,
 		relationName,
 		[ relationEntity.id ]
 	);
-	yield receiveDirtyRelationAddition(
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveDirtyRelationAddition',
 		relationName,
 		relationEntity.id,
 		modelName,
 		entityId,
-	);
-	yield resolveGetEntityByIdForIds(
-		singularRelationName,
-		[ relationEntity.id ]
 	);
 }
 
@@ -86,6 +83,7 @@ function* createRelations(
 ) {
 	relationName = pluralModelName( relationName );
 	const singularRelationName = singularModelName( relationName );
+	const pluralRelationName = pluralModelName( relationName );
 
 	try {
 		assertArrayHasEntitiesForModel( relationEntities, singularRelationName );
@@ -99,23 +97,126 @@ function* createRelations(
 		);
 		return;
 	}
-	let relationIds = getIdsFromBaseEntityArray( relationEntities );
-	yield receiveEntitiesAndResolve( singularRelationName, relationEntities );
-	yield receiveRelatedEntities(
+	const relationIds = getIdsFromBaseEntityArray( relationEntities );
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveEntitiesAndResolve',
+		singularRelationName,
+		relationEntities
+	);
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveRelatedEntities',
 		modelName,
 		entityId,
 		relationName,
 		relationIds,
 	);
-	relationIds = [ ...relationIds ];
-	while ( relationIds.length > 0 ) {
-		yield receiveDirtyRelationAddition(
+	const modelEntity = yield resolveSelect(
+		REDUCER_KEY,
+		'getEntityById',
+		modelName,
+		entityId,
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		REDUCER_KEY,
+		'getRelatedEntities',
+		[ modelEntity, pluralRelationName ]
+	);
+	const relationsToResolve = [ ...relationEntities ];
+	while ( relationsToResolve.length > 0 ) {
+		const relationEntity = relationsToResolve.pop();
+		yield dispatch(
+			REDUCER_KEY,
+			'receiveDirtyRelationAddition',
 			relationName,
-			relationIds.pop(),
+			relationEntity.id,
 			modelName,
 			entityId,
 		);
+		yield dispatch(
+			'core/data',
+			'finishResolution',
+			REDUCER_KEY,
+			'getRelatedEntities',
+			[ relationEntity, pluralModelName( modelName ) ]
+		);
 	}
+}
+
+/**
+ * This action is used to ensure a relation Entity related to the given
+ * model entity id is both added to the state and various selectors for these
+ * are resolved so no additional resolution happens for these.
+ *
+ * The purpose for this action is to allow for doing more efficient batch
+ * queries of entities from an api request and then triggering the resolution of
+ * any more granular selectors that have resolvers.  This basically allows one
+ * to hydrate the `eventespresso/core` state with more efficient queries.
+ *
+ * @param {BaseEntity} relationEntity
+ * @param {string} modelName
+ * @param {number|string} modelId
+ */
+function* resolveRelationRecordForRelation(
+	relationEntity,
+	modelName,
+	modelId
+) {
+	const singularRelationName = singularModelName( relationEntity.modelName );
+	const pluralRelationName = pluralModelName( relationEntity.modelName );
+	const hasEntity = yield select(
+		'core/data',
+		'hasFinishedResolution',
+		REDUCER_KEY,
+		'getEntityById',
+		[ singularRelationName, relationEntity.id ]
+	);
+	relationEntity = hasEntity ?
+		yield select(
+			REDUCER_KEY,
+			'getEntityById',
+			singularRelationName,
+			relationEntity.id
+		) :
+		relationEntity;
+	if ( ! hasEntity ) {
+		yield dispatch(
+			REDUCER_KEY,
+			'receiveEntityAndResolve',
+			relationEntity
+		);
+	}
+	yield dispatch(
+		REDUCER_KEY,
+		'receiveRelatedEntities',
+		modelName,
+		modelId,
+		pluralRelationName,
+		[ relationEntity.id ]
+	);
+	const modelEntity = yield resolveSelect(
+		REDUCER_KEY,
+		'getEntityById',
+		modelName,
+		modelId
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		REDUCER_KEY,
+		'getRelatedEntities',
+		[ modelEntity, pluralRelationName ]
+	);
+	yield dispatch(
+		'core/data',
+		'finishResolution',
+		REDUCER_KEY,
+		'getRelatedEntities',
+		[ relationEntity, pluralModelName( modelName ) ]
+	);
 }
 
 /**
@@ -135,4 +236,4 @@ const assertArrayHasEntitiesForModel = ( entities, relationModelName ) => {
 	}
 };
 
-export { createRelation, createRelations };
+export { createRelation, createRelations, resolveRelationRecordForRelation };

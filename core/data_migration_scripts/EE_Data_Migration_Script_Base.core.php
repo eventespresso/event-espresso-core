@@ -248,7 +248,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      */
     protected function _set_mapping_option($old_table_name, $new_table_name, $mapping_array)
     {
-        $success = update_option($this->_get_mapping_option_name($old_table_name, $new_table_name), $mapping_array);
+        $success = update_option($this->_get_mapping_option_name($old_table_name, $new_table_name), $mapping_array, false);
         return $success;
     }
 

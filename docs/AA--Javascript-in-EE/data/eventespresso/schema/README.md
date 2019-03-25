@@ -28,9 +28,7 @@ const NewEventBase = ( { eventFactory, eventData } => {
   }
 } );
 export default withSelect( ( select ) => {
-  return {
-    eventFactory: select( 'eventespresso/schema' ).getFactoryForModel( 'event' );
-  }
+  eventFactory: select( 'eventespresso/schema' ).getFactoryForModel( 'event' );
 } );
 ```
 
@@ -48,13 +46,16 @@ The following are all the actions and selectors available for this data store:
 
 ### Selectors
 
-|Selector                                                                                                                             | Description                                                                         |
-|------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
-|[`getSchemaForModel`](./selectors.md#getschemaformodel-modelname-)                                                                   | Returns the schema object for the given model name from the state                   |
-|[`isRequestingSchemaForModel`](./selectors.md#isrequestingschemaformodel-modelname-)                                                 | Returns whether the schema is being requested or not for the given model name       |
-|[`hasResolvedSchemaForModel`](./selectors.md#hasresolvedschemaformodel-modelname-)                                                   | Returns whether the schema has been resolved or not for the given model name.       |
-|[`getFactoryForModel`](./selectors.md#getfactoryformodel-modelname-)                                                                 | Returns the `BaseEntity` factory for the given model name                           |
-|[`isRequestingFactoryForModel`](./selectors.md#isrequestingfactoryformodel-modelname-)                                               | Returns whether the factory is being requested or not for the given model name      |
-|[`hasResolvedFactoryForModel`](./selectors.md#hasresolvedfactoryformodel-modelname-)                                                 | Returns whether the factory has been resolved or not for the given model name.      |
-|[`getRelationEndpointForEntityId`](./selectors.md#getrelationendpointforentityid-modelname-entityid-relationname-)                   | Returns the relation endpoint for the given model entity and relation.              |
-|[`isRequestingRelationEndpointForEntityId`](./selectors.md#isrequestingrelationendpointforentityid-modelname-entityid-relationname-) | Returns whether the relation endpoint is being requested or not for the given data. |
+|Selector                                                                                                                            | Description                                                                                                    |
+|------------------------------------------------------------------------------------------------------------------------------------| -------------------------------------------------------------------------------------------------------------- |
+|[`getSchemaForModel`](./selectors.md#getschemaformodel-modelname-)                                                                  | Returns the schema object for the given model name from the state                                              |
+|[`isRequestingSchemaForModel`](./selectors.md#isrequestingschemaformodel-modelname-)                                                | Returns whether the schema is being requested or not for the given model name                                  |
+|[`hasResolvedSchemaForModel`](./selectors.md#hasresolvedschemaformodel-modelname-)                                                  | Returns whether the schema has been resolved or not for the given model name.                                  |
+|[`getFactoryForModel`](./selectors.md#getfactoryformodel-modelname-)                                                                | Returns the `BaseEntity` factory for the given model name                                                      |
+|[`isRequestingFactoryForModel`](./selectors.md#isrequestingfactoryformodel-modelname-)                                              | Returns whether the factory is being requested or not for the given model name                                 |
+|[`hasResolvedFactoryForModel`](./selectors.md#hasresolvedfactoryformodel-modelname-)                                                | Returns whether the factory has been resolved or not for the given model name.                                 |
+|[`getRelationEndpointForEntityId`](./selectors.md#getrelationendpointforentityid-modelname-entityid-relationname-)                  | Returns the relation endpoint for the given model entity and relation.                                         |
+|[`isRequestingRelationEndpointForEntityId`](./selectors.md#isrequestingrelationendpointforentityid-modelname-entityid-relationname-)| Returns whether the relation endpoint is being requested or not for the given data.                            |
+|[`hasJoinTableRelation`](./selectors.md#hasjointablerelation-modelname-relationname-)                                               | Selector returning whether the relation between the given model name and relation name has a join table        |
+|[`getRelationType`](./selectors.md#getrelationtype-modelname-relationname-)                                                         | Selector returning the relation type describing the relation between the given model name and relation name.   |
+|[`getRelationSchema`](./selectors.md#getrelationschema-modelname-relationname-)                                                     | Selector returning the relation schema describing the relation between the given model name and relation name. |

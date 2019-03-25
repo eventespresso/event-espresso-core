@@ -93,7 +93,7 @@
 																<h4>MailChimp Integration</h4>
 															</div>
 															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-mailchimp/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=mailchimp_integration&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/mailchimp-231x151.jpg"></a><a href="http://eepurl.com/OXgr" target="_blank">MailChimp</a> is an extremely popular tool among email marketers, businesses and bloggers. It is easy to use, powerful, and allows just about anyone to create amazing email campaigns quickly and easily. Once a visitor submits their information on your registration form, the attendee is instantly added to the MailChimp mailing LIST or GROUP that you have configured for that event.</p>
+																<p><a href="https://eventespresso.com/product/eea-mailchimp/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=mailchimp_integration&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/mailchimp-231x151.jpg"></a><a href="http://eepurl.com/OXgr" target="_blank" rel="noopener noreferrer">MailChimp</a> is an extremely popular tool among email marketers, businesses and bloggers. It is easy to use, powerful, and allows just about anyone to create amazing email campaigns quickly and easily. Once a visitor submits their information on your registration form, the attendee is instantly added to the MailChimp mailing LIST or GROUP that you have configured for that event.</p>
 															</div>
 														</div>
 														<div class="action-links">
@@ -320,6 +320,26 @@
 												</div>
 												
 												<h3 class="service-settings-heading">Payment Gateways</h3>
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
+																<h4>Stripe Payment Gateway</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-stripe-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=stripe_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/ee4-stripe-logo-231x151.jpg"></a>Stripe is the easiest way to accept credit and debit card payments with Event Espresso. With Stripe, you can create exactly the payment experience you want in your Event Espresso powered website, and Stripe handles everything from security to transfers to your bank account. You can get started immediately.</p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-stripe-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=stripe_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/stripe-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=stripe_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+												</div>
 												
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
@@ -518,31 +538,10 @@
 													<div class="service-div-settings-top">
 														<div class="service-div-inner-content">
 															<div class="name column-name">
-																<h4>Stripe Payment Gateway</h4>
-															</div>
-															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-stripe-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=stripe_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/ee4-stripe-logo-231x151.jpg"></a>Stripe is the easiest way to accept credit and debit card payments with Event Espresso. With Stripe, you can create exactly the payment experience you want in your Event Espresso powered website, and Stripe handles everything from security to transfers to your bank account. You can get started immediately.</p>
-															</div>
-														</div>
-														<div class="action-links">
-															<ul class="plugin-action-buttons-custom">
-																<li>
-																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-stripe-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=stripe_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
-																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/stripe-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=stripe_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
-																</li>
-															</ul>
-														</div>
-													</div>
-												</div>
-
-												<div class="service-div-settings">
-													<div class="service-div-settings-top">
-														<div class="service-div-inner-content">
-															<div class="name column-name">
 																<h4>Vanco Payment Gateway</h4>
 															</div>
 															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-vanco-payment-method/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=vanco_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/vanco_payment_gateway_231x151.jpg"></a><a href="http://vancopayments.com/" target="_blank">Vanco Payment Solutions</a> is focused on meeting the unique needs of clients, such as <a href="http://vancopayments.com/organizations-we-serve/faith-based/" target="_blank">Faith-based</a>, <a href="http://vancopayments.com/organizations-we-serve/nonprofit/" target="_blank">nonprofits</a> and other <a href="http://vancopayments.com/organizations-we-serve/professional-services/" target="_blank">professional organizations</a> that need a specialized approach to adding electronic payment options and enhancing current capabilities. </p>
+																<p><a href="https://eventespresso.com/product/eea-vanco-payment-method/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=vanco_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/vanco_payment_gateway_231x151.jpg"></a><a href="http://vancopayments.com/" target="_blank" rel="noopener noreferrer">Vanco Payment Solutions</a> is focused on meeting the unique needs of clients, such as <a href="http://vancopayments.com/organizations-we-serve/faith-based/" target="_blank" rel="noopener noreferrer">Faith-based</a>, <a href="http://vancopayments.com/organizations-we-serve/nonprofit/" target="_blank" rel="noopener noreferrer">nonprofits</a> and other <a href="http://vancopayments.com/organizations-we-serve/professional-services/" target="_blank" rel="noopener noreferrer">professional organizations</a> that need a specialized approach to adding electronic payment options and enhancing current capabilities. </p>
 															</div>
 														</div>
 														<div class="action-links">

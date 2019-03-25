@@ -2,7 +2,6 @@
  * Internal imports
  */
 import * as status from './constants';
-import Label from '../../../vo/label';
 import { EVENT_STATUS_ID } from '../event';
 import { TICKET_STATUS_ID } from '../ticket';
 import { DATETIME_STATUS_ID } from '../datetime';
@@ -12,6 +11,7 @@ import { CHECKIN_STATUS_ID } from '../checkin';
  * External imports
  */
 import { __ } from '@eventespresso/i18n';
+import { Label } from '@eventespresso/value-objects';
 import { isArray } from 'lodash';
 
 /**

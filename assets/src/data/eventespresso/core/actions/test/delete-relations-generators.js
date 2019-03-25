@@ -55,7 +55,7 @@ describe( 'removeRelationForEntity()', () => {
 			[ 'event', 10, 'datetimes', [ 20 ] ],
 		],
 		[
-			removeDirtyRelationForAddition,
+			removeDirtyRelationAddition,
 			[ 'event', 10, 'datetimes', 20 ],
 		],
 		[

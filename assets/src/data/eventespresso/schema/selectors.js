@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { isResolving, hasFinishedResolving } from '../base-selectors';
-import { REDUCER_KEY } from './constants';
+import { REDUCER_KEY, JOIN_RELATION_TYPES } from './constants';
 import { Map } from 'immutable';
 
 /**
@@ -19,8 +19,7 @@ import { normalizeEntityId } from '@eventespresso/helpers';
  * @return {Object} The schema object or null if it doesn't exist.
  */
 export function getSchemaForModel( state, modelName ) {
-	const schema = state.schema.get( singularModelName( modelName ), null );
-	return ! ( schema instanceof Map ) ? schema : null;
+	return state.schema.get( singularModelName( modelName ), null );
 }
 
 /**
@@ -152,3 +151,70 @@ export function isRequestingRelationEndpointForEntityId(
 		relationModelName,
 	);
 }
+
+/**
+ * Selector returning the relation response type for the given relation.
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {string} relationName
+ * @return {string} The type for the relation returned for the given model and
+ * relation.
+ */
+export const getRelationResponseType = ( state, modelName, relationName ) => {
+	modelName = singularModelName( modelName );
+	relationName = pluralModelName( relationName );
+	const relationSchema = getRelationSchema( state, modelName, relationName );
+	return relationSchema !== null ?
+		relationSchema.type :
+		'';
+};
+
+/**
+ * Selector returning whether the relation between the given model name and
+ * relation name has a join table.
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {string} relationName
+ * @return {boolean} True means there is a join table, false means there isn't.
+ */
+export const hasJoinTableRelation = ( state, modelName, relationName ) => {
+	modelName = singularModelName( modelName );
+	relationName = pluralModelName( relationName );
+	const relationType = getRelationType( state, modelName, relationName );
+	return JOIN_RELATION_TYPES.indexOf( relationType ) > -1;
+};
+
+/**
+ * Selector returning the relation type describing the relation between the
+ * given model name and relation name.
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {string} relationName
+ * @return {string}  The relation type (eg. "EE_HABTM_Relation")
+ */
+export const getRelationType = ( state, modelName, relationName ) => {
+	modelName = singularModelName( modelName );
+	relationName = pluralModelName( relationName );
+	const relationSchema = getRelationSchema( state, modelName, relationName );
+	return relationSchema !== null ?
+		relationSchema.relation_type :
+		'';
+};
+
+/**
+ * Selector returning the relation schema describing the relation between the
+ * given model name and relation name.
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {string} relationName
+ * @return {Object|null} An object or null if there is no relation schema.
+ */
+export const getRelationSchema = ( state, modelName, relationName ) => {
+	modelName = singularModelName( modelName );
+	relationName = pluralModelName( relationName );
+	return state.relationSchema.getIn( [ modelName, relationName ], null );
+};

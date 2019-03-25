@@ -136,3 +136,30 @@ This returns a number indicating the count of relations.
 const countOfRelationsInState = wp.data.select( 'eventespresso/core' )
   .countRelationModelsIndexedForEntity( 'event', 10 );
 ```
+## `getRelatedEntitiesForIds( modelName, entityIds, relationName )`
+
+Efficient selector for getting all the related entities for the given model, it's entity ids, and the relation name.
+
+Instead of using the `getRelateions` selector which gets the relations for a single entity, this allows you to get all the relations for a given set of entity ids (i.e. Get all datetimes related to the event ids: 10, 20 and 30).
+
+This selector is wired up to a resolver that does an efficient request to retrieve all those entities and then dispatches the appropriate actions so that the relation state is correctly recorded for each relation entity returned.
+
+This returns an array of `BaseEntity` instances for the given relation name related to the given model entities having the passed in ids.
+
+### Arguments
+
+| Argument    | Type    | Description                                     |
+| ----------- | ------- | ----------------------------------------------- |
+| `modelName` | string  | The name of the model the entity ids belong to. |
+| `entityIds` | Array<string\|number></string> | The ids for which to get the related entities.                                                 |
+| `relationName`            | string         | The name of the relation model for which to get the related entities from.                                                 |
+
+### Example
+
+If you wanted to get all the tickets related to the datetimes with the ids 10, 20, and 30 you would do something like this:
+
+```js
+const tickets = wp.data( 'eventespresso/core' ).getRelatedEntitiesForIds( 'datetime', [ 10, 20, 30 ], 'tickets' );
+```
+
+**Note:** This selector is attached to a resolver, so you will want to use `wp.data.subscribe` to ensure the `tickets` variable is populated with the result once the resolution is complete.
