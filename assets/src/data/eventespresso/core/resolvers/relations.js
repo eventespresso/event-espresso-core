@@ -181,7 +181,7 @@ export function* getRelatedEntities( entity, relationModelName ) {
  * @param {Array<number>} entityIds
  * @param {string} relationName
  *
- * @return {undefined|Array} If there is no schema for the relation, an
+ * @return {Array|undefined} If there is no schema for the relation, an
  * empty array is returned.
  */
 export function* getRelatedEntitiesForIds(
@@ -189,7 +189,7 @@ export function* getRelatedEntitiesForIds(
 	entityIds,
 	relationName
 ) {
-	let path, response, records;
+	let path, response, records, relationPrimaryKeyString;
 	const hasJoinTable = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'hasJoinTableRelation',
@@ -226,7 +226,7 @@ export function* getRelatedEntitiesForIds(
 			singularModelName( modelName ),
 			entityIds
 		);
-		path += '&include=' + getModelNameForRequest( relationName ) + '.*';
+		path += `&include=${ getModelNameForRequest( relationName ) }.*`;
 		response = yield fetch( { path } );
 		if ( ! response.length ) {
 			return;
@@ -269,8 +269,23 @@ export function* getRelatedEntitiesForIds(
 			}
 		}
 	} else {
-		path = getEndpoint( singularRelationName ) +
-			'/?where' + getPrimaryKeyQueryString( modelName, entityIds );
+		relationPrimaryKeyString = yield resolveSelect(
+			SCHEMA_REDUCER_KEY,
+			'getRelationPrimaryKeyString',
+			relationName,
+			modelName
+		);
+		if ( relationPrimaryKeyString === '' ) {
+			warning(
+				false,
+				`Unable to get the primary key for the ${ modelName } model ` +
+				`and it's relation (${ relationName })`
+			);
+			return DEFAULT_EMPTY_ARRAY;
+		}
+		path = getEndpoint( singularRelationName );
+		path += `/?where[${ relationPrimaryKeyString }]`;
+		path += `[IN]=${ entityIds.join() }`;
 		response = yield fetch( { path } );
 		if ( ! response.length ) {
 			return;

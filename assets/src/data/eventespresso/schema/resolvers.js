@@ -12,6 +12,8 @@ import {
 	MODEL_PREFIXES,
 	pluralModelName,
 	singularModelName,
+	getPrimaryKey,
+	modelNameForQueryString,
 } from '@eventespresso/model';
 import { isUndefined } from 'lodash';
 
@@ -135,6 +137,37 @@ export function* getRelationEndpointForEntityId(
 }
 
 /**
+ * A resolver for getting the primary key string to use in a query for the given
+ * model and relation. This considers the join type for the relation.
+ *
+ * @see the `getRelationPrimaryKeyString` selector for example.
+ *
+ * @param {string} modelName
+ * @param {string} relationName
+ * @return {string} The primary key string to use or an empty string if relation
+ * type could not be determined.
+ */
+export function* getRelationPrimaryKeyString( modelName, relationName ) {
+	// normalize
+	modelName = singularModelName( modelName );
+	relationName = pluralModelName( relationName );
+	const relationType = yield resolveSelect(
+		SCHEMA_REDUCER_KEY,
+		'getRelationType',
+		modelName,
+		relationName
+	);
+	relationName = singularModelName( relationName );
+	if ( relationType === '' ) {
+		return '';
+	}
+	const relationPrimaryKey = getPrimaryKey( relationName );
+	return relationType === 'EE_Belongs_To_Relation' ?
+		relationPrimaryKey :
+		`${ modelNameForQueryString( relationName ) }.${ relationPrimaryKey }`;
+}
+
+/**
  * A resolver for returning what the expected response type is for the given
  * relation.
  *
@@ -224,7 +257,7 @@ export function* getRelationSchema( modelName, relationName ) {
 	}
 	yield receiveRelationSchema(
 		modelName,
-		relationName,
+		pluralRelationName,
 		typeSchema
 	);
 }

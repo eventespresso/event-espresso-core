@@ -3,13 +3,19 @@
  */
 import { isResolving, hasFinishedResolving } from '../base-selectors';
 import { REDUCER_KEY, JOIN_RELATION_TYPES } from './constants';
-import { Map } from 'immutable';
 
 /**
  * External imports
  */
-import { pluralModelName, singularModelName } from '@eventespresso/model';
+import {
+	pluralModelName,
+	singularModelName,
+	getPrimaryKey,
+	modelNameForQueryString,
+} from '@eventespresso/model';
 import { normalizeEntityId } from '@eventespresso/helpers';
+import { Map } from 'immutable';
+import createSelector from 'rememo';
 
 /**
  * Selector for returning the schema object for a given model name from the
@@ -151,6 +157,53 @@ export function isRequestingRelationEndpointForEntityId(
 		relationModelName,
 	);
 }
+
+/**
+ * Selector for returning the primary key string to use in a query for the given
+ * model and relation.  This considers the join type for the relation.
+ *
+ * For example:  If you were doing a query to get the registrations related to an
+ * attendee, you would need the string to use for the `REG_ID` primary key in
+ * the query.  Since the join type for registrations to attendees is
+ * EE_Has_Many_Relation, then the query string would need to be
+ * `Registration.REG_ID`.  If however you were getting the attendee related
+ * to a registration, then the join type for attendees on registrations is
+ * EE_Belongs_To_Relation, in which case the attendee primary key would be
+ * `ATT_ID` (the registration table has the foreign key on it).
+ *
+ * @param {Object} state
+ * @param {string} modelName
+ * @param {string} relationName
+ *
+ * @return {string} The primary key string to use or an empty string if relation
+ * type could not be determined.
+ */
+export const getRelationPrimaryKeyString = createSelector(
+	(
+		state,
+		modelName,
+		relationName
+	) => {
+		modelName = singularModelName( modelName );
+		relationName = pluralModelName( relationName );
+		const singularRelationName = singularModelName( relationName );
+		const relationType = getRelationType( state, modelName, relationName );
+		if ( relationType === '' ) {
+			return '';
+		}
+		const relationPrimaryKey = getPrimaryKey( singularRelationName );
+		return relationType === 'EE_Belongs_To_Relation' ?
+			relationPrimaryKey :
+			`${ modelNameForQueryString( singularRelationName ) }.${ relationPrimaryKey }`;
+	},
+	( state, modelName, relationName ) => {
+		modelName = singularModelName( modelName );
+		relationName = pluralModelName( relationName );
+		return [
+			state.relationSchema.getIn( [ modelName, relationName ], '' ),
+		];
+	},
+);
 
 /**
  * Selector returning the relation response type for the given relation.
