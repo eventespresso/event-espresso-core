@@ -270,7 +270,8 @@ describe( 'getRelatedEntitiesForIds()', () => {
 		} );
 	} );
 	describe( 'when relation does not have join table', () => {
-		it( 'yields expected fetch control when relationSchema is available', () => {
+		it( 'yields resolveSelect control for ' +
+			'"getRelationPrimaryKeyString"', () => {
 			reset(
 				'event',
 				[ 10, 20 ],
@@ -280,6 +281,33 @@ describe( 'getRelatedEntitiesForIds()', () => {
 			fulfillment.next( false );
 			fulfillment.next( { joining_model_name: 'Datetime_Ticket' } );
 			const { value } = fulfillment.next( dateTimeFactory );
+			expect( value ).toEqual(
+				resolveSelect(
+					SCHEMA_REDUCER_KEY,
+					'getRelationPrimaryKeyString',
+					'datetimes',
+					'event'
+				)
+			);
+		} );
+		it( 'returns empty array when relation type is not available', () => {
+			const { value, done } = fulfillment.next( '' );
+			expect( console ).toHaveErrored();
+			expect( value ).toEqual( [ ] );
+			expect( done ).toBe( true );
+		} );
+		it( 'yields expected fetch control when relationSchema is ' +
+			'and relation type is available', () => {
+			reset(
+				'event',
+				[ 10, 20 ],
+				'datetimes'
+			);
+			fulfillment.next();
+			fulfillment.next( false );
+			fulfillment.next( { joining_model_name: 'Datetime_Ticket' } );
+			fulfillment.next( dateTimeFactory );
+			const { value } = fulfillment.next( 'EVT_ID' );
 			expect( value ).toEqual(
 				fetch(
 					{
