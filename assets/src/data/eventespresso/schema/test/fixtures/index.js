@@ -31,6 +31,10 @@ export const mockStateForTests = {
 			EventSchema.schema.properties.datetimes
 		)
 		.setIn(
+			[ 'datetime', 'events' ],
+			DateTimeSchema.schema.properties.event
+		)
+		.setIn(
 			[ 'event', 'venues' ],
 			EventSchema.schema.properties.venues
 		),
