@@ -1,6 +1,9 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\files\FileSubmissionInterface;
 
 /**
  * EE_File_Input
@@ -81,19 +84,21 @@ class EE_File_Input extends EE_Form_Input_Base
     }
 
     /**
-     * Takes into account that $_FILES does a weird thing when you have hierarchical form names (eg `<input type="file"
-     * name="my[hierarchical][form]">`): it leaves the top-level form part alone, but replaces the SECOND part with
-     * "name", "size", "temp_file", etc. So that file's data is located at "my[name][hierarchical][form]",
-     * "my[size][hierarchical][form]", "my[temp_name][hierarchical][form]", etc. It's really weird.
+     * $_FILES has a really weird structure. So we let `FilesDataHandler` take care of finding the file info for
+     * this input.
      * @since $VID:$
      * @param array $req_data
-     * @return array|mixed|NULL
-     * @throws EE_Error
+     * @return FileSubmissionInterface
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function find_form_data_for_this_section($req_data)
     {
         // ignore $req_data. Files are in the files data handler.
-        $fileDataHandler = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\files\FilesDataHandler');
+        $fileDataHandler = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\services\request\files\FilesDataHandler'
+        );
         return $fileDataHandler->getFileObject($this->html_name());
     }
 
