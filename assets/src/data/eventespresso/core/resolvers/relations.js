@@ -337,12 +337,18 @@ const getRelationRequestUrl = (
 			break;
 		default:
 			// we do the reverse endpoint so that we are getting the belongs to
-			// relation responses back and including the relation entities we want
-			// in the response (belongs to).  So for instance if the incoming
-			// arguments are `getRelatedEntitiesForEntityIds( 'attendee', [ 10, 20], 'registration')
-			// then the query would be /registrations/?where[ATT_ID][IN]=10,20&include=Attendee*.
-			// basically the goal here is to get one to one relations returned in the query for
-			// easier parsing/dispatching.
+			// relation responses back and including the relation entities we
+			// want in the response (belongs to).  So for instance if the
+			// incoming arguments are:
+			// `getRelatedEntitiesForEntityIds(
+			// 		'attendee',
+			// 		[ 10, 20],
+			// 		'registration'
+			// )
+			// then the query would be:
+			// /registrations/?where[ATT_ID][IN]=10,20&include=Attendee.*
+			// basically the goal here is to get one to one relations returned
+			// in the query for easier parsing/dispatching.
 			// @todo, currently this will NOT account for paging.
 			path = getEndpoint( singularModelName( relationName ) );
 			path += `/?where${ getPrimaryKeyQueryString( modelName, entityIds ) }`;
