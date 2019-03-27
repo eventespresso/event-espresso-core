@@ -6,8 +6,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  * EE_File_Input
  *
  * For uploading a file
- * Note: if you will be using this in a form, make sure it uses `enctype="multipart/form-data"`, and that the request
- * data is `array_merge($_REQUEST, $_FILES)`.
+ * Note: if you will be using this in a form, make sure it uses `enctype="multipart/form-data"`.
  *
  * @package         Event Espresso
  * @subpackage
@@ -23,7 +22,7 @@ class EE_File_Input extends EE_Form_Input_Base
     protected $allowed_file_extensions;
 
     /**
-     * @var
+     * @var array
      */
     protected $allowed_mime_types;
 
@@ -70,25 +69,12 @@ class EE_File_Input extends EE_Form_Input_Base
             . ' extension="'
             . implode(
                 ',',
-                //                array_merge(
-                //                    array_map(
-                //                        function ($mime_type) {
-                //                            if(strpos($mime_type, '/') === false) {
-                //                                return $mime_type . '/*';
-                //                            } else {
-                //                                return $mime_type;
-                //                            }
-                //
-                //                        },
-                //                        $this->allowed_mime_types
-                //                    )
-                    array_map(
-                        function ($file_extension) {
-                            return  $file_extension;
-                        },
-                        $this->allowed_file_extensions
-                    )
-                //                )
+                array_map(
+                    function ($file_extension) {
+                        return  $file_extension;
+                    },
+                    $this->allowed_file_extensions
+                )
             )
             . '"'
         );
