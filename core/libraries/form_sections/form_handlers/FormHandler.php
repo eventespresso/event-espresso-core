@@ -611,7 +611,7 @@ abstract class FormHandler implements FormHandlerInterface
     }
 
     /**
-     * Determines if this form needs "
+     * Determines if this form needs "enctype='multipart/form-data'" or not.
      * @since $VID:$
      * @return bool
      * @throws EE_Error
