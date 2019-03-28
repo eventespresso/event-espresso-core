@@ -133,7 +133,7 @@ class FileSubmission implements FileSubmissionInterface
     protected function determineExtension()
     {
         $position_of_period = strrpos($this->getName(), '.');
-        if($position_of_period === false){
+        if ($position_of_period === false) {
             return '';
         }
         return mb_substr(
