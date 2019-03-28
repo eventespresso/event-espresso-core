@@ -11,12 +11,17 @@ import {
  * Internal dependencies
  */
 import { receiveResponse, receiveEntityResponse } from './actions';
-import { fetch, select, dispatch } from '../base-controls';
 import {
-	getFactoryByModel,
+	fetch,
+	select,
+	dispatch,
 	resolveGetEntityByIdForIds,
-} from '../base-resolvers.js';
+	resolveSelect,
+} from '../base-controls';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../core/constants';
+import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../schema/constants';
+
+const DEFAULT_EMPTY_ARRAY = [];
 
 /**
  * Resolver for generic items returned from an endpoint.
@@ -47,9 +52,13 @@ export function* getItems( identifier, queryString ) {
  * entities.
  */
 export function* buildAndDispatchEntitiesFromResponse( modelName, response ) {
-	const factory = yield getFactoryByModel( modelName );
+	const factory = yield resolveSelect(
+		SCHEMA_REDUCER_KEY,
+		'getFactoryForModel',
+		modelName
+	);
 	if ( isEmpty( factory ) ) {
-		return [];
+		return DEFAULT_EMPTY_ARRAY;
 	}
 	let fullEntities = response.map(
 		( entity ) => factory.fromExisting( entity )
@@ -91,9 +100,12 @@ export function* getEntities( modelName, queryString ) {
 		path: applyQueryString( modelName, queryString ),
 	} );
 	if ( isEmpty( response ) ) {
-		return [];
+		return DEFAULT_EMPTY_ARRAY;
 	}
-	const fullEntities = yield buildAndDispatchEntitiesFromResponse( modelName, response );
+	const fullEntities = yield buildAndDispatchEntitiesFromResponse(
+		modelName,
+		response
+	);
 	yield receiveEntityResponse( modelName, queryString, fullEntities );
 }
 
@@ -112,8 +124,11 @@ export function* getEntitiesByIds( modelName, ids = [] ) {
 		),
 	} );
 	if ( isEmpty( response ) ) {
-		return [];
+		return DEFAULT_EMPTY_ARRAY;
 	}
-	const fullEntities = yield buildAndDispatchEntitiesFromResponse( modelName, response );
+	const fullEntities = yield buildAndDispatchEntitiesFromResponse(
+		modelName,
+		response
+	);
 	yield receiveEntityResponse( modelName, queryString, fullEntities );
 }

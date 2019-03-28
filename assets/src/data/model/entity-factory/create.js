@@ -24,6 +24,7 @@ import {
 	deriveRenderedValue,
 	derivePreparedValueForField,
 	getRelationNameFromLink,
+	getBaseFieldsAndValuesForCloning,
 	getBaseFieldsAndValuesForPersisting,
 	getPrimaryKeyFieldsFromSchema,
 	getEntityFieldsFromSchema,
@@ -91,7 +92,7 @@ export const createGetterAndSetter = (
 	instance,
 	fieldName,
 	initialFieldValue,
-	opts = {}
+	opts = {},
 ) => {
 	let propertyValue = initialFieldValue;
 	Object.defineProperty( instance, fieldName, {
@@ -105,6 +106,7 @@ export const createGetterAndSetter = (
 				instance
 			);
 			setSaveState( instance, SAVE_STATE.DIRTY );
+			setFieldToPersist( instance, fieldName );
 			propertyValue = receivedValue;
 		},
 		...opts,
@@ -219,6 +221,9 @@ export const createEntityGettersAndSetters = ( instance ) => {
 			if ( fieldName === '_calculated_fields' ) {
 				setCalculatedFieldAndValues( instance, fieldValue );
 			}
+			if ( fieldName === '_protected' ) {
+				populateProtectedFieldsProperty( instance, fieldValue );
+			}
 			if ( fieldName === 'link' ) {
 				createGetter( instance, 'link', fieldValue );
 			}
@@ -236,6 +241,29 @@ export const createEntityGettersAndSetters = ( instance ) => {
 
 	populatePrimaryKeys( instance );
 	populateMissingFields( instance );
+};
+
+/**
+ * Populates the `protectedFields` property on the instance.
+ *
+ * @param {Object} instance
+ * @param {Array} protectedFields
+ */
+const populateProtectedFieldsProperty = ( instance, protectedFields ) => {
+	// get any calculated protected fields.
+	const calculatedFields = instance
+		.originalFieldsAndValues
+		._calculated_fields || {};
+	if (
+		calculatedFields._protected &&
+		isArray( calculatedFields._protected )
+	) {
+		protectedFields = [
+			...protectedFields,
+			...calculatedFields._protected,
+		];
+	}
+	createGetter( instance, 'protectedFields', protectedFields );
 };
 
 /**
@@ -291,6 +319,9 @@ const setValidateTypeForField = ( instance, fieldName, fieldValue ) => {
  * @param {Object} instance
  */
 const populateMissingFields = ( instance ) => {
+	if ( typeof instance.protectedFields === 'undefined' ) {
+		populateProtectedFieldsProperty( instance, [] );
+	}
 	if ( ! instance.isNew ) {
 		return;
 	}
@@ -298,7 +329,7 @@ const populateMissingFields = ( instance ) => {
 		getEntityFieldsFromSchema( instance ),
 		( schemaProperties, fieldName ) => {
 			if (
-				! instance[ fieldName ] &&
+				typeof instance[ fieldName ] === 'undefined' &&
 				! isPrimaryKeyField( fieldName, instance.schema )
 			) {
 				setInitialEntityFieldsAndValues(
@@ -309,6 +340,18 @@ const populateMissingFields = ( instance ) => {
 			}
 		}
 	);
+};
+
+/**
+ * Returns a plain object of entity fields and values from this entity instance
+ * for use in cloning the entity.
+ *
+ * @param {BaseEntity} instance
+ *
+ * @return {Object} Plain object of all field:value pairs.
+ */
+const forClone = ( instance ) => {
+	return getBaseFieldsAndValuesForCloning( instance );
 };
 
 /**
@@ -330,7 +373,10 @@ const forUpdate = ( instance ) => {
  * @return {Object} Plain object of field:value pairs.
  */
 const forInsert = ( instance ) => {
-	const entityValues = getBaseFieldsAndValuesForPersisting( instance );
+	const entityValues = getBaseFieldsAndValuesForPersisting(
+		instance,
+		true
+	);
 	instance.primaryKeys.forEach( ( primaryKey ) => {
 		entityValues[ primaryKey ] = instance[ primaryKey ];
 	} );
@@ -363,6 +409,7 @@ export const createPersistingGettersAndSetters = ( instance ) => {
 	createCallbackGetter( instance, 'forUpdate', forUpdate );
 	createCallbackGetter( instance, 'forInsert', forInsert );
 	createCallbackGetter( instance, 'forPersist', forPersist );
+	createCallbackGetter( instance, 'forClone', forClone );
 };
 
 /**
@@ -599,11 +646,13 @@ const hasCalculatedFieldCallback = ( instance ) =>
  */
 export const setCalculatedFieldAndValues = ( instance, fieldsAndValues ) => {
 	forEach( fieldsAndValues, ( calculatedFieldValue, calculatedFieldName ) => {
-		createGetter(
-			instance,
-			camelCase( calculatedFieldName ),
-			calculatedFieldValue
-		);
+		if ( calculatedFieldName !== '_protected' ) {
+			createGetter(
+				instance,
+				camelCase( calculatedFieldName ),
+				calculatedFieldValue
+			);
+		}
 	} );
 	createCallbackGetter(
 		instance,
@@ -703,5 +752,18 @@ export const setSaveState = ( instance, saveState ) => {
 				'Save state for entity can only be set to either ' +
 				'SAVE_STATE.DIRTY, SAVE_STATE.NEW or SAVE_STATE.CLEAN'
 			);
+	}
+};
+
+/**
+ * Add the field name to the fieldToPersistOnInsert property on the instance
+ * if it exists.
+ *
+ * @param {Object} instance
+ * @param {string} fieldName
+ */
+export const setFieldToPersist = ( instance, fieldName ) => {
+	if ( instance.fieldsToPersistOnInsert ) {
+		instance.fieldsToPersistOnInsert.add( fieldName );
 	}
 };

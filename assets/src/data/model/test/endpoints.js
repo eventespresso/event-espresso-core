@@ -11,10 +11,13 @@ describe( 'endpoints', () => {
 		expect( endpoints ).toEqual(
 			{
 				datetime: '/ee/v4.8.36/datetimes',
+				datetime_ticket: '/ee/v4.8.36/datetime_tickets',
 				event: '/ee/v4.8.36/events',
 				ticket: '/ee/v4.8.36/tickets',
 				venue: '/ee/v4.8.36/venues',
 				term: '/ee/v4.8.36/terms',
+				checkin: '/ee/v4.8.36/checkins',
+				registration: '/ee/v4.8.36/registrations',
 			},
 		);
 	} );

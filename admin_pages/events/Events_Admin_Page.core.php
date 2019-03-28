@@ -732,9 +732,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             return;
         }
         EE_Error::add_attention(
-            esc_html__(
-                'Please be advised that this event has been published and is open for registrations on your website. If you update any registration-related details (i.e. custom questions, messages, tickets, datetimes, etc.) while a registration is in process, the registration process could be interrupted and result in errors for the person registering and potentially incorrect registration or transaction data inside Event Espresso. We recommend editing events during a period of slow traffic, or even temporarily changing the status of an event to "Draft" until your edits are complete.',
-                'event_espresso'
+            sprintf(
+                esc_html__(
+                    'Your event is open for registration. Making changes may disrupt any transactions in progress. %sLearn more%s',
+                    'event_espresso'
+                ),
+                '<a class="espresso-help-tab-lnk">',
+                '</a>'
             )
         );
     }
@@ -2659,7 +2663,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             : '';
         if (empty($timezone_string) || ! EEH_DTT_Helper::validate_timezone($timezone_string, false)) {
             EE_Error::add_error(
-                esc_html('An invalid timezone string submitted.', 'event_espresso'),
+                esc_html__('An invalid timezone string submitted.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__

@@ -5,7 +5,7 @@
 <tr>
 <td><!-- Callout Panel -->
 <p class="callout"><strong><?php esc_html_e('Event:', 'event_espresso'); ?> [EVENT_LINK]
-<?php esc_html_e('Venue:', 'event_espresso'); ?> <a href="[VENUE_URL]" target="_blank">[VENUE_TITLE]</a> ([VENUE_CITY], [VENUE_STATE])</strong></p>
+<?php esc_html_e('Venue:', 'event_espresso'); ?> <a href="[VENUE_URL]" target="_blank" rel="noopener noreferrer">[VENUE_TITLE]</a> ([VENUE_CITY], [VENUE_STATE])</strong></p>
 <!-- /Callout Panel --></td>
 </tr>
 </tbody>

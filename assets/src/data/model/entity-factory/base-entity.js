@@ -52,8 +52,14 @@ class BaseEntity {
 		);
 		createGetter( this, 'modelName', modelName );
 		createGetter( this, 'originalFieldsAndValues', entityFieldsAndValues );
+		createGetter(
+			this,
+			'fieldsToPersistOnInsert',
+			new Set( Object.keys( entityFieldsAndValues ) )
+		);
 		createEntityGettersAndSetters( this );
 		createPersistingGettersAndSetters( this );
+		Object.seal( this );
 	}
 
 	/**
@@ -94,6 +100,40 @@ class BaseEntity {
 	 */
 	get isClean() {
 		return this.saveState === SAVE_STATE.CLEAN;
+	}
+
+	/**
+	 * Whether the entity has any password protected fields.
+	 * @return {boolean} True means it does, false means it doesn't.
+	 */
+	get isPasswordProtected() {
+		return this.protectedFields.length > 0;
+	}
+
+	/**
+	 * Whether the given fieldName is a password protected field.
+	 * @return {function(string): boolean}  Returns a function that can be used
+	 * to check if the given field name is a protected field in this entity.
+	 */
+	get isFieldPasswordProtected() {
+		return ( fieldName ) => this.protectedFields.indexOf( fieldName ) > -1;
+	}
+
+	/**
+	 * Used to clone the current entity object.  This results in an instance of
+	 * BaseEntity that is equivalent as this current instance (except it will
+	 * have a new generated id).
+	 *
+	 * @return {BaseEntity} A new instance of BaseEntity
+	 */
+	get clone() {
+		return new BaseEntity(
+			this.modelName,
+			this.forClone,
+			{ $schema: {}, properties: this.schema },
+			this.fieldPrefixes,
+			true
+		);
 	}
 
 	static name = 'BaseEntity'

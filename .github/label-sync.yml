@@ -243,6 +243,8 @@
         - "type-invalid 🦄"
     - name: "type:impacts-eventsmart"
       color: 00f2ff
+    - name: "requires:WP5.0+ 🧩"
+      color: 2a1f78
   options:
     ignoreMilestones:
       - eventespresso/event-espresso-core

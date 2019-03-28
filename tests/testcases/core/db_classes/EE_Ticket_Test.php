@@ -119,14 +119,14 @@ class EE_Ticket_Test extends EE_UnitTestCase
             'TKT_sold'       => 0,
         ));
         $this->assertEquals(0, $t->sold());
-        $t->increase_sold();
+        $t->increaseSold();
         $this->assertEquals(1, $t->sold());
-        $t->increase_sold(2);
+        $t->increaseSold(2);
         $this->assertEquals(3, $t->sold());
         //now try decreasing
-        $t->decrease_sold();
+        $t->decreaseSold();
         $this->assertEquals(2, $t->sold());
-        $t->decrease_sold(2);
+        $t->decreaseSold(2);
         $this->assertEquals(0, $t->sold());
     }
 

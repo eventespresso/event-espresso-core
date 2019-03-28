@@ -8,6 +8,7 @@ import { isArray } from 'lodash';
 import {
 	EventSchema,
 	EventResponse,
+	PasswordProtectedEventResponse,
 	DateTimeSchema,
 	AuthedDateTimeResponse,
 	AuthedEventResponse,
@@ -164,6 +165,7 @@ describe( 'createEntityFactory()', () => {
 		'evtDonations',
 		'setEVT_donations',
 		'donationsRendered',
+		'forClone',
 		'forUpdate',
 		'forInsert',
 		'forPersist',
@@ -172,9 +174,11 @@ describe( 'createEntityFactory()', () => {
 		'primaryKeys',
 		'hasMultiplePrimaryKeys',
 		'fieldPrefixes',
+		'fieldsToPersistOnInsert',
 		'schema',
 		'modelName',
 		'originalFieldsAndValues',
+		'protectedFields',
 	];
 	const calculatedFieldProperties = [
 		'hasCalculatedField',
@@ -546,6 +550,47 @@ describe( 'createEntityFactory()', () => {
 					} );
 				} );
 			} );
+		describe( 'creating entity from authed password protected rest response' +
+			' (fromExisting)', () => {
+			describe( 'creating entity', () => {
+				const event = EventFactory.fromExisting(
+					PasswordProtectedEventResponse
+				);
+				baseTests( event, allProperties );
+				it( 'has expected protected fields', () => {
+					expect( event.protectedFields ).toEqual(
+						[
+							'password',
+							'EVT_desc',
+							'EVT_short_desc',
+							'EVT_display_desc',
+							'EVT_display_ticket_selector',
+							'EVT_visible_on',
+							'EVT_additional_limit',
+							'EVT_default_registration_status',
+							'EVT_member_only',
+							'EVT_phone',
+							'EVT_allow_overflow',
+							'EVT_timezone_string',
+							'EVT_external_URL',
+							'EVT_donations',
+							'dummy_field',
+						]
+					);
+				} );
+				it( 'isFieldPasswordProtected getter returns expected ' +
+					'value', () => {
+					expect( event.isFieldPasswordProtected( 'EVT_desc' ) )
+						.toBe( true );
+					expect( event.isFieldPasswordProtected( 'invalid' ) )
+						.toBe( false );
+				} );
+				it( 'returns expected value for `isPasswordProtected` ' +
+					'getter', () => {
+					expect( event.isPasswordProtected ).toBe( true );
+				} );
+			} );
+		} );
 	} );
 	describe( 'multiple key prefix handling', () => {
 		const DateTimeFactory = createEntityFactory(
@@ -573,6 +618,48 @@ describe( 'createEntityFactory()', () => {
 			test( 'The ' + fieldName + ' field exists', () => {
 				expect( DateTimeEntity[ fieldName ] ).toBeDefined();
 			} );
+		} );
+	} );
+	describe( 'forPersist returns expected values', () => {
+		const factory = createEntityFactory(
+			'datetime',
+			DateTimeSchema.schema,
+			[ 'DTT_EVT', 'DTT' ]
+		);
+		it( 'returns expected values with nothing provided on new entity' +
+			'instantiation', () => {
+			const entity = factory.createNew( {} );
+			expect( entity.forPersist ).toEqual( {
+				DTT_ID: entity.id,
+			} );
+		} );
+		it( 'returns expected values with nothing provided on new entity ' +
+			'instantiation and setters used to set values', () => {
+			const entity = factory.createNew( {} );
+			entity.name = 'Test Datetime';
+			expect( entity.forPersist ).toEqual(
+				{
+					DTT_ID: entity.id,
+					DTT_name: 'Test Datetime',
+				}
+			);
+		} );
+	} );
+	describe( 'clone property', () => {
+		const factory = createEntityFactory(
+			'event',
+			EventSchema.schema,
+			[ 'EVT_ID' ]
+		);
+		it( 'returns a new instance of BaseEntity', () => {
+			const entity = factory.fromExisting( EventResponse );
+			const newEntity = entity.clone;
+			expect( newEntity ).not.toBe( entity );
+		} );
+		it( 'returns a new instance that differs only in id', () => {
+			const entity = factory.fromExisting( EventResponse );
+			const newEntity = entity.clone;
+			expect( newEntity.forUpdate ).toEqual( entity.forUpdate );
 		} );
 	} );
 } );

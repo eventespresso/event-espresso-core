@@ -3,7 +3,10 @@
 namespace EventEspresso\tests\mocks\core\services\request;
 
 use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
+use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\interfaces\ReservedInstanceInterface;
 use EventEspresso\core\services\request\Request;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class RequestMock
@@ -13,7 +16,7 @@ use EventEspresso\core\services\request\Request;
  * @author  Brent Christensen
  * @since   4.9.70.p
  */
-class RequestMock extends Request
+class RequestMock extends Request implements InterminableInterface, RequestInterface, ReservedInstanceInterface
 {
 
     /**
@@ -43,6 +46,13 @@ class RequestMock extends Request
      * @var array $server
      */
     public $server;
+
+    /**
+     * $_FILES parameters
+     *
+     * @var array $files
+     */
+    private $files;
 
     /**
      * $_REQUEST parameters
@@ -76,12 +86,19 @@ class RequestMock extends Request
     public $is_bot;
 
 
-    public function __construct(array $get, array $post, array $cookie, array $server, $ip_address = '0.0.0.0')
-    {
+    public function __construct(
+        array $get,
+        array $post,
+        array $cookie,
+        array $server,
+        array $files = array(),
+        $ip_address = '0.0.0.0'
+    ) {
         $this->get = $get;
         $this->post = $post;
         $this->cookie = $cookie;
         $this->server = $server;
+        $this->files = $files;
         $this->request = array_merge($this->get, $this->post);
         $this->ip_address = $this->visitorIp($ip_address);
         parent::__construct($get, $post, $cookie, $server);

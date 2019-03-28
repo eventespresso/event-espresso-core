@@ -2015,17 +2015,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         } else {
             $route = array('action' => 'default');
         }
-        // unset nonces
-        foreach ($this->_req_data as $ref => $value) {
-            if (strpos($ref, 'nonce') !== false) {
-                unset($this->_req_data[ $ref ]);
-                continue;
-            }
-            $value = is_array($value) ? array_map('urlencode', $value) : urlencode($value);
-            $this->_req_data[ $ref ] = $value;
-        }
-        // merge request vars so that the reloaded list table contains any existing filter query params
-        $route = array_merge($this->_req_data, $route);
+        $route = $this->mergeExistingRequestParamsWithRedirectArgs($route);
         $this->_redirect_after_action($success, '', '', $route, true);
     }
 
@@ -2650,7 +2640,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     ),
                     REG_ADMIN_URL
                 );
-                $this->_template_args['attendees'][ $att_nmbr ]['event_name'] = $registration->event_obj()->name();
+                $this->_template_args['attendees'][ $att_nmbr ]['event_name'] = $registration->event_obj() instanceof EE_Event
+                    ? $registration->event_obj()->name()
+                    : '';
                 $att_nmbr++;
             }
             $this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
@@ -2797,7 +2789,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $trash
                 ? esc_html__('moved to the trash', 'event_espresso')
                 : esc_html__('restored', 'event_espresso'),
-            array('action' => 'default'),
+            $this->mergeExistingRequestParamsWithRedirectArgs(array('action' => 'default')),
             $overwrite_msgs
         );
     }
@@ -2856,7 +2848,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $success,
             $what,
             $action_desc,
-            array('action' => 'default'),
+            $this->mergeExistingRequestParamsWithRedirectArgs(['action' => 'default']),
             true
         );
     }

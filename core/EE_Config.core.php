@@ -3180,15 +3180,21 @@ class EE_Environment_Config extends EE_Config_Base
         if (! empty($this->php->max_input_vars)
             && ($input_count >= $this->php->max_input_vars)
         ) {
-            return sprintf(
-                __(
-                    'The maximum number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.%1$sThere are %2$d inputs and the maximum amount currently allowed by your server is %3$d.',
-                    'event_espresso'
-                ),
-                '<br>',
-                $input_count,
-                $this->php->max_input_vars
-            );
+            // check the server setting because the config value could be stale
+            $max_input_vars = ini_get('max_input_vars');
+            if ($input_count >= $max_input_vars) {
+                return sprintf(
+                    esc_html__(
+                        'The maximum number of inputs on this page has been exceeded. You cannot make edits to this page because of your server\'s PHP "max_input_vars" setting.%1$sThere are %2$d inputs and the maximum amount currently allowed by your server is %3$d.%1$sPlease contact your web host and ask them to raise the "max_input_vars" limit.',
+                        'event_espresso'
+                    ),
+                    '<br>',
+                    $input_count,
+                    $max_input_vars
+                );
+            } else {
+                return '';
+            }
         } else {
             return '';
         }

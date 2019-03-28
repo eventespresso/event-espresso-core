@@ -10,6 +10,11 @@ import {
 	hasResolvedSchemaForModel,
 	getRelationEndpointForEntityId,
 	isRequestingRelationEndpointForEntityId,
+	hasJoinTableRelation,
+	getRelationSchema,
+	getRelationType,
+	getRelationResponseType,
+	getRelationPrimaryKeyString,
 } from '../selectors';
 import { mockStateForTests } from './fixtures';
 
@@ -171,5 +176,133 @@ describe( 'getRelationEndpointForEntityId', () => {
 				'datetime'
 			)
 		).toEqual( '/ee/v4.8.36/events/10/datetimes' );
+	} );
+} );
+describe( 'hasJoinTableRelation()', () => {
+	it( 'returns false when there is not a join table ' +
+		'relation', () => {
+		expect(
+			hasJoinTableRelation(
+				mockStateForTests,
+				'event',
+				'datetimes'
+			)
+		).toBe( false );
+	} );
+	it( 'returns true when there is a join table ' +
+		'relation', () => {
+		expect(
+			hasJoinTableRelation(
+				mockStateForTests,
+				'event',
+				'venues',
+			)
+		).toBe( true );
+	} );
+	it( 'returns false when the relation does not exist for the ' +
+		'given values', () => {
+		expect(
+			hasJoinTableRelation(
+				mockStateForTests,
+				'foo',
+				'bar',
+			)
+		).toBe( false );
+	} );
+} );
+describe( 'getRelationType()', () => {
+	it( 'returns expected value for relation that exists', () => {
+		expect(
+			getRelationType(
+				mockStateForTests,
+				'event',
+				'datetimes'
+			)
+		).toBe( 'EE_Has_Many_Relation' );
+	} );
+	it( 'returns empty string when relation does not exist', () => {
+		expect(
+			getRelationType(
+				mockStateForTests,
+				'foo',
+				'bar',
+			)
+		).toBe( '' );
+	} );
+} );
+describe( 'getRelationResponseType', () => {
+	it( 'returns expected value for relation that exists', () => {
+		expect(
+			getRelationResponseType(
+				mockStateForTests,
+				'event',
+				'datetime'
+			)
+		).toBe( 'array' );
+	} );
+	it( 'returns empty string when relation does not exist', () => {
+		expect(
+			getRelationType(
+				mockStateForTests,
+				'foo',
+				'bar'
+			)
+		).toBe( '' );
+	} );
+} );
+describe( 'getRelationSchema()', () => {
+	it( 'returns expected value for relation that exists', () => {
+		expect(
+			getRelationSchema(
+				mockStateForTests,
+				'event',
+				'datetimes',
+			)
+		).toEqual(
+			EventSchema.schema.properties.datetimes
+		);
+	} );
+	it( 'returns null for relation that does not exist', () => {
+		expect(
+			getRelationSchema(
+				mockStateForTests,
+				'foo',
+				'bar',
+			)
+		).toBeNull();
+	} );
+} );
+describe( 'getRelationPrimaryKeyString', () => {
+	beforeEach( () => {
+		getRelationPrimaryKeyString.clear();
+	} );
+	it( 'returns expected value for relation that exists on ' +
+		'EE_Belongs_To_Relation', () => {
+		expect(
+			getRelationPrimaryKeyString(
+				mockStateForTests,
+				'datetime',
+				'event'
+			)
+		).toBe( 'EVT_ID' );
+	} );
+	it( 'returns expected value for relation that exists when ' +
+		'relation type is not EE_Belongs_To_Relation', () => {
+		expect(
+			getRelationPrimaryKeyString(
+				mockStateForTests,
+				'event',
+				'datetime',
+			)
+		).toBe( 'Datetime.DTT_ID' );
+	} );
+	it( 'returns empty string for relation that does not exist', () => {
+		expect(
+			getRelationPrimaryKeyString(
+				mockStateForTests,
+				'foo',
+				'bar',
+			)
+		).toBe( '' );
 	} );
 } );
