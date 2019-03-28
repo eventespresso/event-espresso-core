@@ -46,13 +46,22 @@ class Price_Types_List_Table extends EE_Admin_List_Table
             'cb'        => '<input type="checkbox" />', // Render a checkbox instead of text
             'name'      => __('Name', 'event_espresso'),
             'base_type' => '<div class="jst-cntr">' . __('Base Type', 'event_espresso') . '</div>',
-            'percent'   => '<div class="jst-cntr">' . __('Applied', 'event_espresso') . '<br/>'
-                           . __('as ', 'event_espresso') . '<span class="big-text">'
-                           . __('%', 'event_espresso') . '</span>'
-                           . __(' or ', 'event_espresso') . '<span class="big-text">'
-                           . __('$', 'event_espresso') . '</span></div>',
-            'order'     => '<div class="jst-cntr">' . __('Order of', 'event_espresso') . '<br/>'
-                           . __('Application', 'event_espresso') . '</div>',
+            'percent'   => '<div class="jst-cntr">' 
+                           . sprintf( 
+                                /* translators: 1: HTML new line, 2: open span tag, 3: close span tag */
+                                esc_html('Applied %1$s as %2$s%%%3$s or %2$s$%3$s', 'event_espresso'),
+                                '<br/>',
+                                '<span class="big-text">',
+                                '</span>'
+                            )
+                           . '</div>',
+            'order'     => '<div class="jst-cntr">' 
+                           . sprintf(
+                                /* translators: HTML new line */
+                                esc_html('Order of %s Application', 'event_espresso'),
+                                '<br/>'
+                            )
+                           . '</div>',
         );
 
         $this->_sortable_columns = array(
