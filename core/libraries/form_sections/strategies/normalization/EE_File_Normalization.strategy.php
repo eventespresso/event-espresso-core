@@ -14,7 +14,8 @@ class EE_File_Normalization extends EE_Normalization_Strategy_Base
 {
 
     /**
-     * Convert the $_FILES inputted data into a well-defined object.
+     * Keep in mind $value_to_normalize should be a FileSubmissionInterface or null, so this shouldn't really do
+     * much (other than NOT convert it to a string or something).
      * @param string $value_to_normalize
      * @return FileSubmissionInterface
      */
@@ -31,7 +32,9 @@ class EE_File_Normalization extends EE_Normalization_Strategy_Base
 
 
     /**
-     * Convert the object back into a string of the filename.
+     * This may be called prematurely on submitted data, so we actually don't want to convert it into a string because
+     * we'll lose all the FileSubmissionInterface data. So prefer to leave it alone. FileSubmissionInterface
+     * can be cast to a string just fine so it's good as-is.
      *
      * @param string $normalized_value
      * @return string
