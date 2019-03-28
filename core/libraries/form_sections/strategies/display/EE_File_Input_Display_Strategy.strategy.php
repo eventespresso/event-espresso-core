@@ -11,19 +11,10 @@
 class EE_File_Input_Display_Strategy extends EE_Text_Input_Display_Strategy
 {
     /**
-     * The html "type" attribute value. default is "text"
-     * @var string
+     * Override's parent to just set the type. May someday support other arguments.
      */
-    protected $allowed_extensions;
-
-
-
-    /**
-     * @param string $allowed_extensions
-     */
-    public function __construct($type = 'file', $allowed_extensions = [])
+    public function __construct()
     {
-        $this->allowed_extensions = $allowed_extensions;
-        parent::__construct($type);
+        parent::__construct('file');
     }
 }
