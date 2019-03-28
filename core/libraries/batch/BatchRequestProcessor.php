@@ -3,6 +3,7 @@
 namespace EventEspressoBatchRequest;
 
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerInterface;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
@@ -39,7 +40,19 @@ class BatchRequestProcessor
      * @var JobParameters|null
      */
     protected $_job_parameters;
+    /**
+     * @var LoaderInterface
+     */
+    private $loader;
 
+    /**
+     * BatchRequestProcessor constructor.
+     * @param LoaderInterface $loader
+     */
+    public function __construct(LoaderInterface $loader)
+    {
+        $this->loader = $loader;
+    }
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     /**
      * Creates a job for the specified batch handler class (which should be autoloaded)
@@ -144,7 +157,7 @@ class BatchRequestProcessor
                 )
             );
         }
-        $obj = LoaderFactory::getLoader()->getNew($classname);
+        $obj = $this->loader->getNew($classname);
         if (! $obj instanceof JobHandlerInterface) {
             throw new BatchRequestException(
                 sprintf(
