@@ -59,6 +59,7 @@ class BaseEntity {
 		);
 		createEntityGettersAndSetters( this );
 		createPersistingGettersAndSetters( this );
+		Object.seal( this );
 	}
 
 	/**
