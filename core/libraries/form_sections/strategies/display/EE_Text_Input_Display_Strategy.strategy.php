@@ -25,7 +25,7 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base
      * @param string $type
      */
     public function __construct($type = 'text')
-        {
+    {
         $this->_type = $type;
         parent::__construct();
     }
