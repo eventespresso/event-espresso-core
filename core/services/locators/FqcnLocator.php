@@ -145,30 +145,29 @@ class FqcnLocator extends Locator
             throw new InvalidClassException($partial_namespace);
         }
         // load our PSR-4 Autoloader so we can get the list of registered namespaces from it
-        $psr4_loader = EE_Psr4AutoloaderInit::psr4_loader();
-        // breakup the incoming namespace into segments then loop thru them
+        $psr4_loader = \EE_Psr4AutoloaderInit::psr4_loader();
+        // breakup the incoming namespace into segments so we can loop thru them
         $namespace_segments = explode(Psr4Autoloader::NS, trim($partial_namespace, Psr4Autoloader::NS));
-        $prefix = null;
-        $namespace_segments_to_try = $namespace_segments;
-        $removed_namespace_segments = [];
-        while (! empty($namespace_segments_to_try)) {
-            $namespace_to_try = implode(Psr4Autoloader::NS, $namespace_segments_to_try);
+        // we're only interested in the Vendor and secondary base, so pull those from the array
+        $vendor_base = array_slice($namespace_segments, 0, 2);
+        $namespace = $prefix = null;
+        while (! empty($vendor_base)) {
+            $namespace = implode(Psr4Autoloader::NS, $vendor_base);
             // check if there's a base directory registered for that namespace
-            $prefix = $psr4_loader->prefixes($namespace_to_try . Psr4Autoloader::NS);
-            // nope? then the incoming namespace is invalid
+            $prefix = $psr4_loader->prefixes($namespace . Psr4Autoloader::NS);
             if (! empty($prefix) && ! empty($prefix[0])) {
+                // found one!
                 break;
             }
-            array_unshift(
-                $removed_namespace_segments,
-                array_pop($namespace_segments_to_try)
-            );
-        }// nope? then the incoming namespace is invalid
+            // remove base and try vendor only portion of namespace
+            array_pop($vendor_base);
+        }
+        // nope? then the incoming namespace is invalid
         if (empty($prefix) || empty($prefix[0])) {
             throw new InvalidClassException($partial_namespace);
         }
-        $this->setNamespace($namespace_to_try, $prefix[0]);
+        $this->setNamespace($namespace, $prefix[0]);
         // but if it's good, add that base directory to the rest of the path, and return it
-        return $prefix[0] . implode(DS, $removed_namespace_segments) . DS;
+        return $prefix[0] . implode(DS, array_diff($namespace_segments, $vendor_base)) . DS;
     }
 }
