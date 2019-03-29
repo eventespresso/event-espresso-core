@@ -25,7 +25,7 @@ class EE_File_Normalization extends EE_Normalization_Strategy_Base
             return $value_to_normalize;
         } else {
             throw new EE_Validation_Error(
-                esc_html__('The file input has an inavlid format.', 'event_espresso')
+                esc_html__('The file input has an invalid format.', 'event_espresso')
             );
         }
     }

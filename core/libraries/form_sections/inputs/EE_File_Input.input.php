@@ -66,12 +66,7 @@ class EE_File_Input extends EE_Form_Input_Base
             . ' extension="'
             . implode(
                 ',',
-                array_map(
-                    function ($file_extension) {
-                        return  $file_extension;
-                    },
-                    $this->allowed_file_extensions
-                )
+                $this->allowed_file_extensions
             )
             . '"'
         );
