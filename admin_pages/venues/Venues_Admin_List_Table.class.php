@@ -133,11 +133,11 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
             );
             $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EE_VENUES_ADMIN_URL);
             $actions['edit'] = '<a href="' . $edit_link . '"'
-                               . 'aria-label="' 
+                               . 'aria-label="'
                                /* Translators: The name of the venue */
                                . sprintf(esc_attr__('Edit Venue (%s)', 'event_espresso'), $item->name())
-                               . '">' 
-                               . esc_html__('Edit', 'event_espresso') 
+                               . '">'
+                               . esc_html__('Edit', 'event_espresso')
                                . '</a>';
         }
 
@@ -191,7 +191,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
                     $item->ID()
                 )) {
                     $actions['restore_from_trash'] = '<a href="' . $restore_venue_link . '"'
-                                                     . ' aria-label="' 
+                                                     . ' aria-label="'
                                                      . sprintf(
                                                          /* Translators: The name of the venue */
                                                          esc_attr__(
