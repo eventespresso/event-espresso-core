@@ -46,21 +46,21 @@ class Price_Types_List_Table extends EE_Admin_List_Table
             'cb'        => '<input type="checkbox" />', // Render a checkbox instead of text
             'name'      => esc_html__('Name', 'event_espresso'),
             'base_type' => '<div class="jst-cntr">' . __('Base Type', 'event_espresso') . '</div>',
-            'percent'   => '<div class="jst-cntr">' 
-                           . sprintf( 
-                                /* translators: 1: HTML new line, 2: open span tag, 3: close span tag */
-                                esc_html__('Applied %1$s as %2$s%%%3$s or %2$s$%3$s', 'event_espresso'),
-                                '<br/>',
-                                '<span class="big-text">',
-                                '</span>'
-                            )
-                           . '</div>',
-            'order'     => '<div class="jst-cntr">' 
+            'percent'   => '<div class="jst-cntr">'
                            . sprintf(
-                                /* translators: HTML new line */
-                                esc_html__('Order of %s Application', 'event_espresso'),
-                                '<br/>'
-                            )
+                               /* translators: 1: HTML new line, 2: open span tag, 3: close span tag */
+                               esc_html__('Applied %1$s as %2$s%%%3$s or %2$s$%3$s', 'event_espresso'),
+                               '<br/>',
+                               '<span class="big-text">',
+                               '</span>'
+                           )
+                           . '</div>',
+            'order'     => '<div class="jst-cntr">'
+                           . sprintf(
+                               /* translators: HTML new line */
+                               esc_html__('Order of %s Application', 'event_espresso'),
+                               '<br/>'
+                           )
                            . '</div>',
         );
 
