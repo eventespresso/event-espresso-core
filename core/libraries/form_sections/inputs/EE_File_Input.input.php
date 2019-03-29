@@ -36,18 +36,12 @@ class EE_File_Input extends EE_Form_Input_Base
     public function __construct($options = array())
     {
         if (isset($options['allowed_file_extensions'])) {
-            if (!is_array($options['allowed_file_extensions'])) {
-                throw new InvalidArgumentException(esc_html__('A valid allowed_file_extensions array was not provided to EE_File_Input', 'event_espresso'));
-            }
-            $this->allowed_file_extensions = $options['allowed_file_extensions'];
+            $this->allowed_file_extensions = (array) $options['allowed_file_extensions'];
         } else {
             $this->allowed_file_extensions = ['csv'];
         }
         if (isset($options['allowed_mime_types'])) {
-            if (!is_array($options['allowed_mime_types'])) {
-                throw new InvalidArgumentException(esc_html__('A valid allowed_mime_types array was not provided to EE_File_Input', 'event_espresso'));
-            }
-            $this->allowed_mime_types = $options['allowed_file_extensions'];
+            $this->allowed_mime_types = (array) $options['allowed_file_extensions'];
         } else {
             $this->allowed_mime_types = ['text/csv'];
         }
