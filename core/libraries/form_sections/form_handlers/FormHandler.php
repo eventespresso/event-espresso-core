@@ -586,11 +586,9 @@ abstract class FormHandler implements FormHandlerInterface
         if ($form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
             || $form_config === FormHandler::ADD_FORM_TAGS_ONLY
         ) {
-            if ($this->requiresMultipartEnctype()) {
-                $additional_props = 'enctype="multipart/form-data"';
-            } else {
-                $additional_props = '';
-            }
+            $additional_props = $this->requiresMultipartEnctype()
+                ? 'enctype="multipart/form-data"'
+                : '';
             $form_html .= $this->form()->form_open(
                 $this->formAction(),
                 'POST',
