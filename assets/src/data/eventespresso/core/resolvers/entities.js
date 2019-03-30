@@ -1,8 +1,9 @@
 /**
  * External imports
  */
-import { getEndpoint } from '@eventespresso/model';
+import { getEndpoint, singularModelName } from '@eventespresso/model';
 import { isModelEntityFactoryOfModel } from '@eventespresso/validators';
+import { castArray } from 'lodash';
 
 /**
  * Internal Imports
@@ -16,13 +17,18 @@ import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
  *
  * @param {string} modelName
  * @param {number} entityId
+ * @param {Array} calculatedFields
  * @return {null|BaseEntity} If successfully retrieved, the entity,
  * otherwise null.
  */
-export function* getEntityById( modelName, entityId ) {
-	const entity = yield fetch( {
-		path: getEndpoint( modelName ) + '/' + entityId,
-	} );
+export function* getEntityById( modelName, entityId, calculatedFields = [] ) {
+	calculatedFields = castArray( calculatedFields );
+	modelName = singularModelName( modelName );
+	let path = `${ getEndpoint( modelName ) }/${ entityId }`;
+	path += calculatedFields.length > 0 ?
+		`?calculate=${ calculatedFields.join() }` :
+		'';
+	const entity = yield fetch( { path } );
 	const factory = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'getFactoryForModel',

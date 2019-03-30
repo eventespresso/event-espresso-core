@@ -18,7 +18,7 @@ import {
 } from '@eventespresso/validators';
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import warning from 'warning';
-import { isEmpty, isUndefined, isArray } from 'lodash';
+import { isEmpty, isUndefined, isArray, castArray } from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 
 /**
@@ -48,13 +48,19 @@ const DEFAULT_EMPTY_ARRAY = [];
  *
  * @param {BaseEntity} entity
  * @param {string} relationModelName
+ * @param {Array} calculatedFields
  * @return {[]|Array<BaseEntity>} If there are relations, returns an array of
  * BaseEntity instances for the relations, otherwise an empty array.
  */
-export function* getRelatedEntities( entity, relationModelName ) {
+export function* getRelatedEntities(
+	entity,
+	relationModelName,
+	calculatedFields = []
+) {
 	if ( ! isModelEntity( entity ) ) {
 		throw new InvalidModelEntity( '', entity );
 	}
+	calculatedFields = castArray( calculatedFields );
 	const modelName = entity.modelName.toLowerCase();
 	const pluralRelationName = pluralModelName( relationModelName );
 	const singularRelationName = singularModelName( relationModelName );
@@ -89,9 +95,12 @@ export function* getRelatedEntities( entity, relationModelName ) {
 		[ modelName, entity.id, pluralRelationName, relationEndpoint ]
 	);
 
-	let relationEntities = yield fetch( {
-		path: relationEndpoint,
-	} );
+	// add calculatedFields to endpoint?
+	const path = calculatedFields.length > 0 ?
+		`${ relationEndpoint }?calculate=${ calculatedFields.join() }` :
+		relationEndpoint;
+
+	let relationEntities = yield fetch( { path } );
 
 	relationEntities = ! isEmpty( relationEntities ) ?
 		relationEntities :
@@ -181,6 +190,8 @@ export function* getRelatedEntities( entity, relationModelName ) {
  * @param {string} modelName
  * @param {Array<number>} entityIds
  * @param {string} relationName
+ * @param {Array} calculatedFields  This will retrieve any named calculated
+ * fields for the related entities.
  *
  * @return {Array|undefined} If there is no schema for the relation, an
  * empty array is returned.
@@ -188,10 +199,12 @@ export function* getRelatedEntities( entity, relationModelName ) {
 export function* getRelatedEntitiesForIds(
 	modelName,
 	entityIds,
-	relationName
+	relationName,
+	calculatedFields = []
 ) {
 	modelName = singularModelName( modelName );
 	relationName = pluralModelName( relationName );
+	calculatedFields = castArray( calculatedFields );
 	const hasJoinTable = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'hasJoinTableRelation',
@@ -227,7 +240,8 @@ export function* getRelatedEntitiesForIds(
 			relationName,
 			relationSchema,
 			relationType,
-			hasJoinTable
+			hasJoinTable,
+			calculatedFields,
 		),
 	} );
 	if ( ! response.length ) {
@@ -307,6 +321,7 @@ export function* getRelatedEntitiesForIds(
  * @param {Object} relationSchema
  * @param {string} relationType
  * @param {boolean} hasJoinTable
+ * @param {Array} calculatedFields
  * @return {string} A path to use for a relation request.
  */
 const getRelationRequestUrl = (
@@ -315,7 +330,8 @@ const getRelationRequestUrl = (
 	relationName,
 	relationSchema,
 	relationType,
-	hasJoinTable
+	hasJoinTable,
+	calculatedFields,
 ) => {
 	let path;
 	switch ( true ) {
@@ -329,11 +345,21 @@ const getRelationRequestUrl = (
 				entityIds
 			);
 			path += `&include=${ modelNameForQueryString( relationName ) }.*`;
+			path = appendCalculatedFieldsToPath(
+				path,
+				calculatedFields,
+				singularModelName( relationName )
+			);
 			break;
 		case isBelongsToRelation( relationType ):
 			path = getEndpoint( modelName );
 			path += `/?where${ getPrimaryKeyQueryString( modelName, entityIds ) }`;
 			path += `&include=${ modelNameForQueryString( relationName ) }.*`;
+			path = appendCalculatedFieldsToPath(
+				path,
+				calculatedFields,
+				singularModelName( relationName )
+			);
 			break;
 		default:
 			// we do the reverse endpoint so that we are getting the belongs to
@@ -353,7 +379,43 @@ const getRelationRequestUrl = (
 			path = getEndpoint( singularModelName( relationName ) );
 			path += `/?where${ getPrimaryKeyQueryString( modelName, entityIds ) }`;
 			path += `&include=${ modelNameForQueryString( modelName ) }.*`;
+			path = appendCalculatedFieldsToPath(
+				path,
+				calculatedFields,
+			);
 			break;
+	}
+	return path;
+};
+
+/**
+ * Appends provided calculated fields to the provided path if not empty.
+ *
+ * Also, if modelName is passed in undefined, then any fields are appended
+ * without modification.  Otherwise they will be suffixed with the modelName as
+ * a part of the query to indicate what model the calculated fields apply to.
+ *
+ * @param {string} path
+ * @param {Array<string>} calculatedFields
+ * @param {string} modelName
+ * @return {string} The path with calculated fields appended if present.
+ */
+const appendCalculatedFieldsToPath = ( path, calculatedFields, modelName ) => {
+	if ( calculatedFields.length > 0 ) {
+		// setup fields string
+		const nameForQueryString = modelName !== undefined ?
+			modelNameForQueryString(
+				singularModelName( modelName )
+			) :
+			'';
+		const queryStrings = nameForQueryString ?
+			calculatedFields.map(
+				( field ) => {
+					return `${ nameForQueryString }.${ field }`;
+				},
+			) :
+			calculatedFields;
+		path += `&calculate=${ queryStrings.join() }`;
 	}
 	return path;
 };

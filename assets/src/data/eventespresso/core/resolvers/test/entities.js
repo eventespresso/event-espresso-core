@@ -15,12 +15,14 @@ import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../../schema/constants';
 describe( getEntityById.name + '()', () => {
 	describe( 'yields with expected response', () => {
 		let fulfillment;
-		const reset = () => fulfillment = getEntityById(
+		const reset = ( calculatedFields = [] ) => fulfillment = getEntityById(
 			'event',
-			10
+			10,
+			calculatedFields
 		);
 		const Event = eventFactory.fromExisting( AuthedEventResponse );
-		it( 'yields action for fetching the entity', () => {
+		it( 'yields action for fetching the entity (without calculated ' +
+			'fields)', () => {
 			reset();
 			const { value } = fulfillment.next();
 			expect( value ).toEqual( fetch(
@@ -29,7 +31,22 @@ describe( getEntityById.name + '()', () => {
 				}
 			) );
 		} );
+		it( 'yields expected path with multiple calculated fields', () => {
+			reset( [ 'foo', 'bar' ] );
+			const { value } = fulfillment.next();
+			expect( value.request.path )
+				.toBe( '/ee/v4.8.36/events/10?calculate=foo,bar' );
+		} );
+		it( 'yields expected path with string passed in for calculated ' +
+			'fields', () => {
+			reset( 'foo' );
+			const { value } = fulfillment.next();
+			expect( value.request.path )
+				.toBe( '/ee/v4.8.36/events/10?calculate=foo' );
+		} );
 		it( 'yields resolve select action for getting factory', () => {
+			reset();
+			fulfillment.next();
 			const { value } = fulfillment.next();
 			expect( value ).toEqual(
 				resolveSelect(
