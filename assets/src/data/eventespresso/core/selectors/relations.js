@@ -194,11 +194,11 @@ export const getRelatedEntitiesForIds = createSelector(
  * }
  */
 const lookupRelationsQueuedForModel = ( state, modelName, type = 'add' ) => {
-	const forIndexLookup = pluralModelName( modelName );
 	const forAddLookup = singularModelName( modelName );
 	if ( state.dirty.relations.hasIn( [ type, forAddLookup ] ) ) {
 		return state.dirty.relations.getIn( [ type, forAddLookup ] ).toJS();
 	}
+	const forIndexLookup = pluralModelName( modelName );
 	if ( state.dirty.relations.hasIn( [ 'index', forIndexLookup ] ) ) {
 		let relations = Map();
 		state.dirty.relations.getIn( [ 'index', forIndexLookup ] ).forEach(

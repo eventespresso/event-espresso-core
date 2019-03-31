@@ -236,6 +236,7 @@ const config = [
 						{
 							loader: 'postcss-loader',
 							options: {
+								// eslint-disable-next-line object-shorthand
 								plugins: function() {
 									return [ autoprefixer ];
 								},
@@ -295,6 +296,7 @@ const config = [
 						{
 							loader: 'postcss-loader',
 							options: {
+								// eslint-disable-next-line object-shorthand
 								plugins: function() {
 									return [ autoprefixer ];
 								},
@@ -370,6 +372,7 @@ const config = [
 						{
 							loader: 'postcss-loader',
 							options: {
+								// eslint-disable-next-line object-shorthand
 								plugins: function() {
 									return [ autoprefixer ];
 								},

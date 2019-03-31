@@ -35,6 +35,8 @@ describe( 'withMoney()', () => {
 	};
 
 	const getWrappedTestComponent = ( testProps, testMap = [] ) => {
+		// false positive
+		// eslint-disable-next-line @wordpress/no-unused-vars-before-return
 		const Wrapped = getEnhancedComponent( testMap );
 		return <Wrapped { ...testProps } />;
 	};

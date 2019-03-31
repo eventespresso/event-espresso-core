@@ -57,7 +57,6 @@ export function* getRelatedEntities( entity, relationModelName ) {
 	}
 	const modelName = entity.modelName.toLowerCase();
 	const pluralRelationName = pluralModelName( relationModelName );
-	const singularRelationName = singularModelName( relationModelName );
 	const relationResourceProperty = pluralRelationName + 'Resource';
 	const relationEndpoint = entity[ relationResourceProperty ] ?
 		stripBaseRouteFromUrl(
@@ -73,6 +72,7 @@ export function* getRelatedEntities( entity, relationModelName ) {
 		);
 		return DEFAULT_EMPTY_ARRAY;
 	}
+
 	yield dispatch(
 		SCHEMA_REDUCER_KEY,
 		'receiveRelationEndpointForModelEntity',
@@ -103,6 +103,8 @@ export function* getRelatedEntities( entity, relationModelName ) {
 	if ( ! relationEntities.length ) {
 		return relationEntities;
 	}
+
+	const singularRelationName = singularModelName( relationModelName );
 
 	const factory = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
@@ -208,10 +210,6 @@ export function* getRelatedEntitiesForIds(
 		return DEFAULT_EMPTY_ARRAY;
 	}
 	const relationType = relationSchema.relation_type;
-	const relationPrimaryKey = getPrimaryKey(
-		singularModelName( relationName )
-	);
-	const modelPrimaryKey = getPrimaryKey( singularModelName( modelName ) );
 	const singularRelationName = singularModelName( relationName );
 
 	const factory = yield resolveSelect(
@@ -219,7 +217,6 @@ export function* getRelatedEntitiesForIds(
 		'getFactoryForModel',
 		singularRelationName
 	);
-	let hasSetMap = ImmutableMap();
 	const response = yield fetch( {
 		path: getRelationRequestUrl(
 			modelName,
@@ -233,6 +230,13 @@ export function* getRelatedEntitiesForIds(
 	if ( ! response.length ) {
 		return DEFAULT_EMPTY_ARRAY;
 	}
+
+	const relationPrimaryKey = getPrimaryKey(
+		singularModelName( relationName )
+	);
+	const modelPrimaryKey = getPrimaryKey( singularModelName( modelName ) );
+	let hasSetMap = ImmutableMap();
+
 	if ( hasJoinTable ) {
 		while ( response.length > 0 ) {
 			const record = response.pop();
