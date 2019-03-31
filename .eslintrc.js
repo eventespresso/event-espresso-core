@@ -26,4 +26,7 @@ module.exports = {
 			}
 		}
 	],
+	rules: {
+		"@wordpress/dependency-group": 'off'
+	}
 };
