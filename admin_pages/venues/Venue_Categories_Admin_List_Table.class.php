@@ -95,17 +95,27 @@ class Venue_Categories_Admin_List_Table extends EE_Admin_List_Table
         $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EE_VENUES_ADMIN_URL);
         $delete_link = EE_Admin_Page::add_query_args_and_nonce($delete_query_args, EE_VENUES_ADMIN_URL);
 
+        $term_name = $item->get_first_related('Term')->get('name');
+
         $actions = array(
-            'edit' => '<a href="' . $edit_link . '" title="' . esc_attr__(
-                'Edit Category',
-                'event_espresso'
+            'edit' => '<a href="' . $edit_link . '" aria-label="' . sprintf(
+                /* translators: The name of the venue category */
+                esc_attr__(
+                    'Edit Category (%s)',
+                    'event_espresso'
+                ),
+                $term_name
             ) . '">' . __('Edit', 'event_espresso') . '</a>',
         );
 
 
-        $actions['delete'] = '<a href="' . $delete_link . '" title="' . esc_attr__(
-            'Delete Category',
-            'event_espresso'
+        $actions['delete'] = '<a href="' . $delete_link . '" aria-label="' . sprintf(
+            /* translators: The name of the venue category */
+            esc_attr__(
+                'Delete Category (%s)',
+                'event_espresso'
+            ),
+            $term_name
         ) . '">' . __('Delete', 'event_espresso') . '</a>';
 
         $content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->get_first_related('Term')->get(
