@@ -35,7 +35,6 @@ class Venue_Categories_Admin_List_Table extends EE_Admin_List_Table
             'cb'    => '<input type="checkbox" />',
             'id'    => esc_html__('ID', 'event_espresso'),
             'name'  => esc_html__('Name', 'event_espresso'),
-            // 'shortcode' => esc_html__('Shortcode', 'event_espresso'),
             'count' => esc_html__('Venues', 'event_espresso'),
         );
 
@@ -103,7 +102,7 @@ class Venue_Categories_Admin_List_Table extends EE_Admin_List_Table
                     'event_espresso'
                 ),
                 $term_name
-            ) . '">' . __('Edit', 'event_espresso') . '</a>',
+            ) . '">' . esc_html__('Edit', 'event_espresso') . '</a>',
         );
 
 
@@ -114,7 +113,7 @@ class Venue_Categories_Admin_List_Table extends EE_Admin_List_Table
                 'event_espresso'
             ),
             $term_name
-        ) . '">' . __('Delete', 'event_espresso') . '</a>';
+        ) . '">' . esc_html__('Delete', 'event_espresso') . '</a>';
 
         $content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->get_first_related('Term')->get(
             'name'
