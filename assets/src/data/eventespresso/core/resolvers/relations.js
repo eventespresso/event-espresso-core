@@ -39,6 +39,7 @@ import {
 import { keepExistingEntitiesInObject } from '../../base-model';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
+import { appendCalculatedFieldsToPath } from './utils';
 
 const DEFAULT_EMPTY_ARRAY = [];
 
@@ -60,7 +61,6 @@ export function* getRelatedEntities(
 	if ( ! isModelEntity( entity ) ) {
 		throw new InvalidModelEntity( '', entity );
 	}
-	calculatedFields = castArray( calculatedFields );
 	const modelName = entity.modelName.toLowerCase();
 	const pluralRelationName = pluralModelName( relationModelName );
 	const singularRelationName = singularModelName( relationModelName );
@@ -96,9 +96,10 @@ export function* getRelatedEntities(
 	);
 
 	// add calculatedFields to endpoint?
-	const path = calculatedFields.length > 0 ?
-		`${ relationEndpoint }?calculate=${ calculatedFields.join() }` :
-		relationEndpoint;
+	const path = appendCalculatedFieldsToPath(
+		relationEndpoint,
+		calculatedFields
+	);
 
 	let relationEntities = yield fetch( { path } );
 
@@ -204,7 +205,6 @@ export function* getRelatedEntitiesForIds(
 ) {
 	modelName = singularModelName( modelName );
 	relationName = pluralModelName( relationName );
-	calculatedFields = castArray( calculatedFields );
 	const hasJoinTable = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'hasJoinTableRelation',
@@ -384,38 +384,6 @@ const getRelationRequestUrl = (
 				calculatedFields,
 			);
 			break;
-	}
-	return path;
-};
-
-/**
- * Appends provided calculated fields to the provided path if not empty.
- *
- * Also, if modelName is passed in undefined, then any fields are appended
- * without modification.  Otherwise they will be suffixed with the modelName as
- * a part of the query to indicate what model the calculated fields apply to.
- *
- * @param {string} path
- * @param {Array<string>} calculatedFields
- * @param {string} modelName
- * @return {string} The path with calculated fields appended if present.
- */
-const appendCalculatedFieldsToPath = ( path, calculatedFields, modelName ) => {
-	if ( calculatedFields.length > 0 ) {
-		// setup fields string
-		const nameForQueryString = modelName !== undefined ?
-			modelNameForQueryString(
-				singularModelName( modelName )
-			) :
-			'';
-		const queryStrings = nameForQueryString ?
-			calculatedFields.map(
-				( field ) => {
-					return `${ nameForQueryString }.${ field }`;
-				},
-			) :
-			calculatedFields;
-		path += `&calculate=${ queryStrings.join() }`;
 	}
 	return path;
 };

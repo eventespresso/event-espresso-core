@@ -35,7 +35,7 @@ describe( getEntityById.name + '()', () => {
 			reset( [ 'foo', 'bar' ] );
 			const { value } = fulfillment.next();
 			expect( value.request.path )
-				.toBe( '/ee/v4.8.36/events/10?calculate=foo,bar' );
+				.toBe( '/ee/v4.8.36/events/10?calculate=foo%2Cbar' );
 		} );
 		it( 'yields expected path with string passed in for calculated ' +
 			'fields', () => {
