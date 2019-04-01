@@ -4,9 +4,6 @@
  * -------------------------------------------------------------------------*/
 
 .biggie-calendar-date-bg {
-    background-image: linear-gradient(to bottom, rgba(0, 0, 0, .25) 50%, rgba(255, 255, 255, 0) 0%);
-    background-size: 1px 5px;
-    background-repeat: repeat-y;
     box-sizing: border-box;
     color: var(--ee-white);
     height: 100%;
@@ -17,12 +14,10 @@
 }
 
 .biggie-calendar-date-bg.bcd-pos-left {
-    background-position: right;
     float: left;
     left: 0;
 }
 .biggie-calendar-date-bg.bcd-pos-right {
-    background-position: left;
     float: right;
     right: 0;
 }
@@ -123,21 +118,8 @@
 }
 
 @media only screen and (max-width: 480px) {
-    .biggie-calendar-date-bg.bcd-pos-left {
-        background-position: bottom;
-        float: none;
-    }
-
-    .biggie-calendar-date-bg.bcd-pos-right {
-        background-position: top;
-        float: none;
-    }
 
     .biggie-calendar-date-bg {
-        background-image: linear-gradient(to right, rgba(0, 0, 0, .25) 50%, rgba(255, 255, 255, 0) 0%);
-        background-position: top;
-        background-size: 5px 1px;
-        background-repeat: repeat-x;
         clear: both;
         float: none;
         height: auto;
@@ -145,6 +127,14 @@
         position: relative;
         right: unset;
         width: 100% !important;
+    }
+
+    .biggie-calendar-date-bg.bcd-pos-left {
+        float: none;
+    }
+
+    .biggie-calendar-date-bg.bcd-pos-right {
+        float: none;
     }
 
     .biggie-calendar-date,
