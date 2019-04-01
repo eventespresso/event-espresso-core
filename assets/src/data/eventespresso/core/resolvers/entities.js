@@ -3,7 +3,6 @@
  */
 import { getEndpoint, singularModelName } from '@eventespresso/model';
 import { isModelEntityFactoryOfModel } from '@eventespresso/validators';
-import { castArray } from 'lodash';
 
 /**
  * Internal Imports
@@ -11,6 +10,7 @@ import { castArray } from 'lodash';
 import { fetch, resolveSelect } from '../../base-controls';
 import { receiveEntityRecords } from './../actions';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
+import { appendCalculatedFieldsToPath } from './utils';
 
 /**
  * A resolver for getting an entity for the given model name and entity id.
@@ -22,12 +22,12 @@ import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
  * otherwise null.
  */
 export function* getEntityById( modelName, entityId, calculatedFields = [] ) {
-	calculatedFields = castArray( calculatedFields );
 	modelName = singularModelName( modelName );
 	let path = `${ getEndpoint( modelName ) }/${ entityId }`;
-	path += calculatedFields.length > 0 ?
-		`?calculate=${ calculatedFields.join() }` :
-		'';
+	path = appendCalculatedFieldsToPath(
+		path,
+		calculatedFields
+	);
 	const entity = yield fetch( { path } );
 	const factory = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,

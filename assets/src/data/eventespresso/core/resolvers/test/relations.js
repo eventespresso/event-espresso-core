@@ -95,7 +95,7 @@ describe( getRelatedEntities.name + '()', () => {
 		fulfillment.next();
 		const { value } = fulfillment.next();
 		expect( value.request.path )
-			.toBe( 'ee/v4.8.36/events/10/datetimes?calculate=foo,bar' );
+			.toBe( 'ee/v4.8.36/events/10/datetimes?calculate=foo%2Cbar' );
 	} );
 	it( 'yields expected path when there is a single calculated ' +
 		'field passed in as a string', () => {
@@ -294,8 +294,8 @@ describe( 'getRelatedEntitiesForIds()', () => {
 			expect( value.request.path )
 				.toBe(
 					'/ee/v4.8.36/datetime_tickets/?where' +
-					'[TKT_ID][IN]=10,20&include=Datetime.*' +
-					'&calculate=Datetime.foo,Datetime.bar'
+					'%5BTKT_ID%5D%5BIN%5D=10%2C20&include=Datetime.%2A' +
+					'&calculate=Datetime.foo%2CDatetime.bar'
 				);
 		} );
 		it( 'yields expected path when multiple a single calculated field ' +
@@ -313,7 +313,7 @@ describe( 'getRelatedEntitiesForIds()', () => {
 			expect( value.request.path )
 				.toBe(
 					'/ee/v4.8.36/datetime_tickets/?where' +
-					'[TKT_ID][IN]=10,20&include=Datetime.*' +
+					'%5BTKT_ID%5D%5BIN%5D=10%2C20&include=Datetime.%2A' +
 					'&calculate=Datetime.foo'
 				);
 		} );
@@ -383,8 +383,8 @@ describe( 'getRelatedEntitiesForIds()', () => {
 			const { value } = fulfillment.next( dateTimeFactory );
 			expect( value.request.path ).toBe(
 				'/ee/v4.8.36/events/?where' +
-				'[EVT_ID][IN]=10,20&include=Datetime.*' +
-				'&calculate=Datetime.foo,Datetime.bar'
+				'%5BEVT_ID%5D%5BIN%5D=10%2C20&include=Datetime.%2A' +
+				'&calculate=Datetime.foo%2CDatetime.bar'
 			);
 		} );
 		it( 'yields expected path when relationSchema is present ' +
@@ -402,8 +402,8 @@ describe( 'getRelatedEntitiesForIds()', () => {
 			const { value } = fulfillment.next( dateTimeFactory );
 			expect( value.request.path ).toBe(
 				'/ee/v4.8.36/events/?where' +
-				'[EVT_ID][IN]=10,20&include=Datetime.*' +
-				'&calculate=Datetime.foo'
+				'%5BEVT_ID%5D%5BIN%5D=10%2C20' +
+				'&include=Datetime.%2A&calculate=Datetime.foo'
 			);
 		} );
 		describe( 'yields expected action for each item in the response but ' +
@@ -475,8 +475,8 @@ describe( 'getRelatedEntitiesForIds()', () => {
 			const { value } = fulfillment.next( dateTimeFactory );
 			expect( value.request.path ).toBe(
 				'/ee/v4.8.36/datetimes/?where' +
-				'[EVT_ID][IN]=10,20&include=Event.*' +
-				'&calculate=foo,bar'
+				'%5BEVT_ID%5D%5BIN%5D=10%2C20'+
+				'&include=Event.%2A&calculate=foo%2Cbar'
 			);
 		} );
 		it( 'yields expected fetch path when relationSchema is present ' +
@@ -494,8 +494,8 @@ describe( 'getRelatedEntitiesForIds()', () => {
 			const { value } = fulfillment.next( dateTimeFactory );
 			expect( value.request.path ).toBe(
 				'/ee/v4.8.36/datetimes/?where' +
-				'[EVT_ID][IN]=10,20&include=Event.*' +
-				'&calculate=foo'
+				'%5BEVT_ID%5D%5BIN%5D=10%2C20' +
+				'&include=Event.%2A&calculate=foo'
 			);
 		} );
 	} );
