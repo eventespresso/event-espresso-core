@@ -163,15 +163,29 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
     {
         // makes sure timezone is always set.
         $timezone_string = $this->get_timezone();
+        /**
+         * Filters the initial start date for the new datetime.
+         * Any time included in this value will be overridden later so use additional filters to modify the time.
+         *
+         * @param int $start_date Unixtimestamp representing now + 30 days in seconds.
+         * @return int unixtimestamp
+         */
         $start_date = apply_filters(
             'FHEE__EEM_Datetime__create_new_blank_datetime__start_date',
             $this->current_time_for_query('DTT_EVT_start', true) + MONTH_IN_SECONDS
         );
+        /**
+         * Filters the initial end date for the new datetime.
+         * Any time included in this value will be overridden later so use additional filters to modify the time.
+         *
+         * @param int $end_data Unixtimestamp representing now + 30 days in seconds.
+         * @return int unixtimestamp
+         */
         $end_date = apply_filters(
             'FHEE__EEM_Datetime__create_new_blank_datetime__end_date',
             $this->current_time_for_query('DTT_EVT_end', true) + MONTH_IN_SECONDS
         );
-        $blank_datetime  = EE_Datetime::new_instance(
+        $blank_datetime = EE_Datetime::new_instance(
             array(
                 'DTT_EVT_start' => $start_date,
                 'DTT_EVT_end'   => $end_date,
@@ -180,10 +194,24 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
             ),
             $timezone_string
         );
+        /**
+         * Filters the initial start time and format for the new EE_Datetime instance.
+         *
+         * @param array $start_time An array having size 2.  First element is the time, second element is the time
+         *                          format.
+         * @return array
+         */
         $start_time = apply_filters(
             'FHEE__EEM_Datetime__create_new_blank_datetime__start_time',
             ['8am', 'ga']
         );
+        /**
+         * Filters the initial end time and format for the new EE_Datetime instance.
+         *
+         * @param array $end_time An array having size 2.  First element is the time, second element is the time
+         *                        format
+         * @return array
+         */
         $end_time = apply_filters(
             'FHEE__EEM_Datetime__create_new_blank_datetime__end_time',
             ['5pm', 'ga']
