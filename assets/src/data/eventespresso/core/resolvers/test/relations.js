@@ -475,7 +475,7 @@ describe( 'getRelatedEntitiesForIds()', () => {
 			const { value } = fulfillment.next( dateTimeFactory );
 			expect( value.request.path ).toBe(
 				'/ee/v4.8.36/datetimes/?where' +
-				'%5BEVT_ID%5D%5BIN%5D=10%2C20'+
+				'%5BEVT_ID%5D%5BIN%5D=10%2C20' +
 				'&include=Event.%2A&calculate=foo%2Cbar'
 			);
 		} );

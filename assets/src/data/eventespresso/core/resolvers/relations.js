@@ -18,7 +18,7 @@ import {
 } from '@eventespresso/validators';
 import { InvalidModelEntity } from '@eventespresso/eejs';
 import warning from 'warning';
-import { isEmpty, isUndefined, isArray, castArray } from 'lodash';
+import { isEmpty, isUndefined, isArray } from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 
 /**
