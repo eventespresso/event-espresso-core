@@ -20,6 +20,7 @@ import { EspressoIcon } from '../';
  * @param {string} size
  * @param {string} style
  * @param {string} htmlClass
+ * @param {Object} buttonProps
  */
 const FancyButton = ( {
 	buttonText,
@@ -28,6 +29,7 @@ const FancyButton = ( {
 	size = 'medium',
 	style = 'wp-primary',
 	htmlClass = '',
+	...buttonProps
 } ) => {
 	let iconSize = 24;
 	let sizeClass = 'ee-medium-button';
@@ -85,7 +87,7 @@ const FancyButton = ( {
 		htmlClass += ' ee-noIcon';
 	}
 	return (
-		<Button className={ htmlClass } onClick={ onClick }>
+		<Button className={ htmlClass } onClick={ onClick } { ...buttonProps }>
 			<span className="text-wrap">{ buttonText }</span>{ icon }
 		</Button>
 	);
