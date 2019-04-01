@@ -1,20 +1,22 @@
 /**
  * External imports
  */
-import { isEmpty } from 'lodash';
 import { Component } from '@wordpress/element';
-import { withSelect } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
+import { withSelect, withDispatch } from '@wordpress/data';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-// import { EspressoIcon } from '@eventespresso/components';
 import { __, _x, sprintf } from '@eventespresso/i18n';
 import { withEditorModal } from '@eventespresso/higher-order-components';
+import { Money, SiteCurrency } from '@eventespresso/value-objects';
 
 /**
  * Internal dependencies
  */
 import { default as TicketPriceCalculatorForm } from './ticket-price-calculator-form';
-import { ticketPriceCalculatorFormDataMap } from './ticket-price-calculator-form-data-map';
-// import './style.css';
+import {
+	ticketPriceCalculatorFormDataMap,
+} from './ticket-price-calculator-form-data-map';
+import { ticketPriceCalculator } from './ticket-price-calculator';
 
 const DEFAULT_EMPTY_ARRAY = [];
 
@@ -22,8 +24,6 @@ const DEFAULT_EMPTY_ARRAY = [];
  * TicketPriceCalculatorFormModal
  *
  * @constructor
- * @param {Object} ticket    JSON object defining the Ticket
- * @return {Object} rendered menu
  */
 class TicketPriceCalculatorFormModal extends Component {
 	/**
@@ -33,140 +33,7 @@ class TicketPriceCalculatorFormModal extends Component {
 	constructor( props ) {
 		super( props );
 		this.toggleEditor = props.closeModal;
-		// this.state = {
-		// 	ticket: props.ticket,
-		// 	prices: props.prices,
-		// 	// originalTicket: null,
-		// };
 	}
-
-	// /**
-	//  * @function
-	//  * @param {number} ticketId
-	//  * @return {Promise} ticket
-	//  */
-	// getTicket = ( ticketId ) => {
-	// 	console.log( 'TicketPriceCalculatorFormModal.getTicket()' );
-	// 	return new Promise(
-	// 		( resolve ) => {
-	// 			// resolve(
-	// 			// 	select( 'eventespresso/core' )
-	// 			// 		.getEntityById(
-	// 			// 			'ticket',
-	// 			// 			ticketId
-	// 			// 		)
-	// 			// );
-	// 			if ( ticketId ) {
-	// 				console.log(
-	// 					'TicketPriceCalculatorFormModal.getTicket() ticketId',
-	// 					ticketId
-	// 				);
-	// 				const ticket = select( 'eventespresso/core' )
-	// 					.getEntityById(
-	// 						'ticket',
-	// 						ticketId
-	// 					);
-	// 				console.log(
-	// 					'TicketPriceCalculatorFormModal.getTicket() ticket',
-	// 					ticket
-	// 				);
-	// 				if ( ticket ) {
-	// 					resolve( ticket );
-	// 				}
-	// 			}
-	// 		}
-	// 	);
-	// };
-	//
-	// /**
-	//  * @function
-	//  * @param {Object} ticket
-	//  * @return {Promise} prices
-	//  */
-	// getTicketPrices = ( ticket ) => {
-	// 	console.log( 'TicketPriceCalculatorFormModal.getTicketPrices()' );
-	// 	return new Promise(
-	// 		( resolve ) => {
-	// 			// resolve(
-	// 			// 	select( `eventespresso/core` )
-	// 			// 		.getRelatedEntities( ticket, 'price' )
-	// 			// );
-	// 			console.log(
-	// 				'TicketPriceCalculatorFormModal.getTicketPrices() ticket',
-	// 				ticket
-	// 			);
-	// 			const prices = isModelEntityOfModel( ticket, 'ticket' ) ?
-	// 				select( 'eventespresso/core' )
-	// 					.getRelatedEntities( ticket, 'prices' ) :
-	// 				[];
-	// 			console.log(
-	// 				'TicketPriceCalculatorFormModal.getTicketPrices() prices',
-	// 				prices
-	// 			);
-	// 			if ( prices !== [] ) {
-	// 				resolve( {
-	// 					ticket: ticket,
-	// 					prices: prices,
-	// 				} );
-	// 			}
-	// 		}
-	// 	);
-	// };
-
-	/**
-	 * @function
-	 * @return {Object} data
-	 */
-	loadHandler = async () => {
-		console.log( 'TicketPriceCalculatorFormModal.loadHandler()' );
-		return {};
-		// return {
-		// 	ticket: this.props.ticket,
-		// 	prices: this.props.prices,
-		// };
-		// if (
-		// 	isModelEntityOfModel( this.props.ticket, 'ticket' ) &&
-		// 	this.props.prices !== [] &&
-		// 	this.props.priceTypes !== []
-		// ) {
-		// 	console.log( '************************************************' );
-		// 	console.log(
-		// 		'TicketPriceCalculatorFormModal.loadHandler()',
-		// 		this.props.ticket,
-		// 		this.props.prices,
-		// 		this.props.priceTypes
-		// 	);
-		// 	console.log( '************************************************' );
-		// 	return {
-		// 		ticket: this.props.ticket,
-		// 		prices: this.props.prices,
-		// 		priceTypes: this.props.priceTypes,
-		// 	};
-		// }
-		// return this.getTicket( this.props.ticketId )
-		// 	.then( this.getTicketPrices )
-		// 	.then( ( data ) => {
-		// 		return data;
-		// 	} );
-		// const ticket = await this.getTicket( this.props.ticketId );
-		// if ( ticket ) {
-		// 	console.log(
-		// 		'TicketPriceCalculatorFormModal.loadHandler() ticket',
-		// 		ticket
-		// 	);
-		// 	const prices = await this.getTicketPrices( ticket );
-		// 	if ( prices ) {
-		// 		console.log(
-		// 			'TicketPriceCalculatorFormModal.loadHandler() prices',
-		// 			prices
-		// 		);
-		// 		return {
-		// 			ticket: ticket,
-		// 			prices: prices,
-		// 		};
-		// 	}
-		// }
-	};
 
 	/**
 	 * @function
@@ -175,12 +42,6 @@ class TicketPriceCalculatorFormModal extends Component {
 	submitHandler = async ( data ) => {
 		console.log( 'TicketPriceCalculatorFormModal.submitHandler()' );
 		console.log( ' >>> SUBMITTING DATA <<<', data );
-		// const ticket = ticketEntityFormSubmitHandler(
-		// 	this.state.ticket,
-		// 	data
-		// );
-		// console.log( ' >>> UPDATED TICKET <<<', ticket );
-		// this.setState( { ticket: ticket } );
 		this.toggleEditor();
 	};
 
@@ -191,39 +52,33 @@ class TicketPriceCalculatorFormModal extends Component {
 	resetHandler = ( event ) => {
 		console.log( 'TicketPriceCalculatorFormModal.resetHandler()' );
 		console.log( ' >>> FORM RESET <<<', event );
-		// this.setState( { ticket: this.state.originalTicket } );
+		this.toggleEditor();
 	};
 
 	render() {
-		// console.log( '' );
-		// console.log( 'TicketPriceCalculatorFormModal.render()', this.props );
 		const {
+			loading,
 			ticket,
 			prices,
 			priceTypes,
 			...formProps
 		} = this.props;
-		const formDataMap = ticketPriceCalculatorFormDataMap(
-			ticket,
-			prices
-		);
-		// console.log( 'TicketPriceCalculatorFormModal.render() formDataMap',
-		// 	formDataMap
-		// );
-		const formData = ! isEmpty( formDataMap ) && ! isEmpty( priceTypes ) ?
+		const formData = loading ?
+			{ loading } :
 			{
-				loading: false,
-				formData: formDataMap,
+				loading,
+				formData: ticketPriceCalculatorFormDataMap(
+					ticket,
+					prices
+				),
 				ticket,
 				prices,
 				priceTypes,
-			} :
-			{ loading: true };
-		// console.log( 'TicketPriceCalculatorFormModal.render() formData', formData );
-
+			};
 		return (
 			<TicketPriceCalculatorForm
 				{ ...formData }
+				decorators={ ticketPriceCalculator }
 				loadHandler={ null }
 				submitHandler={ this.submitHandler }
 				resetHandler={ this.resetHandler }
@@ -246,24 +101,85 @@ class TicketPriceCalculatorFormModal extends Component {
 /**
  * Enhanced TicketPriceCalculatorForm with Modal
  */
-export default withEditorModal( {
-	title: __( 'Ticket Price Calculator', 'event_espresso' ),
-	customClass: 'ee-ticket-price-calculator-modal',
-	closeButtonLabel: __( 'close ticket price calculator', 'event_espresso' ),
-} )(
+export default compose( [
+	withEditorModal( {
+		title: __( 'Ticket Price Calculator', 'event_espresso' ),
+		customClass: 'ee-ticket-price-calculator-modal',
+		closeButtonLabel: __( 'close ticket price calculator',
+			'event_espresso'
+		),
+	} ),
 	withSelect( ( select, ownProps ) => {
+		const {
+			getEntityById,
+			getRelatedEntities,
+		} = select( 'eventespresso/core' );
+		const { getEntities } = select( 'eventespresso/lists' );
+		const { hasFinishedResolution } = select( 'core/data' );
+		const getTicket = async ( ticketId ) => {
+			const ticket = getEntityById( 'ticket', parseInt( ticketId ) );
+			if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
+				return ticket;
+			}
+		};
 		const ticket = ownProps.ticket;
 		let prices = DEFAULT_EMPTY_ARRAY;
 		if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
-			prices = select( 'eventespresso/core' )
-				.getRelatedEntities( ticket, 'prices' );
+			prices = getRelatedEntities( ticket, 'prices' );
 		}
-		const priceTypes = select( 'eventespresso/lists' )
-			.getEntities( 'price_type' );
-		return {
+		const priceTypes = getEntities( 'price_type' );
+		const pricesResolved = hasFinishedResolution(
+			'eventespresso/core',
+			'getRelatedEntities',
+			[ ticket, 'prices' ]
+		);
+		const priceTypesResolved = hasFinishedResolution(
+			'eventespresso/lists',
+			'getEntities',
+			[ 'price_type' ]
+		);
+		return pricesResolved && priceTypesResolved ? {
+			loading: false,
 			ticket,
 			prices,
 			priceTypes,
+			getTicket,
+		} : {
+			loading: true,
 		};
-	} )( TicketPriceCalculatorFormModal )
-);
+	} ),
+	withDispatch( ( dispatch ) => {
+		const {
+			createEntity,
+			createRelation,
+			trashEntityById,
+		} = dispatch( 'eventespresso/core' );
+		const addPriceModifier = async ( ticket, details = {} ) => {
+			if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
+				return;
+			}
+			const priceModifier = await createEntity(
+				'price',
+				{
+					PRT_ID: parseInt( details.type || 2 ),
+					PRC_name: details.name || '',
+					PRC_desc: details.desc || '',
+					PRC_amount: new Money(
+						parseFloat( details.amount || 0 ), SiteCurrency
+					),
+					PRC_order: details.order || 999,
+				}
+			);
+			if ( isModelEntityOfModel( priceModifier, 'price' ) ) {
+				createRelation( 'ticket', ticket.id, 'price', priceModifier );
+			}
+		};
+		const trashPriceModifier = async ( priceModifier ) => {
+			if ( ! isModelEntityOfModel( priceModifier, 'price' ) ) {
+				return;
+			}
+			trashEntityById( 'price', priceModifier.id );
+		};
+		return { addPriceModifier, trashPriceModifier };
+	} ),
+] )( TicketPriceCalculatorFormModal );
