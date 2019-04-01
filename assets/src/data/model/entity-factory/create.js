@@ -24,6 +24,7 @@ import {
 	deriveRenderedValue,
 	derivePreparedValueForField,
 	getRelationNameFromLink,
+	getBaseFieldsAndValuesForCloning,
 	getBaseFieldsAndValuesForPersisting,
 	getPrimaryKeyFieldsFromSchema,
 	getEntityFieldsFromSchema,
@@ -91,7 +92,7 @@ export const createGetterAndSetter = (
 	instance,
 	fieldName,
 	initialFieldValue,
-	opts = {}
+	opts = {},
 ) => {
 	let propertyValue = initialFieldValue;
 	Object.defineProperty( instance, fieldName, {
@@ -105,6 +106,7 @@ export const createGetterAndSetter = (
 				instance
 			);
 			setSaveState( instance, SAVE_STATE.DIRTY );
+			setFieldToPersist( instance, fieldName );
 			propertyValue = receivedValue;
 		},
 		...opts,
@@ -341,6 +343,18 @@ const populateMissingFields = ( instance ) => {
 };
 
 /**
+ * Returns a plain object of entity fields and values from this entity instance
+ * for use in cloning the entity.
+ *
+ * @param {BaseEntity} instance
+ *
+ * @return {Object} Plain object of all field:value pairs.
+ */
+const forClone = ( instance ) => {
+	return getBaseFieldsAndValuesForCloning( instance );
+};
+
+/**
  * Returns a plain object of the entity fields and values from this entity
  * instance prepared for use in an update request.
  *
@@ -359,7 +373,10 @@ const forUpdate = ( instance ) => {
  * @return {Object} Plain object of field:value pairs.
  */
 const forInsert = ( instance ) => {
-	const entityValues = getBaseFieldsAndValuesForPersisting( instance );
+	const entityValues = getBaseFieldsAndValuesForPersisting(
+		instance,
+		true
+	);
 	instance.primaryKeys.forEach( ( primaryKey ) => {
 		entityValues[ primaryKey ] = instance[ primaryKey ];
 	} );
@@ -392,6 +409,7 @@ export const createPersistingGettersAndSetters = ( instance ) => {
 	createCallbackGetter( instance, 'forUpdate', forUpdate );
 	createCallbackGetter( instance, 'forInsert', forInsert );
 	createCallbackGetter( instance, 'forPersist', forPersist );
+	createCallbackGetter( instance, 'forClone', forClone );
 };
 
 /**
@@ -734,5 +752,18 @@ export const setSaveState = ( instance, saveState ) => {
 				'Save state for entity can only be set to either ' +
 				'SAVE_STATE.DIRTY, SAVE_STATE.NEW or SAVE_STATE.CLEAN'
 			);
+	}
+};
+
+/**
+ * Add the field name to the fieldToPersistOnInsert property on the instance
+ * if it exists.
+ *
+ * @param {Object} instance
+ * @param {string} fieldName
+ */
+export const setFieldToPersist = ( instance, fieldName ) => {
+	if ( instance.fieldsToPersistOnInsert ) {
+		instance.fieldsToPersistOnInsert.add( fieldName );
 	}
 };

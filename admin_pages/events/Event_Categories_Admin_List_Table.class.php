@@ -126,6 +126,19 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
             ),
             $term_name
         ) . '">' . esc_html__('Delete', 'event_espresso') . '</a>';
+      
+        $actions['view'] = sprintf(
+            '<a href="%s" aria-label="%s">%s</a>',
+            get_term_link($item->get('term_id')),
+            esc_attr(
+                sprintf(
+                    /* translators: %s: event category name */
+                    __('View &#8220;%s&#8221; archive', 'event_espresso'),
+                    $item->get_first_related('Term')->get('name')
+                )
+            ),
+            esc_html__('View', 'event_espresso')
+        );
 
         $content = '<strong><a class="row-title" href="' . $edit_link . '">' . $term_name . '</a></strong>';
         $content .= $this->row_actions($actions);

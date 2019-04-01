@@ -52,8 +52,14 @@ class BaseEntity {
 		);
 		createGetter( this, 'modelName', modelName );
 		createGetter( this, 'originalFieldsAndValues', entityFieldsAndValues );
+		createGetter(
+			this,
+			'fieldsToPersistOnInsert',
+			new Set( Object.keys( entityFieldsAndValues ) )
+		);
 		createEntityGettersAndSetters( this );
 		createPersistingGettersAndSetters( this );
+		Object.seal( this );
 	}
 
 	/**
@@ -111,6 +117,23 @@ class BaseEntity {
 	 */
 	get isFieldPasswordProtected() {
 		return ( fieldName ) => this.protectedFields.indexOf( fieldName ) > -1;
+	}
+
+	/**
+	 * Used to clone the current entity object.  This results in an instance of
+	 * BaseEntity that is equivalent as this current instance (except it will
+	 * have a new generated id).
+	 *
+	 * @return {BaseEntity} A new instance of BaseEntity
+	 */
+	get clone() {
+		return new BaseEntity(
+			this.modelName,
+			this.forClone,
+			{ $schema: {}, properties: this.schema },
+			this.fieldPrefixes,
+			true
+		);
 	}
 
 	static name = 'BaseEntity'

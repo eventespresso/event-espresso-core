@@ -68,3 +68,16 @@ export function receiveRelationEndpointForModelEntity(
 		endpoint,
 	};
 }
+
+export function receiveRelationSchema(
+	modelName,
+	relationName,
+	relationSchema
+) {
+	return {
+		type: types.RECEIVE_RELATION_SCHEMA,
+		modelName,
+		relationName,
+		relationSchema,
+	};
+}

@@ -46,6 +46,12 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
 
 
     /**
+     * @return array
+     */
+    public function filesParams();
+
+
+    /**
      * returns contents of $_REQUEST
      *
      * @return array

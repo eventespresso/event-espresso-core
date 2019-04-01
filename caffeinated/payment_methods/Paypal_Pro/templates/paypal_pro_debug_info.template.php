@@ -39,11 +39,7 @@
                 '<a href="http://developer.paypal.com">developer.paypal.com</a>'
             ); ?></li>
         <li><?php
-            printf(
-                __('CVV2 should be 115 (see %s PayPal\'s documentation for other special codes %s)', 'event_espresso'),
-                '<a href="https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_testing_SBTestErrorConditions#id108HH0RJ0TS" target="_blank">',
-                '</a>'
-            ); ?></li>
+            esc_html_e('CVV2 should be 115', 'event_espresso'); ?></li>
     </ul>
 
     <p class="test-credit-cards-info-pg">

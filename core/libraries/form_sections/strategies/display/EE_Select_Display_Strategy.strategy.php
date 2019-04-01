@@ -27,14 +27,9 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base
 
         $html = EEH_HTML::nl(0, 'select');
         $html .= '<select';
-        $html .= ' id="' . $this->_input->html_id() . '"';
-        $html .= ' name="' . $this->_input->html_name() . '"';
-        $class = $this->_input->required() ? $this->_input->required_css_class() . ' ' . $this->_input->html_class() : $this->_input->html_class();
-        $html .= ' class="' . $class . '"';
-        // add html5 required
-        $html .= $this->_input->required() ? ' required' : '';
-        $html .= ' style="' . $this->_input->html_style() . '"';
-        $html .= ' ' . $this->_input->other_html_attributes();
+        $html .= $this->_attributes_string(
+            $this->_standard_attributes_array()
+        );
         $html .= '>';
 
         if (EEH_Array::is_multi_dimensional_array($this->_input->options())) {

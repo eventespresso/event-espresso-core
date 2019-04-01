@@ -4,7 +4,7 @@
 import { isEmpty, keys } from 'lodash';
 import cuid from 'cuid';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-import { singularModelName } from '@eventespresso/model';
+import { singularModelName, pluralModelName } from '@eventespresso/model';
 
 /**
  * Internal imports.
@@ -32,6 +32,7 @@ const DEFAULT_EMPTY_ARRAY = [];
  * names with values of relation Ids persisted.
  */
 function* persistAddRelationsForModel( modelName ) {
+	modelName = singularModelName( modelName );
 	return yield resolveDispatch(
 		CORE_REDUCER_KEY,
 		'persistRelationsForModel',
@@ -49,6 +50,7 @@ function* persistAddRelationsForModel( modelName ) {
  * names with values of relation Ids persisted.
  */
 function* persistDeleteRelationsForModel( modelName ) {
+	modelName = singularModelName( modelName );
 	return yield resolveDispatch(
 		CORE_REDUCER_KEY,
 		'persistRelationsForModel',
@@ -69,6 +71,7 @@ function* persistDeleteRelationsForModel( modelName ) {
  * names with values of relation Ids persisted.
  */
 function* persistRelationsForModel( modelName, addRelation = true ) {
+	modelName = singularModelName( modelName );
 	const relationState = yield resolveDispatch(
 		CORE_REDUCER_KEY,
 		'getRelationState',
@@ -120,6 +123,7 @@ function* persistRelationsForEntityId(
 	addRelation = true,
 	relationState = DEFAULT_EMPTY_OBJECT
 ) {
+	modelName = singularModelName( modelName );
 	relationState = yield resolveDispatch(
 		CORE_REDUCER_KEY,
 		'getRelationState',
@@ -178,6 +182,8 @@ function* persistRelationsForEntityIdAndRelation(
 	addRelation = true,
 	relationState = DEFAULT_EMPTY_OBJECT
 ) {
+	modelName = singularModelName( modelName );
+	relationName = pluralModelName( relationName );
 	relationState = yield resolveDispatch(
 		CORE_REDUCER_KEY,
 		'getRelationState',
@@ -240,6 +246,8 @@ function* persistRelationsForEntityIdAndRelationId(
 	addRelation = true,
 	relationState = DEFAULT_EMPTY_OBJECT
 ) {
+	modelName = singularModelName( modelName );
+	relationName = pluralModelName( relationName );
 	relationState = yield resolveDispatch(
 		CORE_REDUCER_KEY,
 		'getRelationState',
@@ -344,6 +352,8 @@ function* persistNewEntityAndRemoveDirtyRelations(
 	persistingArguments,
 	doRelationRemoval = true,
 ) {
+	relationName = pluralModelName( relationName );
+	modelName = singularModelName( modelName );
 	const persistedEntity = yield resolveDispatch(
 		CORE_REDUCER_KEY,
 		'persistForEntityId',

@@ -160,4 +160,36 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
         $billing_values['credit_card_type'] = $billing_form->get_input_value('credit_card_type');
         return $billing_values;
     }
+
+    /**
+     * Override parent to account for a change in extra meta inputs in 4.9.75.p
+     * @since 4.9.79.p
+     * @param EE_Payment_Method $payment_method_instance
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     */
+    public function set_instance($payment_method_instance)
+    {
+        // Check for the old extra meta inputs
+        $old_extra_metas = EEM_Extra_Meta::instance()->get_all(
+            [
+                [
+                    'EXM_type' => 'Payment_Method',
+                    'OBJ_ID' => $payment_method_instance->ID(),
+                    'EXM_key' => ['IN', ['username', 'password', 'signature']],
+                ]
+            ]
+        );
+        // If they existed, set the new ones instead
+        if (!empty($old_extra_metas)) {
+            foreach ($old_extra_metas as $old_extra_meta) {
+                $old_extra_meta->set('EXM_key', 'api_' . $old_extra_meta->get('EXM_key'));
+                $old_extra_meta->save();
+            }
+        }
+        return parent::set_instance($payment_method_instance);
+    }
 }
