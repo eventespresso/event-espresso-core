@@ -12,7 +12,7 @@ import {
 	ResponsiveTable,
 	twoColumnAdminFormLayout,
 } from '@eventespresso/components';
-import { __, _x, sprintf } from '@eventespresso/i18n';
+import { __ } from '@eventespresso/i18n';
 import { dateTimeModel, ticketModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
@@ -20,7 +20,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  * Internal imports
  */
 import * as handler from './ticket-assignments-handler';
-import './dates-and-tickets-manager.css';
+import './ticket-assignments-manager.css';
 
 const noIndex = -1;
 
@@ -33,7 +33,7 @@ const {
 	getBackgroundColorClass: getTicketBgColorClass,
 } = ticketModel;
 
-class DatesAndTicketsManager extends Component {
+class TicketAssignmentsManager extends Component {
 	static propTypes = {
 		entities: PropTypes.arrayOf( PropTypes.object ).isRequired,
 		tickets: PropTypes.arrayOf( PropTypes.object ).isRequired,
@@ -113,7 +113,7 @@ class DatesAndTicketsManager extends Component {
 	 */
 	ticketHeaders = ( tickets, dateCount ) => {
 		// console.log( '' );
-		// console.log( 'DatesAndTicketsManager.ticketHeaders()' );
+		// console.log( 'TicketAssignmentsManager.ticketHeaders()' );
 		const headerCells = [];
 		if ( dateCount > 1 ) {
 			headerCells.push(
@@ -176,7 +176,7 @@ class DatesAndTicketsManager extends Component {
 		dateCount,
 	) => {
 		// console.log( '' );
-		// console.log( 'DatesAndTicketsManager.ticketHeaders()' );
+		// console.log( 'TicketAssignmentsManager.ticketHeaders()' );
 		// console.log( ' > dateCount: ', dateCount );
 		let year = 0;
 		const dateRows = [];
@@ -201,6 +201,7 @@ class DatesAndTicketsManager extends Component {
 					{
 						type: 'row',
 						class: 'ee-dtm-date-row',
+						value: '',
 					},
 				];
 				if ( dateCount > 1 ) {
@@ -402,7 +403,7 @@ class DatesAndTicketsManager extends Component {
 
 	render() {
 		// console.log( '' );
-		// console.log( 'DatesAndTicketsManager.render()' );
+		// console.log( 'TicketAssignmentsManager.render()' );
 		// console.log( ' > props: ', this.props );
 
 		const {
@@ -440,7 +441,6 @@ class DatesAndTicketsManager extends Component {
 			FormSaveCancelButtons,
 		} = twoColumnAdminFormLayout;
 		const dateCount = dates.length;
-		// console.log( ' > dateCount: ', dateCount );
 		let tableId = 'ee-ticket-assignments-manager-';
 		if ( dateCount === 1 ) {
 			tableId += dates[ 0 ].id;
@@ -485,4 +485,4 @@ class DatesAndTicketsManager extends Component {
 	}
 }
 
-export default DatesAndTicketsManager;
+export default TicketAssignmentsManager;

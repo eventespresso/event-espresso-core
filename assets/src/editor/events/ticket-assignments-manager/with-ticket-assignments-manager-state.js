@@ -18,7 +18,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 import {
 	sortDatesList,
 } from '../dates-and-times/editor-date/filter-bar/dates-list-filter-utils';
-import { default as DatesAndTicketsManager } from './dates-and-tickets-manager';
+import { default as TicketAssignmentsManager } from './ticket-assignments-manager';
 
 const { MODEL_NAME: DATETIME } = dateTimeModel;
 const { MODEL_NAME: TICKET } = ticketModel;
@@ -28,7 +28,7 @@ const { MODEL_NAME: TICKET } = ticketModel;
  * Higher-Order-Component that wraps an "EntityListFilterBar" component
  * in order to provide state management for it and its children
  *
- * @param {Object} DatesAndTicketsManager
+ * @param {Object} TicketAssignmentsManager
  * @return {Object} WrappedComponent with added EntityListFilterState
  */
 export default compose( [
@@ -271,4 +271,4 @@ export default compose( [
 	withEntityPagination( {
 		returnAsProp: true,
 	} ),
-] )( DatesAndTicketsManager );
+] )( TicketAssignmentsManager );

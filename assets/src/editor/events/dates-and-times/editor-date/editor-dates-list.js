@@ -17,7 +17,7 @@ import { dateTimeModel } from '@eventespresso/model';
 import { EditorDatesGridView, EditorDatesListView } from './';
 import { default as PaginatedDatesListWithFilterBar } from './filter-bar';
 import { EditEventDateFormModal } from '../';
-import { DatesAndTicketsManagerModal } from '../../dates-and-tickets-metabox';
+import { TicketAssignmentsManagerModal } from '../../ticket-assignments-manager';
 
 const {
 	FormWrapper,
@@ -59,7 +59,7 @@ class EditorDatesList extends Component {
 	};
 
 	/**
-	 * opens and closes DatesAndTicketsManagerModal
+	 * opens and closes TicketAssignmentsManagerModal
 	 *
 	 * @function
 	 */
@@ -159,7 +159,7 @@ class EditorDatesList extends Component {
 					closeModal={ this.toggleEditor }
 					editorOpen={ this.state.editorOpen }
 				/>
-				<DatesAndTicketsManagerModal
+				<TicketAssignmentsManagerModal
 					allDates={ allDates }
 					allTickets={ allTickets }
 					closeModal={ this.toggleManager }

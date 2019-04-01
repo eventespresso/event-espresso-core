@@ -14,7 +14,7 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 import { EditEventDateFormModal } from '../';
 import { copyEventDate, trashEventDate } from '../action-handlers';
 import { EntityActionMenuItem } from '../../../entity-action-menu-item';
-import { DatesAndTicketsManagerModal } from '../../../dates-and-tickets-metabox';
+import { TicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
 import './style.css';
 
 const { MODEL_NAME: DATETIME } = dateTimeModel;
@@ -48,7 +48,7 @@ class EditorDateActionsMenu extends Component {
 	};
 
 	/**
-	 * opens and closes DatesAndTicketsManagerModal
+	 * opens and closes TicketAssignmentsManagerModal
 	 *
 	 * @function
 	 */
@@ -207,7 +207,7 @@ class EditorDateActionsMenu extends Component {
 					closeModal={ this.toggleEditor }
 					editorOpen={ this.state.editorOpen }
 				/>
-				<DatesAndTicketsManagerModal
+				<TicketAssignmentsManagerModal
 					date={ eventDate }
 					allTickets={ allTickets }
 					closeModal={ this.toggleTickets }

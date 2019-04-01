@@ -21,7 +21,7 @@ const { MODEL_NAME: TICKET } = ticketModel;
 import { EditTicketFormModal } from '../';
 import { copyTicket, trashTicket } from '../action-handlers';
 import { EntityActionMenuItem } from '../../../entity-action-menu-item';
-import { DatesAndTicketsManagerModal } from '../../../dates-and-tickets-metabox';
+import { TicketAssignmentsManagerModal } from '../../../ticket-assignments-manager';
 import {
 	default as TicketPriceCalculatorFormModal,
 } from '../price-calculator/ticket-price-calculator-form-modal';
@@ -57,7 +57,7 @@ class EditorTicketActionsMenu extends Component {
 	};
 
 	/**
-	 * opens and closes DatesAndTicketsManagerModal
+	 * opens and closes TicketAssignmentsManagerModal
 	 *
 	 * @function
 	 */
@@ -226,7 +226,7 @@ class EditorTicketActionsMenu extends Component {
 					closeModal={ this.toggleEditor }
 					editorOpen={ this.state.editorOpen }
 				/>
-				<DatesAndTicketsManagerModal
+				<TicketAssignmentsManagerModal
 					ticket={ ticket }
 					allDates={ allDates }
 					closeModal={ this.toggleTickets }
