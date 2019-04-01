@@ -27,18 +27,17 @@ class Venue_Categories_Admin_List_Table extends EE_Admin_List_Table
     protected function _set_properties()
     {
         $this->_wp_list_args = array(
-            'singular' => __('venue category', 'event_espresso'),
-            'plural'   => __('venue categories', 'event_espresso'),
+            'singular' => esc_html__('venue category', 'event_espresso'),
+            'plural'   => esc_html__('venue categories', 'event_espresso'),
             'ajax'     => true, // for now,
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
 
         $this->_columns = array(
             'cb'    => '<input type="checkbox" />',
-            'id'    => __('ID', 'event_espresso'),
-            'name'  => __('Name', 'event_espresso'),
-            // 'shortcode' => __('Shortcode', 'event_espresso'),
-            'count' => __('Venues', 'event_espresso'),
+            'id'    => esc_html__('ID', 'event_espresso'),
+            'name'  => esc_html__('Name', 'event_espresso'),
+            'count' => esc_html__('Venues', 'event_espresso'),
         );
 
         $this->_sortable_columns = array(
@@ -105,7 +104,7 @@ class Venue_Categories_Admin_List_Table extends EE_Admin_List_Table
                     'event_espresso'
                 ),
                 $term_name
-            ) . '">' . __('Edit', 'event_espresso') . '</a>',
+            ) . '">' . esc_html__('Edit', 'event_espresso') . '</a>',
         );
 
 
@@ -116,7 +115,7 @@ class Venue_Categories_Admin_List_Table extends EE_Admin_List_Table
                 'event_espresso'
             ),
             $term_name
-        ) . '">' . __('Delete', 'event_espresso') . '</a>';
+        ) . '">' . esc_html__('Delete', 'event_espresso') . '</a>';
 
         $content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->get_first_related('Term')->get(
             'name'
