@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { isEmpty, isFunction } from 'lodash';
+import { first, isEmpty, isFunction } from 'lodash';
 import warning from 'warning';
 import PropTypes from 'prop-types';
 import { Component } from '@wordpress/element';
@@ -45,7 +45,7 @@ class ResponsiveTable extends Component {
 						PropTypes.object,
 						PropTypes.number,
 						PropTypes.string,
-					] ),
+					] ).isRequired,
 					id: PropTypes.string,
 					class: PropTypes.string,
 					render: PropTypes.func,
@@ -86,7 +86,7 @@ class ResponsiveTable extends Component {
 		this.captionID = `${ this.tableId }-caption`;
 		this.showTableFooter = metaData.showTableFooter ?
 			metaData.showTableFooter :
-			false;
+			true;
 		this.hasRowHeaders = metaData.hasRowHeaders ?
 			metaData.hasRowHeaders :
 			false;
@@ -128,38 +128,50 @@ class ResponsiveTable extends Component {
 
 	/**
 	 * @function
+	 * @param {number} rowNumber
 	 * @param {Array} columns
+	 * @param {boolean} isFooter
 	 * @return {Object} rendered headings row
 	 */
-	tableHeader = ( columns ) => {
+	tableHeader = ( rowNumber, columns, isFooter = false ) => {
 		let rowProps = {};
-		const rowNumber = 0;
+		const rowType = isFooter === true ? 'footer' : 'header';
+		let indexMod = 0;
+
+		// check if columns is <TableHeader> and if it has children
+
 		const headerCells = columns.map(
 			( column, colNumber ) => {
+
+				// check if column is <TableHeaderCell> and if it has children
+
 				if ( column.type && column.type === 'row' ) {
 					rowProps = column;
-					colNumber--;
+					indexMod++;
 					return null;
 				}
+				colNumber -= indexMod;
 				const hasRenderCallback = isFunction( column.render );
 				warning(
 					hasRenderCallback || column.hasOwnProperty( 'value' ),
-					`Missing "value" property for column header ${ colNumber }.`
+					`Missing "value" property for column ${ rowType } ${ colNumber }.`
 				);
 				const renderCallback = hasRenderCallback ?
 					column.render :
 					this.headerCell;
-				return renderCallback( rowNumber, colNumber, column );
+				return renderCallback( rowNumber, colNumber, column, rowType );
 			}
 		);
 		const rowId = rowProps.id ?
 			rowProps.id :
 			`ee-rTable-row-${ rowNumber }`;
-		const rowClass = rowProps.class ?
-			`${ rowProps.class } ${ this.headerRowClass }` :
-			this.headerRowClass;
+		let rowClass = rowProps.class || '';
+		rowClass = rowType === 'header' ?
+			`${ rowClass } ${ this.headerRowClass } row-${ rowNumber }` :
+			`${ rowClass } ${ this.footerRowClass } row-${ rowNumber }`;
 		return (
-			<tr key={ `row-${ rowNumber }` } id={ rowId } className={ rowClass } >
+			<tr key={ `row-${ rowNumber }` } id={ rowId }
+				className={ rowClass }>
 				{ headerCells }
 			</tr>
 		);
@@ -170,22 +182,33 @@ class ResponsiveTable extends Component {
 	 * @param {number} rowNumber
 	 * @param {number} colNumber
 	 * @param {Object} column
+	 * @param {string} rowType
 	 * @return {Object} rendered column header cell
 	 */
-	headerCell = ( rowNumber, colNumber, column ) => {
+	headerCell = ( rowNumber, colNumber, column, rowType ) => {
 		const columnId = column.id ?
 			column.id :
-			`ee-rTable-row-${ rowNumber }-col-${ colNumber }`;
-		const columnClass = column.class ?
-			`${ column.class } ${ this.headerThClass }` :
-			this.headerThClass;
+			`ee-rTable-row-${ rowType }-${ rowNumber }-col-${ colNumber }`;
+		let columnClass = column.class || '';
+		columnClass = rowType === 'header' ?
+			`${ columnClass } ${ this.headerThClass } col-${ colNumber }` :
+			`${ columnClass } ${ this.footerThClass } col-${ colNumber }`;
 		const extraProps = column.extraProps ?
 			column.extraProps :
 			{};
-		return (
+		return rowType === 'header' ? (
 			<th
 				role="columnheader"
 				scope="col"
+				key={ colNumber }
+				id={ columnId }
+				className={ columnClass }
+				{ ...extraProps }
+			>
+				{ column.value }
+			</th>
+		) : (
+			<th
 				key={ colNumber }
 				id={ columnId }
 				className={ columnClass }
@@ -211,15 +234,41 @@ class ResponsiveTable extends Component {
 		);
 		let rowProps = {};
 		let indexMod = 0;
+
+		// check if tableRow is <TableBodyRow> and if it has children
+
 		const rowCells = tableRow.map(
 			( cellData, colNumber ) => {
+
+				// check if column is <TableBodyCell> and if it has children
+				// else check if <TableBodyCell> elements have been supplied
+				// and loop thru each one and run its predicate on data
+				// (
+				// 		which is a callback that returns a boolean that
+				// 		indicates whether or not to use that <TableBodyCell>
+				// 		for the current data.
+				// 		ex:
+				//		a predicate could evaluate whether the current data
+				//		contains a particular property and if that property
+				// 		is of a particular type:
+				// 		predicate = ( data ) = {
+				//			return data.hasOwnProperty( 'type' ) &&
+				//			data.type === 'special-case';
+				//		}
+				// )
+
 				if ( cellData.type && cellData.type === 'row' ) {
 					rowProps = cellData;
 					indexMod++;
 					return null;
 				}
-				colNumber -= indexMod;
+				// first grab correct column from column data
 				const column = columns[ colNumber ];
+				if ( ! column ) {
+					return null;
+				}
+				// THEN adjust column number used in IDs
+				colNumber -= indexMod;
 				const hasRenderCallback = isFunction( cellData.render );
 				warning(
 					hasRenderCallback || cellData.hasOwnProperty( 'value' ),
@@ -241,8 +290,8 @@ class ResponsiveTable extends Component {
 			rowProps.id :
 			`ee-rTable-row-${ rowNumber }`;
 		const rowClass = rowProps.class ?
-			`${ rowProps.class } ${ this.bodyRowClass }` :
-			this.headerRowClass;
+			`${ rowProps.class } ${ this.bodyRowClass } row-${ rowNumber }` :
+			`${ this.bodyRowClass } row-${ rowNumber }`;
 		return (
 			<tr key={ `row-${ rowNumber }` } id={ rowId } className={ rowClass }>
 				{ rowCells }
@@ -267,8 +316,8 @@ class ResponsiveTable extends Component {
 			this.bodyThClass :
 			this.bodyTdClass;
 		columnClass = cellData.class ?
-			`${ cellData.class } ${ columnClass }` :
-			columnClass;
+			`${ cellData.class } ${ columnClass } col-${ colNumber }` :
+			`${ columnClass } col-${ colNumber }`;
 		const extraProps = cellData.extraProps ?
 			cellData.extraProps :
 			{};
@@ -280,7 +329,7 @@ class ResponsiveTable extends Component {
 				className={ columnClass }
 				{ ...extraProps }
 			>
-				{ cellData.value }
+				{ cellData.value || '' }
 			</th>
 		) : (
 			<td
@@ -293,38 +342,53 @@ class ResponsiveTable extends Component {
 					aria-hidden
 					className={ 'ee-rTable-mobile-only-column-header' }
 				>
-					{ column.value }
+					{ column.value || '' }
 				</div>
 				<div
 					className={ 'ee-rTable-mobile-only-column-value' }
 				>
-					{ cellData.value }
+					{ cellData.value || '' }
 				</div>
 			</td>
 		);
 	};
 
-	/**
-	 * @function
-	 * @param {Object} columns
-	 * @return {Object} rendered headings row
-	 */
-	footerRow = ( columns ) => {
-	};
-
 	render() {
-		const { columns, rowData, metaData, classes } = this.props;
+		const {
+			columns,
+			rowData,
+			metaData,
+			classes,
+			footerData = [],
+		} = this.props;
 		if ( isEmpty( columns ) ) {
 			return null;
 		}
 		this.setMetaData( metaData );
 		this.setCssClasses( classes ? classes : {} );
 		this.columnCount = columns.length;
+		const headerRowData = first( columns );
+		if ( headerRowData && headerRowData.type === 'row' ) {
+			this.columnCount--;
+		}
 		this.tableClass += ` ee-rTable-column-count-${ this.columnCount }`;
-		const tableHeader = this.tableHeader( columns );
-		const tableFooter = this.showTableFooter ? (
+		const tableHeader = this.tableHeader( 0, columns );
+		const tableBody = rowData.map(
+			( tableRow, rowNumber ) => this.tableRow(
+				rowNumber,
+				tableRow,
+				columns
+			)
+		);
+		const tableFooter = this.showTableFooter && ! isEmpty( footerData ) ? (
 			<tfoot className="ee-rTable-footer">
-				{ tableHeader }
+				{
+					this.tableHeader(
+						rowData.length + 1,
+						footerData,
+						true
+					)
+				}
 			</tfoot>
 		) : null;
 		return (
@@ -344,15 +408,7 @@ class ResponsiveTable extends Component {
 						{ tableHeader }
 					</thead>
 					<tbody className="ee-rTable-body">
-						{
-							rowData.map(
-								( tableRow, rowNumber ) => this.tableRow(
-									rowNumber,
-									tableRow,
-									columns
-								)
-							)
-						}
+						{ tableBody }
 					</tbody>
 					{ tableFooter }
 				</table>
