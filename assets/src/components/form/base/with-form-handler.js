@@ -1,7 +1,7 @@
 /**
  * External imports
  */
-import { isEmpty, isFunction } from 'lodash';
+import { castArray, isEmpty, isFunction } from 'lodash';
 import { Component } from '@wordpress/element';
 import { Form } from 'react-final-form';
 
@@ -19,23 +19,13 @@ import { FormCancelButton } from './form-cancel-button';
  * withFormHandler
  * Higher-Order-Component that wraps the supplied form component
  * with a React-Final-Form Form component and connects it to the
- * supplied load, Submit, and Reset handlers, which can either
- * be passed directly to this HOC as function parameters,
- * or passed as props to the final wrapped component.
- * Passing as props allows more interactivity from the calling component.
+ * supplied load, Submit, and Reset handlers, which are
+ * passed as props to the final wrapped component.
  *
  * @param {Function} FormComponent
- * @param {Function} loadHandler a function that supplies the form data
- * @param {Function} submitHandler a function that processes the submitted form
- * @param {Function} resetHandler a function called when resetting the form
  * @return {Object} FormComponent with added form handling
  */
-export const withFormHandler = (
-	FormComponent,
-	loadHandler = null,
-	submitHandler = null,
-	resetHandler = null
-) => {
+export const withFormHandler = ( FormComponent ) => {
 	/**
 	 * FormHandler
 	 *
@@ -56,15 +46,6 @@ export const withFormHandler = (
 				loading: false,
 				changes: false,
 				data: {},
-				loadHandler: props.loadHandler ?
-					props.loadHandler :
-					loadHandler,
-				submitHandler: props.submitHandler ?
-					props.submitHandler :
-					submitHandler,
-				resetHandler: props.resetHandler ?
-					props.resetHandler :
-					resetHandler,
 			};
 		}
 
@@ -86,9 +67,9 @@ export const withFormHandler = (
 		 * @function
 		 */
 		async componentDidMount() {
-			if ( isFunction( this.state.loadHandler ) ) {
+			if ( isFunction( this.props.loadHandler ) ) {
 				this.setState( { loading: true } );
-				const data = await this.state.loadHandler();
+				const data = await this.props.loadHandler();
 				this.setState( { loading: false, data } );
 			}
 		}
@@ -96,8 +77,12 @@ export const withFormHandler = (
 		render() {
 			const {
 				loading,
+				submitHandler,
+				resetHandler,
 				errorMessage = '',
 				loadingNotice = '',
+				decorators = [],
+				mutators = {},
 				...formProps
 			} = this.props;
 			let { formData = null } = this.props;
@@ -107,8 +92,10 @@ export const withFormHandler = (
 			return (
 				<FormErrorBoundary errorMessage={ errorMessage } >
 					<Form
-						onSubmit={ this.state.submitHandler }
+						onSubmit={ submitHandler }
 						initialValues={ formData }
+						decorators={ castArray( decorators ) }
+						mutators={ mutators }
 						render={ ( {
 							form,
 							values,
@@ -126,7 +113,7 @@ export const withFormHandler = (
 							);
 							const formReset = ( event ) => {
 								this.reset();
-								this.state.resetHandler( event );
+								resetHandler( event );
 								form.reset( event );
 							};
 							const cancelButton = (
