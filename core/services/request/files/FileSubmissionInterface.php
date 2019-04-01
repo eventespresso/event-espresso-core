@@ -5,11 +5,7 @@ namespace EventEspresso\core\services\request\files;
 /**
  * Class FileSubmissionInterface
  *
-<<<<<<< HEAD
  * Data concerning a file that was submitted via an HTML form.
-=======
- * Description
->>>>>>> master
  *
  * @package     Event Espresso
  * @author         Mike Nelson
