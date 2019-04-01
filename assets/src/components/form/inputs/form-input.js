@@ -2,7 +2,9 @@
  * External imports
  */
 import PropTypes from 'prop-types';
-import { Component } from '@wordpress/element';
+import { Component, Fragment } from '@wordpress/element';
+import { isFunction } from 'lodash';
+import { OnChange } from 'react-final-form-listeners';
 
 /**
  * Internal imports
@@ -41,6 +43,7 @@ HTML5_INPUT_TYPES.push( 'toggle' );
  * @param {Object} dataSet
  * @param {Array} options
  * @param {boolean} hasHelpText
+ * @param {Function} changeListener
  * @return {string} rendered date name form row
  */
 export class FormInput extends Component {
@@ -59,6 +62,7 @@ export class FormInput extends Component {
 		helpText: PropTypes.string,
 		helpTextID: PropTypes.string,
 		InputLayout: PropTypes.object,
+		changeListener: PropTypes.func,
 	};
 
 	render() {
@@ -67,6 +71,7 @@ export class FormInput extends Component {
 			name,
 			htmlId,
 			InputLayout,
+			changeListener = null,
 			...rest
 		} = this.props;
 		let {
@@ -87,7 +92,6 @@ export class FormInput extends Component {
 		attributes = addValidatorsToAttributes( attributes, validations );
 		// reduce validations to a single callback
 		validations = composeValidators( ...validations );
-
 		let formInput = null;
 		switch ( type ) {
 			case 'hidden' :
@@ -202,20 +206,31 @@ export class FormInput extends Component {
 					/>
 				);
 		}
+		const formListener = isFunction( changeListener ) ? (
+			<OnChange name={ name }>
+				{ changeListener }
+			</OnChange>
+		) : null;
 		return InputLayout ? (
-			<InputLayout
-				inputName={ name }
-				formInput={ formInput }
-				helpTextID={ helpTextID }
-				helpText={ helpText }
-			/>
+			<Fragment>
+				<InputLayout
+					inputName={ name }
+					formInput={ formInput }
+					helpTextID={ helpTextID }
+					helpText={ helpText }
+				/>
+				{ formListener }
+			</Fragment>
 		) : (
-			<DefaultInputLayout
-				inputName={ name }
-				formInput={ formInput }
-				helpTextID={ helpTextID }
-				helpText={ helpText }
-			/>
+			<Fragment>
+				<DefaultInputLayout
+					inputName={ name }
+					formInput={ formInput }
+					helpTextID={ helpTextID }
+					helpText={ helpText }
+				/>
+				{ formListener }
+			</Fragment>
 		);
 	}
 }
