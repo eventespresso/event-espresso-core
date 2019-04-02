@@ -78,4 +78,20 @@ describe( 'handleReceiveSelector()', () => {
 			)
 		).toEqual( expectedState );
 	} );
+	it( 'resets everything when RESET_ALL_STATE action type received', () => {
+		const originalState = Map()
+			.setIn(
+				[ 'foo', JSON.stringify( [ 'bar', 10 ] ) ],
+				'bar'
+			).setIn(
+				[ 'bar', JSON.stringify( [ 'foo', 42 ] ) ],
+				'foo'
+			);
+		expect( handleReceiveSelector(
+			originalState,
+			{
+				type: resetTypes.RESET_ALL_STATE,
+			}
+		) ).toEqual( Map() );
+	} );
 } );
