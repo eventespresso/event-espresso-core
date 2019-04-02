@@ -1,4 +1,8 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  * Class Datetime Model
  *
@@ -150,37 +154,122 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @access public
      * @return EE_Datetime[] array on success, FALSE on fail
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws ReflectionException
+     * @throws InvalidInterfaceException
      */
     public function create_new_blank_datetime()
     {
         // makes sure timezone is always set.
         $timezone_string = $this->get_timezone();
-        $blank_datetime  = EE_Datetime::new_instance(
+        /**
+         * Filters the initial start date for the new datetime.
+         * Any time included in this value will be overridden later so use additional filters to modify the time.
+         *
+         * @param int $start_date Unixtimestamp representing now + 30 days in seconds.
+         * @return int unixtimestamp
+         */
+        $start_date = apply_filters(
+            'FHEE__EEM_Datetime__create_new_blank_datetime__start_date',
+            $this->current_time_for_query('DTT_EVT_start', true) + MONTH_IN_SECONDS
+        );
+        /**
+         * Filters the initial end date for the new datetime.
+         * Any time included in this value will be overridden later so use additional filters to modify the time.
+         *
+         * @param int $end_data Unixtimestamp representing now + 30 days in seconds.
+         * @return int unixtimestamp
+         */
+        $end_date = apply_filters(
+            'FHEE__EEM_Datetime__create_new_blank_datetime__end_date',
+            $this->current_time_for_query('DTT_EVT_end', true) + MONTH_IN_SECONDS
+        );
+        $blank_datetime = EE_Datetime::new_instance(
             array(
-                'DTT_EVT_start' => $this->current_time_for_query('DTT_EVT_start', true) + MONTH_IN_SECONDS,
-                'DTT_EVT_end'   => $this->current_time_for_query('DTT_EVT_end', true) + MONTH_IN_SECONDS,
+                'DTT_EVT_start' => $start_date,
+                'DTT_EVT_end'   => $end_date,
                 'DTT_order'     => 1,
                 'DTT_reg_limit' => EE_INF,
             ),
             $timezone_string
         );
+        /**
+         * Filters the initial start time and format for the new EE_Datetime instance.
+         *
+         * @param array $start_time An array having size 2.  First element is the time, second element is the time
+         *                          format.
+         * @return array
+         */
+        $start_time = apply_filters(
+            'FHEE__EEM_Datetime__create_new_blank_datetime__start_time',
+            ['8am', 'ga']
+        );
+        /**
+         * Filters the initial end time and format for the new EE_Datetime instance.
+         *
+         * @param array $end_time An array having size 2.  First element is the time, second element is the time
+         *                        format
+         * @return array
+         */
+        $end_time = apply_filters(
+            'FHEE__EEM_Datetime__create_new_blank_datetime__end_time',
+            ['5pm', 'ga']
+        );
+        $this->validateStartAndEndTimeForBlankDate($start_time, $end_time);
         $blank_datetime->set_start_time(
             $this->convert_datetime_for_query(
                 'DTT_EVT_start',
-                '8am',
-                'ga',
+                $start_time[0],
+                $start_time[1],
                 $timezone_string
             )
         );
         $blank_datetime->set_end_time(
             $this->convert_datetime_for_query(
                 'DTT_EVT_end',
-                '5pm',
-                'ga',
+                $end_time[0],
+                $end_time[1],
                 $timezone_string
             )
         );
         return array($blank_datetime);
+    }
+
+
+    /**
+     * Validates whether the start_time and end_time are in the expected format.
+     * @param array $start_time
+     * @param array $end_time
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     */
+    private function validateStartAndEndTimeForBlankDate($start_time, $end_time)
+    {
+        if (! is_array($start_time)) {
+            throw new InvalidDataTypeException('start_time', $start_time, 'array');
+        }
+        if (! is_array($end_time)) {
+            throw new InvalidDataTypeException('end_time', $end_time, 'array');
+        }
+        if (count($start_time) !== 2) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'The variable %1$s is expected to be an array with two elements.  The first item in the '
+                    . 'array should be a valid time string, the second item in the array should be a valid time format',
+                    '$start_time'
+                )
+            );
+        }
+        if (count($end_time) !== 2) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'The variable %1$s is expected to be an array with two elements.  The first item in the '
+                    . 'array should be a valid time string, the second item in the array should be a valid time format',
+                    '$end_time'
+                )
+            );
+        }
     }
 
 
