@@ -2,11 +2,13 @@
  * External imports
  */
 import { EventFactory } from '@test/fixtures';
+import { fromJS, Map } from 'immutable';
+import { DEFAULT_CORE_STATE } from '@eventespresso/model';
 
 /**
  * Internal dependencies
  */
-import {
+import entitiesHandler, {
 	receiveEntity,
 	receiveEntityRecords,
 	removeEntityById,
@@ -15,7 +17,7 @@ import { EventEntities } from '../../../test/fixtures/base';
 import { mockStateForTests } from '../../test/fixtures';
 import { ACTION_TYPES } from '../../actions/action-types';
 
-const { entities: types } = ACTION_TYPES;
+const { entities: types, resets: resetTypes } = ACTION_TYPES;
 const originalState = mockStateForTests.entities;
 
 describe( 'receiveEntity()', () => {
@@ -182,5 +184,31 @@ describe( 'removeEntityById()', () => {
 		expect( resultState ).toEqual(
 			originalState.deleteIn( [ 'event', 10 ] )
 		);
+	} );
+} );
+
+describe( 'RESET_ALL_STATE action', () => {
+	it( 'returns default state when RESET_ALL_STATE action fired', () => {
+		expect(
+			entitiesHandler(
+				originalState,
+				{ type: resetTypes.RESET_ALL_STATE }
+			)
+		).toEqual( fromJS( DEFAULT_CORE_STATE.entities ) );
+	} );
+} );
+
+describe( 'RESET_STATE_FOR_MODEL action', () => {
+	const testAction = ( modelName ) => ( {
+		type: resetTypes.RESET_STATE_FOR_MODEL,
+		modelName,
+	} );
+	it( 'returns original state when modelName does not exist', () => {
+		expect( entitiesHandler( originalState, testAction( 'goulash' ) ) )
+			.toBe( originalState );
+	} );
+	it( 'sets model state to an empty Map when model exists', () => {
+		const newState = entitiesHandler( originalState, testAction( 'event' ) );
+		expect( newState.get( 'event' ) ).toEqual( Map() );
 	} );
 } );
