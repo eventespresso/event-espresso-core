@@ -27,7 +27,7 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 		));
 		$input = $form->get_input( 'input1' );
 		$expected_output = '
-<select id="form-input1" name="form[input1]" class="" style="" >
+<select name="form[input1]" id="form-input1" >
 	<option value="foo">Foo</option>
 	<option value="bar">Bar</option>
 	<option value="baz&#039;em">Baz</option>
@@ -40,7 +40,7 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 		$this->assertEquals( "baz'em", $input->normalized_value() );
 		$this->assertEquals( "baz'em", $input->raw_value() );
 		$expected_output2 = '
-<select id="form-input1" name="form[input1]" class="" style="" >
+<select name="form[input1]" id="form-input1" >
 	<option value="foo">Foo</option>
 	<option value="bar">Bar</option>
 	<option value="baz&#039;em" selected="selected">Baz</option>
@@ -64,7 +64,7 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 						'baboon' => 'Baboon'
 					)));
 		$expected_output = '
-<select id="" name="" class="" style="" >
+<select id="" >
 	<optgroup label="code_var_names">
 		<option value="foo">Foo</option>
 		<option value="bar">Bar</option>
