@@ -286,7 +286,7 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		}
 
 		//make sure now is in the timezone we want to test with.
-		$now =  new Datetime( '@' . ( time() + ( DAY_IN_SECONDS * 30 ) ) );
+		$now =  new DateTime( '@' . ( time() + ( DAY_IN_SECONDS * 30 ) ) );
 		$now->setTimeZone( new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
 		$now->setTime( '8', '0', '0' );
 		$now->setTimeZone( new DateTimeZone( 'America/Toronto' ) );
@@ -314,6 +314,52 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		$this->assertEquals( $now->format('H'), $actual->format( 'H' ) );
 		$this->assertEquals( $now->format('i'), $actual->format('i' ) );
 	}
+
+
+    /**
+     * @since $VID:$
+     */
+	public function testCreateNewBlankDatetimeWithFilters() {
+        $start_date = new DateTime('@' . strtotime('2012-10-12'));
+        $end_date = new DateTime('@' . strtotime('2012-10-31'));
+        add_filter(
+            'FHEE__EEM_Datetime__create_new_blank_datetime__start_date',
+            function () use ($start_date) {
+                return $start_date->format('U');
+            }
+        );
+        add_filter(
+            'FHEE__EEM_Datetime__create_new_blank_datetime__end_date',
+            function () use ($end_date) {
+                return $end_date->format('U');
+            }
+        );
+        add_filter(
+            'FHEE__EEM_Datetime__create_new_blank_datetime__start_time',
+            function () {
+                return ['10am', 'ga'];
+            }
+        );
+        add_filter(
+            'FHEE__EEM_Datetime__create_new_blank_datetime__end_time',
+            function () {
+                return ['8pm', 'ga'];
+            }
+        );
+        $blank_date = EEM_Datetime::instance()->create_new_blank_datetime()[0];
+        $actual_start = $blank_date->get_DateTime_object('DTT_EVT_start');
+        $actual_end = $blank_date->get_DateTime_object('DTT_EVT_end');
+
+        $start_date->setTime('10', '0', '0');
+        $end_date->setTime('20', '0', '0');
+        $formats = [ 'Y', 'm', 'd', 'H', 'i' ];
+        // test each format to ensure it matches expectation
+        foreach( $formats as $format ) {
+            $message = 'For format ' . $format;
+            $this->assertEquals($actual_start->format($format), $start_date->format($format), $message);
+            $this->assertEquals($actual_end->format($format), $end_date->format($format), $message );
+        }
+    }
 
 
 
