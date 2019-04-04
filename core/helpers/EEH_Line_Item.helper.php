@@ -1750,7 +1750,7 @@ class EEH_Line_Item
         }
         // ok now find this new registration's final price
         if (isset($final_prices_per_ticket_line_item[ $total_line_item->ID() ][ $ticket_line_item->ID() ])) {
-            return $final_prices_per_ticket_line_item[ $total_line_item ][ $ticket_line_item->ID() ];
+            return $final_prices_per_ticket_line_item[ $total_line_item->ID() ][ $ticket_line_item->ID() ];
         }
         $message = sprintf(
             esc_html__(
