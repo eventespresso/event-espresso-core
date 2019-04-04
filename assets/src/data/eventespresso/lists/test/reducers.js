@@ -2,15 +2,20 @@
  * External imports
  */
 import { fromJS, OrderedMap, Map, Set } from 'immutable';
+import { DEFAULT_LISTS_STATE } from '@eventespresso/model';
 
 /**
  * Internal dependencies
  */
 import { receiveListItems } from '../reducers';
-import { ACTION_TYPES as types } from '../action-types';
+import {
+	ACTION_TYPES as types,
+	RESET_TYPES as resetTypes,
+} from '../action-types';
 import {
 	genericObjects,
 	eventEntityItems,
+	mockStateForTests,
 } from './fixtures';
 
 describe( 'receiveListItems()', () => {
@@ -216,5 +221,65 @@ describe( 'receiveListItems()', () => {
 					'event',
 				);
 			} );
+	} );
+} );
+describe( 'RESET_ALL_STATE', () => {
+	it( 'returns expected state', () => {
+		expect( receiveListItems(
+			mockStateForTests,
+			{ type: resetTypes.RESET_ALL_STATE }
+		) ).toEqual( fromJS( DEFAULT_LISTS_STATE ) );
+	} );
+} );
+describe( 'RESET_STATE_FOR_IDENTIFIER', () => {
+	it( 'returns expected state when identifier does not exist', () => {
+		const newState = receiveListItems(
+			mockStateForTests,
+			{
+				type: resetTypes.RESET_STATE_FOR_IDENTIFIER,
+				identifier: 'bogus',
+			}
+		);
+		expect( newState ).toBe( mockStateForTests );
+	} );
+	it( 'returns expected state when identifier exists', () => {
+		const expectedState = mockStateForTests.delete( 'event' );
+		const newState = receiveListItems(
+			mockStateForTests,
+			{
+				type: resetTypes.RESET_STATE_FOR_IDENTIFIER,
+				identifier: 'event',
+			}
+		);
+		expect( newState ).toEqual( expectedState );
+	} );
+} );
+describe( 'RESET_SPECIFIC_STATE_FOR_IDENTIFIER', () => {
+	it( 'returns expected state when identifier exists but query string ' +
+		'does not', () => {
+		const newState = receiveListItems(
+			mockStateForTests,
+			{
+				type: resetTypes.RESET_SPECIFIC_STATE_FOR_IDENTIFIER,
+				identifier: 'event',
+				queryString: 'invalid',
+			}
+		);
+		expect( newState ).toBe( mockStateForTests );
+	} );
+	it( 'returns expected state when identifier and query string ' +
+		'exists in it', () => {
+		const newState = receiveListItems(
+			mockStateForTests,
+			{
+				type: resetTypes.RESET_SPECIFIC_STATE_FOR_IDENTIFIER,
+				identifier: 'event',
+				queryString: '[EVT_ID][IN]=20,10',
+			}
+		);
+		expect( newState ).toEqual(
+			mockStateForTests
+				.deleteIn( [ 'event', '[EVT_ID][IN]=20,10' ] )
+		);
 	} );
 } );
