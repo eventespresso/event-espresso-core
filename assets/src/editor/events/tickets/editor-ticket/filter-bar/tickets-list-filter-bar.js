@@ -124,6 +124,13 @@ class TicketsListFilterBar extends Component {
 							'event_espresso'
 						),
 					},
+					{
+						value: 'archived-only',
+						label: __(
+							'archived tickets only',
+							'event_espresso'
+						),
+					},
 				] }
 				onChange={ setShowTickets }
 			/>
