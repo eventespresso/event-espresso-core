@@ -21,15 +21,16 @@ const { BASE_PRICE_TYPES } = priceTypeModel;
  * @return {number} money value
  */
 export const parseMoneyValue = ( moneyValue ) => {
-	moneyValue = parseFloat(
+	moneyValue = moneyValue && moneyValue.toString ?
 		moneyValue.toString().replace(
 			SiteCurrency.thousandsSeparator,
 			''
 		).replace(
 			SiteCurrency.sign,
 			''
-		)
-	);
+		) :
+		0;
+	moneyValue = parseFloat( moneyValue );
 	return ! isNaN( moneyValue ) ? moneyValue : 0;
 };
 
@@ -56,16 +57,10 @@ const getTicketTotal = ( formData ) => {
 
 /**
  * @function
- * @param {number|string} value
- * @param {string} name
  * @param {Object} formData
  * @return {Object} new field data
  */
-const calculateTicketTotalFromModifiers = async (
-	value,
-	name,
-	formData
-) => {
+const calculateTicketTotalFromModifiers = ( formData ) => {
 	const ticketID = getTicketId( formData );
 	if ( ! ticketID ) {
 		return {};
@@ -155,12 +150,10 @@ const calculateTicketTotal = ( priceModifiers ) => {
 
 /**
  * @function
- * @param {number|string} value
- * @param {string} name
  * @param {Object} formData
  * @return {Object} new field data
  */
-const calculateTicketBasePriceFromTotal = async ( value, name, formData ) => {
+const calculateTicketBasePriceFromTotal = ( formData ) => {
 	const ticketID = getTicketId( formData );
 	if ( ! ticketID ) {
 		return {};
@@ -250,62 +243,74 @@ const calculateTicketBasePrice = ( total, priceModifiers ) => {
 	return parseMoneyValue( total );
 };
 
+/**
+ * @function
+ * @param {Object} formData
+ * @return {Object} priceChanges
+ */
+export const calculateTicketPrices = ( formData ) => {
+	return formData.reverseCalculate ?
+		calculateTicketBasePriceFromTotal( formData ) :
+		calculateTicketTotalFromModifiers( formData );
+};
+
 let calculating = null;
-const sleep = () => new Promise(
-	( resolve ) => setTimeout( resolve, 250 )
-);
+const sleep = ( delay = 250 ) => {
+	return delay ? new Promise(
+		( resolve ) => setTimeout( resolve, delay )
+	) : null;
+};
+
+/**
+ * @function
+ * @param {Object} formData
+ * @param {number} delay
+ * @return {Object} priceChanges
+ */
+const runTicketPriceCalculations = async ( formData, delay = 250 ) => {
+	const now = new Date().getTime();
+	calculating = now;
+	const priceChanges = calculateTicketPrices( formData );
+	await sleep( delay );
+	// WHAT?!?!? Why are we sleeping????
+	// because someone might type in multiple numbers quickly...
+	// for example: 10
+	// but React Final Form will trigger these decorators
+	// the instant a change is detected and start processing the `1`
+	// before you have a chance to enter the `0`, but pausing for
+	// 250 ms allows enough time for subsequent key presses.
+	// tracking a timestamp for when calculations start means
+	// we can discard any that have been followed by other changes,
+	// so we only keep changes from the very last key press
+	return calculating === now ? priceChanges : {};
+};
 
 export const ticketPriceCalculator = createDecorator(
 	{
 		field: /^(.*?(\b-amount\b))$/,
-		updates: async ( value, name, formData ) => {
-			const now = new Date().getTime();
-			calculating = now;
-			const ticketTotal = await calculateTicketTotalFromModifiers(
-				value,
-				name,
-				formData
-			);
-			await sleep();
-			// WHAT?!?!? Why are we sleeping????
-			// because someone might type in multiple numbers quickly...
-			// for example: 10
-			// but React Final Form will trigger these decorators
-			// the instant a change is detected and start processing the `1`
-			// before you have a chance to enter the `0`, but pausing for
-			// 250 ms allows enough time for subsequent key presses.
-			// tracking a timestamp for when calculations start means
-			// we can discard any that have been followed by other changes,
-			// so we only keep changes from the very last key press
-			return calculating === now ? ticketTotal : {};
+		updates: async ( value, name, formData, prevData ) => {
+			if ( parseFloat( formData[ name ] ) === parseFloat( prevData[ name ] ) ) {
+				return {};
+			}
+			return await runTicketPriceCalculations( formData );
 		},
 	},
 	{
 		field: /^(.*?(\b-type\b))$/,
-		updates: async ( value, name, formData ) => {
-			const now = new Date().getTime();
-			calculating = now;
-			const ticketTotal = await calculateTicketTotalFromModifiers(
-				value,
-				name,
-				formData
-			);
-			await sleep();
-			return calculating === now ? ticketTotal : {};
+		updates: async ( value, name, formData, prevData ) => {
+			if ( formData[ name ] === prevData[ name ] ) {
+				return {};
+			}
+			return await runTicketPriceCalculations( formData );
 		},
 	},
 	{
 		field: 'ticketTotal',
-		updates: async ( value, name, formData ) => {
-			const now = new Date().getTime();
-			calculating = now;
-			const basePrice = await calculateTicketBasePriceFromTotal(
-				value,
-				name,
-				formData
-			);
-			await sleep();
-			return calculating === now ? basePrice : {};
+		updates: async ( value, name, formData, prevData ) => {
+			if ( parseFloat( formData[ name ] ) === parseFloat( prevData[ name ] ) ) {
+				return {};
+			}
+			return await runTicketPriceCalculations( formData );
 		},
 	},
 );
