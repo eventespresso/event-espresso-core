@@ -2,7 +2,7 @@
  * External imports
  */
 import { Component } from '@wordpress/element';
-import { compose } from '@wordpress/compose';
+import { compose, withState, withSafeTimeout } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { __, _x, sprintf } from '@eventespresso/i18n';
@@ -12,11 +12,19 @@ import { Money, SiteCurrency } from '@eventespresso/value-objects';
 /**
  * Internal dependencies
  */
-import { default as TicketPriceCalculatorForm } from './ticket-price-calculator-form';
+import {
+	default as TicketPriceCalculatorForm,
+} from './ticket-price-calculator-form';
 import {
 	ticketPriceCalculatorFormDataMap,
 } from './ticket-price-calculator-form-data-map';
-import { ticketPriceCalculator } from './ticket-price-calculator';
+import {
+	calculateTicketPrices,
+	ticketPriceCalculator,
+} from './ticket-price-calculator';
+import {
+	ticketPriceCalculatorSubmitHandler,
+} from './ticket-price-calculator-submit-handler';
 
 const DEFAULT_EMPTY_ARRAY = [];
 
@@ -27,22 +35,40 @@ const DEFAULT_EMPTY_ARRAY = [];
  */
 class TicketPriceCalculatorFormModal extends Component {
 	/**
-	 * @constructor
-	 * @param {Object} props
+	 * @function
+	 * @param {Object} ticket
+	 * @param {Array} prices
+	 * @param {boolean} reverseCalculate
+	 * @return {Object} formData
 	 */
-	constructor( props ) {
-		super( props );
-		this.toggleEditor = props.closeModal;
-	}
+	loadHandler = ( ticket, prices, reverseCalculate ) => {
+		// console.log( 'TicketPriceCalculatorFormModal.loadHandler()' );
+		// console.log( ' >>> LOADING DATA <<<' );
+		const formData = ticketPriceCalculatorFormDataMap(
+			ticket,
+			prices,
+			reverseCalculate
+		);
+		const totals = calculateTicketPrices( formData );
+		// console.log( ' > > totals: ', totals );
+		return { ...formData, ...totals };
+	};
 
 	/**
 	 * @function
-	 * @param {Object} data
+	 * @param {Object} formData
 	 */
-	submitHandler = async ( data ) => {
+	submitHandler = async ( formData ) => {
 		console.log( 'TicketPriceCalculatorFormModal.submitHandler()' );
-		console.log( ' >>> SUBMITTING DATA <<<', data );
-		this.toggleEditor();
+		console.log( ' >>> SUBMITTING DATA <<<', formData );
+		const ticket = ticketPriceCalculatorSubmitHandler(
+			this.props.ticket,
+			this.props.prices,
+			formData
+		);
+		if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
+			this.toggleEditor();
+		}
 	};
 
 	/**
@@ -61,23 +87,27 @@ class TicketPriceCalculatorFormModal extends Component {
 			ticket,
 			prices,
 			priceTypes,
-			...formProps
+			reverseCalculate,
+			closeModal,
+			...extraProps
 		} = this.props;
-		const formData = loading ?
+		this.toggleEditor = closeModal;
+		// console.log( '' );
+		// console.log( 'TicketPriceCalculatorFormModal.render()' );
+		// console.log( ' > props: ', this.props );
+		const formProps = loading ?
 			{ loading } :
 			{
 				loading,
-				formData: ticketPriceCalculatorFormDataMap(
-					ticket,
-					prices
-				),
 				ticket,
 				prices,
 				priceTypes,
+				formData: this.loadHandler( ticket, prices, reverseCalculate ),
 			};
+		// console.log( ' > formProps: ', formProps );
 		return (
 			<TicketPriceCalculatorForm
-				{ ...formData }
+				{ ...formProps }
 				decorators={ ticketPriceCalculator }
 				loadHandler={ null }
 				submitHandler={ this.submitHandler }
@@ -92,7 +122,7 @@ class TicketPriceCalculatorFormModal extends Component {
 						String.fromCharCode( '8230' )
 					)
 				}
-				{ ...formProps }
+				{ ...extraProps }
 			/>
 		);
 	}
@@ -102,6 +132,13 @@ class TicketPriceCalculatorFormModal extends Component {
  * Enhanced TicketPriceCalculatorForm with Modal
  */
 export default compose( [
+	withSafeTimeout,
+	withState( {
+		reverseCalculate: false,
+		newModifierUpdate: false,
+		newModifiers: [],
+		deletedModifiers: [],
+	} ),
 	withEditorModal( {
 		title: __( 'Ticket Price Calculator', 'event_espresso' ),
 		customClass: 'ee-ticket-price-calculator-modal',
@@ -110,18 +147,11 @@ export default compose( [
 		),
 	} ),
 	withSelect( ( select, ownProps ) => {
-		const {
-			getEntityById,
-			getRelatedEntities,
-		} = select( 'eventespresso/core' );
+		// console.log( '' );
+		// console.log( 'TicketPriceCalculatorFormModal withSelect()' );
+		const { getRelatedEntities } = select( 'eventespresso/core' );
 		const { getEntities } = select( 'eventespresso/lists' );
 		const { hasFinishedResolution } = select( 'core/data' );
-		const getTicket = async ( ticketId ) => {
-			const ticket = getEntityById( 'ticket', parseInt( ticketId ) );
-			if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
-				return ticket;
-			}
-		};
 		const ticket = ownProps.ticket;
 		let prices = DEFAULT_EMPTY_ARRAY;
 		if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
@@ -138,20 +168,23 @@ export default compose( [
 			'getEntities',
 			[ 'price_type' ]
 		);
-		return pricesResolved && priceTypesResolved ? {
+		const modalProps = pricesResolved && priceTypesResolved ? {
 			loading: false,
 			ticket,
 			prices,
 			priceTypes,
-			getTicket,
 		} : {
 			loading: true,
 		};
+		// console.log( ' > modalProps: ', modalProps );
+		return modalProps;
 	} ),
-	withDispatch( ( dispatch ) => {
+	withDispatch( ( dispatch, ownProps ) => {
+		const { newModifiers, deletedModifiers } = ownProps;
 		const {
 			createEntity,
 			createRelation,
+			removeRelationForEntity,
 			trashEntityById,
 		} = dispatch( 'eventespresso/core' );
 		const addPriceModifier = async ( ticket, details = {} ) => {
@@ -172,13 +205,38 @@ export default compose( [
 			);
 			if ( isModelEntityOfModel( priceModifier, 'price' ) ) {
 				createRelation( 'ticket', ticket.id, 'price', priceModifier );
+				newModifiers.push( priceModifier.id );
 			}
 		};
-		const trashPriceModifier = async ( priceModifier ) => {
+		const trashPriceModifier = async ( priceModifier, ticket ) => {
 			if ( ! isModelEntityOfModel( priceModifier, 'price' ) ) {
+				Error(
+					__(
+						'Unable to perform deletion because an invalid Price' +
+						' Entity was supplied by the Ticket Price Calculator.',
+						'event_espresso'
+					)
+				);
 				return;
 			}
+			if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
+				Error(
+					__(
+						'Unable to perform deletion because an invalid Ticket' +
+						' Entity was supplied by the Ticket Price Calculator.',
+						'event_espresso'
+					)
+				);
+				return;
+			}
+			removeRelationForEntity(
+				'ticket',
+				ticket.id,
+				'price',
+				priceModifier.id
+			);
 			trashEntityById( 'price', priceModifier.id );
+			deletedModifiers.push( priceModifier.id );
 		};
 		return { addPriceModifier, trashPriceModifier };
 	} ),
