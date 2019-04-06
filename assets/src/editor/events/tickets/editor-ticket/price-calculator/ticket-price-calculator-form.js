@@ -28,6 +28,7 @@ const { MODEL_NAME: TICKET } = ticketModel;
 const { BASE_PRICE_TYPES } = priceTypeModel;
 
 const {
+	FormInfo,
 	FormInput,
 	InputLabel,
 	FormSection,
@@ -72,11 +73,11 @@ class TicketPriceCalculatorForm extends Component {
 	 */
 	getPriceType = ( priceTypeId ) => {
 		priceTypeId = parseInt( priceTypeId );
-		const priceType = find( this.props.priceTypes, [ 'id', priceTypeId ] );
+		const priceType = find( this.priceTypes, [ 'id', priceTypeId ] );
 		if ( isModelEntityOfModel( priceType, 'price_type' ) ) {
 			return priceType;
 		}
-		return last( this.props.priceTypes );
+		return last( this.priceTypes );
 	};
 
 	/**
@@ -145,6 +146,40 @@ class TicketPriceCalculatorForm extends Component {
 		return priceType && priceType.isPercent ?
 			`ee-percent-field${ this.signB4() }${ this.signChars() }` :
 			`ee-money-field${ this.signB4() }${ this.signChars() }`;
+	};
+
+	/**
+	 * waits for a few seconds then shakes the "add Price Modifier"
+	 * button and toggles aria-live labels for screen readers
+	 * to notify users that they need to click the [+] button
+	 * in order for a new Price Modifier to actually be added
+	 *
+	 * @function
+	 */
+	newModifierUpdated = () => {
+		// delete any existing timeouts first
+		// because the user may still be typing
+		// and we only want ONE timeout to fire (the last one)
+		this.clearTimeout( this.timeout );
+		this.timeout = this.setTimeout( this.addModifierUpdate, 2500 );
+	};
+
+	addModifierUpdate = () => {
+		// only update state after actual field changes
+		// and not because a price modifier was added or removed
+		if ( isEmpty( this.newModifiers ) && isEmpty( this.deletedModifiers ) ) {
+			this.setState( { newModifierUpdate: true } );
+			this.setTimeout( this.modifierUpdated, 2000 );
+			return;
+		}
+		this.clearTimeout( this.timeout );
+		this.timeout = null;
+		this.newModifiers.pop();
+		this.deletedModifiers.pop();
+	};
+
+	modifierUpdated = () => {
+		this.setState( { newModifierUpdate: false } );
 	};
 
 	/**
@@ -326,15 +361,31 @@ class TicketPriceCalculatorForm extends Component {
 							name={ `${ prefix }-amount` }
 							htmlId={ `${ prefix }-amount` }
 							htmlClass={ this.amountClass( priceType ) }
-							value={ values[ `${ prefix }-amount` ] || 0 }
-							changeListener={
-								( value ) => price.amount = new Money(
-									parseMoneyValue( value ),
-									SiteCurrency
+							value={
+								price.amount.formatter.formatNumber(
+									parseMoneyValue(
+										values[ `${ prefix }-amount` ] || 0
+									)
 								)
 							}
+							changeListener={
+								( value, previous ) => {
+									if (
+										parseFloat( value ) !== parseFloat( previous )
+									) {
+										price.amount = new Money(
+											parseMoneyValue( value ),
+											SiteCurrency
+										);
+									}
+								}
+							}
+							disabled={
+								price.prtId === BASE_PRICE_TYPES.BASE_PRICE &&
+								values.reverseCalculate === true
+							}
 							format={ ( value ) => {
-								return ticket.price.formatter.formatNumber(
+								return price.amount.formatter.formatNumber(
 									parseMoneyValue( value )
 								);
 							} }
@@ -346,19 +397,25 @@ class TicketPriceCalculatorForm extends Component {
 			{
 				type: 'cell',
 				class: 'ee-ticket-price-calculator-price-actions',
-				value: (
-
-					<Tooltip
-						text={ __( 'delete price modifier', 'event_espresso' ) }
+				value: price.prtId !== BASE_PRICE_TYPES.BASE_PRICE ? (
+					<Tooltip position={ 'top left' }
+						text={ __(
+							'click to delete price modifier',
+							'event_espresso'
+						) }
 					>
 						<IconButton
+							aria-label={ __(
+								'click to delete price modifier',
+								'event_espresso'
+							) }
 							icon="trash"
 							onClick={
-								() => this.props.trashPriceModifier( price )
+								() => this.trashPriceModifier( price, ticket )
 							}
 						/>
 					</Tooltip>
-				),
+				) : '',
 			},
 		];
 	};
@@ -369,7 +426,7 @@ class TicketPriceCalculatorForm extends Component {
 	 * @param {string} ticketPrefix
 	 * @param {Array} values
 	 * @param {Array} priceTypeOptions
-	 * @param {Function} addPriceModifier
+	 * @param {boolean} newModifierUpdate
 	 * @return {Object} rendered price modifier form row
 	 */
 	addPriceModifierRow = (
@@ -377,7 +434,7 @@ class TicketPriceCalculatorForm extends Component {
 		ticketPrefix,
 		values,
 		priceTypeOptions,
-		addPriceModifier
+		newModifierUpdate
 	) => {
 		const priceId = 'new';
 		const prefix = `${ ticketPrefix }-price-${ priceId }`;
@@ -411,6 +468,11 @@ class TicketPriceCalculatorForm extends Component {
 							value={ values[ `${ prefix }-type` ] || priceTypeId }
 							options={ priceTypeOptions }
 							htmlId={ `${ prefix }-type` }
+							changeListener={ ( value, previous ) => {
+								if ( value !== previous ) {
+									this.newModifierUpdated();
+								}
+							} }
 						/>
 					</Fragment>
 				),
@@ -431,6 +493,11 @@ class TicketPriceCalculatorForm extends Component {
 							name={ `${ prefix }-name` }
 							htmlId={ `${ prefix }-name` }
 							value={ values[ `${ prefix }-name` ] || '' }
+							changeListener={ ( value, previous ) => {
+								if ( value !== previous ) {
+									this.newModifierUpdated();
+								}
+							} }
 						/>
 					</Fragment>
 				),
@@ -451,6 +518,11 @@ class TicketPriceCalculatorForm extends Component {
 							name={ `${ prefix }-desc` }
 							htmlId={ `${ prefix }-desc` }
 							value={ values[ `${ prefix }-desc` ] || '' }
+							changeListener={ ( value, previous ) => {
+								if ( value !== previous ) {
+									this.newModifierUpdated();
+								}
+							} }
 						/>
 					</Fragment>
 				),
@@ -468,14 +540,23 @@ class TicketPriceCalculatorForm extends Component {
 						{ this.modifierSign( priceType ) }
 						<FormInput
 							key="price"
-							type="number"
+							type="text"
 							name={ `${ prefix }-amount` }
 							htmlId={ `${ prefix }-amount` }
 							htmlClass={ this.amountClass( priceType ) }
 							value={ values[ `${ prefix }-amount` ] || 0 }
-							format={ ticket.price.formatter.formatNumber }
+							format={ ( value ) => {
+								return ticket.price.formatter.formatNumber(
+									parseMoneyValue( value )
+								);
+							} }
 							formatOnBlur
 							step="0.01"
+							changeListener={ ( value, previous ) => {
+								if ( value !== previous ) {
+									this.newModifierUpdated();
+								}
+							} }
 						/>
 					</Fragment>
 				),
@@ -484,25 +565,53 @@ class TicketPriceCalculatorForm extends Component {
 				type: 'cell',
 				class: 'ee-ticket-price-calculator-add-price-actions',
 				value: (
-					<Tooltip
-						text={ __( 'add price modifier', 'event_espresso' ) }
-					>
-						<IconButton
-							icon="plus-alt"
-							onClick={
-								() => addPriceModifier(
-									ticket,
-									{
-										type: values[ `${ prefix }-type` ],
-										name: values[ `${ prefix }-name` ],
-										desc: values[ `${ prefix }-desc` ],
-										amount: values[ `${ prefix }-amount` ],
-										order: '',
-									}
-								)
+					<Fragment>
+						<p
+							className={ 'screen-reader-text' }
+							aria-live={ 'polite' }
+						>
+							{
+								newModifierUpdate ?
+									__(
+										'click to add price modifier',
+										'event_espresso'
+									) :
+									''
 							}
-						/>
-					</Tooltip>
+						</p>
+						<Tooltip position={ 'top left' }
+							text={ __(
+								'click to add price modifier',
+								'event_espresso'
+							) }
+						>
+							<IconButton
+								aria-label={ __(
+									'click to add price modifier',
+									'event_espresso'
+								) }
+								icon="plus-alt"
+								onClick={
+									() => this.addPriceModifier(
+										ticket,
+										{
+											type: values[ `${ prefix }-type` ],
+											name: values[ `${ prefix }-name` ],
+											desc: values[ `${ prefix }-desc` ],
+											amount: values[ `${ prefix }-amount` ],
+											order: '',
+										}
+									)
+								}
+								className={
+									newModifierUpdate ?
+										'ee-add-price-modifier-btn ' +
+										'ee-tpc-new-modifier-update' :
+										'ee-add-price-modifier-btn'
+								}
+							/>
+						</Tooltip>
+					</Fragment>
 				),
 			},
 		];
@@ -516,6 +625,10 @@ class TicketPriceCalculatorForm extends Component {
 	 * @return {Object} rendered form footer
 	 */
 	ticketTotalRow = ( ticket, ticketPrefix, values ) => {
+		const calcDirIcon = values.reverseCalculate ? 'up' : 'down';
+		const calcDirText = values.reverseCalculate ?
+			__( 'reverse calculate base price from total', 'event_espresso' ) :
+			__( 'calculate total from base price', 'event_espresso' );
 		return [
 			{
 				type: 'row',
@@ -542,12 +655,10 @@ class TicketPriceCalculatorForm extends Component {
 				class: 'ee-ticket-price-calculator-total-label' +
 					' ee-number-column',
 				value: (
-					<Fragment>
-						<InputLabel
-							label={ __( 'Total', 'event_espresso' ) }
-							htmlFor={ `${ ticketPrefix }-total` }
-						/>
-					</Fragment>
+					<InputLabel
+						label={ __( 'Total', 'event_espresso' ) }
+						htmlFor={ `${ ticketPrefix }-total` }
+					/>
 				),
 			},
 			{
@@ -562,13 +673,24 @@ class TicketPriceCalculatorForm extends Component {
 							name="ticketTotal"
 							htmlId="ticketTotal"
 							htmlClass={ this.amountClass() }
-							value={ values.ticketTotal }
-							changeListener={
-								( value ) => ticket.price = new Money(
-									parseMoneyValue( value ),
-									SiteCurrency
+							value={
+								ticket.price.formatter.formatNumber(
+									parseMoneyValue( values.ticketTotal )
 								)
 							}
+							changeListener={
+								( value, previous ) => {
+									if (
+										parseFloat( value ) !== parseFloat( previous )
+									) {
+										ticket.price = new Money(
+											parseMoneyValue( value ),
+											SiteCurrency
+										);
+									}
+								}
+							}
+							disabled={ values.reverseCalculate === false }
 							format={ ( value ) => {
 								return ticket.price.formatter.formatNumber(
 									parseMoneyValue( value )
@@ -581,8 +703,20 @@ class TicketPriceCalculatorForm extends Component {
 			},
 			{
 				type: 'cell',
-				class: '',
-				value: '',
+				class: 'ee-ticket-price-calculator-total-actions',
+				value: (
+					<Tooltip text={ calcDirText } position={ 'top left' } >
+						<IconButton
+							aria-label={ calcDirText }
+							icon={ `arrow-${ calcDirIcon }-alt2` }
+							onClick={ () => {
+								this.setState( {
+									reverseCalculate: ! values.reverseCalculate,
+								} );
+							} }
+						/>
+					</Tooltip>
+				),
 			},
 		];
 	};
@@ -600,16 +734,41 @@ class TicketPriceCalculatorForm extends Component {
 			prices,
 			priceTypes,
 			addPriceModifier,
+			trashPriceModifier,
+			newModifierUpdate,
+			newModifiers,
+			deletedModifiers,
+			setState,
+			setTimeout,
+			clearTimeout,
 			submitButton,
 			cancelButton,
 			initialValues = {},
 			currentValues = {},
 		} = this.props;
-
+		// console.log( '' );
+		// console.log( 'TicketPriceCalculatorForm.render()' );
+		// console.log( ' > this.props: ', this.props );
+		// console.log( ' > newModifiers: ', newModifiers );
+		// console.log( ' > deletedModifiers: ', deletedModifiers );
+		this.setState = setState;
+		this.setTimeout = setTimeout;
+		this.clearTimeout = clearTimeout;
+		this.addPriceModifier = addPriceModifier;
+		this.trashPriceModifier = trashPriceModifier;
+		this.newModifiers = newModifiers;
+		this.deletedModifiers = deletedModifiers;
 		if ( ! isModelEntityOfModel( ticket, TICKET ) || isEmpty( priceTypes ) ) {
 			return null;
 		}
-		const allPriceTypeOptions = this.buildPriceTypeOptions( priceTypes );
+		this.priceTypes = priceTypes;
+		const values = isEmpty( currentValues ) ?
+			initialValues :
+			currentValues;
+		// console.log( ' > values: ', values );
+		const allPriceTypeOptions = this.buildPriceTypeOptions(
+			this.priceTypes
+		);
 		const priceTypeOptions = filter(
 			allPriceTypeOptions,
 			( priceType ) => {
@@ -618,9 +777,6 @@ class TicketPriceCalculatorForm extends Component {
 		);
 		let ticketPrefix = TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX;
 		ticketPrefix += '-ticket-' + ticket.id;
-		const values = isEmpty( currentValues ) ?
-			initialValues :
-			currentValues;
 
 		const formRows = [];
 		const priceCount = prices.length;
@@ -653,7 +809,7 @@ class TicketPriceCalculatorForm extends Component {
 				ticketPrefix,
 				values,
 				priceTypeOptions,
-				addPriceModifier
+				newModifierUpdate
 			)
 		);
 		return ticket && ticket.id ? (
@@ -673,7 +829,7 @@ class TicketPriceCalculatorForm extends Component {
 							)
 						}
 						metaData={ {
-							tableId: `${ ticketPrefix }-price-calculator`,
+							tableId: ticketPrefix,
 							tableCaption: __(
 								'Ticket Price Modifiers',
 								'event_espresso'
@@ -702,12 +858,47 @@ class TicketPriceCalculatorForm extends Component {
 						htmlId="priceTypes"
 						value={ values.priceTypes }
 					/>
+					<FormInput
+						type="hidden"
+						key="reverseCalculate"
+						name="reverseCalculate"
+						htmlId="reverseCalculate"
+						value={ values.reverseCalculate }
+					/>
 				</FormSection>
 				<FormSaveCancelButtons
 					htmlClass={ 'ee-ticket-price-calculator-buttons' }
 					submitButton={ submitButton }
 					cancelButton={ cancelButton }
 				/>
+				<FormSection htmlClass="ee-ticket-price-calculator-form-info" >
+					<FormInfo
+						formInfo={
+							values.reverseCalculate ?
+								__(
+									'ticket base price is being calculated' +
+									' by reversing the price modifiers' +
+									' applied to the ticket total - change' +
+									' the calculation direction by clicking' +
+									' on the arrow button to the right of the' +
+									' ticket total field',
+									'event_espresso'
+								) :
+								__(
+									'ticket total is being calculated by ' +
+									' applying price modifiers to base price' +
+									' - change the calculation direction by' +
+									' clicking on the arrow button to the' +
+									' right of the ticket total field',
+									'event_espresso'
+								)
+						}
+						dashicon={ 'info' }
+						dismissable={ false }
+						colSize={ 11 }
+						offset={ 1 }
+					/>
+				</FormSection>
 			</FormWrapper>
 		) : null;
 	}
