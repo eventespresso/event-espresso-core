@@ -23,13 +23,17 @@
     position: relative;
 }
 
+.ee-form-info span {
+    height: 100%;
+}
+
 .ee-form-info-row.is-dismissable .ee-form-info {
     padding: 20px 20px 0 0;
 }
 
 .ee-form-info .ee-form-info-type {
     background: var(--ee-white);
-    color: var(--ee-off-white);
+    color: var(--ee-grey-white);
     left: -66px;
     position: absolute;
     top: 2px;
@@ -74,4 +78,15 @@
     100% {
         transform: rotate(360deg);
     }
+}
+
+@media screen and (max-width: 600px) {
+    .ee-form-info .ee-form-info-type {
+        left: 8px;
+    }
+    .ee-form-info-text {
+        display: inline-block;
+        padding-left: 66px;
+    }
+
 }
