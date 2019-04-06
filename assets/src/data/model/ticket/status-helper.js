@@ -29,7 +29,8 @@ const assertTicketEntity = ( TicketEntity ) => {
  */
 export const isOnSale = ( TicketEntity ) => {
 	assertTicketEntity( TicketEntity );
-	return TicketEntity.startDate.diffNow() < 0 &&
+	return ! isArchived( TicketEntity ) &&
+		TicketEntity.startDate.diffNow() < 0 &&
 		TicketEntity.endDate.diffNow() > 0;
 };
 
@@ -63,7 +64,8 @@ export const isSoldOut = ( TicketEntity ) => {
  */
 export const isPending = ( TicketEntity ) => {
 	assertTicketEntity( TicketEntity );
-	return TicketEntity.startDate.diffNow() > 0;
+	return ! isArchived( TicketEntity ) &&
+		TicketEntity.startDate.diffNow() > 0;
 };
 
 /**
