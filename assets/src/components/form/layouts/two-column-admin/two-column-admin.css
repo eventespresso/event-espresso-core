@@ -378,19 +378,27 @@
     padding: 0.375rem 0.25rem;
     font-size: 1.25rem;
     line-height: 1.25;
+    vertical-align: middle;
 }
 .ee-two-column-admin .ee-currency-sign {
     width: 1.5rem;
 }
 .ee-two-column-admin .ee-currency-sign.ee-curSign-2 {
-    width: 2.25rem;
+    font-size: 1.125rem;
+    line-height: 1.125;
+    width: 2.2rem;
 }
 .ee-two-column-admin .ee-currency-sign.ee-curSign-3 {
-    width: 3rem;
+    font-size: 1.05rem;
+    line-height: 1.05;
+    width: 2.8rem;
 }
 .ee-two-column-admin .ee-currency-sign.ee-curSign-4 {
-    width: 3.75rem;
+    font-size: 1rem;
+    line-height: 1;
+    width: 3.2rem;
 }
+
 .ee-two-column-admin .ee-percent-sign {
     text-align: left;
     width: 1.5rem;
