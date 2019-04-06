@@ -16,7 +16,7 @@ const buildTicketDataMap = ( formData, ticket ) => {
 	formData.ticketID = ticket.id;
 	formData.ticketIsTaxable = ticket.taxable;
 	formData.ticketTotal = ticket.price && ticket.price.amount ?
-		ticket.price.amount.toNumber() :
+		ticket.price.formatter.formatNumber( ticket.price.amount.toNumber() ) :
 		null;
 	return formData;
 };
@@ -50,11 +50,10 @@ const buildPricesDataMap = ( formData, ticket, prices ) => {
 			formData[ `${ pricePrefix }-desc` ] = price.desc || '';
 			formData[ `${ pricePrefix }-amount` ] = price.amount &&
 			price.amount.amount ?
-				price.amount.amount.toNumber() :
+				price.amount.formatter.formatNumber(
+					price.amount.amount.toNumber()
+				) :
 				0;
-			if ( price.prtId === 1 ) {
-				formData.ticketTotal = formData[ `${ pricePrefix }-amount` ];
-			}
 		}
 	}
 	if ( isArray( priceIDs ) && ! isEmpty( priceIDs ) ) {
@@ -83,14 +82,23 @@ export const shortenCuid = ( cuid ) => {
  * @function
  * @param {Object} ticket
  * @param {Array} prices
+ * @param {boolean} reverseCalculate
  * @return {Object} form data
  */
-export const ticketPriceCalculatorFormDataMap = ( ticket, prices ) => {
-	if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
+export const ticketPriceCalculatorFormDataMap = (
+	ticket,
+	prices,
+	reverseCalculate
+) => {
+	if ( ! prices || ! isModelEntityOfModel( ticket, 'ticket' ) ) {
 		return {};
 	}
 	let formData = {};
 	formData = buildTicketDataMap( formData, ticket );
 	formData = buildPricesDataMap( formData, ticket, prices );
+	formData.reverseCalculate = !! reverseCalculate;
+	// console.log( '' );
+	// console.log( 'ticketPriceCalculatorFormDataMap()' );
+	// console.log( ' > formData: ', formData );
 	return formData;
 };
