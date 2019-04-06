@@ -53,6 +53,7 @@ export class FormInput extends Component {
 		htmlId: PropTypes.string.isRequired,
 		htmlClass: PropTypes.string,
 		value: PropTypes.oneOfType( [
+			PropTypes.bool,
 			PropTypes.number,
 			PropTypes.string,
 		] ),
