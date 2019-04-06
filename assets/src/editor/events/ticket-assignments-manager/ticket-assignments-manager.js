@@ -5,7 +5,7 @@ import { findIndex, isFunction } from 'lodash';
 import PropTypes from 'prop-types';
 import warning from 'warning';
 import { IconButton } from '@wordpress/components';
-import { Component, Fragment } from '@wordpress/element';
+import { Component } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
 import {
 	CalendarPageDate,
@@ -114,7 +114,13 @@ class TicketAssignmentsManager extends Component {
 	ticketHeaders = ( tickets, dateCount ) => {
 		// console.log( '' );
 		// console.log( 'TicketAssignmentsManager.ticketHeaders()' );
-		const headerCells = [];
+		const headerCells = [
+			{
+				type: 'row',
+				class: '',
+				value: '',
+			},
+		];
 		if ( dateCount > 1 ) {
 			headerCells.push(
 				{
@@ -212,6 +218,7 @@ class TicketAssignmentsManager extends Component {
 						isModelEntityOfModel( ticket, TICKET ),
 						'Invalid EE Ticket model object!'
 					);
+					// console.log( ' > ticket: ', ticket.name );
 					rowData.push(
 						this.ticketCell( eventDate, ticket, eventDateTickets )
 					);
@@ -334,25 +341,23 @@ class TicketAssignmentsManager extends Component {
 			type: 'cell',
 			class: 'ee-dtm-date-row-ticket',
 			value: (
-				<Fragment>
-					<IconButton
-						icon={ icon }
-						className={ bgColor }
-						size={ 45 }
-						onClick={ ( event ) => {
+				<IconButton
+					icon={ icon }
+					className={ bgColor }
+					size={ 45 }
+					onClick={ ( event ) => {
+						event.preventDefault();
+						event.stopPropagation();
+						action( eventDate, ticket );
+					} }
+					onKeyDown={ ( event ) => {
+						if ( event.keyCode === ENTER ) {
 							event.preventDefault();
 							event.stopPropagation();
 							action( eventDate, ticket );
-						} }
-						onKeyDown={ ( event ) => {
-							if ( event.keyCode === ENTER ) {
-								event.preventDefault();
-								event.stopPropagation();
-								action( eventDate, ticket );
-							}
-						} }
-					/>
-				</Fragment>
+						}
+					} }
+				/>
 			),
 		};
 	};
@@ -405,7 +410,6 @@ class TicketAssignmentsManager extends Component {
 		// console.log( '' );
 		// console.log( 'TicketAssignmentsManager.render()' );
 		// console.log( ' > props: ', this.props );
-
 		const {
 			entities,
 			tickets,
