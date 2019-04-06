@@ -23,11 +23,6 @@ const { MODEL_NAME: TICKET } = ticketModel;
  * @return {string}    ticket details
  */
 class EditorTicketDetails extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = { ticket: props.ticket ? props.ticket : {} };
-	}
-
 	/**
 	 * ticketName
 	 *
@@ -218,8 +213,7 @@ class EditorTicketDetails extends Component {
 	};
 
 	render() {
-		const ticket = this.state.ticket;
-		const { showDesc = 'excerpt', showPrice = true } = this.props;
+		const { ticket, showDesc = 'excerpt', showPrice = true } = this.props;
 		return isModelEntityOfModel( ticket, TICKET ) ? (
 			<div className={ 'ee-editor-ticket-details-wrapper-div' }>
 				{ this.ticketName( ticket ) }
