@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
@@ -17,19 +20,37 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_Datetime_Test extends EE_UnitTestCase{
 
+    /**
+     * @since $VID:$
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
 	function test_increase_sold(){
-		$d = EE_Datetime::new_instance();
-		$this->assertEquals($d->get('DTT_sold'),0);
-		$d->increase_sold();
-		$this->assertEquals($d->get('DTT_sold'),1);
-		$d->increase_sold(2);
-		$this->assertEquals($d->get('DTT_sold'),3);
+	    $original_sold_count = 5;
+	    $original_reserved_count = 10;
+		$d = EE_Datetime::new_instance(
+		    [
+		        'DTT_sold' => $original_sold_count,
+                'DTT_reserved' => $original_reserved_count
+            ]
+        );
+		$this->assertEquals($d->get('DTT_sold'), $original_sold_count);
+        $this->assertEquals($d->get('DTT_reserved'), $original_reserved_count);
+		$d->increaseSold();
+		$this->assertEquals($d->get('DTT_sold'), $original_sold_count + 1);
+        $this->assertEquals($d->get('DTT_reserved'), $original_reserved_count - 1);
+		$d->increaseSold(2, false);
+		$this->assertEquals($d->get('DTT_sold'), $original_sold_count + 3);
+        $this->assertEquals($d->get('DTT_reserved'), $original_reserved_count - 1);
 	}
 	function test_decrease_sold(){
 		$d = EE_Datetime::new_instance(array('DTT_sold'=>5));
-		$d->decrease_sold();
+		$d->decreaseSold();
 		$this->assertEquals(4,$d->get('DTT_sold'));
-		$d->decrease_sold(2);
+		$d->decreaseSold(2);
 		$this->assertEquals(2,$d->get('DTT_sold'));
 	}
 	/**
@@ -208,6 +229,7 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 
 	/**
 	 * @group 8861
+     * @doesNotPerformAssertions
 	 */
 	public function test_tickets_remaining() {
         $this->loadTestScenarios();

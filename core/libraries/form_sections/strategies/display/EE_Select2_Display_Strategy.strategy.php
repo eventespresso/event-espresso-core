@@ -80,4 +80,15 @@ class EE_Select2_Display_Strategy extends EE_Select_Display_Strategy
         $other_js_data['select2s'][ $this->_input->html_id() ] = $this->get_js_args();
         return $other_js_data;
     }
+
+    /**
+     * Overrides standard attributes array to add the CSS class "ee-select2"
+     * @return array
+     */
+    protected function _standard_attributes_array()
+    {
+        $standard_attributes = parent::_standard_attributes_array();
+        $standard_attributes['class'] .= ' ee-select2';
+        return $standard_attributes;
+    }
 }

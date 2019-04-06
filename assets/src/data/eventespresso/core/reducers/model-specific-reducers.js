@@ -24,8 +24,11 @@ export default function handleReceiveSelector( state = Map(), action ) {
 		case types.RECEIVE_SELECTOR_VALUE:
 			return state.setIn( [ selector, JSON.stringify( args ) ], value );
 		case resetTypes.RESET_ALL_MODEL_SPECIFIC:
+		case resetTypes.RESET_ALL_STATE:
 			return Map();
 		case resetTypes.RESET_MODEL_SPECIFIC_FOR_SELECTOR:
+			return state.delete( selector );
+		case resetTypes.RESET_MODEL_SPECIFIC_FOR_SELECTOR_AND_ARGS:
 			return state.deleteIn( [ selector, JSON.stringify( args ) ] );
 	}
 	return state;

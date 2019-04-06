@@ -83,19 +83,6 @@ describe( 'receiveLatestCheckin()', () => {
 			)
 		);
 	} );
-	it( 'yields the dispatch action for finishing the resolution on ' +
-		'getLatestCheckin', () => {
-		const { value } = fulfillment.next();
-		expect( value ).toEqual(
-			dispatch(
-				'core/data',
-				'finishResolution',
-				REDUCER_KEY,
-				'getLatestCheckin',
-				[ 10, 20 ]
-			)
-		);
-	} );
 	it( 'yields the dispatch action for receiveSelectorValue', () => {
 		const { value } = fulfillment.next();
 		expect( value ).toEqual(
@@ -106,6 +93,19 @@ describe( 'receiveLatestCheckin()', () => {
 				AuthedCheckinEntity.id,
 				10,
 				20
+			)
+		);
+	} );
+	it( 'yields the dispatch action for finishing the resolution on ' +
+		'getLatestCheckin', () => {
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			dispatch(
+				'core/data',
+				'finishResolution',
+				REDUCER_KEY,
+				'getLatestCheckin',
+				[ 10, 20 ]
 			)
 		);
 	} );
