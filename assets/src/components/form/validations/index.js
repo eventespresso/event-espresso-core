@@ -19,7 +19,7 @@ import {
  * @param {mixed} value
  * @return {string|null} error string on fail
  */
-export const isFloat = value => ! isValidFloat( +value ) ?
+export const isFloat = ( value ) => ! isValidFloat( +value ) ?
 	__( 'Value must be a float', 'event_espresso' ) :
 	null;
 
@@ -28,7 +28,7 @@ export const isFloat = value => ! isValidFloat( +value ) ?
  * @param {mixed} value
  * @return {string|null} error string on fail
  */
-export const isInteger = value => ! isValidInteger( +value ) ?
+export const isInteger = ( value ) => ! isValidInteger( +value ) ?
 	__( 'Value must be an integer', 'event_espresso' ) :
 	null;
 
@@ -37,7 +37,7 @@ export const isInteger = value => ! isValidInteger( +value ) ?
  * @param {mixed} value
  * @return {string|undefined} error string on fail
  */
-export const isNumeric = value => ! isValidNumeric( +value ) ?
+export const isNumeric = ( value ) => ! isValidNumeric( +value ) ?
 	__( 'Value must be a number', 'event_espresso' ) :
 	null;
 
@@ -47,7 +47,7 @@ export const isNumeric = value => ! isValidNumeric( +value ) ?
  * @param {string} fieldName
  * @return {string|undefined} error string on fail
  */
-export const matches = ( fieldValue, fieldName ) => valueToMatch =>
+export const matches = ( fieldValue, fieldName ) => ( valueToMatch ) =>
 	! valueToMatch || fieldValue !== valueToMatch ?
 		sprintf(
 			__( 'Value should match %s', 'event_espresso' ),
@@ -59,7 +59,7 @@ export const matches = ( fieldValue, fieldName ) => valueToMatch =>
  * @param {number} max
  * @return {string|null} error string on fail
  */
-export const maxFloat = max => value =>
+export const maxFloat = ( max ) => ( value ) =>
 	! floatLessThanOrEqualTo( +max, +value ) ?
 		sprintf(
 			_n(
@@ -76,7 +76,7 @@ export const maxFloat = max => value =>
  * @param {number} max
  * @return {string|null} error string on fail
  */
-export const maxLength = ( max = 1024 ) => value => (
+export const maxLength = ( max = 1024 ) => ( value ) => (
 	! stringLengthLessThanOrEqualTo( +max, value ) ?
 		sprintf(
 			_n(
@@ -94,7 +94,7 @@ export const maxLength = ( max = 1024 ) => value => (
  * @param {number} max
  * @return {string|null} error string on fail
  */
-export const maxNumber = max => value => (
+export const maxNumber = ( max ) => ( value ) => (
 	! numberLessThanOrEqualTo( +max, +value ) ?
 		sprintf(
 			_n(
@@ -112,7 +112,7 @@ export const maxNumber = max => value => (
  * @param {number} min
  * @return {string|null} error string on fail
  */
-export const minFloat = min => value => (
+export const minFloat = ( min ) => ( value ) => (
 	! floatGreaterThanOrEqualTo( +min, +value ) ?
 		sprintf(
 			_n(
@@ -130,7 +130,7 @@ export const minFloat = min => value => (
  * @param {number} min
  * @return {string|null} error string on fail
  */
-export const minLength = ( min = 1 ) => value => (
+export const minLength = ( min = 1 ) => ( value ) => (
 	! stringLengthGreaterThanOrEqualTo( +min, value ) ?
 		sprintf(
 			_n(
@@ -148,7 +148,7 @@ export const minLength = ( min = 1 ) => value => (
  * @param {number} min
  * @return {string|null} error string on fail
  */
-export const minNumber = min => value => (
+export const minNumber = ( min ) => ( value ) => (
 	! numberGreaterThanOrEqualTo( +min, +value ) ?
 		sprintf(
 			_n(
@@ -166,7 +166,7 @@ export const minNumber = min => value => (
  * @param {mixed} value
  * @return {string|null} error string on fail
  */
-export const required = value => ! value ?
+export const required = ( value ) => ! value ?
 	__( 'Please enter a value', 'event_espresso' ) :
 	null;
 

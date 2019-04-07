@@ -25,7 +25,7 @@ export const cleanUpInputAttributes = ( attributes = {} ) => {
  * @param {Array} validators
  * @return {Function} combined validation function
  */
-export const composeValidators = ( ...validators ) => value => {
+export const composeValidators = ( ...validators ) => ( value ) => {
 	return validators.reduce(
 		( error, validator ) => error || validator( value ),
 		undefined
@@ -47,7 +47,7 @@ export const addValidatorsToAttributes = (
 	validators = [],
 ) => {
 	validators.forEach(
-		validator => {
+		( validator ) => {
 			const name = validator && validator.name ? validator.name : '';
 			switch ( name ) {
 				case 'required' :
@@ -64,7 +64,7 @@ export const addValidatorsToAttributes = (
  * @param {Array} options
  * @return {Array} values
  */
-export const getValuesForOptions = options => options.map(
+export const getValuesForOptions = ( options ) => options.map(
 	( option ) => option.value
 );
 

@@ -61,7 +61,7 @@ class Observer {
 	 * calls each observer callback and applies any assigned arguments
 	 */
 	notify() {
-		this.observers.forEach( observer => {
+		this.observers.forEach( ( observer ) => {
 			observer.apply( null, arguments );
 		} );
 	}
