@@ -6,7 +6,6 @@ import moment from 'moment-timezone';
 import { filter, first, sortBy } from 'lodash';
 import { ticketModel } from '@eventespresso/model';
 
-
 /**
  * filterTickets
  * reduces tickets array based on value of the "show" filter
