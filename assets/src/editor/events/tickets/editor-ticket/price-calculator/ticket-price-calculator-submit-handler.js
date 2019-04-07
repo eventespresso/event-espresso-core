@@ -41,29 +41,27 @@ export const ticketPriceCalculatorSubmitHandler = async (
 		formData.ticketTotal || 0,
 		SiteCurrency
 	);
-	// if ( ! isArray( prices ) || prices.length === 0
-	// ) {
-	// 	return {};
-	// }
-	let prefix = TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX;
-	prefix += '-ticket-' + ticket.id + '-price';
-	for ( let i = 0; i < prices.length; i++ ) {
-		let price = prices[ i ];
-		if ( isModelEntityOfModel( price, 'price' ) ) {
-			const priceId = shortenCuid( price.id );
-			const pricePrefix = `${ prefix }-${ priceId }`;
-			if ( price.id === formData[ `${ pricePrefix }-id` ] ) {
-				price.prtId = parseInt( formData[ `${ pricePrefix }-type` ] );
-				price.name = formData[ `${ pricePrefix }-name` ] || '';
-				price.desc = formData[ `${ pricePrefix }-desc` ] || '';
-				price.amount = new Money(
-					formData[ `${ pricePrefix }-amount` ] || 0,
-					SiteCurrency
-				);
-				price = await updatePrice( price, ticket );
-				console.log( 'price', price );
-			}
-		}
+	if ( isArray( prices ) ) {
+        let prefix = TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX;
+        prefix += '-ticket-' + ticket.id + '-price';
+        for ( let i = 0; i < prices.length; i++ ) {
+            let price = prices[ i ];
+            if ( isModelEntityOfModel( price, 'price' ) ) {
+                const priceId = shortenCuid( price.id );
+                const pricePrefix = `${ prefix }-${ priceId }`;
+                if ( price.id === formData[ `${ pricePrefix }-id` ] ) {
+                    price.prtId = parseInt( formData[ `${ pricePrefix }-type` ] );
+                    price.name = formData[ `${ pricePrefix }-name` ] || '';
+                    price.desc = formData[ `${ pricePrefix }-desc` ] || '';
+                    price.amount = new Money(
+                        formData[ `${ pricePrefix }-amount` ] || 0,
+                        SiteCurrency
+                    );
+                    price = await updatePrice( price, ticket );
+                    console.log( 'price', price );
+                }
+            }
+        }
 	}
 	ticket = await updateTicket( ticket );
 	console.log( 'ticket', ticket );
