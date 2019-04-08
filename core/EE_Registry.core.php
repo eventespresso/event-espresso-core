@@ -1321,8 +1321,18 @@ class EE_Registry implements ResettableInterface
         $argument_keys = array_keys($arguments);
         // now loop thru all of the constructors expected parameters
         foreach ($params as $index => $param) {
-            // is this a dependency for a specific class ?
-            $param_class = $this->mirror->getParameterClassName($param, $class_name, $index);
+            try {
+                // is this a dependency for a specific class ?
+                $param_class = $this->mirror->getParameterClassName($param, $class_name, $index);
+            } catch (ReflectionException $exception) {
+                // uh-oh... most likely a legacy class that has not been autoloaded
+                // let's try to derive the classname from what we have now
+                // and hope that the property var name is close to the class name
+                $param_class = $param->getName();
+                $param_class = str_replace('_', ' ',$param_class);
+                $param_class = ucwords($param_class);
+                $param_class = str_replace(' ', '_', $param_class);
+            }
             // BUT WAIT !!! This class may be an alias for something else (or getting replaced at runtime)
             $param_class = $this->class_cache->isAlias($param_class, $class_name)
                 ? $this->class_cache->getFqnForAlias($param_class, $class_name)
