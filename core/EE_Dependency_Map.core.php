@@ -1030,6 +1030,7 @@ class EE_Dependency_Map
             'EventEspresso\core\services\request\RequestInterface'                         => 'EventEspresso\core\services\request\Request',
             'EventEspresso\core\services\request\ResponseInterface'                        => 'EventEspresso\core\services\request\Response',
             'EventEspresso\core\domain\DomainInterface'                                    => 'EventEspresso\core\domain\Domain',
+            'Registration_Processor'                                                       => 'EE_Registration_Processor',
         );
         foreach ($aliases as $alias => $fqn) {
             if (is_array($fqn)) {
