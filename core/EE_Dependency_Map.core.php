@@ -909,6 +909,8 @@ class EE_Dependency_Map
             'EE_Register_CPTs'                             => 'load_core',
             'EE_Admin'                                     => 'load_core',
             'EE_CPT_Strategy'                              => 'load_core',
+            // load_class
+            'EE_Registration_Processor'                    => 'load_class',
             // load_lib
             'EE_Message_Resource_Manager'                  => 'load_lib',
             'EE_Message_Type_Collection'                   => 'load_lib',
