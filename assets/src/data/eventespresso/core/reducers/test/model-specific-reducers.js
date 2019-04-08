@@ -50,6 +50,32 @@ describe( 'handleReceiveSelector()', () => {
 			}
 		) ).toEqual( Map() );
 	} );
+	it( 'resets only the model specific state for a given selector ' +
+		'(RESET_MODEL_SPECIFIC_FOR_SELECTOR)', () => {
+		const originalState = Map()
+			.setIn(
+				[ 'foo', JSON.stringify( [ 'bar', 10 ] ) ],
+				'bar'
+			).setIn(
+				[ 'bar', JSON.stringify( [ 'foo', 42 ] ) ],
+				'foo'
+			).setIn(
+				[ 'foo', JSON.stringify( [ 'foo', 33 ] ) ],
+				'bar'
+			);
+		expect( handleReceiveSelector(
+			originalState,
+			{
+				type: resetTypes.RESET_MODEL_SPECIFIC_FOR_SELECTOR,
+				selector: 'foo',
+			}
+		) ).toEqual(
+			Map().setIn(
+				[ 'bar', JSON.stringify( [ 'foo', 42 ] ) ],
+				'foo'
+			)
+		);
+	} );
 	it( 'resets only the given selector and args leaving any other selectors' +
 		' in state', () => {
 		const originalState = Map()
@@ -71,7 +97,7 @@ describe( 'handleReceiveSelector()', () => {
 			handleReceiveSelector(
 				originalState,
 				{
-					type: resetTypes.RESET_MODEL_SPECIFIC_FOR_SELECTOR,
+					type: resetTypes.RESET_MODEL_SPECIFIC_FOR_SELECTOR_AND_ARGS,
 					selector: 'foo',
 					args: [ 'bar', 10 ],
 				}
