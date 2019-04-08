@@ -116,7 +116,7 @@ class ClassInterfaceCache
         if ($this->isAliasForClass($fqn, $for_class)) {
             return true;
         }
-        if ($for_class === '' && $this->isDirectAlias($fqn)) {
+        if ($this->isDirectAlias($fqn)) {
             return true;
         }
         return false;
