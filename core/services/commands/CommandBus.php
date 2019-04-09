@@ -89,7 +89,7 @@ class CommandBus implements CommandBusInterface
         $middleware = function ($command) use ($command_bus) {
             return $command_bus->getCommandHandlerManager()
                                ->getCommandHandler($command, $command_bus)
-                               ->handle($command);
+                               ->invokeHandle($command);
         };
         // now build the rest of the middleware stack
         while ($command_bus_middleware = array_pop($this->command_bus_middleware)) {
