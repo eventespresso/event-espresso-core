@@ -29,6 +29,17 @@ class MockCommandHandler implements CommandHandlerInterface
     {
         return $this->results;
     }
+
+    /**
+     * Wrapper for handle, except it verifies the command is of the correct type.
+     * @since $VID:$
+     * @param CommandInterface $command
+     * @return mixed
+     */
+    public function invokeHandle(CommandInterface $command)
+    {
+        return $this->handle($command);
+    }
 }
 // End of file MockCommandHandler.php
 // Location: testcases/tests/testcases/core/services/commands/MockCommandHandler.php
