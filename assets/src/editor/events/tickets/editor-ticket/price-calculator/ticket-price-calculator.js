@@ -84,7 +84,7 @@ const getPriceModifierFormData = ( ticketID, formData ) => {
 	let basePrefix = TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX;
 	basePrefix += '-ticket-' + ticketID + '-price';
 	const priceModifiers = [];
-	const priceIDs = formData.priceIDs.split( ',' );
+	const priceIDs = formData.priceIDs ? formData.priceIDs.split( ',' ) : [];
 	for ( const priceID of priceIDs ) {
 		const prefix = `${ basePrefix }-${ priceID }`;
 		const priceType = typeof formData[ `${ prefix }-type` ] !== 'undefined' ?
