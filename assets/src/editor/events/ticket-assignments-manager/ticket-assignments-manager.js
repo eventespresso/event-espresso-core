@@ -112,8 +112,6 @@ class TicketAssignmentsManager extends Component {
 	 * @return {Array} table header cell data
 	 */
 	ticketHeaders = ( tickets, dateCount ) => {
-		// console.log( '' );
-		// console.log( 'TicketAssignmentsManager.ticketHeaders()' );
 		const headerCells = [
 			{
 				type: 'row',
@@ -138,7 +136,6 @@ class TicketAssignmentsManager extends Component {
 			let statusClass = getTicketBgColorClass( ticket );
 			statusClass = `ee-dtm-ticket-header-status ${ statusClass }`;
 			const saleDate = ticket.startDate.toFormat( 'MMM DD YYYY' );
-			// console.log( ' > ticket: ', ticket.name );
 			headerCells.push(
 				{
 					type: 'cell',
@@ -181,9 +178,6 @@ class TicketAssignmentsManager extends Component {
 		eventDateTicketMap,
 		dateCount,
 	) => {
-		// console.log( '' );
-		// console.log( 'TicketAssignmentsManager.ticketHeaders()' );
-		// console.log( ' > dateCount: ', dateCount );
 		let year = 0;
 		const dateRows = [];
 		dates.forEach(
@@ -192,7 +186,6 @@ class TicketAssignmentsManager extends Component {
 					isModelEntityOfModel( eventDate, DATETIME ),
 					'Invalid EE Date model object!'
 				);
-				// console.log( ' > eventDate: ', eventDate.name );
 				const dateYear = parseInt(
 					eventDate.start.toFormat( 'YYYY' )
 				);
@@ -200,9 +193,6 @@ class TicketAssignmentsManager extends Component {
 					year = dateYear;
 					dateRows.push( this.yearRow( year, tickets ) );
 				}
-				const eventDateTickets = eventDateTicketMap[ eventDate.id ] ?
-					eventDateTicketMap[ eventDate.id ] :
-					[];
 				const rowData = [
 					{
 						type: 'row',
@@ -213,12 +203,14 @@ class TicketAssignmentsManager extends Component {
 				if ( dateCount > 1 ) {
 					rowData.push( this.dateHeader( eventDate ) );
 				}
+				const eventDateTickets = eventDateTicketMap[ eventDate.id ] ?
+					eventDateTicketMap[ eventDate.id ] :
+					[];
 				tickets.forEach( ( ticket ) => {
 					warning(
 						isModelEntityOfModel( ticket, TICKET ),
 						'Invalid EE Ticket model object!'
 					);
-					// console.log( ' > ticket: ', ticket.name );
 					rowData.push(
 						this.ticketCell( eventDate, ticket, eventDateTickets )
 					);
@@ -309,32 +301,31 @@ class TicketAssignmentsManager extends Component {
 			eventDate,
 			ticket,
 			true
-		);
+		) > noIndex;
 		const isRemoved = handler.isRemoved(
 			this.state.removed,
 			eventDate,
 			ticket,
 			true
-		);
+		) > noIndex;
 		let icon = '';
 		let bgColor = 'ee-dtm-ticket-relation-button';
 		if ( hasTicket ) {
-			if ( isRemoved > noIndex ) {
+			if ( isRemoved ) {
 				icon = 'no';
 				bgColor += ' ee-dtm-remove-ticket-relation';
 			} else {
 				icon = 'tickets-alt';
 				bgColor += ' ee-dtm-has-ticket-relation';
 			}
-		} else if ( isAssigned > noIndex ) {
+		} else if ( isAssigned ) {
 			icon = 'tickets-alt';
 			bgColor += ' ee-dtm-add-ticket-relation';
 		} else {
 			icon = 'minus';
 			bgColor += ' ee-dtm-no-ticket-relation';
 		}
-		const action = isAssigned > noIndex ||
-		( hasTicket && isRemoved === noIndex ) ?
+		const action = isAssigned || ( hasTicket && ! isRemoved ) ?
 			this.removeTicket :
 			this.assignTicket;
 		return {
@@ -407,9 +398,6 @@ class TicketAssignmentsManager extends Component {
 	};
 
 	render() {
-		// console.log( '' );
-		// console.log( 'TicketAssignmentsManager.render()' );
-		// console.log( ' > props: ', this.props );
 		const {
 			entities,
 			tickets,
@@ -422,7 +410,6 @@ class TicketAssignmentsManager extends Component {
 			pagination,
 		} = this.props;
 		const dates = entities;
-		// console.log( ' > dates: ', dates );
 		this.onUpdate = onUpdate;
 		this.closeModal = closeModal;
 		this.resetRelationsMap = resetRelationsMap;
