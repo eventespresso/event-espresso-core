@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import { warning } from 'warning';
 import { Component } from '@wordpress/element';
 import { compose, withState, withSafeTimeout } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
@@ -42,15 +43,12 @@ class TicketPriceCalculatorFormModal extends Component {
 	 * @return {Object} formData
 	 */
 	loadHandler = ( ticket, prices, reverseCalculate ) => {
-		// console.log( 'TicketPriceCalculatorFormModal.loadHandler()' );
-		// console.log( ' >>> LOADING DATA <<<' );
 		const formData = ticketPriceCalculatorFormDataMap(
 			ticket,
 			prices,
 			reverseCalculate
 		);
 		const totals = calculateTicketPrices( formData );
-		// console.log( ' > > totals: ', totals );
 		return { ...formData, ...totals };
 	};
 
@@ -59,9 +57,7 @@ class TicketPriceCalculatorFormModal extends Component {
 	 * @param {Object} formData
 	 */
 	submitHandler = async ( formData ) => {
-		console.log( 'TicketPriceCalculatorFormModal.submitHandler()' );
-		console.log( ' >>> SUBMITTING DATA <<<', formData );
-		const ticket = ticketPriceCalculatorSubmitHandler(
+		const ticket = await ticketPriceCalculatorSubmitHandler(
 			this.props.ticket,
 			this.props.prices,
 			formData
@@ -69,16 +65,9 @@ class TicketPriceCalculatorFormModal extends Component {
 		if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
 			this.toggleEditor();
 		}
-	};
-
-	/**
-	 * @function
-	 * @param {Object} event
-	 */
-	resetHandler = ( event ) => {
-		console.log( 'TicketPriceCalculatorFormModal.resetHandler()' );
-		console.log( ' >>> FORM RESET <<<', event );
-		this.toggleEditor();
+		if ( Array.isArray( ticket ) ) {
+			warning( false, ticket.join( '/n' ) );
+		}
 	};
 
 	render() {
@@ -92,9 +81,6 @@ class TicketPriceCalculatorFormModal extends Component {
 			...extraProps
 		} = this.props;
 		this.toggleEditor = closeModal;
-		// console.log( '' );
-		// console.log( 'TicketPriceCalculatorFormModal.render()' );
-		// console.log( ' > props: ', this.props );
 		const formProps = loading ?
 			{ loading } :
 			{
@@ -104,14 +90,13 @@ class TicketPriceCalculatorFormModal extends Component {
 				priceTypes,
 				formData: this.loadHandler( ticket, prices, reverseCalculate ),
 			};
-		// console.log( ' > formProps: ', formProps );
 		return (
 			<TicketPriceCalculatorForm
 				{ ...formProps }
 				decorators={ ticketPriceCalculator }
 				loadHandler={ null }
 				submitHandler={ this.submitHandler }
-				resetHandler={ this.resetHandler }
+				resetHandler={ closeModal }
 				loadingNotice={
 					sprintf(
 						_x(
@@ -147,8 +132,6 @@ export default compose( [
 		),
 	} ),
 	withSelect( ( select, ownProps ) => {
-		// console.log( '' );
-		// console.log( 'TicketPriceCalculatorFormModal withSelect()' );
 		const { getRelatedEntities } = select( 'eventespresso/core' );
 		const { getEntities } = select( 'eventespresso/lists' );
 		const { hasFinishedResolution } = select( 'core/data' );
@@ -168,16 +151,17 @@ export default compose( [
 			'getEntities',
 			[ 'price_type' ]
 		);
-		const modalProps = pricesResolved && priceTypesResolved ? {
+		return pricesResolved && priceTypesResolved ? {
 			loading: false,
 			ticket,
 			prices,
 			priceTypes,
 		} : {
 			loading: true,
+			ticket,
+			prices: [],
+			priceTypes: [],
 		};
-		// console.log( ' > modalProps: ', modalProps );
-		return modalProps;
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
 		const { newModifiers, deletedModifiers } = ownProps;

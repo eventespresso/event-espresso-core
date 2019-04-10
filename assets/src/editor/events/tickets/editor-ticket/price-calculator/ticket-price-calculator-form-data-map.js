@@ -29,16 +29,14 @@ const buildTicketDataMap = ( formData, ticket ) => {
  * @return {Object} form data
  */
 const buildPricesDataMap = ( formData, ticket, prices ) => {
-	if ( ! isArray( prices ) || prices.length === 0
-	) {
+	if ( ! isArray( prices ) || prices.length === 0 ) {
 		return {};
 	}
 	let prefix = TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX;
 	prefix += '-ticket-' + ticket.id + '-price';
 	const priceIDs = [];
 	const priceTypes = [];
-	for ( let i = 0; i < prices.length; i++ ) {
-		const price = prices[ i ];
+	prices.forEach( ( price ) => {
 		if ( isModelEntityOfModel( price, 'price' ) ) {
 			const priceId = shortenCuid( price.id );
 			priceIDs.push( priceId );
@@ -55,13 +53,13 @@ const buildPricesDataMap = ( formData, ticket, prices ) => {
 				) :
 				0;
 		}
-	}
-	if ( isArray( priceIDs ) && ! isEmpty( priceIDs ) ) {
-		formData.priceIDs = uniq( priceIDs ).join();
-	}
-	if ( isArray( priceTypes ) && ! isEmpty( priceTypes ) ) {
-		formData.priceTypes = uniq( priceTypes ).join();
-	}
+	} );
+	formData.priceIDs = isArray( priceIDs ) && ! isEmpty( priceIDs ) ?
+		uniq( priceIDs ).join() :
+		'';
+	formData.priceTypes = isArray( priceTypes ) && ! isEmpty( priceTypes ) ?
+		uniq( priceTypes ).join() :
+		'';
 	return formData;
 };
 
@@ -90,15 +88,12 @@ export const ticketPriceCalculatorFormDataMap = (
 	prices,
 	reverseCalculate
 ) => {
-	if ( ! prices || ! isModelEntityOfModel( ticket, 'ticket' ) ) {
+	if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
 		return {};
 	}
 	let formData = {};
 	formData = buildTicketDataMap( formData, ticket );
 	formData = buildPricesDataMap( formData, ticket, prices );
 	formData.reverseCalculate = !! reverseCalculate;
-	// console.log( '' );
-	// console.log( 'ticketPriceCalculatorFormDataMap()' );
-	// console.log( ' > formData: ', formData );
 	return formData;
 };
