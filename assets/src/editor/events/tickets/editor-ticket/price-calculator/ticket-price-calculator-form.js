@@ -427,6 +427,7 @@ class TicketPriceCalculatorForm extends Component {
 	 * @param {Array} values
 	 * @param {Array} priceTypeOptions
 	 * @param {boolean} newModifierUpdate
+	 * @param {boolean} required
 	 * @return {Object} rendered price modifier form row
 	 */
 	addPriceModifierRow = (
@@ -434,7 +435,8 @@ class TicketPriceCalculatorForm extends Component {
 		ticketPrefix,
 		values,
 		priceTypeOptions,
-		newModifierUpdate
+		newModifierUpdate,
+		required
 	) => {
 		const priceId = 'new';
 		const prefix = `${ ticketPrefix }-price-${ priceId }`;
@@ -473,6 +475,7 @@ class TicketPriceCalculatorForm extends Component {
 									this.newModifierUpdated();
 								}
 							} }
+							required={ !! required }
 						/>
 					</Fragment>
 				),
@@ -498,6 +501,7 @@ class TicketPriceCalculatorForm extends Component {
 									this.newModifierUpdated();
 								}
 							} }
+							required={ !! required }
 						/>
 					</Fragment>
 				),
@@ -557,6 +561,7 @@ class TicketPriceCalculatorForm extends Component {
 									this.newModifierUpdated();
 								}
 							} }
+							required={ !! required }
 						/>
 					</Fragment>
 				),
@@ -758,7 +763,10 @@ class TicketPriceCalculatorForm extends Component {
 		this.trashPriceModifier = trashPriceModifier;
 		this.newModifiers = newModifiers;
 		this.deletedModifiers = deletedModifiers;
-		if ( ! isModelEntityOfModel( ticket, TICKET ) || isEmpty( priceTypes ) ) {
+		if (
+			! isModelEntityOfModel( ticket, TICKET ) ||
+			isEmpty( priceTypes )
+		) {
 			return null;
 		}
 		this.priceTypes = priceTypes;
@@ -780,7 +788,7 @@ class TicketPriceCalculatorForm extends Component {
 
 		const formRows = [];
 		const priceCount = prices.length;
-		if ( priceCount ) {
+		if ( priceCount > 0 ) {
 			const sortedPrices = sortBy( prices, [ 'order', 'name' ] );
 			for ( let i = 0; i < priceCount; i++ ) {
 				const price = sortedPrices[ i ];
@@ -808,8 +816,11 @@ class TicketPriceCalculatorForm extends Component {
 				ticket,
 				ticketPrefix,
 				values,
-				priceTypeOptions,
-				newModifierUpdate
+				priceCount < 1 ?
+					[ allPriceTypeOptions.shift() ] :
+					priceTypeOptions,
+				newModifierUpdate,
+				priceCount < 1
 			)
 		);
 		return ticket && ticket.id ? (
