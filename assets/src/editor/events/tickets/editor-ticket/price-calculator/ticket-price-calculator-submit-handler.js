@@ -1,9 +1,10 @@
 /**
  * External imports
  */
-import { isArray } from 'lodash';
+import { __, sprintf } from '@eventespresso/i18n';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 import { Money, SiteCurrency } from '@eventespresso/value-objects';
+import { dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -29,41 +30,73 @@ export const ticketPriceCalculatorSubmitHandler = async (
 	prices,
 	formData
 ) => {
-	console.log( '' );
-	console.log( 'ticketPriceCalculatorSubmitHandler()' );
-	console.log( ' > ticketEntity: ', ticket );
-	console.log( ' > prices: ', prices );
-	console.log( ' > formData: ', formData );
+	const errors = [];
 	if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
-		return null;
+		errors.push(
+			sprintf(
+				__(
+					'invalid ticket entity supplied to' +
+					' ticketPriceCalculatorSubmitHandler(): ',
+					'event_espresso'
+				),
+				ticket
+			)
+		);
+		return errors;
 	}
+	const ticketId = ticket.id;
 	ticket.price = new Money(
 		formData.ticketTotal || 0,
 		SiteCurrency
 	);
-	if ( isArray( prices ) ) {
-        let prefix = TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX;
-        prefix += '-ticket-' + ticket.id + '-price';
-        for ( let i = 0; i < prices.length; i++ ) {
-            let price = prices[ i ];
-            if ( isModelEntityOfModel( price, 'price' ) ) {
-                const priceId = shortenCuid( price.id );
-                const pricePrefix = `${ prefix }-${ priceId }`;
-                if ( price.id === formData[ `${ pricePrefix }-id` ] ) {
-                    price.prtId = parseInt( formData[ `${ pricePrefix }-type` ] );
-                    price.name = formData[ `${ pricePrefix }-name` ] || '';
-                    price.desc = formData[ `${ pricePrefix }-desc` ] || '';
-                    price.amount = new Money(
-                        formData[ `${ pricePrefix }-amount` ] || 0,
-                        SiteCurrency
-                    );
-                    price = await updatePrice( price, ticket );
-                    console.log( 'price', price );
-                }
-            }
-        }
+	if ( Array.isArray( prices ) ) {
+		let prefix = TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX;
+		prefix += '-ticket-' + ticketId + '-price';
+		prices.forEach( async ( price ) => {
+			if ( isModelEntityOfModel( price, 'price' ) ) {
+				const priceId = shortenCuid( price.id );
+				const pricePrefix = `${ prefix }-${ priceId }`;
+				if ( formData[ `${ pricePrefix }-id` ] === priceId ) {
+					price.prtId = parseInt( formData[ `${ pricePrefix }-type` ] );
+					price.name = formData[ `${ pricePrefix }-name` ] || '';
+					price.desc = formData[ `${ pricePrefix }-desc` ] || '';
+					price.amount = new Money(
+						formData[ `${ pricePrefix }-amount` ] || 0,
+						SiteCurrency
+					);
+					price = await updatePrice( price, ticket );
+					if ( ! isModelEntityOfModel( price, 'price' ) ) {
+						errors.push(
+							sprintf(
+								__(
+									'update for price %s failed',
+									'event_espresso'
+								),
+								priceId
+							)
+						);
+					}
+				}
+			}
+		} );
 	}
 	ticket = await updateTicket( ticket );
-	console.log( 'ticket', ticket );
-	return true;
+	if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
+		const {
+			persistRelationsForEntityIdAndRelation,
+		} = dispatch( 'eventespresso/core' );
+		await persistRelationsForEntityIdAndRelation(
+			'ticket',
+			ticketId,
+			'prices'
+		);
+		return ticket;
+	}
+	errors.push(
+		sprintf(
+			__( 'update for ticket %s failed', 'event_espresso' ),
+			ticketId
+		)
+	);
+	return errors;
 };
