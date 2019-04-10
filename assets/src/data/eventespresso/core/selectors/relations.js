@@ -38,7 +38,7 @@ const getRelationIdsForEntityRelation = createSelector(
 		}
 		let modelName = singularModelName( entity.modelName );
 		relationName = pluralModelName( relationName );
-		if ( state.relations.hasIn( [ 'entityMap', modelName ] ) ) {
+		if ( state.relations.hasIn( [ 'entityMap', modelName, entity.id, relationName ] ) ) {
 			return ( state.relations.getIn(
 				[
 					'entityMap',
@@ -50,7 +50,7 @@ const getRelationIdsForEntityRelation = createSelector(
 		}
 		modelName = pluralModelName( modelName );
 		relationName = singularModelName( relationName );
-		if ( state.relations.hasIn( [ 'index', modelName ] ) ) {
+		if ( state.relations.hasIn( [ 'index', modelName, entity.id, relationName ] ) ) {
 			return ( state.relations.getIn(
 				[
 					'index',
@@ -196,8 +196,11 @@ export const getRelatedEntitiesForIds = createSelector(
 const lookupRelationsQueuedForModel = ( state, modelName, type = 'add' ) => {
 	const forIndexLookup = pluralModelName( modelName );
 	const forAddLookup = singularModelName( modelName );
+	let relationsQueued = Map();
 	if ( state.dirty.relations.hasIn( [ type, forAddLookup ] ) ) {
-		return state.dirty.relations.getIn( [ type, forAddLookup ] ).toJS();
+		relationsQueued = relationsQueued.mergeDeep(
+			state.dirty.relations.getIn( [ type, forAddLookup ] )
+		);
 	}
 	if ( state.dirty.relations.hasIn( [ 'index', forIndexLookup ] ) ) {
 		let relations = Map();
@@ -213,9 +216,9 @@ const lookupRelationsQueuedForModel = ( state, modelName, type = 'add' ) => {
 				} );
 			}
 		);
-		return relations.toJS();
+		relationsQueued = relationsQueued.mergeDeep( relations );
 	}
-	return {};
+	return relationsQueued.toJS();
 };
 
 /**
