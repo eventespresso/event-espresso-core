@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import { isEmpty } from 'lodash';
 import { Component, Fragment } from '@wordpress/element';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { EntityListFilterBar } from '@eventespresso/higher-order-components';
@@ -25,7 +26,7 @@ import {
  * @return {Array} filtered list of dates
  */
 export const getFilteredDatesList = ( dates, showDates, sortDates ) => {
-	return showDates && sortDates && dates ?
+	return showDates && sortDates && ! isEmpty( dates ) ?
 		sortDatesList(
 			filterDates( dates, showDates ),
 			sortDates

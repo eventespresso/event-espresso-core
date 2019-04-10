@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import { isEmpty } from 'lodash';
 import { Component, Fragment } from '@wordpress/element';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { __ } from '@eventespresso/i18n';
@@ -19,15 +20,15 @@ import { default as TicketListFilterBar } from './tickets-list-filter-bar';
 /**
  * filters the tickets list based on the current filter state
  *
- * @param {Array} entities
+ * @param {Array} tickets
  * @param {string} showTickets
  * @param {string} sortTickets
  * @return {Array} filtered list of tickets
  */
-export const getFilteredTicketsList = ( entities, showTickets, sortTickets ) => {
-	return showTickets && sortTickets && entities ?
+export const getFilteredTicketsList = ( tickets, showTickets, sortTickets ) => {
+	return showTickets && sortTickets && ! isEmpty( tickets ) ?
 		sortTicketsList(
-			filterTickets( entities, showTickets ),
+			filterTickets( tickets, showTickets ),
 			sortTickets
 		) :
 		[];
