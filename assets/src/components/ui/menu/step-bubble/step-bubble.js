@@ -30,12 +30,12 @@ export const StepBubble = ( {
 				if ( event.key === 'Enter' ) {
 					bubbleClick( slug );
 				}
-			}
+			},
+			role: 'menuitem',
 		} :
 		{};
 	return <button
 		className={ cssClass }
-		role="menuitem"
 		tabIndex={ -1 }
 		{ ...clickActions }
 	>
