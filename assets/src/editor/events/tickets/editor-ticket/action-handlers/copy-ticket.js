@@ -20,19 +20,24 @@ const {
 /**
  * @function
  * @param {Object} ticketEntity  EE Ticket object
+ * @param {Array} relatedDates    Event Dates for the Ticket
+ * @param {boolean} datesLoaded
  * @return {boolean}  true if copy was successful
  */
-export const copyTicket = async ( ticketEntity ) => {
+export const copyTicket = async (
+	ticketEntity,
+	relatedDates,
+	datesLoaded
+) => {
 	if ( ! isModelEntityOfModel( ticketEntity, TICKET ) ) {
 		return false;
 	}
-	const relatedDates = getRelatedEntities( ticketEntity, DATETIME );
 	createEntity(
 		TICKET,
 		ticketEntity.forClone
 	).then(
 		async ( newTicketEntity ) => {
-			if ( ! isEmpty( relatedDates ) ) {
+			if ( datesLoaded ) {
 				createRelations(
 					TICKET,
 					newTicketEntity.id,
