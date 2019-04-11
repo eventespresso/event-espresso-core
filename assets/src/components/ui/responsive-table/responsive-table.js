@@ -157,19 +157,24 @@ class ResponsiveTable extends Component {
 	 */
 	tableHeader = ( columns, isFooter = false ) => {
 		this.rowNumber++;
+		// console.log( '' );
+		// console.log( 'rowNumber', this.rowNumber );
 		const rowType = isFooter === true ? 'footer' : 'header';
 		let rowProps = {};
 		let indexMod = 0;
 		const headerCells = columns.map(
 			( column, colNumber ) => {
+				// console.log( ' > colNumber', colNumber );
+				// console.log( ' > indexMod', indexMod );
 				column.rowType = column.rowType ? column.rowType : rowType;
 				if ( column.type && column.type === 'row' ) {
 					rowProps = column;
 					indexMod++;
-					this.headerIndexMod++;
 					return null;
 				}
+				this.columns.push( column );
 				colNumber -= indexMod;
+				// console.log( ' > > colNumber', colNumber );
 				const hasRenderCallback = isFunction( column.render );
 				warning(
 					hasRenderCallback || column.hasOwnProperty( 'value' ),
@@ -213,6 +218,8 @@ class ResponsiveTable extends Component {
 	 * @return {Object} rendered column header cell
 	 */
 	headingCell = ( rowNumber, colNumber, cellProps ) => {
+		// console.log( ' >>> headingCell', `row-${ rowNumber }-col-${ colNumber }` );
+		// console.log( '   -----------' );
 		return (
 			<TableHeadingCell
 				key={ `row-${ rowNumber }-col-${ colNumber }` }
@@ -231,30 +238,22 @@ class ResponsiveTable extends Component {
 	/**
 	 * @function
 	 * @param {Array} dataRow
-	 * @param {Array} columns
 	 * @return {Object} rendered data row
 	 */
-	dataRow = ( dataRow, columns ) => {
+	dataRow = ( dataRow ) => {
 		this.rowNumber++;
 		// console.log( '' );
 		// console.log( 'rowNumber', this.rowNumber );
-		// console.log( 'headerIndexMod', this.headerIndexMod );
 		warning(
 			isArray( dataRow ),
 			`Data for row ${ this.rowNumber } is not an array.`
 		);
 		let rowProps = {};
-		// if there are more elements in the columns array
-		// then decrement indexMod by the difference
-		// so that the columns match up correctly
-		let indexMod = 0 - this.headerIndexMod;
-		// let indexMod = columns.length > dataRow.length ?
-		// 	dataRow.length - columns.length :
-		// 	0;
+		let indexMod = 0;
 		const rowCells = dataRow.map(
 			( cellData, colNumber ) => {
 				// console.log( ' > colNumber', colNumber );
-				// console.log( ' > > indexMod', indexMod );
+				// console.log( ' > indexMod', indexMod );
 				// console.log( ' > > cellData', cellData );
 				cellData.rowType = cellData.rowType ? cellData.rowType : 'body';
 				if ( cellData.type && cellData.type === 'row' ) {
@@ -265,8 +264,9 @@ class ResponsiveTable extends Component {
 				// adjust column number used in IDs
 				// before grabbing element from column data
 				colNumber -= indexMod;
-				const column = columns[ colNumber ];
-				// console.log( ' > colNumber', colNumber );
+				const column = this.columns[ colNumber ];
+				// console.log( ' > colNumber - indexMod', colNumber );
+				// console.log( ' > > colNumber', colNumber );
 				// console.log( ' > > columns[ colNumber ]', colNumber, column );
 				if ( ! column ) {
 					warning(
@@ -305,7 +305,11 @@ class ResponsiveTable extends Component {
 	 * @return {Object} rendered headings row
 	 */
 	dataCell = ( rowNumber, colNumber, column, cellData ) => {
-		return this.hasRowHeaders && colNumber === this.headerIndexMod ? (
+		if ( ! ( this.hasRowHeaders && colNumber === 0 ) ) {
+			// console.log( ' >>> dataCell', `row-${ rowNumber }-col-${ colNumber }` );
+			// console.log( '   -----------' );
+		}
+		return this.hasRowHeaders && colNumber === 0 ? (
 			this.headingCell( rowNumber, colNumber, cellData )
 		) : (
 			<TableDataCell
@@ -342,14 +346,10 @@ class ResponsiveTable extends Component {
 		// console.log( ' > rowData: ', rowData );
 		this.setMetaData( metaData );
 		this.setCssClasses( classes ? classes : {} );
-		let columnCount = columns.length;
+		this.columns = [];
 		this.rowNumber = -1;
-		this.headerIndexMod = 0;
-		const headerRowData = first( columns );
-		if ( headerRowData && headerRowData.type === 'row' ) {
-			columnCount--;
-		}
-		this.classes.tableClass += ` ee-rTable-column-count-${ columnCount }`;
+		const tableHeader = this.tableHeader( columns );
+		this.classes.tableClass += ` ee-rTable-column-count-${ this.columns.length }`;
 		this.showTableFooter = this.showTableFooter && ! isEmpty( footerData );
 		return (
 			<Table
@@ -359,11 +359,11 @@ class ResponsiveTable extends Component {
 				captionText={ this.tableCaption }
 			>
 				<TableHeader htmlClass={ this.classes.headerClass } >
-					{ this.tableHeader( columns ) }
+					{ tableHeader }
 				</TableHeader>
 				<TableBody htmlClass={ this.classes.bodyClass }>
 					{ rowData.map(
-						( dataRow ) => this.dataRow( dataRow, columns )
+						( dataRow ) => this.dataRow( dataRow )
 					) }
 				</TableBody>
 				<TableFooter
