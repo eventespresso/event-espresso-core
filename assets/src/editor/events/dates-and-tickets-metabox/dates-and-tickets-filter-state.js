@@ -2,10 +2,9 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { isEmpty, uniq } from 'lodash';
-import { createHigherOrderComponent, compose } from '@wordpress/compose';
+import { uniq } from 'lodash';
+import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
-import { Component } from '@wordpress/element';
 import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
@@ -25,7 +24,6 @@ import {
 	getFilteredTicketsList,
 } from '../tickets/editor-ticket/filter-bar/with-tickets-list-filter-bar';
 import {
-	buildEventDateTicketRelationsMap,
 	condenseArray,
 	getDatetimeEntityIds,
 } from './dates-and-tickets-filter-state-utils';
@@ -34,134 +32,140 @@ import {
  * DatesAndTicketsFilterState
  * manages state for the Event Dates and Available Tickets "metaboxes"
  *
- * @constructor
- * @param {number|string} eventId
+ * @param {boolean} loading
+ * @param {boolean} loadingDates
+ * @param {boolean} loadingTickets
  * @param {Array} eventDates
  * @param {Array} eventDateTickets
- * @param {Object} eventDateTicketMap
- * @param {Function} render
+ * @param {Function} getRelatedTickets
+ * @param {string} showDates
+ * @param {string} sortDates
+ * @param {string} showTickets
+ * @param {string} sortTickets
+ * @param {boolean} isChained
+ * @param {Function} render callback for rendering the metabox
+ * @param {Object} otherProps
+ * @return {Object} rendered DatesAndTicketsMetabox
  */
-class DatesAndTicketsFilterState extends Component {
-	static propTypes = {
-		eventId: PropTypes.oneOfType( [
-			PropTypes.number,
-			PropTypes.string,
-		] ).isRequired,
-		event: PropTypes.object,
-		eventDates: PropTypes.arrayOf( PropTypes.object ),
-		eventDateTickets: PropTypes.arrayOf( PropTypes.object ),
-		eventDateTicketMap: PropTypes.object,
-		render: PropTypes.func,
-	};
+const DatesAndTicketsFilterState = ( {
+	loading,
+	loadingDates,
+	loadingTickets,
+	eventDates,
+	eventDateTickets,
+	getRelatedTickets,
+	showDates,
+	sortDates,
+	showTickets,
+	sortTickets,
+	isChained,
+	render,
+	...otherProps
+} ) => {
+	const datetimes = getFilteredDatesList(
+		eventDates,
+		showDates,
+		sortDates
+	);
+	const tickets = getFilteredTicketsList(
+		isChained ?
+			getRelatedTickets( datetimes ) :
+			eventDateTickets,
+		showTickets,
+		sortTickets
+	);
+	return render( {
+		loading: loading,
+		loadingDates: loadingDates,
+		loadingTickets: loadingTickets,
+		datetimes: datetimes,
+		allDates: eventDates,
+		tickets: tickets,
+		allTickets: eventDateTickets,
+		showDates: showDates,
+		sortDates: sortDates,
+		showTickets: showTickets,
+		sortTickets: sortTickets,
+		isChained: isChained,
+		getRelatedTickets: getRelatedTickets,
+		...otherProps,
+	} );
+};
 
-	/**
-	 * @function
-	 * @param {Array} eventDates
-	 * @param {Array} eventDateTicketMap tickets sorted by eventDate
-	 * @return {Array} tickets
-	 */
-	getEventDateTickets = ( eventDates, eventDateTicketMap ) => {
-		let tickets = [];
-		eventDates.map(
-			( eventDate ) => {
-				if (
-					! isEmpty( eventDateTicketMap[ eventDate.id ] ) &&
-					Array.isArray( eventDateTicketMap[ eventDate.id ] )
-				) {
-					tickets = tickets.concat(
-						eventDateTicketMap[ eventDate.id ]
-					);
-				}
-			}
-		);
-		return uniq( tickets );
-	};
+DatesAndTicketsFilterState.propTypes = {
+	eventId: PropTypes.oneOfType( [
+		PropTypes.number,
+		PropTypes.string,
+	] ).isRequired,
+	event: PropTypes.object,
+	eventDates: PropTypes.arrayOf( PropTypes.object ),
+	eventDateTickets: PropTypes.arrayOf( PropTypes.object ),
+	eventDateTicketMap: PropTypes.object,
+	render: PropTypes.func,
+};
 
-	render() {
+export default compose( [
+	withDatesListFilterState,
+	withTicketsListFilterState,
+	withSelect( ( select, ownProps ) => {
+		let loading = true;
+		let eventDates = [];
+		let eventDateTickets = [];
+		let dateRelationsResolved = false;
+		let ticketRelationsResolved = false;
 		const {
-			render,
+			getEventById,
+			getRelatedEntities,
+			getRelatedEntitiesForIds,
+		} = select( 'eventespresso/core' );
+		const { hasFinishedResolution } = select( 'core/data' );
+		const event = getEventById( ownProps.eventId );
+		if ( isModelEntityOfModel( event, 'event' ) ) {
+			loading = false;
+			eventDates = getRelatedEntities( event, 'datetimes' );
+			eventDates = condenseArray( eventDates );
+			dateRelationsResolved = hasFinishedResolution(
+				'eventespresso/core',
+				'getRelatedEntities',
+				[ event, 'datetimes' ]
+			);
+			if ( dateRelationsResolved ) {
+				const eventDateIds = getDatetimeEntityIds( eventDates );
+				eventDateTickets = getRelatedEntitiesForIds(
+					'datetime',
+					eventDateIds,
+					'ticket'
+				);
+				ticketRelationsResolved = hasFinishedResolution(
+					'eventespresso/core',
+					'getRelatedEntitiesForIds',
+					[ 'datetime', eventDateIds, 'ticket' ]
+				);
+			}
+		}
+		/**
+		 * @function
+		 * @param {Array} dates
+		 * @return {Array} tickets
+		 */
+		const getRelatedTickets = ( dates ) => {
+			if ( ! ticketRelationsResolved ) {
+				return null;
+			}
+			let tickets = [];
+			dates.forEach( ( date ) => {
+				tickets = tickets.concat( getRelatedEntities( date, 'ticket' ) );
+			} );
+			return uniq( tickets );
+		};
+		return {
 			event,
 			eventDates,
 			eventDateTickets,
-			eventDateTicketMap,
-			showDates,
-			sortDates,
-			showTickets,
-			sortTickets,
-			isChained,
-			...otherProps
-		} = this.props;
-		let datetimes = [];
-		let tickets = [];
-
-		if ( ! isEmpty( eventDates ) ) {
-			datetimes = getFilteredDatesList(
-				eventDates,
-				showDates,
-				sortDates
-			);
-			tickets = isChained ?
-				this.getEventDateTickets( datetimes, eventDateTicketMap ) :
-				eventDateTickets;
-			tickets = getFilteredTicketsList(
-				tickets,
-				showTickets,
-				sortTickets
-			);
-		}
-
-		return render( {
-			loading: isEmpty( eventDates ) || isEmpty( eventDateTickets ),
-			event: event,
-			datetimes: datetimes,
-			allDates: eventDates,
-			tickets: tickets,
-			allTickets: eventDateTickets,
-			showDates: showDates,
-			sortDates: sortDates,
-			showTickets: showTickets,
-			sortTickets: sortTickets,
-			isChained: isChained,
-			eventDateTicketMap: eventDateTicketMap,
-			...otherProps,
-		} );
-	}
-}
-
-export default createHigherOrderComponent(
-	compose( [
-		withDatesListFilterState,
-		withTicketsListFilterState,
-		withSelect( ( select, ownProps ) => {
-			let eventDates = [];
-			let eventDateTickets = [];
-			let eventDateIds = [];
-			let eventDateTicketMap = {};
-			const coreStore = select( 'eventespresso/core' );
-			const listStore = select( 'eventespresso/lists' );
-			const event = coreStore.getEventById( ownProps.eventId );
-			if ( isModelEntityOfModel( event, 'event' ) ) {
-				eventDates = coreStore.getRelatedEntities( event, 'datetimes' );
-				eventDates = condenseArray( eventDates );
-				if ( ! isEmpty( eventDates ) ) {
-					eventDateIds = getDatetimeEntityIds( eventDates );
-					const queryString = 'where[Datetime.DTT_ID][IN]=[' +
-						eventDateIds.join( ',' ) + ']';
-					const ticketQueryString = queryString +
-						'&default_where_conditions=minimum';
-					eventDateTickets = listStore.getEntities(
-						'ticket',
-						ticketQueryString
-					);
-					eventDateTicketMap = buildEventDateTicketRelationsMap(
-						eventDateIds,
-						eventDateTickets,
-						listStore.getEntities( 'datetime_ticket', queryString )
-					);
-				}
-			}
-			return { event, eventDates, eventDateTickets, eventDateTicketMap };
-		} ),
-	] ),
-	'withDatesAndTicketsFilterState'
-)( DatesAndTicketsFilterState );
+			getRelatedTickets,
+			loading: loading,
+			loadingDates: ! dateRelationsResolved,
+			loadingTickets: ! ticketRelationsResolved,
+		};
+	} ),
+] )( DatesAndTicketsFilterState );
