@@ -4,8 +4,10 @@
 import { dispatch } from '@wordpress/data';
 import { __ } from '@eventespresso/i18n';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-
-const { createRelation, persistEntityRecord } = dispatch( 'eventespresso/core' );
+const {
+	createRelation,
+	persistEntityRecord,
+} = dispatch( 'eventespresso/core' );
 
 /**
  * @function
