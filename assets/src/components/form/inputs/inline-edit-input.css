@@ -3,12 +3,6 @@
  * (c) 2018 Event Espresso
  * -------------------------------------------------------------------------*/
 
-.ee-form-row .ee-inline-edit-text {
-    font-size: 1rem;
-    line-height: 1.5;
-    color: var(--ee-dark-grey);
-}
-
 .ee-form-row .ee-inline-edit-text:hover {
     color: var(--ee-green) !important;
 }
