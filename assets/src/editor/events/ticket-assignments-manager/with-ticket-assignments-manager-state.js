@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import { uniq } from 'lodash';
 import { compose, withState } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 import {
@@ -46,8 +47,9 @@ export default compose( [
 		),
 	} ),
 	withSelect( ( select, ownProps ) => {
-		const { editorOpen, initialized } = ownProps;
 		const {
+			editorOpen,
+			initialized,
 			loading,
 			date,
 			allDates,
@@ -57,7 +59,6 @@ export default compose( [
 			tickets,
 			setState,
 		} = ownProps;
-		let { eventDateTicketMap } = ownProps;
 		const resetRelationsMap = () => {
 			setState( { initialized: false } );
 		};
@@ -65,131 +66,54 @@ export default compose( [
 			loading,
 			entities,
 			tickets,
-			eventDateTicketMap,
 			resetRelationsMap,
 		};
 		if ( ! editorOpen || initialized ) {
 			return dtmProps;
 		}
 		if ( isModelEntityOfModel( date, DATETIME ) ) {
-			const { getRelatedEntities } = select( 'eventespresso/core' );
-			const { hasFinishedResolution } = select( 'core/data' );
-			const relatedTickets = getRelatedEntities( date, TICKET );
-			const relationsResolved = hasFinishedResolution(
-				'eventespresso/core',
-				'getRelatedEntities',
-				[ date, TICKET ]
-			);
-			if ( ! relationsResolved || ! Array.isArray( relatedTickets ) ) {
-				return dtmProps;
-			}
 			dtmProps = {
 				loading: false,
 				initialized: true,
 				entities: [ date ],
 				tickets: allTickets,
-				eventDateTicketMap: { [ date.id ]: relatedTickets },
-				resetRelationsMap,
 			};
-			setState( dtmProps );
 		} else if ( isModelEntityOfModel( ticket, TICKET ) ) {
-			const { getRelatedEntities } = select( 'eventespresso/core' );
-			const { hasFinishedResolution } = select( 'core/data' );
-			const relatedDates = getRelatedEntities( ticket, DATETIME );
-			const relationsResolved = hasFinishedResolution(
-				'eventespresso/core',
-				'getRelatedEntities',
-				[ ticket, DATETIME ]
-			);
-			if ( ! relationsResolved || ! Array.isArray( relatedDates ) ) {
-				return dtmProps;
-			}
-			eventDateTicketMap = {};
-			for ( let x = 0; x < relatedDates.length; x++ ) {
-				const relatedDate = relatedDates[ x ];
-				if ( isModelEntityOfModel( relatedDate, DATETIME ) ) {
-					eventDateTicketMap[ relatedDate.id ] = ticket;
-				}
-			}
 			dtmProps = {
 				loading: false,
 				initialized: true,
 				entities: sortDatesList( allDates ),
 				tickets: [ ticket ],
-				eventDateTicketMap: eventDateTicketMap,
-				resetRelationsMap,
 			};
-			setState( dtmProps );
 		} else if ( Array.isArray( allDates ) && Array.isArray( allTickets ) ) {
-			const { getRelatedEntities, getRelatedEntitiesForIds } = select( 'eventespresso/core' );
-			const { hasFinishedResolution } = select( 'core/data' );
-
-			const dateIds = [];
-			allDates.forEach( ( oneDate ) => {
-				if ( isModelEntityOfModel( oneDate, DATETIME ) ) {
-					dateIds.push( oneDate.id );
-				}
-			} );
-			getRelatedEntitiesForIds(
-				DATETIME,
-				dateIds,
-				TICKET
-			);
-			const allRelationsResolved = hasFinishedResolution(
-				'eventespresso/core',
-				'getRelatedEntitiesForIds',
-				[ DATETIME, dateIds, TICKET ]
-			);
-			if ( ! allRelationsResolved ) {
-				return dtmProps;
-			}
-			let resolvedRelations = 0;
-			eventDateTicketMap = {};
-			for ( let x = 0; x < allDates.length; x++ ) {
-				const oneDate = allDates[ x ];
-				if ( isModelEntityOfModel( oneDate, DATETIME ) && oneDate.id ) {
-					const relatedTickets = getRelatedEntities(
-						oneDate,
-						TICKET
-					);
-					const relationsResolved = hasFinishedResolution(
-						'eventespresso/core',
-						'getRelatedEntities',
-						[ oneDate, TICKET ]
-					);
-					if ( ! relationsResolved ) {
-						return dtmProps;
-					}
-					if ( Array.isArray( relatedTickets ) ) {
-						resolvedRelations++;
-						relatedTickets.forEach( ( relatedTicket ) => {
-							if ( isModelEntityOfModel( relatedTicket, TICKET ) ) {
-								if ( ! eventDateTicketMap[ oneDate.id ] &&
-									! Array.isArray( eventDateTicketMap[ oneDate.id ] )
-								) {
-									eventDateTicketMap[ oneDate.id ] = [];
-								}
-								eventDateTicketMap[ oneDate.id ].push(
-									relatedTicket
-								);
-							}
-						} );
-					}
-				}
-			}
-			if ( resolvedRelations < allDates.length ) {
-				return dtmProps;
-			}
 			dtmProps = {
 				loading: false,
 				initialized: true,
 				entities: sortDatesList( allDates ),
 				tickets: allTickets,
-				eventDateTicketMap: eventDateTicketMap,
-				resetRelationsMap,
 			};
-			setState( dtmProps );
 		}
+		const { getRelatedEntities } = select( 'eventespresso/core' );
+		const { hasFinishedResolution } = select( 'core/data' );
+		const eventDateTicketMap = {};
+		dtmProps.entities.forEach( ( dateEntity ) => {
+			if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
+				const relatedTickets = getRelatedEntities( dateEntity, 'ticket' );
+				const ticketRelationsResolved = hasFinishedResolution(
+					'eventespresso/core',
+					'getRelatedEntities',
+					[ dateEntity, 'ticket' ]
+				);
+				if ( ticketRelationsResolved ) {
+					eventDateTicketMap[ dateEntity.id ] = uniq( relatedTickets );
+				}
+			}
+		} );
+		setState( {
+			...dtmProps,
+			eventDateTicketMap,
+			resetRelationsMap,
+		} );
 		return dtmProps;
 	} ),
 	withDispatch( ( dispatch ) => {
