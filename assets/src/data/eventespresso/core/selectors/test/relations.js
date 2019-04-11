@@ -57,6 +57,25 @@ describe( 'getRelationIdsForEntityRelation()', () => {
 			'datetime'
 		) ).toEqual( [ 52 ] );
 	} );
+	it( 'returns expected array for the given entity and relation when ' +
+		'the modelName exists in both entityMap and index but the relation ' +
+		'is in the index', () => {
+		const testState = {
+			...mockStateForTests,
+			relations: mockStateForTests.relations.setIn(
+				[ 'entityMap', 'datetime' ],
+				Map().set( 52, Map().set( 'foo', Set.of( 100, 200 ) ) )
+			).setIn(
+				[ 'index', 'datetimes', 52, 'ticket' ],
+				Set.of( 10, 20, 30 )
+			),
+		};
+		expect( getRelationIdsForEntityRelation(
+			testState,
+			DateTimeEntities.a,
+			'ticket'
+		) ).toEqual( [ 10, 20, 30 ] );
+	} );
 	it( 'returns cached copy when state has not changed for the given ' +
 		'query', () => {
 		const testResult = getRelationIdsForEntityRelation(
