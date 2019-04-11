@@ -50,13 +50,26 @@ class IconMenuItem extends Component {
 			externalApp = null,
 			...otherProps
 		} = this.props;
-		let { htmlClass } = this.props;
+		let { htmlClass, itemCount = null } = this.props;
 		delete otherProps.htmlClass;
+		delete otherProps.itemCount;
 		htmlClass = `ee-icon-menu-item-${ htmlClass }`;
 		htmlClass += ` ee-icon-menu-item-${ index }`;
 		htmlClass += ' ee-icon-menu-item clickable';
+		if ( itemCount !== null ) {
+			itemCount = parseInt( itemCount );
+			const itemCountClass = itemCount > 0 ?
+				'ee-icon-menu-item-count ee-tiny-shadow ee-has-items' :
+				'ee-icon-menu-item-count ee-tiny-shadow ee-no-items';
+			itemCount = (
+				<div className={ itemCountClass }>
+					{ itemCount > 0 ? itemCount : '?' }
+				</div>
+			);
+		}
+
 		return (
-			<Fragment>
+			<div className={ 'ee-icon-menu-item-wrapper' }>
 				<IconButton
 					id={ `ee-icon-menu-item-${ id }` }
 					className={ htmlClass }
@@ -67,8 +80,9 @@ class IconMenuItem extends Component {
 					icon={ dashicon }
 					{ ...otherProps }
 				/>
+				{ itemCount }
 				{ externalApp }
-			</Fragment>
+			</div>
 		);
 	}
 }
