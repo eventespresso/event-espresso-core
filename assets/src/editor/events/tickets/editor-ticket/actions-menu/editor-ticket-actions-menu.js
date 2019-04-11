@@ -266,10 +266,10 @@ class EditorTicketActionsMenu extends Component {
 		const {
 			ticket,
 			allDates,
-			relatedDates,
-			datesLoaded,
-			prices,
-			pricesLoaded,
+			relatedDates = [],
+			datesLoaded = false,
+			prices = [],
+			pricesLoaded = false,
 		} = this.props;
 		if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
 			return null;
@@ -322,23 +322,20 @@ export default withSelect( ( select, ownProps ) => {
 	const { getRelatedEntities } = select( 'eventespresso/core' );
 	const { hasFinishedResolution } = select( 'core/data' );
 	const ticket = ownProps.ticket;
-	let prices = [];
-	let relatedDates = [];
-	let datesLoaded = false;
-	let pricesLoaded = false;
 	if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
-		relatedDates = getRelatedEntities( ticket, 'datetimes' );
-		prices = getRelatedEntities( ticket, 'prices' );
-		datesLoaded = hasFinishedResolution(
+		const relatedDates = getRelatedEntities( ticket, 'datetimes' );
+		const prices = getRelatedEntities( ticket, 'prices' );
+		const datesLoaded = hasFinishedResolution(
 			'eventespresso/core',
 			'getRelatedEntities',
 			[ ticket, 'datetimes' ]
 		);
-		pricesLoaded = hasFinishedResolution(
+		const pricesLoaded = hasFinishedResolution(
 			'eventespresso/core',
 			'getRelatedEntities',
 			[ ticket, 'prices' ]
 		);
+		return { relatedDates, datesLoaded, prices, pricesLoaded };
 	}
-	return { relatedDates, datesLoaded, prices, pricesLoaded };
+	return {};
 } )( EditorTicketActionsMenu );
