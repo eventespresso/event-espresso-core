@@ -129,7 +129,11 @@ class RequestTypeContextDetector
      */
     private function isEspressoRestApiRequest()
     {
-        return $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
+        return strpos(
+            $this->request->getRequestParam('rest_route', false),
+            '/' . Domain::API_NAMESPACE
+            ) === 0
+            || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
     }
 
 
@@ -139,7 +143,8 @@ class RequestTypeContextDetector
      */
     private function isWordPressRestApiRequest()
     {
-        return $this->uriPathMatches(trim(rest_get_url_prefix(), '/'));
+        return $this->request->getRequestParam('rest_route', false)
+            || $this->uriPathMatches(trim(rest_get_url_prefix(), '/'));
     }
 
 
