@@ -11,10 +11,7 @@ import {
 	IconMenuItem,
 } from '@eventespresso/components';
 import { __, sprintf, _x } from '@eventespresso/i18n';
-import { ticketModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-
-const { MODEL_NAME: TICKET } = ticketModel;
 
 /**
  * Internal dependencies
@@ -274,7 +271,7 @@ class EditorTicketActionsMenu extends Component {
 			prices,
 			pricesLoaded,
 		} = this.props;
-		if ( ! isModelEntityOfModel( ticket, TICKET ) ) {
+		if ( ! isModelEntityOfModel( ticket, 'ticket' ) ) {
 			return null;
 		}
 		return ticket && ticket.id ? (
@@ -330,12 +327,12 @@ export default withSelect( ( select, ownProps ) => {
 	let datesLoaded = false;
 	let pricesLoaded = false;
 	if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
-		relatedDates = getRelatedEntities( ticket, 'datetime' );
+		relatedDates = getRelatedEntities( ticket, 'datetimes' );
 		prices = getRelatedEntities( ticket, 'prices' );
 		datesLoaded = hasFinishedResolution(
 			'eventespresso/core',
 			'getRelatedEntities',
-			[ ticket, 'datetime' ]
+			[ ticket, 'datetimes' ]
 		);
 		pricesLoaded = hasFinishedResolution(
 			'eventespresso/core',

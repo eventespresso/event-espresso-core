@@ -3,12 +3,7 @@
  */
 import { isEmpty } from 'lodash';
 import { dispatch, select } from '@wordpress/data';
-import { dateTimeModel, eventModel, ticketModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-
-const { MODEL_NAME: DATETIME } = dateTimeModel;
-const { MODEL_NAME: EVENT } = eventModel;
-const { MODEL_NAME: TICKET } = ticketModel;
 
 const { getRelatedEntities } = select( 'eventespresso/core' );
 const {
@@ -30,26 +25,26 @@ export const copyEventDate = async (
 	relatedTickets,
 	ticketsLoaded,
 ) => {
-	if ( ! isModelEntityOfModel( datetimeEntity, DATETIME ) ) {
+	if ( ! isModelEntityOfModel( datetimeEntity, 'datetime' ) ) {
 		return false;
 	}
 	createEntity(
-		DATETIME,
+		'datetime',
 		datetimeEntity.forClone
 	).then(
 		async ( newDatetimeEntity ) => {
-			if ( ! isEmpty( relatedTickets ) ) {
+			if ( ticketsLoaded && ! isEmpty( relatedTickets ) ) {
 				createRelations(
-					DATETIME,
+					'datetime',
 					newDatetimeEntity.id,
-					TICKET,
+					'tickets',
 					relatedTickets
 				);
 			}
 			createRelations(
-				EVENT,
+				'event',
 				datetimeEntity.EVT_ID,
-				DATETIME,
+				'datetimes',
 				[ newDatetimeEntity ]
 			);
 			return Promise.resolve( newDatetimeEntity );
@@ -57,7 +52,7 @@ export const copyEventDate = async (
 	).then(
 		async ( newDatetimeEntity ) => {
 			return await persistEntityRecord(
-				DATETIME,
+				'datetime',
 				newDatetimeEntity
 			);
 		}
@@ -65,16 +60,16 @@ export const copyEventDate = async (
 		async ( newDatetimeEntity ) => {
 			const newDatetime = newDatetimeEntity;
 			persistRelationsForEntityId(
-				DATETIME,
+				'datetime',
 				newDatetimeEntity.id
 			).then(
 				async () => {
 					new Promise(
 						( resolve ) => {
-							if ( isModelEntityOfModel( newDatetime, DATETIME ) ) {
+							if ( isModelEntityOfModel( newDatetime, 'datetime' ) ) {
 								const newTickets = getRelatedEntities(
 									newDatetime,
-									TICKET
+									'tickets'
 								);
 								if ( ! isEmpty( newTickets ) ) {
 									resolve( newTickets );

@@ -134,12 +134,12 @@ export default compose( [
 				eventDateTickets = getRelatedEntitiesForIds(
 					'datetime',
 					eventDateIds,
-					'ticket'
+					'tickets'
 				);
 				ticketRelationsResolved = hasFinishedResolution(
 					'eventespresso/core',
 					'getRelatedEntitiesForIds',
-					[ 'datetime', eventDateIds, 'ticket' ]
+					[ 'datetime', eventDateIds, 'tickets' ]
 				);
 			}
 		}
@@ -154,7 +154,7 @@ export default compose( [
 			}
 			let tickets = [];
 			dates.forEach( ( date ) => {
-				tickets = tickets.concat( getRelatedEntities( date, 'ticket' ) );
+				tickets = tickets.concat( getRelatedEntities( date, 'tickets' ) );
 			} );
 			return uniq( tickets );
 		};

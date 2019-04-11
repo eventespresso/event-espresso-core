@@ -3,11 +3,7 @@
  */
 import { isEmpty } from 'lodash';
 import { dispatch, select } from '@wordpress/data';
-import { dateTimeModel, ticketModel } from '@eventespresso/model';
 import { isModelEntityOfModel } from '@eventespresso/validators';
-
-const { MODEL_NAME: DATETIME } = dateTimeModel;
-const { MODEL_NAME: TICKET } = ticketModel;
 
 const { getRelatedEntities } = select( 'eventespresso/core' );
 const {
@@ -29,19 +25,19 @@ export const copyTicket = async (
 	relatedDates,
 	datesLoaded
 ) => {
-	if ( ! isModelEntityOfModel( ticketEntity, TICKET ) ) {
+	if ( ! isModelEntityOfModel( ticketEntity, 'ticket' ) ) {
 		return false;
 	}
 	createEntity(
-		TICKET,
+		'ticket',
 		ticketEntity.forClone
 	).then(
 		async ( newTicketEntity ) => {
 			if ( datesLoaded ) {
 				createRelations(
-					TICKET,
+					'ticket',
 					newTicketEntity.id,
-					DATETIME,
+					'datetime',
 					relatedDates
 				);
 			}
@@ -50,7 +46,7 @@ export const copyTicket = async (
 	).then(
 		async ( newTicketEntity ) => {
 			return await persistEntityRecord(
-				TICKET,
+				'ticket',
 				newTicketEntity
 			);
 		}
@@ -58,16 +54,16 @@ export const copyTicket = async (
 		async ( newTicketEntity ) => {
 			const newTicket = newTicketEntity;
 			persistRelationsForEntityId(
-				TICKET,
+				'ticket',
 				newTicketEntity.id
 			).then(
 				async () => {
 					new Promise(
 						( resolve ) => {
-							if ( isModelEntityOfModel( newTicket, TICKET ) ) {
+							if ( isModelEntityOfModel( newTicket, 'ticket' ) ) {
 								const newDates = getRelatedEntities(
 									newTicket,
-									DATETIME
+									'datetimes'
 								);
 								if ( ! isEmpty( newDates ) ) {
 									resolve( newDates );

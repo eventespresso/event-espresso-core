@@ -98,11 +98,11 @@ export default compose( [
 		const eventDateTicketMap = {};
 		dtmProps.entities.forEach( ( dateEntity ) => {
 			if ( isModelEntityOfModel( dateEntity, 'datetime' ) ) {
-				const relatedTickets = getRelatedEntities( dateEntity, 'ticket' );
+				const relatedTickets = getRelatedEntities( dateEntity, 'tickets' );
 				const ticketRelationsResolved = hasFinishedResolution(
 					'eventespresso/core',
 					'getRelatedEntities',
-					[ dateEntity, 'ticket' ]
+					[ dateEntity, 'tickets' ]
 				);
 				if ( ticketRelationsResolved ) {
 					eventDateTicketMap[ dateEntity.id ] = uniq( relatedTickets );

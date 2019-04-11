@@ -257,11 +257,11 @@ export default withSelect( ( select, ownProps ) => {
 	let relatedTickets = [];
 	let ticketsLoaded = false;
 	if ( isModelEntityOfModel( eventDate, 'datetime' ) ) {
-		relatedTickets = getRelatedEntities( eventDate, 'ticket' );
+		relatedTickets = getRelatedEntities( eventDate, 'tickets' );
 		ticketsLoaded = hasFinishedResolution(
 			'eventespresso/core',
 			'getRelatedEntities',
-			[ eventDate, 'ticket' ]
+			[ eventDate, 'tickets' ]
 		);
 	}
 	return { relatedTickets, ticketsLoaded };
