@@ -2,11 +2,13 @@
  * External imports
  */
 import { filter, without } from 'lodash';
+import { Fragment } from '@wordpress/element';
 import { __ } from '@eventespresso/i18n';
 
 /**
  * Internal dependencies
  */
+import { FormContainer, FormPlaceholder } from '../../form';
 import './style.css';
 
 /**
@@ -15,6 +17,8 @@ import './style.css';
  * as either a list table or grid of entity blocks
  *
  * @function
+ * @param {boolean} loading
+ * @param {string} loadingNotice
  * @param {Array} entities
  * @param {mixed} otherProps
  * @param {Component} EntityGridView
@@ -25,6 +29,8 @@ import './style.css';
  * @return {Component} list of rendered entities
  */
 const EntityList = ( {
+	loading,
+	loadingNotice,
 	entities,
 	EntityGridView,
 	EntityListView,
@@ -33,23 +39,14 @@ const EntityList = ( {
 	noResultsText = '',
 	...otherProps
 } ) => {
+	let entityList = null;
 	entities = Array.isArray( entities ) ? entities : [];
 	// Remove undefined from the array
 	entities = without( entities, undefined );
-	if ( entities.length === 0 ) {
-		noResultsText = noResultsText !== '' ?
-			noResultsText :
-			__( 'no results found', 'event_espresso' );
-		return (
-			<div className="ee-entity-list-no-results">
-				{ noResultsText }
-			</div>
-		);
-	}
 	htmlClass = htmlClass ?
 		`${ htmlClass } ee-editor-entity-list` :
 		'ee-editor-entity-list';
-	return view === 'grid' ? (
+	entityList = view === 'grid' ? (
 		<EntityGridView
 			entities={ entities }
 			htmlClass={ htmlClass }
@@ -62,6 +59,28 @@ const EntityList = ( {
 			{ ...otherProps }
 		/>
 	);
+	if ( entities.length === 0 ) {
+		noResultsText = noResultsText !== '' ?
+			noResultsText :
+			__( 'no results found', 'event_espresso' );
+		entityList = (
+			<div className="ee-entity-list-no-results">
+				{ noResultsText }
+			</div>
+		);
+	}
+	return (
+		<Fragment>
+			<FormPlaceholder
+				loading={ loading }
+				notice={ loadingNotice }
+			/>
+			<FormContainer loading={ loading } htmlClass={ htmlClass }>
+				{ entityList }
+			</FormContainer>
+		</Fragment>
+	);
+
 };
 
 export default EntityList;
