@@ -68,7 +68,6 @@ class EditorDateGridItem extends Component {
 			event,
 			eventDate,
 			allTickets,
-			eventDateTicketMap,
 			showDate = 'start',
 			showDesc = 'excerpt',
 			showVenue = true,
@@ -105,7 +104,6 @@ class EditorDateGridItem extends Component {
 					event={ event }
 					eventDate={ eventDate }
 					allTickets={ allTickets }
-					eventDateTicketMap={ eventDateTicketMap }
 				/>
 				{ isPrimary }
 			</Fragment>
