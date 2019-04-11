@@ -21,27 +21,29 @@ const {
 /**
  * @function
  * @param {Object} datetimeEntity  EE Date object
- * @param {Array} eventDateTicketMap Event Date Ticket Relations Map
+ * @param {Array} relatedTickets    Tickets for Event Date
+ * @param {boolean} ticketsLoaded
  * @return {boolean}  true if copy was successful
  */
-export const copyEventDate = async ( datetimeEntity, eventDateTicketMap ) => {
+export const copyEventDate = async (
+	datetimeEntity,
+	relatedTickets,
+	ticketsLoaded,
+) => {
 	if ( ! isModelEntityOfModel( datetimeEntity, DATETIME ) ) {
 		return false;
 	}
-	const tickets = eventDateTicketMap[ datetimeEntity.id ] ?
-		eventDateTicketMap[ datetimeEntity.id ] :
-		[];
 	createEntity(
 		DATETIME,
 		datetimeEntity.forClone
 	).then(
 		async ( newDatetimeEntity ) => {
-			if ( ! isEmpty( tickets ) ) {
+			if ( ! isEmpty( relatedTickets ) ) {
 				createRelations(
 					DATETIME,
 					newDatetimeEntity.id,
 					TICKET,
-					tickets
+					relatedTickets
 				);
 			}
 			createRelations(
