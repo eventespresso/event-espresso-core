@@ -2,10 +2,14 @@
 
 namespace EventEspresso\core\services\commands\registration;
 
+use EE_Error;
 use EventEspresso\core\domain\services\registration\CopyRegistrationService;
+use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
+use RuntimeException;
 
 /**
  * Class CopyRegistrationDetailsCommandHandler
@@ -38,15 +42,16 @@ class CopyRegistrationDetailsCommandHandler extends CommandHandler
 
 
     /**
-     * @param \EventEspresso\core\services\commands\CommandInterface $command
+     * @param CommandInterface|CopyRegistrationDetailsCommand $command
      * @return boolean
+     * @throws InvalidEntityException
+     * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws UnexpectedEntityException
+     * @throws RuntimeException
      */
     public function handle(CommandInterface $command)
     {
-        /** @var CopyRegistrationDetailsCommand $command */
-        if (! $command instanceof CopyRegistrationDetailsCommand) {
-            throw new InvalidEntityException(get_class($command), 'CopyRegistrationDetailsCommand');
-        }
         return $this->copy_registration_service->copyRegistrationDetails(
             $command->targetRegistration(),
             $command->registrationToCopy()
