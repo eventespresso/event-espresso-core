@@ -2,6 +2,7 @@
 
 namespace EventEspresso\tests\mocks\core\services\commands;
 
+use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\CommandHandlerInterface;
 use EventEspresso\core\services\commands\CommandInterface;
 
@@ -15,14 +16,15 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * 
+ *
  */
 class MockCommandHandler implements CommandHandlerInterface
 {
+    public $expected = 'EventEspresso\tests\mocks\core\services\commands\MockCommand';
     public $results = null;
 
     /**
-     * @param \EventEspresso\core\services\commands\CommandInterface $command
+     * @param CommandInterface $command
      * @return mixed
      */
     public function handle(CommandInterface $command)
@@ -30,15 +32,19 @@ class MockCommandHandler implements CommandHandlerInterface
         return $this->results;
     }
 
+
     /**
-     * Wrapper for handle, except it verifies the command is of the correct type.
-     * @since $VID:$
      * @param CommandInterface $command
-     * @return mixed
+     * @return $this|CommandHandlerInterface
+     * @throws InvalidEntityException
+     * @since $VID:$
      */
-    public function invokeHandle(CommandInterface $command)
+    public function verify(CommandInterface $command)
     {
-        return $this->handle($command);
+        if (! $command instanceof $this->expected) {
+            throw new InvalidEntityException($command, $this->expected);
+        }
+        return $this;
     }
 }
 // End of file MockCommandHandler.php
