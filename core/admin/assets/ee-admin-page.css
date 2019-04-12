@@ -534,7 +534,7 @@ label.error { display : block; color : #FE2A00 !important; }
 	font-size : 20px;
 }
 
-.espresso-admin .wp-list-table a {
+.espresso-admin .wp-list-table td.column-actions a {
 	display : inline-block;
 }
 
