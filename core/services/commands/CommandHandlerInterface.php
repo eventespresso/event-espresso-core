@@ -9,16 +9,22 @@ namespace EventEspresso\core\services\commands;
 interface CommandHandlerInterface
 {
     /**
-     * Wrapper for handle, except it verifies the command is of the correct type.
-     * @since $VID:$
+     * verifies that the supplied command is the correct class for the handler.
+     *
+     * !!! IMPORTANT !!!
+     * Must return $this (ie: the handler itself)
+     * as the CommandBus utilizes method chaining
+     *
      * @param CommandInterface $command
-     * @return mixed
+     * @return CommandHandlerInterface
+     * @since $VID:$
      */
-    public function invokeHandle(CommandInterface $command);
+    public function verify(CommandInterface $command);
+
     /**
      * Performs the command handler's logic.
-     * Note: the command bus directly calls invokeCommand, which will verify the command is of the correct type.
-     * @param \EventEspresso\core\services\commands\CommandInterface $command
+     *
+     * @param CommandInterface $command
      * @return mixed
      */
     public function handle(CommandInterface $command);

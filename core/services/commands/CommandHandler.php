@@ -15,32 +15,25 @@ use EventEspresso\core\exceptions\InvalidEntityException;
 abstract class CommandHandler implements CommandHandlerInterface
 {
     /**
-     * Verifies the inputted command is of the correct type.
-     * @since $VID:$
-     * @param CommandInterface $inputted_command
-     * @throws InvalidEntityException
-     */
-    protected function verifyCommand(CommandInterface $inputted_command)
-    {
-        $expected_classname = str_replace('CommandHandler', 'Command', get_class($this));
-        if (!is_a($inputted_command, $expected_classname, true)) {
-            throw new InvalidEntityException(
-                $inputted_command,
-                $expected_classname
-            );
-        }
-    }
-
-    /**
-     * Wrapper for handle method, just first verifies the command is of the correct type.
-     * @since $VID:$
+     * Verifies the Command class matches the Handler class
+     * by simply removing "Handler" from the Command class and then comparing.
+     * IF the Command Handler has been changed via CommandHandlerManager::addCommandHandler,
+     * or via the filter in CommandHandlerManager::getCommandHandler(),
+     * then this method MUST be overridden in the new Command Handler class.
+     * PLZ NOTE: that it also needs to return itself ($this)
+     * because the CommandBus utilizes method chaining.
+     *
      * @param CommandInterface $command
-     * @return mixed
+     * @return CommandHandler
      * @throws InvalidEntityException
+     * @since $VID:$
      */
-    public function invokeHandle(CommandInterface $command)
+    public function verify(CommandInterface $command)
     {
-        $this->verifyCommand($command);
-        return $this->handle($command);
+        $expected = str_replace('CommandHandler', 'Command', get_class($this));
+        if (! $command instanceof $expected) {
+            throw new InvalidEntityException($command, $expected);
+        }
+        return $this;
     }
 }
