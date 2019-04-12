@@ -39,11 +39,7 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
      */
     public static function set_hooks_admin()
     {
-        define(
-            'EVENTS_ARCHIVE_CAFF_TEMPLATES_PATH',
-            str_replace('\\', DS, plugin_dir_path(__FILE__)) . 'templates' . DS
-        );
-        define('EVENT_ARCHIVE_CAFF_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets' . DS);
+        self::setDefinitions();
         add_action(
             'AHEE__template_settings__template__before_settings_form',
             array('EED_Events_Archive_Caff', 'template_settings_form'),
@@ -75,6 +71,21 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
      */
     public function run($WP)
     {
+    }
+
+
+    /**
+     * Conditionally set constants if they haven't been defined yet.
+     */
+    public static function setDefinitions()
+    {
+        if (! defined('EVENTS_ARCHIVE_CAFF_TEMPLATES_PATH')) {
+            define(
+                'EVENTS_ARCHIVE_CAFF_TEMPLATES_PATH',
+                str_replace('\\', DS, plugin_dir_path(__FILE__)) . 'templates' . DS
+            );
+            define('EVENT_ARCHIVE_CAFF_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets' . DS);
+        }
     }
 
 
