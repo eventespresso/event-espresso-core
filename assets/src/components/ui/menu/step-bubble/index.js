@@ -39,7 +39,7 @@ const assertStepConfiguration = ( { label, value } ) => {
 	}
 };
 
-const getStepBubbles = ( bubbleData, activeBubble ) => {
+const getStepBubbles = ( bubbleData ) => {
 	const stepBubbles = [];
 	for ( const slug in bubbleData ) {
 		if ( bubbleData.hasOwnProperty( slug ) ) {
@@ -49,6 +49,7 @@ const getStepBubbles = ( bubbleData, activeBubble ) => {
 				value,
 				action,
 				clickable,
+				active,
 			} = bubbleData[ slug ];
 			stepBubbles.push(
 				<StepBubble
@@ -58,7 +59,7 @@ const getStepBubbles = ( bubbleData, activeBubble ) => {
 					action={ action }
 					stepValue={ value }
 					clickable={ clickable }
-					isActive={ activeBubble === slug }
+					isActive={ active }
 				/>
 			);
 		}
@@ -66,24 +67,17 @@ const getStepBubbles = ( bubbleData, activeBubble ) => {
 	return stepBubbles;
 };
 
-const StepBubbleMenu = ( { bubbleData, activeBubble } ) => {
+const StepBubbleMenu = ( { bubbleData } ) => {
 	return (
 		<div className="ee-step-bubble-menu-container">
 			<div className="step-bubbles-container" role="menu" tabIndex={ 1 }>
-			{ getStepBubbles( bubbleData, activeBubble ) }
+			{ getStepBubbles( bubbleData ) }
 			</div>
 		</div>
 	);
 };
 
-StepBubbleMenu.propTypes = {
-	bubbleData: PropTypes.object,
-	activeBubble: PropTypes.string,
-};
-
-StepBubbleMenu.defaultProps = {
-	bubbleData: {},
-	activeBubble: '',
-};
+StepBubbleMenu.propTypes = { bubbleData: PropTypes.object };
+StepBubbleMenu.defaultProps = { bubbleData: {} };
 
 export default StepBubbleMenu;
