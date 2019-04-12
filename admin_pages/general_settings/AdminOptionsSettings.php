@@ -149,7 +149,7 @@ class AdminOptionsSettings extends FormHandler
                             ),
                             'default'         => isset($this->registry->CFG->admin->show_reg_footer)
                                 ? filter_var($this->registry->CFG->admin->show_reg_footer, FILTER_VALIDATE_BOOLEAN)
-                                : true,
+                                : false,
                             'required'        => false,
                         )
                     ),

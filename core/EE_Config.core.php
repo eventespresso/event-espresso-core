@@ -2613,7 +2613,7 @@ class EE_Admin_Config extends EE_Config_Base
         $this->use_full_logging = false;
         $this->use_remote_logging = false;
         $this->remote_logging_url = null;
-        $this->show_reg_footer = true;
+        $this->show_reg_footer = false;
         $this->affiliate_id = 'default';
         $this->help_tour_activation = true;
         $this->encode_session_data = false;
