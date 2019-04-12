@@ -86,7 +86,7 @@ class CommandBus implements CommandBusInterface
         // that will get run at the end of our middleware stack
         // can't pass $this to a Closure, so use a named variable
         $command_bus = $this;
-        $middleware = static function($command) use ($command_bus) {
+        $middleware = static function ($command) use ($command_bus) {
             return $command_bus->getCommandHandlerManager()
                                ->getCommandHandler($command, $command_bus)
                                ->verify($command)
@@ -97,7 +97,7 @@ class CommandBus implements CommandBusInterface
             if (! $command_bus_middleware instanceof CommandBusMiddlewareInterface) {
                 throw new InvalidCommandBusMiddlewareException($command_bus_middleware);
             }
-            $middleware = static function($command) use ($command_bus_middleware, $middleware) {
+            $middleware = static function ($command) use ($command_bus_middleware, $middleware) {
                 return $command_bus_middleware->handle($command, $middleware);
             };
         }

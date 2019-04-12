@@ -95,7 +95,7 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
     {
         $command_name = get_class($command);
         /*
- 	     * Filters the Fully Qualified Class Name for the Command Handler
+         * Filters the Fully Qualified Class Name for the Command Handler
          * that will be used to handle the incoming Command
          *
          * !!! IMPORTANT !!!
