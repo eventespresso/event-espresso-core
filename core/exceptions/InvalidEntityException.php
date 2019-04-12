@@ -28,6 +28,9 @@ class InvalidEntityException extends InvalidArgumentException
     public function __construct($actual, $expected, $message = '', $code = 0, Exception $previous = null)
     {
         if (empty($message)) {
+            ob_start();
+            var_dump($actual);
+            $object = ob_get_clean();
             $message = sprintf(
                 __(
                     'The supplied entity is an instance of "%1$s", but an instance of "%2$s" was expected. Object: %3$s',
@@ -37,7 +40,7 @@ class InvalidEntityException extends InvalidArgumentException
                     ? get_class($actual)
                     : gettype($actual),
                 $expected,
-                var_export($actual, true)
+                $object
             );
         }
         parent::__construct($message, $code, $previous);
