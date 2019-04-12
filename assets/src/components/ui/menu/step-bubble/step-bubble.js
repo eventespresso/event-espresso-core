@@ -6,6 +6,7 @@ import StepText from './step-text';
 /**
  * External imports
  */
+import { isFunction } from 'lodash';
 import classNames from 'classnames';
 import { pure } from '@wordpress/compose'
 import PropTypes from 'prop-types';
@@ -15,20 +16,20 @@ export const StepBubble = ( {
 	slug,
 	isActive,
 	stepValue,
-	canClick,
-	bubbleClick,
+	clickable,
+	action,
 } ) => {
 	const cssClass = classNames(
 		'ee-step-bubble-item',
 		{ 'ee-step-bubble-active': isActive },
-		{ 'ee-clickable': canClick },
+		{ 'ee-clickable': clickable },
 	);
-	const clickActions = canClick ?
+	const clickActions = clickable && isFunction( action ) ?
 		{
-			onClick: () => bubbleClick( slug ),
+			onClick: () => action( slug ),
 			onKeyPress: ( event ) => {
 				if ( event.key === 'Enter' ) {
-					bubbleClick( slug );
+					action( slug );
 				}
 			},
 			role: 'menuitem',
@@ -55,14 +56,15 @@ StepBubble.propTypes = {
 		PropTypes.number,
 		PropTypes.string,
 	] ),
-	canClick: PropTypes.bool,
-	bubbleClick: PropTypes.func,
+	clickable: PropTypes.bool,
+	action: PropTypes.func,
 };
+
 StepBubble.defaultProps = {
 	isActive: false,
 	stepValue: 1,
-	canClick: true,
-	bubbleClick: () => null,
+	clickable: true,
+	action: () => null,
 };
 
 export default pure( StepBubble );
