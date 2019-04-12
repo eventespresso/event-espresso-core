@@ -550,7 +550,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     private function addConditionalColumns()
     {
         $event_category_count = EEM_Term::instance()->count(
-            [['Term_Taxonomy.taxonomy' => 'espresso_event_categories']]
+            [['Term_Taxonomy.taxonomy' => EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY]]
         );
         if ($event_category_count === 0) {
             return;
