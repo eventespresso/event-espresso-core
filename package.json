@@ -80,7 +80,7 @@
 		"eslint-plugin-jest": "21.5.0",
 		"license-checker": "^20.2.0",
 		"lodash": "^4.17.11",
-		"mini-css-extract-plugin": "^0.4.4",
+		"mini-css-extract-plugin": "^0.6.0",
 		"pegjs": "^0.10.0",
 		"pegjs-loader": "^0.5.4",
 		"postcss-loader": "^2.1.6",
