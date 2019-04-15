@@ -21,8 +21,6 @@ import {
 class EditTicketFormModal extends Component {
 	constructor( props ) {
 		super( props );
-		// console.log( '' );
-		// console.log( 'EditTicketFormModal props: ', props );
 		this.toggleEditor = props.closeModal;
 		this.state = {
 			ticket: props.ticket ? props.ticket : {},
@@ -35,9 +33,7 @@ class EditTicketFormModal extends Component {
 	 * @return {Object} data
 	 */
 	loadHandler = async () => {
-		const data = ticketEntityFormSchema( this.state.ticket );
-		// console.log( 'EditTicketFormModal.loadHandler() data', data );
-		return data;
+		return await ticketEntityFormSchema( this.state.ticket );
 	};
 
 	/**
@@ -45,29 +41,22 @@ class EditTicketFormModal extends Component {
 	 * @param {Object} data
 	 */
 	submitHandler = async ( data ) => {
-		// console.log( 'EditTicketFormModal.submitHandler()' );
-		// console.log( ' >>> SUBMITTING DATA <<<', data );
-		const ticket = ticketEntityFormSubmitHandler(
+		const ticket = await ticketEntityFormSubmitHandler(
 			this.state.ticket,
 			data
 		);
-		// console.log( ' >>> UPDATED TICKET <<<', ticket );
 		this.setState( { ticket: ticket } );
 		this.toggleEditor();
 	};
 
 	/**
 	 * @function
-	 * @param {Object} event
 	 */
-	resetHandler = ( event ) => {
-		// console.log( 'EditTicketFormModal.resetHandler()' );
-		// console.log( ' >>> FORM RESET <<<', event );
+	resetHandler = () => {
 		this.setState( { ticket: this.state.originalTicket } );
 	};
 
 	render() {
-		// console.log( 'EditTicket.render()', this.props );
 		return (
 			<EditTicketForm
 				loadHandler={ this.loadHandler }
