@@ -67,11 +67,25 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
                     'payment_method_paths' => glob(EE_CAF_PAYMENT_METHODS . '*', GLOB_ONLYDIR),
                 )
             );
+            $this->defaultFilters();
             // caffeinated constructed
             do_action('AHEE__EE_Brewing_Regular__construct__complete');
             // seeing how this is caf, which isn't put on WordPress.org, we can have affiliate links without a disclaimer
             add_filter('FHEE__ee_show_affiliate_links', '__return_false');
         }
+    }
+
+
+    /**
+     * Various filters for affecting default configuration values in the caffeinated
+     * context.
+     */
+    public function defaultFilters()
+    {
+        add_filter(
+            'FHEE__EE_Admin_Config__show_reg_footer__default',
+            '__return_true'
+        );
     }
 
 
