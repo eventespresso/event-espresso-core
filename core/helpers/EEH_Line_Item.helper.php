@@ -1743,14 +1743,14 @@ class EEH_Line_Item
         EE_Line_Item $ticket_line_item
     ) {
         static $final_prices_per_ticket_line_item = array();
-        if (empty($final_prices_per_ticket_line_item)) {
-            $final_prices_per_ticket_line_item = EEH_Line_Item::calculate_reg_final_prices_per_line_item(
+        if (empty($final_prices_per_ticket_line_item) || empty($final_prices_per_ticket_line_item[ $total_line_item->ID() ])) {
+            $final_prices_per_ticket_line_item[ $total_line_item->ID() ] = EEH_Line_Item::calculate_reg_final_prices_per_line_item(
                 $total_line_item
             );
         }
         // ok now find this new registration's final price
-        if (isset($final_prices_per_ticket_line_item[ $ticket_line_item->ID() ])) {
-            return $final_prices_per_ticket_line_item[ $ticket_line_item->ID() ];
+        if (isset($final_prices_per_ticket_line_item[ $total_line_item->ID() ][ $ticket_line_item->ID() ])) {
+            return $final_prices_per_ticket_line_item[ $total_line_item->ID() ][ $ticket_line_item->ID() ];
         }
         $message = sprintf(
             esc_html__(
