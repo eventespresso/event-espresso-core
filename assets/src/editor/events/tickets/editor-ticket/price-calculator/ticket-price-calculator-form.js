@@ -3,7 +3,7 @@
  */
 import { isEmpty, filter, find, last, sortBy } from 'lodash';
 import { Component, Fragment } from '@wordpress/element';
-import { IconButton, Tooltip } from '@wordpress/components';
+import { Dashicon, IconButton, Tooltip } from '@wordpress/components';
 import { sprintf, __ } from '@eventespresso/i18n';
 import {
 	ResponsiveTable,
@@ -442,6 +442,9 @@ class TicketPriceCalculatorForm extends Component {
 		const prefix = `${ ticketPrefix }-price-${ priceId }`;
 		const priceTypeId = parseInt( values[ `${ prefix }-type` ] ) || 0;
 		const priceType = this.getPriceType( priceTypeId );
+		if ( priceTypeOptions.length === 1 ) {
+			values[ `${ prefix }-type` ] = 1;
+		}
 		return [
 			{
 				type: 'row',
@@ -786,6 +789,7 @@ class TicketPriceCalculatorForm extends Component {
 		let ticketPrefix = TICKET_PRICE_CALCULATOR_FORM_INPUT_PREFIX;
 		ticketPrefix += '-ticket-' + ticket.id;
 
+		let warnings = null;
 		const formRows = [];
 		const priceCount = prices.length;
 		if ( priceCount > 0 ) {
@@ -810,6 +814,28 @@ class TicketPriceCalculatorForm extends Component {
 					)
 				);
 			}
+		} else {
+			warnings = (
+				<FormInfo
+					formInfo={
+						__(
+							'No ticket prices have been set! A base price' +
+							' is required at the very minimum. Please' +
+							' provide a "Label" and "Amount" and then' +
+							' click the %%var%% button in the "Actions"' +
+							' column to add the base price.',
+							'event_espresso'
+						)
+					}
+					formInfoVars={ [
+						<Dashicon icon="plus-alt" key={ 0 } />,
+					] }
+					dashicon={ 'warning' }
+					dismissable={ false }
+					colSize={ 11 }
+					offset={ 1 }
+				/>
+			);
 		}
 		formRows.push(
 			this.addPriceModifierRow(
@@ -829,6 +855,7 @@ class TicketPriceCalculatorForm extends Component {
 					htmlId={ `${ ticketPrefix }-form-section` }
 					htmlClass="ee-ticket-price-calculator-form-section"
 				>
+					{ warnings }
 					<ResponsiveTable
 						columns={ this.formHeader() }
 						rowData={ formRows }
