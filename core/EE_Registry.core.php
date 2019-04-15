@@ -1329,7 +1329,7 @@ class EE_Registry implements ResettableInterface
                 // let's try to derive the classname from what we have now
                 // and hope that the property var name is close to the class name
                 $param_class = $param->getName();
-                $param_class = str_replace('_', ' ',$param_class);
+                $param_class = str_replace('_', ' ', $param_class);
                 $param_class = ucwords($param_class);
                 $param_class = str_replace(' ', '_', $param_class);
             }
