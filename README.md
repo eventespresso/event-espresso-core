@@ -60,6 +60,7 @@ This is the Core for Event Espresso 4. This README.md file is targeted for displ
 
 
 ## Event Espresso Releases
+
 At Event Espresso we follow a set pattern for releases:
 
 1. Active development for new features happens on a **FET/{ticket-number}/{description}** branch.  We continually merge master into the feature branch while its in development.  Once its complete, then testing is done on it and its merged back to master ready for release.
