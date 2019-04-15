@@ -192,7 +192,8 @@ const getBasePriceFormFieldID = ( ticketID, formData ) => {
 		const priceType = typeof formData[ `${ prefix }-type` ] !== 'undefined' ?
 			parseInt( formData[ `${ prefix }-type` ] ) :
 			null;
-		if ( priceType !== null ) {
+		// base prices have a type id of 1
+		if ( priceType === 1 ) {
 			const basePrice = typeof formData[ `${ prefix }-amount` ] !== 'undefined' ?
 				formData[ `${ prefix }-amount` ] :
 				null;
