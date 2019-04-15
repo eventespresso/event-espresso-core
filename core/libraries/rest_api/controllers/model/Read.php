@@ -479,7 +479,7 @@ class Read extends Base
                     $result,
                     $request
                 );
-                $joined_result = array_merge($nice_result, $join_model_result);
+                $joined_result = array_merge($join_model_result, $nice_result);
                 // but keep the meta stuff from the main model
                 if (isset($nice_result['meta'])) {
                     $joined_result['meta'] = $nice_result['meta'];
