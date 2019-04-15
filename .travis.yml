@@ -66,7 +66,7 @@ jobs:
         - PHP_LINT_WITH_WARNINGS=yes
   include:
     - stage: test
-      if: NOT commit_message =~ js_only
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
       php: 7.3
       env:
         - PHP_LINT=1
@@ -76,7 +76,7 @@ jobs:
         - composer config-eventespressocs || exit 1
         - npm run lint-php:skip-warnings || exit 1
     - php: 7.3
-      if: NOT commit_message =~ js_only
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
       env:
         - PHP_LINT=1
         - PHP_LINT_WITH_WARNINGS=yes
@@ -100,27 +100,27 @@ jobs:
       script:
         - npm run lc || exit 1
     - php: 7.3
-      if: NOT commit_message =~ js_only
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
     - php: 7.2
-      if: NOT commit_message =~ js_only
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
     - php: 7.1
-      if: NOT commit_message =~ js_only
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
     - php: 7.0
-      if: NOT commit_message =~ js_only
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
     - php: 5.6
-      if: NOT commit_message =~ js_only
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
     - php: 5.5
-      if: NOT commit_message =~ js_only
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
     # multisite
     - php: 7.2
       env: WP_MULTISITE=1
-      if: NOT commit_message =~ js_only
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
     # wp 4.5 builds
     - php: 5.6
       env: WP_VERSION=4.5
-      if: NOT commit_message =~ js_only
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
     - php: nightly
-      if: NOT commit_message =~ js_only
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot
 
 notifications:
   slack:
