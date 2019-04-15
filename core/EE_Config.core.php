@@ -1,7 +1,5 @@
 <?php
 
-use EventEspresso\core\domain\Domain;
-use EventEspresso\core\domain\DomainFactory;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
@@ -2607,11 +2605,6 @@ class EE_Admin_Config extends EE_Config_Base
      */
     public function __construct()
     {
-        try {
-            $domain = DomainFactory::getEventEspressoCoreDomain();
-        } catch (Exception $e) {
-            $domain = null;
-        }
         // set default general admin settings
         $this->use_personnel_manager = true;
         $this->use_dashboard_widget = true;
@@ -2620,7 +2613,10 @@ class EE_Admin_Config extends EE_Config_Base
         $this->use_full_logging = false;
         $this->use_remote_logging = false;
         $this->remote_logging_url = null;
-        $this->show_reg_footer = $domain instanceof Domain ? $domain->isCaffeinated() : false;
+        $this->show_reg_footer = apply_filters(
+            'FHEE__EE_Admin_Config__show_reg_footer__default',
+            false
+        );
         $this->affiliate_id = 'default';
         $this->help_tour_activation = true;
         $this->encode_session_data = false;

@@ -10,11 +10,8 @@ use EE_Text_Input;
 use EE_Yes_No_Input;
 use EEH_HTML;
 use EEH_Template;
-use EventEspresso\core\domain\DomainFactory;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidFormSubmissionException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\form_sections\form_handlers\FormHandler;
 use InvalidArgumentException;
 use LogicException;
@@ -63,11 +60,6 @@ class AdminOptionsSettings extends FormHandler
      *
      * @return EE_Form_Section_Proper
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws \DomainException
-     * @throws InvalidFilePathException
-     * @throws InvalidInterfaceException
      */
     public function generate()
     {
@@ -155,9 +147,7 @@ class AdminOptionsSettings extends FormHandler
                                 'adds an unobtrusive link to Event Espresso\'s website in the footer of your registration form. Get an affiliate link (see below) and make money if people click the link and purchase Event Espresso.',
                                 'event_espresso'
                             ),
-                            'default'         => isset($this->registry->CFG->admin->show_reg_footer)
-                                ? filter_var($this->registry->CFG->admin->show_reg_footer, FILTER_VALIDATE_BOOLEAN)
-                                : DomainFactory::getEventEspressoCoreDomain()->isCaffeinated(),
+                            'default'         => filter_var($this->registry->CFG->admin->show_reg_footer, FILTER_VALIDATE_BOOLEAN),
                             'required'        => false,
                         )
                     ),
