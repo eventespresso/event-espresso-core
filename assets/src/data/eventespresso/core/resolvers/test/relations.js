@@ -15,7 +15,11 @@ import {
 	resolveGetEntityByIdForIds,
 } from '../../../base-controls';
 import { getRelatedEntities, getRelatedEntitiesForIds } from '../relations';
-import { dateTimeFactory, EventEntities } from '../../../test/fixtures/base';
+import {
+	dateTimeFactory,
+	EventEntities,
+	eventFactory,
+} from '../../../test/fixtures/base';
 import { receiveRelatedEntities } from '../../actions';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../../constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../../schema/constants';
@@ -47,6 +51,15 @@ describe( getRelatedEntities.name + '()', () => {
 			'There is no relation resource for the given model (event) and ' +
 			'requested relation (cheesburgers)'
 		);
+		expect( value ).toEqual( [] );
+		expect( done ).toBe( true );
+	} );
+	it( 'returns an empty array if the incoming entity is new', () => {
+		reset(
+			eventFactory.createNew( { EVT_name: 'foo' } ),
+			'datetimes'
+		);
+		const { value, done } = fulfillment.next();
 		expect( value ).toEqual( [] );
 		expect( done ).toBe( true );
 	} );
