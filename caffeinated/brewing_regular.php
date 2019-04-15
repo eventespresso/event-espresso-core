@@ -61,11 +61,16 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
             add_action('wp_enqueue_scripts', array($this, 'enqueue_caffeinated_scripts'), 10);
             add_filter('FHEE__EE_Registry__load_helper__helper_paths', array($this, 'caf_helper_paths'), 10);
             // add_filter('FHEE__EE_Registry__load_helper__helper_paths', array($this, 'caf_helper_paths'), 10);
-            EE_Register_Payment_Method::register(
-                'caffeinated_payment_methods',
-                array(
-                    'payment_method_paths' => glob(EE_CAF_PAYMENT_METHODS . '*', GLOB_ONLYDIR),
-                )
+            add_filter(
+                'AHEE__EE_System__load_core_configuration__complete',
+                function () {
+                    EE_Register_Payment_Method::register(
+                        'caffeinated_payment_methods',
+                        array(
+                            'payment_method_paths' => glob(EE_CAF_PAYMENT_METHODS . '*', GLOB_ONLYDIR),
+                        )
+                    );
+                }
             );
             $this->defaultFilters();
             // caffeinated constructed
