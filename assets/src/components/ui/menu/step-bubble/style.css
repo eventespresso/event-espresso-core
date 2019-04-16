@@ -1,7 +1,7 @@
 .ee-step-bubble-menu-container {
-    width: 100%;
+    display: inline-block;
+    margin: 2rem auto;
     position: relative;
-    margin: auto;
 }
 
 .ee-step-bubble-menu-container .step-bubbles-container {
@@ -12,63 +12,67 @@
 
 .step-bubbles-container .progress-step-line {
     background: #ddd;
-    border: 1px solid #ddd;
+    border: 2px solid #ddd;
     height: 0px;
+    left: -2%;
     position: absolute;
     top: 30%;
-    left: -2%;
     width: 104%;
     z-index: -1;
 }
 
 .step-bubbles-container .ee-step-bubble-item {
+    background-color: transparent;
+    border: none;
     display: inline-block;
     margin-right: 30px;
+    min-width: 160px;
     text-align: center;
-    border: none;
-    background-color: transparent;
 }
 
 .step-bubbles-container .ee-step-bubble-item:focus {
     outline: unset;
-    border: none;
-}
-
-.step-bubbles-container .ee-clickable {
-    cursor: pointer;
 }
 
 .step-bubbles-container .ee-step-bubble {
-    width: 50px;
+    background-color: #fff;
+    border: 3px solid #ddd;
+    border-radius: 999em;
+    color: #999;
     height: 50px;
     margin: auto;
-    border-radius: 50px;
-    background-color: #ddd;
-    color: #000;
     text-align: center;
+    width: 50px;
 }
 
-.step-bubbles-container .ee-step-bubble-active .ee-step-bubble {
+.step-bubbles-container .ee-clickable .ee-step-bubble {
+    background-color: #fff;
+    color: #297abc;
+    cursor: pointer;
+}
+.step-bubbles-container .ee-clickable .ee-step-bubble:hover {
+    border-color: #297abc;
+}
+
+.step-bubbles-container .ee-clickable.ee-step-bubble-active .ee-step-bubble {
     color: #fff;
-    background-color: #666;
-    width: 55px;
-    height: 55px;
-    margin: auto;
-    border-radius: 55px;
+    background-color: #297abc;
+    border-color: #297abc;
 }
 
 .step-bubbles-container .ee-step-bubble p {
     font-size: 32px;
-    padding: 0;
-    margin: 0;
     font-weight: bold;
     line-height: 1.4;
+    margin: 0;
+    padding: 3px 0 0;
     text-align: center;
-    padding-top: 3px;
 }
 
 .step-bubbles-container .ee-step-bubble-step-text {
+    color: #666;
     display: block;
-    margin-top: 15px;
     font-size: 1.3em;
+    font-weight: bold;
+    margin-top: 1rem;
 }
