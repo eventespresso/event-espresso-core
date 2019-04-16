@@ -27,8 +27,9 @@ class EE_Text_Validation_Strategy extends EE_Validation_Strategy_Base
      */
     public function validate($normalized_value)
     {
-        if ($this->_regex && $normalized_value) {
-            if (! preg_match($this->_regex, $normalized_value)) {
+        $string_normalized_value = (string) $normalized_value;
+        if ($this->_regex &&  $string_normalized_value) {
+            if (! preg_match($this->_regex, $string_normalized_value)) {
                 throw new EE_Validation_Error($this->get_validation_error_message(), 'regex');
             }
         }
