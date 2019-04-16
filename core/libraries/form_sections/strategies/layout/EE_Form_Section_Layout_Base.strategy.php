@@ -188,7 +188,7 @@ abstract class EE_Form_Section_Layout_Base
                . $class
                . '" style="'
                . $input->html_label_style()
-               . '" for="' . $input->html_name()
+               . '" for="' . $input->html_id()
                . '">'
                . $label_text
                . '</label>';
