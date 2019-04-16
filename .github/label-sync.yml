@@ -245,6 +245,13 @@
       color: 00f2ff
     - name: "requires:WP5.0+ 🧩"
       color: 2a1f78
+    ## depends-on-labels
+    - name: "requires:WP5.0 🧩"
+      color: 2a1f78
+      previousNames:
+        - requires:WP5.0+ 🧩
+    - name: "requires:WP5.2 🧩"
+      color: 2a1f78
   options:
     ignoreMilestones:
       - eventespresso/event-espresso-core
