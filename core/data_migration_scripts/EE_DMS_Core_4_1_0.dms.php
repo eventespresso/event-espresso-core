@@ -121,9 +121,9 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
         // relies on 4.1's EEH_Activation::create_table
         require_once(EE_HELPERS . 'EEH_Activation.helper.php');
         $table_name = 'esp_answer';
-        $sql = " ANS_ID int unsigned NOT NULL AUTO_INCREMENT,
-					REG_ID int unsigned NOT NULL,
-					QST_ID int unsigned NOT NULL,
+        $sql = "ANS_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+					REG_ID int(10) unsigned NOT NULL,
+					QST_ID int(10) unsigned NOT NULL,
 					ANS_value text NOT NULL,
 					PRIMARY KEY  (ANS_ID)";
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
@@ -180,7 +180,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_event_meta';
         $sql = "
-			EVTM_ID int NOT NULL AUTO_INCREMENT,
+			EVTM_ID int(10) NOT NULL AUTO_INCREMENT,
 			EVT_ID bigint(20) unsigned NOT NULL,
 			EVT_display_desc tinyint(1) unsigned NOT NULL DEFAULT 1,
 			EVT_display_ticket_selector tinyint(1) unsigned NOT NULL DEFAULT 1,
@@ -196,9 +196,9 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 			PRIMARY KEY  (EVTM_ID)";
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_event_question_group';
-        $sql = "EQG_ID int unsigned NOT NULL AUTO_INCREMENT,
+        $sql = "EQG_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					EVT_ID bigint(20) unsigned NOT NULL,
-					QSG_ID int unsigned NOT NULL,
+					QSG_ID int(10) unsigned NOT NULL,
 					EQG_primary tinyint(1) unsigned NOT NULL DEFAULT 0,
 					PRIMARY KEY  (EQG_ID)";
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
@@ -226,8 +226,8 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 				LIN_unit_price decimal(10,3) DEFAULT NULL,
 				LIN_percent decimal(10,3) DEFAULT NULL,
 				LIN_is_taxable tinyint(1) DEFAULT 0,
-				LIN_order int DEFAULT 0,
-				LIN_parent int DEFAULT 0,
+				LIN_order int(10) DEFAULT 0,
+				LIN_parent int(10) DEFAULT 0,
 				LIN_type varchar(25) NOT NULL,
 				LIN_total decimal(10,3) DEFAULT NULL,
 				LIN_quantity int(10) DEFAULT NULL,
@@ -283,9 +283,9 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 					  TKT_description text NOT NULL,
 					  TKT_qty mediumint(8) DEFAULT NULL,
 					  TKT_sold mediumint(8) NOT NULL DEFAULT 0,
-					  TKT_uses tinyint NOT NULL DEFAULT '-1',
-					  TKT_min tinyint unsigned NOT NULL DEFAULT '0',
-					  TKT_max tinyint NOT NULL DEFAULT '-1',
+					  TKT_uses tinyint(2) NOT NULL DEFAULT '-1',
+					  TKT_min tinyint(2) unsigned NOT NULL DEFAULT '0',
+					  TKT_max tinyint(2) NOT NULL DEFAULT '-1',
 					  TKT_price decimal(10,3) NOT NULL DEFAULT '0.00',
 					  TKT_start_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 					  TKT_end_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -334,32 +334,32 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 				  PRT_name varchar(45) NOT NULL,
 				  PBT_ID tinyint(3) unsigned NOT NULL DEFAULT '1',
 				  PRT_is_percent tinyint(1) NOT NULL DEFAULT '0',
-				  PRT_order tinyint unsigned NULL,
+				  PRT_order tinyint(2) unsigned NULL,
 				  PRT_deleted tinyint(1) NOT NULL DEFAULT '0',
 				  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
 				  PRIMARY KEY  (PRT_ID)";
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_question';
-        $sql = 'QST_ID int unsigned NOT NULL AUTO_INCREMENT,
+        $sql = 'QST_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					QST_display_text text NOT NULL,
 					QST_admin_label varchar(255) NOT NULL,
 					QST_system varchar(25) DEFAULT NULL,
 					QST_type varchar(25) NOT NULL DEFAULT "text",
 					QST_required tinyint(1) unsigned NOT NULL DEFAULT 0,
 					QST_required_text varchar(100) NULL,
-					QST_order tinyint unsigned NOT NULL DEFAULT 0,
+					QST_order tinyint(2) unsigned NOT NULL DEFAULT 0,
 					QST_admin_only tinyint(1) NOT NULL DEFAULT 0,
-					QST_wp_user bigint unsigned NULL,
-					QST_deleted tinyint unsigned NOT NULL DEFAULT 0,
+					QST_wp_user bigint(20) unsigned NULL,
+					QST_deleted tinyint(1) unsigned NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QST_ID)';
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $this->_get_table_manager()->dropIndex('esp_question_group', 'QSG_identifier_UNIQUE');
         $table_name = 'esp_question_group';
-        $sql = 'QSG_ID int unsigned NOT NULL AUTO_INCREMENT,
+        $sql = 'QSG_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					QSG_name varchar(255) NOT NULL,
 					QSG_identifier varchar(100) NOT NULL,
 					QSG_desc text NULL,
-					QSG_order tinyint unsigned NOT NULL DEFAULT 0,
+					QSG_order tinyint(2) unsigned NOT NULL DEFAULT 0,
 					QSG_show_group_name tinyint(1) NOT NULL,
 					QSG_show_group_desc tinyint(1) NOT NULL,
 					QSG_system tinyint NULL,
@@ -368,16 +368,16 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 					UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier ASC)';
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_question_group_question';
-        $sql = "QGQ_ID int unsigned NOT NULL AUTO_INCREMENT,
-					QSG_ID int unsigned NOT NULL,
-					QST_ID int unsigned NOT NULL,
+        $sql = "QGQ_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+					QSG_ID int(10) unsigned NOT NULL,
+					QST_ID int(10) unsigned NOT NULL,
 					PRIMARY KEY  (QGQ_ID) ";
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_question_option';
-        $sql = "QSO_ID int unsigned NOT NULL AUTO_INCREMENT,
+        $sql = "QSO_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					QSO_value varchar(255) NOT NULL,
 					QSO_desc text NOT NULL,
-					QST_ID int unsigned NOT NULL,
+					QST_ID int(10) unsigned NOT NULL,
 					QSO_deleted tinyint(1) unsigned NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QSO_ID)";
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');

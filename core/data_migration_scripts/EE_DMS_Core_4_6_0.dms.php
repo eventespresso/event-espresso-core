@@ -90,7 +90,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
         // relies on 4.1's EEH_Activation::create_table
         require_once(EE_HELPERS . 'EEH_Activation.helper.php');
         $table_name = 'esp_answer';
-        $sql = " ANS_ID int unsigned NOT NULL AUTO_INCREMENT,
+        $sql = "ANS_ID int unsigned NOT NULL AUTO_INCREMENT,
 					REG_ID int unsigned NOT NULL,
 					QST_ID int unsigned NOT NULL,
 					ANS_value text NOT NULL,
@@ -326,10 +326,10 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
 					QST_type varchar(25) NOT NULL DEFAULT "text",
 					QST_required tinyint(1) unsigned NOT NULL DEFAULT 0,
 					QST_required_text varchar(100) NULL,
-					QST_order tinyint unsigned NOT NULL DEFAULT 0,
+					QST_order tinyint(2) unsigned NOT NULL DEFAULT 0,
 					QST_admin_only tinyint(1) NOT NULL DEFAULT 0,
 					QST_wp_user bigint unsigned NULL,
-					QST_deleted tinyint unsigned NOT NULL DEFAULT 0,
+					QST_deleted tinyint(1) unsigned NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QST_ID)';
         $this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
         $table_name = 'esp_question_group_question';
@@ -453,7 +453,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
 				  PRT_name varchar(45) NOT NULL,
 				  PBT_ID tinyint(3) unsigned NOT NULL DEFAULT '1',
 				  PRT_is_percent tinyint(1) NOT NULL DEFAULT '0',
-				  PRT_order tinyint unsigned NULL,
+				  PRT_order tinyint(2) unsigned NULL,
 				  PRT_wp_user bigint unsigned NULL,
 				  PRT_deleted tinyint(1) NOT NULL DEFAULT '0',
 				  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
@@ -466,10 +466,10 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
 					  TKT_description text NOT NULL,
 					  TKT_qty mediumint(8) DEFAULT NULL,
 					  TKT_sold mediumint(8) NOT NULL DEFAULT 0,
-					  TKT_uses tinyint NOT NULL DEFAULT '-1',
-					  TKT_required tinyint unsigned NOT NULL DEFAULT '0',
-					  TKT_min tinyint unsigned NOT NULL DEFAULT '0',
-					  TKT_max tinyint NOT NULL DEFAULT '-1',
+					  TKT_uses tinyint(2) NOT NULL DEFAULT '-1',
+					  TKT_required tinyint(1) unsigned NOT NULL DEFAULT '0',
+					  TKT_min tinyint(2) unsigned NOT NULL DEFAULT '0',
+					  TKT_max tinyint(1) NOT NULL DEFAULT '-1',
 					  TKT_price decimal(10,3) NOT NULL DEFAULT '0.00',
 					  TKT_start_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 					  TKT_end_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
