@@ -38,18 +38,12 @@ class UpdateRegistrationAndTransactionAfterChangeCommandHandler extends CommandH
 
 
     /**
-     * @param \EventEspresso\core\services\commands\CommandInterface $command
+     * @param CommandInterface|UpdateRegistrationAndTransactionAfterChangeCommand $command
      * @return boolean
+     * @throws InvalidEntityException
      */
     public function handle(CommandInterface $command)
     {
-        /** @var UpdateRegistrationAndTransactionAfterChangeCommand $command */
-        if (! $command instanceof UpdateRegistrationAndTransactionAfterChangeCommand) {
-            throw new InvalidEntityException(
-                get_class($command),
-                'UpdateRegistrationAndTransactionAfterChangeCommand'
-            );
-        }
         return $this->update_registration_service->updateRegistrationAndTransaction($command->registration());
     }
 }

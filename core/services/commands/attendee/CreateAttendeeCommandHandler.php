@@ -37,17 +37,13 @@ class CreateAttendeeCommandHandler extends CommandHandler
 
 
     /**
-     * @param CommandInterface $command
+     * @param CommandInterface|CreateAttendeeCommand $command
      * @return EE_Attendee
      * @throws EE_Error
      * @throws InvalidEntityException
      */
     public function handle(CommandInterface $command)
     {
-        /** @var CreateAttendeeCommand $command */
-        if (! $command instanceof CreateAttendeeCommand) {
-            throw new InvalidEntityException(get_class($command), 'CreateAttendeeCommand');
-        }
         // have we met before?
         $attendee = $this->findExistingAttendee(
             $command->registration(),

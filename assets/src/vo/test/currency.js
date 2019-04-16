@@ -117,7 +117,7 @@ describe( 'Currency Value Object', () => {
 			( property ) => {
 				describe( property + ' property validation', () => {
 					it( 'throws TypeError for missing property', () => {
-						delete( testConfig[ property ] );
+						delete testConfig[ property ];
 						expect( getTestObject ).toThrow( TypeError );
 					} );
 					it( 'throws Type Error for invalid property', () => {
