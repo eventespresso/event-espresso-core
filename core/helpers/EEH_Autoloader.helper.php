@@ -41,12 +41,12 @@ class EEH_Autoloader extends EEH_Base
     public static $debug = false;
 
 
-
     /**
      *    class constructor
      *
      * @access    private
      * @return \EEH_Autoloader
+     * @throws Exception
      */
     private function __construct()
     {
@@ -105,6 +105,10 @@ class EEH_Autoloader extends EEH_Base
     {
         $class_paths = is_array($class_paths) ? $class_paths : array( $class_paths );
         foreach ($class_paths as $class => $path) {
+            // skip all files that are not PHP
+            if (substr($path, strlen($path) - 3) !== 'php') {
+                continue;
+            }
             // don't give up! you gotta...
             // get some class
             if (empty($class)) {
@@ -142,13 +146,12 @@ class EEH_Autoloader extends EEH_Base
     }
 
 
-
-
     /**
      *  register core, model and class 'autoloaders'
      *
-     *  @access private
-     *  @return void
+     * @access private
+     * @return void
+     * @throws EE_Error
      */
     private function _register_custom_autoloaders()
     {
@@ -193,13 +196,12 @@ class EEH_Autoloader extends EEH_Base
     }
 
 
-
-
     /**
      *  register core, model and class 'autoloaders'
      *
-     *  @access public
-     *  @return void
+     * @access public
+     * @return void
+     * @throws EE_Error
      */
     public static function register_line_item_display_autoloaders()
     {
@@ -207,13 +209,12 @@ class EEH_Autoloader extends EEH_Base
     }
 
 
-
-
     /**
      *  register core, model and class 'autoloaders'
      *
-     *  @access public
-     *  @return void
+     * @access public
+     * @return void
+     * @throws EE_Error
      */
     public static function register_line_item_filter_autoloaders()
     {
@@ -221,17 +222,26 @@ class EEH_Autoloader extends EEH_Base
     }
 
 
-
-
     /**
      *  register template part 'autoloaders'
      *
-     *  @access public
-     *  @return void
+     * @access public
+     * @return void
+     * @throws EE_Error
      */
     public static function register_template_part_autoloaders()
     {
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_LIBRARIES . 'template_parts', true);
+    }
+
+
+    /**
+     * @return void
+     * @throws EE_Error
+     */
+    public static function register_business_classes()
+    {
+        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_CORE . 'business');
     }
 
 

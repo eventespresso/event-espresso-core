@@ -6,7 +6,7 @@ import { primaryKeys } from './primary-keys.js';
 /**
  * External imports
  */
-import { keys } from 'lodash';
+import { keys, startCase } from 'lodash';
 import pluralize from 'pluralize';
 import memoize from 'memize';
 
@@ -31,4 +31,24 @@ export const pluralModelName = memoize(
  */
 export const singularModelName = memoize(
 	( modelName ) => pluralize.singular( modelName )
+);
+
+/**
+ * Provides the capitalized snakecase format for the given model name typically
+ * used in query strings.
+ *
+ * Example:
+ *
+ * modelNameForQueryString( 'message_template_group' );
+ * // Message_Template_Group
+ *
+ * @param {string} modelName
+ * @return {string} the formatted string.
+ */
+export const modelNameForQueryString = memoize(
+	( modelName ) => {
+		modelName = singularModelName( modelName );
+		modelName = startCase( modelName );
+		return modelName.replace( /\s/g, '_' );
+	}
 );

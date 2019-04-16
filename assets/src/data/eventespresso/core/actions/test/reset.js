@@ -12,6 +12,7 @@ import {
 	resetStateForModel,
 	resetAllModelSpecific,
 	resetModelSpecificForSelector,
+	resetModelSpecificForSelectorAndArgs,
 } from '../reset';
 import { ACTION_TYPES } from '../action-types';
 import { select, dispatch } from '../../../base-controls';
@@ -170,8 +171,12 @@ describe( 'resetAllModelSpecific()', () => {
 		shouldNotAppear: new EquivalentKeyMap(),
 		shouldNotCheckin: new EquivalentKeyMap(),
 	};
-	const fulfillment = resetAllModelSpecific();
+	let fulfillment;
+	const reset = ( selectorName ) => fulfillment = resetAllModelSpecific(
+		selectorName
+	);
 	it( 'yields action for resetting all model specific state', () => {
+		reset();
 		const { value } = fulfillment.next();
 		expect( value ).toEqual(
 			{
@@ -204,27 +209,54 @@ describe( 'resetAllModelSpecific()', () => {
 		expect( final ).toBeUndefined();
 		expect( done ).toBe( true );
 	} );
+	it( 'yields action for resetting specific state for selector', () => {
+		reset( 'nonValid' );
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			{
+				type: types.RESET_MODEL_SPECIFIC_FOR_SELECTOR,
+				selector: 'nonValid',
+			}
+		);
+	} );
 } );
 
 describe( 'resetModelSpecificForSelector()', () => {
 	const fulfillment = resetModelSpecificForSelector(
 		'getLatestCheckin',
-		'checkin',
-		10
+		'checkin'
 	);
-	it( 'yields action for resetting the specific model specific ' +
-		'selector', () => {
+	it( 'yields action for resetting model specific state for the ' +
+		'given selector name', () => {
 		const { value } = fulfillment.next();
 		expect( value ).toEqual(
 			{
 				type: types.RESET_MODEL_SPECIFIC_FOR_SELECTOR,
-				selectorName: 'getLatestCheckin',
+				selector: 'getLatestCheckin',
+			}
+		);
+	} );
+} );
+
+describe( 'resetModelSpecificForSelectorAndArgs()', () => {
+	const fulfillment = resetModelSpecificForSelectorAndArgs(
+		'getLatestCheckin',
+		'checkin',
+		10
+	);
+	it( 'yields action for resetting model specific state for the ' +
+		'given selector name', () => {
+		const { value } = fulfillment.next();
+		expect( value ).toEqual(
+			{
+				type: types.RESET_MODEL_SPECIFIC_FOR_SELECTOR_AND_ARGS,
+				selector: 'getLatestCheckin',
 				args: [ 'checkin', 10 ],
 			}
 		);
 	} );
-	it( 'yields expected dispatch control for invalidating the ' +
-		'resolution', () => {
+	it( 'yields dispatch control for invalidateResolution on the ' +
+		'selector', () => {
 		const { value } = fulfillment.next();
 		expect( value ).toEqual(
 			dispatch(
