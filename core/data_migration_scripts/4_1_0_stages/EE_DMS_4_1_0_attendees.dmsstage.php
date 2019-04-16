@@ -209,6 +209,9 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table
         global $wpdb;
         $this->_pretty_name = __("Attendees", "event_espresso");
         $this->_old_table = $wpdb->prefix."events_attendee";
+        // Only select the event status column from the event table.
+        $this->select_expression = 'att.*, e.event_status';
+        // Only select attendees for events that aren't deleted.
         $this->_extra_where_sql = 'AS att
             INNER JOIN ' . $wpdb->prefix . 'events_detail AS e ON att.event_id=e.id
             WHERE e.event_status!="D"';

@@ -856,6 +856,9 @@ class EE_Dependency_Map
             'EventEspresso\core\services\request\files\FilesDataHandler' => array(
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ),
+            'EventEspressoBatchRequest\BatchRequestProcessor' => [
+                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+            ]
         );
     }
 
@@ -906,6 +909,8 @@ class EE_Dependency_Map
             'EE_Register_CPTs'                             => 'load_core',
             'EE_Admin'                                     => 'load_core',
             'EE_CPT_Strategy'                              => 'load_core',
+            // load_class
+            'EE_Registration_Processor'                    => 'load_class',
             // load_lib
             'EE_Message_Resource_Manager'                  => 'load_lib',
             'EE_Message_Type_Collection'                   => 'load_lib',
@@ -1025,6 +1030,7 @@ class EE_Dependency_Map
             'EventEspresso\core\services\request\RequestInterface'                         => 'EventEspresso\core\services\request\Request',
             'EventEspresso\core\services\request\ResponseInterface'                        => 'EventEspresso\core\services\request\Response',
             'EventEspresso\core\domain\DomainInterface'                                    => 'EventEspresso\core\domain\Domain',
+            'Registration_Processor'                                                       => 'EE_Registration_Processor',
         );
         foreach ($aliases as $alias => $fqn) {
             if (is_array($fqn)) {
