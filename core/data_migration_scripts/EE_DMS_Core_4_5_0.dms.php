@@ -271,7 +271,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
 					QST_required_text varchar(100) NULL,
 					QST_order tinyint(2) unsigned NOT NULL DEFAULT 0,
 					QST_admin_only tinyint(1) NOT NULL DEFAULT 0,
-					QST_wp_user bigint unsigned NULL,
+					QST_wp_user bigint(20) unsigned NULL,
 					QST_deleted tinyint(1) unsigned NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QST_ID)';
         $this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
@@ -386,7 +386,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
 					  PRC_overrides int(10) unsigned DEFAULT NULL,
 					  PRC_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
 					  PRC_order tinyint(3) unsigned NOT NULL DEFAULT '0',
-					  PRC_wp_user bigint unsigned NULL,
+					  PRC_wp_user bigint(20) unsigned NULL,
 					  PRC_parent int(10) unsigned DEFAULT 0,
 					  PRIMARY KEY  (PRC_ID)";
         $this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
@@ -396,7 +396,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
 				  PBT_ID tinyint(3) unsigned NOT NULL DEFAULT '1',
 				  PRT_is_percent tinyint(1) NOT NULL DEFAULT '0',
 				  PRT_order tinyint(2) unsigned NULL,
-				  PRT_wp_user bigint unsigned NULL,
+				  PRT_wp_user bigint(20) unsigned NULL,
 				  PRT_deleted tinyint(1) NOT NULL DEFAULT '0',
 				  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
 				  PRIMARY KEY  (PRT_ID)";
@@ -419,7 +419,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
 					  TKT_order tinyint(3) unsigned NOT NULL DEFAULT '0',
 					  TKT_row tinyint(3) unsigned NOT NULL DEFAULT '0',
 					  TKT_is_default tinyint(1) unsigned NOT NULL DEFAULT '0',
-					  TKT_wp_user bigint unsigned NULL,
+					  TKT_wp_user bigint(20) unsigned NULL,
 					  TKT_parent int(10) unsigned DEFAULT '0',
 					  TKT_deleted tinyint(1) NOT NULL DEFAULT '0',
 					  PRIMARY KEY  (TKT_ID)";
@@ -435,7 +435,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
 					QSG_show_group_desc tinyint(1) NOT NULL,
 					QSG_system tinyint(2) NULL,
 					QSG_deleted tinyint(1) unsigned NOT NULL DEFAULT 0,
-					QSG_wp_user bigint unsigned NULL,
+					QSG_wp_user bigint(20) unsigned NULL,
 					PRIMARY KEY  (QSG_ID),
 					UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier ASC)';
         $this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
