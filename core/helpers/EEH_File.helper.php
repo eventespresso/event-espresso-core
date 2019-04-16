@@ -630,6 +630,7 @@ class EEH_File extends EEH_Base implements EEHI_File
 
         $full_dest_path = EEH_File::standardise_directory_separators($destination_file);
         $folder = EEH_File::remove_filename_from_filepath($full_dest_path);
+        EEH_File::ensure_folder_exists_and_is_writable($folder);
         if (! EEH_File::verify_is_writable($folder, 'folder')) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 $msg = sprintf(__('The file located at "%2$s" is not writable.', 'event_espresso'), $full_dest_path);

@@ -20,6 +20,7 @@ import { InvalidModelEntity } from '@eventespresso/eejs';
 import warning from 'warning';
 import { isEmpty, isUndefined, isArray } from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
+import { sprintf } from '@eventespresso/i18n';
 
 /**
  * Internal Imports
@@ -61,6 +62,11 @@ export function* getRelatedEntities(
 	if ( ! isModelEntity( entity ) ) {
 		throw new InvalidModelEntity( '', entity );
 	}
+	// if entity is new then there won't be any relations for it on the server
+	// yet, so let's just return early.
+	if ( entity.isNew ) {
+		return DEFAULT_EMPTY_ARRAY;
+	}
 	const modelName = entity.modelName.toLowerCase();
 	const pluralRelationName = pluralModelName( relationModelName );
 	const singularRelationName = singularModelName( relationModelName );
@@ -73,9 +79,11 @@ export function* getRelatedEntities(
 	if ( relationEndpoint === '' ) {
 		warning(
 			false,
-			'There is no relation resource for the given model (%s) and requested relation (%s)',
-			modelName,
-			pluralRelationName
+			sprintf(
+				'There is no relation resource for the given model (%s) and requested relation (%s)',
+				modelName,
+				pluralRelationName
+			)
 		);
 		return DEFAULT_EMPTY_ARRAY;
 	}

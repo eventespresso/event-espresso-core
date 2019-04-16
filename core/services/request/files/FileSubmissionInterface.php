@@ -5,7 +5,7 @@ namespace EventEspresso\core\services\request\files;
 /**
  * Class FileSubmissionInterface
  *
- * Description
+ * Data concerning a file that was submitted via an HTML form.
  *
  * @package     Event Espresso
  * @author         Mike Nelson
@@ -36,6 +36,7 @@ interface FileSubmissionInterface
     public function getTmpFile();
 
     /**
+     * Should just return the filename.
      * @since $VID:$
      * @return string
      */
