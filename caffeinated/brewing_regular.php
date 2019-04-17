@@ -28,7 +28,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
 {
 
     /**
-     * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
+     * @var TableAnalysis $table_analysis
      */
     protected $_table_analysis;
 
@@ -36,48 +36,69 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
     /**
      * EE_Brewing_Regular constructor.
      *
-     * @throws \DomainException
-     * @throws \EE_Error
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @param TableAnalysis $table_analysis
      */
     public function __construct(TableAnalysis $table_analysis)
     {
         $this->_table_analysis = $table_analysis;
         if (defined('EE_CAFF_PATH')) {
-            // activation
-            add_action('AHEE__EEH_Activation__initialize_db_content', array($this, 'initialize_caf_db_content'));
-            // load caff init
-            add_action('AHEE__EE_System__set_hooks_for_core', array($this, 'caffeinated_init'));
-            // remove the "powered by" credit link from receipts and invoices
-            add_filter('FHEE_EE_Html_messenger__add_powered_by_credit_link_to_receipt_and_invoice', '__return_false');
-            // add caffeinated modules
-            add_filter(
-                'FHEE__EE_Config__register_modules__modules_to_register',
-                array($this, 'caffeinated_modules_to_register')
-            );
-            // load caff scripts
-            add_action('wp_enqueue_scripts', array($this, 'enqueue_caffeinated_scripts'), 10);
-            add_filter('FHEE__EE_Registry__load_helper__helper_paths', array($this, 'caf_helper_paths'), 10);
-            // add_filter('FHEE__EE_Registry__load_helper__helper_paths', array($this, 'caf_helper_paths'), 10);
-            add_filter(
-                'AHEE__EE_System__load_core_configuration__complete',
-                function () {
-                    EE_Register_Payment_Method::register(
-                        'caffeinated_payment_methods',
-                        array(
-                            'payment_method_paths' => glob(EE_CAF_PAYMENT_METHODS . '*', GLOB_ONLYDIR),
-                        )
-                    );
-                }
-            );
-            $this->defaultFilters();
+            $this->setInitializationHooks();
+            $this->setApiRegistrationHooks();
+            $this->setSwitchHooks();
+            $this->setDefaultFilterHooks();
             // caffeinated constructed
             do_action('AHEE__EE_Brewing_Regular__construct__complete');
-            // seeing how this is caf, which isn't put on WordPress.org, we can have affiliate links without a disclaimer
-            add_filter('FHEE__ee_show_affiliate_links', '__return_false');
         }
+    }
+
+
+    /**
+     * Various hooks used for extending features via registration of modules or extensions.
+     */
+    private function setApiRegistrationHooks()
+    {
+        add_filter(
+            'FHEE__EE_Config__register_modules__modules_to_register',
+            array($this, 'caffeinated_modules_to_register')
+        );
+        add_filter('FHEE__EE_Registry__load_helper__helper_paths', array($this, 'caf_helper_paths'), 10);
+        add_filter(
+            'AHEE__EE_System__load_core_configuration__complete',
+            function () {
+                EE_Register_Payment_Method::register(
+                    'caffeinated_payment_methods',
+                    array(
+                        'payment_method_paths' => glob(EE_CAF_PAYMENT_METHODS . '*', GLOB_ONLYDIR),
+                    )
+                );
+            }
+        );
+    }
+
+
+    /**
+     * Various hooks used for modifying initialization or activation processes.
+     */
+    private function setInitializationHooks()
+    {
+        // activation
+        add_action('AHEE__EEH_Activation__initialize_db_content', array($this, 'initialize_caf_db_content'));
+        // load caff init
+        add_action('AHEE__EE_System__set_hooks_for_core', array($this, 'caffeinated_init'));
+        // load caff scripts
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_caffeinated_scripts'), 10);
+    }
+
+
+    /**
+     * Various hooks used for switch (on/off) type filters.
+     */
+    private function setSwitchHooks()
+    {
+        // remove the "powered by" credit link from receipts and invoices
+        add_filter('FHEE_EE_Html_messenger__add_powered_by_credit_link_to_receipt_and_invoice', '__return_false');
+        // seeing how this is caf, which isn't put on WordPress.org, we can have affiliate links without a disclaimer
+        add_filter('FHEE__ee_show_affiliate_links', '__return_false');
     }
 
 
@@ -85,7 +106,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
      * Various filters for affecting default configuration values in the caffeinated
      * context.
      */
-    public function defaultFilters()
+    private function setDefaultFilterHooks()
     {
         add_filter(
             'FHEE__EE_Admin_Config__show_reg_footer__default',
