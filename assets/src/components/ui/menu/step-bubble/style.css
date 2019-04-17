@@ -1,32 +1,26 @@
 .ee-step-bubble-menu-container {
+    box-sizing: border-box;
     display: inline-block;
-    margin: 2rem auto;
+    margin: 1rem auto;
     position: relative;
+    width: auto;
 }
 
 .ee-step-bubble-menu-container .step-bubbles-container {
-    display: inline-block;
-    position:relative;
+    display: block;
     margin: auto;
-}
-
-.step-bubbles-container .progress-step-line {
-    background: #ddd;
-    border: 2px solid #ddd;
-    height: 0px;
-    left: -2%;
-    position: absolute;
-    top: 30%;
-    width: 104%;
-    z-index: -1;
+    width: 100%;
 }
 
 .step-bubbles-container .ee-step-bubble-item {
     background-color: transparent;
     border: none;
+    box-sizing: border-box;
     display: inline-block;
-    margin-right: 30px;
+    margin: 1rem;
     min-width: 160px;
+    padding: 0;
+    position: relative;
     text-align: center;
 }
 
@@ -34,24 +28,39 @@
     outline: unset;
 }
 
+.step-bubbles-container .progress-step-line {
+    background: #ddd;
+    border: 1px solid #ddd;
+    height: 0px;
+    left: -1rem;
+    position: absolute;
+    top: 16px;
+    width: calc(100% + 2rem);
+    z-index: -1;
+}
+
 .step-bubbles-container .ee-step-bubble {
     background-color: #fff;
-    border: 3px solid #ddd;
+    border: 2px solid #ddd;
     border-radius: 999em;
-    color: #999;
-    height: 50px;
+    box-sizing: content-box;
+    color: #777;
+    height: 30px;
     margin: auto;
     text-align: center;
-    width: 50px;
+    width: 30px;
 }
 
 .step-bubbles-container .ee-clickable .ee-step-bubble {
-    background-color: #fff;
-    color: #297abc;
+    background-color: #ddd;
+    color: #fff;
     cursor: pointer;
 }
+
 .step-bubbles-container .ee-clickable .ee-step-bubble:hover {
+    background-color: #fff;
     border-color: #297abc;
+    color: #297abc;
 }
 
 .step-bubbles-container .ee-clickable.ee-step-bubble-active .ee-step-bubble {
@@ -61,18 +70,115 @@
 }
 
 .step-bubbles-container .ee-step-bubble p {
-    font-size: 32px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 21px;
     font-weight: bold;
-    line-height: 1.4;
+    line-height: 27px;
     margin: 0;
-    padding: 3px 0 0;
+    padding: 0;
     text-align: center;
 }
 
 .step-bubbles-container .ee-step-bubble-step-text {
-    color: #666;
+    color: #777;
     display: block;
     font-size: 1.3em;
     font-weight: bold;
     margin-top: 1rem;
+}
+
+
+/* Media Queries for specific screen sizes
+ * -------------------------------------------------------------------------*/
+
+@media only screen and (max-width: 1920px) {
+}
+
+@media only screen and (max-width: 1600px) {
+}
+
+@media only screen and (max-width: 1366px) {
+}
+
+@media only screen and (max-width: 1280px) {
+}
+
+@media only screen and (max-width: 1024px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
+@media only screen and (max-width: 960px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
+@media only screen and (max-width: 850px) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Tablet */
+@media screen and ( max-width: 782px ) {
+}
+
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+
+    .ee-step-bubble-menu-container {
+        margin: 1rem auto .5rem;
+    }
+
+    .step-bubbles-container .ee-step-bubble-item {
+        max-width: 90px;
+        min-width: 60px;
+    }
+
+    .step-bubbles-container .ee-step-bubble-step-text {
+        font-size: 1em;
+        margin: .5rem 0 0;
+    }
+
+}
+
+@media only screen and (max-width: 480px) {
+
+}
+
+@media only screen and (max-width: 360px) {
+
+    .ee-step-bubble-menu-container {
+        display: block;
+        margin: 0 0 1rem;
+    }
+
+    .step-bubbles-container .ee-step-bubble-item {
+        display: block;
+        max-width: unset;
+        width: 100%;
+        text-align: left;
+    }
+
+    .step-bubbles-container .ee-step-bubble {
+        display: inline-block;
+        float: left;
+        margin: 0 1rem 0 0;
+        height: 26px;
+        width: 26px;
+    }
+
+    .step-bubbles-container .ee-step-bubble p {
+        font-size: 18px;
+        line-height: 24px;
+    }
+
+    .step-bubbles-container .progress-step-line {
+        height: calc( 100% + 2rem );
+        left: 13px;
+        top: -1rem;
+        width: 0;
+    }
+
+    .step-bubbles-container .ee-step-bubble-step-text {
+        display: block;
+        font-size: 1.3em;
+        margin: .3rem 0 0;
+    }
+
 }
