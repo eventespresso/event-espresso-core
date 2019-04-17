@@ -778,6 +778,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table
                 'PAY_timestamp' => $this->get_migration_script()->convert_date_string_to_utc($this, $old_attendee, $old_attendee['date']),
                 'PAY_method' => 'CART',
                 'PAY_amount' => $old_attendee['amount_pd'],
+                // 'txn_type' was used both for the gateway's name, and for other payment notes.
                 'PAY_gateway' => $old_attendee['txn_type'],
                 'PAY_extra_accntng' => $old_attendee['txn_type'],
                 'PAY_gateway_response' => '',
