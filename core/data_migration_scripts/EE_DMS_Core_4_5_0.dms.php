@@ -231,7 +231,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
 					PAY_timestamp datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 					PAY_method varchar(45) COLLATE utf8_bin DEFAULT NULL,
 					PAY_amount decimal(10,3) DEFAULT NULL,
-					PAY_gateway varchar(32) COLLATE utf8_bin DEFAULT NULL,
+					PAY_gateway varchar(45) COLLATE utf8_bin DEFAULT NULL,
 					PAY_gateway_response text COLLATE utf8_bin,
 					PAY_txn_id_chq_nmbr varchar(32) COLLATE utf8_bin DEFAULT NULL,
 					PAY_po_number varchar(32) COLLATE utf8_bin DEFAULT NULL,
