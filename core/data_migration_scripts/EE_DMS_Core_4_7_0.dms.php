@@ -117,7 +117,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base
 						ATT_phone varchar(45) DEFAULT NULL,
 							PRIMARY KEY  (ATTM_ID),
 								KEY ATT_ID (ATT_ID),
-								KEY ATT_email (ATT_email),
+								KEY ATT_email (ATT_email(191)),
 								KEY ATT_lname (ATT_lname),
 								KEY ATT_fname (ATT_fname)";
         $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
