@@ -345,7 +345,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base
 					QST_display_text text NOT NULL,
 					QST_admin_label varchar(255) NOT NULL,
 					QST_system varchar(25) DEFAULT NULL,
-					QST_type varchar(25) NOT NULL DEFAULT "text",
+					QST_type varchar(25) NOT NULL DEFAULT "TEXT",
 					QST_required tinyint(1) unsigned NOT NULL DEFAULT 0,
 					QST_required_text varchar(100) NULL,
 					QST_order tinyint(2) unsigned NOT NULL DEFAULT 0,
