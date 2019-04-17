@@ -779,11 +779,11 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table
                 'PAY_method' => 'CART',
                 'PAY_amount' => $old_attendee['amount_pd'],
                 'PAY_gateway' => $old_attendee['txn_type'],
+                'PAY_extra_accntng' => $old_attendee['txn_type'],
                 'PAY_gateway_response' => '',
                 'PAY_txn_id_chq_nmbr' => substr($old_attendee['txn_id'], 0, 32),
                 'PAY_via_admin' => $by_admin,
                 'PAY_details' => $old_attendee['transaction_details']
-
             );
             $datatypes = array(
                 '%d',// TXN_Id
