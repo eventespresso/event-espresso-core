@@ -185,7 +185,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 			EVT_display_desc tinyint(1) unsigned NOT NULL DEFAULT 1,
 			EVT_display_ticket_selector tinyint(1) unsigned NOT NULL DEFAULT 1,
 			EVT_visible_on datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-			EVT_DEFAULT_registration_status varchar(3),
+			EVT_default_registration_status varchar(3),
 			EVT_phone varchar(45) DEFAULT NULL,
 			EVT_additional_limit tinyint(2) unsigned NULL,
 			EVT_member_only tinyint(1) unsigned NOT NULL DEFAULT 0,
@@ -292,7 +292,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 					  TKT_taxable tinyint(1) unsigned NOT NULL DEFAULT '0',
 					  TKT_order tinyint(3) unsigned NOT NULL DEFAULT '0',
 					  TKT_row tinyint(3) unsigned NOT NULL DEFAULT '0',
-					  TKT_is_DEFAULT tinyint(1) unsigned NOT NULL DEFAULT '0',
+					  TKT_is_default tinyint(1) unsigned NOT NULL DEFAULT '0',
 					  TKT_parent int(10) unsigned DEFAULT '0',
 					  TKT_deleted tinyint(1) NOT NULL DEFAULT '0',
 					  PRIMARY KEY  (TKT_ID)";
@@ -322,7 +322,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 					  PRC_amount decimal(10,3) NOT NULL DEFAULT '0.00',
 					  PRC_name varchar(245) NOT NULL,
 					  PRC_desc text,
-					  PRC_is_DEFAULT tinyint(1) unsigned NOT NULL DEFAULT '1',
+					  PRC_is_default tinyint(1) unsigned NOT NULL DEFAULT '1',
 					  PRC_overrides int(10) unsigned DEFAULT NULL,
 					  PRC_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
 					  PRC_order tinyint(3) unsigned NOT NULL DEFAULT '0',
@@ -427,7 +427,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 					  STS_code varchar(45) COLLATE utf8_bin NOT NULL,
 					  STS_type set('event','registration','transaction','payment','email') COLLATE utf8_bin NOT NULL,
 					  STS_can_edit tinyint(1) NOT NULL DEFAULT 0,
-					  STS_desc TINYtext COLLATE utf8_bin,
+					  STS_desc tinytext COLLATE utf8_bin,
 					  STS_open tinyint(1) NOT NULL DEFAULT 1,
 					  UNIQUE KEY STS_ID_UNIQUE (STS_ID),
 					  KEY STS_type (STS_type)";
@@ -947,7 +947,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
     public function get_or_create_country($country_name)
     {
         if (! $country_name) {
-            throw new EE_Error(esc_html__("Could NOT get a country because country name is blank", "event_espresso"));
+            throw new EE_Error(esc_html__("Could not get a country because country name is blank", "event_espresso"));
         }
         global $wpdb;
         $country_table = $wpdb->prefix . "esp_country";
@@ -1053,7 +1053,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
     {
         if (! $state_name) {
             throw new EE_Error(esc_html__(
-                "Could NOT get-or-create state because no state name was provided",
+                "Could not get-or-create state because no state name was provided",
                 "event_espresso"
             ));
         }
@@ -1452,7 +1452,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
                 update_post_meta($new_cpt_id, '_thumbnail_id', $attachment_post_id);
             } else {
                 $migration_stage->add_error(sprintf(esc_html__(
-                    "Could NOT update event image %s for CPT with ID %d, but attachments post ID is %d",
+                    "Could not update event image %s for CPT with ID %d, but attachments post ID is %d",
                     "event_espresso"
                 ), $guid, $new_cpt_id, $attachment_post_id));
             }
@@ -1553,7 +1553,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
         $attach_data = wp_generate_attachment_metadata($attach_id, $local_filepath);
         if (! $attach_data) {
             $migration_stage->add_error(sprintf(esc_html__(
-                "Coudl NOT genereate attachment metadata for attachment post %d with filepath %s and GUID %s. Please check the file was downloaded properly.",
+                "Coudl not genereate attachment metadata for attachment post %d with filepath %s and GUID %s. Please check the file was downloaded properly.",
                 "event_espresso"
             ), $attach_id, $local_filepath, $guid));
             return $attach_id;

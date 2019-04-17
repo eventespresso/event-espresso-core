@@ -337,7 +337,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
 					  STS_code varchar(45) COLLATE utf8_bin NOT NULL,
 					  STS_type set('event','registration','transaction','payment','email') COLLATE utf8_bin NOT NULL,
 					  STS_can_edit tinyint(1) NOT NULL DEFAULT 0,
-					  STS_desc TINYtext COLLATE utf8_bin,
+					  STS_desc tinytext COLLATE utf8_bin,
 					  STS_open tinyint(1) NOT NULL DEFAULT 1,
 					  UNIQUE KEY STS_ID_UNIQUE (STS_ID),
 					  KEY STS_type (STS_type)";
