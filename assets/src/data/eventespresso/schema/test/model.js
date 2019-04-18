@@ -21,11 +21,6 @@ jest.mock( '../../../model', () => ( {
 	MODEL_NAMES: [ 'event', 'datetime' ],
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
-	...require.requireActual( '@wordpress/data' ),
-	select: jest.fn().mockReturnValue( {} ),
-} ) );
-
 describe( 'createEntitySelectors', () => {
 	beforeAll( () => {
 		select( 'core/data' ).isResolving = jest.fn().mockReturnValue( false );
