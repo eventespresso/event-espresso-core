@@ -24,11 +24,6 @@ import { mockStateForTests } from './fixtures';
 import { select } from '@wordpress/data';
 import { EventSchema, EventFactory } from '@test/fixtures';
 
-jest.mock( '@wordpress/data', () => ( {
-	...require.requireActual( '@wordpress/data' ),
-	select: jest.fn().mockReturnValue( {} ),
-} ) );
-
 describe( 'testing getters', () => {
 	[
 		[
