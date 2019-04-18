@@ -174,11 +174,18 @@ const selectorIsModelSpecific = (
 };
 
 /**
- * Resets all model specific state.
+ * Resets all model specific state (optionally restricted to the given selector
+ * name if present).
+ *
+ * @param {string} selectorName  If present then state will only be reset for
+ * the specific selector.  Otherwise all model specific state is reset.
  */
-export function* resetAllModelSpecific() {
+export function* resetAllModelSpecific( selectorName ) {
 	yield {
-		type: types.RESET_ALL_MODEL_SPECIFIC,
+		type: selectorName === undefined ?
+			types.RESET_ALL_MODEL_SPECIFIC :
+			types.RESET_MODEL_SPECIFIC_FOR_SELECTOR,
+		selector: selectorName,
 	};
 
 	// get resolvers
@@ -192,18 +199,31 @@ export function* resetAllModelSpecific() {
 
 	// dispatch invalidation of the cached resolvers for model specific selector
 	for ( const selector in resolvers ) {
-		for ( const entry of resolvers[ selector ]._map ) {
-			if ( selectorIsModelSpecific( selector, selectorsToInvalidate ) ) {
-				yield dispatch(
-					'core/data',
-					'invalidateResolution',
-					REDUCER_KEY,
-					selector,
-					entry[ 0 ],
-				);
+		if ( selectorName === undefined || selectorName === selector ) {
+			for ( const entry of resolvers[ selector ]._map ) {
+				if (
+					selectorIsModelSpecific( selector, selectorsToInvalidate )
+				) {
+					yield dispatch(
+						'core/data',
+						'invalidateResolution',
+						REDUCER_KEY,
+						selector,
+						entry[ 0 ],
+					);
+				}
 			}
 		}
 	}
+}
+
+/**
+ * Reset model specific state for the given selector name.
+ *
+ * @param {string} selectorName
+ */
+export function* resetModelSpecificForSelector( selectorName ) {
+	yield* resetAllModelSpecific( selectorName );
 }
 
 /**
@@ -212,10 +232,10 @@ export function* resetAllModelSpecific() {
  * @param {string} selectorName
  * @param {Array} args
  */
-export function* resetModelSpecificForSelector( selectorName, ...args ) {
+export function* resetModelSpecificForSelectorAndArgs( selectorName, ...args ) {
 	yield {
-		type: types.RESET_MODEL_SPECIFIC_FOR_SELECTOR,
-		selectorName,
+		type: types.RESET_MODEL_SPECIFIC_FOR_SELECTOR_AND_ARGS,
+		selector: selectorName,
 		args,
 	};
 

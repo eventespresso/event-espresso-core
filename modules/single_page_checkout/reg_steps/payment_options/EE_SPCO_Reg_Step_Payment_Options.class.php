@@ -351,7 +351,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                       && $registration->status_ID() !== EEM_Registration::status_id_not_approved
                       && $registration->ticket()->is_free()
             ) {
-                $registrations_for_free_events[ $registration->event()->ID() ] = $registration;
+                $registrations_for_free_events[ $registration->ticket()->ID() ] = $registration;
             }
         }
         $subsections = array();

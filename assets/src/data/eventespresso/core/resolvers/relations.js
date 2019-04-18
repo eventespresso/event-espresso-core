@@ -20,6 +20,7 @@ import { InvalidModelEntity } from '@eventespresso/eejs';
 import warning from 'warning';
 import { isEmpty, isUndefined, isArray } from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
+import { sprintf } from '@eventespresso/i18n';
 
 /**
  * Internal Imports
@@ -39,6 +40,7 @@ import {
 import { keepExistingEntitiesInObject } from '../../base-model';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
+import { appendCalculatedFieldsToPath } from './utils';
 
 const DEFAULT_EMPTY_ARRAY = [];
 
@@ -48,12 +50,22 @@ const DEFAULT_EMPTY_ARRAY = [];
  *
  * @param {BaseEntity} entity
  * @param {string} relationModelName
+ * @param {Array} calculatedFields
  * @return {[]|Array<BaseEntity>} If there are relations, returns an array of
  * BaseEntity instances for the relations, otherwise an empty array.
  */
-export function* getRelatedEntities( entity, relationModelName ) {
+export function* getRelatedEntities(
+	entity,
+	relationModelName,
+	calculatedFields = []
+) {
 	if ( ! isModelEntity( entity ) ) {
 		throw new InvalidModelEntity( '', entity );
+	}
+	// if entity is new then there won't be any relations for it on the server
+	// yet, so let's just return early.
+	if ( entity.isNew ) {
+		return DEFAULT_EMPTY_ARRAY;
 	}
 	const modelName = entity.modelName.toLowerCase();
 	const pluralRelationName = pluralModelName( relationModelName );
@@ -67,9 +79,11 @@ export function* getRelatedEntities( entity, relationModelName ) {
 	if ( relationEndpoint === '' ) {
 		warning(
 			false,
-			'There is no relation resource for the given model (%s) and requested relation (%s)',
-			modelName,
-			pluralRelationName
+			sprintf(
+				'There is no relation resource for the given model (%s) and requested relation (%s)',
+				modelName,
+				pluralRelationName
+			)
 		);
 		return DEFAULT_EMPTY_ARRAY;
 	}
@@ -89,9 +103,13 @@ export function* getRelatedEntities( entity, relationModelName ) {
 		[ modelName, entity.id, pluralRelationName, relationEndpoint ]
 	);
 
-	let relationEntities = yield fetch( {
-		path: relationEndpoint,
-	} );
+	// add calculatedFields to endpoint?
+	const path = appendCalculatedFieldsToPath(
+		relationEndpoint,
+		calculatedFields
+	);
+
+	let relationEntities = yield fetch( { path } );
 
 	relationEntities = ! isEmpty( relationEntities ) ?
 		relationEntities :
@@ -181,6 +199,8 @@ export function* getRelatedEntities( entity, relationModelName ) {
  * @param {string} modelName
  * @param {Array<number>} entityIds
  * @param {string} relationName
+ * @param {Array} calculatedFields  This will retrieve any named calculated
+ * fields for the related entities.
  *
  * @return {Array|undefined} If there is no schema for the relation, an
  * empty array is returned.
@@ -188,7 +208,8 @@ export function* getRelatedEntities( entity, relationModelName ) {
 export function* getRelatedEntitiesForIds(
 	modelName,
 	entityIds,
-	relationName
+	relationName,
+	calculatedFields = []
 ) {
 	modelName = singularModelName( modelName );
 	relationName = pluralModelName( relationName );
@@ -227,7 +248,8 @@ export function* getRelatedEntitiesForIds(
 			relationName,
 			relationSchema,
 			relationType,
-			hasJoinTable
+			hasJoinTable,
+			calculatedFields,
 		),
 	} );
 	if ( ! response.length ) {
@@ -307,6 +329,7 @@ export function* getRelatedEntitiesForIds(
  * @param {Object} relationSchema
  * @param {string} relationType
  * @param {boolean} hasJoinTable
+ * @param {Array} calculatedFields
  * @return {string} A path to use for a relation request.
  */
 const getRelationRequestUrl = (
@@ -315,7 +338,8 @@ const getRelationRequestUrl = (
 	relationName,
 	relationSchema,
 	relationType,
-	hasJoinTable
+	hasJoinTable,
+	calculatedFields,
 ) => {
 	let path;
 	switch ( true ) {
@@ -329,11 +353,21 @@ const getRelationRequestUrl = (
 				entityIds
 			);
 			path += `&include=${ modelNameForQueryString( relationName ) }.*`;
+			path = appendCalculatedFieldsToPath(
+				path,
+				calculatedFields,
+				singularModelName( relationName )
+			);
 			break;
 		case isBelongsToRelation( relationType ):
 			path = getEndpoint( modelName );
 			path += `/?where${ getPrimaryKeyQueryString( modelName, entityIds ) }`;
 			path += `&include=${ modelNameForQueryString( relationName ) }.*`;
+			path = appendCalculatedFieldsToPath(
+				path,
+				calculatedFields,
+				singularModelName( relationName )
+			);
 			break;
 		default:
 			// we do the reverse endpoint so that we are getting the belongs to
@@ -353,6 +387,10 @@ const getRelationRequestUrl = (
 			path = getEndpoint( singularModelName( relationName ) );
 			path += `/?where${ getPrimaryKeyQueryString( modelName, entityIds ) }`;
 			path += `&include=${ modelNameForQueryString( modelName ) }.*`;
+			path = appendCalculatedFieldsToPath(
+				path,
+				calculatedFields,
+			);
 			break;
 	}
 	return path;
