@@ -75,7 +75,8 @@ class EE_DMS_4_5_0_invoice_settings extends EE_Data_Migration_Script_Stage
             // message templates are only initialized AFTER migrations and those two are new in 4.5. So if we wanted to
             // update them from a DMS, we'd need to have the DMS create the message templates which is quite a lot of code;
             // also we don't want to build a dependency on the messages code because it is likely to change soon
-            if (! in_array($invoice_settings['invoice_css'], array( '', 'simple.css' ))) {
+            if (isset($invoice_settings['invoice_css'])
+                && ! in_array($invoice_settings['invoice_css'], array( '', 'simple.css' ))) {
                 new PersistentAdminNotice(
                     'invoice_css_not_updated',
                     sprintf(
