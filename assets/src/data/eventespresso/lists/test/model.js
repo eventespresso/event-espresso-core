@@ -19,7 +19,6 @@ jest.mock( '../../../model', () => ( {
 	MODEL_NAMES: [ 'event', 'datetime' ],
 } ) );
 
-
 describe( 'createEntitySelectors()', () => {
 	beforeAll( () => {
 		select( 'core/data' ).isResolving = jest.fn().mockReturnValue( false );
