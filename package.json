@@ -35,7 +35,7 @@
 		"@babel/core": "7.0.0",
 		"@babel/plugin-proposal-class-properties": "^7.4.0",
 		"@babel/plugin-transform-react-jsx": "^7.0.0",
-		"@babel/polyfill": "^7.0.0",
+		"@babel/polyfill": "^7.4.3",
 		"@babel/preset-react": "^7.0.0",
 		"@babel/runtime-corejs2": "7.0.0",
 		"@wordpress/a11y": "^1.1.3",
