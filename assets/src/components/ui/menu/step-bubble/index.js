@@ -42,27 +42,25 @@ const assertStepConfiguration = ( { label, value } ) => {
 const getStepBubbles = ( bubbleData ) => {
 	const stepBubbles = [];
 	for ( const slug in bubbleData ) {
-		if ( bubbleData.hasOwnProperty( slug ) ) {
-			assertStepConfiguration( bubbleData[ slug ] );
-			const {
-				label,
-				value,
-				action,
-				clickable,
-				active,
-			} = bubbleData[ slug ];
-			stepBubbles.push(
-				<StepBubble
-					key={ slug }
-					label={ label }
-					slug={ slug }
-					action={ action }
-					stepValue={ value }
-					clickable={ clickable }
-					isActive={ active }
-				/>
-			);
-		}
+		assertStepConfiguration( bubbleData[ slug ] );
+		const {
+			label,
+			value,
+			action,
+			clickable,
+			active,
+		} = bubbleData[ slug ];
+		stepBubbles.push(
+			<StepBubble
+				key={ slug }
+				label={ label }
+				slug={ slug }
+				action={ action }
+				stepValue={ value }
+				clickable={ clickable }
+				isActive={ active }
+			/>
+		);
 	}
 	return stepBubbles;
 };
