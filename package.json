@@ -83,7 +83,7 @@
 		"pegjs": "^0.10.0",
 		"pegjs-loader": "^0.5.4",
 		"postcss-loader": "^2.1.6",
-		"react": "^16.6.0",
+		"react": "^16.8.6",
 		"react-dom": "^16.8.6",
 		"react-test-renderer": "^16.6.0",
 		"recast": "^0.14.7",
