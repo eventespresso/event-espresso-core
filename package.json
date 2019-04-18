@@ -48,7 +48,7 @@
 		"@wordpress/blocks": "^6.2.2",
 		"@wordpress/browserslist-config": "^2.3.0",
 		"@wordpress/components": "^1.1.1",
-		"@wordpress/compose": "^1.0.4",
+		"@wordpress/compose": "^3.2.0",
 		"@wordpress/core-data": "^2.2.2",
 		"@wordpress/data": "^4.4.0",
 		"@wordpress/date": "^3.2.0",
