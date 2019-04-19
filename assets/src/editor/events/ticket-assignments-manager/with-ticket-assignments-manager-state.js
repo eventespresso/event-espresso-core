@@ -50,7 +50,6 @@ export default compose( [
 		const {
 			editorOpen,
 			initialized,
-			loading,
 			date,
 			allDates,
 			ticket,
@@ -59,6 +58,7 @@ export default compose( [
 			tickets,
 			setState,
 		} = ownProps;
+		let { loading } = ownProps;
 		const resetRelationsMap = () => {
 			setState( { initialized: false } );
 		};
@@ -73,21 +73,18 @@ export default compose( [
 		}
 		if ( isModelEntityOfModel( date, DATETIME ) ) {
 			dtmProps = {
-				loading: false,
 				initialized: true,
 				entities: [ date ],
 				tickets: allTickets,
 			};
 		} else if ( isModelEntityOfModel( ticket, TICKET ) ) {
 			dtmProps = {
-				loading: false,
 				initialized: true,
 				entities: sortDatesList( allDates ),
 				tickets: [ ticket ],
 			};
 		} else if ( Array.isArray( allDates ) && Array.isArray( allTickets ) ) {
 			dtmProps = {
-				loading: false,
 				initialized: true,
 				entities: sortDatesList( allDates ),
 				tickets: allTickets,
@@ -105,6 +102,7 @@ export default compose( [
 					[ dateEntity, 'tickets' ]
 				);
 				if ( ticketRelationsResolved ) {
+					loading = false;
 					eventDateTicketMap[ dateEntity.id ] = uniq( relatedTickets );
 				}
 			}
@@ -113,6 +111,7 @@ export default compose( [
 			...dtmProps,
 			eventDateTicketMap,
 			resetRelationsMap,
+			loading: loading,
 		} );
 		return dtmProps;
 	} ),
