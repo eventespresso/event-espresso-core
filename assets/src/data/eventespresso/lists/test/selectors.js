@@ -16,11 +16,6 @@ import { select } from '@wordpress/data';
 import { Exception } from '@eventespresso/eejs';
 import { Set, OrderedMap, Map } from 'immutable';
 
-jest.mock( '@wordpress/data', () => ( {
-	...require.requireActual( '@wordpress/data' ),
-	select: jest.fn().mockReturnValue( {} ),
-} ) );
-
 describe( 'testing getters', () => {
 	const testConditions = [
 		[
