@@ -83,6 +83,7 @@ export const withFormHandler = ( FormComponent ) => {
 				loadingNotice = '',
 				decorators = [],
 				mutators = {},
+				formChanges = false,
 				...formProps
 			} = this.props;
 			let { formData = null } = this.props;
@@ -108,7 +109,9 @@ export const withFormHandler = ( FormComponent ) => {
 							const submitButton = (
 								<FormSubmitButton
 									submitting={ submitting }
-									disabled={ pristine || invalid }
+									disabled={
+										( pristine || invalid ) && ! formChanges
+									}
 								/>
 							);
 							const formReset = ( event ) => {
