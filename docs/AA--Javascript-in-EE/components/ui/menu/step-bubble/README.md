@@ -6,55 +6,42 @@ This outputs an accessible menu used for articulating steps in a process.  The v
 
 ```jsx
 <StepBubbleMenu
-  bubbleClick={ () => null }
-  bubbleData={ [] }
-  clickable={ [] }
-  activeBubble={ '' }
+  bubbleData={ {} }
 />
 ```
 
 ## Props
-### `bubbleClick`
-
-This is a callback that will be fired when a menu item is clicked or toggled via keyboard when menu is in focus (Enter key or OS specific menu item trigger).
-
-Typically components implementing this menu component will use this callback to trigger view state (as in the gif example above).
-
-The callback receives the `slug` of the bubble clicked.
-
-**Example:**
-
-```jsx
-import { StepBubbleMenu } from '@eventespresso/components';
-// or you could do this for es5
-// const { StepBubbleMenu } = eejs.components;
-
-const myComponentWithMenu = () => {
-	function stepCallback( slug ) {
-		// do something with slug
-	}
-	return <div>
-		<StepBubbleMenu bubbleClick={ stepCallback } />
-	</div>
-};
-
-export default myComponentWithMenu;
-```
-
-| Type   | Required | Default            |
-| ------ | -------- | -------------------|
-| string | No       | `() => null       `|
 
 ### `bubbleData`
 
-This is expected to be an array of option configs for each menu item in the menu.  The shape of each object in this array is:
+The component expects a single prop labelled `bubbleData` which is the configuration object for the steps. This is to be a collection of objects indexed by slugs for each step. 
 
 ```js
-const menuItem = {
-  label: 'Choose Event',
-  slug: 'choose_event',
-  value: 1
+const bubbleData = {
+  stepOne: { /* configuration for step one */ },
+  stepTwo: { /* configuration for step two */ },
 }
+```
+The configuration object should contain the following properties:
+
+|Property  | Type                                           | Description                                                                                                   |
+|--------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------|
+|label     | `string    `                                   | The label for the step that will be displayed to the user.                                                    |
+|value     | `mixed`                                        | The value assigned to the step as it appears in the step bubble itself (eg `1`)                               |
+|action    | `function            `                         | This is a callback that will be invoked when the step bubble is clicked or when activated via keypress (Enter)|
+|clickable | `boolean                      `                | Indicates whether the step should be clickable/actionable.  If false then the bubble is display only          |
+|active    | `boolean`                                      | Indicates whether the step should receive "active" state styling.                                             |
+Here's an example of a step configuration object:
+```js
+const bubbleData = {
+  choose_event: {
+    label: 'Choose Event',
+    value: 1,
+    action: ( slug ) => handleClickFunction(),
+    clickable: true,
+    active: false,
+  },
+};
 ```
 With this configuration array, you are able to dynamically configure the output of the menu.
 
@@ -67,16 +54,33 @@ import { StepBubbleMenu } from '@eventespresso/components';
 
 const myComponentWithMenu = () => {
 	function stepCallback( slug ) {
-		// do something with slug
+		// do something for step click event.  The incoming slug allows you to derive what step was clicked.
 	}
-	const menuItems = [
-		{ label: 'Choose Event', slug: 'choose_event', value: 1 },
-		{ label: 'Choose Datetime', slug: 'choose_datetime', value: 2 },
-		{ label: 'Scan', slug: 'scan', value: 3 },
-	];
+	const menuItems = {
+	  choose_event: {
+	    label: 'Choose Event',
+	    value: 1,
+	    action: stepCallback,
+	    clickable: false,
+	    active: true,
+	  },
+	  choose_datetime: {
+	    label: 'Choose Datetime',
+	    value: 2,
+	    action: stepCallback,
+	    clickable: false,
+	    active: false,
+	  },
+	  scan: {
+	    label: 'Scan',
+	    value: 3,
+	    action: stepCallback,
+	    clickable: false,
+	    active: false,
+	  }
+	};
 	return <div>
 		<StepBubbleMenu
-			bubbleClick={ stepCallback }
 			bubbleData={ menuItems }
 		/>
 	</div>
@@ -84,85 +88,9 @@ const myComponentWithMenu = () => {
 
 export default myComponentWithMenu;
 ```
-|Type  | Required | Default |
-|----- | -------- | ------- |
-|Array | No       | []      |
-
-### `clickable`
-
-An array of slugs that should have a click event attached.  
-
-This allows for finer control of what step indicators can be toggled by the user (useful when there's predefined conditions require for other menu items to be available)
-
-**Example:**
-```jsx
-import { StepBubbleMenu } from '@eventespresso/components';
-// or you could do this for es5
-// const { StepBubbleMenu } = eejs.components;
-
-const myComponentWithMenu = () => {
-	function stepCallback( slug ) {
-		// do something with slug
-	}
-	const menuItems = [
-		{ label: 'Choose Event', slug: 'choose_event', value: 1 },
-		{ label: 'Choose Datetime', slug: 'choose_datetime', value: 2 },
-		{ label: 'Scan', slug: 'scan', value: 3 },
-	];
-	// only the choose_event step is clickable
-	const clickable = [ 'choose_event' ];
-	return <div>
-		<StepBubbleMenu
-			bubbleClick={ stepCallback }
-			bubbleData={ menuItems }
-			clickable={ clickable }
-		/>
-	</div>
-};
-
-export default myComponentWithMenu;
-```
-
-| Type  | Required | Default |
-| ----- | -------- | ------- |
-| Array | No       | []      |
-
-## activeBubble
-
-This indicates what step (via slug) should be considered "active".
-
-**Example:**
-```jsx
-import { StepBubbleMenu } from '@eventespresso/components';
-// or you could do this for es5
-// const { StepBubbleMenu } = eejs.components;
-
-const myComponentWithMenu = () => {
-	function stepCallback( slug ) {
-		// do something with slug
-	}
-	const menuItems = [
-		{ label: 'Choose Event', slug: 'choose_event', value: 1 },
-		{ label: 'Choose Datetime', slug: 'choose_datetime', value: 2 },
-		{ label: 'Scan', slug: 'scan', value: 3 },
-	];
-	const clickable = [ 'choose_event' ];
-	return <div>
-		<StepBubbleMenu
-			bubbleClick={ stepCallback }
-			bubbleData={ menuItems }
-			clickable={ clickable }
-			activeBubble={ 'choose_event' }
-		/>
-	</div>
-};
-
-export default myComponentWithMenu;
-```
-
-| Type   | Required | Default |
-| ------ | -------- | ------- |
-| string | No       | '''     |
+|Type   | Required | Default |
+|------ | -------- | ------- |
+|Object | Yes      | {}      |
 
 ## Usage
 
