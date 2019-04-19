@@ -59,7 +59,7 @@ class AdminOptionsSettings extends FormHandler
      * creates and returns the actual form
      *
      * @return EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function generate()
     {
@@ -147,9 +147,7 @@ class AdminOptionsSettings extends FormHandler
                                 'adds an unobtrusive link to Event Espresso\'s website in the footer of your registration form. Get an affiliate link (see below) and make money if people click the link and purchase Event Espresso.',
                                 'event_espresso'
                             ),
-                            'default'         => isset($this->registry->CFG->admin->show_reg_footer)
-                                ? filter_var($this->registry->CFG->admin->show_reg_footer, FILTER_VALIDATE_BOOLEAN)
-                                : true,
+                            'default'         => filter_var($this->registry->CFG->admin->show_reg_footer, FILTER_VALIDATE_BOOLEAN),
                             'required'        => false,
                         )
                     ),
