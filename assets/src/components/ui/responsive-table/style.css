@@ -97,11 +97,13 @@
 /*    width: 66.6700%*/
 /*}*/
 
+.ee-rTable-column-count-1 .ee-rTable-header-th, .ee-rTable-column-count-1 .ee-rTable-body-td, .ee-rTable-column-count-1 .ee-rTable-footer-th,
 .ee-rTable-column-count-2 .ee-rTable-header-th, .ee-rTable-column-count-2 .ee-rTable-body-td, .ee-rTable-column-count-2 .ee-rTable-footer-th,
 .ee-rTable-column-count-3 .ee-rTable-header-th, .ee-rTable-column-count-3 .ee-rTable-body-td, .ee-rTable-column-count-3 .ee-rTable-footer-th {
     width: 25.0000%
 }
 
+.ee-rTable-column-count-1 .ee-rTable-body-th,
 .ee-rTable-column-count-2 .ee-rTable-body-th,
 .ee-rTable-column-count-3 .ee-rTable-body-th {
     width: 50.0000%
