@@ -54,10 +54,7 @@ const CalendarDateRange = ( {
 				<div className="ee-cdr-weekday">
 					{ startDate.toFormat( 'dddd' ) }
 				</div>
-				<CalendarPageDate
-					startDate={ startDate }
-					addStatusClass={ false }
-				/>
+				<CalendarPageDate startDate={ startDate } />
 			</div>
 			<div className="ee-calendar-date-range-separator">
 				{ __( 'to', 'event_espresso' ) }
@@ -66,10 +63,7 @@ const CalendarDateRange = ( {
 				<div className="ee-cdr-weekday">
 					{ endDate.toFormat( 'dddd' ) }
 				</div>
-				<CalendarPageDate
-					endDate={ endDate }
-					addStatusClass={ false }
-				/>
+				<CalendarPageDate endDate={ endDate } />
 			</div>
 			<div className="ee-clear-float"></div>
 			<div className="ee-cdr-time">
