@@ -96,7 +96,9 @@ class CalendarPageDate extends Component {
 	 * @return {string} The day formatted to look like a calendar page
 	 */
 	renderCalendarPage = ( date, statusClass, startOrEnd = 'start' ) => {
-		const htmlClass = `ee-calendar-page-date-month ${ statusClass }`;
+		const htmlClass = statusClass !== '' ?
+			`ee-calendar-page-date-month ${ statusClass }` :
+			'ee-calendar-page-date-month';
 		return (
 			<Tooltip
 				text={ date.toFormat( 'LLLL' ) }
