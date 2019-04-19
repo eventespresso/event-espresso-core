@@ -63,6 +63,7 @@ class TicketPriceCalculatorFormModal extends Component {
 			formData
 		);
 		if ( isModelEntityOfModel( ticket, 'ticket' ) ) {
+			this.props.setState( { formChanges: false } );
 			this.toggleEditor();
 		}
 		if ( Array.isArray( ticket ) ) {
@@ -119,6 +120,7 @@ class TicketPriceCalculatorFormModal extends Component {
 export default compose( [
 	withSafeTimeout,
 	withState( {
+		formChanges: false,
 		reverseCalculate: false,
 		newModifierUpdate: false,
 		newModifiers: [],
@@ -190,6 +192,7 @@ export default compose( [
 			if ( isModelEntityOfModel( priceModifier, 'price' ) ) {
 				createRelation( 'ticket', ticket.id, 'price', priceModifier );
 				newModifiers.push( priceModifier.id );
+				ownProps.setState( { formChanges: true } );
 			}
 		};
 		const trashPriceModifier = async ( priceModifier, ticket ) => {
@@ -221,6 +224,7 @@ export default compose( [
 			);
 			trashEntityById( 'price', priceModifier.id );
 			deletedModifiers.push( priceModifier.id );
+			ownProps.setState( { formChanges: true } );
 		};
 		return { addPriceModifier, trashPriceModifier };
 	} ),
