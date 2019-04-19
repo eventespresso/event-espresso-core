@@ -21,25 +21,25 @@ describe( 'StepBubble', () => {
 	it( 'is clickable when canClick prop is true', () => {
 		const testProps = {
 			...props,
-			bubbleClick: jest.fn(),
+			action: jest.fn(),
 		};
 		const wrapper = shallow( <StepBubble { ...testProps } /> );
 		const clickEl = wrapper.find( '.ee-step-bubble-item' );
 		expect( clickEl.length ).toBe( 1 );
 		clickEl.first().simulate( 'click' );
-		expect( testProps.bubbleClick ).toHaveBeenCalledTimes( 1 );
+		expect( testProps.action ).toHaveBeenCalledTimes( 1 );
 	} );
 	it( 'is not clickable when canClick prop is false', () => {
 		const testProps = {
 			...props,
-			canClick: false,
-			bubbleClick: jest.fn(),
+			clickable: false,
+			action: jest.fn(),
 		};
 		const wrapper = shallow( <StepBubble { ...testProps } /> );
 		const clickEl = wrapper.find( '.ee-step-bubble-item' );
 		expect( clickEl.length ).toBe( 1 );
 		clickEl.first().simulate( 'click' );
-		expect( testProps.bubbleClick ).not.toHaveBeenCalled();
+		expect( testProps.action ).not.toHaveBeenCalled();
 	} );
 	it( 'has expected label for StepText child', () => {
 		const wrapper = shallow( <StepBubble { ...props } /> );

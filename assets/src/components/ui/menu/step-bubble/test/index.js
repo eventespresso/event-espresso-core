@@ -13,43 +13,45 @@ describe( 'StepBubbleMenu', () => {
 	} );
 	it( 'renders the expected number of children StepBubble components ' +
 		'for the given data', () => {
-		const testData = [
-			{ label: 'foo', value: 1  },
-			{ label: 'bar', value: 2 },
-		];
+		const testData = {
+			foo: { label: 'foo label', value: 1  },
+			bar: { label: 'bar label', value: 2 },
+		};
 		const wrapper = shallow( <StepBubbleMenu bubbleData={ testData } /> );
 		expect( wrapper.find( StepBubble ) ).toHaveLength( 2 );
 	} );
-	it( 'renders expected prop for slug given the provided data when ' +
-		'slug is in the data', () => {
-		const testData = [ { slug: 'someData', label: 'bar', value: 1 } ];
+	it( 'renders expected prop for slug given the provided data', () => {
+		const testData = {
+			someData: {
+				label: 'bar',
+				value: 1
+			}
+		};
 		const wrapper = shallow( <StepBubbleMenu bubbleData={ testData } /> );
 		expect( wrapper.find( StepBubble ).first().props().slug )
 			.toBe( 'someData' );
 	} );
-	it( 'renders expected prop for slug given the provided data when ' +
-		'slug is not in the data', () => {
-		const testData = [ { label: 'foo', value: 2 } ];
-		const wrapper = shallow( <StepBubbleMenu bubbleData={ testData } /> );
-		expect( wrapper.find( StepBubble ).first().props().slug )
-			.toBe( 'foo' );
-	} );
-	it( 'renders expected props for given incoming props', () => {
+	describe( 'renders expected props for given incoming props', () => {
 		const bubbleClick = jest.fn();
 		const props = {
-			bubbleClick,
-			bubbleData: [ { label: 'foo', value: 42 } ],
-			clickable: [ 'foo' ],
-			activeBubble: 'foo',
+			bubbleData: {
+				foo: {
+					label: 'foo label',
+					value: 42,
+					action: bubbleClick,
+					clickable: false,
+					active: true
+				}
+			},
 		};
 		const wrapper = shallow( <StepBubbleMenu { ...props } /> );
 		const expectedProps = [
-			[ 'label', 'foo' ],
+			[ 'label', 'foo label' ],
 			[ 'slug', 'foo' ],
 			[ 'stepValue', 42 ],
 			[ 'isActive', true ],
-			[ 'canClick', false ],
-			[ 'bubbleClick', bubbleClick ],
+			[ 'clickable', false ],
+			[ 'action', bubbleClick ],
 		];
 		const child = wrapper.find( StepBubble ).first();
 		const childProps = child.props();
@@ -57,7 +59,9 @@ describe( 'StepBubbleMenu', () => {
 			prop,
 			expectedValue,
 		] ) => {
-			expect( childProps[ prop ] ).toEqual( expectedValue );
+			it( `has expected value for the ${ prop } prop`, () => {
+				expect( childProps[ prop ] ).toEqual( expectedValue );
+			} );
 		} );
 		expect( child.key() ).toEqual( 'foo' );
 	} );
