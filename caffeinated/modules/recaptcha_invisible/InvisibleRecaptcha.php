@@ -238,6 +238,10 @@ class InvisibleRecaptcha
                 'recaptcha_passed' => $this->recaptchaPassed(),
                 'wp_debug'         => WP_DEBUG,
                 'disable_submit'   => defined('EE_EVENT_QUEUE_BASE_URL'),
+                'failed_message'   => esc_html__(
+                    'We\'re sorry but an attempt to verify the form\'s reCAPTCHA has failed. Please try again.',
+                    'event_espresso'
+                )
             )
         );
     }
