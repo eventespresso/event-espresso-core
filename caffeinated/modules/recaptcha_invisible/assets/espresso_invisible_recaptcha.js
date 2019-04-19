@@ -31,7 +31,7 @@ function espressoLoadRecaptcha() {
             var espresso_ajax_msg = $('#espresso-ajax-notices-error');
             espresso_ajax_msg.children('.espresso-notices-msg').html(msg);
             $('#espresso-ajax-loading').fadeOut('fast');
-            espresso_ajax_msg.removeClass('hidden').show().delay(5000).fadeOut();
+            espresso_ajax_msg.removeClass('hidden').show().delay(12000).fadeOut();
         };
 
         // convert truthy values to pure booleans
