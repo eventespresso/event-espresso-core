@@ -3,6 +3,10 @@
  * (c) 2018 Event Espresso
  * -------------------------------------------------------------------------*/
 
+.ee-form-info-row {
+    padding: 1rem 0;
+}
+
 .ee-form-info-row.is-dismissable {
     max-height: 500px;
     min-height: 0 !important;
@@ -19,7 +23,7 @@
     font-size: 1rem;
     font-style: italic;
     height: auto;
-    line-height: 1.5rem;
+    line-height: 36px;
     position: relative;
 }
 
@@ -28,7 +32,7 @@
 }
 
 .ee-form-info-row.is-dismissable .ee-form-info {
-    padding: 20px 20px 0 0;
+    padding: 0 20px 0 0;
 }
 
 .ee-form-info .ee-form-info-type {
@@ -37,6 +41,15 @@
     left: -66px;
     position: absolute;
     top: 2px;
+}
+
+.ee-form-info.ee-form-info-type-warning .ee-form-info-type {
+    color: var(--ee-hot-pink);
+}
+
+.ee-form-info .ee-form-info-text .dashicon {
+    margin: 0 .25rem;
+    vertical-align: text-bottom;
 }
 
 .ee-form-info .ee-form-info-dismiss {

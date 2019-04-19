@@ -39,18 +39,24 @@ class FormInfo extends Component {
 			dismissable = true,
 			colSize = 6,
 			offset = 3,
+			formInfoVars = [],
 		} = this.props;
-		let rowClass = this.state.dismiss ?
-			'ee-form-info-row dismissed' :
+		let { htmlClass = '' } = this.props;
+		htmlClass = htmlClass !== '' ?
+			`${ htmlClass } ee-form-info-row` :
 			'ee-form-info-row';
-		rowClass = dismissable ?
-			`${ rowClass } is-dismissable` :
-			rowClass;
+		htmlClass = this.state.dismiss ?
+			`${ htmlClass } dismissed` :
+			htmlClass;
+		htmlClass = dismissable ?
+			`${ htmlClass } is-dismissable` :
+			htmlClass;
 		return formInfo ? (
-			<FormRow htmlClass={ rowClass }>
+			<FormRow htmlClass={ htmlClass }>
 				<FormColumn colSize={ colSize } offset={ offset }>
 					<FormInfoBase
 						formInfo={ formInfo }
+						formInfoVars={ formInfoVars }
 						dashicon={ dashicon }
 						onDismiss={ dismissable ? this.dismiss : null }
 					/>

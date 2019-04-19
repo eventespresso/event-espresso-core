@@ -1,6 +1,7 @@
 /**
  * External imports
  */
+import { isEmpty } from 'lodash';
 import { __ } from '@eventespresso/i18n';
 import { Dashicon, IconButton } from '@wordpress/components';
 
@@ -26,12 +27,14 @@ import './form-info-base.css';
  * @param {string} dashicon
  * @param {string} htmlClass
  * @param {Function} onDismiss
+ * @param {Array} formInfoVars
  */
 const FormInfoBase = ( {
 	formInfo,
 	dashicon = '',
 	htmlClass = '',
 	onDismiss = null,
+	formInfoVars = [],
 } ) => {
 	htmlClass = htmlClass ?
 		`${ htmlClass } ee-form-info` :
@@ -53,6 +56,19 @@ const FormInfoBase = ( {
 			onClick={ onDismiss }
 		/>
 	) : null;
+	if ( ! isEmpty( formInfoVars ) ) {
+		const formInfoText = [];
+		const chunks = formInfo.split( '%%var%%' );
+		for ( let x = 0; x < chunks.length; x++ ) {
+			if ( chunks[ x ] ) {
+				formInfoText.push( chunks[ x ] );
+			}
+			if ( formInfoVars[ x ] ) {
+				formInfoText.push( formInfoVars[ x ] );
+			}
+		}
+		formInfo = formInfoText;
+	}
 	return formInfo ? (
 		<div
 			aria-label={ __( 'important information', 'event_espresso' ) }
