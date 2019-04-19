@@ -35,13 +35,16 @@
 }
 
 .ee-calendar-page-date-month {
-    background: rgba(0, 0, 0, .05);
     border: 1px solid rgba(255, 255, 255, .25);
     border-bottom: none;
     color: var(--ee-white);
     font-weight: bold;
     letter-spacing: 2px;
 }
+.ee-calendar-page-date-month.ee-no-status-class {
+    background: rgba(0, 0, 0, .1);
+}
+
 .ee-calendar-page-date-tiny .ee-calendar-page-date-month {
     font-size: 10px;
     height: 14px;
