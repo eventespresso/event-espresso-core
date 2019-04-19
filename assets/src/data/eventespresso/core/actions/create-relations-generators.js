@@ -92,7 +92,6 @@ function* createRelations(
 			false,
 			'Incoming relation Entities do not contain BaseEntity instances ' +
 			'for the given relation model (%s)',
-			'',
 			singularRelationName,
 		);
 		return;

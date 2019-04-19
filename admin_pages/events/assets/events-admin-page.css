@@ -4,6 +4,8 @@
 #Extend_Events_Admin_List_Table-table-frm .column-name { width: 20%;  }
 #Events_Admin_List_Table-table-frm .column-venue,
 #Extend_Events_Admin_List_Table-table-frm .column-venue  { width:15%; }
+#Extend_Events_Admin_List_Table-table-frm .column-event_category,
+#Events_Admin_List_Table-table-frm .column-event_category { width: 15% }
 #Events_Admin_List_Table-table-frm .column-start_date_time,
 #Extend_Events_Admin_List_Table-table-frm .column-start_date_time { width:15%; }
 #Events_Admin_List_Table-table-frm .column-reg_begins,

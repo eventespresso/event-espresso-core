@@ -1784,7 +1784,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $category = isset($this->_req_data['EVT_CAT']) && $this->_req_data['EVT_CAT'] > 0
             ? $this->_req_data['EVT_CAT'] : null;
         if (! empty($category)) {
-            $where['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
+            $where['Term_Taxonomy.taxonomy'] = EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY;
             $where['Term_Taxonomy.term_id'] = $category;
         }
         // date where conditions
@@ -2422,7 +2422,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             return;
         }
         $category_id = absint($this->_req_data['EVT_CAT_ID']);
-        $term = get_term($category_id, 'espresso_event_categories');
+        $term = get_term($category_id, EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY);
         if (! empty($term)) {
             $this->_category->category_name = $term->name;
             $this->_category->category_identifier = $term->slug;
@@ -2498,7 +2498,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         );
         $_wp_editor = $this->_generate_admin_form_fields($editor_args, 'array');
         $all_terms = get_terms(
-            array('espresso_event_categories'),
+            array(EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY),
             array('hide_empty' => 0, 'exclude' => array($this->_category->id))
         );
         // setup category select for term parents.
@@ -2556,7 +2556,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function _delete_category($cat_id)
     {
         $cat_id = absint($cat_id);
-        wp_delete_term($cat_id, 'espresso_event_categories');
+        wp_delete_term($cat_id, EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY);
     }
 
 
@@ -2608,8 +2608,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $term_args['slug'] = $this->_req_data['category_identifier'];
         }
         $insert_ids = $update
-            ? wp_update_term($cat_id, 'espresso_event_categories', $term_args)
-            : wp_insert_term($category_name, 'espresso_event_categories', $term_args);
+            ? wp_update_term($cat_id, EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY, $term_args)
+            : wp_insert_term($category_name, EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY, $term_args);
         if (! is_array($insert_ids)) {
             $msg = esc_html__(
                 'An error occurred and the category has not been saved to the database.',
@@ -2639,7 +2639,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'Term.term_id';
         $order = isset($this->_req_data['order']) ? $this->_req_data['order'] : 'DESC';
         $limit = ($current_page - 1) * $per_page;
-        $where = array('taxonomy' => 'espresso_event_categories');
+        $where = array('taxonomy' => EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY);
         if (isset($this->_req_data['s'])) {
             $sstr = '%' . $this->_req_data['s'] . '%';
             $where['OR'] = array(
