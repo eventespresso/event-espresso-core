@@ -5,14 +5,14 @@ const { startCase } = require( 'lodash' );
 
 const TEMPLATES_PATH = path.resolve( __dirname, 'css-templates' );
 
-function buildColorsItems( colorsConfig, template ) {
-	const COLOR_ITEM_TEMPLATE = fs.readFileSync(
-		path.resolve( TEMPLATES_PATH, `color-${ template }.css.handlebars` ),
+function buildColorsItems( colorsConfig, templateId ) {
+	const colorItemTemplate = fs.readFileSync(
+		path.resolve( TEMPLATES_PATH, `color-${ templateId }.css.handlebars` ),
 		'utf8'
 	);
-	const colorItemTemplate = compile( COLOR_ITEM_TEMPLATE );
+	const template = compile( colorItemTemplate );
 	return colorsConfig.colors.map( ( colorConfig ) => {
-		return colorItemTemplate(
+		return template(
 			{
 				...colorConfig,
 				colorLabel: startCase( colorConfig.color )

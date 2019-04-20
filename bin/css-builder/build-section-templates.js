@@ -14,10 +14,9 @@ const TEMPLATES_PATH = path.resolve( __dirname, 'demo-templates' );
  * @return {string}  Colors section html.
  */
 function buildColorsSection() {
-	const COLORS_SECTION_TEMPLATE = fs.readFileSync( path.resolve( TEMPLATES_PATH, 'colors-section-template.html' ), 'utf8' );
-	const COLORS_DEMO_ITEM_TEMPLATE = fs.readFileSync( path.resolve( TEMPLATES_PATH, 'color-demo-item.html' ), 'utf8' );
-
-	const COLORS = [
+	const colorsSectionTemplate = fs.readFileSync( path.resolve( TEMPLATES_PATH, 'colors-section-template.html' ), 'utf8' );
+	const colorsDemoItemTemplate = fs.readFileSync( path.resolve( TEMPLATES_PATH, 'color-demo-item.html' ), 'utf8' );
+	const colors = [
 		'pink',
 		'green',
 		'dark-green',
@@ -31,17 +30,16 @@ function buildColorsSection() {
 		'black',
 		'white',
 	];
-	const colorDemoItemTemplate = compile( COLORS_DEMO_ITEM_TEMPLATE );
-
-	const colorDemoItems = COLORS.map( ( color ) => {
-		return colorDemoItemTemplate(
+	const template = compile( colorsDemoItemTemplate );
+	const colorDemoItems = colors.map( ( color ) => {
+		return template(
 			{
 				ColorLabel: startCase( color ),
 				color,
 			}
 		);
 	} );
-	const sectionTemplate = compile( COLORS_SECTION_TEMPLATE );
+	const sectionTemplate = compile( colorsSectionTemplate );
 	return sectionTemplate( { colorDemoItems } );
 }
 
