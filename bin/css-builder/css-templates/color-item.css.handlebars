@@ -30,3 +30,27 @@
 .ee-{{color}}-background-color.with-linear-gradient.with-accessible-foreground {
     color: var(--ee-color-{{color}}-background-contrast, {{background_contrast}} );
 }
+.ee-{{color}}-background-color.with-01-transparency {
+    background-color: var(--ee-color-{{color}}-01-transparency, rgb( {{rgb1}}, {{rgb2}}, {{rgb3}}, 0.01));
+}
+.ee-{{color}}-background-color.with-01-transparency.with-hover:hover {
+    background-color: var(--ee-color-{{color}}-25-transparency, rgb( {{rgb1}}, {{rgb2}}, {{rgb3}}, 0.25));
+}
+.ee-{{color}}-background-color.with-25-transparency {
+    background-color: var(--ee-color-{{color}}-25-transparency, rgb( {{rgb1}}, {{rgb2}}, {{rgb3}}, 0.25));
+}
+.ee-{{color}}-background-color.with-25-transparency.with-hover:hover {
+    background-color: var(--ee-color-{{color}}-01-transparency, rgb( {{rgb1}}, {{rgb2}}, {{rgb3}}, 0.01));
+}
+.ee-{{color}}-background-color.with-50-transparency {
+    background-color: var(--ee-color-{{color}}-50-transparency, rgb( {{rgb1}}, {{rgb2}}, {{rgb3}}, 0.50));
+}
+.ee-{{color}}-background-color.with-50-transparency.with-hover:hover {
+    background-color: var(--ee-color-{{color}}-25-transparency, rgb( {{rgb1}}, {{rgb2}}, {{rgb3}}, 0.25));
+}
+.ee-{{color}}-background-color.with-75-transparency {
+    background-color: var(--ee-color-{{color}}-75-transparency, rgb( {{rgb1}}, {{rgb2}}, {{rgb3}}, 0.75));
+}
+.ee-{{color}}-background-color.with-75-transparency.with-hover:hover {
+    background-color: var(--ee-color-{{color}}-50-transparency, rgb( {{rgb1}}, {{rgb2}}, {{rgb3}}, 0.50));
+}
