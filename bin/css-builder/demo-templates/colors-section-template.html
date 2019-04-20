@@ -1,0 +1,24 @@
+<section class="demo-section">
+    <h2>Colors</h2>
+    <p>Accessible colors are exposed in the scheme via the appropriate <code>with-accessible-*</code> modifier. Background/Foreground ratios meet the WCAG AAA Color contrast requirements.  However, keep in mind that if you use a color on a different background you'll need to make sure it's WCAG AAA compliant.</p>
+    <p>
+        The following schema is used for color type classes:
+    </p>
+    <ul>
+        <li><code class="alternate"><strong>ee-{color}-color</strong></code>: For text color.</li>
+        <li><code class="alternate"><strong>ee-{color}-background-color</strong></code>: For background color</li>
+        <li><code class="alternate"><strong>with-accessible-background</strong></code>: used with the ee-*-color class to add an accessible background color.
+        </li>
+        <li><code class="alternate"><strong>with-accessible-foreground</strong></code>: Used with the ee-*-background-color class to add an accessible foreground color.
+        </li>
+        <li><code class="alternate"><strong>with-linear-gradient</strong></code>: Applies a linear-gradient background for the given color
+            class
+        </li>
+        <li><code class="alternate"><strong>with-hover</strong></code>: Used on selectors with an applied background to provide an accessible hover state for the background.</li>
+    </ul>
+    <div class="demo-items">
+        {{#each colorDemoItems}}
+            {{{this}}}
+        {{/each}}
+    </div>
+</section>

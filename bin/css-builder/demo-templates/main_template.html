@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <title>Demo of {{themeName}} styles</title>
+        {{#each variableStylesheets}}
+            <link href="{{this}}" rel="stylesheet">
+        {{/each}}
+        {{#each baseStylesheets}}
+            <link href="{{this}}" rel="stylesheet">
+        {{/each}}
+        {{#each overrideStylesheets}}
+            <link href="{{this}}" rel="stylesheet">
+        {{/each}}
+        <link href="./demo.css" rel="stylesheet">
+    </head>
+    <body>
+        <h1>Demo of styles for the <strong>{{themeName}}</strong> theme.</h1>
+        {{#each demoSections}}
+            {{{this}}}
+        {{/each}}
+    </body>
+</html>

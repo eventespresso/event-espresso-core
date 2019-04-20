@@ -26,7 +26,8 @@
 		"test-unit:coverage": "npm run test-unit -- --coverage",
 		"test-unit:coverage-ci": "npm run test-unit -- --coverage --maxWorkers 1 && codecov",
 		"test-unit:watch": "npm run test-unit -- --watch",
-		"lc": "jsgl --local ./"
+		"lc": "jsgl --local ./",
+		"build:css": "node ./bin/css-builder/css-builder.js"
 	},
 	"author": "Event Espresso",
 	"license": "GPL-2.0",
