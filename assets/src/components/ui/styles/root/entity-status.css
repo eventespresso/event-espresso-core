@@ -1,0 +1,441 @@
+/* Transaction */
+.ee-status-color-TCM {
+    color: var(--ee-color-green, #70CC50);
+}
+.ee-status-background-color-TCM {
+    background-color: var(--ee-color-green, #70CC50);
+}
+.ee-status-color-TCM.with-dark-contrast {
+    color: var(--ee-color-green-contrast-dark, #00202a)
+}
+.ee-status-color-TCM.with-bright-contrast {
+    color: var(--ee-color-green-contrast-bright, #0000e0)
+}
+.ee-status-background-color-TCM.with-dark-contrast {
+    background-color: var(--ee-color-green-contrast-dark, #00202a)
+}
+.ee-status-background-color-TCM.with-bright-contrast {
+    background-color: var(--ee-color-green-contrast-bright, #0000e0)
+}
+
+.ee-status-color-TFL {
+    color: var(--ee-color-pink, #E44064);
+}
+.ee-status-background-color-TFL {
+    background-color: var(--ee-color-pink, #E44064);
+}
+.ee-status-color-TFL.with-dark-contrast {
+    color: var(--ee-color-pink-contrast-dark, #000)
+}
+.ee-status-color-TFL.with-bright-contrast {
+    color: var(--ee-color-pink-contrast-bright, #c8f7c5)
+}
+.ee-status-background-color-TFL.with-dark-contrast {
+    background-color: var(--ee-color-pink-contrast-dark, #000)
+}
+.ee-status-background-color-TFL.with-bright-contrast {
+    background-color: var(--ee-color-pink-contrast-bright, #C8F7C5)
+}
+
+
+.ee-status-color-TOP {
+    color: var(--ee-color-orange, #E76700);
+}
+.ee-status-background-color-TOP {
+    background-color: var(--ee-color-orange, #E76700);
+}
+.ee-status-color-TOP.with-dark-contrast {
+    color: var(--ee-color-orange-contrast-dark, #000)
+}
+.ee-status-color-TOP.with-bright-contrast {
+    color: var(--ee-color-orange-contrast-bright, #fff)
+}
+.ee-status-background-color-TOP.with-dark-contrast {
+    background-color: var(--ee-color-orange-contrast-dark, #000)
+}
+.ee-status-background-color-TOP.with-bright-contrast {
+    background-color: var(--ee-color-orange-contrast-bright, #fff)
+}
+
+.ee-status-color-TAB {
+    color: var(--ee-color-yellow, #F8D755);
+}
+.ee-status-background-color-TAB {
+    background-color: var(--ee-color-yellow, #F8D755);
+}
+.ee-status-color-TAB.with-dark-contrast {
+    color: var(--ee-color-yellow-contrast-dark, #4b6a88)
+}
+.ee-status-color-TAB.with-bright-contrast {
+    color: var(--ee-color-yellow-contrast-bright, #e63022)
+}
+.ee-status-background-color-TAB.with-dark-contrast {
+    background-color: var(--ee-color-yellow-contrast-dark, #4b6a88)
+}
+.ee-status-background-color-TAB.with-bright-contrast {
+    background-color: var(--ee-color-yellow-contrast-bright, #e63022)
+}
+
+.ee-status-color-TIN {
+    color: var(--ee-color-light-blue, #00B1CA);
+}
+.ee-status-background-color-TIN {
+    background-color: var(--ee-color-light-blue, #00B1CA);
+}
+.ee-status-color-TIN.with-dark-contrast {
+    color: var(--ee-color-light-blue-contrast-dark, #050709)
+}
+.ee-status-color-TIN.with-bright-contrast {
+    color: var(--ee-color-light-blue-contrast-bright, #0000b5)
+}
+.ee-status-background-color-TIN.with-dark-contrast {
+    background-color: var(--ee-color-light-blue-contrast-dark, #050709)
+}
+.ee-status-background-color-TIN.with-bright-contrast {
+    background-color: var(--ee-color-light-blue-contrast-bright, #0000b5)
+}
+
+/* Payment */
+.ee-status-color-PAP {
+    color: var(--ee-color-green, #70CC50);
+}
+.ee-status-background-color-PAP {
+    background-color: var(--ee-color-green, #70CC50);
+}
+.ee-status-color-PAP.with-dark-contrast {
+    color: var(--ee-color-green-contrast-dark, #00202a)
+}
+.ee-status-color-PAP.with-bright-contrast {
+    color: var(--ee-color-green-contrast-bright, #0000e0)
+}
+.ee-status-background-color-PAP.with-dark-contrast {
+    background-color: var(--ee-color-green-contrast-dark, #00202a)
+}
+.ee-status-background-color-PAP.with-bright-contrast {
+    background-color: var(--ee-color-green-contrast-bright, #0000e0)
+}
+
+.ee-status-color-PDC {
+    color: var(--ee-color-pink, #E44064);
+}
+.ee-status-background-color-PDC {
+    background-color: var(--ee-color-pink, #E44064);
+}
+.ee-status-color-PDC.with-dark-contrast {
+    color: var(--ee-color-pink-contrast-dark, #000)
+}
+.ee-status-color-PDC.with-bright-contrast {
+    color: var(--ee-color-pink-contrast-bright, #c8f7c5)
+}
+.ee-status-background-color-PDC.with-dark-contrast {
+    background-color: var(--ee-color-pink-contrast-dark, #000)
+}
+.ee-status-background-color-PDC.with-bright-contrast {
+    background-color: var(--ee-color-pink-contrast-bright, #C8F7C5)
+}
+
+.ee-status-color-PCN {
+    color: var(--ee-color-grey, #AC9d9C);
+}
+.ee-status-background-color-PCN {
+    background-color: var(--ee-color-grey, #AC9d9C);
+}
+.ee-status-color-PCN.with-dark-contrast {
+    color: var(--ee-color-grey-contrast-dark, #05182a)
+}
+.ee-status-color-PCN.with-bright-contrast {
+    color: var(--ee-color-grey-contrast-bright, #0000e0)
+}
+.ee-status-background-color-PCN.with-dark-contrast {
+    background-color: var(--ee-color-grey-contrast-dark, #05182a)
+}
+.ee-status-background-color-PCN.with-bright-contrast {
+    background-color: var(--ee-color-grey-contrast-bright, #0000e0)
+}
+
+.ee-status-color-PFL {
+    color: var(--ee-color-orange, #E76700);
+}
+.ee-status-background-color-PFL {
+    background-color: var(--ee-color-orange, #E76700);
+}
+.ee-status-color-PFL.with-dark-contrast {
+    color: var(--ee-color-orange-contrast-dark, #000)
+}
+.ee-status-color-PFL.with-bright-contrast {
+    color: var(--ee-color-orange-contrast-bright, #fff)
+}
+.ee-status-background-color-PFL.with-dark-contrast {
+    background-color: var(--ee-color-orange-contrast-dark, #000)
+}
+.ee-status-background-color-PFL.with-bright-contrast {
+    background-color: var(--ee-color-orange-contrast-bright, #fff)
+}
+
+.ee-status-color-PPN {
+    color: var(--ee-color-light-blue, #00B1CA);
+}
+.ee-status-background-color-PPN {
+    background-color: var(--ee-color-light-blue, #00B1CA);
+}
+.ee-status-color-PPN.with-dark-contrast {
+    color: var(--ee-color-light-blue-contrast-dark, #050709)
+}
+.ee-status-color-PPN.with-bright-contrast {
+    color: var(--ee-color-light-blue-contrast-bright, #0000b5)
+}
+.ee-status-background-color-PPN.with-dark-contrast {
+    background-color: var(--ee-color-light-blue-contrast-dark, #050709)
+}
+.ee-status-background-color-PPN.with-bright-contrast {
+    background-color: var(--ee-color-light-blue-contrast-bright, #0000b5)
+}
+
+/* Registration */
+.ee-status-color-RAP {
+    color: var(--ee-color-green, #70CC50);
+}
+.ee-status-background-color-RAP {
+    background-color: var(--ee-color-green, #70CC50);
+}
+.ee-status-color-RAP.with-dark-contrast {
+    color: var(--ee-color-green-contrast-dark, #00202a)
+}
+.ee-status-color-RAP.with-bright-contrast {
+    color: var(--ee-color-green-contrast-bright, #0000e0)
+}
+.ee-status-background-color-RAP.with-dark-contrast {
+    background-color: var(--ee-color-green-contrast-dark, #00202a)
+}
+.ee-status-background-color-RAP.with-bright-contrast {
+    background-color: var(--ee-color-green-contrast-bright, #0000e0)
+}
+
+.ee-status-color-RDC {
+    color: var(--ee-color-pink, #E44064);
+}
+.ee-status-background-color-RDC {
+    background-color: var(--ee-color-pink, #E44064);
+}
+.ee-status-color-RDC.with-dark-contrast {
+    color: var(--ee-color-pink-contrast-dark, #000)
+}
+.ee-status-color-RDC.with-bright-contrast {
+    color: var(--ee-color-pink-contrast-bright, #c8f7c5)
+}
+.ee-status-background-color-RDC.with-dark-contrast {
+    background-color: var(--ee-color-pink-contrast-dark, #000)
+}
+.ee-status-background-color-RDC.with-bright-contrast {
+    background-color: var(--ee-color-pink-contrast-bright, #C8F7C5)
+}
+
+.ee-status-color-RNA {
+    color: var(--ee-color-orange, #E76700);
+}
+.ee-status-background-color-RNA {
+    background-color: var(--ee-color-orange, #E76700);
+}
+.ee-status-color-RNA.with-dark-contrast {
+    color: var(--ee-color-orange-contrast-dark, #000)
+}
+.ee-status-color-RNA.with-bright-contrast {
+    color: var(--ee-color-orange-contrast-bright, #fff)
+}
+.ee-status-background-color-RNA.with-dark-contrast {
+    background-color: var(--ee-color-orange-contrast-dark, #000)
+}
+.ee-status-background-color-RNA.with-bright-contrast {
+    background-color: var(--ee-color-orange-contrast-bright, #fff)
+}
+
+.ee-status-color-RPP {
+    color: var(--ee-color-light-blue, #00B1CA);
+}
+.ee-status-background-color-RPP {
+    background-color: var(--ee-color-light-blue, #00B1CA);
+}
+.ee-status-color-RPP.with-dark-contrast {
+    color: var(--ee-color-light-blue-contrast-dark, #050709)
+}
+.ee-status-color-RPP.with-bright-contrast {
+    color: var(--ee-color-light-blue-contrast-bright, #0000b5)
+}
+.ee-status-background-color-RPP.with-dark-contrast {
+    background-color: var(--ee-color-light-blue-contrast-dark, #050709)
+}
+.ee-status-background-color-RPP.with-bright-contrast {
+    background-color: var(--ee-color-light-blue-contrast-bright, #0000b5)
+}
+
+.ee-status-color-RCN {
+    color: var(--ee-color-grey, #AC9d9C);
+}
+.ee-status-background-color-RCN {
+    background-color: var(--ee-color-grey, #AC9d9C);
+}
+.ee-status-color-RCN.with-dark-contrast {
+    color: var(--ee-color-grey-contrast-dark, #05182a)
+}
+.ee-status-color-RCN.with-bright-contrast {
+    color: var(--ee-color-grey-contrast-bright, #0000e0)
+}
+.ee-status-background-color-RCN.with-dark-contrast {
+    background-color: var(--ee-color-grey-contrast-dark, #05182a)
+}
+.ee-status-background-color-RCN.with-bright-contrast {
+    background-color: var(--ee-color-grey-contrast-bright, #0000e0)
+}
+
+.ee-status-color-RIC {
+    color: var(--ee-color-yellow, #F8D755);
+}
+.ee-status-background-color-RIC {
+    background-color: var(--ee-color-yellow, #F8D755);
+}
+.ee-status-color-RIC.with-dark-contrast {
+    color: var(--ee-color-yellow-contrast-dark, #4b6a88)
+}
+.ee-status-color-RIC.with-bright-contrast {
+    color: var(--ee-color-yellow-contrast-bright, #e63022)
+}
+.ee-status-background-color-RIC.with-dark-contrast {
+    background-color: var(--ee-color-yellow-contrast-dark, #4b6a88)
+}
+.ee-status-background-color-RIC.with-bright-contrast {
+    background-color: var(--ee-color-yellow-contrast-bright, #e63022)
+}
+
+/* Datetime */
+.ee-status-color-DTA {
+    color: var(--ee-color-green, #70CC50);
+}
+.ee-status-background-color-DTA {
+    background-color: var(--ee-color-green, #70CC50);
+}
+.ee-status-color-DTA.with-dark-contrast {
+    color: var(--ee-color-green-contrast-dark, #00202a)
+}
+.ee-status-color-DTA.with-bright-contrast {
+    color: var(--ee-color-green-contrast-bright, #0000e0)
+}
+.ee-status-background-color-DTA.with-dark-contrast {
+    background-color: var(--ee-color-green-contrast-dark, #00202a)
+}
+.ee-status-background-color-DTA.with-bright-contrast {
+    background-color: var(--ee-color-green-contrast-bright, #0000e0)
+}
+
+.ee-status-color-DTC {
+    color: var(--ee-color-pink, #E44064);
+}
+.ee-status-background-color-DTC {
+    background-color: var(--ee-color-pink, #E44064);
+}
+.ee-status-color-DTC.with-dark-contrast {
+    color: var(--ee-color-pink-contrast-dark, #000)
+}
+.ee-status-color-DTC.with-bright-contrast {
+    color: var(--ee-color-pink-contrast-bright, #c8f7c5)
+}
+.ee-status-background-color-DTC.with-dark-contrast {
+    background-color: var(--ee-color-pink-contrast-dark, #000)
+}
+.ee-status-background-color-DTC.with-bright-contrast {
+    background-color: var(--ee-color-pink-contrast-bright, #C8F7C5)
+}
+
+.ee-status-color-DTE {
+    color: var(--ee-color-grey, #AC9d9C);
+}
+.ee-status-background-color-DTE {
+    background-color: var(--ee-color-grey, #AC9d9C);
+}
+.ee-status-color-DTE.with-dark-contrast {
+    color: var(--ee-color-grey-contrast-dark, #05182a)
+}
+.ee-status-color-DTE.with-bright-contrast {
+    color: var(--ee-color-grey-contrast-bright, #0000e0)
+}
+.ee-status-background-color-DTE.with-dark-contrast {
+    background-color: var(--ee-color-grey-contrast-dark, #05182a)
+}
+.ee-status-background-color-DTE.with-bright-contrast {
+    background-color: var(--ee-color-grey-contrast-bright, #0000e0)
+}
+
+.ee-status-color-DTS {
+    color: var(--ee-color-yellow, #F8D755);
+}
+.ee-status-background-color-DTS {
+    background-color: var(--ee-color-yellow, #F8D755);
+}
+.ee-status-color-DTS.with-dark-contrast {
+    color: var(--ee-color-yellow-contrast-dark, #4b6a88)
+}
+.ee-status-color-DTS.with-bright-contrast {
+    color: var(--ee-color-yellow-contrast-bright, #e63022)
+}
+.ee-status-background-color-DTS.with-dark-contrast {
+    background-color: var(--ee-color-yellow-contrast-dark, #4b6a88)
+}
+.ee-status-background-color-DTS.with-bright-contrast {
+    background-color: var(--ee-color-yellow-contrast-bright, #e63022)
+}
+
+.ee-status-color-DTI {
+    color: var(--ee-color-dark-grey, #464549);
+}
+.ee-status-background-color-DTI {
+    background-color: var(--ee-color-dark-grey, #464549);
+}
+.ee-status-color-DTI.with-dark-contrast {
+    color: var(--ee-color-dark-grey-contrast-dark, #00aa55)
+}
+.ee-status-color-DTI.with-bright-contrast {
+    color: var(--ee-color-dark-grey-contrast-bright, #baf73c)
+}
+.ee-status-background-color-DTI.with-dark-contrast {
+    background-color: var(--ee-color-dark-grey-contrast-dark, #00aa55)
+}
+.ee-status-background-color-DTI.with-bright-contrast {
+    background-color: var(--ee-color-dark-grey-contrast-bright, #baf73c)
+}
+
+.ee-status-color-DTP {
+    color: var(--ee-color-orange, #E76700);
+}
+.ee-status-background-color-DTP {
+    background-color: var(--ee-color-orange, #E76700);
+}
+.ee-status-color-DTP.with-dark-contrast {
+    color: var(--ee-color-orange-contrast-dark, #000)
+}
+.ee-status-color-DTP.with-bright-contrast {
+    color: var(--ee-color-orange-contrast-bright, #fff)
+}
+.ee-status-background-color-DTP.with-dark-contrast {
+    background-color: var(--ee-color-orange-contrast-dark, #000)
+}
+.ee-status-background-color-DTP.with-bright-contrast {
+    background-color: var(--ee-color-orange-contrast-bright, #fff)
+}
+
+.ee-status-color-DTU {
+    color: var(--ee-color-light-blue, #00B1CA);
+}
+.ee-status-background-color-DTU {
+    background-color: var(--ee-color-light-blue, #00B1CA);
+}
+.ee-status-color-DTU.with-dark-contrast {
+    color: var(--ee-color-light-blue-contrast-dark, #050709)
+}
+.ee-status-color-DTU.with-bright-contrast {
+    color: var(--ee-color-light-blue-contrast-bright, #0000b5)
+}
+.ee-status-background-color-DTU.with-dark-contrast {
+    background-color: var(--ee-color-light-blue-contrast-dark, #050709)
+}
+.ee-status-background-color-DTU.with-bright-contrast {
+    background-color: var(--ee-color-light-blue-contrast-bright, #0000b5)
+}

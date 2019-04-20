@@ -1,0 +1,192 @@
+.ee-button,
+.ee-button:active,
+.ee-button:visited {
+    display: inline-block;
+    position: relative;
+    top: -2px;
+    margin: 0 0 1em;
+    background:
+        var( --ee-color-light-blue, #00B1CA )
+        linear-gradient(
+            var( --ee-light-blue-background-gradient-x, #066DB1 ),
+            var( --ee-light-blue-background-gradient-y, #00B1CA )
+        );
+    border: 1px solid var( --ee-color-black-01-transparency, rgba( 0,0,0,0.01 ) ) !important;
+    border-top: 1px solid var( --ee-color-white-50-transparency, rgba( 255,255,255,0.5 ) ) !important;
+    border-bottom: 1px solid var( --ee-color-black-25-transparency, rgba( 0, 0, 0, 0.25) ) !important;
+    font-weight: normal;
+    cursor: pointer;
+    color: var( --ee-color-white, #fff ) !important;
+    text-decoration: none !important;
+    text-align: center;
+    line-height: 1em;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.ee-button:hover {
+    color: var( --ee-color-white-contrast-dark, #2e343b ) !important;
+    background-color: var( --ee-button-base-hover-background-color, #00c7e3 )
+}
+
+.ee-button:active { top:-1px; }
+
+/* REGISTER BUTTON */
+
+.ee-button.ee-register-button,
+.ee-button.ee-register-button:active,
+.ee-button.ee-register-button:visited {
+    margin: 0;
+    font-weight: bold;
+    text-shadow: 0 -1px 0px var( --ee-color-black-25-transparency, rgba( 0, 0, 0, 0.25 ) );
+}
+input.ee-register-button {
+    float: right;
+}
+
+
+/* BUTTON SIZES */
+
+.small.ee-button, .small.ee-button:visited {
+    font-size: calc( var( --ee-font-size-small, 11 ) * 1px );
+    padding: 5px 10px 5px;
+}
+.ee-button, .ee-button:visited,
+.medium.ee-button, .medium.ee-button:visited {
+    font-size: calc( var( --ee-font-size-medium, 13 ) * 1px );
+    padding: 6px 12px 7px;
+}
+.big.ee-button, .big.ee-button:visited {
+    font-size: calc( var( --ee-font-size-large, 14 ) * 1px );
+    padding: 8px 16px 9px;
+}
+.huge.ee-button, .huge.ee-button:visited {
+    font-size: calc( var( --ee-font-size-huge, 16 ) * 1px );
+    padding: 14px 32px 16px;
+}
+
+/* ROUND BUTTONS */
+/* @todo put equivalents as examples in demo */
+.ee-round.ee-button {
+    border-radius: calc( var( --ee-radius-size-normal, 6 ) * 1px );
+}
+.ee-roundish.ee-button {
+    border-radius: calc( var( --ee-radius-size-small, 3 ) * 1px );
+}
+
+/* SHADOWY BUTTONS (back-compat) */
+/** todo remove and put equivalent example in demo ( .ee-button.with-0x1x3-dark-box-shadow ) */
+.ee-button.with {
+    box-shadow: 0 1px 3px var( --ee-dark-box-shadow, rgba( 0, 0, 0, 0.6 ) );
+}
+
+/* BUTTON COLOURS (back-compat) */
+/* @todo remove and show how to do this in demo via adding `.with-background-color`,`.with-hover`
+     and `.with-linear-gradient` selectors.*/
+.ee-pink.ee-button, .ee-pink.ee-button:visited {
+    background-color: var( --ee-pink-background-color );
+    background-image: linear-gradient(
+        var( --ee-pink-background-gradient-x, #F65077 ),
+        var( --ee-pink-background-gradient-y, #E44064 )
+    );
+}
+.ee-pink.ee-button:hover {
+    background-color: var( --ee-pink-background-color-hover, #F65077 );
+    background-image: none;
+}
+
+.ee-green.ee-button, .ee-green.ee-button:visited {
+    background-color: var( --ee-green-background-color, #70CC50 );
+    background-image: linear-gradient(
+        var( --ee-green-background-gradient-x, #80DD5E ),
+        var( --ee-green-background-gradient-y, #70CC50 )
+    );
+}
+.ee-green.ee-button:hover {
+    background-color: var( --ee-green-background-color-hover, #80DD5E );
+    background-image: none;
+}
+
+.ee-red.ee-button, .ee-red.ee-button:visited {
+    background-color: var( --ee-red-background-color, #B4113F );
+    background-image: linear-gradient(
+        var( --ee-red-background-gradient-x, #C8194E ),
+        var( --ee-red-background-gradient-y, #B4113F )
+    );
+}
+.ee-red.ee-button:hover {
+    background-color: var( --ee-red-background-color-hover, #C8194E );
+    background-image: none;
+}
+
+.ee-orange.ee-button, .ee-orange.ee-button:visited {
+    background-color: var( --ee-orange-background-color, #E76700 );
+    background-image: linear-gradient(
+        var( --ee-orange-background-gradient-x, #FA730B ),
+        var( --ee-orange-background-gradient-y, #E76700 ),
+    );
+}
+.ee-orange.ee-button:hover {
+    background-color: var( --ee-orange-background-color-hover, #FA730B );
+    background-image: none;
+}
+
+.ee-blue.ee-button, .ee-blue.ee-button:visited {
+    background-color: var( --ee-blue-background-color, #005B9E );
+    background-image: linear-gradient(
+        var( --ee-blue-background-gradient-x, #066DB1 ),
+        var( --ee-blue-background-gradient-y, #005B9E )
+    );
+}
+.ee-blue.ee-button:hover {
+    background-color: var( --ee-blue-background-color-hover, #066DB1 );
+    background-image: none;
+}
+
+.ee-yellow.ee-button, .ee-yellow.ee-button:visited {
+    background-color: var( --ee-yellow-background-color, #F8D755 );
+    background-image: linear-gradient(
+        var( --ee-yellow-background-gradient-x, #FEDF6C ),
+        var( --ee-yellow-background-gradient-y, #F8D755 )
+    );
+}
+.ee-yellow.ee-button:hover {
+    background-color: var( --ee-yellow-background-color-hover, #FEDF6C );
+    background-image: none;
+}
+
+.ee-grey.ee-button, .ee-grey.ee-button:visited {
+    background-color: var( --ee-grey-background-color, #A39D9C );
+    background-image: linear-gradient(
+        var( --ee-grey-background-gradient-x, #B5B3B3 ),
+        var( --ee-grey-background-gradient-y, #A39D9C )
+    );
+}
+.ee-grey.ee-button:hover {
+    background-color: var( --ee-grey-background-color-hover, #B5B3B3 );
+    background-image: none;
+}
+
+.ee-dark-grey.ee-button, .ee-dark-grey.ee-button:visited {
+    background-color: var( --ee-dark-grey-background-color, #464549 );
+    background-image: linear-gradient(
+        var( --ee-dark-grey-background-gradient-x, #59595B ),
+        var( --ee-dark-grey-background-gradient-y, #464549 )
+    );
+}
+.ee-dark-grey.ee-button:hover {
+    background-color: var( --ee-dark-grey-background-color-hover, #59595B );
+    background-image: none;
+}
+
+.ee-black.ee-button, .ee-black.ee-button:visited {
+    background-color: var( --ee-black-background-color, #2F3334 );
+    background-image: linear-gradient(
+        var( --ee-black-background-gradient-x, #424646 ),
+        var( --ee-black-background-gradient-y, #2F3334 )
+    );
+}
+.ee-black.ee-button:hover {
+    background-color: var( --ee-black-background-color-hover, #424646 );
+    background-image: none;
+}

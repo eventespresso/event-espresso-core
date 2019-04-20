@@ -1,0 +1,6 @@
+.with-0x1x3-dark-box-shadow  {
+    box-shadow: 0 1px 3px var( --ee-color-black-50-transparency, rgba( 0, 0, 0, 0.5 ) );
+}
+.with-0x-1x0-dark-text-shadow {
+    text-shadow: 0 -1px 0 var( --ee-color-black-25-transparency, rgba( 0, 0, 0, 0.25 ) );
+}

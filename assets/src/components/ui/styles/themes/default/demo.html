@@ -1,0 +1,865 @@
+<html>
+<head>
+    <title>Demo of default styles</title>
+    <link href="./button-variables.css" rel="stylesheet">
+    <link href="./color-variables.css" rel="stylesheet">
+    <link href="./sizes-variables.css" rel="stylesheet">
+    <link href="../../root/colors.css" rel="stylesheet">
+    <link href="../../root/shadows.css" rel="stylesheet">
+    <link href="../../root/sizes.css" rel="stylesheet">
+    <link href="../../root/entity-status.css" rel="stylesheet">
+    <link href="../../root/buttons.css">
+    <style>
+        :root {
+            font-family: 'Helvetica';
+            font-size: 1em;
+        }
+        code {
+            font-size: 1em;
+            display: inline-block;
+            background-color: #dedcee;
+            color: var(--ee-color-grey-contrast-dark);
+            padding: 5px;
+            margin: 2px;
+        }
+        code.alternate {
+            background-color: #f2f6f5;
+        }
+        body {
+            padding: 20px;
+        }
+        .demo-section {
+            background-color: #dedcee;
+            padding: 20px;
+        }
+        .demo-items {
+            display: flex;
+            flex-flow: row wrap;
+        }
+        .demo-item {
+            flex: 1 1 30%;
+            background-color: #f2f6f5;
+            padding: 10px;
+            margin: 10px;
+        }
+        .demo-swatch {
+            margin-bottom: 10px;
+            border: 1px dotted;
+            padding: 5px;
+        }
+        .demo-box {
+            width: 75px;
+            height: 50px;
+            margin-top: 5px;
+        }
+        .demo-box.with-text {
+            height: auto;
+            width: auto;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>Demo of styles for the <strong>default</strong> theme.</h1>
+<section class="demo-section">
+    <h2>Colors</h2>
+    <p>
+        The following schema is used for color type classes:
+    </p>
+    <ul>
+        <li><code class="alternate"><strong>ee-{color}-color</strong></code>: For text color.</li>
+        <li><code class="alternate"><strong>ee-{color}-background-color</strong></code>: For background color</li>
+        <li><code class="alternate"><strong>with-dark-contrast</strong></code>: Used to swap in the dark accessible contrast color matching
+            the main color
+        </li>
+        <li><code class="alternate"><strong>with-bright-contrast</strong></code>: Used to swap in the bright accessible contrast color
+            matching the main color
+        </li>
+        <li><code class="alternate"><strong>with-linear-gradient</strong></code>: Applies a linear-gradient background for the given color
+            class
+        </li>
+    </ul>
+    <div class="demo-items">
+        <div class="demo-item">
+            <h3>Pink</h3>
+            <div class="demo-swatch">
+                <code>.ee-pink-background-color</code><br>
+                <div class="demo-box ee-pink-background-color"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-pink-background-color.with-bright-contrast</code><br>
+                <div class="demo-box ee-pink-background-color with-bright-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-pink-background-color.with-dark-contrast</code><br>
+                <div class="demo-box ee-pink-background-color with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-pink-background-color.with-dark-contrast</code><br>
+                Inner: <code>.ee-pink-color</code>
+                <div class="demo-box with-text ee-pink-background-color with-dark-contrast">
+                    <div class="ee-pink-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-pink-background-color.with-bright-contrast</code><br>
+                Inner: <code>.ee-pink-color</code>
+                <div class="demo-box with-text ee-pink-background-color with-bright-contrast">
+                    <div class="ee-pink-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-pink-background-color</code><br>
+                Inner: <code>.ee-pink-color.with-bright-contrast</code>
+                <div class="demo-box with-text ee-pink-background-color">
+                    <div class="ee-pink-color with-bright-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-pink-background-color</code><br>
+                Inner: <code>.ee-pink-color.with-dark-contrast</code>
+                <div class="demo-box with-text ee-pink-background-color">
+                    <div class="ee-pink-color with-dark-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-pink-background-color.with-linear-gradient</code><br>
+                <div class="demo-box ee-pink-background-color with-linear-gradient"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h3>Green</h3>
+            <div class="demo-swatch">
+                <code>.ee-green-background-color</code><br>
+                <div class="demo-box ee-green-background-color"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-green-background-color.with-bright-contrast</code><br>
+                <div class="demo-box ee-green-background-color with-bright-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-green-background-color.with-dark-contrast</code><br>
+                <div class="demo-box ee-green-background-color with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-green-background-color.with-dark-contrast</code><br>
+                Inner: <code>.ee-green-color</code>
+                <div class="demo-box with-text ee-green-background-color with-dark-contrast">
+                    <div class="ee-green-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-green-background-color.with-bright-contrast</code><br>
+                Inner: <code>.ee-green-color</code>
+                <div class="demo-box with-text ee-green-background-color with-bright-contrast">
+                    <div class="ee-green-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-green-background-color</code><br>
+                Inner: <code>.ee-green-color.with-bright-contrast</code>
+                <div class="demo-box with-text ee-green-background-color">
+                    <div class="ee-green-color with-bright-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-green-background-color</code><br>
+                Inner: <code>.ee-green-color.with-dark-contrast</code>
+                <div class="demo-box with-text ee-green-background-color">
+                    <div class="ee-green-color with-dark-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-green-background-color.with-linear-gradient</code><br>
+                <div class="demo-box ee-green-background-color with-linear-gradient"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h3>Dark Green</h3>
+            <div class="demo-swatch">
+                <code>.ee-dark-green-background-color</code><br>
+                <div class="demo-box ee-dark-green-background-color"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-dark-green-background-color.with-bright-contrast</code><br>
+                <div class="demo-box ee-dark-green-background-color with-bright-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-dark-green-background-color.with-dark-contrast</code><br>
+                <div class="demo-box ee-dark-green-background-color with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-dark-green-background-color.with-dark-contrast</code><br>
+                Inner: <code>.ee-dark-green-color</code>
+                <div class="demo-box with-text ee-dark-green-background-color with-dark-contrast">
+                    <div class="ee-dark-green-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-dark-green-background-color.with-bright-contrast</code><br>
+                Inner: <code>.ee-dark-green-color</code>
+                <div class="demo-box with-text ee-dark-green-background-color with-bright-contrast">
+                    <div class="ee-dark-green-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-dark-green-background-color</code><br>
+                Inner: <code>.ee-dark-green-color.with-bright-contrast</code>
+                <div class="demo-box with-text ee-dark-green-background-color">
+                    <div class="ee-dark-green-color with-bright-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-dark-green-background-color</code><br>
+                Inner: <code>.ee-dark-green-color.with-dark-contrast</code>
+                <div class="demo-box with-text ee-dark-green-background-color">
+                    <div class="ee-dark-green-color with-dark-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-dark-green-background-color.with-linear-gradient</code><br>
+                <div class="demo-box ee-dark-green-background-color with-linear-gradient"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h3>Red</h3>
+            <div class="demo-swatch">
+                <code>.ee-red-background-color</code><br>
+                <div class="demo-box ee-red-background-color"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-red-background-color.with-bright-contrast</code><br>
+                <div class="demo-box ee-red-background-color with-bright-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-red-background-color.with-dark-contrast</code><br>
+                <div class="demo-box ee-red-background-color with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-red-background-color.with-dark-contrast</code><br>
+                Inner: <code>.ee-red-color</code>
+                <div class="demo-box with-text ee-red-background-color with-dark-contrast">
+                    <div class="ee-red-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-red-background-color.with-bright-contrast</code><br>
+                Inner: <code>.ee-red-color</code>
+                <div class="demo-box with-text ee-red-background-color with-bright-contrast">
+                    <div class="ee-red-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-red-background-color</code><br>
+                Inner: <code>.ee-red-color.with-bright-contrast</code>
+                <div class="demo-box with-text ee-red-background-color">
+                    <div class="ee-red-color with-bright-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-red-background-color</code><br>
+                Inner: <code>.ee-red-color.with-dark-contrast</code>
+                <div class="demo-box with-text ee-red-background-color">
+                    <div class="ee-red-color with-dark-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-red-background-color.with-linear-gradient</code><br>
+                <div class="demo-box ee-red-background-color with-linear-gradient"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h3>Orange</h3>
+            <div class="demo-swatch">
+                <code>.ee-orange-background-color</code><br>
+                <div class="demo-box ee-orange-background-color"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-orange-background-color.with-bright-contrast</code><br>
+                <div class="demo-box ee-orange-background-color with-bright-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-orange-background-color.with-dark-contrast</code><br>
+                <div class="demo-box ee-orange-background-color with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-orange-background-color.with-dark-contrast</code><br>
+                Inner: <code>.ee-orange-color</code>
+                <div class="demo-box with-text ee-orange-background-color with-dark-contrast">
+                    <div class="ee-orange-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-orange-background-color.with-bright-contrast</code><br>
+                Inner: <code>.ee-orange-color</code>
+                <div class="demo-box with-text ee-orange-background-color with-bright-contrast">
+                    <div class="ee-orange-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-orange-background-color</code><br>
+                Inner: <code>.ee-orange-color.with-bright-contrast</code>
+                <div class="demo-box with-text ee-orange-background-color">
+                    <div class="ee-orange-color with-bright-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-orange-background-color</code><br>
+                Inner: <code>.ee-orange-color.with-dark-contrast</code>
+                <div class="demo-box with-text ee-orange-background-color">
+                    <div class="ee-orange-color with-dark-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-orange-background-color.with-linear-gradient</code><br>
+                <div class="demo-box ee-orange-background-color with-linear-gradient"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h3>Blue</h3>
+            <div class="demo-swatch">
+                <code>.ee-blue-background-color</code><br>
+                <div class="demo-box ee-blue-background-color"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-blue-background-color.with-bright-contrast</code><br>
+                <div class="demo-box ee-blue-background-color with-bright-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-blue-background-color.with-dark-contrast</code><br>
+                <div class="demo-box ee-blue-background-color with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-blue-background-color.with-dark-contrast</code><br>
+                Inner: <code>.ee-blue-color</code>
+                <div class="demo-box with-text ee-blue-background-color with-dark-contrast">
+                    <div class="ee-blue-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-blue-background-color.with-bright-contrast</code><br>
+                Inner: <code>.ee-blue-color</code>
+                <div class="demo-box with-text ee-blue-background-color with-bright-contrast">
+                    <div class="ee-blue-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-blue-background-color</code><br>
+                Inner: <code>.ee-blue-color.with-bright-contrast</code>
+                <div class="demo-box with-text ee-blue-background-color">
+                    <div class="ee-blue-color with-bright-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-blue-background-color</code><br>
+                Inner: <code>.ee-blue-color.with-dark-contrast</code>
+                <div class="demo-box with-text ee-blue-background-color">
+                    <div class="ee-blue-color with-dark-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-blue-background-color.with-linear-gradient</code><br>
+                <div class="demo-box ee-blue-background-color with-linear-gradient"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h3>Light Blue</h3>
+            <div class="demo-swatch">
+                <code>.ee-light-blue-background-color</code><br>
+                <div class="demo-box ee-light-blue-background-color"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-light-blue-background-color.with-bright-contrast</code><br>
+                <div class="demo-box ee-light-blue-background-color with-bright-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-light-blue-background-color.with-dark-contrast</code><br>
+                <div class="demo-box ee-light-blue-background-color with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-light-blue-background-color.with-dark-contrast</code><br>
+                Inner: <code>.ee-light-blue-color</code>
+                <div class="demo-box with-text ee-light-blue-background-color with-dark-contrast">
+                    <div class="ee-light-blue-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-light-blue-background-color.with-bright-contrast</code><br>
+                Inner: <code>.ee-light-blue-color</code>
+                <div class="demo-box with-text ee-light-blue-background-color with-bright-contrast">
+                    <div class="ee-light-blue-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-light-blue-background-color</code><br>
+                Inner: <code>.ee-light-blue-color.with-bright-contrast</code>
+                <div class="demo-box with-text ee-light-blue-background-color">
+                    <div class="ee-light-blue-color with-bright-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-light-blue-background-color</code><br>
+                Inner: <code>.ee-light-blue-color.with-dark-contrast</code>
+                <div class="demo-box with-text ee-light-blue-background-color">
+                    <div class="ee-light-blue-color with-dark-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-light-blue-background-color.with-linear-gradient</code><br>
+                <div class="demo-box ee-light-blue-background-color with-linear-gradient"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h3>Yellow</h3>
+            <div class="demo-swatch">
+                <code>.ee-yellow-background-color</code><br>
+                <div class="demo-box ee-yellow-background-color"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-yellow-background-color.with-bright-contrast</code><br>
+                <div class="demo-box ee-yellow-background-color with-bright-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-yellow-background-color.with-dark-contrast</code><br>
+                <div class="demo-box ee-yellow-background-color with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-yellow-background-color.with-dark-contrast</code><br>
+                Inner: <code>.ee-yellow-color</code>
+                <div class="demo-box with-text ee-yellow-background-color with-dark-contrast">
+                    <div class="ee-yellow-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-yellow-background-color.with-bright-contrast</code><br>
+                Inner: <code>.ee-yellow-color</code>
+                <div class="demo-box with-text ee-yellow-background-color with-bright-contrast">
+                    <div class="ee-yellow-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-yellow-background-color</code><br>
+                Inner: <code>.ee-yellow-color.with-bright-contrast</code>
+                <div class="demo-box with-text ee-yellow-background-color">
+                    <div class="ee-yellow-color with-bright-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-yellow-background-color</code><br>
+                Inner: <code>.ee-yellow-color.with-dark-contrast</code>
+                <div class="demo-box with-text ee-yellow-background-color">
+                    <div class="ee-yellow-color with-dark-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-yellow-background-color.with-linear-gradient</code><br>
+                <div class="demo-box ee-yellow-background-color with-linear-gradient"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h3>Grey</h3>
+            <div class="demo-swatch">
+                <code>.ee-grey-background-color</code><br>
+                <div class="demo-box ee-grey-background-color"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-grey-background-color.with-bright-contrast</code><br>
+                <div class="demo-box ee-grey-background-color with-bright-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-grey-background-color.with-dark-contrast</code><br>
+                <div class="demo-box ee-grey-background-color with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-grey-background-color.with-dark-contrast</code><br>
+                Inner: <code>.ee-grey-color</code>
+                <div class="demo-box with-text ee-grey-background-color with-dark-contrast">
+                    <div class="ee-grey-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-grey-background-color.with-bright-contrast</code><br>
+                Inner: <code>.ee-grey-color</code>
+                <div class="demo-box with-text ee-grey-background-color with-bright-contrast">
+                    <div class="ee-grey-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-grey-background-color</code><br>
+                Inner: <code>.ee-grey-color.with-bright-contrast</code>
+                <div class="demo-box with-text ee-grey-background-color">
+                    <div class="ee-grey-color with-bright-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-grey-background-color</code><br>
+                Inner: <code>.ee-grey-color.with-dark-contrast</code>
+                <div class="demo-box with-text ee-grey-background-color">
+                    <div class="ee-grey-color with-dark-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-grey-background-color.with-linear-gradient</code><br>
+                <div class="demo-box ee-grey-background-color with-linear-gradient"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h3>Dark Grey</h3>
+            <div class="demo-swatch">
+                <code>.ee-dark-grey-background-color</code><br>
+                <div class="demo-box ee-dark-grey-background-color"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-dark-grey-background-color.with-bright-contrast</code><br>
+                <div class="demo-box ee-dark-grey-background-color with-bright-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-dark-grey-background-color.with-dark-contrast</code><br>
+                <div class="demo-box ee-dark-grey-background-color with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-dark-grey-background-color.with-dark-contrast</code><br>
+                Inner: <code>.ee-dark-grey-color</code>
+                <div class="demo-box with-text ee-dark-grey-background-color with-dark-contrast">
+                    <div class="ee-dark-grey-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-dark-grey-background-color.with-bright-contrast</code><br>
+                Inner: <code>.ee-dark-grey-color</code>
+                <div class="demo-box with-text ee-dark-grey-background-color with-bright-contrast">
+                    <div class="ee-dark-grey-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-dark-grey-background-color</code><br>
+                Inner: <code>.ee-dark-grey-color.with-bright-contrast</code>
+                <div class="demo-box with-text ee-dark-grey-background-color">
+                    <div class="ee-dark-grey-color with-bright-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-dark-grey-background-color</code><br>
+                Inner: <code>.ee-dark-grey-color.with-dark-contrast</code>
+                <div class="demo-box with-text ee-dark-grey-background-color">
+                    <div class="ee-dark-grey-color with-dark-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-dark-grey-background-color.with-linear-gradient</code><br>
+                <div class="demo-box ee-dark-grey-background-color with-linear-gradient"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h3>Black</h3>
+            <div class="demo-swatch">
+                <code>.ee-black-background-color</code><br>
+                <div class="demo-box ee-black-background-color"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-black-background-color.with-bright-contrast</code><br>
+                <div class="demo-box ee-black-background-color with-bright-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-black-background-color.with-dark-contrast</code><br>
+                <div class="demo-box ee-black-background-color with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-black-background-color.with-dark-contrast</code><br>
+                Inner: <code>.ee-black-color</code>
+                <div class="demo-box with-text ee-black-background-color with-dark-contrast">
+                    <div class="ee-black-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-black-background-color.with-bright-contrast</code><br>
+                Inner: <code>.ee-black-color</code>
+                <div class="demo-box with-text ee-black-background-color with-bright-contrast">
+                    <div class="ee-black-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-black-background-color</code><br>
+                Inner: <code>.ee-black-color.with-bright-contrast</code>
+                <div class="demo-box with-text ee-black-background-color">
+                    <div class="ee-black-color with-bright-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-black-background-color</code><br>
+                Inner: <code>.ee-black-color.with-dark-contrast</code>
+                <div class="demo-box with-text ee-black-background-color">
+                    <div class="ee-black-color with-dark-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-black-background-color.with-linear-gradient</code><br>
+                <div class="demo-box ee-black-background-color with-linear-gradient"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h3>White</h3>
+            <div class="demo-swatch">
+                <code>.ee-white-background-color</code><br>
+                <div class="demo-box ee-white-background-color"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-white-background-color.with-bright-contrast</code><br>
+                <div class="demo-box ee-white-background-color with-bright-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-white-background-color.with-dark-contrast</code><br>
+                <div class="demo-box ee-white-background-color with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-white-background-color.with-dark-contrast</code><br>
+                Inner: <code>.ee-white-color</code>
+                <div class="demo-box with-text ee-white-background-color with-dark-contrast">
+                    <div class="ee-white-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-white-background-color.with-bright-contrast</code><br>
+                Inner: <code>.ee-white-color</code>
+                <div class="demo-box with-text ee-white-background-color with-bright-contrast">
+                    <div class="ee-white-color">Sample Text</div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-white-background-color</code><br>
+                Inner: <code>.ee-white-color.with-bright-contrast</code>
+                <div class="demo-box with-text ee-white-background-color">
+                    <div class="ee-white-color with-bright-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                Outer: <code>.ee-white-background-color</code><br>
+                Inner: <code>.ee-white-color.with-dark-contrast</code>
+                <div class="demo-box with-text ee-white-background-color">
+                    <div class="ee-white-color with-dark-contrast">
+                        Sample Text
+                    </div>
+                </div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-white-background-color.with-linear-gradient</code><br>
+                <div class="demo-box ee-white-background-color with-linear-gradient"></div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="demo-section">
+    <h2>Entity Status Colors</h2>
+    <p>These are status colors for various Event Espresso model entities. The following schema is used for the class names:</p>
+    <ul>
+        <li><code class="alternate">.ee-status-color-{status_code}</code>: The text will be colored for the given status code.</li>
+        <li><code class="alternate">.ee-status-background-color-{status_code}</code>: The background color will be colored for the given status code.</li>
+        <li><code class="alternate">.with-bright-contrast</code>: Used to swap in the bright contrast accessible color for that status.</li>
+        <li><code class="alternate">.with-dark-contrast</code>: Used to swap in the dark contrast accessible color for that status.</li>
+    </ul>
+    <p>strong>Note: For these examples, we're just showing the colors not the text color. For implementation you can use similar technique as demonstrated in the previous color demo.</p>
+    <h3>Transaction Statuses</h3>
+    <div class="demo-items">
+        <div class="demo-item">
+            <h4>Transaction Completed (TCM)</h4>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-TCM</code>
+                <div class="demo-box ee-status-background-color-TCM"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-TCM.with-dark-contrast</code>
+                <div class="demo-box ee-status-background-color-TCM with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-TCM.with-bright-contrast</code>
+                <div class="demo-box ee-status-background-color-TCM with-bright-contrast"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h4>Transaction Failed (TFL)</h4>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-TFL</code>
+                <div class="demo-box ee-status-background-color-TFL"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-TFL.with-dark-contrast</code>
+                <div class="demo-box ee-status-background-color-TFL with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-TFL.with-bright-contrast</code>
+                <div class="demo-box ee-status-background-color-TFL with-bright-contrast"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h4>Transaction Open (TOP)</h4>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-TOP</code>
+                <div class="demo-box ee-status-background-color-TOP"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-TOP.with-dark-contrast</code>
+                <div class="demo-box ee-status-background-color-TOP with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-TOP.with-bright-contrast</code>
+                <div class="demo-box ee-status-background-color-TOP with-bright-contrast"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h4>Transaction Abandoned (TAB)</h4>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-TAB</code>
+                <div class="demo-box ee-status-background-color-TAB"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-TAB.with-dark-contrast</code>
+                <div class="demo-box ee-status-background-color-TAB with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-TAB.with-bright-contrast</code>
+                <div class="demo-box ee-status-background-color-TAB with-bright-contrast"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h4>Transaction Incomplete (TIN)</h4>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-TIN</code>
+                <div class="demo-box ee-status-background-color-TIN"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-TIN.with-dark-contrast</code>
+                <div class="demo-box ee-status-background-color-TIN with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-TIN.with-bright-contrast</code>
+                <div class="demo-box ee-status-background-color-TIN with-bright-contrast"></div>
+            </div>
+        </div>
+    </div>
+    <h3>Payment Statuses</h3>
+    <div class="demo-items">
+        <div class="demo-item">
+            <h4>Payment Approved (PAP)</h4>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-PAP</code>
+                <div class="demo-box ee-status-background-color-PAP"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-PAP.with-dark-contrast</code>
+                <div class="demo-box ee-status-background-color-PAP with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-PAP.with-bright-contrast</code>
+                <div class="demo-box ee-status-background-color-PAP with-bright-contrast"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h4>Payment Declined (PDC)</h4>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-PDC</code>
+                <div class="demo-box ee-status-background-color-PDC"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-PDC.with-dark-contrast</code>
+                <div class="demo-box ee-status-background-color-PDC with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-PDC.with-bright-contrast</code>
+                <div class="demo-box ee-status-background-color-PDC with-bright-contrast"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h4>Payment Cancelled (PCN)</h4>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-PCN</code>
+                <div class="demo-box ee-status-background-color-PCN"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-PCN.with-dark-contrast</code>
+                <div class="demo-box ee-status-background-color-PCN with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-PCN.with-bright-contrast</code>
+                <div class="demo-box ee-status-background-color-PCN with-bright-contrast"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h4>Payment Failed (PFL)</h4>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-PFL</code>
+                <div class="demo-box ee-status-background-color-PFL"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-PFL.with-dark-contrast</code>
+                <div class="demo-box ee-status-background-color-PFL with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-PFL.with-bright-contrast</code>
+                <div class="demo-box ee-status-background-color-PFL with-bright-contrast"></div>
+            </div>
+        </div>
+        <div class="demo-item">
+            <h4>Payment Pending (PPN)</h4>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-PPN</code>
+                <div class="demo-box ee-status-background-color-PPN"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-PPN.with-dark-contrast</code>
+                <div class="demo-box ee-status-background-color-PPN with-dark-contrast"></div>
+            </div>
+            <div class="demo-swatch">
+                <code>.ee-status-background-color-PPN.with-bright-contrast</code>
+                <div class="demo-box ee-status-background-color-PPN with-bright-contrast"></div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,104 @@
+/**
+    - color suffix is the primary
+    - "contrast-bright" suffix is accessible bright contrast for the main color.
+    - "contrast-dark" suffix is accessible dark contrast for the main color.
+
+    Typically the difference between bright and dark contrast variables is that bright will tend to be
+    brighter colors whereas dark will tend to be duller colors.  But both have an accessible acceptance
+    store for color contrast.
+
+    A useful tool for doing color-safe palettes is http://colorsafe.co/
+ */
+:root {
+    --ee-color-pink: #E44064;
+    --ee-pink-background-gradient-x: #F65077;
+    --ee-pink-background-gradient-y: #E44064;
+    --ee-color-pink-hover: #F65077;
+    --ee-color-pink-contrast-bright: #c8f7c5;
+    --ee-color-pink-contrast-dark: #000;
+
+    --ee-color-green: #70CC50;
+    --ee-green-background-gradient-x: #80DD5E;
+    --ee-green-background-gradient-y: #70CC50;
+    --ee-color-green-hover: #80DD5E;
+    --ee-color-green-contrast-bright: #0000e0;
+    --ee-color-green-contrast-dark: #00202a;
+
+    --ee-color-dark-green: #009900;
+    --ee-dark-green-background-gradient-x: #80DD5E;
+    --ee-dark-green-background-gradient-y: #009900;
+    --ee-color-dark-green-hover: #80DD5E;
+    --ee-color-dark-green-contrast-bright: #0000b5;
+    --ee-color-dark-green-contrast-dark: #00202a;
+
+    --ee-color-red: #B4113F;
+    --ee-red-background-gradient-x: #C8194E;
+    --ee-red-background-gradient-y: #B4113F;
+    --ee-color-red-hover: #C8194E;
+    --ee-color-red-contrast-bright: #f1f227;
+    --ee-color-red-contrast-dark: #000;
+
+    --ee-color-orange: #E76700;
+    --ee-orange-background-gradient-x: #FA730B;
+    --ee-orange-background-gradient-y: #E76700;
+    --ee-color-orange-hover: #FA730B;
+    --ee-color-orange-contrast-bright: #fff;
+    --ee-color-orange-contrast-dark: #000;
+
+    --ee-color-light-blue: #00B1CA;
+    --ee-light-blue-background-gradient-x: #066DB1;
+    --ee-light-blue-background-gradient-y: #00B1CA;
+    --ee-color-light-blue-hover: #066DB1;
+    --ee-color-light-blue-contrast-bright: #0000b5;
+    --ee-color-light-blue-contrast-dark: #050709;
+
+    --ee-color-blue: #005B9E;
+    --ee-blue-background-gradient-x: #066DB1;
+    --ee-blue-background-gradient-y: #005B9E;
+    --ee-color-blue-hover: #066DB1;
+    --ee-color-blue-contrast-bright: #fff;
+    --ee-color-blue-contrast-dark: #d5d5d5;
+
+    --ee-color-yellow: #F8D755;
+    --ee-yellow-background-gradient-x: #FEDF6C;
+    --ee-yellow-background-gradient-y: #F8D755;
+    --ee-color-yellow-hover: #FEDF6C;
+    --ee-color-yellow-contrast-bright: #e63022;
+    --ee-color-yellow-contrast-dark: #4b6a88;
+
+    --ee-color-grey: #AC9D9C;
+    --ee-grey-background-gradient-x: #59595B;
+    --ee-grey-background-gradient-y: #AC9D9C;
+    --ee-color-grey-hover: #59595B;
+    --ee-color-grey-contrast-bright: #0000e0;
+    --ee-color-grey-contrast-dark: #05182a;
+
+    --ee-color-dark-grey: #464549;
+    --ee-dark-grey-background-gradient-x: #59595B;
+    --ee-dark-grey-background-gradient-y: #464549;
+    --ee-color-dark-grey-hover: #59595B;
+    --ee-color-dark-grey-contrast-bright: #baf73c;
+    --ee-color-dark-grey-contrast-dark: #00aa55;
+
+    --ee-color-black: #2F3334;
+    --ee-black-background-gradient-x: #424646;
+    --ee-black-background-gradient-y: #2F3334;
+    --ee-color-black-hover: #424646;
+    --ee-color-black-contrast-bright: #fefefe;
+    --ee-color-black-contrast-dark: #4183d7;
+    --ee-color-black-01-transparency: rgba( 0,0,0,0.01 );
+    --ee-color-black-25-transparency: rgba( 0,0,0,0.25 );
+    --ee-color-black-50-transparency: rgba( 0,0,0,0.50 );
+    --ee-color-black-75-transparency: rgba( 0,0,0,0.75 );
+
+    --ee-color-white: #fff;
+    --ee-white-background-gradient-x: #ffecdb;
+    --ee-white-background-gradient-y: #fff;
+    --ee-color-white-hover: #ffecdb;
+    --ee-color-white-contrast-bright: #7462e0;
+    --ee-color-white-contrast-dark: #2e343b;
+    --ee-color-white-01-transparency: rgba( 255,255,255,0.01 );
+    --ee-color-white-25-transparency: rgba( 255,255,255,0.25 );
+    --ee-color-white-50-transparency: rgba( 255,255,255,0.50 );
+    --ee-color-white-75-transparency: rgba( 255,255,255,0.75 );
+}

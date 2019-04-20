@@ -1,0 +1,515 @@
+.ee-pink-background-color {
+    background-color: var(--ee-color-pink, #E44064);
+}
+
+.ee-pink-background-color.with-bright-contrast {
+    background-color: var(--ee-color-pink-contrast-bright, #c8f7c5);
+}
+
+.ee-pink-background-color.with-dark-contrast {
+    background-color: var(--ee-color-pink-contrast-dark, #000);
+}
+
+.ee-pink-color {
+    color: var(--ee-color-pink, #E44064);
+}
+
+.ee-pink-color.with-bright-contrast {
+    color: var(--ee-color-pink-contrast-bright, #c8f7c5);
+}
+
+.ee-pink-color.with-dark-contrast {
+    color: var(--ee-color-pink-contrast-dark, #000);
+}
+
+.ee-pink-background-color.with-linear-gradient {
+    background-image: linear-gradient(
+        var(--ee-pink-background-gradient-x, #F65077),
+        var(--ee-pink-background-gradient-y, #E44064)
+    );
+}
+
+.ee-pink-background-color.with-hover:hover {
+    background-color: var(--ee-color-pink-hover, #F65077);
+}
+
+.ee-pink-background-color.with-bright-contrast.with-hover:hover {
+    background-color: var(--ee-color-pink-contrast-bright, #c8f7c5);
+}
+
+.ee-pink-background-color.with-dark-contrast.with-hover:hover {
+    background-color: var(--ee-color-pink-contrast-dark, #000);
+}
+
+.ee-green-background-color {
+    background-color: var(--ee-color-green, #70CC50);
+}
+
+.ee-green-background-color.with-bright-contrast {
+    background-color: var(--ee-color-green-contrast-bright, #0000e0);
+}
+
+.ee-green-background-color.with-dark-contrast {
+    background-color: var(--ee-color-green-contrast-dark, #00202a);
+}
+
+.ee-green-color {
+    color: var(--ee-color-green, #70CC50);
+}
+
+.ee-green-color.with-bright-contrast {
+    color: var(--ee-color-green-contrast-bright, #0000e0);
+}
+
+.ee-green-color.with-dark-contrast {
+    color: var(--ee-color-green-contrast-dark, #00202a);
+}
+
+.ee-green-background-color.with-linear-gradient {
+    background-image: linear-gradient(
+        var(--ee-green-background-gradient-x, #80DD5E),
+        var(--ee-green-background-gradient-y, #70CC50)
+    );
+}
+
+.ee-green-background-color.with-hover:hover {
+    background-color: var(--ee-color-green-hover, #80DD5E);
+}
+
+.ee-green-background-color.with-bright-contrast.with-hover:hover {
+    background-color: var(--ee-color-green-contrast-bright, #0000e0);
+}
+
+.ee-green-background-color.with-dark-contrast.with-hover:hover {
+    background-color: var(--ee-color-green-contrast-dark, #00202a);
+}
+
+.ee-dark-green-background-color {
+    background-color: var(--ee-color-dark-green, #009900);
+}
+
+.ee-dark-green-background-color.with-bright-contrast {
+    background-color: var(--ee-color-dark-green-contrast-bright, #0000b5);
+}
+
+.ee-dark-green-background-color.with-dark-contrast {
+    background-color: var(--ee-color-dark-green-contrast-dark, #00202a);
+}
+
+.ee-dark-green-color {
+    color: var(--ee-color-dark-green, #009900);
+}
+
+.ee-dark-green-color.with-bright-contrast {
+    color: var(--ee-color-dark-green-contrast-bright, #0000b5);
+}
+
+.ee-dark-green-color.with-dark-contrast {
+    color: var(--ee-color-dark-green-contrast-dark, #00202a);
+}
+
+.ee-dark-green-background-color.with-linear-gradient {
+    background-image: linear-gradient(
+        var(--ee-dark-green-background-gradient-x, #80DD5E),
+        var(--ee-dark-green-background-gradient-y, #009900)
+    );
+}
+
+.ee-dark-green-background-color.with-hover:hover {
+    background-color: var(--ee-color-dark-green-hover, #80DD5E);
+}
+
+.ee-dark-green-background-color.with-bright-contrast.with-hover:hover {
+    background-color: var(--ee-color-dark-green-contrast-bright, #0000b5);
+}
+
+.ee-dark-green-background-color.with-dark-contrast.with-hover:hover {
+    background-color: var(--ee-color-dark-green-contrast-dark, #00202a);
+}
+
+.ee-red-background-color {
+    background-color: var(--ee-color-red, #B4113F);
+}
+
+.ee-red-background-color.with-bright-contrast {
+    background-color: var(--ee-color-red-contrast-bright, #f1f227);
+}
+
+.ee-red-background-color.with-dark-contrast {
+    background-color: var(--ee-color-red-contrast-dark, #000);
+}
+
+.ee-red-color {
+    color: var(--ee-color-red, #B4113F);
+}
+
+.ee-red-color.with-bright-contrast {
+    color: var(--ee-color-red-contrast-bright, #f1f227);
+}
+
+.ee-red-color.with-dark-contrast {
+    color: var(--ee-color-red-contrast-dark, #000);
+}
+
+.ee-red-background-color.with-linear-gradient {
+    background-image: linear-gradient(
+        var(--ee-red-background-gradient-x, #C8194E),
+        var(--ee-red-background-gradient-y, #B4113F)
+    );
+}
+
+.ee-red-background-color.with-hover:hover {
+    background-color: var(--ee-color-red-hover, #C8194E);
+}
+
+.ee-red-background-color.with-bright-contrast.with-hover:hover {
+    background-color: var(--ee-color-red-contrast-bright, #f1f227);
+}
+
+.ee-red-background-color.with-dark-contrast.with-hover:hover {
+    background-color: var(--ee-color-red-contrast-dark, #000);
+}
+
+.ee-orange-background-color {
+    background-color: var(--ee-color-orange, #E76700);
+}
+
+.ee-orange-background-color.with-bright-contrast {
+    background-color: var(--ee-color-orange-contrast-bright, #fff);
+}
+
+.ee-orange-background-color.with-dark-contrast {
+    background-color: var(--ee-color-orange-contrast-dark, #000);
+}
+
+.ee-orange-color {
+    color: var(--ee-color-orange, #E76700);
+}
+
+.ee-orange-color.with-bright-contrast {
+    color: var(--ee-color-orange-contrast-bright, #fff);
+}
+
+.ee-orange-color.with-dark-contrast {
+    color: var(--ee-color-orange-contrast-dark, #000);
+}
+
+.ee-orange-background-color.with-linear-gradient {
+    background-image: linear-gradient(
+        var(--ee-orange-background-gradient-x, #FA730B),
+        var(--ee-orange-background-gradient-y, #E76700)
+    );
+}
+
+.ee-orange-background-color.with-hover {
+    background-color: var(--ee-color-orange-hover, #FA730B);
+}
+
+.ee-orange-background-color.with-bright-contrast.with-hover:hover {
+    background-color: var(--ee-color-orange-contrast-bright, #fff);
+}
+
+.ee-orange-background-color.with-dark-contrast.with-hover:hover {
+    background-color: var(--ee-color-orange-contrast-dark, #000);
+}
+
+.ee-blue-background-color {
+    background-color: var(--ee-color-blue, #005B9E);
+}
+
+.ee-blue-background-color.with-bright-contrast {
+    background-color: var(--ee-color-blue-contrast-bright, #fff);
+}
+
+.ee-blue-background-color.with-dark-contrast {
+    background-color: var(--ee-color-blue-contrast-dark, #d5d5d5);
+}
+
+.ee-blue-color {
+    color: var(--ee-color-blue, #005B9E);
+}
+
+.ee-blue-color.with-bright-contrast {
+    color: var(--ee-color-blue-contrast-bright, #fff);
+}
+
+.ee-blue-color.with-dark-contrast {
+    color: var(--ee-color-blue-contrast-dark, #d5d5d5);
+}
+
+.ee-blue-background-color.with-linear-gradient {
+    background-image: linear-gradient(
+        var(--ee-blue-background-gradient-x, #066DB1),
+        var(--ee-blue-background-gradient-y, #005B9E)
+    );
+}
+
+.ee-blue-background-color.with-hover {
+    background-color: var(--ee-color-blue-hover, #066DB1);
+}
+
+.ee-blue-background-color.with-bright-contrast.with-hover:hover {
+    background-color: var(--ee-color-blue-contrast-bright, #fff);
+}
+
+.ee-blue-background-color.with-dark-contrast.with-hover:hover {
+    background-color: var(--ee-color-blue-contrast-dark, #d5d5d5);
+}
+
+.ee-light-blue-background-color {
+    background-color: var(--ee-color-light-blue, #00B1CA);
+}
+
+.ee-light-blue-background-color.with-bright-contrast {
+    background-color: var(--ee-color-light-blue-contrast-bright, #0000b5);
+}
+
+.ee-light-blue-background-color.with-dark-contrast {
+    background-color: var(--ee-color-light-blue-contrast-dark, #050709);
+}
+
+.ee-light-blue-color {
+    color: var(--ee-color-light-blue, #00B1CA);
+}
+
+.ee-light-blue-color.with-bright-contrast {
+    color: var(--ee-color-light-blue-contrast-bright, #0000b5);
+}
+
+.ee-light-blue-color.with-dark-contrast {
+    color: var(--ee-color-light-blue-contrast-dark, #050709);
+}
+
+.ee-light-blue-background-color.with-linear-gradient {
+    background-image: linear-gradient(
+        var(--ee-light-blue-background-gradient-x, #066DB1),
+        var(--ee-light-blue-background-gradient-y, #00B1CA)
+    );
+}
+
+.ee-light-blue-background-color.with-hover {
+    background-color: var(--ee-color-light-blue-hover, #066DB1);
+}
+
+.ee-light-blue-background-color.with-bright-contrast.with-hover:hover {
+    background-color: var(--ee-color-light-blue-contrast-bright, #0000b5);
+}
+
+.ee-light-blue-background-color.with-dark-contrast.with-hover:hover {
+    background-color: var(--ee-color-light-blue-contrast-dark, #050709);
+}
+
+.ee-yellow-background-color {
+    background-color: var(--ee-color-yellow, #F8D755);
+}
+
+.ee-yellow-background-color.with-bright-contrast {
+    background-color: var(--ee-color-yellow-contrast-bright, #e63022);
+}
+
+.ee-yellow-background-color.with-dark-contrast {
+    background-color: var(--ee-color-yellow-contrast-dark, #4b6a88);
+}
+
+.ee-yellow-color {
+    color: var(--ee-color-yellow, #F8D755);
+}
+
+.ee-yellow-color.with-bright-contrast {
+    color: var(--ee-color-yellow-contrast-bright, #e63022);
+}
+
+.ee-yellow-color.with-dark-contrast {
+    color: var(--ee-color-yellow-contrast-dark, #4b6a88);
+}
+
+.ee-yellow-background-color.with-linear-gradient {
+    background-image: linear-gradient(
+        var(--ee-yellow-background-gradient-x, #FEDF6C),
+        var(--ee-yellow-background-gradient-y, #F8D755)
+    );
+}
+
+.ee-yellow-background-color.with-hover {
+    background-color: var(--ee-color-yellow-hover, #FEDF6C);
+}
+
+.ee-yellow-background-color.with-bright-contrast.with-hover:hover {
+    background-color: var(--ee-color-yellow-contrast-bright, #e63022);
+}
+
+.ee-yellow-background-color.with-dark-contrast.with-hover:hover {
+    background-color: var(--ee-color-yellow-contrast-dark, #4b6a88);
+}
+
+.ee-grey-background-color {
+    background-color: var(--ee-color-grey, #A39D9C);
+}
+
+.ee-grey-background-color.with-bright-contrast {
+    background-color: var(--ee-color-grey-contrast-bright, #0000e0);
+}
+
+.ee-grey-background-color.with-dark-contrast {
+    background-color: var(--ee-color-grey-contrast-dark, #05182a);
+}
+
+.ee-grey-color {
+    color: var(--ee-color-grey, #A39D9C);
+}
+
+.ee-grey-color.with-bright-contrast {
+    color: var(--ee-color-grey-contrast-bright, #0000e0);
+}
+
+.ee-grey-color.with-dark-contrast {
+    color: var(--ee-color-grey-contrast-dark, #05182a);
+}
+
+.ee-grey-background-color.with-linear-gradient {
+    background-image: linear-gradient(
+        var(--ee-grey-background-gradient-x, #59595B),
+        var(--ee-grey-background-gradient-y, #A39D9C)
+    );
+}
+
+.ee-grey-background-color.with-hover {
+    background-color: var(--ee-color-grey-hover, #59595B);
+}
+
+.ee-grey-background-color.with-bright-contrast.with-hover:hover {
+    background-color: var(--ee-color-grey-contrast-bright, #0000e0);
+}
+
+.ee-grey-background-color.with-dark-contrast.with-hover:hover {
+    background-color: var(--ee-color-grey-contrast-dark, #05182a);
+}
+
+.ee-dark-grey-background-color {
+    background-color: var(--ee-color-dark-grey, #464549);
+}
+
+.ee-dark-grey-background-color.with-bright-contrast {
+    background-color: var(--ee-color-dark-grey-contrast-bright, #baf73c);
+}
+
+.ee-dark-grey-background-color.with-dark-contrast {
+    background-color: var(--ee-color-dark-grey-contrast-dark, #00aa55);
+}
+
+.ee-dark-grey-color {
+    color: var(--ee-color-dark-grey, #464549);
+}
+
+.ee-dark-grey-color.with-bright-contrast {
+    color: var(--ee-color-dark-grey-contrast-bright, #baf73c);
+}
+
+.ee-dark-grey-color.with-dark-contrast {
+    color: var(--ee-color-dark-grey-contrast-dark, #00aa55);
+}
+
+.ee-dark-grey-background-color.with-linear-gradient {
+    background-image: linear-gradient(
+        var(--ee-dark-grey-background-gradient-x, #59595B),
+        var(--ee-dark-grey-background-gradient-y, #464549)
+    );
+}
+
+.ee-dark-grey-background-color.with-hover {
+    background-color: var(--ee-color-dark-grey-hover, #59595B);
+}
+
+.ee-dark-grey-background-color.with-bright-contrast.with-hover:hover {
+    background-color: var(--ee-color-dark-grey-contrast-bright, #baf73c);
+}
+
+.ee-dark-grey-background-color.with-dark-contrast.with-hover:hover {
+    background-color: var(--ee-color-dark-grey-contrast-dark, #00aa55);
+}
+
+.ee-black-background-color {
+    background-color: var(--ee-color-black, #2F3334);
+}
+
+.ee-black-background-color.with-bright-contrast {
+    background-color: var(--ee-color-black-contrast-bright, #fefefe);
+}
+
+.ee-black-background-color.with-dark-contrast {
+    background-color: var(--ee-color-black-contrast-dark, #4183d7);
+}
+
+.ee-black-color {
+    color: var(--ee-color-black, #2F3334);
+}
+
+.ee-black-color.with-bright-contrast {
+    color: var(--ee-color-black-contrast-bright, #fefefe);
+}
+
+.ee-black-color.with-dark-contrast {
+    color: var(--ee-color-black-contrast-dark, #4183d7);
+}
+
+.ee-black-background-color.with-linear-gradient {
+    background-image: linear-gradient(
+        var(--ee-black-background-gradient-x, #424646),
+        var(--ee-black-background-gradient-y, #2F3334)
+    );
+}
+
+.ee-black-background-color.with-hover {
+    background-color: var(--ee-color-black-hover, #424646);
+}
+
+.ee-black-background-color.with-bright-contrast.with-hover:hover {
+    background-color: var(--ee-color-black-contrast-bright, #fefefe);
+}
+
+.ee-black-background-color.with-dark-contrast.with-hover:hover {
+    background-color: var(--ee-color-black-contrast-dark, #4183d7);
+}
+
+.ee-white-background-color {
+    background-color: var(--ee-color-white, #fff);
+}
+
+.ee-white-background-color.with-bright-contrast {
+    background-color: var(--ee-color-white-contrast-bright, #7462e0);
+}
+
+.ee-white-background-color.with-dark-contrast {
+    background-color: var(--ee-color-white-contrast-dark, #2e343b);
+}
+
+.ee-white-color {
+    color: var(--ee-color-white, #fff);
+}
+
+.ee-white-color.with-bright-contrast {
+    color: var(--ee-color-white-contrast-bright, #7462e0);
+}
+
+.ee-white-color.with-dark-contrast {
+    color: var(--ee-color-white-contrast-dark, #2e343b);
+}
+
+.ee-white-background-color.with-linear-gradient {
+    background-image: linear-gradient(
+        var(--ee-white-background-gradient-x, #ffecdb),
+        var(--ee-white-background-gradient-y, #fff)
+    );
+}
+
+.ee-white-background-color.with-hover {
+    background-color: var(--ee-color-white-hover, #ffecdb);
+}
+
+.ee-white-background-color.with-bright-contrast.with-hover:hover {
+    background-color: var(--ee-color-white-contrast-bright, #7462e0);
+}
+
+.ee-white-background-color.with-dark-contrast.with-hover:hover {
+    background-color: var(--ee-color-white-contrast-dark, #2e343b);
+}
